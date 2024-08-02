@@ -1,207 +1,111 @@
-Return-Path: <linux-kernel+bounces-272965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9EF9462DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:09:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFC5946335
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A9961F21A2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:09:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8AF11F23743
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C78165EFD;
-	Fri,  2 Aug 2024 18:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C7C1ABED6;
+	Fri,  2 Aug 2024 18:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sadPMPVH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="XVDAqyVx"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B7E13634B;
-	Fri,  2 Aug 2024 18:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDE51ABEA9;
+	Fri,  2 Aug 2024 18:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722622156; cv=none; b=MI5dNSRe4w11VD6LLt+z+YG3s5n894hIxgBIn2wfThZgQA9kaz50Id6k1KyCiQlxaW4T/nNMZwxbI3oLZvUes5jxNZe3cHUTfVM6GjULXxXzFuAycaYOGpSaleBgDl6TUi1E1PQs7QDqOSEnVXApBD2bRxe9FQjRx86HKWtBT3M=
+	t=1722623048; cv=none; b=T6XOnkIayLvw6nO3HFgdHHH4Xmd4/dQc3ia2amNq0UCklfovQyG7p32M7G+6oCn872+3ic0b6tsp1o3h92TqFXIkHkfy54Whryp2ubK5+LAR/FzCQTTgjsNHO8VNkBMyl5h+Fvk3wiNFRKbxnFvzargMX3Nw1GQjRMdR54wevPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722622156; c=relaxed/simple;
-	bh=661HsJSYUSjLBHgbOmJlKx/oaAEcvLmKUqv7JMQThtY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JNGeI8zStoQxzbxOQH3zTRk/u2E7gnpyOxwTpFaQxPGsAbkiSBlf/pncIKDrBLWj9kEkvkHarV0B4cowXWL+ERrIFTFu/NBvlAnIOvHyyowkiBW3zX8HXv45IY6LV6DixGHqoTF0U6jLs95i5yshu6PNVpm0Kz+b9xAg3Ug648U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sadPMPVH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5896BC32782;
-	Fri,  2 Aug 2024 18:09:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722622155;
-	bh=661HsJSYUSjLBHgbOmJlKx/oaAEcvLmKUqv7JMQThtY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sadPMPVHueVSeZ3h2ZrlIDd5Gaul3jfYZ48eBOyahzVv7uEjDqaUtDosUjU1KeDyW
-	 WKMFtSA0GU4aYDRxLQHMn4f2QS11mjPX/WNQnMdPgF/o9mIJcVtep1Cu7ww9rigvjn
-	 oac9fG3eUwWLDw0TT7jnTh/SqCU/s0oKthbiu3vesBGorPdu9YEgzfJizDCzqrBZWP
-	 jO3Ty7pyOvfSsAfD6T9uE5c7YDiM1Y9Fzl0Xx/0VtULocQKGdYhSNPQYidDmsnjX3l
-	 QGrAQtQ9DD6P6LNYtj5ucKvHIq1xLvzF1A4xePlSdmoP7gMLvYiQQ0TxdyTUWdF6ry
-	 UCqFJKgpJCtPw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: [PATCH] perf mem: Update documentation for new options
-Date: Fri,  2 Aug 2024 11:09:13 -0700
-Message-ID: <20240802180913.1023886-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+	s=arc-20240116; t=1722623048; c=relaxed/simple;
+	bh=SGbiGlnwzmqmhpPgTHVszf9CDLsuxBGtN97yKHdTmEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sc0SKBiGtLT1pj42cFpDqz5kl3yaSqQYp5dfDxwF8KDm1cIzHCb6k3vKRs05DEk+z7vGNsyPD8uksKHIH02Ri1IYWcrX4YQU++ylDN7jBDePl88kbRReOf5e3CkJd30GR9DOozNvajIKHLi+6FvKXdIXZ+tge9neYewNO8H6pt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=XVDAqyVx reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 982c33be547c8fd8; Fri, 2 Aug 2024 20:24:04 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id EB00A73B540;
+	Fri,  2 Aug 2024 20:24:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722623044;
+	bh=SGbiGlnwzmqmhpPgTHVszf9CDLsuxBGtN97yKHdTmEs=;
+	h=From:To:Cc:Subject:Date;
+	b=XVDAqyVxpDhmEQnCtQixsWXc5ZXI24EeOsOkjCzK4m4EWhZg9CPpkBRHzR6T3t+sc
+	 YMtI+R1noyGp6vMVgsSAifsN1JmfxaZbth8bZFSM9e6jgHoTAYhOurimouw5Wtzbyx
+	 QPOGAuN3KsfVeZnvXg6XZdFu0Mjk1SZaxsa3Sf54gndZhCTuGA1OqsuKamTlVcf+xI
+	 szWyXAGEZNyoVZYceAEZwI5UVxt9APSqYdEi/X5IweI6+6xhWydb7Hyssn+W3XuYZm
+	 0tbdjaXadp3wFcWOWEA+UsYicUDYfSEaZPPs/6JJRdX4FgtRecBgd0o4b9vMvD76Wn
+	 El/9j1VK0HloQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: x86 Maintainers <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+Subject:
+ [PATCH v1 0/3] x86 / intel_pstate: Set asymmetric CPU capacity on hybrid
+ systems
+Date: Fri, 02 Aug 2024 20:15:10 +0200
+Message-ID: <4908113.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgdduvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopedutddprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgv
+ lhdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeguihgvthhmrghrrdgvghhgvghmrghnnhesrghrmhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=30 Fuz1=30 Fuz2=30
 
-Add a common options section and move some items to the section.  Also
-add description of new options to report options.
+Hi Everyone,
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-mem.txt | 94 ++++++++++++++++++---------
- 1 file changed, 63 insertions(+), 31 deletions(-)
+The purpose of this series is to provide the scheduler with asymmetric CPU
+capacity information on x86 hybrid systems based on Intel hardware.
 
-diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
-index 47456b212e99..8a1bd9ff0f86 100644
---- a/tools/perf/Documentation/perf-mem.txt
-+++ b/tools/perf/Documentation/perf-mem.txt
-@@ -28,15 +28,8 @@ and kernel support is required. See linkperf:perf-arm-spe[1] for a setup guide.
- Due to the statistical nature of SPE sampling, not every memory operation will
- be sampled.
- 
--OPTIONS
---------
--<command>...::
--	Any command you can specify in a shell.
--
---i::
----input=<file>::
--	Input file name.
--
-+COMMON OPTIONS
-+--------------
- -f::
- --force::
- 	Don't do ownership validation
-@@ -45,24 +38,9 @@ OPTIONS
- --type=<type>::
- 	Select the memory operation type: load or store (default: load,store)
- 
---D::
----dump-raw-samples::
--	Dump the raw decoded samples on the screen in a format that is easy to parse with
--	one sample per line.
--
---x::
----field-separator=<separator>::
--	Specify the field separator used when dump raw samples (-D option). By default,
--	The separator is the space character.
--
---C::
----cpu=<cpu>::
--	Monitor only on the list of CPUs provided. Multiple CPUs can be provided as a
--        comma-separated list with no space: 0,1. Ranges of CPUs are specified with -: 0-2. Default
--        is to monitor all CPUS.
---U::
----hide-unresolved::
--	Only display entries resolved to a symbol.
-+-v::
-+--verbose::
-+	Be more verbose (show counter open errors, etc)
- 
- -p::
- --phys-data::
-@@ -73,6 +51,9 @@ OPTIONS
- 
- RECORD OPTIONS
- --------------
-+<command>...::
-+	Any command you can specify in a shell.
-+
- -e::
- --event <event>::
- 	Event selector. Use 'perf mem record -e list' to list available events.
-@@ -85,14 +66,65 @@ RECORD OPTIONS
- --all-user::
- 	Configure all used events to run in user space.
- 
---v::
----verbose::
--	Be more verbose (show counter open errors, etc)
--
- --ldlat <n>::
- 	Specify desired latency for loads event. Supported on Intel and Arm64
- 	processors only. Ignored on other archs.
- 
-+REPORT OPTIONS
-+--------------
-+-i::
-+--input=<file>::
-+	Input file name.
-+
-+-C::
-+--cpu=<cpu>::
-+	Monitor only on the list of CPUs provided. Multiple CPUs can be provided as a
-+        comma-separated list with no space: 0,1. Ranges of CPUs are specified with -
-+	like 0-2. Default is to monitor all CPUS.
-+
-+-D::
-+--dump-raw-samples::
-+	Dump the raw decoded samples on the screen in a format that is easy to parse with
-+	one sample per line.
-+
-+-s::
-+--sort=<key>::
-+	Group result by given key(s) - multiple keys can be specified
-+	in CSV format.  The keys are specific to memory samples are:
-+	symbol_daddr, symbol_iaddr, dso_daddr, locked, tlb, mem, snoop,
-+	dcacheline, phys_daddr, data_page_size, blocked.
-+
-+	- symbol_daddr: name of data symbol being executed on at the time of sample
-+	- symbol_iaddr: name of code symbol being executed on at the time of sample
-+	- dso_daddr: name of library or module containing the data being executed
-+	             on at the time of the sample
-+	- locked: whether the bus was locked at the time of the sample
-+	- tlb: type of tlb access for the data at the time of the sample
-+	- mem: type of memory access for the data at the time of the sample
-+	- snoop: type of snoop (if any) for the data at the time of the sample
-+	- dcacheline: the cacheline the data address is on at the time of the sample
-+	- phys_daddr: physical address of data being executed on at the time of sample
-+	- data_page_size: the data page size of data being executed on at the time of sample
-+	- blocked: reason of blocked load access for the data at the time of the sample
-+
-+	And the default sort keys are changed to local_weight, mem, sym, dso,
-+	symbol_daddr, dso_daddr, snoop, tlb, locked, blocked, local_ins_lat.
-+
-+-T::
-+--type-profile::
-+	Show data-type profile result instead of code symbols.  This requires
-+	the debug information and it will change the default sort keys to:
-+	mem, snoop, tlb, type.
-+
-+-U::
-+--hide-unresolved::
-+	Only display entries resolved to a symbol.
-+
-+-x::
-+--field-separator=<separator>::
-+	Specify the field separator used when dump raw samples (-D option). By default,
-+	The separator is the space character.
-+
- In addition, for report all perf report options are valid, and for record
- all perf record options.
- 
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
+The asymmetric CPU capacity information is important on hybrid systems as it
+allows utilization to be computed for tasks in a consistent way across all
+CPUs in the system, regardless of their capacity.  This, in turn, allows
+the schedutil cpufreq governor to set CPU performance levels consistently
+in the cases when tasks migrate between CPUs of different capacities.  It
+should also help to improve task placement and load balancing decisions on
+hybrid systems and it is key for anything along the lines of EAS.
+
+The information in question comes from the MSR_HWP_CAPABILITIES register and
+is provided to the scheduler by the intel_pstate driver, as per the changelog
+of patch [3/3].  Patch [2/3] introduces the arch infrastructure needed for
+that (in the form of a per-CPU capacity variable) and patch [1/3] is a
+preliminary code adjustment.
+
+This is based on an RFC posted previously
+
+https://lore.kernel.org/linux-pm/7663799.EvYhyI6sBW@kreacher/
+
+but differs from it quite a bit (except for the first patch).  The most
+significant difference is based on the observation that frequency-
+invariance needs to adjusted to the capacity scaling on hybrid systems
+for the complete scale-invariance to work as expected.
+
+Thank you!
+
+
 
 
