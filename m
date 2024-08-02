@@ -1,98 +1,144 @@
-Return-Path: <linux-kernel+bounces-272951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C289462B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:46:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F189462B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405481F21E29
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:46:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10A301C20BE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F0425632;
-	Fri,  2 Aug 2024 17:46:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C0813634E;
+	Fri,  2 Aug 2024 17:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="YvsMsO+w"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E95C1AE02E
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722620762; cv=none; b=qFsZKYMEL3x1DReBR9Or1BBqmxuwD2kAAIpFYtWX5lLxFus31LmmpB/U7Ho5Ew6lFoujOsvrSfn89zVw3c+y8nqLy2F+J9ytWMdC6DIHDeLfclnJ0ZBVL1cWuIlhH0QHMR1yg14pge4IBKzeLuODWd54EbvSE5pO5B4+eQk3T1A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722620762; c=relaxed/simple;
-	bh=wXU781dYeKJR+lQwgY34xZnCbDfR3WTf0NaI2WZG+vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DwBli1EdA3Ghp5YRuwpkayR9ZySFEUvxcGFXNX28Q2vxX73h99/sIdKajcpMd2brwySWwnzGVrIDoo32GRDK8h5fhE2eJv3M8ZSyS9oM96RvMrtlH8ElKfZAuKFpv05d6Momp2uSwatrMolETrK9N5xk1dWTCK9mPifXXrCiZF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5525C32782;
-	Fri,  2 Aug 2024 17:46:00 +0000 (UTC)
-Date: Fri, 2 Aug 2024 18:45:58 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] arm64 fixes for 6.11-rc2
-Message-ID: <Zq0bVlue7gHx6oaz@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C951AE02E;
+	Fri,  2 Aug 2024 17:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722620779; cv=pass; b=Yy81ZsYMkCReqzgeNvhL533MQ2/s4zuBtNjXdAhIKFfwl/BVA5TVqbjtJZBnT3NdtDdpRRGbvJj5BrDOWLIwsqIYX6486PZc/UmUGC0pkepBSw7UI8z0/QkjfHz6XqbJSlYCddMQqIzFvNGYjAKC5L40EYaT8jaTnzcHumXJAEc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722620779; c=relaxed/simple;
+	bh=FaSy9z5/BKbRyNYMvsp7Zib7UTxTj9ufwAnK5qE4gdU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Y5DrU5GQudPUedscMcNfXR5QAEeH74q5jqzJaMiIvx5qgWUOwxZXGaXjisnPJ3Cx+X2CV6qVgo9rV2z3zIzx7jYezWlkoBvjTQxE2qpQZ9/sR9faTz0TOxPw+JwgMQ6E5CR+M3s5snaYB/02DNHj77qXsL043wt4irewZ8lA2rw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=YvsMsO+w; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (91-154-92-171.elisa-laajakaista.fi [91.154.92.171])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WbCtX2ZK0z49Pv3;
+	Fri,  2 Aug 2024 20:46:11 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1722620772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJA5dz6GT1ZPM1EjDcSFSj0xz36BOkfodV/mooPCX64=;
+	b=YvsMsO+w2yl7JvT6prNmcGULOsmsSUNO8p+g/57AkH2HGSjY4Q+ha+zVLy3defbXX5aKV/
+	UZqdkoms4EDkJnQA8oR8sEev0fR45v2YYtLuEux2JdkOY7rtl/3aWZ/odsdlUQPTyJtyye
+	LEBBMfwnBFfqImTPbDNcHsl5uBLCmYOeC0NcZrKb66U56rOaJGuqUVX2FPd51IAiQhV/Tr
+	ht2F6ISgmmr3OJQPFJpjWdLdgP5YQ83r4H1WTU5J7ekCKNCewdFS/bXwQ+lMJHL5TKvdby
+	7Osw7DfhZ8UKEUy/az78xWxI9yw9kkSYFEKr8vRkjkU1WFM2w/i9QiDsDgx19w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1722620772;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EJA5dz6GT1ZPM1EjDcSFSj0xz36BOkfodV/mooPCX64=;
+	b=OjgtywO+ZzXIeSzuyXr72K3aTrvCa2zcnLpJSmEW3arU7Zy0xtxExN7bh3J9YDBTHWYnZv
+	21cPNn3lVkzLr7TpS7+Xj3HQodzegr+N6cCFomtwAQqQ4rzouYhQbScwnBuwJOChIzdYXQ
+	WV9N7tQVO50mPMsAP6smAEfbUAmlNPthpDHp0BLCHrB9d8sF4zHUeH0RoQz6S6ZXKMqF1J
+	bAwSrO3MElegkJdbDmwTNdVTcsRVckVJnrS0rV/Qjzc7y3fgK4Zp4pFEfQJ9WsoNLTkoe2
+	SdjpriiG1qOlitg/QQKIVKI82lL4Ki/mNAsxYXKp17mlPhOUzEyzV3+sPhh5Ng==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1722620772; a=rsa-sha256;
+	cv=none;
+	b=kSjNsjxJonm2XFSz2z1T+mGe15fzaoWVVaM18lSFkdLqFzkoK+981ndvH96m/YKe6PekcD
+	E9lPgIVVUK+fZmEZ3AMGH/zxZjwaOMiXlXxSzjPPta52CGVTs2wu1tNhn66o1qj5P0NKcS
+	4LpEbd5u4VAfiOtnEEg+8wMoWkWy4oj1HQB77eKdRLR4qZf+HVQbaqRaA/OUjnMlRNMZvG
+	VPx2zq5ck9aJrR+t2YcgapEo9ASByPfnGEwWuFraLkPfxvVj4ZYUh5XQO2Jl2SWZZEyfzc
+	/cCZbBqU6aBgo0YEi79jebqoh16gjQ699hW0fbl9LDVzczQxKA1YEjtD4IzEBA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 02 Aug 2024 20:46:10 +0300
+Message-Id: <D35M3L2PFQFK.RYW2GMO04RYI@iki.fi>
+Cc: <kernel@collabora.com>, <linux-kselftest@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests: tpm2: redirect python unittest logs to
+ stdout
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Shuah Khan" <skhan@linuxfoundation.org>, "Jarkko Sakkinen"
+ <jarkko@kernel.org>, "Muhammad Usama Anjum" <usama.anjum@collabora.com>,
+ "Shuah Khan" <shuah@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240710081539.1741132-1-usama.anjum@collabora.com>
+ <47ea7423-3aae-4bb3-a41f-1fcb5c07e74b@collabora.com>
+ <8696338c-fcd7-4c0f-87ec-9303c9c1ce88@linuxfoundation.org>
+ <D34XE10GQHIY.1H7BTET3DOREV@kernel.org>
+ <deda17e1-328f-4eed-b14b-84b47d36e8d7@linuxfoundation.org>
+In-Reply-To: <deda17e1-328f-4eed-b14b-84b47d36e8d7@linuxfoundation.org>
 
-Hi Linus,
+On Fri Aug 2, 2024 at 1:58 AM EEST, Shuah Khan wrote:
+> On 8/1/24 16:24, Jarkko Sakkinen wrote:
+> > On Wed Jul 31, 2024 at 8:45 PM EEST, Shuah Khan wrote:
+> >> On 7/31/24 07:42, Muhammad Usama Anjum wrote:
+> >>> Reminder
+> >>>
+> >>
+> >> top post???
+> >>
+> >>> On 7/10/24 1:15 PM, Muhammad Usama Anjum wrote:
+> >>>> The python unittest module writes all its output to stderr, even whe=
+n
+> >>>> the run is clean. Redirect its output logs to stdout.
+> >>>>
+> >>>> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> >>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> >>>> ---
+> >>>>    tools/testing/selftests/tpm2/test_async.sh | 2 +-
+> >>>>    tools/testing/selftests/tpm2/test_smoke.sh | 2 +-
+> >>>>    tools/testing/selftests/tpm2/test_space.sh | 2 +-
+> >>>>    3 files changed, 3 insertions(+), 3 deletions(-)
+> >>>>
+> >>
+> >> Applied to linux-kselftest next for Linux 6.12-rc1
+> >>
+> >> thanks,
+> >> -- Shuah
+> >=20
+> > OK, great. Maybe it is not *that* critical to backport this.
+> >=20
+>
+> I took the liberty to pull this in. I agree that this doesn't need
+> backport. It suppresses messages and doesn't really fix any bug.
+>
+> I tested it to make sure it doesn't suppress important messages.
 
-Please pull the arm64 fixes below. Thanks.
+OK, great thanks a lot!
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+>
+> thanks,
+> -- Shuah
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+BR, Jarkko
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
-
-for you to fetch changes up to cfb00a35786414e7c0e6226b277d9f09657eae74:
-
-  arm64: jump_label: Ensure patched jump_labels are visible to all CPUs (2024-08-02 15:07:01 +0100)
-
-----------------------------------------------------------------
-arm64 fixes:
-
-- Expand the speculative SSBS errata workaround to more CPUs
-
-- Ensure jump label changes are visible to all CPUs with a
-  kick_all_cpus_sync() (and also enable jump label batching as part of
-  the fix)
-
-- The shadow call stack sanitiser is currently incompatible with Rust,
-  make CONFIG_RUST conditional on !CONFIG_SHADOW_CALL_STACK
-
-----------------------------------------------------------------
-Alice Ryhl (1):
-      rust: SHADOW_CALL_STACK is incompatible with Rust
-
-Mark Rutland (3):
-      arm64: cputype: Add Cortex-X1C definitions
-      arm64: cputype: Add Cortex-A725 definitions
-      arm64: errata: Expand speculative SSBS workaround (again)
-
-Will Deacon (1):
-      arm64: jump_label: Ensure patched jump_labels are visible to all CPUs
-
- Documentation/arch/arm64/silicon-errata.rst | 18 ++++++++++++++++++
- arch/arm64/Kconfig                          | 22 ++++++++++++++++------
- arch/arm64/include/asm/cputype.h            |  4 ++++
- arch/arm64/include/asm/jump_label.h         |  1 +
- arch/arm64/kernel/cpu_errata.c              | 11 ++++++++++-
- arch/arm64/kernel/jump_label.c              | 11 +++++++++--
- init/Kconfig                                |  1 +
- 7 files changed, 59 insertions(+), 9 deletions(-)
-
--- 
-Catalin
 
