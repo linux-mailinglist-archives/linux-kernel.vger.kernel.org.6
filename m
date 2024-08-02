@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-272827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039809461A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:15:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83FB9461A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B192A2864ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:15:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E889E1C21331
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4999166F38;
-	Fri,  2 Aug 2024 16:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825FD166F0A;
+	Fri,  2 Aug 2024 16:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="k5ayIbUi"
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VeegD1JZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E67C166F2E;
-	Fri,  2 Aug 2024 16:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3E115C13C;
+	Fri,  2 Aug 2024 16:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722615250; cv=none; b=cqqL1JfeLvOjBw+vRrM4u3nsJ4aSRQ2WdNvEeJUayxF9ArZLFoHbuYPFyoxJfg7ShifZwiPoX3UMBA10vbsH00cAv2kfobSJRQ6kbYGCfxf/RTrgl4XOGXRxLszN5avU27O1PfNhJLGIChyDAnpI7nU22NSWUljYkGqN+qIqiCQ=
+	t=1722615229; cv=none; b=QpNMhkHREivYI/YRPUSqpnavJeyVKhtiY5ImU1doU9fJpgA8OJ446fBiGvqa3KZErXcVr/1kwqz6Be2xhUnVRD9LhQI6kZXmM9znNtZxGEc3jkdK9vi0T+LhoBwrgJ3oA9QrE5pb+PMyoAU1k6BWKVnTB5G3VFMnmWB8NVy1KCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722615250; c=relaxed/simple;
-	bh=7sCSXjk0kKxYzaCMC+RgwACo41h3WnpDWPFDeNoutj8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=chtn7RghEQXqBTcMJyPWlwlx5ueWDfp/Gjxya3GCZ881NmhybrTu7EZWBpWxKzGihnczjVveA8Q6s9D3Emf0i6BV58EQI/06Jh1vhTNNcSnQ5CvMFi0gYpxNkz1QmwJiQ+Ml0zj8K+VRo36+sWYY7nCB8u67zJqnO03Yng5M5eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=k5ayIbUi; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1722615115;
-	bh=o7kEQYLQyljSLraqYcnSwcOesk1zWEYaqOjNpRLHXHY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=k5ayIbUiyu6YMZ5jJLCuzsxYDpBaNiDAYROweR9M57GybXQBe3AqVjDqhU+r7DmYe
-	 nbmbeYhzNcV+L6mBLA8qXIfFrC7qi0pt7DyRAJIRPFqlVWRV0u2FuNlITDBmds6yyQ
-	 JvtQRBj7UR6gRVKWFGzvvbkMa/1e9+zuOX3gocPw=
-X-QQ-mid: bizesmtp82t1722615092tz25dnlq
-X-QQ-Originating-IP: WJS9rCXdtSElBMKBt8/rhaRnoONKese1XrFEBESY2FM=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 03 Aug 2024 00:11:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 12327301821540536056
-From: WangYuli <wangyuli@uniontech.com>
-To: bhelgaas@google.com,
-	siyuli@glenfly.com
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	linux@horizon.com,
-	pat-lkml@erley.org,
-	alex.williamson@redhat.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] PCI: Add function 0 DMA alias quirk for Glenfly arise chip
-Date: Sat,  3 Aug 2024 00:11:09 +0800
-Message-ID: <DB918DA5CBA08DE8+20240802161109.240191-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1722615229; c=relaxed/simple;
+	bh=/7CaU8cFVRs8SSowdcAlAKQN0I6TZSX6MZ/rIFbdsVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gCrUZHzxb9DvnV7kgwletHpOfO6ESeyyjKjUhzBCbPV4tvW4TpNcne8BAd0hqQkb7fYwVnlfq0czaiu3eSqHhANQx2b4ZUImJuHlVpo7Elyu79kOic47NTGUdOb7EWQpnXPXTzUzmNRp4EY9M+zsRwghLX/nhR+s5v0CAA5Ox0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VeegD1JZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472EACwD023760;
+	Fri, 2 Aug 2024 16:13:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zb60TfBYM+a5pMbLi9F+/DtgtdfZ9SS0BcxUtqLgWHM=; b=VeegD1JZrmp5xGu2
+	I6K4rap5+mpYCizUf66qphl7uzgasKA2evx1ZVijI31PvM6K4L2uNJp5iaWNvv0E
+	ihfb6aF9NNNWzRQS4e37SIvBTOh36P/o1QrVD4/xCOTeR+IaXTAxbmhwyXq1vkw3
+	ejCtGJ8YP8E93Nl1WYY5yC/L+COeUddgqXM6p1OhXNmk7V6xHZGvPis3pOOkDmlt
+	tCZaMvW+c74MGt+fSRc2s8Hih1cM4kVsplxqE5ILOM5Ox2aGfOMsV8veOScUhVZk
+	JvFiytj9obrxQP0UusWF5Lg9jjhlI8w4LQe2nIVAg344S463ZGPjyi9T8rd8XcoO
+	lKYKyA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40rje6t3ag-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 16:13:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 472GDSRO002242
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 2 Aug 2024 16:13:28 GMT
+Received: from [10.111.177.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 2 Aug 2024
+ 09:13:27 -0700
+Message-ID: <2a1f5b08-5c5e-4c16-89a9-69eb920d1f44@quicinc.com>
+Date: Fri, 2 Aug 2024 09:13:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: ppc/curve25519 - add missing MODULE_DESCRIPTION()
+ macro
+Content-Language: en-US
+To: Arnd Bergmann <arnd@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>
+CC: <kernel-janitors@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+        <linux-kernel@vger.kernel.org>, Danny Tsen <dtsen@linux.ibm.com>,
+        Christophe
+ Leroy <christophe.leroy@csgroup.eu>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linuxppc-dev@lists.ozlabs.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        <linux-crypto@vger.kernel.org>
+References: <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
+ <ZqzcApbJomFTnc30@gondor.apana.org.au>
+ <75a526e3-3101-4319-b42f-4482ba188abc@quicinc.com>
+ <6fdd8f30-4df1-447d-9156-5d2314239e99@app.fastmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <6fdd8f30-4df1-447d-9156-5d2314239e99@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Y7YufICC5Uy0q04j5zhcN7WAQ60I3hz8
+X-Proofpoint-GUID: Y7YufICC5Uy0q04j5zhcN7WAQ60I3hz8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_12,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ spamscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 clxscore=1015
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408020112
 
-Add DMA support for audio function of Glenfly arise chip,
-which uses request id of function 0.
+On 8/2/2024 8:16 AM, Arnd Bergmann wrote:
+> On Fri, Aug 2, 2024, at 16:27, Jeff Johnson wrote:
+>> On 8/2/2024 6:15 AM, Herbert Xu wrote:
+>>> On Thu, Jul 18, 2024 at 06:14:18PM -0700, Jeff Johnson wrote:
+>>>> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+>>>> description is missing"), a module without a MODULE_DESCRIPTION() will
+>>>> result in a warning with make W=1. The following warning is being
+>>>> observed when building ppc64le with CRYPTO_CURVE25519_PPC64=m:
+>>>>
+>>>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/crypto/curve25519-ppc64le.o
+>>>>
+>>>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>>>>
+>>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>>>> ---
+>>>>  arch/powerpc/crypto/curve25519-ppc64le-core.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>
+>>> Patch applied.  Thanks.
+>>
+>> Great, that was the last of my MODULE_DESCRIPTION patches!!!
+>>
+>> There are a few more instances of the warning that Arnd has patches for,
+>> covering issues that appear in randconfigs that I didn't test.
+> 
+> Are all of your patches in linux-next now, or is there a another
+> git tree that has them all?
+> 
+> I can send the ones I have left, but I want to avoid duplication.
+> 
+>     Arnd
 
-Signed-off-by: SiyuLi <siyuli@glenfly.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/pci/quirks.c    | 6 ++++++
- include/linux/pci_ids.h | 4 ++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index a2ce4e08edf5..a6cb8b314fae 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4246,6 +4246,12 @@ static void quirk_dma_func0_alias(struct pci_dev *dev)
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_RICOH, 0xe832, quirk_dma_func0_alias);
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_RICOH, 0xe476, quirk_dma_func0_alias);
- 
-+/*
-+ * Some Glenfly chips use function 0 as the PCIe requester ID for DMA too.
-+ */
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_GLENFLY, PCI_DEVICE_ID_GLENFLY_ARISE10C0_AUDIO, quirk_dma_func0_alias);
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_GLENFLY, PCI_DEVICE_ID_GLENFLY_ARISE1020_AUDIO, quirk_dma_func0_alias);
-+
- static void quirk_dma_func1_alias(struct pci_dev *dev)
- {
- 	if (PCI_FUNC(dev->devfn) != 1)
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index e388c8b1cbc2..35d2314cc433 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -1654,6 +1654,10 @@
- #define PCI_DEVICE_ID_RICOH_R5C832	0x0832
- #define PCI_DEVICE_ID_RICOH_R5C843	0x0843
- 
-+#define PCI_VENDOR_ID_GLENFLY	    0x6766
-+#define PCI_DEVICE_ID_GLENFLY_ARISE10C0_AUDIO	 0x3D40
-+#define PCI_DEVICE_ID_GLENFLY_ARISE1020_AUDIO	 0x3D41
-+
- #define PCI_VENDOR_ID_DLINK		0x1186
- #define PCI_DEVICE_ID_DLINK_DGE510T	0x4c00
- 
--- 
-2.43.4
-
+When this one lands they'll all be in linux-next
 
