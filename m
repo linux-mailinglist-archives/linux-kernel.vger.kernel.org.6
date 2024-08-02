@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-271957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA00945567
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53CE945568
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51B591C22E0D
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739F3286428
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAECF9EC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB17FC11;
 	Fri,  2 Aug 2024 00:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a17gmV2w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HbFfDc3k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E68D53C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E36D51E
 	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 00:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722558649; cv=none; b=N2OZVwrKeWiJOtJSchML9hB5t7+SxMqhl08Zm1H1TiY6fNCoy7/8a75O9gO1RIUl45lm6h8BaSAciWIz+MWWALXCu+5AoFMktL14x9pH++PWzGANf6OCBhiFVwMuY17+E2tupwDKZkg39w1rhwnrSAcbP/MQq2F0qHkWU9pHD9g=
+	t=1722558649; cv=none; b=RT/r55/GzNZTn7co2RI5415ARY4Qty5D/s00hV3zmCcHrrG4GVulZ+ryAwFp6G3UiNdPZoGPPGSoPSevNA+SvUfiMyVcSnz9YrTQkK9JYyOPHZS3Ccq1cy6kt1BkDw+cUzvfPPqOQh0EW40CjE3MzGmqjSn0F+C5gX56RaIlJbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722558649; c=relaxed/simple;
-	bh=8C34RINqOzbv7O7VmP3k09aSRfR+MGxFqszYs5oYLmQ=;
+	bh=GOsLE2H2kxozZGmGGy11M/q8AzvicOB0v4IKkxs553w=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KwSAm6BZ65/s34awRRv7A2t72Mz5FfX8mAGVXJtYcNAneptiMNOhnKgMAf0C6s58COzIrzYiqZBITbpIYF6WtvMxo3luPhwuvt8dbhTCYFC6xMkL263Zz+VOQXU/mqQGq2Sf4LGjg1+atP/H0VcNRkaNBqT+9WGc36HVcBjZ3e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a17gmV2w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76223C32786;
+	 MIME-Version; b=PCHTwJ5F7u583/Mq98SgvQci+3H7d3WiCIBadOAGJPw89D1+VRy0BX5HgPp7nFQ9mW2Cf/DkJ4L7cdcAd7L51EuIBiaiw9t+y4VhMx/gIEXy1zU1OyC8hmFZTOCk64SErSyH/wyyweqoR2fCe4ZbDrF+g1d5+Un+2XkrTrMX1WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HbFfDc3k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 869ADC4AF0A;
 	Fri,  2 Aug 2024 00:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722558648;
-	bh=8C34RINqOzbv7O7VmP3k09aSRfR+MGxFqszYs5oYLmQ=;
+	bh=GOsLE2H2kxozZGmGGy11M/q8AzvicOB0v4IKkxs553w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a17gmV2wnRRVOhxYHWUgCEM6Vzn7ARLANkfCUMrUt2RVBrdSOxkZr9uRHbI+nFQ9L
-	 3n8/3kGeeLcc3Z1mNUkRfzKM7xc4ZKFKatT4O1KlbgFmHXQBK2YxUgG0ueNX+8iOZU
-	 GQOrIWVIdQJGwBLkiZGwii8yePOo/nIkY8tCfbvIXKIxt5DyLjBnA2DHyBZcQYke2X
-	 8Y3SJZjYEvOGKhNtyBZ05/I07OFWzjICuPO24W3TrgHPMnMBNKnRlgR6A6HCVonmZe
-	 Ymh62f1q+3mOKqnRKCSAir4vwAUVm/jSOSTvC5DnhCCyhGzmMUvDtC7/FF/mdaHbAm
-	 cqgB4pf4KsPkw==
+	b=HbFfDc3kU+sa5h4LiyXBiMNWMS/ohMRjT0qVpeRS1HGbH4DsBaHK+Q58j6MtAVUuf
+	 ehwjpQaAJ37bvNLN9EssSjDq/2Tp7lwRseE/1Mih41o7PRgiTQ6saSkKq0/TvA7nHA
+	 SHn3DPQ0PnzzlV3s3/vjMyMBZq0fZVTApAdSOqoiZduHqNDtm+tRaRoINt2L0dlKjW
+	 SR6+cV4tXAMJovXSmAB/TUlCAoIEJ6vnTCixPqD1lez0r72nqA+aEUPA9Y4u6j4b7q
+	 jwqwYwboTBK7U0Mwcc/lTVwRqVxasIlUU5nnyW51wrZ1y0Ie348UynyTT5yLn8GWss
+	 dxXq7O4M7WqOQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2B8C0CE09F8; Thu,  1 Aug 2024 17:30:48 -0700 (PDT)
+	id 2F230CE0A01; Thu,  1 Aug 2024 17:30:48 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tejun Heo <tj@kernel.org>,
@@ -56,9 +56,9 @@ Cc: Tejun Heo <tj@kernel.org>,
 	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Chris Mason <clm@fb.com>,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH misc 1/2] workqueue: Add check for clocks going backwards to wq_worker_tick()
-Date: Thu,  1 Aug 2024 17:30:45 -0700
-Message-Id: <20240802003046.4134043-1-paulmck@kernel.org>
+Subject: [PATCH misc 2/2] exit: Sleep at TASK_IDLE when waiting for application core dump
+Date: Thu,  1 Aug 2024 17:30:46 -0700
+Message-Id: <20240802003046.4134043-2-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <d70d1654-fed2-477f-8f4f-f81322784f17@paulmck-laptop>
 References: <d70d1654-fed2-477f-8f4f-f81322784f17@paulmck-laptop>
@@ -70,43 +70,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Experimental, might never go to mainline.
+Currently, the coredump_task_exit() function sets the task state
+to TASK_UNINTERRUPTIBLE|TASK_FREEZABLE, which usually works well.
+But a combination of large memory and slow (and/or highly contended)
+mass storage can cause application core dumps to take more than
+two minutes, which can cause check_hung_task(), which is invoked by
+check_hung_uninterruptible_tasks(), to produce task-blocked splats.
+There does not seem to be any reasonable benefit to getting these splats.
 
-There has been some evidence of clocks going backwards, producing
-"workqueue: kfree_rcu_monitor hogged CPU" diagnostics on idle systems
-just after a change in clocksource.  This diagnostic commit checks for
-this, ignoring differences that would be negative if interpreted as a
-signed 64-bit integer.
+Furthermore, as Oleg Nesterov points out, TASK_UNINTERRUPTIBLE could
+be misleading because the task sleeping in coredump_task_exit() really
+is killable, albeit indirectly.  See the check of signal->core_state
+in prepare_signal() and the check of fatal_signal_pending()
+in dump_interrupted(), which bypass the normal unkillability of
+TASK_UNINTERRUPTIBLE, resulting in coredump_finish() invoking
+wake_up_process() on any threads sleeping in coredump_task_exit().
 
+Therefore, change that TASK_UNINTERRUPTIBLE to TASK_IDLE.
+
+Reported-by: Anhad Jai Singh <ffledgling@meta.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Breno Leitao <leitao@debian.org>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Chris Mason <clm@fb.com>
 Cc: Rik van Riel <riel@surriel.com>
 ---
- kernel/workqueue.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/exit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 1745ca788ede3..4f7b4b32e6b4e 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -1482,6 +1482,7 @@ void wq_worker_tick(struct task_struct *task)
- 	 * If the current worker is concurrency managed and hogged the CPU for
- 	 * longer than wq_cpu_intensive_thresh_us, it's automatically marked
- 	 * CPU_INTENSIVE to avoid stalling other concurrency-managed work items.
-+	 * If the time is negative, ignore, assuming a backwards clock.
- 	 *
- 	 * Set @worker->sleeping means that @worker is in the process of
- 	 * switching out voluntarily and won't be contributing to
-@@ -1491,6 +1492,7 @@ void wq_worker_tick(struct task_struct *task)
- 	 * We probably want to make this prettier in the future.
- 	 */
- 	if ((worker->flags & WORKER_NOT_RUNNING) || READ_ONCE(worker->sleeping) ||
-+	    WARN_ON_ONCE((s64)(worker->task->se.sum_exec_runtime - worker->current_at) < 0) ||
- 	    worker->task->se.sum_exec_runtime - worker->current_at <
- 	    wq_cpu_intensive_thresh_us * NSEC_PER_USEC)
- 		return;
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 7430852a85712..0d62a53605dfc 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -428,7 +428,7 @@ static void coredump_task_exit(struct task_struct *tsk)
+ 			complete(&core_state->startup);
+ 
+ 		for (;;) {
+-			set_current_state(TASK_UNINTERRUPTIBLE|TASK_FREEZABLE);
++			set_current_state(TASK_IDLE|TASK_FREEZABLE);
+ 			if (!self.task) /* see coredump_finish() */
+ 				break;
+ 			schedule();
 -- 
 2.40.1
 
