@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-272907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC2A946275
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:31:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA8C946276
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620E01F23674
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C64286942
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131761A34CD;
-	Fri,  2 Aug 2024 17:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1B615C13C;
+	Fri,  2 Aug 2024 17:30:23 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E357415C12D
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542621A34DB
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619819; cv=none; b=eTB+GEK1gw7RrDXxBGhYfW67ldmpUnUd82ZGh8G95w68VGh7nj2Qgrdqwoi0ZaKVLYjPRVFOJSUWQPiDLbC9n0BNJaXwvLK+4JBP4eaukpcSrs2RM0yyFykePlBi7swTenLD4QkB9/JzwF8e8lqSwaZXL8rFRzyvqi3ea9Gw5V4=
+	t=1722619823; cv=none; b=a5CbOrvguS1+yF7UwjJW70B1LmstpUhnfYgNaBpTvccPub9pxWG0wDRHsGqVNXUC/7Bkc3ZhjDBOthItawMr9ZqyHAKudIBYs6YQZm79DSseT675f8AcgXvo2HyoBoyKUDYtoXv/l+j5YzB+lpSUivdO1JMW8etoNhsx36KF7r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619819; c=relaxed/simple;
-	bh=HaLrFzz81Py3zI0MhmXkzFAeBHBYSXkq7rWzzwQsBdY=;
+	s=arc-20240116; t=1722619823; c=relaxed/simple;
+	bh=1n/oo/SQs/9Fphx4X5QXCBgzBuIA9tsp52SLmOpQMCc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FxiN9jphqDvtvdBmnqs/aNxekHLR0d7JQmzR3Lz65WmwiFbaPdfjrh0BvYCaTzUojq3y3bToUO9qxxN2Hxi0fERZWQ4XP9OSiXS5Hffif1+LQxichTzip6C9Qq1HcN6Wfs9+uKqJ8zPLsUfL41LskKIcQj7S10TYsLcvStIuAQY=
+	 MIME-Version; b=Pdq8KrgtTL8uPUUQJTevKZ2aVY+8PWfeCNK9ryqTnc9mIDNyppMWKsDvYrVCT+Lhg1kKMdMGREbDTeLBU9ZlQXljsGZrJtd1YPvKrMPv2IeJJp4megBR+f1AAGtNUtwKWB6onwEM0VmyykqyXtTnp/NZb4UezABbk5cP6Y4Hn3s=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D81B1480;
-	Fri,  2 Aug 2024 10:30:43 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 606B41007;
+	Fri,  2 Aug 2024 10:30:46 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 631743F64C;
-	Fri,  2 Aug 2024 10:30:14 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B0433F64C;
+	Fri,  2 Aug 2024 10:30:17 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -57,10 +57,11 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
 	amitsinght@marvell.com,
 	David Hildenbrand <david@redhat.com>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>
-Subject: [PATCH v4 08/39] x86/resctrl: Generate default_ctrl instead of sharing it
-Date: Fri,  2 Aug 2024 17:28:22 +0000
-Message-Id: <20240802172853.22529-9-james.morse@arm.com>
+	Dave Martin <dave.martin@arm.com>,
+	Dave Martin <Dave.Martin@arm.com>
+Subject: [PATCH v4 09/39] x86/resctrl: Add helper for setting CPU default properties
+Date: Fri,  2 Aug 2024 17:28:23 +0000
+Message-Id: <20240802172853.22529-10-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240802172853.22529-1-james.morse@arm.com>
 References: <20240802172853.22529-1-james.morse@arm.com>
@@ -72,174 +73,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The struct rdt_resource default_ctrl is used by both the architecture
-code for resetting the hardware controls, and by the filesystem parts
-of resctrl to report to user-space.
+rdtgroup_rmdir_ctrl() and rdtgroup_rmdir_mon() set the per-CPU
+pqr_state for CPUs that were part of the rmdir()'d group.
 
-This means the value has to be shared, but might not match the
-properties of the control. e.g. a percentage greater than 100.
+Another architecture might not have a 'pqr_state', its hardware may
+need the values in a different format. MPAM's equivalent of RMID values
+are not unique, and always need the CLOSID to be provided too.
 
-Instead, determine the default control value from a shared helper
-resctrl_get_default_ctrl() that uses the schema properties to
-determine the correct value.
+There is only one caller that modifies a single value,
+(rdtgroup_rmdir_mon()). MPAM always needs both CLOSID and RMID
+for the hardware value as these are written to the same system
+register.
 
+As rdtgroup_rmdir_mon() has the CLOSID on hand, only provide a
+helper to set both values. These values are read by
+__resctrl_sched_in(), but may be written by a different CPU without
+any locking, add READ/WRTE_ONCE() to avoid torn values.
+
+Co-developed-by: Dave Martin <Dave.Martin@arm.com>
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
----
-Changes since v2:
- * This patch is new.
----
- arch/x86/kernel/cpu/resctrl/core.c     | 16 +++++++---------
- arch/x86/kernel/cpu/resctrl/rdtgroup.c |  6 +++---
- include/linux/resctrl.h                | 21 +++++++++++++++++++--
- 3 files changed, 29 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index f0bbc1350070..1628c848bfd0 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -139,7 +139,10 @@ static inline void cache_alloc_hsw_probe(void)
+---
+Changes since v1:
+ * In rdtgroup_rmdir_mon(), (re)set CPU default closid based on the
+   parent control group, to avoid the appearance of referencing
+   something that we're in the process of destroying (even if it
+   doesn't make a difference because the victim mon group necessarily
+   has the same closid as the parent control group).
+
+   Update comment to match.
+
+   No (intentional) functional change.
+---
+ arch/x86/include/asm/resctrl.h         | 14 +++++++++++---
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 20 ++++++++++++++------
+ 2 files changed, 25 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
+index 12dbd2588ca7..f61382258743 100644
+--- a/arch/x86/include/asm/resctrl.h
++++ b/arch/x86/include/asm/resctrl.h
+@@ -4,8 +4,9 @@
+ 
+ #ifdef CONFIG_X86_CPU_RESCTRL
+ 
+-#include <linux/sched.h>
+ #include <linux/jump_label.h>
++#include <linux/percpu.h>
++#include <linux/sched.h>
+ 
+ /*
+  * This value can never be a valid CLOSID, and is used when mapping a
+@@ -96,8 +97,8 @@ static inline void resctrl_arch_disable_mon(void)
+ static inline void __resctrl_sched_in(struct task_struct *tsk)
  {
- 	struct rdt_hw_resource *hw_res = &rdt_resources_all[RDT_RESOURCE_L3];
- 	struct rdt_resource *r  = &hw_res->r_resctrl;
--	u64 max_cbm = BIT_ULL_MASK(20) - 1, l3_cbm_0;
-+	u64 max_cbm, l3_cbm_0;
-+
-+	r->cache.cbm_len = 20;
-+	max_cbm = resctrl_get_default_ctrl(r);
+ 	struct resctrl_pqr_state *state = this_cpu_ptr(&pqr_state);
+-	u32 closid = state->default_closid;
+-	u32 rmid = state->default_rmid;
++	u32 closid = READ_ONCE(state->default_closid);
++	u32 rmid = READ_ONCE(state->default_rmid);
+ 	u32 tmp;
  
- 	if (wrmsrl_safe(MSR_IA32_L3_CBM_BASE, max_cbm))
- 		return;
-@@ -151,8 +154,6 @@ static inline void cache_alloc_hsw_probe(void)
- 		return;
- 
- 	hw_res->num_closid = 4;
--	r->default_ctrl = max_cbm;
--	r->cache.cbm_len = 20;
- 	r->cache.shareable_bits = 0xc0000;
- 	r->cache.min_cbm_bits = 2;
- 	r->cache.arch_has_sparse_bitmasks = false;
-@@ -207,7 +208,6 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
- 	cpuid_count(0x00000010, 3, &eax.full, &ebx, &ecx, &edx.full);
- 	hw_res->num_closid = edx.split.cos_max + 1;
- 	max_delay = eax.split.max_delay + 1;
--	r->default_ctrl = MAX_MBA_BW;
- 	r->membw.max_bw = MAX_MBA_BW;
- 	r->membw.arch_needs_linear = true;
- 	if (ecx & MBA_IS_LINEAR) {
-@@ -244,7 +244,6 @@ static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
- 
- 	cpuid_count(0x80000020, subleaf, &eax, &ebx, &ecx, &edx);
- 	hw_res->num_closid = edx + 1;
--	r->default_ctrl = 1 << eax;
- 	r->schema_fmt = RESCTRL_SCHEMA_MBPS;
- 	r->membw.max_bw = 1 << eax;
- 
-@@ -276,8 +275,7 @@ static void rdt_get_cache_alloc_cfg(int idx, struct rdt_resource *r)
- 	cpuid_count(0x00000010, idx, &eax.full, &ebx, &ecx.full, &edx.full);
- 	hw_res->num_closid = edx.split.cos_max + 1;
- 	r->cache.cbm_len = eax.split.cbm_len + 1;
--	r->default_ctrl = BIT_MASK(eax.split.cbm_len + 1) - 1;
--	r->cache.shareable_bits = ebx & r->default_ctrl;
-+	r->cache.shareable_bits = ebx & resctrl_get_default_ctrl(r);
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
- 		r->cache.arch_has_sparse_bitmasks = ecx.split.noncont;
- 	r->alloc_capable = true;
-@@ -324,7 +322,7 @@ static u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
- 		return MAX_MBA_BW - bw;
- 
- 	pr_warn_once("Non Linear delay-bw map not supported but queried\n");
--	return r->default_ctrl;
-+	return resctrl_get_default_ctrl(r);
+ 	/*
+@@ -132,6 +133,13 @@ static inline unsigned int resctrl_arch_round_mon_val(unsigned int val)
+ 	return val * scale;
  }
  
- static void mba_wrmsr_intel(struct msr_param *m)
-@@ -433,7 +431,7 @@ static void setup_default_ctrlval(struct rdt_resource *r, u32 *dc)
- 	 * For Memory Allocation: Set b/w requested to 100%
- 	 */
- 	for (i = 0; i < hw_res->num_closid; i++, dc++)
--		*dc = r->default_ctrl;
-+		*dc = resctrl_get_default_ctrl(r);
- }
- 
- static void ctrl_domain_free(struct rdt_hw_ctrl_domain *hw_dom)
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index ed06384f9161..4aba311445f7 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -969,7 +969,7 @@ static int rdt_default_ctrl_show(struct kernfs_open_file *of,
- 	struct resctrl_schema *s = of->kn->parent->priv;
- 	struct rdt_resource *r = s->res;
- 
--	seq_printf(seq, "%x\n", r->default_ctrl);
-+	seq_printf(seq, "%x\n", resctrl_get_default_ctrl(r));
- 	return 0;
- }
- 
-@@ -2874,7 +2874,7 @@ static int reset_all_ctrls(struct rdt_resource *r)
- 		hw_dom = resctrl_to_arch_ctrl_dom(d);
- 
- 		for (i = 0; i < hw_res->num_closid; i++)
--			hw_dom->ctrl_val[i] = r->default_ctrl;
-+			hw_dom->ctrl_val[i] = resctrl_get_default_ctrl(r);
- 		msr_param.dom = d;
- 		smp_call_function_any(&d->hdr.cpu_mask, rdt_ctrl_update, &msr_param, 1);
- 	}
-@@ -3409,7 +3409,7 @@ static void rdtgroup_init_mba(struct rdt_resource *r, u32 closid)
- 		}
- 
- 		cfg = &d->staged_config[CDP_NONE];
--		cfg->new_ctrl = r->default_ctrl;
-+		cfg->new_ctrl = resctrl_get_default_ctrl(r);
- 		cfg->have_new_ctrl = true;
- 	}
- }
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index 5f08fb2f235f..0eb9854bf94f 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -218,7 +218,6 @@ enum resctrl_schema_fmt {
-  * @ctrl_domains:	RCU list of all control domains for this resource
-  * @mon_domains:	RCU list of all monitor domains for this resource
-  * @name:		Name to use in "schemata" file.
-- * @default_ctrl:	Specifies default cache cbm or memory B/W percent.
-  * @schema_fmt:	Which format string and parser is used for this schema.
-  * @evt_list:		List of monitoring events
-  * @cdp_capable:	Is the CDP feature available on this resource
-@@ -235,7 +234,6 @@ struct rdt_resource {
- 	struct list_head	ctrl_domains;
- 	struct list_head	mon_domains;
- 	char			*name;
--	u32			default_ctrl;
- 	enum resctrl_schema_fmt	schema_fmt;
- 	struct list_head	evt_list;
- 	bool			cdp_capable;
-@@ -272,6 +270,25 @@ struct resctrl_schema {
- 	u32				num_closid;
- };
- 
-+/**
-+ * resctrl_get_default_ctrl() - Return the default control value for this
-+ *                              resource.
-+ * @r:		The resource whose default control type is queried.
-+ */
-+static inline u32 resctrl_get_default_ctrl(struct rdt_resource *r)
++static inline void resctrl_arch_set_cpu_default_closid_rmid(int cpu, u32 closid,
++							    u32 rmid)
 +{
-+	switch (r->schema_fmt) {
-+	case RESCTRL_SCHEMA_BITMAP:
-+		return BIT_MASK(r->cache.cbm_len) - 1;
-+	case RESCTRL_SCHEMA_PERCENTAGE:
-+		return 100u;
-+	case RESCTRL_SCHEMA_MBPS:
-+		return r->membw.max_bw;
-+	}
-+
-+	return WARN_ON_ONCE(1);
++	WRITE_ONCE(per_cpu(pqr_state.default_closid, cpu), closid);
++	WRITE_ONCE(per_cpu(pqr_state.default_rmid, cpu), rmid);
 +}
 +
- /* The number of closid supported by this resource regardless of CDP */
- u32 resctrl_arch_get_num_closid(struct rdt_resource *r);
- int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid);
+ static inline void resctrl_arch_set_closid_rmid(struct task_struct *tsk,
+ 						u32 closid, u32 rmid)
+ {
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 4aba311445f7..520227455f76 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -3721,14 +3721,21 @@ static int rdtgroup_mkdir(struct kernfs_node *parent_kn, const char *name,
+ static int rdtgroup_rmdir_mon(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+ {
+ 	struct rdtgroup *prdtgrp = rdtgrp->mon.parent;
++	u32 closid, rmid;
+ 	int cpu;
+ 
+ 	/* Give any tasks back to the parent group */
+ 	rdt_move_group_tasks(rdtgrp, prdtgrp, tmpmask);
+ 
+-	/* Update per cpu rmid of the moved CPUs first */
++	/*
++	 * Update per cpu closid/rmid of the moved CPUs first.
++	 * Note: the closid will not change, but the arch code still needs it.
++	 */
++	closid = prdtgrp->closid;
++	rmid = prdtgrp->mon.rmid;
+ 	for_each_cpu(cpu, &rdtgrp->cpu_mask)
+-		per_cpu(pqr_state.default_rmid, cpu) = prdtgrp->mon.rmid;
++		resctrl_arch_set_cpu_default_closid_rmid(cpu, closid, rmid);
++
+ 	/*
+ 	 * Update the MSR on moved CPUs and CPUs which have moved
+ 	 * task running on them.
+@@ -3761,6 +3768,7 @@ static int rdtgroup_ctrl_remove(struct rdtgroup *rdtgrp)
+ 
+ static int rdtgroup_rmdir_ctrl(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+ {
++	u32 closid, rmid;
+ 	int cpu;
+ 
+ 	/* Give any tasks back to the default group */
+@@ -3771,10 +3779,10 @@ static int rdtgroup_rmdir_ctrl(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+ 		   &rdtgroup_default.cpu_mask, &rdtgrp->cpu_mask);
+ 
+ 	/* Update per cpu closid and rmid of the moved CPUs first */
+-	for_each_cpu(cpu, &rdtgrp->cpu_mask) {
+-		per_cpu(pqr_state.default_closid, cpu) = rdtgroup_default.closid;
+-		per_cpu(pqr_state.default_rmid, cpu) = rdtgroup_default.mon.rmid;
+-	}
++	closid = rdtgroup_default.closid;
++	rmid = rdtgroup_default.mon.rmid;
++	for_each_cpu(cpu, &rdtgrp->cpu_mask)
++		resctrl_arch_set_cpu_default_closid_rmid(cpu, closid, rmid);
+ 
+ 	/*
+ 	 * Update the MSR on moved CPUs and CPUs which have moved
 -- 
 2.39.2
 
