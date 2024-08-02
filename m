@@ -1,568 +1,241 @@
-Return-Path: <linux-kernel+bounces-272768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75DF39460C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:45:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00399460B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B041F217BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:45:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 654EDB2488D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A815D15C13C;
-	Fri,  2 Aug 2024 15:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7872D136334;
+	Fri,  2 Aug 2024 15:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1k3SDhv"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="pK07G6RM"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2099.outbound.protection.outlook.com [40.92.22.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC8D1537B7;
-	Fri,  2 Aug 2024 15:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722613469; cv=none; b=k/wLXmXG1xlZ64z90IznxuLCcsBQH0WOpgG/RsYe4yJBDfd/1KveSq23GJGXXagCNICf0OIb0X2iHNdtzRT8euYqCio9wN4BPHD/99GnRMOXpoSlWVTmvxsMJwePhri7+o0Bi5gTNGOcypN8xwTRLTl1MpQwQ8goXdJABBCbY5M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722613469; c=relaxed/simple;
-	bh=DDbPDIdST10PqgBgKufZ/mh19WwyOQcfy5H11w75Kw0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rqWhNAUoOOAK6ikLgGjO9RZhoynAP6k3mjqQDWGuLGMFo6Mx8qjajQLf4K5peZT5fvg3cPQzD4vh7p0DivKjJRz8B1nFyi+HxbsfzPZi3H58cnkA6E6up5sl3FrWzGjPP/91IrPUkCt/D1l5Y3w6MxWTmzO2gx9smL0HSpDRWHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1k3SDhv; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so18111184e87.0;
-        Fri, 02 Aug 2024 08:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722613465; x=1723218265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lCzeoOfgRyN73yjz89XP9iP1Oo6tqinC2NDD3XRCXj8=;
-        b=V1k3SDhvX/VoZwc9SOd2QdSMT89EQpn4OX2qgQ0GHOSyg0ZVW8eVlc/o1EjuYwpF7X
-         J2D2SAqaF2hn7ilt9u9rDjMgjMnxlK+d7GBDhWGzIORRleEr2D2yAx2/G/zLGMYTbyhN
-         wFPjaMLI9MaVeV4uCXfiAemdOGXemD8/UGAJJZmC6xqG5bjVXIOHG+ZXRyazTa7OMlYf
-         gCd/0lSxu6qdi8oNgT4P3KYY1deGCT3biSlii5qNtGGHpgKR1KlspVO32qJrQdmSvQhz
-         a/raOIMAGbitLYMgNtl2vjU+r2sI0Kdlm5hjI5+4DZDvNQsSqmjEs7M1TLW3SzfXrfY8
-         xfBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722613465; x=1723218265;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lCzeoOfgRyN73yjz89XP9iP1Oo6tqinC2NDD3XRCXj8=;
-        b=EyP1s42eN8EniV5TfvmtN55ujSNe3PKVbgn/nBzfQfjZQB1JvCwtHRIRLFgx6M9Wmv
-         IdFGGZ702QArH1Gnvy/tx4ahRTcI5W35vnB1nVt21ZsQT0NTkeZvjBZG86Qb1HRh0fXQ
-         lDP9FNASX2kKrwLL640k6oJ78wsn2Xo9J+GwZJkwg/Gu+UkdAJtapmkmg+4Yvf3s+vcj
-         /b7qB1xBOWApaqmEjduttCMBJBaQ7zzgvcoKpA5riDpCQhHLZgPP7L3feDvHZ4JdBKra
-         /S9fNpdfX6TQvCbtM4iLM3XNQmjPp4YCbrg7ebfSDzjVAjZF9rJJdoRwRwJtQiGwEVas
-         lWmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYc2yaeK6SwoouEyMQsX0B2UG4QsJUuzJ6k/xJZDwP/x3JkEkdFGsldsuTLUFUJtgzt90T1/1nKFbHGoKz7TR30bPL1EEs1F+fZRdyMGS40bPQ/rEBDVl0SFGgN50VUgGEFca21EGLvs4nXCheWmFy2fuYzOCAalaIKebZgS7G5Pjfig==
-X-Gm-Message-State: AOJu0YzZkpgFCbwmZa05Vhzfl+/XdaoBENGMaM7HxLJNRCfybj2EWxVL
-	zD1WpR6Iu305XX4IBbCGX6K26B+narnvCCWgxV0Y8a/REN4X9VN+
-X-Google-Smtp-Source: AGHT+IGCZIEIePDOnbaHnoxU8b+C6munOPw7nKfVIlUaSoYvM4469Qmopy3614IitmXWg9J7RXtOgA==
-X-Received: by 2002:a05:6512:2399:b0:52c:9877:71b7 with SMTP id 2adb3069b0e04-530bb3bd153mr3731866e87.59.1722613464337;
-        Fri, 02 Aug 2024 08:44:24 -0700 (PDT)
-Received: from debian.fritz.box ([2a00:79c0:640:3a00:303:6c5b:4b07:6715])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3d14sm112577566b.22.2024.08.02.08.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 08:44:23 -0700 (PDT)
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: 
-Cc: Dimitri Fedrau <dima.fedrau@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] pwm: add support for NXPs high-side switch MC33XS2410
-Date: Fri,  2 Aug 2024 17:44:08 +0200
-Message-Id: <20240802154408.135632-3-dima.fedrau@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240802154408.135632-1-dima.fedrau@gmail.com>
-References: <20240802154408.135632-1-dima.fedrau@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD36175D20;
+	Fri,  2 Aug 2024 15:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.99
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722613455; cv=fail; b=H/1RBpjUPv9/dm47bYAcGRpBEjP2Y4rI28YXDGMo8G+472ylLHbEzDbFIcf+EriedjXWf++i6UX9QzA8Mn+ahnkiNF2b8hFuJJxrM83ow/eSUp9lJePUE3fj5XvP+Tqvz53GarVaVLwi8I8fuu50ubRwCqXIGg8/+ek3O3Gxvv0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722613455; c=relaxed/simple;
+	bh=j2Md8h7bbOJjDAQ/XB+Q7/RNoZ+aROH3QaFHHdAXoNg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BvX3Fjt2DqzK4ZpEyjGINWMDs3GQFw1SLRqG08gHHy0TQd+YiR99wsjKINJS5isQW2lj3I0RbVCrHzYjkJECj5LvCZlrEX4mHFIBegdw35A81uKpnouaFyXqIn7JKRmx3F2ykrC9xj99DG2cyuLG17MFTWSp0nCrb6pTA9hlVnU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=pK07G6RM; arc=fail smtp.client-ip=40.92.22.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KUqz5hx+ee4O7Au+o2Yq7X/SY1sJwTlk9radIEak5ye8pcKFd3OpAdnd8LJwVTRrnMASIIeo8qEwhTAk9d82jL+OMRvKPTd4MjiQA1OiEcrefHrReFFeHipCxs5RSMWBoaS5l1Kl9lvGfFu/rOBwU+MnPLSn9TsQR/mHcgMh6f8mehFXpYXHiy8Nf536Amc6YAvXw8dlIEU97rSebNf6qIkNl0BtNN27SHDevaNhGfaOFry4sdZrPakXH6BO3SPSs5+3OJJjs3olgWST4zc+i8VcEAGj2xM+h4eMO/A0K8N1kCY678xvxoI+tLDps/FhrG9WKh7bL3yTuAS44lsHQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j9LtmVXz7F1oPXN9h2WiHMd2bQQzLP34Nv9x5nUbOks=;
+ b=M8d0dxZHcH6h/WbwcufZxpsZHuwW7rsM0jKhM8bJ5Ku+DAD8cfqom+kracp/6cq1Vcy0PAgj4GIezSXiCIk3KQWaiyvvTHOwve7RVOBSp8qR+HFT1KtLNy4LID38XEQv92ivgRM/8B/MGmg+c7fIG7UOlfjmnnLJEm7+OO+g6kkvZ7x84o6Dn+ZceJT74E7PhDT0ORkNLWy0czAPTLFbohwGj5r2mbQJ57nlGPl9tm3f9ob/AJrtySNKENSrHxn8KECnFWXdtzA4wafLNn6t05LzmnPNlzHhErZSMnb3Z9Dy9cGAgJnogp10W5JpdalaQZ17xHlwGtap6P27BzlC4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j9LtmVXz7F1oPXN9h2WiHMd2bQQzLP34Nv9x5nUbOks=;
+ b=pK07G6RMma2QOMZ7Rax835OsyAqwLC2W2E0Vle1IyX71WFFEbWjIgOAKfJ+5IQQTyoueLOC7pQYt1E0U0ZEYb9lPnnKx8epKGjbtSsOiy/QLmfUaC36T8+hkFioBNaRTjeUFBLoAL1YE1/LGCDA8JsM5ElQKqq/U3fqBmzqcYTZ+qKLmWvMChpPIUw1AtI/sGOLq/FFuACHHj0FhgTxQgOYDQTknfNGUZGm0zEshGPgz0ldvei2ddiEtVs5DzYvYr4SxRsCFUbJkWrRcs8WDDOfhp8FET+L9An9flS52SQsF1quGjwiuyYPZpuTdxRT/UNhYXXLNwLMUKY5nVMpKxg==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by DS0PR02MB9022.namprd02.prod.outlook.com (2603:10b6:8:c6::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.22; Fri, 2 Aug 2024 15:44:10 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7807.026; Fri, 2 Aug 2024
+ 15:44:10 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: David Woodhouse <dwmw2@infradead.org>, "tglx@linuxtronix.de"
+	<tglx@linuxtronix.de>, "x86@kernel.org" <x86@kernel.org>
+CC: "lirongqing@baidu.com" <lirongqing@baidu.com>, "seanjc@google.com"
+	<seanjc@google.com>, "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
+	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>
+Subject: RE: [PATCH 1/2] i8253: Disable PIT timer 0 when not in use
+Thread-Topic: [PATCH 1/2] i8253: Disable PIT timer 0 when not in use
+Thread-Index: AQHa5OO/mm8Sev7m2k2ajrwKMJYE+LIUGLfg
+Date: Fri, 2 Aug 2024 15:44:10 +0000
+Message-ID:
+ <SN6PR02MB41576EAA0B95887BF9777645D4B32@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240802135555.564941-1-dwmw2@infradead.org>
+In-Reply-To: <20240802135555.564941-1-dwmw2@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [voVXgGxQbn3jRBGiHFlFMnuOKuNRS2h6]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DS0PR02MB9022:EE_
+x-ms-office365-filtering-correlation-id: 419dd6c0-9d0e-496e-5da2-08dcb309f3f3
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799003|8060799006|461199028|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ 75tp0fbo1l7+QSRHuklfl/kgArnKAatkZ+WxfM4RvkjjNcCnOzuJdPmh6vuYppagHrgWyv5yC+ofPNwbnvjoxugST8yte6rH4rcMs1ob6Xbdw0IjNlKuWDefgJemr5q3U9K6uLw3DY7TzhGO26tGXpkfIdfhhPouyBshqnyjJOQ7DpzQdmL7TYoQuHc4Owa2p56tRrdqQwFvk6pc13RlvKYbEWON1ChWPqN0sXXMPgHpZQL9MhULtrXqKnrS+YH/5q0H65GLE/MC5lyPeHY6vnDoErMWeKtvcDWGynNdHpQpXArregce0o1ixYZjdLLemc1HO8yoSTUPSuDuCBD24f0nMOt2sgCeA9bih/NrE9ifNS2eZoRC3QySF5ikmYJylHE9h0LhM3IkCFNGd8K9YSE/JdVWuf8q3Vor3og5f4E33z3fH1UL76zviO0T2oo/iRsjuFLjC/V1PvRlybzYXJbsi88qot/R99xe2JYzsLxxNNKhE1VrxoKj8aZvnwzu1ldPa6ffTDv6doSB+VE7/qPOo2ri18/GScxY9Q3/Jk7ojkbBIPMcKN/S0jTfhNO6vKAXEC5EfGFJvAtwTvAxlcKn0kscwUCrB09SRWhbvu5/l/LEioPmWxeXcJxHx/IV4a6QaCIa8cP0+tjd5p3Bpg==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?TOrxxWICp5z3Xo0zgGNcKJeybsucoOE+BG3awyMsvl7S8Fl2DpM74Ek4gLD6?=
+ =?us-ascii?Q?gpPO++RilJr8XrLy/p1CRfBRs+cc80XJqMW3bdb/B2LkbNLf1H0BRfICenl9?=
+ =?us-ascii?Q?QKtRCS70/kElFmGwMGrdVdYs8jS8uN74O2lTMDhjmSNEFJPz9Rk4E01F/Fp6?=
+ =?us-ascii?Q?UL8XD3VK/mHx4qQUY+52spxTYSPsBARdfWd+9ELYmVCc6w2nYZ4oZ5UVDEyR?=
+ =?us-ascii?Q?DsBJx5MwIy3qa2u+SW3DISIS45RzS3VIy5E5DWI72zwilIZUGL4MRCZKFlMi?=
+ =?us-ascii?Q?7C6cAsaRjuvKd7X0sAwaVsC7+BZQ8XCqLh4/K/9UvQHNZaAHZHyzEoS0Jl3B?=
+ =?us-ascii?Q?uZvlLwp5gcGZKuMGV3jP7gvV6tg6zPlytmPlDM9xTJEHONpcOywlAfl3J1BH?=
+ =?us-ascii?Q?K9RJWgIvq8jTUV62Rs7hg7DU65jq3l+kd/lmHA4y9oA+dk6z9U8qK2yGfDSS?=
+ =?us-ascii?Q?j5itYDSL3kQM3m/DsN3qZumMEiB6ByjyuAwV98xnrjOuxnZpZ5WCDOJmoWEA?=
+ =?us-ascii?Q?c3mDjUDhdE4zIPU9erD8xAz/9+M2HqwpHHRDzdhARCqy30H+ab+0kXJNCcj2?=
+ =?us-ascii?Q?pNiR0dvsQdJ/YM8048Sib5jdGWIMNIQLeT9RTMC4F6GUGvFHeiq79+tsANPV?=
+ =?us-ascii?Q?oUP0wBfW8tctP8AieXULBFeA2JpWzmPDvJm2+OQGVyrPwB0g3GoZoEQdVN5H?=
+ =?us-ascii?Q?86+cspNNpFqeIkkg9wbCNW+kERY1OctE9+DhlJI/5m7ed2gupwN1fvNeS72+?=
+ =?us-ascii?Q?3Lr0lAQO8WrCA5FrChGS5RLpVox16jnyzyZ5Fa11XZEUO3pgdt/0eICFx6rT?=
+ =?us-ascii?Q?8Do3+JPKk2Mi8DS12cYSjPhp0JAMkBYoAHglqzitHqNU7LdImXV7jpLgZt5q?=
+ =?us-ascii?Q?8inDQiwXFWvM22zgmvIAejuESE6PoR4mlYaR+3Nz5nKhoDRn/DmUF57bURzt?=
+ =?us-ascii?Q?WIVEm+o3RM4/pBWjqhgSwceeTxClDKM11GnCqyAQUYpndewPHN/IBdLYXG0U?=
+ =?us-ascii?Q?LqcvWRkrG1gXW0Pj48mf4WYT10KkDYo/hruG7FCaf1ulK1I70d3wwy++GEeF?=
+ =?us-ascii?Q?xX/3JUCn0B0vg7rqnNWx/ULkrtONQRpgdVpZtsg+1Go58EDZOQ7bMZGTBCk5?=
+ =?us-ascii?Q?XmbYtiHgrcKydFxreRtccqExQV/60M/8LzHqVyMMyGuPqv32WgUpRrHyC67b?=
+ =?us-ascii?Q?MhHu/N8BEzJmlB3+5PMxZf+ZKL3hsBcKltP9M62vLUQ1Xq1I17krS4rXUfc?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 419dd6c0-9d0e-496e-5da2-08dcb309f3f3
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2024 15:44:10.8034
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR02MB9022
 
-The MC33XS2410 is a four channel high-side switch. Featuring advanced
-monitoring and control function, the device is operational from 3.0 V to
-60 V. The device is controlled by SPI port for configuration.
+From: David Woodhouse <dwmw2@infradead.org> Sent: Friday, August 2, 2024 6:=
+56 AM
+>=20
+> Leaving the PIT interrupt running can cause noticeable steal time for
+> virtual guests. The VMM generally has a timer which toggles the IRQ input
+> to the PIC and I/O APIC, which takes CPU time away from the guest. Even
+> on real hardware, running the counter may use power needlessly (albeit
+> not much).
+>=20
+> Make sure it's turned off if it isn't going to be used.
+>=20
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>  arch/x86/kernel/i8253.c     | 11 +++++++++--
+>  drivers/clocksource/i8253.c | 13 +++++++++----
+>  include/linux/i8253.h       |  1 +
+>  3 files changed, 19 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/arch/x86/kernel/i8253.c b/arch/x86/kernel/i8253.c
+> index 2b7999a1a50a..80e262bb627f 100644
+> --- a/arch/x86/kernel/i8253.c
+> +++ b/arch/x86/kernel/i8253.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/timex.h>
+>  #include <linux/i8253.h>
+>=20
+> +#include <asm/hypervisor.h>
+>  #include <asm/apic.h>
+>  #include <asm/hpet.h>
+>  #include <asm/time.h>
+> @@ -39,9 +40,15 @@ static bool __init use_pit(void)
+>=20
+>  bool __init pit_timer_init(void)
+>  {
+> -	if (!use_pit())
+> +	if (!use_pit()) {
+> +		/*
+> +		 * Don't just ignore the PIT. Ensure it's stopped, because
+> +		 * VMMs otherwise steal CPU time just to pointlessly waggle
+> +		 * the (masked) IRQ.
+> +		 */
+> +		clockevent_i8253_disable();
+>  		return false;
+> -
+> +	}
+>  	clockevent_i8253_init(true);
+>  	global_clock_event =3D &i8253_clockevent;
+>  	return true;
+> diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
+> index d4350bb10b83..cb215e6f2e83 100644
+> --- a/drivers/clocksource/i8253.c
+> +++ b/drivers/clocksource/i8253.c
+> @@ -108,11 +108,8 @@ int __init clocksource_i8253_init(void)
+>  #endif
+>=20
+>  #ifdef CONFIG_CLKEVT_I8253
+> -static int pit_shutdown(struct clock_event_device *evt)
+> +void clockevent_i8253_disable(void)
+>  {
+> -	if (!clockevent_state_oneshot(evt) && !clockevent_state_periodic(evt))
+> -		return 0;
+> -
+>  	raw_spin_lock(&i8253_lock);
+>=20
+>  	outb_p(0x30, PIT_MODE);
+> @@ -123,6 +120,14 @@ static int pit_shutdown(struct clock_event_device *e=
+vt)
+>  	}
+>=20
+>  	raw_spin_unlock(&i8253_lock);
+> +}
+> +
+> +static int pit_shutdown(struct clock_event_device *evt)
+> +{
+> +	if (!clockevent_state_oneshot(evt) && !clockevent_state_periodic(evt))
+> +		return 0;
+> +
+> +	clockevent_i8253_disable();
+>  	return 0;
+>  }
+>=20
+> diff --git a/include/linux/i8253.h b/include/linux/i8253.h
+> index 8336b2f6f834..bf169cfef7f1 100644
+> --- a/include/linux/i8253.h
+> +++ b/include/linux/i8253.h
+> @@ -24,6 +24,7 @@ extern raw_spinlock_t i8253_lock;
+>  extern bool i8253_clear_counter_on_shutdown;
+>  extern struct clock_event_device i8253_clockevent;
+>  extern void clockevent_i8253_init(bool oneshot);
+> +extern void clockevent_i8253_disable(void);
+>=20
+>  extern void setup_pit_timer(void);
+>=20
+> --
+> 2.44.0
 
-Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
----
- drivers/pwm/Kconfig          |  12 +
- drivers/pwm/Makefile         |   1 +
- drivers/pwm/pwm-mc33xs2410.c | 419 +++++++++++++++++++++++++++++++++++
- 3 files changed, 432 insertions(+)
- create mode 100644 drivers/pwm/pwm-mc33xs2410.c
+Did a basic smoke test of this two-patch series on a Hyper-V Gen 1
+VM and on a Gen 2 VM. All looks good and behaves as expected.
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 1dd7921194f5..1e873a19a1cf 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -380,6 +380,18 @@ config PWM_LPSS_PLATFORM
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called pwm-lpss-platform.
- 
-+config PWM_MC33XS2410
-+	tristate "MC33XS2410 PWM support"
-+	depends on OF
-+	depends on SPI
-+	help
-+	  NXP MC33XS2410 high-side switch driver. The MC33XS2410 is a four
-+	  channel high-side switch. The device is operational from 3.0 V
-+	  to 60 V. The device is controlled by SPI port for configuration.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called pwm-mc33xs2410.
-+
- config PWM_MESON
- 	tristate "Amlogic Meson PWM driver"
- 	depends on ARCH_MESON || COMPILE_TEST
-diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-index 90913519f11a..b9b202f7fe7e 100644
---- a/drivers/pwm/Makefile
-+++ b/drivers/pwm/Makefile
-@@ -33,6 +33,7 @@ obj-$(CONFIG_PWM_LPC32XX)	+= pwm-lpc32xx.o
- obj-$(CONFIG_PWM_LPSS)		+= pwm-lpss.o
- obj-$(CONFIG_PWM_LPSS_PCI)	+= pwm-lpss-pci.o
- obj-$(CONFIG_PWM_LPSS_PLATFORM)	+= pwm-lpss-platform.o
-+obj-$(CONFIG_PWM_MC33XS2410)	+= pwm-mc33xs2410.o
- obj-$(CONFIG_PWM_MESON)		+= pwm-meson.o
- obj-$(CONFIG_PWM_MEDIATEK)	+= pwm-mediatek.o
- obj-$(CONFIG_PWM_MICROCHIP_CORE)	+= pwm-microchip-core.o
-diff --git a/drivers/pwm/pwm-mc33xs2410.c b/drivers/pwm/pwm-mc33xs2410.c
-new file mode 100644
-index 000000000000..63e6a48b0d02
---- /dev/null
-+++ b/drivers/pwm/pwm-mc33xs2410.c
-@@ -0,0 +1,419 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Liebherr-Electronics and Drives GmbH
-+ *
-+ * Limitations:
-+ * - Supports frequencies between 0.5Hz and 2048Hz with following steps:
-+ *   - 0.5 Hz steps from 0.5 Hz to 32 Hz
-+ *   - 2 Hz steps from 2 Hz to 128 Hz
-+ *   - 8 Hz steps from 8 Hz to 512 Hz
-+ *   - 32 Hz steps from 32 Hz to 2048 Hz
-+ * - Cannot generate a 0 % duty cycle.
-+ * - Always produces low output if disabled.
-+ * - Configuration isn't atomic. When changing polarity, duty cycle or period
-+ *   the data is taken immediately, counters not being affected, resulting in a
-+ *   behavior of the output pin that is neither the old nor the new state,
-+ *   rather something in between.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/math64.h>
-+#include <linux/minmax.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pwm.h>
-+
-+#include <asm/unaligned.h>
-+
-+#include <linux/spi/spi.h>
-+
-+#define MC33XS2410_GLB_CTRL		0x00
-+#define MC33XS2410_GLB_CTRL_MODE_MASK	GENMASK(7, 6)
-+#define MC33XS2410_GLB_CTRL_NORMAL_MODE	BIT(6)
-+#define MC33XS2410_PWM_CTRL1		0x05
-+#define MC33XS2410_PWM_CTRL1_POL_INV(x)	BIT(x)
-+#define MC33XS2410_PWM_CTRL3		0x07
-+/* x in { 0 ... 3 } */
-+#define MC33XS2410_PWM_CTRL3_EN(x)	BIT(4 + (x))
-+#define MC33XS2410_PWM_FREQ1		0x08
-+/* x in { 1 ... 4 } */
-+#define MC33XS2410_PWM_FREQ(x)		(MC33XS2410_PWM_FREQ1 + (x - 1))
-+#define MC33XS2410_PWM_FREQ_STEP_MASK	GENMASK(7, 6)
-+#define MC33XS2410_PWM_FREQ_COUNT_MASK	GENMASK(5, 0)
-+#define MC33XS2410_PWM_DC1		0x0c
-+/* x in { 1 ... 4 } */
-+#define MC33XS2410_PWM_DC(x)		(MC33XS2410_PWM_DC1 + (x - 1))
-+#define MC33XS2410_WDT			0x14
-+
-+#define MC33XS2410_WR			BIT(7)
-+#define MC33XS2410_RD_CTRL		BIT(7)
-+#define MC33XS2410_RD_DATA_MASK		GENMASK(13, 0)
-+
-+#define MC33XS2410_MIN_PERIOD_STEP0	31250000
-+#define MC33XS2410_MAX_PERIOD_STEP0	2000000000
-+/* x in { 0 ... 3 } */
-+#define MC33XS2410_MIN_PERIOD_STEP(x)	(MC33XS2410_MIN_PERIOD_STEP0 >> (2 * x))
-+/* x in { 0 ... 3 } */
-+#define MC33XS2410_MAX_PERIOD_STEP(x)	(MC33XS2410_MAX_PERIOD_STEP0 >> (2 * x))
-+
-+#define MC33XS2410_MAX_TRANSFERS	5
-+#define MC33XS2410_WORD_LEN		2
-+
-+struct mc33xs2410_pwm {
-+	struct spi_device *spi;
-+};
-+
-+static
-+inline struct mc33xs2410_pwm *to_pwm_mc33xs2410_chip(struct pwm_chip *chip)
-+{
-+	return pwmchip_get_drvdata(chip);
-+}
-+
-+static int mc33xs2410_xfer_regs(struct spi_device *spi, bool read, u8 *reg,
-+				u16 *val, bool *ctrl, int len)
-+{
-+	struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] = { { 0 } };
-+	u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-+	u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-+	int i, ret, reg_i, val_i;
-+
-+	if (!len)
-+		return 0;
-+
-+	if (read)
-+		len++;
-+
-+	if (len > MC33XS2410_MAX_TRANSFERS)
-+		return -EINVAL;
-+
-+	for (i = 0; i < len; i++) {
-+		reg_i = i * MC33XS2410_WORD_LEN;
-+		val_i = reg_i + 1;
-+		if (read) {
-+			if (i < len - 1) {
-+				tx[reg_i] = reg[i];
-+				tx[val_i] = ctrl[i] ? MC33XS2410_RD_CTRL : 0;
-+				t[i].tx_buf = &tx[reg_i];
-+			}
-+
-+			if (i > 0)
-+				t[i].rx_buf = &rx[reg_i - MC33XS2410_WORD_LEN];
-+		} else {
-+			tx[reg_i] = reg[i] | MC33XS2410_WR;
-+			tx[val_i] = val[i];
-+			t[i].tx_buf = &tx[reg_i];
-+		}
-+
-+		t[i].len = MC33XS2410_WORD_LEN;
-+		t[i].cs_change = 1;
-+	}
-+
-+	t[len - 1].cs_change = 0;
-+
-+	ret = spi_sync_transfer(spi, &t[0], len);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (read) {
-+		for (i = 0; i < len - 1; i++) {
-+			reg_i = i * MC33XS2410_WORD_LEN;
-+			val[i] = FIELD_GET(MC33XS2410_RD_DATA_MASK,
-+					   get_unaligned_be16(&rx[reg_i]));
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static
-+int mc33xs2410_write_regs(struct spi_device *spi, u8 *reg, u16 *val, int len)
-+{
-+
-+	return mc33xs2410_xfer_regs(spi, false, reg, val, NULL, len);
-+}
-+
-+static int mc33xs2410_read_regs(struct spi_device *spi, u8 *reg, bool *ctrl,
-+				u16 *val, u8 len)
-+{
-+	return mc33xs2410_xfer_regs(spi, true, reg, val, ctrl, len);
-+}
-+
-+
-+static int mc33xs2410_write_reg(struct spi_device *spi, u8 reg, u16 val)
-+{
-+	return mc33xs2410_write_regs(spi, &reg, &val, 1);
-+}
-+
-+static
-+int mc33xs2410_read_reg(struct spi_device *spi, u8 reg, u16 *val, bool ctrl)
-+{
-+	return mc33xs2410_read_regs(spi, &reg, &ctrl, val, 1);
-+}
-+
-+static int mc33xs2410_read_reg_ctrl(struct spi_device *spi, u8 reg, u16 *val)
-+{
-+	return mc33xs2410_read_reg(spi, reg, val, true);
-+}
-+
-+static
-+int mc33xs2410_modify_reg(struct spi_device *spi, u8 reg, u16 mask, u16 val)
-+{
-+	u16 tmp;
-+	int ret;
-+
-+	ret = mc33xs2410_read_reg_ctrl(spi, reg, &tmp);
-+	if (ret < 0)
-+		return ret;
-+
-+	tmp &= ~mask;
-+	tmp |= val & mask;
-+
-+	return mc33xs2410_write_reg(spi, reg, tmp);
-+}
-+
-+static u8 mc33xs2410_pwm_get_freq(u64 period)
-+{
-+	u8 step, count;
-+
-+	/*
-+	 * Check which step is appropriate for the given period, starting with
-+	 * the highest frequency(lowest period). Higher frequencies are
-+	 * represented with better resolution by the device. Therefore favor
-+	 * frequency range with the better resolution to minimize error
-+	 * introduced by the frequency steps.
-+	 */
-+
-+	switch (period) {
-+	case MC33XS2410_MIN_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(3):
-+		step = 3;
-+		break;
-+	case MC33XS2410_MAX_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(2):
-+		step = 2;
-+		break;
-+	case MC33XS2410_MAX_PERIOD_STEP(2) + 1 ... MC33XS2410_MAX_PERIOD_STEP(1):
-+		step = 1;
-+		break;
-+	case MC33XS2410_MAX_PERIOD_STEP(1) + 1 ... MC33XS2410_MAX_PERIOD_STEP(0):
-+		step = 0;
-+		break;
-+	}
-+
-+	count = DIV_ROUND_UP((u32)MC33XS2410_MAX_PERIOD_STEP(step), (u32)period);
-+	return FIELD_PREP(MC33XS2410_PWM_FREQ_STEP_MASK, step) |
-+	       FIELD_PREP(MC33XS2410_PWM_FREQ_COUNT_MASK, count - 1);
-+}
-+
-+static u64 mc33xs2410_pwm_get_period(u8 reg)
-+{
-+	u32 freq, code, steps;
-+
-+	/*
-+	 * steps:
-+	 *   - 0 = 0.5Hz
-+	 *   - 1 = 2Hz
-+	 *   - 2 = 8Hz
-+	 *   - 3 = 32Hz
-+	 * frequency = (code + 1) x steps.
-+	 *
-+	 * To avoid division in case steps value is zero we scale the steps
-+	 * value for now by two and keep it in mind when calculating the period
-+	 * that we have doubled the frequency.
-+	 */
-+	steps = 1 << (FIELD_GET(MC33XS2410_PWM_FREQ_STEP_MASK, reg) * 2);
-+	code = FIELD_GET(MC33XS2410_PWM_FREQ_COUNT_MASK, reg);
-+	freq = (code + 1) * steps;
-+
-+	/* Convert frequency to period, considering the doubled frequency. */
-+	return DIV_ROUND_UP((u32)(2 * NSEC_PER_SEC), freq);
-+}
-+
-+static int mc33xs2410_pwm_get_relative_duty_cycle(u64 period, u64 duty_cycle)
-+{
-+	/*
-+	 * duty_cycle cannot overflow and period is not zero, since this is
-+	 * guaranteed by the caller.
-+	 */
-+	duty_cycle *= 256;
-+	duty_cycle = div64_u64(duty_cycle, period);
-+
-+	return duty_cycle - 1;
-+}
-+
-+static void mc33xs2410_pwm_set_relative_duty_cycle(struct pwm_state *state,
-+						   u16 duty_cycle)
-+{
-+	if (!duty_cycle && !state->enabled)
-+		state->duty_cycle = 0;
-+	else
-+		state->duty_cycle = DIV_ROUND_UP_ULL((u64)(duty_cycle + 1) * state->period, 256);
-+}
-+
-+static int mc33xs2410_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+				const struct pwm_state *state)
-+{
-+	struct mc33xs2410_pwm *mc33xs2410 = to_pwm_mc33xs2410_chip(chip);
-+	struct spi_device *spi = mc33xs2410->spi;
-+	u8 reg[4] = {
-+			MC33XS2410_PWM_FREQ(pwm->hwpwm + 1),
-+			MC33XS2410_PWM_DC(pwm->hwpwm + 1),
-+			MC33XS2410_PWM_CTRL1,
-+			MC33XS2410_PWM_CTRL3
-+		    };
-+	bool ctrl[2] = { true, true };
-+	u64 period, duty_cycle;
-+	int ret, rel_dc;
-+	u16 val[4];
-+	u8 mask;
-+
-+	period = min(state->period, MC33XS2410_MAX_PERIOD_STEP(0));
-+	if (period < MC33XS2410_MIN_PERIOD_STEP(3) + 1)
-+		return -EINVAL;
-+
-+	ret = mc33xs2410_read_regs(spi, &reg[2], &ctrl[0], &val[2], 2);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* frequency */
-+	val[0] = mc33xs2410_pwm_get_freq(period);
-+	/* Continue calculations with the possibly truncated period */
-+	period = mc33xs2410_pwm_get_period(val[0]);
-+
-+	/* duty cycle */
-+	duty_cycle = min(period, state->duty_cycle);
-+	rel_dc = mc33xs2410_pwm_get_relative_duty_cycle(period, duty_cycle);
-+	val[1] = rel_dc < 0 ? 0 : rel_dc;
-+
-+	/* polarity */
-+	mask = MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm);
-+	val[2] = (state->polarity == PWM_POLARITY_INVERSED) ?
-+		 (val[2] | mask) : (val[2] & ~mask);
-+
-+	/* enable output */
-+	mask = MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm);
-+	val[3] = (state->enabled && rel_dc >= 0) ? (val[3] | mask) :
-+						   (val[3] & ~mask);
-+
-+	return mc33xs2410_write_regs(spi, reg, val, 4);
-+}
-+
-+static int mc33xs2410_pwm_get_state(struct pwm_chip *chip,
-+				    struct pwm_device *pwm,
-+				    struct pwm_state *state)
-+{
-+	struct mc33xs2410_pwm *mc33xs2410 = to_pwm_mc33xs2410_chip(chip);
-+	struct spi_device *spi = mc33xs2410->spi;
-+	u8 reg[4] = {
-+			MC33XS2410_PWM_FREQ(pwm->hwpwm + 1),
-+			MC33XS2410_PWM_DC(pwm->hwpwm + 1),
-+			MC33XS2410_PWM_CTRL1,
-+			MC33XS2410_PWM_CTRL3,
-+		    };
-+	bool ctrl[4] = { true, true, true, true };
-+	u16 val[4];
-+	int ret;
-+
-+	ret = mc33xs2410_read_regs(spi, reg, ctrl, val, 4);
-+	if (ret < 0)
-+		return ret;
-+
-+	state->period = mc33xs2410_pwm_get_period(val[0]);
-+	state->polarity = (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm)) ?
-+			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
-+	state->enabled = !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
-+	mc33xs2410_pwm_set_relative_duty_cycle(state, val[1]);
-+	return 0;
-+}
-+
-+static const struct pwm_ops mc33xs2410_pwm_ops = {
-+	.apply = mc33xs2410_pwm_apply,
-+	.get_state = mc33xs2410_pwm_get_state,
-+};
-+
-+static int mc33xs2410_reset(struct device *dev)
-+{
-+	struct gpio_desc *reset_gpio;
-+
-+	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR_OR_NULL(reset_gpio))
-+		return PTR_ERR_OR_ZERO(reset_gpio);
-+
-+	fsleep(1000);
-+	gpiod_set_value_cansleep(reset_gpio, 0);
-+	/* Wake-up time */
-+	fsleep(10000);
-+
-+	return 0;
-+}
-+
-+static int mc33xs2410_probe(struct spi_device *spi)
-+{
-+	struct mc33xs2410_pwm *mc33xs2410;
-+	struct device *dev = &spi->dev;
-+	struct pwm_chip *chip;
-+	int ret;
-+
-+	chip = devm_pwmchip_alloc(dev, 4, sizeof(*mc33xs2410));
-+	if (IS_ERR(chip))
-+		return PTR_ERR(chip);
-+
-+	mc33xs2410 = to_pwm_mc33xs2410_chip(chip);
-+	mc33xs2410->spi = spi;
-+	chip->ops = &mc33xs2410_pwm_ops;
-+
-+	ret = mc33xs2410_reset(dev);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Disable watchdog and keep in mind that the watchdog won't trigger a
-+	 * reset of the machine when running into an timeout, instead the
-+	 * control over the outputs is handed over to the INx input logic
-+	 * signals of the device. Disabling it here just deactivates this
-+	 * feature until a proper solution is found.
-+	 */
-+	ret = mc33xs2410_write_reg(spi, MC33XS2410_WDT, 0x0);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to disable watchdog\n");
-+
-+	/* Transition to normal mode */
-+	ret = mc33xs2410_modify_reg(spi, MC33XS2410_GLB_CTRL,
-+				    MC33XS2410_GLB_CTRL_MODE_MASK,
-+				    MC33XS2410_GLB_CTRL_NORMAL_MODE);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret,
-+				     "Failed to transition to normal mode\n");
-+
-+	ret = devm_pwmchip_add(dev, chip);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to add pwm chip\n");
-+
-+	return 0;
-+}
-+
-+static const struct spi_device_id mc33xs2410_spi_id[] = {
-+	{ "mc33xs2410" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, mc33xs2410_spi_id);
-+
-+static const struct of_device_id mc33xs2410_of_match[] = {
-+	{ .compatible = "nxp,mc33xs2410" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, mc33xs2410_of_match);
-+
-+static struct spi_driver mc33xs2410_driver = {
-+	.driver = {
-+		.name = "mc33xs2410-pwm",
-+		.of_match_table = mc33xs2410_of_match,
-+	},
-+	.probe = mc33xs2410_probe,
-+	.id_table = mc33xs2410_spi_id,
-+};
-+module_spi_driver(mc33xs2410_driver);
-+
-+MODULE_DESCRIPTION("NXP MC33XS2410 high-side switch driver");
-+MODULE_AUTHOR("Dimitri Fedrau <dima.fedrau@gmail.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.39.2
+On the Gen 1 VM, the PIT is used briefly at boot (takes ~35 interrupts)
+before the Hyper-V synthetic timer takes over and the PIT is shutdown.
+As expected, no further interrupts are received from the PIT.
 
+On a Gen 2 VM, apic_needs_pit() returns true because
+X86_FEATURE_ARAT isn't present. The PIT doesn't exist in a
+Gen 2 VM, but the code paths handle this situation with no
+problems, just as before the patch series.
+
+For the two-patch series on Hyper-V,
+Tested-by: Michael Kelley <mhkelley@outlook.com>
 
