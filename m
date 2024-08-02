@@ -1,105 +1,115 @@
-Return-Path: <linux-kernel+bounces-272108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F5794571E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:34:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80203945723
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F1322837F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:34:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1741F24235
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926522C1A5;
-	Fri,  2 Aug 2024 04:34:26 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC8F208D7;
+	Fri,  2 Aug 2024 04:36:44 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613621B7F4
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 04:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F4A256D;
+	Fri,  2 Aug 2024 04:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722573266; cv=none; b=bAooYZU2H9NY33Ip/tzczg5mVDt/TbHz9pNgGF26A04pudhBL8S4pQj2pTOOD3qj0BJ7hQOHF0gyd46oDt10bSlIENs+43ATHgt0cmSlyp6Cyzy7YEIvFl7ddGqhtcq3MggN1lv7Zq7Rttq09jk87Idbo0ZsU4wk89HzeK/dwYM=
+	t=1722573403; cv=none; b=OAh00zaHfpbvarbKhTlicqINhRse93oXd+Yd8G9jMTs4si7Sm8t5+d3cg/+4y3bug+03xXmRATudkxbsZxrfqRmx6sum07ff1vE/9qU5mTLRosVRwim7eiAoIV/PLRiX/RHL1ZaH/sl+YtVUcmV2BKTeMpyvRuUHnopXNb7EJoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722573266; c=relaxed/simple;
-	bh=Ia3GNH5t4DAVsAiEytxtQpi2Cvt24KTMWtuxBpX/z7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJndnwMZxRujBPnBkjsCsushE5oHrRT9SFxjTH50nw1ZXgz+IHOHuV23lSip4LhsQcC9/Pnppl3P91B1L3wxkjG+oF65kcQvPhel0544i6Ujijd7krI2vmXqDmJDtIoHpBAPA7zqwfkA6Gyu+WTt3cNjz3D1ZCBPA5OQCho2txU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sZjze-00039I-Me; Fri, 02 Aug 2024 06:34:18 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sZjzd-003vQ3-9T; Fri, 02 Aug 2024 06:34:17 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sZjzd-00EngG-0c;
-	Fri, 02 Aug 2024 06:34:17 +0200
-Date: Fri, 2 Aug 2024 06:34:17 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH net-next] MAINTAINERS: Add ethtool pse-pd to PSE NETWORK
- DRIVER
-Message-ID: <ZqxhyRiR1EPH4l6d@pengutronix.de>
-References: <20240709130637.163991-1-kory.maincent@bootlin.com>
+	s=arc-20240116; t=1722573403; c=relaxed/simple;
+	bh=L6008oDfcpGOdp3sZj7mO4v81wzU3PhcgEhuJkxXEyk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CtEpxeu5M/lVPaed9A2+tJdAL5hTMTpJPp1a7gmsL+JvOjaDw9M1YODVQi2C47m+5c4p9NGcbq5OSI1+sdZF1/VyWkvpJ79rmMAdNTziG3MJy04GeKmtZmVtFYIVg1+/9eG736bZF/zrddcp35tTvrBYAjtSvLWfoovn7VGMMDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowAB3ngE9YqxmqRTsAg--.50979S2;
+	Fri, 02 Aug 2024 12:36:20 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	make24@iscas.ac.cn,
+	bskeggs@redhat.com,
+	airlied@redhat.com
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] drm/nouveau: fix a possible null pointer dereference
+Date: Fri,  2 Aug 2024 12:36:12 +0800
+Message-Id: <20240802043612.1568426-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240709130637.163991-1-kory.maincent@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAB3ngE9YqxmqRTsAg--.50979S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFykCryUWr4DuFyDCF1ftFb_yoW8GFWkpF
+	srG34YyFW5JFZruF18Ja4avF15G3W7JF1xuw10van3C3ZayryUtryrXryYgryfAFW3Kr12
+	qwnFvFy7WF12krJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Tue, Jul 09, 2024 at 03:06:36PM +0200, Kory Maincent wrote:
-> Add net/ethtool/pse-pd.c to PSE NETWORK DRIVER to receive emails concerning
-> modifications to the ethtool part.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+In ch7006_encoder_get_modes(), the return value of drm_mode_duplicate() is
+used directly in drm_mode_probed_add(), which will lead to a NULL pointer
+dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
 
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: stable@vger.kernel.org
+Fixes: 6ee738610f41 ("drm/nouveau: Add DRM driver for NVIDIA GPUs")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/gpu/drm/i2c/ch7006_drv.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e0f28278e504..b8312a8ba808 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18050,6 +18050,7 @@ L:	netdev@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/net/pse-pd/
->  F:	drivers/net/pse-pd/
-> +F:	net/ethtool/pse-pd.c
->  
->  PSTORE FILESYSTEM
->  M:	Kees Cook <kees@kernel.org>
-> -- 
-> 2.34.1
-> 
-> 
-
+diff --git a/drivers/gpu/drm/i2c/ch7006_drv.c b/drivers/gpu/drm/i2c/ch7006_drv.c
+index 131512a5f3bd..48bf6e4e8bdb 100644
+--- a/drivers/gpu/drm/i2c/ch7006_drv.c
++++ b/drivers/gpu/drm/i2c/ch7006_drv.c
+@@ -229,6 +229,7 @@ static int ch7006_encoder_get_modes(struct drm_encoder *encoder,
+ {
+ 	struct ch7006_priv *priv = to_ch7006_priv(encoder);
+ 	const struct ch7006_mode *mode;
++	struct drm_display_mode *encoder_mode = NULL;
+ 	int n = 0;
+ 
+ 	for (mode = ch7006_modes; mode->mode.clock; mode++) {
+@@ -236,8 +237,11 @@ static int ch7006_encoder_get_modes(struct drm_encoder *encoder,
+ 		    ~mode->valid_norms & 1<<priv->norm)
+ 			continue;
+ 
+-		drm_mode_probed_add(connector,
+-				drm_mode_duplicate(encoder->dev, &mode->mode));
++		encoder_mode = drm_mode_duplicate(encoder->dev, &mode->mode);
++		if (!encoder_mode)
++			return 0;
++
++		drm_mode_probed_add(connector, encoder_mode);
+ 
+ 		n++;
+ 	}
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.25.1
+
 
