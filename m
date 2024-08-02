@@ -1,157 +1,112 @@
-Return-Path: <linux-kernel+bounces-272496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 780F8945D0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:16:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968D3945D14
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ACB51C21601
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E06F1F22368
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4930134B6;
-	Fri,  2 Aug 2024 11:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fwoudIRm"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C781DF685;
+	Fri,  2 Aug 2024 11:17:10 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258E115CD4E
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 11:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0997B134B6;
+	Fri,  2 Aug 2024 11:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722597376; cv=none; b=rs0pci1jb+OnpGhx91DVb0mMOyayhQPpuvst1Bq3DZt10Mc2/nWP2t5JVa3UhgpUx3ltJ7P7Jolnqp0MpZ34B78WGn0Vz36k348ATyCYwot8a/eYFHfW6m376RM/vUk3kKFBLVeiMf1B+YJk4wdTKLQ9mzg7FG6Tf5nKLQBn0ZI=
+	t=1722597430; cv=none; b=rDfaU33tHrKx98J8gPbGSyaXnINHe/QZrsvg/GyZYz2s7FeNDMYzeRNGv147H3RKdyP0DFoRBYGb3g3NovBJA2K9j80tffAKjdJz7hoDSZrfSst5O0in3xlUjWCtzkO2Oj3yVILRLJXfQeK7PpO98tQBRBbMt686oMfJdjdtmK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722597376; c=relaxed/simple;
-	bh=5/L0Yc2Z+AOSOKZw3/Dotf6pZ+cloK9IZVwKZGtH7AE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LH4gza743+B7wbmwWjXpAMEvah1ifrpjdAa6YoQ/8z2z51cX3zBe3iuxZC+orkdoyWSVKFPDvoV60/tRbyW6wlSdHOYy6f3opjhngjuyVPhOjOHAbopiqx9/z5YNGx/+U25Mq2Rov2g1t+fDrmuWrNImJb5rs5W3mVspj31Yy5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fwoudIRm; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7ab76558a9so531219766b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 04:16:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722597373; x=1723202173; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h+a+YbUYnYp2O9o3vDX++ZHVr+zNy81A/L7Ak8HFY0M=;
-        b=fwoudIRmwyCZlvfZAYP55lQcN+bde7o08iQUsXGJ/fUVJ1Tf4MSd9mmhuHU3dSCrX0
-         W3Tau751iP6vRYFZW9yxiV609CXOQ6fzoqnmowcurzv2TWw5tHNLy2Z8r7bsYH/CJG93
-         gi4+fx4KAfHEf4ahly+/x1/RHo+wyHG7H64Pv8TUj17ZApMqNMra+oGnF0xbwewFXfT2
-         tPi1FLl4/+XJhnn81LdxSTjN/SsAK0UbQP5WpGHja82rTztj2E8wE7jAzP5h3xvb57vQ
-         WDCK6fWMywgyF6T5pFcJycbxuICu9UO7uz+hhfBKlzsZTpJHt1WEfpJWzdUSmZdlD0Lv
-         6szw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722597373; x=1723202173;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h+a+YbUYnYp2O9o3vDX++ZHVr+zNy81A/L7Ak8HFY0M=;
-        b=T/75g7LWxFuUQm0o1ly49VlyIsjvJ6N5ht1P6SGB/hyDz9gS4PBGcFD7qwuQREKPbM
-         HgS1YzUWNKW2OpwqAgbwp6RgQhCn9LFU24ouzVe4K9CHfA9tkeXxL7cr9iYrSIsHAXsN
-         YPENxF1O0UlpFdHJaEhsT+OAkQ4GIZVbAYwvMcC4nsFQ1L9bhMjBg+An75dMBYOwFNgX
-         vhj8bEgsrHvGFRx+6IU7h+Gb6OjhfU/VuvL2dfZMuZR1GI7BvGDA2+t1izAOYI4appQU
-         rVWeYfof+ToUQudRQT/i2ZIUchiXNykZSGcxstOsmAllq56DaDHRdkD77It+w6ysHWY5
-         LuAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyCuR93f4qjuExQjNJO0d/XOGf97Kh9ThY01JOJIRDoNzWD44ARCtoz5EMJQeC/aS+jHBy808l2NBAIOaRBT8PnOSFWnZ6d7GN8tc3
-X-Gm-Message-State: AOJu0YzmAMeBVFgfjlxwrdXmTQuFG+Y8fvuX2V6JZ6xo+TkPpWnHdREG
-	3vUlhFc7TIMtCqSy4ruo73PIKPcHPABdOtbJY6+bgmvJKXC1Bk4SB4IWSbr4kvE=
-X-Google-Smtp-Source: AGHT+IHUr2+eigMQMyKiFV2SC/+LcUpbtIeuSXGg+vhEQqD67tJuIK6amWVCFT4RRO+CzEGYIGxtXA==
-X-Received: by 2002:a17:907:25c5:b0:a7a:acae:340b with SMTP id a640c23a62f3a-a7dc628bf8fmr256404766b.31.1722597372903;
-        Fri, 02 Aug 2024 04:16:12 -0700 (PDT)
-Received: from draig.lan ([85.9.250.243])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bcb19csm87224666b.42.2024.08.02.04.16.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 04:16:08 -0700 (PDT)
-Received: from draig (localhost [IPv6:::1])
-	by draig.lan (Postfix) with ESMTP id 91DEE5F8A9;
-	Fri,  2 Aug 2024 12:16:04 +0100 (BST)
-From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,  Marc Zyngier <maz@kernel.org>,
-  Oliver Upton <oliver.upton@linux.dev>,  Tianrui Zhao
- <zhaotianrui@loongson.cn>,  Bibo Mao <maobibo@loongson.cn>,  Huacai Chen
- <chenhuacai@kernel.org>,  Michael Ellerman <mpe@ellerman.id.au>,  Anup
- Patel <anup@brainfault.org>,  Paul Walmsley <paul.walmsley@sifive.com>,
-  Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,
-  Christian Borntraeger <borntraeger@linux.ibm.com>,  Janosch Frank
- <frankja@linux.ibm.com>,  Claudio Imbrenda <imbrenda@linux.ibm.com>,
-  kvm@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  kvmarm@lists.linux.dev,  loongarch@lists.linux.dev,
-  linux-mips@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
-  kvm-riscv@lists.infradead.org,  linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  David Matlack <dmatlack@google.com>,
-  David Stevens <stevensd@chromium.org>
-Subject: Re: [PATCH v12 11/84] KVM: Rename gfn_to_page_many_atomic() to
- kvm_prefetch_pages()
-In-Reply-To: <20240726235234.228822-12-seanjc@google.com> (Sean
-	Christopherson's message of "Fri, 26 Jul 2024 16:51:20 -0700")
-References: <20240726235234.228822-1-seanjc@google.com>
-	<20240726235234.228822-12-seanjc@google.com>
-Date: Fri, 02 Aug 2024 12:16:04 +0100
-Message-ID: <87frrncgzv.fsf@draig.linaro.org>
+	s=arc-20240116; t=1722597430; c=relaxed/simple;
+	bh=kdLR7/cpds8pc5n/xWKZBwHekmR7maVn/tf0jPEHv98=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UiAls1pg4exPdcXNdAxqB4txFmJ717wfIH2pjHnIdH7Dtc40kggb4P53tvzTW/cRZFwvtugTWgT2zh0JRUEpdQ9D3vNTJZPPYt/lwfPjuekuAALynjpcQtYMqo4Ds6SPwr1B5nnNSJAPYtnpuTvat1Rzcf4Tgnv5gFYPK/H1ccE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472AYG5Z009941;
+	Fri, 2 Aug 2024 11:16:45 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40rjf18j1e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 02 Aug 2024 11:16:45 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 2 Aug 2024 04:16:43 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 2 Aug 2024 04:16:41 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <jack@suse.cz>
+CC: <brauner@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: [PATCH V5] squashfs: Add i_size check in squash_read_inode
+Date: Fri, 2 Aug 2024 19:16:40 +0800
+Message-ID: <20240802111640.2762325-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240802093310.twbwdi5hpgpth63z@quack3>
+References: <20240802093310.twbwdi5hpgpth63z@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: xwEG6FKVqN5OaHtAnOmZiVlsrsO9UCJV
+X-Proofpoint-GUID: xwEG6FKVqN5OaHtAnOmZiVlsrsO9UCJV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_07,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408020076
 
-Sean Christopherson <seanjc@google.com> writes:
+syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+squashfs_symlink_read_folio did not check the length, resulting in folio
+not being initialized and did not return the corresponding error code.
 
-> Rename gfn_to_page_many_atomic() to kvm_prefetch_pages() to try and
-> communicate its true purpose, as the "atomic" aspect is essentially a
-> side effect of the fact that x86 uses the API while holding mmu_lock.
+The length is calculated from i_size, so it is necessary to add a check
+when i_size is initialized to confirm that its value is correct, otherwise
+an error -EINVAL will be returned. Strictly, the check only applies to the
+symlink type. Add larger symlink check.
 
-It's never too late to start adding some kdoc annotations to a function
-and renaming a kvm_host API call seems like a good time to do it.
+Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/squashfs/inode.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> E.g. even if mmu_lock weren't held, KVM wouldn't want to fault-in pages,
-> as the goal is to opportunistically grab surrounding pages that have
-> already been accessed and/or dirtied by the host, and to do so quickly.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
-<snip>
+diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+index 16bd693d0b3a..6c5dd225482f 100644
+--- a/fs/squashfs/inode.c
++++ b/fs/squashfs/inode.c
+@@ -287,6 +287,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+ 		inode->i_mode |= S_IFLNK;
+ 		squashfs_i(inode)->start = block;
+ 		squashfs_i(inode)->offset = offset;
++		if ((int)inode->i_size < 0 || inode->i_size > PAGE_SIZE) {
++			ERROR("Wrong i_size %d!\n", inode->i_size);
++			return -EINVAL;
++		}
++
+ 
+ 		if (type == SQUASHFS_LSYMLINK_TYPE) {
+ 			__le32 xattr;
+-- 
+2.43.0
 
-/**
- * kvm_prefetch_pages() - opportunistically grab previously accessed pages
- * @slot: which @kvm_memory_slot the pages are in
- * @gfn: guest frame
- * @pages: array to receives page pointers
- * @nr_pages: number of pages
- *
- * Returns the number of pages actually mapped.
- */
-
-?
-
->=20=20
-> -int gfn_to_page_many_atomic(struct kvm_memory_slot *slot, gfn_t gfn,
-> -			    struct page **pages, int nr_pages)
-> +int kvm_prefetch_pages(struct kvm_memory_slot *slot, gfn_t gfn,
-> +		       struct page **pages, int nr_pages)
->  {
->  	unsigned long addr;
->  	gfn_t entry =3D 0;
-> @@ -3075,7 +3075,7 @@ int gfn_to_page_many_atomic(struct kvm_memory_slot =
-*slot, gfn_t gfn,
->=20=20
->  	return get_user_pages_fast_only(addr, nr_pages, FOLL_WRITE, pages);
->  }
-> -EXPORT_SYMBOL_GPL(gfn_to_page_many_atomic);
-> +EXPORT_SYMBOL_GPL(kvm_prefetch_pages);
->=20=20
->  /*
->   * Do not use this helper unless you are absolutely certain the gfn _mus=
-t_ be
-
---=20
-Alex Benn=C3=A9e
-Virtualisation Tech Lead @ Linaro
 
