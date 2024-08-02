@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-272600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 446CF945E9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:23:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBD9945E9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0075A283174
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2CD1F24167
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839061E3CB9;
-	Fri,  2 Aug 2024 13:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3D01E484F;
+	Fri,  2 Aug 2024 13:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ah8vZqD5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XgQSvStR"
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D981DAC4F
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 13:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB88E1E3CC3;
+	Fri,  2 Aug 2024 13:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722605004; cv=none; b=rCtl8RgLSFJPXio64c4qFemxTjqS5GGhFt1GvnvMbI3MZvnhtqohb95MpT8dx0cM8OXibEFWoyoiICAG9kVvVe3FY6oXZ3dXgMvKOHNBUnx+/dEpwqEqfuDYkmNK57pXXeBGJm8OcWzjUroC8HTnh8GprG6Moide7AjKi3+KcnE=
+	t=1722605028; cv=none; b=oETbSTNydT+qVGFzwbQvC2hZb6+p1n2Yz5NqOBLJ8plm06wFvWVmZPp1iCjF4XTNOGvr0l8P5cGYFNcSpSy1HQ+F4A5RsnHFeH2hJuj1lC0D2HsT3M/Q3Wj9mZjC7odFb4WlU0QjiRG7KE8U4FI4IqfvZE7rbNpPnD+7Mc+J0Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722605004; c=relaxed/simple;
-	bh=SbzVMvrgqgnN6vDegUB9cL5i+J+RsUNUs2IF58rQ7o4=;
+	s=arc-20240116; t=1722605028; c=relaxed/simple;
+	bh=fsVvgYGyE0NtWIPTCBcgpNi+GdQA4vGo6K3ciq5bNA0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ejx4S+/qUIkkR6CqdLteGuU8PEXD5AE3aDPxUnQzLPSkEs6Lk3wiz737AbzxC3ifGPaZYEs3FeJ6ROWG1rIRjg9LBBahBwM9mvhcHZJMIK04owQFu66NvEjZiXuUGPzxTq1JPsqAXL6nCNMiuyEUQgTa+6ZUnIlr9wzF81uDVNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ah8vZqD5; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722605003; x=1754141003;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SbzVMvrgqgnN6vDegUB9cL5i+J+RsUNUs2IF58rQ7o4=;
-  b=Ah8vZqD5FgRkMaOP9R3c+HZJG++kEos2N3gTe3KB3u8finU5s/VQdKrM
-   1HnoLIDM06CnyCqkAOki522Y4JLhLJ0k6tnYRdrVP35Gje3qQlz+6nlEQ
-   UeE3Btg1bLs3aLgOYjuHduE8p74ABnrpVjiuh1uvzSvsGP9EoBqObFgvM
-   hgGfKrIZoeg+GagfrUQLgpo92dlXE1tQDxoGEowxa7i4aspFJOlZa/Xm3
-   dZ2SIN3JbBSoUnF9sSvn2SBaZ9wiwdDwVG1iWHE4m8WwXpEMgElQ/J2JF
-   hXd3LjSrDiy5aB0Q+pBaAyLbnDTO7lDBEUzPxxi7Z0rtwijN37PfnhtHJ
-   Q==;
-X-CSE-ConnectionGUID: esKcBqMfTMutLzg5439tDw==
-X-CSE-MsgGUID: 1U6H6qkbROKxlvcpfsR62A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20571622"
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="20571622"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 06:23:22 -0700
-X-CSE-ConnectionGUID: Hi/gxvj9Qeeq8I28/TOxqA==
-X-CSE-MsgGUID: 1BjErpSTRxqf4IP9A9RHrQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="55636314"
-Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
-  by orviesa006.jf.intel.com with ESMTP; 02 Aug 2024 06:23:20 -0700
-Message-ID: <4808f199-2cc7-4150-ac04-0f36db841f50@linux.intel.com>
-Date: Fri, 2 Aug 2024 16:23:19 +0300
+	 In-Reply-To:Content-Type; b=GWjlZK0/AKwk5rXR75PzDMWINa25kdr/p5RLEpfDXJZLaFK8dzuvRAYsfM2FqvcBs71Q9paZ0/+YP0bdTojUzfNuw6yvSoPiECp/7wTnu28cszrAxjbaEu0YOvvzGTJStifXhTiCPQSo1PHEabQ4qAAOXsOVaP9EqmIknpeYLdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XgQSvStR; arc=none smtp.client-ip=80.12.242.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ZsFrs3ZHUIDadZsFrsw7Va; Fri, 02 Aug 2024 15:23:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722605016;
+	bh=l1w5HkBmdUNhk0KIrdXhJAVeGOc8OmiX+2Fh0Dp3WdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=XgQSvStRKBHsqpExqclU4nuBvGpye4lES2soTnHEnVXj4m6zeXXOi17G4VtcLIV2n
+	 /r2X0anBonHUcyPLH0/2OPjYCaNUKAWF5jZCoRcfrloaB/kxuVoMH5MC3l8En+PxAZ
+	 TwJ4VTBBs6p1wAGg/ffP6RFTtkXyr7Xiugq7DnrYQlZ1aeOdYrr6iAofa1RuB2ZuEW
+	 4HLW2TL0uOl6Vzmvfjt1ALmkBvOlNQK2gwllVMd/ctDoIqcYLG7776cbDrWvVU5Xnu
+	 Y6MIOe6aBz1FhEo/NldiBR5Ujl3VAazooUS0iRhGtlRXXfRq2KTkbkjei9+kKWFfnE
+	 uqfMRnfrpOFnA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 02 Aug 2024 15:23:36 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <96843dc5-6c7a-4b93-84a2-1cdc4da9ce85@wanadoo.fr>
+Date: Fri, 2 Aug 2024 15:23:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +56,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] i3c: mipi-i3c-hci: Add MIPI0100 ACPI ID to the I3C
- Support List
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
- Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240724071245.3833404-1-Shyam-sundar.S-k@amd.com>
- <20240724071245.3833404-2-Shyam-sundar.S-k@amd.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20240724071245.3833404-2-Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH V2] Input: atkbd - fix LED state at suspend/resume
+To: Qiang Ma <maqianga@uniontech.com>, dmitry.torokhov@gmail.com,
+ hdegoede@redhat.com
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240802093600.6807-1-maqianga@uniontech.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240802093600.6807-1-maqianga@uniontech.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi
+Le 02/08/2024 à 11:36, Qiang Ma a écrit :
+> After we turn on the keyboard CAPSL LED and let the system suspend,
+> the keyboard LED is not off, and the kernel log is as follows:
+> 
+> [  185.987574] i8042: [44060] ed -> i8042 (kbd-data)
+> [  185.988057] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
+> [  185.988067] i8042: [44061] 04 -> i8042 (kbd-data)
+> [  185.988248] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
+> 
+> The log shows that after the command 0xed is sent, the data
+> sent is 0x04 instead of 0x00.
+> 
+> Solution:
+> Add a bitmap variable ledon in the atkbd structure, and then set ledon
+> according to code-value in the event, in the atkbd_set_leds() function,
+> first look at the value of ledon, if it is 0, there is no need to
+> look at the value of dev->led, otherwise, need to look at dev->led
+> to determine the keyboard LED on/off.
+> 
+> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On 7/24/24 10:12 AM, Shyam Sundar S K wrote:
-> The current driver code lacks the necessary plumbing for ACPI IDs,
-> preventing the mipi-i3c-hci driver from being loaded on x86
-> platforms that advertise I3C ACPI support.
-> 
-> This update adds the MIPI0100 ACPI ID to the list of supported IDs.
-> 
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Hmmm, no.
+
+I just made a few comments on v1.
+
+That does not mean a Signed-off-by at all.
+
 > ---
-> MIPI0100 is the ACPI ID as defined in the MIPI I3C DisCo specification.
-> 
->   drivers/i3c/master/mipi-i3c-hci/core.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-> index d7e966a25583..dbc8c38bd962 100644
-> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
-> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-> @@ -826,12 +826,18 @@ static const __maybe_unused struct of_device_id i3c_hci_of_match[] = {
->   };
->   MODULE_DEVICE_TABLE(of, i3c_hci_of_match);
->   
-> +static const struct acpi_device_id i3c_hci_acpi_match[] = {
-> +	{"MIPI0100"},
-> +	{}
-> +};
-> +
->   static struct platform_driver i3c_hci_driver = {
->   	.probe = i3c_hci_probe,
->   	.remove_new = i3c_hci_remove,
->   	.driver = {
->   		.name = "mipi-i3c-hci",
->   		.of_match_table = of_match_ptr(i3c_hci_of_match),
-> +		.acpi_match_table = i3c_hci_acpi_match,
->   	},
->   };
->   module_platform_driver(i3c_hci_driver);
+> V2:
+>   - Fixed formatting and spelling errors
+>   - Optimized some code
 
-Looks otherwise ok to me but is this missing MODULE_DEVICE_TABLE()?
+A good practice is also to give the link to previous versions. It can 
+help reviewers who maybe missed part of the story.
+
+v1: 
+https://lore.kernel.org/all/20240726102730.24836-1-maqianga@uniontech.com/
+
+> 
+>   drivers/input/keyboard/atkbd.c | 31 +++++++++++++++++++++++--------
+>   1 file changed, 23 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+> index 7f67f9f2946b..fb479bc78134 100644
+> --- a/drivers/input/keyboard/atkbd.c
+> +++ b/drivers/input/keyboard/atkbd.c
+> @@ -237,6 +237,8 @@ struct atkbd {
+>   	struct mutex mutex;
+>   
+>   	struct vivaldi_data vdata;
+> +
+> +	DECLARE_BITMAP(ledon, LED_CNT);
+>   };
+>   
+>   /*
+> @@ -604,24 +606,32 @@ static int atkbd_set_repeat_rate(struct atkbd *atkbd)
+>   	return ps2_command(&atkbd->ps2dev, &param, ATKBD_CMD_SETREP);
+>   }
+>   
+> +#define ATKBD_DO_LED_TOGGLE(dev, atkbd, type, v, bits, on)		\
+
+Is there a real advantage for 'bits' and 'on'?
+
+They always match with 'led' and 'ledon' below.
+And 'atkbd' and 'dev' are already hard coded below anyway.
+
+I just find it confusing and harder to read.
+
+Also, in order to be less verbose, maybe ATKBD_LED_TOGGLE or 
+ATKBD_TOGGLE_LED would just be as clear with fewer char?
+
+CJ
+
+> +({									\
+> +	unsigned char __tmp = 0;					\
+> +	if (test_bit(LED_##type, atkbd->on))				\
+> +		__tmp = test_bit(LED_##type, dev->bits) ? v : 0;	\
+> +	__tmp;								\
+> +})
+> +
+>   static int atkbd_set_leds(struct atkbd *atkbd)
+>   {
+>   	struct input_dev *dev = atkbd->dev;
+>   	unsigned char param[2];
+>   
+> -	param[0] = (test_bit(LED_SCROLLL, dev->led) ? 1 : 0)
+> -		 | (test_bit(LED_NUML,    dev->led) ? 2 : 0)
+> -		 | (test_bit(LED_CAPSL,   dev->led) ? 4 : 0);
+> +	param[0] = ATKBD_DO_LED_TOGGLE(dev, atkbd, SCROLLL, 1, led, ledon)
+> +		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, NUML,    2, led, ledon)
+> +		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, CAPSL,   4, led, ledon);
+>   	if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_SETLEDS))
+>   		return -1;
+>   
+>   	if (atkbd->extra) {
+>   		param[0] = 0;
+> -		param[1] = (test_bit(LED_COMPOSE, dev->led) ? 0x01 : 0)
+> -			 | (test_bit(LED_SLEEP,   dev->led) ? 0x02 : 0)
+> -			 | (test_bit(LED_SUSPEND, dev->led) ? 0x04 : 0)
+> -			 | (test_bit(LED_MISC,    dev->led) ? 0x10 : 0)
+> -			 | (test_bit(LED_MUTE,    dev->led) ? 0x20 : 0);
+> +		param[1] = ATKBD_DO_LED_TOGGLE(dev, atkbd, COMPOSE, 0x01, led, ledon)
+> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SLEEP,   0x02, led, ledon)
+> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SUSPEND, 0x04, led, ledon)
+> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MISC,    0x10, led, ledon)
+> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MUTE,    0x20, led, ledon);
+>   		if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_EX_SETLEDS))
+>   			return -1;
+>   	}
+> @@ -695,6 +705,11 @@ static int atkbd_event(struct input_dev *dev,
+>   	switch (type) {
+>   
+>   	case EV_LED:
+> +		if (value)
+> +			__set_bit(code, atkbd->ledon);
+> +		else
+> +			__clear_bit(code, atkbd->ledon);
+> +
+>   		atkbd_schedule_event_work(atkbd, ATKBD_LED_EVENT_BIT);
+>   		return 0;
+>   
+
 
