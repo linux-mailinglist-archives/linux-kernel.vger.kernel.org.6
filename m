@@ -1,141 +1,95 @@
-Return-Path: <linux-kernel+bounces-272585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25BD945E56
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D99945E59
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AA64B208B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D951F22360
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CA11E4841;
-	Fri,  2 Aug 2024 13:07:35 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34021E4840;
+	Fri,  2 Aug 2024 13:08:09 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C8817547;
-	Fri,  2 Aug 2024 13:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6828A17547;
+	Fri,  2 Aug 2024 13:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722604055; cv=none; b=ixHs5rMJm82gNOu0d41GNHVHIqYm7hZwWW907AVUhkOSH/Rn4P1Uj//cPKxB9BCe9Hq2Pz0+zq++yhQefRflC6y0ejx5UkJUCmHn58q6SwOTwb0gXZQYDrZVLQIj2geyYzhq2bwgcgkfVgh3sqW2WA15Rf3eyKxqbNHpf/26WhA=
+	t=1722604089; cv=none; b=EsNIJ3Yp0V5HsY5cqocYrcrVpu7WmilsCWSAkimenLPdFGhcO6VCcMy73rKme+UYuzKNX1uXpoKXAWTaxq3kNBzb9DJjX4WcwP2pasFeaiB5M2YoaRG8VaLY7rBFCzF4XTkB5t5tGlFxFm7aL5LryH+9mamtGeGXx0l2G0Xn7Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722604055; c=relaxed/simple;
-	bh=ng0IcaXPaHLvdetCJAhGczVFHBRtogBlyNPpK2y3Yj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lLIVjpTOT7GDgdn3hL+l7s3SeJ38aWQkd47SRmPj+PWT9z5bkgNwJXiSDj7YwCegpmPeeufuSBn6EayvXUy5GXG+N3TEDMxpIs8Cttq0O+xXntvtG2tmGlaSs9Q7+ADDG0u7IVBFsN57yfXdprqgmnnbJFqyGc2ft1MkwPf9Ays=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wb5hk39xyz4f3jkq;
-	Fri,  2 Aug 2024 21:07:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 38A1A1A018D;
-	Fri,  2 Aug 2024 21:07:27 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4UL2qxm7ChBAg--.9954S3;
-	Fri, 02 Aug 2024 21:07:27 +0800 (CST)
-Message-ID: <182c4b0b-6c69-4119-90ca-4e52bcad0409@huaweicloud.com>
-Date: Fri, 2 Aug 2024 21:07:23 +0800
+	s=arc-20240116; t=1722604089; c=relaxed/simple;
+	bh=p9pbDg4t4Cdpx//swVD12yoiZqbHPH+0aZ/mcEstjnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G5abyCDUz3CcZ+wr3yJkd41kDLSxgVaQ8GX4ee3WFdBAejbfGxG/oqjkhrfO104hXyRcNe8ZNPT18tym1YaloyhswxLxCR5dBzpmumHVP9J5P5DlWqse4PiK6SWZdIRIOsHgTxesnjGvC5SC7gP2xkceVwN2PZ6UfmTBpk7VPjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sZrsK-001zvx-12;
+	Fri, 02 Aug 2024 21:08:02 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 02 Aug 2024 21:08:01 +0800
+Date: Fri, 2 Aug 2024 21:08:01 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Helge Deller <deller@kernel.org>
+Cc: linux-crypto@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org
+Subject: Re: [PATCH v2] crypto: xor - fix template benchmarking
+Message-ID: <ZqzaMQDswTxVVVIX@gondor.apana.org.au>
+References: <ZovalOTfarFv1SZa@p100>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/20] ext4: get rid of ppath in
- ext4_ext_create_new_leaf()
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
- Baokun Li <libaokun@huaweicloud.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-11-libaokun@huaweicloud.com>
- <ZqyL6rmtwl6N4MWR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <ZqyL6rmtwl6N4MWR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHr4UL2qxm7ChBAg--.9954S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kry3ur1xCrWrCry5Gry5XFb_yoW8Ar4Dpa
-	4Syw4Duw1Dta1j9FZrtF45tFyFva1fGa4UGFW5Wry8uasFqF1rZFyfKFWj9rs8XFs7GFy2
-	vrWxWa1ftr12y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQADBWasmH0ZsQAAsA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZovalOTfarFv1SZa@p100>
 
-On 2024/8/2 15:34, Ojaswin Mujoo wrote:
-> On Wed, Jul 10, 2024 at 12:06:44PM +0800, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> The use of path and ppath is now very confusing, so to make the code more
->> readable, pass path between functions uniformly, and get rid of ppath.
->>
->> To get rid of the ppath in ext4_ext_create_new_leaf(), the following is
->> done here:
->>
->>   * Free the extents path when an error is encountered.
->>   * Its caller needs to update ppath if it uses ppath.
->>
->> No functional changes.
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Hi Baokun,
-Hey Ojaswin,
-> The changes look good to me, feel free to add:
->
-> Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Thank you very much for your review!
->
-> That being said, IIUC i think this patchset also fixes a potential UAF
-> bug. Below is a sample trace with dummy values:
->
-> ext4_ext_insert_extent
->    path = *ppath = 2000
->    ext4_ext_create_new_leaf(ppath)
->      path = *ppath = 2000
->      ext4_find_extent(path = 2000)
->        if (depth > path[0].p_maxdepth)
->              kfree(path = 2000);
->              path = NULL;
->        path = kcalloc() = 3000
->        ...
->        return path;
->    path = 3000
->    *ppath = 3000;
->    return;
-> /* here path is still 2000 *, UAF! */
-> eh = path[depth].p_hdr
->
-> I'm not completely sure if we can hit (depth > path[0].p_maxdepth) in the
-> above codepath but I think the flow is still a bit fragile. Maybe this
-> should be fixed in a separate patch first. What do you think?
->
-> Regards,
-> ojaswin
-Nice catch!
+On Mon, Jul 08, 2024 at 02:24:52PM +0200, Helge Deller wrote:
+> Commit c055e3eae0f1 ("crypto: xor - use ktime for template benchmarking")
+> switched from using jiffies to ktime-based performance benchmarking.
+> 
+> This works nicely on machines which have a fine-grained ktime()
+> clocksource as e.g. x86 machines with TSC.
+> But other machines, e.g. my 4-way HP PARISC server, don't have such
+> fine-grained clocksources, which is why it seems that 800 xor loops
+> take zero seconds, which then shows up in the logs as:
+> 
+>  xor: measuring software checksum speed
+>     8regs           : -1018167296 MB/sec
+>     8regs_prefetch  : -1018167296 MB/sec
+>     32regs          : -1018167296 MB/sec
+>     32regs_prefetch : -1018167296 MB/sec
+> 
+> Fix this with some small modifications to the existing code to improve
+> the algorithm to always produce correct results without introducing
+> major delays for architectures with a fine-grained ktime()
+> clocksource:
+> a) Delay start of the timing until ktime() just advanced. On machines
+> with a fast ktime() this should be just one additional ktime() call.
+> b) Count the number of loops. Run at minimum 800 loops and finish
+> earliest when the ktime() counter has progressed.
+> 
+> With that the throughput can now be calculated more accurately under all
+> conditions.
+> 
+> Fixes: c055e3eae0f1 ("crypto: xor - use ktime for template benchmarking")
+> Signed-off-by: Helge Deller <deller@gmx.de>
+> Tested-by: John David Anglin <dave.anglin@bell.net>
+> 
+> v2:
+> - clean up coding style (noticed & suggested by Herbert Xu)
+> - rephrased & fixed typo in commit message
 
-This is indeed a potential UAF issue, and while it seems hard to
-trigger (depth > path[0].p_maxdepth), it does deserve a separate
-patch, and I'll be adding a separate quick fix for this in the next version.
-
-Regards,
-Baokun
-
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
