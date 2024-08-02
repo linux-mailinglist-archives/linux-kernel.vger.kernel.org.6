@@ -1,110 +1,103 @@
-Return-Path: <linux-kernel+bounces-272956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD889462C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:57:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581869462C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0031C20EE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13F7A2828F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7672D15C13D;
-	Fri,  2 Aug 2024 17:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF8B15C12D;
+	Fri,  2 Aug 2024 17:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="XrNOS5iI"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GuJAc3w7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09FF1AE021;
-	Fri,  2 Aug 2024 17:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722621469; cv=pass; b=TLJC0QDH0D4498LNcnl9z98HI9yjnst9VawJ3JfyZAgx0PfhWk5nByn7d0OZ+Helai2YD3OCirfcipK9sikV6tUTEubvOMxf5YJsurybkBlI6uXZyXSvzooAabqoBHQYsdz0D2VkaS0cW8BTdb4Al0oYYtRrGSFZcb2Y0kdbRyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722621469; c=relaxed/simple;
-	bh=681KljSbvJwnHppaPJRubgSKRRbnRlXy4FZQH8GM2qs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=dGhZa6wHLuIP0M7AYIMjRQas4pmpDxA3m6e8f7wbnfS4of80EuTRvnDskLvtBCzvQimMiUIWIbihuzmA9oPTQ8CQp+5QJGIY6gtcWF8apZF9OU7zwrHo5RNs86rUT8W+nLIv7BEG2L14Cp2djn0lzMAVk0N/mf4UivGK4PDOdlQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=XrNOS5iI; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from localhost (91-154-92-171.elisa-laajakaista.fi [91.154.92.171])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WbD7s3VQtz49Pv3;
-	Fri,  2 Aug 2024 20:57:44 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1722621465;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iWd1NH3Yqp6z6FcSD+KgDgLIFvGCTjQTVvXCbKTPUaE=;
-	b=XrNOS5iIi7wk/kHbWysofnSPqHd3dxbfb5CiqF7tf+nLPbOoagHkUmTaDbB1fZs9AfgryB
-	gIvEdDkFk0xRRgsQBq5mQEEpnRiodDxjpwjyOAUpwnZJQNeiicxnQOodp7t7kQRkKEjp7X
-	HFhwLymuf/pWq6EX41TNsuhM2XqHzIouFosKajrwbWEIlqEf2NpyPgMgDB9Ky3WC86fTkY
-	OOVeaKO9gttXQen7cyySC0sdN9DvT838sei2nQwyr4xTb8vQlrR4nSEGF6BROq+uRlrTLt
-	lzJzBTby9HmQj1ekUdog0Mu8IU8ltXwQHFoTN3ee7SPvhV6yZ1MNQRAcefx0Fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1722621465;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iWd1NH3Yqp6z6FcSD+KgDgLIFvGCTjQTVvXCbKTPUaE=;
-	b=iF6MfBw5SPE6pmpltBYInXDZUqSWfy9mnvXzMAcGwpQZa7imSHc42sgyjZX61wE2NbjbFE
-	jMTYgNiLJO7JzpUOU2mLnbSGzP1wfGJqUb5dpTMwufm21y/Uu2rcBy6KBIFcFoOmk8yDcj
-	PVu9QRdSt1rMheReq42uijCZjQlaICMbO+eI+BMZlRROa1OifOVGoCv2iD7ptKlu3ik+RU
-	kE1ixD/iRmwg5iV0vob3pBSJ6/AcZ79cuRvZ8w7349HBvJ6mnb/4fwELqUBNN1DhhwpNu3
-	HxYQYHds7WyEx3Dc2OuZI2sCwR3Isl6D0Qgoc9lplH59ObwO19Ymv3d48e5bfA==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1722621465; a=rsa-sha256;
-	cv=none;
-	b=IDJC5wETE8cYYD8GCVylGd4W5p/4KPGzduwvJVc6ZoJ1BE9g6zlgnKM4BzXhPe82D5rBsT
-	xfTsIumOFhIiEnShhKap+iVnpepLQPL6UDlr8njhZNPZ8Dda13Sca2Qaqd7U+H4y7wbcTf
-	zwRnlU14wJhgpz6NQ8JKoy/nrSjuYcQpcjpOveXIJTvQXCrQUm0koo9fVqv2xeoSpBlVAL
-	Dh61MO0o9NDHAMoZcFt4vQ2HmCj1ySS94M1ICxXgxMxS/XY4n+ldUY2OSd6ixkzsW/6MeK
-	H4GEjTUPPfWfz+8YoH+NSq6JvdERtIHPbPCKvFWAgUIy2nCFHew+2+MqvKZ9Sg==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A76415C126;
+	Fri,  2 Aug 2024 17:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722621517; cv=none; b=B/AJlfiYT/1bZIkDPN4YDhF27irRsdwq/p9bFbOG/cLAKRDF4VpcphtrWOIsdhIHaRX2zCwkHa8FPe9jXCxMH+oOZxxxDARh2n/m9ATKf4KZ6qDhKy8rd4+7so6V9/pa45v5x9xjgtxXTilNKQ+4jYUVBtZ3Pd4XXlFdQZB6+EQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722621517; c=relaxed/simple;
+	bh=GgOQs8fWVA6+ODz3DoKPihPh88i0r8y5j3hiHzKyiHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YofD9HXxU2v06vY/AEMNYcf+EXl1GWk/uToTqgBRzgeXirzSect9obMLOUax6Q+8UzJtgy5h/FmOdKTJQEuJVnB8gsFr3KQzhNGypF+y6N+WXLTUwtX/N1g3N23NgtYOpkwlfn4DvvVeRvabLqa2sHl5N/ofl9/GRbgFr5t3ZR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GuJAc3w7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F38AC32782;
+	Fri,  2 Aug 2024 17:58:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722621517;
+	bh=GgOQs8fWVA6+ODz3DoKPihPh88i0r8y5j3hiHzKyiHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GuJAc3w7YaGE2Y2S6OEZue2iJyz1YZIA2JPeGnuKiNKwMrT3uu/FNGHXBKuCrbZAt
+	 YR/j3tgsN39AuIFVFdcysv3gFVrTO/GSPUU/a4q+JJ4NVGIGjr2nzGMpQsdEll04UC
+	 eVRmnf6eaYu4ltcrMRZpmdXqLAfPhCsH3gGVEDJ3i7VYOwl5tv6AauO+UY2cEchWge
+	 AziV3/P/0sALOjwwhXvV6wzwhAQ4flOxmDeavh27zvVumZ66QT/D2uqnVGslv4Ko0i
+	 MT9FNYEWNBwTr3Fz9771S4YvcrM65/OG7jZgdeAbRZArq/LH3elXCUdu2cktNyErvM
+	 3YpcHGYOPYm1g==
+Date: Fri, 2 Aug 2024 18:58:31 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andrei.Simion@microchip.com
+Cc: lgirdwood@gmail.com, claudiu.beznea@tuxon.dev,
+	Nicolas.Ferre@microchip.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, robh@kernel.org, alexandre.belloni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Mihai.Sain@microchip.com
+Subject: Re: [PATCH 1/6] regulator: mcp16502: Add supplier for regulators
+Message-ID: <e0db4f2b-ce4f-4560-b586-1d8dbb75c7ff@sirena.org.uk>
+References: <20240802084433.20958-1-andrei.simion@microchip.com>
+ <20240802084433.20958-2-andrei.simion@microchip.com>
+ <98f91a56-946c-4a40-b908-45f4c6c6d66e@sirena.org.uk>
+ <f318439f-b520-4b86-99a7-eb9a2e47525f@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 02 Aug 2024 20:57:43 +0300
-Message-Id: <D35MCFF29VT4.2JGEENK5HO6WU@iki.fi>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, "Linux Next
- Mailing List" <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the tpmdd tree
-From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Jarkko Sakkinen"
- <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240802090234.2acf4c25@canb.auug.org.au>
-In-Reply-To: <20240802090234.2acf4c25@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2wUEPk6V6lIxYR86"
+Content-Disposition: inline
+In-Reply-To: <f318439f-b520-4b86-99a7-eb9a2e47525f@microchip.com>
+X-Cookie: -- I have seen the FUN --
 
-On Fri Aug 2, 2024 at 2:02 AM EEST, Stephen Rothwell wrote:
-> Hi all,
->
-> Commit
->
->   f6554cbf56be ("KEYS: Remove unused declarations")
->
-> is missing a Signed-off-by from its committer.
 
-Will fix, sorry I came from holidays this week and mbsync failed me.
-Did a lot of stuff yesterday when I got it finally working (tried
-to be careful but shit happens).
+--2wUEPk6V6lIxYR86
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[1] https://bugzilla.redhat.com/show_bug.cgi?id=3D2302132
+On Fri, Aug 02, 2024 at 02:25:15PM +0000, Andrei.Simion@microchip.com wrote:
 
-BR, Jarkko
+> In regulator.yaml exists .*-supply [1] which practically allows every
+> char sequence before -supply. In the binding microchip,mcp16502.yaml [2]
+> each node under the regulators includes all the rules/documentation
+> from regulator.yaml , so I supposed that it is unnecessary to add
+> in the binding of those new property.
+
+> What is your opinion? Let me know any thoughts.
+
+The specific names for a given device are supposed to be specified,
+there's a bunch of existing bindings that appear to do that.
+
+--2wUEPk6V6lIxYR86
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmatHkYACgkQJNaLcl1U
+h9CIkwf/RsbW7SyzVKRGUscKpzn3wbeRWCz0wIKHuuAl0St8cJoZ+yOx2gfpXAG6
+dvKJblD/8qEq3VDQPgDoLCvlP3rr4MyoM+4TlZQEXAZJ9tpmNqh0RstFA9pvpjSc
+LrcLotb4ZX2enREjujCphZnvy4rCauddzJRPx6hDnlGvcbkAcemZRvRTyPVMiJeQ
+Okc/k9h7/6NkGvf8eWEszAqEpsAytEye7Lkw9rlRpj8aCwfTQa7JJVrMqZZZmxg+
+MrUHqDa20mc/RMkWhAaoxNBeTosjGcHkShnYsvVIxpNXqETaix2ym3igFUP7OG//
+ztr4pub4/1pMjxdSje6vokLzBWrqbA==
+=Uffm
+-----END PGP SIGNATURE-----
+
+--2wUEPk6V6lIxYR86--
 
