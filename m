@@ -1,232 +1,249 @@
-Return-Path: <linux-kernel+bounces-272300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D1A9459D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:25:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3C49459DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ACDF1C22930
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:25:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA1AB21E87
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35771C2312;
-	Fri,  2 Aug 2024 08:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4571C232A;
+	Fri,  2 Aug 2024 08:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="egWRJE7R"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fAIL+Upn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4E213FF6
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 08:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722587098; cv=none; b=M2K8Y1GMuFTVqS2ZwARsxonjgHk/V2h+chOjAsvEc7nGF1RXqRM1+ahGmlognf4B/Z96YfCrBGyQRCKlahReXhW20yyYwwiwKX/4gw5+mWhRjnjgmrIR2FAku/cVDuWMuD9McPC4iUat6qzVoEsmbm3Tts0RjXTegQqVhijVJvk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722587098; c=relaxed/simple;
-	bh=Z7B4ej6Mdj2+V0RtL74zqFZgEeI1PTkP8LnxQO89PYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KdhVJqr2P6CW1GCRRuXmw3DiwzayXF64OVCNffRlDKTDGTA81B2jLZH388n7ItvqSwSKODYykvsnBMqv85FRtT+IwHcQZamDQe0NuLM4wqSb5+PA9gQHy6/KvEZKp1Hk93EsPc9LTxdt8TRFzLm358SXhgGs14/ORv0r7AN/84k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=egWRJE7R; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e0885b4f1d5so6432366276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 01:24:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1722587094; x=1723191894; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AiVreYMKSzML2GjOpf0xHyyUDslaxEFhmmZabXtLDM0=;
-        b=egWRJE7Rkbyb576pGvJFK+m4g0eXN9B79bWgElhZvmOHhz0+XfINr3EGYDp2Am0EMS
-         t/Xav6iM4+Q7MP4iAXtUiyly7Hx+zVGufFdwcSVjlF3ZaD5XRWr+Oio4oOGL/1+cW08y
-         CQcY8ukMlYHRxz53+Mqxty7tOt7YUe+lO2aGMkeM2US+gX270WxE1onS/HJsaPM2I1BY
-         fC5h6ayusGVWQpleQqpfCd7o/FN4LYbw5+QKJgCV9+UpksfAezC9a8wRiYXLaYiQgZti
-         2uYcIliUHgmqmjA54AjOecaCVN35RU2mSBRS1esLq+Edbote4B/5dl1eRhntmzB8oORM
-         i/Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722587094; x=1723191894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AiVreYMKSzML2GjOpf0xHyyUDslaxEFhmmZabXtLDM0=;
-        b=iJLCpmPnvbtEfiXizkA/odz0pddcClgqbnJguhldNEXsMKCnFUEiWg6tNwrGU2DhKj
-         0HGy7teDwhcg7ge/io9OsBxZJA66mx7j22Ysc5V3Uh7bIdHF1ElezIu9xelG0R0L7Z+L
-         KWY4luvAPeYGTphiKtd8EK1Vzag0oU6koHbmsqSAyMqY2aA3v2VLaxaYPgh9B5IAQvZt
-         VXXhLDFBEbQWO5UIFWeEYBExZSStIDTFM0G36BykdQd3cCKRMLhSZKVPtPJTZuUkTPXc
-         wn1wugOi4cD/sOTjX0/AN4amgiZ2VxmM5N+qgHf4iVNR4efIbh65ExBiZg64P1Je3NUE
-         ao+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVL2na0lEO4LzuQdXUtyA2Sodndnry+P4QzGn0wms8ubf3ac8hggySL/d9CL/dgZVrJ1V565WldGjNbz4qpIaBOofMJvtXDoVOaedC4
-X-Gm-Message-State: AOJu0Yx9nVBQAX9fcrI3krLlBwyQo+PFwF7NfstQj+mJlUaPb3DurIyE
-	8GD27bAGyzi5Zd3eg4kRx6krkmXANOihMkbHYK2VOe62FdmbEuMC+UN9nC2a6rukQM3zT8JIvYY
-	War860u6oGD4jWAI3lw2nQRQiMUcWh261SkdjwQ==
-X-Google-Smtp-Source: AGHT+IFIESiJEeEBTmmXQg27WfjMc+QvxNvI7xxd/zoyTg5h71etytPKHyRbnw2Zm4xe8fT6eIxxkkMgmg8pVXO8q4s=
-X-Received: by 2002:a05:6902:20c8:b0:e0b:d7da:ae01 with SMTP id
- 3f1490d57ef6-e0bde2c191emr3325333276.5.1722587094502; Fri, 02 Aug 2024
- 01:24:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BD113FF6;
+	Fri,  2 Aug 2024 08:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722587218; cv=fail; b=Q1FcbiW4wtyTJftcuC//tIrg5VM/2Rr4V3ybnI6f0KmX9+GYjPxwJBduz/YURqVbRcK+EYi6W5YK1RghU0gU1g4AYoRaZcP1nTNo9yMIPOcZOFiozJVhik0uj1Av6b9fAGxGq4NY45gvo0bGT8Hqmvx95UwnP4c0Q4MgqwMBVkc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722587218; c=relaxed/simple;
+	bh=xYvxiXaRe6VmcOP5T/OraP2LF1QF5aXHoXyQJkxkALA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NnH0TVryU9sW9mvY+grSL286NhACt3tGo2bEOcs/mk8Nyfqn7hwgP4MGYtJAy+WFxNxnVQiqocC2skL7uRCK+v2FuVb8Q8XZlMdX93+h4Nd/0RJvCEApuz4ailxjHfkKmIe6mwye58JilQ6QMDPipuN8mSUhjUjgeGpTPsPYPQc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fAIL+Upn; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722587217; x=1754123217;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=xYvxiXaRe6VmcOP5T/OraP2LF1QF5aXHoXyQJkxkALA=;
+  b=fAIL+UpnvuZclxUzJ3+JGB62TGQBwxngqRdJvk72feb/moppMbP59aDw
+   R+LxBEkFhlDTqfvyjochqMFT7F8mq/RLvlnoy+1zENvZwiyStWQ43V2To
+   wZuHKY7Zfyxrr/SPtGIw6jJGZgtsN3xBE2LfimJp2nqCiKo5UiYyDUMxg
+   VFvs60M4ji0OLragWGdjr+YbX+XSJ6Vixy1SMxARMPPl12hP+4n7fERJD
+   KbffLoZx3U50xAKpZqO3Sp66vcCw0cu/NTjJUU0I+sXCY/eG/ZfEypJQR
+   A7zu/lVIYXg9pHIYt/riJhIO9TRp26Xyj5pJteCt0G8ca3rGIAx58ET7K
+   Q==;
+X-CSE-ConnectionGUID: vva9ZQNDTXe3Rkcez+vbmg==
+X-CSE-MsgGUID: kYCbKempROW6oJgD9jNzUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="38053719"
+X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
+   d="scan'208";a="38053719"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 01:26:55 -0700
+X-CSE-ConnectionGUID: YzFSaJjQREWZnSkpX2udZw==
+X-CSE-MsgGUID: HyaLYcvpQ+q2nGOhhQdYMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
+   d="scan'208";a="92876259"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Aug 2024 01:26:55 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 2 Aug 2024 01:26:54 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 2 Aug 2024 01:26:54 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 2 Aug 2024 01:26:54 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.42) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 2 Aug 2024 01:26:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eMvDyxKXz8aWgEBw7QScDAShK5dW/8SnPnBwXj5jvD+l9qPWMsoNVCTrf//mhzF7QH5mRf481efk3moyxKW7w+J+1NoiGn6GZGH7URvH0xHthZl3KXLHW8LOS8bjiD2rK8tKXkd1EyNrIWzEhYNSyqviA58W0V6FTCSVhx1oxXISCwAM9kfY+Cxe/L/ray+seIqxW6scfhKjQK1YOU9AB20OI53kcX3V360wnkoBHAJQggoAH+ibIgE5bSufn9xP9AVfix5lr3T2xxs0+qmQ9JbeV3S1cdMnEaUZh+RHyeKqFgIk4wkj36f83NauaJwv8S50HCyo2VfEz+nQiG9/6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uqbT47+81ID/+mEUV7gO4Or1gm1l+hhSNBbW9JFIpWM=;
+ b=PYwBAOTAThzPULua9/0uuDwdizfKSMNChp/qyFM1kM2HwosDVifXsDQ3zw1lraBa/wehTUbsmGDIWiP2e+Ty1M69zImK38K0P1vnHEOU+4UpY7QDXg5Fb/YHAhtH0boxmiunoIu95QZH5zl85f07v2N7kJNnegzkTfQ2oHn0Lqvffz/kKrC99cewBospq+1cS9ce6CLizuVJoDsSv0X4mSGCFtQKfBJyYPQprferhsXTu1RtAdtpq0QAStMNYeCqcWo0KnRx5gYfo1SNvvbCsK9v6WK/eWL52u4LpdSSFBdwwzXxQwlRhY6bz4EraVO3Ec72WhlwjebMOcmwc81JXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by IA0PR11MB8380.namprd11.prod.outlook.com (2603:10b6:208:485::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Fri, 2 Aug
+ 2024 08:26:48 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7828.021; Fri, 2 Aug 2024
+ 08:26:48 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>, David Hildenbrand <david@redhat.com>
+CC: Mostafa Saleh <smostafa@google.com>, John Hubbard <jhubbard@nvidia.com>,
+	Elliot Berman <quic_eberman@quicinc.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, Matthew Wilcox
+	<willy@infradead.org>, "maz@kernel.org" <maz@kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Fuad Tabba <tabba@google.com>,
+	"Xu, Yilun" <yilun.xu@intel.com>, "Qiang, Chenyi" <chenyi.qiang@intel.com>
+Subject: RE: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+Thread-Topic: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+Thread-Index: AQHawdyTbbj3CTyCxU2oU4wQ5oQq6rHOYY8AgABR7QCAAe6NAIAAEoqAgAAFggCAQyU6EA==
+Date: Fri, 2 Aug 2024 08:26:48 +0000
+Message-ID: <BN9PR11MB5276D7FAC258CFC02F75D0648CB32@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+ <7fb8cc2c-916a-43e1-9edf-23ed35e42f51@nvidia.com>
+ <14bd145a-039f-4fb9-8598-384d6a051737@redhat.com>
+ <ZnQpslcah7dcSS8z@google.com>
+ <1ab73f42-9397-4fc7-8e62-2627b945f729@redhat.com>
+ <20240620143406.GJ2494510@nvidia.com>
+In-Reply-To: <20240620143406.GJ2494510@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|IA0PR11MB8380:EE_
+x-ms-office365-filtering-correlation-id: 1f8e64d2-2791-4bc4-8937-08dcb2ccda66
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?iiEYoFDYAZrZza4g+RuqRyI414K36ZM21dE/zau4tAu8O63swX2nXY7r5ACX?=
+ =?us-ascii?Q?q1zsdaG+L3oL8Pvq6bYKry2IrYVC8pgLqeJUNm1b4hBo+bveii2I5sJl4Zfb?=
+ =?us-ascii?Q?9Ng0Mt2kcp6yPaqlnx8KewzBvlr1kTU9K/daPLMf53BZSNcN9BbSw4XHdl6M?=
+ =?us-ascii?Q?kp3TgWAzDMSBpVRQwX/ecjgdlGogMsOoZcfm3YXGJbLDP4151AWFe4pXbR80?=
+ =?us-ascii?Q?iV4saJvZ0Wc0SCdh38eGbuFEa64T3a5KM4aQS1h8QJnl6rDlNHO+JzsWgHcH?=
+ =?us-ascii?Q?DPa1QIjuvQnIeXPNDqboxBUlkmt33eg/zTN0/8xqe8HqMS9LitLzCmON+40B?=
+ =?us-ascii?Q?rbVUXTa0UDNb4/1EeDOfwOgEIRT/QJGt6y7meSp2lKWT3L5dBFneZxQqBRUU?=
+ =?us-ascii?Q?//xnNT8W1P1a5fq5/878hoxpGJfFN2QgMnklmsKj+yC750TB9IXQV1YCSLch?=
+ =?us-ascii?Q?M25PNMTKoscsdYPar+vlxLdUR5QJ9Aoi2p0jxrJ3S8tHMmV5vNLmNCtlbQuG?=
+ =?us-ascii?Q?JrvfwCoSUDGW+KZ1CJfZuhPazE3wgJEceAZkkWHNoNVXl5/yVVkyRyjKUcr0?=
+ =?us-ascii?Q?A+B5VThEmzhxH1BfWe7/90gBPlnv265tw/VBfq9M0lzusLOGwAuNudWwlfih?=
+ =?us-ascii?Q?URWxPW48vTCbSJGxbpaQWX9eSBoYV6qJw1SCntCUSO3R55DC/0PBj0v6+xTV?=
+ =?us-ascii?Q?gGqSZenFB9ai6nqn6GRXnQDfAyyrlP562cOc0EZdvVdGW8I+xWQqJU2BGgkh?=
+ =?us-ascii?Q?X7vRzvoX0hyrPX/eT7teQnZ3xUCJArwhlErXkbw2/mAGXvM4UCcRkapyw+ee?=
+ =?us-ascii?Q?YG+BAK+0iFW8B7xPRUiGyEHoSuRc5/9FjD1+g4cgOVSYAWc/S5wf6BQE5gdL?=
+ =?us-ascii?Q?PuNlKuZF693tU2Jwp4Pf0lQ3pm2rnBnalDX5VVgA3f0wR5NwG4UUXBQOCF4T?=
+ =?us-ascii?Q?GTwGDPq2WspGU+C6RW4e+Y+Zk8XnxAF5VD2Gks6E3ijnQe7fgRdA2xpfjPJF?=
+ =?us-ascii?Q?xtCdnufKc+1i18gKTp9wqCRs8PSAIpVcMq6LOUtu12YW2Zlu0P7vDvXxvrIR?=
+ =?us-ascii?Q?Ufq2Je/Ax8yvGFTylyY4+O7Ts6TJQ9xvn8gI3kbfBgjX0Wavg2Z2vt+vQrcg?=
+ =?us-ascii?Q?/NkiC8wpJYi2hg02OFYmlgXD3QJ3H+RkBhhqppkGu/NxPZ5hzIBJ32YqM0Do?=
+ =?us-ascii?Q?T1eXcM5GW6vnqXCTrivcR25RpHfFZNnj5X8rQaQMOMIjTUsPKClCsX3mssD1?=
+ =?us-ascii?Q?EVVpYmkQ4+cLfZ0/IVnm1OTBA1fATABKGKZmAGhSlp9z7wZ68gNYdgTrwovM?=
+ =?us-ascii?Q?lHI+VDbIUpBeEAsk3TJmjcZE+7M5Coh8c+mjssLMQY6AQRXwdg5Mb5Y10Dlw?=
+ =?us-ascii?Q?OOQzHu8=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?tDAWzJZlksgSBAbb8Jw5h+82jSG4zuSgEoszgfZXFYiYcELZ9SdZVMoS0YCW?=
+ =?us-ascii?Q?muWzoC3HghSYyvhnmWnmzRHPY5qNnXZEZd32IlCmsr9BbDea5X8Z1ZtYGyOq?=
+ =?us-ascii?Q?4hkpC6JznieSCJluKzX9bOEy736D1ziMJf/SjMkiKm/FMzqS65p+wt0BRuoT?=
+ =?us-ascii?Q?+8Y5tCjQtgjBwEHTrorEFmhZVyUrCDAAunGIXLDlXSwDpJ3nwmFmFmthwynH?=
+ =?us-ascii?Q?cMBlN3mhFIpt/SVlXYzWuf/qMosrZ63tX1+0xkaFglzaMc6zEHJJeRfBTp93?=
+ =?us-ascii?Q?eWMlAzsL7HxJBp61VnEUxKJ34EFcymftapxx4Fcb00I4YjayJc1b0HbSsDS8?=
+ =?us-ascii?Q?9laIxPIVVdutnT5JZ1tao/NirAS695jYxLIHiX4Lk5pbG8jYoMrQjHdvOylK?=
+ =?us-ascii?Q?Kja42XKLGE9GfZvv1IMSIotgsNScu5TbJyAF9AKeEDXcKJ8325WAI511gUr/?=
+ =?us-ascii?Q?U4rEC+bwM8RhTTte7qT6ocfaaEu87wvcsGw74lZmpsVJO3ksvGv53ssdH73/?=
+ =?us-ascii?Q?ZikpMR6wnEAhJdOrutB9zywzbb3nN/rK8ad5SF08p8OSdOWiVQn2OwsQDdEn?=
+ =?us-ascii?Q?Lo38rrBuRIpFKs4S5I+NHcPzD0XMNstIyAee76LSWKGV6t3CVKI7zzpG9GWl?=
+ =?us-ascii?Q?7mrycNsYwysIMyqPIkzd39laspuO2gKrA+w/GpKQUBjIVQjOAdOgfhiG8URM?=
+ =?us-ascii?Q?VlH6caHC6OxMjGVXpxUBa8XGIxaNTlHomB0Hq7yffE30C00w0dSJ00z7bwWz?=
+ =?us-ascii?Q?NFO/G7ko1OouwwT1NwlzJjqdJQKV+9U4StvxN3NX0QcivLWsnj4XUzjYebZy?=
+ =?us-ascii?Q?wpmGbOjF+xG+KD6JDsjIAk5SKmahyWP6CkDWcSjtu3XUaZh0+SW56XQZhWAC?=
+ =?us-ascii?Q?OqZwBab9QX44OkmVxCGkWony7Deidtxldsy/x/21/BD3WRD9BuuecmePLBt4?=
+ =?us-ascii?Q?n/Vm3yee940JfAOln5YWjWbuEAR9fI8DfFL44vm3Cg5h+kyjhKY1SKOzf5hR?=
+ =?us-ascii?Q?//fE1/ZWyDmygP7pMKLe/dWU64V8tKuxdBwO8xCklaSpaP0JAtbIW3EDl5LN?=
+ =?us-ascii?Q?B6ioverVV3Wue+6wMW0erxDuZKYIxAe9o9GYxcVOXBaCP4L6LaZV1uA3g3/Z?=
+ =?us-ascii?Q?GWmZtM57Y/CxGigyhrntrtDr6uCEHd1DP0gQg6UGfhLnGbecqD5rICBLtOoG?=
+ =?us-ascii?Q?TXiHUSLuggYInZ8HQgpPxByAHCPZe5SVIfQEYglp7aodA78QB7fwiSv6rxz5?=
+ =?us-ascii?Q?4NEysXpB77gksIlWs0ElSUz6wMBEGY6tR0eWw8c2XzEdTRt98TLztyd4wYJ5?=
+ =?us-ascii?Q?bHrkQ7N/fbVv+F4w7oz+rrCkRxa9F+cRL95ySUNHtFS1fhWktE9Yr//rugus?=
+ =?us-ascii?Q?jERETvfSXiTHdVVw/76tgAvJOnIWIYCtgaSl5jQTrhMz3UdrCYOG9A9JjzBi?=
+ =?us-ascii?Q?r3EjANObFXLiOBkzM/amT0u/RM/pO24Xv7lWFuVY14194q6tUoF48tLT0WZF?=
+ =?us-ascii?Q?xhhkmS61bvr5cfVh2EK88t4ESu8Dhq/l74bE0nV1I1Up6E+bx+ef9ZQDq5BE?=
+ =?us-ascii?Q?tibsRtWbBD4P+u6TlurYsNbCWdBhqFq8nl6jm1fY?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719075200.10717-2-jhp@endlessos.org> <20240719080255.10998-2-jhp@endlessos.org>
-In-Reply-To: <20240719080255.10998-2-jhp@endlessos.org>
-From: Jian-Hong Pan <jhp@endlessos.org>
-Date: Fri, 2 Aug 2024 16:24:18 +0800
-Message-ID: <CAPpJ_edybLMtrN_gxP2h9Z-BuYH+RG-qRqMqgZM1oSVoW1sP5A@mail.gmail.com>
-Subject: Re: [PATCH v8 4/4] PCI/ASPM: Fix L1.2 parameters when enable link state
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, David Box <david.e.box@linux.intel.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Nirmal Patel <nirmal.patel@linux.intel.com>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, 
-	Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux@endlessos.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f8e64d2-2791-4bc4-8937-08dcb2ccda66
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2024 08:26:48.6885
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YUgTXdmJiwm0xxsYGPPAn8THIoqzkUXzfUn8JqfVK57b6g0EUaOlDthfawGLNsJ7aOUYjDnebpmQHvk+wDbrUw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8380
+X-OriginatorOrg: intel.com
 
-Jian-Hong Pan <jhp@endlessos.org> =E6=96=BC 2024=E5=B9=B47=E6=9C=8819=E6=97=
-=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:04=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Currently, when enable link's L1.2 features with __pci_enable_link_state(=
-),
-> it configs the link directly without ensuring related L1.2 parameters, su=
-ch
-> as T_POWER_ON, Common_Mode_Restore_Time, and LTR_L1.2_THRESHOLD have been
-> programmed.
->
-> This leads the link's L1.2 between PCIe Root Port and child device gets
-> wrong configs when a caller tries to enabled it.
->
-> Here is a failed example on ASUS B1400CEAE with enabled VMD:
->
-> 10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core Processor PCIe =
-Controller (rev 01) (prog-if 00 [Normal decode])
->     ...
->     Capabilities: [200 v1] L1 PM Substates
->         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_S=
-ubstates+
->                   PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50u=
-s
->         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->                    T_CommonMode=3D45us LTR1.2_Threshold=3D101376ns
->         L1SubCtl2: T_PwrOn=3D50us
->
-> 10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp WD Blue SN550 =
-NVMe SSD (rev 01) (prog-if 02 [NVM Express])
->     ...
->     Capabilities: [900 v1] L1 PM Substates
->         L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_S=
-ubstates+
->                   PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10u=
-s
->         L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->                    T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
->         L1SubCtl2: T_PwrOn=3D10us
->
-> According to "PCIe r6.0, sec 5.5.4", before enabling ASPM L1.2 on the PCI=
-e
-> Root Port and the child NVMe, they should be programmed with the same
-> LTR1.2_Threshold value. However, they have different values in this case.
->
-> Invoke aspm_calc_l12_info() to program the L1.2 parameters properly befor=
-e
-> enable L1.2 bits of L1 PM Substates Control Register in
-> __pci_enable_link_state().
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
-> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> ---
-> v2:
-> - Prepare the PCIe LTR parameters before enable L1 Substates
->
-> v3:
-> - Only enable supported features for the L1 Substates part
->
-> v4:
-> - Focus on fixing L1.2 parameters, instead of re-initializing whole L1SS
->
-> v5:
-> - Fix typo and commit message
-> - Split introducing aspm_get_l1ss_cap() to "PCI/ASPM: Introduce
->   aspm_get_l1ss_cap()"
->
-> v6:
-> - Skipped
->
-> v7:
-> - Pick back and rebase on the new version kernel
-> - Drop the link state flag check. And, always config link state's timing
->   parameters
->
-> v8:
-> - Because pcie_aspm_get_link() might return the link as NULL, move
->   getting the link's parent and child devices after check the link is
->   not NULL. This avoids NULL memory access.
->
->  drivers/pci/pcie/aspm.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index 5db1044c9895..55ff1d26fcea 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -1411,9 +1411,15 @@ EXPORT_SYMBOL(pci_disable_link_state);
->  static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool=
- locked)
->  {
->         struct pcie_link_state *link =3D pcie_aspm_get_link(pdev);
-> +       u32 parent_l1ss_cap, child_l1ss_cap;
-> +       struct pci_dev *parent, *child;
->
->         if (!link)
->                 return -EINVAL;
-> +
-> +       parent =3D link->pdev;
-> +       child =3D link->downstream;
-> +
->         /*
->          * A driver requested that ASPM be enabled on this device, but
->          * if we don't have permission to manage ASPM (e.g., on ACPI
-> @@ -1428,6 +1434,15 @@ static int __pci_enable_link_state(struct pci_dev =
-*pdev, int state, bool locked)
->         if (!locked)
->                 down_read(&pci_bus_sem);
->         mutex_lock(&aspm_lock);
-> +       /*
-> +        * Ensure L1.2 parameters: Common_Mode_Restore_Times, T_POWER_ON =
-and
-> +        * LTR_L1.2_THRESHOLD are programmed properly before enable bits =
-for
-> +        * L1.2, per PCIe r6.0, sec 5.5.4.
-> +        */
-> +       parent_l1ss_cap =3D aspm_get_l1ss_cap(parent);
-> +       child_l1ss_cap =3D aspm_get_l1ss_cap(child);
-> +       aspm_calc_l12_info(link, parent_l1ss_cap, child_l1ss_cap);
-> +
->         link->aspm_default =3D pci_calc_aspm_enable_mask(state);
->         pcie_config_aspm_link(link, policy_to_aspm_state(link));
->
-> --
-> 2.45.2
->
+> From: Jason Gunthorpe <jgg@nvidia.com>
+> Sent: Thursday, June 20, 2024 10:34 PM
+>=20
+> On Thu, Jun 20, 2024 at 04:14:23PM +0200, David Hildenbrand wrote:
+>=20
+> > 1) How would the device be able to grab/access "private memory", if not
+> >    via the user page tables?
+>=20
+> The approaches I'm aware of require the secure world to own the IOMMU
+> and generate the IOMMU page tables. So we will not use a GUP approach
+> with VFIO today as the kernel will not have any reason to generate a
+> page table in the first place. Instead we will say "this PCI device
+> translates through the secure world" and walk away.
+>=20
+> The page table population would have to be done through the KVM path.
+>=20
 
-Hi Nirmal and Paul,
+Sorry for noting this discussion late. Dave pointed it to me in a related
+thread [1].
 
-It will be great to have your review here.
+I had an impression that above approach fits some trusted IO arch (e.g.
+TDX Connect which has a special secure I/O page table format and
+requires sharing it between IOMMU/KVM) but not all.
 
-I had tried to "set the threshold value in vmd_pm_enable_quirk()"
-directly as Paul said [1].  However, it still needs to get the PCIe
-link from the PCIe device to set the threshold value.
-And, pci_enable_link_state_locked() gets the link. Then, it will be
-great to calculate and programm L1 sub-states' parameters properly
-before configuring the link's ASPM there.
+e.g. SEV-TIO spec [2] (page 8) describes to have the IOMMU walk the
+existing I/O page tables to get HPA and then verify it through a new
+permission table (RMP) for access control.
 
-[1]: https://lore.kernel.org/linux-kernel/20240624081108.10143-2-jhp@endles=
-sos.org/T/#mc467498213fe1a6116985c04d714dae378976124
+That arch may better fit a scheme in which the I/O page tables are
+still managed by VFIO/IOMMUFD and RMP is managed by KVM, with an
+an extension to the MAP_DMA call to accept a [guest_memfd, offset]
+pair to find out the pfn instead of using host virtual address.
 
-Jian-Hong Pan
+looks the Linux MM alignment session [3] did mention "guest_memfd
+will take ownership of the hugepages, and provide interested parties
+(userspace, KVM, iommu) with pages to be used" to support that extension?
+
+[1] https://lore.kernel.org/kvm/272e3dbf-ed4a-43f5-8b5f-56bf6d74930c@redhat=
+.com/
+[2] https://www.amd.com/system/files/documents/sev-tio-whitepaper.pdf
+[3] https://lore.kernel.org/kvm/20240712232937.2861788-1-ackerleytng@google=
+.com/
+
+Thanks
+Kevin
 
