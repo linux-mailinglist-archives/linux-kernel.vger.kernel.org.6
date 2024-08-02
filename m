@@ -1,141 +1,123 @@
-Return-Path: <linux-kernel+bounces-273036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C42F9463A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:16:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8974F9463A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7878F1C210C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:16:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7C91C21428
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197461547ED;
-	Fri,  2 Aug 2024 19:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA961547E8;
+	Fri,  2 Aug 2024 19:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oAD0YljU"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h7f5owDH"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130A41ABEA9
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88586376F1
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722626187; cv=none; b=S2GsiYCOddbxham2t3dzPQwTWEzp/UZYQ/PkbNMIUyn/bgFpBXkJ6yS+cxdUsdPtmPV3BC045gzOglR3iaCBqt7K+y/gXBUxVY1kNIyHYxDp7CdYMo+f48f6IdWxg8VQm2BsQXIqVoFoAwGEMTWafg/4Kf0LJ9l/y4rO21pUpKM=
+	t=1722626453; cv=none; b=Zhvn3FhYHmTiV6lp8j4yBGoA+InbqrKqZDdH8y1OYayMOoumcwXuHmAWtoLkKG+V3jlaN8DBC/B6ANor4b6DN3yR2Zo2NIFCDdUjj1PkF+H1AcSEAmtIvUm5Qr/OA8NOmzf6ruAaubJtcQAU6g3U0M5whFRyvqS+HZCGaEFnEI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722626187; c=relaxed/simple;
-	bh=cd3nERhRyP5WUA7DduGPP+BWpepjFRp3xf3fTSNPuWQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cL9x7SK8VuEF591vpWfpQMc1jtuv8vtg5VgaEMH7OdkpopjyHJBDU5gweRW5whmyHEEJSnJM/88UxVrcXvzbLLOpoj4Jw/AB6ASReGV47DNjHMoOtCPtj4UAJ+tcmfuOzan89IYc2MqytCjF1V8u3hAXbEksChmMAbwqoXHha1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oAD0YljU; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fd72932d74so71867535ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 12:16:25 -0700 (PDT)
+	s=arc-20240116; t=1722626453; c=relaxed/simple;
+	bh=jbgPxUaRpWe7IUV6OPVfKHMd2VVjNZeOVIHBRBVc2Fw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UziCzpJij91hobyPRNFQYmgCrl1Sjy1ppnPJxE0Y6gKijbhiEzERO/8ORC30IDQOAHHnv4dL8dY+8CU4wKw0eaupw1EdLiElrRtA0Ti4+gBv0uJsFXQrm03VJ+0sK93uqbD9OCuZB1e/ZTUqZGLOn9c3ktw/yaMYXkejTg1XVto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h7f5owDH; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-65f880c56b1so70679727b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 12:20:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722626185; x=1723230985; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YIO+qgUdBIl41nA20oLk13lAMgqpqVOKXB0K8n0R60E=;
-        b=oAD0YljULYV22N0DAGKDrah+IAvs15F6GN17b/XWi4T5QrzMcrAulymNApOErcPkVC
-         QyHUEet/UKf/hOVMNn7WpVNclq5dJWsvQQQa+mlMjCMWl0cWhX8RA6+kRc8UhrfP427J
-         7EH3YnEZ9l4SqJtLhQ0BDZwAdcQAw94SEORtPz4+RXVdDRXaeQEek4d9BfbBaWzdPjCa
-         ekSsHQkVUKNqWQrKLqVqxxsFDmv4g3AKSPLJa9wbdG/KHu/jGQ7C69nI/YyWBTXLhDdq
-         SNYU8O+wvqOaezr3Y/CsgIQUkhbdH3idX8EoFIvxbiaBW+7ehTEut5DBOaYmmGT0eMxP
-         HxWg==
+        d=linaro.org; s=google; t=1722626449; x=1723231249; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gZNwK4s34iYGvIbS46dI7pOTIc2gw03JA9isN6WtOpc=;
+        b=h7f5owDHZCyceSJcMJflUWGrQOKrmAMf/DVuI2Y9BVtqZEYDSY42rZlJns5OQv4Jgm
+         kYUdmYFVRH9jgJFVUY/lzW8fZjdQ7bpUHhAwfFrNCPL1hO7ZwVGFNxZV4GPWy5t7W7pN
+         5AspOYE4RzVLoQfp8jeSCUuXwyeKvH+htIIqS4kzQxdMtr8A8hP/yHWq1GhdDTv4baZ8
+         s2QNueIaZxpEq914c4C7ZD+k5x3xFP83LeCV6WOlIzF0lFCTRGw8nUyhNKTAwY9ys28A
+         6IWuNese7icnurDLtGsbd/otB2W3tDN9JvK2M4pkqtE5vYCxPhp3e/8eUu7AFe9z0jDr
+         sgCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722626185; x=1723230985;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YIO+qgUdBIl41nA20oLk13lAMgqpqVOKXB0K8n0R60E=;
-        b=Ja43dxCZoW+SXlh0E5jtQHuToTwwXoNxXoKXjQbp7NXmRpd6YXkk3wan/Nx1yqRwfh
-         dJum9x0SSfXhwDhYQGzWx1zyuvwsYEB0Kwz9c+UtIxQsDg9ny8Wn+XbicXxl0DJc2mjx
-         QAyRL2UwVBHSiZtT1Ty50pyKL294eUfOokPYjWz6YqFOkPRcbXg5nniQeB/R1gwdo+cx
-         37kAw5b1Oj2P6t1VXgSeewekVvrArXuUtC6Lf9s4tPUU7I6qwPb/l/Zyv7G5iKVtEIpw
-         yGtjowHBUHP6hzGMkDghHUErUhAlCcxkiVlQichHbPVZHFXrySB8QKNfp59930DErtMN
-         7fkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn5WccaoRG307WlVWbu+p0Afr73C1uk6DQwAXSEI/++1D+PbUjA+1wk1wh5R3bEvSdqbNNFn9v0JxJa+qGkaL/yDTOCSKNamEprvDw
-X-Gm-Message-State: AOJu0YymF5fs6BjQ+CIqxwYexxEMVx0EMYsJzjr8MPuNnc5WPZ0G/waz
-	jSI9sJRCI9/Km81xvqQoRaVd55xagGSO8Hd52+UTYIp8IZD+YKHxPXew6ahElcyUOrVA42y+YM5
-	sFg==
-X-Google-Smtp-Source: AGHT+IHp8m7VmlNHNgyndl5iB/Qrp58SL7daPo+m+ANFoMuJ9ymw7NFJIbT8yKQlLqeCw0sES7T/md/ku+4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:d4c1:b0:1f9:ddfe:fdde with SMTP id
- d9443c01a7336-1ff573f60ecmr1961065ad.9.1722626184573; Fri, 02 Aug 2024
- 12:16:24 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  2 Aug 2024 12:16:17 -0700
+        d=1e100.net; s=20230601; t=1722626449; x=1723231249;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gZNwK4s34iYGvIbS46dI7pOTIc2gw03JA9isN6WtOpc=;
+        b=NjuAFUlzpvjvhiZaGFLW85Xns6PLp4GXWw/P9hMltu2h5dhG2Eau/KXJzOLNMEywCU
+         cpEe2/5HynJe1x+Yq4qU0hns74fkXUBUy7y8ScUNZzbJR9Eh+EumhyrpLZ3T3V6SJJWS
+         r2xdWnr/MQPt2Ht2yDsjsnPkIXUXLyd0cHUINfw4q7OIw5w3YI4NSXTBSJ6cf+7fPHYS
+         igbybQ1obVq6w/v1O8t3wi4QLPYnoCGjmaXzoeqzFWb9uAURqcPtCQamgPdLL4uy8gfk
+         9Aowga5Cne197aunNVq09c5mW1GU2Gi9OfwF6vGMN4zANIdmvpIjJ4lLSdoGmDGail5/
+         XZNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWU6NT7aEXt74t5j9+bJ+DEETMt5LjTG4Vo9gOhnLvHfZktFt87BhPEerW+m+vGhSZClC6RoBiLR0tOr5u206DILR7cv+fP30SIz5m+
+X-Gm-Message-State: AOJu0Yz2AeEeSn2PmGv+97cKlye6+fMB8viv8JNIQ9tDhjJEL8CLEFcG
+	v4d+injGlwE4E/f/CcwQgtEJXGl4Qp0vnCYqNJFWl19M3BWhrrLEkDkleI/6xD4gRHXzUL8INZa
+	p2JAFTgxIn6eZCmZl6hpkT+y0mUXmjPivHcFCxg==
+X-Google-Smtp-Source: AGHT+IEqzG5OJVYb0N/hhSy3/aCVZpwuaC57g1J8oBIELAMwqUOkxVNDUu61cFnvy19WDb7qlbHaefm1NS450MOTFBE=
+X-Received: by 2002:a81:c20e:0:b0:63c:aa2:829d with SMTP id
+ 00721157ae682-689637fccd4mr52822217b3.44.1722626449505; Fri, 02 Aug 2024
+ 12:20:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802191617.312752-1-seanjc@google.com>
-Subject: [PATCH] KVM: Use precise range-based flush in mmu_notifier hooks when possible
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Sean Christopherson <seanjc@google.com>
+MIME-Version: 1.0
+References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com> <20240802090544.2741206-9-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240802090544.2741206-9-kevin_chen@aspeedtech.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 2 Aug 2024 22:20:38 +0300
+Message-ID: <CAA8EJprcmQvE3PjySxBKq7Qv3JHJHhic2aQ5MDnwZaf-D=K2Rw@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] arm64: defconfig: Add ASPEED AST2700 family support
+To: Kevin Chen <kevin_chen@aspeedtech.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, 
+	andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, olof@lixom.net, soc@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	quic_bjorande@quicinc.com, geert+renesas@glider.be, shawnguo@kernel.org, 
+	neil.armstrong@linaro.org, m.szyprowski@samsung.com, nfraprado@collabora.com, 
+	u-kumar1@ti.com, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Do arch-specific range-based TLB flushes (if they're supported) when
-flushing in response to mmu_notifier events, as a single range-based flush
-is almost always more performant.  This is especially true in the case of
-mmu_notifier events, as the majority of events that hit a running VM
-operate on a relatively small range of memory.
+On Fri, 2 Aug 2024 at 12:05, Kevin Chen <kevin_chen@aspeedtech.com> wrote:
+>
+> Enable CONFIG_ARCH_ASPEED in arm64 defconfig.
 
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
+Why? Usually the defconfig changes have "Enable CONFIG_FOO as it is
+used on the Bar Baz platform" commit message.
 
-This is *very* lightly tested, a thumbs up from the ARM world would be much
-appreciated.
+>
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 7d32fca64996..b393735a695f 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -38,6 +38,7 @@ CONFIG_ARCH_AIROHA=y
+>  CONFIG_ARCH_SUNXI=y
+>  CONFIG_ARCH_ALPINE=y
+>  CONFIG_ARCH_APPLE=y
+> +CONFIG_ARCH_ASPEED=y
+>  CONFIG_ARCH_BCM=y
+>  CONFIG_ARCH_BCM2835=y
+>  CONFIG_ARCH_BCM_IPROC=y
+> --
+> 2.34.1
+>
 
- virt/kvm/kvm_main.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index d0788d0a72cc..46bb95d58d53 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -599,6 +599,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
- 	struct kvm_gfn_range gfn_range;
- 	struct kvm_memory_slot *slot;
- 	struct kvm_memslots *slots;
-+	bool need_flush = false;
- 	int i, idx;
- 
- 	if (WARN_ON_ONCE(range->end <= range->start))
-@@ -651,10 +652,22 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
- 					goto mmu_unlock;
- 			}
- 			r.ret |= range->handler(kvm, &gfn_range);
-+
-+			/*
-+			 * Use a precise gfn-based TLB flush when possible, as
-+			 * most mmu_notifier events affect a small-ish range.
-+			 * Fall back to a full TLB flush if the gfn-based flush
-+			 * fails, and don't bother trying the gfn-based flush
-+			 * if a full flush is already pending.
-+			 */
-+			if (range->flush_on_ret && !need_flush && r.ret &&
-+			    kvm_arch_flush_remote_tlbs_range(kvm, gfn_range.start,
-+							     gfn_range.end - gfn_range.start))
-+				need_flush = true;
- 		}
- 	}
- 
--	if (range->flush_on_ret && r.ret)
-+	if (need_flush)
- 		kvm_flush_remote_tlbs(kvm);
- 
- mmu_unlock:
-
-base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
 -- 
-2.46.0.rc2.264.g509ed76dc8-goog
-
+With best wishes
+Dmitry
 
