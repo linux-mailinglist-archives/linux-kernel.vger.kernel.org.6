@@ -1,83 +1,103 @@
-Return-Path: <linux-kernel+bounces-272298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D589459CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:22:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B519459D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08D21C22942
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:22:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E75A9B21993
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D921BF33D;
-	Fri,  2 Aug 2024 08:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777221C2320;
+	Fri,  2 Aug 2024 08:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q1uOcXmU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CNdNCScV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Kn7Ndqi2"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CC31494DE
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 08:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950FB13FF6;
+	Fri,  2 Aug 2024 08:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722586948; cv=none; b=dtZ0ZFM/icyvK2x4jMvITUAHkwAVulAm10vCO8CwxwGbiYArMvXf/fjzdkDJ6AkI0fl6bS1LOXSFw07JfEosS9nMKAqt9To8JhEmsFKiZU0bxlSlDbwzAISfh27+IjBx3IJ9XSUzfEXmOx7HqwDUVXTT5V6c5y03VI0I1Vw296E=
+	t=1722587014; cv=none; b=JXghGY6dhp25/AkQ1JAWG2Cg4/11P8fHQcFU17RY5pbvtBsH4plnOscM0vIgumhM+JIknw5xRw/nEsFnQtPPrFXPq2tEs0GxK/qyqS0n429KJw2z6kp+UVJ4oyyvsOICPlviXfyMWMx3AuPcGJTvtuZBGiH3p0zd4JKqqCP6mhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722586948; c=relaxed/simple;
-	bh=pzimt/9MBCN8azyxhMdkRPjEi2v6pkUcSpRbvXIV+1c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W4qBRRojWC0YD64goVvdoLZSwuJRyf+lwmu51Mz4QB1nQfdLx7VL6GcNOxKVCZ5EZ9U5Q1cmqunWTyXGWcuUViZKyrKWodmLFWKIDT/GGK9K2YY76JlR6nGP8P2HWgNaYcVPB7DSOK2cgAi1+H5NA+7/MhaPztqhUKizxqXV2LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q1uOcXmU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CNdNCScV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722586944;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=69gs3blZoT1306kf5AjWiNpS1u+Pu4rBAwPi+uq79ws=;
-	b=q1uOcXmU1XbaHH2CVmtwBCB5eLW1YgVgF48tKovgtjEPVrbmLZYWAILMWdwrSG3zQP+AQ7
-	fvJkDGn2uLc+9rQD7R5gmjgvV4SAiFXP0OL8PlyO1SrO/OJj+D7SZP99uYWXqkeLIfiaYy
-	wPiEFf06gkJwT+tyM0cXeA11ZOMsp3gVt35dlI6YJRGqO/v1NNkNfzG+D7/Pwt65LeEOm2
-	28Mn4CPbvCrBrhyrfQ0A/hdXPxvhCnMgaZPpOhtQox/VIi/Myv9cfWMYxjsC7MBQFBxr3B
-	v53vkBagdpVpEajQVgCyh+mxEIxFFHEhnlf9JVYgx8wpDVEKIcYbun3vvsh4Lg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722586944;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=69gs3blZoT1306kf5AjWiNpS1u+Pu4rBAwPi+uq79ws=;
-	b=CNdNCScVlXeKnfNPSpDkRptI7V8o9b5k6Fkc6/kf/IdxHChXYmc4OPkzrxPuit+n1NN5Ox
-	rcTmHCcNF4Bzx8Ag==
-To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
- linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
- linux-mm@kvack.org, keith.lucas@oracle.com, jeffxu@chromium.org,
- rick.p.edgecombe@intel.com, jorgelo@chromium.org, keescook@chromium.org,
- sroettger@google.com, jannh@google.com, aruna.ramakrishna@oracle.com
-Subject: Re: [PATCH v8 5/5] selftests/mm: Add new testcases for pkeys
-In-Reply-To: <20240802061318.2140081-6-aruna.ramakrishna@oracle.com>
-References: <20240802061318.2140081-1-aruna.ramakrishna@oracle.com>
- <20240802061318.2140081-6-aruna.ramakrishna@oracle.com>
-Date: Fri, 02 Aug 2024 10:22:23 +0200
-Message-ID: <87v80j1ghs.ffs@tglx>
+	s=arc-20240116; t=1722587014; c=relaxed/simple;
+	bh=/JFOpX6c03oiUEVf2eeXWR8mNod1ZH7BtsDAtQdND2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=br2xvLCI9DdcV7cKOlERlzl+ikvnKdswt2jGli33L9v67ucCqUpEGIVqbSw0buaasd1dLsEXKFEHKM4DzMbEefgmbqyLwPGjsrI+IrgfjRGdJjlYM5YmXZpEqJ19xE38nCmIrI+pp1ZbYXSDbHU9r8oWpyy5uDLZdsmKW6aBDC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Kn7Ndqi2; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ocBM1K9/X1NEjC6z+jnrLicjhSmeXGMLZSZ4AGPCtSE=; b=Kn7Ndqi2p+R9/chxP+VspXbcKz
+	kNYNF6hLTV+l9ivKcO/BUvd4J3xsc71S+I593gOisUtBjpX3Ic6Amc/uKzcBtPhVo1h5Mh03pmWyQ
+	e92SkQTpbg6rfzt5IxpSUlMSdEjlDhdWv7iq95u9viAPNOp5P564naSw0ZdUYm7uJVDke1yspqmH1
+	mPSO84IFk3JMj+/X0691VjU7yj5bLzN0ACcqculKR1ai+XWDDI0usFRw32w2dGt8yBAlKl4dwa2S1
+	/q3bJnTOsGQnmf1/rYUq+udpwYrm3URd/mkpYBNzVSSP0gE1eUhL6Jt8O9gP6yliG2yZPNvfDH0L+
+	yeIOSTfg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42218)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sZnZK-0004zr-2x;
+	Fri, 02 Aug 2024 09:23:23 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sZnZO-0007tN-9D; Fri, 02 Aug 2024 09:23:26 +0100
+Date: Fri, 2 Aug 2024 09:23:26 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: jitendra.vegiraju@broadcom.com
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	bcm-kernel-feedback-list@broadcom.com, richardcochran@gmail.com,
+	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+	john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+	andrew@lunn.ch, horms@kernel.org, florian.fainelli@broadcom.com
+Subject: Re: [PATCH net-next v3 2/3] net: stmmac: Integrate dwxgmac4 into
+ stmmac hwif handling
+Message-ID: <ZqyXfonFv1GNlbvK@shell.armlinux.org.uk>
+References: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com>
+ <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Aug 02 2024 at 06:13, Aruna Ramakrishna wrote:
->  
-> -__attribute__((noinline)) int read_ptr(int *ptr);
-> +noinline int read_ptr(int *ptr)
+On Thu, Aug 01, 2024 at 08:18:21PM -0700, jitendra.vegiraju@broadcom.com wrote:
+> +static u32 stmmac_get_user_version(struct stmmac_priv *priv, u32 id_reg)
+> +{
+> +	u32 reg = readl(priv->ioaddr + id_reg);
+> +
+> +	if (!reg) {
+> +		dev_info(priv->device, "User Version not available\n");
+> +		return 0x0;
+> +	}
+> +
+> +	return (reg & GENMASK(23, 16)) >> 16;
 
-tools/include only defines noinline for gcc, so a clang build won't have
-it ...
+	return FIELD_GET(GENMASK(23, 16), reg);
 
-Sigh...
+For even more bonus points, use a #define for the field mask.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
