@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-273069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2A5946440
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C653946442
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F002836E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:14:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E265283720
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D6C54657;
-	Fri,  2 Aug 2024 20:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6900650A63;
+	Fri,  2 Aug 2024 20:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mATlp4Jt"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0HY8IUiH"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BC94D8AE
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA211ABEB3
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722629674; cv=none; b=QHtCKl0MbXj5FszjnOIkvA5s2KuCyxYj03TLAIxE4Nhl8NPm7HnfSADdyrwlLCSJK48ljPjKl+mrJcXFDSsIV2UzWd6Xyk5bYBXkqj2L7DZhuABTl0FfOy1W6pHHH2eOgc7KCVKEzDN3uAj6hinCbj17oR+TlNbOISiP9F8Ub0U=
+	t=1722629794; cv=none; b=W3K8ysj+qdYlR2XKyOhNDU1mzDcG7FWmAOSALUqq/qBnUW1IiNZi0Q3TJ0llF1PbzWIxBU/CmfbmAy2b5wvnN1i7KKEMpfSQ1IkJILk2VKSNUTGCTPBXsD27J5KIF/Z0k3+Xw0Wv97lRaZQ6CHP9EN5tw278CfzsnRyWvuHNcLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722629674; c=relaxed/simple;
-	bh=xe5PnUuA6XU4wC83rP+yXvrEX+ZHetMhcLHOc+nWmBw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ikPJujBtL78DXW4KFa5LiAKlZakiMwtoql6FKq6whJC4G/Q4xBNLGJBrjVdGzOhkLRYv02EmS4wu8Z16GQfEHhUOfQcfUMyi7jB2MI9+HD0LkQfrQ0Ar5ulsLxVPeCqE0CXsU6kFILn9YD8BCQli77TYSQ/GzpLsuVYW4XfSBfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mATlp4Jt; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1722629794; c=relaxed/simple;
+	bh=TXvdlxOVU7doVd8ZsCfPhM1Ucj5S0xNZ2Rcj/xvqPgc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=U9kxYR1nju1GXF+0bttCZ8Zm9SGGpOk8HB6A1iAp16cDIIIsrHDqNUM+Bncbj/xiWbdOXFGokROyW8M4JSzXr0GSFU4aqj8ymFxidxL0j7Q7klU/evCWTuL6HtfAaGmQkv+kWcEXKaHEfatRgTM/77bW5+GdvjS73Ng21pdvnHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0HY8IUiH; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fd774c3b8eso34594265ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:14:32 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71065f49abeso2237331b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:16:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722629672; x=1723234472; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722629793; x=1723234593; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WQ+fEs3LsntUlJZqxcHJm6QlCpJ7OHbayZdrEYcxOd0=;
-        b=mATlp4JtpwPe93Ysth8NLRyYWv9aLg9tLpld9gWet4SQ9zHXR67E1lZjIAKLXfHxIu
-         KxVNenPJ6FSKIc5slGjqV1KmF7HZaPmlRltcy9dQ/h2lE93YO0vtjWqX2CqMDjAHY0hb
-         MO2JbjE3ddVndQkQrStIhSLQMhQkbaxbCMC0eZBWRzpZOPGI7K+xviNXEbnYnkuDIQ2A
-         aS/VDpNo/LoseY5HvMvjeTen5EU4srPSrywucyxdgMNCSzs84H9kvGrIUZc1kECUTL05
-         vdSGGNYFfjoSZZGa0xkvXVwCqcFikbmJLUw2z8YYixVedyp3631QXK2UlCRMWtZE64/P
-         L48w==
+        bh=jZQFLav+WlDGG6CozZMcdSkYFx1BmtT+dLZeZWTkJks=;
+        b=0HY8IUiH+anGj05Z1ZKisCJvw9fuBaiTE09x8iDjrZqXj/ReWC626MsvdJ3gnCkXWx
+         +TXRp0cAhlgOnHOHJLXQU32efo104BNZ3OLsaHhADYeUH8UixsOouTuboOZNAqxbR+W8
+         T+kenzNTsa6B2z2kXrFAVbsJU57OvdQGt8AFYL4AzpG3xh5FmjHULYu/NCryDvyk0cKm
+         C9se5OTzTOCDvny+Kg2bH8BGReGw7iAcUAALcu8I6z4wwi70RQUF1J/iqXnzKEUKVvdi
+         Y3RWX0aIeotu5+1+PodLJ+KGETg96z2n4/lXHrJKw1kn4BY5OdvtdoTWPMv92vcjL8M9
+         mK0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722629672; x=1723234472;
+        d=1e100.net; s=20230601; t=1722629793; x=1723234593;
         h=cc:to:from:subject:message-id:mime-version:date:reply-to
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WQ+fEs3LsntUlJZqxcHJm6QlCpJ7OHbayZdrEYcxOd0=;
-        b=UzL+x911W0tlAuUiw0UKWoBrn5sBzIFyAxbW5Yl2/3HrKCaC20BdxQOLlhvshJeXmD
-         xfDzxrurF3hD1IjzzmHnMJOgtWLMPNUo0HiWRK/Pv6bkBuwKMMPbS8+9OkUUwVTUb008
-         dK/ZXEAZd3CbEhSi7Uas4cNL9S7VDLR3av+/zJFM1wyDInbR7/vV9wg4/lVtRwW/CONg
-         +zLs4KMszR6wa87AIS6uF3OzRvXhPCWDLqcC/XPmk1UayE5Z6i7ZWpoaMHfhYwpyrynT
-         UlwzPj+N+KXv7p96VkK+YcQ/1b16DavVVOIgGowKaV4ahtnbt+o6cXmg2dBl7nOW1rFY
-         wRvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwdaaYqr/Z+Cu6oTxm3FitC+XDuFVaR08UCo110W+1oFBx4UqQTrt1TFqJYKy4uXdvAQNGYNIHf35vpdonHJoYL0kh4Ffm0G2AITyp
-X-Gm-Message-State: AOJu0YzZxlWpB1Z9jhcOvPlAPPUCo55upR+EaZyJM9oSzkmJ4e5D7TB3
-	DQ+S0a6+ac4oL5Sk7JK/WQ5pVhEjMB/p/rSTR/DYnav0+qCYKW/54jVPU2doPhWb0FB4x4YxRa2
-	P6g==
-X-Google-Smtp-Source: AGHT+IHDcF0qP1uJC6IVnhoZQo/YQGDSYJtI4Xt2dbbYqJZ/1Z4WIL3eIZE7tO+KB7/Cx1q3ay0AoCbiBbQ=
+        bh=jZQFLav+WlDGG6CozZMcdSkYFx1BmtT+dLZeZWTkJks=;
+        b=C5PfcTKHHt3ErQZuD3freY5DxASXaY6jrvuz9cmX1SoLLUpmwmbMRpEnO3fcPk94MM
+         8lupU264m7DKERq7NtSeNIVvBihVoBRx2vSUvpThrZhY8Vy7xgpsV4vaqJNvfk1fB9c6
+         S3bnSzgebYe7FOeA9cdztdwrqfPF1Qe/lRtfB3xYqIrwRddj7HW7RTb05SEM+Sa81wkU
+         9XEJY2UGT6vWscTk9XjcAQy8iAwpqR59SGQwKp3v2ixgaHJ9yTTCJUJ4WaLSwAam3Omt
+         HRsTP4Yum50IHayMJKpnAkPhQanmqSF+HqeLPACUWeUs7wwIDm1DEcA9QxxLDf3st+Hj
+         942w==
+X-Forwarded-Encrypted: i=1; AJvYcCXGDeh42SAeDXik7VD8W+g+75j9SWUXl0V61cgtJSD6lA5uSKLfk68/ccY7eaF0G4OVqsQ+jMjNefohA7Gex967Q0hv6R6XEs2vQiSH
+X-Gm-Message-State: AOJu0YyqTpz5zbrw30a0nJALGz9UeNZZ/D+K/gAAtCg/jIvnwkfsBcLc
+	fJasY3A5usDqOV/q3M3F9MSS6qvXJMiMAMJu0aKXko9pk/l15j5qz+m0gu/uMZ7rm/6PaeDJqzu
+	Jgg==
+X-Google-Smtp-Source: AGHT+IFb99jmBNeDqQRBYLcydt+zXBMQx4p/CU8oV2WUABtLxdEGZvp3I6qLVp2sa1B93X8GgzfSYMLoBaw=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:110e:b0:1fb:526a:5d60 with SMTP id
- d9443c01a7336-1ff57b85debmr1624915ad.4.1722629671812; Fri, 02 Aug 2024
- 13:14:31 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:aa7:8e9c:0:b0:70b:a46:7dfa with SMTP id
+ d2e1a72fcca58-7106d0a4be6mr112403b3a.5.1722629792616; Fri, 02 Aug 2024
+ 13:16:32 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  2 Aug 2024 13:14:29 -0700
+Date: Fri,  2 Aug 2024 13:16:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,69 +71,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802201429.338412-1-seanjc@google.com>
-Subject: [PATCH] KVM: selftests: Always unlink memory regions when deleting
- (VM free)
+Message-ID: <20240802201630.339306-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Use this_cpu_ptr() instead of per_cpu_ptr(smp_processor_id())
 From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>
+	Isaku Yamahata <isaku.yamahata@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Yuan Yao <yuan.yao@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Unlink memory regions when freeing a VM, even though it's not strictly
-necessary since all tracking structures are freed soon after.  The time
-spent deleting entries is negligible, and not unlinking entries is
-confusing, e.g. it's easy to overlook that the tree structures are
-freed by the caller.
+From: Isaku Yamahata <isaku.yamahata@intel.com>
 
+Use this_cpu_ptr() instead of open coding the equivalent in various
+user return MSR helpers.
+
+Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+Reviewed-by: Chao Gao <chao.gao@intel.com>
+Reviewed-by: Yuan Yao <yuan.yao@intel.com>
+[sean: massage changelog]
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- tools/testing/selftests/kvm/lib/kvm_util.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 56b170b725b3..75f2d737c49f 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -712,16 +712,13 @@ void kvm_vm_release(struct kvm_vm *vmp)
- }
+Not entirely sure where this came from, found it in one of my myriad branches
+while doing "spring" cleaning.
+
+ arch/x86/kvm/x86.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index af6c8cf6a37a..518baf47ef1c 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -427,8 +427,7 @@ static void kvm_user_return_msr_cpu_online(void)
  
- static void __vm_mem_region_delete(struct kvm_vm *vm,
--				   struct userspace_mem_region *region,
--				   bool unlink)
-+				   struct userspace_mem_region *region)
+ int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
  {
- 	int ret;
+-	unsigned int cpu = smp_processor_id();
+-	struct kvm_user_return_msrs *msrs = per_cpu_ptr(user_return_msrs, cpu);
++	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
+ 	int err;
  
--	if (unlink) {
--		rb_erase(&region->gpa_node, &vm->regions.gpa_tree);
--		rb_erase(&region->hva_node, &vm->regions.hva_tree);
--		hash_del(&region->slot_node);
--	}
-+	rb_erase(&region->gpa_node, &vm->regions.gpa_tree);
-+	rb_erase(&region->hva_node, &vm->regions.hva_tree);
-+	hash_del(&region->slot_node);
+ 	value = (value & mask) | (msrs->values[slot].host & ~mask);
+@@ -450,8 +449,7 @@ EXPORT_SYMBOL_GPL(kvm_set_user_return_msr);
  
- 	region->region.memory_size = 0;
- 	vm_ioctl(vm, KVM_SET_USER_MEMORY_REGION2, &region->region);
-@@ -762,7 +759,7 @@ void kvm_vm_free(struct kvm_vm *vmp)
- 
- 	/* Free userspace_mem_regions. */
- 	hash_for_each_safe(vmp->regions.slot_hash, ctr, node, region, slot_node)
--		__vm_mem_region_delete(vmp, region, false);
-+		__vm_mem_region_delete(vmp, region);
- 
- 	/* Free sparsebit arrays. */
- 	sparsebit_free(&vmp->vpages_valid);
-@@ -1270,7 +1267,7 @@ void vm_mem_region_move(struct kvm_vm *vm, uint32_t slot, uint64_t new_gpa)
-  */
- void vm_mem_region_delete(struct kvm_vm *vm, uint32_t slot)
+ static void drop_user_return_notifiers(void)
  {
--	__vm_mem_region_delete(vm, memslot2region(vm, slot), true);
-+	__vm_mem_region_delete(vm, memslot2region(vm, slot));
- }
+-	unsigned int cpu = smp_processor_id();
+-	struct kvm_user_return_msrs *msrs = per_cpu_ptr(user_return_msrs, cpu);
++	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
  
- void vm_guest_mem_fallocate(struct kvm_vm *vm, uint64_t base, uint64_t size,
+ 	if (msrs->registered)
+ 		kvm_on_user_return(&msrs->urn);
 
 base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
 -- 
