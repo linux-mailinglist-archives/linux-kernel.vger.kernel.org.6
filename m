@@ -1,166 +1,201 @@
-Return-Path: <linux-kernel+bounces-273236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C0C946639
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:42:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F3194663B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319AA1C211F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:42:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18272B20F98
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E82B13B297;
-	Fri,  2 Aug 2024 23:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0042A13B58C;
+	Fri,  2 Aug 2024 23:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="e6V0++1/"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZG7gkNKA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4251ABEA4;
-	Fri,  2 Aug 2024 23:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99906137932
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 23:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722642120; cv=none; b=q/ZrndnNJ6bJ2JsJ8cswA8sZrUq4eUU0QJEtr9FrdbTYKOpiitGYTCt0ii3yujDA3YD6a9RFyl072h80FPlYVsMrh7rtIZm9TBNkaFVWuinl5dbAvhbdnuHf7iEU0gZ5WGNTuDeO4U0XGwXIgn6nC89n2/VXdbfa36r6sbDklbM=
+	t=1722642316; cv=none; b=Fbc9esX4DZcXfgKxHjMIutDJWD92z+ekjkl34g8r6S7UNdIZ7bO8Cw5xgN8cqyM58cxOIoT/drVjFEDPlSOTvAxFJvosTgtR/3axMPTZlIuqOsjtsg0TjcHhsp0AIiG50eCeJqWgo9vKQXLFzPFjTldLR3xscNXu3fQ29bXSMjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722642120; c=relaxed/simple;
-	bh=DHCunDeog0Za9ks5cIJvcWeyEcT/xkyRWMfGn6wuHEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RsX4cdbBxmFRJJhgp26GytNEYVtaQP5CSd80v/l9FexcyMpjB6uHVTbsHH0Bm7ra6kdUKyjwdYePjJCsboqppU1Kc06RrdnRZyfEdseEiLfZa9bbzzyRsqtnhc4VdZfuAn3Zg+rzfrcrYWaTdtR/oXxRR8efBkl9KfY3a7/3yAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=e6V0++1/; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wNFhIznygtRVPXC8Af2d5TRRPA6ucixBU45ohUiuQ2o=; b=e6V0++1/C292sJZhWCfThTh2aX
-	56V8OmzYUAEmz5ddqfu89Pw6pZbl9/CoWtsGQ1DXFl6WhJkhaQXIwFOBAjGJCxFf0N9d1e6s2G02k
-	MscYXtS6H/JzgcEsc5iVwQGWKTmREJ9eYwdhgWDOo/myX/V+MlbL0mD1oP44cNP7Z5+AZ89AqjtcK
-	eTj/TBXOZooZujdWoXXkreN4WOgba+cdJfMP7OHOZOTz26UtoMUaXxHRYVGebcamB9cqMruIO1+9P
-	9wq32o+Dv7/JP46+rDmcgNO+OtpQMtL4ECEr6keSca3BjuKkdVjjTRLlz/3dFFKNCgbB/lVvi+xvI
-	tS1mqrNA==;
-Received: from [2001:9e8:9c5:5401:3235:adff:fed0:37e6] (port=53854 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sa1u3-002FTi-Rw;
-	Sat, 03 Aug 2024 01:41:44 +0200
-Date: Sat, 3 Aug 2024 01:41:40 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH] kbuild: clean up code duplication in cmd_fdtoverlay
-Message-ID: <20240803-cryptic-tan-emu-7c58ce@lindesnes>
-References: <20240725192317.258132-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1722642316; c=relaxed/simple;
+	bh=YiCrs0mu/8wgwKATt/N56B6b/WLL8Ibek3OOIeOjpDM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=TNg7Ggnr0NZZMghbN8o999mOhiJM20F6fMFi7eLbroTnWFh7lYFH16zlNH4wYbGj+Ps+C6DeQ4Yaiuf/qPDFwhdgHchShcpFPDSyrbwS+0ImkiF0fGz3p6uQNo6MtY66cx+0Us8Uuposyx+eHieoKwOMUAyxyBsO++ORqHgnq7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZG7gkNKA; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722642313; x=1754178313;
+  h=date:from:to:cc:subject:message-id;
+  bh=YiCrs0mu/8wgwKATt/N56B6b/WLL8Ibek3OOIeOjpDM=;
+  b=ZG7gkNKAXfjQDDGiU7G7ovI6AZEkWOJD2fs5o+vP6pPypJ/pdkjgNBNe
+   jBrgsq3xeyXiTB4LjT0GlnnmCxFbyUkRNqob5ECsKarlDGjHKLhb+3kI3
+   DUyTYaYJG9paJ64UsnVjwJ1O04Xrc5UlJ5z9JrG+iuTk1U2NgTwxf8und
+   YtkrlYFIQX82xtOymapHKYA+Q11rTGff9WwhYYEscg09niJ8Y7ulx1e3A
+   NvgT8xk85Ap0TkfuJTciIAEhN/ILjSqzK/F+xRs0U30gzLP0EHIlwbdZR
+   U0u4vW6YtpFL+CtX8h1/t6uNd+anIuZ8jWppmPvJ8hI69op/U6azzo5Iy
+   w==;
+X-CSE-ConnectionGUID: vtvip1tmR6iQBS9NPyy7KA==
+X-CSE-MsgGUID: 9lEUT+fZRE6kptsOzWHYBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="43197535"
+X-IronPort-AV: E=Sophos;i="6.09,259,1716274800"; 
+   d="scan'208";a="43197535"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 16:45:12 -0700
+X-CSE-ConnectionGUID: unFtrLAbS5a/nNSYDT0VkQ==
+X-CSE-MsgGUID: AMOfXGOeR7WfbqlIN+AZcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,259,1716274800"; 
+   d="scan'208";a="55507245"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Aug 2024 16:45:11 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sa1xN-000xYW-1R;
+	Fri, 02 Aug 2024 23:45:09 +0000
+Date: Sat, 03 Aug 2024 07:44:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240729-cbc-2] BUILD
+ REGRESSION 64c57c9e06ed6d50ba26688a7d2b60a1c33ff20f
+Message-ID: <202408030746.a4dbmbYD-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725192317.258132-1-masahiroy@kernel.org>
 
-On Fri, Jul 26, 2024 at 04:23:14AM +0900, Masahiro Yamada wrote:
-> When resolving a merge conflict, Linus noticed the fdtoverlay command
-> duplication introduced by commit 49636c5680b9 ("kbuild: verify dtoverlay
-> files against schema"). He suggested a clean-up.
-> 
-> I eliminated the duplication and refactored the code a little further.
-> 
-> No functional changes are intended, except for the short logs.
-> 
-> The log will look as follows:
-> 
->   $ make ARCH=arm64 defconfig dtbs_check
->       [ snip ]
->     DTC [C] arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dtb
->     DTC [C] arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dtb
->     DTC [C] arch/arm64/boot/dts/freescale/imx93-var-som-symphony.dtb
->     DTC [C] arch/arm64/boot/dts/freescale/imx95-19x19-evk.dtb
->     DTC     arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-imx219.dtbo
->     OVL [C] arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-imx219.dtb
-> 
-> The tag [C] indicates that the schema check is executed.
-> 
-> Link: https://lore.kernel.org/lkml/CAHk-=wiF3yeWehcvqY-4X7WNb8n4yw_5t0H1CpEpKi7JMjaMfw@mail.gmail.com/#t
-> Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/Makefile.lib | 28 ++++++++++------------------
->  1 file changed, 10 insertions(+), 18 deletions(-)
-> 
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index fe3668dc4954..207325eaf1d1 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -400,26 +400,23 @@ $(obj)/%.dtb.S: $(obj)/%.dtb FORCE
->  $(obj)/%.dtbo.S: $(obj)/%.dtbo FORCE
->  	$(call if_changed,wrap_S_dtb)
->  
-> -quiet_cmd_dtc = DTC     $@
-> +quiet_dtb_check_tag = $(if $(dtb-check-enabled),[C],   )
-> +cmd_dtb_check = $(if $(dtb-check-enabled),; $(DT_CHECKER) $(DT_CHECKER_FLAGS) -u $(srctree)/$(DT_BINDING_DIR) -p $(DT_TMP_SCHEMA) $@ || true)
-> +
-> +quiet_cmd_dtc = DTC $(quiet_dtb_check_tag) $@
->  cmd_dtc = $(HOSTCC) -E $(dtc_cpp_flags) -x assembler-with-cpp -o $(dtc-tmp) $< ; \
->  	$(DTC) -o $@ -b 0 \
->  		$(addprefix -i,$(dir $<) $(DTC_INCLUDE)) $(DTC_FLAGS) \
->  		-d $(depfile).dtc.tmp $(dtc-tmp) ; \
-> -	cat $(depfile).pre.tmp $(depfile).dtc.tmp > $(depfile)
-> -
-> -DT_CHECK_CMD = $(DT_CHECKER) $(DT_CHECKER_FLAGS) -u $(srctree)/$(DT_BINDING_DIR) -p $(DT_TMP_SCHEMA)
-> +	cat $(depfile).pre.tmp $(depfile).dtc.tmp > $(depfile) \
-> +	$(cmd_dtb_check)
->  
->  # NOTE:
->  # Do not replace $(filter %.dtb %.dtbo, $^) with $(real-prereqs). When a single
->  # DTB is turned into a multi-blob DTB, $^ will contain header file dependencies
->  # recorded in the .*.cmd file.
-> -ifneq ($(CHECK_DTBS),)
-> -quiet_cmd_fdtoverlay = DTOVLCH $@
-> -      cmd_fdtoverlay = $(objtree)/scripts/dtc/fdtoverlay -o $@ -i $(filter %.dtb %.dtbo, $^) ; $(DT_CHECK_CMD) $@ || true
-> -else
-> -quiet_cmd_fdtoverlay = DTOVL   $@
-> -      cmd_fdtoverlay = $(objtree)/scripts/dtc/fdtoverlay -o $@ -i $(filter %.dtb %.dtbo, $^)
-> -endif
-> +quiet_cmd_fdtoverlay = OVL $(quiet_dtb_check_tag) $@
-> +      cmd_fdtoverlay = $(objtree)/scripts/dtc/fdtoverlay -o $@ -i $(filter %.dtb %.dtbo, $^) $(cmd_dtb_check)
->  
->  $(multi-dtb-y): FORCE
->  	$(call if_changed,fdtoverlay)
-> @@ -430,16 +427,11 @@ DT_CHECKER ?= dt-validate
->  DT_CHECKER_FLAGS ?= $(if $(DT_SCHEMA_FILES),-l $(DT_SCHEMA_FILES),-m)
->  DT_BINDING_DIR := Documentation/devicetree/bindings
->  DT_TMP_SCHEMA := $(objtree)/$(DT_BINDING_DIR)/processed-schema.json
-> -
-> -quiet_cmd_dtb =	DTC_CHK $@
-> -      cmd_dtb =	$(cmd_dtc) ; $(DT_CHECK_CMD) $@ || true
-> -else
-> -quiet_cmd_dtb = $(quiet_cmd_dtc)
-> -      cmd_dtb = $(cmd_dtc)
-> +dtb-check-enabled = $(if $(filter %.dtb, $@),y)
->  endif
->  
->  $(obj)/%.dtb: $(obj)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE
-> -	$(call if_changed_dep,dtb)
-> +	$(call if_changed_dep,dtc)
->  
->  $(obj)/%.dtbo: $(src)/%.dtso $(DTC) FORCE
->  	$(call if_changed_dep,dtc)
-> -- 
-> 2.43.0
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240729-cbc-2
+branch HEAD: 64c57c9e06ed6d50ba26688a7d2b60a1c33ff20f  net/fungible: Avoid -Wflex-array-member-not-at-end warning
 
-Looks good to me, thanks.
+Error/Warning ids grouped by kconfigs:
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+recent_errors
+`-- arm-allmodconfig
+    `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+
+elapsed time: 1688m
+
+configs tested: 106
+configs skipped: 1
+
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                             allnoconfig   gcc-13.3.0
+alpha                            allyesconfig   gcc-13.3.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                   randconfig-001-20240803   gcc-13.2.0
+arc                   randconfig-002-20240803   gcc-13.2.0
+arm                              allmodconfig   gcc-14.1.0
+arm                               allnoconfig   clang-20
+arm                               allnoconfig   gcc-13.2.0
+arm                   randconfig-001-20240803   gcc-14.1.0
+arm                   randconfig-002-20240803   gcc-14.1.0
+arm                   randconfig-003-20240803   clang-20
+arm                   randconfig-004-20240803   gcc-14.1.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-14.1.0
+arm64                 randconfig-001-20240803   clang-20
+arm64                 randconfig-002-20240803   clang-20
+arm64                 randconfig-003-20240803   clang-20
+arm64                 randconfig-004-20240803   gcc-14.1.0
+csky                              allnoconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-14.1.0
+csky                  randconfig-001-20240803   gcc-14.1.0
+csky                  randconfig-002-20240803   gcc-14.1.0
+hexagon                           allnoconfig   clang-20
+hexagon               randconfig-001-20240803   clang-20
+i386                             allmodconfig   clang-18
+i386                             allmodconfig   gcc-13
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240802   gcc-13
+i386         buildonly-randconfig-002-20240802   gcc-12
+i386         buildonly-randconfig-003-20240802   clang-18
+i386         buildonly-randconfig-004-20240802   gcc-13
+i386         buildonly-randconfig-005-20240802   gcc-13
+i386         buildonly-randconfig-006-20240802   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240802   gcc-12
+i386                  randconfig-002-20240802   gcc-8
+i386                  randconfig-003-20240802   clang-18
+i386                  randconfig-004-20240802   gcc-13
+i386                  randconfig-005-20240802   gcc-13
+i386                  randconfig-006-20240802   gcc-13
+i386                  randconfig-011-20240802   clang-18
+i386                  randconfig-012-20240802   clang-18
+i386                  randconfig-013-20240802   gcc-13
+i386                  randconfig-014-20240802   clang-18
+i386                  randconfig-015-20240802   clang-18
+i386                  randconfig-016-20240802   gcc-11
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                         allnoconfig   gcc-14.1.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-14.1.0
+m68k                             allyesconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-14.1.0
+microblaze                       allyesconfig   gcc-14.1.0
+mips                              allnoconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-14.1.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-14.1.0
+openrisc                          allnoconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+riscv                             allnoconfig   gcc-14.1.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                allnoconfig   gcc-14.1.0
+sh                               allyesconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240802   gcc-11
+x86_64       buildonly-randconfig-002-20240802   gcc-12
+x86_64       buildonly-randconfig-003-20240802   gcc-12
+x86_64       buildonly-randconfig-004-20240802   gcc-12
+x86_64       buildonly-randconfig-005-20240802   clang-18
+x86_64       buildonly-randconfig-006-20240802   gcc-12
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                randconfig-001-20240802   clang-18
+x86_64                randconfig-002-20240802   gcc-11
+x86_64                randconfig-003-20240802   gcc-12
+x86_64                randconfig-004-20240802   gcc-12
+x86_64                randconfig-005-20240802   clang-18
+x86_64                randconfig-006-20240802   gcc-12
+x86_64                randconfig-011-20240802   clang-18
+x86_64                randconfig-012-20240802   gcc-12
+x86_64                randconfig-013-20240802   gcc-11
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                            allnoconfig   gcc-14.1.0
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
