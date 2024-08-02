@@ -1,171 +1,186 @@
-Return-Path: <linux-kernel+bounces-272259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8316894595D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:58:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D94945961
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070EE1F226B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:58:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE8A91C22174
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C04D33DF;
-	Fri,  2 Aug 2024 07:58:31 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4081C0DD7;
+	Fri,  2 Aug 2024 07:59:31 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4852B1BF33E
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03281BF327
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722585510; cv=none; b=SW0aeVgZoLdBVXxZnP87X1Nmdofw3NsbV0j4WzO4qv+ov3YjHUst784bfIH7amXY2gXV52BOLAu2mL8ySWy7c5FWafNwuyCwt8Q2D5OpbdvX7TkUTKVfUAtNc84uzz6gkPcdFzq3mhLAVASEAZkWA2/WZqqMd/3YTo5tSKt5VdY=
+	t=1722585570; cv=none; b=l2s90ZG76RZgcQUnbyOMnWBV7+O+HLL7uFWYedenjoh0/qnPLT7rUVZh2n/avmmro9pzho2Mhtp7c+08lExLyCEqR0Ao6SZ1B1nslFXuu3aeKElz5ve5bFizNB/qd8UJGMoVOotC55DVjYx/jBNchOjkfUDQ6PN2ashnM3f+pj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722585510; c=relaxed/simple;
-	bh=+4gSI2UNRs4upqPARucmyft/k33qUDqvjIa8TSLj6qM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LGMw61aSfxbIrtyVRmGwh1mw2Xo+ZASloM5b4QY5z3LPArxS6GK+XDIHeWwO9B5BSDSJhDDq3eSoMFvxufmByd9vbAeUeM6zd2uLtx4MZsPWlciRRrxA6LA5mjZBIoiW/wzcxi1NPxfAljtw89RpXOnDwTujA38ltcg7319/R0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	s=arc-20240116; t=1722585570; c=relaxed/simple;
+	bh=WtqK1jAXs9qJxNRu902C3FmS8gPcRTmW3YXjIhCxUtA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i90T9Hd8Ii2gDttgKdB1p4hu3Wqb1rcxA0VPkq5DLJYJ67z8DQVbz2w9/YIIznKjMI5awG6aSKkxTTtM4rt7RScaC6frqZDCMpYUJzYBFb7VvfI8OpDV99+ZaH9Ei6Ow6CECbUVSYrrKCsy8nggqmuGcgRZzv8OMlQ30EYaGKK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39a143db6c4so112451185ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:58:29 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39862b50109so113800035ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:59:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722585508; x=1723190308;
+        d=1e100.net; s=20230601; t=1722585568; x=1723190368;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=K/bDTbpx8tospXfPirh54si5d7WTpm3zbJ+fWB6NgvA=;
-        b=LLZ1f/ZSlgkTVvzxwkzwc5JDxzP8T8p3n6dFO46eBnlwZRuLSGyyn+tLqtz1k75siG
-         S4T37rhRhdA3kwAr5qRAIuMLFJsJxq1EoQiElm40H/sI4QV4MXzZ0yogp1b7bU1AInTm
-         92L3HCxkE33JV/xqTA7P5WGmbZdUMaioeiKgkDpP4BmKXVi7LhylsV3rPMRUc0LRHKv7
-         M1EOHOktqSZ+Ei8REC8lStz7U/TZTa3JNW/Occ+SAMVwESwz4dWsnrd6PR5s6swLwEao
-         LDbB9qhQhcmECCU6ZF9cHKVWILV6pyDUSwjggvF2JpAkzm7yzoEw5A8Wwj+wHxm/RP3D
-         MgzA==
-X-Gm-Message-State: AOJu0YxYV/NDj2TQ3URL9xEUUL+I5Y+tkaJu5dll40VIkN92DtHrnJwP
-	Q3fyjWTmSTJJ6BbgsLNwftbQ+p3ZwqvNxmLE2cGVw7SlASKdZUSd5m1vh0K1sXU+AxWsppMPUbf
-	RDqol2r1D2+Cg/nzMrXjxzpHgsBxrJqAavkZ+/erLzOUDikzEwLU7A2U=
-X-Google-Smtp-Source: AGHT+IE5Ri0RbHWoBSQiuL56yiyOhFm8+/JaNvp0HYI8l8IpaKFnQ5apssdKMGGB5+sm1xgW/i9wVye5Eh12nykbA7UDH8RblUBQ
+        bh=s12r9QREMFveHlbn3rdYzt1ORQUyCoWXBKdX/lCYyXU=;
+        b=W4V30HBr/BPQ++qW5pOekSbeicZQy+7e7S75df5HcvX7IsJgBXtM6MdilclxfYxTYh
+         T0YsWjlQPqvO2ir5XvvkoO4bPX8XwMcCbf8zJvhvwsA9Fu93Zb4e7H1w1hZ6R5ErGaFJ
+         Ns6unMic2WaBDmMqdEtCibV1b28ti3ttSdlmmXH+2mjIkP6eJY8s9Q/ae44dWmQoQVUi
+         CrnEsFRC2oMQvy3v6UZqVO1JXS4H0GnVwhKjHx4JIJli26SWaCcp2rul7n7imxxF+kYS
+         c1TMZj55Gj0x/k9bj8vWSIn9K0YxePU72OYIrVks1e2cxMQY6eEiwizn4n3otqQo+jqY
+         qpHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWl7fI2rcCnMRWp/LCRrmBb3s9MFOi29dmcB/U2Q5PVzYps9ZL5IuEwiVvTwxDg+VKte5gFhs5Nh5vQbhAAU1KptFbxJ5knM3u8wy31
+X-Gm-Message-State: AOJu0YywydB+FcZ72a0Fg6mJ+bKmEofw5L6BMlkF5Te7sXTkKhxWLZd/
+	Xv/q7mp1BWmcOLa2swH8pHBicc8B76589VpTaUrSH9f/bcyAH/jZxeR7ZsPTcqkLThrUSTXIB+z
+	vU/QNxyLhjielnPsXd0asgN+KUJ0K49fEgL5cUB0+kdhA8qKHemgWWXE=
+X-Google-Smtp-Source: AGHT+IHfG1QcfB/ZTH/HhK2IAZHCFsZLHpjHBvcMBXaQhaH1OEBEVsG7w8dxFuIF2vFIZU4/8/tCcZ8Ywc2n2fII0qAXs5vOMqNQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d05:b0:381:c5f0:20ef with SMTP id
- e9e14a558f8ab-39b1f78de5dmr2027965ab.0.1722585508386; Fri, 02 Aug 2024
- 00:58:28 -0700 (PDT)
-Date: Fri, 02 Aug 2024 00:58:28 -0700
+X-Received: by 2002:a05:6e02:1a83:b0:375:a55e:f5fc with SMTP id
+ e9e14a558f8ab-39b1fb72b46mr1674775ab.1.1722585567971; Fri, 02 Aug 2024
+ 00:59:27 -0700 (PDT)
+Date: Fri, 02 Aug 2024 00:59:27 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000052aa15061eaeb1fd@google.com>
-Subject: [syzbot] [trace?] linux-next test error: WARNING in rcu_core
-From: syzbot <syzbot+263726e59eab6b442723@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org, sfr@canb.auug.org.au, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000dfd631061eaeb4bc@google.com>
+Subject: [syzbot] [btrfs?] WARNING: bad unlock balance in btrfs_direct_write
+From: syzbot <syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, fdmanana@suse.com, hreitz@redhat.com, 
+	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    f524a5e4dfb7 Add linux-next specific files for 20240802
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=174c896d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a66a5509e9947c4c
-dashboard link: https://syzkaller.appspot.com/bug?extid=263726e59eab6b442723
+HEAD commit:    e4fc196f5ba3 Merge tag 'for-6.11-rc1-tag' of git://git.ker..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=126942d3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2258b49cd9b339fa
+dashboard link: https://syzkaller.appspot.com/bug?extid=7dbbb74af6291b5a5a8b
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14889175980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d261f9980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8c0255b9a6ad/disk-f524a5e4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/71d89466ea60/vmlinux-f524a5e4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ba8fcf059463/bzImage-f524a5e4.xz
+disk image: https://storage.googleapis.com/syzbot-assets/ac353d93e559/disk-e4fc196f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7c2d4dacbc40/vmlinux-e4fc196f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/427fd3f8ee36/bzImage-e4fc196f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/9d865517e0c9/mount_0.gz
+
+The issue was bisected to:
+
+commit 939b656bc8ab203fdbde26ccac22bcb7f0985be5
+Author: Filipe Manana <fdmanana@suse.com>
+Date:   Fri Jul 26 10:12:52 2024 +0000
+
+    btrfs: fix corruption after buffer fault in during direct IO append write
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16f8316d980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15f8316d980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11f8316d980000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+263726e59eab6b442723@syzkaller.appspotmail.com
+Reported-by: syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail.com
+Fixes: 939b656bc8ab ("btrfs: fix corruption after buffer fault in during direct IO append write")
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at mm/slub.c:4550 slab_free_after_rcu_debug+0x18b/0x270 mm/slub.c:4550
-Modules linked in:
-CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc1-next-20240802-syzkaller #0
+=====================================
+WARNING: bad unlock balance detected!
+6.11.0-rc1-syzkaller-00062-ge4fc196f5ba3 #0 Not tainted
+-------------------------------------
+syz-executor334/5215 is trying to release lock (&sb->s_type->i_mutex_key) at:
+[<ffffffff83d47c3f>] btrfs_direct_write+0x91f/0xb40 fs/btrfs/direct-io.c:920
+but there are no more locks to release!
+
+other info that might help us debug this:
+1 lock held by syz-executor334/5215:
+ #0: ffff888025b4c420 (sb_writers#9){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2876 [inline]
+ #0: ffff888025b4c420 (sb_writers#9){.+.+}-{0:0}, at: vfs_write+0x227/0xc90 fs/read_write.c:586
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5215 Comm: syz-executor334 Not tainted 6.11.0-rc1-syzkaller-00062-ge4fc196f5ba3 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:slab_free_after_rcu_debug+0x18b/0x270 mm/slub.c:4550
-Code: 48 89 04 19 48 8d 4a 08 49 8b 34 24 65 48 0f c7 0e 75 c8 4c 89 f7 48 83 c4 08 5b 41 5c 41 5d 41 5e 41 5f 5d e9 36 55 ff ff 90 <0f> 0b 90 eb 92 90 0f 0b 90 eb 8c 90 0f 0b 90 eb 86 41 8b 54 24 1c
-RSP: 0000:ffffc90000007bc0 EFLAGS: 00010286
-RAX: ffff88823bc00000 RBX: ffff88802bcee5c0 RCX: 00000000000a0fe0
-RDX: ffffea0000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90000007e30 R08: ffffffff8142b2ec R09: 1ffffffff26e8ce3
-R10: dffffc0000000000 R11: ffffffff81f0bb80 R12: dffffc0000000000
-R13: ffffffff817bd996 R14: ffff88823bca0fe0 R15: ffffea0000af3a00
-FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_unlock_imbalance_bug+0x256/0x2c0 kernel/locking/lockdep.c:5199
+ __lock_release kernel/locking/lockdep.c:5436 [inline]
+ lock_release+0x5cb/0xa30 kernel/locking/lockdep.c:5780
+ up_write+0x79/0x590 kernel/locking/rwsem.c:1631
+ btrfs_direct_write+0x91f/0xb40 fs/btrfs/direct-io.c:920
+ btrfs_do_write_iter+0x2a1/0x760 fs/btrfs/file.c:1505
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5b6c418169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb1dc3c98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0073746e6576652e RCX: 00007f5b6c418169
+RDX: 0000000000182000 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 652e79726f6d656d R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdb1dc3ce0
+R13: 00007ffdb1dc3d20 R14: 0000000001000000 R15: 0000000000000003
+ </TASK>
+------------[ cut here ]------------
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888075c915c8, owner = 0x0, curr 0xffff888025265a00, list empty
+WARNING: CPU: 0 PID: 5215 at kernel/locking/rwsem.c:1370 __up_write kernel/locking/rwsem.c:1369 [inline]
+WARNING: CPU: 0 PID: 5215 at kernel/locking/rwsem.c:1370 up_write+0x502/0x590 kernel/locking/rwsem.c:1632
+Modules linked in:
+CPU: 0 UID: 0 PID: 5215 Comm: syz-executor334 Not tainted 6.11.0-rc1-syzkaller-00062-ge4fc196f5ba3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:__up_write kernel/locking/rwsem.c:1369 [inline]
+RIP: 0010:up_write+0x502/0x590 kernel/locking/rwsem.c:1632
+Code: c7 c7 a0 c8 ea 8b 48 c7 c6 20 cb ea 8b 48 8b 54 24 28 48 8b 4c 24 18 4d 89 e0 4c 8b 4c 24 30 53 e8 d3 9c e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6a fd ff ff 48 c7 c1 00 a9 f6 8f 80 e1 07 80 c1 03
+RSP: 0018:ffffc90003507920 EFLAGS: 00010292
+RAX: 889b6823d8081400 RBX: ffffffff8beac980 RCX: ffff888025265a00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc900035079f0 R08: ffffffff81559202 R09: fffffbfff1cb9f80
+R10: dffffc0000000000 R11: fffffbfff1cb9f80 R12: 0000000000000000
+R13: ffff888075c915c8 R14: 1ffff920006a0f2c R15: dffffc0000000000
+FS:  0000555586938380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88823ffff000 CR3: 000000000e734000 CR4: 00000000003506f0
+CR2: 00007ffe3488bd28 CR3: 000000002503c000 CR4: 00000000003506f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- <IRQ>
- rcu_do_batch kernel/rcu/tree.c:2569 [inline]
- rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2843
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
  <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5826
-Code: 2b 00 74 08 4c 89 f7 e8 8a 32 8c 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
-RSP: 0000:ffffc900000675a0 EFLAGS: 00000206
-RAX: 0000000000000001 RBX: 1ffff9200000cec0 RCX: 455ccde0f6bffc00
-RDX: dffffc0000000000 RSI: ffffffff8c0ae6a0 RDI: ffffffff8c609240
-RBP: ffffc90000067700 R08: ffffffff93746717 R09: 1ffffffff26e8ce2
-R10: dffffc0000000000 R11: fffffbfff26e8ce3 R12: 1ffff9200000cebc
-R13: dffffc0000000000 R14: ffffc90000067600 R15: 0000000000000246
- __fs_reclaim_acquire mm/page_alloc.c:3856 [inline]
- fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3870
- might_alloc include/linux/sched/mm.h:334 [inline]
- slab_pre_alloc_hook mm/slub.c:3979 [inline]
- slab_alloc_node mm/slub.c:4057 [inline]
- __do_kmalloc_node mm/slub.c:4197 [inline]
- __kmalloc_noprof+0xa9/0x400 mm/slub.c:4210
- kmalloc_noprof include/linux/slab.h:685 [inline]
- kzalloc_noprof include/linux/slab.h:807 [inline]
- kobject_get_path+0xb8/0x230 lib/kobject.c:161
- kobject_uevent_env+0x2a5/0x8e0 lib/kobject_uevent.c:545
- kernel_add_sysfs_param+0x10a/0x130 kernel/params.c:821
- param_sysfs_builtin+0x16e/0x1f0 kernel/params.c:856
- param_sysfs_builtin_init+0x31/0x40 kernel/params.c:990
- do_one_initcall+0x248/0x880 init/main.c:1267
- do_initcall_level+0x157/0x210 init/main.c:1329
- do_initcalls+0x3f/0x80 init/main.c:1345
- kernel_init_freeable+0x435/0x5d0 init/main.c:1578
- kernel_init+0x1d/0x2b0 init/main.c:1467
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:144
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ btrfs_direct_write+0x91f/0xb40 fs/btrfs/direct-io.c:920
+ btrfs_do_write_iter+0x2a1/0x760 fs/btrfs/file.c:1505
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5b6c418169
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdb1dc3c98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0073746e6576652e RCX: 00007f5b6c418169
+RDX: 0000000000182000 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 652e79726f6d656d R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdb1dc3ce0
+R13: 00007ffdb1dc3d20 R14: 0000000001000000 R15: 0000000000000003
  </TASK>
-----------------
-Code disassembly (best guess):
-   0:	2b 00                	sub    (%rax),%eax
-   2:	74 08                	je     0xc
-   4:	4c 89 f7             	mov    %r14,%rdi
-   7:	e8 8a 32 8c 00       	call   0x8c3296
-   c:	f6 44 24 61 02       	testb  $0x2,0x61(%rsp)
-  11:	0f 85 85 01 00 00    	jne    0x19c
-  17:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
-  1e:	74 01                	je     0x21
-  20:	fb                   	sti
-  21:	48 c7 44 24 40 0e 36 	movq   $0x45e0360e,0x40(%rsp)
-  28:	e0 45
-* 2a:	4b c7 44 25 00 00 00 	movq   $0x0,0x0(%r13,%r12,1) <-- trapping instruction
-  31:	00 00
-  33:	43 c7 44 25 09 00 00 	movl   $0x0,0x9(%r13,%r12,1)
-  3a:	00 00
-  3c:	43                   	rex.XB
-  3d:	c7                   	.byte 0xc7
-  3e:	44                   	rex.R
-  3f:	25                   	.byte 0x25
 
 
 ---
@@ -175,9 +190,14 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
