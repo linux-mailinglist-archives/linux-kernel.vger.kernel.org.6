@@ -1,133 +1,89 @@
-Return-Path: <linux-kernel+bounces-272373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4199D945AF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:26:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD70A945AD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFADFB2478E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:26:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFA101C22F2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD9C1DAC77;
-	Fri,  2 Aug 2024 09:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OpzXbgyG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CAF8F47;
+	Fri,  2 Aug 2024 09:19:25 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23141E2110
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 09:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DEB1DAC4F
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 09:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590663; cv=none; b=JU0iKobZM8zJqT+Ixw8PKpGx50ptqRCfl3dMbcIwJNfoyfNyumiyDCLRaEO6/awk++pR7EsXO9lgKxIa8gf7eXw/OwZjqvUOEjq/cZ9ksxXxUcWBVwae68Mjqq3vjyaAWAPt7L7TiVgBsub1LgemGxmIf/k2cXhutIBJnQg/h/M=
+	t=1722590365; cv=none; b=MbXROvbYvaiB5q55p69eC0k8biNNoujtak8NhbQ38WQNHNpvs/Ub4ot5U1dpujH+8zwymAYfWwTuZlN39AaOgsbb/Sjn3zL2zSkyarn1e6IdN1NVPZ/NachmYzBpXLEayvv1PYKxwG34+Nn4rEpAfOSSqvGeibxyTZwnG8OuJvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590663; c=relaxed/simple;
-	bh=uVXNxDR7qKY3f5mtHytO19EwACmQxiXxAxl8I5EYMdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNxmZ2vgdWwtSSodNz+9ue99mS4GAKStITfj+rH+5qkohIH78YjRKxuLMZO17HuuPh17O2ABd1UKUnyBnC+1wiDM1C6P1g4JHOnJTE88cJPB6y62PxH2ejKlgX8x6jdTzHY+3U1HbY3ikYu8+41QOE3K/4GZoO1LSXfv8zgHa4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OpzXbgyG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722590660;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tFZYSjXj/nOTS7A0u95Mfk5cT+BFdZgMlnPQnliy2J8=;
-	b=OpzXbgyG95leQDaMLZ8nnZ0nfNWSWY6mQvS8L1NzEsk4s2BuQ5KXCMsWZieU7JXHKfP8jb
-	4+BzvIgRplDcMWvD0Ji0jbfMca2s1xnldffIX3m0PhtkG6vweK9WvTCU7lUX3r8KqU6vYn
-	ROcCiOVFc5Kr2PC3VAvj0eJXRopU+ws=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-wiluX6t3MMmF-6vA305zDg-1; Fri,
- 02 Aug 2024 05:24:17 -0400
-X-MC-Unique: wiluX6t3MMmF-6vA305zDg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 35FD91956064;
-	Fri,  2 Aug 2024 09:24:15 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.207])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 704E1300018D;
-	Fri,  2 Aug 2024 09:24:08 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  2 Aug 2024 11:24:13 +0200 (CEST)
-Date: Fri, 2 Aug 2024 11:24:06 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] uprobes: Improve scalability by reducing the contention
- on siglock
-Message-ID: <20240802092406.GC12343@redhat.com>
-References: <20240801082407.1618451-1-liaochang1@huawei.com>
- <20240801140639.GE4038@redhat.com>
- <51a756b7-3c2f-9aeb-1418-b38b74108ee6@huawei.com>
+	s=arc-20240116; t=1722590365; c=relaxed/simple;
+	bh=t91oUSCw6oje1J3rVWrMxurCJ8NX2swgfnuwDlpKbds=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NbdkIonqZH/lcZMucMi8CWObTQR+NM7SyYlpS/ILtGx0GHV+6u2HDFTAjdaVx1VknQh0almXmsiE2W+kyWPrLyGT9QinVATqMCqgD0FjrnztIEXpr5JoOwa+YLTkpwowK6XxAFJv5fdz9p+nBcsn6XHDSrtxgPjUQGdIVab+eMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wb0bQ3KtkzfZFj;
+	Fri,  2 Aug 2024 17:17:22 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id DD02D180101;
+	Fri,  2 Aug 2024 17:19:13 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 2 Aug
+ 2024 17:19:13 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <linux@armlinux.org.uk>, <bhe@redhat.com>, <akpm@linux-foundation.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [RFC PATCH] ARM: Support allocating crashkernel above 4G for LPAE
+Date: Fri, 2 Aug 2024 17:25:10 +0800
+Message-ID: <20240802092510.3915986-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <51a756b7-3c2f-9aeb-1418-b38b74108ee6@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On 08/02, Liao, Chang wrote:
->
->
-> 在 2024/8/1 22:06, Oleg Nesterov 写道:
-> > On 08/01, Liao Chang wrote:
-> >>
-> >> @@ -2276,22 +2277,25 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
-> >>  	int err = 0;
-> >>
-> >>  	uprobe = utask->active_uprobe;
-> >> -	if (utask->state == UTASK_SSTEP_ACK)
-> >> +	switch (utask->state) {
-> >> +	case UTASK_SSTEP_ACK:
-> >>  		err = arch_uprobe_post_xol(&uprobe->arch, regs);
-> >> -	else if (utask->state == UTASK_SSTEP_TRAPPED)
-> >> +		break;
-> >> +	case UTASK_SSTEP_TRAPPED:
-> >>  		arch_uprobe_abort_xol(&uprobe->arch, regs);
-> >> -	else
-> >> +		fallthrough;
-> >> +	case UTASK_SSTEP_DENY_SIGNAL:
-> >> +		set_tsk_thread_flag(current, TIF_SIGPENDING);
-> >> +		break;
-> >> +	default:
-> >>  		WARN_ON_ONCE(1);
-> >> +	}
-> >
-> > Liao, at first glance this change looks "obviously wrong" to me.
->
-> Oleg. Did i overlook some thing obvious here?
+As ARM LPAE feature support accessing memory beyond the 4G limit, define
+HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH macro to support reserving crash
+memory above 4G for ARM32 LPAE.
 
-OK, lets suppose uprobe_deny_signal() sets UTASK_SSTEP_DENY_SIGNAL.
+No test because there is no LPAE ARM32 hardware.
 
-In this case handle_singlestep() will only set TIF_SIGPENDING and
-do nothing else. This is wrong, either _post_xol() or _abort_xol()
-must be called.
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ arch/arm/include/asm/crash_reserve.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-But I think handle_singlestep() will never hit this case. In the
-likely case uprobe_post_sstep_notifier() will replace _DENY_SIGNAL
-with _ACK, and this means that handle_singlestep() won't restore
-TIF_SIGPENDING cleared by uprobe_deny_signal().
-
-Oleg.
+diff --git a/arch/arm/include/asm/crash_reserve.h b/arch/arm/include/asm/crash_reserve.h
+index 85c9298bd3b7..33a2f18b0ec1 100644
+--- a/arch/arm/include/asm/crash_reserve.h
++++ b/arch/arm/include/asm/crash_reserve.h
+@@ -19,6 +19,10 @@ static inline unsigned long crash_addr_low_max(void)
+ 	return (crash_max > lowmem_max) ? lowmem_max : crash_max;
+ }
+ 
+-
+ #define HAVE_ARCH_ADD_CRASH_RES_TO_IOMEM_EARLY
++
++#if defined(CONFIG_ARM_LPAE) && defined(CONFIG_HIGHMEM)
++#define HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH
++#endif
++
+ #endif
+-- 
+2.34.1
 
 
