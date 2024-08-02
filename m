@@ -1,114 +1,86 @@
-Return-Path: <linux-kernel+bounces-272181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBEE945858
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:06:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9704A945874
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2195B2331B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5A79285CC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB586487A7;
-	Fri,  2 Aug 2024 07:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D305715B134;
+	Fri,  2 Aug 2024 07:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b="0qAoeX4Y"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="GCoE0s4D"
+Received: from forward202d.mail.yandex.net (forward202d.mail.yandex.net [178.154.239.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AA211CAB
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8043D3D982;
+	Fri,  2 Aug 2024 07:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722582369; cv=none; b=PeBaqxr40I9Fa6WGPTqXfmIJ4oaYy8AoQ7nN9VnztYQVFazOrEkEPXyDwY3HGFjHNx7qWLGroro0uTYm2BHu9UscWXLnVlosV4muJTojoeCiQLL/BwgtT3x7VvHlpEHX7EYrxzoFChHkEWWXQpw01BUm99/zeSp076SYHgoimVI=
+	t=1722582896; cv=none; b=PuJWUmBeGjOtPD7vcrz0cIZhu/NOsbaL+GpSuYwC/4q+lAaAMOyoqaN5vMg2ubwykFQCFS6ul4//AbvyzxcaA4X+jdhTRdTyJ9J7WECk7sIhCZUv+Tc+/Chs946D3A3bCqZG6wBraTaRzS5tIMTAq8GvmR4erpXOvHquZrbpogc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722582369; c=relaxed/simple;
-	bh=rrOoJjeIUfr/0okgX4QxNifRFF/wj+7fTHdWyOXutVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XUq6+A/MJb9V+jBrDjqeavVxweDGa7anEI0QoEDH5uZLkHRKVQP/MBc/fHFAE4m/hA49IZqQj6h93o0e7KlJcJLH3pAdnisQ3mISg0d4KHtaO6difnEF+TYpgMU8SQlOLJ5uulyWYQbFeOjKDwdziRaz3rILVHkbQsfWo2Ihk6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b=0qAoeX4Y; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5d607d88d82so2786306eaf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:06:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=compal-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1722582367; x=1723187167; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTIBsGPtfu1Pgb8/bR61xHSHCNQbyXzi1cZXpHVQwvs=;
-        b=0qAoeX4YrOWQf79njlsBpcytdtV36rjIQlmdcht5gcGHO+54Q+5Q7mmI6qprQH7234
-         5SuD0tgkAjWKjPumBdtbhDSo7AWhZOURRsrNq7vW7zyMN5vtur2ZbJ1v9+UOzkGwPZwa
-         0cxZmaIMvqzoBAgyfQ89uf62UqJAa6X5y4w1/vEAQRRT3kRnYv2HDl5ldxej46KKvqfV
-         GKV/jrxkXL1D2lBkKWByVddxTeyUHYQjmqBcPVUI1+6JkmmYwL8L6Zg7tNwBvKH8dB06
-         XAiNPHgxr7fIT0WGgw/Bc0Dd2sH+wdHYUxm7aMt9pCatJs7yYSp2D5DIC52nuG34FXBQ
-         oabA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722582367; x=1723187167;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TTIBsGPtfu1Pgb8/bR61xHSHCNQbyXzi1cZXpHVQwvs=;
-        b=VWs/R6zfa2NOIuPziNPZHwZI1hXEP1uF6j8zjl8DWJOuSctaUYaj2ulQcIPKQaLl8r
-         TyyxQ630mpmgwE1FW1Ir+fzNgj00WxCDylwXoc4J4ClFR2e+ZuHksNe7wmWF1LsxPkZn
-         zWSUuJatPoXjJcdD65Q44o9ytaEKfYDL+A4BMyZ+6kuJsxTzAXmx9jx/POy1+U/YSdN7
-         xghkbr4C4Pp936b6Weg/wMBhUzqVZFVLi5Q3BRnzEhwCHOBDlM4DR+N6IehmuHRXwJd8
-         olcnUibhnngWXLNzt0qgcP/J5klW2p1R6dCrhO2MAYhGXnjCZS90aO5x+UFKi1r23FyY
-         zU5Q==
-X-Gm-Message-State: AOJu0Yz0fRKgg3c+Q1pfparKW1+OrTq9DbBgut3UGXoEI+lfUyWkIUZa
-	qzhdY7VDcgSvsg8yuNG16Z55ZWNcPp+iF2vlAxzr1+zcrxpKNqwq5dEFmc8zhtua5T9jt/VUVz8
-	2aioiFg==
-X-Google-Smtp-Source: AGHT+IGRXSlWnciuqQZfC3tHOqc0cfNVLuu5sQUtWmYqcOy51Kd1bHWfac9G4uWn7rTTZ4G3ZYP9+A==
-X-Received: by 2002:a05:6870:a550:b0:259:8805:b634 with SMTP id 586e51a60fabf-26891ee302bmr3133273fac.49.1722582367067;
-        Fri, 02 Aug 2024 00:06:07 -0700 (PDT)
-Received: from terryhsiao-Latitude-5490.. (2001-b011-2017-1033-1725-8ce9-24c5-cfd1.dynamic-ip6.hinet.net. [2001:b011:2017:1033:1725:8ce9:24c5:cfd1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed2abe2sm805654b3a.189.2024.08.02.00.06.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 00:06:06 -0700 (PDT)
-From: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
-Subject: [PATCH v1] drm/panel-edp: Fix HKC MB116AN01 name
-Date: Fri,  2 Aug 2024 15:06:02 +0800
-Message-Id: <20240802070602.154201-1-terry_hsiao@compal.corp-partner.google.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722582896; c=relaxed/simple;
+	bh=+H3UscldKpnbwihBTWC8wA030P9WbYbZ+lu6xrBz2IE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:Content-Type:
+	 MIME-Version; b=MtnOaMFIplK4vlCOgY5r1oLx1e3KsKOupph08CRbhdFHp0tefn5qKoXe/m7MZqfjaHruMJNxnW31MHUfuP8nDlRDD/ShnBxCiM706oH81HTvd5p6hIJnLh8dQDsYDPzkd2CJLE4Gh9az+NmvuSBxnZG1QbuG1XTUSiJwcESXCDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=GCoE0s4D; arc=none smtp.client-ip=178.154.239.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d103])
+	by forward202d.mail.yandex.net (Yandex) with ESMTPS id 070E1614A7;
+	Fri,  2 Aug 2024 10:07:46 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3143:0:640:c03:0])
+	by forward103d.mail.yandex.net (Yandex) with ESMTPS id F2BFD60091;
+	Fri,  2 Aug 2024 10:07:37 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id a7SC6W32SiE0-dZji5bIF;
+	Fri, 02 Aug 2024 10:07:37 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1722582457; bh=xsaIK4/EnVOTYIPtcBZdmJmfVFRbdam24wsGhkd0NBM=;
+	h=Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=GCoE0s4D0DNmaAhumCShIXf9BogDTcvSlX/Mt696Gv4MrcKoltDZaaSEDDT2QOSWQ
+	 jtKKwtGIheJLf20GwRr4bj1zY/E8WX/tnTcQxgxmr27URf/Y582rsb0gVGaPZFjxfr
+	 UJUTrFqClNCyZ0mNoyopdbzD4T9rojusKXWhazNM=
+Authentication-Results: mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <7e91180bf4cb632b5ba23df10f8e9b998144acb6.camel@maquefel.me>
+Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mturquette@baylibre.com, nikita.shubin@maquefel.me, 
+	devnull+nikita.shubin.maquefel.me@kernel.org
+Date: Fri, 02 Aug 2024 10:07:36 +0300
+In-Reply-To: <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Rename HKC MB116AN01 from Unknown to MB116AN01
+Hi Stephen!
 
-Signed-off-by: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
----
- drivers/gpu/drm/panel/panel-edp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just in case you missed this one in last series update:
 
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index 2733366b02b0..7183df267777 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1948,7 +1948,7 @@ static const struct edp_panel_entry edp_panels[] = {
- 	EDP_PANEL_ENTRY('C', 'S', 'W', 0x1104, &delay_200_500_e50, "MNB601LS1-4"),
- 
- 	EDP_PANEL_ENTRY('H', 'K', 'C', 0x2d51, &delay_200_500_e200, "Unknown"),
--	EDP_PANEL_ENTRY('H', 'K', 'C', 0x2d5b, &delay_200_500_e200, "Unknown"),
-+	EDP_PANEL_ENTRY('H', 'K', 'C', 0x2d5b, &delay_200_500_e200, "MB116AN01"),
- 	EDP_PANEL_ENTRY('H', 'K', 'C', 0x2d5c, &delay_200_500_e200, "MB116AN01-2"),
- 
- 	EDP_PANEL_ENTRY('I', 'V', 'O', 0x048e, &delay_200_500_e200_d10, "M116NWR6 R5"),
--- 
-2.34.1
+Changelog for this patch:
+- added devm_ep93xx_clk_hw_register_fixed_rate_parent_data() for
+  devm_ version of clk_hw_register_fixed_rate_parent_data()
+-
+s/devm_clk_hw_register_fixed_rate()/devm_ep93xx_clk_hw_register_fixed_r
+ate_parent_data()/
+- replaced all devm_clk_hw_register_fixed_factor() to
+  devm_clk_hw_register_fixed_factor_parent_hw() or
+  devm_clk_hw_register_fixed_factor_index()
+- s/devm_clk_hw_register_gate()/devm_clk_hw_register_gate_parent_data()
 
+Stephen - it think that's you was aiming for - to get rid of all
+functions that are using const char* parent_name directly instead of
+clk_hw or clk_parent_data.
 
