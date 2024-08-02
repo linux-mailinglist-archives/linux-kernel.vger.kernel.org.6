@@ -1,69 +1,85 @@
-Return-Path: <linux-kernel+bounces-273032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E5D5946393
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:12:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A5A946392
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDEC51F225A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:12:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4333C1C20D64
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260481547EC;
-	Fri,  2 Aug 2024 19:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C155F1547C6;
+	Fri,  2 Aug 2024 19:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A7v8xF2G"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vk9ppAxT"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067B77F6
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5E97F6
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722625928; cv=none; b=Rak4P9XGCeENOA1LReDt+maI4PDJ6E5hdGV2pBBoiJg8NOhHJv6FT1N7+/28r5qY1krzGrkjAQ0UGzHQFcGRjO9aXb+TTQtH72DtBx8IbmR2OxQjdCBy3lGjjGOPRqlVJComizyBhwvGii8U2G7EW2JTVhKKbRkajQu4d3xXA4U=
+	t=1722625922; cv=none; b=cFkW8i+YQ/nvjg4HthfD/FLAmCz6Qv3DfJhfoh5yplCu9pUawUtuWTjwnMz6UHTpYKZKBCVuS4H/dxDrDI1nFOfZUWjpTBlgIb941PREQNmiotcIKlznRFDUcZXsFGSGMnYT48cuR2wCmceTqPzymsP4zhQop1AfUkHd90aWK/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722625928; c=relaxed/simple;
-	bh=zGAtBnlADNhuZeKAi4InSlGBAmCdQ04gGx2WWXGPmN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b52BrEH4mlLwTdr7JSAlg9qFoFIfcfedVz+/5C4ZX6gu7dLrRF3sYj6WzFFobt0/Gi0ollx89YzIcgb0H8URsswOrr45K5Ts/+8nMDW3niFfoXBcgsWBDdZDNLkp35i2oBRHoE5neXw65GKYf6BTPqYFLBD9YTA7FSEPJJ6sfdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A7v8xF2G; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=L3tWoQ128xb5Yre0eBQXeRssQQvrUitEP99Y3gbl47k=; b=A7v8xF2GbPYqHLF7aAvIcDPNAy
-	DTgaBINeWKCfFh8bcd0A1L91mu/7AHl9e1m3j90+yfpXlUkuWNCRRdpRihXkI0igGnH44wQt8aa5w
-	b5NNwovhUT8qhCHcRH8Oob30m1AHET2wUzErgxIDSE9RdptwV0pcAflbHMjDpwsXkcKw1tmCtLSx9
-	WaeMV8RSwoR0yNZjLR8Sx0Zt9yplN8yC7IAnPODEPKzRJfSs6Gdd3alLF+ySo3exagRi86y1s/nKA
-	NjTlvX4kGQkIUZZobZ/C9AZl3RrwvbMBgwTkJnVQKW4a6i36AOQMjVX2z4MUCVPeYBgqEj0Z6Tucv
-	0f5kX4Hg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZxgR-00000005mDR-1z74;
-	Fri, 02 Aug 2024 19:11:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1F30230049D; Fri,  2 Aug 2024 21:11:23 +0200 (CEST)
-Date: Fri, 2 Aug 2024 21:11:23 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Stephane Eranian <eranian@google.com>,
-	Ian Rogers <irogers@google.com>, Mingwei Zhang <mizhang@google.com>
-Subject: Re: [PATCH v2] perf/core: Optimize event reschedule for a PMU
-Message-ID: <20240802191123.GC12673@noisy.programming.kicks-ass.net>
-References: <20240731000607.543783-1-namhyung@kernel.org>
- <476e7cea-f987-432a-995b-f7d52a123c9d@linux.intel.com>
- <20240802183841.GG37996@noisy.programming.kicks-ass.net>
- <20240802184350.GA12673@noisy.programming.kicks-ass.net>
- <20240802185023.GB12673@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1722625922; c=relaxed/simple;
+	bh=EWtYVhmS7Rc/4BT9faJuAk+IlhdCI/19TyuATieFKd4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewjhTa0lNqrMH3vlch4MjhYdD9EDAfWCOdBOFaDe4pvCkFWCc/QrsOoXCeLKjUsQSoWaZB+dhuXmsWISA+1VEyK2iDEDzGUFfuUyKTu0+f6kYI7MJt7nBjptv+HCCZJSATnkR8IKgHVwKyNLPREUkrGe7SfI4/O809fHm+unvC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vk9ppAxT; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc587361b6so64778905ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 12:12:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722625920; x=1723230720; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=tb35QWLLfD/xsYl9CucCtFL851FIcfbnJfN3ybM+l8A=;
+        b=Vk9ppAxTFpOQpLmOeUSQF56BN/qt7K7Y//3pEXPahn9E7NdPtdWXNUzifZdDQTWQ50
+         XoiPY3NBxGwC+7fc12S+MX4sCh/1NIb+pz3aawwbOZol0gIZQ7hfQx7omCcyo5BasTAT
+         vfeKZxQgOwVA1yjoXX29rRfQbPIegi/M6Gx1UUdsrx4/uKzyl//KOsPGBAH38We+4E65
+         RPU3zvbLOWhl55La03QEt0NwnL+FI1WWg/2qLWnl3KKcUOJphC6p3fNadzxmLMsIZU7f
+         lN/MNxEKSNh0IY2mC6sQGRBi3TG1TppOdQUrT5RQe3VgeMaAYAr5HWr4y0kWcr0si6f5
+         wN4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722625920; x=1723230720;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tb35QWLLfD/xsYl9CucCtFL851FIcfbnJfN3ybM+l8A=;
+        b=CvsQcFcJgc3sG4nbayS2LI+8vxRDt5jVMlT7HI5itovrJ+YVmn7kxEEYmuBVsI72ns
+         5aK0A/MUeE5V3avJwL4TibBapjWIjO3e7ocs5qpPWIDvnue9YkDe6KoHTvGCxINEpgQ7
+         Wm5THNsU+WsZs1cDo7iBVeKaLRccGtRZMzGZQNE71z08s3MSP6W+5MPRrdGfWVYS46yC
+         Cf1x6CTs/hcOfcSa0P0yYIaac8fp5VYHPFlo8OtoxwRQo9z2hC6Fo9YJX6R4VwRTsNSc
+         WRhef231BZBLCQm9PEi3ZdNlNMyjosfFmfIlWuI9TC8FIXwa0p1R6TO3M/ufOitPOIy9
+         57Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCAKgC5aK01aKvcd2zOSHKRuT0Ha2aIt1K+jRdKd8XWIhgVKARo0HQhj1W1v8o246WWhKUHoFzqi+snee7tf9OaU7TGT5kAhzcEYf4
+X-Gm-Message-State: AOJu0Yx08dPYh35MI4UJ/TGenpzjROjTQrtigKdTM7gxw0DNyMuLJu1T
+	dRtZeYIhRTzGFrQDl8yEu31OAXAsgCtVMxM3H6zCIFxo5YmqAWJtZGyLCA==
+X-Google-Smtp-Source: AGHT+IEKXYt6pFdyXMkGJcwp7ptJcH221g1Bq57XCSZ2a/jU+ImUyDZfEhckltnD+YYSt3ikqIzJoA==
+X-Received: by 2002:a17:902:e5c9:b0:1fb:64da:b142 with SMTP id d9443c01a7336-1ff574f685bmr54474635ad.59.1722625919988;
+        Fri, 02 Aug 2024 12:11:59 -0700 (PDT)
+Received: from DESKTOP-DUKSS9G. (c-76-133-131-165.hsd1.ca.comcast.net. [76.133.131.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f27358sm20823585ad.44.2024.08.02.12.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 12:11:59 -0700 (PDT)
+Message-ID: <66ad2f7f.170a0220.2d3b0e.763f@mx.google.com>
+X-Google-Original-Message-ID: <Zq0vfAelJYbqQqiC@DESKTOP-DUKSS9G.>
+Date: Fri, 2 Aug 2024 12:11:56 -0700
+From: Vishal Moola <vishal.moola@gmail.com>
+To: alexs@kernel.org
+Cc: Vitaly Wool <vitaly.wool@konsulko.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	minchan@kernel.org, willy@infradead.org, senozhatsky@chromium.org,
+	david@redhat.com, 42.hyeyoo@gmail.com,
+	Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+Subject: Re: [PATCH v4 20/22] mm/zsmalloc: introduce __zpdesc_set_zsmalloc()
+References: <20240729112534.3416707-1-alexs@kernel.org>
+ <20240729112534.3416707-21-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,46 +88,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240802185023.GB12673@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240729112534.3416707-21-alexs@kernel.org>
 
-On Fri, Aug 02, 2024 at 08:50:23PM +0200, Peter Zijlstra wrote:
-> On Fri, Aug 02, 2024 at 08:43:50PM +0200, Peter Zijlstra wrote:
-> > On Fri, Aug 02, 2024 at 08:38:41PM +0200, Peter Zijlstra wrote:
-> > > On Fri, Aug 02, 2024 at 02:30:19PM -0400, Liang, Kan wrote:
-> > > > > @@ -2792,7 +2833,14 @@ static int  __perf_install_in_context(void *info)
-> > > > >  	if (reprogram) {
-> > > > >  		ctx_sched_out(ctx, EVENT_TIME);
-> > 
-> > Clearly I should read better...
-> > 
-> > > > >  		add_event_to_ctx(event, ctx);
-> > > > > -		ctx_resched(cpuctx, task_ctx, get_event_type(event));
-> > > > > +		if (ctx->nr_events == 1) {
-> > > > > +			/* The first event needs to set ctx->is_active. */
-> > > > > +			ctx_resched(cpuctx, task_ctx, NULL, get_event_type(event));
-> > > > > +		} else {
-> > > > > +			ctx_resched(cpuctx, task_ctx, event->pmu_ctx->pmu,
-> > > > > +				    get_event_type(event));
-> > > > > +			ctx_sched_in(ctx, EVENT_TIME);
-> > > > 
-> > > > The changelog doesn't mention the time difference much. As my
-> > > > understanding, the time is shared among PMUs in the same ctx.
-> > > > When perf does ctx_resched(), the time is deducted.
-> > > > There is no problem to stop and restart the global time when perf
-> > > > re-schedule all PMUs.
-> > > > But if only one PMU is re-scheduled while others are still running, it
-> > > > may be a problem to stop and restart the global time. Other PMUs will be
-> > > > impacted.
-> > 
-> > So yeah, this stops ctx time but not all PMUs.
+On Mon, Jul 29, 2024 at 07:25:32PM +0800, alexs@kernel.org wrote:
+> From: Alex Shi <alexs@kernel.org>
 > 
-> But isn't this already the case? We don't have perf_ctx_disable() here
-> currently. 
-> 
-> Bah, this heat is melting my brain.
+> Add a helper __zpdesc_set_zsmalloc() for __SetPageZsmalloc(), and use
+> it in callers to make code clear.
 
-I think all it wants is to update time and ensure the added event and
-the resched all use the same time, which could be done differently.
-
-But I'll have to continue staring at this later.
+Definitely just fold this into the prior patch. It effectively does the
+same thing.
 
