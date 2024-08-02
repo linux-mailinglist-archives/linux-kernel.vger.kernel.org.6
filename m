@@ -1,106 +1,110 @@
-Return-Path: <linux-kernel+bounces-272405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58D6C945B56
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:46:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8624D945BA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14CB2281874
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:46:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CDD11F22964
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAD21DB427;
-	Fri,  2 Aug 2024 09:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF261DB459;
+	Fri,  2 Aug 2024 09:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2Lvqibp"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=zabbadoz.net header.i=@zabbadoz.net header.b="W3k6sIWv"
+Received: from mx-01.divo.sbone.de (legacy1.sbone.de [80.151.10.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9451C1BF32B;
-	Fri,  2 Aug 2024 09:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45DB1DB445;
+	Fri,  2 Aug 2024 09:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.151.10.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722591989; cv=none; b=paL4chfMPMp5VWbTMUKXcZjcuyL26B01SqkJ4YiYCFHhUKFn/x8ErWamIv02BdhQFyeUEUf4h7fRc1WlRe2zyOlY45C51yVXXEMu7gvCuZ9XXcwHTmSeMOkpz03iz8ChRY194EK/EjdmSGsImKQeE6FHkV5Pl3rj9nO5BNF/aDg=
+	t=1722592637; cv=none; b=fy2jEo6klFfsDuzRPkUSNhRRo0nBLu9N6bn3KQDkUhxtam8KkEGNSW1+fJnBm5iPuqxh3rhHiIsxIwZbFa/rvXr8IpHoW9uJf0T66+dIWHkcnhqdcamckhVwANrXN7eUo3mcet0IXohuHmE2xSwvceZQl6qEkbqmJ6944+ujGnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722591989; c=relaxed/simple;
-	bh=r+CuKV0BtJAp/fMFn++g/APZ2xgoalbuTBMWgFPMv9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u9hQb9tL8wJNxp2t7q0JLyWpa6uj492L++zYLGNdKSMi/3TgY9Xzfqs8xdS6FAPR0fVaZbZoRJpPdd3i5W1Zgc/Jkl3bTabJMUIQoy1fiZJm5TJ/rhVx+oM40fHJPlXVT134nDC91Ucf2X7jq3JSLjW0iakyC2vpW5JcULf5Zgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2Lvqibp; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so49610815e9.3;
-        Fri, 02 Aug 2024 02:46:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722591986; x=1723196786; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=q67BM/SyptRvsJWIM+wuVI8aE85d1Z8XEHPF+IhIGiI=;
-        b=K2Lvqibp59XTun7HLk+FkLfU7HXYM5cbgwL5ynUsAc47kqwX21WjexcA2b2YTUd9Lh
-         5CzeoI8JwTv5KjsiETAhTt+7HKWPypBCIwMACr7T2TN/+Yoa8QRbPGSOKghq4zHKWfRC
-         IahXcwKOniF0D/d1VRmVbUfwYOA90w0flKUy7xiBADMxy1/2limlp2wb+wi/glsUnj3f
-         T88zgOp542EHP/q/7m0Nxu1l4c0bJrrgUGAQDUD8WnDnZvVC6vMmxI1eY9LKnY0iy5tX
-         VeVv/8TGLxtFnNfnFVV1WQWe4sBcv/u7p0xiMY3IwF07zvc+wiWpObcWL3g+oLg2eLXi
-         TzHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722591986; x=1723196786;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q67BM/SyptRvsJWIM+wuVI8aE85d1Z8XEHPF+IhIGiI=;
-        b=litUxoEkN7s0KrKYhhdRdYXToJZRVdAl8UDNi5Ijj+W2Aamy7d8itqhtUAubDX2KZ1
-         fooazsdJ4URzfep4bdXcGdLo+ERQNWOqvS5V/o/mFJexKvOXvXulyh9gr8VEWuZrrN8C
-         1H9UeUsSFjPCBWYLBUgj2jKYPzDpNpxhz9Kq+johnfp+xRl6hwhoctt4CHmmkyU2q7eD
-         +AmKQw4puvTC9dIhtf4pepA46NY86pu8Z14zpbpam7LdFPOF+0Wt6sC1KJNn6LZo0Ika
-         M+V5IiP0w3A3ij7tdXru7dNrCxceFNvZ9cy+SQRdCMbNiADoWj56PfUjb/b/M3Vn94mS
-         7Epw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbn0KShfi0v6nJsdrNgXqerVTD5YwXWGzcMxNMEa5DzCIOa6aOj2MDs56rp1e2Iorm7i+ezybgPRz6n0ZJfErRPYNrMoTNBDLYiQ==
-X-Gm-Message-State: AOJu0Ywb3orxpaNmOSRTzJLJ0V+ibELPdZxR2nMYUZRow9mFiiYUL+Cx
-	by1X0pi7m2Cj+sRG0D8pVdG1QfDwZXQ2A6Hr4EZQRd2R6aa0r92UGdX3usaEfmQ=
-X-Google-Smtp-Source: AGHT+IFCLBjPsFTWDZkjzm22AGa3mLr/3SDceOhn+SPwLeYiThM/NnCa7DDCeZhNCep2iLYyQ6EoVg==
-X-Received: by 2002:a05:600c:1906:b0:426:686f:cb4c with SMTP id 5b1f17b1804b1-428e6b96b3bmr20772425e9.32.1722591985295;
-        Fri, 02 Aug 2024 02:46:25 -0700 (PDT)
-Received: from andrea ([151.76.3.213])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42824ae7a59sm74389155e9.1.2024.08.02.02.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 02:46:24 -0700 (PDT)
-Date: Fri, 2 Aug 2024 11:46:20 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev, kernel-team@meta.com, mingo@kernel.org,
-	stern@rowland.harvard.edu, will@kernel.org, peterz@infradead.org,
-	boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Re: [PATCH memory-model 7/7] MAINTAINERS: Add the dedicated maillist
- info for LKMM
-Message-ID: <Zqyq7DjIrHAOqf0k@andrea>
-References: <e384a9ac-05c1-45d6-9639-28457dd183d9@paulmck-laptop>
- <20240802002215.4133695-7-paulmck@kernel.org>
+	s=arc-20240116; t=1722592637; c=relaxed/simple;
+	bh=BdE9txZihg93zoUJIdYX0o3vhnu2uDuyjz8mtdq00BY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=tesL82SeG2V0dYZ+QXdplvLK3Ag3GbilCoJJdOrO0+4PpFq1Jll/4kwtYN5MdBbGymvoB4a5aYg8F6RR3UZikQjRBegdol3vj9ogej1Y+wSbsuNRa3JYpcpResj+pYvkcijbddbJjCaa6bDu8MVpRfDG5ehF5ZJrGV+cOxgL1GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.zabbadoz.net; spf=pass smtp.mailfrom=lists.zabbadoz.net; dkim=pass (4096-bit key) header.d=zabbadoz.net header.i=@zabbadoz.net header.b=W3k6sIWv; arc=none smtp.client-ip=80.151.10.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.zabbadoz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lists.zabbadoz.net
+Received: from mail.sbone.de (mail.sbone.de [IPv6:fde9:577b:c1a9:4902:0:7404:2:1025])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by mx-01.divo.sbone.de (Postfix) with ESMTPS id 2A6FBA64808;
+	Fri, 02 Aug 2024 09:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zabbadoz.net;
+	s=20240622; t=1722592002;
+	bh=BdE9txZihg93zoUJIdYX0o3vhnu2uDuyjz8mtdq00BY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References;
+	b=W3k6sIWvhqXJcuJaRi1RSr5VLTIBnpzWxNHDL1xpZM21JF162KrJ6zgVeVgMsGYoG
+	 m4YCS0CJJn6VZnzJq74Ci8g3YkNeBv3wdnVPQgw+6rpHxllZyyRyC/2YEJenqRR176
+	 gtBedrJcGfwVxN5sIg57Et+cThKemU/VJrj0rScAAgolSsk0Rhu0ojesJ5JCLPIam7
+	 PivBaKsXbIQ02O9yKFCy8/1TLy7LEQi59hBKSUThBf5vE2gPayvha7c7tRlW6wyr7E
+	 rjbvTHPDdAMtUkMMOXs80jLzcRkKJh3OMwgBjMtJdbtOZR2QE29BiRnrvsm45LDcQX
+	 tNeKgX07qZJFsDPyUObzrdPYL8DF+ZN0cuJwvQ/QBxM8A7vglCLIZO4aTYMT1duIVN
+	 cEXSlTsVzuFVIImoIeIwKbLInmxaqQTXHPS57awc58cDlctWhiWuS8D+NqswLx41VV
+	 ZRVPCOqrJ94nDtx3l6oCFylqYtyDF1iVjOvCgz5h83mHCqe0e4umCRwYOrmd08dhhU
+	 DUP1GwdJf3r0ePsXhjMDREkXzsW0UGcbRqPgnK8zqSFUxiT+6aCTlE9PobBLhJqpn7
+	 BmDJT7CfVIM1Y+7X6rflvycTG48N9ihIqf/TekruJDm3efSPDaafSlbUULS7SOkcmz
+	 NT6leu2e8nfQFlWe8joy+Ssk=
+Received: from content-filter.t4-02.sbone.de (content-filter.t4-02.sbone.de [IPv6:fde9:577b:c1a9:4902:0:7404:2:2742])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.sbone.de (Postfix) with ESMTPS id 5C6192D029D8;
+	Fri,  2 Aug 2024 09:46:43 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at sbone.de
+Received: from mail.sbone.de ([IPv6:fde9:577b:c1a9:4902:0:7404:2:1025])
+	by content-filter.t4-02.sbone.de (content-filter.t4-02.sbone.de [IPv6:fde9:577b:c1a9:4902:0:7404:2:2742]) (amavisd-new, port 10024)
+	with ESMTP id qiaa6JdiXyBI; Fri,  2 Aug 2024 09:46:42 +0000 (UTC)
+Received: from strong-iwl0.sbone.de (strong-iwl0.sbone.de [IPv6:fde9:577b:c1a9:4902:b66b:fcff:fef3:e3d2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.sbone.de (Postfix) with ESMTPSA id 59D1C2D029D2;
+	Fri,  2 Aug 2024 09:46:41 +0000 (UTC)
+Date: Fri, 2 Aug 2024 09:46:40 +0000 (UTC)
+From: "Bjoern A. Zeeb" <bzeeb-lists@lists.zabbadoz.net>
+To: Sergey Bostandzhyan <jin@mediatomb.cc>
+cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, 
+    devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 0/2 RESEND] Add DTS for NanoPi R2S Plus
+In-Reply-To: <20240801175736.16591-1-jin@mediatomb.cc>
+Message-ID: <756p9487-56pr-88p2-6o79-7oron3q8462n@yvfgf.mnoonqbm.arg>
+References: <22bbec28-41c1-4f36-b776-6e091bf118d9@kernel.org> <20240801175736.16591-1-jin@mediatomb.cc>
+X-OpenPGP-Key-Id: 0x14003F198FEFA3E77207EE8D2B58B8F83CCF1842
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802002215.4133695-7-paulmck@kernel.org>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Thu, Aug 01, 2024 at 05:22:15PM -0700, Paul E. McKenney wrote:
-> From: Boqun Feng <boqun.feng@gmail.com>
-> 
-> A dedicated mail list has been created for Linux kernel memory model
-> discussion, which could help people more easily track memory model
-> related discussions.  This could also help bring memory model discussions
-> to a broader audience.  Therefore, add the list information to the LKMM
-> maintainers entry.
-> 
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+On Thu, 1 Aug 2024, Sergey Bostandzhyan wrote:
 
-Acked-by: Andrea Parri <parri.andrea@gmail.com>
+> Hi,
+>
+> as requested, I am resending the patch series, now with hopefully all
+> relevant addresses on To/Cc.
+>
+> I noticed, that a DTS for the R2S Plus is not yet available, while the
+> R2S is already there. The only difference is, that the Plus version has an
+> eMMC, so we can reuse the R2S definitions and only add an eMMC block, which
+> I copied from the DTS in the friendlyarm/uboot-rockchip repo.
 
-  Andrea
+The original has a
+ 	// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+
+please don't lose the OR MIT as other projects outside Linux do use the
+same dts files;  and the original r2s file also preserved it.
+
+
+-- 
+Bjoern A. Zeeb                                                     r15:7
 
