@@ -1,188 +1,123 @@
-Return-Path: <linux-kernel+bounces-272034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4192D945612
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:44:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31ED494560E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52761F2359D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:44:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E25DB226F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A847C1C687;
-	Fri,  2 Aug 2024 01:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="l8kuj9LN"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2871E171BB;
+	Fri,  2 Aug 2024 01:44:12 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC514199A2;
-	Fri,  2 Aug 2024 01:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE767BE4F
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722563055; cv=none; b=lK9Zs9Dj7MHQx+HKWsHpNLo1nw9C/9nZ2UdQrbduxCPI4K7WV+qcbxV2le21uPzjKYYt90A8tBXyQj/PeQ5qAUASEhuB4mXmzRA889jbBxfinXXAwWKn7E58pz87TSNjqJ7r5flT3TO8BSF9PuQjYaY3c04hU+a6rbz6yFBxQ7U=
+	t=1722563051; cv=none; b=EJpcxb3a44de30YnuagkKGTpPhfgsvyVSK8DKm2Db7ZqVrxr1LQIjsAnzaLbPo4LW+dehaQ1x7S9AeaYuGl/bum3926sosteoxxN9A4pggtKr4ygFSgd2VNJwjwK5S/SQslsregob8GublJPjjabolbJONM7UWdtv9Ma65rxaho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722563055; c=relaxed/simple;
-	bh=AOHlQpp439hxXb8Yhi0cw6rbI7T9wbusdFDZsoOV5IU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mKxa+cZecpaYHSiMpuCmA7dDMnGqxzTZRyTyxHekLKHq0IU4Dmu0sQ1omm2vCWNXSdbqH2qAV1KCYnTQrEvDDG19mQdWlFvBCacvob6r8Ez96wMe1lQWvIsy+N4EIO15dNPteLBQtOffNh8ZETZwC9adywk08u6ueo1cGhwmkx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=l8kuj9LN; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WZpXM4GcRz9sRt;
-	Fri,  2 Aug 2024 03:44:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1722563043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rX5EutK1564BvFK6uRJjpD10n8gil980gFWkU6pBKcA=;
-	b=l8kuj9LNJSkG1HDlE84DRgEPD5l4U2ZvOu8ucxxAt+bBLucAibv9BFY32ZcHRT3HvJb2Oj
-	Rrr/ipAJyEn3TBchVEgoOQnx497Vw9dUw2rj3majF1imXkczlTVl7Kdp5fp0gs8srw9Swr
-	qEux0YiQuY1FSzFwLAEuw3YOt22VnAmovWpN2GOobnNlProTG7bQWk5Dt8Wd7ylJisP975
-	ubaGZg7icectV6xdUI78iaFg18JtnYA0QbWYLELGvdLnVhGdYcDA0u43t8053r8tv/DqmR
-	wiFMHaKxp+2By482c9Dgln4a8MfA6KboPF91OyZFKeDUCqoIri31gt7K2CsJ0Q==
-Date: Fri, 2 Aug 2024 11:43:50 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	Alexander Aring <alex.aring@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH RFC v3 0/2] fhandle: expose u64 mount id to
- name_to_handle_at(2)
-Message-ID: <20240802.010502-peachy.struggle.moldy.shape-YcRNLL7bq7EE@cyphar.com>
-References: <20240801-exportfs-u64-mount-id-v3-0-be5d6283144a@cyphar.com>
- <20240801142812.GA4187848@perftesting>
+	s=arc-20240116; t=1722563051; c=relaxed/simple;
+	bh=R30IIuwa6mus94ESdV3N3TVFOozI//ZVq5AxdhdwD3o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=ipnrr/IZMKFKC5BsBQc/UV8mPOqslZr0XnokHazXEDaMdLYBvBk40C5+/zoXy7Z+vmLMikty/Qn7B8+xaJpYpH0CpJmvAWkOqCOm/R6M3lWJ/5SoCBXKmXqkhDg0hzSE+8CkqYxepuplJaVblyR4FCgc4mSVHVEJ4T+9adVQ2cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WZpRM68CGzQngF;
+	Fri,  2 Aug 2024 09:39:43 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 99A2C140132;
+	Fri,  2 Aug 2024 09:44:04 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 2 Aug 2024 09:44:03 +0800
+Message-ID: <726da253-9827-b5fe-76ef-99b2ec9c42e3@huawei.com>
+Date: Fri, 2 Aug 2024 09:44:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c7qvxlthxg64t2lg"
-Content-Disposition: inline
-In-Reply-To: <20240801142812.GA4187848@perftesting>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] ARM: smp: Fix missing backtrace IPI statics
+Content-Language: en-US
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: <dianders@chromium.org>, <mhocko@suse.com>, <akpm@linux-foundation.org>,
+	<maz@kernel.org>, <vschneid@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240801094022.1402616-1-ruanjinjie@huawei.com>
+ <Zqu5ck+Ik8KlzE0O@shell.armlinux.org.uk>
+ <c55bbffe-9144-f787-eb70-8328be5cfe7c@huawei.com>
+In-Reply-To: <c55bbffe-9144-f787-eb70-8328be5cfe7c@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
 
---c7qvxlthxg64t2lg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-01, Josef Bacik <josef@toxicpanda.com> wrote:
-> On Thu, Aug 01, 2024 at 01:52:39PM +1000, Aleksa Sarai wrote:
-> > Now that we provide a unique 64-bit mount ID interface in statx(2), we
-> > can now provide a race-free way for name_to_handle_at(2) to provide a
-> > file handle and corresponding mount without needing to worry about
-> > racing with /proc/mountinfo parsing or having to open a file just to do
-> > statx(2).
-> >=20
-> > While this is not necessary if you are using AT_EMPTY_PATH and don't
-> > care about an extra statx(2) call, users that pass full paths into
-> > name_to_handle_at(2) need to know which mount the file handle comes from
-> > (to make sure they don't try to open_by_handle_at a file handle from a
-> > different filesystem) and switching to AT_EMPTY_PATH would require
-> > allocating a file for every name_to_handle_at(2) call, turning
-> >=20
-> >   err =3D name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
-> >                           AT_HANDLE_MNT_ID_UNIQUE);
-> >=20
-> > into
-> >=20
-> >   int fd =3D openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
-> >   err1 =3D name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPTY_P=
-ATH);
-> >   err2 =3D statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxbuf);
-> >   mntid =3D statxbuf.stx_mnt_id;
-> >   close(fd);
-> >=20
-> > Also, this series adds a patch to clarify how AT_* flag allocation
-> > should work going forwards.
-> >=20
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > ---
-> > Changes in v3:
-> > - Added a patch describing how AT_* flags should be allocated in the
-> >   future, based on Amir's suggestions.
-> > - Included AT_* aliases for RENAME_* flags to further indicate that
-> >   renameat2(2) is an *at(2) syscall and to indicate that those flags
-> >   have been allocated already in the per-syscall range.
-> > - Switched AT_HANDLE_MNT_ID_UNIQUE to use 0x01 (to reuse
-> >   (AT_)RENAME_NOREPLACE).
-> > - v2: <https://lore.kernel.org/r/20240523-exportfs-u64-mount-id-v2-1-f9=
-f959f17eb1@cyphar.com>
-> > Changes in v2:
-> > - Fixed a few minor compiler warnings and a buggy copy_to_user() check.
-> > - Rename AT_HANDLE_UNIQUE_MOUNT_ID -> AT_HANDLE_MNT_ID_UNIQUE to match =
-statx.
-> > - Switched to using an AT_* bit from 0xFF and defining that range as
-> >   being "per-syscall" for future usage.
-> > - Sync tools/ copy of <linux/fcntl.h> to include changes.
-> > - v1: <https://lore.kernel.org/r/20240520-exportfs-u64-mount-id-v1-1-f5=
-5fd9215b8e@cyphar.com>
-> >=20
-> > ---
-> > Aleksa Sarai (2):
-> >       uapi: explain how per-syscall AT_* flags should be allocated
-> >       fhandle: expose u64 mount id to name_to_handle_at(2)
-> >=20
->=20
-> Wasn't the conclusion from this discussion last time that we needed to re=
-visit
-> this API completely?  Christoph had some pretty adamant objections.
+On 2024/8/2 9:39, Jinjie Ruan wrote:
+> 
+> 
+> On 2024/8/2 0:36, Russell King (Oracle) wrote:
+>> On Thu, Aug 01, 2024 at 05:40:22PM +0800, Jinjie Ruan wrote:
+>>> It is similar to ARM64 commit 916b93f4e865 ("arm64: smp: Fix missing IPI
+>>> statistics"), commit 56afcd3dbd19 ("ARM: Allow IPIs to be handled as normal
+>>> interrupts") set CPU_BACKTRACE IPI "IRQ_HIDDEN" flag but not show it in
+>>> show_ipi_list(), which cause the interrupt kstat_irqs accounting
+>>> is missing in display.
+>>
+>> I don't see why this needs to be included. If this IPI fires, it means
+>> that the kernel has suffered a lockup and is probably not very useful.
+>> So the chances of being able to read out from /proc/interrupts a non-
+>> zero "CPU backtrace interrupts" figure is highly unlikely.
+> 
+> It is more of a change than a bug.
+> 
+> If we reset the arm32 code to before commit 56afcd3dbd19 ("ARM: Allow
+> IPIs to be handled as normal interrupts"), the backtrace IPI statics is
+> shown ok as below, but after that it is missing:
 
-There was a discussion about reworking the API and I agree with most of
-the issues raised about file handles (I personally don't really like
-this interface and it's a bit of a shame that it seems this is going to
-be the interface that replaces inode numbers) so I'm not at all opposed
-to reworking it.
+Sorry, there is some mistake here, the original result has no backtrace
+IPI statics.
 
-However, I agree with Christian[1] that we can fix this existing issue
-in the existing API fairly easily and then work on a new API separately.
-The existing usage of name_to_handle_at() is fundamentally unsafe (as
-outlined in the man page) and we can fix that fairly easily.
-
-[1]: https://lore.kernel.org/all/20240527-hagel-thunfisch-75781b0cf75d@brau=
-ner/
-
-> That being said the uapi comments patch looks good to me, you can add
->=20
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
->=20
-> to that one.  The other one I'm going to let others who have stronger opi=
-nions
-> than me argue about.  Thanks,
->=20
-> Josef
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---c7qvxlthxg64t2lg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZqw51QAKCRAol/rSt+lE
-b4pZAP0REm8hqjt6l74YM2JQI+BQIfgYBKBGk78diZBwiJ5jxgD+KhCe4dt7UT3O
-P4dv9Kd0Ol79OKqHOpG5Fs+2TkIQcQg=
-=Z43g
------END PGP SIGNATURE-----
-
---c7qvxlthxg64t2lg--
+> 
+> / # cat /proc/interrupts
+>            CPU0
+>  24:          6 GIC-0  34 Level     timer
+>  25:        469 GIC-0  29 Level     twd
+>  26:         61 GIC-0  75 Edge      virtio0
+>  29:          8 GIC-0  44 Level     kmi-pl050
+>  30:        118 GIC-0  45 Level     kmi-pl050
+>  31:          0 GIC-0  36 Level     rtc-pl031
+>  32:          0 GIC-0  41 Level     mmci-pl18x (cmd)
+>  33:          0 GIC-0  42 Level     mmci-pl18x (pio)
+>  34:          0 GIC-0  92 Level     arm-pmu
+>  35:          0 GIC-0  93 Level     arm-pmu
+>  36:          0 GIC-0  94 Level     arm-pmu
+>  37:          0 GIC-0  95 Level     arm-pmu
+>  39:         15 GIC-0  37 Level     uart-pl011
+> IPI0:          0  CPU wakeup interrupts
+> IPI1:          0  Timer broadcast interrupts
+> IPI2:          0  Rescheduling interrupts
+> IPI3:          0  Function call interrupts
+> IPI4:          0  CPU stop interrupts
+> IPI5:          0  IRQ work interrupts
+> IPI6:          0  completion interrupts
+> IPI7:          0  CPU backtrace interrupts
+> 
+> 
+>>
+>> So, I don't see much point to this change.
+>>
 
