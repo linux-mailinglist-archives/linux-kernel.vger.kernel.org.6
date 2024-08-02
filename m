@@ -1,217 +1,86 @@
-Return-Path: <linux-kernel+bounces-272682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92295945FD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:04:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 997F4945FD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B32B41C22329
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D82A1F22497
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D992101A8;
-	Fri,  2 Aug 2024 15:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603C42139A2;
+	Fri,  2 Aug 2024 15:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkeQKIhM"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="tT1tcJxp"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8991F61C;
-	Fri,  2 Aug 2024 15:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADDD1E486B;
+	Fri,  2 Aug 2024 15:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611041; cv=none; b=nYEl6bUisa0cHbuWKVYtGVNxsa6cA95qoN+DQCzOcPsdYeBlV5d9gOFe1uULyCrdghkVH1WQxHgiMSnclEhJzNSo3dRzFKluYSIxhZuTO715BDrGDtVGyD/a0JlpAjNWS7ntrbqyMnWZCeZWO8+Bi+lWLUqfGDnf5sq7RCvXJQY=
+	t=1722611033; cv=none; b=Rj4s+I/z2t4D6AVQpXR2h4bWS0JEKekWJ22NhCYigdmeBA4UOb9PlHMoPefcmTjyooREOWy6BB/j5XsD/eWY/bXkJQbsSZyOiqs343csdzGukBeH19FlaZ9nxEiplnw6Km1kE21OoxQ1h3a1SSQH8VW3F8c8Y3ZUdWtUhgld4vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611041; c=relaxed/simple;
-	bh=IoR5lyUFL+tO8MqmxYx6ubpa69xnrVfzyT01anECDFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L7CtX9voK0ddHjLV/c3jernO1/KoJEmbwMnUU2S9MzwNh02LCQSJ1E6mE2OVFy1hpqkCA6GEgGxEblps4nMJ38GoxKKBewcw3J+ywhsnDfQJft5QHlW8g7l0ir4cDC/7SxW41MGcGXeK05PxXb+bjbfsRKO/I41JR9g/ibvtz7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkeQKIhM; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70ea2f25bfaso6059574b3a.1;
-        Fri, 02 Aug 2024 08:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722611039; x=1723215839; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m0H/bERQlrZ1DjkqSeGhsDTzSRq9MwspaSuR7UMwxII=;
-        b=ZkeQKIhMXcw1sxf3QMxOOXBdcjpClRfznjpOWHJBxE+giddCfva5YIKIvXRG+nAjwV
-         xZteasIsNI3XfdoyxYaojw8/iV7kikuvKRxciPcQlqRTWUWrMkhmdbccA02wwNOBdY+a
-         hlnzc+qG+VaoueOeM0CpRGI3OX8lIim4KdqI3g9z805T9ngUGkk5c00K8wu7HzqfMplE
-         xGPH62NU/Vz5M1lESmTlkxYgGuJ3f+vWc2erQjis3VNbFgOOb2HFrUlLqACXfGRy1eR9
-         TqUDcVqui0Q6GS8qmTZdSOWc6EOsjXHsf/MdNUKmMtP7gU6jU7H5/P9WWZ+Fp20g1plu
-         PZzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722611039; x=1723215839;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m0H/bERQlrZ1DjkqSeGhsDTzSRq9MwspaSuR7UMwxII=;
-        b=W3CCgTpr1bjrj5uoCn5sA6xDPuHEGF8JIsDBeqQORJbgulmoO65ZIs81hgKtN5KTMG
-         6K87ssHw500qyeVF7WGmrqaySrN+Vc7taafK7IP/TCL1bGQk1EVjwEILF3tt9UW9idor
-         WGcu6xcBcac0iOgKU7eJISASdyboJuEOORNNiG9uxJgBUsMghlnXwczVsCfyCfNgrPQU
-         dOZLhTVZ2oNfW8n/eRddo/o+ILZCpi28YHmyXND3UGBEQGDGLw1oE2KzJhcbTboivGFI
-         V8e15XYncM3bZFiyD5QutnM8XVjC6rf371MqIHmOit+ynN6iA2YTPvZXhIkXEQzPAEqE
-         XcpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUarGQPnmtY3pYND3ukS1wXwR3xIduAdExOEOww7pwRbC3cuG0l6ndQTPnFPEnWVe8fYpvIsICSb3qOfCjo1/wubZXV8TNfOPbtF3bYNmHK1c87o0C/QMUjJGjxWXqyuEdrx/vaDk6wmbHKkrvrd9T7OZXF6yrfXEJ/H0Zgc2dsIQsy2aMz
-X-Gm-Message-State: AOJu0YyjQJDW9SD+FtsudoX7yoE03gACyUceTkPNo76EcTsFR8Dw8FCb
-	clXuN5WI47txfoZv+BykZnPNa+QoCkDVOUeBD7vod6ZLnczbsPYEJqg5HTFznQB7eabZMtDAsg1
-	vlqF6o+l6on6eQDZpRJJK1oO0kmsY4g==
-X-Google-Smtp-Source: AGHT+IHXB5zGkiAc79Xe8QqP0XrYFv6YL+bg4dmL76s04TDoAjNUrPQu0yuevM16oGpeCCPoORjUuhylCAkeF2KDQFY=
-X-Received: by 2002:a17:90a:a417:b0:2c9:6f8d:7270 with SMTP id
- 98e67ed59e1d1-2cff9544dc7mr4151713a91.42.1722611039266; Fri, 02 Aug 2024
- 08:03:59 -0700 (PDT)
+	s=arc-20240116; t=1722611033; c=relaxed/simple;
+	bh=NFbE6wcKOrGwIHjrSYbTyK8tMuT7kg3hhHMG+9xGGoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fa89feuC/eWQrtEfx8mAEXixp3+e9orJHASCWjeRjvJKLYkIIw+idSk+lFE2s7STjzwg7JjaGDmwQBwzGNkez31RGRgQJsTOVKRgjCVr3WqbnfRwB8wnb0IRxugBVpyX/ef+I8adiy/TjVTylvwkjxr/gN6HxGCPnqB7XC6s4tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=tT1tcJxp; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=CqEkaHSEEPeOywt8SbTu6VXQzxUsBKtJMu8dGqAFKS0=; b=tT1tcJxpzDsSFshX9jXzy2hGk2
+	WQXchSk8VqnCtCBd9gUcZIMIj5Ph3OWKALzlxnjH8/8IIYawSOqL0FKwpHlQDPv3NTOT813l+RQLk
+	y1abLCE1RIKaVJf6loU8/FoAxfFR4iN+IZGGEomesmjDoxfIprSLyEYY6qzVowNZeg4V2nHrONfxa
+	Srjq2EtKr+i1aQipbmavG9TdXoKvlfss/kiMBOwrNCkJ1j/7oL4NY1jNAWLIdF7FI5GPhK6cu53Bm
+	+AXLR9bfzeSAK9QLs1BdcOssVRcUyPYGaMnlywLruCuf3M07qnIy1/wBYyzM5l+Oo4Cl1m5p+7jdC
+	uMLK0rOw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sZtoq-000000018B1-0QbF;
+	Fri, 02 Aug 2024 15:03:48 +0000
+Date: Fri, 2 Aug 2024 16:03:48 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
+	squashfs-devel@lists.sourceforge.net,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] filemap: Init the newly allocated folio memory to 0 for
+ the filemap
+Message-ID: <20240802150348.GW5334@ZenIV>
+References: <20240802135214.GU5334@ZenIV>
+ <20240802144415.259364-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731214256.3588718-1-andrii@kernel.org> <20240731214256.3588718-3-andrii@kernel.org>
- <Zqy-94c1cAUKoWA4@krava>
-In-Reply-To: <Zqy-94c1cAUKoWA4@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 2 Aug 2024 08:03:47 -0700
-Message-ID: <CAEf4BzZbYT9kP7CAY_ddkFFXiVDS3N=HO0AbCcxfKXZue2cQPA@mail.gmail.com>
-Subject: Re: [PATCH 2/8] uprobes: revamp uprobe refcounting and lifetime management
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802144415.259364-1-lizhi.xu@windriver.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Aug 2, 2024 at 4:11=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
-:
->
-> On Wed, Jul 31, 2024 at 02:42:50PM -0700, Andrii Nakryiko wrote:
->
-> SNIP
->
-> > -/*
-> > - * There could be threads that have already hit the breakpoint. They
-> > - * will recheck the current insn and restart if find_uprobe() fails.
-> > - * See find_active_uprobe().
-> > - */
-> > -static void delete_uprobe(struct uprobe *uprobe)
-> > -{
-> > -     if (WARN_ON(!uprobe_is_active(uprobe)))
-> > -             return;
-> > -
-> > -     write_lock(&uprobes_treelock);
-> > -     rb_erase(&uprobe->rb_node, &uprobes_tree);
-> > -     write_unlock(&uprobes_treelock);
-> > -     RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
-> > -}
-> > -
-> >  struct map_info {
-> >       struct map_info *next;
-> >       struct mm_struct *mm;
-> > @@ -1094,17 +1120,12 @@ void uprobe_unregister(struct uprobe *uprobe, s=
-truct uprobe_consumer *uc)
-> >       int err;
-> >
-> >       down_write(&uprobe->register_rwsem);
-> > -     if (WARN_ON(!consumer_del(uprobe, uc)))
-> > +     if (WARN_ON(!consumer_del(uprobe, uc))) {
-> >               err =3D -ENOENT;
-> > -     else
-> > +     } else {
-> >               err =3D register_for_each_vma(uprobe, NULL);
-> > -
-> > -     /* TODO : cant unregister? schedule a worker thread */
-> > -     if (!err) {
-> > -             if (!uprobe->consumers)
-> > -                     delete_uprobe(uprobe);
->
-> ok, so removing this call is why the consumer test is failing, right?
->
-> IIUC the previous behaviour was to remove uprobe from the tree
-> even when there's active uprobe ref for installed uretprobe
->
-> so following scenario will now behaves differently:
->
->   install uretprobe/consumer-1 on foo
->   foo {
->     remove uretprobe/consumer-1                (A)
->     install uretprobe/consumer-2 on foo        (B)
->   }
->
-> before the removal of consumer-1 (A) would remove the uprobe object
-> from the tree, so the installation of consumer-2 (b) would create
-> new uprobe object which would not be triggered at foo return because
-> it got installed too late (after foo uprobe was triggered)
->
-> the behaviour with this patch is that removal of consumer-1 (A) will
-> not remove the uprobe object (that happens only when we run out of
-> refs), and the following install of consumer-2 will use the existing
-> uprobe object so the consumer-2 will be triggered on foo return
->
-> uff ;-)
+On Fri, Aug 02, 2024 at 10:44:15PM +0800, Lizhi Xu wrote:
+> On Fri, 2 Aug 2024 14:52:14 +0100, Al Viro wrote:
+> > > +			ERROR("Wrong i_size %d!\n", inode->i_size);
+> > > +			return -EINVAL;
+> > > +		}
+> > 
+> > ITYM something like
+> I do not recommend this type of code, as it would add unnecessary calls
+> to le32_o_cpu compared to directly using i_size.
+> > 		if (le32_to_cpu(sqsh_ino->symlink_size) > PAGE_SIZE) {
+> > 			ERROR("Corrupted symlink\n");
+> > 			return -EINVAL;
+> > 		}
 
-yep, something like that
-
->
-> but I think it's better, because we get more hits
-
-note, with the next patch set that makes uretprobes SRCU protected
-(but with timeout) the behavior becomes a bit time-sensitive :) so I
-think we'll have to change your selftest to first attach all the new
-uretprobes, then detach all the uretprobes that had to be detached,
-and then do a bit more relaxed logic of the sort "if there were some
-uretprobes before and after, then we *might* get uretprobe triggered
-(but we might not as well, unless the same uretprobe stayed attached
-at all times)".
-
-Anyways, something to take care of in the bpf-next tree separately.
-
-All this is very much an implementation detail, so I think we can
-change these aspects freely.
-
->
-> jirka
->
-> > -             else
-> > -                     err =3D -EBUSY;
-> > +             /* TODO : cant unregister? schedule a worker thread */
-> > +             WARN(err, "leaking uprobe due to failed unregistration");
-> >       }
-> >       up_write(&uprobe->register_rwsem);
-> >
-> > @@ -1159,27 +1180,16 @@ struct uprobe *uprobe_register(struct inode *in=
-ode,
-> >       if (!IS_ALIGNED(ref_ctr_offset, sizeof(short)))
-> >               return ERR_PTR(-EINVAL);
-> >
-> > - retry:
-> >       uprobe =3D alloc_uprobe(inode, offset, ref_ctr_offset);
-> >       if (IS_ERR(uprobe))
-> >               return uprobe;
-> >
-> > -     /*
-> > -      * We can race with uprobe_unregister()->delete_uprobe().
-> > -      * Check uprobe_is_active() and retry if it is false.
-> > -      */
-> >       down_write(&uprobe->register_rwsem);
-> > -     ret =3D -EAGAIN;
-> > -     if (likely(uprobe_is_active(uprobe))) {
-> > -             consumer_add(uprobe, uc);
-> > -             ret =3D register_for_each_vma(uprobe, uc);
-> > -     }
-> > +     consumer_add(uprobe, uc);
-> > +     ret =3D register_for_each_vma(uprobe, uc);
-> >       up_write(&uprobe->register_rwsem);
-> > -     put_uprobe(uprobe);
-> >
-> >       if (ret) {
-> > -             if (unlikely(ret =3D=3D -EAGAIN))
-> > -                     goto retry;
-> >               uprobe_unregister(uprobe, uc);
-> >               return ERR_PTR(ret);
->
-> SNIP
+You do realize that it's inlined, right?  Seriously, compare the
+generated code...
 
