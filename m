@@ -1,409 +1,333 @@
-Return-Path: <linux-kernel+bounces-273087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDB2946471
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:38:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA336946472
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F337B21537
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58F2C1F20FE1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CA44EB37;
-	Fri,  2 Aug 2024 20:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F8752F6F;
+	Fri,  2 Aug 2024 20:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BKHK0Aly"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2086.outbound.protection.outlook.com [40.107.220.86])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bEInBi1u"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AA733DF;
-	Fri,  2 Aug 2024 20:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722631096; cv=fail; b=FLIZZaz7S75XKYpKhgyrEXaOXCkeHhETi6/CU1GpXwKjWR8bucx1AqleJlWx7jcw67NLmkjce8YY9G1Pj7cgnPOKeAGH9I79SPNb9lfEkKJ/V/cSv5CYEIYQJ686gNKn3gsWt7bQ8Hpw4xtGto721qrSc0Fa6DpkQamhzTQexSI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722631096; c=relaxed/simple;
-	bh=6A4JpvCjRnDVEw7D5iI7/4DHymmFdxx3YHusaOIfKgU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NModoQvABk1LPDh9bDlF7RR0UtVNDDum8XQR83HeKqKEZO1kDate2T3Wx3RQIe8HC+2y9nqn9qaZSPknVaEsEppmygcGL8KUsqzRvzWTXtOsl9Teu6uJeANw2bEEJ2tuXjwsxRVlYSqDsyC5OusIZwuW00us0wIxggh9gRO5kCs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BKHK0Aly; arc=fail smtp.client-ip=40.107.220.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ySCXj5vUySxCHMLJg2kPPruLn7oJTU46de09tHH6dHRLYw4SscwRYcsmb8Ajzi/jSZIJJTbmO+/gVYdJoyL63oll+dL6Vz0Hh2In9ua35cMHOE3DPh5QJY2mhniNmKMOU+Ln8zO5YVe6fZL55eLpmb7R91eQzxsIDeJgk2vQhi/e/KQGxaBCtR0Mj223ym5TGvrXROGNsIvkWiv7cYCR4HSZhXgcp8uZHvQN2yoDu7gt7/9oj37lztYnNVSVUuXskKrc9oUEQHJEzR9hJ59P9T4T5YSdJHr4AFA3yLf5zeP35bDpdbjGgdw7QmsKAV/QK0aI9I9Sy/DHYHj/+DYGGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/wbDQb6ufSBPWm/BAboa3KRwcx56NWTxdsN/54dLVVU=;
- b=RSg0q8hy9+wtdnJoXHDHnsvq5ie+8AwwWBnq0tARPsuNEy2Wo7pJz0KvnGRq5EbjznDaqjCeO7+pDZMTdF6y4g2Ds3C3citlY/OUkhvK2ufnbWmFDG93FVD7ibR57tR+75VPBrGjPnEoBEQO0HrdjRwSUYakZXk93nK0VpzK3odSe4K1DITz+ZkcrnQyY9FihhsPLqJsuywUTatcXYgP99waVqKpSJhqv/V4xj6y7XBtBI0BO8ln5Ps8ZGT+7PJTytk510zZrgDxuLE+UVoQVOwt1KkdHoF9UBExh1e2ngB6GA67+Dkz8DhWf1qMQWCZN5eb+TVWCTpcpCi73LQ1KQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/wbDQb6ufSBPWm/BAboa3KRwcx56NWTxdsN/54dLVVU=;
- b=BKHK0Alyt29GTpudY7EVSlCNmVGpZ4WKXXcpRYAbdCGN3d+PlhktZwkqQvmO8Ts/1s0W85DhBAwiOnVu5r/iaAn4//XsEdNAKnJ/vD241FWDqvPuwzB5aZr6pdLTBNvXJdFrQCU8MtJ0aDvVu/Hv4BC0owiY2UjGTN4368aFH8A=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by MN2PR12MB4272.namprd12.prod.outlook.com (2603:10b6:208:1de::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Fri, 2 Aug
- 2024 20:38:11 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%6]) with mapi id 15.20.7828.021; Fri, 2 Aug 2024
- 20:38:11 +0000
-Message-ID: <afb99efe-0de2-f7ad-d0b8-f2a0ea998efd@amd.com>
-Date: Fri, 2 Aug 2024 15:38:06 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v5 00/20] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-Content-Language: en-US
-To: Peter Newman <peternewman@google.com>,
- Reinette Chatre <reinette.chatre@intel.com>
-Cc: babu.moger@amd.com, corbet@lwn.net, fenghua.yu@intel.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- paulmck@kernel.org, rdunlap@infradead.org, tj@kernel.org,
- peterz@infradead.org, yanjiewtw@gmail.com, kim.phillips@amd.com,
- lukas.bulwahn@gmail.com, seanjc@google.com, jmattson@google.com,
- leitao@debian.org, jpoimboe@kernel.org, rick.p.edgecombe@intel.com,
- kirill.shutemov@linux.intel.com, jithu.joseph@intel.com,
- kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, maciej.wieczor-retman@intel.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, eranian@google.com,
- james.morse@arm.com
-References: <cover.1720043311.git.babu.moger@amd.com>
- <e04b721a-b5cb-4089-a3ad-125a6247e5b8@intel.com>
- <1c50b589-a738-4ae6-8362-bd1ce0d0dc98@amd.com>
- <05b4e345-ad14-4ea9-a13f-2c9b3a6eb422@intel.com>
- <CALPaoCi_TBZnULHQpYns+H+30jODZvyQpUHJRDHNwjQzajrD=A@mail.gmail.com>
- <b3babdac-da08-4dfd-9544-47db31d574f5@intel.com>
- <CALPaoCi1CwLy_HbFNOxPfdReEJstd3c+DvOMJHb5P9jBP+iatw@mail.gmail.com>
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <CALPaoCi1CwLy_HbFNOxPfdReEJstd3c+DvOMJHb5P9jBP+iatw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN7PR18CA0019.namprd18.prod.outlook.com
- (2603:10b6:806:f3::30) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434C533DF;
+	Fri,  2 Aug 2024 20:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722631125; cv=none; b=amNQBnBos73TAn6X628mim84hyzYXn+ybtb9giLbXYwdgWPjHGaRQZzcznULGxEjiX2dKsKJA2zGwAMpdYi2FXJzj2gv+B3m9VES4AmvZkWQUeAsCFDqQbcDxewM+VtKL+TqKYy/cgzKdA8OS+YKFFtNKQey1K5qYdmbO3zjKS8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722631125; c=relaxed/simple;
+	bh=CUehoCTYbQ8Mm+3PgeJN+ILyBOqdFJjIKwqJjJx+UOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YXDKJrvJTryhPlXkcSaJUyZCQ+b2FRn60EnQeyFzVUjrRykdqzBXGJN73oxhbly2/y0NJpAwwN1SutM1CfCaA+PUMY7MpCaT74UN/jrpWO7CJBe/5ZSWgdb5LSObqLKCDU0l4y/g1im30veZCXx/P9fE4CZmbwP5j636MPzhdLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bEInBi1u; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472ErxJ9010821;
+	Fri, 2 Aug 2024 20:38:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=ehYGdwzUtkK6ghpNoD+pRMeh9uH
+	a3nvojcbU/gnRR2s=; b=bEInBi1uHjffwzS9qOsBHSGOVHeGpeOjgV1KlDX/2+S
+	ea1vUetEtDlN2CSACO29U4Lu+wLxUzVG1DOcsH7Q96/r7D30vUwJF6BZ6G6A/ctO
+	jiMK5V4//7KpxntXiDTOyUOYE1AKl56gZZkXVz7Oca2Ucxm+NL3AxZrRSTyioWhQ
+	DCAuU4s9bcP/JCrdyXHQpw2vnK34OeIRCOk/4lqVd7jm7zEKbqAnZyG+p2yM3kHU
+	EEVWdmHssUv+kGLlys0QdiwEczdO3pjF3sxAZSPtjJQsgO+n17htj7QP666kewYX
+	bHHsGiyMP14xgf0fVSXsxUBMweTVZbesFtf9sw8Kcbw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rygm934b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:38:20 +0000 (GMT)
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 472KcJIV020461;
+	Fri, 2 Aug 2024 20:38:19 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rygm9349-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:38:19 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 472IPFjI011143;
+	Fri, 2 Aug 2024 20:38:18 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40ncqn9113-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:38:18 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 472KcEeL32047730
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 Aug 2024 20:38:16 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ABDD720040;
+	Fri,  2 Aug 2024 20:38:14 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B7EB720043;
+	Fri,  2 Aug 2024 20:38:12 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.46.209])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  2 Aug 2024 20:38:12 +0000 (GMT)
+Date: Sat, 3 Aug 2024 02:08:10 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 17/20] ext4: get rid of ppath in
+ ext4_ext_convert_to_initialized()
+Message-ID: <Zq1DsmzwS19Q7vJP@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-18-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|MN2PR12MB4272:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12c996bd-8087-4a39-6c7e-08dcb3330689
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WTFIM0hzajNSUG4zZ0NnZVEzcWEyZCtyZlpHSUNsallMczZVYVhOamtFLytU?=
- =?utf-8?B?ZzMyZW1zWjlEOUdtdHZCYlhXcCtibkRabDFYQloxdkxEVWlTY1JQd01qUTZs?=
- =?utf-8?B?YjBjamJaenNMT1FHT0x2em9CQklyOUJJMm5nRmhtbG1oZ29maUs0Zi9ZS3JT?=
- =?utf-8?B?WTVIWHpNbTlFK2dtd2Fodnlyem83TDFkTUJKUEdsSm9vdm9rZk5kMGJIQ3FH?=
- =?utf-8?B?V0szYXJ0N1ovWkRld3V1dUY3RHJoOXAycWR4aG12V1Z0amFTQTJ5Vm9mZDlv?=
- =?utf-8?B?azE3K2V1d29QeU45WUlSZ1B6ekxNTTBOUXhmRjJPZTlDOE1pQ0NqOWNPVFhB?=
- =?utf-8?B?TFVrK0lWWGs5b0xyeFF1dU9CQWpaSFE3TTd3VlJNdmNyblJmZTZsUHRVdnhS?=
- =?utf-8?B?SXBONEpJVnpvci9rWXlpQ2Y5TGlrM2I1V21nblowUVZKaDcwM2NrOElTMFA5?=
- =?utf-8?B?di82RytmWTZPSkJzVGJhMTd3WmxNcUhBMkw4SkxwazNjeDhBblQxTXVjT3lU?=
- =?utf-8?B?b1RVNHRyQVFGY0dYUTBrdXhLT0xOb0RpOXdZSVkrczRqR3RGdFNRN0RzdzF1?=
- =?utf-8?B?VUNwa2lpVXE3MnJHbDdIUzFSM2RucktrNmJXN2s3ZXA5Z1FieUtIVjF3VXNF?=
- =?utf-8?B?UVdoYStQb3FFWmFaSTZvWUwySE81NHpqY01TWkxyaERuME5Jd0pMbXpWbnZH?=
- =?utf-8?B?NmdydzFwckFSSnR3NVdxSU11d0pBajlCSXlPczUvZGNkdUE5M05Zdm84Nlpi?=
- =?utf-8?B?ZzU5K0laLzMxaU5nZDhmbFJycTRTUXdMZG1Canp0RXBaTWNVTWc4UitlOURh?=
- =?utf-8?B?S3hnK2FESFBwaWlvcE45TjNhWkNpeDFPOWZQVC9wVjhFLytjTHB4UEpIbG5G?=
- =?utf-8?B?R0hxMDNkUml3WjFPQ1NyRWJxdVhOSlNZR0EwS1hHd3BCQ2xJRVpGMDdaZkU5?=
- =?utf-8?B?NUc1a0tIRk50WHdqdTJOcjViaE5OU0R3TXVNV1dZK2ZmeDFiWlp6VEc0bExz?=
- =?utf-8?B?NjlQTTZIR1E0VWs3VGk2QU1RNTFhN1pqbm5aRktCUnJKZUVZUzc2UXVFeGtn?=
- =?utf-8?B?U3YrcTI3NHB2ajFKL1U1ZE1ZZ093Y1cxNFB2Z0sxc3psbUY2WGlXdk83ZFA5?=
- =?utf-8?B?bDNrMStHb0xIMmkveUxsM3ZSTHMxdVhDR1lGSDJNaFN3RWw3MS9pcmpGa3dM?=
- =?utf-8?B?MUxNK1IzZTRSTVR6eW5rOC9TMXJBSlV6Z2ZLVllvVmZsRCs0aENIOUgwY2pW?=
- =?utf-8?B?VHAzaGNVb0R5bWx3Ui83NkJ1SjNobXpsczBIVGR6K05kNFlWS3VaLzFSQWYy?=
- =?utf-8?B?WUZKQndLSkM1eTdNdEtlbjNjVWFDck9vN0ZYR0RPbXAyclAzNE84RCsrclVw?=
- =?utf-8?B?RFdURjJ4MXFRRmxab2tTRkpNY1J2cC9GMVBBNStpZjhSRmt3anhmVGpKb2FG?=
- =?utf-8?B?YVlncHpnU3lsYUtsWklrMFVHbkgvalpMTGhsV3Y5Z2hLcVVqVDRHQllVTVh2?=
- =?utf-8?B?Wm9tME1Ha3RqcG5nSFNFdlVQZXcvSkJQNGJwVnB5NHFDcFFxUFArbjkycERG?=
- =?utf-8?B?RitJanROR0dqUitsdUtualQ3bmg1Ui9Ha0xnOUtXWkNhZHAvanVQRytIZ0pC?=
- =?utf-8?B?SDArSDF2WUtxKzZLb1NGRmtHaDdZTUMrc0tuK1FNc2NMYnQva2MxN2VuT0xu?=
- =?utf-8?B?bkk0VFBERTkyUGdzMEV2M3ZKbW5DRk9UTTJqanBKK3dBQWFuS1ZtS1VoOGVG?=
- =?utf-8?B?S2x5bTZIQm5Rd2RTYVNjaUt0K0p3dFRoK292WUwxWFhrNjBkNE53RTJ5RTR0?=
- =?utf-8?B?YU54TVh2UEJPYTllYVRGdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WEtHbG9jK2Y3QkZObXFKa0RqQTRSU3pwZ0VHbnd2aFJjSDVQYnAwSEJTSlg4?=
- =?utf-8?B?MjhwY1ltWFpYWTVzNks4a1M1QkIzNE9BcmhheDNZcFVYMHhOb01ydGJNUnlX?=
- =?utf-8?B?aVRCbkc1cmpOQ3dRVFNseWVRRktXUUsxeFpjV05aOWtISDZIRkdrdmo1eDZx?=
- =?utf-8?B?T3F0V0kzMEVXbU1LMFRDaFpwblp1OWdaMHQwekF0MnRFQnN6UHNoWk5TNkdk?=
- =?utf-8?B?MG1raHgwU2xyeCt3Y2gwU1lnaDIvUWFyN1dmci9HL2hMWUFxY3JNd292bGx5?=
- =?utf-8?B?YnM3SlhxazhZeDlCdkZQRDloZkdXYmRTdmcyRDdMOVNIUEV3bzRvLy9hMDNo?=
- =?utf-8?B?SmdqMUNWTC9WRzdKbFFUM3BITmU4MTNNY2FOdXR3UjNwS3kxaTZSanEyQktZ?=
- =?utf-8?B?YTBwMzhoc21uVkNQMTdidithREFleEVCSDc1UGx5OVNwVXRJUVlmOUFIdGZW?=
- =?utf-8?B?dWlpOEdZUDVZYm9EV0ZzVThsZWkvYUNLOXI4L1lzcFFEWDZyTlk5MkQzLzdB?=
- =?utf-8?B?T2czODkrY2FuMlZGZU9aTEZzbEJVZmYwaWxrN0FkeEt5R0xicUw5Mkl4OXhZ?=
- =?utf-8?B?R2xDMGgyNVN1YTY5Q05LR3RSWVdySWZkQmhIdEJSS1hNbHAxNHBtWXRkbWl4?=
- =?utf-8?B?dGdKUmxoOVdSdWFBS1dXNDNaRHVEMnNVWG1jdGljV1VEd3hiV291aGFpK09Q?=
- =?utf-8?B?bVBPbUhsSXRJL2FNTDhqakdQRmMxWWt6ekZrVnVuWHQrRVpZUFhYV2M1clZ2?=
- =?utf-8?B?WHRyaVorclpvRWNIVHhJcy9CRkQyR3VubkV1RVB2UzFtQlpYVFM4M2NIZWZm?=
- =?utf-8?B?bUlPT3psb1pYcnA1NEJFMGxQczg1YkhCa2VFai96U1RySVE3bzdoQm1LaDJa?=
- =?utf-8?B?dlhUWG14dzVIQXBZNjR5Qng5TWdMc1FRenVLWFFhUURBWGlwdXVNZG9EWTRK?=
- =?utf-8?B?YkZzUWN3TTBuOHdoODQ3U0ZXUTRrdDFrU2hRc3M0UlFrRE1MbFZ1L2RHSEdn?=
- =?utf-8?B?WVpqcmoxVVFKSXNnNFlxN2xKY0ZNQlpJb1lOSHlKRmNLUnhiTDhmNngwRUhG?=
- =?utf-8?B?VGFja2NtWTVYbEpZQ2liOHpNYkdNRWhONHNZY1lEc0s4VGdNNHg3TW1xdGg4?=
- =?utf-8?B?c2h2WHVoeTJBNmtNYmkzbmwyaDhKYXl0QW9IekZLOHB4R09GUXZzUkI4ZEZH?=
- =?utf-8?B?T2llTzI0V0VxWER5UGh2TEV1OUU2ZDdxdHJOQmpHaWtsenBBWm51Y2hTOEQ4?=
- =?utf-8?B?cFM1LzBldWdwZUJjRVlYMUpHc245WjZuM25HUFVqeExvZW9kK1BRNlFPSnNL?=
- =?utf-8?B?NnlSMzZCSVBuVWtIeVpkcHVkOThidUtwcFZUMXgxOFd0emlLN28yQzNFR3NC?=
- =?utf-8?B?RWJsb0xiNkFsYXY2clFEWkNCdTlUeEMzUWRoWi9DWG53YkNhRjN1ZWR2VWxv?=
- =?utf-8?B?VWovZlo4M09pUXZONmVhRXdPTXZZYmJyS1JzYnk5ZXFETEc5bmtMUEd6L1RN?=
- =?utf-8?B?SC9VSkV3RXh3QmNRaW1KYkRNOTlzN0RqV2lJMjVhZEhFZ2Y2S1A5azg5ZW5U?=
- =?utf-8?B?dzd0dit3TXJNRy82UFJMMmwyN2syRkZQNGtGMVA1eVFaNzI4V3BJOHlvVWRu?=
- =?utf-8?B?bDEvejViMGFhODRCcENDZnRIUmRkMXVDYWhOYVpERitYekZMVGR0T2tjZnN6?=
- =?utf-8?B?eVB1b1lRY2VRZ0xSWUtyR1dLbjZzSzFBcHZjZDlibFIzZzBXQ0JQMDFhQUFu?=
- =?utf-8?B?UmNWT3B3eWFSdlpQWFBCVTBuK2hOcHlzUktpOTlKeHgwN2Zkc0psQlJ0REpJ?=
- =?utf-8?B?Z3hKNVNIL2U3OHhXd3FxQmJ6cW9nSWtvM1QrbTBaQWpINGVyemgrMk1RbU5D?=
- =?utf-8?B?OGNZZzhqQS9YVXdPZ2phdWxNSFpoRWdCTmR3U3JDbTJWeWQydDBSTVFQZkFh?=
- =?utf-8?B?elExVU5oOEZFSmQ4RTRVVm9OeXY3YnI0WXhZS1RxT2FmdSs0QU13TW1WL2wx?=
- =?utf-8?B?dlhqdnRWbWpDNkFYU3FSb3lWWENoU3VobmRSOWhHcHAwSzloaWYxeE52SU9p?=
- =?utf-8?B?b1Q3MExNM3JEM25rWCtpN3dxSFVsSjAvTS9wb1VwMlVXMExCTk9LVkw4Nkt2?=
- =?utf-8?Q?zDIk=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12c996bd-8087-4a39-6c7e-08dcb3330689
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2024 20:38:11.5287
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Vx9yxfSRyLOo3yRysL6rj0Dv0e+FyhB/2CkHl5PciFL3xnV6s4TL0wJyHao135zu
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4272
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-18-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: d6pgwc5WSvr2jI_kovjK6Ai3whrj8gJN
+X-Proofpoint-ORIG-GUID: 7v70zqh-xFKKxCfoNutXjLYVGsbHgLrT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_16,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=621
+ bulkscore=0 clxscore=1015 impostorscore=0 mlxscore=0 malwarescore=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408020142
 
-Hi Peter/Reinette,
+On Wed, Jul 10, 2024 at 12:06:51PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
+> 
+> To get rid of the ppath in ext4_ext_convert_to_initialized(), the following
+> is done here:
+> 
+>  * Free the extents path when an error is encountered.
+>  * Its caller needs to update ppath if it uses ppath.
+>  * The 'allocated' is changed from passing a value to passing an address.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-On 8/2/2024 1:49 PM, Peter Newman wrote:
-> Hi Reinette,
-> 
-> On Fri, Aug 2, 2024 at 9:14 AM Reinette Chatre
-> <reinette.chatre@intel.com> wrote:
->>
->> Hi Peter,
->>
->> On 8/1/24 3:45 PM, Peter Newman wrote:
->>> On Thu, Aug 1, 2024 at 2:50 PM Reinette Chatre
->>> <reinette.chatre@intel.com> wrote:
->>>> On 7/17/24 10:19 AM, Moger, Babu wrote:
->>>>> On 7/12/24 17:03, Reinette Chatre wrote:
->>>>>> On 7/3/24 2:48 PM, Babu Moger wrote:
->>
->>>>>>> # Examples
->>>>>>>
->>>>>>> a. Check if ABMC support is available
->>>>>>>        #mount -t resctrl resctrl /sys/fs/resctrl/
->>>>>>>
->>>>>>>        #cat /sys/fs/resctrl/info/L3_MON/mbm_mode
->>>>>>>        [abmc]
->>>>>>>        legacy
->>>>>>>
->>>>>>>        Linux kernel detected ABMC feature and it is enabled.
->>>>>>
->>>>>> How about renaming "abmc" to "mbm_cntrs"? This will match the num_mbm_cntrs
->>>>>> info file and be the final step to make this generic so that another
->>>>>> architecture
->>>>>> can more easily support assignining hardware counters without needing to call
->>>>>> the feature AMD's "abmc".
->>>>>
->>>>> I think we aleady settled this with "mbm_cntr_assignable".
->>>>>
->>>>> For soft-RMID" it will be mbm_sw_assignable.
->>>>
->>>> Maybe getting a bit long but how about "mbm_cntr_sw_assignable" to match
->>>> with the term "mbm_cntr" in accompanying "num_mbm_cntrs"?
->>>
->>> My users are pushing for a consistent interface regardless of whether
->>> counter assignment is implemented in hardware or software, so I would
->>> like to avoid exposing implementation differences in the interface
->>> where possible.
->>
->> This seems a reasonable ask but can we be confident that if hardware
->> supports assignable counters then there will never be a reason to use
->> software assignable counters? (This needs to also consider how/if Arm
->> may use this feature.)
->>
->> I am of course not familiar with details of the software implementation
->> - could there be benefits to using it even if hardware counters are
->> supported?
-> 
-> I can't see any situation where the user would want to choose software
-> over hardware counters. The number of groups which can be monitored by
-> software assignable counters will always be less than with hardware,
-> due to the need for consuming one RMID (and the counters automatically
-> allocated to it by the AMD hardware) for all unassigned groups.
-> 
-> I consider software assignable a workaround to enable measuring
-> bandwidth reliably on a large number of groups on pre-ABMC AMD
-> hardware, or rather salvaging MBM on pre-ABMC hardware making use of
-> our users' effort to adapt to counter assignment in resctrl. We hope
-> no future implementations will choose to silently drop bandwidth
-> counts, so fingers crossed, the software implementation can be phased
-> out when these generations of AMD hardware are decommissioned.
-> 
-> The MPAM specification natively supports (or requires) counter
-> assignment in hardware. From what I recall in the last of James'
-> prototypes I looked at, MBM was only supported if the implementation
-> provided as many bandwidth counters as there were possible monitoring
-> groups, so that it could assume a monitor IDs for every PARTID:PMG
-> combination.
-> 
->>
->> What I would like to avoid is future complexity of needing a new mount/config
->> option that user space needs to use to select if a single "mbm_cntr_assignable"
->> is backed by hardware or software.
-> 
-> In my testing so far, automatically enabling counter assignment and
-> automatically allocating counters for all events in new groups works
-> well enough.
-> 
-> The only configuration I need is the ability to disable the automatic
-> counter allocation so that a userspace agent can have control of where
-> all the counters are assigned at all times. It's easy to implement
-> this as a simple flag if the user accepts that they need to manually
-> deallocate any automatically-allocated counters from groups created
-> before the flag was cleared.
-> 
->>
->>> The main semantic difference with SW assignments is that it is not
->>> possible to assign counters to individual events. Because the
->>> implementation is assigning RMIDs to groups, assignment results in all
->>> events being counted.
->>>
->>> I was considering introducing a boolean mbm_assign_events node to
->>> indicate whether assigning individual events is supported. If true,
->>> num_mbm_cntrs indicates the number of events which can be counted,
->>> otherwise it indicates the number of groups to which counters can be
->>> assigned and attempting to assign a single event is silently upgraded
->>> to assigning counters to all events in the group.
->>
->> How were you envisioning your users using the control file ("mbm_control")
->> in these scenarios? Does this file's interface even work for SW assignment
->> scenarios?
->>
->> Users should expect consistent interface for "mbm_control" also.
->>
->> It sounds to me that a potential "mbm_assign_events" will be false for SW
->> assignments. That would mean that "num_mbm_cntrs" will
->> contain the number of groups to which counters can be assigned?
->> Would user space be required to always enable all flags (enable all events) of
->> all domains to the same values ... or would enabling of one flag (one event)
->> in one domain automatically result in all flags (all events) enabled for all
->> domains ... or would enabling of one flag (one event) in one domain only appear
->> to user space to be enabled while in reality all flags/events are actually enabled?
-> 
-> I believe mbm_control should always accurately reflect which events
-> are being counted.
-> 
-> The behavior as I've implemented today is:
-> 
-> # cat /sys/fs/resctrl/info/L3_MON/mbm_assign_events
-> 0
-> 
-> # cat /sys/fs/resctrl/info/L3_MON/mbm_control
-> test//0=_;1=_;
-> //0=_;1=_;
-> 
-> # echo "test//1+l" > /sys/fs/resctrl/info/L3_MON/mbm_control
-> # cat /sys/fs/resctrl/info/L3_MON/mbm_control
-> test//0=_;1=tl;
-> //0=_;1=_;
-> 
-> # echo "test//1-t" > /sys/fs/resctrl/info/L3_MON/mbm_control
-> # cat /sys/fs/resctrl/info/L3_MON/mbm_control
-> test//0=_;1=_;
-> //0=_;1=_;
+Looks good Baokun, feel free to add:
 
-It enables/disables the events automatically("silent upgrade/degrade").
-This looks good to me.
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
+Regards,
+ojaswin
+
+> ---
+>  fs/ext4/extents.c | 73 +++++++++++++++++++++++------------------------
+>  1 file changed, 35 insertions(+), 38 deletions(-)
 > 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index b7f443f98e9d..59e80926fe3a 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -3437,13 +3437,11 @@ static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
+>   *    that are allocated and initialized.
+>   *    It is guaranteed to be >= map->m_len.
+>   */
+> -static int ext4_ext_convert_to_initialized(handle_t *handle,
+> -					   struct inode *inode,
+> -					   struct ext4_map_blocks *map,
+> -					   struct ext4_ext_path **ppath,
+> -					   int flags)
+> +static struct ext4_ext_path *
+> +ext4_ext_convert_to_initialized(handle_t *handle, struct inode *inode,
+> +			struct ext4_map_blocks *map, struct ext4_ext_path *path,
+> +			int flags, unsigned int *allocated)
+>  {
+> -	struct ext4_ext_path *path = *ppath;
+>  	struct ext4_sb_info *sbi;
+>  	struct ext4_extent_header *eh;
+>  	struct ext4_map_blocks split_map;
+> @@ -3453,7 +3451,6 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  	unsigned int ee_len, depth, map_len = map->m_len;
+>  	int err = 0;
+>  	int split_flag = EXT4_EXT_DATA_VALID2;
+> -	int allocated = 0;
+>  	unsigned int max_zeroout = 0;
+>  
+>  	ext_debug(inode, "logical block %llu, max_blocks %u\n",
+> @@ -3494,6 +3491,7 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  	 *  - L2: we only attempt to merge with an extent stored in the
+>  	 *    same extent tree node.
+>  	 */
+> +	*allocated = 0;
+>  	if ((map->m_lblk == ee_block) &&
+>  		/* See if we can merge left */
+>  		(map_len < ee_len) &&		/*L1*/
+> @@ -3523,7 +3521,7 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  			(prev_len < (EXT_INIT_MAX_LEN - map_len))) {	/*C4*/
+>  			err = ext4_ext_get_access(handle, inode, path + depth);
+>  			if (err)
+> -				goto out;
+> +				goto errout;
+>  
+>  			trace_ext4_ext_convert_to_initialized_fastpath(inode,
+>  				map, ex, abut_ex);
+> @@ -3538,7 +3536,7 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  			abut_ex->ee_len = cpu_to_le16(prev_len + map_len);
+>  
+>  			/* Result: number of initialized blocks past m_lblk */
+> -			allocated = map_len;
+> +			*allocated = map_len;
+>  		}
+>  	} else if (((map->m_lblk + map_len) == (ee_block + ee_len)) &&
+>  		   (map_len < ee_len) &&	/*L1*/
+> @@ -3569,7 +3567,7 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  		    (next_len < (EXT_INIT_MAX_LEN - map_len))) {	/*C4*/
+>  			err = ext4_ext_get_access(handle, inode, path + depth);
+>  			if (err)
+> -				goto out;
+> +				goto errout;
+>  
+>  			trace_ext4_ext_convert_to_initialized_fastpath(inode,
+>  				map, ex, abut_ex);
+> @@ -3584,18 +3582,20 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  			abut_ex->ee_len = cpu_to_le16(next_len + map_len);
+>  
+>  			/* Result: number of initialized blocks past m_lblk */
+> -			allocated = map_len;
+> +			*allocated = map_len;
+>  		}
+>  	}
+> -	if (allocated) {
+> +	if (*allocated) {
+>  		/* Mark the block containing both extents as dirty */
+>  		err = ext4_ext_dirty(handle, inode, path + depth);
+>  
+>  		/* Update path to point to the right extent */
+>  		path[depth].p_ext = abut_ex;
+> +		if (err)
+> +			goto errout;
+>  		goto out;
+>  	} else
+> -		allocated = ee_len - (map->m_lblk - ee_block);
+> +		*allocated = ee_len - (map->m_lblk - ee_block);
+>  
+>  	WARN_ON(map->m_lblk < ee_block);
+>  	/*
+> @@ -3622,21 +3622,21 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  	split_map.m_lblk = map->m_lblk;
+>  	split_map.m_len = map->m_len;
+>  
+> -	if (max_zeroout && (allocated > split_map.m_len)) {
+> -		if (allocated <= max_zeroout) {
+> +	if (max_zeroout && (*allocated > split_map.m_len)) {
+> +		if (*allocated <= max_zeroout) {
+>  			/* case 3 or 5 */
+>  			zero_ex1.ee_block =
+>  				 cpu_to_le32(split_map.m_lblk +
+>  					     split_map.m_len);
+>  			zero_ex1.ee_len =
+> -				cpu_to_le16(allocated - split_map.m_len);
+> +				cpu_to_le16(*allocated - split_map.m_len);
+>  			ext4_ext_store_pblock(&zero_ex1,
+>  				ext4_ext_pblock(ex) + split_map.m_lblk +
+>  				split_map.m_len - ee_block);
+>  			err = ext4_ext_zeroout(inode, &zero_ex1);
+>  			if (err)
+>  				goto fallback;
+> -			split_map.m_len = allocated;
+> +			split_map.m_len = *allocated;
+>  		}
+>  		if (split_map.m_lblk - ee_block + split_map.m_len <
+>  								max_zeroout) {
+> @@ -3654,27 +3654,24 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  
+>  			split_map.m_len += split_map.m_lblk - ee_block;
+>  			split_map.m_lblk = ee_block;
+> -			allocated = map->m_len;
+> +			*allocated = map->m_len;
+>  		}
+>  	}
+>  
+>  fallback:
+>  	path = ext4_split_extent(handle, inode, path, &split_map, split_flag,
+>  				 flags, NULL);
+> -	if (IS_ERR(path)) {
+> -		err = PTR_ERR(path);
+> -		*ppath = NULL;
+> -		goto out;
+> -	}
+> -	err = 0;
+> -	*ppath = path;
+> +	if (IS_ERR(path))
+> +		return path;
+>  out:
+>  	/* If we have gotten a failure, don't zero out status tree */
+> -	if (!err) {
+> -		ext4_zeroout_es(inode, &zero_ex1);
+> -		ext4_zeroout_es(inode, &zero_ex2);
+> -	}
+> -	return err ? err : allocated;
+> +	ext4_zeroout_es(inode, &zero_ex1);
+> +	ext4_zeroout_es(inode, &zero_ex2);
+> +	return path;
+> +
+> +errout:
+> +	ext4_free_ext_path(path);
+> +	return ERR_PTR(err);
+>  }
+>  
+>  /*
+> @@ -3896,7 +3893,6 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+>  			struct ext4_ext_path **ppath, int flags,
+>  			unsigned int allocated, ext4_fsblk_t newblock)
+>  {
+> -	int ret = 0;
+>  	int err = 0;
+>  
+>  	ext_debug(inode, "logical block %llu, max_blocks %u, flags 0x%x, allocated %u\n",
+> @@ -3976,23 +3972,24 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+>  	 * For buffered writes, at writepage time, etc.  Convert a
+>  	 * discovered unwritten extent to written.
+>  	 */
+> -	ret = ext4_ext_convert_to_initialized(handle, inode, map, ppath, flags);
+> -	if (ret < 0) {
+> -		err = ret;
+> +	*ppath = ext4_ext_convert_to_initialized(handle, inode, map, *ppath,
+> +						 flags, &allocated);
+> +	if (IS_ERR(*ppath)) {
+> +		err = PTR_ERR(*ppath);
+> +		*ppath = NULL;
+>  		goto out2;
+>  	}
+>  	ext4_update_inode_fsync_trans(handle, inode, 1);
+>  	/*
+> -	 * shouldn't get a 0 return when converting an unwritten extent
+> +	 * shouldn't get a 0 allocated when converting an unwritten extent
+>  	 * unless m_len is 0 (bug) or extent has been corrupted
+>  	 */
+> -	if (unlikely(ret == 0)) {
+> -		EXT4_ERROR_INODE(inode, "unexpected ret == 0, m_len = %u",
+> +	if (unlikely(allocated == 0)) {
+> +		EXT4_ERROR_INODE(inode, "unexpected allocated == 0, m_len = %u",
+>  				 map->m_len);
+>  		err = -EFSCORRUPTED;
+>  		goto out2;
+>  	}
+> -	allocated = ret;
+>  
+>  out:
+>  	map->m_flags |= EXT4_MAP_NEW;
+> -- 
+> 2.39.2
 > 
->>
->>> However, If we don't expect to see these semantics in any other
->>> implementation, these semantics could be implicit in the definition of
->>> a SW assignable counter.
->>
->> It is not clear to me how implementation differences between hardware
->> and software assignment can be hidden from user space. It is possible
->> to let user space enable individual events and then silently upgrade it
->> to all events. I see two options here, either "mbm_control" needs to
->> explicitly show this "silent upgrade" so that user space knows which
->> events are actually enabled, or "mbm_control" only shows flags/events enabled
->> from user space perspective. In the former scenario, this needs more
->> user space support since a generic user space cannot be confident which
->> flags are set after writing to "mbm_control". In the latter scenario,
->> meaning of "num_mbm_cntrs" becomes unclear since user space is expected
->> to rely on it to know which events can be enabled and if some are
->> actually "silently enabled" when user space still thinks it needs to be
->> enabled the number of available counters becomes vague.
->>
->> It is not clear to me how to present hardware and software assignable
->> counters with a single consistent interface. Actually, what if the
->> "mbm_mode" is what distinguishes how counters are assigned instead of how
->> it is backed (hw vs sw)? What if, instead of "mbm_cntr_assignable" and
->> "mbm_cntr_sw_assignable" MBM modes the terms "mbm_cntr_event_assignable"
->> and "mbm_cntr_group_assignable" is used? Could that replace a
->> potential "mbm_assign_events" while also supporting user space in
->> interactions with "mbm_control"?
-> 
-> If I understand this correctly, is this a preference that the info
-> node be named differently if its value will have different units,
-> rather than a second node to indicate what the value of num_mbm_cntrs
-> actually means? This sounds reasonable to me.
-
-Looks like we are agreeing with "silent upgrade/degrade" option.
-
-"mbm_mode" will look like below(Replaced event with evt and group with grp).
-
-#cat /sys/fs/resctrl/infor/L3_MON/mbm_mode
-[mbm_cntr_evt_assignable]
-mbm_cntr_grp_assignable
-legacy
-
-Does that look ok?
-
-I am not clear on num_mbm_cntrs in case of mbm_cntr_grp_assignable.
-
-Peter, How do you figure out how many counters are available in soft-ABMC?
-
-
-> 
-> I think it's also important to note that in MPAM, the MBWU (memory
-> bandwidth usage) monitors don't have a concept of local versus total
-> bandwidth, so event assignment would likely not apply there either.
-> What the counted bandwidth actually represents is more implicit in the
-> monitor's position in the memory system in the particular
-> implementation. On a theoretical multi-socket system, resctrl would
-> require knowledge about the system's architecture to stitch together
-> the counts from different types of monitors to produce a local and
-> total value. I don't know if we'd program this SoC-specific knowledge
-> into the kernel to produce a unified MBM resource like we're
-> accustomed to now or if we'd present multiple MBM resources, each only
-> providing an mbm_total_bytes event. In this case, the counters would
-> have to be assigned separately in each MBM resource, especially if the
-> different MBM resources support a different number of counters.
-> 
-> Thanks,
-> -Peter
-> 
-
--- 
-- Babu Moger
 
