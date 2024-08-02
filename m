@@ -1,107 +1,104 @@
-Return-Path: <linux-kernel+bounces-272468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056AB945C7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:52:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B53945C81
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3706E1C21D3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:52:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92ECA283D7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971FE1DC461;
-	Fri,  2 Aug 2024 10:52:10 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2692B1DE870;
+	Fri,  2 Aug 2024 10:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlpQORBp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CD71DE874;
-	Fri,  2 Aug 2024 10:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5981B1DE85D;
+	Fri,  2 Aug 2024 10:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722595930; cv=none; b=hZ6h7gfuRtzvF3CUyj1/3VkH2FGz5z8fUPZXnyWQ7FK/n8EWuZn2GP4YvT7htmiHiJrTnuCl8w6/alb1jWrhXsB3hc1ROdFRSymdJ12oV0/JrAVACby5E8FoxSAgXtNSSSmhQ7zfuvP0T+aymC0PtLg9dd16/GEIQWWT4V653l4=
+	t=1722595949; cv=none; b=GgBPH8cLiNzyEWCsq9Jm+sVQiv1Yjxl3NCoBK5RRiZsLjBeJfIp4p4tJsYKJC7AM+LEweeQ+SCj94IrS6uiv/rQvDLk1u/ZuUL2exHyCqf1FNPL6sF5cQNwIPRsxHtcgBC2x5UvKGI/py+av1xoTVnelpA5HqIRouYpCr4E5sNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722595930; c=relaxed/simple;
-	bh=bAT/IJwOHrfw7n2LLlcEClCNvL38OyP9kJx0WhPDtjk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ki844pFGcDm3VEDPL0/XjSWYWvCGJBnzGjSkop34RdkDa4eVo4jq563g39+csOEvnM2Otok9uCnLtLt5Qu/XXS49j+CGZeR97Qgi/VIu8l+UlHSDNvFVtrZznfGOwyi0oU2GvLflNFvPRRvH4tdqFbe5jSaVt97tETXeDuykoVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wb2df5M0xz6K606;
-	Fri,  2 Aug 2024 18:49:26 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1DD6D1400D9;
-	Fri,  2 Aug 2024 18:52:05 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 2 Aug
- 2024 11:52:04 +0100
-Date: Fri, 2 Aug 2024 11:52:03 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
- Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
-	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
-	<dave@stgolabs.net>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko
- Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
- Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
-	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
-	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
-	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
-	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
-Subject: Re: [PATCH v3 18/26] mm: move numa_distance and related code from
- x86 to numa_memblks
-Message-ID: <20240802115203.0000062a@Huawei.com>
-In-Reply-To: <20240801060826.559858-19-rppt@kernel.org>
-References: <20240801060826.559858-1-rppt@kernel.org>
-	<20240801060826.559858-19-rppt@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722595949; c=relaxed/simple;
+	bh=Dsah45Y/KHqlc4tvbqi7GZ6iAsFDWEfJZezDlhque04=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=p9M/5z90XRBuxxj5WcZ2cDdL9ggLKrohElaO2FnoOlJD9T0GEgA9yRPKBzGqKRvi6eV61oFs1KLTFdg64LDs/YRuU3/6EBd2UX6mCbdhoROcBrtZevF1FRW7dA1B9yOv5iPN3joZhrsFXT261e9U8wy3hVtY4g99J3larjQknjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlpQORBp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D4EC32782;
+	Fri,  2 Aug 2024 10:52:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722595949;
+	bh=Dsah45Y/KHqlc4tvbqi7GZ6iAsFDWEfJZezDlhque04=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=LlpQORBpXAFAKQIJweJDU+4vrjyXc1koXzSa0QTv1KuD7nX4R4NNT/Pz9p6hD+mmr
+	 WN60xpK8biJ31LpG62vqE5yjoGIEda31UBK8/so1tjQZgPJxzqaLXPOF3ITaJpSD/T
+	 Fe8SwKC61Qqzz/wtQHovGWy+n61mOLeH2oZhvqkfkuZVR7+ibsMJvgN4Rq494mMIro
+	 80+hq64c4CuXhXXyqlLkOSUlCDDCwnNiQ0RssP9vT93tIjaDDb4oO7RBNoOv+TJPqm
+	 hSAVGHQnTFWs9j1pAFZluQUYEGdol3thYc7N6sAb9qsUNFGsdspE81E6GOKlLoIzi+
+	 3ejjEowMf+oYQ==
+Date: Fri, 2 Aug 2024 12:52:25 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: "Luke D. Jones" <luke@ljones.dev>
+cc: bentiss@kernel.org, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hid-asus: add ROG Ally X prod ID to quirk list
+In-Reply-To: <20240724223125.44914-1-luke@ljones.dev>
+Message-ID: <nycvar.YFH.7.76.2408021251150.12664@cbobk.fhfr.pm>
+References: <20240724223125.44914-1-luke@ljones.dev>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu,  1 Aug 2024 09:08:18 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+On Thu, 25 Jul 2024, Luke D. Jones wrote:
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> The new ASUS ROG Ally X functions almost exactly the same as the previous
+> model, so we can use the same quirks.
 > 
-> Move code dealing with numa_distance array from arch/x86 to
-> mm/numa_memblks.c
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> ---
+>  drivers/hid/hid-asus.c | 3 +++
+>  drivers/hid/hid-ids.h  | 1 +
+>  2 files changed, 4 insertions(+)
 > 
-> This code will be later reused by arch_numa.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
+> diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> index 9010f12a221e..e5f6664bac0f 100644
+> --- a/drivers/hid/hid-asus.c
+> +++ b/drivers/hid/hid-asus.c
+> @@ -1255,6 +1255,9 @@ static const struct hid_device_id asus_devices[] = {
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>  	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
+>  	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> +	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> +	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
+> +	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+>  	    USB_DEVICE_ID_ASUSTEK_ROG_AZOTH_KEYBOARD),
+>  	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index fdf2d480533b..57f1f1bc5eb6 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -212,6 +212,7 @@
+>  #define USB_DEVICE_ID_ASUSTEK_ROG_RAIKIRI_PAD		0x1abb
+>  #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY		0x1abe
+>  #define USB_DEVICE_ID_ASUSTEK_ROG_AZOTH_KEYBOARD	0x1a83
+> +#define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X		0x1b4c
 
-As you say, simple code move and I'll cope with the confusion
-of stuff that isn't numa_memblk in that file given the
-convenience.
+I've applied the patch, but got a conflict here, because I don't see 
+USB_DEVICE_ID_ASUSTEK_ROG_AZOTH_KEYBOARD in my tree, nor in Linus' tree.
+What tree was this patch generated against?
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+-- 
+Jiri Kosina
+SUSE Labs
+
 
