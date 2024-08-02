@@ -1,76 +1,176 @@
-Return-Path: <linux-kernel+bounces-272475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E251C945CAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:58:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 635FB945CAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9720E1F224C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24580285142
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06F91DF669;
-	Fri,  2 Aug 2024 10:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB761DF669;
+	Fri,  2 Aug 2024 10:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CW+nChj/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzeS/dru"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A6E14AD38;
-	Fri,  2 Aug 2024 10:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A734E1DE87A;
+	Fri,  2 Aug 2024 10:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722596320; cv=none; b=sDQu+S9AxlQky7En7Ct4G61d/l6YwpNAxKBrQiBrEbKxNtVQKeeiGgs4YOTS6dSxyNGqYeezaGNh8I0bewGQPBGdYHi9LgdEkeyMwWvs9lZ5QPRqkPgFXp3qYGcSRGivJ8wiugCxX1WqZtruITcwXJYPoMIBpTilqUWwYRUkNoY=
+	t=1722596346; cv=none; b=r13p7JZSx70muRmiEp38xz6uaMOkP1LQrE5PEwdzF7k9zmYbkY4MRhBZR2DkDdMsNdUrMPDZI1yxD7fbuax5A9Dh24iQcrGKC47NFrGOJVOVJOGn2OaZQam95sd0zDaneOhzGimdj+VqESEkZIYVs8P00GpgKooLCQkqpyLhyXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722596320; c=relaxed/simple;
-	bh=qb4DVqqPh1mYIAE2cm9ELnhbOFTsYN3mV8ZJepzT3+k=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=u0ahWlc1T2ive2iQBYEqsPZqEMIkj+m+z5j63rH2WmgNl9tQ8jQSWhmxREoXyinJ/IHc5b7/YAN/I6EobqZsHi0VcKpD3iIyDfE+bWv46Wol939Lt9R90wvgAY2PIQTWDCTS7NtIhPO3R48p0COIwcyF/IjfzA7zhdClGIfY8qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CW+nChj/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E25C4AF0D;
-	Fri,  2 Aug 2024 10:58:38 +0000 (UTC)
+	s=arc-20240116; t=1722596346; c=relaxed/simple;
+	bh=qppczfrXCD0TYJ6nOu5rI+WZpfgTJHoBUkyW5pmMA34=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WfosZp2iWkHpiXg+dv7N0SaJpl9JfWew2nKX511ZADD8HUo5KKIVL9NT0oqaqlVtMVxvenk+O1zkD5GHDxhjoFwiIE9s4oxMgm0/YfLMuJJlWhtYiHcXdeWWhSACpXLzelCxKW0XvBlwbOtvMOZ6WuswS2ny+A7HQhXY+cgWE4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzeS/dru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C08C32782;
+	Fri,  2 Aug 2024 10:59:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722596319;
-	bh=qb4DVqqPh1mYIAE2cm9ELnhbOFTsYN3mV8ZJepzT3+k=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=CW+nChj/opXtVU5Bv9oCG2IwrWFqMMiTYDxhfbAhzshCt3fUfGW5wXvE8idC11QFX
-	 SeVRaVEFs9vYsCLhjQms8QnegvaxKKxEIWkfs5hgVULFNWMMWjeto96zSDCQed/YAX
-	 BuSlhbJYWUBFajx6vlF1md8yZWfjpNDfFZn37kZL/3Zsa/bNFrChWnwkP1o1GibgNs
-	 PdIQiDhtPM+kuRoPGFSe0xgTFmBjxJ01PRvSUlr4maxmedwJXPjqdoXCXIzTuPXoEW
-	 L4tKXU5jaBeglA4CGeQLdqAihwyJ9VsmmgVHEA8jwhFvU2uUMZuLE56yT/x0+UPBNa
-	 RX1VE8gdJ6Xyw==
-Date: Fri, 2 Aug 2024 12:58:37 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Basavaraj Natikar <bnatikar@amd.com>
-cc: Olivier Sobrie <olivier@sobrie.be>, 
-    Basavaraj Natikar <basavaraj.natikar@amd.com>, 
-    Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: amd_sfh: free driver_data after destroying hid
- device
-In-Reply-To: <d1c3ab42-107d-4ce0-9d47-9870084c9514@amd.com>
-Message-ID: <nycvar.YFH.7.76.2408021258250.12664@cbobk.fhfr.pm>
-References: <20240723084827.11773-1-olivier@sobrie.be> <nycvar.YFH.7.76.2408021247560.12664@cbobk.fhfr.pm> <d1c3ab42-107d-4ce0-9d47-9870084c9514@amd.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=k20201202; t=1722596346;
+	bh=qppczfrXCD0TYJ6nOu5rI+WZpfgTJHoBUkyW5pmMA34=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gzeS/druFECbIE1E4ibEX4W2hE1kkH3O08i0uo7jgyzti17yMlDUOq0uMFrnvZuyw
+	 CDz3YC+zg4Lb83Mhyt6NyLLJ5BAbyI37mXFw5/gjefbiGysuzD8MKJ/FKjY2o0nfYP
+	 2S4SPG9i3RPWCwDllMaSIa5y1KhxFAec1N2dlhLsESv79N9R8tGYMvMRk1EcsFO7sN
+	 QUEeld+hWPZXBfZXiR9MWA2wTbpOOHBWDnCJvsVnlf3U8uiFWXdW5oRynB8Dpa+xfx
+	 XTNn3DUo0UbU43ucrBaN9jImnLEqubQ5Adnt9w3q2FVZRv1hnbXtNCzbXI4mAPVRnZ
+	 G+M3yXjDpkauA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sZq00-0005hG-2K;
+	Fri, 02 Aug 2024 11:59:04 +0100
+Date: Fri, 02 Aug 2024 11:59:03 +0100
+Message-ID: <86bk2b198o.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based FGU handling
+In-Reply-To: <d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
+References: <20240620065807.151540-1-anshuman.khandual@arm.com>
+	<20240620065807.151540-11-anshuman.khandual@arm.com>
+	<865xu3kh4r.wl-maz@kernel.org>
+	<4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
+	<878qyy35e5.wl-maz@kernel.org>
+	<47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
+	<86tthhi0nz.wl-maz@kernel.org>
+	<c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
+	<86o76c1b8p.wl-maz@kernel.org>
+	<d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, 2 Aug 2024, Basavaraj Natikar wrote:
-
-> Looks good to me.
+On Fri, 02 Aug 2024 10:25:44 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 > 
-> Acked-by: Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+> On 8/1/24 21:33, Marc Zyngier wrote:
+> > On Thu, 01 Aug 2024 11:46:22 +0100,
+> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 
-Thanks, applied.
+[...]
+
+> >> +	SR_FGT(SYS_SPMACCESSR_EL1,	HDFGRTR2, nSPMACCESSR_EL1, 0),
+> > 
+> > This (and I take it most of the stuff here) is also gated by
+> > MDCR_EL2.SPM, which is a coarse grained trap. That needs to be
+> > described as well. For every new register that you add here.
+> 
+> I did not find a SPM field in MDCR_EL2 either in latest ARM ARM or in
+> the latest XML. But as per current HDFGRTR2_EL2 description the field
+> nSPMACCESSR_EL1 is gated by FEAT_SPMU feature, which is being checked
+> via ID_AA64DFR1_EL1.PMU when required. So could you please give some
+> more details.
+
+I misspelled it. It is MDCR_EL2.EnSPM.
+
+And you are completely missing the point. It is not about
+HDFGRTR2_EL2, but about SPMACCESSR_EL1 (and all its little friends).
+
+To convince yourself, just look at the pseudocode for SPMACCESSR_EL1,
+limited to an EL1 access:
+
+elsif PSTATE.EL == EL1 then
+    if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
+        UNDEFINED;
+    elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMACCESSR_EL1 == '0') then
+        AArch64.SystemAccessTrap(EL2, 0x18);
+    elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
+        AArch64.SystemAccessTrap(EL2, 0x18);
+    elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
+        if EL3SDDUndef() then
+            UNDEFINED;
+        else
+            AArch64.SystemAccessTrap(EL3, 0x18);
+    elsif EffectiveHCR_EL2_NVx() IN {'111'} then
+        X[t, 64] = NVMem[0x8E8];
+    else
+        X[t, 64] = SPMACCESSR_EL1;
+
+
+Can you spot the *TWO* conditions where we take an exception to EL2
+with 0x18 as the EC?
+
+- One is when HDFGxTR2_EL2.nSPMACCESSR_EL1 == '0': that's a fine
+  grained trap.
+- The other is when MDCR_EL2.EnSPM == '0': that's a coarse grained
+  trap.
+
+Both conditions need to be captured in the various tables in this
+file, for each and every register that you describe.
+
+[...]
+
+> > Now, the main issues are that:
+> > 
+> > - you're missing the coarse grained trapping for all the stuff you
+> >   have just added. It's not a huge amount of work, but you need, for
+> >   each register, to describe what traps apply to it. The fine grained
+> >   stuff is most, but not all of it. There should be enough of it
+> >   already to guide you through it.
+> 
+> Coarse grained trapping for FEAT_FGT2 based fine grained registers ?
+
+Not for FEAT_FGT2. For the registers that FEAT_FGT2 traps. Can you see
+the difference?
+
+> Afraid, did not understand this. Could you please give some pointers
+> on similar existing code.
+
+See above. And if you want some example, just took at the file you are
+patching already. Look at how MDCR_EL2 conditions the trapping of all
+the debug, PMU, AMU registers, for example. There is no shortage of
+them.
+
+Thanks,
+
+	M.
 
 -- 
-Jiri Kosina
-SUSE Labs
-
+Without deviation from the norm, progress is not possible.
 
