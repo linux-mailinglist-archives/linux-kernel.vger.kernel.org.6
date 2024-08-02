@@ -1,149 +1,90 @@
-Return-Path: <linux-kernel+bounces-272666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF0C945F9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:47:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9754D945FAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11BD21F22276
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B2D1C21401
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8792101AC;
-	Fri,  2 Aug 2024 14:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A442101B6;
+	Fri,  2 Aug 2024 14:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mR0WO4H3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="rAVzIX6j"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F841F94C;
-	Fri,  2 Aug 2024 14:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EF91C693;
+	Fri,  2 Aug 2024 14:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722610010; cv=none; b=EtTXSvv8T7ommbVdoPgjPlkatCSaplR7hcAButfnHJaaqbVx1pw/9aPikwA8LyD3aE/nTNT9saWBAPaKjgACzvSfXU84eBg4wUqriEZt8tnwRRcweLm7RfHNPxP+4yhPHEZZ/DHHIsf8STSpKu52PoEhy6bNNCDIA+hA6mGh5sc=
+	t=1722610438; cv=none; b=BFrnFQD/4K/xxZ1LvSEpzQGen/+9MY9cDJDAE9k+W49jhCblVprnZQghjT5VH+PpIBEbpX4NR38cFr405wBdqmMH3Ew5h28kSpBjiYP4mjUWDJ7FPaL7rJB7kHKk4HaVtIc3XXrUBzZof2UBQo5DnOfcGpbT7h0TbnFyTXdk+qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722610010; c=relaxed/simple;
-	bh=0B04wVki9G0yvxf18iermuBnvEqCoQZgAVStJfZayRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uuMBX58GtPX3tJZ2kRkYW2pXRayl2wzqzkL/RZuKE2rILsPf/TlV1aFNZGXnoH7MAMpmcUjVXp+igOMuhqlnh1aZwOiClNq4VwxwY1du8EmI+FioehDL6EOgIRl/7ZVq4/LWNx+Vh/LkUft+wdKWF3RCiX6m5tVUxIkZokwGihA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mR0WO4H3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4589C32782;
-	Fri,  2 Aug 2024 14:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722610010;
-	bh=0B04wVki9G0yvxf18iermuBnvEqCoQZgAVStJfZayRs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mR0WO4H3CHo4CDRMsplIKoppPnHrrAbbdCqAJ9yH+/mgDzNuWDn5IWdExszj6TYqp
-	 p3M9u/GnMdZ2hFeL+hWS2UraUs/Fr0EewdUl3/RLxFQGAt60wmqu4zP9Zghr4Ur5nk
-	 lkjLyJsfLyRKJcmlWhjawFSC1d2zqlcVinW9tEmJbI14PhUo5HPQ5NiwBAKCzlTVOZ
-	 1c+Z6FcCOTlmHpmNZkCjWz3zlG2csKgE6U/8bCuxp9rs84Xp02mKxA8IE9HFZ4Q3R9
-	 djuEMM1yjCU3uJulkQeJb/B5YMpdtsksxLG8FJQ2F0OFw/fIXg5ehoDxbXH4ASivYk
-	 8mLh9yavg4dOw==
-Date: Fri, 2 Aug 2024 15:46:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1722610438; c=relaxed/simple;
+	bh=wMSXbHgdztQ8Vy7EQBiAkB4jPXd5Iv5FFJ65MyOzQ0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cX5oVQcGrvaWYl684A/+tv+cKOFzKnSKnVbDI/CeYSKmgB+gq6s6kiCr+c7iW4JywH1V6TTc/SWBVBVZf5NFVF82+IR2TrIzE3EoNKASFxI7mjgdgEk5tkmsAXtWsknpjCiRMMsxjxCLob9ZYD6vrp/JbYNusIfmR/eYpZkj1aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=rAVzIX6j; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722610434;
+	bh=wMSXbHgdztQ8Vy7EQBiAkB4jPXd5Iv5FFJ65MyOzQ0s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rAVzIX6jTydkyx+lqZdV0C/7PPYNT6WeEyxEszG8yQIeXxWdb0LghQYnywHxYt6Qt
+	 QaUuowX1GpyzevVA14t/62QpXRSQxbwtWO6Shr4Y8MR4zB+/muWME2GyAUOO0c6Uv0
+	 XwgU1n45AeQWHt/SjIytwfuRPqq8pkKztPRz6PR3wIt1dER7SHkpskdVts7BTaXRg7
+	 tM8djs6ZQWdzYlAOvATuazh6sv7vg6u19Z5u0FERoeENBDtiABAcAydVaDEIFeZy/y
+	 kYCLbxrFU/EVxSddIHbc8ZkNsmVoEGJQzojjRpplpwg5pFp02tI/pZLj1CZ7z2FLG1
+	 mBO4Ai9rQOSaw==
+Received: from trenzalore.hitronhub.home (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BFFD137806B3;
+	Fri,  2 Aug 2024 14:53:52 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v4 12/13] dt-bindings: riscv: Add Ziccrse ISA extension
- description
-Message-ID: <20240802-frighten-flail-fddc8136b69d@spud>
-References: <20240731072405.197046-1-alexghiti@rivosinc.com>
- <20240731072405.197046-13-alexghiti@rivosinc.com>
- <20240801-unlighted-senator-cc60d021fe28@spud>
- <4b890910-ed3b-47e1-a895-48ae3d47e958@ghiti.fr>
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH 0/2] Add pinctrl support for rk3576
+Date: Fri,  2 Aug 2024 10:52:02 -0400
+Message-ID: <20240802145458.291890-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wOGS7rCkyPiSGxrA"
-Content-Disposition: inline
-In-Reply-To: <4b890910-ed3b-47e1-a895-48ae3d47e958@ghiti.fr>
+Content-Transfer-Encoding: 8bit
 
+Add support for the pinctrl core on the rk3576 SoC.
+The patch from downstream has been rebased.
 
---wOGS7rCkyPiSGxrA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Detlev Casanova (1):
+  dt-bindings: pinctrl: Add rk3576 pinctrl bindings
 
-On Fri, Aug 02, 2024 at 10:14:21AM +0200, Alexandre Ghiti wrote:
-> Hi Cono
->=20
-> On 01/08/2024 16:44, Conor Dooley wrote:
-> > On Wed, Jul 31, 2024 at 09:24:04AM +0200, Alexandre Ghiti wrote:
-> > > Add description for the Ziccrse ISA extension which was introduced in
-> > > the riscv profiles specification v0.9.2.
-> > >=20
-> > > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> > > Reviewed-by: Guo Ren <guoren@kernel.org>
-> > > ---
-> > >   Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
-> > >   1 file changed, 6 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml =
-b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > index a63578b95c4a..22824dd30175 100644
-> > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > @@ -289,6 +289,12 @@ properties:
-> > >               in commit 64074bc ("Update version numbers for Zfh/Zfin=
-x") of
-> > >               riscv-isa-manual.
-> > > +        - const: ziccrse
-> > > +          description:
-> > > +            The standard Ziccrse extension which provides forward pr=
-ogress
-> > > +            guarantee on LR/SC sequences, as introduced in the riscv=
- profiles
-> > > +            specification v0.9.2.
-> > Do we have a commit hash for this? Also v0.9.2? The profiles spec is a
-> > crock and the version depends on the specific profile - for example
-> > there's new tags as of last week with 0.5 in them... The original profi=
-les
-> > are ratified, so if this definition is in there, please cite that
-> > instead of a "random" version.
->=20
->=20
-> That's not a "random" version, please refer to the existing tag v0.9.2 wh=
-ere
-> this was first introduced
-> (https://github.com/riscv/riscv-profiles/releases/tag/v0.9.2).
+Steven Liu (1):
+  pinctrl: rockchip: Add rk3576 pinctrl support
 
-That might be your intent, but the versioning in that repo sucks. If
-you'd said the v0.9.2 *tag* that would be clearer than what you wrote,
-as there could easily be a v0.9.2 of a new profile - there's already a
-v0.4 etc.
+ .../bindings/pinctrl/rockchip,pinctrl.yaml    |   6 +
+ drivers/pinctrl/pinctrl-rockchip.c            | 228 ++++++++++++++++++
+ drivers/pinctrl/pinctrl-rockchip.h            |   2 +
+ 3 files changed, 236 insertions(+)
 
-> But I'll change that to the profiles specification v1.0.
+-- 
+2.46.0
 
-Still vague IMO, please provide a commit hash.
-
---wOGS7rCkyPiSGxrA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqzxQQAKCRB4tDGHoIJi
-0kz2AQDjtdPseCng2S+4ONZZ0SQUpo8PNoH5fYL4FOkdI8i/XgD/UWt6cymyJp12
-kVz40SPUpdTEuDlR9fA8oueX+EaJIQI=
-=xbhP
------END PGP SIGNATURE-----
-
---wOGS7rCkyPiSGxrA--
 
