@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-272932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF0694628F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6246946290
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E334B22F5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:36:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B90BB22F00
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9828B1AB7F0;
-	Fri,  2 Aug 2024 17:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07941AB80A;
+	Fri,  2 Aug 2024 17:31:54 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCD71AB7E7
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DCA1AB7E7
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619911; cv=none; b=orE5MzG5MW1iCSUalDjBF8h4XGv0DYgb4gfvBTVU5AFuUyUG5lMdhh120CFcz7RKf8M2helzJwQuY+LUw6ZtAbp7o7ROkvP4sTjSvUpYiO4ImKXNGZVOwuQgnCobcWUAScJ7izPqR2SADPdFFToNyv7ZQjBYyXU1fJn9ruWsNV0=
+	t=1722619914; cv=none; b=aO/YQGG8j28AGR9K+9QZb+xEk+KuuwKEMeDOIkDyumURmEQzXOukhx0ty5zKd8YniRQxLzPUUuHydnSKUpyfUtlWTx717VNJnvvHW4iArLMcCiNQq0sr9IJ/JJL3+BKubPVIUoNNMa0DnbXggRCSMUFYPk31j4XyPMi7vTyPDFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619911; c=relaxed/simple;
-	bh=ifBjzSdWmImiKVs92m9WkDkcHYt7KH3FOkyzT8IMroU=;
+	s=arc-20240116; t=1722619914; c=relaxed/simple;
+	bh=x8YilEwZUVKsc87DxGOOMNGEJvjKkJaVTSOQPkN7cr4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FYUp+6By8ka1Mxx9iecHmqiekARbtPynhWQVmxc3lNVFPntjRWARQnBojwYx3ZP6yVInUufJ0XP5QUFXzgH3BhqRD9ssvSz5nnS2ooUz/7YCQ33quIDAkdrJYcHr02++IRp3E+qCbU0Q2L5g2Sx/bK8hE6EzhdulsXpe0nSFx4w=
+	 MIME-Version; b=a5hfISjyeeXH7b8JDXFGTdMGDjTQdfYhgiQk/VtygPk6Q23Ez1Lft1qT7uMZfKfiZiN91MGu6NvO5t+9rJf7iZ6waPXOb6YXSwaa8M1poYewiKIv7bL+2a4OcSUD4LHZeIiR7xBeMg7QjT8q4LnnGeoI1issvgrFa//C7Q515W8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 264391682;
-	Fri,  2 Aug 2024 10:32:15 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B0B31042;
+	Fri,  2 Aug 2024 10:32:18 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C42B3F64C;
-	Fri,  2 Aug 2024 10:31:46 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B12303F64C;
+	Fri,  2 Aug 2024 10:31:49 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -58,9 +58,9 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
 	David Hildenbrand <david@redhat.com>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>
-Subject: [PATCH v4 33/39] x86/resctrl: Move is_mba_sc() out of core.c
-Date: Fri,  2 Aug 2024 17:28:47 +0000
-Message-Id: <20240802172853.22529-34-james.morse@arm.com>
+Subject: [PATCH v4 34/39] x86/resctrl: Add end-marker to the resctrl_event_id enum
+Date: Fri,  2 Aug 2024 17:28:48 +0000
+Message-Id: <20240802172853.22529-35-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240802172853.22529-1-james.morse@arm.com>
 References: <20240802172853.22529-1-james.morse@arm.com>
@@ -72,74 +72,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-is_mba_sc() is defined in core.c, but has no callers there. It does
-not access any architecture private structures.
+The resctrl_event_id enum gives names to the counter event numbers on x86.
+These are used directly by resctrl.
 
-Move this to rdtgroup.c where the majority of callers are. This makes
-the move of the filesystem code to /fs/ cleaner.
+To allow the MPAM driver to keep an array of these the size of the enum
+needs to be known.
+
+Add a 'num_events' define which can be used to size an array. This isn't
+a member of the enum to avoid updating switch statements that would
+otherwise be missing a case.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
 ---
-Changes since v2:
- * This patch is new.
----
- arch/x86/kernel/cpu/resctrl/core.c     | 15 ---------------
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 15 +++++++++++++++
- 2 files changed, 15 insertions(+), 15 deletions(-)
+ include/linux/resctrl_types.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 1e2ea470ea45..568127177a98 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -162,21 +162,6 @@ static inline void cache_alloc_hsw_probe(void)
- 	rdt_alloc_capable = true;
- }
+diff --git a/include/linux/resctrl_types.h b/include/linux/resctrl_types.h
+index 51c51a1aabfb..70226f5ab3e3 100644
+--- a/include/linux/resctrl_types.h
++++ b/include/linux/resctrl_types.h
+@@ -51,4 +51,6 @@ enum resctrl_event_id {
+ 	QOS_L3_MBM_LOCAL_EVENT_ID	= 0x03,
+ };
  
--bool is_mba_sc(struct rdt_resource *r)
--{
--	if (!r)
--		r = resctrl_arch_get_resource(RDT_RESOURCE_MBA);
--
--	/*
--	 * The software controller support is only applicable to MBA resource.
--	 * Make sure to check for resource type.
--	 */
--	if (r->rid != RDT_RESOURCE_MBA)
--		return false;
--
--	return r->membw.mba_sc;
--}
--
- /*
-  * rdt_get_mb_table() - get a mapping of bandwidth(b/w) percentage values
-  * exposed to user interface and the h/w understandable delay values.
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index db5c18caa40e..f5065414ca6a 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1493,6 +1493,21 @@ unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r,
- 	return size;
- }
- 
-+bool is_mba_sc(struct rdt_resource *r)
-+{
-+	if (!r)
-+		r = resctrl_arch_get_resource(RDT_RESOURCE_MBA);
++#define QOS_NUM_EVENTS		(QOS_L3_MBM_LOCAL_EVENT_ID + 1)
 +
-+	/*
-+	 * The software controller support is only applicable to MBA resource.
-+	 * Make sure to check for resource type.
-+	 */
-+	if (r->rid != RDT_RESOURCE_MBA)
-+		return false;
-+
-+	return r->membw.mba_sc;
-+}
-+
- /*
-  * rdtgroup_size_show - Display size in bytes of allocated regions
-  *
+ #endif /* __LINUX_RESCTRL_TYPES_H */
 -- 
 2.39.2
 
