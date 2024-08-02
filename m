@@ -1,90 +1,115 @@
-Return-Path: <linux-kernel+bounces-272516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FEEA945D64
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9430E945D67
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B92282239
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50221C21199
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF451E2887;
-	Fri,  2 Aug 2024 11:47:15 +0000 (UTC)
-Received: from hkg.router.rivoreo (45.78.32.129.16clouds.com [45.78.32.129])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B231E3CAE;
+	Fri,  2 Aug 2024 11:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mREUOL5U"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1DB1E2873;
-	Fri,  2 Aug 2024 11:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.78.32.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40951DF67E;
+	Fri,  2 Aug 2024 11:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722599234; cv=none; b=szJtoQVtcwP/GCLgPg1IrXlgb1cVGk/rD9UzwKWwawvOBA9goZT68ghD/bpqMpx/Y7mWYKW2HzCK5UCUBw+bafMHtvi2uIMe8NN8W2sgGpOXmWLfg03aT86oTk69XJxMSju+ZAIOFB54V8MutpIPdQ1WjtwVc1ttwJPajmj0+bY=
+	t=1722599246; cv=none; b=L9HFLZFkcbQA15PkC+9jTCE2hghptO2vc3bU4agBWVXDvmjTcVhl8veISmfApbDgMvj7HL1JZpN74SUUHV91EW0lxI/H002GnkZa5IZKCT1KH9ZOATKNRHjCVllr0uDhwFegVZpoxBMPNaO+VRvQ2Lo5WzKPe3k1BVzFbbTnuew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722599234; c=relaxed/simple;
-	bh=Ywmrtq1bhsgjkopmVHEBTo8ehChPseqHw6GpKd+PL4U=;
-	h=Message-ID:In-Reply-To:References:Date:Subject:From:To:Cc:
-	 MIME-Version:Content-Type; b=Jc9atIJbf3gNZH5bKmPj19xaDl0Xt7NKRL5muu6ORBSzJNJudNnAD1MjP1y8VNq/f748GO5xdXUr7h3DXyGda5TIvO8eo8PTNoTftDfuH4v7WQu5GmFcehrX9jp/ZeF02qPyvt/KgKh9a/wv/DGinPZrk7Q9nd3kiQtdaqvYJL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rivoreo.one; spf=pass smtp.mailfrom=rivoreo.one; arc=none smtp.client-ip=45.78.32.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rivoreo.one
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivoreo.one
-Received: from tianjin2.rivoreo.one (unknown [10.100.1.128])
-	by hkg.router.rivoreo (Postfix) with ESMTPS id E920711CEEF;
-	Fri,  2 Aug 2024 11:47:11 +0000 (UTC)
-Received: from [10.1.105.1] (localhost [127.0.0.1])
-	by tianjin2.rivoreo.one (Postfix) with ESMTP id 796326BEA1;
-	Fri,  2 Aug 2024 19:45:42 +0800 (CST)
-Received: from 10.12.4.102
-        (SquirrelMail authenticated user whr)
-        by _ with HTTP;
-        Fri, 2 Aug 2024 11:45:42 -0000
-Message-ID: <bc8e26604c189e737c92cb7d43ec1681.squirrel@_>
-In-Reply-To: <CAL_Jsq+Wcag2Lzu_kLRb5ia=3hNUOs1Ny93Y541eOY-NZOA5qw@mail.gmail.com>
-References: <2046da39e53a8bbca5166e04dfe56bd5.squirrel@_>
-    <CAL_JsqKpTKv-fthwD9bFHiVESJyNP6uMg7Px7Rh+-k583oz76g@mail.gmail.com>
-    <1c7955e8b5f0cdb3c60381a9a7dbbf42.squirrel@_>
-    <CAL_Jsq+Wcag2Lzu_kLRb5ia=3hNUOs1Ny93Y541eOY-NZOA5qw@mail.gmail.com>
-Date: Fri, 2 Aug 2024 11:45:42 -0000
-Subject: Re: [PATCH v2] of/irq: Make sure to update out_irq->np to the new
- parent in of_irq_parse_raw
-From: "WHR" <whr@rivoreo.one>
-To: "Rob Herring" <robh@kernel.org>
-Cc: "Saravana Kannan" <saravanak@google.com>,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-User-Agent: SquirrelMail/1.4.23 [Rivoreo]
+	s=arc-20240116; t=1722599246; c=relaxed/simple;
+	bh=wUKkUSdw0p6i3Bs8P7gvRXVxcbGTf3ktetocNF5mH70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3OHItZiGZVDhvLrQzniw/LkOOIf2RRqCAOyuA55YP6YEytgg7mgMmO9le8IFQp6Y3OvHvjvI6RWvG7IMB6XDy3Vva/xbrtKPCwmwbEFc/pbn4nFXv9wmjC/EN7Y6vbGnXMmuYDmrd5i7/8nj3tsevOhQ26WR2n4k1VzKPxOaxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=mREUOL5U; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=BmhN0+wpI6L4vTvyz8ph0NLVfTqswy6p5ftY8fHzRww=; b=mREUOL5U5K9EpWl79M33tWiLwB
+	y6fMilzj4UtNKSPbdPqOteOfejqkylm3Z8gqvkxbzYnzE/2BSqFt25qzcUUEshSiT6yK9zaE1tCn7
+	3NHpz4lIIRtGf5CceloVEFg7EFAiRicOPx1SgesFO/ML7xQTxbT3Nxr8UhbQuLM4oG8XitFPAEcnJ
+	zjIWP1hBswBr2eLTGIH5NTxBUFuY5t15tuCelJVkhbwVZ2pnSaL2eChhAm44rnnjrqJOClXb3ZOXn
+	Q256mNVW4dRpB6fZH+XIDioNSfAY+K6dBLR3OuWiVUfkUy03LCv33+p+OH5webHCY+wrMLg/ysjpM
+	gGujWshA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48660)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sZqkM-0006d3-21;
+	Fri, 02 Aug 2024 12:46:58 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sZqkO-00080n-GF; Fri, 02 Aug 2024 12:47:00 +0100
+Date: Fri, 2 Aug 2024 12:47:00 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: ardb@kernel.org, arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
+	linus.walleij@linaro.org, eric.devolder@oracle.com, robh@kernel.org,
+	kees@kernel.org, masahiroy@kernel.org, palmer@rivosinc.com,
+	samitolvanen@google.com, xiao.w.wang@intel.com,
+	alexghiti@rivosinc.com, nathan@kernel.org, jan.kiszka@siemens.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: Add support for STACKLEAK gcc plugin
+Message-ID: <ZqzHNN27hwms0CB/@shell.armlinux.org.uk>
+References: <20240624023612.2134144-1-ruanjinjie@huawei.com>
+ <b8792d9c-c2a2-6808-f94b-e3b826232f78@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Priority: 3 (Normal)
-Importance: Normal
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b8792d9c-c2a2-6808-f94b-e3b826232f78@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-> On Wed, Jul 31, 2024 at 10:22 PM WHR <whr@rivoreo.one> wrote:
->>
->> > On Mon, Jul 29, 2024 at 11:54 PM WHR <whr@rivoreo.one> wrote:
->> >>
->> >> Commit 935df1bd40d43c4ee91838c42a20e9af751885cc has removed an
->> >> assignment statement for 'out_irq->np' right after label 'skiplevel',
->> >> causing the new parent acquired from function of_irq_find_parent didn't
->> >> being stored to 'out_irq->np' as it supposed to. Under some conditions
->> >> this can resuit in multiple corruptions and leakages to device nodes.
->> >
->> > Under what conditions? Please provide a specific platform and DT.
->>
->> I have a previous email sent to you before I came up with the fix. The
->> kernel
->> log for debugging and the device tree blob are attached again.
+On Mon, Jul 22, 2024 at 10:53:10AM +0800, Jinjie Ruan wrote:
+> Gentle ping.
 > 
-> Thanks. The patch needs to stand on its own with this detail, not
-> require that I've read (and remember) some other email among the
-> 1000s.
+> On 2024/6/24 10:36, Jinjie Ruan wrote:
+> > Add the STACKLEAK gcc plugin to arm32 by adding the helper used by
+> > stackleak common code: on_thread_stack(). It initialize the stack with the
+> > poison value before returning from system calls which improves the kernel
+> > security. Additionally, this disables the plugin in EFI stub code and
+> > decompress code, which are out of scope for the protection.
+> > 
+> > Before the test on Qemu versatilepb board:
+> > 	# echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
+> > 	lkdtm: Performing direct entry STACKLEAK_ERASING
+> > 	lkdtm: XFAIL: stackleak is not supported on this arch (HAVE_ARCH_STACKLEAK=n)
+> > 
+> > After:
+> > 	# echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
+> > 	lkdtm: Performing direct entry STACKLEAK_ERASING
+> > 	lkdtm: stackleak stack usage:
+> > 	  high offset: 80 bytes
+> > 	  current:     280 bytes
+> > 	  lowest:      696 bytes
+> > 	  tracked:     696 bytes
+> > 	  untracked:   192 bytes
+> > 	  poisoned:    7220 bytes
+> > 	  low offset:  4 bytes
+> > 	lkdtm: OK: the rest of the thread stack is properly erased
+> > 
+> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> > Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-For referencing the mentioned email in mailing list archive:
-https://lore.kernel.org/linux-devicetree/a373cf98c2d35f2bd828261f078471a5.squirrel@_/
+Is this a feature that you have a use case for?
 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
