@@ -1,184 +1,123 @@
-Return-Path: <linux-kernel+bounces-272019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D909455EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:27:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005899455EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72ECCB2112D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A97F31F2345D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732E0F4FB;
-	Fri,  2 Aug 2024 01:27:47 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FA9BA4D
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B16EEBA;
+	Fri,  2 Aug 2024 01:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="OiE8z3oq"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3781BA4D
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722562067; cv=none; b=gnqGXSCT6n/e7jYiSuAJQP9apLdoev0putX9/z/9urro0AiBrbMeALgEKAdOQZR0epNQAl7+rOEWk4Mt3d0+2Z4ADvhLAAelNd6bfr+C17Yp0y+4mAkfBuvO+FqzukgSqHjl0zjJVIP3U8vGtHWjTKEBWcWr5Cp1M33DFVRtEew=
+	t=1722562128; cv=none; b=dqkW8uGbq/+egru4JHUNdZYf3N5l63bQT/wSoutVg0An3BpDIjWXWGhujThT24ovskCsgSaV9HYdc9YBTQJH8dYbvjU7OOW1DCM78T8LzQxOphzn31+45ckBtbQznrm6rMOk7j8RqfmgVaECH3Qz4IOTjQtvRQJhvAbKH1ldcxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722562067; c=relaxed/simple;
-	bh=Bo7CyCSCfTo4lFIIiFGKSmBdMQs6UBJCBOSER2j2Pxo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=q0tH/FTulcKqCNl1Eg6NewUPyWSvM+3iYzyG+0lFgJD2+WOnnt+MjVqf8m7y+tEwrA4/9Oushv3pnK6WGuuogbI/r4p33PCmf1txEPyicm/lfQuCOlEjEWq/gBirmUrxaa4eMFldEKaxw9M4RbQ9yhRzRets7oM5PldCFt8kXQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxrusGNqxm8DQGAA--.21824S3;
-	Fri, 02 Aug 2024 09:27:34 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMAxysUFNqxmGwMLAA--.53376S3;
-	Fri, 02 Aug 2024 09:27:33 +0800 (CST)
-Subject: Re: [PATCH v4] x86/paravirt: Disable virt spinlock on bare metal
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
- Arnd Bergmann <arnd@arndb.de>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
- Nikolay Borisov <nik.borisov@suse.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- Prem Nath Dey <prem.nath.dey@intel.com>,
- Xiaoping Zhou <xiaoping.zhou@intel.com>
-References: <20240729065236.407758-1-yu.c.chen@intel.com>
- <4d31e1b4-2113-c557-b60a-3a45b2840f26@loongson.cn>
- <ZqueWhX6lqS+1vwg@chenyu5-mobl2>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <a3c4b603-fc8d-bfa4-7e5d-0b2d8043131b@loongson.cn>
-Date: Fri, 2 Aug 2024 09:27:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1722562128; c=relaxed/simple;
+	bh=ByclwuU1//UfsLHR2YQkVRys/q+dvmWnujot64Ue9Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OE7S6rcSygMV2m+ilWQXFeqhg/XYpm3Mer+CKmwJvgszyRx8On2rIekK31/6mWgacuQGhlu3gtmiZmwggLXLGQ6yZBiYCACNWA0FoKebgbopAVrXsyV6XZ/XdsghBGrDqYXuTa5R7Vs25LwO0GHbN9DRo357UcrTaA4MFnXO+D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=OiE8z3oq; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4929fd67c7bso1829264137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 18:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1722562123; x=1723166923; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zKUD5+q+2+FARY5NYum2l/0OwIlk6YQuFBZMg9eGiu4=;
+        b=OiE8z3oqeB+pHnyGUrI1fV2JhUXz1wd04hUEI1bSkS95+Wf/b/dJL0gBgKaWmIsw3+
+         7v1+GmqsOCeWJadvh/80eT0oPNwVxvdaRfnITkaMzgf3AOyYDj/S50Zlp3tg67M6u0nk
+         cTzQYsRXnh4tnfwxjmc7bJ3YGStX2UnZUOwjqDcRCj5I/uXG5dhJ9pgOrSSADjHwKMyQ
+         RXUL2Wp4GyMLyyZM+7qZj/qxb0Yf3DwKmY1FATckfaMi6Tx73dhSdOlO2zroAsz5dNws
+         tYQpXGh3mAVF6GIMIsSBdPLcskImZXSYwJgTSiLerbThTiqEBh5jKz+XeOgzqKk3D3ce
+         Iktw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722562123; x=1723166923;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zKUD5+q+2+FARY5NYum2l/0OwIlk6YQuFBZMg9eGiu4=;
+        b=GbNnseLY19yTLPGGQI24HTIsAhCfQHmK6hqx92SJ4YCRT9D5Xpk7GA9/+obRn+/loY
+         MG3AFXLJOyns/6Y5++LBPcOhhjZ1mBkG1sNQi/ChbxF8CodRcIeeLa7ws6JV2YQZFFYC
+         nMoMSyKDab0PVTKaqzB8PSqmkX72pPdTeQZXF8m0k6gVW6pOTPf81f85s32pjtTFZVnn
+         yminjbZYyIZq3h78QF/ulivwKjOBIvaQ12p9ZMaAY2kTMu0SntpvzCBMm8/uTVtBG+qT
+         s7HEz6TzycfDF1+wtuXiOE5+NSBfkKKrEdrgFhDqUJt0U+TxWirDq32/pgRd++IozK3S
+         +Dbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfN2aMnahQEP2RGTGBh5u9B6I1rel/oZDpno6Cx7vGvz2ML2qHCwNlMBrX3qAxEZ/UyHOPZHzpyUOGuiPCghiTgJooHd6T7txAgS6o
+X-Gm-Message-State: AOJu0YxHEJp/pFvCJj7Jz1gsNNtOaY+7uD9k2TcPBqFrKSriRgTTljoB
+	nF3/T5mxktAHY3NjdFDn7EhzlWnRNCTcrN/H/r5AXP5K3EH+6j+/V59SypSe5Do=
+X-Google-Smtp-Source: AGHT+IHwZfbMP8zKT5avi5rhEpW2YzlUhsbuUVw/Pb3WCaRXvwCLhk8Ri4safqA3JO2OlfsoG0BJRg==
+X-Received: by 2002:a05:6102:38d0:b0:493:c348:4d9f with SMTP id ada2fe7eead31-4945bec3f06mr2464809137.19.1722562123383;
+        Thu, 01 Aug 2024 18:28:43 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c79b1fdsm2237486d6.53.2024.08.01.18.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 18:28:42 -0700 (PDT)
+Date: Thu, 1 Aug 2024 21:28:41 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kinsey Ho <kinseyho@google.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH mm-unstable v1 1/4] mm: don't hold css->refcnt during
+ traversal
+Message-ID: <20240802012841.GH3365290@cmpxchg.org>
+References: <20240724190214.1108049-1-kinseyho@google.com>
+ <20240724190214.1108049-2-kinseyho@google.com>
+ <20240725204346.GA1702603@cmpxchg.org>
+ <CAJD7tkbZkuak=VYa_FLQVa=n+9Yd5EBXq5pc11GSiqn1fy7etg@mail.gmail.com>
+ <CAF6N3nW5ZwE_e7bF3eZqiD6d_QhkCyzZM4DEgo74kgO=hVU2Nw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZqueWhX6lqS+1vwg@chenyu5-mobl2>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxysUFNqxmGwMLAA--.53376S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxJF48uFWDKFWrXF4DXr15ZFc_yoWrWrWrpr
-	W7JFnYqF1kXF4FvwsIvw4vqr4jy39Fkw1DXrn8Grn5Xan8ZrnIqr48tws093W2qr1Iy34r
-	tF45XrZxZayUZagCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
-	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2-VyUUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAF6N3nW5ZwE_e7bF3eZqiD6d_QhkCyzZM4DEgo74kgO=hVU2Nw@mail.gmail.com>
 
-Hi Chenyu,
-
-On 2024/8/1 下午10:40, Chen Yu wrote:
-> Hi Bibo,
+On Thu, Aug 01, 2024 at 03:32:53PM -0700, Kinsey Ho wrote:
+> Sorry, I replied to this email earlier but it had some issues with plain
+> text. Please ignore the first reply of mine (the one with HTML). I'm resending
+> the email below.
 > 
-> On 2024-08-01 at 16:00:19 +0800, maobibo wrote:
->> Chenyu,
->>
->> I do not know much about x86, just give some comments(probably incorrected)
->> from the code.
->>
->> On 2024/7/29 下午2:52, Chen Yu wrote:
->>> X86_FEATURE_HYPERVISOR         Y    Y    Y     N
->>> CONFIG_PARAVIRT_SPINLOCKS      Y    Y    N     Y/N
->>> PV spinlock                    Y    N    N     Y/N
->>>
->>> virt_spin_lock_key             N    N    Y     N
->>>
->>> -DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
->>> +DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
->>
->> @@ -87,7 +87,7 @@ static inline bool virt_spin_lock(struct qspinlock *lock)
->>   {
->>          int val;
->>
->> -       if (!static_branch_likely(&virt_spin_lock_key))
->> +       if (!static_branch_unlikely(&virt_spin_lock_key))
->>                  return false;
->>
->> Do we need change it with static_branch_unlikely() if value of key is false
->> by fault?
+> Thank you Johannes, Roman, and Yosry for reviewing this patch!
 > 
-> My understanding is that, firstly, whether it is likely() or unlikely()
-> depends on the 'expected' value of the key, rather than its default
-> initialized value. The compiler can arrange the if 'jump' condition to
-> avoid the overhead of branch jump(to keep the instruction pipeline)
-> as much as possible. Secondly, before this patch, the 'expected' value
-> of virt_spin_lock_key is 'true', so I'm not sure if we should change
-> its behavior. Although it seems that in most VM guest, with para-virt
-> spinlock enabled, this key should be false at most time, but just in
-> case of any regression...
-yes, it does not inflect the result, it is a trivial thing and depends 
-on personal like or dislike.
-
+> On Thu, Jul 25, 2024 at 3:34 PM Yosry Ahmed <yosryahmed@google.com> wrote:
+> > On Thu, Jul 25, 2024 at 1:43 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > > What does this buy us? The tryget is cheap.
+> >
+> > mem_cgroup_iter() is not an easy function to follow, so I personally
+> > appreciate the simplicity gains tbh.
 > 
->>>    /*
->>>     * Shortcut for the queued_spin_lock_slowpath() function that allows
->>> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
->>> index 5358d43886ad..fec381533555 100644
->>> --- a/arch/x86/kernel/paravirt.c
->>> +++ b/arch/x86/kernel/paravirt.c
->>> @@ -51,13 +51,12 @@ DEFINE_ASM_FUNC(pv_native_irq_enable, "sti", .noinstr.text);
->>>    DEFINE_ASM_FUNC(pv_native_read_cr2, "mov %cr2, %rax", .noinstr.text);
->>>    #endif
->>> -DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
->>> +DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
->>>    void __init native_pv_lock_init(void)
->>>    {
->>> -	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
->>> -	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
->>> -		static_branch_disable(&virt_spin_lock_key);
->>> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
->>> +		static_branch_enable(&virt_spin_lock_key);
->>>    }
->>
->>  From my point, the sentence static_branch_disable(&virt_spin_lock_key) can
->> be removed in file arch/x86/xen/spinlock.c and arch/x86/kernel/kvm.c, since
->> function native_smp_prepare_boot_cpu() is already called by
->> xen_smp_prepare_boot_cpu() and kvm_smp_prepare_boot_cpu().
->>
+> Yes, the main intention here was to simplify the code's readability.
+>
+> > This reads to me like it is intentional that RCU protection is enough
+> > for @pos and @root, and that the sibling linkage is RCU protected by
+> > design. Perhaps we could clarify this further (whether at
+> > css_next_descendant_pre(), or above the definition of the linkage
+> > members).
 > 
-> The key is enabled by native_smp_prepare_boot_cpu() for VM guest as
-> the initial value(default to true). And later either arch/x86/xen/spinlock.c
-> or arch/x86/kernel/kvm.c disable this key in a on-demand manner.
-I understand that you only care about host machine and do not want to 
-change behavior of VM. Only that from the view of VM, there are two 
-conditions such as:
+> Do we want to move forward with Yosry's suggestion to clarify that the
+> sibling linkage is RCU-protected by design? Perhaps this clarification
+> can be made in the definition of the linkage members so that the
+> safety of the css in this function is more clear to users. If this is
+> sufficient, I will make the change in a v2 patchset.
 
-1. If option CONFIG_PARAVIRT_SPINLOCKS is disabled, virt_spin_lock_key 
-is disabled with your patch. VM will use test-set spinlock rather than 
-qspinlock to avoid the over-preemption of native qspinlock, just the 
-same with commit 2aa79af64263. And it is the same for all the hypervisor 
-types.
-
-2. If option CONFIG_PARAVIRT_SPINLOCKS is enable, pv spinlock cannot be 
-used because some reasons, such as host hypervisor has no 
-KVM_FEATURE_PV_UNHALT feature or nopvspin kernel parameter is added. The 
-behavior to use test-set spinlock or native qspinlock is different on 
-different hypervisor types.
-
-Even on KVM hypervisor, if KVM_FEATURE_PV_UNHALT is not supported, 
-test-set spinlock will be used on VM; For nopvspin kernel parameter, 
-native spinlock is used on VM. What is the rule for this? :)
-
-Regards
-Bibo Mao
-> 
-> thanks,
-> Chenyu
-> 
+Yes, that sounds like a good way forward to me.
 
 
