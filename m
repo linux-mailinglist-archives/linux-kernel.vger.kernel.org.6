@@ -1,167 +1,149 @@
-Return-Path: <linux-kernel+bounces-272178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0037694584A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:54:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80EC094584C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F1F1F24202
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A2D1F2418D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884B54B5C1;
-	Fri,  2 Aug 2024 06:54:02 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3E04AEF6;
+	Fri,  2 Aug 2024 06:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXHnO+2p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F617481AA;
-	Fri,  2 Aug 2024 06:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F65D3F8E4;
+	Fri,  2 Aug 2024 06:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722581642; cv=none; b=by01ut0GoPaXGHv6Hegki9hkseNcaRtacy/VoE36zE0qDXe7up9zPL5/o+w305GUJBvYeM410GAu/Jp5Xc8QSUP/RoAmMglk2CDEApVkpdRypgQhbzOz0SmAJuvakfW3Rcw75k8YrPqwvYwQNumZbFov5weJfKP2xWW6Ibs2p9Q=
+	t=1722581684; cv=none; b=hCynGZBywIOU9+bNoXuNSZXumMWtTjkVe8zhA8RU+L2FN4RGKs2UoUMZPXvFHY/1Xmdol1OnFQbAr/ZAvXdhCrneZ2B5XWZJZ3gge2gI+NXrGpB4DMZmrFNIBNDaKCovzgQPylcR5LHBYadlJsAVr9SsCTpYsi/R+paNq0eQA/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722581642; c=relaxed/simple;
-	bh=qmsI4avS4y1dJQhRAG+h3KNcF8cMb4N/Ektrb5rnaEY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=jtuiijIF3SOY1yjdzToGos7cxhmd3K7hN+zP01MlFrzaK4xXjgmdPC62Tm0imAAvI0Ly1aIjSh6/H+moCBDMqcSf4PuUaltanxZTnTHM0Mp386hZGaqnLykn3uzu2Ta4v5au4gXOWQFgRxcouHrL5WpteEh/Kjbd8rQfzkD0NTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WZxPd0KwPz4f3jjn;
-	Fri,  2 Aug 2024 14:53:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C18311A058E;
-	Fri,  2 Aug 2024 14:53:49 +0800 (CST)
-Received: from [10.174.178.55] (unknown [10.174.178.55])
-	by APP4 (Coremail) with SMTP id gCh0CgCXv4V7gqxm25YoAg--.65018S3;
-	Fri, 02 Aug 2024 14:53:49 +0800 (CST)
-Subject: Re: [PATCH 2/3] kallsyms: Add APIs to match symbol without
- .llmv.<hash> suffix.
-To: Song Liu <songliubraving@meta.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Song Liu <song@kernel.org>,
- "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>, Nathan Chancellor
- <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Luis Chamberlain <mcgrof@kernel.org>,
- Leizhen <thunder.leizhen@huawei.com>, "kees@kernel.org" <kees@kernel.org>,
- Kernel Team <kernel-team@meta.com>, Matthew Maurer <mmaurer@google.com>,
- Sami Tolvanen <samitolvanen@google.com>, Steven Rostedt <rostedt@goodmis.org>
-References: <20240730005433.3559731-1-song@kernel.org>
- <20240730005433.3559731-3-song@kernel.org>
- <20240730220304.558355ff215d0ee74b56a04b@kernel.org>
- <5E9D7211-5902-47D3-9F4D-8DEFD8365B57@fb.com>
- <9f6c6c81-c8d1-adaf-2570-7e40a10ee0b8@huaweicloud.com>
- <FE4F231A-5D24-4337-AE00-9B251733EC53@fb.com>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>
-Message-ID: <17533605-ec23-d806-2759-a054492384e4@huaweicloud.com>
-Date: Fri, 2 Aug 2024 14:53:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1722581684; c=relaxed/simple;
+	bh=OP4QQx4SAAD3ym6dhLxCPWA5IfxjKsJoayDx4py8fLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dNs8w7Tqt0Q6lUEJVK/BJROuX3K3B462c4tVgGjMGVsvg2IvQEJ/E0adFs3GCLlsPtzQCmB9Jmm/SI86HPOhEsLW2+yPY88k2s/VJxq79mpBFxsuAJt6RSA4mMfS9Nf/bNkT37YmP50o7ksvWkjNaJYO908veLi2X86lGiREJKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXHnO+2p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF5AC32782;
+	Fri,  2 Aug 2024 06:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722581683;
+	bh=OP4QQx4SAAD3ym6dhLxCPWA5IfxjKsJoayDx4py8fLQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sXHnO+2pHEgBGpN2e7LX9WsUzPZI7rWn1RC12qmURFCz9z329gyHKc3OHwLdCjBty
+	 zrCeKBgxJ7JytZGAfPRC3OnoKdiAiAnjmTc17O34/D5ZCae/z518negUetHnEjHOXH
+	 t61QzP+cOvOWFE2uWOU0+Sfmamuae48gRfzL4XNTDncZbE2ZdaCCvyga2fMC9In5HM
+	 20u2FShon/3j1HZ2HQmyiCrDSkWq5lfA9nccB4QE1RmhjImIdtlSuoAO2DOKTBU0vP
+	 Hn01QlSApFw+XnIcwAJirQbV3qrPWanaQmeSFVlBloz4DL8D/GVv5SDKiwCAPsxgps
+	 rikeFTeyxUtuA==
+Message-ID: <20d128b3-ad81-4338-bd59-a039ddcbbadf@kernel.org>
+Date: Fri, 2 Aug 2024 08:54:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <FE4F231A-5D24-4337-AE00-9B251733EC53@fb.com>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: edac: Add Altera SOCFPGA SDRAM EDAC
+ binding
+To: Alessandro Zanni <alessandro.zanni87@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, skhan@linuxfoundation.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240801161005.120111-1-alessandro.zanni87@gmail.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXv4V7gqxm25YoAg--.65018S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr4UCry5AFy8uryUJFykGrg_yoW5Jw1Upr
-	WrKF42kayDJFWrAws7K3y8AFWakr4qqr1DX3s5Ka4DCF90qFyFvF4xKw1YkFyDWrs3Gr12
-	vanrtF9IqF1UArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07jIksgUUUUU=
-X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240801161005.120111-1-alessandro.zanni87@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/8/2 11:45, Song Liu wrote:
+On 01/08/2024 18:10, Alessandro Zanni wrote:
+> Convert the device tree bindings for the Altera PCIe MSI controller
 > 
-> 
->> On Aug 1, 2024, at 6:18 PM, Leizhen (ThunderTown) <thunder.leizhen@huaweicloud.com> wrote:
->>
->> On 2024/7/31 9:00, Song Liu wrote:
->>> Hi Masami, 
->>>
->>>> On Jul 30, 2024, at 6:03 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
->>>>
->>>> On Mon, 29 Jul 2024 17:54:32 -0700
->>>> Song Liu <song@kernel.org> wrote:
->>>>
->>>>> With CONFIG_LTO_CLANG=y, the compiler may add suffix to function names
->>>>> to avoid duplication. This causes confusion with users of kallsyms.
->>>>> On one hand, users like livepatch are required to match the symbols
->>>>> exactly. On the other hand, users like kprobe would like to match to
->>>>> original function names.
->>>>>
->>>>> Solve this by splitting kallsyms APIs. Specifically, existing APIs now
->>>>> should match the symbols exactly. Add two APIs that matches the full
->>>>> symbol, or only the part without .llvm.suffix. Specifically, the following
->>>>> two APIs are added:
->>>>>
->>>>> 1. kallsyms_lookup_name_or_prefix()
->>>>> 2. kallsyms_on_each_match_symbol_or_prefix()
->>>>
->>>> Since this API only removes the suffix, "match prefix" is a bit confusing.
->>>> (this sounds like matching "foo" with "foo" and "foo_bar", but in reality,
->>>> it only matches "foo" and "foo.llvm.*")
->>>> What about the name below?
->>>>
->>>> kallsyms_lookup_name_without_suffix()
->>>> kallsyms_on_each_match_symbol_without_suffix()
->>>
->>> I am open to name suggestions. I named it as xx or prefix to highlight
->>> that these two APIs will try match full name first, and they only match
->>> the symbol without suffix when there is no full name match. 
->>>
->>> Maybe we can call them: 
->>> - kallsyms_lookup_name_or_without_suffix()
->>> - kallsyms_on_each_match_symbol_or_without_suffix()
->>>
->>> Again, I am open to any name selections here.
->>
->> Only static functions have suffixes. In my opinion, explicitly marking static
->> might be a little clearer.
->> kallsyms_lookup_static_name()
->> kallsyms_on_each_match_static_symbol()
-> 
-> While these names are shorter, I think they are more confusing. Not all
-> folks know that only static functions can have suffixes. 
-> 
-> Maybe we should not hide the "try match full name first first" in the
-> API, and let the users handle it. Then, we can safely call the new APIs
-> *_without_suffix(), as Masami suggested. 
-
-Yes, that would be clearer.
-
-> 
-> If there is no objections, I will send v2 based on this direction. 
-> 
-> Thanks,
-> Song
+> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+> ---
 > 
 
--- 
-Regards,
-  Zhen Lei
+Subject: you did not add binding in this patch. Binding was already
+there. You converted one to DT schema.
+
+
+> Notes:
+>     v3: moved yaml file from arm/altera to the edac folder, removed items keys, added general node names
+> 
+
+...
+
+> +
+> +examples:
+> +  - |
+> +    memory-controller {
+> +      compatible = "altr,sdram-edac";
+> +      altr,sdr-syscon = <&sdr>;
+> +      interrupts = <0 39 4>;
+
+No improvements here.
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
+
+Best regards,
+Krzysztof
 
 
