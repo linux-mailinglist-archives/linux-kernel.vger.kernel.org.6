@@ -1,129 +1,83 @@
-Return-Path: <linux-kernel+bounces-272274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B91B945988
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:07:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2737194598B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1281C22676
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60F21F23696
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC5E1C0DE1;
-	Fri,  2 Aug 2024 08:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F191B1C230C;
+	Fri,  2 Aug 2024 08:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9J8tg2Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="P6ocFeae"
+Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F1015CD62
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 08:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558371EB4B6;
+	Fri,  2 Aug 2024 08:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722586024; cv=none; b=s4LQ+0RnnwseTGD9EQfWpfNvZGCbg1u3h5DrNA2o3fTtou9cxpZ2r7UbufdUR+pLF+uoGCiqVPhIt9UHblSq39zZKnfPUDnnDJpx9ShdaF0kB58jJysDZQNwBlXRfhrPkGuKngS0GLmcc3JT/Og6iqh/xuQdUxU6WaMQKja5I0w=
+	t=1722586054; cv=none; b=WvlkgHnpSGPttq5SRE4OA/EBpJSJSA8NWJHAsXeA0Dz29gVsnGjeXvg/jo4E5CXdHvb6RcZV6QxG5aV+wKtIyc2X71cxqRMS3RYcaxqZ2+JAG8Mn1C8q2SPlod0oqmFZAn18PhMFy9wVzbcqLoc3VeJqaMBp5iq8ZwhseTCOj1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722586024; c=relaxed/simple;
-	bh=eNErd0gPp6JE2ltIsD8Hu8U2ej3I5B2e5zQu6VBQtqk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KtrjRg+o1gxqECXwY1AHRbJcgqCpJkzlgv1FlOhW83TQI61aqEYRSqFLWuvXUzFZ90NE+lxzfkeieqdPY+lpazoA1nH53Q2yjDmOeTByvYd7LqSST/VTuSzSGCOaSpDBUX2+Q9c1//4vwgxxIrH0KwQ8N0akF9BQ3zTz5iv3RlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9J8tg2Z; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722586022; x=1754122022;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=eNErd0gPp6JE2ltIsD8Hu8U2ej3I5B2e5zQu6VBQtqk=;
-  b=M9J8tg2ZXM85tPUfSN0cg4DZRJVHWw9YLUvTqBE6U6/zZC2RMLAP5kKE
-   pt9PBFMGF9NMTKNy/NmJ7XRFpe8Sf+EKLmtTzKfalAsp/rl2E2/zriybO
-   6usBUO47a3bDY8w3Ve/m2/ND/EpeBNRIvx6zIoZj4bGXweBn5caciEt3T
-   FaS5TmSOwaspTLmq6Xa0h3Pe/i7it2o6R9ovf6QN2u6uAbdNhsh9xR5ve
-   jp7ovvMKEv8GuvYqslmphiu87yEOeIjlCm6Qtx19dKt8STVTLOvWQ65BZ
-   BWmzL9UuqEGHTSGifKkgN+H21JqO/o55jbHgWSlnRvHwX7fNS/RHDDaHg
-   g==;
-X-CSE-ConnectionGUID: /kMBre8CQ7OYOO4PqGWeMQ==
-X-CSE-MsgGUID: 8XtF26dAT9Oju8dVBstxLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="24377872"
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="24377872"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 01:07:01 -0700
-X-CSE-ConnectionGUID: GEyKm2UnQYeMlsEPNcaocQ==
-X-CSE-MsgGUID: wk885wdcTKCmNNSiYCq02w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="54965399"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.66])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 01:06:59 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: abid-sayyad <sayyad.abid16@gmail.com>, airlied@gmail.com
-Cc: daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, abid-sayyad <sayyad.abid16@gmail.com>
-Subject: Re: [PATCH v2] drm: Add documentation for struct drm_pane_size_hint
-In-Reply-To: <20240801130112.1317239-1-sayyad.abid16@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240801130112.1317239-1-sayyad.abid16@gmail.com>
-Date: Fri, 02 Aug 2024 11:06:53 +0300
-Message-ID: <875xsj73he.fsf@intel.com>
+	s=arc-20240116; t=1722586054; c=relaxed/simple;
+	bh=6bRNDTSn7NG2m4UUq9bRnjAmIn1wnrCrKqnIjDHhxNI=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GRDOKOR/KToftCLwHNC3YNaiuXeg6VmuBJIZcM75tyFYCHlcb/wL7AWL/Nol7//xDdy2YS57Lu5TvT3G6qiuhd18bbzms8Leh005Rz97lPSyoaZUVB824ATX8NC/SQAvG8EcSD7G+sEukuYvWLVdRTkOtE39u7Kd+HX7m0vh5b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=P6ocFeae; arc=none smtp.client-ip=185.70.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722586043; x=1722845243;
+	bh=Wy+SqFUYOWwBwGRfuKWoUvPm1nL0Kd/BTvULVmw6+eA=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=P6ocFeae4F+a1VMqHe9TPi+dAdTO9cJedVbZjZmZJVEkTABbqufNORCiW+wPgcgKO
+	 IJDXiyB1X1+5hDEMuMHnRsVePEYZRK6vDm7wFp1GVJw3xMLRXYrPwekLIzxkOk9Rzd
+	 H1IuVu1MmKZ4WydnjjDot2gfGxxhY18ZY5/uwNX2jgWSnUfp2D+22U9VMRubMVIgeQ
+	 qec3TyZ9ST5iApHNfq7LYyrod6KcFS28/QrBYk/b1FGkLIXR+Llidk4Xq6zfDjs8eJ
+	 fLRkQYCXoXP0w305I7/hH3c1ppuRXsfgSoEgnzoDiTjBl2sq+ZzAmgCOUPqMYExGHx
+	 nEPrr2KZHW05w==
+Date: Fri, 02 Aug 2024 08:07:16 +0000
+To: linux-kernel@vger.kernel.org
+From: "Lin, Meng-Bo" <linmengbo06890@proton.me>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH 0/2] arm64: dts: qcom: msm8916-samsung-j3ltetw: Add initial device tree
+Message-ID: <20240802080701.3643-1-linmengbo06890@proton.me>
+Feedback-ID: 112742687:user:proton
+X-Pm-Message-ID: e48e463b51e86a9f7300844944fc80b772208d9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 01 Aug 2024, abid-sayyad <sayyad.abid16@gmail.com> wrote:
-> Fixed warning for the following:
-> ./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member
-> 				'width' not described in 'drm_plane_size_hint'
-> ./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member
-> 				'height' not described in 'drm_plane_size_hint'
->
-> Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
-> ---
-> My sincere apologies for the spam and the patch subject error
+The dts and dtsi add support for msm8916 variant of Samsung Galaxy J3
+SM-J320YZ smartphone released in 2016.
 
-Usually there's no need to resend, at least not immediately, because of
-issues in the subject or the commit message. Many of them can be fixed
-while applying, and if not, you'll be asked to fix and resend.
+Add a device tree for SM-J320YZ with initial support for:
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+- GPIO keys
+- SDHCI (internal and external storage)
+- USB Device Mode
+- UART (on USB connector via the SM5703 MUIC)
+- WCNSS (WiFi/BT)
+- Regulators
+- QDSP6 audio
+- Speaker/earpiece/headphones/microphones via digital/analog codec in
+  MSM8916/PM8916
+- WWAN Internet via BAM-DMUX
+- Touchscreen
 
+There are different variants of J3, with some differences in MUIC, sensor,
+NFC and touch key I2C buses.
 
-> Changes in v2:
-> - Adress review feedback regarding indentation in the fix
-> - Link to v1
-> https://lore.kernel.org/all/20240801102239.572718-1-sayyad.abid16@gmail.com/
->
->  include/uapi/drm/drm_mode.h | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-> index d390011b89b4..9d398335d871 100644
-> --- a/include/uapi/drm/drm_mode.h
-> +++ b/include/uapi/drm/drm_mode.h
-> @@ -864,7 +864,13 @@ struct drm_color_lut {
->   * array of struct drm_plane_size_hint.
->   */
->  struct drm_plane_size_hint {
-> +	/**
-> +	 * @width: width of the plane in pixels.
-> +	 */
->  	__u16 width;
-> +	/**
-> +	 * @height: height of the plane in pixels.
-> +	 */
->  	__u16 height;
->  };
->
-> --
-> 2.39.2
->
+The common parts are shared in msm8916-samsung-j3-common.dtsi to reduce
+duplication.
 
--- 
-Jani Nikula, Intel
 
