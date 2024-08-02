@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-272036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477CB945619
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:50:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE07D94561B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2FA61F23753
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B870281690
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75E317BB7;
-	Fri,  2 Aug 2024 01:50:28 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A28418054;
+	Fri,  2 Aug 2024 01:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQsDUdi/"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCA479F0;
-	Fri,  2 Aug 2024 01:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F05E17BA4;
+	Fri,  2 Aug 2024 01:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722563428; cv=none; b=F90WOna6qT0PQA00S6N+qAbWjch7DzF//i43bT+Y0oBILPe1uy+3vmUFTq05yVdsV+hCN+EcetWB1km18OWdsVRel9z7EdwB+Oko6PuqD5slbxUgYq8aWiiF+Y07cGRCluIHgs806ZV6JVWEe36ljknaJ0y19urW8DzlvOXrLxI=
+	t=1722563517; cv=none; b=iM8l/SqN03m0mVi8laqYR/VPw5VYWF+z2CO4hEl0wGASIwyLNFQaB7FGg/Bc+WqjXkAn0aSESeIbFtH/SUbqGa0E5kgDfex/ggXRGE/IoBEW0/seUxX3Q1QOZJzm6ldMuFdoQ+Um2fG+nbynFBBhS18nfXE43of8rm578vxk3jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722563428; c=relaxed/simple;
-	bh=IkN4TBJpwf8VUhVoftKLj45ogkUDwA7T0rVt0p6O1Q4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HbiOiRb5DMyFt91cID+zJ2TQeriKKxzMJiuiDP9aXtKoEPCEOGNuzFFSmn3rpVt5gy558fd9OdE3VoAiF2wqalZ2IPQ2BICTNi+4xw2R6jV/2Abyulm4+/KAoNLlS+WTm2MkJtbsNFu/IrF8N2sDf6byl2bQtp0PSLTlo8BLaks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4720xmrF014142;
-	Fri, 2 Aug 2024 01:50:11 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40rjf184yw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 02 Aug 2024 01:50:11 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 1 Aug 2024 18:50:10 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 18:50:07 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <jack@suse.cz>
-CC: <brauner@kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
-        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
-Subject: [PATCH V3] squashfs: Add i_size check in squash_read_inode
-Date: Fri, 2 Aug 2024 09:50:06 +0800
-Message-ID: <20240802015006.900168-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801153042.prhbovbuys4zmprv@quack3>
-References: <20240801153042.prhbovbuys4zmprv@quack3>
+	s=arc-20240116; t=1722563517; c=relaxed/simple;
+	bh=JBNnV0uADYTtfu4slxKNJ6KUj/8oHz+XS9o+5CxrYYk=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DuWKHy16k73hX5U+v9wFgphvb++hSuHihepT/Cw4/wevFjY62XKxh3zDci/eVgik2/MwShslkbSknsG6XNmN1R2u8jtCJbW3k1Sk2akitfypca47wzGTaoGsmldPFGHm58Av+FMIIXu8XE0xRKrzL0BRzjgOf3lZgQJJA269uXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQsDUdi/; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso5569793a12.2;
+        Thu, 01 Aug 2024 18:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722563515; x=1723168315; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QDmCkGOySC7BUzlBEXHv44zk9Dp2wAsf6i4H4rN57ZM=;
+        b=CQsDUdi/aSjE9NZuT0Jdj3GXIFir4oV+o8LMlc2ytcNrKzSB9j5fIAffdeb8xkvpFm
+         afUpUmilzwHJiBO4PP7Rkcjc88eeNoMvyp6XO3q1a0xD7MDY0/Ja+SBJ1Ds0n/iKFieA
+         TXjU/EEpOdtIZuhhTF4AO0bjFGs/85GRDU1Dz9DI6pPtl7Bh7fE6PJSrPlzQcw8BVOt2
+         z/SrQotuZXpHW0DNOzQ8ar+Pl87914Fv+A+paoN5oqGMke0HuEDtDjXpZCN/7yLUoWVk
+         cjfQ+aEy2dWbXab9W4cjaF7WUju8LuGpMqgDImJ7HP3dEUCZ52nWu39LsXM6+gaogMGt
+         5g1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722563515; x=1723168315;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QDmCkGOySC7BUzlBEXHv44zk9Dp2wAsf6i4H4rN57ZM=;
+        b=XxPbfkoAL0r+XdospWVjiHxsA6d3W3+9a/XbyVJHeUoW00ZdDQ9Nyuc0x1frRh3IEQ
+         FZlU3bxEsRDUvL5myFgODnh0DNlJ2iPxTU8W3AYgNc3V7/vPSsoplp9NKaFSNorosOXm
+         3XxfwBTvMJUiZPpQgLXx/dE2CAuq0yUqnqF40vOJT1lxp9tQlvCqiAwd8gOuStISVxxO
+         tybI97vMI3zSETpsR/vIoTNjDoJKHbLescbNKlvfTpkstjxzN7Q7RigDlAb5QsRppL57
+         Hy2LSF97I2BhsRSl9SM5BeNDgDCdDAYXV4qWBiRkF2btcPfokFweLz4fFVGnvmHz4xqJ
+         Mo2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVSDbGBBX39B56QdTRGi32/8fvuOEX0D/TV2I/xh6sszM9pVlMjH1pSaYtKXZm95WgRNRNF9ZZtDcFAZkqFQ==@vger.kernel.org, AJvYcCUbRhLr0df2NEsXcltwHqdUDwZXHH6M/xakW1qAtWeGPVj75T9VtVSjhI49wjpWVtomYeDT87sT7EO1357T@vger.kernel.org
+X-Gm-Message-State: AOJu0YznNzuCMzrG0Zm9tgc27tTC9ci9m+o2ju8JpuYLzS0OeV3O4T5W
+	PYAu3J64ASVTNegT0DA6cjIyTBUypVv4WqlzM/cqXvL3mn3LYXZp
+X-Google-Smtp-Source: AGHT+IE5ADnY+cIlrpWgFEOUgeDHEI30PQdtkXR/15P0nbEwGZyeetr65PqA8GXLIwnRGe4x0Licnw==
+X-Received: by 2002:a05:6a20:8404:b0:1c4:d438:7dd2 with SMTP id adf61e73a8af0-1c6995ccd9dmr3425796637.32.1722563515263;
+        Thu, 01 Aug 2024 18:51:55 -0700 (PDT)
+Received: from [192.168.7.110] ([190.196.134.53])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc406481sm4104020a91.2.2024.08.01.18.51.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 18:51:54 -0700 (PDT)
+From: Camila Alvarez Inostroza <cam.alvarez.i@gmail.com>
+X-Google-Original-From: Camila Alvarez Inostroza <calvarez@macbook-pro-de-camila.local>
+Date: Thu, 1 Aug 2024 21:51:50 -0400 (-04)
+To: Camila Alvarez Inostroza <cam.alvarez.i@gmail.com>
+cc: Kent Overstreet <kent.overstreet@linux.dev>, 
+    syzbot+4093905737cf289b6b38@syzkaller.appspotmail.com, 
+    Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] bcachefs: WARNING in bch2_fs_journal_stop
+In-Reply-To: <f3814333-2f49-5563-0673-a3d3cb8354cf@macbook-pro-de-camila.local>
+Message-ID: <7252b968-829b-bc32-6832-8bc132009c64@macbook-pro-de-camila.local>
+References: <20240717220237.1246673-1-cam.alvarez.i@gmail.com> <e2oi7a4jj4gjhzcp66rygr5d6wqlock6c5jvuwszxuej3hldmd@tnvbf45nbx2x> <6d42612b-1c20-0484-ce9f-eac509e6740d@macbook-pro-de-camila.local> <f6lmsdtntfs3ot4jc2waizihayhipszr3iuro3tzyjgbfvjwuw@ms4foq466yiz>
+ <d25b7319-5b16-da76-6f07-226d1da11e16@macbook-pro-de-camila.local> <6cysckb2o54lmg27htyr67mogkprkqjfipmws27fp4rhe3wxwm@edgdbatbeahw> <f3814333-2f49-5563-0673-a3d3cb8354cf@macbook-pro-de-camila.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: HfIKw6mRCkilvhk2pj7yHfDrDtzr6CnJ
-X-Proofpoint-GUID: HfIKw6mRCkilvhk2pj7yHfDrDtzr6CnJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_23,2024-08-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=989
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
- spamscore=0 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408020011
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-syzbot report KMSAN: uninit-value in pick_link, the root cause is that
-squashfs_symlink_read_folio did not check the length, resulting in folio
-not being initialized and did not return the corresponding error code.
 
-The length is calculated from i_size, so it is necessary to add a check
-when i_size is initialized to confirm that its value is correct, otherwise
-an error -EINVAL will be returned.
 
-Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/squashfs/inode.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On Thu, 18 Jul 2024, Camila Alvarez Inostroza wrote:
 
-diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
-index 16bd693d0b3a..3c667939f1d7 100644
---- a/fs/squashfs/inode.c
-+++ b/fs/squashfs/inode.c
-@@ -394,6 +394,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
- 		return -EINVAL;
- 	}
- 
-+	if ((int)inode->i_size < 0) {
-+		ERROR("Wrong i_size %d!\n", inode->i_size);
-+		return -EINVAL;
-+	}
-+
- 	if (xattr_id != SQUASHFS_INVALID_XATTR && msblk->xattr_id_table) {
- 		err = squashfs_xattr_lookup(sb, xattr_id,
- 					&squashfs_i(inode)->xattr_count,
--- 
-2.43.0
-
+>
+>
+> On Thu, 18 Jul 2024, Kent Overstreet wrote:
+>
+>> On Thu, Jul 18, 2024 at 06:49:02PM GMT, Camila Alvarez Inostroza wrote:
+>>> 
+>>> 
+>>> On Thu, 18 Jul 2024, Kent Overstreet wrote:
+>>> 
+>>>> On Thu, Jul 18, 2024 at 06:42:55PM GMT, Camila Alvarez Inostroza wrote:
+>>>>> 
+>>>>> 
+>>>>> On Thu, 18 Jul 2024, Kent Overstreet wrote:
+>>>>> 
+>>>>>> On Wed, Jul 17, 2024 at 06:02:39PM GMT, Camila Alvarez wrote:
+>>>>>>> last_seq and last_empty_seq suffered from an off by one error when the
+>>>>>>> journal has no entries.
+>>>>>>> 
+>>>>>>> The indexes were fixed and an assertion is added to check that the
+>>>>>>> last_empty_seq is always kept under the next valid seq number.
+>>>>>> 
+>>>>>> oh nice. I'm going to need to stare at this some more, I still feel 
+>>>>>> like
+>>>>>> this code needs to be clearer and less fiddly.
+>>>>>> 
+>>>>> Sure! Please let me know if there's anything I can do to help.
+>>>> 
+>>>> I'm just applying it - the warning you added gave me warm fuzzies.
+>>>> 
+>>>> I'll let you know if anything pops up in the CI (and I should give you
+>>>> an account so you can point it at your own branches; email me a username
+>>>> and ssh key)
+>>>> 
+>>> Should I give you the info in this same thread or in a separate email?
+>> 
+>> doesn't matter, ssh pubkeys aren't secrets
+>> 
+> I've attached my pubkey. You can use calvarez as my username. Thanks
+Hi, just wondering if you had any time to take a look at this patch.
+Please let me know if you have any comments!
 
