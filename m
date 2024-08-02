@@ -1,187 +1,102 @@
-Return-Path: <linux-kernel+bounces-272130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1343894579E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:35:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033E09457A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E0F01C23C43
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39678285A5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF06A38F9C;
-	Fri,  2 Aug 2024 05:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B97C3D97F;
+	Fri,  2 Aug 2024 05:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UwFKFkdi"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="LhaHG7pg"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50E21CAB3;
-	Fri,  2 Aug 2024 05:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F001EB4AE;
+	Fri,  2 Aug 2024 05:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722576916; cv=none; b=fOaNf7hz4wHXCwJ22efTUToJLgK2hN3OizeDye/7e0WRRLOrall24IV1vlJMpZK74odoO/gKXUKLv8hShNoxrefsQStUuQvcAnuNLpUVBhTyYHlN4xgPLGbczbXL0kZp8+4Z9xycSP7d0VBgPLmsPavVyQZYDtNrUHt03/1nx1Q=
+	t=1722577011; cv=none; b=qF3j4YCqLQExxzQQaV/A4lmdq+zxfaVl5Bay2i/J+7GTG+rgODXf5KRr1vHngQrD1zrk2jaXFJLUDm4bTekf0Ey66ISKWZFUeLZfYslk4wbk28TZvQHA4B9uh27f/LYlKrIjg8BBFEsaVr+prX3kJNNjQEU3zJE1YNRV01LIFYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722576916; c=relaxed/simple;
-	bh=ghlFZWY60Vj//MsnCNPZGKvVI1HR5CTWLZ1dS+pGpP0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VwVR7U6jIpqBu+SCzz+X9EZee4DgoT9Eoj1RB54fmrPz8GiFv704ie2Q8nhKLtk20O52og2xWZs1DsemM33Wv58s7duGV8W04xx7W2ENFAA4qewJzCe57xarQ+PPNiBpG/l3/IZCwt0P/qPrB750cLBMEqSi3xhzDEwuMv1bKOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UwFKFkdi; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7106cf5771bso814650b3a.2;
-        Thu, 01 Aug 2024 22:35:14 -0700 (PDT)
+	s=arc-20240116; t=1722577011; c=relaxed/simple;
+	bh=fctzEsVVZTuybuCnk9TUPhrRHTzee7hdRm4iRJeYDb0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=M1Q/IwfWgNcmiKfrl1Poh9A1ty+C2YBQEsvg/aaTcOznSni6jd9z1/zpq9Pa1VskSGDQCNf6Od4LpxsqmbUc5V3fwyanC5aoWPlAfQpAEVjPGvgIv5CboCE+5NpvBOYWjcMQ0DSC6HLA+KZuNvr3Jd8hcrMwgGSIeOjt3QF/ako=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=LhaHG7pg; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722576914; x=1723181714; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TZQoHgAzEUKdf271aj7GmUNsMJGjbJxHx2mZmXNAzV4=;
-        b=UwFKFkdiSiYq8MKKsuLDcFP4EdXUEC3g8w/U924z5mY0IfZDFz/EhdlsS0b8GTUT+z
-         qkUbJUTqqBfN/LcYIJZrW6Cm7Kcjdy2M0W3Z/uFhlzsBk+/tyLZas38V0utKFnX3DqwX
-         p5UzkJmkoyt8uJkDqnGDE7Hue/vCSJwmvkkXagN0ReThcyi4e748gR4TFvWbBcjUsljb
-         /dwjSoHaxzdH2yDM2m1Vx4TodT23N/WiMwdBzGtTOTW8IRFqHvTUahfqghNApuUeiaR4
-         h7ESEcPqqQmo4X/JqffTBz0Ljjs96p3j0u7THVIDfhrJKHVDyfmF1R9/MPZoEuzwLjgk
-         +j4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722576914; x=1723181714;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZQoHgAzEUKdf271aj7GmUNsMJGjbJxHx2mZmXNAzV4=;
-        b=A4s546L3o+fNDjKBBLWBOx/vv7CYk0ufF8DkhU1R6FmrE/Hrg/qePiBVP/n/2Batvg
-         m2KOtAcCw/kaqZyHOcDlAOrZXlbgNoSU44Ke792ECp1a9vo7st/lk2/fr2gvYtFPq2Fx
-         HqBOwlJzt5QNkajTbe8VqQ5TvaPh8c52igMzJdKLp1kTmcjM3pLBttsn+Qpmy6RhNDUl
-         4ThaH9GahpUJ6pwlecVvElZv5PPlOnh/CvN++ICSIbP9q1Q5Xn814MvSGzOjA56amZo+
-         KmgXp4ShzMcJn0RR1f9Z0/+7i8TsfM8+SWZDrq7x7m7F1gi308SdZFRQqRwyw6GInJ6t
-         DKjw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1fpyY4saf+4qNr1iUXC2N7QYA48qleF0fHV1PWASjOiQ/kZsFhOk0X5o/fR57No/vEZey4xn3/8NOTPdIP7ltWsgjP6d/MxJnqmZCJFahwBhFLLKAv+e/w7tw5PcBaOW9
-X-Gm-Message-State: AOJu0YzICYUKpBm+ltp2m6yJEFhAXXa0DuxJvx+WEetfJ4QvMozkgqzb
-	3EUE0nOc5V9VgU6Ei/zY6IeLdaoa6CgkbfDgMWcz17DqYCimFza3
-X-Google-Smtp-Source: AGHT+IFAruCA5WH9Ek0qO5QAEQUPU8dklz3HucAfnEQ8UHFLgTFdD9VWkrdnWQqEGpyFKx3iBKC0Uw==
-X-Received: by 2002:a05:6a21:680b:b0:1c4:e365:1ccd with SMTP id adf61e73a8af0-1c699559f71mr2792722637.22.1722576913777;
-        Thu, 01 Aug 2024 22:35:13 -0700 (PDT)
-Received: from [10.22.68.119] ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592ad9efsm8179615ad.284.2024.08.01.22.35.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 22:35:13 -0700 (PDT)
-Message-ID: <19097c64-7dce-479a-8123-2d0be20a0927@gmail.com>
-Date: Fri, 2 Aug 2024 13:35:08 +0800
+	d=codeconstruct.com.au; s=2022a; t=1722577008;
+	bh=Q47qJS2a9PBUFubzmNdKq1lpyf6zLMrCpRsxzpxyTKY=;
+	h=From:Subject:Date:To:Cc;
+	b=LhaHG7pgSk/HxGfyOUGpotSifTFcQtq68W50Yaw+fj1enh2H6g0mlzc1CyxBClzZq
+	 Rtem8xpEUwiXywFpyfZpToreNoj/CV9HKdEN2UrWBqlON20gK+ScEwIB+ATsznk/EI
+	 Lzzxu3haF58t2RhyJ0FW3UOVzwRQzBEmo+9c4sPHpNWOE05eH/KAgRUpVELnW4KaZP
+	 zVGtOwD8Gd6ttucjMRxfIHQ+Sk6rJtJ+EdPLvDorbMuMVZ6dBzV8vAAcenTKp3/z0X
+	 fgA7ZAuoaU+X6791VuAxDiWx+6YaI7APDWYpdHY3RVwuDUXcVLMvqdlIwNeUhOxYqX
+	 kx/eIF0nzs/JQ==
+Received: from [127.0.1.1] (ppp118-210-29-70.adl-adc-lon-bras31.tpg.internode.on.net [118.210.29.70])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 30DBE65665;
+	Fri,  2 Aug 2024 13:36:46 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+Subject: [PATCH 0/2] dt-bindings: interrupt-controller: Convert Aspeed
+ (C)VIC to DT schema
+Date: Fri, 02 Aug 2024 15:06:29 +0930
+Message-Id: <20240802-dt-warnings-irq-aspeed-dt-schema-v1-0-8cd4266d2094@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog
- method to output failure logs to kernel
-Content-Language: en-US
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, Zheao Li <me@manjusaka.me>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240725051511.57112-1-me@manjusaka.me>
- <08e180da-e841-427d-bed6-3ba8d73e8519@linux.dev>
- <c7952df9-5830-45d3-89bb-b45f2b030e24@gmail.com>
- <6511ce2a-1c7d-497c-aeb6-d4f0b17271ed@linux.dev>
- <2c6b1737-0a96-44ed-afe9-655444121984@gmail.com>
- <CAEf4BzbL0xfdCEYmzfQ4qCWQxKJAK=TwsdS3k=L58AoVyObL3Q@mail.gmail.com>
- <0f5b7717-fad3-4c89-bacf-7a11baf7a9df@gmail.com>
- <CAEf4BzZCz+sLuAUF65SaHqPUemsUb0WBhAhLYoaAs54VfH1V2w@mail.gmail.com>
- <a1ba10df-b521-40f7-941f-ab94b1bf9890@gmail.com>
- <CAEf4BzZhsQeDn8biUnt9WXt6RVcW_PPX76YFyZo6CjEXGKTdDg@mail.gmail.com>
- <9f68005d-511f-4223-af8f-69fb885024a1@gmail.com>
- <CAEf4BzbzM85_946eB95e9U6stknBh4ucLMKVo5SEqUsihe4K1A@mail.gmail.com>
- <951159c7-08b1-4b15-9dd7-e1a6589ce2ce@gmail.com>
- <CAEf4BzbbyojuFSS7xQ3+jZb=dHzOaZfMbtT+WnypW2LPwOUwRw@mail.gmail.com>
-From: Leon Hwang <hffilwlqm@gmail.com>
-In-Reply-To: <CAEf4BzbbyojuFSS7xQ3+jZb=dHzOaZfMbtT+WnypW2LPwOUwRw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF1wrGYC/x2NQQqDQAwAvyI5N7BuXSh+pXgIJqs5dLWJtAXx7
+ 109zhxmdnAxFYe+2cHko65LqdDeGhhnKpOgcmWIIXbhESLyhl+yomVyVHsj+SrCp/Zxlhdhykk
+ yJ+7uLUHNrCZZf9fiORzHH8rbwqhyAAAA
+To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+X-Mailer: b4 0.14.1
 
+Hello,
 
+This short series converts the Aspeed VIC and CVIC bindings over to DT
+schema. The CVIC has historically been documented under "misc" as it's
+the interrupt controller for the Coldfire co-processor embedded in the
+SoCs, and not for the main ARM core. Regardless, I've updated both in
+this series.
 
-On 2/8/24 00:59, Andrii Nakryiko wrote:
-> On Tue, Jul 30, 2024 at 8:31 PM Leon Hwang <hffilwlqm@gmail.com> wrote:
->>
->>
->>
->> On 31/7/24 01:28, Andrii Nakryiko wrote:
->>> On Mon, Jul 29, 2024 at 8:32 PM Leon Hwang <hffilwlqm@gmail.com> wrote:
->>>>
->>>>
->>>>
->>>> On 30/7/24 05:01, Andrii Nakryiko wrote:
->>>>> On Fri, Jul 26, 2024 at 9:04 PM Leon Hwang <hffilwlqm@gmail.com> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 2024/7/27 08:12, Andrii Nakryiko wrote:
->>>>>>> On Thu, Jul 25, 2024 at 7:57 PM Leon Hwang <hffilwlqm@gmail.com> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>
->>>> [...]
->>>>
->>>>>>>>
->>>>>>>> Is it OK to add a tracepoint here? I think tracepoint is more generic
->>>>>>>> than retsnoop-like way.
->>>>>>>
->>>>>>> I personally don't see a problem with adding tracepoint, but how would
->>>>>>> it look like, given we are talking about vararg printf-style function
->>>>>>> calls? I'm not sure how that should be represented in such a way as to
->>>>>>> make it compatible with tracepoints and not cause any runtime
->>>>>>> overhead.
->>>>>>
->>>>>> The tracepoint is not about vararg printf-style function calls.
->>>>>>
->>>>>> It is to trace the reason why it fails to bpf_check_attach_target() at
->>>>>> attach time.
->>>>>>
->>>>>
->>>>> Oh, that changes things. I don't think we can keep adding extra
->>>>> tracepoints for various potential reasons that BPF prog might be
->>>>> failing to verify.
->>>>>
->>>>> But there is usually no need either. This particular code already
->>>>> supports emitting extra information into verifier log, you just have
->>>>> to provide that. This is done by libbpf automatically, can't your
->>>>> library of choice do the same (if BPF program failed).
->>>>>
->>>>> Why go to all this trouble if we already have a facility to debug
->>>>> issues like this. Note every issue is logged into verifier log, but in
->>>>> this case it is.
->>>>>
->>>>
->>>> Yeah, it is unnecessary to add tracepoint here, as we are able to trace
->>>> the log message in bpf_log() arguments with retsnoop.
->>>
->>> My point was that you don't even need retsnoop, you can just ask for
->>> verifier log directly, that's the main way to understand and debug BPF
->>> program verification/load failures.
->>>
->>
->> Nope. It is not about BPF program verification/load failures. It is
->> about freplace program attach failures instead.
-> 
-> Ah, my bad, it's at an attach time. Still, I don't think a tracepoint
-> for every possible failure will ever work. Perhaps the right approach
-> is to wire up bpf_log into attach commands (LINK_CREATE, at least), so
-> that the kernel can report back what's the reason for declining
-> attachment?
-> 
+I tried to document the historical oddities and conversion quirks in the
+commit messages where appropriate.
 
-OK. Let me take a try.
+Please review!
 
-Thanks,
-Leon
+Andrew
+
+---
+Andrew Jeffery (2):
+      dt-bindings: interrupt-controller: aspeed,ast2400-vic: Convert to DT schema
+      dt-bindings: misc: aspeed,ast2400-cvic: Convert to DT schema
+
+ .../interrupt-controller/aspeed,ast2400-vic.txt    | 23 --------
+ .../interrupt-controller/aspeed,ast2400-vic.yaml   | 63 ++++++++++++++++++++++
+ .../bindings/misc/aspeed,ast2400-cvic.yaml         | 60 +++++++++++++++++++++
+ .../devicetree/bindings/misc/aspeed,cvic.txt       | 35 ------------
+ 4 files changed, 123 insertions(+), 58 deletions(-)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240802-dt-warnings-irq-aspeed-dt-schema-5f5efd5d431a
+
+Best regards,
+-- 
+Andrew Jeffery <andrew@codeconstruct.com.au>
+
 
