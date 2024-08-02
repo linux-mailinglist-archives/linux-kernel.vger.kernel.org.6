@@ -1,118 +1,185 @@
-Return-Path: <linux-kernel+bounces-271964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7107B945571
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:35:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2541945577
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5D71F232BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2315A1F2275D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558EC3D97A;
-	Fri,  2 Aug 2024 00:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5ED134AC;
+	Fri,  2 Aug 2024 00:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJeZdika"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6Q0NI7M"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF91168DA;
-	Fri,  2 Aug 2024 00:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7298D520;
+	Fri,  2 Aug 2024 00:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722558869; cv=none; b=g5tTesnLxmNwuZ2ZKwmtlYHQutUKCRp3ysJozvP97M+dYhaCr+vXRRpl7ReAhtMbshQ6pK7anD7cQOSW9WktfETquETYpdVlhhjGS4o7VUvn1ev3hX0BWievQZDUKHINzNXMjPmscUT5lj4huM15gmsPQFzOXi7nzfz1PWLPRGk=
+	t=1722558888; cv=none; b=h0Rd/B8HGN9QEBKthX0vDaPaa+9h+IE2BlXcGLHbgE4L3IzwDaOX4SKGLSBJyoAoVk8wRGbRD2AWcmEPAizokGfMJodI45zI8++Ve8heKdwcZstLPLk+hf5Yy9E0Fu3jbYCkWjYtqnhY+62Lx1k+Isyoztyv2YpsD3QG2lcsVaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722558869; c=relaxed/simple;
-	bh=9C6fIiB/R+CnzPnUcGPw5yPIwJNQLck0Q+T4uibP3zg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FR4NNSiRbGFMtnlUEUyicKH7RVslS59NvUD01QMP5MdFgAmhl4Ax9/bzkqBXrKA7swwr5mw6vP5c8y9PT8aEsFCM+iNdRC7aC9xOYP5h5EXy0okgV++vjuJUAkX9mDbBFMyO5Fih6VhKWRCMRFmm6lNpiH98vuYAzDS3QkoYt60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJeZdika; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9903AC4AF15;
-	Fri,  2 Aug 2024 00:34:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722558868;
-	bh=9C6fIiB/R+CnzPnUcGPw5yPIwJNQLck0Q+T4uibP3zg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nJeZdikadeB8zMehwiJaMByVnqDWfOB3bNNwugWjvE2xxBNfwVH1DVEsGCcBSeClk
-	 3+2gy5m6qBgoO/uvVtqXx7wDnibQISE9gYfIoA6FLMV9rxYqMAomKlY1BPr00OHLG1
-	 PpOk2SILhUlN//PCThh5Mm25O+9YaWmgYa6CE/iz8yEQwcAJzl6Y5cFj/6DN0hnzuT
-	 CQBUbDw6Z8Hd5SCoTEawSavdT6BU9I5xCrVdV1eRTNs4gbC6gdKzNuolO0JUTeuKit
-	 bJkemCSDdjGh6wkaDprZXWVS7r6ZgDBxk3tKJ6T3a9LvaD3ikZlNAwSZJCrXzYOvs6
-	 q3WQntdSCc8Tg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id EF11CCE0FA1; Thu,  1 Aug 2024 17:34:27 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 6/6] rcu/tasks: Add rcu_barrier_tasks*() start time to diagnostics
-Date: Thu,  1 Aug 2024 17:34:26 -0700
-Message-Id: <20240802003426.4134196-6-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <41c68c6b-2c55-4c2d-ab70-f2a5b38eb374@paulmck-laptop>
-References: <41c68c6b-2c55-4c2d-ab70-f2a5b38eb374@paulmck-laptop>
+	s=arc-20240116; t=1722558888; c=relaxed/simple;
+	bh=ZVhOko/Es2Cy0eD/eIbDqzj6uBX2CIFzIfGTkRBHbXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOLHwzO1wj6YLlUH64sIfVz03hJ+rEXZZV+YI3Uf0Sh+p38ZAxMG731Bx4rdbF9p6dJ0Zk/0ENLhu3n1R91zQLmRta9QGBOiLOppQ4jHld00h9all09zqrMT6KttYUpabEDTg9z7eX4ZUph1L+rInGsFvlSP2bhQZwtP8HikYMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6Q0NI7M; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f035ae0fe0so87855071fa.3;
+        Thu, 01 Aug 2024 17:34:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722558885; x=1723163685; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r4TxVSYutmdmVBr6Vm91nJQyTFo86VmYkWwujCrGEo4=;
+        b=J6Q0NI7MS46sCeDNXH9iwPZF4u1qCCoIutMnrdP00mgqhFI8nxTBdrmx9zaMbIaH2/
+         1wHBfBPZZ1f8kAjFDEhwQQz30Orwe3EXcQZJ8fFS3xQ06so442LfwGJtvAYTLgNXsMVW
+         4oICNHs04/ouXPYpSN8DprgxXAr3AFvNR89XeLoOA4TjKZSiVM214hSMJCS+7aBH+QOp
+         Uh+AXoDoe1BDs/PApApDDyIQKPozMOxXEPZ/U6zkT9lGnlP9ZmPqdmMZAjFAyeBeE/9/
+         qFbD9/CFekvxOP5/cGF7IgMovlPOqzcJXcP+Z3YuKdqkiGFynwOfiRQUviFJE+Hlongw
+         JwjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722558885; x=1723163685;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r4TxVSYutmdmVBr6Vm91nJQyTFo86VmYkWwujCrGEo4=;
+        b=oHnYFzBlLrzgkhduq91smi0EFizPL2DpPev9VxDCj/7v3b2INnQ4wwfas6TZqqEbhB
+         zQi8IHlllN7OeW5BaMSC2V0j9MvUoEZsbZoReSu0DAV7koocLH6AmEJ1M/hMxX8eZKWo
+         y+tv3w7MIdkthohWWy/TBp30U77bD75MwerLo+yK1ZMm91Gljwe0BV5Jt+L3x8cwsztG
+         tK4JhGF/bIpni1BUJpXOZVIw8LYDnDrpqZDjMlyqIhyHhH5xAM7Hp4JRFPIupVkG6RsA
+         fojWImollCYdP2oeYEqwtDwFEkLa7klYHv8ULuqk9zuAx0JUaDQO9c+/ZDv0bzrh38NK
+         T1QA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoik333iOg6RI5XyqNmXCnUl4nMktO1mRmwPm0jKXKc1SFPq05TKWlGvB5uZCZr5G8zNrV+XU5GNQJkuVuv5gYWTYHiOdO4oBCJJtf79YjS6MGybkTmQVUDMuIfAMBox8sHnYos3hMmMqe24ttWn6jLDFO8CjsGKuLevv4/LWs
+X-Gm-Message-State: AOJu0YyfRt4Ux7J9+q8m6Bm+8Ofi1NJgCdj+e60zHdsDDUqsBaJvBpMR
+	Q/3ndwDVY4r79jG5E80eDr2TscXmV2wMd0BaCkIlqf8k3aUeMUw2
+X-Google-Smtp-Source: AGHT+IG/FMK3bNVlrP15HVAL29rwgIgSr3VJBp7bNTiL3KfUs6zHWiqpafjB1eMUpCtsYUlpQ6PkVw==
+X-Received: by 2002:a05:651c:104d:b0:2ee:494c:c3d3 with SMTP id 38308e7fff4ca-2f15ab395afmr11770781fa.43.1722558884154;
+        Thu, 01 Aug 2024 17:34:44 -0700 (PDT)
+Received: from mobilestation ([176.213.10.205])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e250619sm362831fa.79.2024.08.01.17.34.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 17:34:43 -0700 (PDT)
+Date: Fri, 2 Aug 2024 03:34:41 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, 
+	quic_shazhuss@quicinc.com, quic_nitegupt@quicinc.com, quic_ramkri@quicinc.com, 
+	quic_nayiluri@quicinc.com, quic_krichai@quicinc.com, quic_vbadigan@quicinc.com, 
+	stable@vger.kernel.org, Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dmaengine: dw-edma: Do not enable watermark
+ interrupts for HDMA
+Message-ID: <mhfcw7yuv55me2d7kf6jh3eggzebq6riv5im4nbvx6qrzsg2mr@xpq3srpzemkb>
+References: <1721740773-23181-1-git-send-email-quic_msarkar@quicinc.com>
+ <1721740773-23181-3-git-send-email-quic_msarkar@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1721740773-23181-3-git-send-email-quic_msarkar@quicinc.com>
 
-This commit adds the start time, in jiffies, of the most recently started
-rcu_barrier_tasks*() operation to the diagnostic output used by rcuscale.
-This information can be helpful in distinguishing a hung barrier operation
-from a long series of barrier operations.
+On Tue, Jul 23, 2024 at 06:49:32PM +0530, Mrinmay Sarkar wrote:
+> DW_HDMA_V0_LIE and DW_HDMA_V0_RIE are initialized as BIT(3) and BIT(4)
+> respectively in dw_hdma_control enum. But as per HDMA register these
+> bits are corresponds to LWIE and RWIE bit i.e local watermark interrupt
+> enable and remote watermarek interrupt enable. In linked list mode LWIE
+> and RWIE bits only enable the local and remote watermark interrupt.
+> 
+> Since the watermark interrupts are not used but enabled, this leads to
+> spurious interrupts getting generated. So remove the code that enables
+> them to avoid generating spurious watermark interrupts.
+> 
+> And also rename DW_HDMA_V0_LIE to DW_HDMA_V0_LWIE and DW_HDMA_V0_RIE to
+> DW_HDMA_V0_RWIE as there is no LIE and RIE bits in HDMA and those bits
+> are corresponds to LWIE and RWIE bits.
+> 
+> Fixes: e74c39573d35 ("dmaengine: dw-edma: Add support for native HDMA")
+> cc: stable@vger.kernel.org
+> Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+> ---
+>  drivers/dma/dw-edma/dw-hdma-v0-core.c | 17 +++--------------
+>  1 file changed, 3 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+> index fa89b3a..9ad2e28 100644
+> --- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
+> +++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+> @@ -17,8 +17,8 @@ enum dw_hdma_control {
+>  	DW_HDMA_V0_CB					= BIT(0),
+>  	DW_HDMA_V0_TCB					= BIT(1),
+>  	DW_HDMA_V0_LLP					= BIT(2),
+> -	DW_HDMA_V0_LIE					= BIT(3),
+> -	DW_HDMA_V0_RIE					= BIT(4),
+> +	DW_HDMA_V0_LWIE					= BIT(3),
+> +	DW_HDMA_V0_RWIE					= BIT(4),
+>  	DW_HDMA_V0_CCS					= BIT(8),
+>  	DW_HDMA_V0_LLE					= BIT(9),
+>  };
+> @@ -195,25 +195,14 @@ static void dw_hdma_v0_write_ll_link(struct dw_edma_chunk *chunk,
+>  static void dw_hdma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
+>  {
+>  	struct dw_edma_burst *child;
+> -	struct dw_edma_chan *chan = chunk->chan;
+>  	u32 control = 0, i = 0;
+> -	int j;
+>  
+>  	if (chunk->cb)
+>  		control = DW_HDMA_V0_CB;
+>  
+> -	j = chunk->bursts_alloc;
+> -	list_for_each_entry(child, &chunk->burst->list, list) {
+> -		j--;
+> -		if (!j) {
+> -			control |= DW_HDMA_V0_LIE;
+> -			if (!(chan->dw->chip->flags & DW_EDMA_CHIP_LOCAL))
+> -				control |= DW_HDMA_V0_RIE;
+> -		}
+> -
+> +	list_for_each_entry(child, &chunk->burst->list, list)
+>  		dw_hdma_v0_write_ll_data(chunk, i++, control, child->sz,
+>  					 child->sar, child->dar);
+> -	}
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/tasks.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Hm, in case of DW EDMA the LIE/RIE flags of the LL entries gets to be
+moved to the LIE/RIE flags of the channel context register by the
+DMA-engine. In its turn the context register LIE/RIE flags determine
+whether the Local and Remote Done/Abort IRQs being raised. So without
+the LIE/RIE flags being set in the LL-entries the IRQs won't be raised
+and the whole procedure won't work. I have doubts it works differently
+in case of HDMA because changing the semantics would cause
+implementing additional logic in the DW HDMA RTL-model. Seeing the DW
+HDMA IP-core supports the eDMA compatibility mode it would needlessly
+expand the controller size. What are the rest of the CONTROL1 register
+fields? There must be LIE/RIE flags someplace there for the non-LL
+transfers and to preserve the values retrieved from the LL-entries.
 
-diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 37597f7c581ca..2f8d6c8e3c4ce 100644
---- a/kernel/rcu/tasks.h
-+++ b/kernel/rcu/tasks.h
-@@ -85,6 +85,7 @@ struct rcu_tasks_percpu {
-  * @barrier_q_count: Number of queues being waited on.
-  * @barrier_q_completion: Barrier wait/wakeup mechanism.
-  * @barrier_q_seq: Sequence number for barrier operations.
-+ * @barrier_q_start: Most recent barrier start in jiffies.
-  * @name: This flavor's textual name.
-  * @kname: This flavor's kthread name.
-  */
-@@ -120,6 +121,7 @@ struct rcu_tasks {
- 	atomic_t barrier_q_count;
- 	struct completion barrier_q_completion;
- 	unsigned long barrier_q_seq;
-+	unsigned long barrier_q_start;
- 	char *name;
- 	char *kname;
- };
-@@ -428,6 +430,7 @@ static void __maybe_unused rcu_barrier_tasks_generic(struct rcu_tasks *rtp)
- 		mutex_unlock(&rtp->barrier_q_mutex);
- 		return;
- 	}
-+	rtp->barrier_q_start = jiffies;
- 	rcu_seq_start(&rtp->barrier_q_seq);
- 	init_completion(&rtp->barrier_q_completion);
- 	atomic_set(&rtp->barrier_q_count, 2);
-@@ -783,8 +786,9 @@ static void rcu_tasks_torture_stats_print_generic(struct rcu_tasks *rtp, char *t
- 		pr_cont(".\n");
- 	else
- 		pr_cont(" (none).\n");
--	pr_alert("\tBarrier seq %lu count %d holdout CPUs ",
--		 data_race(rtp->barrier_q_seq), atomic_read(&rtp->barrier_q_count));
-+	pr_alert("\tBarrier seq %lu start %lu count %d holdout CPUs ",
-+		 data_race(rtp->barrier_q_seq), j - data_race(rtp->barrier_q_start),
-+		 atomic_read(&rtp->barrier_q_count));
- 	if (cpumask_available(cm) && !cpumask_empty(cm))
- 		pr_cont(" %*pbl.\n", cpumask_pr_args(cm));
- 	else
--- 
-2.40.1
+Moreover the DW eDMA HW manual has a dedicated chapter called
+"Interrupts and Error Handling" with a very demonstrative figures
+describing the way the flags work. Does the DW HDMA databook have
+something like that?
 
+Please also note, the DW _EDMA_ LIE and RIE flags can be also utilized
+for the intermediate IRQ raising, to implement the runtime LL-entries
+recycling pattern. The IRQ in that case is called as "watermark" IRQ
+in the DW EDMA HW databook, but the flags are still called as just
+LIE/RIE.
+
+-Serge(y)
+
+>  
+>  	control = DW_HDMA_V0_LLP | DW_HDMA_V0_TCB;
+>  	if (!chunk->cb)
+> -- 
+> 2.7.4
+> 
 
