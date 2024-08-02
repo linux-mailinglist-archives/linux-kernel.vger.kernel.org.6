@@ -1,181 +1,180 @@
-Return-Path: <linux-kernel+bounces-272780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05179460D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:51:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EFEE9460D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B93281234
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99F0F1C213E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5210314D2B1;
-	Fri,  2 Aug 2024 15:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AF21537A0;
+	Fri,  2 Aug 2024 15:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="WkinlYf9"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazolkn19012058.outbound.protection.outlook.com [52.103.2.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3AvOswIo"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF68175D4B;
-	Fri,  2 Aug 2024 15:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722613902; cv=fail; b=AfhLy8MOkMlOD4RKvRidTB4JSY4JIL/MffO05JftsFZyJLRvCvbyyNVvlyLwV5k2wzcXOg78qSSJWIPDkfnb1iWwTozNVix+na5q3J4MKNuEseXOQgrWRCLBA0ADBK4/j3M+O/OSRuVIwgOnlSsvzJxDDUNkPqzUSf8vgxtZWO8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722613902; c=relaxed/simple;
-	bh=JJnND6f0MZpNQPgtmCtDmxRJYyJqDJPmAtYc6fU9kVo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qeGFXAofOUAxNJF5x47a5MN9qeC2XskdtLRP4XwBlYUe1X+Qv3klG/2h//OnvFd3UCoNMbh3GQycgv5tHoc7A3YudxsqmfwuRNVaFffGat6H8tJ4mumUkF2WouZPJOebc+F6QMRj1pGz/KUtxhi82xZ3OpmaQ+UTW9htuTPs1p0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=WkinlYf9; arc=fail smtp.client-ip=52.103.2.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NzA7YUpU4/erDv/yVXxPr8ZkdfMkK/+pzzgy9bBx/l1MH/cepDq6p9xS1BZA//I9vEfxTcdCAdhzzluHAKX5S9wsfcbNKD7yUWJAeuRdBLMj9/jEExEigwuyFy2tsO+zPKolE3MRT0ySniHHL9l0LJifAw3d8fYee84QRD3+6AqVEZSO+1OPwbjpSAv/aaoFv1Y3pjN2f5kPA9ULmoxsSfk9hJmiTxZbqPguXwFByw5FcZfQXgvjTdp/wcd9Fmu/6ofU7XasBpFJAty4RSd0ARWid3quX2ijDOQD/jlng5PJRCNgk0wFzG+LYqBMYT+G4B9fjpgPo1lxrnkakaPDmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7yUAgkvu6oh76BlpCh485DyRfTVbWnCAb9jhsoDtJs8=;
- b=S8oSCB+8ukV6voxlC8az9s1jJecuGUpzW5PGaXSM4+seud9/loOW9unt2qZKjA7bZ+41PBpQnxYkGpYWO/WoWVO7PGR0ZkDVrHQOvZqjNca3C8l3u/9QYyuYOjBHaoAYJqbKHqFCZjiMJAGW0aeQnZ4IRqdEnX+mvaPtEc8ca2hRXUltjddMrXzTLzL+ceFQ3UdWwoRHpdKUaOUqHiXIJhvRa9W2BSf6vWKu/JRFe48dwuKdOhqluxpf/oQiMhZ8d6CRXdxvu2kaxjLpFdYWMFN9ba7vVZ8330Gi+55X2kpQpR4K1mcWboP/WrmzFQAVHnYkgcW+9LU95K60+uFhNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7yUAgkvu6oh76BlpCh485DyRfTVbWnCAb9jhsoDtJs8=;
- b=WkinlYf914laRxegcKpGaLDnId7yjRSv2e4bkaPwJ6GNmSC6X9qnnraJeQAhVOtFgjrePl/W7f4SvdDc4vW5SIczOWs++BwMCYRHdYOnNf3R+mgVHDLBqfbisCkG7qz7e6gn0rvDNrSMNhVVm1Cd6QhQ0FbKhmilNvaylDa0F63tUb9e009oKBtiqF/2yXaDiqqKdI7NiVrxOJ30rppPTRNb3qjuH1RTHqslssPcO8U0u2+hYeWms8hC5g9bVUCCqWyA2sfXMe+lm0x2HXMCP230G5TDA0NifCi9FUG8fDVDktfklI69vclODgbiS51xHd5ysttSifVuWxtUjrL7BA==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by DM6PR02MB6746.namprd02.prod.outlook.com (2603:10b6:5:21b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Fri, 2 Aug
- 2024 15:51:37 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7807.026; Fri, 2 Aug 2024
- 15:51:37 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Roman Kisel <romank@linux.microsoft.com>, "kys@microsoft.com"
-	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
-	<decui@microsoft.com>, "sashal@kernel.org" <sashal@kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "apais@microsoft.com" <apais@microsoft.com>, "benhill@microsoft.com"
-	<benhill@microsoft.com>, "ssengar@microsoft.com" <ssengar@microsoft.com>,
-	"sunilmut@microsoft.com" <sunilmut@microsoft.com>, "vdso@hexbites.dev"
-	<vdso@hexbites.dev>
-Subject: RE: [PATCH] Drivers: hv: vmbus: Fix the misplaced function
- description
-Thread-Topic: [PATCH] Drivers: hv: vmbus: Fix the misplaced function
- description
-Thread-Index: AQHa5Fj6+TFH9+m9l0yyVWb3YLIZnbIUHp3Q
-Date: Fri, 2 Aug 2024 15:51:37 +0000
-Message-ID:
- <SN6PR02MB41578B75E804B59A2B8A8E24D4B32@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240801212235.352220-1-romank@linux.microsoft.com>
-In-Reply-To: <20240801212235.352220-1-romank@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [Dy3VIgNr+b8YY5Bh2znBKnL6ec3hc3oN]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|DM6PR02MB6746:EE_
-x-ms-office365-filtering-correlation-id: d822c43c-8880-482d-ebd5-08dcb30afe39
-x-ms-exchange-slblob-mailprops:
- dx7TrgQSB6elLiMRHB5H6rzWn7vhF1Vne5y3Ey0KLFZSBGqKHqgGIJR1dS4mQMp2fTQhmhvpuqMIziOB4ItfxHuRqVaq2Ih7HDNUp3Nyd7vk/zhzKwzFEfFNKPNehYPI57XWmY99lJemg5uElo2uPrtmwiuuO6cg0PcNmVL8TenFkBzlPlxOBaEwE0v6YTqLg7gDy/+o3TftSWEv2KH2DtMoOXOJZFrZhwi3FQbkxWjHSsIVf0W9QqOHSxs/sBsAHvfnsnpa6+fs3nk8pfLa6hjF9N8LIRtJ2Qhp6FwitTkR9aHZ6Wk34BKsh9/7OQdUizxu03nmeUBM66Zm9EhPt51RH6uWNBCXRW8qTrx6qFSv+TDF9t2K8t7UIx/tRdRdKsonMEzXm8ONubheS73utNFdP46kSAXNP4PjkVmEoEea62TviveUuuDWQ6X9eO9/hfneFTK2sru8mCfESGaWmttDln4nbXcP3Wxu8NzS8YX4b++8e9IBn34ycB8RuuM3F4MyCRJNjVR/Yi4nMt5GWTBK1PAlwBKDNnprhF9ADUY7YJGMuncP9aEtNjkwiUpcXYV2aaArJayvegL+Lmmdz2W9ybEGfQ7tcQ0NdDaU0T0X8QH7qdDQhsXhmVB7uLCIOujCBm5ZlMBaF6s5duvFYUKU/oD07LPSRMbKko9Cb1nvCw7z+GxtHsxyxWJ3STfVOOlcby9WhCEuZxi2pd8nnHNmRzMTQDhJuYXItVRq0ho/zfJ1b5UAPQWajBL+EgRCLRCpfR/4s9I=
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|19110799003|461199028|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- U4VRc1vItczOU6EO/WjX9ddX6/SstFjTy3uzotZxomMor5PDtUWF5D7v88mwgQcqZTZdOSnSZ6RYMcqhw5Vw1aTq8UoGMoCZFRHq6yBb07Sj/NmNlq2VLvnb7hHBkBUmp3MXGHW5xjb9ehpJinZdXnGiOb4o4+1sMCcHkso/zEt/29dIacpWk31k5SQwCVeIzVYsUtGL05g6WtSuLRUIlDFo1yssjRFbo4y/40QBvodvgHvj8cHYAEm+XBD3BVBrN39MijwVO0KhEteVyAeKkvpBq+V1SlOzaHLo+LxQd7kPSu+ANvrQr3x6CZFB0a4KQpXarRYzqXkTbSBJQxRYsHBOPFDiTlLck+YkQbqXvZ162QUFY/jYsmJ37MhwKpNWruXhwqtzCwUDKD7safDZzDM71DKkKZZ32RShrdQYVEKEr//rDlXuntk8Pc6AvhOfhcuQrt0sefkmGNTK/F7RxAn+ea5wt8vOrIsuEuf2qg4ZT4JWvbu+VTracsQj9mfrtFDvvjQ12Dqh7ONSHHX29rFc0IPbusB0TEdikazcrJ/x1Xvq9vRA30qSxZ3iEPCrR84ANszTrFPIzK5VU1WMlaMdoA2PJwV5yheaVzJPIRTn3A1WIbbm5hZqaWzDOr+P6lW1juRjbc7ID3U2x82X7Q==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?gKRJBIxZXG1eC1f5ciAO5J0jfu4hhFmeyxSL81UjGIZzchy5azp4wxkABg2m?=
- =?us-ascii?Q?rQjqleF33eTIWXJ49nxMkelmbRKKiYGXCTINLwAVv5oY948UNCl0NhTl80zg?=
- =?us-ascii?Q?QXLWoNHpqw6NoaNmOE8Dd7wNLH7QTA3CztAeYs6mKatMG64EQwPbhhB4o2xD?=
- =?us-ascii?Q?xdz7ltfT+zj82lxccBwNIjBHdcns/C0qXJBzQQsoVZ5Y7HC7kisI8lvDNrL0?=
- =?us-ascii?Q?XUdJ11yWqgzc158QzygYcaCFcmvOLLsWrYrC7Cp2fnUi/brd6BJAM4gam9p5?=
- =?us-ascii?Q?KoBQEMqe24PgI3Lmw/xdL3MhGc8gVbPiZ1NFPwQdbe1P+ZmFz0QF3EHTPqFq?=
- =?us-ascii?Q?vudKQtJ7HRGxkHhaaUhuWRx2O6Vt8UGT6Ov2cE1yM7J60EGQuaaSlsazKypt?=
- =?us-ascii?Q?733UIf7z+yeqL7MndKWcGic3yuap0Xmo5BelbyhZG2LkpRXUUVbnIraZFSnT?=
- =?us-ascii?Q?G7Nq0caBd7udhJuBxwYZ0XMq40tFN50zsjUmdFkdz4zC1UEYwoRIjuTNk9sS?=
- =?us-ascii?Q?IJRlNltkutXsZd5ej1fq2YMp3CQ1Tgwmmsd2mXP2kTDbh0vFqzYXw3BVeD3T?=
- =?us-ascii?Q?iZ1L2+8/HuYVMn90JTBU0bq27dZAuHWJg7GsQa74dMsC1JqaKtp4q8FnGTUB?=
- =?us-ascii?Q?sGnVbtM/jLw4gprxYf/ZxkGbo7fgFo0roKhvPOvVO9dQy3/+iFa7j3rVED7w?=
- =?us-ascii?Q?RPf5my/Go7y5bBectYEZsoiShjgfknjU3JsiTzwdl2ug4zXTPSxQ71pOREmw?=
- =?us-ascii?Q?sBBARsu/Ea9iEAqeC4P7Ids19bKu0b1DKmzeUs1ghclC2ELNt5drWJC37EWL?=
- =?us-ascii?Q?zDvm6QJVoVxav9+2UgiOTuHxiTeCaE1AqVNjUrx6JNmW9116MGn5C6cto5M3?=
- =?us-ascii?Q?O8zwdSdRiz1JG9Kogg1rySq4fHTKRdvoNsURUXlsbTnQRpNSUbfterKV/BKe?=
- =?us-ascii?Q?v1GgtR1CQ81AbkwGrcGbEzKgzSiMmvKPxLJwsrfz/d8hxOhMHcig+6liFsvF?=
- =?us-ascii?Q?tyvxNmLv8wQ8lV+iMVvR532pJ+RExccBXlXde026mWpHXPsrLSoTZ7GyuF8l?=
- =?us-ascii?Q?pXcu52aB09Q9fIGO3QqLmr2a0Wr2vdJpjCzrj2aFPB4rll2BHtG3OByt2SMh?=
- =?us-ascii?Q?0z6d97MA7xFS7O1LPG6PArfSlAn2rOBDxPu9uhlPRS4rzll77ymsnn3xcszD?=
- =?us-ascii?Q?XolQ5jPx+OnCJP3QoU/Nv4qgjzNwUYwnP9HIIJ6iXKOn+zy24iVVCzv3ZFM?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FE1175D4B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722614009; cv=none; b=JlYucdx/dKeDBFQt+kkf5TtI46abGIHvkJQqgkHQ6zoPz9VgzolsOngLLz5hB4ih3Mmc1X6sfnjaGEL5tn0D4MZ6hqAmVaxSfIdj3Laf9x0MM57SCVcGVUOJkhn5h9f4wJccUQfiD/sUK+waARZTdmSZnZbdQRai/PGbufzj1lc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722614009; c=relaxed/simple;
+	bh=HfRW5DmJhxhXde7xQghASIZD9c7a0wgm8T+Cw16zeMA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=g6kfXqMXI1Q5ChR+XOpFrjmmTcdFQz7yxFrYK0coAYuBbMMRrs3UCHzcojjzVirprHCP+sddjKE9n9pul1KVRLZBrcUVPnr6uquLVHcQjMl6KRDjx4klpWV5/RaDgupEBNLgbfx0JSJca01cugz5+JzVUoHNuh0a86gmItZ1+60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3AvOswIo; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70d1c8d98baso7523912b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 08:53:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722614007; x=1723218807; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OQflQF1VpeXc1q1T34zDznynP2cVcjD3C+kAeL3RI/M=;
+        b=3AvOswIowHGrDrNrq7RCNaFP+zYg1JxAk6FngLPeJ3LzKbBLI6yimNRZE5FpMKzCY9
+         sRnVyaZwzyB6MvuNUo2BQO8FAGQ+wO7+vFOLai1JPWO5X2oLFXID8jE08FlhvsUWTMJ+
+         dw3HbT3oJBcwI06rQUaAEO9CPqr/pO3zpjSZpeh/RuYpVibpaXZZdRIz4SH0vag9TlXp
+         os1XCI25snodu5e4U/fcQKEQ59oAGlXpcOiF8U1OA+TnzZn/VDQJYglGW0Ocs2CnyFn+
+         ZnchZON2CNgPPycByVTIqvudZuYXZj87q+k+RxDFUuZ+aE/8CenN6I/9+3WfkO56aMRz
+         IA4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722614007; x=1723218807;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OQflQF1VpeXc1q1T34zDznynP2cVcjD3C+kAeL3RI/M=;
+        b=mi5uh81Osee9l9gFYorLJvJdSRFnEvUoIGWyGcvUxBJmA6JMBjjPcrBz4IMKfTvgjD
+         xLCwlTdQkqi1xvjFD69GZBn62nGUZdFQNDvc9EipcImgQ9dqY8sGh0dmG1RAGyyT/q7C
+         0ZgSjyB+zQ1HRiJ87gMY8smnuN2R1Hs7Lcoz+Ib02qWaTQ132NmFgjaXsPyFJYDjtTL8
+         tKo8GvloNr8vPTeExRQQDqhQKrIPmGxpwUnB8NmJKROGNxJdSVcWV19E8gbuAEp8Mowc
+         soTkr74xWLU6/o7zHZDUt5GUkEtcLBEcOMyen3yLOLKuvdBPTp61hFR/r6AGRFE77eSk
+         G0pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWix0LSAy0dcbWabwGJAPo/rRQWy6y6GJ4cF3nEgRdRC/WwQJTRbBoIlcdwRPsyi/ZX/TcghCTuKDk/JQbqsCMBP3B0ST1yaQxxBmDY
+X-Gm-Message-State: AOJu0Ywzgtb9Z9evczKAbcxeYorv1qE0jUTG4Bp83dOAqU4Nmp1fA+6l
+	FbZpveP3AHTOoITOYJcVqzHdyH6LJewUDQ7EqN/qc1YbzxMrUZshWvsQGkSvAE6nYCgIuW1jz1h
+	dig==
+X-Google-Smtp-Source: AGHT+IGAq55hoq+7zWXDHX5qWCzZXyIak9Ckv9V5U//xtLLkFkk6XDyP9DgONLQBDJ79qPxHDM35sdQTUL4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:6f69:b0:70e:9e1e:e6ed with SMTP id
+ d2e1a72fcca58-7106cf9c4dcmr32915b3a.2.1722614007037; Fri, 02 Aug 2024
+ 08:53:27 -0700 (PDT)
+Date: Fri, 2 Aug 2024 08:53:25 -0700
+In-Reply-To: <20240802151608.72896-2-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d822c43c-8880-482d-ebd5-08dcb30afe39
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2024 15:51:37.5919
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6746
+Mime-Version: 1.0
+References: <20240802151608.72896-1-mlevitsk@redhat.com> <20240802151608.72896-2-mlevitsk@redhat.com>
+Message-ID: <Zq0A9R5R_MAFrqTP@google.com>
+Subject: Re: [PATCH v2 1/2] KVM: x86: relax canonical check for some x86
+ architectural msrs
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Chao Gao <chao.gao@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Roman Kisel <romank@linux.microsoft.com> Sent: Thursday, August 1, 20=
-24 2:23 PM
->=20
-> When hv_synic_disable_regs was introduced, it received the description
-> of hv_synic_cleanup. Fix that.
->=20
-> Fixes: dba61cda3046 ("Drivers: hv: vmbus: Break out synic enable and disa=
-ble
-> operations")
->=20
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+On Fri, Aug 02, 2024, Maxim Levitsky wrote:
+> Several architectural msrs (e.g MSR_KERNEL_GS_BASE) must contain
+> a canonical address, and according to Intel PRM, this is enforced
+> by a #GP canonical check during MSR write.
+> 
+> However as it turns out, the supported address width
+> used for this canonical check is determined only
+> by host cpu model:
+
+Please try to wrap consistently and sanely, this is unnecessarily hard to read
+because every paragraph manages to wrap at a different column.
+
+> if CPU *supports* 5 level paging, the width will be 57
+> regardless of the state of CR4.LA57.
+> 
+> Experemental tests on a Sapphire Rapids CPU and on a Zen4 CPU
+> confirm this behavior.
+> 
+> In addition to that, the Intel ISA extension manual mentions that this might
+> be the architectural behavior:
+> 
+> Architecture Instruction Set Extensions and Future Features Programming Reference [1].
+> Chapter 6.4:
+> 
+> "CANONICALITY CHECKING FOR DATA ADDRESSES WRITTEN TO CONTROL REGISTERS AND
+> MSRS"
+> 
+> "In Processors that support LAM continue to require the addresses written to
+> control registers or MSRs to be 57-bit canonical if the processor _supports_
+> 5-level paging or 48-bit canonical if it supports only 4-level paging"
+> 
+> [1]: https://cdrdv2.intel.com/v1/dl/getContent/671368
+> 
+> Suggested-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
 > ---
->  drivers/hv/hv.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index e0d676c74f14..36d9ba097ff5 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -342,9 +342,6 @@ int hv_synic_init(unsigned int cpu)
->  	return 0;
->  }
->=20
-> -/*
-> - * hv_synic_cleanup - Cleanup routine for hv_synic_init().
-> - */
->  void hv_synic_disable_regs(unsigned int cpu)
->  {
->  	struct hv_per_cpu_context *hv_cpu =3D
-> @@ -436,6 +433,9 @@ static bool hv_synic_event_pending(void)
->  	return pending;
->  }
->=20
-> +/*
-> + * hv_synic_cleanup - Cleanup routine for hv_synic_init().
-> + */
->  int hv_synic_cleanup(unsigned int cpu)
->  {
->  	struct vmbus_channel *channel, *sc;
->=20
-> base-commit: 831bcbcead6668ebf20b64fdb27518f1362ace3a
-> --
-> 2.34.1
->=20
+>  arch/x86/kvm/x86.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index a6968eadd418..3582f0bb7644 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1844,7 +1844,16 @@ static int __kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data,
+>  	case MSR_KERNEL_GS_BASE:
+>  	case MSR_CSTAR:
+>  	case MSR_LSTAR:
+> -		if (is_noncanonical_address(data, vcpu))
+> +
+> +		/*
+> +		 * Both AMD and Intel cpus allow values which
+> +		 * are canonical in the 5 level paging mode but are not
+> +		 * canonical in the 4 level paging mode to be written
+> +		 * to the above MSRs, as long as the host CPU supports
+> +		 * 5 level paging, regardless of the state of the CR4.LA57.
+> +		 */
+> +		if (!__is_canonical_address(data,
+> +			kvm_cpu_cap_has(X86_FEATURE_LA57) ? 57 : 48))
 
-Reviewed-by: Michael Kelley <mhkelley@outlook.com>
+Please align indentation.
+
+Checking kvm_cpu_cap_has() is wrong.  What the _host_ supports is irrelevant,
+what matters is what the guest CPU supports, i.e. this should check guest CPUID.
+Ah, but for safety, KVM also needs to check kvm_cpu_cap_has() to prevent faulting
+on a bad load into hardware.  Which means adding a "governed" feature until my
+CPUID rework lands.
+
+And I'm pretty sure this fix is incomplete, as nVMX's consistency checks on MSRs
+that are loaded via dedicated VMCS fields likely need the same treatment, e.g.
+presumably these checks should follow the MSR handling.
+
+	if (CC(is_noncanonical_address(vmcs12->host_ia32_sysenter_esp, vcpu)) ||
+	    CC(is_noncanonical_address(vmcs12->host_ia32_sysenter_eip, vcpu)))
+		return -EINVAL;
+
+
+	    (CC(is_noncanonical_address(vmcs12->guest_bndcfgs & PAGE_MASK, vcpu)) ||
+
+So I think we probably need a dedicated helper for MSRs.
+
+Hmm, and I suspect these are wrong too, but in a different way.  Toggling host
+LA57 on VM-Exit is legal[*], so logically, KVM should use CR4.LA57 from
+vmcs12->host_cr4, not the vCPU's current CR4 value.  Which makes me _really_
+curious if Intel CPUs actually get that right.
+
+	if (CC(is_noncanonical_address(vmcs12->host_fs_base, vcpu)) ||
+	    CC(is_noncanonical_address(vmcs12->host_gs_base, vcpu)) ||
+	    CC(is_noncanonical_address(vmcs12->host_gdtr_base, vcpu)) ||
+	    CC(is_noncanonical_address(vmcs12->host_idtr_base, vcpu)) ||
+	    CC(is_noncanonical_address(vmcs12->host_tr_base, vcpu)) ||
+	    CC(is_noncanonical_address(vmcs12->host_rip, vcpu)))
+		return -EINVAL;
+
+[*] https://lore.kernel.org/all/20210622211124.3698119-1-seanjc@google.com
 
