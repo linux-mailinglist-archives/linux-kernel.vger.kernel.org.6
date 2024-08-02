@@ -1,103 +1,91 @@
-Return-Path: <linux-kernel+bounces-272679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09374945FCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:01:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAD5945FCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B01A1C21AE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:01:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84F061C210B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBAF1E3CA8;
-	Fri,  2 Aug 2024 15:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E6A2101BD;
+	Fri,  2 Aug 2024 15:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fk4hneuP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VFImo5/x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2jv234pF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FD214D2B1;
-	Fri,  2 Aug 2024 15:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212DD1F61C;
+	Fri,  2 Aug 2024 15:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722610855; cv=none; b=U40Cnj099LZ/CBstP04zAACLxY4WrMiyLYssDOtcUo08zT2ToyKP9NOisoXNZT+PjHxXjXFEtZquw9R1mfLUHq9UG3W1UVn7mi/sUvSITUL9e8vOIfgbu3l2C5m3/ohLpZqrjdQGfybUTgN4hbUguXGUb8WBwiBQGeHRsLdCHGc=
+	t=1722610909; cv=none; b=t2OukXZQdVfbsMN/Eq+Gw86LGeD94aC2PCx8xZqs74EkoV0zuKth45g9EI5xS3X9n3owB22fcfMaC9/VfqYkmX1KnApAfTiFIAO6ziy0/nSZ80r2SBigl8t+/b+/lc0aX51zGHQsUP3OKqMb1gDTjWjo73sVEwAe51sPpu3W0Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722610855; c=relaxed/simple;
-	bh=2ELiqG08xZ0LVQMoVoxBT2tDnoWcCGTYUiKxCU2w+5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AfNPA6g4Cvbx3PzZk118C/KjyVRGwI3LZ12p5Cu6yztz7EA5DB//QRRxWY+ATmjKTwFY9vglneXlk+K1f5nltCE105NJAWUhbJE7aKR/zylG0lmWSYu4OMsoVta563O93o+mqozLZFwFSj9ouCI4YdSPbBb3++4CmED8WJ+VJbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fk4hneuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0DAC32782;
-	Fri,  2 Aug 2024 15:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722610854;
-	bh=2ELiqG08xZ0LVQMoVoxBT2tDnoWcCGTYUiKxCU2w+5g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fk4hneuP+MQJnzmWN/EVZhIG0hIMPbAzRrzjCZTx7R5Kz7NDz4PxYXqiTlIh9wEr7
-	 0gHP+3gw1fMqqjDHZ30AK1eRNe9s9wl0cIhAhhflN/J2s4EbVjl1G+31o7ChM9QTlb
-	 bI2aAnZR42E+QckE7I9BgKS0e06P9IG+5rU0zeVBtwNyt2L9NOHjxTLdIzIRq0jJXk
-	 b1tJl0JGN1ap954E7/lvggf8zfp6CYJfU1ur3uF+iWWPrJk/JyVATAARaiP+C4wzGl
-	 mWWghU4/LYk0gSCVnC9Gb98/s8uehLpkKoLsYEVmj2GOpB7AVid7ftkDq6laZcG4Qw
-	 2bOQq4wJmtrgQ==
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2635abdc742so1202041fac.2;
-        Fri, 02 Aug 2024 08:00:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBnPHZ5S74bep3pZCjLVJsWh1FmyI6k+4H+opaAO/DJNV1pYC1j7WIVdpTSJ+Cw049iP6KOinFrFD7KuRX@vger.kernel.org, AJvYcCULc/ptWTR81XQN2mNEbqLcIcIoIocewfngMva0GsDIItrg8n+cduWGooKvTKeKSw5vCprKj7QRDLKB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+p3JdmZWzR8+lPjf4GbjzQVJkI4+syyK+gP/iO8E7Y3sYFR/9
-	ySDbzwBhmSBEIlkNTJhEDhrfkk57VvFcwgQjr+TcADV+W3ZF3ZDUEnBvPMGnOxeHGyUCM3NUioA
-	X5SfbkGSb5AXwzxB8Ark0nerGTgI=
-X-Google-Smtp-Source: AGHT+IFil9pYtmy806vMRAxxrPLbT21xjDWO7nO5I3lpA8dnUVKCrF7typyrR8Zta02XxEzmjqHf9wKk+cPl6EFymK8=
-X-Received: by 2002:a05:6870:2054:b0:260:e5e1:2411 with SMTP id
- 586e51a60fabf-26891e9f598mr2318205fac.6.1722610854101; Fri, 02 Aug 2024
- 08:00:54 -0700 (PDT)
+	s=arc-20240116; t=1722610909; c=relaxed/simple;
+	bh=TNm8PThnDv3WiKDoRpzIgsXgANDIKlBfgmOcRi0bBA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jcIJLHnjdfPnnDY2p5uPSvGiuSnllcY5dKP6h7J2VW+q2VwGuDrBA2nJP+RT4yB8SIe2hMcpf32qtSrG6Pzj3MBVXJeL22vjAnJvH7HZGRQbnDElHBojrKXqEOVufgLTiB/x9iY9zTyJV/0zpDrLOVQGSzC+y5kLprJECZ0uWc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VFImo5/x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2jv234pF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 2 Aug 2024 17:01:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722610906;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=qiXrXAu2b5HCw8e2JvrpCFrTKk34pc8sz9ZEqzZRQd8=;
+	b=VFImo5/xyeQAy0j43Ctur8q9x0VD/kZpRtSM3Pw55f1YnUj1o8jEYTq4zohAWuXM4Ix93T
+	+Uj5WgGCC+l9z8FegxQiMu9kbH6WJIsezZQeYuGdRXvHSNK2H1hlIB3r1Ga2izNI2eqACD
+	cwYo1OirdmhOOrdOGncACenS5IcA/PdKBgqNb/5UBZrcuDh3ndzfbkQ6UsTdvFwzZB8S9r
+	mti1mRXmhoTtDVPPEsNMGig/k1wLSn2kQe/JGuk+3+PQRFylmdh6ExYJy4ozK3pTNMetrn
+	eNUZDDm6+6r/yc3Tm5fmVjX1hQ2trOM+MNUV47BM9vEdwuDgbPeJ9z9fbqFCTA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722610906;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=qiXrXAu2b5HCw8e2JvrpCFrTKk34pc8sz9ZEqzZRQd8=;
+	b=2jv234pF6SSN5L87wGOUxKd0tEsAMbUdHihsJSfQfuKeEnCYIudFpo4J6kaE2GmApkMCOg
+	+vkyCPhIE3beNICA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v6.11-rc1-rt1
+Message-ID: <20240802150145.pIfTM_ju@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719145330.9430-1-lirongqing@baidu.com>
-In-Reply-To: <20240719145330.9430-1-lirongqing@baidu.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 2 Aug 2024 17:00:43 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gUfsaUej19ts-M0ueB3GyvKQ2vPk-pqc7uk1+G-f7cew@mail.gmail.com>
-Message-ID: <CAJZ5v0gUfsaUej19ts-M0ueB3GyvKQ2vPk-pqc7uk1+G-f7cew@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: processor: Silence per-cpu acpi_handle_info about
- idle states
-To: Li RongQing <lirongqing@baidu.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Fri, Jul 19, 2024 at 4:53=E2=80=AFPM Li RongQing <lirongqing@baidu.com> =
-wrote:
->
-> This made the CPU bootup faster, otherwise Linux spends lots
-> of time to printing nonsense information for each CPU when
-> there are lots of CPUs
->
-> Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> ---
->  drivers/acpi/acpi_processor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.=
-c
-> index 9916cc7..a19ace9 100644
-> --- a/drivers/acpi/acpi_processor.c
-> +++ b/drivers/acpi/acpi_processor.c
-> @@ -985,7 +985,7 @@ int acpi_processor_evaluate_cst(acpi_handle handle, u=
-32 cpu,
->                 memcpy(&info->states[++last_index], &cx, sizeof(cx));
->         }
->
-> -       acpi_handle_info(handle, "Found %d idle states\n", last_index);
-> +       acpi_handle_debug(handle, "Found %d idle states\n", last_index);
->
->         info->count =3D last_index;
->
-> --
+Dear RT folks!
 
-Applied (with edited subject) as 6.12 material, thanks!
+I'm pleased to announce the v6.11-rc1-rt1 patch set. 
+
+Changes since v6.10.2-rt14:
+
+  - Update to v6.11-rc1
+
+Known issues
+    None.
+
+You can get this release via the git tree at:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.11-rc1-rt1
+
+The RT patch against v6.11-rc1 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.11/older/patch-6.11-rc1-rt1.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.11/older/patches-6.11-rc1-rt1.tar.xz
+
+Sebastian
 
