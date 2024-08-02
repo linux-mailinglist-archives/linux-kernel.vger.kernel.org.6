@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-271998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2CAE9455B5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:44:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F155D9455BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CDED1F2179A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:44:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D811F233EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749464F20C;
-	Fri,  2 Aug 2024 00:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364AA14295;
+	Fri,  2 Aug 2024 00:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIqaK0Xk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uo6xTSzo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81DA18E06;
-	Fri,  2 Aug 2024 00:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47976FC11;
+	Fri,  2 Aug 2024 00:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722559391; cv=none; b=aeh3zrVxtt5TFgXjqSERqV/Cni6TMdX5qjz++eyvERNUL/WBjiPH/pPXFQ+bMNoYfpcxQtg+SjaLcTAawBA47HckDAD2ysnYGP7JBHtGfFjOy9mhkl82pOzxVV+tyEbsK+6goPZmJENuxV5SVxzVNYHKl0EkWjMW9er73ge8TNg=
+	t=1722559430; cv=none; b=NVlTaMyAHGhJ0NIW9sxhRoiHBkwOYHmfLkKe/bPXbNRah9dETtARqFlh6Q1cRmKihVV2hTUtLifqk0jXyeiBlRQcpI2Ym0T33/cUitW+R7xPYV50tPOQ5/gknU63XBKB7GpgMojJRx9QALVZVuOPt/0XhckoigyYjIJtXXzroX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722559391; c=relaxed/simple;
-	bh=0uXJ7XpqMMOTU5D9L7DX8BbJ/THNXMlQczyB3O6xc1c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q6MpY4pBnTk04hdDNcrjUKySPIrMw8NM2TtGL19DMZ0UX0PzY498jQlcnUi7AoTeFsUaOZ5dpWao4B6RGNWD3NCVlO6ki+3D+3nPY67SD0Gk2o7j96PkGWUjUqO5MuZXvy8pj+BPcg3Wz7qKy+w9U9TV1U/AlyOxLYp6AfkWC4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OIqaK0Xk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8251FC4AF17;
-	Fri,  2 Aug 2024 00:43:11 +0000 (UTC)
+	s=arc-20240116; t=1722559430; c=relaxed/simple;
+	bh=kb4Er6Cc/3bSSz/8+h2xyIo0D6MrCX3wmU15n/+pTP0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TIqigBEFZ0O1+A9cVE3ft1LGAkI87g996nwQC1sTD4ccOfVPxW+0cGRe/ccFQOGVyirzoJgTW3K5Sb0KXLfV1ac1qZx7kQ/B9x3HipcxPjUJ0dCpJ5hEfOk2GtIvjA5/QTaijC4A6jeIVu2pWr4K5I3+GkT3ZrVuQgFW8Pwh4J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uo6xTSzo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ABEBC32786;
+	Fri,  2 Aug 2024 00:43:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722559391;
-	bh=0uXJ7XpqMMOTU5D9L7DX8BbJ/THNXMlQczyB3O6xc1c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OIqaK0XkfevEFyIoWZ+h2IqA31zqlYISem5Wb/IElhq3wvGBRVM0hFZDUNkb6UKjC
-	 c5ckoYj31+3opPDh5z9cGrQaGmgPetTc6TuyVC7W/Zxux6hRNTPENrPnukR7l+gtrD
-	 8iw9Lc2kDbbotzikFwHm51fFi4EGFmUGKrIUACQeVcIDU9waFpviRWQDzOst+A9kYP
-	 g2jCzi1rFQW0KNniIT+i8iHyxDm+2Rc/wpX+dNkzvTkMLzVHGvLtMpZNnyda6YaUR+
-	 j5WmyzvrG2pI478uSPMln9zNfkecs/pzwzo9roGRl7gZQsTKlruMo7OTGsbFNW4S0k
-	 6GKRYfsQZhD5A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D8C1BCE11CD; Thu,  1 Aug 2024 17:43:10 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH rcu 11/11] rcuscale: Count outstanding callbacks per-task rather than per-CPU
-Date: Thu,  1 Aug 2024 17:43:08 -0700
-Message-Id: <20240802004308.4134731-11-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
-References: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
+	s=k20201202; t=1722559430;
+	bh=kb4Er6Cc/3bSSz/8+h2xyIo0D6MrCX3wmU15n/+pTP0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uo6xTSzoCXC043p3mLgTWknUf2rgHWo4IFal2y4TRyUUKWXjgfeKteXHeJNatnzOP
+	 ykkxBx3M95QinqY4Uv5iDO76L/kujQMnFqwqg6DeoIm+NXGq3X++6CYhj2sy2GBpkN
+	 NOo+A2zv0NM0kImpcj8SiB+B3JipANpbEQECkm3Fedbwfxv1nLLZRWx/z8Omk+P95Z
+	 NxGW0uSIFBPNDS0bt+kWwgJTsZWqzFbCivIZEmePwopMavMqI8C9EBRYgytCrvX0d7
+	 eZgLVg2vJm3/11jtiULsDyUC0bKIbg33RizwDkqtSTzGGhJXgM4ArliEWdyu2U60AS
+	 c/ID1txi6dvZw==
+Message-ID: <15efa538-fe9d-4dfd-ab22-cd6361c39c8b@kernel.org>
+Date: Fri, 2 Aug 2024 09:43:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] ata: ahci: Replace deprecated PCI functions
+To: Philipp Stanner <pstanner@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Niklas Cassel <cassel@kernel.org>,
+ Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>,
+ Srujana Challa <schalla@marvell.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Kalle Valo <kvalo@kernel.org>, Serge Semin <fancer.lancer@gmail.com>,
+ Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+ Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Kevin Cernekee <cernekee@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jie Wang <jie.wang@intel.com>, Adam Guerin <adam.guerin@intel.com>,
+ Shashank Gupta <shashank.gupta@intel.com>,
+ Damian Muszynski <damian.muszynski@intel.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Gregory Greenman <gregory.greenman@intel.com>,
+ Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+ Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+ Breno Leitao <leitao@debian.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ John Ogness <john.ogness@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-ide@vger.kernel.org, qat-linux@intel.com,
+ linux-crypto@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ntb@lists.linux.dev, linux-pci@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20240801174608.50592-1-pstanner@redhat.com>
+ <20240801174608.50592-3-pstanner@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240801174608.50592-3-pstanner@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The current rcu_scale_writer() asynchronous grace-period testing uses a
-per-CPU counter to track the number of outstanding callbacks.  This is
-subject to CPU-imbalance errors when tasks migrate from one CPU to another
-between the time that the counter is incremented and the callback is
-queued, and additionally in kernels configured such that callbacks can
-be invoked on some CPU other than the one that queued it.
+On 8/2/24 02:46, Philipp Stanner wrote:
+> pcim_iomap_regions_request_all() and pcim_iomap_table() have been
+> deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+> pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> 
+> Replace these functions with their successors, pcim_iomap() and
+> pcim_request_all_regions()
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-This commit therefore arranges for per-task callback counts, thus avoiding
-any issues with migration of either tasks or callbacks.
+Acked-by: Damien Le Moal <dlemoal@kernel.org>
 
-Reported-by: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/rcuscale.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-index 13d379c179248..b1c50df142eba 100644
---- a/kernel/rcu/rcuscale.c
-+++ b/kernel/rcu/rcuscale.c
-@@ -114,6 +114,7 @@ struct writer_mblock {
- 
- struct writer_freelist {
- 	struct llist_head ws_lhg;
-+	atomic_t ws_inflight;
- 	struct llist_head ____cacheline_internodealigned_in_smp ws_lhp;
- 	struct writer_mblock *ws_mblocks;
- };
-@@ -136,7 +137,6 @@ static u64 t_rcu_scale_writer_started;
- static u64 t_rcu_scale_writer_finished;
- static unsigned long b_rcu_gp_test_started;
- static unsigned long b_rcu_gp_test_finished;
--static DEFINE_PER_CPU(atomic_t, n_async_inflight);
- 
- #define MAX_MEAS 10000
- #define MIN_MEAS 100
-@@ -520,8 +520,9 @@ static void rcu_scale_free(struct writer_mblock *wmbp)
- static void rcu_scale_async_cb(struct rcu_head *rhp)
- {
- 	struct writer_mblock *wmbp = container_of(rhp, struct writer_mblock, wmb_rh);
-+	struct writer_freelist *wflp = wmbp->wmb_wfl;
- 
--	atomic_dec(this_cpu_ptr(&n_async_inflight));
-+	atomic_dec(&wflp->ws_inflight);
- 	rcu_scale_free(wmbp);
- }
- 
-@@ -541,6 +542,7 @@ rcu_scale_writer(void *arg)
- 	DEFINE_TORTURE_RANDOM(tr);
- 	u64 *wdp;
- 	u64 *wdpp = writer_durations[me];
-+	struct writer_freelist *wflp = &writer_freelists[me];
- 	struct writer_mblock *wmbp = NULL;
- 
- 	VERBOSE_SCALEOUT_STRING("rcu_scale_writer task started");
-@@ -584,8 +586,8 @@ rcu_scale_writer(void *arg)
- 		if (gp_async && !WARN_ON_ONCE(!cur_ops->async)) {
- 			if (!wmbp)
- 				wmbp = rcu_scale_alloc(me);
--			if (wmbp && atomic_read(this_cpu_ptr(&n_async_inflight)) < gp_async_max) {
--				atomic_inc(this_cpu_ptr(&n_async_inflight));
-+			if (wmbp && atomic_read(&wflp->ws_inflight) < gp_async_max) {
-+				atomic_inc(&wflp->ws_inflight);
- 				cur_ops->async(&wmbp->wmb_rh, rcu_scale_async_cb);
- 				wmbp = NULL;
- 				gp_succeeded = true;
 -- 
-2.40.1
+Damien Le Moal
+Western Digital Research
 
 
