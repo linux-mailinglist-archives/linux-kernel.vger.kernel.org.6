@@ -1,119 +1,100 @@
-Return-Path: <linux-kernel+bounces-272004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E539455CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:57:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D83A9455D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5930EB22161
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:57:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8AB71F22774
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D51BE4F;
-	Fri,  2 Aug 2024 00:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26A8E541;
+	Fri,  2 Aug 2024 00:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F8iLPN8N"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBg2oTFn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819B34C91;
-	Fri,  2 Aug 2024 00:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0640817758;
+	Fri,  2 Aug 2024 00:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722560253; cv=none; b=PoOw0fP3fa/ib94SuHbFUHloC07Wi8vvZZsTRn28rd2+/0uCFka53rT0gQsBE9i45tMwXZZ1b5lEJCqyqF8rvh1kMVdjfV4qNESmuDoS+LcUVqHXQkQAMEbJk5gbLEPxJHcYhcchfwQxTDx2y6t7rkHZsWwgJyTyGgX05lTsvNA=
+	t=1722560279; cv=none; b=sN6nhWSWRQginXUmVUALkRC5JFsmsRkKROam8wXWeOTMZlByjLcW0HKiWTF1rDJWkjVzVeW6ER/OW3Lbm6kSPWLWoy6lrdQatU4NSvz8y7n9jr4eYTKGHW8mewy3KCxxHX1Pqqgw4dhR5AFMmgj6kpdhyhLWYRliDypkFH8UEzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722560253; c=relaxed/simple;
-	bh=3NLzT/3jx2hm5IvGk88iE8hl5vNX3Rv+N1VcqMRD8LQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=haMhf9ZpdsAuhKaqXFJzE+WOGHAzqut0XDtEF1EzflRtwOS4c1Pbgq4QhnaQRvjX824bHR1EKP1NFJGCfdQmHKhVt+yph4VpQk93HMANhbjug0jsJiwj/g7Xynra4BGnSNXRW8aF308+IM1deAK6hL6Y9MqOryuUE7otkpEIY30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=F8iLPN8N; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722560247;
-	bh=gEcvdzYghf0C2EKbmvRbt3Bfu5Mp5vQg61UTvv695/g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=F8iLPN8NuQ2AYn2thUDDHIEXyCFk5fTLJ++9t+N5j1nZZ4sXqJplggEf6+0Edbj83
-	 k+V4556c++a+yIfc4ZIRhmjG6xGC0NsL/cqd1a1dvSJuGIIr+5q7YprjtSWKk/NpUt
-	 GGWp4S2qIj3af0rlLn6WYH+wzamAOQPNG5DCcjy+KFsR+ZVl39eikpgA+Kt52DJ4on
-	 SRB2MtJGtvML1yq0m2hAdDTRVRRn1/Ky0OM7l/9bEwsujc246ppRQA44CIl4JOTA6J
-	 mhhsLSmAeEbHb6O5FH8HBImUVYqq844SYOB34VmDEyr9trKAsG15dIKV5RjPFPdj1H
-	 7VBN/ksbDsMIA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZnVb4C5Qz4wcK;
-	Fri,  2 Aug 2024 10:57:27 +1000 (AEST)
-Date: Fri, 2 Aug 2024 10:57:26 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the cpufreq-arm tree
-Message-ID: <20240802105726.6ce93aa8@canb.auug.org.au>
+	s=arc-20240116; t=1722560279; c=relaxed/simple;
+	bh=MTaSJyGBiIzdMGc84TjF9+v49GKSVnCpV8/HKiLEJVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=udwZXn3UnSYayeq438g/3vpVBxS/1gOOorLIi5UGJPFyPxavDbw2xhKygNT3Z9KQdLiLokfAn9bqktcRQUl0o8dtxYnbdZm3EbeS1iPk4qEOSIsPhcleCtncq30lUQzalbw1UoJZR5mISmxnPIc9mtF8U4GXEbS3qoQNW+UbRSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBg2oTFn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EFE2C32786;
+	Fri,  2 Aug 2024 00:57:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722560278;
+	bh=MTaSJyGBiIzdMGc84TjF9+v49GKSVnCpV8/HKiLEJVo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QBg2oTFnzq35PaCY+KM6z8eegHyrndOsaaeFoP7q+ZTnzWPRcfkCT5397TvNCPveY
+	 V3onjqNZn3QeYsho+3D77AbHeyqKdDTZCvPuC0Uw43Tsw1NI28LAF5jLVdaQgLXOMz
+	 pRnIXP2QmirdYXOSA1FR1XHDHzxN/6MHEsZVYQArfbMxgFLV1sryyHnVBkWgCyrKtW
+	 iPtMyU4W5tztq4HUipwxm+5zk1yeMnERVMfac9eJdXAAOhEYl5gnPwQt1f3SeKLFMD
+	 M6W1MO+FkTW3TACWGqenMNSMDUlwXLg6/mnksYMUYL7W6jpML3fA18Oc5SQe+/UKIi
+	 2V9xzc9Jr0XpQ==
+Date: Thu, 1 Aug 2024 17:57:56 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Allen <allen.lkml@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ jes@trained-monkey.org, kda@linux-powerpc.org, cai.huoqing@linux.dev,
+ dougmill@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+ aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
+ tlfalcon@linux.ibm.com, cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com,
+ mlindner@marvell.com, stephen@networkplumber.org, nbd@nbd.name,
+ sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, lorenzo@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ borisp@nvidia.com, bryan.whitehead@microchip.com,
+ UNGLinuxDriver@microchip.com, louis.peens@corigine.com,
+ richardcochran@gmail.com, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-acenic@sunsite.dk,
+ linux-net-drivers@amd.com, netdev@vger.kernel.org, Sunil Goutham
+ <sgoutham@marvell.com>
+Subject: Re: [net-next v3 05/15] net: cavium/liquidio: Convert tasklet API
+ to new bottom half workqueue mechanism
+Message-ID: <20240801175756.71753263@kernel.org>
+In-Reply-To: <CAOMdWS+HJfjDpQX1yE+2O3nb1qAkQJC_GSiCjrrAJVrRB5r_rg@mail.gmail.com>
+References: <20240730183403.4176544-1-allen.lkml@gmail.com>
+	<20240730183403.4176544-6-allen.lkml@gmail.com>
+	<20240731190829.50da925d@kernel.org>
+	<CAOMdWS+HJfjDpQX1yE+2O3nb1qAkQJC_GSiCjrrAJVrRB5r_rg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wDvO.EjsPMksGST2MI4cUAN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/wDvO.EjsPMksGST2MI4cUAN
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Thu, 1 Aug 2024 15:00:23 -0700 Allen wrote:
+> > Could you shed some light in the cover letter or this patch why
+> > tasklet_enable() is converted to enable_and_queue_work() at
+> > the face of it those two do not appear to do the same thing?  
+> 
+> With the transition to workqueues, the implementation on the workqueue side is:
+> 
+> tasklet_enable() -> enable_work() + queue_work()
+> 
+> Ref: https://lore.kernel.org/all/20240227172852.2386358-7-tj@kernel.org/
+> 
+> enable_and_queue_work() is a helper which combines the two calls.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=474a549ff4c989427a14fdab851e562c8a63fe24
+> 
+> Hope this answers your question.
 
-After merging the cpufreq-arm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-In file included from include/linux/cpufreq.h:17,
-                 from drivers/cpufreq/spear-cpufreq.c:17:
-drivers/cpufreq/spear-cpufreq.c: In function 'spear_cpufreq_probe':
-include/linux/of.h:1435:51: error: lvalue required as unary '&' operand
- 1435 |                  of_prop_next_u32(_it.prop, NULL, &u)};            =
-     \
-      |                                                   ^
-drivers/cpufreq/spear-cpufreq.c:201:9: note: in expansion of macro 'of_prop=
-erty_for_each_u32'
-  201 |         of_property_for_each_u32(np, "cpufreq_tbl", &val)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/of.h:1437:62: error: lvalue required as unary '&' operand
- 1437 |              _it.item =3D of_prop_next_u32(_it.prop, _it.item, &u))
-      |                                                              ^
-drivers/cpufreq/spear-cpufreq.c:201:9: note: in expansion of macro 'of_prop=
-erty_for_each_u32'
-  201 |         of_property_for_each_u32(np, "cpufreq_tbl", &val)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  e960bbac0af4 ("cpufreq: spear: Use of_property_for_each_u32() instead of =
-open coding")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wDvO.EjsPMksGST2MI4cUAN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmasLvYACgkQAVBC80lX
-0GygFgf/ZZSEZUgGsecXtpq6vIH8JJtdf0RB80YEX0UYZwuZ7zc+1CnCU21uqOCk
-RUefy7XwqyR+pmj0a2X6YXKcF9GGf/Ox+3uJJDnCYOSI93SZiUCg57P1MlZtHo3g
-N4Jext/EFbzUKt8zrjYf6YdnrpNr/vaBHeZ1IrV9b5qa9iTwCI+D/qmK5Iee7yqo
-Sp7QYPXB8SwJgFIQrh4RGcVCJcPOwW9vYMxvFaIVjvOHNBOx0iugQhNUAt1zC/Xu
-620+p19FqREi2IP8l1/GWnGYNrxM7vC4i3M6dWmi98tMYTmgdZ9Mrv0vXi18O3//
-8odH4U3b2GW2sFKT0XhBMgmom/VEkQ==
-=Dwqh
------END PGP SIGNATURE-----
-
---Sig_/wDvO.EjsPMksGST2MI4cUAN--
+To an extent. tj says "unconditionally scheduling the work item after
+enable_work() returns %true should work for most users." 
+You need to include the explanation of the conversion not being 1:1 
+in the commit message, and provide some analysis why it's fine for this
+user.
 
