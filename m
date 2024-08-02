@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-272029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7970945605
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:38:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6D8945608
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8DE1F23C00
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:38:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCE251C22CF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0DE134D1;
-	Fri,  2 Aug 2024 01:38:12 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0361A17995;
+	Fri,  2 Aug 2024 01:39:47 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBCB23BE;
-	Fri,  2 Aug 2024 01:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF079134AB;
+	Fri,  2 Aug 2024 01:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722562691; cv=none; b=QAaP3KjP76rK0yynVS7ftxELFTGK9FagyzonGM8jnY5moUrpzVor129N7BC4JndAyhrEGrqg3iaLe/PH5YIzpgEPL0HhEONoko1+jHjMIkwUXsqEMWd5UxQatGaWLNI2gdgG5Uzi/m7FkMDejryevXS0g2EA/h8Mc9aDw7/+yxc=
+	t=1722562786; cv=none; b=Xaeh2rsF24cStm+74mvy318/9y8Q49mtJEveUSKpE5rqYrhCP+WN+RmZvL6QnXoukph380Gfu4PXHX7vOjQk9zDtVD5oh+gKCpNI7DoyDZgr5VTxOuLD+YnspdA1VMOLLSlhnpfwr724meYh5bvs967Kuw8za5liBsPiS2ruzpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722562691; c=relaxed/simple;
-	bh=mIpy2kd8VdwIWeSn1wpqNNhPbAFJkACF1nbu/Ftpb9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hkLJo6k1ZrhPYHL2QJbw1fWz/45JOFXKYSotJ2HT4HlLC2N5rlpexv//4Sofd5FrwH+xz73iL8KgEq+6c77NUL86IaNYmP/VerNB1O47FuQef7Sh8HAnrNbj9nuCskbX9pF9lbnAkD7R9OxCtfh7IyEkJ7FoseKb22UXtKd2ZRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WZpLC4L2yz1HFgL;
-	Fri,  2 Aug 2024 09:35:15 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 54E6D1402E0;
-	Fri,  2 Aug 2024 09:38:06 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 2 Aug 2024 09:38:05 +0800
-Message-ID: <51a756b7-3c2f-9aeb-1418-b38b74108ee6@huawei.com>
-Date: Fri, 2 Aug 2024 09:38:04 +0800
+	s=arc-20240116; t=1722562786; c=relaxed/simple;
+	bh=qLxp/e4geSzSXoWLwJ22yq+h1HK+xkGEd4vJuM3xOzs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iUgXw14l7iMdx/Q+YeQ1hzDMX2vZD3Fn4DQGeAnuiXMOTu6edokPxL7KiOkGWJYr6y9t1NQCspZYynnQcuJPwcL3I5O41ale2UlBJLZvr7zPV7OyndIFHb2PPaZkRQI6xrcNLZsYYdfIHzGE5tFu3lnCqDP+pY/+OZ4Bi4mcZeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4721bcDM002962;
+	Fri, 2 Aug 2024 01:39:23 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40rjf2r4v1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 02 Aug 2024 01:39:23 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 18:39:21 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 18:39:19 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <jack@suse.cz>
+CC: <brauner@kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH V2] squashfs: Add length check in squashfs_symlink_read_folio
+Date: Fri, 2 Aug 2024 09:39:18 +0800
+Message-ID: <20240802013918.811227-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801153042.prhbovbuys4zmprv@quack3>
+References: <20240801153042.prhbovbuys4zmprv@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH] uprobes: Improve scalability by reducing the contention
- on siglock
-To: Oleg Nesterov <oleg@redhat.com>
-CC: <mhiramat@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
-	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>
-References: <20240801082407.1618451-1-liaochang1@huawei.com>
- <20240801140639.GE4038@redhat.com>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <20240801140639.GE4038@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: wS2A7I-Rojq4P1Qa_KSDPeYUIBwkHId1
+X-Proofpoint-GUID: wS2A7I-Rojq4P1Qa_KSDPeYUIBwkHId1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_23,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ impostorscore=0 mlxlogscore=999 adultscore=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 spamscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.21.0-2407110000
+ definitions=main-2408020010
 
-
-
-在 2024/8/1 22:06, Oleg Nesterov 写道:
-> On 08/01, Liao Chang wrote:
->>
->> @@ -2276,22 +2277,25 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
->>  	int err = 0;
->>  
->>  	uprobe = utask->active_uprobe;
->> -	if (utask->state == UTASK_SSTEP_ACK)
->> +	switch (utask->state) {
->> +	case UTASK_SSTEP_ACK:
->>  		err = arch_uprobe_post_xol(&uprobe->arch, regs);
->> -	else if (utask->state == UTASK_SSTEP_TRAPPED)
->> +		break;
->> +	case UTASK_SSTEP_TRAPPED:
->>  		arch_uprobe_abort_xol(&uprobe->arch, regs);
->> -	else
->> +		fallthrough;
->> +	case UTASK_SSTEP_DENY_SIGNAL:
->> +		set_tsk_thread_flag(current, TIF_SIGPENDING);
->> +		break;
->> +	default:
->>  		WARN_ON_ONCE(1);
->> +	}
+On Thu, 1 Aug 2024 17:30:42 +0200, Jan Kara wrote:
+> > syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+> > squashfs_symlink_read_folio did not check the length, resulting in folio
+> > not being initialized and did not return the corresponding error code.
+> > 
+> > The incorrect value of length is due to the incorrect value of inode->i_size.
+> > 
+> > Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> > ---
+> >  fs/squashfs/symlink.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
+> > index 6ef735bd841a..d5fa5165ddd6 100644
+> > --- a/fs/squashfs/symlink.c
+> > +++ b/fs/squashfs/symlink.c
+> > @@ -61,6 +61,12 @@ static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
+> >  		}
+> >  	}
+> >  
+> > +	if (length < 0) {
 > 
-> Liao, at first glance this change looks "obviously wrong" to me.
+> OK, so this would mean that (int)inode->i_size is a negative number.
+> Possible. Perhaps we should rather better validate i_size of symlinks in
+> squashfs_read_inode()? Otherwise it would be a whack-a-mole game of
+> catching places that get confused by bogus i_size...
+This move is tough enough, start from where i_size is initialized.
+I will send a v3 patch for it.
 
-Oleg. Did i overlook some thing obvious here?
-
-> 
-> But let me read this patch more carefully and reply on weekend,
-> I am a bit busy right now.
-
-Sure, thanks.
-
-> 
-> Thanks,
-> 
-> Oleg.
-> 
-> 
-
--- 
-BR
-Liao, Chang
+--
+Lizhi
 
