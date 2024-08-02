@@ -1,224 +1,212 @@
-Return-Path: <linux-kernel+bounces-272796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF72694612B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2428946151
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49FC71F22671
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:00:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CBFE281D2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7735166F02;
-	Fri,  2 Aug 2024 15:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1CD1C2AD;
+	Fri,  2 Aug 2024 16:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="lH5mMHAX"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k2v/sLX2"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F7A1537C7
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E401A34A0;
+	Fri,  2 Aug 2024 16:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722614343; cv=none; b=evFeq6VtJKtqPY0CqNHX3YS+4zAwUpPp17hfLa8qqbB8NmxcECVcSTXeO/VjiXXk5p7UFrpDhGjUlpnMMHD2GYE33Zb0YLAd2jdUG2ZxBCbxX6vhk/CsWoxCjTJoUGFPqJOIG9VrsKRiHsXxukdDmbvIUCvSGNUVt6yrjsiPxZE=
+	t=1722614520; cv=none; b=CCm7SUArUfCFUL4z0MuyKOU2GNe8mLa4OQv/gbh6htiX3AP9Jom3MyEsQkkOekI63HqXBjoWj1JIlavCcgVu6TH2zW3VNlIfa8W2S/v0ryf6Fb4CrKcfd8Bs+M+KXq1n2noZdeGdPUxrQgdhlg9GCk2QaXWbnvU82L40Mcl2zKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722614343; c=relaxed/simple;
-	bh=K7V2bYIOSvHVC1lJhx2wo3CbfVszEZTl5iQkYkWZAbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=poIlV3Evdx07WIrRsT0u6VPxD4ieXpY8SdWX4LvutcI7FbBI42JFM6+NX37L/pn5nr6v5J5wcCe4C2OoKJJ6RgD6A1Qt+D17JYWsGLSxHsMUqDNCTRiTTMVYhqTNvbzjrNjZVKOQJsTiQ8DqmMqFuA9VSKO3wI0AgwiQhq3W3+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=lH5mMHAX; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-65f880c56b1so68817457b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 08:59:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1722614341; x=1723219141; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=411U8k9mMC3IZL6s6SMQtlI1/hffpCMVW4TK9o1PCQs=;
-        b=lH5mMHAXAAXNyNnVGBR6daimhYUwjIy5AtEIt4BpVWsvpEBL1BLTWlaQKKvQNNyyT4
-         fSYmKKEQG9r9FFsd+DJlsysI2h+WeDVkqzg4P8tXD/qFgwbJibIDrmJTLdkoAA0tRvqV
-         yUJyxewFc09H0Lbm4idDuDBhYf9O3FXI/CIE5ppahH+0/qtNu9fVjx8N2GTfHo2HiBfL
-         /WgIl9KKcCEkfXt1crM4hxh94+Tl/2wDEKJUDuexlSjVBEehd/pySNhlogu6Hw6q4An1
-         jBxiOIic6veY8WvaZmsni5EHCXIohqzpAwHevVJ1tVvICwjRVIA6oj4A3xNqQvPAdt6q
-         a3ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722614341; x=1723219141;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=411U8k9mMC3IZL6s6SMQtlI1/hffpCMVW4TK9o1PCQs=;
-        b=uVRPeaciYaPAm56R0Art7+EZHIB3oKbS/YybMot52GM4RdeoVkD1bckIo7HFgetewo
-         J2vGF+1rdhhBieTSEjF6YEFOmsRBmjcHL1ZQbs8FBI5gt/XgpZYDGnsWltrhaQPUYaFd
-         JtMjS06/KSi8QU9E4WAwXfXDyVv9UolXJAfa5KyGD2ghEDHnWqQDZguTWF7vA+Qk5NO5
-         MfD8Fn1cY2JvOl9Iq2s8V0npJzh4d/sN2BnTz2nNtbOHtExbtatJw4V/UBrkkd724A86
-         F8fZSwEO30WORMQPUbmxzpCxjtRr15APUmy12xspuTISN5A+Bx7CZf1he7mfEX+rq3zP
-         /Kdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFCFZPScx7d96NssnpNKHE22GdW1jhgigpJChfrP4RfKOuZnijt6IaxyG4A7HX5MQS83dOZWIID6ryfbgkA0uUEJ9ddjqV/dqNxVZB
-X-Gm-Message-State: AOJu0YxbzS9i9zfN4zSX0Pgp9RqKz93YV6U6bDcIEaLq+8LFAD+0yQEv
-	imHj8UBZnkKp24vn/PUNogNpkYDg2vcm5RpqveBBv9JTJgwyFzlPsRZ9THyr/XU=
-X-Google-Smtp-Source: AGHT+IFGZiI6AUAkN7eJwQnP8DpPrdR8tAAe1cjOdO9L4E8zWgjvbtVtl9NTqmwHz+5c4nciO1RMng==
-X-Received: by 2002:a81:c242:0:b0:65f:dfd9:b672 with SMTP id 00721157ae682-6895f9e5cdamr42031227b3.11.1722614340987;
-        Fri, 02 Aug 2024 08:59:00 -0700 (PDT)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-68a140613afsm2935237b3.136.2024.08.02.08.59.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 08:59:00 -0700 (PDT)
-Date: Fri, 2 Aug 2024 11:58:59 -0400
-From: Josef Bacik <josef@toxicpanda.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Wojciech =?utf-8?Q?G=C5=82adysz?= <wojciech.gladysz@infogain.com>,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	ebiederm@xmission.com, kees@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/fs: last check for exec credentials on NOEXEC
- mount
-Message-ID: <20240802155859.GB6306@perftesting>
-References: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
- <20240801140739.GA4186762@perftesting>
- <mtnfw62q32omz5z4ptiivmzi472vd3zgt7bpwx6bmql5jaozgr@5whxmhm7lf3t>
+	s=arc-20240116; t=1722614520; c=relaxed/simple;
+	bh=zmtnUgSoVRxOqY613tZtBbbh9cNuC2vxnGrhKplNwPE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ee5r8ef47cHIPjqYOzBaEjQt9M+xQ/rudqpDrywO7pGTt2Li5ooDlvyHmgDe+w0WIoF6BfEg26PXb1slLcPZB89yohz8p9TvERsauQY8F3fMmqhuP5F/G55BnbX49CeStKCOlhJR60eCuM0xV7YXog/jGHOj9wIVjEM2E/ZsnKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k2v/sLX2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zmtnUgSoVRxOqY613tZtBbbh9cNuC2vxnGrhKplNwPE=; b=k2v/sLX2jXi1yP0G6jG76BUFeZ
+	96qHbjnQiRbvxVCNijOFN2iG2J11LrY1UpwfF1GOUNk5egONEXrQuC1bU7Ar86bT9M0MAL8oe8KgC
+	LD3ESocFG5Z0S/xqr46qodZQt3SuJSPdYR7QD3H8Ka8c/9B/hoMMFMBKHJ5qj8dLkjCLCuM9yQLc5
+	NdpyYy8pkq6TOhQ4cNLtL0b8+U6wGBW/lZc1EWzACq6JeC86gAY8S6JKkaN7ulEGRluOiW9rh31Wk
+	oEq1xRwBnKrkgwxqwAk4OIqHyXl0oh4I/Z50+VKoIsEJ7QvqM+LC4NalBAfOSj2i7Z5XMFW/2iqj1
+	DpIrhTvw==;
+Received: from [2001:8b0:10b:5:baa5:735b:df3b:ad66] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZuir-00000001BcJ-1nBd;
+	Fri, 02 Aug 2024 16:01:41 +0000
+Message-ID: <c444e22855305bc9d335dc1623fdd7ec0cb35c02.camel@infradead.org>
+Subject: Re: [PATCH 1/2] i8253: Disable PIT timer 0 when not in use
+From: David Woodhouse <dwmw2@infradead.org>
+To: Michael Kelley <mhklinux@outlook.com>, "tglx@linutronix.de"
+	 <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>
+Cc: "lirongqing@baidu.com" <lirongqing@baidu.com>, "seanjc@google.com"
+ <seanjc@google.com>, "kys@microsoft.com" <kys@microsoft.com>, 
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
+ <wei.liu@kernel.org>,  "decui@microsoft.com" <decui@microsoft.com>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>
+Date: Fri, 02 Aug 2024 17:01:40 +0100
+In-Reply-To: <SN6PR02MB41576EAA0B95887BF9777645D4B32@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240802135555.564941-1-dwmw2@infradead.org>
+	 <SN6PR02MB41576EAA0B95887BF9777645D4B32@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-aJHbD0GIj6O2UwsVIrVt"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <mtnfw62q32omz5z4ptiivmzi472vd3zgt7bpwx6bmql5jaozgr@5whxmhm7lf3t>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Aug 01, 2024 at 05:15:06PM +0200, Mateusz Guzik wrote:
-> On Thu, Aug 01, 2024 at 10:07:39AM -0400, Josef Bacik wrote:
-> > On Thu, Aug 01, 2024 at 02:07:45PM +0200, Wojciech Gładysz wrote:
-> > > Test case: thread mounts NOEXEC fuse to a file being executed.
-> > > WARN_ON_ONCE is triggered yielding panic for some config.
-> > > Add a check to security_bprm_creds_for_exec(bprm).
-> > > 
-> > 
-> > Need more detail here, a script or something to describe the series of events
-> > that gets us here, I can't quite figure out how to do this.
-> > 
-> > > Stack trace:
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 0 PID: 2736 at fs/exec.c:933 do_open_execat+0x311/0x710 fs/exec.c:932
-> > > Modules linked in:
-> > > CPU: 0 PID: 2736 Comm: syz-executor384 Not tainted 5.10.0-syzkaller #0
-> > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> > > RIP: 0010:do_open_execat+0x311/0x710 fs/exec.c:932
-> > > Code: 89 de e8 02 b1 a1 ff 31 ff 89 de e8 f9 b0 a1 ff 45 84 ff 75 2e 45 85 ed 0f 8f ed 03 00 00 e8 56 ae a1 ff eb bd e8 4f ae a1 ff <0f> 0b 48 c7 c3 f3 ff ff ff 4c 89 f7 e8 9e cb fe ff 49 89 de e9 2d
-> > > RSP: 0018:ffffc90008e07c20 EFLAGS: 00010293
-> > > RAX: ffffffff82131ac6 RBX: 0000000000000004 RCX: ffff88801a6611c0
-> > > RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-> > > RBP: ffffc90008e07cf0 R08: ffffffff8213173f R09: ffffc90008e07aa0
-> > > R10: 0000000000000000 R11: dffffc0000000001 R12: ffff8880115810e0
-> > > R13: dffffc0000000000 R14: ffff88801122c040 R15: ffffc90008e07c60
-> > > FS:  00007f9e283ce6c0(0000) GS:ffff888058a00000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 00007f9e2848600a CR3: 00000000139de000 CR4: 0000000000352ef0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > Call Trace:
-> > >  bprm_execve+0x60b/0x1c40 fs/exec.c:1939
-> > >  do_execveat_common+0x5a6/0x770 fs/exec.c:2077
-> > >  do_execve fs/exec.c:2147 [inline]
-> > >  __do_sys_execve fs/exec.c:2223 [inline]
-> > >  __se_sys_execve fs/exec.c:2218 [inline]
-> > >  __x64_sys_execve+0x92/0xb0 fs/exec.c:2218
-> > >  do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
-> > >  entry_SYSCALL_64_after_hwframe+0x61/0xcb
-> > > RIP: 0033:0x7f9e2842f299
-> > > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> > > RSP: 002b:00007f9e283ce218 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
-> > > RAX: ffffffffffffffda RBX: 00007f9e284bd3f8 RCX: 00007f9e2842f299
-> > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000400
-> > > RBP: 00007f9e284bd3f0 R08: 0000000000000000 R09: 0000000000000000
-> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9e2848a134
-> > > R13: 0030656c69662f2e R14: 00007ffc819a23d0 R15: 00007f9e28488130
-> > > 
-> > > Signed-off-by: Wojciech Gładysz <wojciech.gladysz@infogain.com>
-> > > ---
-> > >  fs/exec.c | 42 +++++++++++++++++++-----------------------
-> > >  1 file changed, 19 insertions(+), 23 deletions(-)
-> > > 
-> > > diff --git a/fs/exec.c b/fs/exec.c
-> > > index a126e3d1cacb..0cc6a7d033a1 100644
-> > > --- a/fs/exec.c
-> > > +++ b/fs/exec.c
-> > > @@ -953,8 +953,6 @@ EXPORT_SYMBOL(transfer_args_to_stack);
-> > >   */
-> > >  static struct file *do_open_execat(int fd, struct filename *name, int flags)
-> > >  {
-> > > -	struct file *file;
-> > > -	int err;
-> > >  	struct open_flags open_exec_flags = {
-> > >  		.open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
-> > >  		.acc_mode = MAY_EXEC,
-> > > @@ -969,26 +967,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
-> > >  	if (flags & AT_EMPTY_PATH)
-> > >  		open_exec_flags.lookup_flags |= LOOKUP_EMPTY;
-> > >  
-> > > -	file = do_filp_open(fd, name, &open_exec_flags);
-> > > -	if (IS_ERR(file))
-> > > -		goto out;
-> > > -
-> > > -	/*
-> > > -	 * may_open() has already checked for this, so it should be
-> > > -	 * impossible to trip now. But we need to be extra cautious
-> > > -	 * and check again at the very end too.
-> > > -	 */
-> > > -	err = -EACCES;
-> > > -	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
-> > > -			 path_noexec(&file->f_path)))
-> > > -		goto exit;
-> > > -
-> > 
-> > This still needs to be left here to catch any bad actors in the future.  Thanks,
-> > 
-> 
-> This check is fundamentally racy.
-> 
-> path_noexec expands to the following:
->         return (path->mnt->mnt_flags & MNT_NOEXEC) ||
->                (path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC);
-> 
-> An exec racing against remount setting the noexec flag can correctly
-> conclude the file can be execed and then trip over the check later if
-> the flag showed up in the meantime.
-> 
-> This is not fuse-specific and I disagree with the posted patch as well.
-> 
-> The snippet here tries to validate that permissions were correctly checked
-> at some point, but it fails that goal in 2 ways:
-> - the inode + fs combo might just happen to be fine for exec, even if
->   may_open *was not issued*
-> - there is the aforementioned race
-> 
-> If this thing here is supposed to stay, it instead needs to be
-> reimplemented with may_open setting a marker "checking for exec was
-> performed and execing is allowed" somewhere in struct file.
 
-This sounds like a reasonable alternative solution.
+--=-aJHbD0GIj6O2UwsVIrVt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> I'm not confident this is particularly valuable, but if it is, it
-> probably should hide behind some debug flags.
+On Fri, 2024-08-02 at 15:44 +0000, Michael Kelley wrote:
+> Did a basic smoke test of this two-patch series on a Hyper-V Gen 1
+> VM and on a Gen 2 VM. All looks good and behaves as expected.
+>=20
+> On the Gen 1 VM, the PIT is used briefly at boot (takes ~35 interrupts)
+> before the Hyper-V synthetic timer takes over and the PIT is shutdown.
+> As expected, no further interrupts are received from the PIT.
+>=20
+> On a Gen 2 VM, apic_needs_pit() returns true because
+> X86_FEATURE_ARAT isn't present. The PIT doesn't exist in a
+> Gen 2 VM, but the code paths handle this situation with no
+> problems, just as before the patch series.
+>=20
+> For the two-patch series on Hyper-V,
+> Tested-by: Michael Kelley <mhkelley@outlook.com>
 
-I'm still going to disagree here, putting it behind a debug flag means it'll
-never get caught, and it obviously proved valuable because we're discussing this
-particular case.
+Thank you!
 
-Is it racy? Yup sure.  I think that your solution is the right way to fix it,
-and then we can have a 
+--=-aJHbD0GIj6O2UwsVIrVt
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-WARN_ON(!(file->f_mode & FMODE_NO_EXEC_CHECKED));
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwODAyMTYwMTQwWjAvBgkqhkiG9w0BCQQxIgQgoABFdLTj
+hlX47cLztPGWgUeuX74hDevJS3Z6Kjo6xjMwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCguEeqYzDiP8aLKBEMB3H7MtCi/4J7zqVd
+cvJCrBuqHzhcWC2d4t6L63vVm+cZBXegGyN6ktK3fR1dFPNtppYNkG4JPgfwX3RLrx/ZKC4+I4e2
+5A0g4JkdN/aRmmFfAIIkEApnaPrLSt4MOXNaYP1h6xheFTck2A+AwceuhGRwRp21PF8lQTkzaUHR
+WjsYBrhMeY/gJ13TKwcZxKkjt+WOB8Q1dTA1bC4FBspN2XVyfO60wDWZZTMwaC5EVkCk0rWVB78Z
+880dPkZaE4FWj1XILrdzLOyx0VJbQX29FoNigYrWjTmuuRyjeOKLZoqUy1/jvmdFRcZakkdQ6bVU
+33ppE0O8YOfWLwI8+0wp2Iy/l0eLxI2oXT5LiBIlSFxxdvW5KadcBswyKiIWqnY9sAAoN1sXMALf
+qcWuhhTdvmt9Gj+rADDYD1yqoS5w4YDtcsTWH+K61qxYN1RM3i3sKsRs0ogwfW4Giv1uP7etodHy
+MXg4Z+ntjQbREEijL6LHmkrMECnoaFQFJs3OlFfqWG/aDbc5q2PDe1aZwWqQSvXXRGXDztU+kFds
+WteCTZdNeyQp353q/2Md4Ftsv4t/FBhRJWi0gN3nCH0X6nPLgaoutdKsS261aC5nJ3+Ss6hB9upq
+v/NHRnY1GncVypfmtrsRhJb3pcWW3sO6T0U9NRMdWQAAAAAAAA==
 
-or however we choose to flag the file, that way we are no longer racing with the
-mount flags and only validating that a check that should have already occurred
-has in fact occurred.  Thanks,
 
-Josef
+--=-aJHbD0GIj6O2UwsVIrVt--
 
