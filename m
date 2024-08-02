@@ -1,126 +1,311 @@
-Return-Path: <linux-kernel+bounces-273227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2301946610
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:05:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE00E946611
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DBC828353F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:05:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40CCE1F22CDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B3713A41D;
-	Fri,  2 Aug 2024 23:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F112913A404;
+	Fri,  2 Aug 2024 23:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y6KExnQs"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSqLimTO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143A76D1A8
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 23:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00B55258;
+	Fri,  2 Aug 2024 23:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722639909; cv=none; b=qSAEG1eS7yHADck1dDXm5yiTih0xcmJC2s1+kMLLw+tLZ1ygKqAsJBw2btP4z+LYztVa501LZrgRj9TronmmMfgyseF2zZ2hR/DtirnHfSQrF6H8vqaUQhwjLlrmoW73OTP1SZlr0oEsHxelr02+tmbqgDr/9OGYG0p9qwaCCS0=
+	t=1722640038; cv=none; b=Q9oQrcbB8evpkJNf506eMfgK0A6M16CxxeJ56W8h2c8rM5Vwwi0aqu2XCkZjmkpqCj3clxdy+Uzxv484IcudIox7UHRNYvBz3AtInKEwEMxbMswEjt8tVTly4qAKpgeu8g2T83kr+4TO8mfQMfXvWdYFeYPacWdu1sCHLXh9zHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722639909; c=relaxed/simple;
-	bh=1l2HG0mAcYSPHpBTeVOshWV4YNWUADVGijU9aCZU+BU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QBmSkqxBWfvX0qlXSFejhCUYMNe0lZbh+w0tkoNS3T/WzYEwMxbP78LxAGaYROZB7iML+Ww89Vy1ytaSzavTRpJG+JhcJDP5UdddpNXTLGoagcCzp9j1TxX/gqVHCVi2Dk1fjLwJiHdsteKFlyeqjlDykdh4h2MP7Tfd3n406tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y6KExnQs; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso7714912e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 16:05:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722639905; x=1723244705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1l2HG0mAcYSPHpBTeVOshWV4YNWUADVGijU9aCZU+BU=;
-        b=y6KExnQsmgw9PP2UEePfOJb8lDSOFRVN4+x6WXV9LaIX3SeaDDEKujVVewDRSfjYrs
-         WK6gDIfvHlAKAj65IQwGbqN5iDlZ7S8LCVQY3T7GAjWU/QurNWIiLZhLYZk+O4CMzbiA
-         3mjxeCQY0dDxlb+sYzVmQ14+xTE2I/b7b9zp8BQuePE/F2rS8lSw0h7OIgO66TDTRDzt
-         VC0K0q+hC8zKrKL0fTJSFFewdFNqUSeMejgJ/fYwhVGL8PFUxUyKJNNyUHDpVDYqCOOV
-         pQGgmC+AdaOn6S6rk7WlU596W6TnG2PWrQl3N5vlImrGvWOA4x8EAhFrw1Kv4Z8i0egL
-         ME9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722639905; x=1723244705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1l2HG0mAcYSPHpBTeVOshWV4YNWUADVGijU9aCZU+BU=;
-        b=PBakVQEt0MPz+P15mJ+tFUYmXVWsrc6DmohuPCDh1Hhxn1EZcqh9i4PKrSRBmSDKF1
-         7WJ5ziQ+7JYz1ebOdqpuD3Fmku/T+TxUF50GncyuGgtAw7Dce/PSZFYqDWJM0syxIN5p
-         DZxJkm3P2VSJTbgvAGKZ8YCTo20XRmihEVW8d7nPu8gpgDZbA4mFhXty0+9F6HTVohPC
-         tHPFOLgzRsHCwkGRR26ajE1r3seeZiQsveZrh5O02j7R1s+RK0Z8cl08u23GpLHMCQG5
-         qcTvZj2Yne9594n/yqcMjcqvE8NqniODp9fi1QQh0wr7Z6ZOOM7K3Mwbk9mBjiJXpvHx
-         pr4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWbe2UC6Mk2ZfXlZAffzAME4DTTCxuZ4qC45lWIEdL/n7jhTLLbuFUBQvlPHJ3digonmYbEG1fvl/bWCiulr3YGoo4rs/0F9IdGNWCR
-X-Gm-Message-State: AOJu0YxZfBuTiYnWgPcUsCKd5erCEmGtWL+mq9NA22PKL/6VyLsPZrab
-	ulfsJD7R2XY+TcL/CkyLMBF4H9C5Ono8b/kcgUbrgE8KGGPhBesei4dzRf1mOik70ijLKfY/Lbh
-	mA0ISD+uCYMqnmEFg9upJlZtevKzdutZzp9E89Q==
-X-Google-Smtp-Source: AGHT+IHiky/rVdWthmVWKiSIzFDGUnJD6TaG3+/N+nw6JpPsFbuQqgGkLMWGevVLpwCKdyODEdsHUnS8HiVk3slTT1s=
-X-Received: by 2002:a05:6512:3b95:b0:52e:fa5f:b6a7 with SMTP id
- 2adb3069b0e04-530bb381097mr3600518e87.13.1722639904955; Fri, 02 Aug 2024
- 16:05:04 -0700 (PDT)
+	s=arc-20240116; t=1722640038; c=relaxed/simple;
+	bh=bc/jPOXqEBJsFaUc3DCiNN63Sw3ffR3ayB1AQ2jpfKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e4c0sFBDuPFyD3Ki+dG+2b7wm/9K8qAzScMGkl4RwmciUtwBHaR2ElOGZb6eQLik5yCRWASdyU40ZQCa0DIWeF1AdxnS4RDvF93U6w7RCbw/W9OTjMeVTikJuSh7pFdOiwRN4MKUYcBPcfl8ew2psoeJd3XFpwnsXjUMeeom7Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSqLimTO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7AC1C32782;
+	Fri,  2 Aug 2024 23:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722640037;
+	bh=bc/jPOXqEBJsFaUc3DCiNN63Sw3ffR3ayB1AQ2jpfKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qSqLimTOQVOmSqPtBkKip4BolRiy+JPqr8fLxl9s9O0SZG/Xf+KTfjpCw18Mu5kQY
+	 Ue+Ac5IZ2oVamtmjWlrUidZ0njVDxpeg7GSVaTgEeVBUB+Kq2m9m6h94o8tBqOwp8S
+	 CsrkR1IF0nPSiSk2VytDJY1fVoB/3LOdF/WAw5i2xyFTTJyosVFYPq+tV5i5KFFO8x
+	 S6KDH1f94qJSjv7nnkTb5Tz8APZwpV90dyMotcQ8Yq1RYV8A2FKLpjirOxMiHJmrNo
+	 sTtfyuiMmyXj/b3ABz/Pb8H+Rm3WRPbltb4TfoQ1VEVnqmCVHx/PF9Ub0e1avLpSvm
+	 QAtLVCZwX0mLg==
+Date: Fri, 2 Aug 2024 16:07:15 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>, llvm@lists.linux.dev,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v3 1/4] find: Switch from inline to __always_inline
+Message-ID: <20240802230715.GA959572@thelio-3990X>
+References: <20240719005127.2449328-1-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <e19821dc-01b8-4801-88ce-4c33d1a9fd63@arm.com> <8f8c07c6-d138-491c-9ca0-72f82779b2d2@app.fastmail.com>
-In-Reply-To: <8f8c07c6-d138-491c-9ca0-72f82779b2d2@app.fastmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sat, 3 Aug 2024 01:04:54 +0200
-Message-ID: <CACRpkdaX91Lb7esSNOHZZDcU9f5c5_-V4ZuGAvjBhxAs4uZKmg@mail.gmail.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Richard Earnshaw <Richard.Earnshaw@arm.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, 
-	Richard Sandiford <richard.sandiford@arm.com>, Ramana Radhakrishnan <ramanara@nvidia.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
-	Tony Lindgren <tony@atomide.com>, Linux-OMAP <linux-omap@vger.kernel.org>, 
-	Nikita Shubin <nikita.shubin@maquefel.me>, linux-samsung-soc@vger.kernel.org, 
-	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Gregory Clement <gregory.clement@bootlin.com>, "Jeremy J. Peper" <jeremy@jeremypeper.com>, 
-	debian-arm@lists.debian.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719005127.2449328-1-briannorris@chromium.org>
 
-On Fri, Aug 2, 2024 at 5:12=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote:
+Hi Brian,
 
-> Right, for us this is clearly only done for legacy user
-> binaries. It is still possible to run an OABI Debian-5.0
-> or older rootfs with a new kernel, but there are not a lot
-> of reasons to do so, other than ARMv4 (StrongARM)
-> hardware. The only times I ever tried using it were
-> to test kernel changes that impact OABI syscall handling.
+On Thu, Jul 18, 2024 at 05:50:37PM -0700, Brian Norris wrote:
+> From: Yury Norov <yury.norov@gmail.com>
+> 
+> 'inline' keyword is only a recommendation for compiler. If it decides to
+> not inline find_bit nodemask functions, the whole small_const_nbits()
+> machinery doesn't work.
+> 
+> This is how a standard GCC 11.3.0 does for my x86_64 build now. This patch
+> replaces 'inline' directive with unconditional '__always_inline' to make
+> sure that there's always a chance for compile-time optimization. It doesn't
+> change size of kernel image, according to bloat-o-meter.
+> 
+> [[ Brian: split out from:
+>       Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
+>       https://lore.kernel.org/all/20221027043810.350460-2-yury.norov@gmail.com/
+>    But rewritten, as there were too many conflicts. ]]
+> 
+> Signed-off-by: Yury Norov <yury.norov@gmail.com>
+> Co-developed-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Reviewed-by: Kees Cook <kees@kernel.org>
 
-I tried it with the old RedHat rootfs of the NetWinder. It "worked"
-but you had to create e.g a sysfs directory for the thing to even
-boot. Debian 5 got its last update 12 years or so ago.
+Sorry for taking some time to review this. Overall, this seems
+reasonable, especially given the numbers that you provided in the third
+patch. I would expect the compiler to be able to optimize better at some
+callsites with this.
 
-Security-wise it must be strongly discouraged to connect
-anything like that to a public network given the plethora of issues
-in that old userspace, so I don't know if it can even be
-useful for anything. The SSH agent will be refused by
-contemporary servers. Maybe if you just have 1-2 old OABI
-binaries without source code that you just have to keep running?
-Is there any such system?
+For the series:
 
-If people absolutely want to run these machines they should
-probably port OpenWrt to them so they can run a modern
-userspace, and OpenWrt uses EABI, albeit with a hack, but it's
-the best I know of:
-https://github.com/openwrt/openwrt/blob/main/toolchain/gcc/patches-14.x/840=
--armv4_pass_fix-v4bx_to_ld.patch
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Yours,
-Linus Walleij
+> ---
+> 
+> Changes in v3:
+>  - newly split out in v3
+> 
+>  include/linux/find.h | 50 ++++++++++++++++++++++----------------------
+>  1 file changed, 25 insertions(+), 25 deletions(-)
+> 
+> diff --git a/include/linux/find.h b/include/linux/find.h
+> index 5dfca4225fef..68685714bc18 100644
+> --- a/include/linux/find.h
+> +++ b/include/linux/find.h
+> @@ -52,7 +52,7 @@ unsigned long _find_next_bit_le(const unsigned long *addr, unsigned
+>   * Returns the bit number for the next set bit
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
+>  			    unsigned long offset)
+>  {
+> @@ -81,7 +81,7 @@ unsigned long find_next_bit(const unsigned long *addr, unsigned long size,
+>   * Returns the bit number for the next set bit
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_and_bit(const unsigned long *addr1,
+>  		const unsigned long *addr2, unsigned long size,
+>  		unsigned long offset)
+> @@ -112,7 +112,7 @@ unsigned long find_next_and_bit(const unsigned long *addr1,
+>   * Returns the bit number for the next set bit
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_andnot_bit(const unsigned long *addr1,
+>  		const unsigned long *addr2, unsigned long size,
+>  		unsigned long offset)
+> @@ -142,7 +142,7 @@ unsigned long find_next_andnot_bit(const unsigned long *addr1,
+>   * Returns the bit number for the next set bit
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_or_bit(const unsigned long *addr1,
+>  		const unsigned long *addr2, unsigned long size,
+>  		unsigned long offset)
+> @@ -171,7 +171,7 @@ unsigned long find_next_or_bit(const unsigned long *addr1,
+>   * Returns the bit number of the next zero bit
+>   * If no bits are zero, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_zero_bit(const unsigned long *addr, unsigned long size,
+>  				 unsigned long offset)
+>  {
+> @@ -198,7 +198,7 @@ unsigned long find_next_zero_bit(const unsigned long *addr, unsigned long size,
+>   * Returns the bit number of the first set bit.
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_first_bit(const unsigned long *addr, unsigned long size)
+>  {
+>  	if (small_const_nbits(size)) {
+> @@ -224,7 +224,7 @@ unsigned long find_first_bit(const unsigned long *addr, unsigned long size)
+>   * Returns the bit number of the N'th set bit.
+>   * If no such, returns >= @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_nth_bit(const unsigned long *addr, unsigned long size, unsigned long n)
+>  {
+>  	if (n >= size)
+> @@ -249,7 +249,7 @@ unsigned long find_nth_bit(const unsigned long *addr, unsigned long size, unsign
+>   * Returns the bit number of the N'th set bit.
+>   * If no such, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_nth_and_bit(const unsigned long *addr1, const unsigned long *addr2,
+>  				unsigned long size, unsigned long n)
+>  {
+> @@ -276,7 +276,7 @@ unsigned long find_nth_and_bit(const unsigned long *addr1, const unsigned long *
+>   * Returns the bit number of the N'th set bit.
+>   * If no such, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_nth_andnot_bit(const unsigned long *addr1, const unsigned long *addr2,
+>  				unsigned long size, unsigned long n)
+>  {
+> @@ -332,7 +332,7 @@ unsigned long find_nth_and_andnot_bit(const unsigned long *addr1,
+>   * Returns the bit number for the next set bit
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_first_and_bit(const unsigned long *addr1,
+>  				 const unsigned long *addr2,
+>  				 unsigned long size)
+> @@ -357,7 +357,7 @@ unsigned long find_first_and_bit(const unsigned long *addr1,
+>   * Returns the bit number for the first set bit
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_first_and_and_bit(const unsigned long *addr1,
+>  				     const unsigned long *addr2,
+>  				     const unsigned long *addr3,
+> @@ -381,7 +381,7 @@ unsigned long find_first_and_and_bit(const unsigned long *addr1,
+>   * Returns the bit number of the first cleared bit.
+>   * If no bits are zero, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_first_zero_bit(const unsigned long *addr, unsigned long size)
+>  {
+>  	if (small_const_nbits(size)) {
+> @@ -402,7 +402,7 @@ unsigned long find_first_zero_bit(const unsigned long *addr, unsigned long size)
+>   *
+>   * Returns the bit number of the last set bit, or size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_last_bit(const unsigned long *addr, unsigned long size)
+>  {
+>  	if (small_const_nbits(size)) {
+> @@ -425,7 +425,7 @@ unsigned long find_last_bit(const unsigned long *addr, unsigned long size)
+>   * Returns the bit number for the next set bit, or first set bit up to @offset
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_and_bit_wrap(const unsigned long *addr1,
+>  					const unsigned long *addr2,
+>  					unsigned long size, unsigned long offset)
+> @@ -448,7 +448,7 @@ unsigned long find_next_and_bit_wrap(const unsigned long *addr1,
+>   * Returns the bit number for the next set bit, or first set bit up to @offset
+>   * If no bits are set, returns @size.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_bit_wrap(const unsigned long *addr,
+>  					unsigned long size, unsigned long offset)
+>  {
+> @@ -465,7 +465,7 @@ unsigned long find_next_bit_wrap(const unsigned long *addr,
+>   * Helper for for_each_set_bit_wrap(). Make sure you're doing right thing
+>   * before using it alone.
+>   */
+> -static inline
+> +static __always_inline
+>  unsigned long __for_each_wrap(const unsigned long *bitmap, unsigned long size,
+>  				 unsigned long start, unsigned long n)
+>  {
+> @@ -506,20 +506,20 @@ extern unsigned long find_next_clump8(unsigned long *clump,
+>  
+>  #if defined(__LITTLE_ENDIAN)
+>  
+> -static inline unsigned long find_next_zero_bit_le(const void *addr,
+> -		unsigned long size, unsigned long offset)
+> +static __always_inline
+> +unsigned long find_next_zero_bit_le(const void *addr, unsigned long size, unsigned long offset)
+>  {
+>  	return find_next_zero_bit(addr, size, offset);
+>  }
+>  
+> -static inline unsigned long find_next_bit_le(const void *addr,
+> -		unsigned long size, unsigned long offset)
+> +static __always_inline
+> +unsigned long find_next_bit_le(const void *addr, unsigned long size, unsigned long offset)
+>  {
+>  	return find_next_bit(addr, size, offset);
+>  }
+>  
+> -static inline unsigned long find_first_zero_bit_le(const void *addr,
+> -		unsigned long size)
+> +static __always_inline
+> +unsigned long find_first_zero_bit_le(const void *addr, unsigned long size)
+>  {
+>  	return find_first_zero_bit(addr, size);
+>  }
+> @@ -527,7 +527,7 @@ static inline unsigned long find_first_zero_bit_le(const void *addr,
+>  #elif defined(__BIG_ENDIAN)
+>  
+>  #ifndef find_next_zero_bit_le
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_zero_bit_le(const void *addr, unsigned
+>  		long size, unsigned long offset)
+>  {
+> @@ -546,7 +546,7 @@ unsigned long find_next_zero_bit_le(const void *addr, unsigned
+>  #endif
+>  
+>  #ifndef find_first_zero_bit_le
+> -static inline
+> +static __always_inline
+>  unsigned long find_first_zero_bit_le(const void *addr, unsigned long size)
+>  {
+>  	if (small_const_nbits(size)) {
+> @@ -560,7 +560,7 @@ unsigned long find_first_zero_bit_le(const void *addr, unsigned long size)
+>  #endif
+>  
+>  #ifndef find_next_bit_le
+> -static inline
+> +static __always_inline
+>  unsigned long find_next_bit_le(const void *addr, unsigned
+>  		long size, unsigned long offset)
+>  {
+> -- 
+> 2.45.2.1089.g2a221341d9-goog
+> 
 
