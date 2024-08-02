@@ -1,161 +1,106 @@
-Return-Path: <linux-kernel+bounces-272209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2D89458A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:26:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220339458AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8467283B2B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:26:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DDBF1C23915
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A431BF309;
-	Fri,  2 Aug 2024 07:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qth+KIxl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E8F1C0DCF;
+	Fri,  2 Aug 2024 07:26:30 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3B933991;
-	Fri,  2 Aug 2024 07:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE3633991
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583561; cv=none; b=ppQPMQef4j3nbQhlonuuY3P3YlWxd8ZyUioGkx71TowygzyGe8q7yLNBcW9nI4UzaRNG1Fj4gCwscPnjNlqjYG0i6/YdSk+nEGpzJjtNoTVsGOQl6XxBPzFget1sGKWuxvl3K2BsJYNzU4h+da4M+uhDQDV+lYWuApulKKbnqYI=
+	t=1722583589; cv=none; b=GTOF6CZ+G58+FC4oPF75vjPVnPkF8BBymGxkNdHkq/77/OZm6yFr2fNzql8poy5n7SHLrKoRgYndZYvVm8/RUH+nPgL3qFANvdLImM/aKHEYuhPpbJsyNsm5qZokwl5s1NhXlWiVWz7Y8ggW0IXqWBsnpW5rdUVPfB16gby+ft8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583561; c=relaxed/simple;
-	bh=tIDBugnnIao0rCesYd8gdUdjsah0ZDt4iRLJv46cdP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Gka5C/aewIu6x38kw0NNbcjRcG4sPgkdZ3hmMBwhtHVZlnl+CwtHwMidxiX7EE9P5qIyjBwo+i6N8JX+6vGiKrOjnVTQpxjq2WLT4R20m2xYC1DrsKRnHKkua7gWBGt850JnkBKzk6mgH+127LpumzUy+Ps8fnAeMHppKp1J1xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qth+KIxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D58C32782;
-	Fri,  2 Aug 2024 07:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722583560;
-	bh=tIDBugnnIao0rCesYd8gdUdjsah0ZDt4iRLJv46cdP8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=qth+KIxlQlztEPXb2C6gf5swH0ESG0QtUXGvsYkCGQQ4rXEs5MgsmJOrtVDKDsw2n
-	 5f35yO1GuHfYZdmtPYJigwIf1x4D2gQ/wDV6k1I6CGk0u4NNY/zAlZDBZFZydLEv9e
-	 O/gs/v01ABQ/IUiEFT4FOOQWgbe8ql7Qn6ftrrvbyePXjzBnBTtE5AW5J9yuHPy04y
-	 HiQWi5BUEWP7lImu2xo2dO2kAZhzr86bBOsceR35/KHBoGswS2986jRmPuJGqg6Id6
-	 wlkv91eK9XJ5sXUcljcjbW2GzLEljchb467LID7mNaYmMbncafGU+F4UAmuAMj/l68
-	 mtIpYczulyf4g==
-Message-ID: <944715e8-e91e-46dd-a053-7e00a17dea72@kernel.org>
-Date: Fri, 2 Aug 2024 09:25:54 +0200
+	s=arc-20240116; t=1722583589; c=relaxed/simple;
+	bh=Oxm/pfSsuLOgexnoccmfnLZAlQbLWyVX1uliw0z/UC8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cIAzK7ZdGQl3zTykfRdXwC9GIokVSmcFxnUA8O5PzKzJ5apwIhM5DAj8C6XTEnKgmlZbiygHTGy/I0OY6OAVaV86LFXUaHS5S9PaPTYzT6t/x+tXJ9CfYaZ05C5o2lKO4OFKnZTAIp2de+yF2yUq5z5r319q4p3sjvQSdOzWmIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39835205d20so148366945ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:26:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722583587; x=1723188387;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BCr9LnPSoHkIK4J/GpkYOT3P7xvLGVBQAKEbbV6/rSI=;
+        b=nutpL5h8kOBA1DvakeeZRg+qtgBVb907wS+QAJqvigbY4GkHLKYcsDqYPJipgQH2iZ
+         EHhMXlkXFdnT8r8vfoQB2vRfX0BXHAubWgSjT3ms7+EClJQf/ATN4noceaDAjK/8c1nd
+         ULfoiTBfocBmUp/Ur7stdqnsMbugKzi4XHI39zqUNTJWQY2l204Hnxh7jz/lroRwQ/Ly
+         uXe5+PqIOMv4bW6ndewrgApVS33hQkJ2R9d137ePGhNxBfXVXtBtsmz3EHkELaCx6K5V
+         NkS7GMMfoWLb57yFvOl3+6wbLgA8vn9OCX45VmqGqcOaYw/tZ1ZybT3WDQFGO5yAOCac
+         TV7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWOC2FI6YRE310Y4k2gyd+tEvgJCMJTnUFFpnjJWQdKl8MKQHdgsnlHPx5WqoRZrozmiZ+OYcHVOxFcAHQxzWKZeuV0LXZGLtClhYec
+X-Gm-Message-State: AOJu0YxjbBcyGs7O3OrnF/5yI7va9WekndgBgNP90HU5eTI8r9rUq0LV
+	6g0PE/SbFU61QEGpAcV5DdWVHsN4HAUEjs8C8lx2TF21/5NN/jWs69QVM6AMRRlMTFOhlFKWuDt
+	Ik98uCbdd3sVs/aVU3EhjBzKSHegeISvSnt3M56KHYysmByzOOSIhjsM=
+X-Google-Smtp-Source: AGHT+IG+3+ysEdazJDjhmIN2EU+CswIpTEaa+h2llnHNpHqurWiCjI9rJ+YFuw5B1Y44ucmrbPztL27jYkvUAfnLWzIG29UHgVFq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] arm64: dts: imx93: add lpi2c1 and child node
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240801160915.2505610-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240801160915.2505610-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:214b:b0:39a:ea86:12f2 with SMTP id
+ e9e14a558f8ab-39b1fca07c2mr2396255ab.6.1722583587405; Fri, 02 Aug 2024
+ 00:26:27 -0700 (PDT)
+Date: Fri, 02 Aug 2024 00:26:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d2ce01061eae3e22@google.com>
+Subject: [syzbot] Monthly input report (Aug 2024)
+From: syzbot <syzbot+list9ef74d105b31e667593b@syzkaller.appspotmail.com>
+To: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 01/08/2024 18:09, Frank Li wrote:
-> From: Clark Wang <xiaoning.wang@nxp.com>
-> 
-> Add lpi2c1 and child node for imx93-11x11-evk board.
+Hello input maintainers/developers,
 
-Why? What for? What are these? We see all this from the diff, so commit
-msg should explain why and what do you want to achieve.
+This is a 31-day syzbot report for the input subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/input
 
-> 
-> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-> Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
-> Signed-off-by: Li Yang <leoyang.li@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../boot/dts/freescale/imx93-11x11-evk.dts    | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
-> index a15987f49e8d6..dd387b820831a 100644
-> --- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
-> @@ -145,6 +145,20 @@ ethphy2: ethernet-phy@2 {
->  	};
->  };
->  
-> +&lpi2c1 {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	clock-frequency = <400000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_lpi2c1>;
-> +	status = "okay";
-> +
-> +	lsm6dsm@6a {
+During the period, 1 new issues were detected and 1 were fixed.
+In total, 19 issues are still open and 56 have been fixed so far.
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+Some of the still happening issues:
 
+Ref Crashes Repro Title
+<1> 685     No    possible deadlock in evdev_pass_values (2)
+                  https://syzkaller.appspot.com/bug?extid=13d3cb2a3dc61e6092f5
+<2> 389     Yes   INFO: task hung in uhid_char_release
+                  https://syzkaller.appspot.com/bug?extid=8fe2d362af0e1cba8735
+<3> 326     Yes   WARNING in cm109_urb_irq_callback/usb_submit_urb
+                  https://syzkaller.appspot.com/bug?extid=2d6d691af5ab4b7e66df
+<4> 21      Yes   possible deadlock in uinput_request_submit
+                  https://syzkaller.appspot.com/bug?extid=159077b1355b8cd72757
+<5> 19      Yes   WARNING in cm109_input_open/usb_submit_urb (3)
+                  https://syzkaller.appspot.com/bug?extid=ac0f9c4cc1e034160492
+<6> 2       Yes   INFO: rcu detected stall in asm_exc_page_fault
+                  https://syzkaller.appspot.com/bug?extid=360faf5c01a5be55581d
+<7> 2       Yes   WARNING in bcm5974_start_traffic/usb_submit_urb (2)
+                  https://syzkaller.appspot.com/bug?extid=b064b5599f18f7ebb1e1
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-Best regards,
-Krzysztof
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
+You may send multiple commands in a single email message.
 
