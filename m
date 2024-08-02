@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-272590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28FE945E6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D25BD945E56
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 560CAB21BEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:13:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AA64B208B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E921E4850;
-	Fri,  2 Aug 2024 13:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ngn.tf header.i=@ngn.tf header.b="LrTGrjyY"
-Received: from mail.ngn.tf (ngn.tf [193.106.196.85])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CA11E4841;
+	Fri,  2 Aug 2024 13:07:35 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA421E3CC3;
-	Fri,  2 Aug 2024 13:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.106.196.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C8817547;
+	Fri,  2 Aug 2024 13:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722604404; cv=none; b=IrYi39nfZJ5p/mUoYEqTgFXV1duBv5WVeQ0e0HHYn7h9IWx9z1122/eVqVO5mJswtk4GIC2Nic2oVQSNQgH+Lwc8ZkHHzbcXV3ivj+TZC+xYDc2n6hTh25a8sIcgIUR+u18BeOWUPCoGkee+68w9p6+foUzuCh4BF8lWr3Blm+c=
+	t=1722604055; cv=none; b=ixHs5rMJm82gNOu0d41GNHVHIqYm7hZwWW907AVUhkOSH/Rn4P1Uj//cPKxB9BCe9Hq2Pz0+zq++yhQefRflC6y0ejx5UkJUCmHn58q6SwOTwb0gXZQYDrZVLQIj2geyYzhq2bwgcgkfVgh3sqW2WA15Rf3eyKxqbNHpf/26WhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722604404; c=relaxed/simple;
-	bh=3UFpgyCFVFFSP7w9ZXE06UkaNdzc2jHhYbdzI1pJgQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FkV0dmzQjzZn3ZzIQpJ7M0+kK75fYLY/gDAIPf0Q1ym4DN5vkDmjn/XmFdRUFSN8ez//PZ9m3KuJtS9QwJpbnCcuP/AR5XekJQwHRZeuQXzegUrOr6sGEQ/2BOCcQ/22OX0XYIWzPR8wMKRbHix7wZe9mZSJ9ZLXx9pdYZtarQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ngn.tf; spf=pass smtp.mailfrom=ngn.tf; dkim=pass (2048-bit key) header.d=ngn.tf header.i=@ngn.tf header.b=LrTGrjyY; arc=none smtp.client-ip=193.106.196.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ngn.tf
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ngn.tf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ngn.tf; s=mail;
-	t=1722604043; bh=3UFpgyCFVFFSP7w9ZXE06UkaNdzc2jHhYbdzI1pJgQs=;
-	h=From:To:Cc:Subject:References:In-Reply-To;
-	b=LrTGrjyYMCVWcXl95+FEVuYzzUu89hkK5NJ+BKjq0DtQq0fNGUjGekHQi5Q4QNCK/
-	 oan5fylRvA95e0gV4GsGHJse+lQE1p3+s23sn5V5ZuZMUQbW+fJ1nVdDg+/GN7smR1
-	 HzDZx0Qc3KCsq2tcEcZOB86C53Yjjos2hZx645nXr4oORTJwtubvpaP1Iepigm15fJ
-	 HZdgrcj7161B3LMgtWWUcQZQkNhY+DFOoEmTx32AjKxD/Q3O5NrYGzpZNXYhcgB/NP
-	 sHHJkxbZcI8xna015/ItpOhQ2Qqd6zjTY6Dh+WAx4BgOJjRJLOluFxMwq2HG/rQyTn
-	 OdNE2OXLR0qGQ==
-Date: Fri, 2 Aug 2024 16:06:09 +0300
-From: ngn <ngn@ngn.tf>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Nam Cao <namcao@linutronix.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] PCI: shpchp: Remove hpc_ops
-Message-ID: <ZqzZwRx0Fug4bcwv@archbtw>
-References: <Zp-XXVW4hlcMASEc@archbtw>
- <20240802000852.GA129961@bhelgaas>
+	s=arc-20240116; t=1722604055; c=relaxed/simple;
+	bh=ng0IcaXPaHLvdetCJAhGczVFHBRtogBlyNPpK2y3Yj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lLIVjpTOT7GDgdn3hL+l7s3SeJ38aWQkd47SRmPj+PWT9z5bkgNwJXiSDj7YwCegpmPeeufuSBn6EayvXUy5GXG+N3TEDMxpIs8Cttq0O+xXntvtG2tmGlaSs9Q7+ADDG0u7IVBFsN57yfXdprqgmnnbJFqyGc2ft1MkwPf9Ays=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wb5hk39xyz4f3jkq;
+	Fri,  2 Aug 2024 21:07:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 38A1A1A018D;
+	Fri,  2 Aug 2024 21:07:27 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP4 (Coremail) with SMTP id gCh0CgCHr4UL2qxm7ChBAg--.9954S3;
+	Fri, 02 Aug 2024 21:07:27 +0800 (CST)
+Message-ID: <182c4b0b-6c69-4119-90ca-4e52bcad0409@huaweicloud.com>
+Date: Fri, 2 Aug 2024 21:07:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802000852.GA129961@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/20] ext4: get rid of ppath in
+ ext4_ext_create_new_leaf()
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-11-libaokun@huaweicloud.com>
+ <ZqyL6rmtwl6N4MWR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <ZqyL6rmtwl6N4MWR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHr4UL2qxm7ChBAg--.9954S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kry3ur1xCrWrCry5Gry5XFb_yoW8Ar4Dpa
+	4Syw4Duw1Dta1j9FZrtF45tFyFva1fGa4UGFW5Wry8uasFqF1rZFyfKFWj9rs8XFs7GFy2
+	vrWxWa1ftr12y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQADBWasmH0ZsQAAsA
 
-On Thu, Aug 01, 2024 at 07:08:52PM -0500, Bjorn Helgaas wrote:
-> On Tue, Jul 23, 2024 at 02:43:25PM +0300, ngn wrote:
-> > Remove the hpc_ops struct from shpchp. This struct is unnecessary as
-> > no other hotplug controller implements it. A similar thing has already
-> > been done in pciehp with commit 82a9e79ef132 ("PCI: pciehp: remove hpc_ops")
-> 
-> > +++ b/drivers/pci/hotplug/shpchp_hpc.c
-> > @@ -167,7 +167,6 @@
-> >  
-> >  static irqreturn_t shpc_isr(int irq, void *dev_id);
-> >  static void start_int_poll_timer(struct controller *ctrl, int sec);
-> > -static int hpc_check_cmd_status(struct controller *ctrl);
-> >  
-> >  static inline u8 shpc_readb(struct controller *ctrl, int reg)
-> >  {
-> > @@ -317,7 +316,7 @@ static int shpc_write_cmd(struct slot *slot, u8 t_slot, u8 cmd)
-> >  	if (retval)
-> >  		goto out;
-> >  
-> > -	cmd_status = hpc_check_cmd_status(slot->ctrl);
-> > +	cmd_status = shpchp_check_cmd_status(slot->ctrl);
-> 
-> This rename looks like it should be a separate patch because it's not
-> part of removing hpc_ops.
+On 2024/8/2 15:34, Ojaswin Mujoo wrote:
+> On Wed, Jul 10, 2024 at 12:06:44PM +0800, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> The use of path and ppath is now very confusing, so to make the code more
+>> readable, pass path between functions uniformly, and get rid of ppath.
+>>
+>> To get rid of the ppath in ext4_ext_create_new_leaf(), the following is
+>> done here:
+>>
+>>   * Free the extents path when an error is encountered.
+>>   * Its caller needs to update ppath if it uses ppath.
+>>
+>> No functional changes.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Hi Baokun,
+Hey Ojaswin,
+> The changes look good to me, feel free to add:
+>
+> Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Thank you very much for your review!
+>
+> That being said, IIUC i think this patchset also fixes a potential UAF
+> bug. Below is a sample trace with dummy values:
+>
+> ext4_ext_insert_extent
+>    path = *ppath = 2000
+>    ext4_ext_create_new_leaf(ppath)
+>      path = *ppath = 2000
+>      ext4_find_extent(path = 2000)
+>        if (depth > path[0].p_maxdepth)
+>              kfree(path = 2000);
+>              path = NULL;
+>        path = kcalloc() = 3000
+>        ...
+>        return path;
+>    path = 3000
+>    *ppath = 3000;
+>    return;
+> /* here path is still 2000 *, UAF! */
+> eh = path[depth].p_hdr
+>
+> I'm not completely sure if we can hit (depth > path[0].p_maxdepth) in the
+> above codepath but I think the flow is still a bit fragile. Maybe this
+> should be fixed in a separate patch first. What do you think?
+>
+> Regards,
+> ojaswin
+Nice catch!
 
-I think hpc_check_cmd_status meant to be a part of the hpc_ops struct.
-Here is the original struct:
+This is indeed a potential UAF issue, and while it seems hard to
+trigger (depth > path[0].p_maxdepth), it does deserve a separate
+patch, and I'll be adding a separate quick fix for this in the next version.
 
-struct hpc_ops {
-	int (*power_on_slot)(struct slot *slot);
-	int (*slot_enable)(struct slot *slot);
-	int (*slot_disable)(struct slot *slot);
-	int (*set_bus_speed_mode)(struct slot *slot, enum pci_bus_speed speed);
-	int (*get_power_status)(struct slot *slot, u8 *status);
-	int (*get_attention_status)(struct slot *slot, u8 *status);
-	int (*set_attention_status)(struct slot *slot, u8 status);
-	int (*get_latch_status)(struct slot *slot, u8 *status);
-	int (*get_adapter_status)(struct slot *slot, u8 *status);
-	int (*get_adapter_speed)(struct slot *slot, enum pci_bus_speed *speed);
-	int (*get_prog_int)(struct slot *slot, u8 *prog_int);
-	int (*query_power_fault)(struct slot *slot);
-	void (*green_led_on)(struct slot *slot);
-	void (*green_led_off)(struct slot *slot);
-	void (*green_led_blink)(struct slot *slot);
-	void (*release_ctlr)(struct controller *ctrl);
-	int (*check_cmd_status)(struct controller *ctrl);
-};
+Regards,
+Baokun
 
-As you can see it contains a pointer for check_cmd_status function,
-however the hpc_check_cmd_status was never assigned to it:
-
-static const struct hpc_ops shpchp_hpc_ops = {
-	.power_on_slot			= hpc_power_on_slot,
-	.slot_enable			= hpc_slot_enable,
-	.slot_disable			= hpc_slot_disable,
-	.set_bus_speed_mode		= hpc_set_bus_speed_mode,
-	.set_attention_status	= hpc_set_attention_status,
-	.get_power_status		= hpc_get_power_status,
-	.get_attention_status	= hpc_get_attention_status,
-	.get_latch_status		= hpc_get_latch_status,
-	.get_adapter_status		= hpc_get_adapter_status,
-
-	.get_adapter_speed		= hpc_get_adapter_speed,
-	.get_prog_int			= hpc_get_prog_int,
-
-	.query_power_fault		= hpc_query_power_fault,
-	.green_led_on			= hpc_set_green_led_on,
-	.green_led_off			= hpc_set_green_led_off,
-	.green_led_blink		= hpc_set_green_led_blink,
-
-	.release_ctlr			= hpc_release_ctlr,
-};
-
-Which made me believe that this function supposed to be a part of the
-hpc_ops struct and whoever wrote the code added a pointer for it but
-then they forgot to assign the function to it during the actual
-definition of the struct. So I renamed it anyway.
 
