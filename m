@@ -1,163 +1,267 @@
-Return-Path: <linux-kernel+bounces-272744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4CA946078
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:26:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B92C94607E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CABD41C2158A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 370F42852A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAF31537D6;
-	Fri,  2 Aug 2024 15:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53591E507;
+	Fri,  2 Aug 2024 15:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="gl0fMV/y"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nF5xhe84"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CE1175D29;
-	Fri,  2 Aug 2024 15:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFAE175D2D;
+	Fri,  2 Aug 2024 15:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722612290; cv=none; b=B1IaB+xfm8fKTLECLyB677vGGzFdKyDCYltB8PiY7FajmbzOaRe+/v7dgC2fPk0j49WjEuuRiEGtTVsHFubY239qnCxG/eWHKXT3m/mHFCf2EVgNYI9IBFqf/KFIjtsB7P03kiCFEWcybTJjsE282bYUD7hf55dVAPy4Kv4ooo8=
+	t=1722612368; cv=none; b=SWzj52MJDWJl30g+RTTMvLsi+rDe7d9WYC3wnKmQK4G6QCL4t866zxPd9jLSyy41tORy+iQ7umnMVRrrp+8XR9UxTmk9+jE4TkylsCMkqh2mlC3FPzFetFIZKhSd/YjQMgzq9/kiOiOWxbk2vJLG4+YDn5AorzptKZaFoKB3zJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722612290; c=relaxed/simple;
-	bh=M8qcfFelmeMZAh8kqX7LJJxJpym2qszDCS9w9IsDnLU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g/eY/MM85wej4rjjB+CqYXnE/l+z5NCQcQyegPhcK1oFhY5uwZjHPNhw2LI1YllllNuP4E501kE5kixRiu/5iLGcVZQi/MROIQA7ZBgPfGsUCi1IOcz5hpTHB33z/HVmtDDn0tMgH9T2gXqEQJ6766V1IFEyVciPdU66pZAiTJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=gl0fMV/y; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722612289; x=1754148289;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HlTLf6rMFLh/z3VvfgmI3bnbMSeXF59wzmGFsXVVC5k=;
-  b=gl0fMV/y+waoLRFUMr0mBjcaD1LzCTo433XGVdWMzcot12yIWSO8HvwE
-   CyYH2cHBamxy4+DbqOaSSFRnZ3iDpZywxt3vkjLjg1zZ3Qs8J6le1QU2d
-   i6rZk21HQNM64Ro8zgiC0dcops42urPdAshpHiv7yFAniMxofDpVpBjLu
-   k=;
-X-IronPort-AV: E=Sophos;i="6.09,258,1716249600"; 
-   d="scan'208";a="746702857"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 15:24:47 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:26186]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.192:2525] with esmtp (Farcaster)
- id 2c37182a-10f2-45eb-8eda-90c6ae2bc19a; Fri, 2 Aug 2024 15:24:46 +0000 (UTC)
-X-Farcaster-Flow-ID: 2c37182a-10f2-45eb-8eda-90c6ae2bc19a
-Received: from EX19EXOUWC002.ant.amazon.com (10.250.64.172) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 2 Aug 2024 15:24:38 +0000
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
- EX19EXOUWC002.ant.amazon.com (10.250.64.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 2 Aug 2024 15:24:35 +0000
-Received: from dev-dsk-jorcrous-2c-c0367878.us-west-2.amazon.com
- (10.189.195.130) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
- Server id 15.2.1258.34 via Frontend Transport; Fri, 2 Aug 2024 15:24:35 +0000
-Received: by dev-dsk-jorcrous-2c-c0367878.us-west-2.amazon.com (Postfix, from userid 14178300)
-	id 68F76A79F; Fri,  2 Aug 2024 15:24:35 +0000 (UTC)
-From: Jordan Crouse <jorcrous@amazon.com>
-To: <linux-media@vger.kernel.org>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Robert Foss <rfoss@kernel.org>, Todor Tomov
-	<todor.too@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/2] media: camss: Avoid overwriting vfe clock rates for 8250
-Date: Fri, 2 Aug 2024 15:24:34 +0000
-Message-ID: <20240802152435.35796-3-jorcrous@amazon.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240802152435.35796-1-jorcrous@amazon.com>
-References: <20240802152435.35796-1-jorcrous@amazon.com>
+	s=arc-20240116; t=1722612368; c=relaxed/simple;
+	bh=m5D3gD/Hy9UKtTCnXqA+30/hEnVScAGJ1UrYeX8hcqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bsHHQEig5sAgBHz0uShuDzi8GSp5psusgXQA79goemGagTXUibg0FDMUcJ25ntIQf+Z9GcxWITo05Sc/0EFHQ5zwOwjmb2mkWdbIWuLTeg5tgp3Q9aY+RpMdGV48pozUo5UHreOVAWWCg7qUBXikocACKYIqS+LJzCQ1aEOo5B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nF5xhe84; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722612368; x=1754148368;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=m5D3gD/Hy9UKtTCnXqA+30/hEnVScAGJ1UrYeX8hcqE=;
+  b=nF5xhe84OdmfD7QJi+1ix/kFk1rDzcT/2F5JOUqivUsz9fD5/EvO4t7i
+   fJH1xnMvRI7Erj6FUG4yJQ130ibPSgHtM1FiUpJclHwc++BZPvsUItkSB
+   A0EbghM5sZDDW/F+dLkQw5O3z+mPdCluXpR3H65w27N4hiba67xwwj2tZ
+   h24moStmP2Ix+gC+/DC+zj8XoHRs6wqXKOgSts9AASdeID3W5xObBg8KT
+   NuuOtZ1tv3nLhz9y9SdBG12TyJEB2WZDownuG4yXKr2loli/1Xn142c9J
+   2By7ylHVom6uSSayfxQyKOVjuD36ErNP2IahKctMFtd6HwIaZjeRkZQzT
+   g==;
+X-CSE-ConnectionGUID: dzHrVkPOQz6ji+45wjDtOw==
+X-CSE-MsgGUID: H7FrW9LASd+41O0p5BHBfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="38099843"
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="38099843"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 08:26:07 -0700
+X-CSE-ConnectionGUID: /QFu6Oe4SdS8i5wTlOih5Q==
+X-CSE-MsgGUID: Pmd+rAUTT/uAZirSpnUy8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="55352789"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 08:26:07 -0700
+Received: from [10.212.17.69] (kliang2-mobl1.ccr.corp.intel.com [10.212.17.69])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 2E51820BF41F;
+	Fri,  2 Aug 2024 08:26:03 -0700 (PDT)
+Message-ID: <3956760b-de6e-4726-ac4f-e03738233f73@linux.intel.com>
+Date: Fri, 2 Aug 2024 11:26:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] perf/x86/rapl: Fix the energy-pkg event for AMD
+ CPUs
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ rui.zhang@intel.com
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, ananth.narayan@amd.com, gautham.shenoy@amd.com,
+ kprateek.nayak@amd.com, ravi.bangoria@amd.com
+References: <20240730044917.4680-1-Dhananjay.Ugwekar@amd.com>
+ <20240730044917.4680-2-Dhananjay.Ugwekar@amd.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240730044917.4680-2-Dhananjay.Ugwekar@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On sm8250 targets both the csid and vfe subsystems share a number of
-clocks. Commit b4436a18eedb ("media: camss: add support for SM8250 camss")
-reorganized the initialization sequence so that VFE gets initialized first
-but a side effect of that was that the CSID subsystem came in after and
-overwrites the set frequencies on the shared clocks.
+Hi Dhananjay,
 
-Empty the frequency tables for the shared clocks in the CSID resources so
-they won't overwrite the clock rates that the VFE has already set.
+On 2024-07-30 12:49 a.m., Dhananjay Ugwekar wrote:
+> After commit ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf"),
+> on AMD processors that support extended CPUID leaf 0x80000026, the
+> topology_die_cpumask() and topology_logical_die_id() macros, no longer
+> return the package cpumask and package id, instead they return the CCD
+> (Core Complex Die) mask and id respectively. This leads to the energy-pkg
+> event scope to be modified to CCD instead of package.
+> 
+> For more historical context, please refer to commit 32fb480e0a2c
+> ("powercap/intel_rapl: Support multi-die/package"), which initially changed
+> the RAPL scope from package to die for all systems, as Intel systems
+> with Die enumeration have RAPL scope as die, and those without die
+> enumeration were not affected by it. So, all systems(Intel, AMD, Hygon),
+> worked correctly with topology_logical_die_id() until recently, but this
+> changed after the "0x80000026 leaf" commit mentioned above.
+> 
+> Replacing topology_logical_die_id() with topology_physical_package_id()
+> conditionally only for AMD and Hygon fixes the energy-pkg event.
+> 
+> On a 12 CCD 1 Package AMD Zen4 Genoa machine:
+> 
+> Before:
+> $ cat /sys/devices/power/cpumask
+> 0,8,16,24,32,40,48,56,64,72,80,88.
+> 
+> The expected cpumask here is supposed to be just "0", as it is a package
+> scope event, only one CPU will be collecting the event for all the CPUs in
+> the package.
+> 
+> After:
+> $ cat /sys/devices/power/cpumask
+> 0
+> 
+> Fixes: 63edbaa48a57 ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf")
+> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+> Reviewed-by: Zhang Rui <rui.zhang@intel.com>
+> ---
+> Changes in v2:
+> * Updated the scope description comment
+> * Dont create rapl_pmu_cpumask and rapl_pmu_idx local variables, as they're
+>   used only once, instead call the get_* functions directly where needed
+> * Check topology_logical_(die/package)_id return value
+> --->  arch/x86/events/rapl.c | 47 +++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 42 insertions(+), 5 deletions(-)
 
-Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
----
+I just posted a patch set to clean up the hotplug code in perf.
+https://lore.kernel.org/lkml/20240802151643.1691631-1-kan.liang@linux.intel.com/
 
- drivers/media/platform/qcom/camss/camss.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+With the cleanup patch set, the fix may be simplified as below.
 
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 51b1d3550421..d78644c3ebe9 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -915,6 +915,15 @@ static const struct camss_subdev_resources csiphy_res_8250[] = {
- 	}
- };
- 
-+/*
-+ * Both CSID and VFE use some of the same vfe clocks and both
-+ * should prepare/enable them but only the VFE subsystem should be in charge
-+ * of setting the clock rates.
-+ *
-+ * Set the frequency tables for those clocks in the CSID resources to
-+ * be empty so the csid subsystem doesn't overwrite the clock rates that the
-+ * VFE already set.
-+ */
- static const struct camss_subdev_resources csid_res_8250[] = {
- 	/* CSID0 */
- 	{
-@@ -922,8 +931,8 @@ static const struct camss_subdev_resources csid_res_8250[] = {
- 		.clock = { "vfe0_csid", "vfe0_cphy_rx", "vfe0", "vfe0_areg", "vfe0_ahb" },
- 		.clock_rate = { { 400000000 },
- 				{ 400000000 },
--				{ 350000000, 475000000, 576000000, 720000000 },
--				{ 100000000, 200000000, 300000000, 400000000 },
-+				{ 0 },
-+				{ 0 },
- 				{ 0 } },
- 		.reg = { "csid0" },
- 		.interrupt = { "csid0" },
-@@ -939,8 +948,8 @@ static const struct camss_subdev_resources csid_res_8250[] = {
- 		.clock = { "vfe1_csid", "vfe1_cphy_rx", "vfe1", "vfe1_areg", "vfe1_ahb" },
- 		.clock_rate = { { 400000000 },
- 				{ 400000000 },
--				{ 350000000, 475000000, 576000000, 720000000 },
--				{ 100000000, 200000000, 300000000, 400000000 },
-+				{ 0 },
-+				{ 0 },
- 				{ 0 } },
- 		.reg = { "csid1" },
- 		.interrupt = { "csid1" },
-@@ -956,7 +965,7 @@ static const struct camss_subdev_resources csid_res_8250[] = {
- 		.clock = { "vfe_lite_csid", "vfe_lite_cphy_rx", "vfe_lite",  "vfe_lite_ahb" },
- 		.clock_rate = { { 400000000 },
- 				{ 400000000 },
--				{ 400000000, 480000000 },
-+				{ 0 },
- 				{ 0 } },
- 		.reg = { "csid2" },
- 		.interrupt = { "csid2" },
-@@ -973,7 +982,7 @@ static const struct camss_subdev_resources csid_res_8250[] = {
- 		.clock = { "vfe_lite_csid", "vfe_lite_cphy_rx", "vfe_lite",  "vfe_lite_ahb" },
- 		.clock_rate = { { 400000000 },
- 				{ 400000000 },
--				{ 400000000, 480000000 },
-+				{ 0 },
- 				{ 0 } },
- 		.reg = { "csid3" },
- 		.interrupt = { "csid3" },
--- 
-2.40.1
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index b70ad880c5bc..801697be4118 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -646,6 +646,10 @@ static int __init init_rapl_pmus(void)
+ 	rapl_pmus->pmu.module           = THIS_MODULE;
+ 	rapl_pmus->pmu.scope            = PERF_PMU_SCOPE_DIE;
+ 	rapl_pmus->pmu.capabilities     = PERF_PMU_CAP_NO_EXCLUDE;
++
++	if (rapl_pmu_is_pkg_scope())
++		rapl_pmus->pmu.scope = PERF_PMU_SCOPE_PKG;
++
+ 	return 0;
+ }
 
+Could you please take a look at the cleanup patch and give it a try?
+
+Thanks,
+Kan
+> 
+> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+> index b985ca79cf97..7097c0f6a71f 100644
+> --- a/arch/x86/events/rapl.c
+> +++ b/arch/x86/events/rapl.c
+> @@ -103,6 +103,19 @@ static struct perf_pmu_events_attr event_attr_##v = {				\
+>  	.event_str	= str,							\
+>  };
+>  
+> +/*
+> + * RAPL Package energy counter scope:
+> + * 1. AMD/HYGON platforms have a per-PKG package energy counter
+> + * 2. For Intel platforms
+> + *	2.1. CLX-AP is multi-die and its RAPL MSRs are die-scope
+> + *	2.2. Other Intel platforms are single die systems so the scope can be
+> + *	     considered as either pkg-scope or die-scope, and we are considering
+> + *	     them as die-scope.
+> + */
+> +#define rapl_pmu_is_pkg_scope()				\
+> +	(boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||	\
+> +	 boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
+> +
+>  struct rapl_pmu {
+>  	raw_spinlock_t		lock;
+>  	int			n_active;
+> @@ -140,9 +153,25 @@ static unsigned int rapl_cntr_mask;
+>  static u64 rapl_timer_ms;
+>  static struct perf_msr *rapl_msrs;
+>  
+> +/*
+> + * Helper functions to get the correct topology macros according to the
+> + * RAPL PMU scope.
+> + */
+> +static inline unsigned int get_rapl_pmu_idx(int cpu)
+> +{
+> +	return rapl_pmu_is_pkg_scope() ? topology_logical_package_id(cpu) :
+> +					 topology_logical_die_id(cpu);
+> +}
+> +
+> +static inline const struct cpumask *get_rapl_pmu_cpumask(int cpu)
+> +{
+> +	return rapl_pmu_is_pkg_scope() ? topology_core_cpumask(cpu) :
+> +					 topology_die_cpumask(cpu);
+> +}
+> +
+>  static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
+>  {
+> -	unsigned int rapl_pmu_idx = topology_logical_die_id(cpu);
+> +	unsigned int rapl_pmu_idx = get_rapl_pmu_idx(cpu);
+>  
+>  	/*
+>  	 * The unsigned check also catches the '-1' return value for non
+> @@ -552,7 +581,7 @@ static int rapl_cpu_offline(unsigned int cpu)
+>  
+>  	pmu->cpu = -1;
+>  	/* Find a new cpu to collect rapl events */
+> -	target = cpumask_any_but(topology_die_cpumask(cpu), cpu);
+> +	target = cpumask_any_but(get_rapl_pmu_cpumask(cpu), cpu);
+>  
+>  	/* Migrate rapl events to the new target */
+>  	if (target < nr_cpu_ids) {
+> @@ -565,6 +594,11 @@ static int rapl_cpu_offline(unsigned int cpu)
+>  
+>  static int rapl_cpu_online(unsigned int cpu)
+>  {
+> +	s32 rapl_pmu_idx = get_rapl_pmu_idx(cpu);
+> +	if (rapl_pmu_idx < 0) {
+> +		pr_err("topology_logical_(package/die)_id() returned a negative value");
+> +		return -EINVAL;
+> +	}
+>  	struct rapl_pmu *pmu = cpu_to_rapl_pmu(cpu);
+>  	int target;
+>  
+> @@ -579,14 +613,14 @@ static int rapl_cpu_online(unsigned int cpu)
+>  		pmu->timer_interval = ms_to_ktime(rapl_timer_ms);
+>  		rapl_hrtimer_init(pmu);
+>  
+> -		rapl_pmus->pmus[topology_logical_die_id(cpu)] = pmu;
+> +		rapl_pmus->pmus[rapl_pmu_idx] = pmu;
+>  	}
+>  
+>  	/*
+>  	 * Check if there is an online cpu in the package which collects rapl
+>  	 * events already.
+>  	 */
+> -	target = cpumask_any_and(&rapl_cpu_mask, topology_die_cpumask(cpu));
+> +	target = cpumask_any_and(&rapl_cpu_mask, get_rapl_pmu_cpumask(cpu));
+>  	if (target < nr_cpu_ids)
+>  		return 0;
+>  
+> @@ -675,7 +709,10 @@ static const struct attribute_group *rapl_attr_update[] = {
+>  
+>  static int __init init_rapl_pmus(void)
+>  {
+> -	int nr_rapl_pmu = topology_max_packages() * topology_max_dies_per_package();
+> +	int nr_rapl_pmu = topology_max_packages();
+> +
+> +	if (!rapl_pmu_is_pkg_scope())
+> +		nr_rapl_pmu *= topology_max_dies_per_package();
+>  
+>  	rapl_pmus = kzalloc(struct_size(rapl_pmus, pmus, nr_rapl_pmu), GFP_KERNEL);
+>  	if (!rapl_pmus)
 
