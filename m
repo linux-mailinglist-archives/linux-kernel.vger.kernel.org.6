@@ -1,93 +1,97 @@
-Return-Path: <linux-kernel+bounces-272024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48F19455FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B65B19455FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 036CB1C22CED
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:30:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6B371C22C85
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAEF18B1A;
-	Fri,  2 Aug 2024 01:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FucAqN8C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AFEC156;
-	Fri,  2 Aug 2024 01:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBEA125D5;
+	Fri,  2 Aug 2024 01:30:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231D43D97A;
+	Fri,  2 Aug 2024 01:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722562232; cv=none; b=Ad8Hz7zCG6F1vkO0OjNzQKh9WJvqt2u+eR9pABU/Uvkj7fvFeXSnr5/g+ZiVkI+u7hfBA83RhfyxKOKyQ5Dm7L59n9L9wdrE047Xjt1KxULBqr7xapWwue9m+87mUf7vXpe3XujARTXxNdal3eArH6MeDNR27K85mfKaS7w4JLc=
+	t=1722562252; cv=none; b=eUuiU1PdHq0JJZTPxWpjyA5xwwFMxE0APtlZRiUF1ctHYgzHUelaKdC8LcK7UuwKJam0cZEAFSYEd0fy2A7DaUhYCGEskShQj0jHhf+VP7Tj7IJAM8fyY9RGufKT8G4tSlcQk06Mo4vc3J7cE8GJPuNk+rV2B9X+psm7Y6g89iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722562232; c=relaxed/simple;
-	bh=/NO8rLNeJv0cBnN2o+HO18XZtIgNLJjv8n2ZC5pYfOQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=OrLmJ7RGoiEFj4pWUzl7rQQp6R5VOJHXM9jQg2Kp3VAnlghDGyWaSii3JjLnmUwydMQ8heWnboelYWiYv0/CBZUA4OEHH0q5lfuxfciMHsNTOW/BlcoOmdC1uCx2emrW9KCcrzI805ToFxrJLlF8xFJFr9XQuxY86aa5IL7Ce84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FucAqN8C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7FC06C4AF11;
-	Fri,  2 Aug 2024 01:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722562231;
-	bh=/NO8rLNeJv0cBnN2o+HO18XZtIgNLJjv8n2ZC5pYfOQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FucAqN8CoGrR75yWffAuL8JgHLygUaXU6HHfFymn5+DLVdBBTj9K4DhkoR/QMt1rT
-	 t6TxFne1AqKUhECL7MDZiyNdjt0LdNt6pK9w9LcS1nsQp5f5TFU0x1NnESBqE00CcU
-	 r88Kc5BEkTGVuiyfzOy2nRfsrdlCksKHQx/TbMTHs/USI6/8UEa4nyemA3Qwcsk5Po
-	 ADiq+hMJjZHUIzJQde3YH1wdryZkAIzkO/G+38kIbW+hfCED/GRpfqcvwfRpW6M6nb
-	 CsxwHaYdUukuEGJO51EcvcEFoROzZFdfoYoh2LbhvO/dTl4dQoiM4TKJrXoLA5Syrm
-	 PnzTlTZDJxvCA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 70DF5D0C602;
-	Fri,  2 Aug 2024 01:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722562252; c=relaxed/simple;
+	bh=eSHr6TCbRl9edluYyCnfspp1ybpELwqRdYor8/z9ykc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZRNlQoEiNmNmMjkUP0Sj38siJbzEuvcvmeagklK3pYsz/Ml7b+CKWZzilVkbDOxEG9WYx27KzwgoD/RRPnQ8MaFw13dyO/FO1yYFRCISirsVyKmrdhl1M9zEasdzYvMOm4DaWq/8jWpuqvUvOQMyWg6yOUgZht+oH10pb6Ah+3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 975481007;
+	Thu,  1 Aug 2024 18:31:14 -0700 (PDT)
+Received: from [10.163.56.112] (unknown [10.163.56.112])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 877203F64C;
+	Thu,  1 Aug 2024 18:30:46 -0700 (PDT)
+Message-ID: <1781c39a-2280-49ed-aaaa-b1684744615e@arm.com>
+Date: Fri, 2 Aug 2024 07:00:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 0/2] uapi: Add support for GENMASK_U128()
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, ardb@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org
+References: <20240801071646.682731-1-anshuman.khandual@arm.com>
+ <CAAH8bW9sJmwKd19sJzpGrQ5Tr_4fYMyvLnfFyahhxxkG6r6GbA@mail.gmail.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <CAAH8bW9sJmwKd19sJzpGrQ5Tr_4fYMyvLnfFyahhxxkG6r6GbA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: phy: qca807x: Drop unnecessary and broken DT
- validation
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172256223145.32676.8205372678905951335.git-patchwork-notify@kernel.org>
-Date: Fri, 02 Aug 2024 01:30:31 +0000
-References: <20240731201703.1842022-2-robh@kernel.org>
-In-Reply-To: <20240731201703.1842022-2-robh@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 31 Jul 2024 14:17:03 -0600 you wrote:
-> The check for "leds" and "gpio-controller" both being present is never
-> true because "leds" is a node, not a property. This could be fixed
-> with a check for child node, but there's really no need for the kernel
-> to validate a DT. Just continue ignoring the LEDs if GPIOs are present.
+On 8/1/24 20:13, Yury Norov wrote:
+> On Thu, Aug 1, 2024 at 12:16 AM Anshuman Khandual
+> <anshuman.khandual@arm.com> wrote:
+>>
+>> This adds support for GENMASK_U128() and some corresponding tests as well.
+>> GENMASK_U128() generated 128 bit masks will be required later on the arm64
+>> platform for enabling FEAT_SYSREG128 and FEAT_D128 features.
+>>
+>> Because GENMAKS_U128() depends on __int128 data type being supported in the
+>> compiler, its usage needs to be protected with CONFIG_ARCH_SUPPORTS_INT128.
+>>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Yury Norov <yury.norov@gmail.com>
+>> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>> Cc: Arnd Bergmann <arnd@arndb.de>>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-arch@vger.kernel.org
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> For the patches:
 > 
-> [...]
+> Reviewed-by: Yury Norov <yury.norov@gmail.com>
 
-Here is the summary with links:
-  - [net-next] net: phy: qca807x: Drop unnecessary and broken DT validation
-    https://git.kernel.org/netdev/net-next/c/46e6acfe3501
+Thanks Yury.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> 
+> This series doesn't include a real use-case for the new macros. Do you
+> have some?
+> I can take it via my branch, but I need at least one use-case to not
+> merge dead code.
 
+I have recently posted the following patch for arm64 platform although
+most of the subsequent work is still in progress. But for now there
+are some corresponding tests for this new GENMASK_U128() ABI as well.
+Hence it will be really great to have these two patches merged first.
+Thank you.
 
+https://lore.kernel.org/all/20240801054436.612024-1-anshuman.khandual@arm.com/
 
