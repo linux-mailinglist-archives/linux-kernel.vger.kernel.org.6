@@ -1,110 +1,173 @@
-Return-Path: <linux-kernel+bounces-272135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6BD9457AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:38:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1969457AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20682862B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:38:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACB94287849
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC0C45038;
-	Fri,  2 Aug 2024 05:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED8D3D97F;
+	Fri,  2 Aug 2024 05:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="M0WrNzhn"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HyBJWRbH"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E357F1EB4AE
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 05:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849D74C61B;
+	Fri,  2 Aug 2024 05:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722577107; cv=none; b=g48jLe92E1Go5w6QjdmEIQHVQFhZzlmNDRX9MdavpLgLVDPnH5R0u5r3PEpa+S0A5eFOxBUi08H1agQJV4BcWgNIpDrM8U2tCfrDZV+7hiFP99fGeNG3owRCpDk6yF707ixYLZqIvDgucGHjXhqQ/xgCySChCIeoBF5oCg1gGv8=
+	t=1722577122; cv=none; b=WJ5E+D4XsqRVjVVkipH97+uq9i6ypameor1yLKVoFVSUAnoFEWMGoTBGDNcV+Xv8hv24Z7JFe9oHkrp8RMaVBpFkD57y+nE0kMG4FEyae0dOcJaIyjmkp5eC2Gw93s1vaKQieBemgBsUtcri8SQ/W5uNz4fSsAzL2vz78MsWE18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722577107; c=relaxed/simple;
-	bh=r+yRL5NIoWIL7MEb/c3WCpWwOnsPDmf5woeau24tuXg=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=dMXObFtrNoroNqaYqmtiFIzNlUtMQCtUCNZNdey36rVlLnCdIB5HX4zmq25xJgzAJvdunSJF2bHNmfTPP9DgLVXpMvzQHSyNuoRvFo/T6If/TWWA+zLLtpH1iTPvNBcYgVuwFUdljPW3KZygOyJOgHzwCAmSEKAjQ4Oom+M8AS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=M0WrNzhn; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-428141be2ddso51167635e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 22:38:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722577103; x=1723181903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DfeP6amEbFO01B4Acz+SaLNxYhMl+/N6xqPd9wmuVYo=;
-        b=M0WrNzhnV1SvxBVE+bBwbkZSkAFjmHarLHiCN44noWobidpnYOSIiffGqPGL69t34j
-         KHXwHoNeii3qfc2bD72ymQF4PKYhIkVlYgCYqg+9Vnx2j36/R28lWDIjVwCJxuzb0wPF
-         BmKu+ywcofygglt+L/K9pgAM9odHEIF2HioAE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722577103; x=1723181903;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DfeP6amEbFO01B4Acz+SaLNxYhMl+/N6xqPd9wmuVYo=;
-        b=EE3D/+BFF6v97CpNH2liKVjNFGXHDQ4H8cansbaCVGImn/170YqPJS4Pd76F1Z+pDy
-         xaIyGPENj3TxOaCUCaofj9AZ6mM5rjWDRtbchw11PzUST3HYBdQ22VfABLYo2Knnlfg6
-         aWqXOUV8GakOZexcVvMMjObMaRNTwJqIuYaBVLBjJJhRZT4M7iNKsCxtKTz19hI87Aji
-         jCh7VE1KMshl9zaI1ZCQf0sNVhqlH6cOC3Xyfs8CArIXf+I2wuimvFIfW6KYkRYxkFSN
-         MlCMQjBsR641mSuUmQ4OS3Dz1eKbnbSJ3YPukILEf2tPHncrSQx7+nQQzV/Yl6ByPzLQ
-         oQhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWj2qBy+LhA8rFGEdn9HTI3HtNkqRZf4UebXqAGpZ9whpnxEcou3y/qChe6cxsQZHzD3Ge8UAE/x2kLeMO2mJWMYT97RnnHZYEu+Cmg
-X-Gm-Message-State: AOJu0Yzm6TnX9f0gK4tlKS3eH7E9zGeBOpiduoqvilZlwQwGnH1CH0qJ
-	uZctMOuCNcgx5N048iEzHM+JcdR4ZHVXfSCDfbuAGW8hxi/GRtkzhn/4Aa6wHg==
-X-Google-Smtp-Source: AGHT+IEejV9gHMncaZ3o/uEqdLFU6pJXfTAhrguKl3WqsWQrl6f780k97r/VhDfVH2wQrwxF/xsUbA==
-X-Received: by 2002:a05:600c:1d20:b0:426:668f:5eca with SMTP id 5b1f17b1804b1-428e6af76f7mr14366225e9.7.1722577103013;
-        Thu, 01 Aug 2024 22:38:23 -0700 (PDT)
-Received: from [10.229.42.193] ([192.19.176.250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b89a946sm81037345e9.6.2024.08.01.22.38.21
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2024 22:38:22 -0700 (PDT)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Jacobe Zang <jacobe.zang@wesion.com>, <robh@kernel.org>, <krzk+dt@kernel.org>, <heiko@sntech.de>, <kvalo@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>, <conor+dt@kernel.org>
-CC: <efectn@protonmail.com>, <dsimic@manjaro.org>, <jagan@edgeble.ai>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, <arend@broadcom.com>, <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <megi@xff.cz>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <nick@khadas.com>
-Date: Fri, 02 Aug 2024 07:38:22 +0200
-Message-ID: <1911198a4b0.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <20240802025715.2360456-5-jacobe.zang@wesion.com>
-References: <20240802025715.2360456-1-jacobe.zang@wesion.com>
- <20240802025715.2360456-5-jacobe.zang@wesion.com>
-User-Agent: AquaMail/1.51.5 (build: 105105504)
-Subject: Re: [PATCH v7 4/5] wifi: brcmfmac: Add optional lpo clock enable support
+	s=arc-20240116; t=1722577122; c=relaxed/simple;
+	bh=tpiyqJZ1HFHzDigXKuAOzLKCNbVeUJkmfARaulC5BQA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mEHKdOizclVvQIAlGThKnQ6vmJP4nqhZl9+/W6kGK8Fl7eZPBeDBRLr9SftZ/i3RVeE208vbRcVN6IYesWgGYYq620XyQ+XGKUt+l9bKG8xM0xTgoDy0zoSctQhYJvjF6g8h6EBUYiqGGiKgiemrGZKNJohssXfPZjH1yyt5YQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HyBJWRbH; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722577118;
+	bh=tpiyqJZ1HFHzDigXKuAOzLKCNbVeUJkmfARaulC5BQA=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=HyBJWRbHhSm3ygzDfcFMJukkm9c9TL7jhx5Dtaz8K84QoMTORTkzne28zyOAuF7CW
+	 GSuFqxDum87324JKCJU9HlOt3NvJhbCwTfa/KUgcx5vlvF5mmEs76s6uqEjsipG0FT
+	 00y7QiFVyj95MsgTmx+Sqrt9s1Z+3bWo0dRqHEunj9++xt1lS7fxKrP5Gqh/O7oET3
+	 Gcc19uI7gAcVXq+33UgKIQOuS/WdIdAJChkqe3sdXAOpDXuTUaTml5GyVfoI4m/hTf
+	 yQJ2f6OSMEzMsJmdZX1KBG2lEwPewdyNWVYIBhj6RiFdTkHew4dIZGeltqX4EMC/BI
+	 yucM37qgKjOUw==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9013437821AD;
+	Fri,  2 Aug 2024 05:38:35 +0000 (UTC)
+Message-ID: <ff70e502-c3c8-4046-9447-5eff56028c9d@collabora.com>
+Date: Fri, 2 Aug 2024 10:38:30 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Aleksa Sarai <cyphar@cyphar.com>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftests: openat2: don't print total number of tests
+ and then skip
+To: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>
+References: <20240731133951.404933-1-usama.anjum@collabora.com>
+ <c1414d9d-61b1-4f92-bc8a-333679362283@linuxfoundation.org>
+ <d30aa38c-5dbd-4c18-b20f-a6eb9e9e722b@collabora.com>
+ <f560819b-3a3c-4999-ad63-422ca31e9b08@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <f560819b-3a3c-4999-ad63-422ca31e9b08@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On August 2, 2024 4:57:48 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
+On 8/1/24 9:27 PM, Shuah Khan wrote:
+> On 8/1/24 02:42, Muhammad Usama Anjum wrote:
+>> On 7/31/24 9:57 PM, Shuah Khan wrote:
+>>> On 7/31/24 07:39, Muhammad Usama Anjum wrote:
+>>>> Don't print that 88 sub-tests are going to be executed, but then skip.
+>>>> This is against TAP compliance. Instead check pre-requisites first
+>>>> before printing total number of tests.
+>>>
+>>> Does TAP clearly mention this?
+>> Yes from https://testanything.org/tap-version-13-specification.html
+>>
+>> Skipping everything
+>> This listing shows that the entire listing is a skip. No tests were run.
+>>
+>> TAP version 13
+>> 1..0 # skip because English-to-French translator isn't installed
+> 
+> I don't see how this is applicable to the current scenario. The user
+> needs to have root privilege to run the test.
+> 
+> It is important to mention how many tests could have been run.
+> As mentioned before, this information is important for users and testers.
+> 
+> I would like to see this information in the output.
+> 
+>>
+>> We can see above that we need to print 1..0 and skip without printing the
+>> total number of tests to be executed as they are going to be skipped.
+>>
+>>>
+>>>>
+>>>> Old non-tap compliant output:
+>>>>     TAP version 13
+>>>>     1..88
+>>>>     ok 2 # SKIP all tests require euid == 0
+>>>>     # Planned tests != run tests (88 != 1)>>>     # Totals: pass:0
+>>>> fail:0 xfail:0 xpass:0 skip:1 error:0
+>>>>
+>>>> New and correct output:
+>>>>     TAP version 13
+>>>>     1..0 # SKIP all tests require euid == 0
+>>>
+>>> The problem is that this new output doesn't show how many tests
+>>> are in this test suite that could be run.
+>>>
+>>> I am not use if this is better for communicating coverage information
+>>> even if meets the TAP compliance.
+>> I think the number of tests represents the number of planned tests. If we
+>> don't plan to run X number of tests, we shouldn't print it.
+> 
+> 88 tests are planned to be run except for the fact the first check
+> failed.
+> 
+> Planned tests could not be run because of user privileges. So these
+> tests are all skips because of unmet dependencies.
+Agreed.
 
-> WiFi modules often require 32kHz clock to function. Add support to
-> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
-> to the top of brcmf_of_probe. Change function prototypes from void
-> to int and add appropriate errno's for return values.
+> 
+> So the a good report would show that 88 tests could have been run. You
+> can meet the specification and still make it work for us. When we
+> adapt TAP 13 we didn't require 100% compliance.
+> 
+> There are cases where you can comply and still provide how many test
+> could be run.
+> 
+> I think you are applying the spec strictly thereby removing useful
+> information from the report.
+> 
+> Can you tell me what would fail because of this "non-compliance"?
+Some months ago, someone had reported for one of my test that it says it is
+going to execute X number of tests. But then it just skips saying it
+couldn't run X tests and final footer of tests also didn't had the correct
+number of tests in it.
 
-Sorry, but this is moving in the wrong direction. The reason for changing 
-from void to int was to propagate the error up to the bus, ie. PCIe, SDIO, 
-or USB. Anyway, I reworked this patch last night to do just that. Let me 
-send it out to you.
+> TAP version 13
+> 1..88
+This gives information that 88 tests are going to be executed.
+> ok 2 # SKIP all tests require euid == 0
+Why not ok 1 here?
+> # Planned tests != run tests (88 != 1)
+This gives a error occured signal instead of telling us that preconditions
+failed.
+> # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:1 error:0
+The tests exit with KSFT_FAIL instead of KSFT_SKIP. This was the biggest
+concern from the report.
 
-Regards,
-Arend
+> 
+> thanks,
+> -- Shuah
+> 
+> 
+> 
+> 
+> 
 
-> Co-developed-by: Ondrej Jirman <megi@xff.cz>
-> Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
-> Change-Id: I21bf9e21b275452369dce1f50c2f092eded6376c
-> ---
-> .../wireless/broadcom/brcm80211/brcmfmac/of.c | 49 +++++++++++--------
-> .../wireless/broadcom/brcm80211/brcmfmac/of.h |  4 +-
-> 2 files changed, 31 insertions(+), 22 deletions(-)
-
-
+-- 
+BR,
+Muhammad Usama Anjum
 
