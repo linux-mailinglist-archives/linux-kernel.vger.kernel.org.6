@@ -1,119 +1,95 @@
-Return-Path: <linux-kernel+bounces-272576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F25945E37
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:59:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C55945E3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3C65B23975
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:59:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956151C22B73
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CF61E3CCB;
-	Fri,  2 Aug 2024 12:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918701E484F;
+	Fri,  2 Aug 2024 13:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NcHKNbKY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KSKoFnkx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Uiq+V2F6"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3651DB449;
-	Fri,  2 Aug 2024 12:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48751DF66E;
+	Fri,  2 Aug 2024 13:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722603562; cv=none; b=W7dbhxJnVP5UTflDrgAA2qXV/47yp7f2857qChpqooUTkeda5ZIBNZ7lVrH1h7FymjmdeFk8HjwJ1Hl35aHWe0akE/W5CfVzIoF7VuC09vXxlr9i7qKylYjrerslGIijPTzN0pxA9kWp5YzVnzFm5mwAFIBFEX6uGn0e4QlQLG4=
+	t=1722603672; cv=none; b=JLla2Yh+Jle67MVNJR3Agpd5fuVYOz8KmV4FxYklosWPeOmvw7g2laiukRFa8LNcZ2ZJtQzBLOJrcMs3JeSJfwl9srHmbKUtIzji4/+VR8h49h1dC/lr0kaTsdxXlaa0+ycbNcbazR5Ne/HyufZyIE0KDyBgHH29T5Mn1zeNT6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722603562; c=relaxed/simple;
-	bh=8AeZ7fFeOvcsQTQtRT8VLN+5n6mQD9f7VRwnkn/Q5zg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ix9nov9/8Fu6KglcYLHASWm9Nh+DsXKLEiHG9o8EzVwUbMUMDBU8Pntqg082lhYgYks5ehzAvkPzQ7sT3QwHnXJf+c26DUy6UGDrcvnHvdalPN9EBsJCf/sbKlvGIiz7U83K+V8haZevF2H6Oie+xBiVRXIkIxPy2mFOURYL96E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NcHKNbKY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KSKoFnkx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 02 Aug 2024 12:59:18 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722603558;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DI9Cx61e0POTGtDcFjtJKpbkQDzMatKldKJdqsywcsI=;
-	b=NcHKNbKYYF5rgfgWVZ2YrC90svlgeKTHPb/3nyWKayKev4+ZLbs9yz5r+Cu1Pttbkzx1/G
-	Xcxfca78nr9xuTC1niRrAmOO8hpDQz5866Nncj1+HMemCUg2K1xMrPzs/sdqgeXLVHpzMV
-	Exiw3h8Iy7qXSSjpplCHGs0jX8u4DII7NiGGoXJc7fI/RFyAmVXxfEhNHd7g831PVleA0M
-	q4bwfNwrtkvhjUbZ/xNE19l3FW3OM2NV1v7/5tfs3nI3L6NAkc7t8xuIEmhHj4mu5fuuML
-	PTx6lLdxJvxQrAEL8Tz64+l8bOPT80d8fOR2Zo0quN2kr8qzFWtUIT47pyeV+A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722603558;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DI9Cx61e0POTGtDcFjtJKpbkQDzMatKldKJdqsywcsI=;
-	b=KSKoFnkxdVmKHG/t6PkGz00XeiEyV8PHx05LQCmniFVUmjzUY2w+j2kdgQk9KEhGra3k5R
-	KuCPBExIUa4mt0DA==
-From: "tip-bot2 for Anshuman Khandual" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqchip/gic-v4.1: Replace bare number with
- ID_AA64PFR0_EL1_GIC_V4P1
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, Zenghui Yu <yuzenghui@huawei.com>,
- Marc Zyngier <maz@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240802085601.1824057-1-anshuman.khandual@arm.com>
-References: <20240802085601.1824057-1-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1722603672; c=relaxed/simple;
+	bh=m6iSvV9AmND1hcZN2f+bPfnP14wQvEKYq43atXqwy38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bImQkCBxiuVtuXgWgr0dXhtHB5WzmL3YvhY/NCbDoWC0YsvKqVJdyM+5Nl9gYY4Zynf8an8YMXtDH/a7m6ZQkGQ+7PIxOp4RerWJNEC59TAzfc9SAlfILeIrOL/Z1flG2hUMHdA6cvKHLz8pPhiDEaVFjpEFUDxAoRo79bzZ/RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Uiq+V2F6; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PgzsDZJO5TJV6XeYvtT0REpDP+vDzAbSZioJj7fuDso=; b=Uiq+V2F6DvyppVyFElBewaa6tq
+	oM6FI+xzIQWnl0MAXWwQIS4E9K43B50mnRNARXyuSAZA+EHyV6Jhj7vEAvkoevTrOfAy8TK8piEf4
+	lwivZz7syNh9spjMfvjSzfIqne92wlJ+7LeRFUUxJboWMdu0OuHG58XjjWxnV9wTdMxtrpiCI+Viw
+	D7T4Eh5LnMyHYD2PvuQcVPWI9Qh6JsH39H0SDq0yJRYjtGUANqYohEggSHyu3kZ4nlzJxCVC9ljTU
+	LNPQ5jN2m1DlMr/Ce/4aNLlSz9PtUIeksTnRk/OknmtpxWaJaP8T2TDrnGODqeVz0ZbMcJxAl3S8H
+	aNpO3pUQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38078)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sZrty-0006l2-26;
+	Fri, 02 Aug 2024 14:00:58 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sZru1-00083F-Ib; Fri, 02 Aug 2024 14:01:01 +0100
+Date: Fri, 2 Aug 2024 14:01:01 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 5/6] net: dsa: vsc73xx: allow phy resetting
+Message-ID: <ZqzYjfCfpaLqOy+r@shell.armlinux.org.uk>
+References: <20240802080403.739509-1-paweldembicki@gmail.com>
+ <20240802080403.739509-6-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172260355813.2215.3564057730782452257.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802080403.739509-6-paweldembicki@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The following commit has been merged into the irq/core branch of tip:
+On Fri, Aug 02, 2024 at 10:04:02AM +0200, Pawel Dembicki wrote:
+> Now, phy reset isn't a problem for vsc73xx switches.
+> 'soft_reset' can be done normally.
+> 
+> This commit removes the reset blockade in the 'vsc73xx_phy_write'
+> function.
 
-Commit-ID:     bb4531976523c6e394188c4f4a7eeaf5e9efdd48
-Gitweb:        https://git.kernel.org/tip/bb4531976523c6e394188c4f4a7eeaf5e9efdd48
-Author:        Anshuman Khandual <anshuman.khandual@arm.com>
-AuthorDate:    Fri, 02 Aug 2024 14:26:01 +05:30
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 02 Aug 2024 14:54:25 +02:00
+This commit message needs to explain more clearly why a soft reset is no
+longer a problem. For example, which patch in this series makes it now
+safe to do?
 
-irqchip/gic-v4.1: Replace bare number with ID_AA64PFR0_EL1_GIC_V4P1
-
-Use ID_AA64PFR0_EL1_GIC_V4P1 instead of '3' in gic_cpuif_has_vsgi() to
-check for the GIC version.
-
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/all/20240802085601.1824057-1-anshuman.khandual@arm.com
----
- drivers/irqchip/irq-gic-v4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-gic-v4.c b/drivers/irqchip/irq-gic-v4.c
-index ca32ac1..58c2889 100644
---- a/drivers/irqchip/irq-gic-v4.c
-+++ b/drivers/irqchip/irq-gic-v4.c
-@@ -97,7 +97,7 @@ bool gic_cpuif_has_vsgi(void)
- 
- 	fld = cpuid_feature_extract_unsigned_field(reg, ID_AA64PFR0_EL1_GIC_SHIFT);
- 
--	return fld >= 0x3;
-+	return fld >= ID_AA64PFR0_EL1_GIC_V4P1;
- }
- #else
- bool gic_cpuif_has_vsgi(void)
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
