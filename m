@@ -1,145 +1,199 @@
-Return-Path: <linux-kernel+bounces-272894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BC6946263
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:24:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1A7946264
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C3881F21F3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:24:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A520B21DF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CE015C143;
-	Fri,  2 Aug 2024 17:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NvaGzkys"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F661537A0;
-	Fri,  2 Aug 2024 17:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8888F15C12C;
+	Fri,  2 Aug 2024 17:24:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FB21537A0
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619450; cv=none; b=TA7DlaeOy2zHmtJOBmuefSenD9P37r2JwJ5zWh01erAifXo+uWASfCdV6y+xFb+M/tAT57+vEIRVt/6AAu6/8mSqMZevp3i+DTmytPzFdKeeKwoi3Pbo9Qj9A93dCOa3ABKWruo0MrBgnKvw2MPa12vTVnDSZVDd+Pmh5Ldq9CY=
+	t=1722619458; cv=none; b=qQX4Ge2391lCy214wfB9G2n/xDF03EofkMbiMvZBgQYfr0e/vpqfSBmYXrWjD0gRixI56yYR3qhucfhV/CIWyn/9b6HHDnvcYsogjE/PMNa05hc5cQfTprRe+QN4Ird/xiHZLQYXoz7XTg6AIPFYxwHbdN1u3Q4oyNxC1z6n4Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619450; c=relaxed/simple;
-	bh=WFAHa2ete4Xb+JbywsGV+pLk9gCOl+vYhLmCllbETPw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uRMSxlC+UBENbYmTNjSFv2V4jOPB7SmXCrPRNylip1LQQXAnQDwU6iHbtjcrNC4hwbhulAQbTWlBnwOCweFmrI4OxDWSnzmwb8VG3UDH3OLDvtWwsSj1bgYC243HaSWxh6nKZMECFIb7ZLIMdYPdfGUNRRPHokzkUsZOCoT/UZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NvaGzkys; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722619446; x=1722878646;
-	bh=KYJ880DzvybbissblwMCNzUlLxxe1Ktl0TOAACRRXAQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=NvaGzkysirXcjizn6Jo4e4bFXgCgbyugGW/9RojsJdsReD3ddkqxDsLLila/aLRf6
-	 zAbt4EB/1Gu795L1QQ/3CavkmtMHt7uIFQq8t2ItVC3iOl9fwTeC1AthRSX4z+8iNe
-	 oTr8wCRurge3wMmBL2CzZSMR6HFHR48iZ/RMDQcD0zhPEJL/htJer4r63YJ548B1tb
-	 J6FK0Z9l/PtQc892UbtZkC+5Plst5EtSJMIYvNubk7qKCDAz8J/AnUw2YqS/s397gC
-	 G+gnJ0EzhLYfOWcLjc7ypKcE9FOL5T0G59OgxWS4zTsdbw3CdY61bx6jAIVXRefpsV
-	 feUbG72Eojoow==
-Date: Fri, 02 Aug 2024 17:23:59 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor Dooley <conor.dooley@microchip.com>,
-	Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, Carlos Llamas <cmllamas@google.com>
-Subject: Re: [PATCH v5 2/2] rust: add tracepoint support
-Message-ID: <a381ef22-96f4-4a72-8e3a-cc023dee111a@proton.me>
-In-Reply-To: <20240802-tracepoint-v5-2-faa164494dcb@google.com>
-References: <20240802-tracepoint-v5-0-faa164494dcb@google.com> <20240802-tracepoint-v5-2-faa164494dcb@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: d47c8e3b3391333c5a5926396deb7ee3ad135f33
+	s=arc-20240116; t=1722619458; c=relaxed/simple;
+	bh=H8txR3jjbUbidD/le7pIChXcbihmrAugfmXCT0nv9dM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ioSpMJ4nyWzclSWpMrgYzTXbNSAoIlQLFy+ZfqlWnB8fNcbXjFIj3UvpyKXw5RIhIVpkpKIzRCVGOx7DSvQbNqVR1dwnVZhIMxt7nOKNgK53qpZ2qFxhrIsHvjCUrsDSPtTDl2xZc5kvKKqDo4q49ih/NH9xYwPqlTQFurDxJlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0708EDA7;
+	Fri,  2 Aug 2024 10:24:41 -0700 (PDT)
+Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7ED83F64C;
+	Fri,  2 Aug 2024 10:24:11 -0700 (PDT)
+Message-ID: <8c3dd90d-475d-47e9-8691-a447d8042596@arm.com>
+Date: Fri, 2 Aug 2024 18:24:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/38] x86/resctrl: Add a schema format enum and use
+ this for fflags
+Content-Language: en-GB
+To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>
+References: <20240614150033.10454-1-james.morse@arm.com>
+ <20240614150033.10454-4-james.morse@arm.com>
+ <62581526-2dfa-44a5-a0bb-8582932b9943@intel.com>
+ <d8e30c4f-04ef-4ed0-9d06-7f735c1c5e90@arm.com>
+ <c79a1aae-6ab7-48d2-93fb-7b78198b5954@intel.com>
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <c79a1aae-6ab7-48d2-93fb-7b78198b5954@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 02.08.24 11:31, Alice Ryhl wrote:
-> diff --git a/rust/kernel/tracepoint.rs b/rust/kernel/tracepoint.rs
-> new file mode 100644
-> index 000000000000..69dafdb8bfe8
-> --- /dev/null
-> +++ b/rust/kernel/tracepoint.rs
-> @@ -0,0 +1,49 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2024 Google LLC.
-> +
-> +//! Logic for tracepoints.
-> +
-> +/// Declare the Rust entry point for a tracepoint.
-> +///
-> +/// This macro generates an unsafe function that calls into C, and its s=
-afety requirements will be
-> +/// whatever the relevant C code requires. To document these safety requ=
-irements, you may add
-> +/// doc-comments when invoking the macro.
+Hi Reinette,
 
-I think we should mandate safety documentation for the function.
+On 01/07/2024 22:09, Reinette Chatre wrote:
+> On 7/1/24 11:17 AM, James Morse wrote:
+>> On 28/06/2024 17:43, Reinette Chatre wrote:
+>>> On 6/14/24 7:59 AM, James Morse wrote:
+>>>> resctrl has three types of control, these emerge from the way the
+>>>> architecture initialises a number of properties in struct rdt_resource.
+>>>>
+>>>> A group of these properties need to be set the same on all architectures,
+>>>> it would be better to specify the format the schema entry should use, and
+>>>> allow resctrl to generate all the other properties it needs. This avoids
+>>>> architectures having divergant behaviour here.
+>>>
+>>> divergant -> divergent ?
+>>>
+>>>>
+>>>> Add a schema format enum, and as a first use, replace the fflags member
+>>>> of struct rdt_resource.
+>>>>
+>>>> The MBA schema has a different format between AMD and Intel systems.
+>>>> The schema_fmt property is changed by __rdt_get_mem_config_amd() to
+>>>> enable the MBPS format.
+>>
+>>>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>>>> b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>>>> index e3edc41882dc..b12307d465bc 100644
+>>>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>>>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+>>>> @@ -2162,6 +2162,19 @@ static int rdtgroup_mkdir_info_resdir(void *priv, char *name,
+>>>>        return ret;
+>>>>    }
+>>>>    +static u32 fflags_from_resource(struct rdt_resource *r)
+>>>> +{
+>>>> +    switch (r->schema_fmt) {
+>>>> +    case RESCTRL_SCHEMA_BITMAP:
+>>>> +        return RFTYPE_RES_CACHE;
+>>>> +    case RESCTRL_SCHEMA_PERCENTAGE:
+>>>> +    case RESCTRL_SCHEMA_MBPS:
+>>>> +        return RFTYPE_RES_MB;
+>>>> +    }
+>>>> +
+>>>> +    return WARN_ON_ONCE(1);
+>>>> +}
+>>>> +
+>>>
+>>> The fflags returned specifies which files will be associated with the resource
+>>> in the "info" directory. Basing this on a property of the schema does not look
+>>> right to me. I understand that many of the info files relate to, for example,
+>>> information related to the bitmap used by the cache,
+>>
+>> Do we agree that some of them are?
+>>
+>> One reason for doing this is it decouples the parsing and management of bitmaps from "this
+>> is the L3 cache", which will make it much easier to support bitmaps on some other kind of
+>> resource.
 
-> +#[macro_export]
-> +macro_rules! declare_trace {
-> +    ($($(#[$attr:meta])* $pub:vis fn $name:ident($($argname:ident : $arg=
-typ:ty),* $(,)?);)*) =3D> {$(
+> The way I see it is that it changes the meaning of the RFTYPE_RES_CACHE flag from "this is a
+> file related to the cache resource" to "this is a file containing a bitmap property".
+> It prevents us from easily adding a file related to the cache resource, which
+> the info directory is intended to contain.
 
-Can you add an `unsafe` in front of `fn`, since this macro generates an
-`unsafe` function? Otherwise I don't see how the SAFETY comment below is
-correct.
+I struggled to find something that is a property of a "cache control", but is neither a
+property of the control (e.g. bitmap size) or the cache. I guess the 'bit_usage' stuff is
+the best example.
 
----
-Cheers,
-Benno
+Maybe we end up with two sets of flags - this will be for the distant future. Currently I
+taking your 'base fflags on resource id'.
 
-> +        $( #[$attr] )*
-> +        #[inline(always)]
-> +        $pub unsafe fn $name($($argname : $argtyp),*) {
-> +            #[cfg(CONFIG_TRACEPOINTS)]
-> +            {
-> +                // SAFETY: It's always okay to query the static key for =
-a tracepoint.
-> +                let should_trace =3D unsafe {
-> +                    $crate::macros::paste! {
-> +                        $crate::static_key::static_key_false!(
-> +                            $crate::bindings::[< __tracepoint_ $name >],
-> +                            $crate::bindings::tracepoint,
-> +                            key
-> +                        )
-> +                    }
-> +                };
-> +
-> +                if should_trace {
-> +                    $crate::macros::paste! {
-> +                        // SAFETY: The caller guarantees that it is okay=
- to call this tracepoint.
-> +                        unsafe { $crate::bindings::[< rust_do_trace_ $na=
-me >]($($argname),*) };
-> +                    }
-> +                }
-> +            }
-> +
-> +            #[cfg(not(CONFIG_TRACEPOINTS))]
-> +            {
-> +                // If tracepoints are disabled, insert a trivial use of =
-each argument
-> +                // to avoid unused argument warnings.
-> +                $( let _unused =3D $argname; )*
-> +            }
-> +        }
-> +    )*}
-> +}
-> +
-> +pub use declare_trace;
->=20
-> --
-> 2.46.0.rc2.264.g509ed76dc8-goog
->=20
 
+>> Ultimately I'd like to expose these to user-space, so that user-space can work out how to
+>> configure resources it doesn't recognise. Today '100' could be a percentage, a bitmap, or
+>> a value in MB/s. Today some knowledge of the control type is needed to work this out.
+>>
+>>
+>>> but that is not the same for
+>>> info files related to the MBA resource (all info files related to MBA resource
+>>> are not about the schema property format).
+>>
+>> Hmmm, because the files min_bandwidth and bandwidth_gran both have bandwidth in their name?
+>>
+>> I agree 'delay_linear' and 'thread_throttle_mode' are a bit strange.
+> 
+> Right. This is not a clean association.
+> 
+>>
+>>
+>>> I do not think the type of values of a schema should dictate which files
+>>> appear in the info directory.
+>>
+>> Longer term I think this will be a problem. We probably only have 3 types of control:
+>> percentage, bitmap and MB/s... but if each resource on each architecture adds files here
+>> the list will quickly grow. User-space won't be able to work out how to configure a
+>> resource type it hadn't seen before.
+> 
+> That is fair. This makes the type of control a property of the resource as is done in this
+> series. Perhaps this can be exposed to user space via the info directory?
+
+Yes, that is something I intend to look at. I eventually need to get MPAM's "cache
+capacity" controls working as there are a number of hardware platforms that have it. This
+would probably be a percentage control for 'L2' or 'L3', exposing an "info/schema_format"
+file makes the most sense. I can't convert the existing bitmap as it implies isolation,
+which this control format can't do, so it does need to be separate.
+But! - to prevent confusing existing software, I don't think the L2/L3 should be touched -
+those will forever have to be implicitly a bitmap, so anything in this area would have to
+be an additional schema.
+
+
+> Possibly the files related to control can have new flags that that reflect the control type
+> instead of the resource. For example, "bit_usage" currently has
+> "RFTYPE_CTRL_INFO | RFTYPE_RES_CACHE" and that could be (for lack of better
+> term) "RFTYPE_CTRL_INFO | RFTYPE_CTRL_BITMAP" to disconnect the control type from the
+> resource. Doing so may then map nicely to the fflags_from_resource() in this patch that
+> connects the schema format to the _control_ type flag. As we have found there is not
+> a clear mapping between the control type and the resource type so I expect RFTYPE_RES_CACHE
+> and RFTYPE_RES_MB to remain and be associated with files that contain information
+> specific to that resource. This enables future additions of files containing cache specific
+> (non-bitmap) properties to still be added (with RFTYPE_RES_CACHE flag) without impacting
+> everything that uses a bitmap.
+> 
+> What do you think?
+
+Makes sense!
+
+
+Thanks,
+
+James
 
