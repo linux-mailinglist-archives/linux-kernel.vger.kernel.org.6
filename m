@@ -1,160 +1,163 @@
-Return-Path: <linux-kernel+bounces-273042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE819463EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B73AE9463F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53381C2168C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA2BF1C2180D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448FA41C71;
-	Fri,  2 Aug 2024 19:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E8C49647;
+	Fri,  2 Aug 2024 19:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TFYfBTH/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vReEFtMb"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B81A1ABED4
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E68025632
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722627073; cv=none; b=DGWLzLEixbaziOWwjEbiMn9zHD270DDzeLRv3Ws/M7JGat48b542wNhseAaYYG3n/kgoMkH458yzudXEMYMKYj54XjFiN1erhG9JEaROmdKTqd6fRtVjfjFvq+h5lAZ6DdUCLjkPHrVJCysVvs2yCXKjVbbSpTVBzDdFNv5QWPQ=
+	t=1722627132; cv=none; b=GqvV02MQVk0C6Y+Qmg4kIqgLaONcR3LJQygwK4QeunD6ef1zctHp+qXHKmsEtXlRuFFlozzeixQhdHaE6v4t/UbrCmoz65ybN7DOyX4aRnk/YMiLTBWgWYoBikLsyueVbvP8xtFBc/+qrkVzGGrS53yZ9kxxUkeVcO+SMxQhyFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722627073; c=relaxed/simple;
-	bh=aXWIEmfqM1zomJZ8ZlmZ/PaBc+fZQ9lCcB76/qCTB14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ai756ohUKadQ0TICBoV0asRd8MdquW8kwrKJDw1plcFm7QwQ5be+F0MIn7F1bW4qH6A3d1ouGgduut/Yy6xdQMrcj1c5Mf1c6M91K+KEDs5Pd02HNHoudTyajCGn+5IAwDFkJPZ98rI2K+68CE4o5JhIQ5Ql/hcEJlbeQQqHomA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TFYfBTH/; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722627071; x=1754163071;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=aXWIEmfqM1zomJZ8ZlmZ/PaBc+fZQ9lCcB76/qCTB14=;
-  b=TFYfBTH/e9szRgQ6SiBEylPO1v1LpUA7OhnajcDgxKuoGCJfg2R1XRcb
-   93hZSagoZSsVtJaeSwucO0raN30aXwRSL/Md/EoLaHKtDV7mT+3vtYiAr
-   SMB0kptt5z5rcwivGy0JFacZ164Rd+t94b6KpKUtmaPc9UoalfAeaY2uG
-   1z2ZwohsZ4FrWP2Oz+nfe4PTE7ERIfqpMJ81k814Hoy0USdVBdh+jJInl
-   /8C7J6SBn5h2MqBwTkpIMoCZuxBlPl59R5dA7bTfr2c6YHoNkTboIRxTI
-   7bG18VT3XIgqjinxUoaGeoppOv9NCPmzvIJP6Zvl+PXYPovPQfcXcZ3Dg
-   A==;
-X-CSE-ConnectionGUID: C/WEFM/vTcOJQCJBSTLeSw==
-X-CSE-MsgGUID: qGE6NpBCTNuRxz7Du6+VKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20240834"
-X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
-   d="scan'208";a="20240834"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 12:31:11 -0700
-X-CSE-ConnectionGUID: QYv1rEqqQ2yd3kiKViN39w==
-X-CSE-MsgGUID: NWrp7pzIT02WNb0n1i/lLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
-   d="scan'208";a="59851781"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 12:31:11 -0700
-Received: from [10.212.17.69] (kliang2-mobl1.ccr.corp.intel.com [10.212.17.69])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 115EA20B5782;
-	Fri,  2 Aug 2024 12:31:08 -0700 (PDT)
-Message-ID: <1fc7dc5f-c3fa-4993-b46d-8261a6e4b79d@linux.intel.com>
-Date: Fri, 2 Aug 2024 15:31:07 -0400
+	s=arc-20240116; t=1722627132; c=relaxed/simple;
+	bh=csd0MkbfiRZ32mkpXZ9twM9kRQL1vy8OM+kdMsU6aRQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mnZ9xlt2R4S1TVr+XKEb6wTe7/vSmkniaxRdxoxCJADk1B4WjUgmWbOF/8gY5H2B5/41Afau7ur1Anh6EyXqQmUbRVAEZWcQk0oKjlNSIx5oaK/ez+5G92MXryJd11tLllj98IvGBsUesuQLECTm9wvPn/LzGKf/cJ0DKycfRDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vReEFtMb; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2cb4e6725ccso10529878a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 12:32:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722627130; x=1723231930; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TTqa7oavJrWkxSTFWtVmMnGsBDrmN4Dgl5PSeoZtRS0=;
+        b=vReEFtMb8CAFhD48LXhHNrq42SN4FMUwrKuHu78nDaMkuGiLYNH1S3ueug3tXdbDSD
+         q5/zS/NxBlhvweltAffWXpLjFA5ySn6JAucM8gptfp+77wlNo33nuMzRmAFXoqKiFujy
+         6mwzUX4RAO5+z24IWxRWuO3kF1fGqaF59au7q9oQbBS2XmJxRikAZTTvt4I04CpjPrSa
+         S6fxMg8+gTW+e1qpQ46Y2+B23wGX7N6vDh2eewOPELlk5rV7qX1tHxZoJ3XqWw11R+jx
+         Luz+GmqHYSNzPr/kjcU1hIY9WUn9VQat5QdbLPsFxWpAIPbZ39r2dQTyic6l7T55ERUj
+         ejwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722627130; x=1723231930;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TTqa7oavJrWkxSTFWtVmMnGsBDrmN4Dgl5PSeoZtRS0=;
+        b=M6dhRanRN9H0LdBFFM2Z2PL8tvlx29YKPyh4JimpmaYRCQri2QYb0jHdDVtsluIu1x
+         +sg48r0N36v3SPoeQuUdpsqbG8WEuLdY5TIVXvs6Qhq1u5oBU0cIRfx/niZlDNIJBzfv
+         AUmoVLZdlO1383/ExFBNxJ8aLBjT8XW7kpThq6j6AYMXUYuo4QQj8GBBFJG5jrbiJqF4
+         y3sia0K3hdYDDZ3/OsGDDo0iE9GIP46J31wVWOXlJonz/h8hrTyLqp7uXwtTEkx/awBp
+         VjWRNZTRyxP8ilDJS1E+1HqPtNOW4kjBGrbKB/sT2VEojh5d1+MY+FeqaT+kvfQpQYjD
+         96lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiThPgIhg8aMe0HdAz1ypTy7TMyZDnQWrY/iPb7mQf6e2yD3g/7TAecMA41f4XkjOBV4K6HcNGLLH0foQ10SgmZ7NiydF1Wlfx+6Vk
+X-Gm-Message-State: AOJu0Yz0TAqu+i65FsQimr7+87pkj1Rxwi6VXx7zoc1WfBhvBV3VV8VD
+	7DS3Kxy8GZKLJTRWv1lTKIu1W1/8Ic3s8G49CmKUKNqkJ2pyz9+LhXTNNKiazhZVHeahTVtguww
+	Prg==
+X-Google-Smtp-Source: AGHT+IHxpD4UvI3cH5YcMAfSn5X/q5FbzhvcZwiTnoiXfWEKupcq/mKgFqqrl+E4nqq+ftOi/sOAAYuzYXs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90b:50cf:b0:2c9:61f9:9b27 with SMTP id
+ 98e67ed59e1d1-2cff9526286mr68117a91.5.1722627130434; Fri, 02 Aug 2024
+ 12:32:10 -0700 (PDT)
+Date: Fri, 2 Aug 2024 12:32:09 -0700
+In-Reply-To: <a039b758-d4e3-3798-806f-25bceb2f33a5@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf/core: Optimize event reschedule for a PMU
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Stephane Eranian <eranian@google.com>, Ian Rogers <irogers@google.com>,
- Mingwei Zhang <mizhang@google.com>
-References: <20240731000607.543783-1-namhyung@kernel.org>
- <476e7cea-f987-432a-995b-f7d52a123c9d@linux.intel.com>
- <20240802183841.GG37996@noisy.programming.kicks-ass.net>
- <20240802184350.GA12673@noisy.programming.kicks-ass.net>
- <20240802185023.GB12673@noisy.programming.kicks-ass.net>
- <20240802191123.GC12673@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240802191123.GC12673@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-65-seanjc@google.com>
+ <a039b758-d4e3-3798-806f-25bceb2f33a5@loongson.cn>
+Message-ID: <Zq00OYowF5kc9QFE@google.com>
+Subject: Re: [PATCH v12 64/84] KVM: LoongArch: Mark "struct page" pfns dirty
+ only in "slow" page fault path
+From: Sean Christopherson <seanjc@google.com>
+To: maobibo <maobibo@loongson.cn>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 02, 2024, maobibo wrote:
+> On 2024/7/27 =E4=B8=8A=E5=8D=887:52, Sean Christopherson wrote:
+> > Mark pages/folios dirty only the slow page fault path, i.e. only when
+> > mmu_lock is held and the operation is mmu_notifier-protected, as markin=
+g a
+> > page/folio dirty after it has been written back can make some filesyste=
+ms
+> > unhappy (backing KVM guests will such filesystem files is uncommon, and
+> > the race is minuscule, hence the lack of complaints).
+> >=20
+> > See the link below for details.
+> >=20
+> > Link: https://lore.kernel.org/all/cover.1683044162.git.lstoakes@gmail.c=
+om
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >   arch/loongarch/kvm/mmu.c | 18 ++++++++++--------
+> >   1 file changed, 10 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+> > index 2634a9e8d82c..364dd35e0557 100644
+> > --- a/arch/loongarch/kvm/mmu.c
+> > +++ b/arch/loongarch/kvm/mmu.c
+> > @@ -608,13 +608,13 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcp=
+u, unsigned long gpa, bool writ
+> >   		if (kvm_pte_young(changed))
+> >   			kvm_set_pfn_accessed(pfn);
+> > -		if (kvm_pte_dirty(changed)) {
+> > -			mark_page_dirty(kvm, gfn);
+> > -			kvm_set_pfn_dirty(pfn);
+> > -		}
+> >   		if (page)
+> >   			put_page(page);
+> >   	}
+> > +
+> > +	if (kvm_pte_dirty(changed))
+> > +		mark_page_dirty(kvm, gfn);
+> > +
+> >   	return ret;
+> >   out:
+> >   	spin_unlock(&kvm->mmu_lock);
+> > @@ -915,12 +915,14 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, un=
+signed long gpa, bool write)
+> >   	else
+> >   		++kvm->stat.pages;
+> >   	kvm_set_pte(ptep, new_pte);
+> > -	spin_unlock(&kvm->mmu_lock);
+> > -	if (prot_bits & _PAGE_DIRTY) {
+> > -		mark_page_dirty_in_slot(kvm, memslot, gfn);
+> > +	if (writeable)
+> Is it better to use write or (prot_bits & _PAGE_DIRTY) here?  writable is
+> pte permission from function hva_to_pfn_slow(), write is fault action.
 
+Marking folios dirty in the slow/full path basically necessitates marking t=
+he
+folio dirty if KVM creates a writable SPTE, as KVM won't mark the folio dir=
+ty
+if/when _PAGE_DIRTY is set.
 
-On 2024-08-02 3:11 p.m., Peter Zijlstra wrote:
-> On Fri, Aug 02, 2024 at 08:50:23PM +0200, Peter Zijlstra wrote:
->> On Fri, Aug 02, 2024 at 08:43:50PM +0200, Peter Zijlstra wrote:
->>> On Fri, Aug 02, 2024 at 08:38:41PM +0200, Peter Zijlstra wrote:
->>>> On Fri, Aug 02, 2024 at 02:30:19PM -0400, Liang, Kan wrote:
->>>>>> @@ -2792,7 +2833,14 @@ static int  __perf_install_in_context(void *info)
->>>>>>  	if (reprogram) {
->>>>>>  		ctx_sched_out(ctx, EVENT_TIME);
->>>
->>> Clearly I should read better...
->>>
->>>>>>  		add_event_to_ctx(event, ctx);
->>>>>> -		ctx_resched(cpuctx, task_ctx, get_event_type(event));
->>>>>> +		if (ctx->nr_events == 1) {
->>>>>> +			/* The first event needs to set ctx->is_active. */
->>>>>> +			ctx_resched(cpuctx, task_ctx, NULL, get_event_type(event));
->>>>>> +		} else {
->>>>>> +			ctx_resched(cpuctx, task_ctx, event->pmu_ctx->pmu,
->>>>>> +				    get_event_type(event));
->>>>>> +			ctx_sched_in(ctx, EVENT_TIME);
->>>>>
->>>>> The changelog doesn't mention the time difference much. As my
->>>>> understanding, the time is shared among PMUs in the same ctx.
->>>>> When perf does ctx_resched(), the time is deducted.
->>>>> There is no problem to stop and restart the global time when perf
->>>>> re-schedule all PMUs.
->>>>> But if only one PMU is re-scheduled while others are still running, it
->>>>> may be a problem to stop and restart the global time. Other PMUs will be
->>>>> impacted.
->>>
->>> So yeah, this stops ctx time but not all PMUs.
->>
->> But isn't this already the case? We don't have perf_ctx_disable() here
->> currently. 
->>
->> Bah, this heat is melting my brain.
-> 
-> I think all it wants is to update time and ensure the added event and
-> the resched all use the same time, which could be done differently.
->
-
-Yes. I think that's what the current code tries to do.
-But it seems the current code doesn't do it clearly either.
-
-ctx_sched_out(ctx, EVENT_TIME); <-- disable the time
-ctx_resched()
-    perf_ctx_disable()          <-- disable all PMUs
-
-    perf_event_sched_in()
-        ctx_sched_in()          <-- enable the time
-    perf_ctx_enable()           <-- enable all PMUs
-
-I think the ctx_sched_out(ctx, EVENT_TIME) should be moved after the
-perf_ctx_disable();.
-Hope it can be fixed by the different way.
-
-> But I'll have to continue staring at this later.
-
-Sure.
-
-Thanks,
-Kan
+Practically speaking, I'm 99.9% certain it doesn't matter.  The folio is ma=
+rked
+dirty by core MM when the folio is made writable, and cleaning the folio tr=
+iggers
+an mmu_notifier invalidation.  I.e. if the page is mapped writable in KVM's
+stage-2 PTEs, then its folio has already been marked dirty.
 
