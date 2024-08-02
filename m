@@ -1,160 +1,168 @@
-Return-Path: <linux-kernel+bounces-272616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6686C945EF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9AF945EF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FF6A282C7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D842F282410
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4781E4858;
-	Fri,  2 Aug 2024 13:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828251E2873;
+	Fri,  2 Aug 2024 13:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=zabbadoz.net header.i=@zabbadoz.net header.b="EUHccVw+"
-Received: from mx-01.divo.sbone.de (legacy1.sbone.de [80.151.10.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b+bUI3Yo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5D91C2322;
-	Fri,  2 Aug 2024 13:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.151.10.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CB71C2322
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 13:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722607057; cv=none; b=aI3L+ey84RDqjNvJqGyl43tAfVOtX8wK2Ak8G/+gDPIUjW0mYL+bX8CQDT41j/ZVsmODFCwhvgmHpEQUai0W9h0WtHaoJJn0PK8CFUW4nYm4Wm4rTsmZu0NmfwjqjqxG6pmkb27rsEuhVZI20B+4ETof11EssK1zVBjHgoE52SU=
+	t=1722607117; cv=none; b=p73dGbmPuB2QHFwxP7s9xYU/jEx/KykibwjerQKGRk6CHCXnOmL/fqtPMNoGovB2MUIImCQIwqE0EZnVHwflMq56uHNPeSaGRH+Wh8mir2+PeSKfvHq6/P8cP6XqfMyEeYOXresdhaGY1GTSk7JCOkHKT/jAkk++ZzzqD4a6pGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722607057; c=relaxed/simple;
-	bh=5/XgeH9emBTwZkd45Z8QA3mktVHCHuE+a9qlMXeEXBU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jQVhPxKD/Q0EixYw6CsLfY1QFon9FDwbPtIn7reRyAyoPUWytsdj5zqaQZmQwpKeQRzLvUVMa2aonxrVOnlQKUGQbvZxkIbgYiyglsu4iFdf3gwpn2UhyeD9nPeKAL+1/Nh7vPmkPwcwH9kzD/11iUO1Lht1f7SPgLUXWCGVxjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.zabbadoz.net; spf=pass smtp.mailfrom=lists.zabbadoz.net; dkim=pass (4096-bit key) header.d=zabbadoz.net header.i=@zabbadoz.net header.b=EUHccVw+; arc=none smtp.client-ip=80.151.10.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lists.zabbadoz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lists.zabbadoz.net
-Received: from mail.sbone.de (mail.sbone.de [IPv6:fde9:577b:c1a9:4902:0:7404:2:1025])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by mx-01.divo.sbone.de (Postfix) with ESMTPS id 65DCDA64808;
-	Fri, 02 Aug 2024 13:57:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=zabbadoz.net;
-	s=20240622; t=1722607048;
-	bh=5/XgeH9emBTwZkd45Z8QA3mktVHCHuE+a9qlMXeEXBU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=EUHccVw+gbRvI7Eo3mXMj2CB1z2h70vg0e87xOmxqyzcvYMkTG4nF4TzIQqBX2+hW
-	 mJxwoj6nwr8/W4p1FMTDek3E9pPKr7sdex1jVBN5Z6FBneOUTIXkjffqAj5H1kB3PX
-	 N3wFIxBqltfWfxD5WVLOW/en0BphZABfJhoScNbusu0B4nOQGbAcl1JNdXMubItRVY
-	 s81d8q6VA51mtbm9zBI9TxPI5dm3zJy8XiypUucCDIa05ZA5b/G6e6kE8Hb3CMIfZm
-	 Gca1V6ppNuqO10j96SVjkn5dwmH86F5WzB6n6BlmUpXo74vgKegnXNZCZrVTS0rzhT
-	 NXv/9aupkZVFKv/pcgV5OfE8QG6J1y1p4z5jJIIV76E8v6B/6eNDzy0WJ0qOxC+nKW
-	 69WLIOnf/RtStqK2SSIl5LmcgwZURR0I+C6jVR6IzdB+Jk4tRwohkXSzK2r/8COQ7N
-	 b7TIv5ZOOy23SwiRmQnDkSonhKFMPP7ACI4YhZ0KO/Kb4ZLK28tk39CQpjJJjTVWuj
-	 M3+pzIk0Dil4LyJnqrbM+WIKEBUjqsaHoG4caW8ZHP1jA8M4Ndi2Uv0/O702gQC0DK
-	 TMNydQrZkGyxCWjQRadOsWoHKaLy8GbtbjY0HEY5YrTg84YWAM53U1K5Q72Ak5NtYm
-	 zKlrvHUgggJF6GzDPx7GbEP8=
-Received: from content-filter.t4-02.sbone.de (content-filter.t4-02.sbone.de [IPv6:fde9:577b:c1a9:4902:0:7404:2:2742])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.sbone.de (Postfix) with ESMTPS id 8AFBA2D029D8;
-	Fri,  2 Aug 2024 13:57:29 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at sbone.de
-Received: from mail.sbone.de ([IPv6:fde9:577b:c1a9:4902:0:7404:2:1025])
-	by content-filter.t4-02.sbone.de (content-filter.t4-02.sbone.de [IPv6:fde9:577b:c1a9:4902:0:7404:2:2742]) (amavisd-new, port 10024)
-	with ESMTP id xhqxyI7DanWY; Fri,  2 Aug 2024 13:57:28 +0000 (UTC)
-Received: from strong-iwl0.sbone.de (strong-iwl0.sbone.de [IPv6:fde9:577b:c1a9:4902:b66b:fcff:fef3:e3d2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.sbone.de (Postfix) with ESMTPSA id D13072D029D2;
-	Fri,  2 Aug 2024 13:57:27 +0000 (UTC)
-Date: Fri, 2 Aug 2024 13:57:26 +0000 (UTC)
-From: "Bjoern A. Zeeb" <bzeeb-lists@lists.zabbadoz.net>
-To: Sergey 'Jin' Bostandzhyan <jin@mediatomb.cc>
-cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, 
-    devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-    linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 0/2 RESEND] Add DTS for NanoPi R2S Plus
-In-Reply-To: =?UTF-8?Q?=3C20240802100447=2EGB18509=40=D0=B2=D0=B5=D1=82=D0=B5=D1=80?=
- =?UTF-8?Q?=D0=B0=D0=BD=2Esu=3E?=
-Message-ID: <4q216op8-0p0r-n053-383o-3rpqq8s37p4p@yvfgf.mnoonqbm.arg>
-References: =?UTF-8?Q?=3C22bbec28-41c1-4f36-b776-6e091bf118d9=40kernel=2Eorg=3E_=3C?=
- =?UTF-8?Q?20240801175736=2E16591-1-jin=40mediatomb=2Ecc=3E_=3C756p9487-?=
- =?UTF-8?Q?56pr-88p2-6o79-7oron3q8462n=40yvfgf=2Emnoonqbm=2Earg=3E_=3C20?=
- =?UTF-8?Q?240802100447=2EGB18509=40=D0=B2=D0=B5=D1=82=D0=B5=D1=80=D0=B0?=
- =?UTF-8?Q?=D0=BD=2Esu=3E?=
-X-OpenPGP-Key-Id: 0x14003F198FEFA3E77207EE8D2B58B8F83CCF1842
+	s=arc-20240116; t=1722607117; c=relaxed/simple;
+	bh=mj/1clMgFrEPI2KKj2APtQ4WLR9RYvT5ia/+L0lqI14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ctc8KyCHRh6esZHISMusWiL17cIP6GOVzQ8IlBILXDD9oj17oNzORLHnbJzK8tsqz0uJj8g5AIUvfnlwqya/LV780MbapaRSqtuFlqtJJbILQfWp0TCuA3YOL4xA8/eXM5dHhtC1iuKpwao0F+ByGzblNepKVNWC6rx87wCTLZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b+bUI3Yo; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722607116; x=1754143116;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mj/1clMgFrEPI2KKj2APtQ4WLR9RYvT5ia/+L0lqI14=;
+  b=b+bUI3YoQxK7R7U+qM6moQzbDzCHma2Sns/cNlG+NUjqg1+Cg3IimXXo
+   t8jVUC1GlHwZiJJwUhed/neGqIM8pfHC2JF/m8OH3TxYRv4ZZ+9ad0v7u
+   qdf40AIVKWAZfogca2L3eFgxXYMnC5qFZfbgIBGcbBkFPbfUJXLXbt2Sf
+   LpqQw04G5pkjQYCAGY10v/YiwEMzCGTS+UVtnQcYvKXzbyP+sbG3re8Ky
+   +HrL9anaLu4Bj4WHcxsMo0bTH2gILBPPDex2xTo5xevDxZE5Zwr87D/tV
+   F5iUQoDh5s5Q/RafZusTuw9ZrEponJWoyh/V4B8Fi3Tv+l1HNiS69r6R1
+   A==;
+X-CSE-ConnectionGUID: N5v8cl4NQe6aiUnpNyea8w==
+X-CSE-MsgGUID: PEcVzvuiQAGGMfygujYLSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20800670"
+X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
+   d="scan'208";a="20800670"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 06:58:35 -0700
+X-CSE-ConnectionGUID: dyWcK1jYS8CdclQYZxYZXQ==
+X-CSE-MsgGUID: gzTbPkUQSQuuN32SCtMSXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
+   d="scan'208";a="60236926"
+Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
+  by orviesa003.jf.intel.com with ESMTP; 02 Aug 2024 06:58:33 -0700
+Message-ID: <a0f5ea6b-2be4-4fac-8c22-34fc21df84b2@linux.intel.com>
+Date: Fri, 2 Aug 2024 16:58:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] i3c: mipi-i3c-hci: Add a quirk to set PIO mode
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+ Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240724071245.3833404-1-Shyam-sundar.S-k@amd.com>
+ <20240724071245.3833404-3-Shyam-sundar.S-k@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20240724071245.3833404-3-Shyam-sundar.S-k@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2 Aug 2024, Sergey 'Jin' Bostandzhyan wrote:
+Hi
 
-> Hi,
->
-> On Fri, Aug 02, 2024 at 09:46:40AM +0000, Bjoern A. Zeeb wrote:
->>> I noticed, that a DTS for the R2S Plus is not yet available, while the
->>> R2S is already there. The only difference is, that the Plus version has an
->>> eMMC, so we can reuse the R2S definitions and only add an eMMC block, which
->>> I copied from the DTS in the friendlyarm/uboot-rockchip repo.
->>
->> The original has a
->> 	// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>
->> please don't lose the OR MIT as other projects outside Linux do use the
->> same dts files;  and the original r2s file also preserved it.
->
-> Uhm... I am confused now, I copy-pasted the emmc block from this file:
-> https://github.com/friendlyarm/uboot-rockchip/blob/nanopi4-v2017.09/arch/arm/dts/rk3328-nanopi-r2.dts#L7
->
-> The header does not have the "OR MIT" in there, it's just
-> "SPDX-License-Identifier:     GPL-2.0+" which is what I also copied
-> over, together with the (c) part.
->
-> The source which I was using is described in the commit message:
->
-> The eMMC configuration for the DTS has been extracted and copied from
-> rk3328-nanopi-r2.dts, v2017.09 branch from the friendlyarm/uboot-rockchip
-> repository.
->
-> Maybe you looked at a different branch? Shall I still add the "OR
-> MIT" or leave it as in the original file which I copied it from?
+On 7/24/24 10:12 AM, Shyam Sundar S K wrote:
+> The AMD HCI controller currently only supports PIO mode but exposes DMA
+> rings to the OS, which leads to the controller being configured in DMA
+> mode. To address this, add a quirk to avoid configuring the controller in
+> DMA mode and default to PIO mode.
+> 
+> Additionally, introduce a generic quirk infrastructure to the mipi-i3c-hci
+> driver to facilitate seamless future quirk additions.
+> 
+> Co-developed-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
+> Signed-off-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
+> Co-developed-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
+> Signed-off-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
+> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> ---
+>   drivers/i3c/master/mipi-i3c-hci/Makefile |  3 ++-
+>   drivers/i3c/master/mipi-i3c-hci/core.c   | 15 ++++++++++++++-
+>   drivers/i3c/master/mipi-i3c-hci/hci.h    |  3 +++
+>   3 files changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i3c/master/mipi-i3c-hci/Makefile b/drivers/i3c/master/mipi-i3c-hci/Makefile
+> index a658e7b8262c..1f8cd5c48fde 100644
+> --- a/drivers/i3c/master/mipi-i3c-hci/Makefile
+> +++ b/drivers/i3c/master/mipi-i3c-hci/Makefile
+> @@ -3,4 +3,5 @@
+>   obj-$(CONFIG_MIPI_I3C_HCI)		+= mipi-i3c-hci.o
+>   mipi-i3c-hci-y				:= core.o ext_caps.o pio.o dma.o \
+>   					   cmd_v1.o cmd_v2.o \
+> -					   dat_v1.o dct_v1.o
+> +					   dat_v1.o dct_v1.o \
+> +					   hci_quirks.o
 
-That explains also why there's no sdmmc_ext/sdio bits...
+This doesn't build since hci_quirks.c is added by the patch 4/5. One 
+idea below.
 
-See here for more:
-https://github.com/friendlyarm/kernel-rockchip/blob/nanopi-r2-v6.1.y/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2-rev24.dts
+> diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
+> index dbc8c38bd962..8bb422ab1d01 100644
+> --- a/drivers/i3c/master/mipi-i3c-hci/core.c
+> +++ b/drivers/i3c/master/mipi-i3c-hci/core.c
+> @@ -33,6 +33,7 @@
+>   #define reg_clear(r, v)		reg_write(r, reg_read(r) & ~(v))
+>   
+>   #define HCI_VERSION			0x00	/* HCI Version (in BCD) */
+> +#define HCI_VERSION_V1			0x100	/* MIPI HCI Version number V1.0 */
+>   
+>   #define HC_CONTROL			0x04
+>   #define HC_CONTROL_BUS_ENABLE		BIT(31)
+> @@ -745,6 +746,14 @@ static int i3c_hci_init(struct i3c_hci *hci)
+>   		return -EINVAL;
+>   	}
+>   
+> +	/* Initialize quirks for AMD platforms */
+> +	amd_i3c_hci_quirks_init(hci);
+> +
+> +	regval = reg_read(HCI_VERSION);
+> +
+> +	if (hci->quirks & HCI_QUIRK_AMD_PIO_MODE)
+> +		hci->RHS_regs = NULL;
+> +
+>   	/* Try activating DMA operations first */
+>   	if (hci->RHS_regs) {
+>   		reg_clear(HC_CONTROL, HC_CONTROL_PIO_MODE);
+> @@ -760,7 +769,11 @@ static int i3c_hci_init(struct i3c_hci *hci)
+>   	/* If no DMA, try PIO */
+>   	if (!hci->io && hci->PIO_regs) {
+>   		reg_set(HC_CONTROL, HC_CONTROL_PIO_MODE);
+> -		if (!(reg_read(HC_CONTROL) & HC_CONTROL_PIO_MODE)) {
+> +		/*
+> +		 * HC_CONTROL_PIO_MODE bit not present in HC_CONTROL register w.r.t V1.0
+> +		 * specification. So skip checking PIO_MODE bit status
+> +		 */
+> +		if (regval != HCI_VERSION_V1 && !(reg_read(HC_CONTROL) & HC_CONTROL_PIO_MODE)) {
+>   			dev_err(&hci->master.dev, "DMA mode is stuck\n");
+>   			ret = -EIO;
+>   		} else {
 
-My current believe is that rockchip/rk3328.dtsi needs the additional
- 	sdmmc_ext: mmc@ff5f0000
+This is true, I see this now from pre-v1.0, v1.0. v1.1 and v1.2 specs 
+too, HC_CONTROL_PIO_MODE bit is present only after v1.0. And therefore 
+version != HCI_VERSION_V1 check is not fully correct since bit is not 
+present in pre-v1.0 HW versions either.
 
-block and the vendor setting for rk3328-nanopi-r2s-plus.dts
-needs like:
-        aliases {
-                mmc0 = &sdmmc;
-                mmc1 = &sdmmcext;
-                mmc2 = &emmc;
-        };
-
-and also need
-
-+&emmc {
-+&sdmmc {
-+&sdmmc_ext {
-+&sdmmc0ext_clk {
-+&sdmmc0ext_cmd {
-+&sdmmc0ext_bus4 {
-+&sdio_pwrseq {
-
-but I don't do Linux a lot so I don't know the current state of art for
-6.11 for each of the values there (I assume some need tweaking and
-cleanup).
-
-/bz
-
--- 
-Bjoern A. Zeeb                                                     r15:7
+I'd split this patch and do version check alone here (perhaps as a first 
+patch) and do quirk stuff later where hci_quirks.c is added.
 
