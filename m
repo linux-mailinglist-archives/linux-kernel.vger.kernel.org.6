@@ -1,171 +1,115 @@
-Return-Path: <linux-kernel+bounces-271986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65D194559F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0F29455AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 143FF1C23144
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:40:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F1B51F22F9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218A13A1A0;
-	Fri,  2 Aug 2024 00:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0DE1171C;
+	Fri,  2 Aug 2024 00:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3jDwwYW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iihRnCfn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3313A282FD;
-	Fri,  2 Aug 2024 00:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6974A5672;
+	Fri,  2 Aug 2024 00:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722559073; cv=none; b=oVrLde2rg23so9OITRWJQirxUZRWbKXq9L+1cGKm1wpO1Dv1Ca1Ois+1cJWlHIwadj7J3nnmaGHwVt6dWHU+B4pyJdQ1n2QPWKA2uQYAH9dn1Ee9AdwvGA78TgYzYs7DTzdKSi3QT5k7R5hH0xojM8dYaKu2BkIi0Qleaf5xBTg=
+	t=1722559339; cv=none; b=dVl1yafjAmeNcU0psJ4nArOgYC+htYdm9Cn85lzCIBL/bWU0HJkUSKjqXlU4OXnvNA8Y6AqSFlnXrLa3JJ4+CVy0vUzMX6myhFqPvxegrDeS+rOB7tzhhktW8fjoiEt6gw7Bs1c59pPBg3II3X/Rne/2brRKSeChay5SfLTHWdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722559073; c=relaxed/simple;
-	bh=ORPsIKilCO2aukBgqnmuWKArS6fdjcdYNMJJxLt6Zz8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TqA2WEgskaEJLBSCOc3EIKKE2JZM8j0bCdIShXGUYBm+ZbZNV/oQTHGnq8s5iPGx8iRZd3IcIcBWKpOUUjbIqTm4CUT6XnP83rtdP1i0cOdY/6miPj+hWlFVqs4/wwc9yByR/zNYSFR/vR4fQrsm8gFOHB0Y+3eBA9hXWOCH/gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3jDwwYW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5D60C4AF0D;
-	Fri,  2 Aug 2024 00:37:52 +0000 (UTC)
+	s=arc-20240116; t=1722559339; c=relaxed/simple;
+	bh=V8dQQ7UGH+1AhEx8lI11JZBKmXrcr/VuZFYYSJkrEak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PX91TQOnpuK6L4V3Jlvu+1+v0O8gJLXvlOVYKmFFGV5iw7l1or1o6a0R/XCRfxMP4Gi+Vr3pmfNJGpYwAm/K3iEG97LAw1nW3OqBc72SJwGuSC0CSFCq9HM4p+V1Ha9xu5FSk+e+MWGfi/lMc5YUr6ZAOJG+IDaKKc9vJAN3rm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iihRnCfn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D83C4AF0F;
+	Fri,  2 Aug 2024 00:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722559072;
-	bh=ORPsIKilCO2aukBgqnmuWKArS6fdjcdYNMJJxLt6Zz8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h3jDwwYWgRcbA4Yp0Kf8ALb+Xg8JrV2pKnbHcSRsoSfWOq1ss4dH5PlhddnHo0+kF
-	 h/qeP9nhZMWYvZMlITxhowKY9vcuNB6uzY7NFl4llJSu4dmo3PCTW42dCnEbzfGKBb
-	 Sgcc5ZLYDDu6T4OzEpehiC1b1wmi71hhjEZ6QLQPHHbfZtOqlwUemYm4Q+rskZQRht
-	 KGd6ml8WqhRcANTwQ6bw25H2cw2Pt7atn3vTk5KrTI5NEcyzpe4aGBqJInQ8+9uEaG
-	 EBWbMmNmc1PzSdJVdERA1vlJRQJjS/QOphDig9mvw4Dn+C5eKgstoqhDWy5mPmbUn/
-	 bcUhcUglx1Pfw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6C41FCE0BC3; Thu,  1 Aug 2024 17:37:52 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 3/3] torture: Add torture.sh --guest-cpu-limit argument for limited hosts
-Date: Thu,  1 Aug 2024 17:37:50 -0700
-Message-Id: <20240802003750.4134451-3-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <22c4b040-7b7b-45ff-8fa5-41b741c7cd7e@paulmck-laptop>
-References: <22c4b040-7b7b-45ff-8fa5-41b741c7cd7e@paulmck-laptop>
+	s=k20201202; t=1722559339;
+	bh=V8dQQ7UGH+1AhEx8lI11JZBKmXrcr/VuZFYYSJkrEak=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iihRnCfnP7YVmtMb8C1Rz03oNHFtwU7dDTowokFfsOY8NMqPNu6QVcnKpz90DPH26
+	 QjDV22jNLw2go8Kr74TC3Hmka/0Gqt4Uq+3ImmUsSU2EDJ+dufyeNXyzr8Gl+u8WUZ
+	 XWFjgdpp/RY/tecBq/u4D5zsv40Bl/aTrASw1rDRHmeck2o3jI1WsXhT84QKkCcq+g
+	 Tfo+uKXKmJss9N2Y3BhJ5z+Sgm3lCcIQ9Miryf/aD7CSY3EnrTM9Kn72jwIGJIfRE7
+	 aB9S+ROAi3Z57xa13AjLsWlcyQG1cWQjv/Pp6nzgD9d+kdHEPIOwNnysK32qPZSNpP
+	 LDjUj/rw6KTYQ==
+Message-ID: <1e021b7b-b1f7-4604-9e97-370758ac4f4e@kernel.org>
+Date: Fri, 2 Aug 2024 09:42:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] PCI: Make pcim_request_all_regions() a public
+ function
+To: Philipp Stanner <pstanner@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Niklas Cassel <cassel@kernel.org>,
+ Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>,
+ Srujana Challa <schalla@marvell.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Kalle Valo <kvalo@kernel.org>, Serge Semin <fancer.lancer@gmail.com>,
+ Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+ Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Kevin Cernekee <cernekee@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+ David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jie Wang <jie.wang@intel.com>, Adam Guerin <adam.guerin@intel.com>,
+ Shashank Gupta <shashank.gupta@intel.com>,
+ Damian Muszynski <damian.muszynski@intel.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Gregory Greenman <gregory.greenman@intel.com>,
+ Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+ Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+ Breno Leitao <leitao@debian.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ John Ogness <john.ogness@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-ide@vger.kernel.org, qat-linux@intel.com,
+ linux-crypto@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ntb@lists.linux.dev, linux-pci@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20240801174608.50592-1-pstanner@redhat.com>
+ <20240801174608.50592-2-pstanner@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240801174608.50592-2-pstanner@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Some servers have limitations on the number of CPUs a given guest OS
-can use.  In my earlier experience, such limitations have been at least
-half of the host's CPUs, but in a recent example, this limit is less
-than 40%.  This commit therefore adds a --guest-cpu-limit argument that
-allows such low limits to be made known to torture.sh.
+On 8/2/24 02:45, Philipp Stanner wrote:
+> In order to remove the deprecated function
+> pcim_iomap_regions_request_all(), a few drivers need an interface to
+> request all BARs a PCI-Device offers.
+> 
+> Make pcim_request_all_regions() a public interface.
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- .../selftests/rcutorture/bin/torture.sh       | 38 +++++++++++++------
- 1 file changed, 27 insertions(+), 11 deletions(-)
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-diff --git a/tools/testing/selftests/rcutorture/bin/torture.sh b/tools/testing/selftests/rcutorture/bin/torture.sh
-index 990d24696fd34..0447c4a00cc4d 100755
---- a/tools/testing/selftests/rcutorture/bin/torture.sh
-+++ b/tools/testing/selftests/rcutorture/bin/torture.sh
-@@ -19,10 +19,10 @@ PATH=${RCUTORTURE}/bin:$PATH; export PATH
- 
- TORTURE_ALLOTED_CPUS="`identify_qemu_vcpus`"
- MAKE_ALLOTED_CPUS=$((TORTURE_ALLOTED_CPUS*2))
--HALF_ALLOTED_CPUS=$((TORTURE_ALLOTED_CPUS/2))
--if test "$HALF_ALLOTED_CPUS" -lt 1
-+SCALE_ALLOTED_CPUS=$((TORTURE_ALLOTED_CPUS/2))
-+if test "$SCALE_ALLOTED_CPUS" -lt 1
- then
--	HALF_ALLOTED_CPUS=1
-+	SCALE_ALLOTED_CPUS=1
- fi
- VERBOSE_BATCH_CPUS=$((TORTURE_ALLOTED_CPUS/16))
- if test "$VERBOSE_BATCH_CPUS" -lt 2
-@@ -90,6 +90,7 @@ usage () {
- 	echo "       --do-scftorture / --do-no-scftorture / --no-scftorture"
- 	echo "       --do-srcu-lockdep / --do-no-srcu-lockdep / --no-srcu-lockdep"
- 	echo "       --duration [ <minutes> | <hours>h | <days>d ]"
-+	echo "       --guest-cpu-limit N"
- 	echo "       --kcsan-kmake-arg kernel-make-arguments"
- 	exit 1
- }
-@@ -203,6 +204,21 @@ do
- 		duration_base=$(($ts*mult))
- 		shift
- 		;;
-+	--guest-cpu-limit|--guest-cpu-lim)
-+		checkarg --guest-cpu-limit "(number)" "$#" "$2" '^[0-9]*$' '^--'
-+		if (("$2" <= "$TORTURE_ALLOTED_CPUS" / 2))
-+		then
-+			SCALE_ALLOTED_CPUS="$2"
-+			VERBOSE_BATCH_CPUS="$((SCALE_ALLOTED_CPUS/8))"
-+			if (("$VERBOSE_BATCH_CPUS" < 2))
-+			then
-+				VERBOSE_BATCH_CPUS=0
-+			fi
-+		else
-+			echo "Ignoring value of $2 for --guest-cpu-limit which is greater than (("$TORTURE_ALLOTED_CPUS" / 2))."
-+		fi
-+		shift
-+		;;
- 	--kcsan-kmake-arg|--kcsan-kmake-args)
- 		checkarg --kcsan-kmake-arg "(kernel make arguments)" $# "$2" '.*' '^error$'
- 		kcsan_kmake_args="`echo "$kcsan_kmake_args $2" | sed -e 's/^ *//' -e 's/ *$//'`"
-@@ -425,9 +441,9 @@ fi
- if test "$do_scftorture" = "yes"
- then
- 	# Scale memory based on the number of CPUs.
--	scfmem=$((3+HALF_ALLOTED_CPUS/16))
--	torture_bootargs="scftorture.nthreads=$HALF_ALLOTED_CPUS torture.disable_onoff_at_boot csdlock_debug=1"
--	torture_set "scftorture" tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration "$duration_scftorture" --configs "$configs_scftorture" --kconfig "CONFIG_NR_CPUS=$HALF_ALLOTED_CPUS" --memory ${scfmem}G --trust-make
-+	scfmem=$((3+SCALE_ALLOTED_CPUS/16))
-+	torture_bootargs="scftorture.nthreads=$SCALE_ALLOTED_CPUS torture.disable_onoff_at_boot csdlock_debug=1"
-+	torture_set "scftorture" tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration "$duration_scftorture" --configs "$configs_scftorture" --kconfig "CONFIG_NR_CPUS=$SCALE_ALLOTED_CPUS" --memory ${scfmem}G --trust-make
- fi
- 
- if test "$do_rt" = "yes"
-@@ -471,8 +487,8 @@ for prim in $primlist
- do
- 	if test -n "$firsttime"
- 	then
--		torture_bootargs="refscale.scale_type="$prim" refscale.nreaders=$HALF_ALLOTED_CPUS refscale.loops=10000 refscale.holdoff=20 torture.disable_onoff_at_boot"
--		torture_set "refscale-$prim" tools/testing/selftests/rcutorture/bin/kvm.sh --torture refscale --allcpus --duration 5 --kconfig "CONFIG_TASKS_TRACE_RCU=y CONFIG_NR_CPUS=$HALF_ALLOTED_CPUS" --bootargs "refscale.verbose_batched=$VERBOSE_BATCH_CPUS torture.verbose_sleep_frequency=8 torture.verbose_sleep_duration=$VERBOSE_BATCH_CPUS" --trust-make
-+		torture_bootargs="refscale.scale_type="$prim" refscale.nreaders=$SCALE_ALLOTED_CPUS refscale.loops=10000 refscale.holdoff=20 torture.disable_onoff_at_boot"
-+		torture_set "refscale-$prim" tools/testing/selftests/rcutorture/bin/kvm.sh --torture refscale --allcpus --duration 5 --kconfig "CONFIG_TASKS_TRACE_RCU=y CONFIG_NR_CPUS=$SCALE_ALLOTED_CPUS" --bootargs "refscale.verbose_batched=$VERBOSE_BATCH_CPUS torture.verbose_sleep_frequency=8 torture.verbose_sleep_duration=$VERBOSE_BATCH_CPUS" --trust-make
- 		mv $T/last-resdir-nodebug $T/first-resdir-nodebug || :
- 		if test -f "$T/last-resdir-kasan"
- 		then
-@@ -520,8 +536,8 @@ for prim in $primlist
- do
- 	if test -n "$firsttime"
- 	then
--		torture_bootargs="rcuscale.scale_type="$prim" rcuscale.nwriters=$HALF_ALLOTED_CPUS rcuscale.holdoff=20 torture.disable_onoff_at_boot"
--		torture_set "rcuscale-$prim" tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration 5 --kconfig "CONFIG_TASKS_TRACE_RCU=y CONFIG_NR_CPUS=$HALF_ALLOTED_CPUS" --trust-make
-+		torture_bootargs="rcuscale.scale_type="$prim" rcuscale.nwriters=$SCALE_ALLOTED_CPUS rcuscale.holdoff=20 torture.disable_onoff_at_boot"
-+		torture_set "rcuscale-$prim" tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration 5 --kconfig "CONFIG_TASKS_TRACE_RCU=y CONFIG_NR_CPUS=$SCALE_ALLOTED_CPUS" --trust-make
- 		mv $T/last-resdir-nodebug $T/first-resdir-nodebug || :
- 		if test -f "$T/last-resdir-kasan"
- 		then
-@@ -559,7 +575,7 @@ do_kcsan="$do_kcsan_save"
- if test "$do_kvfree" = "yes"
- then
- 	torture_bootargs="rcuscale.kfree_rcu_test=1 rcuscale.kfree_nthreads=16 rcuscale.holdoff=20 rcuscale.kfree_loops=10000 torture.disable_onoff_at_boot"
--	torture_set "rcuscale-kvfree" tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration $duration_rcutorture --kconfig "CONFIG_NR_CPUS=$HALF_ALLOTED_CPUS" --memory 2G --trust-make
-+	torture_set "rcuscale-kvfree" tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration $duration_rcutorture --kconfig "CONFIG_NR_CPUS=$SCALE_ALLOTED_CPUS" --memory 2G --trust-make
- fi
- 
- if test "$do_clocksourcewd" = "yes"
 -- 
-2.40.1
+Damien Le Moal
+Western Digital Research
 
 
