@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-272280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19691945996
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:08:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3FF945990
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAEA6B23ACD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:08:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1341C22264
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160D11C37B9;
-	Fri,  2 Aug 2024 08:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AUAsQ+Mc"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EB21C3793;
+	Fri,  2 Aug 2024 08:07:39 +0000 (UTC)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5DC1C232E
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 08:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B261C2320;
+	Fri,  2 Aug 2024 08:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722586080; cv=none; b=gxSPIcnmENLcLd+jbB9J6fg/6NcVl0q5pRUNrTRzTXcodCSftM4fBDpbui7OQ2zoOLDvPjW3mKLyFfXewgz+hu92KaT/rPGPsxBFGeKSu07HRtvRi9auRZMiZyvgoYaPoLqNbQbspGP09kMEHuJHkB1T9LgvH5iUTKbfJKr8i6w=
+	t=1722586059; cv=none; b=gXYhuzSdOaczflx8trxuNUG5fOD/vXa0Jx3XgvzOE7dmSlLpstxW62ksf8MoBPzOOSd51+W4HcokR05b8nem3XM5dLU7t5d6Lph4tPsynDq5ojWX9o+Hk7K/vo7+cWXvkbWh2kLcF+ziB76VKHLepxRhuIL2FmLwlrtvQeUzrLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722586080; c=relaxed/simple;
-	bh=zr17in5873w0D7frEzn9Z1BvBNMtjb7Z9MPgUwnjjT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r09ZSka1XO7JtZSF0h09fKC00V8MVFyFbG19oXQFNjEHLngucVrLcNjmk0iRqlHVHSqrdeJi1SimfODwXqrtKO9gFADt6K4jMDH/b+8DTMJ88r0LIA7Ho08HxhPSdAI/cxNKMn63olwtU4JDlJpojoez2ezMk7nHgPTCUz0Wq7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AUAsQ+Mc; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f01afa11cso11699076e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 01:07:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722586077; x=1723190877; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=escxcbn6CQpzZVjl6z5VUlZK10Wql4Sh9GSQYpnvjOs=;
-        b=AUAsQ+McMuzLxujWxipKKVvsbaANZuzCFHavP/5J3zHzFJvUvDkvpAaZL33cXrMu/Y
-         0rTRdYLnnucYRfSjI8KSy0GKyaYNsOaZL2iaJiu51UZIHTsURE5bn2IhoUfYHDtCMcE0
-         Nd4y1L7xeJjpolmoCxHzlStf7VLdme0ZLZ0YMZ5BjHOwzHseqAg3OJ2MLXuy9Cnp9bJd
-         Ki4dNeKgGelrJvkn8yujKLCxzbd6gkgiu2yrl4LMsUYyLlu3EyxFlLI7fefjt0ClHIhq
-         wYFWg0zNp5CywCUim4xSql+1xIdmw85KyZEiY7qtlI344XdajqfQ9af6xXmSNWf7x1yC
-         dXbg==
+	s=arc-20240116; t=1722586059; c=relaxed/simple;
+	bh=pbHBycrVCFDsyq1V5V6Iy22R6+v1Cwgyg0R8xo/haNM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ogpiz1HaIQGsj0ZxSXP4EwQA5L7nUqQHmJ3833nUAl01TOO+99B7E8SpimyEjYECyEzVrDNPwJxUnSBc6YKtEddz4dJzKq1nWhvuEYPwl+ei8qlHkgBkqx42gn/diqbuoX2YCdYirXmnpse7zdtNoHpwjKvM+fiFlisDfeuWnu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso10970997a12.1;
+        Fri, 02 Aug 2024 01:07:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722586077; x=1723190877;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1722586054; x=1723190854;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=escxcbn6CQpzZVjl6z5VUlZK10Wql4Sh9GSQYpnvjOs=;
-        b=v1t17DIrczka7zFOvOsXsZh3iX+XRQJ9JHr/WvYgBNwx2rJxvhUGsa3i2NL5Q+FcsS
-         Q3XFikYvzERR+GjohFS/HASeiHvTI5KmnA4Dqlei09NZuneUnMqUcv8BPhR2RRAnyg0b
-         gz4KQCKD8p+BvnpOl+iieq8HJUXaQ7s+Q62TYy62xauKPsKUg5PewqKYzq89Q8hQNzQP
-         tgaeXAxD1SFJG5e6njQUBK67BYP1eRi7fAg5GGBaQtL8DrUembsf1p21PoNkKmjzxGqd
-         TQSSt+wm7ot65kfi2s5y4bGqMZgR8h/AO19yZyvYrqmSXmRTr0PyE9R9kw+2wG+X0C51
-         25NA==
-X-Gm-Message-State: AOJu0Yzy7Ji5DzWP2gAiMtOeyOte52DhEnKGYiie3veGhbmc2+r4/F+Y
-	3feJzErLA7U9HZSS62CcsckfdE5Vt0zaWosQfhmdQmRQHsVO5rbxO8R8rJ5l+2sJSIJ6TtIPj5P
-	km2CXKWeF9/Vuq5hgWd63bA7BX9me1Zu0wdV+9OjodB9VRzm+Fqtn
-X-Google-Smtp-Source: AGHT+IG+xKO0y/MDURV7v5Ye973aEWq2ZhirgU9AGFasanOfoT8SM2QxjIQmJdkM6GFLTO/y2v5+4WlaF2T/WZYjysc=
-X-Received: by 2002:a05:6512:b8d:b0:52e:f367:709b with SMTP id
- 2adb3069b0e04-530bb3a34f9mr1726621e87.42.1722586076673; Fri, 02 Aug 2024
- 01:07:56 -0700 (PDT)
+        bh=tW89l+b3r4SnTW2RmO8UaiObA20fmU+fo2Kiu5RwA4I=;
+        b=MRk9VmGAe6Qw8JkzgH5QOF9xfsDb1tZtSuL8+GE1z5y0yy1jqjF93m5qg6Ae2aTutn
+         RTBXRU4uI+I1t64zAbmQ7bjQUFI+G8iClyoUq4UiAeq1AjL147VioJeeUWjiKPil9YRm
+         /B0TXMTttgU7d+bOCAYvJ6TPfXF03UGPtrxw+xzn4uyzDXiaYpk9XGAH/Lh6dVeOSM5J
+         uYiKlFtmT/IMwwYaCccej7nvYdMBOd0mH5Q+qpUa+6m67+FOwriYwBeJvwH9pqsBSdoR
+         KwnCtJQ3hJVuGxdW10yJrjHirazoyy8BN3lwDL++QEG+IMPCvPYJWs++s2JEYtR2stK7
+         WyYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVArh1rGJTTiKEgAo14HyGoGrdKnay3lkkTfzR9tK9RyLI3DOQ8+MWxy8aDVPIZK1zO+Z4EEm8dAkCv/6dmFLTANBTxi5rguAFwYnQnmNexkiLP/KRVQACvrzJLE8lfC1awy1xN
+X-Gm-Message-State: AOJu0Yxsy0Nspnm8ICkBM8OXzvdbU8cyjcbwm12CBA7lfiuFkGfRTn2p
+	hjQkSgnlZuMURWckyqTInTfqZ1onJ50SXFk3Mm8gRKA7DMABxk8T0x+rRA==
+X-Google-Smtp-Source: AGHT+IHvnSTZ6l2PbLFq+BB6u0sWAuAYIh1kX9sMG5lkaGeQb5lploa9+GYusl3HDvtqVxGQXuqDYA==
+X-Received: by 2002:a17:907:9803:b0:a7a:be06:d8eb with SMTP id a640c23a62f3a-a7dc50a37f2mr208421266b.53.1722586053540;
+        Fri, 02 Aug 2024 01:07:33 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c67a43sm68767966b.96.2024.08.02.01.07.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 01:07:33 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: mpm@selenic.com,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: netconsole: Fix MODULE_AUTHOR format
+Date: Fri,  2 Aug 2024 01:07:23 -0700
+Message-ID: <20240802080723.1869111-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000052aa15061eaeb1fd@google.com>
-In-Reply-To: <00000000000052aa15061eaeb1fd@google.com>
-From: Marco Elver <elver@google.com>
-Date: Fri, 2 Aug 2024 10:07:19 +0200
-Message-ID: <CANpmjNMENK5NG+gjMm67--p-4h+c89bkSngoRJ3XTpkqrH0=Gg@mail.gmail.com>
-Subject: Re: [syzbot] [trace?] linux-next test error: WARNING in rcu_core
-To: syzbot <syzbot+263726e59eab6b442723@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mhiramat@kernel.org, sfr@canb.auug.org.au, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2 Aug 2024 at 09:58, syzbot
-<syzbot+263726e59eab6b442723@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    f524a5e4dfb7 Add linux-next specific files for 20240802
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=174c896d980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a66a5509e9947c4c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=263726e59eab6b442723
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/8c0255b9a6ad/disk-f524a5e4.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/71d89466ea60/vmlinux-f524a5e4.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/ba8fcf059463/bzImage-f524a5e4.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+263726e59eab6b442723@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 1 at mm/slub.c:4550 slab_free_after_rcu_debug+0x18b/0x270 mm/slub.c:4550
+Update the MODULE_AUTHOR for netconsole, according to the format, as
+stated in module.h:
 
-See https://lore.kernel.org/all/ZqyThs-o85nqueaF@elver.google.com/T/#u
+	use "Name <email>" or just "Name"
+
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/net/netconsole.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+index 9c09293b5258..ffedf7648bed 100644
+--- a/drivers/net/netconsole.c
++++ b/drivers/net/netconsole.c
+@@ -38,7 +38,7 @@
+ #include <linux/etherdevice.h>
+ #include <linux/utsname.h>
+ 
+-MODULE_AUTHOR("Maintainer: Matt Mackall <mpm@selenic.com>");
++MODULE_AUTHOR("Matt Mackall <mpm@selenic.com>");
+ MODULE_DESCRIPTION("Console driver for network interfaces");
+ MODULE_LICENSE("GPL");
+ 
+-- 
+2.43.0
+
 
