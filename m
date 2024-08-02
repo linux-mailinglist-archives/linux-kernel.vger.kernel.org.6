@@ -1,91 +1,217 @@
-Return-Path: <linux-kernel+bounces-272680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAD5945FCD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92295945FD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84F061C210B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B32B41C22329
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E6A2101BD;
-	Fri,  2 Aug 2024 15:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D992101A8;
+	Fri,  2 Aug 2024 15:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VFImo5/x";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2jv234pF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkeQKIhM"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212DD1F61C;
-	Fri,  2 Aug 2024 15:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8991F61C;
+	Fri,  2 Aug 2024 15:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722610909; cv=none; b=t2OukXZQdVfbsMN/Eq+Gw86LGeD94aC2PCx8xZqs74EkoV0zuKth45g9EI5xS3X9n3owB22fcfMaC9/VfqYkmX1KnApAfTiFIAO6ziy0/nSZ80r2SBigl8t+/b+/lc0aX51zGHQsUP3OKqMb1gDTjWjo73sVEwAe51sPpu3W0Tw=
+	t=1722611041; cv=none; b=nYEl6bUisa0cHbuWKVYtGVNxsa6cA95qoN+DQCzOcPsdYeBlV5d9gOFe1uULyCrdghkVH1WQxHgiMSnclEhJzNSo3dRzFKluYSIxhZuTO715BDrGDtVGyD/a0JlpAjNWS7ntrbqyMnWZCeZWO8+Bi+lWLUqfGDnf5sq7RCvXJQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722610909; c=relaxed/simple;
-	bh=TNm8PThnDv3WiKDoRpzIgsXgANDIKlBfgmOcRi0bBA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jcIJLHnjdfPnnDY2p5uPSvGiuSnllcY5dKP6h7J2VW+q2VwGuDrBA2nJP+RT4yB8SIe2hMcpf32qtSrG6Pzj3MBVXJeL22vjAnJvH7HZGRQbnDElHBojrKXqEOVufgLTiB/x9iY9zTyJV/0zpDrLOVQGSzC+y5kLprJECZ0uWc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VFImo5/x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2jv234pF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 2 Aug 2024 17:01:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722610906;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=qiXrXAu2b5HCw8e2JvrpCFrTKk34pc8sz9ZEqzZRQd8=;
-	b=VFImo5/xyeQAy0j43Ctur8q9x0VD/kZpRtSM3Pw55f1YnUj1o8jEYTq4zohAWuXM4Ix93T
-	+Uj5WgGCC+l9z8FegxQiMu9kbH6WJIsezZQeYuGdRXvHSNK2H1hlIB3r1Ga2izNI2eqACD
-	cwYo1OirdmhOOrdOGncACenS5IcA/PdKBgqNb/5UBZrcuDh3ndzfbkQ6UsTdvFwzZB8S9r
-	mti1mRXmhoTtDVPPEsNMGig/k1wLSn2kQe/JGuk+3+PQRFylmdh6ExYJy4ozK3pTNMetrn
-	eNUZDDm6+6r/yc3Tm5fmVjX1hQ2trOM+MNUV47BM9vEdwuDgbPeJ9z9fbqFCTA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722610906;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=qiXrXAu2b5HCw8e2JvrpCFrTKk34pc8sz9ZEqzZRQd8=;
-	b=2jv234pF6SSN5L87wGOUxKd0tEsAMbUdHihsJSfQfuKeEnCYIudFpo4J6kaE2GmApkMCOg
-	+vkyCPhIE3beNICA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v6.11-rc1-rt1
-Message-ID: <20240802150145.pIfTM_ju@linutronix.de>
+	s=arc-20240116; t=1722611041; c=relaxed/simple;
+	bh=IoR5lyUFL+tO8MqmxYx6ubpa69xnrVfzyT01anECDFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L7CtX9voK0ddHjLV/c3jernO1/KoJEmbwMnUU2S9MzwNh02LCQSJ1E6mE2OVFy1hpqkCA6GEgGxEblps4nMJ38GoxKKBewcw3J+ywhsnDfQJft5QHlW8g7l0ir4cDC/7SxW41MGcGXeK05PxXb+bjbfsRKO/I41JR9g/ibvtz7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkeQKIhM; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70ea2f25bfaso6059574b3a.1;
+        Fri, 02 Aug 2024 08:03:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722611039; x=1723215839; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m0H/bERQlrZ1DjkqSeGhsDTzSRq9MwspaSuR7UMwxII=;
+        b=ZkeQKIhMXcw1sxf3QMxOOXBdcjpClRfznjpOWHJBxE+giddCfva5YIKIvXRG+nAjwV
+         xZteasIsNI3XfdoyxYaojw8/iV7kikuvKRxciPcQlqRTWUWrMkhmdbccA02wwNOBdY+a
+         hlnzc+qG+VaoueOeM0CpRGI3OX8lIim4KdqI3g9z805T9ngUGkk5c00K8wu7HzqfMplE
+         xGPH62NU/Vz5M1lESmTlkxYgGuJ3f+vWc2erQjis3VNbFgOOb2HFrUlLqACXfGRy1eR9
+         TqUDcVqui0Q6GS8qmTZdSOWc6EOsjXHsf/MdNUKmMtP7gU6jU7H5/P9WWZ+Fp20g1plu
+         PZzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722611039; x=1723215839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m0H/bERQlrZ1DjkqSeGhsDTzSRq9MwspaSuR7UMwxII=;
+        b=W3CCgTpr1bjrj5uoCn5sA6xDPuHEGF8JIsDBeqQORJbgulmoO65ZIs81hgKtN5KTMG
+         6K87ssHw500qyeVF7WGmrqaySrN+Vc7taafK7IP/TCL1bGQk1EVjwEILF3tt9UW9idor
+         WGcu6xcBcac0iOgKU7eJISASdyboJuEOORNNiG9uxJgBUsMghlnXwczVsCfyCfNgrPQU
+         dOZLhTVZ2oNfW8n/eRddo/o+ILZCpi28YHmyXND3UGBEQGDGLw1oE2KzJhcbTboivGFI
+         V8e15XYncM3bZFiyD5QutnM8XVjC6rf371MqIHmOit+ynN6iA2YTPvZXhIkXEQzPAEqE
+         XcpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUarGQPnmtY3pYND3ukS1wXwR3xIduAdExOEOww7pwRbC3cuG0l6ndQTPnFPEnWVe8fYpvIsICSb3qOfCjo1/wubZXV8TNfOPbtF3bYNmHK1c87o0C/QMUjJGjxWXqyuEdrx/vaDk6wmbHKkrvrd9T7OZXF6yrfXEJ/H0Zgc2dsIQsy2aMz
+X-Gm-Message-State: AOJu0YyjQJDW9SD+FtsudoX7yoE03gACyUceTkPNo76EcTsFR8Dw8FCb
+	clXuN5WI47txfoZv+BykZnPNa+QoCkDVOUeBD7vod6ZLnczbsPYEJqg5HTFznQB7eabZMtDAsg1
+	vlqF6o+l6on6eQDZpRJJK1oO0kmsY4g==
+X-Google-Smtp-Source: AGHT+IHXB5zGkiAc79Xe8QqP0XrYFv6YL+bg4dmL76s04TDoAjNUrPQu0yuevM16oGpeCCPoORjUuhylCAkeF2KDQFY=
+X-Received: by 2002:a17:90a:a417:b0:2c9:6f8d:7270 with SMTP id
+ 98e67ed59e1d1-2cff9544dc7mr4151713a91.42.1722611039266; Fri, 02 Aug 2024
+ 08:03:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240731214256.3588718-1-andrii@kernel.org> <20240731214256.3588718-3-andrii@kernel.org>
+ <Zqy-94c1cAUKoWA4@krava>
+In-Reply-To: <Zqy-94c1cAUKoWA4@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 2 Aug 2024 08:03:47 -0700
+Message-ID: <CAEf4BzZbYT9kP7CAY_ddkFFXiVDS3N=HO0AbCcxfKXZue2cQPA@mail.gmail.com>
+Subject: Re: [PATCH 2/8] uprobes: revamp uprobe refcounting and lifetime management
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paulmck@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear RT folks!
+On Fri, Aug 2, 2024 at 4:11=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
+:
+>
+> On Wed, Jul 31, 2024 at 02:42:50PM -0700, Andrii Nakryiko wrote:
+>
+> SNIP
+>
+> > -/*
+> > - * There could be threads that have already hit the breakpoint. They
+> > - * will recheck the current insn and restart if find_uprobe() fails.
+> > - * See find_active_uprobe().
+> > - */
+> > -static void delete_uprobe(struct uprobe *uprobe)
+> > -{
+> > -     if (WARN_ON(!uprobe_is_active(uprobe)))
+> > -             return;
+> > -
+> > -     write_lock(&uprobes_treelock);
+> > -     rb_erase(&uprobe->rb_node, &uprobes_tree);
+> > -     write_unlock(&uprobes_treelock);
+> > -     RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
+> > -}
+> > -
+> >  struct map_info {
+> >       struct map_info *next;
+> >       struct mm_struct *mm;
+> > @@ -1094,17 +1120,12 @@ void uprobe_unregister(struct uprobe *uprobe, s=
+truct uprobe_consumer *uc)
+> >       int err;
+> >
+> >       down_write(&uprobe->register_rwsem);
+> > -     if (WARN_ON(!consumer_del(uprobe, uc)))
+> > +     if (WARN_ON(!consumer_del(uprobe, uc))) {
+> >               err =3D -ENOENT;
+> > -     else
+> > +     } else {
+> >               err =3D register_for_each_vma(uprobe, NULL);
+> > -
+> > -     /* TODO : cant unregister? schedule a worker thread */
+> > -     if (!err) {
+> > -             if (!uprobe->consumers)
+> > -                     delete_uprobe(uprobe);
+>
+> ok, so removing this call is why the consumer test is failing, right?
+>
+> IIUC the previous behaviour was to remove uprobe from the tree
+> even when there's active uprobe ref for installed uretprobe
+>
+> so following scenario will now behaves differently:
+>
+>   install uretprobe/consumer-1 on foo
+>   foo {
+>     remove uretprobe/consumer-1                (A)
+>     install uretprobe/consumer-2 on foo        (B)
+>   }
+>
+> before the removal of consumer-1 (A) would remove the uprobe object
+> from the tree, so the installation of consumer-2 (b) would create
+> new uprobe object which would not be triggered at foo return because
+> it got installed too late (after foo uprobe was triggered)
+>
+> the behaviour with this patch is that removal of consumer-1 (A) will
+> not remove the uprobe object (that happens only when we run out of
+> refs), and the following install of consumer-2 will use the existing
+> uprobe object so the consumer-2 will be triggered on foo return
+>
+> uff ;-)
 
-I'm pleased to announce the v6.11-rc1-rt1 patch set. 
+yep, something like that
 
-Changes since v6.10.2-rt14:
+>
+> but I think it's better, because we get more hits
 
-  - Update to v6.11-rc1
+note, with the next patch set that makes uretprobes SRCU protected
+(but with timeout) the behavior becomes a bit time-sensitive :) so I
+think we'll have to change your selftest to first attach all the new
+uretprobes, then detach all the uretprobes that had to be detached,
+and then do a bit more relaxed logic of the sort "if there were some
+uretprobes before and after, then we *might* get uretprobe triggered
+(but we might not as well, unless the same uretprobe stayed attached
+at all times)".
 
-Known issues
-    None.
+Anyways, something to take care of in the bpf-next tree separately.
 
-You can get this release via the git tree at:
+All this is very much an implementation detail, so I think we can
+change these aspects freely.
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.11-rc1-rt1
-
-The RT patch against v6.11-rc1 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.11/older/patch-6.11-rc1-rt1.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.11/older/patches-6.11-rc1-rt1.tar.xz
-
-Sebastian
+>
+> jirka
+>
+> > -             else
+> > -                     err =3D -EBUSY;
+> > +             /* TODO : cant unregister? schedule a worker thread */
+> > +             WARN(err, "leaking uprobe due to failed unregistration");
+> >       }
+> >       up_write(&uprobe->register_rwsem);
+> >
+> > @@ -1159,27 +1180,16 @@ struct uprobe *uprobe_register(struct inode *in=
+ode,
+> >       if (!IS_ALIGNED(ref_ctr_offset, sizeof(short)))
+> >               return ERR_PTR(-EINVAL);
+> >
+> > - retry:
+> >       uprobe =3D alloc_uprobe(inode, offset, ref_ctr_offset);
+> >       if (IS_ERR(uprobe))
+> >               return uprobe;
+> >
+> > -     /*
+> > -      * We can race with uprobe_unregister()->delete_uprobe().
+> > -      * Check uprobe_is_active() and retry if it is false.
+> > -      */
+> >       down_write(&uprobe->register_rwsem);
+> > -     ret =3D -EAGAIN;
+> > -     if (likely(uprobe_is_active(uprobe))) {
+> > -             consumer_add(uprobe, uc);
+> > -             ret =3D register_for_each_vma(uprobe, uc);
+> > -     }
+> > +     consumer_add(uprobe, uc);
+> > +     ret =3D register_for_each_vma(uprobe, uc);
+> >       up_write(&uprobe->register_rwsem);
+> > -     put_uprobe(uprobe);
+> >
+> >       if (ret) {
+> > -             if (unlikely(ret =3D=3D -EAGAIN))
+> > -                     goto retry;
+> >               uprobe_unregister(uprobe, uc);
+> >               return ERR_PTR(ret);
+>
+> SNIP
 
