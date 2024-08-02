@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-272199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B3B94588F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E2D89458A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CA63283AEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8467283B2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334111BE878;
-	Fri,  2 Aug 2024 07:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A431BF309;
+	Fri,  2 Aug 2024 07:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxWaTZJx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qth+KIxl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5C8481AA;
-	Fri,  2 Aug 2024 07:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3B933991;
+	Fri,  2 Aug 2024 07:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583336; cv=none; b=CEfSZYUtuCBS1CkX3XRGd2QhcRDrmZxe7IjiE9vDEDzI7n1r6A8V9IcL1l0b7hBgy+go5d/zFCXayVYGjoAGiu0O+gv1B2SsD7AEtCl5tsqXHMC0iylOSWGUFK41f/i8IbOTvOIlmV/rNRmhcjY2Iag/EI70pkmA2DBOCOvTnlw=
+	t=1722583561; cv=none; b=ppQPMQef4j3nbQhlonuuY3P3YlWxd8ZyUioGkx71TowygzyGe8q7yLNBcW9nI4UzaRNG1Fj4gCwscPnjNlqjYG0i6/YdSk+nEGpzJjtNoTVsGOQl6XxBPzFget1sGKWuxvl3K2BsJYNzU4h+da4M+uhDQDV+lYWuApulKKbnqYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583336; c=relaxed/simple;
-	bh=eBqw49UcPYPhf7AEOvF+AlnHBTQLYKg8/l4No1WFkqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fh0Hi10x7eqN+LMGHNR4YPGYXnCKfZNiMSjDISksy92mYIvXH9bd8MTYp8u1qbhsuuXnG9qmpHt4XYE4wZgCjMp5CjJsb3xIv+R013eFGyel4GGM7RZBcdN7TWMcRUdK/uJkeHtsgjvEihNgHZKqsIbhIe8MvYwyLvWQi9zlBzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxWaTZJx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E142BC32782;
-	Fri,  2 Aug 2024 07:22:11 +0000 (UTC)
+	s=arc-20240116; t=1722583561; c=relaxed/simple;
+	bh=tIDBugnnIao0rCesYd8gdUdjsah0ZDt4iRLJv46cdP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Gka5C/aewIu6x38kw0NNbcjRcG4sPgkdZ3hmMBwhtHVZlnl+CwtHwMidxiX7EE9P5qIyjBwo+i6N8JX+6vGiKrOjnVTQpxjq2WLT4R20m2xYC1DrsKRnHKkua7gWBGt850JnkBKzk6mgH+127LpumzUy+Ps8fnAeMHppKp1J1xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qth+KIxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D58C32782;
+	Fri,  2 Aug 2024 07:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722583336;
-	bh=eBqw49UcPYPhf7AEOvF+AlnHBTQLYKg8/l4No1WFkqg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YxWaTZJx4sAEpAlVt70i1fPTwngQJ8Mm2lDnlzaUywO26X6HkptSZYKOo8P7izJQg
-	 wXVyd4oSh3vYGDzIgeh38/G0+AG1Af2exdxEYKIIO5WcGuRTlhZaQT3+Bu8QYHRHb5
-	 B9T1UFLuTak83wISZWNYS/YaUH7aUjeuI/4iCf16QDT4o9Ses55rSdwaB61Ps5sQo+
-	 njUPYPquagmzJZ8gLKQOyakLp8fgsTyd2ZS4gzgYn5/5zyMKm+t9Fmjhq/NczkxyyP
-	 DltSM5OX5vEpnpGozsDJ8Fmj+T1Ke3EOSPjFk1xgvTGHqY2UnjXPFIRKMnQBUu26v6
-	 MNVCkrzBlDYIg==
-Message-ID: <20f5fa43-280d-4fde-a36f-c66b1f474f7e@kernel.org>
-Date: Fri, 2 Aug 2024 09:22:11 +0200
+	s=k20201202; t=1722583560;
+	bh=tIDBugnnIao0rCesYd8gdUdjsah0ZDt4iRLJv46cdP8=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=qth+KIxlQlztEPXb2C6gf5swH0ESG0QtUXGvsYkCGQQ4rXEs5MgsmJOrtVDKDsw2n
+	 5f35yO1GuHfYZdmtPYJigwIf1x4D2gQ/wDV6k1I6CGk0u4NNY/zAlZDBZFZydLEv9e
+	 O/gs/v01ABQ/IUiEFT4FOOQWgbe8ql7Qn6ftrrvbyePXjzBnBTtE5AW5J9yuHPy04y
+	 HiQWi5BUEWP7lImu2xo2dO2kAZhzr86bBOsceR35/KHBoGswS2986jRmPuJGqg6Id6
+	 wlkv91eK9XJ5sXUcljcjbW2GzLEljchb467LID7mNaYmMbncafGU+F4UAmuAMj/l68
+	 mtIpYczulyf4g==
+Message-ID: <944715e8-e91e-46dd-a053-7e00a17dea72@kernel.org>
+Date: Fri, 2 Aug 2024 09:25:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: interconnect: Add Qualcomm SM4450
-To: Tengfei Fan <quic_tengfan@quicinc.com>, Georgi Djakov
- <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 1/1] arm64: dts: imx93: add lpi2c1 and child node
+To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>
-Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240801-sm4450_interconnect-v3-0-8e364d0faa99@quicinc.com>
- <20240801-sm4450_interconnect-v3-1-8e364d0faa99@quicinc.com>
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240801160915.2505610-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,40 +108,52 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240801-sm4450_interconnect-v3-1-8e364d0faa99@quicinc.com>
+In-Reply-To: <20240801160915.2505610-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/08/2024 10:54, Tengfei Fan wrote:
-> The Qualcomm SM4450 SoC has several bus fabrics that could be controlled
-> and tuned dynamically according to the bandwidth demand.
+On 01/08/2024 18:09, Frank Li wrote:
+> From: Clark Wang <xiaoning.wang@nxp.com>
 > 
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> Add lpi2c1 and child node for imx93-11x11-evk board.
+
+Why? What for? What are these? We see all this from the diff, so commit
+msg should explain why and what do you want to achieve.
+
+> 
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
+> Signed-off-by: Li Yang <leoyang.li@nxp.com>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  .../bindings/interconnect/qcom,sm4450-rpmh.yaml    | 133 +++++++++++++++++
->  include/dt-bindings/interconnect/qcom,sm4450.h     | 163 +++++++++++++++++++++
->  2 files changed, 296 insertions(+)
+>  .../boot/dts/freescale/imx93-11x11-evk.dts    | 21 +++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+> index a15987f49e8d6..dd387b820831a 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
+> @@ -145,6 +145,20 @@ ethphy2: ethernet-phy@2 {
+>  	};
+>  };
+>  
+> +&lpi2c1 {
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	clock-frequency = <400000>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_lpi2c1>;
+> +	status = "okay";
+> +
+> +	lsm6dsm@6a {
 
-If there were no changes, why skipping my tag?
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 
-<form letter>
-This is a friendly reminder during the review process.
 
-It looks like you received a tag and forgot to add it.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
 
 Best regards,
 Krzysztof
