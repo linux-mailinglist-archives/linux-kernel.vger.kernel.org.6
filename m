@@ -1,195 +1,150 @@
-Return-Path: <linux-kernel+bounces-272352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAEC4945A9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:14:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92110945AA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B2E28311C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1DD61C21F82
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039B01D4162;
-	Fri,  2 Aug 2024 09:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD5B1DAC4E;
+	Fri,  2 Aug 2024 09:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbGgmTrx"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtKTriS9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DA01C2305;
-	Fri,  2 Aug 2024 09:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790958F47;
+	Fri,  2 Aug 2024 09:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590085; cv=none; b=Auo50E+f8R+VUEKHSISE8wsXRwa1/eTq0HYMicLd9DUVPryctXCcpqop3FoLlbUmnC63Mx0iCFywuQ3yG1eJ0nLoib59Zp975/vlP6BqKAv6LV9yDwJwiQrK8WtLh23Q2Wd7ZT2XO6y40zfuEDbCbj7CDJjCmEPgnP9xJXHa4tk=
+	t=1722590155; cv=none; b=ZkPZWpiJNDLObdHGaObOdKJTUseTzjdhx0HsijSUs0c+SttVhS24q1AZgG9b1bQdqQapySZ7v/496lsoka9XzIQn05zW1LTJTpPrg4DAWIeJDaPWEE0Zqq5l17Rj2MnzTmfUR+im57myMidEUjP8aDBXK6wqE4FXfHDOXbZ2VsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590085; c=relaxed/simple;
-	bh=NtQgUIIaE/hqf9ZTyjTigeg1fDW8BSWir7Rbxa7onBM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dgyB9NXwAk338UCep/reZe4aj5Dk0Oq1gJ+jicG2jkk9fjNTGGsP3foBQONA6Lq8EG8STTpT5W9EkxtGP6pI6JEhSLnK8yxt6+9lKXpNCLPyo9IyyMGioGUf62ySWC8tWCAqS0HAZgTPOOe1JSoB3HhcuNb7dJYKJsJpTl0utZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbGgmTrx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A92C32782;
-	Fri,  2 Aug 2024 09:14:39 +0000 (UTC)
+	s=arc-20240116; t=1722590155; c=relaxed/simple;
+	bh=Frw/aKnT7fHBmc7Oh65zgDJ6VRU3OcJ9C3yXXcLORnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=HL309/B6Dox0dhU3084s5qOPkTZSyJFbJIJbJQf6eOYBPjso3SL2x6ZrJsi+0U2cgBjv2T7DP1/bsRDv+IHsxVcs9td1kuRfVllXV4iJtv79gveTCmlpGdRUx97klLHNvchB20yClXdRURdEUoXjuFAK5ew+VEMwGiwo8kAIzQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtKTriS9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4BB3C32782;
+	Fri,  2 Aug 2024 09:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722590084;
-	bh=NtQgUIIaE/hqf9ZTyjTigeg1fDW8BSWir7Rbxa7onBM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bbGgmTrxzQuS5tpbP9+9wboqMGAMhPhZxnIf7/wgIM1HfEZsdkvoOSZVzK6P9e32M
-	 lMD2hyN+pM35SRh/ImRDfjqNugGhL7WfQYPU4aeJtxn6UhCioWMYMaeAtFc8TDGKF7
-	 Gw1dgnn76w9678hmQ0dgbjflCp26qZIbs5XN6Q2d7cwg0TLPE66V3pZVcoHADS0qUi
-	 V+mFXGTAJpF16uUhRlnTobySNCRf9enDuEef0rMrYIFgGoZ0K2aBYayOPV6tEX/IvY
-	 BycB/v3LvDzb3ZKqzy0+ZGb+jk9UN+hXzBqPx2JJQdU+QNIeUKbTH9NiXb/jkt+mgj
-	 sWYG+HG8RjSnw==
-Date: Fri, 2 Aug 2024 18:14:37 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, Arnd Bergmann
- <arnd@arndb.de>, Jiri Olsa <jolsa@kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Guo Ren <guoren@kernel.org>, Geert
- Uytterhoeven <geert@linux-m68k.org>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Kees Cook <kees@kernel.org>, "peterz@infradead.org"
- <peterz@infradead.org>, "H.J. Lu" <hjl.tools@gmail.com>, Sohil Mehta
- <sohil.mehta@intel.com>, Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko
- <andrii@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [RFC] uretprobe: change syscall number, again
-Message-Id: <20240802181437.29b439e26608561f1289892a@kernel.org>
-In-Reply-To: <20240730154500.3155437-1-arnd@kernel.org>
-References: <20240730154500.3155437-1-arnd@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1722590155;
+	bh=Frw/aKnT7fHBmc7Oh65zgDJ6VRU3OcJ9C3yXXcLORnY=;
+	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
+	b=UtKTriS9ejPE2TBDuw8wFEO1RgR/o0PVtjCN/p6yFfJXizz+3Jrq87N20UV5TOIc8
+	 IBofkW0TDnFcTS3ZFG/jcmzqPG9Ue34M34wcQI+JU1pXorouEY5WSg2QfCF+pmX0bv
+	 +9ca364EelxXF99lJOxmNBM0PsNY3vAvTzukJuCSNBgpeR5NL+PKgK48eTK2pGWs3t
+	 pOu2id4uGVngPm3epmfZJSJh5Ypx5CHU2lNxP16XzUfQikVbKysGYmY8JAM8mUfQO3
+	 rTFzsXvxoAhWBwO1lNnoGW0JyEO8GTPpUKCt4YKheO5Z3zUZxdDAmUUMm+BTzU8ROF
+	 ra2VYwDfMjFIQ==
+Message-ID: <77541300-5204-4d3f-b958-57cb1a67ac95@kernel.org>
+Date: Fri, 2 Aug 2024 11:15:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/9] dt-bindings: reset: ast2700: Add ASPEED AST27xx
+ Reset schema
+To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ quic_bjorande@quicinc.com, geert+renesas@glider.be,
+ dmitry.baryshkov@linaro.org, shawnguo@kernel.org, neil.armstrong@linaro.org,
+ m.szyprowski@samsung.com, nfraprado@collabora.com, u-kumar1@ti.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
+ <20240802090544.2741206-4-kevin_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240802090544.2741206-4-kevin_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 30 Jul 2024 17:43:36 +0200
-Arnd Bergmann <arnd@kernel.org> wrote:
-
-> From: Arnd Bergmann <arnd@arndb.de>
+On 02/08/2024 11:05, Kevin Chen wrote:
+> Add Reset schema for AST2700.
 > 
-> Despite multiple attempts to get the syscall number assignment right
-> for the newly added uretprobe syscall, we ended up with a bit of a mess:
-> 
->  - The number is defined as 467 based on the assumption that the
->    xattrat family of syscalls would use 463 through 466, but those
->    did not make it into 6.11.
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
 
-OK... that was not expected.
+So you just ignored all the comments?
 
-> 
->  - The include/uapi/asm-generic/unistd.h file still lists the number
->    463, but the new scripts/syscall.tbl that was supposed to have the
->    same data lists 467 instead as the number for arc, arm64, csky,
->    hexagon, loongarch, nios2, openrisc and riscv. None of these
->    architectures actually provide a uretprobe syscall.
+No, respond to each of them so we will all know that you understood them.
 
-Oops, thanks for finding.
+You already got this comment:
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-> 
->  - All the other architectures (powerpc, arm, mips, ...) don't list
->    this syscall at all.
+and not much improved. Drop "schema".
 
-OK, so even if it is not supported on those, we need to put it as a
-placeholder.
+Anyway, rest was ignored:
 
-> 
-> There are two ways to make it consistent again: either list it with
-> the same syscall number on all architectures, or only list it on x86
-> but not in scripts/syscall.tbl and asm-generic/unistd.h.
-> 
-> Based on the most recent discussion, it seems like we won't need it
-> anywhere else, so just remove the inconsistent assignment and instead
-> move the x86 number to the next available one in the architecture
-> specific range, which is 335.
-> 
-> Fixes: 5c28424e9a34 ("syscalls: Fix to add sys_uretprobe to syscall.tbl")
-> Fixes: 190fec72df4a ("uprobe: Wire up uretprobe system call")
-> Fixes: 63ded110979b ("uprobe: Change uretprobe syscall scope and number")
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I think we should fix this as soon as possible. Please let me know if
-> you agree on this approach, or prefer one of the alternatives.
+<form letter>
+This is a friendly reminder during the review process.
 
-OK, I think it is good. But you missed to fix a selftest code which
-also needs to be updated.
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
 
-Could you revert commit 3e301b431b91 ("selftests/bpf: Change uretprobe
- syscall number in uprobe_syscall test") too?
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> 
-> I've queued up this version in the asm-generic tree so I can send a
-> pull request in the next few days, but I'm fine with doing this a
-> differently if someone has a stronger opinion on what numbers to
-> assign for it on earch architecture.
-> 
->  arch/x86/entry/syscalls/syscall_64.tbl | 2 +-
->  include/uapi/asm-generic/unistd.h      | 5 +----
->  scripts/syscall.tbl                    | 1 -
->  3 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> index 83073fa3c989..7093ee21c0d1 100644
-> --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> @@ -344,6 +344,7 @@
->  332	common	statx			sys_statx
->  333	common	io_pgetevents		sys_io_pgetevents
->  334	common	rseq			sys_rseq
-> +335	common	uretprobe		sys_uretprobe
->  # don't use numbers 387 through 423, add new calls after the last
->  # 'common' entry
->  424	common	pidfd_send_signal	sys_pidfd_send_signal
-> @@ -385,7 +386,6 @@
->  460	common	lsm_set_self_attr	sys_lsm_set_self_attr
->  461	common	lsm_list_modules	sys_lsm_list_modules
->  462 	common  mseal			sys_mseal
-> -467	common	uretprobe		sys_uretprobe
->  
->  #
->  # Due to a historical design error, certain syscalls are numbered differently
-> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> index 985a262d0f9e..5bf6148cac2b 100644
-> --- a/include/uapi/asm-generic/unistd.h
-> +++ b/include/uapi/asm-generic/unistd.h
-> @@ -841,11 +841,8 @@ __SYSCALL(__NR_lsm_list_modules, sys_lsm_list_modules)
->  #define __NR_mseal 462
->  __SYSCALL(__NR_mseal, sys_mseal)
->  
-> -#define __NR_uretprobe 463
-> -__SYSCALL(__NR_uretprobe, sys_uretprobe)
-> -
->  #undef __NR_syscalls
-> -#define __NR_syscalls 464
-> +#define __NR_syscalls 463
->  
->  /*
->   * 32 bit systems traditionally used different
-> diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-> index 591d85e8ca7e..797e20ea99a2 100644
-> --- a/scripts/syscall.tbl
-> +++ b/scripts/syscall.tbl
-> @@ -402,4 +402,3 @@
->  460	common	lsm_set_self_attr		sys_lsm_set_self_attr
->  461	common	lsm_list_modules		sys_lsm_list_modules
->  462	common	mseal				sys_mseal
-> -467	common	uretprobe			sys_uretprobe
-> -- 
-> 2.39.2
-> 
+Thank you.
+</form letter>
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Best regards,
+Krzysztof
+
 
