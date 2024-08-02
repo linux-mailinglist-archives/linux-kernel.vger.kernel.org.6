@@ -1,126 +1,94 @@
-Return-Path: <linux-kernel+bounces-273066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6197C946437
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF48094643A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 039CAB21A1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78138283679
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528DA6F06B;
-	Fri,  2 Aug 2024 20:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3AMonfGW"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7326A039;
+	Fri,  2 Aug 2024 20:07:46 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45534482D3
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF69D272;
+	Fri,  2 Aug 2024 20:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722629064; cv=none; b=KWymN1LCuDxCg4i5bZ0nmkSiMgzxHRhAiqRbQlu3sjFpBezytueGjGd8aZwsuM6Yg1BHykq+9V3X5woygv+Ky3ucT+7lfeHJ5o4Z3jjQRyQ/c12NR2KAuhXJ4uJ0u0KIB4bweDgC+ncYLnrItw+GZpxq2r6vy/tC/flwE3Qr+sw=
+	t=1722629266; cv=none; b=iMwV0bo/TfZz3w9qszsT2shsbHp1Mg6CR9cgm44qgnLKjU4by+wYHCvuJW0q09VqzlLlFNGH4kcGoCwQyqZopDNkjlNcxSjef0gxW9L0ompQz5VYM/zgcZdkK2msZMGq6Bs/gFJpj+lTN4UOHUhkzoUX3T1rpE9E31+qHDe+ORw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722629064; c=relaxed/simple;
-	bh=QKWhYz0UvagZTgqAREtRaLHDQPE2mg4rSmdG2Y/zeNw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FAhgYIxlDeCoW61Nsnrt5qICeKol+LcttHvfGck7GZYB1IlGbH8YLmpVC1CUTGO9KU4vJlSZhmPlLfUEhmCVBjdZauRudIoOOX2x0Q0FGXPs/yaNLoh17BAV19QuCLpeOd+tFCUkq/R+J61IzzbftWFiZ/Dl9vUQ0DblXTQYzAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3AMonfGW; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fc60ef3076so79940825ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722629062; x=1723233862; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ywJidtx+i69imVBTLQoKHViS/i1c8qwbY9qpH2RYPhY=;
-        b=3AMonfGWwIC7uQTCcMfO+uMJMurcEVRxd4UQot4+iUGPZygau2jzKSy6e8qp1+AAsq
-         GHcHZ3YzhYdmzTSB5u6uSGSmHD0V7Hvo+ZX+Q3N8cSMYOsjEUGMXpR11WjOvP2Wo/73Y
-         3GT8cLgXk8n0hD1yBu9whJ8rSC5y70yk6j4F1J4bzPF3JSgDaDD2tNCatLStLRCjy4CN
-         YiOSjq4iOxOUUm2gdQLSd1qmXpjg0pBqrRGWzr9ap0nYugbZSr5s6t0Hpfg/KMjZy3vC
-         7UxLmq0zSFuFMEjOSDnQfHB3dTaPLGZYNuiWhcVFy2WCA7FXnXxqrI36ktdx9FtbPsVG
-         /mOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722629062; x=1723233862;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ywJidtx+i69imVBTLQoKHViS/i1c8qwbY9qpH2RYPhY=;
-        b=v0hgl3Jae9Vk+lXnl9LtjJCpW48iO65uDLlxC4+x249Rj4ebMcr6Pg1yQds8BqkPPl
-         kPA7ya7/Q+jQ4AbGvCVjJ50IO2X6XK/QQsiSRS1rBzJn6VXWTF0iYasgIW/Ar3jHOoP/
-         QtqpTQZOZg9ZXMoPh4pvOGht6DcF8Iq53n1KsZIr5dNmRCtOoUHrhOMDTjIFkvItvHq9
-         C/FCZUjdQ5/wRg6P64eYZqPwbAJHQUGBFYArJaU1w1MiKkHUiJSpsaB7P0yu37buWLoR
-         d/4ses81JBlFuWt/t9YR+OYc03+2nypY6pKMlh0Ho8QPVf3it3SV685L9eOWK7rhPu9M
-         +iQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAV/nXxdtVT+OS1sUQfQncaXrjWIS73EQkT0FiPyscUwkT1rXh0g9FosLK5cDbDkv3eWGnaCKJpEDBNwtnc3Wpnd0iomJ9kOA5jf2+
-X-Gm-Message-State: AOJu0YyDhtr0h8PkHSvLCH2c8IT6igbYNLsQYXB58mWYHY3OS//quDFK
-	eBMbHWF0d5WjGD19gBue5LWzjwM9AZsQqUTVoMEjVZIGjoSXwobEu76T4YUBtDPswJL63MXRaKr
-	Tbg==
-X-Google-Smtp-Source: AGHT+IE2pF+g3rRa7FDBgrB2Sw37x7RTKPyzV3G2a0NsUAKnKECEoNESeCZwkH8292lIkcUwB4mlfYp6BNM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:dac5:b0:1ff:4a01:43d1 with SMTP id
- d9443c01a7336-1ff574efccemr3340415ad.10.1722629062194; Fri, 02 Aug 2024
- 13:04:22 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  2 Aug 2024 13:04:20 -0700
+	s=arc-20240116; t=1722629266; c=relaxed/simple;
+	bh=wE8OKquMMv91cO1Ouu4ZnPCZSFtMagofbn0AEBj1D1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LimPK22QL/kj3VmOb9n6Bknla58cNdkVztF+dHzE7uyFqmGOnOuPSbSbZOS1VbekEQQvJlkEpJgjpOy6QAgqAhC5WEgKcac9qIWLlBbIYcEaOO6kHwCjHLg76ixXf0iEwDirjMwrtRzuTocLbSDpQ/VTxucKWYnJ5Kg+IaAYsLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 93F63100DA1A1;
+	Fri,  2 Aug 2024 22:07:39 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 5E13017601E; Fri,  2 Aug 2024 22:07:39 +0200 (CEST)
+Date: Fri, 2 Aug 2024 22:07:39 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: manivannan.sadhasivam@linaro.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 1/4] PCI/portdrv: Make use of pci_dev::bridge_d3 for
+ checking the D3 possibility
+Message-ID: <Zq08i2i_ETHsJiKW@wunner.de>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-1-2426dd9e8e27@linaro.org>
+ <Zqyro5mW-1kpFGQd@wunner.de>
+ <CAJZ5v0hw7C2dHC3yXAwya-KAjzYxU+QgavO_MkR9Rscsm_YHvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802200420.330769-1-seanjc@google.com>
-Subject: [PATCH] KVM: x86: Document an erratum in KVM_SET_VCPU_EVENTS on Intel CPUs
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0hw7C2dHC3yXAwya-KAjzYxU+QgavO_MkR9Rscsm_YHvg@mail.gmail.com>
 
-Document a flaw in KVM's ABI which lets userspace attempt to inject a
-"bad" hardware exception event, and thus induce VM-Fail on Intel CPUs.
-Fixing the flaw is a fool's errand, as AMD doesn't sanity check the
-validity of the error code, Intel CPUs that support CET relax the check
-for Protected Mode, userspace can change the mode after queueing an
-exception, KVM ignores the error code when emulating Real Mode exceptions,
-and so on and so forth.
+On Fri, Aug 02, 2024 at 01:19:24PM +0200, Rafael J. Wysocki wrote:
+> On Fri, Aug 2, 2024 at 11:49AM Lukas Wunner <lukas@wunner.de> wrote:
+> >
+> > On Fri, Aug 02, 2024 at 11:25:00AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > PCI core is already caching the value of pci_bridge_d3_possible() in
+> > > pci_dev::bridge_d3 during pci_pm_init(). Since the value is not going to
+> > > change,
+> 
+> Is that really the case?
+> 
+> Have you seen pci_bridge_d3_update()?
 
-The VM-Fail itself doesn't harm KVM or the kernel beyond triggering a
-ratelimited pr_warn(), so just document the oddity.
+Okay the value may change at runtime, e.g. due to user space
+manipulating d3cold_allowed in sysfs.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- Documentation/virt/kvm/x86/errata.rst | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> > I don't know if there was a reason to call pci_bridge_d3_possible()
+> > (instead of using the cached value) on probe, remove and shutdown.
+> >
+> > The change is probably safe but it would still be good to get some
+> > positive test results with Thunderbolt laptops etc to raise the
+> > confidence.
+> 
+> If I'm not mistaken, the change is not correct.
 
-diff --git a/Documentation/virt/kvm/x86/errata.rst b/Documentation/virt/kvm/x86/errata.rst
-index 4116045a8744..37c79362a48f 100644
---- a/Documentation/virt/kvm/x86/errata.rst
-+++ b/Documentation/virt/kvm/x86/errata.rst
-@@ -33,6 +33,18 @@ Note however that any software (e.g ``WIN87EM.DLL``) expecting these features
- to be present likely predates these CPUID feature bits, and therefore
- doesn't know to check for them anyway.
- 
-+``KVM_SET_VCPU_EVENTS`` issue
-+-----------------------------
-+
-+Invalid KVM_SET_VCPU_EVENTS input with respect to error codes *may* result in
-+failed VM-Entry on Intel CPUs.  Pre-CET Intel CPUs require that exception
-+injection through the VMCS correctly set the "error code valid" flag, e.g.
-+require the flag be set when injecting a #GP, clear when injecting a #UD,
-+clear when injecting a soft exception, etc.  Intel CPUs that enumerate
-+IA32_VMX_BASIC[56] as '1' relax VMX's consistency checks, and AMD CPUs have no
-+restrictions whatsoever.  KVM_SET_VCPU_EVENTS doesn't sanity check the vector
-+versus "has_error_code", i.e. KVM's ABI follows AMD behavior.
-+
- Nested virtualization features
- ------------------------------
- 
+You're right.  Because the value may change, different code paths
+may be chosen on probe, remove and shutdown.  Sorry for missing that.
 
-base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
+Thanks,
 
+Lukas
 
