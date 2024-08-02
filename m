@@ -1,134 +1,128 @@
-Return-Path: <linux-kernel+bounces-272189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F3294586C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C7094586E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EC441C23508
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2D71C23731
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C379A15B12D;
-	Fri,  2 Aug 2024 07:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A367B15B54C;
+	Fri,  2 Aug 2024 07:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cfNOIWcp"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hSq5Ug0q"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B8B15AD9C
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A581598E3
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722582579; cv=none; b=O6Vu79MnR505uGNKGHZhTDGzwBhC2QzSyeLXEPH77+W0tu6zHmsthNmnt8l+RhAiusyFbQ+/JuItWkQhnG9q8mkS+jbpnJYu793NmU1j+sYaU+g8PG+T0Dr0E3n2ncv4f5rIFtxVuxjUoJ8Hwn7qsEfp87Bki5e3DnK5SlsqoCo=
+	t=1722582597; cv=none; b=GsuSpI8BrVk7asMn2j/3gdfrRwGbZ2/bOpG4nGPu2+cinc/8aPt+qCVq5dI4q9KS1iLnlwjBbZMxpMd3tDyPA7R1ORByUNEW1/8/oucNbEl8jxrZGdG9xVj0YPPKsahl20XiU77U0492c+G3NtSfFuySh/OtaYkOpjpr2VS0LPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722582579; c=relaxed/simple;
-	bh=hMiBlKDN58PswalzrIqaXOCk4IQmXtzaGtMOuqtse7k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lfPaPVW+WQN48Ycx3Wde0OhZmYq3LQ08xiw4H/pgdKu9UN4egtcxWIWixSNgMjiS3N+FDYOlWMGm9qv2ZO4bGGkqTkGyUxLI5aDGYMIBhqEvZGwr33TUNIItr3KGiynCQT0pMGp1L4gwQdCC5kVWz+IYneOh9qoIrra6wTmB1so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cfNOIWcp; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4726Rt1b015694;
-	Fri, 2 Aug 2024 07:09:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	hMiBlKDN58PswalzrIqaXOCk4IQmXtzaGtMOuqtse7k=; b=cfNOIWcpt2OprGzz
-	Xf8awKLlVxqI49CAIuH5WebVSDBW2+iM+5+QaP0PdGCfIDJhg35VmDO3Xf2zr5Go
-	xhdyR5f+ZJ7+nTYXlEZpSBz56W1vfK2HdO4cfpmGcyQMglMfTeAu+5R5zIC95UIW
-	77Dqfnd2GDAJZoP/BOHe2+fBvbv06urE4FAmE8VqSfeOqQcNQU9IujyzEZ60Ompz
-	ARbprePoCP40CPh1ui8qEM5p4V4B2fH0MWFz9d9BYn64cQjBNyn/8nPZCAkTs6Ab
-	b1TA465SN+g8Wk6ElhuQs36NhV2fU0n5gsPXkcmJTaOnvUrBI6d3ZG0L56kZ1n2K
-	dE8llw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rq508crt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 07:09:28 +0000 (GMT)
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47279RxL023009;
-	Fri, 2 Aug 2024 07:09:27 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rq508crr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 07:09:27 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4723WEQA003935;
-	Fri, 2 Aug 2024 07:09:27 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40ndemwr3q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 07:09:27 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47279NuW54395136
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 2 Aug 2024 07:09:25 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 838102004B;
-	Fri,  2 Aug 2024 07:09:23 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3E7DF20043;
-	Fri,  2 Aug 2024 07:09:23 +0000 (GMT)
-Received: from li-1de7cd4c-3205-11b2-a85c-d27f97db1fe1.ibm.com (unknown [9.171.18.251])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  2 Aug 2024 07:09:23 +0000 (GMT)
-From: "Marc Hartmayer" <mhartmay@linux.ibm.com>
-To: Lai Jiangshan <jiangshanlai@gmail.com>, Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshan.ljs@antgroup.com>
-Subject: Re: [PATCH] workqueue: Remove incorrect
- "WARN_ON_ONCE(!list_empty(&worker->entry));" from dying worker
-In-Reply-To: <CAJhGHyD7Ligkp4Ww0STbj=p=igOmORQP86XyB-CmQ0wGqK351Q@mail.gmail.com>
-References: <20240725010437.694727-1-jiangshanlai@gmail.com>
- <87wml4s9zz.fsf@linux.ibm.com>
- <CAJhGHyD7Ligkp4Ww0STbj=p=igOmORQP86XyB-CmQ0wGqK351Q@mail.gmail.com>
-Date: Fri, 02 Aug 2024 09:09:22 +0200
-Message-ID: <87ikwjo0yl.fsf@linux.ibm.com>
+	s=arc-20240116; t=1722582597; c=relaxed/simple;
+	bh=qukvKq6BW36VQopCqVeGMajQBRgKUM0bgNiwhrujaXU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=duhxdDYpvzrKrJOBfn2iL6pmkdavZtjPKCIh/HyGpQTcWm+Qv8ENPlj5WdHYUqm+m/pRS8fKUWDAcimwwRt7XDxPP5tPU2sL/dTjw+k4MlExiI/4tW/mPHuwxtGbixvtGoKGMHKIVCKQbSCuljO7yjLJgqGsckx3y9q043P/3g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hSq5Ug0q; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fd90c2fc68so62001575ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:09:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722582596; x=1723187396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7Br9pmxpWGWBK1ASt7BgnymbG5sO0VEPtoGkQEDSjI=;
+        b=hSq5Ug0qnvS+NtDGLKeK9Qqm6k2yEWRpCQ3PYvOtsvbomV1LuZxmIjuL1RC4H03Um/
+         9pTMPxcSTgUGsuWuYhSjnL4+55Qt6cOOvsnL2oqAOY+gOUpYT5P+keiGTivBM/MO72PE
+         sZgzTLVmtzXj/Fyk8f5vuZf/JVrx1OrT5DBNQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722582596; x=1723187396;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S7Br9pmxpWGWBK1ASt7BgnymbG5sO0VEPtoGkQEDSjI=;
+        b=BPNpbdBfurUWz7NROTif4ap7+7tORamWzhEpksy7V5Zz6JesSv3n1TZ78mshMJMiyd
+         yJCF+uxKoIvy9ZLEKGVu59tenhiC4iGjIas0hWRJd5PEbL/yrCvaWAmyzHnJ3Ja4GblA
+         r2nyYOAjP0u30a2oW2mswhwEEk7UpOHF7PXkVk4Y5+NdP45caSNmrf0tsenyEVwYFGLh
+         CJTFwaHEYxsqt1s3JZ7N1oKZ2IyT9ak72wFF6WQ506Ap3MSKOIFLmAZf6cYPZ2eaZKXk
+         gqGz8b70c1c2C0vW3jgHv3LAZNQ0K2qjumAeZTxH+Aa8TElpKoiyju4aa3OZHBVEg+A5
+         47Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXurSL+iE6SOOOLe9KGTKC0MMqF4Zb6tA6YKGPWnFgFH48HutPc58gFJQoGOnjU6PgE1fWg5bpW2U8cvsTUDXToefo1Ilfvt0vgqhAI
+X-Gm-Message-State: AOJu0YwLdvJwewCFrBgA8l7UPVL2GINJQV8tUFB6LC5iRwNmhrhbGvmH
+	uG10Pc/kAbSfHU7N5/8UDjfiwWqHFyP23rrYdr492ovr7cxUeser2LCe8nbf4g==
+X-Google-Smtp-Source: AGHT+IGLq0mErGqzzVN2fu1NHv5FwQg+WZUq33b12gl6nvqOLVq6lohDfRmMscu6BBut3VG69qGzww==
+X-Received: by 2002:a17:903:182:b0:1ff:5135:130d with SMTP id d9443c01a7336-1ff57261cc7mr32752225ad.16.1722582595790;
+        Fri, 02 Aug 2024 00:09:55 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:f2e4:75b7:52fc:71cc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f19e15sm10228345ad.40.2024.08.02.00.09.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 00:09:55 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: mediatek: mt8195: Correct clock order for dp_intf*
+Date: Fri,  2 Aug 2024 15:09:50 +0800
+Message-ID: <20240802070951.1086616-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: FJnCimlD5O53tn3wcokeWmOago2V53c_
-X-Proofpoint-ORIG-GUID: NPMp9irE41fuqtVXBcWlPGQ8RTpAStKq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-02_04,2024-08-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 mlxscore=0 malwarescore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 adultscore=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408020047
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 01, 2024 at 11:11 AM +0800, Lai Jiangshan <jiangshanlai@gmail.c=
-om> wrote:
-> Hello, Tejun
->
-> On Mon, Jul 29, 2024 at 7:39=E2=80=AFPM Marc Hartmayer <mhartmay@linux.ib=
-m.com> wrote:
->
->>
->> [=E2=80=A6snip]
->>
->> The crash I reported is fixed by this patch. But I can't say whether the
->> removal of the warning is OK.
->>
->
-> Could you have a look at it please?
+The clocks for dp_intf* device nodes are given in the wrong order,
+causing the binding validation to fail.
 
-Hi Lai,
+Fixes: 6c2503b5856a ("arm64: dts: mt8195: Add dp-intf nodes")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-I am not familiar with the code, so I cannot give a qualified answer.
-But if it helps, here is my
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+index 989e8ac545ac..e89ba384c4aa 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+@@ -3252,10 +3252,10 @@ dp_intf0: dp-intf@1c015000 {
+ 			compatible = "mediatek,mt8195-dp-intf";
+ 			reg = <0 0x1c015000 0 0x1000>;
+ 			interrupts = <GIC_SPI 657 IRQ_TYPE_LEVEL_HIGH 0>;
+-			clocks = <&vdosys0  CLK_VDO0_DP_INTF0>,
+-				 <&vdosys0 CLK_VDO0_DP_INTF0_DP_INTF>,
++			clocks = <&vdosys0 CLK_VDO0_DP_INTF0_DP_INTF>,
++				 <&vdosys0  CLK_VDO0_DP_INTF0>,
+ 				 <&apmixedsys CLK_APMIXED_TVDPLL1>;
+-			clock-names = "engine", "pixel", "pll";
++			clock-names = "pixel", "engine", "pll";
+ 			status = "disabled";
+ 		};
+ 
+@@ -3522,10 +3522,10 @@ dp_intf1: dp-intf@1c113000 {
+ 			reg = <0 0x1c113000 0 0x1000>;
+ 			interrupts = <GIC_SPI 513 IRQ_TYPE_LEVEL_HIGH 0>;
+ 			power-domains = <&spm MT8195_POWER_DOMAIN_VDOSYS1>;
+-			clocks = <&vdosys1 CLK_VDO1_DP_INTF0_MM>,
+-				 <&vdosys1 CLK_VDO1_DPINTF>,
++			clocks = <&vdosys1 CLK_VDO1_DPINTF>,
++				 <&vdosys1 CLK_VDO1_DP_INTF0_MM>,
+ 				 <&apmixedsys CLK_APMIXED_TVDPLL2>;
+-			clock-names = "engine", "pixel", "pll";
++			clock-names = "pixel", "engine", "pll";
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
-Tested-by: Marc Hartmayer <mhartmay@linux.ibm.com>
-
->
-> Thanks
-> Lai
 
