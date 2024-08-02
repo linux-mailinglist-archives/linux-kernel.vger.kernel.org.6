@@ -1,101 +1,171 @@
-Return-Path: <linux-kernel+bounces-272071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3FF945689
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:11:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB6439456A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D425E282093
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:11:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 740CDB22C6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60C31BC58;
-	Fri,  2 Aug 2024 03:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29131429A;
+	Fri,  2 Aug 2024 03:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mqtB5b6n"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="p5XI9A4t"
+Received: from relay.smtp-ext.broadcom.com (saphodev.broadcom.com [192.19.144.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C123D68
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 03:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D51862;
+	Fri,  2 Aug 2024 03:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722568279; cv=none; b=oWVeQrUpRRVPCcZwgzA3rrE/dle4ffS13QvDaY0u6h3BkRgCQdwyMB3JEI0V2hZs2Gb1Z+EVvKhyvGiQzQVh398Fd6PkrIcsr0VzatpG02emE+YIKbjfMvrwGl07B4vZRxyeH9BAM1yFxdHMTVn6Q5tvPhynjnE46TKg+R8f+e0=
+	t=1722569054; cv=none; b=TCfH59nNR3DRwJCOnsGtduqo5x/BPsB3BOr1iV/1KMx3AL6K+qSgrJx8hn9Y55NIFdA7MNTykNtOLk84Bh0BRWLSicaIRj/tbfqetG2dVmMyt7/mKMmbam6ip9S1MHVnx3V0AKfurmyDhQ24jJcDniTobu1mK9r1+pPhSXNvucg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722568279; c=relaxed/simple;
-	bh=IvTN9RUuaMw52Yy78L9/uujylMXKbSELTdGuhqvLHzs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uYB5dfP70h/PUnd4tJ4DuU+qpIm4T6uvdT97ey/SZhkLOBbXk36OhUvtVEzU7ytIFGLoCjrQ0icU3a+n5zK3RtJS3fl6tJ03rw8Qw4TpE5RMMwV9vt167nRbmhmMcNHDwj7f2Y707xCBThdfJyjRhk7d/cUPZAkSI0WlHA5BJNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mqtB5b6n; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722568275; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=12DXJCyM5dEPtaGag3N2aiCBqyKJKN9vuLRg7UajN00=;
-	b=mqtB5b6naRK7Sj2kaLloMRV5pLFi8aSw/Sb+rwUfDNx7lgtoXn+S+LLGgDgupXnedraMhjTImg06jMpfnLN8EX67jub6EWaiPQj1RnaHFXbhUXkxKEVRzfdtBKo+6NXM35HPy559NWaw3odEi90oorjEFONd0u7pnyJTsqKrnIc=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R721e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WBvmIPN_1722568272;
-Received: from 30.97.56.76(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WBvmIPN_1722568272)
-          by smtp.aliyun-inc.com;
-          Fri, 02 Aug 2024 11:11:13 +0800
-Message-ID: <15d93ced-ffa5-4b87-9dea-bcf8cfaf44e9@linux.alibaba.com>
-Date: Fri, 2 Aug 2024 11:11:12 +0800
+	s=arc-20240116; t=1722569054; c=relaxed/simple;
+	bh=RHWM2CtWUWVpihcZvDeOFBZpR66cVXr5m/EFPtj1ocI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BcBXFw3snGwl4lDVbrMddSGreN65YzaqWzkVjqUUBwZSTpkMDhcN9UzH1C6LUatVm/W/OEq/RppgzdIYxmighdKNwUV7/TqXhJL+k3jYWDzVUfOW5Cg7iJ357A1VDYXg2ySxjdCYYfltjvjN/M1TnsRVXf3DdkraT/BKx87d1ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=p5XI9A4t; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 7D02FC0000EA;
+	Thu,  1 Aug 2024 20:18:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 7D02FC0000EA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1722568706;
+	bh=RHWM2CtWUWVpihcZvDeOFBZpR66cVXr5m/EFPtj1ocI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p5XI9A4tDoBDbHQDvwqF34I/x9A+ZZBWs+kpJh7RsS/14I9UtKeEkAngT+/RNnOyX
+	 zB77CnkwlJb7en35uxL7jbP1X1c35mvebKaDuN3W8KkYXiP4V5ESvn7XER7GVFbRXg
+	 kC8VH9skX73xMPz7J1Rjvux+b/3FMSVtHUUXGdr0=
+Received: from pcie-dev03.dhcp.broadcom.net (pcie-dev03.dhcp.broadcom.net [10.59.171.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id AF53118041CAC4;
+	Thu,  1 Aug 2024 20:18:23 -0700 (PDT)
+From: jitendra.vegiraju@broadcom.com
+To: netdev@vger.kernel.org
+Cc: alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	jitendra.vegiraju@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	richardcochran@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	bpf@vger.kernel.org,
+	andrew@lunn.ch,
+	linux@armlinux.org.uk,
+	horms@kernel.org,
+	florian.fainelli@broadcom.com
+Subject: [PATCH net-next v3 0/3] net: stmmac: Add PCI driver support for BCM8958x
+Date: Thu,  1 Aug 2024 20:18:19 -0700
+Message-Id: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: shmem: avoid allocating huge pages larger than
- MAX_PAGECACHE_ORDER for shmem
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>, Barry Song <21cnbao@gmail.com>,
- hughd@google.com, willy@infradead.org, david@redhat.com,
- ryan.roberts@arm.com, ziy@nvidia.com, gshan@redhat.com, ioworker0@gmail.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <117121665254442c3c7f585248296495e5e2b45c.1722404078.git.baolin.wang@linux.alibaba.com>
- <CAGsJ_4xmHY06VAKzXxCFcovPkrR0WOR28jXbaeD5VyUBHWzn_w@mail.gmail.com>
- <c55d7ef7-78aa-4ed6-b897-c3e03a3f3ab7@linux.alibaba.com>
- <87769ae8-b6c6-4454-925d-1864364af9c8@huawei.com>
- <ba3e3dfa-d019-4991-9e3a-d73ffa83bb36@linux.alibaba.com>
- <20240731134802.00541e78813997f3c59df36c@linux-foundation.org>
- <bf97923f-b59a-4d91-95b5-67e555fb4cd3@linux.alibaba.com>
- <20240801125552.12dc70cbe7220205a4a1a9ce@linux-foundation.org>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20240801125552.12dc70cbe7220205a4a1a9ce@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
 
+This patchset adds basic PCI ethernet device driver support for Broadcom
+BCM8958x Automotive Ethernet switch SoC devices.
 
-On 2024/8/2 03:55, Andrew Morton wrote:
-> On Thu, 1 Aug 2024 08:06:59 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
-> 
->>
->>
->> On 2024/8/1 04:48, Andrew Morton wrote:
->>> On Wed, 31 Jul 2024 18:22:17 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
->>>
->>>> (Hope Andrew can help to squash these changes :))
->>>
->>> I'm seeing some rejects against, amongst other things, your own "Some
->>> cleanups for shmem" series.
->>>
->>> So... v2, please?
->>
->> These two bugfix patches are based on the mm-hotfixes-unstable branch
->> and need to be merged into 6.11-rcX, so they should be queued first.
-> 
-> OK.
-> 
->> For the 'Some cleanups for shmem' series, I can send a new V4 version to
->> you after resolving conflicts with the shmem bugfix patches. Sorry for
->> the inconvenience.
-> 
-> I fixed things up.
+This SoC device has PCIe ethernet MAC attached to an integrated ethernet
+switch using XGMII interface. The PCIe ethernet controller is presented to
+the Linux host as PCI network device.
 
-Thank you for your help, Andrew. I have checked the patches after 
-resolving the conflicts, and all look good.
+The following block diagram gives an overview of the application.
+             +=================================+
+             |       Host CPU/Linux            |
+             +=================================+
+                        || PCIe
+                        ||
+        +==========================================+
+        |           +--------------+               |
+        |           | PCIE Endpoint|               |
+        |           | Ethernet     |               |
+        |           | Controller   |               |
+        |           |   DMA        |               |
+        |           +--------------+               |
+        |           |   MAC        |   BCM8958X    |
+        |           +--------------+   SoC         |
+        |               || XGMII                   |
+        |               ||                         |
+        |           +--------------+               |
+        |           | Ethernet     |               |
+        |           | switch       |               |
+        |           +--------------+               |
+        |             || || || ||                  |
+        +==========================================+
+                      || || || || More external interfaces
+
+The MAC block on BCM8958x is based on Synopsis XGMAC 4.00a core. This
+driver uses common dwxgmac2 code where applicable.
+Driver functionality specific to this MAC is implemented in dwxgmac4.c.
+Management of integrated ethernet switch on this SoC is not handled by
+the PCIe interface.
+This SoC device has PCIe ethernet MAC directly attached to an integrated
+ethernet switch using XGMII interface.
+
+v2->v3:
+   Addressed v2 comments from Andrew, Jakub, Russel and Simon.
+   Based on suggestion by Russel and Andrew, added software node to create
+   phylink in fixed-link mode.
+   Moved dwxgmac4 specific functions to new files dwxgmac4.c and dwxgmac4.h
+   in stmmac core module.
+   Reorganized the code to use the existing glue logic support for xgmac in
+   hwif.c and override ops functions for dwxgmac4 specific functions.
+   The patch is split into three parts.
+     Patch#1 Adds dma_ops for dwxgmac4 in stmmac core
+     Patch#2 Hooks in the hardware interface handling for dwxgmac4
+     Patch#3 Adds PCI driver for BCM8958x device
+
+v1->v2:
+   Minor fixes to address coding style issues.
+   Sent v2 too soon by mistake, without waiting for review comments.
+   Received feedback on this version.
+   https://lore.kernel.org/netdev/20240511015924.41457-1-jitendra.vegiraju@broadcom.com/
+
+v1:  
+   https://lore.kernel.org/netdev/20240510000331.154486-1-jitendra.vegiraju@broadcom.com/
+
+Jitendra Vegiraju (3):
+  Add basic dwxgmac4 support to stmmac core
+  Integrate dwxgmac4 into stmmac hwif handling
+  Add PCI driver support for BCM8958x
+
+ MAINTAINERS                                   |   8 +
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   3 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h  |   4 +
+ .../net/ethernet/stmicro/stmmac/dwmac-brcm.c  | 517 ++++++++++++++++++
+ .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  31 ++
+ .../net/ethernet/stmicro/stmmac/dwxgmac4.c    | 142 +++++
+ .../net/ethernet/stmicro/stmmac/dwxgmac4.h    |  84 +++
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |  26 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |   1 +
+ 10 files changed, 825 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxgmac4.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxgmac4.h
+
+-- 
+2.34.1
+
 
