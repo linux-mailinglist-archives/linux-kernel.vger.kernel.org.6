@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-272160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E01F9457F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (unknown [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5C99457F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3C00B23796
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8A11C235D8
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3464CE05;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D534D5BD;
 	Fri,  2 Aug 2024 06:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AAJaKO0L"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ViJ9Ym9Q"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0858C1757D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F4338F9C
 	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 06:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722579222; cv=none; b=D2G9EIEnL+6C2ZmBc4GMIvnMwBa2mOoHP5vxS5VBVJreakN7bS0Uxs7eLj5dinEwdzBXLrWXnCRAzrvkHkRaLvj0AgwtrKMQ85+vmU8/DgcElIL/HOU1RisAJYYnvO0xOCktwajMCC9bJ5eWubR6giXmFesIr8R/MNE9J5LGLiw=
+	t=1722579222; cv=none; b=dDhw1IRAcFUtk1QIvlGXqVon8isNA05YMUN4aN05WigezL1ez82kMEledwAjEyyrxLrcQfWZTZctXSsgrmNCBcdkl8dsLomp3BJqbORKQWh2+1cyNeJrPFGGSZdyT42VdVTqq6U6NYSQZCf11hUxW7kK177Sz69dB2E/GeQbl1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722579222; c=relaxed/simple;
-	bh=LPXjtMMpQZI8k8paf8J+PicfqHOPihHKxzMwFv+Z4eI=;
+	bh=R3lnZW9OMqRbqoHndWC7iz8saDbeVoz/TYO/UgjKKGU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZpDOIhFtnQnHAdniR+24Wq5LXcfE8e9bpWduan0MUMinvqldIcZcWNz7BLPbF/oirsWF4vh3QkJWOEeiC+RhOHG6tuiWYbiyOPxaxE/N1mHFmPzIbzfRVW6ZxFCMolkKdumk5fd1XlSnBDL37alrTrgXoXCCrRHKXTBOyTYBf+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AAJaKO0L; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version; b=dqHj+hbWH2dwIOQXj6nhtbBSNTDDa2Y81G2LWkVCVIX9k9eq7W2Y2Qj9I4D1OxVN+Y65iLbfep+OW0ECYVdcqFHHTSGYpaLV3Q9hcPWM2UaZ9aDorQX+Ho1EOUXh4yZen1Xz/Z9qGI9EJyZOtsA5XgWnyneVxBs0jTPLbe2FngQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ViJ9Ym9Q; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4723ft2W022569;
-	Fri, 2 Aug 2024 06:13:27 GMT
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4723fWOu008206;
+	Fri, 2 Aug 2024 06:13:29 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
 	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=M
-	KU+WG2gzC94jUgb0tLE7u9uI0Bei7s8TSL3t2RlLeo=; b=AAJaKO0Lt2E/BfIvZ
-	GBc6utt0Ckp1t98ialbh0Zn8hKiUYaILlBQQ28J2suY6kKTKuws+eJ0u1Vxp2e17
-	JNEy+fLnJUsIvdhwpRa3DLQzKaYV8Rl57h2jEQwpgTEHrOOR67IF8tyVoqQJJC+1
-	btBQ5133OROjE2ltYvgl5KBbKRWxS8GvS6tirvO4CzRSuIEX4RbfJGtRtaF+vNTf
-	FOYtCbCZoAGjXJeLN6lFysR7yGLZQKUTJk2dxE07e4+gu3hfwXaeoRHVSAcRtpMM
-	aXWvb/5eeS5rFL/VzqNTsKqm4/3EpMw13iglGqmY8SQ1cnzIB4pguVB986O+IyGH
-	bnAfg==
+	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=c
+	iUF/eIFsWVQEHGUf3W5Z0a0BL+wJJ3TBjudo25Imuw=; b=ViJ9Ym9Qi9P3w97cw
+	9U+ftHX+qD/zDDwIBRHacf8c+eAqZAC4dKNUtndgVVCp1OaaiBfq6B3olV9uyfEv
+	xx8NdXrk2LJcMZCMYfAVxZn2fnscURSmW4dqXvoUINMsk5FVxWvC6Mxh/QhJvjkE
+	kvtJuLM2OIEC+Sv7sPSTs3anbZVa0M9b4i/si24EcBnBTEBKV4ODIekknBjjCZKk
+	mFBJKcyRyDPcEMfM8AWtpnZG0xq4q+NH9tgJaipC50D4pKqVNCgwO15bun+XCGjo
+	hSMyx2ucgv6QcjrUSZPg4Hm5jHHQl41008cTeQIReaghqQtFXr+pmWDyWsIISH5F
+	+UhbQ==
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40rjg5gfyy-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40rjds8g5q-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 02 Aug 2024 06:13:27 +0000 (GMT)
+	Fri, 02 Aug 2024 06:13:29 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4725TVE3035644;
-	Fri, 2 Aug 2024 06:13:26 GMT
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4723Raoe036482;
+	Fri, 2 Aug 2024 06:13:28 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40nvp16eb1-1
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40nvp16ebu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 02 Aug 2024 06:13:26 +0000
+	Fri, 02 Aug 2024 06:13:28 +0000
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4726BM9a012716;
-	Fri, 2 Aug 2024 06:13:26 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4726BM9c012716;
+	Fri, 2 Aug 2024 06:13:27 GMT
 Received: from aruramak-dev.osdevelopmeniad.oraclevcn.com (aruramak-dev.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.155])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 40nvp16e89-2;
-	Fri, 02 Aug 2024 06:13:26 +0000
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 40nvp16e89-3;
+	Fri, 02 Aug 2024 06:13:27 +0000
 From: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
@@ -67,9 +67,9 @@ Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
         jeffxu@chromium.org, rick.p.edgecombe@intel.com, jorgelo@chromium.org,
         keescook@chromium.org, sroettger@google.com, jannh@google.com,
         aruna.ramakrishna@oracle.com
-Subject: [PATCH v8 1/5] x86/pkeys: Add PKRU as a parameter in signal handling functions
-Date: Fri,  2 Aug 2024 06:13:14 +0000
-Message-Id: <20240802061318.2140081-2-aruna.ramakrishna@oracle.com>
+Subject: [PATCH v8 2/5] x86/pkeys: Add helper functions to update PKRU on the sigframe
+Date: Fri,  2 Aug 2024 06:13:15 +0000
+Message-Id: <20240802061318.2140081-3-aruna.ramakrishna@oracle.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20240802061318.2140081-1-aruna.ramakrishna@oracle.com>
 References: <20240802061318.2140081-1-aruna.ramakrishna@oracle.com>
@@ -87,130 +87,120 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adult
  mlxlogscore=999 mlxscore=0 suspectscore=0 malwarescore=0 bulkscore=0
  phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2407110000 definitions=main-2408020042
-X-Proofpoint-ORIG-GUID: jRagxgvjfVt8Bq3SVJ4BKZjm5pIfO22r
-X-Proofpoint-GUID: jRagxgvjfVt8Bq3SVJ4BKZjm5pIfO22r
+X-Proofpoint-ORIG-GUID: VCM5Jqh7_fwRhudywwKQbXduzurqnPn8
+X-Proofpoint-GUID: VCM5Jqh7_fwRhudywwKQbXduzurqnPn8
 
-Problem description:
-Let's assume there's a multithreaded application that runs untrusted
-user code. Each thread has its stack/code protected by a non-zero pkey,
-and the PKRU register is set up such that only that particular non-zero
-pkey is enabled. Each thread also sets up an alternate signal stack to
-handle signals, which is protected by pkey zero. The pkeys man page
-documents that the PKRU will be reset to init_pkru when the signal
-handler is invoked, which means that pkey zero access will be enabled.
-But this reset happens after the kernel attempts to push fpu state
-to the alternate stack, which is not (yet) accessible by the kernel,
-which leads to a new SIGSEGV being sent to the application, terminating
-it.
+In the case where a user thread sets up an alternate signal stack
+protected by the default pkey (i.e. pkey 0), while the thread's stack
+is protected by a non-zero pkey, both these pkeys have to be enabled in
+the PKRU register for the signal to be delivered to the application
+correctly. However, the PKRU value restored after handling the signal
+must not enable this extra pkey (i.e. pkey 0) - i.e., the PKRU value on
+the on the sigframe should be overwritten with the user-defined value.
 
-Enabling both the non-zero pkey (for the thread) and pkey zero in
-userspace will not work for this use case. We cannot have the alt stack
-writeable by all - the rationale here is that the code running in that
-thread (using a non-zero pkey) is untrusted and should not have access
-to the alternate signal stack (that uses pkey zero), to prevent the
-return address of a function from being changed. The expectation is that
-kernel should be able to set up the alternate signal stack and deliver
-the signal to the application even if pkey zero is explicitly disabled
-by the application. The signal handler accessibility should not be
-dictated by whatever PKRU value the thread sets up.
+Add helper functions that will update PKRU value on the sigframe after
+XSAVE. These functions will be called in a later patch; this patch does
+not change any behavior as yet.
 
-Solution:
-The PKRU register is managed by XSAVE, which means the sigframe contents
-must match the register contents - which is not the case here. We want
-the sigframe to contain the user-defined PKRU value (so that it is
-restored correctly from sigcontext) but the actual register must be
-reset to init_pkru so that the alt stack is accessible and the signal
-can be delivered to the application. It seems that the proper fix here
-would be to remove PKRU from the XSAVE framework and manage it
-separately, which is quite complicated. As a workaround, do this:
-
-        orig_pkru = rdpkru();
-        wrpkru(orig_pkru & init_pkru_value);
-        xsave_to_user_sigframe();
-        put_user(pkru_sigframe_addr, orig_pkru)
-
-This change is split over multiple patches.
-
-In preparation for writing PKRU to sigframe in a later patch, pass in
-PKRU as an additional parameter down the chain from get_sigframe():
-	get_sigframe()
-          copy_fpstate_to_sigframe()
-            copy_fpregs_to_sigframe()
-
-There are no functional changes in this patch.
+Note that sig_prepare_pkru() makes no assumption about what pkey could
+be used to protect the altstack (i.e. it may not be part of init_pkru),
+and so enables all pkeys.
 
 Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
 ---
- arch/x86/include/asm/fpu/signal.h | 2 +-
- arch/x86/kernel/fpu/signal.c      | 6 +++---
- arch/x86/kernel/signal.c          | 3 ++-
- 3 files changed, 6 insertions(+), 5 deletions(-)
+ arch/x86/kernel/fpu/signal.c | 10 ++++++++++
+ arch/x86/kernel/fpu/xstate.c | 13 +++++++++++++
+ arch/x86/kernel/fpu/xstate.h |  2 ++
+ arch/x86/kernel/signal.c     | 18 ++++++++++++++++++
+ 4 files changed, 43 insertions(+)
 
-diff --git a/arch/x86/include/asm/fpu/signal.h b/arch/x86/include/asm/fpu/signal.h
-index 611fa41711af..eccc75bc9c4f 100644
---- a/arch/x86/include/asm/fpu/signal.h
-+++ b/arch/x86/include/asm/fpu/signal.h
-@@ -29,7 +29,7 @@ fpu__alloc_mathframe(unsigned long sp, int ia32_frame,
- 
- unsigned long fpu__get_fpstate_size(void);
- 
--extern bool copy_fpstate_to_sigframe(void __user *buf, void __user *fp, int size);
-+extern bool copy_fpstate_to_sigframe(void __user *buf, void __user *fp, int size, u32 pkru);
- extern void fpu__clear_user_states(struct fpu *fpu);
- extern bool fpu__restore_sig(void __user *buf, int ia32_frame);
- 
 diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 247f2225aa9f..2b3b9e140dd4 100644
+index 2b3b9e140dd4..931c5469d7f3 100644
 --- a/arch/x86/kernel/fpu/signal.c
 +++ b/arch/x86/kernel/fpu/signal.c
-@@ -156,7 +156,7 @@ static inline bool save_xstate_epilog(void __user *buf, int ia32_frame,
- 	return !err;
+@@ -63,6 +63,16 @@ static inline bool check_xstate_in_sigframe(struct fxregs_state __user *fxbuf,
+ 	return true;
  }
  
--static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
-+static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf, u32 pkru)
- {
- 	if (use_xsave())
- 		return xsave_to_user_sigframe(buf);
-@@ -185,7 +185,7 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
-  * For [f]xsave state, update the SW reserved fields in the [f]xsave frame
-  * indicating the absence/presence of the extended state to the user.
++/*
++ * Update the value of PKRU register that was already pushed onto the signal frame.
++ */
++static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u32 pkru)
++{
++	if (unlikely(!cpu_feature_enabled(X86_FEATURE_OSPKE)))
++		return 0;
++	return __put_user(pkru, (unsigned int __user *)get_xsave_addr_user(buf, XFEATURE_PKRU));
++}
++
+ /*
+  * Signal frame handlers.
   */
--bool copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
-+bool copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size, u32 pkru)
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index c5a026fee5e0..fa7628bb541b 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -993,6 +993,19 @@ void *get_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
+ }
+ EXPORT_SYMBOL_GPL(get_xsave_addr);
+ 
++/*
++ * Given an xstate feature nr, calculate where in the xsave buffer the state is.
++ * The xsave buffer should be in standard format, not compacted (e.g. user mode
++ * signal frames).
++ */
++void __user *get_xsave_addr_user(struct xregs_state __user *xsave, int xfeature_nr)
++{
++	if (WARN_ON_ONCE(!xfeature_enabled(xfeature_nr)))
++		return NULL;
++
++	return (void __user *)xsave + xstate_offsets[xfeature_nr];
++}
++
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+ 
+ /*
+diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+index 2ee0b9c53dcc..5f057e50df81 100644
+--- a/arch/x86/kernel/fpu/xstate.h
++++ b/arch/x86/kernel/fpu/xstate.h
+@@ -54,6 +54,8 @@ extern int copy_sigframe_from_user_to_xstate(struct task_struct *tsk, const void
+ extern void fpu__init_cpu_xstate(void);
+ extern void fpu__init_system_xstate(unsigned int legacy_size);
+ 
++extern void __user *get_xsave_addr_user(struct xregs_state __user *xsave, int xfeature_nr);
++
+ static inline u64 xfeatures_mask_supervisor(void)
  {
- 	struct task_struct *tsk = current;
- 	struct fpstate *fpstate = tsk->thread.fpu.fpstate;
-@@ -228,7 +228,7 @@ bool copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- 		fpregs_restore_userregs();
- 
- 	pagefault_disable();
--	ret = copy_fpregs_to_sigframe(buf_fx);
-+	ret = copy_fpregs_to_sigframe(buf_fx, pkru);
- 	pagefault_enable();
- 	fpregs_unlock();
- 
+ 	return fpu_kernel_cfg.max_features & XFEATURE_MASK_SUPERVISOR_SUPPORTED;
 diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 31b6f5dddfc2..1f1e8e0ac5a3 100644
+index 1f1e8e0ac5a3..9dc77ad03a0e 100644
 --- a/arch/x86/kernel/signal.c
 +++ b/arch/x86/kernel/signal.c
-@@ -84,6 +84,7 @@ get_sigframe(struct ksignal *ksig, struct pt_regs *regs, size_t frame_size,
- 	unsigned long math_size = 0;
- 	unsigned long sp = regs->sp;
- 	unsigned long buf_fx = 0;
-+	u32 pkru = read_pkru();
+@@ -60,6 +60,24 @@ static inline int is_x32_frame(struct ksignal *ksig)
+ 		ksig->ka.sa.sa_flags & SA_X32_ABI;
+ }
  
- 	/* redzone */
- 	if (!ia32_frame)
-@@ -139,7 +140,7 @@ get_sigframe(struct ksignal *ksig, struct pt_regs *regs, size_t frame_size,
- 	}
- 
- 	/* save i387 and extended state */
--	if (!copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size))
-+	if (!copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size, pkru))
- 		return (void __user *)-1L;
- 
- 	return (void __user *)sp;
++/*
++ * Enable all pkeys temporarily, so as to ensure that both the current
++ * execution stack as well as the alternate signal stack are writeable.
++ * The application can use any of the available pkeys to protect the
++ * alternate signal stack, and we don't know which one it is, so enable
++ * all. The PKRU register will be reset to init_pkru later in the flow,
++ * in fpu__clear_user_states(), and it is the application's responsibility
++ * to enable the appropriate pkey as the first step in the signal handler
++ * so that the handler does not segfault.
++ */
++static inline u32 sig_prepare_pkru(void)
++{
++	u32 orig_pkru = read_pkru();
++
++	write_pkru(0);
++	return orig_pkru;
++}
++
+ /*
+  * Set up a signal frame.
+  */
 -- 
 2.39.3
 
