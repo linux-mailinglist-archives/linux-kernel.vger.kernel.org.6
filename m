@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-271984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987AC94559E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:40:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D2C9455A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43DC41F23D63
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:40:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 772BAB2347A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48612E405;
-	Fri,  2 Aug 2024 00:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242F23AC28;
+	Fri,  2 Aug 2024 00:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvvWAKZ6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bePHb2Tc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A7A249EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330F226AC2;
 	Fri,  2 Aug 2024 00:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722559072; cv=none; b=SSckOe/JhJjc/HtF5y4WsnVlOVwStdZh11dGIUsnQtcld99IHax72kb+D1gXjv4Alt5ozL2+sw0PFSvEI+XIRhgYTtCPf0ER/4nxYxZFHl3W+2vJGlRijYwh2B0wK7uMPPXVcIkKi5AlY5XmNldbq9P25O+fh5quk5AH/rMlbFE=
+	t=1722559073; cv=none; b=qEALoHYVf2xVZ8NC7hOKffAPMJLDTWpLQhqmuciViWRgcRu5cZFUAgOEhv3iHvmsBwnV5IMEkQGGV4ZEIGceGW0YSySoHVpYp9UlrhVBP25eHtimek49tTCL7KjBEDBINNjqyrDF7OThl6YUPn8qKCb+BhjjZmbD0bLnKfTPMM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722559072; c=relaxed/simple;
-	bh=XzfMbwBaTKMebhXjqJdBOmTvMeI7ZiKNs5sHEYidrL8=;
+	s=arc-20240116; t=1722559073; c=relaxed/simple;
+	bh=rG1LYuhBJekOp6wqHDJn7PtOPxnpbi4tnOcI0lklMZ8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FgymqkL3SjlZbOM6G61c5RsI8W+bQxbAjCZ6fIx/kQddk0T8Ao+7qSEtSbmWcxFKewZM6tJZJJS0DkJmjtM/Wu1AibL/J8fDrBZNQ16u6RK0ewCrjc5R6yn2ngmWTgRE7RWS+xZar7J8imTulPszSkJN2msiDpH4bMsOuDXv4OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AvvWAKZ6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1408C4AF0C;
+	 MIME-Version; b=JN8/8S81nwnntVxZuEcQx5ghBsb2nxZl7t58hVmDQaXnfe1ec9vYNg2gcSSRtHLsxOFEqcWmKTvaoHwsrQBvxkqx0amlEnhU3OjeGW25zI9bflFfOXzu/X+UY0O7VkAJPDLeJ6SPz9nDJ3TA6u8GCyp2GEkRIoC1UJTKuK1FGYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bePHb2Tc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0BE4C32786;
 	Fri,  2 Aug 2024 00:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722559072;
-	bh=XzfMbwBaTKMebhXjqJdBOmTvMeI7ZiKNs5sHEYidrL8=;
+	bh=rG1LYuhBJekOp6wqHDJn7PtOPxnpbi4tnOcI0lklMZ8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AvvWAKZ6AsAUzRKl3q6EUUqeUy5mOyJnUv3JZbE5jiqCVTrkSq2PXmJWPMXN/kOYG
-	 51XC4A42wVAJ0n5G1FPe1IzKj5IITrSEfGeqUjmKxXTuf9csSV5ZHjBnlCdfG90FAD
-	 37TYurtcfDT+rZJk4BLaJcvOP1AgCgROYcW3eebX1WNvrm8/kZ2G+yvA0VbodTcVYp
-	 ux2VAp3akgXgnamPuQuJ9dpiDS6uq7319rV1UsiydUsb7y/8HeNJ6m4o+cc1dRhY+B
-	 7nU6WXpchzpcdT/LQ5jISaw586JGHFj16qPFnymRvGwcI9FoPi1aZXEjCSZCEFdRXd
-	 M6h5Wxvpx3j/Q==
+	b=bePHb2Tc9TIE3FOnqgMyNXpOV3/HEnXWahJexwER97fWsxgCKSXVheYQeN9BlgsPx
+	 LzQZsaqipxMJl9T+iW1X+uvmR8ibpuAIt6dg/KdBe9Basq+gEKhwxzgPEUql6wXqYc
+	 jMif/a+OsxC1Ja+/rLy9S+2cow8fcYDxkRKBtz0LxaY1ys926cqfhmSC0AcOY4FftU
+	 ax3UII4FtI9q6cQCX+tytSMw/YpvJ03zP60OT3dXWfPpcF4zUlzZ05owTMKawjRFj2
+	 gPtD04/gMlstlI5DVWp3OpZVMIQn+QPoXI8O8Oj52hhDGRAT/2S/IZW4hjUuxOk2sZ
+	 laAvzcaAwFfvg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 64ADFCE09F8; Thu,  1 Aug 2024 17:37:52 -0700 (PDT)
+	id 690D9CE0A01; Thu,  1 Aug 2024 17:37:52 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 1/3] rcutorture: Add rcutree.nohz_full_patience_delay to TREE07
-Date: Thu,  1 Aug 2024 17:37:48 -0700
-Message-Id: <20240802003750.4134451-1-paulmck@kernel.org>
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Rik van Riel <riel@surriel.com>
+Subject: [PATCH rcu 2/3] rcutorture: Add a stall_cpu_repeat module parameter
+Date: Thu,  1 Aug 2024 17:37:49 -0700
+Message-Id: <20240802003750.4134451-2-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <22c4b040-7b7b-45ff-8fa5-41b741c7cd7e@paulmck-laptop>
 References: <22c4b040-7b7b-45ff-8fa5-41b741c7cd7e@paulmck-laptop>
@@ -62,24 +63,160 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds the rcutree.nohz_full_patience_delay=1000 kernel boot
-parameter to the TREE07 scenario, on the observation that "if it ain't
-tested, it don't work".
+This commit adds an stall_cpu_repeat kernel, which is also the
+rcutorture.stall_cpu_repeat boot parameter, to test repeated CPU stalls.
+Note that only the first stall will pay attention to the stall_cpu_irqsoff
+module parameter.  For the second and subsequent stalls, interrupts will
+be enabled.  This is helpful when testing the interaction between RCU
+CPU stall warnings and CSD-lock stall warnings.
 
+Reported-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot | 1 +
- 1 file changed, 1 insertion(+)
+ .../admin-guide/kernel-parameters.txt         |  8 ++-
+ kernel/rcu/rcutorture.c                       | 56 +++++++++++++------
+ 2 files changed, 47 insertions(+), 17 deletions(-)
 
-diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot b/tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot
-index 979edbf4c8205..55ce305b2a3d0 100644
---- a/tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot
-+++ b/tools/testing/selftests/rcutorture/configs/rcu/TREE07.boot
-@@ -2,3 +2,4 @@ nohz_full=2-9
- rcutorture.stall_cpu=14
- rcutorture.stall_cpu_holdoff=90
- rcutorture.fwd_progress=0
-+rcutree.nohz_full_patience_delay=1000
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 35dd1e69b14d0..d30b81e693f9c 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -5388,7 +5388,13 @@
+ 			Time to wait (s) after boot before inducing stall.
+ 
+ 	rcutorture.stall_cpu_irqsoff= [KNL]
+-			Disable interrupts while stalling if set.
++			Disable interrupts while stalling if set, but only
++			on the first stall in the set.
++
++	rcutorture.stall_cpu_repeat= [KNL]
++			Number of times to repeat the stall sequence,
++			so that rcutorture.stall_cpu_repeat=3 will result
++			in four stall sequences.
+ 
+ 	rcutorture.stall_gp_kthread= [KNL]
+ 			Duration (s) of forced sleep within RCU
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 3dc7ef4af0eca..9dd6764e25f3d 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -115,6 +115,7 @@ torture_param(int, stall_cpu_holdoff, 10, "Time to wait before starting stall (s
+ torture_param(bool, stall_no_softlockup, false, "Avoid softlockup warning during cpu stall.");
+ torture_param(int, stall_cpu_irqsoff, 0, "Disable interrupts while stalling.");
+ torture_param(int, stall_cpu_block, 0, "Sleep while stalling.");
++torture_param(int, stall_cpu_repeat, 0, "Number of additional stalls after the first one.");
+ torture_param(int, stall_gp_kthread, 0, "Grace-period kthread stall duration (s).");
+ torture_param(int, stat_interval, 60, "Number of seconds between stats printk()s");
+ torture_param(int, stutter, 5, "Number of seconds to run/halt test");
+@@ -1385,7 +1386,8 @@ rcu_torture_writer(void *arg)
+ 
+ 	// If a new stall test is added, this must be adjusted.
+ 	if (stall_cpu_holdoff + stall_gp_kthread + stall_cpu)
+-		stallsdone += (stall_cpu_holdoff + stall_gp_kthread + stall_cpu + 60) * HZ;
++		stallsdone += (stall_cpu_holdoff + stall_gp_kthread + stall_cpu + 60) *
++			      HZ * (stall_cpu_repeat + 1);
+ 	VERBOSE_TOROUT_STRING("rcu_torture_writer task started");
+ 	if (!can_expedite)
+ 		pr_alert("%s" TORTURE_FLAG
+@@ -2383,7 +2385,7 @@ rcu_torture_print_module_parms(struct rcu_torture_ops *cur_ops, const char *tag)
+ 		 "test_boost=%d/%d test_boost_interval=%d "
+ 		 "test_boost_duration=%d shutdown_secs=%d "
+ 		 "stall_cpu=%d stall_cpu_holdoff=%d stall_cpu_irqsoff=%d "
+-		 "stall_cpu_block=%d "
++		 "stall_cpu_block=%d stall_cpu_repeat=%d "
+ 		 "n_barrier_cbs=%d "
+ 		 "onoff_interval=%d onoff_holdoff=%d "
+ 		 "read_exit_delay=%d read_exit_burst=%d "
+@@ -2395,7 +2397,7 @@ rcu_torture_print_module_parms(struct rcu_torture_ops *cur_ops, const char *tag)
+ 		 test_boost, cur_ops->can_boost,
+ 		 test_boost_interval, test_boost_duration, shutdown_secs,
+ 		 stall_cpu, stall_cpu_holdoff, stall_cpu_irqsoff,
+-		 stall_cpu_block,
++		 stall_cpu_block, stall_cpu_repeat,
+ 		 n_barrier_cbs,
+ 		 onoff_interval, onoff_holdoff,
+ 		 read_exit_delay, read_exit_burst,
+@@ -2473,19 +2475,11 @@ static struct notifier_block rcu_torture_stall_block = {
+  * induces a CPU stall for the time specified by stall_cpu.  If a new
+  * stall test is added, stallsdone in rcu_torture_writer() must be adjusted.
+  */
+-static int rcu_torture_stall(void *args)
++static void rcu_torture_stall_one(int rep, int irqsoff)
+ {
+ 	int idx;
+-	int ret;
+ 	unsigned long stop_at;
+ 
+-	VERBOSE_TOROUT_STRING("rcu_torture_stall task started");
+-	if (rcu_cpu_stall_notifiers) {
+-		ret = rcu_stall_chain_notifier_register(&rcu_torture_stall_block);
+-		if (ret)
+-			pr_info("%s: rcu_stall_chain_notifier_register() returned %d, %sexpected.\n",
+-				__func__, ret, !IS_ENABLED(CONFIG_RCU_STALL_COMMON) ? "un" : "");
+-	}
+ 	if (stall_cpu_holdoff > 0) {
+ 		VERBOSE_TOROUT_STRING("rcu_torture_stall begin holdoff");
+ 		schedule_timeout_interruptible(stall_cpu_holdoff * HZ);
+@@ -2505,12 +2499,12 @@ static int rcu_torture_stall(void *args)
+ 		stop_at = ktime_get_seconds() + stall_cpu;
+ 		/* RCU CPU stall is expected behavior in following code. */
+ 		idx = cur_ops->readlock();
+-		if (stall_cpu_irqsoff)
++		if (irqsoff)
+ 			local_irq_disable();
+ 		else if (!stall_cpu_block)
+ 			preempt_disable();
+-		pr_alert("%s start on CPU %d.\n",
+-			  __func__, raw_smp_processor_id());
++		pr_alert("%s start stall episode %d on CPU %d.\n",
++			  __func__, rep + 1, raw_smp_processor_id());
+ 		while (ULONG_CMP_LT((unsigned long)ktime_get_seconds(), stop_at) &&
+ 		       !kthread_should_stop())
+ 			if (stall_cpu_block) {
+@@ -2522,12 +2516,42 @@ static int rcu_torture_stall(void *args)
+ 			} else if (stall_no_softlockup) {
+ 				touch_softlockup_watchdog();
+ 			}
+-		if (stall_cpu_irqsoff)
++		if (irqsoff)
+ 			local_irq_enable();
+ 		else if (!stall_cpu_block)
+ 			preempt_enable();
+ 		cur_ops->readunlock(idx);
+ 	}
++}
++
++/*
++ * CPU-stall kthread.  Invokes rcu_torture_stall() once, and then as many
++ * additional times as specified by the stall_cpu_repeat module parameter.
++ * Note that stall_cpu_irqsoff is ignored on the second and subsequent
++ * stall.
++ */
++static int rcu_torture_stall(void *args)
++{
++	int i;
++	int repeat = stall_cpu_repeat;
++	int ret;
++
++	VERBOSE_TOROUT_STRING("rcu_torture_stall task started");
++	if (repeat < 0) {
++		repeat = 0;
++		WARN_ON_ONCE(IS_BUILTIN(CONFIG_RCU_TORTURE_TEST));
++	}
++	if (rcu_cpu_stall_notifiers) {
++		ret = rcu_stall_chain_notifier_register(&rcu_torture_stall_block);
++		if (ret)
++			pr_info("%s: rcu_stall_chain_notifier_register() returned %d, %sexpected.\n",
++				__func__, ret, !IS_ENABLED(CONFIG_RCU_STALL_COMMON) ? "un" : "");
++	}
++	for (i = 0; i <= repeat; i++) {
++		if (kthread_should_stop())
++			break;
++		rcu_torture_stall_one(i, i == 0 ? stall_cpu_irqsoff : 0);
++	}
+ 	pr_alert("%s end.\n", __func__);
+ 	if (rcu_cpu_stall_notifiers && !ret) {
+ 		ret = rcu_stall_chain_notifier_unregister(&rcu_torture_stall_block);
 -- 
 2.40.1
 
