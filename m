@@ -1,340 +1,203 @@
-Return-Path: <linux-kernel+bounces-272067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12ADB94567E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:00:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04200945678
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD4F28803A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7193E1F23A6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C8A13BC26;
-	Fri,  2 Aug 2024 02:57:53 +0000 (UTC)
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2132.outbound.protection.outlook.com [40.107.255.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9226084E1C;
+	Fri,  2 Aug 2024 02:57:50 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25BA132494;
-	Fri,  2 Aug 2024 02:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.132
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722567472; cv=fail; b=lLYCEF4ZOu/PzRI8D1r8mrk8ujZ11pMmzjgdT828/Rl5LfGLCi7Vdqb2GE0KyjVSva65c0Mynv9aNoQ7dgPDB0m3FSeaAtP+2qBIl7u/y6OXnkeUr3x0x5NDAcVoYS63wvdvn8skLQ92xV0w6cW7VoJUKg/TEz7CO446ad9l6zs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722567472; c=relaxed/simple;
-	bh=8fr2le2RRkyBxxo0cMbqgGIl5Pqcs8qpx2qLsAezPSE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Nvuqg8wQGFtdL7JwMIPRLTywfg51/oY11To60nYuMElVoPISTH+t3Xwv+akl419eSDkMabR6GhCpyXQ9Lm6E0PaWimUh8SFbF6g8CRh08tWbxOzR78QsG+wooT864OkzvLOS0nXvQPyiZaabIVMFPlrAEdJl/CMm9Dsyo04nBoM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.255.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zP/hhOrocXZH3Wc6T+o1NDnjV7JltNBRU0v2Wix/tD8S7FWwhcFBjojejAHU2B+ybLZyT/cOhNFC+wbV4rXpeUXhr7J6iaLyBXLqmqRremED60BbjQZAVfP9hqYIL08yHn415I2rm2eKZ8lLgq5O/WHstcaDPvKElyidBC5kDiryQJo6UuYiAC78Ig/99+n/hBV8nTtxm+HvE2nKKxGOvoIaOHoiBZrsbqm0sCPG1graXOdw7qZkaTTKB+WAx+6qHSWp+0dMbLxT5t3rFW5xoytQ+dze/xTTfSgeVj0dl9jjirnXggxjkF7/pQAQG5Z13VSbG+hMT7tkhx++1rL/9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XB3tez9D3u90dIBU3uiBuPnvK5S2Zx5c0jWE2G6mkbA=;
- b=vXIUUG4Dlp8Y1oONiQD9AlDlHszQ8PSrNOQepo4GAKu5LlskDOuEw+G+cBWuVDUokV+xXLjnGi3mWSYlr99EQalf3hUWIbzkeaK5DI7OVgCXtcUZFbhq52l9b4eVEhAAVqj4CVAN3V8QIDG2qtuAbpbjgNZHLm+zfTaKhfnfs0XfHiIshOlEHBlFlD11RS0f8zcW8CwfkJnM2DuSLyIFHpa208hbRHsUqnhQUoj1g+zwRmUiWk5sDHF+Z63iehTbxGX5uRcVOaLqW31lo2BFNQAzLYFnexe69l0Pf53er8CYl/RUQpLz9tkHu+t+PvoSVZQHTPN8jkHG5UzD0okuoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by KL1PR03MB8376.apcprd03.prod.outlook.com (2603:1096:820:12c::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Fri, 2 Aug
- 2024 02:57:49 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7828.016; Fri, 2 Aug 2024
- 02:57:48 +0000
-From: Jacobe Zang <jacobe.zang@wesion.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	heiko@sntech.de,
-	kvalo@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	conor+dt@kernel.org,
-	arend.vanspriel@broadcom.com
-Cc: efectn@protonmail.com,
-	dsimic@manjaro.org,
-	jagan@edgeble.ai,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	arend@broadcom.com,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	megi@xff.cz,
-	duoming@zju.edu.cn,
-	bhelgaas@google.com,
-	minipli@grsecurity.net,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	nick@khadas.com,
-	Jacobe Zang <jacobe.zang@wesion.com>
-Subject: [PATCH v7 5/5] wifi: brcmfmac: add flag for random seed during firmware download
-Date: Fri,  2 Aug 2024 10:57:15 +0800
-Message-Id: <20240802025715.2360456-6-jacobe.zang@wesion.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240802025715.2360456-1-jacobe.zang@wesion.com>
-References: <20240802025715.2360456-1-jacobe.zang@wesion.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0211.apcprd04.prod.outlook.com
- (2603:1096:4:187::19) To TYZPR03MB7001.apcprd03.prod.outlook.com
- (2603:1096:400:26a::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B547A13A;
+	Fri,  2 Aug 2024 02:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722567470; cv=none; b=nT9PjiuhCjP+RF8T330ySLM+6Jq2GJ4vtu3/404QDp6Px0/ZMRXePk9g7GSmo34lNrl49cQ+JQcVYkiEM+aO4os4fWUcSozCkTaxVHoMI2omymROr3U8a2ALIdU2tYYTxOYrK81LSlOQhMpHCcugX1mBMb12dIwTugQZkUg33lU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722567470; c=relaxed/simple;
+	bh=Ky8NxVSblEJ2L86FKaPjuMhj1pzuGVaEyqERYdCcTOQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bXRjT2M1Y0XaLyUwP7H+LAPiteZKvEy3SGZIpKEcTcdJcZyE3YpXeLYx/99khNt5kNA+y0/qYzjvI0sqjJVmzLpgeV3kysP+xgvNyc2UT71S1GohEJrqTjKtmsJ0hdEyq+JdKVL5czQxpC/aVr1eB0VsxjOc5QO+8DujCQUx7Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WZr9C0KM6z4f3jYx;
+	Fri,  2 Aug 2024 10:57:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C69671A15D6;
+	Fri,  2 Aug 2024 10:57:43 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCXv4UlS6xmjwQZAg--.57908S3;
+	Fri, 02 Aug 2024 10:57:43 +0800 (CST)
+Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
+ uptodate bits
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
+ <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+ <Zqwi48H74g2EX56c@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <b40a510d-37b3-da50-79db-d56ebd870bf0@huaweicloud.com>
+Date: Fri, 2 Aug 2024 10:57:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB7001:EE_|KL1PR03MB8376:EE_
-X-MS-Office365-Filtering-Correlation-Id: 676c7624-5b06-4e87-af2b-08dcb29ee47c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Jvq3XyToX73b2UzNgT5gqV/St3IxQQCYs2pRlgK4KNcl3crE308uTcuS/gcd?=
- =?us-ascii?Q?ZbMPcsQmiT0D8rEQq7P6MNOEa2nJ/ho1xh33+odRrXeq/DSlCJAL+B+LVq90?=
- =?us-ascii?Q?QIONCLZ7ybp9e72Lf9jmYbq/EZlLJUdcRDrZHum96Qc2sMQTB3BiHZq1B1pB?=
- =?us-ascii?Q?lKMFqiYiVnt2D+g/s7giQapIMXi/SY51y+VwJ+rX3xQA82nBszm70TXWvySH?=
- =?us-ascii?Q?JA0enysQ3cSb9wfTAFea8XcJHZDLaBRtR9kseUDzEc917F6LYIpUYa3bovUF?=
- =?us-ascii?Q?XTIfbFwFYxTjsZYNl1x40LnLjDyGhLhMLoE8FiM4CKx2d1QpTjMx04PTggIg?=
- =?us-ascii?Q?3mK+fE3ouYu9Tqary+WzPb6lhGM2mHOW/y6T6Bw0fRBEEotoxnLBtAMe9aJC?=
- =?us-ascii?Q?KEjFaqbiUboO4xl1/uPLHfVwLzbXzx+rTaCPJF+XFzGPZ32mcYVXMxczIPq0?=
- =?us-ascii?Q?QxoFgjTwSUDl27D2e94FtQGGC0eP32+fCbjsBjYh7ssAVnk4reVwDPuRP4Wc?=
- =?us-ascii?Q?91kPsLoF4OlEJ23gCVxzYSM/1fVwkjws23wyaqBls0KYTKQtxAa7sgf5hJkS?=
- =?us-ascii?Q?Xnf5yscE0LSIhMzDhFChBmA51P7Jl955mUQ3ytx4uTvM5oAJmWr8oz9b/8LS?=
- =?us-ascii?Q?mT4K2/PjejtVF1Fi8ABMj58Hyd6BhZMZsh6y1KHCa/J91Xu678rkjLbiFiYC?=
- =?us-ascii?Q?YFCPGm/PdC/sIHRju0dg1B4GkxayQCRvkN3bLSh0HF6kwkwIyeR8Ff0c69KZ?=
- =?us-ascii?Q?copLr8cS45/xzkzRHt0T/rDCzgtG0IePWm4YHwg9nFrhzZgLY27bsFMqLG+V?=
- =?us-ascii?Q?rvmon1fZALroe0RrqgHouNHHaWtF2KtwUp2UJ6t7Pi5XJXlzTLzoWP4I6IuP?=
- =?us-ascii?Q?CdNWXe19auw94V5JY37sPqvuyONTkPTglRdC2lBi1W1yGpRcNALNtj50IPcP?=
- =?us-ascii?Q?yemOd6R9jMkmyWQ5EIG3JNwEdAa80PQJyhIdhdmOemGgLRLjb9MYYwTQ2wh4?=
- =?us-ascii?Q?HqLZC+9YwOQ99ZF5OdXZTPRvmgwKBQgv4xLIHHTuS/2IpavNVmqVP+4vptyf?=
- =?us-ascii?Q?G5k71GK4Yjz+mzT2smzIw0B2s68E0Paqpw8aU9oG4JCXoKx2veuQ0+MQb4/P?=
- =?us-ascii?Q?LLBGazlsgIubGBe5NW/XYS6B5NAHu5//bnzZklrpIuC/I4LWbbJBxMb+xE/7?=
- =?us-ascii?Q?t25BxiyVoEID3LxHdvSNPVEnmH4azXss6+RaW0Xgxmxvyi9NFY+z3Q6JgfFK?=
- =?us-ascii?Q?wUerNjrcRnQq0uk9haCf7hp4CB0GD2VumjIOVxVfk/lxiGv0aog6PMzg8PuQ?=
- =?us-ascii?Q?SFHf4hy1FvNfaJdIQCJ7gsKvbaRhBq07zeVDzrjVlQohegH4qvdLvwQlHmVS?=
- =?us-ascii?Q?yg+4ltPoCM32YA87Uy+aE4pNl45EgqXq+y36/ZFONs9CLQzdIZiKLxmYvp2B?=
- =?us-ascii?Q?9yMnm62ISs0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(921020)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gfTGzo8rMTRnBfHQVhapd1iOw2d6fyMP2XAyB31ZsJSk1dZd1BciERdT6zhg?=
- =?us-ascii?Q?2KgYhynHXVAertuA708WWZrmD98O1HHyn9TvDqB+2um+sip3G8yacAF5BFNv?=
- =?us-ascii?Q?EWSDTUiOx0UcTbaRyNZyf/7++rOrswgZNfawHylJQjzu2Cksogdqn2n2Iy3Z?=
- =?us-ascii?Q?Y2UL6DFKDaQEDyEbF0yRK4+99LB8COu+4o1J8gU5H8UhI6WsQ1U/dB2bsCQX?=
- =?us-ascii?Q?6cXvTYgcsOM7g7AV25HQGy/K9voKw0/XM5gFup4r9rnsvGjWHMXIkhb7LtCF?=
- =?us-ascii?Q?LF8aRpPt5sRTkLFCXEoiQxrvPzA/AmdRFRCQtrfdq5bpSNIoPy2UwRaN+ItQ?=
- =?us-ascii?Q?Kn5b/1mRtmpPAdMpOwm/brIO7xoiWcicAvMhshRpc7IzAh1P1iEzeD4EVdr1?=
- =?us-ascii?Q?tHEhW6ivOg0wB2czIEE5s0ju5g4pQJcoTcit32PSZ0AFjYSkvKkBh08Wml89?=
- =?us-ascii?Q?nnLEcaGa34IRMrgLELKv/Ljwm/gWNuEFLSHyrcew76Rn9jLEeup+4ZHw/0de?=
- =?us-ascii?Q?o+tFo09J0/lIFoN7yEGBvikAtesIsuIfFEKppDXSalqsfkW2TSj5BbeRaVQ/?=
- =?us-ascii?Q?Wgv89vuMwSXweU7XsEhzE8DF81LMiftatg1KOHXS8JmitqvOW3Pg3DTrhsJM?=
- =?us-ascii?Q?TsQ4m+3a8e1bYfv1ty9+gAf8SpGnM9Vs3uIjM+yteCCW7WzmHJ2kWDUv5aJp?=
- =?us-ascii?Q?gv5Yq+9TtR9gu+AJNCoOcv8W/QBEHY0IKyifQ3lwGw7grh8whP1uEFOmApJR?=
- =?us-ascii?Q?4ZawAWTTXavKbjbgTeMkYb45mfpMO2Gf0zD7LpRr3xHrWsrIfCW1xwXJbACv?=
- =?us-ascii?Q?QJWMxv3bxB0C7NxXJt4evrXtUXwVjQoh3yB3Oyn5bWouNPoxY73fINGdrF1L?=
- =?us-ascii?Q?Gv+CFuN3wN8MT3XgoLYeWQII8BRXJhYXPA/BQKG6WCBremH3LwK58l4sPK+v?=
- =?us-ascii?Q?NA70Vj36zDV0OTNmPozgLFP2CNLTut9+O+Fa7x4k8LQvDVeF0FfnjxdPl5GB?=
- =?us-ascii?Q?f3QxPUVFkXwOVokN6WBGX3ztrO8Rv6nwSmksCweDwUDNeqt/SdaH5OU0Mc7A?=
- =?us-ascii?Q?IoIfU++nPcqoQ74Jz9mIbTBF37G8+CBuOw6jDccii5YS6KG8kVwpkRT3I68+?=
- =?us-ascii?Q?5zjcwVDt4zRMcoOG01SCwxT3uHAlxdRswNSJtyHdi5ccYN+521iCIQ/fbK2D?=
- =?us-ascii?Q?gthJeH4ywC0jFsy2iYuUohvnn9pkMUbHBPCi2alRfWUu5iJ6bbBQrCdVD5zr?=
- =?us-ascii?Q?Id6FTlWRZ0OWZd8Xpui61PtLUnTkeBqy5u9MrGhqiG+bi/BpRWPnRqOO5p8T?=
- =?us-ascii?Q?vIxMncFCvHuKd5oqCFIFmFT3ZRfRqUHc1wGjgQSA/gBeUAg6jSlKuf4tJrd+?=
- =?us-ascii?Q?VZFwWjeLy5zjwdBgxko7jhgjlVNpAC4CeN7qNU0wcLUNVMKE/MqjWej1WRss?=
- =?us-ascii?Q?ew/E07iIpCxqWUQuzYQv2LQHY3GleX3Sw8dpfHKpntPgy5PgbmMX/L2KogmD?=
- =?us-ascii?Q?KoYiZjDJvXztvKAtiqykK3KGjVzLv1gOJgSs5uZhD/S01OFgFWbgiPvPdajm?=
- =?us-ascii?Q?Nw269cD62aZVBJzdPSUFimNw6KT3NTwqTgjt+J+N?=
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 676c7624-5b06-4e87-af2b-08dcb29ee47c
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2024 02:57:48.9132
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 91HjvrHmT0Gxda90T2bNgDvsfL5M6ad+WqyaZ6XFXPf+yDC/lOG9JKTTgoysCWcH8ZeD5rwnPbUD46R8vCrjFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8376
+In-Reply-To: <Zqwi48H74g2EX56c@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCXv4UlS6xmjwQZAg--.57908S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF48Aw17Aw1kAF1xZr1DKFg_yoWrKrWxpF
+	Z8Ka4DKr4ktFWxZwn7Xr1xXF1F9anrW3yrCFZ3K345AF98XF1SgF1I9ay5urW8Jws3Cr1F
+	qr40v34kuFWUZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Providing the random seed to firmware was tied to the fact that the
-device has a valid OTP, which worked for some Apple chips. However,
-it turns out the BCM43752 device also needs the random seed in order
-to get firmware running. Suspect it is simply tied to the firmware
-branch used for the device. Introducing a mechanism to allow setting
-it for a device through the device table.
+On 2024/8/2 8:05, Dave Chinner wrote:
+> On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Commit '1cea335d1db1 ("iomap: fix sub-page uptodate handling")' fix a
+>> race issue when submitting multiple read bios for a page spans more than
+>> one file system block by adding a spinlock(which names state_lock now)
+>> to make the page uptodate synchronous. However, the race condition only
+>> happened between the read I/O submitting and completeing threads,
+> 
+> when we do writeback on a folio that has multiple blocks on it we
+> can submit multiple bios for that, too. Hence the write completions
+> can race with each other and write submission, too.
+> 
+> Yes, write bio submission and completion only need to update ifs
+> accounting using an atomic operation, but the same race condition
+> exists even though the folio is fully locked at the point of bio
+> submission.
+> 
+> 
+>> it's
+>> sufficient to use page lock to protect other paths, e.g. buffered write
+>                     ^^^^ folio
+>> path.
+>>
+>> After large folio is supported, the spinlock could affect more
+>> about the buffered write performance, so drop it could reduce some
+>> unnecessary locking overhead.
+> 
+> From the point of view of simple to understand and maintain code, I
+> think this is a bad idea. The data structure is currently protected
+> by the state lock in all situations, but this change now makes it
+> protected by the state lock in one case and the folio lock in a
+> different case.
 
-Co-developed-by: Ondrej Jirman <megi@xff.cz>
-Signed-off-by: Ondrej Jirman <megi@xff.cz>
-Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
----
- .../broadcom/brcm80211/brcmfmac/pcie.c        | 52 ++++++++++++++++---
- .../broadcom/brcm80211/include/brcm_hw_ids.h  |  2 +
- 2 files changed, 46 insertions(+), 8 deletions(-)
+Yeah, I agree that this is a side-effect of this change, after this patch,
+we have to be careful to distinguish between below two cases B1 and B2 as
+Willy mentioned.
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-index 06698a714b523..938632daf30a9 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-@@ -66,6 +66,7 @@ BRCMF_FW_DEF(4365C, "brcmfmac4365c-pcie");
- BRCMF_FW_DEF(4366B, "brcmfmac4366b-pcie");
- BRCMF_FW_DEF(4366C, "brcmfmac4366c-pcie");
- BRCMF_FW_DEF(4371, "brcmfmac4371-pcie");
-+BRCMF_FW_CLM_DEF(43752, "brcmfmac43752-pcie");
- BRCMF_FW_CLM_DEF(4377B3, "brcmfmac4377b3-pcie");
- BRCMF_FW_CLM_DEF(4378B1, "brcmfmac4378b1-pcie");
- BRCMF_FW_CLM_DEF(4378B3, "brcmfmac4378b3-pcie");
-@@ -104,6 +105,7 @@ static const struct brcmf_firmware_mapping brcmf_pcie_fwnames[] = {
- 	BRCMF_FW_ENTRY(BRCM_CC_43664_CHIP_ID, 0xFFFFFFF0, 4366C),
- 	BRCMF_FW_ENTRY(BRCM_CC_43666_CHIP_ID, 0xFFFFFFF0, 4366C),
- 	BRCMF_FW_ENTRY(BRCM_CC_4371_CHIP_ID, 0xFFFFFFFF, 4371),
-+	BRCMF_FW_ENTRY(BRCM_CC_43752_CHIP_ID, 0xFFFFFFFF, 43752),
- 	BRCMF_FW_ENTRY(BRCM_CC_4377_CHIP_ID, 0xFFFFFFFF, 4377B3), /* revision ID 4 */
- 	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0x0000000F, 4378B1), /* revision ID 3 */
- 	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0xFFFFFFE0, 4378B3), /* revision ID 5 */
-@@ -358,6 +360,7 @@ struct brcmf_pciedev_info {
- 			  u16 value);
- 	struct brcmf_mp_device *settings;
- 	struct brcmf_otp_params otp;
-+	bool fwseed;
- #ifdef DEBUG
- 	u32 console_interval;
- 	bool console_active;
-@@ -1720,14 +1723,14 @@ static int brcmf_pcie_download_fw_nvram(struct brcmf_pciedev_info *devinfo,
- 		memcpy_toio(devinfo->tcm + address, nvram, nvram_len);
- 		brcmf_fw_nvram_free(nvram);
- 
--		if (devinfo->otp.valid) {
-+		if (devinfo->fwseed) {
- 			size_t rand_len = BRCMF_RANDOM_SEED_LENGTH;
- 			struct brcmf_random_seed_footer footer = {
- 				.length = cpu_to_le32(rand_len),
- 				.magic = cpu_to_le32(BRCMF_RANDOM_SEED_MAGIC),
- 			};
- 
--			/* Some Apple chips/firmwares expect a buffer of random
-+			/* Some chips/firmwares expect a buffer of random
- 			 * data to be present before NVRAM
- 			 */
- 			brcmf_dbg(PCIE, "Download random seed\n");
-@@ -2399,6 +2402,37 @@ static void brcmf_pcie_debugfs_create(struct device *dev)
- }
- #endif
- 
-+struct brcmf_pcie_drvdata {
-+	enum brcmf_fwvendor vendor;
-+	bool fw_seed;
-+};
-+
-+enum {
-+	BRCMF_DRVDATA_CYW,
-+	BRCMF_DRVDATA_BCA,
-+	BRCMF_DRVDATA_WCC,
-+	BRCMF_DRVDATA_WCC_SEED,
-+};
-+
-+static const struct brcmf_pcie_drvdata drvdata[] = {
-+	[BRCMF_DRVDATA_CYW] = {
-+		.vendor = BRCMF_FWVENDOR_CYW,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_BCA] = {
-+		.vendor = BRCMF_FWVENDOR_BCA,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_WCC] = {
-+		.vendor = BRCMF_FWVENDOR_WCC,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_WCC_SEED] = {
-+		.vendor = BRCMF_FWVENDOR_WCC,
-+		.fw_seed = true,
-+	},
-+};
-+
- /* Forward declaration for pci_match_id() call */
- static const struct pci_device_id brcmf_pcie_devid_table[];
- 
-@@ -2477,9 +2511,10 @@ brcmf_pcie_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	bus->bus_priv.pcie = pcie_bus_dev;
- 	bus->ops = &brcmf_pcie_bus_ops;
- 	bus->proto_type = BRCMF_PROTO_MSGBUF;
--	bus->fwvid = id->driver_data;
- 	bus->chip = devinfo->coreid;
- 	bus->wowl_supported = pci_pme_capable(pdev, PCI_D3hot);
-+	bus->fwvid = drvdata[id->driver_data].vendor;
-+	devinfo->fwseed = drvdata[id->driver_data].fw_seed;
- 	dev_set_drvdata(&pdev->dev, bus);
- 
- 	ret = brcmf_alloc(&devinfo->pdev->dev, devinfo->settings);
-@@ -2665,14 +2700,14 @@ static const struct dev_pm_ops brcmf_pciedrvr_pm = {
- 		BRCM_PCIE_VENDOR_ID_BROADCOM, (dev_id), \
- 		PCI_ANY_ID, PCI_ANY_ID, \
- 		PCI_CLASS_NETWORK_OTHER << 8, 0xffff00, \
--		BRCMF_FWVENDOR_ ## fw_vend \
-+		BRCMF_DRVDATA_ ## fw_vend \
- 	}
- #define BRCMF_PCIE_DEVICE_SUB(dev_id, subvend, subdev, fw_vend) \
- 	{ \
- 		BRCM_PCIE_VENDOR_ID_BROADCOM, (dev_id), \
- 		(subvend), (subdev), \
- 		PCI_CLASS_NETWORK_OTHER << 8, 0xffff00, \
--		BRCMF_FWVENDOR_ ## fw_vend \
-+		BRCMF_DRVDATA_ ## fw_vend \
- 	}
- 
- static const struct pci_device_id brcmf_pcie_devid_table[] = {
-@@ -2700,9 +2735,10 @@ static const struct pci_device_id brcmf_pcie_devid_table[] = {
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4366_5G_DEVICE_ID, BCA),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4371_DEVICE_ID, WCC),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_43596_DEVICE_ID, CYW),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_43752_DEVICE_ID, WCC_SEED),
- 
- 	{ /* end: all zeroes */ }
- };
-diff --git a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-index 44684bf1b9acc..c1e22c589d85e 100644
---- a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-@@ -52,6 +52,7 @@
- #define BRCM_CC_43664_CHIP_ID		43664
- #define BRCM_CC_43666_CHIP_ID		43666
- #define BRCM_CC_4371_CHIP_ID		0x4371
-+#define BRCM_CC_43752_CHIP_ID		43752
- #define BRCM_CC_4377_CHIP_ID		0x4377
- #define BRCM_CC_4378_CHIP_ID		0x4378
- #define BRCM_CC_4387_CHIP_ID		0x4387
-@@ -94,6 +95,7 @@
- #define BRCM_PCIE_4366_5G_DEVICE_ID	0x43c5
- #define BRCM_PCIE_4371_DEVICE_ID	0x440d
- #define BRCM_PCIE_43596_DEVICE_ID	0x4415
-+#define BRCM_PCIE_43752_DEVICE_ID	0x449d
- #define BRCM_PCIE_4377_DEVICE_ID	0x4488
- #define BRCM_PCIE_4378_DEVICE_ID	0x4425
- #define BRCM_PCIE_4387_DEVICE_ID	0x4433
--- 
-2.34.1
+B. If ifs_set_range_uptodate() is called from iomap_set_range_uptodate(),
+   either we know:
+B1. The caller of iomap_set_range_uptodate() holds the folio lock, and this
+    is the only place that can call ifs_set_range_uptodate() for this folio
+B2. The caller of iomap_set_range_uptodate() holds the state lock
+
+> 
+> Making this change also misses the elephant in the room: the
+> buffered write path still needs the ifs->state_lock to update the
+> dirty bitmap. Hence we're effectively changing the serialisation
+> mechanism for only one of the two ifs state bitmaps that the
+> buffered write path has to update.
+> 
+> Indeed, we can't get rid of the ifs->state_lock from the dirty range
+> updates because iomap_dirty_folio() can be called without the folio
+> being locked through folio_mark_dirty() calling the ->dirty_folio()
+> aop.
+> 
+
+Sorry, I don't understand, why folio_mark_dirty() could be called without
+folio lock (isn't this supposed to be a bug)? IIUC, all the file backed
+folios must be locked before marking dirty. Are there any exceptions or am
+I missing something?
+
+> IOWs, getting rid of the state lock out of the uptodate range
+> changes does not actually get rid of it from the buffered IO patch.
+> we still have to take it to update the dirty range, and so there's
+> an obvious way to optimise the state lock usage without changing any
+> of the bitmap access serialisation behaviour. i.e.  We combine the
+> uptodate and dirty range updates in __iomap_write_end() into a
+> single lock context such as:
+> 
+> iomap_set_range_dirty_uptodate()
+> {
+> 	struct iomap_folio_state *ifs = folio->private;
+> 	struct inode *inode:
+>         unsigned int blks_per_folio;
+>         unsigned int first_blk;
+>         unsigned int last_blk;
+>         unsigned int nr_blks;
+> 	unsigned long flags;
+> 
+> 	if (!ifs)
+> 		return;
+> 
+> 	inode = folio->mapping->host;
+> 	blks_per_folio = i_blocks_per_folio(inode, folio);
+> 	first_blk = (off >> inode->i_blkbits);
+> 	last_blk = (off + len - 1) >> inode->i_blkbits;
+> 	nr_blks = last_blk - first_blk + 1;
+> 
+> 	spin_lock_irqsave(&ifs->state_lock, flags);
+> 	bitmap_set(ifs->state, first_blk, nr_blks);
+> 	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
+> 	spin_unlock_irqrestore(&ifs->state_lock, flags);
+> }
+> 
+> This means we calculate the bitmap offsets only once, we take the
+> state lock only once, and we don't do anything if there is no
+> sub-folio state.
+> 
+> If we then fix the __iomap_write_begin() code as Willy pointed out
+> to elide the erroneous uptodate range update, then we end up only
+> taking the state lock once per buffered write instead of 3 times per
+> write.
+> 
+> This patch only reduces it to twice per buffered write, so doing the
+> above should provide even better performance without needing to
+> change the underlying serialisation mechanism at all.
+> 
+
+Thanks for the suggestion. I've thought about this solution too, but I
+didn't think we need the state_lock when setting ifs dirty bit since the
+folio lock should work, so I changed my mind and planed to drop all ifs
+state_lock in the write path (please see the patch 6). Please let me
+know if I'm wrong.
+
+Thanks,
+Yi.
 
 
