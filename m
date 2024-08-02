@@ -1,106 +1,90 @@
-Return-Path: <linux-kernel+bounces-272418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A0D945BA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D01945BB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3301F22693
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BF81F21D50
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CBB1DC472;
-	Fri,  2 Aug 2024 09:57:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F5E1C69D;
+	Fri,  2 Aug 2024 10:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qa0JRFg8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BDE1DB442;
-	Fri,  2 Aug 2024 09:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254833FE4A
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 10:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722592619; cv=none; b=avn8dSeC+eIo7iHt0Ewno9WCKk0/3GTi1VFMGabJQvTXsFZgG3TP4/NAoUu5XX5JchrfQGciYseULKhz6/Wr/rbLpcNJRgpXHEiKFBxv5lO56Ekzdjxn08ttjoEQP/4Zja2j99zRzCIghiUK3nV5YaHQ4ovYues3ROsB9P37xOE=
+	t=1722592847; cv=none; b=o0XUD5dcZiYvjneR8CvPNEjsOyFI1OKrV6Ru1j4VPEqZYAH6XxIA1AmWk70Wz5MO9J/bqXOuVviaXwnu3fidbRu9sTaAsUvJcsHlaLICy68hF1yRNY0XEiZm2OAO5TuBCcfYDBqKpO3hVR9FtYa1D9x0WX8ZDnvdWaMp8yriTng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722592619; c=relaxed/simple;
-	bh=eKEtTbJBtNuE4PPmEUyxxjLRQZmXUAyUm/daUMyw9cE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hp+76BgjtEksT4QVtmDWmPn5zoSepfnJqsvUe3xUmXz3RYYvLmTqEKbofEVSOySBoKncRRk5j0orhlvYj2+F7za1ayzaGUBZ6dhdtGZE2dKMi9IsXDfWZREfZtmqSutFzBtq6JAc9zX/AcKgMZoYFtl3uh0RgROJUa3VRRwOeQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wb1Q24SDxz6K975;
-	Fri,  2 Aug 2024 17:54:18 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id E41C6140A08;
-	Fri,  2 Aug 2024 17:56:55 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 2 Aug
- 2024 10:56:54 +0100
-Date: Fri, 2 Aug 2024 10:56:54 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
- Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
-	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
-	<dave@stgolabs.net>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko
- Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
- Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
-	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
-	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
-	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
-	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
-Subject: Re: [PATCH v3 10/26] x86/numa: simplify numa_distance allocation
-Message-ID: <20240802105654.00004752@Huawei.com>
-In-Reply-To: <20240801060826.559858-11-rppt@kernel.org>
-References: <20240801060826.559858-1-rppt@kernel.org>
-	<20240801060826.559858-11-rppt@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722592847; c=relaxed/simple;
+	bh=rX8GSyUhQPYw9wyBC+lYN2xbZncM+5VUIKhRExTNBHM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=elTRvyFxSIeOT2kC/wdDgWVpgySs5MqQma68aJIQjoktUj2GSyDei0ol0qOvvFfpFKEY60VbuNGoysrT+tON/q7NX5cQBNPFbnO/Fm1DPKrqQ1F02y5+zvi9mymR3A9TDo3MgLCUDCKOksSUwUiWXwcgFJh5nPnZ9dKkO0z/x50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qa0JRFg8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C32C4AF0A;
+	Fri,  2 Aug 2024 10:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722592846;
+	bh=rX8GSyUhQPYw9wyBC+lYN2xbZncM+5VUIKhRExTNBHM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qa0JRFg8Ks1431VpmUZYTEHJ0FA5F5c0ewONVcFPvUxM3a6mpbEE2seKAAxlZIGaN
+	 XtysiMc2/EC+ZD1RsQWPr49kGKYUbnuB+d7bKVbt+4rXtJdIWPKg7XOTqipsfAozYF
+	 puSLfuzdRyAfAwjInL/WfwxysZgWacWdDynURlo1YvubNNLQZJFgVItd1DQhPw9wHR
+	 QwOf89xkj+E1Oww8X/8P61dauySzAKxFv/FqnUT4M3S3HLqfNEKwZzf/ut9L3LH1P4
+	 29TWCHIaDP70fuAY7/VyheZOjIAtcoPqn+oJ0goPlmm2ODIQ983ZhgTb66ne+llhfw
+	 DTLPi3Lvq5xxg==
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 6E90C1473F34; Fri, 02 Aug 2024 12:00:43 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ath9k: use devm for gpio_request_one
+In-Reply-To: <CAKxU2N_b51S=gDthQtM+aRnCt1Zg1SrodjmLF3u9aV+Y6GefAg@mail.gmail.com>
+References: <20240731210052.6974-1-rosenp@gmail.com>
+ <87le1godh1.fsf@toke.dk>
+ <CAKxU2N_b51S=gDthQtM+aRnCt1Zg1SrodjmLF3u9aV+Y6GefAg@mail.gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Fri, 02 Aug 2024 12:00:43 +0200
+Message-ID: <87y15f6y7o.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu,  1 Aug 2024 09:08:10 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+Rosen Penev <rosenp@gmail.com> writes:
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Allocation of numa_distance uses memblock_phys_alloc_range() to limit
-> allocation to be below the last mapped page.
-> 
-> But NUMA initializaition runs after the direct map is populated and
-> there is also code in setup_arch() that adjusts memblock limit to
-> reflect how much memory is already mapped in the direct map.
-> 
-> Simplify the allocation of numa_distance and use plain memblock_alloc().
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
-Seems sensible. FWIW (which might just be me not bothering to
-read this one again ;) 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
- 
+> On Thu, Aug 1, 2024 at 1:26=E2=80=AFAM Toke H=C3=B8iland-J=C3=B8rgensen <=
+toke@kernel.org> wrote:
+>>
+>> Rosen Penev <rosenp@gmail.com> writes:
+>>
+>> > No need to manually free the gpio now.
+>> >
+>> > Remove if statement as it's redundant now. The gpio bit now gets clear=
+ed
+>> > whether set or not.
+>> >
+>> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+>>
+>> So presumably these will conflict with this patch?
+>>
+>> https://patchwork.kernel.org/project/linux-wireless/patch/3b46f6c7-4372-=
+4cc9-9a7c-2c1c06d29324@gmail.com/
+> This does not look related.
+
+Ah, no, you're right; was confusing the PCI-internal device managed
+thing with the generic one :)
+
+-Toke
 
