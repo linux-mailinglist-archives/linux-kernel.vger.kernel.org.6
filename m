@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-272579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C33945E43
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:01:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7695B945E48
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5241F23F1D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:01:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CCF7281216
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE2E1E4878;
-	Fri,  2 Aug 2024 13:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CCE1E4EFC;
+	Fri,  2 Aug 2024 13:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eFY2ESgt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1OYZ1uZ2"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f4REzJOK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O3EbW0On"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D1B1E484D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4651E485B;
 	Fri,  2 Aug 2024 13:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722603675; cv=none; b=Na44uE/fUWzVqYNqTE3c1nwKjj58+2qrxc+GBXbtyt2jmdoSoXJkYG2a1PF+4SvDzU0TB+viKZd/U1Oq5il5XNOs/xN6+A2W5nzJzTqhXDbKfr0jj4DzEhQw1Mnh24hg6tT+iUGft7JP+b9ovoMJs+HjSh1IygILbq24pyRjW34=
+	t=1722603676; cv=none; b=WUPtoc71IJOgKZtyPSQ2SFn9dbJmpikxroir3TobMID6j1Zpf6l4PLIt5jABViodTH3ktzJ7lcvJzbkKd6kwej5sh1wBEtAhMRe9WS67xsp2IjWTV/DNLCmAlmt0SUReoboDRednBTHD90q/BDMPYJhRNzCJsIJTOJWA/1Ir0/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722603675; c=relaxed/simple;
-	bh=6xbV5coL9L5DcczCTWZA4EFCUOZG4PiFIyo8+E/q9lI=;
+	s=arc-20240116; t=1722603676; c=relaxed/simple;
+	bh=d+nhXZCY4s6NxzGgau/hWpRMNkZvdKpoV5KoQ0WhBSQ=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FRXOU6HcGRqks3WESrV02mPAUyY1VPoiRx6XfegxsI0qd27XciU/5grySml+256Qw9uqhjrxL4wl6cHDv9z9pfdezS55MkSyttIEPoaxUu9j/XvopD+d9n3NykohwpvsqTHDpsPFoWb/yn6HAwfULy14V5/R83iBHFARErsHHuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eFY2ESgt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1OYZ1uZ2; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=D+Hos5I+1TBWCaaHhwyXpya5Ik4yQ4iHbKG1GUs73PJw5FELyH4UlAsTDTKc1IWyKkT7jrwn7rF6A7wODMdi0rN548ydyN+DyBOYHKPw4NDTSM1wAIhs9Rg1lqGaado4r4ykC7WeriWBep84D0PPf3o15657oxVzEA5MmG2gG8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f4REzJOK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O3EbW0On; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 02 Aug 2024 13:01:11 -0000
+Date: Fri, 02 Aug 2024 13:01:12 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722603671;
+	s=2020; t=1722603672;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZzybNjFD6Yd8xfm8fn2cw0riknejZym0ljhPOh4Zmks=;
-	b=eFY2ESgtTRpDGt5aX3xKSlS2dkIS/AhAKx2bNWZ2MHIQ5U1ZKHT9UqmupNyj1nCMu7PpJ5
-	ZR/2wu8HVSyi/ITZX3EjxAkfJn7TYpvEt98Ty1KForduXK75z++zDbKbxY2nuFOa9NFkRd
-	YAbJU5AU7XzwQbVxJjHs6yHpwtIfKLNDKQ6TeVPmIa8BrPROVUZJ1sHXGJz9XzrzbJO0vd
-	OQ/i2NHPJlMMEGrfPLxZpU3PfOV6TxOgOsgHv6J0Ib+1t3zK9IJSncVzbeUcxxO1sA9C3K
-	EGYkqznLt5edcN93vZlRkBwfhW6jhhThZh9RGn0piFCYJbwq1LcSXr2tytIV7A==
+	bh=urlHfVi3U8w4pm8yquBjVBEs1OkG+4RI76qI832S2N4=;
+	b=f4REzJOKX8z+fZVx0ZKVwmFBXPtNly6cZO1vY4nQ4JA3/Gqu6PP3zgg0Gr9vIlmoowyd6c
+	0jeeTAFZzdkTTJwQ9AQnSreCp43L492dc5jBdeHzL0XZEA+dNZiW2XRrHTZzXNqqdGqo4A
+	IxDdYCMDVPyrOnxsjG3gu84mGMeKZj0u+oSICXFqTJSOSydcTUbwF+jDqK4ihySlOnD3tl
+	vCbBX0G2v/AM9r32tYQcwQBUtKN1uSuJZmEh+h02/5lZ05aGN72dSq/gwmP0I7pwx9vWaK
+	SLFsN4UQ6EfN9ljckt4nfYivzfzu6Pj/5XXnhXIkXQ6h36lLNqJ0h6N/kw1AWg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722603671;
+	s=2020e; t=1722603672;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZzybNjFD6Yd8xfm8fn2cw0riknejZym0ljhPOh4Zmks=;
-	b=1OYZ1uZ2+azOnRRteSDLzUl4e5EQQrCCGDB4IgexyLXJh+P3Uhu5xUhKHRpRL3XqkpESFH
-	Iu2uExsYx6eaFOAQ==
+	bh=urlHfVi3U8w4pm8yquBjVBEs1OkG+4RI76qI832S2N4=;
+	b=O3EbW0OnwvRRAda8PTnAYRGqkktghjUxwO6jcU/WGQJ+a3DaSgYpZmdvYUe8Ov19Dvoxl8
+	a8R3UwEdMYbw7kBQ==
 From: "tip-bot2 for Aruna Ramakrishna" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/pkeys: Restore altstack access in sigreturn()
+Subject:
+ [tip: x86/mm] x86/pkeys: Add helper functions to update PKRU on the sigframe
 Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
  Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240802061318.2140081-5-aruna.ramakrishna@oracle.com>
-References: <20240802061318.2140081-5-aruna.ramakrishna@oracle.com>
+In-Reply-To: <20240802061318.2140081-3-aruna.ramakrishna@oracle.com>
+References: <20240802061318.2140081-3-aruna.ramakrishna@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172260367109.2215.3503021469640609513.tip-bot2@tip-bot2>
+Message-ID: <172260367217.2215.13764673539033105574.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,54 +82,128 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/mm branch of tip:
 
-Commit-ID:     d10b554919d4cc8fa8fe2e95b57ad2624728c8e4
-Gitweb:        https://git.kernel.org/tip/d10b554919d4cc8fa8fe2e95b57ad2624728c8e4
+Commit-ID:     84ee6e8d195e4af4c6c4c961bbf9266bdc8b90ac
+Gitweb:        https://git.kernel.org/tip/84ee6e8d195e4af4c6c4c961bbf9266bdc8b90ac
 Author:        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-AuthorDate:    Fri, 02 Aug 2024 06:13:17 
+AuthorDate:    Fri, 02 Aug 2024 06:13:15 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Fri, 02 Aug 2024 14:12:21 +02:00
 
-x86/pkeys: Restore altstack access in sigreturn()
+x86/pkeys: Add helper functions to update PKRU on the sigframe
 
-A process can disable access to the alternate signal stack by not
-enabling the altstack's PKEY in the PKRU register.
+In the case where a user thread sets up an alternate signal stack protected
+by the default PKEY (i.e. PKEY 0), while the thread's stack is protected by
+a non-zero PKEY, both these PKEYS have to be enabled in the PKRU register
+for the signal to be delivered to the application correctly. However, the
+PKRU value restored after handling the signal must not enable this extra
+PKEY (i.e. PKEY 0) - i.e., the PKRU value in the sigframe has to be
+overwritten with the user-defined value.
 
-Nevertheless, the kernel updates the PKRU temporarily for signal
-handling. However, in sigreturn(), restore_sigcontext() will restore the
-PKRU to the user-defined PKRU value.
+Add helper functions that will update PKRU value in the sigframe after
+XSAVE.
 
-This will cause restore_altstack() to fail with a SIGSEGV as it needs read
-access to the altstack which is prohibited by the user-defined PKRU value.
+Note that sig_prepare_pkru() makes no assumption about which PKEY could
+be used to protect the altstack (i.e. it may not be part of init_pkru),
+and so enables all PKEYS.
 
-Fix this by restoring altstack before restoring PKRU.
+No functional change.
 
 Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240802061318.2140081-5-aruna.ramakrishna@oracle.com
+Link: https://lore.kernel.org/all/20240802061318.2140081-3-aruna.ramakrishna@oracle.com
 
 ---
- arch/x86/kernel/signal_64.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/kernel/fpu/signal.c | 10 ++++++++++
+ arch/x86/kernel/fpu/xstate.c | 13 +++++++++++++
+ arch/x86/kernel/fpu/xstate.h |  2 ++
+ arch/x86/kernel/signal.c     | 18 ++++++++++++++++++
+ 4 files changed, 43 insertions(+)
 
-diff --git a/arch/x86/kernel/signal_64.c b/arch/x86/kernel/signal_64.c
-index 8a94053..ee94538 100644
---- a/arch/x86/kernel/signal_64.c
-+++ b/arch/x86/kernel/signal_64.c
-@@ -260,13 +260,13 @@ SYSCALL_DEFINE0(rt_sigreturn)
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 2b3b9e1..931c546 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -64,6 +64,16 @@ setfx:
+ }
  
- 	set_current_blocked(&set);
+ /*
++ * Update the value of PKRU register that was already pushed onto the signal frame.
++ */
++static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u32 pkru)
++{
++	if (unlikely(!cpu_feature_enabled(X86_FEATURE_OSPKE)))
++		return 0;
++	return __put_user(pkru, (unsigned int __user *)get_xsave_addr_user(buf, XFEATURE_PKRU));
++}
++
++/*
+  * Signal frame handlers.
+  */
+ static inline bool save_fsave_header(struct task_struct *tsk, void __user *buf)
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index c5a026f..fa7628b 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -993,6 +993,19 @@ void *get_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
+ }
+ EXPORT_SYMBOL_GPL(get_xsave_addr);
  
--	if (!restore_sigcontext(regs, &frame->uc.uc_mcontext, uc_flags))
-+	if (restore_altstack(&frame->uc.uc_stack))
- 		goto badframe;
++/*
++ * Given an xstate feature nr, calculate where in the xsave buffer the state is.
++ * The xsave buffer should be in standard format, not compacted (e.g. user mode
++ * signal frames).
++ */
++void __user *get_xsave_addr_user(struct xregs_state __user *xsave, int xfeature_nr)
++{
++	if (WARN_ON_ONCE(!xfeature_enabled(xfeature_nr)))
++		return NULL;
++
++	return (void __user *)xsave + xstate_offsets[xfeature_nr];
++}
++
+ #ifdef CONFIG_ARCH_HAS_PKEYS
  
--	if (restore_signal_shadow_stack())
-+	if (!restore_sigcontext(regs, &frame->uc.uc_mcontext, uc_flags))
- 		goto badframe;
+ /*
+diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+index 2ee0b9c..5f057e5 100644
+--- a/arch/x86/kernel/fpu/xstate.h
++++ b/arch/x86/kernel/fpu/xstate.h
+@@ -54,6 +54,8 @@ extern int copy_sigframe_from_user_to_xstate(struct task_struct *tsk, const void
+ extern void fpu__init_cpu_xstate(void);
+ extern void fpu__init_system_xstate(unsigned int legacy_size);
  
--	if (restore_altstack(&frame->uc.uc_stack))
-+	if (restore_signal_shadow_stack())
- 		goto badframe;
++extern void __user *get_xsave_addr_user(struct xregs_state __user *xsave, int xfeature_nr);
++
+ static inline u64 xfeatures_mask_supervisor(void)
+ {
+ 	return fpu_kernel_cfg.max_features & XFEATURE_MASK_SUPERVISOR_SUPPORTED;
+diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
+index 1f1e8e0..9dc77ad 100644
+--- a/arch/x86/kernel/signal.c
++++ b/arch/x86/kernel/signal.c
+@@ -61,6 +61,24 @@ static inline int is_x32_frame(struct ksignal *ksig)
+ }
  
- 	return regs->ax;
+ /*
++ * Enable all pkeys temporarily, so as to ensure that both the current
++ * execution stack as well as the alternate signal stack are writeable.
++ * The application can use any of the available pkeys to protect the
++ * alternate signal stack, and we don't know which one it is, so enable
++ * all. The PKRU register will be reset to init_pkru later in the flow,
++ * in fpu__clear_user_states(), and it is the application's responsibility
++ * to enable the appropriate pkey as the first step in the signal handler
++ * so that the handler does not segfault.
++ */
++static inline u32 sig_prepare_pkru(void)
++{
++	u32 orig_pkru = read_pkru();
++
++	write_pkru(0);
++	return orig_pkru;
++}
++
++/*
+  * Set up a signal frame.
+  */
+ 
 
