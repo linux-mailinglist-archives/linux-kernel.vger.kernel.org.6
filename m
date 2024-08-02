@@ -1,63 +1,60 @@
-Return-Path: <linux-kernel+bounces-272068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D49194567F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:00:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187DE945681
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D1928823C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:00:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73AAEB228FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2B61C698;
-	Fri,  2 Aug 2024 02:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Y436ndEi"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718EE1C693;
+	Fri,  2 Aug 2024 03:01:53 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F94C1BC4B
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 02:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640983D68;
+	Fri,  2 Aug 2024 03:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722567595; cv=none; b=YFisSJYEpfFXqoQuow87K0qU/mwxJ2fM+bIxAC1oBpfLCXYphnB/5orKl0I3wH0CJjd30kDv/VONh/L6qPURevO+sbybuKH8HoEEQuJk7stcPVZcdmZ+HzIT+Si/JwhmPwmf8cB/zmn0g/+4EqDeD4ZdefrD9Y8bgeGO/KWS8Es=
+	t=1722567713; cv=none; b=AQvhLnEDc+BOnFgoIX0SwmaVJYC8mNXQvSFp3GxwpYMW1ksuz5q3ovYmlXcp0BUW3SjPjVIr4G6OrUPsZZg3HfLqjFAihHO5YgI7HRZc6bTQSgiUe68dPekNlKQlAcqythX8wiQpUe6wEikU8Qg1wgwh/1ejNYBnLcOqa+30xTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722567595; c=relaxed/simple;
-	bh=7YzdKodQalNTaCMpvtdtLnW5bxxelLzotMjh5/LpH+4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hz5up9B/si93VoVyTA6s2zsHpNYyU04yp+xQ15FS6NqrsP0m5mFpqxeyQmSaX5ReCEXRrStjIdHrPE64nHmtR7abiQ1/cam5/4xTZciLYbwr9mCEhpxTdflO7oZroRLp8hwQvozJm9Y+H9aqgWp67UcyfqCaQwkfUoebQ/BFS1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Y436ndEi; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722567591; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=0kM025x32/0+5dTxxuOpGxTdKPJ7pjJl/LKjasSay0I=;
-	b=Y436ndEi16m6hH5Qdvuq/NSFGni9dKUz9ytdzrrrwLPmoSEu79cFyKq39Cvsx0dT6ridFlDYQ4Zwcl9EO17xdTT3MnXt8M+8XLW/fV3btRGxqk/jwvSRsoz9MOsFNwqE+5QCOIu6ng+jGTSz3be6Ac81mWWFhKEquXbnBOVlmoE=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0WBvhqXh_1722567582;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WBvhqXh_1722567582)
-          by smtp.aliyun-inc.com;
-          Fri, 02 Aug 2024 10:59:50 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: chaitanya.dhere@amd.com
-Cc: jun.lei@amd.com,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] drm/amd/display: remove unneeded semicolon
-Date: Fri,  2 Aug 2024 10:59:42 +0800
-Message-Id: <20240802025942.62734-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1722567713; c=relaxed/simple;
+	bh=nPgduAN7V2KzsCg/8hkD+4lmpoVidWGJmhdMh5v8kEY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rRxQZ4hnPu+N6lp3u7flBsvQwKdazd9mt0dPfl0kjezk/2pO9ZXFMH7/ngoFFv7dLRxqJVCjen4Pi/KvIqT8yfcGE+G/2KJMdtL9OttdwLKbzrFijsbvpQzcb0a8HXuE56sumUdLE1iN3RAlGQ2yO40FwdSngM+7mFJofSZjXLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4720V5bR008263;
+	Fri, 2 Aug 2024 03:01:19 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40rjf186b6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 02 Aug 2024 03:01:19 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 20:01:18 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 20:01:15 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <lizhi.xu@windriver.com>
+CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <phillip@squashfs.org.uk>,
+        <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: [PATCH V4] squashfs: Add i_size check in squash_read_inode
+Date: Fri, 2 Aug 2024 11:01:14 +0800
+Message-ID: <20240802030114.1400462-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240802015006.900168-1-lizhi.xu@windriver.com>
+References: <20240802015006.900168-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,34 +62,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Kpm6qnmiWBeKOSmBQ4e9dC8V98HXQU73
+X-Proofpoint-GUID: Kpm6qnmiWBeKOSmBQ4e9dC8V98HXQU73
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_23,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 phishscore=0 bulkscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408020019
 
-No functional modification involved.
+syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+squashfs_symlink_read_folio did not check the length, resulting in folio
+not being initialized and did not return the corresponding error code.
 
-./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c:6463:166-167: Unneeded semicolon.
+The length is calculated from i_size, so it is necessary to add a check
+when i_size is initialized to confirm that its value is correct, otherwise
+an error -EINVAL will be returned. Strictly, the check only applies to the
+symlink type.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9633
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 ---
- .../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c    | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/squashfs/inode.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-index c54c29711a65..8f3c1c0b1cc1 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c
-@@ -6464,8 +6464,8 @@ static void CalculateSwathAndDETConfiguration(struct dml2_core_internal_scratch
- 			p->SwathHeightC[k] = l->MaximumSwathHeightC[k] / 2;
- 			l->RoundedUpSwathSizeBytesY[k] = p->full_swath_bytes_l[k] / 2;
- 			l->RoundedUpSwathSizeBytesC[k] = p->full_swath_bytes_c[k] / 2;
--			p->request_size_bytes_luma[k] = ((p->BytePerPixY[k] == 2) == dml_is_vertical_rotation(p->display_cfg->plane_descriptors[k].composition.rotation_angle)) ? 128 : 64;;
--			p->request_size_bytes_chroma[k] = ((p->BytePerPixC[k] == 2) == dml_is_vertical_rotation(p->display_cfg->plane_descriptors[k].composition.rotation_angle)) ? 128 : 64;;
-+			p->request_size_bytes_luma[k] = ((p->BytePerPixY[k] == 2) == dml_is_vertical_rotation(p->display_cfg->plane_descriptors[k].composition.rotation_angle)) ? 128 : 64;
-+			p->request_size_bytes_chroma[k] = ((p->BytePerPixC[k] == 2) == dml_is_vertical_rotation(p->display_cfg->plane_descriptors[k].composition.rotation_angle)) ? 128 : 64;
- 		}
+diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+index 16bd693d0b3a..6c5dd225482f 100644
+--- a/fs/squashfs/inode.c
++++ b/fs/squashfs/inode.c
+@@ -287,6 +287,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+ 		inode->i_mode |= S_IFLNK;
+ 		squashfs_i(inode)->start = block;
+ 		squashfs_i(inode)->offset = offset;
++		if ((int)inode->i_size < 0) {
++			ERROR("Wrong i_size %d!\n", inode->i_size);
++			return -EINVAL;
++		}
++
  
- 		if (p->SwathHeightC[k] == 0)
+ 		if (type == SQUASHFS_LSYMLINK_TYPE) {
+ 			__le32 xattr;
 -- 
-2.32.0.3.g01195cf9f
+2.43.0
 
 
