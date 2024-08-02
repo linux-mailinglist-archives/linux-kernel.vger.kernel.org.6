@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-272359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7DFB945AC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08000945ACD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1834A1C21960
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 289FA1C22B4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3F21DAC61;
-	Fri,  2 Aug 2024 09:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108B81DAC64;
+	Fri,  2 Aug 2024 09:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKdYcnLS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMvNUwfE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0478F47;
-	Fri,  2 Aug 2024 09:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4684F8F47;
+	Fri,  2 Aug 2024 09:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590265; cv=none; b=f5xDVA77auu/cPh5PHf5Yd7xxHvTdh1UGzhq0kJh85aBlJSKWi/SS56AVnNQCtW1vq5Ly7yl3zpj/SVxtKJci7vdi+WudvFx/m+kHJ0o9cqZw7kZ3ryB3HF3ZXjlwwshzV7J5cOObhAZFY/py51lYxgby2VzjxWg1tYL+HdKdEw=
+	t=1722590337; cv=none; b=iBwdFwgnXi1cQ8T16JDX5kR29IYQMZIQ3w8e3OxHFVf8C6GRQFFYixnDFl4vZ/yMVZronTqJtPHU69vZFST/P+MJM0Peln2ZPcnXR2KlJeL9Bn8sq2XxqBdw82Sj+pu8fW+Cecx7eRD053X8OuPBQgKt2pz3T5VyjvY9Eaj27Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590265; c=relaxed/simple;
-	bh=GSu3k3pjNPPfYdvKG8us8Bm7TChoEA287efB6uq8KaQ=;
+	s=arc-20240116; t=1722590337; c=relaxed/simple;
+	bh=dbphdIVJqwevCp53CHXALfkGLRq+V/D3wbfxlX/nOyc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iz18vgz72Mu7eK0Pq2tKUIPubui+11XCzsMMKVEpLBigGSFbgeY0KPk8XZYHJd94B9FEZvVAhXC5bA3LPBovpqrRHR+jVAmcvIH7nwN/rbk+IFq88/wSwmeVgYTi2dr9KNUR1suTUK5wvqjFiqtpejMO0a81T0aUlwt6sOA1OS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKdYcnLS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791DEC32782;
-	Fri,  2 Aug 2024 09:17:37 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=QHX6/d3EY/L5VRmS7N1DNHUvc27cVJc9AQH1pOCJ7J7QXX/JNtmZJdcV4h9SfFTnwx7GIlDqk7tTxuYpLGxhtbnGhMFk/GNeNgf22MrW5UvciDOeEzP6zVoaz6bNdoHCDq9uV2cqdfI4PNKP2aUz0aqcMO2vpzVEPg2vpGVKSmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMvNUwfE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDDB5C32782;
+	Fri,  2 Aug 2024 09:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722590265;
-	bh=GSu3k3pjNPPfYdvKG8us8Bm7TChoEA287efB6uq8KaQ=;
+	s=k20201202; t=1722590337;
+	bh=dbphdIVJqwevCp53CHXALfkGLRq+V/D3wbfxlX/nOyc=;
 	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=AKdYcnLSxvInmtzheoqA0y+osKIThZbxOnk73m33UOCRLO/ztWXfD13yPj9nZBF++
-	 Q4xxWO/NdQLiJOgBsuX1eNdQE6kzSYpRgHODFrxAoru3XGRTi9J6VF7V6OYaAoJ8sk
-	 ict5SKd7HdVQPHt4w4CqPgKYop7wKsSZHNo4qjPobWWnlVrr806879OgX6B3uRSvvM
-	 fUfGG9s2iYla2otbp+/pxca7tJ0q0KIu0kbXuayU1LWh0DnBU9zTcUg4QE45C78XgP
-	 i+ve/2U10PlLvUihw6l8ChdG+cCuPc/QUGmfVyd9Y9wlL8F2W/SNA2HgtXEnv91rc8
-	 NuH3p8vic1VEg==
-Message-ID: <00cd1d9e-24ec-47c2-b88b-d585b10da7e5@kernel.org>
-Date: Fri, 2 Aug 2024 11:17:35 +0200
+	b=OMvNUwfE7uhLPAlBZMbpXpIg517Auxjx/N8Eg84WkQTZkHLgWWLF1j+yjDrgojyIs
+	 Jbh/CZEhwn/wozFgTap4PPRELgudYYSf0GfyUp01JfVUFvRiFyR41Y8t02kSd/4xJ0
+	 bc39EkYpWEmUH97rDnL6YBqXSafpOcWyfJReCMcI+XE/EazrC/i3vH1XUr844TKTjx
+	 GR4FqzK0TRg5EfVwEtCCDnA342/7XCaYwrnzEeADE4cp0KEHLZ6QSv3lA/gEL44gfz
+	 HVCADKE8y3Z8VAHlI9Ix1GD+2/ch6N7lScFKTv3ZqRnekbwgLNwCWfhohqPLcidtsh
+	 aKFMAgKF/WIlQ==
+Message-ID: <ba9cc5ea-4138-4e9c-b848-c7a3a070bd73@kernel.org>
+Date: Fri, 2 Aug 2024 11:18:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 9/9] arm64: dts: aspeed: Add initial AST2700 EVB device
- tree
+Subject: Re: [PATCH v2 0/9] Introduce ASPEED AST27XX BMC SoC
 To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
@@ -63,7 +62,7 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
- <20240802090544.2741206-11-kevin_chen@aspeedtech.com>
+ <20240802090544.2741206-2-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,66 +108,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802090544.2741206-11-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240802090544.2741206-2-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/08/2024 11:05, Kevin Chen wrote:
-> Add EVB board of AST2700 in ASPEED G7 Architecture.
+> This patchset adds initial support for the ASPEED.
+> AST27XX Board Management controller (BMC) SoC family.
 > 
-> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
-> ---
->  arch/arm64/boot/dts/aspeed/Makefile        |  4 ++
->  arch/arm64/boot/dts/aspeed/ast2700-evb.dts | 58 ++++++++++++++++++++++
->  2 files changed, 62 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
->  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+> AST2700 is ASPEED's 8th-generation server management processor.
+> Featuring a quad-core ARM Cortex A35 64-bit processor and two
+> independent ARM Cortex M4 processors
 > 
-> diff --git a/arch/arm64/boot/dts/aspeed/Makefile b/arch/arm64/boot/dts/aspeed/Makefile
-> new file mode 100644
-> index 000000000000..ffe7e15017cc
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/aspeed/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +dtb-$(CONFIG_ARCH_ASPEED) += \
-> +	ast2700-evb.dtb
-> diff --git a/arch/arm64/boot/dts/aspeed/ast2700-evb.dts b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-> new file mode 100644
-> index 000000000000..09c9569c0f7b
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/aspeed/ast2700-evb.dts
-> @@ -0,0 +1,58 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +/dts-v1/;
-> +
-> +#include "aspeed-g7.dtsi"
-> +#include <dt-bindings/gpio/aspeed-gpio.h>
-> +
-> +/ {
-> +	model = "AST2700A1-EVB";
-> +	compatible = "aspeed,ast2700-evb", "aspeed,ast2700";
-> +
-> +	aliases {
-> +		serial4 = &uart4;
-> +	};
-> +
-> +	chosen {
-> +		bootargs = "console=ttyS4,115200n8";
-> +		stdout-path = &uart4;
+> This patchset adds minimal architecture and drivers such as:
+> Clocksource, Clock and Reset
+> 
+> This patchset was tested on the ASPEED AST2700 evaluation board.
 
-<form letter>
-This is a friendly reminder during the review process.
+Where is the changelog? You ignored several comments, did not bother to
+respond them, did not implement them.
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
+No changelog means you sent exactly the same? This is not how it works.
+Please read submitting patches, respond to all comments or implement
+them, provide *DETAILED* changelog in the cover letter or individual
+patches (---).
 
 Best regards,
 Krzysztof
