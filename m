@@ -1,131 +1,155 @@
-Return-Path: <linux-kernel+bounces-272039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A8C945622
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:55:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B445945627
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32E501C2301E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:55:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2662E1F23970
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6D017C7F;
-	Fri,  2 Aug 2024 01:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1503717BB7;
+	Fri,  2 Aug 2024 01:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IZVHZ0B2"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1ZaMZU7"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFFD2572;
-	Fri,  2 Aug 2024 01:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DDEB67E;
+	Fri,  2 Aug 2024 01:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722563722; cv=none; b=LBHcGEOw0rM1TuWMkpsl6p4LY51foNsMLCIDlJUqPw7HP/cxLOlu1xIpRUKvT9EL8tDXWOjYRVerrT+wl8g+ARhxMd2/iIlGS4ITvH/zNKMhLzJAJ1juNI2rSJ4LloG1vd3iHISfpQMjPcvdMEuByj780GZbqg/jEEwDhQFlJ+c=
+	t=1722563804; cv=none; b=jMyo5ZmiwZtzymqLjGS5nQ6zJWRkb1Fke31re6akEBES/UZVVGyYQOGHFj3D7UPsYU9oYJkk+Bf8hu75xrwRwv1CFIyHoW4g40as9QYkTsk7I2LcOB2ORqI9G4CEKDQwe1hl9SzI1M+k4M8j5I50mtguxENDIoAUNjVi0D5YO6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722563722; c=relaxed/simple;
-	bh=ZCvScViQqCucMKDq2Ql0ZIV1r1VqUzOfJvh/3tJyy94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fJwtZi/fE4mVpTEVKDDEo5rffi44ayf1gUudugFVC6qVlqN/p2N2w6tspngdISdYvNtPI+dmbGN0+SiOCUAHqXFmZVh1xm5iEJLnY6Pt5h8rRh8aERZqmEObGosTcL/W+f8m82A806Pl4yJgzSZnVgGO0J8HGluLEvrKQuA2Fpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IZVHZ0B2; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722563717; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zsJ8qpiUqdp+eWJmsE2CmpJqsddXO5xbkozRYvCTCxs=;
-	b=IZVHZ0B2peq3F01RawE9f6QpjnlKL6IGzhvtbogomUFEt01R7ycDcdEcgtwB7+E+Qcydf9oCsxyzm4Io22EzDw/bz0JssW8hLzRVRcDsm17EtUHgLH2vw8u3Uvhen8yQlqD13CG1HUfi+V7Oru1WIiyxQTN1jKGBs98ssLK6wTw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WBvTFOd_1722563707;
-Received: from 30.221.130.78(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WBvTFOd_1722563707)
-          by smtp.aliyun-inc.com;
-          Fri, 02 Aug 2024 09:55:16 +0800
-Message-ID: <dedb6046-83a6-4bda-bf1d-ae77a8cda972@linux.alibaba.com>
-Date: Fri, 2 Aug 2024 09:55:06 +0800
+	s=arc-20240116; t=1722563804; c=relaxed/simple;
+	bh=bEwvbBKgwUm95B0DvqZT1H/saqC9aOlJiBXMdLWTVcE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kCXTAE4s094/S+UM8mlzjua7ZbGf78RA74YOFujwLS3KAAqjlyY6hN+Q73xaK+PUa6yO5mJunRJ4hwtRdD9D3Ju6E30luMjKEavC8T8Vmlo3BikziFUKPC6LzfWzD8GfsTSqrLuEyweCrmuZZt4+HCPoTS0t8zedvZK8ZUSYJho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1ZaMZU7; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5afa207b8bfso8027235a12.0;
+        Thu, 01 Aug 2024 18:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722563801; x=1723168601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LtHQhobldpJJPQmPYcIkiHl149A/gyJJkr05VI99uUI=;
+        b=k1ZaMZU7aqESokpSXmuAnOlj/nci+0YM3Z0CkgLOOBLABk77BfvIFDl1btZVYvp8yy
+         XQEITsJMV7/FK8RnDMLOR8sI0t2W0BTXIqqMdkHr1Cckk7TNLGbRP4g8npb7tLp9Hxm0
+         hT2jguF8Nd1sucsZgdK/gMs4+S+Oh2pFHxcZcHpFzNSGWdbCACs3DW3XPgWf4PFLjeHW
+         /LtfePF5YAxgGfzuK0W4fxvxf8V7embrKp0l3A4dejzucexv6uI2PNar3e43DGHnnRMP
+         TdVY1mkvBjJIiNMVezLGZcaCnLfOm7VUVcnBPjkF6ydeiP87m45ta7IEJax+Nn96IzOf
+         yWvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722563801; x=1723168601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LtHQhobldpJJPQmPYcIkiHl149A/gyJJkr05VI99uUI=;
+        b=q4rMT/N7JG8uYCS6JV5sqVhYDHV0k/6DrD7lzBjYybhnhsQ7+H1q1xuJjZ90ASCd9K
+         LLSRisNvo/66F0LRZ61Ebh0+9OYjcs/ps+68KceQIYU0aiMBnR3fLg65HLlu5pZ0xEZg
+         hfpzs0KCtgz54+K5oeqMY/7GIxppgjsghX0HX/bb4zG/NCfa0QvGVwWuIy6aEq8ROD0/
+         s6tEfQmz9tXg9hksDhf3CLQTIYdKZNZbGOShF1F7C51WRjGVVWkMLo2rvbzRQIPAhxvK
+         6UQtdrQ3zde+OpYJSZoBMve5gTYAQSHyYx27DFdIq8AINs9aGQqCuN/ax5CUK8VhE/tJ
+         9ynA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQS6dP2Jy10h3kx6y5wm7xqyzzrXv9ySShNE9VVbhEMM6LAhbgG3sS/MTvkMmux4VM4q/m4aPIX3WlXI3sJnZhzTYnNO2wJYYAT3X/3uOqOLndPm5uKp7Bs4F9ipsLKyyPL3BtMQ==
+X-Gm-Message-State: AOJu0YxnvtSfurlukgoN49Sq2ujkHPfLsIv0fJGm4AgsIMcxYF43j7ur
+	ZgqWrLtxMVRwbP+IZJsjlfmwUVAQDakUERcG8WERs3Fv5f8NPRH/qAAJlH9Ykz/oqqSapa7yDo1
+	4O9QjTLUsTPM6JSwNcdbMxaMjM5A=
+X-Google-Smtp-Source: AGHT+IGfpycLUw+2FFBR3cE2zymB2hyFOpnDRwpucSUMZ4M7PitiCU0H+n9vg8QOwC+Ul5yDbrfFO2+oCM03kmWzlSs=
+X-Received: by 2002:aa7:de99:0:b0:5a2:abcb:c4d1 with SMTP id
+ 4fb4d7f45d1cf-5b7f56fe773mr1337568a12.34.1722563800666; Thu, 01 Aug 2024
+ 18:56:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net/smc: delete buf_desc from buffer list under lock
- protection
-To: shaozhengchao <shaozhengchao@huawei.com>, wenjia@linux.ibm.com,
- jaka@linux.ibm.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240731093102.130154-1-guwen@linux.alibaba.com>
- <ef374ef8-a19e-7b9b-67a1-5b89fb505545@huawei.com>
-From: Wen Gu <guwen@linux.alibaba.com>
-In-Reply-To: <ef374ef8-a19e-7b9b-67a1-5b89fb505545@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240801045430.48694-1-ioworker0@gmail.com> <2527d5a4-de1f-4c93-b7ee-fdd6fbe2a6f0@kernel.org>
+ <CAK1f24knBez71sEvcfFoFuyvap+=3LzsRrmW-+fLsqV3WkyMBA@mail.gmail.com> <iedonwzoqj75yeaykgovdufi53cu3ddsrqfhdfui5kgwlal6pq@mdeue6pc6byz>
+In-Reply-To: <iedonwzoqj75yeaykgovdufi53cu3ddsrqfhdfui5kgwlal6pq@mdeue6pc6byz>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Fri, 2 Aug 2024 09:56:04 +0800
+Message-ID: <CAK1f24mOdm6YK=3ZY4QE2eQq4ggeiNKoq_Nhp1bguE8E5jBwBg@mail.gmail.com>
+Subject: Re: [BUG] mm/cgroupv2: memory.min may lead to an OOM error
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, akpm@linux-foundation.org, 21cnbao@gmail.com, 
+	ryan.roberts@arm.com, david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, 
+	libang.li@antgroup.com, baolin.wang@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Cgroups <cgroups@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Michal,
 
+Thanks a lot for clarifying!
 
-On 2024/7/31 18:32, shaozhengchao wrote:
-> Hi Wen Gu:
->    "The operations to link group buffer list should be protected by
-> sndbufs_lock or rmbs_lock" It seems that the logic is smooth. But will
-> this really happen? Because no process is in use with the link group,
-> does this mean that there is no concurrent scenario?
-> 
+On Fri, Aug 2, 2024 at 6:58=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.com=
+> wrote:
+>
+> Hello.
+>
+> On Thu, Aug 01, 2024 at 07:40:10PM GMT, Lance Yang <ioworker0@gmail.com> =
+wrote:
+> > However, if the child cgroup doesn't exist and we add a process to the =
+'test'
+> > cgroup, then attempt to create a large file(2GB) using dd, we won't enc=
+ounter
+> > an OOM error; everything works as expected.
+>
+> That's due to the way how effective protections are calculated, see [1].
+> If reclaim target is cgroup T, then it won't enjoy protection configured
+> on itself, whereas the child of T is subject of ancestral reclaim hence
+> the protection applies.
 
-Hi Zhengchao,
+Makes sense to me.
 
-Yes, I am also very conflicted about whether to add lock protection.
- From the code, it appears that when __smc_lgr_free_bufs is called, the
-link group has already been removed from the lgr_list, so theoretically
-there should be no contention (e.g. add to buf_list). However, in order
-to maintain consistency with other lgr buf_list operations and to guard
-against unforeseen or future changes, I have added lock protection here
-as well.
+>
+> That would mean that in your 1st demo, it is test/memory.max that
+> triggers reclaim and then failure to reclaim from test/test-child causes
+> OOM in test.
+> That's interesting since the (same) limit of test-child/memory.max
+> should be evaluated first. I guess it is in your example there are
+> actually two parallel processes (1321 and 1324) so some charges may
+> randomly propagate to the upper test/memory.max limit.
+>
+> As explained above, the 2nd demo has same reclaim target but due to no
+> nesting, protection is moot.
 
-Thanks!
+Ah, that clears it up. I appreciate the detailed explanation - thanks!
 
-> Thank you
-> 
-> Zhengchao Shao
-> 
-> On 2024/7/31 17:31, Wen Gu wrote:
->> The operations to link group buffer list should be protected by
->> sndbufs_lock or rmbs_lock. So fix it.
->>
->> Fixes: 3e034725c0d8 ("net/smc: common functions for RMBs and send buffers")
->> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
->> ---
->>   net/smc/smc_core.c | 10 ++++++++--
->>   1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
->> index 3b95828d9976..ecfea8c38da9 100644
->> --- a/net/smc/smc_core.c
->> +++ b/net/smc/smc_core.c
->> @@ -1368,18 +1368,24 @@ static void __smc_lgr_free_bufs(struct smc_link_group *lgr, bool is_rmb)
->>   {
->>       struct smc_buf_desc *buf_desc, *bf_desc;
->>       struct list_head *buf_list;
->> +    struct rw_semaphore *lock;
->>       int i;
->>       for (i = 0; i < SMC_RMBE_SIZES; i++) {
->> -        if (is_rmb)
->> +        if (is_rmb) {
->>               buf_list = &lgr->rmbs[i];
->> -        else
->> +            lock = &lgr->rmbs_lock;
->> +        } else {
->>               buf_list = &lgr->sndbufs[i];
->> +            lock = &lgr->sndbufs_lock;
->> +        }
->> +        down_write(lock);
->>           list_for_each_entry_safe(buf_desc, bf_desc, buf_list,
->>                        list) {
->>               list_del(&buf_desc->list);
->>               smc_buf_free(lgr, is_rmb, buf_desc);
->>           }
->> +        up_write(lock);
->>       }
->>   }
+> I believe you could reproduce with merely
+>
+>         test/memory.max
+>         test-child/memory.min
+
+Yep, I just tested it, and you're right ;)
+
+>
+> > Hmm... I'm a bit confused about that.
+>
+> I agree, the calculation of effective protection wrt reclaim target can
+> be confusing.
+>
+> The effects you see are documented for memory.min:
+>
+> > Putting more memory than generally available under this
+> > protection is discouraged and may lead to constant OOMs.
+
+Thanks a lot again for your time!
+Lance
+
+>
+> HTH,
+> Michal
+>
+> [1] https://lore.kernel.org/all/20200729140537.13345-2-mkoutny@suse.com/
 
