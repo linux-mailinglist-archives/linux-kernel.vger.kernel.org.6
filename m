@@ -1,128 +1,125 @@
-Return-Path: <linux-kernel+bounces-272140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DC89457B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:44:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEED49457C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C6141C2407D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:44:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9630E1F250D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD30B3399F;
-	Fri,  2 Aug 2024 05:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DA041C62;
+	Fri,  2 Aug 2024 05:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OiWNjspX"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pnc92zuq"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021C03D6A
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 05:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061672D047;
+	Fri,  2 Aug 2024 05:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722577457; cv=none; b=nVKdam+J1QXJSn9bYpd3xY6JGKD9WSmek9lRPS8Y6ASTt827A62Zp51IQ4DSLF7fCG5HrjqZpfTOU7R+KS40IJLxup2VdMAIhtudJ12KAeIwi+znUR+8VSjNAlQmqPwKL5DFi13jerDd20WX/pjP66+BCz0zrIyYJNY9sgHoLWw=
+	t=1722577564; cv=none; b=cLSrAJuX1VLvrcDdKHYaOWv2T3PIVAT+Pxdl6lsOZfWQdQ0T6vm6u2NwYIHfVkD1SgbxPtGFyEcNQ7kqesIfBslknp8HBjO4D/dSlUYIkJW780w0DBlmj7jjL/zD3EZoEFEMbALoqb14a2LbnytuN6TAUqqNIFXGDQFNfdjvtXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722577457; c=relaxed/simple;
-	bh=UFHlq0H3E82gCdWNYrxq9Ao1um3cD+Y2UTdkK+3smhs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZVyALgjozVTY2xj7zTh6yru+nZB8uQ2m9lmqlKdANRrEBFsF+KjwHS5C9fais2n+0akG9QJ7Ke/gKkrEPhtGE04KFeude7VP/6fl4bQab3laoRYYWESYSjZ6Hug6AeOMsYEo+lDETzwzb4c8mPA2LvJGxHEhTqMppuCBs4hLhOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OiWNjspX; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4281c164408so44344385e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 22:44:13 -0700 (PDT)
+	s=arc-20240116; t=1722577564; c=relaxed/simple;
+	bh=XQhjo188Vyx5MKMr+apYuqo6be4mNnMoNB6pZjn6VPI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=omKC1KaQ6xZ77gawcLEOP9MKG5KLy6Bb2hltIXO8KpYYWm7NFrOBujB5DHM8kH8V4UDpCrRc5hbr/cSFdSANAyJIxA+o8H/rE7M4hhHt1LX5wRzOEhNPC2piHMQyAybB9EbKr45iC/mX4B5kKpwMb3xsQbmaifNGaiQukbgnIQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pnc92zuq; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc569440e1so69645625ad.3;
+        Thu, 01 Aug 2024 22:46:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722577452; x=1723182252; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/suS5E/THPwitL/0CNux/d6Wr8slSFy728FjLfghXwk=;
-        b=OiWNjspXshSxngOZ2OrWvpBpa5egjyej/6C+ZDVGi3b/+cFyuczSLF3KOOWFUirQuy
-         La+zhcoJhJuDvrbTyegNRTFIVGsiXy0lDvWOQebW03YPgQ3dw2LnecsaZxTmPShcSXZF
-         6Z/OHZ1XW49QvVzrwuVr+eT+nJ4I07Y3oy/fYh5kUOPKMZjwnf/0tmep9mNdNi4rc84d
-         jTL+PcZzrderVgZLGwMjip/aMLHvLLlLrsYR0/Tu+R6nWRVQSkKGX1SWBvaWJaQ7JMZq
-         oB5DBcc2FmrM71JcdfBeJHlnyENE+DLP7TbtCtlbtzYkWN96IxJ7JYg+jWqSa7SKwfHZ
-         kyww==
+        d=gmail.com; s=20230601; t=1722577562; x=1723182362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5bG1c+VFaEOvvUxyv+bCQnVb/VVzVXFx36kqHv00YTA=;
+        b=Pnc92zuq47zsFHw5Y2VYsfpDMVvgoY0fYx5itSp3Y3rdc2n8ujdNpAbxQL9BKn2zeo
+         aLiQHWeECexIVgPs3ShRu69kefM5jjquWsxpSEpgHUF8snnJMjy19o+A7a+CUBvAS7Ci
+         ekTZcy0wTZWxo8fbp21sUfCQF1tdhkZHjXq7t2uzmHlsCkNYL4wQZCWQ6DRUJPZq1Vft
+         b1wtp4M8QP4ZabCLiFErwI+dnhbld8rBAcmpBBopnhUsE05VzC0LIiD2mOF88XkGnIvZ
+         fmH7NMlTN9yjR7YdYpuyYEELb4hZWNoOo6f1UIpmuqLXJEsp0W2j8mpe/pKZg/R4hZUB
+         Cd2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722577452; x=1723182252;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/suS5E/THPwitL/0CNux/d6Wr8slSFy728FjLfghXwk=;
-        b=craF2QsDH2uGgdlzlvSqwIWZlRz4CVSo6AqxkCA4dduYkos6hYonGxD64qho68UlSS
-         pKn8qX3MoDSe7ue7SLrQofmxT0JQcv7qvZh6gyuQ9TbrTAcqjTDNT9kKEAB/TvpWry86
-         qoVhH8Rdl4c1Q6S6lnhl+8MyWspxkciISGfsNCHQIPvidF7dn26hLo72LlEE+VLGUWSl
-         CfrVIU/9F1aXTAscyko//tnh8znYW0VirIJVf+0ERqQ1lqJ09qTm4l5nU+eXuPx9eql5
-         1Rq/20/T7ahck2ndQBHCxtFb8JAGt84JVBH8AWfUko3oVYvV7rT/Jc7H+4Asf0CGPFul
-         wIWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbsSizAbGEWvjuA8NzZ/qPzxwPhANHZ/VFLjj0bqOeKZ4d43Kv0d2qCXd1OXfHpUn+bSR/5mqBfsrq/YMje2EKr3BwhCOJj+wtpzpp
-X-Gm-Message-State: AOJu0YxccBYinSk50ocXj1uRDmxgUKZGh3pjrcAIMVE26KVHrxx8Vc55
-	eo1gGvHkkmiBvfLtFrCZzM/rEaVbQXLInrsXO3t0I4TSF5mDr7n+wJmMK0D+BFM=
-X-Google-Smtp-Source: AGHT+IEbwsdCFVcpSof1lHH3nO0h4oFeOaJ4dZlzRZY2FFW9Nakdpxej2wm/Gce4TH5H4U+e9jvGag==
-X-Received: by 2002:a05:600c:4f92:b0:426:6e8b:3dc5 with SMTP id 5b1f17b1804b1-428e6b92636mr15226395e9.32.1722577452042;
-        Thu, 01 Aug 2024 22:44:12 -0700 (PDT)
-Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9cd14sm18773995e9.45.2024.08.01.22.44.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 22:44:11 -0700 (PDT)
-Message-ID: <242b327a-9244-411c-8d3e-7b860464f8f6@suse.com>
-Date: Fri, 2 Aug 2024 07:44:11 +0200
+        d=1e100.net; s=20230601; t=1722577562; x=1723182362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5bG1c+VFaEOvvUxyv+bCQnVb/VVzVXFx36kqHv00YTA=;
+        b=tPWZ+kpF2VX95TwtPfcG/tpvQ8VI+an2eBMhqHuEcA6HDC739GD9WS1pziqriI0B77
+         yqSQPfDt+fhdaUvvDoICsjd//2HIJ50kkIz3nHpZCOo1mlTp+pYwc/lPQALbwtUjYCjO
+         wK5wfu+i+rz30sle/UK+ySBdO5xEoEPTyc6ps2cIwWf0l9JO2xK5WZPpOsvuPSMIvln5
+         k2b4uF18/nAKzqwZhOY4NgLf7WdfqR8rOlDL3OrrZfkHTE+g8cSqqsH4E/c9NmMdsFM3
+         wp7axVk9e1t2JamCt9sV5cFRsYm6MGY+xEsflyt4QO2f/NheJpUqqASNwdqfmc8gWsC+
+         mPzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwiCMBl0a9uuV6q1DXd4PVOgAuuCoCNvqdf+mgMrKBn4Fqqg1Iwm0jHVIoqpfu+LEgWWXG5M+0J0RdTd6uhn5ym2vUPkmNJ+VnSE6j
+X-Gm-Message-State: AOJu0Yy5oXRltc/178X4q4DBQEEk6i6O5Yrzg8JquPcaROa+KyU+f6s+
+	o1IvFJ4h85WSB9wln/Cw9twfzeiIh2eo7UzIkbHr68q8S3Wq5X1z
+X-Google-Smtp-Source: AGHT+IGba0YUoAJZO/cZtgwZ2axTAToxS/thDxJxHx4Sn++qh2s6M9BRnED/uwun4wL27cljzgIf0Q==
+X-Received: by 2002:a17:903:2445:b0:1fd:91b1:7897 with SMTP id d9443c01a7336-1ff574a7ac9mr34361965ad.65.1722577562253;
+        Thu, 01 Aug 2024 22:46:02 -0700 (PDT)
+Received: from localhost.localdomain ([218.150.196.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59176cbcsm8462535ad.205.2024.08.01.22.46.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 22:46:01 -0700 (PDT)
+From: Moon Yeounsu <yyyynoom@gmail.com>
+To: cooldavid@cooldavid.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Moon Yeounsu <yyyynoom@gmail.com>
+Subject: [PATCH] net: ethernet: use ip_hdrlen() instead of bit shift
+Date: Fri,  2 Aug 2024 14:44:21 +0900
+Message-ID: <20240802054421.5428-1-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] xen, pvh: fix unbootable VMs (PVH + KASAN)
-To: Alexey Dobriyan <adobriyan@gmail.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <a9f505a6-fd31-4cfa-a193-d21638bb14f1@p183>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-In-Reply-To: <a9f505a6-fd31-4cfa-a193-d21638bb14f1@p183>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01.08.24 21:16, Alexey Dobriyan wrote:
-> Uninstrument arch/x86/platform/pvh/enlighten.c: KASAN is not setup
-> _this_ early in the boot process.
-> 
-> Steps to reproduce:
-> 
-> 	make allnoconfig
-> 	make sure CONFIG_AMD_MEM_ENCRYPT is disabled
-> 		AMD_MEM_ENCRYPT independently uninstruments lib/string.o
-> 		so PVH boot code calls into uninstrumented memset() and
-> 		memcmp() which can make the bug disappear depending on
-> 		the compiler.
-> 	enable CONFIG_PVH
-> 	enable CONFIG_KASAN
-> 	enable serial console
-> 		this is fun exercise if you never done it from nothing :^)
-> 
-> 	make
-> 
-> 	qemu-system-x86_64	\
-> 		-enable-kvm	\
-> 		-cpu host	\
-> 		-smp cpus=1	\
-> 		-m 4096		\
-> 		-serial stdio	\
-> 		-kernel vmlinux \
-> 		-append 'console=ttyS0 ignore_loglevel'
-> 
-> Messages on serial console will easily tell OK kernel from unbootable
-> kernel. In bad case qemu hangs in an infinite loop stroboscoping
-> "SeaBIOS" message.
-> 
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+`ip_hdr(skb)->ihl << 2` are the same as `ip_hdrlen(skb)`
+Therefore, we should use a well-defined function not a bit shift
+to find the header length.
 
-Acked-by: Juergen Gross <jgross@suse.com>
+It also compress two lines at a single line.
 
+Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+---
+ drivers/net/ethernet/jme.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-Juergen
+diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
+index b06e24562973..83b185c995df 100644
+--- a/drivers/net/ethernet/jme.c
++++ b/drivers/net/ethernet/jme.c
+@@ -946,15 +946,13 @@ jme_udpsum(struct sk_buff *skb)
+ 	if (skb->protocol != htons(ETH_P_IP))
+ 		return csum;
+ 	skb_set_network_header(skb, ETH_HLEN);
++
+ 	if ((ip_hdr(skb)->protocol != IPPROTO_UDP) ||
+-	    (skb->len < (ETH_HLEN +
+-			(ip_hdr(skb)->ihl << 2) +
+-			sizeof(struct udphdr)))) {
++	    (skb->len < (ETH_HLEN + (ip_hdrlen(skb)) + sizeof(struct udphdr)))) {
+ 		skb_reset_network_header(skb);
+ 		return csum;
+ 	}
+-	skb_set_transport_header(skb,
+-			ETH_HLEN + (ip_hdr(skb)->ihl << 2));
++	skb_set_transport_header(skb, ETH_HLEN + (ip_hdrlen(skb)));
+ 	csum = udp_hdr(skb)->check;
+ 	skb_reset_transport_header(skb);
+ 	skb_reset_network_header(skb);
+-- 
+2.45.2
 
 
