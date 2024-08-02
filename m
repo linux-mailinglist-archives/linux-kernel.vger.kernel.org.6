@@ -1,284 +1,119 @@
-Return-Path: <linux-kernel+bounces-272684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9A1945FD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:05:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0A7945FDC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53EA3B22540
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AAD7283C57
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F8E2139C6;
-	Fri,  2 Aug 2024 15:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F312139B0;
+	Fri,  2 Aug 2024 15:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYQxjmB1"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Feuyqlsz"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CE01DAC4F;
-	Fri,  2 Aug 2024 15:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398DE1F61C;
+	Fri,  2 Aug 2024 15:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611138; cv=none; b=uO1MzdM02Cjyfmd3h8xVlp+k8CEWvi0/vdIPJaAOLRUoF2RfYt7ShYqBKuhUovkGfavTPpCf+QZPdCxGDVUHs0Fe3/TdpJCO0gpqOa1X4E3ZJ11gbN4n3cfHPWnxTnY+U/Su+LtvPj8kZXe6VrxDjpjcijtjVOkAZvYfQUUSZJY=
+	t=1722611265; cv=none; b=sQgWgGJEbTP+/W2Q9OXScL4BFy6JWdNT/EmfoDZG9dXQP8cD3OCBpc+dBfyFYIu8NyA33ZRZFjqunjYC8JiicbxWBKUnkgWMI7bjVjn/XBoYP7+E96RyhSt3pz4bttCEdWnEzYGcT6KHDMvSwnJLVWfRfEAdSOfMBwM9M0rCPKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611138; c=relaxed/simple;
-	bh=RBRAeZBBYoe2LXhw8LghRfF6wQcafFS9pPEQGc32G0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZyppxTAilTNh2gk6dok+XYFaZVTLpJ8lqLMahw2LtyP/VFl1Wuk3ZVFzg/T0tRtWDdVKSVeYFGsjyQAQD5jX6PRuTx7XH25BD4ayNVJqR71FR4Y8gCHCTmeR37/tKxIZeyP3T3TGrm4wkZ98z29YNvS5mgKNsfiHeIeQzHjt7TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYQxjmB1; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a9e25008aso1102428566b.0;
-        Fri, 02 Aug 2024 08:05:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722611135; x=1723215935; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3UyWAM+msyPF6QGXrwvMTh/SmGbZRENZMvN4/PcJhyU=;
-        b=ZYQxjmB1AQWyOmgjnh7QzsWDoGRHYhRwlPnV+TahrW7R/bH2e0lwv9D9yUZggpdkMd
-         o2EN40+CopYdjcVgzNldlvRkSuaA3ymFgGzmAbkPTxOut4ytJmfD4dpFaktLpZfQrGED
-         DtRrSs9N4E4YHZV1XRvjJYJ6ApNiVqX+mB+Jy/q3zYEJwh1360rY3PdUX30h0YfVSPrT
-         p1PtES3vCv0ifuFUVM5pOWmFkDdDicI4t/uMUao4xkl+lJtNUiwbHxO5l3kswEbKQ0Z0
-         M6TnnGpKxwblJPeAWajR943niQwHMDg53ymPKJ3Kjo0WN+ZCHWn84zuS+NHMFwS3PcGl
-         dDJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722611135; x=1723215935;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3UyWAM+msyPF6QGXrwvMTh/SmGbZRENZMvN4/PcJhyU=;
-        b=FgHz2rkdC3m1DYO988N/SDR6OTeuyfV2vol3Idmd+8x+4AR61WzzDqSGZEYZqLKVcv
-         cAc46zrw+agPsAcNhn75+WHqv2okB2Ts3IPN+tuey78N2tLU6d7YacbnXwGMcLHl6tYD
-         LMX7ZAkCG5OfCwHOngMmtIpd+V5YN9WlfqRGSISMpeN2aNY9gHDTYNdYjdskbO4H+LtI
-         6bkWpArXGIzQIrn68LQcAM0zD8KPagqVK36QUFgZdhSzv9zug7ODvDzOXBpre3Hv/2C4
-         zGE76DaFeAfaibKIzUgnvuqCqu9Jpz4lNuLJ/n2nmT9PEQ+smTinNb0a+VJ81shBqU8j
-         0cRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvXu0p5xDs/IY0G5irDo4nD8q2bjdraaRHG4XlPrti5S/D3HXmelZfAow5rTAnc8/NsP1NgS9TVfR7pIZCDsrPaZLg1/oGABFs2dmobkT+31xjgCTuAn0Wa2+3A8/L6vqwiLYaHb3cGrv86J0N4csWC6g2rpRXZeRcC63F4WhE2W7Q4J3m
-X-Gm-Message-State: AOJu0YwCIBJrfREFKo6pl5/kuELQn1kcpJPI2xE+EQu2fz4OGzJFFH3b
-	n7JxPIAfGx51ZmkYiqd5zb221FL5EyjDTIiAvTSGrJnYMRMWaPumN6rw7OfFv2eWYKSMwEIwIn3
-	eKzFQ3ObFiLOxA2ww+VNAg/2+8zU=
-X-Google-Smtp-Source: AGHT+IElMIr/ebjjVoiS+upJcSsQBtMTff/+jRibSomwARdE7S8RvH9GjM+u5Fc8asTVB7YKAdQ5e2uYe0cQpkk+4V4=
-X-Received: by 2002:a17:906:c10a:b0:a72:8296:ca1f with SMTP id
- a640c23a62f3a-a7dc506dc64mr257607166b.50.1722611134200; Fri, 02 Aug 2024
- 08:05:34 -0700 (PDT)
+	s=arc-20240116; t=1722611265; c=relaxed/simple;
+	bh=iLjiimI9QumdAASoSSm5SQ9Q5oP3vBPC+C6gOdC1ahg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kIFL4qga1dOYRSFUKgZFfSTxV/1uKxdua9YwR1zEUFuJTm2F0nACoUOiXPgtTqpUw2cenpZmj19XNHb4grQ6KA+PRkDu4hl9xCF1r3yQ9T/4ghQtFaqvMMb1jjzuUnyu8gotnVZjAi/jyMJ5gjZRpG7u3cvDWx1Y9EEgMPYMjnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Feuyqlsz; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=fIYvKPuNOEMEkDChnU2e4Wtk8YCB6+/z9l+uIWsJNiA=; b=Feuyqlsz+VRV6PvIasBPuyuFLy
+	5TQcnlgbH/t1tHUgX17TV5G12D+KD0k0VYWwExdJM+uriVdtnJOHWVUmoomxZXGT1tGUKv/IvsonX
+	g4Z/M4k6kyCh1OvteeCHfbb5ycE4041SgMJECHDauoFUqhgwiitG28PF1tXCZfgXweWQAcVHwwQr0
+	5u6ZYUhEpA6DJLxxZ9ch3YuK8vJKEgCAJdYzr1OMQ+DVdRRX+fq8SGhAgCBhpN/7st94qQMgKMgNF
+	JGCL1ahR+lKuh3hfpnNYiMa2LIwud7gd5Ta+xCrq09HWa2IFWKDiYCx71TDVf/09GM/exGhMt6QSi
+	mc5f9UNw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZtsL-00000005jbg-0OJ7;
+	Fri, 02 Aug 2024 15:07:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 38A2430049D; Fri,  2 Aug 2024 17:07:24 +0200 (CEST)
+Date: Fri, 2 Aug 2024 17:07:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, torvalds@linux-foundation.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Lukas Wunner <lukas@wunner.de>, Jonathan Corbet <corbet@lwn.net>,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v3] cleanup: Add usage and style documentation
+Message-ID: <20240802150724.GL39708@noisy.programming.kicks-ass.net>
+References: <171140738438.1574931.15717256954707430472.stgit@dwillia2-xfh.jf.intel.com>
+ <171175585714.2192972.12661675876300167762.stgit@dwillia2-xfh.jf.intel.com>
+ <20240802145856.00002717@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731214256.3588718-1-andrii@kernel.org> <20240731214256.3588718-7-andrii@kernel.org>
- <eb6d1474-a292-af20-b8b1-1c2de61405f4@huawei.com>
-In-Reply-To: <eb6d1474-a292-af20-b8b1-1c2de61405f4@huawei.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 2 Aug 2024 08:05:18 -0700
-Message-ID: <CAEf4BzZR6a4OSqsvyci0_-P+_o2PErM_PyC9y9eSc4J4A+Uabw@mail.gmail.com>
-Subject: Re: [PATCH 6/8] perf/uprobe: split uprobe_unregister()
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jolsa@kernel.org, paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240802145856.00002717@Huawei.com>
 
-On Thu, Aug 1, 2024 at 7:41=E2=80=AFPM Liao, Chang <liaochang1@huawei.com> =
-wrote:
->
->
->
-> =E5=9C=A8 2024/8/1 5:42, Andrii Nakryiko =E5=86=99=E9=81=93:
-> > From: Peter Zijlstra <peterz@infradead.org>
-> >
-> > With uprobe_unregister() having grown a synchronize_srcu(), it becomes
-> > fairly slow to call. Esp. since both users of this API call it in a
-> > loop.
-> >
-> > Peel off the sync_srcu() and do it once, after the loop.
-> >
-> > With recent uprobe_register()'s error handling reusing full
-> > uprobe_unregister() call, we need to be careful about returning to the
-> > caller before we have a guarantee that partially attached consumer won'=
-t
-> > be called anymore. So add uprobe_unregister_sync() in the error handlin=
-g
-> > path. This is an unlikely slow path and this should be totally fine to
-> > be slow in the case of an failed attach.
-> >
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Co-developed-by: Andrii Nakryiko <andrii@kernel.org>
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+On Fri, Aug 02, 2024 at 02:58:56PM +0100, Jonathan Cameron wrote:
+> On Fri, 29 Mar 2024 16:48:48 -0700
+> Dan Williams <dan.j.williams@intel.com> wrote:
+> 
+> > When proposing that PCI grow some new cleanup helpers for pci_dev_put()
+> > and pci_dev_{lock,unlock} [1], Bjorn had some fundamental questions
+> > about expectations and best practices. Upon reviewing an updated
+> > changelog with those details he recommended adding them to documentation
+> > in the header file itself.
+> > 
+> > Add that documentation and link it into the rendering for
+> > Documentation/core-api/.
+> > 
+> > Link: http://lore.kernel.org/r/20240104183218.GA1820872@bhelgaas [1]
+> > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > Cc: Ira Weiny <ira.weiny@intel.com>
+> > Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>
+> > Cc: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> > Cc: Lukas Wunner <lukas@wunner.de>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Jonathan Corbet <corbet@lwn.net>
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 > > ---
-> >  include/linux/uprobes.h                        |  8 ++++++--
-> >  kernel/events/uprobes.c                        | 18 ++++++++++++++----
-> >  kernel/trace/bpf_trace.c                       |  5 ++++-
-> >  kernel/trace/trace_uprobe.c                    |  6 +++++-
-> >  .../selftests/bpf/bpf_testmod/bpf_testmod.c    |  3 ++-
-> >  5 files changed, 31 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> > index a1686c1ebcb6..8f1999eb9d9f 100644
-> > --- a/include/linux/uprobes.h
-> > +++ b/include/linux/uprobes.h
-> > @@ -105,7 +105,8 @@ extern unsigned long uprobe_get_trap_addr(struct pt=
-_regs *regs);
-> >  extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_=
-struct *mm, unsigned long vaddr, uprobe_opcode_t);
-> >  extern struct uprobe *uprobe_register(struct inode *inode, loff_t offs=
-et, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
-> >  extern int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer =
-*uc, bool);
-> > -extern void uprobe_unregister(struct uprobe *uprobe, struct uprobe_con=
-sumer *uc);
-> > +extern void uprobe_unregister_nosync(struct uprobe *uprobe, struct upr=
-obe_consumer *uc);
-> > +extern void uprobe_unregister_sync(void);
->
-> [...]
->
-> >  static inline void
-> > -uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
-> > +uprobe_unregister_nosync(struct uprobe *uprobe, struct uprobe_consumer=
- *uc)
-> > +{
-> > +}
-> > +static inline void uprobes_unregister_sync(void)
->
-> *uprobes*_unregister_sync, is it a typo?
->
+> > Changes since v2:
+> > * remove the unnecessary newlines around code examples further reducing
+> >   the visual interruption of RST metadata (Jon)
+> > * Fix a missing FILO=>LIFO conversion
+> > * Fix a bug in the example
+> > * Collect Jonathan's reviewed-by
+> > 
+> > Review has been quiet on this thread for a few days so I think is the
+> > final rev. Let me know if anything else to fix up.
+> 
+> Would be good to either get more review, or this applied.
+> 
+> Currently I'm pointing people at the email. Would much rather
+> point them at the upstream docs!
+> 
+> Jon, would you consider picking this up?
 
-I think the idea behind this is that you do a lot of individual uprobe
-unregistrations with multiple uprobe_unregister() calls, and then
-follow with a single *uprobes*_unregister_sync(), because in general
-it is meant to sync multiple uprobes unregistrations.
-
-> >  {
-> >  }
-> >  static inline int uprobe_mmap(struct vm_area_struct *vma)
-> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> > index 3b42fd355256..b0488d356399 100644
-> > --- a/kernel/events/uprobes.c
-> > +++ b/kernel/events/uprobes.c
-> > @@ -1089,11 +1089,11 @@ register_for_each_vma(struct uprobe *uprobe, st=
-ruct uprobe_consumer *new)
-> >  }
-> >
-> >  /**
-> > - * uprobe_unregister - unregister an already registered probe.
-> > + * uprobe_unregister_nosync - unregister an already registered probe.
-> >   * @uprobe: uprobe to remove
-> >   * @uc: identify which probe if multiple probes are colocated.
-> >   */
-> > -void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *=
-uc)
-> > +void uprobe_unregister_nosync(struct uprobe *uprobe, struct uprobe_con=
-sumer *uc)
-> >  {
-> >       int err;
-> >
-> > @@ -1109,10 +1109,14 @@ void uprobe_unregister(struct uprobe *uprobe, s=
-truct uprobe_consumer *uc)
-> >               return;
-> >
-> >       put_uprobe(uprobe);
-> > +}
-> > +EXPORT_SYMBOL_GPL(uprobe_unregister_nosync);
-> >
-> > +void uprobe_unregister_sync(void)
-> > +{
-> >       synchronize_srcu(&uprobes_srcu);
-> >  }
-> > -EXPORT_SYMBOL_GPL(uprobe_unregister);
-> > +EXPORT_SYMBOL_GPL(uprobe_unregister_sync);
-> >
-> >  /**
-> >   * uprobe_register - register a probe
-> > @@ -1170,7 +1174,13 @@ struct uprobe *uprobe_register(struct inode *ino=
-de,
-> >       up_write(&uprobe->register_rwsem);
-> >
-> >       if (ret) {
-> > -             uprobe_unregister(uprobe, uc);
-> > +             uprobe_unregister_nosync(uprobe, uc);
-> > +             /*
-> > +              * Registration might have partially succeeded, so we can=
- have
-> > +              * this consumer being called right at this time. We need=
- to
-> > +              * sync here. It's ok, it's unlikely slow path.
-> > +              */
-> > +             uprobe_unregister_sync();
-> >               return ERR_PTR(ret);
-> >       }
-> >
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index 73c570b5988b..6b632710c98e 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -3184,7 +3184,10 @@ static void bpf_uprobe_unregister(struct bpf_upr=
-obe *uprobes, u32 cnt)
-> >       u32 i;
-> >
-> >       for (i =3D 0; i < cnt; i++)
-> > -             uprobe_unregister(uprobes[i].uprobe, &uprobes[i].consumer=
-);
-> > +             uprobe_unregister_nosync(uprobes[i].uprobe, &uprobes[i].c=
-onsumer);
-> > +
-> > +     if (cnt)
-> > +             uprobe_unregister_sync();
-> >  }
-> >
-> >  static void bpf_uprobe_multi_link_release(struct bpf_link *link)
-> > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> > index 7eb79e0a5352..f7443e996b1b 100644
-> > --- a/kernel/trace/trace_uprobe.c
-> > +++ b/kernel/trace/trace_uprobe.c
-> > @@ -1097,6 +1097,7 @@ static int trace_uprobe_enable(struct trace_uprob=
-e *tu, filter_func_t filter)
-> >  static void __probe_event_disable(struct trace_probe *tp)
-> >  {
-> >       struct trace_uprobe *tu;
-> > +     bool sync =3D false;
-> >
-> >       tu =3D container_of(tp, struct trace_uprobe, tp);
-> >       WARN_ON(!uprobe_filter_is_empty(tu->tp.event->filter));
-> > @@ -1105,9 +1106,12 @@ static void __probe_event_disable(struct trace_p=
-robe *tp)
-> >               if (!tu->uprobe)
-> >                       continue;
-> >
-> > -             uprobe_unregister(tu->uprobe, &tu->consumer);
-> > +             uprobe_unregister_nosync(tu->uprobe, &tu->consumer);
-> > +             sync =3D true;
-> >               tu->uprobe =3D NULL;
-> >       }
-> > +     if (sync)
-> > +             uprobe_unregister_sync();
-> >  }
-> >
-> >  static int probe_event_enable(struct trace_event_call *call,
-> > diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/to=
-ols/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> > index 73a6b041bcce..928c73cde32e 100644
-> > --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> > +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> > @@ -478,7 +478,8 @@ static void testmod_unregister_uprobe(void)
-> >       mutex_lock(&testmod_uprobe_mutex);
-> >
-> >       if (uprobe.uprobe) {
-> > -             uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
-> > +             uprobe_unregister_nosync(uprobe.uprobe, &uprobe.consumer)=
-;
-> > +             uprobe_unregister_sync();
-> >               uprobe.offset =3D 0;
-> >               uprobe.uprobe =3D NULL;
-> >       }
->
-> --
-> BR
-> Liao, Chang
+I suppose I can stick it in tip/locking/core, I think that's how we all
+ended up with this nonsense anyway :-)
 
