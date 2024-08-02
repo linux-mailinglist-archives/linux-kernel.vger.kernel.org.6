@@ -1,136 +1,93 @@
-Return-Path: <linux-kernel+bounces-272470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3463A945C8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:53:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EA8945C2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84C8283DE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F5FD1C2152C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BA11DF66C;
-	Fri,  2 Aug 2024 10:53:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A8B1DB453;
+	Fri,  2 Aug 2024 10:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ReoJGTUm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FD41DB422;
-	Fri,  2 Aug 2024 10:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7659C14B943;
+	Fri,  2 Aug 2024 10:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722595994; cv=none; b=BTIKFiszbx9qUy8h6F3gr36lIW9KGNDhF0gA581t3eAT5r16jTnJxH1z7oS6Uz9WSrpBMJuGUqSBSU2+cByK8TkplhFPyhpP9K1oFy3AGbOHtuMamgz3ND0n/7WDO3Vh9ApXQyWCtxkDo39b3AJLIIxRXB6wP/NEZBDviEoj8jU=
+	t=1722595062; cv=none; b=gl3WakBVezI4WdsviiaOl5jKYdbUa0EMLIf0a0Q+1BOYeYtbyHMzWcW3WMjvQIUEG7YfFpr/Cv6ZJKei0gK9CBPjWHAN7wEFXQJ7eQLWvATh2mic0v6Zg5B4z+2Ik2SF8stSt/XaOf1b64bwuhm/Tb6lCrltjfyqCgtyHnJ0rJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722595994; c=relaxed/simple;
-	bh=A3e/wQVmmVlejxsbfOJzsMOgYw/ggliYt0zycmeoaAU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JwbE1I9efksJu85esD89XRHsMytYmz7XJeL55v+SUUTS55UAXWC8Tw5fUvakhXnm4kVDUP6LrXhoEQsPvnfXkPja5l/oujYjE3NM/fM+XH8a4mOnq7b2AJgkbKJ9fpTjPCddbiSyYT5TELwAQ+cV6HMn4ruOYSLibZfLmsECQoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wb2JN02Stz6K5nV;
-	Fri,  2 Aug 2024 18:34:28 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 90EC81400D9;
-	Fri,  2 Aug 2024 18:36:31 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 2 Aug
- 2024 11:36:30 +0100
-Date: Fri, 2 Aug 2024 11:36:29 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
- Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
-	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
-	<dave@stgolabs.net>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko
- Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
- Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
-	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
-	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
-	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
-	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
-Subject: Re: [PATCH v3 11/26] x86/numa: use get_pfn_range_for_nid to verify
- that node spans memory
-Message-ID: <20240802113629.00003069@Huawei.com>
-In-Reply-To: <20240801060826.559858-12-rppt@kernel.org>
-References: <20240801060826.559858-1-rppt@kernel.org>
-	<20240801060826.559858-12-rppt@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722595062; c=relaxed/simple;
+	bh=Rub6ETdVZ4JQhCTqX4fBuJ2wjAKj5H57kQ9DlkLWTNc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pyKnoEcrcfi49AgEH7fGxZQ4zSr0vdUabdnQeYCl9Vi1Y+R82wU8yxgm3jN+aB6xmppV4WBnGdPX5Ev4xdcBl+n/NI009dq0nkheQucJ8BbUF62CMVlCwAvkcVo/rAL4yq0+FB/+viytZzqNUrgPogqF9be3DTGiNqwJ9CWdzTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ReoJGTUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71555C32782;
+	Fri,  2 Aug 2024 10:37:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722595061;
+	bh=Rub6ETdVZ4JQhCTqX4fBuJ2wjAKj5H57kQ9DlkLWTNc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ReoJGTUmEphI4f5cFFlLcAnizuzbYo22tQ9nD14y1cJd45me3rxbyoQ0mICRzO8u+
+	 WoAs1pIyqVUtBi4ToR3ZAIGYuKu9im28iuGntVRK5lTIKbeVFuPv2Ubf1eZpoHw3OM
+	 stKI3LGD5lcw8X6dzE5fpCyICFxe/T/2Qv1kZpPmplDiakEm2CwcrGv3lyGfEFC0mw
+	 IQnKMAdyOO1zDO+Lba6nAfvm8V/usA3Kplgab+CeZxeQnvk529Sxazm9TNRJP2CwY5
+	 AN28+KIoMFtOkFk2kEdPzI6YPvwdNkA7K2ka400RaVoobXzh0nXliHmoTd/T5jtb7s
+	 Z5PpYmjnkLelA==
+From: Christian Brauner <brauner@kernel.org>
+To: Wang Long <w@laoqinren.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	tj@kernel.org,
+	cl@linux.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] percpu-rwsem: remove the unused parameter 'read'
+Date: Fri,  2 Aug 2024 12:37:23 +0200
+Message-ID: <20240802-achtzehn-glitten-c520ce8ef628@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240802091901.2546797-1-w@laoqinren.net>
+References: <20240802091901.2546797-1-w@laoqinren.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=912; i=brauner@kernel.org; h=from:subject:message-id; bh=Rub6ETdVZ4JQhCTqX4fBuJ2wjAKj5H57kQ9DlkLWTNc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSt2fZOp3+l/NNUvRO7ikJcVf0dgqalLTpWwJB92nRhO MffmwtNOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTAG7yfob/fk4pM2xPL1UXlNZj Ouh41Ei5a9PVsyYRFgfyblw52PXnOyPD7PUzBNNuH5oSd+7dcntlq0kNpzrL/l23j/C9uVTP+5o 7FwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu,  1 Aug 2024 09:08:11 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
-
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On Fri, 02 Aug 2024 17:19:01 +0800, Wang Long wrote:
+> In the function percpu_rwsem_release, the parameter `read`
+> is unused, so remove it.
 > 
-> Instead of looping over numa_meminfo array to detect node's start and
-> end addresses use get_pfn_range_for_init().
 > 
-> This is shorter and make it easier to lift numa_memblks to generic code.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
 
-Fair enough given code a few lines up has set the node
-for all the memblocks so this should I think give the same
-effective result.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> ---
->  arch/x86/mm/numa.c | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-> index edfc38803779..cfe7e5477cf8 100644
-> --- a/arch/x86/mm/numa.c
-> +++ b/arch/x86/mm/numa.c
-> @@ -521,17 +521,10 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
->  
->  	/* Finally register nodes. */
->  	for_each_node_mask(nid, node_possible_map) {
-> -		u64 start = PFN_PHYS(max_pfn);
-> -		u64 end = 0;
-> +		unsigned long start_pfn, end_pfn;
->  
-> -		for (i = 0; i < mi->nr_blks; i++) {
-> -			if (nid != mi->blk[i].nid)
-> -				continue;
-> -			start = min(mi->blk[i].start, start);
-> -			end = max(mi->blk[i].end, end);
-> -		}
-> -
-> -		if (start >= end)
-> +		get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
-> +		if (start_pfn >= end_pfn)
->  			continue;
->  
->  		alloc_node_data(nid);
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] percpu-rwsem: remove the unused parameter 'read'
+      https://git.kernel.org/vfs/vfs/c/31eaea29457d
 
