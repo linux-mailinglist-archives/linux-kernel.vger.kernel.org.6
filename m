@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-272662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8808E945F91
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:43:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 294B9945F98
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345241F21AE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C797E1F21EE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538382101A3;
-	Fri,  2 Aug 2024 14:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11542101BC;
+	Fri,  2 Aug 2024 14:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ImUm53r8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lKljglRj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzIfzPbq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DFD1171C;
-	Fri,  2 Aug 2024 14:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DFD1171C;
+	Fri,  2 Aug 2024 14:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722609801; cv=none; b=FyP1POU0e8ZicqBYKWDPTM1rF/GgYO68AcCpHggim4qBZDPfR6mVHJDxkqnarmkZDzvHsstHLO8v0Whl7W3ps/9uz0dKxN/McoFWffGMs9GpHkfvC1EY2Ce4Sgh+2sq4Pjqlb2jLcioCxIWCOuHsD39FdQlMSygHxCk+YFO6z2E=
+	t=1722609852; cv=none; b=YTqOhBFEQ97fPvYvP+ogXao6LQrsmHRlS1zklG/i0KCrZeXp8uAj/K/JxvPmN8ZC1eUqnFd4lB9uGBeWVvKcWwYcN/gRkaFSvC4x0EV6Iv7FXaazYx9nFXcbt+bpuvwaRP7kw5CbSUXEb9rNOSZAWHT+W+pthpERDE+jO3plDqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722609801; c=relaxed/simple;
-	bh=NU3wYy8k5zdf/9XOOg0SD16HymdvaMCyJVKYJpshXx4=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=dwL204ZAGRaFwbmeO87iGQgeceX+0xcnTzqO7x5gkTs74bG9YjaFsZL3oecljeoVzxgSFfsDiwENqNRXsSV/0l0cUVP4tRtRuLSuhwREx3dHwmzhk0l5mjV3UwY4+f9bf3tsK0MG4PTI2fPUkrT1N14wCTGDhW9IqJC5wzEtUvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ImUm53r8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lKljglRj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 02 Aug 2024 14:43:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722609798;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=08Xy70LRyIdQG3tcn9StZykLFGQJFxclC0TUOOF1MYk=;
-	b=ImUm53r8hk6DkslxA55mdKzq9oUwF/6yYCX6bFxVc1CWovGA7ajCMlTi0hpC9UgDcMzcSh
-	+7ogu73BRNRooScXFrNMRlfkDJogffrbW6gf5yL0WPUwDTTMtFAvhIj6HsGJAqnVkab57e
-	arQVefM4ZwPj/PB0ygzI+qrqbtUG3hUSaprjaRZXMsUHpMlPNontQwLWkIzbg9io4AwWEE
-	eRExbbDxFKHmcNVQ1fvlkTaR7dWmZHLdEsyRYiGZIylFZYRClrNKq964K85x2lpTSxIkzd
-	NwumrZN2qtyRPbD917L+mpipa2F9bhLjUQKSMUM97Hf6A9WWfyfpnw2tgQ2leQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722609798;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=08Xy70LRyIdQG3tcn9StZykLFGQJFxclC0TUOOF1MYk=;
-	b=lKljglRjDKoPlQzPcgYizb6aQ2MRBYk1bEoJcL32f5IPhIktx8kyKlVkRQ8DzL3UpDUBrU
-	tSQdRVAv2TNDcFCw==
-From: "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] clocksource: Fix brown-bag boolean thinko in
- cs_watchdog_read()
-Cc: Borislav Petkov <bp@alien8.de>, "Paul E. McKenney" <paulmck@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1722609852; c=relaxed/simple;
+	bh=x8gmfjyvWGUc0bCINyn9NBAMXGuzcpTpCIJEd8Maaqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4BsSTXGghbtJluwou74V6KEfZZqXKooHVZNjZNClxC11h8g4nWDIitjGL/d1DVb/Bt6My39RMobunIY81obv2E7jqxgm9xw6DTGJ4kQTrbUHllxur1vEG+sHHilU7qDq/jjYkgur1SswWGQRrxNZAmFdG9NC3RsoK0W+DNOa+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzIfzPbq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55967C32782;
+	Fri,  2 Aug 2024 14:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722609851;
+	bh=x8gmfjyvWGUc0bCINyn9NBAMXGuzcpTpCIJEd8Maaqg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uzIfzPbqeWDSXjHiBgkEJnEtvR/x00pI80yfMOPspsqu8FySfDHUqzDYaUa33dMPa
+	 9VuWj+8Sla/wxa6LgFUP4mUw5Uqld7oPO/Rc7VTvnZTkP4QUsX0WNIBJRfMKEbOm5E
+	 0O3SbfpH6tCZjpWaiiD1fNODTiZvR3ChGvm1WdEivsVrn36vxh5q5dSLX0Bq7q6TW/
+	 ZIfiaLlaRb/QTv1p8yRpvlyNCDsCx+PAndbRntFM/P58FfzqAwLyMhP9mXUnvR6Pti
+	 auvyf2mCECPYJDUbbakovkI3Q9PN8/kFR339yvIkgqaDOFi20gDtMTllo/pWmelP5F
+	 gBuJs50KKDLcA==
+Date: Fri, 2 Aug 2024 15:44:05 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 18/24] netfs: Speed up buffered reading
+Message-ID: <20240802144405.GD2504122@kernel.org>
+References: <20240731190742.GS1967603@kernel.org>
+ <20240729162002.3436763-1-dhowells@redhat.com>
+ <20240729162002.3436763-19-dhowells@redhat.com>
+ <117846.1722608282@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172260979799.2215.16859702418802740077.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <117846.1722608282@warthog.procyon.org.uk>
 
-The following commit has been merged into the timers/urgent branch of tip:
+On Fri, Aug 02, 2024 at 03:18:02PM +0100, David Howells wrote:
+> Simon Horman <horms@kernel.org> wrote:
+> 
+> > If the code ever reaches this line, then slice will be used
+> > uninitialised below.
+> 
+> It can't actually happen (or, at least, it shouldn't).  There are only three
+> ways of obtaining data: downloading from the server
+> (NETFS_DOWNLOAD_FROM_SERVER), reading from the cache (NETFS_READ_FROM_CACHE)
+> and just clearing space (NETFS_FILL_WITH_ZEROES); each of those has its own
+> if-statement that will set 'slice' or will switch the source to a different
+> type that will set 'slice'.
+> 
+> The problem is that the compiler doesn't know this.
+> 
+> The check for NETFS_INVALID_READ is there just in case.  Possibly:
+> 
+> 		if (source == NETFS_INVALID_READ)
+> 			break;
+> 
+> could be replaced with a WARN_ON_ONCE() and an unconditional break.
 
-Commit-ID:     305c821c3006c1f201eb85bcfb44a35930f54a71
-Gitweb:        https://git.kernel.org/tip/305c821c3006c1f201eb85bcfb44a35930f54a71
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Thu, 01 Aug 2024 17:16:36 -07:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 02 Aug 2024 16:34:26 +02:00
-
-clocksource: Fix brown-bag boolean thinko in cs_watchdog_read()
-
-The current "nretries > 1 || nretries >= max_retries" check in
-cs_watchdog_read() will always evaluate to true, and thus pr_warn(), if
-nretries is greater than 1.
-
-The intent is instead to never warn on the first try, but otherwise warn if
-the successful retry was the last retry.
-
-Therefore, change that "||" to "&&".
-
-Fixes: db3a34e17433 ("clocksource: Retry clock read if long delays detected")
-Reported-by: Borislav Petkov <bp@alien8.de>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
----
- kernel/time/clocksource.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index d25ba49..d0538a7 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -246,7 +246,7 @@ static enum wd_read_status cs_watchdog_read(struct clocksource *cs, u64 *csnow, 
- 
- 		wd_delay = cycles_to_nsec_safe(watchdog, *wdnow, wd_end);
- 		if (wd_delay <= WATCHDOG_MAX_SKEW) {
--			if (nretries > 1 || nretries >= max_retries) {
-+			if (nretries > 1 && nretries >= max_retries) {
- 				pr_warn("timekeeping watchdog on CPU%d: %s retried %d times before success\n",
- 					smp_processor_id(), watchdog->name, nretries);
- 			}
+Thanks, I think that should make the compiler happy without
+significantly altering the flow or readability of the code.
 
