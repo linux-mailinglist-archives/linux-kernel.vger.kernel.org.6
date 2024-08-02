@@ -1,121 +1,110 @@
-Return-Path: <linux-kernel+bounces-272959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39D39462C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:58:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD889462C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83E4CB230A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:58:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0031C20EE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58256165F04;
-	Fri,  2 Aug 2024 17:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7672D15C13D;
+	Fri,  2 Aug 2024 17:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCxLJ50q"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="XrNOS5iI"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAB9165EF3
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722621483; cv=none; b=hplGIw3mxXDnbHdbzg13xFFAe9/ZCnIXG3iMi65IDQBBr8ZwTs92s+O1bWZjI9F8fIw6F+V0+hlKSY7qspA1TF21szYsunz4RTIghegxCWIDipJVgOPUS07J7PYztLuiVF3E+MS19d9o2U+SqVvvzASEdeS+yggTG+uOfRUlElc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722621483; c=relaxed/simple;
-	bh=xsZIBRfdsZwDqoPiwS7SDtWvcLSCMiwnHEu6ibn+8V4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OCS4KHyPZs+QHBgM7lmkIOdc+TdmngIBIOhhq/ajQdQhzSDeyEnwzZpRkVHiAmv/bQVXQZhXStcleXxPVHQ+bcXuqEAiDnkt6NvfVPhgp65b5lNOalW0/yV0WkV9MglfhLLkr1g6FsBUVZ/R6jtUytbE+QenV7wsGdrzhRYj/Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PCxLJ50q; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc692abba4so64571745ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 10:58:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722621481; x=1723226281; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sz3mcqbqEF89T2wEr0EL29fSOL/K4I+O/30wFmlGKkw=;
-        b=PCxLJ50q09DedYMR0TALS8gu56WUUFFh0fUdwyR8Pb4iEbDoFo1sBJWjN3dNJ55/4h
-         BO6JU3K5LRXipXdEqO7a4Wjzkv7MfnNzpuwJZVpqHmOiesDCkIP/6MXb5VRWzT+s+sjm
-         2DJayLx0W633nO3XSy5v3wSJXAbLqvirYCS2ZNBbdw8K0DFzuYKAo2gvxX5pwKkqEUuZ
-         m7cZIP78mfEFCtHtC//K5OG365GReHo5RUZBoctVbDSA8+NiwAqqa2P0hfZXABqCOF+D
-         ZUfEsZ9LMGiHwFMHW9aSDWVEVUsC8sEw6EFfLLHN4V23y4++iuL6ZWV6/0IKiYcSBx1B
-         bDsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722621481; x=1723226281;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sz3mcqbqEF89T2wEr0EL29fSOL/K4I+O/30wFmlGKkw=;
-        b=Y3BGvsE7rXiCfG6kAkEdDqF9sOtegbMQbgrw86n2/Lp5y/YR6Ccon/4k7PY3j8aLNW
-         bnCzEfPZLurGYihp099SyoyuGrM3BvbEspLq1Rkpeyy1TBwivY8MmTdmjsfreHUFMCqj
-         tOdjBpgHmv3QyVVWgMACG34ot0mkJkH9VTFt+1ScoEyASqD8viN4aABiwh+6xulVfbwx
-         MByjJ13O+4uielupHbwN+8sZoAVjOb2r5Zo5mHzazLtSqvYLku/G6zfls8SSmXAcNkKq
-         nLUNX0z68jmGdPphd8a1qTTiJx3qQcnvbkn4hLWDTpoUEt+PHyUehmcDRbmkihiHZwCV
-         dn4A==
-X-Gm-Message-State: AOJu0YzWaBUw2slrF0KBvpPdKJFofPgBvlOBckNkMmkEnfv+v54sYE7L
-	sAEdAfdIOLGHCFyO58enMNhPi3D5PkMXE0/bQztCRtdf0/bnpfphYfQzfFVg
-X-Google-Smtp-Source: AGHT+IHKdC6LauYcl8QZrVe4wBPVqUBNUSNn4meiFx20A9CAPS09TbVGsmONzm5xMU5wHvWmdHTKZQ==
-X-Received: by 2002:a17:902:ecc9:b0:1fd:a769:fcaf with SMTP id d9443c01a7336-1ff574dfdcbmr65575795ad.61.1722621481422;
-        Fri, 02 Aug 2024 10:58:01 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f5713fsm20113945ad.95.2024.08.02.10.58.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 10:58:01 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Leonardo Bras <leobras@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: [PATCH 2/2] sched/topology: optimize topology_span_sane()
-Date: Fri,  2 Aug 2024 10:57:43 -0700
-Message-ID: <20240802175750.1152788-3-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240802175750.1152788-1-yury.norov@gmail.com>
-References: <20240802175750.1152788-1-yury.norov@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09FF1AE021;
+	Fri,  2 Aug 2024 17:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722621469; cv=pass; b=TLJC0QDH0D4498LNcnl9z98HI9yjnst9VawJ3JfyZAgx0PfhWk5nByn7d0OZ+Helai2YD3OCirfcipK9sikV6tUTEubvOMxf5YJsurybkBlI6uXZyXSvzooAabqoBHQYsdz0D2VkaS0cW8BTdb4Al0oYYtRrGSFZcb2Y0kdbRyU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722621469; c=relaxed/simple;
+	bh=681KljSbvJwnHppaPJRubgSKRRbnRlXy4FZQH8GM2qs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=dGhZa6wHLuIP0M7AYIMjRQas4pmpDxA3m6e8f7wbnfS4of80EuTRvnDskLvtBCzvQimMiUIWIbihuzmA9oPTQ8CQp+5QJGIY6gtcWF8apZF9OU7zwrHo5RNs86rUT8W+nLIv7BEG2L14Cp2djn0lzMAVk0N/mf4UivGK4PDOdlQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=XrNOS5iI; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (91-154-92-171.elisa-laajakaista.fi [91.154.92.171])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WbD7s3VQtz49Pv3;
+	Fri,  2 Aug 2024 20:57:44 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1722621465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iWd1NH3Yqp6z6FcSD+KgDgLIFvGCTjQTVvXCbKTPUaE=;
+	b=XrNOS5iIi7wk/kHbWysofnSPqHd3dxbfb5CiqF7tf+nLPbOoagHkUmTaDbB1fZs9AfgryB
+	gIvEdDkFk0xRRgsQBq5mQEEpnRiodDxjpwjyOAUpwnZJQNeiicxnQOodp7t7kQRkKEjp7X
+	HFhwLymuf/pWq6EX41TNsuhM2XqHzIouFosKajrwbWEIlqEf2NpyPgMgDB9Ky3WC86fTkY
+	OOVeaKO9gttXQen7cyySC0sdN9DvT838sei2nQwyr4xTb8vQlrR4nSEGF6BROq+uRlrTLt
+	lzJzBTby9HmQj1ekUdog0Mu8IU8ltXwQHFoTN3ee7SPvhV6yZ1MNQRAcefx0Fg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1722621465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iWd1NH3Yqp6z6FcSD+KgDgLIFvGCTjQTVvXCbKTPUaE=;
+	b=iF6MfBw5SPE6pmpltBYInXDZUqSWfy9mnvXzMAcGwpQZa7imSHc42sgyjZX61wE2NbjbFE
+	jMTYgNiLJO7JzpUOU2mLnbSGzP1wfGJqUb5dpTMwufm21y/Uu2rcBy6KBIFcFoOmk8yDcj
+	PVu9QRdSt1rMheReq42uijCZjQlaICMbO+eI+BMZlRROa1OifOVGoCv2iD7ptKlu3ik+RU
+	kE1ixD/iRmwg5iV0vob3pBSJ6/AcZ79cuRvZ8w7349HBvJ6mnb/4fwELqUBNN1DhhwpNu3
+	HxYQYHds7WyEx3Dc2OuZI2sCwR3Isl6D0Qgoc9lplH59ObwO19Ymv3d48e5bfA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1722621465; a=rsa-sha256;
+	cv=none;
+	b=IDJC5wETE8cYYD8GCVylGd4W5p/4KPGzduwvJVc6ZoJ1BE9g6zlgnKM4BzXhPe82D5rBsT
+	xfTsIumOFhIiEnShhKap+iVnpepLQPL6UDlr8njhZNPZ8Dda13Sca2Qaqd7U+H4y7wbcTf
+	zwRnlU14wJhgpz6NQ8JKoy/nrSjuYcQpcjpOveXIJTvQXCrQUm0koo9fVqv2xeoSpBlVAL
+	Dh61MO0o9NDHAMoZcFt4vQ2HmCj1ySS94M1ICxXgxMxS/XY4n+ldUY2OSd6ixkzsW/6MeK
+	H4GEjTUPPfWfz+8YoH+NSq6JvdERtIHPbPCKvFWAgUIy2nCFHew+2+MqvKZ9Sg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 02 Aug 2024 20:57:43 +0300
+Message-Id: <D35MCFF29VT4.2JGEENK5HO6WU@iki.fi>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, "Linux Next
+ Mailing List" <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the tpmdd tree
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Jarkko Sakkinen"
+ <jarkko@kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240802090234.2acf4c25@canb.auug.org.au>
+In-Reply-To: <20240802090234.2acf4c25@canb.auug.org.au>
 
-The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
-even when cpu != i. In such case, cpumask_equal() would always return
-true, and we can proceed to the next iteration immediately.
+On Fri Aug 2, 2024 at 2:02 AM EEST, Stephen Rothwell wrote:
+> Hi all,
+>
+> Commit
+>
+>   f6554cbf56be ("KEYS: Remove unused declarations")
+>
+> is missing a Signed-off-by from its committer.
 
-Signed-off-by: Yury Norov <yury.norov@gmail.com>
----
- kernel/sched/topology.c | 2 ++
- 1 file changed, 2 insertions(+)
+Will fix, sorry I came from holidays this week and mbsync failed me.
+Did a lot of stuff yesterday when I got it finally working (tried
+to be careful but shit happens).
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 754ad5fa3c99..571759606954 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2368,6 +2368,8 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
- 	 */
- 	for_each_cpu_from(i, cpu_map) {
- 		mi = tl->mask(i);
-+		if (mi == mc)
-+			continue;
- 
- 		/*
- 		 * We should 'and' all those masks with 'cpu_map' to exactly
--- 
-2.43.0
+[1] https://bugzilla.redhat.com/show_bug.cgi?id=3D2302132
 
+BR, Jarkko
 
