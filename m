@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-272197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FF4945887
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E68AF94588B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6C8F282BE9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF6F1F23009
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCA91BE871;
-	Fri,  2 Aug 2024 07:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872B81BF300;
+	Fri,  2 Aug 2024 07:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lBGJDCpT"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrzheSp7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BDC1BE860
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB38C33991;
+	Fri,  2 Aug 2024 07:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583288; cv=none; b=R4qoOfrkd2m4P6eORFLc8FsqzT4sR75AkXuOLntjdw/EHVZ+zRCcVTBEFb1M9OslThRhuxVpc/ksmgamQoFnrZZI10dytdd9Vr+BT2FcQ72LACySdVUXbETjVS+3ixel2b7w+MP3P461/y4zKQcnsq2PkgVVW9GWKI2EMksq3o0=
+	t=1722583327; cv=none; b=OOXhi25Dvoxjc1e9szYsCfehJ/Af0aGtiuqCjloiSQZCB6lv/XWNiMegoOzzH5H/jJa9FJnC6nd+nO6EfPZaMhq1rQcE/hI/Ra0/p9fpedxYwzPUh0GgF70/YzVdDhN8h3X1O+8LBkc1WASTSc/m15AYB8vetD+RgloaJmXdiF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583288; c=relaxed/simple;
-	bh=PCHK9AQ8hYY+3lWooz8Oue7k/B/xfCu8ovZek0miUKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fIft8cx4RRq6zRn93uOKBTkYov+7hrK7ZXbyr35D5KyxCLSEnWvmS8x7g8LTyL++6nmTflAMrxg9mN22zo/munv5ZD0K2XR6IQYMegaIBzjA0plfJKn6GP4u26StImRyjBhOFDPhsPEkEBgeaDqJb4Q1POz75nkNtVCaKeAMSE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lBGJDCpT; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso54914a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:21:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722583285; x=1723188085; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mpxgTPokUFyNrltPPoZbQf8Nv+LcbhWrr2CF2IPV7xU=;
-        b=lBGJDCpTZGlmwDazgBdRMPDZD3WObuFrZFvxgY4Nb4pEixI7AZgbvhl1JhA74uSPqB
-         V7nAreRxxE10wdKsQULfZxnla7+l0MbqODnaHwiMz3km3vX7vjr5fGoQ/Wr8MibCehuX
-         di3yBcQc0NaWqRiKst3W1H38AnQztxoeuMxZCdEUYsOibcdheyj5WMi3gZHAUQE+tdE6
-         +paDlTMZmClB/VLcyaDyUGS1khPqIrVgJhBAFnCVx3E1sIjDv4wBM3x6UdD/qd98SNC7
-         F4mrW8wsxyVrDNB9MeeAgi6niAx2Tk75SPb7CdF5VaHCU1+N3t9pIqpOA4+cDoX29PZH
-         VZLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722583285; x=1723188085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mpxgTPokUFyNrltPPoZbQf8Nv+LcbhWrr2CF2IPV7xU=;
-        b=sL/AFVdSaAEIXoe0Bt/EsUdaoYOxol9DIgBz1XIpF8udc905qjprA/WiYmdnt0mNjl
-         YOvSTEMMIeHV7YN6Masv/M5kRkQil0dUmvrPwSn4LWB3aKfGgbqOGmwq2xOHfV/U2LRn
-         YWP0FEp6j0OYZ3yDktkZB0iYhjm72JJhL7apQOBQefAv0WoM+/ZYPOO+5Ic6OK2scXBx
-         1CLVjP1VcrY3aVtwc9BjocvSWgCHOlp1733SWemgzdkfiDNRPkSyHXyX14TxxJsgWs37
-         JtwpBo8i2L6hG+9+QFQB2L/Uh8wi7Ex+GyUEFSsmbuaXKFC3kMLXexnF8hjn1Dcw2F4J
-         +1ow==
-X-Forwarded-Encrypted: i=1; AJvYcCXKoQtXjj4dGRFR1FnEe8aNIo1XUDn3ywMbcdwYZmmIiXagIOM0T2cFvefGtE6eufTdlJhpzgH3HqYhQ5jnKAD+kzxSkzYZ758nwA0D
-X-Gm-Message-State: AOJu0Yy0GN+6d8P7s4S/hTTop8KQ2wKleiR82XQFHB2Sx/A4VYeLM7MC
-	aVKxEIst/DByQuY+hGPGTM/viTLrODn3CnbXJzPR/1Ac8aYY/Elr9FBh7cbC4kMxG8dOOGU3UQp
-	FUVgrP3SyPHOtxjHdyzv3upD21ikPXTFtv6Fo
-X-Google-Smtp-Source: AGHT+IHOcP0+ocqCghIsI3ZkGBkB2Xf4oyNP81XpK8QGg7jspCknSEJMvCSfoVpKqSC5L1Dm8VPwMKjhr72HxO6hI4I=
-X-Received: by 2002:a05:6402:51cf:b0:5a7:7f0f:b70b with SMTP id
- 4fb4d7f45d1cf-5b86752ec46mr103224a12.0.1722583284587; Fri, 02 Aug 2024
- 00:21:24 -0700 (PDT)
+	s=arc-20240116; t=1722583327; c=relaxed/simple;
+	bh=aq2e9hMWzklb3HWXGpFHwyD5+68vdhtZ55+IM5p4ZUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GmK1oq5HDrJeT4gxfHBKcjNLyzf5RHdoaBlamIcb4SqNiabk8AebEex8O3NtGcd93Puyki3vqfIyxKwWE7NBiyJf13km3zukntHDjbNd745+BJXNb5MV5KIEVvV1prhTLoOIORMUas5gayIpIab7gjemub8aZoCYurnmpXXenJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrzheSp7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 936BFC32782;
+	Fri,  2 Aug 2024 07:22:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722583327;
+	bh=aq2e9hMWzklb3HWXGpFHwyD5+68vdhtZ55+IM5p4ZUk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HrzheSp7VfbxIvAbxUCOvGL177ERdkcytetl77liWVdIgHCwaBCpJjtM8HHJoZX/a
+	 w3PHPYUrxVDgnaJ73+UDvjxJtYFgzWXjcqM9zJiWaBKGDfL458lO8uJMikgIdYGc3I
+	 Hsud28EO5tNzQUTHq5v6cMwu+THHWRfHJ8oXO6v7v/twGV2uHP9KEbgz5ORw9pDoUZ
+	 W2AWlT/QE2csmJ84zIVbj1TpWcTV75kOmaaDdm+6T3ymnBIani7X3sr0hC5hDJrqwy
+	 ONNpaYPZB3TZCQMIbXfnUKL9uN6pKsyVqo/VyauS9oSsghP9S5hjM2lncVSJrO+hIk
+	 YvsfY6ExLFKpg==
+Message-ID: <e95c0938-3af3-4ec5-bf23-270ab8823e5e@kernel.org>
+Date: Fri, 2 Aug 2024 09:22:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <mailman.7002.1716464964.1888.tomoyo-dev-en@lists.osdn.me> <00000000000023e800061eaa9fea@google.com>
-In-Reply-To: <00000000000023e800061eaa9fea@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 2 Aug 2024 09:21:13 +0200
-Message-ID: <CANn89iKY6JzgwDpANsniAaDUP8H1QXyuTzpE2YyRMXzwkSWRcA@mail.gmail.com>
-Subject: Re: [syzbot] [tomoyo?] INFO: rcu detected stall in
- security_file_ioctl (8)
-To: syzbot <syzbot+67defecaa74f7dd0a5d3@syzkaller.appspotmail.com>
-Cc: jmorris@namei.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	penguin-kernel@i-love.sakura.ne.jp, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
-	tomoyo-dev-en-owner@lists.osdn.me, tomoyo-dev-en@lists.osdn.me, 
-	vladimir.oltean@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] interconnect: qcom: Add SM4450 interconnect
+To: Tengfei Fan <quic_tengfan@quicinc.com>, Georgi Djakov
+ <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240801-sm4450_interconnect-v3-0-8e364d0faa99@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240801-sm4450_interconnect-v3-0-8e364d0faa99@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 2, 2024 at 5:07=E2=80=AFAM syzbot
-<syzbot+67defecaa74f7dd0a5d3@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this issue was fixed by commit:
->
-> commit e634134180885574d1fe7aa162777ba41e7fcd5b
-> Author: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Date:   Mon May 27 15:39:54 2024 +0000
->
->     net/sched: taprio: make q->picos_per_byte available to fill_sched_ent=
-ry()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D16a9066d98=
-0000
-> start commit:   0450d2083be6 Merge tag '6.10-rc-smb-fix' of git://git.sam=
-b..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D17ffd15f654c9=
-8ba
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D67defecaa74f7dd=
-0a5d3
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17109b3f180=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10bcb2a498000=
-0
->
-> If the result looks correct, please mark the issue as fixed by replying w=
-ith:
->
-> #syz fix: net/sched: taprio: make q->picos_per_byte available to fill_sch=
-ed_entry()
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
+On 01/08/2024 10:54, Tengfei Fan wrote:
+> Add SM4450 interconnect provider driver and enable it.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+> Changes in v3:
+> - add enable CONFIG_INTERCONNECT_QCOM_SM4450 defconfig patch.
+> - remove all _disp related paths in sm4450.c
+> - fix patch check issue
+> 
+> Changes in v2:
+> - remove DISP related paths
+> - make compatible and data of of_device_id in one line
+> - add clock patch series dependence
+> - redo dt_binding_check
 
-This seems legit, according to the repro.
+? Running make is not a change.
 
-#syz fix: net/sched: taprio: make q->picos_per_byte available to
-fill_sched_entry()
+Best regards,
+Krzysztof
+
 
