@@ -1,231 +1,156 @@
-Return-Path: <linux-kernel+bounces-272158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B389C9457F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:11:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D0C9457FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C021C23550
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:11:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F038DB23D82
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D081B45976;
-	Fri,  2 Aug 2024 06:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BA454724;
+	Fri,  2 Aug 2024 06:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="y9tQ78ct"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2043.outbound.protection.outlook.com [40.107.236.43])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IzzimLWM"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4C41757D;
-	Fri,  2 Aug 2024 06:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722579085; cv=fail; b=WkPN95AmNjgyD3YN8tW7Zvq3S4Su+BwBZ87mYKVSpRxXrF+YJCwSl2gwQgiOl3sWA5is9P7kgK0CUzT+ahGFCPPPKsaCXY0YIFQ06Kzygcm4hrh40BMFwix4rAhDXW6lgjK2mp7t7hG/PhEUJLx/CqKCqQbBwB0I3DrlnOhDo/Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722579085; c=relaxed/simple;
-	bh=H+p1hDDMrFWR3jydPh+Rkx5rGnR4JAZ5OEfqmaTSLSk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Z/lnC0i96lfrS+eStO9wkzmfcj8TxDNfm6+5xaoRZV0B1FhT7OrVO854bBp4x/OLkWWVtl7fWpYJAleTb1gvaGj47qHkUuOHR8Zlc6ZrLri4Ta7XS01nZZ8FLTRyCggAIV6XpK1wllVpx1DZXuBESbGEB9Q+Ihxvsp441VxWFRs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=y9tQ78ct; arc=fail smtp.client-ip=40.107.236.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O34vYGucaGhIM+GJiM6xqBXC1tzDi7PcoaImOiTfagu4M3uiKoJGtQdUO2VoFUiABirwFPYRYVYXOPS3CE+qTa2zXNx7403CDzlMFGoLd5w+fvwsoubEqjj8g1kEWKPeCtBiJMC8+sno4S+pwT5jVhpO3KEPr5a81GBSJpOdDqvJAhfY5534TcXPvfsU41RG7NFEYCIyhssxT093rlZwmB8z7KKXVeaZTSZUTtIe7CewRiDpQD1O8lFl0sHF6zCGLPgJs+O5DlQ9+61fXY6hArWc9Ledaj0mgMy5N7Hh/HakD5UKqP0k9kdguXkeoQIjGeF90Bx9I62SD0hNk8hQAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5BRh3GWXRKqz1mfjrLhoai7/0IkkDo/aT55X8ipdwTs=;
- b=nyTBKMLe+EkS2h1ylA/eZqHgkVqxtsiaNfHRDThXSymxjZcUPVQ7D6rkBDkfXgEi089L49b7XDupt+G1WrCJXzXHeQTCQ2+MMdsvN9DVYNmdjTVPBOgq2mn4S3BhM3DPWN7DzSy4ExIyA/2Q5H6v/EmUqZpiOygQHoruTaaMIkXA//yLwN5JXsvC1CR0EXp8BSUK2XtAcbksw2h85VYapcOf2qMv5qnAA4nGiEvNZ1iiiSgjIX8+vs+i6Ag8/eLJa5FS2VSXcPvNjrVsio7REEEoQrVWg4jQTmnyLfMSwVobajgomu+lwXopNWxePBiwSVTbprZNL+qIw2LIOLfH9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5BRh3GWXRKqz1mfjrLhoai7/0IkkDo/aT55X8ipdwTs=;
- b=y9tQ78ctmuyI7iLAXUm+2zJyYeGAMTb/IKpAmd00GN+GSftORdrdtgUkPKvEztbMSH1tmU5/f2gwEhsDmHlYfBZoEO0UTNHk8d8NsCk79idOcSHiveBw1n5EBCZKwsoRHXrnArXKJYGnt+FPSvhaoV6RayXzdPSbqCAAT/XwFjk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com (2603:10b6:610:d7::15)
- by BL3PR12MB6644.namprd12.prod.outlook.com (2603:10b6:208:3b1::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Fri, 2 Aug
- 2024 06:11:21 +0000
-Received: from CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607]) by CH0PR12MB5388.namprd12.prod.outlook.com
- ([fe80::a363:f18a:cdd1:9607%5]) with mapi id 15.20.7828.024; Fri, 2 Aug 2024
- 06:11:21 +0000
-Message-ID: <322fd9eb-8793-402a-ba6a-617591561254@amd.com>
-Date: Fri, 2 Aug 2024 01:11:18 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 RESEND] EDAC/ti: Fix possible null pointer dereference
- in _emif_get_id()
-Content-Language: en-US
-To: Ma Ke <make24@iscas.ac.cn>, kristo@kernel.org, bp@alien8.de,
- tony.luck@intel.com, james.morse@arm.com, mchehab@kernel.org, rric@kernel.org
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240802044134.1569313-1-make24@iscas.ac.cn>
-From: "Naik, Avadhut" <avadnaik@amd.com>
-In-Reply-To: <20240802044134.1569313-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0166.namprd11.prod.outlook.com
- (2603:10b6:806:1bb::21) To CH0PR12MB5388.namprd12.prod.outlook.com
- (2603:10b6:610:d7::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEA74C61B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 06:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722579225; cv=none; b=oLB1rzvysYyKmF1aGcUcdNHBjdlUEHfrHklF3LNzAU43GBptnnk3rhuw5V4hnC6K5WdwW4EIizA3aDxdB6G4J7PXNpivotTgupFwwcqBCL32S47wiP3/eQLTk3eiUVCf5uQdISHal2e0sTReJAZMC6NP4QGnBRU7bOgLFhhn5Dk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722579225; c=relaxed/simple;
+	bh=ttxoVE4AZVMYSAY/NzJA7YfegPgZfVrWnSKKWUTftiY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qyRvF545KDmY+I8ntMEEcW2YfownmkOYLkPP77Sk/0b/YMdaRFfkm+6+IbaGQfZTCHW9Akonvrwbnxq+dhYeOEjFNeE7xGrqzTtMDytrG8degpAhb0VfkLl8ats4FpsjH0ocoz26XbnhFMsg/HEywqm8wrePlm3KAdj0RjSMqho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IzzimLWM; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4723fWdx014378;
+	Fri, 2 Aug 2024 06:13:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=corp-2023-11-20; bh=8icyUdj43dziau
+	j0xrsmeQuD/aTz/A64NReInB9aZYc=; b=IzzimLWMWvAGf6k3CGsloWcDCYr0RG
+	w5rwngE4RulVFnzT80NeKxRx11hK2QlL8uteh8YCAR0dRjy4razzhLdEbEUYFV6w
+	Dn0q7w0IZOJpOKtDx0ObwcPOV9hunJeH6U30Pd8vBu8szkrU28tAJZ54ce/6SBem
+	YCd6np00C0r3ntp40kGz4QQfB+3Vaq4Q28ifr/XGTDFOLaKdDNZWHkeQDHvBE5do
+	Eo5AVOGUHmGctyYbfcsqFF4Gkndp5eCrcMMjRZYjCueyI+4FuUSJFwb4a2ZTbXAz
+	WOmmMaFimwbp9jAekUBttyFfIIvWn+zPe7yohnkOC/zPlz6MbJfZ6naw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40rjdy0fv7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 02 Aug 2024 06:13:24 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 4724blSM035586;
+	Fri, 2 Aug 2024 06:13:23 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40nvp16e9r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 02 Aug 2024 06:13:23 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4726BM9Y012716;
+	Fri, 2 Aug 2024 06:13:22 GMT
+Received: from aruramak-dev.osdevelopmeniad.oraclevcn.com (aruramak-dev.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.155])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 40nvp16e89-1;
+	Fri, 02 Aug 2024 06:13:22 +0000
+From: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
+        mingo@kernel.org, linux-mm@kvack.org, keith.lucas@oracle.com,
+        jeffxu@chromium.org, rick.p.edgecombe@intel.com, jorgelo@chromium.org,
+        keescook@chromium.org, sroettger@google.com, jannh@google.com,
+        aruna.ramakrishna@oracle.com
+Subject: [PATCH v8 0/5] x86/pkeys: update PKRU to enable all pkeys before XSAVE
+Date: Fri,  2 Aug 2024 06:13:13 +0000
+Message-Id: <20240802061318.2140081-1-aruna.ramakrishna@oracle.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR12MB5388:EE_|BL3PR12MB6644:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4574662-dcc2-4de1-6537-08dcb2b9ee14
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MHpOZ2FxaWtGWHNWM2oxV25VVFFMZjRsSGRmTFlpckZlQVp3T1dlek8vbENL?=
- =?utf-8?B?cm1EUkhpMXlrWEtSTTVTSGZEcy91QkZRMmdNczdMN1VmSzBuY2Jta3BXSTdQ?=
- =?utf-8?B?SmI1WHhrTkNrTWxoV1hpZGVXRC83cE4xOHdkZ1RWa1JSS3AvdXNMNXZhU0c1?=
- =?utf-8?B?RmNFSTZZbVIwNlN1M0I2RVEzdlh1TmJjTGgydjdRSGtuUlQ4V1h1dzJGSUNI?=
- =?utf-8?B?ZGlmdzNZME9nd21DMjJ3akpLaEJEWkdDTFpzVGxYUDBnYTFzbC9NUzkxcno5?=
- =?utf-8?B?YnVlNlUwVlVtaGx1bHZ3SWQ3VGVwZUFjVW8xUzFuUEhOSDZmZzFhaC9KYUVq?=
- =?utf-8?B?K1VycDNJZ01BWUtBWGFyYklEakFJWDNVZzk1cmgwUjhQMW9zb016UjFGcHpm?=
- =?utf-8?B?d0N1UHZCMExmbUUwMVVpdHJOclc5emorWm5vU3FIUlZuZmxOa0hqVU50SnFI?=
- =?utf-8?B?YXhNL2lzbkdKSXF2VXk5ZDVTeEJ1c3liY2laODNMVTVqeHlwalQzUy81NThV?=
- =?utf-8?B?ZkJFaUZsV1p3QmVYMEU2ckh0UGE0dXRmMzZNRVdZY0pkdnJSWkV5S0NCSVZV?=
- =?utf-8?B?ZWUyQVBBSk5kK1l1cjZ5U3pzL2psNjNkY2FzZURKWXNXZFdXMmN4THY5d2w0?=
- =?utf-8?B?emhtcDNPNE43MGVSNDNlQVU2T1ViMkJ3WDN6aTd1bWVoVjJ3RnJic0ZMbnlL?=
- =?utf-8?B?bG05RHBXdnZkSVRDa2ZHSTBBSk1Ya2Vpc29LQ1dxalRWM1QzNngvWUVGUVoz?=
- =?utf-8?B?ZnVuZDZ0cjJXNDZCZWkvaFJHQ1Q4dDZkaFJvZkNNV2N3MkN2VXdNWCtrSStT?=
- =?utf-8?B?dEZUWWtESTB3MU9BOVJSQ1VSOERZZ0s3RmZYSDJlTWRSOXFpT3BjbjhFT1lr?=
- =?utf-8?B?U1RFMlVHMHRyYklwZTgxZ2ttTmpqblRuM29vNlAvdlZ1UWhoblBoNVZNN0RC?=
- =?utf-8?B?dTlnUlIvWlJST1FBMmZBOFNXRStCVXJFaU1LcHgwMDlkY2tUMVNIM0t0RGtm?=
- =?utf-8?B?c2h5ZHBQOS91RzdmenVRaVJFTUZqVDhrNmdhVlI2NDBCVllOTk9FSTI2TWpM?=
- =?utf-8?B?bDBzK1VqOEEwOHhkbG5RdUpNeWlpbFhMN3hoVXYzSVk4MUEvOEVYay9udko1?=
- =?utf-8?B?ekdJNld4dlhva3NPcGZHMFNURGVlczVJYkVBTmp6cWZ6UkNTUFVnMllDcVdW?=
- =?utf-8?B?N2oxRHMzeWZuZzNJbVM2NEd2WXQxM011cDlqYkFMSS9XcWJrNnZIZUtqTi9Y?=
- =?utf-8?B?L0J3WHpCNW9IRWFOS1hzVnhiUk1IV3gyR3Z1TDRpV3NucjF1UzZISGZGM2s1?=
- =?utf-8?B?RVRENVlldCtVc3BJbzdmQXdtcnJZVDI3MjZoa1J2djREbWRFY1FPRVpMTWtz?=
- =?utf-8?B?RnN3RjJFTXMrTUZZcWtwa201RldkRUhsckl1b0JmL0dUM056aXN2cU5HdkVL?=
- =?utf-8?B?TUJQZXc3ZGk3bFZIR2VMc252cThvcEliMVpHQTFncUhwYVBDKzd4NWEzaUY2?=
- =?utf-8?B?cnRERjVJdmdjd09odDVNcmVBZjV6ZnVjbXFsTlE2dGp2N0ZOVE9QVm9xZnNo?=
- =?utf-8?B?KzdrMGNGeXVJalhoVDF6U29TN05vTWxUbkV0QUphUDUzRVBlYjFRVEtXc3By?=
- =?utf-8?B?TFBWUHdoaFZQWWVNK2pIRDk4K0g1K0JHSWdnZ0JPRnZpZkV4QU8zNzM3M3ZE?=
- =?utf-8?B?WGhIWDYwMStyd0JCK0EyNVBhby94RlRSUGk2VGZ0WmoxTlFjT0dwT3NnRTM1?=
- =?utf-8?Q?Q2BBFhLwS8rWl5BLcg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR12MB5388.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V25NQWYzQktuU2VMSFRHbUxsRDBrREZwNTkwT0dFTkdXYUNyc1FHMmtEa01i?=
- =?utf-8?B?MTRoRzBJVnFwTDErMURDVGlSRjd1dFBVZFNCbUROaDFoWDhhSGU1eE9VUGtE?=
- =?utf-8?B?bkFYWk5HdVRsYjdsZ1JlZDQreVhDMGlscHdzVGM1UTNzWEoxSnU2QWxCQ3ho?=
- =?utf-8?B?RVg3Rk1DT0puQ0lhN3hWMlQwa2tmU0QyOXVUVnVEeGtmMjRoaXoxV0RQK2RD?=
- =?utf-8?B?M3o3V0FjRnVzUzF3VVNlbGJTY2hpdGU1dXNXaHl6WVhuNjhhNVFvUVo5M1JQ?=
- =?utf-8?B?NlB0QjN5N3BvbmVOc2MwTW1VUk1TWktpQzRnMDIzeGF5OUwzZ2EyWDNxYlpz?=
- =?utf-8?B?c0I0WnJTdGVTdUhaMFBZMG5sMk9ZRFd2S2xhdXYyWC9JWllneWVEbWtRZHZG?=
- =?utf-8?B?WnBBTTFKZ2Y4Yk5IUHRTMnVuZXV0d0s5eWY1YTZWOWN6NlNqc1ZHcnNmRkZk?=
- =?utf-8?B?ZEZhTm9MaitJaU5YZ25vK3hmaERmNGNwOUZ4U01tdDh5YUs3aWZKTStEM0ZB?=
- =?utf-8?B?RzhFT0JXMjJ2U3VaL3J6d1owcGxMZkt4QysvOERQazlzU1JFWHF4MjJTMDU3?=
- =?utf-8?B?ZDFjTHZhaWJSRzRZSDJYbmgzNjFKTE5tblNEckNXS0l2cVlTUXlOeXNMaWto?=
- =?utf-8?B?ZDFqRnBYQTZ0NmdOaFZVODJNVTN6UzNvQ2JUWWs4OUpnRkUzREZNTkJQbkVO?=
- =?utf-8?B?VlQxQXhKRmJUYkVGMXRuSk9RSnZhdXFzclRvMkhqTTRoS0pJL0ZJbVozQWlj?=
- =?utf-8?B?T3prRE1VRVdEOXByazI3TmFLUzRGT1RFNVBhcS9tc09PMmU4RkpxM3BqanNI?=
- =?utf-8?B?TXJXMUNGbjRxTFVhQzBTNkxsNEFwaUlvZUdIQUR0a1ZoeHQwVWhaR1BpYzdh?=
- =?utf-8?B?WXkzQVRCUm5mTk5qRVpMVXVMR0dmWStEMW4vTmhTU0VKblNQcE1KZFBIVmpT?=
- =?utf-8?B?dkNKdUNBSlpTRkJwUlJqKzJvTlIzbXlpM2EzS01mSFV5MldJTlFGd3V6bUF3?=
- =?utf-8?B?bFI4c3lWdExGWWUrRkp5RjJwR1lEaHZkY3JONDgyNjZPY0l1dm1wQWhEL2J0?=
- =?utf-8?B?aG16TFpDVllYbDF5Y2ttM2oyL1QvalBBVEVsVlNJallkQUs4ZEZ0RGp2a1Zi?=
- =?utf-8?B?dmJYL0k0VWhSSmdNYitxQ0ZRbXM4T2hPUHN2QWM3WDdQYnlOanFyckRsYjJW?=
- =?utf-8?B?MHdQQjMyM2paN1JzajJtTlFnRnFtU2pYUjFSTWVsODlsdlRwODNnZXVzSjZx?=
- =?utf-8?B?WW15R2JHaGsyTHkxZFNKMmhIMnUvNjRsVTBoem90U2cyUXZmdDhqTDB5bTVE?=
- =?utf-8?B?Yy9oU1Rvd1FwS25jUjd5ZUdnSmxwaVNubG9LSFFmaTMzNnZqNFFxVDV2MndK?=
- =?utf-8?B?RGxoQkE5aUJRWTd3T0dqTjA4dVB4cW9jMWpXZSs2M1dGa2JDeW1PekxFbDlC?=
- =?utf-8?B?MFMzRDhxbVNKaU51UVlSQ2R4c3l5ZzVCSittb3dFNDI2Z2dvK21JdVBheDYz?=
- =?utf-8?B?Q1VRMC8wODlqWXNiUHZIVGtuTU5pQ3VVbHlYdXhCaHlnSUVMT0dPRGpPeWFZ?=
- =?utf-8?B?cUk0aHRIRXZSREhRdktWTFk2bUFsbDFTY3Vzdml0Q1RrSTZFUnhMZGNmU2xV?=
- =?utf-8?B?dUZkQXVyaHFjTzN1RmtmMysyOFlWVlNXMTVzMG5CUWFYQUNmTm9sOVFSN2ZT?=
- =?utf-8?B?Tk5JdDc0NWdHQjVwNFo2eGpOaHRYalU3U0txTU8zblg4UWlmc2RXUG9KZExo?=
- =?utf-8?B?YlZTN05vWjdha1JxQm5UekVJV1BKM0xGbVVySWxwdllrZEMwSnp2U1QrNmZS?=
- =?utf-8?B?dG9Kcm80bGNYVGZ3cVlCRlJPUlVhY29qTjJrU2V5VU5FODY3ZFhRUE9rV1lK?=
- =?utf-8?B?ZjBSZnJKRjZUbWJFckl1ZnZVaU93ekpIMWh0eU12VTJPdXk1dC8vanV1Vlhk?=
- =?utf-8?B?SnAzMFFEYW9jdU95aUlseituOGdpNjM1MmlUcmJzamdXaG5XSDFkdXhGTEdu?=
- =?utf-8?B?RldicDZZaVJuWCtNZGlURDRnV1pobnEzandIbVREN2tsZ0RoM1huQkVGUEJy?=
- =?utf-8?B?cGhUSlYrL2t4SVFTKzc1MU81YXl5bmNlaDRFcjBUT0Z0QVJlSUwzalhZQ29P?=
- =?utf-8?Q?Gs21BBtGCBLfvcA8KrpttR8NJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4574662-dcc2-4de1-6537-08dcb2b9ee14
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR12MB5388.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2024 06:11:21.4255
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4j/HovMLwJp8U1IQJkh/Z003dOC9DSoraRa3dGh3Q/ev+o1XkPiOngY1qFuDJSpLq2sgCT5oKKadz7wCUShsiQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6644
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_03,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0
+ mlxlogscore=990 mlxscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2408020042
+X-Proofpoint-ORIG-GUID: m0w9hc6MQaIiUVwYaUupFncfHxGs7Xrm
+X-Proofpoint-GUID: m0w9hc6MQaIiUVwYaUupFncfHxGs7Xrm
 
-On 8/1/2024 23:41, Ma Ke wrote:
-> In _emif_get_id(), of_get_address() may return NULL which is later
-> dereferenced. Fix this bug by adding NULL check.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 86a18ee21e5e ("EDAC, ti: Add support for TI keystone and DRA7xx EDAC")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v3:
-> - added the patch operations omitted in PATCH v2 RESEND compared to PATCH 
-> v2. Sorry for my oversight.
-> Changes in v2:
-> - added Cc stable line.
-> ---
->  drivers/edac/ti_edac.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
-> index 29723c9592f7..6f3da8d99eab 100644
-> --- a/drivers/edac/ti_edac.c
-> +++ b/drivers/edac/ti_edac.c
-> @@ -207,6 +207,9 @@ static int _emif_get_id(struct device_node *node)
->  	int my_id = 0;
->  
->  	addrp = of_get_address(node, 0, NULL, NULL);
-> +	if (!addrp)
-> +		return -EINVAL;
-> +
->  	my_addr = (u32)of_translate_address(node, addrp);
->  
->  	for_each_matching_node(np, ti_edac_of_match) {
-> @@ -214,6 +217,9 @@ static int _emif_get_id(struct device_node *node)
->  			continue;
->  
->  		addrp = of_get_address(np, 0, NULL, NULL);
-> +		if (!addrp)
-> +			return -EINVAL;
-> +
->  		addr = (u32)of_translate_address(np, addrp);
->  
->  		edac_printk(KERN_INFO, EDAC_MOD_NAME,
+v8 updates:
+- Edited changelog for better readability
 
-In [1], you are fixing possible NULL pointer dereferences arising from
-of_get_address() and of_translate_address()
-In this patch, however, you are only attempting to fix possible NULL
-pointer dereferences arising from of_get_address().
-Any reason why of_translate_address() doesn't need to be fixed here?
+v7 updates:
+- Rebased patchset to v6.11.0-rc1
+- Removed ia32 and x32 function interface changes as PKRU is only
+  supported in 64-bit mode, as suggested by Jeff Xu
 
-Also, since [1] and this patch are addressing possible NULL pointer
-dereferences from similar functions, you may want to club them
-together as a single patchset. Makes its easier for people to review.
+v6 updates:
+- Rebased patchset to v6.10.0-rc5
+- Changed sig_prepare_pkru() back to enabling all pkeys, based on
+  discussion with Jeff Xu
 
-[1]: https://lore.kernel.org/linux-edac/7021a08b-ba75-4d16-a71f-b38e48df5af3@amd.com/T/#t
+v5 updates:
+- No major changes, mostly a resend of v4 - except for updating the
+  commit description for patch 5/5
 
+v4 updates (based on review feedback from Thomas Gleixner):
+- Simplified update_pkru_in_sigframe()
+- Changed sigpkru to enable minimally required keys (init_pkru and
+  current pkru)
+- Modified pkey_sighandler_tests.c to use kselfttest framework
+- Fixed commit descriptions
+- Fixed sigreturn use case (pointed out by Jeff Xu)
+- Added a new sigreturn test case
+
+v3 updates (based on review feedback from Ingo Molnar and Dave Hansen):
+- Split the original patch into 3:
+        - function interface changes
+        - helper functions
+        - functional change to write pkru on sigframe
+- Enabled all pkeys before XSAVE - i.e. wrpkru(0), rather than assuming
+that the alt sig stack is always protected by pkey 0.
+- Added a few test cases in pkey_sighandler_tests.c.
+
+I had some trouble adding these tests to
+tools/testing/selftests/mm/protection_keys.c, so they're in a separate
+file.
+
+Aruna Ramakrishna (4):
+  x86/pkeys: Add PKRU as a parameter in signal handling functions
+  x86/pkeys: Add helper functions to update PKRU on the sigframe
+  x86/pkeys: Update PKRU to enable all pkeys before XSAVE
+  x86/pkeys: Restore altstack access in sigreturn()
+
+Keith Lucas (1):
+  selftests/mm: Add new testcases for pkeys
+
+ arch/x86/include/asm/fpu/signal.h             |   2 +-
+ arch/x86/kernel/fpu/signal.c                  |  27 +-
+ arch/x86/kernel/fpu/xstate.c                  |  13 +
+ arch/x86/kernel/fpu/xstate.h                  |   2 +
+ arch/x86/kernel/signal.c                      |  29 +-
+ arch/x86/kernel/signal_64.c                   |   6 +-
+ tools/testing/selftests/mm/Makefile           |   2 +
+ tools/testing/selftests/mm/pkey-helpers.h     |  11 +-
+ .../selftests/mm/pkey_sighandler_tests.c      | 479 ++++++++++++++++++
+ tools/testing/selftests/mm/protection_keys.c  |  10 -
+ 10 files changed, 560 insertions(+), 21 deletions(-)
+ create mode 100644 tools/testing/selftests/mm/pkey_sighandler_tests.c
+
+
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+prerequisite-patch-id: 7b2144970da943b19b53baab525a0fc653fcd7b8
 -- 
-Thanks,
-Avadhut Naik
+2.39.3
 
 
