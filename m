@@ -1,157 +1,150 @@
-Return-Path: <linux-kernel+bounces-272170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922B8945814
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05688945816
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00EA1C22B84
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:36:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3784A1C23D00
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F005481CE;
-	Fri,  2 Aug 2024 06:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED6E481DB;
+	Fri,  2 Aug 2024 06:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ilW3kSQt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="db89q6fp";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ilW3kSQt";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="db89q6fp"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="MxtqBcEA"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A8D134B6;
-	Fri,  2 Aug 2024 06:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99294134B6;
+	Fri,  2 Aug 2024 06:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722580565; cv=none; b=Of5PYTgy3K/zCAimNEnOtstuctsJY2k93avR9ROaun4lssvVuVV4wTRqY1gazkkVf9TadvgLHLKxAo9xLkiclPWabSDUlBk3cZWkp+ErF+x3f82iISDBhdmdB0t5l9IPOvKilfREqnhsncdKCHFTkGvsmZf33XJX63O/WL6aeJs=
+	t=1722580615; cv=none; b=D5Id/LEGoxPUr7D0ZEAUQ8c0NnqNe0LFHRhUxPXEF7ECaqO03TjaM4pX4xT3ZyJP9g1trOLElJJuC2+Xc05/SLLKu9a2odn4mJl3HX7XBEk0ousO2pFyIolMBX8la50786hbcGOquOxPvAoTFMnvKFpVpvcphXMa6KrfUeycTZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722580565; c=relaxed/simple;
-	bh=sAqoXYerHI9hNI+lJHALuT+GhZWTmkH77iK7Y+MHmFg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SAfmA32nSM3AW3duuJx+zL2s5mk/NUPBSWtpOws50iFDsY3/MEWcNDFDToc+STQfKfxgQX8Wt+phczsz9NBZzsSY922ZEGndq1rsik0alHW1vsKKcvO3UK0sYRbV/+vpXn6cPF3bak3x+Q4o8Pbji3wS/5z1DBglGTJllQ/s4IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ilW3kSQt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=db89q6fp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ilW3kSQt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=db89q6fp; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 845F821A21;
-	Fri,  2 Aug 2024 06:36:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722580561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hKI2L+NoERSIbYAKkhhz73Hnoa6+HMmim8DwxJ1Zrxs=;
-	b=ilW3kSQt2+ecfNk+44ZrP/j++C2OHNv/0lxfSAImJ9Rr+LcUXmxg9Nn/6izens/3N7ZQiB
-	v8agIJrFCeOyBLVQwMdiQo6c+SF58oOwnO2mS/bZkG0oJrtUCdWnyMYiIG8Vew5rIS5apQ
-	5cTWYMcbhUx076iGRTjb0yBC1t2AEj8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722580561;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hKI2L+NoERSIbYAKkhhz73Hnoa6+HMmim8DwxJ1Zrxs=;
-	b=db89q6fpJy4qdDpDMczy4htNrUr+4l/sxCoINRyqZsOlucvDL3VYJYzQOSgDv7dbAQN8dY
-	GLug42PgPOoTT3Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ilW3kSQt;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=db89q6fp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722580561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hKI2L+NoERSIbYAKkhhz73Hnoa6+HMmim8DwxJ1Zrxs=;
-	b=ilW3kSQt2+ecfNk+44ZrP/j++C2OHNv/0lxfSAImJ9Rr+LcUXmxg9Nn/6izens/3N7ZQiB
-	v8agIJrFCeOyBLVQwMdiQo6c+SF58oOwnO2mS/bZkG0oJrtUCdWnyMYiIG8Vew5rIS5apQ
-	5cTWYMcbhUx076iGRTjb0yBC1t2AEj8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722580561;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hKI2L+NoERSIbYAKkhhz73Hnoa6+HMmim8DwxJ1Zrxs=;
-	b=db89q6fpJy4qdDpDMczy4htNrUr+4l/sxCoINRyqZsOlucvDL3VYJYzQOSgDv7dbAQN8dY
-	GLug42PgPOoTT3Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 536D113999;
-	Fri,  2 Aug 2024 06:36:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5fR+ElF+rGYtdwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 02 Aug 2024 06:36:01 +0000
-Date: Fri, 02 Aug 2024 08:36:37 +0200
-Message-ID: <87mslvig7e.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Takashi Iwai <tiwai@suse.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the ieee1394 tree
-In-Reply-To: <20240802122120.480789ac@canb.auug.org.au>
-References: <20240802122120.480789ac@canb.auug.org.au>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1722580615; c=relaxed/simple;
+	bh=kSS14MYRKNfUcQXgALz3pJHNOCn7+YfGkQK3nekdriI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UaJvf2IixPm4y7a2HfVQ+E0uqF+MFW2GztHy0akeO2TBcXopxOTpkBPNPAcRSi5LkPmIWeXR5Wz96j4fg56JBB+HAmkrGTInINDIz51zL02GNFdpnF+QzYCIUTyuFSQDeTwunYZ/mHadDMopWmcQ2nmFTaszLU1IkiCauC6LRQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=MxtqBcEA; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1722580611;
+	bh=Of1XQj/7J9HzKpXSbYLjUaisLnBd/UQhz1by2QoX/5c=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=MxtqBcEATo0dGOTgctGcB6bOQvpEkAMPyBrwIu6xtPH9/21QZTVJbdkqAEWgE9EuT
+	 d5cyH/eAhSTka6Y49yPXuH+uWDNhIYrYm1i2RmSVLHsYXWHY+8TLpZ4XN36EF0NfX/
+	 zZtyjTPSZ5Zc/MuxmfM2ob7YSYBszFARDBfFboUbA+YfpNd8IoFABDaUYldr4btgAM
+	 9zLeK+1LuLBoOmyFrFt7WRbqW2Jnv2G1av0XmYe0Fi6tLyTqBP8gCj1sQvREnJAJBm
+	 h/k4AciM7MwmQz+7RLOB0tpL312Zpdzpn01JezLMe+qsV8M8ktUS4hev83ch4ZIsTO
+	 KgplzLHHIvG7A==
+Received: from [192.168.68.112] (ppp118-210-29-70.adl-adc-lon-bras31.tpg.internode.on.net [118.210.29.70])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 1638D65665;
+	Fri,  2 Aug 2024 14:36:49 +0800 (AWST)
+Message-ID: <7bf4cb57f2b0b41c79f2efea3e0b0211988c0896.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v3 02/11] ARM: dts: aspeed: Harma: add VR device
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Peter Yin <peteryin.openbmc@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley
+	 <joel@jms.id.au>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Fri, 02 Aug 2024 16:06:47 +0930
+In-Reply-To: <20240801160136.1281291-3-peteryin.openbmc@gmail.com>
+References: <20240801160136.1281291-1-peteryin.openbmc@gmail.com>
+	 <20240801160136.1281291-3-peteryin.openbmc@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.31 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -5.31
-X-Rspamd-Queue-Id: 845F821A21
+MIME-Version: 1.0
 
-On Fri, 02 Aug 2024 04:21:20 +0200,
-Stephen Rothwell wrote:
-> 
-> Hi all,
-> 
-> The following commits are also in the sound-current tree as different
-> commits (but the same patches):
-> 
->   c2f9fd3d6ad7 ("Revert "ALSA: firewire-lib: operate for period elapse event in process context"")
->   e29ed9a81fd4 ("Revert "ALSA: firewire-lib: obsolete workqueue for period update"")
+On Fri, 2024-08-02 at 00:01 +0800, Peter Yin wrote:
+> Add isl69260, xdpe152c4 device
+>=20
+> Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
+> ---
+>  .../dts/aspeed/aspeed-bmc-facebook-harma.dts  | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arc=
+h/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
+> index d99fba321379..8fb30029e46c 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
+> @@ -398,6 +398,30 @@ imux28: i2c@0 {
+>  			#address-cells =3D <1>;
+>  			#size-cells =3D <0>;
+>  			reg =3D <0>;
+> +			power-monitor@61 {
+> +				compatible =3D "isil,isl69260";
+> +				reg =3D <0x61>;
+> +			};
+> +			power-monitor@62 {
+> +				compatible =3D "isil,isl69260";
+> +				reg =3D <0x62>;
+> +			};
+> +			power-monitor@63 {
+> +				compatible =3D "isil,isl69260";
+> +				reg =3D <0x63>;
+> +			};
 
-Sakamoto-san, with your Reviewed-by tag, I thought you gave a sign to
-put via sound git tree?  I'm going send a PR to Linus in today, so if
-possible, please drop those from yours.
+As of v6.11-rc1 this gives me:
 
+```
+$ ./scripts/checkpatch.pl --strict -g HEAD
+...
+WARNING: DT compatible string "isil,isl69260" appears un-documented -- chec=
+k ./Documentation/devicetree/bindings/
+#24: FILE: arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts:402:
++                               compatible =3D "isil,isl69260";
 
-thanks,
+WARNING: DT compatible string "isil,isl69260" appears un-documented -- chec=
+k ./Documentation/devicetree/bindings/
+#28: FILE: arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts:406:
++                               compatible =3D "isil,isl69260";
 
-Takashi
+WARNING: DT compatible string "isil,isl69260" appears un-documented -- chec=
+k ./Documentation/devicetree/bindings/
+#32: FILE: arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts:410:
++                               compatible =3D "isil,isl69260";
+
+total: 0 errors, 3 warnings, 0 checks, 30 lines checked
+```
+
+and
+
+```
+$ make CHECK_DTBS=3Dy aspeed/aspeed-bmc-facebook-harma.dtb 2>&1 | grep isil
+...
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a0=
+00/i2c@700/i2c-mux@70/i2c@0/power-monitor@61: failed to match any schema wi=
+th compatible: ['isil,isl69260']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a0=
+00/i2c@700/i2c-mux@70/i2c@0/power-monitor@62: failed to match any schema wi=
+th compatible: ['isil,isl69260']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a0=
+00/i2c@700/i2c-mux@70/i2c@0/power-monitor@63: failed to match any schema wi=
+th compatible: ['isil,isl69260']
+```
+
+While there's already an Aspeed-based Quanta platform that also
+specifies this device, let's not add to the problems of the Aspeed
+devicetrees.
+
+Please make sure to run `make dtbs_check ...` and checkpatch on your
+changes. Regarding `make dtbs_check` and related tests, this blog post
+is helpful:
+
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sourc=
+es-with-the-devicetree-schema/
+
+Andrew
 
