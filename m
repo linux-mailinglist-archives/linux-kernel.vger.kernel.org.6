@@ -1,254 +1,159 @@
-Return-Path: <linux-kernel+bounces-272231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCCF9458E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:34:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39B89458EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4CB9B2362D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:34:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31CB31C225B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05F715B117;
-	Fri,  2 Aug 2024 07:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GxRt3tVE"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B514D8BD;
-	Fri,  2 Aug 2024 07:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530681BF32A;
+	Fri,  2 Aug 2024 07:34:47 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A621BE87E;
+	Fri,  2 Aug 2024 07:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722584080; cv=none; b=uK8kAliTyxEub//RZ7hGRIxhZIQnv4Ky9PI7B4iirIf0kWOJ0MaDvB2Jmp6CC6VZvGTHREXkOPHUia0/BWf582OMHWCFnsX13cqzmRNzOAaEgfm0WskbKQ+XoIxxrODmzf1tnKjm3orl7+b+z3boPCUJRHeebiiOX5YaxBpvPW8=
+	t=1722584086; cv=none; b=NR53mCvp/8C+Zh+FS+LNfpOCklWpYDyG3g1i+1w6sXzsPF/RG0iTgeb1TQVrMWclnQeL/NccxgWci/RutU3fgVAaAU6ClRL1bAdvdf27qBO9yBpZFOs3edRf421R9OnI4eu1+HTfYp16sfhe2r34AEZlyRB8KEadqMcKZHEvnKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722584080; c=relaxed/simple;
-	bh=Y7oUZFzs9JdiSCi+7GgFen9Y7E+A3M4dKqm1FlJXs5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TikC0f2a09/iw8TNROpm02/kIGwRw09L8MWUNiQ4hiy8CsRVTKMDSLsgyzOHRSvrLiI9w9d+jhxH48xLUcN3af2hUzTZe4hGyI0wjZUMKW9tIeJEFWZAFnuSKFcK85I5NehB9tQEmdY4OT8qCUWaw3Xur7TtKiye7jgXefT2wm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GxRt3tVE; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4727JmT4023838;
-	Fri, 2 Aug 2024 07:34:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=/gT1HipQeU5sVnl5LRkK8oayYcA
-	U5Hy2f855m8tVuWE=; b=GxRt3tVEOLkkqoBT2A9GRCfgPCQzmwren5esbT8GDun
-	X2PyZFU8ux8kZSDzx5pxjXovxrx6MkcColJVwHDmGVe4Qm0zp1mezxRzOpqiMAKB
-	zs1I9QKXmJdmnUONQ8DLpVd52XlU66LR24jjg3rhxDMfilyQaLse/E7SCTpuwKuX
-	F2lMH0eSyj6lTD7E2Fr+PCACcJvwaZhZ9LVwh6OLy2H7XpDstiKMYP3VaLsIcixY
-	L5+EbGMudCTLF3d1x5PHPpujMznI4E2eZ3l+abNR3VsiGRHjSagssm/zCAIcY2k3
-	GSYsG6ONhNdaRKX8OmtFxqLpWWM1GesBw75T4OB32Cg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rp8vghmt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 07:34:11 +0000 (GMT)
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4727YBie017758;
-	Fri, 2 Aug 2024 07:34:11 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rp8vghmr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 07:34:11 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4723FXZ8018863;
-	Fri, 2 Aug 2024 07:34:10 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nc7q634k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 07:34:10 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4727Y6VC21693058
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 2 Aug 2024 07:34:08 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6CE0B20067;
-	Fri,  2 Aug 2024 07:34:06 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 99AEF2005A;
-	Fri,  2 Aug 2024 07:34:04 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.46.217])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  2 Aug 2024 07:34:04 +0000 (GMT)
-Date: Fri, 2 Aug 2024 13:04:02 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com,
-        Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 10/20] ext4: get rid of ppath in
- ext4_ext_create_new_leaf()
-Message-ID: <ZqyL6rmtwl6N4MWR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-11-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1722584086; c=relaxed/simple;
+	bh=28kV5J8/flAVt86/GsEj43NZxtciKgmXFgOHNgHpFQI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=hLCkO6Z2M9XFNK5jHD+510JJ6f97yOPTG0b2pjJ3Tz2VgaRPvewo3V7XVRIfHWQLnBBJhofTsuZnEwS3MsgyEvz3Ao3xIzxyjiHlBYbZfTQv6pYEMorbsgZq2mP3hVoPYsBOkdNqZbDQoAXOdnLU5LOIqMqTJjsfaZsxnqRSsvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxrusQjKxmBloGAA--.22331S3;
+	Fri, 02 Aug 2024 15:34:40 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMCxbuUPjKxm0GILAA--.55848S3;
+	Fri, 02 Aug 2024 15:34:39 +0800 (CST)
+Subject: Re: [PATCH v12 65/84] KVM: LoongArch: Mark "struct page" pfns
+ accessed only in "slow" page fault path
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
+ David Stevens <stevensd@chromium.org>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-66-seanjc@google.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <d5405245-edd3-9bc5-0c40-282a30e46fae@loongson.cn>
+Date: Fri, 2 Aug 2024 15:34:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-11-libaokun@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wKEMLnYKOE5DL0znAtdydpP9edbY7Rdy
-X-Proofpoint-ORIG-GUID: b0B-8raEEwRxqDGsz0eBhM6QQYFGNQz4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-02_04,2024-08-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=770 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408020047
+In-Reply-To: <20240726235234.228822-66-seanjc@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxbuUPjKxm0GILAA--.55848S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7WFWUJw1rKF47AFWUZFWfCrX_yoW8ZF1xpF
+	ZxCwsrtr4rtrn093srta4qvF17Gw4DKr1xX3W2q34FkFnIqw1Y93W8W397WFyUJ392ya1S
+	vF1rt3WUWan0vacCm3ZEXasCq-sJn29KB7ZKAUJUUUUA529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUShiSDU
+	UUU
 
-On Wed, Jul 10, 2024 at 12:06:44PM +0800, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+
+
+On 2024/7/27 上午7:52, Sean Christopherson wrote:
+> Mark pages accessed only in the slow path, before dropping mmu_lock when
+> faulting in guest memory so that LoongArch can convert to
+> kvm_release_faultin_page() without tripping its lockdep assertion on
+> mmu_lock being held.
 > 
-> The use of path and ppath is now very confusing, so to make the code more
-> readable, pass path between functions uniformly, and get rid of ppath.
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/loongarch/kvm/mmu.c | 20 ++------------------
+>   1 file changed, 2 insertions(+), 18 deletions(-)
 > 
-> To get rid of the ppath in ext4_ext_create_new_leaf(), the following is
-> done here:
-> 
->  * Free the extents path when an error is encountered.
->  * Its caller needs to update ppath if it uses ppath.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-
-Hi Baokun,
-
-The changes look good to me, feel free to add:
-
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-
-That being said, IIUC i think this patchset also fixes a potential UAF
-bug. Below is a sample trace with dummy values:
-
-ext4_ext_insert_extent
-  path = *ppath = 2000
-  ext4_ext_create_new_leaf(ppath)
-    path = *ppath = 2000
-    ext4_find_extent(path = 2000)
-      if (depth > path[0].p_maxdepth)
-            kfree(path = 2000);
-            path = NULL;
-      path = kcalloc() = 3000
-      ...
-      return path;
-  path = 3000
-  *ppath = 3000;
-  return;
-/* here path is still 2000 *, UAF! */
-eh = path[depth].p_hdr 
-
-I'm not completely sure if we can hit (depth > path[0].p_maxdepth) in the
-above codepath but I think the flow is still a bit fragile. Maybe this
-should be fixed in a separate patch first. What do you think?
-
-Regards,
-ojaswin
-
- ---
->  fs/ext4/extents.c | 41 +++++++++++++++++++++--------------------
->  1 file changed, 21 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 6dfb5d03e197..0d6ce9e74b01 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -1397,13 +1397,12 @@ static int ext4_ext_grow_indepth(handle_t *handle, struct inode *inode,
->   * finds empty index and adds new leaf.
->   * if no free index is found, then it requests in-depth growing.
->   */
-> -static int ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
-> -           unsigned int mb_flags,
-> -           unsigned int gb_flags,
-> -           struct ext4_ext_path **ppath,
-> -           struct ext4_extent *newext)
-> +static struct ext4_ext_path *
-> +ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
-> +      unsigned int mb_flags, unsigned int gb_flags,
-> +      struct ext4_ext_path *path,
-> +      struct ext4_extent *newext)
->  {
-> - struct ext4_ext_path *path = *ppath;
->   struct ext4_ext_path *curp;
->   int depth, i, err = 0;
->  
-> @@ -1424,28 +1423,24 @@ static int ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
->      * entry: create all needed subtree and add new leaf */
->     err = ext4_ext_split(handle, inode, mb_flags, path, newext, i);
->     if (err)
-> -     goto out;
-> +     goto errout;
->  
->     /* refill path */
->     path = ext4_find_extent(inode,
->             (ext4_lblk_t)le32_to_cpu(newext->ee_block),
->             path, gb_flags);
-> -   if (IS_ERR(path))
-> -     err = PTR_ERR(path);
->   } else {
->     /* tree is full, time to grow in depth */
->     err = ext4_ext_grow_indepth(handle, inode, mb_flags);
->     if (err)
-> -     goto out;
-> +     goto errout;
->  
->     /* refill path */
->     path = ext4_find_extent(inode,
->            (ext4_lblk_t)le32_to_cpu(newext->ee_block),
->             path, gb_flags);
-> -   if (IS_ERR(path)) {
-> -     err = PTR_ERR(path);
-> -     goto out;
-> -   }
-> +   if (IS_ERR(path))
-> +     return path;
->  
->     /*
->      * only first (depth 0 -> 1) produces free space;
-> @@ -1457,9 +1452,11 @@ static int ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
->       goto repeat;
->     }
->   }
-> -out:
-> - *ppath = IS_ERR(path) ? NULL : path;
-> - return err;
-> + return path;
+> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+> index 364dd35e0557..52b5c16cf250 100644
+> --- a/arch/loongarch/kvm/mmu.c
+> +++ b/arch/loongarch/kvm/mmu.c
+> @@ -552,12 +552,10 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+>   static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
+>   {
+>   	int ret = 0;
+> -	kvm_pfn_t pfn = 0;
+>   	kvm_pte_t *ptep, changed, new;
+>   	gfn_t gfn = gpa >> PAGE_SHIFT;
+>   	struct kvm *kvm = vcpu->kvm;
+>   	struct kvm_memory_slot *slot;
+> -	struct page *page;
+>   
+>   	spin_lock(&kvm->mmu_lock);
+>   
+> @@ -570,8 +568,6 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
+>   
+>   	/* Track access to pages marked old */
+>   	new = kvm_pte_mkyoung(*ptep);
+> -	/* call kvm_set_pfn_accessed() after unlock */
+> -
+>   	if (write && !kvm_pte_dirty(new)) {
+>   		if (!kvm_pte_write(new)) {
+>   			ret = -EFAULT;
+> @@ -595,23 +591,11 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
+>   	}
+>   
+>   	changed = new ^ (*ptep);
+> -	if (changed) {
+> +	if (changed)
+>   		kvm_set_pte(ptep, new);
+> -		pfn = kvm_pte_pfn(new);
+> -		page = kvm_pfn_to_refcounted_page(pfn);
+> -		if (page)
+> -			get_page(page);
+> -	}
 > +
-> +errout:
-> + ext4_free_ext_path(path);
-> + return ERR_PTR(err);
->  }
->  
->  /*
-> @@ -2112,10 +2109,14 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
->    */
->   if (gb_flags & EXT4_GET_BLOCKS_METADATA_NOFAIL)
->     mb_flags |= EXT4_MB_USE_RESERVED;
-> - err = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
-> -              ppath, newext);
-> - if (err)
-> + path = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
-> +         path, newext);
-> + if (IS_ERR(path)) {
-> +   *ppath = NULL;
-> +   err = PTR_ERR(path);
->     goto cleanup;
-> + }
-> + *ppath = path;
->   depth = ext_depth(inode);
->   eh = path[depth].p_hdr;
->  
-> -- 
-> 2.39.2
+>   	spin_unlock(&kvm->mmu_lock);
+>   
+> -	if (changed) {
+> -		if (kvm_pte_young(changed))
+> -			kvm_set_pfn_accessed(pfn);
+> -
+> -		if (page)
+> -			put_page(page);
+> -	}
+> -
+>   	if (kvm_pte_dirty(changed))
+>   		mark_page_dirty(kvm, gfn);
+>   
 > 
+Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+
 
