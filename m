@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-272890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F04094625E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:22:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7291B94625F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA752B21DA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2900F1F21EB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BF015C126;
-	Fri,  2 Aug 2024 17:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF8215C128;
+	Fri,  2 Aug 2024 17:22:37 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF73616BE0C
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88771537A0
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619337; cv=none; b=Qh1nI6IQeIE4ANyfySQXODkM0e5xN2zxkBxWgWw8u/DlRXTVRcCbGtOCObVQr1VCioIQIzQrBlLSxbo4C6lQOvSKYoTHKrBxvtjOaG03msUP8HuSLXJLxPbFd37rumS55u1RK+d1JDcPfbIkXOLpSrthnImdgV3JVqAOYedIqBA=
+	t=1722619357; cv=none; b=LNwagjfIKOv5heSCOz4dqTqBbwj1Zy/xd8MDrwYA7GSXDEUUEsh8G0lz8/dA3GTTtnK32b4pSWwf4eZ5TPB08ztgZBxp5aADnxTm3yiwczApZotvh1zJ2Wnk1tH/LzpvTqMzAJ8JjvaumvksLkz/iJJT9d6F8BUF/CDttBwoHyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619337; c=relaxed/simple;
-	bh=7OQKEgvzqandwKPwqYB4knvWEpwE95ho9s78axEaw84=;
+	s=arc-20240116; t=1722619357; c=relaxed/simple;
+	bh=taiWfWuuFYQpiIfZvOQkFnmOLnlL4KSF7mBsvJ7oTJc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDkKDhwxz6IvOEEQScLOf8nK4EjRAQdzu/0urPbul0vmv71L+4DZwX1M5QwRYBQjVkma3QV02YWxByXNOsuqELnCsXl2JyzTtxccRYsHv/ibs5feHFVTI8I4Eg8MoFRcQu+Y1ylDjcJWx2tgpuSaqNp5IqHUNf3m/p6bgDIxiwc=
+	 In-Reply-To:Content-Type; b=UpE2Mx6XIUqwEeo+cG3xxQdjI28CtzTZf4TYpTD0yOzn3Q2BNgn3RGupw0NrNwGDGxlx+pOT2A7j5k8YE7mhvTfJLhCY0KZv+RdHevygUqmdCgqxO0YeS5MLZVCh6JHu+sQHoKq4c58IpXcQFi8o75urFFH3WhMGkmaQUWTozUA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17F8BDA7;
-	Fri,  2 Aug 2024 10:22:39 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3CD31007;
+	Fri,  2 Aug 2024 10:22:59 -0700 (PDT)
 Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04DFD3F64C;
-	Fri,  2 Aug 2024 10:22:09 -0700 (PDT)
-Message-ID: <4d20edf9-ecf6-4ccd-914d-a303b827a7bd@arm.com>
-Date: Fri, 2 Aug 2024 18:22:07 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B25A3F64C;
+	Fri,  2 Aug 2024 10:22:30 -0700 (PDT)
+Message-ID: <fd3005fc-4d8f-4e55-a325-7a8681d6ebe2@arm.com>
+Date: Fri, 2 Aug 2024 18:22:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,8 +41,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/38] x86/resctrl: Move the resctrl filesystem code to
- /fs/resctrl
+Subject: Re: [PATCH v3 23/38] x86/resctrl: Allow an architecture to disable
+ pseudo lock
 Content-Language: en-GB
 To: Carl Worth <carl@os.amperecomputing.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
@@ -57,42 +57,48 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
  Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
  dfustini@baylibre.com, amitsinght@marvell.com,
  David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>
+ Dave Martin <dave.martin@arm.com>, Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 References: <20240614150033.10454-1-james.morse@arm.com>
- <87bk33d1xg.fsf@rasp.cworth.amperemail.amperecomputing.com>
+ <20240614150033.10454-24-james.morse@arm.com>
+ <87frsfd362.fsf@rasp.cworth.amperemail.amperecomputing.com>
 From: James Morse <james.morse@arm.com>
-In-Reply-To: <87bk33d1xg.fsf@rasp.cworth.amperemail.amperecomputing.com>
+In-Reply-To: <87frsfd362.fsf@rasp.cworth.amperemail.amperecomputing.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi Carl,
 
-On 11/07/2024 23:00, Carl Worth wrote:
+On 11/07/2024 22:33, Carl Worth wrote:
 > James Morse <james.morse@arm.com> writes:
->> This is the final series that allows other architectures to implement resctrl.
->> The final patch to move the code has been ommited, but can be generated using
->> the python script at the end of the series.
->> The final move is a bit of a monster. I don't expect that to get merged as part
->> of this series - we should wait for it to make less impact on other
->> series.
+>> diff --git a/arch/x86/kernel/cpu/resctrl/Makefile b/arch/x86/kernel/cpu/resctrl/Makefile
+>> index 4a06c37b9cf1..0c13b0befd8a 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/Makefile
+>> +++ b/arch/x86/kernel/cpu/resctrl/Makefile
+>> @@ -1,4 +1,5 @@
+>>  # SPDX-License-Identifier: GPL-2.0
+>> -obj-$(CONFIG_X86_CPU_RESCTRL)	+= core.o rdtgroup.o monitor.o
+>> -obj-$(CONFIG_X86_CPU_RESCTRL)	+= ctrlmondata.o pseudo_lock.o
+>> +obj-$(CONFIG_X86_CPU_RESCTRL)		+= core.o rdtgroup.o monitor.o
+>> +obj-$(CONFIG_X86_CPU_RESCTRL)		+= ctrlmondata.o
+>> +obj-$(CONFIG_RESCTRL_FS_PSEUDO_LOCK)	+= pseudo_lock.o
+>>  CFLAGS_pseudo_lock.o = -I$(src)
 > 
-> Thanks, again, James.
+> Now that pseudo_lock.c is only conditionally compiled, the work it's
+> doing to define tracepoints, (that is, #define CREATE_TRACE_POINTS),
+> should be moved to monitor.c which is unconditionally compiled.
 > 
-> As with previous versions, I've tested this code (along with additional
-> MPAM code from you and other code we've written), to test MPAM
-> functionality on an Ampere implementation.
+> And then, the CFLAGS line above should be adjusted to apply to
+> the compilation of monitor.c, that is:
 > 
-> I replied to the in the series which introduces
-> CONFIG_RESCTRL_FS_PSEUDO_LOCK to point out how that commit will actually
-> break compilation if that option is not selected, (and I described the
-> minor change needed to fix that).
-> 
-> With that fixed, for the series:
-> 
-> Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
+> CFLAGS_monitor.o = -I$(src)
 
-Great - thanks!
-(I assume you didn't test the python script that generates the move-to-fs patch)
+> Without these changes, compiling without CONFIG_RESCTRL_FS_PSEUDO_LOCK
+> will fail due to undefined tracepoint functions.
+
+Thanks for catching this - I bashed my head against it for a while.
+
+I've split trace.h in two: monitor_trace.h and pseudo_lock_trace.h. When the code gets
+moved to /fs/ only one of those files moves.
 
 
 Thanks,
