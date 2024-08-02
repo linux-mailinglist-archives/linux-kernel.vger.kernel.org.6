@@ -1,82 +1,90 @@
-Return-Path: <linux-kernel+bounces-273025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3995494637D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:59:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DC794637F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E949E2819F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:59:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF09E1F226BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4071547D4;
-	Fri,  2 Aug 2024 18:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD891547D1;
+	Fri,  2 Aug 2024 18:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieM3XIUQ"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ID6d8Ajn"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD5F1ABEC2;
-	Fri,  2 Aug 2024 18:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA751ABEC2
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 18:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722625139; cv=none; b=ahlc4ivrg27Pd26jiYVpqZjxeU7W9JxJrfQA7SVIzp9Mqphrxz362A3PE/59prUFkeVmh2VNPzExKsXBYLyTqfBE7hQmlu4cO8UTLZj2h+Du3SHh54xROcjb35BQ8kEmuss6mK9dhN/cGz+WtUeUFM1Qu1TS/aZFgV3vaM9az7k=
+	t=1722625197; cv=none; b=hx37H1aWlTD7uQMH9gDKb2xb5RdLSYSmDgqc+D1rCLfPGOUIKiU7egI51l8e2gi3LV12w9O/Iu5XGJQt8pYouBQgIh0nHissBIeuYUekgBc4/9WZRqru0arX5mVisjGOlfo7Q0mFbpWGVbOj33RwGPZVXuZNx+HPoNgRZvZPbFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722625139; c=relaxed/simple;
-	bh=K8ddkoxm3C1nB3L53StfamoAtWc4pJlscEHXJCWcn4s=;
+	s=arc-20240116; t=1722625197; c=relaxed/simple;
+	bh=6Oq2YA2pmLOHc0LGjhUhjd2RhE572MLmN+9EJNZ4XVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqhxFSybwwR0az3JwY62Po7ng/j3DnT2kqfFBJNzzcvsrV+xtGzQb2EN5FDC5x/SO3YOotYikuhGCoIIlRlL4i+777Vp7Zpv5hfhijs1NKCnFTiUlZcCC5IDwKm2+Qrio0opOpOUhZbVHYYUavLg/AGD5u5zTTp66DgxYLzon7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ieM3XIUQ; arc=none smtp.client-ip=209.85.210.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2fmfJJT1fj9A3yeqpW57HgJiYpUQNRyQb0jUszccaRTqiUh35KOjiGPLkLxc0nWFIMhld+AE+AS7uUMfUhT9PseD1iJH3/R8DnCUtg8xiVRfKL4Ep+YNhiMKWO6GWSWATMaXqPhJZEO07qqKGbcIiVzdtiI+oZxqod9gkaVRKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ID6d8Ajn; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d19d768c2so6603489b3a.3;
-        Fri, 02 Aug 2024 11:58:57 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fc56fd4de1so26991985ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 11:59:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722625137; x=1723229937; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722625195; x=1723229995; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7HBEL9KEPrHUySlWotkmtSjR9oMPQS+D7NW6xshQG7o=;
-        b=ieM3XIUQ4O3SQ4DNJEXGx2cYyqYx7PYKpc2hS/T3fWXow90eFiUSZwR/GAxI/4pr85
-         gBIWFOfcoiMABQU7r9koLHHH0QED31cHVDlG7rDwX3H9OA7EjkcRK6AdNwnRk9JQu1r9
-         vj4hhnn6+PPp+wwx+7LvKTnQTuJIRN4NC8mgQSKMJ2XYJdTxuypkv2Nf3aGuc00z57mX
-         r0nieKePj4rsh9g75HsZZETa9gJ4tojXjMmKQtse7L6RyNtxOGbJe2zfw5oPDKB3+P80
-         Er+HieeV+QHm2M8NcbT/0wuesHyIk5zrUT7azPekKAzQBBBha131VdjLxQxHUsF/gD9S
-         zetA==
+        bh=qwSftlIurclRafu7LWzfCWxvcV52fQxmz5EFZiJ9yss=;
+        b=ID6d8Ajn+hTJfd4O61hrJcw0S7d/Zh0tkpDD6FoNnwOQ38Y8PPRXgk57oPNhRE6gtJ
+         YPUVtvf2+BPLCpI7alHoJ95puUmBtk9aR9bOYTFxjxUlPdeX8wUQbyemW66QVS4a9+oB
+         uuvj3jZj/fJtKZxwkD0yra+lKJgvnlI35za+/UgHJqSPCEJBbJglRSvWNmedfBrdiSPL
+         yJBaDl833hB2JJVO60rjYIv0h+ebE0bPl4xcUulrI0NzWRVdIxCcm4azfUHXVqNCtThp
+         QBA3u0x8UdMYpdFw2MFPHbeMABDuqb9dfTKNbVPM0KZT9b3wA5sDqE9KG/MxCmYTvPq7
+         I9yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722625137; x=1723229937;
+        d=1e100.net; s=20230601; t=1722625195; x=1723229995;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7HBEL9KEPrHUySlWotkmtSjR9oMPQS+D7NW6xshQG7o=;
-        b=AkI975nFkCRDoVi/Y6MuqrlyDABg5AMh3/x5LAT9LQxWtxvKTkIMrSozoeNIiW8yuH
-         BGxYw3dsqSqwGWSN8/dbC2wA/+SLHP1dIyFoDruo8JVtUE49GwqFMwckShJNnZAghg56
-         /01f5ddzQo6kpabHahZIsavpbVSZfYNXxheqHBOQVWDgFSITP1ajHffh6SiBFPqzLaDL
-         1yI1JAAcZIdrnjxgX/KnNCH2Aa1aI+eDqErSnPfwLhmvlymz6HICyaCLT6QyoMH6gdDS
-         EQ+OiyzDeD60ypMjGNNjarfvrF6oB6KKjXg8I9NJHcTfRY717DKFcfWjJNu73qczOLqq
-         tfAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqKJEHKshWre4DEmCUvMGEmI+LucrDcE7JXYvJiiMufRqqkW2DCfcNUdtCEcNi5xeo5SiC0GcXywYA0g==@vger.kernel.org, AJvYcCVCccTjJXPvwjOAs16+xG+UwgL9g/E/nptkLKEyemqjM4nwbAJbckxDtPq9ixiAHyQlZxKRIEZBJu3Jmdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaeqxbbRL3ElOFOTxWbb45miSIKFg0MsVKUxdCVlAeYVH7BrV8
-	qUMuTAeytXSmT4TpogYaTgOdmYc0lwC7OTzqZ4DnVZQOlFb4v6+W
-X-Google-Smtp-Source: AGHT+IEI2SvbXP3lngtOdFq2NbmSoqvD+qfb0NDypYClAfynPsgLsRKsK37/dWFItErRsUKa0pB0DQ==
-X-Received: by 2002:a05:6a00:13aa:b0:70d:2b1b:a37f with SMTP id d2e1a72fcca58-7106d02f8c6mr5559741b3a.24.1722625136789;
-        Fri, 02 Aug 2024 11:58:56 -0700 (PDT)
+        bh=qwSftlIurclRafu7LWzfCWxvcV52fQxmz5EFZiJ9yss=;
+        b=JIDyS+1HWUfUlGqnk1KZHDnlWv6QBjUAkxyvKq+yJCKrGX3ZcS2vv6wEIf5JrEMAV3
+         mpTmtFdJWXn4QvQWMfGOPtOHkJBRBZhC46wwZPJ00HZle4DKZcl+kWkhpXuLqqWi7ra4
+         aEUvSCD9LBWF5CiPZjRDlu/yMDv3dvJAzJzPz3iZcrzr77+7awojjgrhWPhU1Zi1oCyQ
+         zynTts6qMoZUHqU0KkWUraOyPdWlcS2j1kOgvNhWAxuNKYOq6lLWvqz5Xf7J+GKaEK+p
+         1zlfkNCsoU/qsY/998q9DXmV7I6LA79phoBsey8JIrkT0IV7fmKvSbIRVWxiM1XgTb06
+         lpJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjn7OEuirC1PlrU51efYLRywI+v5Sp/Dc6JU+TTUuzCVW9DIUdIT/qhOr9lBs1GDVa5fjxFC1RrVkzQ0+/yshs/k2j7VogD2uOnWHf
+X-Gm-Message-State: AOJu0YwzpUI/2zWYcfNbk743YcdiC6lcJRmHjzK6E3BYVn3KOhDhkq8h
+	D8brlBdNwDNQXQLOFLL7LcUhKsb/Fn/7PTRkrhv4XZ63bTmzPD0v
+X-Google-Smtp-Source: AGHT+IFCVaSXdt6+0rKFZgYoCd8P+A+kCzNHu2o5aSsX+A4K2MWUJKYpMjYkEnSI2JHZy92JbyH/QA==
+X-Received: by 2002:a17:902:d2cd:b0:1f2:fcc0:66f with SMTP id d9443c01a7336-1ff57f186a1mr62936885ad.31.1722625195095;
+        Fri, 02 Aug 2024 11:59:55 -0700 (PDT)
 Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecfccd3sm1701642b3a.144.2024.08.02.11.58.56
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5928f849sm20533515ad.236.2024.08.02.11.59.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 11:58:56 -0700 (PDT)
+        Fri, 02 Aug 2024 11:59:54 -0700 (PDT)
 Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 2 Aug 2024 08:58:55 -1000
+Date: Fri, 2 Aug 2024 08:59:53 -1000
 From: Tejun Heo <tj@kernel.org>
-To: Xavier <xavier_qy@163.com>
-Cc: sfr@canb.auug.org.au, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: [PATCH v2] Documentation: Fix the compilation errors in
- union_find.rst
-Message-ID: <Zq0sb2zfV-sJ4hRY@slm.duckdns.org>
-References: <ZqvAeam7_iN44C88@slm.duckdns.org>
- <20240802033346.468893-1-xavier_qy@163.com>
+To: David Vernet <void@manifault.com>
+Cc: "Zhangqiao (2012 lab)" <zhangqiao22@huawei.com>,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v2 sched_ext/for-6.12] sched_ext: Allow p->scx.disallow
+ only while loading
+Message-ID: <Zq0sqdxd_-P8Xxgq@slm.duckdns.org>
+References: <20240711110720.1285-1-zhangqiao22@huawei.com>
+ <ZpArK0qxZZI-0ykt@slm.duckdns.org>
+ <ba2702f9-f66e-498b-853c-d23f1f9191bc@huawei.com>
+ <ZpbclgFjf_q6PSd1@slm.duckdns.org>
+ <cd3fa16d-5a70-4c85-a591-fa4fa481f50b@huawei.com>
+ <ZpgERphu--gPn235@slm.duckdns.org>
+ <7d39f26d-3c9f-4ee4-977c-87f9bed0bac1@huawei.com>
+ <ZqqNLNWLfjsJ2E02@slm.duckdns.org>
+ <20240731203344.GA42857@maniforge>
+ <ZqwbK9m6ATnyYxHS@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,16 +93,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240802033346.468893-1-xavier_qy@163.com>
+In-Reply-To: <ZqwbK9m6ATnyYxHS@slm.duckdns.org>
 
-On Fri, Aug 02, 2024 at 11:33:46AM +0800, Xavier wrote:
-> Fix the compilation errors and warnings caused by merging
-> Documentation/core-api/union_find.rst and
-> Documentation/translations/zh_CN/core-api/union_find.rst.
+On Thu, Aug 01, 2024 at 01:32:59PM -1000, Tejun Heo wrote:
+> From 1232da7eced620537a78f19c8cf3d4a3508e2419 Mon Sep 17 00:00:00 2001
+> From: Tejun Heo <tj@kernel.org>
+> Date: Wed, 31 Jul 2024 09:14:52 -1000
 > 
-> Signed-off-by: Xavier <xavier_qy@163.com>
+> p->scx.disallow provides a way for the BPF scheduler to reject certain tasks
+> from attaching. It's currently allowed for both the load and fork paths;
+> however, the latter doesn't actually work as p->sched_class is already set
+> by the time scx_ops_init_task() is called during fork.
+> 
+> This is a convenience feature which is mostly useful from the load path
+> anyway. Allow it only from the load path.
+> 
+> v2: Trigger scx_ops_error() iff @p->policy == SCHED_EXT to make it a bit
+>     easier for the BPF scheduler (David).
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: "Zhangqiao (2012 lab)" <zhangqiao22@huawei.com>
+> Link: http://lkml.kernel.org/r/20240711110720.1285-1-zhangqiao22@huawei.com
+> Fixes: 7bb6f0810ecf ("sched_ext: Allow BPF schedulers to disallow specific tasks from joining SCHED_EXT")
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-Applied to cgroup/for-6.12.
+Applied to sched_ext/for-6.12.
 
 Thanks.
 
