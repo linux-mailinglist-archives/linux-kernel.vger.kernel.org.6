@@ -1,354 +1,180 @@
-Return-Path: <linux-kernel+bounces-272016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB3C9455E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:17:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5134D9455EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969D11F23135
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:17:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D06671F23314
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9586FF4FB;
-	Fri,  2 Aug 2024 01:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="FF+1MZhW"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2064.outbound.protection.outlook.com [40.107.255.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7288EEBA;
+	Fri,  2 Aug 2024 01:18:48 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46C42595;
-	Fri,  2 Aug 2024 01:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722561414; cv=fail; b=i69s2pHJS5YAlmyBEa1mmp7zKxG84QDooI6i8oXlNgiG3BG39yx8cLeE+d8SLrxXOvsZhAmPcwr17JSyMk14/gntx0ef6sK+JPr3kHLnEnkGzmYQeZLejifWGL5SySR+PIP7yfS97Z0rYmU5S528ZtgACu5HAz0qLGAFrh+B9DM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722561414; c=relaxed/simple;
-	bh=99++8I6TqclS/ng5Tj//Cc+sIUhlxcM/9A/5YKZlm08=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IbxJdJFHps/y4FSyXGGRACAd2iKoTcjwXiKBGDQfS3OIhFOoLhxWZTWri+n7KcUdHz+YAJc14Fs+pI83fgLY5IWYLUp6hn2t5SAbiKoIgse3ggaYf1jSpOHnuxcZhnfo2/HI8FLe7NaUhl7zPJeFEuK2cUYiFFxyRjl3rJRVw90=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=FF+1MZhW; arc=fail smtp.client-ip=40.107.255.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LncoHQFB0rnDFlWjxdfVnQXlrTToACuo0fK1kYAXyqnE3Ez1hxdwdyM90wE7EV8R6RSRcjtfmrVLsOw65fE5Q4GDoctnpI73/1RxfWUfUEDg/ZkOcpGG2Q5Gk01H+vzkNeqbaHZGoEODPtwtTK/vD9Iopb8SSQAViZTOKi4SGmPg5ccuv4anVwoSh0gIoE5OtqnmPFv/o3jqNnqv1N7FDa/b1kQHf7VF5inoOAZkb29FMgRkLBlpq7nf3w1nfXBbR1lI3x9CK/q+27Km6CrKXSnSiefK9v2PaVr6fyJLaaBVxAHyTXH8xH5S2NF2EehtDRGTap8sVwyaXS8/caJMzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5tHPysq8litAGVkepNacHzoMhqIpXrcVUF0F1k3h/qY=;
- b=eia/NHHaMbfwghwZ7JYWS//qxIq9+lLrKpWRM9W+aCPUXx7q2/yb1Ja7ZB9DW0QnkG5BTLTJ5sI6xK4cQHNhmDp76nZiKWl1Uz+sQQ5ZnvPs3FcHG310v56hFt1wGEtqsiNtoYvmC9V+by+dOZOuMePdh7Q8L/IXDMopBBgaSO+w01ta+Dlr+17ct1Eea6HvSDeYGxOOOh439Tgt4A1zCv6MKNZyelUaejGFjJ8NsPPvJEW6AHVBGNmqmOaqfrk6L00yTdermfXAPLfx5jyl++YiArEjateFF+1GSfzgh55cplb87mZHGGx7V1g+Ww/fWKP7ehk6V46zryO3BgKzOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5tHPysq8litAGVkepNacHzoMhqIpXrcVUF0F1k3h/qY=;
- b=FF+1MZhWe88gOUR2PJuzAwQCoGJetkUDUuoCwi5YtBx+MNgltNuYYhI5B61+RjqG/kRzha+frogMwfTtwtFlGobRiodTtCDP3NdySdyEzZ7uY/6R4xo5ZghU8pm65bER5sbhCoURpBPmQKAW6LvQrJZiH7cbT0EpDfgO1I5+YnSEXRsX7scn3Xd8Wy3E4FcWlY7A72UvkpsUjg8BxJUanlOepog1/wuU6EAvmw8aOn+z80D60PeDKCPMr0Ji3cbDMUKVleNs/0nldKzdEuDfTB3Wl2Dj4TY80h2DRr6/Xqn0WAWLungeTVrsh41WFHtxgGmF81WH0V83j2zqGkhHFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by SEZPR06MB6287.apcprd06.prod.outlook.com (2603:1096:101:126::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Fri, 2 Aug
- 2024 01:16:45 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%4]) with mapi id 15.20.7828.021; Fri, 2 Aug 2024
- 01:16:45 +0000
-Message-ID: <154e015d-f8d7-4452-bb9b-018fa04bb6d1@vivo.com>
-Date: Fri, 2 Aug 2024 09:16:40 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] udmbuf bug fix and some improvements
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-References: <20240801104512.4056860-1-link@vivo.com>
- <IA0PR11MB7185EDB259502BC6937CE566F8B22@IA0PR11MB7185.namprd11.prod.outlook.com>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <IA0PR11MB7185EDB259502BC6937CE566F8B22@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0033.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::14) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F5D2595;
+	Fri,  2 Aug 2024 01:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722561528; cv=none; b=E5fXw2jLm82E9/3/pr8fDfQ7SNdrSFpzVAGkLYo7bf8tJvcD0Cg/bcHtlcWO4/8STu5Jx+SM74dc/atS4Lg3l+92mhse6iIW0CQCLVxSuytEcB4BnbC4OVSQUPStaGKFsHeFOogPCuLm/opSO9yFbtUNhamSjwBP6q3kYCYze3E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722561528; c=relaxed/simple;
+	bh=kK79Z0IWKmAhQGWjJXUlj6idoSSo7dm+zG6M8zr2fYw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=roog2kBKnTfSNfL/uRe8lLhpPID7i8uBHgCdwdNeMXi2X9+zbKgxxBdQ9e15gTokhmLtavO28gNU/Uz6+D0mZhJmlbNh1RlrUowMQSiTq/GxUkHXqEHl6mvi8nMPjOGhzg/4FynXK7L0fVlAr8VNogrktnhk4j2jfMCrxqUzfG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WZnyw6xVBz4f3jjk;
+	Fri,  2 Aug 2024 09:18:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B15E21A0568;
+	Fri,  2 Aug 2024 09:18:41 +0800 (CST)
+Received: from [10.174.178.55] (unknown [10.174.178.55])
+	by APP4 (Coremail) with SMTP id gCh0CgB37ILvM6xmro8SAg--.53496S3;
+	Fri, 02 Aug 2024 09:18:41 +0800 (CST)
+Subject: Re: [PATCH 2/3] kallsyms: Add APIs to match symbol without
+ .llmv.<hash> suffix.
+To: Song Liu <songliubraving@meta.com>, Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Song Liu <song@kernel.org>,
+ "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>, Nathan Chancellor
+ <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Luis Chamberlain <mcgrof@kernel.org>,
+ Leizhen <thunder.leizhen@huawei.com>, "kees@kernel.org" <kees@kernel.org>,
+ Kernel Team <kernel-team@meta.com>, Matthew Maurer <mmaurer@google.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Steven Rostedt <rostedt@goodmis.org>
+References: <20240730005433.3559731-1-song@kernel.org>
+ <20240730005433.3559731-3-song@kernel.org>
+ <20240730220304.558355ff215d0ee74b56a04b@kernel.org>
+ <5E9D7211-5902-47D3-9F4D-8DEFD8365B57@fb.com>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>
+Message-ID: <9f6c6c81-c8d1-adaf-2570-7e40a10ee0b8@huaweicloud.com>
+Date: Fri, 2 Aug 2024 09:18:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEZPR06MB6287:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6592e319-4061-4dad-9618-08dcb290c621
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MkZWL01IRmplZldNQUE3WWVxeHVVZHNqY2liQi9YbFEwaGJuRVowc0pCYUZH?=
- =?utf-8?B?eGVCdkFocEZ5NHhpNHBiWGZOVlprdWV4M3l1eUFML1FnYlhrbFJlbTA0TU1p?=
- =?utf-8?B?Q2NaSzN6eE9hZXpLUjJraVUyaGdqTS9BNFBZTE43ZTVheHFRQUN3Z3NRYmRy?=
- =?utf-8?B?SC9DZDdHblFHSkoraDBjRlkvQ1B1R2dwdi9kaGtWeXpmOGNHK21mU3I2Uzc4?=
- =?utf-8?B?YjhFTG1BRXNVNlBTSndTZlJWOHJoMlJqSldXSXNpbGE0cXd3QWppdjc2cnI1?=
- =?utf-8?B?NzRsYkV6c2RZdTJBbmJ4SDJpU05UOUo1VWc5eTdrc1NXV1RPMCtHWWZTcG9T?=
- =?utf-8?B?cTY0bXZkTHN5S3dDY1oyQW5la3FEc1FEYkVrOTZKV0t5TzFKU1lDOEV1VHp6?=
- =?utf-8?B?bDNjbk9lSmluVDRJSEhJRVkvdW10d2t6aGQ3djFFbFdIc3dMQ1pROEl4elJJ?=
- =?utf-8?B?dXZhVlE4MjZ0Y21nb1VRYVpDbnZwK1EzdGhRUnViRFdHVnpmOXF3T0hNeW10?=
- =?utf-8?B?cnNuV2xibGFoa0FnQXlMb045UlQ2cGtrdWVIejRiL2NHUDRBSUhmUi95TUVy?=
- =?utf-8?B?a05venR5MWZsWlZjR1VIRnJ0MGJRUmtzRlFZS0tZU2c3d21aZjdzNENnamla?=
- =?utf-8?B?eVB1Z1JUeGQwUlBmaHpGUXNKQm9DVWVmbkpUN25Uc2lLQ1YxdFo3TlBhL2V5?=
- =?utf-8?B?VlRrNmRobzU3Y1Q2Zmdxd0s5TkMxNEF2cmx0Tk92dk9CZkxZdXkyUkVrSCtT?=
- =?utf-8?B?aU1GNWxPZ0JZZW1BYnFjVWJMeDIwOEtLRWVqeEYwV09LdW9VSGUvQVI0VEZO?=
- =?utf-8?B?TTQ3eHRGZVZBZi8vRWd5MzZ4UURKTHpRYlBaZXdVS3hKT3o1VnRnYVhWN0Fy?=
- =?utf-8?B?d3UrcHVhR0RsYTVCUzVKT3FwcTVHM0ZCNUMvVWdIU1l1UDhWTzNNaEtoRm40?=
- =?utf-8?B?MmcydTQwL0dqa0o1VkVuYUQ2QjdobnhVeDVlaFZtdVFwenR1OHFIRTZMU2dm?=
- =?utf-8?B?bWNNQllIbzhwbENvL1E3c0Y0TmY3VXl6R0lOekUyRytweVJXVTBJWDZjMEtJ?=
- =?utf-8?B?Q1pQakZCVld6WEw2Q24wVWgzTEYyZWlKc1YzUUVLZWN6MXZTaWZOSjEwc2xq?=
- =?utf-8?B?MjRqcklNVGMzM1BRWkdyUmRQWndWUGczNG95UEVjSkRwQkhUMExYTlJGY3hW?=
- =?utf-8?B?amFSQ3BmbkptZWw1RmdUM2prZkZVK0FZRFRyc2tqcUF4RlNzYjdIL3ZVbmg5?=
- =?utf-8?B?clJXdElmcURndUxST3dNRWdlc1hkUFpSYmh2VmRRZUJsbm13RlE1UmVlK1U2?=
- =?utf-8?B?T2tTM0ZLUUNHNkMxcVdRNGNoUnV0ZTkrcEIyVEpSWVlKYmQ4Z0VrVG1lTExy?=
- =?utf-8?B?MDhSTnJWWWR3Ty9ydFhGUzBUMlNjSG9Ya2Jia05hOHZWSnpmdEFZR0dkMjBo?=
- =?utf-8?B?NndCMzNzbTFRb3ZSNTZGU0dabXM5eFZtQmtyRmQzbXBSR2tTMHQxc0svZEdD?=
- =?utf-8?B?S1E5Q1BBd1EwaXBXNkdYTDlzNE1xcEthVVFFTGozZHlCL013dnF0cnY5cjlG?=
- =?utf-8?B?bXh6VDYxSEF3SXhaUGluVzJsdzZrdkhRN0xyaGprcFZEa3FkVDB3aE5mQkoy?=
- =?utf-8?B?WEQrbUpoRVNZUHF2VHF3eGVvcnphUXdUVTBFcENzeU0yRUFPTENXekJHRjA5?=
- =?utf-8?B?UFJqREdmcmpCanFYZ3l6amFFQjNrVDhBYkgwQ1VRbmlIUGpZWHc3dThZVkpz?=
- =?utf-8?B?RmdkcDVnNjBjYURGck14SkdDZkFqMS9JdFI5NEtobGJiUHBrQ2ZVUDZMOTRP?=
- =?utf-8?Q?dkuq2RVLJeCq9oaueAZZClR3WWrzipfat6avs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YlBLZHp4WnR2SEVkU1A1eW5iU0xDay9OSjNjYmVlQjl2Q0wvWlU1b3hyUW4w?=
- =?utf-8?B?S2lBNDJKdnk3ZXRtdXdZOHExRU1MTmlkMTdLcGg3cWttTHkrSjlITzRqSDdq?=
- =?utf-8?B?M0JsTmVpK0k3aEp4Mmx0MTJPTW1QWW9vOWVENFVuWkplVzVlQWc5MWk1ZDBQ?=
- =?utf-8?B?K0JTQzB5ZjJ1TWhzZEJHSENid2N0dW5rRjdoU2VuemxkWHN2SnJjdjI1cDdS?=
- =?utf-8?B?UnJJK3pmdDZ0Y1pnNDJoZC9BcE9ORWg4RkF4NEppcnpkM2hBamZHdlJWQTlB?=
- =?utf-8?B?VE12dGI4K3ZxcW04azZGZU1INDF3Nk9LeVhGbXd2eEs2R1FqRVlqYUFPL3lo?=
- =?utf-8?B?eUdWbVIrcVYwOFd3WFJ5QVBvZFdnNlZXdXkzU0wxa2JtNWxCOHlqWWtqUkQ2?=
- =?utf-8?B?MUVlQUplbHF5ZHVvNlFkU0x6WC84Q2RxZXR2UDVyc2NLTnhNUDltSnA0YkUx?=
- =?utf-8?B?UzZSMS9uK090NWxxQWNNM0JNRjJLdzJMejc2T0RvUFhLV2FpeVZpbjFiZUFU?=
- =?utf-8?B?a1JLSkVhTVBWMzh0KzIwTkkwbFpJRTR5WHdVaHhpRWVoRSt5c2dhSXBKSU5N?=
- =?utf-8?B?MDd6dHRhazFMQUVNQm93eHFjQmtnb3NrWFQ4WUN1ZENYK0prN01KN3RMWWpl?=
- =?utf-8?B?TDhkM1Naay80SVo1MTYrK21KNWVKR05OcDNOeDNMQ3NwTjNUT1luVEY2cFJw?=
- =?utf-8?B?YTkzOXdBWG8wMVpGUEtNQlJNNmxocWI4NW1GRHlDMWxpbEdOMVlvQTYyVVJv?=
- =?utf-8?B?bCtZTjhoclFTMjYvSTU5SHhsZ1N0a3pIVUNlNzVtb3RCTnNtbEszWlZrZkJk?=
- =?utf-8?B?Y0FSS3JWSG1DbW1SZFNFaGdRUkR1WmlIMC92bkhhZHlaY0dxQ2Q5UVZyYU0r?=
- =?utf-8?B?SkxJVzlaVzI5ZTJEcDlFQ1VjaEV4UFBOVzZhOVptTklXS0RKZVNhMmJoNGxW?=
- =?utf-8?B?c1I0Q0NSaGhaMkk1SFF2eXpyZFZaRmZuUEgzcUw5bnB4S0NNb2dydndNdjJa?=
- =?utf-8?B?a1J5eWpFMmY5TXZZMDFWY3dxOXlFeFV0S2NPT3p0UW15TVhITTBjT3g0djE0?=
- =?utf-8?B?SHJMM2dyWStpUFNzREtLNXJWby9mQXM2SVoyME5OTjhkcjkrTFVlSy92VXAw?=
- =?utf-8?B?OHJGbEpXTUdYTlFLYVIxRWQvQ1lHZGtsVXVZMmJ3NDhjSWxlbE9uNEVUbDJT?=
- =?utf-8?B?VkttN0RERXpKK3pBWjdLVlRjdnFiTU1pK3hEbTYxdHNsT3NwYUIzand1bHlG?=
- =?utf-8?B?dUJsNG1uK0NlaXhuK0QwbGdOL0NZMG01d2NIWVBUb1VNa0xuQVlLWlM2bnVU?=
- =?utf-8?B?YjB2UzBSOENlY0NURXZIenFuaDhLQ2VoVXFRcDFiTHhFZTZxYXpyTndBNlhm?=
- =?utf-8?B?MmFpdlRxaEdMRFJ4cFBZQThEekRTS1lNTlRkZWhPQitaODJLVHZRZ0RZQ0Uz?=
- =?utf-8?B?NUdSYURFWkEyK2ZwMFZuSStqWHczVkwyMG1PYmRKdWpycnVhaTVQZG5NRnU2?=
- =?utf-8?B?UENVMDA0bDY0ZGJqUWpSZzEwM3hHY3JONTJHcnpTT3ZZa3psVG1RRmNSc1pr?=
- =?utf-8?B?bGpjRjdjK21BL0NtNmE0YWRDRlhNZy9tczc2REcvRWVuelFYNEF3U2VFZmVM?=
- =?utf-8?B?algrdlJnNEJ4cmg1MUZFZnhmUkF2MHRqSUVWNUlKNGFWa2FXbkRLR3pSQ0pU?=
- =?utf-8?B?bFFnVVZ0Skp5UTE4Q0RDSldWWmVEQndXZXV6YVc5VTlYY05hbmN3amd5VjV3?=
- =?utf-8?B?S09iOUtybmwzaExadkdsdFVTZ1dlMUxKeUlhMldicUZUSW5RU0Z5SkpsYUlj?=
- =?utf-8?B?UkVqajU0VXRxSk1BZnlJWlkrRitCeFcwUm1HeVRoMGdDdzMyaUs5TTI4OVpO?=
- =?utf-8?B?NUFsT1RXSnV6T3NFcG9wZTF2UHFiTi82bjRxanhURmFmWG1SZ0FXb1dUREtz?=
- =?utf-8?B?N0ZzeE5uQXE5alVzT0JLSUZOUUlIakVNclloY25oalZtOXlHeDdweGxsbXZG?=
- =?utf-8?B?TFE0Y0JuQWJqN0lmZ1d5WVJlVzVNQ29FYnllWFUwZGt3bEl5M3h0NlhqNU5w?=
- =?utf-8?B?anozcTlWSGJraFlwRjVHb1dWWDRza3ZkUzVUTE9nS2UxeXVvdUR0R1ZzN054?=
- =?utf-8?Q?fMfDiTTWGWYVgvEDtEtBwKIqr?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6592e319-4061-4dad-9618-08dcb290c621
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2024 01:16:45.0524
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qZk/NzGzZIpdKUE2tfrcq7BYSiUt+eYqJ9ToiIc7YagJkz7lEP9o8gwy/rVsqtJjnoLOMNZR12SxF7XtXEjXrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6287
+In-Reply-To: <5E9D7211-5902-47D3-9F4D-8DEFD8365B57@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB37ILvM6xmro8SAg--.53496S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxArWUGr1fZw17tr1rJr4UCFg_yoW5Ww4fpF
+	yrKF4qyrWDJFWrCw1Ik3yrAFWSkr4Dtr45Jrn5KF9ruas8XFySvF4xKF4Ykr98Jr4vyw12
+	vayDAr9rt3WUArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
+X-CM-SenderInfo: hwkx0vthuozvpl2kv046kxt4xhlfz01xgou0bp/
 
 
-在 2024/8/2 2:32, Kasireddy, Vivek 写道:
-> [Some people who received this message don't often get email from vivek.kasireddy@intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> Hi Huan,
->
->> This patchset attempts to fix some errors in udmabuf and remove the
->> upin_list structure.
+
+On 2024/7/31 9:00, Song Liu wrote:
+> Hi Masami, 
+> 
+>> On Jul 30, 2024, at 6:03 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
 >>
->> Some of this fix just gather the patches which I upload before.
+>> On Mon, 29 Jul 2024 17:54:32 -0700
+>> Song Liu <song@kernel.org> wrote:
 >>
->> Patch1
->> ===
->> Try to remove page fault mmap and direct map it.
->> Due to current udmabuf has already obtained and pinned the folio
->> upon completion of the creation.This means that the physical memory has
->> already been acquired, rather than being accessed dynamically. The
->> current page fault method only saves some page table memory.
+>>> With CONFIG_LTO_CLANG=y, the compiler may add suffix to function names
+>>> to avoid duplication. This causes confusion with users of kallsyms.
+>>> On one hand, users like livepatch are required to match the symbols
+>>> exactly. On the other hand, users like kprobe would like to match to
+>>> original function names.
+>>>
+>>> Solve this by splitting kallsyms APIs. Specifically, existing APIs now
+>>> should match the symbols exactly. Add two APIs that matches the full
+>>> symbol, or only the part without .llvm.suffix. Specifically, the following
+>>> two APIs are added:
+>>>
+>>> 1. kallsyms_lookup_name_or_prefix()
+>>> 2. kallsyms_on_each_match_symbol_or_prefix()
 >>
->> As a result, the page fault mechanism has lost its purpose as a demanding
->> page. Due to the fact that page fault requires trapping into kernel mode
->> and filling in when accessing the corresponding virtual address in mmap,
->> this means that user mode access to virtual addresses needs to trap into
->> kernel mode.
+>> Since this API only removes the suffix, "match prefix" is a bit confusing.
+>> (this sounds like matching "foo" with "foo" and "foo_bar", but in reality,
+>> it only matches "foo" and "foo.llvm.*")
+>> What about the name below?
 >>
->> Therefore, when creating a large size udmabuf, this represents a
->> considerable overhead.
-> Just want to mention that for the main use-case the udmabuf driver is designed for,
-> (sharing Qemu Guest FB with Host for GPU DMA), udmabufs are not created very
-> frequently. And, I think providing CPU access via mmap is just a backup, mainly
-> intended for debugging purposes.
+>> kallsyms_lookup_name_without_suffix()
+>> kallsyms_on_each_match_symbol_without_suffix()
+> 
+> I am open to name suggestions. I named it as xx or prefix to highlight
+> that these two APIs will try match full name first, and they only match
+> the symbol without suffix when there is no full name match. 
+> 
+> Maybe we can call them: 
+> - kallsyms_lookup_name_or_without_suffix()
+> - kallsyms_on_each_match_symbol_or_without_suffix()
+> 
+> Again, I am open to any name selections here. 
 
-I'm very glad to know this.
+Only static functions have suffixes. In my opinion, explicitly marking static
+might be a little clearer.
+kallsyms_lookup_static_name()
+kallsyms_on_each_match_static_symbol()
 
-However, recently I have been researching on using asynchronous and 
-direct I/O (DIO) when loading large model files with dma-buf,
-
-which can improve performance and reduce power consumption. You can see 
-the patchset:
-
-https://lore.kernel.org/all/20240730075755.10941-1-link@vivo.com/
-
-In the discussion, the maintainer suggested that we should base our work 
-on udmabuf. I tested udmabuf and found that using asynchronous
-
-and direct I/O (DIO) to read files performs similarly to my patchset.
-
-So I turned to studying udmabuf, and once I become familiar with the 
-system, I will be able to encourage our partners to adapt it.
-
->
->> Therefore, the current patch removes the page fault method of mmap and
->> instead fills it directly when mmap is triggered.
+> 
 >>
->> This is achieved by using the scatter-gather table to establish a
->> linear relationship for the page. Calling remap_pfn_range does not cause
->> the previously set VMA flags to become invalid.
+>>>
+>>> These APIs will be used by kprobe.
 >>
->> Patch2
->> ===
->> This is the same to patch:
->> https://lore.kernel.org/all/20240725021349.580574-1-link@vivo.com/
->> I just gather it to this patchset.
->>
->> Patch3
->> ===
->> The current implementation of udmabuf's vmap has issues.
->>
->> It does not correctly set each page of the folio to the page structure,
->> so that when vmap is called, all pages are the head page of the folio.
->>
->> This implementation is not the same as this patch:
->> https://lore.kernel.org/all/20240731090233.1343559-1-link@vivo.com/
->>
->> This reuse sgt table to map all page into vmalloc area.
->>
->> Patch4
->> ===
->> Wrap the repeated calls to get_sg_table, add a helper function to do it.
->> Set to udmabuf->sg use cmpxchg, It should be able to prevent concurrent
->> access situations. (I see mmap do not use lock)
->>
->> Patch5
->> ===
->> Attempt to remove unpin_list and other related data structures.
->>
->> In order to adapt to Folio, we established the unpin_list data structure
->> to unpin all folios and maintain the page mapping relationship.
->>
->> However, this data structure requires 24 bytes for each page and has low
->> traversal performance for the list. And maintaining the offset structure
->> also consumes a portion of memory.
->>
->> This patch attempts to remove these data structures and modify the
->> semantics of some existing data structures.
->>
->> udmabuf:
->>    folios -> folios array, which only contain's the folio, org contains
->> duplicate.
->>    add item_offset -> base on create item count, record it's start offset
->> in every memfd.
->>    add item_size -> base on create item count, record it's size in every
->> memfd.
->>    add nr_folios -> folios array number
-> I am not sure if these changes improve the readability. Instead, I think it makes
-> sense to add comments to the existing code.
-
-This is not aimed at improving readability, but rather at saving memory 
-and performance,
-
-as unpin_list is 24 bytes for each folio.
-
-If each folio is 24 bytes, it would result in a lot of performance loss.
-
-I previously provided a patch to establish a kmem_cache to reduce memory 
-waste, but after recent study,
-
-https://lore.kernel.org/all/20240731062642.1164140-1-link@vivo.com/(This 
-patch forget to unregister when model exit)
-
-I believe that the unpin_list may not need to be constructed, and 
-instead, operations can be directly based on the folio array.
-
-
->
->> So, when building the sg table, it is necessary to iterate in this way:
->>    if size cross item->size, take care of it's start offset in folio.
->>    if got folio, set each page into sgl until reach into folio size.
->>
->> This patch also remove single folios' create on each create item, use it
->> be the ubuf->folios arrays' pointer, slide to fill the corresponding
->> folio under the item into the array.
->>
->> After the modification, the various data structures in udmabuf have the
->> following corresponding relationships:
->>    pagecount * PAGESIZE = sum(folios_size(folios[i])) i=0->nr_folios
->>    pagecount * PAGESIZE = sum(item_size[i]) i=0, item_count (do not
->> record)
->>    item_offset use to record each memfd offset if exist, else 0.
->>
->> Huan Yang (5):
->>    udmabuf: cancel mmap page fault, direct map it
->>    udmabuf: change folios array from kmalloc to kvmalloc
->>    udmabuf: fix vmap_udmabuf error page set
-> Do you have a test-case to test this patch?
->
->>    udmabuf: add get_sg_table helper function
->>    udmabuf: remove folio pin list
-> Please run the newly added udmabuf selftests to make sure that these
-
-Yes, you're right, when I release the next patch, I will include it. 
-Thank you for point this.
-
-Christian König reminded me not to build page associations based on the 
-sg table, which I had not considered.
-
-Therefore, the overall logic of the patch needs to be revised.
-
-> patches are not causing any regressions. And, we also need to make sure that
-> the main use-cases (Qemu with memfd + shmem and Qemu with memfd + hugetlb)
-> are working as expected given the invasive changes.
->
-> I'll be able to test and provide more detailed feedback on all patches once I am back from
-> vacation late next week.
-
-Wish you a pleasant holiday.
-Thank you.
->
+>> No other user need this?
+> 
+> AFACIT, kprobe is the only use case here. Sami, please correct 
+> me if I missed any users. 
+> 
+> 
+> More thoughts on this: 
+> 
+> I actually hope we don't need these two new APIs, as they are 
+> confusing. Modern compilers can do many things to the code 
+> (inlining, etc.). So when we are tracing a function, we are not 
+> really tracing "function in the source code". Instead, we are 
+> tracing "function in the binary". If a function is inlined, it 
+> will not show up in the binary. If a function is _partially_ 
+> inlined (inlined by some callers, but not by others), it will 
+> show up in the binary, but we won't be tracing it as it appears
+> in the source code. Therefore, tracing functions by their names 
+> in the source code only works under certain assumptions. And 
+> these assumptions may not hold with modern compilers. Ideally, 
+> I think we cannot promise the user can use name "ping_table" to
+> trace function "ping_table.llvm.15394922576589127018"
+> 
+> Does this make sense?
+> 
 > Thanks,
-> Vivek
->
->>   drivers/dma-buf/udmabuf.c | 270 +++++++++++++++++++++-----------------
->>   1 file changed, 148 insertions(+), 122 deletions(-)
->>
->>
->> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
->> --
->> 2.45.2
+> Song
+> 
+> 
+> [...]
+> 
+
+-- 
+Regards,
+  Zhen Lei
+
 
