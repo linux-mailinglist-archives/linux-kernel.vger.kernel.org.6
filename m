@@ -1,111 +1,127 @@
-Return-Path: <linux-kernel+bounces-272212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDF19458B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:27:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171329458B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB8991F24717
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:27:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 330B01C236BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D161C0DE0;
-	Fri,  2 Aug 2024 07:26:30 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D671BF305;
+	Fri,  2 Aug 2024 07:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxOTDUTd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D3F1BF325
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F192C219FC;
+	Fri,  2 Aug 2024 07:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583590; cv=none; b=RMwbkM2XJ7OjsxiVVOUClwPBh9Nhwl6q2b5Klt2F4CygxL/TuNNbSJZPNORIqNBvqHwYEXec0yOA5sGg9S4nag+Ssc2zPl7bYNxmKdzJA7KI4Sn9jbWf86nmTyy97hhWJqksVD+zd4ET661UXVoiAN5v6R1ZMgBoQ6ROeXQOwgQ=
+	t=1722583631; cv=none; b=XLxYMBGw+FGT6DxMqcC3z8vLvHKxNpYhEUlkgmiQXVlXWwLyXH325PbpkyuCEdIp0baBFKYgJrevguPC8zjYdub7FUG6Lx07i/UGkXdiR86WiLxFHtQpN4wkCbU2g51kePixAOP1DCFdgeeEPRXQHTc1LXQmn96LfUaU1Mnk6Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583590; c=relaxed/simple;
-	bh=mXj5zq9cbihDCWhZIY+vpwJiaJLdPixCkZlSlmf5rT0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Kjqr3AcNWFhZaM9uUSqaX7YuDOUM1JRCqfCNKic0K3P5zbxkxwT5wXpy796+nOm928VKX6AgEMT/hxd3hlZRXkybNxUU0uffUmNVjX0YANwwVHBeju3Ss84fIUxykVCX9iaK9m66YY9reL8ZCP0JDZtgDP+u4+4ME4fkpBDq8bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39915b8e08dso143678745ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:26:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722583587; x=1723188387;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XrXByCznmhsppVEKcGZ/MFeTWBUrt3Wcq6+zhpOmQNM=;
-        b=OP/c/2mfyVn8bxPV8RRNkZk1QlyzY4FPzF4Dt8HYZ7Aqrhzgk96f20vVkD34ngCObq
-         l1DMZwF5GjGSOmAMIE1FKWuQXd1s9kylTZu3p7oJDmFDvYMldSgnGhY+0Au7mJ8ULeuG
-         jRTnAsTP5Nq8uwuYMtRwUbOzWnNOptuxbA9tHQJqTJfmbycCD3QyVYmoC37NkyL1FrNN
-         lg37yuzBGQaznsGZjnMI/LvwscngrpFap8Epjmpnjb/6psP+KuBOndYzRs4cQP24K4Ab
-         wF7mghItpNrj9ZZ0IzxuLlKVNToyvRtisdpO9D5W/c9RoSNnXsrtmsxSmP9dmfP38KHi
-         Lp1Q==
-X-Gm-Message-State: AOJu0YysoO4eQiroEGdFC0Ugei4qYrXDg6JgHe13zIX5Uom3zHlTHpRY
-	LX/mFrF6Mnh+x7/CdXejYP2t03gUuaYKSuu6ZIXc2rt9UFQwav5V/zp3ncs/oNDTL97vIimcxRc
-	B+1KsU/yXXUpNJnh0P10COBKX1Zjo0HJQ6tsLDY5MmgUrnSjSM8911Nc=
-X-Google-Smtp-Source: AGHT+IFotTmT94wCutbGucYcHOJn2xrABFMGERzA2A3CFrqC1D4uiGnGJsP4CFNn5M23ICuawfJVIuNNKtn9+Od6xXoNbOQ5mlIz
+	s=arc-20240116; t=1722583631; c=relaxed/simple;
+	bh=jNOB+LUNmMpU1ZevdtwyxVeBA8MyZ2+b63HNWYOmTkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sizGhJhgt8xXV2e2ikUQ+8uVcgz5dGyqlvO9IcRV833EmAUoEHAmqQiTFrCr2sYMG/ISTJj2QRLEu2txJSsqNzKlXwBQKDPhlFDHdX6qOlzpsieJB0f9OzRi//zPlPoUmubosrEG+6BXMTB+RWX+FDz6a8QEdu9wZFUGitwGmBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxOTDUTd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 935E1C32782;
+	Fri,  2 Aug 2024 07:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722583630;
+	bh=jNOB+LUNmMpU1ZevdtwyxVeBA8MyZ2+b63HNWYOmTkY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=PxOTDUTdOwmamN7eeJGa7iGaEOUYHxZovt4g0bQkTQErqq2O2z+xHXuGcKYkI9+0d
+	 lmJoeAmatU1l+gNv1aloCaXT3PiBK5cH3G6FikdHj9eB2mVn1/oMk9SCEZBgn0tACf
+	 jhGlRs1F7+a8wB09zHp64rdxy6IPxPGmhL+9bvrBnkEv9DomJmMCVrh5YQTwEH92dY
+	 ALD0T+lh4n3qd/gJGi2dSUrbYRJDSAsb7Ugse1mysC6OOiLxjBOrJoIkr8c+urg8OU
+	 Tqf6e7FN/tz/IVbaXzPQXzOgeqCM8OXk12Ddi9ZsKMJNGh6wNwvA/1/zodEouN+SaK
+	 uZnUsl3O19QNg==
+Message-ID: <ed4f21ac-cc1f-45a0-aba5-35f508a67ff0@kernel.org>
+Date: Fri, 2 Aug 2024 09:27:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216b:b0:396:1fc1:7034 with SMTP id
- e9e14a558f8ab-39b1f7a3de1mr2031555ab.0.1722583587642; Fri, 02 Aug 2024
- 00:26:27 -0700 (PDT)
-Date: Fri, 02 Aug 2024 00:26:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d668c8061eae3ecd@google.com>
-Subject: [syzbot] Monthly net report (Aug 2024)
-From: syzbot <syzbot+list8e95f1289d8f38f9e414@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] dt-bindings: Add ISL69260 voltage regulator device
+To: Peter Yin <peteryin.openbmc@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+ Noah Wang <noahwang.wang@outlook.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Patrick Rudolph <patrick.rudolph@9elements.com>,
+ Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240801153429.1277378-1-peteryin.openbmc@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240801153429.1277378-1-peteryin.openbmc@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello net maintainers/developers,
+On 01/08/2024 17:34, Peter Yin wrote:
+> The ISL69260 is a digital dual output multiphase
+> with Intel VR13, VR13.HC, and VR14 specifications.
 
-This is a 31-day syzbot report for the net subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/net
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-During the period, 17 new issues were detected and 9 were fixed.
-In total, 110 issues are still open and 1486 have been fixed so far.
+Commit msg: You should also say that you document a compatible already
+used in DTS.
 
-Some of the still happening issues:
+Best regards,
+Krzysztof
 
-Ref  Crashes Repro Title
-<1>  97695   Yes   possible deadlock in team_del_slave (3)
-                   https://syzkaller.appspot.com/bug?extid=705c61d60b091ef42c04
-<2>  12003   Yes   unregister_netdevice: waiting for DEV to become free (8)
-                   https://syzkaller.appspot.com/bug?extid=881d65229ca4f9ae8c84
-<3>  5132    Yes   KMSAN: uninit-value in eth_type_trans (2)
-                   https://syzkaller.appspot.com/bug?extid=0901d0cc75c3d716a3a3
-<4>  1530    Yes   WARNING in inet_sock_destruct (4)
-                   https://syzkaller.appspot.com/bug?extid=de6565462ab540f50e47
-<5>  1221    Yes   WARNING in rcu_check_gp_start_stall
-                   https://syzkaller.appspot.com/bug?extid=111bc509cd9740d7e4aa
-<6>  683     Yes   general protection fault in skb_release_data (2)
-                   https://syzkaller.appspot.com/bug?extid=ccfa5775bc1bda21ddd1
-<7>  670     Yes   possible deadlock in team_port_change_check (2)
-                   https://syzkaller.appspot.com/bug?extid=3c47b5843403a45aef57
-<8>  588     Yes   WARNING in kcm_write_msgs
-                   https://syzkaller.appspot.com/bug?extid=52624bdfbf2746d37d70
-<9>  543     Yes   INFO: task hung in synchronize_rcu (4)
-                   https://syzkaller.appspot.com/bug?extid=222aa26d0a5dbc2e84fe
-<10> 488     Yes   INFO: rcu detected stall in tc_modify_qdisc
-                   https://syzkaller.appspot.com/bug?extid=9f78d5c664a8c33f4cce
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
