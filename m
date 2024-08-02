@@ -1,132 +1,145 @@
-Return-Path: <linux-kernel+bounces-272221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018EC9458C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF469458CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317EE1C23A35
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:29:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E186C1C21121
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118081C2322;
-	Fri,  2 Aug 2024 07:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2651BF321;
+	Fri,  2 Aug 2024 07:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zRJNIYqV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XQGHQUqy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hh67PEb7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BB71C0DC1;
-	Fri,  2 Aug 2024 07:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948051BF310;
+	Fri,  2 Aug 2024 07:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583731; cv=none; b=MyQ++jPfdOfxCwu6nrTyf7fKsP4Btqdr2z4bv+LvrGIOhERy8ODj7n04WMW3ItJbn4kvQsPoTyymAZFVvMFXvIpT0nvjU1GOd8Cq6GCKEOO/UcOiRu7E+qLQ+2HrH3cdw6Onj6IlM6N1Kc0LtEX8QSGPJzP/Rp4/tQLB2sHLYe0=
+	t=1722583743; cv=none; b=Rja+gou4e18to64mX0wJ0M7spITZCU7h874HTw1rkP7t72Q9et79Nsj5RrCVCFmmQRiRPYYACY4zqRnDixJ2dglglFwNOpuHm+pgU3CIG6chFyeiI9g33jdlM04UKa3wENdbFQxFV+jO16ogmOAZqfyE+NCyYFrlhOUWSXVuDXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583731; c=relaxed/simple;
-	bh=eSVR0ivgMb2rD2JV7JSP6Z32YgRncPjqKaeBVgh8QZM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=IhR0i1d1ofdFJCbWL7nUL0fxYA1e+nfyjQgmY1ps/IqB5ftybQsTJ3Q8SuKiecJKtzpRLEV5KGFGE8ZhrpRyHey9S+t1SCHURFzE+KO/5gQ9888wplTLjlJzXT5k1pNpSlANlLXXQBAQI7cGX7b24BubDAhLmkaXH73JU7b3bJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zRJNIYqV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XQGHQUqy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 02 Aug 2024 07:28:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722583726;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6QOjRKKDXXdDXcD/8SkufvHMQ7lD2Bf/QGt2BxTDeh8=;
-	b=zRJNIYqVbHAYwo1W2YfKf1UqMW8BMFTyqFfHrthtwdMIzKH9UFxMIaz+bhGPNzOxHAvj4S
-	pnY2SnTsxWgLZveHBOf+PxVIPHX+OrKWUO90wPQ0upCYrMfaLYXcl0xm3HV9r4EQBtzX8W
-	EWbXhkuTZwNPI95wA1i2GNaaYiN//37tObu2E8f9drQoLqWZCrWaaVtuBfXFiMKOxSq/Ou
-	+7STQHDd7LWV1u5my+ZqRxYmz9DWfehYscBthyP8WNDeVLLxEGB/LTS3BQ/kBEre60FAyJ
-	dC+maLGvejh8yM/QtXYfqKvCzTNq5S0VFia1aB3S/YBK6/aZdDD3uF8n8TfNSw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722583726;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6QOjRKKDXXdDXcD/8SkufvHMQ7lD2Bf/QGt2BxTDeh8=;
-	b=XQGHQUqy6cTeI2hu95qTsozHhfm7UoatmATCPM7ViyS/PIpBL1EtNk2iegJ0MdH717G+UA
-	I1eNgo385npdPoCg==
-From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/misc] tools/x86/kcpuid: Remove unused variable
-Cc: "Ahmed S. Darwish" <darwi@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240718134755.378115-2-darwi@linutronix.de>
-References: <20240718134755.378115-2-darwi@linutronix.de>
+	s=arc-20240116; t=1722583743; c=relaxed/simple;
+	bh=1w+7rrYCa3LRNi+HM2wn8pYcRqkhvqQwbQhxswRVpZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QSwukoD7nHQfUXd6/uzjBKVrlwkWGyED7V6eWGW++rEqLTHxlADiL2zXE2nad5oCK6s5bgK0FtZEohRwmHCKrAsUqKKOswfs5gPsLa6XD4uo+IJ9AvjXGSuGWsn3pC54R3Y24qSuyzGbb7tn52p0wCRsELHpct0zSBoPO6vBXzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hh67PEb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9EF6C4AF09;
+	Fri,  2 Aug 2024 07:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722583743;
+	bh=1w+7rrYCa3LRNi+HM2wn8pYcRqkhvqQwbQhxswRVpZ0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Hh67PEb72N2VVF+qkXferhBwAhLAQzGLOvfL0UoeuLtig+sjoSsd50+KBqF4wEUvq
+	 /4oMF4oUO3cSbu+9Z1yoN7R863aDLzAH5A6NLFncIKCNPQ+IFTMPbuppM+FmuL24bg
+	 LvICqgGmnWO2ABTqTtKbjJyGejU1CB775K7DmyadwnCC3I4kPsonUXBpFEuXAQxHUf
+	 6xLUkauYcIJWtRbrLMMAK32fuyUOBNgq8gZpqydd5Uw/HDLhoC4QvrbisKFJkzguLF
+	 IwcJkZFBV68x5QQHzOa7oY4V5ytWMAJSMFWoGsGimhWmXb+HemstwqF0CNgbvLoMYj
+	 7OeRwlcSQEpdA==
+Message-ID: <c65a6eab-1f76-43ee-9bde-9ab1d5cd2819@kernel.org>
+Date: Fri, 2 Aug 2024 09:28:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172258372626.2215.9009669202769080316.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] ASoC: dt-bindings: pm8916-wcd-analog-codec:
+ Document pm8950/pm8953
+To: Adam Skladowski <a39.skl@gmail.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Stephan Gerhold <stephan@gerhold.net>
+Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240731-msm8953-msm8976-asoc-v3-0-163f23c3a28d@gmail.com>
+ <20240731-msm8953-msm8976-asoc-v3-2-163f23c3a28d@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240731-msm8953-msm8976-asoc-v3-2-163f23c3a28d@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/misc branch of tip:
+On 31/07/2024 17:25, Adam Skladowski wrote:
+> Document pm8950 and pm8953 analog audio codecs.
+> 
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+>  .../devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml     | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml b/Documentation/devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml
+> index 94e7a1860977..8af8bb747abe 100644
+> --- a/Documentation/devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml
+> +++ b/Documentation/devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml
+> @@ -14,8 +14,10 @@ description:
+>  
+>  properties:
+>    compatible:
+> -    const: qcom,pm8916-wcd-analog-codec
+> -
+> +    enum:
+> +      - qcom,pm8916-wcd-analog-codec
+> +      - qcom,pm8950-wcd-analog-codec
+> +      - qcom,pm8953-wcd-analog-codec
 
-Commit-ID:     39e470057f785eab7b6638feb3f24cbad6816aff
-Gitweb:        https://git.kernel.org/tip/39e470057f785eab7b6638feb3f24cbad6816aff
-Author:        Ahmed S. Darwish <darwi@linutronix.de>
-AuthorDate:    Thu, 18 Jul 2024 15:47:41 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 02 Aug 2024 09:17:18 +02:00
+Why dropping new line?
 
-tools/x86/kcpuid: Remove unused variable
 
-Global variable "num_leafs" is set in multiple places but is never read
-anywhere.  Remove it.
+Best regards,
+Krzysztof
 
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240718134755.378115-2-darwi@linutronix.de
-
----
- tools/arch/x86/kcpuid/kcpuid.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/tools/arch/x86/kcpuid/kcpuid.c b/tools/arch/x86/kcpuid/kcpuid.c
-index 24b7d01..e1973d8 100644
---- a/tools/arch/x86/kcpuid/kcpuid.c
-+++ b/tools/arch/x86/kcpuid/kcpuid.c
-@@ -76,7 +76,6 @@ struct cpuid_range {
-  */
- struct cpuid_range *leafs_basic, *leafs_ext;
- 
--static int num_leafs;
- static bool is_amd;
- static bool show_details;
- static bool show_raw;
-@@ -246,7 +245,6 @@ struct cpuid_range *setup_cpuid_range(u32 input_eax)
- 		allzero = cpuid_store(range, f, subleaf, eax, ebx, ecx, edx);
- 		if (allzero)
- 			continue;
--		num_leafs++;
- 
- 		if (!has_subleafs(f))
- 			continue;
-@@ -272,7 +270,6 @@ struct cpuid_range *setup_cpuid_range(u32 input_eax)
- 						eax, ebx, ecx, edx);
- 			if (allzero)
- 				continue;
--			num_leafs++;
- 		}
- 
- 	}
 
