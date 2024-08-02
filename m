@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-272861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D19429461F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:44:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CD89461FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09B941C210C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40C41F221FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC8A136344;
-	Fri,  2 Aug 2024 16:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sQ9F2wx2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZnCWtt2/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE17136322;
+	Fri,  2 Aug 2024 16:44:49 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066D216BE02;
-	Fri,  2 Aug 2024 16:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4823816BE0B;
+	Fri,  2 Aug 2024 16:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722617041; cv=none; b=IIeVL5aNocYPDb4X3+0tdHe0wgNoQwl2baxeSO3gdRd0LSMjfIXA/BlelyaC8rKu4L5aEjru7cdTjizWKg9hcCKM/+4lBrZdp0ShAx6KPKt7L6xVhV1TVeiKXbpPoEI0K4r+cgA8wzX5pohz71C7VD9CRB884LKgqhyJxRYtlxM=
+	t=1722617089; cv=none; b=D++J5nz4W2qB0UvFG9MIHJXD8C7wV6h5WlA4WoHP6DaOmfQ6Z0yK9BADE2hpDG0L++hmOSS3w4aHIiFpw+G/w/64hKhVnqkcOQDX8u6awsSAA79dtqngqscDCIraPv0p9bOP49sn6aecIpxyA2EZzJXvXP7kLqJl99NP0acsCkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722617041; c=relaxed/simple;
-	bh=8XEi+13NZTXueUGt3oRFjyAfKZ9s7Zm/L10469/W95Y=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=e55uNuR4SALnfASFDXElOzxaA7om07oVyUIc6QAWmc6ehIukFg3WBcOa/2OaUvgWjEM+GSp1s93VYSR5B3pK1RiR7Y/H5rPLC6DO4pG9LtiNsPRGWmaLsGnOziKkfsVCO/SJZg/LE6waBZjwLbCMZjXYW66JRL/LQmjSYJaSSik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sQ9F2wx2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZnCWtt2/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 02 Aug 2024 16:43:58 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722617038;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3eFvLdL7VGTMpnzwSogiL2VLEqV/4dAJ3zFB9eQYG+4=;
-	b=sQ9F2wx29WuLzloImZtocO7kMCFNIYQ9UXBkFBdGlGsLk7z1ZxLWl1bjRJOyZoXnioPVRq
-	3LrQlGjO5eWdeU26hG9fZjSOaH1GcVKfHhr2nWr6Ola9lLdehhmcG9jUzdZ1GQC4DMAXGL
-	vzq4YCumI/QwlcWMc1dhTNdJggoUoj6dpSftZG5UEYLUyUjfEGGL8Uv8acaG1cVNkDSJwA
-	2xRjfIxZ01hAamsScsDxbg2knPYamI0xP3tH2lrdaVQRAsCI0rS3PgSbw08tb5Yejh1f0k
-	GBW8iadj8IpsV5qwWk2dvpfpYOREZlptqDNmo712P0qk6IambtZatuDUyuTZsg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722617038;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3eFvLdL7VGTMpnzwSogiL2VLEqV/4dAJ3zFB9eQYG+4=;
-	b=ZnCWtt2/yG9tZGnnM+3Kb8iNm4rHRM2YUuCZY1kHqtTSIkbc+Rqj2gLm5bTg3lVep8v6VG
-	ud9quMv+J5KwJHCA==
-From: "tip-bot2 for Paul E. McKenney" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/timers] x86/tsc: Check for sockets instead of CPUs to make
- code match comment
-Cc: Zhengxu Chen <zhxchen17@meta.com>,
- Danielle Costantino <dcostantino@meta.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240802154618.4149953-5-paulmck@kernel.org>
-References: <20240802154618.4149953-5-paulmck@kernel.org>
+	s=arc-20240116; t=1722617089; c=relaxed/simple;
+	bh=NCbcoYaXRkWCPqQyDc3SvLTQKqJDdoxXXdNRp7Lxpbs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lCLHlV6CpOm8I3ytXZV58odGzhKssSn4mYVx+u82uzv2NNPAt2KhqqLINfwmoktDWEPfarSn0pNNgy2pndspbrAFJOAOv800Z1YiIQHDiCFGqttqzLNKeoo+jeIP/yMK0EOY3KVFIeqaHdCChPcptQkkK+4SJIg+2NX1uFpYF8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WbBTD2kfFz6K5YZ;
+	Sat,  3 Aug 2024 00:42:40 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id A6A811404F5;
+	Sat,  3 Aug 2024 00:44:44 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 2 Aug
+ 2024 17:44:43 +0100
+Date: Fri, 2 Aug 2024 17:44:43 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mike Rapoport <rppt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
+ Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
+	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
+	<dave@stgolabs.net>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko
+ Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
+ Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
+	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
+	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
+	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
+	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
+Subject: Re: [PATCH v3 00/26] mm: introduce numa_memblks
+Message-ID: <20240802174443.0000710c@Huawei.com>
+In-Reply-To: <20240801060826.559858-1-rppt@kernel.org>
+References: <20240801060826.559858-1-rppt@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172261703803.2215.17943747116347203203.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-The following commit has been merged into the x86/timers branch of tip:
+On Thu,  1 Aug 2024 09:08:00 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-Commit-ID:     e7ff4ebffe3bedf55560ef861d80f6500ff0d76f
-Gitweb:        https://git.kernel.org/tip/e7ff4ebffe3bedf55560ef861d80f6500ff0d76f
-Author:        Paul E. McKenney <paulmck@kernel.org>
-AuthorDate:    Fri, 02 Aug 2024 08:46:18 -07:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 02 Aug 2024 18:38:07 +02:00
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> Hi,
+> 
+> Following the discussion about handling of CXL fixed memory windows on
+> arm64 [1] I decided to bite the bullet and move numa_memblks from x86 to
+> the generic code so they will be available on arm64/riscv and maybe on
+> loongarch sometime later.
+> 
+> While it could be possible to use memblock to describe CXL memory windows,
+> it currently lacks notion of unpopulated memory ranges and numa_memblks
+> does implement this.
+> 
+> Another reason to make numa_memblks generic is that both arch_numa (arm64
+> and riscv) and loongarch use trimmed copy of x86 code although there is no
+> fundamental reason why the same code cannot be used on all these platforms.
+> Having numa_memblks in mm/ will make it's interaction with ACPI and FDT
+> more consistent and I believe will reduce maintenance burden.
+> 
+> And with generic numa_memblks it is (almost) straightforward to enable NUMA
+> emulation on arm64 and riscv.
 
-x86/tsc: Check for sockets instead of CPUs to make code match comment
+Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> #arm64 + CXL via QEMU
+With that one fix in patch 7.
 
-The unsynchronized_tsc() eventually checks num_possible_cpus(), and if the
-system is non-Intel and the number of possible CPUs is greater than one,
-assumes that TSCs are unsynchronized.  This despite the comment saying
-"assume multi socket systems are not synchronized", that is, socket rather
-than CPU.  This behavior was preserved by commit 8fbbc4b45ce3 ("x86: merge
-tsc_init and clocksource code") and by the previous relevant commit
-7e69f2b1ead2 ("clocksource: Remove the update callback").
+Feel free to figure out which patches actually got tested by that
+(or tag them all - I'll pretend I tested ip27 :)
 
-The clocksource drivers were added by commit 5d0cf410e94b ("Time: i386
-Clocksource Drivers") back in 2006, and the comment still said "socket"
-rather than "CPU".
+Jonathan
 
-Therefore, bravely (and perhaps foolishly) make the code match the
-comment.
-
-Note that it is possible to bypass both code and comment by booting
-with tsc=reliable, but this also disables the clocksource watchdog,
-which is undesirable when trust in the TSC is strictly limited.
-
-Reported-by: Zhengxu Chen <zhxchen17@meta.com>
-Reported-by: Danielle Costantino <dcostantino@meta.com>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240802154618.4149953-5-paulmck@kernel.org
-
----
- arch/x86/kernel/tsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 0ced187..dfe6847 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -1288,7 +1288,7 @@ int unsynchronized_tsc(void)
- 	 */
- 	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL) {
- 		/* assume multi socket systems are not synchronized: */
--		if (num_possible_cpus() > 1)
-+		if (topology_max_packages() > 1)
- 			return 1;
- 	}
- 
 
