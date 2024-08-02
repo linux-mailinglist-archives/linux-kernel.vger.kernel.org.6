@@ -1,120 +1,140 @@
-Return-Path: <linux-kernel+bounces-272045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93473945634
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:01:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBAD9945636
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F26FB22C25
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7735B2842E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A951804F;
-	Fri,  2 Aug 2024 02:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F8517BB7;
+	Fri,  2 Aug 2024 02:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GO3I31WF"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CBWpWQ96"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3393D68;
-	Fri,  2 Aug 2024 02:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A60813FF6
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 02:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722564073; cv=none; b=X3MO+1YtKVTWCGnkkQMs/feZOjeTDyiflAQYO4/8G9oqYU0Uk43yBSooSdJ7fsKTKyyZ3Y452ATI50GBS9h/S7UxWpEN4YYmCWq/Vi9l3hRB3k+Xspdqb2q61uxGbVZym7ojVgqtYkGZcQ1vF6tk3ET7Lt9wl2N31O3nrK5bVpc=
+	t=1722564374; cv=none; b=mB7uN/NXtiGjAe5YsIRfXs4UnnOoUNceV76OJ5/mgf2dLfaJqqCX2yKFGjVWYQz2Rtm2+HNlLmJbrh3aBbVyDlOHKveu+IC7h7abKmrEn8WVu1/LoFDN43xPbSzgVdQfitFrfr6wiNpOUGrMNQgLqCHWzWfx6Ie6iyYZRDTHlvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722564073; c=relaxed/simple;
-	bh=DME/FcWpg1y22yW6VktfNpiVVplejRNksuU2BNddFm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SdU+S0/dIcEn/L+KLLA/4ODsd6PEqkaVlMIdluS41BDh4nJK+owbv/AKukARn1FTCX1pPfwV5qzXzbxLPOKuZZey/bG8+eGJtm8Rmd2xLN8lrx028UDwQxgI/VSowbL91EC7ipj9ZphtX2GoLtmSwij5daZVVf4THMjzA7xKiy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GO3I31WF; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cb81c0ecb4so2059693a91.0;
-        Thu, 01 Aug 2024 19:01:12 -0700 (PDT)
+	s=arc-20240116; t=1722564374; c=relaxed/simple;
+	bh=oR/MugVZHnBj/5zRWr5q0x83uwzfm2FrZybCle6S/Hw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hi7kI4NQJD6WCIR60L41yxrQs52+eMcIWaXHtyEic8xyhDpekffYng4GcZeW6cm7XPCSslm7nkkdV0oBt9SRu02J4LLRuGLw+Avsys+GkerTEqwGrknItcGqJU4k4u525pL8/hAoeFqUoQPcwvaOpXXKVNz15+/1NQXR1OzyLGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CBWpWQ96; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428119da952so48861785e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 19:06:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722564072; x=1723168872; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6jPu7+Zk7lvnbGrSwKxSxehNV5Y9nXc9e9et1xGEkKw=;
-        b=GO3I31WFZo0a+XBo1Ys8JeSgTFQFTSojS8JtBoL8pdSJWvmJkm7zcrum507sCyATSE
-         iO0822c0WunPrbWhTKJTSivf7hQv6PEjba4LZWmCZ/UOPl/E8h4ZPuIRv3agujk9RyN1
-         WXlXeH1PLm9I850YSS7ls4ERgvDWh4zTmNgZGq8fEMs9MwtQr6ay02MUGcNMV3DVnTzh
-         nLXGzg2siNIZErO2fuAryVrC7wDEw24GhhHH2QF0KX1tW8CjRgZC498YrG+Kcgn9sW3L
-         gbQ3kY4EFO0u4gnNaEAY+Pt/kmr1tIjP6NtFxOao4upKUklXnILv9wenJLK71XHCH4u1
-         FLFQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722564371; x=1723169171; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oR/MugVZHnBj/5zRWr5q0x83uwzfm2FrZybCle6S/Hw=;
+        b=CBWpWQ96K4s7vmEI7KXqPk///5UDW8iGV8YuJhJ5z7o/Ooi/NdvyAjIYr2BaxAj8Yj
+         dzroIqeT4omOLPR6bhr5Cpv73v/CMSHzb7vrChFroUhLiqyE5iElwABcpV/glQUnkP7E
+         1SXP0VkbedItcvWLo7dJk81SNagiBWN0e0KTk3mKTEkQUwiGhmVo07RxNyvcyG6x1yf/
+         yoaGqiGIAK6fDc1pEZP4nzDszqaNlSQrzDh2qmZQc5utnHbxLjeGLu1EOp81rmv3QxuR
+         +W8VpF1w3Qur2RjxJywjLa6QTT54u0JJ15pO1MwslySp8w20vV0D2qstZCVOdx+ARecA
+         tThw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722564072; x=1723168872;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6jPu7+Zk7lvnbGrSwKxSxehNV5Y9nXc9e9et1xGEkKw=;
-        b=m0OX56uV3BFUvqSTh6RRrpFKiScK8saLB/xcR5PI9GEL4/6GrVO7qttT80PO3BiJ8i
-         Ex+2H8C6zP61XiP1O1F8jdysfjMCoU0iBRwEt5xfV/245o0kIuWQkMjw3dvZqUojl2SX
-         nOMGG8NPoxfzNTrsCzM3i2Sh5WhivL2At16127j0x3722+LJazbyc+ovUjwBw9vfgmOH
-         Ewe0FKQrfafyQOluu3FeGa2AOgOVB0vzCHg8NRFwLj1KfHD89VrCsuPatwJdTELaHjGV
-         nw4UIAoWfcDG5MxkVE1q2X2XbVqmBztV8OQ2S5FP2J4v8QxhL2lgdkrJHhJGB/qYuZA1
-         owGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvZLYNFpxfd/gB16qFPN46Np6m0bCkNq5X0iudClOZIG/e69cR0km26mx9TNs94SI4iQwqO56nXbv9dbhtIveJsYLpaLY2Uz7RpTlWEjjCeHj97eXw9zwzB9WsRvgjVxNGazLE
-X-Gm-Message-State: AOJu0YzpU6DDqVnrj5yvQpZVOPvh1ImJTak1tAwjItqIs4dt+5PhTpbE
-	4xCliC3Kphsb0Arf2H71xa4ciSepueRwQa9gwvR/9kDlQRQ/kKNhGXBcYXWUmAG+ooYUUMRyNol
-	kwCecimpDds+riFgUz98QVNFetMw=
-X-Google-Smtp-Source: AGHT+IHjGpzpgrv1AUBVEgNxsB96VHmMg0F97xvxdjInlzIReOvhWJNU6m6LqZlULDRI7gbYV1gnMdNzinP0BSVC+bk=
-X-Received: by 2002:a17:90a:ba97:b0:2c2:c3f5:33c3 with SMTP id
- 98e67ed59e1d1-2cff093a154mr5472664a91.6.1722564071378; Thu, 01 Aug 2024
- 19:01:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722564371; x=1723169171;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oR/MugVZHnBj/5zRWr5q0x83uwzfm2FrZybCle6S/Hw=;
+        b=QKLvZRz6wjmZCn8vPWKQ41Wp5tL4ZqwV3ttd9ltBCs6GmrFZiYiOoVjf+82iHywc/b
+         ob4lJx7pJNi+D48UpFssrkIE3NGGEeyXYproZlup8lk2ks8IxFBybt1YxN4bbX5px8f1
+         5rzBR7cxoAxM5AaZ3KRuwiGC39JGofvo8Xja3ZENPH1UmzExkxhbvRcR3tbYhANtcdQg
+         ZaG1p4YG6CWmZsAASCOskeMQF8lR/j7e4d5MNPB3f6VtaWEwFiwrRud8N+Nkq3LkKQdg
+         4rGgL6tmopAO2Q97x7M6O17zEXzNWX9mAEa/+niVKgImZBe+7H6C8HyvPZnQJp7eg4EX
+         GnFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAMjzaXczNh5AVBCtCx0kwen1COYjMw3vfp6X/kxlRArLxfRwVasG77Z+j2e3gZW5Pb23DTAzCM1TnwEQ/QDHeCQ3kr2dX1icmidO0
+X-Gm-Message-State: AOJu0YyPzDOcHLKdDknNjWvZ+oNtSUtbmTXcYs7/WyIxF8FSnv2EcSpD
+	p+ydqRuqiQSHGirxKu0iBaX3Ezn6VGcFdyNA/qtteiw/KudY6MiHylOjd50zwbQ=
+X-Google-Smtp-Source: AGHT+IFgs/L5chgCWRujbx3zy8AdMp72u0uP67eyDF1hQhi/BSdFegtJ57Pe1L8E487dPxQwYQzjGg==
+X-Received: by 2002:a05:600c:5102:b0:427:d72a:6c26 with SMTP id 5b1f17b1804b1-428e6af2e18mr12094855e9.6.1722564370518;
+        Thu, 01 Aug 2024 19:06:10 -0700 (PDT)
+Received: from localhost ([193.196.194.3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b89aa4bsm75810095e9.7.2024.08.01.19.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 19:06:10 -0700 (PDT)
+Date: Fri, 2 Aug 2024 04:06:09 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Rob Herring <robh@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: lp3943: Use of_property_count_u32_elems() to get
+ property length
+Message-ID: <4uo63ppnjpk6kf3ogzyh4gqukc5nyu3lkwhhgfxhamwlcbji2w@7ft3td4qbgtf>
+References: <20240731201407.1838385-8-robh@kernel.org>
+ <xz4mlhgxh4fqi3ken5xzam4xzmjbfpmyxs76pthofqathbcobc@3wdrnrca47qh>
+ <CAL_JsqK+rF0fTDh5-gQWfmijkBuDOoxJ4M+TVvSpUgWgeOhZBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJwJo6Z-qsZ9ZLV7qHrc=ujYT0Q2Ayod_C6e9kM+2QH48z650w@mail.gmail.com>
- <20240802010250.82312-1-kuniyu@amazon.com>
-In-Reply-To: <20240802010250.82312-1-kuniyu@amazon.com>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Fri, 2 Aug 2024 03:00:59 +0100
-Message-ID: <CAJwJo6ajnzqS0mNwEJNEYo5HBryRNJOtZeK7aRVGWCdu5ovc0A@mail.gmail.com>
-Subject: Re: [PATCH net v3] net/tcp: Disable TCP-AO static key after RCU grace period
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ji6bhllhyfg66pyo"
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqK+rF0fTDh5-gQWfmijkBuDOoxJ4M+TVvSpUgWgeOhZBA@mail.gmail.com>
 
-On Fri, 2 Aug 2024 at 02:03, Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
->
-> From: Dmitry Safonov <0x7f454c46@gmail.com>
-> Date: Fri, 2 Aug 2024 01:37:28 +0100
-> > On Thu, 1 Aug 2024 at 01:13, Dmitry Safonov via B4 Relay
-> > <devnull+0x7f454c46.gmail.com@kernel.org> wrote:
+
+--ji6bhllhyfg66pyo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello Rob,
+
+On Thu, Aug 01, 2024 at 09:52:18AM -0600, Rob Herring wrote:
+> On Thu, Aug 1, 2024 at 2:58=E2=80=AFAM Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@baylibre.com> wrote:
+> > On Wed, Jul 31, 2024 at 02:14:03PM -0600, Rob Herring (Arm) wrote:
+> > > Replace of_get_property() with the type specific
+> > > of_property_count_u32_elems() to get the property length.
 > > >
-> > > From: Dmitry Safonov <0x7f454c46@gmail.com>
-> > [..]
-> > > Happened on netdev test-bot[1], so not a theoretical issue:
+> > > This is part of a larger effort to remove callers of of_get_property()
+> > > and similar functions. of_get_property() leaks the DT property data
+> > > pointer which is a problem for dynamically allocated nodes which may
+> > > be freed.
 > >
-> > Self-correction: I see a static_key fix in git.tip tree from a recent
-> > regression, which could lead to the same kind of failure. So, I'm not
-> > entirely sure the issue isn't theoretical.
-> > https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=224fa3552029
->
-> My syzkaller instances recently started to report similar splats over
-> different places (TCP-AO/MD5, fl6, netfilter, perf, etc), and I was
-> suspecting a bug in the jump label side.
+> > To understand that right: The problem is that of_get_property() returns
+> > pp->value, which might be freed. In this driver this isn't problematic
+> > as the returned value is just used for a NULL check. So this isn't
+> > urgent and queuing it for the next merge window is fine, right?
+>=20
+> Yes, 6.12 is fine.
 
-I'm glad I dropped you a hint :-)
+Thanks for confirming, queued in
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+for 6.12-rc.
 
-> report19:2:jump_label: Fatal kernel bug, unexpected op at fl6_sock_lookup include/net/ipv6.h:414 [inline] [000000001bd3e3db] (e9 ee 00 00 00 != 0f 1f 44 00 00)) size:5 type:1
-> report23:1:jump_label: Fatal kernel bug, unexpected op at nf_skip_egress include/linux/netfilter_netdev.h:136 [inline] [00000000c1241913] (e9 e9 0a 00 00 != 0f 1f 44 00 00)) size:5 type:1
-> report45:2:jump_label: Fatal kernel bug, unexpected op at tcp_ao_required include/net/tcp.h:2776 [inline] [000000009a4b37e9] (eb 5a e8 e1 57 != 66 90 0f 1f 00)) size:2 type:1
-> report49:3:jump_label: Fatal kernel bug, unexpected op at perf_sw_event include/linux/perf_event.h:1432 [inline] [00000000c1f7a26c] (eb 24 e9 63 fe != 66 90 0f 1f 00)) size:2 type:1
-> report58:2:jump_label: Fatal kernel bug, unexpected op at tcp_md5_do_lookup include/net/tcp.h:1852 [inline] [00000000fbd24b58] (e9 8d 01 00 00 != 0f 1f 44 00 00)) size:5 type:1
->
-> I'll cherry-pick the patch and see if it fixes them altogether.
-> It will take few days.
+Best regards
+Uwe
 
-Thanks!
+--ji6bhllhyfg66pyo
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-             Dmitry
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmasPw4ACgkQj4D7WH0S
+/k6S+wf+J/f9YwLE78sYE91DzeslAb1KelN13UkzxyWYHs4FzMRBjJ954So0A57S
+TP7k+fyDhuL49l07ioQTkWpplXNOwlHHmheFQxafjpP+zMfyjErwIEVNo71/Oihl
+7VCePDvMm8j48QKGAYyGRhz+aqn+kc/k605qaVzOvafmO46FjZ63ybIvfcLNSPIo
+hbdlQnXJ/lUqdvPvZgaE8CrOdFmH/+t19xddm6bU6R6eqoMM7ZIlePiS5Mhnmc4U
+ipOVUAGfpw2zbt8GgsIWDWlyYN4CPccy5uN1Kg49JbULosSFtvrbW6jtH4yng6eF
+Q6w56En52PzkPvIo/Qp2nPMPvWpBTw==
+=p/2y
+-----END PGP SIGNATURE-----
+
+--ji6bhllhyfg66pyo--
 
