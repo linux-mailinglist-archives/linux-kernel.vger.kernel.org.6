@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-272356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4EA945AAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:16:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7AB945ABB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0551C227E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:16:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34E04B2237F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E83C1DAC58;
-	Fri,  2 Aug 2024 09:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BC51DAC6F;
+	Fri,  2 Aug 2024 09:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YF1vsroS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRhMiu6G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D06A1D1F57;
-	Fri,  2 Aug 2024 09:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880B01DAC4F;
+	Fri,  2 Aug 2024 09:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590201; cv=none; b=idUDv0uBVjMGOXiAuPf2JNrJg/8/rthbQUb0Kw1RQO9W1QAZ14j2qB3160UqWV9IPu0T1VMvy+n4+uhguqeQbBMTCb+NxfwCIj0/c2pEkHOQzTbncc1b/JfqpeujARVdOclyKKo6pGk+ynxW8WrmzONd/Xf8uau3WEMuaM+nCNQ=
+	t=1722590221; cv=none; b=LyDj33lRwhXDojakg2C4oOK9dJ4VA4YAQ/fguqDYFXIgzwYvHUYmz3Flt0XNDPXY7/9/DWfAKlwZvz36PtR0QAkTkbTWtp4yw7sDX+Hl4unO8cgnD0rrZQ9TuAWi1Gu7M3+E2QWiYMS7kDlrLTRveOGLZfZZyVzPjs4RzV/SyFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590201; c=relaxed/simple;
-	bh=Y3r5c3mXmlOWpcFm3QHkylS6JpNEEFokCiPj1jL60MY=;
+	s=arc-20240116; t=1722590221; c=relaxed/simple;
+	bh=h4T2Z5yLCtlds/HQEBtiro+DJlvC9ILcivFEw6gvYm8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sc05Nr2AKskZmGYVBe4Nh5zrB3WoOHff1g9P2m5TH+uw/nn7IkZVU0LAgU7cCuC5i5jVH6Si/NLRtY4BPXB7PNDxxRirmLCOq1Rq1e0VDw55stlecpZgTmUH26oaxSJ54Kg66tKEUbEOrHEBdqBwBW5Cc0mO3OzLhktsonXBeZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YF1vsroS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6517FC32782;
-	Fri,  2 Aug 2024 09:16:32 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=oVVZMRYPubsE48bebpA7nEbM74BSYT0DAuIOLgTIzdt7k5R0uLFX7mse4h+hZk4d2apBqi6zDMXjMwh/xKlpN8AagjRl8fbhbOFYde6tIyL8gK70iIJJXVNlPWHatpchuMmuNjFqdrNnRLD9z0boEMPU5fHlu5mQZpdq9veYngk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRhMiu6G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 732A2C32782;
+	Fri,  2 Aug 2024 09:16:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722590200;
-	bh=Y3r5c3mXmlOWpcFm3QHkylS6JpNEEFokCiPj1jL60MY=;
+	s=k20201202; t=1722590221;
+	bh=h4T2Z5yLCtlds/HQEBtiro+DJlvC9ILcivFEw6gvYm8=;
 	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=YF1vsroSiEErn5zarvC72BreviL6/S1JchUpSglXe/sy5YSk0Y0Fd7RJVtRof8U0c
-	 2r4Uv+TGqO9HESJq43YeG9IbV3lxa/h6RYL8WQCuiV+9EGPz1sMN01b0jc9gwSqbV/
-	 n+Sdh2G0ztAo2V7bKFCnHFQNT3gQX/3mJUqS5FobJeLywpqQx64ckk7B3i6WR2h6VG
-	 HZAsuM3BDOfsrkkUvgOKj3cUfEK7ypxbVnI/3RomU8ta6pzke71rcZbZqJmeDa8WA5
-	 DAURIDjpkeZa8PKylBNR3k7qT2yYmuglov1GMouHYvVYuRn8Vnq5ZUH+deSgpMuG+D
-	 JlJFIyhfQ7Bjg==
-Message-ID: <effd2324-45a9-4c78-8012-7ac94b9b5ea2@kernel.org>
-Date: Fri, 2 Aug 2024 11:16:32 +0200
+	b=CRhMiu6GuPq2UYc3EZ+KCKPquVkPUMpfg1PqHQLVW14Qh+s1QmHOw+ovZtj4Ys6uW
+	 vOfjWIYMqR5tlVnHlvKKpqZM25620jo1fyHsFsJVkREPgBY5j9r5N2/8qOuKncUxgV
+	 B4VNi2dZ8Hvx/NaTEsPXb4IiGuqbGcn/6zIQwabJx+IxykOaRif6a2W8jbSgQ279Nm
+	 sqNuBI4fFJRk3//qR6N3oeB87PVQA59Xhhhu7Br0ktmfEncTqPLQGTcikGDq/oe/I2
+	 Bp5ETv6BWMrPAMHa/K71163C7sddA/g0i+gWFKDH6060+4eIMfdKz3xhdOwvu5lag1
+	 daQbwhM9TlyOA==
+Message-ID: <c00e51de-8c13-4531-867f-77ff2d23f45b@kernel.org>
+Date: Fri, 2 Aug 2024 11:16:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] dt-bindings: arm: aspeed: Add ASPEED AST27XX SoC
+Subject: Re: [PATCH v2 6/9] arm64: aspeed: Add support for ASPEED AST27XX BMC
+ SoC
 To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
@@ -62,9 +63,9 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
- <20240802090544.2741206-7-kevin_chen@aspeedtech.com>
-Content-Language: en-US
+ <20240802090544.2741206-8-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -108,12 +109,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802090544.2741206-7-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240802090544.2741206-8-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/08/2024 11:05, Kevin Chen wrote:
+> Add two configs of ARCH_ASPEED and MACH_ASPEED_G7.
+> In current arm64 architecture, ARCH_ASPEED would select MACH_ASPEED_G7.
+> 
 > Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> ---
+
+NAK.
 
 <form letter>
 This is a friendly reminder during the review process.
