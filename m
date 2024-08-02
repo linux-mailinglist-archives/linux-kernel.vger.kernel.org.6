@@ -1,106 +1,318 @@
-Return-Path: <linux-kernel+bounces-273120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F4D9464B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:58:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7428D9464BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA971F21B99
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AFF628316B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB99B56440;
-	Fri,  2 Aug 2024 20:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795CC1ABEA0;
+	Fri,  2 Aug 2024 20:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ff1++IQt"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W5TlKkDG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0A04C61B
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAB71ABEBA;
+	Fri,  2 Aug 2024 20:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722632315; cv=none; b=aAgQ5vvSpBJUFMrfPU4lB7tzvlxbifWijjBAwtPloBNgZ+VX25PAAvb1TtKowvLjNXEKnJzxVqBEHQS/Uh1E25TvBrF3ok31w8/PYqKWAikeVZtJdE6l4gBfz0sBjzeZc+2y11BSBfnbJwFWKNZzKUwqU94PGf7mmQp26iWm+Ro=
+	t=1722632347; cv=none; b=gs5IkfJH3QbcgkNYjpbxsqO4PQ+WEC8NgepUzUVax3nuwKNfazbqD8+LqpT4RE/7Ai3ZrkHyFu5B0l8baf3WjEv3sIjuiz2zMjjP421cXck399wsS3tsgjH0agg2h8vMjCFU1dmTDeTKFyr5MCpKAoL8TcAGJ+MnreVUIzlACwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722632315; c=relaxed/simple;
-	bh=O+Tilim3KrHmSHorua8YjAEFRiWBTprbGtThLXeCT40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t6ou20UKDxxcA2nJXRwtnOtmx/2hC0RD1PQFw8LGkY3++tDwx/OB4qGCgwsU0P1qWtnl3kiI8bB8agg7eo0oHy6SGwE4///R2XVA5VUj3s7nUA/37Wr4keSKuSI44g+4m5e4i9VK2HSzylLF7nKcIZ+sW2OcOPNHS6GlmQeqNos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ff1++IQt; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so13409237e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:58:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722632311; x=1723237111; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O+Tilim3KrHmSHorua8YjAEFRiWBTprbGtThLXeCT40=;
-        b=Ff1++IQtefS2vQx5N6vsf1zr6pZ+mZsyzFGKbf2e29saEGW2Sv2GdPFm0v07YfdRZm
-         eOSpv8qE4bF3iFyR44AZdS1HFIebqJweX9ghdpAgP0Cf9NHO5bfMat/uDoV2Z2kcnEMd
-         CPSLUcChEDppfV/Jxxq6j7BxJboq7heyI2no3kbvmdqDvALZ2TqmO65kAWbU9T9nX/QM
-         WSIlK3Blvi4isr85XcKIcJd/X9Qg2AcZUTE4eTXZ77Fxs5iIrGBTb6g+dbI8fM6gzPfw
-         NDwjvicpyyfXBPXOkX3rVWwW9XfsaBgyJXvi+KX+WO4QqGMt8oKdD8EzMs/4i0albdsP
-         h4MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722632311; x=1723237111;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O+Tilim3KrHmSHorua8YjAEFRiWBTprbGtThLXeCT40=;
-        b=ex4HIviXtkIlG7NbHoOHAw5w0xqmIkApRWxmkzWHOtEodiWHgvvA3R8dFuPEic2/Bc
-         gwqnBPghJ2SfhhNa9VFl4X68YDEaD8c4puHr/lBvyDNlIASpljAMLKRFMplF24fZXUvO
-         WHBNPBGesoPxAeeiBX/80GkeydTiNH8I1C/sUS95JKWAA1zd63sLL1EDuFiC2eFJschj
-         3xeJtwv52HhYVtQhZ+XpVBAc7VJDGMrI1hAiCmRugJ1CC18DoaqBgdLImptrAjbMZ/eu
-         Jq5/Dcm0lx5yjzyySOJCHK5URNJFpMeb89qAhBdWyzp0D6Yt/55IAgymcThXm9EAiPRE
-         +mpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUavc4876Ue0l9+8Rccl1C/4XCPc/aE3EwGIJG6hXPVoRdKk1rUKwhGM+ods9xww59+25WU8XjpbSQ5a6z5W7EfxVG00snnvEG31u/F
-X-Gm-Message-State: AOJu0YwmckILabTYpVs98LSi60MEpYdq68IhCA4oxfCkiHksQBkctuXX
-	qGrx6VPwAs3hXWAJ5YRE/Ke1yn1Df5uaTLF/k2PM6JkFIuStf4+tnO3e1KMD4r9VN7eD7VJ55Nq
-	kUw4O6JCnAz4iXIcayIrtDBRsCY8CM+dkm99gLg==
-X-Google-Smtp-Source: AGHT+IGEPkWYjQyyOhvXhyRwGwgS8w8GFCtqhBPUgnWMvIErW7bGpVsQpPodZajzWUnVBZudUqQ/mS1GChG1h+2Tc8c=
-X-Received: by 2002:a05:6512:ba3:b0:52e:bdfc:1d09 with SMTP id
- 2adb3069b0e04-530bb36f0b1mr3129076e87.18.1722632311380; Fri, 02 Aug 2024
- 13:58:31 -0700 (PDT)
+	s=arc-20240116; t=1722632347; c=relaxed/simple;
+	bh=AMZ09jx4B75eq06v9qwSptsvrNaG0/xLTcQxAVq7P1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=upVDj3sNrSbHTCBMZAZmTk3pVVXdKRNayqfCsJlIVbqA9sxA+YmxB9Mone1uDLs1lNVxagxRqD4yfD/jnZSeQfQTrTZjNT/8KethNntyOGFzqfvjztW4t2U3JpjtpKDUN6kD+xbjWynDQwMNOuAsq87q5GgNDtwElUMcC732S2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W5TlKkDG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472FZsJm000895;
+	Fri, 2 Aug 2024 20:58:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=ZXwEyjfTR6JMviAKfGyOd37s8Vs
+	jISLrMk22g52BjL4=; b=W5TlKkDGjEtnmZ2WADSChV6abqRHO/vuaZue73oJEHB
+	/xKZPR78bBBqEr9S2shJRfDhWbmXmqXcANChzVSmpZ2Kx5K9Jl5UGzaeri8RBeyR
+	Ho+Kw5MSvEmAyX1voEvJ72GO1S4D0Z3Fxy4aNksPo78d8vQPs0IAvKukafi7F++i
+	41Ofl5EKsaG9yS+IibCw7iAhnLTMm17k/vbzraWhGBC61wCAQT6B+XMv07HHSzqe
+	FrXrGLXhkCcqOO1ZO506Ib95nWcWDUhIKtNoaF/BPJwlVS36MJYjWQlt/zL0Qx8e
+	rawN9DIn+8xQrUEUPi8dA1W63VR3aFyD/Kq4aiy+gVw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rwqwsaye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:58:47 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 472KwkcZ026060;
+	Fri, 2 Aug 2024 20:58:47 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rwqwsayb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:58:46 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 472IPgAm018797;
+	Fri, 2 Aug 2024 20:58:46 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nc7q945q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:58:46 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 472KwgLe33423896
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 Aug 2024 20:58:44 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3038D20043;
+	Fri,  2 Aug 2024 20:58:42 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 40EFA20040;
+	Fri,  2 Aug 2024 20:58:40 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.46.209])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  2 Aug 2024 20:58:40 +0000 (GMT)
+Date: Sat, 3 Aug 2024 02:28:37 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 20/20] ext4: avoid unnecessary extent path frees and
+ allocations
+Message-ID: <Zq1IfX3R7YSf6n5R@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-21-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802080403.739509-1-paweldembicki@gmail.com> <20240802080403.739509-2-paweldembicki@gmail.com>
-In-Reply-To: <20240802080403.739509-2-paweldembicki@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 Aug 2024 22:58:20 +0200
-Message-ID: <CACRpkdYwCNSj_A9FwinwW6kf6DOKEjM6jY9ur+REF+Yuv2yP2Q@mail.gmail.com>
-Subject: Re: [PATCH net 1/6] net: dsa: vsc73xx: fix port MAC configuration in
- full duplex mode
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-21-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: AyuhhpSBi-ds3-7TMXoTZHhOpubrUqLQ
+X-Proofpoint-GUID: 2garBcJxued9fPbwmmCb3mGP6fhcmdYC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_16,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=624 adultscore=0 spamscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408020145
 
-On Fri, Aug 2, 2024 at 10:04=E2=80=AFAM Pawel Dembicki <paweldembicki@gmail=
-.com> wrote:
+On Wed, Jul 10, 2024 at 12:06:54PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The ext4_find_extent() can update the extent path so that it does not have
+> to allocate and free the path repeatedly, thus reducing the consumption of
+> memory allocation and freeing in the following functions:
+> 
+>     ext4_ext_clear_bb
+>     ext4_ext_replay_set_iblocks
+>     ext4_fc_replay_add_range
+>     ext4_fc_set_bitmaps_and_counters
+> 
+> No functional changes. Note that ext4_find_extent() does not support error
+> pointers, so in this case set path to NULL first.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-> According to the datasheet description ("Port Mode Procedure" in 5.6.2),
-> the VSC73XX_MAC_CFG_WEXC_DIS bit is configured only for half duplex mode.
->
-> The WEXC_DIS bit is responsible for MAC behavior after an excessive
-> collision. Let's set it as described in the datasheet.
->
-> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+Looks good Baokun, feel free to add:
 
-Good catch!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Yours,
-Linus Walleij
+Regards,
+ojaswin
+
+> ---
+>  fs/ext4/extents.c     | 51 +++++++++++++++++++------------------------
+>  fs/ext4/fast_commit.c | 11 ++++++----
+>  2 files changed, 29 insertions(+), 33 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 737432bb316e..5ff92cd50dc8 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -6068,12 +6068,9 @@ int ext4_ext_replay_set_iblocks(struct inode *inode)
+>  	if (IS_ERR(path))
+>  		return PTR_ERR(path);
+>  	ex = path[path->p_depth].p_ext;
+> -	if (!ex) {
+> -		ext4_free_ext_path(path);
+> +	if (!ex)
+>  		goto out;
+> -	}
+>  	end = le32_to_cpu(ex->ee_block) + ext4_ext_get_actual_len(ex);
+> -	ext4_free_ext_path(path);
+>  
+>  	/* Count the number of data blocks */
+>  	cur = 0;
+> @@ -6099,32 +6096,28 @@ int ext4_ext_replay_set_iblocks(struct inode *inode)
+>  	ret = skip_hole(inode, &cur);
+>  	if (ret < 0)
+>  		goto out;
+> -	path = ext4_find_extent(inode, cur, NULL, 0);
+> +	path = ext4_find_extent(inode, cur, path, 0);
+>  	if (IS_ERR(path))
+>  		goto out;
+>  	numblks += path->p_depth;
+> -	ext4_free_ext_path(path);
+>  	while (cur < end) {
+> -		path = ext4_find_extent(inode, cur, NULL, 0);
+> +		path = ext4_find_extent(inode, cur, path, 0);
+>  		if (IS_ERR(path))
+>  			break;
+>  		ex = path[path->p_depth].p_ext;
+> -		if (!ex) {
+> -			ext4_free_ext_path(path);
+> -			return 0;
+> -		}
+> +		if (!ex)
+> +			goto cleanup;
+> +
+>  		cur = max(cur + 1, le32_to_cpu(ex->ee_block) +
+>  					ext4_ext_get_actual_len(ex));
+>  		ret = skip_hole(inode, &cur);
+> -		if (ret < 0) {
+> -			ext4_free_ext_path(path);
+> +		if (ret < 0)
+>  			break;
+> -		}
+> -		path2 = ext4_find_extent(inode, cur, NULL, 0);
+> -		if (IS_ERR(path2)) {
+> -			ext4_free_ext_path(path);
+> +
+> +		path2 = ext4_find_extent(inode, cur, path2, 0);
+> +		if (IS_ERR(path2))
+>  			break;
+> -		}
+> +
+>  		for (i = 0; i <= max(path->p_depth, path2->p_depth); i++) {
+>  			cmp1 = cmp2 = 0;
+>  			if (i <= path->p_depth)
+> @@ -6136,13 +6129,14 @@ int ext4_ext_replay_set_iblocks(struct inode *inode)
+>  			if (cmp1 != cmp2 && cmp2 != 0)
+>  				numblks++;
+>  		}
+> -		ext4_free_ext_path(path);
+> -		ext4_free_ext_path(path2);
+>  	}
+>  
+>  out:
+>  	inode->i_blocks = numblks << (inode->i_sb->s_blocksize_bits - 9);
+>  	ext4_mark_inode_dirty(NULL, inode);
+> +cleanup:
+> +	ext4_free_ext_path(path);
+> +	ext4_free_ext_path(path2);
+>  	return 0;
+>  }
+>  
+> @@ -6163,12 +6157,9 @@ int ext4_ext_clear_bb(struct inode *inode)
+>  	if (IS_ERR(path))
+>  		return PTR_ERR(path);
+>  	ex = path[path->p_depth].p_ext;
+> -	if (!ex) {
+> -		ext4_free_ext_path(path);
+> -		return 0;
+> -	}
+> +	if (!ex)
+> +		goto out;
+>  	end = le32_to_cpu(ex->ee_block) + ext4_ext_get_actual_len(ex);
+> -	ext4_free_ext_path(path);
+>  
+>  	cur = 0;
+>  	while (cur < end) {
+> @@ -6178,16 +6169,16 @@ int ext4_ext_clear_bb(struct inode *inode)
+>  		if (ret < 0)
+>  			break;
+>  		if (ret > 0) {
+> -			path = ext4_find_extent(inode, map.m_lblk, NULL, 0);
+> -			if (!IS_ERR_OR_NULL(path)) {
+> +			path = ext4_find_extent(inode, map.m_lblk, path, 0);
+> +			if (!IS_ERR(path)) {
+>  				for (j = 0; j < path->p_depth; j++) {
+> -
+>  					ext4_mb_mark_bb(inode->i_sb,
+>  							path[j].p_block, 1, false);
+>  					ext4_fc_record_regions(inode->i_sb, inode->i_ino,
+>  							0, path[j].p_block, 1, 1);
+>  				}
+> -				ext4_free_ext_path(path);
+> +			} else {
+> +				path = NULL;
+>  			}
+>  			ext4_mb_mark_bb(inode->i_sb, map.m_pblk, map.m_len, false);
+>  			ext4_fc_record_regions(inode->i_sb, inode->i_ino,
+> @@ -6196,5 +6187,7 @@ int ext4_ext_clear_bb(struct inode *inode)
+>  		cur = cur + map.m_len;
+>  	}
+>  
+> +out:
+> +	ext4_free_ext_path(path);
+>  	return 0;
+>  }
+> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+> index 1dee40477727..1426d595fab7 100644
+> --- a/fs/ext4/fast_commit.c
+> +++ b/fs/ext4/fast_commit.c
+> @@ -1766,7 +1766,7 @@ static int ext4_fc_replay_add_range(struct super_block *sb,
+>  
+>  		if (ret == 0) {
+>  			/* Range is not mapped */
+> -			path = ext4_find_extent(inode, cur, NULL, 0);
+> +			path = ext4_find_extent(inode, cur, path, 0);
+>  			if (IS_ERR(path))
+>  				goto out;
+>  			memset(&newex, 0, sizeof(newex));
+> @@ -1782,7 +1782,6 @@ static int ext4_fc_replay_add_range(struct super_block *sb,
+>  			up_write((&EXT4_I(inode)->i_data_sem));
+>  			if (IS_ERR(path))
+>  				goto out;
+> -			ext4_free_ext_path(path);
+>  			goto next;
+>  		}
+>  
+> @@ -1830,6 +1829,7 @@ static int ext4_fc_replay_add_range(struct super_block *sb,
+>  	ext4_ext_replay_shrink_inode(inode, i_size_read(inode) >>
+>  					sb->s_blocksize_bits);
+>  out:
+> +	ext4_free_ext_path(path);
+>  	iput(inode);
+>  	return 0;
+>  }
+> @@ -1930,12 +1930,13 @@ static void ext4_fc_set_bitmaps_and_counters(struct super_block *sb)
+>  				break;
+>  
+>  			if (ret > 0) {
+> -				path = ext4_find_extent(inode, map.m_lblk, NULL, 0);
+> +				path = ext4_find_extent(inode, map.m_lblk, path, 0);
+>  				if (!IS_ERR(path)) {
+>  					for (j = 0; j < path->p_depth; j++)
+>  						ext4_mb_mark_bb(inode->i_sb,
+>  							path[j].p_block, 1, true);
+> -					ext4_free_ext_path(path);
+> +				} else {
+> +					path = NULL;
+>  				}
+>  				cur += ret;
+>  				ext4_mb_mark_bb(inode->i_sb, map.m_pblk,
+> @@ -1946,6 +1947,8 @@ static void ext4_fc_set_bitmaps_and_counters(struct super_block *sb)
+>  		}
+>  		iput(inode);
+>  	}
+> +
+> +	ext4_free_ext_path(path);
+>  }
+>  
+>  /*
+> -- 
+> 2.39.2
+> 
 
