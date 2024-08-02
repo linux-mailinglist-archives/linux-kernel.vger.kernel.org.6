@@ -1,176 +1,94 @@
-Return-Path: <linux-kernel+bounces-272476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635FB945CAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:59:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481FC945CB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24580285142
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04B5F2856F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB761DF669;
-	Fri,  2 Aug 2024 10:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB501DAC68;
+	Fri,  2 Aug 2024 11:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzeS/dru"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="J1fIIrGC"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A734E1DE87A;
-	Fri,  2 Aug 2024 10:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD8A14A4E0
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 11:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722596346; cv=none; b=r13p7JZSx70muRmiEp38xz6uaMOkP1LQrE5PEwdzF7k9zmYbkY4MRhBZR2DkDdMsNdUrMPDZI1yxD7fbuax5A9Dh24iQcrGKC47NFrGOJVOVJOGn2OaZQam95sd0zDaneOhzGimdj+VqESEkZIYVs8P00GpgKooLCQkqpyLhyXU=
+	t=1722596514; cv=none; b=sGNp/tmTdH4+EU2iHhHYrI5oW1ciiVwjYAfGCXfhbnhHc1RXGGXSLxuCJr86lqBc9KD3D+CykPz3E90HlayiyYwIKrtLMSTNX3wm+b+EZWWgsxAE72152FT87I+uirtH2ZssfHpHzTJ7Uer11s23aSkjsGKMxL6KPiqOcj1s3BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722596346; c=relaxed/simple;
-	bh=qppczfrXCD0TYJ6nOu5rI+WZpfgTJHoBUkyW5pmMA34=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WfosZp2iWkHpiXg+dv7N0SaJpl9JfWew2nKX511ZADD8HUo5KKIVL9NT0oqaqlVtMVxvenk+O1zkD5GHDxhjoFwiIE9s4oxMgm0/YfLMuJJlWhtYiHcXdeWWhSACpXLzelCxKW0XvBlwbOtvMOZ6WuswS2ny+A7HQhXY+cgWE4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzeS/dru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C08C32782;
-	Fri,  2 Aug 2024 10:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722596346;
-	bh=qppczfrXCD0TYJ6nOu5rI+WZpfgTJHoBUkyW5pmMA34=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gzeS/druFECbIE1E4ibEX4W2hE1kkH3O08i0uo7jgyzti17yMlDUOq0uMFrnvZuyw
-	 CDz3YC+zg4Lb83Mhyt6NyLLJ5BAbyI37mXFw5/gjefbiGysuzD8MKJ/FKjY2o0nfYP
-	 2S4SPG9i3RPWCwDllMaSIa5y1KhxFAec1N2dlhLsESv79N9R8tGYMvMRk1EcsFO7sN
-	 QUEeld+hWPZXBfZXiR9MWA2wTbpOOHBWDnCJvsVnlf3U8uiFWXdW5oRynB8Dpa+xfx
-	 XTNn3DUo0UbU43ucrBaN9jImnLEqubQ5Adnt9w3q2FVZRv1hnbXtNCzbXI4mAPVRnZ
-	 G+M3yXjDpkauA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sZq00-0005hG-2K;
-	Fri, 02 Aug 2024 11:59:04 +0100
-Date: Fri, 02 Aug 2024 11:59:03 +0100
-Message-ID: <86bk2b198o.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based FGU handling
-In-Reply-To: <d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
-References: <20240620065807.151540-1-anshuman.khandual@arm.com>
-	<20240620065807.151540-11-anshuman.khandual@arm.com>
-	<865xu3kh4r.wl-maz@kernel.org>
-	<4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
-	<878qyy35e5.wl-maz@kernel.org>
-	<47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
-	<86tthhi0nz.wl-maz@kernel.org>
-	<c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
-	<86o76c1b8p.wl-maz@kernel.org>
-	<d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1722596514; c=relaxed/simple;
+	bh=4jgnMbYB3FniXg1lxribVNfZsl17DeBITBImIWuoYXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqwX5q3Q2waUtvQBFPVQiiF/xjTnph7pV4DFBW5h3sJjiqSWqtrNKJf/cwAUI4bNYRDBhxMvNXcXswART9NYRJOiH+LBli9Q1Vf6vXJLQFkUsY92W1BFUMJIukkJG0vUL7hBgMa19kfxl4gjq6VTLFN8F2UvGE1PTRWpq8V9oyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=J1fIIrGC; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nw1iqQVMOzq+ioAn1MHFepdFcLn2HlKNyKqm4YBYshw=; b=J1fIIrGCP9dpDOdQ00BA0t3cp5
+	/0qw8Bk3QxrxAXYcAub5QMMbCBCuQujhVJ2JidL20HeCD6qfGZITx09EynUB2ceGeJRFI9ouAw5yN
+	DXqJs8MTddn2C5FHyM2tg/yLvXST2uRL4CwBlMFdB0F6ZRmSUdIf9wb1gLzPi9Z+d0H9YgRwFUTOq
+	Q+z9ik+ZnSCKm4/r/jUzpgLluwh6Jcw3iNFlL8j5c1uLJpXYL1Zvit28JU8peTZNzGoVbq7QwSlg7
+	21uidRezn5a13HCNSyhxep5yZBZJAf0ZN7RQwSoTNEvWX53tbWib9mr8xOMEH4MbfCeGZNQh96T5G
+	hDK2ibKQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36616)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sZq2W-0006WZ-2O;
+	Fri, 02 Aug 2024 12:01:40 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sZq2Z-0007yZ-7U; Fri, 02 Aug 2024 12:01:43 +0100
+Date: Fri, 2 Aug 2024 12:01:43 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: bhe@redhat.com, akpm@linux-foundation.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ARM: Support allocating crashkernel above 4G for LPAE
+Message-ID: <Zqy8lwZM2Z6RlV5H@shell.armlinux.org.uk>
+References: <20240802092510.3915986-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802092510.3915986-1-ruanjinjie@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, 02 Aug 2024 10:25:44 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+On Fri, Aug 02, 2024 at 05:25:10PM +0800, Jinjie Ruan wrote:
+> As ARM LPAE feature support accessing memory beyond the 4G limit, define
+> HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH macro to support reserving crash
+> memory above 4G for ARM32 LPAE.
 > 
-> On 8/1/24 21:33, Marc Zyngier wrote:
-> > On Thu, 01 Aug 2024 11:46:22 +0100,
-> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> No test because there is no LPAE ARM32 hardware.
 
-[...]
+Why are you submitting patches for features you can't test?
 
-> >> +	SR_FGT(SYS_SPMACCESSR_EL1,	HDFGRTR2, nSPMACCESSR_EL1, 0),
-> > 
-> > This (and I take it most of the stuff here) is also gated by
-> > MDCR_EL2.SPM, which is a coarse grained trap. That needs to be
-> > described as well. For every new register that you add here.
-> 
-> I did not find a SPM field in MDCR_EL2 either in latest ARM ARM or in
-> the latest XML. But as per current HDFGRTR2_EL2 description the field
-> nSPMACCESSR_EL1 is gated by FEAT_SPMU feature, which is being checked
-> via ID_AA64DFR1_EL1.PMU when required. So could you please give some
-> more details.
+I'm not going to apply this without it being properly tested, because I
+don't believe that this will work in the generic case.
 
-I misspelled it. It is MDCR_EL2.EnSPM.
+If the crash kernel is located in memory outside of the lower 4GiB of
+address space, and there is no alias within physical address space
+for that memory, then there is *no* *way* for such a kernel to boot.
 
-And you are completely missing the point. It is not about
-HDFGRTR2_EL2, but about SPMACCESSR_EL1 (and all its little friends).
-
-To convince yourself, just look at the pseudocode for SPMACCESSR_EL1,
-limited to an EL1 access:
-
-elsif PSTATE.EL == EL1 then
-    if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
-        UNDEFINED;
-    elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMACCESSR_EL1 == '0') then
-        AArch64.SystemAccessTrap(EL2, 0x18);
-    elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
-        AArch64.SystemAccessTrap(EL2, 0x18);
-    elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
-        if EL3SDDUndef() then
-            UNDEFINED;
-        else
-            AArch64.SystemAccessTrap(EL3, 0x18);
-    elsif EffectiveHCR_EL2_NVx() IN {'111'} then
-        X[t, 64] = NVMem[0x8E8];
-    else
-        X[t, 64] = SPMACCESSR_EL1;
-
-
-Can you spot the *TWO* conditions where we take an exception to EL2
-with 0x18 as the EC?
-
-- One is when HDFGxTR2_EL2.nSPMACCESSR_EL1 == '0': that's a fine
-  grained trap.
-- The other is when MDCR_EL2.EnSPM == '0': that's a coarse grained
-  trap.
-
-Both conditions need to be captured in the various tables in this
-file, for each and every register that you describe.
-
-[...]
-
-> > Now, the main issues are that:
-> > 
-> > - you're missing the coarse grained trapping for all the stuff you
-> >   have just added. It's not a huge amount of work, but you need, for
-> >   each register, to describe what traps apply to it. The fine grained
-> >   stuff is most, but not all of it. There should be enough of it
-> >   already to guide you through it.
-> 
-> Coarse grained trapping for FEAT_FGT2 based fine grained registers ?
-
-Not for FEAT_FGT2. For the registers that FEAT_FGT2 traps. Can you see
-the difference?
-
-> Afraid, did not understand this. Could you please give some pointers
-> on similar existing code.
-
-See above. And if you want some example, just took at the file you are
-patching already. Look at how MDCR_EL2 conditions the trapping of all
-the debug, PMU, AMU registers, for example. There is no shortage of
-them.
-
-Thanks,
-
-	M.
+So, right now I believe this patch to be *fundamentally* wrong.
 
 -- 
-Without deviation from the norm, progress is not possible.
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
