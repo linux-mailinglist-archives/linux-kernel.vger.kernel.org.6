@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-272628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD2D945F22
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:09:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A131945F16
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E0F284621
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:09:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3EC2B227E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCDA1E4853;
-	Fri,  2 Aug 2024 14:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E094B1E4853;
+	Fri,  2 Aug 2024 14:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="flc1ttft"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KlWdSE3Z"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AE01EEF9;
-	Fri,  2 Aug 2024 14:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78946E57D
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 14:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722607765; cv=none; b=JOjqXV7IUcXxKZ0eKDsk3rlhJAEm1Ff/OKqvZ5g46e0WL0Ze98jYIHcGfdpxnGLQwe5HC9fkXG6TivwlhvyML30Z/zTTO9Jh5VHsYc/kIC9ufBth4Y6nz9Yqt210n67Hsrrshiw0LSf9NZ9uIIU1AmddA6ySmNAkIFL3j1ixrNw=
+	t=1722607475; cv=none; b=FjNROYcDAjaZRcRJQ7Kw+BVw61RrviSvwW/BocU1o+NK/xZcQFL39fF+I6t2Mp0quhR9uDhcm44ZEAgGDq0fUvIDeGAFypPpgq0UZ7pPR/9VzgNuRhxPa/5vhPHrNGRkVHz6yyxGe0dm6TQ94iqAoTGUwYGNGemyaZ5AYHzorJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722607765; c=relaxed/simple;
-	bh=8aPj2nIntgmfW19Mn0CoHG78RbeTKwJCAKokFBJ3vFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GAAFsZH4fqOf+cAQbFpYC+/PmZTM2iiELi2Ku/cYzNWf1eWZcfMgbLeH81kIY7HCwTqZck4JJ3gI4odOkkJskwHB22aneqpMf7s6cbyN65Indsh+OFuHhG6oKDflsPXn4TU5Rh8SaAil5h3q74KlajTAbnaqnd/OyDeWBqo6fks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=flc1ttft; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ZsRVs1261jeEBZsRVs9mZU; Fri, 02 Aug 2024 15:35:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722605739;
-	bh=bUGQWQ6HeX/0on+n88StgC2Xu31/KnbENv/BO2RPW38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=flc1ttftNWKukhI3mogmvoyWlsRr8+1q8QhfP0zHSXxFdudDWO7mTH3h8fNMi5YSg
-	 E7EV+VLHI/0Kap4WSmbtoaIdzHLmIwijibFuriPEHEqBh68SaOBmL5BfZyohpX1upu
-	 ZvxowL/UjQmdyJ/S1Wm6orM9WvFxnwdw2/idRvTShCpJRPQ+rcrQj8YrK1gNhVerBi
-	 6EENmZ4T0RZ5mW6RywYq/gvmRmDaaMq1xRkeP6KQJ4QUi/eMfnx9Z/6f18bnFIxhK7
-	 BEJAlDyS/Db2zRZeDci7H3WKRC5/CWOBY1/EWvU7vRjnaBojlVwpE2xFjbdgxp0ze9
-	 hF6L0XUMMq/QQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 02 Aug 2024 15:35:39 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <e792d1b6-b9b5-4e90-801d-ad10893defc1@wanadoo.fr>
-Date: Fri, 2 Aug 2024 15:35:37 +0200
+	s=arc-20240116; t=1722607475; c=relaxed/simple;
+	bh=vJLu6oq+1pT04NmnJdyE+jlvgan1iF3vVhXj9Ca0mfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SIgFXyv96Zq5Aorfr9NwYoZPJKQ42cR9C5SHfqBxt5exfbn2XXs/ZiMuFkoFCcUjB1TgFwlGHog/go8GoRT7APOBkzkKfzjAQq6qz2mqev4zVugFZSCCMW+cO+PbGpFvnnI+/LWJH4bO4wufhCVwGehgZ/ZFE26940LnSRPOWOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KlWdSE3Z; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4280c55e488so19686635e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 07:04:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722607472; x=1723212272; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GELJE7nQv7ekgdarVIaR5+IvJvhwEDxUWUtprd+UKWA=;
+        b=KlWdSE3ZU8DCMot84IZGl41jjxAyNjM9J06vTfH25/T/T3Xme2be2ejRx+UUgkrSNE
+         gYUNg7+ggzroNF8ynjn412Kmx22HWcGxFu0uDoJVQe9QV7kWfrddkAh/t957Ef/VOwNu
+         19pQ+rJ2CbC/jAf6Z9Wa4zHIFhJMLR9tcDqwddNW+9uZrSoBQqtmFtJZrsQtn2yIzeDb
+         ksurOYkwPXi/ctIuewpYwIXYIBOupa9opjcwVcBlbgC/ApXyy6IAI7XCjik6oL6G1wgZ
+         2TZO1oceRqydPW7eJKBj+4yiIBBe7y5y2M1Aks2J+MqlKYx1tWawUjCmTc8s22Rf/dit
+         DofA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722607472; x=1723212272;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GELJE7nQv7ekgdarVIaR5+IvJvhwEDxUWUtprd+UKWA=;
+        b=U+RejUkkwgTtilWbdWhhBinvq6QbjabX3KQjaX5JrTv2fuIO3QFlkXRQpjIkzV9AyM
+         RWdgqFSt061gckVJsS4qN+QAPiG0jx140tgl9K0w8p/djRO6WrS+i3EQi2seBLHUKV09
+         ecDhQBGwfw5/FIki0pS687T0i94+Zp3a/IpGELqYJ6COgaQZXnG72o4udgk7lXczDPVI
+         rbb+saC3Z8AVcXNpWkcQlFA+HDn95PgqSQvj1R0ell1KQYZTQ7XyhXd6beTe/2olsW9b
+         3DByxG6CcCO+xWQ8ZEz3mT19yR/YCBSKn83YJg+W3EOfPwhEljjJHfWizrpgY+A+bfFw
+         sB8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUwxCWnzz6wZOWWOp8Rd54xND7Tm5T8RaxBXlkBHi6W+NH3uXMm1u1Vb/ihumzB2TeBqd4RWpiP56bZQN9hMzmIGTN5Y8QbuFBi9gWy
+X-Gm-Message-State: AOJu0Yz5ejEqTFcwHGpxlIYr1TYQHvPKFSEotv4klFPx8CY97GtlrD49
+	4gG4JRidlNryNOuLqYNs7yzOHKFnL354WSSJQI9ms71ZCgZbTZpx3IdR5GRkRh4=
+X-Google-Smtp-Source: AGHT+IHjeAUbwKoMujhIuiKsaXvTJXWs+3v9YRa+G50K8248IF0I+wHIS7yMKSYnrz6NJ5onAPlhpQ==
+X-Received: by 2002:a7b:c5c7:0:b0:427:ee01:ebf0 with SMTP id 5b1f17b1804b1-428e4714cfemr46021525e9.8.1722607471704;
+        Fri, 02 Aug 2024 07:04:31 -0700 (PDT)
+Received: from ta2.c.googlers.com.com (185.83.140.34.bc.googleusercontent.com. [34.140.83.185])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e8d6555fsm29041605e9.26.2024.08.02.07.04.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 07:04:31 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: gregkh@linuxfoundation.org,
+	hgajjar@de.adit-jv.com,
+	willmcvicker@google.com
+Cc: paul@crapouillou.net,
+	brauner@kernel.org,
+	christian.koenig@amd.com,
+	jlayton@kernel.org,
+	kees@kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	andre.draszik@linaro.org,
+	peter.griffin@linaro.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH 0/2] usb: gadget: f_fs: restore ffs_func_disable() functionality
+Date: Fri,  2 Aug 2024 14:04:26 +0000
+Message-ID: <20240802140428.2000312-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: ethernet: use ip_hdrlen() instead of bit shift
-To: Moon Yeounsu <yyyynoom@gmail.com>, cooldavid@cooldavid.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240802054421.5428-1-yyyynoom@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240802054421.5428-1-yyyynoom@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 02/08/2024 à 07:44, Moon Yeounsu a écrit :
-> `ip_hdr(skb)->ihl << 2` are the same as `ip_hdrlen(skb)`
-> Therefore, we should use a well-defined function not a bit shift
-> to find the header length.
-> 
-> It also compress two lines at a single line.
-> 
-> Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
-> ---
->   drivers/net/ethernet/jme.c | 8 +++-----
->   1 file changed, 3 insertions(+), 5 deletions(-)
-> 
+ffs_func_disable() always returned -EINVAL and made pixel6 crash on USB
+disconnect. Restore ffs_func_disable() functionality.
 
-Hi,
+Tudor Ambarus (2):
+  usb: gadget: f_fs: restore ffs_func_disable() functionality
+  usb: gadget: f_fs: pull out f->disable() from ffs_func_set_alt()
 
-> diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
-> index b06e24562973..83b185c995df 100644
-> --- a/drivers/net/ethernet/jme.c
-> +++ b/drivers/net/ethernet/jme.c
-> @@ -946,15 +946,13 @@ jme_udpsum(struct sk_buff *skb)
->   	if (skb->protocol != htons(ETH_P_IP))
->   		return csum;
->   	skb_set_network_header(skb, ETH_HLEN);
-> +
->   	if ((ip_hdr(skb)->protocol != IPPROTO_UDP) ||
-> -	    (skb->len < (ETH_HLEN +
-> -			(ip_hdr(skb)->ihl << 2) +
-> -			sizeof(struct udphdr)))) {
-> +	    (skb->len < (ETH_HLEN + (ip_hdrlen(skb)) + sizeof(struct udphdr)))) {
+ drivers/usb/gadget/function/f_fs.c | 32 +++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 12 deletions(-)
 
-The extra () around "ip_hdrlen(skb)" can be remove.
-Also maybe the ones around "ETH_HLEN + ip_hdrlen(skb)" could also be 
-removed.
-
->   		skb_reset_network_header(skb);
->   		return csum;
->   	}
-> -	skb_set_transport_header(skb,
-> -			ETH_HLEN + (ip_hdr(skb)->ihl << 2));
-> +	skb_set_transport_header(skb, ETH_HLEN + (ip_hdrlen(skb)));
-
-Same here, the extra () around "ip_hdrlen(skb)" can be remove.
-
-CJ
-
->   	csum = udp_hdr(skb)->check;
->   	skb_reset_transport_header(skb);
->   	skb_reset_network_header(skb);
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
 
