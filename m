@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-271987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0F29455AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B118A9455AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F1B51F22F9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF231F23919
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0DE1171C;
-	Fri,  2 Aug 2024 00:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300791C2AD;
+	Fri,  2 Aug 2024 00:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iihRnCfn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TjDgN8vn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6974A5672;
-	Fri,  2 Aug 2024 00:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1D815E89;
+	Fri,  2 Aug 2024 00:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722559339; cv=none; b=dVl1yafjAmeNcU0psJ4nArOgYC+htYdm9Cn85lzCIBL/bWU0HJkUSKjqXlU4OXnvNA8Y6AqSFlnXrLa3JJ4+CVy0vUzMX6myhFqPvxegrDeS+rOB7tzhhktW8fjoiEt6gw7Bs1c59pPBg3II3X/Rne/2brRKSeChay5SfLTHWdk=
+	t=1722559391; cv=none; b=m+Ll7vtZRwLqmkNM5gQUSgHqS8VyXKOBBDJZ/RaZekaDwsVgdHi6s1vvGIgPvhYd9nFFJcE1kGQ0nZDdGVqDGNn95K4DSFRlVj6hv5YgKu4lfNJek3bOOpPgzRTO7+cUMy3xQlh1QlombhuCdci4f1xnf0Tee8k3QSEGMO7HmA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722559339; c=relaxed/simple;
-	bh=V8dQQ7UGH+1AhEx8lI11JZBKmXrcr/VuZFYYSJkrEak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PX91TQOnpuK6L4V3Jlvu+1+v0O8gJLXvlOVYKmFFGV5iw7l1or1o6a0R/XCRfxMP4Gi+Vr3pmfNJGpYwAm/K3iEG97LAw1nW3OqBc72SJwGuSC0CSFCq9HM4p+V1Ha9xu5FSk+e+MWGfi/lMc5YUr6ZAOJG+IDaKKc9vJAN3rm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iihRnCfn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D83C4AF0F;
-	Fri,  2 Aug 2024 00:42:13 +0000 (UTC)
+	s=arc-20240116; t=1722559391; c=relaxed/simple;
+	bh=cISelkdGqljgDeI2+QcSA5s1XZGf3TYnjcH1wmM0OdM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uSnWYmSYpv8cmJWGzzbrfZeIM1J2GvZdZGvbyte/VUv0/htgglCViGETOlYlD1q4PRbbjrjFa4pyk89LBwVDUyZ3wwQOtUVcsalq6l7UC5eJ+FW9dlNl93x76zIkDWX2Z8WhcLqMVgYZYOimGyil+AulCPxCNz1lOkRlZ66d1YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TjDgN8vn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08670C32786;
+	Fri,  2 Aug 2024 00:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722559339;
-	bh=V8dQQ7UGH+1AhEx8lI11JZBKmXrcr/VuZFYYSJkrEak=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iihRnCfnP7YVmtMb8C1Rz03oNHFtwU7dDTowokFfsOY8NMqPNu6QVcnKpz90DPH26
-	 QjDV22jNLw2go8Kr74TC3Hmka/0Gqt4Uq+3ImmUsSU2EDJ+dufyeNXyzr8Gl+u8WUZ
-	 XWFjgdpp/RY/tecBq/u4D5zsv40Bl/aTrASw1rDRHmeck2o3jI1WsXhT84QKkCcq+g
-	 Tfo+uKXKmJss9N2Y3BhJ5z+Sgm3lCcIQ9Miryf/aD7CSY3EnrTM9Kn72jwIGJIfRE7
-	 aB9S+ROAi3Z57xa13AjLsWlcyQG1cWQjv/Pp6nzgD9d+kdHEPIOwNnysK32qPZSNpP
-	 LDjUj/rw6KTYQ==
-Message-ID: <1e021b7b-b1f7-4604-9e97-370758ac4f4e@kernel.org>
-Date: Fri, 2 Aug 2024 09:42:11 +0900
+	s=k20201202; t=1722559391;
+	bh=cISelkdGqljgDeI2+QcSA5s1XZGf3TYnjcH1wmM0OdM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TjDgN8vnv0H0AAhrda5LwUO5Kyi1T+RuOPT+grl1MdPMyG2S2Mb0EsDHMO4zftjwW
+	 nu0/3oZ03SBMpbRwmS6CTXhqEVo5SXJkgr3V2nLP9PC4ixvv2g8k02QEBI6n0GmYcH
+	 nYhANZM/+MPikZUyT6/0qPnUww5hB1SVtwcvix6Y/qDmAVnZICn9yGkCez5zuFRd4D
+	 dR0EItufThTc083wZUa8wT7WZmMvhExThz1L0sWYi8PEpAF5Ph9DV6haYJAB3nF6Pr
+	 KrsM6sOgi08GkL7D3SgVDiBIeC2wpu32Rkw6JzmFzVAWk0hvWoRHWyjLRV2CuqS+wR
+	 C7eIrUoYvzgxQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id B6AB8CE09F8; Thu,  1 Aug 2024 17:43:10 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH rcu 01/11] rcuscale: Save a few lines with whitespace-only change
+Date: Thu,  1 Aug 2024 17:42:58 -0700
+Message-Id: <20240802004308.4134731-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
+References: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/10] PCI: Make pcim_request_all_regions() a public
- function
-To: Philipp Stanner <pstanner@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Niklas Cassel <cassel@kernel.org>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,
- Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>,
- Srujana Challa <schalla@marvell.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Kalle Valo <kvalo@kernel.org>, Serge Semin <fancer.lancer@gmail.com>,
- Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
- Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Kevin Cernekee <cernekee@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
- David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jie Wang <jie.wang@intel.com>, Adam Guerin <adam.guerin@intel.com>,
- Shashank Gupta <shashank.gupta@intel.com>,
- Damian Muszynski <damian.muszynski@intel.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Bharat Bhushan <bbhushan2@marvell.com>,
- Johannes Berg <johannes.berg@intel.com>,
- Gregory Greenman <gregory.greenman@intel.com>,
- Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
- Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
- Breno Leitao <leitao@debian.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- John Ogness <john.ogness@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-ide@vger.kernel.org, qat-linux@intel.com,
- linux-crypto@vger.kernel.org, linux-wireless@vger.kernel.org,
- ntb@lists.linux.dev, linux-pci@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20240801174608.50592-1-pstanner@redhat.com>
- <20240801174608.50592-2-pstanner@redhat.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240801174608.50592-2-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/2/24 02:45, Philipp Stanner wrote:
-> In order to remove the deprecated function
-> pcim_iomap_regions_request_all(), a few drivers need an interface to
-> request all BARs a PCI-Device offers.
-> 
-> Make pcim_request_all_regions() a public interface.
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+This whitespace-only commit fuses a few lines of code, taking advantage
+of the newish 100-character-per-line limit to save a few lines of code.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/rcuscale.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
+diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
+index d534d4ec23147..3269dd9c639f7 100644
+--- a/kernel/rcu/rcuscale.c
++++ b/kernel/rcu/rcuscale.c
+@@ -1015,13 +1015,9 @@ rcu_scale_init(void)
+ 	}
+ 	while (atomic_read(&n_rcu_scale_reader_started) < nrealreaders)
+ 		schedule_timeout_uninterruptible(1);
+-	writer_tasks = kcalloc(nrealwriters, sizeof(reader_tasks[0]),
+-			       GFP_KERNEL);
+-	writer_durations = kcalloc(nrealwriters, sizeof(*writer_durations),
+-				   GFP_KERNEL);
+-	writer_n_durations =
+-		kcalloc(nrealwriters, sizeof(*writer_n_durations),
+-			GFP_KERNEL);
++	writer_tasks = kcalloc(nrealwriters, sizeof(reader_tasks[0]), GFP_KERNEL);
++	writer_durations = kcalloc(nrealwriters, sizeof(*writer_durations), GFP_KERNEL);
++	writer_n_durations = kcalloc(nrealwriters, sizeof(*writer_n_durations), GFP_KERNEL);
+ 	if (!writer_tasks || !writer_durations || !writer_n_durations) {
+ 		SCALEOUT_ERRSTRING("out of memory");
+ 		firsterr = -ENOMEM;
 -- 
-Damien Le Moal
-Western Digital Research
+2.40.1
 
 
