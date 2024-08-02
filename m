@@ -1,99 +1,137 @@
-Return-Path: <linux-kernel+bounces-272052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8AA945645
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:21:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DC5945647
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24045286049
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:21:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12AEA1C2194E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A671AACB;
-	Fri,  2 Aug 2024 02:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E56199A2;
+	Fri,  2 Aug 2024 02:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h9zk08eU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="DeNvzjqG"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7ED168DA;
-	Fri,  2 Aug 2024 02:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C9118EA8
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 02:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722565289; cv=none; b=E+hAcRQst+DJSmGytT56ApriZFrgbPOhJUZ9jViEOQnGyT2r/W9CCy1+6jMKqzy2YL9r3glk9FXsT86twYjtbqdBkb1i2aJmYVL6TzGSIM+2BKdu/Mcv0OnnPdNxMKwDabnVqzhmtXuW0KUnllWXkAM/TQ3qCmNodB1+jTKQQFY=
+	t=1722565478; cv=none; b=FPDS1kHFhX69tJivr8assttfhkIgyWH6pJ3rrw1P/ND+NX/omFxbbE6FSxi1HLvaEFm0TDbMjRXCwhwzf/uoiphLlvb2v0kH2Qi7zAYCsUlgL0yoscDav2ozQ68hqZNnOfqVdKjxeck1Pdb1CknsAC39wx+mzkwPzs3AYXJJyRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722565289; c=relaxed/simple;
-	bh=FZAW0oaZMiOoFMjNtgxtApYHPoDwFm7fpwFkO2u4Dcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dJGj8tYXMdfNHrtbtFa0cJXNY3Vdc3zbkvug5j8FRIQWJ3N+cK7z769WeRI5LLKJ4Zm+PQ2gnBr4CHTux7YY0tuRE4rCdnF2qukg70E8LdEUtmZYuLSHCGGt2/Suglw2lernpg59tXwRMWqky1XKB+he2+clEMeD8vas5DkYKuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=h9zk08eU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722565281;
-	bh=ht6MsSV5KimzjQnGJjY4UeLBKAX+DfOGBI6IF2U0NFk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=h9zk08eUZMCNT2CWOoI6PKHW7nOVpAbSrjc27pwQSXYZaAIyZO0nxwg8HzyMSW6zF
-	 0wT69HCZxBOYZY6ogfJX4JxOJR8vKyFhjKKHkQxIbLNRC3H2ebN0NPAJz8ou0VAsFr
-	 By7QkOJqZFhfKuNxfiqSEOyg/lsg+GMr2FyMB06tR3S8Prk/fFvKc1lyR9eAVzDlT8
-	 kgCdtoH9Opm12RYIXnluVxej5Ztr7eViIJR4kk5wCn9s9HcKHqaenBuUC5afEeMrhT
-	 TiNQ8QixX5PpSWkR1Y8mjclcdDmwizXhTw4vSDPLNXtsfeg1J+wYrxHSjrAJoVhFp2
-	 u/ABlL2GWSlRA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZqMP3RzTz4wbR;
-	Fri,  2 Aug 2024 12:21:21 +1000 (AEST)
-Date: Fri, 2 Aug 2024 12:21:20 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>, Takashi Iwai <tiwai@suse.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the ieee1394 tree
-Message-ID: <20240802122120.480789ac@canb.auug.org.au>
+	s=arc-20240116; t=1722565478; c=relaxed/simple;
+	bh=1pUgx4kLA5On0aRPcA0zyVwM4kr2EKTTlb7JRVxeoQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=us0LKDecCfG8NdmSVkM88PYyw/TP74LIxxYNB0QUEv0Rac8Wj9wWO9cUOzEzOmCWvORJ27qAc8KxewYgUFP5io4cjrWkK1ldQqoEswaBYYxrgwHFet6g2se24gimatsEoiga4l4CS19QGO4WrJphOB7nrEmXi1z/96gFskzXQMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=DeNvzjqG; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d1c655141so5869174b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 19:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722565475; x=1723170275; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MbaxQcsGfxUIgeMy81+1yUQqnxTxpWNLrxDGUmYtREY=;
+        b=DeNvzjqG4SJazkPKxQw+xL40JUQLgyYqQJy7dORbfWS0PeMBvZsChBpc9nLURCYJrN
+         CMJXBIc+qZ3M87Gn54oOXLDdzOixvRCZXCu6IOIPt/J7RkMF08MUlbUCtst0YyggHMGp
+         CeQCABcD/e0Q60BraJaGODxJaVMhC0HRs+9oPK8hkEIqRTHKsxGyXGl2HJ1GLLWEwiMP
+         xRcu/mTBV2SgdZl2j6S6YtyCa0ajSX6O4YONLXz75tKobL7zQFNBNOBL8FTkBP6JipG0
+         mLiKpu3KNyTwwTPQI8IimuMz7WbDsUoZ1U22RkGiseCWHUfzbCE9Y16WYP/AJHg6q5FA
+         pdsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722565475; x=1723170275;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MbaxQcsGfxUIgeMy81+1yUQqnxTxpWNLrxDGUmYtREY=;
+        b=VjJ3Lsv9FRdONvVlG9U4YkOq+/A17x2KjvHh0CVUPwYQEeB+Vb6z8S9F5lqZTHt22a
+         L4d8kUqO/KyTgIHaU0MZoPF5CosCWzTm2ilPMz7q+xB2OFZEgJ51rbVqy8Qmo8itCfI9
+         nKvszBeL2gIQsgKu9zn2R0Ybjlg0tchH+iAuHSzWYd1EgI5aTU5ABnkYw5eYmey8wZFP
+         QiSIGOdRRND5qEfFxZhkQ5najFWJmnlX/+0taSwjErQLaNKBjcox503QcCRR4PM33QgL
+         RexZntTsyIOQh02LW1ZQYbKdK7dn4KXYwcX+sbaU/tESXs9qvhVZyWbVoU/T5jBPDORA
+         F5SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWiaF10C4QeykDsjw00Z+Jp+1tNhoVlxKf5XnrKD6ljbAA+bijVXW9GQ0OgszTcvl1LTKDlx48RViUb2p+dwp8i7k4bN8jJUoPuh7V
+X-Gm-Message-State: AOJu0Yxx9VGfvkLJsaY/TPMq0bueKyN6/s1M0to5ZjV6N/7YGJjHju9k
+	RZZzXi6NmX0ie7H+iSsHMmkdqw3ZZTdew4/lPysSRDJLxFN+SmDVBKUVMsXPaAA=
+X-Google-Smtp-Source: AGHT+IHszQBF9XaIlkRyUDtOVaKjBsyd9ElItCsAR7bTXrfBCzQtRSicoMdohqzkHhw4ctg47eXRzA==
+X-Received: by 2002:a05:6a21:32a0:b0:1c2:9643:2921 with SMTP id adf61e73a8af0-1c6995504d0mr3392945637.10.1722565474979;
+        Thu, 01 Aug 2024 19:24:34 -0700 (PDT)
+Received: from ghost ([2601:647:6700:2d90:16b8:ec8e:e4be:b399])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f53c4csm5947405ad.72.2024.08.01.19.24.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 19:24:34 -0700 (PDT)
+Date: Thu, 1 Aug 2024 19:24:32 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Andy Chiu <andy.chiu@sifive.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH -fixes v2] riscv: Re-introduce global icache flush in
+ patch_text_XXX()
+Message-ID: <ZqxDYF1OyIf40ZJA@ghost>
+References: <20240801191404.55181-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LkPx7irOW3sDkkGWApfUv5C";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801191404.55181-1-alexghiti@rivosinc.com>
 
---Sig_/LkPx7irOW3sDkkGWApfUv5C
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Aug 01, 2024 at 09:14:04PM +0200, Alexandre Ghiti wrote:
+> commit edf2d546bfd6 ("riscv: patch: Flush the icache right after
+> patching to avoid illegal insns") mistakenly removed the global icache
+> flush in patch_text_nosync() and patch_text_set_nosync() functions, so
+> reintroduce them.
+> 
+> Fixes: edf2d546bfd6 ("riscv: patch: Flush the icache right after patching to avoid illegal insns")
+> Reported-by: Samuel Holland <samuel.holland@sifive.com>
+> Closes: https://lore.kernel.org/linux-riscv/a28ddc26-d77a-470a-a33f-88144f717e86@sifive.com/
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-Hi all,
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 
-The following commits are also in the sound-current tree as different
-commits (but the same patches):
-
-  c2f9fd3d6ad7 ("Revert "ALSA: firewire-lib: operate for period elapse even=
-t in process context"")
-  e29ed9a81fd4 ("Revert "ALSA: firewire-lib: obsolete workqueue for period =
-update"")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LkPx7irOW3sDkkGWApfUv5C
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmasQqAACgkQAVBC80lX
-0GxfwQf8C/LQisGyz6vA97FEPZRV21jN1hSuTa6dNLrD9C5RYnUJQ/T5p/DbKwgz
-GsmBAfWdFAbl2RnpUzndekM5VwNNrhRu2CU71irRtzPi70fgHAra4txv5a6q8Dd7
-p1iNrRrJ3YXlPQ0nRvuwyDRPeQDKebA9dvxz88nvBuirq5l53JqFqPdq+lk3DLfS
-Ybbg11phumo+nsKpvdOtYro+hHJm7ltXLkrK/ZVHf6WCQOljKHLXDlVn+xWh32/o
-5vRx1Op9eT1S2fTL/zv/K7QUoHF+QLsbRf/iIxQufT8yaUskG9t/G0cNtcWIktW0
-7xQq4V/lfHhlgdjhE4vZ3k/aEviQjg==
-=fkrD
------END PGP SIGNATURE-----
-
---Sig_/LkPx7irOW3sDkkGWApfUv5C--
+> ---
+>  arch/riscv/kernel/patch.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
+> index 69e5796fc51f..34ef522f07a8 100644
+> --- a/arch/riscv/kernel/patch.c
+> +++ b/arch/riscv/kernel/patch.c
+> @@ -205,6 +205,8 @@ int patch_text_set_nosync(void *addr, u8 c, size_t len)
+>  	int ret;
+>  
+>  	ret = patch_insn_set(addr, c, len);
+> +	if (!ret)
+> +		flush_icache_range((uintptr_t)addr, (uintptr_t)addr + len);
+>  
+>  	return ret;
+>  }
+> @@ -239,6 +241,8 @@ int patch_text_nosync(void *addr, const void *insns, size_t len)
+>  	int ret;
+>  
+>  	ret = patch_insn_write(addr, insns, len);
+> +	if (!ret)
+> +		flush_icache_range((uintptr_t)addr, (uintptr_t)addr + len);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.39.2
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
