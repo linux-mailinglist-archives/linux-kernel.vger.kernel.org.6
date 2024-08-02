@@ -1,252 +1,252 @@
-Return-Path: <linux-kernel+bounces-273197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1116946599
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:51:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF3594659B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60ADB1F2397C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6501F22EF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD19C6A039;
-	Fri,  2 Aug 2024 21:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D4B136672;
+	Fri,  2 Aug 2024 21:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYzAF4bP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DqOGq4k5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67C16BFA6;
-	Fri,  2 Aug 2024 21:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5791ABEC2;
+	Fri,  2 Aug 2024 21:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722635456; cv=none; b=Nf6foKl6LjHiqr0HldqHqYhOJYe6rjOKirzDqYUpFLravaiseaAiKI8tnR4UfZvUiLsZWi0dHIlBQioIBQC3NFuvPCYpbwYK7FINuadQfrMnnxgtyC8jY783gLNM1kglBzQeuDWlBD500dy5oGTezt3RxuVmFc/o0wFFI7tzSjE=
+	t=1722635628; cv=none; b=TD/eHBXHCnbp2qc/yW3HbEWL80zCnIixhu9tomte6rvijeHV5O0Yx+mW4j4MmUWMUaYQeC/zkDeguqbCCXGuEOtBAH7Pvlz1SiRhrqPKdR2B8fLs/tXjvH0pe04L8xMsZD9Si8KNhOH+Zv47EYdnxtydtqKnthQNXLWtJIOXTU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722635456; c=relaxed/simple;
-	bh=uuXgtuDH8cBQ87gq4/YyxIlFuK+mRg3H1gD0rb9Obd0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZCX5+VgUPyxajeVccWOGqiAw2DVKRwoykQci51ySKiq2RysHgdDL9eQ+97zWl69b3vQ38WqKXEkxaX/eDR9Ky/lfuR8al4rhliOJxh23FnFMUdFlpjMqdlynUFAB+xxx63dU5/PiexKdy3/8p71zpScx714Qegt8lX0pQF+BqAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYzAF4bP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D11C4AF0C;
-	Fri,  2 Aug 2024 21:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722635456;
-	bh=uuXgtuDH8cBQ87gq4/YyxIlFuK+mRg3H1gD0rb9Obd0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pYzAF4bPjvUqSInyhmJfqXrjo7GeEOzF4484peaqtRqn932/aRWyIJf1XnHY+VSzw
-	 wclnrnb9A/FQu4dKkCM8UPQu133pZft3XvKBhLJhXocimH6b+8WRgnvRbdkOuXBXcY
-	 UwJZBSlNU42ql6x8PKwHgo90H0nW9UfHQXHODP4igH974iSja++WLH2ROfOpofj8XO
-	 QbN+zXmDHVzE9wuNn9lkliWeo2HNSSMzUlPTns7ejU7PgUqZ9iqs9VK0/1zGCbQXDf
-	 JTz7JV+qrKzjT6CEeRA/a87BRJ0WquYcE4sUN/9ipcC46OsR/wzDE+TbBwAex7XUYz
-	 YXBasmGxDqUYQ==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so18747605e87.0;
-        Fri, 02 Aug 2024 14:50:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1FRjY+cZt2xWyMwvoMH3xbdPfYyJaDZvmI1uw1DNWILHg3OlZTwjssGZ9bxPh1gzaFTdmWv8dFIKnNXIGXpCbzu+u6QZgApU28a7VmW3achiZCJjq8qC6wSMDHztNBgNYbeGbPgFXY1Wrz+1r7w==
-X-Gm-Message-State: AOJu0Yw2bMCbbqVE5j4hBPa/YmoZuU7HHS5sfpHGZ7D4Em9ObJ6rCfdD
-	VCb4Y07BpNsk6zjQ2/kF55WUoCCfCV2JTI0inLt+y7vuup03FrqqA9/rPH94+QdFWll2oOb2upm
-	Y0HuFJ696YMaAMWptG6Lk23MgcRs=
-X-Google-Smtp-Source: AGHT+IGTAK5XT2ims2rToOuqW2RmwAMi6oAavsxippggEd51AEZEmokQvlYaEwA1C3xsfaucgSJZrdBSNfqpYCE0abg=
-X-Received: by 2002:a05:6512:308a:b0:52e:9f7a:6e6 with SMTP id
- 2adb3069b0e04-530bb3b4602mr4213789e87.41.1722635454577; Fri, 02 Aug 2024
- 14:50:54 -0700 (PDT)
+	s=arc-20240116; t=1722635628; c=relaxed/simple;
+	bh=RERWMdBecekBtXMyvnP2+fJUfUwH6k4q645hRgNjC2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5Rn8amSAxdv3Edfh7KyJqnvAARvezXCjmn2YtGnBI4XHF8AUkctNPiRMCPGNRhNAshNRdbS3iJ5rXJAfd8WDJQlSgyZJdgsh8/Alq+BEUgBLKsdbgsJszxAwtiUqvMSvzM/V6UGDG88Bi3tJsEv+3mrwo0M2mkGbVNWm+cAq8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DqOGq4k5; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722635625; x=1754171625;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RERWMdBecekBtXMyvnP2+fJUfUwH6k4q645hRgNjC2o=;
+  b=DqOGq4k5mV/dijJGZULKnRBiDtqnIIhi5ntngV7lsGyZAqU3J0iQsVsM
+   xlNSMByRnpxI7HK03tguRTTVuZ2p3G++zHJKpKQN/Z3WuUMc1aW3lbc6K
+   PaooVxNwGCAa3vMaxfobHt89CIgZiLpYitiQ1OIflqfUoGWQB3RRZBfoT
+   ZS9yz6122h1b1e+N2m+KifNwU2IXtdC4vACErg8j3zVplUDx3TKYZ63Ky
+   rXzEFkmJ5gkr/qe/BCIZWVZFLeQF9gMf9NNUmEEycJYuUciqTBG14UKJs
+   rNkjcVUynvPzwvKm21SpJiWTEkpqorB7Ft6wJYWNaM/ybnS8ipjPBPn2y
+   w==;
+X-CSE-ConnectionGUID: cZDKby7eTXmKLutpxn2B9w==
+X-CSE-MsgGUID: auXDZDnTTXyUDg+gmpOvhg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20485824"
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="20485824"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 14:53:44 -0700
+X-CSE-ConnectionGUID: lYEDvgI9SI+i0B4Xm672GQ==
+X-CSE-MsgGUID: GZckaPaMReSP4vRAQQ3New==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="55184276"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 02 Aug 2024 14:53:41 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sa0DS-000xTI-2X;
+	Fri, 02 Aug 2024 21:53:38 +0000
+Date: Sat, 3 Aug 2024 05:53:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stanley Chu <stanley.chuys@gmail.com>, alexandre.belloni@bootlin.com,
+	robh@kernel.org, krzk+dt@kernel.org, linux-i3c@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+	tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com,
+	cpchiang1@nuvoton.com
+Subject: Re: [PATCH v1 2/2] i3c: master: Add Nuvoton npcm845 i3c master driver
+Message-ID: <202408030543.PWRuy07u-lkp@intel.com>
+References: <20240801071946.43266-3-yschu@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPhsuW4nem9XZP+b=sJJ7kqXG-cafz0djZf51HsgjCiwkGBA+A@mail.gmail.com>
- <26fb7054-f877-496f-b23a-9b6a3d752595@linux.intel.com> <CAPhsuW6+7ULMQFLbmOsBzYAdd8LMV54h_ynfkGDxd_oH6O8cww@mail.gmail.com>
- <CAP-5=fVNfGT+a1RG9-ugKWjQR-83vLdHo-6vCVz=N=CBF4_7ug@mail.gmail.com> <CO6PR11MB5635E5844F7C8CB1277C1DF4EEAB2@CO6PR11MB5635.namprd11.prod.outlook.com>
-In-Reply-To: <CO6PR11MB5635E5844F7C8CB1277C1DF4EEAB2@CO6PR11MB5635.namprd11.prod.outlook.com>
-From: Song Liu <song@kernel.org>
-Date: Fri, 2 Aug 2024 14:50:41 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6Hq4qno1=K9-q17TsNO7S4-dQMCfo_nAQZ7EMdcuP6NQ@mail.gmail.com>
-Message-ID: <CAPhsuW6Hq4qno1=K9-q17TsNO7S4-dQMCfo_nAQZ7EMdcuP6NQ@mail.gmail.com>
-Subject: Re: Some unc_cha_tor_* events appear to be "not supported"?
-To: "Wang, Weilin" <weilin.wang@intel.com>
-Cc: Ian Rogers <irogers@google.com>, "Taylor, Perry" <perry.taylor@intel.com>, 
-	"Baker, Edward" <edward.baker@intel.com>, 
-	"Daneti, Venkata Naga Sai Dilip" <venkata.naga.sai.dilip.daneti@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	"Hunter, Adrian" <adrian.hunter@intel.com>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	"jonesz@meta.com" <jonesz@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801071946.43266-3-yschu@nuvoton.com>
 
-Hi folks,
+Hi Stanley,
 
-What are the next steps with this issue? I guess we need to update the
-scripts and regenerate the JSON files?
+kernel test robot noticed the following build warnings:
 
-Thanks,
-Song
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.11-rc1 next-20240802]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-On Thu, Jul 25, 2024 at 10:52=E2=80=AFAM Wang, Weilin <weilin.wang@intel.co=
-m> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Ian Rogers <irogers@google.com>
-> > Sent: Thursday, July 25, 2024 10:00 AM
-> > To: Song Liu <song@kernel.org>; Wang, Weilin <weilin.wang@intel.com>;
-> > Taylor, Perry <perry.taylor@intel.com>
-> > Cc: Liang, Kan <kan.liang@linux.intel.com>; Arnaldo Carvalho de Melo
-> > <acme@kernel.org>; Hunter, Adrian <adrian.hunter@intel.com>; linux-perf=
--
-> > users@vger.kernel.org; open list <linux-kernel@vger.kernel.org>; Namhyu=
-ng
-> > Kim <namhyung@kernel.org>; Jiri Olsa <jolsa@kernel.org>; jonesz@meta.co=
-m
-> > Subject: Re: Some unc_cha_tor_* events appear to be "not supported"?
-> >
-> > On Thu, Jul 25, 2024 at 9:39=E2=80=AFAM Song Liu <song@kernel.org> wrot=
-e:
-> > >
-> > > Hi Kan,
-> > >
-> > > Thanks for your quick response!
-> > >
-> > > On Thu, Jul 25, 2024 at 6:37=E2=80=AFAM Liang, Kan <kan.liang@linux.i=
-ntel.com>
-> > wrote:
-> > > >
-> > > >
-> > > >
-> > > > On 2024-07-24 6:39 p.m., Song Liu wrote:
-> > > > > Hi folks,
-> > > > >
-> > > > > We noticed that some unc_cha_tor_occupancy and unc_cha_tor_insert=
-s
-> > events
-> > > > > appear to be "not supported" and always counting zero (see an exa=
-mple
-> > below).
-> > > > > Is this a known issue? We are testing with 6.10 kernel and perf.
-> > > > >
-> > > > > Thanks,
-> > > > > Song
-> > > > >
-> > > > >
-> > > > > [root@kerneltest008.05.atn6 ~]# ./perf list | grep
-> > > > > unc_cha_tor_occupancy.ia_hit_llcprefdrd
-> > > > >   unc_cha_tor_occupancy.ia_hit_llcprefdrd
-> > > > > [root@kerneltest008.05.atn6 ~]# ./perf stat -e
-> > > > > unc_cha_tor_occupancy.ia_hit_llcprefdrd -a -- sleep 1
-> > > > > WARNING: event 'N/A' not valid (bits 10,12-13,15 of config1 '4b43=
-3'
-> > > >
-> > > >
-> > > > The value '4b433' is for the 'Filter1', according to the original e=
-vent
-> > > > list.
-> > > >
-> > > >
-> > https://github.com/intel/perfmon/blob/main/SKX/events/skylakex_uncore.j=
-s
-> > on#L4634
-> > > >
-> > > >       "EventName": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > >       "BriefDescription":
-> > "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > >       "PublicDescription":
-> > "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > >       "Counter": "0",
-> > > >       "MSRValue": "0x00",
-> > > >       "ELLC": "0",
-> > > >       "Filter": "Filter1",
-> > > >       "ExtSel": "0",
-> > > >       "Deprecated": "0",
-> > > >       "FILTER_VALUE": "0x4b433"
-> > > >
-> > > > There are two filters for CHA on SKX. Each filter is 32 bits wide.
-> > > > So the Linux kernel driver uses config1 (64 bits wide) to represent=
- both
-> > > > of them. The low 32 bits are for filter0 and high 32 bits are for f=
-ilter1.
-> > > >
-> > > > It should be an issue of the convert script, which set the filter1 =
-value
-> > > > to the low 32 bits.
-> > > >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/tools/
-> > perf/pmu-events/arch/x86/skylakex/uncore-cache.json#n4489
-> > > >
-> > > > Can you please try the below event?
-> > > > uncore_cha/event=3D0x35,umask=3D0x11,config1=3D0x4b43300000000/
-> > >
-> > > This appears to work. I also tried events like:
-> > >
-> > >
-> > uncore_cha/UNC_CHA_TOR_OCCUPANCY.IA_MISS,config1=3D0x40432000000
-> > 00/
-> > >
-> > uncore_cha/UNC_CHA_TOR_INSERTS.IA_MISS,config1=3D0x4043200000000/
-> > >
-> > > Do you have an idea on how to fix the convert script? I haven't looke=
-d
-> > > into these codes.
-> >
-> > The converter script logic is here:
-> > https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py#=
-L3
-> > 95
-> > but presumably this worked at some point or is needed on other models.
-> > Checking the perf json I see:
-> > ```
-> > $ grep -rl config1 tools/perf/pmu-events/arch/x86/
-> > tools/perf/pmu-events/arch/x86/snowridgex/uncore-cache.json
-> > tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-> > tools/perf/pmu-events/arch/x86/skylakex/uncore-cache.json
-> > tools/perf/pmu-events/arch/x86/cascadelakex/uncore-cache.json
-> > tools/perf/pmu-events/arch/x86/cascadelakex/clx-metrics.json
-> > ```
-> > Since CLX is near equal to SKX, and the metrics will presumably be
-> > false hits, perhaps shifting this value will break snowridgex - I have
-> > no such machine to test on.
-> >
-> > Using config1 values rather than formats is odd to me. On a SkylakeX I =
-see:
-> > ```
-> > $ grep -r config1 /sys/devices/uncore_cha_0/format/
-> > /sys/devices/uncore_cha_0/format/filter_rem:config1:32
-> > /sys/devices/uncore_cha_0/format/filter_opc0:config1:41-50
-> > /sys/devices/uncore_cha_0/format/filter_isoc:config1:63
-> > /sys/devices/uncore_cha_0/format/filter_tid:config1:0-8
-> > /sys/devices/uncore_cha_0/format/filter_loc:config1:33
-> > /sys/devices/uncore_cha_0/format/filter_nc:config1:62
-> > /sys/devices/uncore_cha_0/format/filter_opc1:config1:51-60
-> > /sys/devices/uncore_cha_0/format/filter_all_op:config1:35
-> > /sys/devices/uncore_cha_0/format/filter_not_nm:config1:37
-> > /sys/devices/uncore_cha_0/format/filter_state:config1:17-26
-> > /sys/devices/uncore_cha_0/format/filter_nm:config1:36
-> > ```
-> >
-> > Adding Weilin and Perry as I'm unsure what the right fix should be. My
-> > thought is the input Intel perfmon json should break apart the filter
-> > value into opcodes, etc. and then in the converter script we add these
-> > to perf events like filter_opc0=3D0xb4.
-> >
->
-> Adding Ed and Dilip for event related questions. I can follow up to updat=
-e the
-> converter script once we are clear about the content we need/could provid=
-e
-> in event JSON.
->
-> Thanks,
-> Weilin
->
-> > Thanks,
-> > Ian
-> >
-> > > Thanks,
-> > > Song
-> > >
-> > > [...]
+url:    https://github.com/intel-lab-lkp/linux/commits/Stanley-Chu/dt-bindings-i3c-Add-NPCM845-i3c-controller/20240802-183617
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240801071946.43266-3-yschu%40nuvoton.com
+patch subject: [PATCH v1 2/2] i3c: master: Add Nuvoton npcm845 i3c master driver
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240803/202408030543.PWRuy07u-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240803/202408030543.PWRuy07u-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408030543.PWRuy07u-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/i3c/master/npcm845-i3c-master.c: In function 'npcm_i3c_master_bus_init':
+>> drivers/i3c/master/npcm845-i3c-master.c:885:48: warning: left shift count >= width of type [-Wshift-count-overflow]
+     885 |         info.pid = (NPCM_I3C_VENDORID_VID(reg) << 33) | readl(master->regs + NPCM_I3C_PARTNO);
+         |                                                ^~
+   drivers/i3c/master/npcm845-i3c-master.c: At top level:
+   drivers/i3c/master/npcm845-i3c-master.c:2353:19: error: initialization of 'void (*)(struct platform_device *)' from incompatible pointer type 'int (*)(struct platform_device *)' [-Wincompatible-pointer-types]
+    2353 |         .remove = npcm_i3c_master_remove,
+         |                   ^~~~~~~~~~~~~~~~~~~~~~
+   drivers/i3c/master/npcm845-i3c-master.c:2353:19: note: (near initialization for 'npcm_i3c_master.<anonymous>.remove')
+
+
+vim +885 drivers/i3c/master/npcm845-i3c-master.c
+
+   770	
+   771	static int npcm_i3c_master_bus_init(struct i3c_master_controller *m)
+   772	{
+   773		struct npcm_i3c_master *master = to_npcm_i3c_master(m);
+   774		struct i3c_bus *bus = i3c_master_get_bus(m);
+   775		struct i3c_device_info info = {};
+   776		unsigned long fclk_rate, fclk_period_ns;
+   777		unsigned long i3c_scl_rate, i2c_scl_rate;
+   778		unsigned int pp_high_period_ns, od_low_period_ns, i2c_period_ns;
+   779		unsigned int scl_period_ns;
+   780		u32 ppbaud, pplow, odhpp, odbaud, i2cbaud, reg;
+   781		int ret;
+   782	
+   783		/* Timings derivation */
+   784		fclk_rate = clk_get_rate(master->fclk);
+   785		if (!fclk_rate)
+   786			return -EINVAL;
+   787	
+   788		fclk_period_ns = DIV_ROUND_UP(1000000000, fclk_rate);
+   789	
+   790		/*
+   791		 * Configure for Push-Pull mode.
+   792		 */
+   793		if (master->scl_timing.i3c_pp_hi >= I3C_SCL_PP_PERIOD_NS_MIN &&
+   794		    master->scl_timing.i3c_pp_lo >= master->scl_timing.i3c_pp_hi) {
+   795			ppbaud = DIV_ROUND_UP(master->scl_timing.i3c_pp_hi, fclk_period_ns) - 1;
+   796			if (ppbaud > NPCM_I3C_MAX_PPBAUD)
+   797				ppbaud = NPCM_I3C_MAX_PPBAUD;
+   798			pplow = DIV_ROUND_UP(master->scl_timing.i3c_pp_lo, fclk_period_ns)
+   799				- (ppbaud + 1);
+   800			if (pplow > NPCM_I3C_MAX_PPLOW)
+   801				pplow = NPCM_I3C_MAX_PPLOW;
+   802			bus->scl_rate.i3c = 1000000000 / (((ppbaud + 1) * 2 + pplow) * fclk_period_ns);
+   803		} else {
+   804			scl_period_ns = DIV_ROUND_UP(1000000000, bus->scl_rate.i3c);
+   805			if (bus->scl_rate.i3c == 10000000) {
+   806				/* Workaround for npcm8xx: 40/60 ns */
+   807				ppbaud = DIV_ROUND_UP(40, fclk_period_ns) - 1;
+   808				pplow = DIV_ROUND_UP(20, fclk_period_ns);
+   809			} else {
+   810				/* 50% duty-cycle */
+   811				ppbaud = DIV_ROUND_UP((scl_period_ns / 2), fclk_period_ns) - 1;
+   812				pplow = 0;
+   813			}
+   814			if (ppbaud > NPCM_I3C_MAX_PPBAUD)
+   815				ppbaud = NPCM_I3C_MAX_PPBAUD;
+   816		}
+   817		pp_high_period_ns = (ppbaud + 1) * fclk_period_ns;
+   818	
+   819		/*
+   820		 * Configure for Open-Drain mode.
+   821		 */
+   822		if (master->scl_timing.i3c_od_hi >= pp_high_period_ns &&
+   823		    master->scl_timing.i3c_od_lo >= I3C_SCL_OD_LOW_PERIOD_NS_MIN) {
+   824			if (master->scl_timing.i3c_od_hi == pp_high_period_ns)
+   825				odhpp = 1;
+   826			else
+   827				odhpp = 0;
+   828			odbaud = DIV_ROUND_UP(master->scl_timing.i3c_od_lo, pp_high_period_ns) - 1;
+   829		} else {
+   830			/* Set default OD timing: 1MHz/1000ns with 50% duty cycle */
+   831			odhpp = 0;
+   832			odbaud = DIV_ROUND_UP(500, pp_high_period_ns) - 1;
+   833		}
+   834		if (odbaud > NPCM_I3C_MAX_ODBAUD)
+   835			odbaud = NPCM_I3C_MAX_ODBAUD;
+   836		od_low_period_ns = (odbaud + 1) * pp_high_period_ns;
+   837	
+   838		/* Configure for I2C mode */
+   839		i2c_period_ns = DIV_ROUND_UP(1000000000, bus->scl_rate.i2c);
+   840		if (i2c_period_ns < od_low_period_ns * 2)
+   841			i2c_period_ns = od_low_period_ns * 2;
+   842		i2cbaud = DIV_ROUND_UP(i2c_period_ns, od_low_period_ns) - 2;
+   843		if (i2cbaud > NPCM_I3C_MAX_I2CBAUD)
+   844			i2cbaud = NPCM_I3C_MAX_I2CBAUD;
+   845	
+   846		i3c_scl_rate = 1000000000 / (((ppbaud + 1) * 2 + pplow) * fclk_period_ns);
+   847		i2c_scl_rate = 1000000000 / ((i2cbaud + 2) * od_low_period_ns);
+   848	
+   849		reg = NPCM_I3C_MCONFIG_MASTER_EN |
+   850		      NPCM_I3C_MCONFIG_DISTO(0) |
+   851		      NPCM_I3C_MCONFIG_HKEEP(3) |
+   852		      NPCM_I3C_MCONFIG_ODSTOP(1) |
+   853		      NPCM_I3C_MCONFIG_PPBAUD(ppbaud) |
+   854		      NPCM_I3C_MCONFIG_PPLOW(pplow) |
+   855		      NPCM_I3C_MCONFIG_ODBAUD(odbaud) |
+   856		      NPCM_I3C_MCONFIG_ODHPP(odhpp) |
+   857		      NPCM_I3C_MCONFIG_SKEW(0) |
+   858		      NPCM_I3C_MCONFIG_I2CBAUD(i2cbaud);
+   859		writel(reg, master->regs + NPCM_I3C_MCONFIG);
+   860	
+   861		dev_dbg(master->dev, "dts: i3c rate=%lu, i2c rate=%lu\n",
+   862			bus->scl_rate.i3c, bus->scl_rate.i2c);
+   863		dev_info(master->dev, "fclk=%lu, period_ns=%lu\n", fclk_rate, fclk_period_ns);
+   864		dev_info(master->dev, "i3c scl_rate=%lu\n", i3c_scl_rate);
+   865		dev_info(master->dev, "i2c scl_rate=%lu\n", i2c_scl_rate);
+   866		dev_info(master->dev, "pp_high=%u, pp_low=%lu\n", pp_high_period_ns,
+   867				(ppbaud + 1 + pplow) * fclk_period_ns);
+   868		dev_info(master->dev, "pp_sda_rd_skew=%d, pp_sda_wr_skew=%d\n",
+   869				master->scl_timing.i3c_pp_sda_rd_skew,
+   870				master->scl_timing.i3c_pp_sda_wr_skew);
+   871		dev_info(master->dev, "od_high=%d, od_low=%d\n",
+   872				odhpp ? pp_high_period_ns : od_low_period_ns, od_low_period_ns);
+   873		dev_dbg(master->dev, "i2c_high=%u, i2c_low=%u\n", ((i2cbaud >> 1) + 1) * od_low_period_ns,
+   874				((i2cbaud >> 1) + 1 + (i2cbaud % 2)) * od_low_period_ns);
+   875		dev_dbg(master->dev, "ppbaud=%d, pplow=%d, odbaud=%d, i2cbaud=%d\n",
+   876			ppbaud, pplow, odbaud, i2cbaud);
+   877		dev_info(master->dev, "mconfig=0x%x\n", readl(master->regs + NPCM_I3C_MCONFIG));
+   878		/* Master core's registration */
+   879		ret = i3c_master_get_free_addr(m, 0);
+   880		if (ret < 0)
+   881			return ret;
+   882	
+   883		info.dyn_addr = ret;
+   884		reg = readl(master->regs + NPCM_I3C_VENDORID);
+ > 885		info.pid = (NPCM_I3C_VENDORID_VID(reg) << 33) | readl(master->regs + NPCM_I3C_PARTNO);
+   886	
+   887		writel(NPCM_MDYNADDR_VALID | NPCM_MDYNADDR_ADDR(info.dyn_addr),
+   888		       master->regs + NPCM_I3C_MDYNADDR);
+   889	
+   890		ret = i3c_master_set_info(&master->base, &info);
+   891	
+   892		return ret;
+   893	}
+   894	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
