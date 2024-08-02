@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-272047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF378945638
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:06:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9987D945641
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2AB71C20F63
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:06:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9443B21FCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36B11B813;
-	Fri,  2 Aug 2024 02:06:40 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6D91C698;
-	Fri,  2 Aug 2024 02:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF2318AED;
+	Fri,  2 Aug 2024 02:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="Q3rnx/Na"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16D017984;
+	Fri,  2 Aug 2024 02:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722564399; cv=none; b=EXC+S7WPfpeINQIT9wItrs0KYLNsuwQJeVUMmjd+RAkLzVMz1yrcF73v12vc16EBfuOgF8CD/ahw5j6Sg0SazBb/iskO0MmFfyovL6yfyfTr+plL8A1a3fS8PrAtTtHZpKH03VHlaM/b8PxGTsCkRWIQTnPtYivHPNUhgBUvNlQ=
+	t=1722565094; cv=none; b=DbWXTLPa3lv7rx4orJfA/2lHvtzwMqfB7n7+ho2n3Ls7lSzfg3M0F4romEDbikTrznYIWtYuM/nSInMg/JI3c895YyjZ9PoDMdzZoXA+CcklnmjYwSCmAeP00eLPPq1CBK6TbthMcu/xG7h2SfSV7iIRE92MZlA51cBhGdtB/ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722564399; c=relaxed/simple;
-	bh=IlocbmpmuX2SAx0WorxeajL8D2h54uVWAF0MWLK1Dqg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=Y9HJge3a6N9syVuR09EGt5+MSeBAdmoT/qXfY4jigAOaF6KJz+7BNC4CbWVSqWAVkEdIMXNof0a75qXrr5KThy1fVwlPdp+rIanFODDAxU0q9Vx24ByuFep06CRl6LhAvVy4Rc4/sTJ+lq21D+ZsOUWY1GlzX+/GOMqtZZ/JWyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WZq0H60cqz1xtyP;
-	Fri,  2 Aug 2024 10:04:47 +0800 (CST)
-Received: from kwepemf200007.china.huawei.com (unknown [7.202.181.233])
-	by mail.maildlp.com (Postfix) with ESMTPS id B38BD1A016C;
-	Fri,  2 Aug 2024 10:06:33 +0800 (CST)
-Received: from [10.67.121.184] (10.67.121.184) by
- kwepemf200007.china.huawei.com (7.202.181.233) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 2 Aug 2024 10:06:32 +0800
-Message-ID: <f09f7df6-9d5e-410d-8409-006c3b6e995a@huawei.com>
-Date: Fri, 2 Aug 2024 10:06:32 +0800
+	s=arc-20240116; t=1722565094; c=relaxed/simple;
+	bh=9h4GvL5256m2CBoDTMLyKRqqqP5JN5oETaO0gJ1UaQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NfR/v6G7dBox0GPKF7GpHvqVF5e3+6MLTKbaA1WZFyYymNwhK+zsRVpmKVWlbJmxIvCyyBLEB/TpFj6TGVcKTQD10DHrtsZ99k+23mLsNx1fdeYdNdVYXZozK/rEUpp6HwUdUSEvicIxRgx5FzATw7bHoj4qnKY68hvl05ov3Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=Q3rnx/Na; arc=none smtp.client-ip=117.135.210.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=efERMJpxnaxMghz1MNPu0cCXQeyYUN4vf3FoWqJkU44=;
+	b=Q3rnx/NaAN7P2SrxRB5MBLWmRMDkiQLrFa6cAqw87htNlLCEuiyq4bIUOjFI3g
+	8n2dAZKomiHa3YkjwPv3XV4jBOZDXBg6t4kD0Dr18x4vDPs19ZD33yUiD0nwae43
+	MJO5pIrTf7sTsb+Z4JnlsqT/3+RBwvrU+uxJXAyUhuVzo=
+Received: from [172.21.22.210] (unknown [118.242.3.34])
+	by gzga-smtp-mta-g1-3 (Coremail) with SMTP id _____wD3f9OiO6xmnD3jAw--.18967S2;
+	Fri, 02 Aug 2024 09:51:32 +0800 (CST)
+Message-ID: <b5f5b215-fdf2-4287-96a9-230a87662194@126.com>
+Date: Fri, 2 Aug 2024 09:51:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,312 +46,471 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at
- iommu_get_dma_domain+0xc/0x20
-Content-Language: en-US
-From: Yonglong Liu <liuyonglong@huawei.com>
-To: Somnath Kotur <somnath.kotur@broadcom.com>, Jesper Dangaard Brouer
-	<hawk@kernel.org>
-CC: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ilias.apalodimas@linaro.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alexander Duyck <alexander.duyck@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>, linyunsheng <linyunsheng@huawei.com>,
-	"shenjian (K)" <shenjian15@huawei.com>, Salil Mehta <salil.mehta@huawei.com>
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
- <8743264a-9700-4227-a556-5f931c720211@huawei.com>
- <e980d20f-ea8a-43e3-8d3f-179a269b5956@kernel.org>
- <CAOBf=musxZcjYNHjdD+MGp0y6epnNO5ryC6JgeAJbP6YQ+sVUA@mail.gmail.com>
- <d385bdba-65a0-4776-b950-9e62392f5115@huawei.com>
-In-Reply-To: <d385bdba-65a0-4776-b950-9e62392f5115@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH V2] mm/gup: Clear the LRU flag of a page before adding to
+ LRU batch
+To: Chris Li <chrisl@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+ Barry Song <21cnbao@gmail.com>, David Hildenbrand <david@redhat.com>,
+ baolin.wang@linux.alibaba.com, liuzixing@hygon.cn,
+ Hugh Dickins <hughd@google.com>
+References: <1719038884-1903-1-git-send-email-yangge1116@126.com>
+ <CAF8kJuNP5iTj2p07QgHSGOJsiUfYpJ2f4R1Q5-3BN9JiD9W_KA@mail.gmail.com>
+ <0f9f7a2e-23c3-43fe-b5c1-dab3a7b31c2d@126.com>
+ <CACePvbXU8K4wxECroEPr5T3iAsG6cCDLa12WmrvEBMskcNmOuQ@mail.gmail.com>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <CACePvbXU8K4wxECroEPr5T3iAsG6cCDLa12WmrvEBMskcNmOuQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf200007.china.huawei.com (7.202.181.233)
+X-CM-TRANSID:_____wD3f9OiO6xmnD3jAw--.18967S2
+X-Coremail-Antispam: 1Uf129KBjvAXoW3KFW5Wry5tFy5ArWrJF47urg_yoW8Cw48to
+	Z5Aw42va18GF17AF18u347tw17uwsYgF1xJrWxAr4DAF12q34qya1kAFs5XFWfXr1jqFWU
+	CFy7Xr1j9a93Awn3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU7SoGUUUUU
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiWQcvG2VLb2CfQwAAsX
 
 
-On 2024/7/31 19:32, Yonglong Liu wrote:
->
-> On 2024/7/31 16:42, Somnath Kotur wrote:
->> On Tue, Jul 30, 2024 at 10:51 PM Jesper Dangaard Brouer 
->> <hawk@kernel.org> wrote:
+
+在 2024/7/30 6:06, Chris Li 写道:
+> On Sun, Jul 28, 2024 at 8:49 PM Ge Yang <yangge1116@126.com> wrote:
+>>
+>>
+>>
+>> 在 2024/7/28 6:33, Chris Li 写道:
+>>> Hello Ge Yang,
+>>>
+>>> Sorry for joining this discussion late.
+>>>
+>>> I recently found a regression on mm-unstable during my swap stress
+>>> test, using tmpfs to compile linux. The test hit OOM very soon after
+>>> the make spawn many cc processes.
+>>>
+>>> This is preventing me from stress testing the swap allocator series on
+>>> mm-unstable and mm-stable. I finally spent some time doing a kernel
+>>> git bisect. It bisects down to this commit:
+>>>
+>>> 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9 is the first bad commit
+>>> commit 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
+>>> Author: yangge <yangge1116@126.com>
+>>> Date:   Wed Jul 3 20:02:33 2024 +0800
+>>>       mm/gup: clear the LRU flag of a page before adding to LRU batch
+>>>    mm/swap.c | 43 +++++++++++++++++++++++++++++++------------
+>>>    1 file changed, 31 insertions(+), 12 deletions(-)
+>>> bisect found first bad commit
 >>>
 >>>
->>> On 30/07/2024 15.08, Yonglong Liu wrote:
->>>> I found a bug when running hns3 driver with page pool enabled, the log
->>>> as below:
->>>>
->>>> [ 4406.956606] Unable to handle kernel NULL pointer dereference at
->>>> virtual address 00000000000000a8
->>> struct iommu_domain *iommu_get_dma_domain(struct device *dev)
->>> {
->>>          return dev->iommu_group->default_domain;
->>> }
+>>> Here the git bisect log:
+>>> $ git bisect log
+>>> # bad: [66ebbdfdeb093e097399b1883390079cd4c3022b] Merge tag
+>>> 'irq-msi-2024-07-22' of
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>>> # good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
+>>> git bisect start 'remotes/akpm/mm-stable' 'v6.10'
+>>> # good: [280e36f0d5b997173d014c07484c03a7f7750668] nsfs: use cleanup guard
+>>> git bisect good 280e36f0d5b997173d014c07484c03a7f7750668
+>>> # good: [07e773db19f16f4111795b658c4748da22c927bb] Merge tag
+>>> 'tpmdd-next-6.11-rc1-roundtwo' of
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd
+>>> git bisect good 07e773db19f16f4111795b658c4748da22c927bb
+>>> # good: [ef035628c326af9aa645af1b91fbb72fdfec874e] Merge tag
+>>> 'i2c-for-6.11-rc1-try2' of
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
+>>> git bisect good ef035628c326af9aa645af1b91fbb72fdfec874e
+>>> # good: [2c9b3512402ed192d1f43f4531fb5da947e72bd0] Merge tag
+>>> 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm
+>>> git bisect good 2c9b3512402ed192d1f43f4531fb5da947e72bd0
+>>> # bad: [30d77b7eef019fa4422980806e8b7cdc8674493e] mm/mglru: fix
+>>> ineffective protection calculation
+>>> git bisect bad 30d77b7eef019fa4422980806e8b7cdc8674493e
+>>> # good: [c02525a33969000fa7b595b743deb4d79804916b] ftrace: unpoison
+>>> ftrace_regs in ftrace_ops_list_func()
+>>> git bisect good c02525a33969000fa7b595b743deb4d79804916b
+>>> # good: [8ef6fd0e9ea83a792ba53882ddc6e0d38ce0d636] Merge branch
+>>> 'mm-hotfixes-stable' into mm-stable to pick up "mm: fix crashes from
+>>> deferred split racing folio migration", needed by "mm: migrate: split
+>>> folio_migrate_mapping()".
+>>> git bisect good 8ef6fd0e9ea83a792ba53882ddc6e0d38ce0d636
+>>> # good: [a898530eea3d0ba08c17a60865995a3bb468d1bc] powerpc/64e: split
+>>> out nohash Book3E 64-bit code
+>>> git bisect good a898530eea3d0ba08c17a60865995a3bb468d1bc
+>>> # good: [00f58104202c472e487f0866fbd38832523fd4f9] mm: fix khugepaged
+>>> activation policy
+>>> git bisect good 00f58104202c472e487f0866fbd38832523fd4f9
+>>> # good: [53dabce2652fb854eae84609ce9c37429d5d87ba] mm, page_alloc: put
+>>> should_fail_alloc_page() back behing CONFIG_FAIL_PAGE_ALLOC
+>>> git bisect good 53dabce2652fb854eae84609ce9c37429d5d87ba
+>>> # good: [6ab42fe21c84d72da752923b4bd7075344f4a362] alloc_tag: fix
+>>> page_ext_get/page_ext_put sequence during page splitting
+>>> git bisect good 6ab42fe21c84d72da752923b4bd7075344f4a362
+>>> # bad: [33dfe9204f29b415bbc0abb1a50642d1ba94f5e9] mm/gup: clear the
+>>> LRU flag of a page before adding to LRU batch
+>>> git bisect bad 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
+>>> # good: [af649773fb25250cd22625af021fb6275c56a3ee] mm/numa_balancing:
+>>> teach mpol_to_str about the balancing mode
+>>> git bisect good af649773fb25250cd22625af021fb6275c56a3ee
+>>> # first bad commit: [33dfe9204f29b415bbc0abb1a50642d1ba94f5e9] mm/gup:
+>>> clear the LRU flag of a page before adding to LRU batch
 >>>
->>> $ pahole -C iommu_group --hex | grep default_domain
->>>          struct iommu_domain *      default_domain;   /* 0xa8   0x8 */
+>>> I double checked this commit 33dfe9204f29b415bbc0abb1a50642d1ba94f5e9
+>>> ("mm/gup: clear the LRU flag of a page before adding to LRU batch")
+>>> fail the swap stress test very quickly.
 >>>
->>> Looks like iommu_group is a NULL pointer (that when deref member
->>> 'default_domain' cause this fault).
+>>> The previous commit af649773fb25250cd22625af021fb6275c56a3ee
+>>> ("mm/numa_balancing: teach mpol_to_str about the balancing mode") can
+>>> pass the swap stress test fine.
 >>>
+>>> Please feel free to send me patches to test out the issue. As it is, I
+>>> believe it is a regression on the swapping behavior.
 >>>
->>>> [ 4406.965379] Mem abort info:
->>>> [ 4406.968160]   ESR = 0x0000000096000004
->>>> [ 4406.971906]   EC = 0x25: DABT (current EL), IL = 32 bits
->>>> [ 4406.977218]   SET = 0, FnV = 0
->>>> [ 4406.980258]   EA = 0, S1PTW = 0
->>>> [ 4406.983404]   FSC = 0x04: level 0 translation fault
->>>> [ 4406.988273] Data abort info:
->>>> [ 4406.991154]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>>> [ 4406.996632]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>>> [ 4407.001681]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>>> [ 4407.006985] user pgtable: 4k pages, 48-bit VAs, 
->>>> pgdp=0000202828326000
->>>> [ 4407.013430] [00000000000000a8] pgd=0000000000000000,
->>>> p4d=0000000000000000
->>>> [ 4407.020212] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->>>> [ 4407.026454] Modules linked in: hclgevf xt_CHECKSUM ipt_REJECT
->>>> nf_reject_ipv4 ip6table_mangle ip6table_nat iptable_mangle
->>>> ip6table_filter ip6_tables hns_roce_hw_v2 hns3 hclge hnae3 xt_addrtype
->>>> iptable_filter xt_conntrack overlay arm_spe_pmu arm_smmuv3_pmu
->>>> hisi_uncore_hha_pmu hisi_uncore_ddrc_pmu hisi_uncore_l3c_pmu
->>>> hisi_uncore_pmu fuse rpcrdma ib_isert iscsi_target_mod ib_iser 
->>>> libiscsi
->>>> scsi_transport_iscsi crct10dif_ce hisi_sec2 hisi_hpre hisi_zip
->>>> hisi_sas_v3_hw xhci_pci sbsa_gwdt hisi_qm hisi_sas_main hisi_dma
->>>> xhci_pci_renesas uacce libsas [last unloaded: hnae3]
->>>> [ 4407.076027] CPU: 48 PID: 610 Comm: kworker/48:1
->>>> [ 4407.093343] Workqueue: events page_pool_release_retry
->>>> [ 4407.098384] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
->>>> BTYPE=--)
->>>> [ 4407.105316] pc : iommu_get_dma_domain+0xc/0x20
->>>> [ 4407.109744] lr : iommu_dma_unmap_page+0x38/0xe8
->>>> [ 4407.114255] sp : ffff80008bacbc80
->>>> [ 4407.117554] x29: ffff80008bacbc80 x28: 0000000000000000 x27:
->>>> ffffc31806be7000
->>>> [ 4407.124659] x26: ffff2020002b6ac0 x25: 0000000000000000 x24:
->>>> 0000000000000002
->>>> [ 4407.131762] x23: 0000000000000022 x22: 0000000000001000 x21:
->>>> 00000000fcd7c000
->>>> [ 4407.138865] x20: ffff0020c9882800 x19: ffff0020856f60c8 x18:
->>>> ffff8000d3503c58
->>>> [ 4407.145968] x17: 0000000000000000 x16: 1fffe00419521061 x15:
->>>> 0000000000000001
->>>> [ 4407.153073] x14: 0000000000000003 x13: 00000401850ae012 x12:
->>>> 000006b10004e7fb
->>>> [ 4407.160177] x11: 0000000000000067 x10: 0000000000000c70 x9 :
->>>> ffffc3180405cd20
->>>> [ 4407.167280] x8 : fefefefefefefeff x7 : 0000000000000001 x6 :
->>>> 0000000000000010
->>>> [ 4407.174382] x5 : ffffc3180405cce8 x4 : 0000000000000022 x3 :
->>>> 0000000000000002
->>>> [ 4407.181485] x2 : 0000000000001000 x1 : 00000000fcd7c000 x0 :
->>>> 0000000000000000
->>>> [ 4407.188589] Call trace:
->>>> [ 4407.191027]  iommu_get_dma_domain+0xc/0x20
->>>> [ 4407.195105]  dma_unmap_page_attrs+0x38/0x1d0
->>>> [ 4407.199361]  page_pool_return_page+0x48/0x180
->>>> [ 4407.203699]  page_pool_release+0xd4/0x1f0
->>>> [ 4407.207692]  page_pool_release_retry+0x28/0xe8
->>> I suspect that the DMA IOMMU part was deallocated and freed by the
->>> driver even-though page_pool still have inflight packets.
->> When you say driver, which 'driver' do you mean?
->> I suspect this could be because of the VF instance going away with
->> this cmd - disable the vf: echo 0 >
->> /sys/class/net/eno1/device/sriov_numvfs, what do you think?
->
-> I found that this happen when the vf enabled and running some packets, 
-> below is more infomation:
->
->
-> [ 4391.596558] pci 0000:7d:01.0: page_pool_release_retry() stalled 
-> pool shutdown: id 1145, 33 inflight 906 sec
-> [ 4397.111484] hns3 0000:bd:00.0: SRIOV setting: 0
-> [ 4397.118155] hns3 0000:bd:01.0 enp189s0f0v0: link down
-> [ 4397.416623] hns3 0000:bd:01.0: finished uninitializing hclgevf driver
-> [ 4397.480572] pci 0000:7d:01.0: page_pool_release_retry() stalled 
-> pool shutdown: id 1279, 98 inflight 362 sec
-> [ 4400.948362] hns3 0000:7d:00.0: SRIOV setting: 1
-> [ 4401.060569] pci 0000:7d:01.0: [19e5:a22f] type 00 class 0x020000 
-> PCIe Endpoint
-> [ 4401.067795] pci 0000:7d:01.0: enabling Extended Tags
-> [ 4401.073090] hns3 0000:7d:01.0: Adding to iommu group 48
-> [ 4401.078494] hns3 0000:7d:01.0: enabling device (0000 -> 0002)
-> [ 4401.084348] hns3 0000:7d:01.0: The firmware version is 1.20.0.17
-> [ 4401.102911] hns3 0000:7d:01.0: finished initializing hclgevf driver
-> [ 4401.111212] hns3 0000:7d:01.0: using random MAC address 
-> da:**:**:**:a3:47
-> [ 4401.138375] hns3 0000:7d:01.0 eno1v0: renamed from eth0
-> [ 4403.939449] hns3 0000:7d:01.0 eno1v0: link up
-> [ 4403.940237] 8021q: adding VLAN 0 to HW filter on device eno1v0
-> [ 4406.956606] Unable to handle kernel NULL pointer dereference at 
-> virtual address 00000000000000a8
->
->
-> another log:
->
-> [11550.197002] hns3 0000:bd:01.0 enp189s0f0v0: link up
-> [11550.197034] hns3 0000:bd:01.0 enp189s0f0v0: net open
-> [11550.206910] 8021q: adding VLAN 0 to HW filter on device enp189s0f0v0
-> [11564.872929] page_pool_release_retry() stalled pool shutdown: id 
-> 2330, 99 inflight 60 sec
-> [11568.353723] hns3 0000:bd:01.0 enp189s0f0v0: net stop
-> [11568.360723] hns3 0000:bd:01.0 enp189s0f0v0: link down
-> [11568.519899] hns3 0000:bd:01.0 enp189s0f0v0: link up
-> [11568.519935] hns3 0000:bd:01.0 enp189s0f0v0: net open
-> [11568.529840] 8021q: adding VLAN 0 to HW filter on device enp189s0f0v0
-> [11589.640930] page_pool_release_retry() stalled pool shutdown: id 
-> 1996, 50 inflight 2054 sec
-> [11592.554875] hns3 0000:bd:01.0 enp189s0f0v0: net stop
-> [11592.560930] hns3 0000:bd:01.0 enp189s0f0v0: link down
-> [11596.684935] pci 0000:7d:01.0: [19e5:a22f] type 00 class 0x020000 
-> PCIe Endpoint
-> [11596.692140] pci 0000:7d:01.0: enabling Extended Tags
-> [11596.697324] hns3 0000:7d:01.0: Adding to iommu group 48
-> [11596.702988] hns3 0000:7d:01.0: enabling device (0000 -> 0002)
-> [11596.708808] hns3 0000:7d:01.0: The firmware version is 1.20.0.17
-> [11596.727263] hns3 0000:7d:01.0: finished initializing hclgevf driver
-> [11596.735561] hns3 0000:7d:01.0: using random MAC address 
-> 72:**:**:**:55:d7
-> [11596.760621] hns3 0000:7d:01.0 eno1v0: renamed from eth0
-> [11599.545341] hns3 0000:7d:01.0 eno1v0: link up
-> [11599.545409] hns3 0000:7d:01.0 eno1v0: net open
-> [11599.554858] 8021q: adding VLAN 0 to HW filter on device eno1v0
-> [11608.908922] Unable to handle kernel NULL pointer dereference at 
-> virtual address 00000000000000a8
->
-I adds more debug info, and found that:
-
-[ 4573.356891] pci 0000:7d:01.0: page_pool_release_retry() stalled pool 
-shutdown: id 1046, 82 inflight 60 sec, iommu_group=0x0
-
-The iommu_group will release whether the page_pool is using it or not, 
-so if once page_pool_return_page() was called(why does this occur when 
-the device is reloaded and packets are transmitted?) , this crash will 
-happen.
-
-I try the follow patch, but doesn't work :(
-
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index f4444b4e39e6..d03a87407ca8 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -21,6 +21,7 @@
-  #include <linux/poison.h>
-  #include <linux/ethtool.h>
-  #include <linux/netdevice.h>
-+#include <linux/iommu.h>
-
-  #include <trace/events/page_pool.h>
-
-@@ -306,6 +307,9 @@ page_pool_create_percpu(const struct 
-page_pool_params *params, int cpuid)
-         if (err)
-                 goto err_uninit;
-
-+       if (pool->dma_map)
-+               iommu_group_get(pool->p.dev);
-+
-         return pool;
-
-  err_uninit:
-@@ -974,8 +978,11 @@ static int page_pool_release(struct page_pool *pool)
-
-         page_pool_scrub(pool);
-         inflight = page_pool_inflight(pool, true);
--       if (!inflight)
-+       if (!inflight) {
-                 __page_pool_destroy(pool);
-+               if (pool->dma_map)
-+ iommu_group_put(pool->p.dev->iommu_group);
-+       }
-
-         return inflight;
-  }
-
-
->>> The page_pool bumps refcnt via get_device() + put_device() on the DMA
->>> 'struct device', to avoid it going away, but I guess there is also some
->>> IOMMU code that we need to make sure doesn't go away (until all 
->>> inflight
->>> pages are returned) ???
+>>> Here is the dmesg of the OOM kill:
 >>>
+>>> [   93.326752] cc1 invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL),
+>>> order=0, oom_score_adj=0
+>>> [   93.327330] CPU: 3 PID: 5225 Comm: cc1 Tainted: G          I
+>>> 6.10.0-rc6+ #34
+>>> [   93.328277] Hardware name: HP ProLiant DL360 G7, BIOS P68 08/16/2015
+>>> [   93.328757] Call Trace:
+>>> [   93.328977]  <TASK>
+>>> [   93.329515]  dump_stack_lvl+0x5d/0x80
+>>> [   93.329842]  dump_header+0x44/0x18d
+>>> [   93.330422]  oom_kill_process.cold+0xa/0xaa
+>>> [   93.330723]  out_of_memory+0x219/0x4b0
+>>> [   93.331037]  mem_cgroup_out_of_memory+0x12d/0x160
+>>> [   93.331755]  try_charge_memcg+0x488/0x630
+>>> [   93.332044]  __mem_cgroup_charge+0x42/0xb0
+>>> [   93.332321]  do_anonymous_page+0x32a/0x8b0
+>>> [   93.332553]  ? __pte_offset_map+0x1b/0x180
+>>> [   93.332857]  __handle_mm_fault+0xc05/0x1080
+>>> [   93.333141]  ? sched_balance_trigger+0x14c/0x3f0
+>>> [   93.333840]  ? sched_tick+0xee/0x320
+>>> [   93.334142]  handle_mm_fault+0xcd/0x2a0
+>>> [   93.334419]  do_user_addr_fault+0x217/0x620
+>>> [   93.334694]  exc_page_fault+0x7e/0x180
+>>> [   93.334960]  asm_exc_page_fault+0x26/0x30
+>>> [   93.335194] RIP: 0033:0x147a0b3
+>>> [   93.335852] Code: a0 00 48 89 fb 49 89 f4 41 89 d5 74 7a 31 d2 31
+>>> f6 b9 01 00 00 00 bf 18 00 00 00 e8 97 b6 f8 ff 66 0f ef c0 66 41 83
+>>> 3c 24 2b <4c> 89 60 10 48 89 c5 49 89 c6 0f 11 00 74 7e 48 8b 43 08 80
+>>> 48 02
+>>> [   93.337577] RSP: 002b:00007ffe666e3e10 EFLAGS: 00010216
+>>> [   93.337966] RAX: 00007f4dd9d0e000 RBX: 00007ffe666e3e50 RCX: 00000000000000a9
+>>> [   93.338896] RDX: 0000000000000018 RSI: 0000000000000006 RDI: 00000000000000aa
+>>> [   93.339849] RBP: 00007f4dd9d0a0e0 R08: 0000000000000040 R09: 0000000000000001
+>>> [   93.340801] R10: 0000000000000000 R11: 0000000004c04560 R12: 00007f4dd9d04fd8
+>>> [   93.341675] R13: 0000000000000004 R14: 0000000000000000 R15: 000000007ffea943
+>>> [   93.342584]  </TASK>
+>>> [   93.342762] memory: usage 481280kB, limit 481280kB, failcnt 9789
+>>
+>> I can't reproduce this problem, using tmpfs to compile linux.
+>> Seems you limit the memory size used to compile linux, which leads to
+>> OOM. May I ask why the memory size is limited to 481280kB? Do I also
+>> need to limit the memory size to 481280kB to test?
+> 
+> Yes, you need to limit the cgroup memory size to force the swap
+> action. I am using memory.max = 470M.
+> 
+> I believe other values e.g. 800M can trigger it as well. The reason to
+> limit the memory to cause the swap action.
+> The goal is to intentionally overwhelm the memory load and let the
+> swap system do its job. The 470M is chosen to cause a lot of swap
+> action but not too high to cause OOM kills in normal kernels.
+> In another word, high enough swap pressure but not too high to bust
+> into OOM kill. e.g. I verify that, with your patch reverted, the
+> mm-stable kernel can sustain this level of swap pressure (470M)
+> without OOM kill.
+> 
+> I borrowed the 470M magic value from Hugh and verified it works with
+> my test system. Huge has a similar swab test up which is more
+> complicated than mine. It is the inspiration of my swap stress test
+> setup.
+> 
+> FYI, I am using "make -j32" on a machine with 12 cores (24
+> hyperthreading). My typical swap usage is about 3-5G. I set my
+> swapfile size to about 20G.
+> I am using zram or ssd as the swap backend.  Hope that helps you
+> reproduce the problem.
+> 
+Hi Chris,
+
+I try to construct the experiment according to your suggestions above. 
+High swap pressure can be triggered, but OOM can't be reproduced. The 
+specific steps are as follows:
+root@ubuntu-server-2204:/home/yangge# cp workspace/linux/ /dev/shm/ -rf
+root@ubuntu-server-2204:/home/yangge# sync
+root@ubuntu-server-2204:/home/yangge# echo 3 > /proc/sys/vm/drop_caches
+root@ubuntu-server-2204:/home/yangge# cd /sys/fs/cgroup/
+root@ubuntu-server-2204:/sys/fs/cgroup/# mkdir kernel-build
+root@ubuntu-server-2204:/sys/fs/cgroup/# cd kernel-build
+root@ubuntu-server-2204:/sys/fs/cgroup/kernel-build# echo 470M > memory.max
+root@ubuntu-server-2204:/sys/fs/cgroup/kernel-build# echo $$ > cgroup.procs
+root@ubuntu-server-2204:/sys/fs/cgroup/kernel-build# cd /dev/shm/linux/
+root@ubuntu-server-2204:/dev/shm/linux# make clean && make -j24
+
+Please help to see which step does not meet your requirements.
+
+
+> Chris
+> 
+>>
+>>> [   93.343556] swap: usage 123404kB, limit 9007199254740988kB, failcnt 0
+>>> [   93.343984] Memory cgroup stats for /build-kernel-tmpfs:
+>>> [   93.344051] anon 461377536
+>>> [   93.344586] file 10264576
+>>> [   93.344795] kernel 20480000
+>>> [   93.344987] kernel_stack 2146304
+>>> [   93.345615] pagetables 9916416
+>>> [   93.346283] sec_pagetables 0
+>>> [   93.346878] percpu 54496
+>>> [   93.347080] sock 0
+>>> [   93.347607] vmalloc 0
+>>> [   93.347837] shmem 24576
+>>> [   93.347984] zswap 0
+>>> [   93.348510] zswapped 0
+>>> [   93.348661] file_mapped 9805824
+>>> [   93.349286] file_dirty 0
+>>> [   93.349484] file_writeback 0
+>>> [   93.350085] swapcached 24576
+>>> [   93.350706] anon_thp 213909504
+>>> [   93.351335] file_thp 0
+>>> [   93.351544] shmem_thp 0
+>>> [   93.351681] inactive_anon 180965376
+>>> [   93.352348] active_anon 291487744
+>>> [   93.352993] inactive_file 1298432
+>>> [   93.353632] active_file 7987200
+>>> [   93.354281] unevictable 0
+>>> [   93.354483] slab_reclaimable 943096
+>>> [   93.355085] slab_unreclaimable 6340520
+>>> [   93.355369] slab 7283616
+>>> [   93.355597] workingset_refault_anon 1138
+>>> [   93.355857] workingset_refault_file 180
+>>> [   93.356135] workingset_activate_anon 627
+>>> [   93.356410] workingset_activate_file 123
+>>> [   93.356694] workingset_restore_anon 579
+>>> [   93.357001] workingset_restore_file 115
+>>> [   93.382485] workingset_nodereclaim 0
+>>> [   93.457426] pgscan 101315
+>>> [   93.457631] pgsteal 51494
+>>> [   93.457843] pgscan_kswapd 0
+>>> [   93.458033] pgscan_direct 101315
+>>> [   93.458725] pgscan_khugepaged 0
+>>> [   93.459494] pgsteal_kswapd 0
+>>> [   93.460338] pgsteal_direct 51494
+>>> [   93.461046] pgsteal_khugepaged 0
+>>> [   93.461701] pgfault 994774
+>>> [   93.461895] pgmajfault 1839
+>>> [   93.462123] pgrefill 134581
+>>> [   93.462315] pgactivate 32506
+>>> [   93.463086] pgdeactivate 0
+>>> [   93.463314] pglazyfree 0
+>>> [   93.463527] pglazyfreed 0
+>>> [   93.463727] zswpin 0
+>>> [   93.463912] zswpout 0
+>>> [   93.464114] zswpwb 0
+>>> [   93.464321] thp_fault_alloc 485
+>>> [   93.464963] thp_collapse_alloc 0
+>>> [   93.465578] thp_swpout 4
+>>> [   93.465815] thp_swpout_fallback 0
+>>> [   93.466457] Tasks state (memory values in pages):
+>>> [   93.467153] [  pid  ]   uid  tgid total_vm      rss rss_anon
+>>> rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+>>> [   93.467917] [   1461]  1000  1461     1795      530       53
+>>> 477         0    45056        0             0 kbench
+>>> [   93.468600] [   4170]  1000  4170      636      321        0
+>>> 321         0    45056        0             0 time
+>>> [   93.569307] [   4171]  1000  4171     3071      810       48
+>>> 762         0    69632       48             0 make
+>>> [   93.570111] [   4172]  1000  4172     2706      827      144
+>>> 683         0    65536      192             0 make
+>>> [   93.571015] [   4951]  1000  4951     2733      791      144
+>>> 647         0    61440      192             0 make
+>>> [   93.571747] [   4956]  1000  4956     2560      852      144
+>>> 708         0    69632        0             0 make
+>>> [   93.572478] [   4957]  1000  4957     2541      803       96
+>>> 707         0    61440       96             0 make
+>>> [   93.573244] [   4958]  1000  4958     2541      750       96
+>>> 654         0    53248       48             0 make
+>>> [   93.574016] [   4960]  1000  4960     2565      753       96
+>>> 657         0    65536       48             0 make
+>>> [   93.674651] [   4961]  1000  4961     2538      837      144
+>>> 693         0    53248        0             0 make
+>>> [   93.675446] [   4962]  1000  4962     2569      845      192
+>>> 653         0    69632        0             0 make
+>>> [   93.676220] [   4963]  1000  4963     2567      852      192
+>>> 660         0    57344        0             0 make
+>>> [   93.676946] [   4964]  1000  4964     2536      901      192
+>>> 709         0    65536        0             0 make
+>>> [   93.677679] [   4965]  1000  4965     2540      887      192
+>>> 695         0    61440        0             0 make
+>>> [   93.678377] [   4967]  1000  4967     2563      853      144
+>>> 709         0    61440       48             0 make
+>>> [   93.679168] [   4969]  1000  4969     2538      836      144
+>>> 692         0    57344       48             0 make
+>>> [   93.679937] [   4973]  1000  4973     2535      827      144
+>>> 683         0    61440       48             0 make
+>>> [   93.680628] [   4976]  1000  4976     2571      878      192
+>>> 686         0    57344        0             0 make
+>>> [   93.681397] [   4977]  1000  4977     2534      850      192
+>>> 658         0    53248        0             0 make
+>>> [   93.682121] [   4978]  1000  4978     1797      766       48
+>>> 718         0    49152        0             0 sh
+>>> [   93.683272] [   4980]  1000  4980     2540      839      192
+>>> 647         0    65536       48             0 make
+>>> [   93.709270] [   4982]  1000  4982     2539      853      144
+>>> 709         0    65536        0             0 make
+>>> [   93.784725] [   4983]  1000  4983     1798      885       96
+>>> 789         0    61440        0             0 sh
+>>> [   93.785895] [   4984]  1000  4984     2539      878      192
+>>> 686         0    57344        0             0 make
+>>> [   93.786661] [   4986]  1000  4986     2537      863      192
+>>> 671         0    61440        0             0 make
+>>> [   93.787378] [   4988]  1000  4988     2540      824      144
+>>> 680         0    61440       48             0 make
+>>> [   93.788060] [   4989]  1000  4989     2538      792      144
+>>> 648         0    65536        0             0 make
+>>> [   93.788873] [   4990]  1000  4990     1282      810       48
+>>> 762         0    45056        0             0 gcc
 >>>
->>>> [ 4407.212119] process_one_work+0x164/0x3e0
->>>> [ 4407.216116]  worker_thread+0x310/0x420
->>>> [ 4407.219851]  kthread+0x120/0x130
->>>> [ 4407.223066]  ret_from_fork+0x10/0x20
->>>> [ 4407.226630] Code: ffffc318 aa1e03e9 d503201f f9416c00 (f9405400)
->>>> [ 4407.232697] ---[ end trace 0000000000000000 ]---
+>>> Chris
+>>>
+>>> On Fri, Jun 21, 2024 at 11:48 PM <yangge1116@126.com> wrote:
+>>>>
+>>>> From: yangge <yangge1116@126.com>
+>>>>
+>>>> If a large number of CMA memory are configured in system (for example, the
+>>>> CMA memory accounts for 50% of the system memory), starting a virtual
+>>>> virtual machine, it will call pin_user_pages_remote(..., FOLL_LONGTERM,
+>>>> ...) to pin memory.  Normally if a page is present and in CMA area,
+>>>> pin_user_pages_remote() will migrate the page from CMA area to non-CMA
+>>>> area because of FOLL_LONGTERM flag. But the current code will cause the
+>>>> migration failure due to unexpected page refcounts, and eventually cause
+>>>> the virtual machine fail to start.
+>>>>
+>>>> If a page is added in LRU batch, its refcount increases one, remove the
+>>>> page from LRU batch decreases one. Page migration requires the page is not
+>>>> referenced by others except page mapping. Before migrating a page, we
+>>>> should try to drain the page from LRU batch in case the page is in it,
+>>>> however, folio_test_lru() is not sufficient to tell whether the page is
+>>>> in LRU batch or not, if the page is in LRU batch, the migration will fail.
+>>>>
+>>>> To solve the problem above, we modify the logic of adding to LRU batch.
+>>>> Before adding a page to LRU batch, we clear the LRU flag of the page so
+>>>> that we can check whether the page is in LRU batch by folio_test_lru(page).
+>>>> Seems making the LRU flag of the page invisible a long time is no problem,
+>>>> because a new page is allocated from buddy and added to the lru batch,
+>>>> its LRU flag is also not visible for a long time.
+>>>>
+>>>> Cc: <stable@vger.kernel.org>
+>>>> Signed-off-by: yangge <yangge1116@126.com>
+>>>> ---
+>>>>    mm/swap.c | 43 +++++++++++++++++++++++++++++++------------
+>>>>    1 file changed, 31 insertions(+), 12 deletions(-)
+>>>>
+>>>> diff --git a/mm/swap.c b/mm/swap.c
+>>>> index dc205bd..9caf6b0 100644
+>>>> --- a/mm/swap.c
+>>>> +++ b/mm/swap.c
+>>>> @@ -211,10 +211,6 @@ static void folio_batch_move_lru(struct folio_batch *fbatch, move_fn_t move_fn)
+>>>>           for (i = 0; i < folio_batch_count(fbatch); i++) {
+>>>>                   struct folio *folio = fbatch->folios[i];
+>>>>
+>>>> -               /* block memcg migration while the folio moves between lru */
+>>>> -               if (move_fn != lru_add_fn && !folio_test_clear_lru(folio))
+>>>> -                       continue;
+>>>> -
+>>>>                   folio_lruvec_relock_irqsave(folio, &lruvec, &flags);
+>>>>                   move_fn(lruvec, folio);
+>>>>
+>>>> @@ -255,11 +251,16 @@ static void lru_move_tail_fn(struct lruvec *lruvec, struct folio *folio)
+>>>>    void folio_rotate_reclaimable(struct folio *folio)
+>>>>    {
+>>>>           if (!folio_test_locked(folio) && !folio_test_dirty(folio) &&
+>>>> -           !folio_test_unevictable(folio) && folio_test_lru(folio)) {
+>>>> +           !folio_test_unevictable(folio)) {
+>>>>                   struct folio_batch *fbatch;
+>>>>                   unsigned long flags;
+>>>>
+>>>>                   folio_get(folio);
+>>>> +               if (!folio_test_clear_lru(folio)) {
+>>>> +                       folio_put(folio);
+>>>> +                       return;
+>>>> +               }
+>>>> +
+>>>>                   local_lock_irqsave(&lru_rotate.lock, flags);
+>>>>                   fbatch = this_cpu_ptr(&lru_rotate.fbatch);
+>>>>                   folio_batch_add_and_move(fbatch, folio, lru_move_tail_fn);
+>>>> @@ -352,11 +353,15 @@ static void folio_activate_drain(int cpu)
+>>>>
+>>>>    void folio_activate(struct folio *folio)
+>>>>    {
+>>>> -       if (folio_test_lru(folio) && !folio_test_active(folio) &&
+>>>> -           !folio_test_unevictable(folio)) {
+>>>> +       if (!folio_test_active(folio) && !folio_test_unevictable(folio)) {
+>>>>                   struct folio_batch *fbatch;
+>>>>
+>>>>                   folio_get(folio);
+>>>> +               if (!folio_test_clear_lru(folio)) {
+>>>> +                       folio_put(folio);
+>>>> +                       return;
+>>>> +               }
+>>>> +
+>>>>                   local_lock(&cpu_fbatches.lock);
+>>>>                   fbatch = this_cpu_ptr(&cpu_fbatches.activate);
+>>>>                   folio_batch_add_and_move(fbatch, folio, folio_activate_fn);
+>>>> @@ -700,6 +705,11 @@ void deactivate_file_folio(struct folio *folio)
+>>>>                   return;
+>>>>
+>>>>           folio_get(folio);
+>>>> +       if (!folio_test_clear_lru(folio)) {
+>>>> +               folio_put(folio);
+>>>> +               return;
+>>>> +       }
+>>>> +
+>>>>           local_lock(&cpu_fbatches.lock);
+>>>>           fbatch = this_cpu_ptr(&cpu_fbatches.lru_deactivate_file);
+>>>>           folio_batch_add_and_move(fbatch, folio, lru_deactivate_file_fn);
+>>>> @@ -716,11 +726,16 @@ void deactivate_file_folio(struct folio *folio)
+>>>>     */
+>>>>    void folio_deactivate(struct folio *folio)
+>>>>    {
+>>>> -       if (folio_test_lru(folio) && !folio_test_unevictable(folio) &&
+>>>> -           (folio_test_active(folio) || lru_gen_enabled())) {
+>>>> +       if (!folio_test_unevictable(folio) && (folio_test_active(folio) ||
+>>>> +           lru_gen_enabled())) {
+>>>>                   struct folio_batch *fbatch;
+>>>>
+>>>>                   folio_get(folio);
+>>>> +               if (!folio_test_clear_lru(folio)) {
+>>>> +                       folio_put(folio);
+>>>> +                       return;
+>>>> +               }
+>>>> +
+>>>>                   local_lock(&cpu_fbatches.lock);
+>>>>                   fbatch = this_cpu_ptr(&cpu_fbatches.lru_deactivate);
+>>>>                   folio_batch_add_and_move(fbatch, folio, lru_deactivate_fn);
+>>>> @@ -737,12 +752,16 @@ void folio_deactivate(struct folio *folio)
+>>>>     */
+>>>>    void folio_mark_lazyfree(struct folio *folio)
+>>>>    {
+>>>> -       if (folio_test_lru(folio) && folio_test_anon(folio) &&
+>>>> -           folio_test_swapbacked(folio) && !folio_test_swapcache(folio) &&
+>>>> -           !folio_test_unevictable(folio)) {
+>>>> +       if (folio_test_anon(folio) && folio_test_swapbacked(folio) &&
+>>>> +           !folio_test_swapcache(folio) && !folio_test_unevictable(folio)) {
+>>>>                   struct folio_batch *fbatch;
+>>>>
+>>>>                   folio_get(folio);
+>>>> +               if (!folio_test_clear_lru(folio)) {
+>>>> +                       folio_put(folio);
+>>>> +                       return;
+>>>> +               }
+>>>> +
+>>>>                   local_lock(&cpu_fbatches.lock);
+>>>>                   fbatch = this_cpu_ptr(&cpu_fbatches.lru_lazyfree);
+>>>>                   folio_batch_add_and_move(fbatch, folio, lru_lazyfree_fn);
+>>>> --
+>>>> 2.7.4
 >>>>
 >>>>
->>>> The hns3 driver use page pool like this, just call once when the 
->>>> driver
->>>> initialize:
->>>>
->>>> static void hns3_alloc_page_pool(struct hns3_enet_ring *ring)
->>>> {
->>>>       struct page_pool_params pp_params = {
->>>>           .flags = PP_FLAG_DMA_MAP | PP_FLAG_PAGE_FRAG |
->>>>                   PP_FLAG_DMA_SYNC_DEV,
->>>>           .order = hns3_page_order(ring),
->>>>           .pool_size = ring->desc_num * hns3_buf_size(ring) /
->>>>                   (PAGE_SIZE << hns3_page_order(ring)),
->>>>           .nid = dev_to_node(ring_to_dev(ring)),
->>>>           .dev = ring_to_dev(ring),
->>>>           .dma_dir = DMA_FROM_DEVICE,
->>>>           .offset = 0,
->>>>           .max_len = PAGE_SIZE << hns3_page_order(ring),
->>>>       };
->>>>
->>>>       ring->page_pool = page_pool_create(&pp_params);
->>>>       if (IS_ERR(ring->page_pool)) {
->>>>           dev_warn(ring_to_dev(ring), "page pool creation failed: 
->>>> %ld\n",
->>>>                PTR_ERR(ring->page_pool));
->>>>           ring->page_pool = NULL;
->>>>       }
->>>> }
->>>>
->>>> And call page_pool_destroy(ring->page_pool)  when the driver 
->>>> uninitialized.
->>>>
->>>>
->>>> We use two devices, the net port connect directory, and the step of 
->>>> the
->>>> test case like below:
->>>>
->>>> 1. enable a vf of '7d:00.0':  echo 1 >
->>>> /sys/class/net/eno1/device/sriov_numvfs
->>>>
->>>> 2. use iperf to produce some flows(the problem happens to the side 
->>>> which
->>>> runs 'iperf -s')
->>>>
->>>> 3. use ifconfig down/up to the vf
->>>>
->>>> 4. kill iperf
->>>>
->>>> 5. disable the vf: echo 0 > /sys/class/net/eno1/device/sriov_numvfs
->>>>
->>>> 6. run 1~5 with another port bd:00.0
->>>>
->>>> 7. repeat 1~6
->>>>
->>>>
->>>> And when running this test case, we can found another related 
->>>> message (I
->>>> replaced pr_warn() to dev_warn()):
->>>>
->>>> pci 0000:7d:01.0: page_pool_release_retry() stalled pool shutdown: id
->>>> 949, 98 inflight 1449 sec
->>>>
->>>>
->>>> Even when stop the traffic, stop the test case, disable the vf, this
->>>> message is still being printed.
->>>>
->>>> We must run the test case for about two hours to reproduce the 
->>>> problem.
->>>> Is there some advise to solve or debug the problem?
->>>>
->
+>>
+
 
