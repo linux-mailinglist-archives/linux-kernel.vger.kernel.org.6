@@ -1,271 +1,300 @@
-Return-Path: <linux-kernel+bounces-272241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9688945927
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:49:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C155945929
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 016B71C224E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:49:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10E15286AD5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E401BF31F;
-	Fri,  2 Aug 2024 07:49:22 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66031BE86D;
+	Fri,  2 Aug 2024 07:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ziNFBQyn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z5IABXal";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ziNFBQyn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Z5IABXal"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04403FBAD
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A9314A4EB
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722584961; cv=none; b=NiUDf0Vg1JOHV8lOYtyAyLmTKtb77bnZTHk6ME5Ut+DaQh7c02LVgfB/j59DMGOQAz2F99Uzfqtxu/+fGCB11vl05y2g8HfZGonBQ5IInekGVSVLaRJTRVnNJqT0GhXbB3Gllhd/Alw91I4BgnwNQ8y/3HayI9xQmPssadJKVEc=
+	t=1722584991; cv=none; b=DM+caa7kYH1MYBHeCcztxAvEW9pX9UHiSBHNEBDvrvbkwqTHPUzmOuAe+ZBk8SEIr7XqfEkvqIjm5uZBPV47nkL4rDdYNf9zVTyVCUACnYoGaUca5gOC0JPiRmFpi/izADDB+a7eCQEl4cMFwfbW0JF8WHNUVGVe5PUQlIIN1Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722584961; c=relaxed/simple;
-	bh=UU0F1/EUltQpjH9awVRXpjLqsO2sRafg/dITiDBAiLI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HkzWFeJ0YAftx3+nD9llqMYSYzSDVsaSS3cfdQP4djjYrGh8HHD0w8MjQ8grbX9HhsgZMAn/aaka6vFPUMSuqSj2+Rv/1XcoMMgixVXW5W978AlOtJmduEJuo5eNy4PizTjMydF+MF97igfUVTJOfTns5bmSySOTSZuG5GoId2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f93601444so1112928339f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:49:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722584959; x=1723189759;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=92lXj3Vb44eyllG2vHCIL/SyzrpHYEhu/JLd1zyyRqg=;
-        b=d0wPS7KFFyHAhcNRoIE8mH11Mwc2OJiyOGPi/QmOE6BA3EUcoU7dpgdZOrXjYGo6e8
-         7XiX+9gK7ZjOs2DUx1/cPnIvc9V4gtuMihDdbvXjydxIBHjaKfkZBhlGlCKbb9wRVI2D
-         3sObCU0rYytHE2/j9ImoRR4/NlKS/EZff7rIgiyBOPhzq8vcGvyb5uTzd2TBeFN9jRac
-         Ce1vm2HudQBQRwIS3Fa4xA6plgJ4EEUU1I+8GFcX9zzLUg/MLZ50m7j3y0IhnZdgcbKv
-         PGLRXtsppuP9yzGPwFZEZsmWUIudBDKR+XBcoXQ86ORcSzyCwyoK9e80vXGMq8k5tFlv
-         kakQ==
-X-Gm-Message-State: AOJu0YyBt+7h4+gjyCntJ1i0Dk01jsY9npBjJUbzU6sI7bvRwPpjqHxC
-	YrfKylfGB6QRQKvnhLmYwub50zUPjt7otn7XcRSQZBWawVprS80yeknHa0BZmKejTySAWjiQ3LG
-	6v/XMWbmKLRmSl8cTUl1eyk1bHuOdz34p29g8J8rl/5OHlaabqdLwbAs=
-X-Google-Smtp-Source: AGHT+IH0QgN5RY5nLV9RAozx2i4g4uqe5aSF7gVidnVwTVgPlxr5BF5mxvri5IR5TIiVU3++JsJcIEDaYkFQ5tLoHSpW4sxRjzbP
+	s=arc-20240116; t=1722584991; c=relaxed/simple;
+	bh=p3cmgbR0D6YZlUAzIHNeuJHSGmeZ3Gifm+yi4v0qne4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i7feSfquJ1IdqXVpydyfGckHewlLLPAvqetDRA+shdjnKx4NajL+yDNNYRaSwH/TeNVzuIRBJf9vDwLUtsgUeD90u60gn7NB48UZ5gT109n+WDf9vDYVI9WQjwVyR6GH9kvTS37sJagNNbI8Cyxcv4DB79ypJcTXpxb0oEwToXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ziNFBQyn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z5IABXal; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ziNFBQyn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Z5IABXal; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A8EEF1FB9C;
+	Fri,  2 Aug 2024 07:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722584987;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jKPA9rypfqUqED4M3cdU4FEAK1NDmc5WyxWUH9Q5Eg=;
+	b=ziNFBQyndB+dK276Lhuk+eQqUq9PRGMjykZtj5HAblm5EXkYv9peljJgXbAnxtIQk8Uddq
+	nIkAk/mAToy33KQQJl4x7jdPRYqdpQ3Q5TZ5Rn+A2i7N7FXD6MZjuW3RAc8obcZEeGYfoz
+	nmGIjpuNiSrUK6xQy8F1UeoQQ0ozIQw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722584987;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jKPA9rypfqUqED4M3cdU4FEAK1NDmc5WyxWUH9Q5Eg=;
+	b=Z5IABXalIcJSfEWWT0taxZXhO48ifsmbb2A9KkHzKMgtFk8pGRzdLDOxw+cF28B04/P1Jf
+	9ekiMwy/Pol8cuCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ziNFBQyn;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Z5IABXal
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722584987;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jKPA9rypfqUqED4M3cdU4FEAK1NDmc5WyxWUH9Q5Eg=;
+	b=ziNFBQyndB+dK276Lhuk+eQqUq9PRGMjykZtj5HAblm5EXkYv9peljJgXbAnxtIQk8Uddq
+	nIkAk/mAToy33KQQJl4x7jdPRYqdpQ3Q5TZ5Rn+A2i7N7FXD6MZjuW3RAc8obcZEeGYfoz
+	nmGIjpuNiSrUK6xQy8F1UeoQQ0ozIQw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722584987;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jKPA9rypfqUqED4M3cdU4FEAK1NDmc5WyxWUH9Q5Eg=;
+	b=Z5IABXalIcJSfEWWT0taxZXhO48ifsmbb2A9KkHzKMgtFk8pGRzdLDOxw+cF28B04/P1Jf
+	9ekiMwy/Pol8cuCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 71DC41388E;
+	Fri,  2 Aug 2024 07:49:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vsMRGpuPrGYEDAAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Fri, 02 Aug 2024 07:49:47 +0000
+Date: Fri, 2 Aug 2024 09:49:48 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: Andrea Cervesato <andrea.cervesato@suse.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	Andrea Cervesato <andrea.cervesato@suse.de>, ltp@lists.linux.it,
+	Alexey Gladkov <legion@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Cyril Hrubis <chrubis@suse.cz>,
+	Adhemerval Zanella <adhemerval.zanella@linaro.org>,
+	=?iso-8859-2?Q?Ga=EBl?= PORTAY <gael.portay@rtone.fr>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [LTP] [PATCH v4 0/5] Add fchmodat2 testing suite
+Message-ID: <20240802074948.GA1595727@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20240801-fchmodat2-v4-0-7f2f11a53a09@suse.com>
+ <20240801165756.GA1526142@pevik>
+ <20240802.011554-broke.flocks.valiant.camp-sk9TjsxvPYf@cyphar.com>
+ <20240802054252.GA1582980@pevik>
+ <b0de5bc7-2b94-47cc-9610-fbec1347aecc@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8717:b0:4c0:838e:9fd1 with SMTP id
- 8926c6da1cb9f-4c8d56b0085mr102646173.5.1722584958937; Fri, 02 Aug 2024
- 00:49:18 -0700 (PDT)
-Date: Fri, 02 Aug 2024 00:49:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000092be0b061eae907e@google.com>
-Subject: [syzbot] [media?] KASAN: slab-use-after-free Read in em28xx_release_resources
-From: syzbot <syzbot+16062f26c6480975e5ed@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	mchehab@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0de5bc7-2b94-47cc-9610-fbec1347aecc@suse.com>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:replyto,suse.cz:dkim];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REPLYTO_EQ_FROM(0.00)[]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.51
+X-Rspamd-Queue-Id: A8EEF1FB9C
 
-Hello,
+> Hi!
 
-syzbot found the following issue on:
+> On 8/2/24 07:42, Petr Vorel wrote:
+> > > On 2024-08-01, Petr Vorel <pvorel@suse.cz> wrote:
+> > > > Hi all,
+> > > > > This is a patch-set that implements fchmodat2() syscall coverage.
+> > > > > fchmodat2() has been added in kernel 6.6 in order to support
+> > > > > AT_SYMLINK_NOFOLLOW and AT_EMPTY_PATH in fchmodat().
+> > > > > There's no man pages yet, so please take the following links as
+> > > > > main documentation along with kernel source code:
+> > > > I would hope that it'd be at least Christian's fork [1], but it's not there.
+> > > > I suppose nobody is working on the man page.
+> > > > > https://www.phoronix.com/news/fchmodat2-For-Linux-6.6
+> > > > > https://lore.kernel.org/lkml/20230824-frohlocken-vorabend-725f6fdaad50@brauner/
+> > > > > ***********
+> > > > > * WARNING *
+> > > > > ***********
+> > > > > fchmodat2_02 fails with EOPNOTSUPP because of missing feature.
+> > > > For a record, it's fchmodat2_01.c (from this patchset) which is failing (on
+> > > > 6.10.1-1.g4c78d6f-default Tumbleweed and 6.6.21-0-lts Alpine, both x86_64 VMs).
+> > > > Andrea, I would personally just skip test on EOPNOTSUPP (that's what we do in
+> > > > LTP on EOPNOTSUPP). The question why is not supported and whether is going to be
+> > > > fixed.
+> > > > Looking into glibc change 65341f7bbe ("linux: Use fchmodat2 on fchmod for flags
+> > > > different than 0 (BZ 26401)") one year old change from glibc-2.39 [2] it looks
+> > > > just accepted behavior (glibc returns EOPNOTSUPP on symlink):
+> > > > +  /* Some Linux versions with some file systems can actually
+> > > > +     change symbolic link permissions via /proc, but this is not
+> > > > +     intentional, and it gives inconsistent results (e.g., error
+> > > > +     return despite mode change).  The expected behavior is that
+> > > > +     symbolic link modes cannot be changed at all, and this check
+> > > > +     enforces that.  */
+> > > > +  if (S_ISLNK (st.st_mode))
+> > > > +    {
+> > > >         __close_nocancel (pathfd);
+> > > > -      return ret;
+> > > > +      __set_errno (EOPNOTSUPP);
+> > > > +      return -1;
+> > > > +    }
+> > > > Also musl also behaves the same on his fallback on old kernels [3]
+> > > > (it started 10 years ago on 0dc48244 ("work around linux's lack of flags
+> > > > argument to fchmodat syscall") when SYS_fchmodat was used and kept when this
+> > > > year SYS_fchmodat2 started to be used in d0ed307e):
+> > > > 	int ret = __syscall(SYS_fchmodat2, fd, path, mode, flag);
+> > > > 	if (ret != -ENOSYS) return __syscall_ret(ret);
+> > > > 	if (flag != AT_SYMLINK_NOFOLLOW)
+> > > > 		return __syscall_ret(-EINVAL);
+> > > > 	struct stat st;
+> > > > 	int fd2;
+> > > > 	char proc[15+3*sizeof(int)];
+> > > > 	if (fstatat(fd, path, &st, flag))
+> > > > 		return -1;
+> > > > 	if (S_ISLNK(st.st_mode))
+> > > > 		return __syscall_ret(-EOPNOTSUPP);
 
-HEAD commit:    6342649c33d2 Merge tag 'block-6.11-20240726' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=159feda1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-dashboard link: https://syzkaller.appspot.com/bug?extid=16062f26c6480975e5ed
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+> > > > > According to documentation, the feature has been implemented in
+> > > > > kernel 6.6, but __in reality__ AT_SYMLINK_NOFOLLOW is not working
+> > > > > on symbolic files. Also kselftests, which are meant to test the
+> > > > > functionality, are not working and they are treating fchmodat2()
+> > > > > syscall failure as SKIP. Please take a look at the following code
+> > > > > before reviewing:
+> > > > > https://github.com/torvalds/linux/blob/8f6a15f095a63a83b096d9b29aaff4f0fbe6f6e6/tools/testing/selftests/fchmodat2/fchmodat2_test.c#L123
+> > > > I see there is a kselftest workaround in 4859c257d295 ("selftests: Add fchmodat2
+> > > > selftest") [4], where fchmodat2 failure on symlink is simply skipped.
+> > > > Aleksa, you're probably aware of this fchmodat2() failure on symlinks. Does
+> > > > anybody work or plan to work on fixing it? LTP has policy to not cover kernel
+> > > > bugs, if it's not expected to be working we might just skip the test as well.
+> > > If I understand the bug report, the issue is that fchmodat2() doesn't
+> > > work on symlinks?
+> > Yes.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> > > This is intentional -- Christian fixed a tree-wide bug a while ago[1]
+> > > where some filesystems would change the mode of symlinks despite
+> > > returning an error (usually EOPNOTSUPP) and IIRC a few others would
+> > > happily change the mode of symlinks.
+> > Ah, I've seen this in the past. Thanks a lot for reminding me.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f7155d1516ca/disk-6342649c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f724a979b927/vmlinux-6342649c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/480121fc37f0/bzImage-6342649c.xz
+> > > The current intended behaviour is to always return EOPNOTSUPP, and AFAIK
+> > > there is no plan to re-enable the changing of symlink modes. EOPNOTSUPP
+> > > was chosen because that's what filesystems were already returning.
+> > > (While this is a little confusing, VFS syscalls return EINVAL for an
+> > > unsupported flag, not EOPNOTSUPP.)
+> > > The benefit of an AT_SYMLINK_NOFOLLOW flag is not just to to allow a
+> > > syscall to operate on symlinks, it also allows programs to safely
+> > > operate on path components without worrying about symlinks being
+> > > followed (this is relevant for container runtimes, where we are
+> > > operating on untrusted filesystem roots -- though in the case of
+> > > fchmodat2(2) you would probably just use AT_EMPTY_PATH in practice). So
+> > > an error here is actually what you want as a program that uses
+> > > AT_SYMLINK_NOFOLLOW (since the actual operation is intentionally not
+> > > supported by filesystems).
+> Thanks for the explanation. I also have a question around this topic:
+> AT_SYMLINK_NOFOLLOW has been added in order to avoid symlinks being
+> followed. But if filesystems are not supporting it, why do we have this
+> feature?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+16062f26c6480975e5ed@syzkaller.appspotmail.com
+@Aleksa please correct me if I'm wrong.
 
-em28xx 5-1:0.0: Closing input extension
-==================================================================
-BUG: KASAN: slab-use-after-free in media_device_unregister+0x154/0x470
-Read of size 8 at addr ffff888058df4210 by task kworker/0:1/9
+AFAIK (reading 5d1f903f75a8 commit message [1] and Aleksa's comments) previously
+it was an idea which many of the filesystem implemented wrongly - a mess
+regardless whether supported by the filesystem or not. I particularly like
+changing the mode but fail EOPNOTSUPP. And because glibc and musl did EOPNOTSUPP
+anyway (I found that as well), the best was just to follow this in kernel and
+unify all filesystems behavior by disabling this in VFS.
 
-CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.10.0-syzkaller-12881-g6342649c33d2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- media_device_unregister+0x154/0x470
- em28xx_unregister_media_device drivers/media/usb/em28xx/em28xx-cards.c:3511 [inline]
- em28xx_release_resources+0xa7/0x230 drivers/media/usb/em28xx/em28xx-cards.c:3532
- em28xx_usb_disconnect+0x1cc/0x530 drivers/media/usb/em28xx/em28xx-cards.c:4201
- usb_unbind_interface+0x25e/0x940 drivers/usb/core/driver.c:461
- device_remove drivers/base/dd.c:568 [inline]
- __device_release_driver drivers/base/dd.c:1272 [inline]
- device_release_driver_internal+0x503/0x7c0 drivers/base/dd.c:1295
- bus_remove_device+0x34f/0x420 drivers/base/bus.c:574
- device_del+0x57a/0x9b0 drivers/base/core.c:3868
- usb_disable_device+0x3bf/0x850 drivers/usb/core/message.c:1418
- usb_disconnect+0x340/0x950 drivers/usb/core/hub.c:2304
- hub_port_connect drivers/usb/core/hub.c:5361 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x1eb9/0x5150 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+> Also, is it an unsupported feature only on certain filesystems?
 
-Allocated by task 31851:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4189
- kmalloc_noprof include/linux/slab.h:681 [inline]
- kzalloc_noprof include/linux/slab.h:807 [inline]
- em28xx_v4l2_init+0xfd/0x2f40 drivers/media/usb/em28xx/em28xx-video.c:2534
- em28xx_init_extension+0x120/0x1c0 drivers/media/usb/em28xx/em28xx-core.c:1117
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Disabled in VFS => unsupported on all filesystems.
 
-Freed by task 31851:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2252 [inline]
- slab_free mm/slub.c:4473 [inline]
- kfree+0x149/0x360 mm/slub.c:4594
- em28xx_free_v4l2 drivers/media/usb/em28xx/em28xx-video.c:2120 [inline]
- kref_put include/linux/kref.h:65 [inline]
- em28xx_v4l2_init+0x16d7/0x2f40 drivers/media/usb/em28xx/em28xx-video.c:2903
- em28xx_init_extension+0x120/0x1c0 drivers/media/usb/em28xx/em28xx-core.c:1117
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> > Thanks a lot for explaining the background!
 
-The buggy address belongs to the object at ffff888058df4000
- which belongs to the cache kmalloc-8k of size 8192
-The buggy address is located 528 bytes inside of
- freed 8192-byte region [ffff888058df4000, ffff888058df6000)
+> > > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5d1f903f75a80daa4dfb3d84e114ec8ecbf29956
+> > > > I see a RFC UAPI related patchset [5] which touches include/uapi/linux/fcntl.h,
+> > > > but AFAIK it's not related to this problem.
+> > > Yeah this is unrelated, that patch is about clarifying how AT_* flags
+> > > are allocated, not syscall behaviour.
+> > Thanks!
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x58df0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000040 ffff888015842280 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000080020002 00000001fdffffff 0000000000000000
-head: 00fff00000000040 ffff888015842280 dead000000000122 0000000000000000
-head: 0000000000000000 0000000080020002 00000001fdffffff 0000000000000000
-head: 00fff00000000003 ffffea0001637c01 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0x152820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL), pid 3922, tgid 3922 (kworker/u8:8), ts 2368883364470, free_ts 2368880799693
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3442
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4700
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2321
- allocate_slab+0x5a/0x2f0 mm/slub.c:2484
- new_slab mm/slub.c:2537 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
- __slab_alloc+0x58/0xa0 mm/slub.c:3813
- __slab_alloc_node mm/slub.c:3866 [inline]
- slab_alloc_node mm/slub.c:4025 [inline]
- __do_kmalloc_node mm/slub.c:4157 [inline]
- __kmalloc_noprof+0x25a/0x400 mm/slub.c:4170
- kmalloc_noprof include/linux/slab.h:685 [inline]
- n_hdlc_tty_receive+0x1ce/0x4e0 drivers/tty/n_hdlc.c:393
- tty_ldisc_receive_buf+0x11f/0x170 drivers/tty/tty_buffer.c:391
- tty_port_default_receive_buf+0x6d/0xa0 drivers/tty/tty_port.c:37
- receive_buf drivers/tty/tty_buffer.c:445 [inline]
- flush_to_ldisc+0x328/0x860 drivers/tty/tty_buffer.c:495
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-page last free pid 13102 tgid 13102 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- free_unref_page+0xd22/0xea0 mm/page_alloc.c:2612
- discard_slab mm/slub.c:2583 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3051
- put_cpu_partial+0x17c/0x250 mm/slub.c:3126
- __slab_free+0x2ea/0x3d0 mm/slub.c:4343
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3988 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
- anon_vma_chain_alloc mm/rmap.c:142 [inline]
- __anon_vma_prepare+0xc4/0x4a0 mm/rmap.c:195
- vmf_anon_prepare mm/memory.c:3289 [inline]
- do_anonymous_page mm/memory.c:4551 [inline]
- do_pte_missing mm/memory.c:3945 [inline]
- handle_pte_fault+0x5788/0x6eb0 mm/memory.c:5522
- __handle_mm_fault mm/memory.c:5665 [inline]
- handle_mm_fault+0x1029/0x1980 mm/memory.c:5833
- do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+> > > > Kind regards,
+> > > > Petr
+> > @Andrea, I guess we want something like this:
 
-Memory state around the buggy address:
- ffff888058df4100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888058df4180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888058df4200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                         ^
- ffff888058df4280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888058df4300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+> > +++ testcases/kernel/syscalls/fchmodat2/fchmodat2_01.c
+> > @@ -43,9 +43,10 @@ static void test_symbolic_link(void)
+> >   	verify_mode(fd_dir, FNAME, S_IFREG | 0700);
+> >   	verify_mode(fd_dir, SNAME, S_IFLNK | 0777);
+> > -	TST_EXP_PASS(fchmodat2(fd_dir, SNAME, 0640, AT_SYMLINK_NOFOLLOW));
+> > -	verify_mode(fd_dir, FNAME, S_IFREG | 0700);
+> > -	verify_mode(fd_dir, SNAME, S_IFLNK | 0640);
+> > +	if (tst_kvercmp(6, 6, 0) >= 0) {
+> > +		TST_EXP_FAIL(tst_syscall(__NR_fchmodat2, fd_dir, SNAME, 0640,
+> > +					 AT_SYMLINK_NOFOLLOW), EOPNOTSUPP);
+> > +	}
+> >   }
+> >   static void test_empty_folder(void)
 
+> I think it makes more sense to filter out only filesystems which are not
+> supporting this feature (see my comment above).
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Due disabled in VFS since 5d1f903f75a8 all filesystems fail with EOPNOTSUPP,
+thus failure in LTP (TBROK), which needs to be handled.  Before 5d1f903f75a8
+some of them actually changed the mode (e.g. btrfs, ext4, xfs), but that's no
+longer the case. And because it got backported to all stable/LTS, we can expect
+this is the correct behavior.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Kind regards,
+Petr
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> Best regards,
+> Andrea
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
