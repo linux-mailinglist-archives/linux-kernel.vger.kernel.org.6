@@ -1,104 +1,165 @@
-Return-Path: <linux-kernel+bounces-272389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE24945B1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:36:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F37945B25
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612741F246B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40901C20E1C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04951C0DF1;
-	Fri,  2 Aug 2024 09:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E671DAC69;
+	Fri,  2 Aug 2024 09:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DdPprZmy"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fzYNV5bX"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CE51DAC69
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 09:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168C21BF304;
+	Fri,  2 Aug 2024 09:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722591361; cv=none; b=azOmWigRS1iRPJBagYvGgYgmop2CGXzKLBfWn7Pr/AVrRtXGRsrrpNtetnOS+xR425Ch0n5OHpd5Yt0IshfICgbTez+tTXJtqwv73SKZnYAIkO/986aAd77tEXbSvKLWP87reNKXvULnrC1E2pSikIyRdK+9CQ07W7V1vnscoVQ=
+	t=1722591436; cv=none; b=Rxr4TlHa0XvSlPfTFHk96rLmbYJ8NRdlM8odf5gdmlrD0uGn/6EJef5cI09/J1qs5l1DKG3AhUPNF0PXHvahIU28eEHgQl4JBCZN8UBJz4b7zf31Y+z9x7GiLPkAOspTaDeLKr+jTmONCA5GEpPG92DdrezsM5aOWGHGNXKyNIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722591361; c=relaxed/simple;
-	bh=dGZMGcHUtm9nJXfSiS/hGY6mS7HzGlEUMK0ytOf8QLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ICA8Kc7fHihdB6YzEMxT+xiR/60hvjNDUGIHttGjWNtcoWcBw4QyAU/+o8R1OfPyZdjDMwv39N6SMNEssqlXa+Yu3gaE+9Mtc1dDLEOfl3fkX0YpiqTMzdEorpUbH39iX8cVIwG8Lltz1pnb3YW6q7ZfxRWHSSTaSu1ax/4tygs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DdPprZmy; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=i6UGt9w6oVjdke1onFK4SKyphZpyTcfgA6/77jk/y8A=; b=DdPprZmyua1EKfU+9mBdlaeUa4
-	9v7jjEGk3pvKPdaB/1Qo0joYnwohLGxpUlrzJFSZl9qzp+yzq14GyRv13m6WEA3q2vNtOiXY4Ea3R
-	3Lo9YiVSgHX5d+kmeSqL9rczz0XI0BaHp45NzSX0oYCmT0RQdDDCwkeRqeF6MJxVvpSX6sp59/pFI
-	Jd7M2DhX6Iis4HeM+HSpzaFjp+4j6hc+h4k7PAWT+whYJfKC60lqKp4zf1ueZKldjibKrQ2a5rJb/
-	WVqf8JjxciBtYva7DjCO+W7Iwm9oDBhslpkd2CcR1/I/hZxdUkT5DGtyeENpipaTeck6BaD1C0s8K
-	K+dvOuxA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZohV-00000005g0A-0dvL;
-	Fri, 02 Aug 2024 09:35:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 80CD330049D; Fri,  2 Aug 2024 11:35:52 +0200 (CEST)
-Date: Fri, 2 Aug 2024 11:35:52 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [FYI] objtool: =?utf-8?B?LmV4cG9ydF9z?= =?utf-8?B?eW1ib2zigKY6?=
- data relocation to !ENDBR: stpcpy
-Message-ID: <20240802093552.GG39708@noisy.programming.kicks-ass.net>
-References: <20240801152836.xOJc9iaY@linutronix.de>
+	s=arc-20240116; t=1722591436; c=relaxed/simple;
+	bh=mBo/Gq6QDk9/Dr3lyo0qOe2wNbZqWQDFEKOJSXo4x6I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l8nDs+diJpVUooqh0XBLWJoJcFzUe/grAyhQ7p1kNd4XWp/b2mH+S+CyvOc8QKQYV4PzetFJxKDXpydJLsF9EFj+XTtpwQE62Tsp8JRTXSGU4ab1g5CDNkfKjv/cdwoQSSeCKr+mSD2OSNUUaVtn57Ci6cqZWwHidU1u+O59qzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fzYNV5bX; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1722591397;
+	bh=NsIKkB/pr2FlhtN9deyA9A/er15GQbDfKsbBwFdHhqA=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=fzYNV5bXU2BJoIumVQ3/zQh8WhYz0z4QCLXVtN9RZkv5eLQIKWbxbirn5AdvJ3/eD
+	 DQz6RIE/Q/fK3hHRNxyly843faK6fjot9fUwyWWgcpbgGMpnzx763cc4QVtnLa9koO
+	 03BVcbr4GQHtYW2R8GFD2vl95f1DeVrKU/6r+RSY=
+X-QQ-mid: bizesmtp84t1722591393t29jd6vp
+X-QQ-Originating-IP: Zm1SS9v5f3kvreoF8JKqgz+MhrTtNXlL8iPlq6ibJxU=
+Received: from localhost.localdomain ( [123.114.60.34])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 02 Aug 2024 17:36:31 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14219945242816507166
+From: Qiang Ma <maqianga@uniontech.com>
+To: dmitry.torokhov@gmail.com,
+	hdegoede@redhat.com,
+	christophe.jaillet@wanadoo.fr
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qiang Ma <maqianga@uniontech.com>
+Subject: [PATCH V2] Input: atkbd - fix LED state at suspend/resume
+Date: Fri,  2 Aug 2024 17:36:00 +0800
+Message-Id: <20240802093600.6807-1-maqianga@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801152836.xOJc9iaY@linutronix.de>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-On Thu, Aug 01, 2024 at 05:28:36PM +0200, Sebastian Andrzej Siewior wrote:
-> Hi,
-> 
-> defconfig on x86-64 with gcc-14 I get this:
-> | vmlinux.o: warning: objtool: .export_symbol+0x26980: data relocation to !ENDBR: stpcpy+0x0
-> 
-> objdump ->
-> 
-> | 0000000000000110 <stpcpy>:
-> |  110:   66 66 2e 0f 1f 84 00    data16 cs nopw 0x0(%rax,%rax,1)
-> |  117:   00 00 00 00 
-> |  11b:   0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
-> |  120:   f3 0f 1e fa             endbr64
-> 
-> okay, no endbr64 on entry label.
-> 
-> | $ make lib/string.s
-> ->
-> |         .type   stpcpy, @function
-> | stpcpy:
-> |         .p2align 5
-> |         endbr64
-> | .L30:
-> | # lib/string.c:193:  while ((*dest++ = *src++) != '\0')
-> |         movzbl  (%rsi), %eax    # MEM[(const char *)src_8 + -1B], _1
-> 
-> an alignment request after the function label before endbr64 which gets
-> expanded into NOP_11+NOP_5.
-> I don't see this with gcc-13.
-> Reported as https://gcc.gnu.org/PR116174
+After we turn on the keyboard CAPSL LED and let the system suspend,
+the keyboard LED is not off, and the kernel log is as follows:
 
-Fun, thanks for tracking that down!
+[  185.987574] i8042: [44060] ed -> i8042 (kbd-data)
+[  185.988057] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
+[  185.988067] i8042: [44061] 04 -> i8042 (kbd-data)
+[  185.988248] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
+
+The log shows that after the command 0xed is sent, the data
+sent is 0x04 instead of 0x00.
+
+Solution:
+Add a bitmap variable ledon in the atkbd structure, and then set ledon
+according to code-value in the event, in the atkbd_set_leds() function,
+first look at the value of ledon, if it is 0, there is no need to
+look at the value of dev->led, otherwise, need to look at dev->led
+to determine the keyboard LED on/off.
+
+Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+V2:
+ - Fixed formatting and spelling errors
+ - Optimized some code
+
+ drivers/input/keyboard/atkbd.c | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+index 7f67f9f2946b..fb479bc78134 100644
+--- a/drivers/input/keyboard/atkbd.c
++++ b/drivers/input/keyboard/atkbd.c
+@@ -237,6 +237,8 @@ struct atkbd {
+ 	struct mutex mutex;
+ 
+ 	struct vivaldi_data vdata;
++
++	DECLARE_BITMAP(ledon, LED_CNT);
+ };
+ 
+ /*
+@@ -604,24 +606,32 @@ static int atkbd_set_repeat_rate(struct atkbd *atkbd)
+ 	return ps2_command(&atkbd->ps2dev, &param, ATKBD_CMD_SETREP);
+ }
+ 
++#define ATKBD_DO_LED_TOGGLE(dev, atkbd, type, v, bits, on)		\
++({									\
++	unsigned char __tmp = 0;					\
++	if (test_bit(LED_##type, atkbd->on))				\
++		__tmp = test_bit(LED_##type, dev->bits) ? v : 0;	\
++	__tmp;								\
++})
++
+ static int atkbd_set_leds(struct atkbd *atkbd)
+ {
+ 	struct input_dev *dev = atkbd->dev;
+ 	unsigned char param[2];
+ 
+-	param[0] = (test_bit(LED_SCROLLL, dev->led) ? 1 : 0)
+-		 | (test_bit(LED_NUML,    dev->led) ? 2 : 0)
+-		 | (test_bit(LED_CAPSL,   dev->led) ? 4 : 0);
++	param[0] = ATKBD_DO_LED_TOGGLE(dev, atkbd, SCROLLL, 1, led, ledon)
++		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, NUML,    2, led, ledon)
++		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, CAPSL,   4, led, ledon);
+ 	if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_SETLEDS))
+ 		return -1;
+ 
+ 	if (atkbd->extra) {
+ 		param[0] = 0;
+-		param[1] = (test_bit(LED_COMPOSE, dev->led) ? 0x01 : 0)
+-			 | (test_bit(LED_SLEEP,   dev->led) ? 0x02 : 0)
+-			 | (test_bit(LED_SUSPEND, dev->led) ? 0x04 : 0)
+-			 | (test_bit(LED_MISC,    dev->led) ? 0x10 : 0)
+-			 | (test_bit(LED_MUTE,    dev->led) ? 0x20 : 0);
++		param[1] = ATKBD_DO_LED_TOGGLE(dev, atkbd, COMPOSE, 0x01, led, ledon)
++			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SLEEP,   0x02, led, ledon)
++			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SUSPEND, 0x04, led, ledon)
++			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MISC,    0x10, led, ledon)
++			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MUTE,    0x20, led, ledon);
+ 		if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_EX_SETLEDS))
+ 			return -1;
+ 	}
+@@ -695,6 +705,11 @@ static int atkbd_event(struct input_dev *dev,
+ 	switch (type) {
+ 
+ 	case EV_LED:
++		if (value)
++			__set_bit(code, atkbd->ledon);
++		else
++			__clear_bit(code, atkbd->ledon);
++
+ 		atkbd_schedule_event_work(atkbd, ATKBD_LED_EVENT_BIT);
+ 		return 0;
+ 
+-- 
+2.20.1
+
 
