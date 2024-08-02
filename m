@@ -1,127 +1,157 @@
-Return-Path: <linux-kernel+bounces-272710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C720946022
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:19:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BDD94600C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E95E1C228D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66E462843BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E1D3DAC08;
-	Fri,  2 Aug 2024 15:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A3B21C18D;
+	Fri,  2 Aug 2024 15:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayq4LRjU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nakr+78l"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A61216324E;
-	Fri,  2 Aug 2024 15:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF682101A4
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611820; cv=none; b=tvFpJcBfWk5h8N2pDWHu425IlLz2t92weJdvyBiX+UKQYjNLJxZIcgWOyChEwIEVC71IIFje0qj95qCGbF5Phv2CGzZF4yHOrYxnn7ytycsV1Hcf8kummTzqakkWVj1OK4WIlXvcEOxK2I/dIDWJSxKSDyjQtEGpJ+/BkGW0M/4=
+	t=1722611763; cv=none; b=R9mkkus3ojCh2uzRTOU3vl4qOnd2xq5rt7s+fbKaaXXXnINgGxOjWYT710+BF9UVRP/rrM6zD6JRxXFEzVngsWtcvlpRT6MDrEGZzuQZbpPXJCYOy9BJQKA2WYG8tJ+qOeq/UKpod7U0AUr1VKkIOjB+1IPNa6Nk6bHMO1PmCD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611820; c=relaxed/simple;
-	bh=3N+B04uKCIlAgIPePxYWuNHTEndJgm1x2so5SryKEkA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=m6cWOI9gyoStgoJgk75DDigg2GGD71IBwvWMJ4PYZGAFs9hXY+5VMvs1gu8HFJBRgiZvqc7bzSjYwDD/6mhEBKjaiWlgsEWlSa+F7RLgirwTevL56Hj7OQI340gbMkFW9NW5BJGSSdbRUStdL6ta/OlqN5af7d8NzXc1AjqUEhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayq4LRjU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A399C4AF0D;
-	Fri,  2 Aug 2024 15:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722611819;
-	bh=3N+B04uKCIlAgIPePxYWuNHTEndJgm1x2so5SryKEkA=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ayq4LRjUyUulg1JYg2dw4nkA058tvN4M830+/fLyWIuH6LttNr95b0LI35AELwaSV
-	 evoOMlVLCJe9WcWS40IgvMj32e8Z4vFvsyYFus2Psgc+2p+ngCgNGMIVPQNt9GX8tR
-	 Cvqp3nQs5VCq9bnC5xW9UTBfXeh4CEIgWDj/lizXAmOxiPMRzuJPH7HqsBoH/w8mXn
-	 SrcRX9XLSE2MPSqhpyrEzIxu+NUzJv4o0PLq+gpMnVK7OmE+20EQ9erZkbxlGdsdny
-	 3vFkcRyJ3ISRWSXgbAUCVNJh7EYGSyqLQPHfl0L6x6aW7e75etarkzhqvjWcS204Fg
-	 MCCve1jn/8M0g==
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 20EFC120006E;
-	Fri,  2 Aug 2024 11:16:58 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 02 Aug 2024 11:16:58 -0400
-X-ME-Sender: <xms:avisZpI4XYancRwgkHIu75asiQmV8SojGgE6Q3xxP13AA5ZRxpZrWQ>
-    <xme:avisZlJeEgF7EqFxGIrJKjVCwZ5ez9lqP5DspnG7_0DqVZ1_mrPi7TbclUjQDgBkH
-    b0doeemUnn46KgqoWQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgdekiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrdhorhhgqeenucggtffrrg
-    htthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedtudeikeeggeefkefhudfh
-    lefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidquddvkeehudejtddv
-    gedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdrohhrghesrghrnhgusgdrug
-    gvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:avisZhstiPww3TOhCD55MvuV78pLx_BmboXq5oSacv3F-d-FqtRPXA>
-    <xmx:avisZqbiSCLL_liys-FP4zEymB9zcyp4uDN8qzcEuAv0DbNRn3gp9Q>
-    <xmx:avisZgZp9TV-JY4KG8KsWcIAZU09d2egsdNaPmN50NMTuSwAnkoGqA>
-    <xmx:avisZuC3R_w6smQ0Jsq1Xb3uO8p7FXWhYuZeSRlMgf9oQ17tq25VCA>
-    <xmx:avisZuYb2g7_JOQvh_YodFH1VtkQJzwQyAdPe4laCgh1CHJ1kUq615q_>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id E99D2B6008D; Fri,  2 Aug 2024 11:16:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722611763; c=relaxed/simple;
+	bh=onkK7eGKtLJBosXsYvUv4xlTMHPEHaRONgXoxX6LRTw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dfGZufXHSOy1tmAJbFV+0pvfUQ/N4RQ2MddWNokHx6D7A5Kn7jDMnUOZC7bdmyVGL67RhqmcDc5OQ/28b8vrfyCSXja6HD6r+BsTObSUajbFPBzP6smg7uLEzxAxuaNFhk5BmnPdSQ/ATHJeLhiEQEyEzThv3iagOjEiZTvb3xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nakr+78l; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722611762; x=1754147762;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=onkK7eGKtLJBosXsYvUv4xlTMHPEHaRONgXoxX6LRTw=;
+  b=nakr+78lwJCHM0cOWvGolr3Jrkppi3C0Z9lrL6f8fDaEY+kaDCNsvDCE
+   Zy8hkxNttp+zUpExBSZTK+AkP9AJ4Q6syUTlcrWFDO8A9EYijAfH4xTD+
+   uMoOWvEceG9RCdiL976JOOl6lqW+QLh67ldfZDdl3SgMtAYUi7bl2SoqQ
+   M2kaFddAZlz5zXObqrUTA+4n5v7Virozzs/D3sjFWqswYPZ5ALep0wB1t
+   V6AlvJZ3C7Tv7eJX12IY+BuYUB9VzeKjD434Wb6bhtFcq+E7L/F7pSHWi
+   t0aIGbJ/I4m81pOtOqZZPKtNFADf0AVmsOoPEUr+cBzBASSaAn0yYMhRv
+   A==;
+X-CSE-ConnectionGUID: XLwjHKXpSwGvGc4Abu1y6A==
+X-CSE-MsgGUID: K3mjAHv1RV22kwyfg5iuOw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20473762"
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="20473762"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 08:15:59 -0700
+X-CSE-ConnectionGUID: tV7qxRiOQIixsbqeXItJxw==
+X-CSE-MsgGUID: uIEbc+T/TFqLPNLW/K05Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="55516931"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa010.fm.intel.com with ESMTP; 02 Aug 2024 08:15:58 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	linux-kernel@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 2/7] perf: Add PERF_EV_CAP_READ_SCOPE
+Date: Fri,  2 Aug 2024 08:16:38 -0700
+Message-Id: <20240802151643.1691631-3-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20240802151643.1691631-1-kan.liang@linux.intel.com>
+References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 02 Aug 2024 17:16:37 +0200
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
- "Herbert Xu" <herbert@gondor.apana.org.au>
-Cc: kernel-janitors@vger.kernel.org, "Nicholas Piggin" <npiggin@gmail.com>,
- linux-kernel@vger.kernel.org, "Danny Tsen" <dtsen@linux.ibm.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- "Andrew Morton" <akpm@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org,
- "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
-Message-Id: <6fdd8f30-4df1-447d-9156-5d2314239e99@app.fastmail.com>
-In-Reply-To: <75a526e3-3101-4319-b42f-4482ba188abc@quicinc.com>
-References: 
- <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
- <ZqzcApbJomFTnc30@gondor.apana.org.au>
- <75a526e3-3101-4319-b42f-4482ba188abc@quicinc.com>
-Subject: Re: [PATCH] crypto: ppc/curve25519 - add missing MODULE_DESCRIPTION() macro
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 2, 2024, at 16:27, Jeff Johnson wrote:
-> On 8/2/2024 6:15 AM, Herbert Xu wrote:
->> On Thu, Jul 18, 2024 at 06:14:18PM -0700, Jeff Johnson wrote:
->>> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
->>> description is missing"), a module without a MODULE_DESCRIPTION() will
->>> result in a warning with make W=1. The following warning is being
->>> observed when building ppc64le with CRYPTO_CURVE25519_PPC64=m:
->>>
->>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/crypto/curve25519-ppc64le.o
->>>
->>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>>
->>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->>> ---
->>>  arch/powerpc/crypto/curve25519-ppc64le-core.c | 1 +
->>>  1 file changed, 1 insertion(+)
->> 
->> Patch applied.  Thanks.
->
-> Great, that was the last of my MODULE_DESCRIPTION patches!!!
->
-> There are a few more instances of the warning that Arnd has patches for,
-> covering issues that appear in randconfigs that I didn't test.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Are all of your patches in linux-next now, or is there a another
-git tree that has them all?
+Usually, an event can be read from any CPU of the scope. It doesn't need
+to be read from the advertised CPU.
 
-I can send the ones I have left, but I want to avoid duplication.
+Add a new event cap, PERF_EV_CAP_READ_SCOPE. An event of a PMU with
+scope can be read from any active CPU in the scope.
 
-    Arnd
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ include/linux/perf_event.h |  3 +++
+ kernel/events/core.c       | 14 +++++++++++---
+ 2 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1102d5c2be70..1206bc86eb4f 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -633,10 +633,13 @@ typedef void (*perf_overflow_handler_t)(struct perf_event *,
+  * PERF_EV_CAP_SIBLING: An event with this flag must be a group sibling and
+  * cannot be a group leader. If an event with this flag is detached from the
+  * group it is scheduled out and moved into an unrecoverable ERROR state.
++ * PERF_EV_CAP_READ_SCOPE: A CPU event that can be read from any CPU of the
++ * PMU scope where it is active.
+  */
+ #define PERF_EV_CAP_SOFTWARE		BIT(0)
+ #define PERF_EV_CAP_READ_ACTIVE_PKG	BIT(1)
+ #define PERF_EV_CAP_SIBLING		BIT(2)
++#define PERF_EV_CAP_READ_SCOPE		BIT(3)
+ 
+ #define SWEVENT_HLIST_BITS		8
+ #define SWEVENT_HLIST_SIZE		(1 << SWEVENT_HLIST_BITS)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 5e1877c4cb4c..c55294f34575 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4463,16 +4463,24 @@ struct perf_read_data {
+ 	int ret;
+ };
+ 
++static inline const struct cpumask *perf_scope_cpu_topology_cpumask(unsigned int scope, int cpu);
++
+ static int __perf_event_read_cpu(struct perf_event *event, int event_cpu)
+ {
++	int local_cpu = smp_processor_id();
+ 	u16 local_pkg, event_pkg;
+ 
+ 	if ((unsigned)event_cpu >= nr_cpu_ids)
+ 		return event_cpu;
+ 
+-	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
+-		int local_cpu = smp_processor_id();
++	if (event->group_caps & PERF_EV_CAP_READ_SCOPE) {
++		const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(event->pmu->scope, event_cpu);
++
++		if (cpumask && cpumask_test_cpu(local_cpu, cpumask))
++			return local_cpu;
++	}
+ 
++	if (event->group_caps & PERF_EV_CAP_READ_ACTIVE_PKG) {
+ 		event_pkg = topology_physical_package_id(event_cpu);
+ 		local_pkg = topology_physical_package_id(local_cpu);
+ 
+@@ -11804,7 +11812,7 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+ 				if (cpu >= nr_cpu_ids)
+ 					ret = -ENODEV;
+ 				else
+-					event->cpu = cpu;
++					event->event_caps |= PERF_EV_CAP_READ_SCOPE;
+ 			} else {
+ 				ret = -ENODEV;
+ 			}
+-- 
+2.38.1
+
 
