@@ -1,115 +1,189 @@
-Return-Path: <linux-kernel+bounces-271930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2234494551B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:05:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED7B94551E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27A51F22B9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727702849B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BB423A9;
-	Fri,  2 Aug 2024 00:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FE94A18;
+	Fri,  2 Aug 2024 00:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="il03V0sn"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="KnYaLdmd"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BDF360;
-	Fri,  2 Aug 2024 00:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC5F15B7
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 00:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722557138; cv=none; b=YU+vT5bbcyO6pcDmcJa8DKqtsmbXLLNiSE14Hir4ZRDY1+Fhc1YmZzcqre2NgNfHX5sCWA25LULdhESxh+c+INCpMHWVyLbgowMFXGjn9Gx+cV091MAtsE282zHVtveNxLzxQ3er7nXhA7xBCHtkifrPHu7T2lR45eQhjES10V8=
+	t=1722557160; cv=none; b=LtFR9f692es6R3Hk/LyP8X4MLbKlfSsjlxM8eEtvfiU/OR4MTy3l6YinWAM8YxrtXR+2pnqoXv1nNeZFnHR5Jop7AcoNeQHJ9Jv/5DOqZlyIYjAHt/7Jz7IwO4RnJSCBaE08qH+2RC+kZYzjJi1RuNhgNJ75ys569GBG0J284Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722557138; c=relaxed/simple;
-	bh=Mk+Wb2FalPTBQ7RngNErfEg66fBNQpeyb/IVX6aSUYE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gAE9Fka7NY5Wk6ZXDyhKV0vE1E4z3akoX9kHunWUm5+fZJMrLGRm2N/oIA6nxYXMKaPUx7A/jBmj3s0CG5jdLtEI0FVJ1O2GsuuzoMTp+4QXHE1J2c963ufYuqIgDhEhulv4k7mQHN+BTFfuHIxkHVMWWXSpERRgZFG1vMnHj70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=il03V0sn; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1722557137; x=1754093137;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Mk+Wb2FalPTBQ7RngNErfEg66fBNQpeyb/IVX6aSUYE=;
-  b=il03V0snNU6EYCCbOe5uW3UDya43ryA+T8I350X7SaQhwj/xPZCVYTdv
-   uA493G9k/vFQCl7Jp1kBUwRYmClRUNVj2qnAr5heUyEQeAK36LsQpjzSU
-   ibWJkzgfVtORpPDV2acdAxoOuTb1sUf5JAYgNLRhmLraa7LuxJx0D2RMi
-   yirjIGVpG54dG95eKtAtUUh+h5ZnThjh9QDglV2X5JwLw+c3Cb9AC+GPJ
-   k7hnTjjrTndoF5y720EuxFee57evAdL7D3sMgUZEuzCJZIbpbuv2OGwo7
-   fB2pXbNGgGpm1atV0og896mM0TcscnzpqtW0zCScgHWs7L9cHZQZJyZ1F
-   g==;
-X-CSE-ConnectionGUID: Nd1Mm3CYRsmzk10QRL3M7w==
-X-CSE-MsgGUID: znJPEgPDS0Sx0oMgty1lSw==
-X-IronPort-AV: E=Sophos;i="6.09,256,1716274800"; 
-   d="scan'208";a="30662038"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Aug 2024 17:05:35 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 1 Aug 2024 17:05:10 -0700
-Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 1 Aug 2024 17:05:10 -0700
-From: <Tristram.Ha@microchip.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, Woojung Huh
-	<woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>, Vivien Didelot
-	<vivien.didelot@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>,
-	"Vladimir Oltean" <olteanv@gmail.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tristram Ha
-	<tristram.ha@microchip.com>
-Subject: [PATCH net] net: dsa: microchip: Fix Wake-on-LAN check to not return an error
-Date: Thu, 1 Aug 2024 17:05:10 -0700
-Message-ID: <20240802000510.7088-1-Tristram.Ha@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722557160; c=relaxed/simple;
+	bh=kPg6hNpv0fyQQ4C8xugRnahcyI2M1VfEIoO8Iylc6mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W9X8J5a0OHJUEg1ksyaEMVI7+1b04lUm13FqBzvwjvCi9dADHuj8xdy1fUXsd0XzWHNsgqnvPrRNXeJwYZRSdhstxqWjND4E06jsQhSwGLBfrjunLhSEkKriHYLuS3Fqhl7G/3SrF2U5Wh4YxwWm9QmpFJC44rXP0dkSZxbVT64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=KnYaLdmd; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc6a017abdso51438895ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 17:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722557158; x=1723161958; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BtsQ+3NXr7Z0grTXgI4VJ8mpDigb9614hgPF8/mg2ek=;
+        b=KnYaLdmdx2kIS5cRhTBo9gtYC5Cuu9GWeGnR5/z9WkUTP3MTuLgzH26Y+un7cTRsYv
+         yJjicBTWTBNCawOIBZTDcWdv4BWNIc/mkZRKIddb9YMD+TLu1uBop98FeKxls5Qk1yzE
+         TUReUZcKvWJOhfKmskXQMXSij7vO1d0bHmEYOmecSuIOfcEg4fwKVWZOePvrJpHdJV9b
+         QytxvDv0VDbTl82WF/WQ9T9I3wSGFHPXgDV/7/BFZ2kSWDEJCRa/EOtwi/17BOn8IWM/
+         aqSPG/PcPAThwVhNVGLDusX1cBPb/4SrRJQgnEVPAiCBqnFDleu3VtqIr40a2GMAs7/v
+         HK8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722557158; x=1723161958;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BtsQ+3NXr7Z0grTXgI4VJ8mpDigb9614hgPF8/mg2ek=;
+        b=hAF9sT+7YFDz0LOVmpZL7jTnZYcIaHnHEHzcYlAXI9w7DtbxMFImKbRZXIPSZ2fjC4
+         ubn1XIxATCArkhUu5pa3AWnJHsKPpNZIv1ASfP8RqobLeRVO6wPglUacPBPreCmW38U4
+         uOEbLqC2v/cmoHq+JDYKI1aC+b8M25MQD0FHMeV2tSrGr2WXQ/+Zjo7iIttsir1A7mwX
+         ClymdlzaWcjrxqj1x7vlRYjlo9xpLLnkjsm7rJe17EauNI7iEqhMCcTyHCbQzdVC73eE
+         YoV3UI7lGfW4nE727HeI6FcBDhGkaYTOcvsmSfo/mXNwXkgv4A6wHat9rQAysyn2ikGb
+         7kyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVc5GUA/axwVpqNKUCeJ/2fBLMiVmKHZ82FyT7R+BqYNlx5YIS2DcpXjppL9nu/QfnYwGPhjeB1j3tjJHPYNipwoh+n969i2JybqKtE
+X-Gm-Message-State: AOJu0Yytt/IkX8aVS/kETVc8aLpKg1BWlysG4joWmcKdh0hg5z8h3CBH
+	jfyK4YnaljeKwoTBjJbThB5NAGaRb4Fg9uS9pQKdVfuZdOtfGjxYMX8EzWXJthQ=
+X-Google-Smtp-Source: AGHT+IHAi8u2E0Zyx8AqxUHQRqLu9oFcTolJxIePwk6jnTPCdufSt8G3TT6DihMhy1lfh6fr5NcjNA==
+X-Received: by 2002:a17:902:f686:b0:1fb:6294:2e35 with SMTP id d9443c01a7336-1ff5743b563mr26795165ad.50.1722557158429;
+        Thu, 01 Aug 2024 17:05:58 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592acd2fsm4645375ad.286.2024.08.01.17.05.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 17:05:57 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sZfnv-0023B7-1T;
+	Fri, 02 Aug 2024 10:05:55 +1000
+Date: Fri, 2 Aug 2024 10:05:55 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
+ uptodate bits
+Message-ID: <Zqwi48H74g2EX56c@dread.disaster.area>
+References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
+ <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
 
-From: Tristram Ha <tristram.ha@microchip.com>
+On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Commit '1cea335d1db1 ("iomap: fix sub-page uptodate handling")' fix a
+> race issue when submitting multiple read bios for a page spans more than
+> one file system block by adding a spinlock(which names state_lock now)
+> to make the page uptodate synchronous. However, the race condition only
+> happened between the read I/O submitting and completeing threads,
 
-The wol variable in ksz_port_set_mac_address() is declared with random
-data, but the code in ksz_get_wol call may not be executed so the
-WAKE_MAGIC check may be invalid resulting in an error message when
-setting a MAC address after starting the DSA driver.
+when we do writeback on a folio that has multiple blocks on it we
+can submit multiple bios for that, too. Hence the write completions
+can race with each other and write submission, too.
 
-Fixes: 3b454b6390c3 ("net: dsa: microchip: ksz9477: Add Wake on Magic Packet support")
-Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
----
- drivers/net/dsa/microchip/ksz_common.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Yes, write bio submission and completion only need to update ifs
+accounting using an atomic operation, but the same race condition
+exists even though the folio is fully locked at the point of bio
+submission.
 
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index b074b4bb0629..2725c5bc311c 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -3764,6 +3764,12 @@ static int ksz_port_set_mac_address(struct dsa_switch *ds, int port,
- 		return -EBUSY;
- 	}
- 
-+	/* Need to initialize variable as the code to fill in settings may
-+	 * not be executed.
-+	 */
-+	wol.supported = 0;
-+	wol.wolopts = 0;
-+
- 	ksz_get_wol(ds, dp->index, &wol);
- 	if (wol.wolopts & WAKE_MAGIC) {
- 		dev_err(ds->dev,
+
+> it's
+> sufficient to use page lock to protect other paths, e.g. buffered write
+                    ^^^^ folio
+> path.
+>
+> After large folio is supported, the spinlock could affect more
+> about the buffered write performance, so drop it could reduce some
+> unnecessary locking overhead.
+
+From the point of view of simple to understand and maintain code, I
+think this is a bad idea. The data structure is currently protected
+by the state lock in all situations, but this change now makes it
+protected by the state lock in one case and the folio lock in a
+different case.
+
+Making this change also misses the elephant in the room: the
+buffered write path still needs the ifs->state_lock to update the
+dirty bitmap. Hence we're effectively changing the serialisation
+mechanism for only one of the two ifs state bitmaps that the
+buffered write path has to update.
+
+Indeed, we can't get rid of the ifs->state_lock from the dirty range
+updates because iomap_dirty_folio() can be called without the folio
+being locked through folio_mark_dirty() calling the ->dirty_folio()
+aop.
+
+IOWs, getting rid of the state lock out of the uptodate range
+changes does not actually get rid of it from the buffered IO patch.
+we still have to take it to update the dirty range, and so there's
+an obvious way to optimise the state lock usage without changing any
+of the bitmap access serialisation behaviour. i.e.  We combine the
+uptodate and dirty range updates in __iomap_write_end() into a
+single lock context such as:
+
+iomap_set_range_dirty_uptodate()
+{
+	struct iomap_folio_state *ifs = folio->private;
+	struct inode *inode:
+        unsigned int blks_per_folio;
+        unsigned int first_blk;
+        unsigned int last_blk;
+        unsigned int nr_blks;
+	unsigned long flags;
+
+	if (!ifs)
+		return;
+
+	inode = folio->mapping->host;
+	blks_per_folio = i_blocks_per_folio(inode, folio);
+	first_blk = (off >> inode->i_blkbits);
+	last_blk = (off + len - 1) >> inode->i_blkbits;
+	nr_blks = last_blk - first_blk + 1;
+
+	spin_lock_irqsave(&ifs->state_lock, flags);
+	bitmap_set(ifs->state, first_blk, nr_blks);
+	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
+	spin_unlock_irqrestore(&ifs->state_lock, flags);
+}
+
+This means we calculate the bitmap offsets only once, we take the
+state lock only once, and we don't do anything if there is no
+sub-folio state.
+
+If we then fix the __iomap_write_begin() code as Willy pointed out
+to elide the erroneous uptodate range update, then we end up only
+taking the state lock once per buffered write instead of 3 times per
+write.
+
+This patch only reduces it to twice per buffered write, so doing the
+above should provide even better performance without needing to
+change the underlying serialisation mechanism at all.
+
+-Dave.
 -- 
-2.34.1
-
+Dave Chinner
+david@fromorbit.com
 
