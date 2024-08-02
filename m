@@ -1,118 +1,95 @@
-Return-Path: <linux-kernel+bounces-272283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257BE9459A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:09:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002559459A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2F7AB22A50
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:09:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8661F21DF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE8B1C230F;
-	Fri,  2 Aug 2024 08:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwm8/92Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52BC1C2339;
+	Fri,  2 Aug 2024 08:09:07 +0000 (UTC)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97A41C0DF2;
-	Fri,  2 Aug 2024 08:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF133D6A;
+	Fri,  2 Aug 2024 08:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722586117; cv=none; b=W31mSbZpXQXK6sm2LFZsdhPNUfjudvs2Y19sUN8pjK1DNiCGO9UTw/fqWOwfbjnwOLCm1MCHCSDl2+An6oIlkgOSVkOCkg4V+yCVfZZdP1qUtbUKpVTR/3JssAeZdS/OMXMj3yIPfA0DMOQICDAGIMdlboDdblUCDkz4jHwu9E0=
+	t=1722586147; cv=none; b=FvZqZNNrqXgzT0StVRsPQBQTLN2VRUqPg98GR5sRwo+xYYoAi5c4y04xFGxeIVxh40sQ7CPFooF22EIhEXcYwc9QpQWw6iGmmhRSSRvsHklfTtLT6fuvCskncPIMLl6WOky67mjTv6rZYtbsTkMSrXUejfL3jX8doYtF4Lh7v8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722586117; c=relaxed/simple;
-	bh=FsH3wdtcvgjhgqn/vSYrToks9tDfFD/g6p47+4HujaA=;
+	s=arc-20240116; t=1722586147; c=relaxed/simple;
+	bh=Zp9EI5OCVN/DrlafofP7/8nWGubayZQSFeHZUyxUuPQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IWtuceWPqxvZ9MjmRWMSwsEAwGJ6SIskbz/zpadnRK7KIoPLCHhxqUiThTkgEHQJEt/dWny6gI8hwt7EP5JGTh2nocULbdeB/hnR8pv2XPZecTZiXAMc3pgaBzt5VeB/2fPE6ncqkRpUaz515R1KJDq6ZTqb4HcxVYK3w1suwHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwm8/92Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E191C32782;
-	Fri,  2 Aug 2024 08:08:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722586117;
-	bh=FsH3wdtcvgjhgqn/vSYrToks9tDfFD/g6p47+4HujaA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rwm8/92ZOEienicTuhNeHn1BDzsUuaqNfkgUmv7ZS/UVNhlkK8lyge0Viw9rT223I
-	 l+yFXEzO+PUYPeeFhNAntoTMz5pAIjZ9nIL/o4u/OVs+iEyr4C7GswpSbDHK1P86jc
-	 k107v7h8c2I+JuT3bkKtRQ+w2UdIVW0ThJH46cXrmgEaAK5gjqzRQ8zQeEICkbdC1R
-	 NuNK68ASsCQ8UM11W4sc+9JdIso37yG3cI5SHkj8l/zOQd00zeVDJ/TjWIezKwryU0
-	 Q1tMbr5alcN33lMXyUgBskpxEKSrt6fpZI9XLV5afs0CTmJK2xzuyNtq2ipNf5ewAN
-	 Byds7sIy/BBcg==
-Date: Fri, 2 Aug 2024 09:08:32 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC v7 3/6] irqchip: add mpfs gpio interrupt mux
-Message-ID: <20240802-rippling-clubbing-5318f914f16a@spud>
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
- <20240723-flatworm-cornflake-8023212f6584@wendy>
- <87le1k8oq2.ffs@tglx>
- <20240801-palpitate-swinger-7bc8ae8deaaf@spud>
- <87r0b82i57.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DAsbfQCiZWd8X4uwuzBIRPPyqzhSbbyY63KAGgwBPlmtn8aJM1UjDKFuWYZdnssRqseyyrdI+zo8woRcwBMpmanLSITC25vIFqNMlvcf5O6QmspSspDDjZ1Z8/uat/H287S+iXl2EDZNKTxfAOkRP62Fd2PS5oUclphPtCoe8po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so10970096a12.3;
+        Fri, 02 Aug 2024 01:09:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722586144; x=1723190944;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0k6PCzJzChjhZx4W9GMM2CEphZr+afr1YrAs2NqKqiY=;
+        b=voR7beevD70zaZapxJ4D7YJzl/s4/XqyzXUcGyyJq30FaQ2UwjsofqvR8RB6WOaRAG
+         huyQFFB4fhdDKQqVjdpgvVK/58N7UjNSF58szzSs0U9mEHExRRvJcj1Zxg9xslVCso3X
+         o094Vrei6WhvOSSL2DXiYlr2bCIfZv7jonctsZnkO2KJYRjmKNfjIokdXSOzjmV7qN5q
+         cZDBxT5z9hbODXBvBpftJxrCskWB/oTHDIcVMTLXe7YZ50GRIbMJN8yJSLiT2TTUvwZu
+         Q8mgbu9liPxuMd0t/3bJuV/mWbgcekYNJKOldZ0hCKERsrzba3Unt5FBFShzowahfJ1z
+         BSXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVd07E3iZxC57JhIMA3AEOPq6kqtfumiv6EnkVLm7BalnRm3jGKOOGFoJNQXN/rZqXjL5E/KrCJbzYAxZocuXhMR+f3LXDfe//NMPmrc29Eiti9t8slIlnGqhxAvLx1AcO4vl3uvsM8ply+sfGCDyEbIHWTJjLH15s+YlDhfDr5ZmmaZ286
+X-Gm-Message-State: AOJu0YyB5I2Qt573n59Mk+3kiGFlEs7vuysBaYUBafOtJEl1HZ7GFz9g
+	zQgL7bzLAJqr1QIF0d4IW3FklYj7PpyHRNV5bbESHk5pL2mBVY5b
+X-Google-Smtp-Source: AGHT+IHZNov+DE6EzlY3KLu7YZJLxLM4/IJbXU3Go/m5skcb3JZjpjdZVZ/u69FOmgTvF+GuH/+PAQ==
+X-Received: by 2002:aa7:c3cc:0:b0:5a2:cc1c:4d07 with SMTP id 4fb4d7f45d1cf-5b7f5414436mr1782480a12.27.1722586143435;
+        Fri, 02 Aug 2024 01:09:03 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83be39fa9sm771885a12.82.2024.08.02.01.09.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 01:09:03 -0700 (PDT)
+Date: Fri, 2 Aug 2024 01:09:00 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	Shuah Khan <shuah@kernel.org>, thevlad@fb.com,
+	thepacketgeek@gmail.com, riel@surriel.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org, davej@codemonkey.org.uk,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH net-next 1/6] net: netconsole: selftests: Create a new
+ netconsole selftest
+Message-ID: <ZqyUHN770pjSofTC@gmail.com>
+References: <20240801161213.2707132-1-leitao@debian.org>
+ <20240801161213.2707132-2-leitao@debian.org>
+ <20240801095322.6d9dec9c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xOPLd7jspMNzpBg/"
-Content-Disposition: inline
-In-Reply-To: <87r0b82i57.ffs@tglx>
-
-
---xOPLd7jspMNzpBg/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240801095322.6d9dec9c@kernel.org>
 
-On Thu, Aug 01, 2024 at 08:49:08PM +0200, Thomas Gleixner wrote:
-> On Thu, Aug 01 2024 at 16:09, Conor Dooley wrote:
-> > On Mon, Jul 29, 2024 at 12:41:25PM +0200, Thomas Gleixner wrote:
-> >> > +	/*
-> >> > +	 * If a bit is set in the mux, GPIO the corresponding interrupt fr=
-om
-> >> > +	 * controller 2 is direct and that controllers 0 or 1 is muxed.
-> >>=20
-> >> This is not a coherent sentence.
-> >
-> > It should read "controller 0 or 1;s interrupt is muxed". Does that make
+Hello Jakub,
 
-Heh, I even typoed here, the ; should be a '.
+On Thu, Aug 01, 2024 at 09:53:22AM -0700, Jakub Kicinski wrote:
+> On Thu,  1 Aug 2024 09:11:58 -0700 Breno Leitao wrote:
+> >  .../net/netconsole/basic_integration_test.sh  | 153 ++++++++++++++++++
+> 
+> It needs to be included in a Makefile
+> If we only have one script I'd put it directly in .../net/, 
+> or drivers/netdevsim/? each target should technically have
+> a Kconfig, Makefile, settings, no point for a single script.
 
-> > more sense to you?
->=20
-> No: If a bit is set in the mux, GPIO the corresponding...
->=20
-> I'm already failing at 'GPIO'. My parser expects a verb there :)
+Thanks for the feedback, I will wait a bit for more feedback, and then
+send a v2 where I would move the script back to .../net.
 
-Ah, so double mistake in the sentence. s/GPIO// I suppose. An updated
-comment could be:
-
-"If a bit is set in the mux, the corresponding interrupt from GPIO
-controller 2 is direct and controller 0 or 1's interrupt is muxed"
-
---xOPLd7jspMNzpBg/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqyUAAAKCRB4tDGHoIJi
-0tJiAQDK/ooWrAM9WcdKj0bqR5Zx9ER6sCblcL1m6FezXQWh7wEAiwKCvoyld4er
-8BIEk1XDwZm2ul8Wx7vA1q98pn9HHwQ=
-=8fH1
------END PGP SIGNATURE-----
-
---xOPLd7jspMNzpBg/--
+--breno
 
