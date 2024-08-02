@@ -1,91 +1,117 @@
-Return-Path: <linux-kernel+bounces-272636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 906C3945F3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:18:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C938945F42
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A2BB217FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:18:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AA21F221F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C041E2894;
-	Fri,  2 Aug 2024 14:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD971E672B;
+	Fri,  2 Aug 2024 14:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4asp4AHl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T9f9Go1/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PRCp00EQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301F01E4EF8
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 14:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906B61E4855
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 14:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722608270; cv=none; b=m37cSgWiYdGQdXvoX6c9UsQp/65m52l4wXEA/Y9SLuS7DQ4dI5vozY7lSnoUVcrsMyse/iRvyJXD3gDoTu9Y4T80QgllYkPl+zgXsCtu3pA2YExqbsVbUG7KUKZ38cKz39tHaJPI8Fy+WP3ZGyk+s83+8xP1ZzGl1GXselirVB0=
+	t=1722608304; cv=none; b=dj4yK+zfusBOJsSm5VqlTeZi8N06+Thb0TvH1qUFTN3fCDS8aM5E4YMLkql9W8FoMqhJhLHdd3cSjvte8UekxTc6V1J5RTNPQ2PZ21/zcuVRO9mFjKNH1J5iRDN6AQpESbPlP81mit/HkyU1uEG4//7Ia0wz1lmc9EpRsA5eyWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722608270; c=relaxed/simple;
-	bh=IIZ4J9eCu7qiyvmbXDsboXGKGqpTaIpnpAKPEaHl1LU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=g5S0euuW4fzWWxfAWWzGPJ4fYYJVccd/3Rr/GZ7H5Qy65vGDKcWZLsZvY1rhUheUXKL7UoRskxMF/SYHP21vtIlrlWyyD6/pGte1YkimBJsgHzA7om39g24uCU8w6K68ZxZfSY0VLJcfCriY34w0oyjT3RJrVkSkv6TDdId52zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4asp4AHl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T9f9Go1/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722608267;
+	s=arc-20240116; t=1722608304; c=relaxed/simple;
+	bh=Z5c5T9SO1qEs+S4zGxk90PSnPZppHdEyEZ6FALk8OgI=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=K1nZvw6gtnpDYJ6Y0gYnvvQTKJa+6Dufzy32FoM5efYSoUxEq6gKydoY89lYs8tYS7uQbl7EzWTir4O163jlYbdSfuHx9iKMkgx2tKFwOndKdHuSAxGaEh5+9RLnC1yIvJs+/BEQVgSBrreodtXrYDmTBMtckOQJQY9Y9FxcJlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PRCp00EQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722608301;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Y6UOXUHsCuEOdHkhLbc1yBpiOisJQeHbIHrJz/cErYg=;
-	b=4asp4AHl6LezVIO4M4TqADwV3ukpIDq2AWXP3jyCD5encysu+ucCWO3VOSQFZEXcSwyAui
-	6vX1+Eidv3BALfS+JvbIHSHPsXOwbcSiGRfjps5iT70ldwOBy+wFJ+/HH2hcX4afmwZUtE
-	T9ywk3CzwoZcVPnxH91V0++aQz/tV//2+bEYZxLhqrh9CJcmXiIXevmnTlgipdxAstaaBi
-	j8OPQEM/t1OD3i1Ogfdr4Kq1gRjI7wf9ZNA1tYKQd1/rQKxT2qIrKs39IX9Rvc9iGVgqlI
-	oUCxsajCnRCIxc5oyETfg+jwD5tqEzzOfucfSIqE+0GlKp+dGWNNbRSmwOzJeA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722608267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y6UOXUHsCuEOdHkhLbc1yBpiOisJQeHbIHrJz/cErYg=;
-	b=T9f9Go1/xBBUIFhRYlj80SZL0LFSfUHTmPwmY1RY4nLQzdBdOVAzePZvj2F8K+XWTJAfY2
-	2NM+ZK+00TCR2VDA==
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Peter Zijlstra
- <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>
-Cc: linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, Jiaxun Yang
- <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH v3 0/3] LoongArch: CPU parallel bring up
-In-Reply-To: <20240716-loongarch-hotplug-v3-0-af59b3bb35c8@flygoat.com>
-References: <20240716-loongarch-hotplug-v3-0-af59b3bb35c8@flygoat.com>
-Date: Fri, 02 Aug 2024 16:17:47 +0200
-Message-ID: <871q37101g.ffs@tglx>
+	bh=UIDX8cy8H46a6mHnpLua2nDQ7obthpcuLcvJcSVXyfU=;
+	b=PRCp00EQnAFvaRS0sIywn+MQgAGwScix9ZOKWh6CBlB0aOK9BWQsAoBvTix0H/RGUsNqUl
+	QKuAW1LXSLrzt5Aqnd1cLaBhnUAQsuCjsEJyvdut5nx8JYf0zIwWfLWtEyKctG1Ckb2BxZ
+	OnwlJSoRwAbLtGgvhgrTPDDH9CPdNKQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-141-oNOQTMjXPXOFGGA7YhgjQw-1; Fri,
+ 02 Aug 2024 10:18:15 -0400
+X-MC-Unique: oNOQTMjXPXOFGGA7YhgjQw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 378B61955D48;
+	Fri,  2 Aug 2024 14:18:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3AFCD19560AE;
+	Fri,  2 Aug 2024 14:18:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240731190742.GS1967603@kernel.org>
+References: <20240731190742.GS1967603@kernel.org> <20240729162002.3436763-1-dhowells@redhat.com> <20240729162002.3436763-19-dhowells@redhat.com>
+To: Simon Horman <horms@kernel.org>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 18/24] netfs: Speed up buffered reading
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <117845.1722608282.1@warthog.procyon.org.uk>
+Date: Fri, 02 Aug 2024 15:18:02 +0100
+Message-ID: <117846.1722608282@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Jul 16 2024 at 22:14, Jiaxun Yang wrote:
-> This series implemented CPU parallel bring up for LoongArch.
->
-> Being the first non-x86 arch enabling that we need to fix some
-> infra in patch 1 and 2, then implement everything in patch 3.
+Simon Horman <horms@kernel.org> wrote:
 
-I've merged the first two patches into
+> If the code ever reaches this line, then slice will be used
+> uninitialised below.
 
-     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp/core
+It can't actually happen (or, at least, it shouldn't).  There are only three
+ways of obtaining data: downloading from the server
+(NETFS_DOWNLOAD_FROM_SERVER), reading from the cache (NETFS_READ_FROM_CACHE)
+and just clearing space (NETFS_FILL_WITH_ZEROES); each of those has its own
+if-statement that will set 'slice' or will switch the source to a different
+type that will set 'slice'.
 
-and tagged them so the loongson tree can consume them to apply the
-actual loongson change:
+The problem is that the compiler doesn't know this.
 
-     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp-for-loongson
+The check for NETFS_INVALID_READ is there just in case.  Possibly:
 
-Thanks,
+		if (source == NETFS_INVALID_READ)
+			break;
 
-        tglx
+could be replaced with a WARN_ON_ONCE() and an unconditional break.
+
+David
 
 
