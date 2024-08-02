@@ -1,266 +1,181 @@
-Return-Path: <linux-kernel+bounces-273027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA3A946380
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:00:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFAF946383
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F7D9281854
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:00:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01661281A6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8279B4501F;
-	Fri,  2 Aug 2024 19:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6B313634B;
+	Fri,  2 Aug 2024 19:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A6d998yR"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+zWebKB"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B2A1ABEC1
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0F51ABEBD
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722625241; cv=none; b=qKOzblZMYta4Bq8h/el7DsHXEF4cskLb0hAfPiCx6ZwVfZiH/j41LQeNSNNUlz0jTsfwscF9gBJNcNqojVVi9+g0sCTPJSKvMZ0xbjQiiirsMvXx0M/I/HhiUB14XnTxyaWCSx67g0heQvDgMrvXoUvwVeo/82l4cFUfuGH9ack=
+	t=1722625327; cv=none; b=B1iZhYQb96iig3mfwFd7zLLai4hSAPAPBouvEBQEdQwuQ4tZa83J/f4VqYoP5DtwUDSmIRjYQOUU1OUIv60tEqhq0t5YbHV2A2GXOHrZNA07wUCUKTEo2mrrx9bQTZf9uRWB1KE8gO0BSKikXDhm/THacuIAACZ2RSDsCBZ0zUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722625241; c=relaxed/simple;
-	bh=UvtafIr6sTNTXplrQjYCntX7FdSnb1Tr48PQZWBMJ7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PZfj/HapdeEnJU9kE9MgisSFKIBGBmyOn3uKLjnP6+OqqF8NMeaXpDw5DsnxqdcqmAoZGF0dVXPgRrhM/DBvESedVmKlQAknKXYYn5cpzJNgO9fpq2K5JeM1wVWqiOKXUy2DOzmwx0l8l2J84qnCq+NUVPlcHuFvIyJVI/lBTB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A6d998yR; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39a16fab332so468585ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 12:00:39 -0700 (PDT)
+	s=arc-20240116; t=1722625327; c=relaxed/simple;
+	bh=xzkwMCBQyWM3Tf0I+QmHifLWtxH/k5TuWD/8eJJYW+w=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRQ+YnTcRbQTMMIh/0FV+Q17p//jFWZ0+bxhjXUZes1a47b0OOJ9k4TJTEaBqOa+ymv3BUBqOzWKxOuriJHzxJDgiFcLMYJetuzd5fXhdE6ahLdSZA+mrO5yWuht4oY4/5cxyH3HfHTH1E9PC6CuJGgmWuNb8QjDNYA6NFDd8kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+zWebKB; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd6ed7688cso72134535ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 12:02:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722625239; x=1723230039; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZQMF8JzoGV0u6x7WIUKkjG9+7GVwEzTDPtC2fYe3ZzM=;
-        b=A6d998yRfKHjNo4US82jayHowkLJL/cvR8TfLbRmNwU8DTZXh+1okwtbob5Lga1J1v
-         a6mz2sN0hAz77tdyIWe30uWSUPywfyluFvRbk9sO/wIc7CqK00C5+roqnUM7Ke+Ahv+h
-         ywlpt66Idw4f2B6/+UajuxCSAd8KPo27DWY202+MzlUaOhyNhtcyYs9eGHirOMWfFJuj
-         xnside7B8m5S57s2HeKgwnBRlScnpz6XsZsFAeAJ/zb9lvR4vxqurpUFP25HofJsWlSs
-         tgGtKJJynar9/2g8gHaLV5oYRfLTZ3p8ZYjWpVjqXkDWNTQUly0gvhuDOC/ysmEs2cfy
-         XCZw==
+        d=gmail.com; s=20230601; t=1722625326; x=1723230126; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xaPRu7hct9rtRu+ze3cCugybIgVJ/rIQubAhNiOPdcE=;
+        b=f+zWebKBVR1yd8Phx49Cgl/tq/ZlX7k2zmOFNh82IpNUdjDVzF/DjbRX5TBEwV245T
+         T8VhJEUU11ppOevznjQKWmw1pA7DHz7TlYKAOByErn6S9rR0OKAKhYIh1V+I9y+uJqAU
+         miTTvfhpxPYU7r/ZYK6i2XyLsqCOcblIDbdrGDJx07ln9G8gojiXVKrywG//58Q1MoBE
+         UPF0o1T3Tau4FvRzshEQ0XUhpvn7SJNExlVLMHU35TAqkYMqAZBppzDdnNYK52DBc8SG
+         /NDwYSQGTKFo0DnVFrSXvLRt5QZLLknlM+1F9sjXal6oWFW4ehgRSm5Odks2xQQfCw0O
+         J5gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722625239; x=1723230039;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZQMF8JzoGV0u6x7WIUKkjG9+7GVwEzTDPtC2fYe3ZzM=;
-        b=GZKUwdtzoTCpCI3ugN8d97xqJ0GwnMyzusziJYjpepEd4CAQpOD9FS+JQoQHrWNVZ1
-         XBHteh5DAhMKNoe4MTtvOSunX/ga5+qS6E3AFhnnGiMU3KzIXvVU1t1wi97ulP9PrS0u
-         QyC0WRRCJnQKvlKCFHhqxFkC90/bg9U/0YVEuSVPV6OLutbbPCwXIR+DvK/9VMyBdB2v
-         EOl9oom4Zz0SQyb1gVSiG6ZLzzskQq5vQM2LCjko3O86ccGpIW1k069Y0L3j391rdDj5
-         Jn1PQ9Ir2A9mH2qaK+fvPHkHx4XvHDQUIOjt0L6dfrZQR2nRNqYcV9Aetwqhy4lbac59
-         Y0dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXV11ZVC+bEUlQerWtPXyVmo8H300QwQLDDTgDuvQZ1dgWj+c/JdDBQyU873bLEbFuJ+iu+L0/+ljjO5txynbbQgDZs9DVb797ApzT4
-X-Gm-Message-State: AOJu0Yzbo9iofonpcr1fou/nM6//wXxczSk4kdcdlIVJUc5pMgUkA7Bg
-	WjjJkWM4p31Zg6NsCqpbQTz9NtIEzRQBnkpQUm70+mwc+8wfV2vJWNLyfrC45MbAgRtPVycxllR
-	khOLQB1aD989QALqC7zlKFLhM1W3TTMqX8+4r
-X-Google-Smtp-Source: AGHT+IF1aCbJjjZLlxlo8sraTmpBrRvh3vvGD8ORLYMADZKRO0s2CNrPb88fQI8tUgkhz7zrS0AZ86He1q6xHnZUvcQ=
-X-Received: by 2002:a05:6e02:1fed:b0:374:a294:58bf with SMTP id
- e9e14a558f8ab-39b2ad13bb3mr326455ab.10.1722625239089; Fri, 02 Aug 2024
- 12:00:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722625326; x=1723230126;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xaPRu7hct9rtRu+ze3cCugybIgVJ/rIQubAhNiOPdcE=;
+        b=Xs0FWX9r5RSy544yaRCmqu9l3xRGlSGsS4+KrQ8pQJ57Z+/6HHBzn6xX6XKxhd8/Ql
+         zpPHzKuoXU9seo76F3l9kmTNsrTsXVCDiT5IlTeQRWoemAnLsZty4Lznqgd/bWK/5NZf
+         zc0GdDu5dTbvb0YvrX/CYmBJZgBia2q/QQ4/rgnyUNl47DkzX1vlETi0SL8qGEq37Jxq
+         AYqMRn8VPlLDm4JBnShb3k8ULfzh909mMo8Loqmz77kQpuMFKJDeCxsoQ+osPvNiJzgV
+         lLNPcig+BimI8OCmqchfZz3MRW0V6gZ/5L3PnOmjomKGwNPw3JuFfZoouunKaLzZz70n
+         9SaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXR7H3u1+nokuEFd/1gE3FVvGtHtlzp4LEj6BsdhRaGdBaJcdpGsdkVnhR7bs9Lghn4qcymWAv1ePhOHGqJuNeYyTMO/TPrbsBMM24y
+X-Gm-Message-State: AOJu0YxCOyhWoGr1z6lCjMoKOM9j3/qq8U4MmPTHhcx0f9TWjCUMN2d5
+	ualnDctkVDaJhWT50Ei0z0VncI5Z4jpmNtuE09EtfaVB3nLmz5NS
+X-Google-Smtp-Source: AGHT+IFTtWPpiX5zilQD7jUgvn/k5ycmash7C+7lavtCrkyuc7txDisExatDGL0C1GCIEv746aY+AA==
+X-Received: by 2002:a17:903:234e:b0:1f7:3d0d:4cd with SMTP id d9443c01a7336-1ff57292a32mr56535135ad.24.1722625325543;
+        Fri, 02 Aug 2024 12:02:05 -0700 (PDT)
+Received: from DESKTOP-DUKSS9G. (c-76-133-131-165.hsd1.ca.comcast.net. [76.133.131.165])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f53c59sm20682765ad.69.2024.08.02.12.02.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 12:02:05 -0700 (PDT)
+Message-ID: <66ad2d2d.170a0220.668d3.6c80@mx.google.com>
+X-Google-Original-Message-ID: <Zq0tKsNhSiAYDO7W@DESKTOP-DUKSS9G.>
+Date: Fri, 2 Aug 2024 12:02:02 -0700
+From: Vishal Moola <vishal.moola@gmail.com>
+To: alexs@kernel.org
+Cc: Vitaly Wool <vitaly.wool@konsulko.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	minchan@kernel.org, willy@infradead.org, senozhatsky@chromium.org,
+	david@redhat.com, 42.hyeyoo@gmail.com,
+	Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+Subject: Re: [PATCH v4 02/22] mm/zsmalloc: use zpdesc in
+ trylock_zspage/lock_zspage
+References: <20240729112534.3416707-1-alexs@kernel.org>
+ <20240729112534.3416707-3-alexs@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802180913.1023886-1-namhyung@kernel.org>
-In-Reply-To: <20240802180913.1023886-1-namhyung@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 2 Aug 2024 12:00:27 -0700
-Message-ID: <CAP-5=fU2HNnJKzRQUaM51ht7evxO30gSR0H5sQ9mSOE+xqkLjA@mail.gmail.com>
-Subject: Re: [PATCH] perf mem: Update documentation for new options
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Stephane Eranian <eranian@google.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729112534.3416707-3-alexs@kernel.org>
 
-On Fri, Aug 2, 2024 at 11:09=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Add a common options section and move some items to the section.  Also
-> add description of new options to report options.
->
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+On Mon, Jul 29, 2024 at 07:25:14PM +0800, alexs@kernel.org wrote:
+> From: Alex Shi <alexs@kernel.org>
+> 
+> To use zpdesc in trylock_zspage/lock_zspage funcs, we add couple of helpers:
+> zpdesc_lock/zpdesc_unlock/zpdesc_trylock/zpdesc_wait_locked and
+> zpdesc_get/zpdesc_put for this purpose.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+You should always include the "()" following function names. It just
+makes everything more readable.
 
-Thanks,
-Ian
-
+> Here we use the folio series func in guts for 2 reasons, one zswap.zpool
+> only get single page, and use folio could save some compound_head checking;
+> two, folio_put could bypass devmap checking that we don't need.
+> 
+> Originally-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> Signed-off-by: Alex Shi <alexs@kernel.org>
 > ---
->  tools/perf/Documentation/perf-mem.txt | 94 ++++++++++++++++++---------
->  1 file changed, 63 insertions(+), 31 deletions(-)
->
-> diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documenta=
-tion/perf-mem.txt
-> index 47456b212e99..8a1bd9ff0f86 100644
-> --- a/tools/perf/Documentation/perf-mem.txt
-> +++ b/tools/perf/Documentation/perf-mem.txt
-> @@ -28,15 +28,8 @@ and kernel support is required. See linkperf:perf-arm-=
-spe[1] for a setup guide.
->  Due to the statistical nature of SPE sampling, not every memory operatio=
-n will
->  be sampled.
->
-> -OPTIONS
-> --------
-> -<command>...::
-> -       Any command you can specify in a shell.
-> -
-> --i::
-> ---input=3D<file>::
-> -       Input file name.
-> -
-> +COMMON OPTIONS
-> +--------------
->  -f::
->  --force::
->         Don't do ownership validation
-> @@ -45,24 +38,9 @@ OPTIONS
->  --type=3D<type>::
->         Select the memory operation type: load or store (default: load,st=
-ore)
->
-> --D::
-> ---dump-raw-samples::
-> -       Dump the raw decoded samples on the screen in a format that is ea=
-sy to parse with
-> -       one sample per line.
-> -
-> --x::
-> ---field-separator=3D<separator>::
-> -       Specify the field separator used when dump raw samples (-D option=
-). By default,
-> -       The separator is the space character.
-> -
-> --C::
-> ---cpu=3D<cpu>::
-> -       Monitor only on the list of CPUs provided. Multiple CPUs can be p=
-rovided as a
-> -        comma-separated list with no space: 0,1. Ranges of CPUs are spec=
-ified with -: 0-2. Default
-> -        is to monitor all CPUS.
-> --U::
-> ---hide-unresolved::
-> -       Only display entries resolved to a symbol.
-> +-v::
-> +--verbose::
-> +       Be more verbose (show counter open errors, etc)
->
->  -p::
->  --phys-data::
-> @@ -73,6 +51,9 @@ OPTIONS
->
->  RECORD OPTIONS
->  --------------
-> +<command>...::
-> +       Any command you can specify in a shell.
+>  mm/zpdesc.h   | 30 ++++++++++++++++++++++++
+>  mm/zsmalloc.c | 64 ++++++++++++++++++++++++++++++++++-----------------
+>  2 files changed, 73 insertions(+), 21 deletions(-)
+> 
+> diff --git a/mm/zpdesc.h b/mm/zpdesc.h
+> index 2dbef231f616..3b04197cec9d 100644
+> --- a/mm/zpdesc.h
+> +++ b/mm/zpdesc.h
+> @@ -63,4 +63,34 @@ static_assert(sizeof(struct zpdesc) <= sizeof(struct page));
+>  	const struct page *:		(const struct zpdesc *)(p),	\
+>  	struct page *:			(struct zpdesc *)(p)))
+>  
+> +static inline void zpdesc_lock(struct zpdesc *zpdesc)
+> +{
+> +	folio_lock(zpdesc_folio(zpdesc));
+> +}
 > +
->  -e::
->  --event <event>::
->         Event selector. Use 'perf mem record -e list' to list available e=
-vents.
-> @@ -85,14 +66,65 @@ RECORD OPTIONS
->  --all-user::
->         Configure all used events to run in user space.
->
-> --v::
-> ---verbose::
-> -       Be more verbose (show counter open errors, etc)
-> -
->  --ldlat <n>::
->         Specify desired latency for loads event. Supported on Intel and A=
-rm64
->         processors only. Ignored on other archs.
->
-> +REPORT OPTIONS
-> +--------------
-> +-i::
-> +--input=3D<file>::
-> +       Input file name.
+> +static inline bool zpdesc_trylock(struct zpdesc *zpdesc)
+> +{
+> +	return folio_trylock(zpdesc_folio(zpdesc));
+> +}
 > +
-> +-C::
-> +--cpu=3D<cpu>::
-> +       Monitor only on the list of CPUs provided. Multiple CPUs can be p=
-rovided as a
-> +        comma-separated list with no space: 0,1. Ranges of CPUs are spec=
-ified with -
-> +       like 0-2. Default is to monitor all CPUS.
+> +static inline void zpdesc_unlock(struct zpdesc *zpdesc)
+> +{
+> +	folio_unlock(zpdesc_folio(zpdesc));
+> +}
 > +
-> +-D::
-> +--dump-raw-samples::
-> +       Dump the raw decoded samples on the screen in a format that is ea=
-sy to parse with
-> +       one sample per line.
+> +static inline void zpdesc_wait_locked(struct zpdesc *zpdesc)
+> +{
+> +	folio_wait_locked(zpdesc_folio(zpdesc));
+> +}
+
+The more I look at zsmalloc, the more skeptical I get about it "needing"
+the folio_lock. At a glance it seems like a zspage already has its own lock,
+and the migration doesn't appear to be truly physical? There's probably
+something I'm missing... it would make this code a lot simpler to drop
+many of the folio locks.
+
 > +
-> +-s::
-> +--sort=3D<key>::
-> +       Group result by given key(s) - multiple keys can be specified
-> +       in CSV format.  The keys are specific to memory samples are:
-> +       symbol_daddr, symbol_iaddr, dso_daddr, locked, tlb, mem, snoop,
-> +       dcacheline, phys_daddr, data_page_size, blocked.
+> +static inline void zpdesc_get(struct zpdesc *zpdesc)
+> +{
+> +	folio_get(zpdesc_folio(zpdesc));
+> +}
 > +
-> +       - symbol_daddr: name of data symbol being executed on at the time=
- of sample
-> +       - symbol_iaddr: name of code symbol being executed on at the time=
- of sample
-> +       - dso_daddr: name of library or module containing the data being =
-executed
-> +                    on at the time of the sample
-> +       - locked: whether the bus was locked at the time of the sample
-> +       - tlb: type of tlb access for the data at the time of the sample
-> +       - mem: type of memory access for the data at the time of the samp=
-le
-> +       - snoop: type of snoop (if any) for the data at the time of the s=
-ample
-> +       - dcacheline: the cacheline the data address is on at the time of=
- the sample
-> +       - phys_daddr: physical address of data being executed on at the t=
-ime of sample
-> +       - data_page_size: the data page size of data being executed on at=
- the time of sample
-> +       - blocked: reason of blocked load access for the data at the time=
- of the sample
+> +static inline void zpdesc_put(struct zpdesc *zpdesc)
+> +{
+> +	folio_put(zpdesc_folio(zpdesc));
+> +}
 > +
-> +       And the default sort keys are changed to local_weight, mem, sym, =
-dso,
-> +       symbol_daddr, dso_daddr, snoop, tlb, locked, blocked, local_ins_l=
-at.
+>  #endif
+> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> index a532851025f9..243677a9c6d2 100644
+> --- a/mm/zsmalloc.c
+> +++ b/mm/zsmalloc.c
+> @@ -433,13 +433,17 @@ static __maybe_unused int is_first_page(struct page *page)
+>  	return PagePrivate(page);
+>  }
+>  
+> +static int is_first_zpdesc(struct zpdesc *zpdesc)
+> +{
+> +	return PagePrivate(zpdesc_page(zpdesc));
+> +}
 > +
-> +-T::
-> +--type-profile::
-> +       Show data-type profile result instead of code symbols.  This requ=
-ires
-> +       the debug information and it will change the default sort keys to=
-:
-> +       mem, snoop, tlb, type.
-> +
-> +-U::
-> +--hide-unresolved::
-> +       Only display entries resolved to a symbol.
-> +
-> +-x::
-> +--field-separator=3D<separator>::
-> +       Specify the field separator used when dump raw samples (-D option=
-). By default,
-> +       The separator is the space character.
-> +
->  In addition, for report all perf report options are valid, and for recor=
-d
->  all perf record options.
->
-> --
-> 2.46.0.rc2.264.g509ed76dc8-goog
->
+
+I feel like we might not even need to use the PG_private flag for
+zpages? It seems to me like its just used for sanity checking. Can
+zpage->first_page ever not point to the first zpdesc?
+
+For the purpose of introducing the memdesc its fine to continue using
+it; just some food for thought.
 
