@@ -1,92 +1,98 @@
-Return-Path: <linux-kernel+bounces-272664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC4B945F9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:45:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0E5945FA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE41AB21A49
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313AE1F21EE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9132101A8;
-	Fri,  2 Aug 2024 14:44:52 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CCA2101B6;
+	Fri,  2 Aug 2024 14:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eme4P2Or"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09F61171C;
-	Fri,  2 Aug 2024 14:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4391F94C;
+	Fri,  2 Aug 2024 14:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722609892; cv=none; b=cz4TNX/b/Xcw9OIESWYtBjypmfE2/mqwnNNpd5BI5jK+t2lX47IJVBF1S8SaXIqqdfYxkGJ0aH95JgJQnGpUxQPaG9nL5ZbI8gmEGiT9E0YP8nkhyqIbp8pz0UE/G1XNLYFmEG6IVgKZIhNYg86fRSbTlOVRkbYW7/C773VUIRM=
+	t=1722610190; cv=none; b=G0erfm3UhNSLPh7zIMRa4H+f/HmWqts+TR0Ff0QKQJpEvv6Rc85mVO5h3rV9IGnEJXRb0NE1R4L1QOE2MZqrdWkGZiC4nw+nPYSuDgBoqOj2zBSjERgpo62jq7XI8ytiCZNDAo+KjD20eJuJt91COXw/m5z099YN0uMYVmwAMRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722609892; c=relaxed/simple;
-	bh=TbtraOWhyx3XKowuKv1m3Z/5BsvIqmAlb7jX+usWXSY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tY6Yc8oMnhFgBrIkTD9ygW4Klxb7rpejVT1uaJAVnvV9pgAgDQaw6EkV2fYK+3tIdGs7gGzxZ+eHjZSFzg2D9psVeExvFzN9QiC2SG4SDzri4lSGO5oyDHgxMpjcq01LGNLzLVh7+ph9TNbBO5Az+wCRjFF+KePU7bJfgpjTInU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472DVrA7021119;
-	Fri, 2 Aug 2024 07:44:19 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40rjf08pdx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 02 Aug 2024 07:44:19 -0700 (PDT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 2 Aug 2024 07:44:18 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 2 Aug 2024 07:44:16 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <viro@zeniv.linux.org.uk>
-CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
-        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH] filemap: Init the newly allocated folio memory to 0 for the filemap
-Date: Fri, 2 Aug 2024 22:44:15 +0800
-Message-ID: <20240802144415.259364-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240802135214.GU5334@ZenIV>
-References: <20240802135214.GU5334@ZenIV>
+	s=arc-20240116; t=1722610190; c=relaxed/simple;
+	bh=C0gNPjyqqSGaw6+V9sZvTDgJk/TpHOmXXsbUVayAPRI=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=oSOKRhVnLI72v2ESFzDiAlDR/ou+5k6UiYYXiT2vggcVAkcUGGBTrF2tktjX6DgXGPWs6Y69rxK7hGtVTpIZSkzvVVUbMgwvbA6oTDZpjM1oK1QylYC6VuC+eIHQmY62kWJFEyBNUlT1Ua7Dr4u07Um1GeYuxr9Ceu2f08cG9dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eme4P2Or; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so19942915e9.1;
+        Fri, 02 Aug 2024 07:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722610187; x=1723214987; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C0gNPjyqqSGaw6+V9sZvTDgJk/TpHOmXXsbUVayAPRI=;
+        b=eme4P2Or0OKxPBywIXzssf5bP1qBE23icBC05X+YoQwaUT+Yf0Ls+bnD0zOvAAS4Ck
+         9gY6U94C6TFgQwj24R6vbrgsapOZAUaOWtkk4dV3Qeo05VJp7gVSUQT2/3fU7RkArA7+
+         86UmZVo0w+lDncbaSdND3qfVLHLp6ySmu8iOM1Aou18hwgluzFr/tjVGUzVCly+VljMM
+         d5ChSkV8MZqRIDRSapRFPn/w4ZgKW138Iv5DESRfehyhJZCT8XgzX6qTBaFRLvgouSR+
+         QjFnGz/noqUrGIswqkVvOeZN1wGqjStnBemVOCx/y37p/2JXXs5AJNHiCnmq8t6p5clO
+         aIoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722610187; x=1723214987;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C0gNPjyqqSGaw6+V9sZvTDgJk/TpHOmXXsbUVayAPRI=;
+        b=kV+/3HFvujOPgSzZae9oU+vrsCBMpxoV5DBPsrGsSDYBEGppbvfwxtOSSY/byltZtT
+         05KxrqzfRE4K6I82Eo3jS1uEE9Bylm13SPBKIJDnzNu3EyClb9FDuIE6LLE7R1lSpq3C
+         BNO3XGmFvVKjqk/OpPJNhjnyqAZSDVzB4kZH94yWJPUpoupsNjhU3c4nf5B4MHCf9fp5
+         xGGnY/JROAYa4+vlwQr5TgXp19iJx9O453r0P6T8IpR8YevZn35k4j7+DCCC74legX9w
+         L4Mq2/aI74ZAlty1APk6CzIs8OFnPRnhLX3xJTZzpABMcgmhSVgncsFjpNCO58VHwCyn
+         iXGw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2eUMqWkSZCUFnH9Evk19oymomJgzsHFpvUW0jC+xo19BpYY2/yXgvXXZgdIODSETOR7eSDu95NkDVvu6V4tLJsqYmdtjOXEU5vCrN36wVzBzqC91KkYH5is7qYQGsKuDzfb3K3N3NmkH4jYyMRA9TD62tx+Pcpc1U6hPO+617nrTQObcG
+X-Gm-Message-State: AOJu0Yzeg1ZYMRq6dh6HKL4JXt9Ggw+luosoBVpC5zY4cCbNW/e/byW8
+	a35rbifCtKl2eka2UaFHdRJ5AVMVHOF0gzfSUOkJ8NUQxPm+Nb6Wb32BEARs
+X-Google-Smtp-Source: AGHT+IEshLaLaPr08jZ2Xb5zRgtgxOyOX6PcsquL7FGTTRvgGt+iVdx0Z/DglcsusFlSRBLs6hqa1A==
+X-Received: by 2002:a7b:c5c7:0:b0:427:ee01:ebf0 with SMTP id 5b1f17b1804b1-428e4714cfemr47246135e9.8.1722610186483;
+        Fri, 02 Aug 2024 07:49:46 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:e8ca:b31f:8686:afd3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8ad475sm97561165e9.13.2024.08.02.07.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 07:49:46 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,  "David S . Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Paolo Abeni
+ <pabeni@redhat.com>,  Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+  netdev@vger.kernel.org,  kernel-janitors@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] tools: ynl: remove extraneous ; after statements
+In-Reply-To: <20240802113436.448939-1-colin.i.king@gmail.com> (Colin Ian
+	King's message of "Fri, 2 Aug 2024 12:34:36 +0100")
+Date: Fri, 02 Aug 2024 15:45:56 +0100
+Message-ID: <m2ed77nftn.fsf@gmail.com>
+References: <20240802113436.448939-1-colin.i.king@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: 79bnPn4ka2mgM7vqKYK1eRo_uMASQA5l
-X-Proofpoint-ORIG-GUID: 79bnPn4ka2mgM7vqKYK1eRo_uMASQA5l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-02_10,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=801
- priorityscore=1501 spamscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408020101
 
-On Fri, 2 Aug 2024 14:52:14 +0100, Al Viro wrote:
-> > +			ERROR("Wrong i_size %d!\n", inode->i_size);
-> > +			return -EINVAL;
-> > +		}
-> 
-> ITYM something like
-I do not recommend this type of code, as it would add unnecessary calls
-to le32_o_cpu compared to directly using i_size.
-> 		if (le32_to_cpu(sqsh_ino->symlink_size) > PAGE_SIZE) {
-> 			ERROR("Corrupted symlink\n");
-> 			return -EINVAL;
-> 		}
+Colin Ian King <colin.i.king@gmail.com> writes:
 
---
-Lizhi
+> There are a couple of statements with two following semicolons,
+> replace these with just one semicolon.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
