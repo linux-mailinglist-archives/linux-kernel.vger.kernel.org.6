@@ -1,136 +1,191 @@
-Return-Path: <linux-kernel+bounces-272239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D806945914
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:41:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7B594591B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8A3AB21586
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69991F22635
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE251BF306;
-	Fri,  2 Aug 2024 07:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CAB1BF317;
+	Fri,  2 Aug 2024 07:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Df3/4zhh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADpT8SDC"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D04482CA
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE73482CA
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722584486; cv=none; b=DVOOnJUwHiMrA8TS1AqbcnnsMC/hsA4hTe0z5LPxOKUkDCwNwJrobmnCnDnCtgfRwA50i+ondP0+IQdPNDI6v77RxyUq3/dQAJW9dC1oglAZIunEuTzqyM8Z438mT0vQgn8IUwK1Geu/95UGeeSLqsgBVEXLnaO9ZxUCdPu9rWY=
+	t=1722584610; cv=none; b=KQujtwLBfYXBFuEDpXOj83DOm1Wi05ybmrzng37wQlIhLlnBt0dyu9xzpf1KMqlsK9/rlwrLfKNauwn7K8+R2DnN43ablbW1GyF9kpnpu/cBeggSv83srx9CdvZ9SV54AQJ/KP+N9W7Skt6P76YTgcLCFieCo1ajBKG2pbwn+9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722584486; c=relaxed/simple;
-	bh=lWIiKgnb7HkD/XfNp5unduL8AgOpKEyW/X7I3xwLQDo=;
+	s=arc-20240116; t=1722584610; c=relaxed/simple;
+	bh=guXI55gF86E2Fne4JQyI51aRCrWAiOUf3c9HiCMWwgU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZu1ifSfdROkAWGFR+uUISAiiIXCFIyn31uOaHALXe5Cfl7B+LOevWfV0WRCMcui/XuPOovXMhlx7EcJ0vncSb+WKxgykpliU5B1GzibZLL00AMvK/H7ZqOPDBo2eYZleCE8QU1wuzwFPpBsuSv2Trz5PTSP+o8Ah/4HvBojR/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Df3/4zhh; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722584485; x=1754120485;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lWIiKgnb7HkD/XfNp5unduL8AgOpKEyW/X7I3xwLQDo=;
-  b=Df3/4zhhmgtzCk8GXi4+Qdc3PfeP8bk+uXrTnGSrHtL8rL6ZtGMDWYyL
-   02APNjZVDrWi7wGEZeqDiQ+q9c9pH+OAfv9YkN9QQrK25P6FKJfOsFENF
-   z/qrw6C0c/xxhbkKpFfRl68NPfXrUbKPsRmjCQxaLpRkNmpT9P6uA3ZV9
-   AfdaY6KfNt4/BYtO3uChnBzuEum1Fz1m1pAE0yRlaXe3fWhtEniaG3L9S
-   KUVOfqXI1QTCSjv7PRay9GsTsawvGQiJNiVBuLp21fa40nZHxdHa03EI7
-   qV73RWCY0DyYR7hUvfw7ANhMCCWOdzB3d1EF8MwtyQnT/5J1x+4agDOO/
-   w==;
-X-CSE-ConnectionGUID: uhcZND14SlujH5W6U94lnQ==
-X-CSE-MsgGUID: owvbDoKfQvipIWLayL0Hpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="20172557"
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="20172557"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 00:41:24 -0700
-X-CSE-ConnectionGUID: L1CWsx85QJGZnI8jSN05lA==
-X-CSE-MsgGUID: 43k7dbOpR4+KzcUA1F/hrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="55239840"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 02 Aug 2024 00:41:19 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 165ED1F2; Fri, 02 Aug 2024 10:41:18 +0300 (EEST)
-Date: Fri, 2 Aug 2024 10:41:17 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: "Alexey Gladkov (Intel)" <legion@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
-	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
-	decui@microsoft.com, John.Starks@microsoft.com
-Subject: Re: [PATCH v1 2/4] x86/tdx: Add validation of userspace MMIO
- instructions
-Message-ID: <mnncaxyk6jsbtlxk6xo5jvs7mzirp3ituyf7anequxy6xjjijm@ogkxlksd4gi6>
-References: <cover.1722356794.git.legion@kernel.org>
- <855a5d97f0e76373e76c5124f415d3abd7ae3699.1722356794.git.legion@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pxw6DG4QwXVw5YzVbSVD84RauoIM8beKltUnE+0sLC0SkoMzLqDSWCwRa+kF+bwXG7q18/mP8flOxcxWBZYkOcY6YoCVtdtocAtaQmN93Xa6Mnf2kHqkumX2MFFe+INUz2n91fU8esoX2RKmG9c0NcM3oB+ltHa9r87ZyyUR7dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ADpT8SDC; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc56fd4de1so22393185ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:43:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722584607; x=1723189407; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cfFV4f3ZJY8hELRtpL4CzVeAVRtbalGeAhd5lHTSqtg=;
+        b=ADpT8SDCLBIbbrTKV4tXAjNXGp5mMtfisOWGvIaa52h1C0nYogri7914W/0QUJzdFc
+         cKXeUwAQdSJwaROvR2PNl/OONh3loH7Okf92KjUgt3oaRev7kovwSpAK+6VGwx7VWG4b
+         ea1Gvwkm0N0u9Qm94ZICE7jQl46jfJjdpy60sLThnAisvdL7T6XB8P3ujL83xqaVsNRE
+         JGuNFG9rFEsgiN8M6X+zbIwInXITJ/eczygxtw8QVVhSXeHOdcCsAJoAgURbYY08jV65
+         +quEQVklg0/zLRcpJjhUfKtDD8+heoO6siCArffVQcvHb93ad/c51vwu+Xk/mr4P0KcK
+         FhWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722584607; x=1723189407;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cfFV4f3ZJY8hELRtpL4CzVeAVRtbalGeAhd5lHTSqtg=;
+        b=g3iFpMeRoBD6YjZShhKroSd9bXCqML8UNf6hUHJ814r0V7uLTTjkGC44bXX63Wx5oB
+         SoM6EK1cAJE+I7UZUTs7x9tpSSUxfzwGAGF1wL9rUwUUJpZBeYIZL/jGCMdniuuQn0wb
+         N0AAw5PgMeqt1prglMiK5KA9+iGZSE8bsVg0492PnqxewnxDwxj2SKk2u8HatpFdNYvn
+         xiX49j2l9CWHfq2G4oSUwkPBJ7e9qb4WIlC3aax6Fxbl9Dm/c2EMMQmtKWUW9yjZ0Rnv
+         EJ5bOOUexAVgi/ZhHjut3vFnCplm6ezratOeIumqlMlVxNHlbwM5RA/CQcdN86I09TQ7
+         GHdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGbdnqNpMiqwGoxpJZ99mEUgM/y+VQT2qXIpwLgGlAEk9i4sKWtzYHzF64QIfvpfKNSryrzmJhxlGO6Xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt3xJd6WqhHG89ZaExqfgxdH8oo+k/igx60kHqxtyB3MzCfRMd
+	S3+CAn2tezjdyEJEoAc/FEJmlp0WGnrFBXkAEyeoeTTDp6W2BpJqdH/Kdb6Z1Q==
+X-Google-Smtp-Source: AGHT+IEunTnPjylhkwVdwv7PF5vhBnFBh+gzhM2Fmc7OHQ79TjhUuzg8HL5NTYnOuj3Qn0/m+c1Lqg==
+X-Received: by 2002:a17:902:650b:b0:1ff:3b0f:d5cd with SMTP id d9443c01a7336-1ff524920a3mr51154115ad.20.1722584606734;
+        Fri, 02 Aug 2024 00:43:26 -0700 (PDT)
+Received: from thinkpad ([120.60.54.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59297c46sm10769725ad.258.2024.08.02.00.43.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 00:43:26 -0700 (PDT)
+Date: Fri, 2 Aug 2024 13:13:19 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH v3 06/13] PCI: qcom-ep: Modify 'global_irq' and
+ 'perst_irq' IRQ device names
+Message-ID: <20240802074319.GA57846@thinkpad>
+References: <20240731-pci-qcom-hotplug-v3-6-a1426afdee3b@linaro.org>
+ <20240801172308.GA109178@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <855a5d97f0e76373e76c5124f415d3abd7ae3699.1722356794.git.legion@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240801172308.GA109178@bhelgaas>
 
-On Tue, Jul 30, 2024 at 07:35:57PM +0200, Alexey Gladkov (Intel) wrote:
-> +static int valid_vaddr(struct ve_info *ve, enum insn_mmio_type mmio, int size,
-> +			unsigned long vaddr)
-> +{
-> +	phys_addr_t phys_addr;
-> +	bool writable = false;
-> +
-> +	/* It's not fatal. This can happen due to swap out or page migration. */
-> +	if (get_phys_addr(vaddr, &phys_addr, &writable) || (ve->gpa != cc_mkdec(phys_addr)))
-> +		return -EAGAIN;
+On Thu, Aug 01, 2024 at 12:23:08PM -0500, Bjorn Helgaas wrote:
+> On Wed, Jul 31, 2024 at 04:20:09PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > 
+> > Currently, the IRQ device name for both of these IRQs doesn't have Qcom
+> > specific prefix and PCIe domain number. This causes 2 issues:
+> > 
+> > 1. Pollutes the global IRQ namespace since 'global' is a common name.
+> > 2. When more than one EP controller instance is present in the SoC, naming
+> > conflict will occur.
+> > 
+> > Hence, add 'qcom_pcie_ep_' prefix and PCIe domain number suffix to the IRQ
+> > names to uniquely identify the IRQs and also to fix the above mentioned
+> > issues.
+> > 
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom-ep.c | 16 ++++++++++++++--
+> >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > index 0bb0a056dd8f..d0a27fa6fdc8 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> > @@ -711,8 +711,15 @@ static irqreturn_t qcom_pcie_ep_perst_irq_thread(int irq, void *data)
+> >  static int qcom_pcie_ep_enable_irq_resources(struct platform_device *pdev,
+> >  					     struct qcom_pcie_ep *pcie_ep)
+> >  {
+> > +	struct device *dev = pcie_ep->pci.dev;
+> > +	char *name;
+> >  	int ret;
+> >  
+> > +	name = devm_kasprintf(dev, GFP_KERNEL, "qcom_pcie_ep_global_irq%d",
+> > +			      pcie_ep->pci.ep.epc->domain_nr);
+> > +	if (!name)
+> > +		return -ENOMEM;
+> 
+> I assume this is what shows up in /proc/interrupts?
 
-I think we need big fat comment here why these checks are needed.
+Yes.
 
-We have ve->gpa and it was valid at the time we got ve_info. But after we
-get ve_info, we enable interrupts allowing tlb shootdown and therefore
-munmap() in parallel thread of the process.
+> I always wonder
+> why it doesn't include dev_name().  A few drivers do that, but
+> apparently it's not universally desirable.  It's sort of annoying
+> that, e.g., we get a bunch of "aerdrv" interrupts with no clue which
+> device they relate to.
+> 
 
-So by the time we've got here ve->gpa might be unmapped from the process,
-the device it belongs to removed from system and something else could be
-plugged in its place.
+dev_name() can be big at times. I wouldn't recommend to include it unless there
+are no other ways to differentiate between IRQs. Luckily PCIe has the domain
+number that we can use to differentiate these IRQs.
 
-That's why we need to re-check if the GPA is still mapped and writable if
-we are going to write to it.
+- Mani
 
-> +
-> +	/* Check whether #VE info matches the instruction that was decoded. */
-> +	switch (mmio) {
-> +	case INSN_MMIO_WRITE:
-> +	case INSN_MMIO_WRITE_IMM:
-> +		if (!writable || !(ve->exit_qual & EPT_VIOLATION_ACC_WRITE))
-> +			return -EFAULT;
-> +		break;
-> +	case INSN_MMIO_READ:
-> +	case INSN_MMIO_READ_ZERO_EXTEND:
-> +	case INSN_MMIO_READ_SIGN_EXTEND:
-> +		if (!(ve->exit_qual & EPT_VIOLATION_ACC_READ))
-> +			return -EFAULT;
-> +		break;
-> +	default:
-> +		WARN_ONCE(1, "Unsupported mmio instruction: %d", mmio);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
+> >  	pcie_ep->global_irq = platform_get_irq_byname(pdev, "global");
+> >  	if (pcie_ep->global_irq < 0)
+> >  		return pcie_ep->global_irq;
+> > @@ -720,18 +727,23 @@ static int qcom_pcie_ep_enable_irq_resources(struct platform_device *pdev,
+> >  	ret = devm_request_threaded_irq(&pdev->dev, pcie_ep->global_irq, NULL,
+> >  					qcom_pcie_ep_global_irq_thread,
+> >  					IRQF_ONESHOT,
+> > -					"global_irq", pcie_ep);
+> > +					name, pcie_ep);
+> >  	if (ret) {
+> >  		dev_err(&pdev->dev, "Failed to request Global IRQ\n");
+> >  		return ret;
+> >  	}
+> >  
+> > +	name = devm_kasprintf(dev, GFP_KERNEL, "qcom_pcie_ep_perst_irq%d",
+> > +			      pcie_ep->pci.ep.epc->domain_nr);
+> > +	if (!name)
+> > +		return -ENOMEM;
+> > +
+> >  	pcie_ep->perst_irq = gpiod_to_irq(pcie_ep->reset);
+> >  	irq_set_status_flags(pcie_ep->perst_irq, IRQ_NOAUTOEN);
+> >  	ret = devm_request_threaded_irq(&pdev->dev, pcie_ep->perst_irq, NULL,
+> >  					qcom_pcie_ep_perst_irq_thread,
+> >  					IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+> > -					"perst_irq", pcie_ep);
+> > +					name, pcie_ep);
+> >  	if (ret) {
+> >  		dev_err(&pdev->dev, "Failed to request PERST IRQ\n");
+> >  		disable_irq(pcie_ep->global_irq);
+> > 
+> > -- 
+> > 2.25.1
+> > 
+> > 
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+மணிவண்ணன் சதாசிவம்
 
