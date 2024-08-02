@@ -1,162 +1,162 @@
-Return-Path: <linux-kernel+bounces-272720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9698B94603A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:21:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5234F946047
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CABB628678E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:21:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D182E1F21A95
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D4F15C158;
-	Fri,  2 Aug 2024 15:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE41E136357;
+	Fri,  2 Aug 2024 15:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BKvudFLM"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tI2xGgd7"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C93F13632B
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AF5175D50;
+	Fri,  2 Aug 2024 15:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611975; cv=none; b=PPK5xh7YJ3AJC2BXaLYU/FEqLcLhtjWZzVdV+CIiyQPX/dqBaildiyAKVc8tafWazjenIyh1aLUg50VkXWXEBruhiZqCmwKNgtYy+pRYqJAPPYe1Vuov/w2a4omV3YKfBHYsI8bwL6N1tY7XriGSbuf1z9rJqIS1yctVzyo07SA=
+	t=1722612087; cv=none; b=fjdUgR8/0ZkTzte64FHPXPVrhJ7JuTa2pjW/vpK1shfrXW/uTCgxA08bUoUq5AtfgGcwhCdXanovf6ClDIQ2f2GcLb+NFSpuIEQr98N6/KKuOid+xDr1xI91Z6mfWL7M5NMR/7MxILUbR93He7cTbFhpcEYsTbK/Cdgq7gA25jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611975; c=relaxed/simple;
-	bh=yf3/DcLNflmZVVdGmRQQ3m5ZTvXvQqIBueCI1PWXdwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jKctSB3CsaGD1rxSxUVKxyWgsDRY1uhHQjoySr0MZxXLsXX2/WDnlsJt2qoXrYpRx7ZhejrQYW+HQUaRcC9KB8D8an7y2ylgUza2H/l+15usJZIFjVNUTgptDM5nJyCXpWeNImmmVVbcohiAZIddfAW9hHxND2t6rPMvjzlx2uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BKvudFLM; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5d5e97b8a22so3475581eaf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 08:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722611970; x=1723216770; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hVQxTJ6XiBlo2K6vivKGyjwtwzsISazu9ikSPPmJl/k=;
-        b=BKvudFLMgRl2q3rvuTbFgJvNchsosRZK4tIukjujKRw1dEr89Jz2GO8z9IurlGrvcP
-         Wjh5ti/uV11DwSPsTUIGYK5qVo/QekWR6Xhk9lcbuWearkuOEX6HWZgDHlTSIrsdYDah
-         xjdBbMymQPfOrplba70BKcxbvLeHMSmEFbKGw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722611970; x=1723216770;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hVQxTJ6XiBlo2K6vivKGyjwtwzsISazu9ikSPPmJl/k=;
-        b=Bdf1YzuVgDLl6B3yT8+n5F68NrwoXXxnQaFLov7Ft67ONCd36hrM3P968KXWUeFxVn
-         EvJOctIgxvqPukOfTj314lU3DNdwDO1qVbdbgWIgeyRnu/3rtyNIzem02ukiJOBl8JBN
-         12ou/HlWz+ktZ/MohNR+GOzw+LUxdZgFCXJVmABfb7xeTvov3ykK/MHvrLvNpYvVyrH1
-         Z2fMSYkeP46FEJuWzcdwoHv4D1WtGUIVsES1Ha5y+ZPNc4UTg3KkG9RRMVVNn1/ZwLp3
-         oxqcdBJ/jCaTrNNd2Y8fgELCiMIZ+Zjpw4zDrepRFlkeIjN6OcH4OIwZoAfArUltce4r
-         T+wQ==
-X-Gm-Message-State: AOJu0YzEDXls8wK5dYNXzxtXsqQcs9lF87r5QaYUGD9TQV4qtrzuVnjI
-	YsNgSWCD1LgMQOFEf9MN+jTMDNCsCuStZgnaPMTkWqbmoBDBFXzorX4PgsMtawjg5VrY3Kr8B8/
-	M9w==
-X-Google-Smtp-Source: AGHT+IHL2jlAsEbqYwMwQT8HgaprL9DHe1pQxJYIDyHX7GZR7qpuoWR3yygsSSRnO6x8I0mGVKIDqA==
-X-Received: by 2002:a05:6820:1acb:b0:5d5:dca7:b6d5 with SMTP id 006d021491bc7-5d67145aa1cmr4822800eaf.8.1722611970383;
-        Fri, 02 Aug 2024 08:19:30 -0700 (PDT)
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com. [209.85.160.44])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d757178a65sm363736eaf.10.2024.08.02.08.19.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Aug 2024 08:19:30 -0700 (PDT)
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-260f057aa9bso5250830fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 08:19:29 -0700 (PDT)
-X-Received: by 2002:a05:6870:b025:b0:25e:24b:e65b with SMTP id
- 586e51a60fabf-26891f23fc9mr4898926fac.42.1722611968742; Fri, 02 Aug 2024
- 08:19:28 -0700 (PDT)
+	s=arc-20240116; t=1722612087; c=relaxed/simple;
+	bh=GESU2vy63jv2s1dJXyUahHwZ/0of8wAMLNHCY+WI1Vc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MiiJY4Q/uAMQN4+9K6LfHLH6sw9UjyoDVqbiN1zboLPDSrDqZ1P4t9T5G6ENWcVqjNWiTA/xpx95urr6nim1DWbCx3VnEchhgx1Co82Je2H4nQbEmZxdWZghlpgpc1Nw/ZsrEImAXuGCr7+7K2gySFSrVQEskmAL6hJ6kIWe2jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tI2xGgd7; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 472FLBJs109018;
+	Fri, 2 Aug 2024 10:21:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722612071;
+	bh=dMzobiPINGynYJxO6pCSmRhcNi3u9bYwLfHSjQ3otRc=;
+	h=From:To:CC:Subject:Date;
+	b=tI2xGgd7WEQ1T98bJBVtFH82zYMLZRihab8oaT+vyvlIsfztlO3M3qNxbSXQ0b8xB
+	 ieUXIT7/vCdrHmnbzoeP56H16JKmqFLnvOy+d3LP+uvedk5Q1teyJ4n2rOp8CuF3aC
+	 q42GLisXTZcNjLNFX4vGhWLO6IkTmPTJLYgW4WXw=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 472FLBt3099547
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 Aug 2024 10:21:11 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ Aug 2024 10:21:10 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 Aug 2024 10:21:11 -0500
+Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 472FLAeo007504;
+	Fri, 2 Aug 2024 10:21:10 -0500
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth
+ Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo
+	<kristo@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hari Nagalla
+	<hnagalla@ti.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Davis <afd@ti.com>
+Subject: [PATCH v11 0/9] TI K3 M4F support on AM62 and AM64 SoCs
+Date: Fri, 2 Aug 2024 10:21:00 -0500
+Message-ID: <20240802152109.137243-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718202359.127482-1-jettrink@chromium.org>
-In-Reply-To: <20240718202359.127482-1-jettrink@chromium.org>
-From: Jett Rink <jettrink@chromium.org>
-Date: Fri, 2 Aug 2024 09:19:17 -0600
-X-Gmail-Original-Message-ID: <CAK+PMK4yBkqpfJdcQ5M93DKB1-7Wn4zJmx6VmqNghogJJhDa6A@mail.gmail.com>
-Message-ID: <CAK+PMK4yBkqpfJdcQ5M93DKB1-7Wn4zJmx6VmqNghogJJhDa6A@mail.gmail.com>
-Subject: Re: [PATCH v2] tpm: Add new device/vendor ID 0x50666666
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: linux-security-module@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Could I get some feedback on this patch please? Is there something I
-am not doing correctly?
+Hello all,
 
--Jett
+This is the continuation of the M4F RProc support series from here[0].
+I'm helping out with the upstream task for Hari and so versions (v8+)
+is a little different than the previous(v7-) postings[0]. Most notable
+change I've introduced being the patches factoring out common support
+from the current K3 R5 and DSP drivers have been dropped. I'd like
+to do that re-factor *after* getting this driver in shape, that way
+we have 3 similar drivers to factor out from vs trying to make those
+changes in parallel with the series adding M4 support.
 
-On Thu, Jul 18, 2024 at 2:24=E2=80=AFPM Jett Rink <jettrink@chromium.org> w=
-rote:
->
-> Accept another DID:VID for the next generation Google TPM. This TPM
-> has the same Ti50 firmware and fulfills the same interface.
->
-> Signed-off-by: Jett Rink <jettrink@chromium.org>
-> ---
->
-> Changes in v2:
-> Patchset 2 applies cleanly
->
->  drivers/char/tpm/tpm_tis_i2c_cr50.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_t=
-is_i2c_cr50.c
-> index adf22992138e..b50005ccfc5e 100644
-> --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> @@ -31,7 +31,8 @@
->  #define TPM_CR50_TIMEOUT_SHORT_MS      2               /* Short timeout =
-during transactions */
->  #define TPM_CR50_TIMEOUT_NOIRQ_MS      20              /* Timeout for TP=
-M ready without IRQ */
->  #define TPM_CR50_I2C_DID_VID           0x00281ae0L     /* Device and ven=
-dor ID reg value */
-> -#define TPM_TI50_I2C_DID_VID           0x504a6666L     /* Device and ven=
-dor ID reg value */
-> +#define TPM_TI50_DT_I2C_DID_VID                0x504a6666L     /* Device=
- and vendor ID reg value */
-> +#define TPM_TI50_OT_I2C_DID_VID                0x50666666L     /* Device=
- and vendor ID reg value */
->  #define TPM_CR50_I2C_MAX_RETRIES       3               /* Max retries du=
-e to I2C errors */
->  #define TPM_CR50_I2C_RETRY_DELAY_LO    55              /* Min usecs betw=
-een retries on I2C */
->  #define TPM_CR50_I2C_RETRY_DELAY_HI    65              /* Max usecs betw=
-een retries on I2C */
-> @@ -741,14 +742,18 @@ static int tpm_cr50_i2c_probe(struct i2c_client *cl=
-ient)
->         }
->
->         vendor =3D le32_to_cpup((__le32 *)buf);
-> -       if (vendor !=3D TPM_CR50_I2C_DID_VID && vendor !=3D TPM_TI50_I2C_=
-DID_VID) {
-> +       if (vendor !=3D TPM_CR50_I2C_DID_VID &&
-> +           vendor !=3D TPM_TI50_DT_I2C_DID_VID &&
-> +           vendor !=3D TPM_TI50_OT_I2C_DID_VID) {
->                 dev_err(dev, "Vendor ID did not match! ID was %08x\n", ve=
-ndor);
->                 tpm_cr50_release_locality(chip, true);
->                 return -ENODEV;
->         }
->
->         dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
-> -                vendor =3D=3D TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
-> +                vendor =3D=3D TPM_CR50_I2C_DID_VID    ? "cr50" :
-> +                vendor =3D=3D TPM_TI50_DT_I2C_DID_VID ? "ti50 DT" :
-> +                                                    "ti50 OT",
->                  client->addr, client->irq, vendor >> 16);
->         return tpm_chip_register(chip);
->  }
-> --
-> 2.45.2.1089.g2a221341d9-goog
->
+Anyway, details on our M4F subsystem can be found the
+the AM62 TRM in the section on the same:
+
+AM62x Technical Reference Manual (SPRUIV7A – MAY 2022)
+https://www.ti.com/lit/pdf/SPRUIV7A
+
+Thanks,
+Andrew
+
+[0] https://lore.kernel.org/linux-arm-kernel/20240202175538.1705-5-hnagalla@ti.com/T/
+
+Changes for v11:
+ - Added patch [2/9] factoring out a common function
+ - Addressed comments by Mathieu from v10
+ - Rebased on v6.11-rc1
+ - Small reworks in driver for readability
+
+Changes for v10:
+ - Rebased on v6.10-rc3
+ - Added AM64 M4 support in DT
+ - Addressed comments by Mathieu from v9
+
+Changes for v9:
+ - Fixed reserved-memory.yaml text in [1/5]
+ - Split dts patch into one for SoC and one for board enable
+ - Corrected DT property order and formatting [4/5][5/5]
+
+Andrew Davis (1):
+  remoteproc: k3: Factor out TI-SCI processor control OF get function
+
+Hari Nagalla (7):
+  dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+  arm64: dts: ti: k3-am62: Add M4F remoteproc node
+  arm64: dts: ti: k3-am625-sk: Add M4F remoteproc node
+  arm64: dts: ti: k3-am64: Add M4F remoteproc node
+  arm64: dts: ti: k3-am642-sk: Add M4F remoteproc node
+  arm64: dts: ti: k3-am642-evm: Add M4F remoteproc node
+  arm64: defconfig: Enable TI K3 M4 remoteproc driver
+
+Martyn Welch (1):
+  remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
+
+ .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 125 ++++
+ arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi       |  13 +
+ .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  19 +
+ arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi       |  13 +
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  19 +
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts        |  19 +
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/remoteproc/Kconfig                    |  13 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c     |  28 +-
+ drivers/remoteproc/ti_k3_m4_remoteproc.c      | 667 ++++++++++++++++++
+ drivers/remoteproc/ti_k3_r5_remoteproc.c      |  28 +-
+ drivers/remoteproc/ti_sci_proc.h              |  26 +
+ 13 files changed, 918 insertions(+), 54 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+ create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
+
+-- 
+2.39.2
+
 
