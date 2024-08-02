@@ -1,86 +1,182 @@
-Return-Path: <linux-kernel+bounces-272383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C3F945B0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18903945B13
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CF41F231E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A64E1F22D4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304AA1DC462;
-	Fri,  2 Aug 2024 09:32:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B181C3794;
-	Fri,  2 Aug 2024 09:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04B91DB44A;
+	Fri,  2 Aug 2024 09:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="riDDj+YK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ER7lLSyt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="riDDj+YK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ER7lLSyt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7B41C37A4;
+	Fri,  2 Aug 2024 09:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722591159; cv=none; b=hSpqVc38eNM+Hu7kD4h1pLPJxt5mE01SwTC4doxi0Rg+no+vHwnsLkGXtJJNKE6st8RsJsYm9sbNHDKvHo1CLY3tmWayCT7QD93KfnRKam1sApQibT0GU6Oygt7a7LShjyWmoDlVzQER4a3df9Vp4ULF4iFzdTse5YzIuQRWY7k=
+	t=1722591200; cv=none; b=KNNxx19qCnI19UKm5XQ0aqdot2QbFkRfZu3hjZYoDBSXJ+2BoswIV9EztopUZhOvgdWYvDuLRPYAou1J/mECctFUtCnSra3EuHV0R5QiiEEv/tLuFb4xTqtunJ/J7X0KtWHQYodl3TUN/RzxKoI6ZLa9TY2KvgJ2cVLz4BHnzIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722591159; c=relaxed/simple;
-	bh=RmTFvEP8cQMU+zfTmPKcfKdwqPciPafUo/Qszg1NYWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FVW7ryoHC6l90AGmyn60Z3ztZZYJ4A/PeR2zmrhr+gwu0CMi0SH3WpAqDJvZhri7YgBFRxY7Jte5C0pIZQdx2Y1fla82eD3vpw9IEA1Yjkl5kkHboSe78S7ORjuFKZKY5SnmRlaeQu6HdyX2zHN0njLwioFDjDXgSshRNnTWQfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0C761007;
-	Fri,  2 Aug 2024 02:33:02 -0700 (PDT)
-Received: from [10.57.12.204] (unknown [10.57.12.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE29E3F766;
-	Fri,  2 Aug 2024 02:32:35 -0700 (PDT)
-Message-ID: <5a4405dd-cbc5-4178-9fcb-f42676c793fe@arm.com>
-Date: Fri, 2 Aug 2024 10:33:06 +0100
+	s=arc-20240116; t=1722591200; c=relaxed/simple;
+	bh=spKZID6KM/2QnxyqFtrSsJaYO7p6ETZufbSeTAO5/3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n6q/+mkGf2R0J7Xui704kDImSCgcN6TGT4otYNfDPqdqUazelwQ9piXo/ossf8ZjSWIRDXj125JjHWwqHaNM5ngchsfQiIrbjJPFMRqRQ5pnCTIAgcCv0z0MXrxfFuyxPy821B4jNbslrjgK5QJstMKSO+ZpYGXm4puvmMouFPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=riDDj+YK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ER7lLSyt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=riDDj+YK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ER7lLSyt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5C0FD1F807;
+	Fri,  2 Aug 2024 09:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722591196; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tVWMdak+idnOkUocEVgkhISNn1L9MPUyres+uiWUp5I=;
+	b=riDDj+YK0rBWN1iBKXoZoJWGR0IeqN9+GkgLI/+dz2hv1eMMveoK3FoQd0FHXVIqc6k6fn
+	bwxi0mgoir6rZ5aB11/vUIv1gN1ybCvD2ZtBLE5EOhwxUfgDe1dTFAo+eLXdh3aQqgbaPE
+	Ol3SXoBCBcVjy0UcNEIUYVQ3LilIkWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722591196;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tVWMdak+idnOkUocEVgkhISNn1L9MPUyres+uiWUp5I=;
+	b=ER7lLSytDOAq/wAAruvPLEW0A5aLRCFO06Sc8ylsNiy8/PHG4Suim9xqyMFy6eb+9ZkB6c
+	AUXCCGrFQCSOdpBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722591196; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tVWMdak+idnOkUocEVgkhISNn1L9MPUyres+uiWUp5I=;
+	b=riDDj+YK0rBWN1iBKXoZoJWGR0IeqN9+GkgLI/+dz2hv1eMMveoK3FoQd0FHXVIqc6k6fn
+	bwxi0mgoir6rZ5aB11/vUIv1gN1ybCvD2ZtBLE5EOhwxUfgDe1dTFAo+eLXdh3aQqgbaPE
+	Ol3SXoBCBcVjy0UcNEIUYVQ3LilIkWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722591196;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tVWMdak+idnOkUocEVgkhISNn1L9MPUyres+uiWUp5I=;
+	b=ER7lLSytDOAq/wAAruvPLEW0A5aLRCFO06Sc8ylsNiy8/PHG4Suim9xqyMFy6eb+9ZkB6c
+	AUXCCGrFQCSOdpBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0180F1388E;
+	Fri,  2 Aug 2024 09:33:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id galYANynrGaBKgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 02 Aug 2024 09:33:16 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A1AA0A08CB; Fri,  2 Aug 2024 11:33:10 +0200 (CEST)
+Date: Fri, 2 Aug 2024 11:33:10 +0200
+From: Jan Kara <jack@suse.cz>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
+	squashfs-devel@lists.sourceforge.net,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH V4] squashfs: Add i_size check in squash_read_inode
+Message-ID: <20240802093310.twbwdi5hpgpth63z@quack3>
+References: <20240802015006.900168-1-lizhi.xu@windriver.com>
+ <20240802030114.1400462-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] thermal: core: Update thermal zone registration
- documentation
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, LKML <linux-kernel@vger.kernel.org>,
- Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-References: <2767845.mvXUDI8C0e@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <2767845.mvXUDI8C0e@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802030114.1400462-1-lizhi.xu@windriver.com>
+X-Spamd-Result: default: False [-2.10 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[24ac24ff58dc5b0d26b9];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.10
 
-
-
-On 7/31/24 15:59, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri 02-08-24 11:01:14, Lizhi Xu wrote:
+> syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+> squashfs_symlink_read_folio did not check the length, resulting in folio
+> not being initialized and did not return the corresponding error code.
 > 
-> The thermal sysfs API document is outdated.  One of the problems with
-> it is that is still documents thermal_zone_device_register() which
-> does not exit any more and it does not reflect the current thermal
-> zone operations definition.
+> The length is calculated from i_size, so it is necessary to add a check
+> when i_size is initialized to confirm that its value is correct, otherwise
+> an error -EINVAL will be returned. Strictly, the check only applies to the
+> symlink type.
 > 
-> Replace the thermal_zone_device_register() description in it with
-> a thermal_zone_device_register_with_trips() description, including
-> an update of the thermal zone operations list.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 > ---
->   Documentation/driver-api/thermal/sysfs-api.rst |   65 +++++++++++--------------
->   1 file changed, 30 insertions(+), 35 deletions(-)
+>  fs/squashfs/inode.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> Index: linux-pm/Documentation/driver-api/thermal/sysfs-api.rst
-> ===================================================================
-> --- linux-pm.orig/Documentation/driver-api/thermal/sysfs-api.rst
-> +++ linux-pm/Documentation/driver-api/thermal/sysfs-api.rst
+> diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+> index 16bd693d0b3a..6c5dd225482f 100644
+> --- a/fs/squashfs/inode.c
+> +++ b/fs/squashfs/inode.c
+> @@ -287,6 +287,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+>  		inode->i_mode |= S_IFLNK;
+>  		squashfs_i(inode)->start = block;
+>  		squashfs_i(inode)->offset = offset;
+> +		if ((int)inode->i_size < 0) {
 
-LGTM
+Looks good. I think you could actually add even more agressive check like:
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+		if (inode->i_size > PAGE_SIZE) {
+
+because larger symlink isn't supported by squashfs code anyway.
+
+									Honza
+
+> +			ERROR("Wrong i_size %d!\n", inode->i_size);
+> +			return -EINVAL;
+> +		}
+> +
+>  
+>  		if (type == SQUASHFS_LSYMLINK_TYPE) {
+>  			__le32 xattr;
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
