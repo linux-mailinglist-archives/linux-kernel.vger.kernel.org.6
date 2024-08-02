@@ -1,346 +1,460 @@
-Return-Path: <linux-kernel+bounces-272980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09A2946304
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B84946308
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A64C7283DC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:23:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDDF283833
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE237166F30;
-	Fri,  2 Aug 2024 18:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8677A175D49;
+	Fri,  2 Aug 2024 18:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHArcFMz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="p1Ih+8MV"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F0E166F16;
-	Fri,  2 Aug 2024 18:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865F515C150;
+	Fri,  2 Aug 2024 18:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722622873; cv=none; b=NbFCt0ggpKgpUT14cMlSyTnvsgwauerFMQ5FkOo1MFSJ1fRHzgS70Fjcw+IU8bBMNEu2kkXMTfzUZye4AVi5PaTGNKM1hyOiQov/M555IGF9iAJtFY48FrvFC8FZGBRjx7zgHDYRBv0DBc2/tsZ4AbVfi40v7U+mlA2vAH+OHu4=
+	t=1722622925; cv=none; b=o7ZhguSy5WawZabj+GFffsrt2NEVd+kWH0bvT8r+JlS1GyVQeHfBb0TxjeuRYdKBHItXvV2WN+9CqrFr8Bk8m0QVsv/qhLoMGcmeDUDpcZ/D9M6zK/GPZomtkNB/iv9vGRL4ibmb9fxZipUOgvwJWhOcpfwq5ZWZw5oAQGCbpUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722622873; c=relaxed/simple;
-	bh=JPfxNE1HkT7S+SO31tOM4YJy8RSd9UqK2EwtYsA4LIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NR+8pI3+ctqm826/wYL9Z3+fqmD0hYKlq2PezxR7KvoA4btyj7bBMoSlq1wov7E+Y6R93odKRWdE0ykERaE8iOfj98Xe78Cm2Q0dBKS4pGurAV8G9hJVi43Dc5SQ2e6a3U/QIwaLRHoipFN4lGk4qyyrp4Pg0ZEqCeGEcF3HpTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHArcFMz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26A9BC4AF09;
-	Fri,  2 Aug 2024 18:21:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722622872;
-	bh=JPfxNE1HkT7S+SO31tOM4YJy8RSd9UqK2EwtYsA4LIo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fHArcFMzXWFo2LhphJghxbBkGwlItvYyluDndKYoyjvnIVwjCZGTwhKoJ1Ky+sa9T
-	 xZ7WQWfa8JgMk5G6ijX+AFaA5fQxwUK73lS7rIy13hUtbAGOI0469t4cRqvXkY+HMs
-	 oO066GJhzvWHgnQuXQ3AzIPG0Y3P65FVHwjdSYLGrGibmicJSo/RC/fR8OD4nCRJKL
-	 Tgig0ufNKyoMEOTxK/gbZTXN0Lr6+lvHL8eaVzrubV0R2fPE8JXOFZxjdFA7zQbU7c
-	 kr6p5ocfDdxE5/lMu2ymOqukHtwUImPTEQzULF5Z8RXR5aLYuCPD3dYTLi/rskEuUB
-	 DiyfLg5JjciiA==
-Date: Fri, 2 Aug 2024 11:21:09 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ben Gainey <ben.gainey@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	james.clark@arm.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 1/2] tools/perf: Correctly calculate sample period
- for inherited SAMPLE_READ values
-Message-ID: <Zq0jlcPFijZFjyXP@google.com>
-References: <20240801123030.3075928-1-ben.gainey@arm.com>
- <20240801123030.3075928-2-ben.gainey@arm.com>
+	s=arc-20240116; t=1722622925; c=relaxed/simple;
+	bh=fvuYgD8w/6ITvJyml+9ZvATHC3zmBGQA7HDOSPxODIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NleMiCx3rqtYpnPE5Wpe7VzNWTR0jNr42p/bos3MqXGHuOBicvEYaTx55/kGBqBQGy4CWWD2G/maVgTHTInFlQp2fibM/O9HmZ4kcMsqCPNqY9GWLSXSbRefpGNpR3rgs47/2YyGLEBskBGyibmefWNKEPyY+AEhBn8aLoMItk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=p1Ih+8MV reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 25e1e61871fd8b66; Fri, 2 Aug 2024 20:22:00 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id D236B73B540;
+	Fri,  2 Aug 2024 20:21:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1722622920;
+	bh=fvuYgD8w/6ITvJyml+9ZvATHC3zmBGQA7HDOSPxODIw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=p1Ih+8MVLAbYBhpt3OAukITF0VfNWOFAGK77v54ogUJbiOtSSkaHENXX6EH7x0pe4
+	 4xJY0nHwyfT1Ux0CplYFH+URdADJJTlfRMSXa1buKnEc0DYSvqrVdJowlR91wjaY3N
+	 61VRjRdu9PApPtZkVNfy+e/V35p2R00FlrHrOXyQ7QfsIuUVndyfTMoGKWQh2lTBea
+	 7JxvisCXAfZhyOvIVMvmSYmM/VgVWWm463zRE/y4SO7n6VAqf+b2bLAOvKf5fjKTnF
+	 gw6eGcAVSyoNj7BIJ+prQtmhST8UhWrA5aXHjzsJEd3M4aNSrEc3tJoY8HwTv/Wiej
+	 Zf7gyqHg3gDEg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: x86 Maintainers <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
+Subject:
+ [PATCH v1 3/3] cpufreq: intel_pstate: Set asymmetric CPU capacity on hybrid
+ systems
+Date: Fri, 02 Aug 2024 20:21:44 +0200
+Message-ID: <10504155.nUPlyArG6x@rjwysocki.net>
+In-Reply-To: <4908113.GXAFRqVoOG@rjwysocki.net>
+References: <4908113.GXAFRqVoOG@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240801123030.3075928-2-ben.gainey@arm.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgdduvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhig
+ sehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnhhnsegrrhhmrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
 
-On Thu, Aug 01, 2024 at 01:30:29PM +0100, Ben Gainey wrote:
-> Sample period calculation in deliver_sample_value is updated to
-> calculate the per-thread period delta for events that are inherit +
-> PERF_SAMPLE_READ. When the sampling event has this configuration, the
-> read_format.id is used with the tid from the sample to lookup the
-> storage of the previously accumulated counter total before calculating
-> the delta. All existing valid configurations where read_format.value
-> represents some global value continue to use just the read_format.id to
-> locate the storage of the previously accumulated total.
-> 
-> perf_sample_id is modified to support tracking per-thread
-> values, along with the existing global per-id values. In the
-> per-thread case, values are stored in a hash by tid within the
-> perf_sample_id, and are dynamically allocated as the number is not known
-> ahead of time.
-> 
-> Signed-off-by: Ben Gainey <ben.gainey@arm.com>
-> ---
->  tools/lib/perf/evsel.c                  | 48 +++++++++++++++++++
->  tools/lib/perf/include/internal/evsel.h | 63 ++++++++++++++++++++++++-
->  tools/perf/util/session.c               | 25 ++++++----
->  3 files changed, 126 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/lib/perf/evsel.c b/tools/lib/perf/evsel.c
-> index c07160953224..abdae2f9498b 100644
-> --- a/tools/lib/perf/evsel.c
-> +++ b/tools/lib/perf/evsel.c
-> @@ -5,6 +5,7 @@
->  #include <perf/evsel.h>
->  #include <perf/cpumap.h>
->  #include <perf/threadmap.h>
-> +#include <linux/hash.h>
->  #include <linux/list.h>
->  #include <internal/evsel.h>
->  #include <linux/zalloc.h>
-> @@ -23,6 +24,7 @@ void perf_evsel__init(struct perf_evsel *evsel, struct perf_event_attr *attr,
->  		      int idx)
->  {
->  	INIT_LIST_HEAD(&evsel->node);
-> +	INIT_LIST_HEAD(&evsel->per_stream_periods);
->  	evsel->attr = *attr;
->  	evsel->idx  = idx;
->  	evsel->leader = evsel;
-> @@ -531,10 +533,56 @@ int perf_evsel__alloc_id(struct perf_evsel *evsel, int ncpus, int nthreads)
->  
->  void perf_evsel__free_id(struct perf_evsel *evsel)
->  {
-> +	struct perf_sample_id_period *pos, *n;
-> +
->  	xyarray__delete(evsel->sample_id);
->  	evsel->sample_id = NULL;
->  	zfree(&evsel->id);
->  	evsel->ids = 0;
-> +
-> +	perf_evsel_for_each_per_thread_period_safe(evsel, n, pos) {
-> +		list_del_init(&pos->node);
-> +		free(pos);
-> +	}
-> +}
-> +
-> +bool perf_evsel__attr_has_per_thread_sample_period(struct perf_evsel *evsel)
-> +{
-> +	return (evsel->attr.sample_type & PERF_SAMPLE_READ)
-> +		&& (evsel->attr.sample_type & PERF_SAMPLE_TID)
-> +		&& evsel->attr.inherit;
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Nitpick: I believe the coding style wants to put the operators
-at the end of the line like
+Make intel_pstate use the HWP_HIGHEST_PERF values from
+MSR_HWP_CAPABILITIES to set asymmetric CPU capacity information
+via the previously introduced arch_set_cpu_capacity() on hybrid
+systems without SMT.
 
-	return (evsel->attr.sample_type & PERF_SAMPLE_READ) &&
-		(evsel->attr.sample_type & PERF_SAMPLE_TID) &&
-		evsel->attr.inherit;
+Setting asymmetric CPU capacity is generally necessary to allow the
+scheduler to compute task sizes in a consistent way across all CPUs
+in a system where they differ by capacity.  That, in turn, should help
+to improve scheduling decisions.  It is also necessary for the schedutil
+cpufreq governor to operate as expected on hybrid systems where tasks
+migrate between CPUs of different capacities.
 
-Thanks,
-Namhyung
+The underlying observation is that intel_pstate already uses
+MSR_HWP_CAPABILITIES to get CPU performance information which is
+exposed by it via sysfs and CPU performance scaling is based on it.
+Thus using this information for setting asymmetric CPU capacity is
+consistent with what the driver has been doing already.  Moreover,
+HWP_HIGHEST_PERF reflects the maximum capacity of a given CPU including
+both the instructions-per-cycle (IPC) factor and the maximum turbo
+frequency and the units in which that value is expressed are the same
+for all CPUs in the system, so the maximum capacity ratio between two
+CPUs can be obtained by computing the ratio of their HWP_HIGHEST_PERF
+values.  Of course, in principle that capacity ratio need not be
+directly applicable at lower frequencies, so using it for providing the
+asymmetric CPU capacity information to the scheduler is a rough
+approximation, but it is as good as it gets.  Also, measurements
+indicate that this approximation is not too bad in practice.
 
-> +}
-> +
-> +u64 *perf_sample_id__get_period_storage(struct perf_sample_id *sid, u32 tid, bool per_thread)
-> +{
-> +	struct hlist_head *head;
-> +	struct perf_sample_id_period *res;
-> +	int hash;
-> +
-> +	if (!per_thread)
-> +		return &sid->period;
-> +
-> +	hash = hash_32(tid, PERF_SAMPLE_ID__HLIST_BITS);
-> +	head = &sid->periods[hash];
-> +
-> +	hlist_for_each_entry(res, head, hnode)
-> +		if (res->tid == tid)
-> +			return &res->period;
-> +
-> +	if (sid->evsel == NULL)
-> +		return NULL;
-> +
-> +	res = zalloc(sizeof(struct perf_sample_id_period));
-> +	if (res == NULL)
-> +		return NULL;
-> +
-> +	INIT_LIST_HEAD(&res->node);
-> +	res->tid = tid;
-> +
-> +	list_add_tail(&res->node, &sid->evsel->per_stream_periods);
-> +	hlist_add_head(&res->hnode, &sid->periods[hash]);
-> +
-> +	return &res->period;
->  }
->  
->  void perf_counts_values__scale(struct perf_counts_values *count,
-> diff --git a/tools/lib/perf/include/internal/evsel.h b/tools/lib/perf/include/internal/evsel.h
-> index 5cd220a61962..ea78defa77d0 100644
-> --- a/tools/lib/perf/include/internal/evsel.h
-> +++ b/tools/lib/perf/include/internal/evsel.h
-> @@ -11,6 +11,32 @@
->  struct perf_thread_map;
->  struct xyarray;
->  
-> +/**
-> + * The per-thread accumulated period storage node.
-> + */
-> +struct perf_sample_id_period {
-> +	struct list_head	node;
-> +	struct hlist_node	hnode;
-> +	/* Holds total ID period value for PERF_SAMPLE_READ processing. */
-> +	u64			period;
-> +	/* The TID that the values belongs to */
-> +	u32			tid;
-> +};
-> +
-> +/**
-> + * perf_evsel_for_each_per_thread_period_safe - safely iterate thru all the
-> + * per_stream_periods
-> + * @evlist:perf_evsel instance to iterate
-> + * @item: struct perf_sample_id_period iterator
-> + * @tmp: struct perf_sample_id_period temp iterator
-> + */
-> +#define perf_evsel_for_each_per_thread_period_safe(evsel, tmp, item) \
-> +	list_for_each_entry_safe(item, tmp, &(evsel)->per_stream_periods, node)
-> +
-> +
-> +#define PERF_SAMPLE_ID__HLIST_BITS 4
-> +#define PERF_SAMPLE_ID__HLIST_SIZE (1 << PERF_SAMPLE_ID__HLIST_BITS)
-> +
->  /*
->   * Per fd, to map back from PERF_SAMPLE_ID to evsel, only used when there are
->   * more than one entry in the evlist.
-> @@ -34,8 +60,32 @@ struct perf_sample_id {
->  	pid_t			 machine_pid;
->  	struct perf_cpu		 vcpu;
->  
-> -	/* Holds total ID period value for PERF_SAMPLE_READ processing. */
-> -	u64			 period;
-> +	/*
-> +	 * Per-thread, and global event counts are mutually exclusive:
-> +	 * Whilst it is possible to combine events into a group with differing
-> +	 * values of PERF_SAMPLE_READ, it is not valid to have inconsistent
-> +	 * values for `inherit`. Therefore it is not possible to have a
-> +	 * situation where a per-thread event is sampled as a global event;
-> +	 * all !inherit groups are global, and all groups where the sampling
-> +	 * event is inherit + PERF_SAMPLE_READ will be per-thread. Any event
-> +	 * that is part of such a group that is inherit but not PERF_SAMPLE_READ
-> +	 * will be read as per-thread. If such an event can also trigger a
-> +	 * sample (such as with sample_period > 0) then it will not cause
-> +	 * `read_format` to be included in its PERF_RECORD_SAMPLE, and
-> +	 * therefore will not expose the per-thread group members as global.
-> +	 */
-> +	union {
-> +		/*
-> +		 * Holds total ID period value for PERF_SAMPLE_READ processing
-> +		 * (when period is not per-thread).
-> +		 */
-> +		u64			period;
-> +		/*
-> +		 * Holds total ID period value for PERF_SAMPLE_READ processing
-> +		 * (when period is per-thread).
-> +		 */
-> +		struct hlist_head	periods[PERF_SAMPLE_ID__HLIST_SIZE];
-> +	};
->  };
->  
->  struct perf_evsel {
-> @@ -58,6 +108,10 @@ struct perf_evsel {
->  	u32			 ids;
->  	struct perf_evsel	*leader;
->  
-> +	/* For events where the read_format value is per-thread rather than
-> +	 * global, stores the per-thread cumulative period */
-> +	struct list_head	per_stream_periods;
-> +
->  	/* parse modifier helper */
->  	int			 nr_members;
->  	/*
-> @@ -88,4 +142,9 @@ int perf_evsel__apply_filter(struct perf_evsel *evsel, const char *filter);
->  int perf_evsel__alloc_id(struct perf_evsel *evsel, int ncpus, int nthreads);
->  void perf_evsel__free_id(struct perf_evsel *evsel);
->  
-> +bool perf_evsel__attr_has_per_thread_sample_period(struct perf_evsel *evsel);
-> +
-> +u64 *perf_sample_id__get_period_storage(struct perf_sample_id *sid, u32 tid,
-> +					bool per_thread);
-> +
->  #endif /* __LIBPERF_INTERNAL_EVSEL_H */
-> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> index 5596bed1b8c8..fac0557ff6ea 100644
-> --- a/tools/perf/util/session.c
-> +++ b/tools/perf/util/session.c
-> @@ -1474,18 +1474,24 @@ static int deliver_sample_value(struct evlist *evlist,
->  				union perf_event *event,
->  				struct perf_sample *sample,
->  				struct sample_read_value *v,
-> -				struct machine *machine)
-> +				struct machine *machine,
-> +				bool per_thread)
->  {
->  	struct perf_sample_id *sid = evlist__id2sid(evlist, v->id);
->  	struct evsel *evsel;
-> +	u64 *storage = NULL;
->  
->  	if (sid) {
-> +		storage = perf_sample_id__get_period_storage(sid, sample->tid, per_thread);
-> +	}
-> +
-> +	if (storage) {
->  		sample->id     = v->id;
-> -		sample->period = v->value - sid->period;
-> -		sid->period    = v->value;
-> +		sample->period = v->value - *storage;
-> +		*storage       = v->value;
->  	}
->  
-> -	if (!sid || sid->evsel == NULL) {
-> +	if (!storage || sid->evsel == NULL) {
->  		++evlist->stats.nr_unknown_id;
->  		return 0;
->  	}
-> @@ -1506,14 +1512,15 @@ static int deliver_sample_group(struct evlist *evlist,
->  				union  perf_event *event,
->  				struct perf_sample *sample,
->  				struct machine *machine,
-> -				u64 read_format)
-> +				u64 read_format,
-> +				bool per_thread)
->  {
->  	int ret = -EINVAL;
->  	struct sample_read_value *v = sample->read.group.values;
->  
->  	sample_read_group__for_each(v, sample->read.group.nr, read_format) {
->  		ret = deliver_sample_value(evlist, tool, event, sample, v,
-> -					   machine);
-> +					   machine, per_thread);
->  		if (ret)
->  			break;
->  	}
-> @@ -1528,6 +1535,7 @@ static int evlist__deliver_sample(struct evlist *evlist, struct perf_tool *tool,
->  	/* We know evsel != NULL. */
->  	u64 sample_type = evsel->core.attr.sample_type;
->  	u64 read_format = evsel->core.attr.read_format;
-> +	bool per_thread = perf_evsel__attr_has_per_thread_sample_period(&evsel->core);
->  
->  	/* Standard sample delivery. */
->  	if (!(sample_type & PERF_SAMPLE_READ))
-> @@ -1536,10 +1544,11 @@ static int evlist__deliver_sample(struct evlist *evlist, struct perf_tool *tool,
->  	/* For PERF_SAMPLE_READ we have either single or group mode. */
->  	if (read_format & PERF_FORMAT_GROUP)
->  		return deliver_sample_group(evlist, tool, event, sample,
-> -					    machine, read_format);
-> +					    machine, read_format, per_thread);
->  	else
->  		return deliver_sample_value(evlist, tool, event, sample,
-> -					    &sample->read.one, machine);
-> +					    &sample->read.one, machine,
-> +					    per_thread);
->  }
->  
->  static int machines__deliver_event(struct machines *machines,
-> -- 
-> 2.45.2
-> 
+If the given system is hybrid and non-SMT, the new code disables ITMT
+support in the scheduler (because it may get in the way of asymmetric CPU
+capacity code in the scheduler that automatically gets enabled by setting
+asymmetric CPU capacity) after initializing all online CPUs and finds
+the one with the maximum HWP_HIGHEST_PERF value.  Next, it computes the
+capacity number for each (online) CPU by dividing the product of its
+HWP_HIGHEST_PERF and SCHED_CAPACITY_SCALE by the maximum HWP_HIGHEST_PERF.
+
+When a CPU goes offline, its capacity is reset to SCHED_CAPACITY_SCALE
+and if it is the one with the maximum HWP_HIGHEST_PERF value, the
+capacity numbers for all of the other online CPUs are recomputed.  This
+also takes care of a cleanup during driver operation mode changes.
+
+Analogously, when a new CPU goes online, its capacity number is updated
+and if its HWP_HIGHEST_PERF value is greater than the current maximum
+one, the capacity numbers for all of the other online CPUs are
+recomputed.
+
+The case when the driver is notified of a CPU capacity change, either
+through the HWP interrupt or through an ACPI notification, is handled
+similarly to the CPU online case above, except that if the target CPU
+is the current highest-capacity one and its capacity is reduced, the
+capacity numbers for all of the other online CPUs need to be recomputed
+either.
+
+If the driver's "no_trubo" sysfs attribute is updated, all of the CPU
+capacity information is computed from scratch to reflect the new turbo
+status.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpufreq/intel_pstate.c |  210 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 206 insertions(+), 4 deletions(-)
+
+Index: linux-pm/drivers/cpufreq/intel_pstate.c
+===================================================================
+--- linux-pm.orig/drivers/cpufreq/intel_pstate.c
++++ linux-pm/drivers/cpufreq/intel_pstate.c
+@@ -16,6 +16,7 @@
+ #include <linux/tick.h>
+ #include <linux/slab.h>
+ #include <linux/sched/cpufreq.h>
++#include <linux/sched/smt.h>
+ #include <linux/list.h>
+ #include <linux/cpu.h>
+ #include <linux/cpufreq.h>
+@@ -215,6 +216,7 @@ struct global_params {
+  * @hwp_req_cached:	Cached value of the last HWP Request MSR
+  * @hwp_cap_cached:	Cached value of the last HWP Capabilities MSR
+  * @last_io_update:	Last time when IO wake flag was set
++ * @capacity_perf:	Highest perf used for scale invariance
+  * @sched_flags:	Store scheduler flags for possible cross CPU update
+  * @hwp_boost_min:	Last HWP boosted min performance
+  * @suspended:		Whether or not the driver has been suspended.
+@@ -253,6 +255,7 @@ struct cpudata {
+ 	u64 hwp_req_cached;
+ 	u64 hwp_cap_cached;
+ 	u64 last_io_update;
++	unsigned int capacity_perf;
+ 	unsigned int sched_flags;
+ 	u32 hwp_boost_min;
+ 	bool suspended;
+@@ -295,6 +298,7 @@ static int hwp_mode_bdw __ro_after_init;
+ static bool per_cpu_limits __ro_after_init;
+ static bool hwp_forced __ro_after_init;
+ static bool hwp_boost __read_mostly;
++static bool hwp_is_hybrid;
+ 
+ static struct cpufreq_driver *intel_pstate_driver __read_mostly;
+ 
+@@ -934,6 +938,106 @@ static struct freq_attr *hwp_cpufreq_att
+ 	NULL,
+ };
+ 
++static struct cpudata *hybrid_max_perf_cpu __read_mostly;
++/*
++ * Protects hybrid_max_perf_cpu, the capacity_perf fields in struct cpudata,
++ * and the x86 arch scale-invariance information from concurrent updates.
++ */
++static DEFINE_MUTEX(hybrid_capacity_lock);
++
++static void hybrid_set_cpu_capacity(struct cpudata *cpu)
++{
++	arch_set_cpu_capacity(cpu->cpu, cpu->capacity_perf,
++			      hybrid_max_perf_cpu->capacity_perf,
++			      cpu->capacity_perf,
++			      cpu->pstate.max_pstate_physical);
++
++	pr_debug("CPU%d: perf = %u, max. perf = %u, base perf = %d\n", cpu->cpu,
++		 cpu->capacity_perf, hybrid_max_perf_cpu->capacity_perf,
++		 cpu->pstate.max_pstate_physical);
++}
++
++static void hybrid_clear_cpu_capacity(unsigned int cpunum)
++{
++	arch_set_cpu_capacity(cpunum, 1, 1, 1, 1);
++}
++
++static void hybrid_get_capacity_perf(struct cpudata *cpu)
++{
++	if (READ_ONCE(global.no_turbo)) {
++		cpu->capacity_perf = cpu->pstate.max_pstate_physical;
++		return;
++	}
++
++	cpu->capacity_perf = HWP_HIGHEST_PERF(READ_ONCE(cpu->hwp_cap_cached));
++}
++
++static void hybrid_set_capacity_of_cpus(void)
++{
++	int cpunum;
++
++	for_each_online_cpu(cpunum) {
++		struct cpudata *cpu = all_cpu_data[cpunum];
++
++		if (cpu)
++			hybrid_set_cpu_capacity(cpu);
++	}
++}
++
++static void hybrid_update_cpu_scaling(void)
++{
++	struct cpudata *max_perf_cpu = NULL;
++	unsigned int max_cap_perf = 0;
++	int cpunum;
++
++	for_each_online_cpu(cpunum) {
++		struct cpudata *cpu = all_cpu_data[cpunum];
++
++		if (!cpu)
++			continue;
++
++		/*
++		 * During initialization, CPU performance at full capacity needs
++		 * to be determined.
++		 */
++		if (!hybrid_max_perf_cpu)
++			hybrid_get_capacity_perf(cpu);
++
++		/*
++		 * If hybrid_max_perf_cpu is not NULL at this point, it is
++		 * being replaced, so don't take it into account when looking
++		 * for the new one.
++		 */
++		if (cpu == hybrid_max_perf_cpu)
++			continue;
++
++		if (cpu->capacity_perf > max_cap_perf) {
++			max_cap_perf = cpu->capacity_perf;
++			max_perf_cpu = cpu;
++		}
++	}
++
++	if (max_perf_cpu) {
++		hybrid_max_perf_cpu = max_perf_cpu;
++		hybrid_set_capacity_of_cpus();
++	} else {
++		pr_info("Found no CPUs with nonzero maximum performance\n");
++		/* Revert to the flat CPU capacity structure. */
++		for_each_online_cpu(cpunum)
++			hybrid_clear_cpu_capacity(cpunum);
++	}
++}
++
++static void hybrid_init_cpu_scaling(void)
++{
++	mutex_lock(&hybrid_capacity_lock);
++
++	hybrid_max_perf_cpu = NULL;
++	hybrid_update_cpu_scaling();
++
++	mutex_unlock(&hybrid_capacity_lock);
++}
++
+ static void __intel_pstate_get_hwp_cap(struct cpudata *cpu)
+ {
+ 	u64 cap;
+@@ -962,6 +1066,43 @@ static void intel_pstate_get_hwp_cap(str
+ 	}
+ }
+ 
++static void hybrid_update_capacity(struct cpudata *cpu)
++{
++	unsigned int max_cap_perf;
++
++	mutex_lock(&hybrid_capacity_lock);
++
++	if (!hybrid_max_perf_cpu)
++		goto unlock;
++
++	/*
++	 * The maximum performance of the CPU may have changed, but assume
++	 * that the performance of the other CPUs has not changed.
++	 */
++	max_cap_perf = hybrid_max_perf_cpu->capacity_perf;
++
++	intel_pstate_get_hwp_cap(cpu);
++
++	hybrid_get_capacity_perf(cpu);
++	/* Should hybrid_max_perf_cpu be replaced by this CPU? */
++	if (cpu->capacity_perf > max_cap_perf) {
++		hybrid_max_perf_cpu = cpu;
++		hybrid_set_capacity_of_cpus();
++		goto unlock;
++	}
++
++	/* If this CPU is hybrid_max_perf_cpu, should it be replaced? */
++	if (cpu == hybrid_max_perf_cpu && cpu->capacity_perf < max_cap_perf) {
++		hybrid_update_cpu_scaling();
++		goto unlock;
++	}
++
++	hybrid_set_cpu_capacity(cpu);
++
++unlock:
++	mutex_unlock(&hybrid_capacity_lock);
++}
++
+ static void intel_pstate_hwp_set(unsigned int cpu)
+ {
+ 	struct cpudata *cpu_data = all_cpu_data[cpu];
+@@ -1070,6 +1211,22 @@ static void intel_pstate_hwp_offline(str
+ 		value |= HWP_ENERGY_PERF_PREFERENCE(HWP_EPP_POWERSAVE);
+ 
+ 	wrmsrl_on_cpu(cpu->cpu, MSR_HWP_REQUEST, value);
++
++	mutex_lock(&hybrid_capacity_lock);
++
++	if (!hybrid_max_perf_cpu) {
++		mutex_unlock(&hybrid_capacity_lock);
++
++		return;
++	}
++
++	if (hybrid_max_perf_cpu == cpu)
++		hybrid_update_cpu_scaling();
++
++	mutex_unlock(&hybrid_capacity_lock);
++
++	/* Reset the capacity of the CPU going offline to the initial value. */
++	hybrid_clear_cpu_capacity(cpu->cpu);
+ }
+ 
+ #define POWER_CTL_EE_ENABLE	1
+@@ -1165,21 +1322,41 @@ static void __intel_pstate_update_max_fr
+ static void intel_pstate_update_limits(unsigned int cpu)
+ {
+ 	struct cpufreq_policy *policy = cpufreq_cpu_acquire(cpu);
++	struct cpudata *cpudata;
+ 
+ 	if (!policy)
+ 		return;
+ 
+-	__intel_pstate_update_max_freq(all_cpu_data[cpu], policy);
++	cpudata = all_cpu_data[cpu];
++
++	__intel_pstate_update_max_freq(cpudata, policy);
++
++	/* Prevent the driver from being unregistered now. */
++	mutex_lock(&intel_pstate_driver_lock);
+ 
+ 	cpufreq_cpu_release(policy);
++
++	hybrid_update_capacity(cpudata);
++
++	mutex_unlock(&intel_pstate_driver_lock);
+ }
+ 
+ static void intel_pstate_update_limits_for_all(void)
+ {
+ 	int cpu;
+ 
+-	for_each_possible_cpu(cpu)
+-		intel_pstate_update_limits(cpu);
++	for_each_possible_cpu(cpu) {
++		struct cpufreq_policy *policy = cpufreq_cpu_acquire(cpu);
++
++		if (!policy)
++			continue;
++
++		__intel_pstate_update_max_freq(all_cpu_data[cpu], policy);
++
++		cpufreq_cpu_release(policy);
++	}
++
++	hybrid_init_cpu_scaling();
+ }
+ 
+ /************************** sysfs begin ************************/
+@@ -1618,6 +1795,13 @@ static void intel_pstate_notify_work(str
+ 		__intel_pstate_update_max_freq(cpudata, policy);
+ 
+ 		cpufreq_cpu_release(policy);
++
++		/*
++		 * The driver will not be unregistered while this function is
++		 * running, so update the capacity without acquiring the driver
++		 * lock.
++		 */
++		hybrid_update_capacity(cpudata);
+ 	}
+ 
+ 	wrmsrl_on_cpu(cpudata->cpu, MSR_HWP_STATUS, 0);
+@@ -2034,8 +2218,10 @@ static void intel_pstate_get_cpu_pstates
+ 
+ 		if (pstate_funcs.get_cpu_scaling) {
+ 			cpu->pstate.scaling = pstate_funcs.get_cpu_scaling(cpu->cpu);
+-			if (cpu->pstate.scaling != perf_ctl_scaling)
++			if (cpu->pstate.scaling != perf_ctl_scaling) {
+ 				intel_pstate_hybrid_hwp_adjust(cpu);
++				hwp_is_hybrid = true;
++			}
+ 		} else {
+ 			cpu->pstate.scaling = perf_ctl_scaling;
+ 		}
+@@ -2703,6 +2889,8 @@ static int intel_pstate_cpu_online(struc
+ 		 */
+ 		intel_pstate_hwp_reenable(cpu);
+ 		cpu->suspended = false;
++
++		hybrid_update_capacity(cpu);
+ 	}
+ 
+ 	return 0;
+@@ -3143,6 +3331,20 @@ static int intel_pstate_register_driver(
+ 
+ 	global.min_perf_pct = min_perf_pct_min();
+ 
++	/*
++	 * On hybrid systems, use asym capacity instead of ITMT, but because
++	 * the capacity of SMT threads is not deterministic even approximately,
++	 * do not do that when SMT is in use.
++	 */
++	if (hwp_is_hybrid && !sched_smt_active() &&
++	    arch_enable_hybrid_capacity_scale()) {
++		sched_clear_itmt_support();
++
++		hybrid_init_cpu_scaling();
++
++		arch_rebuild_sched_domains();
++	}
++
+ 	return 0;
+ }
+ 
+
+
+
 
