@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-272331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7104945A58
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 392B6945A5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DBC41F22F81
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDAB21F23261
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4341D0DE6;
-	Fri,  2 Aug 2024 09:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A65B1D0DFD;
+	Fri,  2 Aug 2024 09:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXPVSNSR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VM+vH0bd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092711D0DDC;
-	Fri,  2 Aug 2024 09:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D467014B06C
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 09:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722589232; cv=none; b=CZDBCU/PRz1D2R2mgII2ObA7ozS1Jqa23DD4jQaN9hUToqDc/mWmcBLE5qRtGuS1FMFEEcmDjUm/QBES9/l37QADagKGNI6vsBYkdmnYEv0V2AU5vY7rWFUyiHwIXBa5xTPPMDuze3SaLU9v/JncsD0wMrIp5NgCTvUHrRmuFa8=
+	t=1722589260; cv=none; b=iS8lFhzfYZYB1JnZmpuofXnTkCodEzg7P/XUQKnlSlpDPK4dpofvfsWODnu6Zy6SMjVjIc9z9OuNntR2UWAF6kGuH+756/6jRExwvscGo36JrYjsc6l4gemafZXMPzSypzozOH4WUCpTY+DsF3fuH2fukg98ga49BqF55qr/CBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722589232; c=relaxed/simple;
-	bh=LCAUnK30xDB8ecVE/x8xdfHib0sA8+f1IZAZIFEnS9Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wzw1ZEMPr93vDpMG4ehlt/qRTRyRFZnOMns/gbMlHmEnhjYTaFsWIvJUmKZqUtYVbvTwUNuESWtW+jvOI5hizU1UDUMXq00UVB+5By2Eu6oEQBVbqdZbdNV1qr6+xrtqjHofGwgNoCOgaEPmKgTWUAQP27AuB8/+94n42R1MDfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXPVSNSR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B077C32782;
-	Fri,  2 Aug 2024 09:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722589231;
-	bh=LCAUnK30xDB8ecVE/x8xdfHib0sA8+f1IZAZIFEnS9Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZXPVSNSRqBLVr+7hyXlHZISMUqc+qQUEBqA2c9n8LkZyFheGoSAFqf4H5fkQ9WsRz
-	 wMIwdiHu6fw7hLhmbxnm3tS6LAlr4sh3tBfEnalRuzzYjrHmz0ewdZ4spniy+fSnMq
-	 q1fFme4nsfnwFWUjCsSlTsO/MTkQDD/AkcCCGjUEd+Jaz+bbnlVrltehrukamTC7V4
-	 YuPVTLyxabGQ5tHPiyS6kzQLTlvjW4U0YgIzTF1eSNKxrs1zngTn6Xf4NFy9LTkaYX
-	 zT/bm8q3hcLV7SuDCzEkaNnHMTGrE7RklBgPKUo7oNJ/i1sgegnzziua46Y8HnGVBx
-	 83By+Lvke42RQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sZo9E-0003B2-UD;
-	Fri, 02 Aug 2024 10:00:29 +0100
-Date: Fri, 02 Aug 2024 10:00:28 +0100
-Message-ID: <86jzgz1eqb.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: selftests: arm64: Correct feature test for S1PIE in get-reg-list
-In-Reply-To: <811ea0eb-bc87-4ac3-8bca-27c787e43051@sirena.org.uk>
-References: <20240731-kvm-arm64-fix-s1pie-test-v1-1-a9253f3b7db4@kernel.org>
-	<86le1g19aa.wl-maz@kernel.org>
-	<811ea0eb-bc87-4ac3-8bca-27c787e43051@sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1722589260; c=relaxed/simple;
+	bh=mI6XNam89D6wed+57dXwm5WjNkhxyQ10KenEUrjaDjw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VeLSFNzK37nDE515i27kuHiiKQpzFzxFIN2Y+GjeA86zgA7qHJPEJUSTr5xy7YsPcEI2TFuVIk3qYl1t2Lk80siPQN53mdVzGH64WyPb7CgnXjiC2yaQFuPiYRP2pZaSwKcgWoeS0mKTZ6lDs2sp8geyvsmZldIGr3t0uLtWdJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VM+vH0bd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722589257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d/jketK09aRbk1keqpEqJcKxt9b20wEYZYCZkMAMQBc=;
+	b=VM+vH0bdVbjjUnCkGgzqy2HTF+1XPma/H67B3sqU/9VJJN7YWQg8cuk5w2gB7FRisa5nuU
+	0lv4gvLGKdHsS/eyHPASy59h6u4uF4oJPFk1baZdqdXQp/xr4054CArQCYD6p6dlCVI70E
+	R+CICyd4CCak5zXLf5zxBBtauwX7S0o=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-tUJNXAURO1C0Dgf6zo9KhA-1; Fri,
+ 02 Aug 2024 05:00:52 -0400
+X-MC-Unique: tUJNXAURO1C0Dgf6zo9KhA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 475011955D4C;
+	Fri,  2 Aug 2024 09:00:49 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.207])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0A4C51955D44;
+	Fri,  2 Aug 2024 09:00:42 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  2 Aug 2024 11:00:47 +0200 (CEST)
+Date: Fri, 2 Aug 2024 11:00:40 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Kees Cook <keescook@chromium.org>, srikar@linux.vnet.ibm.com,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+	"glider@google.com" <glider@google.com>,
+	Matthew Wilcox <willy@infradead.org>, zokeefe@google.com,
+	hughd@google.com, luto@amacapital.net,
+	"jmarchan@redhat.com" <jmarchan@redhat.com>,
+	"rientjes@google.com" <rientjes@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: question on [uprobes] special vma
+Message-ID: <20240802090040.GB12343@redhat.com>
+References: <CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, catalin.marinas@arm.com, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, 01 Aug 2024 20:14:38 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> [1  <text/plain; us-ascii (7bit)>]
-> On Thu, Aug 01, 2024 at 05:45:49PM +0100, Marc Zyngier wrote:
-> 
-> > Can we please switch all this stuff to symbolic naming instead of
-> > magic numbers? Given how much effort is going into the "automated
-> > generation" thing, it is mind-boggling that the tests still rely on
-> > handcrafted numbers. We just end-up with two different sets of bugs.
-> 
-> > At the moment, the level of confidence I have in this stuff is
-> > sub-zero.
-> 
-> Yeah, I was wondering why this wasn't using the generated values
-> especially given that the generated headers are available to tools - I
-> wasn't sure if this was a deliberate decision to cross check the data
-> entry or something.
+Hi Jeff,
 
-We've lost that battle a long time ago, given the numbers of bugs the
-sysreg file has had. The real reason is that the ABI reports the
-encoding, and that it is rather easy to just dump stuff back into the
-test using the script described in the very first commit for the test.
+On 08/01, Jeff Xu wrote:
+>
+> __create_xol_area() calls  _install_special_mapping() to create a vma
+> named [uprobes].
+>
+> I'm trying to find out the lifetime of this uprobes vma, e.g. when it
+> is created, will it ever be unmapped/remapped/changed during the
+> lifetime of the process.
+>
+> If  the uprobes vma remains the same during the lifetime of the
+> process,
 
-Also, the test predates the generated stuff by some margin.
+Yes,
 
-> I'd certainly be happy to convert, though that does
-> seem a bit invasive for a fix.
+> I can call mseal on it so user space can't change it, i.e.
+> blocking munmap/mremap/mprotect/mmap, etc.
 
-Not for a point fix, for sure. And if you do, make sure it is entirely
-scripted.
+I didn't even know about mm/mseal.c...
 
-Thanks,
+at first glance do_mseal() just adds VM_SEALED for can_modify_vma().
 
-	M.
+So it seems that xol_add_vma() can just pass the additional VM_SEALED
+flag to _install_special_mapping(), no?
 
--- 
-Without deviation from the norm, progress is not possible.
+But why it depends on CONFIG_64_BIT?
+
+Oleg.
+
 
