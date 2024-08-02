@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-272870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5B9946215
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:53:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2184946218
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D9D282A80
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:53:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 598D7B224E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B62F1537B3;
-	Fri,  2 Aug 2024 16:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A22515C121;
+	Fri,  2 Aug 2024 16:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJpdP40F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJqptY1T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6421116BE0E;
-	Fri,  2 Aug 2024 16:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8471537CB;
+	Fri,  2 Aug 2024 16:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722617583; cv=none; b=O4rUnyGryKoBn5qyVO0RqkeaM8MkWliGFoIzQXOHq5UdKXH5sDXidBH5C2vGKHhidMSRgKHE/JKBkjHNSIL8q2bEOe3l/rtdfg7tOApgu3Vssp3nhXxiDC5lw/hOkru1QnN8AwG/gwKbEQ7buVPeU+AVn8B51TP4n95mJlNaOuQ=
+	t=1722617585; cv=none; b=lq590Q+NaWLpYLBZ9GL+8XE7P+ZSmEZ3hHxaC3ZUeVs4/ktajFJr1dq/us2ue+0ceaRjJRK62cON8o8Wd7sBS9/6lXVIZvdWp+bPZOIRQx+zTd4tug6K0sI02uvgdT9rYETYI2XqmBFW/eVQpcVwCV8PdcDrVlxn4dVggKiEQ/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722617583; c=relaxed/simple;
-	bh=ksPx/nJVMGiJKRwCNbH4MWMtCx9sEzvONXFeeg4Grws=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Iq5kePJmW8VzTiuCrL2isKrXg3KuFrY+06SM+WTqyLr/RjITkp8O0t6Rxm0HxZTGhMaiRlngFusDgNs8nz0L9LB5zP1BbCzD9i61s7eGM5Pkrx8IIHuTTj51GG+XK6oyncICNqz8yUgWCbY763hfYo3PxmPrR7Mf1s6ItG6Mb+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJpdP40F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3F10CC32782;
-	Fri,  2 Aug 2024 16:53:03 +0000 (UTC)
+	s=arc-20240116; t=1722617585; c=relaxed/simple;
+	bh=tBx3czLDQuVst0jXQJP0UeYBbvi5L9KwX8x5eZmXcpM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Pq9o0AWNzbOgFytjnnSR4tCYer6i6PUX9t90EA+65gxS+w2oDoSKMYZqPR0Kq5XTcA8qiVR8ppTJH9H70MJ1xm9HR4IdkzdRw6Eb26fV9MO925g/qHH5O4iKqqwV97Rxnrq3quygz0doEjDVB4woA1ARm2WMfOcUyyfpIEIF+L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJqptY1T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 332D5C32782;
+	Fri,  2 Aug 2024 16:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722617583;
-	bh=ksPx/nJVMGiJKRwCNbH4MWMtCx9sEzvONXFeeg4Grws=;
+	s=k20201202; t=1722617585;
+	bh=tBx3czLDQuVst0jXQJP0UeYBbvi5L9KwX8x5eZmXcpM=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=sJpdP40F3S7YmLRwecw1IU6GFRwnzBqNjVKyQi5aoxUgFmIQRZnLviiut6QGiFVMo
-	 Yvr57OQrDeMd8hW5AcmOe0rjY4qVu+/TkevR1uMM93/pfS+PyXavrWdZVVZwOi/Iqb
-	 OGJvWYknELKrVzrgmogWOqvgT439BmAT1NremOrHheCQfeIfUk1qAwpDyXWorjqZzh
-	 lC+TtQLUqLgnmwKC8m1ADouyUKCN+wyFyxzDHF0F0kpMzNIlg0/aN+mJZ2TlWjv9ck
-	 TfTV0u+PMnr6QOLKcYaMHW1KyE72ZeNSiQpvIDhD8RD8vZKJfd7fSpiKK8xX165dKD
-	 1dKdbcFhJz2Eg==
+	b=CJqptY1TmXk7xcP4m9tQAhgv8/BQSEEOAqTMrLG+99H4e+74vEC2jkxevuFUogfwU
+	 KzflB/14uTtR24ptTHEKnV6vzvzVTP9MT9X5g8Ox6sz7XRd0AvtLq6WQIF0ouQxkHd
+	 eigwi77/Ax8lgtLSujQZoOsZHODvqI3IAtPHJbkMZ0smlKJx6FZfoLFqw3H0tGmblX
+	 7ay7z9t9YeuCGwNjCDXT1rMZkOi8pPsWk86azGFR/ZrXN4rcd0jPvQmyon9yfDn7ME
+	 wMPj99EImR1bR6/dHJiP3ht7NzuuUmS0Byx+7w4dcCOVqfZZ59x0VbWSqgk/GgR7Qi
+	 Tis3xADhb3XPg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 35A42D0C60A;
-	Fri,  2 Aug 2024 16:53:03 +0000 (UTC)
-Subject: Re: [GIT PULL] asm-generic: fixes for 6.11
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2744ED0C60C;
+	Fri,  2 Aug 2024 16:53:05 +0000 (UTC)
+Subject: Re: [GIT PULL] s390 updates for 6.11-rc2
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <9a365229-9f76-47ac-87e2-fdeafe8550ab@app.fastmail.com>
-References: <9a365229-9f76-47ac-87e2-fdeafe8550ab@app.fastmail.com>
-X-PR-Tracked-List-Id: <linux-arch.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9a365229-9f76-47ac-87e2-fdeafe8550ab@app.fastmail.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-fixes-6.11-1
-X-PR-Tracked-Commit-Id: 343416f0c11c42bed07f6db03ca599f4f1771b17
+In-Reply-To: <your-ad-here.call-01722607265-ext-9466@work.hours>
+References: <your-ad-here.call-01722607265-ext-9466@work.hours>
+X-PR-Tracked-List-Id: <linux-s390.vger.kernel.org>
+X-PR-Tracked-Message-Id: <your-ad-here.call-01722607265-ext-9466@work.hours>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.11-3
+X-PR-Tracked-Commit-Id: 33bd8d153c337ba9b30a2e5994437ca703ab4ed8
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 29ccb40f2b543ccb1d143e54e8227b80d277bc2f
-Message-Id: <172261758320.28369.9121389422290459623.pr-tracker-bot@kernel.org>
-Date: Fri, 02 Aug 2024 16:53:03 +0000
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-alpha@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Florian Weimer <fweimer@redhat.com>, Andreas Schwab <schwab@suse.de>, linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, linux-api@vger.kernel.org
+X-PR-Merge-Commit-Id: 66242ef25eedc5b48d46c4b60f5d453763adf2b8
+Message-Id: <172261758515.28369.10064380943770688283.pr-tracker-bot@kernel.org>
+Date: Fri, 02 Aug 2024 16:53:05 +0000
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 02 Aug 2024 15:29:25 +0200:
+The pull request you sent on Fri, 2 Aug 2024 16:01:05 +0200:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-fixes-6.11-1
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.11-3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/29ccb40f2b543ccb1d143e54e8227b80d277bc2f
+https://git.kernel.org/torvalds/c/66242ef25eedc5b48d46c4b60f5d453763adf2b8
 
 Thank you!
 
