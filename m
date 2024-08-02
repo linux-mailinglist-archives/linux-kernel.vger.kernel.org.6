@@ -1,889 +1,200 @@
-Return-Path: <linux-kernel+bounces-272938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15AF2946296
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:38:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5E694626D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99CD41F2581C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8192284225
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57141AE02D;
-	Fri,  2 Aug 2024 17:32:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A071AE022
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A43915C13B;
+	Fri,  2 Aug 2024 17:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvpbP16h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB875136327
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619932; cv=none; b=dU3UaQxIomDbFYkoHR/2uYn6VafiEYmzBnhSufQG2NqAa/MaJpYJqnEKJTs0mrk2fm4j1c7q1eE8o0x/4gd2LOtCbFS0eJ1dSWwxpMvbDUGLzrdmmEedLScRx6LUejoCF4WAj9/rlAqLJbRDMObW9aSau0woJb8hFG9spb2fRZg=
+	t=1722619760; cv=none; b=hTJI1vcYTLqMF4cabPnisyZwnp4q3cY60UY7uTlzfVHNI7yK2xNsbfWOy514SMFM8kumLF3eVBL6IVLwjNimMqi70iVN7x/GWJxXY97i7vPkgSora4FMoHX9WyknlNqfzHN4kLKBV/n5MOJ4Xz73oz9K1mHFmoS8Z58Dk9jpMhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619932; c=relaxed/simple;
-	bh=zBQRauNGIfVlcZ8KhV3kOOnz46maPAidlbnQO7YVB90=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DiaVXCYB4feXilLG/yeEcMroVtzyWXNl4d8TZdk5RPjpt3BcVbJv1SHiZkBdD5pdixLIpH76tCAotZautXXcP8MLeSmQgmCqgmQkNpMsSk1K5gmzCHiXpNTHSCNC8ONdhSwiOl3RBpgFzkY3RipVTDWyXrphxs8mjWJ6xKxL5Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2F671684;
-	Fri,  2 Aug 2024 10:32:34 -0700 (PDT)
-Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A0343F64C;
-	Fri,  2 Aug 2024 10:32:05 -0700 (PDT)
-From: James Morse <james.morse@arm.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	H Peter Anvin <hpa@zytor.com>,
-	Babu Moger <Babu.Moger@amd.com>,
-	James Morse <james.morse@arm.com>,
-	shameerali.kolothum.thodi@huawei.com,
-	D Scott Phillips OS <scott@os.amperecomputing.com>,
-	carl@os.amperecomputing.com,
-	lcherian@marvell.com,
-	bobo.shaobowang@huawei.com,
-	tan.shaopeng@fujitsu.com,
-	baolin.wang@linux.alibaba.com,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Xin Hao <xhao@linux.alibaba.com>,
-	peternewman@google.com,
-	dfustini@baylibre.com,
-	amitsinght@marvell.com,
-	David Hildenbrand <david@redhat.com>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Dave Martin <dave.martin@arm.com>
-Subject: [PATCH v4 39/39] x86/resctrl: Add python script to move resctrl code to /fs/resctrl
-Date: Fri,  2 Aug 2024 17:28:53 +0000
-Message-Id: <20240802172853.22529-40-james.morse@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240802172853.22529-1-james.morse@arm.com>
-References: <20240802172853.22529-1-james.morse@arm.com>
+	s=arc-20240116; t=1722619760; c=relaxed/simple;
+	bh=1aXr1a6cPgOepOy3AhjNqHrv1sNmM2SwAOr0T46pwP4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NHZsBL3nEJeKUg8wUMi3OavqCjkWCzDkv95Cmiasp6FHNGETqLBrLpJm99LMyxjDnZEu7kzT4kH04nastDt9fbyly3eKYE7EQP50lGiWs426b5uk6qoq8XjGtravUdeocqMdbKispaoY7EkHtIPPY4okQ37uWLOx4z27jS3HFUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvpbP16h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38900C4AF48
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:29:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722619760;
+	bh=1aXr1a6cPgOepOy3AhjNqHrv1sNmM2SwAOr0T46pwP4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pvpbP16hq+rm54xJczTpn8B80vjIfKaT4TK5sbBTfRp5QxEAOiGU5KObwXIcjGYu8
+	 SJ6eFZFwJE7eWehVtIvnamZoMeuWH2sc76WM99/NjWa7XJSyS3lu8QTkhkvu5wKfGZ
+	 kUNE7YVY3Hr1ZUFxoYoYmktyIQHjDChlchTNVcuHdvH1pwMGOS5cHvN+Bh+pqc5re4
+	 jJJa4GeK+7y2W9mdJQdIq5kOZSlFtXzrlAxv47NS4etzILZT7oxEpz9y4blrzoSjJC
+	 PpnCCf4ihygaX8kLSYKgIXO2rACzYvbHuKkxploIgjTTF/XpxGrjZM4eoU+EbhYNn/
+	 G7RJFqUqVdryA==
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-66526e430e0so71342417b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 10:29:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXLryn41xRDr2bqIkGMcvCMkbm6GTisuYW1B7/NoKRyqRWGHfhAzSTLR859YeV/7C09Ieeci8OlFnxYkhXL5LrRwVENdfzmVfupCyKC
+X-Gm-Message-State: AOJu0YxiPsXO1K3Ccs4DyPBkoTaIaChdBfawwwV1M1cp1rKeN1nfI1ak
+	k35t3o4dt9bBy/8mmxtYWNqcf8PwdVHKvsEfBur0lRzNYrx0di0ZtTJcnOVhyPsBxbd9JTpTFUj
+	bbSZuLul3KXRicU6dUP9G+QkRqQU6S66oS1fYyQ==
+X-Google-Smtp-Source: AGHT+IGgp0/LFOnOVLKTwvr2itlc7DfEpJiEC5mNOsNgKnoG0VxvpaCvtmpTWUcoQdIKztSXOlXn9/ACCsSBd3lfotY=
+X-Received: by 2002:a81:c20f:0:b0:61b:1e81:4eb8 with SMTP id
+ 00721157ae682-6895fbdb8c3mr47090427b3.9.1722619758887; Fri, 02 Aug 2024
+ 10:29:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240726094618.401593-1-21cnbao@gmail.com> <20240802122031.117548-1-21cnbao@gmail.com>
+ <20240802122031.117548-2-21cnbao@gmail.com>
+In-Reply-To: <20240802122031.117548-2-21cnbao@gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Fri, 2 Aug 2024 10:29:08 -0700
+X-Gmail-Original-Message-ID: <CACePvbUmCN313ippOkP9bhYa8Zd7gNDXgA9w9Q8bA9sgUxTvOQ@mail.gmail.com>
+Message-ID: <CACePvbUmCN313ippOkP9bhYa8Zd7gNDXgA9w9Q8bA9sgUxTvOQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] mm: add nr argument in mem_cgroup_swapin_uncharge_swap()
+ helper to support large folios
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, david@redhat.com, hannes@cmpxchg.org, 
+	hughd@google.com, kaleshsingh@google.com, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org, 
+	nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org, 
+	shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com, 
+	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
+	ying.huang@intel.com, yosryahmed@google.com, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To support more than one architecture resctrl needs to move from arch/x86
-to live under fs. Moving all the code breaks any series on the mailing
-list, so needs scheduling carefully.
+Acked-by: Chris Li <chrisl@kernel.org>
 
-Maintaining the patch that moves all this code has proved labour intensive.
-It's also near-impossible to review that no inadvertent changes have
-crept in.
+Chris
 
-To solve these problems, temporarily add a hacky python program that
-lists all the functions that should move, and those that should stay.
-
-No attempt to parse C code is made, this thing tries to name 'blocks'
-based on hueristics about the kernel coding style. It's fragile, but
-good enough for its single use here.
-
-This causes the original files to be regenerated, which will add
-newlines that are not present in the original file.
-
-I don't suggested this gets merged.
-
-Signed-off-by: James Morse <james.morse@arm.com>
----
- resctrl_copy_pasta.py | 779 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 779 insertions(+)
- create mode 100644 resctrl_copy_pasta.py
-
-diff --git a/resctrl_copy_pasta.py b/resctrl_copy_pasta.py
-new file mode 100644
-index 000000000000..227e67eac4c4
---- /dev/null
-+++ b/resctrl_copy_pasta.py
-@@ -0,0 +1,779 @@
-+#!/usr/bin/python
-+import sys;
-+import os;
-+import re;
-+
-+############
-+
-+SRC_DIR = "arch/x86/kernel/cpu/resctrl";
-+DST_DIR = "fs/resctrl";
-+
-+resctrl_files = [
-+	"ctrlmondata.c",
-+	"internal.h",
-+	"monitor.c",
-+	"pseudo_lock.c",
-+	"rdtgroup.c",
-+	"pseudo_lock_trace.h",
-+	"monitor_trace.h",
-+];
-+
-+functions_to_keep = [
-+	# common
-+	"pr_fmt",
-+
-+	# core.c
-+	"domain_list_lock",
-+	"resctrl_arch_late_init",
-+	"resctrl_arch_exit",
-+	"resctrl_cpu_detect",
-+	"rdt_cpu_has",
-+	"resctrl_arch_is_evt_configurable",
-+	"get_mem_config",
-+	"get_slow_mem_config",
-+	"get_rdt_alloc_resources",
-+	"get_rdt_mon_resources",
-+	"__check_quirks_intel",
-+	"check_quirks",
-+	"get_rdt_resources",
-+	"rdt_init_res_defs_intel",
-+	"rdt_init_res_defs_amd",
-+	"rdt_init_res_defs",
-+	"resctrl_cpu_detect",
-+	"resctrl_arch_late_init",
-+	"resctrl_arch_exit",
-+	"setup_default_ctrlval",
-+	"domain_free",
-+	"domain_setup_ctrlval",
-+	"arch_domain_mbm_alloc",
-+	"domain_add_cpu",
-+	"domain_remove_cpu",
-+	"clear_closid_rmid",
-+	"resctrl_arch_online_cpu",
-+	"resctrl_arch_offline_cpu",
-+	"resctrl_arch_find_domain",
-+	"resctrl_arch_get_num_closid",
-+	"rdt_ctrl_update",
-+	"domain_init",
-+	"resctrl_arch_get_resource",
-+	"cache_alloc_hsw_probe",
-+	"rdt_get_mb_table",
-+	"__get_mem_config_intel",
-+	"__rdt_get_mem_config_amd",
-+	"rdt_get_cache_alloc_cfg",
-+	"rdt_get_cdp_config",
-+	"rdt_get_cdp_l3_config",
-+	"rdt_get_cdp_l2_config",
-+	"resctrl_arch_get_cdp_enabled",
-+	"set_rdt_options",
-+	"pqr_state",
-+	"rdt_resources_all",
-+	"delay_bw_map",
-+	"rdt_options",
-+	"cat_wrmsr",
-+	"mba_wrmsr_amd",
-+	"mba_wrmsr_intel",
-+	"anonymous-enum",
-+	"rdt_find_domain",
-+	"rdt_alloc_capable",
-+	"rdt_online",
-+	"RDT_OPT",
-+
-+	# ctrlmon.c
-+	"apply_config",
-+	"resctrl_arch_update_one",
-+	"resctrl_arch_update_domains",
-+	"resctrl_arch_get_config",
-+
-+	# internal.h
-+	"L3_QOS_CDP_ENABLE",
-+	"L2_QOS_CDP_ENABLE",
-+	"MBM_CNTR_WIDTH_OFFSET_AMD",
-+	"arch_mbm_state",
-+	"rdt_hw_ctrl_domain",
-+	"rdt_hw_mon_domain",
-+	"resctrl_to_arch_ctrl_dom",
-+	"resctrl_to_arch_mon_dom",
-+	"msr_param",
-+	"rdt_hw_resource",
-+	"resctrl_to_arch_res",
-+	"rdt_resources_all",
-+	"resctrl_inc",
-+	"for_each_rdt_resource",
-+	"for_each_capable_rdt_resource",
-+	"for_each_alloc_capable_rdt_resource",
-+	"for_each_mon_capable_rdt_resource",
-+	"arch_mon_domain_online",
-+	"cpuid_0x10_1_eax",
-+	"cpuid_0x10_3_eax",
-+	"cpuid_0x10_x_ecx",
-+	"cpuid_0x10_x_edx",
-+	"rdt_ctrl_update",
-+	"rdt_get_mon_l3_config",
-+	"rdt_cpu_has",
-+	"intel_rdt_mbm_apply_quirk",
-+	"rdt_domain_reconfigure_cdp",
-+
-+	# monitor.c
-+	"rdt_mon_capable",
-+	"rdt_mon_features",
-+	"CF",
-+	"snc_nodes_per_l3_cache",
-+	"mbm_cf_table",
-+	"mbm_cf_rmidthreshold",
-+	"mbm_cf",
-+	"logical_rmid_to_physical_rmid",
-+	"__rmid_read_phys",
-+	"get_corrected_mbm_count",
-+	"__rmid_read",
-+	"get_arch_mbm_state",
-+	"resctrl_arch_reset_rmid",
-+	"resctrl_arch_reset_rmid_all",
-+	"mbm_overflow_count",
-+	"resctrl_arch_rmid_read",
-+	"snc_cpu_ids",
-+	"snc_get_config",
-+	"rdt_get_mon_l3_config",
-+	"intel_rdt_mbm_apply_quirk",
-+
-+	# pseudo_lock.c
-+	"prefetch_disable_bits",
-+	"resctrl_arch_get_prefetch_disable_bits",
-+	"resctrl_arch_pseudo_lock_fn",
-+	"resctrl_arch_measure_cycles_lat_fn",
-+	"perf_miss_attr",
-+	"perf_hit_attr",
-+	"residency_counts",
-+	"measure_residency_fn",
-+	"resctrl_arch_measure_l2_residency",
-+	"resctrl_arch_measure_l3_residency",
-+
-+	# rdtgroup.c
-+	"rdt_enable_key",
-+	"rdt_mon_enable_key",
-+	"rdt_alloc_enable_key",
-+	"resctrl_arch_sync_cpu_closid_rmid",
-+	"INVALID_CONFIG_INDEX",
-+	"mon_event_config_index_get",
-+	"resctrl_arch_mon_event_config_read",
-+	"resctrl_arch_mon_event_config_write",
-+	"l3_qos_cfg_update",
-+	"l2_qos_cfg_update",
-+	"set_cache_qos_cfg",
-+	"rdt_domain_reconfigure_cdp",
-+	"cdp_enable",
-+	"cdp_disable",
-+	"resctrl_arch_set_cdp_enabled",
-+	"reset_all_ctrls",
-+	"resctrl_arch_reset_resources",
-+
-+	# pseudo_lock_trace.h
-+	"TRACE_SYSTEM",
-+	"pseudo_lock_mem_latency",
-+	"pseudo_lock_l2",
-+	"pseudo_lock_l3",
-+];
-+
-+functions_to_move = [
-+	# common
-+	"pr_fmt",
-+
-+	# ctrlmon.c
-+	"rdt_parse_data",
-+	"(ctrlval_parser_t)",
-+	"bw_validate",
-+	"parse_bw",
-+	"cbm_validate",
-+	"parse_cbm",
-+	"get_parser",
-+	"parse_line",
-+	"rdtgroup_parse_resource",
-+	"rdtgroup_schemata_write",
-+	"show_doms",
-+	"rdtgroup_schemata_show",
-+	"smp_mon_event_count",
-+	"mon_event_read",
-+	"rdtgroup_mondata_show",
-+
-+	# internal.h
-+	"MBM_OVERFLOW_INTERVAL",
-+	"CQM_LIMBOCHECK_INTERVAL",
-+	"cpumask_any_housekeeping",
-+	"rdt_fs_context",
-+	"rdt_fc2context",
-+	"mon_evt",
-+	"mon_data_bits",
-+	"rmid_read",
-+	"resctrl_schema_all",
-+	"resctrl_mounted",
-+	"rdt_group_type",
-+	"rdtgrp_mode",
-+	"mongroup",
-+	"rdtgroup",
-+	"RFTYPE_FLAGS_CPUS_LIST",
-+	"rdt_all_groups",
-+	"rftype",
-+	"mbm_state",
-+	"is_mba_sc",
-+
-+	# monitor.c
-+	"rmid_entry",
-+	"rmid_free_lru",
-+	"closid_num_dirty_rmid",
-+	"rmid_limbo_count",
-+	"rmid_ptrs",
-+	"resctrl_rmid_realloc_threshold",
-+	"resctrl_rmid_realloc_limit",
-+	"__rmid_entry",
-+	"limbo_release_entry",
-+	"__check_limbo",
-+	"has_busy_rmid",
-+	"resctrl_find_free_rmid",
-+	"resctrl_find_cleanest_closid",
-+	"alloc_rmid",
-+	"add_rmid_to_limbo",
-+	"free_rmid",
-+	"get_mbm_state",
-+	"__mon_event_count",
-+	"mbm_bw_count",
-+	"mon_event_count",
-+	"update_mba_bw",
-+	"mbm_update",
-+	"cqm_handle_limbo",
-+	"cqm_setup_limbo_handler",
-+	"mbm_handle_overflow",
-+	"mbm_setup_overflow_handler",
-+	"dom_data_init",
-+	"dom_data_exit",
-+	"llc_occupancy_event",
-+	"mbm_total_event",
-+	"mbm_local_event",
-+	"l3_mon_evt_init",
-+	"resctrl_mon_resource_init",
-+	"resctrl_mon_resource_exit",
-+
-+	# pseudo_lock.c
-+	"pseudo_lock_major",
-+	"pseudo_lock_minor_avail",
-+	"pseudo_lock_devnode",
-+	"pseudo_lock_class",
-+	"pseudo_lock_minor_get",
-+	"pseudo_lock_minor_release",
-+	"region_find_by_minor",
-+	"pseudo_lock_pm_req",
-+	"pseudo_lock_cstates_relax",
-+	"pseudo_lock_cstates_constrain",
-+	"pseudo_lock_region_clear",
-+	"pseudo_lock_region_init",
-+	"pseudo_lock_init",
-+	"pseudo_lock_region_alloc",
-+	"pseudo_lock_free",
-+	"rdtgroup_monitor_in_progress",
-+	"rdtgroup_locksetup_user_restrict",
-+	"rdtgroup_locksetup_user_restore",
-+	"rdtgroup_locksetup_enter",
-+	"rdtgroup_locksetup_exit",
-+	"rdtgroup_cbm_overlaps_pseudo_locked",
-+	"rdtgroup_pseudo_locked_in_hierarchy",
-+	"pseudo_lock_measure_cycles",
-+	"pseudo_lock_measure_trigger",
-+	"pseudo_measure_fops",
-+	"rdtgroup_pseudo_lock_create",
-+	"rdtgroup_pseudo_lock_remove",
-+	"pseudo_lock_dev_open",
-+	"pseudo_lock_dev_release",
-+	"pseudo_lock_dev_mremap",
-+	"pseudo_mmap_ops",
-+	"pseudo_lock_dev_mmap",
-+	"pseudo_lock_dev_fops",
-+	"rdt_pseudo_lock_init",
-+	"rdt_pseudo_lock_release",
-+
-+	# rdtgroup.c
-+	"rdtgroup_mutex",
-+	"rdt_root",
-+	"rdtgroup_default",
-+	"rdt_all_groups",
-+	"resctrl_schema_all",
-+	"resctrl_mounted",
-+	"kn_info",
-+	"kn_mongrp",
-+	"kn_mondata",
-+	"max_name_width",
-+	"last_cmd_status",
-+	"last_cmd_status_buf",
-+	"rdtgroup_setup_root",
-+	"rdtgroup_destroy_root",
-+	"debugfs_resctrl",
-+	"resctrl_debug",
-+	"rdt_last_cmd_clear",
-+	"rdt_last_cmd_puts",
-+	"rdt_last_cmd_printf",
-+	"rdt_staged_configs_clear",
-+	"resctrl_is_mbm_enabled",
-+	"resctrl_is_mbm_event",
-+	"closid_free_map",
-+	"closid_free_map_len",
-+	"closids_supported",
-+	"closid_init",
-+	"closid_alloc",
-+	"closid_free",
-+	"closid_allocated",
-+	"rdtgroup_mode_by_closid",
-+	"rdt_mode_str",
-+	"rdtgroup_mode_str",
-+	"rdtgroup_kn_set_ugid",
-+	"rdtgroup_add_file",
-+	"rdtgroup_seqfile_show",
-+	"rdtgroup_file_write",
-+	"rdtgroup_kf_single_ops",
-+	"kf_mondata_ops",
-+	"is_cpu_list",
-+	"rdtgroup_cpus_show",
-+	"update_closid_rmid",
-+	"cpus_mon_write",
-+	"cpumask_rdtgrp_clear",
-+	"cpus_ctrl_write",
-+	"rdtgroup_cpus_write",
-+	"rdtgroup_remove",
-+	"_update_task_closid_rmid",
-+	"update_task_closid_rmid",
-+	"task_in_rdtgroup",
-+	"__rdtgroup_move_task",
-+	"is_closid_match",
-+	"is_rmid_match",
-+	"rdtgroup_tasks_assigned",
-+	"rdtgroup_task_write_permission",
-+	"rdtgroup_move_task",
-+	"rdtgroup_tasks_write",
-+	"show_rdt_tasks",
-+	"rdtgroup_tasks_show",
-+	"rdtgroup_closid_show",
-+	"rdtgroup_rmid_show",
-+	"proc_resctrl_show",
-+	"rdt_last_cmd_status_show",
-+	"rdt_num_closids_show",
-+	"rdt_default_ctrl_show",
-+	"rdt_min_cbm_bits_show",
-+	"rdt_shareable_bits_show",
-+	"rdt_bit_usage_show",
-+	"rdt_min_bw_show",
-+	"rdt_num_rmids_show",
-+	"rdt_mon_features_show",
-+	"rdt_bw_gran_show",
-+	"rdt_delay_linear_show",
-+	"max_threshold_occ_show",
-+	"rdt_thread_throttle_mode_show",
-+	"max_threshold_occ_write",
-+	"rdtgroup_mode_show",
-+	"resctrl_peer_type",
-+	"rdt_has_sparse_bitmasks_show",
-+	"__rdtgroup_cbm_overlaps",
-+	"rdtgroup_cbm_overlaps",
-+	"rdtgroup_mode_test_exclusive",
-+	"rdtgroup_mode_write",
-+	"rdtgroup_cbm_to_size",
-+	"rdtgroup_size_show",
-+	"mondata_config_read",
-+	"mbm_config_show",
-+	"mbm_total_bytes_config_show",
-+	"mbm_local_bytes_config_show",
-+	"mbm_config_write_domain",
-+	"mon_config_write",
-+	"mbm_total_bytes_config_write",
-+	"mbm_local_bytes_config_write",
-+	"res_common_files",
-+	"rdtgroup_add_files",
-+	"rdtgroup_get_rftype_by_name",
-+	"thread_throttle_mode_init",
-+	"mbm_config_rftype_init",
-+	"rdtgroup_kn_mode_restrict",
-+	"rdtgroup_kn_mode_restore",
-+	"rdtgroup_mkdir_info_resdir",
-+	"fflags_from_resource",
-+	"rdtgroup_create_info_dir",
-+	"mongroup_create_dir",
-+	"is_mba_linear",
-+	"mba_sc_domain_allocate",
-+	"mba_sc_domain_destroy",
-+	"supports_mba_mbps",
-+	"set_mba_sc",
-+	"kernfs_to_rdtgroup",
-+	"rdtgroup_kn_get",
-+	"rdtgroup_kn_put",
-+	"rdtgroup_kn_lock_live",
-+	"rdtgroup_kn_unlock",
-+	"rdt_disable_ctx",
-+	"rdt_enable_ctx",
-+	"schemata_list_add",
-+	"schemata_list_create",
-+	"schemata_list_destroy",
-+	"rdt_get_tree",
-+	"rdt_param",
-+	"rdt_fs_parameters",
-+	"rdt_parse_param",
-+	"rdt_fs_context_free",
-+	"rdt_fs_context_ops",
-+	"rdt_init_fs_context",
-+	"rdt_move_group_tasks",
-+	"free_all_child_rdtgrp",
-+	"rmdir_all_sub",
-+	"rdt_kill_sb",
-+	"rdt_fs_type",
-+	"mon_addfile",
-+	"mon_rmdir_one_subdir",
-+	"rmdir_mondata_subdir_allrdtgrp",
-+	"mon_add_all_files",
-+	"mkdir_mondata_subdir",
-+	"mkdir_mondata_subdir_allrdtgrp",
-+	"mkdir_mondata_subdir_alldom",
-+	"mkdir_mondata_all",
-+	"cbm_ensure_valid",
-+	"__init_one_rdt_domain",
-+	"rdtgroup_init_cat",
-+	"rdtgroup_init_mba",
-+	"rdtgroup_init_alloc",
-+	"mkdir_rdt_prepare_rmid_alloc",
-+	"mkdir_rdt_prepare_rmid_free",
-+	"mkdir_rdt_prepare",
-+	"mkdir_rdt_prepare_clean",
-+	"rdtgroup_mkdir_mon",
-+	"rdtgroup_mkdir_ctrl_mon",
-+	"is_mon_groups",
-+	"rdtgroup_mkdir",
-+	"rdtgroup_rmdir_mon",
-+	"rdtgroup_ctrl_remove",
-+	"rdtgroup_rmdir_ctrl",
-+	"rdtgroup_rmdir",
-+	"mongrp_reparent",
-+	"rdtgroup_rename",
-+	"rdtgroup_show_options",
-+	"rdtgroup_kf_syscall_ops",
-+	"rdtgroup_setup_root",
-+	"rdtgroup_destroy_root",
-+	"rdtgroup_setup_default",
-+	"domain_destroy_mon_state",
-+	"resctrl_offline_ctrl_domain",
-+	"resctrl_offline_mon_domain",
-+	"domain_setup_mon_state",
-+	"resctrl_online_ctrl_domain",
-+	"resctrl_online_mon_domain",
-+	"resctrl_online_cpu",
-+	"clear_childcpus",
-+	"resctrl_offline_cpu",
-+	"resctrl_init",
-+	"resctrl_exit",
-+
-+	# monitor_trace.h
-+	"TRACE_SYSTEM",
-+	"mon_llc_occupancy_limbo",
-+];
-+
-+############
-+
-+builtin_non_functions = ["__setup", "__exitcall", "__printf"];
-+builtin_one_arg_macros = ["LIST_HEAD", "DEFINE_MUTEX", "DEFINE_STATIC_KEY_FALSE"];
-+types = ["bool",  "char", "int", "u32", "long", "u64"];
-+
-+def get_array_name(line):
-+  tok = re.search(r'([^\s]+?)\[\]', line)
-+  if (tok is None):
-+    return None;
-+  return tok.group(1);
-+
-+
-+def get_struct_name(line):
-+  tok = re.search(r'struct ([^\s]+?) {', line)
-+  if (tok is None):
-+    return None;
-+  return tok.group(1);
-+
-+def get_enum_name(line):
-+  tok = re.search(r'enum ([^\s]+?) {', line)
-+  if (tok is None):
-+    return None;
-+  return tok.group(1);
-+
-+def get_union_name(line):
-+  tok = re.search(r'union ([^\s]+?) {', line)
-+  if (tok is None):
-+    return None;
-+  return tok.group(1);
-+
-+
-+def get_macro_name(line):
-+  tok = re.search(r'#define[\s]+([^\s]+?)\(', line)
-+  if (tok):
-+    return tok.group(1);
-+
-+  tok = re.search(r'#define[\s]+([^\s]+?)[\s]+[^\s]+?\n', line)
-+  if (tok):
-+    return tok.group(1);
-+
-+  return None;
-+
-+
-+def get_macro_target(line):
-+  tok = re.search(r'[^\s]+?\(([^\s]+?)\);\n', line)
-+  if (tok):
-+    return tok.group(1);
-+
-+  return None;
-+
-+
-+# Things like 'bool my_bool;'
-+def get_object_name(line):
-+  # remove things that don't change the meaning of the name
-+  if line.startswith("static "):
-+    line = line[len("static "):];
-+  if line.startswith("extern "):
-+    line = line[len("extern "):];
-+  if line.startswith("unsigned "):
-+    line = line[len("unsigned "):];
-+
-+  # Note the trailing semicolon..
-+  tok = re.search(r'([^\s]+)\s[\*]*([^\s\[\],;]+)', line)
-+  if tok:
-+    if tok.group(1) in types:
-+      return tok.group(2);
-+
-+  tok = re.search(r'struct\s[^\s]+\s[\*]*([^\s;]+)', line)
-+  if tok:
-+    return tok.group(1);
-+
-+  tok = re.search(r'enum\s[^\s]+\s([^\s;]+)', line)
-+  if tok:
-+    return tok.group(1);
-+
-+  return None;
-+
-+
-+# Is there a name for this block of code?
-+#
-+# Function names are the token before '(' ... assuming there is only one '('.
-+# This also handles structs and arrays,
-+def get_block_name(line):
-+  # remove things that don't change the meaning of the name
-+  if (" __read_mostly" in line):
-+    line = line.replace(" __read_mostly", "");
-+  if (" __initconst" in line):
-+    line = line.replace(" __initconst", "");
-+
-+  if line == "enum {\n":
-+    return "anonymous-enum";
-+  if (line.startswith("#define ")):
-+    return get_macro_name(line);
-+
-+  if ("=" in line):
-+    tok = re.search(r'[\*]*([^\s\[\]]+?)[\s\[\]]*=', line)
-+  else:
-+    tok = re.search(r'[\*]*([^\s]+?)\(.+?', line)
-+
-+  if (tok is None):
-+    if ("[]" in line):
-+      return get_array_name(line);
-+    if (line.startswith("struct") and line.endswith("{\n")):
-+      return get_struct_name(line);
-+    if (line.startswith("enum") and line.endswith("{\n")):
-+      return get_enum_name(line);
-+    if (line.startswith("union") and line.endswith("{\n")):
-+      return get_union_name(line);
-+    if (line.endswith(";\n") and '(' not in line):
-+      return get_object_name(line);
-+    if (line.endswith("= {\n") and '(' not in line):
-+      return get_object_name(line);
-+    return None;
-+
-+  func_name = tok.group(1);
-+  if (func_name in builtin_one_arg_macros):
-+    tok = re.search(r'[^\(]+\(([^\s]+?)\)', line)
-+    if (tok is None):
-+      return None;
-+    return tok.group(1);
-+  elif (func_name == "DEFINE_PER_CPU"):
-+    tok = re.search(r'DEFINE_PER_CPU\(.+?, ([^\s]+?)\)', line)
-+    if (tok is None):
-+      return None;
-+    return tok.group(1);
-+  elif (func_name == "TRACE_EVENT"):
-+    tok = re.search(r'TRACE_EVENT\((.+?),', line)
-+    if (tok is None):
-+      return None;
-+    return tok.group(1);
-+  elif (func_name == "late_initcall"):
-+    return get_macro_target(line);
-+  else:
-+    return func_name;
-+
-+def output_function_body(body, file):
-+  # Mandatory whitespace between blocks
-+  if os.lseek(file.fileno(), 0, os.SEEK_CUR) > 0:
-+    file.write("\n".encode());
-+
-+  for out_line in body:
-+    file.write(out_line.encode());
-+
-+# Where should we put this block of code?
-+def output_function(name, body, files):
-+  output = False;
-+  (new_src, new_dst) = files;
-+
-+  if (len(body)) == 0:
-+    return;
-+
-+  # Output to both files
-+  if (name is None):
-+    output_function_body(body, new_src);
-+    output_function_body(body, new_dst);
-+    output = True;
-+  if (name in functions_to_keep):
-+    output_function_body(body, new_src);
-+    output = True;
-+  if (name in functions_to_move):
-+    output_function_body(body, new_dst);
-+    output = True;
-+
-+  if not output:
-+    print("Missing function name: "+name);
-+    #print(body);
-+
-+def reset_parser():
-+  global function_name;
-+  global define_name;
-+  global function_body;
-+  global in_define;
-+
-+  function_name = None;
-+  define_name = None;
-+  function_body = [];
-+  in_define = False;
-+
-+############
-+
-+for file in resctrl_files:
-+  function_name = None;
-+  # function_names take priority over defines, this is only used when
-+  # no function_name was found
-+  define_name = None;
-+  function_body = [];
-+  # Nothing clever - this is just to detect newlines between functions
-+  in_function = False;
-+  in_define = False;
-+
-+  src_path = SRC_DIR + "/" + str(file);
-+  if (not os.path.isfile(src_path)):
-+    continue;
-+  dst_path = DST_DIR + "/" + str(file);
-+
-+  orig_file = open(src_path, "r");
-+  lines = orig_file.readlines();
-+
-+  # Now unlink the original file, so it can be re-created with new
-+  # contents.
-+  try:
-+    os.unlink(src_path);
-+  except Exception as err:
-+    print("Failed to unlink source file: {err}");
-+    sys.exit(1);
-+
-+  # non-buffering is so we can snoop the fd offset to avoid trailing newlines
-+  new_src = open(src_path, "wb", buffering=0);
-+  new_dst = open(dst_path, "wb", buffering=0);
-+
-+  for line in lines:
-+    # Empty lines outside a function - reset the function tracking
-+    if (line == "\n" and not in_function):
-+      if function_name is None and define_name is not None:
-+        function_name = define_name;
-+      output_function(function_name, function_body, (new_src, new_dst));
-+      reset_parser();
-+
-+    # Function prototypes are a funny C thing - reset the function tracking
-+    elif (line[0].isspace() and not in_function and line.endswith(");\n")):
-+      function_body += [line];
-+      output_function(function_name, function_body, (new_src, new_dst));
-+      reset_parser();
-+
-+    # Lines that begin with whitespace are part of the current function.
-+    elif (line[0].isspace()):
-+      function_body += [line];
-+
-+    # Next, try to find the kind of line that contains a function name
-+
-+    # Ignore lines with comment markers, braces
-+    elif (line.startswith("/*")):
-+      function_body += [line];
-+    elif (line.startswith("*/")):
-+      function_body += [line];
-+    elif (line.startswith("//")):
-+      function_body += [line];
-+    elif (line == "{\n"):
-+      function_body += [line];
-+      in_function = True;
-+    elif (line == "}\n"):
-+      function_body += [line];
-+      in_function = False;
-+    elif (line == "};\n"):
-+      function_body += [line];
-+      in_function = False;
-+
-+    elif (line.startswith("#include")):
-+      function_body += [line];
-+    elif (line.startswith("#if ")):
-+      function_body += [line];
-+    elif (line.startswith("#ifdef ")):
-+      function_body += [line];
-+    elif (line.startswith("#ifndef ")):
-+      function_body += [line];
-+    elif (line.startswith("#else")):
-+      function_body += [line];
-+    elif (line.startswith("#endif")):
-+      function_body += [line];
-+    elif (line.startswith("#undef ")):
-+      function_body += [line];
-+    elif (line.startswith("#define")):
-+      function_body += [line];
-+      define_name = get_block_name(line);
-+      if line.endswith("\\\n"):
-+        in_define = True;
-+    elif in_define and line.endswith("\\\n"):
-+      function_body += [line];
-+
-+    # goto was always a crime
-+    elif (' ' not in line and line.endswith(":\n")):
-+      function_body += [line];
-+
-+    # Try and parse a function/array name
-+
-+    # Things like late_initcall() aren't function names, but belong to
-+    # the previous function.
-+    elif (get_block_name(line) in builtin_non_functions):
-+      function_body += [line];
-+
-+    # Start a new block if we can get a block name for this line
-+    elif (get_block_name(line) != None and function_name is None):
-+      _name = get_block_name(line);
-+
-+      if (line.endswith("{\n")):
-+        in_function = True;
-+
-+      # Is this a function prototype? Output it now
-+      if (line.endswith(";\n")):
-+        function_body += [line];
-+        output_function(_name, function_body, (new_src, new_dst));
-+        reset_parser();
-+      else:
-+        function_name = _name;
-+        function_body += [line];
-+
-+    # Failed to parse a function name ... did it get split up?
-+    elif (line.startswith("static")):
-+      function_body += [line];
-+
-+    else:
-+       print("Unknown: '" + line + "'");
-+
-+  # Output whatever is left in the buffer
-+  output_function(function_name, function_body, (new_src, new_dst));
-+
-+  orig_file.close();
--- 
-2.39.2
-
+On Fri, Aug 2, 2024 at 5:21=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrote=
+:
+>
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> With large folios swap-in, we might need to uncharge multiple entries
+> all together, add nr argument in mem_cgroup_swapin_uncharge_swap().
+>
+> For the existing two users, just pass nr=3D1.
+>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  include/linux/memcontrol.h | 5 +++--
+>  mm/memcontrol.c            | 7 ++++---
+>  mm/memory.c                | 2 +-
+>  mm/swap_state.c            | 2 +-
+>  4 files changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 1b79760af685..44f7fb7dc0c8 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -682,7 +682,8 @@ int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *=
+memcg, gfp_t gfp,
+>
+>  int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct=
+ *mm,
+>                                   gfp_t gfp, swp_entry_t entry);
+> -void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry);
+> +
+> +void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr_=
+pages);
+>
+>  void __mem_cgroup_uncharge(struct folio *folio);
+>
+> @@ -1181,7 +1182,7 @@ static inline int mem_cgroup_swapin_charge_folio(st=
+ruct folio *folio,
+>         return 0;
+>  }
+>
+> -static inline void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry)
+> +static inline void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, un=
+signed int nr)
+>  {
+>  }
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index b889a7fbf382..5d763c234c44 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4572,14 +4572,15 @@ int mem_cgroup_swapin_charge_folio(struct folio *=
+folio, struct mm_struct *mm,
+>
+>  /*
+>   * mem_cgroup_swapin_uncharge_swap - uncharge swap slot
+> - * @entry: swap entry for which the page is charged
+> + * @entry: the first swap entry for which the pages are charged
+> + * @nr_pages: number of pages which will be uncharged
+>   *
+>   * Call this function after successfully adding the charged page to swap=
+cache.
+>   *
+>   * Note: This function assumes the page for which swap slot is being unc=
+harged
+>   * is order 0 page.
+>   */
+> -void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry)
+> +void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr_=
+pages)
+>  {
+>         /*
+>          * Cgroup1's unified memory+swap counter has been charged with th=
+e
+> @@ -4599,7 +4600,7 @@ void mem_cgroup_swapin_uncharge_swap(swp_entry_t en=
+try)
+>                  * let's not wait for it.  The page already received a
+>                  * memory+swap charge, drop the swap entry duplicate.
+>                  */
+> -               mem_cgroup_uncharge_swap(entry, 1);
+> +               mem_cgroup_uncharge_swap(entry, nr_pages);
+>         }
+>  }
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 4c8716cb306c..4cf4902db1ec 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4102,7 +4102,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>                                         ret =3D VM_FAULT_OOM;
+>                                         goto out_page;
+>                                 }
+> -                               mem_cgroup_swapin_uncharge_swap(entry);
+> +                               mem_cgroup_swapin_uncharge_swap(entry, 1)=
+;
+>
+>                                 shadow =3D get_shadow_from_swap_cache(ent=
+ry);
+>                                 if (shadow)
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index 293ff1afdca4..1159e3225754 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -522,7 +522,7 @@ struct folio *__read_swap_cache_async(swp_entry_t ent=
+ry, gfp_t gfp_mask,
+>         if (add_to_swap_cache(new_folio, entry, gfp_mask & GFP_RECLAIM_MA=
+SK, &shadow))
+>                 goto fail_unlock;
+>
+> -       mem_cgroup_swapin_uncharge_swap(entry);
+> +       mem_cgroup_swapin_uncharge_swap(entry, 1);
+>
+>         if (shadow)
+>                 workingset_refault(new_folio, shadow);
+> --
+> 2.34.1
+>
 
