@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-271995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90309455B2
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F529455B1
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063911C23127
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:44:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 828E41C2115B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718654D8D1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718434D8BD;
 	Fri,  2 Aug 2024 00:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEzGCdj3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ul8bPBSU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF42317BB7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F5917BA4;
 	Fri,  2 Aug 2024 00:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722559391; cv=none; b=EaO2StBo4fsM5udS4rjJrKFVm8gWGE69l5FtVmHX4j+aMFxkcETvjVC1uK4TAjeIlG3X5rQ9vnAstdjcG/LF054BO+esi+GSYydprOKjd7U4aAf9izQpgCMLBsuOEVhmb3jRJSS42JFdNssPOwxtV8WPuZMYpJk6agQzm7Zeh+k=
+	t=1722559391; cv=none; b=MuxkPARxVYD6J5flMJY/AVilk7KVNCRdereCGGKjZsKsG7gZlgEXKzZCN87xyFAK2wdpbZVAFRObNymJvn7G4Z1S/vlRusxlChKaHIKwICyYY1s0cJJkSZcRmjTv5AcSEKaJ2SjJeXUGms2z7kNY+zHjQYAC9pahVbJlov/oM70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722559391; c=relaxed/simple;
-	bh=AEzkTPCKcNGzv5Un7TZuguhoYqpHfaG2unUtIDA5KrA=;
+	bh=wtNU9ny0pb6w6vugnHTvWS5lxc3HG5A0ixYSJLK9w1g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JSfGwciN5yq7XWr1Tw/2vVBlJuvKqfZbH6iu2QI/l2vAl7EKroXqAZDmIeXx8ulbG8xkHNL9fZ45T867NYKBRgk2vu8V5XHhKdbUl3+rixQT/be2KF1hnmDWkiS+m71XYiDVRwz/uejpDjl48XojLmjQTOAwEqT83xhyBKmxMDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEzGCdj3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6564CC4AF11;
+	 MIME-Version; b=FqM6iQQPsk3QSKW1+gWmlMY1ljxKcs9yFFWJwqymiPGFy2QT7AwYazRIhN9F0ZlWXg2SFI7OWAtcsnI6FXv8sgl0NFu0ANsuDEqWqKZfSPmpqv2FixH1D2/VqDCzzxUK8RbfZZnraZ30n/slR1fhDcaG+rMPobcBeg+HB1I7lMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ul8bPBSU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E582C4AF15;
 	Fri,  2 Aug 2024 00:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722559391;
-	bh=AEzkTPCKcNGzv5Un7TZuguhoYqpHfaG2unUtIDA5KrA=;
+	bh=wtNU9ny0pb6w6vugnHTvWS5lxc3HG5A0ixYSJLK9w1g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UEzGCdj3zGWsz6VSJzTbOsaxJUwMoKotUWDArHHs2FuhtYnnF1l5Lp88f9+8nBbt6
-	 P/TRaFkM5RgnTzSe9fA/JeiIIFflq9jfyZO7aVOFhGIjozs2qudAOC4Jzf70b3gCOw
-	 N7o+6kDaF4uTVQhtdBRgdZVxBZterodI9/ARJ1zBohjXKfIDgYSsaQwmO9ThBDJjSA
-	 fikkQcgErkv6CMrU136FHmEf615Ee+GKYl2PFxQ6HZ55VDUbqQWqpUEpAlL83V3z0h
-	 YQyghbRlaen5yseQa5c0KSXuu7xwZJGEyfMq9SCiZo0jYXQSu//yS96sNPpHh3CxAE
-	 YGKMbmxEYO+IQ==
+	b=ul8bPBSU2jl+Z3cs5u/wyRDgudETm4TcVugUU2h8u86K132S3wDN8zZa0ZbYCXc6K
+	 XoiOLqHRqc0XvVCn8zmNflupW3neXlF/AZh8qsm+74Z2ekP5OT50riSAaxX+44OQeL
+	 UCCuTFzbZ/JbA5Fo51cyakhEEXHqmngEzcNnpbrCv1r/a019UrKrFhkUyeFMjYGIH9
+	 YQNFjzFtRntD7HxT8cIoFyXrFYpHkdKstUMl5Y6MediuXNzOZBCNdBOm57Jvv3R6Gw
+	 2RL5EU85qhQ84JkLVa6Dc1sw3yL5ZhaZebNqZL9Fz7DfTDhBttuAzs7lfbLKiW/tGW
+	 4gninT4KMfK4w==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id CB57ECE0FA1; Thu,  1 Aug 2024 17:43:10 -0700 (PDT)
+	id CDF0FCE0FA9; Thu,  1 Aug 2024 17:43:10 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 06/11] rcuscale: Provide clear error when async specified without primitives
-Date: Thu,  1 Aug 2024 17:43:03 -0700
-Message-Id: <20240802004308.4134731-6-paulmck@kernel.org>
+Subject: [PATCH rcu 07/11] rcuscale: Make all writer tasks report upon hang
+Date: Thu,  1 Aug 2024 17:43:04 -0700
+Message-Id: <20240802004308.4134731-7-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
 References: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
@@ -62,39 +62,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, if the rcuscale module's async module parameter is specified
-for RCU implementations that do not have sync primitives such as
-call_rcu(), there will be a series of splats due to calls to a NULL
-pointer.  This commit therefore warns of this situation, but switches
-to non-async testing.
+This commit causes all writer tasks to provide a brief report after a
+hang has been reported, spaced at one-second intervals.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcuscale.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/rcu/rcuscale.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-index 933014b381ec0..315ced63ec105 100644
+index 315ced63ec105..a820f11b19444 100644
 --- a/kernel/rcu/rcuscale.c
 +++ b/kernel/rcu/rcuscale.c
-@@ -525,7 +525,7 @@ rcu_scale_writer(void *arg)
- 			schedule_timeout_idle(torture_random(&tr) % writer_holdoff_jiffies + 1);
- 		wdp = &wdpp[i];
- 		*wdp = ktime_get_mono_fast_ns();
--		if (gp_async) {
-+		if (gp_async && !WARN_ON_ONCE(!cur_ops->async)) {
- retry:
- 			if (!rhp)
- 				rhp = kmalloc(sizeof(*rhp), GFP_KERNEL);
-@@ -597,7 +597,7 @@ rcu_scale_writer(void *arg)
+@@ -483,6 +483,7 @@ rcu_scale_writer(void *arg)
+ 	unsigned long jdone;
+ 	long me = (long)arg;
+ 	struct rcu_head *rhp = NULL;
++	bool selfreport = false;
+ 	bool started = false, done = false, alldone = false;
+ 	u64 t;
+ 	DEFINE_TORTURE_RANDOM(tr);
+@@ -593,6 +594,11 @@ rcu_scale_writer(void *arg)
+ 					cur_ops->stats();
+ 			}
+ 		}
++		if (!selfreport && time_after(jiffies, jdone + HZ * (70 + me))) {
++			pr_info("%s: Writer %ld self-report: started %d done %d/%d->%d i %d jdone %lu.\n",
++				__func__, me, started, done, writer_done[me], atomic_read(&n_rcu_scale_writer_finished), i, jiffies - jdone);
++			selfreport = true;
++		}
+ 		if (started && !alldone && i < MAX_MEAS - 1)
  			i++;
  		rcu_scale_wait_shutdown();
- 	} while (!torture_must_stop());
--	if (gp_async) {
-+	if (gp_async && cur_ops->async) {
- 		cur_ops->gp_barrier();
- 	}
- 	writer_n_durations[me] = i_max + 1;
 -- 
 2.40.1
 
