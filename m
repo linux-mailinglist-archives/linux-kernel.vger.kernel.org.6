@@ -1,255 +1,202 @@
-Return-Path: <linux-kernel+bounces-272896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB6F946269
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:28:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBBA94626C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97D5CB22252
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:28:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F442841DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E1C15C135;
-	Fri,  2 Aug 2024 17:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kSqngSBM"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDEE136327
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA3E15C13B;
+	Fri,  2 Aug 2024 17:29:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C159136327
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619708; cv=none; b=l0//m2JOKNosXfrtUUZkJFs7JQyRDZwVxF8zasmBXB2RZ8kiApayyAJd0CBRi1qqOIcBpyW68TFsN2hDM/AMzyPqDV2nV+cJZYdOcK9FlE7CRIXHU+lGWAaOokbQ7siYB/TBX58SQOqrJUQA+COzv/fwHQSH6LeiLsdlgxctmNg=
+	t=1722619749; cv=none; b=LaSjwnbUw9QSNjSGTS1KKJhx6UOo0taUM8QzfDDMjEhnLscQQLnqw3yG/xgQuBVQlNu5ZuWcJCrpd8MqsKLGNWlIuY13ix+xrjwZvoUofoqh50ZPVWp3ivwJq7PPiOZrW9PtY+wG9SdwO+cL23XN7ykoBAv7C9tF5OGSgGIhXs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619708; c=relaxed/simple;
-	bh=F3g430AFcd5fktOgTWAO9/9FNUn0gfLYsMRiXbuhse8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oS6mMpnmw3QuhtxpmV4yWm6Ha7a50X52cmfU+IoQcX8RXBaihrxvsd1xXHMySp4BqoS4ETOBh/Aj7ZF9rkA0qj8YG1VPceIliV/POYgJRBRVEPukRXIk3TYQZpKtWcKrDgHpW2GEWLxTjT1aUP1q7DawScU6C3jsWwttdWQ8Q84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kSqngSBM; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fdc70e695so1470731cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 10:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722619705; x=1723224505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lSSS4E3zuKvWBv0XQ9yYM+WcI7zxzF47G/3hGsx+ctc=;
-        b=kSqngSBMVj6W9IFzwsBH29Gnz+3M9sMiToP98yqb6OxuQHL585EIBYoa3ToRCGJJwg
-         tE15mjhdlDO42yOXFS8jQR9KO/toQEQKifkziTeWMHxK3Vheen9bnmha8F0D5woA2kx+
-         jRnbuHUAVF1chU7uGJQt2dlF+7MbDdDfJmH08JCBlZVctbKpc78Ojkg4+lJ3b8tcqKoe
-         1rnzFN5KBu1vMsnLN4lIF9s3aLnJfkk+FoUVV0BMF7Ar3f3LEYzmATc8sY4yX97KHiUl
-         KiMS5Y4m/XmhIXxVFhiv656y8eiDTY4ZLiYupBOO/6gF1ezZdczydFycAa5UEw30okfK
-         rZZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722619705; x=1723224505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lSSS4E3zuKvWBv0XQ9yYM+WcI7zxzF47G/3hGsx+ctc=;
-        b=OIcMPEsOOqjDftUdzpjg76RFGfPmF/87sNarUzWYYcnDYb4aTG97nhRaio3bLajsRy
-         l03bodicqVGNTArVUA4QUmWMA8vbABKXqQPz/2GKUjV/AS2CjbUL7EUC2VIf32vCHz6M
-         wE3R8uEqn75GBaWPuXcSEv4hYI9oqkZgO1nz0/6tGjgSazswD4Voyd78MhLeDtddAp44
-         vgvYFVh/s/SnwyLghUAmUvalyiyLyK3KGyf9+sEc+pN21oehjl1W50SrKiP5jKdbQ0/n
-         Jy5C2gUny4I93BAHqVE/5yUpwRxQJmCXvX70oDo3AFtLlBhIhLTUlsYh2DhOrND5SFut
-         t0lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWC2cr77K3GCbmVy73Vz/DR6nZXKpsbkH8NEhbewzQg5OWCHUbSQxnnCdfi5bj55Zx+cwRlnxW31WQ8ygY+7wDqhCIgBkDeivfON+uC
-X-Gm-Message-State: AOJu0Yz0atQ2FKzIxeKDdpdlTX16SrGoGum6EF7CrWNX5AEj5N02sFoG
-	uPV59+bEENRug6n67TSgMrPcIn08m2x0dzBhYAlwzEBjEja/aI+VcUmcEtX/znb+Yx3P3VQ2pew
-	9nksEiZOn1PT+ldRlVjti2nfpmRZC/y8tgzvm
-X-Google-Smtp-Source: AGHT+IEW8VIhs9YamiW05dBEhB7BQ3Do4tGZnbt1vWnlgmGeqasRzyUtOO85UW1YZdi4lv8hQmL5M3LA+U1y8BvQHY8=
-X-Received: by 2002:ac8:5a01:0:b0:447:f958:ab83 with SMTP id
- d75a77b69052e-4518ccc2c8dmr3261391cf.21.1722619705228; Fri, 02 Aug 2024
- 10:28:25 -0700 (PDT)
+	s=arc-20240116; t=1722619749; c=relaxed/simple;
+	bh=4B/5yuTgIwoLj5ysDmAqSjUaDu5uk78cOyFA8E4f/H0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R5qHH3Lth/x7j6h28+NDX+kqVbUg1orkqnyJZ8O7a5bTgLgHGZCO5Az5kzs4bvMUiJkqTY8FyEXl0Kbz7UELxNtuhQPOGP60ydBDJluPHMg/570I9oq6QkIy15oH3nQrATZYq++RoVy/+ttinpMcUNHd0FZexU2pIYnOiGVPxZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 596291007;
+	Fri,  2 Aug 2024 10:29:32 -0700 (PDT)
+Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 72D0E3F64C;
+	Fri,  2 Aug 2024 10:29:01 -0700 (PDT)
+From: James Morse <james.morse@arm.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	H Peter Anvin <hpa@zytor.com>,
+	Babu Moger <Babu.Moger@amd.com>,
+	James Morse <james.morse@arm.com>,
+	shameerali.kolothum.thodi@huawei.com,
+	D Scott Phillips OS <scott@os.amperecomputing.com>,
+	carl@os.amperecomputing.com,
+	lcherian@marvell.com,
+	bobo.shaobowang@huawei.com,
+	tan.shaopeng@fujitsu.com,
+	baolin.wang@linux.alibaba.com,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Xin Hao <xhao@linux.alibaba.com>,
+	peternewman@google.com,
+	dfustini@baylibre.com,
+	amitsinght@marvell.com,
+	David Hildenbrand <david@redhat.com>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Dave Martin <dave.martin@arm.com>
+Subject: [PATCH v4 00/39] x86/resctrl: Move the resctrl filesystem code to /fs/resctrl
+Date: Fri,  2 Aug 2024 17:28:14 +0000
+Message-Id: <20240802172853.22529-1-james.morse@arm.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731070207.3918687-1-davidgow@google.com>
-In-Reply-To: <20240731070207.3918687-1-davidgow@google.com>
-From: Rae Moar <rmoar@google.com>
-Date: Fri, 2 Aug 2024 13:28:13 -0400
-Message-ID: <CA+GJov5k2a6OEj-E2ULbimeMcY9Rq2Lh58-juBm=AMbPy0s4sA@mail.gmail.com>
-Subject: Re: [PATCH] kunit: Device wrappers should also manage driver name
-To: David Gow <davidgow@google.com>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Matti Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Maxime Ripard <mripard@kernel.org>, Kees Cook <kees@kernel.org>, Nico Pache <npache@redhat.com>, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 3:02=E2=80=AFAM David Gow <davidgow@google.com> wro=
-te:
->
-> kunit_driver_create() accepts a name for the driver, but does not copy
-> it, so if that name is either on the stack, or otherwise freed, we end
-> up with a use-after-free when the driver is cleaned up.
->
-> Instead, strdup() the name, and manage it as another KUnit allocation.
-> As there was no existing kunit_kstrdup(), we add one. Further, add a
-> kunit_ variant of strdup_const() and kfree_const(), so we don't need to
-> allocate and manage the string in the majority of cases where it's a
-> constant.
->
-> This fixes a KASAN splat with overflow.overflow_allocation_test, when
-> built as a module.
->
-> Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
-> Reported-by: Nico Pache <npache@redhat.com>
-> Closes: https://groups.google.com/g/kunit-dev/c/81V9b9QYON0
-> Signed-off-by: David Gow <davidgow@google.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> ---
->
-> There's some more serious changes since the RFC I sent, so please take a
-> closer look.
->
-> Thanks,
-> -- David
->
+Changes since v3?
+The behaviour round fflags has changed to remove more static properties of the
+schema that the arch code had to set, and to generate the 'its a cache' flags
+from the resource type.
+The trace file is now split in two, one file moves the other doesn't.
+Otherwise changes are noted on each patch.
 
-Hello!
+~
 
-These changes look good to me. Fun patch to review! Only comment is
-that we could potentially add tests for these functions in a future
-patch.
+This is the final series that allows other architectures to implement resctrl.
+The final patch to move the code has been omited, but can be generated using
+the python script at the end of the series.
+The final move is a bit of a monster. I don't expect that to get merged as part
+of this series - we should wait for it to make less impact on other series.
 
-Reviewed-by: Rae Moar <rmoar@google.com>
+Otherwise this series renames functions and moves code around. With the
+exception of invalid configurations for the configurable-events, there should
+be no changes in behaviour caused by this series.
 
-Thanks!
--Rae
+The driving pattern is to make things like struct rdtgroup private to resctrl.
+Features like pseudo-lock aren't going to work on arm64, the ability to disable
+it at compile time is added.
 
-> Changes since RFC:
-> https://groups.google.com/g/kunit-dev/c/81V9b9QYON0/m/PFKNKDKAAAAJ
-> - Add and use the kunit_kstrdup_const() and kunit_free_const()
->   functions.
-> - Fix a typo in the doc comments.
->
->
-> ---
->  include/kunit/test.h | 58 ++++++++++++++++++++++++++++++++++++++++++++
->  lib/kunit/device.c   |  7 ++++--
->  2 files changed, 63 insertions(+), 2 deletions(-)
->
-> diff --git a/include/kunit/test.h b/include/kunit/test.h
-> index e2a1f0928e8b..da9e84de14c0 100644
-> --- a/include/kunit/test.h
-> +++ b/include/kunit/test.h
-> @@ -28,6 +28,7 @@
->  #include <linux/types.h>
->
->  #include <asm/rwonce.h>
-> +#include <asm/sections.h>
->
->  /* Static key: true if any KUnit tests are currently running */
->  DECLARE_STATIC_KEY_FALSE(kunit_running);
-> @@ -480,6 +481,63 @@ static inline void *kunit_kcalloc(struct kunit *test=
-, size_t n, size_t size, gfp
->         return kunit_kmalloc_array(test, n, size, gfp | __GFP_ZERO);
->  }
->
-> +
-> +/**
-> + * kunit_kfree_const() - conditionally free test managed memory
-> + * @x: pointer to the memory
-> + *
-> + * Calls kunit_kfree() only if @x is not in .rodata section.
-> + * See kunit_kstrdup_const() for more information.
-> + */
-> +static inline void kunit_kfree_const(struct kunit *test, const void *x)
-> +{
-> +       if (!is_kernel_rodata((unsigned long)x))
-> +               kunit_kfree(test, x);
-> +}
-> +
-> +/**
-> + * kunit_kstrdup() - Duplicates a string into a test managed allocation.
-> + *
-> + * @test: The test context object.
-> + * @str: The NULL-terminated string to duplicate.
-> + * @gfp: flags passed to underlying kmalloc().
-> + *
-> + * See kstrdup() and kunit_kmalloc_array() for more information.
-> + */
-> +static inline char *kunit_kstrdup(struct kunit *test, const char *str, g=
-fp_t gfp)
-> +{
-> +       size_t len;
-> +       char *buf;
-> +
-> +       if (!str)
-> +               return NULL;
-> +
-> +       len =3D strlen(str) + 1;
-> +       buf =3D kunit_kmalloc(test, len, gfp);
-> +       if (buf)
-> +               memcpy(buf, str, len);
-> +       return buf;
-> +}
-> +
-> +/**
-> + * kunit_kstrdup_const() - Conditionally duplicates a string into a test=
- managed allocation.
-> + *
-> + * @test: The test context object.
-> + * @str: The NULL-terminated string to duplicate.
-> + * @gfp: flags passed to underlying kmalloc().
-> + *
-> + * Calls kunit_kstrdup() only if @str is not in the rodata section. Must=
- be freed with
-> + * kunit_free_const() -- not kunit_free().
-> + * See kstrdup_const() and kunit_kmalloc_array() for more information.
-> + */
-> +static inline const char *kunit_kstrdup_const(struct kunit *test, const =
-char *str, gfp_t gfp)
-> +{
-> +       if (is_kernel_rodata((unsigned long)str))
-> +               return str;
-> +
-> +       return kunit_kstrdup(test, str, gfp);
-> +}
-> +
->  /**
->   * kunit_vm_mmap() - Allocate KUnit-tracked vm_mmap() area
->   * @test: The test context object.
-> diff --git a/lib/kunit/device.c b/lib/kunit/device.c
-> index 25c81ed465fb..520c1fccee8a 100644
-> --- a/lib/kunit/device.c
-> +++ b/lib/kunit/device.c
-> @@ -89,7 +89,7 @@ struct device_driver *kunit_driver_create(struct kunit =
-*test, const char *name)
->         if (!driver)
->                 return ERR_PTR(err);
->
-> -       driver->name =3D name;
-> +       driver->name =3D kunit_kstrdup_const(test, name, GFP_KERNEL);
->         driver->bus =3D &kunit_bus_type;
->         driver->owner =3D THIS_MODULE;
->
-> @@ -192,8 +192,11 @@ void kunit_device_unregister(struct kunit *test, str=
-uct device *dev)
->         const struct device_driver *driver =3D to_kunit_device(dev)->driv=
-er;
->
->         kunit_release_action(test, device_unregister_wrapper, dev);
-> -       if (driver)
-> +       if (driver) {
-> +               const char *driver_name =3D driver->name;
->                 kunit_release_action(test, driver_unregister_wrapper, (vo=
-id *)driver);
-> +               kunit_kfree_const(test, driver_name);
-> +       }
->  }
->  EXPORT_SYMBOL_GPL(kunit_device_unregister);
->
-> --
-> 2.46.0.rc1.232.g9752f9e123-goog
->
+After this, I can start posting the MPAM driver to make use of resctrl on arm64.
+(What's MPAM? See the cover letter of the first series. [1])
+
+This series is based on v6.11-rc1 and can be retrieved from:
+https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/move_to_fs/v4
+
+As ever - bugs welcome,
+Thanks,
+
+James
+
+[v3] https://lore.kernel.org/r/20240614150033.10454-1-james.morse@arm.com
+[v2] https://lore.kernel.org/r/20240426150537.8094-1-Dave.Martin@arm.com
+[v1] https://lore.kernel.org/r/20240321165106.31602-1-james.morse@arm.com
+[1] https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
+
+James Morse (39):
+  x86/resctrl: Fix allocation of cleanest CLOSID on platforms with no
+    monitors
+  x86/resctrl: Add a helper to avoid reaching into the arch code
+    resource list
+  x86/resctrl: Remove fflags from struct rdt_resource
+  x86/resctrl: Use schema type to determine how to parse schema values
+  x86/resctrl: Use schema type to determine the schema format string
+  x86/resctrl: Move data_width to be a schema property
+  x86/resctrl: Add max_bw to struct resctrl_membw
+  x86/resctrl: Generate default_ctrl instead of sharing it
+  x86/resctrl: Add helper for setting CPU default properties
+  x86/resctrl: Remove rdtgroup from update_cpu_closid_rmid()
+  x86/resctrl: Export resctrl fs's init function
+  x86/resctrl: Wrap resctrl_arch_find_domain() around rdt_find_domain()
+  x86/resctrl: Move resctrl types to a separate header
+  x86/resctrl: Add a resctrl helper to reset all the resources
+  x86/resctrl: Move monitor exit work to a resctrl exit call
+  x86/resctrl: Move monitor init work to a resctrl init call
+  x86/resctrl: Rewrite and move the for_each_*_rdt_resource() walkers
+  x86/resctrl: Export the is_mbm_*_enabled() helpers to asm/resctrl.h
+  x86/resctrl: Add resctrl_arch_is_evt_configurable() to abstract BMEC
+  x86/resctrl: Change mon_event_config_{read,write}() to be arch helpers
+  x86/resctrl: Move mbm_cfg_mask to struct rdt_resource
+  x86/resctrl: Add resctrl_arch_ prefix to pseudo lock functions
+  x86/resctrl: Allow an architecture to disable pseudo lock
+  x86/resctrl: Make prefetch_disable_bits belong to the arch code
+  x86/resctrl: Make resctrl_arch_pseudo_lock_fn() take a plr
+  x86/resctrl: Move thread_throttle_mode_init() to be managed by resctrl
+  x86/resctrl: Move get_config_index() to a header
+  x86/resctrl: Claim get_{mon,ctrl}_domain_from_cpu() helpers for
+    resctrl
+  x86/resctrl: Describe resctrl's bitmap size assumptions
+  x86/resctrl: Rename resctrl_sched_in() to begin with "resctrl_arch_"
+  x86/resctrl: resctrl_exit() teardown resctrl but leave the mount point
+  x86/resctrl: Drop __init/__exit on assorted symbols
+  x86/resctrl: Move is_mba_sc() out of core.c
+  x86/resctrl: Add end-marker to the resctrl_event_id enum
+  x86/resctrl: Remove a newline to avoid confusing the code move script
+  x86/resctrl: Split trace.h
+  fs/resctrl: Add boiler plate for external resctrl code
+  x86/resctrl: Move the filesystem bits to headers visible to fs/resctrl
+  x86/resctrl: Add python script to move resctrl code to /fs/resctrl
+
+ MAINTAINERS                                   |   2 +
+ arch/Kconfig                                  |   8 +
+ arch/x86/Kconfig                              |  12 +-
+ arch/x86/include/asm/resctrl.h                |  45 +-
+ arch/x86/kernel/cpu/resctrl/Makefile          |   8 +-
+ arch/x86/kernel/cpu/resctrl/core.c            | 174 ++--
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c     |  67 +-
+ arch/x86/kernel/cpu/resctrl/internal.h        | 215 +----
+ arch/x86/kernel/cpu/resctrl/monitor.c         | 104 ++-
+ arch/x86/kernel/cpu/resctrl/monitor_trace.h   |  31 +
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c     |  60 +-
+ .../resctrl/{trace.h => pseudo_lock_trace.h}  |  24 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c        | 276 +++++--
+ arch/x86/kernel/process_32.c                  |   2 +-
+ arch/x86/kernel/process_64.c                  |   2 +-
+ fs/Kconfig                                    |   1 +
+ fs/Makefile                                   |   1 +
+ fs/resctrl/Kconfig                            |  37 +
+ fs/resctrl/Makefile                           |   6 +
+ fs/resctrl/ctrlmondata.c                      |   0
+ fs/resctrl/internal.h                         |   0
+ fs/resctrl/monitor.c                          |   0
+ fs/resctrl/monitor_trace.h                    |   0
+ fs/resctrl/pseudo_lock.c                      |   0
+ fs/resctrl/pseudo_lock_trace.h                |   0
+ fs/resctrl/rdtgroup.c                         |   0
+ include/linux/resctrl.h                       | 244 +++++-
+ include/linux/resctrl_types.h                 |  59 ++
+ resctrl_copy_pasta.py                         | 779 ++++++++++++++++++
+ 29 files changed, 1655 insertions(+), 502 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/resctrl/monitor_trace.h
+ rename arch/x86/kernel/cpu/resctrl/{trace.h => pseudo_lock_trace.h} (56%)
+ create mode 100644 fs/resctrl/Kconfig
+ create mode 100644 fs/resctrl/Makefile
+ create mode 100644 fs/resctrl/ctrlmondata.c
+ create mode 100644 fs/resctrl/internal.h
+ create mode 100644 fs/resctrl/monitor.c
+ create mode 100644 fs/resctrl/monitor_trace.h
+ create mode 100644 fs/resctrl/pseudo_lock.c
+ create mode 100644 fs/resctrl/pseudo_lock_trace.h
+ create mode 100644 fs/resctrl/rdtgroup.c
+ create mode 100644 include/linux/resctrl_types.h
+ create mode 100644 resctrl_copy_pasta.py
+
+-- 
+2.39.2
+
 
