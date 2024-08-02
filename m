@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-272740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC4C94606F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:25:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCE8946076
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222D3287DC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:25:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811771C21666
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C774B166F37;
-	Fri,  2 Aug 2024 15:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3DF13635C;
+	Fri,  2 Aug 2024 15:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XD7MU5yg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ZB2bSwDS"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146EF15C133
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8C3175D36;
+	Fri,  2 Aug 2024 15:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722612212; cv=none; b=leOZvrHbNYhSKPV06iJgTAKjJoZsuD/vd9YGShLtIzLq54ATqXPZ3rk9zTk+M92XMEzV7/h29EQuK7b/omtt8EcMK2Jwb0t4jVpZ+oOMomrd7ejx3+ljVHdqAiJdHWgZf79vrLoEPv26NvnELOylWtfJG9AMjAMS4GPq56oVKTo=
+	t=1722612284; cv=none; b=MmxkaUbBNx+TlC7q/tC3G9R3s0NVmAvQXSKIVzEcpC5tD64+icNMGgLXqAUkVXjkfXxHUUOe2upLgq7R6DVfm7M/DzCLdzXAJSmaAHC/mTBguPWIlA/ogH3C/qVYswUmr4D0gg5BdQ1WGU78LzvOxBTRw9H5+37PGTRMqhifanc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722612212; c=relaxed/simple;
-	bh=Ck9LEwXJuTKp2hn5gIf5h/hL9jCsANACSnvPZxzbkos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OIjzVmoNacW0Tu/0y1BH02YSugew7wJOi706uTUuB5jjU5ru7BiyPlsdUnKY+zDW/1HZvzIcJUz7TRHI1UgH5YCfuRFxa0ZaOMHQWJ/uS0uEr3y3Fzq/yy0P2nzS0l9GiQuEo6Fw7jYYx65m0fQxYmjCC9Ro8IlDJcJcz8puA9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XD7MU5yg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 443D0C32782;
-	Fri,  2 Aug 2024 15:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722612211;
-	bh=Ck9LEwXJuTKp2hn5gIf5h/hL9jCsANACSnvPZxzbkos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XD7MU5ygwhpiOocynTMKY/af/KzGc4OmemcQ5yRyiEEXQFnk5SoPqs9p+eIOC7XhJ
-	 Az3LiSTmhJe80QdO6QsOILdLlP02vHVkrWNK0fw2q9PsDs68KmcEkIfWlO2pu9Zj2N
-	 7+SGCAeBeDYtwOOZ1ChPh0lS+K9rN/UaE5D2nuP00zVKIeKFTnoqu8D8gx47+nZhlA
-	 cWHijqMq8Yk8fIj+hCoB8JyJQofSsiagJCeu5ANr6j0esikMmUVkda7H533aWwZOzk
-	 Xh1MpF3vVBITANuBQ2TQUzc79D0ujx+q4gBeCM6KcKFI1aAnNB2B9d9iyeiKZYnw0T
-	 jplV0BCSYyywg==
-Date: Fri, 2 Aug 2024 16:23:28 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Cristian.Birsan@microchip.com
-Cc: Andrei.Simion@microchip.com, claudiu.beznea@tuxon.dev,
-	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Update DTS path for ARM/Microchip (AT91) SoC
-Message-ID: <20240802-trustable-copy-8595abfa5625@spud>
-References: <20240731144100.182221-1-andrei.simion@microchip.com>
- <67dae338-31f9-4b5a-b870-769a914464bf@microchip.com>
+	s=arc-20240116; t=1722612284; c=relaxed/simple;
+	bh=tSOPhpPWSDfuhuQNh/03dUPsZeMbnMz0ai/De9506rg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jPWTx7LleT2PdLWL9n7cX3RNsyhFvS/L5qgJYw1Di5/FBgnPr3T+uxJRE89jt9iGGprgJQeDiP6rtEz4Wo7LLlY3iJewHDubEWMqep1xmi8LjkLKmbQwkFTsAJR95upmm9n7w+/wwFAY1fWonSEkzmz0UNDI0RzZMYOwiQ5sHuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ZB2bSwDS; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1722612283; x=1754148283;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Jl1MLgN/io3EBYNcV6UPk1uVnZispg71Was7orwfQaE=;
+  b=ZB2bSwDSQMCFgSck3j9myS5Kamh39Vinml12NivGK1f78Od2CQG2y21D
+   c0fME7Kb96b9T+J2ulfKHDXFAXABhKTsqyqU9CucaBe6QJlPfOEM2vHWb
+   oEOaZlBagM4y+PcACTLZw/jPQ2CtqjlCL2PqeZyFTaQ7pM/TbNvfk8gXO
+   E=;
+X-IronPort-AV: E=Sophos;i="6.09,258,1716249600"; 
+   d="scan'208";a="414879173"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 15:24:40 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:37986]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.47.88:2525] with esmtp (Farcaster)
+ id 52fc12c4-fc78-4936-82aa-b0c63a035f2a; Fri, 2 Aug 2024 15:24:39 +0000 (UTC)
+X-Farcaster-Flow-ID: 52fc12c4-fc78-4936-82aa-b0c63a035f2a
+Received: from EX19MTAUWC001.ant.amazon.com (10.250.64.174) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 2 Aug 2024 15:24:35 +0000
+Received: from dev-dsk-jorcrous-2c-c0367878.us-west-2.amazon.com
+ (10.189.195.130) by mail-relay.amazon.com (10.250.64.145) with Microsoft SMTP
+ Server id 15.2.1258.34 via Frontend Transport; Fri, 2 Aug 2024 15:24:35 +0000
+Received: by dev-dsk-jorcrous-2c-c0367878.us-west-2.amazon.com (Postfix, from userid 14178300)
+	id 0E1D8A79E; Fri,  2 Aug 2024 15:24:35 +0000 (UTC)
+From: Jordan Crouse <jorcrous@amazon.com>
+To: <linux-media@vger.kernel.org>
+CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Robert Foss <rfoss@kernel.org>, Todor Tomov
+	<todor.too@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/2] media: camss: Fixups for large capture frames
+Date: Fri, 2 Aug 2024 15:24:32 +0000
+Message-ID: <20240802152435.35796-1-jorcrous@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="X/8ipsA4lfjMk04E"
-Content-Disposition: inline
-In-Reply-To: <67dae338-31f9-4b5a-b870-769a914464bf@microchip.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+
+A few small issues discovered while (thus far unsuccessfully) trying to bring
+up a 64MP sensor. The chosen frame limitation of 8192 seems to be somewhat
+arbitrary as there don't appear to be any hardware limits on maximum frame size.
+Double the maximum allowable frame size to accommodate bigger sensors.
+
+Next the larger data sizes end up needing bigger pixel clocks. This exposed a
+bug for 8250 devices where the VFE clocks are shared between two blocks, but
+the CSID block is being initialized second and overwriting the carefully
+selected clock rates from VFE. This was likely not a problem earlier because
+the lowest VFE clock rate that CSID was selecting was good enough for the
+family of sensors that were being used.
 
 
---X/8ipsA4lfjMk04E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Jordan Crouse (2):
+  media: camss: Increase the maximum frame size
+  media: camss: Avoid overwriting vfe clock rates for 8250
 
-On Fri, Aug 02, 2024 at 12:11:11PM +0000, Cristian.Birsan@microchip.com wro=
-te:
-> Hi Andrei,
->=20
-> On 31.07.2024 17:41, Andrei Simion wrote:
-> > Update the path to the supported DTS files for ARM/Microchip (AT91)
-> > SoC to ensure that the output of the get_maintainer.pl script includes
-> > the email addresses of the maintainers for all files located in
-> > arch/arm/boot/dts/microchip.
-> >=20
-> > Suggested-by: Conor Dooley <conor@kernel.org>
-> > Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
->=20
-> This is helpful for SAM9x60 and SAM9x75 boards. On the other hand it=20
-> will add other boards too but there is no explicit maintainer for them=20
-> so I hope is fine.
+ .../media/platform/qcom/camss/camss-csid.c    |  8 +++----
+ .../media/platform/qcom/camss/camss-csiphy.c  |  4 ++--
+ .../media/platform/qcom/camss/camss-ispif.c   |  4 ++--
+ drivers/media/platform/qcom/camss/camss-vfe.c |  4 ++--
+ .../media/platform/qcom/camss/camss-video.c   |  6 +++---
+ drivers/media/platform/qcom/camss/camss.c     | 21 +++++++++++++------
+ 6 files changed, 28 insertions(+), 19 deletions(-)
 
-Ye, even if it did add other boards I think it would be correct to do,
-as having a single tree for the arm32 microchip boards is a good idea.
+-- 
+2.40.1
 
-Cheers,
-Conor.
-
->=20
-> Reviewed-by: Cristian Birsan <cristian.birsan@microchip.com>
->=20
-> > ---
-> > Based on discussion:
-> > https://lore.kernel.org/lkml/20240709-education-unfreeze-a719c6927d73@s=
-pud/
-> > ---
-> >   MAINTAINERS | 3 +--
-> >   1 file changed, 1 insertion(+), 2 deletions(-)
-> >=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 36d66b141352..c9f320ba8bc9 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -2542,8 +2542,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderate=
-d for non-subscribers)
-> >   S:	Supported
-> >   W:	http://www.linux4sam.org
-> >   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git
-> > -F:	arch/arm/boot/dts/microchip/at91*
-> > -F:	arch/arm/boot/dts/microchip/sama*
-> > +F:	arch/arm/boot/dts/microchip/
-> >   F:	arch/arm/include/debug/at91.S
-> >   F:	arch/arm/mach-at91/
-> >   F:	drivers/memory/atmel*
-> >=20
-> > base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
->=20
-> Regards,
-> Cristi
-
---X/8ipsA4lfjMk04E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqz58AAKCRB4tDGHoIJi
-0qfvAP4kVwZOzMHXrN129a0Av8wwFwZlwglTXMewYSeLyU2JyAD/azU83ku0XmfE
-BH2q/jztu7YWyeT7EUSZ8Jk0KDSocQI=
-=Kl0O
------END PGP SIGNATURE-----
-
---X/8ipsA4lfjMk04E--
 
