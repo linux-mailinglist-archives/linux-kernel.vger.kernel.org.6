@@ -1,159 +1,136 @@
-Return-Path: <linux-kernel+bounces-272232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39B89458EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:35:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9755B9458F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31CB31C225B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:35:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A721C21638
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530681BF32A;
-	Fri,  2 Aug 2024 07:34:47 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A621BE87E;
-	Fri,  2 Aug 2024 07:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE7E1BF30D;
+	Fri,  2 Aug 2024 07:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="B+gbkflc"
+Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net [178.154.239.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15FC482EF;
+	Fri,  2 Aug 2024 07:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722584086; cv=none; b=NR53mCvp/8C+Zh+FS+LNfpOCklWpYDyG3g1i+1w6sXzsPF/RG0iTgeb1TQVrMWclnQeL/NccxgWci/RutU3fgVAaAU6ClRL1bAdvdf27qBO9yBpZFOs3edRf421R9OnI4eu1+HTfYp16sfhe2r34AEZlyRB8KEadqMcKZHEvnKU=
+	t=1722584187; cv=none; b=sr+K7eGaIPS75Gkr4OlmaudDkNAMetEupwf2eFd//k4eBKtAHMY0g8Ki5wYLp0p7zlmZC43s/Z9F+9cBrkCwQ1eXNdISsmT474YhAwR7k+ZKhXTBr8wxXg2mBNLfMWz1TPC023zb2gujoHMXKr0r6Cu1rsdylwE6O7vUReu2cbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722584086; c=relaxed/simple;
-	bh=28kV5J8/flAVt86/GsEj43NZxtciKgmXFgOHNgHpFQI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hLCkO6Z2M9XFNK5jHD+510JJ6f97yOPTG0b2pjJ3Tz2VgaRPvewo3V7XVRIfHWQLnBBJhofTsuZnEwS3MsgyEvz3Ao3xIzxyjiHlBYbZfTQv6pYEMorbsgZq2mP3hVoPYsBOkdNqZbDQoAXOdnLU5LOIqMqTJjsfaZsxnqRSsvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxrusQjKxmBloGAA--.22331S3;
-	Fri, 02 Aug 2024 15:34:40 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMCxbuUPjKxm0GILAA--.55848S3;
-	Fri, 02 Aug 2024 15:34:39 +0800 (CST)
-Subject: Re: [PATCH v12 65/84] KVM: LoongArch: Mark "struct page" pfns
- accessed only in "slow" page fault path
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
- David Stevens <stevensd@chromium.org>
-References: <20240726235234.228822-1-seanjc@google.com>
- <20240726235234.228822-66-seanjc@google.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <d5405245-edd3-9bc5-0c40-282a30e46fae@loongson.cn>
-Date: Fri, 2 Aug 2024 15:34:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1722584187; c=relaxed/simple;
+	bh=xFfFI1VUxM96WEW9h09vMDS1bRrM3Fk2qt43Z+ICuZ8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uKMlx82TRvia6UWp4OhrxgBHFAjpXbHsmXLTKdxQt2nkyAneXWR0UJfnM2ufRgniRuORF05wQI7wF+PM0mc+EQCJxDoGGqeYTi5neBtTEbepFAXc6YTkOhNueFnNdGMYaL0lEzqQJtktPvBikksAi7Jl25CUH1a4OwWgnBuPcQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=B+gbkflc; arc=none smtp.client-ip=178.154.239.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3ca5:0:640:b181:0])
+	by forward500d.mail.yandex.net (Yandex) with ESMTPS id D54DA614BA;
+	Fri,  2 Aug 2024 10:36:14 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 6aS9oj3g9Gk0-oGKazRiT;
+	Fri, 02 Aug 2024 10:36:13 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1722584173; bh=xFfFI1VUxM96WEW9h09vMDS1bRrM3Fk2qt43Z+ICuZ8=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=B+gbkflcsamzsGcKQTG4gVtLeiw5V77vFyRCXGV32y02UNz0jqZWx/MHlr09NS+AF
+	 H/nuqOh4suJapcpzsjCr0oA+GzqaB3O/j3B06JXBVCF/TWiGCMWTOk55v0lhknim05
+	 7duSEm+DNJsbKzrqYeFrO89AuJ66z0aYIFrJU63c=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <a1a27117725305dcd6135df193fe2b74646a9e26.camel@maquefel.me>
+Subject: Re: [PATCH v11 00/38] ep93xx device tree conversion
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: "Rob Herring (Arm)" <robh@kernel.org>, Alexander Sverdlin
+	 <alexander.sverdlin@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-watchdog@vger.kernel.org, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, Damien Le Moal
+ <dlemoal@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry
+ Reding <thierry.reding@gmail.com>,  Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-pwm@vger.kernel.org, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>, Ralf Baechle <ralf@linux-mips.org>, 
+ Sebastian Reichel <sre@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>,  linux-ide@vger.kernel.org, Stephen
+ Boyd <sboyd@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, linux-spi@vger.kernel.org, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Mark Brown
+ <broonie@kernel.org>,  Hartley Sweeten <hsweeten@visionengravers.com>,
+ linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,  Andrew Lunn
+ <andrew@lunn.ch>, Richard Weinberger <richard@nod.at>, Eric Dumazet
+ <edumazet@google.com>,  linux-sound@vger.kernel.org, Arnd Bergmann
+ <arnd@arndb.de>,  linux-input@vger.kernel.org, Jaroslav Kysela
+ <perex@perex.cz>, Sergey Shtylyov <s.shtylyov@omp.ru>, Lukasz Majewski
+ <lukma@denx.de>
+Date: Fri, 02 Aug 2024 10:36:06 +0300
+In-Reply-To: <f68b628c3978a4fb0e5989e3b6918c756da1fefb.camel@gmail.com>
+References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
+	 <172104541245.3725513.13547524352291855487.robh@kernel.org>
+	 <f68b628c3978a4fb0e5989e3b6918c756da1fefb.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240726235234.228822-66-seanjc@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxbuUPjKxm0GILAA--.55848S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7WFWUJw1rKF47AFWUZFWfCrX_yoW8ZF1xpF
-	ZxCwsrtr4rtrn093srta4qvF17Gw4DKr1xX3W2q34FkFnIqw1Y93W8W397WFyUJ392ya1S
-	vF1rt3WUWan0vacCm3ZEXasCq-sJn29KB7ZKAUJUUUUA529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUShiSDU
-	UUU
 
+Hi Rob,
 
+On Mon, 2024-07-15 at 22:46 +0200, Alexander Sverdlin wrote:
+> Hi Rob,
+>=20
+> On Mon, 2024-07-15 at 06:12 -0600, Rob Herring (Arm) wrote:
+> > My bot found new DTB warnings on the .dts files added or changed in
+> > this
+> > series.
+> >=20
+> > Some warnings may be from an existing SoC .dtsi. Or perhaps the
+> > warnings
+> > are fixed by another series. Ultimately, it is up to the platform
+> > maintainer whether these warnings are acceptable or not. No need to
+> > reply
+> > unless the platform maintainer has comments.
+> >=20
+> > If you already ran DT checks and didn't see these error(s), then
+> > make sure dt-schema is up to date:
+> >=20
+> > =C2=A0 pip3 install dtschema --upgrade
+> >=20
+> >=20
+> > New warnings running 'make CHECK_DTBS=3Dy cirrus/ep93xx-bk3.dtb
+> > cirrus/ep93xx-edb9302.dtb cirrus/ep93xx-ts7250.dtb' for
+> > 20240715-ep93xx-v11-0-4e924efda795@maquefel.me:
+> >=20
+> > arch/arm/boot/dts/cirrus/ep93xx-edb9302.dtb:
+> > /soc/spi@808a0000/codec@0: failed to match any schema with
+> > compatible: ['cirrus,cs4271']
+>=20
+> well, this seems to come from the fact is still documented in a .txt
+> file
+> (Documentation/devicetree/bindings/sound/cs4271.txt), which is not
+> really
+> the scope of this series. Hope it's OK to ignore it for the series.
+>=20
 
-On 2024/7/27 上午7:52, Sean Christopherson wrote:
-> Mark pages accessed only in the slow path, before dropping mmu_lock when
-> faulting in guest memory so that LoongArch can convert to
-> kvm_release_faultin_page() without tripping its lockdep assertion on
-> mmu_lock being held.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/loongarch/kvm/mmu.c | 20 ++------------------
->   1 file changed, 2 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-> index 364dd35e0557..52b5c16cf250 100644
-> --- a/arch/loongarch/kvm/mmu.c
-> +++ b/arch/loongarch/kvm/mmu.c
-> @@ -552,12 +552,10 @@ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
->   static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
->   {
->   	int ret = 0;
-> -	kvm_pfn_t pfn = 0;
->   	kvm_pte_t *ptep, changed, new;
->   	gfn_t gfn = gpa >> PAGE_SHIFT;
->   	struct kvm *kvm = vcpu->kvm;
->   	struct kvm_memory_slot *slot;
-> -	struct page *page;
->   
->   	spin_lock(&kvm->mmu_lock);
->   
-> @@ -570,8 +568,6 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
->   
->   	/* Track access to pages marked old */
->   	new = kvm_pte_mkyoung(*ptep);
-> -	/* call kvm_set_pfn_accessed() after unlock */
-> -
->   	if (write && !kvm_pte_dirty(new)) {
->   		if (!kvm_pte_write(new)) {
->   			ret = -EFAULT;
-> @@ -595,23 +591,11 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
->   	}
->   
->   	changed = new ^ (*ptep);
-> -	if (changed) {
-> +	if (changed)
->   		kvm_set_pte(ptep, new);
-> -		pfn = kvm_pte_pfn(new);
-> -		page = kvm_pfn_to_refcounted_page(pfn);
-> -		if (page)
-> -			get_page(page);
-> -	}
-> +
->   	spin_unlock(&kvm->mmu_lock);
->   
-> -	if (changed) {
-> -		if (kvm_pte_young(changed))
-> -			kvm_set_pfn_accessed(pfn);
-> -
-> -		if (page)
-> -			put_page(page);
-> -	}
-> -
->   	if (kvm_pte_dirty(changed))
->   		mark_page_dirty(kvm, gfn);
->   
-> 
-Reviewed-by: Bibo Mao <maobibo@loongson.cn>
+Indeed it resides in
+Documentation/devicetree/bindings/sound/cs4271.txt.
+
+Can we slip for the series ?
+
+Actually i found this one on mail lists:
+
+https://lore.kernel.org/lkml/20240709184231.125207-1-animeshagarwal28@gmail=
+.com/
+
+Conversion of cs4270.txt, Alexander isn't it almost the same thing as
+cs4271 ?
 
 
