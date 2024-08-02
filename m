@@ -1,48 +1,82 @@
-Return-Path: <linux-kernel+bounces-272568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCE2945E10
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:47:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562E6945E15
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB582831C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:47:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFEA7B23079
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D521E3CC4;
-	Fri,  2 Aug 2024 12:47:16 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AF41E2899;
+	Fri,  2 Aug 2024 12:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iMzr/r2s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AB41E2889;
-	Fri,  2 Aug 2024 12:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107551E3CA7
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 12:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722602836; cv=none; b=SOHOwHm9S5S089qkIt9R0hjoa5pke+GMRHiz+XZt9IxcC4ddoDKy7NRGCqSmTnARtq7578Tt671uAiDclqbykL8P3M0AlGhhal61KOSTPIACnDoZuloAZ58fK7PhX1errVAp9vZCd1pllR3X19NfuDbTUbWZPKde/UG4BnoiU+Q=
+	t=1722602846; cv=none; b=YMaehudGpDI4Pw6NyywecWOgz9fP5t3qJKxh+NGbbg+r2tw4jvoMZWiFF7dDhXZizMbgLrOEFJ/DhAt1c0l8iuWSC5GGErSgBRVL0BqS9zU4tB4i0lnGDSAQHUbKqwO0Rdydlmlwynrdzw74gBox3DDVh0HIWbgJtQ2Xmca4OnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722602836; c=relaxed/simple;
-	bh=QwtvSHP8orsfWRhmoOyhHXEUD00kRv35Tia6kl9g/64=;
+	s=arc-20240116; t=1722602846; c=relaxed/simple;
+	bh=T3dNCXJURRRkxySqwgtV8ojNjDh9wCEAmFfwbrdC/8k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mcn3EuvgNUg20LhlK9UN5YTwrkBjyUqPuo+hDm7yqrIU5vxRaZQiiPnJLA/c85xSz4bkqzW6gmQw1S1vZxqcphMJ6YKA9n1lGCMCB1TJj6IrJjdtS4xMm+QWMuw9NuellaUw+OvId0n+d/6j+A4QSAS3k0ti96Q4VL9dKa+zgfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sZrXr-001zj2-0Q;
-	Fri, 02 Aug 2024 20:46:53 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 02 Aug 2024 20:46:52 +0800
-Date: Fri, 2 Aug 2024 20:46:52 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Roman Smirnov <r.smirnov@omp.ru>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] crypto: mpi: add NULL checks to mpi_normalize().
-Message-ID: <ZqzVPGCbwAS8ChEa@gondor.apana.org.au>
-References: <20240716082825.65219-1-r.smirnov@omp.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PPIIEmkmIwY8adAKZmy3YuSyKOOMwe9t1vgT7zeR9tP/Q2wgo3yYyIJ5YEw64fuJv1gzUmhNCaqytdz6w7/SRrHmR5ntQiFNKIRYY5cbc/xy8T2P7Ixplr28IfKLXGXmkf/meCa5fbcyefj9BYYSJr91h2VGv+ST/Ep9c6JYkXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iMzr/r2s; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722602845; x=1754138845;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T3dNCXJURRRkxySqwgtV8ojNjDh9wCEAmFfwbrdC/8k=;
+  b=iMzr/r2sYR8k7BJPQm3Pbz4m6e00zD7POYp+lBvYvntMInoC2asX7Q7W
+   cY79EFxNHf5SaQxgQeW3/rSV9Yb0t/qZhusyBdaDzIu5gunpX2RJC4Kv3
+   3hxZ3G6JZDT7LHcPa78wg/mW/388NNGeWf9Kai3X2yZNah1RkJbi1fcoT
+   rd1GMPRyd8ithn6EusHXWmtFAg3i1V5ruSxz/BIa+MRTYTLPqWjuhak04
+   T6MpK33A4l+QpjtHwtkH9kivywZrB2TunARaJUm26mPqCEPL4CGM8/Jin
+   7nyuPJufVUbeU0SGIU7pqv5ELpjBHu4CTWc8PxLGVPSVuFJZddkFdQ+j1
+   g==;
+X-CSE-ConnectionGUID: cBIRTYOvQkaIXAYhdHZCiA==
+X-CSE-MsgGUID: KwfdJhpQT0W3+yjy5RE9Ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="31995652"
+X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
+   d="scan'208";a="31995652"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 05:47:24 -0700
+X-CSE-ConnectionGUID: NaDYw3I0Sg+OqUuONhJFww==
+X-CSE-MsgGUID: mStR05z2TvaPico6O1qerQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
+   d="scan'208";a="59724145"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 02 Aug 2024 05:47:18 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 7DCD4268; Fri, 02 Aug 2024 15:47:17 +0300 (EEST)
+Date: Fri, 2 Aug 2024 15:47:17 +0300
+From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To: Tim Merrifield <tim.merrifield@broadcom.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Xin Li <xin3.li@intel.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Kai Huang <kai.huang@intel.com>, 
+	Kevin Loughlin <kevinloughlin@google.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Kees Cook <kees@kernel.org>, Mike Rapoport <rppt@kernel.org>, 
+	Brian Gerst <brgerst@gmail.com>, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Ajay Kaher <ajay.kaher@broadcom.com>, Alexey Makhalov <alexey.makhalov@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, virtualization@lists.linux.dev, alex.james@broadcom.com, 
+	doug.covelli@broadcom.com, jeffrey.sheldon@broadcom.com, kevin.christopher@broadcom.com, 
+	aravind-as.srinivasan@broadcom.com, ravindra.kumar@broadcom.com
+Subject: Re: [PATCH v2 1/2] Add prctl to allow userlevel TDX hypercalls
+Message-ID: <djcj4rubfrjdha64bdea5mvujfbtf2j5lgipywvkkdugbrl5u5@xbg5ofqfp6ix>
+References: <cover.1722019360.git.tim.merrifield@broadcom.com>
+ <651ceb5a89721621d522419e8a5d901632a78a22.1722019360.git.tim.merrifield@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,46 +85,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240716082825.65219-1-r.smirnov@omp.ru>
+In-Reply-To: <651ceb5a89721621d522419e8a5d901632a78a22.1722019360.git.tim.merrifield@broadcom.com>
 
-On Tue, Jul 16, 2024 at 11:28:25AM +0300, Roman Smirnov wrote:
-> If a->d is NULL, the NULL pointer will be dereferenced. It
-> is necessary to prevent this case. There is at least one call
-> stack that can lead to it:
-> 
->     mpi_ec_curve_point()
->       ec_pow2()
->         ec_mulm()
->           ec_mod()
->             mpi_mod()
->               mpi_fdiv_r()
->                 mpi_tdiv_r()
->                   mpi_tdiv_qr()
->                     mpi_resize()
->                       kcalloc()
-> 
-> mpi_resize can return -ENOMEM, but this case is not handled in any way.
-> 
-> Next, dereferencing takes place:
-> 
->     mpi_ec_curve_point()
->       mpi_cmp()
->         do_mpi_cmp()
->           mpi_normalize()
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Svace.
-> 
-> Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
-> ---
->  lib/crypto/mpi/mpi-bit.c | 3 +++
->  1 file changed, 3 insertions(+)
+On Fri, Jul 26, 2024 at 06:58:00PM +0000, Tim Merrifield wrote:
+> Add a new process-level prctl option to enable/disable user-level
+> hypercalls when running in a confidential VM. Add support for
+> checking this flag on VMCALL #VE for TDX and transfer control to
+> a hypervisor vendor-specific handler.
 
-I've just posted a patch to remove mpi_ec_curve_point and mpi_tdiv_qr.
-Are there any other code paths with the same problem?
+We need more context from the cover letter here.
 
-Thanks,
+> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+> index f63f8fd00a91..198431919fd2 100644
+> --- a/arch/x86/kernel/process.c
+> +++ b/arch/x86/kernel/process.c
+> @@ -1042,6 +1042,24 @@ unsigned long __get_wchan(struct task_struct *p)
+>  	return addr;
+>  }
+>  
+> +static int get_coco_user_hcall_mode(void)
+> +{
+> +	return !test_bit(MM_CONTEXT_COCO_USER_HCALL,
+> +			&current->mm->context.flags);
+
+Hm. Why "!"?
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+  Kiryl Shutsemau / Kirill A. Shutemov
 
