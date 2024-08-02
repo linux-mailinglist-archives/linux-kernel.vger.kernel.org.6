@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-272986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F13294630E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:25:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F3E946316
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA58E1F25CBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE902833EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942F4165F04;
-	Fri,  2 Aug 2024 18:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F7D1EB4AB;
+	Fri,  2 Aug 2024 18:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pCuVmrDp"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aPeBVC8J"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D06C1AE05A;
-	Fri,  2 Aug 2024 18:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4E21A83D0;
+	Fri,  2 Aug 2024 18:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722622994; cv=none; b=aTkY/Hcnut8xQ2hbE7zH0x3XwjudhHIKCRPec0LxQi20QDg6tzsaTqtaBWDi0vNCnYmpI68xDc4zqvhCQZQP23IcyqP9Fl1AVmu59MnW/RO6fciLkz8vLoTBZ+ixkR2m16VL1P0Ue9PJTr3/w6iuGJTuTDsc4bMx++BzwmzL0xk=
+	t=1722622999; cv=none; b=HIdJg4LZnV67ZrtCHqFa7p8r4WIgn5xVN/VCTcLEj35/qKfiKHDtzIViPk+P5YFe9X0Bbx6Q1ucI4KiZmHVFnqT5m0JfGg4p0AOQywoPcTk3AvcKeYsUpiezABkMKBt5HqRalN1gWkW7oLD/5EFhpT7DurTujB9efHdvvtffEsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722622994; c=relaxed/simple;
-	bh=rJgAl2O0ZJO8rgCPEVw0NiLl953Q04lQpcEyBNjYPy0=;
+	s=arc-20240116; t=1722622999; c=relaxed/simple;
+	bh=YTijXSwbtkDt+G+LCvECK+11VvEPBRmo9gUYwYTi6xQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=COcNKIe2dW8ihcbfKrT+fzwMejrYYpqMTEzKHMSdx7nqyai55mCQ0N+YSy6K5B2PDr0ABwQk6xH99cPRT7y20BqtnAV4/znaLoq5A9d4EVaxCbnWQRSHCwhb1ZglpQXZM7scThk6gUc8WhBhMKn/gKCXUwbR3J9nWm7soMSFc9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pCuVmrDp; arc=none smtp.client-ip=198.47.19.142
+	 MIME-Version:Content-Type; b=R11+QSC/pPsxP/8owad7Ch+w6kWLtxuPm6uvq8WQm/1o7AoMvITnnctlAaQDFu2vUB2B+y4IcJqK6tmjftfNcmlWfwe1B8qm182p9aNATBiSzAOa1d5XtxWBDMcFbkVPDMqf4VhW1wza1IdRoRYvUHOEn++S+olEHZf/+gZp9TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aPeBVC8J; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 472IN3gv091693;
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 472IN3Sh069886;
 	Fri, 2 Aug 2024 13:23:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1722622983;
-	bh=D05ogUP7M3NPmfc18cqNc7y1c0EOJJTWkiJt31qgICE=;
+	bh=J0m4m+3HttioTdWTTPB2v877twY5lb3S3IK/+3qAB9I=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=pCuVmrDpyhHkx0Csty94/qIB79/4dVAT1wmwas05G02d5Vaipmj9L5OjRxHGfuv5+
-	 SH2MDFLoaQon5z/QqsziFJMCuT1bDILbeLUo3Rfm10rGSmH1sLNssxPTJ/zUkBRAxN
-	 gdVhGIjFmmVcDNKEypF63UWRMQ6tLPRfEfLoyLVo=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 472IN3fK071359
+	b=aPeBVC8J1vQ1zB9oeWgGwSxspR9uWUAMlL1e8fKtNwyrQB9oKnBEiQ3GNPjOJFWKU
+	 fHBEkel+tGuBb01wDZSzpw0f0Man8pOlZUKVj9KEPx67P1H2wT1wyNWUxCPTasiGII
+	 HzHkFw+TKmzS1x0rRXC/FyvT8qFhA+TfeJgUSCUI=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 472IN3jv079454
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Fri, 2 Aug 2024 13:23:03 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
  Aug 2024 13:23:02 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Fri, 2 Aug 2024 13:23:02 -0500
 Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 472IN0BU039524;
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 472IN0BV039524;
 	Fri, 2 Aug 2024 13:23:02 -0500
 From: Andrew Davis <afd@ti.com>
 To: Hari Nagalla <hnagalla@ti.com>, Bjorn Andersson <andersson@kernel.org>,
@@ -61,9 +61,9 @@ To: Hari Nagalla <hnagalla@ti.com>, Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Andrew
  Davis <afd@ti.com>
-Subject: [PATCH 5/7] remoteproc: keystone: Use devm action to call PM runtime put sync
-Date: Fri, 2 Aug 2024 13:22:58 -0500
-Message-ID: <20240802182300.244055-5-afd@ti.com>
+Subject: [PATCH 6/7] remoteproc: keystone: Use devm_gpiod_get() helper
+Date: Fri, 2 Aug 2024 13:22:59 -0500
+Message-ID: <20240802182300.244055-6-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240802182300.244055-1-afd@ti.com>
 References: <20240802182300.244055-1-afd@ti.com>
@@ -77,87 +77,63 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-This helps prevent mistakes like putting out of order in cleanup functions
-and forgetting to put sync on error paths.
+Use device life-cycle managed GPIO get function to simplify probe
+and exit paths.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/remoteproc/keystone_remoteproc.c | 34 ++++++++++++------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ drivers/remoteproc/keystone_remoteproc.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index f457cadc1fae0..e65f99b1bf379 100644
+index e65f99b1bf379..da5d5969829fb 100644
 --- a/drivers/remoteproc/keystone_remoteproc.c
 +++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -365,6 +365,13 @@ static void keystone_rproc_mem_release(void *data)
- 	of_reserved_mem_device_release(dev);
- }
+@@ -440,7 +440,7 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+ 	if (ksproc->irq_fault < 0)
+ 		return ksproc->irq_fault;
  
-+static void keystone_rproc_pm_runtime_put(void *data)
-+{
-+	struct device *dev = data;
-+
-+	pm_runtime_put_sync(dev);
-+}
-+
- static int keystone_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -417,30 +424,26 @@ static int keystone_rproc_probe(struct platform_device *pdev)
- 	ret = pm_runtime_resume_and_get(dev);
- 	if (ret < 0)
- 		return dev_err_probe(dev, ret, "failed to enable clock\n");
-+	ret = devm_add_action_or_reset(dev, keystone_rproc_pm_runtime_put, dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to add disable pm devm action\n");
- 
- 	ret = keystone_rproc_of_get_memories(pdev, ksproc);
- 	if (ret)
--		goto disable_clk;
-+		return ret;
- 
- 	ksproc->irq_ring = platform_get_irq_byname(pdev, "vring");
--	if (ksproc->irq_ring < 0) {
--		ret = ksproc->irq_ring;
--		goto disable_clk;
--	}
-+	if (ksproc->irq_ring < 0)
-+		return ksproc->irq_ring;
- 
- 	ksproc->irq_fault = platform_get_irq_byname(pdev, "exception");
--	if (ksproc->irq_fault < 0) {
--		ret = ksproc->irq_fault;
--		goto disable_clk;
--	}
-+	if (ksproc->irq_fault < 0)
-+		return ksproc->irq_fault;
- 
- 	ksproc->kick_gpio = gpiod_get(dev, "kick", GPIOD_ASIS);
+-	ksproc->kick_gpio = gpiod_get(dev, "kick", GPIOD_ASIS);
++	ksproc->kick_gpio = devm_gpiod_get(dev, "kick", GPIOD_ASIS);
  	ret = PTR_ERR_OR_ZERO(ksproc->kick_gpio);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "failed to get gpio for virtio kicks\n");
+@@ -457,27 +457,19 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+ 	/* ensure the DSP is in reset before loading firmware */
+ 	ret = reset_control_status(ksproc->reset);
+ 	if (ret < 0) {
+-		dev_err(dev, "failed to get reset status, status = %d\n", ret);
+-		goto release_mem;
++		return dev_err_probe(dev, ret, "failed to get reset status\n");
+ 	} else if (ret == 0) {
+ 		WARN(1, "device is not in reset\n");
+ 		keystone_rproc_dsp_reset(ksproc);
+ 	}
+ 
+ 	ret = rproc_add(rproc);
 -	if (ret) {
--		dev_err(dev, "failed to get gpio for virtio kicks, status = %d\n",
+-		dev_err(dev, "failed to add register device with remoteproc core, status = %d\n",
 -			ret);
--		goto disable_clk;
+-		goto release_mem;
 -	}
 +	if (ret)
-+		return dev_err_probe(dev, ret, "failed to get gpio for virtio kicks\n");
++		return dev_err_probe(dev, ret, "failed to register device with remoteproc core\n");
  
- 	ret = of_reserved_mem_device_init(dev);
- 	if (ret) {
-@@ -474,8 +477,6 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, ksproc);
  
- release_mem:
- 	gpiod_put(ksproc->kick_gpio);
--disable_clk:
--	pm_runtime_put_sync(dev);
- 	return ret;
+ 	return 0;
+-
+-release_mem:
+-	gpiod_put(ksproc->kick_gpio);
+-	return ret;
  }
  
-@@ -485,7 +486,6 @@ static void keystone_rproc_remove(struct platform_device *pdev)
+ static void keystone_rproc_remove(struct platform_device *pdev)
+@@ -485,7 +477,6 @@ static void keystone_rproc_remove(struct platform_device *pdev)
+ 	struct keystone_rproc *ksproc = platform_get_drvdata(pdev);
  
  	rproc_del(ksproc->rproc);
- 	gpiod_put(ksproc->kick_gpio);
--	pm_runtime_put_sync(&pdev->dev);
+-	gpiod_put(ksproc->kick_gpio);
  }
  
  static const struct of_device_id keystone_rproc_of_match[] = {
