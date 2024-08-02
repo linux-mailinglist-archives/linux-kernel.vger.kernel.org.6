@@ -1,228 +1,350 @@
-Return-Path: <linux-kernel+bounces-272119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F102945744
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:04:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E228C945748
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACFEB1F24075
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:04:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5267BB225D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7AB22097;
-	Fri,  2 Aug 2024 05:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC60C20B28;
+	Fri,  2 Aug 2024 05:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eeH2Zs+m"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJdPvNc+"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432F28836;
-	Fri,  2 Aug 2024 05:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722575059; cv=fail; b=evjpX006mamOxzBKnKpGSo32/xGnxvcxrNBfz8qM3WaphkT1cVhQUeoIQ+0pfnHuDy2j3HdZwK0EyKkdzXHitgmz/6UQetZvXynDQYFVW+zIu8deNcTZ3a437i7OdtU/zz9srWp9lAWMURoyXZQ9tgPbmMrm6IG0JWlb6cPLkuw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722575059; c=relaxed/simple;
-	bh=7El0q5005LcbyPHmZOCOLAcJ7PVatbY+wAG6/G5l7+I=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dIqyKKBed7HAnWFcgnmcMpgohLK29SJ/UlokM92W7H3rZF4bgD9E/FzNoHpNpurjnOVnj+3yk2OiAeI2Wg3+R+dRM5xI71l3HDjE459+9vut991apukRLqw7sePUVEB8DbVKV+JewS+iWAsN7AVEUARulBA1xkQWcSm8nfTKbd0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eeH2Zs+m; arc=fail smtp.client-ip=40.107.93.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FMTgGp9cDarMrsWO43uTA7dDq5iqYn8zXOTB2JzXxpTA7PfEwQSJVugEGfVVOkr+Q/bmUzgz3sSJx0TBQ+OnyZomEewPwGj7JcudF7Hv7dRFyQcFd0HgdtWNN1VhZumH2IBToABntdbpxj38z6qC2g4CCN9c1MaUv3RZGFCla28+YEmiZTsb8thrNGn5rO17JaYhQu72CZt/AfaDi6X89nJKxwdLXvflbaBKhOSXtUJM/K7u2TuxqG3IVZxKA18rF5xNpf0ME6XmTKw/rqKatf9PHXs4gFEIkrQJEuPTsnIxJSVOo5zi0PiioakvKvzHh+t08uAj22HqwLE3Nj6eBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZtsKxPqotvHupur6Ww8A/srPFiUAbDB5dcTB032qEWc=;
- b=QDKRIPBCclGydslzhfWJJcoD3B0jiMWkWV31xq3YNXYeKQH/MGk/utnYAGEUn/3u3fRHDiyLmPwE5fAe4UYqYbFTFr4Oud00g65xKAJTI89LszCA+LNfsD4kVNIi55j59LbvcdP162wjq8NxBqh8zQZGCAWtciufBBgrbqRQdHMXbQc289DO0mpkR6iY2u0r3iYBCNT3Ka1bN3dvdKb8+GIhXfbrkcjDsmPNeTSMlIXiA254v6VE5kzS/iQduTaAeiHCGFFfa9MY0sEaed547FuKezXrhapnYiMk/tEhZF2MErixm0PvI4YzYYbqnoaOWXMXOaQt9dZV1OTL3A2oTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZtsKxPqotvHupur6Ww8A/srPFiUAbDB5dcTB032qEWc=;
- b=eeH2Zs+mJSnKDW5Ww4pGdj+kYdvOgarUaSge09tNPhFZWqR7xzAsekdo6jXwACDohUogphHz9HJKhKwwvg+dv8VKq1/MgJCUusaeG763NejBM+QGH6G+iMu6vVVZ3z8ffQFXCVxJYYC5sv3NpiLjSei2S6HHLcV3xDqCcwaln3w=
-Received: from BN1PR12CA0011.namprd12.prod.outlook.com (2603:10b6:408:e1::16)
- by CH3PR12MB9218.namprd12.prod.outlook.com (2603:10b6:610:19f::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Fri, 2 Aug
- 2024 05:04:13 +0000
-Received: from BN2PEPF0000449E.namprd02.prod.outlook.com
- (2603:10b6:408:e1:cafe::4b) by BN1PR12CA0011.outlook.office365.com
- (2603:10b6:408:e1::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23 via Frontend
- Transport; Fri, 2 Aug 2024 05:04:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF0000449E.mail.protection.outlook.com (10.167.243.149) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Fri, 2 Aug 2024 05:04:12 +0000
-Received: from BLRRASHENOY1 (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 2 Aug
- 2024 00:02:57 -0500
-From: Gautham R.Shenoy <gautham.shenoy@amd.com>
-To: David Wang <00107082@163.com>
-CC: <perry.yuan@amd.com>, <Alexander.Deucher@amd.com>, <Li.Meng@amd.com>,
-	<Mario.Limonciello@amd.com>, <Xiaojian.Du@amd.com>, <Xinmei.Huang@amd.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<rafael.j.wysocki@intel.com>, <viresh.kumar@linaro.org>
-Subject: Re: [Regression] 6.11.0-rc1: AMD CPU boot with error when CPPC
- feature disabled by BIOS
-In-Reply-To: <2f793cc8.a13d.19108df0a58.Coremail.00107082@163.com>
-References: <20240730140111.4491-1-00107082@163.com>
- <87zfpxsweb.fsf@BLR-5CG11610CF.amd.com>
- <2f793cc8.a13d.19108df0a58.Coremail.00107082@163.com>
-Date: Fri, 2 Aug 2024 10:32:48 +0530
-Message-ID: <87v80jbjpj.fsf@BLR-5CG11610CF.amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13141C2BD
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 05:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722575300; cv=none; b=RFnCRHAZUkjujk498V78rD2KoyF2NCExGP/FYd51JZVsFfijSgwKfIESrEYv3OJlrp9VfbJO9UG4BG7AhKQ6U6jdgzUwLbBHmNOd8Mqbxo8znGuuiKMNSwWy1tdCBHIpowUXdWurAzvl+3EYD2HgaUQk+HNHWKIC+8f2IBb1gKs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722575300; c=relaxed/simple;
+	bh=eog2FjC1EYDmc3Pqnq98TwQQco8omNS757as43ghfxY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XXS3TWIFj4rpPYuojLRtbw2OI+b0brOdiHqz04B/Xl9ndJb9yFUGmDwgS+PPuoTd2SL63/BWCM/9RIne47+s69qFEWwTgh7fujiLvlSsCV/3zGzJ34wLKwZ2e4GyR2F8AyFKKAldKMPK1QUE+iA6snzbEvYX7luoHIg0PZQi07U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WJdPvNc+; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a94aa5080so99110666b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 22:08:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722575297; x=1723180097; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dQSBIHh2x6d9F0Z2/XcgwrwlzUqOX9u6dBtDOp6ZOKw=;
+        b=WJdPvNc+tTK/HXAewV6NkxyPlv/hn/ryTN78njcoHIkuz6RPeazYbpfVu8lOeGkSfk
+         iHBWiwZpBnjYO/v+wxr6URTLEec4RG2QAiSJOKSRq04OOAJZozv1aF9qsHnP6mbH8jD4
+         Emwes/2Sxti6+DAUChlBaekutpCyRGRadpgozCfwrsubCbWoZg5CHs1vqCkv0SXJGVL5
+         5a+w2uEHXgwVgSoF+mUWlIwsLvUaiNx6y1oMknNn/vTl+vqEBF2q/GFa7E9y52wYMnqI
+         qQ9cPr4nMuBZ6LP2eiMxe8VQXWV4WhiPqAxZ7Dlv/QmZeV/5USN/iCuS/Kq1bi7KiBD+
+         9GFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722575297; x=1723180097;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dQSBIHh2x6d9F0Z2/XcgwrwlzUqOX9u6dBtDOp6ZOKw=;
+        b=Z20tOAr+2tIp8KgjPW6rp6kNlITISgWL8H6B8EIPxOZo+mZULZ4HyJQ6ET4v5luJDO
+         43x7MglxCBONo/ueT9tszQY7BP8NjzmTC1Y3tOsuF1/Qx5f8vZHei7WhLudySOKSMvh3
+         Yk89j3l2CX4HTavpez73wtxjdn5B/rcxNbcpcx2xy7AQ+tjXCo3I8ntcIqALMe5bhHZI
+         YS4/dSkYKDTdu4Ob7msLnMKfPwnxtp/FAxiSxuvg0KFDTv0QVpTtwKF/ew9l/wh/8UZe
+         5gjl6xz3WvKnsyTxcQbtBBSuh48AtgtolLwu8Zd2H8DDiHO54G3XYLCGmGxukJeP757n
+         Dg0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUX8l6phvN017OJG7dr2pePHLVqwsFART3aPrJrmaFwBLdo0FIqN4NcfTNRquFmlblEhFvJ05VQcaiCwbtUQwL4AKU97pZgDQNW7hly
+X-Gm-Message-State: AOJu0YwYKPbTYT/k1oJ9q5trDpyaST3xVeMO95D38nlx2r9yKxY4LcDc
+	fb1Z50X5kRigvTiUxuaA1IAA5yXA27uFZ/YFdUpjYNfVil0vGLsYasJyeLKN8uULjZ9bnRG5XRL
+	32sFdrq+bqR7O6HsRLZ7kY0RxTiE=
+X-Google-Smtp-Source: AGHT+IEcTILTMdnWLjjOTY1mWVR8vxXku5vDqawPsrHX4ltfDplMoweepY+N6j+5QQh09FQZJN0qIT5bKCOah18V9y4=
+X-Received: by 2002:a17:907:d16:b0:a7a:bae8:f297 with SMTP id
+ a640c23a62f3a-a7dc5016569mr142804666b.15.1722575296994; Thu, 01 Aug 2024
+ 22:08:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF0000449E:EE_|CH3PR12MB9218:EE_
-X-MS-Office365-Filtering-Correlation-Id: b13d922c-7de3-41f8-4372-08dcb2b08d00
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3qimoRQ+RQymrU2GthNvciJ745r2qsw91lVrztRD45aY+A6vFO+upG6FUCgQ?=
- =?us-ascii?Q?5g/b0V7XT22oHgGikXGVWXuVSfc6mZPMo/PzdyJoYkDm57kHc8VSw0Brj+gq?=
- =?us-ascii?Q?6QfL0MmEmIewjFhwNf1XwtKgKtNYcr+ak05MmBab02sEjXOuN/+/0IXnkvae?=
- =?us-ascii?Q?qfHBvV1d4mkech2BujnGC3QPHLix+LFHZbPdut9NDkUM+8KE2maOZ0bn5oLg?=
- =?us-ascii?Q?3e72Nb6gKWe74xhOYGxV5Jz3Qof9gg7rF1mvz6tVOOBp89dfFOHKrqPMWRlK?=
- =?us-ascii?Q?We7WN6R8+D56U1ibf7IDiaa4hsFU88tZzLjGD6GYGXD+P7PACbnh6pYBQCRi?=
- =?us-ascii?Q?F9P0hVgVnHcFlDN6DCo9gjYMt5AskbUFHRi4Uz4jVjmUlFqdFgbl0cmXHr+2?=
- =?us-ascii?Q?y9G6PuY3atA58p/xWLruiW9QRk3ZC/gjZ9nPvkOiA2Cn85+NYsy/lVJxgR93?=
- =?us-ascii?Q?E/LKclDt81ijeXKrI8XLlRxuE40CzmIp0lEpavD0GXkkKvGF+xkaK1ApOItz?=
- =?us-ascii?Q?f0zhjeFLeNK+wjMNDwLT1r7baAdN3Ha9ZTpxR4DKer8xpoCgQclHxswFdVrd?=
- =?us-ascii?Q?ztIbeEUgFq37a+DkT1RO7mW36TYYHZaaI7ZjUqTyPpaWw8bo/Uxe27n9/yPV?=
- =?us-ascii?Q?0vLZPR4O4hRK8oMwJo6M/47rw/rFVL/k7LFq3Y1OAsLunzY7CvlAA6XZ65tq?=
- =?us-ascii?Q?wjYm0DjhbDmSgMYDHbH6+LDVDX1N2KKQiX3uNzMyEk5dyY3dRpPck4kggSUp?=
- =?us-ascii?Q?D8fBGb581afFntnMcd1uN/ic1tiWIzxKgj+5Cea6zf9IxGq1ZTYPFM+oroen?=
- =?us-ascii?Q?YnEgFMeuxcnfdZG8SiwggEVros/WjL5s62KtxV7iCjfWO9ya23aAct3ZJrwL?=
- =?us-ascii?Q?orhHnv0qkLp4Bi9crK6GLkr8n2AJmYt/vC2AWg4WathLmpgxdSGC07LKBBSE?=
- =?us-ascii?Q?CoLUf4PnFEQGQdp25Gt31ocmAxSBxKkQ9HEY+4cirQkhtlGFCzRoer0mZdhf?=
- =?us-ascii?Q?zDkmx9bH2W7rddBuaj37LSeSmbkdS5Qp5hYo/ingYHrhIM/ryQZKSMsmN43m?=
- =?us-ascii?Q?zV/mkFvCsenGULCaxYrM5CdDMAt+wS+dQcBeQL9Q9IivosOsTSaGzNhiYjaY?=
- =?us-ascii?Q?rerGklecWbKzyXEAmLqbmOX662/7AYsNXZz//K2+78kwwYMrexmZXsnw+16t?=
- =?us-ascii?Q?LOP5vffg0bsXrgqIR7MS3eHu3XF8ZqFIOGtmV71SitRSbXtmNbi0LJMTWXd1?=
- =?us-ascii?Q?6fMW+PXZJGdvG7uV04V6NJmLrwKiMt9QecMu2f2jsE2fZGTdcHXjq+h6ngsQ?=
- =?us-ascii?Q?bZ0mXUFN2lIfw8OjWUSwcsY//NgiOlxWTo5+aT/KxLOUZbxQJRPh725koV5E?=
- =?us-ascii?Q?CBnvBRHDlcWsTrkK3EmgNISRciwWYACL0paGwVu7wHbe2V0kjlwaj5vEAXTa?=
- =?us-ascii?Q?t7G7jPOFxtwHDsNckMacVjPU5gV2dqiW?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2024 05:04:12.7173
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b13d922c-7de3-41f8-4372-08dcb2b08d00
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF0000449E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9218
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 2 Aug 2024 15:08:04 +1000
+Message-ID: <CAPM=9tw0tAEd9LQuK-ANW501UATMrCDJvyAube9N_umUBBWFDQ@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.11-rc2
+To: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Linus,
 
-Hello David,
+Regular weekly fixes. This is a bit larger than usual but doesn't seem
+too crazy.
 
-"David Wang" <00107082@163.com> writes:
+Most of it is vmwgfx changes that fix a bunch of issues with wayland
+userspaces with dma-buf/external buffers and modesetting fixes.
 
-> Hi,
->
-> At 2024-07-31 18:12:12, "Gautham R.Shenoy" <gautham.shenoy@amd.com> wrote:
->>Hello David,
->>
->>David Wang <00107082@163.com> writes:
->>
->>> Hi,
->>>
->>> I notice some kernel warning and errors when I update to 6.11.0-rc1:
->>>
->>>  kernel: [    1.022739] amd_pstate: The CPPC feature is supported but currently disabled by the BIOS.
->>>  kernel: [    1.022739] Please enable it if your BIOS has the CPPC option.
->>>  kernel: [    1.098054] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.110058] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.122057] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.134062] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.134641] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.135128] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.135693] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.136371] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.136390] amd_pstate: failed to register with return -19
->>>  kernel: [    1.138410] ledtrig-cpu: registered to indicate activity on CPUs
->>>
->>>
->>> Those warning message was introduced by commit:
->>>  bff7d13c190ad98cf4f877189b022c75df4cb383 ("cpufreq: amd-pstate: add debug message while CPPC is supported and disabled by SBIOS)
->>> , which make sense.
->>
->>
->>If CPPC is disabed in the BIOS, then the _CPC objects shouldn't have
->>been created. And the error message that you should have seen is
->>"the _CPC object is not present in SBIOS or ACPI disabled".
->>
->>
->>Could you please share the family and model number of the platform where
->>you are observing this ?
->
-> My `cat /proc/cpuinfo` shows something as following:
-> processor	: 0
-> vendor_id	: AuthenticAMD
-> cpu family	: 23
-> model		: 113
+Otherwise it's kinda spread out, v3d fixes some new ioctls, nouveau
+has regression revert and fixes, amdgpu, i915 and ast have some small
+fixes, and some core fixes spread about.
 
+Let me know if any problems,
+Thanks,
+Dave.
 
-This is Family 0x17 (Zen2), Model 0x71. AFAIK, this processor supports
-CPPC but does not have the support for the CPPC MSRs. Hence the CPPC
-communication occurs via shared-memory.
+drm-fixes-2024-08-02:
+drm fixes for 6.11-rc2
 
-Hence the warning introduced by the commit bff7d13c190a ("cpufreq:
-amd-pstate: add debug message while CPPC is supported and disabled by
-SBIOS") is not applicable on your platform. I will send a patch to
-rectify this which avoids the warning for Zen2 Models 0x70-0x7F.
+client:
+- fix error code
 
-Regarding the following errors that you are observing 
+atomic:
+- allow damage clips with async flips
+- allow explicit sync with async flips
 
->>>  kernel: [    1.098054] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.110058] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.122057] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.134062] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.134641] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.135128] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.135693] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.136371] amd_pstate: min_freq(0) or max_freq(0) or nominal_freq(0) value is incorrect
->>>  kernel: [    1.136390] amd_pstate: failed to register with return -19
+kselftests:
+- fix dmabuf-heaps test
 
+panic:
+- fix schedule_work in panic paths
 
-it appears that the CPPC version on your platform is v2 which does not
-advertise the nominal_freq and the lowest_freq. In the absence of these,
-it is not possible for the amd-pstate driver to infer the
-min/max_freq. Which is why the driver bails at this later stage.
+panel:
+- fix OrangePi Neo orientation
 
-The way around it is to add a quirk for your BIOS as done in this commit
-from Perry:
-eb8b6c368202 ("cpufreq: amd-pstate: Add quirk for the pstate CPPC capabilities missing")
+gpuvm:
+- fix missing dependency
 
+amdgpu:
+- SMU 14.x update
+- Fix contiguous VRAM handling for IB parsing
+- GFX 12 fix
+- Regression fix for old APUs
 
---
-Thanks and Regards
-gautham.
+i915:
+- Static analysis fix for int overflow
+- Fix for HDCP2_STREAM_STATUS macro and removal of PWR_CLK_STATE for gen12
+
+nouveau:
+- revert busy wait change that caused a resume regression
+- fix buffer placement fault on dynamic pm s/r
+- fix refcount underflow
+
+ast:
+- fix black screen on resume
+- wake during connector status detect
+
+v3d:
+- fix issues with perf/timestamp ioctls
+
+vmwgfx:
+- fix deadlock in dma-buf fence polling
+- fix screen surface refcounting
+- fix dumb buffer handling
+- fix support for external buffers
+- fix overlay with screen targets
+- trigger modeset on screen moves
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b=
+:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-08-02
+
+for you to fetch changes up to 27ce65f65258cf2f2855162cbeef59659a81fac4:
+
+  Revert "nouveau: rip out busy fence waits" (2024-08-02 14:38:28 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.11-rc2
+
+client:
+- fix error code
+
+atomic:
+- allow damage clips with async flips
+- allow explicit sync with async flips
+
+kselftests:
+- fix dmabuf-heaps test
+
+panic:
+- fix schedule_work in panic paths
+
+panel:
+- fix OrangePi Neo orientation
+
+gpuvm:
+- fix missing dependency
+
+amdgpu:
+- SMU 14.x update
+- Fix contiguous VRAM handling for IB parsing
+- GFX 12 fix
+- Regression fix for old APUs
+
+i915:
+- Static analysis fix for int overflow
+- Fix for HDCP2_STREAM_STATUS macro and removal of PWR_CLK_STATE for gen12
+
+nouveau:
+- revert busy wait change that caused a resume regression
+- fix buffer placement fault on dynamic pm s/r
+- fix refcount underflow
+
+ast:
+- fix black screen on resume
+- wake during connector status detect
+
+v3d:
+- fix issues with perf/timestamp ioctls
+
+vmwgfx:
+- fix deadlock in dma-buf fence polling
+- fix screen surface refcounting
+- fix dumb buffer handling
+- fix support for external buffers
+- fix overlay with screen targets
+- trigger modeset on screen moves
+
+----------------------------------------------------------------
+Alex Deucher (1):
+      drm/amdgpu: Fix APU handling in amdgpu_pm_load_smu_firmware()
+
+Andr=C3=A9 Almeida (2):
+      drm/atomic: Allow userspace to use explicit sync with atomic async fl=
+ips
+      drm/atomic: Allow userspace to use damage clips with async flips
+
+Christian K=C3=B6nig (1):
+      drm/amdgpu: fix contiguous handling for IB parsing v2
+
+Dan Carpenter (1):
+      drm/client: Fix error code in drm_client_buffer_vmap_local()
+
+Danilo Krummrich (2):
+      drm/gpuvm: fix missing dependency to DRM_EXEC
+      drm/nouveau: prime: fix refcount underflow
+
+Dave Airlie (5):
+      nouveau: set placement to original placement on uvmm validate.
+      Merge tag 'amd-drm-fixes-6.11-2024-07-27' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+      Merge tag 'drm-intel-fixes-2024-08-01' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
+      Merge tag 'drm-misc-fixes-2024-08-01' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+      Revert "nouveau: rip out busy fence waits"
+
+Dmitry Osipenko (1):
+      drm/virtio: Fix type of dma-fence context variable
+
+Ian Forbes (2):
+      drm/vmwgfx: Fix overlay when using Screen Targets
+      drm/vmwgfx: Trigger a modeset when the screen moves
+
+Jammy Huang (1):
+      drm/ast: Fix black screen after resume
+
+Kenneth Feng (1):
+      drm/amdgpu/pm: support gpu_metrics sysfs interface for smu v14.0.2/3
+
+Maxime Ripard (2):
+      Merge drm/drm-fixes into drm-misc-fixes
+      Merge drm-misc/drm-misc-next-fixes into drm-misc-fixes
+
+Michael Chen (1):
+      drm/amdgpu: increase mes log buffer size for gfx12
+
+Nikita Zhandarovich (1):
+      drm/i915: Fix possible int overflow in skl_ddi_calculate_wrpll()
+
+Philip Mueller (1):
+      drm: panel-orientation-quirks: Add quirk for OrangePi Neo
+
+Qiuxu Zhuo (1):
+      drm/fb-helper: Don't schedule_work() to flush frame buffer during pan=
+ic()
+
+Suraj Kandpal (1):
+      drm/i915/hdcp: Fix HDCP2_STREAM_STATUS macro
+
+Thomas Zimmermann (1):
+      drm/ast: astdp: Wake up during connector status detection
+
+Tvrtko Ursulin (5):
+      drm/v3d: Prevent out of bounds access in performance query extensions
+      drm/v3d: Fix potential memory leak in the timestamp extension
+      drm/v3d: Fix potential memory leak in the performance extension
+      drm/v3d: Validate passed in drm syncobj handles in the timestamp exte=
+nsion
+      drm/v3d: Validate passed in drm syncobj handles in the
+performance extension
+
+Umesh Nerlige Ramappa (1):
+      i915/perf: Remove code to update PWR_CLK_STATE for gen12
+
+Zack Rusin (4):
+      drm/vmwgfx: Fix a deadlock in dma buf fence polling
+      drm/vmwgfx: Make sure the screen surface is ref counted
+      drm/vmwgfx: Fix handling of dumb buffers
+      drm/vmwgfx: Add basic support for external buffers
+
+Zenghui Yu (1):
+      kselftests: dmabuf-heaps: Ensure the driver name is null-terminated
+
+ drivers/gpu/drm/Kconfig                            |   1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |  16 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mes.c            |   6 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mes.h            |   6 +-
+ drivers/gpu/drm/amd/amdgpu/mes_v11_0.c             |   2 +
+ drivers/gpu/drm/amd/amdgpu/mes_v12_0.c             |   8 +-
+ drivers/gpu/drm/amd/include/mes_v11_api_def.h      |   3 +
+ drivers/gpu/drm/amd/include/mes_v12_api_def.h      |   3 +
+ drivers/gpu/drm/amd/pm/amdgpu_dpm.c                |   3 +-
+ .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |  86 +++-
+ drivers/gpu/drm/ast/ast_dp.c                       |   7 +
+ drivers/gpu/drm/ast/ast_drv.c                      |   5 +
+ drivers/gpu/drm/ast/ast_drv.h                      |   1 +
+ drivers/gpu/drm/ast/ast_mode.c                     |  29 +-
+ drivers/gpu/drm/drm_atomic_uapi.c                  |   5 +-
+ drivers/gpu/drm/drm_client.c                       |   2 +-
+ drivers/gpu/drm/drm_fb_helper.c                    |  11 +
+ drivers/gpu/drm/drm_panel_orientation_quirks.c     |   6 +
+ drivers/gpu/drm/i915/display/intel_dpll_mgr.c      |   6 +-
+ drivers/gpu/drm/i915/display/intel_hdcp_regs.h     |   2 +-
+ drivers/gpu/drm/i915/i915_perf.c                   |  33 --
+ drivers/gpu/drm/nouveau/nouveau_bo.c               |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_chan.c             |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_dmem.c             |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_fence.c            |  30 +-
+ drivers/gpu/drm/nouveau/nouveau_fence.h            |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_gem.c              |   2 +-
+ drivers/gpu/drm/nouveau/nouveau_prime.c            |   3 +-
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c             |   1 +
+ drivers/gpu/drm/v3d/v3d_drv.h                      |   4 +
+ drivers/gpu/drm/v3d/v3d_sched.c                    |  44 +-
+ drivers/gpu/drm/v3d/v3d_submit.c                   | 121 +++--
+ drivers/gpu/drm/virtio/virtgpu_submit.c            |   2 +-
+ drivers/gpu/drm/vmwgfx/vmw_surface_cache.h         |  10 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_bo.c                 | 127 +++---
+ drivers/gpu/drm/vmwgfx/vmwgfx_bo.h                 |  15 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h                |  40 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c              |  17 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_gem.c                |  62 ++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                | 502 +++++++++--------=
+----
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                |  17 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_ldu.c                |  14 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_overlay.c            |   2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_prime.c              |  32 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_resource.c           |  27 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_scrn.c               |  33 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c               | 174 ++++---
+ drivers/gpu/drm/vmwgfx/vmwgfx_surface.c            | 280 +++++++++++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c               |  40 +-
+ tools/testing/selftests/dmabuf-heaps/dmabuf-heap.c |   4 +-
+ 50 files changed, 1202 insertions(+), 650 deletions(-)
 
