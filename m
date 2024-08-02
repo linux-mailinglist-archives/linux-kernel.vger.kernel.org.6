@@ -1,132 +1,104 @@
-Return-Path: <linux-kernel+bounces-272608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCB3945EDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:46:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4198D945EE5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8671F2337A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:46:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB33AB22867
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F101E2885;
-	Fri,  2 Aug 2024 13:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BE11E4870;
+	Fri,  2 Aug 2024 13:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WXqbIFjz"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="p84W7NXy"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B49D1DA26
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 13:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B44481AA;
+	Fri,  2 Aug 2024 13:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722606399; cv=none; b=aR6dKPt8Pr9+/32RxWtf2vM1ZfXyYLabo3orphlfQKWQYV8wmNOKc7DUcRVCcW7r5zX948STxefItqKU8+0lSxxogW5xaG5W98enO+HkMo/9GkdgbP9am4IrqAaxicvtbwqLfO5XTu1c4aQwteQqHbAG4cb0DI3XMOXXQQOU3tw=
+	t=1722606741; cv=none; b=f6kB3l3oFdnMkSurOpY7Cq7NySiS2jC7pwRV8EzK5phwJ2+EyjbxpMKSbG+8TIk5DaQRzzHhjKfpGGLtRu3NhbsM64HJguo9NmarUeA0bJR+1iUopWmb+uwRG1++pVcFi+lL2fOxQeSNk6SM3Ok9D7IkBr3LlYoZ/jpFzBqNDPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722606399; c=relaxed/simple;
-	bh=4c9Ldky+3qywdMlPP+dyoq9OuhFiLIHUR2wWzTIlc9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g8WdfpgeSMpVqEPslBZ0jf60q+GRutdvw0N9ZqDNV5XdhY13bpIP3gHQ4bGj9Rllc3nS7hRloDRdI06rnJQmTrnkSnJQnm+S9G/occNaeDH9MoulBxI6GugFTLIqWcapGq5MPMzjm8XT/kJD3p93A7CWP29+eZU7OfLycUGM5gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WXqbIFjz; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722606390;
-	bh=4c9Ldky+3qywdMlPP+dyoq9OuhFiLIHUR2wWzTIlc9E=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WXqbIFjzG1uB/AbIfD0r8lOiXH4luNOtGxADP0xm/KojkJzU9GZscyAoQxktWnWZF
-	 Fwk3K1AfAhb9mwkm6FHR1QlUZvEN1QE8JeC9ayKPez2SOPL+CknjZqVpshqmoH11pQ
-	 qgl7VvAY1XkoX/hxoTfAyt6840/ZNLau2GFIW+tH8HvLgS6gJ6S367G4mRFRnoKe/T
-	 fd7HxTxEFaU4I2FHaHC//vAl6Euq5mKkAERXdcqtkZ+yeIFUnt09B960F1DwtnPhNI
-	 4P4S6oy9QqEaLW1z/qcwpIWKleih+KXVezLnI9sCfD1yz/aNNPKNQHHCJv76SmO6OE
-	 I7RE6BO6HPINQ==
-Received: from trenzalore.hitronhub.home (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 87CD33782215;
-	Fri,  2 Aug 2024 13:46:29 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Lee Jones <lee@kernel.org>,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Subject: [PATCH] mfd: rk8xx: Add support for rk806 on i2c bus
-Date: Fri,  2 Aug 2024 09:47:36 -0400
-Message-ID: <20240802134736.283851-1-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1722606741; c=relaxed/simple;
+	bh=SiWVKwE1xW8X9EtDGjyX1Wg1kUH1l1z2I6jgWdtmsBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fNJQuY2NLaIl9+Q0O61FE/R3qdBjY3imuW69JGKL9dpFccq+RzDfnmPRWLVpludtnESDJ8uQ8E3wrtAIsgevUmwX2znFXFolFfhTFVU8bjL6UBLt7fPsrvq8mYP53WvwGXzGE188wcXtfQsqFZD8Nos52B7nuzDkoal3A74y/BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=p84W7NXy; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3UUWojAQerjSYG73lA+68aXbCwJ0MbwYWPMNazDfW7g=; b=p84W7NXy7yy+d2fP3j/Htgsl53
+	VPChprfk53CtjSAhQ/7C46Y+5x9n55V/FZGtQqLNu25EEA9V1aDPfJ1o2qU7gY6L9VOKSb4n0i6CY
+	F1DIfRPg5wmKg4mYFGZHPOadLGHucFYRU0yxHzx8Sobbg/MnKsGFy9/cad5o+gxSVEhYo5Wly5iRr
+	OQPiEoZ6cgDrC9GromozqY7iK+gB9aEIO2rEa0fMiHNTQYCALkhbxipaogT+uRXOTnJcGiXtg4NuZ
+	qSAb4pv+/kEq5LmiQx1pJaHmZtjjWaKp3jP8yG2AMR3sHOoeuXK0TXYXmMJqbQ7dkS1x+heKN5qAd
+	8ZSbUf+g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sZsha-000000017UD-3Ri6;
+	Fri, 02 Aug 2024 13:52:14 +0000
+Date: Fri, 2 Aug 2024 14:52:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: jack@suse.cz, brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
+	squashfs-devel@lists.sourceforge.net,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V5] squashfs: Add i_size check in squash_read_inode
+Message-ID: <20240802135214.GU5334@ZenIV>
+References: <20240802093310.twbwdi5hpgpth63z@quack3>
+ <20240802111640.2762325-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802111640.2762325-1-lizhi.xu@windriver.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The ArmSoM Sige 5 board connects the rk806 PMIC on an i2c bus.
+On Fri, Aug 02, 2024 at 07:16:40PM +0800, Lizhi Xu wrote:
+> syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+> squashfs_symlink_read_folio did not check the length, resulting in folio
+> not being initialized and did not return the corresponding error code.
+> 
+> The length is calculated from i_size, so it is necessary to add a check
+> when i_size is initialized to confirm that its value is correct, otherwise
+> an error -EINVAL will be returned. Strictly, the check only applies to the
+> symlink type. Add larger symlink check.
+> 
+> Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>  fs/squashfs/inode.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+> index 16bd693d0b3a..6c5dd225482f 100644
+> --- a/fs/squashfs/inode.c
+> +++ b/fs/squashfs/inode.c
+> @@ -287,6 +287,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+>  		inode->i_mode |= S_IFLNK;
+>  		squashfs_i(inode)->start = block;
+>  		squashfs_i(inode)->offset = offset;
+> +		if ((int)inode->i_size < 0 || inode->i_size > PAGE_SIZE) {
+> +			ERROR("Wrong i_size %d!\n", inode->i_size);
+> +			return -EINVAL;
+> +		}
 
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- drivers/mfd/rk8xx-i2c.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/mfd/rk8xx-i2c.c b/drivers/mfd/rk8xx-i2c.c
-index 69a6b297d7238..37287b06dab0d 100644
---- a/drivers/mfd/rk8xx-i2c.c
-+++ b/drivers/mfd/rk8xx-i2c.c
-@@ -21,6 +21,17 @@ struct rk8xx_i2c_platform_data {
- 	int variant;
- };
- 
-+static bool rk806_is_volatile_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case RK806_POWER_EN0 ... RK806_POWER_EN5:
-+	case RK806_DVS_START_CTRL ... RK806_INT_MSK1:
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	/*
-@@ -121,6 +132,14 @@ static const struct regmap_config rk805_regmap_config = {
- 	.volatile_reg = rk808_is_volatile_reg,
- };
- 
-+static const struct regmap_config rk806_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = RK806_BUCK_RSERVE_REG5,
-+	.cache_type = REGCACHE_MAPLE,
-+	.volatile_reg = rk806_is_volatile_reg,
-+};
-+
- static const struct regmap_config rk808_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -150,6 +169,11 @@ static const struct rk8xx_i2c_platform_data rk805_data = {
- 	.variant = RK805_ID,
- };
- 
-+static const struct rk8xx_i2c_platform_data rk806_data = {
-+	.regmap_cfg = &rk806_regmap_config,
-+	.variant = RK806_ID,
-+};
-+
- static const struct rk8xx_i2c_platform_data rk808_data = {
- 	.regmap_cfg = &rk808_regmap_config,
- 	.variant = RK808_ID,
-@@ -201,6 +225,7 @@ static SIMPLE_DEV_PM_OPS(rk8xx_i2c_pm_ops, rk8xx_suspend, rk8xx_resume);
- 
- static const struct of_device_id rk8xx_i2c_of_match[] = {
- 	{ .compatible = "rockchip,rk805", .data = &rk805_data },
-+	{ .compatible = "rockchip,rk806", .data = &rk806_data },
- 	{ .compatible = "rockchip,rk808", .data = &rk808_data },
- 	{ .compatible = "rockchip,rk809", .data = &rk809_data },
- 	{ .compatible = "rockchip,rk816", .data = &rk816_data },
--- 
-2.46.0
-
+ITYM something like
+		if (le32_to_cpu(sqsh_ino->symlink_size) > PAGE_SIZE) {
+			ERROR("Corrupted symlink\n");
+			return -EINVAL;
+		}
 
