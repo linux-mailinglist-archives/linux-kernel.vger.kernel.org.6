@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-272773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6384B9460C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8233B9460C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20994282E5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:46:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CF1B283149
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F67C1537C0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3E21537AA;
 	Fri,  2 Aug 2024 15:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4fkwL1R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WoSLA2up"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD43E175D5F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A70F175D3F
 	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722613580; cv=none; b=HsNGVWTR6ThPTjWAz+zkZTy/0PaROoAFdvL+Thyuot6gKm14lO+5FjeCjA26aFlQx06Om+O1p4Y3EEYXR7iV38j/Ur/efike6KyQsH/+P3LTh+ZB/FgZV44FrsAmnkCvxIzZRFTgNrC2NDrnAFeHF3PYqcvZTj1ii2CBYSmCXXo=
+	t=1722613580; cv=none; b=etv+WCT7gQSiGvPXMzy0n9gADAYamXvN8adPXB4aLHHuRjar3AzVkX27QnsHGS09ErNSiJcvuZ1StZ1MovVAp1808gRKf0IcHoawdCRlz1p2tnUXC9hhusnDAepF05+emNtV8TtkqSj0icDn8gbqWeFnO7XCNHf/RHJE8Oav8Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722613580; c=relaxed/simple;
-	bh=NkGy99ttE/WMalc6vpGUP6nwyw6xu1BMaI7NQioFehE=;
+	bh=Smm79O1AfPjUYfDBORGT1d4YEJu4ZIjrym+47QxNb4c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=se4OLwhEwhL9lKawDDZ+eWD7wUSH9XfADY6NYfUhmxnEPLo4YS8GjcDQ+6Q2ql0qqkSM+Gv9XemDQqgdxSkm4OoYz0SoK5knwwVT9n2Ri/h8NxKIPHTOiNterUiZypRzZZ7VsiaPeeJ+LiJ0VQqDmjTegyzpmwEzTCDmRM/OIXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4fkwL1R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D7ADC4AF11;
+	 MIME-Version; b=V5GuDsycJCHWYz+suN1Hb9PIWSoi5N0kxgEveeZ4AO9VzONFTK+I7HshlKQnaxqM3Jd7KpUiNGDVEGuqT6JHdCEt2ISeM10mXOzFiT4rY737ICzpXEdbX/9DDA4H74MC3WabItkS0dtWOapvGaNYpBFVj/JmOZVTYUUlvGwCySk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WoSLA2up; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65629C4AF0E;
 	Fri,  2 Aug 2024 15:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722613580;
-	bh=NkGy99ttE/WMalc6vpGUP6nwyw6xu1BMaI7NQioFehE=;
+	bh=Smm79O1AfPjUYfDBORGT1d4YEJu4ZIjrym+47QxNb4c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V4fkwL1RLmMlC64WHE687M63QdWRYiVvJmzkbNELlaoQawaPeu8WwTVG2glAnHmI3
-	 bZWRqn4scSiLorZhZwEWds1hSKImMyBWzimcsvcvno7BbhXJgrstvXGGAhEod+ZJ7F
-	 BeHRIiSutFe/ZLmqzjReBzvvWsc0haORn4illGdnYtl7RY6vnFn6Rc370p3vi66tOl
-	 bKCBeucmYHZBXN+/f+tzRJwDxbb6VN6ITaH1uNXS3MoYRRhH88yFWs+NDOTu6VNj9Y
-	 IZIpbVB6wjLqyDV61RAExyTCpaFnSQU7+xjsHxJE2oj8+7hVYx3Es71j5v0hcmDYCk
-	 IuoSkEebB1cqA==
+	b=WoSLA2upoFepc9wR2pYBMrnAumboYzGPqk87EgVZ2ugrUQPSrMBiL5VVO5nnWSShP
+	 xK6+p3xCnlOWglxbLDwk/7MP4S5iu64GKfTqJNRx7aYnEybcLCsbGLMJyZAqnEjhs1
+	 eABgQ+OHqMftKL21FvbJjgVZ69GItFXT/cZ2mqaUXslsmUAIYovr8m0CKEVn28/FkO
+	 KXomM6FqS+8knXf+RX/dsNY1Pn/eLL5pckyGNmQrEKS08pU86Y10Nur7jterFRUImM
+	 5HjYKU/AV7tPbXbfXQLhdz+3icVxojfP/A931dco05iogzVBmfFSTtyJ14ImgSZ6vv
+	 UbF0rtxqIXUFQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 05EEBCE0E5A; Fri,  2 Aug 2024 08:46:20 -0700 (PDT)
+	id 0935ACE0F69; Fri,  2 Aug 2024 08:46:20 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
@@ -56,10 +56,11 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
 	x86@kernel.org,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH v2 TSC and clocksource-watchdog updates for v6.12 3/5]  clocksource: Fix comments on WATCHDOG_THRESHOLD & WATCHDOG_MAX_SKEW
-Date: Fri,  2 Aug 2024 08:46:16 -0700
-Message-Id: <20240802154618.4149953-3-paulmck@kernel.org>
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2 TSC and clocksource-watchdog updates for v6.12 4/5]  clocksource: Set cs_watchdog_read() checks based on .uncertainty_margin
+Date: Fri,  2 Aug 2024 08:46:17 -0700
+Message-Id: <20240802154618.4149953-4-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <dac058b2-68c7-4b9a-a428-afb2b4b03ea0@paulmck-laptop>
 References: <dac058b2-68c7-4b9a-a428-afb2b4b03ea0@paulmck-laptop>
@@ -71,43 +72,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The WATCHDOG_THRESHOLD macro is no longer used to supply a default value
-for ->uncertainty_margin, but WATCHDOG_MAX_SKEW now is.  Therefore,
-update the comments to reflect this change.
+Right now, cs_watchdog_read() does clocksource sanity checks based
+on WATCHDOG_MAX_SKEW, which sets a floor on any clocksource's
+.uncertainty_margin.  These sanity checks can therefore act
+inappropriately for clocksources with large uncertainty margins.
+
+One reason for a clocksource to have a large .uncertainty_margin is when
+that clocksource has long read-out latency, given that it does not make
+sense for the .uncertainty_margin to be smaller than the read-out latency.
+With the current checks, cs_watchdog_read() could reject all normal
+reads from a clocksource with long read-out latencies, such as those
+from legacy clocksources that are no longer implemented in hardware.
+
+Therefore, recast the cs_watchdog_read() checks in terms of the
+.uncertainty_margin values of the clocksources involved in the timespan
+in question.  The first covers two watchdog reads and one cs read,
+so use twice the watchdog .uncertainty_margin plus that of the cs.
+The second covers only a pair of watchdog reads, so use twice the
+watchdog .uncertainty_margin.
 
 Reported-by: Borislav Petkov <bp@alien8.de>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: <x86@kernel.org>
 ---
- kernel/time/clocksource.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/time/clocksource.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 581cdbb538448..ee0ad5e4d5170 100644
+index ee0ad5e4d5170..23336eecb4f43 100644
 --- a/kernel/time/clocksource.c
 +++ b/kernel/time/clocksource.c
-@@ -113,7 +113,6 @@ static u64 suspend_start;
+@@ -244,6 +244,7 @@ enum wd_read_status {
  
- /*
-  * Threshold: 0.0312s, when doubled: 0.0625s.
-- * Also a default for cs->uncertainty_margin when registering clocks.
-  */
- #define WATCHDOG_THRESHOLD (NSEC_PER_SEC >> 5)
+ static enum wd_read_status cs_watchdog_read(struct clocksource *cs, u64 *csnow, u64 *wdnow)
+ {
++	int64_t md = 2 * watchdog->uncertainty_margin;
+ 	unsigned int nretries, max_retries;
+ 	int64_t wd_delay, wd_seq_delay;
+ 	u64 wd_end, wd_end2;
+@@ -258,7 +259,7 @@ static enum wd_read_status cs_watchdog_read(struct clocksource *cs, u64 *csnow,
+ 		local_irq_enable();
  
-@@ -139,6 +138,13 @@ static u64 suspend_start;
- #define MAX_SKEW_USEC	(125 * WATCHDOG_INTERVAL / HZ)
- #endif
+ 		wd_delay = cycles_to_nsec_safe(watchdog, *wdnow, wd_end);
+-		if (wd_delay <= WATCHDOG_MAX_SKEW) {
++		if (wd_delay <= md + cs->uncertainty_margin) {
+ 			if (nretries > 1 && nretries >= max_retries) {
+ 				pr_warn("timekeeping watchdog on CPU%d: %s retried %d times before success\n",
+ 					smp_processor_id(), watchdog->name, nretries);
+@@ -271,12 +272,12 @@ static enum wd_read_status cs_watchdog_read(struct clocksource *cs, u64 *csnow,
+ 		 * there is too much external interferences that cause
+ 		 * significant delay in reading both clocksource and watchdog.
+ 		 *
+-		 * If consecutive WD read-back delay > WATCHDOG_MAX_SKEW/2,
+-		 * report system busy, reinit the watchdog and skip the current
++		 * If consecutive WD read-back delay > md, report
++		 * system busy, reinit the watchdog and skip the current
+ 		 * watchdog test.
+ 		 */
+ 		wd_seq_delay = cycles_to_nsec_safe(watchdog, wd_end, wd_end2);
+-		if (wd_seq_delay > WATCHDOG_MAX_SKEW/2)
++		if (wd_seq_delay > md)
+ 			goto skip_test;
+ 	}
  
-+/*
-+ * Default for maximum permissible skew when cs->uncertainty_margin is
-+ * not specified, and the lower bound even when cs->uncertainty_margin
-+ * is specified.  This is also the default that is used when registering
-+ * clocks with unspecifed cs->uncertainty_margin, so this macro is used
-+ * even in CONFIG_CLOCKSOURCE_WATCHDOG=n kernels.
-+ */
- #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
- 
- #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
 -- 
 2.40.1
 
