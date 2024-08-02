@@ -1,225 +1,373 @@
-Return-Path: <linux-kernel+bounces-272540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C1B945DA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:06:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 461DA945DA4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8121F23232
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:06:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69E2B1C2134B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EAC1E2884;
-	Fri,  2 Aug 2024 12:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C1214A4C8;
+	Fri,  2 Aug 2024 12:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S5R2EjDB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MporJiNc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1831314A4C8;
-	Fri,  2 Aug 2024 12:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722600396; cv=fail; b=nC1i9c7+nTHWYi3vckKaHd/BfOBKSWPzw8aptu5frPMDj/C/j/OfBARAfYvQC09Awo9tLVzy+RtAMWM8b3JDtFo5AGYqNrzcE58k2c/jFI/QCaMxrzQ/W7/84S0im3l6mJ9TJTbDifxxVv5KYDGpwP/uQkVY97vlC4avnvIjEPM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722600396; c=relaxed/simple;
-	bh=6uXAMDpQktC0IBN2YVuJDz4KoABUVVuIvdQHCaC0CHA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WOlNjFKs6FEJxr9JnN0Xm8/UMrZ+4hXqHwV0chyHuASM/+MUwkmgSm4ETqjTnRLWwWnHiCAhkLOsI/al4uiI9HdzOqt0Y3XPPzMp1GdN3W60LMWD2h6Jm9RXLykG66ktQjA0u21Rg607uidkxafU4Dk9aM2E1cG4XcPiLp+dGyQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S5R2EjDB; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722600394; x=1754136394;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=6uXAMDpQktC0IBN2YVuJDz4KoABUVVuIvdQHCaC0CHA=;
-  b=S5R2EjDB+TEol9MZzTYkxT9NfxAlVUmxcSak9OIgGf4YIs3nDrWuP9xL
-   xMbOTbecc1GNdYM3kGPp4B+8ruFFgzTp+Ee5uVVHo3yYOykIZPkpHnOje
-   DU9dobPFcGlpn3pa8I0/q9lGV5KGRYEVzGxlW9Ze+PEDG2SZqNXoTSMKu
-   cJZqxpdoFnzLCbdmyqEGONUy6kMTOqBxtCGsB2iP9rEinwq5YI9R6UBou
-   PYP/I/h3N2v6ru+ESW5NXYJxvIih5TDr1RRtZm2rLI0uAW/pBTpUgwnwk
-   1DM7z10/0ZoAncv/0UGZhBnyApEspSa8oUAFM7Wl9g9bTheVp3KX5d6q0
-   A==;
-X-CSE-ConnectionGUID: 5x7vQXrZSfWCN62/EQ0Gzw==
-X-CSE-MsgGUID: X2d3/jDPRamH0CP86HmcOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="20750013"
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="20750013"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 05:06:33 -0700
-X-CSE-ConnectionGUID: +3aEjy3BSaGCLPZRzBuDcw==
-X-CSE-MsgGUID: AgzBMNGrSoqkGJM+nCb5/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="55305292"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 02 Aug 2024 05:06:33 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 2 Aug 2024 05:06:32 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 2 Aug 2024 05:06:32 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 2 Aug 2024 05:06:32 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 2 Aug 2024 05:06:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=voFXIXTybGFvlkcEPKNSXRcNpiK/VU6sFsQuP4TWcYMgYEUjlJTaPGuGoqtOqXmj6alKL7SegSjCk5qzsLBYLdh9Y4NQfeUvsAmBUir1mUyziMSRe9asfX6HtvdIQQrOe3sjw7RmwMhilwmcL6uhu261seZ3J9KECIc8GeOzKHWw50IVWD7lc4tcNVrcMzaecMjav9dYGLS21K+tdn20qAfbvo4syITVhGjtv8j5vO9v6OE0g9YSZX1AInM73AVa5nqWrCgrjdkqOORL1EHKhpMsbJnOA8w0TbTmUiHR/3Gx4FL80vxOHjnkJOsVJUbP9gx88Ou50O+QVmGvr62h4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6uXAMDpQktC0IBN2YVuJDz4KoABUVVuIvdQHCaC0CHA=;
- b=ZWB/KrOi8CvQVweuIb0NzqTHFMCgzPXoVd853gP8qOYTd4XKLrp/Y9i3IxModtMcVujUMc70JIBUZSaKGGvJSsJb6d60+SS9NxgmxoiZ/iAA9J6GPcQAgC+RuYhWKRLiwqvNGqX5VGNLvu1zolxXyYHtb8BG+a8smEPkrpMjs/zfkMWCp7GApoLYyHTtRnA+6NkwoyLvFA4R1zSvTWxnDNPaflST1dO7UeaK52wCT9fmYlld4HRuWODACHOx1giCGwRWyH+UO6mlUenLN/BQPhNlfSh56PRGzfK8M40luCK1T9bzizOnx0LmwKMo7/1PrGX6jSYHmTamlPwkd548Zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by LV8PR11MB8485.namprd11.prod.outlook.com (2603:10b6:408:1e6::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Fri, 2 Aug
- 2024 12:06:30 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%7]) with mapi id 15.20.7828.024; Fri, 2 Aug 2024
- 12:06:30 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com"
-	<seanjc@google.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Gao, Chao"
-	<chao.gao@intel.com>
-Subject: Re: [PATCH v3 4/8] KVM: Add a module param to allow enabling
- virtualization when KVM is loaded
-Thread-Topic: [PATCH v3 4/8] KVM: Add a module param to allow enabling
- virtualization when KVM is loaded
-Thread-Index: AQHauTfPMFWPSBOIHEiZJ+sXeeXGULIUNR6AgAABQIA=
-Date: Fri, 2 Aug 2024 12:06:30 +0000
-Message-ID: <df1f371e6faeed88afefd0103d759c02b4acdc12.camel@intel.com>
-References: <20240608000639.3295768-1-seanjc@google.com>
-	 <20240608000639.3295768-5-seanjc@google.com>
-	 <7e12a22947bdaf7fb4693000c5dbcf24a20e6326.camel@intel.com>
-In-Reply-To: <7e12a22947bdaf7fb4693000c5dbcf24a20e6326.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.52.3 (3.52.3-1.fc40) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|LV8PR11MB8485:EE_
-x-ms-office365-filtering-correlation-id: b7463ece-ad1b-4f44-1382-08dcb2eb8b2b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?QjZ4aVRDaDlIVGc3NFFKWkFqeXpFS2ptUUk4S1ZHcXlrSnRBSG5uWExWWktz?=
- =?utf-8?B?WlpxYld4dlhVOGc4ek5yOHNHeTJxWjlLQzIrSkpuR1l2UDlHd0NzQWxNeFJq?=
- =?utf-8?B?NUszLzZLNVQ5Z0pyR0pjdUJFeWE1ZzI1R2NpeXBnOS93bnRCSktsNnlyb1pH?=
- =?utf-8?B?cUxNeWdGam5ZV0F2TjUvNW5mc0I1d2tpb25WVjJVc3VKMUVONTg0eXR5VE1U?=
- =?utf-8?B?dlM0VVNyWHhKeFFFTmR1eVJYUDQyMWd6ZVFkL3prRmJ4VEFrSHBjQVlxSXY3?=
- =?utf-8?B?UEdiTmJ6R1ZwOVdxZmxnSm9TZ2lqR3FKOWZkNVVBcnoyVVdVRDVpcS9jellX?=
- =?utf-8?B?VmFvZlRmbDRjK0pIYU1oUFhJNlBaQmN3RS93S2dzTENCUFZNMXZ5Q3VSajJl?=
- =?utf-8?B?YmJEMyttbkExY0NqVHZ4TWZyVFBHSzNsczBXZ0ozY0pNSDhiZDc5M2ZDQXc1?=
- =?utf-8?B?cDg0cXYzaDEySFFQTE5NcTVvOHc4bjBHbG9kelhJdmZseTJvdnFTMGQ4OVJq?=
- =?utf-8?B?aG81VWc4c09LcE0rMlpzdkUzK2dWamxmQVFtc1RnRFQ1ZGtSTzNkUU5kZmR4?=
- =?utf-8?B?YUVUdkpUeVIyd3lTbVYxVitUTmZLdzdPOWFaVXNVSEVzaHYvMGtvOGpXTnl5?=
- =?utf-8?B?ZDBPQlN2em9iZkl5ZmpMM3QySlp5U1l5cjN5NHVGSkROZHhnZk9kQUpFN0Mr?=
- =?utf-8?B?U1RNOTJWZDdobHN1Qi9MMG1DWTBBeGM1NVI4eURQazFKWjAxUnNpZ20ycGxJ?=
- =?utf-8?B?SzdQc2NXL05YSmx1dmFUY0U4TVZqNVdBeCtSNFRCSW04QXhaZjk4TVJCVmVa?=
- =?utf-8?B?OUJKQWZTakc0S3VaL0V3eVVTclpMWks1RVc5UDlKd2lYenY2eDR4MW9IYVJY?=
- =?utf-8?B?SERZbWtTNEtWU0ErMUVDRzY2TEVxVjg5Nks2YmVLTERuVXBCYmxYM1hlSkRD?=
- =?utf-8?B?c1U5RFVnemVQcmIxOG01bm4vNXlNL2hLM01JUlRIRE51elBvOUJwd2dDcWJ5?=
- =?utf-8?B?TjcyZGlGV2VyOEYzTEVIM09Bam81MVFVMS83MmF5c25WbGF0MkF5bWJ0MlJy?=
- =?utf-8?B?YUQyWXdYd1hSVjZrUGNJVDBMa0lwdVd0OUdKaXhYdEZDcVVYSU1yNGR1bWtN?=
- =?utf-8?B?cnVBeDE4b3lnd0dQeGlGRFV5TWlCeUd1aWc3YUVsT0pSdnV3Ym1DSWo4VmRI?=
- =?utf-8?B?Q3l5SW4rTEZUaWxZZXV2c3EveC9HZGNzWS9PR3RDYW1vaXpTY0N4YmpVdEQy?=
- =?utf-8?B?NGFtOGtiQ2pFUG9BUk1MWU9TcXBoUFV1NDNuNFlxbGtFWW1SQmoxTllaTGxN?=
- =?utf-8?B?NWJydlJNUmQxRmZkeW8xTVN5YmJlaDNEY0RQSzFodEtlMzBzdTM3VW4zS1Ry?=
- =?utf-8?B?UGhiWXBoVitIOVEvUVdnRUt1QlVrWERlMFFQbkgxZXJEZ3V6U2U5aUI0ZTZK?=
- =?utf-8?B?bzdpR24wNHFUcm9YRmQrUFYwUUoyQVJ1ZHRWN3JUTGZiTGdraVBYUVFydnhw?=
- =?utf-8?B?NzI2dVlpZzNmMjFDQWtBWDNuUTZKc2s1TXY2ZEQ4Slh1c0FybGxEdUhDVDJD?=
- =?utf-8?B?NnorWGo2OTdJUDZTdkJyZjNKWDhQK0hLNHNyU2ppblNtUno4OGg1SjVZQ0JY?=
- =?utf-8?B?SE1wYWpLWWN3SGtsRDBsNFVNTWxNcm5MRVVUanhyZTN2NE03eTdJSFFWMi9v?=
- =?utf-8?B?M1RCV0V6RXBwNGVucGhSZytjbjU1cmhDNWxJWkhzeHBZM29xKzk1VU1OSVIy?=
- =?utf-8?B?bXJFMVdCYWdlKzFhVi9ucVlmV0ZJSDBKc0F1YW1tYzl5cUJickRTdmFaaWVH?=
- =?utf-8?B?SEtlc2JVVGhjeVpZR1hrdUJKcDZxRVgzUjMxa3pFeitBUklQQmlwclRBQ1Qx?=
- =?utf-8?B?TG5ueWJZZkFta2FEOFUvbTk1VTQ3NmV0dDJMcHV3T0JwQ3c9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?clI0Ti8yM0NWZ2ViaWRWVEEwclo4aHVuM2xHeGovTXIxNDBvYWIyTkZMRTVV?=
- =?utf-8?B?OEE0Y3g3VTFqVkpTOGMzbVB0UUxiMGt2M1JDdXZ6dytLdGw1aFlncnROb2VZ?=
- =?utf-8?B?Vm5tSGw3VW1LQjZPQmlTM2xnZTQrcHY2cDV5alhEMTFWREx4UUtTSU1lR2U1?=
- =?utf-8?B?Um1qMHJ6QThvbDJkV1ZmellWN3htM3VOTFpGR2xNMENna3Y2bUZta21OMlI3?=
- =?utf-8?B?MzJVMXkxVTd3cFJERytBc1graVlRL256eFQxVVl1eFNobUQzc2hqZFFFc0Yy?=
- =?utf-8?B?TFpkSTgxajg4VWFpbmRyMVNORDI4SlhkY1pqK01PY0t0VE1hUVY0Uy8vOVNw?=
- =?utf-8?B?OUcxTlRzbWpjUm1XS2VFbndOKzhNek85aFJQNWVtZDhMR2VCa0J2RmJEUjl0?=
- =?utf-8?B?UnBPS2kwYks0SnFpbE56cm1zcEc4eUp5YnlHbVFLVCtXUUdDSnF0aE1VKzRM?=
- =?utf-8?B?K3A1ZU9LNGlLU1VPR0JkWkl0U1NHd3h5d2lvbnZjRE81ZlVMK0J0N09WSG5x?=
- =?utf-8?B?Q3NFQzh6OExSaDVZR1lEb1FLRFlCZkd5YXFtVENLMmlVYndhZjM3c3owRi9H?=
- =?utf-8?B?Q1FPNm9ldnFlUTNtSmdzYU8vYlRuTks1a3FkYVFUVzkyNTZvSXV1VGx2M2Fy?=
- =?utf-8?B?aDB6UlVrMW83U3FwbDhZMjN1QUI5WWdGYjdMc29iNkR2Y3FvNDlnNU1Fa3JU?=
- =?utf-8?B?SVRHbHRURWF4ZUdMK0FUMVpKMXpkVnpVb1o3Yy9vTEhEK1QvZU9nOGttUlFD?=
- =?utf-8?B?L1FUOFNMek50dUgxVWtVVElVOHZWTFpjaEk2ZHIxNUt0eW1BMFVQdlNNT1FC?=
- =?utf-8?B?SlAxNVI4OWl6U0dyeHRHc2k3aWNheEJPOWJYUUVxM0xPL0RNbm14MGEvQjRo?=
- =?utf-8?B?Q29Mb2xCTVlvMUJnb2UwTkVYbnBGOHdhUkYyNUlHUmRYemUyNzRia25jVktw?=
- =?utf-8?B?dWtjZGxUYThobzB0b2ttaXpBbkpkcWJZbnppY1RzZ0RoR1BnNU1KL05YM3Va?=
- =?utf-8?B?TERReVhyQTlLR1VYTmdvK1hWVW5BWTdpTTFEWThuVUtZUnl3Ri9Ea1JwK1Zu?=
- =?utf-8?B?azE3QXoybmZDdmM2MVNJdThYVTFUQmplVVJhWElCT1hEREhuMkQxS0c5MW9X?=
- =?utf-8?B?alYzS2ZvM3NVSmFnUDN0NzA4NllBQWNhRGdjRDZ2eDRSSXFWRktqakFaTFlH?=
- =?utf-8?B?b055bFhhR0dyaWw2cGN0WnFvWklsUlZMTCtyTXZ4ZDRhVk84OEhNdGxmc05D?=
- =?utf-8?B?TnpjTG9PRFFpa2ZRTmVWTGh2NXVGVlo3TFRTWGhQbnc4Z2ZtYXFQTXFSWm9k?=
- =?utf-8?B?UFJRd0Q4dUhicnY3Y2ZSUy9na2tBOGF1aEFpMTBRbzFWTlJNVlZqU3AxVTM1?=
- =?utf-8?B?U3dSYVArRDd5SjBSbFhCWnhIL1VybFpyVm82cFBaaThrVFN4UDBRMnZCc2RU?=
- =?utf-8?B?T0ZyR09EMVd4bENOUVM2YzNIZEpxN2lXQ3l4TTJKNDRYeDF5Y21LdjF6OEdF?=
- =?utf-8?B?enpJUmd6aVdRZ1JIYlZRdEVTWkdHZEV1emd2TW84VDVnb284cC9BbzlsZk5O?=
- =?utf-8?B?aUFndlFhaTFWWnpUY0hJNndsMENWNzdoR3BUclFuWEY4cGZoQWU0SWh2WjVD?=
- =?utf-8?B?SDJKWGFqRFQvZEw4VVZoR1J0U0FkL00vaEtXN0U5dmFEMFZYTWxIaUhmNE93?=
- =?utf-8?B?Z1IrajRsWTRSSXFlOUlLM2FENDhmalhmVWROS1BMZEd1Q3Bibi94TGQwcXF1?=
- =?utf-8?B?SG9uRGJVRWtaK0cyVkpGNXNLdWxycm9maENQT0NkdmZzd3dUZk43cS9aSTdG?=
- =?utf-8?B?UnArYjNBQlFidjdVRGJRK1RFZ25lUktLdjNFb25ybTZtd2tWWVJvT0FBdDhL?=
- =?utf-8?B?Z3VSUDVnSmRMamxyWHFrbE5RdXNORXNXaUtnN1F2am1YNEU5N3Z4dzRXVStM?=
- =?utf-8?B?WTBibFNlK0hLTkwwQXdCa1BFbkNrU095VzZtQUMybXFEZlgrTEVDUzgrYlJD?=
- =?utf-8?B?aVpnNWVyS0lrSUt2dDNCQ0kweWlMRjJISnZZZGY1eThENFFpaDgwcTBqeWZi?=
- =?utf-8?B?all4ZkZjOU1CMU1od1VGMXBhaEZ5RDBNNWRLa2VKU3ZmM0xoU3I3aE5zekdn?=
- =?utf-8?Q?Jaq3Zs3LTxnN63wO7+oW05hrO?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <91A6BCEDE1116840803F0AB118C4C299@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E5714B09F;
+	Fri,  2 Aug 2024 12:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722600420; cv=none; b=VD8ISWDuKH4BvKNw4AVH3RN+WfKqXR43klikDlmTbAjPimOzEgdTIsBc53xtUgbcr6b/ZR/oiz6tD5rE+NgS/6c7SAKcwI3+zGVYARUFn5t554rFCYbvihsxQ6j8osxRdClMEkTwkQwEqDSITBDDlp6QTTDkAszKTxaNG2XmJBU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722600420; c=relaxed/simple;
+	bh=P1MyO8tewyeBtE5QPe1RrvkBxiKvgomIWmjp/iPF4dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOLuAaRMPw2aY6T5WPQcG02eU1ZC9Sx8vHuXD02KEVWmViEfjpd2Vis7irbKRythRL1ct2FHsmlV4Gf0WYDh2F87OPgKgcGAmkoIXC0efoiQp2s0lGX5FC7Xa+zTa5Bel1UHWXy+0GOUHEZoYf2lWdmJz6+U18z55uMl5+Iv3Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MporJiNc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD372C32782;
+	Fri,  2 Aug 2024 12:06:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722600420;
+	bh=P1MyO8tewyeBtE5QPe1RrvkBxiKvgomIWmjp/iPF4dg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MporJiNc3YYstja6aE/KrwEvmZqP/taMc3rd1FQKYEqYHKs/fLBNtPc1oI/FAZEb3
+	 +SrrhFJqLwCvEocxHEh41Abk9t9Qta6dadnUPBNf1YQNrzVKJOnChmidE11SiXGmsj
+	 Oj7ZnbMOPAxpvzwW0BcbqkNFEi5cpnEG0v+jRl//zhs9n9zFOUheJiVVTzI8Dx22MP
+	 j3diBGQy00Xxax3rNCYhgCmpn52nF1iO3cgr2bJDSCpQM0UXxMRbFPB9Qg/mMwfJLe
+	 7RlWLjOI7XZSny5xtMecI3JdaUiVRQQe+cDGSLw0Jhu9yIF4+kI5tFD4NY2kRh7oed
+	 ARLjzHYbjHafQ==
+Date: Fri, 2 Aug 2024 14:06:52 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] rust: pass module name to `Module::init`
+Message-ID: <ZqzL3OE1AYqUab5W@pollux>
+References: <20240618234025.15036-1-dakr@redhat.com>
+ <20240618234025.15036-2-dakr@redhat.com>
+ <2024062038-backroom-crunchy-d4c9@gregkh>
+ <ZnRUXdMaFJydAn__@cassiopeiae>
+ <2024062010-change-clubhouse-b16c@gregkh>
+ <ZnSeAZu3IMA4fR8P@cassiopeiae>
+ <2024071046-gaining-gave-b38f@gregkh>
+ <Zo8-IZgJswTlyP8H@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7463ece-ad1b-4f44-1382-08dcb2eb8b2b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2024 12:06:30.1470
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Yt274fBqelKDy8OhQoTK8FJRyJYVL8feFm+/HrenjE4VGZFAwk6AFMdliEjQaaaZOiRLlZtQYShRaf53gkhfuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8485
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo8-IZgJswTlyP8H@pollux>
 
-T24gRnJpLCAyMDI0LTA4LTAyIGF0IDEyOjAyICswMDAwLCBIdWFuZywgS2FpIHdyb3RlOg0KPiBU
-aGlzIHdpbGwgdHJpZ2dlciB0aGUgYWJvdmUgIldBUk5fT04oa3ZtX3VzYWdlX2NvdW50KTsiIHdo
-ZW4NCj4gZW5hYmxlX3ZpcnRfYXRfbG9hZCBpcyB0cnVlLCBiZWNhdXNlIGt2bV91bmluaXRfdmly
-dHVhbGl6YXRpb24oKSBpc24ndA0KPiB0aGUgbGFzdCBjYWxsIG9mIGt2bV9kaXNhYmxlX3ZpcnR1
-YWxpemF0aW9uKCkuDQoNCkNvcnJlY3Q6IHRoZSBXQVJOX09OKCkgd2lsbCBiZSB0cmlnZ2VyZWQg
-cmVnYXJkbGVzcyBvZiANCmVuYWJsZV92aXJ0X2F0X2xvYWQgaXMgdHJ1ZSBvciBmYWxzZSwgaWYg
-a3ZtX3VuaW5pdF92aXJ0dWFsaXphdGlvbigpDQppc24ndCB0aGUgbGFzdCBjYWxsIG9mIGt2bV9k
-aXNhYmxlX3ZpcnR1YWxpemF0aW9uKCkuDQo=
+On Thu, Jul 11, 2024 at 04:06:25AM +0200, Danilo Krummrich wrote:
+
+Gentle reminder on this and patch 2 of this series.
+
+> On Wed, Jul 10, 2024 at 04:02:04PM +0200, Greg KH wrote:
+> > On Thu, Jun 20, 2024 at 11:24:17PM +0200, Danilo Krummrich wrote:
+> > > Ok, good you point this out. We should definitely discuss this point then and
+> > > build some consensus around it.
+> > > 
+> > > I propose to focus on this point first and follow up with the discussion of the
+> > > rest of the series afterwards.
+> > > 
+> > > Let me explain why I am convinced that it's very important to have abstractions
+> > > in place in general and from the get-go.
+> > > 
+> > > In general, having abstractions for C APIs is the foundation of being able to
+> > > make use of a lot of advantages Rust has to offer.
+> > > 
+> > > The most obvious one are all the safety aspects. For instance, with an
+> > > abstraction we have to get exactly one piece of code right in terms of pointer
+> > > validity, lifetimes, type safety, API semantics, etc. and in all other places
+> > > (e.g. drivers) we get the compiler to check those things for us through the
+> > > abstraction.
+> > > 
+> > > Now, the abstraction can be buggy or insufficient and hence there is no absolute
+> > > safety guarantee. *But*, if we get this one thing right, there is nothing a
+> > > driver can mess up by itself trying to do stupid things anymore.
+> > > 
+> > > If we just call the C code instead we have to get it right everywhere instead.
+> > 
+> > I too want a pony.  But unfortunatly you are shaving a yak here instead :)
+> > 
+> > I'm not saying to call C code from rust, I'm saying call rust code from
+> > C.
+> > 
+> > Have a "normal" pci_driver structure with C functions that THEN call
+> > into the rust code that you want to implement them, with a pointer to
+> > the proper structure.  That gives you everything that you really want
+> > here, EXCEPT you don't have to build the whole tower of drivers and
+> > busses and the like.
+> 
+> Please find my reply below where you expand this point.
+> 
+> > 
+> > > Now, you could approach this top-down instead and argue that we could at least
+> > > benefit from Rust for the driver specific parts.
+> > > 
+> > > Unfortunately, this doesn't really work out either. Also driver specific code is
+> > > typically (very) closely connected to kernel APIs. If you want to use the safety
+> > > aspects of Rust for the driver specific parts you inevitably end up writing
+> > > abstractions for the C APIs in your driver.
+> > > 
+> > > There are basically three options you can end up with:
+> > > 
+> > > (1) An abstraction for the C API within your driver that is actually generic
+> > >     for every driver, and hence shouldn't be there.
+> > > (2) Your driver specific code is full of raw pointers and `unsafe {}` calls,
+> > >     which in the end just means that you ended up baking the abstraction into
+> > >     your driver specific code.
+> > > (3) You ignore everything, put everything in a huge `unsafe {}` block and
+> > >     compile C code with the Rust compiler. (Admittedly, maybe slightly
+> > >     overstated, but not that far off either.)
+> > > 
+> > > The latter is also the reason why it doesn't make sense to only have
+> > > abstractions for some things, but not for other.
+> > > 
+> > > If an abstraction for B is based on A, but we don't start with A, then B ends up
+> > > implementing (at least partially) the abstraction for A as well. For instance,
+> > > if we don't implement `driver::Registration` then the PCI abstractions (and
+> > > platform, usb, etc.) have to implement it.
+> > > 
+> > > It really comes down to the point that it just bubbles up. We really have to do
+> > > this bottom-up, otherwise we just end up moving those abstractions up, layer by
+> > > layer, where they don't belong to and we re-implement them over and over again.
+> > 
+> > I think we are talking past each other.
+> 
+> Given your proposal below, that is correct.
+> 
+> I read your previous mail as if you question having abstractions for C APIs at
+> all. And some parts of your latest reply still read like that to me, but for the
+> rest of my reply I will assume that's not the case.
+> 
+> > 
+> > Here is an example .c file that you can use today for your "implement a
+> > PCI driver in rust" wish in a mere 34 lines of .c code:
+> 
+> Your proposal below actually only discards a rather small amount of the proposed
+> abstractions, in particular:
+> 
+>   (1) the code to create a struct pci_driver and the code to call
+>       pci_register_driver() and pci_unregister_driver() (implemented in Patch 2)
+>   (2) the generic code to create the struct pci_device_id table (or any other ID
+>       table) (implemented in Patch 3)
+> 
+> As I understand you, the concern here really seems to be about the complexity
+> vs. what we get from it and that someone has to maintain this.
+> 
+> I got the point and I take it seriously. As already mentioned, I'm also willing
+> to take responsibility for the code and offer to maintain it.
+> 
+> But back to the technical details.
+> 
+> Let's start with (2):
+> 
+> I agree that this seems a bit complicated. I'd propose to remove the
+> abstractions in device_id.rs (i.e. Patch 3) for now and let the PCI abstraction
+> simply create a struct pci_device_id table directly.
+> 
+> As for (1):
+> 
+> This just makes a pretty small part of the abstractions and, it's really only
+> about creating the struct pci_driver (or another driver type) instance and
+> call the corresponding register() / unregister() functions, since we already
+> have the Rust module support upstream.
+> 
+> As in C, we really just call register() from module_init() and unregister() from
+> module_exit() and the code for that, without comments, is around 50 lines of
+> code.
+> 
+> As mentioned this is implemented in Patch 2; Hence, please see my reply on Patch
+> 2, where I put a rather long and detailed explanation which hopefully clarifies
+> things.
+> 
+> Now, what do we get from that compared to the proposal below?
+> 
+>   - The driver's probe() and remove() functions get called with the
+>     corresponding abstraction types directly instead of raw pointers; this moves
+>     the required  `unsafe {}` blocks to a cental place which otherwise *every*
+>     driver would need to implement itself (obviously it'd be the same for future
+>     suspend, resume, shutdown, etc. callbacks).
+> 
+>   - More complex drivers can do the work required to be done in module_init()
+>     and module_exit() in Rust directly, which allows them to attach the lifetime
+>     of structures to the lifetime of the `Module` structure in Rust which avoids
+>     the need for explicit cleanup in module_exit() since they can just implement
+>     in Rust's drop() trait.
+> 
+> The latter may sound a bit less important than it actually is, since it can break
+> the design, safety and soundness of Rust types. Let me explain:
+> 
+> In Rust a type instance should cleanup after itself when it goes out of scope.
+> 
+> Let's make up an example:
+> 
+> ```
+> // DISCLAIMER: Obviously, this is not how we actually handle memory allocations
+> // in Rust, it's just an example.
+> struct Buffer {
+> 	ptr: *const u8,
+> }
+> 
+> impl Buffer {
+> 	fn alloc(size: u8) -> Result<Self> {
+> 		let ptr = Kmalloc::alloc(size, GFP_KERNEL)?;
+> 
+> 		// Return an instance of `Buffer` initialized with a pointer to
+> 		// the above memory allocation.
+> 		Ok(Self {
+> 			ptr,
+> 		})
+> 	}
+> }
+> 
+> impl Drop for Buffer {
+> 	fn drop(&mut self) {
+> 		// SAFETY: `Self` is always holding a pointer to valid memory
+> 		// allocated with `Kmalloc`.
+> 		unsafe { Kmalloc::free(self.ptr) };
+> 	}
+> }
+> ```
+> 
+> (Side note: `Kmalloc::free` is unsafe since it has no control on whether the
+> pointer passed to it is valid and was allocated with `Kmalloc` previously.)
+> 
+> In Rust's module_init() you could now attach an instance of `Buffer` to the
+> `Module` instance, which lives until module_exit(), which looks like this:
+> 
+> ```
+> struct MyModule {
+> 	buffer: Buffer,
+> }
+> 
+> impl kernel::Moduke for MyModule {
+> 	fn init(module: &'static ThisModule) -> Result<Self> {
+> 		Ok(MyModule {
+> 			buffer: Buffer::alloc(0x100)?,
+> 		})
+> 	}
+> }
+> ```
+> 
+> Note that we don't need to implement module_exit() here, since `MyModule` lives
+> until module_exit() and hence `buffer` has the same lifetime. Once `buffer` goes
+> out of scope it frees itself due to the drop() trait. In fact, buffer can never
+> leak it's memory.
+> 
+> With the proposed approach below we can't do this, we'd need to play dirty and
+> unsafe tricks in order to not entirely break the design of `Buffer`, or any
+> other more complex data structure that the module needs.
+> 
+> > 
+> > ------------------------------------------------------------------------
+> > // SPDX-License-Identifier: GPL-2.0-only
+> > #include <linux/module.h>
+> > #include <linux/pci.h>
+> > #include "my_pci_rust_bindings.h"
+> > 
+> > #define PCI_DEVICE_ID_FOO		0x0f00
+> > #define PCI_VENDOR_ID_FOO		0x0f00
+> > 
+> > static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+> > {
+> > 	return my_rust_probe(pdev);
+> > }
+> > 
+> > static void remove(struct pci_dev *pdev)
+> > {
+> > 	my_rust_remove(pdev);
+> > }
+> > 
+> > static const struct pci_device_id pci_ids[] = {
+> > 	{PCI_DEVICE(PCI_VENDOR_ID_FOO, PCI_DEVICE_ID_FOO)},
+> > 	{}
+> > };
+> > MODULE_DEVICE_TABLE(pci, pci_ids);
+> > 
+> > static struct pci_driver my_rust_pci_driver = {
+> > 	.name = "my_pci_rust_driver",
+> > 	.id_table = pci_ids,
+> > 	.probe = probe,
+> > 	.remove = remove,
+> > };
+> > module_pci_driver(my_rust_pci_driver);
+> > 
+> > MODULE_DESCRIPTION("Driver for my fancy PCI device");
+> > MODULE_LICENSE("GPL v2");
+> > ------------------------------------------------------------------------
+> > 
+> > Now, all you have to do is provide a my_rust_probe() and
+> > my_rust_remove() call in your rust code, and handle the conversion of a
+> > struct pci_dev to whatever you want to use (which you had to do anyway),
+> > and you are set!
+> > 
+> > That .c code above is "obviously" correct, and much simpler and worlds
+> > easier for all of us to understand instead of the huge .rs files that
+> > this patch series was attempting to implement.
+> > 
+> > You have to draw the c/rust line somewhere, you all seem to be wanting
+> > to draw that line at "no .c in my module at all!" and I'm saying "put 34
+> > lines of .c in your module and you will save a LOT of headache now."
+> > 
+> > All of the "real" work you want to do for your driver is behind the
+> > probe/remove callbacks (ok, add a suspend/resume as well, forgot that),
+> > and stop worrying about all of the bindings and other mess to tie into
+> > the driver model for a specific bus type and the lunacy that the device
+> > id mess was.
+> > 
+> > In short, KEEP IT SIMPLE!
+> > 
+> > Then, after we are comfortable with stuff like the above, slowly think
+> > about moving the line back a bit more, if you really even need to.  But
+> > why would you need to?  Only reason I can think of is if you wanted to
+> > write an entire bus in rust, and for right now, I would strongly suggest
+> > anyone not attempt that.
+> 
+> We're not trying to do that. Also, please note that all the abstractions are
+> *only* making use of APIs that C drivers use directly, just abstracting them
+> in a way, such that we can actually use the strength of Rust.
+> 
+> > 
+> > The "joy" of writing a driver in rust is that a driver consumes from
+> > EVERYWHERE in the kernel (as you well know.)  Having to write bindings
+> > and mappings for EVERYTHING all at once, when all you really want to do
+> > is implement the logic between probe/remove is rough, I'm sorry.  I'm
+> > suggesting that you stop at the above line for now, which should make
+> > your life easier as the .c code is obviously correct, and anything you
+> > do in the rust side is your problem, not mine as a bus maintainer :)
+> 
+> As explained above, we already have the module abstraction in place. Really all
+> that we're left with is creating the struct pci_driver and call register() /
+> remove() from it.
+> 
+> Now, this could be fully done in the PCI abstraction. The only reason we have
+> the `Registration` and `DriverOps` (again there are a few misunderstandings
+> around that, that I try to clarify in the corresponding thread) in "driver.rs"
+> is to not duplicate code for maintainability.
+> 
+> What I'm trying to say, the stuff in "driver.rs" is not even abstracting things
+> from drivers/base/, but is Rust helper code for subsystems to abstract their
+> stuff (e.g. struct pci_driver).
+> 
+> And again, I'm willing to take responsibility for the code and offer to maintain
+> it - I really want to do this the proper way.
+> 
+> - Danilo
+> 
+> (cutting of the rest since it was based on the misunderstanding mentioned above)
 
