@@ -1,118 +1,108 @@
-Return-Path: <linux-kernel+bounces-272862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34CD89461FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:45:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A31A946200
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40C41F221FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C85DA282754
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE17136322;
-	Fri,  2 Aug 2024 16:44:49 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D5D13634C;
+	Fri,  2 Aug 2024 16:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWAD+qxE"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4823816BE0B;
-	Fri,  2 Aug 2024 16:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563F116BE06;
+	Fri,  2 Aug 2024 16:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722617089; cv=none; b=D++J5nz4W2qB0UvFG9MIHJXD8C7wV6h5WlA4WoHP6DaOmfQ6Z0yK9BADE2hpDG0L++hmOSS3w4aHIiFpw+G/w/64hKhVnqkcOQDX8u6awsSAA79dtqngqscDCIraPv0p9bOP49sn6aecIpxyA2EZzJXvXP7kLqJl99NP0acsCkw=
+	t=1722617216; cv=none; b=RrdaG6ZlSSws915dQSiXpXRUb2mNaMT36Z0F2fjNGS/xBS6ighyz0gQ6Iqh+tdu1m1EVIOjUpRZTEYUjqt+wiRoJpL3Yt8jbynpDKrrWCDLZ32QXwzj14bR+0K04Dn6354IYkxolZd8WVeOwoY3uF+Np8ysgYuFPzFYBKsZxpg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722617089; c=relaxed/simple;
-	bh=NCbcoYaXRkWCPqQyDc3SvLTQKqJDdoxXXdNRp7Lxpbs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lCLHlV6CpOm8I3ytXZV58odGzhKssSn4mYVx+u82uzv2NNPAt2KhqqLINfwmoktDWEPfarSn0pNNgy2pndspbrAFJOAOv800Z1YiIQHDiCFGqttqzLNKeoo+jeIP/yMK0EOY3KVFIeqaHdCChPcptQkkK+4SJIg+2NX1uFpYF8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WbBTD2kfFz6K5YZ;
-	Sat,  3 Aug 2024 00:42:40 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id A6A811404F5;
-	Sat,  3 Aug 2024 00:44:44 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 2 Aug
- 2024 17:44:43 +0100
-Date: Fri, 2 Aug 2024 17:44:43 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
- Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
-	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
-	<dave@stgolabs.net>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko
- Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
- Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
-	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
-	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
-	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
-	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
-Subject: Re: [PATCH v3 00/26] mm: introduce numa_memblks
-Message-ID: <20240802174443.0000710c@Huawei.com>
-In-Reply-To: <20240801060826.559858-1-rppt@kernel.org>
-References: <20240801060826.559858-1-rppt@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722617216; c=relaxed/simple;
+	bh=4y5k1QnCofmNxwcJVb7NvQqYIBcYJzenhBV6fF87API=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C3TpqtFT3UvAlwv4TjbpYLqx+2IuXqJcLm3xsA9Owxm0WIUVLnHWbqznul0BUWVxNgvEyFp7nhu/bE9nH061SEZCyBB2/0mXtwinaE/YZwG/+cev0I97/goXrod7aqOa3sAYvMe4KbNll6GS3gHEn4e1HOrbg11TWXB6Gahu2bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BWAD+qxE; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f024f468bso11790481e87.1;
+        Fri, 02 Aug 2024 09:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722617213; x=1723222013; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8mY2dBkrjE8GweTAGavqDNNrZwpjLqK85WvRCvWyrxc=;
+        b=BWAD+qxEtNI3BfuD+r1kWo1ARovSDlRDe9P65ri18RRZ83Kfc7mmCsbzBn+UxYV9mO
+         vsnMJnh2xB28yGbE9RV1mPgCYnxJER3uM2zjqLZa33DMXLQ4gLVhDDwYzL7ozujSKC32
+         pntDxtqyBh2jc/GnvOznIOJhN9g4zxzEEdOHXsy6J/KZhq30I1bpRQ0aMnoA14APUkLf
+         jkb4oPO0vG+t12RTHkFGMtErxNRpYfMZO7zZboxsYR2z8ywLr29LUF2wA2PQOD3OoUrh
+         fUtINeAmzlIbYn3FhUoaVUxEudiWrdz4vEd7Zl2hzvpU1NSn64RMCRoU/K3qGGWfTSOl
+         iaeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722617213; x=1723222013;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8mY2dBkrjE8GweTAGavqDNNrZwpjLqK85WvRCvWyrxc=;
+        b=GXo/ZhULTu/7epaXUtI/DSIbXSyUVjsRYAI4gR7qG0pIEp1GfTrqLiPTU9h3KYjsNi
+         jcZIXgQidi7UD+La+SuTCL8s8pBleIsOKZ4RzGCxCDNRB/4c+K/JhIazpPUFfrMEa2HG
+         JqPy97rpiguwhqRBs9w3JSv6vLhi6+wA8zZHnyXgLOEkgORpOG8PWxUgnckRO7GclOYp
+         HjoHfISQtFQ1P4JEj5B9bqsOZHpVQK0E01cPqTYMYj9qi/Zn4oVhFUyRqv3qOgoT+/Nf
+         C04flpbhudUlh0wkr5oJTPZ89alOYm7Sf/r0beKHVBsNaETJYS7NLyNmjqtssuzsUgyx
+         WeJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXplmzwxk4GgxR0Ph1rqQPo5Y6Y4/8SKeK4xstKk4xl3vp1vrxbjggsJX63cSGDsSBSx71K+TXkPgNOGqaynZu05NQvW43R7a89G0l5
+X-Gm-Message-State: AOJu0YyM6ANabWTjKL+O+Cc/lNwnE2oXmGFNgiExCADVXYFZ8UDOc99n
+	UwFQLBJbkt1uv4dqqC2JES9W5x8Eba0LgKvXZpi9TKadgIL1B1my3Y3ViQ==
+X-Google-Smtp-Source: AGHT+IHaWqMHJ46ZEkjg1WHLWXD8vKJ/XP5NqcSdc0QHWF0ZEz9Gn8kpcjvNQAqrFn48yT2Et79OWw==
+X-Received: by 2002:a05:6512:281a:b0:52c:e3bd:c708 with SMTP id 2adb3069b0e04-530bb39d1f5mr2517293e87.10.1722617213052;
+        Fri, 02 Aug 2024 09:46:53 -0700 (PDT)
+Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf1e97esm2318469f8f.37.2024.08.02.09.46.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 09:46:51 -0700 (PDT)
+From: Ilya Dryomov <idryomov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fix for 6.11-rc2
+Date: Fri,  2 Aug 2024 18:46:36 +0200
+Message-ID: <20240802164638.900157-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Thu,  1 Aug 2024 09:08:00 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+Hi Linus,
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Hi,
-> 
-> Following the discussion about handling of CXL fixed memory windows on
-> arm64 [1] I decided to bite the bullet and move numa_memblks from x86 to
-> the generic code so they will be available on arm64/riscv and maybe on
-> loongarch sometime later.
-> 
-> While it could be possible to use memblock to describe CXL memory windows,
-> it currently lacks notion of unpopulated memory ranges and numa_memblks
-> does implement this.
-> 
-> Another reason to make numa_memblks generic is that both arch_numa (arm64
-> and riscv) and loongarch use trimmed copy of x86 code although there is no
-> fundamental reason why the same code cannot be used on all these platforms.
-> Having numa_memblks in mm/ will make it's interaction with ACPI and FDT
-> more consistent and I believe will reduce maintenance burden.
-> 
-> And with generic numa_memblks it is (almost) straightforward to enable NUMA
-> emulation on arm64 and riscv.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Tested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> #arm64 + CXL via QEMU
-With that one fix in patch 7.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-Feel free to figure out which patches actually got tested by that
-(or tag them all - I'll pretend I tested ip27 :)
+are available in the Git repository at:
 
-Jonathan
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.11-rc2
 
+for you to fetch changes up to 31634d7597d8c57894b6c98eeefc9e58cf842993:
+
+  ceph: force sending a cap update msg back to MDS for revoke op (2024-08-01 13:14:28 +0200)
+
+----------------------------------------------------------------
+A fix for a potential hang in the MDS when cap revocation races with
+the client releasing the caps in question, marked for stable.
+
+----------------------------------------------------------------
+Xiubo Li (1):
+      ceph: force sending a cap update msg back to MDS for revoke op
+
+ fs/ceph/caps.c  | 35 ++++++++++++++++++++++++-----------
+ fs/ceph/super.h |  7 ++++---
+ 2 files changed, 28 insertions(+), 14 deletions(-)
 
