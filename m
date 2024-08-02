@@ -1,130 +1,290 @@
-Return-Path: <linux-kernel+bounces-273070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C653946442
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA99946445
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E265283720
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4478A2822CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6900650A63;
-	Fri,  2 Aug 2024 20:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA3152F6F;
+	Fri,  2 Aug 2024 20:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0HY8IUiH"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GnoLVTv9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA211ABEB3
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A842C1ABEAB;
+	Fri,  2 Aug 2024 20:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722629794; cv=none; b=W3K8ysj+qdYlR2XKyOhNDU1mzDcG7FWmAOSALUqq/qBnUW1IiNZi0Q3TJ0llF1PbzWIxBU/CmfbmAy2b5wvnN1i7KKEMpfSQ1IkJILk2VKSNUTGCTPBXsD27J5KIF/Z0k3+Xw0Wv97lRaZQ6CHP9EN5tw278CfzsnRyWvuHNcLs=
+	t=1722629885; cv=none; b=D2ohyGBuj4haDztOqYCT5ymwgpMkD4loYFed5RPgfjEM5gphZtQ4rQ+BXROB3qzx4TBRtVgVKavc4OF2XFfpCgXI3byozJwaa1b2dEw1EbHG3o5NtwAsiZr4Y5Y0itU0BZpC87HxqwKtkjcQ9Uyuc7BDWNm4yR41P3lw/9m8MxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722629794; c=relaxed/simple;
-	bh=TXvdlxOVU7doVd8ZsCfPhM1Ucj5S0xNZ2Rcj/xvqPgc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=U9kxYR1nju1GXF+0bttCZ8Zm9SGGpOk8HB6A1iAp16cDIIIsrHDqNUM+Bncbj/xiWbdOXFGokROyW8M4JSzXr0GSFU4aqj8ymFxidxL0j7Q7klU/evCWTuL6HtfAaGmQkv+kWcEXKaHEfatRgTM/77bW5+GdvjS73Ng21pdvnHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0HY8IUiH; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71065f49abeso2237331b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722629793; x=1723234593; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jZQFLav+WlDGG6CozZMcdSkYFx1BmtT+dLZeZWTkJks=;
-        b=0HY8IUiH+anGj05Z1ZKisCJvw9fuBaiTE09x8iDjrZqXj/ReWC626MsvdJ3gnCkXWx
-         +TXRp0cAhlgOnHOHJLXQU32efo104BNZ3OLsaHhADYeUH8UixsOouTuboOZNAqxbR+W8
-         T+kenzNTsa6B2z2kXrFAVbsJU57OvdQGt8AFYL4AzpG3xh5FmjHULYu/NCryDvyk0cKm
-         C9se5OTzTOCDvny+Kg2bH8BGReGw7iAcUAALcu8I6z4wwi70RQUF1J/iqXnzKEUKVvdi
-         Y3RWX0aIeotu5+1+PodLJ+KGETg96z2n4/lXHrJKw1kn4BY5OdvtdoTWPMv92vcjL8M9
-         mK0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722629793; x=1723234593;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZQFLav+WlDGG6CozZMcdSkYFx1BmtT+dLZeZWTkJks=;
-        b=C5PfcTKHHt3ErQZuD3freY5DxASXaY6jrvuz9cmX1SoLLUpmwmbMRpEnO3fcPk94MM
-         8lupU264m7DKERq7NtSeNIVvBihVoBRx2vSUvpThrZhY8Vy7xgpsV4vaqJNvfk1fB9c6
-         S3bnSzgebYe7FOeA9cdztdwrqfPF1Qe/lRtfB3xYqIrwRddj7HW7RTb05SEM+Sa81wkU
-         9XEJY2UGT6vWscTk9XjcAQy8iAwpqR59SGQwKp3v2ixgaHJ9yTTCJUJ4WaLSwAam3Omt
-         HRsTP4Yum50IHayMJKpnAkPhQanmqSF+HqeLPACUWeUs7wwIDm1DEcA9QxxLDf3st+Hj
-         942w==
-X-Forwarded-Encrypted: i=1; AJvYcCXGDeh42SAeDXik7VD8W+g+75j9SWUXl0V61cgtJSD6lA5uSKLfk68/ccY7eaF0G4OVqsQ+jMjNefohA7Gex967Q0hv6R6XEs2vQiSH
-X-Gm-Message-State: AOJu0YyqTpz5zbrw30a0nJALGz9UeNZZ/D+K/gAAtCg/jIvnwkfsBcLc
-	fJasY3A5usDqOV/q3M3F9MSS6qvXJMiMAMJu0aKXko9pk/l15j5qz+m0gu/uMZ7rm/6PaeDJqzu
-	Jgg==
-X-Google-Smtp-Source: AGHT+IFb99jmBNeDqQRBYLcydt+zXBMQx4p/CU8oV2WUABtLxdEGZvp3I6qLVp2sa1B93X8GgzfSYMLoBaw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:8e9c:0:b0:70b:a46:7dfa with SMTP id
- d2e1a72fcca58-7106d0a4be6mr112403b3a.5.1722629792616; Fri, 02 Aug 2024
- 13:16:32 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  2 Aug 2024 13:16:30 -0700
+	s=arc-20240116; t=1722629885; c=relaxed/simple;
+	bh=fDyLjeqQv/jitF1le2J3X0IJsMVm1/Jwz5ya8aTz3nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W93tlAIZgbcd8M5tI4oGHGrLHAJkW1yD8tWmcQ0bzr0QjjgwDHET47bdGstEonftpJGlUbchfRtxO4+XjQC5CMYhbtHuVB01RjcwqHlATj6G1GanOsqfoi5WQ4mFEWkTaIC5IzpS4bPK2ME8ZVwmZSoVHv+Y7zSsnyECw2gpxEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GnoLVTv9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472JuYOl027523;
+	Fri, 2 Aug 2024 20:17:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=CxNpZmxja0FW5gkXZzXOKBxZ/sZ
+	7BNMmzLEm/Z0oma0=; b=GnoLVTv9zCCE5ECMsHZNQT02HGIcTa4dlg1niLQ789E
+	sjUgWW7kHwx/cmUju+Y1G+MFPhxfDIO5BXq0YApFeNAgJO60muZA24ntYE407Rb4
+	0EBulNiWRnYuR7oJsdZFd6bVE1BMnXOrNCWsaMMmZ58y9vg3x+DsfVFyfdfa8B2N
+	H6d0RqybVNK1rGUwY83CZmQLsdsCkdC6UDGvut+XM3PS/+dTxfiNNBDOqLCaFuIL
+	Wmq5PPLgFZDpO/hHfDraF9gCahnt1kbh7lNVn0DZPexBcbTWzBKLEParfAgF/YlA
+	1wW2GYQ7gOv6nOSlVW+RIbvHp+cjvlak8qbQ2qCkg5A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40s3vxgass-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:17:41 +0000 (GMT)
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 472KHeL4028705;
+	Fri, 2 Aug 2024 20:17:40 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40s3vxgasq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:17:40 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 472HFd1v007483;
+	Fri, 2 Aug 2024 20:17:39 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40nb7us8vr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:17:39 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 472KHafi51511554
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 Aug 2024 20:17:38 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2037420043;
+	Fri,  2 Aug 2024 20:17:36 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1EB5620040;
+	Fri,  2 Aug 2024 20:17:34 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.46.209])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  2 Aug 2024 20:17:33 +0000 (GMT)
+Date: Sat, 3 Aug 2024 01:47:31 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 14/20] ext4: get rid of ppath in ext4_split_extent()
+Message-ID: <Zq0+235GoXtmUDps@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-15-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802201630.339306-1-seanjc@google.com>
-Subject: [PATCH] KVM: x86: Use this_cpu_ptr() instead of per_cpu_ptr(smp_processor_id())
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Yuan Yao <yuan.yao@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-15-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DR1RBYqTPUqX1h9NfkVqPZ4b5AYCnuJO
+X-Proofpoint-ORIG-GUID: _jyIaAHnept1L1sGMpsFhDqQ0Zh6cf2v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_15,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 mlxlogscore=611 malwarescore=0
+ mlxscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 phishscore=0
+ adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408020138
 
-From: Isaku Yamahata <isaku.yamahata@intel.com>
+On Wed, Jul 10, 2024 at 12:06:48PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
+> 
+> To get rid of the ppath in ext4_split_extent(), the following is done here:
+> 
+>  * The 'allocated' is changed from passing a value to passing an address.
+>  * Its caller needs to update ppath if it uses ppath.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-Use this_cpu_ptr() instead of open coding the equivalent in various
-user return MSR helpers.
+Looks good Baokun, feel free to add:
 
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Reviewed-by: Chao Gao <chao.gao@intel.com>
-Reviewed-by: Yuan Yao <yuan.yao@intel.com>
-[sean: massage changelog]
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Not entirely sure where this came from, found it in one of my myriad branches
-while doing "spring" cleaning.
-
- arch/x86/kvm/x86.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index af6c8cf6a37a..518baf47ef1c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -427,8 +427,7 @@ static void kvm_user_return_msr_cpu_online(void)
- 
- int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
- {
--	unsigned int cpu = smp_processor_id();
--	struct kvm_user_return_msrs *msrs = per_cpu_ptr(user_return_msrs, cpu);
-+	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
- 	int err;
- 
- 	value = (value & mask) | (msrs->values[slot].host & ~mask);
-@@ -450,8 +449,7 @@ EXPORT_SYMBOL_GPL(kvm_set_user_return_msr);
- 
- static void drop_user_return_notifiers(void)
- {
--	unsigned int cpu = smp_processor_id();
--	struct kvm_user_return_msrs *msrs = per_cpu_ptr(user_return_msrs, cpu);
-+	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
- 
- 	if (msrs->registered)
- 		kvm_on_user_return(&msrs->urn);
-
-base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
-
+Regards,
+ojaswin
+> ---
+>  fs/ext4/extents.c | 97 ++++++++++++++++++++++++-----------------------
+>  1 file changed, 50 insertions(+), 47 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 0bd068ed324f..2a4f6c89858c 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -3345,21 +3345,18 @@ static struct ext4_ext_path *ext4_split_extent_at(handle_t *handle,
+>   *   c> Splits in three extents: Somone is splitting in middle of the extent
+>   *
+>   */
+> -static int ext4_split_extent(handle_t *handle,
+> -			      struct inode *inode,
+> -			      struct ext4_ext_path **ppath,
+> -			      struct ext4_map_blocks *map,
+> -			      int split_flag,
+> -			      int flags)
+> +static struct ext4_ext_path *ext4_split_extent(handle_t *handle,
+> +					       struct inode *inode,
+> +					       struct ext4_ext_path *path,
+> +					       struct ext4_map_blocks *map,
+> +					       int split_flag, int flags,
+> +					       unsigned int *allocated)
+>  {
+> -	struct ext4_ext_path *path = *ppath;
+>  	ext4_lblk_t ee_block;
+>  	struct ext4_extent *ex;
+>  	unsigned int ee_len, depth;
+> -	int err = 0;
+>  	int unwritten;
+>  	int split_flag1, flags1;
+> -	int allocated = map->m_len;
+>  
+>  	depth = ext_depth(inode);
+>  	ex = path[depth].p_ext;
+> @@ -3377,33 +3374,25 @@ static int ext4_split_extent(handle_t *handle,
+>  			split_flag1 |= EXT4_EXT_DATA_VALID1;
+>  		path = ext4_split_extent_at(handle, inode, path,
+>  				map->m_lblk + map->m_len, split_flag1, flags1);
+> -		if (IS_ERR(path)) {
+> -			err = PTR_ERR(path);
+> -			*ppath = NULL;
+> -			goto out;
+> +		if (IS_ERR(path))
+> +			return path;
+> +		/*
+> +		 * Update path is required because previous ext4_split_extent_at
+> +		 * may result in split of original leaf or extent zeroout.
+> +		 */
+> +		path = ext4_find_extent(inode, map->m_lblk, path, flags);
+> +		if (IS_ERR(path))
+> +			return path;
+> +		depth = ext_depth(inode);
+> +		ex = path[depth].p_ext;
+> +		if (!ex) {
+> +			EXT4_ERROR_INODE(inode, "unexpected hole at %lu",
+> +					(unsigned long) map->m_lblk);
+> +			ext4_free_ext_path(path);
+> +			return ERR_PTR(-EFSCORRUPTED);
+>  		}
+> -		*ppath = path;
+> -	} else {
+> -		allocated = ee_len - (map->m_lblk - ee_block);
+> -	}
+> -	/*
+> -	 * Update path is required because previous ext4_split_extent_at() may
+> -	 * result in split of original leaf or extent zeroout.
+> -	 */
+> -	path = ext4_find_extent(inode, map->m_lblk, path, flags);
+> -	if (IS_ERR(path)) {
+> -		*ppath = NULL;
+> -		return PTR_ERR(path);
+> -	}
+> -	*ppath = path;
+> -	depth = ext_depth(inode);
+> -	ex = path[depth].p_ext;
+> -	if (!ex) {
+> -		EXT4_ERROR_INODE(inode, "unexpected hole at %lu",
+> -				 (unsigned long) map->m_lblk);
+> -		return -EFSCORRUPTED;
+> +		unwritten = ext4_ext_is_unwritten(ex);
+>  	}
+> -	unwritten = ext4_ext_is_unwritten(ex);
+>  
+>  	if (map->m_lblk >= ee_block) {
+>  		split_flag1 = split_flag & EXT4_EXT_DATA_VALID2;
+> @@ -3414,17 +3403,18 @@ static int ext4_split_extent(handle_t *handle,
+>  		}
+>  		path = ext4_split_extent_at(handle, inode, path,
+>  				map->m_lblk, split_flag1, flags);
+> -		if (IS_ERR(path)) {
+> -			err = PTR_ERR(path);
+> -			*ppath = NULL;
+> -			goto out;
+> -		}
+> -		*ppath = path;
+> +		if (IS_ERR(path))
+> +			return path;
+>  	}
+>  
+> +	if (allocated) {
+> +		if (map->m_lblk + map->m_len > ee_block + ee_len)
+> +			*allocated = ee_len - (map->m_lblk - ee_block);
+> +		else
+> +			*allocated = map->m_len;
+> +	}
+>  	ext4_ext_show_leaf(inode, path);
+> -out:
+> -	return err ? err : allocated;
+> +	return path;
+>  }
+>  
+>  /*
+> @@ -3669,10 +3659,15 @@ static int ext4_ext_convert_to_initialized(handle_t *handle,
+>  	}
+>  
+>  fallback:
+> -	err = ext4_split_extent(handle, inode, ppath, &split_map, split_flag,
+> -				flags);
+> -	if (err > 0)
+> -		err = 0;
+> +	path = ext4_split_extent(handle, inode, path, &split_map, split_flag,
+> +				 flags, NULL);
+> +	if (IS_ERR(path)) {
+> +		err = PTR_ERR(path);
+> +		*ppath = NULL;
+> +		goto out;
+> +	}
+> +	err = 0;
+> +	*ppath = path;
+>  out:
+>  	/* If we have gotten a failure, don't zero out status tree */
+>  	if (!err) {
+> @@ -3718,6 +3713,7 @@ static int ext4_split_convert_extents(handle_t *handle,
+>  	struct ext4_extent *ex;
+>  	unsigned int ee_len;
+>  	int split_flag = 0, depth;
+> +	unsigned int allocated = 0;
+>  
+>  	ext_debug(inode, "logical block %llu, max_blocks %u\n",
+>  		  (unsigned long long)map->m_lblk, map->m_len);
+> @@ -3745,7 +3741,14 @@ static int ext4_split_convert_extents(handle_t *handle,
+>  		split_flag |= (EXT4_EXT_MARK_UNWRIT2 | EXT4_EXT_DATA_VALID2);
+>  	}
+>  	flags |= EXT4_GET_BLOCKS_PRE_IO;
+> -	return ext4_split_extent(handle, inode, ppath, map, split_flag, flags);
+> +	path = ext4_split_extent(handle, inode, path, map, split_flag, flags,
+> +				 &allocated);
+> +	if (IS_ERR(path)) {
+> +		*ppath = NULL;
+> +		return PTR_ERR(path);
+> +	}
+> +	*ppath = path;
+> +	return allocated;
+>  }
+>  
+>  static int ext4_convert_unwritten_extents_endio(handle_t *handle,
+> -- 
+> 2.39.2
+> 
 
