@@ -1,166 +1,111 @@
-Return-Path: <linux-kernel+bounces-272333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDDC945A5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D90945A62
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93732B220D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:01:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93BA1B21816
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A0B1C3793;
-	Fri,  2 Aug 2024 09:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="M4QPXT/p"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702681D2F7A;
+	Fri,  2 Aug 2024 09:05:56 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D61149659
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 09:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4401C0DC1;
+	Fri,  2 Aug 2024 09:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722589308; cv=none; b=mtWKkVOUk1j0Joq63rSMTw8Wa6aN4mw2fvoGMPfF3F9r8Dpw+vnaSRw11xf8PiMTx9i5BMPJkfjgSb0ChOWa69CfO3xqFBhEpynt7cpMK5Z3q8P2Vy8vofVw8jMeX6ekF3hLG0m8Zh9PR85Phs8UbS29tsw8dPMDY/BSOkoaZ5c=
+	t=1722589556; cv=none; b=ACfD5tC4oVwRtdUvpW4gIIPkLSzmJmi1tq3Rw6/xJOd45RJcesy2QxVtHe0dCrCXxXZlfnaVvUXU+V89nTRQb4wTY+bP/Wcyjx3k7PLaILiJZ2nA4NTXMa2obQ6xWi6tSxG4WZayEhMEa/+oP80CCs162E5mR6o4Q0S91ky7QEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722589308; c=relaxed/simple;
-	bh=iHd0oRRdj5VAxcNdtUaMaEiKRX81SENnsPbe6vneCYU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lZTzaXb0vq/1/tECKdKgONBg0c43Y9fY+XrqFI+T/N3dOBDMBQ7OX621oTHDJUEbTbVNI75t12QW+H+h9YeXXJNdwBOwA69urKRdfKwSW3VGSycIeAG2Nu8RN0WAuoiuG4tBgjfq1W5PDxF8L2zphDh/vpSCmGDZ/mCrZhuGNBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=M4QPXT/p; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722589302; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=MmOD1Kd+8JiK9iMzOwNmvwMz5rOtu4BwhOC7vysWx5s=;
-	b=M4QPXT/p0UFikh2SpeQmOEw2i8VTQVVDn94wIX4nrQU/lsg+fLVtuJkcILOD0MaU2N1Njv8zMKirreM+xL7d1MZtW2Pn6Vc3bO/amUMg/UZVs9pL3C3bS7XPULZwtJctrM1U+WixHFv+IFCK1I3nQ5eBfySxgsaYYttXjtW20WQ=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0WBwwROu_1722589300;
-Received: from 30.97.48.169(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WBwwROu_1722589300)
-          by smtp.aliyun-inc.com;
-          Fri, 02 Aug 2024 17:01:42 +0800
-Message-ID: <c7182f2f-8ca3-4b8c-b338-99a5ebd0cad0@linux.alibaba.com>
-Date: Fri, 2 Aug 2024 17:01:40 +0800
+	s=arc-20240116; t=1722589556; c=relaxed/simple;
+	bh=D8ogs8GBuYVvZtiV2P2X9897oab0tdFIb2V2GWAbj0I=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WQXY1KkEStkZbHF5GuTtnjHAhd8/vE+Me0fRynxAB6ceHvr7wD1NKeT298SPzIT2LFZ4JBsY1wcDNIbpZTxlMRgTy3h3LyrCDzlfmZ5KaY/VzE6HE9R6t0dmr/LKa1R4TRcijxX6j08QTnkycZtBiFxGJz97L53xL9f1pGgCrvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 2 Aug
+ 2024 17:05:51 +0800
+Received: from localhost.localdomain (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Fri, 2 Aug 2024 17:05:51 +0800
+From: Kevin Chen <kevin_chen@aspeedtech.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <lee@kernel.org>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <soc@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <p.zabel@pengutronix.de>, <quic_bjorande@quicinc.com>,
+	<geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+	<shawnguo@kernel.org>, <neil.armstrong@linaro.org>,
+	<m.szyprowski@samsung.com>, <nfraprado@collabora.com>, <u-kumar1@ti.com>,
+	<kevin_chen@aspeedtech.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v1 00/10] Introduce ASPEED AST27XX BMC SoC
+Date: Fri, 2 Aug 2024 17:05:34 +0800
+Message-ID: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/migrate: fix deadlock in migrate_pages_batch() on
- large folios
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
-References: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com>
- <Zqa8NTqKuXkTxzBw@casper.infradead.org>
- <04bbfcd0-6eb1-4a5b-ac21-b3cdf1acdc77@linux.alibaba.com>
-In-Reply-To: <04bbfcd0-6eb1-4a5b-ac21-b3cdf1acdc77@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Matthew,
+This patchset adds initial support for the ASPEED.
+AST27XX Board Management controller (BMC) SoC family.
 
-On 2024/7/29 06:11, Gao Xiang wrote:
-> Hi,
-> 
-> On 2024/7/29 05:46, Matthew Wilcox wrote:
->> On Sun, Jul 28, 2024 at 11:49:13PM +0800, Gao Xiang wrote:
->>> It was found by compaction stress test when I explicitly enable EROFS
->>> compressed files to use large folios, which case I cannot reproduce with
->>> the same workload if large folio support is off (current mainline).
->>> Typically, filesystem reads (with locked file-backed folios) could use
->>> another bdev/meta inode to load some other I/Os (e.g. inode extent
->>> metadata or caching compressed data), so the locking order will be:
->>
->> Umm.  That is a new constraint to me.  We have two other places which
->> take the folio lock in a particular order.  Writeback takes locks on
->> folios belonging to the same inode in ascending ->index order.  It
->> submits all the folios for write before moving on to lock other inodes,
->> so it does not conflict with this new constraint you're proposing.
-> 
-> BTW, I don't believe it's a new order out of EROFS, if you consider
-> ext4 or ext2 for example, it will also use sb_bread() (buffer heads
-> on bdev inode to trigger some meta I/Os),
-> 
-> e.g. take ext2 for simplicity:
->    ext2_readahead
->      mpage_readahead
->       ext2_get_block
->         ext2_get_blocks
->           ext2_get_branch
->              sb_bread     <-- get some metadata using for this data I/O
+AST2700 is ASPEED's 8th-generation server management processor.
+Featuring a quad-core ARM Cortex A35 64-bit processor and two
+independent ARM Cortex M4 processors
 
-I guess I need to write more words about this:
+This patchset adds minimal architecture and drivers such as:
+Clocksource, Clock and Reset
 
-Although currently sb_bread() mainly take buffer locks to do meta I/Os,
-but the following path takes the similar dependency:
+This patchset was tested on the ASPEED AST2700 evaluation board.
 
-                ...
-                sb_bread
-                  __bread_gfp
-                    bdev_getblk
-                      __getblk_slow
-                        grow_dev_folio  // bdev->bd_mapping
-                          __filemap_get_folio(FGP_LOCK | .. | FGP_CREAT)
+Kevin Chen (10):
+  dt-binding: mfd: aspeed,ast2x00-scu: Add binding for ASPEED AST2700
+    SCU
+  dt-binding: clk: ast2700: Add binding for Aspeed AST27xx Clock
+  clk: ast2700: add clock controller
+  dt-bindings: reset: ast2700: Add binding for ASPEED AST2700 Reset
+  dt-bindings: arm: aspeed: Add maintainer
+  dt-bindings: arm: aspeed: Add aspeed,ast2700-evb compatible string
+  arm64: aspeed: Add support for ASPEED AST2700 BMC SoC
+  arm64: dts: aspeed: Add initial AST27XX device tree
+  arm64: dts: aspeed: Add initial AST2700 EVB device tree
+  arm64: defconfig: Add ASPEED AST2700 family support
 
-So the order is already there for decades.. Although EROFS doesn't
-use buffer heads since its initial version, it needs a different
-address_space to cache metadata in page cache for best performance.
+ .../bindings/arm/aspeed/aspeed.yaml           |    6 +
+ .../bindings/mfd/aspeed,ast2x00-scu.yaml      |    3 +
+ MAINTAINERS                                   |    3 +
+ arch/arm64/Kconfig.platforms                  |   14 +
+ arch/arm64/boot/dts/Makefile                  |    1 +
+ arch/arm64/boot/dts/aspeed/Makefile           |    4 +
+ arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi     |  217 +++
+ arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |   50 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1166 +++++++++++++++++
+ .../dt-bindings/clock/aspeed,ast2700-clk.h    |  180 +++
+ .../dt-bindings/reset/aspeed,ast2700-reset.h  |  126 ++
+ 13 files changed, 1772 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
+ create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+ create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+ create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
 
-In .read_folio() and .readahead() context, the orders have to be
-
-   file-backed folios
-      bdev/meta folios
-
-since it's hard to use any other orders and the file-backed folios
-won't be filled without uptodated bdev/meta folios.
-
-> 
->>
->> The other place is remap_file_range().  Both inodes in that case must be
->> regular files,
->>          if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
->>                  return -EINVAL;
->> so this new rule is fine.
-
-Refer to vfs_dedupe_file_range_compare() and vfs_lock_two_folios(), it
-seems it only considers folio->index regardless of address_spaces too.
-
->>
->> Does anybody know of any _other_ ordering constraints on folio locks?  I'm
->> willing to write them down ...
-> 
-> Personally I don't think out any particular order between two folio
-> locks acrossing different inodes, so I think folio batching locking
-> always needs to be taken care.
-
-
-I think folio_lock() comment of different address_spaces added in
-commit cd125eeab2de ("filemap: Update the folio_lock documentation")
-would be better to be refined:
-
-...
-  * in the same address_space.  If they are in different address_spaces,
-  * acquire the lock of the folio which belongs to the address_space which
-  * has the lowest address in memory first.
-  */
-static inline void folio_lock(struct folio *folio)
-{
-...
-
-
-Since there are several cases we cannot follow the comment above due
-to .read_folio(), .readahead() and more contexts.
-
-I'm not sure how to document the order of different address_spaces,
-so I think it's just "no particular order between different
-address_space".
-
-Thanks,
-Gao Xiang
+-- 
+2.34.1
 
 
