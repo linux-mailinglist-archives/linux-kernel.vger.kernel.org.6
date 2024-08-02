@@ -1,108 +1,105 @@
-Return-Path: <linux-kernel+bounces-273140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFAB9464E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:17:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035B09464EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1EBF1C20F16
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:17:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB3D8B21EEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7D1745F2;
-	Fri,  2 Aug 2024 21:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78726A325;
+	Fri,  2 Aug 2024 21:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F2ri5abC"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W07csFea"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF2C1EA8D
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 21:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF611ABEDC
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 21:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722633447; cv=none; b=u6s45CdjV9zeKFGcCuLILHyo9HUo7vXyoJSfAxq84duXmtQepcDnfBH/0TFtezT21GUVPqX8FRuEBSWI1OG5Eg2zxVzGOSZEyEJ5kYwSQPAeujMFeicB3TfiKZZLd7rdxvcCVKelYabLqHLtAZOVilwtQ80A4e6LfgH3Hh5sE0Y=
+	t=1722633536; cv=none; b=gPV4GHFZmmqL4M4tBjzc4d5dtaOqp+/QnKv+dhi7PEf+bpvWhCCTtnwubHvbq58YuTtBqch4S3fFhVrs6IJNg8POn1mTeJ+trIiiJ49UKT2/PVmYX5zNyZE7HQsnQWXi4PjIFuPI/+hlqzeQieWmzquHIC3LUhuEazvkiDJ7TWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722633447; c=relaxed/simple;
-	bh=CJVx6hKBEtA2C6xwKu+85psWN00Yma38PQ634qW6kgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQ5DD5SvHjKaRucppAPtRs5tp7r6g6BolAWK2cHawOVdJne7FCs/MKoPUKmEpWp/P8qO+PV0Yaaf9+lxrsx9tnk+uzWZitBLTpZnzglxkPtC+Y3MQEhEtTg+LqmKGThZKcbz9cMfzFw2VwDpTRV6jf3WLgAbHnCs9w4hBfLsrg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F2ri5abC; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fec34f94abso70100395ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 14:17:26 -0700 (PDT)
+	s=arc-20240116; t=1722633536; c=relaxed/simple;
+	bh=v3HZnKcZrPXLVKe4/bZ+Sg9EL/Zo5bHXDirYgTmAXJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rKvXT28S7FUF72bI6zQW6JCsvrQ2m5iSybR1swA+xSv3SsOpwoq1UiKrFgoe7a1dixcdzwZxzFaHQAQLjSWEJpCrPG7EiOKwC1TTb7DOkZhZ019tnc7nsedxZyYMRqdH/FxBfkPZAOz6A4v3uwxkKhctaHWEa3uEwyzqOqVfKvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W07csFea; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d150e8153so2512900b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 14:18:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722633446; x=1723238246; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xg/nIkEBOUj6ERsU4SsqgIXyx4I9NBiRgxttKQa94Lg=;
-        b=F2ri5abCF7oBW+vkjlG5z4/CWOMxso5IPddBFyPRStDF4+lR9Jw4uYb8vrEBl7Pt7r
-         2I8mLYTPWP4xMtYR9UN8rFVDbQtAib4IoS6evsK/FRX9LXOh68Z0g+9kBZX6/kQnB4w+
-         YT9sQQt9m2Ytu8J7cstEYo2oj8hdp+NBPeJFU=
+        d=gmail.com; s=20230601; t=1722633534; x=1723238334; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=8hn2btrRWR5QcXtzCR0MH3KvcjgIAfIrdUdoWIlFqFA=;
+        b=W07csFeaSNb3l6AMgUdbHL4IPxAKMP8He606u5BnToA0wgN8gZEVhU2EAFkU9EJmEE
+         /ElZjVqpjPIVE9nhMfFuFXTXaDyXo6gdcDPRAMfBWcKQamQ90ZtTtligx7bYN7hKxVnH
+         2VT6F2pRRZjZxc9Iqd1DbNhf8BW9IxXjwcHqagkOUucjK87UP+nI+WKiMaCSc3wuCI2U
+         5Shr1xn9ZFCJdJI1vLtsn1XpZdiCI09A8vyCjk5sBR6D0hg4kE+JSBVIVnP+eHZMydAP
+         XJ74hLaw/54irKUybUewHVb0gFcNM6FpnBPP4YcnODowiEjrcNDdveD283JY6OlA47xg
+         u83A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722633446; x=1723238246;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1722633534; x=1723238334;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Xg/nIkEBOUj6ERsU4SsqgIXyx4I9NBiRgxttKQa94Lg=;
-        b=ZLPbFEXraOOZ1MYZ3AWzc0A+VfAj9ZQd0Axo1PqXEfZJYCxQ/mS53XfSjUK22GOBws
-         v4GRfaFRMvKyU1Y+R95y1zpeTAI9IOlxcknOepo1AychfvYPGCgjMeRL2Auc86jJhZkU
-         qdOmptwZC3KAo92wsa1Z2ehAeZusxHWuQLzJC88PWDAnjsZVBgnbae3I6wj8vKCwley7
-         amwuv6fV9MjT3HmLAi2oWnPl+Dz+qzZ4ikqWJ60szftnyE/YRjJed1/Q3/+w99bVqfdr
-         UEXyKUaARB5oowMOSrrIqPbV6tWnaJ68z8NEK6m2zkeedkZpdjaLSV98n2MjmIY36xL1
-         gP2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtW7/yFOMgDTlu399VFr7Odsa6kwRHERweNQ+q/GPZzm79bllw0vcBZi6ZF7nBoF6qQNuUvxonElyrkl8Al0aI2kwM+vkDzV15HhOA
-X-Gm-Message-State: AOJu0YxdaYXB/nG8UFJSxn+Db3R9cJWocxS/5pKNgqrfv93oGZuqJLLy
-	vew1TAc3xlysD8VVh4QpmIaaiwVDfdz83+xKjD3ysKzt2IGPMgNfGLM+uRFI2w==
-X-Google-Smtp-Source: AGHT+IFFmu0KeHAGUS32wdXePcs4h01hwELYQaMMmW8APwdIiTFVYyrGB7g2Uh4wIWrPv5KZReIUyg==
-X-Received: by 2002:a17:902:d492:b0:1fb:8419:8384 with SMTP id d9443c01a7336-1ff5722d6e9mr59497725ad.13.1722633445808;
-        Fri, 02 Aug 2024 14:17:25 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:ac3b:d38d:edce:bf32])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1ff5916e836sm21683095ad.184.2024.08.02.14.17.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Aug 2024 14:17:25 -0700 (PDT)
-Date: Fri, 2 Aug 2024 14:17:23 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>, bpf@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, Jiri Olsa <olsajiri@gmail.com>
-Subject: Re: [PATCH v4 2/3] tools build: Avoid circular .fixdep-in.o.cmd
- issues
-Message-ID: <Zq1M43UGQCkdLBNn@google.com>
-References: <20240715203325.3832977-1-briannorris@chromium.org>
- <20240715203325.3832977-3-briannorris@chromium.org>
- <ZpYngEl9XKumuow5@krava>
+        bh=8hn2btrRWR5QcXtzCR0MH3KvcjgIAfIrdUdoWIlFqFA=;
+        b=jetfGHnSp7zNze2nOe5dGwwmTN9u1GZmQjw0WAkNtg6+b8VUQAT3ADreSGhMi00po2
+         ex9T8+efOZGXbh4Mu94yyEluf51sTVBaAGm7nSyHD3gbrFVvjJxecXugTg7RqAhMorPv
+         np2kdcmcy43eI5SR1gm6Z2MWPMZMP2I9HO2CoCjjnS3ncrTQiZxzuqITVd6AbzR25eka
+         PMlO6SY/VScm7YErtPuUscyIlkXrpTRaZSAazj/vHffqoc3rUg4QItivxXxUYiFVzjRj
+         NiZrst3EzGeo3FdsV4o4MigQEjtJQ5cyGfOvvJKB+G3idadLwx4JJSSa5n0X4w1jRlJe
+         VvRQ==
+X-Gm-Message-State: AOJu0Yy1huhg1TQD3CW1OhcO3DFKUmopPC/QBA95Ir+aRX0H3luV7BUt
+	OQyI9BICHli+tBTvUxFagQRM1jqFJh5hHZCwAeUUdP4NZBDZB8b+
+X-Google-Smtp-Source: AGHT+IH87jGnUX7dR6KnQs8DHmfjq7dK0AHy0lSZrBHi394uk7eFnRhrNmCaf5K9uEWCrXe8yNdrxg==
+X-Received: by 2002:a05:6a00:91d9:b0:705:d6ad:2495 with SMTP id d2e1a72fcca58-71065f1e22emr10250027b3a.12.1722633533841;
+        Fri, 02 Aug 2024 14:18:53 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec54457sm1756226b3a.86.2024.08.02.14.18.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 14:18:53 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+To: jiangshanlai@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [PATCHSET wq/for-6.12] workqueue: Use wq_online_cpumask consistently and make CPU hotplug unbound pwq updates asynchronous
+Date: Fri,  2 Aug 2024 11:18:16 -1000
+Message-ID: <20240802211850.1211737-1-tj@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpYngEl9XKumuow5@krava>
+Content-Transfer-Encoding: 8bit
 
-Hi Arnaldo,
+Hello,
 
-On Tue, Jul 16, 2024 at 09:55:44AM +0200, Jiri Olsa wrote:
-> so usually Arnaldo takes changes for tools/build, Arnaldo, could you please take a look?
-> but still there'are the tools/lib/bpf bits..
+Make wq_online_cpumask more consistently which also simplifies the code, and
+make unbound pwq updates from CPU hotplug path asynchronous so that we don't
+add additional dependency on fork from CPU hotplug.
 
-Would you have some time to look at this series and whether it's ready
-to be applied? Several folks have already acked one or more patches.
+ 0001-workqueue-Make-wq_affn_dfl_set-use-wq_online_cpumask.patch
+ 0002-workqueue-Make-wq_update_node_max_active-use-wq_onli.patch
+ 0003-workqueue-s-unbound_wq_update_pwq-update_unbound_pwq.patch
+ 0004-workqueue-Make-unbound-pwq-updates-from-CPU-hotplug-.patch
 
-In case you've lost context on the series, here's a lore link for the
-cover letter:
+The patches are also available in
 
-  [PATCH v4 0/3] tools build: Incorrect fixdep dependencies
-  https://lore.kernel.org/all/20240715203325.3832977-1-briannorris@chromium.org/
+ git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git use-wq_online_cpumask
 
-Thanks,
-Brian
+diffstat follows. Thanks.
+
+ kernel/workqueue.c |  121 ++++++++++++++++++++++++++++++++++-----------------------------------------
+ 1 file changed, 56 insertions(+), 65 deletions(-)
+
+--
+tejun
 
