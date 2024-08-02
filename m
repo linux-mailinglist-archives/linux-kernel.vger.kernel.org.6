@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-272914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F5494627C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:33:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3ED94627D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD76287A01
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:33:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7EE91F23C7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92FF200104;
-	Fri,  2 Aug 2024 17:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A57215C14D;
+	Fri,  2 Aug 2024 17:30:54 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DBD166F37
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B9E2101AE
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619850; cv=none; b=tfaz3xv9r/OjmKKSCcZsZ+geELbrWtnDjkOr7qWfmxazZhLoMd5ajjN0Tc0u1jGJArjLtCh0zGnMsT0jjRVWtMh8IvPv1YUJKi0FHPjilos5kfkPbCAHIWRCqygR1xV9Dv5aId+Vt6PbXZf54Er+qhlcVsgd6tceuvOx6nqR6KI=
+	t=1722619853; cv=none; b=PM+5OFOej/hip5RQ4IV2MH9dexw+3Alm+QWLocMyXpzXTWoLzMqbZvVkMqzDXHl0GdcX6kyqnJCXRJFB0HwLP7w/ttmcJe+Sygn8VKMcmqE7Wxyy0w1Aab8c7JGDR26tsAJ7C9t9z1Hq6cvxd/cy3yCTq3ngPXZblH2E+LsMb0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619850; c=relaxed/simple;
-	bh=bcygbHmS1bwX9uU3cJ5O+T8hloPUizq+8UXgpooS3PA=;
+	s=arc-20240116; t=1722619853; c=relaxed/simple;
+	bh=EU+IThqm5A9wDJJP94UMD6FeTMl4jAm6qk4bvK/f9xY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iKdNncEsl0mkgyB6jGrECLtXlOxnFgMEafxYnh0kABAdeYq/ZX4PXvD+sDSwdzu+585sNZ3I+WLOJUQHAC7AYv5vBfQ4Y/O7fz0i89bl570S4HDVUbti7seieWyRkHxfU9wIDzmlGasFQ0bZdPea3/2E1cTTpqnAK+sZCdBSdwA=
+	 MIME-Version; b=ltubTtYJj/3ct+8q7REAQ3ai45hDXmmWlC5BeUmQshBxCkOhSiSbr62yl+kuZ5UWlYpwyHpRhLDhtjyJgQ7r274ofeyKM9nhaI1jirKaYzxeKGY+fvtAu3VH6VkoBtu8JjiXWp10J2mZqRvY3sxJClSrl5dyf1ii/Kg8ICEjCNs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F32B31480;
-	Fri,  2 Aug 2024 10:31:13 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AC101655;
+	Fri,  2 Aug 2024 10:31:17 -0700 (PDT)
 Received: from merodach.members.linode.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54B2F3F64C;
-	Fri,  2 Aug 2024 10:30:45 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89FBA3F64C;
+	Fri,  2 Aug 2024 10:30:48 -0700 (PDT)
 From: James Morse <james.morse@arm.com>
 To: x86@kernel.org,
 	linux-kernel@vger.kernel.org
@@ -58,9 +58,9 @@ Cc: Fenghua Yu <fenghua.yu@intel.com>,
 	David Hildenbrand <david@redhat.com>,
 	Rex Nie <rex.nie@jaguarmicro.com>,
 	Dave Martin <dave.martin@arm.com>
-Subject: [PATCH v4 15/39] x86/resctrl: Move monitor exit work to a resctrl exit call
-Date: Fri,  2 Aug 2024 17:28:29 +0000
-Message-Id: <20240802172853.22529-16-james.morse@arm.com>
+Subject: [PATCH v4 16/39] x86/resctrl: Move monitor init work to a resctrl init call
+Date: Fri,  2 Aug 2024 17:28:30 +0000
+Message-Id: <20240802172853.22529-17-james.morse@arm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240802172853.22529-1-james.morse@arm.com>
 References: <20240802172853.22529-1-james.morse@arm.com>
@@ -72,130 +72,160 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-rdt_put_mon_l3_config() is called via the architecture's
-resctrl_arch_exit() call, and appears to free the rmid_ptrs[]
-and closid_num_dirty_rmid[] arrays. In reality this code is marked
-__exit, and is removed by the linker as resctrl can't be built
-as a module.
+rdt_get_mon_l3_config() is called from the architecture's
+resctrl_arch_late_init(), and initialises both architecture specific
+fields, such as hw_res->mon_scale and resctrl filesystem fields
+by calling dom_data_init().
 
-To separate the filesystem and architecture parts of resctrl,
-this free()ing work needs to be triggered by the filesystem,
-as these structures belong to the filesystem code.
+To separate the filesystem and architecture parts of resctrl, this
+function needs splitting up.
 
-Rename rdt_put_mon_l3_config() resctrl_mon_resource_exit()
-and call it from resctrl_exit(). The kfree() is currently
-dependent on r->mon_capable.
+Add resctrl_mon_resource_init() to do the filesystem specific work,
+and call it from resctrl_init(). This runs later, but is still before
+the filesystem is mounted and the rmid_ptrs[] array can be used.
 
 Signed-off-by: James Morse <james.morse@arm.com>
 Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
 ---
 Changes since v3:
- * Moved r->mon_capable check under the lock.
- * Dropped references to resctrl_mon_resource_init() from the commit message.
- * Fixed more resctrl typos,
+ * Added a comment over resctrl_mon_resource_init().
+ * Added a comment over domain_setup_mon_state() to warn of cpuhp ordering.
+ * Added __init to resctrl_mon_resource_init().
 
 Changes since v2:
- * Dropped __exit as needed in the next patch.
-
-Change since v1:
- * [Commit message only] Typo fixes:
-   s/restrl/resctrl/g
-   s/resctl/resctrl/g
-
- * [Commit message only] Reword second paragraph to remove reference to
-   the MPAM error interrupt, which provides background rationale for a
-   later patch rather than for this patch, and so it is not really
-   relevant here.
+ * Added error handling for the case sysfs files can't be created.
 ---
- arch/x86/kernel/cpu/resctrl/core.c     |  5 -----
- arch/x86/kernel/cpu/resctrl/internal.h |  2 +-
- arch/x86/kernel/cpu/resctrl/monitor.c  | 12 +++++++++---
- arch/x86/kernel/cpu/resctrl/rdtgroup.c |  2 ++
- 4 files changed, 12 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/resctrl/internal.h |  1 +
+ arch/x86/kernel/cpu/resctrl/monitor.c  | 36 +++++++++++++++++++++-----
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 22 +++++++++++++++-
+ 3 files changed, 51 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 4a0dbdc2da4d..9d4d64b4e357 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -1101,14 +1101,9 @@ late_initcall(resctrl_arch_late_init);
- 
- static void __exit resctrl_arch_exit(void)
- {
--	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
--
- 	cpuhp_remove_state(rdt_online);
- 
- 	resctrl_exit();
--
--	if (r->mon_capable)
--		rdt_put_mon_l3_config();
- }
- 
- __exitcall(resctrl_arch_exit);
 diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index d355aa676158..3fdeca6e3d21 100644
+index 3fdeca6e3d21..8e52e81a044b 100644
 --- a/arch/x86/kernel/cpu/resctrl/internal.h
 +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -579,7 +579,7 @@ void closid_free(int closid);
- int alloc_rmid(u32 closid);
- void free_rmid(u32 closid, u32 rmid);
- int rdt_get_mon_l3_config(struct rdt_resource *r);
--void __exit rdt_put_mon_l3_config(void);
-+void resctrl_mon_resource_exit(void);
- bool __init rdt_cpu_has(int flag);
- void mon_event_count(void *info);
- int rdtgroup_mondata_show(struct seq_file *m, void *arg);
+@@ -586,6 +586,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg);
+ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
+ 		    struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
+ 		    cpumask_t *cpumask, int evtid, int first);
++int __init resctrl_mon_resource_init(void);
+ void mbm_setup_overflow_handler(struct rdt_mon_domain *dom,
+ 				unsigned long delay_ms,
+ 				int exclude_cpu);
 diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 9cdca9d2bbde..afbda09aacf5 100644
+index afbda09aacf5..cecc96213c49 100644
 --- a/arch/x86/kernel/cpu/resctrl/monitor.c
 +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -1044,10 +1044,13 @@ static int dom_data_init(struct rdt_resource *r)
- 	return err;
+@@ -1179,12 +1179,40 @@ static __init int snc_get_config(void)
+ 	return ret;
  }
  
--static void __exit dom_data_exit(void)
-+static void dom_data_exit(struct rdt_resource *r)
- {
- 	mutex_lock(&rdtgroup_mutex);
- 
-+	if (!r->mon_capable)
-+		goto out_unlock;
++/**
++ * resctrl_mon_resource_init() - Initialise global monitoring structures.
++ *
++ * Allocate and initialise global monitor resources that do not belong to a
++ * specific domain. i.e. the rmid_ptrs[] used for the limbo and free lists.
++ * Called once during boot after the struct rdt_resource's have been configured
++ * but before the filesystem is mounted.
++ * Resctrl's cpuhp callbacks may be called before this point to bring a domain
++ * online.
++ *
++ * Returns 0 for success, or -ENOMEM.
++ */
++int __init resctrl_mon_resource_init(void)
++{
++	struct rdt_resource *r = resctrl_arch_get_resource(RDT_RESOURCE_L3);
++	int ret;
 +
- 	if (IS_ENABLED(CONFIG_RESCTRL_RMID_DEPENDS_ON_CLOSID)) {
- 		kfree(closid_num_dirty_rmid);
- 		closid_num_dirty_rmid = NULL;
-@@ -1056,6 +1059,7 @@ static void __exit dom_data_exit(void)
- 	kfree(rmid_ptrs);
- 	rmid_ptrs = NULL;
++	if (!r->mon_capable)
++		return 0;
++
++	ret = dom_data_init(r);
++	if (ret)
++		return ret;
++
++	l3_mon_evt_init(r);
++
++	return 0;
++}
++
+ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ {
+ 	unsigned int mbm_offset = boot_cpu_data.x86_cache_mbm_width_offset;
+ 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+ 	unsigned int threshold;
+-	int ret;
  
-+out_unlock:
+ 	snc_nodes_per_l3_cache = snc_get_config();
+ 
+@@ -1214,10 +1242,6 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ 	 */
+ 	resctrl_rmid_realloc_threshold = resctrl_arch_round_mon_val(threshold);
+ 
+-	ret = dom_data_init(r);
+-	if (ret)
+-		return ret;
+-
+ 	if (rdt_cpu_has(X86_FEATURE_BMEC)) {
+ 		u32 eax, ebx, ecx, edx;
+ 
+@@ -1235,8 +1259,6 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ 		}
+ 	}
+ 
+-	l3_mon_evt_init(r);
+-
+ 	r->mon_capable = true;
+ 
+ 	return 0;
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index 576f6b183980..f53d6ce390ac 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -4097,6 +4097,19 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_mon_domain *d
  	mutex_unlock(&rdtgroup_mutex);
  }
  
-@@ -1238,9 +1242,11 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
- 	return 0;
- }
- 
--void __exit rdt_put_mon_l3_config(void)
-+void resctrl_mon_resource_exit(void)
++/**
++ * domain_setup_mon_state() -  Initialise domain monitoring structures.
++ * @r:	The resource for the newly online domain.
++ * @d:	The newly online domain.
++ *
++ * Allocate monitor resources that belong to this domain.
++ * Called when the first CPU of a domain comes online, regardless of whether
++ * the filesystem is mounted.
++ * During boot this may be called before global allocations have been made by
++ * resctrl_mon_resource_init().
++ *
++ * Returns 0 for success, or -ENOMEM.
++ */
+ static int domain_setup_mon_state(struct rdt_resource *r, struct rdt_mon_domain *d)
  {
--	dom_data_exit();
-+	struct rdt_resource *r = resctrl_arch_get_resource(RDT_RESOURCE_L3);
-+
-+	dom_data_exit(r);
- }
+ 	u32 idx_limit = resctrl_arch_system_num_rmid_idx();
+@@ -4247,9 +4260,15 @@ int __init resctrl_init(void)
  
- void __init intel_rdt_mbm_apply_quirk(void)
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 1597add37b97..576f6b183980 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -4291,4 +4291,6 @@ void __exit resctrl_exit(void)
- 	debugfs_remove_recursive(debugfs_resctrl);
- 	unregister_filesystem(&rdt_fs_type);
- 	sysfs_remove_mount_point(fs_kobj, "resctrl");
+ 	rdtgroup_setup_default();
+ 
++	ret = resctrl_mon_resource_init();
++	if (ret)
++		return ret;
 +
+ 	ret = sysfs_create_mount_point(fs_kobj, "resctrl");
+-	if (ret)
++	if (ret) {
++		resctrl_mon_resource_exit();
+ 		return ret;
++	}
+ 
+ 	ret = register_filesystem(&rdt_fs_type);
+ 	if (ret)
+@@ -4282,6 +4301,7 @@ int __init resctrl_init(void)
+ 
+ cleanup_mountpoint:
+ 	sysfs_remove_mount_point(fs_kobj, "resctrl");
 +	resctrl_mon_resource_exit();
+ 
+ 	return ret;
  }
 -- 
 2.39.2
