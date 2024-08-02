@@ -1,223 +1,289 @@
-Return-Path: <linux-kernel+bounces-272261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF38494596A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5F6945972
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CAE9B21537
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C67282C66
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C111C0DFA;
-	Fri,  2 Aug 2024 08:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14811C0DF7;
+	Fri,  2 Aug 2024 08:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gV+dy6Hb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OBpPn8MH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gV+dy6Hb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OBpPn8MH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PgtGf+SS"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FE61EB4B6;
-	Fri,  2 Aug 2024 08:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FE43D6A;
+	Fri,  2 Aug 2024 08:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722585688; cv=none; b=qZ26qQ2vdPystPMXSfynNlLMK1EGF4MdSQ1ptkak65prsW0Qb8Bj7kCwyRb3bZUkVCPjrIANvMOKYHja9XyvuSxqdNzLneKaQGDXQZ9dl5DHSZO6hAnf0z0RpFKL+0XJyf5m9sbvxORqva0zldNCimF/MD8pbsqa+jm/UfONi6E=
+	t=1722585813; cv=none; b=t/WJPq+FIzZMdPlnnD69uHuw0/aQBao9nC+hQrUlJfMT1zqMvvuHOwNmJiivrNNSBGvZKDOZclcXoBtPWA84OeqvKRhFmOum81H92XPl/oFLe/RfrIBvDzTn/nkPoI0kRBSxgykeINAZb1kauQHPqJJFlNMJQbUWJ+P3gPbWzr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722585688; c=relaxed/simple;
-	bh=+RPF19zxpzjlvYCTbY+grIfPZrP90fYFntEOY8xsHMs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hSZr+tyc8gjXpT50cNqMsM6N2FxDJvJ/pETJnO/+1CTNK2yqEDKuk9LmrpUuSruvdumlKp3kLO95nYWDjN0C7fI3rTkux255h9h1PUW6ku8KT8UneW1TZxgSdMP9hmKG76d61xdQwwW93d0WYV9GlhH0R13VgMlKEiBaxMHvpdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gV+dy6Hb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OBpPn8MH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gV+dy6Hb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OBpPn8MH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1722585813; c=relaxed/simple;
+	bh=kaMFpxHzNkrDtihVBi54kX+DE52xC/pY5UehobLP9Qo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gPiz1cpFMG6jK0Nk+7pjaIHsjfokOpISkteO923/pE0sye0F0gwDk5aV57KvA1CtALN/WV0uajYJ/AxXsvOn2/nB74szfrZJVafUaxPfDzoqtgaTC1Bt8kmptfeISvYaSc2rfMsBPbksGEuke0NWQhAccS1OjKd9N073fpl1cd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PgtGf+SS; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722585810;
+	bh=kaMFpxHzNkrDtihVBi54kX+DE52xC/pY5UehobLP9Qo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PgtGf+SS3vqXcgSlHZT/DCu/JHcsY70Bkl3xXMc5XTShbHXgqoAws5LlSaHPQry6u
+	 4HixZbwpw2m4EScPp31nvs3sKqIn4uQiGRxLmQ1LMrdZCW/stHXq/44SrW9FCnkyUy
+	 FBpqCt3L+oxMol+cCcRxZo91gB9i1LjJXISTRouIu815zK0aUSaCTJ++383IsHJJ7j
+	 lhj2LLSs99xtPrG4Mzh1d+o7kwcKjx4YYSMIJMNKTjiV+nsurWbXlfRhjj+8/eR/0N
+	 +j1lrwoQjg8JHnvqIfNucpnrpLotE8+srObIdsarEoF71p0ErPdlRNOAdo0bz+6c8D
+	 a92XuB4kUiDfQ==
+Received: from gentoo.ratioveremundo.com (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AF21F2193C;
-	Fri,  2 Aug 2024 08:01:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722585684; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BS7F6/VnwHnr5d6vmx7l+U580Ch90URY4uXrae65JM=;
-	b=gV+dy6HbW8R3P7OG9uh6RP1bjX0DVZqjFjhTbWkrR9S7VP8Web/ce6ZKRSbjfDx72JBVOi
-	O+1JsszkXDGvbjaVYtwmNaGEGnMe453X7lcUhXPk+FnD3wZY6wl/dUwH++bAS4lBwq+p4y
-	H0/A+sRM7ZNvSD5SVj4y83dWMpROtws=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722585684;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BS7F6/VnwHnr5d6vmx7l+U580Ch90URY4uXrae65JM=;
-	b=OBpPn8MHCWvKZ7UJR8thx66+D8gmFu9DOUBW6ku1tH5yANcLOexdH1xlHzpMr2HdCc7xco
-	vOrWI2InCG9uByCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gV+dy6Hb;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=OBpPn8MH
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722585684; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BS7F6/VnwHnr5d6vmx7l+U580Ch90URY4uXrae65JM=;
-	b=gV+dy6HbW8R3P7OG9uh6RP1bjX0DVZqjFjhTbWkrR9S7VP8Web/ce6ZKRSbjfDx72JBVOi
-	O+1JsszkXDGvbjaVYtwmNaGEGnMe453X7lcUhXPk+FnD3wZY6wl/dUwH++bAS4lBwq+p4y
-	H0/A+sRM7ZNvSD5SVj4y83dWMpROtws=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722585684;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4BS7F6/VnwHnr5d6vmx7l+U580Ch90URY4uXrae65JM=;
-	b=OBpPn8MHCWvKZ7UJR8thx66+D8gmFu9DOUBW6ku1tH5yANcLOexdH1xlHzpMr2HdCc7xco
-	vOrWI2InCG9uByCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C3351388E;
-	Fri,  2 Aug 2024 08:01:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Wo4KHVOSrGazDwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 02 Aug 2024 08:01:23 +0000
-Date: Fri, 02 Aug 2024 10:02:00 +0200
-Message-ID: <87ed77ic93.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,	Giovanni Cabiddu
- <giovanni.cabiddu@intel.com>,	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,	Boris Brezillon
- <bbrezillon@kernel.org>,	Arnaud Ebalard <arno@natisbad.org>,	Srujana Challa
- <schalla@marvell.com>,	Alexander Shishkin
- <alexander.shishkin@linux.intel.com>,	Miri Korenblit
- <miriam.rachel.korenblit@intel.com>,	Kalle Valo <kvalo@kernel.org>,	Serge
- Semin <fancer.lancer@gmail.com>,	Jon Mason <jdmason@kudzu.us>,	Dave Jiang
- <dave.jiang@intel.com>,	Allen Hubbe <allenbh@gmail.com>,	Bjorn Helgaas
- <bhelgaas@google.com>,	Kevin Cernekee <cernekee@gmail.com>,	Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,	Jiri Slaby
- <jirislaby@kernel.org>,	Jaroslav Kysela <perex@perex.cz>,	Takashi Iwai
- <tiwai@suse.com>,	Mark Brown <broonie@kernel.org>,	David Lechner
- <dlechner@baylibre.com>,	Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <u.kleine-koenig@pengutronix.de>,	Jonathan Cameron
- <Jonathan.Cameron@huawei.com>,	Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,	Jie Wang <jie.wang@intel.com>,	Adam
- Guerin <adam.guerin@intel.com>,	Shashank Gupta <shashank.gupta@intel.com>,
-	Damian Muszynski <damian.muszynski@intel.com>,	Nithin Dabilpuram
- <ndabilpuram@marvell.com>,	Bharat Bhushan <bbhushan2@marvell.com>,	Johannes
- Berg <johannes.berg@intel.com>,	Gregory Greenman
- <gregory.greenman@intel.com>,	Emmanuel Grumbach
- <emmanuel.grumbach@intel.com>,	Yedidya Benshimol
- <yedidya.ben.shimol@intel.com>,	Breno Leitao <leitao@debian.org>,	Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,	John Ogness
- <john.ogness@linutronix.de>,	Thomas Gleixner <tglx@linutronix.de>,
-	linux-doc@vger.kernel.org,	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,	qat-linux@intel.com,
-	linux-crypto@vger.kernel.org,	linux-wireless@vger.kernel.org,
-	ntb@lists.linux.dev,	linux-pci@vger.kernel.org,
-	linux-serial@vger.kernel.org,	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 09/10] ALSA: korg1212: Replace deprecated PCI functions
-In-Reply-To: <20240801174608.50592-10-pstanner@redhat.com>
-References: <20240801174608.50592-1-pstanner@redhat.com>
-	<20240801174608.50592-10-pstanner@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	(Authenticated sender: aratiu)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0D3FC3782212;
+	Fri,  2 Aug 2024 08:03:28 +0000 (UTC)
+From: Adrian Ratiu <adrian.ratiu@collabora.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	kernel@collabora.com,
+	gbiv@google.com,
+	inglorion@google.com,
+	ajordanr@google.com,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Doug Anderson <dianders@chromium.org>,
+	Jeff Xu <jeffxu@google.com>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH v5] proc: add config & param to block forcing mem writes
+Date: Fri,  2 Aug 2024 11:02:25 +0300
+Message-ID: <20240802080225.89408-1-adrian.ratiu@collabora.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: AF21F2193C
-X-Spam-Score: -1.81
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-1.81 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[lwn.net,kernel.org,intel.com,gondor.apana.org.au,davemloft.net,natisbad.org,marvell.com,linux.intel.com,gmail.com,kudzu.us,google.com,linuxfoundation.org,perex.cz,suse.com,baylibre.com,pengutronix.de,huawei.com,debian.org,linutronix.de,vger.kernel.org,lists.linux.dev];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLp4wjbahqp9imfp3xd18ktmsn)];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCPT_COUNT_GT_50(0.00)[52];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 01 Aug 2024 19:46:07 +0200,
-Philipp Stanner wrote:
-> 
-> pcim_iomap_table() and pcim_iomap_regions_request_all() have been
-> deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> pcim_iomap_table(), pcim_iomap_regions_request_all()").
-> 
-> Replace these functions with their successors, pcim_iomap() and
-> pcim_request_all_regions()
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+This adds a Kconfig option and boot param to allow removing
+the FOLL_FORCE flag from /proc/pid/mem write calls because
+it can be abused.
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
+The traditional forcing behavior is kept as default because
+it can break GDB and some other use cases.
 
-And feel free to take my ack to v2 if the further change will be only
-about the description, too :)
+Previously we tried a more sophisticated approach allowing
+distributions to fine-tune /proc/pid/mem behavior, however
+that got NAK-ed by Linus [1], who prefers this simpler
+approach with semantics also easier to understand for users.
 
+Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Jeff Xu <jeffxu@google.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+---
+Changes in v5:
+* Wrapped task fields accesses in READ_ONCE()
+* Added all values to proc_mem_force_table[] and changed
+  the default of lookup_constant() to preserve the initial
+  value set via Kconfig
 
-thanks,
+Changes in v4:
+* Fixed doc punctuation, used passive tense, improved
+  wording consistency, fixed default value wording
+* Made struct constant_table a static const __initconst
+* Reworked proc_mem_foll_force() indentation and var
+  declarations to make code clearer
+* Reworked enum + struct definition so lookup_constant()
+  defaults to 'always'.
 
-Takashi
+Changes in v3:
+* Simplified code to use shorthand ifs and a
+  lookup_constant() table
 
+Changes in v2:
+* Added bootparam on top of Linus' patch
+* Slightly reworded commit msg
+---
+ .../admin-guide/kernel-parameters.txt         | 10 +++
+ fs/proc/base.c                                | 61 ++++++++++++++++++-
+ security/Kconfig                              | 32 ++++++++++
+ 3 files changed, 102 insertions(+), 1 deletion(-)
 
-> ---
->  sound/pci/korg1212/korg1212.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/pci/korg1212/korg1212.c b/sound/pci/korg1212/korg1212.c
-> index 5c2cac201a28..b5428ac34d3b 100644
-> --- a/sound/pci/korg1212/korg1212.c
-> +++ b/sound/pci/korg1212/korg1212.c
-> @@ -2106,7 +2106,7 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci)
->          for (i=0; i<kAudioChannels; i++)
->                  korg1212->volumePhase[i] = 0;
->  
-> -	err = pcim_iomap_regions_request_all(pci, 1 << 0, "korg1212");
-> +	err = pcim_request_all_regions(pci, "korg1212");
->  	if (err < 0)
->  		return err;
->  
-> @@ -2128,7 +2128,9 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci)
->  		   korg1212->iomem2, iomem2_size,
->  		   stateName[korg1212->cardState]);
->  
-> -	korg1212->iobase = pcim_iomap_table(pci)[0];
-> +	korg1212->iobase = pcim_iomap(pci, 0, 0);
-> +	if (!korg1212->iobase)
-> +		return -ENOMEM;
->  
->  	err = devm_request_irq(&pci->dev, pci->irq, snd_korg1212_interrupt,
->                            IRQF_SHARED,
-> -- 
-> 2.45.2
-> 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f1384c7b59c9..8396e015aab3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4788,6 +4788,16 @@
+ 	printk.time=	Show timing data prefixed to each printk message line
+ 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
+ 
++	proc_mem.force_override= [KNL]
++			Format: {always | ptrace | never}
++			Traditionally /proc/pid/mem allows memory permissions to be
++			overridden without restrictions. This option may be set to
++			restrict that. Can be one of:
++			- 'always': traditional behavior always allows mem overrides.
++			- 'ptrace': only allow mem overrides for active ptracers.
++			- 'never':  never allow mem overrides.
++			If not specified, default is the CONFIG_PROC_MEM_* choice.
++
+ 	processor.max_cstate=	[HW,ACPI]
+ 			Limit processor to maximum C-state
+ 			max_cstate=9 overrides any DMI blacklist limit.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 72a1acd03675..f389c69767fa 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -85,6 +85,7 @@
+ #include <linux/elf.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/user_namespace.h>
++#include <linux/fs_parser.h>
+ #include <linux/fs_struct.h>
+ #include <linux/slab.h>
+ #include <linux/sched/autogroup.h>
+@@ -117,6 +118,40 @@
+ static u8 nlink_tid __ro_after_init;
+ static u8 nlink_tgid __ro_after_init;
+ 
++enum proc_mem_force {
++	PROC_MEM_FORCE_ALWAYS,
++	PROC_MEM_FORCE_PTRACE,
++	PROC_MEM_FORCE_NEVER
++};
++
++static enum proc_mem_force proc_mem_force_override __ro_after_init =
++	IS_ENABLED(CONFIG_PROC_MEM_NO_FORCE) ? PROC_MEM_FORCE_NEVER :
++	IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
++	PROC_MEM_FORCE_ALWAYS;
++
++static const struct constant_table proc_mem_force_table[] __initconst = {
++	{ "always", PROC_MEM_FORCE_ALWAYS },
++	{ "ptrace", PROC_MEM_FORCE_PTRACE },
++	{ "never", PROC_MEM_FORCE_NEVER },
++	{ }
++};
++
++static int __init early_proc_mem_force_override(char *buf)
++{
++	if (!buf)
++		return -EINVAL;
++
++	/*
++	 * lookup_constant() defaults to proc_mem_force_override to preseve
++	 * the initial Kconfig choice in case an invalid param gets passed.
++	 */
++	proc_mem_force_override = lookup_constant(proc_mem_force_table,
++						  buf, proc_mem_force_override);
++
++	return 0;
++}
++early_param("proc_mem.force_override", early_proc_mem_force_override);
++
+ struct pid_entry {
+ 	const char *name;
+ 	unsigned int len;
+@@ -835,6 +870,28 @@ static int mem_open(struct inode *inode, struct file *file)
+ 	return ret;
+ }
+ 
++static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
++{
++	struct task_struct *task;
++	bool ptrace_active = false;
++
++	switch (proc_mem_force_override) {
++	case PROC_MEM_FORCE_NEVER:
++		return false;
++	case PROC_MEM_FORCE_PTRACE:
++		task = get_proc_task(file_inode(file));
++		if (task) {
++			ptrace_active =	READ_ONCE(task->ptrace) &&
++					READ_ONCE(task->mm) == mm &&
++					READ_ONCE(task->parent) == current;
++			put_task_struct(task);
++		}
++		return ptrace_active;
++	default:
++		return true;
++	}
++}
++
+ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 			size_t count, loff_t *ppos, int write)
+ {
+@@ -855,7 +912,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 	if (!mmget_not_zero(mm))
+ 		goto free;
+ 
+-	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
++	flags = write ? FOLL_WRITE : 0;
++	if (proc_mem_foll_force(file, mm))
++		flags |= FOLL_FORCE;
+ 
+ 	while (count > 0) {
+ 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
+diff --git a/security/Kconfig b/security/Kconfig
+index 412e76f1575d..a93c1a9b7c28 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++choice
++	prompt "Allow /proc/pid/mem access override"
++	default PROC_MEM_ALWAYS_FORCE
++	help
++	  Traditionally /proc/pid/mem allows users to override memory
++	  permissions for users like ptrace, assuming they have ptrace
++	  capability.
++
++	  This allows people to limit that - either never override, or
++	  require actual active ptrace attachment.
++
++	  Defaults to the traditional behavior (for now)
++
++config PROC_MEM_ALWAYS_FORCE
++	bool "Traditional /proc/pid/mem behavior"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions if you have ptrace access rights.
++
++config PROC_MEM_FORCE_PTRACE
++	bool "Require active ptrace() use for access override"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions for active ptracers like gdb.
++
++config PROC_MEM_NO_FORCE
++	bool "Never"
++	help
++	  Never override memory mapping permissions
++
++endchoice
++
+ config SECURITY
+ 	bool "Enable different security models"
+ 	depends on SYSFS
+-- 
+2.44.2
+
 
