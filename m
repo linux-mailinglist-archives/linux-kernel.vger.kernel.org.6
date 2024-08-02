@@ -1,209 +1,184 @@
-Return-Path: <linux-kernel+bounces-272364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997F5945ADB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:22:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273D9945AEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CAD01F23A49
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:22:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27732842D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DAC1DAC76;
-	Fri,  2 Aug 2024 09:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7551DC464;
+	Fri,  2 Aug 2024 09:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G+Tgt2u7"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fpt/jDhL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915F31DAC61;
-	Fri,  2 Aug 2024 09:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167D01DAC61;
+	Fri,  2 Aug 2024 09:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590569; cv=none; b=kwezrKROPws8MRjxL/vtvRodu0YuE0kPahULyY064TmaSv/XCHa9bu9/q7+ZbOuKbp6wWrR54V893Ald3Kr56/P8sKhs8pvLENH2K4PjpTvy68Vkrdwy/M1mE4L9nnCzw+abj+yOxdIjDMMRwRSzXMoLJjMMnWfZSHRMthY8kEA=
+	t=1722590619; cv=none; b=G5QqCiUcokIaxYIDWg7g7yjxuF8l1WcGWsZuxDVH2vbUNr1rD/MnL3hbHkKmahD/DYr7cN3Gn2KWFTLyWByGV///eyrPn1pCWyhxc7JYOwPNKdQeyUDITDWjAzlY4QF5/ff8ayuwCc0YAJJrAy2BrcOlAYvwuLwp18kzlfIyrJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590569; c=relaxed/simple;
-	bh=Cg/MKCTgd7hojhmxXQb7ju0BBua/MVvhWfRNKo9kc9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n8Z/YxxW/dU1J3o3XlJvUlyOtMT/T4rrCBhaXd9jebMdm+oVnA/dC8Ne8Ok6xGYieyfdGrVUe4BTBx1mKW8X4wnjbWRhvxGEIsyD8vnb8j1mtLyecBsKG7cBt1pccHnIQV4k3BXLZ+OseeX+DC/r0/36QNfjYWlUYefEoX28JZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G+Tgt2u7; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f042c15e3so2729831e87.0;
-        Fri, 02 Aug 2024 02:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722590566; x=1723195366; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ye5tA42uMBNtvT73KdG8A94PBs19ktzkMoJkqT5xskw=;
-        b=G+Tgt2u724xXWxeV+8GWWw7KJByFn9b90RX4Sm0p2n3Hn1gVOGrDrOkf4zzOTMMjEd
-         hl0MM8GSvSIvKn4D5gQ96ra6B2Wn0SXQi5Bsq9JFJDPekx7UupdoTS461QDeZabDsTx6
-         dp2mXEG2GbWP68w9H4yG7Nd9mzCPObtWGolCgSi6PrXm/1ItZ01J68R5IzqvBVq7vGla
-         DpoHeFylkBOsBOryEExW4Y9GmrqFbCNtSsm5GSqwzB/BHXIcgm07wB9fOQvwfRKbPGLl
-         Lf5R4dQtS9usJ3x0IW2pXpbeAGsDwQ0b2Pg7G6PObGk06/DVB1He517ZNjwtoCWPJbW+
-         ZL8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722590566; x=1723195366;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ye5tA42uMBNtvT73KdG8A94PBs19ktzkMoJkqT5xskw=;
-        b=IL7kFH7bLcUL8rwUIxNaioW+U4RNb0mji1uW8vo+qx7wgJNfk/u8qK/XaazKPUzHQC
-         2jbw+YlYoLxVQQHCeZ6R4MpuxH4fuataERiIXL1eh4WamTf+et1LaOfnRCWAAD9xhGAa
-         nqRiYF8CtmJP7+sSGAfSLiaRuppG5jRf+KAe1iqI+AP/14RMV7puiJ3ICwvSgdyHMPD4
-         nKuXFt3+XJotHNBKyyxtLfTt7kl5ApmBWwOaFhi8WFEHNYWy7trYkH3O3gHZvq7orUOE
-         yv+vwyORROTXxQUwEdbbdyeYVAqGZB8VjWS61plADNg/kZfxUdxH7G7HifmekdsbL2AH
-         GohA==
-X-Forwarded-Encrypted: i=1; AJvYcCUExlCjb4buIFr1G0edXmO8Rg+/ZW27Y2apvZbP+MoAWnOd/MCjNCtkdhy4LG/JalHOBwq46tFelp0brkQwtmSwazNDYEwyu0aiyPefNHEM6xGa7mZRu2QXUF+GJjJhjfe1PZPi5EZazFgYtnZHqh210J6FvsKPqQFYFOWDUgaWmc6xepfY2Q==
-X-Gm-Message-State: AOJu0YwLOTkeqNpgOGzih1vlkYQyiyVxMJyA/4YdOj2ypgS+loG4DsiV
-	mLqcYyIobW4X+z0EU02bQapEcEyrPJHDF0zURh2y5zauynJjEGAI
-X-Google-Smtp-Source: AGHT+IHHynU+MvKkk5v8go0Stm9aPxO3OHJ73yl2a7M0njc/TuGYR9a+LcLadnndQkGuDNy47AS//Q==
-X-Received: by 2002:a05:6512:2206:b0:52f:c16d:5c6a with SMTP id 2adb3069b0e04-530b8d17b54mr1271536e87.16.1722590565143;
-        Fri, 02 Aug 2024 02:22:45 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba29dafsm175361e87.171.2024.08.02.02.22.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 02:22:44 -0700 (PDT)
-Date: Fri, 2 Aug 2024 12:22:41 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>, 
-	Bjorn Helgaas <helgaas@kernel.org>, jingoohan1@gmail.com, lpieralisi@kernel.org, kw@linux.com, 
-	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, quic_mrana@quicinc.com
-Subject: Re: [PATCH v3 1/2] PCI: dwc: Add dbi_phys_addr and atu_phys_addr to
- struct dw_pcie
-Message-ID: <rw45lgwf5btlsr64okzk2e4rpd62fdyrou7u2c6lndozxjhdpq@qm5qx4dvw5ci>
-References: <20240724022719.2868490-1-quic_pyarlaga@quicinc.com>
- <20240724022719.2868490-2-quic_pyarlaga@quicinc.com>
- <vbq3ma3xanu4budrrt7iwk7bh7evgmlgckpohqksuamf3odbee@mvox7krdugg3>
- <6d926346-1c24-4aee-85b1-ffb5a0df904b@quicinc.com>
- <j62ox6yeemxng3swlnzkqpl4mos7zj4khui6rusrm7nqcpts6r@vmoddl4lchlt>
- <20240802052206.GA4206@thinkpad>
+	s=arc-20240116; t=1722590619; c=relaxed/simple;
+	bh=dzjfyyKWWkhqqIhfp/nfZMd5h+7kqFl7gCK6K/qlQ34=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iaJA9n9v3NYbSzDIvepDSICbhegrRA5udkLpuPtpJMSCG0SKimfpkf2PBLiA6xTtCFCRRDOTIURqMrizFx1VhVdGE7HR5yMZvPwjswTjDcXUigOn8UAKMWHDSz6hGwIljhHhV6H/ucDGIMKeJouOSseaA2R2vKAXly1VOGL03aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fpt/jDhL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AC048C4AF09;
+	Fri,  2 Aug 2024 09:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722590618;
+	bh=dzjfyyKWWkhqqIhfp/nfZMd5h+7kqFl7gCK6K/qlQ34=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Fpt/jDhL/Fq0e7f7iw0Fgsb7gv2VD+S1c8yoQnQPJoFd+WJ50MQHcidYzKZ1HfKfB
+	 MnXul/JEp/g2kVHap3w2W6lRCVh1+Corh0IbIfAjjk70OgGp+rLz2M4i11WoXtypIT
+	 2HgshsApOVdScMxM1+bv7RrDXL7eYCyyJGkv/Hm66hn/B1EEyQAhwXxzi34lGKAZ44
+	 kpj3pkyX98tRvaShIbzUAFBKhFQtY0zDh8OR/Z7nLPcEUPDv5thu1v2Js+8su0UMIa
+	 FSc8EC+j7uqOgaW7T4GzTNFUUtQehAc6hlFhTHoQBJZzYxMxBdQdXzflHSdiaNOp4c
+	 P9Mc3jWBYJkpg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EE0C3DA49;
+	Fri,  2 Aug 2024 09:23:38 +0000 (UTC)
+From: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
+Subject: [PATCH net-next v2 0/7] net/selftests: TCP-AO selftests updates
+Date: Fri, 02 Aug 2024 10:23:24 +0100
+Message-Id: <20240802-tcp-ao-selftests-upd-6-12-v2-0-370c99358161@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240802052206.GA4206@thinkpad>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIylrGYC/42OQQqDMBREryJ/3d+qiVq66j2Ki5j8aEATSVKxi
+ HdvFLrvchjem9kgkDcU4JFt4GkxwTibQnnJQA7C9oRGpQxlXvK8YTlGOaNwGGjUkUIM+J4V1li
+ UyBWjiomGa6Yh8bMnbdbT/QJLES2tEdrUdCIQdl5YORzuX3ebhLEHOZgQnf+cp5bi5P/YXwrMU
+ WvFO11Uqmb3Z5+E41W6Cdp937+0GgzB7AAAAA==
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: Mohammad Nassiri <mnassiri@ciena.com>, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dmitry Safonov <0x7f454c46@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722590616; l=5091;
+ i=0x7f454c46@gmail.com; s=20240410; h=from:subject:message-id;
+ bh=dzjfyyKWWkhqqIhfp/nfZMd5h+7kqFl7gCK6K/qlQ34=;
+ b=U+9VP/yk5wD3HFimmgiYofM6S5ROyuhHPL/Sit/H1iu2dGpgx8js2I3pHgIfUH6Z+8oa6qZT5
+ SnqLgNS2czoAM4JRQQztbEPO3wqifEO18XDEaUfmwotVqXzo2xOYbdB
+X-Developer-Key: i=0x7f454c46@gmail.com; a=ed25519;
+ pk=cFSWovqtkx0HrT5O9jFCEC/Cef4DY8a2FPeqP4THeZQ=
+X-Endpoint-Received: by B4 Relay for 0x7f454c46@gmail.com/20240410 with
+ auth_id=152
+X-Original-From: Dmitry Safonov <0x7f454c46@gmail.com>
+Reply-To: 0x7f454c46@gmail.com
 
-On Fri, Aug 02, 2024 at 10:52:06AM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Aug 02, 2024 at 12:59:57AM +0300, Serge Semin wrote:
-> > On Thu, Aug 01, 2024 at 02:29:49PM -0700, Prudhvi Yarlagadda wrote:
-> > > Hi Serge,
-> > > 
-> > > Thanks for the review comment.
-> > > 
-> > > On 8/1/2024 12:25 PM, Serge Semin wrote:
-> > > > On Tue, Jul 23, 2024 at 07:27:18PM -0700, Prudhvi Yarlagadda wrote:
-> > > >> Both DBI and ATU physical base addresses are needed by pcie_qcom.c
-> > > >> driver to program the location of DBI and ATU blocks in Qualcomm
-> > > >> PCIe Controller specific PARF hardware block.
-> > > >>
-> > > >> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-> > > >> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
-> > > >> ---
-> > > >>  drivers/pci/controller/dwc/pcie-designware.c | 2 ++
-> > > >>  drivers/pci/controller/dwc/pcie-designware.h | 2 ++
-> > > >>  2 files changed, 4 insertions(+)
-> > > >>
-> > > >> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > > >> index 1b5aba1f0c92..bc3a5d6b0177 100644
-> > > >> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > > >> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > > >> @@ -112,6 +112,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
-> > > >>  		pci->dbi_base = devm_pci_remap_cfg_resource(pci->dev, res);
-> > > >>  		if (IS_ERR(pci->dbi_base))
-> > > >>  			return PTR_ERR(pci->dbi_base);
-> > > >> +		pci->dbi_phys_addr = res->start;
-> > > >>  	}
-> > > >>  
-> > > >>  	/* DBI2 is mainly useful for the endpoint controller */
-> > > >> @@ -134,6 +135,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
-> > > >>  			pci->atu_base = devm_ioremap_resource(pci->dev, res);
-> > > >>  			if (IS_ERR(pci->atu_base))
-> > > >>  				return PTR_ERR(pci->atu_base);
-> > > >> +			pci->atu_phys_addr = res->start;
-> > > >>  		} else {
-> > > >>  			pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
-> > > >>  		}
-> > > >> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> > > >> index 53c4c8f399c8..efc72989330c 100644
-> > > >> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > > >> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > > >> @@ -407,8 +407,10 @@ struct dw_pcie_ops {
-> > > >>  struct dw_pcie {
-> > > >>  	struct device		*dev;
-> > > >>  	void __iomem		*dbi_base;
-> > > > 
-> > > >> +	phys_addr_t		dbi_phys_addr;
-> > > >>  	void __iomem		*dbi_base2;
-> > > >>  	void __iomem		*atu_base;
-> > > >> +	phys_addr_t		atu_phys_addr;
-> > > > 
-> > > > What's the point in adding these fields to the generic DW PCIe private
-> > > > data if they are going to be used in the Qcom glue driver only?
-> > > > 
-> > > > What about moving them to the qcom_pcie structure and initializing the
-> > > > fields in some place of the pcie-qcom.c driver?
-> > > > 
-> > > > -Serge(y)
-> > > > 
-> > > 
-> > 
-> > > These fields were in pcie-qcom.c driver in the v1 patch[1] and
-> > > Manivannan suggested to move these fields to 'struct dw_pcie' so that duplication
-> > > of resource fetching code 'platform_get_resource_byname()' can be avoided.
-> > > 
-> > > [1] https://lore.kernel.org/linux-pci/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/T/#mf9843386d57e9003de983e24e17de4d54314ff73
-> > 
-> > Em, polluting the core driver structure with data not being used by
-> > the core driver but by the glue-code doesn't seem like a better
-> > alternative to additional platform_get_resource_byname() call in the
-> > glue-driver. I would have got back v1 version so to keep the core
-> > driver simpler. Bjorn?
-> > 
-> 
-> IDK how adding two fields which is very related to DWC code *pollutes* it. Since
-> there is already 'dbi_base', adding 'dbi_phys_addr' made sense to me even though
-> only glue drivers are using it. Otherwise, glue drivers have to duplicate the
-> platform_get_resource_byname() code which I find annoying.
+First 4 patches are more-or-less cleanups/preparations.
 
-I just explained why it was redundant:
-1. adding the fields expands the core private data size for _all_
-platforms for no reason. (a few bytes but still)
-2. the new fields aren't utilized by the core driver, but still
-defined in the core private data which is first confusing and
-second implicitly encourages the kernel developers to add another
-unused or even weakly-related fields in there.
-3. the new fields utilized in a single glue-driver and there is a small
-chance they will be used in another ones. Another story would have
-been if we had them used in more than one glue-driver...
+Patch 5 was sent to me/contributed off-list by Mohammad, who wants 32-bit
+kernels to run TCP-AO.
 
-So from that perspective I find adding these fields to the driver core
-data less appropriate than duplicating the
-platform_get_resource_byname() call in a _single_ glue driver. It
-seems more reasonable to have them defined and utilized in the code
-that actually needs them, but not in the place that doesn't annoy you.)
+Patch 6 is a workaround/fix for slow VMs. Albeit, I can't reproduce
+the issue, but I hope it will fix netdev flakes for connect-deny-*
+tests.
 
-Anyway I read your v1 command and did understand your point in the
-first place. That's why my question was addressed to Bjorn.
+And the biggest change is adding TCP-AO tracepoints to selftests.
+I think it's a good addition by the following reasons:
+- The related tracepoints are now tested;
+- It allows tcp-ao selftests to raise expectations on the kernel
+  behavior - up from the syscalls exit statuses + net counters.
+- Provides tracepoints usage samples.
 
-Please also note the resource::start field is of the resource_size_t
-type. So wherever the fields are added, it's better to have them
-defined of that type instead.
+As tracepoints are not a stable ABI, any kernel changes done to them
+will be reflected to the selftests, which also will allow users
+to see how to change their code. It's quite better than parsing dmesg
+(what BGP was doing pre-tracepoints, ugh).
 
--Serge(y)
+Somewhat arguably, the code parses trace_pipe, rather than uses
+libtraceevent (which any sane user should do). The reason behind that is
+the same as for rt-netlink macros instead of libmnl: I'm trying
+to minimize the library dependencies of the selftests. And the
+performance of formatting text in kernel and parsing it again in a test
+is not critical.
 
-> 
-> - Mani
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
+Current output sample:
+> ok 73 Trace events matched expectations: 13 tcp_hash_md5_required[2] tcp_hash_md5_unexpected[4] tcp_hash_ao_required[3] tcp_ao_key_not_found[4]
+
+Previously, tracepoints selftests were part of kernel tcp tracepoints
+submission [1], but since then the code was quite changed:
+- Now generic tracing setup is in lib/ftrace.c, separate from
+  lib/ftrace-tcp.c which utilizes TCP trace points. This separation
+  allows future selftests to trace non-TCP events, i.e. to find out
+  an skb's drop reason, which was useful in the creation of TCP-CLOSE
+  stress-test (not in this patch set, but used in attempt to reproduce
+  the issue from [2]).
+- Another change is that in the previous submission the trace events
+  where used only to detect unexpected TCP-AO/TCP-MD5 events. In this
+  version the selftests will fail if an expected trace event didn't
+  appear.
+  Let's see how reliable this is on the netdev bot - it obviously passes
+  on my testing, but potentially may require a temporary XFAIL patch
+  if it misbehaves on a slow VM.
+
+[1] https://lore.kernel.org/lkml/20240224-tcp-ao-tracepoints-v1-0-15f31b7f30a7@arista.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=33700a0c9b56
+
+Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+---
+Changes in v2:
+- Fixed two issues with parsing TCP-AO events: the socket state and TCP
+  segment flags. Hopefully, won't fail on netdev.
+- Reword patch 1 & 2 messages to be more informative and at some degree
+  formal (Paolo)
+- Since commit e33a02ed6a4f ("selftests: Add printf attribute to
+  kselftest prints") it's possible to use __printf instead of "raw" gcc
+  attribute - switch using that, as checkpatch suggests.
+- Link to v1: https://lore.kernel.org/r/20240730-tcp-ao-selftests-upd-6-12-v1-0-ffd4bf15d638@gmail.com
+
+---
+Dmitry Safonov (6):
+      selftests/net: Clean-up double assignment
+      selftests/net: Provide test_snprintf() helper
+      selftests/net: Be consistent in kconfig checks
+      selftests/net: Don't forget to close nsfd after switch_save_ns()
+      selftests/net: Synchronize client/server before counters checks
+      selftests/net: Add trace events matching to tcp_ao
+
+Mohammad Nassiri (1):
+      selftests/tcp_ao: Fix printing format for uint64_t
+
+ tools/testing/selftests/net/tcp_ao/Makefile        |   3 +-
+ tools/testing/selftests/net/tcp_ao/bench-lookups.c |   2 +-
+ tools/testing/selftests/net/tcp_ao/config          |   1 +
+ tools/testing/selftests/net/tcp_ao/connect-deny.c  |  25 +-
+ tools/testing/selftests/net/tcp_ao/connect.c       |   6 +-
+ tools/testing/selftests/net/tcp_ao/icmps-discard.c |   2 +-
+ .../testing/selftests/net/tcp_ao/key-management.c  |  18 +-
+ tools/testing/selftests/net/tcp_ao/lib/aolib.h     | 176 ++++++-
+ .../testing/selftests/net/tcp_ao/lib/ftrace-tcp.c  | 549 +++++++++++++++++++++
+ tools/testing/selftests/net/tcp_ao/lib/ftrace.c    | 466 +++++++++++++++++
+ tools/testing/selftests/net/tcp_ao/lib/kconfig.c   |  31 +-
+ tools/testing/selftests/net/tcp_ao/lib/setup.c     |  15 +-
+ tools/testing/selftests/net/tcp_ao/lib/sock.c      |   1 -
+ tools/testing/selftests/net/tcp_ao/lib/utils.c     |  26 +
+ tools/testing/selftests/net/tcp_ao/restore.c       |  30 +-
+ tools/testing/selftests/net/tcp_ao/rst.c           |   2 +-
+ tools/testing/selftests/net/tcp_ao/self-connect.c  |  19 +-
+ tools/testing/selftests/net/tcp_ao/seq-ext.c       |  28 +-
+ .../selftests/net/tcp_ao/setsockopt-closed.c       |   6 +-
+ tools/testing/selftests/net/tcp_ao/unsigned-md5.c  |  35 +-
+ 20 files changed, 1375 insertions(+), 66 deletions(-)
+---
+base-commit: 3361a6eae59664ffae640ff7a838f5bd89c24461
+change-id: 20240730-tcp-ao-selftests-upd-6-12-4d3e53a74f3f
+
+Best regards,
+-- 
+Dmitry Safonov <0x7f454c46@gmail.com>
+
+
 
