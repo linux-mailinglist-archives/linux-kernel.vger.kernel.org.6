@@ -1,78 +1,142 @@
-Return-Path: <linux-kernel+bounces-272947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40D29462AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:41:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566A09462B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77624B22E0C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888B11C20C1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DB015C131;
-	Fri,  2 Aug 2024 17:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233671AE033;
+	Fri,  2 Aug 2024 17:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OidNy4Iw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="ml4ER3Q7"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62811AE05E;
-	Fri,  2 Aug 2024 17:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFC31AE024
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722620410; cv=none; b=H8GOcPz/rDPECSnSwMZdbf82tOsQYy/Wpk8R+tIoZTySXuqsPYfQYoeBkYHNhAbSKmo7eU0zy8qmk9A9G5N0/7JGPw2EPnAtAwymrXQZw4upnUCoQnsnd0xCvZublaWQ3XcqRp513xgW095YE11FchMf64q34Vej6MYeHnMAclM=
+	t=1722620567; cv=none; b=SKGDTw+abG1y3L76MYM2qjnzWkwvizl0gINc7OzBwyAJ4iY2qMfkW7G9tzU24+SRsuZWLtged9h3X73xsP72bPCv5Ihi3X1Q8D5dXcrqkjXlLKx36E6t+gc52DhwY1iqMuw7JyIdv6n6P3vjUSsy8wS7HGctal8HImDVTXYgVmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722620410; c=relaxed/simple;
-	bh=O+54GVQqjxUOx1zNFRkQaWEOJAdw70eBfVlXfVyrHPc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=KpoExCn+d+hbbzDA6SsTyD3JHNWbH0HdAYlL8tJUFNySe1LqVaxZDX+GX5yHZqf1+MkDP7D20rtfssemPBggTEkoKOmerNKWGVb7hIsppWJQhZWOdoM5w/GI5kkSrhpI1o+KW0DajfwOcFVl1NQ3m0+GziMQn6uywm0f1nq0DAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OidNy4Iw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5EAA9C4AF15;
-	Fri,  2 Aug 2024 17:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722620409;
-	bh=O+54GVQqjxUOx1zNFRkQaWEOJAdw70eBfVlXfVyrHPc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=OidNy4IwOM6FzS+2C/BAtt7Bx8xpkXdBdXz6/CqTA4Ga32OEkyP2iW1mYlsx2sdPM
-	 6qdDk1NbS/V22vDAhNaJSjETL4hsEB57gLB7/NaYGZe1hZ4rS1ebqlTcFtaTmJ5T8I
-	 RTs6gbaZDcKo2jkr40ECn8VfRJX7FyaoUTcKPKBfjC6YD2G56ZDB5JOdE4/Ymn8C9I
-	 +exLByPN7DcP1G5e40mx7N/ZAL+sHw9fJ2jnY62CzMOYr7/WkM0/KgIt9Mg5s8yyHz
-	 41BbNFyxHV7fKA7Hpt7vRsFrNZ4LInUeOq6znwmFfjMiUv2YFM5FcMi7XHlCVUTtMb
-	 P478Q4uRIMjaw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 51C6CD0C60A;
-	Fri,  2 Aug 2024 17:40:09 +0000 (UTC)
-Subject: Re: [GIT PULL] KVM changes for Linux 6.11-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240802165116.9197-1-pbonzini@redhat.com>
-References: <20240802165116.9197-1-pbonzini@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240802165116.9197-1-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-X-PR-Tracked-Commit-Id: 1773014a975919195be71646fc2c2cad1570fce4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 725d410facf9f232832bf6ea14a0c8814d890e06
-Message-Id: <172262040932.22533.16401613941115228026.pr-tracker-bot@kernel.org>
-Date: Fri, 02 Aug 2024 17:40:09 +0000
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+	s=arc-20240116; t=1722620567; c=relaxed/simple;
+	bh=J79iXNK9epessJfAB5+RZWmf9kNmVC6v30LXTrozZ0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oB0AfDWO1G09liAIjDq3CIuXeY4ytVuvuBSibfNEC9GT8GJ+axnbtUL3TRP4lizkAYkkgKMva8J6SdnjOIor+WYi4pfz8mfQNpU/kESHZxE3ZD7PPiJofqfg3ES0I089ml40DaF0WwPZZEfBuvZq7CPAWac4PdJ/pN+U/hvKFWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=ml4ER3Q7; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3687fb526b9so4132371f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 10:42:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1722620563; x=1723225363; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Fo1Jw27d6kJ2c/4oihcpg8Bes1iWl/SxW8eqBhtNepU=;
+        b=ml4ER3Q7tKUmSLMK9/Y9lBOJC0jnhjkxL60V8daqCpgSL69KM4/QDmua/HZG1jNNEc
+         UubSMuhfpnN0fVosPv7rJQ51eSMek+ZnIJbGcDC1D4YkIEwZCknut3D8IrTkkr8Wz2M4
+         bfQhNaexlCxL2s2Gu5OVa0rqQBXYQXMWPfChKmQ5kdRJut3TwJUUcFfuskK2u2ob7vFm
+         NQJkxtQe8uSdPT0XlsdTT14MZey+8k/8vXY8D7yr1E62wZhz6Y/Sy8OqM/dpbLMvkcPQ
+         gVYrvSYJOOzGQZctkkYJv6yoROAzefotGS2sTknJ4eQAwcZ+dYxouUuQ2spI1gWf5D46
+         VAWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722620563; x=1723225363;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fo1Jw27d6kJ2c/4oihcpg8Bes1iWl/SxW8eqBhtNepU=;
+        b=mfVu4nTkhaChJ0er7/Xt7zT5baAjsCXhOQQjKIFCcrPeKnGYn27B0io+jK3SycYoAR
+         5sWYFLNmsKpDELffNybA6XKMVwzjRqVSzL0su4ZymBy+7vCYwrzmc9SUQwYLaO1f5ZFD
+         aQHr+zBM2O7Glmw/7/SjIt37G2q8ATD5J/dafmDMbalwrza3fR/nf7uQkzV1p+kZL/oY
+         xjQlASM3xvSB1yYR26FwyhdqjrQunQ6B60Td+0UcZUxSGyr21SShA3eqhHtdA1TFRjvp
+         TfnOwF/SfK37EXjs8Ajm/Fm1+G3KlGmiO7BXZc8mqoQdvsItMbpZcqTidIix9ZqmCAtp
+         Kz9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXIKEK07SDG0vfvIE5zNtLchDSZ1rRrNCyZjvOaXBwO0O9OLA1JsseUusnTxueEeXuZfP42RJXQklWeQ7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2LQmsERsTDM2/nH1BlgWOoFCW8wnlmtYbu4o5qFh20q9Mafi9
+	71GXsoMzzqOz/BS5R7pr7MqDmqGKSecbAP2Ik+LVV8Ukn1eyhpHJuzdNPGFqUrA=
+X-Google-Smtp-Source: AGHT+IGXsVHnYdTCw2tj0+vAdIxlzcZvHcvH/OjLs64ZjEQNrypWoVHtBio2oOUyzRbsNIVImEp+eQ==
+X-Received: by 2002:adf:f345:0:b0:368:3f13:22fe with SMTP id ffacd0b85a97d-36bbc0e5fa7mr3103764f8f.23.1722620562940;
+        Fri, 02 Aug 2024 10:42:42 -0700 (PDT)
+Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06e100sm2438256f8f.98.2024.08.02.10.42.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 10:42:42 -0700 (PDT)
+Date: Fri, 2 Aug 2024 19:42:41 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: edumazet@google.com, davem@davemloft.net, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+Subject: Re: [PATCH net,v2] team: fix possible deadlock in
+ team_port_change_check
+Message-ID: <Zq0akdhiSeoiOLsY@nanopsycho.orion>
+References: <CANn89iJDVNqnMiGYHGQissykzASK-DcLss6LDAZetnp34n1gxw@mail.gmail.com>
+ <20240802162531.97752-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240802162531.97752-1-aha310510@gmail.com>
 
-The pull request you sent on Fri,  2 Aug 2024 12:51:16 -0400:
+Fri, Aug 02, 2024 at 06:25:31PM CEST, aha310510@gmail.com wrote:
+>Eric Dumazet wrote:
+>>
+>> On Fri, Aug 2, 2024 at 5:00 PM Jeongjun Park <aha310510@gmail.com> wrote:
+>> >
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+[..]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/725d410facf9f232832bf6ea14a0c8814d890e06
+>@@ -2501,6 +2470,11 @@ int team_nl_options_get_doit(struct sk_buff *skb, struct genl_info *info)
+> 	int err;
+> 	LIST_HEAD(sel_opt_inst_list);
+> 
+>+	if (!rtnl_is_locked()) {
 
-Thank you!
+This is completely wrong, other thread may hold the lock.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+
+>+		rtnl_lock();
+
+NACK! I wrote it in the other thread. Don't take rtnl for get options
+command. It is used for repeated fetch of stats. It's read only. Should
+be converted to RCU.
+
+Why are you so obsessed by this hypothetical syzcaller bug? Are you
+hitting this in real? If not, please let it go. I will fix it myself
+when I find some spare cycles.
+
+
+
+
+>+		team->rtnl_locked = true;
+>+	}
+>+
+> 	team = team_nl_team_get(info);
+> 	if (!team)
+> 		return -EINVAL;
+>@@ -2513,6 +2487,11 @@ int team_nl_options_get_doit(struct sk_buff *skb, struct genl_info *info)
+> 
+> 	team_nl_team_put(team);
+> 
+>+	if (team->rtnl_locked) {
+>+		team->rtnl_locked = false;
+>+		rtnl_unlock();
+>+	}
+>+
+> 	return err;
+> }
+> 
+
+[..]
 
