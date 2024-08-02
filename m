@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-273023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63A1946378
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E1794637A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7693428251C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E89DC1C21994
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818321A7040;
-	Fri,  2 Aug 2024 18:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5B81A7066;
+	Fri,  2 Aug 2024 18:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TUMfBmJN"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TXD/xPgz"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6411D1A34BF
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 18:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DAA175D5D
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 18:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722624933; cv=none; b=JK1lUefLbISynYLFiutL3UefVRmF2S5jefG/7y+kWskF8T2MZGD79GligME0Sissu9Bylmu3QTNrTQ50iUmmJC5QKU+bQErIkmTLyJO2+CfK7Pm1ktJ9sYAplcMcJEMJ+INxw+oEatp37dx+PZmdDFr7sdii81X46xe4sOJIukU=
+	t=1722624935; cv=none; b=ljDUZbrmWgdqJIdCRaZW+8sGoVVW37zeA25GpmzXuz8imCUCoIfbWEOFlT91N9TRMCLSS2P5nCNVSsm9VVWj0TmVZC7vshBMgn+4/9CWzX+Dk/pu4jU6PO6D+iZOH93EZeCBhVYxBotCog27S0IWnpVCMwa/TI4LNpHbuKkhmqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722624933; c=relaxed/simple;
-	bh=eIV+FYdJhQs5sXuHNlkR0r+AyOQQyHcB8GM1pTTn+fc=;
+	s=arc-20240116; t=1722624935; c=relaxed/simple;
+	bh=nN94EdUS9XdoLYGq4cV5S9KQKM8sOq6fMUYOehoYu+A=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RIxQcf/ibIAGb07LCulJlR9SBJ0KgB2K6NssKc4nenfncVFwezzTzXPliJMjMum1FGf60Z+nR1mrBJtWUjLqd26svrgNSezL4fRNcodK1qMkyQPnqDoQHA3YmvyVijexg6GXAc9dMtuda2rDvnSHdXYlsFkxf4Jb/yCFuGnFyOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TUMfBmJN; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=c4WdTaGllijiYwJ8M3CMTDulJdC/pEAyoB7CuU/N3nu8a9OGabTnP6ei1ns7tr4JnWU4nTTQKnHMT95h6Odn+30/syk03o4rY4c8KS/iDHpW32btlSE4czJx/sfs2UJhUycMRLO/+eGodQAHgW8VMdiItyRhMpDmTnIqDI6dxDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TXD/xPgz; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0bebbbebeaso1303489276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 11:55:32 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-78e323b3752so5641082a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 11:55:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722624931; x=1723229731; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722624933; x=1723229733; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=MerlJqn4bVyg3mGydSW2OGMbCzaSyxYLo7ygyAWKfwY=;
-        b=TUMfBmJNd8cyYCPPfeIri8h913Evp559Iil3ZzIKaj7woy688p37ZbxI8zgTto/6U8
-         /A2nOJVdFf5evXRyvd6i24AZ2kSHCVoVy77qfAcrMogy7ShpM73JF8F8F4nv8zmCvv14
-         ZqaH/AgtLy8S3tTt/SeNI1aE3KIZ9foCvtz4iO72AHFVC/WkMto08pEWJLG21nAXygY7
-         m28AR11wlqFoLpJNiLZSkYpBpc9RSUemcw0mKwiL0gV7bHaa5I0DzSSJVKx7ACBL+P0X
-         jRTJXC7UDmGAT72dNieoYR5ekyVo013nc4OXjWlFIfm5md0dwbquwMhralafEELbkjeF
-         wI4g==
+        bh=P1dllkuPBdFGoq66LwoZDW3BVSVl+pHV+qHFjbtP1CA=;
+        b=TXD/xPgzLq2m2Cs4KDTvsnf+9qtIdMRIL5kWCehGUlosKkjnfAejwhswLaz8lCxa/O
+         +0c0P7KYKW0uCom+XHA2b5N/coOGv5PlN0In+EVsLQDA0NdntVz1dfDXaEbMefuW/efU
+         BbVvsyG5TGaSYtCod4HPr4vHPVyLvKpFMCUuxEclGGpTxlNbnt+UZelfDALg3ERqhiBU
+         qSIu8TiWCpUoMI7yyshZH66lrQQlnaV4BC/tHGknWwtYoODYxa/Sr0Pa4OimnZdMmRL2
+         N+mwWTQIRIX1xbjA7YDu46rN6S5mKUF7mGhZCDuIpIxQx6RBceGkiXMtFCuJ3H2w4tq2
+         dlRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722624931; x=1723229731;
+        d=1e100.net; s=20230601; t=1722624933; x=1723229733;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MerlJqn4bVyg3mGydSW2OGMbCzaSyxYLo7ygyAWKfwY=;
-        b=H+9XW1JYzx9vlHlhVu8Qc0NxoegeifFjoKm0E7gVtMjbhZ9h19/bjQvgKodgm9nc3c
-         VwHdUuP9/R4zUuPKAFWpaItZOItIycGHwvmk4fd7Q6tqJsgji6sk7WbmhEHviZE1xHPe
-         hLfNPiJmmPBMVDqSOn3hcGQa+j9dy6EsAimMsdXyt4R5IIPzzFi6WYwrHaFdwwlBETgs
-         n4YjoPcU4An62RkQTPLWxDVlES/2vPiUJU5LM4EWOubyhnC/zKe6HOvIberuQg/57c77
-         FiMGsQ8R9ij5i4fR15CQpYmRs3xnulvCmpFDtaeuiWruA0NV6Ah04wa6FgQS7iV8EmTU
-         qxhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ+NoKv4r1k2RX4PRBn/LGXl7BXMeU90s623DVcNfhBVTeLsEcibAf1sZv5wUW4Cg0z+dUWqRT6nh2iN3OKZbfYIYnLQzwFZpObjIu
-X-Gm-Message-State: AOJu0YySfemFq5ew4ZstYFwMHqCrOLXRQ/ix7fclji4o/q/5eruIvSya
-	I2j+Fuvs11z3TqEv1SOltSEQ7w+BdT9STXfTAVPfrDfbo/4Po605toF7R4UTzrrRxA+0Stvd04+
-	T5g==
-X-Google-Smtp-Source: AGHT+IHswe5/CkX/DtlsTvaAS5oC9dYy6wH3QqDG0ZluG+o3E35qvyo4ilahXxkGw4Z6a6FaqYnqfF/to1M=
+        bh=P1dllkuPBdFGoq66LwoZDW3BVSVl+pHV+qHFjbtP1CA=;
+        b=wdLgoAIqK1TS8KgTEIuDLRvCa38vWmj4Bn3Ghep70DZGugXPdaYj+bXj3RhxgYwmUK
+         B1WihToH52dXTSW/HDVHPEQe4ao4lY1bw9FgzmcpUINISoWyAW6drpM9AmEDFsUv45cI
+         A7jc02UHbqAXYyZDab0EWis3TdxcMnWciIpxDEk/9ZQq1+hgChOn3/ZOYe69PDeXCkRo
+         /egTczplsvoUyN3Oy/WmAeh7p+VV0wqEhwkTdKgFPb9IHBFcXiTLNWawlFI1xtAHD172
+         wJKZf7v/DTURqlPngnFQAi8vT8rxETbvtZgyBT3TyRazu33Ks0P0lCuJN9r0uGROUkhj
+         /oog==
+X-Forwarded-Encrypted: i=1; AJvYcCUcMkney8rVzU3OTvM6K27nQzL0dJkfQJQdGCr2yzHSJM2OBYhiXOte8TZHeRMs49cGIFHRRaTMlTEt5tS88Xp07lbwEmwsTk8iKuxI
+X-Gm-Message-State: AOJu0YwrpWDaj4TL4Yvox3W/nd7FrJ2spCTdGn4k654c7igJUGlXGyyO
+	UQu1pgxxKYykCElXyHckl/z6iaBongaTb5sAbxB+16lQor1zrXls/efDZm/svVs/gYjG+6MTARI
+	Itw==
+X-Google-Smtp-Source: AGHT+IGF/Uer4uQKdi8nVuIRV33BvnYIkl97WidqrB2j7Q/ZBCuCCKyt5W5hQi9b4thjF+o+u5mrrq8akfQ=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:2b12:b0:e03:6556:9fb5 with SMTP id
- 3f1490d57ef6-e0bde481682mr107222276.11.1722624931070; Fri, 02 Aug 2024
- 11:55:31 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a63:3f41:0:b0:7a1:2fb5:3ff7 with SMTP id
+ 41be03b00d2f7-7b7438b1dc8mr8680a12.0.1722624932740; Fri, 02 Aug 2024 11:55:32
+ -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  2 Aug 2024 11:55:10 -0700
+Date: Fri,  2 Aug 2024 11:55:11 -0700
 In-Reply-To: <20240802185511.305849-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,60 +75,203 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240802185511.305849-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802185511.305849-9-seanjc@google.com>
-Subject: [PATCH 8/9] KVM: selftests: Verify get/set PERF_CAPABILITIES w/o
- guest PDMC behavior
+Message-ID: <20240802185511.305849-10-seanjc@google.com>
+Subject: [PATCH 9/9] KVM: selftests: Add a testcase for disabling feature MSRs
+ init quirk
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Add another testcase to x86's PMU capabilities test to verify that KVM's
-handling of userspace accesses to PERF_CAPABILITIES when the vCPU doesn't
-support the MSR (per the vCPU's CPUID).  KVM's (newly established) ABI is
-that userspace MSR accesses are subject to architectural existence checks,
-but that if the MSR is advertised as supported _by KVM_, "bad" reads get
-'0' and writes of '0' are always allowed.
+Expand and rename the feature MSRs test to verify KVM's ABI and quirk
+for initializing feature MSRs.
+
+Exempt VM_CR{0,4}_FIXED1 from most tests as KVM intentionally takes full
+control of the MSRs, e.g. to prevent L1 from running L2 with bogus CR0
+and/or CR4 values.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- .../selftests/kvm/x86_64/vmx_pmu_caps_test.c  | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ tools/testing/selftests/kvm/Makefile          |   2 +-
+ .../selftests/kvm/x86_64/feature_msrs_test.c  | 113 ++++++++++++++++++
+ .../kvm/x86_64/get_msr_index_features.c       |  35 ------
+ 3 files changed, 114 insertions(+), 36 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86_64/feature_msrs_test.c
+ delete mode 100644 tools/testing/selftests/kvm/x86_64/get_msr_index_features.c
 
-diff --git a/tools/testing/selftests/kvm/x86_64/vmx_pmu_caps_test.c b/tools/testing/selftests/kvm/x86_64/vmx_pmu_caps_test.c
-index 7c92536551cc..a1f5ff45d518 100644
---- a/tools/testing/selftests/kvm/x86_64/vmx_pmu_caps_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/vmx_pmu_caps_test.c
-@@ -207,6 +207,29 @@ KVM_ONE_VCPU_TEST(vmx_pmu_caps, lbr_perf_capabilities, guest_code)
- 	TEST_ASSERT(!r, "Writing LBR_TOS should fail after disabling vPMU");
- }
- 
-+KVM_ONE_VCPU_TEST(vmx_pmu_caps, perf_capabilities_unsupported, guest_code)
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index b084ba2262a0..827b523a18fa 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -67,7 +67,7 @@ TEST_PROGS_x86_64 += x86_64/nx_huge_pages_test.sh
+ TEST_GEN_PROGS_x86_64 = x86_64/cpuid_test
+ TEST_GEN_PROGS_x86_64 += x86_64/cr4_cpuid_sync_test
+ TEST_GEN_PROGS_x86_64 += x86_64/dirty_log_page_splitting_test
+-TEST_GEN_PROGS_x86_64 += x86_64/get_msr_index_features
++TEST_GEN_PROGS_x86_64 += x86_64/feature_msrs_test
+ TEST_GEN_PROGS_x86_64 += x86_64/exit_on_emulation_failure_test
+ TEST_GEN_PROGS_x86_64 += x86_64/fix_hypercall_test
+ TEST_GEN_PROGS_x86_64 += x86_64/hwcr_msr_test
+diff --git a/tools/testing/selftests/kvm/x86_64/feature_msrs_test.c b/tools/testing/selftests/kvm/x86_64/feature_msrs_test.c
+new file mode 100644
+index 000000000000..a72f13ae2edb
+--- /dev/null
++++ b/tools/testing/selftests/kvm/x86_64/feature_msrs_test.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2020, Red Hat, Inc.
++ */
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++
++#include "test_util.h"
++#include "kvm_util.h"
++#include "processor.h"
++
++static bool is_kvm_controlled_msr(uint32_t msr)
 +{
-+	uint64_t val;
-+	int i, r;
++	return msr == MSR_IA32_VMX_CR0_FIXED1 || msr == MSR_IA32_VMX_CR4_FIXED1;
++}
 +
-+	vcpu_set_msr(vcpu, MSR_IA32_PERF_CAPABILITIES, host_cap.capabilities);
-+	val = vcpu_get_msr(vcpu, MSR_IA32_PERF_CAPABILITIES);
-+	TEST_ASSERT_EQ(val, host_cap.capabilities);
-+
-+	vcpu_clear_cpuid_feature(vcpu, X86_FEATURE_PDCM);
-+
-+	val = vcpu_get_msr(vcpu, MSR_IA32_PERF_CAPABILITIES);
-+	TEST_ASSERT_EQ(val, 0);
-+
-+	vcpu_set_msr(vcpu, MSR_IA32_PERF_CAPABILITIES, 0);
-+
-+	for (i = 0; i < 64; i++) {
-+		r = _vcpu_set_msr(vcpu, MSR_IA32_PERF_CAPABILITIES, BIT_ULL(i));
-+		TEST_ASSERT(!r, "Setting PERF_CAPABILITIES bit %d (= 0x%llx) should fail without PDCM",
-+			    i, BIT_ULL(i));
++/*
++ * For VMX MSRs with a "true" variant, KVM requires userspace to set the "true"
++ * MSR, and doesn't allow setting the hidden version.
++ */
++static bool is_hidden_vmx_msr(uint32_t msr)
++{
++	switch (msr) {
++	case MSR_IA32_VMX_PINBASED_CTLS:
++	case MSR_IA32_VMX_PROCBASED_CTLS:
++	case MSR_IA32_VMX_EXIT_CTLS:
++	case MSR_IA32_VMX_ENTRY_CTLS:
++		return true;
++	default:
++		return false;
 +	}
 +}
 +
- int main(int argc, char *argv[])
- {
- 	TEST_REQUIRE(kvm_is_pmu_enabled());
++static bool is_quirked_msr(uint32_t msr)
++{
++	return msr != MSR_AMD64_DE_CFG;
++}
++
++static void test_feature_msr(uint32_t msr)
++{
++	const uint64_t supported_mask = kvm_get_feature_msr(msr);
++	uint64_t reset_value = is_quirked_msr(msr) ? supported_mask : 0;
++	struct kvm_vcpu *vcpu;
++	struct kvm_vm *vm;
++
++	/*
++	 * Don't bother testing KVM-controlled MSRs beyond verifying that the
++	 * MSR can be read from userspace.  Any value is effectively legal, as
++	 * KVM is bound by x86 architecture, not by ABI.
++	 */
++	if (is_kvm_controlled_msr(msr))
++		return;
++
++	/*
++	 * More goofy behavior.  KVM reports the host CPU's actual revision ID,
++	 * but initializes the vCPU's revision ID to an arbitrary value.
++	 */
++	if (msr == MSR_IA32_UCODE_REV)
++		reset_value = host_cpu_is_intel ? 0x100000000ULL : 0x01000065;
++
++	/*
++	 * For quirked MSRs, KVM's ABI is to initialize the vCPU's value to the
++	 * full set of features supported by KVM.  For non-quirked MSRs, and
++	 * when the quirk is disabled, KVM must zero-initialize the MSR and let
++	 * userspace do the configuration.
++	 */
++	vm = vm_create_with_one_vcpu(&vcpu, NULL);
++	TEST_ASSERT(vcpu_get_msr(vcpu, msr) == reset_value,
++		    "Wanted 0x%lx for %squirked MSR 0x%x, got 0x%lx",
++		    reset_value, is_quirked_msr(msr) ? "" : "non-", msr,
++		    vcpu_get_msr(vcpu, msr));
++	if (!is_hidden_vmx_msr(msr))
++		vcpu_set_msr(vcpu, msr, supported_mask);
++	kvm_vm_free(vm);
++
++	if (is_hidden_vmx_msr(msr))
++		return;
++
++	if (!kvm_has_cap(KVM_CAP_DISABLE_QUIRKS2) ||
++	    !(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) & KVM_X86_QUIRK_STUFF_FEATURE_MSRS))
++		return;
++
++	vm = vm_create(1);
++	vm_enable_cap(vm, KVM_CAP_DISABLE_QUIRKS2, KVM_X86_QUIRK_STUFF_FEATURE_MSRS);
++
++	vcpu = vm_vcpu_add(vm, 0, NULL);
++	TEST_ASSERT(!vcpu_get_msr(vcpu, msr),
++		    "Quirk disabled, wanted '0' for MSR 0x%x, got 0x%lx",
++		    msr, vcpu_get_msr(vcpu, msr));
++	kvm_vm_free(vm);
++}
++
++int main(int argc, char *argv[])
++{
++	const struct kvm_msr_list *feature_list;
++	int i;
++
++	/*
++	 * Skip the entire test if MSR_FEATURES isn't supported, other tests
++	 * will cover the "regular" list of MSRs, the coverage here is purely
++	 * opportunistic and not interesting on its own.
++	 */
++	TEST_REQUIRE(kvm_has_cap(KVM_CAP_GET_MSR_FEATURES));
++
++	(void)kvm_get_msr_index_list();
++
++	feature_list = kvm_get_feature_msr_index_list();
++	for (i = 0; i < feature_list->nmsrs; i++)
++		test_feature_msr(feature_list->indices[i]);
++}
+diff --git a/tools/testing/selftests/kvm/x86_64/get_msr_index_features.c b/tools/testing/selftests/kvm/x86_64/get_msr_index_features.c
+deleted file mode 100644
+index d09b3cbcadc6..000000000000
+--- a/tools/testing/selftests/kvm/x86_64/get_msr_index_features.c
++++ /dev/null
+@@ -1,35 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Test that KVM_GET_MSR_INDEX_LIST and
+- * KVM_GET_MSR_FEATURE_INDEX_LIST work as intended
+- *
+- * Copyright (C) 2020, Red Hat, Inc.
+- */
+-#include <fcntl.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <sys/ioctl.h>
+-
+-#include "test_util.h"
+-#include "kvm_util.h"
+-#include "processor.h"
+-
+-int main(int argc, char *argv[])
+-{
+-	const struct kvm_msr_list *feature_list;
+-	int i;
+-
+-	/*
+-	 * Skip the entire test if MSR_FEATURES isn't supported, other tests
+-	 * will cover the "regular" list of MSRs, the coverage here is purely
+-	 * opportunistic and not interesting on its own.
+-	 */
+-	TEST_REQUIRE(kvm_has_cap(KVM_CAP_GET_MSR_FEATURES));
+-
+-	(void)kvm_get_msr_index_list();
+-
+-	feature_list = kvm_get_feature_msr_index_list();
+-	for (i = 0; i < feature_list->nmsrs; i++)
+-		kvm_get_feature_msr(feature_list->indices[i]);
+-}
 -- 
 2.46.0.rc2.264.g509ed76dc8-goog
 
