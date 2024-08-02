@@ -1,165 +1,114 @@
-Return-Path: <linux-kernel+bounces-272391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F37945B25
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:37:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDFB945B1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40901C20E1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:37:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3341C237A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E671DAC69;
-	Fri,  2 Aug 2024 09:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fzYNV5bX"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168C21BF304;
-	Fri,  2 Aug 2024 09:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD921DB447;
+	Fri,  2 Aug 2024 09:35:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139031DAC4A;
+	Fri,  2 Aug 2024 09:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722591436; cv=none; b=Rxr4TlHa0XvSlPfTFHk96rLmbYJ8NRdlM8odf5gdmlrD0uGn/6EJef5cI09/J1qs5l1DKG3AhUPNF0PXHvahIU28eEHgQl4JBCZN8UBJz4b7zf31Y+z9x7GiLPkAOspTaDeLKr+jTmONCA5GEpPG92DdrezsM5aOWGHGNXKyNIo=
+	t=1722591353; cv=none; b=LIiFdT0EWUqIYi+4LWXynymIamUe+eNbmFAtHiEi9QGAoaYZHTtY1k/5s7ioKlOnKfCJ/CNWc2MyNugy5rcRXgYnDZPn4ooaj+ennaCdukeqhQdAa+Xho4Y8te7dO6BfKXHm9Qi/OhkfrF/l87kksiXLZFyw6Zw0264ykq8rQbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722591436; c=relaxed/simple;
-	bh=mBo/Gq6QDk9/Dr3lyo0qOe2wNbZqWQDFEKOJSXo4x6I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l8nDs+diJpVUooqh0XBLWJoJcFzUe/grAyhQ7p1kNd4XWp/b2mH+S+CyvOc8QKQYV4PzetFJxKDXpydJLsF9EFj+XTtpwQE62Tsp8JRTXSGU4ab1g5CDNkfKjv/cdwoQSSeCKr+mSD2OSNUUaVtn57Ci6cqZWwHidU1u+O59qzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fzYNV5bX; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1722591397;
-	bh=NsIKkB/pr2FlhtN9deyA9A/er15GQbDfKsbBwFdHhqA=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=fzYNV5bXU2BJoIumVQ3/zQh8WhYz0z4QCLXVtN9RZkv5eLQIKWbxbirn5AdvJ3/eD
-	 DQz6RIE/Q/fK3hHRNxyly843faK6fjot9fUwyWWgcpbgGMpnzx763cc4QVtnLa9koO
-	 03BVcbr4GQHtYW2R8GFD2vl95f1DeVrKU/6r+RSY=
-X-QQ-mid: bizesmtp84t1722591393t29jd6vp
-X-QQ-Originating-IP: Zm1SS9v5f3kvreoF8JKqgz+MhrTtNXlL8iPlq6ibJxU=
-Received: from localhost.localdomain ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 02 Aug 2024 17:36:31 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14219945242816507166
-From: Qiang Ma <maqianga@uniontech.com>
-To: dmitry.torokhov@gmail.com,
-	hdegoede@redhat.com,
-	christophe.jaillet@wanadoo.fr
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Qiang Ma <maqianga@uniontech.com>
-Subject: [PATCH V2] Input: atkbd - fix LED state at suspend/resume
-Date: Fri,  2 Aug 2024 17:36:00 +0800
-Message-Id: <20240802093600.6807-1-maqianga@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1722591353; c=relaxed/simple;
+	bh=dk3AkEexnpfCj7aRF0eLLUhA3VvcUM8ph8xsoYphiw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rBV5MW0gqooSYpqYDWadGiaXtciceAT7/0+xjOwsrBfma6EcUo88hbkjuP9bzg7inJh+EnWCt4MHt6JE+rl6OYxK/htlitSMHo3FDpxs/uaVR6JyARuHP90ceOFKb/JRhOyP7vVwHN3b7JM7HeG1joUAUU3h7lAt49OlDoBjv+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08E741007;
+	Fri,  2 Aug 2024 02:36:17 -0700 (PDT)
+Received: from [10.57.12.204] (unknown [10.57.12.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D52EF3F766;
+	Fri,  2 Aug 2024 02:35:49 -0700 (PDT)
+Message-ID: <078ce0ba-63d4-4d04-9ac0-2344ca176fe5@arm.com>
+Date: Fri, 2 Aug 2024 10:36:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v1 1/8] thermal: broadcom: Use
+ thermal_zone_get_crit_temp() in bcm2835_thermal_probe()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>
+References: <2211925.irdbgypaU6@rjwysocki.net>
+ <3322893.aeNJFYEL58@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <3322893.aeNJFYEL58@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-After we turn on the keyboard CAPSL LED and let the system suspend,
-the keyboard LED is not off, and the kernel log is as follows:
 
-[  185.987574] i8042: [44060] ed -> i8042 (kbd-data)
-[  185.988057] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
-[  185.988067] i8042: [44061] 04 -> i8042 (kbd-data)
-[  185.988248] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
 
-The log shows that after the command 0xed is sent, the data
-sent is 0x04 instead of 0x00.
+On 7/29/24 16:53, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Modify the bcm2835 thermal driver to use thermal_zone_get_crit_temp() in
+> bcm2835_thermal_probe() instead of relying on the assumption that the
+> critical trip index will always be 0.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>   drivers/thermal/broadcom/bcm2835_thermal.c |    7 +++----
+>   1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/broadcom/bcm2835_thermal.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/broadcom/bcm2835_thermal.c
+> +++ linux-pm/drivers/thermal/broadcom/bcm2835_thermal.c
+> @@ -208,8 +208,7 @@ static int bcm2835_thermal_probe(struct
+>   	 */
+>   	val = readl(data->regs + BCM2835_TS_TSENSCTL);
+>   	if (!(val & BCM2835_TS_TSENSCTL_RSTB)) {
+> -		struct thermal_trip trip;
+> -		int offset, slope;
+> +		int offset, slope, crit_temp;
+>   
+>   		slope = thermal_zone_get_slope(tz);
+>   		offset = thermal_zone_get_offset(tz);
+> @@ -217,7 +216,7 @@ static int bcm2835_thermal_probe(struct
+>   		 * For now we deal only with critical, otherwise
+>   		 * would need to iterate
+>   		 */
+> -		err = thermal_zone_get_trip(tz, 0, &trip);
+> +		err = thermal_zone_get_crit_temp(tz, &crit_temp);
+>   		if (err < 0) {
+>   			dev_err(dev, "Not able to read trip_temp: %d\n", err);
+>   			return err;
+> @@ -232,7 +231,7 @@ static int bcm2835_thermal_probe(struct
+>   		val |= (0xFE << BCM2835_TS_TSENSCTL_RSTDELAY_SHIFT);
+>   
+>   		/*  trip_adc value from info */
+> -		val |= bcm2835_thermal_temp2adc(trip.temperature,
+> +		val |= bcm2835_thermal_temp2adc(crit_temp,
+>   						offset,
+>   						slope)
+>   			<< BCM2835_TS_TSENSCTL_THOLD_SHIFT;
+> 
+> 
+> 
 
-Solution:
-Add a bitmap variable ledon in the atkbd structure, and then set ledon
-according to code-value in the event, in the atkbd_set_leds() function,
-first look at the value of ledon, if it is 0, there is no need to
-look at the value of dev->led, otherwise, need to look at dev->led
-to determine the keyboard LED on/off.
 
-Signed-off-by: Qiang Ma <maqianga@uniontech.com>
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-V2:
- - Fixed formatting and spelling errors
- - Optimized some code
-
- drivers/input/keyboard/atkbd.c | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
-index 7f67f9f2946b..fb479bc78134 100644
---- a/drivers/input/keyboard/atkbd.c
-+++ b/drivers/input/keyboard/atkbd.c
-@@ -237,6 +237,8 @@ struct atkbd {
- 	struct mutex mutex;
- 
- 	struct vivaldi_data vdata;
-+
-+	DECLARE_BITMAP(ledon, LED_CNT);
- };
- 
- /*
-@@ -604,24 +606,32 @@ static int atkbd_set_repeat_rate(struct atkbd *atkbd)
- 	return ps2_command(&atkbd->ps2dev, &param, ATKBD_CMD_SETREP);
- }
- 
-+#define ATKBD_DO_LED_TOGGLE(dev, atkbd, type, v, bits, on)		\
-+({									\
-+	unsigned char __tmp = 0;					\
-+	if (test_bit(LED_##type, atkbd->on))				\
-+		__tmp = test_bit(LED_##type, dev->bits) ? v : 0;	\
-+	__tmp;								\
-+})
-+
- static int atkbd_set_leds(struct atkbd *atkbd)
- {
- 	struct input_dev *dev = atkbd->dev;
- 	unsigned char param[2];
- 
--	param[0] = (test_bit(LED_SCROLLL, dev->led) ? 1 : 0)
--		 | (test_bit(LED_NUML,    dev->led) ? 2 : 0)
--		 | (test_bit(LED_CAPSL,   dev->led) ? 4 : 0);
-+	param[0] = ATKBD_DO_LED_TOGGLE(dev, atkbd, SCROLLL, 1, led, ledon)
-+		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, NUML,    2, led, ledon)
-+		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, CAPSL,   4, led, ledon);
- 	if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_SETLEDS))
- 		return -1;
- 
- 	if (atkbd->extra) {
- 		param[0] = 0;
--		param[1] = (test_bit(LED_COMPOSE, dev->led) ? 0x01 : 0)
--			 | (test_bit(LED_SLEEP,   dev->led) ? 0x02 : 0)
--			 | (test_bit(LED_SUSPEND, dev->led) ? 0x04 : 0)
--			 | (test_bit(LED_MISC,    dev->led) ? 0x10 : 0)
--			 | (test_bit(LED_MUTE,    dev->led) ? 0x20 : 0);
-+		param[1] = ATKBD_DO_LED_TOGGLE(dev, atkbd, COMPOSE, 0x01, led, ledon)
-+			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SLEEP,   0x02, led, ledon)
-+			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SUSPEND, 0x04, led, ledon)
-+			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MISC,    0x10, led, ledon)
-+			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MUTE,    0x20, led, ledon);
- 		if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_EX_SETLEDS))
- 			return -1;
- 	}
-@@ -695,6 +705,11 @@ static int atkbd_event(struct input_dev *dev,
- 	switch (type) {
- 
- 	case EV_LED:
-+		if (value)
-+			__set_bit(code, atkbd->ledon);
-+		else
-+			__clear_bit(code, atkbd->ledon);
-+
- 		atkbd_schedule_event_work(atkbd, ATKBD_LED_EVENT_BIT);
- 		return 0;
- 
--- 
-2.20.1
-
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
