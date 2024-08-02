@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-271973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0943F94558A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:37:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7864194558C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833EF1F231CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3B01F23C66
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E30381C7;
-	Fri,  2 Aug 2024 00:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8C347781;
+	Fri,  2 Aug 2024 00:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="RfIupct2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VShKTIX8"
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="Flw2OSOW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CSZQP/qf"
 Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACF21C687
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 00:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71DB1CD02
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 00:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722558977; cv=none; b=W2xOBeouIOFbn4ihTCoLJ3y/e20YA76TkwZJ+4qnC+TZY0EC+0qfx2FullpmFg8v0K8vwI5gS+fUpzGQ+R//+0IMe+zjJFtqlJg3WBArRWzG9Q2NdTeR1vsoadqGoSKXigCvxl3uLGnkNC0pWGWoQWmPwWtLKcIS0+aWdcwurjY=
+	t=1722558978; cv=none; b=TqIGDkCAU6kZLlHsm84xjT9Z/ymqd3/Ap4UfKMn6J9yT3SzwUjspylkSI5et2l9xgDhdH2vXFID52GumbyXJX3PurbDVmBNkpXVAGu9RPJlhLAIMdu7uAuFPD//eDozoAFZbwl1Ckxv+Uhfuu3HCcRqKwTBH/rMqjyqeG6VhOo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722558977; c=relaxed/simple;
-	bh=Ws0jqyGuxNdGowY7r95dbj9LEJAccp/E1kA/TtLOx8g=;
+	s=arc-20240116; t=1722558978; c=relaxed/simple;
+	bh=DXTPSNKwLvYFn0h0UZcju4Oht9hG6hNSZmZ7KDbEpJg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ot6FsMi+ExnBDBqamMgBDQ553DwEVuUtYIOftSD3QOgUInEFyUKFhNDUbFuW6bNR/Gw2vzSC7eaIz3j7zpqRBG+Ig0ILbLogP5qTwtEm5lbamT18OXinQPBNsLbxwkSfpfTqnlPsJTXYo+r3mMMnW2N5ndZEOOlGocR4vVyjD7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=RfIupct2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VShKTIX8; arc=none smtp.client-ip=103.168.172.149
+	 MIME-Version; b=qtbjHiuwlwUw8Hz2wF4qMY+3bbXQkvqhGtPYb0x72M0v70eWNCh4lQzm7u9HhtjkE0XXgFFfOdCxMSSK7xfCYgto5+gInLYSS6Z80IzCOQTR0G5abI5TUDG0vEvpYeupYcprPHez1Y+iXIfm4LSYv19xbH/YEKPY1VAFGjw1E5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=Flw2OSOW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CSZQP/qf; arc=none smtp.client-ip=103.168.172.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 6FFBD138FC7A;
-	Thu,  1 Aug 2024 20:36:14 -0400 (EDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B86F0138FC81;
+	Thu,  1 Aug 2024 20:36:15 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 01 Aug 2024 20:36:14 -0400
+  by compute4.internal (MEProxy); Thu, 01 Aug 2024 20:36:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1722558974; x=
-	1722645374; bh=hld0IfkYJX3gAwEL6QqzZl+AfhUDccknia9yFzpMOfQ=; b=R
-	fIupct2UTNS2EQJMKmkJAUgeVl1z9WBA/qIE7dJ5pQ3Ge/n2MCA8bxeIQGRGbIRS
-	ybvF4qn5AEBpyIDnne8yblxxBmooV8IbjChZA8x7fCZGf9RjmppVY7elgn586BVL
-	tSS5DgASzcgpfgN6Afmdjg5u4gUZZpqxh8MYvW/UtdtETjmdLHHbo6jLcJXbtZPF
-	Ce8wTPdCdD5uwtcUvkrg6xbS23nUg83WZuhMsuUkVh+4fHhhpjIryc6QhIuhhg8F
-	l0Jlm3zzscoQYtmwlNZk0FD4rX7bb0wtHt09almVmcyflQTbYPIlI+gw8wAH6dSR
-	vFAF6jMLDgeIZiOACVMcg==
+	:reply-to:subject:subject:to:to; s=fm3; t=1722558975; x=
+	1722645375; bh=fGBvKcMjmz7YqvhXrQlAHy53rzEKiDR9wJlFL73blRo=; b=F
+	lw2OSOW1QK10C2bl0w9ZFxr2XfYatOWF+7w4K00F6ofZy0duLvr6DkZFeYjip9TE
+	b+jv/JMbpu6XHcdzumyp5I/RnQMBuRhBE613c+ca8xKjLFORJOb5Kzzv4i+cTAUX
+	GT2YLAm330XLN7TEsFQ1C2FZ89tXtK7d5f+HS81GXPchzzE40mIU3QTQcFP8/bYw
+	nGGXlV0VayTe/0xeiZQPoK3Rij2AnEyMqFITB1wDFXXAtBv/EGn1itriJ6azQKji
+	kAstMQkzaCiKVv5OVSBx0qhHWGkrXyVtE1ydX9/P0MGhYk+d2qsPB2oiUPEgftfL
+	1vY35EZ5tSMA2kHjXMeow==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722558974; x=
-	1722645374; bh=hld0IfkYJX3gAwEL6QqzZl+AfhUDccknia9yFzpMOfQ=; b=V
-	ShKTIX8TfqHWoH2DJu1iQC8nzjBS4a5GVZDNCgIGfxjrLXTiudpWc1rz1HtEdurz
-	1IkPHuSsC1rO1HkVdStzmEpYkNVPa7p3SbC1aA/d+pvcIre8ZOKDnzedUZ8DghIP
-	KejW3o3wwyRh6v0ss/Svk9CgoewFXFvDihhj0IPv7YbNIVkzLHRh+BBjvuJ/Gwkd
-	aUjne3RQdrS924aattGuRYQAsAfVDiGaAXor9spFLKtZsaxxWVi37/B/+08gnROX
-	wZSQIL4cfJK94gNyzcIhlqGjraxJZID52+dSRguwdoQv+1TpdTN6pVLOoy+GgOQD
-	2AOg/WZ68j2dnM+2jAaRg==
-X-ME-Sender: <xms:_imsZrgT3tR77yOn2Pe9AqmRh5uD8noQXtVsztzyv74fXSTCEeqcaQ>
-    <xme:_imsZoDR2y3hmBccZj6mY0MQsSlaGa2QGKlGvvqiCI6g3vzThPIbjPIDambnU8gWs
-    P1Qk91MTE_5yXTBPa4>
-X-ME-Received: <xmr:_imsZrGLMR7lDbwp7tkd2-5xtKJOO2G_XaLnU2ARAEhY-T8O4Lt592e0c9tQ9c2c7joi7UzC6RVCUwR3G-tThbEUNu7kq-pESaWrg8TXTqLo>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722558975; x=
+	1722645375; bh=fGBvKcMjmz7YqvhXrQlAHy53rzEKiDR9wJlFL73blRo=; b=C
+	SZQP/qfwVa0GHG+b9igDv78psRwnahxhWPoWuUbIURN/FJ20V3xrbftqN3urrYk6
+	r8zXebGxKVptSWqVLfKnndiIX4KeDh/KxOx9zu/rTzcO2nM7E4o/2eBBBrfiOzLE
+	E2XjceGaRSlMrJXhzTBZXI8qD2p0yqrfvTPFGf31pWAFzyqxgpXzntE/FzQGygGs
+	BMjRJLu2irhH0hFVayEs2SDlbP6Q2pOQjl+cuuLjbmcZq1BbC8odSf48yrRA+5bM
+	GOd0u+ptbuQF/94V+3nrUFHI04R/JR8YFgP956c1Wz10pasuFFPWfdSNZX4Iv5Qm
+	gDluMLvEZm3zMKqYlrGwA==
+X-ME-Sender: <xms:_ymsZsO22v2jDBI682-zQzbPOVzdXd4UAcqmMNjuTZwzU2Vu6xtdqQ>
+    <xme:_ymsZi8fDXSH53n_06L1fQftPFnJv5sQCqr9HNyRzSmuE19Xxk8qAIM23sCR1PCAe
+    BucqhGymhhlwW-MqEM>
+X-ME-Received: <xmr:_ymsZjTZTqyff4mpwi1lmEqIkH_KSVZ0h4TmqHP9jbeScT3Wtb2fqK84XqOAfZViJI3cb6oC9EbC0H2fjyDqhA2VviuycEhfrcywY_LQuOua>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeelgdefjecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
@@ -72,20 +72,20 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeelgdefjecutefuodetggdote
     dvgfduudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgv
     rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
     grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:_imsZoTsqOg4V6dZnBOXDdfFKyjUl2Rh0LWFt7-46e9pZI1NSpitfw>
-    <xmx:_imsZowQX5L3sBfXI4rDXHOKZg3MkjrVaL5NMdN84VJxWzmQlrg8Cw>
-    <xmx:_imsZu5vTuVGrRg197pBrhbPuj7gHPhxLZqc8F-pqfiFIngPpx1yLw>
-    <xmx:_imsZtwN-yBXbI1E6NRx4QCkgnhNFa6xUO6yDl-n-8ifD5t5e67Vbg>
-    <xmx:_imsZj8jj_635hqTh2-ElKAyxMiPpfV-Xrez9fOj2Os4FQ7X7j5q_UIp>
+X-ME-Proxy: <xmx:_ymsZkufis3O7eYyffmAe7tKTi_OSbfL5ih4n6FKtSH67ZH8HJCieQ>
+    <xmx:_ymsZkf5ii6sVUhLIwga1L0aYQNpQKNw2y1RuBnXqGgZ6S2thzEZIQ>
+    <xmx:_ymsZo2JfI31vjQ8n9VYiGdVgU-3IPYsPSCQzgdPlrKjCqrKyR3WTA>
+    <xmx:_ymsZo_QNKip_-bZ5Wi9EhHRDwCxGW8AMT_EPHFRXw7O3TYWAIQbmQ>
+    <xmx:_ymsZlpIyy2fowIJxfJcH919MBWSIb8uRiwKOTc8xz2aWWGcWXMzj4Gp>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 1 Aug 2024 20:36:13 -0400 (EDT)
+ 1 Aug 2024 20:36:14 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] firewire: ohci: add static inline functions to serialize/deserialize data of IT DMA
-Date: Fri,  2 Aug 2024 09:36:05 +0900
-Message-ID: <20240802003606.109402-4-o-takashi@sakamocchi.jp>
+Subject: [PATCH 4/4] firewire: ohci: use static inline functions to serialize data of IT DMA
+Date: Fri,  2 Aug 2024 09:36:06 +0900
+Message-ID: <20240802003606.109402-5-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240802003606.109402-1-o-takashi@sakamocchi.jp>
 References: <20240802003606.109402-1-o-takashi@sakamocchi.jp>
@@ -97,161 +97,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In 1394 OHCI specification, the format of data for IT DMA is different from
-the format of isochronous packet in IEEE 1394 specification, in its spd and
-srcBusID fields.
-
-This commit adds some static inline functions to serialize/deserialize the
-data of IT DMA.
+THis commit replaces current implementation with the helper functions added
+in the former commit.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/ohci-serdes-test.c | 32 +++++++++++
- drivers/firewire/ohci.h             | 84 +++++++++++++++++++++++++++++
- 2 files changed, 116 insertions(+)
+ drivers/firewire/ohci.c | 34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/firewire/ohci-serdes-test.c b/drivers/firewire/ohci-serdes-test.c
-index c6820f4f7ec1..ab25ec28aeb5 100644
---- a/drivers/firewire/ohci-serdes-test.c
-+++ b/drivers/firewire/ohci-serdes-test.c
-@@ -73,10 +73,42 @@ static void test_at_data_serdes(struct kunit *test)
- 	KUNIT_EXPECT_MEMEQ(test, quadlets, expected, sizeof(expected));
- }
- 
-+static void test_it_data_serdes(struct kunit *test)
-+{
-+	static const __le32 expected[] = {
-+		cpu_to_le32(0x000349a7),
-+		cpu_to_le32(0x02300000),
-+	};
-+	__le32 quadlets[] = {0, 0};
-+	unsigned int scode = ohci1394_it_data_get_speed(expected);
-+	unsigned int tag = ohci1394_it_data_get_tag(expected);
-+	unsigned int channel = ohci1394_it_data_get_channel(expected);
-+	unsigned int tcode = ohci1394_it_data_get_tcode(expected);
-+	unsigned int sync = ohci1394_it_data_get_sync(expected);
-+	unsigned int data_length = ohci1394_it_data_get_data_length(expected);
-+
-+	KUNIT_EXPECT_EQ(test, 0x03, scode);
-+	KUNIT_EXPECT_EQ(test, 0x01, tag);
-+	KUNIT_EXPECT_EQ(test, 0x09, channel);
-+	KUNIT_EXPECT_EQ(test, 0x0a, tcode);
-+	KUNIT_EXPECT_EQ(test, 0x7, sync);
-+	KUNIT_EXPECT_EQ(test, 0x0230, data_length);
-+
-+	ohci1394_it_data_set_speed(quadlets, scode);
-+	ohci1394_it_data_set_tag(quadlets, tag);
-+	ohci1394_it_data_set_channel(quadlets, channel);
-+	ohci1394_it_data_set_tcode(quadlets, tcode);
-+	ohci1394_it_data_set_sync(quadlets, sync);
-+	ohci1394_it_data_set_data_length(quadlets, data_length);
-+
-+	KUNIT_EXPECT_MEMEQ(test, quadlets, expected, sizeof(expected));
-+}
-+
- static struct kunit_case ohci_serdes_test_cases[] = {
- 	KUNIT_CASE(test_self_id_count_register_deserialization),
- 	KUNIT_CASE(test_self_id_receive_buffer_deserialization),
- 	KUNIT_CASE(test_at_data_serdes),
-+	KUNIT_CASE(test_it_data_serdes),
- 	{}
+diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
+index e8429dbbc60d..8f2bbd0569fb 100644
+--- a/drivers/firewire/ohci.c
++++ b/drivers/firewire/ohci.c
+@@ -162,13 +162,6 @@ struct context {
+ 	struct tasklet_struct tasklet;
  };
  
-diff --git a/drivers/firewire/ohci.h b/drivers/firewire/ohci.h
-index a5501996137c..218666cfe14a 100644
---- a/drivers/firewire/ohci.h
-+++ b/drivers/firewire/ohci.h
-@@ -269,6 +269,90 @@ static inline void ohci1394_at_data_set_rcode(__le32 *data, unsigned int rcode)
- 	data[1] |= cpu_to_le32((rcode << OHCI1394_AT_DATA_Q1_rCode_SHIFT) & OHCI1394_AT_DATA_Q1_rCode_MASK);
- }
+-#define IT_HEADER_SY(v)          ((v) <<  0)
+-#define IT_HEADER_TCODE(v)       ((v) <<  4)
+-#define IT_HEADER_CHANNEL(v)     ((v) <<  8)
+-#define IT_HEADER_TAG(v)         ((v) << 14)
+-#define IT_HEADER_SPEED(v)       ((v) << 16)
+-#define IT_HEADER_DATA_LENGTH(v) ((v) << 16)
+-
+ struct iso_context {
+ 	struct fw_iso_context base;
+ 	struct context context;
+@@ -1457,9 +1450,14 @@ static int at_context_queue_packet(struct context *ctx,
+ 		break;
  
-+// Isochronous Transmit DMA.
-+//
-+// The content of first two quadlets of data for IT DMA is different from the header for IEEE 1394
-+// isochronous packet.
+ 	case TCODE_STREAM_DATA:
+-		header[0] = cpu_to_le32((packet->header[0] & 0xffff) |
+-					(packet->speed << 16));
+-		header[1] = cpu_to_le32(packet->header[0] & 0xffff0000);
++		ohci1394_it_data_set_speed(header, packet->speed);
++		ohci1394_it_data_set_tag(header, isoc_header_get_tag(packet->header[0]));
++		ohci1394_it_data_set_channel(header, isoc_header_get_channel(packet->header[0]));
++		ohci1394_it_data_set_tcode(header, TCODE_STREAM_DATA);
++		ohci1394_it_data_set_sync(header, isoc_header_get_sy(packet->header[0]));
 +
-+#define OHCI1394_IT_DATA_Q0_spd_MASK		0x00070000
-+#define OHCI1394_IT_DATA_Q0_spd_SHIFT		16
-+#define OHCI1394_IT_DATA_Q0_tag_MASK		0x0000c000
-+#define OHCI1394_IT_DATA_Q0_tag_SHIFT		14
-+#define OHCI1394_IT_DATA_Q0_chanNum_MASK	0x00003f00
-+#define OHCI1394_IT_DATA_Q0_chanNum_SHIFT	8
-+#define OHCI1394_IT_DATA_Q0_tcode_MASK		0x000000f0
-+#define OHCI1394_IT_DATA_Q0_tcode_SHIFT		4
-+#define OHCI1394_IT_DATA_Q0_sy_MASK		0x0000000f
-+#define OHCI1394_IT_DATA_Q0_sy_SHIFT		0
-+#define OHCI1394_IT_DATA_Q1_dataLength_MASK	0xffff0000
-+#define OHCI1394_IT_DATA_Q1_dataLength_SHIFT	16
++		ohci1394_it_data_set_data_length(header, isoc_header_get_data_length(packet->header[0]));
 +
-+static inline unsigned int ohci1394_it_data_get_speed(const __le32 *data)
-+{
-+	return (le32_to_cpu(data[0]) & OHCI1394_IT_DATA_Q0_spd_MASK) >> OHCI1394_IT_DATA_Q0_spd_SHIFT;
-+}
-+
-+static inline void ohci1394_it_data_set_speed(__le32 *data, unsigned int scode)
-+{
-+	data[0] &= cpu_to_le32(~OHCI1394_IT_DATA_Q0_spd_MASK);
-+	data[0] |= cpu_to_le32((scode << OHCI1394_IT_DATA_Q0_spd_SHIFT) & OHCI1394_IT_DATA_Q0_spd_MASK);
-+}
-+
-+static inline unsigned int ohci1394_it_data_get_tag(const __le32 *data)
-+{
-+	return (le32_to_cpu(data[0]) & OHCI1394_IT_DATA_Q0_tag_MASK) >> OHCI1394_IT_DATA_Q0_tag_SHIFT;
-+}
-+
-+static inline void ohci1394_it_data_set_tag(__le32 *data, unsigned int tag)
-+{
-+	data[0] &= cpu_to_le32(~OHCI1394_IT_DATA_Q0_tag_MASK);
-+	data[0] |= cpu_to_le32((tag << OHCI1394_IT_DATA_Q0_tag_SHIFT) & OHCI1394_IT_DATA_Q0_tag_MASK);
-+}
-+
-+static inline unsigned int ohci1394_it_data_get_channel(const __le32 *data)
-+{
-+	return (le32_to_cpu(data[0]) & OHCI1394_IT_DATA_Q0_chanNum_MASK) >> OHCI1394_IT_DATA_Q0_chanNum_SHIFT;
-+}
-+
-+static inline void ohci1394_it_data_set_channel(__le32 *data, unsigned int channel)
-+{
-+	data[0] &= cpu_to_le32(~OHCI1394_IT_DATA_Q0_chanNum_MASK);
-+	data[0] |= cpu_to_le32((channel << OHCI1394_IT_DATA_Q0_chanNum_SHIFT) & OHCI1394_IT_DATA_Q0_chanNum_MASK);
-+}
-+
-+static inline unsigned int ohci1394_it_data_get_tcode(const __le32 *data)
-+{
-+	return (le32_to_cpu(data[0]) & OHCI1394_IT_DATA_Q0_tcode_MASK) >> OHCI1394_IT_DATA_Q0_tcode_SHIFT;
-+}
-+
-+static inline void ohci1394_it_data_set_tcode(__le32 *data, unsigned int tcode)
-+{
-+	data[0] &= cpu_to_le32(~OHCI1394_IT_DATA_Q0_tcode_MASK);
-+	data[0] |= cpu_to_le32((tcode << OHCI1394_IT_DATA_Q0_tcode_SHIFT) & OHCI1394_IT_DATA_Q0_tcode_MASK);
-+}
-+
-+static inline unsigned int ohci1394_it_data_get_sync(const __le32 *data)
-+{
-+	return (le32_to_cpu(data[0]) & OHCI1394_IT_DATA_Q0_sy_MASK) >> OHCI1394_IT_DATA_Q0_sy_SHIFT;
-+}
-+
-+static inline void ohci1394_it_data_set_sync(__le32 *data, unsigned int sync)
-+{
-+	data[0] &= cpu_to_le32(~OHCI1394_IT_DATA_Q0_sy_MASK);
-+	data[0] |= cpu_to_le32((sync << OHCI1394_IT_DATA_Q0_sy_SHIFT) & OHCI1394_IT_DATA_Q0_sy_MASK);
-+}
-+
-+static inline unsigned int ohci1394_it_data_get_data_length(const __le32 *data)
-+{
-+	return (le32_to_cpu(data[1]) & OHCI1394_IT_DATA_Q1_dataLength_MASK) >> OHCI1394_IT_DATA_Q1_dataLength_SHIFT;
-+}
-+
-+static inline void ohci1394_it_data_set_data_length(__le32 *data, unsigned int data_length)
-+{
-+	data[1] &= cpu_to_le32(~OHCI1394_IT_DATA_Q1_dataLength_MASK);
-+	data[1] |= cpu_to_le32((data_length << OHCI1394_IT_DATA_Q1_dataLength_SHIFT) & OHCI1394_IT_DATA_Q1_dataLength_MASK);
-+}
-+
- // Self-ID DMA.
+ 		d[0].req_count = cpu_to_le16(8);
+ 		break;
  
- #define OHCI1394_SelfIDCount_selfIDError_MASK		0x80000000
+@@ -3403,14 +3401,14 @@ static int queue_iso_transmit(struct iso_context *ctx,
+ 		d[0].branch_address = cpu_to_le32(d_bus | z);
+ 
+ 		header = (__le32 *) &d[1];
+-		header[0] = cpu_to_le32(IT_HEADER_SY(p->sy) |
+-					IT_HEADER_TAG(p->tag) |
+-					IT_HEADER_TCODE(TCODE_STREAM_DATA) |
+-					IT_HEADER_CHANNEL(ctx->base.channel) |
+-					IT_HEADER_SPEED(ctx->base.speed));
+-		header[1] =
+-			cpu_to_le32(IT_HEADER_DATA_LENGTH(p->header_length +
+-							  p->payload_length));
++
++		ohci1394_it_data_set_speed(header, ctx->base.speed);
++		ohci1394_it_data_set_tag(header, p->tag);
++		ohci1394_it_data_set_channel(header, ctx->base.channel);
++		ohci1394_it_data_set_tcode(header, TCODE_STREAM_DATA);
++		ohci1394_it_data_set_sync(header, p->sy);
++
++		ohci1394_it_data_set_data_length(header, p->header_length + p->payload_length);
+ 	}
+ 
+ 	if (p->header_length > 0) {
 -- 
 2.43.0
 
