@@ -1,101 +1,103 @@
-Return-Path: <linux-kernel+bounces-271941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BF8945546
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:22:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44160945548
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 834311C21289
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:22:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3E7FB22AB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7FBB64E;
-	Fri,  2 Aug 2024 00:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0471017571;
+	Fri,  2 Aug 2024 00:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Vc0IDUR1"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KHVqF1JU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C926AB8;
-	Fri,  2 Aug 2024 00:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E28134AC;
+	Fri,  2 Aug 2024 00:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722558117; cv=none; b=RDrJn+xiQfUcHF+dRAWe42Kt/5pregkfGz13Wzq2a5lPUlsFDSkyxyJqTYWC9Mvm3UjbJd9R5Zjz4B0qrUhDDEljGqGkDv30MdgYTLqsctEBvpARnYgcVWE+aQewtAFzyciK2wZBJFi5T0Lt++pl/82pwEbSYCqVPKDS8+o2izA=
+	t=1722558125; cv=none; b=VBuCQvl4XexK2sXyjp5QS2RAPCLj/C9GyeTKrfwx6BD5RNAAvLRkUP9o2v0JN/G2rqrncq1y32fnVSoy58n35Gx9Tj56zzC5voSc4v7VVEuvcWSEfKWLIZFLyaGsVVaqIeuZq/in843tSkgPOnqVmjys4skNCh7ciQE20x7v6G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722558117; c=relaxed/simple;
-	bh=ghv9OtTv9SJqdWKFw3ZACL/St9pTAizFrhYcNywrhk4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YEAuhvEPHib+Bc4A48EHG2+G9ZI4HN3XOVz6QGW4I2Q0cBngG/k+/em6QjHogQzpuVk6bpumV2guIFaf6kphRb0al96v/Xs5KeRqGta1etVfy4sFcmSY8JTRNKnN9/MxusesegmuJ2s13mz+HmrOuGdI5BeuI0oEfDdzsbFA0p8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Vc0IDUR1; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1722558107;
-	bh=ghv9OtTv9SJqdWKFw3ZACL/St9pTAizFrhYcNywrhk4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=Vc0IDUR1WbhlOK+xhX/4k8svb2qgx/Fss3PgEJ4UfVRfCsrGYExqRzVSrmfTql/dJ
-	 nNToSS3DbzrjOfGbEZc1QW0HSbJ5k1wXdTl3nXf3md6EwL6frI865iIighH0Sx8DKn
-	 pMLNlG/PqgJcBxlSYsnueZBOOwDwHMTQP4pf6bEFqy5f52941/fnIacPZ7AkAuqCvh
-	 qpNv595qmcZh4BPrJ4WgC9SWLrb5xKd9Y5uNeX3wZslv3+nqvyhraws7cDmcc9MNK7
-	 EawbNJQDr5khVkKQGKL+pmrKfr5iO9+Ph16YyI3NgZhYlqyA6z7AIYdbAW0UV0s3Xs
-	 6Z0Ns4zxKTsNg==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 39C2364B84;
-	Fri,  2 Aug 2024 08:21:47 +0800 (AWST)
-Message-ID: <2fde081adb2352e613ae33536363f284f1b46f32.camel@codeconstruct.com.au>
-Subject: Re: [PATCH net-next v2] net: mctp: Consistent peer address handling
- in ioctl tag allocation
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Jakub Kicinski <kuba@kernel.org>, Matt Johnston
- <matt@codeconstruct.com.au>
-Cc: John Wang <wangzq.jn@gmail.com>, "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Fri, 02 Aug 2024 08:21:46 +0800
-In-Reply-To: <20240801085744.1713e8b5@kernel.org>
-References: <20240730084636.184140-1-wangzhiqiang02@ieisystem.com>
-	 <20240801085744.1713e8b5@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1722558125; c=relaxed/simple;
+	bh=rEoWPFpPS2fkdkiCezt44NzRUl97kQ26hPkj1rdopps=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kzdUUTdwRD3JQ9DRb0l4jXbZ5kcaMdQ0jIQ3+1j4udSv+CjBsOawNnhHGU/JOjZXW8EQS+RKXXjekCkJ56hq9BtxNfxtKiWHlNDtLEUGS1dg40nlecE4ws7kfuhNpDF2Hpjiv5qY1yOSF2/Sr5VOGmf4k1xW6cmZjPf4byT9YaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KHVqF1JU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C2CC32786;
+	Fri,  2 Aug 2024 00:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722558124;
+	bh=rEoWPFpPS2fkdkiCezt44NzRUl97kQ26hPkj1rdopps=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=KHVqF1JUdFPtkL4Jd9AJS2DWDWCHzUu23KAz1mY0dwTtckMo6lzL5MY0RGog2l/nI
+	 s9Q08TOpmQ3hGaUJ+aKayp/eP0+yfSdr4m4Iw1mkeuoncJErm9VyMAGUB33wGh3Sk2
+	 /5Zbe2DEP3dessKk20sFtlrY25OhmV9oXoQkA3fOdhzzGprb9NIyt+gXBDO3dTea/z
+	 bcL8aZk9heE+Nq0FJNFOWOkJhvgHIoslMt4B1um9XdjmYKjF64EX2J4GaDNmr0rbnb
+	 ahGNSZjNxlU3GkyElqsQQ8kzbt4Jp15xr4HqbmMabQhygUiErDJJNEK3N1Fop10KX0
+	 /ybM6xCpDxv8Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 5526FCE09F8; Thu,  1 Aug 2024 17:22:04 -0700 (PDT)
+Date: Thu, 1 Aug 2024 17:22:04 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev, kernel-team@meta.com, mingo@kernel.org
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com
+Subject: [PATCH memory-model 0/7] LKMM updates for v6.12
+Message-ID: <e384a9ac-05c1-45d6-9639-28457dd183d9@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Jakub and John,
+Hello!
 
-> On Tue, 30 Jul 2024 16:46:35 +0800 John Wang wrote:
-> > When executing ioctl to allocate tags, if the peer address is 0,
-> > mctp_alloc_local_tag now replaces it with 0xff. However, during tag
-> > dropping, this replacement is not performed, potentially causing
-> > the key
-> > not to be dropped as expected.
-> >=20
-> > Signed-off-by: John Wang <wangzhiqiang02@ieisystem.com>
->=20
-> Looks sane. Jeremy? Matt?
+This series adds a few atomic operations, some documentation, and updates
+the MAINTAINERS file.
 
-All looks good to me!
+1.	Add atomic_and()/or()/xor() and add_negative, courtesy of
+	Puranjay Mohan.
 
-Reviewed-by: Jeremy Kerr <jk@codeconstruct.com.au>
+2.	Add atomic_andnot() with its variants, courtesy of Puranjay Mohan.
 
-(John had already discussed the change with us, so no surprises on my
-side)
+3.	Document herd7 (abstract) representation, courtesy of Andrea
+	Parri.
 
-> In netdev we try to review patches within 24-48 hours.
-> You have willingly boarded this crazy train.. :)
+4.	Add locking.txt and glossary.txt to README, courtesy of Akira
+	Yokosawa.
 
-Yeah we bought express tickets to netdev town! I just saw that there
-were nipa warnings on patchwork, so was waiting on a v3. If it's okay
-as-is, I'm happy for a merge.
+5.	simple.txt: Fix stale reference to recipes-pairs.txt, courtesy
+	of Akira Yokosawa.
 
-Cheers,
+6.	docs/memory-barriers.txt: Remove left-over references to "CACHE
+	COHERENCY", courtesy of Akira Yokosawa.
 
+7.	MAINTAINERS: Add the dedicated maillist info for LKMM, courtesy
+	of Boqun Feng.
 
-Jeremy
+						Thanx, Paul
 
+------------------------------------------------------------------------
+
+ b/Documentation/memory-barriers.txt                        |    3 
+ b/MAINTAINERS                                              |    1 
+ b/tools/memory-model/Documentation/README                  |    7 
+ b/tools/memory-model/Documentation/herd-representation.txt |  110 +++++++++++++
+ b/tools/memory-model/Documentation/simple.txt              |    2 
+ b/tools/memory-model/linux-kernel.def                      |   21 ++
+ tools/memory-model/Documentation/README                    |   17 ++
+ tools/memory-model/linux-kernel.def                        |    6 
+ 8 files changed, 162 insertions(+), 5 deletions(-)
 
