@@ -1,115 +1,115 @@
-Return-Path: <linux-kernel+bounces-272030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA6D4945606
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:39:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD39394560C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B411F234E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:39:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ADD2B21950
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E23171BB;
-	Fri,  2 Aug 2024 01:39:46 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA90117C6A;
+	Fri,  2 Aug 2024 01:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BleUUNCp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDE2134AC
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F7212E71;
+	Fri,  2 Aug 2024 01:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722562786; cv=none; b=arHdba536GQMRGrs6nDXFjmg3mu/KGx9Kp3om7F9AD6b0N6/QZOz38JQm6CehPFV4gC0MwOd0M06yZUvCtRbGDOUF8BcrgUm7kmx8i7c70n/vcOev/qVu/ITIY5qwckqveC17NW0dr0U4du4dFY00m+eN9vACRFpBq+V5CptTBQ=
+	t=1722562833; cv=none; b=OjdBWxrnlj1kBu0cT/u1YpGM+i9a7WPZsf525NLT3iWGt8flRFuRXfiOHQ6GanKX2RC8dzb9PKGSiyOsDEfHKryF3ESpEMb385rwmC9AapNN/E25j6Lm2XwTumaRdVTNtD2wzRbjIpWCJoHPTuo84GSmtA8NuJiVVfzSugfQT+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722562786; c=relaxed/simple;
-	bh=HYMtRlYBv1qXUi3R4GOGLKkKTuTelUkjeEIEB+MWwmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RDVwZtiVzKdjPS5PPkjdvfeYTxfNpzyNocskZ6UJyBWQq8Y0Pky8gsBCm6lZq+nKn7s6LJHQpVTvOxR0ultnMMGJNKY+pk7eYQsU9+kbN9ud6AIg+n9M/Bb4CsJ8h7H90cTwo0V2J+U3g7nbDHmzSv1Fs9HzvkfX+Gu0SQp+vK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WZpKt6Qhmz1S71V;
-	Fri,  2 Aug 2024 09:34:58 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 46B871A0188;
-	Fri,  2 Aug 2024 09:39:35 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 2 Aug 2024 09:39:34 +0800
-Message-ID: <c55bbffe-9144-f787-eb70-8328be5cfe7c@huawei.com>
-Date: Fri, 2 Aug 2024 09:39:33 +0800
+	s=arc-20240116; t=1722562833; c=relaxed/simple;
+	bh=xYpZjisZm/f+NRI59T0R2ycx0HtLFJvMti3jCCvGcao=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=lam9/7afdNV0Yrz9rQy05ssR8vySYqjO5DUPLUBgc/y0Uu2cIowmgcxwxijyMps6BMywFW/T1Gb1kSNEvHZJSvgSuDESbO6S//5NasRQeqHY/tamkAU5cGy7txpf0+siOLJC1m/5IpLP8BvoQERH4Xowy6keTCbl40C9NhLJxNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BleUUNCp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 70137C4AF0A;
+	Fri,  2 Aug 2024 01:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722562832;
+	bh=xYpZjisZm/f+NRI59T0R2ycx0HtLFJvMti3jCCvGcao=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=BleUUNCpCd1yI6z6E/F9Z7d047NL3xN3dtKxncFEEN354CTO8xa1evWVSceCkn5KS
+	 1Hqc20G3mNGKTOZzCFKZiCj7Nx9C4AsmXZxLhUkt626N2hMlliwaubCVN1L/XgPLy2
+	 l+gAvlz9t1wnI1GC8HWylkLNimAbe8/FOOlZFqO6HBJoGvH7aKuqggdvybXWJyk57a
+	 +z3ux64+VeUmbzsxj6EIuLroBNdyrharesVwQ0LowARTrO+iJCeCx7tewk2tT8B4js
+	 t731V2LAiikbU0BozfFDH77BR1v5X3pfzZKnqeHXu7OiAjbm+Pwlb4rTtnWh15/ZdF
+	 xLFafnlaZ98Zg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5DB3BD0C60A;
+	Fri,  2 Aug 2024 01:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] ARM: smp: Fix missing backtrace IPI statics
-Content-Language: en-US
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: <dianders@chromium.org>, <mhocko@suse.com>, <akpm@linux-foundation.org>,
-	<maz@kernel.org>, <vschneid@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240801094022.1402616-1-ruanjinjie@huawei.com>
- <Zqu5ck+Ik8KlzE0O@shell.armlinux.org.uk>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <Zqu5ck+Ik8KlzE0O@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net 0/7] mptcp: fix endpoints with 'signal' and 'subflow'
+ flags
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172256283237.5499.17809617500066693516.git-patchwork-notify@kernel.org>
+Date: Fri, 02 Aug 2024 01:40:32 +0000
+References: <20240731-upstream-net-20240731-mptcp-endp-subflow-signal-v1-0-c8a9b036493b@kernel.org>
+In-Reply-To: <20240731-upstream-net-20240731-mptcp-endp-subflow-signal-v1-0-c8a9b036493b@kernel.org>
+To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ shuah@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, stable@vger.kernel.org
 
+Hello:
 
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 2024/8/2 0:36, Russell King (Oracle) wrote:
-> On Thu, Aug 01, 2024 at 05:40:22PM +0800, Jinjie Ruan wrote:
->> It is similar to ARM64 commit 916b93f4e865 ("arm64: smp: Fix missing IPI
->> statistics"), commit 56afcd3dbd19 ("ARM: Allow IPIs to be handled as normal
->> interrupts") set CPU_BACKTRACE IPI "IRQ_HIDDEN" flag but not show it in
->> show_ipi_list(), which cause the interrupt kstat_irqs accounting
->> is missing in display.
+On Wed, 31 Jul 2024 13:05:52 +0200 you wrote:
+> When looking at improving the user experience around the MPTCP endpoints
+> setup, I noticed that setting an endpoint with both the 'signal' and the
+> 'subflow' flags -- as it has been done in the past by users according to
+> bug reports we got -- was resulting on only announcing the endpoint, but
+> not using it to create subflows: the 'subflow' flag was then ignored.
 > 
-> I don't see why this needs to be included. If this IPI fires, it means
-> that the kernel has suffered a lockup and is probably not very useful.
-> So the chances of being able to read out from /proc/interrupts a non-
-> zero "CPU backtrace interrupts" figure is highly unlikely.
-
-It is more of a change than a bug.
-
-If we reset the arm32 code to before commit 56afcd3dbd19 ("ARM: Allow
-IPIs to be handled as normal interrupts"), the backtrace IPI statics is
-shown ok as below, but after that it is missing:
-
-/ # cat /proc/interrupts
-           CPU0
- 24:          6 GIC-0  34 Level     timer
- 25:        469 GIC-0  29 Level     twd
- 26:         61 GIC-0  75 Edge      virtio0
- 29:          8 GIC-0  44 Level     kmi-pl050
- 30:        118 GIC-0  45 Level     kmi-pl050
- 31:          0 GIC-0  36 Level     rtc-pl031
- 32:          0 GIC-0  41 Level     mmci-pl18x (cmd)
- 33:          0 GIC-0  42 Level     mmci-pl18x (pio)
- 34:          0 GIC-0  92 Level     arm-pmu
- 35:          0 GIC-0  93 Level     arm-pmu
- 36:          0 GIC-0  94 Level     arm-pmu
- 37:          0 GIC-0  95 Level     arm-pmu
- 39:         15 GIC-0  37 Level     uart-pl011
-IPI0:          0  CPU wakeup interrupts
-IPI1:          0  Timer broadcast interrupts
-IPI2:          0  Rescheduling interrupts
-IPI3:          0  Function call interrupts
-IPI4:          0  CPU stop interrupts
-IPI5:          0  IRQ work interrupts
-IPI6:          0  completion interrupts
-IPI7:          0  CPU backtrace interrupts
-
-
+> My initial thought was to modify IPRoute2 to warn the user when the two
+> flags were set, but it doesn't sound normal to ignore one of them. I
+> then looked at modifying the kernel not to allow having the two flags
+> set, but when discussing about that with Mat, we thought it was maybe
+> not ideal to do that, as there might be use-cases, we might break some
+> configs. Then I saw it was working before v5.17. So instead, I fixed the
+> support on the kernel side (patch 5) using Paolo's suggestion. This also
+> includes a fix on the options side (patch 1: for v5.11+), an explicit
+> deny of some options combinations (patch 2: for v5.18+), and some
+> refactoring (patches 3 and 4) to ease the inclusion of the patch 5.
 > 
-> So, I don't see much point to this change.
-> 
+> [...]
+
+Here is the summary with links:
+  - [net,1/7] mptcp: fully established after ADD_ADDR echo on MPJ
+    https://git.kernel.org/netdev/net/c/d67c5649c154
+  - [net,2/7] mptcp: pm: deny endp with signal + subflow + port
+    https://git.kernel.org/netdev/net/c/8af1f11865f2
+  - [net,3/7] mptcp: pm: reduce indentation blocks
+    https://git.kernel.org/netdev/net/c/c95eb32ced82
+  - [net,4/7] mptcp: pm: don't try to create sf if alloc failed
+    https://git.kernel.org/netdev/net/c/cd7c957f936f
+  - [net,5/7] mptcp: pm: do not ignore 'subflow' if 'signal' flag is also set
+    https://git.kernel.org/netdev/net/c/85df533a787b
+  - [net,6/7] selftests: mptcp: join: ability to invert ADD_ADDR check
+    https://git.kernel.org/netdev/net/c/bec1f3b119eb
+  - [net,7/7] selftests: mptcp: join: test both signal & subflow
+    https://git.kernel.org/netdev/net/c/4d2868b5d191
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
