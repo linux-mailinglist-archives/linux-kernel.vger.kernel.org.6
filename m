@@ -1,225 +1,232 @@
-Return-Path: <linux-kernel+bounces-273079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5091E94645F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFFF946460
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:29:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA425B20954
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3FAF1F21A30
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF9C53E23;
-	Fri,  2 Aug 2024 20:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634E66A33F;
+	Fri,  2 Aug 2024 20:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tSOleY5H"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O0ddN3d7"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6011ABEB3;
-	Fri,  2 Aug 2024 20:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B656F46B91
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722630540; cv=none; b=jd6feKNT+k8zeLQi7XSsrHbTrhyh8v3nsre0eZaAuvrfl6GjdJEhjf8zkyvK03yjnu4u/gZzgioAERe2Q8DlkfYwAWExxc/0HUIBusZ56f6L2hj6bBx4FL6UEuJIBuPAcsnW/RJgGOAFAHQxwxLATgaDQcAwSSJmUFEt1ktJGgI=
+	t=1722630579; cv=none; b=HX/ydAaT0GypekRbEGMkzxsOs0wjINsmize9JSnSlY6npzqZU5ui/t1eZSDc+dxCEKCfTwn9Zelz0vtywf1DEZSnn131lvR0Xk0nlJLYTio9/+T3VMz5QXnkj/BhBX0HcWNjAjZ+U69mWpxa6W/Me8ElE10u7Rz4/U7axapzNYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722630540; c=relaxed/simple;
-	bh=OsIQaXA7NDoJ4BOQ0KSt82LyGmUzHbYEgfBtoUu30zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XFAIR+txibYstv0QVPbWsbMiyD/YweaLZs/DzfGi0ZOR1zSMFnYd6WN7uOm47WPXt34sSqWmFArmfwi94UmOJblM9mRX+fANV1kclMcNKA6A3+hvhy2YIu22GAedshqoLocFP20f3GoQe2+28qqXtW0rqmVMwAKmB+GpUILo9Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tSOleY5H; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472Il3Sv024987;
-	Fri, 2 Aug 2024 20:28:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=lGOjYWzCwHdnwncbpitzxodb54Q
-	3biok922/l59eztI=; b=tSOleY5HxocmirS2qvsCP7Oi4VA6hBaiatpqS5G24Kw
-	N6TDRErsuIwkNmmkGgNR6hI/JpYbEIFDAHF61GJSu1Us4QNZ60zFKwG6FoPCFLIs
-	6Ikxz0H47hHyM6PEdUZq0hNQPtGZ5JK3JolllE90NUQ5wdWW/s4uedFgnih02hLd
-	vPqlzCLDoUSfaAo6+XoomEFvISeLEsuKYM/hPtDpsnlZnt7aCB+aWU3MetKaDwF0
-	ts+oMNbbJlTQdL1M0ey/x/ouSFXJEEvQEa/MMvB6L8ssODvdIcXarevUMHohuTnG
-	ElljDwqw26h7xYd9C27Gzf1w8BfU9XGJrmxMlWu2qeg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rygm92hq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 20:28:42 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 472KSfWD002880;
-	Fri, 2 Aug 2024 20:28:41 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rygm92hn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 20:28:41 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 472HaSU9029103;
-	Fri, 2 Aug 2024 20:28:41 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nbm1967j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 20:28:40 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 472KSaKw49742202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 2 Aug 2024 20:28:38 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5210120043;
-	Fri,  2 Aug 2024 20:28:36 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6575320040;
-	Fri,  2 Aug 2024 20:28:34 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.46.209])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  2 Aug 2024 20:28:34 +0000 (GMT)
-Date: Sat, 3 Aug 2024 01:58:31 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com,
-        Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 16/20] ext4: get rid of ppath in
- ext4_convert_unwritten_extents_endio()
-Message-ID: <Zq1Bb7eeV5m7HNBS@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-17-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1722630579; c=relaxed/simple;
+	bh=CMki9I2Y5hDPbvNKXl8/tTfJe8Wm9//Xu6+W9DDmr6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5PMZyOcdhqYiuhvj18jSvMeNM/eUFHl/lo9liUfgg73XV8zb5devQd3XhFAFeDrbzs6oirf/5i3wOPxYZHK3k4EJ30vD17DPXzBbgxUoUrDstdE0QVYGM6eODvywF13R//qHss7w2cR/T8OjdwXMUypyLxKkWctR2WHuPrwK2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O0ddN3d7; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52efc82c872so14820e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:29:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722630576; x=1723235376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f2uDO9ShPfNpZoAJ6K9acrrg1s8RVj7WAqg5LH0JB1k=;
+        b=O0ddN3d7Bq2vTC+wpMCvnlPFrd+fqkb9tStXhjEpsGSV2e61EnXSW6SCWQ7ocFN3ui
+         xQA1ZPCD90S6FilcaeRqIHyf7nXPF37VRantZtunX4FUSGBPSjdwiZdqulK7I5vQANiA
+         gCcQ7eQNQmR8QB9ctIFszeQWGQDzWiXThOpNvUd+2RYX0VrpmwQRhtzxQB3/RsIPKzb+
+         vyd5LqOG/te52XxpjsQWw8Z3MA9X9STVJ3O2SxDNKBB8maEAgd0W8/r2Yi8MlKHpkN6f
+         nyiVyF7qVjBxGHA6WCQOK6x3rHrbXLfkZj0rG12OCVWJIvP8FxaVtVSurQUuXcKMjWup
+         9wwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722630576; x=1723235376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f2uDO9ShPfNpZoAJ6K9acrrg1s8RVj7WAqg5LH0JB1k=;
+        b=WAnm38Ld0v4b5w7gf8iEFUBqIoPOg4euq5PiwkSIOjgerxF8iC2LOjM3n3VT7PZwBS
+         W6o8juvLVVh5gz4cJkWGuKxzpEd76LFICjNFUoQFzAbzK1hprhGARwf6Y9Wh/8jV/a3X
+         3vqpSjXGhBZAdCbZgxorEYF1VKCmch1iEDsqHCG4TT/1JyhJHU+j8qNuV5baJQ1vsjr+
+         91KIcVG0RpBkfgbnscuW6aWIJ5gP9kXqb9PeWGY/l6GwNFelQidN/xth2aLDKN4UaMpI
+         gAV3iAOO5PUGX+riEIh4JBMNx0jMPgRCvvNy1k/LoKJppT8uEDOLHOFHIeEgU23drzmu
+         DBJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQoodTEpg2U9qaNKt4p5vy77v9mS3itlUszeDfVU67T7czdTOUOEyFYIAVj9SwbhLnaLkfSs2HR+CCOVPJW2o4qUiT6aoeaiKY8SiV
+X-Gm-Message-State: AOJu0YzTbpqld/M56jF6eyczVpqIOSB+mFXoe9fnQ0HhdzmKSRk+fS3C
+	t+t+XEow0RYSXKDodAvBIcSrCk5/yp0MSZrJthfSfUQGeTzz+2wqNsPiS1iKKhoacvHyHahFcNo
+	JqGrJdSWXn1Xt95dsmF5BmbZ6kS/XCVKWK2Pf
+X-Google-Smtp-Source: AGHT+IFVMP6/AIADLfhzpRRtoWiEvCdz1UG4nR4KuW4rmv8Vt8+GJoT3o9txbVT3Dv1Y4rdQE3zf0+OrJwZBdgLqa1U=
+X-Received: by 2002:a05:6512:3d0b:b0:52c:b243:cd02 with SMTP id
+ 2adb3069b0e04-530c46d7982mr6068e87.1.1722630575181; Fri, 02 Aug 2024 13:29:35
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-17-libaokun@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: VyYMjhpIs0Mb0RLVnLBwe1X_-JkjQAU1
-X-Proofpoint-ORIG-GUID: goHBJw4k6TUltnuikUmIXodbaHIJZp0T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-02_16,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=563
- bulkscore=0 clxscore=1015 impostorscore=0 mlxscore=0 malwarescore=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408020142
+References: <20240802200136.329973-1-seanjc@google.com> <20240802200136.329973-3-seanjc@google.com>
+In-Reply-To: <20240802200136.329973-3-seanjc@google.com>
+From: Steve Rutherford <srutherford@google.com>
+Date: Fri, 2 Aug 2024 13:28:56 -0700
+Message-ID: <CABayD+dHLXwQK3YdwVi6raf+CF3XOaAiAG+tfDYPiZFzqeVXpQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] KVM: Protect vCPU's "last run PID" with rwlock, not RCU
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Paolo Bonzini <pbonzini@redhat.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 12:06:50PM +0800, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> The use of path and ppath is now very confusing, so to make the code more
-> readable, pass path between functions uniformly, and get rid of ppath.
-> 
-> To get rid of the ppath in ext4_convert_unwritten_extents_endio(), the
-> following is done here:
-> 
->  * Free the extents path when an error is encountered.
->  * Its caller needs to update ppath if it uses ppath.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-
-Looks good Baokun, feel free to add:
-
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-
-Regards,
-ojaswin
-
+On Fri, Aug 2, 2024 at 1:01=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> To avoid jitter on KVM_RUN due to synchronize_rcu(), use a rwlock instead
+> of RCU to protect vcpu->pid, a.k.a. the pid of the task last used to a
+> vCPU.  When userspace is doing M:N scheduling of tasks to vCPUs, e.g. to
+> run SEV migration helper vCPUs during post-copy, the synchronize_rcu()
+> needed to change the PID associated with the vCPU can stall for hundreds
+> of milliseconds, which is problematic for latency sensitive post-copy
+> operations.
+>
+> In the directed yield path, do not acquire the lock if it's contended,
+> i.e. if the associated PID is changing, as that means the vCPU's task is
+> already running.
+>
+> Reported-by: Steve Rutherford <srutherford@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  fs/ext4/extents.c | 43 +++++++++++++++++++++++--------------------
->  1 file changed, 23 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index a41cbb8c4475..b7f443f98e9d 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3745,12 +3745,11 @@ static struct ext4_ext_path *ext4_split_convert_extents(handle_t *handle,
->  				 allocated);
->  }
->  
-> -static int ext4_convert_unwritten_extents_endio(handle_t *handle,
-> -						struct inode *inode,
-> -						struct ext4_map_blocks *map,
-> -						struct ext4_ext_path **ppath)
-> +static struct ext4_ext_path *
-> +ext4_convert_unwritten_extents_endio(handle_t *handle, struct inode *inode,
-> +				     struct ext4_map_blocks *map,
-> +				     struct ext4_ext_path *path)
->  {
-> -	struct ext4_ext_path *path = *ppath;
->  	struct ext4_extent *ex;
->  	ext4_lblk_t ee_block;
->  	unsigned int ee_len;
-> @@ -3780,24 +3779,19 @@ static int ext4_convert_unwritten_extents_endio(handle_t *handle,
+>  arch/arm64/include/asm/kvm_host.h |  2 +-
+>  include/linux/kvm_host.h          |  3 ++-
+>  virt/kvm/kvm_main.c               | 32 +++++++++++++++++--------------
+>  3 files changed, 21 insertions(+), 16 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/k=
+vm_host.h
+> index a33f5996ca9f..7199cb014806 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -1115,7 +1115,7 @@ int __kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu=
+,
+>  void kvm_arm_halt_guest(struct kvm *kvm);
+>  void kvm_arm_resume_guest(struct kvm *kvm);
+>
+> -#define vcpu_has_run_once(vcpu)        !!rcu_access_pointer((vcpu)->pid)
+> +#define vcpu_has_run_once(vcpu)        (!!READ_ONCE((vcpu)->pid))
+>
+>  #ifndef __KVM_NVHE_HYPERVISOR__
+>  #define kvm_call_hyp_nvhe(f, ...)                                       =
+       \
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 689e8be873a7..d6f4e8b2b44c 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -342,7 +342,8 @@ struct kvm_vcpu {
+>  #ifndef __KVM_HAVE_ARCH_WQP
+>         struct rcuwait wait;
 >  #endif
->  		path = ext4_split_convert_extents(handle, inode, map, path,
->  						EXT4_GET_BLOCKS_CONVERT, NULL);
-> -		if (IS_ERR(path)) {
-> -			*ppath = NULL;
-> -			return PTR_ERR(path);
-> -		}
-> +		if (IS_ERR(path))
-> +			return path;
->  
->  		path = ext4_find_extent(inode, map->m_lblk, path, 0);
-> -		if (IS_ERR(path)) {
-> -			*ppath = NULL;
-> -			return PTR_ERR(path);
-> -		}
-> -		*ppath = path;
-> +		if (IS_ERR(path))
-> +			return path;
->  		depth = ext_depth(inode);
->  		ex = path[depth].p_ext;
->  	}
->  
->  	err = ext4_ext_get_access(handle, inode, path + depth);
->  	if (err)
-> -		goto out;
-> +		goto errout;
->  	/* first mark the extent as initialized */
->  	ext4_ext_mark_initialized(ex);
->  
-> @@ -3808,9 +3802,15 @@ static int ext4_convert_unwritten_extents_endio(handle_t *handle,
->  
->  	/* Mark modified extent as dirty */
->  	err = ext4_ext_dirty(handle, inode, path + path->p_depth);
-> -out:
-> +	if (err)
-> +		goto errout;
+> -       struct pid __rcu *pid;
+> +       struct pid *pid;
+> +       rwlock_t pid_lock;
+>         int sigset_active;
+>         sigset_t sigset;
+>         unsigned int halt_poll_ns;
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 91048a7ad3be..fabffd85fa34 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -486,6 +486,7 @@ static void kvm_vcpu_init(struct kvm_vcpu *vcpu, stru=
+ct kvm *kvm, unsigned id)
+>         vcpu->kvm =3D kvm;
+>         vcpu->vcpu_id =3D id;
+>         vcpu->pid =3D NULL;
+> +       rwlock_init(&vcpu->pid_lock);
+>  #ifndef __KVM_HAVE_ARCH_WQP
+>         rcuwait_init(&vcpu->wait);
+>  #endif
+> @@ -513,7 +514,7 @@ static void kvm_vcpu_destroy(struct kvm_vcpu *vcpu)
+>          * the vcpu->pid pointer, and at destruction time all file descri=
+ptors
+>          * are already gone.
+>          */
+> -       put_pid(rcu_dereference_protected(vcpu->pid, 1));
+> +       put_pid(vcpu->pid);
+>
+>         free_page((unsigned long)vcpu->run);
+>         kmem_cache_free(kvm_vcpu_cache, vcpu);
+> @@ -3930,15 +3931,17 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_kick);
+>
+>  int kvm_vcpu_yield_to(struct kvm_vcpu *target)
+>  {
+> -       struct pid *pid;
+>         struct task_struct *task =3D NULL;
+>         int ret;
+>
+> -       rcu_read_lock();
+> -       pid =3D rcu_dereference(target->pid);
+> -       if (pid)
+> -               task =3D get_pid_task(pid, PIDTYPE_PID);
+> -       rcu_read_unlock();
+> +       if (!read_trylock(&target->pid_lock))
+> +               return 0;
 > +
->  	ext4_ext_show_leaf(inode, path);
-> -	return err;
-> +	return path;
+> +       if (target->pid)
+> +               task =3D get_pid_task(target->pid, PIDTYPE_PID);
 > +
-> +errout:
-> +	ext4_free_ext_path(path);
-> +	return ERR_PTR(err);
+> +       read_unlock(&target->pid_lock);
+> +
+>         if (!task)
+>                 return 0;
+>         ret =3D yield_to(task, 1);
+> @@ -4178,9 +4181,9 @@ static int vcpu_get_pid(void *data, u64 *val)
+>  {
+>         struct kvm_vcpu *vcpu =3D data;
+>
+> -       rcu_read_lock();
+> -       *val =3D pid_nr(rcu_dereference(vcpu->pid));
+> -       rcu_read_unlock();
+> +       read_lock(&vcpu->pid_lock);
+> +       *val =3D pid_nr(vcpu->pid);
+> +       read_unlock(&vcpu->pid_lock);
+>         return 0;
 >  }
->  
->  static int
-> @@ -3938,10 +3938,13 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
->  	}
->  	/* IO end_io complete, convert the filled extent to written */
->  	if (flags & EXT4_GET_BLOCKS_CONVERT) {
-> -		err = ext4_convert_unwritten_extents_endio(handle, inode, map,
-> -							   ppath);
-> -		if (err < 0)
-> +		*ppath = ext4_convert_unwritten_extents_endio(handle, inode,
-> +							      map, *ppath);
-> +		if (IS_ERR(*ppath)) {
-> +			err = PTR_ERR(*ppath);
-> +			*ppath = NULL;
->  			goto out2;
-> +		}
->  		ext4_update_inode_fsync_trans(handle, inode, 1);
->  		goto map_out;
->  	}
-> -- 
-> 2.39.2
-> 
+>
+> @@ -4466,7 +4469,7 @@ static long kvm_vcpu_ioctl(struct file *filp,
+>                 r =3D -EINVAL;
+>                 if (arg)
+>                         goto out;
+> -               oldpid =3D rcu_access_pointer(vcpu->pid);
+> +               oldpid =3D vcpu->pid;
+
+Overall this patch looks correct, but this spot took me a moment, and
+I want to confirm. This skips the reader lock since writing only
+happens just below, under the vcpu lock, and we've already taken that
+lock?
+
+>                 if (unlikely(oldpid !=3D task_pid(current))) {
+>                         /* The thread running this VCPU changed. */
+>                         struct pid *newpid;
+> @@ -4476,9 +4479,10 @@ static long kvm_vcpu_ioctl(struct file *filp,
+>                                 break;
+>
+>                         newpid =3D get_task_pid(current, PIDTYPE_PID);
+> -                       rcu_assign_pointer(vcpu->pid, newpid);
+> -                       if (oldpid)
+> -                               synchronize_rcu();
+> +                       write_lock(&vcpu->pid_lock);
+> +                       vcpu->pid =3D newpid;
+> +                       write_unlock(&vcpu->pid_lock);
+> +
+>                         put_pid(oldpid);
+>                 }
+>                 vcpu->wants_to_run =3D !READ_ONCE(vcpu->run->immediate_ex=
+it__unsafe);
+> --
+> 2.46.0.rc2.264.g509ed76dc8-goog
+>
 
