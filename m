@@ -1,185 +1,141 @@
-Return-Path: <linux-kernel+bounces-273035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE9499463A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:15:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C42F9463A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D8531F22774
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:15:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7878F1C210C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03061547D4;
-	Fri,  2 Aug 2024 19:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197461547ED;
+	Fri,  2 Aug 2024 19:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwUcYcf5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oAD0YljU"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1059E15AC4;
-	Fri,  2 Aug 2024 19:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130A41ABEA9
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722626145; cv=none; b=apIzhuxOTQ602bQdqT3+6viXqnNLgCn0OcIy5WGOwKJwTMb+Fia7TzlXGRQEE1fRlfFyPSVF4tz+gGA6/4/wupJ7Cpdoqn6WZa3oYbfJChOr6AXcRNP3h9bcqmOM7gaYty6i7roIWO/mpGOpa7FcOVQefwOAdr2udKJF9boKr3A=
+	t=1722626187; cv=none; b=S2GsiYCOddbxham2t3dzPQwTWEzp/UZYQ/PkbNMIUyn/bgFpBXkJ6yS+cxdUsdPtmPV3BC045gzOglR3iaCBqt7K+y/gXBUxVY1kNIyHYxDp7CdYMo+f48f6IdWxg8VQm2BsQXIqVoFoAwGEMTWafg/4Kf0LJ9l/y4rO21pUpKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722626145; c=relaxed/simple;
-	bh=DPcm9VpQDiXwdm+30uqoSz3rkdbNpnTdaG3j/y469E0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=QB/yOALynV2GYn8Z5ceJ/l1CCvvHQ8x5ec5mVW9/zNg4OaEyFDcBTNMeXBWuzv8cznBQvC1E4tCxtDSemjXIWIbZQ795V+5+UudCdhbm96q0rzlwDyatuzy0wGEuLefQLeKf0Kbyg4SccYBvVrO2fTfvm9wzOS8SK7jXDhpnpf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwUcYcf5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26FADC32782;
-	Fri,  2 Aug 2024 19:15:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722626144;
-	bh=DPcm9VpQDiXwdm+30uqoSz3rkdbNpnTdaG3j/y469E0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RwUcYcf5vcPVAx6YCe2DGEDcMXm8ZNvo3kqZcRCYH+D952+5bQ0oHUr95Z9F+15IE
-	 eCHyS+clmAp5aUUxA5Eq0I7sWAviKl94PbJdw6/WH6Hzz1m0t/FlKDoApikNt/4VfN
-	 lObeO8Y730WjDeSl11h2qLXdhQ93BwIilkP2Jrsn5SNy2uUpRwHGRuIgO+tDXGO4UQ
-	 1EXaOt2NnmPrtIgAuBRjhIXo7TwNZgam7nBfybnLhFQ76RnAKBz8f5ebIlEbU9jyRN
-	 027qWO9Gy+x6yTHfD2dGhAfPDUKmeT4jsuF8numqWGIjCsGCkecm8BJd1PAaOqyAYu
-	 1LLV+v9iwBvsA==
+	s=arc-20240116; t=1722626187; c=relaxed/simple;
+	bh=cd3nERhRyP5WUA7DduGPP+BWpepjFRp3xf3fTSNPuWQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cL9x7SK8VuEF591vpWfpQMc1jtuv8vtg5VgaEMH7OdkpopjyHJBDU5gweRW5whmyHEEJSnJM/88UxVrcXvzbLLOpoj4Jw/AB6ASReGV47DNjHMoOtCPtj4UAJ+tcmfuOzan89IYc2MqytCjF1V8u3hAXbEksChmMAbwqoXHha1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oAD0YljU; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fd72932d74so71867535ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 12:16:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722626185; x=1723230985; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YIO+qgUdBIl41nA20oLk13lAMgqpqVOKXB0K8n0R60E=;
+        b=oAD0YljULYV22N0DAGKDrah+IAvs15F6GN17b/XWi4T5QrzMcrAulymNApOErcPkVC
+         QyHUEet/UKf/hOVMNn7WpVNclq5dJWsvQQQa+mlMjCMWl0cWhX8RA6+kRc8UhrfP427J
+         7EH3YnEZ9l4SqJtLhQ0BDZwAdcQAw94SEORtPz4+RXVdDRXaeQEek4d9BfbBaWzdPjCa
+         ekSsHQkVUKNqWQrKLqVqxxsFDmv4g3AKSPLJa9wbdG/KHu/jGQ7C69nI/YyWBTXLhDdq
+         SNYU8O+wvqOaezr3Y/CsgIQUkhbdH3idX8EoFIvxbiaBW+7ehTEut5DBOaYmmGT0eMxP
+         HxWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722626185; x=1723230985;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YIO+qgUdBIl41nA20oLk13lAMgqpqVOKXB0K8n0R60E=;
+        b=Ja43dxCZoW+SXlh0E5jtQHuToTwwXoNxXoKXjQbp7NXmRpd6YXkk3wan/Nx1yqRwfh
+         dJum9x0SSfXhwDhYQGzWx1zyuvwsYEB0Kwz9c+UtIxQsDg9ny8Wn+XbicXxl0DJc2mjx
+         QAyRL2UwVBHSiZtT1Ty50pyKL294eUfOokPYjWz6YqFOkPRcbXg5nniQeB/R1gwdo+cx
+         37kAw5b1Oj2P6t1VXgSeewekVvrArXuUtC6Lf9s4tPUU7I6qwPb/l/Zyv7G5iKVtEIpw
+         yGtjowHBUHP6hzGMkDghHUErUhAlCcxkiVlQichHbPVZHFXrySB8QKNfp59930DErtMN
+         7fkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn5WccaoRG307WlVWbu+p0Afr73C1uk6DQwAXSEI/++1D+PbUjA+1wk1wh5R3bEvSdqbNNFn9v0JxJa+qGkaL/yDTOCSKNamEprvDw
+X-Gm-Message-State: AOJu0YymF5fs6BjQ+CIqxwYexxEMVx0EMYsJzjr8MPuNnc5WPZ0G/waz
+	jSI9sJRCI9/Km81xvqQoRaVd55xagGSO8Hd52+UTYIp8IZD+YKHxPXew6ahElcyUOrVA42y+YM5
+	sFg==
+X-Google-Smtp-Source: AGHT+IHp8m7VmlNHNgyndl5iB/Qrp58SL7daPo+m+ANFoMuJ9ymw7NFJIbT8yKQlLqeCw0sES7T/md/ku+4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:d4c1:b0:1f9:ddfe:fdde with SMTP id
+ d9443c01a7336-1ff573f60ecmr1961065ad.9.1722626184573; Fri, 02 Aug 2024
+ 12:16:24 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri,  2 Aug 2024 12:16:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 02 Aug 2024 22:15:36 +0300
-Message-Id: <D35O025XJT9S.CO2QK3K59QO9@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jett Rink" <jettrink@chromium.org>, "LKML"
- <linux-kernel@vger.kernel.org>
-Cc: <linux-security-module@vger.kernel.org>, "Jason Gunthorpe"
- <jgg@ziepe.ca>, "Peter Huewe" <peterhuewe@gmx.de>,
- <linux-integrity@vger.kernel.org>
-Subject: Re: [PATCH v2] tpm: Add new device/vendor ID 0x50666666
-X-Mailer: aerc 0.17.0
-References: <20240718202359.127482-1-jettrink@chromium.org>
- <CAK+PMK4yBkqpfJdcQ5M93DKB1-7Wn4zJmx6VmqNghogJJhDa6A@mail.gmail.com>
-In-Reply-To: <CAK+PMK4yBkqpfJdcQ5M93DKB1-7Wn4zJmx6VmqNghogJJhDa6A@mail.gmail.com>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240802191617.312752-1-seanjc@google.com>
+Subject: [PATCH] KVM: Use precise range-based flush in mmu_notifier hooks when possible
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri Aug 2, 2024 at 6:19 PM EEST, Jett Rink wrote:
-> Could I get some feedback on this patch please? Is there something I
-> am not doing correctly?
+Do arch-specific range-based TLB flushes (if they're supported) when
+flushing in response to mmu_notifier events, as a single range-based flush
+is almost always more performant.  This is especially true in the case of
+mmu_notifier events, as the majority of events that hit a running VM
+operate on a relatively small range of memory.
 
-Sorry, I just came from holidays.
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
 
->
-> -Jett
->
-> On Thu, Jul 18, 2024 at 2:24=E2=80=AFPM Jett Rink <jettrink@chromium.org>=
- wrote:
-> >
-> > Accept another DID:VID for the next generation Google TPM. This TPM
-> > has the same Ti50 firmware and fulfills the same interface.
-> >
-> > Signed-off-by: Jett Rink <jettrink@chromium.org>
-> > ---
-> >
-> > Changes in v2:
-> > Patchset 2 applies cleanly
-> >
-> >  drivers/char/tpm/tpm_tis_i2c_cr50.c | 11 ++++++++---
-> >  1 file changed, 8 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm=
-_tis_i2c_cr50.c
-> > index adf22992138e..b50005ccfc5e 100644
-> > --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> > +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> > @@ -31,7 +31,8 @@
-> >  #define TPM_CR50_TIMEOUT_SHORT_MS      2               /* Short timeou=
-t during transactions */
-> >  #define TPM_CR50_TIMEOUT_NOIRQ_MS      20              /* Timeout for =
-TPM ready without IRQ */
-> >  #define TPM_CR50_I2C_DID_VID           0x00281ae0L     /* Device and v=
-endor ID reg value */
-> > -#define TPM_TI50_I2C_DID_VID           0x504a6666L     /* Device and v=
-endor ID reg value */
-> > +#define TPM_TI50_DT_I2C_DID_VID                0x504a6666L     /* Devi=
-ce and vendor ID reg value */
-> > +#define TPM_TI50_OT_I2C_DID_VID                0x50666666L     /* Devi=
-ce and vendor ID reg value */
-> >  #define TPM_CR50_I2C_MAX_RETRIES       3               /* Max retries =
-due to I2C errors */
-> >  #define TPM_CR50_I2C_RETRY_DELAY_LO    55              /* Min usecs be=
-tween retries on I2C */
-> >  #define TPM_CR50_I2C_RETRY_DELAY_HI    65              /* Max usecs be=
-tween retries on I2C */
-> > @@ -741,14 +742,18 @@ static int tpm_cr50_i2c_probe(struct i2c_client *=
-client)
-> >         }
-> >
-> >         vendor =3D le32_to_cpup((__le32 *)buf);
-> > -       if (vendor !=3D TPM_CR50_I2C_DID_VID && vendor !=3D TPM_TI50_I2=
-C_DID_VID) {
-> > +       if (vendor !=3D TPM_CR50_I2C_DID_VID &&
-> > +           vendor !=3D TPM_TI50_DT_I2C_DID_VID &&
-> > +           vendor !=3D TPM_TI50_OT_I2C_DID_VID) {
-> >                 dev_err(dev, "Vendor ID did not match! ID was %08x\n", =
-vendor);
-> >                 tpm_cr50_release_locality(chip, true);
-> >                 return -ENODEV;
-> >         }
-> >
-> >         dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
-> > -                vendor =3D=3D TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
-> > +                vendor =3D=3D TPM_CR50_I2C_DID_VID    ? "cr50" :
-> > +                vendor =3D=3D TPM_TI50_DT_I2C_DID_VID ? "ti50 DT" :
-> > +                                                    "ti50 OT",
+This is *very* lightly tested, a thumbs up from the ARM world would be much
+appreciated.
 
-Whenever possible ternary operator should be avoided, unless the use
-case super trivial: this complexity brings us zero measurable benefit
-and unnecessarily obfuscates code.
+ virt/kvm/kvm_main.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-I'd suggest to simply add a helper:
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index d0788d0a72cc..46bb95d58d53 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -599,6 +599,7 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
+ 	struct kvm_gfn_range gfn_range;
+ 	struct kvm_memory_slot *slot;
+ 	struct kvm_memslots *slots;
++	bool need_flush = false;
+ 	int i, idx;
+ 
+ 	if (WARN_ON_ONCE(range->end <= range->start))
+@@ -651,10 +652,22 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
+ 					goto mmu_unlock;
+ 			}
+ 			r.ret |= range->handler(kvm, &gfn_range);
++
++			/*
++			 * Use a precise gfn-based TLB flush when possible, as
++			 * most mmu_notifier events affect a small-ish range.
++			 * Fall back to a full TLB flush if the gfn-based flush
++			 * fails, and don't bother trying the gfn-based flush
++			 * if a full flush is already pending.
++			 */
++			if (range->flush_on_ret && !need_flush && r.ret &&
++			    kvm_arch_flush_remote_tlbs_range(kvm, gfn_range.start,
++							     gfn_range.end - gfn_range.start))
++				need_flush = true;
+ 		}
+ 	}
+ 
+-	if (range->flush_on_ret && r.ret)
++	if (need_flush)
+ 		kvm_flush_remote_tlbs(kvm);
+ 
+ mmu_unlock:
 
-/*
- * Maps VID to a name.
- */
-const char *tpm_cr50_vid_to_name(u32 vendor)
-{
-	switch (vendor) {
-	case TPM_CR50_I2C_DID_VID:
-		return "cr50";
-	case TPM_TI50_DT_I2C_DID_VID:
-		return "ti50 DT";
-	case TPM_TI50_OT_I2C_DID_VID:
-		return "ti50 OT";
-	default:=09
-		break;
-	}
+base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
-	tpm_cr50_release_locality(chip, true);
-	return NULL;
-}
-
-The code then transforms to:
-
-	vendor =3D le32_to_cpup((__le32 *)buf);
-
-	name =3D tpm2_cr50_vid_to_name(vendor);
-	if (name =3D=3D NULL) {
-		dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
-		return -ENODEV;
-	}
-
-	dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n", name.
-		 client->addr, client->addr, client->irq, vendor >> 16);
-
-[and add suggested-by]
-
-> >                  client->addr, client->irq, vendor >> 16);
-> >         return tpm_chip_register(chip);
-> >  }
-> > --
-> > 2.45.2.1089.g2a221341d9-goog
-> >
-
-
-BR, Jarkko
 
