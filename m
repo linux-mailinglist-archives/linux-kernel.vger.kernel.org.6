@@ -1,215 +1,235 @@
-Return-Path: <linux-kernel+bounces-272692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E195946003
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:12:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32555946005
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A40A91F22921
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:12:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 546CA1C21640
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119E22139D4;
-	Fri,  2 Aug 2024 15:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181FB2139DB;
+	Fri,  2 Aug 2024 15:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NyApQ1Bi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HqmUAiK3"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWB6ivEU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219EB1F61C;
-	Fri,  2 Aug 2024 15:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E9F2101A0;
+	Fri,  2 Aug 2024 15:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611557; cv=none; b=FsxyVfUqAL7e5n4o39aStytIoyzwk1OM9Q6PlDl0R0had9SDwOp9eJgRlkCeWynWwD1nw2tsFQFq4+qX9ujqjuWE/ymKs6qT/xkf7eIxBF/QAWwyaxdHOz0EgHOpLyVO81WiMeLh7/ljSXuOw6QzXhvSA1TilocreGF5Yz0RdEg=
+	t=1722611641; cv=none; b=Esgs/sI/xjXzDFyv5DKoLmq+8q4h9QiDo1Gv+WSTW/sQfO5FZvh+LUlkEBZs0q/Br7ZYrRRh9A67sMJuu2CFFNmmyO41YWUF9rY92guRf2uG8+pLg5KabmyYrYYyXWUcM3gOFphObTz12O4D5JpqSSpKfZKqSDfs+OtyMEC5y74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611557; c=relaxed/simple;
-	bh=W3wC7Ikbkwi/Pgp0kqDiZgPvH2nay3XrVIOwwdKUw4I=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=AOZyfTwzLF/h/5taVzFyrGB31m5H4GlC45zccvPEafh+qqK8BS6IwvnTBbhl3+rw2/C6XtuBq0c0GiuWxswqjUP6CPHbncrz8j2pMnJnL8y2eNeo27BTE2dGXuXxSvKXnKUAzK+1KKdfJCO3voIMJFdWrVoupRmPwA+qLvRHrFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NyApQ1Bi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HqmUAiK3; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 6B53E138822F;
-	Fri,  2 Aug 2024 11:12:31 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 02 Aug 2024 11:12:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722611551;
-	 x=1722697951; bh=rxwcyT4FiQZfyMKXPhPP1+sJGwFMbXH2xa6spGjudeE=; b=
-	NyApQ1BigbVEecF8OOYW2csf4GZoK5pN0ZLjKxIuR+flxlgFOYZoFPQL/i3zGwjH
-	h3wnN1+bs26Og3JJDCwbqQIiHPJMnuJsqdE33Et8EyjWYhNQRZ8MhmLre9ZdXnPZ
-	HomyI+ZpBEklZCNQ9Yk6LPZoO05T5OTdWBmtUtTbikilRjXWcrk0690qrUUYvUid
-	9l5bBcUXAS2IqE7+ZRm1CSrAzlf+7uIn7aV71127/lmljbt+VBiu6AnOW12DuGXP
-	UXsKxHgPjfJ1uzDPVY0h6ZAgKgB1KoQrhmqmxTDL2R+8XdGI8QM+k2R1UtkmPAGq
-	hV6hh56XVU6Vhm9uAgdacg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722611551; x=
-	1722697951; bh=rxwcyT4FiQZfyMKXPhPP1+sJGwFMbXH2xa6spGjudeE=; b=H
-	qmUAiK3ncBPYWcQK/GsGNbNb7cj8qK1Ys8E80EQXq4019Xqkt7rJ3Vdv01rYQYCN
-	6FrHa5XcWcKE1d4IazSSsrNVBLiA7fIcj8n1yhbOUlAUgpoUXyE5astYqieaQ/Mf
-	J2yGQbL/UFBdObn2ITMHw/qW5wpNG0uQXXjWivFxD/yqfCQljjGmr3dk3RDL/uiV
-	OZYtRKRWuSyhzCmyzyELTrq1fOVmIl4dwJyjs7SjrF7xhFMeki6xQxShFPxXnsr1
-	DaG3hI/WWRCZ7e5/Cq+5596IbPZx9mRwktf4BlOQK+ue/vqXsJ660PCDDjl50bbX
-	y5YrsGE/exD1ky/F9Z9mw==
-X-ME-Sender: <xms:XvesZphaaqrP9UicW7fKe3vTBm6xSgiS7QtBp1hna1JGgtMe9FbK_Q>
-    <xme:XvesZuA-w7gCKwbOtrY_9_Z58_SU9dvx9yz2umX58yCOBd4ttG0umQ4d7peb7ywf8
-    wIZ128yqACyIt6PGfw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgdekhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
-    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:XvesZpFdf0Ol8Hdln3kfVekYI9z4j3THnm8vWoPOGdFEWDLXXG-9JA>
-    <xmx:XvesZuSI2m9tkgFlgarWgQhTbWeab-z1ZVm_0dcE2qnaHoyrkekznQ>
-    <xmx:XvesZmzlfB0lD1iv1Eo3L_37RhBDfE4DjkyAZ7e8cUWNUUd20Dn6gQ>
-    <xmx:XvesZk5Tw2yEfpbTxyQ7k57tfIeBpoalF6StOq7by5R7Bv5t0zBmRg>
-    <xmx:X_esZjhcoUfk0XhfcbjVViWDP_T6n3KiWVyucBwkU1dAM234aJsfbNso>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 45F37B6008D; Fri,  2 Aug 2024 11:12:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722611641; c=relaxed/simple;
+	bh=ZbMK+mNmuq1p2SzgYsGBsSkD66aeog6KMnL9ACHlE1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n+xLOqySv/mkPZM1nH7UI83up+JZMBm9Lk54k7pZtZ9rhNY4Jc9AAxqn4VclCozVnPrayaP5TOVVt/IBt1Nwq3JWF/8FrKGHaZsQTBNYDORIHS4HmxJAV7R9y6AuQs/+Gig2Gx1/yNarBkdDa1lppnOXu/j6JdzXmAt/XYEQsvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWB6ivEU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C21C32782;
+	Fri,  2 Aug 2024 15:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722611640;
+	bh=ZbMK+mNmuq1p2SzgYsGBsSkD66aeog6KMnL9ACHlE1U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FWB6ivEU1d6Qhec0mA21xhoI8qHBX4kpxtWMzhzD2Xr9LQ60sPNdmdaIJZ6YP/QFg
+	 bzBsbUhZb2UX1oNkiorhgxL2pSsk1kiUAYZpRT32zGjM6N1jzonDU6c80Ak3SnjbSv
+	 37oMDTf0av/u3un8n4qhC9X/vBZZYS3qeIv006bI4rkgOu8OObo3a1ARDMYzpUyrv/
+	 ZYTSS/MGHCPJGiFfnNgRNKnglI2Iru70oRzojIvqXi4hw3hEi7h25ZqjPu8NqP61wP
+	 Nj9kfHainIaMVEpGu2TlGVd0/kO3AWA4Y5hEQZIZg/Zh8IpjGAaGscImzPJpJmStSa
+	 zRNlsPFWgqppA==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3db10d8830aso763140b6e.0;
+        Fri, 02 Aug 2024 08:14:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8ij7aQIYPd0MloRrHdi5D9favtqHISWx78GpTZeF3oAKmyYdigAEb8I5UjbvviIyGo6gTrazJu0/tjc27Cfph6f/dXxzKSZOl4y7i2+TdqQL899LxG5BtZYAE+LM5IFG7ZfRXeKe20g==
+X-Gm-Message-State: AOJu0Yyrc1LGaPPg3C6T6Qz/WifivOhYH0jisebfWiJwib8jhS7h3gJ4
+	wiobb2a57FCaoGggKA2dFoVzJR32xL4/WtuQco7o5F5Go6dv7g1ntDMiPV331eKSATF77uHvWCR
+	mvQMZa9pQxVNle73fjt6jgSTvCqY=
+X-Google-Smtp-Source: AGHT+IFNZYcF3uqR4OY3lduSzRsUwT82PQ2KBtKL0cfFh3g065OHfuTDW8k5OxpDsvM1oPYD+S4AJUX3IMHPWwBAZzk=
+X-Received: by 2002:a05:6870:7b4c:b0:260:ccfd:1efe with SMTP id
+ 586e51a60fabf-26891e1566emr2464668fac.6.1722611640121; Fri, 02 Aug 2024
+ 08:14:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 02 Aug 2024 17:12:09 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Richard Earnshaw" <Richard.Earnshaw@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, "Russell King" <linux@armlinux.org.uk>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Richard Sandiford" <richard.sandiford@arm.com>,
- "Ramana Radhakrishnan" <ramanara@nvidia.com>,
- "Nicolas Pitre" <nico@fluxnic.net>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Mark Brown" <broonie@kernel.org>,
- "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
- "Robert Jarzmik" <robert.jarzmik@free.fr>,
- "Aaro Koskinen" <aaro.koskinen@iki.fi>,
- "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
- "Tony Lindgren" <tony@atomide.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Gregory Clement" <gregory.clement@bootlin.com>,
- "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>
-Message-Id: <8f8c07c6-d138-491c-9ca0-72f82779b2d2@app.fastmail.com>
-In-Reply-To: <e19821dc-01b8-4801-88ce-4c33d1a9fd63@arm.com>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <e19821dc-01b8-4801-88ce-4c33d1a9fd63@arm.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240715153336.3720653-1-cleger@rivosinc.com>
+In-Reply-To: <20240715153336.3720653-1-cleger@rivosinc.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 2 Aug 2024 17:13:48 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g5eAxJiiC6hY3BLKcuTyG1sZxgV5g=Zx4xu02UFfuwMA@mail.gmail.com>
+Message-ID: <CAJZ5v0g5eAxJiiC6hY3BLKcuTyG1sZxgV5g=Zx4xu02UFfuwMA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: CPPC: Fix MASK_VAL() usage
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 1, 2024, at 16:15, Richard Earnshaw wrote:
-> On 31/07/2024 18:29, Arnd Bergmann wrote:
->>   This is used for both StrongARM and FA526 CPUs, which are still
->>   used on a small number of boards. Even the newest chips (moxa
->>   art, ) are close to 20 years olds but were still in use a few years
->>   ago. The last Debian release for these was Lenny (5.0).
->>
->>   Dropping compiler support now would be appropriate IMHO, and
->>   we can drop kernel support in a few years.
+On Mon, Jul 15, 2024 at 5:33=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
+osinc.com> wrote:
 >
-> This is good to know.  The lack of Thumb (particularly the lack of BX) on these
-> CPUs is a major wart we still have to handle in the compiler.
-
-See also my (too long) reply to Linus Walleij. He thinks we may
-want to support ARMv4 a little longer, but hopefully we can reach
-a consensus about how long exactly.
-
->> === iWMMXt ===
->> 
->> I'm not aware of any remaining users for iWMMXt, and we dropped
->> support for ARMv7 PJ4 CPUs (MMP2, Berlin) already, so the
->> only supported hardware that even has this is Intel/Marvell
->> PXA and MMP1.
->> 
->> Dropping support from gcc is probably a good idea now,
->> it is already unsupported in clang.
+> MASK_VAL() was added a way to handle bit_offset and bit_width for
+> registers located in system memory address space. However, while suited
+> for reading, it does not work for writing and result in corrupted
+> registers when writing values with bit_offset > 0. Moreover, when a
+> register is collocated with another one at the same address but with a
+> different mask, the current code results in the other registers being
+> overwritten with 0s. The write procedure for SYSTEM_MEMORY registers
+> should actually read the value, mask it, update it and write it with the
+> updated value. Moreover, since registers can be located in the same
+> word, we must take care of locking the access before doing it. We should
+> potentially use a global lock since we don't know in if register
+> addresses aren't shared with another _CPC package but better not
+> encourage vendors to do so. Assume that registers can use the same word
+> inside a _CPC package and thus, use a per _CPC package lock.
 >
-> We marked iWMMXt as deprecated in gcc-14 and will likely remove support 
-> in GCC-15.  We expect to continue supporting these as Armv5T cores, but 
-> not the iwmmxt (or other XScale) extensions.  
-
-Ok, good to know. The kernel doesn't actually have a build
-time dependency on gcc's xscale or iwmmxt support aside from the
-one assembly file we build with gcc -march=xscale.
-
->> === big-endian ARMv7 (BE8) kernel ===
->> 
->> This is very different from BE32 mode in making more sense
->> from a kernel point of view. In theory any ARMv7 hardware
->> should work, though a lot of drivers are buggy. I am not
->> aware of any actual use cases, though in theory it can be
->> helpful for testing big-endian userspace when one has
->> access to Arm hardware but no other big-endian machine.
->> 
->> We should probably keep this a few more years in both
->> toolchain and kernel, unless it starts causing actual
->> problems. I don't think anyone is testing it any more
->> though.
->> 
->> Side-note: netbsd has a armv7+be8 variant, so clang will
->> likely keep supporting be8 even if gcc ends up dropping it
->> in the future.
-
-Do you have any comments on BE8 support? I would imagine
-that having two (mostly) unused big-endian targets in
-the compiler still complicates things a bit.
-
->> I would propose to leave the feature in the kernel but
->> make it harder to enable by accident, changing the default
->> for all targets to EABI and adding a dependency on
->> 'CPU_32v4 || EXPERT'.
->> 
->> For the compiler, I think removing support for -mabi=apcs
->> makes sense, unless there are non-Linux targets that still
->> use this.
+> Fixes: 2f4a4d63a193 ("ACPI: CPPC: Use access_width over bit_width for sys=
+tem memory accesses")
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
 >
-> Gas 2.43 (finally) drops support for the FPA and Maverick. gas 2.44 
-> may well drop support for OABI binaries (arm-none-elf, as opposed to 
-> arm-none-eabi).  Support for these is probably buggy now and it is 
-> certainly making maintenance more difficult.
-
-Ok. I can certainly confirm that we regularly run into
-build problems with -mabi=apcs in the kernel, usually
-because of the incompatible structure alignment rules.
-If binutils are dropping support, that also means we will
-eventually stop supporting it in the kernel.
-
->> === NWFPE ===
->> 
->> Russell had a patch set to remove this 11 years ago,
->> but ended up keeping it. This is fundamentally tied
->> to OABI userland, so we'll likely need to keep it for
->> as long as either OABI or OABI_COMPAT remains.
+> ---
+>  drivers/acpi/cppc_acpi.c | 44 ++++++++++++++++++++++++++++++++++++----
+>  include/acpi/cppc_acpi.h |  2 ++
+>  2 files changed, 42 insertions(+), 4 deletions(-)
 >
-> See above re FPA removal from GAS.  GCC removed FPA support in 2012!
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index 1d857978f5f4..2e99cf1842ee 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -170,8 +170,11 @@ show_cppc_data(cppc_get_perf_ctrs, cppc_perf_fb_ctrs=
+, wraparound_time);
+>  #define GET_BIT_WIDTH(reg) ((reg)->access_width ? (8 << ((reg)->access_w=
+idth - 1)) : (reg)->bit_width)
+>
+>  /* Shift and apply the mask for CPC reads/writes */
+> -#define MASK_VAL(reg, val) (((val) >> (reg)->bit_offset) &              =
+       \
+> +#define MASK_VAL_READ(reg, val) (((val) >> (reg)->bit_offset) &         =
+                       \
+>                                         GENMASK(((reg)->bit_width) - 1, 0=
+))
+> +#define MASK_VAL_WRITE(reg, prev_val, val)                              =
+               \
+> +       ((((val) & GENMASK(((reg)->bit_width) - 1, 0)) << (reg)->bit_offs=
+et) |          \
+> +       ((prev_val) & ~(GENMASK(((reg)->bit_width) - 1, 0) << (reg)->bit_=
+offset)))      \
+>
+>  static ssize_t show_feedback_ctrs(struct kobject *kobj,
+>                 struct kobj_attribute *attr, char *buf)
+> @@ -857,6 +860,7 @@ int acpi_cppc_processor_probe(struct acpi_processor *=
+pr)
+>
+>         /* Store CPU Logical ID */
+>         cpc_ptr->cpu_id =3D pr->id;
+> +       spin_lock_init(&cpc_ptr->rmw_lock);
+>
+>         /* Parse PSD data for this CPU */
+>         ret =3D acpi_get_psd(cpc_ptr, handle);
+> @@ -1062,7 +1066,7 @@ static int cpc_read(int cpu, struct cpc_register_re=
+source *reg_res, u64 *val)
+>         }
+>
+>         if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
+> -               *val =3D MASK_VAL(reg, *val);
+> +               *val =3D MASK_VAL_READ(reg, *val);
+>
+>         return 0;
+>  }
+> @@ -1071,9 +1075,11 @@ static int cpc_write(int cpu, struct cpc_register_=
+resource *reg_res, u64 val)
+>  {
+>         int ret_val =3D 0;
+>         int size;
+> +       u64 prev_val;
+>         void __iomem *vaddr =3D NULL;
+>         int pcc_ss_id =3D per_cpu(cpu_pcc_subspace_idx, cpu);
+>         struct cpc_reg *reg =3D &reg_res->cpc_entry.reg;
+> +       struct cpc_desc *cpc_desc;
+>
+>         size =3D GET_BIT_WIDTH(reg);
+>
+> @@ -1106,8 +1112,34 @@ static int cpc_write(int cpu, struct cpc_register_=
+resource *reg_res, u64 val)
+>                 return acpi_os_write_memory((acpi_physical_address)reg->a=
+ddress,
+>                                 val, size);
+>
+> -       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
+> -               val =3D MASK_VAL(reg, val);
+> +       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY) {
+> +               cpc_desc =3D per_cpu(cpc_desc_ptr, cpu);
+> +               if (!cpc_desc) {
+> +                       pr_debug("No CPC descriptor for CPU:%d\n", cpu);
+> +                       return -ENODEV;
+> +               }
+> +
+> +               spin_lock(&cpc_desc->rmw_lock);
+> +               switch (size) {
+> +               case 8:
+> +                       prev_val =3D readb_relaxed(vaddr);
+> +                       break;
+> +               case 16:
+> +                       prev_val =3D readw_relaxed(vaddr);
+> +                       break;
+> +               case 32:
+> +                       prev_val =3D readl_relaxed(vaddr);
+> +                       break;
+> +               case 64:
+> +                       prev_val =3D readq_relaxed(vaddr);
+> +                       break;
+> +               default:
+> +                       ret_val =3D -EFAULT;
+> +                       goto out_unlock;
 
-Right, for us this is clearly only done for legacy user
-binaries. It is still possible to run an OABI Debian-5.0
-or older rootfs with a new kernel, but there are not a lot
-of reasons to do so, other than ARMv4 (StrongARM)
-hardware. The only times I ever tried using it were
-to test kernel changes that impact OABI syscall handling.
+I would do
 
-       Arnd
+                      spin_unlock(&cpc_desc->rmw_lock);
+                      return -EFAUL;
+
+here to avoid the check below which is redundant in this path and the
+label would not be necessary then.
+
+LGTM otherwise.
+
+> +               };
+> +               val =3D MASK_VAL_WRITE(reg, prev_val, val);
+> +               val |=3D prev_val;
+> +       }
+>
+>         switch (size) {
+>         case 8:
+> @@ -1134,6 +1166,10 @@ static int cpc_write(int cpu, struct cpc_register_=
+resource *reg_res, u64 val)
+>                 break;
+>         }
+>
+> +out_unlock:
+> +       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
+> +               spin_unlock(&cpc_desc->rmw_lock);
+> +
+>         return ret_val;
+>  }
+>
+> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+> index 930b6afba6f4..e1720d930666 100644
+> --- a/include/acpi/cppc_acpi.h
+> +++ b/include/acpi/cppc_acpi.h
+> @@ -64,6 +64,8 @@ struct cpc_desc {
+>         int cpu_id;
+>         int write_cmd_status;
+>         int write_cmd_id;
+> +       /* Lock used for RMW operations in cpc_write() */
+> +       spinlock_t rmw_lock;
+>         struct cpc_register_resource cpc_regs[MAX_CPC_REG_ENT];
+>         struct acpi_psd_package domain_info;
+>         struct kobject kobj;
+> --
+> 2.45.2
+>
 
