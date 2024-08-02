@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-272400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561B5945B45
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:41:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BDAE945B32
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAC71B210EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:41:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0AF1C216A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805021DD3B6;
-	Fri,  2 Aug 2024 09:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E941DB42B;
+	Fri,  2 Aug 2024 09:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFpc5S8Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zw/KFesV"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C201DC478;
-	Fri,  2 Aug 2024 09:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5476E1C2BD;
+	Fri,  2 Aug 2024 09:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722591625; cv=none; b=EsJNze0GO9b0/Uy0JWAmZHfhLMye+0dwhucOuRyL1J0WoYQ8kmn/P6vMAdIRtKHiLwH+NaF35syzZWMBeOxqCYl4gL45/CeKueePHykNT8GkgpBwnSB6j8+PSaXxfatF3y017RVdMMX5xymEQwDbunHh8S0yhbx2E69cM1vJ25g=
+	t=1722591620; cv=none; b=hmsmlMeQwSwJ1SzFTuVFl9DxZfFZ8/6MQsE96XU6P54JGSuIt4GFc/nSwJOFc0vBbl2XgrenNjeGZNbKX24DiHR7xc0eImuY2Xs6HIuesN2pgVbaXm0U09prYmxVIOWlbZHCt8mp/BiuVugmELgwHTEfKaUAzOiDkbZSG592h3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722591625; c=relaxed/simple;
-	bh=ee0MfqKhJwu+BmHNrObmbBkQYcwyzrWWQyYQK6nZ/Zg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aVRrAAPzUCdRp9/zz2QtyyFvUvks6WLKHewIklqIHmtM+J/hWrveaQHG8Dv/xKkJ68S4x9cRO2wh7D37Ug/Ktof2q1uUD0JW/BUGYc5Ix654z4dp+/OdIyykZoXa+KfG6r6HDA6Qwk4qGQYpeVm4hFESfqmUmW2SRSBFFlXGV34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFpc5S8Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2C92BC4AF0B;
-	Fri,  2 Aug 2024 09:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722591625;
-	bh=ee0MfqKhJwu+BmHNrObmbBkQYcwyzrWWQyYQK6nZ/Zg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VFpc5S8Zl7mSoxZ9CjlfuVpqKYVgPCCofts7W9hhy12z3DnvkHP+XLTtjw7LA0LDN
-	 N4EfGqwmwinD6C8hUS5ZKHfCs+o2QHAclummHDtgQyi4vfshq11173O0qgWHQUNurd
-	 lqQpwYbVoO/65EiNzguntAh9TvVbmoG65go+VhLPRhQ4FhBzqWLd0UtUOlFFw/niRs
-	 PM0LccA8Jp6CwaACu0lt8XxEbA1CfEZDAJkYW6jM+ePh7OhAhEtO7OpzK3AWW83ngm
-	 j/s+6n4qFgaj2LYYb0BZjRPCD2pZvSVeMFNrGAzx1XKWKjMlM2IyNzdU6nFogjHjMs
-	 ovfonZANPxCNQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A99C52D6D;
-	Fri,  2 Aug 2024 09:40:25 +0000 (UTC)
-From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
-Date: Fri, 02 Aug 2024 17:39:49 +0800
-Subject: [PATCH v3 3/3] MAINTAINERS: Add an entry for Amlogic HCI UART (M:
- Yang Li)
+	s=arc-20240116; t=1722591620; c=relaxed/simple;
+	bh=msG2bFBQBZqPQE+/Mc9DqGJxJPZH2XOVibyXJ4vjKh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dd7GzLm6K/uQ4IZYPmDM6zGfWOv97dipwj2luUUe0B49BFs4rb47WltcQLF4r56SNqofOKoezyqt22NOIS+rVgeKkd4YENVqciHm+TKequNhVnog+LYl42YxePnwVXwuO9JOJW4MbAM3vjHNsnJ1eHrKEDoxvphSSzBKjBbHP48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zw/KFesV; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9Z+aZs0SZ0YC0bCCXeGs8Vm6t97KZ36rxeFA4yv6VTs=; b=Zw/KFesVnIdv3zfmHq5Lgrs5Kv
+	latri07BG8i4S1nwE+kxVm9CRqcaJllTU0uxtIwT+uKPxG/dphWK7zASeRnTfEmWTLCOvBAx4B+z1
+	Ern+lvCmTDVXbcv1dPN0zqMgMzI33TKcRsu4+hzgnhPyCmKqs/Bp988YBtzUM25rpb14ipJQ85AVw
+	A1qBCb2qKv9XsTXMMRilLG3dSTaFmu2TAPcrSPMf3fgPRaPA0fNV8MXpDhCO0KnujT0DRLJAQNj5X
+	5mfm7dVDr1DErxLIcmXKv4X2gk+qdWI705etIfroB8ccBkAw6pd1ol+D+g0iBbcD4UIEBWrLj46po
+	txqO3NeQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZolO-00000005g5O-43JP;
+	Fri, 02 Aug 2024 09:39:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7E0F230088D; Fri,  2 Aug 2024 11:39:54 +0200 (CEST)
+Date: Fri, 2 Aug 2024 11:39:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev,
+	WANG Rui <wangrui@loongson.cn>
+Subject: Re: [PATCH v5 1/2] rust: add static_key_false
+Message-ID: <20240802093954.GH39708@noisy.programming.kicks-ass.net>
+References: <20240802-tracepoint-v5-0-faa164494dcb@google.com>
+ <20240802-tracepoint-v5-1-faa164494dcb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240802-btaml-v3-3-d8110bf9963f@amlogic.com>
-References: <20240802-btaml-v3-0-d8110bf9963f@amlogic.com>
-In-Reply-To: <20240802-btaml-v3-0-d8110bf9963f@amlogic.com>
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Yang Li <yang.li@amlogic.com>
-X-Mailer: b4 0.13-dev-f0463
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722591623; l=782;
- i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
- bh=JCpkGkVAbaLnnsN6aT/w92n7ppHeCAU2X3+VbVGUtEo=;
- b=ipIHuZhIM6ngp93qMdEN/VfjA2HdBObHH6HUqRhwg4SUWFYllaWDjnOeLn9MTAx/H80ZxbFBj
- Rz0/egPUCntAjI0rPNIdMIP91Xxt3dEevf97kNawoX1aj3XI4kBdu35
-X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
- pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
-X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
- auth_id=180
-X-Original-From: Yang Li <yang.li@amlogic.com>
-Reply-To: yang.li@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802-tracepoint-v5-1-faa164494dcb@google.com>
 
-From: Yang Li <yang.li@amlogic.com>
+On Fri, Aug 02, 2024 at 09:31:27AM +0000, Alice Ryhl wrote:
+> Add just enough support for static key so that we can use it from
+> tracepoints. Tracepoints rely on `static_key_false` even though it is
+> deprecated, so we add the same functionality to Rust.
+> 
+> It is not possible to use the existing C implementation of
+> arch_static_branch because it passes the argument `key` to inline
+> assembly as an 'i' parameter, so any attempt to add a C helper for this
+> function will fail to compile because the value of `key` must be known
+> at compile-time.
+> 
+> One disadvantage of this patch is that it introduces a fair amount of
+> duplicated inline assembly. However, this is a limited and temporary
+> situation:
+> 
+> 1. Most inline assembly has no reason to be duplicated like this. It is
+>    only needed here due to the use of 'i' parameters.
+> 
+> 2. Alice will submit a patch along the lines of [1] that removes the
+>    duplication. This will happen as a follow-up to this patch series.
 
-Add Amlogic Bluetooth entry to MAINTAINERS to clarify the maintainers
+You're talking about yourself in the 3rd person?
 
-Signed-off-by: Yang Li <yang.li@amlogic.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0b73a6e2d78c..b106217933b2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1149,6 +1149,13 @@ S:	Supported
- F:	arch/arm64/boot/dts/amd/amd-seattle-xgbe*.dtsi
- F:	drivers/net/ethernet/amd/xgbe/
- 
-+AMLOGIC BLUETOOTH DRIVER
-+M:	Yang Li <yang.li@amlogic.com>
-+L:	linux-bluetooth@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/net/bluetooth/amlogic,w155s2-bt.yaml
-+F:	drivers/bluetooth/hci_aml.c
-+
- AMLOGIC DDR PMU DRIVER
- M:	Jiucheng Xu <jiucheng.xu@amlogic.com>
- L:	linux-amlogic@lists.infradead.org
-
--- 
-2.42.0
-
-
+What's the rush, why not do it right first?
 
