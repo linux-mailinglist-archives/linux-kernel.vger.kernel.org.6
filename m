@@ -1,115 +1,94 @@
-Return-Path: <linux-kernel+bounces-272746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B977E946081
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:26:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58447946097
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B055B24260
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C891C2264B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F41813633D;
-	Fri,  2 Aug 2024 15:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EFB136343;
+	Fri,  2 Aug 2024 15:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="R2+aNIIn"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="15wWideh"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A69D136334;
-	Fri,  2 Aug 2024 15:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E65F175D20;
+	Fri,  2 Aug 2024 15:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722612391; cv=none; b=KdQlTjQ+3rjH0sdAmfHMqLPdM43px+2gY3bzxGXGu2gSAL2+/NHb+LW2xJexQAxaaWL7EGV+GEMhybvhmqzPfGvliUE1HkHIPmTzmnBBeVv9fd9YAF82L/dBfSRz4igbptDXO7HZ2nBbiQ/3Hxs+bizHQ3cT5P/RP/aUFBZaV00=
+	t=1722612908; cv=none; b=mlXKK5DOaBLJk6CcK+hTzVTfqRWYnO2Epm1nEFm18h3eLvyu1/zc7DuuNv46coTgt2aKCGNCcDRVA63EqQlPsbb7uIZgnYBbZEQhZIoE/ZH99YGhnGo/aRVVeF4ok0FsT44tyU0DerlRFcJZNhqQVjrKmUNLpSS2zkdhK7CRbvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722612391; c=relaxed/simple;
-	bh=vaUoWKYYbc+9apH9UAH7phKlFhbklSN9gVy55V3kjUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nqqm8Ivr11sFZgBt8v7JL3KOlLgBlLEraP8+ZL2peME0czqZy6we0VK+9tJTgQ8oa3eGSwQonrjwB4G2VSZGnH4Sgl0bLEX9Zew6ENeQGs3SyLsMmdUhxAa4BAHbKp/yEEI3iJl8Kjykz/vE42pRETzJF2YqBJSoLdmyzXWb7Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=R2+aNIIn; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	s=arc-20240116; t=1722612908; c=relaxed/simple;
+	bh=k5rIFuap9u09uK4DFf3V6w/o37SuG4BJxHIP00dzT/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ceeK2xfB50hsN2G2/uZU4TtVAaAivdBMtL2VTRQFNYDV9uAIK1uprHw0rqUHVIIPFVNpiRFM6ZL59Tl+hQe0VraSLMxF3p3UWPFT3t6N4+FvG1RYzVLm8QnONcUYxpvOxIhf2eyn9zvNTWQw2zTTAhBksSVWfOxQ7ZK+3t6FU6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=15wWideh; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722612904;
+	bh=k5rIFuap9u09uK4DFf3V6w/o37SuG4BJxHIP00dzT/o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=15wWidehvvP1d0fUCgwMWS5h4SN6RPQUX90ZDvRIaSEhKdErdn8heH8glxWkbYSWA
+	 WdamB47lPsOz2Ze+lvi2mV/lm8b3ywNWUiLRPI+iWoHuG/uYjZvxj4qRKLUAr3AFwd
+	 +of/UK1AaZ8agJgWpiQWPpTchQcGA/h99F6bjsTPFX8OfoVxjfB/OJYmTWCQIBFS8h
+	 u3qIe5NNJByDhxzgJbEPhvEA/DVr4D+ysR39ESExInRVeb1Mpz/q3SAMEKUWI2JKfF
+	 guKr7AKPwW9JWHfhMup4IseDQ+r+hI0N9N4VWMe5BUB8+5vEfNmzS8UbcwFUkHltJK
+	 UVTUhaJCHL4Yg==
+Received: from trenzalore.hitronhub.home (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Wb8nD4pX9z9tM7;
-	Fri,  2 Aug 2024 17:26:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1722612384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IbiOHuuK++HVqf4Ly0K8XIOEOZLhizAbHkNRlvigC5k=;
-	b=R2+aNIInlYHCHZ2caXa7mIUa0XaVi1NbbxC4Sc0k23Tv6Cd77LrKwMYv0HcLd/NPZT19h0
-	V9gXA9vCM32XI7l0mJvMr1w4BDM8kRMXHt57HkNoGUzKjjxpvvj97tZg9p9kyrB43EBSQc
-	RuJWYANqMDxRfmnYipbG//P2htyDtB4PXxwzS6GZSHdlESLPCf9MyEWyDbSu3byDG6PCJ+
-	Uxf9f+ZerJEbGi/4e7nUpPelWnR4aaLy1nJPlIFsi9HrGNsS1oNPKB1U9as8Mnji9biv1e
-	/LNTN9alkIvHiIOuO28LMNR6TEld0ugCOnrpPsnFyLKyzSKr3bz3xpCiQQtQ2Q==
-Message-ID: <86d7ca9c-1493-474b-95d6-1e38b5703a67@mailbox.org>
-Date: Fri, 2 Aug 2024 17:26:21 +0200
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0D4BC3782212;
+	Fri,  2 Aug 2024 15:35:02 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH 0/3] Add dw_mmc support for rk3576
+Date: Fri,  2 Aug 2024 11:31:26 -0400
+Message-ID: <20240802153609.296197-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 0/5] udmbuf bug fix and some improvements
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>, Huan Yang
- <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-References: <20240801104512.4056860-1-link@vivo.com>
- <IA0PR11MB7185EDB259502BC6937CE566F8B22@IA0PR11MB7185.namprd11.prod.outlook.com>
-From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Content-Language: en-CA, de-CH-frami
-In-Reply-To: <IA0PR11MB7185EDB259502BC6937CE566F8B22@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: jraeashjkoya6xgp7jomd86xn6cw6ttf
-X-MBO-RS-ID: a8c9a5cf6cddf16cf40
 
-On 2024-08-01 20:32, Kasireddy, Vivek wrote:
-> Hi Huan,
-> 
->> This patchset attempts to fix some errors in udmabuf and remove the
->> upin_list structure.
->>
->> Some of this fix just gather the patches which I upload before.
->>
->> Patch1
->> ===
->> Try to remove page fault mmap and direct map it.
->> Due to current udmabuf has already obtained and pinned the folio
->> upon completion of the creation.This means that the physical memory has
->> already been acquired, rather than being accessed dynamically. The
->> current page fault method only saves some page table memory.
->>
->> As a result, the page fault mechanism has lost its purpose as a demanding
->> page. Due to the fact that page fault requires trapping into kernel mode
->> and filling in when accessing the corresponding virtual address in mmap,
->> this means that user mode access to virtual addresses needs to trap into
->> kernel mode.
->>
->> Therefore, when creating a large size udmabuf, this represents a
->> considerable overhead.
-> Just want to mention that for the main use-case the udmabuf driver is designed for,
-> (sharing Qemu Guest FB with Host for GPU DMA), udmabufs are not created very
-> frequently. And, I think providing CPU access via mmap is just a backup, mainly
-> intended for debugging purposes.
+The SD card controller on the rk3576 SoC uses a new tuning version that is
+capable of using pre-boot tuning information.
 
-FYI, Mesa now uses udmabuf for supporting dma-bufs with software rendering.
+Also, it stores the phase settings into the dw_mmc controller, so the code
+has to be adapted to implement that.
 
+Detlev Casanova (1):
+  dt-bindings: pinctrl: Add rk3576 dw-mshc bindings
+
+Shawn Lin (2):
+  mmc: dw_mmc-rockchip: Add v2 tuning support
+  mmc: dw_mmc-rockchip: Add internal phase support
+
+ .../bindings/mmc/rockchip-dw-mshc.yaml        |  11 +
+ drivers/mmc/host/dw_mmc-rockchip.c            | 224 +++++++++++++++++-
+ 2 files changed, 226 insertions(+), 9 deletions(-)
 
 -- 
-Earthling Michel Dänzer            |                  https://redhat.com
-Libre software enthusiast          |         Mesa and Xwayland developer
+2.46.0
 
 
