@@ -1,66 +1,64 @@
-Return-Path: <linux-kernel+bounces-273170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05718946538
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:44:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE16946537
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4391828388B
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C93D1C2182E
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ABD13775B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3998137750;
 	Fri,  2 Aug 2024 21:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+GR71yS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k23NbhNc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1866E73446
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186A87A13A
 	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 21:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722635064; cv=none; b=NAntT0xYgc/sytAip/laEbuBBfVub9eax7bB9mQDoRpNOsD/XUxgu8JBa/VChla1LCTrTWnmfUVOK5JU4+rpR1nmd3Vpw+cXEkJXl/ivhEllM1xtu9Kmcmr1MRXS+w5iIqNOnFEDLz2IZ7nab9JOp8hM76Dpz2J2TW+kH9J1OVI=
+	t=1722635064; cv=none; b=GblPEVUE2il8RPVNqY134tbr/sXjRRrQ7602FcEgTEPj1ZUj8ECMhxgJ3nXUUBlUNDX89ubXLYHlPgbTKSuOqkZtFQJI0l03Si6+kO9vTznRjikOrG0dF6psozfjAtAalK/ttYTAM9/S2l7QMKvzgOuyqAhw64jwc50yhdNlusk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722635064; c=relaxed/simple;
-	bh=oBrmRMT6eVkZhSBwJ/tCQXBFfP8uBbfVpOcor3ldlVA=;
+	bh=ZSlU9yW3n4NevgGhDHVq1qOszSSTbSe+VJ0pqN5i5yU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tZjOLdtM/r8wmpdI40eVl35Sr7mJxLwoCaG2hBgDmUaBXb4hn0r0zQncmr5d+Y0sxvXBGsFiM7einZQ+mYaEPjkdK7MOJn6w1orcOzdzX2ztGTCZCSXDbuHaP3MHQbbUMZp42MkwnzTyWKWKbuV7R5Ph2weS0hKAxlAPH3a98r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+GR71yS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9E5C4AF09;
+	 MIME-Version; b=XmXiP3k87Ry9/HhiuCMOFZGmU/TcR2BsH0b7THHrtnTy1fvh2doXVWdFW95WybmIxVrgGYCyvqnFM5BOijFedxCdWS807E8Zbq7hxK0PuwtlXsbfC01TW+Efb5ovHpgnsOK5/71Sm9Rq78PPCie8CR94S+7oKueZiqyNF5/YzUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k23NbhNc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3F1C4AF0F;
 	Fri,  2 Aug 2024 21:44:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722635063;
-	bh=oBrmRMT6eVkZhSBwJ/tCQXBFfP8uBbfVpOcor3ldlVA=;
+	bh=ZSlU9yW3n4NevgGhDHVq1qOszSSTbSe+VJ0pqN5i5yU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P+GR71ySO4elhXHLcBnJY5xs7O1P+RAm2L5b5NPqDn/+LOJAXp6bzkLZduF/0HWBO
-	 IqpYVcn2/bexTq+s1risYu7u9OKAx247lEgTkyV1YYKHpRy5wY0WnvKqpCObnezwiR
-	 YQnn9aNIBdYbXJnuMElohcL6mMS9DnzjdnLjyx0nx8FFnhbkpmQ2FkxJ5ewlU4m228
-	 pc6VHXb3zm9Zr/D2K+HwRKDIwIiCO0PWA02eFLqE8Grtzyl1YhAPm44yHLuRQOpdnA
-	 1RQSD9G1fTlOtWsBoHlv9QR8D1iNqVKDC5Lb2bSTMMusUT+303X1p/pB9naf1niVD1
-	 2WZ93wpP1Zicw==
+	b=k23NbhNcvr7qcW0xNGW/lpc063Ke8p+T3amvRCJSiFCEVRb4H7p9pBQPO4OJZjc02
+	 53j4U8mzbsz+hPg8IgcdmW8yhjJ0vaCvj2dpLFta0vt9caHzuWJiQ1imY+Y+6gOVhC
+	 Wcs6+zgkYqfLB2ebYMcPy/zpjTAyyi7UYUcsVRSxtA74T/qeBsMtWSSfnZWb10wW7l
+	 A8P8LlShEqoplvkwGKaAOe53Zfi/oadN4z6Exx8NDvjC7dLBgEA2uL1+ec4o4T6C+J
+	 qtJ0c+7W7CPQy9V+SS4KX8b/U1pk0fQaJD+/UynF0GUD+kbgw+gGNrVbCHbUt6k+F9
+	 GsePxlR5709Vw==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1sa04T-00000002naJ-2sEj;
+	id 1sa04T-00000002naP-2z0m;
 	Fri, 02 Aug 2024 23:44:21 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: 
 Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	Shiju Jose <shiju.jose@huawei.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Michael S. Tsirkin" <mst@redhat.com>,
 	Ani Sinha <anisinha@redhat.com>,
 	Dongjiu Geng <gengdongjiu1@gmail.com>,
 	Igor Mammedov <imammedo@redhat.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	Shannon Zhao <shannon.zhaosl@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org
-Subject: [PATCH v5 3/7] arm/virt: Wire up GPIO error source for ACPI / GHES
-Date: Fri,  2 Aug 2024 23:43:58 +0200
-Message-ID: <d0607d8f6116ff841b6c6a17d20f6d7077063045.1722634602.git.mchehab+huawei@kernel.org>
+	qemu-devel@nongnu.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH v5 4/7] acpi/ghes: Support GPIO error source
+Date: Fri,  2 Aug 2024 23:43:59 +0200
+Message-ID: <5d53042ebc5bc73bbc71f600e1ec1dea41f346b9.1722634602.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1722634602.git.mchehab+huawei@kernel.org>
 References: <cover.1722634602.git.mchehab+huawei@kernel.org>
@@ -73,124 +71,90 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Adds support to ARM virtualization to allow handling
-a General Purpose Event (GPE) via GED error device.
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-It is aligned with Linux Kernel patch:
-https://lore.kernel.org/lkml/1272350481-27951-8-git-send-email-ying.huang@intel.com/
+Add error notification to GHES v2 using the GPIO source.
 
-Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[mchehab: do some cleanups at ACPI_HEST_SRC_ID_* checks]
+
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- hw/acpi/ghes.c           |  3 +++
- hw/arm/virt-acpi-build.c |  1 +
- hw/arm/virt.c            | 16 +++++++++++++++-
- include/hw/acpi/ghes.h   |  3 +++
- include/hw/arm/virt.h    |  1 +
- 5 files changed, 23 insertions(+), 1 deletion(-)
+ hw/acpi/ghes.c         | 16 ++++++++++------
+ include/hw/acpi/ghes.h |  3 ++-
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
 diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index e9511d9b8f71..8d0262e6c1aa 100644
+index 8d0262e6c1aa..a745dcc7be5e 100644
 --- a/hw/acpi/ghes.c
 +++ b/hw/acpi/ghes.c
-@@ -444,6 +444,9 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
-     return ret;
- }
+@@ -34,8 +34,8 @@
+ /* The max size in bytes for one error block */
+ #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
  
-+NotifierList generic_error_notifiers =
-+    NOTIFIER_LIST_INITIALIZER(error_device_notifiers);
-+
- bool acpi_ghes_present(void)
+-/* Now only support ARMv8 SEA notification type error source */
+-#define ACPI_GHES_ERROR_SOURCE_COUNT        1
++/* Support ARMv8 SEA notification type error source and GPIO interrupt. */
++#define ACPI_GHES_ERROR_SOURCE_COUNT        2
+ 
+ /* Generic Hardware Error Source version 2 */
+ #define ACPI_GHES_SOURCE_GENERIC_ERROR_V2   10
+@@ -290,6 +290,9 @@ void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
  {
-     AcpiGedState *acpi_ged_state;
-diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
-index f76fb117adff..f8bbe3e7a0b8 100644
---- a/hw/arm/virt-acpi-build.c
-+++ b/hw/arm/virt-acpi-build.c
-@@ -858,6 +858,7 @@ build_dsdt(GArray *table_data, BIOSLinker *linker, VirtMachineState *vms)
-     }
+     uint64_t address_offset;
++
++    assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
++
+     /*
+      * Type:
+      * Generic Hardware Error Source version 2(GHESv2 - Type 10)
+@@ -327,6 +330,9 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
+          */
+         build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_SEA);
+         break;
++    case ACPI_HEST_SRC_ID_GPIO:
++        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_GPIO);
++        break;
+     default:
+         error_report("Not support this error source");
+         abort();
+@@ -370,6 +376,7 @@ void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
+     /* Error Source Count */
+     build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
+     build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
++    build_ghes_v2(table_data, ACPI_HEST_SRC_ID_GPIO, linker);
  
-     acpi_dsdt_add_power_button(scope);
-+    acpi_dsdt_add_error_device(scope);
- #ifdef CONFIG_TPM
-     acpi_dsdt_add_tpm(scope, vms);
- #endif
-diff --git a/hw/arm/virt.c b/hw/arm/virt.c
-index 687fe0bb8bc9..8b315328154f 100644
---- a/hw/arm/virt.c
-+++ b/hw/arm/virt.c
-@@ -73,6 +73,7 @@
- #include "standard-headers/linux/input.h"
- #include "hw/arm/smmuv3.h"
- #include "hw/acpi/acpi.h"
-+#include "hw/acpi/ghes.h"
- #include "target/arm/cpu-qom.h"
- #include "target/arm/internals.h"
- #include "target/arm/multiprocessing.h"
-@@ -677,7 +678,7 @@ static inline DeviceState *create_acpi_ged(VirtMachineState *vms)
-     DeviceState *dev;
-     MachineState *ms = MACHINE(vms);
-     int irq = vms->irqmap[VIRT_ACPI_GED];
--    uint32_t event = ACPI_GED_PWR_DOWN_EVT;
-+    uint32_t event = ACPI_GED_PWR_DOWN_EVT | ACPI_GED_ERROR_EVT;
- 
-     if (ms->ram_slots) {
-         event |= ACPI_GED_MEM_HOTPLUG_EVT;
-@@ -1009,6 +1010,15 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
-     }
+     acpi_table_end(linker, &table);
  }
+@@ -406,10 +413,7 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
+     start_addr = le64_to_cpu(ags->ghes_addr_le);
  
-+static void virt_generic_error_req(Notifier *n, void *opaque)
-+{
-+    VirtMachineState *s = container_of(n, VirtMachineState, generic_error_notifier);
-+
-+    if (s->acpi_dev) {
-+        acpi_send_event(s->acpi_dev, ACPI_GENERIC_ERROR);
-+    }
-+}
-+
- static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
-                              uint32_t phandle)
- {
-@@ -2397,6 +2407,10 @@ static void machvirt_init(MachineState *machine)
-      vms->powerdown_notifier.notify = virt_powerdown_req;
-      qemu_register_powerdown_notifier(&vms->powerdown_notifier);
+     if (physical_address) {
+-
+-        if (source_id < ACPI_HEST_SRC_ID_RESERVED) {
+-            start_addr += source_id * sizeof(uint64_t);
+-        }
++        start_addr += source_id * sizeof(uint64_t);
  
-+     vms->generic_error_notifier.notify = virt_generic_error_req;
-+     notifier_list_add(&generic_error_notifiers,
-+                       &vms->generic_error_notifier);
-+
-     /* Create mmio transports, so the user can create virtio backends
-      * (which will be automatically plugged in to the transports). If
-      * no backend is created the transport will just sit harmlessly idle.
+         cpu_physical_memory_read(start_addr, &error_block_addr,
+                                  sizeof(error_block_addr));
 diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-index 674f6958e905..6891eafff5ab 100644
+index 6891eafff5ab..33be1eb5acf4 100644
 --- a/include/hw/acpi/ghes.h
 +++ b/include/hw/acpi/ghes.h
-@@ -23,6 +23,9 @@
- #define ACPI_GHES_H
+@@ -59,9 +59,10 @@ enum AcpiGhesNotifyType {
+     ACPI_GHES_NOTIFY_RESERVED = 12
+ };
  
- #include "hw/acpi/bios-linker-loader.h"
-+#include "qemu/notify.h"
-+
-+extern NotifierList generic_error_notifiers;
++/* Those are used as table indexes when building GHES tables */
+ enum {
+     ACPI_HEST_SRC_ID_SEA = 0,
+-    /* future ids go here */
++    ACPI_HEST_SRC_ID_GPIO,
+     ACPI_HEST_SRC_ID_RESERVED,
+ };
  
- /*
-  * Values for Hardware Error Notification Type field
-diff --git a/include/hw/arm/virt.h b/include/hw/arm/virt.h
-index a4d937ed45ac..ad9f6e94dcc5 100644
---- a/include/hw/arm/virt.h
-+++ b/include/hw/arm/virt.h
-@@ -175,6 +175,7 @@ struct VirtMachineState {
-     DeviceState *gic;
-     DeviceState *acpi_dev;
-     Notifier powerdown_notifier;
-+    Notifier generic_error_notifier;
-     PCIBus *bus;
-     char *oem_id;
-     char *oem_table_id;
 -- 
 2.45.2
 
