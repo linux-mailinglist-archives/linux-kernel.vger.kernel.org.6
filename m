@@ -1,106 +1,98 @@
-Return-Path: <linux-kernel+bounces-273161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E47894650F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:30:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79767946512
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5E41C216AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FBA28309B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650C17EF09;
-	Fri,  2 Aug 2024 21:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/IRgE6+"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A681261FFC;
+	Fri,  2 Aug 2024 21:31:33 +0000 (UTC)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D53D61FFC
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 21:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BC61396
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 21:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722634199; cv=none; b=PUbWNpGhm+Sw2sDMfwfQeTQOFquWZ1MWuAG/8MJiPMB/tMqYEPhNtmUkpN7/SYlTsDNuBQCMG75l/PoP7yf/JpkZ5xtNbDykvHjUtf+ZBpaHpReXZ18DpmEeq1xOfqr+zIH1mODaLSHoRh91BkPW4qhZ+fJDnBxGTnr7bPh7Oj4=
+	t=1722634293; cv=none; b=p4kJ97LI8JonYKovjkYogZ+y6BqPoy8vzqd6Hx6QKF312naHdPylL0YJej/eR+tdTL/A7fa4FN5yDgwZ7/tBvArR+w/nQEprsAG4Cg6UOtrZDw+2eh5OesuKqp/4fuFlw3AYR3UkgkvXLAi1pnOcSVCifNAUzdyzIIL8hYqctlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722634199; c=relaxed/simple;
-	bh=Eqd5DSqcYMAnbki6Oa/uDzMz0iJTYPIDWjPGs8KfInk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M/AKKWwv/zZK9hpFOoSVKmQklMwklijgt6X2pd/Z2v5QAxpie5yrTQLvqPDNVWOKdCsRGMtSgDwS25s2DqCKVIeztOIzjH9SrCcLo2zauCfNzUcw6lfcoWuOAp/g8i8RX6WdV62GqUVcDJJL/odA+RQ4Sf53WyJvN/6fkK5veN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h/IRgE6+; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1722634293; c=relaxed/simple;
+	bh=N/bkhoclcDF9N6YGdC5UP2Cv+bxlhp/62VCe8P1bU90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QpwyCFRva3JdeRASsrf+VxXgRWWi9sD8oBHcMjDqKHaYI+fZSvUV+35OvTM2s2zKpFwRFKbsftdpbgep+dPw2Hxjwurn8srJ+w+Gs7WPOTJ+/R9onn1Wwq3ZfIS+hqitXT+uI9hLBZs5ZRS94PTiheV0IJma+0SfIz4H2pZMlu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b96a253c59so12630866d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 14:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722634197; x=1723238997; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eqd5DSqcYMAnbki6Oa/uDzMz0iJTYPIDWjPGs8KfInk=;
-        b=h/IRgE6+kCYZHZZe15wgv6U50+1Z6Bgx+0Xq70XhPUp1vNyQmjuwNYJ+IdZ2EEqCxQ
-         eAjOohw3LnQqO1KBva97G9mWe6yNM11wgoP+UPEejf0gmZwRq3MVySf9ay2OCZZjJxsW
-         ivYrtcD0uRE1kixe4ghDaUgRB/6LYL5Ubjdwk4OC6TKONqkxgYQXHi9dxVTisr0Fym7I
-         DeBHjdSrqM6PfISe2UM8jk+1BoyXFnwz8gcBk5f5gmZs6/tArJWE0h3aJA7vA5l810Kp
-         4fGYQV2kZ7sWeY/FPQ4AjmwjUBgBEb7ZcUr0eqXKCMlxVAX4yVoZC3drFLZEbDBhgc3Y
-         kOUA==
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso6414183b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 14:31:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722634197; x=1723238997;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eqd5DSqcYMAnbki6Oa/uDzMz0iJTYPIDWjPGs8KfInk=;
-        b=EHqD135MozQvSjz85lXYdKBQtOZ1K6Dxmt0Z+ZpEckCh2sWfJQBNcWRTnzD7I3dUWU
-         gws0m4ul4nKUMMr3t1KE7TIrS2g2uux+NG+D+DtQmg/cNr+fBLWHTVGwZGvH38I8Q6rR
-         bBBVeza/6WDh5IRP7kH1qC6X26aUZqsDZwQDq1T565ZUG6eVP/SbjnvjfD/1/z19qhik
-         QQBzk+yWAskaDdHV3slGXaiUulV8PO8ZTRK78sypH9+T4HHibyxalTYCMSsKS34VbG45
-         w0msN+rhv6RCm12NwhJsSngFsK4cCqLY5T8vmzDG3MRyD5/uMwDA0npoc3nB88uSK7eo
-         JLcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJgC8sZj6LkHjVTGuzgcDbqh4ZCvVWtmLBl/ceURKCuO61Rf0U6vEdZoW/3shVvqAIrvJba2Oyfx3fs/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkvGCfnbn6+aacbtwtkC1+OqO6/5U/8DqcrN4f5reo9aVKPFv1
-	3umECLAB65sGNZ/3zxQ1tLEnvnGEIg9YBKVLVz9xiUV5xL27oI68avAyfRp7wZrRW0eyH0WAzSN
-	IBeMXoMaw99Dtpa/Ojv59Sxr4Mvx8AgKrGAlqFGvL
-X-Google-Smtp-Source: AGHT+IGeyPkk/dWhUIyWDzjMBB8iGs4RL6xounmSFkrEvZlAvm16BiP8UqA0qIQBOFfHGQPdk9Nxri4ADWEeHCXChxk=
-X-Received: by 2002:a05:6214:e8c:b0:6bb:3f69:dd0c with SMTP id
- 6a1803df08f44-6bb984bab76mr33918776d6.9.1722634197160; Fri, 02 Aug 2024
- 14:29:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722634291; x=1723239091;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vbmO4KOuDaOFuESIt0suPWSi7GBxZGUwlTBYZeh0caY=;
+        b=FivfkXhqsHJdFcoA1UP9rB2++ZVblBpiSAJLbSUVlLRF70mYH18ugdFE5rmbNzv7FO
+         mAZZJwkbi/3Mzc7wElxfJJgplHxykIAEMRxLPSxLS1iXVqbG0V1eo2YvMcH03P0ocMJ8
+         jtNtfSDCb3s5dYo0w7gqOQ53GV47eiBqWjr5vthxhU9enaFC4AdW0IJVLjF/C28ltKXv
+         WmmsNRKvCSbA2MXGhloCJ8NDLec+wrx0iuOV6kSB7l0OVsSPctzdVj+Y26KrP130M/tm
+         AFq/tXUIL0wEY0HEhaiQXEefr+WnLRsl1BUQEmdc0JtKQtiXlZi2jwW2/clgrih2YVU2
+         TdeA==
+X-Gm-Message-State: AOJu0YzBs8GicBzKAOoMDn2DHc2k7uBwqRfnpmRkeq50aQIbZ3bM2iNF
+	xCqU5RhSvUQNLKwr4pVB7R2vi9ILevqde03r8yw2L/OBnPAckCFWckzaKQ==
+X-Google-Smtp-Source: AGHT+IH3UbGQleUVjw9w0t5wUQiA/gOoVLvw7jq+Jgh7DMqK3q9VYMiZDZhoLDsPOSwNiUkJIbtuPA==
+X-Received: by 2002:a05:6a00:1790:b0:70d:2ac8:c838 with SMTP id d2e1a72fcca58-7106cf8ac9emr6514373b3a.4.1722634291104;
+        Fri, 02 Aug 2024 14:31:31 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecdff89sm1754808b3a.103.2024.08.02.14.31.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 14:31:30 -0700 (PDT)
+Date: Fri, 2 Aug 2024 21:31:29 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Ubisectech Sirius <bugreport@valiantsec.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, kys <kys@microsoft.com>,
+	haiyangz <haiyangz@microsoft.com>, "wei.liu" <wei.liu@kernel.org>,
+	decui <decui@microsoft.com>
+Subject: Re: BUG: stack guard page was hit in vsock_connectible_recvmsg
+Message-ID: <Zq1QMacH8BCA_UW5@liuwe-devbox-debian-v2>
+References: <59b20304-a273-4882-8dfb-fe9a668ec8d8.bugreport@valiantsec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmtqzBfUykT-JgyhZn-7ZXtftHL35znDdYuTnUOpGnoQ@mail.gmail.com>
- <1266c4af-a000-48c0-bd0d-79c2e918aea9@gmail.com> <CADnq5_O-hKQZoMxuX2=HiukiorxE=bFAJownQFkTbzNR2d411g@mail.gmail.com>
- <CABXGCsM=Q-Xp2d0Ht2J78FupEtOtMh1bhVMUZtOqKqSoiZA8cQ@mail.gmail.com>
-In-Reply-To: <CABXGCsM=Q-Xp2d0Ht2J78FupEtOtMh1bhVMUZtOqKqSoiZA8cQ@mail.gmail.com>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Sat, 3 Aug 2024 02:29:44 +0500
-Message-ID: <CABXGCsPr++1ViN467+uP5G+wdFmZ_Bnjoor9VLndZoAG4qS-dA@mail.gmail.com>
-Subject: Re: 6.10/bisected/regression - Since commit e356d321d024 in the
- kernel log appears the message "MES failed to respond to msg=MISC
- (WAIT_REG_MEM)" which were never seen before
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	amd-gfx list <amd-gfx@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	"Deucher, Alexander" <alexander.deucher@amd.com>, mukul.joshi@amd.com, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59b20304-a273-4882-8dfb-fe9a668ec8d8.bugreport@valiantsec.com>
 
-On Wed, Jul 24, 2024 at 10:16=E2=80=AFPM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
-> > https://patchwork.freedesktop.org/patch/605201/
-> For which kernel is this patch intended? The patch is not applied on
-> top of d67978318827.
+Hello
 
-I am able to apply this patch on top of e4fc196f5ba3 and the issue is gone.
+On Mon, Jul 29, 2024 at 10:22:37AM +0800, Ubisectech Sirius wrote:
+> 
+>  vsock_bpf_recvmsg+0xb41/0x11a0 net/vmw_vsock/vsock_bpf.c:105
+> 
 
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+I'm not sure why I (or other Hyper-V folks) were CC'ed on
+this email.
 
---=20
-Best Regards,
-Mike Gavrilov.
+Per get_maintainer.pl, the maintainers of the vmw_vsock directory are:
+
+Stefano Garzarella <sgarzare@redhat.com> (maintainer:VM SOCKETS (AF_VSOCK))
+"David S. Miller" <davem@davemloft.net> (maintainer:NETWORKING [GENERAL])
+Eric Dumazet <edumazet@google.com> (maintainer:NETWORKING [GENERAL])
+Jakub Kicinski <kuba@kernel.org> (maintainer:NETWORKING [GENERAL])
+Paolo Abeni <pabeni@redhat.com> (maintainer:NETWORKING [GENERAL])
+virtualization@lists.linux.dev (open list:VM SOCKETS (AF_VSOCK))
+netdev@vger.kernel.org (open list:VM SOCKETS (AF_VSOCK))
+linux-kernel@vger.kernel.org (open list)
+
+You probably want to resend your report to them.
+
+Thanks,
+Wei.
 
