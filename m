@@ -1,145 +1,86 @@
-Return-Path: <linux-kernel+bounces-272055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 147C094564C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:28:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519F194564E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C5A31C217C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:28:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7304B22DD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAF91BC4B;
-	Fri,  2 Aug 2024 02:28:14 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F152D1A702;
+	Fri,  2 Aug 2024 02:29:04 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E071A702;
-	Fri,  2 Aug 2024 02:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29599B64E
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 02:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722565694; cv=none; b=HKbAnVejoxR4s3cj2MFLfng8VBXTjlRH0QhdpNvc+olTgBMYXNHlxyqsmNfcc939/1f42hta3j43q/SGO8kgh62t9hP1/FVzSqpKmQxpmjyLIBPk1ffYXIcrZ4ZmXwZ61ALNYRiOE7vWRQWSHhyOq0LeMTJ5C1d/D0423q8ivIc=
+	t=1722565744; cv=none; b=sP30/FW13khnD2Y+vtDTcGQ9Zpzl0Oyjg0JZf+nsU2D4rrWkX+XA5fmKtKFxGci48rgb33YdCON225Ef1v0o/bQIpOA0uUCjVcNe2vyhAQtMQrzzVQx9nx3Jdcv1mNxdhXKyVvHGx7rRiBJ9zV+vsBgqcQw6Tc5zpPguf893tqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722565694; c=relaxed/simple;
-	bh=uu1Z6bxJRmFyQRtdMJvH5k/t5mvvOsBMA+2WTmMaNak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fPlE0NwXPOWU5aByCOZaGHkY6XEg5ZflnxDev78haDoBEzEt13e13ddPsuKD3gFTXYovnECsNznF/KQyrVNQSs/60b5xIr2pqz0DFVSXqWQ+jlcHj4vEQI4v+jC7BAt4kvnLtTrO7vqqaxvL1PpBQp0OBaaD0ossgbRI7EyM69U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WZqQB5H2kzQnTs;
-	Fri,  2 Aug 2024 10:23:46 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 845F5140132;
-	Fri,  2 Aug 2024 10:28:07 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 2 Aug 2024 10:28:06 +0800
-Message-ID: <1ddde0db-c18e-7968-185e-1e792854d1b6@hisilicon.com>
-Date: Fri, 2 Aug 2024 10:28:06 +0800
+	s=arc-20240116; t=1722565744; c=relaxed/simple;
+	bh=4J2+OAbxH40EKWVmejNEtpmGtyb1n3CQYbIcGc3CEjE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=P9JqqTmd5qFG0ZdGcFfgAV6hYWMZeqfWapabwXYKl54zoWWQyC5FiID5RopyAA8MbAE2Vzl2L14tB/kAi9j3DzOAFOizu+VQFLkbkHqS7ixQvUW3TTCjvQrJngjTpON1c4hfD1PcguTW94OdFd+Xn0trFmz6D3WbgJelxXouIuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f8e43f0c1so1090951939f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 19:29:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722565742; x=1723170542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Q/Ye9Z+jG5K6SsonreeVrYeesu+LELNnvv7iXUxYuw=;
+        b=E/ai4iuthCRMZjI8thQbX8aPcFuyn+SejjOK/ORoYAgzIk80RrQkxp2sFU4bpBJxJq
+         Bjl3DJLD3pyrlEePBKDeAy8VEOKywdFhplp7cAw0sdk/SW6tu532j4QtDw61rQKx2ebJ
+         4QRTygQT3AsXwXlhxJ+TeE34xCvkw51KwdaEg3lFaYEVX81Wdw7KfR4+hkSAlyAWU7vk
+         hwHRL0suEm8+a16nBgQ9wLOmvkYSrkLj7nDWmceakOZAuyOs42tMXSaa+q2q1E42JzjD
+         O45RRqaQ684RSyyyK361uCOzqR11AHVQpUzM3EFcbnOBlrjDYMgHInyemsDz2uoMaUpp
+         GTsw==
+X-Gm-Message-State: AOJu0YwsT6Cojmqc9Id6QPAKVVIVrvMS01fvRKk7tUp0ZlRd/V+LT6od
+	VHSZflErcx5bVFyW63XKykYVgSSBe0vuBA0LqEOF5wGxkMmIz7FXlKUSWujiNHNOzF9n2yW8AaO
+	nQ5RsOWR4/FCh6SeuQwlb1RRHck5VfvntVxHJpxZLNHG4+mnrp8e27w8=
+X-Google-Smtp-Source: AGHT+IGjnAJb8myQsAYlmFWEoHHmwUryv+Nmg5lAgJFKdnkH8f1eiqc94nL+cYiHl4t1QsvB6SC9O3RG1UXoGfr489gBsCPsOkJx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
-Content-Language: en-US
-To: Zhu Yanjun <yanjun.zhu@linux.dev>, <jgg@ziepe.ca>, <leon@kernel.org>,
-	<bvanassche@acm.org>, <nab@risingtidesystems.com>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <target-devel@vger.kernel.org>
-References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
- <02f7cfc8-0495-485d-9849-b5a9514f6110@linux.dev>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <02f7cfc8-0495-485d-9849-b5a9514f6110@linux.dev>
+X-Received: by 2002:a05:6e02:1c06:b0:39a:1b94:9733 with SMTP id
+ e9e14a558f8ab-39b1fb8f0ccmr1533315ab.2.1722565742276; Thu, 01 Aug 2024
+ 19:29:02 -0700 (PDT)
+Date: Thu, 01 Aug 2024 19:29:02 -0700
+In-Reply-To: <20240802020037.976956-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002bc5f6061eaa1738@google.com>
+Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100018.china.huawei.com (7.202.181.17)
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 2024/8/2 5:55, Zhu Yanjun wrote:
-> 在 2024/8/1 15:44, Junxian Huang 写道:
->> Currently cancel_work_sync() is not called when srpt_refresh_port()
->> failed in srpt_add_one(). There is a probability that sdev has been
->> freed while the previously initiated sport->work is still running,
->> leading to a UAF as the log below:
->>
->> [  T880] ib_srpt MAD registration failed for hns_1-1.
->> [  T880] ib_srpt srpt_add_one(hns_1) failed.
->> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
->> ...
->> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
->> ...
->> [  T376] Call trace:
->> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
->> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
->> [  T376]  process_one_work+0x1d8/0x4cc
->> [  T376]  worker_thread+0x158/0x410
->> [  T376]  kthread+0x108/0x13c
->> [  T376]  ret_from_fork+0x10/0x18
->>
->> Add cancel_work_sync() to the exception branch to fix this UAF.
-> 
-> Can you share the method to reproduce this problem?
-> I am interested in this problem.
-> 
-> Thanks,
-> Zhu Yanjun
-> 
+Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
 
-I was testing bonding in 5.10 kernel, doing
-	ifenslave bond0 eth0 eth1; ifenslave -d bond0 eth0 eth1
-and
-	ethtool --reset eth0 dedicated; ethtool --reset eth1 dedicated
-concurrently and infinitely.
+Tested on:
 
-But I think this problem has been fixed in latest mainline probably.
-Please look into my reply to Bart in v2.
+commit:         2f8c4f50 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=12df3703980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13687e55980000
 
-Junxian
-
->>
->> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
->> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->> ---
->>   drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
->> index 9632afbd727b..244e5c115bf7 100644
->> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
->> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
->> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
->>   {
->>       struct srpt_device *sdev;
->>       struct srpt_port *sport;
->> +    u32 i, j;
->>       int ret;
->> -    u32 i;
->>         pr_debug("device = %p\n", device);
->>   @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
->>           if (ret) {
->>               pr_err("MAD registration failed for %s-%d.\n",
->>                      dev_name(&sdev->device->dev), i);
->> -            i--;
->>               goto err_port;
->>           }
->>       }
->> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
->>       return 0;
->>     err_port:
->> +    for (j = i, i--; j > 0; j--)
->> +        cancel_work_sync(&sdev->port[j - 1].work);
->>       srpt_unregister_mad_agent(sdev, i);
->>   err_cm:
->>       if (sdev->cm_id)
-> 
+Note: testing is done by a robot and is best-effort only.
 
