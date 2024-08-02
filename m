@@ -1,119 +1,117 @@
-Return-Path: <linux-kernel+bounces-272552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7386945DCA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:29:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF771945DD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2A4284293
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:29:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B7D1C215B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8DC1E2890;
-	Fri,  2 Aug 2024 12:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A681DE85B;
+	Fri,  2 Aug 2024 12:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKnt4piW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="K+t41Kha"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B58F14A0A0;
-	Fri,  2 Aug 2024 12:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8201E505
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 12:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722601787; cv=none; b=Xc7EL9Tlmk44NiCjCKeHxztnuiRpjMQ8u9RxUb6KpHpLLrxsHMRVNLME/xFV/SnsYhyn4krrdN0OJlnsv7JwyZaAHxsZY+NyH9jmuJ8ENxRHVec/AnFVGuZrIMTB7grOVPUIBGugGv3nyFJzLE5A4yyQSgt13RZWsRhJvhA6dQg=
+	t=1722602068; cv=none; b=Mv1rSQH755ymQfqzAC9cbCk2q4mHhWt1BxBxAeH3gi1GhcZWvdnjxG0oaATrtZcgC5cCCO/lk9VsxgMEnexp5tEA6+/kKSYLmi5s/p7YOGFTC2tUNer5YoQsA7seVyMkpRCxNgRK6RMqZfuKVw3XNqwR/9f4HjfaiqRV6I/80i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722601787; c=relaxed/simple;
-	bh=TPZ8aWuX8dcV5p3KIElIaSI7CNBcw6WTN9JPjFF6k6s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uRH6XguPlGwo5zYW135ki936A1sVTEZA9Bmyf8C6uHF4UWGiIK6LATjuOVLwK+lZel1aiFptzzaGJYKFUuVH2jBRyxoSagT+wBNQ8th5pQ25b38oc/opN/Xto2zxNeWhZdlJkzH9kEVJnRYor+OJ13ca9AO3pbnhrW/ZTdzU6LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKnt4piW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CCF0C4AF11;
-	Fri,  2 Aug 2024 12:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722601787;
-	bh=TPZ8aWuX8dcV5p3KIElIaSI7CNBcw6WTN9JPjFF6k6s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XKnt4piWORyEWiUf3bbdvvWeetpNqC+f7iEkj8//WFYGtw4D1VFrj+steO5E5dDxJ
-	 ySK7dm4ZzYa3c2XStQgc0rKVZw5KPcNdya/TaNHY8iLXdm5dU9Z3KVEm/neSX0ULNU
-	 WtNCkvOG5y8fRy32LmV8WbqbGll3lUGc7CCehq1JQnk+XgtmBLK8Zio16j5WJmAT9c
-	 BfGV7JcJMVlblUNt+xrE4U+3yjhLpGIc91hitcxqZAq/iml0rmvusmId0RPzPev/hy
-	 MAp31cVI3+nUCz8sj64WoUkRsQD0Uuj3W18ZUGqSz/v9gLXEjWLRUIuT2mGukAq+4d
-	 qgM1LaLjJvWWg==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so11736049e87.2;
-        Fri, 02 Aug 2024 05:29:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUl7Rd70THJb5SnbH5YK2lMaXsV7DbppS7YHz+uDKT2Pwsd8ciyEKECM0XuHSyUISUZa6XannEAri4ra0Vc1eyjD8eBKSJhHoNRO4jNTXi5hfat5o7sFhGKJFTVpiLZgdPcfQhorpIvtlU=
-X-Gm-Message-State: AOJu0YxROJIoHbotBAeyYeg1yji/YZrgC7uLLvBErMWAR8ewUIH2PY7f
-	OTIV2jlcCSeRH64aTNhRukR4K3T8jJBhN0Dn1ujCFH2aLjxOo6IPnJkM2UqxyyTuIN2+QAG4CX1
-	2WvAcOLW4SHlUjjq3kQYO26cHkn0=
-X-Google-Smtp-Source: AGHT+IG8bBjNKWGKaKUm9N02/bROr4Jw7YD0IkF2WYIGiUSmueMOUr8Mj5a+pvmWsTT3zT2FcuV8T1kELjQxe5KlLbk=
-X-Received: by 2002:a05:6512:a93:b0:52e:9cb1:d254 with SMTP id
- 2adb3069b0e04-530bb39dc80mr1949529e87.46.1722601785409; Fri, 02 Aug 2024
- 05:29:45 -0700 (PDT)
+	s=arc-20240116; t=1722602068; c=relaxed/simple;
+	bh=wep4Ew9P8tOMLyW8aBT3i/sDjpDB6b1K0/du6R89PZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jy1ImzrMC8NjaLhOsoHOcmIUj5gLAt1yE5RFa2nhfgjROYYySSer7oGehMol5Jy5IOZfU2OHy/otRTT0wmyCKBF5EM+JApxqH05ti1dbDRt3/+Wf0JDY6F1BJFutywg+244fWgbUdp8aceAJcTJqpLnWDN6BroNmESAhs2nins8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=K+t41Kha; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efdf02d13so13473841e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 05:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722602064; x=1723206864; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EpQ32yxaR6G41EvCjwLaGrxfkOQL+lJX1w8a1HXU06c=;
+        b=K+t41KhaucyRgbCqMRFcxaQ5R1OFnyXXfpe9I5TCtf+P8+qmXPX9/pAlHdG2Gjhior
+         2sHEinPt5j7ZyELeWuq7xVk+i1c7fErXv+pc7cXoFvGJi4uVNthHh8ohEJ0NMIyZtPMF
+         cSKclFzzS9x3gSHuub0JPXIAfBCzT4NnhRrQMYCJHFAk8mKPgtJFdGSQdCs9z+yO73/+
+         qLbApGoMk8s/6L8XFXxp5nxid1uMkhk6W7GIMoEtZb+xpVqwfM5W3ZvwIzKLN7XVCC0I
+         zTDuAt9EWFH2LucRyLRPnGr8q5brsyBT3N5gO6f1bsZxsIr50XtobA9YV0wzNbc4ui1T
+         l9Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722602064; x=1723206864;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EpQ32yxaR6G41EvCjwLaGrxfkOQL+lJX1w8a1HXU06c=;
+        b=RZt5W+W0x7KUWBFYwlQ4mOpTvAWYBg0yHgL3YprT2XLd4IFuI1NFxVdUbpl0Ro/arn
+         xTSXogcB+Cxug+7a1XW+VktFU4glPCYJHoIUyTy5hv2QRMWuSzB7i6jufOahxUQJpdeP
+         tcspXSG9yb+O6tuHx6bTpn0y+IYFKkbUvbrmThuq0/4kQLmS/Iu2/9ZoGRh4uWoGRyIN
+         iSPbrOkkaajQ7ufC7C+XfxUVakxmuVtjSsjMblorBk73sbsbcrrMYwdcbF3GBPX6ofA3
+         n5lFdEBKXLlEt0MDU+Cbl4ejibrx5sHv4CZDmrzI6EsKHHYCV25gW/7ZMayU6qBHi1ET
+         ratg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOvqYg+vmtj/I31WI9naD0takSrsrdn6UNsiF20SNFQ6odqa4Lzs+BWchlo4w/rQu1ngt3rW/TLUZiRaDanie8XI5N98MncJL/Rxm7
+X-Gm-Message-State: AOJu0YzE9wjgJxEusF7E/7c0sQ5R+m4HEyhpOePUFqJcXfdgqnWWXOfn
+	kVU7aL+gI/Qx6FjUFWPew9CJ6OyZsL7xPsm4mDuEOVlvXF7tKFkC3PUWAKuq38A=
+X-Google-Smtp-Source: AGHT+IEhqRxrqYg7HyfO+00nKTCN+aEnPofxgBXKlnPK/2HYCDlLMwP+rVUVHG+pRBC6DiElyItghA==
+X-Received: by 2002:a05:6512:2305:b0:52e:a03f:ef53 with SMTP id 2adb3069b0e04-530bb38c982mr2933841e87.24.1722602064193;
+        Fri, 02 Aug 2024 05:34:24 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d437bbsm94683366b.121.2024.08.02.05.34.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 05:34:23 -0700 (PDT)
+Date: Fri, 2 Aug 2024 14:34:22 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v3 19/19] printk: Avoid false positive lockdep
+ report for legacy printing
+Message-ID: <ZqzSTocPmBpEOk37@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-20-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000dfd631061eaeb4bc@google.com> <tencent_8F5362E361A97883B8444B1763F777C6DF05@qq.com>
-In-Reply-To: <tencent_8F5362E361A97883B8444B1763F777C6DF05@qq.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 2 Aug 2024 13:29:08 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H7d92JC_ZHp2cZ_tWyy-+qQkqG9nVgYSTi06+GAbYpNbg@mail.gmail.com>
-Message-ID: <CAL3q7H7d92JC_ZHp2cZ_tWyy-+qQkqG9nVgYSTi06+GAbYpNbg@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: Add missing skip-lock for locks
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail.com, clm@fb.com, 
-	dsterba@suse.com, fdmanana@suse.com, hreitz@redhat.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722171939.3349410-20-john.ogness@linutronix.de>
 
-On Fri, Aug 2, 2024 at 12:59=E2=80=AFPM Edward Adam Davis <eadavis@qq.com> =
-wrote:
->
-> The commit 939b656bc8ab missing a skip-lock in btrfs_sync_file,
-> it cause syzbot report WARNING: bad unlock balance in btrfs_direct_write.
->
-> Fixes: 939b656bc8ab ("btrfs: fix corruption after buffer fault in during =
-direct IO append write")
-> Reported-and-tested-by: syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail=
-.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D7dbbb74af6291b5a5a8b
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+On Mon 2024-07-22 19:25:39, John Ogness wrote:
+> Legacy console printing from printk() caller context may invoke
+> the console driver from atomic context. This leads to a lockdep
+> splat because the console driver will acquire a sleeping lock
+> and the caller may already hold a spinning lock. This is noticed
+> by lockdep on !PREEMPT_RT configurations because it will lead to
+> a problem on PREEMPT_RT.
+> 
+> However, on PREEMPT_RT the printing path from atomic context is
+> always avoided and the console driver is always invoked from a
+> dedicated thread. Thus the lockdep splat on !PREEMPT_RT is a
+> false positive.
+> 
+> For !PREEMPT_RT override the lock-context before invoking the
+> console driver to avoid the false positive.
+> 
+> Do not override the lock-context for PREEMPT_RT in order to
+> allow lockdep to catch any real locking context issues related
+> to the write callback usage.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-I had already a submitted a fix for this hours ago:
+Makes sense:
 
-https://lore.kernel.org/linux-btrfs/7aa71067c2946ea3a7165f26899324e0df7d772=
-e.1722588255.git.fdmanana@suse.com/
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Thanks.
-
-> ---
->  fs/btrfs/file.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index 9f10a9f23fcc..9914419f3b7d 100644
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@ -1868,7 +1868,10 @@ int btrfs_sync_file(struct file *file, loff_t star=
-t, loff_t end, int datasync)
->
->  out_release_extents:
->         btrfs_release_log_ctx_extents(&ctx);
-> -       btrfs_inode_unlock(inode, BTRFS_ILOCK_MMAP);
-> +       if (skip_ilock)
-> +               up_write(&inode->i_mmap_lock);
-> +       else
-> +               btrfs_inode_unlock(inode, BTRFS_ILOCK_MMAP);
->         goto out;
->  }
->
-> --
-> 2.43.0
->
->
+Best Regards,
+Petr
 
