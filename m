@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-272695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A370C946008
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:15:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31AA946015
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FBC9284300
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 944DAB23639
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DC22101B6;
-	Fri,  2 Aug 2024 15:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F00C15C14F;
+	Fri,  2 Aug 2024 15:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="wousDlC4"
-Received: from pv50p00im-tydg10021701.me.com (pv50p00im-tydg10021701.me.com [17.58.6.54])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LMkmsVlg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E111E505
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551A015C12D
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611738; cv=none; b=jiNzqTi3VF6zVoKE3xrs3IS61VBRzmRJmNkwzrNCFEvJ0e09qbuuNXBjmmxUUFFJ+/HYW2KQ+eKX2QtN6D9fe9+cXxb5StLdQua2dus0/oyKRTpN9IHSlM3/shuVCx9c77CKH6NMrZhuPTLcsoqpzw7iELVGo7Sn/NWrRt3wL0E=
+	t=1722611780; cv=none; b=vA6YEJZznLBGW/K8jOhkSt1X5knCFn0vY1SZTqdKkNer442bwraBm77UEfBcdaNqWrw5MY1HKTM21AQt9OyhXWqfKRP9QYs8ks8/Qn8r2G7LoltzXBVrDsDG+Irbjp7RLePFBpw3hfqGZo2T1po3VNH71EBn+9Au2SkvgR6gjlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611738; c=relaxed/simple;
-	bh=iDqYMyds3l/rw+YZ3Y8gUb2pc9zLCcVm25sVWrFQTcE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NEjfIrWBwqBmsPDwBRAzf54/QXPPRFdkq8HUAeFlUEDIyzRpjsBJ65hykU+H5D7T9jMMFHidIlN4U23e3nwbQw9Bqp7LoyQtK8r9fF+NZH7gBRTYinUocAeOTdEua/T4DIRAkwuam1LRQBmnByMaLiuiQUXLCw7Ez6Ya1tLksrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=wousDlC4; arc=none smtp.client-ip=17.58.6.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1722611735;
-	bh=LW7O3t6eR4bD/ctY46Os0i6msApACQ6Vz8uHe+UsPKQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=wousDlC4nudHWqmWiaDWuDs2ink9/GGmbMI+BFCRpNnbylXgO72viPiz2msVLcAB4
-	 Q81xJi/vAKbY4wdNb30zY7m9UgXHBVVwGD0vIezIj+HDQBN0rteQY8ejezNrhrWzqq
-	 jfRJP+iSFHqB6Drs6e9SbmduK0mBPhSEBitmrP+Ce816j6TGFyYdTCuVllnplVo/nW
-	 TnHGMfI1/MrVpss1765a3Zst4iBAItVN7HzrU7LlF117h5ZUavzUqbGeK1gvEsz6/2
-	 Pb+JJ6g7RujmPhmORabFnZf3wCBH/lTaPtdiXscXunKr3wFmBZGlVCbPakmDoPdJTz
-	 mzqUZwovAnHNA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-tydg10021701.me.com (Postfix) with ESMTPSA id 1E51A3A118D;
-	Fri,  2 Aug 2024 15:15:30 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Fri, 02 Aug 2024 23:15:15 +0800
-Subject: [PATCH] linux/container_of.h: Remove redundant type cast in
- container_of_const()
+	s=arc-20240116; t=1722611780; c=relaxed/simple;
+	bh=iuimfJknKx17ZsRwE8HxkPVR9wtDKQz5UqYPwUcW5+E=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=tJfQkxKGjnoCGFBN4YX7XiF/WcQZ3iMwSjdy8Pzyd5dBCfO8RusCeIjxbc5ui4HVCVvfz0mhNeF3by+DAUrhRn1SWODzALJF8c82/HKNyEVC3df/t1NhV7aORoqKR/Hwx3hE6tqTChWbE+OFgvJ0ZSJp3GHC/j5fsDLKEl6gZyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LMkmsVlg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722611778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dB8ZjsQi0DqhQ19QW4eHSso4LuqSpVC05OgWx9LUJeU=;
+	b=LMkmsVlgECYUnyQWAoh0NfRlLWxCLR34eiIbCLj5sK6Cpd3DA5XtOqDwhmU859inSUt8E1
+	k+XRdD7sAfZ9yk8beQFLbZVM2gFDA0cnZjdhGjBbrN7qFaPVmj2cw+AuTwhhYjgmz+2Pb8
+	/YP6ubC5kIqNaCBiDhDMe0OmbDYWFqc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-sELmaxqFNACf-wJmQ0HHjw-1; Fri,
+ 02 Aug 2024 11:16:16 -0400
+X-MC-Unique: sELmaxqFNACf-wJmQ0HHjw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6DDED195421F;
+	Fri,  2 Aug 2024 15:16:14 +0000 (UTC)
+Received: from intellaptop.redhat.com (unknown [10.47.238.37])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EE2481955E80;
+	Fri,  2 Aug 2024 15:16:09 +0000 (UTC)
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>,
+	linux-kernel@vger.kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>
+Subject: [PATCH v2 0/2] Relax canonical checks on some arch msrs
+Date: Fri,  2 Aug 2024 18:16:06 +0300
+Message-Id: <20240802151608.72896-1-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240802-container_of_const_fix-v1-1-90e7a5b624f9@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAL4rGYC/x3MQQqAIBCF4avErBNMAq2rRIjpWLPR0IhAuntDy
- ++H9xpULIQV5q5BwZsq5cQY+g784dKOggIblFSjNFIJn9PlKGGxOVpGvWykRxiNPmx62Nwkgcd
- nQc7/8bK+7weqm2TYaAAAAA==
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Zijun Hu <zijun_hu@icloud.com>, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: LdTH7tCN29nB1zynYv3mgRwb3HP7Qj4W
-X-Proofpoint-ORIG-GUID: LdTH7tCN29nB1zynYv3mgRwb3HP7Qj4W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-02_11,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 adultscore=0
- clxscore=1011 bulkscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408020105
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
-
-Remove redundant (type *) cast for default branch in container_of_const()
-since the cast has been done by container_of().
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- include/linux/container_of.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/container_of.h b/include/linux/container_of.h
-index 713890c867be..c36435e7c7f2 100644
---- a/include/linux/container_of.h
-+++ b/include/linux/container_of.h
-@@ -32,7 +32,7 @@
- #define container_of_const(ptr, type, member)				\
- 	_Generic(ptr,							\
- 		const typeof(*(ptr)) *: ((const type *)container_of(ptr, type, member)),\
--		default: ((type *)container_of(ptr, type, member))	\
-+		default: container_of(ptr, type, member)	\
- 	)
- 
- #endif	/* _LINUX_CONTAINER_OF_H */
-
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-change-id: 20240802-container_of_const_fix-87ecdb71ba90
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+Recently we came up upon a failure where likely the guest writes=0D
+0xff4547ceb1600000 to MSR_KERNEL_GS_BASE and later on, qemu=0D
+sets this value via KVM_PUT_MSRS, and is rejected by the=0D
+kernel, likely due to not being canonical in 4 level paging.=0D
+=0D
+I did some reverse engineering and to my surprise I found out=0D
+that both Intel and AMD have very loose checks in regard to=0D
+non canonical addresses written to this and several other msrs,=0D
+when the CPU supports 5 level paging.=0D
+=0D
+Patch #1 addresses this, making KVM tolerate this.=0D
+=0D
+Patch #2 is just a fix for a semi theoretical bug, found=0D
+while trying to debug the issue.=0D
+=0D
+V2: addressed a very good feedback from Chao Gao. Thanks!=0D
+=0D
+Best regards,=0D
+	Maxim Levitsky=0D
+=0D
+Maxim Levitsky (2):=0D
+  KVM: x86: relax canonical check for some x86 architectural msrs=0D
+  KVM: SVM: fix emulation of msr reads/writes of MSR_FS_BASE and=0D
+    MSR_GS_BASE=0D
+=0D
+ arch/x86/kvm/svm/svm.c | 12 ++++++++++++=0D
+ arch/x86/kvm/x86.c     | 11 ++++++++++-=0D
+ 2 files changed, 22 insertions(+), 1 deletion(-)=0D
+=0D
+-- =0D
+2.40.1=0D
+=0D
 
 
