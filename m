@@ -1,95 +1,149 @@
-Return-Path: <linux-kernel+bounces-272006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6F69455D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:03:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B299455D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE78DB22148
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:03:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57C5C1C226B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE21DDC5;
-	Fri,  2 Aug 2024 01:02:59 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B922D2EE;
+	Fri,  2 Aug 2024 01:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="C6u3TiEs"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5CD8F70
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF6CA2D
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722560579; cv=none; b=C/zR0V9K16BAPjjfPIuz7/ALXwo1i9VNoud6D9x7GdauUIk5TxVFvvoLsgcWfoOnSbO8GWjhpsdC75BVwctSXZFsxcd9+jOhYbdiFx9WQnPMik/L0zMsGoBmoSTUttkH29sSoTgtdXbVHc7Mq7u4nXh4SXoeBXhY+/nhCJ03dlg=
+	t=1722560680; cv=none; b=tXzbGE9/UDjGgDA8k1WN78lhERzoeKAqI2zb2gZPjabpmekxpNWwp5o8WyJO4nQpYhJkCKyrlDLFpv2GPDho+Y1oNm7Tk/oy0dV/XS33iuGn8VDd9SVe2AWtW2SX9VI4TsiMztRDwQWoKBSgBDVKC4v5unEj3Ba8JU5QNAeomMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722560579; c=relaxed/simple;
-	bh=nJT4/AO/Riu8PGzuBfVJef3YG629nPMpC47LNqj98bw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Q6YOAwg0hP/q166tCoh3rfw37aKkILqvuTJsOVcGzM+yXO9qvtKhgLZ54kyC6DAmhZXnx7KqSHzpm+NqZ97qeeFufyZyo6TMdSp0qCtSVosmuem/b6EcWshfhvhyOeugmUGXDGs/7AmfmA+iIjzNLmtPCzvSEluVsngOxxbLlHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f897b8b56so318312139f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 18:02:57 -0700 (PDT)
+	s=arc-20240116; t=1722560680; c=relaxed/simple;
+	bh=qhM7Rkoo/wjgyet+sVe9Ojyo+y5fgscuRJSoHTiEu8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QdUCHBHAQs8Yy9a/tXUGjXNr/65Cq2+NjtxHGDcJU1RJfDA3NLtLbAjQVUnPFucIZ8cYpKx1NNLR0L/7ioIeFXxIsDzxczCSXQ3/thu9+ubFijGR87IrLQIisUEuN8a1MnrHB1E6o2XdI9HgFXoiMmSkOz+9uNjsjv+5oytIqPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=C6u3TiEs; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B43B83FA52
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1722560675;
+	bh=+ZPWBr+Q3IbRsWrbuL1qMThGGqMu0789Q6IwfLEtpY0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=C6u3TiEs6lDSDdxmybzHZQlJCd7J/XJLc5um/lcb9lSZzyxHuczFKjZxF23FpHoXW
+	 AA/rpusDAbdk9zT0LCvsDkOMkeP0zL4WppE0U+fAB4MREi3ONKGeAHOQ+r6mfBYPzz
+	 yOz+QFxfP+Tez5rD7ldyyUQhj6vPPxIz/t2vEvI9w2vzEQdiql99j76RMxwPxo/+Yd
+	 BpmKYmL/cB8pf1M0+HXN9XWSIarWDsY1JY3MQqtF+CV6LDKhp1maFRXy2gD1iktN6F
+	 Ne6ukZCnYyLaFtE/aHZzQkmyVKRIAsY/BVdsfPdRqIRzNG+DEDs/HfsK3Vgm9qy2SB
+	 EQALf93QCPAMA==
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2cb4bcdd996so2874318a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 18:04:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722560577; x=1723165377;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=owsp9VXX7ARDyJqaO4lMYNokANfxMYwQvhR96uETJRc=;
-        b=Xb/E/d24AA7IP9ynUTu5EgPBdfgo1Qxp90sb4T0r0BoBD7Ln/IntpLw5OR53XQOQrk
-         xcY3JiJ0tTtewEioj/0C6yV5rllMe1XDXBz3DfhiFb5iRnH6kZwNtYrln+x5Q+7ARd0D
-         BV0Y6R5AAcsfpL4Fi4sdFdDAJoosu2NsvLQxAxj6RLvsNU3Yl9b4vvq4W8/rB5kT8ea0
-         ricOv/jXli1r+Utu79VP2t8Kh7oJEyhrN9VisHouSrakyNx7KllhhwrKhNeXFllwsKGR
-         quUA3K0RMSzpOYw8p0JUlFQDpml+Z7bWxfre2CXmqBBaCtLSYd4GdRbX+ucJymh5t7yk
-         uViw==
-X-Gm-Message-State: AOJu0YzJ8h+djTMHTaOxfeXZHKMgvOZYm7s7UbXcoAaz38cEWNpJDvkz
-	9IOWaAHcGzBFXzapb1ClpGyUzsYahMOkdgTA1KwyfRDE6u+JEHNQQL5pxEbOVVKqHDxLqWIs7G2
-	GeWJdYV2s/gi4tFWqgD8b0Acdv+mbGFec3XTz6yHhjokAeEGv4dTBWDM=
-X-Google-Smtp-Source: AGHT+IEpoBC7mm0wc/gJr59FgSAdUKLzpKCEZLGH6hk4km5NGOpD2CMV7pmtMbMwt8Cn+J3euXey2kQT2ESWgrLm+LKT7uYN3Bfy
+        d=1e100.net; s=20230601; t=1722560674; x=1723165474;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+ZPWBr+Q3IbRsWrbuL1qMThGGqMu0789Q6IwfLEtpY0=;
+        b=kXQA8KgEIzUJN4t4xbALyS65XJn9z1Jm73O9tS6d6j9HOlTYCNh89xnj7jr6jJ4YZg
+         HIddPq2CdcnAV/pm5lObWQTl5qjTO6QxZIPINIz7ihhdu4EKHz7JRJMs+Z/NKRQQi1oo
+         3z4HmCORTcNCm/jWTe/UzinGwgnNE1Z0uJY8Kbh8oBIUQMIfqwtJW+UTGKfDLne+l1T2
+         1uVs4ppYGNGkKT2uDMgw4ZnQjk/gmTGGo3nNScSW7M8f6V9dy85e6YEXpZwlKA+6Q3Pf
+         5/M3TrkbBQNCHWUexlck2nYTzKoGRbUd6fXsd+XuCXBiwwApQ10CHAH8iBYrqLoaPCPg
+         6Eiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOohLREznBz6/jBbq7ekk++AnVYaQhBnTuabLrUvADZAs/Ji6IFzYyqIackjQJGnTiSchXv+CtJvwL6IFqFZ9iZ1/wE8o1ViN5DRHJ
+X-Gm-Message-State: AOJu0YxGuSHAvgDAASN9HLSyabQ44ZzXbMkOBGot+lX2QEySacuxFhvk
+	CkJh9+bw7Ndm8Xi66HA6K25IpjQCPS/2h2dHGSNJ9O/hlaf0RqKIl8W8kuR57f5qjU+4E2XYTe8
+	fSZ3S5QfKZacW7AIjCFT/y/o5NlTFTicEYC04ghO9Dtm4MtP9z9drlWUszqS+FUePwYzvXbWK8Y
+	BVe3j9avCw/pHOCKSjHqPRo8l3aWmWP5hbIb0yu2fd16akTZ3VDxbg
+X-Received: by 2002:a17:90a:bb81:b0:2cd:40cf:5ebd with SMTP id 98e67ed59e1d1-2cffa0ae819mr2788366a91.5.1722560674118;
+        Thu, 01 Aug 2024 18:04:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHi1XbnIuGlbutYrJYDsV2mpUlSCSSjGOSbhqAhT5XfgwjkLY9Xoo5Lh/RtULrVhIg4zRHNi+WyHSEwurJ43oQ=
+X-Received: by 2002:a17:90a:bb81:b0:2cd:40cf:5ebd with SMTP id
+ 98e67ed59e1d1-2cffa0ae819mr2788327a91.5.1722560673667; Thu, 01 Aug 2024
+ 18:04:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2dc8:b0:805:e4ad:66d6 with SMTP id
- ca18e2360f4ac-81fd48345a1mr7481639f.0.1722560576960; Thu, 01 Aug 2024
- 18:02:56 -0700 (PDT)
-Date: Thu, 01 Aug 2024 18:02:56 -0700
-In-Reply-To: <000000000000a90e8c061e86a76b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004b4ac4061ea8e39c@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
-From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+References: <20240530085227.91168-2-kai.heng.feng@canonical.com> <20240802000414.GA127813@bhelgaas>
+In-Reply-To: <20240802000414.GA127813@bhelgaas>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Date: Fri, 2 Aug 2024 09:04:21 +0800
+Message-ID: <CAAd53p66NNOaD=KdvW911gKSf+QOSCik9c-dJmn6zQqXaoFQXw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PCI: vmd: Let OS control ASPM for devices under VMD domain
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nirmal.patel@linux.intel.com, 
+	jonathan.derrick@linux.dev, ilpo.jarvinen@linux.intel.com, 
+	david.e.box@linux.intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Fri, Aug 2, 2024 at 8:04=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org> w=
+rote:
+>
+> On Thu, May 30, 2024 at 04:52:27PM +0800, Kai-Heng Feng wrote:
+> > Intel SoC cannot reach lower power states when mapped VMD PCIe bridges
+> > and NVMe devices don't have ASPM configured.
+> >
+> > So set aspm_os_control attribute to let OS really enable ASPM for those
+> > devices.
+> >
+> > Fixes: f492edb40b54 ("PCI: vmd: Add quirk to configure PCIe ASPM and LT=
+R")
+>
+> I assume f492edb40b54 was tested and worked at the time.  Is the
+> implication that newer Intel SoCs have added more requirements for
+> getting to low power states, since __pci_enable_link_state() would
+> have warned and done nothing even then?
+>
+> Or maybe this is a new system that sets ACPI_FADT_NO_ASPM, and
+> f492edb40b54 was tested on systems that did *not* set
+> ACPI_FADT_NO_ASPM?
 
-***
+I believe it's the case here. Vendors may or may not set
+ACPI_FADT_NO_ASPM, so f492edb40b54 works on some systems but not
+others.
 
-Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
-Author: lizhi.xu@windriver.com
+Kai-Heng
 
-why folio not inited?
-
-#syz test: upstream 2f8c4f506285
-
-diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
-index 16bd693d0b3a..3c667939f1d7 100644
---- a/fs/squashfs/inode.c
-+++ b/fs/squashfs/inode.c
-@@ -394,6 +394,11 @@ int squashfs_read_inode(struct inode *inode, long long ino)
- 		return -EINVAL;
- 	}
- 
-+	if ((int)inode->i_size < 0) {
-+		ERROR("Wrong i_size %d!\n", inode->i_size);
-+		return -EINVAL;
-+	}
-+
- 	if (xattr_id != SQUASHFS_INVALID_XATTR && msblk->xattr_id_table) {
- 		err = squashfs_xattr_lookup(sb, xattr_id,
- 					&squashfs_i(inode)->xattr_count,
+>
+> > Link: https://lore.kernel.org/linux-pm/218aa81f-9c6-5929-578d-8dc15f83d=
+d48@panix.com/
+> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > ---
+> >  drivers/pci/controller/vmd.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.=
+c
+> > index 87b7856f375a..1dbc525c473f 100644
+> > --- a/drivers/pci/controller/vmd.c
+> > +++ b/drivers/pci/controller/vmd.c
+> > @@ -751,6 +751,8 @@ static int vmd_pm_enable_quirk(struct pci_dev *pdev=
+, void *userdata)
+> >       if (!(features & VMD_FEAT_BIOS_PM_QUIRK))
+> >               return 0;
+> >
+> > +     pdev->aspm_os_control =3D 1;
+> > +
+> >       pci_enable_link_state_locked(pdev, PCIE_LINK_STATE_ALL);
+> >
+> >       pos =3D pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_LTR);
+> > --
+> > 2.43.0
+> >
 
