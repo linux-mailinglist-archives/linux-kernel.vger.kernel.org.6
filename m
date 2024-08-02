@@ -1,104 +1,157 @@
-Return-Path: <linux-kernel+bounces-272621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A521E945F04
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:00:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00E2945F05
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C4412835A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:00:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F14FC1C21ACD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7B31E3CB8;
-	Fri,  2 Aug 2024 14:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1631CD02;
+	Fri,  2 Aug 2024 14:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IG/BvCXv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Gy3W7/p0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1265258;
-	Fri,  2 Aug 2024 14:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3B0E57D;
+	Fri,  2 Aug 2024 14:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722607219; cv=none; b=hC2H6zK2aSdNnZOoAWKi9ePoxWXIzg9OHmqfqh/kxxH3ySEd46gg/vzp1Inndd5eVqVvFPCOdmuKYXScjxK6aiV104ZkuH+f2WdA868YWNHZyW/KjO2ZE4qcpMedszl3R7rCSDLWM2xpY7xGoaLpv7SgW7/CVBCKjIIumeYeQEY=
+	t=1722607281; cv=none; b=hVCGQQ05ONVaGtSSGf/vK4+4p2FNPESTRgoPbiP0PC8ekjUNbC6i+jl5QIA906/LVPpv2YQ1rG2OxPViHPCPdPIpC0/Gkz5lUXXMpmUZKWgzeRr2EtmtTVl/upUu/UK5/n7BivCecdAkBa7qND+XgtscPCUNqIMWRZFiaHB6j1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722607219; c=relaxed/simple;
-	bh=mUHev5+wVFteh2AXlxax3nVXkSA/YXwRUNjtnJNhS/0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=XRjQQYPm6tWr3OvgFYHGGtl/mXMLuqINzTMLRWJN+vOHBBCT7gdAH8V4EG+EwD6cn5uExeAMbMG6jwgmbwoVHP0EBa5y36MBUEnFU1tvOHlAW30ceyFdJN/yJIjWpZNA3X7gXMIAvGFKACUEBxrENxlICM5rTHcJhlVHDpBqFpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IG/BvCXv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556C3C32782;
-	Fri,  2 Aug 2024 14:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722607219;
-	bh=mUHev5+wVFteh2AXlxax3nVXkSA/YXwRUNjtnJNhS/0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IG/BvCXvY0pdD/1jBt6YyxN2brYe0X1adt7Np3EwFJ8nm46pkhcnBRggFGuyOZQhv
-	 C8MAMSXe7ax1l9oVlSsCJQeOu5o5uc1dt3UWxhRPnSiCWwgFh7hqLUktgkNkg99o20
-	 T5/uHc6VbTNQ1zLLp2y5bPokkNUdkNBpYYTlwsdTBx6moQKAj4h5pbmtPTpHD+1tzJ
-	 J280i2hmY/UiyY3yYYA/3Z+VyPWqxaCfMtPZAM76vTz9xDea4k4ETaj8+m+sUWdajO
-	 9wMz+36Rs98K64/mUDIkWtYNtI41hNg7StHK5+dSmMGqYG6FQyHJ3LrSiqgKTccy96
-	 jUGwKzcGODu+Q==
-Date: Fri, 2 Aug 2024 23:00:12 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
- <dave.hansen@linux.intel.com>, x86@kernel.org, "Jiri Olsa"
- <jolsa@kernel.org>, "Linus Torvalds" <torvalds@linux-foundation.org>,
- "H. Peter Anvin" <hpa@zytor.com>, "Palmer Dabbelt" <palmer@dabbelt.com>,
- guoren <guoren@kernel.org>, "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Kees Cook" <kees@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "H.J. Lu" <hjl.tools@gmail.com>, "Sohil Mehta" <sohil.mehta@intel.com>,
- "Oleg Nesterov" <oleg@redhat.com>, "Andrii Nakryiko" <andrii@kernel.org>,
- linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-riscv@lists.infradead.org
-Subject: Re: [RFC] uretprobe: change syscall number, again
-Message-Id: <20240802230012.938e42a56ff2d0f09ca8100b@kernel.org>
-In-Reply-To: <6662ea26-9850-48fd-a67c-01daf412dc2e@app.fastmail.com>
-References: <20240730154500.3155437-1-arnd@kernel.org>
-	<20240802181437.29b439e26608561f1289892a@kernel.org>
-	<6662ea26-9850-48fd-a67c-01daf412dc2e@app.fastmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722607281; c=relaxed/simple;
+	bh=XAzq90tXsW4MHAcyucXeezYyJcSOPgMi4/uABnRVNhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=RXoleAZAnyv+g1ikZHbuj6t4pW5ojw8R94YDJSiaLqI6NXNus/t0dUY2LmAmTU0ASEY996d5QWhTthK3BH2y19xKGVTXGb8NRYXc+6B/ja/u+ZICyVKojGhw8GpH4X/Q6CRdX02A8+gjC/YI6ZUI746H0nEkyylTS3QuV5dtL68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Gy3W7/p0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4729SdrI013249;
+	Fri, 2 Aug 2024 14:01:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
+	 bh=pc5iN6sru0Yprqp0el0Dzoh0J8MBl+0Jx7OjFclTb+Y=; b=Gy3W7/p00WX8
+	pey1BLfa7R5KQM/aaLvQ3eIys/HC6X3xE5SAg6MWnUfkHKSJkz5nS9jXgzkIzF7z
+	23rEBIG0VDbaAcG/ua7mHtMzVWaFb8obmAeGV4b+njM9RsiAli8CfwiCVmWpxJTv
+	ELBhndBk0PSJQWQ8MyVHcN9ALYPmrHjamJyrs901ynKU3VN1BZz0nqodltc/lnMj
+	oD+8BuWSm1nDZlfLXItrRdhX1iiyi3q5NhFNvHetHL6Snmnso2l0X+YwzBk5UdC5
+	FjIBpdd+2svrTmeFXQdYoTWZGfx0JJmbokpdAyK+zXJ9l9VNaiCfgruJjGpd/+D8
+	VPQ70J+PLQ==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rvuw0k3s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 14:01:14 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 472BtAXh009211;
+	Fri, 2 Aug 2024 14:01:13 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40ndx3f6wh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 14:01:13 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 472E17Qe32309584
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 Aug 2024 14:01:09 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C02742004D;
+	Fri,  2 Aug 2024 14:01:07 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 61C4B20040;
+	Fri,  2 Aug 2024 14:01:07 +0000 (GMT)
+Received: from localhost (unknown [9.171.4.191])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  2 Aug 2024 14:01:07 +0000 (GMT)
+Date: Fri, 2 Aug 2024 16:01:05 +0200
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [GIT PULL] s390 updates for 6.11-rc2
+Message-ID: <your-ad-here.call-01722607265-ext-9466@work.hours>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 0n4VIpJuaNnCOInP-JgyFVaqMmrUojY9
+X-Proofpoint-ORIG-GUID: 0n4VIpJuaNnCOInP-JgyFVaqMmrUojY9
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_09,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0 mlxscore=0
+ spamscore=0 priorityscore=1501 impostorscore=0 mlxlogscore=555
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408020095
 
-On Fri, 02 Aug 2024 15:18:52 +0200
-"Arnd Bergmann" <arnd@arndb.de> wrote:
+Hello Linus,
 
-> On Fri, Aug 2, 2024, at 11:14, Masami Hiramatsu wrote:
-> > On Tue, 30 Jul 2024 17:43:36 +0200 Arnd Bergmann <arnd@kernel.org> wrote:
-> >> ---
-> >> I think we should fix this as soon as possible. Please let me know if
-> >> you agree on this approach, or prefer one of the alternatives.
-> >
-> > OK, I think it is good. But you missed to fix a selftest code which
-> > also needs to be updated.
-> >
-> > Could you revert commit 3e301b431b91 ("selftests/bpf: Change uretprobe
-> >  syscall number in uprobe_syscall test") too?
-> 
-> I folded the change that Jiri suggested now.
+please pull s390 changes for 6.11-rc2.
 
-Thanks Jiri and Arnd for fix that!
+Thank you,
+Vasily
 
-> 
-> > Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Thanks,
-> 
->      Arnd
-> 
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.11-3
+
+for you to fetch changes up to 33bd8d153c337ba9b30a2e5994437ca703ab4ed8:
+
+  s390: Keep inittext section writable (2024-07-31 16:30:20 +0200)
+
+----------------------------------------------------------------
+s390 updates for 6.11-rc2
+
+- Remove unused empty CPU alternatives header file
+
+- Fix recently and erroneously removed exception handling when loading
+  an invalid floating point register
+
+- Couple of ptdump fixes to reflect the recent changes due to the
+  uncoupling of physical vs virtual kernel address spaces
+
+- Couple of changes to avoid the unnecessary splitting of large pages
+  in kernel mappings
+
+- Add the missing MODULE_DESCRIPTION for the CIO modules
+
+----------------------------------------------------------------
+Heiko Carstens (8):
+      s390/fpu: Re-add exception handling in load_fpu_state()
+      s390/alternatives: Remove unused empty header file
+      s390/mm/ptdump: Fix handling of identity mapping area
+      s390/mm/ptdump: Add support for relocated lowcore mapping
+      s390/mm/ptdump: Improve sorting of markers
+      s390/mm: Get rid of RELOC_HIDE()
+      s390/vmlinux.lds.S: Move ro_after_init section behind rodata section
+      s390: Keep inittext section writable
+
+Jeff Johnson (1):
+      s390/cio: Add missing MODULE_DESCRIPTION() macros
+
+ arch/s390/kernel/alternative.h  |   0
+ arch/s390/kernel/fpu.c          |   2 +-
+ arch/s390/kernel/vmlinux.lds.S  |  17 ++---
+ arch/s390/mm/dump_pagetables.c  | 140 +++++++++++++++++++++++-----------------
+ arch/s390/mm/init.c             |   9 +--
+ arch/s390/mm/vmem.c             |  13 +---
+ drivers/s390/cio/ccwgroup.c     |   1 +
+ drivers/s390/cio/vfio_ccw_drv.c |   1 +
+ 8 files changed, 95 insertions(+), 88 deletions(-)
+ delete mode 100644 arch/s390/kernel/alternative.h
 
