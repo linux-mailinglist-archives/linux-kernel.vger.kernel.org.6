@@ -1,200 +1,119 @@
-Return-Path: <linux-kernel+bounces-272984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6F694630B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DD49462E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05010283A20
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E167282C8F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AF41A34AC;
-	Fri,  2 Aug 2024 18:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E4415C12C;
+	Fri,  2 Aug 2024 18:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="f/V6Vghw"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="r4Nfx163"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FBC15C15D;
-	Fri,  2 Aug 2024 18:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDA11AE02D;
+	Fri,  2 Aug 2024 18:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722622926; cv=none; b=O25HowTx88aJOZa2KHPEmQdQSBj1JWrM0OnaamvSkILv2xttD0B2iAuAhAgcyEhGMiL9pf7+RgD68OFtiQU3ysZSz72snijwakb36oAWNcaFSV8VXgub7Is/FMDw2g2wRY9lbPAgVElEeGlIqR3fBLjdx5zog7bFwofiNCi8riA=
+	t=1722622754; cv=none; b=P8IATEQpUYl7hh0Cct2Cptw4cwNMMtfF0eCpcpfu/J6Y1warTzaQqBfowBlR8eZ7CSN/pcggr3ZCdmmKBqiqFTmGPD39Ic2eYKqp2mMnnDRqHne9328HDQQr9i2akcoQKjkMhSaX3LshYgHlmaIi3Q6UH25oHCr9jDU6JOTtV6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722622926; c=relaxed/simple;
-	bh=H36+ANriL1BHT8EJ8fXzIZhPt9HqxP4EVTcec1v8TJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PfeAAVQ0XJCivAouj4DBe1MBMVJuL11SL+a3LoqYD3NYyI7ZAKsyqV0BL6y5rinlD3AupbnlC8xtqz4hlC7G0aYyRLFfX0SSEH9l6U3D4qBM0kgivw0QZbnkya4e9EAWZZqUxGxj1MRY0FNC08DPzlaLHh5ZZqJ4HNMu4Rlksio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=f/V6Vghw; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id e4062f9b974f24c0; Fri, 2 Aug 2024 20:22:02 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id C7E0573B540;
-	Fri,  2 Aug 2024 20:22:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1722622922;
-	bh=H36+ANriL1BHT8EJ8fXzIZhPt9HqxP4EVTcec1v8TJg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=f/V6VghwphxhKHr0UGnkvLvShK9vZiAsdZzfqH2ErhkDX1fs02sGnFviWpQCXShPG
-	 lTE5R+oC7INTax+Gti4gTEkR33xfq1NNRryI1hQKdONyzaR3f3ZBV411vimxzScSdd
-	 6n89PFxfSLQGhQ9xooI06OGexCzNkAdjuPoUQB1j84tJzmnaS1KmYPRI9Kw+AM4/qH
-	 T2AjtBl1YWi6HDY6rm9QlwXTgl+MoprgM4BqDOMpSuwANyjkKSJjqka5XBfI55FFoY
-	 lLY0zlTMSGm/OvUYus+5RHMD0DIhu+Ze8WLnnBZc2taCC7DZ31UodheOG0Chcf6jk2
-	 NkG54X9VYFJ7Q==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: x86 Maintainers <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-Subject: [PATCH v1 1/3] x86/sched: Introduce arch_rebuild_sched_domains()
-Date: Fri, 02 Aug 2024 20:16:37 +0200
-Message-ID: <2189204.irdbgypaU6@rjwysocki.net>
-In-Reply-To: <4908113.GXAFRqVoOG@rjwysocki.net>
-References: <4908113.GXAFRqVoOG@rjwysocki.net>
+	s=arc-20240116; t=1722622754; c=relaxed/simple;
+	bh=zON6RjPTf5MmxXUFZfGeVjEEpkp2eWNiZ+51r8kW1qU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUGjXmV4UHhuWllc1CC3v3DtpgpUzZdqFKyyB4nRDGy/kBxrfZjnW91/u7JC5J+k+RLb5eX/YLx8pekL0DOqjkXfna7mj70g6TiHOnfobdGpxjqFWHdc5gqjE5c1GdjKOMs+L62MKMqVhhJkqLJlW2fjdEUoMcD2gGL1y74tLJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=r4Nfx163; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B9142496;
+	Fri,  2 Aug 2024 20:18:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722622694;
+	bh=zON6RjPTf5MmxXUFZfGeVjEEpkp2eWNiZ+51r8kW1qU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r4Nfx163YkaYMr/xLWiOvqsD+iE0uj/YrfS2NTL5ebnKMOkghmTQst3xVmpGhbPqK
+	 roZHoSE1wdrpl8WdxdGCM4DOU04S2AKyUcWmADG52fPDHNkSEhcdXaPYCpGNMiEHRz
+	 briRU5UGeuKkwFyIkzvnzZGXY+3LxY8ihUYQEEB4=
+Date: Fri, 2 Aug 2024 21:18:41 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>
+Cc: dan.scally@ideasonboard.com, gregkh@linuxfoundation.org,
+	skhan@linuxfoundation.org, dan.carpenter@linaro.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>
+Subject: Re: [PATCH] usb: gadget: uvc: Fix ERR_PTR dereference in uvc_v4l2.c
+Message-ID: <20240802181841.GA21917@pendragon.ideasonboard.com>
+References: <20240802180247.519273-1-abhishektamboli9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgdduvdefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhig
- sehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnhhnsegrrhhmrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240802180247.519273-1-abhishektamboli9@gmail.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Abhishek,
 
-Add arch_rebuild_sched_domains() for rebuilding scheduling domains and
-updating topology on x86 and make the ITMT code use it.
+(CC'ing Michael Grzeschik)
 
-First of all, this reduces code duplication somewhat and eliminates
-a need to use an extern variable, but it will also lay the ground for
-subsequent work related to CPU capacity scaling.
+Thank you for the patch.
 
-No intentional functional impact.
+On Fri, Aug 02, 2024 at 11:32:47PM +0530, Abhishek Tamboli wrote:
+> Fix potential dereferencing of ERR_PTR() in find_format_by_pix()
+> and uvc_v4l2_enum_format().
+> 
+> Fix the following smatch errors:
+> 
+> drivers/usb/gadget/function/uvc_v4l2.c:124 find_format_by_pix()
+> error: 'fmtdesc' dereferencing possible ERR_PTR()
+> drivers/usb/gadget/function/uvc_v4l2.c:392 uvc_v4l2_enum_format()
+> error: 'fmtdesc' dereferencing possible ERR_PTR()
+> 
+> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> ---
+>  drivers/usb/gadget/function/uvc_v4l2.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
+> index a024aecb76dc..9dd602a742c4 100644
+> --- a/drivers/usb/gadget/function/uvc_v4l2.c
+> +++ b/drivers/usb/gadget/function/uvc_v4l2.c
+> @@ -121,6 +121,9 @@ static struct uvcg_format *find_format_by_pix(struct uvc_device *uvc,
+>  	list_for_each_entry(format, &uvc->header->formats, entry) {
+>  		const struct uvc_format_desc *fmtdesc = to_uvc_format(format->fmt);
+> 
+> +		if (IS_ERR(fmtdesc))
+> +			continue;
+> +
+>  		if (fmtdesc->fcc == pixelformat) {
+>  			uformat = format->fmt;
+>  			break;
+> @@ -389,6 +392,9 @@ uvc_v4l2_enum_format(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+>  		return -EINVAL;
+> 
+>  	fmtdesc = to_uvc_format(uformat);
+> +	if (IS_ERR(fmtdesc))
+> +		return -EINVAL;
+> +
+>  	f->pixelformat = fmtdesc->fcc;
+> 
+>  	return 0;
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- arch/x86/include/asm/topology.h |    6 ++++--
- arch/x86/kernel/itmt.c          |   12 ++++--------
- arch/x86/kernel/smpboot.c       |   10 +++++++++-
- 3 files changed, 17 insertions(+), 11 deletions(-)
+Michael, you authored this, I'll let you review the patch and decide if
+this is a false positive.
 
-Index: linux-pm/arch/x86/include/asm/topology.h
-===================================================================
---- linux-pm.orig/arch/x86/include/asm/topology.h
-+++ linux-pm/arch/x86/include/asm/topology.h
-@@ -235,8 +235,6 @@ struct pci_bus;
- int x86_pci_root_bus_node(int bus);
- void x86_pci_root_bus_resources(int bus, struct list_head *resources);
- 
--extern bool x86_topology_update;
--
- #ifdef CONFIG_SCHED_MC_PRIO
- #include <asm/percpu.h>
- 
-@@ -284,9 +282,13 @@ static inline long arch_scale_freq_capac
- 
- extern void arch_set_max_freq_ratio(bool turbo_disabled);
- extern void freq_invariance_set_perf_ratio(u64 ratio, bool turbo_disabled);
-+
-+void arch_rebuild_sched_domains(void);
- #else
- static inline void arch_set_max_freq_ratio(bool turbo_disabled) { }
- static inline void freq_invariance_set_perf_ratio(u64 ratio, bool turbo_disabled) { }
-+
-+static inline void arch_rebuild_sched_domains(void) { }
- #endif
- 
- extern void arch_scale_freq_tick(void);
-Index: linux-pm/arch/x86/kernel/itmt.c
-===================================================================
---- linux-pm.orig/arch/x86/kernel/itmt.c
-+++ linux-pm/arch/x86/kernel/itmt.c
-@@ -54,10 +54,8 @@ static int sched_itmt_update_handler(str
- 	old_sysctl = sysctl_sched_itmt_enabled;
- 	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- 
--	if (!ret && write && old_sysctl != sysctl_sched_itmt_enabled) {
--		x86_topology_update = true;
--		rebuild_sched_domains();
--	}
-+	if (!ret && write && old_sysctl != sysctl_sched_itmt_enabled)
-+		arch_rebuild_sched_domains();
- 
- 	mutex_unlock(&itmt_update_mutex);
- 
-@@ -114,8 +112,7 @@ int sched_set_itmt_support(void)
- 
- 	sysctl_sched_itmt_enabled = 1;
- 
--	x86_topology_update = true;
--	rebuild_sched_domains();
-+	arch_rebuild_sched_domains();
- 
- 	mutex_unlock(&itmt_update_mutex);
- 
-@@ -150,8 +147,7 @@ void sched_clear_itmt_support(void)
- 	if (sysctl_sched_itmt_enabled) {
- 		/* disable sched_itmt if we are no longer ITMT capable */
- 		sysctl_sched_itmt_enabled = 0;
--		x86_topology_update = true;
--		rebuild_sched_domains();
-+		arch_rebuild_sched_domains();
- 	}
- 
- 	mutex_unlock(&itmt_update_mutex);
-Index: linux-pm/arch/x86/kernel/smpboot.c
-===================================================================
---- linux-pm.orig/arch/x86/kernel/smpboot.c
-+++ linux-pm/arch/x86/kernel/smpboot.c
-@@ -39,6 +39,7 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/cpuset.h>
- #include <linux/init.h>
- #include <linux/smp.h>
- #include <linux/export.h>
-@@ -125,7 +126,7 @@ static DEFINE_PER_CPU_ALIGNED(struct mwa
- int __read_mostly __max_smt_threads = 1;
- 
- /* Flag to indicate if a complete sched domain rebuild is required */
--bool x86_topology_update;
-+static bool x86_topology_update;
- 
- int arch_update_cpu_topology(void)
- {
-@@ -135,6 +136,13 @@ int arch_update_cpu_topology(void)
- 	return retval;
- }
- 
-+#ifdef CONFIG_X86_64
-+void arch_rebuild_sched_domains(void) {
-+	x86_topology_update = true;
-+	rebuild_sched_domains();
-+}
-+#endif
-+
- static unsigned int smpboot_warm_reset_vector_count;
- 
- static inline void smpboot_setup_warm_reset_vector(unsigned long start_eip)
+-- 
+Regards,
 
-
-
+Laurent Pinchart
 
