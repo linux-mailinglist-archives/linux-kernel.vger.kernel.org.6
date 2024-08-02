@@ -1,87 +1,153 @@
-Return-Path: <linux-kernel+bounces-272881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4C094623E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:05:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893BB946241
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 223081C212AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:05:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB81B1C2132F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C442B1537CE;
-	Fri,  2 Aug 2024 17:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEFE1537AE;
+	Fri,  2 Aug 2024 17:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9/KQwt3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="KuCuIm7E"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0702016BE3B;
-	Fri,  2 Aug 2024 17:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4B416BE06
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722618336; cv=none; b=ebJEwexfQfoDnDkP9L6ByRQ7LHc6SrKuelRZUbVHgMR7KXVNxWtJJVzeeBFSr7nS3Vg/0OdQXR9PrW50gZWrqiYwzxu377DjnH4v++du+mUdOt0X632IQZ2y09ypIQclmcAblzxjEd4Bp/hI8Rk+YymZn0Q7w9DGYenBykHwlKA=
+	t=1722618501; cv=none; b=Ns7xcjlWd8JNqlFaKb71bOYBYvmPIFw0mX4pq2fhFzhSyaqBct0Kg5r0Ef6rQYCwuxzAKvGnBklk5J6Q/mYJnC98fDR56r8wNA0Fp4K2WHa7REQcBm4tPX0A7nwMZ1bAUlsM+voNmLmPU0FFfsyZEvySNGamz4VU1KnS34c033U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722618336; c=relaxed/simple;
-	bh=BaaOUPxE63y8U8q+BOZAPvydLCLHsJUCTvZjvrGQvZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=XpsJugMbbAgvACWbGjQFb2IAGkYWQ588jxHK5IKDCkjCGw8RmhK9oa48CvX8PAN1iKIwkL52Ru+kwAI4g0Av6KGU5gSTP3XUc+fSVjGXc0eIyNToUUBFSNui0Cupm97paFYJJiK61RYKIUe+jOzrls6ZlteQ3a//kAkdpmLelZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9/KQwt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D70BC32782;
-	Fri,  2 Aug 2024 17:05:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722618335;
-	bh=BaaOUPxE63y8U8q+BOZAPvydLCLHsJUCTvZjvrGQvZ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=T9/KQwt37sTL2WfXrSrcgjOVRW4lUtEeZDNmaFAnoyofTA+GTIWkG1/EPzdhYTjg6
-	 QXsttm4dGSvDePi8ZRwkWdBeb7Gx6EPgHtc6ug5GqVtmzryX5zeylUoVJh3Bs1LYkU
-	 zlqp39zadhTPMqtapvnTbh5TThfpoSsGZUYO3GRDgslZNUEUrUCSi0yGHL9MnMZULr
-	 8AbR62F8hUyLyqk5xqSetopJ97MNTH3Zd8OMV33bSXoyOCYCDyW4q9t8HM9GOyTxFc
-	 TXi7sjV8mwxRDxDOvgS5mPxSrEFvLzwgg8YMyOdIiaJos8cF0CIvGwRAyT3Z9mFHpm
-	 wFY6iDbtF51RA==
-Date: Fri, 2 Aug 2024 12:05:33 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
-	bhelgaas@google.com
-Subject: Re: [PATCH V3 04/10] PCI/TPH: Add pci=nostmode to force No ST Mode
-Message-ID: <20240802170533.GA154363@bhelgaas>
+	s=arc-20240116; t=1722618501; c=relaxed/simple;
+	bh=xagRC+4ijWNGhIzFIvxVvo5zwUqvGhZsUPg9xjpLj48=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ucHELo5qL8URT+Ol38Ez2uf/LSKByaaYW8Z+9EmQZ5TOXTQ1PyWB2HUq/yJyprYCCKBhbZlfcYgai4sJoxBHwO1VJE6AIP4lXYeQA1E+4mMqqSt86XUt5FBI37E5UcVMKE1kw1EZuKIz0reOT7DeiKZR7bwG0rGZcYmAvaD4gVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=KuCuIm7E; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <65f25d99-bf27-4521-944e-7ebfe3447a14@amd.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1722618490;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mDf+A9txkVqV1W2Ctpc6t6vDZn8LLAQXpSRjiyJzMOU=;
+	b=KuCuIm7EjTaDAWS+pem9FA5VGekuTecxRgvzgPRfLBUP9PekSaU0a03rI1qpbWZMGQbvJL
+	qv6GlRUcB64STvmMlbm24I2DOKR8MdmiEmegNdShlEo5VBMBP8NqYsVcygy2lKPZiqWk/F
+	zFS7H31XC4cVdQwPyuUsL4VN1WzstzwqHTu3piXCO8r/a0k9cy4rPKH3GMRcuWrQP7gAUC
+	GppNzsrsuRNrL1eOCUf0MtNVCq/mDNtCju4relzGX7oDWpXAEg/BVaZgam3g/dZmzTO6OC
+	vXSxUVI8DVd9sj/TPEJnnGC/j0dV+65AsFAiaQt0qnmYJU//jgOf8B9AzAzLYQ==
+Date: Fri, 02 Aug 2024 19:08:09 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Cc: heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: cdn-dp: Clean up a few logged messages
+In-Reply-To: <62c163be6ba3eeb9af82672d41e93b78@manjaro.org>
+References: <92db74a313547c087cc71059428698c4ec37a9ae.1720048818.git.dsimic@manjaro.org>
+ <62c163be6ba3eeb9af82672d41e93b78@manjaro.org>
+Message-ID: <ee2476ba76d91682ba53248df4789e90@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Thu, Aug 01, 2024 at 11:29:22PM -0500, Wei Huang wrote:
-> On 7/23/24 17:44, Bjorn Helgaas wrote:
-> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > > @@ -4656,6 +4656,7 @@
-> > >   		norid		[S390] ignore the RID field and force use of
-> > >   				one PCI domain per PCI function
-> > >   		notph		[PCIE] Do not use PCIe TPH
-> > > +		nostmode	[PCIE] Force TPH to use No ST Mode
-> > 
-> > Needs a little more context here about what this means.  Users won't
-> > know where to even look for "No ST Mode" unless they have a copy of
-> > the spec.
+On 2024-07-25 11:33, Dragan Simic wrote:
+> Hello all,
 > 
-> I can certainly add more description to talk about "No ST Mode". Also, will
-> "tph_nostmode" be better than "nostmode" in your opinion?
+> Just checking, is this patch good enough to be accepted?  If not, is 
+> there
+> some other preferred way for cleaning up the produced messages?
 
-I don't really care about the parameter name.  I think just spelling
-these out once, e.g., "PCIe TLP Processing Hints (TPH)" and "No ST
-Mode (Steering Tags must be all zeros)" is probably enough context.
+Just a brief reminder...
+
+> On 2024-07-04 01:32, Dragan Simic wrote:
+>> Clean up a few logged messages, which were previously worded as rather
+>> incomplete sentences separated by periods.  This was both a bit 
+>> unreadable
+>> and grammatically incorrect, so convert them into partial sentences 
+>> separated
+>> (or connected) by semicolons, together with some wording improvements.
+>> 
+>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> ---
+>>  drivers/gpu/drm/rockchip/cdn-dp-core.c | 16 +++++++---------
+>>  1 file changed, 7 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>> b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>> index bd7aa891b839..ee9def197095 100644
+>> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>> @@ -969,46 +969,44 @@ static void cdn_dp_pd_event_work(struct 
+>> work_struct *work)
+>> 
+>>  	/* Not connected, notify userspace to disable the block */
+>>  	if (!cdn_dp_connected_port(dp)) {
+>> -		DRM_DEV_INFO(dp->dev, "Not connected. Disabling cdn\n");
+>> +		DRM_DEV_INFO(dp->dev, "Not connected; disabling cdn\n");
+>>  		dp->connected = false;
+>> 
+>>  	/* Connected but not enabled, enable the block */
+>>  	} else if (!dp->active) {
+>> -		DRM_DEV_INFO(dp->dev, "Connected, not enabled. Enabling cdn\n");
+>> +		DRM_DEV_INFO(dp->dev, "Connected, not enabled; enabling cdn\n");
+>>  		ret = cdn_dp_enable(dp);
+>>  		if (ret) {
+>> -			DRM_DEV_ERROR(dp->dev, "Enable dp failed %d\n", ret);
+>> +			DRM_DEV_ERROR(dp->dev, "Enabling dp failed: %d\n", ret);
+>>  			dp->connected = false;
+>>  		}
+>> 
+>>  	/* Enabled and connected to a dongle without a sink, notify 
+>> userspace */
+>>  	} else if (!cdn_dp_check_sink_connection(dp)) {
+>> -		DRM_DEV_INFO(dp->dev, "Connected without sink. Assert hpd\n");
+>> +		DRM_DEV_INFO(dp->dev, "Connected without sink; assert hpd\n");
+>>  		dp->connected = false;
+>> 
+>>  	/* Enabled and connected with a sink, re-train if requested */
+>>  	} else if (!cdn_dp_check_link_status(dp)) {
+>>  		unsigned int rate = dp->max_rate;
+>>  		unsigned int lanes = dp->max_lanes;
+>>  		struct drm_display_mode *mode = &dp->mode;
+>> 
+>> -		DRM_DEV_INFO(dp->dev, "Connected with sink. Re-train link\n");
+>> +		DRM_DEV_INFO(dp->dev, "Connected with sink; re-train link\n");
+>>  		ret = cdn_dp_train_link(dp);
+>>  		if (ret) {
+>>  			dp->connected = false;
+>> -			DRM_DEV_ERROR(dp->dev, "Train link failed %d\n", ret);
+>> +			DRM_DEV_ERROR(dp->dev, "Training link failed: %d\n", ret);
+>>  			goto out;
+>>  		}
+>> 
+>>  		/* If training result is changed, update the video config */
+>>  		if (mode->clock &&
+>>  		    (rate != dp->max_rate || lanes != dp->max_lanes)) {
+>>  			ret = cdn_dp_config_video(dp);
+>>  			if (ret) {
+>>  				dp->connected = false;
+>> -				DRM_DEV_ERROR(dp->dev,
+>> -					      "Failed to config video %d\n",
+>> -					      ret);
+>> +				DRM_DEV_ERROR(dp->dev, "Failed to configure video: %d\n", ret);
+>>  			}
+>>  		}
+>>  	}
 
