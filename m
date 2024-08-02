@@ -1,69 +1,55 @@
-Return-Path: <linux-kernel+bounces-272428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182E7945BD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:11:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D6C945BDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 906CCB219D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:11:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB550282BDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85481DB421;
-	Fri,  2 Aug 2024 10:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bDywzy42"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9761DC46D;
+	Fri,  2 Aug 2024 10:13:37 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE611C69D
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 10:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0496E134B6;
+	Fri,  2 Aug 2024 10:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722593484; cv=none; b=ud38sZfOWVV4RZG+oLoS3o1yuQgxQoUG8PCvai/JJk9vwSUnMrBfBj0CKgtLyzEkqdb3cbr4bGUwbDDOs1gxAsTBDWvc4tPZPWiLHUnK1qQakkmgLEIBSvI0LAP7b5CJRzMDSCnzbiuNMaY3UMjNCMyJC9kqqvoctaj/bKa3q7s=
+	t=1722593617; cv=none; b=dBz9WBcQd4CBe7e5e+mnKVUoC5f3UnN+5ZusjQqFOg8TyDgxYtTRocost2QRetjIYkf7w+ssA9h05BAmCFLIU6hHHT4PeU80Ezdc9Z5B4WnY3vWGdRLA0hRjA/qGDj2EPI+hBwX7h5h+58tWnDvHheSFCh8SFtWcj5Fovz2ZXS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722593484; c=relaxed/simple;
-	bh=I6aw5+55dd2uzGKTCNofEj9JqBcYJ5+X5swUYdScceg=;
+	s=arc-20240116; t=1722593617; c=relaxed/simple;
+	bh=CGgO4c4usttTcvDWQPDRc8NVgRBTwg+m6dDsG/vP5mI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gm15MVgicol4G6nITaGjh4ZuUely9rd42dEqW7z2w8rKxwJ7Tz9CG5+efXTG1iw+acFsp8TOimaJ31YB4CA+oZ2ID6L7v2V1b2RcngKBheMgmXtiTRpu5iYn97YEV3A8GNK//NxSaUCDUvf+fpHgOPda6bSPMDeQU5axRLgJWC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bDywzy42; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722593480;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mdrYwGhdrYt4Wjbem5gAPO4p6O6XbcLYXDqwBckiuuI=;
-	b=bDywzy42fcoLwZa4vQO8M4LM8lcLI103jc577TDncrPCty7T9Thtuciz/Z0/nPUvbxP82Y
-	TtHfNOvVUQeIYKnDyMrzmTQUYGPHTkmZF1yRz/04XJXMYqC+ctTLPwGfpcBK64ul/CRhtF
-	l/Weg2L8OlBhr/3PWEOaVa3/pOS3/KI=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-9Yi1FeTJOAmOBbhfGMXroA-1; Fri,
- 02 Aug 2024 06:11:17 -0400
-X-MC-Unique: 9Yi1FeTJOAmOBbhfGMXroA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ry26MRBS60IPZChxXSUXved8ZNCthqsho8MO0c8Z9tFJmpmDNfZneEk6ginwoEx134BabL+G17fF/nGv9joan1BNDPE/E0VyDaw63ltEraBhBDwa7v42pajbA8stMzEJwJ4rrfj7llFDJCPuFB109XOOjuLQBn2/NZsIm3m8NJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B95419560B1;
-	Fri,  2 Aug 2024 10:11:15 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.126])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 398CC1955D44;
-	Fri,  2 Aug 2024 10:11:12 +0000 (UTC)
-Date: Fri, 2 Aug 2024 18:11:01 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: vgoyal@redhat.com, dyoung@redhat.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, chenjiahao16@huawei.com,
-	akpm@linux-foundation.org, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH -next] crash: Fix riscv64 crash memory reserve dead loop
-Message-ID: <ZqywtegyIS/YXOVv@MiWiFi-R3L-srv>
-References: <20240802090105.3871929-1-ruanjinjie@huawei.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id D8088100DA1B8;
+	Fri,  2 Aug 2024 12:13:31 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id AD1C81135EE; Fri,  2 Aug 2024 12:13:31 +0200 (CEST)
+Date: Fri, 2 Aug 2024 12:13:31 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: manivannan.sadhasivam@linaro.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <ZqyxS8spZ-ohsP3R@wunner.de>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,86 +58,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240802090105.3871929-1-ruanjinjie@huawei.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
 
-On 08/02/24 at 05:01pm, Jinjie Ruan wrote:
-> On RISCV64 Qemu machine with 512MB memory, cmdline "crashkernel=500M,high"
-> will cause system stall as below:
-> 
-> 	 Zone ranges:
-> 	   DMA32    [mem 0x0000000080000000-0x000000009fffffff]
-> 	   Normal   empty
-> 	 Movable zone start for each node
-> 	 Early memory node ranges
-> 	   node   0: [mem 0x0000000080000000-0x000000008005ffff]
-> 	   node   0: [mem 0x0000000080060000-0x000000009fffffff]
-> 	 Initmem setup node 0 [mem 0x0000000080000000-0x000000009fffffff]
-> 	(stall here)
-> 
-> commit 5d99cadf1568 ("crash: fix x86_32 crash memory reserve dead loop
-> bug") fix this on 32-bit architecture. However, the problem is not
-> completely solved. If `CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX` on 64-bit
-> architecture, for example, when system memory is equal to
-> CRASH_ADDR_LOW_MAX on RISCV64, the following infinite loop will also occur:
+On Fri, Aug 02, 2024 at 11:25:03AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> Unlike ACPI based platforms, there are no known issues with D3Hot for the
+> PCI bridges in the Devicetree based platforms. So let's allow the PCI
+> bridges to go to D3Hot during runtime. It should be noted that the bridges
+> need to be defined in Devicetree for this to work.
+[...]
+> +		if (state == PCI_D3hot && dev_of_node(&bridge->dev))
+> +			return true;
 
-Interesting, I didn't expect risc-v defining them like these.
+For such a simple change which several parties are interested in,
+I think it would be better to move it to the front of the series.
 
-#define CRASH_ADDR_LOW_MAX              dma32_phys_limit
-#define CRASH_ADDR_HIGH_MAX             memblock_end_of_DRAM()
-> 
-> 	-> reserve_crashkernel_generic() and high is true
-> 	   -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
-> 	      -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
-> 	         (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
-> 
-> Before refactor in commit 9c08a2a139fe ("x86: kdump: use generic interface
-> to simplify crashkernel reservation code"), x86 do not try to reserve crash
-> memory at low if it fails to alloc above high 4G. However before refator in
-> commit fdc268232dbba ("arm64: kdump: use generic interface to simplify
-> crashkernel reservation"), arm64 try to reserve crash memory at low if it
-> fails above high 4G. For 64-bit systems, this attempt is less beneficial
-> than the opposite, remove it to fix this bug and align with native x86
-> implementation.
+Patch [1/4] looks like an optimization (using a cached value)
+which this patch doesn't depend on.  Patch [2/4] looks like a
+change of bikeshed color which isn't strictly necessary for
+this fourth patch either.  If you want to propose those changes,
+fine, but by making this fourth patch depend on them, you risk
+delaying its acceptance.  As an upstreaming strategy it's usually
+smarter to move potentially controversial or unnecessary material
+to the back of the series, or submit it separately if it can be
+applied standalone.
 
-And I don't like the idea crashkernel=,high failure will fallback to
-attempt in low area, so this looks good to me.
 
-> 
-> After this patch, it print:
-> 	cannot allocate crashkernel (size:0x1f400000)
-> 
-> Fixes: 39365395046f ("riscv: kdump: use generic interface to simplify crashkernel reservation")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  kernel/crash_reserve.c | 9 ---------
->  1 file changed, 9 deletions(-)
+> Currently, D3Cold is not allowed since Vcc supply which is required for
+> transitioning the device to D3Cold is not exposed on all Devicetree based
+> platforms.
 
-Acked-by: Baoquan He <bhe@redhat.com>
+The PCI core cannot put devices into D3cold without help from the
+platform.  Checking whether D3cold is possible (or allowed or
+whatever) thus requires asking platform support code via
+platform_pci_power_manageable(), platform_pci_choose_state() etc.
 
-> 
-> diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-> index 5387269114f6..69e4b8b7b969 100644
-> --- a/kernel/crash_reserve.c
-> +++ b/kernel/crash_reserve.c
-> @@ -420,15 +420,6 @@ void __init reserve_crashkernel_generic(char *cmdline,
->  				goto retry;
->  		}
->  
-> -		/*
-> -		 * For crashkernel=size[KMG],high, if the first attempt was
-> -		 * for high memory, fall back to low memory.
-> -		 */
-> -		if (high && search_end == CRASH_ADDR_HIGH_MAX) {
-> -			search_end = CRASH_ADDR_LOW_MAX;
-> -			search_base = 0;
-> -			goto retry;
-> -		}
->  		pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
->  			crash_size);
->  		return;
-> -- 
-> 2.34.1
-> 
+I think patch [3/4] is a little confusing because it creates
+infrastructure to decide whether D3cold is supported (allowed?)
+but we already have that in the platform_pci_*() functions.
+So I'm not sure if patch [3/4] adds value.  I think generally
+speaking if D3hot isn't possible (allowed?), D3cold is assumed
+to not be possible either.
 
+Thanks,
+
+Lukas
 
