@@ -1,200 +1,110 @@
-Return-Path: <linux-kernel+bounces-272134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CDA9457A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:37:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A6BD9457AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D4C21C23B93
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20682862B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0514D481CE;
-	Fri,  2 Aug 2024 05:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC0C45038;
+	Fri,  2 Aug 2024 05:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ILzoFj4J"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="M0WrNzhn"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEE6219E0;
-	Fri,  2 Aug 2024 05:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E357F1EB4AE
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 05:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722577013; cv=none; b=iGMADv+zflZnDCumQByQoho0hOV98PEcRahjculeresdi4/OA3767b9/2mNI8Nvo8fh86bCG+Tt3Wy7jOguUxbFsNdj/13zDgdiYkh1AF7qfd4pMcVJQY6+DfsrX4JldLfgYxqUMPJvdHuTX9TvtIuyYaopaKgv1rxjmAtiur1E=
+	t=1722577107; cv=none; b=g48jLe92E1Go5w6QjdmEIQHVQFhZzlmNDRX9MdavpLgLVDPnH5R0u5r3PEpa+S0A5eFOxBUi08H1agQJV4BcWgNIpDrM8U2tCfrDZV+7hiFP99fGeNG3owRCpDk6yF707ixYLZqIvDgucGHjXhqQ/xgCySChCIeoBF5oCg1gGv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722577013; c=relaxed/simple;
-	bh=ooTfAKgcliNh+7LAC4AvpkSHUHdM6+X7wEVC5oeAho4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rODgk0/42F2VvQgCdozvuZTX73gO6aZY9aLxvoD3OWiqzMS4w2QLoeT+JYw69XthjxttvEU1U7KBBGWxDzYjoOfGD3qfa5B+VhAW8M+0LdWgAEaGyP+3IPeXNq6DiJxuiwqHCbpY8BllGfqcbnPslH6mybWy/kd2MYK0lryo3WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ILzoFj4J; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1722577107; c=relaxed/simple;
+	bh=r+yRL5NIoWIL7MEb/c3WCpWwOnsPDmf5woeau24tuXg=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=dMXObFtrNoroNqaYqmtiFIzNlUtMQCtUCNZNdey36rVlLnCdIB5HX4zmq25xJgzAJvdunSJF2bHNmfTPP9DgLVXpMvzQHSyNuoRvFo/T6If/TWWA+zLLtpH1iTPvNBcYgVuwFUdljPW3KZygOyJOgHzwCAmSEKAjQ4Oom+M8AS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=M0WrNzhn; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-428141be2ddso51167635e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 22:38:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1722577009;
-	bh=xlZ4/Kw11xpyrMXD0cAsdFdsF3dDK1F5MYgwiSI6304=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ILzoFj4JHHtHcpMCOKJ6MMAerPlbAY5PRWfKzguT3wZFVbawVINU/c8u8K+tKi9LD
-	 abfvrYUJKiZZdj/V4Qb6HljDj5VhanCYBR38ngzyefmHQJuHpQYa5nLmDPsC1nMeJ0
-	 +b3chIs0EJleJtkJOiHXqjHGWfn/AmskmYg8joBeaNMSgCC+Gp53s6WH5lua+P4Rvq
-	 t4HSP7mbvlvWzfdnrlz1jpGtot81TM8JZZ7rgZHlawSbNTjRXICA/rdapC55aH1diD
-	 fVWcMQv0wG8bT/+e1jd3oRb8G4uJ6AYI0KFmbLmxOpd5X4Yp6faA1ROFLOWW1dMuB6
-	 BbfZaFWMtVigA==
-Received: from [127.0.1.1] (ppp118-210-29-70.adl-adc-lon-bras31.tpg.internode.on.net [118.210.29.70])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0888C66E06;
-	Fri,  2 Aug 2024 13:36:48 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-Date: Fri, 02 Aug 2024 15:06:31 +0930
-Subject: [PATCH 2/2] dt-bindings: misc: aspeed,ast2400-cvic: Convert to DT
- schema
+        d=broadcom.com; s=google; t=1722577103; x=1723181903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DfeP6amEbFO01B4Acz+SaLNxYhMl+/N6xqPd9wmuVYo=;
+        b=M0WrNzhnV1SvxBVE+bBwbkZSkAFjmHarLHiCN44noWobidpnYOSIiffGqPGL69t34j
+         KHXwHoNeii3qfc2bD72ymQF4PKYhIkVlYgCYqg+9Vnx2j36/R28lWDIjVwCJxuzb0wPF
+         BmKu+ywcofygglt+L/K9pgAM9odHEIF2HioAE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722577103; x=1723181903;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DfeP6amEbFO01B4Acz+SaLNxYhMl+/N6xqPd9wmuVYo=;
+        b=EE3D/+BFF6v97CpNH2liKVjNFGXHDQ4H8cansbaCVGImn/170YqPJS4Pd76F1Z+pDy
+         xaIyGPENj3TxOaCUCaofj9AZ6mM5rjWDRtbchw11PzUST3HYBdQ22VfABLYo2Knnlfg6
+         aWqXOUV8GakOZexcVvMMjObMaRNTwJqIuYaBVLBjJJhRZT4M7iNKsCxtKTz19hI87Aji
+         jCh7VE1KMshl9zaI1ZCQf0sNVhqlH6cOC3Xyfs8CArIXf+I2wuimvFIfW6KYkRYxkFSN
+         MlCMQjBsR641mSuUmQ4OS3Dz1eKbnbSJ3YPukILEf2tPHncrSQx7+nQQzV/Yl6ByPzLQ
+         oQhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWj2qBy+LhA8rFGEdn9HTI3HtNkqRZf4UebXqAGpZ9whpnxEcou3y/qChe6cxsQZHzD3Ge8UAE/x2kLeMO2mJWMYT97RnnHZYEu+Cmg
+X-Gm-Message-State: AOJu0Yzm6TnX9f0gK4tlKS3eH7E9zGeBOpiduoqvilZlwQwGnH1CH0qJ
+	uZctMOuCNcgx5N048iEzHM+JcdR4ZHVXfSCDfbuAGW8hxi/GRtkzhn/4Aa6wHg==
+X-Google-Smtp-Source: AGHT+IEejV9gHMncaZ3o/uEqdLFU6pJXfTAhrguKl3WqsWQrl6f780k97r/VhDfVH2wQrwxF/xsUbA==
+X-Received: by 2002:a05:600c:1d20:b0:426:668f:5eca with SMTP id 5b1f17b1804b1-428e6af76f7mr14366225e9.7.1722577103013;
+        Thu, 01 Aug 2024 22:38:23 -0700 (PDT)
+Received: from [10.229.42.193] ([192.19.176.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b89a946sm81037345e9.6.2024.08.01.22.38.21
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2024 22:38:22 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Jacobe Zang <jacobe.zang@wesion.com>, <robh@kernel.org>, <krzk+dt@kernel.org>, <heiko@sntech.de>, <kvalo@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>, <conor+dt@kernel.org>
+CC: <efectn@protonmail.com>, <dsimic@manjaro.org>, <jagan@edgeble.ai>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, <arend@broadcom.com>, <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <megi@xff.cz>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <nick@khadas.com>
+Date: Fri, 02 Aug 2024 07:38:22 +0200
+Message-ID: <1911198a4b0.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <20240802025715.2360456-5-jacobe.zang@wesion.com>
+References: <20240802025715.2360456-1-jacobe.zang@wesion.com>
+ <20240802025715.2360456-5-jacobe.zang@wesion.com>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH v7 4/5] wifi: brcmfmac: Add optional lpo clock enable support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240802-dt-warnings-irq-aspeed-dt-schema-v1-2-8cd4266d2094@codeconstruct.com.au>
-References: <20240802-dt-warnings-irq-aspeed-dt-schema-v1-0-8cd4266d2094@codeconstruct.com.au>
-In-Reply-To: <20240802-dt-warnings-irq-aspeed-dt-schema-v1-0-8cd4266d2094@codeconstruct.com.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Address warnings such as:
+On August 2, 2024 4:57:48 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
 
-    arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: interrupt-controller@1e6c0080: 'valid-sources' does not match any of the regexes: 'pinctrl-[0-9]+'
+> WiFi modules often require 32kHz clock to function. Add support to
+> enable the clock to PCIe driver and move "brcm,bcm4329-fmac" check
+> to the top of brcmf_of_probe. Change function prototypes from void
+> to int and add appropriate errno's for return values.
 
-and
+Sorry, but this is moving in the wrong direction. The reason for changing 
+from void to int was to propagate the error up to the bus, ie. PCIe, SDIO, 
+or USB. Anyway, I reworked this patch last night to do just that. Let me 
+send it out to you.
 
-    arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: /ahb/copro-interrupt-controller@1e6c2000: failed to match any schema with compatible: ['aspeed,ast2400-cvic', 'aspeed-cvic']
+Regards,
+Arend
 
-Note that the conversion to DT schema causes some further warnings to
-be emitted, because the Aspeed devicetrees are not in great shape. These
-new warnings are resolved in a separate series:
+> Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> Change-Id: I21bf9e21b275452369dce1f50c2f092eded6376c
+> ---
+> .../wireless/broadcom/brcm80211/brcmfmac/of.c | 49 +++++++++++--------
+> .../wireless/broadcom/brcm80211/brcmfmac/of.h |  4 +-
+> 2 files changed, 31 insertions(+), 22 deletions(-)
 
-https://lore.kernel.org/lkml/20240802-dt-warnings-bmc-dts-cleanups-v1-0-1cb1378e5fcd@codeconstruct.com.au/
-
-Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
----
- .../bindings/misc/aspeed,ast2400-cvic.yaml         | 60 ++++++++++++++++++++++
- .../devicetree/bindings/misc/aspeed,cvic.txt       | 35 -------------
- 2 files changed, 60 insertions(+), 35 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/misc/aspeed,ast2400-cvic.yaml b/Documentation/devicetree/bindings/misc/aspeed,ast2400-cvic.yaml
-new file mode 100644
-index 000000000000..3c85b4924c05
---- /dev/null
-+++ b/Documentation/devicetree/bindings/misc/aspeed,ast2400-cvic.yaml
-@@ -0,0 +1,60 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/misc/aspeed,ast2400-cvic.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Aspeed Coprocessor Vectored Interrupt Controller
-+
-+maintainers:
-+  - Andrew Jeffery <andrew@codeconstruct.com.au>
-+
-+description:
-+  The Aspeed AST2400 and AST2500 SoCs have a controller that provides interrupts
-+  to the ColdFire coprocessor. It's not a normal interrupt controller and it
-+  would be rather inconvenient to create an interrupt tree for it, as it
-+  somewhat shares some of the same sources as the main ARM interrupt controller
-+  but with different numbers.
-+
-+  The AST2500 also supports a software generated interrupt.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - aspeed,ast2400-cvic
-+          - aspeed,ast2500-cvic
-+      - const: aspeed,cvic
-+
-+  reg:
-+    maxItems: 1
-+
-+  valid-sources:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description:
-+      One cell, bitmap of support sources for the implementation.
-+
-+  copro-sw-interrupts:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description:
-+      A list of interrupt numbers that can be used as software interrupts from
-+      the ARM to the coprocessor.
-+
-+required:
-+  - compatible
-+  - reg
-+  - valid-sources
-+
-+allOf:
-+  - $ref: /schemas/interrupt-controller.yaml#
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    interrupt-controller@1e6c2000 {
-+        compatible = "aspeed,ast2500-cvic", "aspeed,cvic";
-+        reg = <0x1e6c2000 0x80>;
-+        valid-sources = <0xffffffff>;
-+        copro-sw-interrupts = <1>;
-+    };
-diff --git a/Documentation/devicetree/bindings/misc/aspeed,cvic.txt b/Documentation/devicetree/bindings/misc/aspeed,cvic.txt
-deleted file mode 100644
-index d62c783d1d5e..000000000000
---- a/Documentation/devicetree/bindings/misc/aspeed,cvic.txt
-+++ /dev/null
-@@ -1,35 +0,0 @@
--* ASPEED AST2400 and AST2500 coprocessor interrupt controller
--
--This file describes the bindings for the interrupt controller present
--in the AST2400 and AST2500 BMC SoCs which provides interrupt to the
--ColdFire coprocessor.
--
--It is not a normal interrupt controller and it would be rather
--inconvenient to create an interrupt tree for it as it somewhat shares
--some of the same sources as the main ARM interrupt controller but with
--different numbers.
--
--The AST2500 supports a SW generated interrupt
--
--Required properties:
--- reg: address and length of the register for the device.
--- compatible: "aspeed,cvic" and one of:
--		"aspeed,ast2400-cvic"
--	      or
--		"aspeed,ast2500-cvic"
--
--- valid-sources: One cell, bitmap of supported sources for the implementation
--
--Optional properties;
--- copro-sw-interrupts: List of interrupt numbers that can be used as
--		       SW interrupts from the ARM to the coprocessor.
--		       (AST2500 only)
--
--Example:
--
--	cvic: copro-interrupt-controller@1e6c2000 {
--		compatible = "aspeed,ast2500-cvic";
--		valid-sources = <0xffffffff>;
--		copro-sw-interrupts = <1>;
--		reg = <0x1e6c2000 0x80>;
--	};
-
--- 
-2.39.2
 
 
