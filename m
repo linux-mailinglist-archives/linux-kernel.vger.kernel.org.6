@@ -1,199 +1,157 @@
-Return-Path: <linux-kernel+bounces-272402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C282945B4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:44:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 752EA945B50
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:44:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8E31F22C64
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:44:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4084B22DC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD2E1DB422;
-	Fri,  2 Aug 2024 09:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2031DB432;
+	Fri,  2 Aug 2024 09:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="mwmueyYt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GG2XEYP1"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="w3PLQRUX"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B62256D;
-	Fri,  2 Aug 2024 09:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046491BF311;
+	Fri,  2 Aug 2024 09:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722591849; cv=none; b=h/OmBjYeBlnbiWdC2MkwzFlBfWRe3YOk9XgtgtjNl9OP1Vvlu6u3z09xDE8UGGlZPjLjOJM4i5F8z8n7KCfWOU5g8UWjcuQJSqhiyG7dDQd2ZDaH7RjxyChGxJrwxuu7wHDke3pcJX907IR8GvWxa5eHEMVPZ5USxKDBZ2IB/1U=
+	t=1722591870; cv=none; b=K6DTcK9zsf07on41F9JgOeZINpfwQjPrXnDQ3klprO/eNSeBZHjmMLGkaxH3+olZshplgA8OM/EmLx2OudK4TX9AXSu7EkVKoc1W52sx0UEV2JumXLHLJ3RwcKY0sWk56I9RFC5a6cLYohyWzFLHFsX+CfwCpmldNA4hEfabYHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722591849; c=relaxed/simple;
-	bh=E6PUPysLPIvvEguCB3o+Frxa86QTQZXRqViq1Akk17M=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pt8qBmmvlmU8qgDmYOyei/mbrH9BfH+5RTEJxw/2DyJAH94g3Qx9yELwfUPU1KDgcKzwZglqQ7lsrCSElYfmeuhNGEjWFHQMCjoRPhQyjjNhKT/lwH4hqxyF9O1OAHskStsi5JrzLWEtIVuG5Jq/4xQOAZCO06KvOw0mjWzrr1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=mwmueyYt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GG2XEYP1; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 493C0138FC2E;
-	Fri,  2 Aug 2024 05:44:06 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute5.internal (MEProxy); Fri, 02 Aug 2024 05:44:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1722591846;
-	 x=1722678246; bh=6YYbM+hbo6Lixf7WFtKBaaOQauYlqYL6o2rvnYuPrCI=; b=
-	mwmueyYtSSN20D0edXNVyFRulpQS9D0hQtOIh3FuEl0rm/ds9a/9Hunfw8txswi7
-	zSQZh7dYPQJH+I2gSAqtYbdDk37cr3A68aL9W3oJpEBZVT73EnvMRZp40LzIJmbo
-	Drrs46NnFfvCW1wR/18/3HqMUhTZgjt4W3aGMjBmufrNsJq00PMzHNWvyAHo1qgF
-	5aK7TaiDeop53qPvhB8zJ7OtvRpGOpU8kOJFoLIHtiBPHhpo6G+plL1HGuWJeGI1
-	sw7gRxwA567PBJz2ElJkEATML8EpGX4TZj/IZ3SALEukbBTuy9tEVpTxo0VXgr4P
-	3fRmEe1EUKES9CpjqHV7rA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722591846; x=
-	1722678246; bh=6YYbM+hbo6Lixf7WFtKBaaOQauYlqYL6o2rvnYuPrCI=; b=G
-	G2XEYP1buz5eZ53QZ4dD7ozQ3dL/vZJ+ZbLdpEz/xbvclYgXFS5vtebwO3xhJB5V
-	VKbgWZXVxisFIjiCCybB98Ig56qPnzxVkt9S9Fjs/d52r3p2ZxK0/xfJJ3vsSl7F
-	4cvBHz/rdNCqdyOwFCF3egkXGMOEefx5B66hnXeII0dN8uFAjBrvMwlt05JwTJyb
-	Xh83SNHRu/KOM0YnDMxZpKtOH8ndciWSyOGRpkYdBlM3x3nkV3Bc/CKThvfIHI5o
-	hKC3WcovzQNrkIJ5beyOnp1m7LNN6yCBjNxdyMFtQ+9V8VxGIUOazyu7EsGuYk4L
-	1u8GI45Mp7eRcA/ipqaHg==
-X-ME-Sender: <xms:ZaqsZkSy-C-rznqidSbEhopuSxBrrJ2KeEY6fd6A0yLsG2uALFz2KQ>
-    <xme:ZaqsZhwbs3PnMz1f-MpGnA8iJGPxk7JCIVfpc5-5b4bKmMQh5Y9cyJ4sgNHUe8Ax8
-    zsQohAv1sY_zhiQah0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgddukecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdflihgr
-    gihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqe
-    enucggtffrrghtthgvrhhnpeejheefuddvtdfggfdvffekteehhfelgfdvvedvkeeuffef
-    keehheegvefhveetjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgt
-    phhtthhopedt
-X-ME-Proxy: <xmx:ZaqsZh0LzmoUSHUr-HZB3VMJLXa1VxKHRjFYkUxPyFD7jxm-e0RD5w>
-    <xmx:ZaqsZoA1VkH8d4CPEx0chY0aKqqr37ydO7tx7u8HocJgS2VYGAPQwA>
-    <xmx:ZaqsZtiLCdS6IP96FGn4y_mkIHRahmHzcVIzxw4FlfKApCCW_zVs2w>
-    <xmx:ZaqsZko3u5fkponFC-l4JgEe-e3s6ayKaIzoHlnbwjP3-sF4j-ynNA>
-    <xmx:ZqqsZmaq2q4YgBtvtCZsVFTUFawTXXPfn-4Cg7c77kXrJv8IePTsM19s>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id B750619C0069; Fri,  2 Aug 2024 05:44:05 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722591870; c=relaxed/simple;
+	bh=0KsIn/0/DWTpo7S1UBSEjNExMpvPx+YcOvQCaYBrQw0=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=YlaFuV4YpnRDhIHXZYDh9MJoMjUALfGk4jHo0zfvopXDNz85mCiYZkKK1OdSdBNTM8SkMH1D7X/LduG1Vej07CUnsZvWWq/6GzwzuojMsQxMsGcxAVnvEvHG9WhteUdy7vGwTaVSU/IcbsZkfNKGGZjVPRl7zDYqGGZmGamuNTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=w3PLQRUX; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
+	:Reply-To:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
+	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=tYBNKUdLVBT8EAn0QM/7P3VwYTzBHo4it3VetCjlnIA=; t=1722591868;
+	x=1723023868; b=w3PLQRUX70Hpwlo9isDFSw52fHNxRajsdpWeyy9BAoKOzp6soXj0p+sG5j9MZ
+	6IHV4cFx4v3AZZsxzE8kst+B5MdiPcWiAWoQHl61O2dourb+Rk0IeAFtzPIkEHycbsy71w7mWegfQ
+	OP2a1tlumBswb5uH9xoMCghTIZ8tFX/FbMwCmaiq/1TsqWhsoqpLODS9F7pgbdLBHZUpqcTo7Z7qi
+	KbWJswfClCmw6qfH0NYIS8DxaMULki3dw9w/qvIDWklsrnyuHlzeFgSt9IQzn5zKGwIUIfgGatLcl
+	YUYiUnpiCj96y7dhzgtPZFUfBWxbbQMcSFLDvNFl017p3o9rGA==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sZopf-00078S-Pw; Fri, 02 Aug 2024 11:44:19 +0200
+Message-ID: <c0967665-343d-4ca9-90a0-a072159c1056@leemhuis.info>
+Date: Fri, 2 Aug 2024 11:44:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 02 Aug 2024 17:43:45 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Serge Semin" <fancer.lancer@gmail.com>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,
- "Arnd Bergmann" <arnd@arndb.de>, "Kelvin Cheung" <keguang.zhang@gmail.com>,
- "Gregory CLEMENT" <gregory.clement@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <8d875eb0-d236-46f3-a417-08bff3c0087d@app.fastmail.com>
-In-Reply-To: 
- <6szkkqxpsw26zajwysdrwplpjvhl5abpnmxgu2xuj3dkzjnvsf@4daqrz4mf44k>
-References: <6szkkqxpsw26zajwysdrwplpjvhl5abpnmxgu2xuj3dkzjnvsf@4daqrz4mf44k>
-Subject: Re: [RFC] MIPS: smp: Sleeping func called from start_secondary()
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Steve French <sfrench@samba.org>,
+ Gleb Korobeynikov <gkorobeynikov@astralinux.ru>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: [regression] smb: client: - Failure to mount DFS namespaces without
+ ASCII symbols
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1722591868;e7825c62;
+X-HE-SMSGID: 1sZopf-00078S-Pw
 
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
+Paulo, I noticed a report about a regression in bugzilla.kernel.org that
+appears to be caused by this change of yours:
 
-=E5=9C=A82024=E5=B9=B48=E6=9C=882=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
-=8D=884:45=EF=BC=8CSerge Semin=E5=86=99=E9=81=93=EF=BC=9A
-> Hi folks,
->
-> To debug some another problem I recently enabled the
-> CONFIG_DEBUG_ATOMIC_SLEEP config for my SoC based on the 2xP5600 cores
-> with MIPS GIC as IRQ-controller. That caused the next BUG backtrace
-> started being printed to the system log during the device boot-up:
+3ae872de410751 ("smb: client: fix shared DFS root mounts with different
+prefixes") [v6.5-rc1]
 
-Hi Serge,
+As many (most?) kernel developers don't keep an eye on the bug tracker,
+I decided to write this mail. To quote from
+https://bugzilla.kernel.org/show_bug.cgi?id=219083 :
 
-Thanks for reporting the problem!
+>  Gleb Korobeynikov 2024-07-22 10:59:46 UTC
+> 
+> Windows version of SMB host: Windows Server 2022 Standard x64
+> Kernel: 6.3.13(upstream)
+> CONFIG_CIFS_DFS_UPCALL
+> 
+> In the function cifs_inval_name_dfs_link_error(), a check was added for tcon->origin_fullpath (3ae872de410751fe5e629e04da491a632d95201c). I believe it's unnecessary because when mounting a dfs name without ASCII characters, we always fail at this check and exit the function, leading to dfs namespaces not being mounted
+> 
+> Steps to reproduce:
+> 
+> 1. At Windows, create DFS namespace with name containing non-ASCII symbols (for example дфс)
+> 
+> 2. mount -t cifs \\\\<smb_server>\\дфс  /tmp/dfs -o domain=...,user=...,password=...
+> 
+> result:
+> mount error(2): No such file or directory
+> Refer to the mount.cifs(8) manual page (e.g. man mount.cifs) and kernel log messages (dmesg)
+> 
+> CIFS debug log:
+> [Mon Jul 22 11:00:24 2024] CIFS: Status code returned 0xc0000033 STATUS_OBJECT_NAME_INVALID
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2maperror.c: Mapping SMB2 status code 0xc0000033 to POSIX err -2
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/dfs_cache.c: dfs_cache_noreq_update_tgthint: path: \test.local\дфс
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses_count=2
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses ipc: \\test.local\IPC$
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: cifs_put_tcon: tc_count=1
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in cifs_put_tcon as Xid: 17 with uid: 0
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: Tree Disconnect
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/fscache.c: cifs_fscache_release_super_cookie: (0x0000000000000000)
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses_count=1
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses ipc: \\DC.test.local\IPC$
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in __cifs_put_smb_ses as Xid: 18 with uid: 0
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: disconnect session 00000000360c6881
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses_count=1
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: __cifs_put_smb_ses: ses ipc: \\test.local\IPC$
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: in __cifs_put_smb_ses as Xid: 19 with uid: 0
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/smb2pdu.c: disconnect session 00000000db1ddbb6
+> [Mon Jul 22 11:00:24 2024] CIFS: fs/smb/client/connect.c: VFS: leaving cifs_mount_put_conns (xid = 13) rc = 0
+> [Mon Jul 22 11:00:24 2024] CIFS: VFS: cifs_mount failed w/return code = -2
 
-I actually have a patch lying around somewhere to convert cevt-r4k to us=
-e CPUHP
-interface and avoid requesting interrupt on secondary CPUs.
+And
 
-Will post after getting more platform tests.
+>  Gleb Korobeynikov 2024-07-30 11:03:01 UTC
+> 
+> (In reply to Gleb Korobeynikov from comment #5)
+>> (In reply to The Linux kernel's regression tracker (Thorsten Leemhuis) from
+>> comment #4)
+>> > Please check if 6.10 (or 6.11-rc1 once it's out on Monday) is still
+>> affected
+>> 
+>> Alright, I will definitely check
+> 
+> Checked on 6.11-rc1. The reproduction issue happens identically.
 
-Thanks
-- Jiaxun
+See the ticket for more details.
 
->
-> [    0.118053] BUG: sleeping function called from invalid context at=20
-> kernel/locking/mutex.c:283
-> [    0.118062] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid:=20
-> 0, name: swapper/1
-> [    0.118069] preempt_count: 1, expected: 0
-> [    0.118074] RCU nest depth: 0, expected: 0
-> [    0.118078] Preemption disabled at:
-> [    0.118082] [<80105040>] arch_dup_task_struct+0x20/0x118
-> [    0.118116] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted=20
-> 6.11.0-rc1-bt1-00312-gca6f9469050c-dirty #2460
-> [    0.118134] Stack : 816d0000 801b89bc 81870000 00000004 a02d0c08=20
-> 00000000 84ae7dcc 801b84c0
-> [    0.118167]         00000000 00000002 00000000 00000000 00000000=20
-> 00000001 84ae7d70 84aaf200
-> [    0.118195]         00000000 00000000 81115acc 00000000 00000059=20
-> 84ae7bec 00000000 00000000
-> [    0.118222]         00000000 ffffffff ffffffea 00000020 816d0000=20
-> 00000000 81115acc 00000002
-> [    0.118250]         00000000 04240021 a02d0c08 00000000 00000000=20
-> 00000000 30400000 ac24242a
-> [    0.118277]         ...
-> [    0.118286] Call Trace:
-> [    0.118289] [<8010af2c>] show_stack+0x88/0x120
-> [    0.118309] [<80f09dfc>] dump_stack_lvl+0x78/0xb0
-> [    0.118323] [<801778d0>] __might_resched+0x190/0x1f0
-> [    0.118349] [<80f10f80>] mutex_lock+0x20/0x74
-> [    0.118365] [<801c8590>] irq_create_mapping_affinity+0x48/0x104
-> [    0.118390] [<801121ec>] r4k_clockevent_init+0x58/0x38c
-> [    0.118402] [<80116658>] start_secondary+0x34/0x134
-> [    0.118411] [<80f0b1e4>] smp_bootstrap+0x68/0x98
-> [    0.118424]=20
->
-> I managed to investigate the problem a bit and the reason turned out t=
-o be
-> in the irq_create_mapping() method eventually invoked in the framework=
- of the
-> secondary CPU start-up procedure. The more detailed calls chain is:
-> start_secondary()
-> +-> mips_clockevent_init()
->     +-> r4k_clockevent_init()
->         +-> get_c0_compare_int()
->             +-> gic_get_c0_compare_int()
->                 +-> irq_create_mapping()
->                     +-> irq_create_mapping_affinity()
->                         +-> mutex_lock()
->                             +-> might_sleep()
->                                 +-> might_resched()
->                                     +-> __might_resched()
->                                         +-> Print the log above
->
-> I currently lack of free time for further investigation in an attempt =
-to
-> find a reasonable solution. So here is just a report and a short summa=
-ry
-> of the problem. Should you have any idea of how to fix the problem I'l=
-l be
-> very glad to test it out on a short notice.
->
-> -Serge(y)
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
---=20
-- Jiaxun
+[1] because bugzilla.kernel.org tells users upon registration their
+"email address will never be displayed to logged out users"
+
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: 3ae872de410751fe5e629e04da491a632d95201c
+#regzbot title: smb: client: failure to mount DFS namespaces without
+ASCII symbols
+#regzbot from: Gleb Korobeynikov <gkorobeynikov@astralinux.ru>
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219083
+#regzbot ignore-activity
 
