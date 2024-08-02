@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-272219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5C39458C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:29:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7AE9458BF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B91B23EFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:29:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA601B23B9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A691C2319;
-	Fri,  2 Aug 2024 07:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FBF1BF32F;
+	Fri,  2 Aug 2024 07:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iUaa0t3c";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+FUZfBmg"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LIUhvIeR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CY1ldcZV"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EAD1BF334;
-	Fri,  2 Aug 2024 07:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661B71BE875;
+	Fri,  2 Aug 2024 07:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583731; cv=none; b=R8CQVJuPLTS8GwYwqqvY0UroRCq8gUgsoaLwwCbyO+UsG4wA7C0y1SrdLaBRdWu192oOvZDsuDmdsda368yYSdBl5W4aJ9HRaMph52yHHxx5kdlFXyBjM28oztVdMmLM4hyxbmIA5dt5IGjLhBLhnhhyb/rJqT17s+bp55zg9AY=
+	t=1722583728; cv=none; b=RDLDIuSXZjRFOFdQrop87nepqTS99zsaGGcBHgK3B7gA5lC+NTksQqUnZsGT8byhO4NC2DPCipuo02V5eidVlosUqO+GMsPKfZ+VibQVLDribNJrV09krhaU1yeeesVlYHM+R5qCDdFGzPgPJqg+uDCfWvSj2f3XWMYEPU7/Nz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583731; c=relaxed/simple;
-	bh=BP2EQjdnb+3NpTozPSNCgVbJM1mUKscahB53+FBOaH4=;
+	s=arc-20240116; t=1722583728; c=relaxed/simple;
+	bh=ZjXjzJYk18pmdjRxj7z9OklgFa4Rt6fOSO1FTl4KjbI=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=MfpA9zcwQIQD3q152R6cv2Ox9HES9LDXmeqFf/mtU/xbsY87LGPp5GFYHFvRi2TxiCwbbx894MhpquHRECL/+LhwNEvGOI92ssblW8cwPKTtR9MRTj+SiHkt/QZNFlKno+EjMYx/P4uO9/lEcOXYgV4EiIvFO31r2B/eUWmR2jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iUaa0t3c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+FUZfBmg; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=u1WBJ0GkE1xcSNluC8p/W8ulRKxPnulyOjznvbqjW/HXtDE+s2HJMKkedjngYXNdWQQFAR720AEqs9Sm3HiBrzgjSiyipg6L00+JR9lY0hqpK7o0KJPXn6WgaHKCeuNtSD1AwAN9pKeDqWJFoEBtnz4flo9IcNTKl2isGR/QYy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LIUhvIeR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CY1ldcZV; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Fri, 02 Aug 2024 07:28:45 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722583726;
+	s=2020; t=1722583725;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PnqjfJKUeztmYYh2La0KcUAR6t3tKvfis029yz94QWs=;
-	b=iUaa0t3cLV+Hm6REIxd9jM+QqVV8ag2onx3kce6hY4auzWYxtPLeKbyzPyfN6lQm7+0yIB
-	soa5w1PVn+BWtDW/BinsQBaTKjh9lPSSdu12pnGzffpvY+Ldu+AcTuDsDqo2VdcBGYS/ee
-	V6sOu59ENqOUEQzlAoc1WC+WHjm1C28xcRmuxIx9ItHA0BXqyODDjrtuEZOl9zII3D12Vw
-	84T7spc7gJ6S13gmBqHvSEUS5q/NjLc9lLI5kxES/6QHVuRImCnvV9OHwSkUQAmEvEJzQw
-	axk+AMf5mBEZ4O6mFsVBiNSUq3z0NSNXIM18+s81TwFYBkjBTUuHjphVzobwVA==
+	bh=W8PAnLzG+L401L3pFv6Z6z7acKfk7xuWS0J2+z5/eeI=;
+	b=LIUhvIeRHN8GRRGWqyUdRAt+SN80g76xy18iFRZG0vH8BqxZSIsWl/aIrvqOO1de3RddxX
+	XAnkeea/bTux8GVgL8ip+mEBTd4s63CD0svE8+ckn98cZvJte9HJwofogN74vw2eMX64Xm
+	FSMDxSO2AzkmqflN1fZ36kRE5fjWErluaDxDvkvfUINa2IeCfhFG0Dn8IajKcLoC4hEkH1
+	E1FqtoWBT+HSjn0B2LUmK9vsHtZp6xYw1hbmM0RPApiwSOgpa0nCFWBFC5eTZON7oiUFQ2
+	K7DD3HgWkb68+Z2CWOl+3v8gVJ2zoX/Sp6gf/P1rhvcVyHI4YN1/Xb4r3xwf3A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722583726;
+	s=2020e; t=1722583725;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PnqjfJKUeztmYYh2La0KcUAR6t3tKvfis029yz94QWs=;
-	b=+FUZfBmgzMiWxC4u0Wac4dTj5npi8otMkwv2SjjFDXM+/wLoKiUgya28sL9+lFPL75MaeP
-	znKMMlHQWYUgSfCA==
+	bh=W8PAnLzG+L401L3pFv6Z6z7acKfk7xuWS0J2+z5/eeI=;
+	b=CY1ldcZVrFKF+LKklJGuWV1B7MY2RlS8rprWl7ta1NKHMMJWM7C6kbhZz+K4ew7RRSk4Mw
+	cu1Z86cGpGZ+9yBQ==
 From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/misc] tools/x86/kcpuid: Properly align long-description columns
+Subject: [tip: x86/misc] tools/x86/kcpuid: Strip bitfield names
+ leading/trailing whitespace
 Cc: "Ahmed S. Darwish" <darwi@linutronix.de>,
  Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240718134755.378115-3-darwi@linutronix.de>
-References: <20240718134755.378115-3-darwi@linutronix.de>
+In-Reply-To: <20240718134755.378115-6-darwi@linutronix.de>
+References: <20240718134755.378115-6-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172258372597.2215.17899593830433414242.tip-bot2@tip-bot2>
+Message-ID: <172258372520.2215.2625975190952358820.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,56 +82,41 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/misc branch of tip:
 
-Commit-ID:     a52e735f282c963155090d2d60726324ccd0e4bc
-Gitweb:        https://git.kernel.org/tip/a52e735f282c963155090d2d60726324ccd0e4bc
+Commit-ID:     9ecbc60a5ede928abdd2b152d828ae0ea8a1e3ed
+Gitweb:        https://git.kernel.org/tip/9ecbc60a5ede928abdd2b152d828ae0ea8a1e3ed
 Author:        Ahmed S. Darwish <darwi@linutronix.de>
-AuthorDate:    Thu, 18 Jul 2024 15:47:42 +02:00
+AuthorDate:    Thu, 18 Jul 2024 15:47:45 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 02 Aug 2024 09:17:18 +02:00
+CommitterDate: Fri, 02 Aug 2024 09:17:19 +02:00
 
-tools/x86/kcpuid: Properly align long-description columns
+tools/x86/kcpuid: Strip bitfield names leading/trailing whitespace
 
-When kcpuid is invoked with "--all --details", the detailed description
-column is not properly aligned for all bitfield rows:
+While parsing and saving bitfield names from the CSV file, an extra
+leading space is copied verbatim.  That extra space is not a big issue
+now, but further commits will add a new CSV file with much more padding
+for the bitfield's name column.
 
-CPUID_0x4_ECX[0x0]:
-	 cache_level        	: 0x1       	- Cache Level ...
-	 cache_self_init     - Cache Self Initialization
-
-This is due to differences in output handling between boolean single-bit
-"bitflags" and multi-bit bitfields.  For the former, the bitfield's value
-is not outputted as it is implied to be true by just outputting the
-bitflag's name in its respective line.
-
-If long descriptions were requested through the --all parameter, properly
-align the bitflag's description columns through extra tabs.  With that,
-the sample output above becomes:
-
-CPUID_0x4_ECX[0x0]:
-	 cache_level        	: 0x1       	- Cache Level ...
-	 cache_self_init     			- Cache Self Initialization
+Strip leading/trailing whitespaces while saving bitfield names.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240718134755.378115-3-darwi@linutronix.de
+Link: https://lore.kernel.org/all/20240718134755.378115-6-darwi@linutronix.de
 
 ---
- tools/arch/x86/kcpuid/kcpuid.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/arch/x86/kcpuid/kcpuid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/tools/arch/x86/kcpuid/kcpuid.c b/tools/arch/x86/kcpuid/kcpuid.c
-index e1973d8..08f64d9 100644
+index 581d28c..c4f0ace 100644
 --- a/tools/arch/x86/kcpuid/kcpuid.c
 +++ b/tools/arch/x86/kcpuid/kcpuid.c
-@@ -449,8 +449,9 @@ static void decode_bits(u32 value, struct reg_desc *rdesc, enum cpuid_reg reg)
- 		if (start == end) {
- 			/* single bit flag */
- 			if (value & (1 << start))
--				printf("\t%-20s %s%s\n",
-+				printf("\t%-20s %s%s%s\n",
- 					bdesc->simp,
-+				        show_flags_only ? "" : "\t\t\t",
- 					show_details ? "-" : "",
- 					show_details ? bdesc->detail : ""
- 					);
+@@ -379,7 +379,7 @@ static int parse_line(char *line)
+ 	if (start)
+ 		bdesc->start = strtoul(start, NULL, 0);
+ 
+-	strcpy(bdesc->simp, tokens[4]);
++	strcpy(bdesc->simp, strtok(tokens[4], " \t"));
+ 	strcpy(bdesc->detail, tokens[5]);
+ 	return 0;
+ 
 
