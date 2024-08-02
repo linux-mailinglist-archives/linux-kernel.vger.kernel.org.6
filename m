@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-272413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41B7945B84
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 924C4945B7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D981C216F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:54:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41601C22603
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6361DB44D;
-	Fri,  2 Aug 2024 09:54:38 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132FD1C2BD;
-	Fri,  2 Aug 2024 09:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EAD1DB44A;
+	Fri,  2 Aug 2024 09:52:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2E54C62A;
+	Fri,  2 Aug 2024 09:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722592478; cv=none; b=NgXQsdbl04TFqvqMvEXOya4QUGuCBlh81rdTt6efHR4EnoVF3uvCUwSpypiXXmBUXWCyxfDAIinbSKAz+z0WglHLwfIUlkbLJNGtXwElsznNdduoKvpCflsWgZYVvdAs1yEo3yd7mhUKvLwc76TSUXMyszNbE4RzIkhJqvp+c+Q=
+	t=1722592356; cv=none; b=E/oG1SPQmJp3bNufJCGz42hf3/Vto4aohglRGdFFScd8TP0ZGQNiO2o6gQ+QznNNI1dFmbWIALExjUMQaibm1r4bd0k0Jas6/IJf50o2tYt68NHXRdv+eF4Csb6FPK2ib5nGSxImNNX5aLDvM8BVCI+JJIFIbxhdB4Vxc83xvMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722592478; c=relaxed/simple;
-	bh=pG7QYf5atpiLxIdlu12CXatOzGN8tq3O56ZKUROVJlI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SPmyQX75Yj0Ta1ZPBHMT2OPXkTh16QN0NskWzHlUGY5xPLI7up0VI/dNhRWUt7JrpVExDQSFPYGFxXYsX5mrHgpm/4yw7tmXHIZ2Zk/WiaA1/cwgMEWr2bCtLGsnbNtWdwnXaHCohqs9RFyCvrCIabV9hdvGwZUvevgdLd3ssWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wb1KB0j6vz20l2V;
-	Fri,  2 Aug 2024 17:50:06 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id CAFB91402CF;
-	Fri,  2 Aug 2024 17:54:26 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 2 Aug
- 2024 17:54:26 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <philipp.reisner@linbit.com>, <lars.ellenberg@linbit.com>,
-	<christoph.boehmwalder@linbit.com>, <axboe@kernel.dk>, <brauner@kernel.org>,
-	<yuehaibing@huawei.com>
-CC: <drbd-dev@lists.linbit.com>, <linux-block@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] drbd: Remove unused extern declarations
-Date: Fri, 2 Aug 2024 17:51:47 +0800
-Message-ID: <20240802095147.2788218-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722592356; c=relaxed/simple;
+	bh=rnFqcYhnMeDXtV6Y5+tdT+M0WG9C98IBz7b+htCMRe0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bSLWXfT9FeDjQpBeaWfeIE454TeCJxmRGxijTNS1fFHOUF8UGmJeaH5+wTqaOxqKV1bCUnS/Lpsjv52Br6GZ+oFBtGPiEKEPA8nAEkjrqoq6D7Z3yjmrKXHMJkumSGJH19cLt1Mqnhd0GNDP/lZsne06yfRfNrFcqV41jIKE0ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 133041007;
+	Fri,  2 Aug 2024 02:53:00 -0700 (PDT)
+Received: from [10.57.12.204] (unknown [10.57.12.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9089C3F64C;
+	Fri,  2 Aug 2024 02:52:33 -0700 (PDT)
+Message-ID: <7a0ec54f-2dc1-4941-9890-260c71ed4a17@arm.com>
+Date: Fri, 2 Aug 2024 10:53:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v1 6/8] thermal: helpers: Drop
+ get_thermal_instance()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <2211925.irdbgypaU6@rjwysocki.net>
+ <2014591.usQuhbGJ8B@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <2014591.usQuhbGJ8B@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: YueHaibing <yuehaibing@huawei.com>
 
-Commit b411b3637fa7 ("The DRBD driver") declared but never implemented
-drbd_read_remote(), is_valid_ar_handle() and drbd_set_recv_tcq().
-And commit 668700b40a7c ("drbd: Create a dedicated workqueue for sending acks on the control connection")
-never implemented drbd_send_ping_wf().
 
-Commit 2451fc3b2bd3 ("drbd: Removed the BIO_RW_BARRIER support form the receiver/epoch code")
-leave w_e_reissue() declaration unused.
+On 7/29/24 17:06, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> There are no more users of get_thermal_instance(), so drop it.
+> 
+> While at it, replace get_instance() returning a pointer to struct
+> thermal_instance with thermal_instance_present() returning a bool
+> which is more straightforward.
+> 
+> No functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>   drivers/thermal/thermal_core.h    |    5 -----
+>   drivers/thermal/thermal_helpers.c |   30 ++++++------------------------
+>   2 files changed, 6 insertions(+), 29 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/thermal_core.h
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_core.h
+> +++ linux-pm/drivers/thermal/thermal_core.h
+> @@ -204,11 +204,6 @@ void __thermal_cdev_update(struct therma
+>   
+>   int get_tz_trend(struct thermal_zone_device *tz, const struct thermal_trip *trip);
+>   
+> -struct thermal_instance *
+> -get_thermal_instance(struct thermal_zone_device *tz,
+> -		     struct thermal_cooling_device *cdev,
+> -		     int trip);
+> -
+>   /*
+>    * This structure is used to describe the behavior of
+>    * a certain cooling device on a certain trip point
+> Index: linux-pm/drivers/thermal/thermal_helpers.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/thermal_helpers.c
+> +++ linux-pm/drivers/thermal/thermal_helpers.c
+> @@ -39,18 +39,18 @@ int get_tz_trend(struct thermal_zone_dev
+>   	return trend;
+>   }
+>   
+> -static struct thermal_instance *get_instance(struct thermal_zone_device *tz,
+> -					     struct thermal_cooling_device *cdev,
+> -					     const struct thermal_trip *trip)
+> +static bool thermal_instance_present(struct thermal_zone_device *tz,
+> +				     struct thermal_cooling_device *cdev,
+> +				     const struct thermal_trip *trip)
+>   {
+>   	struct thermal_instance *ti;
+>   
+>   	list_for_each_entry(ti, &tz->thermal_instances, tz_node) {
+>   		if (ti->trip == trip && ti->cdev == cdev)
+> -			return ti;
+> +			return true;
+>   	}
+>   
+> -	return NULL;
+> +	return false;
+>   }
+>   
+>   bool thermal_trip_is_bound_to_cdev(struct thermal_zone_device *tz,
+> @@ -62,7 +62,7 @@ bool thermal_trip_is_bound_to_cdev(struc
+>   	mutex_lock(&tz->lock);
+>   	mutex_lock(&cdev->lock);
+>   
+> -	ret = !!get_instance(tz, cdev, trip);
+> +	ret = thermal_instance_present(tz, cdev, trip);
+>   
+>   	mutex_unlock(&cdev->lock);
+>   	mutex_unlock(&tz->lock);
+> @@ -71,24 +71,6 @@ bool thermal_trip_is_bound_to_cdev(struc
+>   }
+>   EXPORT_SYMBOL_GPL(thermal_trip_is_bound_to_cdev);
+>   
+> -struct thermal_instance *
+> -get_thermal_instance(struct thermal_zone_device *tz,
+> -		     struct thermal_cooling_device *cdev, int trip_index)
+> -{
+> -	struct thermal_instance *ti;
+> -
+> -	mutex_lock(&tz->lock);
+> -	mutex_lock(&cdev->lock);
+> -
+> -	ti = get_instance(tz, cdev, &tz->trips[trip_index].trip);
+> -
+> -	mutex_unlock(&cdev->lock);
+> -	mutex_unlock(&tz->lock);
+> -
+> -	return ti;
+> -}
+> -EXPORT_SYMBOL(get_thermal_instance);
+> -
+>   /**
+>    * __thermal_zone_get_temp() - returns the temperature of a thermal zone
+>    * @tz: a valid pointer to a struct thermal_zone_device
+> 
+> 
+> 
 
-Commit 8fe605513ab4 ("drbd: Rename drbdd_init() -> drbd_receiver()")
-rename drbdd_init() and leave unsued declaration. Also drbd_asender() is removed in
-commit 1c03e52083c8 ("drbd: Rename asender to ack_receiver").
+LGTM, small nit: you can also remove the description of that
+get_thermal_instance() from
+Documentation/driver-api/thermal/sysfs-api.rst
+It sneaked in somehow...
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/block/drbd/drbd_int.h | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
-index 94dc0a235919..d2937bca1fe4 100644
---- a/drivers/block/drbd/drbd_int.h
-+++ b/drivers/block/drbd/drbd_int.h
-@@ -297,10 +297,6 @@ struct drbd_epoch {
- 	unsigned long flags;
- };
- 
--/* Prototype declaration of function defined in drbd_receiver.c */
--int drbdd_init(struct drbd_thread *);
--int drbd_asender(struct drbd_thread *);
--
- /* drbd_epoch flag bits */
- enum {
- 	DE_HAVE_BARRIER_NUMBER,
-@@ -1390,9 +1386,6 @@ extern void conn_free_crypto(struct drbd_connection *connection);
- extern void do_submit(struct work_struct *ws);
- extern void __drbd_make_request(struct drbd_device *, struct bio *);
- void drbd_submit_bio(struct bio *bio);
--extern int drbd_read_remote(struct drbd_device *device, struct drbd_request *req);
--extern int is_valid_ar_handle(struct drbd_request *, sector_t);
--
- 
- /* drbd_nl.c */
- 
-@@ -1474,7 +1467,6 @@ extern int w_resync_timer(struct drbd_work *, int);
- extern int w_send_write_hint(struct drbd_work *, int);
- extern int w_send_dblock(struct drbd_work *, int);
- extern int w_send_read_req(struct drbd_work *, int);
--extern int w_e_reissue(struct drbd_work *, int);
- extern int w_restart_disk_io(struct drbd_work *, int);
- extern int w_send_out_of_sync(struct drbd_work *, int);
- 
-@@ -1488,7 +1480,6 @@ extern int drbd_issue_discard_or_zero_out(struct drbd_device *device,
- 		sector_t start, unsigned int nr_sectors, int flags);
- extern int drbd_receiver(struct drbd_thread *thi);
- extern int drbd_ack_receiver(struct drbd_thread *thi);
--extern void drbd_send_ping_wf(struct work_struct *ws);
- extern void drbd_send_acks_wf(struct work_struct *ws);
- extern bool drbd_rs_c_min_rate_throttle(struct drbd_device *device);
- extern bool drbd_rs_should_slow_down(struct drbd_peer_device *peer_device, sector_t sector,
-@@ -1504,7 +1495,6 @@ extern void __drbd_free_peer_req(struct drbd_device *, struct drbd_peer_request
- #define drbd_free_peer_req(m,e) __drbd_free_peer_req(m, e, 0)
- #define drbd_free_net_peer_req(m,e) __drbd_free_peer_req(m, e, 1)
- extern struct page *drbd_alloc_pages(struct drbd_peer_device *, unsigned int, bool);
--extern void drbd_set_recv_tcq(struct drbd_device *device, int tcq_enabled);
- extern void _drbd_clear_done_ee(struct drbd_device *device, struct list_head *to_be_freed);
- extern int drbd_connected(struct drbd_peer_device *);
- 
--- 
-2.34.1
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
 
