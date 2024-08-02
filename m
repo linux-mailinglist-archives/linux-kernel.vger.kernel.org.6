@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-272465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28ABC945C66
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:48:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AA5945C70
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 556C81C21B16
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:48:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 395781C2187D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41481DE872;
-	Fri,  2 Aug 2024 10:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4/tgcIt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABC31DF665;
+	Fri,  2 Aug 2024 10:49:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E176A1DC461;
-	Fri,  2 Aug 2024 10:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB2614D2B7;
+	Fri,  2 Aug 2024 10:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722595722; cv=none; b=tW/RX/kYu7MkGMLZ4g1O0iuciES6H1+TBMKNIWiw+T4c/LKx5AHKt67/m57plQTH+F3f0A30wD6adUgxsZFMhRBm+dAPf9GiM/14FPa6nu8XQ5nz+75oQHwcv1ShsUzOcsTzlxAtbZ49RrXX6aBM557BdFhRxLssls5iQhP6i6E=
+	t=1722595767; cv=none; b=BZHP2wEA+VGa+xELnI3Ag1+N7FnFK8alBjiW2EWBq63kQVBiWrzyR96/xkdW1/GZj2tpme5ywy6rAUKD2ReWiG4VIuxTwSw5ErcxEayjxt2xWD2Pzu/TsJsXWJNND7eRPzOqBcu0G4ztVOs163QLuZBtGn/ymJhXdLlyW4m7m2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722595722; c=relaxed/simple;
-	bh=1UtEsW1B8YGTusoX2RACg6eRJD75Xl/UNssGCGaoLFo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=c93LyOF6fZDgYCjOknhn7cRlYbrkdQRxOjtcxP2qK1iHiXooA16D8/J+v1fH5LPtjJHmU12RznWuS5gWKl5lO0nJDLtJQuv+0LY1FaCGefRZLsv8hTEzx6lj92aKW/4Iq/+jA9zY3gVUG72ntypYLOxH8M3oPV7wfkbWlciv5X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4/tgcIt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDBB6C32782;
-	Fri,  2 Aug 2024 10:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722595721;
-	bh=1UtEsW1B8YGTusoX2RACg6eRJD75Xl/UNssGCGaoLFo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=F4/tgcItl7OXJuY2RVCfRtvR6VVCv4wUIutjw0GzyZq67a3nOTCgU8OmMj+hG81Hx
-	 DrleyO8xaZ9pTlavt4q6a5TDx2cCL3YrPfNu2D2pGxVevWYvCXIMCtBC0GQgLUFY3C
-	 ORMos0Y0sKNfEt3fxCco4D1SYDCapTmMyCSGo/k09c6hq7xmWqO7/cgX1REt0Ec0cr
-	 T9O1Nu5Qb+7nvkP7hXlPjhScsuljs3NyFr/faO1osK8qkbD9psJtPwWoU9fLwYQ25A
-	 2kiWsplk4wwSsIhjiw/arHEUviuDgWLFN/pgdt0tcvq/Wqnyl7HaylvmTgd1R5BFeP
-	 n7oGIMwehz3Wg==
-Date: Fri, 2 Aug 2024 12:48:38 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Olivier Sobrie <olivier@sobrie.be>
-cc: Basavaraj Natikar <basavaraj.natikar@amd.com>, 
-    Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: amd_sfh: free driver_data after destroying hid
- device
-In-Reply-To: <20240723084827.11773-1-olivier@sobrie.be>
-Message-ID: <nycvar.YFH.7.76.2408021247560.12664@cbobk.fhfr.pm>
-References: <20240723084827.11773-1-olivier@sobrie.be>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1722595767; c=relaxed/simple;
+	bh=Ajy8SvnLDZPxllwgmM2haLw5Ndm9cCJ2PUNQZXktTuA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s3SOKoRbdMgkM+MylIsdQ4JRx/NlhuPE1ZuTOhItvvtjlWAUsaTUKfQP6Czl4zoZbeSBfjAer7Y4j/cC7OeK3FCti8UoGGgHs76qh3xIwHDNGHXukUn8hkLWZ/p8ay5bAi6Ao9Xv8YAJYcoGHUP2XN6rvGQOXujNNAKzZTwH4XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wb2bB1lx3z6K61Q;
+	Fri,  2 Aug 2024 18:47:18 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id D2B89140B3C;
+	Fri,  2 Aug 2024 18:49:21 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 2 Aug
+ 2024 11:49:20 +0100
+Date: Fri, 2 Aug 2024 11:49:20 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mike Rapoport <rppt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
+ Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
+	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
+	<dave@stgolabs.net>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko
+ Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
+ Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
+	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
+	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
+	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
+	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
+Subject: Re: [PATCH v3 17/26] mm: introduce numa_memblks
+Message-ID: <20240802114920.00006dc1@Huawei.com>
+In-Reply-To: <20240801060826.559858-18-rppt@kernel.org>
+References: <20240801060826.559858-1-rppt@kernel.org>
+	<20240801060826.559858-18-rppt@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 23 Jul 2024, Olivier Sobrie wrote:
+On Thu,  1 Aug 2024 09:08:17 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-> HID driver callbacks aren't called anymore once hid_destroy_device() has
-> been called. Hence, hid driver_data should be freed only after the
-> hid_destroy_device() function returned as driver_data is used in several
-> callbacks.
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> I observed a crash with kernel 6.10.0 on my T14s Gen 3, after enabling
-> KASAN to debug memory allocation, I got this output:
-[ ... snip ... ]
-> KASAN reports a use-after-free of hid->driver_data in function
-> amd_sfh_get_report(). The backtrace indicates that the function is called
-> by amdtp_hid_request() which is one of the callbacks of hid device.
-> The current make sure that driver_data is freed only once
-> hid_destroy_device() returned.
+> Move code dealing with numa_memblks from arch/x86 to mm/ and add Kconfig
+> options to let x86 select it in its Kconfig.
 > 
-> Note that I observed the crash both on v6.9.9 and v6.10.0. The
-> code seems to be as it was from the early days of the driver.
+> This code will be later reused by arch_numa.
 > 
-> Signed-off-by: Olivier Sobrie <olivier@sobrie.be>
-> ---
->  drivers/hid/amd-sfh-hid/amd_sfh_hid.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> No functional changes.
 > 
-> diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_hid.c b/drivers/hid/amd-sfh-hid/amd_sfh_hid.c
-> index 705b52337068..81f3024b7b1b 100644
-> --- a/drivers/hid/amd-sfh-hid/amd_sfh_hid.c
-> +++ b/drivers/hid/amd-sfh-hid/amd_sfh_hid.c
-> @@ -171,11 +171,13 @@ int amdtp_hid_probe(u32 cur_hid_dev, struct amdtp_cl_data *cli_data)
->  void amdtp_hid_remove(struct amdtp_cl_data *cli_data)
->  {
->  	int i;
-> +	struct amdtp_hid_data *hid_data;
->  
->  	for (i = 0; i < cli_data->num_hid_devices; ++i) {
->  		if (cli_data->hid_sensor_hubs[i]) {
-> -			kfree(cli_data->hid_sensor_hubs[i]->driver_data);
-> +			hid_data = cli_data->hid_sensor_hubs[i]->driver_data;
->  			hid_destroy_device(cli_data->hid_sensor_hubs[i]);
-> +			kfree(hid_data);
->  			cli_data->hid_sensor_hubs[i] = NULL;
->  		}
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-This seems reasonable. Basavaraj, can you please provide your Ack for 
-this? Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
 
 
