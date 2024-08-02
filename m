@@ -1,213 +1,143 @@
-Return-Path: <linux-kernel+bounces-273000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15690946333
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:29:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4F494633B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65C528348B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:29:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E08A01C21A85
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EBC1ABEB5;
-	Fri,  2 Aug 2024 18:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB29C1547CB;
+	Fri,  2 Aug 2024 18:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNDS4bDC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NH9xcces"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6755C1ABEA9;
-	Fri,  2 Aug 2024 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9581547C4
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 18:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722623025; cv=none; b=GB6eUD73QTMmhPPQXJNYqvEzhXpRz9JvLy5EOZ9F24EMpq7qatXx5MP3Q9IBAyhVqVJZSIy0v7I3sWC6OdpXh57Xq/L2MWl1Gc/ypKwzHUT6RFPglQjxgTeZl/0qyojgcXxdEKHFr0Bl9SsbEDoAnL5HFMQnJ2nIT7R5Wy8+1ak=
+	t=1722623259; cv=none; b=J3mZIGTRv+pTp8ZBz+Qt2dZLCZ/u9X3jVRT545VfKlqgfWfIkkPU1QPXasiPzqI8x9MwUBRGkEGlfzjtNbrIzsGFiBGHUhgnx1UGDsPCQ9HU19wtUuW4y7b2myT8r+zR2mmqfjVt9V4ysAxsPnkrJhlxTY7VelwLQKWfTu1wfko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722623025; c=relaxed/simple;
-	bh=0nh586fdYKbqYE7Xx1zKbVfE2k9oRTxAHMyDsfqXHX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lp+HVRzzxiwAuGo3z8qLlLaBf8Jg5o5utBec4WRAQhXbaNibOpOkLXvMMmVukmZjS+Q3mtya86uoj31KSmV3PLh1TTrx5reiVwFGVJ35W3TKfGES/kiskYWuSmHE6hKFEkeumwtL1b7apvkQZ02/9dwHmrcFuK0aSIWC6TjL08E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNDS4bDC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9CD1C32782;
-	Fri,  2 Aug 2024 18:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722623025;
-	bh=0nh586fdYKbqYE7Xx1zKbVfE2k9oRTxAHMyDsfqXHX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZNDS4bDCnwNQ9Su7UPeetcV9aqZtm8+IPybJ/LTvTbLsYvq4HCtbydVylhvLN6lXE
-	 U5j3o87n+QCLXZHE8NkUeeAhz446lYGaWFhubmXMRDWChjwm9EYoYqk9PW/HKyjd3Z
-	 A/WdEft1mY5lz148SYVeh1li8OFQUKGx109MFy/5RMnvOVekVQz8sMAengoRPqalR7
-	 tHNDRFCQ8mqvP4pixedBQ8pczsDy/7S+16DPmD/puStXYWPSQdYH+eErdffBvQ+wOw
-	 AevS+iavdWmaC9Ju0TIVuwr6+ZQTw1ba5JMWExOT8+MPOwf4ZFjbenDbDy7Z4S3KSZ
-	 38YQnaXDLioaw==
-Date: Fri, 2 Aug 2024 11:23:43 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Casey Chen <cachen@purestorage.com>,
-	Tom Zanussi <tzanussi@gmail.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf inject: Inject build ids for entire call chain
-Message-ID: <Zq0kL-lyCqkM3P4G@google.com>
-References: <20240801031249.176913-1-irogers@google.com>
+	s=arc-20240116; t=1722623259; c=relaxed/simple;
+	bh=KFqyW8VyRJjw06PhvyHoMLnwuQfZyKEuICjCjT51uEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q80Kd3B26Y081PiWQC+pdJyE57vSRAbKJl+KDgrydXfiL0jwKhHw2oSMqD4UdOJfbLht1XXlJ7AtmGirgyqfkU/s6FolEVs7BDqBTQ8a2Iwz9sLgP0LWLcLBrnwkipxOUMK6vshqvlQ567P/6YGgW4VvnJIq6ydv37zjbxukiIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NH9xcces; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722623256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2+dmxbpR/4oI0waxMPR+7txTP17MN5O29+dFvBWzm2c=;
+	b=NH9xccesBBU+s3wZSCdsFlt1fM3QTEm228b1pfqFDWb6H+N/75vHaJSFOUBX9XyH0jbnNW
+	COaSsxcUSSyABdyNVoh7D88y7xtHWkPnbxVwtrCwGB1FWxaytzTRXdVS79RTnNrmHz8ak7
+	DQXUSYzNN3rpYUHiuU2T2+zAyyJtMcQ=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-114-I5M96XR_N8K-EA0s7hRYSA-1; Fri, 02 Aug 2024 14:27:35 -0400
+X-MC-Unique: I5M96XR_N8K-EA0s7hRYSA-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5d5cec5ab62so6848721eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 11:27:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722623254; x=1723228054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2+dmxbpR/4oI0waxMPR+7txTP17MN5O29+dFvBWzm2c=;
+        b=ujeb27OA5sK2XrgZqg0FEg+mV5eVZpVqWeAuOt1c8KHAvZvTJTcRf0FvEGk+732W7o
+         lBpNjY/PhWOFQeWsBi5Zs5aRQZD+i4BuzH6m/CmUvC/kkgVeRNbPFfJraZo/mfLLKMKf
+         OlyjYzQmq8D7McMAzirxgNchh15LkqT/ysGVZ+qrm1YFDcWFksukyilXZUY5hgoYJCTH
+         xuW8iprwwp8xq8bssGWEYTtzFRvnywt+YcF/Z+YJB6bFd/m7R2NoSjh4gIO75mvxRmlo
+         vGk1J5GBhYcr1RmbxOcxUIxtgqQs7b2Mx99jWR7koZJgU+gnqzSFEDoNxwF1mexIPe82
+         RuoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNwGEUA5LenlQEuyU7oiuPqQhL4LGBnAW3lFzRh8IaH5nrJtJ+vnTPh+M1U6G8qWhT/cZf0XqNEtczmwdLhQXWYLEntG9fg7W+axGM
+X-Gm-Message-State: AOJu0Yz9WCgkOlupLUSp2QO6wowyEfPxfBYOzspX84WWxAxVm/XZGTvd
+	xWcyA752lOOtQnG2ebemXYE6frbeDVXpAQVuLV5gTz9fiGVzANi9hYrgjZq73zcL5Ew2tCUDxea
+	xY+4/Z4aCfBFXv0LnB/cRZtcH4IBZ/PH2Ke1YWkILccMhZz/79Mx30fUdtqShignjCXfe7UdmGH
+	Ziun2Q3B4oMzqu4VVewhgREuAXYIcvUlsZDw5d
+X-Received: by 2002:a05:6820:1ca5:b0:5d5:6733:ca74 with SMTP id 006d021491bc7-5d655447235mr5848284eaf.2.1722623254717;
+        Fri, 02 Aug 2024 11:27:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFtCTI5Ag8OdAPcqoLtAhD39boEqLL1L+HG0du0LU4QnQm3qLHoDKEpABDmRlfk5HP1Adkn+xvxE0B6HhjP40=
+X-Received: by 2002:a05:6820:1ca5:b0:5d5:6733:ca74 with SMTP id
+ 006d021491bc7-5d655447235mr5848265eaf.2.1722623254458; Fri, 02 Aug 2024
+ 11:27:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240801031249.176913-1-irogers@google.com>
+References: <cover.1720728319.git.jstancek@redhat.com> <Zqzarrjxrt8A5QE2@gondor.apana.org.au>
+ <D35ME25EZWYG.2G7BARLXC4UOO@iki.fi>
+In-Reply-To: <D35ME25EZWYG.2G7BARLXC4UOO@iki.fi>
+From: Jan Stancek <jstancek@redhat.com>
+Date: Fri, 2 Aug 2024 20:27:17 +0200
+Message-ID: <CAASaF6zA4MDZ-jW8OCp6WrrKD_QkxFrA5CUCtZV8JzyXdr9Orw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] sign-file,extract-cert: switch to PROVIDER API for
+ OpenSSL >= 3.0
+To: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, dhowells@redhat.com, dwmw2@infradead.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jarkko Sakkinen <jarkko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ian,
+On Fri, Aug 2, 2024 at 8:07=E2=80=AFPM Jarkko Sakkinen <jarkko.sakkinen@iki=
+.fi> wrote:
+>
+> On Fri Aug 2, 2024 at 4:10 PM EEST, Herbert Xu wrote:
+> > On Fri, Jul 12, 2024 at 09:11:13AM +0200, Jan Stancek wrote:
+> > > The ENGINE interface has its limitations and it has been superseded
+> > > by the PROVIDER API, it is deprecated in OpenSSL version 3.0.
+> > > Some distros have started removing it from header files.
+> > >
+> > > Update sign-file and extract-cert to use PROVIDER API for OpenSSL Maj=
+or >=3D 3.
+> > >
+> > > Tested on F39 with openssl-3.1.1, pkcs11-provider-0.5-2, openssl-pkcs=
+11-0.4.12-4
+> > > and softhsm-2.6.1-5 by using same key/cert as PEM and PKCS11 and comp=
+aring that
+> > > the result is identical.
+> > >
+> > > Jan Stancek (3):
+> > >   sign-file,extract-cert: move common SSL helper functions to a heade=
+r
+> > >   sign-file,extract-cert: avoid using deprecated ERR_get_error_line()
+> > >   sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >=3D =
+3
+> > >
+> > >  MAINTAINERS          |   1 +
+> > >  certs/Makefile       |   2 +-
+> > >  certs/extract-cert.c | 138 +++++++++++++++++++++++------------------=
+--
+> > >  scripts/sign-file.c  | 134 +++++++++++++++++++++--------------------
+> > >  scripts/ssl-common.h |  32 ++++++++++
+> > >  5 files changed, 178 insertions(+), 129 deletions(-)
+> > >  create mode 100644 scripts/ssl-common.h
+> >
+> > Adding Cc to Jarkko Sakkinen <jarkko@kernel.org>.
+>
+> I can download this but is it likely that there will be v2? If so,
+> I'll hoold on for that. If not, I'll download it.
 
-On Wed, Jul 31, 2024 at 08:12:49PM -0700, Ian Rogers wrote:
-> The DSO build id is injected when the dso is first encountered but the
-> checking for first encountered only looks at the sample->ip not the
-> entire callchain. Use the callchain logic to ensure all build ids are
-> inserted.
-> 
-> Add a for_each callback style API to callchain with
-> sample__for_each_callchain_node. Possibly in the future such an API
-> can avoid the overhead of constructing the call chain list.
-> 
-> Fixes: 454c407ec17a ("perf: add perf-inject builtin")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Noone requested any changes to v1 so far, so if you can have a look,
+it would be much appreciated.
 
 Thanks,
-Namhyung
+Jan
 
-> ---
->  tools/perf/builtin-inject.c | 31 +++++++++++++++++++++++++++++++
->  tools/perf/util/callchain.c | 35 +++++++++++++++++++++++++++++++++++
->  tools/perf/util/callchain.h |  6 ++++++
->  3 files changed, 72 insertions(+)
-> 
-> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-> index 7b4a5d56d279..ea5f1d57e7e1 100644
-> --- a/tools/perf/builtin-inject.c
-> +++ b/tools/perf/builtin-inject.c
-> @@ -743,6 +743,29 @@ static int dso__inject_build_id(struct dso *dso, struct perf_tool *tool,
->  	return 0;
->  }
->  
-> +struct mark_dso_hit_args {
-> +	struct perf_tool *tool;
-> +	struct machine *machine;
-> +	u8 cpumode;
-> +};
-> +
-> +static int mark_dso_hit_callback(struct callchain_cursor_node *node, void *data)
-> +{
-> +	struct mark_dso_hit_args *args = data;
-> +	struct map *map = node->ms.map;
-> +
-> +	if (map) {
-> +		struct dso *dso = map__dso(map);
-> +
-> +		if (dso && !dso__hit(dso)) {
-> +			dso__set_hit(dso);
-> +			dso__inject_build_id(dso, args->tool, args->machine,
-> +					     args->cpumode, map__flags(map));
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
->  int perf_event__inject_buildid(struct perf_tool *tool, union perf_event *event,
->  			       struct perf_sample *sample,
->  			       struct evsel *evsel __maybe_unused,
-> @@ -750,6 +773,11 @@ int perf_event__inject_buildid(struct perf_tool *tool, union perf_event *event,
->  {
->  	struct addr_location al;
->  	struct thread *thread;
-> +	struct mark_dso_hit_args args = {
-> +		.tool = tool,
-> +		.machine = machine,
-> +		.cpumode = sample->cpumode,
-> +	};
->  
->  	addr_location__init(&al);
->  	thread = machine__findnew_thread(machine, sample->pid, sample->tid);
-> @@ -769,6 +797,9 @@ int perf_event__inject_buildid(struct perf_tool *tool, union perf_event *event,
->  		}
->  	}
->  
-> +	sample__for_each_callchain_node(thread, evsel, sample, PERF_MAX_STACK_DEPTH,
-> +					mark_dso_hit_callback, &args);
-> +
->  	thread__put(thread);
->  repipe:
->  	perf_event__repipe(tool, event, sample, machine);
-> diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-> index 6d075648d2cc..0d608e875fe9 100644
-> --- a/tools/perf/util/callchain.c
-> +++ b/tools/perf/util/callchain.c
-> @@ -1797,3 +1797,38 @@ s64 callchain_avg_cycles(struct callchain_node *cnode)
->  
->  	return cycles;
->  }
-> +
-> +int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
-> +				    struct perf_sample *sample, int max_stack,
-> +				    callchain_iter_fn cb, void *data)
-> +{
-> +	struct callchain_cursor *cursor = get_tls_callchain_cursor();
-> +	int ret;
-> +
-> +	if (!cursor)
-> +		return -ENOMEM;
-> +
-> +	/* Fill in the callchain. */
-> +	ret = thread__resolve_callchain(thread, cursor, evsel, sample,
-> +					/*parent=*/NULL, /*root_al=*/NULL,
-> +					max_stack);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Switch from writing the callchain to reading it. */
-> +	callchain_cursor_commit(cursor);
-> +
-> +	while (1) {
-> +		struct callchain_cursor_node *node = callchain_cursor_current(cursor);
-> +
-> +		if (!node)
-> +			break;
-> +
-> +		ret = cb(node, data);
-> +		if (ret)
-> +			return ret;
-> +
-> +		callchain_cursor_advance(cursor);
-> +	}
-> +	return 0;
-> +}
-> diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-> index d5c66345ae31..76891f8e2373 100644
-> --- a/tools/perf/util/callchain.h
-> +++ b/tools/perf/util/callchain.h
-> @@ -311,4 +311,10 @@ u64 callchain_total_hits(struct hists *hists);
->  
->  s64 callchain_avg_cycles(struct callchain_node *cnode);
->  
-> +typedef int (*callchain_iter_fn)(struct callchain_cursor_node *node, void *data);
-> +
-> +int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
-> +				    struct perf_sample *sample, int max_stack,
-> +				    callchain_iter_fn cb, void *data);
-> +
->  #endif	/* __PERF_CALLCHAIN_H */
-> -- 
-> 2.46.0.rc2.264.g509ed76dc8-goog
-> 
+>
+> BR, Jarkko
+>
+
 
