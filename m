@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-272354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5DA945AA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:16:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B7C945AAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B128B22D0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:16:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 709002833A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FC91DAC68;
-	Fri,  2 Aug 2024 09:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FD41DAC53;
+	Fri,  2 Aug 2024 09:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UldeP0aN"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6EOcVZW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBD68F47;
-	Fri,  2 Aug 2024 09:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BA88F47;
+	Fri,  2 Aug 2024 09:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590164; cv=none; b=t2T6RIbMroNYArCmH2KfvWMef+ZjrAKDJuS0f/LHOE1VavAbgvE9bYdbxqD6BFwl3yS3PPOFwO7TE3YkvNewdeO0QSDMhKIvBNxuQCiaS7ZC8WioU7xhFlEkaXTKbP0hfBBRdpKzKblV5sM5LG4QSge+8OakT9PDkbrMxjr/9VQ=
+	t=1722590188; cv=none; b=n6/XOnlVHWg1eSJalCRxBSCvZ8ISWXjVFMM0vxjZMvAGCb3c+6lTsu38d/qlT0I7yVeREJeUzGGdk4rfm52DMkVNy7w1CjVG0/WyhajflYb9pijQQaWNUIMNiotsyETu7N3/Ka/koubASwcSHv8h48/aYRg9i+GBMqXaZkghgMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590164; c=relaxed/simple;
-	bh=G2tIOtTR1ZZWG3IUEsbOgof/if8cRi8NNdYkXmUdaZw=;
+	s=arc-20240116; t=1722590188; c=relaxed/simple;
+	bh=EJjZs91HeAXV13ZEk2XqpWMizAFAF5zD1DVpVpsGB6A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Yh1xkWUnRKSXKloC5DbSbCIhE/qsy4/jqDwnFEKc0P2Q3ZjilIN6qpCWWdtALRRkOP6UXCLYw6PcblWuZ7leRWxhnh3cJuybQKRrQ88JVBLBKzwS6vbELaYSxxR94fS+6hz/sNZ3CAt2iDg+IY8EXeVaNZ5BZDcXsT7WKSy7RAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UldeP0aN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9E6C4AF11;
-	Fri,  2 Aug 2024 09:15:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=GMGdmhb5iwUyo+0hU250fKhS60xgmgOD/OFMPz/9iybEHEHUbMDJblcbQhTo6cSmxcfUCZSMYb6LAxXhbd15WJ+6KhEAzA/Nosc3S+Km+6ysHZZu1EzZIfW9mFBLzdLaDjN+iy/PvwVnCVOSzlehQddnYrLiHve0NnXnvtNWJp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6EOcVZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D599C32782;
+	Fri,  2 Aug 2024 09:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722590164;
-	bh=G2tIOtTR1ZZWG3IUEsbOgof/if8cRi8NNdYkXmUdaZw=;
+	s=k20201202; t=1722590187;
+	bh=EJjZs91HeAXV13ZEk2XqpWMizAFAF5zD1DVpVpsGB6A=;
 	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=UldeP0aNR8yeU91AY9Rq359SeHC8PJsbZT8UB+ZiT8pE9qhS7qXFauBe8ZgIhZLs1
-	 1KTGyUtA3G7Rnh+pYlgwMx6VblgUrwLELW4aOY5E8dnC7yiVC0a1gQ8H9Q2c1xUEvn
-	 PDSOJlRxMLP0m+QLEcEvnQ3Ta/MHwBKMwD1RH/2YP4h9ifdIzQDQgB9wvbjJx4/Erp
-	 E3J+IIqBWEZp4RVEhw/4I7d9gkjDS8zGaqtK8myEhjqIF54rP2+ZoYvwliAtJcT+rw
-	 lmTHUC3n1hjFImx9Yx4jD5GI3MOj3X0cfUfcc9y4qOI6BSViAXqUUuT5BMWUCNK0iX
-	 ijS+b5K7mbsQg==
-Message-ID: <f6823ec7-5a33-483b-ba95-6583d18281ff@kernel.org>
-Date: Fri, 2 Aug 2024 11:15:52 +0200
+	b=I6EOcVZWgkwu8RTtojmyRB4Txjrog/EzJVGsALHf2J4i//iMqkf+KFi7gkoE2v+JC
+	 XE0FZkTckPk8SGBLHfvU1BmgIMHlTP4I0hMwtJNGLEvcjKixEEnp3Nzy15ScqSk2ub
+	 oBX+Y7uRiSIBIV0FVvVkjTsqK4CzB9v6HDXjwEBhICcXfXTld0VD/52sfBEfqP1g3G
+	 A86K9CEKmthfrM1/KZHBPp+pdtvwq94vtMO5/Qeo0zuTzsJLjSOhc7GqbqMLTq5d05
+	 BumdL2d685iEHMdvh8mNMY4zw/MM8RM0t5yWLKL/qtU3QUdlIvfzXUu5/79e1eeixm
+	 Pv08CRPhDSEFQ==
+Message-ID: <7a1769a0-7273-4995-863a-5db9e201c4f0@kernel.org>
+Date: Fri, 2 Aug 2024 11:16:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/9] dt-bindings: clk: ast2700: Add ASPEED AST27XX
- Clock schema
+Subject: Re: [PATCH v2 4/9] clk: ast2700: add clock controller
 To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
@@ -63,7 +62,7 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
- <20240802090544.2741206-5-kevin_chen@aspeedtech.com>
+ <20240802090544.2741206-6-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,25 +108,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802090544.2741206-5-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240802090544.2741206-6-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/08/2024 11:05, Kevin Chen wrote:
-> Add Clock schema for AST2700.
+> Add support for ast2700 clock controller.
 > 
 > Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> ---
+>  drivers/clk/Makefile      |    1 +
+>  drivers/clk/clk-ast2700.c | 1173 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 1174 insertions(+)
+>  create mode 100644 drivers/clk/clk-ast2700.c
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
+Missing bindings.
 
 Best regards,
 Krzysztof
