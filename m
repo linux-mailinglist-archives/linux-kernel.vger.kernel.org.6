@@ -1,151 +1,131 @@
-Return-Path: <linux-kernel+bounces-273417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF44D946906
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:16:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F004294690A
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962642820BF
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D101B216F9
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D632136353;
-	Sat,  3 Aug 2024 10:16:32 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DE74A2F;
-	Sat,  3 Aug 2024 10:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383F613958C;
+	Sat,  3 Aug 2024 10:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UY9Mfeka"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476A14A2F;
+	Sat,  3 Aug 2024 10:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722680191; cv=none; b=IOBqy4mjkmwH4aYw+ozOhNgn/SX7/gVxT77lQRm9SgYCFoZ/O8YYARSvOJ+BTQAWUTpXfWT6IpVo7EOT4A8DqNT84ROKfU9eVqfJpIG41Wh8cNa/yQbcDIA/1iDlgW2peDSZyGxKin4nvDG+jfwl1v11ZFynf1NP8MfW57k+588=
+	t=1722680606; cv=none; b=eaLp8lhK0zxBfz1Z3FzddW+/wNRxKWVzTI62yfNv/fWmCGDgedqiaUX6NyZH+FJ/P2cKzcm2zZJuMnqsiK4KZDv2D6+VDbrfuPWjp8akPkRvfYiJFCmytR5hELAbGovToTXbJzpB/NkqIJL0sz1jbfF9H9H2T3M1uvMd46C79jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722680191; c=relaxed/simple;
-	bh=HTPZJ4SGhjD4vKLrizhvIA6HtB5O7tBYXmfo/h5cv4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aq790MZTnJX4jo767+qHRnOxZ/P/g6G31ieDvfbDbX333BT8TW0mjE2TtmJO2s6cgkbyBHMea3qGYKGd5+ptPVuvPBdU2kxnC10GfBd9lXViH+AFqPtYTFK4O5/nBPoRtPRElMCFuZmWqlpglSZLaOwGbtvTGEcrpGuT2iLcccs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 473AGPHe029315;
-	Sat, 3 Aug 2024 12:16:25 +0200
-Date: Sat, 3 Aug 2024 12:16:25 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] tools/nolibc: add support for [v]sscanf()
-Message-ID: <20240803101625.GH29127@1wt.eu>
-References: <20240731-nolibc-scanf-v1-0-f71bcc4abb9e@weissschuh.net>
- <20240731-nolibc-scanf-v1-1-f71bcc4abb9e@weissschuh.net>
- <3956cee8-1623-42d6-bbc6-71b5abd67759@linuxfoundation.org>
- <5db920e0-51e8-48d9-b0ae-95479e875fad@t-8ch.de>
+	s=arc-20240116; t=1722680606; c=relaxed/simple;
+	bh=F+Kwu+SL10Y+c1ALb7LvkbBlS65JjCffGIIlE1iRefY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E9Z9jgW/kDvlSfrppu/gu1rER/Bvev3xloVsbIc6RGj6kg+nMvzafVEjfmvcNayo1OvlsumcohMDTwOtykkOtWlE/VtDkvGBBeS6zz1UvKaVbnC7t1Ds+gXL3I9sNwYb8KQUEv/ctwc2WlJxbTTXbuq2yWVe1LmeeKNXG3aWp2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UY9Mfeka; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id aBthsTd1khajuaBthsjhx3; Sat, 03 Aug 2024 12:22:06 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722680526;
+	bh=4MAfltrielFugt99roLwuy2ODnKgMwhqZafIG9rnCs4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=UY9Mfeka4XdaFLIk3XMaNqBrVaBs2WUcuCgU5wWXCWHFlfubaF1syagdIgGg6JvUu
+	 TD8lZxEU6THuz8wC2B+B+1nrubiUdzSWvwy1lTVlPUTbdgC2GQ7x1yh/qMxeofsiYZ
+	 2fu8cSwXoKf2k9kSLwRn0eU6wcGoHQsEgB3rCF9umrf692/WCq7iSutXVVxOON/I7i
+	 /1vHFY6mHDgWO17Iu7qnGEDYMWUBqIBtUl//aHYiHhBH/+uBfsx0HOh1/KA36UFQgH
+	 X7QubtPnRHH/oLFgu/QJXg75NnZHiX5eobUDwjVd4gQaa1TvPUaKYeqtsjNN6CRDo3
+	 dnl+3RL1vt8dA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 03 Aug 2024 12:22:06 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <d00b1a28-24ae-4487-8a8a-b08a84a4ce4a@wanadoo.fr>
+Date: Sat, 3 Aug 2024 12:22:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net: ethernet: remove unnecessary parentheses
+To: Moon Yeounsu <yyyynoom@gmail.com>, cooldavid@cooldavid.org,
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org
+References: <20240802054421.5428-1-yyyynoom@gmail.com>
+ <20240803022949.28229-1-yyyynoom@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240803022949.28229-1-yyyynoom@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5db920e0-51e8-48d9-b0ae-95479e875fad@t-8ch.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, Aug 02, 2024 at 05:48:13PM +0200, Thomas Wei�schuh wrote:
-> > With all these libc functionality added, it isn't nolibc looks like :)
+Hi,
+
+this is not how things work.
+This v2 depends on the previous v1. It shouldn't.
+
+v2 should be a standalone patch which includes v1 and all modifications 
+done afterward.
+
+
+When you send a new patch you should:
+   - give an history of changes, below the ---. See [1]
+   - eventually give links to previous version
+   - your new version should not be threaded with the previous mails. It 
+should start a new thread.
+
+
+Le 03/08/2024 à 04:29, Moon Yeounsu a écrit :
+> remove unnecessary parentheses surrounding `ip_hdrlen()`,
+> And keep it under 80 columns long to follow the kernel coding style.
 > 
-> Well :-)
+> Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+> ---
+
+[1]: here.
+
+*As an example*, I would have done as follow, but there is no rule 
+(AFAIK) for this section.
+
+
+Changes in v2:
+   - Remove extra ()   [Christophe Jaillet, Simon Horman]
+   - Break long lines   [Simon Horman]
+
+v1: https://lore.kernel.org/all/20240802054421.5428-1-yyyynoom@gmail.com/
+
+>   drivers/net/ethernet/jme.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> The main motivation is to provide kselftests compatibility.
-> Maybe Willy disagrees.
+> diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
+> index 83b185c995df..d8be0e4dcb07 100644
+> --- a/drivers/net/ethernet/jme.c
+> +++ b/drivers/net/ethernet/jme.c
+> @@ -947,12 +947,12 @@ jme_udpsum(struct sk_buff *skb)
+>   		return csum;
+>   	skb_set_network_header(skb, ETH_HLEN);
+>   
+> -	if ((ip_hdr(skb)->protocol != IPPROTO_UDP) ||
+> -	    (skb->len < (ETH_HLEN + (ip_hdrlen(skb)) + sizeof(struct udphdr)))) {
+> +	if (ip_hdr(skb)->protocol != IPPROTO_UDP ||
+> +	    skb->len < (ETH_HLEN + ip_hdrlen(skb) + sizeof(struct udphdr))) {
+>   		skb_reset_network_header(skb);
+>   		return csum;
+>   	}
+> -	skb_set_transport_header(skb, ETH_HLEN + (ip_hdrlen(skb)));
+> +	skb_set_transport_header(skb, ETH_HLEN + ip_hdrlen(skb));
+>   	csum = udp_hdr(skb)->check;
+>   	skb_reset_transport_header(skb);
+>   	skb_reset_network_header(skb);
 
-No no I'm perfectly fine with adding the functions that developers use
-or need to write their test or init tools. I don't have any strong
-opinion on scanf(). Just like strtok(), I stopped using it 25 years ago
-when I noticed that it never survives code evolutions, lacks a lot of
-flexibility and is often strongly tied to your types (more than printf
-where you can cast). But I perfectly understand that others are used to
-it and would appreciate to have it, for example if it helps with command
-line arguments.
 
-> > > +static int test_scanf(void)
-> > > +{
-> > > +	unsigned long long ull;
-> > > +	unsigned long ul;
-> > > +	unsigned int u;
-> > > +	long long ll;
-> > > +	long l;
-> > > +	void *p;
-> > > +	int i;
-> > > +
-> > > +	if (sscanf("", "foo") != EOF)
-> > > +		return 1;
-> > > +
-> > > +	if (sscanf("foo", "foo") != 0)
-> > > +		return 2;
-> > > +
-> > > +	if (sscanf("123", "%d", &i) != 1)
-> > > +		return 3;
-> > > +
-> > > +	if (i != 123)
-> > > +		return 4;
-> > > +
-> > > +	if (sscanf("a123b456c0x90", "a%db%uc%p", &i, &u, &p) != 3)
-> > > +		return 5;
-> > > +
-> > > +	if (i != 123)
-> > > +		return 6;
-> > > +
-> > > +	if (u != 456)
-> > > +		return 7;
-> > > +
-> > > +	if (p != (void *)0x90)
-> > > +		return 8;
-> > > +
-> > > +	if (sscanf("a    b1", "a b%d", &i) != 1)
-> > > +		return 9;
-> > > +
-> > > +	if (i != 1)
-> > > +		return 10;
-> > > +
-> > > +	if (sscanf("a%1", "a%%%d", &i) != 1)
-> > > +		return 11;
-> > > +
-> > > +	if (i != 1)
-> > > +		return 12;
-> > > +
-> > > +	if (sscanf("1|2|3|4|5|6",
-> > > +		   "%d|%ld|%lld|%u|%lu|%llu",
-> > > +		   &i, &l, &ll, &u, &ul, &ull) != 6)
-> > > +		return 13;
-> > > +
-> > > +	if (i != 1 || l != 2 || ll != 3 ||
-> > > +	    u != 4 || ul != 5 || ull != 6)
-> > > +		return 14;
-> > > +
-> > > +	return 0;
-> > 
-> > Can we simplify this code? It is hard to read code with too
-> > many conditions. Maybe defining an array test conditions
-> > instead of a series ifs.
-> 
-> I tried that and didn't find a way.
-> Any pointers are welcome.
-
-I think it would be difficult by nature of varargs.
-
-However, since you grouped some expressions, maybe a one-liner comment
-between each scanf() to explain the intent of the test would make it
-easier to follow. E.g:
-    /* test multiple naked numbers */
-    ...
-    /* test numbers delimited with a character */
-    ...
-    /* test multiple integer types at once */
-
-etc. This allows the reviewer to more easly re-focus on the test they
-were reading.
-
-Willy
 
