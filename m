@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-273327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD88946784
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:26:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB3E946785
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 524741C20B76
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14471F2188D
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F6B13C673;
-	Sat,  3 Aug 2024 05:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7113A13D8B2;
+	Sat,  3 Aug 2024 05:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFLp3uT0"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vUjotTFQ"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DD613B7BC;
-	Sat,  3 Aug 2024 05:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499C142A82
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 05:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722662784; cv=none; b=SJYn8TgSrPD9U8zxOqvhfkRGXG+0xSfswWBccp0ydTt7/qj3xKBT0+e6AHFIiBZQ2mr7TksPV+BGTLu8o96oeD7vzwSJfaYiMWdjE/MooCOR87p2FQu2Y9GKOWj1YiJFhW0YLaR72rLjouOciQ5l2TUenNoLzKwQqON72U6omac=
+	t=1722663191; cv=none; b=p8/rMytaKPWROpwJbKUYhsosTo0dFWRmRWS8FsFA7w9NBP61P2dlbBo6ydtLCenLoT5xdNnF5fctbj0Gxb8cGcgaqjDLllSBDUgIHrdyuTGYk9hIeECjYcLZW28jOyFAzfkJxSgcRQ/gRY5PA6ykARgSiLcx3EJDbEZtXYyhKYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722662784; c=relaxed/simple;
-	bh=oWyRAm63uA9X7v13N3QIJUgnU1UH+ekPUw8NU3hEoP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWOmHLXIkh+xmCKm8zrqnyR5Wn0xwfdQYoeLyz0oukzJ89OjYO4BgOERXSHvZeh3JPgOWV6SxuvfbuizIwKxcKkQzYmRASfpOvV26pMoSmr3LoWrtOsSsb8FQ8lI7VjN8gk6FRLdbVr+qM3yc0cxwAecqgBJMymXEizpjYgYlvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lFLp3uT0; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-25e3d8d9f70so5285825fac.2;
-        Fri, 02 Aug 2024 22:26:22 -0700 (PDT)
+	s=arc-20240116; t=1722663191; c=relaxed/simple;
+	bh=hvUd3OORrhy9zSUxl2DS9XEmSs8zWXzIOk8rRpBAdt4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=aZ/dOCT+zrUlCYvnGxZZ3nc3uGLnKMGAkYeCdsAkdaXBIM+RPI5YWjuhh5lIIU6tRBrJ8M3HrEMsMQ1OVXANI2AqZPhxYukEq5wapmDxV6knwAexdXaKjkZfXxmDXZe9BHMBHsWmtJJwVZKjYBfMbudmWWu0Thwnqi+KVPVYkVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vUjotTFQ; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0be470f76bso3065375276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 22:33:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722662782; x=1723267582; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gw93++57utP9jDgCwiMGqKOTDkT86N63wDHgTh02H1Q=;
-        b=lFLp3uT0ZBFUqwBu3Ku2gfZ0h2U0frosMOkw6QPTwvMnBRW/TqkyntfQN6NcojVVlG
-         IfXGKWpxAGFQKPRddWqM3/GIho79Xfrki7ov7f6yp1u5oHA3jDHM3zT+WjPwcG+wSovy
-         6zKo1d7riIx4N1tgF4XBhZXZtIrLRM3KCPFYaqBpir3aYCSaBMcE5eczowdq2ZP+VsKg
-         kCOve3T7xt+Y7ZE0uJ0CuRojVt82Y+2QTwvWVFTcr3Sjn3+kCWN3bo7XLXGblUZ31uK+
-         jaN7BkiEawu74gaplGbMPrPC6tjGaSFTWa/dYV+2AU5bbSa51mMG++hYy7lPiUOzVJI9
-         kOew==
+        d=google.com; s=20230601; t=1722663189; x=1723267989; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dVMABDG6zvtzBrluDCQkwCGip5NCjvJGZc7ooD15Ipc=;
+        b=vUjotTFQmXdoFgNjtnrNUgk/90RdJc06r0urhzJpvkRpzleVcQp3lY53gHiLXBa55l
+         FX1NdEiTB5979B1VQad7H2gL2j7A3duhmaCH1WfEbpH0n+cvBhKSD9gqJXR2ecHIoX2C
+         3FLgVCnWy+PGrjy2gV2/WbhBr0WKq1k53z1jU+DaaAJKbnU8wtXPPGNJJ5mY7W6TeHSa
+         zJeH8WUPKvOXWWOcIO8847cVxS7SNPNgRgSY0RiGSDshb90QYnTMF3idmlpfrrRw3MXv
+         fE7Enm0UiUPA4zArNghcsuWPN+EZF0O/9AUkBHDVhzbclNRVMMBVmjV+QaXaZbkmYKxn
+         +HWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722662782; x=1723267582;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gw93++57utP9jDgCwiMGqKOTDkT86N63wDHgTh02H1Q=;
-        b=jHp/jUMx6VtFO3jnVNbdsnd69zj8jsdVLct0WNrsnbHO/m9cIsiPzWpXzFMbSZqkWr
-         Nu7uXi10F31K0192CiI3N/BmfNjPgU1NNksVdPFb3l616oMjyzxyG71E6wJXscuj/lA7
-         5E1fDEab0qkifK8TQcwlO/DZ1HT5pbezIRxDrnZzhzYBfekkZqAmzExpE5D6Bnct14V1
-         zWV9nSOXxVyZFgQiSDscpf2xRfCDYbLALLn1xGUc3fCSaLrb7osaqzMp1yuAJ3wpDDVN
-         9rjSmsAn2Y14lqfdi2AYAckdURDumXliHNHuejOyJ7gchYcIm+4DaA+VO8Dgmlvat609
-         6m7A==
-X-Forwarded-Encrypted: i=1; AJvYcCU6qsC0HCRJSe1+JZqaM2vYN6Z5tWH7o0geOoOrhOhW3ZNC+ZA7Piz95t0g2SfNcZ03R6HlaXlGr18YIHFi+vL3gRTBQDqJl13PvlbAFvkmHk7jCbgbUr74QRLa1ZWyydhHlFRBCyClo7fDveEyvi/h5vqXHSGKAKSgzJe15ysXY4BDuAjpE1T3Fku8Eg39BVUWCWCk06l5ppeYFRXwy5odxFYPIB2CLPCw0qyFI9xDl/bSQXjU96vkm87Rm0F9
-X-Gm-Message-State: AOJu0Yy001VSbmh2ro9r4Bn7Ar0ZcnMGGCvI9K3yrKFb34+a6CtmfyeT
-	w1OzDNKOk+GlavomoZnCV8+OG/6ri+oLnO0LVWkQnRJ2T76nuvNr
-X-Google-Smtp-Source: AGHT+IEdvd40BBz1Z2/L360nmGpmg6LUmBpGm6IQu5JigqoSX0oej7Q4AZZeh3KSK/mxyU7gWtO6Fg==
-X-Received: by 2002:a05:6870:9690:b0:261:9c7:a0bb with SMTP id 586e51a60fabf-26891ee2919mr7265705fac.48.1722662781679;
-        Fri, 02 Aug 2024 22:26:21 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:47be:b3e2:7c00:141c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec41cb2sm2117690b3a.68.2024.08.02.22.26.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 22:26:21 -0700 (PDT)
-Date: Fri, 2 Aug 2024 22:26:18 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: lee@kernel.org, jdelvare@suse.com, linux@roeck-us.net, pavel@ucw.cz,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	ukleinek@debian.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-hwmon@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] Input: add driver for the input part of qnap-mcu
- devices
-Message-ID: <Zq2_evktLN3MZaGF@google.com>
-References: <20240731212430.2677900-1-heiko@sntech.de>
- <20240731212430.2677900-5-heiko@sntech.de>
+        d=1e100.net; s=20230601; t=1722663189; x=1723267989;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dVMABDG6zvtzBrluDCQkwCGip5NCjvJGZc7ooD15Ipc=;
+        b=eDGIX4PaPBhr4IqHHKWOamZyEGNKCt+pvp+Kkg6pCrYUk4H7MVbxdb3xHnrTrciEOX
+         XTUwf0BOYDAWZf3gkGiK7NYpTFneMGCFledKEB9KxaI2DDGEaQBBKQCu6JvK5udfweDE
+         YfHX/lCaAUHmsMJBVWfgzkIo68Jcdk8m3oAuEfYWxNES+IwSMvq9YkPpCOPZ5uiRrHdb
+         Lad55ar8/3VVtweFb8Z7QGBeC9o3XDgKFHQ05Zq83XKvgGnxhr5BMFYOQhbW5yz5geDc
+         T1p7frGnMP1/t8QlPgrCbnfDcc52CCDtRTIE1eoC/an6lpIaTIdP6OUoqUPnj3NQOPoq
+         ZW+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWXohrM0ONBBL24/XZtWws8fLHKmj5takKhiW+1BWdszYsmVGVG427JriMamk4OWJYlzhQhlEKRcHJ64o7RquIzKHc6sHtoO3kOWgZm
+X-Gm-Message-State: AOJu0Yx0IlFkwUKmtJZmsCKqvjeAoszGyYlda+WQ/xIfIK4ePSvsFsgI
+	aSrFxmmgqs2okxZ4YlXNhzBpHfjstYMhHQzop2Ow4a9zv6kv5h6OkuqHhyay33jZqlYdQSDiSI3
+	Atbw7JWmR78cN9MCRxQ==
+X-Google-Smtp-Source: AGHT+IGiZEPPAQNY2/nwbwVwRsUGjO4TgUlfihhyR0VvwxRkt7mU9aLbAmPrEM8xOeTxVidxnOufplpnPgFzgwEo
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
+ (user=yosryahmed job=sendgmr) by 2002:a05:6902:2313:b0:e05:65b7:32d9 with
+ SMTP id 3f1490d57ef6-e0bde22af67mr16846276.6.1722663189151; Fri, 02 Aug 2024
+ 22:33:09 -0700 (PDT)
+Date: Sat,  3 Aug 2024 05:33:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731212430.2677900-5-heiko@sntech.de>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240803053306.2685541-1-yosryahmed@google.com>
+Subject: [PATCH] mm: zswap: make the lock critical section obvious in shrink_worker()
+From: Yosry Ahmed <yosryahmed@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Takero Funaki <flintglass@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 31, 2024 at 11:24:27PM +0200, Heiko Stuebner wrote:
-> The MCU controls the power-button and beeper, so expose them as input
-> device. There is of course no interrupt line, so the status of the
-> power-button needs to be polled. To generate an event the power-button
-> also needs to be held for 1-2 seconds, so the polling interval does
-> not need to be overly fast.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Move the comments and spin_{lock/unlock}() calls around in
+shrink_worker() to make it obvious the lock is protecting the loop
+updating zswap_next_shrink.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+---
 
-Feel free to merge with the rest of the patches.
+This is intended to be squashed into "mm: zswap: fix global shrinker
+memcg iteration".
 
-Thanks.
+---
+ mm/zswap.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
+diff --git a/mm/zswap.c b/mm/zswap.c
+index babf0abbcc765..df620eacd1d11 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1364,24 +1364,22 @@ static void shrink_worker(struct work_struct *w)
+ 	 * until the next run of shrink_worker().
+ 	 */
+ 	do {
+-		spin_lock(&zswap_shrink_lock);
+-
+ 		/*
+ 		 * Start shrinking from the next memcg after zswap_next_shrink.
+ 		 * When the offline cleaner has already advanced the cursor,
+ 		 * advancing the cursor here overlooks one memcg, but this
+ 		 * should be negligibly rare.
++		 *
++		 * If we get an online memcg, keep the extra reference in case
++		 * the original one obtained by mem_cgroup_iter() is dropped by
++		 * zswap_memcg_offline_cleanup() while we are shrinking the
++		 * memcg.
+ 		 */
++		spin_lock(&zswap_shrink_lock);
+ 		do {
+ 			memcg = mem_cgroup_iter(NULL, zswap_next_shrink, NULL);
+ 			zswap_next_shrink = memcg;
+ 		} while (memcg && !mem_cgroup_tryget_online(memcg));
+-		/*
+-		 * Note that if we got an online memcg, we will keep the extra
+-		 * reference in case the original reference obtained by mem_cgroup_iter
+-		 * is dropped by the zswap memcg offlining callback, ensuring that the
+-		 * memcg is not killed when we are reclaiming.
+-		 */
+ 		spin_unlock(&zswap_shrink_lock);
+ 
+ 		if (!memcg) {
 -- 
-Dmitry
+2.46.0.rc2.264.g509ed76dc8-goog
+
 
