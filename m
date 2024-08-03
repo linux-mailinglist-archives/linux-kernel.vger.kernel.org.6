@@ -1,93 +1,151 @@
-Return-Path: <linux-kernel+bounces-273416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7434A946902
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:06:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF44D946906
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4AFA1C20B52
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962642820BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC58B1369B4;
-	Sat,  3 Aug 2024 10:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aQH38mgr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E9223CB;
-	Sat,  3 Aug 2024 10:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D632136353;
+	Sat,  3 Aug 2024 10:16:32 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DE74A2F;
+	Sat,  3 Aug 2024 10:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722679555; cv=none; b=LFKpUVif2kBOXsERU9q0301S+H6in4NQbSHeCfnipwoIswwtGZuJ634xblJexLHYyiypdCZ/AYEZiWfoaUFLgFbjKcOwecAa3ZWeraB5ej9TGMdG10ekjWKqL+J/yg47j+qAqkF7Za00BCCBNSEt2xkNX0JipwrMbwaPXjfOb7I=
+	t=1722680191; cv=none; b=IOBqy4mjkmwH4aYw+ozOhNgn/SX7/gVxT77lQRm9SgYCFoZ/O8YYARSvOJ+BTQAWUTpXfWT6IpVo7EOT4A8DqNT84ROKfU9eVqfJpIG41Wh8cNa/yQbcDIA/1iDlgW2peDSZyGxKin4nvDG+jfwl1v11ZFynf1NP8MfW57k+588=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722679555; c=relaxed/simple;
-	bh=IF7DxCVUzFo0p7x5cQc6/Kkj71VQDEWCgggp1uZftUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j4JiPqpl1auby9Ybg22nDIKsH4ZtxVpBFmjz5jk08tz+xBWdrFkYm5CpOot0hcPKF6X9XTfJshIt9guHACw8yrl3snJUOg8bBdoWmWmUs2eL24nf6svQH6EG56Nq45sNkX4TKRnKU5vqiZplNlfSRJKK6GhMgOpFSJIDpmFlegQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aQH38mgr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E275C116B1;
-	Sat,  3 Aug 2024 10:05:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722679554;
-	bh=IF7DxCVUzFo0p7x5cQc6/Kkj71VQDEWCgggp1uZftUs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aQH38mgrX0APxPWtJB9e2r4fslaZWU+OT0FmeqQpqIB7nZGslNRN5gpdb/DVlCvSu
-	 wwaa1cvMhZoIbU7EHYxSjSXjLjR+T9T4RDoOrYfvXl5hNcpqw23NMtk2lZwjNEdZjo
-	 EuXNnH4eP6k5NL4ck8GtZF+y5NsYTd5F08n3PNEcY9nGoHzrrZy3X5Be9M4U5R23DB
-	 boNDZx+e/HbZBqbk6E2zkrYSfBkZAIm3Ru5goC0l0LN/3Xj0lPy2TYj6ZZZXbRSBOF
-	 RDCYwlsN2P1/k9T3GKnkjAxL2tkCdqfFFuj2hblZjs0ZQ+WSsfVIBPwW5y3ny54Bts
-	 p5A3LImu9V2bA==
-Date: Sat, 3 Aug 2024 11:05:45 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Mariel Tinaco <Mariel.Tinaco@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Hennerich <Michael.Hennerich@analog.com>, Conor Dooley
- <conor+dt@kernel.org>, "Marcelo Schmitt" <marcelo.schmitt1@gmail.com>,
- Dimitri Fedrau <dima.fedrau@gmail.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: dac: add docs for ad8460
-Message-ID: <20240803110545.61885486@jic23-huawei>
-In-Reply-To: <20240730030509.57834-2-Mariel.Tinaco@analog.com>
-References: <20240730030509.57834-1-Mariel.Tinaco@analog.com>
-	<20240730030509.57834-2-Mariel.Tinaco@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722680191; c=relaxed/simple;
+	bh=HTPZJ4SGhjD4vKLrizhvIA6HtB5O7tBYXmfo/h5cv4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aq790MZTnJX4jo767+qHRnOxZ/P/g6G31ieDvfbDbX333BT8TW0mjE2TtmJO2s6cgkbyBHMea3qGYKGd5+ptPVuvPBdU2kxnC10GfBd9lXViH+AFqPtYTFK4O5/nBPoRtPRElMCFuZmWqlpglSZLaOwGbtvTGEcrpGuT2iLcccs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 473AGPHe029315;
+	Sat, 3 Aug 2024 12:16:25 +0200
+Date: Sat, 3 Aug 2024 12:16:25 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] tools/nolibc: add support for [v]sscanf()
+Message-ID: <20240803101625.GH29127@1wt.eu>
+References: <20240731-nolibc-scanf-v1-0-f71bcc4abb9e@weissschuh.net>
+ <20240731-nolibc-scanf-v1-1-f71bcc4abb9e@weissschuh.net>
+ <3956cee8-1623-42d6-bbc6-71b5abd67759@linuxfoundation.org>
+ <5db920e0-51e8-48d9-b0ae-95479e875fad@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5db920e0-51e8-48d9-b0ae-95479e875fad@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, 30 Jul 2024 11:05:08 +0800
-Mariel Tinaco <Mariel.Tinaco@analog.com> wrote:
-
-> This adds the bindings documentation for the 14-bit
-> High Voltage, High Current, Waveform Generator
-> Digital-to-Analog converter.
+On Fri, Aug 02, 2024 at 05:48:13PM +0200, Thomas Weißschuh wrote:
+> > With all these libc functionality added, it isn't nolibc looks like :)
 > 
-A few additions to Krzysztof's much more detailed review.
+> Well :-)
+> 
+> The main motivation is to provide kselftests compatibility.
+> Maybe Willy disagrees.
 
-Wrap patch descriptions to 75 chars. not sub 55.
+No no I'm perfectly fine with adding the functions that developers use
+or need to write their test or init tools. I don't have any strong
+opinion on scanf(). Just like strtok(), I stopped using it 25 years ago
+when I noticed that it never survives code evolutions, lacks a lot of
+flexibility and is often strongly tied to your types (more than printf
+where you can cast). But I perfectly understand that others are used to
+it and would appreciate to have it, for example if it helps with command
+line arguments.
 
-> Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
-> +
-> +  adi,rset-ohms:
+> > > +static int test_scanf(void)
+> > > +{
+> > > +	unsigned long long ull;
+> > > +	unsigned long ul;
+> > > +	unsigned int u;
+> > > +	long long ll;
+> > > +	long l;
+> > > +	void *p;
+> > > +	int i;
+> > > +
+> > > +	if (sscanf("", "foo") != EOF)
+> > > +		return 1;
+> > > +
+> > > +	if (sscanf("foo", "foo") != 0)
+> > > +		return 2;
+> > > +
+> > > +	if (sscanf("123", "%d", &i) != 1)
+> > > +		return 3;
+> > > +
+> > > +	if (i != 123)
+> > > +		return 4;
+> > > +
+> > > +	if (sscanf("a123b456c0x90", "a%db%uc%p", &i, &u, &p) != 3)
+> > > +		return 5;
+> > > +
+> > > +	if (i != 123)
+> > > +		return 6;
+> > > +
+> > > +	if (u != 456)
+> > > +		return 7;
+> > > +
+> > > +	if (p != (void *)0x90)
+> > > +		return 8;
+> > > +
+> > > +	if (sscanf("a    b1", "a b%d", &i) != 1)
+> > > +		return 9;
+> > > +
+> > > +	if (i != 1)
+> > > +		return 10;
+> > > +
+> > > +	if (sscanf("a%1", "a%%%d", &i) != 1)
+> > > +		return 11;
+> > > +
+> > > +	if (i != 1)
+> > > +		return 12;
+> > > +
+> > > +	if (sscanf("1|2|3|4|5|6",
+> > > +		   "%d|%ld|%lld|%u|%lu|%llu",
+> > > +		   &i, &l, &ll, &u, &ul, &ull) != 6)
+> > > +		return 13;
+> > > +
+> > > +	if (i != 1 || l != 2 || ll != 3 ||
+> > > +	    u != 4 || ul != 5 || ull != 6)
+> > > +		return 14;
+> > > +
+> > > +	return 0;
+> > 
+> > Can we simplify this code? It is hard to read code with too
+> > many conditions. Maybe defining an array test conditions
+> > instead of a series ifs.
+> 
+> I tried that and didn't find a way.
+> Any pointers are welcome.
 
-Please rename this as rset sounds like reset to me.  Not sure what a
-good name is however!
+I think it would be difficult by nature of varargs.
 
+However, since you grouped some expressions, maybe a one-liner comment
+between each scanf() to explain the intent of the test would make it
+easier to follow. E.g:
+    /* test multiple naked numbers */
+    ...
+    /* test numbers delimited with a character */
+    ...
+    /* test multiple integer types at once */
 
-> +    description: Specify value of external resistor connected to FS_ADJ pin
-> +      to establish internal HVDAC's reference current I_REF
-> +    default: 2000
-> +    minimum: 2000
-> +    maximum: 20000
-> +
+etc. This allows the reviewer to more easly re-focus on the test they
+were reading.
+
+Willy
 
