@@ -1,320 +1,305 @@
-Return-Path: <linux-kernel+bounces-273513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E19A946A1F
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:36:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78296946A22
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD1C1C20BBF
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:35:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8A56B21308
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE0A1514D1;
-	Sat,  3 Aug 2024 14:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEEA1509AC;
+	Sat,  3 Aug 2024 14:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIP4MOKD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dHqsNND3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A050014E2FC;
-	Sat,  3 Aug 2024 14:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FCE14E2FC
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 14:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722695748; cv=none; b=eY87X21Aj1AnONFhyh9NGMFHV9DDWhL4d+QvYFW+OwEzAx3kJa4yvUuTVZW8J1Ns/IpF++1Rmla/zKxizXDcHMCHjFnYQ6/e6pXV/B493dqmkYVXmhNJmDp6pCgncdFTRBKH+jhmtBb4aH26ueOTbrDpUEzaCYhnAJG+UCzT0sA=
+	t=1722696011; cv=none; b=mnLZlYQa4mPaTxKEZ6UcKOktBtCFnpGqiTUMR3JAfr4M3hJaWe9+uKJFuRNZbV2o0g6IhstqKCmLV1foVD28hYCOHlPBnewsuUUwfXXfCUYsGnyp5skx+4sZez4lfynal1iKCbvpgFN/0l2JYfPT854XJljLgjcNNEZKihT/vhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722695748; c=relaxed/simple;
-	bh=oBPrXUonNO9pQiYaX33t8BvaMG4+Syyr7vyRuVmvIJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KOEa45d8T4efko7dRqeVE6xI7mAYOrKq3uzlv5yuw0UZinXhe1524Rn0C2GSHTgSJICdOvxpY+NNvvQt8U5n7/+sLAzILF9HsjHMCRUrlxvlQ/kwABYO6qbaxxZbuOcbylPPnlE22AcP77tTZqZoxROLjSON6WxYzuZSeeSIq+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIP4MOKD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8ACCC4AF0D;
-	Sat,  3 Aug 2024 14:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722695748;
-	bh=oBPrXUonNO9pQiYaX33t8BvaMG4+Syyr7vyRuVmvIJM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cIP4MOKD1qsWVd9ecz2qyMF00uSGHRgJb2fx4Vuar949LBmhVvxpXpZwxfWqMyZB8
-	 gZ+MQc8eoqC4Vo0hTLx4w8ZEVbnCIuSmWaw2+crxpSJW/EPCtX1/WNhifyMbLWtefX
-	 0V3dSikYAtjgE5L+QrWCVTxkD+szwk40ip23s0ocKXYqR1NJh0ep7D8IO9pCc72nyb
-	 o8lx6R55+h3cTYDVjrUTMwzapg4LQPXYmQhQqlIwsJ/Me882anFAicXj5ypgaCJchA
-	 LfSCItrfIIP3DaLVkuAB96nayplBFpgiOIhBaVRah0FMwoGCoWYYM4XBLjGZyKYjKu
-	 /6uPBxBIgMd4w==
-Date: Sat, 3 Aug 2024 15:35:40 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Trevor Gamblin <tgamblin@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, David
- Lechner <dlechner@baylibre.com>, Uwe Kleine-Konig
- <u.kleine-koenig@baylibre.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH RFC 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
-Message-ID: <20240803153540.17627489@jic23-huawei>
-In-Reply-To: <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
-References: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
-	<20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722696011; c=relaxed/simple;
+	bh=uN8OZcsuUTJtzulOwVVqI9fw5JXRvf9JJrX/R4PpEPk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=R4KAeKKmLlUppmktl+Zv1IWeKRQWCa9zEAVvLuR0k8WcAIv4hLPGqyHlskvoiKgkvT26IRacyjA8ypz5WAXRMCkOJboOGlhg9fp3+x1ItOlvFDWLEBuL1CKq29vcT/zomHXBnLCf6Np9FDXmmG5wH7X6gyxzixam8XN9MR4uQ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dHqsNND3; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722696009; x=1754232009;
+  h=date:from:to:cc:subject:message-id;
+  bh=uN8OZcsuUTJtzulOwVVqI9fw5JXRvf9JJrX/R4PpEPk=;
+  b=dHqsNND37JfxrFnclBWIzNruaUn8OVClX9uuhfjLnoDPEBKsSuE9som2
+   m3togSUgpVRIHJ+0SayxDFRlE1Dkx2RL7sPyKiadCGYvfay9N4IMoQUPw
+   U4IxSsaoR/dRFawvPgWvEm9CSHpcvZUdlDNjVPecZTGMO+J+geIJQrXEI
+   TJtWRZt5DYPmS69IPSl3tL1XPQclECuDggQDSdEcR/rfhuW0I6VgltpeL
+   R3G0qwFRVKrFPaRb3Lsg91w0nyd2YudOsYbIIRElOsmv7ftEtmbxpXytD
+   Fhr+Alu7sWWVLcGCLC1Yeleycb5Gn6JjQviiNTifh8XsjfhsG9myn9gwl
+   g==;
+X-CSE-ConnectionGUID: tis6KA5/TWO3xjkSz86eOA==
+X-CSE-MsgGUID: eKVY/5PETWS5pLZRWdZMIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11153"; a="31857059"
+X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
+   d="scan'208";a="31857059"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2024 07:40:08 -0700
+X-CSE-ConnectionGUID: UEJXZkuJTeKI/Zn/THAJ1A==
+X-CSE-MsgGUID: Aouoj8J9TZiRCO6HbXv14w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
+   d="scan'208";a="60356035"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 03 Aug 2024 07:40:06 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1saFvQ-0000ZQ-0X;
+	Sat, 03 Aug 2024 14:40:04 +0000
+Date: Sat, 03 Aug 2024 22:39:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:smp/core] BUILD SUCCESS
+ 2dce993165088dbe728faa21547e3b74213b6732
+Message-ID: <202408032221.uFmek8MT-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, 31 Jul 2024 09:48:03 -0400
-Trevor Gamblin <tgamblin@baylibre.com> wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp/core
+branch HEAD: 2dce993165088dbe728faa21547e3b74213b6732  cpu/hotplug: Provide weak fallback for arch_cpuhp_init_parallel_bringup()
 
-> This adds a binding specification for the Analog Devices Inc. AD7625,
-> AD7626, AD7960, and AD7961 ADCs.
+elapsed time: 1460m
 
-Given the RFC question is effectively about the binding and may influence
-it a lot - make sure it's talked about here!
+configs tested: 213
+configs skipped: 9
 
->=20
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 176 +++++++++++++++=
-++++++
->  MAINTAINERS                                        |   9 ++
->  2 files changed, 185 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
-> new file mode 100644
-> index 000000000000..e88db0ac2534
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
-> @@ -0,0 +1,176 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7625.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices Fast PulSAR Analog to Digital Converters
-> +
-> +maintainers:
-> +  - Michael Hennerich <Michael.Hennerich@analog.com>
-> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
-> +
-> +description: |
-> +  A family of single channel differential analog to digital converters
-> +  in a LFCSP package. Note that these bindings are for the device when
-> +  used with the PulSAR LVDS project:
-> +  http://analogdevicesinc.github.io/hdl/projects/pulsar_lvds/index.html.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-As per the discussion in the cover letter I think the need to represent
-if the DCO+ is connected between ADC and LVDS converter strongly suggests
-we shouldn't represent it as one aggregate device.
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                            hsdk_defconfig   gcc-13.2.0
+arc                   randconfig-001-20240803   gcc-13.2.0
+arc                   randconfig-002-20240803   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                         bcm2835_defconfig   clang-20
+arm                        clps711x_defconfig   clang-20
+arm                                 defconfig   gcc-13.2.0
+arm                      jornada720_defconfig   clang-20
+arm                        keystone_defconfig   clang-20
+arm                         lpc32xx_defconfig   gcc-14.1.0
+arm                          moxart_defconfig   clang-20
+arm                            mps2_defconfig   clang-20
+arm                        mvebu_v7_defconfig   gcc-13.2.0
+arm                             mxs_defconfig   clang-20
+arm                       omap2plus_defconfig   gcc-14.1.0
+arm                   randconfig-001-20240803   gcc-13.2.0
+arm                   randconfig-002-20240803   gcc-13.2.0
+arm                   randconfig-003-20240803   gcc-13.2.0
+arm                   randconfig-004-20240803   gcc-13.2.0
+arm                        realview_defconfig   gcc-13.2.0
+arm                         s3c6400_defconfig   gcc-13.2.0
+arm                         s3c6400_defconfig   gcc-14.1.0
+arm                           sama5_defconfig   clang-20
+arm                        spear3xx_defconfig   gcc-14.1.0
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                               defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240803   gcc-13.2.0
+arm64                 randconfig-002-20240803   gcc-13.2.0
+arm64                 randconfig-003-20240803   gcc-13.2.0
+arm64                 randconfig-004-20240803   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240803   gcc-13.2.0
+csky                  randconfig-002-20240803   gcc-13.2.0
+i386                             allmodconfig   clang-18
+i386                              allnoconfig   clang-18
+i386                             allyesconfig   clang-18
+i386         buildonly-randconfig-001-20240803   clang-18
+i386         buildonly-randconfig-002-20240803   clang-18
+i386         buildonly-randconfig-002-20240803   gcc-12
+i386         buildonly-randconfig-003-20240803   clang-18
+i386         buildonly-randconfig-003-20240803   gcc-12
+i386         buildonly-randconfig-004-20240803   clang-18
+i386         buildonly-randconfig-004-20240803   gcc-12
+i386         buildonly-randconfig-005-20240803   clang-18
+i386         buildonly-randconfig-006-20240803   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240803   clang-18
+i386                  randconfig-001-20240803   gcc-12
+i386                  randconfig-002-20240803   clang-18
+i386                  randconfig-002-20240803   gcc-12
+i386                  randconfig-003-20240803   clang-18
+i386                  randconfig-004-20240803   clang-18
+i386                  randconfig-004-20240803   gcc-12
+i386                  randconfig-005-20240803   clang-18
+i386                  randconfig-006-20240803   clang-18
+i386                  randconfig-011-20240803   clang-18
+i386                  randconfig-011-20240803   gcc-12
+i386                  randconfig-012-20240803   clang-18
+i386                  randconfig-012-20240803   gcc-11
+i386                  randconfig-013-20240803   clang-18
+i386                  randconfig-014-20240803   clang-18
+i386                  randconfig-015-20240803   clang-18
+i386                  randconfig-015-20240803   gcc-12
+i386                  randconfig-016-20240803   clang-18
+i386                  randconfig-016-20240803   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240803   gcc-13.2.0
+loongarch             randconfig-002-20240803   gcc-13.2.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                                defconfig   gcc-13.2.0
+m68k                            mac_defconfig   gcc-13.2.0
+m68k                        stmark2_defconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                     cu1000-neo_defconfig   gcc-14.1.0
+mips                  decstation_64_defconfig   gcc-14.1.0
+mips                           gcw0_defconfig   clang-20
+mips                           ip22_defconfig   gcc-13.2.0
+mips                        maltaup_defconfig   clang-20
+mips                    maltaup_xpa_defconfig   clang-20
+mips                           mtx1_defconfig   gcc-13.2.0
+mips                      pic32mzda_defconfig   clang-20
+nios2                             allnoconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240803   gcc-13.2.0
+nios2                 randconfig-002-20240803   gcc-13.2.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc                randconfig-001-20240803   gcc-13.2.0
+parisc                randconfig-002-20240803   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                   bluestone_defconfig   gcc-13.2.0
+powerpc                      cm5200_defconfig   gcc-13.2.0
+powerpc                      ep88xc_defconfig   clang-20
+powerpc                        fsp2_defconfig   clang-20
+powerpc                       holly_defconfig   gcc-14.1.0
+powerpc                     ksi8560_defconfig   gcc-13.2.0
+powerpc                   microwatt_defconfig   gcc-14.1.0
+powerpc                 mpc8313_rdb_defconfig   clang-20
+powerpc                 mpc834x_itx_defconfig   gcc-14.1.0
+powerpc               mpc834x_itxgp_defconfig   clang-20
+powerpc                      pcm030_defconfig   clang-20
+powerpc                       ppc64_defconfig   gcc-14.1.0
+powerpc               randconfig-001-20240803   gcc-13.2.0
+powerpc               randconfig-003-20240803   gcc-13.2.0
+powerpc                  storcenter_defconfig   gcc-13.2.0
+powerpc                     tqm8560_defconfig   gcc-14.1.0
+powerpc                      tqm8xx_defconfig   clang-20
+powerpc                        warp_defconfig   gcc-13.2.0
+powerpc                 xes_mpc85xx_defconfig   gcc-13.2.0
+powerpc64             randconfig-001-20240803   gcc-13.2.0
+powerpc64             randconfig-002-20240803   gcc-13.2.0
+powerpc64             randconfig-003-20240803   gcc-13.2.0
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-14.1.0
+riscv                 randconfig-001-20240803   gcc-13.2.0
+riscv                 randconfig-002-20240803   gcc-13.2.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   gcc-14.1.0
+s390                  randconfig-001-20240803   gcc-13.2.0
+s390                  randconfig-002-20240803   gcc-13.2.0
+s390                       zfcpdump_defconfig   clang-20
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                             espt_defconfig   gcc-14.1.0
+sh                          r7780mp_defconfig   gcc-14.1.0
+sh                    randconfig-001-20240803   gcc-13.2.0
+sh                    randconfig-002-20240803   gcc-13.2.0
+sh                          rsk7203_defconfig   gcc-13.2.0
+sh                           se7619_defconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+sparc64               randconfig-001-20240803   gcc-13.2.0
+sparc64               randconfig-002-20240803   gcc-13.2.0
+um                               allmodconfig   gcc-13.3.0
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-14.1.0
+um                               allyesconfig   gcc-13.3.0
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-14.1.0
+um                    randconfig-001-20240803   gcc-13.2.0
+um                    randconfig-002-20240803   gcc-13.2.0
+um                           x86_64_defconfig   clang-20
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                           alldefconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240803   gcc-12
+x86_64       buildonly-randconfig-002-20240803   gcc-12
+x86_64       buildonly-randconfig-003-20240803   gcc-12
+x86_64       buildonly-randconfig-004-20240803   gcc-12
+x86_64       buildonly-randconfig-005-20240803   gcc-12
+x86_64       buildonly-randconfig-006-20240803   gcc-12
+x86_64                              defconfig   clang-18
+x86_64                                  kexec   clang-18
+x86_64                randconfig-001-20240803   gcc-12
+x86_64                randconfig-002-20240803   gcc-12
+x86_64                randconfig-003-20240803   gcc-12
+x86_64                randconfig-004-20240803   gcc-12
+x86_64                randconfig-005-20240803   gcc-12
+x86_64                randconfig-006-20240803   gcc-12
+x86_64                randconfig-011-20240803   gcc-12
+x86_64                randconfig-012-20240803   gcc-12
+x86_64                randconfig-013-20240803   gcc-12
+x86_64                randconfig-014-20240803   gcc-12
+x86_64                randconfig-015-20240803   gcc-12
+x86_64                randconfig-016-20240803   gcc-12
+x86_64                randconfig-071-20240803   gcc-12
+x86_64                randconfig-072-20240803   gcc-12
+x86_64                randconfig-073-20240803   gcc-12
+x86_64                randconfig-074-20240803   gcc-12
+x86_64                randconfig-075-20240803   gcc-12
+x86_64                randconfig-076-20240803   gcc-12
+x86_64                          rhel-8.3-rust   clang-18
+x86_64                               rhel-8.3   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                randconfig-001-20240803   gcc-13.2.0
+xtensa                randconfig-002-20240803   gcc-13.2.0
+xtensa                         virt_defconfig   gcc-13.2.0
 
-> +
-> +  * https://www.analog.com/en/products/ad7625.html
-> +  * https://www.analog.com/en/products/ad7626.html
-> +  * https://www.analog.com/en/products/ad7960.html
-> +  * https://www.analog.com/en/products/ad7961.html
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad7625
-> +      - adi,ad7626
-> +      - adi,ad7960
-> +      - adi,ad7961
-> +
-> +  vdd1-supply:
-> +    description: A supply that powers the analog and digital circuitry.
-Doesn't really tell us anything. I'd just go with
-    vdd1-supply: true
-    vdd2-supply: true
-    vio-supply: true
-
-
-> +
-> +  vdd2-supply:
-> +    description: A supply that powers the analog and digital circuitry.
-> +
-> +  vio-supply:
-> +    description: A supply for the inputs and outputs.
-> +
-> +  ref-supply:
-> +    description:
-> +      Voltage regulator for the external reference voltage (REF).
-> +
-> +  refin-supply:
-> +    description:
-> +      Voltage regulator for the reference buffer input (REFIN).
-> +
-> +  clocks:
-> +    description:
-> +      The clock connected to the CLK pins, gated by the clk_gate PWM.
-> +    maxItems: 1
-> +
-> +  pwms:
-> +    maxItems: 2
-> +
-> +  pwm-names:
-> +    maxItems: 2
-> +    items:
-> +      - const: cnv
-> +        description: PWM connected to the CNV input on the ADC.
-> +      - const: clk_gate
-> +        description: PWM that gates the clock connected to the ADC's CLK=
- input.
-> +
-> +  io-backends:
-> +    description:
-> +      The AXI ADC IP block connected to the D+/- and DCO+/- lines of the=
- ADC.
-
-So you have a backend. Great - we have something to indicate a connection
-to or not for the DCO+/o lines.  It's a bit ugly to just repesent it as a c=
-lk
-but that would I think work.
-
-> +    maxItems: 1
-> +
-> +  adi,en0-always-on:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Indicates if EN0 is hard-wired to the high state. If neither this
-> +      nor en0-gpios are present, then EN0 is hard-wired low.
-It's unfortunate there isn't a special 'fixed' gpio-chip option where we co=
-uld
-just query it is fixed and what the state of the pin is.  This is getting
-quite common so would be good to have a better solution.
-
-Linus, Bartosz - is there a better way to do this?
-
-> +
-> +  adi,en1-always-on:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Indicates if EN1 is hard-wired to the high state. If neither this
-> +      nor en1-gpios are present, then EN1 is hard-wired low.
-> +
-> +  adi,en2-always-on:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Indicates if EN2 is hard-wired to the high state. If neither this
-> +      nor en2-gpios are present, then EN2 is hard-wired low.
-> +
-> +  adi,en3-always-on:
-> +    $ref: /schemas/types.yaml#/definitions/flag
-> +    description:
-> +      Indicates if EN3 is hard-wired to the high state. If neither this
-> +      nor en3-gpios are present, then EN3 is hard-wired low.
-> +
-> +  en0-gpios:
-> +    description:
-> +      Configurable EN0 pin.
-> +
-> +  en1-gpios:
-> +    description:
-> +      Configurable EN1 pin.
-> +
-> +  en2-gpios:
-> +    description:
-> +      Configurable EN2 pin.
-> +
-> +  en3-gpios:
-> +    description:
-> +      Configurable EN3 pin.
-> +
-> +required:
-> +  - compatible
-> +  - vdd1-supply
-> +  - vdd2-supply
-> +  - vio-supply
-> +  - clocks
-> +  - pwms
-> +  - pwm-names
-> +  - io-backends
-> +
-> +- if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +	  - adi,ad7625
-> +	  - adi,ad7626
-> +  then:
-> +    properties:
-> +      en2-gpios: false
-> +      en3-gpios: false
-> +      adi,en2-always-on: false
-> +      adi,en3-always-on: false
-> +    allOf:
-> +      # ref-supply and refin-supply are mutually-exclusive (neither is a=
-lso
-> +      # valid)
-> +      - if:
-> +          required:
-> +            - ref-supply
-> +        then:
-> +          properties:
-> +            refin-supply: false
-> +      - if:
-> +          required:
-> +            - refin-supply
-> +        then:
-> +          properties:
-> +            ref-supply: false
-> +
-> +- if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +	  - adi,ad7960
-> +	  - adi,ad7961
-> +  then:
-> +    oneOf:
-> +      required:
-> +        - ref-supply
-> +      required:
-> +        - refin-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    adc {
-> +        compatible =3D "adi,ad7625";
-> +        vdd1-supply =3D <&supply_5V>;
-> +        vdd2-supply =3D <&supply_2_5V>;
-> +        vio-supply =3D <&supply_2_5V>;
-> +        io-backends =3D <&axi_adc>;
-> +        clock =3D <&ref_clk>;
-> +        pwms =3D <&axi_pwm_gen 0 0>, <&axi_pwm_gen 1 0>;
-> +        pwm-names =3D "cnv", "clk_gate";
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 42decde38320..2361f92751dd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1260,6 +1260,15 @@ F:	Documentation/devicetree/bindings/iio/addac/adi=
-,ad74413r.yaml
->  F:	drivers/iio/addac/ad74413r.c
->  F:	include/dt-bindings/iio/addac/adi,ad74413r.h
-> =20
-> +ANALOG DEVICES INC AD7625 DRIVER
-> +M:	Michael Hennerich <Michael.Hennerich@analog.com>
-> +M:	Nuno S=C3=A1 <nuno.sa@analog.com>
-> +R:	Trevor Gamblin <tgamblin@baylibre.com>
-> +S:	Supported
-> +W:	https://ez.analog.com/linux-software-drivers
-> +W:	http://analogdevicesinc.github.io/hdl/projects/pulsar_lvds/index.html
-> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
-> +
->  ANALOG DEVICES INC AD7768-1 DRIVER
->  M:	Michael Hennerich <Michael.Hennerich@analog.com>
->  L:	linux-iio@vger.kernel.org
->=20
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
