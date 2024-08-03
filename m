@@ -1,106 +1,148 @@
-Return-Path: <linux-kernel+bounces-273546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F51946A6E
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A73946A73
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E480281DD2
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C36281C20
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EEE14F9F1;
-	Sat,  3 Aug 2024 15:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B341B14F9E1;
+	Sat,  3 Aug 2024 15:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fBhANPeb"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVIFv4W5"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD8013BAE4
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 15:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499E71509B6;
+	Sat,  3 Aug 2024 15:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722699930; cv=none; b=q4/lqZXIN6wGw2x1/KC1+prRwFRMJADofn7oLGux1jwuF4rQSwq8GU0QjtyBKeIQEr7o9IkkVlCOD/1/73su4Nvmf3yhaQ44p+AHMHEthWW6GIbvt//YWKCes5fAwLt4adOLARx47AsYUNni7rO+++XrmMNVHmaXSjUTHXIt5UY=
+	t=1722700124; cv=none; b=sWPrcjd1XD36jHdzVDAdWC1N+feb/xiF+ZhLKkT/oN6rBgPBdhHsV/snb4U2UQjIr2a9+mjDzuE+5AfeLA/UoTbQeDwI/HObhlFlvIufBkIQmN9jQJydorO81Feh0ip6L5vAnGrsbpf7QOW7gHT1i5MWJ7SL9bhgMl7U6AbZleI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722699930; c=relaxed/simple;
-	bh=gQUjXX29Q2SaA8GctLtKHHrJYgPF0n9QU8ERvxs0BvE=;
+	s=arc-20240116; t=1722700124; c=relaxed/simple;
+	bh=zvCMh2scSAAzx7sSA0dGXKLUtTv2QHSXx5XOq0pGNIY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DwtpaHp2ooKbK+hG8FtJ+dTdtjg5B/Dg/9sOOEwM5n5Vm0ux53hhvrO0E5pP4snUuOAlZxpT9alPmOTNW6o0Qwi/eiOPq9XV5fHCesqX1UYoxqBRbqUAnlgfYlOWjsRyQAEoPFnfp3knY/PqXQwyyJqvp+fCkTcsxLv4whSpLt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fBhANPeb; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso112074201fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 08:45:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=LQwQiMfUi0bmwLkMnloR1fykN8eYESGS6G6b2zjsH+KbvXCI4q/+Il9WK4eRkM4Qfyb2o0X77cStb83BVjoYF/dRIlMG8M4wx0CUCDX6nE73DorJ4BVPPX9JlVfolW3SHlPmyy+L1AaUHzmc4YwlBNeWy8lveoeQ0wlM5XBBOCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVIFv4W5; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1c496335aso6893494a12.1;
+        Sat, 03 Aug 2024 08:48:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722699926; x=1723304726; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFfluvB3E9CQz+J/qmF/TOCUd+imVKwZ/BTDUIvYdng=;
-        b=fBhANPebEctaAyZOqo0MbC9G021vS3rbL3IbU+7ZmuNwUVy2tS+3pxRuGTU6U8kco6
-         klUWoBmKZSzycRIVMi96d1CbqXrnQOZjgah4gsseRSmncOXu79Lj3HzoB8woobSGcIS1
-         EC7c9sTDewDlvPV+sJYzYZLILF7oliiCYkZMI=
+        d=gmail.com; s=20230601; t=1722700120; x=1723304920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zvCMh2scSAAzx7sSA0dGXKLUtTv2QHSXx5XOq0pGNIY=;
+        b=QVIFv4W53k1iB+cqdgwTjJjNqnNblAGz4SH3Dkd1xkpe8AWqbfzWGlAf09hqGZrOMh
+         jiV4boAkdoM1eN6CwXOVi4LYNow0trcW0FSQ1Dzhe+o6b1EFqj1VARbieC6mUi/x7Jlm
+         MTJMMlFVSBRbU4/vwFXX+GoMNqedbArBcqFhjg76yQaIY0tKoAT4FNDdKd5q0ns6lFDD
+         5cdb23xzBbMnibpnCf2ewpxt0ZSLKGVDfJcLyWq3zJF4QbvsqkgyDc8TrV135P1gQgDW
+         5UsUrt+GHVURei5zBZl+cNqcCFKBdkpsJIEMpmx5n08K2tT1gBbvphrIa39Z75xl8NeE
+         gYIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722699926; x=1723304726;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rFfluvB3E9CQz+J/qmF/TOCUd+imVKwZ/BTDUIvYdng=;
-        b=iP+3TrSPnq0Rx4aYKpBBf7W0hKS5kA7p9p2wtxgWwjKHeIXqVdvUQaBEs+mJoCP7uW
-         NCaEQip6pAvCmh5Gu9PwmK0b2N/ANRMSN8mIkDas/bO1Kyr0OkA/6/pYKa4bxdOWuYmM
-         XSPcauKjrmjZV55oe6r9QVI8rXkSSjVlk8Yra3EKpXG3vF9gZzaaQ4nyRj1nC6rQx8Mv
-         cf8rFn9qsKxeaCMZWljm/znsC97xG8gM7ZXXqhEQLpeaCKwkz1wxrstKbZwij5lBPram
-         +MB2POVWKHnD3veQYxhHUl5ei7Nw2P4wcCFR90yB2cJRWDfvQLTOdJVhoQdgTyLziigX
-         nlhg==
-X-Gm-Message-State: AOJu0YzwaYLvtcEIcqyo/rVoDo8wrvSWihkt33BIEyloZ083tTIZV7LY
-	2uwAYohyy+X8pJgzo2nbfYnGhYNqd9iel1HN3LrD7t2M79Xxu+I6FoPkH/dVmbZJNVjHl3+O36o
-	nZa9+Mg==
-X-Google-Smtp-Source: AGHT+IGMIALErCaEqN7TiqJANTGt6qMD+Hp+zGKm61tRTqxOBGvPwdpAp2foQsciFUe4EzIkmLwY6w==
-X-Received: by 2002:a2e:9f06:0:b0:2f0:1a36:1d79 with SMTP id 38308e7fff4ca-2f15ab24cfamr49444721fa.45.1722699925845;
-        Sat, 03 Aug 2024 08:45:25 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e17edafsm4703191fa.3.2024.08.03.08.45.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 03 Aug 2024 08:45:25 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso112074041fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 08:45:25 -0700 (PDT)
-X-Received: by 2002:ac2:4e07:0:b0:530:ac41:4bf with SMTP id
- 2adb3069b0e04-530bb3b42ccmr4020789e87.61.1722699924969; Sat, 03 Aug 2024
- 08:45:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722700120; x=1723304920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zvCMh2scSAAzx7sSA0dGXKLUtTv2QHSXx5XOq0pGNIY=;
+        b=ZBehcy3+XYlbz3uItjUay6QcWL0aB/cEIfqpnh6eoeJSSK8ZqoAoegeTd8mweFfnY9
+         Kq4qVFN2HeaEShkCUen/B/T6qqaOxKzpZoDIPkPh/f5Yg8m5rnxEFZBBBQeF7nMIRRJ5
+         6dALuKubVVnCLf2lHmjGnR0jXIFjxF6tcuHtOECc4of68EGnMk4RgZeKss8ZdJY8vI5l
+         CT2ah8CSeccC9DTrql0NawTa/TFXki8hi9KjAUFcjDi1tM1n4yRBW4NZcTZljDcxDXkj
+         9pnG3yNyEvY7Ut2Uh7mZ04fDNnTAEJGiXXI2w3vzyQPxCb1bnK+ANooOTR+O9RwjUM+L
+         TOCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMzaiIPpg1EayviRtlJJES0FLcZiM1TAunYLMbEKIzRJswsYk68h6w7qcdp9EzPpVPUKmFkDw5wK+AN10u+4vMf0W1hV+nU2+djsKrFSaHFUiMK/oQxxt8+y1f5zN7hRlmDmV2
+X-Gm-Message-State: AOJu0YynG7U95k74giim52clMch5OZMoGwvFdN+gOvs4PDuE36VsZcB2
+	Y/V14SdVFTi9gEByoQBGAhhJezwjkxhvbf0mt3KszpCD6a4yQiM0bVRe4SqmNU7GShG1sSLwz5n
+	J25OngZ0xFUDwQF52iUHUo1E3lLs=
+X-Google-Smtp-Source: AGHT+IHzoUsOPUmNwqNBBZwXxScIiO4bcD4bws4wUfqUGx+w+8Cp96xBCQYRpfoAMWqGsqil60w05f1cvDxBoiaUEgw=
+X-Received: by 2002:a50:fb8c:0:b0:5a3:8077:3c90 with SMTP id
+ 4fb4d7f45d1cf-5b7f56fb7c0mr5889995a12.33.1722700120100; Sat, 03 Aug 2024
+ 08:48:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802114518.GA20924@redhat.com> <CAHk-=wguPQZKfWdNjF8OedfttMNkrW57Kb5Wjv0NmTzoEbUG7A@mail.gmail.com>
- <20240802221014.GA20135@redhat.com> <CAHk-=wiXK4cc8ikqN15vfi2+wsYJYh08qH8qzCpy+08Gh9whLw@mail.gmail.com>
- <20240803120136.GA2986@redhat.com>
-In-Reply-To: <20240803120136.GA2986@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 3 Aug 2024 08:45:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi1cQZugtWN5x1wZwkUnj6BVPhyynz5P9HOW8URXLOEDQ@mail.gmail.com>
-Message-ID: <CAHk-=wi1cQZugtWN5x1wZwkUnj6BVPhyynz5P9HOW8URXLOEDQ@mail.gmail.com>
-Subject: Re: build failure caused by RUNTIME_CONST()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org
+References: <20240801111611.84743-1-kuro@kuroa.me> <CANn89iKp=Mxu+kyB3cSB2sKevMJa6A3octSCJZM=oz4q+DC=bA@mail.gmail.com>
+In-Reply-To: <CANn89iKp=Mxu+kyB3cSB2sKevMJa6A3octSCJZM=oz4q+DC=bA@mail.gmail.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Sat, 3 Aug 2024 23:48:03 +0800
+Message-ID: <CAL+tcoAHBSDLTNobA1MJ2itLja1xnWwmejDioPBQJh83oma55Q@mail.gmail.com>
+Subject: Re: [PATCH net] tcp: fix forever orphan socket caused by tcp_abort
+To: Eric Dumazet <edumazet@google.com>
+Cc: Xueming Feng <kuro@kuroa.me>, Lorenzo Colitti <lorenzo@google.com>, 
+	"David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
+	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
+	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 3 Aug 2024 at 05:01, Oleg Nesterov <oleg@redhat.com> wrote:
+Hello Eric,
+
+On Thu, Aug 1, 2024 at 9:17=E2=80=AFPM Eric Dumazet <edumazet@google.com> w=
+rote:
 >
-> On 08/02, Linus Torvalds wrote:
+> On Thu, Aug 1, 2024 at 1:17=E2=80=AFPM Xueming Feng <kuro@kuroa.me> wrote=
+:
 > >
-> > Yeah, we document that we support building with ld-2.25.
+> > We have some problem closing zero-window fin-wait-1 tcp sockets in our
+> > environment. This patch come from the investigation.
+> >
+> > Previously tcp_abort only sends out reset and calls tcp_done when the
+> > socket is not SOCK_DEAD aka. orphan. For orphan socket, it will only
+> > purging the write queue, but not close the socket and left it to the
+> > timer.
+> >
+> > While purging the write queue, tp->packets_out and sk->sk_write_queue
+> > is cleared along the way. However tcp_retransmit_timer have early
+> > return based on !tp->packets_out and tcp_probe_timer have early
+> > return based on !sk->sk_write_queue.
+> >
+> > This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resched
+> > and socket not being killed by the timers. Converting a zero-windowed
+> > orphan to a forever orphan.
+> >
+> > This patch removes the SOCK_DEAD check in tcp_abort, making it send
+> > reset to peer and close the socket accordingly. Preventing the
+> > timer-less orphan from happening.
+> >
+> > Fixes: e05836ac07c7 ("tcp: purge write queue upon aborting the connecti=
+on")
+> > Fixes: bffd168c3fc5 ("tcp: clear tp->packets_out when purging write que=
+ue")
+> > Signed-off-by: Xueming Feng <kuro@kuroa.me>
 >
-> Where? I tried to grep Documentation/ but didn't find anything...
+> This seems legit, but are you sure these two blamed commits added this bu=
+g ?
+>
+> Even before them, we should have called tcp_done() right away, instead
+> of waiting for a (possibly long) timer to complete the job.
+>
+> This might be important when killing millions of sockets on a busy server=
+.
+>
+> CC Lorenzo
+>
+> Lorenzo, do you recall why your patch was testing the SOCK_DEAD flag ?
 
-It's not hugely obvious, but you can find the line
+I guess that one of possible reasons is to avoid double-free,
+something like this, happening in inet_csk_destroy_sock().
 
-    binutils               2.25             ld -v
+Let me assume: if we call tcp_close() first under the memory pressure
+which means tcp_check_oom() returns true and then it will call
+inet_csk_destroy_sock() in __tcp_close(), later tcp_abort() will call
+tcp_done() to free the sk again in the inet_csk_destroy_sock() when
+not testing the SOCK_DEAD flag in tcp_abort.
 
-in Documentation/process/changes.rst under the "Current Minimal
-Requirements" header.
+Do you think the above case could happen?
 
-                Linus
+Thanks,
+Jason
 
