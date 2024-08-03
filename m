@@ -1,220 +1,341 @@
-Return-Path: <linux-kernel+bounces-273600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D50C946B32
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 23:47:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF51946B31
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 23:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA2F71C2132C
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 21:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B0F228102C
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 21:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D04457323;
-	Sat,  3 Aug 2024 21:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842485B05E;
+	Sat,  3 Aug 2024 21:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y1ngz/fl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="n5lLHyK4";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="n5lLHyK4"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99095588F;
-	Sat,  3 Aug 2024 21:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AA5101EC;
+	Sat,  3 Aug 2024 21:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722721632; cv=none; b=jsQoxUDzG78i072JIwFN2YJbu0m9nG+4ybOJZLPdsUA01c/DCley195PUlXnEpdD77YiOawInxxprcHP+2i1mf1ZTpbepRRqZEWuh10eXnos/v7cbjKJ51F0BTBpKoS3d8el8qYtKg/PX9Rk7xum+/c7tBHDvQwRQ43ErhawRso=
+	t=1722721616; cv=none; b=IxfBlU4swjegh2QssI1+rdNK8aRYqonlWqKld0zL7cefhV6I/44QTRAMGQCe04AyORX2Fvu6QAXaEK+YVe7kijChooWIGV6oVQRxtkLAQnQnc8dgjfIshfgsh+t1hc3fnmFBsA0VTOUh/D4jy44rivwgWSAV27Q/uqxQkVASuig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722721632; c=relaxed/simple;
-	bh=DyvhvGCZsUWAd17j/gpBKyWl4viZG07fXnUAiJG3fj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hDkhyKvUr4MLCPJCJFDZLXdFOHdOaPwp//+4MSRRnVETxrOLe5Ns66uGaTz9J/FU7wX4TDaSDFVjCIwwCxDTS3e4/LBuyRKxgA4IFzi0eY3v1o98Jkv1cN9OdoXhVFHN/AmZ7+BHNNOrmTUIjsuMtqqivyZHchsmnEzZRsc/KCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y1ngz/fl; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1722721616; c=relaxed/simple;
+	bh=mQwT5aHUifyTWpfaKZkx8teb5olNvyZXf4DUopKgtII=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=Wji5UmKDuTbqPSadLJ2E+Uke4LzuWHuDZg4odjvyGI3dRRsgQaV+oUJWAu90uVom0cmymNAr6sLHbn8cZvMn56/KxsFxXh/7qTm/SIKRp6/1wvCELhWHMLFsM4jIKhg+w8Q7ZzKinQbAQ7ZBXskz24qls/4qVmFqk+lPM6WOh40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=n5lLHyK4; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=n5lLHyK4; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722721630; x=1754257630;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DyvhvGCZsUWAd17j/gpBKyWl4viZG07fXnUAiJG3fj8=;
-  b=Y1ngz/flDFT0cufcnAjU2jI7yS4Er8gk9PYRV9TgtYDdZ4cj4y8lJggc
-   tTDJCK6Pe/8HNpDXscjX3JFJDl09B/DCpQ/F97lwiUle0zEQzvPge3/9U
-   t++d8igFOFsU7Gv7hsh3xJ/QBamtbj+Lt4vsaJcqcUCFzYXWUJGAN7IgZ
-   qMX3AO3ClbpG9v+2pnKgBh0C9SlsuOu0ost7khfMvnj+Ui9BFY/QHA4dE
-   qwCYwzDbDi30S0tp7E5CdTApE94lJUCBPuVfsyj3/BmNsK0auP9Y9l5Ie
-   KBCu0my4zb9GKqo1wXpb40bUJiQsYPKiF/iXcLflDMlQTaNLxCfab4NU3
-   w==;
-X-CSE-ConnectionGUID: vYEW7pZRT/KTQ/+iHcmz3w==
-X-CSE-MsgGUID: 4HRA2iuoT4W0fbZWvz5e6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11153"; a="38217631"
-X-IronPort-AV: E=Sophos;i="6.09,261,1716274800"; 
-   d="scan'208";a="38217631"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2024 14:47:08 -0700
-X-CSE-ConnectionGUID: JAQgAfKGTuGlB5jeOgppxQ==
-X-CSE-MsgGUID: NSwcGpGkS2uVrNzWtdc5Tw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,261,1716274800"; 
-   d="scan'208";a="93311661"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 03 Aug 2024 14:47:05 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1saMac-0000vW-2J;
-	Sat, 03 Aug 2024 21:47:02 +0000
-Date: Sun, 4 Aug 2024 05:46:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, akpm@linux-foundation.org,
-	urezki@gmail.com, hch@infradead.org, linux-mm@kvack.org,
-	lee@kernel.org, andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	s.hauer@pengutronix.de, christian.gmeiner@gmail.com,
-	Mary Strodl <mstrodl@csh.rit.edu>
-Subject: Re: [PATCH v2 1/2] x86: Add basic support for the Congatec CGEB BIOS
- interface
-Message-ID: <202408040528.OmB08hFQ-lkp@intel.com>
-References: <20240801160610.101859-2-mstrodl@csh.rit.edu>
+	d=hansenpartnership.com; s=20151216; t=1722721613;
+	bh=mQwT5aHUifyTWpfaKZkx8teb5olNvyZXf4DUopKgtII=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=n5lLHyK4PVfs1oRCIsk6Mik+NoTRqGe1Gpnexb64xtWqDoKmafFnMR/zW40e/TIxD
+	 O3w1hQ8Bl6B7pFJVio517sN0OjRsCxr9bqRvGt2u01ShDcBVBHeQcSOSlkhT4d6kt3
+	 yq7zjnUMaMJKz0OKdulYds+zTpz73yDSXl7lcUyQ=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7AFDC1281A09;
+	Sat, 03 Aug 2024 17:46:53 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id vkRLEslJHtwv; Sat,  3 Aug 2024 17:46:53 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1722721613;
+	bh=mQwT5aHUifyTWpfaKZkx8teb5olNvyZXf4DUopKgtII=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=n5lLHyK4PVfs1oRCIsk6Mik+NoTRqGe1Gpnexb64xtWqDoKmafFnMR/zW40e/TIxD
+	 O3w1hQ8Bl6B7pFJVio517sN0OjRsCxr9bqRvGt2u01ShDcBVBHeQcSOSlkhT4d6kt3
+	 yq7zjnUMaMJKz0OKdulYds+zTpz73yDSXl7lcUyQ=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DB1BF12816A0;
+	Sat, 03 Aug 2024 17:46:52 -0400 (EDT)
+Message-ID: <dbfc2aaa8122fe748480f53ab79c0a9efe196ebe.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 6.11-rc1
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Sat, 03 Aug 2024 17:46:50 -0400
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801160610.101859-2-mstrodl@csh.rit.edu>
+Content-Transfer-Encoding: 7bit
 
-Hi Mary,
+One core change that reverts the double message print patch in sd.c (it
+was causing regressions on embedded systems).  The rest are driver
+fixes in ufs, mpt3sas and mpi3mr.
 
-kernel test robot noticed the following build errors:
+The patch is available here:
 
-[auto build test ERROR on lee-mfd/for-mfd-next]
-[also build test ERROR on lee-mfd/for-mfd-fixes andi-shyti/i2c/i2c-host akpm-mm/mm-everything linus/master v6.11-rc1 next-20240802]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mary-Strodl/x86-Add-basic-support-for-the-Congatec-CGEB-BIOS-interface/20240803-013725
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git for-mfd-next
-patch link:    https://lore.kernel.org/r/20240801160610.101859-2-mstrodl%40csh.rit.edu
-patch subject: [PATCH v2 1/2] x86: Add basic support for the Congatec CGEB BIOS interface
-config: x86_64-randconfig-002-20240804 (https://download.01.org/0day-ci/archive/20240804/202408040528.OmB08hFQ-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408040528.OmB08hFQ-lkp@intel.com/reproduce)
+The short changelog is:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408040528.OmB08hFQ-lkp@intel.com/
+Damien Le Moal (2):
+      scsi: mpt3sas: Avoid IOMMU page faults on REPORT ZONES
+      scsi: mpi3mr: Avoid IOMMU page faults on REPORT ZONES
 
-All errors (new ones prefixed by >>):
+Eric Biggers (1):
+      scsi: ufs: exynos: Don't resume FMP when crypto support is disabled
 
-   ld: drivers/mfd/congatec-cgeb.o: in function `cgeb_request':
->> drivers/mfd/congatec-cgeb.c:303: undefined reference to `cn_netlink_send'
->> ld: drivers/mfd/congatec-cgeb.c:312: undefined reference to `cn_netlink_send'
-   ld: drivers/mfd/congatec-cgeb.o: in function `cgeb_exit':
->> drivers/mfd/congatec-cgeb.c:1131: undefined reference to `cn_del_callback'
-   ld: drivers/mfd/congatec-cgeb.o: in function `cgeb_init':
->> drivers/mfd/congatec-cgeb.c:1054: undefined reference to `cn_add_callback'
->> ld: drivers/mfd/congatec-cgeb.c:1113: undefined reference to `cn_del_callback'
+Johan Hovold (1):
+      scsi: Revert "scsi: sd: Do not repeat the starting disk message"
 
+Kyoungrul Kim (1):
+      scsi: ufs: core: Check LSDBS cap when !mcq
 
-vim +303 drivers/mfd/congatec-cgeb.c
+Manivannan Sadhasivam (1):
+      scsi: ufs: core: Do not set link to OFF state while waking up from hibernation
 
-   266	
-   267	static int cgeb_request(struct cgeb_msg msg, struct cgeb_msg *out,
-   268				int (*callback)(struct cgeb_msg*, void*), void *user)
-   269	{
-   270		static int seq;
-   271		struct cn_msg *wrapper;
-   272		struct cgeb_request *req;
-   273		int err, retries = 0;
-   274	
-   275		wrapper = (struct cn_msg*) kzalloc(sizeof(*wrapper) + sizeof(msg),
-   276						   GFP_KERNEL);
-   277		if (!wrapper)
-   278			return -ENOMEM;
-   279	
-   280		memset(wrapper, 0, sizeof(*wrapper));
-   281		memcpy(&wrapper->id, &cgeb_cn_id, sizeof(cgeb_cn_id));
-   282	
-   283		wrapper->len = sizeof(msg);
-   284		wrapper->ack = get_random_u32();
-   285		memcpy(wrapper + 1, &msg, sizeof(msg));
-   286	
-   287		mutex_lock(&cgeb_lock);
-   288	
-   289		req = &cgeb_requests[seq];
-   290	
-   291		if (req->busy) {
-   292			mutex_unlock(&cgeb_lock);
-   293			err = -EBUSY;
-   294			goto out;
-   295		}
-   296		wrapper->seq = seq;
-   297		req->busy = CGEB_REQ_ACTIVE;
-   298		req->ack = wrapper->ack;
-   299		req->out = out;
-   300		req->callback = callback;
-   301		req->user = user;
-   302	
- > 303		err = cn_netlink_send(wrapper, 0, 0, GFP_KERNEL);
-   304		if (err == -ESRCH) {
-   305			err = cgeb_helper_start();
-   306			if (err) {
-   307				pr_err("failed to execute %s\n", cgeb_helper_path);
-   308				pr_err("make sure that the cgeb helper is installed and"
-   309				       " executable\n");
-   310			} else {
-   311				do {
- > 312					err = cn_netlink_send(wrapper, 0, 0,
-   313							      GFP_KERNEL);
-   314					if (err == -ENOBUFS)
-   315						err = 0;
-   316					if (err == -ESRCH)
-   317						msleep(30);
-   318				} while (err == -ESRCH && ++retries < 5);
-   319			}
-   320		} else if (err == -ENOBUFS)
-   321			err = 0;
-   322	
-   323		kfree(wrapper);
-   324	
-   325		if (++seq >= CGEB_REQUEST_MAX)
-   326			seq = 0;
-   327	
-   328		mutex_unlock(&cgeb_lock);
-   329	
-   330		if (err)
-   331			goto out;
-   332	
-   333		/* Wait for a response to the request */
-   334		err = wait_for_completion_interruptible_timeout(
-   335			&req->done, msecs_to_jiffies(20000));
-   336		if (err == 0) {
-   337			pr_err("CGEB: Timed out running request of type %d!\n",
-   338			       msg.type);
-   339			err = -ETIMEDOUT;
-   340		} else if (err > 0)
-   341			err = 0;
-   342	
-   343		if (err)
-   344			goto out;
-   345	
-   346		mutex_lock(&cgeb_lock);
-   347	
-   348		if (req->busy != CGEB_REQ_DONE) {
-   349			pr_err("CGEB: BUG: Request is in a bad state?\n");
-   350			err = -EINVAL;
-   351		}
-   352	
-   353		req->busy = CGEB_REQ_IDLE;
-   354		mutex_unlock(&cgeb_lock);
-   355	out:
-   356		return err;
-   357	}
-   358	
+Peter Wang (2):
+      scsi: ufs: core: Fix deadlock during RTC update
+      scsi: ufs: core: Bypass quick recovery if force reset is needed
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With the diffstat:
+
+ drivers/scsi/mpi3mr/mpi3mr_os.c     | 11 +++++++++++
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 20 ++++++++++++++++++--
+ drivers/scsi/sd.c                   |  5 +++--
+ drivers/ufs/core/ufshcd-priv.h      |  5 +++++
+ drivers/ufs/core/ufshcd.c           | 27 ++++++++++++++++++++++-----
+ drivers/ufs/host/ufs-exynos.c       |  3 +++
+ include/ufs/ufshcd.h                |  1 +
+ include/ufs/ufshci.h                |  1 +
+ 8 files changed, 64 insertions(+), 9 deletions(-)
+
+With full diff below.
+
+James
+
+---
+diff --git a/drivers/scsi/mpi3mr/mpi3mr_os.c b/drivers/scsi/mpi3mr/mpi3mr_os.c
+index 69b14918de59..ca8f132e03ae 100644
+--- a/drivers/scsi/mpi3mr/mpi3mr_os.c
++++ b/drivers/scsi/mpi3mr/mpi3mr_os.c
+@@ -3575,6 +3575,17 @@ static int mpi3mr_prepare_sg_scmd(struct mpi3mr_ioc *mrioc,
+ 		    scmd->sc_data_direction);
+ 		priv->meta_sg_valid = 1; /* To unmap meta sg DMA */
+ 	} else {
++		/*
++		 * Some firmware versions byte-swap the REPORT ZONES command
++		 * reply from ATA-ZAC devices by directly accessing in the host
++		 * buffer. This does not respect the default command DMA
++		 * direction and causes IOMMU page faults on some architectures
++		 * with an IOMMU enforcing write mappings (e.g. AMD hosts).
++		 * Avoid such issue by making the REPORT ZONES buffer mapping
++		 * bi-directional.
++		 */
++		if (scmd->cmnd[0] == ZBC_IN && scmd->cmnd[1] == ZI_REPORT_ZONES)
++			scmd->sc_data_direction = DMA_BIDIRECTIONAL;
+ 		sg_scmd = scsi_sglist(scmd);
+ 		sges_left = scsi_dma_map(scmd);
+ 	}
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index b2bcf4a27ddc..b785a7e88b49 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -2671,6 +2671,22 @@ _base_build_zero_len_sge_ieee(struct MPT3SAS_ADAPTER *ioc, void *paddr)
+ 	_base_add_sg_single_ieee(paddr, sgl_flags, 0, 0, -1);
+ }
+ 
++static inline int _base_scsi_dma_map(struct scsi_cmnd *cmd)
++{
++	/*
++	 * Some firmware versions byte-swap the REPORT ZONES command reply from
++	 * ATA-ZAC devices by directly accessing in the host buffer. This does
++	 * not respect the default command DMA direction and causes IOMMU page
++	 * faults on some architectures with an IOMMU enforcing write mappings
++	 * (e.g. AMD hosts). Avoid such issue by making the report zones buffer
++	 * mapping bi-directional.
++	 */
++	if (cmd->cmnd[0] == ZBC_IN && cmd->cmnd[1] == ZI_REPORT_ZONES)
++		cmd->sc_data_direction = DMA_BIDIRECTIONAL;
++
++	return scsi_dma_map(cmd);
++}
++
+ /**
+  * _base_build_sg_scmd - main sg creation routine
+  *		pcie_device is unused here!
+@@ -2717,7 +2733,7 @@ _base_build_sg_scmd(struct MPT3SAS_ADAPTER *ioc,
+ 	sgl_flags = sgl_flags << MPI2_SGE_FLAGS_SHIFT;
+ 
+ 	sg_scmd = scsi_sglist(scmd);
+-	sges_left = scsi_dma_map(scmd);
++	sges_left = _base_scsi_dma_map(scmd);
+ 	if (sges_left < 0)
+ 		return -ENOMEM;
+ 
+@@ -2861,7 +2877,7 @@ _base_build_sg_scmd_ieee(struct MPT3SAS_ADAPTER *ioc,
+ 	}
+ 
+ 	sg_scmd = scsi_sglist(scmd);
+-	sges_left = scsi_dma_map(scmd);
++	sges_left = _base_scsi_dma_map(scmd);
+ 	if (sges_left < 0)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index adeaa8ab9951..8bb3a3611851 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -4205,6 +4205,8 @@ static int sd_resume(struct device *dev)
+ {
+ 	struct scsi_disk *sdkp = dev_get_drvdata(dev);
+ 
++	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
++
+ 	if (opal_unlock_from_suspend(sdkp->opal_dev)) {
+ 		sd_printk(KERN_NOTICE, sdkp, "OPAL unlock failed\n");
+ 		return -EIO;
+@@ -4221,13 +4223,12 @@ static int sd_resume_common(struct device *dev, bool runtime)
+ 	if (!sdkp)	/* E.g.: runtime resume at the start of sd_probe() */
+ 		return 0;
+ 
+-	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
+-
+ 	if (!sd_do_start_stop(sdkp->device, runtime)) {
+ 		sdkp->suspended = false;
+ 		return 0;
+ 	}
+ 
++	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
+ 	ret = sd_start_stop_device(sdkp, 1);
+ 	if (!ret) {
+ 		sd_resume(dev);
+diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
+index ce36154ce963..7aea8fbaeee8 100644
+--- a/drivers/ufs/core/ufshcd-priv.h
++++ b/drivers/ufs/core/ufshcd-priv.h
+@@ -316,6 +316,11 @@ static inline int ufshcd_rpm_get_sync(struct ufs_hba *hba)
+ 	return pm_runtime_get_sync(&hba->ufs_device_wlun->sdev_gendev);
+ }
+ 
++static inline int ufshcd_rpm_get_if_active(struct ufs_hba *hba)
++{
++	return pm_runtime_get_if_active(&hba->ufs_device_wlun->sdev_gendev);
++}
++
+ static inline int ufshcd_rpm_put_sync(struct ufs_hba *hba)
+ {
+ 	return pm_runtime_put_sync(&hba->ufs_device_wlun->sdev_gendev);
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index dc757ba47522..5e3c67e96956 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -2416,7 +2416,17 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
+ 		return err;
+ 	}
+ 
++	/*
++	 * The UFSHCI 3.0 specification does not define MCQ_SUPPORT and
++	 * LSDB_SUPPORT, but [31:29] as reserved bits with reset value 0s, which
++	 * means we can simply read values regardless of version.
++	 */
+ 	hba->mcq_sup = FIELD_GET(MASK_MCQ_SUPPORT, hba->capabilities);
++	/*
++	 * 0h: legacy single doorbell support is available
++	 * 1h: indicate that legacy single doorbell support has been removed
++	 */
++	hba->lsdb_sup = !FIELD_GET(MASK_LSDB_SUPPORT, hba->capabilities);
+ 	if (!hba->mcq_sup)
+ 		return 0;
+ 
+@@ -6553,7 +6563,8 @@ static void ufshcd_err_handler(struct work_struct *work)
+ 	if (ufshcd_err_handling_should_stop(hba))
+ 		goto skip_err_handling;
+ 
+-	if (hba->dev_quirks & UFS_DEVICE_QUIRK_RECOVERY_FROM_DL_NAC_ERRORS) {
++	if ((hba->dev_quirks & UFS_DEVICE_QUIRK_RECOVERY_FROM_DL_NAC_ERRORS) &&
++	    !hba->force_reset) {
+ 		bool ret;
+ 
+ 		spin_unlock_irqrestore(hba->host->host_lock, flags);
+@@ -8211,7 +8222,10 @@ static void ufshcd_update_rtc(struct ufs_hba *hba)
+ 	 */
+ 	val = ts64.tv_sec - hba->dev_info.rtc_time_baseline;
+ 
+-	ufshcd_rpm_get_sync(hba);
++	/* Skip update RTC if RPM state is not RPM_ACTIVE */
++	if (ufshcd_rpm_get_if_active(hba) <= 0)
++		return;
++
+ 	err = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR, QUERY_ATTR_IDN_SECONDS_PASSED,
+ 				0, 0, &val);
+ 	ufshcd_rpm_put_sync(hba);
+@@ -10265,9 +10279,6 @@ int ufshcd_system_restore(struct device *dev)
+ 	 */
+ 	ufshcd_readl(hba, REG_UTP_TASK_REQ_LIST_BASE_H);
+ 
+-	/* Resuming from hibernate, assume that link was OFF */
+-	ufshcd_set_link_off(hba);
+-
+ 	return 0;
+ 
+ }
+@@ -10496,6 +10507,12 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+ 	}
+ 
+ 	if (!is_mcq_supported(hba)) {
++		if (!hba->lsdb_sup) {
++			dev_err(hba->dev, "%s: failed to initialize (legacy doorbell mode not supported)\n",
++				__func__);
++			err = -EINVAL;
++			goto out_disable;
++		}
+ 		err = scsi_add_host(host, hba->dev);
+ 		if (err) {
+ 			dev_err(hba->dev, "scsi_add_host failed\n");
+diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
+index 16ad3528d80b..9ec318ef52bf 100644
+--- a/drivers/ufs/host/ufs-exynos.c
++++ b/drivers/ufs/host/ufs-exynos.c
+@@ -1293,6 +1293,9 @@ static void exynos_ufs_fmp_resume(struct ufs_hba *hba)
+ {
+ 	struct arm_smccc_res res;
+ 
++	if (!(hba->caps & UFSHCD_CAP_CRYPTO))
++		return;
++
+ 	arm_smccc_smc(SMC_CMD_FMP_SECURITY, 0, SMU_EMBEDDED, CFG_DESCTYPE_3,
+ 		      0, 0, 0, 0, &res);
+ 	if (res.a0)
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index a43b14276bc3..cac0cdb9a916 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -1109,6 +1109,7 @@ struct ufs_hba {
+ 	bool ext_iid_sup;
+ 	bool scsi_host_added;
+ 	bool mcq_sup;
++	bool lsdb_sup;
+ 	bool mcq_enabled;
+ 	struct ufshcd_res_info res[RES_MAX];
+ 	void __iomem *mcq_base;
+diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
+index 38fe97971a65..9917c7743d80 100644
+--- a/include/ufs/ufshci.h
++++ b/include/ufs/ufshci.h
+@@ -77,6 +77,7 @@ enum {
+ 	MASK_OUT_OF_ORDER_DATA_DELIVERY_SUPPORT	= 0x02000000,
+ 	MASK_UIC_DME_TEST_MODE_SUPPORT		= 0x04000000,
+ 	MASK_CRYPTO_SUPPORT			= 0x10000000,
++	MASK_LSDB_SUPPORT			= 0x20000000,
+ 	MASK_MCQ_SUPPORT			= 0x40000000,
+ };
+ 
+
 
