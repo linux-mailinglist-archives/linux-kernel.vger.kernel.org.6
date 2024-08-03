@@ -1,157 +1,129 @@
-Return-Path: <linux-kernel+bounces-273587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C7A946B18
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 21:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB90C946B1D
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 21:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BEED1F21561
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 19:42:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 559321F21B97
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 19:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F03E3B79C;
-	Sat,  3 Aug 2024 19:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA0855887;
+	Sat,  3 Aug 2024 19:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eB9oZh/0"
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbO9Vzhe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4662737700;
-	Sat,  3 Aug 2024 19:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330B518E10;
+	Sat,  3 Aug 2024 19:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722714165; cv=none; b=mxji2RI0iSxbdsiJLZOmC/GemTvqyUO3KKc9srhf1H/OzsuitKPv/zUofFnwCSA6fRdyF7fQJ67fxJw3rL/NpfJZtUxdNxpyDb9p5TwYJE7beikkfbTj4FGbGngTfFgtP9Dnt5rqmPqKbUS5BzIQzh0gs6juiafHysIZFT+6Gss=
+	t=1722714784; cv=none; b=d+FFtj9zlXP5KM+ISWraAW82btvrqKWbKN7qknOHOhOitDF9KziICMcb2efrsViQzmuUy4rAbQiRJoit7gzIoXiryNJ6Q5udVCcA8T3vLJqYVs+uQ59bRlW6czFt3AU3ipFhE5FvovzkUwflXdcvgA7LFNb/d97KPzrbVxl+RGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722714165; c=relaxed/simple;
-	bh=vJ6Oc4HlbHn+19UFrejTmI5Ne1QgD/GfIVMyz7SHOuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BM/YlYpp5vbSaluQypHuz/aUejeeUnE8mT8jV0Nhlcswp28S48wcXGftfLcNtcXSf+wrKnhJzUvYkQ73Ksob2k4dfWku3tbEE0rVBP9gNiJgzsZNSMRECwMHQOin2nEPq1yoReeVyNmeA00oklApcp76KFpbqr+fcs/m2i54nNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eB9oZh/0; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id aKeEs4EgIWPKVaKeEsRBek; Sat, 03 Aug 2024 21:42:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722714159;
-	bh=tHCt2cSmPbujQGrBxkHoez24fylTAStJKqhJAGm5IKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=eB9oZh/0hzOm6fIRQol606u2IaWjkxmgVAzg9qo31LLoplxCxGSsv8LZnjWlGkRKJ
-	 iRwqO2ASxt3qDa/X/w27rXpnEyoOWEVPuyriFTbWYP66bJ/kKuYJLpfEpZnQo8q8Ds
-	 0eMJrSbP5UyGcFOa+rUZmJtvAZQt/vXN8cjfxRfQrejcrr7P8wqjGLw4y0BbSK+zcp
-	 PHapNz/M0DaTfZ+v/c5bREENnk6n3WThCmw+lKNOv00tmJMnvbUODYiGlEHS3bDjuT
-	 ZQLyKz1HEatDFbSxQxGTZPTd6V96EE5zd88LUxOph5Acd1oABqrZIAmoxGZvxWA389
-	 A1qpjXR3ChTpg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 03 Aug 2024 21:42:39 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <9927c607-5740-406a-8cd6-0550e8b92038@wanadoo.fr>
-Date: Sat, 3 Aug 2024 21:42:38 +0200
+	s=arc-20240116; t=1722714784; c=relaxed/simple;
+	bh=cO1njgqj1MdIys3zEUAKB60pjD++czAPnaJB2qZeMjI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hOEFQe0pF17ExVY9b6OXM/ACt9buFG8GejcuJiFFHAPeN0t/6StEBvUdRXvCoJ5520YWbGYHzRub8eBIuxN8nltxYDYd1qhWPeVQARkjEQVgVH1T1N4hMrWRL+Qqfv7K95ESDY6xVLZ17XhDlgW6q/gmH6i7YuRwWSiBo9KyAXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbO9Vzhe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B7D03C116B1;
+	Sat,  3 Aug 2024 19:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722714783;
+	bh=cO1njgqj1MdIys3zEUAKB60pjD++czAPnaJB2qZeMjI=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=gbO9Vzhe4Q2t6M6Anaf72tuWGNoTztkRwaVXobXonM3K+z2Uzg3ROlaTF38HLekI/
+	 PC0+IE5UB/JY/Hyut9ornpJY3yc7cy536OYVO95dYWk8OKt5nFhj+ZCPe9XNglS7WZ
+	 DRZZ2wzrSAHQ2Yu3/igaATrLQjTL9m4s98x8GPcjHuVCvtkS5iHr3oS2nS5ptN1MTn
+	 THUBG3Wid/0fwNNZb5ZR13OwKI3Vq7Rvr5E1ZIbt3l+w/InH6PIdeXYE80a4yCDJKt
+	 dmp27AhhoAh4cMf4oyaxbtHECZTBRep8utKwn3n3MkGWZPvucV0TDoO2wXlFCE1eiX
+	 lwVc/qkjMf35A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D901C3DA4A;
+	Sat,  3 Aug 2024 19:53:03 +0000 (UTC)
+From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
+Date: Sat, 03 Aug 2024 21:52:55 +0200
+Subject: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] iio: light: ltr390: Add ALS channel and support
- for gain and resolution
-To: abhashkumarjha123@gmail.com
-Cc: anshulusr@gmail.com, jic23@kernel.org, lars@metafoo.de,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240803180950.32821-1-abhashkumarjha123@gmail.com>
- <20240803180950.32821-2-abhashkumarjha123@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240803180950.32821-2-abhashkumarjha123@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
+X-B4-Tracking: v=1; b=H4sIAJaKrmYC/x3MQQqAIBBA0avErBOsKYiuEiGmYw1lhQMRRHdPW
+ r7F/w8IJSaBvngg0cXCx55RlQW4xe4zKfbZUOu60Z1GNSUXQ7TOnHEVazxtRoS9QoctBcIWUUO
+ uz0SB7/88jO/7AZiy8PppAAAA
+To: Arend van Spriel <arend.vanspriel@broadcom.com>, 
+ Kalle Valo <kvalo@kernel.org>, Hector Martin <marcan@marcan.st>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev, 
+ brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org, 
+ asahi@lists.linux.dev, stable@vger.kernel.org, Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1950; i=j@jannau.net;
+ h=from:subject:message-id;
+ bh=kwa63Uu8k2lWu1jh8mzzIZRococdlt5kl/m4MUAUTEw=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhrR1XfMEpu1b+fuSsfFsHu0AC7n/HqLvPkyYsUf8qoPE2
+ WVB35WOd5SyMIhxMciKKbIkab/sYFhdoxhT+yAMZg4rE8gQBi5OAZjI3HmMDPcyXdbdTkgSbX8v
+ +P1v2493CbJP93htlxD64/Ku96rAllBGhnYeTsmJeakhXxj4GP6WHDzR8etU5P9NPK1xZpKlydc
+ 6mQE=
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+X-Endpoint-Received: by B4 Relay for j@jannau.net/default with auth_id=62
+X-Original-From: Janne Grunau <j@jannau.net>
+Reply-To: j@jannau.net
 
-Le 03/08/2024 à 20:09, Abhash Jha a écrit :
-> Add new ALS channel and allow reading lux and scale values.
-> Also provide gain and resolution configuration for ALS channel.
-> Add automatic mode switching between the UVS and ALS channel
-> based on which channel is being accessed.
-> The default mode in which the sensor start is ALS mode.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
+From: Janne Grunau <j@jannau.net>
 
-Hi,
+wpa_supplicant 2.11 sends since 1efdba5fdc2c ("Handle PMKSA flush in the
+driver for SAE/OWE offload cases") SSID based PMKSA del commands.
+brcmfmac is not prepared and tries to dereference the NULL bssid and
+pmkid pointers in cfg80211_pmksa. PMKID_V3 operations support SSID based
+updates so copy the SSID.
 
-...
+Fixes: a96202acaea4 ("wifi: brcmfmac: cfg80211: Add support for PMKID_V3 operations")
+Cc: stable@vger.kernel.org
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-> @@ -95,6 +101,25 @@ static int ltr390_register_read(struct ltr390_data *data, u8 register_address)
->   	return get_unaligned_le24(recieve_buffer);
->   }
->   
-> +static int ltr390_set_mode(struct ltr390_data *data, enum ltr390_mode mode)
-> +{
-> +	if (data->mode == mode)
-> +		return 0;
-> +
-> +	switch (mode) {
-> +	case LTR390_SET_ALS_MODE:
-> +		regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_UVS_MODE);
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 5fe0e671ecb3..826b768196e2 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -4320,9 +4320,16 @@ brcmf_pmksa_v3_op(struct brcmf_if *ifp, struct cfg80211_pmksa *pmksa,
+ 		/* Single PMK operation */
+ 		pmk_op->count = cpu_to_le16(1);
+ 		length += sizeof(struct brcmf_pmksa_v3);
+-		memcpy(pmk_op->pmk[0].bssid, pmksa->bssid, ETH_ALEN);
+-		memcpy(pmk_op->pmk[0].pmkid, pmksa->pmkid, WLAN_PMKID_LEN);
+-		pmk_op->pmk[0].pmkid_len = WLAN_PMKID_LEN;
++		if (pmksa->bssid)
++			memcpy(pmk_op->pmk[0].bssid, pmksa->bssid, ETH_ALEN);
++		if (pmksa->pmkid) {
++			memcpy(pmk_op->pmk[0].pmkid, pmksa->pmkid, WLAN_PMKID_LEN);
++			pmk_op->pmk[0].pmkid_len = WLAN_PMKID_LEN;
++		}
++		if (pmksa->ssid && pmksa->ssid_len) {
++			memcpy(pmk_op->pmk[0].ssid.SSID, pmksa->ssid, pmksa->ssid_len);
++			pmk_op->pmk[0].ssid.SSID_len = pmksa->ssid_len;
++		}
+ 		pmk_op->pmk[0].time_left = cpu_to_le32(alive ? BRCMF_PMKSA_NO_EXPIRY : 0);
+ 	}
+ 
 
-Should this be:
-	ret = regmap_clear_bits();
-	if (ret)
-		return ret;
-?
+---
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+change-id: 20240803-brcmfmac_pmksa_del_ssid-3c35efe35330
 
-Otherwise, 0 is returned in all cases and ltr390_read_raw() could be 
-simplified.
+Best regards,
+-- 
+Janne Grunau <j@jannau.net>
 
-> +		break;
-> +
-> +	case LTR390_SET_UVS_MODE:
-> +		regmap_set_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_UVS_MODE);
-
-Same.
-
-> +		break;
-> +	}
-> +
-> +	data->mode = mode;
-> +	return 0;
-> +}
-> +
->   static int ltr390_read_raw(struct iio_dev *iio_device,
->   			   struct iio_chan_spec const *chan, int *val,
->   			   int *val2, long mask)
-> @@ -105,15 +130,47 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
->   	guard(mutex)(&data->lock);
->   	switch (mask) {
->   	case IIO_CHAN_INFO_RAW:
-> -		ret = ltr390_register_read(data, LTR390_UVS_DATA);
-> -		if (ret < 0)
-> -			return ret;
-> +		switch (chan->type) {
-> +		case IIO_UVINDEX:
-> +			ret = ltr390_set_mode(data, LTR390_SET_UVS_MODE);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = ltr390_register_read(data, LTR390_UVS_DATA);
-> +			if (ret < 0)
-> +				return ret;
-> +			break;
-> +
-> +		case IIO_LIGHT:
-> +			ret = ltr390_set_mode(data, LTR390_SET_ALS_MODE);
-> +			if (ret < 0)
-> +				return ret;
-> +
-> +			ret = ltr390_register_read(data, LTR390_ALS_DATA);
-> +			if (ret < 0)
-> +				return ret;
-> +			break;
-
-...
-
-CJ
 
 
