@@ -1,436 +1,139 @@
-Return-Path: <linux-kernel+bounces-273362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37FAA946838
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:38:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04A194683A
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 885B9B212EB
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:38:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00C81F21637
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D4A14D44D;
-	Sat,  3 Aug 2024 06:38:23 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D0314D28F
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 06:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9214E14D44E;
+	Sat,  3 Aug 2024 06:40:34 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812B214D28F;
+	Sat,  3 Aug 2024 06:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722667102; cv=none; b=hHqdOQDe3oGj3AnJ/R88UYXiHfGKqGblgKEa7o7QsGxclCA/hY2cwWMKGVkR+DAfLO0V0T6H+nEcz0EDc6iHy+Zw4Cyb1F1p56aQ3WlIaFCI5O3S3UZUvsIBOmQ5urgKgw89za9wD7exGHQUbYjNR9li4gfhgrVp7TZxi3V/hKg=
+	t=1722667234; cv=none; b=gB9IGxeioM6knTwVqwqO4dsyzfIlhkRhbPhuh7ZvFZBGFSBmDu7Aveis+VuMyaTj3j2ySCS6wqJyAgWrjicFkRfWVWxgGJqK0fi7tAj2MjTtvWMEZjX8PFNJv+NoCX702mjj2hAsSDtibIZFThL/KR2aMyi8kCCCxQeGZ3foOBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722667102; c=relaxed/simple;
-	bh=zQL5tacdZJS7FolWbOfYx7hyvXV/x2KEk7bHdRiMWmo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fSfSsILyobayVjOk9IkNpwHkUx1PECSaOEPY/FEsadG6SqXC0rhLPCkpCx8ijO14+vikqD9gwiCyyJaLDdMUddwTpBYFQPAiwaCXLz1vpPMJUeN8ggFllNZ+lwmsqx2AAT+d7G1GWQ7DVFjvmSgNKzOWZJViofe3CnmP7M8PYLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39aebcdfc3eso125855615ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 23:38:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722667100; x=1723271900;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZxpkPNZRt0bGtsa2noBOupZtwqWb53ezzFJmjsuefJc=;
-        b=Ld0pS4o/5aKsQabF80iHD6YcfiCz7D8bRwE5DCa6HWsDnq8+Kem+kzoRn2iQ8hXnVS
-         Jzyrr5HmA0/DfSGbEcBr90gFVN7naJThC8Ros2dv8PvtmlTKPYG2ITjjYOrsvduER3Ay
-         IN7nfQILyEr2Uh4FNry4dpvndX+pEH32ott68cfDZUYqzdc4SF0wxVK7s+i+bgDOUAVZ
-         2kObM1YtUk+mG7AI/dYhzlFC4MplQgT9eG100kH93lDk50bA/T+sRfEEz2QjCswkqU25
-         ne/GJvpkwIQIi1iuUlKRjvsia9TSK/GMZlUbGmok1a8pYkgWRlCTLLoyK59FfbIhpua0
-         F9ZQ==
-X-Gm-Message-State: AOJu0YwC6HG/7Mf6UmaS6LVrFgKhD3sIE0Y/C7VIVlewGXsahxOQHj9f
-	brDwB4Qb6susej3Th+gSRUN56emm8H8v4J8Cho/c6Fw29bdTq+LolXN76WDTgezFRERHcCCzziF
-	l4CRZtocxfGtgvx+G5PlxjtxteTTsvlbYOdu2/IQQNPzm/GmIHRVtVTk=
-X-Google-Smtp-Source: AGHT+IHBqnb9S/zm/IFIH9cTGejgie9A6OWkuiZc3BVMpZ5nZore5Z/zmUQRkbNYzBWnFMrUEn+e45VEWAEnUyRORPkhcH80yq+T
+	s=arc-20240116; t=1722667234; c=relaxed/simple;
+	bh=z3ZXGXsNwuDa56mQqzVBvXDgtN4maYAscG3wgNEp86s=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Ihh01KQH7j/MrkluTgSork49kxD3qp+6J1D5qCRTg5U0JsPMfJ6fA3r1oABqsumL9ttMz2d3p6K4IEcmciaeC1p68EmEzZuxtxRQ2s1Pzlp/WK9rHkAN5Kld/Rz49FUKaPHb+PuXr4XvRPXDsCAb4njchJ+zBBieneu1y8Zr5ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.24])
+	by gateway (Coremail) with SMTP id _____8CxvOrb0K1mTfIGAA--.24311S3;
+	Sat, 03 Aug 2024 14:40:27 +0800 (CST)
+Received: from [10.20.42.24] (unknown [10.20.42.24])
+	by front1 (Coremail) with SMTP id qMiowMCxA+LZ0K1msh4BAA--.6609S3;
+	Sat, 03 Aug 2024 14:40:25 +0800 (CST)
+Subject: Re: [PATCH V7] LoongArch: Add AVEC irqchip support
+To: Thomas Gleixner <tglx@linutronix.de>, Huacai Chen <chenhuacai@kernel.org>
+Cc: corbet@lwn.net, alexs@kernel.org, siyanteng@loongson.cn,
+ kernel@xen0n.name, jiaxun.yang@flygoat.com, gaoliang@loongson.cn,
+ wangliupu@loongson.cn, lvjianmin@loongson.cn, yijun@loongson.cn,
+ mhocko@suse.com, akpm@linux-foundation.org, dianders@chromium.org,
+ maobibo@loongson.cn, xry111@xry111.site, zhaotianrui@loongson.cn,
+ nathan@kernel.org, yangtiezhu@loongson.cn, zhoubinbin@loongson.cn,
+ loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
+References: <20240726102443.12471-1-zhangtianyang@loongson.cn>
+ <87o76kuqza.ffs@tglx>
+ <CAAhV-H7c0Gtjf-6iS-E4nviMqmPWpJMNwvhWf0fLBx75pDXtrQ@mail.gmail.com>
+ <87r0bb6ru1.ffs@tglx>
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+Message-ID: <cff37371-0692-0db5-cb14-74c519eb1c56@loongson.cn>
+Date: Sat, 3 Aug 2024 14:40:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:15c3:b0:39a:e8c5:ba1b with SMTP id
- e9e14a558f8ab-39b1fc6cfa8mr3755695ab.6.1722667099790; Fri, 02 Aug 2024
- 23:38:19 -0700 (PDT)
-Date: Fri, 02 Aug 2024 23:38:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008caf56061ec1b051@google.com>
-Subject: [syzbot] [kernel?] linux-next test error: WARNING in __static_call_update
-From: syzbot <syzbot+01e01e53b1a7ac908deb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87r0bb6ru1.ffs@tglx>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowMCxA+LZ0K1msh4BAA--.6609S3
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7uFy8GF43XFW7Cr4kJr4DJrc_yoW8Ar15pF
+	WUG3W5Ar4Dtry2ka97uw10qFnIyrnaqFW8Jw1rJ34UG3s8WFnaqry8JFWaka4xCrZxJryj
+	vw12v3s0kas8JagCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
+	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l
+	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j5o7tUUUUU=
 
-Hello,
+Hi, Thomas
 
-syzbot found the following issue on:
+在 2024/7/30 下午7:29, Thomas Gleixner 写道:
+> Huacai!
+>
+> On Tue, Jul 30 2024 at 16:51, Huacai Chen wrote:
+>> On Fri, Jul 26, 2024 at 11:12 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>>>> +     while (true) {
+>>>> +             vector = csr_read64(LOONGARCH_CSR_IRR);
+>>>> +             if (vector & IRR_INVALID_MASK)
+>>>> +                     break;
+>>>> +
+>>>> +             vector &= IRR_VECTOR_MASK;
+>>>> +
+>>>> +             d = this_cpu_read(irq_map[vector]);
+>>>> +             if (d)
+>>>> +                     generic_handle_irq_desc(d);
+>>>> +             else {
+>>> See bracket rules.
+>> Do you mean even if there is only one statement in the if condition,
+>> we still need to do like this?
+>> if (xxx) {
+>>      yyy;
+>> } else {
+>>      zzz;
+>> }
+> Yes. It's documented.
+>
+>>>> +     msi_domain = pci_msi_create_irq_domain(pch_msi_handle[0],
+>>>> +                                            &pch_msi_domain_info_v2, parent);
+>>> Please don't do that. Convert this to use per device MSI domains.
+>> OK, thanks. But it is better to split the conversion to another patch
+>> (so we can convert both V1 and V2).
+> Why adding it first?
+>
+> This can be done per interrupt chip. See the conversion series for
+> ARM[64]:
+>
+>      https://lore.kernel.org/r/20240623142137.448898081@linutronix.de
+>
+> Thanks,
+>
+>          tglx
 
-HEAD commit:    cd19ac2f9032 Add linux-next specific files for 20240730
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D129583bd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dd30cbb2338538ae=
-9
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D01e01e53b1a7ac908=
-deb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
+We consider that since the original extioi-msi is still using the 
+legacy-MSI interrupt model at irq-loongson-pch-msi.c, if per-device-MSI 
+is directly supported in the AVEC support patch, it will result in the 
+simultaneous use of two MSI-interrupt-mode in irq-loongson-pch-msi.c, 
+which may seem a bit strange. So we decided to split it into two 
+patches, the first one using tlegace-MSI to support AVEC interrupt 
+controllers, and the second one will be uniformly modified to use 
+per-device-MSI
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/95309178e193/disk-=
-cd19ac2f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/beafc3338d59/vmlinux-=
-cd19ac2f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a588fe0099e3/bzI=
-mage-cd19ac2f.xz
+Tianyang
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+01e01e53b1a7ac908deb@syzkaller.appspotmail.com
-
-Linux version 6.11.0-rc1-next-20240730-syzkaller (syzkaller@syzkaller) (Deb=
-ian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40) #0 SMP PRE=
-EMPT_DYNAMIC now
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at kernel/static_call_inline.c:153 __static_call_upd=
-ate+0x5ce/0x5e0 kernel/static_call_inline.c:153
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc1-next-20240730-syz=
-kaller #0
-RIP: 0010:__static_call_update+0x5ce/0x5e0 kernel/static_call_inline.c:153
-Code: 8b 04 25 28 00 00 00 48 3b 84 24 a0 00 00 00 75 1e 48 8d 65 d8 5b 41 =
-5c 41 5d 41 5e 41 5f 5d e9 68 74 04 0a e8 63 e0 d1 ff 90 <0f> 0b 90 eb a8 e=
-8 58 1a fa 09 0f 1f 84 00 00 00 00 00 90 90 90 90
-RSP: 0000:ffffffff8e607d20 EFLAGS: 00010093 ORIG_RAX: 0000000000000000
-RAX: ffffffff81c1da7d RBX: 0000000000000000 RCX: ffffffff8e694680
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff8e607e18 R08: ffffffff81c1d597 R09: 1ffffffff1cc0f94
-R10: dffffc0000000000 R11: fffffbfff1cc0f95 R12: dffffc0000000000
-R13: ffffffff8e30be88 R14: ffffffff8bc6f238 R15: ffffffff8efcb480
-FS:  0000000000000000(0000) GS:ffffffff9174d000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88800008a000 CR3: 000000001193e000 CR4: 00000000000000b0
-Call Trace:
- <TASK>
- </TASK>
-irq event stamp: 0
-hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-hardirqs last disabled at (0): [<0000000000000000>] 0x0
-softirqs last  enabled at (0): [<0000000000000000>] 0x0
-softirqs last disabled at (0): [<0000000000000000>] 0x0
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-static_key_enable_cpuslocked(): static key 'security_hook_active_locked_dow=
-n_0+0x0/0x20' used before call to jump_label_init()
-WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:199 static_key_enable_cpusloc=
-ked+0x186/0x260 kernel/jump_label.c:199
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper Tainted: G        W          6.11.0-rc1-=
-next-20240730-syzkaller #0
-Tainted: [W]=3DWARN
-RIP: 0010:static_key_enable_cpuslocked+0x186/0x260 kernel/jump_label.c:199
-Code: 9e 8e 5b 41 5e 41 5f 5d e9 e7 a0 fb 09 e8 d2 8d ca ff 90 48 c7 c7 40 =
-ae 13 8c 48 c7 c6 66 c6 08 8e 4c 89 fa e8 bb 64 8c ff 90 <0f> 0b 90 90 e9 c=
-2 fe ff ff e8 ac 8d ca ff 90 0f 0b 90 e9 21 ff ff
-RSP: 0000:ffffffff8e607e40 EFLAGS: 00010046 ORIG_RAX: 0000000000000000
-RAX: 0000000000000000 RBX: ffffffff95134b80 RCX: ffffffff8e694680
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff81559472 R09: 1ffffffff1d025ef
-R10: dffffc0000000000 R11: fffffbfff1d025f0 R12: ffffffff8e30be80
-R13: dffffc0000000000 R14: dffffc0000000000 R15: ffffffff95134b80
-FS:  0000000000000000(0000) GS:ffffffff9174d000(0000) knlGS:000000000000000=
-0
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88800008a000 CR3: 000000001193e000 CR4: 00000000000000b0
-Call Trace:
- <TASK>
- </TASK>
-irq event stamp: 0
-hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-hardirqs last disabled at (0): [<0000000000000000>] 0x0
-softirqs last  enabled at (0): [<0000000000000000>] 0x0
-softirqs last disabled at (0): [<0000000000000000>] 0x0
----[ end trace 0000000000000000 ]---
-Command line: BOOT_IMAGE=3D/boot/bzImage root=3D/dev/sda1 console=3DttyS0
-KERNEL supported cpus:
-  Intel GenuineIntel
-  AMD AuthenticAMD
-BIOS-provided physical RAM map:
-BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
-BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-BIOS-e820: [mem 0x0000000000100000-0x00000000bfffcfff] usable
-BIOS-e820: [mem 0x00000000bfffd000-0x00000000bfffffff] reserved
-BIOS-e820: [mem 0x00000000fffbc000-0x00000000ffffffff] reserved
-BIOS-e820: [mem 0x0000000100000000-0x000000023fffffff] usable
-printk: legacy bootconsole [earlyser0] enabled
-ERROR: earlyprintk=3D earlyser already used
-ERROR: earlyprintk=3D earlyser already used
-**********************************************************
-**   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
-**                                                      **
-** This system shows unhashed kernel memory addresses   **
-** via the console, logs, and other interfaces. This    **
-** might reduce the security of your system.            **
-**                                                      **
-** If you see this message and you are not debugging    **
-** the kernel, report this immediately to your system   **
-** administrator!                                       **
-**                                                      **
-**   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
-**********************************************************
-Malformed early option 'vsyscall'
-nopcid: PCID feature disabled
-NX (Execute Disable) protection: active
-APIC: Static calls initialized
-SMBIOS 2.4 present.
-DMI: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/=
-2024
-DMI: Memory slots populated: 1/1
-Hypervisor detected: KVM
-kvm-clock: Using msrs 4b564d01 and 4b564d00
-kvm-clock: using sched offset of 4847382850 cycles
-clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb,=
- max_idle_ns: 881590591483 ns
-tsc: Detected 2200.170 MHz processor
-last_pfn =3D 0x240000 max_arch_pfn =3D 0x400000000
-MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable M=
-TRRs
-x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT =20
-last_pfn =3D 0xbfffd max_arch_pfn =3D 0x400000000
-found SMP MP-table at [mem 0x000f2a50-0x000f2a5f]
-Using GB pages for direct mapping
-ACPI: Early table checksum verification disabled
-ACPI: RSDP 0x00000000000F27D0 000014 (v00 Google)
-ACPI: RSDT 0x00000000BFFFFFA0 000038 (v01 Google GOOGRSDT 00000001 GOOG 000=
-00001)
-ACPI: FACP 0x00000000BFFFF330 0000F4 (v02 Google GOOGFACP 00000001 GOOG 000=
-00001)
-ACPI: DSDT 0x00000000BFFFD8C0 001A64 (v01 Google GOOGDSDT 00000001 GOOG 000=
-00001)
-ACPI: FACS 0x00000000BFFFD880 000040
-ACPI: FACS 0x00000000BFFFD880 000040
-ACPI: SRAT 0x00000000BFFFFE60 0000C8 (v03 Google GOOGSRAT 00000001 GOOG 000=
-00001)
-ACPI: APIC 0x00000000BFFFFDB0 000076 (v05 Google GOOGAPIC 00000001 GOOG 000=
-00001)
-ACPI: SSDT 0x00000000BFFFF430 000980 (v01 Google GOOGSSDT 00000001 GOOG 000=
-00001)
-ACPI: WAET 0x00000000BFFFFE30 000028 (v01 Google GOOGWAET 00000001 GOOG 000=
-00001)
-ACPI: Reserving FACP table memory at [mem 0xbffff330-0xbffff423]
-ACPI: Reserving DSDT table memory at [mem 0xbfffd8c0-0xbffff323]
-ACPI: Reserving FACS table memory at [mem 0xbfffd880-0xbfffd8bf]
-ACPI: Reserving FACS table memory at [mem 0xbfffd880-0xbfffd8bf]
-ACPI: Reserving SRAT table memory at [mem 0xbffffe60-0xbfffff27]
-ACPI: Reserving APIC table memory at [mem 0xbffffdb0-0xbffffe25]
-ACPI: Reserving SSDT table memory at [mem 0xbffff430-0xbffffdaf]
-ACPI: Reserving WAET table memory at [mem 0xbffffe30-0xbffffe57]
-SRAT: PXM 0 -> APIC 0x00 -> Node 0
-SRAT: PXM 0 -> APIC 0x01 -> Node 0
-ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x0009ffff]
-ACPI: SRAT: Node 0 PXM 0 [mem 0x00100000-0xbfffffff]
-ACPI: SRAT: Node 0 PXM 0 [mem 0x100000000-0x23fffffff]
-NUMA: Node 0 [mem 0x00000000-0x0009ffff] + [mem 0x00100000-0xbfffffff] -> [=
-mem 0x00000000-0xbfffffff]
-NUMA: Node 0 [mem 0x00000000-0xbfffffff] + [mem 0x100000000-0x23fffffff] ->=
- [mem 0x00000000-0x23fffffff]
-Faking node 0 at [mem 0x0000000000000000-0x000000013fffffff] (5120MB)
-Faking node 1 at [mem 0x0000000140000000-0x000000023fffffff] (4096MB)
-NODE_DATA(0) allocated [mem 0x13fffa000-0x13fffffff]
-NODE_DATA(1) allocated [mem 0x23fff7000-0x23fffcfff]
-Zone ranges:
-  DMA      [mem 0x0000000000001000-0x0000000000ffffff]
-  DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
-  Normal   [mem 0x0000000100000000-0x000000023fffffff]
-  Device   empty
-Movable zone start for each node
-Early memory node ranges
-  node   0: [mem 0x0000000000001000-0x000000000009efff]
-  node   0: [mem 0x0000000000100000-0x00000000bfffcfff]
-  node   0: [mem 0x0000000100000000-0x000000013fffffff]
-  node   1: [mem 0x0000000140000000-0x000000023fffffff]
-Initmem setup node 0 [mem 0x0000000000001000-0x000000013fffffff]
-Initmem setup node 1 [mem 0x0000000140000000-0x000000023fffffff]
-On node 0, zone DMA: 1 pages in unavailable ranges
-On node 0, zone DMA: 97 pages in unavailable ranges
-On node 0, zone Normal: 3 pages in unavailable ranges
-kasan: KernelAddressSanitizer initialized
-ACPI: PM-Timer IO Port: 0xb008
-ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
-IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
-ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
-ACPI: Using ACPI (MADT) for SMP configuration information
-CPU topo: Max. logical packages:   1
-CPU topo: Max. logical dies:       1
-CPU topo: Max. dies per package:   1
-CPU topo: Max. threads per core:   2
-CPU topo: Num. cores per package:     1
-CPU topo: Num. threads per package:   2
-CPU topo: Allowing 2 present CPUs plus 0 hotplug CPUs
-PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
-PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x0009ffff]
-PM: hibernation: Registered nosave memory: [mem 0x000a0000-0x000effff]
-PM: hibernation: Registered nosave memory: [mem 0x000f0000-0x000fffff]
-PM: hibernation: Registered nosave memory: [mem 0xbfffd000-0xbfffffff]
-PM: hibernation: Registered nosave memory: [mem 0xc0000000-0xfffbbfff]
-PM: hibernation: Registered nosave memory: [mem 0xfffbc000-0xffffffff]
-[mem 0xc0000000-0xfffbbfff] available for PCI devices
-Booting paravirtualized kernel on KVM
-clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_=
-idle_ns: 19112604462750000 ns
-setup_percpu: NR_CPUS:8 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:2
-percpu: Embedded 74 pages/cpu s264328 r8192 d30584 u1048576
-kvm-guest: PV spinlocks enabled
-PV qspinlock hash table entries: 256 (order: 0, 4096 bytes, linear)
-Kernel command line: earlyprintk=3Dserial net.ifnames=3D0 sysctl.kernel.hun=
-g_task_all_cpu_backtrace=3D1 ima_policy=3Dtcb nf-conntrack-ftp.ports=3D2000=
-0 nf-conntrack-tftp.ports=3D20000 nf-conntrack-sip.ports=3D20000 nf-conntra=
-ck-irc.ports=3D20000 nf-conntrack-sane.ports=3D20000 binder.debug_mask=3D0 =
-rcupdate.rcu_expedited=3D1 rcupdate.rcu_cpu_stall_cputime=3D1 no_hash_point=
-ers page_owner=3Don sysctl.vm.nr_hugepages=3D4 sysctl.vm.nr_overcommit_huge=
-pages=3D4 secretmem.enable=3D1 sysctl.max_rcu_stall_to_panic=3D1 msr.allow_=
-writes=3Doff coredump_filter=3D0xffff root=3D/dev/sda console=3DttyS0 vsysc=
-all=3Dnative numa=3Dfake=3D2 kvm-intel.nested=3D1 spec_store_bypass_disable=
-=3Dprctl nopcid vivid.n_devs=3D16 vivid.multiplanar=3D1,2,1,2,1,2,1,2,1,2,1=
-,2,1,2,1,2 netrom.nr_ndevs=3D16 rose.rose_ndevs=3D16 smp.csd_lock_timeout=
-=3D100000 watchdog_thresh=3D55 workqueue.watchdog_thresh=3D140 sysctl.net.c=
-ore.netdev_unregister_timeout_secs=3D140 dummy_hcd.num=3D8 panic_on_warn=3D=
-1 BOOT_IMAGE=3D/boot/bzImage root=3D/dev/sda1 console=3DttyS0
-Unknown kernel command line parameters "spec_store_bypass_disable=3Dprctl B=
-OOT_IMAGE=3D/boot/bzImage", will be passed to user space.
-random: crng init done
-Fallback order for Node 0: 0 1=20
-Fallback order for Node 1: 1 0=20
-Built 2 zonelists, mobility grouping on.  Total pages: 2097051
-Policy zone: Normal
-mem auto-init: stack:all(zero), heap alloc:on, heap free:off
-stackdepot: allocating hash table via alloc_large_system_hash
-stackdepot hash table entries: 1048576 (order: 12, 16777216 bytes, linear)
-software IO TLB: area num 2.
-SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D2, Nodes=3D2
-allocated 167772160 bytes of page_ext
-Node 0, zone      DMA: page owner found early allocated 0 pages
-Node 0, zone    DMA32: page owner found early allocated 20582 pages
-Node 0, zone   Normal: page owner found early allocated 0 pages
-Node 1, zone   Normal: page owner found early allocated 20483 pages
-Kernel/User page tables isolation: enabled
-Dynamic Preempt: full
-Running RCU self tests
-Running RCU synchronous self tests
-rcu: Preemptible hierarchical RCU implementation.
-rcu: 	RCU lockdep checking is enabled.
-rcu: 	RCU restricting CPUs from NR_CPUS=3D8 to nr_cpu_ids=3D2.
-rcu: 	RCU callback double-/use-after-free debug is enabled.
-rcu: 	RCU debug extended QS entry/exit.
-	All grace periods are expedited (rcu_expedited).
-	Trampoline variant of Tasks RCU enabled.
-	Tracing variant of Tasks RCU enabled.
-rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
-rcu: Adjusting geometry for rcu_fanout_leaf=3D16, nr_cpu_ids=3D2
-Running RCU synchronous self tests
-RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=3D1.
-RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=3D1.
-NR_IRQS: 4352, nr_irqs: 440, preallocated irqs: 16
-rcu: srcu_init: Setting srcu_struct sizes based on contention.
-kfence: initialized - using 2097152 bytes for 255 objects at 0xffff88823bc0=
-0000-0xffff88823be00000
-Console: colour VGA+ 80x25
-printk: legacy console [ttyS0] enabled
-printk: legacy console [ttyS0] enabled
-printk: legacy bootconsole [earlyser0] disabled
-printk: legacy bootconsole [earlyser0] disabled
-Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
-... MAX_LOCKDEP_SUBCLASSES:  8
-... MAX_LOCK_DEPTH:          48
-... MAX_LOCKDEP_KEYS:        8192
-... CLASSHASH_SIZE:          4096
-... MAX_LOCKDEP_ENTRIES:     131072
-... MAX_LOCKDEP_CHAINS:      262144
-... CHAINHASH_SIZE:          131072
- memory used by lock dependency info: 20721 kB
- memory used for stack traces: 8320 kB
- per task-struct memory footprint: 1920 bytes
-mempolicy: Enabling automatic NUMA balancing. Configure with numa_balancing=
-=3D or the kernel.numa_balancing sysctl
-ACPI: Core revision 20240322
-APIC: Switch to symmetric I/O mode setup
-x2apic enabled
-APIC: Switched APIC routing to: physical x2apic
-..TIMER: vector=3D0x30 apic1=3D0 pin1=3D0 apic2=3D-1 pin2=3D-1
-clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x1fb6d394f62,=
- max_idle_ns: 440795316813 ns
-Calibrating delay loop (skipped) preset value.. 4400.34 BogoMIPS (lpj=3D220=
-01700)
-Last level iTLB entries: 4KB 64, 2MB 8, 4MB 8
-Last level dTLB entries: 4KB 64, 2MB 0, 4MB 0, 1GB 4
-Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer saniti=
-zation
-Spectre V2 : Spectre BHI mitigation: SW BHB clearing on syscall and VM exit
-Spectre V2 : Mitigation: IBRS
-Spectre V2 : Spectre v2 / SpectreRSB mitigation: Filling RSB on context swi=
-tch
-Spectre V2 : Spectre v2 / SpectreRSB : Filling RSB on VMEXIT
-RETBleed: Mitigation: IBRS
-Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Ba=
-rrier
-Spectre V2 : User space: Mitigation: STIBP via prctl
-Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via=
- prctl
-MDS: Mitigation: Clear CPU buffers
-TAA: Mitigation: Clear CPU buffers
-MMIO Stale Data: Vulnerable: Clear CPU buffers attempted, no microcode
-x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
-x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
-x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
-x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
-x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, using 'sta=
-ndard' format.
-Freeing SMP alternatives memory: 128K
-pid_max: default: 32768 minimum: 301
-LSM: initializing lsm=3Dlockdown,capability,landlock,yama,safesetid,tomoyo,=
-apparmor,bpf,ima,evm
-landlock: Up and running.
-Yama: becoming mindful.
-TOMOYO Linux initialized
-AppArmor: AppArmor initialized
-LSM support for eBPF active
-Dentry cache hash table entries: 1048576 (order: 11, 8388608 bytes, vmalloc=
- hugepage)
-Inode-cache hash table entries: 524288 (order: 10, 4194304 bytes, vmalloc h=
-ugepage)
-Mount-cache hash table entries: 16384 (order: 5, 131072 bytes, vmalloc)
-Mountpoint-cache hash table entries: 16384 (order: 5, 131072 bytes, vmalloc=
-)
-Running RCU synchronous self tests
-Running RCU synchronous self tests
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
