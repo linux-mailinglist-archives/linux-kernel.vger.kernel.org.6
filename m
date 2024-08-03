@@ -1,134 +1,234 @@
-Return-Path: <linux-kernel+bounces-273427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14B4494691E
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:42:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB7B946925
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43571F22D05
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649FD281DB9
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D1F14EC56;
-	Sat,  3 Aug 2024 10:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A9614BFB4;
+	Sat,  3 Aug 2024 10:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+cQvfFA"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5p0WVRT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B6413957C
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 10:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEC677102;
+	Sat,  3 Aug 2024 10:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722681711; cv=none; b=FBsQkt2tdSCy3p4+OYSNV4YwMAd9S5aPmtD4e/maty7K6whnFND1qHqi52Azn00hNViiNhBUmBcB+hicWhjOnXwMMDmEc3RS5fHtLWTFwJI7MCyHjIVLTO2D9EVnbqFka8ECkuGSs4T5fuCBmvaaFy2+tDjtXRfJhBxvpm2Xe/8=
+	t=1722682201; cv=none; b=ZhD3sm7pWohent+63Aw1MG6M0ZZOxy50tiTWFz3yhvXhSzh+u/xoqIiUsNRLkaZERRyAg52n5agKrbM0GQfWChy3E/tMydjgA6VVSVgadOEywjJ3U8Qx2dRzgej3v6ZBuMbjkCAsSKoKOecHJvC9ATZODUS2kaB5fRx+DF+JPCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722681711; c=relaxed/simple;
-	bh=8swDYCKlHMm/RjEDI1jjvRnoWAi33eYa7CllXV/57qw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ebthaX2ixQMRNAX4YJe6U3bSj4mvlUhbF24C39hifE4uMGW5cynz/fRNt7CV/ARCR3n/rY7jCGSokOUOSApH6LxU+0Bay5+aAfFlf0iVd/KUoP2WoLzYmrq8Gm+nrK6ZsRFl/yicR4JaUkTeIcBb/u0I4iyixKHhsb5j1WOrkEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j+cQvfFA; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a975fb47eso1222323066b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 03:41:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722681707; x=1723286507; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h2P5CUm71nRXIdibIz1zY1EQPaX8kSIUbjLIcJ8FN4Y=;
-        b=j+cQvfFAKoUJVj/EbdjFfbDZ23FnLF/JmUTZqBzc22AEzxWPZkGMLcR6XzDFUEg07d
-         O9zIzs2j5kUKFy4ZvCjwtu2FehhaDO6I7S7kQzum7SnZLyFJ54MnwaqByrHK6JlcX2ut
-         OMcbjcFjepguGzuQY9dsZ1WCZCQe11ARaLiqGMa4u9RM8CIUXQz4yL0abDTqqzMIqCpz
-         VHTy/TZB0p64pz4w4oJFAS4YWHVLVjPMoHIYJm8D7LejjUNW5W5dLWiA4xD9yWN5yMJP
-         SRyEMFv5jv+FgfFXr43TBzRij5EpBLQsRM/iEN9/w1ClINQnnw/+opu5oOn/Ju08u3OS
-         3sFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722681707; x=1723286507;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h2P5CUm71nRXIdibIz1zY1EQPaX8kSIUbjLIcJ8FN4Y=;
-        b=otXXKU7DwdQv7AHYiw6fbacokwK1Z7CdAOMhrp5r3g6H8U1agEcUsE8z8OtkTxJyL5
-         Y4S1yj9TZh3pXlx1HxjFMiVBnl3IHKkDUXPDoN+3qVejNpaKCCvifKnNS5xQh1qZbVHF
-         7xJRAcToEai/mvsjabFWc9RB6QZLE+96+PlaEgClQuuXfKsrjRgIBUOs35h3K+YfVjCw
-         K3Sq9assbPoNqFBpSsT+wKKEIGGDqrSf0u16+4MbljTHy1CyT17bl82I07/S0ZywQUIW
-         jCoBQkevCN638aGe2TmEOJDPAFZ6AnvU41jjyqke3L4r7nGSbeCH6h9an/lfUwGidNBo
-         XiiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY73XZRsDSRNYFyGbiK/yBD71lLSzTeURGPeARDAR5dhV5xVbfywXHQjJEFqSbVKOzvniG/3j1sjM8czGE0ExtoG43W/6nSfHKl/5G
-X-Gm-Message-State: AOJu0Yxz0sObyv4fR5jzHI3TGFWlHBcNChy+/UfucRPZPb3oMFIkF8wj
-	3IIReR240YyFlTHR8NLJXln+h/t2Ae0FmYvwswrEmucm4LLxKVCAK5wHfhaeTK8=
-X-Google-Smtp-Source: AGHT+IGx8JIglmqEtvVOloITy2p1V5U6PesAEG1DHceXHVPF+dkLXz1ocl5KFlVXTMxUWNwK3835aA==
-X-Received: by 2002:a17:907:6093:b0:a7a:a7b8:ada7 with SMTP id a640c23a62f3a-a7dc4df97f8mr402428566b.24.1722681706827;
-        Sat, 03 Aug 2024 03:41:46 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e7feecsm202086366b.176.2024.08.03.03.41.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 03:41:46 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 03 Aug 2024 13:41:41 +0300
-Subject: [PATCH 2/2] ASoC: codecs: lpass-va-macro: warn on unknown version
+	s=arc-20240116; t=1722682201; c=relaxed/simple;
+	bh=TUQN03HWKP9vYxExAiyYuf183tObrdAMJAm01/D8xWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dslOG4Z+jc4wx06SzmDsAqpz8O2c1vs1U3eeIPx7u+GUfToH5wym/VqK7Fb5PZIU6nBW1ijMnss3h9+p4FDBz9eaO9IvxZrSmroMaRLClvfecoDUBcYQbFCRmNe5t7sKSZUWNd/wjYLHZUGwIQxr4SdSYA5G2urbaHmt1LTvn4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5p0WVRT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E55C116B1;
+	Sat,  3 Aug 2024 10:49:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722682201;
+	bh=TUQN03HWKP9vYxExAiyYuf183tObrdAMJAm01/D8xWY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q5p0WVRT+QabJ6dqn7to71NjEABIewPlqFtn0Oo/aatXLNJ6l31F7G+dg6T2sQvMh
+	 +p5zVOvSE+fMvEItHSUiKQsVfckQobImbWf0VemyisBAsP1vb7DRq0+XFo5ktA0dxk
+	 Gc0G+UIVJkT5DoafjCVVL6o7SQBYEe4c++Fzkh2uvBwhDhSJXzEcsdLYRNxGUgiYCW
+	 nSUZDNXphTzWEq4cTUKZj+OuFWY5ltPbHuRj1RAV2lb7UT7cuO3uZOCK/EaWu91xVa
+	 C7zamAiKN8W7HkmioEyIVdxvUbYIphoq0YoKjCxB39eZVGIhEDWYM7cOsK1LzG0Gnp
+	 jpF7r6ZJc3Q/g==
+Date: Sat, 3 Aug 2024 11:49:51 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
+ <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?B?TWlxdcOobA==?= Raynal
+ <miquel.raynal@bootlin.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 2/3] iio: adc: sophgo-saradc: Add driver for Sophgo
+ SARADC
+Message-ID: <20240803114951.6b79e86a@jic23-huawei>
+In-Reply-To: <20240731-sg2002-adc-v3-2-5ac40a518c0a@bootlin.com>
+References: <20240731-sg2002-adc-v3-0-5ac40a518c0a@bootlin.com>
+	<20240731-sg2002-adc-v3-2-5ac40a518c0a@bootlin.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240803-codec-version-v1-2-bc29baa5e417@linaro.org>
-References: <20240803-codec-version-v1-0-bc29baa5e417@linaro.org>
-In-Reply-To: <20240803-codec-version-v1-0-bc29baa5e417@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1126;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=8swDYCKlHMm/RjEDI1jjvRnoWAi33eYa7CllXV/57qw=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmrglnQf2eSPxhCPoW50YyCE1b+UmchLkcoNa1+
- dvwTlj910+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZq4JZwAKCRCLPIo+Aiko
- 1VfsCACUeTsaUC8cUzv19Lh7pPQnhShgpW6Nj2314n5dvpeCHe4zpggfLbi8sxpB6rdB/mz6e9H
- ILm68xJuIZXE+HtM5m0JwHucNwU7sNeTWqPL/vhcgNKyH4jZeoyAHwMYutMqkeXoIuspg36KcU4
- nMqEIszCdROdPeJ7pzaXs7pP05lW67SDv9bJi6u4YTCPIJuhlMVcpEl7nEWKHJ8xbRsDghHhf0T
- sQM/WWIddmjWKwEG298mvWjM6wsDDjfMLlSMkmH65C+EZctbnxD+EijiFMdjHhpRN6wJ0qUDUMr
- OhV4HE4+/VdZBtnQLKlXKDH9paR4HGoCR8FGMNvgSJPsfQxN
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Warn the users if the driver doesn't know the codec version. This helps
-in debugging the issues with other codec not detecting the correct
-version.
+On Wed, 31 Jul 2024 14:24:15 +0200
+Thomas Bonnefille <thomas.bonnefille@bootlin.com> wrote:
 
-va_macro 3370000.codec: Unknown VA Codec version, ID: 00 / 0f / 00
+> This adds a driver for the common Sophgo SARADC.
+> 
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- sound/soc/codecs/lpass-va-macro.c | 4 ++++
- 1 file changed, 4 insertions(+)
+One small bug (you will return 1 on an error), and a few minor other comments inline.
 
-diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
-index b852cc7ffad9..cdc090418d74 100644
---- a/sound/soc/codecs/lpass-va-macro.c
-+++ b/sound/soc/codecs/lpass-va-macro.c
-@@ -1483,6 +1483,10 @@ static void va_macro_set_lpass_codec_version(struct va_macro *va)
- 	if ((core_id_0 == 0x02) && (core_id_1 == 0x0F) && (core_id_2 == 0x80 || core_id_2 == 0x81))
- 		version = LPASS_CODEC_VERSION_2_8;
- 
-+	if (version == LPASS_CODEC_VERSION_UNKNOWN)
-+		dev_warn(va->dev, "Unknown Codec version, ID: %02x / %02x / %02x\n",
-+			 core_id_0, core_id_1, core_id_2);
-+
- 	lpass_macro_set_codec_version(version);
- 
- 	dev_dbg(va->dev, "LPASS Codec Version %s\n", lpass_macro_get_codec_version_string(version));
+Thanks,
 
--- 
-2.39.2
+Jonathan
+
+> diff --git a/drivers/iio/adc/sophgo-cv18xx-adc.c b/drivers/iio/adc/sophgo-cv18xx-adc.c
+> new file mode 100644
+> index 000000000000..27e1aac9560f
+> --- /dev/null
+> +++ b/drivers/iio/adc/sophgo-cv18xx-adc.c
+> @@ -0,0 +1,206 @@
+
+> +
+> +#define CV18XX_ADC_CTRL_REG			0x04
+> +#define		CV18XX_ADC_EN			BIT(0)
+> +#define		CV18XX_ADC_SEL(x)		BIT((x) + 4)
+> +#define CV18XX_ADC_STATUS_REG			0x08
+> +#define		CV18XX_ADC_BUSY			BIT(0)
+> +#define CV18XX_ADC_CYC_SET_REG			0x0C
+> +/* The default cycle configuration is set to maximize the accuracy */
+> +#define		CV18XX_ADC_DEF_STARTUP_CYCLE	0xF
+> +#define		CV18XX_ADC_DEF_SAMPLE_WINDOW	(0xF << 8)
+
+define masks for the various fields and use FIELD_PREP()
+on those with the default values - but do that inline not up here
+where we should only set the masks.
+
+> +#define		CV18XX_ADC_DEF_CLOCK_DIVIDER	(0x1 << 12)
+> +#define		CV18XX_ADC_DEF_COMPARE_CYCLE	(0xF << 16)
+> +#define CV18XX_ADC_CH_RESULT_REG(x)		(0x10 + 4 * (x))
+> +#define		CV18XX_ADC_CH_RESULT		GENMASK(11, 0)
+> +#define		CV18XX_ADC_CH_VALID		BIT(15)
+> +#define CV18XX_ADC_INTR_EN_REG			0x20
+> +#define CV18XX_ADC_INTR_CLR_REG			0x24
+> +#define		CV18XX_ADC_INTR_CLR_BIT		BIT(0)
+> +#define CV18XX_ADC_INTR_STA_REG			0x28
+> +#define		CV18XX_ADC_INTR_STA_BIT		BIT(0)
+
+> +static const struct iio_chan_spec sophgo_channels[] = {
+> +	CV18XX_ADC_CHANNEL(1),
+
+why index from 1?  We tend to use 0 as the base, though there is no ABI
+requirement to do so.  Hence this is ok, just unusual.
+
+> +	CV18XX_ADC_CHANNEL(2),
+> +	CV18XX_ADC_CHANNEL(3),
+> +};
+
+> +static int cv18xx_adc_read_raw(struct iio_dev *indio_dev,
+> +				  struct iio_chan_spec const *chan,
+> +				  int *val, int *val2, long mask)
+> +{
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		{
+
+I'd move { to previous line.
+
+That will avoid need to indent another tab for the scope.
+
+> +		struct cv18xx_adc *saradc = iio_priv(indio_dev);
+> +		u32 sample;
+> +		int ret;
+
+Can move ert into scoped_guard scope.
+
+> +
+> +		scoped_guard(mutex, &saradc->lock) {
+> +			cv18xx_adc_start_measurement(saradc, chan->scan_index);
+> +			ret = cv18xx_adc_wait(saradc);
+> +			if (ret < 0)
+> +				return ret;
+> +
+> +			sample = readl(saradc->regs + CV18XX_ADC_CH_RESULT_REG(chan->scan_index));
+> +		}
+> +		if (!(sample & CV18XX_ADC_CH_VALID))
+> +			return -ENODATA;
+> +
+> +		*val = sample & CV18XX_ADC_CH_RESULT;
+> +		return IIO_VAL_INT;
+> +		}
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = 3300;
+> +		*val2 = 12;
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+
+> +static int cv18xx_adc_probe(struct platform_device *pdev)
+> +{
+> +	struct cv18xx_adc *saradc;
+> +	struct iio_dev *indio_dev;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*saradc));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	saradc = iio_priv(indio_dev);
+> +	indio_dev->name = "sophgo-cv18xx-adc";
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &cv18xx_adc_info;
+> +	indio_dev->num_channels = ARRAY_SIZE(sophgo_channels);
+> +	indio_dev->channels = sophgo_channels;
+> +
+> +	ret = IS_ERR(devm_clk_get_enabled(&pdev->dev, NULL));
+> +	if (ret)
+
+PTR_ERR() not IS_ERR() for the return as you are returning a bool currently
+not an error code.  Similar to what you do for the regulator below.
+
+Better to use a local struct clk * and check that rather than convert
+directly to the error value.
+
+
+> +		return ret;
+> +
+> +	saradc->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(saradc->regs))
+> +		return PTR_ERR(saradc->regs);
+> +
+> +	saradc->irq = platform_get_irq_optional(pdev, 0);
+> +	if (saradc->irq >= 0) {
+> +		init_completion(&saradc->completion);
+> +		ret = devm_request_irq(&pdev->dev, saradc->irq,
+> +				       cv18xx_adc_interrupt_handler, 0,
+> +				       dev_name(&pdev->dev), saradc);
+> +		if (ret)
+> +			return ret;
+> +
+> +		writel(1, saradc->regs + CV18XX_ADC_INTR_EN_REG);
+> +	}
+> +
+> +	ret = devm_mutex_init(&pdev->dev, &saradc->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	platform_set_drvdata(pdev, indio_dev);
+> +	writel(CV18XX_ADC_DEF_STARTUP_CYCLE |
+> +	       CV18XX_ADC_DEF_SAMPLE_WINDOW |
+> +	       CV18XX_ADC_DEF_CLOCK_DIVIDER |
+> +	       CV18XX_ADC_DEF_COMPARE_CYCLE
+> +	       , saradc->regs + CV18XX_ADC_CYC_SET_REG);
+
+Blank line here. + that leading comma should be on end of the line above.
+
+> +	return devm_iio_device_register(&pdev->dev, indio_dev);
+> +
+No blank line here.
+> +}
 
 
