@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-273607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00282946B69
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:58:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF71946B6E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 01:14:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DFA31F21E7C
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 22:58:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE8A8B21725
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 23:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7043F7A15B;
-	Sat,  3 Aug 2024 22:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE627A15B;
+	Sat,  3 Aug 2024 23:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePAmxxOE"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cYZ/M3Jj"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0983F8E4
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 22:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F67014A84;
+	Sat,  3 Aug 2024 23:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722725910; cv=none; b=WHInFsIuVtZuFtQ54dOFopkKFy7mGikVX3eGafpZHJ/x8yTokQZI5QfW8+pFjNBFF9cqNJjnAFv7S86w9SJ3ghtFnFFbHq35b90Tzy+NjSGUF7E/mSI725AyTl2CThhw48Gxh/zHNxjGFJbwTpUotHJpCTM3aHmF+l9c+0O/XeE=
+	t=1722726874; cv=none; b=txy7PesvK1h+Ni7CvSiZLgFN4QM68ZILxSq1Ypc6CqIhIlWBGy5nj8zJYTX/777r90N93+d2GsxO+bhTPN8kIth7dJsA3v+0dVIVwoiqCC467DV82nu8PobwPSnU6bEQfridosR03R6HP1gWQPqc+Orsf7MVk7jdNKf06Hl1LTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722725910; c=relaxed/simple;
-	bh=3BRzezbw9GSa3xz41e6WFFbhJ0iTVxVtG439svHu7GQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I9hNf2u4jyCqCjkc78EI71mIkW4G7zwhUFTskijzSXgvxOX8TXQnNqF6d45poQdqPUok2zs54Xub3+VdEXuKbO0whRWxDMPSKENz5LIBi5+dStRSk+eQq0wMmtb+e3M+4Mh3OFiyczKGOKq/3GtzPnKvtLSitTLmGLbkb0eZXhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ePAmxxOE; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f149845d81so62225711fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 15:58:28 -0700 (PDT)
+	s=arc-20240116; t=1722726874; c=relaxed/simple;
+	bh=B55JkbSlBxpJDiKdSAijLYuz0R5ZzXko95X+7Ef/X8Y=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=EPll+xvWsUce5TS/L/Dy1hlX6RHwcF+0RhfVT8gCV9+9z3KrLW2avCQfBIfhtsYgHkRnqbRyuz1BBr94ITyW1ve0L7KVGlwH8kXbc6LFFF51ncXCbG/JmEYiQYFRaBTKB5chFCOzcQ3w+gJ7YOEZeAZayNSHKjzy1A0CQA7Qq1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cYZ/M3Jj; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52efa16aad9so13137753e87.0;
+        Sat, 03 Aug 2024 16:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722725907; x=1723330707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3BRzezbw9GSa3xz41e6WFFbhJ0iTVxVtG439svHu7GQ=;
-        b=ePAmxxOEMJyJuRV+2xE7qeJpXDR8/tu3XGhdBFnDXsal+oZ+6ZbTS9QoavkBL6ddvW
-         GUJ3GGqIW1T0oD9kIbh2knbdRzrkfTi023sqr8Wk8mP0Qfy2glmUHGhP3DPAANk1ZKRc
-         TZIHL97p1UI1nz8p239eHgkhkry+Wbk3M7vMNYseoS/HraMfCYVgfl3JuTVp0ME1Vwb0
-         vy8RRmBuVN9L9fKmo05kDGDTATpU0IQCKE3eM0gW3QZW7irRQjlRXDloZrPoBNbC5Q2s
-         CBGIV62+aByVRKKMbLcumrfCZ+EZXurn+ocoQBcfW9OnCHcf1uzJFTQ87Qe1jBQlMoVZ
-         colg==
+        d=gmail.com; s=20230601; t=1722726871; x=1723331671; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g0kSt5t1uFzH8Xbkla9+TJMSfVA9igCR7XqP1zqBBoE=;
+        b=cYZ/M3JjmKtKJapQNSFTnpF0sdjsQAR6cCYuUSdjCGjlAATduSua8PQnSeSCcyA/VS
+         AxbdCc43VCxCcSDGXS95gvV/vRE091e//E4Fs4TJlafcEAmkTzRRP7e4kgSkzN+sDeOy
+         QvDObVZqQ0j+fWbG1MMoqUgZcInz8Z30v+iFyk1Em2EUvqnycF0A7vaQktPH2ZeMuhDq
+         9U7RRwDYKuNBHm/DcM6ewH0AGfgZ3FQCNsMPFKHoo6IpC4rS763DlaeTpHQ7lr4jNTIq
+         Ge5x0N8lFxqrq/W+wSX2azBdBhtjm1/mwAw8Taa+md8+Zcl8SoxmHNELG2rRzqGJ0kvx
+         bt7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722725907; x=1723330707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3BRzezbw9GSa3xz41e6WFFbhJ0iTVxVtG439svHu7GQ=;
-        b=YI3LrNwn4zGhc3Vf2EC23IJ9nWis5g69zF7COGuIaglDvl5KVEkrE7Zk68nUljCmnp
-         38lA/6EgbxcnxowHUCg12Z1COE1lFKHSXVWO9hd8og+46RmU3pgQFI950SsBwIF77rd4
-         Hp2fkJNuHbbuy+AeUka30UTUKvLPbiuwfmNAt5DHpvFefc2I+gyj1ZexVmPGyeWeITS/
-         ouIwIoXM/6yrIOjnqdIyOPFDr2YzP/Vk59WpUt4y+cmQhLQigSUwcN5RZhdg0k1mZAEO
-         T4qcY4/ppjzMceEDvnq/yPRm9qO0fx1nIRMCnN7dHoQaUlX6JCTUoxlyQiId4slp77XC
-         gOKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdJFPd6+wuQVVwLaiIi1dbDqCaVoLwR0wWtHvMI4S1O9rNXdnWbp7NQYkyuUaZ1LxijgxM9g7qgJdamxfYQUQT1b19HMPDueCJ7k09
-X-Gm-Message-State: AOJu0YwY1G+rXYd4i0mUxbgt3H7GmLRJIO3+Qjk6yjf2WJI9bbYL912v
-	c8Xylw+G6pgv+astxXerfh/T6d+INC3bv6LILJ+AGqhryT0L43a3DSpvHMXsZRDT8k9niCFjWEM
-	m22xsfN0DmABrOCPVO5n0sxWOZEVj8md9d/PCsQ==
-X-Google-Smtp-Source: AGHT+IE4y9kLkzPoH/zfRiNc8kfa8clmJiMKTLB0WN4Xe+IjU5ivL54qw+cgJYdb+86Oky2eUuqmhbuQKBYEt1uqbzQ=
-X-Received: by 2002:a05:6512:2389:b0:52e:9ecd:3465 with SMTP id
- 2adb3069b0e04-530bb3b1891mr5046679e87.57.1722725907073; Sat, 03 Aug 2024
- 15:58:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722726871; x=1723331671;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g0kSt5t1uFzH8Xbkla9+TJMSfVA9igCR7XqP1zqBBoE=;
+        b=OLajsKS0QhN9YjEeq60lPbuWTJOrkW7P5yU1SLrAooTRoDY5Hs1KfsMBzrm/l+TjY2
+         /wEsBRysYj6mv+tX64MJu4HTPSDpL+Nw6ljUxF4FzTqt8IIcRkgbLMCuxfbecVuQYJyL
+         bOhdZJ4RFCI+AhDplQrfHp1UkXQlmB0SNYtzJscb8Loe+6fN0sPAaHEsTPgh9E6FO2vI
+         b1Q3lfFVPISq3KJv4U76Ua2ksy0CbO+W+hnCBw9BusBRCRuuN/fqV8GNLb410VHaWNIg
+         hHE+zhLAv3QNqUI10v7EgSbOhCLOafkWlupjLV1ry4DxAr86MR+uvNkyEaQKtBfgfEe+
+         9NgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkNiaSPgO5r/+Pji0WTqa8sMv/zucuBTQHyCSMJiPxjdplQOAn5D1nUj9tJi3xSnbCTn3tqbobj0vjfPn3vLyKNI8LLKzvjrm6MA==
+X-Gm-Message-State: AOJu0YzqsJg5V5BTZd54R3mAXClWqk+lOC1TZdg0Mw5sX+dAJ2GYV4FB
+	x7tKbtnjYYgymO5d0Pik/pXCqGXJamXvWAqnjDf/cQhfuEY+zvhnW+2ktFH1Vlpk7/H0mjxa4Gk
+	IA6/OKYqHASuM/qLBrDAEORJfI0aPiw==
+X-Google-Smtp-Source: AGHT+IEQF5asgqFLsoYXPyRMSH92SG+1wrHXlPA2hXWXM1yLMBvmjwY3KwNbqKWs+ZDCgp7CSFdozpZFCvwDk9bFzCY=
+X-Received: by 2002:ac2:4c48:0:b0:52e:be49:9d32 with SMTP id
+ 2adb3069b0e04-530bb39613fmr4885882e87.47.1722726870745; Sat, 03 Aug 2024
+ 16:14:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <IA1PR20MB4953DC78BB0FE0C57EA94F91BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953680DE7977CAD906DBDB4BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
-In-Reply-To: <IA1PR20MB4953680DE7977CAD906DBDB4BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 4 Aug 2024 00:58:16 +0200
-Message-ID: <CACRpkdap4oeG6QRVbSNDK1Y5kT73_VJRgy9EM5Bst08SXmxE8A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] dt-bindings: pinctrl: Add pinctrl for Sophgo
- CV1800 series SoC.
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
-	Drew Fustini <dfustini@baylibre.com>, Haylen Chu <heylenay@outlook.com>, 
-	Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan <dlan@gentoo.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 3 Aug 2024 18:14:19 -0500
+Message-ID: <CAH2r5msSfDbF+wrZ6fWaaL7puR+N4MNQ3Vt1AH7K-Lp82nUGug@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 2, 2024 at 2:35=E2=80=AFAM Inochi Amaoto <inochiama@outlook.com=
-> wrote:
+Please pull the following changes since commit
+8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-> Add pinctrl support for Sophgo CV1800 series SoC.
->
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-Rob said you could add his Review tag if you fixed some small
-issues in v3, are they fixed so I can apply this with his tag?
+are available in the Git repository at:
 
-Yours,
-Linus Walleij
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.11-rc1-smb-client-fixes
+
+for you to fetch changes up to a91bfa67601c07ff9d31731fd2d624b47b0039f2:
+
+  cifs: update internal version number (2024-08-02 10:56:14 -0500)
+
+----------------------------------------------------------------
+smb3 client fixes
+- two reparse point fixes
+- minor cleanup
+- additional trace point (to help debug a recent problem)
+----------------------------------------------------------------
+David Howells (1):
+      cifs: Remove cifs_aio_ctx
+
+Paulo Alcantara (2):
+      smb: client: handle lack of FSCTL_GET_REPARSE_POINT support
+      smb: client: fix FSCTL_GET_REPARSE_POINT against NetApp
+
+Steve French (2):
+      smb3: add dynamic tracepoints for shutdown ioctl
+      cifs: update internal version number
+
+ fs/smb/client/cifsfs.h    |  4 ++--
+ fs/smb/client/cifsglob.h  | 24 -----------------------
+ fs/smb/client/cifsproto.h |  2 --
+ fs/smb/client/inode.c     | 17 ++++++++++++++--
+ fs/smb/client/ioctl.c     | 32 +++++++++++++++++++++++-------
+ fs/smb/client/misc.c      | 54
+---------------------------------------------------
+ fs/smb/client/reparse.c   |  4 ++++
+ fs/smb/client/reparse.h   | 19 ++++++++++++++++--
+ fs/smb/client/smb2inode.c |  8 ++++++--
+ fs/smb/client/trace.h     | 51 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 10 files changed, 119 insertions(+), 96 deletions(-)
+
+--
+Thanks,
+
+Steve
 
