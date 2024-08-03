@@ -1,184 +1,270 @@
-Return-Path: <linux-kernel+bounces-273332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EE4946791
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:46:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924D3946793
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C1F21F21AEA
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E2F11C20BCA
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D5013DDD0;
-	Sat,  3 Aug 2024 05:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B375214C5B8;
+	Sat,  3 Aug 2024 05:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRj1Q33E"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WIaghkhN"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F4026286;
-	Sat,  3 Aug 2024 05:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5246B76410;
+	Sat,  3 Aug 2024 05:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722663955; cv=none; b=ndeql7S0lLTo9iQfFW5z+CLdbbCwTwxIej4tUtG0EyovqubIglt2UiX5W8KhTAGltfWphFh7xlvYpJ1ylTKAg4d/i6B6X/kkV9/qkHctNG2ORxr1kptjHzbKT9FCG5T7XDTU2Se/bKPpJx0gsm0XClbGTK5TP98Cq4uW/X5E4pQ=
+	t=1722664050; cv=none; b=BjkPTtvYL54lN7qDFXDLksaIOGS+FhtPfCCnXXExtxU9klyCkDteKGafwLXBa87OBZcdqg4ZL5A4mHYCbi6XJDCEKdz1TGp02QyQlyhLy5X4V4bJmKVyCjPhWwUVqtaUjAsjaXArkInKNvDSPqoCK5ogB0JFBluRg2uZDKbjpLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722663955; c=relaxed/simple;
-	bh=RBfFvfbPCPm01SrtKpQZgeYH9BLl1ij6j4BwUyCiDAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=trplsIDJ+RjJBa7PGeEyPF7RssGA9jdFRPYsU4DrwgTuXcnN4zu7W5XxY9eVAgKHMpjvkcHNsSpveCisKLjbUi6sh34Fq5iTJ3f9XrgG3Z7a/B3HDZRVsME5bBr8rb0Yog5c4LHfZJskh70N1LyiliEjpp/ZechIjzxatx7PCwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRj1Q33E; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1722664050; c=relaxed/simple;
+	bh=1OUkYsrr9CzydfiBthe4OYV6IZu9wZ46NABTc0L3D5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tAXQ4xZ8O15+AJXCmE9Q63wehLL74kA10R+k0NZk0x+jXcDf+E/ssleH9htkx4UxoeRjeqI+ywsYryt8mgimNaj9/IRmXfvibD59HoAiozOWxx149DD/oatJkDf1OO1/H6OV4W7G1nKlCL4aio16ix6Rh/vVJI/ElwPeE6cYQTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WIaghkhN; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d2b921cdfso7734756b3a.0;
-        Fri, 02 Aug 2024 22:45:54 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb4c584029so6059115a91.3;
+        Fri, 02 Aug 2024 22:47:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722663954; x=1723268754; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TEtfXZu34rcrVfcWsHzthDMMvdFQxX0pLIWrrd85WEk=;
-        b=FRj1Q33EBKLS4EAdaC72EEA4Aw88Yiczzo/6VFzWBYrAg2tDx+WRLA298Hd+gGtJ47
-         AIjFwY1IA4QFBc6Y1pus2/HQbdK8ja5VDXVTbWHjiE0TF17fQ9D/6hm9w4HdO3mLKXFH
-         bs/cSjAh1wyiF+bdm9MhAif5xMbYDMXL/ztldQOaKwIlFdgct8HvAXa6OeaDbOGU9Iye
-         jLlUurXjF7zAlHhPn92sbmiDm+ffYFOxIVJPgSPZT8xgUEzhCJpcar3559AGd3u/MeyU
-         cDwcEJ1iDSNo5sPxsLDDS2OsjKknH3M+qwFxOVcis1QfSC7TBQ9TKmn/Dvr0QfJSduJD
-         GqfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722663954; x=1723268754;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722664049; x=1723268849; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TEtfXZu34rcrVfcWsHzthDMMvdFQxX0pLIWrrd85WEk=;
-        b=v+d+6HvZ5LMfuKU0JI2W8oe5PvsUWQ/7KRKBuI8ks23RRC7Vup1t/2JRJ9MMlQ4BuK
-         yjpoTWEg4RIyuQig72fOID99V0BanGUh7HV5JPwCsjjxQHrprvEEAT9kNZ1DN6S1ruCz
-         Uyrfr87/XTVwAdYNEb2xhf2gr3uA8tfR/Wa5A2AhctF+DXN3UuU3PXwkPKykFBI/28vE
-         lDMiYH8MgXh+dSAhItaLM9zq7/u6/lkJ5FkZC7pRZdr8jm/CxE5pKYgBVGg354pwlmRJ
-         UKNIepmgE6wgHKdObcRO0ej22ZnOtOW22uZFLqc+Ipzmfxdf8XW614z0s/BcDHzThjQa
-         +jXg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6s288Tk4Jvl+9J+G3Noh/XfeI5l73TPfgFVovZ9+6PYHswYv9fx6ammbDQGGsc10FM5uO1r6RQ3y1a8+9/sxzR4lapXvb5d3hciGs1rO9lMBUUmOm3iC7JoJCknZJ18kZ/9JbMGf7yZw=
-X-Gm-Message-State: AOJu0Yz4N717iBwGjGkv2iY0aoYWXFjm6hmtP5mMqpwIKUZWJCs8muaV
-	1CAzI8mS6LY46BJD0cMK9lX9nyzA40ws3w5o4C7/Atv/l6mHm8gz
-X-Google-Smtp-Source: AGHT+IFrTN12PyLuvsTj5ZiWMFpgJNEWP92AzukNhj3DbMnBdYNGSvSivhUvyg5BIXuz69PlDyCaXw==
-X-Received: by 2002:a05:6a20:7f8b:b0:1c4:23f0:9665 with SMTP id adf61e73a8af0-1c6995ab0d9mr7245895637.29.1722663953448;
-        Fri, 02 Aug 2024 22:45:53 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:47be:b3e2:7c00:141c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b76346a9absm1782881a12.29.2024.08.02.22.45.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 22:45:53 -0700 (PDT)
-Date: Fri, 2 Aug 2024 22:45:50 -0700
-From: "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>
-To: Marge Yang <Marge.Yang@tw.synaptics.com>
-Cc: Kevin Chu <kevin.chu@tw.synaptics.com>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Derek Cheng <derek.cheng@tw.synaptics.com>,
-	David Chiu <David.Chiu@tw.synaptics.com>,
-	Vincent Huang <Vincent.huang@tw.synaptics.com>,
-	Sam Tsai <Sam.Tsai@synaptics.com>,
-	Vincent Tang <Vincent.Tang@synaptics.com>
-Subject: Re: [PATCH V1] Input: synaptics-rmi4 - Supports to query DPM value.
-Message-ID: <Zq3EDpH2Wcd6TCl9@google.com>
-References: <20240320111058.601156-1-marge.yang@tw.synaptics.com>
- <MW4PR03MB6651C14EBEE7D8B56C82F1EFA3B12@MW4PR03MB6651.namprd03.prod.outlook.com>
- <DM4PR03MB599884A63173E935FAF7EE7FCFB12@DM4PR03MB5998.namprd03.prod.outlook.com>
- <ZqqIL6cmqT4ZrqBO@google.com>
- <MW4PR03MB6651CCE6D296062CFAE20845A3B22@MW4PR03MB6651.namprd03.prod.outlook.com>
+        bh=KzzgbmFWYHJe0pTR3qJLL95tC3UrvJmxqZXyXcVi3nk=;
+        b=WIaghkhNbKZDaJtatE3wxt1f1r+vFIwv3ZBHfdsDPhYlupuJ7/lA/flGGPBAUiTAfX
+         M3M1RzBsJz37m/VnqNDrF8DdOZjppnOZmPfxKskgRsBAVDbfXxdFa9bZLoS/SwvSXgru
+         Grvs6fsDlz3u/dh7ooCXezEGBzU/tsq4Or8QcZF3WjByP/RoQ9dyatZmyjpqyYHxwnP9
+         A8xviMCOqpxPkubD+g7r9ycjLbQc3E5sthjgWF9Mc/P06MRpaj/SyCaXth+h5RnzxMoo
+         OdTj+IOI2WgW6qyDLeQ57LrVzvHjNOAr+Te3kE1BHqShA3/kDnxi3mDomTjpWRcviqrd
+         xM2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722664049; x=1723268849;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KzzgbmFWYHJe0pTR3qJLL95tC3UrvJmxqZXyXcVi3nk=;
+        b=ddZ4fvJTsxlNnJCn8yAZjOJ6j52zDob0j+dPlA28z+XzmCqUMW1Eh3VNFSQqCXxW7Q
+         IBlE5keN/a28tH08T4Ptct0b6TAUTZbDn+Ff4wJcSaBPF7hK4mporpOpGWnvLS+UIpa4
+         JjdYUfoO8BSP0qqCBHAO5gBbbuhxWk76zbxPgpO166Sqwi5uf8vnWhOAzUQYTPc5MEN2
+         tqBqz8GBuuIQpT0UlFQtzw02wvjJLS2SS0NpXEpzoNaVxgZgpFIls/8vVXKg6gNEqUX0
+         hFGkkDCKt0vqYQ+H4cz4OQLwzMlVAqwJQZive3BybMj9XTVBlQ/P7ruYROuXuTtNnjCd
+         P5Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuKOwyN3aZRGD4O37TCE0y73NNAYyPRtOsLk4y3xNZU9hgOIX8rtf8I3DmwMhF0CuJVfWt3x4rrSFeKovDgMaPn4J9b1L9tMSU35zwVBMCAQmNjehtXpnAcg/aLJ0LHfBK
+X-Gm-Message-State: AOJu0Yw3PRZpW2ukb0sZPZHsUpQc6aiIzjxNUd23osMvXomF9q4PLzeK
+	NjaLVe0uyndXzgQVIPJvdqy18PRH5gDbpJRd7x2uGE2e5a+6ulZwxWZe3ox1YJiM10ieZPnHm8I
+	QHAI7x2msNUGk5q3AMO7nboLdm1Q=
+X-Google-Smtp-Source: AGHT+IEVAoxH60YvTM4n8cXaZgJVSITcaVG/pS743lVr2wh6jcE4AMnO/J/T/E9YCA5NZ3g3FVMKCRnAlJLkk4r8c4I=
+X-Received: by 2002:a17:90b:38cd:b0:2c9:63a4:a138 with SMTP id
+ 98e67ed59e1d1-2cff9412bb4mr5997889a91.11.1722664048507; Fri, 02 Aug 2024
+ 22:47:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MW4PR03MB6651CCE6D296062CFAE20845A3B22@MW4PR03MB6651.namprd03.prod.outlook.com>
+References: <20240709090153.GF27299@noisy.programming.kicks-ass.net>
+ <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop> <20240709142943.GL27299@noisy.programming.kicks-ass.net>
+ <Zo1hBFS7c_J-Yx-7@casper.infradead.org> <20240710091631.GT27299@noisy.programming.kicks-ass.net>
+ <20240710094013.GF28838@noisy.programming.kicks-ass.net> <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
+ <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
+ <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
+ <ZqRtcZHWFfUf6dfi@casper.infradead.org> <20240730131058.GN33588@noisy.programming.kicks-ass.net>
+ <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
+In-Reply-To: <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 2 Aug 2024 22:47:15 -0700
+Message-ID: <CAEf4BzavWOgCLQoNdmPyyqHcm7gY5USKU5f1JWfyaCbuc_zVAA@mail.gmail.com>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Matthew Wilcox <willy@infradead.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, 
+	andrii@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
+	oleg@redhat.com, jolsa@kernel.org, clm@meta.com, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Marge,
-
-On Thu, Aug 01, 2024 at 09:52:48AM +0000, Marge Yang wrote:
+On Tue, Jul 30, 2024 at 11:10=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+>
+> On Tue, Jul 30, 2024 at 6:11=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
+org> wrote:
 > >
-> > RMI4 F12 will support to query DPM value on Touchpad.
-> > When TP firmware doesn't support to report logical and physical value within the Touchpad's HID report, We can directly query the DPM value through RMI.
-> 
-> It seems to me the logic is inverted, if there is resolution register the new code will query it directly, otherwise it will try to get it from the subpacket data. Is it intentional? Or did I parse it incorrectly?
-> [Marge 08/01]
-> Previously, we obtained this information by querying subpacket data. However, when the "Query DPM" feature is present, querying subpacket data may become unreliable, leading to inconsistencies in the pointing speed.
-> 
-> This also does not appear to be tied to the HID transport but rather generic RMI4 code. Did I miss the connection?
-> [Marge 08/01]
-> This change applies to generic RMI4 code and is not related to HID transport.
-
-OK, so how about this patch description then:
-
-"Newer firmware allows to query touchpad resolution information by
-reading from resolution register. Presence of resolution register
-is signalled via bit 29 of the "register presence" register.
-
-On devices that lack this resolution register we fall back to using
-pitch and number of receivers data to calculate size of the sensor."
-
-
+> > On Sat, Jul 27, 2024 at 04:45:53AM +0100, Matthew Wilcox wrote:
 > >
-> > Signed-off-by: Marge Yang <marge.yang@tw.synaptics.com>
-> > Signed-off-by: Vincent Huang <Vincent.Huang@tw.synaptics.com>
-> > ---
-> >  drivers/input/rmi4/rmi_f12.c | 41 
-> > +++++++++++++++++++++++++++++++----------
-> >  1 file changed, 31 insertions(+), 10 deletions(-)
+> > > Hum.  What if we added SLAB_TYPESAFE_BY_RCU to files_cachep?  That wa=
+y
+> > > we could do:
+> > >
+> > >       inode =3D NULL;
+> > >       rcu_read_lock();
+> > >       vma =3D find_vma(mm, address);
+> > >       if (!vma)
+> > >               goto unlock;
+> > >       file =3D READ_ONCE(vma->vm_file);
+> > >       if (!file)
+> > >               goto unlock;
+> > >       inode =3D file->f_inode;
+> > >       if (file !=3D READ_ONCE(vma->vm_file))
+> > >               inode =3D NULL;
 > >
-> > diff --git a/drivers/input/rmi4/rmi_f12.c 
-> > b/drivers/input/rmi4/rmi_f12.c index 7e97944..6a7a17d 100644
-> > --- a/drivers/input/rmi4/rmi_f12.c
-> > +++ b/drivers/input/rmi4/rmi_f12.c
-> > @@ -24,6 +24,7 @@ enum rmi_f12_object_type {  };
+> > remove_vma() does not clear vm_file, nor do I think we ever re-assign
+> > this field after it is set on creation.
+>
+> Quite correct and even if we clear vm_file in remove_vma() and/or
+> reset it on creation I don't think that would be enough. IIUC the
+> warning about SLAB_TYPESAFE_BY_RCU here:
+> https://elixir.bootlin.com/linux/v6.10.2/source/include/linux/slab.h#L98
+> means that the vma object can be reused in the same RCU grace period.
+>
 > >
-> >  #define F12_DATA1_BYTES_PER_OBJ                      8
-> > +#define RMI_QUERY_DPM_IN_PRESENSE_BIT          29
-> 
-> Why "BIT"? Should it be called RMI_F12_RESOLUTION_REG or similar?
-> [Marge 08/01]
-> The "QUERY DPM" feature is the 29th bit in the F12 2D QUERY Presence register. 
-> By checking this bit, we can determine whether certain features are supported. 
-> I will rename it from "RMI_QUERY_DPM_IN_PRESENCE_BIT" to "RMI_F12_QUERY_RESOLUTION_REG".
-
-OK, I see. I think since you are checking presence of a register either
-RMI_F12_QUERY_RESOLUTION_REG or simply RMI_F12_QUERY_RESOLUTION is
-better than "_BIT" variant.
-
-> 
+> > That is, I'm struggling to see what this would do. AFAICT this can stil=
+l
+> > happen:
 > >
-> >  struct f12_data {
-> >       struct rmi_2d_sensor sensor;
-> > @@ -73,6 +74,8 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
-> >       int pitch_y = 0;
-> >       int rx_receivers = 0;
-> >       int tx_receivers = 0;
-> > +     u16 query_dpm_addr = 0;
-> > +     int dpm_resolution = 0;
+> >         rcu_read_lock();
+> >         vma =3D find_vma();
+> >                                         remove_vma()
+> >                                           fput(vma->vm_file);
+> >                                                                 dup_fd)
+> >                                                                   newf =
+=3D kmem_cache_alloc(...)
+> >                                                                   newf-=
+>f_inode =3D blah
 > >
-> >       item = rmi_get_register_desc_item(&f12->control_reg_desc, 8);
-> >       if (!item) {
-> > @@ -122,18 +125,36 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
-> >               offset += 4;
-> >       }
+>
+> Imagine that the vma got freed and reused at this point. Then
+> vma->vm_file might be pointing to a valid but a completely different
+> file.
+>
+> >         file =3D READ_ONCE(vma->vm_file);
+> >         inode =3D file->f_inode; // blah
+> >         if (file !=3D READ_ONCE(vma->vm_file)) // still match
+>
+> I think we should also check that the VMA represents the same area
+> after we obtained the inode.
+>
 > >
-> > -     if (rmi_register_desc_has_subpacket(item, 3)) {
-> > -             rx_receivers = buf[offset];
-> > -             tx_receivers = buf[offset + 1];
-> > -             offset += 2;
-> > -     }
-> > +     // Only supports to query DPM value on RMI F12.
-> 
-> I am unsure what this comment means... We are in F12 code, so what does "only" mean here?
-> [Marge 08/01]
-> The main point is to emphasize the new approach that applies when the "query DPM" feature is present.
-> New comment:
-> Use the Query DPM feature when the "query resolution register" exists.
+> >
+> > > unlock:
+> > >       rcu_read_unlock();
+> > >
+> > >       if (inode)
+> > >               return inode;
+> > >       mmap_read_lock();
+> > >       vma =3D find_vma(mm, address);
+> > >       ...
+> > >
+> > > I think this would be safe because 'vma' will not be reused while we
+> > > hold the read lock, and while 'file' might be reused, whatever f_inod=
+e
+> > > points to won't be used if vm_file is no longer what it once was.
+> >
+> >
+> > Also, we need vaddr_to_offset() which needs additional serialization
+> > against vma_lock.
 
-Sounds good to me.
+Is there any reason why the approach below won't work? I basically
+open-coded the logic in find_active_uprobe(), doing find_vma() under
+RCU lock, then fetching vma->vm_file->f_inode. If at any point any
+check fails, we fallback to mmap_read_lock-protected logic, but if
+not, we just validate that vma->vm_lock_seq didn't change in between
+all this.
 
-Thanks.
+Note that we don't need to grab inode refcount, we already keep the
+reference to inodes in uprobes_tree, so if we find a match (using
+find_uprobe() call), then we are good. As long as that
+vma->vm_file->f_inode chain didn't change, of course.
 
--- 
-Dmitry
+Is vma->vm_lock_seq updated on any change to a VMA? This seems to work
+fine in practice, but would be good to know for sure.
+
+
+Author: Andrii Nakryiko <andrii@kernel.org>
+Date:   Fri Aug 2 22:16:40 2024 -0700
+
+    uprobes: add speculative lockless VMA to inode resolution
+
+    Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 8be9e34e786a..e21b68a39f13 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -2251,6 +2251,52 @@ static struct uprobe
+*find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
+        struct uprobe *uprobe =3D NULL;
+        struct vm_area_struct *vma;
+
++#ifdef CONFIG_PER_VMA_LOCK
++       vm_flags_t flags =3D VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE, vm_flag=
+s;
++       struct file *vm_file;
++       struct inode *vm_inode;
++       unsigned long vm_pgoff, vm_start, vm_end;
++       int vm_lock_seq;
++       loff_t offset;
++
++       rcu_read_lock();
++
++       vma =3D vma_lookup(mm, bp_vaddr);
++       if (!vma)
++               goto retry_with_lock;
++
++       vm_lock_seq =3D READ_ONCE(vma->vm_lock_seq);
++
++       vm_file =3D READ_ONCE(vma->vm_file);
++       vm_flags =3D READ_ONCE(vma->vm_flags);
++       if (!vm_file || (vm_flags & flags) !=3D VM_MAYEXEC)
++               goto retry_with_lock;
++
++       vm_inode =3D READ_ONCE(vm_file->f_inode);
++       vm_pgoff =3D READ_ONCE(vma->vm_pgoff);
++       vm_start =3D READ_ONCE(vma->vm_start);
++       vm_end =3D READ_ONCE(vma->vm_end);
++       if (bp_vaddr < vm_start || bp_vaddr >=3D vm_end)
++               goto retry_with_lock;
++
++       offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_start)=
+;
++       uprobe =3D find_uprobe_rcu(vm_inode, offset);
++       if (!uprobe)
++               goto retry_with_lock;
++
++       /* now double check that nothing about VMA changed */
++       if (vm_lock_seq !=3D READ_ONCE(vma->vm_lock_seq))
++               goto retry_with_lock;
++
++       /* happy case, we speculated successfully */
++       rcu_read_unlock();
++       return uprobe;
++
++retry_with_lock:
++       rcu_read_unlock();
++       uprobe =3D NULL;
++#endif
++
+        mmap_read_lock(mm);
+        vma =3D vma_lookup(mm, bp_vaddr);
+        if (vma) {
+diff --git a/kernel/fork.c b/kernel/fork.c
+index cc760491f201..211a84ee92b4 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -3160,7 +3160,7 @@ void __init proc_caches_init(void)
+                        NULL);
+        files_cachep =3D kmem_cache_create("files_cache",
+                        sizeof(struct files_struct), 0,
+-                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
++ SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|SLAB_TYPESAFE_BY_RCU,
+                        NULL);
+        fs_cachep =3D kmem_cache_create("fs_cache",
+                        sizeof(struct fs_struct), 0,
 
