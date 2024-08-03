@@ -1,619 +1,582 @@
-Return-Path: <linux-kernel+bounces-273419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE7D94690D
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:30:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE70094690E
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131791F216F0
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:30:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBE4A1C20D51
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515DD139CFE;
-	Sat,  3 Aug 2024 10:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C025012B143;
+	Sat,  3 Aug 2024 10:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcll7n1f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fvgeee4n"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA53D130AC8;
-	Sat,  3 Aug 2024 10:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685AB847B
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 10:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722680990; cv=none; b=GtqJnr3trPHmGDMgOW8Zm/mB3ELvT5zwW8k+Yfz/BrMfYzk07rbTNQE8scC9ZsSa32NahzkkGJDlqbSoCLA0Ew4VZtrwgoPCnPbiGCsEseMOH5JBzqi97JodXfzwfH4w1OQ5q2CdB0VT62vkjC0dzc6WsGpjKFMUgKnnDoCiEVw=
+	t=1722681137; cv=none; b=HS5LDiuJXEjwDus0r3mxPvm75EPN6V8Hc7E2pLivMUXnbZLkbPbX7YhvhoHTarnSxFVNr5/PNeo4NxVX1Hy6YKopkp/0lewyHBIgsC7XZU7Yqrxuc/O9+X7WiaL5QXOglF2cbFIzffCM7s4OXiimO23of/gBhAgpC1JsIWm73l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722680990; c=relaxed/simple;
-	bh=kL9g6qYfClDFMTgvBBNhL7mJzJYT7Rq5Tso5Orb+34w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GdEXVpKDdFSSOtKXNQYsihCmxvP8qjSH2VJmNLyhwHHkud7wlTZoIad5WDSGUPbOtLUQV7oAGGO4ZgFw6rUH5caUHeUXW+SdbccbC8l5zf4xuwEBj2WKUSpkSpDZRHWzIT2kwzYwJWzXqyI31Cx1L9dNtCYlqj6W1/ROUKDqGxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcll7n1f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5858EC116B1;
-	Sat,  3 Aug 2024 10:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722680989;
-	bh=kL9g6qYfClDFMTgvBBNhL7mJzJYT7Rq5Tso5Orb+34w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gcll7n1f/DhQkHR+G8roPSm4QhJ9sP3fW1iOeBh5vLIdnRTLFl11nhzMc8H1k9aTN
-	 55aQ1m8HIks0Xd7jw6hsy/I5LAl+iCQOL2ol9x+1HbeqchnJmW8VBV00tDZ7IeWDFV
-	 Hm389DyhbtoUK80qwGa/eokDQjN7PwsNcL6Q4PnPys3qoZK72pA4m1tctJckv4br2u
-	 6GpH+YtgiS7192NUBwzpdXdBPplSnSlxbOcs3zAQoWjYc1NCLWhxEt3K9C8C2+eIt9
-	 /agJ2c1428E0mTs1Jxq4Au3hJxdOTjUAQ7YJJF/dhyYO60sv/92B0nLO49OzU+kmZC
-	 JhAkZLrgddI4Q==
-Date: Sat, 3 Aug 2024 11:29:41 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Mariel Tinaco <Mariel.Tinaco@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Hennerich <Michael.Hennerich@analog.com>, Conor Dooley
- <conor+dt@kernel.org>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
- Dimitri Fedrau <dima.fedrau@gmail.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v2 2/2] iio: dac: support the ad8460 Waveform DAC
-Message-ID: <20240803112941.562d0eb0@jic23-huawei>
-In-Reply-To: <20240730030509.57834-3-Mariel.Tinaco@analog.com>
-References: <20240730030509.57834-1-Mariel.Tinaco@analog.com>
-	<20240730030509.57834-3-Mariel.Tinaco@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722681137; c=relaxed/simple;
+	bh=dK4sfVKSX8FxJSZ82JsQE5l2g1wO+PG7XmQlJH+Lmkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=unrpW4Z0FDj+EqAcU6hfZoBDXWsCHm10C7T6enbGYGBaflKs5CvcKWNclXgo9BCi7mZ/+BeOcgsRofoQu9quHxpMGjSM3aGWIqDcCscjse/ZdNiYTjP7VAqjLoZCv0iuY8jlQR0q4f4BoYqHFtOz+tYnPJ1OvvQD48Rko3SnMdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fvgeee4n; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MFCzhR9IuQQU4WJ8y+IwUGf3IBwjjIjiajEPwxOCick=; b=fvgeee4ncd7fl2VsiPsPiOEDGn
+	R/ZiTF567tJDKShxGvoM3dJcCEwC3abOBayLTNwChILd+OLeHc43dark56Q7lrHQ5Sw/nJSM1XgRk
+	AAVhS22yYxzNr9o4GdTzYFDh6ognVNL6SyIvIY2TN2x1c2vcMPuD2Rncdhs8JacOCQmWGAKMTUoCC
+	mX2ZoBtIhAUOkxTbhR6Cz1XPPttuMeCPD/5qt6pVF4AVVVPaOKb4zGXsd+PMTDQm2HEopWnkZwNL6
+	fPipGOUifUUY5dp29uwodKGhRTfr9V8Vm8e6x0g4EG1of0pJ4GrXganxGueQIjO2n1ANMY1zR2PDL
+	h4HC0cYQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1saC3P-000000021qa-1G9M;
+	Sat, 03 Aug 2024 10:32:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4676E300820; Sat,  3 Aug 2024 12:32:02 +0200 (CEST)
+Date: Sat, 3 Aug 2024 12:32:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Stephane Eranian <eranian@google.com>,
+	Ian Rogers <irogers@google.com>, Mingwei Zhang <mizhang@google.com>
+Subject: Re: [PATCH v2] perf/core: Optimize event reschedule for a PMU
+Message-ID: <20240803103202.GD12673@noisy.programming.kicks-ass.net>
+References: <20240731000607.543783-1-namhyung@kernel.org>
+ <476e7cea-f987-432a-995b-f7d52a123c9d@linux.intel.com>
+ <20240802183841.GG37996@noisy.programming.kicks-ass.net>
+ <20240802184350.GA12673@noisy.programming.kicks-ass.net>
+ <20240802185023.GB12673@noisy.programming.kicks-ass.net>
+ <20240802191123.GC12673@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802191123.GC12673@noisy.programming.kicks-ass.net>
 
-On Tue, 30 Jul 2024 11:05:09 +0800
-Mariel Tinaco <Mariel.Tinaco@analog.com> wrote:
+On Fri, Aug 02, 2024 at 09:11:23PM +0200, Peter Zijlstra wrote:
 
-> The AD8460 is a =E2=80=9Cbits in, power out=E2=80=9D high voltage, high-p=
-ower,
-> high-speed driver optimized for large output current (up to =C2=B11 A)
-> and high slew rate (up to =C2=B11800 V/=CE=BCs) at high voltage (up to =
-=C2=B140 V)
-> into capacitive loads.
->=20
-> A digital engine implements user-configurable features: modes for
-> digital input, programmable supply current, and fault monitoring
-> and programmable protection settings for output current,
-> output voltage, and junction temperature. The AD8460 operates on
-> high voltage dual supplies up to =C2=B155 V and a single low voltage
-> supply of 5 V.
->=20
-> Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
-Hi Mariel,
+> But I'll have to continue staring at this later.
 
-The test bot detected problems don't give me a high degree of confidence
-in this driver in general. Please be much more careful and thorough in
-build tests for v3.
+OK, I have the below, which boots and seems able to do:
 
-Various minor comments inline
+  perf stat -ae power/energy-pkg/ -- sleep 1
 
-Jonathan
+and
 
-> diff --git a/drivers/iio/dac/ad8460.c b/drivers/iio/dac/ad8460.c
-> new file mode 100644
-> index 000000000..a94fa4526
-> --- /dev/null
-> +++ b/drivers/iio/dac/ad8460.c
-> @@ -0,0 +1,976 @@
+  perf top
 
-> +static int ad8460_set_hvdac_word(struct ad8460_state *state,
-> +				 int index,
-> +				 int val)
-> +{
-> +	put_unaligned_le16(val & 0x3FFF, &state->spi_tx_buf);
+also still works, so it must be perfect, right, right?
 
-GENMASK for that constant.
+It should be split up in at least 3, possibly more patches, but that's
+for Monday. Now I get to mow the lawn or any of the other real-life
+things weekends are for :-)
 
-> +
-> +	return regmap_bulk_write(state->regmap, AD8460_HVDAC_DATA_WORD_LOW(inde=
-x),
-> +				 state->spi_tx_buf, AD8460_DATA_BYTE_WORD_LENGTH);
-> +}
+It also isn't ideal in that it still has a ton of pmu_ctx_list
+iteration, but at least it will skip all the expensive parts.
 
+---
+ kernel/events/core.c | 210 +++++++++++++++++++++++++++------------------------
+ 1 file changed, 110 insertions(+), 100 deletions(-)
 
-> +
-> +static int ad8460_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan,
-> +			    int val,
-> +			    int val2,
-> +			    long mask)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index c01a32687dad..2e30ac0fbaf6 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -685,30 +685,32 @@ do {									\
+ 	___p;								\
+ })
+ 
++#define for_each_epc(_epc, _ctx, _pmu, _cgroup)				\
++	list_for_each_entry(_epc, &((_ctx)->pmu_ctx_list), pmu_ctx_entry) \
++		if (_cgroup && !_epc->nr_cgroups)			\
++			continue;					\
++		else if (_pmu && _epc->pmu != _pmu)			\
++			continue;					\
++		else
++
+ static void perf_ctx_disable(struct perf_event_context *ctx, bool cgroup)
+ {
+ 	struct perf_event_pmu_context *pmu_ctx;
+ 
+-	list_for_each_entry(pmu_ctx, &ctx->pmu_ctx_list, pmu_ctx_entry) {
+-		if (cgroup && !pmu_ctx->nr_cgroups)
+-			continue;
++	for_each_epc(pmu_ctx, ctx, NULL, cgroup)
+ 		perf_pmu_disable(pmu_ctx->pmu);
+-	}
+ }
+ 
+ static void perf_ctx_enable(struct perf_event_context *ctx, bool cgroup)
+ {
+ 	struct perf_event_pmu_context *pmu_ctx;
+ 
+-	list_for_each_entry(pmu_ctx, &ctx->pmu_ctx_list, pmu_ctx_entry) {
+-		if (cgroup && !pmu_ctx->nr_cgroups)
+-			continue;
++	for_each_epc(pmu_ctx, ctx, NULL, cgroup)
+ 		perf_pmu_enable(pmu_ctx->pmu);
+-	}
+ }
+ 
+-static void ctx_sched_out(struct perf_event_context *ctx, enum event_type_t event_type);
+-static void ctx_sched_in(struct perf_event_context *ctx, enum event_type_t event_type);
++static void ctx_sched_out(struct perf_event_context *ctx, struct pmu *pmu, enum event_type_t event_type);
++static void ctx_sched_in(struct perf_event_context *ctx, struct pmu *pmu, enum event_type_t event_type);
+ 
+ #ifdef CONFIG_CGROUP_PERF
+ 
+@@ -865,7 +867,7 @@ static void perf_cgroup_switch(struct task_struct *task)
+ 	perf_ctx_lock(cpuctx, cpuctx->task_ctx);
+ 	perf_ctx_disable(&cpuctx->ctx, true);
+ 
+-	ctx_sched_out(&cpuctx->ctx, EVENT_ALL|EVENT_CGROUP);
++	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+ 	/*
+ 	 * must not be done before ctxswout due
+ 	 * to update_cgrp_time_from_cpuctx() in
+@@ -877,7 +879,7 @@ static void perf_cgroup_switch(struct task_struct *task)
+ 	 * perf_cgroup_set_timestamp() in ctx_sched_in()
+ 	 * to not have to pass task around
+ 	 */
+-	ctx_sched_in(&cpuctx->ctx, EVENT_ALL|EVENT_CGROUP);
++	ctx_sched_in(&cpuctx->ctx, NULL, EVENT_ALL|EVENT_CGROUP);
+ 
+ 	perf_ctx_enable(&cpuctx->ctx, true);
+ 	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
+@@ -2328,6 +2330,24 @@ group_sched_out(struct perf_event *group_event, struct perf_event_context *ctx)
+ 		event_sched_out(event, ctx);
+ }
+ 
++static void
++ctx_update_time(struct perf_cpu_context *cpuctx, struct perf_event_context *ctx)
++{
++	if (ctx->is_active & EVENT_TIME) {
++		update_context_time(ctx);
++		update_cgrp_time_from_cpuctx(cpuctx, false);
++	}
++}
++
++static void
++ctx_update_event_time(struct perf_event_context *ctx, struct perf_event *event)
++{
++	if (ctx->is_active & EVENT_TIME) {
++		update_context_time(ctx);
++		update_cgrp_time_from_event(event);
++	}
++}
++
+ #define DETACH_GROUP	0x01UL
+ #define DETACH_CHILD	0x02UL
+ #define DETACH_DEAD	0x04UL
+@@ -2347,10 +2367,7 @@ __perf_remove_from_context(struct perf_event *event,
+ 	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
+ 	unsigned long flags = (unsigned long)info;
+ 
+-	if (ctx->is_active & EVENT_TIME) {
+-		update_context_time(ctx);
+-		update_cgrp_time_from_cpuctx(cpuctx, false);
+-	}
++	ctx_update_time(cpuctx, ctx);
+ 
+ 	/*
+ 	 * Ensure event_sched_out() switches to OFF, at the very least
+@@ -2435,12 +2452,8 @@ static void __perf_event_disable(struct perf_event *event,
+ 	if (event->state < PERF_EVENT_STATE_INACTIVE)
+ 		return;
+ 
+-	if (ctx->is_active & EVENT_TIME) {
+-		update_context_time(ctx);
+-		update_cgrp_time_from_event(event);
+-	}
+-
+ 	perf_pmu_disable(event->pmu_ctx->pmu);
++	ctx_update_event_time(ctx, event);
+ 
+ 	if (event == event->group_leader)
+ 		group_sched_out(event, ctx);
+@@ -2656,7 +2669,8 @@ static void add_event_to_ctx(struct perf_event *event,
+ }
+ 
+ static void task_ctx_sched_out(struct perf_event_context *ctx,
+-				enum event_type_t event_type)
++			       struct pmu *pmu,
++			       enum event_type_t event_type)
+ {
+ 	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
+ 
+@@ -2666,18 +2680,19 @@ static void task_ctx_sched_out(struct perf_event_context *ctx,
+ 	if (WARN_ON_ONCE(ctx != cpuctx->task_ctx))
+ 		return;
+ 
+-	ctx_sched_out(ctx, event_type);
++	ctx_sched_out(ctx, pmu, event_type);
+ }
+ 
+ static void perf_event_sched_in(struct perf_cpu_context *cpuctx,
+-				struct perf_event_context *ctx)
++				struct perf_event_context *ctx,
++				struct pmu *pmu)
+ {
+-	ctx_sched_in(&cpuctx->ctx, EVENT_PINNED);
++	ctx_sched_in(&cpuctx->ctx, pmu, EVENT_PINNED);
+ 	if (ctx)
+-		 ctx_sched_in(ctx, EVENT_PINNED);
+-	ctx_sched_in(&cpuctx->ctx, EVENT_FLEXIBLE);
++		 ctx_sched_in(ctx, pmu, EVENT_PINNED);
++	ctx_sched_in(&cpuctx->ctx, pmu, EVENT_FLEXIBLE);
+ 	if (ctx)
+-		 ctx_sched_in(ctx, EVENT_FLEXIBLE);
++		 ctx_sched_in(ctx, pmu, EVENT_FLEXIBLE);
+ }
+ 
+ /*
+@@ -2695,16 +2710,12 @@ static void perf_event_sched_in(struct perf_cpu_context *cpuctx,
+  * event_type is a bit mask of the types of events involved. For CPU events,
+  * event_type is only either EVENT_PINNED or EVENT_FLEXIBLE.
+  */
+-/*
+- * XXX: ctx_resched() reschedule entire perf_event_context while adding new
+- * event to the context or enabling existing event in the context. We can
+- * probably optimize it by rescheduling only affected pmu_ctx.
+- */
+ static void ctx_resched(struct perf_cpu_context *cpuctx,
+ 			struct perf_event_context *task_ctx,
+-			enum event_type_t event_type)
++			struct pmu *pmu, enum event_type_t event_type)
+ {
+ 	bool cpu_event = !!(event_type & EVENT_CPU);
++	struct perf_event_pmu_context *epc;
+ 
+ 	/*
+ 	 * If pinned groups are involved, flexible groups also need to be
+@@ -2715,10 +2726,14 @@ static void ctx_resched(struct perf_cpu_context *cpuctx,
+ 
+ 	event_type &= EVENT_ALL;
+ 
+-	perf_ctx_disable(&cpuctx->ctx, false);
++	for_each_epc(epc, &cpuctx->ctx, pmu, false)
++		perf_pmu_disable(epc->pmu);
++
+ 	if (task_ctx) {
+-		perf_ctx_disable(task_ctx, false);
+-		task_ctx_sched_out(task_ctx, event_type);
++		for_each_epc(epc, task_ctx, pmu, false)
++			perf_pmu_disable(epc->pmu);
++
++		task_ctx_sched_out(task_ctx, pmu, event_type);
+ 	}
+ 
+ 	/*
+@@ -2729,15 +2744,19 @@ static void ctx_resched(struct perf_cpu_context *cpuctx,
+ 	 *  - otherwise, do nothing more.
+ 	 */
+ 	if (cpu_event)
+-		ctx_sched_out(&cpuctx->ctx, event_type);
++		ctx_sched_out(&cpuctx->ctx, pmu, event_type);
+ 	else if (event_type & EVENT_PINNED)
+-		ctx_sched_out(&cpuctx->ctx, EVENT_FLEXIBLE);
++		ctx_sched_out(&cpuctx->ctx, pmu, EVENT_FLEXIBLE);
+ 
+-	perf_event_sched_in(cpuctx, task_ctx);
++	perf_event_sched_in(cpuctx, task_ctx, pmu);
+ 
+-	perf_ctx_enable(&cpuctx->ctx, false);
+-	if (task_ctx)
+-		perf_ctx_enable(task_ctx, false);
++	for_each_epc(epc, &cpuctx->ctx, pmu, false)
++		perf_pmu_enable(epc->pmu);
++
++	if (task_ctx) {
++		for_each_epc(epc, task_ctx, pmu, false)
++			perf_pmu_enable(epc->pmu);
++	}
+ }
+ 
+ void perf_pmu_resched(struct pmu *pmu)
+@@ -2746,7 +2765,7 @@ void perf_pmu_resched(struct pmu *pmu)
+ 	struct perf_event_context *task_ctx = cpuctx->task_ctx;
+ 
+ 	perf_ctx_lock(cpuctx, task_ctx);
+-	ctx_resched(cpuctx, task_ctx, EVENT_ALL|EVENT_CPU);
++	ctx_resched(cpuctx, task_ctx, pmu, EVENT_ALL|EVENT_CPU);
+ 	perf_ctx_unlock(cpuctx, task_ctx);
+ }
+ 
+@@ -2802,9 +2821,10 @@ static int  __perf_install_in_context(void *info)
+ #endif
+ 
+ 	if (reprogram) {
+-		ctx_sched_out(ctx, EVENT_TIME);
++		ctx_update_time(cpuctx, ctx);
+ 		add_event_to_ctx(event, ctx);
+-		ctx_resched(cpuctx, task_ctx, get_event_type(event));
++		ctx_resched(cpuctx, task_ctx, event->pmu_ctx->pmu,
++			    get_event_type(event));
+ 	} else {
+ 		add_event_to_ctx(event, ctx);
+ 	}
+@@ -2947,8 +2967,7 @@ static void __perf_event_enable(struct perf_event *event,
+ 	    event->state <= PERF_EVENT_STATE_ERROR)
+ 		return;
+ 
+-	if (ctx->is_active)
+-		ctx_sched_out(ctx, EVENT_TIME);
++	ctx_update_time(cpuctx, ctx);
+ 
+ 	perf_event_set_state(event, PERF_EVENT_STATE_INACTIVE);
+ 	perf_cgroup_event_enable(event, ctx);
+@@ -2956,25 +2975,21 @@ static void __perf_event_enable(struct perf_event *event,
+ 	if (!ctx->is_active)
+ 		return;
+ 
+-	if (!event_filter_match(event)) {
+-		ctx_sched_in(ctx, EVENT_TIME);
++	if (!event_filter_match(event))
+ 		return;
+-	}
+ 
+ 	/*
+ 	 * If the event is in a group and isn't the group leader,
+ 	 * then don't put it on unless the group is on.
+ 	 */
+-	if (leader != event && leader->state != PERF_EVENT_STATE_ACTIVE) {
+-		ctx_sched_in(ctx, EVENT_TIME);
++	if (leader != event && leader->state != PERF_EVENT_STATE_ACTIVE)
+ 		return;
+-	}
+ 
+ 	task_ctx = cpuctx->task_ctx;
+ 	if (ctx->task)
+ 		WARN_ON_ONCE(task_ctx != ctx);
+ 
+-	ctx_resched(cpuctx, task_ctx, get_event_type(event));
++	ctx_resched(cpuctx, task_ctx, event->pmu_ctx->pmu, get_event_type(event));
+ }
+ 
+ /*
+@@ -3250,7 +3265,7 @@ static void __pmu_ctx_sched_out(struct perf_event_pmu_context *pmu_ctx,
+ 		cpc->task_epc = NULL;
+ 	}
+ 
+-	if (!event_type)
++	if (!(event_type & EVENT_ALL))
+ 		return;
+ 
+ 	perf_pmu_disable(pmu);
+@@ -3276,8 +3291,17 @@ static void __pmu_ctx_sched_out(struct perf_event_pmu_context *pmu_ctx,
+ 	perf_pmu_enable(pmu);
+ }
+ 
++/*
++ * Be very careful with the @pmu argument since this will change ctx state.
++ * The @pmu argument works for ctx_resched(), because that is symmetric in
++ * ctx_sched_out() / ctx_sched_in() usage and the ctx state ends up invariant.
++ *
++ * However, if you were to be asymmetrical, you could end up with messed up
++ * state, eg. ctx->is_active cleared even though most EPCs would still actually
++ * be active.
++ */
+ static void
+-ctx_sched_out(struct perf_event_context *ctx, enum event_type_t event_type)
++ctx_sched_out(struct perf_event_context *ctx, struct pmu *pmu, enum event_type_t event_type)
+ {
+ 	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
+ 	struct perf_event_pmu_context *pmu_ctx;
+@@ -3331,11 +3355,8 @@ ctx_sched_out(struct perf_event_context *ctx, enum event_type_t event_type)
+ 
+ 	is_active ^= ctx->is_active; /* changed bits */
+ 
+-	list_for_each_entry(pmu_ctx, &ctx->pmu_ctx_list, pmu_ctx_entry) {
+-		if (cgroup && !pmu_ctx->nr_cgroups)
+-			continue;
++	for_each_epc(pmu_ctx, ctx, pmu, cgroup)
+ 		__pmu_ctx_sched_out(pmu_ctx, is_active);
+-	}
+ }
+ 
+ /*
+@@ -3579,7 +3600,7 @@ perf_event_context_sched_out(struct task_struct *task, struct task_struct *next)
+ 
+ inside_switch:
+ 		perf_ctx_sched_task_cb(ctx, false);
+-		task_ctx_sched_out(ctx, EVENT_ALL);
++		task_ctx_sched_out(ctx, NULL, EVENT_ALL);
+ 
+ 		perf_ctx_enable(ctx, false);
+ 		raw_spin_unlock(&ctx->lock);
+@@ -3877,29 +3898,22 @@ static void pmu_groups_sched_in(struct perf_event_context *ctx,
+ 			   merge_sched_in, &can_add_hw);
+ }
+ 
+-static void ctx_groups_sched_in(struct perf_event_context *ctx,
+-				struct perf_event_groups *groups,
+-				bool cgroup)
++static void __pmu_ctx_sched_in(struct perf_event_pmu_context *pmu_ctx,
++			       enum event_type_t event_type)
+ {
+-	struct perf_event_pmu_context *pmu_ctx;
+-
+-	list_for_each_entry(pmu_ctx, &ctx->pmu_ctx_list, pmu_ctx_entry) {
+-		if (cgroup && !pmu_ctx->nr_cgroups)
+-			continue;
+-		pmu_groups_sched_in(ctx, groups, pmu_ctx->pmu);
+-	}
+-}
++	struct perf_event_context *ctx = pmu_ctx->ctx;
+ 
+-static void __pmu_ctx_sched_in(struct perf_event_context *ctx,
+-			       struct pmu *pmu)
+-{
+-	pmu_groups_sched_in(ctx, &ctx->flexible_groups, pmu);
++	if (event_type & EVENT_PINNED)
++		pmu_groups_sched_in(ctx, &ctx->pinned_groups, pmu_ctx->pmu);
++	if (event_type & EVENT_FLEXIBLE)
++		pmu_groups_sched_in(ctx, &ctx->flexible_groups, pmu_ctx->pmu);
+ }
+ 
+ static void
+-ctx_sched_in(struct perf_event_context *ctx, enum event_type_t event_type)
++ctx_sched_in(struct perf_event_context *ctx, struct pmu *pmu, enum event_type_t event_type)
+ {
+ 	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
++	struct perf_event_pmu_context *pmu_ctx;
+ 	int is_active = ctx->is_active;
+ 	bool cgroup = event_type & EVENT_CGROUP;
+ 
+@@ -3935,12 +3949,16 @@ ctx_sched_in(struct perf_event_context *ctx, enum event_type_t event_type)
+ 	 * First go through the list and put on any pinned groups
+ 	 * in order to give them the best chance of going on.
+ 	 */
+-	if (is_active & EVENT_PINNED)
+-		ctx_groups_sched_in(ctx, &ctx->pinned_groups, cgroup);
++	if (is_active & EVENT_PINNED) {
++		for_each_epc(pmu_ctx, ctx, pmu, cgroup)
++			__pmu_ctx_sched_in(pmu_ctx, EVENT_PINNED);
++	}
+ 
+ 	/* Then walk through the lower prio flexible groups */
+-	if (is_active & EVENT_FLEXIBLE)
+-		ctx_groups_sched_in(ctx, &ctx->flexible_groups, cgroup);
++	if (is_active & EVENT_FLEXIBLE) {
++		for_each_epc(pmu_ctx, ctx, pmu, cgroup)
++			__pmu_ctx_sched_in(pmu_ctx, EVENT_FLEXIBLE);
++	}
+ }
+ 
+ static void perf_event_context_sched_in(struct task_struct *task)
+@@ -3983,10 +4001,10 @@ static void perf_event_context_sched_in(struct task_struct *task)
+ 	 */
+ 	if (!RB_EMPTY_ROOT(&ctx->pinned_groups.tree)) {
+ 		perf_ctx_disable(&cpuctx->ctx, false);
+-		ctx_sched_out(&cpuctx->ctx, EVENT_FLEXIBLE);
++		ctx_sched_out(&cpuctx->ctx, NULL, EVENT_FLEXIBLE);
+ 	}
+ 
+-	perf_event_sched_in(cpuctx, ctx);
++	perf_event_sched_in(cpuctx, ctx, NULL);
+ 
+ 	perf_ctx_sched_task_cb(cpuctx->task_ctx, true);
+ 
+@@ -4327,14 +4345,14 @@ static bool perf_rotate_context(struct perf_cpu_pmu_context *cpc)
+ 		update_context_time(&cpuctx->ctx);
+ 		__pmu_ctx_sched_out(cpu_epc, EVENT_FLEXIBLE);
+ 		rotate_ctx(&cpuctx->ctx, cpu_event);
+-		__pmu_ctx_sched_in(&cpuctx->ctx, pmu);
++		__pmu_ctx_sched_in(cpu_epc, EVENT_FLEXIBLE);
+ 	}
+ 
+ 	if (task_event)
+ 		rotate_ctx(task_epc->ctx, task_event);
+ 
+ 	if (task_event || (task_epc && cpu_event))
+-		__pmu_ctx_sched_in(task_epc->ctx, pmu);
++		__pmu_ctx_sched_in(task_epc, EVENT_FLEXIBLE);
+ 
+ 	perf_pmu_enable(pmu);
+ 	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
+@@ -4400,7 +4418,7 @@ static void perf_event_enable_on_exec(struct perf_event_context *ctx)
+ 
+ 	cpuctx = this_cpu_ptr(&perf_cpu_context);
+ 	perf_ctx_lock(cpuctx, ctx);
+-	ctx_sched_out(ctx, EVENT_TIME);
++	ctx_update_time(cpuctx, ctx);
+ 
+ 	list_for_each_entry(event, &ctx->event_list, event_entry) {
+ 		enabled |= event_enable_on_exec(event, ctx);
+@@ -4412,9 +4430,7 @@ static void perf_event_enable_on_exec(struct perf_event_context *ctx)
+ 	 */
+ 	if (enabled) {
+ 		clone_ctx = unclone_ctx(ctx);
+-		ctx_resched(cpuctx, ctx, event_type);
+-	} else {
+-		ctx_sched_in(ctx, EVENT_TIME);
++		ctx_resched(cpuctx, ctx, NULL, event_type);
+ 	}
+ 	perf_ctx_unlock(cpuctx, ctx);
+ 
+@@ -4517,10 +4533,7 @@ static void __perf_event_read(void *info)
+ 		return;
+ 
+ 	raw_spin_lock(&ctx->lock);
+-	if (ctx->is_active & EVENT_TIME) {
+-		update_context_time(ctx);
+-		update_cgrp_time_from_event(event);
+-	}
++	ctx_update_event_time(ctx, event);
+ 
+ 	perf_event_update_time(event);
+ 	if (data->group)
+@@ -4720,10 +4733,7 @@ static int perf_event_read(struct perf_event *event, bool group)
+ 		 * May read while context is not active (e.g., thread is
+ 		 * blocked), in that case we cannot update context time
+ 		 */
+-		if (ctx->is_active & EVENT_TIME) {
+-			update_context_time(ctx);
+-			update_cgrp_time_from_event(event);
+-		}
++		ctx_update_event_time(ctx, event);
+ 
+ 		perf_event_update_time(event);
+ 		if (group)
+@@ -13202,7 +13212,7 @@ static void perf_event_exit_task_context(struct task_struct *child)
+ 	 * in.
+ 	 */
+ 	raw_spin_lock_irq(&child_ctx->lock);
+-	task_ctx_sched_out(child_ctx, EVENT_ALL);
++	task_ctx_sched_out(child_ctx, NULL, EVENT_ALL);
+ 
+ 	/*
+ 	 * Now that the context is inactive, destroy the task <-> ctx relation
+@@ -13751,7 +13761,7 @@ static void __perf_event_exit_context(void *__info)
+ 	struct perf_event *event;
+ 
+ 	raw_spin_lock(&ctx->lock);
+-	ctx_sched_out(ctx, EVENT_TIME);
++	ctx_sched_out(ctx, NULL, EVENT_TIME);
+ 	list_for_each_entry(event, &ctx->event_list, event_entry)
+ 		__perf_remove_from_context(event, cpuctx, ctx, (void *)DETACH_GROUP);
+ 	raw_spin_unlock(&ctx->lock);
 
-Aim for wrapping to below 80 chars, not much shorter.
-Feel free to group parameters though if you want to.
-
-> +{
-> +	struct ad8460_state *state =3D iio_priv(indio_dev);
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		switch (chan->type) {
-> +		case IIO_VOLTAGE:
-> +			iio_device_claim_direct_scoped(return -EBUSY, indio_dev)
-> +				return ad8460_set_sample(state, val);
-> +			unreachable();
-> +		case IIO_CURRENT:
-> +			return regmap_write(state->regmap, AD8460_CTRL_REG(0x04),
-> +					    FIELD_PREP(AD8460_SET_QUIESCENT_CURRENT_MSK, val));
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad8460_read_raw(struct iio_dev *indio_dev,
-> +			   struct iio_chan_spec const *chan,
-> +			   int *val,
-> +			   int *val2,
-> +			   long mask)
-> +{
-> +	struct ad8460_state *state =3D iio_priv(indio_dev);
-> +	int data, ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		switch (chan->type) {
-> +		case IIO_VOLTAGE:
-> +			scoped_guard(mutex, &state->lock) {
-> +				ret =3D ad8460_get_hvdac_word(state, 0, &data);
-> +				if (ret)
-> +					return ret;
-> +			}
-> +			*val =3D data;
-> +			return IIO_VAL_INT;
-> +		case IIO_CURRENT:
-> +			ret =3D regmap_read(state->regmap, AD8460_CTRL_REG(0x04), &data);
-> +			if (ret)
-> +				return ret;
-> +			*val =3D data;
-> +			return IIO_VAL_INT;
-> +		case IIO_TEMP:
-> +			ret =3D iio_read_channel_raw(state->tmp_adc_channel, &data);
-> +			if (ret)
-> +				return ret;
-> +			*val =3D data;
-> +			return IIO_VAL_INT;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		*val =3D clk_get_rate(state->sync_clk);
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		/* vCONV =3D vNOMINAL_SPAN * (DAC_CODE / 2**14) - 40V
-		/*
-		 * vCONV ...
-
-for IIO multiline comment syntax.
-
-> +		 * vMAX  =3D vNOMINAL_SPAN * (2**14 / 2**14) - 40V
-> +		 * vMIN  =3D vNOMINAL_SPAN * (0 / 2**14) - 40V
-> +		 * vADJ  =3D vCONV * (2000 / rSET) * (vREF / 1.2)
-> +		 * vSPAN =3D vADJ_MAX - vADJ_MIN
-> +		 * See datasheet page 49, section FULL-SCALE REDUCTION
-> +		 */
-> +		*val =3D AD8460_NOMINAL_VOLTAGE_SPAN * 2000 * state->refio_1p2v_mv;
-> +		*val2 =3D state->rset_ohms * 1200;
-> +		return IIO_VAL_FRACTIONAL;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad8460_select_fault_type(int chan_type, enum iio_event_direct=
-ion dir)
-> +{
-> +	switch (chan_type) {
-> +	case IIO_VOLTAGE:
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			return AD8460_OVERVOLTAGE_POS;
-> +		case IIO_EV_DIR_FALLING:
-> +			return AD8460_OVERVOLTAGE_NEG;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +		break;
-as below.
-
-> +	case IIO_CURRENT:
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			return AD8460_OVERCURRENT_SRC;
-> +		case IIO_EV_DIR_FALLING:
-> +			return AD8460_OVERCURRENT_SNK;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +		break;
-Can't get here. So drop the break.
-> +	case IIO_TEMP:
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			return AD8460_OVERTEMPERATURE;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-> +static int ad8460_read_event_config(struct iio_dev *indio_dev,
-> +				    const struct iio_chan_spec *chan,
-> +				    enum iio_event_type type,
-> +				    enum iio_event_direction dir)
-> +{
-> +	struct ad8460_state *state =3D iio_priv(indio_dev);
-> +	unsigned int fault;
-> +	bool en;
-> +	int ret;
-> +
-> +	if (type !=3D IIO_EV_TYPE_THRESH)
-> +		return -EINVAL;
-> +
-> +	fault =3D ad8460_select_fault_type(chan->type, dir);
-> +	if (fault < 0)
-> +		return fault;
-> +
-> +	ret =3D ad8460_get_fault_threshold_en(state, fault, &en);
-> +	return ret ?: en;
-
-Keep to simpler to read
-	if (ret)
-		return ret;
-
-	return en;
-
-> +}
-
-> +
-> +static struct iio_chan_spec_ext_info ad8460_ext_info[] =3D {
-> +	AD8460_CHAN_EXT_INFO("raw0", 0, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw1", 1, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw2", 2, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw3", 3, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw4", 4, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw5", 5, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw6", 6, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw7", 7, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw8", 8, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw9", 9, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw10", 10, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw11", 11, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw12", 12, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw13", 13, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw14", 14, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("raw15", 15, IIO_SEPARATE,
-> +			     ad8460_dac_input_read, ad8460_dac_input_write),
-> +	AD8460_CHAN_EXT_INFO("toggle_en", 0, IIO_SEPARATE,
-> +			     ad8460_read_toggle_en,
-> +			     ad8460_write_toggle_en),
-> +	AD8460_CHAN_EXT_INFO("symbol", 0, IIO_SEPARATE,
-> +			     ad8460_read_symbol,
-> +			     ad8460_write_symbol),
-
-Wrap closer to 80 chars.
-
-> +	AD8460_CHAN_EXT_INFO("powerdown", 0, IIO_SEPARATE,
-> +			     ad8460_read_powerdown, ad8460_write_powerdown),
-> +	IIO_ENUM("powerdown_mode", IIO_SEPARATE, &ad8460_powerdown_mode_enum),
-> +	IIO_ENUM_AVAILABLE("powerdown_mode", IIO_SHARED_BY_TYPE,
-> +			   &ad8460_powerdown_mode_enum),
-> +	{}
-> +};
-> +
-> +static const struct iio_event_spec ad8460_events[] =3D {
-> +	{
-> +		.type =3D IIO_EV_TYPE_THRESH,
-> +		.dir =3D IIO_EV_DIR_RISING,
-> +		.mask_separate =3D BIT(IIO_EV_INFO_VALUE) |
-> +				 BIT(IIO_EV_INFO_ENABLE),
-> +	},
-> +	{
-> +		.type =3D IIO_EV_TYPE_THRESH,
-> +		.dir =3D IIO_EV_DIR_FALLING,
-> +		.mask_separate =3D BIT(IIO_EV_INFO_VALUE) |
-> +				 BIT(IIO_EV_INFO_ENABLE),
-> +	},
-> +};
-> +
-> +#define AD8460_VOLTAGE_CHAN(_chan) {				\
-> +	.type =3D IIO_VOLTAGE,					\
-> +	.info_mask_separate =3D BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
-> +			      BIT(IIO_CHAN_INFO_RAW) |		\
-> +			      BIT(IIO_CHAN_INFO_SCALE),		\
-> +	.output =3D 1,						\
-> +	.indexed =3D 1,						\
-> +	.channel =3D (_chan),					\
-> +	.scan_index =3D 0,					\
-> +	.scan_type =3D {						\
-> +		.sign =3D 'u',					\
-> +		.realbits =3D 14,					\
-> +		.storagebits =3D 16,				\
-> +		.endianness =3D IIO_LE,				\
-> +	},                                                      \
-> +	.ext_info =3D ad8460_ext_info,                            \
-> +	.event_spec =3D ad8460_events,				\
-> +	.num_event_specs =3D ARRAY_SIZE(ad8460_events),		\
-> +}
-> +
-> +#define AD8460_CURRENT_CHAN(_chan) {				\
-> +	.type =3D IIO_CURRENT,					\
-> +	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),		\
-> +	.output =3D 0,						\
-
-I'm guessing this is also not used with the buffer.
-set scan_index =3D -1 if so.
-
-> +	.indexed =3D 1,						\
-> +	.channel =3D (_chan),					\
-> +	.scan_index =3D 1,					\
-> +	.scan_type =3D {						\
-> +		.sign =3D 'u',					\
-> +		.realbits =3D 8,					\
-> +		.storagebits =3D 8,				\
-> +		.endianness =3D IIO_LE,				\
-Generally don't provide these if you aren't using them for buffered
-capture.  It's just unnecessary noise in the driver.
-
-> +	},							\
-> +	.event_spec =3D ad8460_events,				\
-> +	.num_event_specs =3D ARRAY_SIZE(ad8460_events),		\
-> +}
-> +
-> +#define AD8460_TEMP_CHAN(_chan) {				\
-> +	.type =3D IIO_TEMP,					\
-> +	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),		\
-> +	.output =3D 1,						\
-> +	.indexed =3D 1,						\
-> +	.channel =3D (_chan),					\
-> +	.scan_index =3D 2,					\
-> +	.scan_type =3D {						\
-No sizing? =20
-I suspect you don't want to present this for the buffered interface.
-If so, set .scan_index =3D -1
-
-> +		.sign =3D 'u',					\
-> +		.endianness =3D IIO_LE,				\
-> +	},							\
-> +	.event_spec =3D ad8460_events,				\
-> +	.num_event_specs =3D 1,					\
-> +}
-> +
-> +static const struct iio_chan_spec ad8460_channels[] =3D {
-> +	AD8460_VOLTAGE_CHAN(0),
-> +	AD8460_CURRENT_CHAN(0),
-> +};
-> +
-> +static const struct iio_chan_spec ad8460_channels_with_tmp_adc[] =3D {
-> +	AD8460_VOLTAGE_CHAN(0),
-> +	AD8460_CURRENT_CHAN(0),
-> +	AD8460_TEMP_CHAN(0),
-> +};
-Unless you plan to very soon add support for devices with more channels,
-drop the parameter and hardcode 0 in the definitions.
-
-Chances are that if you do get a more complex device with more channels
-you will need more than just a channel number anyway so this code
-will change either way.  Hence better to keep it simple for now.
-
-
-> +static int ad8460_probe(struct spi_device *spi)
-> +{
-> +	struct ad8460_state *state;
-> +	struct iio_dev *indio_dev;
-> +	struct regulator *refio_1p2v;
-> +	u32 tmp[2], temp;
-> +	int ret;
-> +
-> +	indio_dev =3D devm_iio_device_alloc(&spi->dev, sizeof(*state));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	state =3D iio_priv(indio_dev);
-> +	mutex_init(&state->lock);
-> +
-> +	indio_dev->name =3D "ad8460";
-> +	indio_dev->info =3D &ad8460_info;
-> +
-> +	state->spi =3D spi;
-> +
-> +	state->regmap =3D devm_regmap_init_spi(spi, &ad8460_regmap_config);
-> +	if (IS_ERR(state->regmap))
-> +		return dev_err_probe(&spi->dev, PTR_ERR(state->regmap),
-> +				     "Failed to initialize regmap");
-> +
-> +	state->sync_clk =3D devm_clk_get_enabled(&spi->dev, NULL);
-
-Lots of use of spi->dev, I'd suggest
-struct device *dev =3D &spi->dev;
-then replace all these instances with that local variable.
-
-> +	if (IS_ERR(state->sync_clk))
-> +		return dev_err_probe(&spi->dev, PTR_ERR(state->sync_clk),
-> +				     "Failed to get sync clk\n");
-> +
-> +	state->tmp_adc_channel =3D devm_iio_channel_get(&spi->dev, "ad8460-tmp"=
-);
-> +	if (IS_ERR_OR_NULL(state->tmp_adc_channel)) {
-> +		indio_dev->channels =3D ad8460_channels;
-> +		indio_dev->num_channels =3D ARRAY_SIZE(ad8460_channels);
-> +	} else {
-> +		indio_dev->channels =3D ad8460_channels_with_tmp_adc;
-> +		indio_dev->num_channels =3D ARRAY_SIZE(ad8460_channels_with_tmp_adc);
-> +		dev_info(&spi->dev, "Found ADC channel to read TMP pin\n");
-
-That will be apparent anyway once driver is registered, so don't fill the l=
-og
-with messages like this. dev_dbg() perhaps or drop it entirely.
-
-> +	}
-> +
-> +	ret =3D devm_regulator_get_enable_read_voltage(&spi->dev, "refio_1p2v");
-> +	if (ret =3D=3D -ENODEV) {
-> +		state->refio_1p2v_mv =3D 1200;
-> +	} else if (ret < 0) {
-> +		return dev_err_probe(&spi->dev, PTR_ERR(vrefio),
-> +				     "Failed to get reference voltage\n");
-> +	} else {
-> +		state->refio_1p2v_mv =3D ret / 1000;
-> +	}
-> +
-> +	if (!in_range(ret, AD8460_MIN_VREFIO_UV, AD8460_MAX_VREFIO_UV))
-> +		return dev_err_probe(&spi->dev, -EINVAL,
-> +				     "Invalid ref voltage range(%u mV) [%u mV, %u mV]\n",
-> +				     ret, AD8460_MIN_VREFIO_UV / 1000,
-
-Why print ret rather than state->refio_1p2v_mv?
-Having a dev_err_probe() with ret as a later parameter is rather confusing
-if nothing else.
-
-
-> +				     AD8460_MAX_VREFIO_UV / 1000);
-> +
-> +	ret =3D device_property_read_u32(&spi->dev, "adi,rset-ohms", &state->rs=
-et_ohms);
-> +	if (ret) {
-> +		state->rset_ohms =3D 2000;
-> +	} else {
-> +		if (!in_range(state->rset_ohms, AD8460_MIN_RSET_OHMS,
-> +			      AD8460_MAX_RSET_OHMS))
-
-Might as well combine as
-
-	else if (!...
-Then can also drop some brackets as single statements in each leg.
-
-
-> +			return dev_err_probe(&spi->dev, -EINVAL,
-> +					     "Invalid resistor set range(%u) [%u, %u]\n",
-> +					     state->rset_ohms,
-> +					     AD8460_MIN_RSET_OHMS,
-> +					     AD8460_MAX_RSET_OHMS);
-> +	}
-> +
-> +	/* Arm the device by default */
-> +	ret =3D device_property_read_u32_array(&spi->dev, "adi,range-microamp",
-> +					     tmp, ARRAY_SIZE(tmp));
-> +	if (!ret) {
-> +		ret =3D regmap_write(state->regmap, AD8460_CTRL_REG(0x08),
-> +				   (1 << 7) | AD8460_CURRENT_LIMIT_CONV(tmp[1]));
-
-What is the (1 << 7)? Feels like a magic number that should have a define.
-
-> +		if (ret)
-> +			return dev_err_probe(&spi->dev, -EINVAL,
-ret not -EINVAL;
-
-> +					     "overcurrent src not valid: %d uA",
-> +					     tmp[1]);
-> +
-> +		ret =3D regmap_write(state->regmap, AD8460_CTRL_REG(0x09),
-> +				   (1 << 7) | AD8460_CURRENT_LIMIT_CONV(abs(tmp[0])));
-> +		if (ret)
-> +			return dev_err_probe(&spi->dev, -EINVAL,
-
-same here and everywhere else where you are eating a potentially more meani=
-ngful error
-value.
-
-> +					     "overcurrent snk not valid: %d uA",
-> +					     tmp[0]);
-> +	}
-> +
-> +	ret =3D device_property_read_u32_array(&spi->dev, "adi,range-microvolt",
-> +					     tmp, ARRAY_SIZE(tmp));
-> +	if (!ret) {
-
-This is currently documented in the binding as only taking one set of value=
-s.
-Seems a lot more flexible here.
-
-> +		ret =3D regmap_write(state->regmap, AD8460_CTRL_REG(0x0A),
-> +				   (1 << 7) | AD8460_VOLTAGE_LIMIT_CONV(tmp[1]));
-> +		if (ret)
-> +			return dev_err_probe(&spi->dev, -EINVAL,
-> +					     "positive overvoltage not valid: %d uV",
-> +					     tmp[1]);
-> +
-> +		ret =3D regmap_write(state->regmap, AD8460_CTRL_REG(0x0B),
-> +				   (1 << 7) | AD8460_VOLTAGE_LIMIT_CONV(abs(tmp[0])));
-> +		if (ret)
-> +			return dev_err_probe(&spi->dev, -EINVAL,
-> +					     "negative overvoltage not valid: %d uV",
-> +					     tmp[0]);
-> +	}
-> +
-> +	ret =3D device_property_read_u32(&spi->dev, "adi,temp-max-millicelsius"=
-, &temp);
-I'd handled as a default of whatever is already in that
-register.  Just write temp =3D default; before this call.
-
-That way you just don't check ret for the property query. If it's there the
-value in temp will be updated, if not we'll have the default.
-
-Consider similar for the other cases.
-It will make it easier to tell from the driver what happens if a property i=
-s not
-provided.  Also document defaults in the dt binding.
-
-> +	if (!ret) {
-> +		ret =3D regmap_write(state->regmap, AD8460_CTRL_REG(0x0C),
-> +				   (1 << 7) | AD8460_TEMP_LIMIT_CONV(abs(temp)));
-> +		if (ret)
-> +			return dev_err_probe(&spi->dev, -EINVAL,
-> +					     "overtemperature not valid: %d",
-> +					     temp);
-> +	}
-> +
-> +	ret =3D ad8460_reset(state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Enables DAC by default */
-> +	ret =3D regmap_update_bits(state->regmap, AD8460_CTRL_REG(0x01),
-> +				 AD8460_HVDAC_SLEEP_MSK,
-> +				 FIELD_PREP(AD8460_HVDAC_SLEEP_MSK, 0));
-> +	if (ret)
-> +		return ret;
-> +
-> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
-> +	indio_dev->setup_ops =3D &ad8460_buffer_setup_ops;
-> +
-> +	ret =3D devm_iio_dmaengine_buffer_setup_ext(&spi->dev, indio_dev, "tx",
-> +						  IIO_BUFFER_DIRECTION_OUT);
-> +	if (ret)
-> +		return dev_err_probe(&spi->dev, ret,
-> +				     "Failed to get DMA buffer\n");
-> +
-> +	ret =3D devm_iio_device_register(&spi->dev, indio_dev);
-
-return devm_iio_device_register()
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
 
