@@ -1,215 +1,200 @@
-Return-Path: <linux-kernel+bounces-273394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30A579468B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:42:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFC99468C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6942824A8
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45D112822DB
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6F914D6EF;
-	Sat,  3 Aug 2024 08:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5470E14E2F6;
+	Sat,  3 Aug 2024 08:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WoLr681Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oCm4PHwh"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19992C6AF;
-	Sat,  3 Aug 2024 08:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B57101F2;
+	Sat,  3 Aug 2024 08:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722674561; cv=none; b=mmEyHzLQ/QtmgmHxmrtq3nyUqtnr7XnWe0/G8KL3HAb5LabFCtnfQK+L+6XF2YU83b5Qsuis4bQvmAU6Q192rTy6aGe0JTm1dwmdD8vsgU/C1/UXbzUDDRU1VFRoROXHteleSQBATIqcJNXD6VYXeltnrU8DBKKE8SMzPKRKpZw=
+	t=1722675205; cv=none; b=UExf03JiRDJDLB7LvRdstj0BjfVFqcTK8ebMUXoJgDf2SkVSeW5nRoJHqTgT3yxYulEf4HGGypqcqYClsgHN4FQIJOriyhVJe7rxXNUgo0WE4GFcdO6jZc4xs65Bjv5u8oDcimySAcfACOfhCvCCi0D+Xec4VewfQWRWlICS9N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722674561; c=relaxed/simple;
-	bh=rL9o66+yTo07C2NUCjmx8LrF2T1qkqT0BezdaAVBoNk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aQhKEVK5hjN0l3i6ZBAg59NzAm5H1hHDxP4vlhFO59IW+FWgZ3OsEluM4ldSZRWDaSLna/KIpnpyPti9bgci+ZR64eSp2FgZQ+gVtNsRNnKQT3+4Yx1OfOZ4mAH2GaMS9nz9cbFwmjMibrQDZ248e1CIesqg41oI207J7G6rxGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WoLr681Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACCFC4AF0B;
-	Sat,  3 Aug 2024 08:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722674560;
-	bh=rL9o66+yTo07C2NUCjmx8LrF2T1qkqT0BezdaAVBoNk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WoLr681Q+aSrgmjIyAzMHpsero14HAbh8Pe2NYfC1yHBoXTIrhK/zNp22Cst1K8uS
-	 qEjtaHDlEmJV05GVvHU4iJvMAG+SD6jgKE3CA3lK0Ek31tDIBvqXWYRSHMNIWKtScM
-	 C0b7RMpf37B8XH0Nd/ZRj05l+vUkqZHFhVAi5m0caoHtGmatB9pZOMMe5o/6LDhjE2
-	 /DYaQ/yoSPEu6GUS3zE4YzIqN8Ufh7mwwX9XwRUYTlpPjy4a/QXCO7rGZdcm23vP3p
-	 qerjEX9ZZxlc73rXJITXV7b9FekKnzH5RZglqPtg0s0Xu1pmlxDn4XqhcauHWVIMfm
-	 FgKtYXGJerggg==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52efe4c7c16so12990961e87.0;
-        Sat, 03 Aug 2024 01:42:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVF2VnvweAIkLv8taYA2CmySmtG27aTIHRI8+1trtLCA0d+kjLMOQohzcEeDhZDodnFw4gxcsflG/hzEC/VGWiW73xgcqESrdcui3ywpU2q1gKY69U8C5JtYMBRUrw4e0RhauDKsdPCyiMl
-X-Gm-Message-State: AOJu0YwB+uzqyDH60WL3FDFqsW0NuzUVrXLFqAESfSFeT+LKPpvJIXOZ
-	0tD1tvJhltSzd3RSYh4pW/QYuGZspzDTtdEavGKXYx4KcEZ44PNb8bXe4Fnrp6qs4NYmAxqtmd8
-	MvyQtacNbZYIaYbGWcPmkv/DFljs=
-X-Google-Smtp-Source: AGHT+IFF4S+80PSYnjQ7scAy9A6/Kk6hzji7GaVN17IZlXndYUp47aES2p2yhhGL0SpWFbevR9PkrNdcUGZQDwELF8Y=
-X-Received: by 2002:a05:6512:114f:b0:52b:c1cc:51f1 with SMTP id
- 2adb3069b0e04-530bb396106mr4237148e87.23.1722674559200; Sat, 03 Aug 2024
- 01:42:39 -0700 (PDT)
+	s=arc-20240116; t=1722675205; c=relaxed/simple;
+	bh=FN3JigGqi+AqC3qFvKF2f0KSO2Q07QphUSLACrnt8KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=feMnWu3bWaBEtTjFWsxmWxGVbMYErzQvc2pSNRvhhPzcm8u9HfmmHCpQyB8gIgTCdFWdSuXiK6vUZutcsPt6GGwWu6iuW8NtsMzIvBDDA+vMvwQ5gbhI3w3ilmlBUrJQhc6Vu21SIMJo0vgrZhrtn1IVaFYwwsOj+MkognanPsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oCm4PHwh; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PhdhUksfUrXzRQyfRQLDw9DD3fn7ZoTv+mL/aWtytIU=; b=oCm4PHwh9nfp+Ktp8SEyatnliI
+	hUAisKmS+ksr00SUfr5jWNGy0F2kWr1307vyoa979kKuItsxB4mZDdzwvSmw539Lwddh25x9MZFsk
+	4EiHv8kv3pff2prFl0ma2LMZf6CKPKiKU0ojWIWWNPopO+0qB9+4QL1F/L0JeCbzv9orY6BR5wCj3
+	0sTpun3QPb81AY2pAQhCI107fbbu74TMLOwO1fYdQBRPl7DBcpCgvXYnqtyPcNcev6TMvpdzvzEnI
+	/CH0qqQvzo4RTccgCgr6E9Y6aiQYq5alPUe10BaK8dGvpe4SQePIoWBnYzLIBvuxEa92RKukScjH0
+	O+k4l6MQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1saAVl-00000005sji-341Y;
+	Sat, 03 Aug 2024 08:53:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B9C7E300820; Sat,  3 Aug 2024 10:53:12 +0200 (CEST)
+Date: Sat, 3 Aug 2024 10:53:12 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <20240803085312.GP39708@noisy.programming.kicks-ass.net>
+References: <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
+ <20240710091631.GT27299@noisy.programming.kicks-ass.net>
+ <20240710094013.GF28838@noisy.programming.kicks-ass.net>
+ <CAJuCfpF3eSwW_Z48e0bykCh=8eohAuACxjXBbUV_sjrVwezxdw@mail.gmail.com>
+ <CAEf4BzZPGG9_P9EWosREOw8owT6+qawmzYr0EJhOZn8khNn9NQ@mail.gmail.com>
+ <CAJuCfpELNoDrVyyNV+fuB7ju77pqyj0rD0gOkLVX+RHKTxXGCA@mail.gmail.com>
+ <ZqRtcZHWFfUf6dfi@casper.infradead.org>
+ <20240730131058.GN33588@noisy.programming.kicks-ass.net>
+ <CAJuCfpFUQFfgx0BWdkNTAiOhBpqmd02zarC0y38gyB5OPc0wRA@mail.gmail.com>
+ <CAEf4BzavWOgCLQoNdmPyyqHcm7gY5USKU5f1JWfyaCbuc_zVAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704-clang-tidy-filter-v1-1-8d4556a35b65@bootlin.com>
-In-Reply-To: <20240704-clang-tidy-filter-v1-1-8d4556a35b65@bootlin.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 3 Aug 2024 17:42:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARmV89PJV3sd93WwqLLQD0fg9mBOMetzECLriF8295zVA@mail.gmail.com>
-Message-ID: <CAK7LNARmV89PJV3sd93WwqLLQD0fg9mBOMetzECLriF8295zVA@mail.gmail.com>
-Subject: Re: [PATCH] scripts: run-clang-tools: add file filtering option
-To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzavWOgCLQoNdmPyyqHcm7gY5USKU5f1JWfyaCbuc_zVAA@mail.gmail.com>
 
-On Thu, Jul 4, 2024 at 6:28=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@bootli=
-n.com> wrote:
->
-> Add file filtering feature. We take zero or more filters at the end as
-> positional arguments. If none are given, the default behavior is kept
-> and we run the tool on all files in the datastore. Else, files must
-> match one or more filter to be analysed.
->
-> The below command runs clang-tidy on drivers/clk/clk.c and all C files
-> inside drivers/reset/.
->
->     ./scripts/clang-tools/run-clang-tools.py clang-tidy \
->         compile_commands.json \
->         'drivers/clk/clk.c' 'drivers/reset/*'
->
-> The Python fnmatch builtin module is used. Matching is case-insensitive.
-> See its documentation for allowed syntax:
-> https://docs.python.org/3/library/fnmatch.html
->
-> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> ---
-> Currently, all files in the datastore are analysed. This is not
-> practical for grabbing errors in a subsystem, or relative to a patch
-> series. Add a file filtering feature with wildcard support.
->
-> Have a nice day,
-> Th=C3=A9o
-> ---
->  scripts/clang-tools/run-clang-tools.py | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/scripts/clang-tools/run-clang-tools.py b/scripts/clang-tools=
-/run-clang-tools.py
-> index f31ffd09e1ea..b0b3a9c8cdec 100755
-> --- a/scripts/clang-tools/run-clang-tools.py
-> +++ b/scripts/clang-tools/run-clang-tools.py
-> @@ -10,6 +10,7 @@ compile_commands.json.
->  """
->
->  import argparse
-> +import fnmatch
->  import json
->  import multiprocessing
->  import subprocess
-> @@ -32,6 +33,8 @@ def parse_arguments():
->                          help=3Dtype_help)
->      path_help =3D "Path to the compilation database to parse"
->      parser.add_argument("path", type=3Dstr, help=3Dpath_help)
-> +    file_filter_help =3D "Optional Unix shell-style wildcard file filter=
-s"
-> +    parser.add_argument("file_filter", type=3Dstr, nargs=3D"*", help=3Df=
-ile_filter_help)
->
->      checks_help =3D "Checks to pass to the analysis"
->      parser.add_argument("-checks", type=3Dstr, default=3DNone, help=3Dch=
-ecks_help)
-> @@ -48,6 +51,22 @@ def init(l, a):
->      args =3D a
->
->
-> +def filter_entries(datastore, filters):
-> +    for entry in datastore:
-> +        if filters =3D=3D []:
-> +            yield entry
-> +            continue
+On Fri, Aug 02, 2024 at 10:47:15PM -0700, Andrii Nakryiko wrote:
 
+> Is there any reason why the approach below won't work?
 
-Maybe, this can be checked on the caller side.
-(Note, I did not test this at all)
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 8be9e34e786a..e21b68a39f13 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -2251,6 +2251,52 @@ static struct uprobe
+> *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
+>         struct uprobe *uprobe = NULL;
+>         struct vm_area_struct *vma;
+> 
+> +#ifdef CONFIG_PER_VMA_LOCK
+> +       vm_flags_t flags = VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE, vm_flags;
+> +       struct file *vm_file;
+> +       struct inode *vm_inode;
+> +       unsigned long vm_pgoff, vm_start, vm_end;
+> +       int vm_lock_seq;
+> +       loff_t offset;
+> +
+> +       rcu_read_lock();
+> +
+> +       vma = vma_lookup(mm, bp_vaddr);
+> +       if (!vma)
+> +               goto retry_with_lock;
+> +
+> +       vm_lock_seq = READ_ONCE(vma->vm_lock_seq);
 
-
-if args.file_filter:
-        datastore =3D filter_entries(datastore, args.file_filter)
-
-
-
+So vma->vm_lock_seq is only updated on vma_start_write()
 
 > +
-> +        assert entry['file'].startswith(entry['directory'])
-> +        # filepath is relative to the directory, to avoid matching on th=
-e absolute path
-
-
-
-Does this assertion work with the separate output directory
-(O=3D option)?
-
-
-Just try this command:
-
- $ make LLVM=3D1 O=3D/tmp/foo clang-tidy
-
-Check the generated /tmp/foo/compile_commands.json
-
-
-The 'file' entry starts with your source directory.
-The 'directory' entry starts with the build directory, "/tmp/foo".
-
-
-
-
-
-
-
-
-
-> +        filepath =3D entry['file'][len(entry['directory']):].lstrip('/')
+> +       vm_file = READ_ONCE(vma->vm_file);
+> +       vm_flags = READ_ONCE(vma->vm_flags);
+> +       if (!vm_file || (vm_flags & flags) != VM_MAYEXEC)
+> +               goto retry_with_lock;
 > +
-> +        for pattern in filters:
-> +            if fnmatch.fnmatch(filepath, pattern):
-> +                yield entry
-> +                break
-> +
-> +
->  def run_analysis(entry):
->      # Disable all checks, then re-enable the ones we want
->      global args
-> @@ -87,6 +106,7 @@ def main():
->          # Read JSON data into the datastore variable
->          with open(args.path, "r") as f:
->              datastore =3D json.load(f)
-> +            datastore =3D filter_entries(datastore, args.file_filter)
->              pool.map(run_analysis, datastore)
->      except BrokenPipeError:
->          # Python flushes standard streams on exit; redirect remaining ou=
-tput
->
-> ---
-> base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
-> change-id: 20240704-clang-tidy-filter-f470377cb2b4
->
-> Best regards,
-> --
-> Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
->
->
+> +       vm_inode = READ_ONCE(vm_file->f_inode);
+> +       vm_pgoff = READ_ONCE(vma->vm_pgoff);
+> +       vm_start = READ_ONCE(vma->vm_start);
+> +       vm_end = READ_ONCE(vma->vm_end);
 
+None of those are written with WRITE_ONCE(), so this buys you nothing.
+Compiler could be updating them one byte at a time while you load some
+franken-update.
 
---=20
-Best Regards
-Masahiro Yamada
+Also, if you're in the middle of split_vma() you might not get a
+consistent set.
+
+> +       if (bp_vaddr < vm_start || bp_vaddr >= vm_end)
+> +               goto retry_with_lock;
+> +
+> +       offset = (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_start);
+> +       uprobe = find_uprobe_rcu(vm_inode, offset);
+> +       if (!uprobe)
+> +               goto retry_with_lock;
+> +
+> +       /* now double check that nothing about VMA changed */
+> +       if (vm_lock_seq != READ_ONCE(vma->vm_lock_seq))
+> +               goto retry_with_lock;
+
+Since vma->vma_lock_seq is only ever updated at vma_start_write() you're
+checking you're in or after the same modification cycle.
+
+The point of sequence locks is to check you *IN* a modification cycle
+and retry if you are. You're now explicitly continuing if you're in a
+modification.
+
+You really need:
+
+   seq++;
+   wmb();
+
+   ... do modification
+
+   wmb();
+   seq++;
+
+vs
+
+  do {
+	  s = READ_ONCE(seq) & ~1;
+	  rmb();
+
+	  ... read stuff
+
+  } while (rmb(), seq != s);
+  
+
+The thing to note is that seq will be odd while inside a modification
+and even outside, further if the pre and post seq are both even but not
+identical, you've crossed a modification and also need to retry.
+
+> +
+> +       /* happy case, we speculated successfully */
+> +       rcu_read_unlock();
+> +       return uprobe;
+> +
+> +retry_with_lock:
+> +       rcu_read_unlock();
+> +       uprobe = NULL;
+> +#endif
+> +
+>         mmap_read_lock(mm);
+>         vma = vma_lookup(mm, bp_vaddr);
+>         if (vma) {
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index cc760491f201..211a84ee92b4 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -3160,7 +3160,7 @@ void __init proc_caches_init(void)
+>                         NULL);
+>         files_cachep = kmem_cache_create("files_cache",
+>                         sizeof(struct files_struct), 0,
+> -                       SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT,
+> + SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT|SLAB_TYPESAFE_BY_RCU,
+>                         NULL);
+>         fs_cachep = kmem_cache_create("fs_cache",
+>                         sizeof(struct fs_struct), 0,
 
