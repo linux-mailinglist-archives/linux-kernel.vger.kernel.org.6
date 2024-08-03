@@ -1,134 +1,124 @@
-Return-Path: <linux-kernel+bounces-273286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B82C9466E5
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:24:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C389466E7
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B71E1C20D4D
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 02:24:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC108B2196E
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 02:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480B8AD58;
-	Sat,  3 Aug 2024 02:24:09 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB273E546;
+	Sat,  3 Aug 2024 02:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0cdyLnd"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAFBD2FA;
-	Sat,  3 Aug 2024 02:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42D963D0;
+	Sat,  3 Aug 2024 02:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722651848; cv=none; b=rhW+m8DWrYrAZCQG1xPliKN8QHvgs4wvxrNH6EFPOdKN2ExVRlGofhbZ2en5vNhq9x1PlmEupU7zRin/83xquOzTGUAowqbF9A9W1QfA1DdAkGXNxL1cxyNaydNbzLhwN1EstUL/FcPEe8wiTKm1H6aB4PX4xoZvpX9c1yrfCz4=
+	t=1722652215; cv=none; b=ZRWen1mQJygkASt2m2NiLHfdyfScvLwVOPJIgSjQuOYmWE0BtMZ/WH+sEh/39p5XeTk6AX7XHM6l6pCRW1s5E1uX3eTn17eDeovvzTTX4ChDCpQryMko5nX5IwA6rPGLrsZo9SUEXZk4jIOJcU6D2Z8yXBLjfYT6p9uSs9BLlCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722651848; c=relaxed/simple;
-	bh=Lb+Stv7ELTU7gvhoeN6BV2b9qg1T+FYABxu+wg+mp3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SuSaiqLXtGL5WyAou5jLiN6qm7ozPdAr8Zs7gsaXYTrrK7FgXjHnkzGMOzBe07v6C8gyfNP/uUxfT2kooaXPMXUxMnwNtnYg5KqmEpoNA7aqjwNaFKSF2cHycQsvVK3BUq2AA+yOZllunavN+40qiBOI0oD2i40lToZ2IWSeDEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WbRMs04srz4f3jZQ;
-	Sat,  3 Aug 2024 10:23:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CA02F1A08FC;
-	Sat,  3 Aug 2024 10:24:01 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP4 (Coremail) with SMTP id gCh0CgB3n4W9lK1m0kl2Ag--.36362S3;
-	Sat, 03 Aug 2024 10:24:01 +0800 (CST)
-Message-ID: <268fea5b-39d1-449f-90ea-85ea00866eb0@huaweicloud.com>
-Date: Sat, 3 Aug 2024 10:23:57 +0800
+	s=arc-20240116; t=1722652215; c=relaxed/simple;
+	bh=lff3WItkl7tt+m2ZlMWiQ5UjuYoh2DTr4sm0ru4q85A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=h76m8ztGXUmyipzio68paZ7IMtRLKsH9e6J4C1ISLCNMe0iEsfEMHGlyEjpU1bta7FPa6C1ZjSb79biJeggsNriK20sC42SwMmNm3fe+ObA0OFGVF58Vmg8SpUdjpufzk4/xQRtev7uGLn0aqymYONspX2zfI7BBfwHOsAUt7nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0cdyLnd; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6c5bcb8e8edso6542191a12.2;
+        Fri, 02 Aug 2024 19:30:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722652213; x=1723257013; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cgJo9q4/RWdklQAygo3Va2c9b+4qbpVa8SK20T9ndb0=;
+        b=f0cdyLndo7NaG7/62ZFY7dq1FFOo2/NLFZr42fxKYuicyx2+5aVqqiTkLdxIcYAqGo
+         jRwAJ4YFEEzw60/PHyCkGrXJwoReRn2HB4mpbqkQRuyPDMO+wT1Igp8lKjS56EM02Kbh
+         SPkychNOMQ1NC+kB27pHtZ94V6EV1rhhOLVUKv3s380IE0DU6K+0l0P7zqhs4M2WG2Tu
+         Fp+ud82+V6T/dywJfP7wXM2HA323j3AhCN8e07ivSM+x/2qdi7se0PU3K/k49nrhM4/8
+         BQKBTeaXgfKpSiQk/areyI++Xo6RNpFI3Kmeb2wiFRvgx38WPRb6LHUvjvMnbDY7dMdd
+         Rvuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722652213; x=1723257013;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cgJo9q4/RWdklQAygo3Va2c9b+4qbpVa8SK20T9ndb0=;
+        b=FeHHA2iwO78oN4O/nOHnEme9xqkkL7ZRYvuKyMh+Z4QalP1YNXQlC6cenP5LEGEqrM
+         CzMl1ZR52pSPGW8zsD1QSl7YKV+2lkh4K1BQFmnIybBjV6JRRvd7b6Nm4qeXwynF4zUh
+         h1pmKgZyTaK0GyQq8AcLqbwg7qzCjTjMHewMTmMkrKQ8qQVhd2GmO17qYfjC16ZxyTFn
+         PU1m9Xs9x0cyDZte3GqDnGFFwKKj9T/8aB++MH2MoRQVfWkqeruusk6Y/TLtVexdUw92
+         i++2jcXsLcQiJHH4o6AUbVmibErRgi/FnN84CeRbKE/sQLSG9beURFiO0A3Rnza8VSqY
+         OJfg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0pCWNcIYbWWd8BqODcsr12oEXUwnBJHINOmRG7zhDvBc8xHkY5d9bI8OCw7px/TOB75FhVzqlH7Gy2wEMlKhKOk65MowmXO34cU5P
+X-Gm-Message-State: AOJu0Yza7nKcFFyMRXmP99ZSa1tgxgaKH9idkms9ZxY5/kMm1COoF7qx
+	evYtPmD0aMEUH0x+CJnK1WMYnV6gPvjNkFMxCblh+MYrI/lFRslA
+X-Google-Smtp-Source: AGHT+IEim5BlgZwWjVR/EgRAcA2adf2yuJoxYugEWSVgo/ETJEch7dnAydGdrDnb5CAT5H4IZB9zVA==
+X-Received: by 2002:a17:903:1251:b0:1fb:98db:ad5f with SMTP id d9443c01a7336-1ff5722de68mr73198015ad.5.1722652212923;
+        Fri, 02 Aug 2024 19:30:12 -0700 (PDT)
+Received: from localhost.localdomain ([218.150.196.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59059f8fsm23919855ad.145.2024.08.02.19.30.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 19:30:12 -0700 (PDT)
+From: Moon Yeounsu <yyyynoom@gmail.com>
+To: cooldavid@cooldavid.org,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr,
+	horms@kernel.org,
+	Moon Yeounsu <yyyynoom@gmail.com>
+Subject: [PATCH v2] net: ethernet: remove unnecessary parentheses
+Date: Sat,  3 Aug 2024 11:29:49 +0900
+Message-ID: <20240803022949.28229-1-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240802054421.5428-1-yyyynoom@gmail.com>
+References: <20240802054421.5428-1-yyyynoom@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/20] ext4: get rid of ppath in
- ext4_force_split_extent_at()
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, Baokun Li <libaokun1@huawei.com>,
- Baokun Li <libaokun@huaweicloud.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-14-libaokun@huaweicloud.com>
- <Zq07D/rySkSKxsw3@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <Zq07D/rySkSKxsw3@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgB3n4W9lK1m0kl2Ag--.36362S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kry3ur1xCrWxtry8Aw43Wrg_yoW8CrWUpr
-	1fC3W3Cr10vw129FyaqF1Utr13Kw4rGF13Gryaqr1ruas8Zr1FgF1xt3WFkF95JFWxXry2
-	vF40qF1fG3W3A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAEBWasmH08QwAAsQ
+Content-Transfer-Encoding: 8bit
 
-Hi Ojaswin,
+remove unnecessary parentheses surrounding `ip_hdrlen()`,
+And keep it under 80 columns long to follow the kernel coding style.
 
-On 2024/8/3 4:01, Ojaswin Mujoo wrote:
-> On Wed, Jul 10, 2024 at 12:06:47PM +0800, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
->>
->> The use of path and ppath is now very confusing, so to make the code more
->> readable, pass path between functions uniformly, and get rid of ppath.
->>
->> To get rid of the ppath in ext4_force_split_extent_at(), the following is
->> done here:
->>
->>   * The ext4_find_extent() can update the extent path so it doesn't have to
->>     allocate and free path repeatedly, thus reducing the consumption of
->>     memory allocation and freeing in ext4_swap_extents().
->>
->> No functional changes.
-> Looks good Baokun, feel free to add:
->
-> Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->
-> One small comment below..
-Thanks for the review!
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> ---
->>   fs/ext4/extents.c | 117 ++++++++++++++++++++++++----------------------
->>   1 file changed, 60 insertions(+), 57 deletions(-)
->>
->> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
->> index c86b1bb7720f..0bd068ed324f 100644
->> --- a/fs/ext4/extents.c
->> +++ b/fs/ext4/extents.c
-> .. snip ..
->
->> @@ -5707,25 +5701,21 @@ ext4_swap_extents(handle_t *handle, struct inode *inode1,
-> In ext4_swap_extents, maybe we should keep the refactoring to a separate
-> patch than the changes needed to get rid of ppath in
-> ext4_force_split_extent_at(), the commits would look a bit cleaner and
-> easier to read that way. I don't feel too strongly about it tho and
-> I'll let you take a call.
->
-> Regards,
-> ojaswin
-Totally agree! It does seem a bit unclear now to put the refactoring
-of ext4_swap_extents() into a modification to get rid of the ppath.
-In the next version I will put the logic for refactoring
-ext4_swap_extents() into a separate patch.
+Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+---
+ drivers/net/ethernet/jme.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Cheers,
-Baokun
+diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
+index 83b185c995df..d8be0e4dcb07 100644
+--- a/drivers/net/ethernet/jme.c
++++ b/drivers/net/ethernet/jme.c
+@@ -947,12 +947,12 @@ jme_udpsum(struct sk_buff *skb)
+ 		return csum;
+ 	skb_set_network_header(skb, ETH_HLEN);
+ 
+-	if ((ip_hdr(skb)->protocol != IPPROTO_UDP) ||
+-	    (skb->len < (ETH_HLEN + (ip_hdrlen(skb)) + sizeof(struct udphdr)))) {
++	if (ip_hdr(skb)->protocol != IPPROTO_UDP ||
++	    skb->len < (ETH_HLEN + ip_hdrlen(skb) + sizeof(struct udphdr))) {
+ 		skb_reset_network_header(skb);
+ 		return csum;
+ 	}
+-	skb_set_transport_header(skb, ETH_HLEN + (ip_hdrlen(skb)));
++	skb_set_transport_header(skb, ETH_HLEN + ip_hdrlen(skb));
+ 	csum = udp_hdr(skb)->check;
+ 	skb_reset_transport_header(skb);
+ 	skb_reset_network_header(skb);
+-- 
+2.45.2
 
 
