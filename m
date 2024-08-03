@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-273549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A73946A73
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:48:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F16C946A70
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C36281C20
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:48:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37E70B21273
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B341B14F9E1;
-	Sat,  3 Aug 2024 15:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0531547D8;
+	Sat,  3 Aug 2024 15:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVIFv4W5"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uK5sIQvc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499E71509B6;
-	Sat,  3 Aug 2024 15:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E7013BAE4;
+	Sat,  3 Aug 2024 15:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722700124; cv=none; b=sWPrcjd1XD36jHdzVDAdWC1N+feb/xiF+ZhLKkT/oN6rBgPBdhHsV/snb4U2UQjIr2a9+mjDzuE+5AfeLA/UoTbQeDwI/HObhlFlvIufBkIQmN9jQJydorO81Feh0ip6L5vAnGrsbpf7QOW7gHT1i5MWJ7SL9bhgMl7U6AbZleI=
+	t=1722700091; cv=none; b=bMHusqMHGiHal2+UFV83ygMxeIlyMm0foDAZmRqV0trbZ+miqAWRbQyy5E74rnPKmU16ycNYDiD/0nYb7UOoYVU/76aH+ukVTGV9yi8xOv4IDbGUiLCqbVB5L/Jn+ErcOx1MFaNT0+fgQ0rPQMxx6clStlpDEd5NLpolvO5vd44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722700124; c=relaxed/simple;
-	bh=zvCMh2scSAAzx7sSA0dGXKLUtTv2QHSXx5XOq0pGNIY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LQwQiMfUi0bmwLkMnloR1fykN8eYESGS6G6b2zjsH+KbvXCI4q/+Il9WK4eRkM4Qfyb2o0X77cStb83BVjoYF/dRIlMG8M4wx0CUCDX6nE73DorJ4BVPPX9JlVfolW3SHlPmyy+L1AaUHzmc4YwlBNeWy8lveoeQ0wlM5XBBOCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QVIFv4W5; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1c496335aso6893494a12.1;
-        Sat, 03 Aug 2024 08:48:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722700120; x=1723304920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zvCMh2scSAAzx7sSA0dGXKLUtTv2QHSXx5XOq0pGNIY=;
-        b=QVIFv4W53k1iB+cqdgwTjJjNqnNblAGz4SH3Dkd1xkpe8AWqbfzWGlAf09hqGZrOMh
-         jiV4boAkdoM1eN6CwXOVi4LYNow0trcW0FSQ1Dzhe+o6b1EFqj1VARbieC6mUi/x7Jlm
-         MTJMMlFVSBRbU4/vwFXX+GoMNqedbArBcqFhjg76yQaIY0tKoAT4FNDdKd5q0ns6lFDD
-         5cdb23xzBbMnibpnCf2ewpxt0ZSLKGVDfJcLyWq3zJF4QbvsqkgyDc8TrV135P1gQgDW
-         5UsUrt+GHVURei5zBZl+cNqcCFKBdkpsJIEMpmx5n08K2tT1gBbvphrIa39Z75xl8NeE
-         gYIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722700120; x=1723304920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zvCMh2scSAAzx7sSA0dGXKLUtTv2QHSXx5XOq0pGNIY=;
-        b=ZBehcy3+XYlbz3uItjUay6QcWL0aB/cEIfqpnh6eoeJSSK8ZqoAoegeTd8mweFfnY9
-         Kq4qVFN2HeaEShkCUen/B/T6qqaOxKzpZoDIPkPh/f5Yg8m5rnxEFZBBBQeF7nMIRRJ5
-         6dALuKubVVnCLf2lHmjGnR0jXIFjxF6tcuHtOECc4of68EGnMk4RgZeKss8ZdJY8vI5l
-         CT2ah8CSeccC9DTrql0NawTa/TFXki8hi9KjAUFcjDi1tM1n4yRBW4NZcTZljDcxDXkj
-         9pnG3yNyEvY7Ut2Uh7mZ04fDNnTAEJGiXXI2w3vzyQPxCb1bnK+ANooOTR+O9RwjUM+L
-         TOCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMzaiIPpg1EayviRtlJJES0FLcZiM1TAunYLMbEKIzRJswsYk68h6w7qcdp9EzPpVPUKmFkDw5wK+AN10u+4vMf0W1hV+nU2+djsKrFSaHFUiMK/oQxxt8+y1f5zN7hRlmDmV2
-X-Gm-Message-State: AOJu0YynG7U95k74giim52clMch5OZMoGwvFdN+gOvs4PDuE36VsZcB2
-	Y/V14SdVFTi9gEByoQBGAhhJezwjkxhvbf0mt3KszpCD6a4yQiM0bVRe4SqmNU7GShG1sSLwz5n
-	J25OngZ0xFUDwQF52iUHUo1E3lLs=
-X-Google-Smtp-Source: AGHT+IHzoUsOPUmNwqNBBZwXxScIiO4bcD4bws4wUfqUGx+w+8Cp96xBCQYRpfoAMWqGsqil60w05f1cvDxBoiaUEgw=
-X-Received: by 2002:a50:fb8c:0:b0:5a3:8077:3c90 with SMTP id
- 4fb4d7f45d1cf-5b7f56fb7c0mr5889995a12.33.1722700120100; Sat, 03 Aug 2024
- 08:48:40 -0700 (PDT)
+	s=arc-20240116; t=1722700091; c=relaxed/simple;
+	bh=DAclLAdadIcv5GbKdMwU03XIRinbvL5u0SJFNzJ02qE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pCGtcbl78GLY4jD8q8XkV+/QyLOOFGI3/xZJdk61+olwr12N43+k4P1mQt4rmHXTLtW6e/ZNjcmA58TN/4RDlZ8vFAuQMIF7ZDxAAEZKx0CSyXHIXHb1R427EldgooHCulqOhSNzy7JIS9ocXUZOe6TJA3BMxnlhvbzUPMsKFCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uK5sIQvc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 555FAC116B1;
+	Sat,  3 Aug 2024 15:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722700091;
+	bh=DAclLAdadIcv5GbKdMwU03XIRinbvL5u0SJFNzJ02qE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uK5sIQvcwJx1/JLdOtwx7ILXbmWW3Tr8EPd5WdlibpipEIkIqWSy6FvFCzzVcBIfx
+	 R9g/6beoLPJfpRUS8qs0gtwHgaWfMMx+vJaNOTK0oxpbY3cNZZS4kxP/pUQUJ2OaJD
+	 L63DPvQc+P0YrkBD1KNhrt700dMqx2/WIJHeFrVRixC6fcQd6PcqLLIUN+5Dij0k4n
+	 0tLQ+s1EZm60wvB9ZSlBFpMEQuQHP/TgCU5y3797EJeJn5GCE5tXd2qdQuFsIT3PRK
+	 Kr7zwaAN8YnTr94fM9ruY0KADYcMdAVspjNle24oiB/CP3V6j8tErvSMCAej0UfbZt
+	 2lxpV7CVXyt3A==
+Date: Sat, 3 Aug 2024 16:48:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
+ <jpaulo.silvagoncalves@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] iio: adc: ads1119: Fix IRQ flags
+Message-ID: <20240803164805.6929a84d@jic23-huawei>
+In-Reply-To: <20240803121252.GA6207@francesco-nb>
+References: <20240731140657.88265-1-francesco@dolcini.it>
+	<20240731142016.6immldd7i4y7v2iw@joaog-nb>
+	<20240803122127.221da36f@jic23-huawei>
+	<20240803121252.GA6207@francesco-nb>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801111611.84743-1-kuro@kuroa.me> <CANn89iKp=Mxu+kyB3cSB2sKevMJa6A3octSCJZM=oz4q+DC=bA@mail.gmail.com>
-In-Reply-To: <CANn89iKp=Mxu+kyB3cSB2sKevMJa6A3octSCJZM=oz4q+DC=bA@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Sat, 3 Aug 2024 23:48:03 +0800
-Message-ID: <CAL+tcoAHBSDLTNobA1MJ2itLja1xnWwmejDioPBQJh83oma55Q@mail.gmail.com>
-Subject: Re: [PATCH net] tcp: fix forever orphan socket caused by tcp_abort
-To: Eric Dumazet <edumazet@google.com>
-Cc: Xueming Feng <kuro@kuroa.me>, Lorenzo Colitti <lorenzo@google.com>, 
-	"David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
-	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hello Eric,
+On Sat, 3 Aug 2024 14:12:52 +0200
+Francesco Dolcini <francesco@dolcini.it> wrote:
 
-On Thu, Aug 1, 2024 at 9:17=E2=80=AFPM Eric Dumazet <edumazet@google.com> w=
-rote:
->
-> On Thu, Aug 1, 2024 at 1:17=E2=80=AFPM Xueming Feng <kuro@kuroa.me> wrote=
-:
-> >
-> > We have some problem closing zero-window fin-wait-1 tcp sockets in our
-> > environment. This patch come from the investigation.
-> >
-> > Previously tcp_abort only sends out reset and calls tcp_done when the
-> > socket is not SOCK_DEAD aka. orphan. For orphan socket, it will only
-> > purging the write queue, but not close the socket and left it to the
-> > timer.
-> >
-> > While purging the write queue, tp->packets_out and sk->sk_write_queue
-> > is cleared along the way. However tcp_retransmit_timer have early
-> > return based on !tp->packets_out and tcp_probe_timer have early
-> > return based on !sk->sk_write_queue.
-> >
-> > This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resched
-> > and socket not being killed by the timers. Converting a zero-windowed
-> > orphan to a forever orphan.
-> >
-> > This patch removes the SOCK_DEAD check in tcp_abort, making it send
-> > reset to peer and close the socket accordingly. Preventing the
-> > timer-less orphan from happening.
-> >
-> > Fixes: e05836ac07c7 ("tcp: purge write queue upon aborting the connecti=
-on")
-> > Fixes: bffd168c3fc5 ("tcp: clear tp->packets_out when purging write que=
-ue")
-> > Signed-off-by: Xueming Feng <kuro@kuroa.me>
->
-> This seems legit, but are you sure these two blamed commits added this bu=
-g ?
->
-> Even before them, we should have called tcp_done() right away, instead
-> of waiting for a (possibly long) timer to complete the job.
->
-> This might be important when killing millions of sockets on a busy server=
-.
->
-> CC Lorenzo
->
-> Lorenzo, do you recall why your patch was testing the SOCK_DEAD flag ?
+> Hello Jonathan,
+>=20
+> On Sat, Aug 03, 2024 at 12:21:27PM +0100, Jonathan Cameron wrote:
+> > On Wed, 31 Jul 2024 11:20:16 -0300
+> > Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.com> wrote:
+> >  =20
+> > > On Wed, Jul 31, 2024 at 04:06:57PM +0200, Francesco Dolcini wrote: =20
+> > > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > > >=20
+> > > > Remove IRQF_TRIGGER_FALLING flag from irq request, this should come=
+ from
+> > > > the platform firmware and should not be hard-coded into the driver.
+> > > >=20
+> > > > Add IRQF_ONESHOT flag to the irq request, the interrupt should not =
+be
+> > > > re-activated in interrupt context, it should be done only after the
+> > > > device irq handler run.
+> > > >   =20
+> > >=20
+> > > Reviwed-by: Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gma=
+il.com> =20
+> >=20
+> > For the direction, there is a risk that we will break someone who
+> > has a firmware that isn't setting this correctly. =20
+>=20
+> > I don't mind doing that if we have another board that needs control
+> > (and is setting it appropriately) though.  Is that true here, or is
+> > this just cleanup?
+> >=20
+> > If it's cleanup we tend to leave these alone (but not introduce them
+> > into new code!) =20
+>=20
+> The driver was just introduced by me in v6.11, I assume that the only
+> user is a board that is not yet available in the upstream Linux kernel
+> (we gonna send the DT soon), with that said I am relatively confident we
+> are not going to break any user.
 
-I guess that one of possible reasons is to avoid double-free,
-something like this, happening in inet_csk_destroy_sock().
+ah! I'd missed the timeline detail completely.  Too many drivers and they
+all have similar names :)
 
-Let me assume: if we call tcp_close() first under the memory pressure
-which means tcp_check_oom() returns true and then it will call
-inet_csk_destroy_sock() in __tcp_close(), later tcp_abort() will call
-tcp_done() to free the sk again in the inet_csk_destroy_sock() when
-not testing the SOCK_DEAD flag in tcp_abort.
-
-Do you think the above case could happen?
+>=20
+> The reason for sending this patch is that we just stumbled across
+> a different driver that was hard-coding the IRQ flags and it was not work=
+ing
+> for our hardware, at that moment I realized that the decision on the just
+> added ti-ads1119 was not the best one.
+>=20
+> The idea of this patch is to clean this up _before_ any user is
+> affected.
+>=20
+Excellent.  Applied to the fixes-togreg branch of iio.git.
 
 Thanks,
-Jason
+
+Jonathan
+
+
+> Francesco
+>=20
+
 
