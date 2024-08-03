@@ -1,88 +1,212 @@
-Return-Path: <linux-kernel+bounces-273421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E46A946912
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:34:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3401A946914
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A021C2109C
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:34:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9044CB21920
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB6F13791C;
-	Sat,  3 Aug 2024 10:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnNEjIVE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA38847B;
-	Sat,  3 Aug 2024 10:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502FC1ABEA7;
+	Sat,  3 Aug 2024 10:38:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A057173C
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 10:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722681262; cv=none; b=tUVTaeCB+pMH3Ib2FBzmKy2lmS3uAvEuGnGlmzhAluURYC4nUPUI4rO5dNAPh/eaj8KaBwEskaHtuwKVRns39Bv00NgaxTvmOJ/QDulqDNBzlGePRqcAmiuFlfJf+D9bw2tLxpQBWYKjKBxg7UgNQRg6m3RRV2I377opofqk78c=
+	t=1722681532; cv=none; b=HbUDPO/Io6uYEIIjTnziwHjkvyc/Z1zL33xRqbGbRFRewHHJLAadMS/Bha4i61HfKV4oh/62vMJJkZ86WVo3L31xfUYOYzhbGekZWOhlAI4eVofjnrjTiyb36qyq7UgOw5sK8db8uFTUuXn1sdg60EB73n/p+Q2leo+6+lpdCLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722681262; c=relaxed/simple;
-	bh=ZFEWPndg0yVqKFM40OaGfcBaVW4yzt0hxy//IAKCYYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PucIq+/NO5R4M7KtkG0MEX86RUK6nSWnTi+bYn3A8T4hi+al/PWTr9/bfqncnjEv4iKnpNOQK7e2N80bMxmWRsG9TjhQtDSlJzJhdKLlxGyoYW4N/eDITJ9vVja52B7J0HXYfS8460LH9N39xpngOY4kQx60UkM0UDtleZNRBkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnNEjIVE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B299AC116B1;
-	Sat,  3 Aug 2024 10:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722681262;
-	bh=ZFEWPndg0yVqKFM40OaGfcBaVW4yzt0hxy//IAKCYYU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pnNEjIVEP/1T5+JDdidTKFewBRuNR14ytyQgY8+QYC0GayR9WRBEg+XoRlr94xizG
-	 QaP8PH0GniRllqCfaxxwisZkBdSi3skx/EbDm6yvoXxZbunp52iiqMdXoVVBKxyGvE
-	 uqDtbcQLm+Jwzg7qwEnYPN+ArBznMGD82E45NyiwQAUvllaNyj9Yv8M9XJyT9Djb3R
-	 su9UrUQD1xDemdLSgA9g/UzOgJMGbHYgtmMRi0iCJxefYNkrvH+3AX7aEZ9/YolK0X
-	 7pgbz0eorSPeExjh5ZYGyRMlQRwx/+t/CLlmqO1gEXQ9DtCNez09bicsVBr6CWzEcs
-	 l6w0wcKKSSvMw==
-Date: Sat, 3 Aug 2024 11:34:12 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Julien Stephan <jstephan@baylibre.com>, Michael Hennerich
- <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 0/7] ad7380: add support for single-ended parts
-Message-ID: <20240803113412.249340a3@jic23-huawei>
-In-Reply-To: <931de9a9-f391-4609-b067-eaf5c5105451@baylibre.com>
-References: <20240731-ad7380-add-single-ended-chips-v2-0-cd63bf05744c@baylibre.com>
-	<931de9a9-f391-4609-b067-eaf5c5105451@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722681532; c=relaxed/simple;
+	bh=YGq3TVZtqJrXxBplwOG85CUfLYaIn/S8Akul9NrisN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q7Xd1QimkAIQFP/kkwL8ENswtC8CueNu7O5+Cz2FgKhcBh8tI5akHk2bbeMHtWpEnLazc790PnKW8GOBTzsx+x+2JeiaCSd0Lu1syDdeaEsinHnLUAi0/iHFXZlUS3/WVpmx2LboNKXLYvdbpyH08I0Ar1SaFJpQPYj5iJ8Qb9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED00DDA7;
+	Sat,  3 Aug 2024 03:39:09 -0700 (PDT)
+Received: from [10.163.57.20] (unknown [10.163.57.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9EB953F64C;
+	Sat,  3 Aug 2024 03:38:16 -0700 (PDT)
+Message-ID: <fb9bef18-adf2-4d3a-8205-b22a65b0c6db@arm.com>
+Date: Sat, 3 Aug 2024 16:08:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP &
+ HDFGRTR2_GROUP based FGU handling
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240620065807.151540-1-anshuman.khandual@arm.com>
+ <20240620065807.151540-11-anshuman.khandual@arm.com>
+ <865xu3kh4r.wl-maz@kernel.org> <4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
+ <878qyy35e5.wl-maz@kernel.org> <47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
+ <86tthhi0nz.wl-maz@kernel.org> <c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
+ <86o76c1b8p.wl-maz@kernel.org> <d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
+ <86bk2b198o.wl-maz@kernel.org>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <86bk2b198o.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 31 Jul 2024 08:46:38 -0500
-David Lechner <dlechner@baylibre.com> wrote:
 
-> On 7/31/24 2:05 AM, Julien Stephan wrote:
-> > This series will add support for ad7386/7/8 (16/14/12 bits) unsigned,
-> > dual simultaneous sampling, single-ended compatible parts, and the
-> > corresponding ad7386-4/7-4/8-4 4 channels to ad7380 driver.
-> >   
-> For the whole series,
+On 8/2/24 16:29, Marc Zyngier wrote:
+> On Fri, 02 Aug 2024 10:25:44 +0100,
+> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>
+>> On 8/1/24 21:33, Marc Zyngier wrote:
+>>> On Thu, 01 Aug 2024 11:46:22 +0100,
+>>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 > 
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> [...]
 > 
+>>>> +	SR_FGT(SYS_SPMACCESSR_EL1,	HDFGRTR2, nSPMACCESSR_EL1, 0),
+>>>
+>>> This (and I take it most of the stuff here) is also gated by
+>>> MDCR_EL2.SPM, which is a coarse grained trap. That needs to be
+>>> described as well. For every new register that you add here.
+>>
+>> I did not find a SPM field in MDCR_EL2 either in latest ARM ARM or in
+>> the latest XML. But as per current HDFGRTR2_EL2 description the field
+>> nSPMACCESSR_EL1 is gated by FEAT_SPMU feature, which is being checked
+>> via ID_AA64DFR1_EL1.PMU when required. So could you please give some
+>> more details.
+> 
+> I misspelled it. It is MDCR_EL2.EnSPM.
+> 
+> And you are completely missing the point. It is not about
+> HDFGRTR2_EL2, but about SPMACCESSR_EL1 (and all its little friends).
+> 
+> To convince yourself, just look at the pseudocode for SPMACCESSR_EL1,
+> limited to an EL1 access:
+> 
+> elsif PSTATE.EL == EL1 then
+>     if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
+>         UNDEFINED;
+>     elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMACCESSR_EL1 == '0') then
+>         AArch64.SystemAccessTrap(EL2, 0x18);
+>     elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
+>         AArch64.SystemAccessTrap(EL2, 0x18);
+>     elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
+>         if EL3SDDUndef() then
+>             UNDEFINED;
+>         else
+>             AArch64.SystemAccessTrap(EL3, 0x18);
+>     elsif EffectiveHCR_EL2_NVx() IN {'111'} then
+>         X[t, 64] = NVMem[0x8E8];
+>     else
+>         X[t, 64] = SPMACCESSR_EL1;
+> 
+> 
+> Can you spot the *TWO* conditions where we take an exception to EL2
+> with 0x18 as the EC?
+> 
+> - One is when HDFGxTR2_EL2.nSPMACCESSR_EL1 == '0': that's a fine
+>   grained trap.
+> - The other is when MDCR_EL2.EnSPM == '0': that's a coarse grained
+>   trap.
+> 
+> Both conditions need to be captured in the various tables in this
+> file, for each and every register that you describe.
 
-Nice series. Applied to the togreg branch of iio.git and pushed
-out initially as testing in case 0-day can find anything we missed.
+Ahh, got it now. Because now KVM knows about SPMACCESSR_EL1 register,
+access to that register must also be enabled via both fine grained trap
+(HDFGxTR2_EL2.nSPMACCESSR_EL1) and coarse grained trap (MDCR_EL2.EnSPM).
 
-Thanks,
+For all the registers that are being added via FEAT_FGT2 here in this
+patch, their corresponding CGT based path also needs to be enabled via
+corresponding CGT_MDCR_XXX groups.
 
-Jonathan
+> 
+> [...]
+> 
+>>> Now, the main issues are that:
+>>>
+>>> - you're missing the coarse grained trapping for all the stuff you
+>>>   have just added. It's not a huge amount of work, but you need, for
+>>>   each register, to describe what traps apply to it. The fine grained
+>>>   stuff is most, but not all of it. There should be enough of it
+>>>   already to guide you through it.
+>>
+>> Coarse grained trapping for FEAT_FGT2 based fine grained registers ?
+> 
+> Not for FEAT_FGT2. For the registers that FEAT_FGT2 traps. Can you see
+> the difference?
+
+Understood, for example PMIAR_EL1 register which FEAT_FGT2 now traps via
+
+SR_FGT(SYS_PMIAR_EL1,           HDFGRTR2, nPMIAR_EL1, 0),
+
+also needs to have corresponding coarse grained trap.
+
+SR_TRAP(SYS_PMIAR_EL1,          CGT_MDCR_TPM),
+
+Similarly corresponding SR_TRAP() needs to be covered for all registers
+that are now being trapped with FEAT_FGT2.
+
+Example code snippet.
+
+........
++       SR_TRAP(SYS_SPMEVFILT2R_EL0(8), CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMEVFILT2R_EL0(9), CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMEVFILT2R_EL0(10),        CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMEVFILT2R_EL0(11),        CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMEVFILT2R_EL0(12),        CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMEVFILT2R_EL0(13),        CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMEVFILT2R_EL0(14),        CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMEVFILT2R_EL0(15),        CGT_MDCR_EnSPM),
++
++       SR_TRAP(SYS_SPMCGCR0_EL1,       CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMCGCR1_EL1,       CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMACCESSR_EL1,     CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMCFGR_EL1,        CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMCNTENCLR_EL0,    CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMCNTENSET_EL0,    CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMCR_EL0,          CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMDEVAFF_EL1,      CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMDEVARCH_EL1,     CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMIIDR_EL1,        CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMINTENCLR_EL1,    CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMINTENSET_EL1,    CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMOVSCLR_EL0,      CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMOVSSET_EL0,      CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMSCR_EL1,         CGT_MDCR_EnSPM),
++       SR_TRAP(SYS_SPMSELR_EL0,        CGT_MDCR_EnSPM),
+........
+
+> 
+>> Afraid, did not understand this. Could you please give some pointers
+>> on similar existing code.
+> 
+> See above. And if you want some example, just took at the file you are
+> patching already. Look at how MDCR_EL2 conditions the trapping of all
+> the debug, PMU, AMU registers, for example. There is no shortage of
+> them.
+
+Right, I understand your point now. I am planning to send out the following
+patches (in reply to the current thread) for your review, before sending out
+the entire series as V1.
+
+- Patch adding VNCR details for virtual EL2 access
+- Patch adding FEAT_FGT2 based FGU handling
+- Patch adding corresponding CGT handling for registers being added above
+
+Although, can skip that step and just send out the series directly if you so
+prefer. Please do suggest. Thanks for all the detailed information above.
+
+- Anshuman
 
