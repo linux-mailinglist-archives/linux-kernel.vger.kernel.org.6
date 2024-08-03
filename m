@@ -1,202 +1,128 @@
-Return-Path: <linux-kernel+bounces-273352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46B0946802
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:14:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D0F946827
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1138B210BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:14:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D5B1F21A1E
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0405614D71D;
-	Sat,  3 Aug 2024 06:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPcl46k/"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0261482F2;
+	Sat,  3 Aug 2024 06:25:42 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D9828376;
-	Sat,  3 Aug 2024 06:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D090A847B;
+	Sat,  3 Aug 2024 06:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722665625; cv=none; b=qvZmGkr9He2JfB1gcWMn6T3Saihdv92qcI+M6uUliPsCQtlw85q5XFeY5XQ911a/k5gt4JORqBUbYsdMN5ZckLr8y7Mc6PykAOaUxKalKBC5ISxCZ49aREO81+4WU3XceOwiyvivPrfttPqIJEdSkNWoI0e719gV6TXLG5hNHOg=
+	t=1722666341; cv=none; b=SajK/zpv6J7lB7+KYSlQqLwI5BJSkuN3Q4L5+f9ol5kHeRy4N3U1ubox5bjGq6uzG3QKPuwsRMoruSXG/fo+RDuaA3DisxdbGDMyx96R7aAu46qse1wr91RTpBBoseCKGH8SjU8RYsAGCS+YuK3HCczmPCEevAPAEyweJVzjQ7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722665625; c=relaxed/simple;
-	bh=f3SsyA0A03ghx59fpFfz4bnYCHxtXxzbra9YDmRBIeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efDG/BciY+F8+Bh586iOMiTpxXkqaQXA6nUEDy0q/aQHnro6I7H9bPjAw6CB5NisIDxQjAZk+LWxY2vMeAhOpeGqOz9KSWBA7v2hVrPdbJV+wG0C2piToIc38YOnAo7+NEL29LfNEYYg/Ylj4KV6zlBYyfQxRO+D0bWRZXuH4xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BPcl46k/; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a264a24ea7so5867094a12.3;
-        Fri, 02 Aug 2024 23:13:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722665623; x=1723270423; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hXMFhCUn5D/KqrMjKOKnbi8o/0EVbx6C+turhkcsq08=;
-        b=BPcl46k/OsInvh/3tWeMR/NW0cfBG1YSvTAwS2gxn2Lkd+/e33uOSEKV8is8OP+X5i
-         1vNL/L3esaz3IQ5PEng03eeA03sKmxsj0sbZXpNBWlfxOr99URe1fUeYHdVfhHqwMD/L
-         uTRLnVff0f9CjeCgjq6P3RTVJVgj5Hk601Ubmyl0Z1YmbIciAZt1vIbU2+0kvwgT8C9l
-         DYJ79pEiafaV2EEDlwasBYvAMinXItHGwCl8zb0BYVvusNB/TuIOAodnHEOnndqiTqC2
-         zs1rOxQ2MYL5bBwnf4oNOjQBFWb/YHMvNwkUUs3YrUFVP9loQnUj927xH4OC+WWQwjjt
-         aevQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722665623; x=1723270423;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hXMFhCUn5D/KqrMjKOKnbi8o/0EVbx6C+turhkcsq08=;
-        b=sn8LfadFJDb+4VwG8qDq5qsDyeZ43TUf/ICvdYyuHA/BrnvpdNe1ISY1RojQUHf0PJ
-         nEWijMV3YkBXVMeA0JMT2cuppsM+rXwsdbo1ASLYGRj9PI2ReF5zJyGmT+7RYJbxAyWl
-         rgC1RNsEpPbsfQMZha5tWOSbZcWZYhTgLz3ojt8R4Da/44qIwbAttZU+Qjg/IqrqANX9
-         bsk4u6FOPjW7VTE+xz8SJZB1WdzK7BugZA9/BEskYyg8ydE9O+PTcLSLulZHwSn6ndl4
-         kyLNMFRQlGJ96eMWEROItO9VK8ATRk9rCr13szMjoV9cbB2KMPCLqBUP2UXyV36x6nz7
-         3pcA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2dHR9bcuhM2sBiUt7CJF3/Z0TnTpuVSeuvUEUOnrlsHNoQyzwzzqHv3j3eDsHTt68zmay8NTC/eVbQTe+JgoqUQ8QmdroLOUrL5mnqYGgUIOCReC4aaFBJzn2iZ+zlhDECvRsg79m6T/DW0UgjZRwXi6moEKoy5kNKNPkJWg5G39DFKg4xltQ2VTCYiaU1pMziW3oX+9xAvqknm9HcIze87Au+SFzC31CgnljTREG3OgOsbNawwLgND4=
-X-Gm-Message-State: AOJu0YxUzPEUPgxMcvFHM0AdtgjtO2R27+2DXy5Ud0ySVIM4SAy8APhK
-	YKFQRmENthcRYg6G2v0ypYsF990E2nxWS+a3IRxtnOvseq0uHXYq
-X-Google-Smtp-Source: AGHT+IGgAjO3iklC0xXjAakpcmHNCbSd220ilCOUTPiEuu5dLNSN0mr4009Uq6sYz/UQhR1i8+qevw==
-X-Received: by 2002:a05:6a21:8cc5:b0:1c0:f323:1b9d with SMTP id adf61e73a8af0-1c6995a1a4fmr7777869637.20.1722665622623;
-        Fri, 02 Aug 2024 23:13:42 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:47be:b3e2:7c00:141c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ece0895sm2164970b3a.125.2024.08.02.23.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 23:13:42 -0700 (PDT)
-Date: Fri, 2 Aug 2024 23:13:39 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v7 7/7] input: keyboard: support i.MX95 BBM module
-Message-ID: <Zq3KkwhB89zUfAjn@google.com>
-References: <20240731-imx95-bbm-misc-v2-v7-0-a41394365602@nxp.com>
- <20240731-imx95-bbm-misc-v2-v7-7-a41394365602@nxp.com>
- <ZqpCwOhXiLzxK43-@pluto>
- <PAXPR04MB84598B36C6721748FB98905088B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <Zqp0IZfUobg6dq8G@google.com>
- <PAXPR04MB8459CE89FFF5662AED66D9AA88B22@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1722666341; c=relaxed/simple;
+	bh=nqpbm8WEcjBvV/nU61W2jnnnozZceO08/0FEReAeuPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E/1m36SFTo0N2k+bs7Mkx5eEFph0xnQf3H/VOpZj/Jo7i6i22M5AMtsShMMUb0TSuSNRRkKJmWJ7RLMFjp98iNVwzIfaJqHwGpJHq4yC1zgQBGn698RjJylLsz+8gmh36CaImPDYs9fnkFxWdCn+Q0AFAHwoR1T7D45nhH/H4uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WbXkS699Cz4f3jMl;
+	Sat,  3 Aug 2024 14:25:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id E80B91A0359;
+	Sat,  3 Aug 2024 14:25:33 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.26])
+	by APP2 (Coremail) with SMTP id Syh0CgCn3r1cza1m5YuCAg--.16339S2;
+	Sat, 03 Aug 2024 14:25:33 +0800 (CST)
+From: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
+To: tj@kernel.org,
+	lizefan.x@bytedance.com,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiujianfeng@huawei.com
+Subject: [PATCH -next] cgroup/pids: Remove unreachable paths of pids_{can,cancel}_fork
+Date: Sat,  3 Aug 2024 06:16:07 +0000
+Message-Id: <20240803061607.50470-1-xiujianfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459CE89FFF5662AED66D9AA88B22@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgCn3r1cza1m5YuCAg--.16339S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFy7Wr1DAFWkKw4UGrW3Wrg_yoW8WFykpF
+	nxC3s7KFWUWas8uw1UtrZ3ZryfKan3W34Uur4kJ3yftw12yw13GFyqyw10vry3Xry2gw17
+	JF4Yka1agw1jvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0E
+	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
+	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
+	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
+	k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
 
-On Thu, Aug 01, 2024 at 01:36:10AM +0000, Peng Fan wrote:
-> Hi Dmitry,
-> 
-> > Subject: Re: [PATCH v7 7/7] input: keyboard: support i.MX95 BBM
-> > module
-> > 
-> > Hi Peng,
-> > 
-> > On Wed, Jul 31, 2024 at 03:37:18PM +0000, Peng Fan wrote:
-> > > Hi Cristian,
-> > >
-> > > > Subject: Re: [PATCH v7 7/7] input: keyboard: support i.MX95 BBM
-> > > > module
-> > > >
-> > > > On Wed, Jul 31, 2024 at 08:56:11PM +0800, Peng Fan (OSS) wrote:
-> > > > > From: Peng Fan <peng.fan@nxp.com>
-> > > > >
-> > > > > The BBM module provides BUTTON feature. To i.MX95, this
-> > module is
-> > > > > managed by System Manager and exported using System
-> > > > Management Control
-> > > > > Interface(SCMI). Linux could use i.MX SCMI BBM Extension
-> > protocol
-> > > > to
-> > > > > use BUTTON feature.
-> > > > >
-> > > > > This driver is to use SCMI interface to enable pwrkey.
-> > > > >
-> > > > > +}
-> > > > > +
-> > > > > +static void scmi_imx_bbm_key_remove(struct scmi_device
-> > *sdev) {
-> > > > > +	struct device *dev = &sdev->dev;
-> > > > > +	struct scmi_imx_bbm *bbnsm = dev_get_drvdata(dev);
-> > > > > +
-> > > > > +	device_init_wakeup(dev, false);
-> > 
-> > I do not believe you need to reset the wakeup flag on driver unbind, as
-> > well as in the error handling path of probe(). If this is needed then
-> > driver core should do this cleanup (maybe it already does?).
-> 
-> I just check the driver core code, you are right, there is
-> no need do this.
-> 
-> DevAttrError:
->  device_pm_remove-> device_wakeup_disable(dev);
->  dpm_sysfs_remove
-> 
-> > 
-> > > > > +
-> > > > > +	cancel_delayed_work_sync(&bbnsm->check_work);
-> > > > > +}
-> > > > > +
-> > > >
-> > > > ..so in v6 I asked you to add a cancel_delayed_work_sync() on the
-> > > > removal path, BUT I missed, my bad, that indeed above there was
-> > > > already a call to cancel_delayed_work_sync() associated to a
-> > > > devm_add_action_or_reset....so now we have 2....also you should
-> > try
-> > > > not to mix devm_add_action_or_reset and plain .remove
-> > methods..use
-> > > > one or the other.
-> > >
-> > > Thanks for your detailed reviewing on this. I will wait to see if
-> > > Sudeep has any comments to patch 1-4. If no comments, I will not do
-> > a
-> > > new version to this patchset.
-> > >
-> > > If v7 patch 1-4 are good for Sudeep to pick up, I will separate this
-> > > patch out as a standalone one for input subsystem maintainer.
-> > 
-> > If you remove the duplicated cancel_delayed_work_sync() in remove()
-> > and unneded device_init_wakeup(dev, false); then you can merge the
-> > input patch with the rest of them with my:
-> > 
-> > Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> 
-> Thanks for your Ack. But I think patch 1-4 needs go to arm-scmi tree,
-> Patch 5 to arm imx tree, patch 6 to rtc tree, patch 7 to input tree.
-> 
-> I put the patches together in a patchset is to let reviewers could
-> get a full picture how the whole stuff work.
-> 
-> For patch 7, I will send out it as a separate patch with fix and tag
-> after patch 1-4 is ready in arm-scmi tree.
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-Right, but to accelerate getting support for your part into the mainline
-I am OK with input piece not going through the input tree but together
-with the rest of the patches through some other tree, probably through
-arm-scmi. If they are not willing to take it then we will have to wait
-till core support lands in mainline and then I can pick up the input
-piece and move it through my tree.
+According to the implement of cgroup_css_set_fork() and the usage in
+the cpuset controller which also has .can_fork and .cancel_fork hooks,
+the argument 'cset' for these two hooks must not be NULL, so remove
+the unrechable paths in thse two hooks.
 
-Thanks.
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ kernel/cgroup/pids.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
+diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
+index 34aa63d7c9c6..8f61114c36dd 100644
+--- a/kernel/cgroup/pids.c
++++ b/kernel/cgroup/pids.c
+@@ -272,15 +272,10 @@ static void pids_event(struct pids_cgroup *pids_forking,
+  */
+ static int pids_can_fork(struct task_struct *task, struct css_set *cset)
+ {
+-	struct cgroup_subsys_state *css;
+ 	struct pids_cgroup *pids, *pids_over_limit;
+ 	int err;
+ 
+-	if (cset)
+-		css = cset->subsys[pids_cgrp_id];
+-	else
+-		css = task_css_check(current, pids_cgrp_id, true);
+-	pids = css_pids(css);
++	pids = css_pids(cset->subsys[pids_cgrp_id]);
+ 	err = pids_try_charge(pids, 1, &pids_over_limit);
+ 	if (err)
+ 		pids_event(pids, pids_over_limit);
+@@ -290,14 +285,9 @@ static int pids_can_fork(struct task_struct *task, struct css_set *cset)
+ 
+ static void pids_cancel_fork(struct task_struct *task, struct css_set *cset)
+ {
+-	struct cgroup_subsys_state *css;
+ 	struct pids_cgroup *pids;
+ 
+-	if (cset)
+-		css = cset->subsys[pids_cgrp_id];
+-	else
+-		css = task_css_check(current, pids_cgrp_id, true);
+-	pids = css_pids(css);
++	pids = css_pids(cset->subsys[pids_cgrp_id]);
+ 	pids_uncharge(pids, 1);
+ }
+ 
 -- 
-Dmitry
+2.34.1
+
 
