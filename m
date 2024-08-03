@@ -1,72 +1,81 @@
-Return-Path: <linux-kernel+bounces-278634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-278662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A7894B2B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:06:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EA894B348
+	for <lists+linux-kernel@lfdr.de>; Thu,  8 Aug 2024 00:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A1F5282566
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:06:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785C61C20C95
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 22:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7742215534B;
-	Wed,  7 Aug 2024 22:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D471155321;
+	Wed,  7 Aug 2024 22:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anquUQfp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="M0vVn6q2"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20DF146599;
-	Wed,  7 Aug 2024 22:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59321153BEE
+	for <linux-kernel@vger.kernel.org>; Wed,  7 Aug 2024 22:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723068405; cv=none; b=CUiqDHP8nwW8oXQCPDH3dnO5dlZzNIzV8UoZlNsvs7wOOP/aKGmjJ9Q3WTOD3A2vKGW4iawllpIKkSk/vptbMgkZw6/vT8784FINcaA/FzxvakTGrlKmbrqJNmT+iRdpSZcpBUWD+45+KIpPgovrKdu3EAHp7zVMsIffuhZJRWo=
+	t=1723071520; cv=none; b=JCj7oy0JBTrsw+KUryuDfKEe8x17spf+pdqf9DlWvCytinkCBDQp+XE6TVn/UEIlJ60yqmXF22T98RbHioCKddCE6QcM2n9si+nxuMPBR/Axtq1XGXkHy/Zxd50BxabZ+NIiif7gx+eTMc2ToeRD9jg/WfhiqcYhfbOFuKUIuFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723068405; c=relaxed/simple;
-	bh=mo5cCI52YxBS4frh3l+KA2nX1q9ZcrMkE2ErnP/Qf8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PVQc+8cpWE1vexu5+9oNY6LKS1xOV50/MfoFgWJWYXZBZrHYzrIMZ0fjtm6VKfw8B0P9GXmVCgGPkXGWmfenJddB7ZGuLNlD+pZRtaiybT5iS3cdH3Q4WbXJetNO6VL1fegTnswaklpC19wM5DX/V3EhmFEW/aQ3iI41HHTsIWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anquUQfp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E2DC32782;
-	Wed,  7 Aug 2024 22:06:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723068405;
-	bh=mo5cCI52YxBS4frh3l+KA2nX1q9ZcrMkE2ErnP/Qf8A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=anquUQfp0kf6tx02UCWUPtvNh6GCGXtww2I9YTVz824oDuszPrePU2Ji49Ubulszx
-	 3tx66uabjRqSP0u4NFANSYV4WE2EoVVy7pLGr63IC+ZdnXygWavMvmcqgSygvwyCDp
-	 so2pPGsXW0vEcBE0N6iEM+YXWPy38u+DcwqHJMikJhN1SsluzTSdITk+uXXtuylF4d
-	 xHRv4mrtm7AfPSFwiMBpmNbWA75O7EqYlZR3TVhpcsL7cTKxlPkPwtce4KoEJciy0D
-	 eExbV41HlFt7fA7JPJt1EOXYhMLTDXXquA9QxC6Dbfn4YX/goeTOwjmArqRU1K+zBQ
-	 s7pNICnJ6h5Tg==
-From: Song Liu <song@kernel.org>
-To: live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: jpoimboe@kernel.org,
-	jikos@kernel.org,
-	mbenes@suse.cz,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com,
-	nathan@kernel.org,
-	morbo@google.com,
-	justinstitt@google.com,
-	mcgrof@kernel.org,
-	thunder.leizhen@huawei.com,
-	kees@kernel.org,
-	kernel-team@meta.com,
-	song@kernel.org,
-	mmaurer@google.com,
-	samitolvanen@google.com,
-	mhiramat@kernel.org,
-	rostedt@goodmis.org
-Subject: [PATCH v3 2/2] kallsyms: Match symbols exactly with CONFIG_LTO_CLANG
-Date: Wed,  7 Aug 2024 15:05:13 -0700
-Message-ID: <20240807220513.3100483-3-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240807220513.3100483-1-song@kernel.org>
-References: <20240807220513.3100483-1-song@kernel.org>
+	s=arc-20240116; t=1723071520; c=relaxed/simple;
+	bh=jrAMGvbH0SDgFLoc2rnAO7ghu3IrjMzhLU1CuaePcqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EcGy4VttCfhSjMuW1LFnMZMdcTu8H6QgwWcZQrHS5flu6vx4TLkQBxSF/kVfj7p12Y4NL8mtid70uGzvmI5hRWQgTdm64sqV/LycYx0LM0LxVQZXAo/5HX2+bPem08dIGwlw97ofZl/vjk3ndwmSkDt0Cszv76pWAA3r3BfOo14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=M0vVn6q2; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b7b349a98aso3876266d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Aug 2024 15:58:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1723071517; x=1723676317; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZutKaF6SdOWz1k7kyafWuql30ajKsBcjvYSYRDagsrU=;
+        b=M0vVn6q24r4XxHtQ81z5KLSyVeIPVyMdn6NE6GiybbGez1DYCgIbDDbAWAzScYkmTO
+         XeyRnFiAQTg5nN+N4X+lfEQZRJN1sXVUL1JtvJeu76pQTXkzBPY3PLwVEn5kKIEot7Qs
+         sz0Sh1JTfCz123QoSV8MPXdF4Z1D6uoP5KKPbp5WRPpCdieeSCBjbvIhPrxUzp/mQhfi
+         b1pHB6z0zpCepQbhEPFn/SvuJZ2juGGnVy3CrSwFf+EIPrkpjwQxIT0v430j+O54H+zE
+         cF4RnAV1ZcwD/uAIGyFjirebEPRRQNRfeJWcJ9cApDb+IFHOYxNG6333pGY72ev001js
+         vRbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723071517; x=1723676317;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZutKaF6SdOWz1k7kyafWuql30ajKsBcjvYSYRDagsrU=;
+        b=d5nUQSR/pNcmS2sKlK15pBsMDHa73j8MNqUskeJUaXweu9UocVlrrWuFr2828sb6sn
+         xIKVSQHT3edYAWZ8hfrJUVP2LHqSvPjFF1umGI1WTYLAuzGxHz68mM9+5hS4iU7AWtZm
+         uLjAr0huoOr+GcUEziPsHnFleg0nvc7wsfcv7iKh+dgVETqFznZE18rTDdYwXL+Z+xvv
+         o3e/vAu0qd38btuZMcrByTKDDBlrV/QQy0YsiE97yrVUzszkApRCZ8WYtOAguIX6iuhq
+         JnAPH+cVTDH3KQmbAXQpCPrDWZuoI+uFKqsIsRujXBqYdK+WhE2w/wERIqrVK5NKVqVh
+         ocTA==
+X-Gm-Message-State: AOJu0Yxb1iRIqSF+Lr0f6B45AOEzCHrTRWOiN2/FOnpV0T4JWrygcoTC
+	AZaJj1XAY8jjBJmg3+2d6wG1s28RDT0JVs0XONlzDFvUBcaQOeTksRsZpJm4iL4=
+X-Google-Smtp-Source: AGHT+IF5BktstHYrHWotu4YyqQgntJRdwILIR+1LenNlhEiEcNuH8phOeFVeezna1eXyKzuw2I6PDg==
+X-Received: by 2002:a05:6214:3d8c:b0:6b5:e190:435 with SMTP id 6a1803df08f44-6bd6bda2d34mr1532896d6.50.1723071517006;
+        Wed, 07 Aug 2024 15:58:37 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c7b82cbsm59997096d6.61.2024.08.07.15.58.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 15:58:36 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	ying.huang@intel.com,
+	nphamcs@gmail.com,
+	nehagholkar@meta.com,
+	abhishekd@meta.com
+Subject: [PATCH 0/3] mm,TPP: Enable promotion of unmapped pagecache
+Date: Sat,  3 Aug 2024 05:47:12 -0400
+Message-ID: <20240803094715.23900-1-gourry@gourry.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,178 +84,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With CONFIG_LTO_CLANG=y, the compiler may add .llvm.<hash> suffix to
-function names to avoid duplication. APIs like kallsyms_lookup_name()
-and kallsyms_on_each_match_symbol() tries to match these symbol names
-without the .llvm.<hash> suffix, e.g., match "c_stop" with symbol
-c_stop.llvm.17132674095431275852. This turned out to be problematic
-for use cases that require exact match, for example, livepatch.
+Unmapped pagecache pages can be demoted to low-tier memory, but 
+they can only be promoted if a process maps the pages into the
+memory space (so that NUMA hint faults can be caught).  This can
+cause significant performance degradation as the pagecache ages
+and unmapped, cached files are accessed.
 
-Fix this by making the APIs to match symbols exactly.
+This patch series enables the pagecache to request a promotion of
+a folio when it is accessed via the pagecache.
 
-Also cleanup kallsyms_selftests accordingly.
+We add a new `numa_hint_page_cache` counter in vmstat to capture
+information on when these migrations occur.
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- kernel/kallsyms.c          | 55 +++++---------------------------------
- kernel/kallsyms_selftest.c | 22 +--------------
- 2 files changed, 7 insertions(+), 70 deletions(-)
+Gregory Price (3):
+  migrate: Allow migrate_misplaced_folio APIs without a VMA
+  memory: allow non-fault migration in numa_migrate_prep path
+  swap: enable promotion for unmapped pagecache on access
 
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index fb2c77368d18..a9a0ca605d4a 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -160,38 +160,6 @@ unsigned long kallsyms_sym_address(int idx)
- 	return kallsyms_relative_base - 1 - kallsyms_offsets[idx];
- }
- 
--static void cleanup_symbol_name(char *s)
--{
--	char *res;
--
--	if (!IS_ENABLED(CONFIG_LTO_CLANG))
--		return;
--
--	/*
--	 * LLVM appends various suffixes for local functions and variables that
--	 * must be promoted to global scope as part of LTO.  This can break
--	 * hooking of static functions with kprobes. '.' is not a valid
--	 * character in an identifier in C. Suffixes only in LLVM LTO observed:
--	 * - foo.llvm.[0-9a-f]+
--	 */
--	res = strstr(s, ".llvm.");
--	if (res)
--		*res = '\0';
--
--	return;
--}
--
--static int compare_symbol_name(const char *name, char *namebuf)
--{
--	/* The kallsyms_seqs_of_names is sorted based on names after
--	 * cleanup_symbol_name() (see scripts/kallsyms.c) if clang lto is enabled.
--	 * To ensure correct bisection in kallsyms_lookup_names(), do
--	 * cleanup_symbol_name(namebuf) before comparing name and namebuf.
--	 */
--	cleanup_symbol_name(namebuf);
--	return strcmp(name, namebuf);
--}
--
- static unsigned int get_symbol_seq(int index)
- {
- 	unsigned int i, seq = 0;
-@@ -219,7 +187,7 @@ static int kallsyms_lookup_names(const char *name,
- 		seq = get_symbol_seq(mid);
- 		off = get_symbol_offset(seq);
- 		kallsyms_expand_symbol(off, namebuf, ARRAY_SIZE(namebuf));
--		ret = compare_symbol_name(name, namebuf);
-+		ret = strcmp(name, namebuf);
- 		if (ret > 0)
- 			low = mid + 1;
- 		else if (ret < 0)
-@@ -236,7 +204,7 @@ static int kallsyms_lookup_names(const char *name,
- 		seq = get_symbol_seq(low - 1);
- 		off = get_symbol_offset(seq);
- 		kallsyms_expand_symbol(off, namebuf, ARRAY_SIZE(namebuf));
--		if (compare_symbol_name(name, namebuf))
-+		if (strcmp(name, namebuf))
- 			break;
- 		low--;
- 	}
-@@ -248,7 +216,7 @@ static int kallsyms_lookup_names(const char *name,
- 			seq = get_symbol_seq(high + 1);
- 			off = get_symbol_offset(seq);
- 			kallsyms_expand_symbol(off, namebuf, ARRAY_SIZE(namebuf));
--			if (compare_symbol_name(name, namebuf))
-+			if (strcmp(name, namebuf))
- 				break;
- 			high++;
- 		}
-@@ -407,8 +375,7 @@ static int kallsyms_lookup_buildid(unsigned long addr,
- 		if (modbuildid)
- 			*modbuildid = NULL;
- 
--		ret = strlen(namebuf);
--		goto found;
-+		return strlen(namebuf);
- 	}
- 
- 	/* See if it's in a module or a BPF JITed image. */
-@@ -422,8 +389,6 @@ static int kallsyms_lookup_buildid(unsigned long addr,
- 		ret = ftrace_mod_address_lookup(addr, symbolsize,
- 						offset, modname, namebuf);
- 
--found:
--	cleanup_symbol_name(namebuf);
- 	return ret;
- }
- 
-@@ -450,8 +415,6 @@ const char *kallsyms_lookup(unsigned long addr,
- 
- int lookup_symbol_name(unsigned long addr, char *symname)
- {
--	int res;
--
- 	symname[0] = '\0';
- 	symname[KSYM_NAME_LEN - 1] = '\0';
- 
-@@ -462,16 +425,10 @@ int lookup_symbol_name(unsigned long addr, char *symname)
- 		/* Grab name */
- 		kallsyms_expand_symbol(get_symbol_offset(pos),
- 				       symname, KSYM_NAME_LEN);
--		goto found;
-+		return 0;
- 	}
- 	/* See if it's in a module. */
--	res = lookup_module_symbol_name(addr, symname);
--	if (res)
--		return res;
--
--found:
--	cleanup_symbol_name(symname);
--	return 0;
-+	return lookup_module_symbol_name(addr, symname);
- }
- 
- /* Look up a kernel symbol and return it in a text buffer. */
-diff --git a/kernel/kallsyms_selftest.c b/kernel/kallsyms_selftest.c
-index 2f84896a7bcb..873f7c445488 100644
---- a/kernel/kallsyms_selftest.c
-+++ b/kernel/kallsyms_selftest.c
-@@ -187,31 +187,11 @@ static void test_perf_kallsyms_lookup_name(void)
- 		stat.min, stat.max, div_u64(stat.sum, stat.real_cnt));
- }
- 
--static bool match_cleanup_name(const char *s, const char *name)
--{
--	char *p;
--	int len;
--
--	if (!IS_ENABLED(CONFIG_LTO_CLANG))
--		return false;
--
--	p = strstr(s, ".llvm.");
--	if (!p)
--		return false;
--
--	len = strlen(name);
--	if (p - s != len)
--		return false;
--
--	return !strncmp(s, name, len);
--}
--
- static int find_symbol(void *data, const char *name, unsigned long addr)
- {
- 	struct test_stat *stat = (struct test_stat *)data;
- 
--	if (strcmp(name, stat->name) == 0 ||
--	    (!stat->perf && match_cleanup_name(name, stat->name))) {
-+	if (!strcmp(name, stat->name)) {
- 		stat->real_cnt++;
- 		stat->addr = addr;
- 
+ include/linux/migrate.h       |  6 ++----
+ include/linux/vm_event_item.h |  1 +
+ mm/huge_memory.c              |  2 +-
+ mm/memory.c                   | 21 +++++++++++----------
+ mm/mempolicy.c                | 25 +++++++++++++++++--------
+ mm/migrate.c                  |  7 +++----
+ mm/swap.c                     | 20 ++++++++++++++++++++
+ mm/vmstat.c                   |  1 +
+ 8 files changed, 56 insertions(+), 27 deletions(-)
+
 -- 
-2.43.5
+2.43.0
 
 
