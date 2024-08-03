@@ -1,141 +1,143 @@
-Return-Path: <linux-kernel+bounces-273496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC10F9469F2
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:59:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F92E9469F5
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 255C81C20B58
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1AA1F215EC
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEEB14F9F8;
-	Sat,  3 Aug 2024 13:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07471514C1;
+	Sat,  3 Aug 2024 14:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DshrQHRZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUIIn+02"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C142214F9CC
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 13:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084D51509A2;
+	Sat,  3 Aug 2024 14:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722693557; cv=none; b=dA9/7It2g16oY8THvzO01jNEc5sxxLKL22f6KD+BF7WaP0x3yIJC1ztdXS5inSbtJSqYNrHKQuMPwvqruKZ0FylZeqeCcCoiWnDo0I/pLMtra2/XAcpwIL143R7KKGOy8uGhCA64RnsvHOjcjDF760FeTtmKDcOla9/IIRTzfq4=
+	t=1722693603; cv=none; b=rJY2ugp1l49DZ8ez/hrmPAJQesR+WK9HrjWtvUA2AJS2DMa/4j4f7Di54gIbObZaSuxM/yWPGk2AV3WpC8FBHzEgEiUqVcsvqwW3lY8irYzr5DOM7mFJd6O57ZTj5iuAdgVcfEXQHgyfLVQ2ikBtH9NocifgQHRFtNdhFAdtoMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722693557; c=relaxed/simple;
-	bh=mkLVXCVtvsYqEZncqittbYiuqAWUMNXxPjor+ZbpaXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsTBODJH/Ge0f/iXBWHf/EH2gDwyjL2XgfOr6zByNft4o1GsXVtYn1QBXTjG7ET8ZqtSWC+3JLVgxtIBMqcNiVptQEW80LbhagMH0GGoIEzWpwHdVjKOM3VUzntTapUI4sL+yVkiEk1cwsc6fZBW9QNEivHk5MhJWCil7yPU7po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DshrQHRZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722693553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5mLPhQ/MtlB+/ouj1vXRLPvV+K/e1JH2NhKIPSu91PM=;
-	b=DshrQHRZsi7NZn4d4lF4F3d/87F/kD1HKeYikhYIWhS48wl5vSD5emUdW/qIMagdRGKgCa
-	LuNyb3CD0FOw2aDIuk3bhfL+vc5yAAELt5fQY199HSaYJJYA5jTtdcJIyxKPZsEZ3jlV/y
-	//AhBxABwyGe276uGdwpcjZrQt4cLOQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-quiLfFzKPea876jzJCuoeg-1; Sat,
- 03 Aug 2024 09:59:08 -0400
-X-MC-Unique: quiLfFzKPea876jzJCuoeg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59CB119560A2;
-	Sat,  3 Aug 2024 13:59:06 +0000 (UTC)
-Received: from [10.2.16.12] (unknown [10.2.16.12])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3C6EB1955D42;
-	Sat,  3 Aug 2024 13:59:03 +0000 (UTC)
-Message-ID: <309c8d74-a51f-42f7-b526-f5e74c0ac22c@redhat.com>
-Date: Sat, 3 Aug 2024 09:59:03 -0400
+	s=arc-20240116; t=1722693603; c=relaxed/simple;
+	bh=WkWZa+0mangtTlCr2epe0OP1425q3NQWizY05UhJpVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gk63lXyEBM7aVGFAj2DIn87MNeOCuaHRnHbatZuaHwbKhBb7nxmUbxF1Bqaz69dc2MRtnuBF0mvrbJS99mFgDyIqjFIqJsA+qlfVGDrXurSKcBK0XcQN6zrDWLqBl+k1Dqgzhu4x+7hzRvuUPvftSuZqURZTWR0l+cIXIJuOM+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUIIn+02; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FBCDC116B1;
+	Sat,  3 Aug 2024 14:00:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722693602;
+	bh=WkWZa+0mangtTlCr2epe0OP1425q3NQWizY05UhJpVo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UUIIn+02+0vQusls/kCfanFrNSWK1+G005GqUNlL+IV4AJHfR34Q2GfSfQiR/hxg3
+	 7VrlzESiVntb1/DDpHPvWzyL4paEo79J2UZ0ytSqyKmx39MEnuPS8GFTQbEdv6SPCH
+	 qiYGUkH+1iDwyN1UqcF0mrp9TDU1Bx6ZaoJvfpcwScoZaOPzuscpmQDqCrrGa/4MzL
+	 ZDAQugm+IuNYY4Kd/J0V4rrQmT006UT2B14qtftweURgiPvolbMxi1ZOYCvU8Yvrbl
+	 KUlZXnrging/nh3xNSyegICvlXUp2aUGY3P32mUCHGhFYtugMpbRk/fNwfHbsqAaCr
+	 RgqY9MmtMBncw==
+Date: Sat, 3 Aug 2024 14:59:56 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] Replaced IIO_INTENSITY channel with IIO_LIGHT
+Message-ID: <20240803145956.2562ad71@jic23-huawei>
+In-Reply-To: <20240731063706.25412-1-abhashkumarjha123@gmail.com>
+References: <20240731063706.25412-1-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup/pids: Remove unreachable paths of
- pids_{can,cancel}_fork
-To: Xiu Jianfeng <xiujianfeng@huaweicloud.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiujianfeng@huawei.com
-References: <20240803061607.50470-1-xiujianfeng@huaweicloud.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240803061607.50470-1-xiujianfeng@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+On Wed, 31 Jul 2024 12:07:02 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-On 8/3/24 02:16, Xiu Jianfeng wrote:
-> From: Xiu Jianfeng <xiujianfeng@huawei.com>
->
-> According to the implement of cgroup_css_set_fork() and the usage in
-"implementation"?
-> the cpuset controller which also has .can_fork and .cancel_fork hooks,
-> the argument 'cset' for these two hooks must not be NULL, so remove
-> the unrechable paths in thse two hooks.
+> Hello,
+> 
+Don't change the cover letter title between versions.
+It makes them hard to track.  That title should not reflect changes
+form previous version and it should always tell us which driver
+the modifications are being made to!
 
-It is primarily due to cgroup_css_set_fork() will fail if cset cannot be 
-found and the can_fork/cancel_fork method will not be called in this case.
-
-Cheers,
-Longman
-
->
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> ---
->   kernel/cgroup/pids.c | 14 ++------------
->   1 file changed, 2 insertions(+), 12 deletions(-)
->
-> diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
-> index 34aa63d7c9c6..8f61114c36dd 100644
-> --- a/kernel/cgroup/pids.c
-> +++ b/kernel/cgroup/pids.c
-> @@ -272,15 +272,10 @@ static void pids_event(struct pids_cgroup *pids_forking,
->    */
->   static int pids_can_fork(struct task_struct *task, struct css_set *cset)
->   {
-> -	struct cgroup_subsys_state *css;
->   	struct pids_cgroup *pids, *pids_over_limit;
->   	int err;
->   
-> -	if (cset)
-> -		css = cset->subsys[pids_cgrp_id];
-> -	else
-> -		css = task_css_check(current, pids_cgrp_id, true);
-> -	pids = css_pids(css);
-> +	pids = css_pids(cset->subsys[pids_cgrp_id]);
->   	err = pids_try_charge(pids, 1, &pids_over_limit);
->   	if (err)
->   		pids_event(pids, pids_over_limit);
-> @@ -290,14 +285,9 @@ static int pids_can_fork(struct task_struct *task, struct css_set *cset)
->   
->   static void pids_cancel_fork(struct task_struct *task, struct css_set *cset)
->   {
-> -	struct cgroup_subsys_state *css;
->   	struct pids_cgroup *pids;
->   
-> -	if (cset)
-> -		css = cset->subsys[pids_cgrp_id];
-> -	else
-> -		css = task_css_check(current, pids_cgrp_id, true);
-> -	pids = css_pids(css);
-> +	pids = css_pids(cset->subsys[pids_cgrp_id]);
->   	pids_uncharge(pids, 1);
->   }
->   
+> The first patch in the series adds support for configuring the gain and
+> resolution(integration time) of the ltr390 sensor by writing to the
+> respective registers. Then the available values for gain and resolution
+> that are listed in the datasheet are provided via the `read_avail`
+> callback. 
+> 
+> The second patch adds a new channel for the ALS feature of the sensor.
+> The same configuration of gain and resolution has to be provided for this
+> channel as well. As there are two IIO channels now, we would need to
+> switch the sensor's mode of operation depending on which sensor is being
+> accessed. Hence, mode switching is also provided.
+> 
+> Then the third patch adds support for calculating `counts_per_uvi` based
+> on the current gain and resolution value.
+> 
+> Changes in v5:
+> - Replaced the IIO_INTENSITY channel with IIO_LIGHT channel
+> - We calculate the lux value directly using `als_data / (gain * int_time)`
+> - Provided a scale channel where the scale is 0.6 * WINDOW_FACTOR
+> - Link to v4: https://lore.kernel.org/linux-iio/20240730065822.5707-1-abhashkumarjha123@gmail.com/T/#m
+> 
+> Changes in v4:
+> - Added "bitfield.h" include to fix `-Wimplicit-function-declaration`.
+> - Link to v3: https://lore.kernel.org/linux-iio/20240729115056.355466-1-abhashkumarjha123@gmail.com/
+> 
+> Changes in v3:
+> - Added cover letter to the patch series.
+> - Fixed indentation in the patch description.
+> - Patch specific changes are listed below.
+> 
+> [PATCH v3 1/3]
+> 	- Cleaned up the spurious changes made in v2.
+> 	- ltr390_set_int_time and ltr390_set_gain now return -EINVAL to
+> 	indicate no match.
+> 
+> [PATCH v3 2/3]
+> 	- Used enum ltr390_mode inside the ltr390_data struct.
+> 	- Refactored `ltr390_set_mode` function according to the comments in v2.
+> 
+> [PATCH v3 3/3]
+> 	- Simplified the formula for `counts_per_uvi` calculation.
+> 	- Removed spurious whitespace changes introduced in v2.
+> 
+> - Link to v2: https://lore.kernel.org/linux-iio/20240728151957.310237-1-abhashkumarjha123@gmail.com/
+> 
+> Changes in v2:
+> - Split the single patch into 3 patches.
+> - Used FIELD_PREP to perform bit shifting.
+> - Used enum for mode selection instead of defines.
+> - Fixed indentation and whitespace issues pointed out in the comments
+> - Replaced `mutex_lock(&data->lock)` with `guard(mutex)(&data->lock)`
+> - Provided available values for gain and resolution via `read_avail`
+>   instead of sysfs attributes.
+> - Refactored `ltr390_set_gain` and `ltr390_set_int_time`.
+> - Used early returns instead of single exit points.
+> 
+> - Link to v1: https://lore.kernel.org/linux-iio/20240718104947.7384-1-abhashkumarjha123@gmail.com/
+> 
+> Regards,
+> Abhash
+> 
+> Abhash Jha (3):
+>   iio: light: ltr390: Add configurable gain and resolution
+>   iio: light: ltr390: Add ALS channel and support for gain and
+>     resolution
+>   iio: light: ltr390: Calculate 'counts_per_uvi' dynamically
+> 
+>  drivers/iio/light/ltr390.c | 238 ++++++++++++++++++++++++++++++++++---
+>  1 file changed, 220 insertions(+), 18 deletions(-)
+> 
 
 
