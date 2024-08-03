@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-273263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0B094669D
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 03:04:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 357469466A0
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 03:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 638931F21F33
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A141C210A6
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F254C568A;
-	Sat,  3 Aug 2024 01:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60601567F;
+	Sat,  3 Aug 2024 01:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAofaV60"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNsX/9XT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378B6380;
-	Sat,  3 Aug 2024 01:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6554C74;
+	Sat,  3 Aug 2024 01:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722647065; cv=none; b=URekHMl0hvJ2ovkSlGpSOz3tz0hg2WNy/Y7hy9YJzg39pRLAkP6gFv16ODBm1lEcjZsVec3JRS/vhBm2Ea/dkBqX3QrHiQagdBqPAxfZouSwp4oMMMUtppAOTn0qgm8+LnrISrNVgvrBCGOQS2J0ZsBSYzBPfUpjRKL6rV/YOjQ=
+	t=1722647112; cv=none; b=mSy62ibTbArfpIfdSQm9U605R+uz24MSxXl20cN4V9C1oarjGAtx5TBbdw6zmxj2QlbeZb64tDD9X/nDjJcEEmS2TMMDpb8inz2OotBsZfplbE2rqdn560gohJiyAGc2faU85EQPUkF0WDCH7wafY9MYXRHYWgJyZFpHKTPbz3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722647065; c=relaxed/simple;
-	bh=o4qoXIl8hP6PXLbezXZCU7oESBWmoZAHNWU1VqWVoPI=;
+	s=arc-20240116; t=1722647112; c=relaxed/simple;
+	bh=bPaCeAClCPNjr6qV0PXPIM+GypEa4zfQWJr9KZ0baWI=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=s3kSzJBvBh6vfOcNF6LATdHkkmVOvOQ60xvlZ8JzO1qU65bEIVKkv0xRU4x0E9/rKPHsdlqa7p8JfGfnaRCJy3CljmgQOuF1M9CmfERwoOT0MD6jx+23Eua6DFsqc2miaFYzXlXoREViXnsRnbH0AOwPPFev+uZeyTDpwJVwJmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAofaV60; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 914ACC32782;
-	Sat,  3 Aug 2024 01:04:24 +0000 (UTC)
+	 Subject:From:Cc:To:Date; b=k+zutGqn0vpqEhSrDvMgcSKAQKE7XDHDZIM0rMcv3RXTvIuSkJjHJZ4wxhGT8j3SGtvlrZqOfEhJ66jG3T1IRDEmgZ14utApv+gSNLlu/N18LBR/5RRcXkagQYDpaf6wz2fpyU09TyNHifegSjtzyn7R7qHVtrA7Jy9OkTpm5yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNsX/9XT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2C3C32782;
+	Sat,  3 Aug 2024 01:05:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722647064;
-	bh=o4qoXIl8hP6PXLbezXZCU7oESBWmoZAHNWU1VqWVoPI=;
+	s=k20201202; t=1722647112;
+	bh=bPaCeAClCPNjr6qV0PXPIM+GypEa4zfQWJr9KZ0baWI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=gAofaV60abe4akulSSdrBLcUmRozKJ7S522cOTHAEWUziciGY7WZx18NbNEtM5XA+
-	 LMBr+QOmRxm26zoaLqlPrE6y++1yyO85bxTcMVpesWtKnVUOa2YfzLVu9middUyOM3
-	 k+mJPwDX8qCJBXLvhqeMXLJvYK+e22fbR+3ldpguMtK2gwDQ3AltcX6cq9HpsXT3jM
-	 KtBMXdyUUMUh7o9bAJOR7tLPOomOtkT59YYvHTzEBjFZt19eDY1tP3ITFXm6Qu888g
-	 pxO2sGHVfZ42qBHtXIR4RG5mWgzZ9UxKLeqsTd1EdXvaI7NTi5XEPchfEzVuUxTWTz
-	 KH/Ijv6a3bGqw==
-Message-ID: <4b41be0c9874c5873c0cf4b6e210812d.sboyd@kernel.org>
+	b=rNsX/9XT9F69gHJ9VJp38rB2XgrESLnvtGHFQRc2D5IrHy8eIP3wrhIao32kN896W
+	 9zkvK/PCVTJTqmajxjkjhEDcA7ozh38lOnTIO93rkOQCwHJXf0Ccyks+pzZ1KkuhP8
+	 /U6BjVBUr+w4ZygS7H+VXsYU/bsDxdplej01bv8jmBP5gBCglf63sEU7l+5rb8RePY
+	 Q2TTKhjzU7i8s/ZVSu7dguFblUySkXa++B2U4QUV9dHHsC2ZM1gAGU+17GlwDs8N8f
+	 lVlCVhT2CSLrkzeiTvRSPBt5dXKqpP9J+juwPKPNsId0BtM5AEamPVS5UfSzSKv0am
+	 4eXlK+uI9ZgUA==
+Message-ID: <ff92343652a998b97981e63ea5dc301f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,52 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240801-clk-new-helper-v1-1-81e9338b7b17@linaro.org>
-References: <20240801-clk-new-helper-v1-0-81e9338b7b17@linaro.org> <20240801-clk-new-helper-v1-1-81e9338b7b17@linaro.org>
-Subject: Re: [PATCH RFC 1/2] clk: provide devm_clk_get_optional_enabled_with_rate()
+In-Reply-To: <20240801110040.505860-1-quic_amansing@quicinc.com>
+References: <20240801110040.505860-1-quic_amansing@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>
-Date: Fri, 02 Aug 2024 18:04:22 -0700
+Cc: quic_devipriy@quicinc.com
+To: Amandeep Singh <quic_amansing@quicinc.com>, andersson@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com
+Date: Fri, 02 Aug 2024 18:05:10 -0700
 User-Agent: alot/0.10
 
-Quoting Bartosz Golaszewski (2024-08-01 08:58:49)
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 90e6078fb6e1..34e800525e21 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -99,6 +99,34 @@ struct clk *devm_clk_get_optional_enabled(struct devic=
-e *dev, const char *id)
->  }
->  EXPORT_SYMBOL_GPL(devm_clk_get_optional_enabled);
-> =20
-> +struct clk *devm_clk_get_optional_enabled_with_rate(struct device *dev,
-> +                                                   const char *id,
-> +                                                   unsigned long rate)
-> +{
-> +       struct clk *clk;
-> +       int ret;
-> +
-> +       clk =3D __devm_clk_get(dev, id, clk_get_optional, NULL,
-> +                            clk_disable_unprepare);
-> +       if (IS_ERR(clk))
-> +               return ERR_CAST(clk);
-> +
-> +       ret =3D clk_set_rate(clk, rate);
-> +       if (ret)
-> +               goto out_put_clk;
-> +
-> +       ret =3D clk_prepare_enable(clk);
-> +       if (ret)
-> +               goto out_put_clk;
-> +
-> +       return clk;
-> +
-> +out_put_clk:
-> +       devm_clk_put(dev, clk);
-> +       return ERR_PTR(ret);
-> +}
-> +EXPORT_SYMBOL(devm_clk_get_optional_enabled_with_rate);
+Quoting Amandeep Singh (2024-08-01 04:00:40)
+> From: devi priya <quic_devipriy@quicinc.com>
+>=20
+> Update PLL offsets to DEFAULT_EVO to configure MDIO to 800MHz.
 
-GPL
+Is this fixing a problem? I can't figure out how urgent this patch is
+from the one sentence commit text.
 
