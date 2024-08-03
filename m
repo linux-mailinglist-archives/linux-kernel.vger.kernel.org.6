@@ -1,299 +1,183 @@
-Return-Path: <linux-kernel+bounces-273484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742779469D1
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:05:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B41B9469D6
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B24281A98
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A85281C2B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C6B139CFA;
-	Sat,  3 Aug 2024 13:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABA44501F;
+	Sat,  3 Aug 2024 13:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S7FAq9YA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dRBZsBl6"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212D51E498
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 13:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E121DDCE
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 13:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722690340; cv=none; b=Pqef82dHpm+8Jd8jX5r9PPTQdsv9dJGBeeiIz/ePJ8RsTEmKbOrKPN/7j0l6/UcxAD3QErXi10HCiJwjc48P1YU0J3FKqyKkgEE8R+QNtWnyzaDkjqa5PvTlPgSiSrHXboxCcE0p/TC9nuIF7m+Q+FgZAeDlTWVvZpdrIX1JyoM=
+	t=1722690756; cv=none; b=i/wII/FfE9AlCRy4Fh1mCI8yB/wCrP/iiED5DdtUZRjOSFC130/Ax3SYAoJz8uaGnIgEcUeZkUOkb7C5CKuvaWV4QuH+h3h4pZTR94AEXHCOG/caufI1m3qDLSilFVryAdnmmxZkkHBkjxcbSh3/5AmQppXpW3UZrDQF8Jms2jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722690340; c=relaxed/simple;
-	bh=Jx1DguHdr+gfltO4MhYvbADgIyFcdMr6xIO4oFaWMz4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=uSohwFzJobW3Fm2WWrUktriKyJUGXf6JuEpumzmW4RQchLTYKDkFII3Bau5hWtOwXhoBpeT2du4E33K0s6MPnzCXCRNloGpycys7tIjR7dfBzuZOzdIPR2vfd3b5CTd0mNAh21WeGUPG16Lk0luU4T11nSeheiDpFz4PxAR8Jfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S7FAq9YA; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722690338; x=1754226338;
-  h=date:from:to:cc:subject:message-id;
-  bh=Jx1DguHdr+gfltO4MhYvbADgIyFcdMr6xIO4oFaWMz4=;
-  b=S7FAq9YAfRF0Sga+F9z7AbVlPTBVegvzhtk9l4HKIo4OpFdlnhfFMY/R
-   b6tmbGC0FyOKQzzAdRrnq0O/7OAirg034se767wImstEUKCkM/e+nFldr
-   Mf7FKz0G/0qskY03jlufNvYhmgFlTOzmHlPD3fElE9trZmqesdXnc9PQh
-   6uqBbIImreoiDiGo1mmqXoF8fY760/9JQDDBJOtqCkhI1BtKULTNXB1+a
-   p9LiA36yraNRoMgXQEBDxM8bphOt0qS8tK1TVCuJXSronV21tWa0anI3u
-   Fn8/ruM3UKCrahJyfMFR6Dr4B+g5nVVYbfKX7GqqENxvquVYU7zPds0Vx
-   w==;
-X-CSE-ConnectionGUID: MTkzyZPdT8aKJVA5Xz7xag==
-X-CSE-MsgGUID: yFnp2aI5SRu5+K/IBLP0sg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11153"; a="32104722"
-X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
-   d="scan'208";a="32104722"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2024 06:05:37 -0700
-X-CSE-ConnectionGUID: c0yOUBq+R0GRMjxD0xdVFg==
-X-CSE-MsgGUID: cS9oO9m+Q3+vImdjo/c0JA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
-   d="scan'208";a="55576456"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 03 Aug 2024 06:05:36 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1saERs-0000T4-1c;
-	Sat, 03 Aug 2024 13:05:30 +0000
-Date: Sat, 03 Aug 2024 21:04:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD SUCCESS
- bb4531976523c6e394188c4f4a7eeaf5e9efdd48
-Message-ID: <202408032147.BbBRzQDB-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722690756; c=relaxed/simple;
+	bh=c96LVhp9JoyNASjS2Of8M/+OVK3/PNhYFiwsAMYrMys=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=foz+zH8sPlJ4gh98xiozmRTW+WHZHVDSN/YLmJPRzRGY7MoTPjF1h03Dyb4YAGieVUWhJlfDizvcwfOc+ULWsTB5qwFTWKlWakc3zaw8owDcgBdtntaOKVQW8CD791D8BuLxRl5pBw+4mgxJwMwXHTjRCMjedtduMpTtRml3hCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dRBZsBl6; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so14151647a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 06:12:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722690753; x=1723295553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VDljJdIC24Z3yYuFdP8r14kP7tULTXlmZnFQLBifNiE=;
+        b=dRBZsBl6zT4bWqC/E+BoapO69QP+bfb/CBzitCMIp+JgegbkFXUDLCyP3jO+QQ/LzJ
+         /q4YminDow2jnCJWHnEWkMU2mKSfCjuDw1PtsjnYX+DbwtqvM4o2DRbBW/pcLaKo0HXx
+         m81q7/Ra1tUg44EgoFhgy1fUvqxbRX4kbHUCHSpURTrgqOZQ3jh+LYdpIiVTTEN9XLqR
+         rAuJp/+hCMg9mo6CziSSXih/nEvw8VSVS5xmSGjIOUx8y2dvpBHSEsi7A/s2Np8oBYiH
+         8mZYTamJqnISnAzzzH+LBoqBxR2qRiE/3N1a9RK51WBy3bXs2Srbkc/MI5wme8Fu5XI7
+         Exsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722690753; x=1723295553;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VDljJdIC24Z3yYuFdP8r14kP7tULTXlmZnFQLBifNiE=;
+        b=CB9mOX6lEBptSu2M0D/2OTOg0MJ0G5OmBc+hw4n56mr1vPlQZ7nMZbnSLffHJhxC41
+         gD54e78lYD84ARHb1jtobzcSkGS2/vCLI/ppCSLGlnzSLdjFi8d5roCQXhpFE1x7Azw2
+         SsF6VHIl7Ih+ViK1AibGSdSrKc86JKcM0WbeW3gTs7MkT+FhhbmUZ0OMs3NaMAjFmENq
+         nDpJeg+awWS+hSHNS2/1VgjpaSxOM6gZW7DSUSARRvjcXofZFrcZytIXuQD7lsFzZ9nb
+         9jIWErJDaxVv3KFZxRx9MT4gheY9Caaa7tTJhCFOR1NM1OuGEyh5Hx400xF6apYwG0aJ
+         5Law==
+X-Forwarded-Encrypted: i=1; AJvYcCXlFOcAudQdb7iKs0WICKoe/o2EHE251aQvvlUdXYcrFxACKMtxZnC8oQiaavfRCdecVQjQu2RERQwc4Omh+bMZCp/21uaWQGOKuXHn
+X-Gm-Message-State: AOJu0Yy6Al+qA1rjL2BQfGyC7SnxYQCE2L2wSkQxk3E+NOQ7MyCr/7Kx
+	2FAViqWTM4hV2QUXaWSW7jZqa9218L9djYJoolwR7z2je/WbpbNhosjTKqi5QdE=
+X-Google-Smtp-Source: AGHT+IGYpMfOxPqwJ64RtyyFZ5kTgG9ih53dCridRJnZ+fb5aD/sopJg2iloIbgto3jRSRHoKbfkLw==
+X-Received: by 2002:a50:9fa4:0:b0:5b9:3eaf:5be with SMTP id 4fb4d7f45d1cf-5b93eaf0766mr2320420a12.15.1722690752819;
+        Sat, 03 Aug 2024 06:12:32 -0700 (PDT)
+Received: from dhcp161.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83c32be67sm2326487a12.97.2024.08.03.06.12.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Aug 2024 06:12:32 -0700 (PDT)
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: mbenes@suse.cz,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Petr Pavlu <petr.pavlu@suse.com>
+Subject: [PATCH] function_graph: Fix the ret_stack used by ftrace_graph_ret_addr()
+Date: Sat,  3 Aug 2024 15:09:26 +0200
+Message-ID: <20240803131211.17255-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-branch HEAD: bb4531976523c6e394188c4f4a7eeaf5e9efdd48  irqchip/gic-v4.1: Replace bare number with ID_AA64PFR0_EL1_GIC_V4P1
+When ftrace_graph_ret_addr() is invoked to convert a found stack return
+address to its original value, the function can end up producing the
+following crash:
 
-elapsed time: 1439m
+[   95.442712] BUG: kernel NULL pointer dereference, address: 0000000000000028
+[   95.442720] #PF: supervisor read access in kernel mode
+[   95.442724] #PF: error_code(0x0000) - not-present page
+[   95.442727] PGD 0 P4D 0-
+[   95.442731] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+[   95.442736] CPU: 1 UID: 0 PID: 2214 Comm: insmod Kdump: loaded Tainted: G           OE K    6.11.0-rc1-default #1 67c62a3b3720562f7e7db5f11c1fdb40b7a2857c
+[   95.442747] Tainted: [O]=OOT_MODULE, [E]=UNSIGNED_MODULE, [K]=LIVEPATCH
+[   95.442750] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.2-3-gd478f380-rebuilt.opensuse.org 04/01/2014
+[   95.442754] RIP: 0010:ftrace_graph_ret_addr+0x42/0xc0
+[   95.442766] Code: [...]
+[   95.442773] RSP: 0018:ffff979b80ff7718 EFLAGS: 00010006
+[   95.442776] RAX: ffffffff8ca99b10 RBX: ffff979b80ff7760 RCX: ffff979b80167dc0
+[   95.442780] RDX: ffffffff8ca99b10 RSI: ffff979b80ff7790 RDI: 0000000000000005
+[   95.442783] RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
+[   95.442786] R10: 0000000000000005 R11: 0000000000000000 R12: ffffffff8e9491e0
+[   95.442790] R13: ffffffff8d6f70f0 R14: ffff979b80167da8 R15: ffff979b80167dc8
+[   95.442793] FS:  00007fbf83895740(0000) GS:ffff8a0afdd00000(0000) knlGS:0000000000000000
+[   95.442797] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   95.442800] CR2: 0000000000000028 CR3: 0000000005070002 CR4: 0000000000370ef0
+[   95.442806] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   95.442809] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   95.442816] Call Trace:
+[   95.442823]  <TASK>
+[   95.442896]  unwind_next_frame+0x20d/0x830
+[   95.442905]  arch_stack_walk_reliable+0x94/0xe0
+[   95.442917]  stack_trace_save_tsk_reliable+0x7d/0xe0
+[   95.442922]  klp_check_and_switch_task+0x55/0x1a0
+[   95.442931]  task_call_func+0xd3/0xe0
+[   95.442938]  klp_try_switch_task.part.5+0x37/0x150
+[   95.442942]  klp_try_complete_transition+0x79/0x2d0
+[   95.442947]  klp_enable_patch+0x4db/0x890
+[   95.442960]  do_one_initcall+0x41/0x2e0
+[   95.442968]  do_init_module+0x60/0x220
+[   95.442975]  load_module+0x1ebf/0x1fb0
+[   95.443004]  init_module_from_file+0x88/0xc0
+[   95.443010]  idempotent_init_module+0x190/0x240
+[   95.443015]  __x64_sys_finit_module+0x5b/0xc0
+[   95.443019]  do_syscall_64+0x74/0x160
+[   95.443232]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   95.443236] RIP: 0033:0x7fbf82f2c709
+[   95.443241] Code: [...]
+[   95.443247] RSP: 002b:00007fffd5ea3b88 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+[   95.443253] RAX: ffffffffffffffda RBX: 000056359c48e750 RCX: 00007fbf82f2c709
+[   95.443257] RDX: 0000000000000000 RSI: 000056356ed4efc5 RDI: 0000000000000003
+[   95.443260] RBP: 000056356ed4efc5 R08: 0000000000000000 R09: 00007fffd5ea3c10
+[   95.443263] R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000000
+[   95.443267] R13: 000056359c48e6f0 R14: 0000000000000000 R15: 0000000000000000
+[   95.443272]  </TASK>
+[   95.443274] Modules linked in: [...]
+[   95.443385] Unloaded tainted modules: intel_uncore_frequency(E):1 isst_if_common(E):1 skx_edac(E):1
+[   95.443414] CR2: 0000000000000028
 
-configs tested: 207
-configs skipped: 10
+The bug can be reproduced with kselftests:
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+ cd linux/tools/testing/selftests
+ make TARGETS='ftrace livepatch'
+ (cd ftrace; ./ftracetest test.d/ftrace/fgraph-filter.tc)
+ (cd livepatch; ./test-livepatch.sh)
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                            hsdk_defconfig   gcc-13.2.0
-arc                   randconfig-001-20240803   gcc-13.2.0
-arc                   randconfig-002-20240803   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                         bcm2835_defconfig   clang-20
-arm                        clps711x_defconfig   clang-20
-arm                                 defconfig   gcc-13.2.0
-arm                      jornada720_defconfig   clang-20
-arm                         lpc32xx_defconfig   gcc-14.1.0
-arm                            mps2_defconfig   clang-20
-arm                        mvebu_v7_defconfig   gcc-13.2.0
-arm                             mxs_defconfig   clang-20
-arm                       omap2plus_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240803   gcc-13.2.0
-arm                   randconfig-002-20240803   gcc-13.2.0
-arm                   randconfig-003-20240803   gcc-13.2.0
-arm                   randconfig-004-20240803   gcc-13.2.0
-arm                        realview_defconfig   gcc-13.2.0
-arm                         s3c6400_defconfig   gcc-13.2.0
-arm                         s3c6400_defconfig   gcc-14.1.0
-arm                           sama5_defconfig   clang-20
-arm                        spear3xx_defconfig   gcc-14.1.0
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240803   gcc-13.2.0
-arm64                 randconfig-002-20240803   gcc-13.2.0
-arm64                 randconfig-003-20240803   gcc-13.2.0
-arm64                 randconfig-004-20240803   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240803   gcc-13.2.0
-csky                  randconfig-002-20240803   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240803   clang-18
-i386         buildonly-randconfig-002-20240803   clang-18
-i386         buildonly-randconfig-002-20240803   gcc-12
-i386         buildonly-randconfig-003-20240803   clang-18
-i386         buildonly-randconfig-003-20240803   gcc-12
-i386         buildonly-randconfig-004-20240803   clang-18
-i386         buildonly-randconfig-004-20240803   gcc-12
-i386         buildonly-randconfig-005-20240803   clang-18
-i386         buildonly-randconfig-006-20240803   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240803   clang-18
-i386                  randconfig-001-20240803   gcc-12
-i386                  randconfig-002-20240803   clang-18
-i386                  randconfig-002-20240803   gcc-12
-i386                  randconfig-003-20240803   clang-18
-i386                  randconfig-004-20240803   clang-18
-i386                  randconfig-004-20240803   gcc-12
-i386                  randconfig-005-20240803   clang-18
-i386                  randconfig-006-20240803   clang-18
-i386                  randconfig-011-20240803   clang-18
-i386                  randconfig-011-20240803   gcc-12
-i386                  randconfig-012-20240803   clang-18
-i386                  randconfig-012-20240803   gcc-11
-i386                  randconfig-013-20240803   clang-18
-i386                  randconfig-014-20240803   clang-18
-i386                  randconfig-015-20240803   clang-18
-i386                  randconfig-015-20240803   gcc-12
-i386                  randconfig-016-20240803   clang-18
-i386                  randconfig-016-20240803   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240803   gcc-13.2.0
-loongarch             randconfig-002-20240803   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-m68k                            mac_defconfig   gcc-13.2.0
-m68k                        stmark2_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                     cu1000-neo_defconfig   gcc-14.1.0
-mips                  decstation_64_defconfig   gcc-14.1.0
-mips                           gcw0_defconfig   clang-20
-mips                           ip22_defconfig   gcc-13.2.0
-mips                        maltaup_defconfig   clang-20
-mips                           mtx1_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240803   gcc-13.2.0
-nios2                 randconfig-002-20240803   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240803   gcc-13.2.0
-parisc                randconfig-002-20240803   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                   bluestone_defconfig   gcc-13.2.0
-powerpc                      cm5200_defconfig   gcc-13.2.0
-powerpc                      ep88xc_defconfig   clang-20
-powerpc                        fsp2_defconfig   clang-20
-powerpc                       holly_defconfig   gcc-14.1.0
-powerpc                     ksi8560_defconfig   gcc-13.2.0
-powerpc                   microwatt_defconfig   gcc-14.1.0
-powerpc                 mpc834x_itx_defconfig   gcc-14.1.0
-powerpc               mpc834x_itxgp_defconfig   clang-20
-powerpc                       ppc64_defconfig   gcc-14.1.0
-powerpc               randconfig-001-20240803   gcc-13.2.0
-powerpc               randconfig-003-20240803   gcc-13.2.0
-powerpc                  storcenter_defconfig   gcc-13.2.0
-powerpc                     tqm8560_defconfig   gcc-14.1.0
-powerpc                      tqm8xx_defconfig   clang-20
-powerpc                        warp_defconfig   gcc-13.2.0
-powerpc                 xes_mpc85xx_defconfig   gcc-13.2.0
-powerpc64             randconfig-001-20240803   gcc-13.2.0
-powerpc64             randconfig-002-20240803   gcc-13.2.0
-powerpc64             randconfig-003-20240803   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240803   gcc-13.2.0
-riscv                 randconfig-002-20240803   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240803   gcc-13.2.0
-s390                  randconfig-002-20240803   gcc-13.2.0
-s390                       zfcpdump_defconfig   clang-20
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                             espt_defconfig   gcc-14.1.0
-sh                          r7780mp_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240803   gcc-13.2.0
-sh                    randconfig-002-20240803   gcc-13.2.0
-sh                          rsk7203_defconfig   gcc-13.2.0
-sh                           se7619_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240803   gcc-13.2.0
-sparc64               randconfig-002-20240803   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240803   gcc-13.2.0
-um                    randconfig-002-20240803   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                           alldefconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240803   gcc-12
-x86_64       buildonly-randconfig-002-20240803   gcc-12
-x86_64       buildonly-randconfig-003-20240803   gcc-12
-x86_64       buildonly-randconfig-004-20240803   gcc-12
-x86_64       buildonly-randconfig-005-20240803   gcc-12
-x86_64       buildonly-randconfig-006-20240803   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                randconfig-001-20240803   gcc-12
-x86_64                randconfig-002-20240803   gcc-12
-x86_64                randconfig-003-20240803   gcc-12
-x86_64                randconfig-004-20240803   gcc-12
-x86_64                randconfig-005-20240803   gcc-12
-x86_64                randconfig-006-20240803   gcc-12
-x86_64                randconfig-011-20240803   gcc-12
-x86_64                randconfig-012-20240803   gcc-12
-x86_64                randconfig-013-20240803   gcc-12
-x86_64                randconfig-014-20240803   gcc-12
-x86_64                randconfig-015-20240803   gcc-12
-x86_64                randconfig-016-20240803   gcc-12
-x86_64                randconfig-071-20240803   gcc-12
-x86_64                randconfig-072-20240803   gcc-12
-x86_64                randconfig-073-20240803   gcc-12
-x86_64                randconfig-074-20240803   gcc-12
-x86_64                randconfig-075-20240803   gcc-12
-x86_64                randconfig-076-20240803   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240803   gcc-13.2.0
-xtensa                randconfig-002-20240803   gcc-13.2.0
-xtensa                         virt_defconfig   gcc-13.2.0
+The problem is that ftrace_graph_ret_addr() is supposed to operate on the
+ret_stack of a selected task but wrongly accesses the ret_stack of the
+current task. Specifically, the above NULL dereference occurs when
+task->curr_ret_stack is non-zero, but current->ret_stack is NULL.
 
+Correct ftrace_graph_ret_addr() to work with the right ret_stack.
+
+Reported-by: Miroslav Benes <mbenes@suse.cz>
+Fixes: 7aa1eaef9f42 ("function_graph: Allow multiple users to attach to function graph")
+Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+---
+ kernel/trace/fgraph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index fc205ad167a9..d1d5ea2d0a1b 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -902,7 +902,7 @@ unsigned long ftrace_graph_ret_addr(struct task_struct *task, int *idx,
+ 
+ 	i = *idx ? : task->curr_ret_stack;
+ 	while (i > 0) {
+-		ret_stack = get_ret_stack(current, i, &i);
++		ret_stack = get_ret_stack(task, i, &i);
+ 		if (!ret_stack)
+ 			break;
+ 		/*
+
+base-commit: 17712b7ea0756799635ba159cc773082230ed028
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
