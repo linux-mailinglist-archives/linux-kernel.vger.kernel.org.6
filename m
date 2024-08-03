@@ -1,92 +1,81 @@
-Return-Path: <linux-kernel+bounces-273453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4FB2946976
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:21:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09527946978
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6036E281E33
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 11:21:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 406EDB214D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 11:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1324314E2F6;
-	Sat,  3 Aug 2024 11:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IILy70xm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F9D14EC42;
+	Sat,  3 Aug 2024 11:24:25 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BF64A2F;
-	Sat,  3 Aug 2024 11:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1FA4A2F;
+	Sat,  3 Aug 2024 11:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722684094; cv=none; b=FZqEc7XqL1okuX3aqXA4v70U1GayeQEtieNUgQgzk4rtzQ2hmnuPSYgsvrNOq0zjHi782tIwFnyWcTI9s50QsyLNhYgAPP3Gu0rft8xAJxnCgTVqVCqgkD5N7WIZNo74PC5vumebSAYZ8EUatvZJCl5DpC8Cxo15bQFhagW3+hc=
+	t=1722684265; cv=none; b=OzfbRW6B/gcThSgVEZImhsZQNfKEn6y/UwubGFih32pX+nwO6ZKnabqhlHuhqFeLXFHz/nwOx/rN1geWQPhtkYn6m/9c8jXrcfYviIN61R0fDZwyykNnEtyg7V3f1MxtNfi5cceKUQ0ux00T8fSRiPkgj4UINr73yO8ElT8y7d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722684094; c=relaxed/simple;
-	bh=bjxkaPPNfgEGeJM4wfWPLDeFdjy4DE0IeEkh1Py7n6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mHpH7hqbiJV3f12O7U4I7k41dUU/ODfL9BkL5lmsgIO0stz4AjAG5mC0cs/undxxk9bzl27GRaFdnNJl67mVLhcFirH8G+DiU8mFtG4V7KWeG826P8qreVdvzu/KavFX4LFGcHrutIU8+44Cum99NWyyawb63bQkv2DlLXdRf6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IILy70xm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF8EC116B1;
-	Sat,  3 Aug 2024 11:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722684093;
-	bh=bjxkaPPNfgEGeJM4wfWPLDeFdjy4DE0IeEkh1Py7n6c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IILy70xmDoCTodYnbpz08gL7NGDGgBt5qrxTeJjat2xBBvDVjtmRSYaz3NKiCOihq
-	 YgPn2dXdccL3/MnWiC4P+x4GDaaRYgnCBgZjkl3XsHXRhn7wUFuKd9M45bg++TAcxQ
-	 eW9A978bhOFJ1+AK/pMad/+Z82fjXCPPrVAoEHaxy9kC4YV1jtTYJqCI9FWCPQmoBF
-	 CO9mI0uHibngAe9SmNN5nb0gfjUTpa58yxLG4M8o20H66yWMuJ2Wi0Fgl4dPIu8pkX
-	 euCJ7HU++hy+2rV7C3GofY8zgTFac5uGU9DKbCTPdmChGNxLmIbqZ6VgZ3deXi4Hfs
-	 2xN6jW/N7UUtA==
-Date: Sat, 3 Aug 2024 12:21:27 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
- <jpaulo.silvagoncalves@gmail.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Lars-Peter Clausen
- <lars@metafoo.de>, Francesco Dolcini <francesco.dolcini@toradex.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] iio: adc: ads1119: Fix IRQ flags
-Message-ID: <20240803122127.221da36f@jic23-huawei>
-In-Reply-To: <20240731142016.6immldd7i4y7v2iw@joaog-nb>
-References: <20240731140657.88265-1-francesco@dolcini.it>
-	<20240731142016.6immldd7i4y7v2iw@joaog-nb>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722684265; c=relaxed/simple;
+	bh=QOq6wHXEkhUZJb1Apls6Ho2udiLfWrwewUlY5suZM1M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JhQDnVlTqvalnnFMCAaiO4EUpJ5vk+SXkzUB7c4YVEpwkaCH76lnAO6Jdmx7nJwZ1i4ZyiwHMy6lA2xm7dGPVaD6OnZLsknVeZkGxRrvUrD9xyWAhSreflWWZUffgkdz1XHpiUQZRqRYIAE0LhAMafTiM3TqNTi9XijDBs/+tRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WbgM61R9wz1L9fc;
+	Sat,  3 Aug 2024 19:24:02 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7AC8D1800D0;
+	Sat,  3 Aug 2024 19:24:17 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 3 Aug
+ 2024 19:24:16 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <danieller@nvidia.com>, <yuehaibing@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] ethtool: cmis_cdb: Remove unused declaration ethtool_cmis_page_fini()
+Date: Sat, 3 Aug 2024 19:22:13 +0800
+Message-ID: <20240803112213.4044015-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Wed, 31 Jul 2024 11:20:16 -0300
-Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.com> wrote:
+ethtool_cmis_page_fini() is declared but never implemented.
 
-> On Wed, Jul 31, 2024 at 04:06:57PM +0200, Francesco Dolcini wrote:
-> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> >=20
-> > Remove IRQF_TRIGGER_FALLING flag from irq request, this should come from
-> > the platform firmware and should not be hard-coded into the driver.
-> >=20
-> > Add IRQF_ONESHOT flag to the irq request, the interrupt should not be
-> > re-activated in interrupt context, it should be done only after the
-> > device irq handler run.
-> > =20
->=20
-> Reviwed-by: Jo=C3=A3o Paulo Gon=C3=A7alves <jpaulo.silvagoncalves@gmail.c=
-om>
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/ethtool/cmis.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-For the direction, there is a risk that we will break someone who
-has a firmware that isn't setting this correctly.
-I don't mind doing that if we have another board that needs control
-(and is setting it appropriately) though.  Is that true here, or is
-this just cleanup?
+diff --git a/net/ethtool/cmis.h b/net/ethtool/cmis.h
+index e71cc3e1b7eb..3e7c293af78c 100644
+--- a/net/ethtool/cmis.h
++++ b/net/ethtool/cmis.h
+@@ -108,7 +108,6 @@ void ethtool_cmis_cdb_check_completion_flag(u8 cmis_rev, u8 *flags);
+ 
+ void ethtool_cmis_page_init(struct ethtool_module_eeprom *page_data,
+ 			    u8 page, u32 offset, u32 length);
+-void ethtool_cmis_page_fini(struct ethtool_module_eeprom *page_data);
+ 
+ struct ethtool_cmis_cdb *
+ ethtool_cmis_cdb_init(struct net_device *dev,
+-- 
+2.34.1
 
-If it's cleanup we tend to leave these alone (but not introduce them
-into new code!)
-
-Jonathan
 
