@@ -1,212 +1,375 @@
-Return-Path: <linux-kernel+bounces-273422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3401A946914
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:39:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8C5946915
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9044CB21920
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C801C20FF2
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502FC1ABEA7;
-	Sat,  3 Aug 2024 10:38:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A057173C
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 10:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B40314D6E6;
+	Sat,  3 Aug 2024 10:38:58 +0000 (UTC)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67787173C
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 10:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722681532; cv=none; b=HbUDPO/Io6uYEIIjTnziwHjkvyc/Z1zL33xRqbGbRFRewHHJLAadMS/Bha4i61HfKV4oh/62vMJJkZ86WVo3L31xfUYOYzhbGekZWOhlAI4eVofjnrjTiyb36qyq7UgOw5sK8db8uFTUuXn1sdg60EB73n/p+Q2leo+6+lpdCLE=
+	t=1722681537; cv=none; b=ehLGA7FCvXhvmhDlIzIr4lMUnfx/N4+xHQ4vxtqkwASCvQjz2Uyw2x3cm9c+tDNkEDCWFuKrHeb9bIUCxA42sCquK1P2eD60FNePZj1nicBUY4N8zw7MXQQTHgSw8CEcqe5EDk0J+vJzdYCWYAnorAdmuCVji4t7wZd2EnalbH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722681532; c=relaxed/simple;
-	bh=YGq3TVZtqJrXxBplwOG85CUfLYaIn/S8Akul9NrisN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q7Xd1QimkAIQFP/kkwL8ENswtC8CueNu7O5+Cz2FgKhcBh8tI5akHk2bbeMHtWpEnLazc790PnKW8GOBTzsx+x+2JeiaCSd0Lu1syDdeaEsinHnLUAi0/iHFXZlUS3/WVpmx2LboNKXLYvdbpyH08I0Ar1SaFJpQPYj5iJ8Qb9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED00DDA7;
-	Sat,  3 Aug 2024 03:39:09 -0700 (PDT)
-Received: from [10.163.57.20] (unknown [10.163.57.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9EB953F64C;
-	Sat,  3 Aug 2024 03:38:16 -0700 (PDT)
-Message-ID: <fb9bef18-adf2-4d3a-8205-b22a65b0c6db@arm.com>
-Date: Sat, 3 Aug 2024 16:08:11 +0530
+	s=arc-20240116; t=1722681537; c=relaxed/simple;
+	bh=n0RLKhtqXPqPBkPDsMsC0STMXfcsgdoXZxapptAhMB0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y3RgUjBD59M/JqCP2TKB1ESYke8eTDnWTBFn7ceOM82RqKDBL5AbAcSsSER0O23aNDUArZbdgYVnmHEnqiESwwjfmYi6k9oGPJv3pj80kL6PjW2k1LZDnBBZpVilUmHzn+lP5Il8Tcy664dTm3HQxnJoKSgamBU14IPKmQAcR1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-493e8ef36b4so2502784137.2
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 03:38:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722681535; x=1723286335;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=muAGmuHbBXdTRByfVV7oFSS1BtcMM0muLKhOERFMDxI=;
+        b=E6Q7uRYLwJ6xIGkdT3kfAHKmLJWrVs87A1piTOS/5lU08sSAiDFQunVnRJPwn5mXNB
+         onkQxKyJM9xNRPS+hUoFcn8ATpgoaMNTCJg4Uf9sntRbjOUSd+W8kErbsgxxtJk4oABq
+         QKxb31VHtybEDiiWtUxEFGDoTMmSY1M6wg6niXZs1UsAs8NoUxrNd5lZ3p/Fdy9Gdfpy
+         mOupMOk0MfPibCdhZxQEmcSHgFeURbTyKnWqiBmAkEsKNU54oWxF87DsQrXhfHBMcf4H
+         j2AiqVGDzJ1sPrxe9JuRKvXyP7v1KuGvDBIOrl2LHdDBUZjexsty5J8Q5Q6iKiOGR0LF
+         v7BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJZHB9L934Q5xRzY1tRK3XCSDeUsQz1S01/z6Oi0wqbsdjnOulaB7JMRH/soXliVT+QgFyaHGiERVRzTyPuJApTpB9v1nGKqW8TqAF
+X-Gm-Message-State: AOJu0YxPdeTPBLNoQxuch9pAcwUs7HE8ZOM59o5sKRyeXxBLJM6+tEjE
+	O31CJe0LvS9COrb5L3Q3bnCHuvDBVZ5h74Jny/5yKnf8HgdDxuIbep0eFpiglMsKBBexoZQCrJ2
+	7o4dUhe11ngSZpRXhdooBSAoYTWw=
+X-Google-Smtp-Source: AGHT+IH0h0yRvr9dorbI2WUOUQi38WG0jp3pdwv+elWfjFPN0q+34vtYRmxMPsA1qDeVgws4ae225mgiokXN5NQne+c=
+X-Received: by 2002:a05:6102:d8f:b0:493:b0c2:ad3c with SMTP id
+ ada2fe7eead31-4945bed096cmr9467619137.22.1722681534511; Sat, 03 Aug 2024
+ 03:38:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP &
- HDFGRTR2_GROUP based FGU handling
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240620065807.151540-1-anshuman.khandual@arm.com>
- <20240620065807.151540-11-anshuman.khandual@arm.com>
- <865xu3kh4r.wl-maz@kernel.org> <4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
- <878qyy35e5.wl-maz@kernel.org> <47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
- <86tthhi0nz.wl-maz@kernel.org> <c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
- <86o76c1b8p.wl-maz@kernel.org> <d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
- <86bk2b198o.wl-maz@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <86bk2b198o.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org> <20240730-swap-allocator-v5-6-cb9c148b9297@kernel.org>
+In-Reply-To: <20240730-swap-allocator-v5-6-cb9c148b9297@kernel.org>
+From: Barry Song <baohua@kernel.org>
+Date: Sat, 3 Aug 2024 18:38:41 +0800
+Message-ID: <CAGsJ_4zsUCN2vgN6kgPmWZiORgH2d9g8h9kLBYsL+hVQRZhHCg@mail.gmail.com>
+Subject: Re: [PATCH v5 6/9] mm: swap: allow cache reclaim to skip slot cache
+To: chrisl@kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
+	Hugh Dickins <hughd@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 31, 2024 at 2:49=E2=80=AFPM <chrisl@kernel.org> wrote:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> Currently we free the reclaimed slots through slot cache even
+> if the slot is required to be empty immediately. As a result
+> the reclaim caller will see the slot still occupied even after a
+> successful reclaim, and need to keep reclaiming until slot cache
+> get flushed. This caused ineffective or over reclaim when SWAP is
+> under stress.
+>
+> So introduce a new flag allowing the slot to be emptied bypassing
+> the slot cache.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> ---
+>  mm/swapfile.c | 152 +++++++++++++++++++++++++++++++++++++++++-----------=
+------
+>  1 file changed, 109 insertions(+), 43 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 9b63b2262cc2..4c0fc0409d3c 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -53,8 +53,15 @@
+>  static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
+>                                  unsigned char);
+>  static void free_swap_count_continuations(struct swap_info_struct *);
+> +static void swap_entry_range_free(struct swap_info_struct *si, swp_entry=
+_t entry,
+> +                                 unsigned int nr_pages);
+>  static void swap_range_alloc(struct swap_info_struct *si, unsigned long =
+offset,
+>                              unsigned int nr_entries);
+> +static bool folio_swapcache_freeable(struct folio *folio);
+> +static struct swap_cluster_info *lock_cluster_or_swap_info(
+> +               struct swap_info_struct *si, unsigned long offset);
+> +static void unlock_cluster_or_swap_info(struct swap_info_struct *si,
+> +                                       struct swap_cluster_info *ci);
+>
+>  static DEFINE_SPINLOCK(swap_lock);
+>  static unsigned int nr_swapfiles;
+> @@ -129,8 +136,25 @@ static inline unsigned char swap_count(unsigned char=
+ ent)
+>   * corresponding page
+>   */
+>  #define TTRS_UNMAPPED          0x2
+> -/* Reclaim the swap entry if swap is getting full*/
+> +/* Reclaim the swap entry if swap is getting full */
+>  #define TTRS_FULL              0x4
+> +/* Reclaim directly, bypass the slot cache and don't touch device lock *=
+/
+> +#define TTRS_DIRECT            0x8
+> +
+> +static bool swap_is_has_cache(struct swap_info_struct *si,
+> +                             unsigned long offset, int nr_pages)
+> +{
+> +       unsigned char *map =3D si->swap_map + offset;
+> +       unsigned char *map_end =3D map + nr_pages;
+> +
+> +       do {
+> +               VM_BUG_ON(!(*map & SWAP_HAS_CACHE));
+> +               if (*map !=3D SWAP_HAS_CACHE)
+> +                       return false;
+> +       } while (++map < map_end);
+> +
+> +       return true;
+> +}
+>
+>  /*
+>   * returns number of pages in the folio that backs the swap entry. If po=
+sitive,
+> @@ -141,12 +165,22 @@ static int __try_to_reclaim_swap(struct swap_info_s=
+truct *si,
+>                                  unsigned long offset, unsigned long flag=
+s)
+>  {
+>         swp_entry_t entry =3D swp_entry(si->type, offset);
+> +       struct address_space *address_space =3D swap_address_space(entry)=
+;
+> +       struct swap_cluster_info *ci;
+>         struct folio *folio;
+> -       int ret =3D 0;
+> +       int ret, nr_pages;
+> +       bool need_reclaim;
+>
+> -       folio =3D filemap_get_folio(swap_address_space(entry), swap_cache=
+_index(entry));
+> +       folio =3D filemap_get_folio(address_space, swap_cache_index(entry=
+));
+>         if (IS_ERR(folio))
+>                 return 0;
+> +
+> +       /* offset could point to the middle of a large folio */
+> +       entry =3D folio->swap;
+> +       offset =3D swp_offset(entry);
+> +       nr_pages =3D folio_nr_pages(folio);
+> +       ret =3D -nr_pages;
+> +
+>         /*
+>          * When this function is called from scan_swap_map_slots() and it=
+'s
+>          * called by vmscan.c at reclaiming folios. So we hold a folio lo=
+ck
+> @@ -154,14 +188,50 @@ static int __try_to_reclaim_swap(struct swap_info_s=
+truct *si,
+>          * case and you should use folio_free_swap() with explicit folio_=
+lock()
+>          * in usual operations.
+>          */
+> -       if (folio_trylock(folio)) {
+> -               if ((flags & TTRS_ANYWAY) ||
+> -                   ((flags & TTRS_UNMAPPED) && !folio_mapped(folio)) ||
+> -                   ((flags & TTRS_FULL) && mem_cgroup_swap_full(folio)))
+> -                       ret =3D folio_free_swap(folio);
+> -               folio_unlock(folio);
+> +       if (!folio_trylock(folio))
+> +               goto out;
+> +
+> +       need_reclaim =3D ((flags & TTRS_ANYWAY) ||
+> +                       ((flags & TTRS_UNMAPPED) && !folio_mapped(folio))=
+ ||
+> +                       ((flags & TTRS_FULL) && mem_cgroup_swap_full(foli=
+o)));
+> +       if (!need_reclaim || !folio_swapcache_freeable(folio))
+> +               goto out_unlock;
+> +
+> +       /*
+> +        * It's safe to delete the folio from swap cache only if the foli=
+o's
+> +        * swap_map is HAS_CACHE only, which means the slots have no page=
+ table
+> +        * reference or pending writeback, and can't be allocated to othe=
+rs.
+> +        */
+> +       ci =3D lock_cluster_or_swap_info(si, offset);
+> +       need_reclaim =3D swap_is_has_cache(si, offset, nr_pages);
+> +       unlock_cluster_or_swap_info(si, ci);
+> +       if (!need_reclaim)
+> +               goto out_unlock;
+> +
+> +       if (!(flags & TTRS_DIRECT)) {
+> +               /* Free through slot cache */
+> +               delete_from_swap_cache(folio);
+> +               folio_set_dirty(folio);
+> +               ret =3D nr_pages;
+> +               goto out_unlock;
+>         }
+> -       ret =3D ret ? folio_nr_pages(folio) : -folio_nr_pages(folio);
+> +
+> +       xa_lock_irq(&address_space->i_pages);
+> +       __delete_from_swap_cache(folio, entry, NULL);
+> +       xa_unlock_irq(&address_space->i_pages);
+> +       folio_ref_sub(folio, nr_pages);
+> +       folio_set_dirty(folio);
+> +
+> +       spin_lock(&si->lock);
+> +       /* Only sinple page folio can be backed by zswap */
+> +       if (!nr_pages)
+> +               zswap_invalidate(entry);
 
-On 8/2/24 16:29, Marc Zyngier wrote:
-> On Fri, 02 Aug 2024 10:25:44 +0100,
-> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
->>
->> On 8/1/24 21:33, Marc Zyngier wrote:
->>> On Thu, 01 Aug 2024 11:46:22 +0100,
->>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
-> [...]
-> 
->>>> +	SR_FGT(SYS_SPMACCESSR_EL1,	HDFGRTR2, nSPMACCESSR_EL1, 0),
->>>
->>> This (and I take it most of the stuff here) is also gated by
->>> MDCR_EL2.SPM, which is a coarse grained trap. That needs to be
->>> described as well. For every new register that you add here.
->>
->> I did not find a SPM field in MDCR_EL2 either in latest ARM ARM or in
->> the latest XML. But as per current HDFGRTR2_EL2 description the field
->> nSPMACCESSR_EL1 is gated by FEAT_SPMU feature, which is being checked
->> via ID_AA64DFR1_EL1.PMU when required. So could you please give some
->> more details.
-> 
-> I misspelled it. It is MDCR_EL2.EnSPM.
-> 
-> And you are completely missing the point. It is not about
-> HDFGRTR2_EL2, but about SPMACCESSR_EL1 (and all its little friends).
-> 
-> To convince yourself, just look at the pseudocode for SPMACCESSR_EL1,
-> limited to an EL1 access:
-> 
-> elsif PSTATE.EL == EL1 then
->     if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
->         UNDEFINED;
->     elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMACCESSR_EL1 == '0') then
->         AArch64.SystemAccessTrap(EL2, 0x18);
->     elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
->         AArch64.SystemAccessTrap(EL2, 0x18);
->     elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
->         if EL3SDDUndef() then
->             UNDEFINED;
->         else
->             AArch64.SystemAccessTrap(EL3, 0x18);
->     elsif EffectiveHCR_EL2_NVx() IN {'111'} then
->         X[t, 64] = NVMem[0x8E8];
->     else
->         X[t, 64] = SPMACCESSR_EL1;
-> 
-> 
-> Can you spot the *TWO* conditions where we take an exception to EL2
-> with 0x18 as the EC?
-> 
-> - One is when HDFGxTR2_EL2.nSPMACCESSR_EL1 == '0': that's a fine
->   grained trap.
-> - The other is when MDCR_EL2.EnSPM == '0': that's a coarse grained
->   trap.
-> 
-> Both conditions need to be captured in the various tables in this
-> file, for each and every register that you describe.
+I am trying to figure out if I am mad :-)  Does nr_pages =3D=3D 0 means sin=
+gle
+page folio?
 
-Ahh, got it now. Because now KVM knows about SPMACCESSR_EL1 register,
-access to that register must also be enabled via both fine grained trap
-(HDFGxTR2_EL2.nSPMACCESSR_EL1) and coarse grained trap (MDCR_EL2.EnSPM).
-
-For all the registers that are being added via FEAT_FGT2 here in this
-patch, their corresponding CGT based path also needs to be enabled via
-corresponding CGT_MDCR_XXX groups.
-
-> 
-> [...]
-> 
->>> Now, the main issues are that:
->>>
->>> - you're missing the coarse grained trapping for all the stuff you
->>>   have just added. It's not a huge amount of work, but you need, for
->>>   each register, to describe what traps apply to it. The fine grained
->>>   stuff is most, but not all of it. There should be enough of it
->>>   already to guide you through it.
->>
->> Coarse grained trapping for FEAT_FGT2 based fine grained registers ?
-> 
-> Not for FEAT_FGT2. For the registers that FEAT_FGT2 traps. Can you see
-> the difference?
-
-Understood, for example PMIAR_EL1 register which FEAT_FGT2 now traps via
-
-SR_FGT(SYS_PMIAR_EL1,           HDFGRTR2, nPMIAR_EL1, 0),
-
-also needs to have corresponding coarse grained trap.
-
-SR_TRAP(SYS_PMIAR_EL1,          CGT_MDCR_TPM),
-
-Similarly corresponding SR_TRAP() needs to be covered for all registers
-that are now being trapped with FEAT_FGT2.
-
-Example code snippet.
-
-........
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(8), CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(9), CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(10),        CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(11),        CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(12),        CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(13),        CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(14),        CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(15),        CGT_MDCR_EnSPM),
-+
-+       SR_TRAP(SYS_SPMCGCR0_EL1,       CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMCGCR1_EL1,       CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMACCESSR_EL1,     CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMCFGR_EL1,        CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMCNTENCLR_EL0,    CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMCNTENSET_EL0,    CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMCR_EL0,          CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMDEVAFF_EL1,      CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMDEVARCH_EL1,     CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMIIDR_EL1,        CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMINTENCLR_EL1,    CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMINTENSET_EL1,    CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMOVSCLR_EL0,      CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMOVSSET_EL0,      CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMSCR_EL1,         CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMSELR_EL0,        CGT_MDCR_EnSPM),
-........
-
-> 
->> Afraid, did not understand this. Could you please give some pointers
->> on similar existing code.
-> 
-> See above. And if you want some example, just took at the file you are
-> patching already. Look at how MDCR_EL2 conditions the trapping of all
-> the debug, PMU, AMU registers, for example. There is no shortage of
-> them.
-
-Right, I understand your point now. I am planning to send out the following
-patches (in reply to the current thread) for your review, before sending out
-the entire series as V1.
-
-- Patch adding VNCR details for virtual EL2 access
-- Patch adding FEAT_FGT2 based FGU handling
-- Patch adding corresponding CGT handling for registers being added above
-
-Although, can skip that step and just send out the series directly if you so
-prefer. Please do suggest. Thanks for all the detailed information above.
-
-- Anshuman
+> +       swap_entry_range_free(si, entry, nr_pages);
+> +       spin_unlock(&si->lock);
+> +       ret =3D nr_pages;
+> +out_unlock:
+> +       folio_unlock(folio);
+> +out:
+>         folio_put(folio);
+>         return ret;
+>  }
+> @@ -903,7 +973,7 @@ static int scan_swap_map_slots(struct swap_info_struc=
+t *si,
+>         if (vm_swap_full() && si->swap_map[offset] =3D=3D SWAP_HAS_CACHE)=
+ {
+>                 int swap_was_freed;
+>                 spin_unlock(&si->lock);
+> -               swap_was_freed =3D __try_to_reclaim_swap(si, offset, TTRS=
+_ANYWAY);
+> +               swap_was_freed =3D __try_to_reclaim_swap(si, offset, TTRS=
+_ANYWAY | TTRS_DIRECT);
+>                 spin_lock(&si->lock);
+>                 /* entry was freed successfully, try to use this again */
+>                 if (swap_was_freed > 0)
+> @@ -1340,9 +1410,6 @@ void put_swap_folio(struct folio *folio, swp_entry_=
+t entry)
+>         unsigned long offset =3D swp_offset(entry);
+>         struct swap_cluster_info *ci;
+>         struct swap_info_struct *si;
+> -       unsigned char *map;
+> -       unsigned int i, free_entries =3D 0;
+> -       unsigned char val;
+>         int size =3D 1 << swap_entry_order(folio_order(folio));
+>
+>         si =3D _swap_info_get(entry);
+> @@ -1350,23 +1417,14 @@ void put_swap_folio(struct folio *folio, swp_entr=
+y_t entry)
+>                 return;
+>
+>         ci =3D lock_cluster_or_swap_info(si, offset);
+> -       if (size > 1) {
+> -               map =3D si->swap_map + offset;
+> -               for (i =3D 0; i < size; i++) {
+> -                       val =3D map[i];
+> -                       VM_BUG_ON(!(val & SWAP_HAS_CACHE));
+> -                       if (val =3D=3D SWAP_HAS_CACHE)
+> -                               free_entries++;
+> -               }
+> -               if (free_entries =3D=3D size) {
+> -                       unlock_cluster_or_swap_info(si, ci);
+> -                       spin_lock(&si->lock);
+> -                       swap_entry_range_free(si, entry, size);
+> -                       spin_unlock(&si->lock);
+> -                       return;
+> -               }
+> +       if (size > 1 && swap_is_has_cache(si, offset, size)) {
+> +               unlock_cluster_or_swap_info(si, ci);
+> +               spin_lock(&si->lock);
+> +               swap_entry_range_free(si, entry, size);
+> +               spin_unlock(&si->lock);
+> +               return;
+>         }
+> -       for (i =3D 0; i < size; i++, entry.val++) {
+> +       for (int i =3D 0; i < size; i++, entry.val++) {
+>                 if (!__swap_entry_free_locked(si, offset + i, SWAP_HAS_CA=
+CHE)) {
+>                         unlock_cluster_or_swap_info(si, ci);
+>                         free_swap_slot(entry);
+> @@ -1526,16 +1584,7 @@ static bool folio_swapped(struct folio *folio)
+>         return swap_page_trans_huge_swapped(si, entry, folio_order(folio)=
+);
+>  }
+>
+> -/**
+> - * folio_free_swap() - Free the swap space used for this folio.
+> - * @folio: The folio to remove.
+> - *
+> - * If swap is getting full, or if there are no more mappings of this fol=
+io,
+> - * then call folio_free_swap to free its swap space.
+> - *
+> - * Return: true if we were able to release the swap space.
+> - */
+> -bool folio_free_swap(struct folio *folio)
+> +static bool folio_swapcache_freeable(struct folio *folio)
+>  {
+>         VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+>
+> @@ -1543,8 +1592,6 @@ bool folio_free_swap(struct folio *folio)
+>                 return false;
+>         if (folio_test_writeback(folio))
+>                 return false;
+> -       if (folio_swapped(folio))
+> -               return false;
+>
+>         /*
+>          * Once hibernation has begun to create its image of memory,
+> @@ -1564,6 +1611,25 @@ bool folio_free_swap(struct folio *folio)
+>         if (pm_suspended_storage())
+>                 return false;
+>
+> +       return true;
+> +}
+> +
+> +/**
+> + * folio_free_swap() - Free the swap space used for this folio.
+> + * @folio: The folio to remove.
+> + *
+> + * If swap is getting full, or if there are no more mappings of this fol=
+io,
+> + * then call folio_free_swap to free its swap space.
+> + *
+> + * Return: true if we were able to release the swap space.
+> + */
+> +bool folio_free_swap(struct folio *folio)
+> +{
+> +       if (!folio_swapcache_freeable(folio))
+> +               return false;
+> +       if (folio_swapped(folio))
+> +               return false;
+> +
+>         delete_from_swap_cache(folio);
+>         folio_set_dirty(folio);
+>         return true;
+> @@ -1640,7 +1706,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int =
+nr)
+>                          * to the next boundary.
+>                          */
+>                         nr =3D __try_to_reclaim_swap(si, offset,
+> -                                             TTRS_UNMAPPED | TTRS_FULL);
+> +                                                  TTRS_UNMAPPED | TTRS_F=
+ULL);
+>                         if (nr =3D=3D 0)
+>                                 nr =3D 1;
+>                         else if (nr < 0)
+>
+> --
+> 2.46.0.rc1.232.g9752f9e123-goog
+>
 
