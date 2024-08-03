@@ -1,194 +1,112 @@
-Return-Path: <linux-kernel+bounces-273321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEBA94676E
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:32:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D87946772
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9F0B1C20C9D
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992791F21B72
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D882E657;
-	Sat,  3 Aug 2024 04:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2074A78C60;
+	Sat,  3 Aug 2024 04:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPbjXkxb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/MCcpvv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5DECA40;
-	Sat,  3 Aug 2024 04:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C91130A54;
+	Sat,  3 Aug 2024 04:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722659528; cv=none; b=VHDAiahUid00TZRBJ3O64YjWIL9EoAhzpNc5cDxvxOwh0Jpg3RFC+B5+egfaIll7lgux9ebwO1jR+Tugfw3Hbb69HUY/Bk0jPtEMVi2HofqOKIerIc9UtCgA0Yhxi4iba43heRr/I7VKF5pTAEmaM/drd27c/e4SwbXCCDdt+Wg=
+	t=1722659599; cv=none; b=FDImrvmQcSH2QAYmpd+LedJj2A09IZ2wor+YyicmBj5s4HtsgGy8xFF4w85EafvxS8YqDgKc0s8Y4od6FvSYniPA7zg/7B2/5sRBNazvDCJOln7VFL7ntiQ+YBuEXN3owSQjpW5N3HS32hMbeyWDmnGtcW6lB3cvp9O52LQZhAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722659528; c=relaxed/simple;
-	bh=AMYmJIWBDLuRET0sJCM296xo2XX40//f3XJ2fojhobc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hGSWIvsYndp7SwBEBpwg0EYBx7HrKIH2EzRGygAYBjv03Z2cavLrfrhyaC6vRNASo6WYMjMfrcCsuA0mTvzux+KvI0i2GYHioKD+bc34WJQ0Ot18TAV9ZsFjUioWnaGfsGS5DlYKmjkkVoEXwAkt8M0tj5GAw50dex3H032qqx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPbjXkxb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BCDFC116B1;
-	Sat,  3 Aug 2024 04:32:08 +0000 (UTC)
+	s=arc-20240116; t=1722659599; c=relaxed/simple;
+	bh=pKpCcF4Ikahp6VdzkjPmida2UGTxrv8uaII3qSDhGkQ=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=hTQJhFpRNppZVMX/+iSiSR76fzzUykYI4H/Kl04y6kumDgOjl/jBaY8I+MghyVq4LMJZ/OLDhRyO0JO4SxKXFsR4joFJuizwTlHsJC1xTpAWugf6Pv4bnVzis7y2j52Nxl+YF7iN9eXr/eP1qawW9DTuLRdWJkrz1Xfux7rf6gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/MCcpvv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3DEC116B1;
+	Sat,  3 Aug 2024 04:33:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722659528;
-	bh=AMYmJIWBDLuRET0sJCM296xo2XX40//f3XJ2fojhobc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=vPbjXkxbaUTpAh6IVPq0ipgwWIe+gKhaPB/fyCWFiCaNag7UkCrLC3jn+BWkGpwS+
-	 NViiusqHJ7awStJ2dqHTCErC31Yi9WWJLtLhHigKGagc0IK28TfQIdH1xhuwU1fwls
-	 PzZ3Vx3sZnC37kWFNoeG7hbyfkOQMTU4CmgawEfOPxbdsqdoHoZ470YFF+PqiYFSUp
-	 2D2+leduBDwsfkww59wueth+rLtbn0LyeJRjpUrOZaMjEHZncZn8GLvhFxhGz1RMDL
-	 bz2l0uLPwe1wQfoUSTOkdy5Lwdz2Zqr3B2/JT4WsUOq3Yjp9JruXUEZhE3QXnRSxyC
-	 j6vA7/G69IwBQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 094BDCE08FF; Fri,  2 Aug 2024 21:32:08 -0700 (PDT)
-Date: Fri, 2 Aug 2024 21:32:08 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: RCU-Task[-Trace] VS EQS (was Re: [PATCH v3 13/25]
- context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*())
-Message-ID: <6c915a8d-983a-4cbb-8d89-01e326a16876@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240724144325.3307148-14-vschneid@redhat.com>
- <ZqJiDlKtD4wvsv1j@localhost.localdomain>
- <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
- <ZqlmjVyWXIneklCm@pavilion.home>
- <30c6d4aa-7598-4dc1-8592-7533d64714c2@paulmck-laptop>
- <Zqot4NpepOORtNzv@localhost.localdomain>
+	s=k20201202; t=1722659598;
+	bh=pKpCcF4Ikahp6VdzkjPmida2UGTxrv8uaII3qSDhGkQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=c/MCcpvvpitEdeZCrrWC2G9BT0nZj5dh+2DWEdBQF+ZTtfboxhOk7rsDhf1yqkBXw
+	 FQymZ6GrsJHyLVE2DsYwXFeiA6ANYdBbZBXFN9H1WVCghwalARO/JYcj1y1mWA7NLl
+	 CZB9R4d4Kk2kDGQY6xHonCFRJbifvJ+dWdZ6qCRjD3TndtARNClFNDuaVwCpPthgSV
+	 uaqzhMOksXkvBzGNpaVw40rojGiw73TCBb+59GGswRmNFqnjCgdBls7+ovO7Y43Yvi
+	 1Ad19tF3XyiU7CfozKWZBsdRbq1uIYEKqH0PAB1ArCYt0y85uyD36ukrfTx+EXBYMG
+	 X9hc3TIfvUzYg==
+Date: Fri, 02 Aug 2024 22:33:17 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zqot4NpepOORtNzv@localhost.localdomain>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: cros-qcom-dts-watchers@chromium.org, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, quic_vbadigan@quicinc.com, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, andersson@kernel.org, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-pci@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, devicetree@vger.kernel.org
+In-Reply-To: <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
+Message-Id: <172265959745.856785.3854064719699930724.robh@kernel.org>
+Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
 
-On Wed, Jul 31, 2024 at 02:28:16PM +0200, Frederic Weisbecker wrote:
-> Le Tue, Jul 30, 2024 at 03:39:44PM -0700, Paul E. McKenney a écrit :
-> > On Wed, Jul 31, 2024 at 12:17:49AM +0200, Frederic Weisbecker wrote:
-> > > Le Tue, Jul 30, 2024 at 07:23:58AM -0700, Paul E. McKenney a écrit :
-> > > > On Thu, Jul 25, 2024 at 04:32:46PM +0200, Frederic Weisbecker wrote:
-> > > > > Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a écrit :
-> > > > > > -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
-> > > > > > -static __always_inline void rcu_dynticks_task_trace_enter(void)
-> > > > > > +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
-> > > > > > +static __always_inline void rcu_task_trace_exit(void)
-> > > > > 
-> > > > > Before I proceed on this last one, a few questions for Paul and others:
-> > > > > 
-> > > > > 1) Why is rcu_dynticks_task_exit() not called while entering in NMI?
-> > > > >    Does that mean that NMIs aren't RCU-Task read side critical sections?
-> > > > 
-> > > > Because Tasks RCU Rude handles that case currently.  So good catch,
-> > > > because this might need adjustment when we get rid of Tasks RCU Rude.
-> > > > And both rcu_dynticks_task_enter() and rcu_dynticks_task_exit() look safe
-> > > > to invoke from NMI handlers.  Memory ordering needs checking, of course.
-> > > > 
-> > > > Except that on architectures defining CONFIG_ARCH_WANTS_NO_INSTR, Tasks
-> > > > RCU should instead check the ct_kernel_enter_state(RCU_DYNTICKS_IDX)
-> > > > state, right?  And on those architectures, I believe that
-> > > > rcu_dynticks_task_enter() and rcu_dynticks_task_exit() can just be no-ops.
-> > > > Or am I missing something here?
-> > > 
-> > > I think rcu_dynticks_task_enter() and rcu_dynticks_task_exit() are
-> > > still needed anyway because the target task can migrate. So unless the rq is locked,
-> > > it's hard to match a stable task_cpu() with the corresponding RCU_DYNTICKS_IDX.
-> > 
-> > Can it really migrate while in entry/exit or deep idle code?  Or am I
-> > missing a trick here?
-> 
-> No but it can migrate before or after EQS. So we need to handle situations like:
-> 
->  == CPU 0 ==                      == CPU 1 ==
->                                   // TASK A is on rq
->                                   set_task_cpu(TASK A, 0)
-> // TASK B runs
-> ct_user_enter()
-> ct_user_exit()
-> 
-> //TASK A runs
-> 
-> 
-> It could be something like the following:
-> 
-> 
-> int rcu_tasks_nohz_full_holdout(struct task_struct *t)
-> {
-> 	int cpu;
-> 	int snap;
-> 
-> 	cpu = task_cpu(t);
-> 
-> 	/* Don't miss EQS exit if the task migrated out and in */
-> 	smp_rmb()
-> 
-> 	snap = ct_dynticks_cpu(cpu);
-> 	if (snap & RCU_DYNTICKS_IDX)
-> 		return true;
-> 
-> 	/* Check if it's the actual task running */
-> 	smp_rmb()
-> 
-> 	if (rcu_dereference_raw(cpu_curr(cpu)) != t)
-> 		return true;
-> 
-> 	/* Make sure the task hasn't migrated in after the above EQS */
-> 	smp_rmb()
-> 
-> 	
-> 	return ct_dynticks_cpu(cpu) != snap;
-> }
-> 
-> But there is still a risk that ct_dynticks wraps before the last test. So
-> we would need task_call_func() if task_cpu() is in nohz_full mode.
 
-Good point, migration just before or just after can look much the same
-as migrating during..
-
-> > > > > 2) Looking further into CONFIG_TASKS_TRACE_RCU_READ_MB=y, it seems to
-> > > > >    allow for uses of rcu_read_[un]lock_trace() while RCU is not watching
-> > > > >    (EQS). Is it really a good idea to support that? Are we aware of any
-> > > > >    such potential usecase?
-> > > > 
-> > > > I hope that in the longer term, there will be no reason to support this.
-> > > > Right now, architectures not defining CONFIG_ARCH_WANTS_NO_INSTR must
-> > > > support this because tracers really can attach probes where RCU is
-> > > > not watching.
-> > > > 
-> > > > And even now, in architectures defining CONFIG_ARCH_WANTS_NO_INSTR, I
-> > > > am not convinced that the early incoming and late outgoing CPU-hotplug
-> > > > paths are handled correctly.  RCU is not watching them, but I am not so
-> > > > sure that they are all marked noinstr as needed.
-> > > 
-> > > Ok I see...
-> > 
-> > If need be, the outgoing-CPU transition to RCU-not-watching could be
-> > delayed into arch-specific code.  We already allow this for the incoming
-> > transition.
+On Sat, 03 Aug 2024 08:52:47 +0530, Krishna chaitanya chundru wrote:
+> Add binding describing the Qualcomm PCIe switch, QPS615,
+> which provides Ethernet MAC integrated to the 3rd downstream port
+> and two downstream PCIe ports.
 > 
-> That's a lot of scary architectures code to handle :-)
-> And how do we determine which place is finally safe to stop watching?
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  .../devicetree/bindings/pci/qcom,qps615.yaml       | 191 +++++++++++++++++++++
+>  1 file changed, 191 insertions(+)
+> 
 
-Huh.  One reason for the current smp_call_function_single() in
-cpuhp_report_idle_dead() was some ARM32 CPUs that shut down caching on
-their way out.  this made it impossible to use shared-variable-based
-CPU-dead notification.  I wonder if Arnd's deprecation schedule
-for ARM32-based platforms will allow us to go back to shared-memory
-notification, which might make this sort of thing easier.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-							Thanx, Paul
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:33.26-101.19: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0: PCI bus number 1 out of range, expected (0 - 0)
+Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:52.30-60.23: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@1,0: PCI bus number 2 out of range, expected (0 - 0)
+Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:62.30-70.23: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@2,0: PCI bus number 2 out of range, expected (0 - 0)
+Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:72.30-100.23: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@3,0: PCI bus number 2 out of range, expected (0 - 0)
+Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:81.39-89.32: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@3,0/pcie@0,0: PCI bus number 4 out of range, expected (0 - 0)
+Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:91.39-99.32: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@3,0/pcie@0,1: PCI bus number 4 out of range, expected (0 - 0)
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240803-qps615-v2-1-9560b7c71369@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
