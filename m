@@ -1,86 +1,304 @@
-Return-Path: <linux-kernel+bounces-273317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9E6946751
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:09:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7387946752
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:15:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770E11F217EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5309F28267E
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A545929414;
-	Sat,  3 Aug 2024 04:09:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164A12B9A6;
+	Sat,  3 Aug 2024 04:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iPOMoSLF"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C001C6A7
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 04:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285B6225DA
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 04:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722658146; cv=none; b=fo3hrbLgsLIMBHOFeRzyuyE8me7NnAYXXR9cDLbzr8gbypXvvohzOrNdm5slauPpbUbq3CDyeRqcDXMYjXV8Z2vQLVH07HaCqll8JnBWPiTuUCH68c5YBrS2X3HKcmVIgj5Cy6CQFOpelXwbzJCBZ3hbj0mba4SzZtA98+SbYUM=
+	t=1722658498; cv=none; b=p40S5VYhVimY0eh4eBQdR9WSsoTB6De9dakKbpjNnuOIvKp0sSEDCAHhBymViOHScpp+QTY6+G6YDlpoq5OVWObNy2NHuiYgZpx/Gyl927OW9OVhJU96flZe7cFgR8wt5WXSykorE1ST73CjjjLOaKQ2lqRI7icx94inewtfX0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722658146; c=relaxed/simple;
-	bh=G2QLznKCNxkfXNbVxecnOtA0jV19W52S8l/+aWl96ig=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HAdke/vuPKoLvGU6TkZ8UewGrO7PawiNjnDht7zBZDjWAHJN1O66eH3ZPsm9CsUnzH8hx1Yf8cfOdDWAEEqJY4qFSQtO4F65JJdA8x7T7T0N5/vlngYKFItYsm8ezFV/xrN/zwcTqu5eYpYUD1BectjMCeR1HsM8aRiACmyVnrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f9612b44fso1214029139f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 21:09:04 -0700 (PDT)
+	s=arc-20240116; t=1722658498; c=relaxed/simple;
+	bh=nEEtWSo1PsNPKdpT9wCPBJNJ6ySmT7t6mz+8Sp2UJCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ElZBvdYttGZ9NUJuDhLMH4p1coMSXlx0VQ+W5wvuthsmoWxQYGkiP3Xkg866E6a1gK87nzVNxU80fAcOUY0W8SOSu7LEWjUKkvAoe2R58g6zbKl115VqG5vFihWQYMmBQxRf43Rqr+LQNJdUHRur8XEylGCKjNMLzc3339S+r+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iPOMoSLF; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7d2a9a23d9so1069067666b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 21:14:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722658494; x=1723263294; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q3VJn+k5RR3eFH5H5UkduuJdBdQKbGUZ1f4tj4+JJqU=;
+        b=iPOMoSLF3TfgHcmlGbYA/GPTxNmtWJZG6RIGZHKwntOszHjlYGOg3d8yIWdY7Q2FZw
+         8NBAqoZI6nPaQzm3EHgw361r9n4Bd2TTo/gfCpWTbR6ogCNE4bZLznxIP//L8oGxHRrs
+         3V2Cwug5pPk6TbH8Z4UzjtOm0YfninLN322EDea8Yjd5533OPNzAMnmg1rKzQmjNQeIk
+         c91OPl0f7N0sD83oE30n/4GwHmpMlqagbiEMLykvfQHTAC8EZY6Tv+tyGCcpPpiABcjs
+         nQIhME6ckuUBVmtr3dxrVpt/wGzbaHP/IRAv0VElLcYFDR3sF2T24Nfplh+/FBk69ldF
+         jRwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722658144; x=1723262944;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9kUejpJ8rapsm3foCfc6I1wyDAKziXGXRtittmfSojE=;
-        b=wJRIOisysRos28h+pQ1HaBZWJONNptR/Z8vfcWgF5ikGrUoZRg5RPN9pF2EMMHfxKv
-         bCNtqnFQlyQOxprmz3r3+o+QyMXA0+mYnMOCfjuMfKVnEnKTYLbnewPBfXgQMwImYzz7
-         IzfOjEwmiDvd/MQmEqrN/X+r+f1SyTn5V5O7d5F3NKpLcZnmzfws0kWTTzj2aZdY+cft
-         3jLRq358mGMrTAV0kBXTpKJ/pRkPPzYnT5Hp2LOJm4vC4DWNIK8AdG0NIpJGyXyFNay/
-         YX+NgcIT/lRN2/xL0Up0ncyxROzaO6wFHcMmmv7+dkiJ3am/418RVQUBGkXup/xTg8Lf
-         Pyjw==
-X-Gm-Message-State: AOJu0YyvQLr07VHcPRziKQXdliuj35sJnCwXWcJDa0lA5GqEBexilacS
-	yLt670Fzhe9749N8gdpzu2lRWLyLEs2SGGWn7Gfoy9zJgJ1xsDpLKClVWsLkSx9pl1WMoet/X3k
-	f5rUI8VPSiXNAppjqdakzS6xkTLjEsH5DXOVuMPFdcgtTKG+vYBquc+E=
-X-Google-Smtp-Source: AGHT+IHPBcc2NymRI2XTCrreWVBHhaBEZ4/Ewr5XcbmZ1PSl8rSrqj/ZFRWUe3Vdm7mo0f3nWeZ68ywgg1dXpQeYdkj5Pkr11eab
+        d=1e100.net; s=20230601; t=1722658494; x=1723263294;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q3VJn+k5RR3eFH5H5UkduuJdBdQKbGUZ1f4tj4+JJqU=;
+        b=mYe6DbKBpV2LJ3+qqthjCTVqSJaaOFV+9L9ON/FqQ0aNPBzRlcSz72CN6pRNe+7ZBt
+         Jg1wLRj2x7HQzXTuur2NTtKaApmtxjNYcStnt+V03nY/vnsIS5TKXuyn7on6qTP5/dhE
+         dl3UHbUCwqSa7eb/DK+oalcoO5S5Bcxdo4T9iM6z8F7NTnPRn6QNc9SRU1slVD4kTbdM
+         JWvEmUsypf7p/wTuhrdy9U7DM1rQdgbYzMjUGTXSG3vbsLM8tLZF+fq/pLFBiIUZMOlG
+         sA4mX+4qZiN1SsPZDu4ZSdO7RHTgRADKikyHnYoXdgY+0UVeg2gcRGWCt3vBrB3m0uYF
+         4vVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOuCqQ7cZXQ7FgQp/mFVluTeZm0rFER6oc6Bfh9zI7OeUbny69Kdt4Vl0lcg9J4imySeXxzJCz0mihfwh0RokL1CubUnDSJs2xCqal
+X-Gm-Message-State: AOJu0YzEaCBHWNbfW/pg5dRSxO2CKV2Jlgb4ZIXBBjUKx7QWcsM3X5ku
+	vmu7TzsVETA1nRE2psq1keNLZnTp28qZtIMrkXEpuWWAqsssoJ16/Eb673k1U2IBO4aXOoyxmIH
+	JZyIn+KsoXGQYqWLL4vCRuFvuqDbmt5ST2CcD
+X-Google-Smtp-Source: AGHT+IEoMBpJZeESnd2W4YFmxshI61AgRv6W4RcOIJNoZalizIpnQjegykPGDNtfsMZsnz7LWshTQxgWgDf0htFSqGw=
+X-Received: by 2002:a17:906:da8a:b0:a77:dd1c:6274 with SMTP id
+ a640c23a62f3a-a7dc5124d64mr281729466b.69.1722658493451; Fri, 02 Aug 2024
+ 21:14:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:154b:b0:397:95c7:6f72 with SMTP id
- e9e14a558f8ab-39b1fc8baecmr4190805ab.6.1722658143765; Fri, 02 Aug 2024
- 21:09:03 -0700 (PDT)
-Date: Fri, 02 Aug 2024 21:09:03 -0700
-In-Reply-To: <20240803031347.1275196-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ba9969061ebf9ae7@google.com>
-Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
-From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20240731004918.33182-1-flintglass@gmail.com> <20240731004918.33182-2-flintglass@gmail.com>
+In-Reply-To: <20240731004918.33182-2-flintglass@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 2 Aug 2024 21:14:17 -0700
+Message-ID: <CAJD7tkaScz+SbB90Q1d5mMD70UfM2a-J2zhXDT9sePR7Qap45Q@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] mm: zswap: fix global shrinker memcg iteration
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jul 30, 2024 at 5:49=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
+>
+> This patch fixes an issue where the zswap global shrinker stopped
+> iterating through the memcg tree.
+>
+> The problem was that shrink_worker() would restart iterating memcg tree
+> from the tree root, considering an offline memcg as a failure, and abort
+> shrinking after encountering the same offline memcg 16 times even if
+> there is only one offline memcg. After this change, an offline memcg in
+> the tree is no longer considered a failure. This allows the shrinker to
+> continue shrinking the other online memcgs regardless of whether an
+> offline memcg exists, gives higher zswap writeback activity.
+>
+> To avoid holding refcount of offline memcg encountered during the memcg
+> tree walking, shrink_worker() must continue iterating to release the
+> offline memcg to ensure the next memcg stored in the cursor is online.
+>
+> The offline memcg cleaner has also been changed to avoid the same issue.
+> When the next memcg of the offlined memcg is also offline, the refcount
+> stored in the iteration cursor was held until the next shrink_worker()
+> run. The cleaner must release the offline memcg recursively.
+>
+> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
+> Acked-by: Yosry Ahmed <yosryahmed@google.com>
+> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> ---
+>  mm/zswap.c | 68 +++++++++++++++++++++++++++++++++++-------------------
+>  1 file changed, 44 insertions(+), 24 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index adeaf9c97fde..3c16a1192252 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -765,12 +765,25 @@ void zswap_folio_swapin(struct folio *folio)
+>         }
+>  }
+>
+> +/*
+> + * This function should be called when a memcg is being offlined.
+> + *
+> + * Since the global shrinker shrink_worker() may hold a reference
+> + * of the memcg, we must check and release the reference in
+> + * zswap_next_shrink.
+> + *
+> + * shrink_worker() must handle the case where this function releases
+> + * the reference of memcg being shrunk.
+> + */
+>  void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
+>  {
+>         /* lock out zswap shrinker walking memcg tree */
+>         spin_lock(&zswap_shrink_lock);
+> -       if (zswap_next_shrink =3D=3D memcg)
+> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
+rink, NULL);
+> +       if (zswap_next_shrink =3D=3D memcg) {
+> +               do {
+> +                       zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap=
+_next_shrink, NULL);
+> +               } while (zswap_next_shrink && !mem_cgroup_online(zswap_ne=
+xt_shrink));
+> +       }
+>         spin_unlock(&zswap_shrink_lock);
+>  }
+>
+> @@ -1304,43 +1317,50 @@ static void shrink_worker(struct work_struct *w)
+>         /* Reclaim down to the accept threshold */
+>         thr =3D zswap_accept_thr_pages();
+>
+> -       /* global reclaim will select cgroup in a round-robin fashion. */
+> +       /*
+> +        * Global reclaim will select cgroup in a round-robin fashion.
+> +        *
+> +        * We save iteration cursor memcg into zswap_next_shrink,
+> +        * which can be modified by the offline memcg cleaner
+> +        * zswap_memcg_offline_cleanup().
+> +        *
+> +        * Since the offline cleaner is called only once, we cannot leave=
+ an
+> +        * offline memcg reference in zswap_next_shrink.
+> +        * We can rely on the cleaner only if we get online memcg under l=
+ock.
+> +        *
+> +        * If we get an offline memcg, we cannot determine if the cleaner=
+ has
+> +        * already been called or will be called later. We must put back =
+the
+> +        * reference before returning from this function. Otherwise, the
+> +        * offline memcg left in zswap_next_shrink will hold the referenc=
+e
+> +        * until the next run of shrink_worker().
+> +        */
+>         do {
+>                 spin_lock(&zswap_shrink_lock);
+> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
+rink, NULL);
+> -               memcg =3D zswap_next_shrink;
+>
+>                 /*
+> -                * We need to retry if we have gone through a full round =
+trip, or if we
+> -                * got an offline memcg (or else we risk undoing the effe=
+ct of the
+> -                * zswap memcg offlining cleanup callback). This is not c=
+atastrophic
+> -                * per se, but it will keep the now offlined memcg hostag=
+e for a while.
+> -                *
+> +                * Start shrinking from the next memcg after zswap_next_s=
+hrink.
+> +                * When the offline cleaner has already advanced the curs=
+or,
+> +                * advancing the cursor here overlooks one memcg, but thi=
+s
+> +                * should be negligibly rare.
+> +                */
+> +               do {
+> +                       memcg =3D mem_cgroup_iter(NULL, zswap_next_shrink=
+, NULL);
+> +                       zswap_next_shrink =3D memcg;
+> +               } while (memcg && !mem_cgroup_tryget_online(memcg));
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I took a look at refactoring the loop to a helper, but it's probably
+not going to be any clearer because this loop has a tryget, and the
+loop in zswap_memcg_offline_cleanup() only has an online check. Using
+a tryget in the offline cleanup version would be wasteful and we'll
+put the ref right away.
 
-Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-Tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Instead, I think we should just move the spin_lock/unlock() closer to
+the loop to make the critical section more obvious, and unify the
+comments above and below into a single block.
 
-Tested on:
+Andrew, could you please fold in the following diff (unless Takero objects)=
+:
 
-commit:         2f8c4f50 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=157dce6d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
-dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15cbe1c9980000
+diff --git a/mm/zswap.c b/mm/zswap.c
+index babf0abbcc765..df620eacd1d11 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1364,24 +1364,22 @@ static void shrink_worker(struct work_struct *w)
+         * until the next run of shrink_worker().
+         */
+        do {
+-               spin_lock(&zswap_shrink_lock);
+-
+                /*
+                 * Start shrinking from the next memcg after zswap_next_shr=
+ink.
+                 * When the offline cleaner has already advanced the cursor=
+,
+                 * advancing the cursor here overlooks one memcg, but this
+                 * should be negligibly rare.
++                *
++                * If we get an online memcg, keep the extra reference in c=
+ase
++                * the original one obtained by mem_cgroup_iter() is droppe=
+d by
++                * zswap_memcg_offline_cleanup() while we are shrinking the
++                * memcg.
+                 */
++               spin_lock(&zswap_shrink_lock);
+                do {
+                        memcg =3D mem_cgroup_iter(NULL, zswap_next_shrink, =
+NULL);
+                        zswap_next_shrink =3D memcg;
+                } while (memcg && !mem_cgroup_tryget_online(memcg));
+-               /*
+-                * Note that if we got an online memcg, we will keep the ex=
+tra
+-                * reference in case the original reference obtained
+by mem_cgroup_iter
+-                * is dropped by the zswap memcg offlining callback,
+ensuring that the
+-                * memcg is not killed when we are reclaiming.
+-                */
+                spin_unlock(&zswap_shrink_lock);
 
-Note: testing is done by a robot and is best-effort only.
+                if (!memcg) {
+
+> +               /*
+>                  * Note that if we got an online memcg, we will keep the =
+extra
+>                  * reference in case the original reference obtained by m=
+em_cgroup_iter
+>                  * is dropped by the zswap memcg offlining callback, ensu=
+ring that the
+>                  * memcg is not killed when we are reclaiming.
+>                  */
+> -               if (!memcg) {
+> -                       spin_unlock(&zswap_shrink_lock);
+> -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
+> -                               break;
+> -
+> -                       goto resched;
+> -               }
+> -
+> -               if (!mem_cgroup_tryget_online(memcg)) {
+> -                       /* drop the reference from mem_cgroup_iter() */
+> -                       mem_cgroup_iter_break(NULL, memcg);
+> -                       zswap_next_shrink =3D NULL;
+> -                       spin_unlock(&zswap_shrink_lock);
+> +               spin_unlock(&zswap_shrink_lock);
+>
+> +               if (!memcg) {
+>                         if (++failures =3D=3D MAX_RECLAIM_RETRIES)
+>                                 break;
+>
+>                         goto resched;
+>                 }
+> -               spin_unlock(&zswap_shrink_lock);
+>
+>                 ret =3D shrink_memcg(memcg);
+>                 /* drop the extra reference */
+> --
+> 2.43.0
+>
 
