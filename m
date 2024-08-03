@@ -1,114 +1,133 @@
-Return-Path: <linux-kernel+bounces-273268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6989466AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 03:21:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB1A9466AD
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 03:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61711F21FCF
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:21:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D122A1C20FB8
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393F3E54C;
-	Sat,  3 Aug 2024 01:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mv50f3fq"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447C06FBE;
+	Sat,  3 Aug 2024 01:21:34 +0000 (UTC)
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B1DAD32;
-	Sat,  3 Aug 2024 01:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE68567F;
+	Sat,  3 Aug 2024 01:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722648096; cv=none; b=CmF8zunohyUnKvPW74PZqDEeIvqEs+OD12tLVGFN7lztg5VYQ0bvauHTqL0gGlD+j9JeWx+ytuvontNq8EsadpNrGYcMHwHxkRAcHkBT1sMKpBhhRCEk/oEctDPkTL5WXFiRkXinWyALNAiAsiePtSKD4J5cDau0Po1LAlHPD5k=
+	t=1722648093; cv=none; b=bPW5tJ6odE7KPAF0TGO+6QFEJ9IgnlfimdMtK6dcSpjhkdIiBkunv1gtytjWn3Y1lE6L3uOR100Xe5xIQLDlaktyF8HcPt9yQWMWQuToVMAkmhQ0uEZGxCBQmdEq69BIkIftGTG5Mc03uEiWjhUx/rUir2HtK05HOCaR4dVr8rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722648096; c=relaxed/simple;
-	bh=oAUjHZHU7593Kn1TaZZsRWcf0gpNtl99/cZMJoydQ5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CnSJCE4d5RefnquS9kWL9yWG2rPEtsLK5H1HjmlUw5zyBIBRDuaLS+pY7ADttPZLcWvp1uLbTeu57AS/tiLOSGn0hwY3QQaAz+W+9bTmVvXoTtbYv943xHlg6fbypwOGcoq3arIAa9W3hp7podHp3FRcL8MUA2TCgNgr2ybWecg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mv50f3fq; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1722648093; c=relaxed/simple;
+	bh=1OwoZaHVI9aZupJdancQKHLKBgrbUxUBr1NA70J2Qjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPQpFMXgaDtGgXF45lTHmeE1fAHdncpiUleHIc5Z/q6L5MC9ztGpumcJIoPbrdlY6NssOpmNOqkTZE+HZ7MoTEDTW3LJKnVwRmqqugTJ7OixPovLQTJAFQSw/f4dxkmsDHAJiB7GAwrkP5cb7oLY8v+HDEJSPPS3rCddbHU8z78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b79b93a4c9so33308816d6.1;
-        Fri, 02 Aug 2024 18:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722648094; x=1723252894; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OK8R6WKVvITGMMXb99ClYH53cm1Liy2P3xPdyZF4WzI=;
-        b=Mv50f3fqCDKLWNbZo7GC18nBGkxH0UsJ/8WXdRlL4mSvExnniB7qQvW9kVMk/FIUFY
-         BFAYOO33d8ijTQPQrlX2Hra3xnyHY2zLB2GFLjhqIv3/o7mcKEP1KDPKQJFAo25aszcd
-         YgqwQV/f/NAs8mShh3r8bpAuT5Os/UZyLI/1WTmw3VrPAn67eH6g9DKGKoBQdyRYB0yz
-         8vT66NYyUFq5qKsscbKnsMNqiYBe74GOwCrctrOsXCSNOeCchWtgpvEv7IYzoNizy6fm
-         mS+S3d6GxBFLLu30ceO+rmnWMFjkH72EUAvmvaRpo66dyC0pdKUI038us8S2oC1SAq8Z
-         otQA==
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39b27935379so3252715ab.1;
+        Fri, 02 Aug 2024 18:21:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722648094; x=1723252894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OK8R6WKVvITGMMXb99ClYH53cm1Liy2P3xPdyZF4WzI=;
-        b=q2EQF+YGzhffQewxINFkMeybs38ekuF/LCiuFk+kD26UZ5IaTS02zGx9IJCXENvNrd
-         gP1Sp4rZQxjd6WLXceIexlRiLmNdzSktthfzulEXzkY9EXDZ1SPxgVCGzLHVw9P9Zk/R
-         q425GRLeG4eeZG6pQjJFPbTKSKCf2Yto1vt4vJKhOWw1O6OPCi5cLPloFHp9ESMhUMXs
-         25kOvn3rdeMeMojty7/iTzpCMGv/h27NhHR8n6xfdGLxNVM8G4/vSfg+af++r60ntI01
-         Nr8V3tf4d5GN5E06ti9tj1JVy0BnLWzw4DviU+0UXYG8rohl26dD7xSwk1LmpEmfIL0/
-         EnUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtKYvh3ZAbyOys6qGab9p+/CoonE/uVSLcEqhlmZMUAV2PUXvhkTTUKBfSMSZGif6/pbkRm0ETwkkiRw8ER9MKo7RO+OKQFv/1fLa215PeBcCZ22QPmpCzhfjdVLOmQa0osQ4K
-X-Gm-Message-State: AOJu0YyXjxT6+1J5AyTkwAmeVde5z1IOJL0gS6c4Xz6C5B+eJkoqjNM0
-	fw07tErrfRDC+5ryMFK1PY8a3rFs8+ldTr1X5JWLS9KmbHciHZYjLfQWIBFbKh9zQPY3Fd2LIPH
-	1EwJBGTUVg67CHP3XRQodLxMOPBo=
-X-Google-Smtp-Source: AGHT+IEs5qr/1OGdh5f3yXIJWBPZlp17YcBNAy/hBFJjK3i7ugTQ2RpD0VGSnquCh8VGJyegZ4mGkiQ9yDmNI99f6GM=
-X-Received: by 2002:a0c:edc7:0:b0:6b5:16f3:94a0 with SMTP id
- 6a1803df08f44-6bb91e7433cmr112171576d6.18.1722648093894; Fri, 02 Aug 2024
- 18:21:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722648091; x=1723252891;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wsnImiphK1NlwCVal/zOVFS53Curr6mQhhwK0Co5UYM=;
+        b=IYDmfKsjFTN59qPGTdzZmkZPkvo6o9QQuey5FlbDylLx0WcuZdWF4zWnGjsIRgyic6
+         zXxYv1YEe+pT7klqWJAnODpAjkpZquszWzNVlzrC6K4zSwJld0R1ZEvQUCCqtx0kpAhG
+         Pc+K7WR6bGMnjFTJFTwUUr+Vlcor++IQCC4TrrqE3B1o35uU69B1/G42vY6Mmr7uQ456
+         Kvkw8bOL8pSOVvFQ2JNLLnTYXI8W4503BKVWBTEoMHI2aQ9ZEY20ggDmMXoZRfHaQm4e
+         8Tt17gno+npos584on1+U0Cygvs3FzDf9hpjnaGdVDa0soBmQa+0OHalSanXTHc3vFTF
+         5CPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXd1gsrgc3WH90wXOvxXrDWpHczMlTCEU+SaE6/sIWhkhiJI5kL0c+wSZO8+dw2U89WIYYcFfbfa3dM96+q+q9KDmcU7wEHJk/S5cCzCbmYhG65zwz3zEHpFIdlKDYhRPRmLc7z3KP8GlPjqxtSIikZizhKt7fqeFL1ZOeNUs+NBf079olRO5oJR/4CKShxjSxM8e0y3HKuBRzi0rOxkbF77Ogi5r8pWTcuOQ7IUIGQyeQjAFX3N2u0u1kXuAk=
+X-Gm-Message-State: AOJu0YwlrrCJ9IP5Z9HQ7TCnV4fXy6su1HM88cGdYSNjJO5h95qSDXS/
+	c9ofFEsHZzbMoZwt2uW3l8ldduEXpqUo2kwKhkPj2UvKxK6acHke
+X-Google-Smtp-Source: AGHT+IGtDKeBup1Q5S5nO+6X4pO7UjRMLDLx+BnkZfIeEqKtoBYna1Ag7k37iiRYXTS97jTK8aQYUQ==
+X-Received: by 2002:a92:c64d:0:b0:381:fa54:fb33 with SMTP id e9e14a558f8ab-39b1fc1e182mr63205255ab.17.1722648091202;
+        Fri, 02 Aug 2024 18:21:31 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59294515sm23572265ad.244.2024.08.02.18.21.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 18:21:30 -0700 (PDT)
+Date: Sat, 3 Aug 2024 01:21:29 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+	catalin.marinas@arm.com, dave.hansen@linux.intel.com,
+	decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
+	kw@linux.com, kys@microsoft.com, lenb@kernel.org,
+	lpieralisi@kernel.org, mingo@redhat.com, rafael@kernel.org,
+	robh@kernel.org, tglx@linutronix.de, wei.liu@kernel.org,
+	will@kernel.org, linux-acpi@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
+	benhill@microsoft.com, ssengar@microsoft.com,
+	sunilmut@microsoft.com, vdso@hexbites.dev
+Subject: Re: [PATCH v3 1/7] arm64: hyperv: Use SMC to detect hypervisor
+ presence
+Message-ID: <Zq2GGfsHjpoacdy_@liuwe-devbox-debian-v2>
+References: <20240726225910.1912537-1-romank@linux.microsoft.com>
+ <20240726225910.1912537-2-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802054421.5428-1-yyyynoom@gmail.com> <e792d1b6-b9b5-4e90-801d-ad10893defc1@wanadoo.fr>
-In-Reply-To: <e792d1b6-b9b5-4e90-801d-ad10893defc1@wanadoo.fr>
-From: Moon Yeounsu <yyyynoom@gmail.com>
-Date: Sat, 3 Aug 2024 10:21:22 +0900
-Message-ID: <CAAjsZQz2orPoBS-yRYQcBEv3mzUHrAiyqB-jti5RTyx39HOVjA@mail.gmail.com>
-Subject: Re: [PATCH] net: ethernet: use ip_hdrlen() instead of bit shift
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: cooldavid@cooldavid.org, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726225910.1912537-2-romank@linux.microsoft.com>
 
-On Fri, Aug 2, 2024 at 10:35=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> The extra () around "ip_hdrlen(skb)" can be remove.
-> Also maybe the ones around "ETH_HLEN + ip_hdrlen(skb)" could also be
-> removed.
-Okay, I'll send the next patch which the parenthesis are removed!
-But... The parenthesis around `ETH_HLEN + ip_hdrlen(skb) +
-sizeof(struct udphdr)`
-should be retained, because it makes a clear boundary.
->
-> >               skb_reset_network_header(skb);
-> >               return csum;
-> >       }
-> > -     skb_set_transport_header(skb,
-> > -                     ETH_HLEN + (ip_hdr(skb)->ihl << 2));
-> > +     skb_set_transport_header(skb, ETH_HLEN + (ip_hdrlen(skb)));
->
-> Same here, the extra () around "ip_hdrlen(skb)" can be remove.
-I'll remove it also.
->
-> CJ
->
-> >       csum =3D udp_hdr(skb)->check;
-> >       skb_reset_transport_header(skb);
-> >       skb_reset_network_header(skb);
->
+On Fri, Jul 26, 2024 at 03:59:04PM -0700, Roman Kisel wrote:
+> The arm64 Hyper-V startup path relies on ACPI to detect
+> running under a Hyper-V compatible hypervisor. That
+> doesn't work on non-ACPI systems.
+> 
+> Hoist the ACPI detection logic into a separate function,
+> use the new SMC added recently to Hyper-V to use in the
+> non-ACPI case.
+> 
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
 
-Thank you for reviewing ^=EC=98=A4^
+The change looks sensible.
+
+Within one minor comment fixed below:
+
+Acked-by: Wei Liu <wei.liu@kernel.org>
+
+However I would also like to get an Acked-by or reivewed-by from someone
+who works on the ARM64 side of things -- Saurabh, Boqun, Srivatsa, and
+Jinank?
+
+> ---
+>  arch/arm64/hyperv/mshyperv.c      | 36 ++++++++++++++++++++++++++-----
+>  arch/arm64/include/asm/mshyperv.h |  5 +++++
+>  2 files changed, 36 insertions(+), 5 deletions(-)
+> 
+[...]
+> diff --git a/arch/arm64/include/asm/mshyperv.h b/arch/arm64/include/asm/mshyperv.h
+> index a975e1a689dd..a7a3586f7cb1 100644
+> --- a/arch/arm64/include/asm/mshyperv.h
+> +++ b/arch/arm64/include/asm/mshyperv.h
+> @@ -51,4 +51,9 @@ static inline u64 hv_get_msr(unsigned int reg)
+>  
+>  #include <asm-generic/mshyperv.h>
+>  
+> +#define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0	0x7948734d
+> +#define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_1	0x56726570
+
+Presumably these are ASCII codes for an identifier string, please 
+provide comments to explain what they are.
+
+> +#define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_2	0
+> +#define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_3	0
+> +
+>  #endif
+> -- 
+> 2.34.1
+> 
 
