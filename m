@@ -1,127 +1,142 @@
-Return-Path: <linux-kernel+bounces-273376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C93794688F
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 09:44:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F362946891
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 09:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564E2282206
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0A181F21BC0
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7662E14D711;
-	Sat,  3 Aug 2024 07:44:33 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250DC14D432;
+	Sat,  3 Aug 2024 07:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oJyhNl8v"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491D0D2EE;
-	Sat,  3 Aug 2024 07:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E828A1ABEAF
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 07:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722671073; cv=none; b=t53u5aVh7ycWYmE2Vyaw/680VjiIwTPId0pXOFj/DrT4YOiC0Vn149FcsuBPSxLwKCvL9PBfhYtVHnyChJwhSpIdS/tHD7hlUuE+escs1VRNv14EvKkbgvWV4oGtx8yQ1CSKVzQkqHq/lLUyfxpObAJ1eKC6eBgWb7qu1GR6lOQ=
+	t=1722671225; cv=none; b=i71WeIL4GNB1fSVHFGut0oo0gsqjguii3+ZWBdYiPKSKjeADWj/xdNIpPUx9M2wYyLACCnd9KMX5RPPRrRhJShN+lwJQbrr/lbikHPRF5wHhWAjGSWxcTl1cYSkmXP20xO1fs/v1K074s1ro/rrpCPa4IrvHWzDvI/QL6m/e43U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722671073; c=relaxed/simple;
-	bh=v+bOWT/FY3VGKxKZHQVk9E/gqV65zK1Em0aeUn6okFk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l3XSEn4YQNNk4Bg1PzN9NMfBhqTdypTh5+gtm3ycEZNp7gWZN3LZoHSRXBi5A8+0Be0efrTNjv0fa6XXvX68ou5kGVbsmQAUwXBUkfmdtMcbfWl2Cy7zLH3lFp+9A26fQ6fqR0yjgwiSjpwxCGV6YN0gVmBInD/6iKfH/9Zh7/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4737hsMO021803;
-	Sat, 3 Aug 2024 07:43:54 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40s9ry06h7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 03 Aug 2024 07:43:54 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 3 Aug 2024 00:43:53 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Sat, 3 Aug 2024 00:43:50 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <lizhi.xu@windriver.com>
-CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <phillip@squashfs.org.uk>,
-        <squashfs-devel@lists.sourceforge.net>,
-        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
-Subject: [PATCH V7] squashfs: Add symlink size check in squash_read_inode
-Date: Sat, 3 Aug 2024 15:43:49 +0800
-Message-ID: <20240803074349.3599957-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240803040729.1677477-1-lizhi.xu@windriver.com>
-References: <20240803040729.1677477-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1722671225; c=relaxed/simple;
+	bh=h+Tu3fjZvF5oNG4yfhrmqJN1U8o5ak9xDG969pbYbpc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Nad/LXZ/qtplj4+LvcUg7VWVZCtQQ5BTE4zNrGlf7/jw0Sq0l9MzjSlf/eWxI/8vRa9UMMxBCTWBe57WBQG2OJMxqm8+kK4gPxgERoqvyuKzRolaC601P0A+RO47OB/x8jMEz9yEmcccB8lCIceO0hTY9cDdKjERMRJOotvPVdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oJyhNl8v; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-672bea19c63so198969347b3.2
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 00:47:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722671223; x=1723276023; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W+8zGdX+0w0z65lZvEos03h3yEnQFMCquba341r2hLM=;
+        b=oJyhNl8vaqfrPOlF1QRzcGXNScypLvc9b9pwsp6sBBVFAo6DZEYEBMv38Htdp76wSe
+         ZrRDJNqdmUxKjcpP1PQKpW45GQxxrxg86XUPZJyKcEobhfMVn1Qg35ln0/HjwWmunvmC
+         GxmCw9H10tUf8g168QSIkirFIX+V2D+vYZFd5YmQ7Qjim7TyfqURlw3M/RMsS8aS1EyY
+         +w5UADQE8wDmi+Alp4nhwbv2q2HKjLD3UxMVlIDBRjoJv8kZs5Wz7MnFNR0FMnt0+q5e
+         EhDfBaUMm3ho8perb/XMOw7XX4MA54sbs0rCOoz13/NQ8/KHsdqz0u7Ys9nC26NeNu6m
+         4viA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722671223; x=1723276023;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W+8zGdX+0w0z65lZvEos03h3yEnQFMCquba341r2hLM=;
+        b=OZNxAcw8l0ZRNst7ELh/Gfuld9OTh8uzgzEsUVYvMVN4MGgBY6qTGu4zPWORmFm9i2
+         9bKdEld2MOH9VBZUlcNFPV2QUIreeN30Ywaed4Rt7VV6QI8beBoZgk1ilAcQg90WrPHX
+         eUcdDOca9BHS4czvke8YJEvj5AhZBoKyZgC2/GJHGp0zptg1Ld9BpEWpI2e5149l0Yny
+         GMXbN7Y1zBm7BdSYfPDMvZ4VOSJQdpyesisxsaJ69RTeARa/J0e3ChJ6YCWxpiPO5PGY
+         99Zjm7vET1K51m9mDTkDEP4njarehH0/2tI+b2HlZ1aqlp2ZiLVhhfLKWs0OHILp/xvo
+         xNcA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/6ERTMcXgg5pCeN8SfWodJ8/8+HBWINrsO2wWviRCoqoyQh9twUcxWoSkEH+eEGRhB7Z+EtXnOiCsPwIG1dHsPHYg5FJ5OGVNCoB7
+X-Gm-Message-State: AOJu0YzevOlSX5xn+wb28K41bek8Jo5cpdZeOhNOr9tL7sYdjzJdXfp7
+	8KEiY4E7XYGCE0VUq19HHHk/TMgLHN2gLLn8T03zrvfmKzXJ2enAaViHB0STRQHseLndytYLQQN
+	uM8LzYM4QfA==
+X-Google-Smtp-Source: AGHT+IEFvJMwtbC2qA1hrhSyqEbBOlj9S/WB0A5Ne9EveISmD2Fy+ngxQ6PuxWVSb3UKNzYz23fd8E5vGR776w==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
+ (user=davidgow job=sendgmr) by 2002:a05:690c:84:b0:646:3ef4:6ad2 with SMTP id
+ 00721157ae682-68964d49c8bmr3342287b3.9.1722671222680; Sat, 03 Aug 2024
+ 00:47:02 -0700 (PDT)
+Date: Sat,  3 Aug 2024 15:46:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: iUNmPIyKVUgqU62z4qZ2NzI6MyHBxWaX
-X-Proofpoint-GUID: iUNmPIyKVUgqU62z4qZ2NzI6MyHBxWaX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-03_02,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- malwarescore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408030050
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240803074642.1849623-2-davidgow@google.com>
+Subject: [PATCH] mm: Only enforce minimum stack gap size if it's sensible
+From: David Gow <davidgow@google.com>
+To: Alexandre Ghiti <alex@ghiti.fr>, Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: David Gow <davidgow@google.com>, linux-mm@kvack.org, 
+	linux-arm-kernel@lists.infradead.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-syzbot report KMSAN: uninit-value in pick_link, the root cause is that
-squashfs_symlink_read_folio did not check the length, resulting in folio
-not being initialized and did not return the corresponding error code.
+The generic mmap_base code tries to leave a gap between the top
+of the stack and the mmap base address, but enforces a minimum
+gap size (MIN_GAP) of 128MB, which is too large on some setups. In
+particular, on arm tasks without ADDR_LIMIT_32BIT, the STACK_TOP
+value is less than 128MB, so it's impossible to fit such a gap in.
 
-The length is calculated from i_size, this case is about symlink, so i_size
-value is derived from symlink_size, so it is necessary to add a check to
-confirm that symlink_size value is valid, otherwise an error -EINVAL will
-be returned. 
+Only enforce this minimum if MIN_GAP < MAX_GAP, as we'd prefer to honour
+MAX_GAP, which is defined proportionally, so scales better and always
+leaves us with both _some_ stack space and some room for mmap.
 
-If symlink_size is too large, it may result in a negative value when
-calculating length in squashfs_symlink_read_folio due to int overflow,
-and its value must be greater than PAGE_SIZE at this time.
+This fixes the usercopy KUnit test suite on 32-bit arm, as it doesn't
+set any personality flags so gets the default (in this case 26-bit)
+task size. This test can be run with:
+./tools/testing/kunit/kunit.py run --arch arm usercopy --make_options LLVM=1
 
-Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+Fixes: dba79c3df4a2 ("arm: use generic mmap top-down layout and brk randomization")
+Signed-off-by: David Gow <davidgow@google.com>
 ---
- fs/squashfs/inode.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
-index 16bd693d0b3a..bed6764e4461 100644
---- a/fs/squashfs/inode.c
-+++ b/fs/squashfs/inode.c
-@@ -273,14 +273,21 @@ int squashfs_read_inode(struct inode *inode, long long ino)
- 	case SQUASHFS_SYMLINK_TYPE:
- 	case SQUASHFS_LSYMLINK_TYPE: {
- 		struct squashfs_symlink_inode *sqsh_ino = &squashfs_ino.symlink;
-+		loff_t symlink_size;
+This is one possible fix for an issue with the usercopy_kunit suite
+(and, indeed, the KUnit user_alloc features) on 32-bit arm. The other
+options are to:
+- hack the KUnit allocation to force ADDR_LIMIT_32BIT or
+  ADDR_COMPAT_LAYOUT; or
+- similarly, use an unlimited stack, which forces the legacy layout
+  behind the scenes; or
+- adjust MIN_GAP based on either STACK_TOP or architecture.
+
+Of them, I made the arbitrary call that this was least hacky, but am
+happy to go with something else if someone who actually knows what's
+going on suggests it.
+
+(Also, does this issue actually mean some strange legacy binaries have
+been broken with an rlimit-ed stack for ages? Or am I missing something?)
+
+Cheers,
+-- David
+
+---
+ mm/util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/util.c b/mm/util.c
+index bd283e2132e0..baca6cafc9f1 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -463,7 +463,7 @@ static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
+ 	if (gap + pad > gap)
+ 		gap += pad;
  
- 		err = squashfs_read_metadata(sb, sqsh_ino, &block, &offset,
- 				sizeof(*sqsh_ino));
- 		if (err < 0)
- 			goto failed_read;
- 
-+		symlink_size = le32_to_cpu(sqsh_ino->symlink_size);
-+		if (symlink_size > PAGE_SIZE) {
-+			ERROR("Corrupted symlink, size [%llu]\n", symlink_size);
-+			return -EINVAL;
-+		}
-+
- 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
--		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
-+		inode->i_size = symlink_size;
- 		inode->i_op = &squashfs_symlink_inode_ops;
- 		inode_nohighmem(inode);
- 		inode->i_data.a_ops = &squashfs_symlink_aops;
+-	if (gap < MIN_GAP)
++	if (gap < MIN_GAP && MIN_GAP < MAX_GAP)
+ 		gap = MIN_GAP;
+ 	else if (gap > MAX_GAP)
+ 		gap = MAX_GAP;
 -- 
-2.43.0
+2.46.0.rc2.264.g509ed76dc8-goog
 
 
