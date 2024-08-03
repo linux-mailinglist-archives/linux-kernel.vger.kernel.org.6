@@ -1,87 +1,54 @@
-Return-Path: <linux-kernel+bounces-273256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160FF946687
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 02:37:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E34B94668A
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 02:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5C82B21859
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 00:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD89E1C2084D
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 00:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E834C7B;
-	Sat,  3 Aug 2024 00:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIndyg4/"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C23E4C7B;
+	Sat,  3 Aug 2024 00:40:09 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EF24690;
-	Sat,  3 Aug 2024 00:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173AB4687;
+	Sat,  3 Aug 2024 00:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722645438; cv=none; b=lXGhz48UCC4jSJYvOOXoQIGAw4MWkd4pWzHwJMlfsdZZo2rP3frQG0svcyuiP6p965PMAKY0JRJkhaJpH54VTdD+Yy4qtl6z0jpFYgGDzmyEUbLVbTyGEoRAntfGEiFyKyuSvm42zodM2imCtqxlHTs1780tEzLIlsduS+E5Scg=
+	t=1722645609; cv=none; b=VLNHcWF9972ZXKmBWMSJO+z9es6OJj/1FJ3EntnWLZak+MUxAGkFGv4Kz5uU+zkktHcBEbEvxjcWZtW94Xva1+2lCOUp9/h0thDBncpPsYDshOWzNQrOLQtpBM6VAMrxB+IUcV2G/nSj8yqm5cVUUp2jLkEOeUvlbUwaDz7DgsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722645438; c=relaxed/simple;
-	bh=T0Vk/auQGIzRzZ52qRPQnGR8mMBib23gMenRZAUoXR4=;
+	s=arc-20240116; t=1722645609; c=relaxed/simple;
+	bh=PzMk2p3zdOZIqJkFUDWKpvnPX7N32f5w6EXQpIrRcJc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8GGJ4tj8f8RWizD/Otf/A3ihK9Agft1zmVGuT7hhybbDsO/hD5B6GRxzr651mzvyane14yMwAMUARof3Wwz0R+C8vilI43TqyMCoMkYrDZ1ITUsPIY0SymaU7GqNdQEgs5Ze2sHBHkfv5PhSzpAqSMb7cR9KPgEBVpbplf9RHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aIndyg4/; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb5b783c15so6495827a91.2;
-        Fri, 02 Aug 2024 17:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722645436; x=1723250236; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+itLntxZyTqI7f7PfMJcECQfhIFzXWAphwS/6jaEk/U=;
-        b=aIndyg4/nuNWw1Tg68xrxLStuxmcFb+fhsbo2ias+Pu6dc12g3vpRXesOD/EGgMDbN
-         dKzwyGAgxls6zeR49HWbN/z6rDaridJ8yFGtsqiNBkTjr/5fs2NC88J5NOxgSE+TV0b0
-         FSq1MZRjlBZWXeYv6SMTPBauI/Y7cSBguRumLDq4s8r+A6UOg8uA16x3/Bwamiqrd09i
-         K69y71RRQsDB/kDY5qsBk1rtK9XRloQT5+hnsXqYaRHgERdBKF/Z2b3AGehLtaEGS0DP
-         QZO09Xtlm/KUJ2Mlew0TtCfAU8uaH2GqMZH7JGatMh31++5zv6w0n79Wl3MGrHvvJvtC
-         Cvxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722645436; x=1723250236;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+itLntxZyTqI7f7PfMJcECQfhIFzXWAphwS/6jaEk/U=;
-        b=IbvSl0HcdmdsLYuw+I+E42Kz/lSBU8AYw294BBUd9el7mUT30TvAxYMN2tPTNTR+7r
-         pbTPFJvHYuqhVgWLNFNsFuNUf6YR2fAkutpuAX62/cfJFhRsg9nmaa443n6mXubWqkEG
-         h5ElUpBhyPZ8ZRFkh1qqRoJ4GZknYj0DRGxal6YcPfHk06G4iLrk0g75iGhfWbmLoXIs
-         liIgLouOO2nPe78S0Cy64AiLB/AuTW/uHswDP0nGralPNzJAW9GrEdCNg0qH0tBAl5Uc
-         NBzPAS5vpKtCkdGXtvew+SG2onFKaY1LFUbEnS8H9D85T8PjXeYP0v+d+9pymWaBnlDw
-         dNvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxcaM3J7PlWK3DSJJBsMY2JVt67/9z4MJVD5g4rEToiYyPRMv4ldgA/mVXGCINzf4snbhEDgf89gbXhTTdioqgtUgBoJS1YkQZwS3HAp7D6NPqvlB/JZ5eMVd9GbzNWpy/k/PIJqTxt5yLrKyupBFfAfuwIL6AvrCDfKVTuGKmdBMc4NiS
-X-Gm-Message-State: AOJu0Yx+Ox8dMoALqUT3s14pMAOU5SJC3gXvnLgFYPEnC5OvFUSzzAlG
-	ndxQ7EuXyxlSCYiVVlG6H+X9SJTHohZO2ireCT1575e0ol5rDHb1
-X-Google-Smtp-Source: AGHT+IGFfX4lVD9nADlN/dQxlgM+uZ2O8NSgKp2XTuPJS7TFxSi+WsiYLvOVTLUPZ7P8w1O46FxssA==
-X-Received: by 2002:a17:903:41c8:b0:1ff:4618:36bc with SMTP id d9443c01a7336-1ff572f236fmr71740635ad.39.1722645435664;
-        Fri, 02 Aug 2024 17:37:15 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:47be:b3e2:7c00:141c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5928ff1esm23067105ad.237.2024.08.02.17.37.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 17:37:15 -0700 (PDT)
-Date: Fri, 2 Aug 2024 17:37:12 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: utsav.agarwal@analog.com
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arturs Artamonovs <arturs.artamonovs@analog.com>,
-	Vasileios Bimpikas <vasileios.bimpikas@analog.com>,
-	Oliver Gaskell <oliver.gaskell@analog.com>
-Subject: Re: [PATCH v8 2/3] Input: adp5588-keys - add support for pure gpio
-Message-ID: <Zq17uABHdNENnwVq@google.com>
-References: <20240704-adp5588_gpio_support-v8-0-208cf5d4c2d6@analog.com>
- <20240704-adp5588_gpio_support-v8-2-208cf5d4c2d6@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwb42F/0wivAKrJCtGCwAjaBF19r6X+pKY0xq4R714xOMPbC8eAuPi+PSPdybenX76fkY/ewjJhoOC2RPb9CfPemR497kwi9hBQADBK7znznkH6bQCACibQImP3ZdleApBUwmTtZ6LOwuWlcf7rxNdlBzD0zf/seRDGrTEJWNGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sa2fq-00276O-1O;
+	Sat, 03 Aug 2024 08:39:52 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 03 Aug 2024 08:39:51 +0800
+Date: Sat, 3 Aug 2024 08:39:51 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: herbertx/cryptodev <reply+AAIFISMST74UQEQBJUWW7J6EXDLZNEVBMPHARJBRSY@reply.github.com>
+Cc: herbertx/cryptodev <cryptodev@noreply.github.com>,
+	Author <author@noreply.github.com>, Jia He <justin.he@arm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-crypto@vger.kernel.org, Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Andy Polyakov <appro@cryptogams.org>
+Subject: Re: [herbertx/cryptodev] crypto: arm64/poly1305 - move data to
+ rodata section (47d9625)
+Message-ID: <Zq18V66ufraB_1-T@gondor.apana.org.au>
+References: <herbertx/cryptodev/commit/47d96252099a7184b4bad852fcfa3c233c1d2f71@github.com>
+ <herbertx/cryptodev/commit/47d96252099a7184b4bad852fcfa3c233c1d2f71/144978326@github.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,89 +57,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240704-adp5588_gpio_support-v8-2-208cf5d4c2d6@analog.com>
+In-Reply-To: <herbertx/cryptodev/commit/47d96252099a7184b4bad852fcfa3c233c1d2f71/144978326@github.com>
 
-Hi Utsav,
-
-On Thu, Jul 04, 2024 at 03:26:31PM +0100, Utsav Agarwal via B4 Relay wrote:
-> From: Utsav Agarwal <utsav.agarwal@analog.com>
+On Fri, Aug 02, 2024 at 08:09:10AM -0700, Andy Polyakov wrote:
+> Formally speaking this is error prone, because there is no guarantee that linker will be able to resolve it as argument to `adr` instruction above. I mean since the address is resolved with `adr` instruction alone, there is a limit on how far the label can be from the instruction in question. On a practical level, if/since it's compiled as part of a kernel module, it won't be a problem, because the module won't be large enough to break the limit, but it **is** a problem in general case.
 > 
-> Keypad specific setup is relaxed if no keypad rows/columns are specified,
-> enabling a purely gpio operation.
+> But why would objtool attempt to disassemble it? Does it actually attempt to disassemble unreferenced spaces between functions? Note that the .Lzeros label doesn't make it into .o file, so there won't be anything in the symbol table to discover as potential entry point...
 > 
-> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
-> ---
->  drivers/input/keyboard/adp5588-keys.c | 37 +++++++++++++++++++++++++++++++----
->  1 file changed, 33 insertions(+), 4 deletions(-)
+> -- 
+> Reply to this email directly or view it on GitHub:
+> https://github.com/herbertx/cryptodev/commit/47d96252099a7184b4bad852fcfa3c233c1d2f71#r144978326
+> You are receiving this because you authored the thread.
 > 
-> diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
-> index 09bcfc6b9408..7c32f8b69a3e 100644
-> --- a/drivers/input/keyboard/adp5588-keys.c
-> +++ b/drivers/input/keyboard/adp5588-keys.c
-> @@ -188,6 +188,7 @@ struct adp5588_kpad {
->  	u32 cols;
->  	u32 unlock_keys[2];
->  	int nkeys_unlock;
-> +	bool gpio_only;
->  	unsigned short keycode[ADP5588_KEYMAPSIZE];
->  	unsigned char gpiomap[ADP5588_MAXGPIO];
->  	struct gpio_chip gc;
-> @@ -431,10 +432,12 @@ static int adp5588_gpio_add(struct adp5588_kpad *kpad)
->  	kpad->gc.label = kpad->client->name;
->  	kpad->gc.owner = THIS_MODULE;
->  
-> -	girq = &kpad->gc.irq;
-> -	gpio_irq_chip_set_chip(girq, &adp5588_irq_chip);
-> -	girq->handler = handle_bad_irq;
-> -	girq->threaded = true;
-> +	if (kpad->client->irq) {
-> +		girq = &kpad->gc.irq;
-> +		gpio_irq_chip_set_chip(girq, &adp5588_irq_chip);
-> +		girq->handler = handle_bad_irq;
-> +		girq->threaded = true;
-> +	}
->  
->  	mutex_init(&kpad->gpio_lock);
->  
-> @@ -632,6 +635,21 @@ static int adp5588_fw_parse(struct adp5588_kpad *kpad)
->  	struct i2c_client *client = kpad->client;
->  	int ret, i;
->  
-> +	/*
-> +	 * Check if the device is to be operated purely in GPIO mode. To do
-> +	 * so, check that no keypad rows or columns have been specified,
-> +	 * since all GPINS should be configured as GPIO.
-> +	 */
-> +	ret = device_property_present(&client->dev,
-> +			"keypad,num-rows");
-> +	ret |= device_property_present(&client->dev,
-> +			"keypad,num-columns");
-> +	/* If purely GPIO, skip keypad setup */
-> +	if (!ret) {
-> +		kpad->gpio_only = true;
-> +		return 0;
-> +	}
-> +
->  	ret = matrix_keypad_parse_properties(&client->dev, &kpad->rows,
->  					     &kpad->cols);
->  	if (ret)
-> @@ -775,6 +793,11 @@ static int adp5588_probe(struct i2c_client *client)
->  	if (error)
->  		return error;
->  
-> +	if (kpad->gpio_only && !client->irq) {
-> +		dev_info(&client->dev, "Rev.%d, started as GPIO only\n", revid);
-> +		return 0;
+> Message ID: <herbertx/cryptodev/commit/47d96252099a7184b4bad852fcfa3c233c1d2f71/144978326@github.com>
 
-I think we need more elaborate handling here (and probably more
-elaborate binding yaml file): now that you are making interrupt optional
-you should check if interrupt-controller functionality of the GPIO
-block/gpiochip is requested. If it was, then we should not allow missing
-interrupt. If only GPIO controller is needed, without interrupt
-capabilities, tnen running without interrupt is fine.
-
-Thanks.
-
+Adding the original Cc list.
 -- 
-Dmitry
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
