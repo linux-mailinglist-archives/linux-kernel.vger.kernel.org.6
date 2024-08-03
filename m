@@ -1,108 +1,166 @@
-Return-Path: <linux-kernel+bounces-273289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351849466F1
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4F39466F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EEF82828AC
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 02:55:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B3D282C2C
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 03:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EA9C8DF;
-	Sat,  3 Aug 2024 02:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gE0D5n5k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E38410A0A;
+	Sat,  3 Aug 2024 03:01:41 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC80BBA2F
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 02:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE0979E0
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 03:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722653707; cv=none; b=TCNgsmLu9x8QqNmedaq0d3jwnssIP9re+00f+gkLm1428bDoKHjP1qUtw5tGAJD6ClZTMf/qRKT2CQJPcvhmNMP6bOUkpOUcpdnLFv1vs8glySqzIZjKiCCLGiaqJgBKPY8DO78TIb5sTuCXyFqo/2Cw6pcR7d8O3jVaFUukOno=
+	t=1722654100; cv=none; b=as5rakJURk7+c3/BwoJFATBdCplpQ1M+FFFH2iF3SzD8m7acqiPXGvRv7xR3Lxtmj27SvGzzQLk1/p8DZt7miVlC4AZLqAZYYOJ4qpizskk09NYi0hg2B5auoMRNEj3EcRWliEY9OqYa8QcdH+Lx3VaE4nexYMPLMFDpBzaH02Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722653707; c=relaxed/simple;
-	bh=RIN8860VKrwG8pGn//fjYw1Ffx/DZsTnQ7DUTwCg1f8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h21gj2v58iRNSeeiH2FETkNVBgnYSkwJRJB2tBnrjjNMjfP6Th+syt+hOWw9GWOk1a9YXiDXXD/kQtAa+hVKRii7BUNOnhqtcZOlOZ25eY3C8nYrmQRfFfUDPQcUEnRR2KMVyrlTFpbSYX2NDMlOQRyn+6Jjd2rkY7quM8YxGYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gE0D5n5k; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722653704;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=F1wAfXnbDS38XwTTIr6+TPJ2ikyvkJ3Nuyw1zubgkCY=;
-	b=gE0D5n5k4cBvqE/2roYfKfX6UfQ9G0VcHNoxM5UwsqdOgKRervku4bLqepYyECJMQSxxNF
-	Vq2b2e2Su3G+jDHqFhrjJ+ZuAIhljVQ8kDjMeAkcZGyUrO/3+Z+annIVRmbmx90R1v+AVJ
-	m8Mu2ewgPXQQn6voqcHVLj0Mp6kmS0g=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-616-r25lBCQANJi1NK8s-9V8Hw-1; Fri,
- 02 Aug 2024 22:55:00 -0400
-X-MC-Unique: r25lBCQANJi1NK8s-9V8Hw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 973FD1955D56;
-	Sat,  3 Aug 2024 02:54:59 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.16.14])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BF27A19560AA;
-	Sat,  3 Aug 2024 02:54:57 +0000 (UTC)
-From: Joel Savitz <jsavitz@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Joel Savitz <jsavitz@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH] file: remove outdated comment after close_fd()
-Date: Fri,  2 Aug 2024 22:54:55 -0400
-Message-ID: <20240803025455.239276-1-jsavitz@redhat.com>
+	s=arc-20240116; t=1722654100; c=relaxed/simple;
+	bh=2PR3qhoGnm0AvRxZp87Me2ywbgB7BFV29r9IbAQsDNQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nrE5syBCdbfvnHoBCSjbnKjasn0d9tqjGdjIC/aonVqyqGUGSCeD/TwhstbVgrgS74MUfZPF5QQBM+7R5+faML2rIxtJ3FQmscxr2+lPIEKDf2+8roEUd4BHhlaVJQbOQ4wktoSbdzLGgIuBzd7cGoQdwu0d3QDN4YiRhkrQ9RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3983ed13f0bso128833255ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 20:01:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722654098; x=1723258898;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jj2i10BNQHB9xdBgUAAVaGeqNtO2gPAwUCggaU6qdFo=;
+        b=TDkloZqRD6wqR5MYdZyLnFG3SNn9UMEV/PsX7acEALXOdeDiP3foIYYWQAwVhcmVN5
+         L9QISMeqLWky3LHOkISDITl57TmhsxtpeQCRoDV4a2wSuRaGYN7aK1Dxx0g/XysQOz1/
+         8ceL3xHq5ONeN7bGxEj8UdHTGhviEHVtAv5ECmOQNpAhqu7U9H3lw++L5jtuhaShjr7C
+         olShCq4nlmfwAXRFEsHH7pgGt9P7PTePInhr+6SVH82ru7c/5tF5TwutRw1RsY0608G/
+         TKlFkICYZ7b738GE0mFuhqtJDrFHYQZy4Gcuv2OxG3Jv2Gioi+8vF/dqffZcXqVcxpfq
+         XFZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi1kmP/7mowY5Cm0Kba8MCbL07dnkWp0/GLNEagE8oKg4Rs28lwkWAKdvuks9w8IelItglHz/MLwLSbHvXn4L+A6pbrxqMahurL6RG
+X-Gm-Message-State: AOJu0Yw9rjJdIDVmlNrrMPJl1Pn/jT8hqn6wCR3MGs6C8b8nMAbxfbd6
+	kcJMWXBv2FL26qIOSLHpphqFVNG/9Icdu3nZ8+nrAydObv6/tJyBGQblPHXYAAK0iy0l0pVaf/u
+	Cu5648k/CQfEZnT6HqxzpXzDqxpJPqALTRkHjTIQytV35I9ZlRdHAUSg=
+X-Google-Smtp-Source: AGHT+IF4CybsTRRvI97V0I9KVxBa4F3+6v5wAwVQKHhNvhBKmsqH2LovKVKr0n87gdPqSi9JHciE+a+3E3VCrhruMOsJYWZZ/T7a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+X-Received: by 2002:a05:6e02:1d8a:b0:376:417e:c2ab with SMTP id
+ e9e14a558f8ab-39b1fc44fd0mr2719995ab.5.1722654098034; Fri, 02 Aug 2024
+ 20:01:38 -0700 (PDT)
+Date: Fri, 02 Aug 2024 20:01:38 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000095a6be061ebea91f@google.com>
+Subject: [syzbot] [staging?] [usb?] WARNING in r8712_usb_write_mem/usb_submit_urb
+ (2)
+From: syzbot <syzbot+ca2eaaadab55de6a5a42@syzkaller.appspotmail.com>
+To: florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
+Hello,
 
-The comment on EXPORT_SYMBOL(close_fd) was added in commit 2ca2a09d6215
-("fs: add ksys_close() wrapper; remove in-kernel calls to sys_close()"),
-before commit 8760c909f54a ("file: Rename __close_fd to close_fd and remove
-the files parameter") gave the function its current name, however commit
-1572bfdf21d4 ("file: Replace ksys_close with close_fd") removes the
-referenced caller entirely, obsoleting this comment.
+syzbot found the following issue on:
 
-Signed-off-by: Joel Savitz <jsavitz@redhat.com>
+HEAD commit:    1722389b0d86 Merge tag 'net-6.11-rc1' of git://git.kernel...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=12d2a623980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e3044dca4d5f6dbe
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca2eaaadab55de6a5a42
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123da96d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1560c223980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/78a5695ed7e2/disk-1722389b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1507b4c5000d/vmlinux-1722389b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/449aa9e94d6b/bzImage-1722389b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ca2eaaadab55de6a5a42@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+usb 1-1: BOGUS urb xfer, pipe 3 != type 1
+WARNING: CPU: 0 PID: 2583 at drivers/usb/core/urb.c:503 usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+Modules linked in:
+CPU: 0 UID: 0 PID: 2583 Comm: dhcpcd Not tainted 6.10.0-syzkaller-g1722389b0d86 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+Code: 84 3c 02 00 00 e8 a5 eb fe fc 4c 89 ef e8 2d 21 d7 fe 45 89 e0 89 e9 4c 89 f2 48 89 c6 48 c7 c7 e0 17 a0 87 e8 96 dc c4 fc 90 <0f> 0b 90 90 e9 e9 f8 ff ff e8 77 eb fe fc 49 81 c4 c0 05 00 00 e9
+RSP: 0018:ffffc900015b7678 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff888103e8ad00 RCX: ffffffff81194ce9
+RDX: ffff88810e70ba00 RSI: ffffffff81194cf6 RDI: 0000000000000001
+RBP: 0000000000000003 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000001
+R13: ffff888100fec0a8 R14: ffff888109f01e00 R15: ffff888103e8ad7c
+FS:  00007f3757320740(0000) GS:ffff8881f6200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd527ba8870 CR3: 000000010c766000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ r8712_usb_write_mem+0x2e4/0x3f0 drivers/staging/rtl8712/usb_ops_linux.c:170
+ rtl8712_dl_fw+0x7ab/0xfe0 drivers/staging/rtl8712/hal_init.c:203
+ rtl8712_hal_init drivers/staging/rtl8712/hal_init.c:330 [inline]
+ rtl871x_hal_init+0xb3/0x190 drivers/staging/rtl8712/hal_init.c:394
+ netdev_open+0xea/0x800 drivers/staging/rtl8712/os_intfs.c:397
+ __dev_open+0x2d4/0x4e0 net/core/dev.c:1474
+ __dev_change_flags+0x561/0x720 net/core/dev.c:8837
+ dev_change_flags+0x8f/0x160 net/core/dev.c:8909
+ devinet_ioctl+0x127a/0x1f10 net/ipv4/devinet.c:1177
+ inet_ioctl+0x3aa/0x3f0 net/ipv4/af_inet.c:1003
+ sock_do_ioctl+0x116/0x280 net/socket.c:1222
+ sock_ioctl+0x22e/0x6c0 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f37573eed49
+Code: 5c c3 48 8d 44 24 08 48 89 54 24 e0 48 89 44 24 c0 48 8d 44 24 d0 48 89 44 24 c8 b8 10 00 00 00 c7 44 24 b8 10 00 00 00 0f 05 <41> 89 c0 3d 00 f0 ff ff 76 10 48 8b 15 ae 60 0d 00 f7 d8 41 83 c8
+RSP: 002b:00007ffe0c834f48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f37573206c0 RCX: 00007f37573eed49
+RDX: 00007ffe0c845138 RSI: 0000000000008914 RDI: 0000000000000005
+RBP: 00007ffe0c8552f8 R08: 00007ffe0c8450f8 R09: 00007ffe0c8450a8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe0c845138 R14: 0000000000000028 R15: 0000000000008914
+ </TASK>
+
+
 ---
- fs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/file.c b/fs/file.c
-index a3b72aa64f11..cfc58b782bc4 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -676,7 +676,7 @@ int close_fd(unsigned fd)
- 
- 	return filp_close(file, files);
- }
--EXPORT_SYMBOL(close_fd); /* for ksys_close() */
-+EXPORT_SYMBOL(close_fd);
- 
- /**
-  * last_fd - return last valid index into fd table
--- 
-2.45.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
