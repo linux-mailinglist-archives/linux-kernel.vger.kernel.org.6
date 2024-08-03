@@ -1,240 +1,328 @@
-Return-Path: <linux-kernel+bounces-273455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55DA946979
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:25:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F7A94697B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75F91C20AC4
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 11:25:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70B61C20B31
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 11:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E91A14EC42;
-	Sat,  3 Aug 2024 11:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F80314EC79;
+	Sat,  3 Aug 2024 11:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FrUCtfxy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yt1WAL/b"
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055541369AE
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 11:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7F64A2F;
+	Sat,  3 Aug 2024 11:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722684343; cv=none; b=V9Jea4mFxq1gRlrvsMFI3Jd2uJNga7gKLGLMa1N5o1K/0CVb7P77x4mGnAXCTyqpOgkgKpBq7TgSKwtkEtg91NQqPpT9XuAelp+n9EwSz2MRiM86eLkey5we24fQ7Nl8Uy13Tg8rrOADk+TA2qMRFh/uAzetu9KWYHZNfFFdSeg=
+	t=1722684563; cv=none; b=kGeU1PeeDmL4Y44WE7OxXGIDvW9aQMGyjJsxpTTvud1F44kZTxdTOZePHmPjDTwnp0Lg4QH8kVwS/HC0hh0VoKIxeVGmgkToFNwC0lZiM6R59zJ0UtlN/8Rgj+F4MsfycBNf85AgpzhMZgYYXQ4ofFqLJkMtmwgsAYtJoxgD2FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722684343; c=relaxed/simple;
-	bh=IPuHjCqQZy+QJ51KTBQrcXVgTvxo+Y3QLu47eRJWPiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NaAj4311XJjDb/CGYqpgC0uyQ/c60p74RaSAXljymjOeHkdPQgOHN3Odgf67wSpsPJaDlBSyb1tBvV+R9NQsieMZvQGsh61st8AB56BjbwYlam8cVrErEC6pts19Rd6emNt3+/Kbv5s8ot/JT0kEHFFVH/w6fc/ypG9VaU7oJkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FrUCtfxy; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722684340; x=1754220340;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=IPuHjCqQZy+QJ51KTBQrcXVgTvxo+Y3QLu47eRJWPiI=;
-  b=FrUCtfxy5wiCAnq1A7xcenHzFJIrDyeOBqeb6Sc2uYoNyl9rw5kFCCn6
-   rXSrsqSK2WBD+2umeASav2ClhPNfAKOWjlH/sDDP2qGDgkO5T1vmjMY9L
-   cBD7W+NbGoivVx5+iMG/GthVfEgzCMA2Y2gU0WUlPWl47wwNx+lzk0Glk
-   qBf3wBgi+QYyOEgSTc2RX3GJbOiURBbfgK3hQPGwcJ2v3ua/JqjPaQKVc
-   qgccPnZS6Dcw4oc+Ku9+3YGQfva8h8m6sbZoSyNZhijeQ9W3PZOD3I2yC
-   uL83iK/vWeSG+UwM5PAYiHBj4w25SzbF23R2USLisib0kA6f/4oxeF7JJ
-   w==;
-X-CSE-ConnectionGUID: DhSS3tBcRZGa4xMl1HSwEg==
-X-CSE-MsgGUID: ByVeeTweQTO43lP1Qcg8tw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20816457"
-X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
-   d="scan'208";a="20816457"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2024 04:25:39 -0700
-X-CSE-ConnectionGUID: 2gG0yxuJRJm7cwiu/MwIKQ==
-X-CSE-MsgGUID: lJdHd0SARw26vii2KfoWew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
-   d="scan'208";a="86275230"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 03 Aug 2024 04:25:37 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1saCtD-0000Pa-1o;
-	Sat, 03 Aug 2024 11:25:35 +0000
-Date: Sat, 3 Aug 2024 19:24:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Hari Bathini <hbathini@linux.ibm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: arch/powerpc/platforms/85xx/smp.c:252:19: sparse: sparse: cast
- removes address space '__iomem' of expression
-Message-ID: <202408031916.rl8Y5JWw-lkp@intel.com>
+	s=arc-20240116; t=1722684563; c=relaxed/simple;
+	bh=M7Fe/njCUoCP6RdmOYg3bUxuW4aHwzbuxwI4Pq19KiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMtQRoPsS7sA1dBy15EPXz1e5E4DqdX0Xnt03O+kR92pBnArcYcB7jmxoErllNAH0oG8/+4b9c4JFGNRe59qTZ+NqTCa7VajqJI76YwDXKuzbmsbrhIqAPh8lI91X1GEXAUeRl3nLdkBZjSSstnMxH6Rg003arnZTplnWm1KQOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yt1WAL/b; arc=none smtp.client-ip=83.166.143.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WbgT465zMzbTj;
+	Sat,  3 Aug 2024 13:29:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1722684552;
+	bh=jwsyx2nnKOINE7lKj3pbNTUdQ8EqlqBDP16h792D1Xo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yt1WAL/bXWZLlDGy398J3PTbg4rOPCRNljSUAyUoQb5mmYl7tmfyRwXKkRhuwCQW+
+	 nYii/957sFuyygKT6gBtQLgSN6J8+4cb+dxojd2lkBEh7hBHghHlKCPRlZHZ/jfuXh
+	 NVfDl51mFaG2d6WNVPBm5X5hnuHmV5nX3khY88rY=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WbgT33Fdbz916;
+	Sat,  3 Aug 2024 13:29:11 +0200 (CEST)
+Date: Sat, 3 Aug 2024 13:29:04 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] Landlock: Add abstract unix socket connect
+ restriction
+Message-ID: <20240803.iefooCha4gae@digikod.net>
+References: <cover.1722570749.git.fahimitahera@gmail.com>
+ <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e8da4d5311be78806515626a6bd4a16fe17ded04.1722570749.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-Hi Hari,
+On Thu, Aug 01, 2024 at 10:02:33PM -0600, Tahera Fahimi wrote:
+> This patch introduces a new "scoped" attribute to the landlock_ruleset_attr
+> that can specify "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope
+> abstract Unix sockets from connecting to a process outside of
+> the same landlock domain. It implements two hooks, unix_stream_connect
+> and unix_may_send to enforce this restriction.
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/7
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> 
+> ---
+> v8:
+> - Code refactoring (improve code readability, renaming variable, etc.) based
+>   on reviews by Mickaël Salaün on version 7.
+> - Adding warn_on_once to check (impossible) inconsistencies.
+> - Adding inline comments.
+> - Adding check_unix_address_format to check if the scoping socket is an abstract
+>   unix sockets.
+> v7:
+>  - Using socket's file credentials for both connected(STREAM) and
+>    non-connected(DGRAM) sockets.
+>  - Adding "domain_sock_scope" instead of the domain scoping mechanism used in
+>    ptrace ensures that if a server's domain is accessible from the client's
+>    domain (where the client is more privileged than the server), the client
+>    can connect to the server in all edge cases.
+>  - Removing debug codes.
+> v6:
+>  - Removing curr_ruleset from landlock_hierarchy, and switching back to use
+>    the same domain scoping as ptrace.
+>  - code clean up.
+> v5:
+>  - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
+>  - Adding curr_ruleset to hierarachy_ruleset structure to have access from
+>    landlock_hierarchy to its respective landlock_ruleset.
+>  - Using curr_ruleset to check if a domain is scoped while walking in the
+>    hierarchy of domains.
+>  - Modifying inline comments.
+> V4:
+>  - Rebased on Günther's Patch:
+>    https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
+>    so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is removed.
+>  - Adding get_scope_accesses function to check all scoped access masks in a ruleset.
+>  - Using socket's file credentials instead of credentials stored in peer_cred
+>    for datagram sockets. (see discussion in [1])
+>  - Modifying inline comments.
+> V3:
+>  - Improving commit description.
+>  - Introducing "scoped" attribute to landlock_ruleset_attr for IPC scoping
+>    purpose, and adding related functions.
+>  - Changing structure of ruleset based on "scoped".
+>  - Removing rcu lock and using unix_sk lock instead.
+>  - Introducing scoping for datagram sockets in unix_may_send.
+> V2:
+>  - Removing wrapper functions
+> 
+> [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
+> ----
+> ---
+>  include/uapi/linux/landlock.h |  30 +++++++
+>  security/landlock/limits.h    |   3 +
+>  security/landlock/ruleset.c   |   7 +-
+>  security/landlock/ruleset.h   |  23 ++++-
+>  security/landlock/syscalls.c  |  14 ++-
+>  security/landlock/task.c      | 155 ++++++++++++++++++++++++++++++++++
+>  6 files changed, 225 insertions(+), 7 deletions(-)
 
-First bad commit (maybe != root cause):
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index 849f5123610b..7e8579ebae83 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
+> @@ -13,6 +13,8 @@
+>  #include <linux/lsm_hooks.h>
+>  #include <linux/rcupdate.h>
+>  #include <linux/sched.h>
+> +#include <net/sock.h>
+> +#include <net/af_unix.h>
+>  
+>  #include "common.h"
+>  #include "cred.h"
+> @@ -108,9 +110,162 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+>  	return task_ptrace(parent, current);
+>  }
+>  
+> +static bool walk_and_check(const struct landlock_ruleset *const child,
+> +			   struct landlock_hierarchy **walker,
+> +			   size_t base_layer, size_t deep_layer,
+> +			   access_mask_t check_scoping)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   17712b7ea0756799635ba159cc773082230ed028
-commit: 7b090b6ff51b9a9f002139660672f662b95f0630 powerpc/85xx: fix compile error without CONFIG_CRASH_DUMP
-date:   3 months ago
-config: powerpc64-randconfig-r121-20240802 (https://download.01.org/0day-ci/archive/20240803/202408031916.rl8Y5JWw-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce: (https://download.01.org/0day-ci/archive/20240803/202408031916.rl8Y5JWw-lkp@intel.com/reproduce)
+s/check_scoping/scope/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408031916.rl8Y5JWw-lkp@intel.com/
+> +{
+> +	if (!child || base_layer < 0 || !(*walker))
 
-sparse warnings: (new ones prefixed by >>)
-   arch/powerpc/platforms/85xx/smp.c:218:28: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct epapr_spin_table [noderef] __iomem *[assigned] spin_table @@     got void * @@
-   arch/powerpc/platforms/85xx/smp.c:218:28: sparse:     expected struct epapr_spin_table [noderef] __iomem *[assigned] spin_table
-   arch/powerpc/platforms/85xx/smp.c:218:28: sparse:     got void *
-   arch/powerpc/platforms/85xx/smp.c:227:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *spin_table @@     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table @@
-   arch/powerpc/platforms/85xx/smp.c:227:36: sparse:     expected void *spin_table
-   arch/powerpc/platforms/85xx/smp.c:227:36: sparse:     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *spin_table @@     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table @@
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse:     expected void *spin_table
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse:     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *spin_table @@     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table @@
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse:     expected void *spin_table
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse:     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *spin_table @@     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table @@
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse:     expected void *spin_table
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse:     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *spin_table @@     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table @@
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse:     expected void *spin_table
-   arch/powerpc/platforms/85xx/smp.c:239:22: sparse:     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table
-   arch/powerpc/platforms/85xx/smp.c:249:26: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *spin_table @@     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table @@
-   arch/powerpc/platforms/85xx/smp.c:249:26: sparse:     expected void *spin_table
-   arch/powerpc/platforms/85xx/smp.c:249:26: sparse:     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table
->> arch/powerpc/platforms/85xx/smp.c:252:19: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/85xx/smp.c:252:19: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned long long volatile [noderef] [usertype] __iomem *addr @@     got unsigned long long [usertype] * @@
-   arch/powerpc/platforms/85xx/smp.c:252:19: sparse:     expected unsigned long long volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/85xx/smp.c:252:19: sparse:     got unsigned long long [usertype] *
-   arch/powerpc/platforms/85xx/smp.c:266:26: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void *spin_table @@     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table @@
-   arch/powerpc/platforms/85xx/smp.c:266:26: sparse:     expected void *spin_table
-   arch/powerpc/platforms/85xx/smp.c:266:26: sparse:     got struct epapr_spin_table [noderef] __iomem *[assigned] spin_table
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got unsigned int * @@
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse:     got unsigned int *
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got unsigned int * @@
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse:     got unsigned int *
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got unsigned int * @@
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse:     got unsigned int *
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got unsigned int * @@
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/85xx/smp.c:173:27: sparse:     got unsigned int *
+I guess it should be:
+WARN_ON_ONCE(!child || base_layer < 0 || !(*walker))
 
-vim +/__iomem +252 arch/powerpc/platforms/85xx/smp.c
+> +		return false;
+> +
+> +	for (deep_layer; base_layer < deep_layer; deep_layer--) {
 
-e16c8765533a15 Andy Fleming     2011-12-08  187  
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  188  static int smp_85xx_start_cpu(int cpu)
-d5b26db2cfcf09 Kumar Gala       2008-11-19  189  {
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  190  	int ret = 0;
-d5b26db2cfcf09 Kumar Gala       2008-11-19  191  	struct device_node *np;
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  192  	const u64 *cpu_rel_addr;
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  193  	unsigned long flags;
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  194  	int ioremappable;
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  195  	int hw_cpu = get_hard_smp_processor_id(cpu);
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  196  	struct epapr_spin_table __iomem *spin_table;
-e16c8765533a15 Andy Fleming     2011-12-08  197  
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  198  	np = of_get_cpu_node(cpu, NULL);
-d5b26db2cfcf09 Kumar Gala       2008-11-19  199  	cpu_rel_addr = of_get_property(np, "cpu-release-addr", NULL);
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  200  	if (!cpu_rel_addr) {
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  201  		pr_err("No cpu-release-addr for cpu %d\n", cpu);
-de300974761d92 Michael Ellerman 2011-04-11  202  		return -ENOENT;
-d5b26db2cfcf09 Kumar Gala       2008-11-19  203  	}
-d5b26db2cfcf09 Kumar Gala       2008-11-19  204  
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  205  	/*
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  206  	 * A secondary core could be in a spinloop in the bootpage
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  207  	 * (0xfffff000), somewhere in highmem, or somewhere in lowmem.
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  208  	 * The bootpage and highmem can be accessed via ioremap(), but
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  209  	 * we need to directly access the spinloop if its in lowmem.
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  210  	 */
-0d897255e79e26 Michael Ellerman 2022-04-07  211  	ioremappable = *cpu_rel_addr > virt_to_phys(high_memory - 1);
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  212  
-d5b26db2cfcf09 Kumar Gala       2008-11-19  213  	/* Map the spin table */
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  214  	if (ioremappable)
-aa91796ec46339 Christophe Leroy 2018-10-09  215  		spin_table = ioremap_coherent(*cpu_rel_addr,
-aa91796ec46339 Christophe Leroy 2018-10-09  216  					      sizeof(struct epapr_spin_table));
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  217  	else
-15f34eb12340b2 Zhao Chenhui     2012-07-20  218  		spin_table = phys_to_virt(*cpu_rel_addr);
-d5b26db2cfcf09 Kumar Gala       2008-11-19  219  
-cb1ffb6204712b Kumar Gala       2009-06-19  220  	local_irq_save(flags);
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  221  	hard_irq_disable();
-d0832a75075b11 Zhao Chenhui     2012-07-20  222  
-3dc709e518b473 Xiaoming Ni      2021-11-26  223  	if (qoriq_pm_ops && qoriq_pm_ops->cpu_up_prepare)
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  224  		qoriq_pm_ops->cpu_up_prepare(cpu);
-cb1ffb6204712b Kumar Gala       2009-06-19  225  
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  226  	/* if cpu is not spinning, reset it */
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  227  	if (read_spin_table_addr_l(spin_table) != 1) {
-d0832a75075b11 Zhao Chenhui     2012-07-20  228  		/*
-d0832a75075b11 Zhao Chenhui     2012-07-20  229  		 * We don't set the BPTR register here since it already points
-d0832a75075b11 Zhao Chenhui     2012-07-20  230  		 * to the boot page properly.
-d0832a75075b11 Zhao Chenhui     2012-07-20  231  		 */
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  232  		mpic_reset_core(cpu);
-d0832a75075b11 Zhao Chenhui     2012-07-20  233  
-bc15236fbed1e0 York Sun         2012-09-29  234  		/*
-bc15236fbed1e0 York Sun         2012-09-29  235  		 * wait until core is ready...
-bc15236fbed1e0 York Sun         2012-09-29  236  		 * We need to invalidate the stale data, in case the boot
-bc15236fbed1e0 York Sun         2012-09-29  237  		 * loader uses a cache-inhibited spin table.
-bc15236fbed1e0 York Sun         2012-09-29  238  		 */
-bc15236fbed1e0 York Sun         2012-09-29  239  		if (!spin_event_timeout(
-bc15236fbed1e0 York Sun         2012-09-29  240  				read_spin_table_addr_l(spin_table) == 1,
-d0832a75075b11 Zhao Chenhui     2012-07-20  241  				10000, 100)) {
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  242  			pr_err("timeout waiting for cpu %d to reset\n",
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  243  				hw_cpu);
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  244  			ret = -EAGAIN;
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  245  			goto err;
-d0832a75075b11 Zhao Chenhui     2012-07-20  246  		}
-d0832a75075b11 Zhao Chenhui     2012-07-20  247  	}
-decbb280bb8e3b Kumar Gala       2011-02-14  248  
-bc15236fbed1e0 York Sun         2012-09-29  249  	flush_spin_table(spin_table);
-d0832a75075b11 Zhao Chenhui     2012-07-20  250  	out_be32(&spin_table->pir, hw_cpu);
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  251  #ifdef CONFIG_PPC64
-15f34eb12340b2 Zhao Chenhui     2012-07-20 @252  	out_be64((u64 *)(&spin_table->addr_h),
-2751b628c97e66 Anton Blanchard  2014-03-11  253  		__pa(ppc_function_entry(generic_secondary_smp_init)));
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  254  #else
-eeb09917c138cc Bai Yingjie      2020-01-06  255  #ifdef CONFIG_PHYS_ADDR_T_64BIT
-eeb09917c138cc Bai Yingjie      2020-01-06  256  	/*
-eeb09917c138cc Bai Yingjie      2020-01-06  257  	 * We need also to write addr_h to spin table for systems
-eeb09917c138cc Bai Yingjie      2020-01-06  258  	 * in which their physical memory start address was configured
-eeb09917c138cc Bai Yingjie      2020-01-06  259  	 * to above 4G, otherwise the secondary core can not get
-eeb09917c138cc Bai Yingjie      2020-01-06  260  	 * correct entry to start from.
-eeb09917c138cc Bai Yingjie      2020-01-06  261  	 */
-eeb09917c138cc Bai Yingjie      2020-01-06  262  	out_be32(&spin_table->addr_h, __pa(__early_start) >> 32);
-eeb09917c138cc Bai Yingjie      2020-01-06  263  #endif
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  264  	out_be32(&spin_table->addr_l, __pa(__early_start));
-5b8544c38e6fde Kumar Gala       2010-10-08  265  #endif
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  266  	flush_spin_table(spin_table);
-2f4f1f815bc6d0 chenhui zhao     2015-11-20  267  err:
-d5b26db2cfcf09 Kumar Gala       2008-11-19  268  	local_irq_restore(flags);
-d5b26db2cfcf09 Kumar Gala       2008-11-19  269  
-d1d47ec6e62ab0 Peter Tyser      2009-12-18  270  	if (ioremappable)
-15f34eb12340b2 Zhao Chenhui     2012-07-20  271  		iounmap(spin_table);
-cb1ffb6204712b Kumar Gala       2009-06-19  272  
-d0832a75075b11 Zhao Chenhui     2012-07-20  273  	return ret;
-d5b26db2cfcf09 Kumar Gala       2008-11-19  274  }
-d5b26db2cfcf09 Kumar Gala       2008-11-19  275  
+No need to pass deep_layer as argument:
+deep_layer = child->num_layers - 1
 
-:::::: The code at line 252 was first introduced by commit
-:::::: 15f34eb12340b2c2e0cd90c5987ad6b5f73b79b7 powerpc/85xx: Replace epapr spin table macros/defines with a struct
+> +		if (check_scoping & landlock_get_scope_mask(child, deep_layer))
+> +			return false;
+> +		*walker = (*walker)->parent;
+> +		if (WARN_ON_ONCE(!*walker))
+> +			/* there is an inconsistency between num_layers
 
-:::::: TO: Zhao Chenhui <chenhui.zhao@freescale.com>
-:::::: CC: Kumar Gala <galak@kernel.crashing.org>
+Please use full sentences starting with a capital letter and ending with
+a dot, and in this case start with "/*"
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +			 * and landlock_hierarchy in the ruleset
+> +			 */
+> +			return false;
+> +	}
+> +	return true;
+> +}
+> +
+> +/**
+> + * domain_IPC_scope - Checks if the client domain is scoped in the same
+> + *		      domain as the server.
+
+Actually, you can remove IPC from the function name.
+
+> + *
+> + * @client: IPC sender domain.
+> + * @server: IPC receiver domain.
+> + *
+> + * Check if the @client domain is scoped to access the @server; the @server
+> + * must be scoped in the same domain.
+
+Returns true if...
+
+> + */
+> +static bool domain_IPC_scope(const struct landlock_ruleset *const client,
+> +			     const struct landlock_ruleset *const server,
+> +			     access_mask_t ipc_type)
+> +{
+> +	size_t client_layer, server_layer = 0;
+> +	int base_layer;
+> +	struct landlock_hierarchy *client_walker, *server_walker;
+> +	bool is_scoped;
+> +
+> +	/* Quick return if client has no domain */
+> +	if (!client)
+> +		return true;
+> +
+> +	client_layer = client->num_layers - 1;
+> +	client_walker = client->hierarchy;
+> +	if (server) {
+> +		server_layer = server->num_layers - 1;
+> +		server_walker = server->hierarchy;
+> +	}
+
+} else {
+	server_layer = 0;
+	server_walker = NULL;
+}
+
+> +	base_layer = (client_layer > server_layer) ? server_layer :
+> +						     client_layer;
+> +
+> +	/* For client domain, walk_and_check ensures the client domain is
+> +	 * not scoped until gets to base_layer.
+
+until gets?
+
+> +	 * For server_domain, it only ensures that the server domain exist.
+> +	 */
+> +	if (client_layer != server_layer) {
+
+bool is_scoped;
+
+> +		if (client_layer > server_layer)
+> +			is_scoped = walk_and_check(client, &client_walker,
+> +						   server_layer, client_layer,
+> +						   ipc_type);
+> +		else
+
+server_walker may be uninitialized and still read here, and maybe later
+in the for loop.  The whole code should maks sure this cannot happen,
+and a test case should check this.
+
+> +			is_scoped = walk_and_check(server, &server_walker,
+> +						   client_layer, server_layer,
+> +						   ipc_type & 0);
+
+"ipc_type & 0" is the same as "0"
+
+> +		if (!is_scoped)
+
+The name doesn't reflect the semantic. walk_and_check() should return
+the inverse.
+
+> +			return false;
+> +	}
+
+This code would be simpler:
+
+if (client_layer > server_layer) {
+	base_layer = server_layer;
+	// TODO: inverse boolean logic
+	if (!walk_and_check(client, &client_walker,
+				   base_layer, ipc_type))
+		return false;
+} else (client_layer < server_layer) {
+	base_layer = client_layer;
+	// TODO: inverse boolean logic
+	if (!walk_and_check(server, &server_walker,
+				   base_layer, 0))
+		return false;
+} else {
+	base_layer = client_layer;
+}
+
+
+I think we can improve more to make sure there is no path/risk of
+inconsistent pointers.
+
+
+> +	/* client and server are at the same level in hierarchy. If client is
+> +	 * scoped, the server must be scoped in the same domain
+> +	 */
+> +	for (base_layer; base_layer >= 0; base_layer--) {
+> +		if (landlock_get_scope_mask(client, base_layer) & ipc_type) {
+
+With each multi-line comment, the first line should be empty:
+/*
+ * This check must be here since access would be denied only if
+
+> +			/* This check must be here since access would be denied only if
+> +			 * the client is scoped and the server has no domain, so
+> +			 * if the client has a domain but is not scoped and the server
+> +			 * has no domain, access is guaranteed.
+> +			 */
+> +			if (!server)
+> +				return false;
+> +
+> +			if (server_walker == client_walker)
+> +				return true;
+> +
+> +			return false;
+> +		}
+> +		client_walker = client_walker->parent;
+> +		server_walker = server_walker->parent;
+> +		/* Warn if there is an incosistenncy between num_layers and
+
+Makes sure there is no inconsistency between num_layers and
+
+
+> +		 * landlock_hierarchy in each of rulesets
+> +		 */
+> +		if (WARN_ON_ONCE(base_layer > 0 &&
+> +				 (!server_walker || !client_walker)))
+> +			return false;
+> +	}
+> +	return true;
+> +}
 
