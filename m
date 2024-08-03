@@ -1,142 +1,107 @@
-Return-Path: <linux-kernel+bounces-273360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B1794682A
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:29:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A8F946831
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4187928238A
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:29:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A4B5B212F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC6814C5BA;
-	Sat,  3 Aug 2024 06:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C32B14D44F;
+	Sat,  3 Aug 2024 06:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUWyKag+"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gIVrN4DJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3663A847B;
-	Sat,  3 Aug 2024 06:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93918136350;
+	Sat,  3 Aug 2024 06:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722666573; cv=none; b=IgM7oJqXq6z8Dksbgxxje2OqUNNtin9weaXinW8ufSMu86rTdneQR3xIVrtFSPfIbvSJMwSpZRWL0iukqqPDsIbRWbfe0vlXTU/+E6nxFla0w4RoMY6HAQ9/1EBbUJB1FNzCTAU3AF0HnzU7ox9FtNWKzN+6dBLH+rd/2OYb6mI=
+	t=1722666701; cv=none; b=LPDQRG7yEZzYxlkmYHuwcIOCN1LMSy6DUKEVytUGNaJaE2P2b/zET+w/93p9Gjng7NZqkO9ihcqm7e9hX6PI6QshOFb9x8eOc7h2Z7wcA7e8gWNog5j3gwQLVJbnp1eMDDA1SnDhQnwGL2sNHd/7z9aXZ39E9vL7CX8TdkePGrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722666573; c=relaxed/simple;
-	bh=1tycnwI8CksGXEW6bv1nXi73bpRjLcKp6j6514Nq7i4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TlKUXCUltTh6R0vQXuVo+hdkZ2ngA5p7Owm+T73ufX8s7rJgfFzHwTMpkE61GGknk8MedSM3mJxF52NasGWH3M1XyvSkyl+xPx386ipfQvXB5s+OtRrNosBmprWNzV9KrjiRLlKqtjx+TP7KY+4+MUv+9NrYG7Osl6Kx0dbs+vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jUWyKag+; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a94aa5080so245257866b.3;
-        Fri, 02 Aug 2024 23:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722666570; x=1723271370; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nVBdH8r6aqubFTzoKQwMuGbkV/3y3tWnewU/Nufy8x4=;
-        b=jUWyKag+Y9h8/3jGOi3aAfABdoKnRAk3xH/EhdQJn442nvcD3XlmhhIix8jyvTLHZ2
-         Gw5sFf2Fbe9B23vjjVHit1W2xB3QJmKd0+RqVOUNb9LeFeEhLdxd5GDgDbuQebQwhJ7B
-         obqScN6GiXDg68MjPk5Q6cFQQ95i6+eRHfUzCy+a+4UIGtSWo8JTFqjxCqDiCQbVMssP
-         NIWncmoo5rX0gFkBDC/2KBEvikLRqZqs32w2e1uN0OUWTLu5MXqDZhZOUwwAuB17CBYK
-         43ogmbwQI8zhKXTy3KKXzCU0AYhqYqfrcdYnU7bTK6ZORLa+0eX6prfLfpZ5B9ov1WgH
-         i0Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722666570; x=1723271370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nVBdH8r6aqubFTzoKQwMuGbkV/3y3tWnewU/Nufy8x4=;
-        b=blegVPX6ClMQQQrKAz/EoJFvQWK8LjjEchIzYtR1lsCUU1Bs1jkmwwluEgEfhBxRjQ
-         yNbd22HLLvzRS+1WJSq1e6lbJQ6ZnNoNf5tpAWh+4OdP2U6GqM73Nc1csE2Gq4MYXfld
-         W9jgD9v4R+GvEXEIPJeE+Yx1kEX9ApCCjshglvkwgIOh/QcMVwXB8MLNuumj+zNyEQBZ
-         /1tAIGDTvRrhm8ZLtyCdjOn0gOZMY7Y4W1bZ1FxtJLzGWEhZHl/HuZvzXzTlRuqVqBTi
-         3+FEWfOK9W953nMglXffs+0DMZ4rOdE+VTUfbzYavCZWExCovFna5U9Q2awVX17homMp
-         qQug==
-X-Forwarded-Encrypted: i=1; AJvYcCUakdvLIlScXNH01ABsYZ0XLQg6bro0AxuTZlFZfvolC7A0PklnnAhSki/gT0wIpUGJGMiMIR02eECr1RUnO+l5TX+pys6gNtCxim8V2FHTHN6dHo0JqHLp1u/muil3Alqwmw17jR3kxC3q7g==
-X-Gm-Message-State: AOJu0YzQZb016uf6l0/nH4P9gSkenh+rxXUemivuQLZ1WvMSctNl+l2Y
-	g3j4KHIV8XfL3yRntzsQMS7gMCdKilQEdnYbIWaarjF5SkWT3o9jvN+XqhKHA+HuNNLEm2TWesg
-	0JmogjJV9WbQ8NazrNiSghfcl08k=
-X-Google-Smtp-Source: AGHT+IFmv325o1+pgG/LjanSxWspk+B4AEBtVNp6UMyei/yaP0MexaEA26gqUc76kG3b6fX8prmKolVJsjEUpXwOdbA=
-X-Received: by 2002:a17:907:2daa:b0:a7a:ab1a:2d71 with SMTP id
- a640c23a62f3a-a7dc51bd5cbmr396948866b.59.1722666570094; Fri, 02 Aug 2024
- 23:29:30 -0700 (PDT)
+	s=arc-20240116; t=1722666701; c=relaxed/simple;
+	bh=WZSRR2bS9c6s6358D44/kwFOsADs6gQRBQQbB7+97Fw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c1nrjsGbxe66i7RHYI30SMCqQH+vjLSwH63z8W+RCHrXJJMQVkPwve2BnohcLFg48MMtbdPa15koPqO+42ebBAqVo/CEgQBlfhdXAe9z7uDJKzfBtnWmPQTc5OdP+2TpR4OMKJiz7CbPTVlLV9bdt92Iv4ypsS0XZLpt4UO1ejc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gIVrN4DJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C73C116B1;
+	Sat,  3 Aug 2024 06:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722666701;
+	bh=WZSRR2bS9c6s6358D44/kwFOsADs6gQRBQQbB7+97Fw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gIVrN4DJA+fX0n5nA1HKKGualV3JtwDob2IzTdhty6KNxsuJ4NZN3IhYn2VTFgWLq
+	 cJ/ZM24fVSieorngygPXF5DVCA6TX95+xWtueku+k8yiq6X4NCZi/QiaUTDZhwTgY1
+	 OcrLLvYFrsmiwnZVeTPvmWtJNBnrz7toCIVGZ46I=
+Date: Sat, 3 Aug 2024 08:31:38 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: linux-usb@vger.kernel.org, Mark Esler <mark.esler@canonical.com>,
+	color Ice <wirelessdonghack@gmail.com>, stf_xl@wp.pl,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
+ Dereference&Use-After-Free Vulnerability
+Message-ID: <2024080359-getaway-concave-623e@gregkh>
+References: <CAOV16XESCK0-sMENJFxvWiKqogBJ4PQwA2DvJBvWq-g+NtV8ow@mail.gmail.com>
+ <ZqyWpovXcaAX2f5c@aeon>
+ <87wmky7i3l.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
- <20240801140739.GA4186762@perftesting> <mtnfw62q32omz5z4ptiivmzi472vd3zgt7bpwx6bmql5jaozgr@5whxmhm7lf3t>
- <20240802155859.GB6306@perftesting>
-In-Reply-To: <20240802155859.GB6306@perftesting>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 3 Aug 2024 08:29:17 +0200
-Message-ID: <CAGudoHFOwOaDyLg3Nh=gPvhG6cO+NXf_xqCjqjz9OxP9DLP3kw@mail.gmail.com>
-Subject: Re: [PATCH] kernel/fs: last check for exec credentials on NOEXEC mount
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: =?UTF-8?Q?Wojciech_G=C5=82adysz?= <wojciech.gladysz@infogain.com>, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	ebiederm@xmission.com, kees@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wmky7i3l.fsf@kernel.org>
 
-On Fri, Aug 2, 2024 at 5:59=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
-rote:
->
-> On Thu, Aug 01, 2024 at 05:15:06PM +0200, Mateusz Guzik wrote:
-> > I'm not confident this is particularly valuable, but if it is, it
-> > probably should hide behind some debug flags.
->
-> I'm still going to disagree here, putting it behind a debug flag means it=
-'ll
-> never get caught, and it obviously proved valuable because we're discussi=
-ng this
-> particular case.
->
-> Is it racy? Yup sure.  I think that your solution is the right way to fix=
- it,
-> and then we can have a
->
-> WARN_ON(!(file->f_mode & FMODE_NO_EXEC_CHECKED));
->
-> or however we choose to flag the file, that way we are no longer racing w=
-ith the
-> mount flags and only validating that a check that should have already occ=
-urred
-> has in fact occurred.  Thanks,
->
+On Sat, Aug 03, 2024 at 12:03:26AM +0300, Kalle Valo wrote:
+> Mark Esler <mark.esler@canonical.com> writes:
+> 
+> > On Fri, Aug 02, 2024 at 03:57:47PM +0800, color Ice wrote:
+> >> Dear RT2X00 driver maintainers,
+> >> 
+> >> We have discovered a critical vulnerability in the RT2X00 driver. We
+> >> recommend urgently submitting an update.
+> >> 
+> >> *Vulnerability Description*: When a PC is running Ubuntu 22.04 or 24.04,
+> >> executing our proof of concept (POC) can directly cause a null pointer
+> >> dereference or use-after-free (UAF). The systems we tested were:
+> >> 
+> >>    - *Description*: Ubuntu 22.04.4 LTS *Release*: 22.04
+> >>    - *Description*: Ubuntu 24.04 LTS *Release*: 24.04
+> >> 
+> >> We tested network cards from the RT2870/RT3070/RT5370 series, which all
+> >> belong to the RT2X00 driver group, and all were able to trigger the
+> >> vulnerability. Additionally, executing the POC requires only user-level
+> >> privileges. Debian systems are not affected.
+> >
+> > It is unclear if Ubuntu is the only affected distro.
+> 
+> It's also unclear how this works as there's no description about the
+> issue. I'm not going to run any scripts and I don't know how python
+> usb.core package works. I guess it needs root privileges to be able to
+> send these USB commands?
+> 
+> If this really is a security vulnerability, here are the instructions
+> how to report them:
+> 
+> https://docs.kernel.org/process/security-bugs.html
 
-To my understanding the submitter ran into the thing tripping over the
-racy check, so this check did not find a real bug elsewhere in this
-instance.
+This is public now, so security@k.o doesn't matter anymore.  But it
+should just be sent to the linux-usb mailing list, as this just looks
+like "sending a USB random data causes problems."
 
-The only case that I know of where this fired and found a real problem
-was after ntfs constructed a bogus inode:
-https://lore.kernel.org/linux-fsdevel/20230818191239.3cprv2wncyyy5yxj@f/
+But the odd thing is that you are sending data to a device that already
+has a driver bound to it.  How is libusb allowing that to happen?
+Shouldn't it require you to unbind the device from the driver first
+before talking to it over usbfs?
 
-But that is a deficiency in debug facilities in the vfs layer -- this
-only tripped over because syzkaller tried to exec a sufficiently bogus
-inode, while the vfs layer should have prevented that from happening
-to begin with.
+thanks,
 
-There should be well-defined spot where the filesystem claims the
-inode in fully constructed at which the vfs layer verifies its state
-(thus in particular i_mode). If implemented it would have caught the
-problem before the inode escaped ntfs and presumably would find some
-other problems which the kernel as is does not correctly report. This
-in part depends on someone(tm) implementing VFS_* debug macros first,
-preferably in a way which can dump inode info on assertion failure.
-
-I have this at the bottom on a TODO list for a rainy day.
-
-However, it's not my call to make as to what to do here. I outlined my
-$0,04 and I'm buggering off.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+greg k-h
 
