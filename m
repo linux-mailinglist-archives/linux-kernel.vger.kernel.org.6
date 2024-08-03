@@ -1,121 +1,157 @@
-Return-Path: <linux-kernel+bounces-273343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF39B9467EC
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:11:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C279467FE
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D6121C203E6
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EA71C210F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3337C14D2AC;
-	Sat,  3 Aug 2024 06:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A70B14EC53;
+	Sat,  3 Aug 2024 06:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ub40uW1o"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D54E14D446;
-	Sat,  3 Aug 2024 06:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YiFHQdJE"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DC314D6EE
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 06:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722665332; cv=none; b=d6xB4Sx3sXiwCs7V7VTX6q4tL1v6Yu7j3pMF6AecJdGPP5t1H55r8dFcVGGyPurnNbfuFBfF/2IH8ogSqIDW5UJvehP1FHHHvUa/Z2II1evrfCt+LnYvNzS7f9acZMkOOop9EjfBHwHRRFK7PcaQEjkDbWnTdhB6Aj+uYw71QM0=
+	t=1722665466; cv=none; b=HbmF0pyTK25IOSYzFLJ9qXxLdnhgmM0GXNHNgsNl9vMxpjYHSyZJ6xi+u1V0UUMr6pTs3TeBpUdXeUmNaEH3IX6wfaXL+2QaO8+Kxy5WLkwFmhXjAmVw4q6L4N+2dT93/bFitx2ZQ/F0cpl6VhDB7RK0EFqCXtxdAXUUxTt723I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722665332; c=relaxed/simple;
-	bh=CbkbmnUWUSrzP2gjXcKpJOqFs5uUaC/FAOsJ2IBq8vw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=SIiMSFRg95Nr7gryERS81AX/ZgrXFQq9FKOjmSK8YZSLzP07V6V2AC/4Ybs9ZmuLjenlw95Y73tKot1QkUlIdaZ53VGX4pXfQz4lEMkvcW2oktO61ZfGUWdcyEMSETSLnJ3GZNs5ULtGOfICKOhto+Hu2StQ18KgiVqHVPq957o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ub40uW1o; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1052)
-	id 3FC4720B7414; Fri,  2 Aug 2024 23:08:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3FC4720B7414
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722665321;
-	bh=m5ciDJgAqH3wb/sErRlgfAzvaeU/bz4zIL+9GOREwvo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ub40uW1obUNH8UB+79CsNA5ldpgFrEsBtDxiEK6gnbbSoV1ZnSQ1/VoFf/dVePg2X
-	 ppYzGmDMUS2txfMf0RpcKdAjv3Xn11bz0qAoSp2Quv5Iipb1IS+M7mDHZfgNgOlxwI
-	 IHcWy2eS7Ls0RhcXvwGIWF36kYOr9l0cXTxGpc10=
-From: Fan Wu <wufan@linux.microsoft.com>
-To: corbet@lwn.net,
-	zohar@linux.ibm.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	tytso@mit.edu,
-	ebiggers@kernel.org,
-	axboe@kernel.dk,
-	agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com,
-	eparis@redhat.com,
-	paul@paul-moore.com
-Cc: linux-doc@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	fsverity@lists.linux.dev,
-	linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Fan Wu <wufan@linux.microsoft.com>
-Subject: [PATCH v20 20/20] MAINTAINERS: ipe: add ipe maintainer information
-Date: Fri,  2 Aug 2024 23:08:34 -0700
-Message-Id: <1722665314-21156-21-git-send-email-wufan@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+	s=arc-20240116; t=1722665466; c=relaxed/simple;
+	bh=M+Ud9zj5zxvYJ4r8nyLdhfUxJMwYZX9z7+g4PGtLCnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cwocu05Q+0E2WsEpgK68WLa4d013oXl9WPAoEjSpjZhdXWPickfqANdoHNtSR1rFhM/lp1mqybh00fOnk48tjBPMehgxoVLRM77BmmeuSFXT5Y7hsq1O04fdrYgNhM9KA9JQymI4mVWRvxfDt3ybWMAEHQxIgCDUvA4u9l9M1lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YiFHQdJE; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3db157d3bb9so5131562b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 23:11:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722665461; x=1723270261; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4xHXuQbEIlF6T6PWN7yL7W7i12ECySoqyc3OAvP7660=;
+        b=YiFHQdJEGKIYfKqC00EznUTIuwTRIuZbIeYl6WJ4L9gWXbc63fIcg1Dc9J33yXzliX
+         IwqpRZuxMeneaKgt7OBUN5CW9qQGXDDjLNk98A5la+EkzeJfTDH0KSOdVEJiBTOL9GLD
+         vyaX2pXc9EJcVhzLB7nVmqjkjvXVP8k6Bw+38oWGDL4V5nzJ9av8Ae66N3orVlPcDjFc
+         xa2DWW7ZbIN/hwmt0ZR4LPaFnSBuiBgg6cQy4s7G92PKpqhfX2a1fqzY1YTeBwUKIFbB
+         brEmutwDFXhy8RezbHAKxuxxUL3VgZGRGUE9wLFf3/qbsjrh+jXTUOYMhl97aA5lHK62
+         o72g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722665461; x=1723270261;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4xHXuQbEIlF6T6PWN7yL7W7i12ECySoqyc3OAvP7660=;
+        b=MuH7xus2JgidrtrJhqs7aiJyLTbWR0sC6r5Elv63GE0h3B2YtYKusw++H/9KTcEBvY
+         aAGGLkbQbx3C/2qnEbYYvYb3eqQZw1pFoOyh+n01UygKGGhLkpXI6h4ae5O36tr+I0MR
+         VnfraXjIs9Y0aPI+LTfGAx+CyRI8Jz33Hu4vG+Tu5Ilr/dTEUFUtvbUmhxxtt6KZAoGs
+         5qqXGaaM3iupTUYpOhJsfRO/gS3HdP0FUMfbFBsiauykVhkaJwQ6kBkhUbY3jtb32/5Q
+         pUqciUp1ZkC9aOOMwkdvzUXfYWIxSDyWwddk0LA2L8xPGa922GEXMRzRJUj/a7JHrLA0
+         fhfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRKABBrntXw7UTEwcLDhHb5J77qCuQV4tmn1tX1xYLin/WpBXUD/Z7i82I+hjcBC/AXYCdjhTHudIhqo/+EF9qs56QXYX/GmBCwvVK
+X-Gm-Message-State: AOJu0YxHvDYeM/8d1jDHaQVI4mlBGhxdpBg8NPFZs6PAD4kzqbcFcwdM
+	Bp+NuHfVh0LB9EQMMtgGAQO4ZhXcLXPklCRoGpOmpCYCqIl4ADtYfJzkXogLj+M=
+X-Google-Smtp-Source: AGHT+IHRmFwg9h+RQHxo9nAy0g9i1yt4x6Wdms+udQI9gwDyyIOAQZpruLkfKCJ5FsshubfS5JIUmA==
+X-Received: by 2002:a05:6830:631a:b0:709:4d7a:3438 with SMTP id 46e09a7af769-709b32081c5mr7524324a34.11.1722665461056;
+        Fri, 02 Aug 2024 23:11:01 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::17c0])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70a3a750d08sm1119236a34.62.2024.08.02.23.11.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 23:11:00 -0700 (PDT)
+Date: Sat, 3 Aug 2024 01:10:58 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Sean Whitton <spwhitton@spwhitton.name>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	~lkcamp/patches@lists.sr.ht, helen.koike@collabora.com,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: media: atomisp: Add parentheses around macro
+ definitions
+Message-ID: <cf999a28-7227-4ee9-bc5f-9fe8c370458c@suswa.mountain>
+References: <20240730062348.46205-2-spwhitton@spwhitton.name>
+ <2024073020-reload-vanquish-f937@gregkh>
+ <87v80i475p.fsf@melete.silentflame.com>
+ <8d383b9d-d029-4706-91c5-9623fddf5df3@suswa.mountain>
+ <878qxe41c8.fsf@melete.silentflame.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878qxe41c8.fsf@melete.silentflame.com>
 
-Update MAINTAINERS to include ipe maintainer information.
+On Sat, Aug 03, 2024 at 01:33:43PM +0800, Sean Whitton wrote:
+> Hello,
+> 
+> On Fri 02 Aug 2024 at 11:28pm -05, Dan Carpenter wrote:
+> 
+> > *You* need to figure out what the proper thing is.  Not us.  That's the
+> > difficult part of writing a patch.  Once you know what the correct thing
+> > is, then the rest is just typing.
+> >
+> > That business of defining STORAGE_CLASS_SP_C is weird.  Figure out the
+> > authors intention and find a better way to do it.
+> >
+> > Figure out why your code compiled as well because putting parentheses
+> > around (static inline) is a syntax error.
+> 
+> I asked follow-up questions because it seems like at least partially a
+> matter of style to say that the business of defining STORAGE_CLASS_SP_C
+> is weird.
 
-Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+I'm a domain expert when it comes to kernel style.  ;)  Trust me, it's
+weird.  There are other places which do it as will but it's not normal.
 
---
-v1-v16:
-  + Not present
+> Maybe there is a better approach than what is currently done,
+> but maybe there isn't.
 
-v17:
-  + Introduced
+Correct.  Just because it's weird, doesn't mean it's wrong.  Figure out
+why the author did what they did and after that you'll probably be able
+to judge if it makes sense.
 
-v18:
-  + No changes
+> Maybe the checkpatch warning should just be
+> suppressed (if that's something that can be done).
 
-v19:
-  + No changes
+Yes.  Try to suppress the warning.  You don't need anyone's permission.
+I think it will be difficult and I doubt you will succeed.  But you
+never know until you try.  Even if you don't succeed, it's a useful
+exercise.
 
-v20:
-  + No changes
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> I would be grateful for some additional pointers.
+> 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8766f3e5e87e..4cdf2d5a2058 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11118,6 +11118,16 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
- F:	security/integrity/
- F:	security/integrity/ima/
- 
-+INTEGRITY POLICY ENFORCEMENT (IPE)
-+M:	Fan Wu <wufan@linux.microsoft.com>
-+L:	linux-security-module@vger.kernel.org
-+S:	Supported
-+T:	git https://github.com/microsoft/ipe.git
-+F:	Documentation/admin-guide/LSM/ipe.rst
-+F:	Documentation/security/ipe.rst
-+F:	scripts/ipe/
-+F:	security/ipe/
-+
- INTEL 810/815 FRAMEBUFFER DRIVER
- M:	Antonino Daplas <adaplas@gmail.com>
- L:	linux-fbdev@vger.kernel.org
--- 
-2.44.0
+Ok.  Here was your question.
+
+> I don't know what the author's intention was.  Are you saying that you
+> think this preprocessor mechanism should just be replaced with
+> hardcoding 'extern' or 'static inline' in each file which includes one
+> of these headers?
+
+The answer is you need to figure out what the author's intention was.
+1) Look through the git log.  2) Try removing it and see if anything
+breaks.  3) Do a grep for __INLINE_SP__.  (I deleted some extra hints
+here because if I give any more hints then it's just me doing the
+project).
+
+Once you know why the macro exists then you can decide it we should do a
+sed to replace it.  The sed to get rid of the macro is just an automated
+one liner thing.  The difficult part is answering why the macro was
+created and do we still need it?
+
+regards,
+dan carpenter
 
 
