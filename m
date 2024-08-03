@@ -1,144 +1,81 @@
-Return-Path: <linux-kernel+bounces-273499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C409469FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:05:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114FC9469FE
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A8D4B2133D
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D7F281DF1
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E394F14EC66;
-	Sat,  3 Aug 2024 14:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B1715216C;
+	Sat,  3 Aug 2024 14:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7uMPDyo"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6MERVGL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E107B1E488;
-	Sat,  3 Aug 2024 14:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E907C13635E;
+	Sat,  3 Aug 2024 14:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722693898; cv=none; b=K256PGaBPE1Y6aW/sTeMEe8x3I0N7OlgVx9vY8tuefQN3pv4pixhg46s/LgDXEFj+OnAZkue7G5eNqNf32tkrgpk1CgstRut8Dx3moaGNaRQQ1n77KBq/hgLkkwoiVuXCnMH0QadfUJEE7loxxq3DndjB0Te2DNCM3PiuLPc4D4=
+	t=1722693968; cv=none; b=sisxcM1lXWKqz0OyJH5iMMWMGPxD4S6TJGFnt7gdq6ckIsUEOgN+9dPlGK/pv5jO3pKV2JXufVjSnSiyHude4HL22ogn6meRPibhkIhkUcuINZtUpfREk+LO+0kg0u93C1f4ZCRrU/QwAIFLwVzbXnxFlT1S5JSq8RHGpaL1adY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722693898; c=relaxed/simple;
-	bh=GHU1if85X7v2tvAnldi6IuytEaqoJKMMegDnviNTSzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fpXvXoM+UsKfaQ9BkUCSeRKHjczcc653wXNgQrZQSLbG7YZVq5vMzoRzcCgqc52EvNlj8WQ5nilgresLFUf5cQiIywO9sHi1gP/I77cGOuMZTLRS8xDjByOTOtHy3QPlyNBVBG6WwEvd6IXkkdiN9RIXVNHS8oCPz8XrnOjZnIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7uMPDyo; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-71871d5e087so6908214a12.1;
-        Sat, 03 Aug 2024 07:04:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722693896; x=1723298696; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jr/sV2/AXwFEYg2C9udoqqnWk4OFTWJ8dnJm+vsqBbw=;
-        b=m7uMPDyotOV3esylzGSee8PvSPKjKBeUYpEoGh3x0nIfVrRIFN+lUvZcjl//bQOxGQ
-         Qq4Dge7QxHobObWOQ6ZfrebC3K3xXljBVLnXL0wjIyVCi4i2qbrxnE/zbse6GZ2zfqDa
-         CZNVUFpuiJajog34E5vQTkfoutztmPD82wHiTdgj6i5xMN3uM41I9gZ56ji8uuz4yPc/
-         q3PicRghLwUtuD6p13OybCIpQ9fWm6VXq//4fjgqh4fYCwLukWzw6RGs7GTmhxpmwaE/
-         nwjCyTmMskSsBmFoO/F8VYUdyd0P7S1LT6Ud9dYdb2MwqL2gmlK66QeAzNQcCKL3F2Dg
-         GD3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722693896; x=1723298696;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jr/sV2/AXwFEYg2C9udoqqnWk4OFTWJ8dnJm+vsqBbw=;
-        b=wDl3ffstxJSNMEk7DxzHDDWW8bFtOwDoDKd6tf65nxaSK0lOz1gnDOquIiI6l9eS4P
-         og7VrVv9ZXapSHCFM/EpyDnJY1miJgWfdi29y3pn8C04dOHGjPHf5RC55aMgmb+/OZfs
-         9NDrQnNxd6LU+VAqBkbSZZEQACFZUGYgrMROAnzcd5hRL0kFxAl8PJhrfGdTpIMGxGMH
-         ufJdixjRQPq5L1DC2X9KxEshPGMSs3HpI+YTjMvBpR4ZZeFHD5XOF/11GDeNmDgXPzeb
-         TDHJ1CU/tN3RO4idmQjyqdi9LBsX9wulRPuSYmBrNfAr2h4vRUMOtxZ6nP41kvG7P8BT
-         egNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmcxIZrw+l6+1CHS7DDUxPt0Q9ddm9aBO5G1HyPwcj6zcGPMqxb6YTC/XqZ0/mmtNdsYg/o0Oy0SCKZIPbsR78BNr0u82ubEQQ0AFxQZ5WRzSiWNayiJJFKj7XLbgqGuLM95SsEwbR
-X-Gm-Message-State: AOJu0YxXNq2EyYZSfDGmn6QDxROyu/OXaeaiRipCQ163SqFRmVix1rG/
-	Gk8gFRgrzUJshreZu8K4U9zMahRs4D+8R4z/Yy1b+ZrYx6m+m8kL
-X-Google-Smtp-Source: AGHT+IF0cfd9ACZj4Cb8vS1x577iByzKVrNou3KTYOyuIDRyR0fcB6jBePpR5KtwLqyr9yILlkLcuQ==
-X-Received: by 2002:a17:90b:4b02:b0:2d0:153f:ce00 with SMTP id 98e67ed59e1d1-2d0153fce83mr1291305a91.41.1722693896129;
-        Sat, 03 Aug 2024 07:04:56 -0700 (PDT)
-Received: from localhost.localdomain ([177.21.143.164])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4cf16bsm6957049a91.44.2024.08.03.07.04.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 07:04:55 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: bhelgaas@google.com
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: remove type return
-Date: Sat,  3 Aug 2024 11:04:42 -0300
-Message-ID: <20240803140443.23036-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1722693968; c=relaxed/simple;
+	bh=RixCY/h5yZqnK3e9g9NA35t0Jqq1QrZ6k4P96vrMYK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GuLbjs1qlRD58rc8s9niHiNShv3Lfz2fLJg8xgWt5APZwSnSO20vEgLpwyLaq4imXfsNG0StW32xvSFAlmPIc4SzVuW8THmNMCCPVij1NumDh1RtDeIOMp6hIC3XpP3ias+ORK6fmc8hc99WMOe+tNkQg85AuB3Tye4x0DwsJYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6MERVGL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 624B8C4AF09;
+	Sat,  3 Aug 2024 14:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722693967;
+	bh=RixCY/h5yZqnK3e9g9NA35t0Jqq1QrZ6k4P96vrMYK0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s6MERVGLjLr0hh39Q65cROiQyPTB1QppZOVCxqrRTI68TwsXOzOcd5jG1lr7kMzL+
+	 qMEdItB36PCF4/nd/IRbRAlrmfKbZ9Cj/s7ocNJVLEVWkl1xLp21UP6ffXxZkfI5si
+	 +qlSFO7brnSaYV/9/rS8Yrn+mDTXRZuz64OPko5wBWmW8AW8tgdwuFt0Tb3kuMBQYB
+	 YgtwoaR9oE1JQRnkHdW48av4uJ4ZIFrnLC0AEPmbb2q78DjbOnm4ZaTqMUe3HR6bGw
+	 10x4tIqdFU8OAMacp0VaJNqNOwew9KRKkcEqufr2IkXjBKxF7TXvdYWSEmzDedenoq
+	 kf8aqkDFRKO7g==
+Date: Sat, 3 Aug 2024 15:06:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Abhash Jha <abhashkumarjha123@gmail.com>
+Cc: linux-iio@vger.kernel.org, anshulusr@gmail.com, lars@metafoo.de,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] iio: light: ltr390: Add configurable gain and
+ resolution
+Message-ID: <20240803150600.2b61fe65@jic23-huawei>
+In-Reply-To: <20240731063706.25412-2-abhashkumarjha123@gmail.com>
+References: <20240731063706.25412-1-abhashkumarjha123@gmail.com>
+	<20240731063706.25412-2-abhashkumarjha123@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-I can see that the function pci_hp_add_brigde have a int return propagation.
-But in the drivers that pci_hp_add_bridge is called, your return never is
-cheked.
-This make me a think that the add bridge for pci hotplug drivers is not crucial
-for functionaly and your failed only should show a message in logs.
+On Wed, 31 Jul 2024 12:07:03 +0530
+Abhash Jha <abhashkumarjha123@gmail.com> wrote:
 
-Then, I maked this patch for remove your return propagation for this moment.
----
- drivers/pci/pci.h   | 2 +-
- drivers/pci/probe.c | 7 +++----
- 2 files changed, 4 insertions(+), 5 deletions(-)
+> Add support for configuring and reading the gain and resolution
+> (integration time). Also provide the available values for gain and
+> resoltion respectively via `read_avail` callback.
+> 
+> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
+Look good.  To reduce what we have to cover for future versions, I'll
+pick this up now.  No need to include it in v6.
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 79c8398f3938..a35dbfd89961 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -189,7 +189,7 @@ static inline int pci_proc_detach_bus(struct pci_bus *bus) { return 0; }
- #endif
- 
- /* Functions for PCI Hotplug drivers to use */
--int pci_hp_add_bridge(struct pci_dev *dev);
-+void pci_hp_add_bridge(struct pci_dev *dev);
- 
- #if defined(CONFIG_SYSFS) && defined(HAVE_PCI_LEGACY)
- void pci_create_legacy_files(struct pci_bus *bus);
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index b14b9876c030..b13c4c912eb1 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -3352,7 +3352,7 @@ void __init pci_sort_breadthfirst(void)
- 	bus_sort_breadthfirst(&pci_bus_type, &pci_sort_bf_cmp);
- }
- 
--int pci_hp_add_bridge(struct pci_dev *dev)
-+void pci_hp_add_bridge(struct pci_dev *dev)
- {
- 	struct pci_bus *parent = dev->bus;
- 	int busnr, start = parent->busn_res.start;
-@@ -3365,7 +3365,7 @@ int pci_hp_add_bridge(struct pci_dev *dev)
- 	}
- 	if (busnr-- > end) {
- 		pci_err(dev, "No bus number available for hot-added bridge\n");
--		return -1;
-+		return;
- 	}
- 
- 	/* Scan bridges that are already configured */
-@@ -3381,8 +3381,7 @@ int pci_hp_add_bridge(struct pci_dev *dev)
- 	pci_scan_bridge_extend(parent, dev, busnr, available_buses, 1);
- 
- 	if (!dev->subordinate)
--		return -1;
-+		pci_err(dev, "No bus subordinate");
- 
--	return 0;
- }
- EXPORT_SYMBOL_GPL(pci_hp_add_bridge);
--- 
-2.46.0
+Applied to the togreg branch of iio.git which is pushed out initially
+as testing for 0-day to see if it can find anything we missed.
 
+Thanks,
+
+Jonathan
 
