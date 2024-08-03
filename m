@@ -1,113 +1,113 @@
-Return-Path: <linux-kernel+bounces-273464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAD0946994
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:13:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61DE5946999
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F370F1F218F4
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:13:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D42F281F51
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7108F14D457;
-	Sat,  3 Aug 2024 12:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="L3bFNHR4"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7EA14F9CB;
+	Sat,  3 Aug 2024 12:19:40 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A281ABEA7;
-	Sat,  3 Aug 2024 12:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABC1847B;
+	Sat,  3 Aug 2024 12:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722687189; cv=none; b=G8byUTIvYRvFZXJZv/CGa2bAu/uxzFZRrvbzS8ZF9SPBU7rJLr0Gg+i1+vAOGhFlYHe+uot5BYV85rS0WUolTukomdDeh15H86GcNzBBbhKnL+2bYdXMX0KUvbXS3/LHN5nh4Pdoe4kK6paZVcAtxlW5FobuRyi5AYl3mVf+WkU=
+	t=1722687580; cv=none; b=R3zzjy57lDkeLHZNvceTcM5cTsNV/YnuSsGOcU5PhW+hSsxNp8e7lDiTBhJW1udIC72gfqgJYbBMXlwjFpkIPHPmV5/VUsZe1Q0Xa7KbC91gaJgr75QF4/3CcD+dfR9NH7Ti/7mEbs95iF+6yo/8UgynU22XsLUcNT1j+CzfvoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722687189; c=relaxed/simple;
-	bh=/+TaaxXgbiMt4LF0JEKjTSLDdxxWoittoRBPcfRUaIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EibVNuMuV3m0lnPpXwWLnWJ04uuCbVYPxK9CrBLcrfRktRHNNrcGgBpF9lHziOs//5bRe0hSIv62JqyXnib9L58WFJie8FpQjJZ13Esvh80DyAEsaoidsf1mBNav0ljsBXrRpCkL8ifbK11pP3eLqIxMEVcwlco1R9tfS/k3Ssk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=L3bFNHR4; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 1F7A41F9D7;
-	Sat,  3 Aug 2024 14:12:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1722687176;
-	bh=em817O2iX9N6mMMcKL4oOGN6A/aMFg9EauJEH6drpRk=; h=From:To:Subject;
-	b=L3bFNHR4JBBT9+RiB3hZgpo0lCMBgjzV57E91OiTvHAQ9tCc7jqdnY5bsMI93KFAR
-	 eA+LdCAyWtKu/RkfqVvwY5AniQj9ElRgiFTmDK6JZFUuaUSd2axCIfi5IM10H2aR4l
-	 GgVwAd7CZrggemqLgVkgZ9Pvw8eYTM8b1RB8K3v0MzvD9p/4YlgMSoyJgIs4JsONjs
-	 WNNPYeVMTb/BnCPMrKw7pB4rrWfr3W4eNkZrLZBifTOtrSl70dcsXwYRS6fYHkRS6Z
-	 6SoDjEEIasrf1P145rN6uqRWIY6MSkPp6uskUCBx07uIo7g8GAgWZgV5wRuYa2EbR8
-	 qpIublG5POXjg==
-Date: Sat, 3 Aug 2024 14:12:52 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <jpaulo.silvagoncalves@gmail.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] iio: adc: ads1119: Fix IRQ flags
-Message-ID: <20240803121252.GA6207@francesco-nb>
-References: <20240731140657.88265-1-francesco@dolcini.it>
- <20240731142016.6immldd7i4y7v2iw@joaog-nb>
- <20240803122127.221da36f@jic23-huawei>
+	s=arc-20240116; t=1722687580; c=relaxed/simple;
+	bh=1uJVjt9ox1mq+Lb0esCmskltSgR6X5424vQCih3hGZM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S4gRNN4L0qZlrWcouNqxHOd3fpldRSQUp3B4lvDrxXv27q88PX8xGLIUgT6VNcp0EUVgdLAO+g0HPgBLue3Ayy2xrtozrd996m1qyyAeZGqdQAajeRHX7wLwr0V55rvb3Nm6f9mdR27WYCXK3DBgQS5g8XHziKrsz2hdwq9Mdgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 9d939956519211efa216b1d71e6e1362-20240803
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
+	DN_TRUSTED, SRC_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR, SN_UNTRUSTED
+	SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD_SPF, CIE_UNKNOWN, GTI_FG_BS, GTI_C_CI, GTI_FG_IT
+	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
+	AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:1f96caaa-2d9d-4edf-ae7b-8bd34a2482b2,IP:10,
+	URL:0,TC:0,Content:0,EDM:-25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-10
+X-CID-INFO: VERSION:1.1.38,REQID:1f96caaa-2d9d-4edf-ae7b-8bd34a2482b2,IP:10,UR
+	L:0,TC:0,Content:0,EDM:-25,RT:0,SF:5,FILE:0,BULK:0,RULE:EDM_GE969F26,ACTIO
+	N:release,TS:-10
+X-CID-META: VersionHash:82c5f88,CLOUDID:1166d7aa1000283c867092886f709c7a,BulkI
+	D:2408032006396MYWMXW9,BulkQuantity:1,Recheck:0,SF:43|74|66|38|23|72|19|10
+	2,TC:nil,Content:0,EDM:1,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:ni
+	l,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
+X-UUID: 9d939956519211efa216b1d71e6e1362-20240803
+X-User: zhanghao1@kylinos.cn
+Received: from pve.sebastian [(118.250.1.11)] by mailgw.kylinos.cn
+	(envelope-from <zhanghao1@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1779692581; Sat, 03 Aug 2024 20:19:22 +0800
+From: zhanghao <zhanghao1@kylinos.cn>
+To: bongsu.jeon@samsung.com,
+	krzk@kernel.org
+Cc: syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	zhanghao <zhanghao1@kylinos.cn>
+Subject: [PATCH] nfc: nci: Fix uninit-value in nci_rx_work()
+Date: Sat,  3 Aug 2024 20:18:17 +0800
+Message-Id: <20240803121817.383567-1-zhanghao1@kylinos.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240803122127.221da36f@jic23-huawei>
 
-Hello Jonathan,
+Commit e624e6c3e777 ("nfc: Add a virtual nci device driver")
+calls alloc_skb() with GFP_KERNEL as the argument flags.The
+allocated heap memory was not initialized.This causes KMSAN
+to detect an uninitialized value.
 
-On Sat, Aug 03, 2024 at 12:21:27PM +0100, Jonathan Cameron wrote:
-> On Wed, 31 Jul 2024 11:20:16 -0300
-> João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com> wrote:
-> 
-> > On Wed, Jul 31, 2024 at 04:06:57PM +0200, Francesco Dolcini wrote:
-> > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > 
-> > > Remove IRQF_TRIGGER_FALLING flag from irq request, this should come from
-> > > the platform firmware and should not be hard-coded into the driver.
-> > > 
-> > > Add IRQF_ONESHOT flag to the irq request, the interrupt should not be
-> > > re-activated in interrupt context, it should be done only after the
-> > > device irq handler run.
-> > >  
-> > 
-> > Reviwed-by: João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com>
-> 
-> For the direction, there is a risk that we will break someone who
-> has a firmware that isn't setting this correctly.
+Reported-by: syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3da70a0abd7f5765b6ea
+Fixes: e624e6c3e777 ("nfc: Add a virtual nci device driver")
+Link: https://lore.kernel.org/all/000000000000747dd6061a974686@google.com/T/
+Signed-off-by: zhanghao <zhanghao1@kylinos.cn>
+---
+ drivers/nfc/virtual_ncidev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I don't mind doing that if we have another board that needs control
-> (and is setting it appropriately) though.  Is that true here, or is
-> this just cleanup?
-> 
-> If it's cleanup we tend to leave these alone (but not introduce them
-> into new code!)
+diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
+index 6b89d596ba9a..ae1592db131e 100644
+--- a/drivers/nfc/virtual_ncidev.c
++++ b/drivers/nfc/virtual_ncidev.c
+@@ -117,7 +117,7 @@ static ssize_t virtual_ncidev_write(struct file *file,
+ 	struct virtual_nci_dev *vdev = file->private_data;
+ 	struct sk_buff *skb;
+ 
+-	skb = alloc_skb(count, GFP_KERNEL);
++	skb = alloc_skb(count, GFP_KERNEL|__GFP_ZERO);
+ 	if (!skb)
+ 		return -ENOMEM;
+ 
 
-The driver was just introduced by me in v6.11, I assume that the only
-user is a board that is not yet available in the upstream Linux kernel
-(we gonna send the DT soon), with that said I am relatively confident we
-are not going to break any user.
-
-The reason for sending this patch is that we just stumbled across
-a different driver that was hard-coding the IRQ flags and it was not working
-for our hardware, at that moment I realized that the decision on the just
-added ti-ads1119 was not the best one.
-
-The idea of this patch is to clean this up _before_ any user is
-affected.
-
-Francesco
+base-commit: 17712b7ea0756799635ba159cc773082230ed028
+-- 
+2.39.2
 
 
