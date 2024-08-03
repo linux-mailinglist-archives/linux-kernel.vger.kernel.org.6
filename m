@@ -1,278 +1,294 @@
-Return-Path: <linux-kernel+bounces-273565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690F6946AB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 19:23:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A86946AB2
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 19:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721A11C205BC
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:23:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC2C61C20D02
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E8317C7F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EB818029;
 	Sat,  3 Aug 2024 17:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AYoebKjW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bsSZmTNH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D510613FF9;
-	Sat,  3 Aug 2024 17:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A52914006
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 17:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722705821; cv=none; b=rfDtbnzD+TktZS+2Vu2MKqtjYBTQNSqAi40/AoKpEiQ1NydKeEeS6l6UikIGqub476xkfpPPh9EFPfmJaz9qwaICb2FA7gQUc8xb359qhSlO9Nkj3uyoijxJjdLs6N57zfJK4YlzPW9UDd4zIUB4BKT0D5osdUCvk1WIsz/+hx4=
+	t=1722705821; cv=none; b=Q+64KWnwmlA2hYzDk24Kqc8fP3PvFIOaEcskcLmhbCoFuRFFMc8LcFoxGxYB9Pxm++23NknODALdbcJHeaMail78cosL6xFUgwE5kvxeSTwESEWPZTcf9yu1Yf4o7q7cNw1TaVCSEdMopgzuhpbzM/1i/xtbrjHRfL8cUX3BQZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722705821; c=relaxed/simple;
-	bh=ei9iQAsajKmKaikDEbq/+rHvQZrS2rhWkcbqSy9KghY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O3LoKRlB3ga8JDkln0wXziXsCK9e4CXYWZWITw5zdhCOdPV8e8V07BYbrZcy+e0/JkdUAHryFQ18BGDjN4lRSoW6HFyCgG8uYcYHVqnIryJbwaMHB6ICj8/YJo6ESVeS+EvPv7D4dW8AvD7gqC9JBgfsbjupAB5NvAXdob0xUFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AYoebKjW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 473HN5Fg027050;
-	Sat, 3 Aug 2024 17:23:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qBWibEVZcuSWmPxGhXwl/VWam/qCpv+3ewsWZvHWhNo=; b=AYoebKjWVNBjyuR5
-	jqZjiXvID5YHroykwaECz9s9cBYU+w22wA9+KEG6QUinBbT1KygIQsT2HVV+eTkO
-	zlpvn68GqA/4HJeYenlzLKYNdhVmTK8AUN2u33en1osVRwlOBlAbnNR7z9zmue71
-	aUj+3mS628DYyvbH1yQAA2JFe9T38YGE50Z61Rvd30T8l3EfpI7biRyXk2JlfueR
-	i+O68SeR+n2GcoU9a1nMzMf7YIwXe/qZKaqfPqPKIyZNrjdUIRiAw0r6OvjwOqDE
-	7pw0yMTQgZ7BKUlcCR0RibWSm3a1GgrN1hiV93EjdwDidVSxbV+NvV5dmOPlvMQf
-	ZOCfGw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scmtrtd8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 03 Aug 2024 17:23:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 473HNVoC017215
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 3 Aug 2024 17:23:31 GMT
-Received: from [10.216.9.55] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 3 Aug 2024
- 10:23:27 -0700
-Message-ID: <df07951e-36fb-4642-8135-385b430cfa5c@quicinc.com>
-Date: Sat, 3 Aug 2024 22:53:23 +0530
+	bh=Aesa8uRb5Krau3s1GMWqe3jVxxiYMFHZbhc1kpgy59I=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=SI0KXdK8ItNNDgI0tsAM73thLW7TYap9KKQgQgzVZfN0KKxOGiAZgRDY//zYd7++csPFQYVQuM9GGDAj+6Uhm73Bz9mhltxKozPOVLPYNKY1F5TqF0svjX5d7lPEC1zUU3n25Kntdt7fmHHIKgTe1Cq7ktn8FuWntudz5m1Qo44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bsSZmTNH; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722705819; x=1754241819;
+  h=date:from:to:cc:subject:message-id;
+  bh=Aesa8uRb5Krau3s1GMWqe3jVxxiYMFHZbhc1kpgy59I=;
+  b=bsSZmTNHofmeqMKeGr3kDquDcp6qMkWAnF+9a9+NRqw8+V6aQdWCuYD1
+   vLAyw02zwq07dxMrTv3vCY8gIrORx/w6KQqlCRxvcTIwaha2nSXG4EeOX
+   jEg5R/Sd830Mzzwb0sDy0pG1HBKI9G8bQr9OnMWQrOAPme5PArfCIt/W9
+   +fEhnawAGQ8QA2JjfZlEF+SzC0dnpbTI7yaLIuNsbXDMjiVDblTdNPFRx
+   IAkkI8lgyXszJQnHIxFw+r0lT47A9diTpR0nQTCfvRUlYVCTCZYNvLpp2
+   jWeN+DDWu9q68k8OLFCbAYLstr0dn9140scpzj1zw3gdvUe9CENXEV0tX
+   Q==;
+X-CSE-ConnectionGUID: 4k3QlCCETOqQYQVffTEDxw==
+X-CSE-MsgGUID: PBSCiZcHT6G9ciZ5O+JQ5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11153"; a="46112848"
+X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
+   d="scan'208";a="46112848"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2024 10:23:39 -0700
+X-CSE-ConnectionGUID: cmPPfGexSuiSQ89fAr7fvg==
+X-CSE-MsgGUID: NcZqR6KLQRmLZNh2uWbJRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
+   d="scan'208";a="55692639"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 03 Aug 2024 10:23:37 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1saITf-0000mo-2C;
+	Sat, 03 Aug 2024 17:23:35 +0000
+Date: Sun, 04 Aug 2024 01:23:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:timers/clocksource] BUILD SUCCESS
+ 4ac1dd3245b9067f929ab30141bb0475e9e32fc5
+Message-ID: <202408040131.gjyziqQl-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: gadget: f_uac1: Change volume name and remove alt
- names
-To: <crwulff@gmail.com>, <linux-usb@vger.kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones
-	<lee@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Perr Zhang
-	<perr@usb7.net>, Pavel Hofman <pavel.hofman@ivitera.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20240803155215.2746444-2-crwulff@gmail.com>
-Content-Language: en-US
-From: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>
-In-Reply-To: <20240803155215.2746444-2-crwulff@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qbXWJPg7x8yFVib-Av3L4jfZ85DTXWyK
-X-Proofpoint-GUID: qbXWJPg7x8yFVib-Av3L4jfZ85DTXWyK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-03_10,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- clxscore=1011 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408030121
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/clocksource
+branch HEAD: 4ac1dd3245b9067f929ab30141bb0475e9e32fc5  clocksource: Set cs_watchdog_read() checks based on .uncertainty_margin
 
+elapsed time: 1455m
 
-On 8/3/2024 9:22 PM, crwulff@gmail.com wrote:
-> From: Chris Wulff <crwulff@gmail.com>
-> 
-> This changes the UAPI to align with disussion of alt settings work.
-> 
-> fu_name is renamed to fu_vol_name, and alt settings mode names
-> are removed for now in favor of future work where they will be
-> settable in subdirectories for each alt mode.
-> 
+configs tested: 202
+configs skipped: 9
 
-Just a nit.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-It would be good to keep the discussion thread link inside commit text 
-rather than below the SoB. It would give more context when the patch is 
-applied.
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                            allyesconfig   gcc-13.3.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                   randconfig-001-20240803   gcc-13.2.0
+arc                   randconfig-002-20240803   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                         bcm2835_defconfig   clang-20
+arm                        clps711x_defconfig   clang-20
+arm                                 defconfig   gcc-13.2.0
+arm                      jornada720_defconfig   clang-20
+arm                        keystone_defconfig   clang-20
+arm                         lpc32xx_defconfig   gcc-14.1.0
+arm                          moxart_defconfig   clang-20
+arm                            mps2_defconfig   clang-20
+arm                             mxs_defconfig   clang-20
+arm                       omap2plus_defconfig   gcc-14.1.0
+arm                   randconfig-001-20240803   gcc-13.2.0
+arm                   randconfig-002-20240803   gcc-13.2.0
+arm                   randconfig-003-20240803   gcc-13.2.0
+arm                   randconfig-004-20240803   gcc-13.2.0
+arm                         s3c6400_defconfig   gcc-14.1.0
+arm                           sama5_defconfig   clang-20
+arm                        spear3xx_defconfig   gcc-14.1.0
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                               defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240803   gcc-13.2.0
+arm64                 randconfig-002-20240803   gcc-13.2.0
+arm64                 randconfig-003-20240803   gcc-13.2.0
+arm64                 randconfig-004-20240803   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240803   gcc-13.2.0
+csky                  randconfig-002-20240803   gcc-13.2.0
+i386                             allmodconfig   clang-18
+i386                             allmodconfig   gcc-12
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-12
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-12
+i386         buildonly-randconfig-001-20240803   clang-18
+i386         buildonly-randconfig-002-20240803   clang-18
+i386         buildonly-randconfig-002-20240803   gcc-12
+i386         buildonly-randconfig-003-20240803   clang-18
+i386         buildonly-randconfig-003-20240803   gcc-12
+i386         buildonly-randconfig-004-20240803   clang-18
+i386         buildonly-randconfig-004-20240803   gcc-12
+i386         buildonly-randconfig-005-20240803   clang-18
+i386         buildonly-randconfig-006-20240803   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240803   clang-18
+i386                  randconfig-001-20240803   gcc-12
+i386                  randconfig-002-20240803   clang-18
+i386                  randconfig-002-20240803   gcc-12
+i386                  randconfig-003-20240803   clang-18
+i386                  randconfig-004-20240803   clang-18
+i386                  randconfig-004-20240803   gcc-12
+i386                  randconfig-005-20240803   clang-18
+i386                  randconfig-006-20240803   clang-18
+i386                  randconfig-011-20240803   clang-18
+i386                  randconfig-011-20240803   gcc-12
+i386                  randconfig-012-20240803   clang-18
+i386                  randconfig-012-20240803   gcc-11
+i386                  randconfig-013-20240803   clang-18
+i386                  randconfig-014-20240803   clang-18
+i386                  randconfig-015-20240803   clang-18
+i386                  randconfig-015-20240803   gcc-12
+i386                  randconfig-016-20240803   clang-18
+i386                  randconfig-016-20240803   gcc-12
+loongarch                        allmodconfig   gcc-14.1.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240803   gcc-13.2.0
+loongarch             randconfig-002-20240803   gcc-13.2.0
+m68k                             allmodconfig   gcc-14.1.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                             allyesconfig   gcc-14.1.0
+m68k                                defconfig   gcc-13.2.0
+m68k                        stmark2_defconfig   gcc-14.1.0
+microblaze                       allmodconfig   gcc-14.1.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                       allyesconfig   gcc-14.1.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+mips                     cu1000-neo_defconfig   gcc-14.1.0
+mips                  decstation_64_defconfig   gcc-14.1.0
+mips                           gcw0_defconfig   clang-20
+mips                        maltaup_defconfig   clang-20
+mips                    maltaup_xpa_defconfig   clang-20
+mips                      pic32mzda_defconfig   clang-20
+nios2                             allnoconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240803   gcc-13.2.0
+nios2                 randconfig-002-20240803   gcc-13.2.0
+openrisc                          allnoconfig   gcc-14.1.0
+openrisc                         allyesconfig   gcc-14.1.0
+openrisc                            defconfig   gcc-14.1.0
+parisc                           allmodconfig   gcc-14.1.0
+parisc                            allnoconfig   gcc-14.1.0
+parisc                           allyesconfig   gcc-14.1.0
+parisc                              defconfig   gcc-14.1.0
+parisc                randconfig-001-20240803   gcc-13.2.0
+parisc                randconfig-002-20240803   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-14.1.0
+powerpc                           allnoconfig   gcc-14.1.0
+powerpc                          allyesconfig   gcc-14.1.0
+powerpc                      ep88xc_defconfig   clang-20
+powerpc                        fsp2_defconfig   clang-20
+powerpc                       holly_defconfig   gcc-14.1.0
+powerpc                   microwatt_defconfig   gcc-14.1.0
+powerpc                 mpc8313_rdb_defconfig   clang-20
+powerpc                 mpc834x_itx_defconfig   gcc-14.1.0
+powerpc               mpc834x_itxgp_defconfig   clang-20
+powerpc                      pcm030_defconfig   clang-20
+powerpc                       ppc64_defconfig   gcc-14.1.0
+powerpc               randconfig-001-20240803   gcc-13.2.0
+powerpc               randconfig-003-20240803   gcc-13.2.0
+powerpc                     tqm8560_defconfig   gcc-14.1.0
+powerpc                      tqm8xx_defconfig   clang-20
+powerpc64             randconfig-001-20240803   gcc-13.2.0
+powerpc64             randconfig-002-20240803   gcc-13.2.0
+powerpc64             randconfig-003-20240803   gcc-13.2.0
+riscv                            allmodconfig   gcc-14.1.0
+riscv                             allnoconfig   gcc-14.1.0
+riscv                            allyesconfig   gcc-14.1.0
+riscv                               defconfig   gcc-14.1.0
+riscv                 randconfig-001-20240803   gcc-13.2.0
+riscv                 randconfig-002-20240803   gcc-13.2.0
+s390                             allmodconfig   clang-20
+s390                              allnoconfig   clang-20
+s390                              allnoconfig   gcc-14.1.0
+s390                             allyesconfig   clang-20
+s390                             allyesconfig   gcc-14.1.0
+s390                                defconfig   gcc-14.1.0
+s390                  randconfig-001-20240803   gcc-13.2.0
+s390                  randconfig-002-20240803   gcc-13.2.0
+s390                       zfcpdump_defconfig   clang-20
+sh                               allmodconfig   gcc-14.1.0
+sh                                allnoconfig   gcc-13.2.0
+sh                               allyesconfig   gcc-14.1.0
+sh                                  defconfig   gcc-14.1.0
+sh                             espt_defconfig   gcc-14.1.0
+sh                          r7780mp_defconfig   gcc-14.1.0
+sh                    randconfig-001-20240803   gcc-13.2.0
+sh                    randconfig-002-20240803   gcc-13.2.0
+sh                           se7619_defconfig   gcc-14.1.0
+sparc                            allmodconfig   gcc-14.1.0
+sparc64                             defconfig   gcc-14.1.0
+sparc64               randconfig-001-20240803   gcc-13.2.0
+sparc64               randconfig-002-20240803   gcc-13.2.0
+um                               allmodconfig   gcc-13.3.0
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-14.1.0
+um                               allyesconfig   gcc-13.3.0
+um                                  defconfig   gcc-14.1.0
+um                             i386_defconfig   gcc-14.1.0
+um                    randconfig-001-20240803   gcc-13.2.0
+um                    randconfig-002-20240803   gcc-13.2.0
+um                           x86_64_defconfig   clang-20
+um                           x86_64_defconfig   gcc-14.1.0
+x86_64                           alldefconfig   gcc-14.1.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240803   gcc-12
+x86_64       buildonly-randconfig-002-20240803   gcc-12
+x86_64       buildonly-randconfig-003-20240803   gcc-12
+x86_64       buildonly-randconfig-004-20240803   gcc-12
+x86_64       buildonly-randconfig-005-20240803   gcc-12
+x86_64       buildonly-randconfig-006-20240803   gcc-12
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-11
+x86_64                                  kexec   clang-18
+x86_64                randconfig-001-20240803   gcc-12
+x86_64                randconfig-002-20240803   gcc-12
+x86_64                randconfig-003-20240803   gcc-12
+x86_64                randconfig-004-20240803   gcc-12
+x86_64                randconfig-005-20240803   gcc-12
+x86_64                randconfig-006-20240803   gcc-12
+x86_64                randconfig-011-20240803   gcc-12
+x86_64                randconfig-012-20240803   gcc-12
+x86_64                randconfig-013-20240803   gcc-12
+x86_64                randconfig-014-20240803   gcc-12
+x86_64                randconfig-015-20240803   gcc-12
+x86_64                randconfig-016-20240803   gcc-12
+x86_64                randconfig-071-20240803   gcc-12
+x86_64                randconfig-072-20240803   gcc-12
+x86_64                randconfig-073-20240803   gcc-12
+x86_64                randconfig-074-20240803   gcc-12
+x86_64                randconfig-075-20240803   gcc-12
+x86_64                randconfig-076-20240803   gcc-12
+x86_64                          rhel-8.3-rust   clang-18
+x86_64                               rhel-8.3   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                randconfig-001-20240803   gcc-13.2.0
+xtensa                randconfig-002-20240803   gcc-13.2.0
 
-Regards,
-Krishna,
-
-> Signed-off-by: Chris Wulff <crwulff@gmail.com>
-> ---
-> discussion thread for api changes for alt mode settings:
-> https://lore.kernel.org/linux-usb/35be4668-58d3-894a-72cf-de1afaacae45@ivitera.com/T/
-> ---
->   .../ABI/testing/configfs-usb-gadget-uac1      |  8 ++---
->   Documentation/usb/gadget-testing.rst          |  8 ++---
->   drivers/usb/gadget/function/f_uac1.c          | 36 +++++++------------
->   drivers/usb/gadget/function/u_uac1.h          |  8 ++---
->   4 files changed, 18 insertions(+), 42 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/configfs-usb-gadget-uac1 b/Documentation/ABI/testing/configfs-usb-gadget-uac1
-> index cf93b98b274d..64188a85592b 100644
-> --- a/Documentation/ABI/testing/configfs-usb-gadget-uac1
-> +++ b/Documentation/ABI/testing/configfs-usb-gadget-uac1
-> @@ -33,13 +33,9 @@ Description:
->   		p_it_name		playback input terminal name
->   		p_it_ch_name		playback channels name
->   		p_ot_name		playback output terminal name
-> -		p_fu_name		playback functional unit name
-> -		p_alt0_name		playback alt mode 0 name
-> -		p_alt1_name		playback alt mode 1 name
-> +		p_fu_vol_name		playback mute/volume functional unit name
->   		c_it_name		capture input terminal name
->   		c_it_ch_name		capture channels name
->   		c_ot_name		capture output terminal name
-> -		c_fu_name		capture functional unit name
-> -		c_alt0_name		capture alt mode 0 name
-> -		c_alt1_name		capture alt mode 1 name
-> +		c_fu_vol_name		capture mute/volume functional unit name
->   		=====================	=======================================
-> diff --git a/Documentation/usb/gadget-testing.rst b/Documentation/usb/gadget-testing.rst
-> index a89b49e639c3..7a94490fb2fd 100644
-> --- a/Documentation/usb/gadget-testing.rst
-> +++ b/Documentation/usb/gadget-testing.rst
-> @@ -960,15 +960,11 @@ The uac1 function provides these attributes in its function directory:
->   	p_it_name        playback input terminal name
->   	p_it_ch_name     playback channels name
->   	p_ot_name        playback output terminal name
-> -	p_fu_name        playback functional unit name
-> -	p_alt0_name      playback alt mode 0 name
-> -	p_alt1_name      playback alt mode 1 name
-> +	p_fu_vol_name    playback mute/volume functional unit name
->   	c_it_name        capture input terminal name
->   	c_it_ch_name     capture channels name
->   	c_ot_name        capture output terminal name
-> -	c_fu_name        capture functional unit name
-> -	c_alt0_name      capture alt mode 0 name
-> -	c_alt1_name      capture alt mode 1 name
-> +	c_fu_vol_name    capture mute/volume functional unit name
->   	================ ====================================================
->   
->   The attributes have sane default values.
-> diff --git a/drivers/usb/gadget/function/f_uac1.c b/drivers/usb/gadget/function/f_uac1.c
-> index 06a220fb7a87..bb36ce2be569 100644
-> --- a/drivers/usb/gadget/function/f_uac1.c
-> +++ b/drivers/usb/gadget/function/f_uac1.c
-> @@ -1254,16 +1254,16 @@ static int f_audio_bind(struct usb_configuration *c, struct usb_function *f)
->   	strings_uac1[STR_USB_OUT_IT].s = audio_opts->p_it_name;
->   	strings_uac1[STR_USB_OUT_IT_CH_NAMES].s = audio_opts->p_it_ch_name;
->   	strings_uac1[STR_IO_OUT_OT].s = audio_opts->p_ot_name;
-> -	strings_uac1[STR_FU_OUT].s = audio_opts->p_fu_name;
-> -	strings_uac1[STR_AS_OUT_IF_ALT0].s = audio_opts->p_alt0_name;
-> -	strings_uac1[STR_AS_OUT_IF_ALT1].s = audio_opts->p_alt1_name;
-> +	strings_uac1[STR_FU_OUT].s = audio_opts->p_fu_vol_name;
-> +	strings_uac1[STR_AS_OUT_IF_ALT0].s = "Playback Inactive";
-> +	strings_uac1[STR_AS_OUT_IF_ALT1].s = "Playback Active";
->   
->   	strings_uac1[STR_IO_IN_IT].s = audio_opts->c_it_name;
->   	strings_uac1[STR_IO_IN_IT_CH_NAMES].s = audio_opts->c_it_ch_name;
->   	strings_uac1[STR_USB_IN_OT].s = audio_opts->c_ot_name;
-> -	strings_uac1[STR_FU_IN].s = audio_opts->c_fu_name;
-> -	strings_uac1[STR_AS_IN_IF_ALT0].s = audio_opts->c_alt0_name;
-> -	strings_uac1[STR_AS_IN_IF_ALT1].s = audio_opts->c_alt1_name;
-> +	strings_uac1[STR_FU_IN].s = audio_opts->c_fu_vol_name;
-> +	strings_uac1[STR_AS_IN_IF_ALT0].s = "Capture Inactive";
-> +	strings_uac1[STR_AS_IN_IF_ALT1].s = "Capture Active";
->   
->   	us = usb_gstrings_attach(cdev, uac1_strings, ARRAY_SIZE(strings_uac1));
->   	if (IS_ERR(us))
-> @@ -1687,16 +1687,12 @@ UAC1_ATTRIBUTE_STRING(function_name);
->   UAC1_ATTRIBUTE_STRING(p_it_name);
->   UAC1_ATTRIBUTE_STRING(p_it_ch_name);
->   UAC1_ATTRIBUTE_STRING(p_ot_name);
-> -UAC1_ATTRIBUTE_STRING(p_fu_name);
-> -UAC1_ATTRIBUTE_STRING(p_alt0_name);
-> -UAC1_ATTRIBUTE_STRING(p_alt1_name);
-> +UAC1_ATTRIBUTE_STRING(p_fu_vol_name);
->   
->   UAC1_ATTRIBUTE_STRING(c_it_name);
->   UAC1_ATTRIBUTE_STRING(c_it_ch_name);
->   UAC1_ATTRIBUTE_STRING(c_ot_name);
-> -UAC1_ATTRIBUTE_STRING(c_fu_name);
-> -UAC1_ATTRIBUTE_STRING(c_alt0_name);
-> -UAC1_ATTRIBUTE_STRING(c_alt1_name);
-> +UAC1_ATTRIBUTE_STRING(c_fu_vol_name);
->   
->   static struct configfs_attribute *f_uac1_attrs[] = {
->   	&f_uac1_opts_attr_c_chmask,
-> @@ -1724,16 +1720,12 @@ static struct configfs_attribute *f_uac1_attrs[] = {
->   	&f_uac1_opts_attr_p_it_name,
->   	&f_uac1_opts_attr_p_it_ch_name,
->   	&f_uac1_opts_attr_p_ot_name,
-> -	&f_uac1_opts_attr_p_fu_name,
-> -	&f_uac1_opts_attr_p_alt0_name,
-> -	&f_uac1_opts_attr_p_alt1_name,
-> +	&f_uac1_opts_attr_p_fu_vol_name,
->   
->   	&f_uac1_opts_attr_c_it_name,
->   	&f_uac1_opts_attr_c_it_ch_name,
->   	&f_uac1_opts_attr_c_ot_name,
-> -	&f_uac1_opts_attr_c_fu_name,
-> -	&f_uac1_opts_attr_c_alt0_name,
-> -	&f_uac1_opts_attr_c_alt1_name,
-> +	&f_uac1_opts_attr_c_fu_vol_name,
->   
->   	NULL,
->   };
-> @@ -1792,16 +1784,12 @@ static struct usb_function_instance *f_audio_alloc_inst(void)
->   	scnprintf(opts->p_it_name, sizeof(opts->p_it_name), "Playback Input terminal");
->   	scnprintf(opts->p_it_ch_name, sizeof(opts->p_it_ch_name), "Playback Channels");
->   	scnprintf(opts->p_ot_name, sizeof(opts->p_ot_name), "Playback Output terminal");
-> -	scnprintf(opts->p_fu_name, sizeof(opts->p_fu_name), "Playback Volume");
-> -	scnprintf(opts->p_alt0_name, sizeof(opts->p_alt0_name), "Playback Inactive");
-> -	scnprintf(opts->p_alt1_name, sizeof(opts->p_alt1_name), "Playback Active");
-> +	scnprintf(opts->p_fu_vol_name, sizeof(opts->p_fu_vol_name), "Playback Volume");
->   
->   	scnprintf(opts->c_it_name, sizeof(opts->c_it_name), "Capture Input terminal");
->   	scnprintf(opts->c_it_ch_name, sizeof(opts->c_it_ch_name), "Capture Channels");
->   	scnprintf(opts->c_ot_name, sizeof(opts->c_ot_name), "Capture Output terminal");
-> -	scnprintf(opts->c_fu_name, sizeof(opts->c_fu_name), "Capture Volume");
-> -	scnprintf(opts->c_alt0_name, sizeof(opts->c_alt0_name), "Capture Inactive");
-> -	scnprintf(opts->c_alt1_name, sizeof(opts->c_alt1_name), "Capture Active");
-> +	scnprintf(opts->c_fu_vol_name, sizeof(opts->c_fu_vol_name), "Capture Volume");
->   
->   	return &opts->func_inst;
->   }
-> diff --git a/drivers/usb/gadget/function/u_uac1.h b/drivers/usb/gadget/function/u_uac1.h
-> index 67784de9782b..feb6eb76462f 100644
-> --- a/drivers/usb/gadget/function/u_uac1.h
-> +++ b/drivers/usb/gadget/function/u_uac1.h
-> @@ -57,16 +57,12 @@ struct f_uac1_opts {
->   	char			p_it_name[USB_MAX_STRING_LEN];
->   	char			p_it_ch_name[USB_MAX_STRING_LEN];
->   	char			p_ot_name[USB_MAX_STRING_LEN];
-> -	char			p_fu_name[USB_MAX_STRING_LEN];
-> -	char			p_alt0_name[USB_MAX_STRING_LEN];
-> -	char			p_alt1_name[USB_MAX_STRING_LEN];
-> +	char			p_fu_vol_name[USB_MAX_STRING_LEN];
->   
->   	char			c_it_name[USB_MAX_STRING_LEN];
->   	char			c_it_ch_name[USB_MAX_STRING_LEN];
->   	char			c_ot_name[USB_MAX_STRING_LEN];
-> -	char			c_fu_name[USB_MAX_STRING_LEN];
-> -	char			c_alt0_name[USB_MAX_STRING_LEN];
-> -	char			c_alt1_name[USB_MAX_STRING_LEN];
-> +	char			c_fu_vol_name[USB_MAX_STRING_LEN];
->   
->   	struct mutex			lock;
->   	int				refcnt;
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
