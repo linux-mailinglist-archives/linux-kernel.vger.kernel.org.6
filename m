@@ -1,442 +1,325 @@
-Return-Path: <linux-kernel+bounces-273442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B926394694F
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CE0946956
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E769EB21904
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 11:00:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DF581F21925
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 11:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E9114F9D6;
-	Sat,  3 Aug 2024 10:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D48B136338;
+	Sat,  3 Aug 2024 11:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sg358cku"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eOq/IScy"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9962A14E2F1;
-	Sat,  3 Aug 2024 10:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF12A13699B
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 11:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722682766; cv=none; b=EbSyBb8r7OA57zJ/2qm9804Ub/eur78j+WafgpoE6ctnV0Ge39/S5vj9ilno9O5vG481HbLz51QwGePvxMRi9kzmMc3ha1NnhcbGOpSIgh3HzliYw6gbpojwmzcGZx7yADPqfKE9CpW22//1T2gXzMSH5hP5lqX2WY3G+1e+CHM=
+	t=1722682837; cv=none; b=NwN9LADCLT21OFSZb7cUEorTIqUzJjybCn86PW/IyZ3uRlPX+gfh8QTth7QKZ/aQVAETp8xPQVLuH/ZLfD7wykAcBxsll2jt9ZV6vH97GxT3oHgYEuowWYAd1yPhZvonTe+dHuMRw5YDMjJCg7DHL4KohXBVC8q8maU3eXJrWrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722682766; c=relaxed/simple;
-	bh=wXJibRRZdKerw8MBnL8BT75mXojPWhhoJOnbQymsNj0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e1aq4+TGaMymri9s+vxKZDNZc4hRswKkIIevR6e0VsZ6+2ea1LPpoeMIoWjoVCpSkMnkWIzM81kloFg5kvlSLECsPY+uGu403/n4SS/Jo6NQ9EGfBxiFYJK6ip6Zgu7G/20zjGmIpcGaMMLZfneSBEzHUiGKuw22m/A7/tmqqoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sg358cku; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A2BC4AF0A;
-	Sat,  3 Aug 2024 10:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722682766;
-	bh=wXJibRRZdKerw8MBnL8BT75mXojPWhhoJOnbQymsNj0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=sg358ckufK+k2XFwJr6mNo76SJseGXXq+48T6xjlyWPDxe9Cz/ZO9vamfQ2nUfrMt
-	 Fa8HOF+JgsVF67w5hmesBkcIVUbgNUWbcu5awi/QMMCdo/YhjABsW7vrr/FmJ5RYn+
-	 muClUkE+muPBsKVfEpjoxbz1UuKeI3e4W8gKZr69hV4ypvCsuS76s1vZa64T2IJ06b
-	 eF+qW8DiqvW0XemCxqy4luQjv6FzzBqSK9gBg8cNqHwwNjzldeZnuvyuMSdaeHF8bN
-	 51/nG8FVmF5Sc7DvIo1sQgSUwaIQ+96ale2TSn2XZNKiOkrOSk4ZYAnqInQl3LYPrN
-	 raArjW4e/c3Gw==
-Message-ID: <7ff040d4a0fb1634d3dc9282da014165a347dbb2.camel@kernel.org>
-Subject: Re: [PATCH RFC 3/4] lockref: rework CMPXCHG_LOOP to handle
- contention better
-From: Jeff Layton <jlayton@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew Morton
-	 <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sat, 03 Aug 2024 06:59:24 -0400
-In-Reply-To: <CAGudoHHLcKoG6Y2Zzm34gLrtaXmtuMc=CPcVpVQUaJ1Ysz8EDQ@mail.gmail.com>
-References: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
-	 <20240802-openfast-v1-3-a1cff2a33063@kernel.org>
-	 <r6gyrzb265f5w6sev6he3ctfjjh7wfhktzwxyylwwkeopkzkpj@fo3yp2lkgp7l>
-	 <CAGudoHHLcKoG6Y2Zzm34gLrtaXmtuMc=CPcVpVQUaJ1Ysz8EDQ@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
+	s=arc-20240116; t=1722682837; c=relaxed/simple;
+	bh=MFgOs2G+h0wMmI4NbkwqSfooXFKz5XyVkrg1+abZ0kU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GCx9xyAw1D5K6IqHwd/kykBRWEfLGngWlTtDPA5I5JvMyGRSygpn6HABOAJRUz2NEow3LVG1EtKzhf7Cl8IJkzzt1NcqrEqwZPsN3dVObsN1l0z6yO1GQ2bs0E5q7TlqrUJdg4rXcpCCt++NSvVHqIWupqjPjQ0ElVLvMrIrQaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eOq/IScy; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso103599721fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 04:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722682833; x=1723287633; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNGT5r4BR2JSxtr0hpWaFKlHFXjUN1Qi2sHmX20c4mY=;
+        b=eOq/IScyQR9GLi+NWi+xJS64O8vCJED2GaFqC+WCHy5xx8lk5WPCHWjqmstJO7C/O2
+         FD7sUVZKZY3pYE1kIvvHpUimeVB+JAlTZzmGQVedBnMFjI6BlIG8N6z7rWS1s0sghU2S
+         ocO+1J8MvncI9Ej0ygxAoKHW6IvCjGkTox3Imp+UI9apIDhH8ejoiqIuypS9jvShBseh
+         bOyk2LvVXOeLAhZG4lrxf0QaeMLiP2/WYB3lr9uGyBpg9TEFsAHSakFOsxjTDZ3PGJ23
+         Rmw8uWUy4rwf8hVUNR1Teh5uMTLhNQp5su4dguFzYAvo/7yYfE2MHGm62/L/FIKDBTY5
+         yOmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722682833; x=1723287633;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nNGT5r4BR2JSxtr0hpWaFKlHFXjUN1Qi2sHmX20c4mY=;
+        b=v6Qj/aUoMybhmcxCTNfhDB+2v3k9OnRJXMmQSQFbJkMbnGl0kbLi9sV1FxXj7/2zYW
+         YWIqOqr7uLISgMhv/eGrRQyCZrAOYRJ4fQgIbHbjbUhEw14/iEBQTgxPly4rfMdqpOCw
+         6UlwL0XOYYTEmRnJHrFBWA5n0Vu7g0ohQwX+UYWw5ww0P/zFyh+TXTaVdJMfsJ+1qWvA
+         CCWnu9Ytj8Tt77Y1vt4dEJxK5VtcYtsgduv4DGQpqmTRY4CYsvZ1ooMxZX/exBByV5GI
+         /04jfijN2ZyHsX6QBYwnMwhRguf3xGptsCHorYtVCSAj8P4hYK+7lh/RgqxX/3VH1ceE
+         TLTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXo8ocmasbBl8ywsaDFiPpDwFYDX/wyjUYrEXqubO0PhrN9xgn3q1R4gqv/b6i5ZvKcoTyeW52791LiUS0XZxNYAQ/8Skzm4HIPwW03
+X-Gm-Message-State: AOJu0YxCuQh2LMAFFX3NLVvo6N4qHzqOPigRXRMs2SelyIHQwmdSPOYL
+	wN2nRKEkSMXeldu5G8AD9r7CCN/EsBGP+OCq7RmEPTg+h98kHNebpDqr56DT880=
+X-Google-Smtp-Source: AGHT+IGfVXpFlc9oFqW8lbiOI9PDtvzXyDErrPZE6WU7MV0jlGMNnbtS+ZF9QfuScaUolgfDoSnFQw==
+X-Received: by 2002:a05:6512:ba7:b0:52b:c0b1:ab9e with SMTP id 2adb3069b0e04-530bb367101mr4034661e87.5.1722682832568;
+        Sat, 03 Aug 2024 04:00:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba4a512sm469093e87.300.2024.08.03.04.00.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Aug 2024 04:00:32 -0700 (PDT)
+Date: Sat, 3 Aug 2024 14:00:30 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Jingoo Han <jingoohan1@gmail.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	andersson@kernel.org, quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
+Message-ID: <pku3ayi76246jmixuqdylkuqpb3k5z3ykn4hj2rjvcrhqrj3hb@yig6as3cph6p>
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
 
-On Sat, 2024-08-03 at 11:09 +0200, Mateusz Guzik wrote:
-> On Sat, Aug 3, 2024 at 6:44=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
-> >=20
-> > On Fri, Aug 02, 2024 at 05:45:04PM -0400, Jeff Layton wrote:
-> > > In a later patch, we want to change the open(..., O_CREAT) codepath t=
-o
-> > > avoid taking the inode->i_rwsem for write when the dentry already exi=
-sts.
-> > > When we tested that initially, the performance devolved significantly
-> > > due to contention for the parent's d_lockref spinlock.
-> > >=20
-> > > There are two problems with lockrefs today: First, once any concurren=
-t
-> > > task takes the spinlock, they all end up taking the spinlock, which i=
-s
-> > > much more costly than a single cmpxchg operation. The second problem =
-is
-> > > that once any task fails to cmpxchg 100 times, it falls back to the
-> > > spinlock. The upshot there is that even moderate contention can cause=
- a
-> > > fallback to serialized spinlocking, which worsens performance.
-> > >=20
-> > > This patch changes CMPXCHG_LOOP in 2 ways:
-> > >=20
-> > > First, change the loop to spin instead of falling back to a locked
-> > > codepath when the spinlock is held. Once the lock is released, allow =
-the
-> > > task to continue trying its cmpxchg loop as before instead of taking =
-the
-> > > lock. Second, don't allow the cmpxchg loop to give up after 100 retri=
-es.
-> > > Just continue infinitely.
-> > >=20
-> > > This greatly reduces contention on the lockref when there are large
-> > > numbers of concurrent increments and decrements occurring.
-> > >=20
-> >=20
-> > This was already tried by me and it unfortunately can reduce performanc=
-e.
-> >=20
->=20
-> Oh wait I misread the patch based on what I tried there. Spinning
-> indefinitely waiting for the lock to be free is a no-go as it loses
-> the forward progress guarantee (and it is possible to get the lock
-> being continuously held). Only spinning up to an arbitrary point wins
-> some in some tests and loses in others.
->=20
+On Sat, Aug 03, 2024 at 08:52:47AM GMT, Krishna chaitanya chundru wrote:
+> Add binding describing the Qualcomm PCIe switch, QPS615,
+> which provides Ethernet MAC integrated to the 3rd downstream port
+> and two downstream PCIe ports.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  .../devicetree/bindings/pci/qcom,qps615.yaml       | 191 +++++++++++++++++++++
+>  1 file changed, 191 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
+> new file mode 100644
+> index 000000000000..ea0c953ee56f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
+> @@ -0,0 +1,191 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/qcom,qps615.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm QPS615 PCIe switch
+> +
+> +maintainers:
+> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
+> +  ports. The 3rd downstream port has integrated endpoint device of
+> +  Ethernet MAC. Other two downstream ports are supposed to connect
+> +  to external device.
+> +
+> +  The QPS615 PCIe switch can be configured through I2C interface before
+> +  PCIe link is established to change FTS, ASPM related entry delays,
+> +  tx amplitude etc for better power efficiency and functionality.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - pci1179,0623
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  qcom,qps615-controller:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Reference to the I2C client used to do configure qps615
+> +
+> +  vdd18-supply: true
+> +
+> +  vdd09-supply: true
+> +
+> +  vddc-supply: true
+> +
+> +  vddio1-supply: true
+> +
+> +  vddio2-supply: true
+> +
+> +  vddio18-supply: true
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description:
+> +      GPIO controlling the RESX# pin.
+> +
+> +  qps615,axi-clk-freq-hz:
+> +    description:
+> +      AXI clock which internal bus of the switch.
 
-I'm a little confused about the forward progress guarantee here. Does
-that exist today at all? ISTM that falling back to spin_lock() after a
-certain number of retries doesn't guarantee any forward progress. You
-can still just end up spinning on the lock forever once that happens,
-no?
+Is it a clock or clock rate?
 
-> Either way, as described below, chances are decent that:
-> 1. there is an easy way to not lockref_get/put on the parent if the
-> file is already there, dodging the problem
-> .. and even if that's not true
-> 2. lockref can be ditched in favor of atomics. apart from some minor
-> refactoring this all looks perfectly doable and I have a wip. I will
-> try to find the time next week to sort it out
->=20
+> +
+> +  qcom,l0s-entry-delay-ns:
+> +    description: Aspm l0s entry delay in nanoseconds.
 
-Like I said in the earlier mail, I don't think we can stay in RCU mode
-because of the audit_inode call. I'm definitely interested in your WIP
-though!
+I'd say, from the property name it is obvious that it comes in
+nanoseconds.
 
-> > Key problem is that in some corner cases the lock can be continuously
-> > held and be queued on, making the fast path always fail and making all
-> > the spins actively waste time (and notably pull on the cacheline).
-> >=20
-> > See this for more details:
-> > https://lore.kernel.org/oe-lkp/lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2m=
-faqbkvv4ke@hzxat7utjnvx/
-> >=20
-> > However, I *suspect* in the case you are optimizing here (open + O_CREA=
-T
-> > of an existing file) lockref on the parent can be avoided altogether
-> > with some hackery and that's what should be done here.
-> >=20
-> > When it comes to lockref in vfs in general, most uses can be elided wit=
-h
-> > some hackery (see the above thread) which is in early WIP (the LSMs are
-> > a massive headache).
-> >=20
-> > For open calls which *do* need to take a real ref the hackery does not
-> > help of course.
-> >=20
-> > This is where I think decoupling ref from the lock is the best way
-> > forward. For that to work the dentry must hang around after the last
-> > unref (already done thanks to RCU and dput even explicitly handles that
-> > already!) and there needs to be a way to block new refs atomically --
-> > can be done with cmpxchg from a 0-ref state to a flag blocking new refs
-> > coming in. I have that as a WIP as well.
-> >=20
-> >=20
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  lib/lockref.c | 85 ++++++++++++++++++++++---------------------------=
-----------
-> > >  1 file changed, 32 insertions(+), 53 deletions(-)
-> > >=20
-> > > diff --git a/lib/lockref.c b/lib/lockref.c
-> > > index 2afe4c5d8919..b76941043fe9 100644
-> > > --- a/lib/lockref.c
-> > > +++ b/lib/lockref.c
-> > > @@ -8,22 +8,25 @@
-> > >   * Note that the "cmpxchg()" reloads the "old" value for the
-> > >   * failure case.
-> > >   */
-> > > -#define CMPXCHG_LOOP(CODE, SUCCESS) do {                            =
-         \
-> > > -     int retry =3D 100;                                             =
-           \
-> > > -     struct lockref old;                                            =
-         \
-> > > -     BUILD_BUG_ON(sizeof(old) !=3D 8);                              =
-           \
-> > > -     old.lock_count =3D READ_ONCE(lockref->lock_count);             =
-           \
-> > > -     while (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock)=
-)) {     \
-> > > -             struct lockref new =3D old;                            =
-           \
-> > > -             CODE                                                   =
-         \
-> > > -             if (likely(try_cmpxchg64_relaxed(&lockref->lock_count, =
-         \
-> > > -                                              &old.lock_count,      =
-         \
-> > > -                                              new.lock_count))) {   =
-         \
-> > > -                     SUCCESS;                                       =
-         \
-> > > -             }                                                      =
-         \
-> > > -             if (!--retry)                                          =
-         \
-> > > -                     break;                                         =
-         \
-> > > -     }                                                              =
-         \
-> > > +#define CMPXCHG_LOOP(CODE, SUCCESS) do {                            =
-                 \
-> > > +     struct lockref old;                                            =
-                 \
-> > > +     BUILD_BUG_ON(sizeof(old) !=3D 8);                              =
-                   \
-> > > +     old.lock_count =3D READ_ONCE(lockref->lock_count);             =
-                   \
-> > > +     for (;;) {                                                     =
-                 \
-> > > +             struct lockref new =3D old;                            =
-                   \
-> > > +                                                                    =
-                 \
-> > > +             if (likely(arch_spin_value_unlocked(old.lock.rlock.raw_=
-lock))) {        \
-> > > +                     CODE                                           =
-                 \
-> > > +                     if (likely(try_cmpxchg64_relaxed(&lockref->lock=
-_count,          \
-> > > +                                                      &old.lock_coun=
-t,               \
-> > > +                                                      new.lock_count=
-))) {            \
-> > > +                             SUCCESS;                               =
-                 \
-> > > +                     }                                              =
-                 \
-> > > +             } else {                                               =
-                 \
-> > > +                     cpu_relax();                                   =
-                 \
-> > > +                     old.lock_count =3D READ_ONCE(lockref->lock_coun=
-t);                \
-> > > +             }                                                      =
-                 \
-> > > +     }                                                              =
-                 \
-> > >  } while (0)
-> > >=20
-> > >  #else
-> > > @@ -46,10 +49,8 @@ void lockref_get(struct lockref *lockref)
-> > >       ,
-> > >               return;
-> > >       );
-> > > -
-> > > -     spin_lock(&lockref->lock);
-> > > -     lockref->count++;
-> > > -     spin_unlock(&lockref->lock);
-> > > +     /* should never get here */
-> > > +     WARN_ON_ONCE(1);
-> > >  }
-> > >  EXPORT_SYMBOL(lockref_get);
-> > >=20
-> > > @@ -60,8 +61,6 @@ EXPORT_SYMBOL(lockref_get);
-> > >   */
-> > >  int lockref_get_not_zero(struct lockref *lockref)
-> > >  {
-> > > -     int retval;
-> > > -
-> > >       CMPXCHG_LOOP(
-> > >               new.count++;
-> > >               if (old.count <=3D 0)
-> > > @@ -69,15 +68,9 @@ int lockref_get_not_zero(struct lockref *lockref)
-> > >       ,
-> > >               return 1;
-> > >       );
-> > > -
-> > > -     spin_lock(&lockref->lock);
-> > > -     retval =3D 0;
-> > > -     if (lockref->count > 0) {
-> > > -             lockref->count++;
-> > > -             retval =3D 1;
-> > > -     }
-> > > -     spin_unlock(&lockref->lock);
-> > > -     return retval;
-> > > +     /* should never get here */
-> > > +     WARN_ON_ONCE(1);
-> > > +     return -1;
-> > >  }
-> > >  EXPORT_SYMBOL(lockref_get_not_zero);
-> > >=20
-> > > @@ -88,8 +81,6 @@ EXPORT_SYMBOL(lockref_get_not_zero);
-> > >   */
-> > >  int lockref_put_not_zero(struct lockref *lockref)
-> > >  {
-> > > -     int retval;
-> > > -
-> > >       CMPXCHG_LOOP(
-> > >               new.count--;
-> > >               if (old.count <=3D 1)
-> > > @@ -97,15 +88,9 @@ int lockref_put_not_zero(struct lockref *lockref)
-> > >       ,
-> > >               return 1;
-> > >       );
-> > > -
-> > > -     spin_lock(&lockref->lock);
-> > > -     retval =3D 0;
-> > > -     if (lockref->count > 1) {
-> > > -             lockref->count--;
-> > > -             retval =3D 1;
-> > > -     }
-> > > -     spin_unlock(&lockref->lock);
-> > > -     return retval;
-> > > +     /* should never get here */
-> > > +     WARN_ON_ONCE(1);
-> > > +     return -1;
-> > >  }
-> > >  EXPORT_SYMBOL(lockref_put_not_zero);
-> > >=20
-> > > @@ -125,6 +110,8 @@ int lockref_put_return(struct lockref *lockref)
-> > >       ,
-> > >               return new.count;
-> > >       );
-> > > +     /* should never get here */
-> > > +     WARN_ON_ONCE(1);
-> > >       return -1;
-> > >  }
-> > >  EXPORT_SYMBOL(lockref_put_return);
-> > > @@ -171,8 +158,6 @@ EXPORT_SYMBOL(lockref_mark_dead);
-> > >   */
-> > >  int lockref_get_not_dead(struct lockref *lockref)
-> > >  {
-> > > -     int retval;
-> > > -
-> > >       CMPXCHG_LOOP(
-> > >               new.count++;
-> > >               if (old.count < 0)
-> > > @@ -180,14 +165,8 @@ int lockref_get_not_dead(struct lockref *lockref=
-)
-> > >       ,
-> > >               return 1;
-> > >       );
-> > > -
-> > > -     spin_lock(&lockref->lock);
-> > > -     retval =3D 0;
-> > > -     if (lockref->count >=3D 0) {
-> > > -             lockref->count++;
-> > > -             retval =3D 1;
-> > > -     }
-> > > -     spin_unlock(&lockref->lock);
-> > > -     return retval;
-> > > +     /* should never get here */
-> > > +     WARN_ON_ONCE(1);
-> > > +     return -1;
-> > >  }
-> > >  EXPORT_SYMBOL(lockref_get_not_dead);
-> > >=20
-> > > --
-> > > 2.45.2
-> > >=20
->=20
->=20
->=20
+> +
+> +  qcom,l1-entry-delay-ns:
+> +    description: Aspm l1 entry delay in nanoseconds.
+> +
+> +  qcom,tx-amplitude-millivolt:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Change Tx Margin setting for low power consumption.
+> +
+> +  qcom,no-dfe:
+> +    type: boolean
+> +    description: Disables DFE (Decision Feedback Equalizer).
+> +
+> +  qcom,nfts:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    description:
+> +      Fast Training Sequence (FTS) is the mechanism that
+> +      is used for bit and Symbol lock.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Doesn't help to understand what it is and what the value means.
+
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-bus-common.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: pci1179,0623
+> +      required:
+> +        - compatible
+> +    then:
+> +      required:
+> +        - vdd18-supply
+> +        - vdd09-supply
+> +        - vddc-supply
+> +        - vddio1-supply
+> +        - vddio2-supply
+> +        - vddio18-supply
+> +        - qcom,qps615-controller
+> +        - reset-gpios
+> +
+> +patternProperties:
+> +  "@1?[0-9a-f](,[0-7])?$":
+> +    type: object
+> +    $ref: qcom,qps615.yaml#
+> +    additionalProperties: true
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    pcie {
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +
+> +        pcie@0 {
+> +            device_type = "pci";
+> +            reg = <0x0 0x0 0x0 0x0 0x0>;
+> +
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            ranges;
+> +
+> +            pcie@0,0 {
+> +                compatible = "pci1179,0623";
+> +                reg = <0x10000 0x0 0x0 0x0 0x0>;
+> +                device_type = "pci";
+> +                #address-cells = <3>;
+> +                #size-cells = <2>;
+> +                ranges;
+> +
+> +                qcom,qps615-controller = <&qps615_controller>;
+
+Where is the corresponding device?
+
+> +
+> +                vdd18-supply = <&vdd>;
+> +                vdd09-supply = <&vdd>;
+> +                vddc-supply = <&vdd>;
+> +                vddio1-supply = <&vdd>;
+> +                vddio2-supply = <&vdd>;
+> +                vddio18-supply = <&vdd>;
+> +
+> +                reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
+> +
+> +                pcie@1,0 {
+> +                    reg = <0x20800 0x0 0x0 0x0 0x0>;
+> +                    #address-cells = <3>;
+> +                    #size-cells = <2>;
+> +                    device_type = "pci";
+> +                    ranges;
+> +
+> +                    qcom,no-dfe;
+> +                };
+> +
+> +                pcie@2,0 {
+> +                    reg = <0x21000 0x0 0x0 0x0 0x0>;
+> +                    #address-cells = <3>;
+> +                    #size-cells = <2>;
+> +                    device_type = "pci";
+> +                    ranges;
+> +
+> +                    qcom,nfts = /bits/ 8 <10>;
+> +                };
+> +
+> +                pcie@3,0 {
+> +                    reg = <0x21800 0x0 0x0 0x0 0x0>;
+> +                    #address-cells = <3>;
+> +                    #size-cells = <2>;
+> +                    device_type = "pci";
+> +                    ranges;
+> +
+> +                    qcom,tx-amplitude-millivolt = <10>;
+> +
+> +                         pcie@0,0 {
+
+Wrong indentation.
+
+> +                              reg = <0x40000 0x0 0x0 0x0 0x0>;
+> +                              #address-cells = <3>;
+> +                              #size-cells = <2>;
+> +                              device_type = "pci";
+> +                              ranges;
+> +
+> +                              qcom,l1-entry-delay-ns = <10>;
+> +                         };
+> +
+> +                         pcie@0,1 {
+> +                              reg = <0x40100 0x0 0x0 0x0 0x0>;
+> +                              #address-cells = <3>;
+> +                              #size-cells = <2>;
+> +                              device_type = "pci";
+> +                              ranges;
+> +
+> +                              qcom,l0s-entry-delay-ns = <10>;
+> +                         };
+> +                };
+> +            };
+> +        };
+> +    };
+> 
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
