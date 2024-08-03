@@ -1,93 +1,71 @@
-Return-Path: <linux-kernel+bounces-273329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9431F946786
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:34:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76ECA94678B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E311C20C8F
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:34:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36EF8282222
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722CB13F01A;
-	Sat,  3 Aug 2024 05:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115B81428F4;
+	Sat,  3 Aug 2024 05:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=spwhitton.name header.i=@spwhitton.name header.b="RpFIvgg3";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="jQMFBPtO"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Jpkm0g9F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD14542A82
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 05:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BC842A82;
+	Sat,  3 Aug 2024 05:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722663251; cv=none; b=qBmaxlDjTkFrqIVXg8BmPM1VXvEXP8xc/Ly7DGdSBuSmkjtK9Rc6AsKnFjmjr3UNi8bgyDUdBY73knT42BHWUMp5KLe814lYe9BnTfA4Rc4ty6B2Jztzv6ahwGZYr/NcNVZ0MERM8JJ3f+Z3LtTaHWcGBw9z7JZF0doUs0do+U8=
+	t=1722663262; cv=none; b=TEa9hIVSiYZEs0vURGxyUCk9nMjwoB761lSq4sidygBUH1KvAhpPEp3kXMdDstSZjE2fUoqW0C/tMXFKAcFkd/sxNjGrc4J+EGd4V/XQblF0LQl9V8N3/t02KkxtTSbA6Yk4VGf9nhfEZ3WqzLDp4870U97DhRrHigZmgAcH2dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722663251; c=relaxed/simple;
-	bh=EF6NEO5ohC294DVJau6zkSdXtr8oG5BVcmFPCUicuLg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gF/goui7ScmU3fLY2clC7w/ZJYUw6e47WwaE25ujziI8EtAM3dUqUYWKlwvhUJOGzbdu1/U9bYPBoU/M63qLvpESDq5oQUblmwSFvVWFbvjDhsmD7ozjFE5t2bo++Q5gqAzmwf1g+ybJIYDClcXble5mIO1g+Rz/ADubecfaDWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spwhitton.name; spf=pass smtp.mailfrom=spwhitton.name; dkim=pass (2048-bit key) header.d=spwhitton.name header.i=@spwhitton.name header.b=RpFIvgg3; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=jQMFBPtO; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spwhitton.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spwhitton.name
-DKIM-Signature: a=rsa-sha256; b=RpFIvgg3MrETYEC6o4HRMsx/LVlHrzozOsJWBfEyRNvwBg/p2LEL324+G1JdlPE6/rGCLkMMzSZqJrsz22ZIaPTItH6OWr7H3jWcR1951jKZ1J1deErFB/MTOhp9zN4M1XUKMxIdgGd7vjq7AXvofEphDtmtYdANBT6vIUUx46RWu4Uo+a8hF23JVwM/Abne469on8M9ZDTscsdToOp6zN0iD06qhfgyrI6pF9bq8ENc4isbroIeMyjNebc63FTsI0regbmijh6ZXdlh/09Uizqh/qntL5mgDICKrnhOy74/BZoCxTfawTmsCOYqcVVLPkFTkoADovlvu4q19wWxmQ==; s=purelymail2; d=spwhitton.name; v=1; bh=EF6NEO5ohC294DVJau6zkSdXtr8oG5BVcmFPCUicuLg=; h=Received:Received:From:To:Subject:Date;
-DKIM-Signature: a=rsa-sha256; b=jQMFBPtOk9WYTSq69gzV6jiwUoxZ54KNa59vycUW4FTrK69E2ZUigvBrrQr/VKoJ+NV4/RApaSAFCJCUQitPQJHtI8mAS3tJBPtnTE5n/SamLQWMdalauP8pYZUZ2iKwZP+0N/KQtNRuvf3H/8mqStyVwhFme04e/vMxnl33/CEp/4IhXLj9yRFNjdi4T5CmM+cxl6BEl4MMP2G2hudm8Fh1tWvq1F1XEDceGE1cI3EsbM0pRcNYFymNSH4FMWzzBFbs5+bnWr4BH73ns7437oXozhBP7y0Vlkl94ndVhiYnIIyJ+TQVaLu+y56PK6UTg/G6RRyWiDXpuKDtfWGYsg==; s=purelymail2; d=purelymail.com; v=1; bh=EF6NEO5ohC294DVJau6zkSdXtr8oG5BVcmFPCUicuLg=; h=Feedback-ID:Received:Received:From:To:Subject:Date;
-Feedback-ID: 20115:3760:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -537863146;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Sat, 03 Aug 2024 05:33:47 +0000 (UTC)
-Received: by melete.silentflame.com (Postfix, from userid 1000)
-	id 2151D7E3E0E; Sat,  3 Aug 2024 14:33:43 +0900 (KST)
-From: Sean Whitton <spwhitton@spwhitton.name>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-  ~lkcamp/patches@lists.sr.ht,  helen.koike@collabora.com,  Hans de Goede
- <hdegoede@redhat.com>,  Mauro Carvalho Chehab <mchehab@kernel.org>,
-  Sakari Ailus <sakari.ailus@linux.intel.com>,
-  linux-media@vger.kernel.org,  linux-staging@lists.linux.dev,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: media: atomisp: Add parentheses around macro
- definitions
-In-Reply-To: <8d383b9d-d029-4706-91c5-9623fddf5df3@suswa.mountain> (Dan
-	Carpenter's message of "Fri, 2 Aug 2024 23:28:43 -0500")
-References: <20240730062348.46205-2-spwhitton@spwhitton.name>
-	<2024073020-reload-vanquish-f937@gregkh>
-	<87v80i475p.fsf@melete.silentflame.com>
-	<8d383b9d-d029-4706-91c5-9623fddf5df3@suswa.mountain>
-Date: Sat, 03 Aug 2024 13:33:43 +0800
-Message-ID: <878qxe41c8.fsf@melete.silentflame.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722663262; c=relaxed/simple;
+	bh=RTJ/1pk/bPsfauTST9+1WLafvUgR5Hy16K0lM1NDVsY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VJ5YbtxlNxy61kaDxk9wE/lvnZf6gXIK3kdNWdylWRT41ySMKDsejSjAEC1anlHXo2sD38HRZGMWgPxdjk8ZvdjAzzhhoMdUSKTQP8vzXPANvHh+SnCnoJxtbTsNi8T1SHfm226o/vdvOMgkNNsO4eMlaYu4QGDqyY9lKZbXKC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Jpkm0g9F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E46C116B1;
+	Sat,  3 Aug 2024 05:34:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722663261;
+	bh=RTJ/1pk/bPsfauTST9+1WLafvUgR5Hy16K0lM1NDVsY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Jpkm0g9Fk6mUPgW4atphwEFKNbJ3kozqtJqzpkHeDgnjJkba28Yqq5im0/vyICX42
+	 7eqHuDyLQBC0t0Lm5QbSbcTtTT4ej0b3AUejH17rXXb0wqqkP8TLHQ3Q7Lzs4aFb4X
+	 FPu2P/QmQedPwqEyg2Dw28J4Yl46o+F1plTix2PM=
+Date: Fri, 2 Aug 2024 22:34:19 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Christian
+ Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank
+ <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, Heiko
+ Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
+ Gordeev <agordeev@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Subject: Re: [PATCH v1 00/11] mm: replace follow_page() by folio_walk
+Message-Id: <20240802223419.3c189525b50f45d36afdbae3@linux-foundation.org>
+In-Reply-To: <20240802155524.517137-1-david@redhat.com>
+References: <20240802155524.517137-1-david@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri,  2 Aug 2024 17:55:13 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-On Fri 02 Aug 2024 at 11:28pm -05, Dan Carpenter wrote:
+> I am not able to test the s390x Secure Execution changes, unfortunately.
 
-> *You* need to figure out what the proper thing is.  Not us.  That's the
-> difficult part of writing a patch.  Once you know what the correct thing
-> is, then the rest is just typing.
->
-> That business of defining STORAGE_CLASS_SP_C is weird.  Figure out the
-> authors intention and find a better way to do it.
->
-> Figure out why your code compiled as well because putting parentheses
-> around (static inline) is a syntax error.
-
-I asked follow-up questions because it seems like at least partially a
-matter of style to say that the business of defining STORAGE_CLASS_SP_C
-is weird.  Maybe there is a better approach than what is currently done,
-but maybe there isn't.  Maybe the checkpatch warning should just be
-suppressed (if that's something that can be done).  I would be grateful
-for some additional pointers.
-
--- 
-Sean Whitton
+I'll add it to -next.  Could the s390 developers please check this?
 
