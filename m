@@ -1,127 +1,86 @@
-Return-Path: <linux-kernel+bounces-273316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0CE94674F
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:08:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9E6946751
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C69401C20D00
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 770E11F217EA
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED8312B95;
-	Sat,  3 Aug 2024 04:07:55 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A545929414;
+	Sat,  3 Aug 2024 04:09:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B997FF;
-	Sat,  3 Aug 2024 04:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C001C6A7
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 04:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722658075; cv=none; b=YkAUSuJu/qb+U/X3kZnF2N6uzYlQj4haZLBqfJhp63/ci6BroXdpT9FXhY3v2984rnqrIVy7SXwIQlHqawfgVjgmStl+gk3MGV73P8H8i/cu9QEsTPnCTjA6G1krxsrq6FAvBd2ZiM3gQ0YRatLVAjC6/NI7RwV1BN4H2opwlko=
+	t=1722658146; cv=none; b=fo3hrbLgsLIMBHOFeRzyuyE8me7NnAYXXR9cDLbzr8gbypXvvohzOrNdm5slauPpbUbq3CDyeRqcDXMYjXV8Z2vQLVH07HaCqll8JnBWPiTuUCH68c5YBrS2X3HKcmVIgj5Cy6CQFOpelXwbzJCBZ3hbj0mba4SzZtA98+SbYUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722658075; c=relaxed/simple;
-	bh=UklIIqxlnbqfNLyjxBzBHPaFjUAHAj9Ac/HgXWHVlIQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N7wSNSSzjch2zkFHHzjBuraQhWBIZJeuHIpEhf/StHr1ITYGTAbFAxC/AuWPxqN/ewM0xxAO1GawlGo+xCGG5J7xinK+gaHsOYMNJVt2ovgPLA6hm5yWqY3m4OPPHVANUP/Y8Ys5MfdFyaeFYkhK8N/rCp0JiDc+ps+V0t1PEYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4733tSRq019728;
-	Fri, 2 Aug 2024 21:07:34 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40rjf097yk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 02 Aug 2024 21:07:33 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 2 Aug 2024 21:07:33 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 2 Aug 2024 21:07:30 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <viro@zeniv.linux.org.uk>
-CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
-        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH V6] squashfs: Add symlink size check in squash_read_inode
-Date: Sat, 3 Aug 2024 12:07:29 +0800
-Message-ID: <20240803040729.1677477-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240802150348.GW5334@ZenIV>
-References: <20240802150348.GW5334@ZenIV>
+	s=arc-20240116; t=1722658146; c=relaxed/simple;
+	bh=G2QLznKCNxkfXNbVxecnOtA0jV19W52S8l/+aWl96ig=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HAdke/vuPKoLvGU6TkZ8UewGrO7PawiNjnDht7zBZDjWAHJN1O66eH3ZPsm9CsUnzH8hx1Yf8cfOdDWAEEqJY4qFSQtO4F65JJdA8x7T7T0N5/vlngYKFItYsm8ezFV/xrN/zwcTqu5eYpYUD1BectjMCeR1HsM8aRiACmyVnrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f9612b44fso1214029139f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 21:09:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722658144; x=1723262944;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9kUejpJ8rapsm3foCfc6I1wyDAKziXGXRtittmfSojE=;
+        b=wJRIOisysRos28h+pQ1HaBZWJONNptR/Z8vfcWgF5ikGrUoZRg5RPN9pF2EMMHfxKv
+         bCNtqnFQlyQOxprmz3r3+o+QyMXA0+mYnMOCfjuMfKVnEnKTYLbnewPBfXgQMwImYzz7
+         IzfOjEwmiDvd/MQmEqrN/X+r+f1SyTn5V5O7d5F3NKpLcZnmzfws0kWTTzj2aZdY+cft
+         3jLRq358mGMrTAV0kBXTpKJ/pRkPPzYnT5Hp2LOJm4vC4DWNIK8AdG0NIpJGyXyFNay/
+         YX+NgcIT/lRN2/xL0Up0ncyxROzaO6wFHcMmmv7+dkiJ3am/418RVQUBGkXup/xTg8Lf
+         Pyjw==
+X-Gm-Message-State: AOJu0YyvQLr07VHcPRziKQXdliuj35sJnCwXWcJDa0lA5GqEBexilacS
+	yLt670Fzhe9749N8gdpzu2lRWLyLEs2SGGWn7Gfoy9zJgJ1xsDpLKClVWsLkSx9pl1WMoet/X3k
+	f5rUI8VPSiXNAppjqdakzS6xkTLjEsH5DXOVuMPFdcgtTKG+vYBquc+E=
+X-Google-Smtp-Source: AGHT+IHPBcc2NymRI2XTCrreWVBHhaBEZ4/Ewr5XcbmZ1PSl8rSrqj/ZFRWUe3Vdm7mo0f3nWeZ68ywgg1dXpQeYdkj5Pkr11eab
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: n8es7XQiANWe4NmCxOwfJzw_s_1kNH4N
-X-Proofpoint-ORIG-GUID: n8es7XQiANWe4NmCxOwfJzw_s_1kNH4N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-02_20,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 spamscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 clxscore=1015 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408030024
+X-Received: by 2002:a05:6e02:154b:b0:397:95c7:6f72 with SMTP id
+ e9e14a558f8ab-39b1fc8baecmr4190805ab.6.1722658143765; Fri, 02 Aug 2024
+ 21:09:03 -0700 (PDT)
+Date: Fri, 02 Aug 2024 21:09:03 -0700
+In-Reply-To: <20240803031347.1275196-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ba9969061ebf9ae7@google.com>
+Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-syzbot report KMSAN: uninit-value in pick_link, the root cause is that
-squashfs_symlink_read_folio did not check the length, resulting in folio
-not being initialized and did not return the corresponding error code.
+Hello,
 
-The length is calculated from i_size, this case is about symlink, so i_size
-value is derived from symlink_size, so it is necessary to add a check
-when i_size is initialized to confirm that its value is correct, otherwise
-an error -EINVAL will be returned. 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-If symlink_size is too large, it will result in a negative value when
-calculating length in squashfs_symlink_read_folio, and its value must
-be greater than PAGE_SIZE at this time.
+Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
 
-Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/squashfs/inode.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Tested on:
 
-diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
-index 16bd693d0b3a..bed6764e4461 100644
---- a/fs/squashfs/inode.c
-+++ b/fs/squashfs/inode.c
-@@ -273,14 +273,21 @@ int squashfs_read_inode(struct inode *inode, long long ino)
- 	case SQUASHFS_SYMLINK_TYPE:
- 	case SQUASHFS_LSYMLINK_TYPE: {
- 		struct squashfs_symlink_inode *sqsh_ino = &squashfs_ino.symlink;
-+		loff_t symlink_size;
- 
- 		err = squashfs_read_metadata(sb, sqsh_ino, &block, &offset,
- 				sizeof(*sqsh_ino));
- 		if (err < 0)
- 			goto failed_read;
- 
-+		symlink_size = le32_to_cpu(sqsh_ino->symlink_size);
-+		if (symlink_size > PAGE_SIZE) {
-+			ERROR("Corrupted symlink, size [%llu]\n", symlink_size);
-+			return -EINVAL;
-+		}
-+
- 		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
--		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
-+		inode->i_size = symlink_size;
- 		inode->i_op = &squashfs_symlink_inode_ops;
- 		inode_nohighmem(inode);
- 		inode->i_data.a_ops = &squashfs_symlink_aops;
--- 
-2.43.0
+commit:         2f8c4f50 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=157dce6d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15cbe1c9980000
 
+Note: testing is done by a robot and is best-effort only.
 
