@@ -1,188 +1,320 @@
-Return-Path: <linux-kernel+bounces-273512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFE1946A1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:35:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E19A946A1F
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC371F216F1
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD1C1C20BBF
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4D114F9C8;
-	Sat,  3 Aug 2024 14:35:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE0A1514D1;
+	Sat,  3 Aug 2024 14:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIP4MOKD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DD514E2FC
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 14:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A050014E2FC;
+	Sat,  3 Aug 2024 14:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722695704; cv=none; b=QOiYtkpdJuEUhZFFizM3I7rKSLtXM9T90JJKZlLo0470qScJXmh3FYax1Hv91F80nOPHVA8tEqQug5KKmISuSo/rzG4IEqPPC8VO0Seki1CDzKDTHp468rTdP4ZgG131shPGpNDyqq8h7a/pXeJqYK6DfEWfVmwMCf559grEz0U=
+	t=1722695748; cv=none; b=eY87X21Aj1AnONFhyh9NGMFHV9DDWhL4d+QvYFW+OwEzAx3kJa4yvUuTVZW8J1Ns/IpF++1Rmla/zKxizXDcHMCHjFnYQ6/e6pXV/B493dqmkYVXmhNJmDp6pCgncdFTRBKH+jhmtBb4aH26ueOTbrDpUEzaCYhnAJG+UCzT0sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722695704; c=relaxed/simple;
-	bh=JdgWNwwiTe5pPyMF4mkDnhwO5n2QhFjDyFPKOvNQe2g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GMh05RF87tTrRm3gpGrYlpMqKe5y3+62ZigeSq8Mv9tDQrO7i2Vb0bOLZnTvhzJZADcgmvX0LuMbbh6MJofLP8slPODwxsU4MulYnFQlXXyN483Fbtgm7t9L07pcTTsc4uo3ZWifw6s4Lzqn6dYX5X1+2sSbF2fmSrCc6gdWxnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-396c41de481so147066015ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 07:35:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722695702; x=1723300502;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pOX7iDSsj97sBQqRzELz1L0sHB1XuQ4x6QXvQoIlTxs=;
-        b=KDDWhIpdlzkJk5lUzw3Jd1RcUBPj8oAeVqSwUQTH2H3sBMZ76D3JM+1L4K9UMhkL9C
-         jZHF1xHN5KToenc/hLXWnp5EOyPTvInx82IMd0+9ghwb3jPWnacQw+NeMTSGsbq8TQBo
-         XzcAdS40oxX9NJmPS6SD0F5YcWfSBf/l14XgtRXz1h3aMl3IORfFlmBmJ36RE+W285U1
-         oD2HMeUs2SoRn8lxM53K9jlTZQJSKXD7lek4fTnCa+1Ogne0ElDBcFKK/pQtwQd9xwgW
-         vi8yYewFJ5EltkMW+sux8k2FCvjBoUlv87TUqSHHV+LXVA9punqCcT8qs9km7w1jmOaZ
-         R3hA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0P334yZ7FKSZYjC39YgnvzAcUmjwpGRgDhNVy3G+kD0l2oaHws8yYTvkLlwDREhVVaBQJ1AWgF4r2h8dgL5+4umXm49sEXavRrzrj
-X-Gm-Message-State: AOJu0YxLgEoCSugqnUuvmCJHEtDvdY5kpUIGo+3YnjLKVrm/XG5ZcVoP
-	/GEaYMjOWHs00p5pnF8J9fYl+snmHFCDcfkHxaMoAMXLbwEA22wjr35RtTY0e4l9BXjGDaACEww
-	TtzaXyVQk+czU2vvik1LV4mwiUfG8JL6VXm2dRkZD3QrLbZRy/IwWguE=
-X-Google-Smtp-Source: AGHT+IEk2tIEEFHEggOlrrgxjV9YPLsnZVfo3UKqoRwpR10rgQWMHhfYsP4sGAf0lYmYzNHK4O/0g5lyk2u3x5Peo5xHcLO358LD
+	s=arc-20240116; t=1722695748; c=relaxed/simple;
+	bh=oBPrXUonNO9pQiYaX33t8BvaMG4+Syyr7vyRuVmvIJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KOEa45d8T4efko7dRqeVE6xI7mAYOrKq3uzlv5yuw0UZinXhe1524Rn0C2GSHTgSJICdOvxpY+NNvvQt8U5n7/+sLAzILF9HsjHMCRUrlxvlQ/kwABYO6qbaxxZbuOcbylPPnlE22AcP77tTZqZoxROLjSON6WxYzuZSeeSIq+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIP4MOKD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8ACCC4AF0D;
+	Sat,  3 Aug 2024 14:35:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722695748;
+	bh=oBPrXUonNO9pQiYaX33t8BvaMG4+Syyr7vyRuVmvIJM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cIP4MOKD1qsWVd9ecz2qyMF00uSGHRgJb2fx4Vuar949LBmhVvxpXpZwxfWqMyZB8
+	 gZ+MQc8eoqC4Vo0hTLx4w8ZEVbnCIuSmWaw2+crxpSJW/EPCtX1/WNhifyMbLWtefX
+	 0V3dSikYAtjgE5L+QrWCVTxkD+szwk40ip23s0ocKXYqR1NJh0ep7D8IO9pCc72nyb
+	 o8lx6R55+h3cTYDVjrUTMwzapg4LQPXYmQhQqlIwsJ/Me882anFAicXj5ypgaCJchA
+	 LfSCItrfIIP3DaLVkuAB96nayplBFpgiOIhBaVRah0FMwoGCoWYYM4XBLjGZyKYjKu
+	 /6uPBxBIgMd4w==
+Date: Sat, 3 Aug 2024 15:35:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Trevor Gamblin <tgamblin@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, David
+ Lechner <dlechner@baylibre.com>, Uwe Kleine-Konig
+ <u.kleine-koenig@baylibre.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH RFC 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
+Message-ID: <20240803153540.17627489@jic23-huawei>
+In-Reply-To: <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
+References: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
+	<20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b0f:b0:382:6a83:f4fc with SMTP id
- e9e14a558f8ab-39b1fc65098mr5205775ab.5.1722695702131; Sat, 03 Aug 2024
- 07:35:02 -0700 (PDT)
-Date: Sat, 03 Aug 2024 07:35:02 -0700
-In-Reply-To: <20240803142426.d8uduX0h@linutronix.de>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000061c8a0061ec859b5@google.com>
-Subject: Re: [syzbot] [staging?] [usb?] WARNING in r8712_usb_write_mem/usb_submit_urb
- (2)
-From: syzbot <syzbot+ca2eaaadab55de6a5a42@syzkaller.appspotmail.com>
-To: florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
-	namcao@linutronix.de, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, 31 Jul 2024 09:48:03 -0400
+Trevor Gamblin <tgamblin@baylibre.com> wrote:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in r871xu_dev_remove
+> This adds a binding specification for the Analog Devices Inc. AD7625,
+> AD7626, AD7960, and AD7961 ADCs.
 
-INFO: task kworker/1:1:28 blocked for more than 143 seconds.
-      Not tainted 6.6.44-syzkaller-g721391060066-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:1     state:D stack:27456 pid:28    ppid:2      flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5380 [inline]
- __schedule+0xca5/0x30d0 kernel/sched/core.c:6698
- schedule+0xe7/0x1b0 kernel/sched/core.c:6772
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
- __mutex_lock_common kernel/locking/mutex.c:679 [inline]
- __mutex_lock+0x5bd/0x9d0 kernel/locking/mutex.c:747
- unregister_netdev+0x12/0x30 net/core/dev.c:11102
- r871xu_dev_remove+0x291/0x480 drivers/staging/rtl8712/usb_intf.c:596
- usb_unbind_interface+0x1e0/0x8d0 drivers/usb/core/driver.c:458
- device_remove drivers/base/dd.c:569 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:561
- __device_release_driver drivers/base/dd.c:1272 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1295
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
- device_del+0x39d/0xa60 drivers/base/core.c:3838
- usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1416
- usb_disconnect+0x2e1/0x890 drivers/usb/core/hub.c:2276
- hub_port_connect drivers/usb/core/hub.c:5329 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5629 [inline]
- port_event drivers/usb/core/hub.c:5789 [inline]
- hub_event+0x1be4/0x4f50 drivers/usb/core/hub.c:5871
- process_one_work+0x889/0x15e0 kernel/workqueue.c:2631
- process_scheduled_works kernel/workqueue.c:2704 [inline]
- worker_thread+0x8b9/0x12a0 kernel/workqueue.c:2785
- kthread+0x2c6/0x3b0 kernel/kthread.c:388
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:293
- </TASK>
+Given the RFC question is effectively about the binding and may influence
+it a lot - make sure it's talked about here!
 
-Showing all locks held in the system:
-3 locks held by kworker/0:1/9:
- #0: ffff888109ba9138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x789/0x15e0 kernel/workqueue.c:2606
- #1: ffffc9000009fd80 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work+0x7eb/0x15e0 kernel/workqueue.c:2607
- #2: ffffffff89ad6da8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0x12/0x30 net/ipv6/addrconf.c:4684
-6 locks held by kworker/1:1/28:
- #0: ffff88810a64fd38 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x789/0x15e0 kernel/workqueue.c:2606
- #1: ffffc900001e7d80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x7eb/0x15e0 kernel/workqueue.c:2607
- #2: ffff888104f2b190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:992 [inline]
- #2: ffff888104f2b190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1be/0x4f50 drivers/usb/core/hub.c:5817
- #3: ffff888114cd9190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:992 [inline]
- #3: ffff888114cd9190 (&dev->mutex){....}-{3:3}, at: usb_disconnect+0x10a/0x890 drivers/usb/core/hub.c:2267
- #4: ffff888100f5b160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:992 [inline]
- #4: ffff888100f5b160 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
- #4: ffff888100f5b160 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0xa4/0x610 drivers/base/dd.c:1292
- #5: ffffffff89ad6da8 (rtnl_mutex){+.+.}-{3:3}, at: unregister_netdev+0x12/0x30 net/core/dev.c:11102
-1 lock held by khungtaskd/29:
- #0: ffffffff888aece0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:334 [inline]
- #0: ffffffff888aece0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:786 [inline]
- #0: ffffffff888aece0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x75/0x340 kernel/locking/lockdep.c:6614
-1 lock held by kworker/u4:7/1043:
- #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:558 [inline]
- #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1375 [inline]
- #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1684 [inline]
- #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x290/0x30d0 kernel/sched/core.c:6613
-3 locks held by kworker/1:2/1939:
- #0: ffff888109ba9138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x789/0x15e0 kernel/workqueue.c:2606
- #1: ffffc9000393fd80 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work+0x7eb/0x15e0 kernel/workqueue.c:2607
- #2: ffffffff89ad6da8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0x12/0x30 net/ipv6/addrconf.c:4684
-1 lock held by klogd/2494:
- #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:558 [inline]
- #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1375 [inline]
- #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1684 [inline]
- #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x290/0x30d0 kernel/sched/core.c:6613
-2 locks held by dhcpcd/2543:
- #0: ffffffff89ad6da8 (rtnl_mutex){+.+.}-{3:3}, at: devinet_ioctl+0x1d3/0x1f10 net/ipv4/devinet.c:1091
- #1: ffff88811928cdb0 (&padapter->mutex_start){+.+.}-{3:3}, at: netdev_open+0x32/0x840 drivers/staging/rtl8712/os_intfs.c:392
-2 locks held by getty/2563:
- #0: ffff88810af530a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc900000432f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfc9/0x1480 drivers/tty/n_tty.c:2216
+>=20
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 176 +++++++++++++++=
+++++++
+>  MAINTAINERS                                        |   9 ++
+>  2 files changed, 185 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+> new file mode 100644
+> index 000000000000..e88db0ac2534
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+> @@ -0,0 +1,176 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7625.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices Fast PulSAR Analog to Digital Converters
+> +
+> +maintainers:
+> +  - Michael Hennerich <Michael.Hennerich@analog.com>
+> +  - Nuno S=C3=A1 <nuno.sa@analog.com>
+> +
+> +description: |
+> +  A family of single channel differential analog to digital converters
+> +  in a LFCSP package. Note that these bindings are for the device when
+> +  used with the PulSAR LVDS project:
+> +  http://analogdevicesinc.github.io/hdl/projects/pulsar_lvds/index.html.
 
-=============================================
+As per the discussion in the cover letter I think the need to represent
+if the DCO+ is connected between ADC and LVDS converter strongly suggests
+we shouldn't represent it as one aggregate device.
 
-NMI backtrace for cpu 0
-CPU: 0 PID: 29 Comm: khungtaskd Not tainted 6.6.44-syzkaller-g721391060066-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
- watchdog+0xf87/0x1210 kernel/hung_task.c:379
- kthread+0x2c6/0x3b0 kernel/kthread.c:388
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:293
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-NMI backtrace for cpu 1 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:86 [inline]
-NMI backtrace for cpu 1 skipped: idling at acpi_safe_halt+0x1b/0x30 drivers/acpi/processor_idle.c:111
+> +
+> +  * https://www.analog.com/en/products/ad7625.html
+> +  * https://www.analog.com/en/products/ad7626.html
+> +  * https://www.analog.com/en/products/ad7960.html
+> +  * https://www.analog.com/en/products/ad7961.html
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad7625
+> +      - adi,ad7626
+> +      - adi,ad7960
+> +      - adi,ad7961
+> +
+> +  vdd1-supply:
+> +    description: A supply that powers the analog and digital circuitry.
+Doesn't really tell us anything. I'd just go with
+    vdd1-supply: true
+    vdd2-supply: true
+    vio-supply: true
 
 
-Tested on:
+> +
+> +  vdd2-supply:
+> +    description: A supply that powers the analog and digital circuitry.
+> +
+> +  vio-supply:
+> +    description: A supply for the inputs and outputs.
+> +
+> +  ref-supply:
+> +    description:
+> +      Voltage regulator for the external reference voltage (REF).
+> +
+> +  refin-supply:
+> +    description:
+> +      Voltage regulator for the reference buffer input (REFIN).
+> +
+> +  clocks:
+> +    description:
+> +      The clock connected to the CLK pins, gated by the clk_gate PWM.
+> +    maxItems: 1
+> +
+> +  pwms:
+> +    maxItems: 2
+> +
+> +  pwm-names:
+> +    maxItems: 2
+> +    items:
+> +      - const: cnv
+> +        description: PWM connected to the CNV input on the ADC.
+> +      - const: clk_gate
+> +        description: PWM that gates the clock connected to the ADC's CLK=
+ input.
+> +
+> +  io-backends:
+> +    description:
+> +      The AXI ADC IP block connected to the D+/- and DCO+/- lines of the=
+ ADC.
 
-commit:         72139106 Linux 6.6.44
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.6.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=17be7b65980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cc2e57d9f035477b
-dashboard link: https://syzkaller.appspot.com/bug?extid=ca2eaaadab55de6a5a42
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11be7b65980000
+So you have a backend. Great - we have something to indicate a connection
+to or not for the DCO+/o lines.  It's a bit ugly to just repesent it as a c=
+lk
+but that would I think work.
+
+> +    maxItems: 1
+> +
+> +  adi,en0-always-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Indicates if EN0 is hard-wired to the high state. If neither this
+> +      nor en0-gpios are present, then EN0 is hard-wired low.
+It's unfortunate there isn't a special 'fixed' gpio-chip option where we co=
+uld
+just query it is fixed and what the state of the pin is.  This is getting
+quite common so would be good to have a better solution.
+
+Linus, Bartosz - is there a better way to do this?
+
+> +
+> +  adi,en1-always-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Indicates if EN1 is hard-wired to the high state. If neither this
+> +      nor en1-gpios are present, then EN1 is hard-wired low.
+> +
+> +  adi,en2-always-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Indicates if EN2 is hard-wired to the high state. If neither this
+> +      nor en2-gpios are present, then EN2 is hard-wired low.
+> +
+> +  adi,en3-always-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Indicates if EN3 is hard-wired to the high state. If neither this
+> +      nor en3-gpios are present, then EN3 is hard-wired low.
+> +
+> +  en0-gpios:
+> +    description:
+> +      Configurable EN0 pin.
+> +
+> +  en1-gpios:
+> +    description:
+> +      Configurable EN1 pin.
+> +
+> +  en2-gpios:
+> +    description:
+> +      Configurable EN2 pin.
+> +
+> +  en3-gpios:
+> +    description:
+> +      Configurable EN3 pin.
+> +
+> +required:
+> +  - compatible
+> +  - vdd1-supply
+> +  - vdd2-supply
+> +  - vio-supply
+> +  - clocks
+> +  - pwms
+> +  - pwm-names
+> +  - io-backends
+> +
+> +- if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +	  - adi,ad7625
+> +	  - adi,ad7626
+> +  then:
+> +    properties:
+> +      en2-gpios: false
+> +      en3-gpios: false
+> +      adi,en2-always-on: false
+> +      adi,en3-always-on: false
+> +    allOf:
+> +      # ref-supply and refin-supply are mutually-exclusive (neither is a=
+lso
+> +      # valid)
+> +      - if:
+> +          required:
+> +            - ref-supply
+> +        then:
+> +          properties:
+> +            refin-supply: false
+> +      - if:
+> +          required:
+> +            - refin-supply
+> +        then:
+> +          properties:
+> +            ref-supply: false
+> +
+> +- if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +	  - adi,ad7960
+> +	  - adi,ad7961
+> +  then:
+> +    oneOf:
+> +      required:
+> +        - ref-supply
+> +      required:
+> +        - refin-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    adc {
+> +        compatible =3D "adi,ad7625";
+> +        vdd1-supply =3D <&supply_5V>;
+> +        vdd2-supply =3D <&supply_2_5V>;
+> +        vio-supply =3D <&supply_2_5V>;
+> +        io-backends =3D <&axi_adc>;
+> +        clock =3D <&ref_clk>;
+> +        pwms =3D <&axi_pwm_gen 0 0>, <&axi_pwm_gen 1 0>;
+> +        pwm-names =3D "cnv", "clk_gate";
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 42decde38320..2361f92751dd 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1260,6 +1260,15 @@ F:	Documentation/devicetree/bindings/iio/addac/adi=
+,ad74413r.yaml
+>  F:	drivers/iio/addac/ad74413r.c
+>  F:	include/dt-bindings/iio/addac/adi,ad74413r.h
+> =20
+> +ANALOG DEVICES INC AD7625 DRIVER
+> +M:	Michael Hennerich <Michael.Hennerich@analog.com>
+> +M:	Nuno S=C3=A1 <nuno.sa@analog.com>
+> +R:	Trevor Gamblin <tgamblin@baylibre.com>
+> +S:	Supported
+> +W:	https://ez.analog.com/linux-software-drivers
+> +W:	http://analogdevicesinc.github.io/hdl/projects/pulsar_lvds/index.html
+> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+> +
+>  ANALOG DEVICES INC AD7768-1 DRIVER
+>  M:	Michael Hennerich <Michael.Hennerich@analog.com>
+>  L:	linux-iio@vger.kernel.org
+>=20
 
 
