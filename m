@@ -1,105 +1,130 @@
-Return-Path: <linux-kernel+bounces-273388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3718C9468A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:13:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17E39468AC
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D061F21AC7
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E276A1C20D49
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 08:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DF614E2FC;
-	Sat,  3 Aug 2024 08:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="ljLNh0DE"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38C914EC42;
+	Sat,  3 Aug 2024 08:15:33 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5447173C;
-	Sat,  3 Aug 2024 08:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722672830; cv=pass; b=UIegl+vmWbkPm4lLdUVjH83L/lg6jQfAfrois0ndnwZJsIGKZ5HSGzLgEHQxp+n4HLO7V4q7qfUH4gKS8KNGVyjOg7xxeiKRFr84h8YuEJwXoO/L9psdUxnV9DmnDzYrHy2nkls/NTVaOCRpfglhpUPQ6FdjLsALFIqC9IG8SX8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722672830; c=relaxed/simple;
-	bh=mFYiVa4XGiKmiaSpR2LuKMXD3VTAjxLCPeMcK9T3w8s=;
-	h=Date:Message-ID:From:To:Subject:MIME-Version:Content-Type; b=BPEoEsv6Ht56jHasvfn5txqmjxmRDGOVjqoj8jhMOUsA2MMi92qsMzWkiWwoYxvQ+lTQpr6LspXaw84W8TZtZOlpud6CCReJ8A00PocVDwUBoxOre+sd+DOUqkMALmndE/uy24mmVYXyv0EnZIdMQvHzbmpgB/AlzzGH7QMtqZA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=ljLNh0DE; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1722672823; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gnhhU8pTanAysBGJJGA5GZuRDcGdRpz1BVHMh06PrKqfrvQkctiGWCdD0MQp+4dc0IF/ULJ37T7BWy4PMIfRaKjOyRda1J6/pLHwcMkpChKiHRzjDV7xZ19c4yJf1djQqYTGRZjbdfutVOZXi/p/udAuT3+tpB/AMJHAFCykPnA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1722672823; h=Content-Type:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=nxj7A3zjeJj0tAOInqsZYuK+DPDzGB1OZ+OlZ2a/Zfw=; 
-	b=UJt42KgShwDse7rRhRzs+PQHnO25bGl5fMY/S84BPU4gJ7bOMGKEO67J4te8YykxTcH783rMpvN6su+a45SZh+CWlzbKx7yMPyNc4USizQOg+FqNGMPxqa4QevskWWXRKt7F6yGPfFkaCa4kfnDRHv2IpkniLlbAL7DQf/Zpe7Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722672823;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=Date:Date:Message-ID:From:From:To:To:Subject:Subject:MIME-Version:Content-Type:Message-Id:Reply-To:Cc;
-	bh=nxj7A3zjeJj0tAOInqsZYuK+DPDzGB1OZ+OlZ2a/Zfw=;
-	b=ljLNh0DEA/IbLHn6rKnEt4YaACuzoDN/7wz+MxZqk63kWDV8TwMDjsrLoIMy+qaw
-	yNgF39bB6aTtwzQW3dwnMHpv/u+o4Ha42W1tAwLWfGDxMdGQlqK0SMsmahgEZcTcqGZ
-	mSa9dmQ4nBLcvzNB083ACfJBsVuWaTGeP3hIN28A=
-Received: by mx.zohomail.com with SMTPS id 1722672822456428.6425515706311;
-	Sat, 3 Aug 2024 01:13:42 -0700 (PDT)
-Date: Sat, 03 Aug 2024 16:13:18 +0800
-Message-ID: <87y15e6n35.wl-me@linux.beauty>
-From: Li Chen <me@linux.beauty>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org> (reviewer:ACPI), linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] ACPI: resource: Do IRQ override on MECHREV GM7XG0M
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
- Emacs/29.4 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81013398A;
+	Sat,  3 Aug 2024 08:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722672933; cv=none; b=OETvmZT0YiiGHZLBYS4tAHtoW186cyKpgFtUPm1uU1bjM+Yr3Sw+qkBF50CEVZdvS3liLA3lICOuk6W53ubMfbchdUg0BzShU+wRhHj2YQ3JuMuJUo6fL+zsN3HwdZWXhTsGJXYNQmJh9XHYH/NS5zdgqNnH/lH75A+KAyfShHc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722672933; c=relaxed/simple;
+	bh=SE8XpBNQlH3cEE27mlw49F50SuobwczKwaqo8X15frY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ONa9oYSqbI9aHE0zCnvrqF9QbBpLFt2QNeAR+0o+Kppe6iswekaAe1cnVqy8zpxCKd0PzW5O5G9YOFdbaAVSylGQLKsSMiWb+7NpBuPo7xm0Q2H1Hb9Wql3vsc3pLh2gI5GJCselKxFl+HATdCshQ2FJuEhw0wRob8Oi8yZxjKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.91.14] (dynamic-176-000-002-166.176.0.pool.telefonica.de [176.0.2.166])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id E2A8E61E5FE01;
+	Sat,  3 Aug 2024 10:14:24 +0200 (CEST)
+Message-ID: <de7857fb-63d9-42fc-af1e-12ffcdfcdda8@molgen.mpg.de>
+Date: Sat, 3 Aug 2024 10:14:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 20/20] MAINTAINERS: ipe: add ipe maintainer
+ information
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+ tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
+ snitzer@kernel.org, mpatocka@redhat.com, eparis@redhat.com,
+ paul@paul-moore.com, linux-doc@vger.kernel.org,
+ linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+ fsverity@lists.linux.dev, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+ <1722665314-21156-21-git-send-email-wufan@linux.microsoft.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <1722665314-21156-21-git-send-email-wufan@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Dear Fan,
 
 
-Listed device need the override for the keyboard to work.
+Thank you very much for your patch. Two nits, should you sent another 
+interation: A more specific summary would avoid people having to look at 
+the message body or diff, and `git log --oneline` would be enough.
 
-Cc: stable@vger.kernel.org
-Fixes: 9946e39fe8d0 ("ACPI: resource: skip IRQ override on AMD Zen platforms")
-Signed-off-by: Li Chen <me@linux.beauty>
----
-Changes since V1: 
-[1] https://lore.kernel.org/lkml/MN0PR12MB610178FBE11426B042C61A24E22AA@MN0PR12MB6101.namprd12.prod.outlook.com/T/
+MAINTAINERS: Add IPE entry with M: Fan Wu
 
-- replace DMI_SYS_VENDOR + DMI_PRODUCT_NAME with DMI_BOARD_NAME
-- rebase on top of next-20240802
+MAINTAINERS: Add IPE entry with Fan Wu as maintainer
 
- drivers/acpi/resource.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Am 03.08.24 um 08:08 schrieb Fan Wu:
+> Update MAINTAINERS to include ipe maintainer information.
 
-diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
-index df5d5a554b388..aa9990507f34c 100644
---- a/drivers/acpi/resource.c
-+++ b/drivers/acpi/resource.c
-@@ -554,6 +554,12 @@ static const struct dmi_system_id irq1_level_low_skip_override[] = {
-  * to have a working keyboard.
-  */
- static const struct dmi_system_id irq1_edge_low_force_override[] = {
-+	{
-+		/* MECHREV Jiaolong17KS Series GM7XG0M */
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "GM7XG0M"),
-+		},
-+	},
- 	{
- 		/* XMG APEX 17 (M23) */
- 		.matches = {
--- 
-2.46.0
+I’d at least mention Integrity Policy Enforcement. As you not only 
+include the maintainer information but add a new entry, I’d leave the 
+body out, or mention that a new entry is added.
 
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> 
+> --
+> v1-v16:
+>    + Not present
+> 
+> v17:
+>    + Introduced
+> 
+> v18:
+>    + No changes
+> 
+> v19:
+>    + No changes
+> 
+> v20:
+>    + No changes
+> ---
+>   MAINTAINERS | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8766f3e5e87e..4cdf2d5a2058 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11118,6 +11118,16 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+>   F:	security/integrity/
+>   F:	security/integrity/ima/
+>   
+> +INTEGRITY POLICY ENFORCEMENT (IPE)
+> +M:	Fan Wu <wufan@linux.microsoft.com>
+> +L:	linux-security-module@vger.kernel.org
+> +S:	Supported
+> +T:	git https://github.com/microsoft/ipe.git
+> +F:	Documentation/admin-guide/LSM/ipe.rst
+> +F:	Documentation/security/ipe.rst
+> +F:	scripts/ipe/
+> +F:	security/ipe/
+> +
+>   INTEL 810/815 FRAMEBUFFER DRIVER
+>   M:	Antonino Daplas <adaplas@gmail.com>
+>   L:	linux-fbdev@vger.kernel.org
+
+
+Kind regards,
+
+Paul
 
