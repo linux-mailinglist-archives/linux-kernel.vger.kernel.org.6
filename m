@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-273477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0349469C0
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8F39469C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E26CA1C20A2B
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E581F21880
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB17614EC42;
-	Sat,  3 Aug 2024 12:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BCC14F138;
+	Sat,  3 Aug 2024 12:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5Y2XW+l"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="BVlIp2J8"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1701E4A1;
-	Sat,  3 Aug 2024 12:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427B81876;
+	Sat,  3 Aug 2024 12:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722689541; cv=none; b=nG1LGgzTfhh4cjwNxwcS9Hm9M0vntkDk0wRFi7OShNl99dFaJzdZqIC5DsIqvN+N5DujSPi9usUNgXYpNjEempGEtsL8a9wK/5TgezfdHK2eDsuy4d7ZWRGxeARDSTRbguj5f6fsR4X8Q4Qj6bb3ssERNZs2KBbmhtVj+2t5P8I=
+	t=1722689788; cv=none; b=WFAVyL5hYOGmYoezwgulLjdacCg4vmV/aNCuaigR45c0ZrlgRxKz8t5ZSlYhm2Ov2oj5C+FuBKwlY2In7zze8cU7xpWXJ9SuAFmb/YHuEuKSy9X3hOhzUChm6Q1f8Kp9Vb4gR8IhWIMIMy215lgsWKwsYmiFCPsn49+IDJRXL7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722689541; c=relaxed/simple;
-	bh=evCFPKOrDCigmhW1vYvJqSVUa2zKQNSdruxUR0QCB4c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KTuYCt320r1RD1TNadvi/nAdBjbbZXHul3HW1//tJoguZdN4RvRGtNSFoZJW2fqZY7qESXA35/5lxTHIvK5JZa+GI1tQhEW09cjawooYF36zohtcEww5k6+xihaRNcqaNd+OfDKeeadW3eoO9W+zIwZdrw7W5PG5KO/fr7ahZ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5Y2XW+l; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5d8060662a1so321993eaf.2;
-        Sat, 03 Aug 2024 05:52:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722689539; x=1723294339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qpycHmXmZ7JGxEw0FNaQDwVQNzxnwclNumLSNksnwRg=;
-        b=h5Y2XW+l5UjayHGBif7VBoJ9oMLkrIbHwEnk7uXiDVk+NG/fKrRZsd6FI7rbNTaRgw
-         Of46juAGQZPSbQHo+S1+CzQx/37P7F2pWJ1v0rymTgzym9bknGeECZdNVZ4a/V4vJHRK
-         0r0E0gDQ+jkM2CwpBikF+SlsJFA52NBW58t0l8qTr5l1dGWcFi5IZ6ieQpYEATIMo2wR
-         WIyF/B18PMNihZCv0RbW0F4yfFlpWyVM7Yv86U+n89Bj0eppivvYaWg/a3PP/eJOqrfZ
-         L0upL+QXDve9a5Yw8Q52hhU9Kwz3mw4PxoRFMjlpeL2AyCmEqJnI6bIA7HzMoS+LSzmY
-         Km3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722689539; x=1723294339;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qpycHmXmZ7JGxEw0FNaQDwVQNzxnwclNumLSNksnwRg=;
-        b=qxoDSXv9+63gsi8LCke8sXZq8ZZjkYXpvLAj63VJBDW3+14lbj9wRcTovFyjyOGck7
-         S92k7rsAe1KwWdvSOYer62eochKB74a42ujVKmNtHWidFl+FRNos81Q4ygVswJUZBrqm
-         GIAKS/UOvzKAlFHn3mGhYqxMlRKS6hg7j8YLr3y48VojXTI1sgirQ8MxOaE84Sq/hwpr
-         D+gcHtsVLTA50pmJsgFC5kJoZOknwG/XWebRggvHKGynz+fJLSw+uKR4R798HdvhwERQ
-         hZVH2uMC5lTDYEi4ikTwWYzyOy7itNj/igGzRQnD+b1W5xl7vG9fc6mZcr77jOvOQ4Dz
-         8bOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXscxb/WXfmSmTt3HnjQ6MZ1BTT8vOxNUSwZ6vQlYBdAhZ2wIKR59NQBYCrc4W1e0ZL4d+wy4f1BwtVJgs31s8u0Y3ypQp04v+Gdws
-X-Gm-Message-State: AOJu0Yw1Y+nGj91Gb7U69IAce5s1UHy8OMi09OEKryxymu4jCEKHoIXr
-	akzu2jkOGG95f3ycigfVrcaP39InDM8n4mcSN/5j+Hw5uRl8Ic4U
-X-Google-Smtp-Source: AGHT+IEtZvpQNWOXMpHnaz+niE5MY6JrlY6u8+AczwqNrkA5Uk1SewCkf56o0JObu8SrF/mq+DWpcw==
-X-Received: by 2002:a05:6870:46a8:b0:268:90ca:de2 with SMTP id 586e51a60fabf-26891a83f76mr6743562fac.5.1722689538798;
-        Sat, 03 Aug 2024 05:52:18 -0700 (PDT)
-Received: from localhost.localdomain ([240d:1a:f76:b500:4431:46e3:c76b:79bc])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed2de19sm2692868b3a.216.2024.08.03.05.52.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 05:52:17 -0700 (PDT)
-From: Alexandre Courbot <gnurou@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: linux-kbuild@vger.kernel.org,
+	s=arc-20240116; t=1722689788; c=relaxed/simple;
+	bh=XUdycKTMsv2E+8uiwBLcx3vvlfuC0EfEfFUu8fsc0qc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RMBSv2/Y8O5gMaAYJklvRfcGi7g2blaTvmpKek5XQwJtb+JR8bjjTfeS19lnQ63FHgw0BvaC1Fsf4J6CnDvN2PeMrkwhpD0j2LwR2j4Nd6O+aCbJDqCHtoHTf0/L6CfwF0cVWMgjOATxosYaJQ9T4qc/hGbmkFOBonhwpYanAnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=BVlIp2J8; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 64E6440FB8;
+	Sat,  3 Aug 2024 14:56:16 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id LHZTQguMCRpp; Sat,  3 Aug 2024 14:56:15 +0200 (CEST)
+From: Yao Zi <ziyao@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1722689775; bh=XUdycKTMsv2E+8uiwBLcx3vvlfuC0EfEfFUu8fsc0qc=;
+	h=From:To:Cc:Subject:Date;
+	b=BVlIp2J8Sotye/3zXBAv47A5xoMBCOYr43urZqm4jiM918NSw325d0y/9f5ZJiVyA
+	 gqCpo1LsM0M0DMID1EtJZt6wcdpzi6w0jP7JJe2fpwdnlL3Euc7EcTyolCwPB+lRf3
+	 IJz3p2oVKav7c8DcbKtzuWOJgZISFAxUoNOrSHH2iv4PgElJbcCC6/UwM4ZghOj2Ir
+	 vIS4YPvjdHu8RQwm2AA4e9IyG0IKw69XMWwH9avBjHk19fdGUGrFZYE4Wllg/Z4kNn
+	 1W86Kk76SS8ed4zsoI0SZ4aw4piIxu/qa5KfKPNl2kyaAOp+36nCT4iQSZNPzlONyW
+	 +Fzdf2O0pznDQ==
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Tim Lunn <tim@feathertop.org>,
+	Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Ondrej Jirman <megi@xff.cz>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Alexandre Courbot <gnurou@gmail.com>
-Subject: [PATCH] Makefile: add $(srctree) to dependency of compile_commands.json target
-Date: Sat,  3 Aug 2024 21:51:53 +0900
-Message-ID: <20240803125153.216030-1-gnurou@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	linux-serial@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 0/4] Add initial support for Rockchip RK3528 SoC
+Date: Sat,  3 Aug 2024 12:55:07 +0000
+Message-ID: <20240803125510.4699-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,35 +77,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When trying to build the compile_commands.json target from an external
-module's directory, the following error is displayed:
+Rockchip RK3528 is a quad-core ARM Cortex-A53 SoC designed for
+multimedia application. This series add a basic device tree with CPU,
+interrupts and UART nodes for it and is able to boot into a kernel with
+only UART console.
 
-	make[1]: *** No rule to make target 'scripts/clang-tools/gen_compile_commands.py',
-	needed by 'compile_commands.json'. Stop.
+Has been tested on Radxa E20C board[1] with vendor U-boot, successfully
+booted into initramfs with this log[2].
 
-This appears to be because gen_compile_commands.py is looked up using
-relative path, which doesn't exist from the module's source tree.
-Prefixing the dependency with $(srctree) fixes the problem.
+[1]: https://docs.radxa.com/en/e/e20c
+[2]: https://gist.github.com/ziyao233/b74523a1e3e8bf36286a572e008ca319
 
-Signed-off-by: Alexandre Courbot <gnurou@gmail.com>
----
- Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yao Zi (4):
+  dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
+  dt-bindings: arm: rockchip: Add Radxa E20C board
+  arm64: dts: rockchip: Add base DT for rk3528 SoC
+  arm64: dts: rockchip: Add Radxa e20c board
 
-diff --git a/Makefile b/Makefile
-index 8ad55d6e7b60..52d7dfe4212a 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1980,7 +1980,7 @@ nsdeps: modules
- quiet_cmd_gen_compile_commands = GEN     $@
-       cmd_gen_compile_commands = $(PYTHON3) $< -a $(AR) -o $@ $(filter-out $<, $(real-prereqs))
- 
--$(extmod_prefix)compile_commands.json: scripts/clang-tools/gen_compile_commands.py \
-+$(extmod_prefix)compile_commands.json: $(srctree)/scripts/clang-tools/gen_compile_commands.py \
- 	$(if $(KBUILD_EXTMOD),, vmlinux.a $(KBUILD_VMLINUX_LIBS)) \
- 	$(if $(CONFIG_MODULES), $(MODORDER)) FORCE
- 	$(call if_changed,gen_compile_commands)
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ .../bindings/serial/snps-dw-apb-uart.yaml     |   1 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  22 +++
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 182 ++++++++++++++++++
+ 5 files changed, 211 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+
+
+base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
 -- 
-2.46.0
+2.45.2
 
 
