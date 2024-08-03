@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-273509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89C7E946A15
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:26:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6F9946A17
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4624A281B61
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:26:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373E3281B31
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7948214F9EB;
-	Sat,  3 Aug 2024 14:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBAC1509A9;
+	Sat,  3 Aug 2024 14:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BazRtXnr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="wBAcmHgH"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BBAE54C;
-	Sat,  3 Aug 2024 14:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC90C8F3;
+	Sat,  3 Aug 2024 14:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722695181; cv=none; b=kBcPWCSW39Vpg3whMCXfl39DEo9Kx3Fc0/om4PkNYG5vEvizImwbrIeNpVdXCv9OqlEuXwPJL0UTOvpOXf5YaaSVgRLL0PqkPQagp5lgCwjhVIzNp3/uTT+1KnjAcnbOSu+UtMSZ1ZmGIliHq6GYEodSclrOvKbducRhyV463WI=
+	t=1722695656; cv=none; b=RcZCVRChwst4mfHgdlYkhJPDPxkSEtLTFqVrlagrvPOobuX4XaXGhGQT4WlaC4qM2UQ1cLWB+1x+8+QDEiCztG3gjU2L8sVeQonjExNo0+POMoGpSZa0FtQlcOvIDATR/I1AKcT/PJQHmwJv9P75aVz9BpdchA+zcVVo/Fl+pkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722695181; c=relaxed/simple;
-	bh=xSCZ/t82QGpLq1GQ2q1A0z/bq70TE4X6PYSKOkzG7Ew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KTHlb3LtAF1BGDiS1XyjZb/2PCEJcJGFnzo8BPTGfGcr6/OnhVzDqygnkzn2k3TeddE37Y1D+Rpk9qFFn0Fpzm8wynm/vNL/Acx4yn10Tg7LTGJh0MFL9mbz73+c40NBtJTekJm2gcQC8u+DJ56s2jNonKPkKBLwgJfKbaGxyss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BazRtXnr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4209EC116B1;
-	Sat,  3 Aug 2024 14:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722695181;
-	bh=xSCZ/t82QGpLq1GQ2q1A0z/bq70TE4X6PYSKOkzG7Ew=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BazRtXnrEUk9E48IE6mKFJsegmEG2pVTtaguAEoemjZ1p+cRg40XhhMHEBMPQxQ1P
-	 5rKfjB8cIxmgn/WLdOsX7WxzeaCfx1D/73JzPCvOOdeN+5e4SBiYkJQ8fCIoOX+UE9
-	 P6yhNb0hFaj7HG9ThKpR1zqa7ZoonJr/4B9lw7As3tlloTH+1tAr0b1sYoph0+WFi+
-	 /kj7vx9e/xzBLDTAER8LN8DHVtMozuged4n1Kergj4Acj8jwBAs/d1QDAs4TjZoecq
-	 rHvnaXIanWXTct++ocACbtS6hia9f6yf2vfUNVhc+FC5rqvgLcrS9OGn4vHVzygkw/
-	 LjFkoApAyHIlw==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52efef496ccso4035124e87.1;
-        Sat, 03 Aug 2024 07:26:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUD5Uksq9JhrxsrVj8DM7wizIOol6IL+iDdNI3mO0agTPYsmydunFoXk12A3BhfUte+iW1S1RogBGxd1D/otqg3KSkinvx2/dRW0+M/
-X-Gm-Message-State: AOJu0YwK59qwmvAkL8xxDo127JFc4sd1jruMPKfXev+Xj3/rdQ9vccqp
-	3RAJy0umfW77IWX+lDpTPT+GV6m8DoYaHTQdMZhFDEyLFmVjaBOfN7s+JoUVBP1Hz4+e6j776jp
-	DwV4tSROOSueRWHBt6QQ0wGTQK1I=
-X-Google-Smtp-Source: AGHT+IFw/Sc6saR/csTZhgiqc25IWnwy3Ob+Gj1jPb6sTjPiqv1NJzJfErRaw+Lw5xGI0HWTKECB0zvKZWfl4fnCkZg=
-X-Received: by 2002:a05:6512:3d8a:b0:52c:f38b:41b2 with SMTP id
- 2adb3069b0e04-530b8d17ademr2213151e87.17.1722695179776; Sat, 03 Aug 2024
- 07:26:19 -0700 (PDT)
+	s=arc-20240116; t=1722695656; c=relaxed/simple;
+	bh=owOHmulNCYiFLR9S5cHIHYrchcu6rmh/Rs/wsMUcUNI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P4/FZOwMvExe9ZwOW0TI/TPs8PvgUehXZGnVfHaj0M+piDRExoTMhfPDXSRRRWowCrCrP8wKFk+9WiQD/yFXZut/ymgh8T/rLLDpmITlNvQmdexe/0A0Y3ejT0Y0od1YPOJ2Jqb3rrqChR1vcj7mtzirjvkV5r5LH2F4KFBSz00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=wBAcmHgH; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722695647;
+	bh=owOHmulNCYiFLR9S5cHIHYrchcu6rmh/Rs/wsMUcUNI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=wBAcmHgHiJsDWuOYvZphH6cDoDrjqrvyB/fdB7/Eroxv1CKLF24N7pCy3U7iNZ4B0
+	 Jl0bztbbX/zMMRHzZsDPQ9fQzJpnIfi6r1c48LEkjh6+Fu7MRE/VPLBciCfGWwLN24
+	 vGV6GTAB0oiAdtlZEQLHybq/bzshmOD6xrSMZsB1T1Y100iSbb/pseC0DQAI/8+HD7
+	 d1bzbhHdUtiup+qSeOA7unNqLAbUNeBeXYvkPfjGLuCOAb/0fiaEksUTzaaNRwuSum
+	 yCmwPJ9qLrh+ZJrDYNU/rCc3LU57GIW56OyrVtY34BFmQ+MCU2blUqRD8euzPU+4/J
+	 mZ6JoXxlYG6kw==
+Received: from [192.168.1.67] (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C2E133781480;
+	Sat,  3 Aug 2024 14:34:04 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Sat, 03 Aug 2024 10:33:25 -0400
+Subject: [PATCH v3] arm64: dts: mediatek: mt8183-kukui: Disable unused
+ efuse at 8000000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802124236.2895857-1-anders.roxell@linaro.org>
-In-Reply-To: <20240802124236.2895857-1-anders.roxell@linaro.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 3 Aug 2024 23:25:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATn+2kKpbiHYHR7zEUeveMBY37t08qyn7Pb_wQS8PqcHQ@mail.gmail.com>
-Message-ID: <CAK7LNATn+2kKpbiHYHR7zEUeveMBY37t08qyn7Pb_wQS8PqcHQ@mail.gmail.com>
-Subject: Re: [PATCH] scripts: kconfig: merge_config: config files: add a
- trailing newline
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240803-mtk-socinfo-no-data-probe-err-v3-1-09cfffc7241a@collabora.com>
+X-B4-Tracking: v=1; b=H4sIALQ/rmYC/5XNvQ6CMBSG4VshnT0GWkiJk/dhHPpzKo3QQ1rSa
+ Aj3bmF00vH9hudbWcLoMbFLtbKI2SdPoYQ4VcwMKjwQvC3NeM3bWtY9TMsTEhkfHEEgsGpRMEf
+ SCBgjWNl1vWiFNT1nxZgjOv86/Nu99ODTQvF93OVmX3+VcwMNOM2VsUK1UruroXFUmqI6G5rYr
+ mf+l8iLKBXyrqDaGP4tbtv2AXSn/7sgAQAA
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.0
 
-On Fri, Aug 2, 2024 at 9:42=E2=80=AFPM Anders Roxell <anders.roxell@linaro.=
-org> wrote:
->
-> When merging files without trailing newlines a the end of the file, two
-> config fragments end up at the same row if file1.config doens't have a
-> trailing newline at the end of the file.
->
-> file1.config "CONFIG_1=3Dy"
-> file2.config "CONFIG_2=3Dy"
-> ./scripts/kconfig/merge_config.sh -m .config file1.config file2.config
->
-> this will generate a .config lookingn like this.
-> cat .config
-> ...
-> CONFIG_1=3DyCONFIG_2=3Dy"
->
-> Making sure so we add a newline at the end of every config file that is
-> passed into the script.
->
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  scripts/kconfig/merge_config.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_conf=
-ig.sh
-> index 902eb429b9db..ce1b77ee043b 100755
-> --- a/scripts/kconfig/merge_config.sh
-> +++ b/scripts/kconfig/merge_config.sh
-> @@ -136,7 +136,7 @@ for ORIG_MERGE_FILE in $MERGE_LIST ; do
->                 echo "The merge file '$ORIG_MERGE_FILE' does not exist.  =
-Exit." >&2
->                 exit 1
->         fi
-> -       cat $ORIG_MERGE_FILE > $MERGE_FILE
-> +       cat $ORIG_MERGE_FILE | sed -e '$a\' > $MERGE_FILE
+MT8183's Devicetree describes two eFuse regions: one at 8000000 and
+another at 11f10000.
 
+The efuse at 8000000, unlike the one at 11f10000 and the efuse on all
+other MediaTek SoCs, does not define any cell, including the
+socinfo-data ones which the mtk-efuse driver expects to always be
+present, resulting in the following errors in the log:
 
-Is the pipe necessary? This seems to be equivalent to:
+  mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
+  mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
 
-  sed -e '$a\' $ORIG_MERGE_FILE > $MERGE_FILE
+The efuse at 8000000 is disabled by default but enabled on mt8183-kukui.
+Since it is unused, and to prevent the errors from being thrown, disable
+it on mt8183-kukui.
 
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v3:
+- Switched to removing the node from MT8183-kukui's DT instead of
+  controlling whether the mtk-socinfo device was registered by mtk-efuse
+- Link to v2: https://lore.kernel.org/r/20240708-mtk-socinfo-no-data-probe-err-v2-1-7ae252acbcc2@collabora.com
 
+Changes in v2:
+- Added missing include for of.h
+- Link to v1: https://lore.kernel.org/r/20240708-mtk-socinfo-no-data-probe-err-v1-1-fb2acd3a47bf@collabora.com
+---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+index 6345e969efae..7c8221fe62eb 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+@@ -868,10 +868,6 @@ &mfg {
+ 	domain-supply = <&mt6358_vgpu_reg>;
+ };
+ 
+-&soc_data {
+-	status = "okay";
+-};
+-
+ &spi0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&spi0_pins>;
 
+---
+base-commit: f524a5e4dfb75b277c9a5ad819ca5f035f490f14
+change-id: 20240708-mtk-socinfo-no-data-probe-err-d7558343dc82
 
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-This issue also happens if $INITFILE lacks a newline at the end.
-
-
-I think the right place to insert a line is there:
-
-
-        # In case the previous file lacks a new line at the end
-        echo >> $TMP_FILE
-        cat $MERGE_FILE >> $TMP_FILE
-
-
-I am fine with always inserting a line between files.
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
