@@ -1,142 +1,175 @@
-Return-Path: <linux-kernel+bounces-273377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F362946891
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 09:47:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0C7946894
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 09:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0A181F21BC0
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395361F21A84
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250DC14D432;
-	Sat,  3 Aug 2024 07:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oJyhNl8v"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D68514D432;
+	Sat,  3 Aug 2024 07:51:54 +0000 (UTC)
+Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E828A1ABEAF
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 07:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CA049647
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 07:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722671225; cv=none; b=i71WeIL4GNB1fSVHFGut0oo0gsqjguii3+ZWBdYiPKSKjeADWj/xdNIpPUx9M2wYyLACCnd9KMX5RPPRrRhJShN+lwJQbrr/lbikHPRF5wHhWAjGSWxcTl1cYSkmXP20xO1fs/v1K074s1ro/rrpCPa4IrvHWzDvI/QL6m/e43U=
+	t=1722671514; cv=none; b=CiptNsNIhtWFjXb7P8G+LtEa3mmzUc/oWhTpIcp807CclCPa6lvFdxLqfyDzFrekn7UqgGqeuOBohO6UoBsvo0Spi/DkMIbtRuaZkE39fgrb6Sm5maI2epdskVOBAP+Kbs9JAsIGu8RBpAmejnQnIIjwt0Fz3d+ih8bNNU0kC/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722671225; c=relaxed/simple;
-	bh=h+Tu3fjZvF5oNG4yfhrmqJN1U8o5ak9xDG969pbYbpc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Nad/LXZ/qtplj4+LvcUg7VWVZCtQQ5BTE4zNrGlf7/jw0Sq0l9MzjSlf/eWxI/8vRa9UMMxBCTWBe57WBQG2OJMxqm8+kK4gPxgERoqvyuKzRolaC601P0A+RO47OB/x8jMEz9yEmcccB8lCIceO0hTY9cDdKjERMRJOotvPVdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oJyhNl8v; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-672bea19c63so198969347b3.2
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 00:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722671223; x=1723276023; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W+8zGdX+0w0z65lZvEos03h3yEnQFMCquba341r2hLM=;
-        b=oJyhNl8vaqfrPOlF1QRzcGXNScypLvc9b9pwsp6sBBVFAo6DZEYEBMv38Htdp76wSe
-         ZrRDJNqdmUxKjcpP1PQKpW45GQxxrxg86XUPZJyKcEobhfMVn1Qg35ln0/HjwWmunvmC
-         GxmCw9H10tUf8g168QSIkirFIX+V2D+vYZFd5YmQ7Qjim7TyfqURlw3M/RMsS8aS1EyY
-         +w5UADQE8wDmi+Alp4nhwbv2q2HKjLD3UxMVlIDBRjoJv8kZs5Wz7MnFNR0FMnt0+q5e
-         EhDfBaUMm3ho8perb/XMOw7XX4MA54sbs0rCOoz13/NQ8/KHsdqz0u7Ys9nC26NeNu6m
-         4viA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722671223; x=1723276023;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W+8zGdX+0w0z65lZvEos03h3yEnQFMCquba341r2hLM=;
-        b=OZNxAcw8l0ZRNst7ELh/Gfuld9OTh8uzgzEsUVYvMVN4MGgBY6qTGu4zPWORmFm9i2
-         9bKdEld2MOH9VBZUlcNFPV2QUIreeN30Ywaed4Rt7VV6QI8beBoZgk1ilAcQg90WrPHX
-         eUcdDOca9BHS4czvke8YJEvj5AhZBoKyZgC2/GJHGp0zptg1Ld9BpEWpI2e5149l0Yny
-         GMXbN7Y1zBm7BdSYfPDMvZ4VOSJQdpyesisxsaJ69RTeARa/J0e3ChJ6YCWxpiPO5PGY
-         99Zjm7vET1K51m9mDTkDEP4njarehH0/2tI+b2HlZ1aqlp2ZiLVhhfLKWs0OHILp/xvo
-         xNcA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/6ERTMcXgg5pCeN8SfWodJ8/8+HBWINrsO2wWviRCoqoyQh9twUcxWoSkEH+eEGRhB7Z+EtXnOiCsPwIG1dHsPHYg5FJ5OGVNCoB7
-X-Gm-Message-State: AOJu0YzevOlSX5xn+wb28K41bek8Jo5cpdZeOhNOr9tL7sYdjzJdXfp7
-	8KEiY4E7XYGCE0VUq19HHHk/TMgLHN2gLLn8T03zrvfmKzXJ2enAaViHB0STRQHseLndytYLQQN
-	uM8LzYM4QfA==
-X-Google-Smtp-Source: AGHT+IEFvJMwtbC2qA1hrhSyqEbBOlj9S/WB0A5Ne9EveISmD2Fy+ngxQ6PuxWVSb3UKNzYz23fd8E5vGR776w==
-X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
- (user=davidgow job=sendgmr) by 2002:a05:690c:84:b0:646:3ef4:6ad2 with SMTP id
- 00721157ae682-68964d49c8bmr3342287b3.9.1722671222680; Sat, 03 Aug 2024
- 00:47:02 -0700 (PDT)
-Date: Sat,  3 Aug 2024 15:46:41 +0800
+	s=arc-20240116; t=1722671514; c=relaxed/simple;
+	bh=DjiN586Eo8jHzSmFOKGcwvE8tf1KpRIoPN/TudQfKms=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sudsP9t+1wbK5ql/4QuRkJY1MVarfX0JpTaKeYugIUOPDDa4dOqstuaUCAWayDby0r7cvmlLlVRpnKSOoODpsNsqAxQ9v01x3PRInBDPPkNljEgCjlnXY5I+UUgEvZDFvlPrLi37VgT5CjMrMM500I/z81fO4z/FgpGg+6pwMR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+Received: from localhost (localhost [127.0.0.1])
+	by mail.valinux.co.jp (Postfix) with ESMTP id 29F31A9DD3;
+	Sat,  3 Aug 2024 16:51:49 +0900 (JST)
+X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
+Received: from mail.valinux.co.jp ([127.0.0.1])
+	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 2MkEHVyS57pd; Sat,  3 Aug 2024 16:51:49 +0900 (JST)
+Received: from localhost.localdomain (p10213112-ipngn20001marunouchi.tokyo.ocn.ne.jp [153.220.101.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.valinux.co.jp (Postfix) with ESMTPSA id 4412BA9DCF;
+	Sat,  3 Aug 2024 16:51:48 +0900 (JST)
+From: takakura@valinux.co.jp
+To: pmladek@suse.com
+Cc: john.ogness@linutronix.de,
+	rostedt@goodmis.org,
+	senozhatsky@chromium.org,
+	akpm@linux-foundation.org,
+	bhe@redhat.com,
+	lukas@wunner.de,
+	wangkefeng.wang@huawei.com,
+	ubizjak@gmail.com,
+	feng.tang@intel.com,
+	j.granados@samsung.com,
+	stephen.s.brennan@oracle.com,
+	linux-kernel@vger.kernel.org,
+	nishimura@valinux.co.jp,
+	taka@valinux.co.jp
+Subject: Re: [PATCH] printk: CPU backtrace not printing on panic
+Date: Sat,  3 Aug 2024 16:51:27 +0900
+Message-Id: <20240803075127.217428-1-takakura@valinux.co.jp>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZqttsMNERRCZw8FR@pathway.suse.cz>
+References: <ZqttsMNERRCZw8FR@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240803074642.1849623-2-davidgow@google.com>
-Subject: [PATCH] mm: Only enforce minimum stack gap size if it's sensible
-From: David Gow <davidgow@google.com>
-To: Alexandre Ghiti <alex@ghiti.fr>, Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: David Gow <davidgow@google.com>, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The generic mmap_base code tries to leave a gap between the top
-of the stack and the mmap base address, but enforces a minimum
-gap size (MIN_GAP) of 128MB, which is too large on some setups. In
-particular, on arm tasks without ADDR_LIMIT_32BIT, the STACK_TOP
-value is less than 128MB, so it's impossible to fit such a gap in.
+Hi Petr,
 
-Only enforce this minimum if MIN_GAP < MAX_GAP, as we'd prefer to honour
-MAX_GAP, which is defined proportionally, so scales better and always
-leaves us with both _some_ stack space and some room for mmap.
+On 2024-08-01, Petr Mladek <pmladek@suse.com> wrote:
+>On Thu 2024-08-01 17:27:21, takakura@valinux.co.jp wrote:
+>> Hi Petr and John,
+>>
+>> On 2024-07-30, Petr Mladek <pmladek@suse.com> wrote:
+>> >On Fri 2024-07-26 16:02:45, John Ogness wrote:
+>> >> On 2024-07-26, Petr Mladek <pmladek@suse.com> wrote:
+>> >> > I would do it the other way and enable printing from other CPUs only
+>> >> > when triggring the backtrace. We could do it because
+>> >> > trigger_all_cpu_backtrace() waits until all backtraces are
+>> >> > printed.
+>> >> >
+>> >> > Something like:
+>> >> >
+>> >> > diff --git a/include/linux/panic.h b/include/linux/panic.h
+>> >> > index 3130e0b5116b..980bacbdfcfc 100644
+>> >> > --- a/include/linux/panic.h
+>> >> > +++ b/include/linux/panic.h
+>> >> > @@ -16,6 +16,7 @@ extern void oops_enter(void);
+>> >> >  extern void oops_exit(void);
+>> >> >  extern bool oops_may_print(void);
+>> >> >
+>> >> > +extern int panic_triggering_all_cpu_backtrace;
+>> >> >  extern int panic_timeout;
+>> >> >  extern unsigned long panic_print;
+>> >> >  extern int panic_on_oops;
+>> >> > diff --git a/kernel/panic.c b/kernel/panic.c
+>> >> > index f861bedc1925..7e9e97d59b1e 100644
+>> >> > --- a/kernel/panic.c
+>> >> > +++ b/kernel/panic.c
+>> >> > @@ -64,6 +64,8 @@ unsigned long panic_on_taint;
+>> >> >  bool panic_on_taint_nousertaint = false;
+>> >> >  static unsigned int warn_limit __read_mostly;
+>> >> >
+>> >> > +int panic_triggering_all_cpu_backtrace;
+>> >> > +
+>> >> >  int panic_timeout = CONFIG_PANIC_TIMEOUT;
+>> >> >  EXPORT_SYMBOL_GPL(panic_timeout);
+>> >> >
+>> >> > @@ -253,8 +255,12 @@ void check_panic_on_warn(const char *origin)
+>> >> >   */
+>> >> >  static void panic_other_cpus_shutdown(bool crash_kexec)
+>> >> >  {
+>> >> > -       if (panic_print & PANIC_PRINT_ALL_CPU_BT)
+>> >> > +       if (panic_print & PANIC_PRINT_ALL_CPU_BT) {
+>> >> > +               /* Temporary allow printing messages on non-panic CPUs. */
+>> >> > +               panic_triggering_all_cpu_backtrace = true;
+>> >> >                 trigger_all_cpu_backtrace();
+>> >> > +               panic_triggering_all_cpu_backtrace = false;
+>> >>
+>> >> Note, here we should also add
+>> >>
+>> >>           nbcon_atomic_flush_pending();
+>> >>
+>> >> Your suggestion allows the other CPUs to dump their backtrace into the
+>> >> ringbuffer, but they are still forbidden from acquiring the nbcon
+>> >> console contexts for printing. That is a necessary requirement of
+>> >> nbcon_waiter_matches().
+>> >
+>> >Great catch!
+>> >
+>> >I would prefer to solve this in a separate patch. This problem existed
+>> >even before the commit 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing
+>> >to ringbuffer"). In fact, the problem existed very long time even for
+>> >the legacy consoles.
+>> >
+>>
+>> Good point! I guess the problem existed since the commit 51a1d258e50e
+>> ("printk: Keep non-panic-CPUs out of console lock") as it forbade the
+>> acquisition of console lock for non-panic cpus?
+>
+>It most likely existed since the commit 7acac3445acde1c94
+>("printk: always use deferred printk when flush printk_safe lines")
+>
+>These were times when printk() serialized access to the log buffer
+>using a spin lock. The backtraces from other CPUs were stored in
+>temporary per-CPU buffers and later copied to the main log buffer.
+>The above mentioned commit caused that printk_safe_flush_line()
+>did not longer try to flush the messages to the console after
+>copying the temporary stored messages.
+>
+>Well, the above commit was in Jan 2017. It was before panic
+>allowed to show the backtraces.
+>
+>In practice, the problem with flushing bracktraces in panic has
+>existed since the option to print the backtraces was added by
+>the commit 60c958d8df9cfc40b ("panic: add sysctl to dump
+>all CPUs backtraces on oops event") in Jun 2020.
+>
+>Best Regards,
+>Petr
 
-This fixes the usercopy KUnit test suite on 32-bit arm, as it doesn't
-set any personality flags so gets the default (in this case 26-bit)
-task size. This test can be run with:
-./tools/testing/kunit/kunit.py run --arch arm usercopy --make_options LLVM=1
+That is quite interesting how flushing of backtraces in panic 
+has been affected differently over time until now, even going back 
+to days before CPU backtrace was introduced in panic.
 
-Fixes: dba79c3df4a2 ("arm: use generic mmap top-down layout and brk randomization")
-Signed-off-by: David Gow <davidgow@google.com>
----
+Thanks for sharing this!
 
-This is one possible fix for an issue with the usercopy_kunit suite
-(and, indeed, the KUnit user_alloc features) on 32-bit arm. The other
-options are to:
-- hack the KUnit allocation to force ADDR_LIMIT_32BIT or
-  ADDR_COMPAT_LAYOUT; or
-- similarly, use an unlimited stack, which forces the legacy layout
-  behind the scenes; or
-- adjust MIN_GAP based on either STACK_TOP or architecture.
-
-Of them, I made the arbitrary call that this was least hacky, but am
-happy to go with something else if someone who actually knows what's
-going on suggests it.
-
-(Also, does this issue actually mean some strange legacy binaries have
-been broken with an rlimit-ed stack for ages? Or am I missing something?)
-
-Cheers,
--- David
-
----
- mm/util.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/util.c b/mm/util.c
-index bd283e2132e0..baca6cafc9f1 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -463,7 +463,7 @@ static unsigned long mmap_base(unsigned long rnd, struct rlimit *rlim_stack)
- 	if (gap + pad > gap)
- 		gap += pad;
- 
--	if (gap < MIN_GAP)
-+	if (gap < MIN_GAP && MIN_GAP < MAX_GAP)
- 		gap = MIN_GAP;
- 	else if (gap > MAX_GAP)
- 		gap = MAX_GAP;
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
-
+Sincerely,
+Ryo Takakura
 
