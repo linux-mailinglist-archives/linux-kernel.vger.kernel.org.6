@@ -1,106 +1,140 @@
-Return-Path: <linux-kernel+bounces-273528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D377946A45
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:11:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E625946A4A
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38820281EBC
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:11:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BB9281923
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D2E14F9DB;
-	Sat,  3 Aug 2024 15:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89311547FA;
+	Sat,  3 Aug 2024 15:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n3S3ZJ+I"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqDYIEQK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550561EA73
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 15:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226D91547E0;
+	Sat,  3 Aug 2024 15:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722697908; cv=none; b=ErlQOY/qDr4OIQYPXY1+JxIVUmpAahgZlp7sF/ceZFNlqRX4dVfaJ5s2eSTyCBqFxF/SzjBT7YF/J8sph3XwE0bQmhWrJ2vD8AbVMfSfedy5J+y+8UJ8P+nETrSNZ9NcSLIstbH2OaDYQAfv2qTfXeJ1wfUPRbU842mEn9pAmZo=
+	t=1722697952; cv=none; b=Kr+4NPuN7bKRR/x9ypklMUHgNgXSPEe15w/qenFzusrhP/12xW/nkc0hqOcDz7gx+iF4tE3MLyneAMkn+fXDEVec7/39jRZ2BNDdVhTZ4snln1K7hon65WNjNwnRTFmF4+5Cyv1eE6iTvx6qHeGcQ1OWedIBU9TjIheDno/Arxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722697908; c=relaxed/simple;
-	bh=TD5p0UpAlZgZjqGGYGGHskVJVNzetmUKvAuFq0qNFLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KojPsNtxndo3jkXxn/6nfWSexVHDlEf8+QLvk83Aa0gBJSQl9i+WYZuz3PNvnrsDhI0rMPKcmiMgQ2rJ6AkvpitInf2QMqHB7ckQHqV8HvPl2Ash4qEW3XX/P4Qqhb1zG/SkH4YDndEIbe3sD0I/+6F7ywgAp4gZgudy3QtsHAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n3S3ZJ+I; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f04c29588so14915436e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 08:11:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722697905; x=1723302705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IIRdmIyZahXOLCwdMsyEmaV+E/1pXlkbU2kWHPbdoFE=;
-        b=n3S3ZJ+IScHnWz+c5ncTX996I36Rxg99QI26hEZ2w25TxaksTycGq2HpqAecDslFhF
-         IH5+WEQvm60dL+d0llfh6aaQRPc/h9HVmrefq1sDV9yBHCxaArRNfz0AD/ZQKpMK9bFR
-         YcuSs++erdZgPlsf0st0aIq47S2pKMHa1qQF6s+tXMYGyPzkuDZ1rcErM+B67Wrrya5r
-         kvGO9nROOoCpRZRyi5TPt9am+YUO3eL+ysHu0VwjIcbzS1F9umA/D+YmV6BtOkNeH9V0
-         OUHt2XEd6ixhdbjBcPI4LGWp9myj8zXIaUXISzW12f2YN2hMmAOknlGs5aSX40tEEKjU
-         n+3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722697905; x=1723302705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IIRdmIyZahXOLCwdMsyEmaV+E/1pXlkbU2kWHPbdoFE=;
-        b=ONAYl3djd+ZFfzxYFKZXpqwXEyhN95SrM4EsTvjL9pwzuXU08aT9nu9t0+j4Mfopze
-         rpOVl3dvCsSinAZSr1dQRdUJ4R7dSCS73UaTAJyT+rf1Chs8yuXg5wlt9r360ZGV+EiG
-         8b8IJVOCr1OEFWD/ca7aRoR02n1VpJlr+UOM6prQYG+Pdl/lrkC+vIwcWOThd7NirE44
-         o4r7vecT6VnUHWTOtsrZS0c7Os61yyivMh+L8L+1XdvEKN91d+KYbmPsRCq5E1AYHM00
-         yfH1oC1CVUle3Y2oCZCro1SdnyvKQS8UzhdVngMrd3o6ST9OzaABe5+OA99IOeZuifbH
-         LSXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIosPKECqPSo+Nj5ohboP6MacXV+/uEbZAvBeEKeZDAvO52IlfhfEnETp7Zow+elPU5YQYsbjinK2SH763irSV+Fs2o6LqcOscBEMY
-X-Gm-Message-State: AOJu0Yx68NekB6KX4eFNWO8BT1G5MYzHOa/aU1y/Cs65YW1+7miwpV9I
-	Ldp2Ri9FYY46sCJOXEuqLIyBr6jF3S4WXpBiGaS8eriLxt99Y/srIHNDr3OPPXTyaPPgL2NLGlk
-	NWw==
-X-Google-Smtp-Source: AGHT+IErJzElqSBk+MCrcqXa5hP5NyMDUvJDijFMOCBT7gp3eyLUio6Kgsdrt8DW1sGkx9pBBU+SDg==
-X-Received: by 2002:a05:6512:1110:b0:52e:f99e:5dd1 with SMTP id 2adb3069b0e04-530bb4d7879mr4049412e87.47.1722697905161;
-        Sat, 03 Aug 2024 08:11:45 -0700 (PDT)
-Received: from google.com ([2a00:79e0:18:10:521e:7b8e:2bc4:adde])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba0787bsm526036e87.7.2024.08.03.08.11.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 08:11:44 -0700 (PDT)
-Date: Sat, 3 Aug 2024 17:11:40 +0200
-From: "Steinar H. Gunderson" <sesse@google.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	irogers@google.com, Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH v9 1/3] perf report: Support LLVM for addr2line()
-Message-ID: <Zq5IrJgjTJOW92gE@google.com>
-References: <20240719150051.520317-1-sesse@google.com>
- <ZqlCIJ4khe2_xyp9@x1>
- <ZqlDuIj_nMVXhYou@x1>
+	s=arc-20240116; t=1722697952; c=relaxed/simple;
+	bh=hKygohsOdeB7ONXdsjrCJbuO58oXWXkp2aNHcwRceSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VR28s/luiq0ZK0aqVAOAPzUk1YDSBfCoB3Y7NJGavSSl7aTOUGuoLkhdoueozCuLFMjMm9/z3v3L5z99DD3fayuuHuIrftBDLfwXLurmji7PohYtLBLJsDbTrHZ2DXEjUpD8h+7jG2LXp795lIl0Y1DTEtEW+vcvOIrcmbt04p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqDYIEQK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11728C4AF0A;
+	Sat,  3 Aug 2024 15:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722697951;
+	bh=hKygohsOdeB7ONXdsjrCJbuO58oXWXkp2aNHcwRceSk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EqDYIEQKd2oRqXFxDim9V5p/bk/1AbaQ2C6SahaSHkP20Wdo5/vGP8pcKmO1efEJq
+	 lcj05rDMqnWZfjqDbGV0/bh7fqY2NjLt+19SzkhS/TnG2eAsMm1jlQ1e86lBNkoVqZ
+	 ZPvhxZQtdvdHdd7Ot9pTONdyHi/akA0FpdzHgsqgU9E2S8HzRVhPlnGk98sRdGULlN
+	 etTE5A0McSsz/cFmOekb43mb1W7k5QS8qFUpSlmzTaYjHyZghjWQMS6ck0rlbZkyET
+	 22SI5AFHPAuOknTKNTnaMZDfWuJ/rO7ogPcL6K+xZPYt82n49nmVwkiV8PDx2GO9j0
+	 2eddEsOC8m/bA==
+Date: Sat, 3 Aug 2024 16:12:22 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: <fabrice.gasnier@foss.st.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, <linux-iio@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 7/9] iio: adc: stm32-dfsdm: adopt generic channels
+ bindings
+Message-ID: <20240803161222.1f320fcc@jic23-huawei>
+In-Reply-To: <20240730084640.1307938-8-olivier.moysan@foss.st.com>
+References: <20240730084640.1307938-1-olivier.moysan@foss.st.com>
+	<20240730084640.1307938-8-olivier.moysan@foss.st.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqlDuIj_nMVXhYou@x1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 04:49:12PM -0300, Arnaldo Carvalho de Melo wrote:
->> I'm testing this again, I thought Ian or Namhyung had made comments on
->> previous versions of this patchset, no?
+On Tue, 30 Jul 2024 10:46:37 +0200
+Olivier Moysan <olivier.moysan@foss.st.com> wrote:
 
-Yes, and I believe they have been addressed.
-
-> Unfortunately it clashed with recent patches in the capstone related
-> codebase, IIRC Athira's for powerpc data-type profiling.
+> Move to generic channels binding to ease new backend framework adoption
+> and prepare the convergence with MDF IP support on STM32MP2 SoC family.
 > 
-> Please take a look at what is in tmp.perf-tools-next at:
+> Legacy binding:
+> DFSDM is an IIO channel consumer.
+> SD modulator is an IIO channels provider.
+> The channel phandles are provided in DT through io-channels property
+> and channel indexes through st,adc-channels property.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
+> New binding:
+> DFSDM is an IIO channel provider.
+> The channel indexes are given by reg property in channel child node.
+> 
+> This new binding is intended to be used with SD modulator IIO backends.
+> It does not support SD modulator legacy IIO devices.
+> The st,adc-channels property presence is used to discriminate
+> between legacy and backend bindings.
+> 
+> The support of the DFSDM legacy channels and SD modulator IIO devices
+> is kept for backward compatibility.
+> 
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
 
-I'll have a look and see if I can do a rebase.
+One trivial thing noted inline.  If you spin a v7 for other reasons
+tidy it up, if not I 'might' (if I remember and can be bothered)
+tweak it whilst applying, but probably not.
 
-/* Steinar */
+Jonathan
+
+>  
+> +static int stm32_dfsdm_chan_init(struct iio_dev *indio_dev, struct iio_chan_spec *channels)
+> +{
+> +	int num_ch = indio_dev->num_channels;
+> +	int chan_idx = 0;
+> +	int ret;
+> +
+> +	for (chan_idx = 0; chan_idx < num_ch; chan_idx++) {
+> +		channels[chan_idx].scan_index = chan_idx;
+> +		ret = stm32_dfsdm_adc_chan_init_one(indio_dev, &channels[chan_idx], NULL);
+> +		if (ret < 0)
+> +			return dev_err_probe(&indio_dev->dev, ret, "Channels init failed\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_dfsdm_generic_chan_init(struct iio_dev *indio_dev, struct iio_chan_spec *channels)
+> +{
+> +	int chan_idx = 0, ret;
+
+As in the above function, I'd have slightly preferred these on separate lines.
+If that's all that comes up, I might tweak it whilst applying.
+
+> +
+> +	device_for_each_child_node_scoped(&indio_dev->dev, child) {
+> +		/* Skip DAI node in DFSDM audio nodes */
+> +		if (fwnode_property_present(child, "compatible"))
+> +			continue;
+> +
+> +		channels[chan_idx].scan_index = chan_idx;
+> +		ret = stm32_dfsdm_adc_chan_init_one(indio_dev, &channels[chan_idx], child);
+> +		if (ret < 0)
+> +			return dev_err_probe(&indio_dev->dev, ret, "Channels init failed\n");
+> +
+> +		chan_idx++;
+> +	}
+> +
+> +	return chan_idx;
+> +}
+> +
 
