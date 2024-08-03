@@ -1,127 +1,82 @@
-Return-Path: <linux-kernel+bounces-273578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82C5946ADD
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 20:32:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0B6946ADF
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 20:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB9651C211EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 18:32:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8CB61F21D19
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 18:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644E71C6B7;
-	Sat,  3 Aug 2024 18:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="Y4kZdvqp"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C70617C6D
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 18:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28821B812;
+	Sat,  3 Aug 2024 18:33:10 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB75017BD2;
+	Sat,  3 Aug 2024 18:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722709919; cv=none; b=VLuME+iMsqYjs2yxXHI24Bb6YowiTqPOtL6EJCrpdDT49axYcjCMf1GI5ezVlLG8u6jQRuF0VRHN2GJmlP0EHaBe4CI7xHnUDdSTotAESKb/pstjw+WksjIG+27wdaUEwveQGV34kSnWV1evunofxWmULZMQ0/Cf9BrVVs1qCkQ=
+	t=1722709990; cv=none; b=DkXZZEy0hf0TSU1yUdUzau+q8k9cpo4WqxbUQyEm7941zxyGr5vHmYYnWQGyRv/90Xp68IrpliZjaxj2D0XOmdFyfFKstPFNBqlgjxMF2616pkfLSy+J0JTX9syQ2eEh8NwSXT+X6JgO/wWOYMFqTSs6OtuEKCD2eKqalMBMlIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722709919; c=relaxed/simple;
-	bh=65wOj3mjIYjmwALC9ReHUnhlcSwBkI8j9RFvSnJ0rbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gamervDWU+PW7ISK62BwNV1HrxBWYClvWjZLK+gqsZzw7LbY3xdVLjm8+aikx6v6IEiee0jg/N8O03/bius5T/cFG9hyVv/0z9FFEK+K7ISmuvb9VE6QGIGmh6lk/dpGq8Clgyss2kFTETdla6I2v2dKhZI1XxJjD0P0GVb0s+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=Y4kZdvqp; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc4fcbb131so80009725ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 11:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1722709917; x=1723314717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vw+7kkCGgqsCM4imm6lrOapR3YwBtUHNXt8VLERjVn0=;
-        b=Y4kZdvqphE2M/s2bwaRuX9wXv5vKs/SUGSZ4Jvj/mb0ESCmqxLPifITUAD1bsmRXzo
-         jeiO0u4pTM0/DLfAwXGWZj7MnNo3Kyv9gpipZSpGV10HJ3RaOPg75SiL77OLJ1uxmyah
-         1VTxvGQk5wKqkq6JOFLiY8akfyNeJkzdSCVkccRaM5vTdE3kU6EbUOX9jH6wvvafh+QV
-         dysa3N0riOCVExmdjOAWc32a9EaEdPlyaeaQwoz2XFbLQsKv1JuT0RLojh+gCHVphf4q
-         TxXh/SsdIyzoF4ur0Z6RG/vUTgFc6NhuRCDSHNZySfPMFXNWYV3QXv52bs9pizKOXxLf
-         s/fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722709917; x=1723314717;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vw+7kkCGgqsCM4imm6lrOapR3YwBtUHNXt8VLERjVn0=;
-        b=QcQQJsBxoNYNHV6h9ldQYhNCDDyHM/0Qxvdg/1xuBI9edQJIqIWxcIKRI6m5OsLWpw
-         Uf5b6Wgm+1WWSoh19jXAUcOOgZJilGAtQaAfWm64lhmVGiO9Yo93i314LVHdYHWquYmt
-         XHhtebThoqaG7BbSPBEIa4Ubb6EGh8DfHnxbU3KfZrvVhbvvQq6xyBRoEqDMKTO0/gKq
-         1XEBTfKkW+FdfzO/IaRpNal/YfgjFn2ROyL54kcA6uUa+UllOu/K0KA4D6BispKCiaEH
-         Pb5dMwx1F4gOt5v8ROSH0ztgCZyyyZvsfqUuJU57Yd4XTYOQqLNdvvBwc9nYXzAoQF1O
-         K5/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUB3wyiZZ7eLE6EHQsqnp18iCKWhDRnfnvenP9zuP623i30dW2Nl8XcYOvp47vxB2JI77Qt7mXoSpXQbRYdNvuhJBChH+x0aiv4C+yE
-X-Gm-Message-State: AOJu0Yx6PEVRzBfQG4H65EJXIh7ARjgiwerM03aK1FMdTSuxqNrtOEP7
-	GpcgbXDzhmSwaXkv8xl6qvalQN1pAYY/LVOF6C9JmBO/xldsfxZP6/iZWVNyMDg=
-X-Google-Smtp-Source: AGHT+IECeN/RnB8XQBElroUgCD3gl4LUfMgIYD2HQbBTrCVzOOWWqlrpv5nCGlAFzpgCRMQFsCD5YQ==
-X-Received: by 2002:a17:902:f54b:b0:1f7:c56:58a3 with SMTP id d9443c01a7336-1ff57293097mr96255815ad.26.1722709917177;
-        Sat, 03 Aug 2024 11:31:57 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9c650sm3049261a12.16.2024.08.03.11.31.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 11:31:56 -0700 (PDT)
-Date: Sat, 3 Aug 2024 11:31:54 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zhu Yanjun <yanjun.zhu@linux.dev>
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, "K. Y.
- Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Long Li
- <longli@microsoft.com>, Ajay Sharma <sharmaajay@microsoft.com>, Simon
- Horman <horms@kernel.org>, Konstantin Taranov <kotaranov@microsoft.com>,
- Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, Erick Archer
- <erick.archer@outlook.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>, Ahmed
- Zaki <ahmed.zaki@intel.com>, Colin Ian King <colin.i.king@gmail.com>
-Subject: Re: [PATCH net-next v2] net: mana: Implement
- get_ringparam/set_ringparam for mana
-Message-ID: <20240803113154.67a37efb@hermes.local>
-In-Reply-To: <4c32b96f-d962-4427-87c2-4953c91c9e43@linux.dev>
-References: <1722358895-13430-1-git-send-email-shradhagupta@linux.microsoft.com>
-	<4c32b96f-d962-4427-87c2-4953c91c9e43@linux.dev>
+	s=arc-20240116; t=1722709990; c=relaxed/simple;
+	bh=PnZH+vTma2Y33lqChWnEGke08kLqhXUVigad5AFAW9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jh7wzl+gXtDcnSDeSu/XqgW3Xe7ode8R2DiKqMb3JqD7zWTJWNqVbqhlez6V/TCBP2N6aztzrI77ExeNZlLvdpnwO0GdpWNXHJQ3WJWlrmUV6RRA8XoXaW9i1ExZ79HtO1rkzrjRS9zg9BHdLkcCtbCylWBj5xfWbB69X+USnzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 473IWxZY029719;
+	Sat, 3 Aug 2024 20:32:59 +0200
+Date: Sat, 3 Aug 2024 20:32:59 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 04/12] tools/nolibc: use attribute((naked)) if available
+Message-ID: <20240803183259.GA29716@1wt.eu>
+References: <20240728-nolibc-llvm-v1-0-bc384269bc35@weissschuh.net>
+ <20240728-nolibc-llvm-v1-4-bc384269bc35@weissschuh.net>
+ <20240803092558.GB29127@1wt.eu>
+ <713abd5e-1f72-4cf8-9857-c6795b4b3187@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <713abd5e-1f72-4cf8-9857-c6795b4b3187@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, 4 Aug 2024 02:09:21 +0800
-Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
-
-> >   
-> >   	/*  The minimum size of the WQE is 32 bytes, hence
-> > -	 *  MAX_SEND_BUFFERS_PER_QUEUE represents the maximum number of WQEs
-> > +	 *  apc->tx_queue_size represents the maximum number of WQEs
-> >   	 *  the SQ can store. This value is then used to size other queues
-> >   	 *  to prevent overflow.
-> > +	 *  Also note that the txq_size is always going to be MANA_PAGE_ALIGNED,
-> > +	 *  as tx_queue_size is always a power of 2.
-> >   	 */
-> > -	txq_size = MAX_SEND_BUFFERS_PER_QUEUE * 32;
-> > -	BUILD_BUG_ON(!MANA_PAGE_ALIGNED(txq_size));
-> > +	txq_size = apc->tx_queue_size * 32;  
+On Sat, Aug 03, 2024 at 08:28:08PM +0200, Thomas Weißschuh  wrote:
+> > I think that it can resolve to roughly this:
+> >
+> > #if defined(__has_attribute) && __has_attribute(naked)
+> > #  define __entrypoint __attribute__((naked))
+> > #  define __entrypoint_epilogue()
+> > #else
+> > #  define __entrypoint __attribute__((optimize("Os", "omit-frame-pointer")))
+> > #  define __entrypoint_epilogue() __builtin_unreachable()
+> > #endif
 > 
-> Not sure if the following is needed or not.
-> "
-> WARN_ON(!MANA_PAGE_ALIGNED(txq_size));
-> "
-> 
-> Zhu Yanjun
+> We would need to duplicate the define for the
+> !defined(__has_attribute) case.
 
-On many systems warn is set to panic the system.
-Any constraint like this should be enforced where user input
-is managed. In this patch, that would be earlier in mana_set_ringparam().
-Looking there, the only requirement is that txq_size is between
-the min/max buffers per queue and a power of 2.
+I don't understand why. Above both are tested on the first line.
+Am I missing something ?
+
+> I wanted to avoid that duplication.
+> > What do you think ?
+> 
+> With the reasoning above I'll let you choose.
+
+I'm fine with avoiding duplication, I just don't understand why there
+should be.
+
+Willy
 
