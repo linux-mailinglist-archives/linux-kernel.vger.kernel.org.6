@@ -1,286 +1,304 @@
-Return-Path: <linux-kernel+bounces-273568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC223946AB8
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 19:25:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F34FE946AC2
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 20:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C59C3B20FDC
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 17:25:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5817A1F215CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 18:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AC4175AE;
-	Sat,  3 Aug 2024 17:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D513E179AE;
+	Sat,  3 Aug 2024 18:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E9HSqFxq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B1rEv1U0"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80079F9F5
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 17:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BB817C6A
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 18:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722705941; cv=none; b=Q64WSLqpqeEy5YE6KzbCpq8JButbnPDbImNZz70c+kZmPSbD85AbB9fMqSRvhVRB6qkxgbIR1ZClskE5P3cWnfBkPXYWpID+9erzyR5BiFCnBKXCfX68BuX2FDSwg/RFWx/gjmody3JqFBcwUVVAPaNWfV7sMKfUBVuWVwo4wxY=
+	t=1722708592; cv=none; b=UO8AnhxV4QS9rH+l2qetOZI9LkVy/aDadivKnnZUXhiBbS67nDtIZqUKXGMVdxA2T34MPpyqWHgUiFhjdBecXSPpsBWCt9fZ5eI61G04GWBeouHe0M42kLgPg3/ZhhIb3gZzGIN8Ayo5BgLIFtIjjHFsoi56q2/Lt9as894AXlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722705941; c=relaxed/simple;
-	bh=mkxq8dALPRo83sB2NB30Qmyr0tXHAhu9z53k+WSk/iw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=bQHBUi9RJaZo/wJqWvZAeq33G2IVxWqpqEEUWO+w+3TMquwYkFWvxBV+0Fh9FGOK/x8ZtUQ1HEnO0XPS+6b6MUZyR71yviVEscgsiuyXm0s8kNk0W0ZQsHX7H+KDxc8jIXI8sGIIeRcnNwpSlQ5H0QcGI9xUKLLXcR87Dmu9Ww0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E9HSqFxq; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722705939; x=1754241939;
-  h=date:from:to:cc:subject:message-id;
-  bh=mkxq8dALPRo83sB2NB30Qmyr0tXHAhu9z53k+WSk/iw=;
-  b=E9HSqFxqVVWq1iHXNqnAN1Us2YEPUeaPes1+/E73DMCFYE5M7JbeK+mC
-   iA7DIidtbkLH9MDWhmCoyMJ89DzWJdccZwDJ220eNlUv+2kCQARxpViQa
-   XCv5RPJ1k1s1H/zh4HXK1ZDM5V0m659ZwWzrlBu5PZUcOFzu9qkp4WpxV
-   CspMz3KUrWQroaUxe670ajPev2orhhe6MyMWxMLvgEUnVJjEHJifh4ETT
-   zUjbelDB4J/i3ZHWgQCnz4rgDbQHLHAy8udV5EigKU4FvfNnQcID9vH4b
-   x0J/hXrlV8ycOUXDuWQt+zYYH5RSym7CQsmwy/l3avKZYN8KR57QkdOBq
-   w==;
-X-CSE-ConnectionGUID: pTLtP7f0Tf6OG/3Gwett/g==
-X-CSE-MsgGUID: mNnY3BAcSNS+pj5N2cDnMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11153"; a="20846443"
-X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
-   d="scan'208";a="20846443"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2024 10:25:39 -0700
-X-CSE-ConnectionGUID: +335GflTRj2pUCUqxVE46Q==
-X-CSE-MsgGUID: KMhTxq6ZRkOs/udpLo/1Xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,260,1716274800"; 
-   d="scan'208";a="60117811"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 03 Aug 2024 10:25:38 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1saIVb-0000nF-2r;
-	Sat, 03 Aug 2024 17:25:35 +0000
-Date: Sun, 04 Aug 2024 01:25:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:timers/urgent] BUILD SUCCESS
- f2655ac2c06a15558e51ed6529de280e1553c86e
-Message-ID: <202408040103.1xL0cvRf-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722708592; c=relaxed/simple;
+	bh=8McCiWm3vKi7832j/u0q6szlS0woc2ICJglvHOVT9nk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A1CRNq42EdU8QQmhyNLxE9LAx8nfL0TIIC6BvqLUUbVUVj3iw/3idPkv/VenNRNVshr+FHb9FrZWEyK0GUJ1+f7+zTpVAwF9AYunS4+9rkoQ6dxLukltf2UQjJhknhq3AIr88NMyXejIDdEoNr8+04XTGuBen5JBlryuGTXN2SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B1rEv1U0; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4c32b96f-d962-4427-87c2-4953c91c9e43@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722708588;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vawbaZaNlrJ7EQQGbry712PsMIOP5IKqRzfxEy/UERA=;
+	b=B1rEv1U0meAPmKRX0yCnnOfLjXcwHnuxSRIM0cozVojWZcdichu0Le2TCs/sd2jUdTZtMp
+	02WMWy9ckNSByxYlbjjV60rIifr2+RRLIMDk2U8yOdw7QAHarh0BPNOCUG+PP3i0j7nbYH
+	6OeYehy2xDTHwK3coHqyrjY6Ae6KLd8=
+Date: Sun, 4 Aug 2024 02:09:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH net-next v2] net: mana: Implement
+ get_ringparam/set_ringparam for mana
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Long Li <longli@microsoft.com>,
+ Ajay Sharma <sharmaajay@microsoft.com>, Simon Horman <horms@kernel.org>,
+ Konstantin Taranov <kotaranov@microsoft.com>,
+ Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+ Erick Archer <erick.archer@outlook.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
+ Colin Ian King <colin.i.king@gmail.com>
+References: <1722358895-13430-1-git-send-email-shradhagupta@linux.microsoft.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <1722358895-13430-1-git-send-email-shradhagupta@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/urgent
-branch HEAD: f2655ac2c06a15558e51ed6529de280e1553c86e  clocksource: Fix brown-bag boolean thinko in cs_watchdog_read()
+在 2024/7/31 1:01, Shradha Gupta 写道:
+> Currently the values of WQs for RX and TX queues for MANA devices
+> are hardcoded to default sizes.
+> Allow configuring these values for MANA devices as ringparam
+> configuration(get/set) through ethtool_ops.
+> 
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Reviewed-by: Long Li <longli@microsoft.com>
+> ---
+>   Changes in v2:
+>   * Removed unnecessary validations in mana_set_ringparam()
+>   * Fixed codespell error
+>   * Improved error message to indicate issue with the parameter
+> ---
+>   drivers/net/ethernet/microsoft/mana/mana_en.c | 20 +++---
+>   .../ethernet/microsoft/mana/mana_ethtool.c    | 66 +++++++++++++++++++
+>   include/net/mana/mana.h                       | 21 +++++-
+>   3 files changed, 96 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> index d2f07e179e86..598ac62be47d 100644
+> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+> @@ -618,7 +618,7 @@ static int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu)
+>   
+>   	dev = mpc->ac->gdma_dev->gdma_context->dev;
+>   
+> -	num_rxb = mpc->num_queues * RX_BUFFERS_PER_QUEUE;
+> +	num_rxb = mpc->num_queues * mpc->rx_queue_size;
+>   
+>   	WARN(mpc->rxbufs_pre, "mana rxbufs_pre exists\n");
+>   	mpc->rxbufs_pre = kmalloc_array(num_rxb, sizeof(void *), GFP_KERNEL);
+> @@ -1899,14 +1899,15 @@ static int mana_create_txq(struct mana_port_context *apc,
+>   		return -ENOMEM;
+>   
+>   	/*  The minimum size of the WQE is 32 bytes, hence
+> -	 *  MAX_SEND_BUFFERS_PER_QUEUE represents the maximum number of WQEs
+> +	 *  apc->tx_queue_size represents the maximum number of WQEs
+>   	 *  the SQ can store. This value is then used to size other queues
+>   	 *  to prevent overflow.
+> +	 *  Also note that the txq_size is always going to be MANA_PAGE_ALIGNED,
+> +	 *  as tx_queue_size is always a power of 2.
+>   	 */
+> -	txq_size = MAX_SEND_BUFFERS_PER_QUEUE * 32;
+> -	BUILD_BUG_ON(!MANA_PAGE_ALIGNED(txq_size));
+> +	txq_size = apc->tx_queue_size * 32;
 
-elapsed time: 1457m
+Not sure if the following is needed or not.
+"
+WARN_ON(!MANA_PAGE_ALIGNED(txq_size));
+"
 
-configs tested: 194
-configs skipped: 9
+Zhu Yanjun
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+>   
+> -	cq_size = MAX_SEND_BUFFERS_PER_QUEUE * COMP_ENTRY_SIZE;
+> +	cq_size = apc->tx_queue_size * COMP_ENTRY_SIZE;
+>   	cq_size = MANA_PAGE_ALIGN(cq_size);
+>   
+>   	gc = gd->gdma_context;
+> @@ -2145,10 +2146,11 @@ static int mana_push_wqe(struct mana_rxq *rxq)
+>   
+>   static int mana_create_page_pool(struct mana_rxq *rxq, struct gdma_context *gc)
+>   {
+> +	struct mana_port_context *mpc = netdev_priv(rxq->ndev);
+>   	struct page_pool_params pprm = {};
+>   	int ret;
+>   
+> -	pprm.pool_size = RX_BUFFERS_PER_QUEUE;
+> +	pprm.pool_size = mpc->rx_queue_size;
+>   	pprm.nid = gc->numa_node;
+>   	pprm.napi = &rxq->rx_cq.napi;
+>   	pprm.netdev = rxq->ndev;
+> @@ -2180,13 +2182,13 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
+>   
+>   	gc = gd->gdma_context;
+>   
+> -	rxq = kzalloc(struct_size(rxq, rx_oobs, RX_BUFFERS_PER_QUEUE),
+> +	rxq = kzalloc(struct_size(rxq, rx_oobs, apc->rx_queue_size),
+>   		      GFP_KERNEL);
+>   	if (!rxq)
+>   		return NULL;
+>   
+>   	rxq->ndev = ndev;
+> -	rxq->num_rx_buf = RX_BUFFERS_PER_QUEUE;
+> +	rxq->num_rx_buf = apc->rx_queue_size;
+>   	rxq->rxq_idx = rxq_idx;
+>   	rxq->rxobj = INVALID_MANA_HANDLE;
+>   
+> @@ -2734,6 +2736,8 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
+>   	apc->ndev = ndev;
+>   	apc->max_queues = gc->max_num_queues;
+>   	apc->num_queues = gc->max_num_queues;
+> +	apc->tx_queue_size = DEF_TX_BUFFERS_PER_QUEUE;
+> +	apc->rx_queue_size = DEF_RX_BUFFERS_PER_QUEUE;
+>   	apc->port_handle = INVALID_MANA_HANDLE;
+>   	apc->pf_filter_handle = INVALID_MANA_HANDLE;
+>   	apc->port_idx = port_idx;
+> diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+> index 146d5db1792f..34707da6ff68 100644
+> --- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+> +++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+> @@ -369,6 +369,70 @@ static int mana_set_channels(struct net_device *ndev,
+>   	return err;
+>   }
+>   
+> +static void mana_get_ringparam(struct net_device *ndev,
+> +			       struct ethtool_ringparam *ring,
+> +			       struct kernel_ethtool_ringparam *kernel_ring,
+> +			       struct netlink_ext_ack *extack)
+> +{
+> +	struct mana_port_context *apc = netdev_priv(ndev);
+> +
+> +	ring->rx_pending = apc->rx_queue_size;
+> +	ring->tx_pending = apc->tx_queue_size;
+> +	ring->rx_max_pending = MAX_RX_BUFFERS_PER_QUEUE;
+> +	ring->tx_max_pending = MAX_TX_BUFFERS_PER_QUEUE;
+> +}
+> +
+> +static int mana_set_ringparam(struct net_device *ndev,
+> +			      struct ethtool_ringparam *ring,
+> +			      struct kernel_ethtool_ringparam *kernel_ring,
+> +			      struct netlink_ext_ack *extack)
+> +{
+> +	struct mana_port_context *apc = netdev_priv(ndev);
+> +	u32 new_tx, new_rx;
+> +	u32 old_tx, old_rx;
+> +	int err1, err2;
+> +
+> +	old_tx = apc->tx_queue_size;
+> +	old_rx = apc->rx_queue_size;
+> +	new_tx = clamp_t(u32, ring->tx_pending, MIN_TX_BUFFERS_PER_QUEUE, MAX_TX_BUFFERS_PER_QUEUE);
+> +	new_rx = clamp_t(u32, ring->rx_pending, MIN_RX_BUFFERS_PER_QUEUE, MAX_RX_BUFFERS_PER_QUEUE);
+> +
+> +	if (!is_power_of_2(new_tx)) {
+> +		netdev_err(ndev, "%s:Tx:%d not supported. Needs to be a power of 2\n",
+> +			   __func__, new_tx);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!is_power_of_2(new_rx)) {
+> +		netdev_err(ndev, "%s:Rx:%d not supported. Needs to be a power of 2\n",
+> +			   __func__, new_rx);
+> +		return -EINVAL;
+> +	}
+> +
+> +	err1 = mana_detach(ndev, false);
+> +	if (err1) {
+> +		netdev_err(ndev, "mana_detach failed: %d\n", err1);
+> +		return err1;
+> +	}
+> +
+> +	apc->tx_queue_size = new_tx;
+> +	apc->rx_queue_size = new_rx;
+> +	err1 = mana_attach(ndev);
+> +	if (!err1)
+> +		return 0;
+> +
+> +	netdev_err(ndev, "mana_attach failed: %d\n", err1);
+> +
+> +	/* Try rolling back to the older values */
+> +	apc->tx_queue_size = old_tx;
+> +	apc->rx_queue_size = old_rx;
+> +	err2 = mana_attach(ndev);
+> +	if (err2)
+> +		netdev_err(ndev, "mana_reattach failed: %d\n", err2);
+> +
+> +	return err1;
+> +}
+> +
+>   const struct ethtool_ops mana_ethtool_ops = {
+>   	.get_ethtool_stats	= mana_get_ethtool_stats,
+>   	.get_sset_count		= mana_get_sset_count,
+> @@ -380,4 +444,6 @@ const struct ethtool_ops mana_ethtool_ops = {
+>   	.set_rxfh		= mana_set_rxfh,
+>   	.get_channels		= mana_get_channels,
+>   	.set_channels		= mana_set_channels,
+> +	.get_ringparam          = mana_get_ringparam,
+> +	.set_ringparam          = mana_set_ringparam,
+>   };
+> diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+> index 6439fd8b437b..8f922b389883 100644
+> --- a/include/net/mana/mana.h
+> +++ b/include/net/mana/mana.h
+> @@ -38,9 +38,21 @@ enum TRI_STATE {
+>   
+>   #define COMP_ENTRY_SIZE 64
+>   
+> -#define RX_BUFFERS_PER_QUEUE 512
+> +/* This Max value for RX buffers is derived from __alloc_page()'s max page
+> + * allocation calculation. It allows maximum 2^(MAX_ORDER -1) pages. RX buffer
+> + * size beyond this value gets rejected by __alloc_page() call.
+> + */
+> +#define MAX_RX_BUFFERS_PER_QUEUE 8192
+> +#define DEF_RX_BUFFERS_PER_QUEUE 512
+> +#define MIN_RX_BUFFERS_PER_QUEUE 128
+>   
+> -#define MAX_SEND_BUFFERS_PER_QUEUE 256
+> +/* This max value for TX buffers is derived as the maximum allocatable
+> + * pages supported on host per guest through testing. TX buffer size beyond
+> + * this value is rejected by the hardware.
+> + */
+> +#define MAX_TX_BUFFERS_PER_QUEUE 16384
+> +#define DEF_TX_BUFFERS_PER_QUEUE 256
+> +#define MIN_TX_BUFFERS_PER_QUEUE 128
+>   
+>   #define EQ_SIZE (8 * MANA_PAGE_SIZE)
+>   
+> @@ -285,7 +297,7 @@ struct mana_recv_buf_oob {
+>   	void *buf_va;
+>   	bool from_pool; /* allocated from a page pool */
+>   
+> -	/* SGL of the buffer going to be sent has part of the work request. */
+> +	/* SGL of the buffer going to be sent as part of the work request. */
+>   	u32 num_sge;
+>   	struct gdma_sge sgl[MAX_RX_WQE_SGL_ENTRIES];
+>   
+> @@ -437,6 +449,9 @@ struct mana_port_context {
+>   	unsigned int max_queues;
+>   	unsigned int num_queues;
+>   
+> +	unsigned int rx_queue_size;
+> +	unsigned int tx_queue_size;
+> +
+>   	mana_handle_t port_handle;
+>   	mana_handle_t pf_filter_handle;
+>   
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240803   gcc-13.2.0
-arc                   randconfig-002-20240803   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                         bcm2835_defconfig   clang-20
-arm                        clps711x_defconfig   clang-20
-arm                                 defconfig   gcc-13.2.0
-arm                      jornada720_defconfig   clang-20
-arm                         lpc32xx_defconfig   gcc-14.1.0
-arm                            mps2_defconfig   clang-20
-arm                             mxs_defconfig   clang-20
-arm                       omap2plus_defconfig   gcc-14.1.0
-arm                   randconfig-001-20240803   gcc-13.2.0
-arm                   randconfig-002-20240803   gcc-13.2.0
-arm                   randconfig-003-20240803   gcc-13.2.0
-arm                   randconfig-004-20240803   gcc-13.2.0
-arm                         s3c6400_defconfig   gcc-14.1.0
-arm                           sama5_defconfig   clang-20
-arm                        spear3xx_defconfig   gcc-14.1.0
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240803   gcc-13.2.0
-arm64                 randconfig-002-20240803   gcc-13.2.0
-arm64                 randconfig-003-20240803   gcc-13.2.0
-arm64                 randconfig-004-20240803   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240803   gcc-13.2.0
-csky                  randconfig-002-20240803   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240803   clang-18
-i386         buildonly-randconfig-002-20240803   clang-18
-i386         buildonly-randconfig-002-20240803   gcc-12
-i386         buildonly-randconfig-003-20240803   clang-18
-i386         buildonly-randconfig-003-20240803   gcc-12
-i386         buildonly-randconfig-004-20240803   clang-18
-i386         buildonly-randconfig-004-20240803   gcc-12
-i386         buildonly-randconfig-005-20240803   clang-18
-i386         buildonly-randconfig-006-20240803   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240803   clang-18
-i386                  randconfig-001-20240803   gcc-12
-i386                  randconfig-002-20240803   clang-18
-i386                  randconfig-002-20240803   gcc-12
-i386                  randconfig-003-20240803   clang-18
-i386                  randconfig-004-20240803   clang-18
-i386                  randconfig-004-20240803   gcc-12
-i386                  randconfig-005-20240803   clang-18
-i386                  randconfig-006-20240803   clang-18
-i386                  randconfig-011-20240803   clang-18
-i386                  randconfig-011-20240803   gcc-12
-i386                  randconfig-012-20240803   clang-18
-i386                  randconfig-012-20240803   gcc-11
-i386                  randconfig-013-20240803   clang-18
-i386                  randconfig-014-20240803   clang-18
-i386                  randconfig-015-20240803   clang-18
-i386                  randconfig-015-20240803   gcc-12
-i386                  randconfig-016-20240803   clang-18
-i386                  randconfig-016-20240803   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240803   gcc-13.2.0
-loongarch             randconfig-002-20240803   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-m68k                        stmark2_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                     cu1000-neo_defconfig   gcc-14.1.0
-mips                  decstation_64_defconfig   gcc-14.1.0
-mips                           gcw0_defconfig   clang-20
-mips                        maltaup_defconfig   clang-20
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240803   gcc-13.2.0
-nios2                 randconfig-002-20240803   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240803   gcc-13.2.0
-parisc                randconfig-002-20240803   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                      ep88xc_defconfig   clang-20
-powerpc                        fsp2_defconfig   clang-20
-powerpc                       holly_defconfig   gcc-14.1.0
-powerpc                   microwatt_defconfig   gcc-14.1.0
-powerpc                 mpc834x_itx_defconfig   gcc-14.1.0
-powerpc               mpc834x_itxgp_defconfig   clang-20
-powerpc                       ppc64_defconfig   gcc-14.1.0
-powerpc               randconfig-001-20240803   gcc-13.2.0
-powerpc               randconfig-003-20240803   gcc-13.2.0
-powerpc                     tqm8560_defconfig   gcc-14.1.0
-powerpc                      tqm8xx_defconfig   clang-20
-powerpc64             randconfig-001-20240803   gcc-13.2.0
-powerpc64             randconfig-002-20240803   gcc-13.2.0
-powerpc64             randconfig-003-20240803   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                 randconfig-001-20240803   gcc-13.2.0
-riscv                 randconfig-002-20240803   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240803   gcc-13.2.0
-s390                  randconfig-002-20240803   gcc-13.2.0
-s390                       zfcpdump_defconfig   clang-20
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                             espt_defconfig   gcc-14.1.0
-sh                          r7780mp_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240803   gcc-13.2.0
-sh                    randconfig-002-20240803   gcc-13.2.0
-sh                           se7619_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240803   gcc-13.2.0
-sparc64               randconfig-002-20240803   gcc-13.2.0
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240803   gcc-13.2.0
-um                    randconfig-002-20240803   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                           alldefconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240803   gcc-12
-x86_64       buildonly-randconfig-002-20240803   gcc-12
-x86_64       buildonly-randconfig-003-20240803   gcc-12
-x86_64       buildonly-randconfig-004-20240803   gcc-12
-x86_64       buildonly-randconfig-005-20240803   gcc-12
-x86_64       buildonly-randconfig-006-20240803   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240803   gcc-12
-x86_64                randconfig-002-20240803   gcc-12
-x86_64                randconfig-003-20240803   gcc-12
-x86_64                randconfig-004-20240803   gcc-12
-x86_64                randconfig-005-20240803   gcc-12
-x86_64                randconfig-006-20240803   gcc-12
-x86_64                randconfig-011-20240803   gcc-12
-x86_64                randconfig-012-20240803   gcc-12
-x86_64                randconfig-013-20240803   gcc-12
-x86_64                randconfig-014-20240803   gcc-12
-x86_64                randconfig-015-20240803   gcc-12
-x86_64                randconfig-016-20240803   gcc-12
-x86_64                randconfig-071-20240803   gcc-12
-x86_64                randconfig-072-20240803   gcc-12
-x86_64                randconfig-073-20240803   gcc-12
-x86_64                randconfig-074-20240803   gcc-12
-x86_64                randconfig-075-20240803   gcc-12
-x86_64                randconfig-076-20240803   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240803   gcc-13.2.0
-xtensa                randconfig-002-20240803   gcc-13.2.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
