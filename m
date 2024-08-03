@@ -1,191 +1,98 @@
-Return-Path: <linux-kernel+bounces-273597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD379946B2C
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 23:14:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD6E946B2E
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 23:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB9F1C212EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 21:14:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBED1C21415
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 21:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A4513AD37;
-	Sat,  3 Aug 2024 21:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451774D8CE;
+	Sat,  3 Aug 2024 21:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkU2DGCi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jz5tkeNo"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0914B13A268;
-	Sat,  3 Aug 2024 21:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365F1B653
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 21:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722719617; cv=none; b=UuirK7rFlo6IsdkVwoinROzBR7zYXF33LkJ326F77r38bMoCZb1EoW0R7H+VDR/DFNXa7gjLNddp3hrbgvcmI5/j7RJcXBcGT53SiWJTY1eaMSTa8J6CjAYzBCJ0IwpWsDKq9iAdlbfIvKpovPwWZq/wP9n7xHIyVZTEsK6+MeI=
+	t=1722720968; cv=none; b=AIDzxOGL+DyX2u2JKgG2XgVWSOsP8lcwtR6IUJ5QD06COkuv7MCX5wXA6thKiweQ/sEVIrWvUPDSynOUPv4ovoavtk/k1iAeKUUO8FJfUy8YsMzDC6mmlooeXkxfn2yvYA624/g1K+6muTv9TDxUQesc155k8cm4JhlibfXTYr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722719617; c=relaxed/simple;
-	bh=bzxWFY3qSDkeG5BTvniUSpMK/drRzTB6XLQAiW1I2O4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ra9Xxs9Ux3oZ+FTddhwFYnPuuSc/uVycJi3SWpofkhjYoQOxTPXoBoKkG0GfVkY5B2Fkw/skmmwOZWPkhaYcA0HtmgpS/lNashYD5GOPsvkJlyVJCceOm2aiLN1WfyTSc/9i4Y6M8bx2xUlrX0dFzSqCx0Hg3ez6MZik+ZNAPDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkU2DGCi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 380B8C4AF0E;
-	Sat,  3 Aug 2024 21:13:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722719616;
-	bh=bzxWFY3qSDkeG5BTvniUSpMK/drRzTB6XLQAiW1I2O4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mkU2DGCiQYdlEBQ0VHLWXGJXC2j4OM+frPhwBtjVTLrKp7s8ncHPmNp8WUgsIKenU
-	 YBYRZlUjOzpotcWlYouPkRu3dDRj30dfgSSp65AyuwdvkEPhtZyBiOQhHwsgOCVdH/
-	 BteBxkseM0XFp8SFjvITnMyzbeZ3S7DXz5QlwLX3yaY0UrimORb751teVP+JAD3dwe
-	 HqMpoWW1fcaz06ggq4Gn/z+fNm9SFvTaytTC5bjdxCJRMjD/j5WH/qSDlT7tIbkhbj
-	 14HasQ9Uh572Hp6OqlVQ5PCDcFfWnt2Sj6+4FrEjI6O42ceykZvQo98wvB5WVSZgGW
-	 UhTAqAmE3RucQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 5/5] perf annotate: Add --skip-empty option
-Date: Sat,  3 Aug 2024 14:13:32 -0700
-Message-ID: <20240803211332.1107222-6-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-In-Reply-To: <20240803211332.1107222-1-namhyung@kernel.org>
-References: <20240803211332.1107222-1-namhyung@kernel.org>
+	s=arc-20240116; t=1722720968; c=relaxed/simple;
+	bh=GGA4x0cRfdtZr8rM4e8YaQaSSi/rroQkTyA63QWZunA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nIc2ZaYpx4Trg95aR/jPWqOL2J4pMNlkrE87um+KYxMGRSIcVlHp7ENUkMsOZUA3ygwcj0Hj1n3RiB/ePdNKnKSXM50mm9QioYMXjLxyH0lzyKAXlmZnk0wKsE5FwmsAqzEcWqHusR8cDubxog2TsM3YbTEBhpwVgWTv8sUdlYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jz5tkeNo; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b79c27dd01so51517706d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 14:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722720966; x=1723325766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GGA4x0cRfdtZr8rM4e8YaQaSSi/rroQkTyA63QWZunA=;
+        b=Jz5tkeNo20MtE8iI052pjn81DHKLwZsPZjrYa//WOwjaj1pdzYqaThdj6y7FlSXd+k
+         Zf/U574orXxdohtBjI6eCDKVuyil6XFuRM1xg/HtpUVokC6iBn1xE+fG7Fg0Juh5/UyR
+         rOQ1aNBR9IW33mek5Xi66JLTYwL/aoVVysjk+2c+ltrYoPaOQmDxFeKTIO0LMO8DmqeO
+         bvMzewZ3PlRhfmgV50IDK2+tnqBMPXNS0uWMGyHdAzKBZcjNfrbCFGU/te8+HmAnnwXX
+         BixXrOiySb0tU4eu5lNWJsHo8M8wbFSNI2YkDNxsS2XV68QxxKag5IZed73QIwA7hb9S
+         AoHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722720966; x=1723325766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GGA4x0cRfdtZr8rM4e8YaQaSSi/rroQkTyA63QWZunA=;
+        b=r5l36oXHw2YHdX4Ig9lzI6wbrhBNqCEPYoURIOa/zMbVGiaUZb+FesZFwqXpXjaAtT
+         TONzzRPq6I6L8eANJkZCV+OQyg84C3JkgljFFtJu2jS20PtO52q2opxp3UsLU7+ZzBPI
+         0siE0xiik4QGt9y4jVlE63w3p/3o4Bh2mqoZuaixDqO64jhCoqPlYDnKQF5OxTQ5d99P
+         U7lWZarktfo8ILM01tLnV3i+Mu6jZ/NyRY+CyAh5ssp/nfZmUBhdvrRwcxpUfIF7BmvH
+         PEU3/okLR7GEM561k2NylAdD4AnMVkiansDpl0P8YCMtCY4H+cENHST4+8iVJOljgSRw
+         yOEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrvLen3IUW+k7nwnzsapdtl2oD5ZHiKBWArPYJSd643mr7qoRKb/ZiPk9ijnEiaeeY9f+itMJOcNgNKlJwo7LbxvtR4ARso00QyZcr
+X-Gm-Message-State: AOJu0YxmQ4le8j/Gohu8+YiTJ4tTCAYuiIv5oOLjnA9hqAbdes/7oTuC
+	wUgsJuSG8JowkpEc9SbPdjMO1KSSfTrOB9D5Q4Q62s1uKdPFjRwx9zpuF8zvxj1xA0gx81IDlMs
+	SaouJ/PR0/1z7dF4gqFhnDZ1UDg0=
+X-Google-Smtp-Source: AGHT+IGszZGZLYotIbtw6Fioo5KC/jrwn+A1TjHwocUeTx2+7j0c+FPLoJQjNwwuAAGJRz2PEorN5HY09hHG4R00qhE=
+X-Received: by 2002:a05:6214:4906:b0:6b7:a2c2:610c with SMTP id
+ 6a1803df08f44-6bb9836ece4mr99660916d6.17.1722720965938; Sat, 03 Aug 2024
+ 14:36:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240803053306.2685541-1-yosryahmed@google.com>
+In-Reply-To: <20240803053306.2685541-1-yosryahmed@google.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Sat, 3 Aug 2024 14:35:55 -0700
+Message-ID: <CAKEwX=N1GZEGnuXo_iW1N9Sx+Jon8=rqe7vznKwL4RQ7t349fA@mail.gmail.com>
+Subject: Re: [PATCH] mm: zswap: make the lock critical section obvious in shrink_worker()
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Takero Funaki <flintglass@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Like in perf report, we want to hide empty events in the perf annotate
-output.  This is consistent when the option is set in perf report.
+On Fri, Aug 2, 2024 at 10:33=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com>=
+ wrote:
+>
+> Move the comments and spin_{lock/unlock}() calls around in
+> shrink_worker() to make it obvious the lock is protecting the loop
+> updating zswap_next_shrink.
+>
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-For example, the following command would use 3 events including dummy.
+Thanks, it looks cleaner to me too.
 
-  $ perf mem record -a -- perf test -w noploop
-
-  $ perf evlist
-  cpu/mem-loads,ldlat=30/P
-  cpu/mem-stores/P
-  dummy:u
-
-Just using perf annotate with --group will show the all 3 events.
-
-  $ perf annotate --group --stdio | head
-   Percent                 |	Source code & Disassembly of ...
-  --------------------------------------------------------------
-                           : 0     0xe060 <_dl_relocate_object>:
-      0.00    0.00    0.00 :    e060:       pushq   %rbp
-      0.00    0.00    0.00 :    e061:       movq    %rsp, %rbp
-      0.00    0.00    0.00 :    e064:       pushq   %r15
-      0.00    0.00    0.00 :    e066:       movq    %rdi, %r15
-      0.00    0.00    0.00 :    e069:       pushq   %r14
-      0.00    0.00    0.00 :    e06b:       pushq   %r13
-      0.00    0.00    0.00 :    e06d:       movl    %edx, %r13d
-
-Now with --skip-empty, it'll hide the last dummy event.
-
-  $ perf annotate --group --stdio --skip-empty | head
-   Percent         |	Source code & Disassembly of ...
-  ------------------------------------------------------
-                   : 0     0xe060 <_dl_relocate_object>:
-      0.00    0.00 :    e060:       pushq   %rbp
-      0.00    0.00 :    e061:       movq    %rsp, %rbp
-      0.00    0.00 :    e064:       pushq   %r15
-      0.00    0.00 :    e066:       movq    %rdi, %r15
-      0.00    0.00 :    e069:       pushq   %r14
-      0.00    0.00 :    e06b:       pushq   %r13
-      0.00    0.00 :    e06d:       movl    %edx, %r13d
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-annotate.txt |  3 +++
- tools/perf/builtin-annotate.c              |  2 ++
- tools/perf/util/annotate.c                 | 22 +++++++++++++++++-----
- 3 files changed, 22 insertions(+), 5 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-annotate.txt b/tools/perf/Documentation/perf-annotate.txt
-index b95524bea021..156c5f37b051 100644
---- a/tools/perf/Documentation/perf-annotate.txt
-+++ b/tools/perf/Documentation/perf-annotate.txt
-@@ -165,6 +165,9 @@ include::itrace.txt[]
- --type-stat::
- 	Show stats for the data type annotation.
- 
-+--skip-empty::
-+	Do not display empty (or dummy) events.
-+
- 
- SEE ALSO
- --------
-diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-index cf60392b1c19..efcadb7620b8 100644
---- a/tools/perf/builtin-annotate.c
-+++ b/tools/perf/builtin-annotate.c
-@@ -795,6 +795,8 @@ int cmd_annotate(int argc, const char **argv)
- 		    "Show stats for the data type annotation"),
- 	OPT_BOOLEAN(0, "insn-stat", &annotate.insn_stat,
- 		    "Show instruction stats for the data type annotation"),
-+	OPT_BOOLEAN(0, "skip-empty", &symbol_conf.skip_empty,
-+		    "Do not display empty (or dummy) events in the output"),
- 	OPT_END()
- 	};
- 	int ret;
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 917897fe44a2..eafe8d65052e 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -848,6 +848,10 @@ static void annotation__calc_percent(struct annotation *notes,
- 
- 			BUG_ON(i >= al->data_nr);
- 
-+			if (symbol_conf.skip_empty &&
-+			    evsel__hists(evsel)->stats.nr_samples == 0)
-+				continue;
-+
- 			data = &al->data[i++];
- 
- 			calc_percent(notes, evsel, data, al->offset, end);
-@@ -901,7 +905,7 @@ int symbol__annotate(struct map_symbol *ms, struct evsel *evsel,
- 		.options	= &annotate_opts,
- 	};
- 	struct arch *arch = NULL;
--	int err;
-+	int err, nr;
- 
- 	err = evsel__get_arch(evsel, &arch);
- 	if (err < 0)
-@@ -922,10 +926,18 @@ int symbol__annotate(struct map_symbol *ms, struct evsel *evsel,
- 			return -1;
- 	}
- 
--	if (evsel__is_group_event(evsel))
--		notes->src->nr_events = evsel->core.nr_members;
--	else
--		notes->src->nr_events = 1;
-+	nr = 0;
-+	if (evsel__is_group_event(evsel)) {
-+		struct evsel *pos;
-+
-+		for_each_group_evsel(pos, evsel) {
-+			if (symbol_conf.skip_empty &&
-+			    evsel__hists(pos)->stats.nr_samples == 0)
-+				continue;
-+			nr++;
-+		}
-+	}
-+	notes->src->nr_events = nr ? nr : 1;
- 
- 	if (annotate_opts.full_addr)
- 		notes->src->start = map__objdump_2mem(ms->map, ms->sym->start);
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
-
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
