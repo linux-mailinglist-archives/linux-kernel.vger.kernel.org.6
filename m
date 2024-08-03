@@ -1,304 +1,159 @@
-Return-Path: <linux-kernel+bounces-273569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34FE946AC2
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 20:10:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1B2946AC5
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 20:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5817A1F215CB
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 18:10:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9531F215C2
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 18:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D513E179AE;
-	Sat,  3 Aug 2024 18:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2B917C95;
+	Sat,  3 Aug 2024 18:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B1rEv1U0"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FCUjeq4u"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BB817C6A
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 18:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CE61C696;
+	Sat,  3 Aug 2024 18:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722708592; cv=none; b=UO8AnhxV4QS9rH+l2qetOZI9LkVy/aDadivKnnZUXhiBbS67nDtIZqUKXGMVdxA2T34MPpyqWHgUiFhjdBecXSPpsBWCt9fZ5eI61G04GWBeouHe0M42kLgPg3/ZhhIb3gZzGIN8Ayo5BgLIFtIjjHFsoi56q2/Lt9as894AXlM=
+	t=1722708608; cv=none; b=G5Mfqzgncdb5SbPYVdjcn6lOhAz88kVGdai+wZx2M84qGIBbqzrK8Mbs+kcEwpyJjV9zKoEnrbbEOuZsoeJqzhzodTiO4SVP5ddfiDappuOaOZJL23lrQjjTs23lKRRJ6aDddzfFng9zKpiDZ6Ja63rKHCxHHamUe7qJ6w+45mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722708592; c=relaxed/simple;
-	bh=8McCiWm3vKi7832j/u0q6szlS0woc2ICJglvHOVT9nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A1CRNq42EdU8QQmhyNLxE9LAx8nfL0TIIC6BvqLUUbVUVj3iw/3idPkv/VenNRNVshr+FHb9FrZWEyK0GUJ1+f7+zTpVAwF9AYunS4+9rkoQ6dxLukltf2UQjJhknhq3AIr88NMyXejIDdEoNr8+04XTGuBen5JBlryuGTXN2SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B1rEv1U0; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4c32b96f-d962-4427-87c2-4953c91c9e43@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722708588;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vawbaZaNlrJ7EQQGbry712PsMIOP5IKqRzfxEy/UERA=;
-	b=B1rEv1U0meAPmKRX0yCnnOfLjXcwHnuxSRIM0cozVojWZcdichu0Le2TCs/sd2jUdTZtMp
-	02WMWy9ckNSByxYlbjjV60rIifr2+RRLIMDk2U8yOdw7QAHarh0BPNOCUG+PP3i0j7nbYH
-	6OeYehy2xDTHwK3coHqyrjY6Ae6KLd8=
-Date: Sun, 4 Aug 2024 02:09:21 +0800
+	s=arc-20240116; t=1722708608; c=relaxed/simple;
+	bh=dNzIwul/cyACio8WXGJx1hSS88CQCb9KVP9/4i45JEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JYCKI1wv8Au2tVbqVLh1/HD4n8vGLI1I5TBv83xSGLR+OYSoaDbOFJmG49cJeoUHqfhAhadONixm026ZicZ96XoMx9VXGaZc6ywdQqIXfTiYVGJlVkXQPzH3ocBoTJhnx8XowCEnTtPLR/OLgIGXKeJrltszl/BBUfect0qzhk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FCUjeq4u; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-260e12aac26so5981898fac.0;
+        Sat, 03 Aug 2024 11:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722708604; x=1723313404; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MnkhRMPKPbMnaTfv5blGb/FY72PqHqmG8iLuFD/CCzU=;
+        b=FCUjeq4uyy/xVjXjsHloxGkEQyzX5mjKjZy1VqGXrO+nr+crgdmgRHU6wbV4JAx/md
+         BEfb5vixscokajPyjhC8vgHAyrmZs7WyMXKLXZ4RUGpxiY4NjTM5FzURHnMpEzgS/v3Z
+         yWqiq/OvXjukkEZYss/0cVbUhg6Gze2HjxZ1K9boH+vigClxwI5xBTTD88M5GQ8Oh7jZ
+         4btArqRGw11RnXBvpSVw5uZ6JeTUVZIaccF83Ngd5KPhX0lb+FfXUlCupYy8HKq6waJs
+         lbWo8xJpmTo7fRSa46aytmmK0ViFW4A71Q+yh2E0j9BK93q2sB8LEUePUzO2RUjUCmLQ
+         eR1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722708604; x=1723313404;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MnkhRMPKPbMnaTfv5blGb/FY72PqHqmG8iLuFD/CCzU=;
+        b=kICHkImbjiIGvZDMippi1lXHlgATrirxzNR0gfYhCwfIp/0IgamuJ5eD7fmB0VAchv
+         qBnuhveQX1rZDlkNCx9+QCFqyrFkFZd1+eyUI29rTm0FxFF4TgED7duL6O5sOtHlVziY
+         FvTwTYrz5o5XxdwO6rsuRkiIZZImJy9vrUKOPt9/0jQl0EXc1/NXZ3vZDDpCYtP2a7Fj
+         GA9zaAP+ku3368XETeeS9PWUsD5mw0FjbDe4sW6xLzBPy6h1rxPYBUjxx5cLotHodUAO
+         pZqzC0X8NKvU1mGKAmUslnxy/syd/FsiBIyCXU0Eb6X1qJ+MdBBMCBuBi7OSQslNbde0
+         L7jg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8xhlMp94J8QdgJ5cLq5Eqlk4SWiIhW0JEZU6UDCG8jeTTL3VI4J/GvdIBDtovtuc78MPytDPP/ZD4u/kLRb55wEkt4mKCo39TMtQp
+X-Gm-Message-State: AOJu0YxibLKalvXB/EzAokQH6p2gsxOP7IZt1s/6Sp1eraMKxqJDD46/
+	xkGH4UP/clkXimGlL+eZsd5Op+useIu7ZQSsC2+lXD6bznpwtbRS8Qtc4xsBQCk=
+X-Google-Smtp-Source: AGHT+IGWRJb3o2LTDjYn2PIqYoAz849UT9k8zezOsK6hLonaKXP5v2ussTi5cjhkmmf/jH9JvlDidg==
+X-Received: by 2002:a05:6871:3a25:b0:268:880c:9e0a with SMTP id 586e51a60fabf-26891d40a1emr8711564fac.20.1722708604594;
+        Sat, 03 Aug 2024 11:10:04 -0700 (PDT)
+Received: from localhost.localdomain ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7b762e9f5aasm3046128a12.6.2024.08.03.11.10.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Aug 2024 11:10:03 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: anshulusr@gmail.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH v6 0/2] Add light channel for LTR390
+Date: Sat,  3 Aug 2024 23:39:47 +0530
+Message-ID: <20240803180950.32821-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2] net: mana: Implement
- get_ringparam/set_ringparam for mana
-To: Shradha Gupta <shradhagupta@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Long Li <longli@microsoft.com>,
- Ajay Sharma <sharmaajay@microsoft.com>, Simon Horman <horms@kernel.org>,
- Konstantin Taranov <kotaranov@microsoft.com>,
- Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
- Erick Archer <erick.archer@outlook.com>,
- Pavan Chebbi <pavan.chebbi@broadcom.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
- Colin Ian King <colin.i.king@gmail.com>
-References: <1722358895-13430-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <1722358895-13430-1-git-send-email-shradhagupta@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-在 2024/7/31 1:01, Shradha Gupta 写道:
-> Currently the values of WQs for RX and TX queues for MANA devices
-> are hardcoded to default sizes.
-> Allow configuring these values for MANA devices as ringparam
-> configuration(get/set) through ethtool_ops.
-> 
-> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-> Reviewed-by: Long Li <longli@microsoft.com>
-> ---
->   Changes in v2:
->   * Removed unnecessary validations in mana_set_ringparam()
->   * Fixed codespell error
->   * Improved error message to indicate issue with the parameter
-> ---
->   drivers/net/ethernet/microsoft/mana/mana_en.c | 20 +++---
->   .../ethernet/microsoft/mana/mana_ethtool.c    | 66 +++++++++++++++++++
->   include/net/mana/mana.h                       | 21 +++++-
->   3 files changed, 96 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> index d2f07e179e86..598ac62be47d 100644
-> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-> @@ -618,7 +618,7 @@ static int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu)
->   
->   	dev = mpc->ac->gdma_dev->gdma_context->dev;
->   
-> -	num_rxb = mpc->num_queues * RX_BUFFERS_PER_QUEUE;
-> +	num_rxb = mpc->num_queues * mpc->rx_queue_size;
->   
->   	WARN(mpc->rxbufs_pre, "mana rxbufs_pre exists\n");
->   	mpc->rxbufs_pre = kmalloc_array(num_rxb, sizeof(void *), GFP_KERNEL);
-> @@ -1899,14 +1899,15 @@ static int mana_create_txq(struct mana_port_context *apc,
->   		return -ENOMEM;
->   
->   	/*  The minimum size of the WQE is 32 bytes, hence
-> -	 *  MAX_SEND_BUFFERS_PER_QUEUE represents the maximum number of WQEs
-> +	 *  apc->tx_queue_size represents the maximum number of WQEs
->   	 *  the SQ can store. This value is then used to size other queues
->   	 *  to prevent overflow.
-> +	 *  Also note that the txq_size is always going to be MANA_PAGE_ALIGNED,
-> +	 *  as tx_queue_size is always a power of 2.
->   	 */
-> -	txq_size = MAX_SEND_BUFFERS_PER_QUEUE * 32;
-> -	BUILD_BUG_ON(!MANA_PAGE_ALIGNED(txq_size));
-> +	txq_size = apc->tx_queue_size * 32;
+Hello,
 
-Not sure if the following is needed or not.
-"
-WARN_ON(!MANA_PAGE_ALIGNED(txq_size));
-"
+The first patch adds a new channel for the ALS feature of the sensor.
+The same configuration of gain and resolution has to be provided for this
+channel as well. As there are two IIO channels now, we would need to
+switch the sensor's mode of operation depending on which sensor is being
+accessed. Hence, mode switching is also provided.
 
-Zhu Yanjun
+Then the second patch adds support for calculating `counts_per_uvi` based
+on the current gain and resolution value.
 
->   
-> -	cq_size = MAX_SEND_BUFFERS_PER_QUEUE * COMP_ENTRY_SIZE;
-> +	cq_size = apc->tx_queue_size * COMP_ENTRY_SIZE;
->   	cq_size = MANA_PAGE_ALIGN(cq_size);
->   
->   	gc = gd->gdma_context;
-> @@ -2145,10 +2146,11 @@ static int mana_push_wqe(struct mana_rxq *rxq)
->   
->   static int mana_create_page_pool(struct mana_rxq *rxq, struct gdma_context *gc)
->   {
-> +	struct mana_port_context *mpc = netdev_priv(rxq->ndev);
->   	struct page_pool_params pprm = {};
->   	int ret;
->   
-> -	pprm.pool_size = RX_BUFFERS_PER_QUEUE;
-> +	pprm.pool_size = mpc->rx_queue_size;
->   	pprm.nid = gc->numa_node;
->   	pprm.napi = &rxq->rx_cq.napi;
->   	pprm.netdev = rxq->ndev;
-> @@ -2180,13 +2182,13 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
->   
->   	gc = gd->gdma_context;
->   
-> -	rxq = kzalloc(struct_size(rxq, rx_oobs, RX_BUFFERS_PER_QUEUE),
-> +	rxq = kzalloc(struct_size(rxq, rx_oobs, apc->rx_queue_size),
->   		      GFP_KERNEL);
->   	if (!rxq)
->   		return NULL;
->   
->   	rxq->ndev = ndev;
-> -	rxq->num_rx_buf = RX_BUFFERS_PER_QUEUE;
-> +	rxq->num_rx_buf = apc->rx_queue_size;
->   	rxq->rxq_idx = rxq_idx;
->   	rxq->rxobj = INVALID_MANA_HANDLE;
->   
-> @@ -2734,6 +2736,8 @@ static int mana_probe_port(struct mana_context *ac, int port_idx,
->   	apc->ndev = ndev;
->   	apc->max_queues = gc->max_num_queues;
->   	apc->num_queues = gc->max_num_queues;
-> +	apc->tx_queue_size = DEF_TX_BUFFERS_PER_QUEUE;
-> +	apc->rx_queue_size = DEF_RX_BUFFERS_PER_QUEUE;
->   	apc->port_handle = INVALID_MANA_HANDLE;
->   	apc->pf_filter_handle = INVALID_MANA_HANDLE;
->   	apc->port_idx = port_idx;
-> diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-> index 146d5db1792f..34707da6ff68 100644
-> --- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-> +++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-> @@ -369,6 +369,70 @@ static int mana_set_channels(struct net_device *ndev,
->   	return err;
->   }
->   
-> +static void mana_get_ringparam(struct net_device *ndev,
-> +			       struct ethtool_ringparam *ring,
-> +			       struct kernel_ethtool_ringparam *kernel_ring,
-> +			       struct netlink_ext_ack *extack)
-> +{
-> +	struct mana_port_context *apc = netdev_priv(ndev);
-> +
-> +	ring->rx_pending = apc->rx_queue_size;
-> +	ring->tx_pending = apc->tx_queue_size;
-> +	ring->rx_max_pending = MAX_RX_BUFFERS_PER_QUEUE;
-> +	ring->tx_max_pending = MAX_TX_BUFFERS_PER_QUEUE;
-> +}
-> +
-> +static int mana_set_ringparam(struct net_device *ndev,
-> +			      struct ethtool_ringparam *ring,
-> +			      struct kernel_ethtool_ringparam *kernel_ring,
-> +			      struct netlink_ext_ack *extack)
-> +{
-> +	struct mana_port_context *apc = netdev_priv(ndev);
-> +	u32 new_tx, new_rx;
-> +	u32 old_tx, old_rx;
-> +	int err1, err2;
-> +
-> +	old_tx = apc->tx_queue_size;
-> +	old_rx = apc->rx_queue_size;
-> +	new_tx = clamp_t(u32, ring->tx_pending, MIN_TX_BUFFERS_PER_QUEUE, MAX_TX_BUFFERS_PER_QUEUE);
-> +	new_rx = clamp_t(u32, ring->rx_pending, MIN_RX_BUFFERS_PER_QUEUE, MAX_RX_BUFFERS_PER_QUEUE);
-> +
-> +	if (!is_power_of_2(new_tx)) {
-> +		netdev_err(ndev, "%s:Tx:%d not supported. Needs to be a power of 2\n",
-> +			   __func__, new_tx);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!is_power_of_2(new_rx)) {
-> +		netdev_err(ndev, "%s:Rx:%d not supported. Needs to be a power of 2\n",
-> +			   __func__, new_rx);
-> +		return -EINVAL;
-> +	}
-> +
-> +	err1 = mana_detach(ndev, false);
-> +	if (err1) {
-> +		netdev_err(ndev, "mana_detach failed: %d\n", err1);
-> +		return err1;
-> +	}
-> +
-> +	apc->tx_queue_size = new_tx;
-> +	apc->rx_queue_size = new_rx;
-> +	err1 = mana_attach(ndev);
-> +	if (!err1)
-> +		return 0;
-> +
-> +	netdev_err(ndev, "mana_attach failed: %d\n", err1);
-> +
-> +	/* Try rolling back to the older values */
-> +	apc->tx_queue_size = old_tx;
-> +	apc->rx_queue_size = old_rx;
-> +	err2 = mana_attach(ndev);
-> +	if (err2)
-> +		netdev_err(ndev, "mana_reattach failed: %d\n", err2);
-> +
-> +	return err1;
-> +}
-> +
->   const struct ethtool_ops mana_ethtool_ops = {
->   	.get_ethtool_stats	= mana_get_ethtool_stats,
->   	.get_sset_count		= mana_get_sset_count,
-> @@ -380,4 +444,6 @@ const struct ethtool_ops mana_ethtool_ops = {
->   	.set_rxfh		= mana_set_rxfh,
->   	.get_channels		= mana_get_channels,
->   	.set_channels		= mana_set_channels,
-> +	.get_ringparam          = mana_get_ringparam,
-> +	.set_ringparam          = mana_set_ringparam,
->   };
-> diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-> index 6439fd8b437b..8f922b389883 100644
-> --- a/include/net/mana/mana.h
-> +++ b/include/net/mana/mana.h
-> @@ -38,9 +38,21 @@ enum TRI_STATE {
->   
->   #define COMP_ENTRY_SIZE 64
->   
-> -#define RX_BUFFERS_PER_QUEUE 512
-> +/* This Max value for RX buffers is derived from __alloc_page()'s max page
-> + * allocation calculation. It allows maximum 2^(MAX_ORDER -1) pages. RX buffer
-> + * size beyond this value gets rejected by __alloc_page() call.
-> + */
-> +#define MAX_RX_BUFFERS_PER_QUEUE 8192
-> +#define DEF_RX_BUFFERS_PER_QUEUE 512
-> +#define MIN_RX_BUFFERS_PER_QUEUE 128
->   
-> -#define MAX_SEND_BUFFERS_PER_QUEUE 256
-> +/* This max value for TX buffers is derived as the maximum allocatable
-> + * pages supported on host per guest through testing. TX buffer size beyond
-> + * this value is rejected by the hardware.
-> + */
-> +#define MAX_TX_BUFFERS_PER_QUEUE 16384
-> +#define DEF_TX_BUFFERS_PER_QUEUE 256
-> +#define MIN_TX_BUFFERS_PER_QUEUE 128
->   
->   #define EQ_SIZE (8 * MANA_PAGE_SIZE)
->   
-> @@ -285,7 +297,7 @@ struct mana_recv_buf_oob {
->   	void *buf_va;
->   	bool from_pool; /* allocated from a page pool */
->   
-> -	/* SGL of the buffer going to be sent has part of the work request. */
-> +	/* SGL of the buffer going to be sent as part of the work request. */
->   	u32 num_sge;
->   	struct gdma_sge sgl[MAX_RX_WQE_SGL_ENTRIES];
->   
-> @@ -437,6 +449,9 @@ struct mana_port_context {
->   	unsigned int max_queues;
->   	unsigned int num_queues;
->   
-> +	unsigned int rx_queue_size;
-> +	unsigned int tx_queue_size;
-> +
->   	mana_handle_t port_handle;
->   	mana_handle_t pf_filter_handle;
->   
+Changes in v6:
+- Changed IIO_CHAN_INFO_PROCESSED to IIO_CHAN_INFO_RAW
+- Changed the scaling code
+- Link to v5: https://lore.kernel.org/linux-iio/CAG=0Rq+q0WJzMroYwQy-4Ng0aSkTvaw-FEMx68i3MqAZwfteCg@mail.gmail.com/T/#t
+
+Changes in v5:
+- Replaced the IIO_INTENSITY channel with IIO_LIGHT channel
+- We calculate the lux value directly using `als_data / (gain * int_time)`
+- Provided a scale channel where the scale is 0.6 * WINDOW_FACTOR
+- Link to v4: https://lore.kernel.org/linux-iio/20240730065822.5707-1-abhashkumarjha123@gmail.com/T/#m
+
+Changes in v4:
+- Added "bitfield.h" include to fix `-Wimplicit-function-declaration`.
+- Link to v3: https://lore.kernel.org/linux-iio/20240729115056.355466-1-abhashkumarjha123@gmail.com/
+
+Changes in v3:
+- Added cover letter to the patch series.
+- Fixed indentation in the patch description.
+- Patch specific changes are listed below.
+
+[PATCH v3 1/3]
+	- Cleaned up the spurious changes made in v2.
+	- ltr390_set_int_time and ltr390_set_gain now return -EINVAL to
+	indicate no match.
+
+[PATCH v3 2/3]
+	- Used enum ltr390_mode inside the ltr390_data struct.
+	- Refactored `ltr390_set_mode` function according to the comments in v2.
+
+[PATCH v3 3/3]
+	- Simplified the formula for `counts_per_uvi` calculation.
+	- Removed spurious whitespace changes introduced in v2.
+
+- Link to v2: https://lore.kernel.org/linux-iio/20240728151957.310237-1-abhashkumarjha123@gmail.com/
+
+Changes in v2:
+- Split the single patch into 3 patches.
+- Used FIELD_PREP to perform bit shifting.
+- Used enum for mode selection instead of defines.
+- Fixed indentation and whitespace issues pointed out in the comments
+- Replaced `mutex_lock(&data->lock)` with `guard(mutex)(&data->lock)`
+- Provided available values for gain and resolution via `read_avail`
+  instead of sysfs attributes.
+- Refactored `ltr390_set_gain` and `ltr390_set_int_time`.
+- Used early returns instead of single exit points.
+
+- Link to v1: https://lore.kernel.org/linux-iio/20240718104947.7384-1-abhashkumarjha123@gmail.com/
+
+Regards,
+Abhash
+
+Abhash Jha (2):
+  iio: light: ltr390: Add ALS channel and support for gain and
+    resolution
+  iio: light: ltr390: Calculate 'counts_per_uvi' dynamically
+
+ drivers/iio/light/ltr390.c | 110 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 95 insertions(+), 15 deletions(-)
+
+-- 
+2.43.0
 
 
