@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBD8946677
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 02:30:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED844946678
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 02:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACFCE1F220A8
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 00:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7799F282DC6
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 00:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F1F63C7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC30E6FC2;
 	Sat,  3 Aug 2024 00:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGiaxZcM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N60qXV9N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47B7196;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB33B80C;
 	Sat,  3 Aug 2024 00:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722645034; cv=none; b=pFd36yVaVX9gt59yXS6cjdvi933vedpT/vkFxpFlGJcDs2YbQ44+IvKEhuhYwO8tKdDK0AV0SNtLH6sZaJmrq2ShQR1KY/tsIOP/rKSo1vpnH7ILLwggTA1whAPpRyatJQCfxfNco7Z/HsrOoWsDKPEr+Cev5D5l8A2GibtFTEY=
+	t=1722645035; cv=none; b=GZwdJJaaEIg3sApTRSxdOX1MnxPfNjRzNEQqMvi3P5/C9p4aDXErg+l3eslxMXQT+zW6B6chjBHRVSq5qaZf8t+qY0y4IHJ3z5WBthFYn8arSkrA8Gvxo5Dy9iOct95tZI1Fiprd2guRJeNuy3Q944NvkF/rE9A3yqZbZXpJJhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722645034; c=relaxed/simple;
-	bh=0FTcKkMRva5cseVVnTNdCCSx8cksJLLo12AO1GBLEqc=;
+	s=arc-20240116; t=1722645035; c=relaxed/simple;
+	bh=QsepNdyGkjDb4pNJbbaugh0oyc7h+m9/WNuPF2KmIMQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Rd5rPzJh3BObuNqvC+RNnFmfKhKiCoiKgOxwb17o5yCH5nw6FpyOLQYm/TfeVboH0yuB17T1YFoXZJlxvwJVb0ME9JRiua1h+UovH6/whuKcGz4d5MPkBxrZVHvDmCKUhuyUDHMLLh0bSLZR41xQfC/vgO7ijwrAQ/8S2UZBqAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGiaxZcM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4D9B5C4AF09;
+	 In-Reply-To:To:Cc; b=eICIE6mqg1yffI5oo9v7Ail2hnrYedNJttqhH+sf0SOz2ruiLt933mxeqEK4c01uNKfjveV+Es69taetnD+BF6UGq56wKQFqCq8Jecxb4iQd5KxE3MsifE29ZKAZAIs2LX9ih0rt5g6RQgTeh4KTC7kmmyd0m/viWFkAITkBEBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N60qXV9N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 58CE4C4AF11;
 	Sat,  3 Aug 2024 00:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722645034;
-	bh=0FTcKkMRva5cseVVnTNdCCSx8cksJLLo12AO1GBLEqc=;
+	bh=QsepNdyGkjDb4pNJbbaugh0oyc7h+m9/WNuPF2KmIMQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pGiaxZcMLNtqXPraq09Bk9cGRtTG//KwnimlTom9eIKK6ybQHGr/zLbvZLYOU/2Cj
-	 F6M4CFZZPQrLNaUp+mde0NkTxtvUi9gD/tWSsXaZvgdvINXEh1iydiI5yevuFNAlxi
-	 sQc72O8ANb8VGbGjp7PCCZYRdzeaOnUP3j5ajqPAsZLGoYRb3DG195hbMvyrqJxRCh
-	 aHSP7RHFG4jAlyuWa/92AqrXvZp+dMDI9G5gONq7I0jVu2z4l092+eYrqpN1IBz2Ul
-	 /Q2cmGfby3BuEv75c1vBGtWGbfPmb/lYTdIg46+W5rKEdJ/rQkuw4vby/ODIML6mLH
-	 0bj9z2itqH/RQ==
+	b=N60qXV9NZnbzd+42lOrVGD2zrr0j/sJwOObb36AkOWGQTEnJD+gdTuV/z+Wop3hbV
+	 MpFMXqrYn2DqksY+7ydf+TRAQeHV3aMv9q0KKhCmkIbylARXwr0uWBr5UPqBsUEYke
+	 qF/Ho+was/JM/7gMchFSBGxhZxoowv/B3Ywb5QEGU30960ACfkD9IX20yJj2k6e3An
+	 HrV7WEqbgg6au552UT1vcmjzIMNX9rSDpC7g0bSgdJSppSysVWz/RXO6aV4mTAZw19
+	 7JkI+7SZk+1d3DhedR01h4r62E7Msz2HHbrmrmaiR3+DG5Xp04Vntb8KFktOUWjd9R
+	 LOnXCVsSuLTkg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 33BA1C433F2;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 46E9DC4333A;
 	Sat,  3 Aug 2024 00:30:34 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,38 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net-next] rxrpc: Remove unused function declarations
+Subject: Re: [PATCH net-next] net: dsa: vsc73xx: speed up MDIO bus to max allowed
+ value
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172264503420.23714.13289570089059223174.git-patchwork-notify@kernel.org>
+ <172264503428.23714.12001402331123268852.git-patchwork-notify@kernel.org>
 Date: Sat, 03 Aug 2024 00:30:34 +0000
-References: <20240731100815.1277894-1-yuehaibing@huawei.com>
-In-Reply-To: <20240731100815.1277894-1-yuehaibing@huawei.com>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: dhowells@redhat.com, marc.dionne@auristor.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-afs@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, horms@kernel.org
+References: <20240731203455.580262-1-paweldembicki@gmail.com>
+In-Reply-To: <20240731203455.580262-1-paweldembicki@gmail.com>
+To: =?utf-8?q?Pawe=C5=82_Dembicki_=3Cpaweldembicki=40gmail=2Ecom=3E?=@codeaurora.org
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+ olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 31 Jul 2024 18:08:15 +0800 you wrote:
-> commit 3cec055c5695 ("rxrpc: Don't hold a ref for connection workqueue")
-> left behind rxrpc_put_client_conn().
-> And commit 248f219cb8bc ("rxrpc: Rewrite the data and ack handling code")
-> removed rxrpc_accept_incoming_calls() but left declaration.
+On Wed, 31 Jul 2024 22:34:55 +0200 you wrote:
+> According to the datasheet, the VSC73xx family's maximum internal MDIO bus
+> speed is 20 MHz. It also allows disabling the preamble.
 > 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
+> This commit sets the MDIO clock prescaler to the minimum value and
+> disables the preamble to speed up MDIO operations.
+> 
+> It doesn't affect the external bus because it's configured in a different
+> subblock.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,net-next] rxrpc: Remove unused function declarations
-    https://git.kernel.org/netdev/net-next/c/7e51d21ee010
+  - [net-next] net: dsa: vsc73xx: speed up MDIO bus to max allowed value
+    https://git.kernel.org/netdev/net-next/c/8d5be2c4f447
 
 You are awesome, thank you!
 -- 
