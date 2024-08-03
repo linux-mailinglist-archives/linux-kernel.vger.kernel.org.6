@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-273438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF23946941
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:59:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D61946944
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2DAA1C20C49
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1C6F1F2182F
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C663B1514F1;
-	Sat,  3 Aug 2024 10:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A6F15099C;
+	Sat,  3 Aug 2024 10:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="KtgwXZRc"
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Nmz1OsC5"
 Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA2214EC56;
-	Sat,  3 Aug 2024 10:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1A5152181
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 10:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722682711; cv=none; b=DIoacBxNFvBxImzms9c8e9+t45joqQLdYvWeO6rq+ZOjZjm8yvtnoEyGfs9YkTXv3l+Qr1c0kyXiYf2XD02/ciAipvaruEgh1GqyMG3cDxFmMrXq+zmzrfCJPmwdIK4+3aBI42RqlmX96qeXLZZ05pbZ+pGwS/Z7Rku0mm4oyZ8=
+	t=1722682715; cv=none; b=crxLedGOUdyiv5/9VosOCu8fCxFzZtjcw6W6HNeOrQS/ODr92y6HD3uJDBrCdU6G2gVme4Lc2HVF+cPH9NfO3K83FHcFT0lt7/682UCzUFGDVBU73UmoPTfXfwJO3u1Wiq/iXHwO3el5UINB9vEOOGrxnMZxjpgLa0b/mOlvhU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722682711; c=relaxed/simple;
-	bh=gvWrW/1wtge8jipyut5vNCvN2H6YSOziPTrjTVdSIWA=;
+	s=arc-20240116; t=1722682715; c=relaxed/simple;
+	bh=TXYMxbNPrsq7kiuHy2+BGQkmZqtm/3pBLgdvU13PUmo=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EoayBPfRoBQ9QEbLNsFOr9b5+0QDLD186W/xSWqkLhMajqk2uomA3f7jMuUa2g0Ne1OuJ94ksPxxtMFFx1UhHPlHD1wji9Mzkr0g6+A8igyIrohyccqUKchLl80HIO0nUSOdjpAAnKoQgn6NR/lp3E8rln51QZJhwr9j8+oo2aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=KtgwXZRc; arc=none smtp.client-ip=185.70.43.16
+	 MIME-Version:Content-Type; b=Wy23FslmqOngd7pNHywvKNVas1nz3b7OQgwJpRJr1bRsx5K0SLxWgTgm4J1Bj5sBL79GiUQGSXXteRXghl4veLDiQ8NqclltflPm8YFy0u6tC7KcYuVBzGj5RdhLdUP6W/x5jxNPWDaKlCFUqHtvf+Q8F2PXniovxpADTRGIB8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Nmz1OsC5; arc=none smtp.client-ip=185.70.43.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1722682707; x=1722941907;
-	bh=llyHHwAfUnsQLIATlG97RZG3ZZL4o5MlcbSrH2uwttg=;
+	s=protonmail3; t=1722682712; x=1722941912;
+	bh=J5O0WfbkON8VHuSeGepk1ISC6Og/9F2pK8v9QAkqW4E=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=KtgwXZRcvI58S6gOfvukZO9zhvLEuRtNpQVrE9J8XQNIjLKvXc+4CEiD+Nxh/HmMR
-	 glDD7qqvsGWhNVExbjIz7J0irBda6n0E55BqDYb1UajKCFpOl7bS+LNcC2cthNwPsP
-	 wzFyBZYSn8tp6D6CVcCnCasvEY2lJseFyE03ayO5bIxCV0dMXpUkQljYfgGYvYPc0g
-	 QxPQS1hxMGzTLE1EpkLjqDXwhYbRNz42L3MX1vOjasxf3eu+jHhwKXFRtIfxJLSXVD
-	 kbze4Ny2LdU85VhXjdodobsqsFGm6wLcUoIWGnzoATvV6biAn73ZnlNqtQk4a9kEw2
-	 guYTJp2FUb+CQ==
-Date: Sat, 03 Aug 2024 10:58:24 +0000
+	b=Nmz1OsC5UciTfdkZib6DCWz4ljkmRhAwotXfEc7GB2UdkMFf4/JCT/bN7glNA6BSk
+	 /MtLk9uwpOow4ixZb0LA6ZEn3iHc3/TiaSbzE0QPJkb+atozA5+6k4RPbrt4mcsuh2
+	 3b95nAnWUyWp8V7tty+Kqqe8h40mtcTVcBvL151eYxLhxDd0JD5DkMA70VS20JLgqC
+	 PLe39NhCy6D02DlsEC3LV/pAvitKdxMb9UpTNvlNDK/l7lOVrxryKObjNhkenUiNHH
+	 t5S0QAcgk52SfRmPOHc+Oasd2e+pEJVrXAEwK4j3zJ3b6EAPKf8tlKlhM4FWCVfJfG
+	 9gUIcT5VJGv8A==
+Date: Sat, 03 Aug 2024 10:58:30 +0000
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 From: Harry Austen <hpausten@protonmail.com>
 Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
-Subject: [PATCH v2 6/9] clk: clocking-wizard: add user clock monitor support
-Message-ID: <20240803105702.9621-7-hpausten@protonmail.com>
+Subject: [PATCH v2 7/9] uio: add Xilinx user clock monitor support
+Message-ID: <20240803105702.9621-8-hpausten@protonmail.com>
 In-Reply-To: <20240803105702.9621-1-hpausten@protonmail.com>
 References: <20240803105702.9621-1-hpausten@protonmail.com>
 Feedback-ID: 53116287:user:proton
-X-Pm-Message-ID: 53032881eef22176f8403430de3565ccf3a6858e
+X-Pm-Message-ID: 0bc1fe7a2cd4c4d3c0a7304955c8869d91c4b6f4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,163 +64,132 @@ Content-Transfer-Encoding: quoted-printable
 Xilinx clocking wizard IP core supports monitoring of up to four
 optional user clock inputs, with a corresponding interrupt for
 notification in change of clock state (stop, underrun, overrun or
-glitch). Give access to this monitor logic through use of an auxiliary
-device.
+glitch). Give userspace access to this monitor logic through use of the
+UIO framework.
 
-Use presence of the user monitor interrupt description in devicetree to
-indicate whether or not the auxiliary device should be registered. Also,
-this functionality is only supported from v6.0 onwards, so add
-indication of support to the device match data, in order to be tied to
-the utilised compatible string.
+Implemented as an auxiliary_driver to avoid introducing UIO dependency
+to the main clock driver.
 
 Signed-off-by: Harry Austen <hpausten@protonmail.com>
 ---
-v1 -> v2:
-- Remove direct UIO dependency by utilising auxiliary device
-- Move some logic from probe into clk_wzrd_setup_monitor for tidiness
+v1 -> v2: New
 
- drivers/clk/xilinx/Kconfig                 |  1 +
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 60 ++++++++++++++++++++--
- 2 files changed, 56 insertions(+), 5 deletions(-)
+ drivers/uio/Kconfig            |  8 ++++
+ drivers/uio/Makefile           |  1 +
+ drivers/uio/uio_xlnx_clk_mon.c | 71 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+)
+ create mode 100644 drivers/uio/uio_xlnx_clk_mon.c
 
-diff --git a/drivers/clk/xilinx/Kconfig b/drivers/clk/xilinx/Kconfig
-index 051756953558b..87f507bd9b6f3 100644
---- a/drivers/clk/xilinx/Kconfig
-+++ b/drivers/clk/xilinx/Kconfig
-@@ -21,6 +21,7 @@ config COMMON_CLK_XLNX_CLKWZRD
- =09tristate "Xilinx Clocking Wizard"
- =09depends on OF
- =09depends on HAS_IOMEM
-+=09select AUXILIARY_BUS
- =09help
- =09  Support for the Xilinx Clocking Wizard IP core clock generator.
- =09  Adds support for clocking wizard and compatible.
-diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilin=
-x/clk-xlnx-clock-wizard.c
-index 1f8023d24029f..557e11017faf9 100644
---- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -8,6 +8,7 @@
-  *
-  */
+diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+index b060dcd7c6350..ca8a53de26a67 100644
+--- a/drivers/uio/Kconfig
++++ b/drivers/uio/Kconfig
+@@ -164,4 +164,12 @@ config UIO_DFL
+ =09    opae-sdk/tools/libopaeuio/
 =20
+ =09  If you compile this as a module, it will be called uio_dfl.
++
++config UIO_XLNX_CLK_MON
++=09tristate "Xilinx user clock monitor support"
++=09depends on COMMON_CLK_XLNX_CLKWZRD
++=09help
++=09  Userspace I/O interface to the user clock monitor logic within the
++=09  Xilinx Clocking Wizard IP core.
++
+ endif
+diff --git a/drivers/uio/Makefile b/drivers/uio/Makefile
+index 1c5f3b5a95cf5..1e8c242265431 100644
+--- a/drivers/uio/Makefile
++++ b/drivers/uio/Makefile
+@@ -11,3 +11,4 @@ obj-$(CONFIG_UIO_MF624)         +=3D uio_mf624.o
+ obj-$(CONFIG_UIO_FSL_ELBC_GPCM)=09+=3D uio_fsl_elbc_gpcm.o
+ obj-$(CONFIG_UIO_HV_GENERIC)=09+=3D uio_hv_generic.o
+ obj-$(CONFIG_UIO_DFL)=09+=3D uio_dfl.o
++obj-$(CONFIG_UIO_XLNX_CLK_MON)=09+=3D uio_xlnx_clk_mon.o
+diff --git a/drivers/uio/uio_xlnx_clk_mon.c b/drivers/uio/uio_xlnx_clk_mon.=
+c
+new file mode 100644
+index 0000000000000..afcbeae98eaaf
+--- /dev/null
++++ b/drivers/uio/uio_xlnx_clk_mon.c
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Driver for user clock monitor logic within Xilinx 'Clocking Wizard' IP =
+core
++ *
++ * Copyright (C) 2024 Harry Austen <hpausten@protonmail.com>
++ */
++
 +#include <linux/auxiliary_bus.h>
- #include <linux/bitfield.h>
- #include <linux/platform_device.h>
- #include <linux/clk.h>
-@@ -129,6 +130,7 @@ enum clk_wzrd_int_clks {
-  * @axi_clk:=09=09Handle to input clock 's_axi_aclk'
-  * @clks_internal:=09Internal clocks
-  * @speed_grade:=09Speed grade of the device
-+ * @adev:=09=09User clock monitor auxiliary device
-  * @suspended:=09=09Flag indicating power state of the device
-  */
- struct clk_wzrd {
-@@ -139,6 +141,7 @@ struct clk_wzrd {
- =09struct clk_hw *clks_internal[wzrd_clk_int_max];
- =09unsigned int speed_grade;
- =09bool suspended;
-+=09struct auxiliary_device adev;
- =09struct clk_hw_onecell_data clk_data;
- };
-=20
-@@ -171,8 +174,9 @@ struct clk_wzrd_divider {
- =09spinlock_t *lock;  /* divider lock */
- };
-=20
--struct versal_clk_data {
-+struct clk_wzrd_data {
- =09bool is_versal;
-+=09bool supports_monitor;
- };
-=20
- #define to_clk_wzrd(_nb) container_of(_nb, struct clk_wzrd, nb)
-@@ -958,16 +962,58 @@ static int __maybe_unused clk_wzrd_resume(struct devi=
-ce *dev)
- static SIMPLE_DEV_PM_OPS(clk_wzrd_dev_pm_ops, clk_wzrd_suspend,
- =09=09=09 clk_wzrd_resume);
-=20
--static const struct versal_clk_data versal_data =3D {
--=09.is_versal=09=3D true,
-+static const struct clk_wzrd_data version_6_0_data =3D {
-+=09.is_versal=09=09=3D false,
-+=09.supports_monitor=09=3D true,
- };
-=20
-+static const struct clk_wzrd_data versal_data =3D {
-+=09.is_versal=09=09=3D true,
-+=09.supports_monitor=09=3D true,
-+};
++#include <linux/bits.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/uio_driver.h>
 +
-+static void clk_wzrd_unregister_adev(void *_adev)
++#define WZRD_INTR_ENABLE=090x10
++
++static int clk_mon_irqcontrol(struct uio_info *info, s32 irq_on)
 +{
-+=09struct auxiliary_device *adev =3D _adev;
++=09if (irq_on)
++=09=09iowrite32(GENMASK(15, 0), info->mem[0].internal_addr + WZRD_INTR_ENA=
+BLE);
++=09else
++=09=09iowrite32(0, info->mem[0].internal_addr + WZRD_INTR_ENABLE);
 +
-+=09auxiliary_device_delete(adev);
-+=09auxiliary_device_uninit(adev);
++=09return 0;
 +}
 +
-+static int clk_wzrd_setup_monitor(struct platform_device *pdev)
++static int probe(struct auxiliary_device *adev, const struct auxiliary_dev=
+ice_id *id)
 +{
-+=09struct device *dev =3D &pdev->dev;
-+=09const struct clk_wzrd_data *data =3D device_get_match_data(dev);
-+=09struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
-+=09struct auxiliary_device *adev =3D &clk_wzrd->adev;
-+=09int ret;
++=09struct platform_device *pdev =3D to_platform_device(adev->dev.parent);
++=09struct device *dev =3D &adev->dev;
++=09struct uio_info *info;
++=09int irq;
 +
-+=09if (!data || !data->supports_monitor)
++=09info =3D devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
++=09if (!info)
++=09=09return -ENOMEM;
++
++=09irq =3D platform_get_irq(pdev, 0);
++=09if (irq < 0)
 +=09=09return 0;
 +
-+=09adev->name =3D "clk-mon";
-+=09adev->dev.parent =3D dev;
-+=09adev->dev.platform_data =3D (__force void *)clk_wzrd->base;
++=09info->name =3D KBUILD_MODNAME;
++=09info->version =3D "0.0.1";
 +
-+=09ret =3D auxiliary_device_init(adev);
-+=09if (ret)
-+=09=09return ret;
++=09info->mem[0].name =3D "clock monitor";
++=09info->mem[0].memtype =3D UIO_MEM_PHYS;
++=09info->mem[0].addr =3D platform_get_resource(pdev, IORESOURCE_IO, 0)->st=
+art;
++=09info->mem[0].size =3D (WZRD_INTR_ENABLE + 4 + PAGE_SIZE - 1) & PAGE_MAS=
+K;
++=09info->mem[0].internal_addr =3D (__force void __iomem *)dev->platform_da=
+ta;
 +
-+=09ret =3D auxiliary_device_add(adev);
-+=09if (ret) {
-+=09=09auxiliary_device_uninit(adev);
-+=09=09return ret;
-+=09}
-+
-+=09return devm_add_action_or_reset(dev, clk_wzrd_unregister_adev, adev);
++=09info->irq =3D irq;
++=09info->irqcontrol =3D clk_mon_irqcontrol;
++=09return devm_uio_register_device(dev, info);
 +}
 +
- static int clk_wzrd_register_output_clocks(struct device *dev, int nr_outp=
-uts)
- {
- =09const char *clkout_name, *clk_name, *clk_mul_name;
- =09struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
- =09u32 regl, regh, edge, regld, reghd, edged, div;
--=09const struct versal_clk_data *data;
-+=09const struct clk_wzrd_data *data;
- =09unsigned long flags =3D 0;
- =09bool is_versal =3D false;
- =09void __iomem *ctrl_reg;
-@@ -1170,6 +1216,10 @@ static int clk_wzrd_probe(struct platform_device *pd=
-ev)
- =09=09return -EINVAL;
- =09}
-=20
-+=09ret =3D clk_wzrd_setup_monitor(pdev);
-+=09if (ret)
-+=09=09return dev_err_probe(&pdev->dev, ret, "failed to setup monitor\n");
++static struct auxiliary_device_id ids[] =3D {
++=09{ .name =3D "clk_xlnx_clock_wizard.clk-mon" },
++=09{}
++};
++MODULE_DEVICE_TABLE(auxiliary, ids);
 +
- =09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
- =09if (ret)
- =09=09return ret;
-@@ -1204,7 +1254,7 @@ static const struct of_device_id clk_wzrd_ids[] =3D {
- =09{ .compatible =3D "xlnx,versal-clk-wizard", .data =3D &versal_data },
- =09{ .compatible =3D "xlnx,clocking-wizard"   },
- =09{ .compatible =3D "xlnx,clocking-wizard-v5.2"   },
--=09{ .compatible =3D "xlnx,clocking-wizard-v6.0"  },
-+=09{ .compatible =3D "xlnx,clocking-wizard-v6.0", .data =3D &version_6_0_d=
-ata },
- =09{ },
- };
- MODULE_DEVICE_TABLE(of, clk_wzrd_ids);
++static struct auxiliary_driver xlnx_clk_mon_driver =3D {
++=09.id_table =3D ids,
++=09.probe =3D probe,
++};
++
++module_auxiliary_driver(xlnx_clk_mon_driver);
++
++MODULE_AUTHOR("Harry Austen <hpausten@protonmail.com>");
++MODULE_DESCRIPTION("Driver for Xilinx user clock monitor logic");
++MODULE_LICENSE("GPL");
 --=20
 2.46.0
 
