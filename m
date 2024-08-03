@@ -1,112 +1,303 @@
-Return-Path: <linux-kernel+bounces-273322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D87946772
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:33:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDBB946774
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 06:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 992791F21B72
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0BA21F21B95
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 04:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2074A78C60;
-	Sat,  3 Aug 2024 04:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F4D7A15B;
+	Sat,  3 Aug 2024 04:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/MCcpvv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="INU3RSq7"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C91130A54;
-	Sat,  3 Aug 2024 04:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54318101D4;
+	Sat,  3 Aug 2024 04:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722659599; cv=none; b=FDImrvmQcSH2QAYmpd+LedJj2A09IZ2wor+YyicmBj5s4HtsgGy8xFF4w85EafvxS8YqDgKc0s8Y4od6FvSYniPA7zg/7B2/5sRBNazvDCJOln7VFL7ntiQ+YBuEXN3owSQjpW5N3HS32hMbeyWDmnGtcW6lB3cvp9O52LQZhAo=
+	t=1722660265; cv=none; b=Yk7rrpFmla7VTpgq6QQYpUWB41vkflWeYFpCYHN4/7vB8c8aIuSMjtDpl6PkbngrKb5pyqlZexr4SBWI3IORMfAUfJdXo67fstE6zEx1krAtUgixLMlYsb0cJ6nr3lzgoFzNDxLznxkUkK+8wc2LH/TT8zi58ydzlV0v/5pM+b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722659599; c=relaxed/simple;
-	bh=pKpCcF4Ikahp6VdzkjPmida2UGTxrv8uaII3qSDhGkQ=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=hTQJhFpRNppZVMX/+iSiSR76fzzUykYI4H/Kl04y6kumDgOjl/jBaY8I+MghyVq4LMJZ/OLDhRyO0JO4SxKXFsR4joFJuizwTlHsJC1xTpAWugf6Pv4bnVzis7y2j52Nxl+YF7iN9eXr/eP1qawW9DTuLRdWJkrz1Xfux7rf6gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/MCcpvv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A3DEC116B1;
-	Sat,  3 Aug 2024 04:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722659598;
-	bh=pKpCcF4Ikahp6VdzkjPmida2UGTxrv8uaII3qSDhGkQ=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=c/MCcpvvpitEdeZCrrWC2G9BT0nZj5dh+2DWEdBQF+ZTtfboxhOk7rsDhf1yqkBXw
-	 FQymZ6GrsJHyLVE2DsYwXFeiA6ANYdBbZBXFN9H1WVCghwalARO/JYcj1y1mWA7NLl
-	 CZB9R4d4Kk2kDGQY6xHonCFRJbifvJ+dWdZ6qCRjD3TndtARNClFNDuaVwCpPthgSV
-	 uaqzhMOksXkvBzGNpaVw40rojGiw73TCBb+59GGswRmNFqnjCgdBls7+ovO7Y43Yvi
-	 1Ad19tF3XyiU7CfozKWZBsdRbq1uIYEKqH0PAB1ArCYt0y85uyD36ukrfTx+EXBYMG
-	 X9hc3TIfvUzYg==
-Date: Fri, 02 Aug 2024 22:33:17 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1722660265; c=relaxed/simple;
+	bh=oxHjW/NGG3FqFkJ/RzqDHvMm6gRJSiu0sTkETRFlacw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onoM9a/wXb01jkv4mi0iiqIS9j2fSnACwO/xUTtTUqsoXbOZC2UZO/cTJA+VSyB3VqaOxLYDcsMEgfoVioxfc5e8zTO5c0EUVCN0j4eBj2CLjlvVbmvYyFqKmPhHgabn6Qi72u/1pL0p81fCkfvWj9PxEYGfyIlSAiDmr1z1UNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=INU3RSq7; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso4512571f8f.1;
+        Fri, 02 Aug 2024 21:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722660261; x=1723265061; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ICRUvIRcSpRjDV05yUvg8MY83qskWqfaY+XnFnSEMU=;
+        b=INU3RSq7riNl8IcgmSaak3DC/Q+lQhgGsEUwqpicElicVizxfZsE4FlcsNz42DrM2+
+         EFZh+idZH6BQBjnRFCJOqyt++O4p5PVfv3OquOrU9pyDmPZK9MC1qViLDGQ63InQzBfL
+         V5Yz7bHKemNHfJAX2omVJ9mBDZ+4P7LSpPQh0lni95vNHRgJrvEIiESH93xTDkyo9cP1
+         cMDuaHmdK5PO4057W6ue2AIBASpnn9/tM3Bbr692Dx/8hfuDOYTgw24qRq3fi54WhJLO
+         Ro/T/3Kca7vY9MeN26WvXuPrQAHVs2Gx+PBVtWJ7n2csVJy9RlGhT9LI04rTvbrXDRc2
+         mUsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722660261; x=1723265061;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1ICRUvIRcSpRjDV05yUvg8MY83qskWqfaY+XnFnSEMU=;
+        b=Uixr78nFdRBoGPq6z7bOuAixq0/jqaB4ZMtK/FGEWG8xU0DCNT7+SiWH4d3zy6sWN5
+         DmVbOT3OwWf/3hWWYT2XgRxVTpkTdib+uiNnvWqaBwOB/XzM2lCR6P4gTatDhIYXympZ
+         kFMd38F8YDBi43diEHQ1/vW9i3ICPSM38t9GFDwdvAp5C7uco9nuGkB7d6W0M/SVROg+
+         7SoO2zYN7qCgHGxl62I9AFTmy3Eo8X+sz1URu9/Z4aE4njz9kzMgihFuOsjOeO5O7Ojm
+         YRHiD6Ia37Msz6gj5qHnhk2jqE8ailM4nJzogjyhHilWCbaVfYxdez6F69U8BQwbNWRi
+         JBDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXF7uC0qNmbMldCGcZWhnigz3SN5boAD00uqK5l8FiP9kqrv6M9N3DACD4WgERsgh+nEQIN8ome+iRSIpPjTjGLopEztpsOd9viG+DiCerbJONNrTibbOY/CwuSdS3Q2ktU2BNqVCr8eH76fg==
+X-Gm-Message-State: AOJu0Yw6QLyVS686mG1gdMc9k+WrXs/iw5u4qUH+I71VXmE5lKyzy04H
+	/oZCOWfwbriwSjYn2SBUngeqjZKPYYBWqj1a8iHFpvAtYlB4ZAwl
+X-Google-Smtp-Source: AGHT+IFzjexPZTqvRksg9lDcuh7zjBlEesoiGpX2Rw0RDHwqQB7xwGBQAn6ofFV9AuM8DNQ+ftddzw==
+X-Received: by 2002:a5d:5d86:0:b0:36b:c126:fe6d with SMTP id ffacd0b85a97d-36bc127010cmr2117052f8f.24.1722660261127;
+        Fri, 02 Aug 2024 21:44:21 -0700 (PDT)
+Received: from f (cst-prg-90-207.cust.vodafone.cz. [46.135.90.207])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06fbfdsm3323307f8f.106.2024.08.02.21.44.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 21:44:20 -0700 (PDT)
+Date: Sat, 3 Aug 2024 06:44:11 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] lockref: rework CMPXCHG_LOOP to handle
+ contention better
+Message-ID: <r6gyrzb265f5w6sev6he3ctfjjh7wfhktzwxyylwwkeopkzkpj@fo3yp2lkgp7l>
+References: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
+ <20240802-openfast-v1-3-a1cff2a33063@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, quic_vbadigan@quicinc.com, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, andersson@kernel.org, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-arm-msm@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- linux-pci@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, devicetree@vger.kernel.org
-In-Reply-To: <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
-Message-Id: <172265959745.856785.3854064719699930724.robh@kernel.org>
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240802-openfast-v1-3-a1cff2a33063@kernel.org>
 
-
-On Sat, 03 Aug 2024 08:52:47 +0530, Krishna chaitanya chundru wrote:
-> Add binding describing the Qualcomm PCIe switch, QPS615,
-> which provides Ethernet MAC integrated to the 3rd downstream port
-> and two downstream PCIe ports.
+On Fri, Aug 02, 2024 at 05:45:04PM -0400, Jeff Layton wrote:
+> In a later patch, we want to change the open(..., O_CREAT) codepath to
+> avoid taking the inode->i_rwsem for write when the dentry already exists.
+> When we tested that initially, the performance devolved significantly
+> due to contention for the parent's d_lockref spinlock.
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> There are two problems with lockrefs today: First, once any concurrent
+> task takes the spinlock, they all end up taking the spinlock, which is
+> much more costly than a single cmpxchg operation. The second problem is
+> that once any task fails to cmpxchg 100 times, it falls back to the
+> spinlock. The upshot there is that even moderate contention can cause a
+> fallback to serialized spinlocking, which worsens performance.
+> 
+> This patch changes CMPXCHG_LOOP in 2 ways:
+> 
+> First, change the loop to spin instead of falling back to a locked
+> codepath when the spinlock is held. Once the lock is released, allow the
+> task to continue trying its cmpxchg loop as before instead of taking the
+> lock. Second, don't allow the cmpxchg loop to give up after 100 retries.
+> Just continue infinitely.
+> 
+> This greatly reduces contention on the lockref when there are large
+> numbers of concurrent increments and decrements occurring.
+> 
+
+This was already tried by me and it unfortunately can reduce performance.
+
+Key problem is that in some corner cases the lock can be continuously
+held and be queued on, making the fast path always fail and making all
+the spins actively waste time (and notably pull on the cacheline).
+
+See this for more details:
+https://lore.kernel.org/oe-lkp/lv7ykdnn2nrci3orajf7ev64afxqdw2d65bcpu2mfaqbkvv4ke@hzxat7utjnvx/
+
+However, I *suspect* in the case you are optimizing here (open + O_CREAT
+of an existing file) lockref on the parent can be avoided altogether
+with some hackery and that's what should be done here.
+
+When it comes to lockref in vfs in general, most uses can be elided with
+some hackery (see the above thread) which is in early WIP (the LSMs are
+a massive headache).
+
+For open calls which *do* need to take a real ref the hackery does not
+help of course.
+
+This is where I think decoupling ref from the lock is the best way
+forward. For that to work the dentry must hang around after the last
+unref (already done thanks to RCU and dput even explicitly handles that
+already!) and there needs to be a way to block new refs atomically --
+can be done with cmpxchg from a 0-ref state to a flag blocking new refs
+coming in. I have that as a WIP as well.
+
+
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  .../devicetree/bindings/pci/qcom,qps615.yaml       | 191 +++++++++++++++++++++
->  1 file changed, 191 insertions(+)
+>  lib/lockref.c | 85 ++++++++++++++++++++++-------------------------------------
+>  1 file changed, 32 insertions(+), 53 deletions(-)
 > 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:33.26-101.19: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0: PCI bus number 1 out of range, expected (0 - 0)
-Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:52.30-60.23: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@1,0: PCI bus number 2 out of range, expected (0 - 0)
-Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:62.30-70.23: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@2,0: PCI bus number 2 out of range, expected (0 - 0)
-Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:72.30-100.23: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@3,0: PCI bus number 2 out of range, expected (0 - 0)
-Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:81.39-89.32: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@3,0/pcie@0,0: PCI bus number 4 out of range, expected (0 - 0)
-Documentation/devicetree/bindings/pci/qcom,qps615.example.dts:91.39-99.32: Warning (pci_device_bus_num): /example-0/pcie/pcie@0/pcie@0,0/pcie@3,0/pcie@0,1: PCI bus number 4 out of range, expected (0 - 0)
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240803-qps615-v2-1-9560b7c71369@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> diff --git a/lib/lockref.c b/lib/lockref.c
+> index 2afe4c5d8919..b76941043fe9 100644
+> --- a/lib/lockref.c
+> +++ b/lib/lockref.c
+> @@ -8,22 +8,25 @@
+>   * Note that the "cmpxchg()" reloads the "old" value for the
+>   * failure case.
+>   */
+> -#define CMPXCHG_LOOP(CODE, SUCCESS) do {					\
+> -	int retry = 100;							\
+> -	struct lockref old;							\
+> -	BUILD_BUG_ON(sizeof(old) != 8);						\
+> -	old.lock_count = READ_ONCE(lockref->lock_count);			\
+> -	while (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock))) {  	\
+> -		struct lockref new = old;					\
+> -		CODE								\
+> -		if (likely(try_cmpxchg64_relaxed(&lockref->lock_count,		\
+> -						 &old.lock_count,		\
+> -						 new.lock_count))) {		\
+> -			SUCCESS;						\
+> -		}								\
+> -		if (!--retry)							\
+> -			break;							\
+> -	}									\
+> +#define CMPXCHG_LOOP(CODE, SUCCESS) do {						\
+> +	struct lockref old;								\
+> +	BUILD_BUG_ON(sizeof(old) != 8);							\
+> +	old.lock_count = READ_ONCE(lockref->lock_count);				\
+> +	for (;;) {									\
+> +		struct lockref new = old;						\
+> +											\
+> +		if (likely(arch_spin_value_unlocked(old.lock.rlock.raw_lock))) {	\
+> +			CODE								\
+> +			if (likely(try_cmpxchg64_relaxed(&lockref->lock_count,		\
+> +							 &old.lock_count,		\
+> +							 new.lock_count))) {		\
+> +				SUCCESS;						\
+> +			}								\
+> +		} else {								\
+> +			cpu_relax();							\
+> +			old.lock_count = READ_ONCE(lockref->lock_count);		\
+> +		}									\
+> +	}										\
+>  } while (0)
+>  
+>  #else
+> @@ -46,10 +49,8 @@ void lockref_get(struct lockref *lockref)
+>  	,
+>  		return;
+>  	);
+> -
+> -	spin_lock(&lockref->lock);
+> -	lockref->count++;
+> -	spin_unlock(&lockref->lock);
+> +	/* should never get here */
+> +	WARN_ON_ONCE(1);
+>  }
+>  EXPORT_SYMBOL(lockref_get);
+>  
+> @@ -60,8 +61,6 @@ EXPORT_SYMBOL(lockref_get);
+>   */
+>  int lockref_get_not_zero(struct lockref *lockref)
+>  {
+> -	int retval;
+> -
+>  	CMPXCHG_LOOP(
+>  		new.count++;
+>  		if (old.count <= 0)
+> @@ -69,15 +68,9 @@ int lockref_get_not_zero(struct lockref *lockref)
+>  	,
+>  		return 1;
+>  	);
+> -
+> -	spin_lock(&lockref->lock);
+> -	retval = 0;
+> -	if (lockref->count > 0) {
+> -		lockref->count++;
+> -		retval = 1;
+> -	}
+> -	spin_unlock(&lockref->lock);
+> -	return retval;
+> +	/* should never get here */
+> +	WARN_ON_ONCE(1);
+> +	return -1;
+>  }
+>  EXPORT_SYMBOL(lockref_get_not_zero);
+>  
+> @@ -88,8 +81,6 @@ EXPORT_SYMBOL(lockref_get_not_zero);
+>   */
+>  int lockref_put_not_zero(struct lockref *lockref)
+>  {
+> -	int retval;
+> -
+>  	CMPXCHG_LOOP(
+>  		new.count--;
+>  		if (old.count <= 1)
+> @@ -97,15 +88,9 @@ int lockref_put_not_zero(struct lockref *lockref)
+>  	,
+>  		return 1;
+>  	);
+> -
+> -	spin_lock(&lockref->lock);
+> -	retval = 0;
+> -	if (lockref->count > 1) {
+> -		lockref->count--;
+> -		retval = 1;
+> -	}
+> -	spin_unlock(&lockref->lock);
+> -	return retval;
+> +	/* should never get here */
+> +	WARN_ON_ONCE(1);
+> +	return -1;
+>  }
+>  EXPORT_SYMBOL(lockref_put_not_zero);
+>  
+> @@ -125,6 +110,8 @@ int lockref_put_return(struct lockref *lockref)
+>  	,
+>  		return new.count;
+>  	);
+> +	/* should never get here */
+> +	WARN_ON_ONCE(1);
+>  	return -1;
+>  }
+>  EXPORT_SYMBOL(lockref_put_return);
+> @@ -171,8 +158,6 @@ EXPORT_SYMBOL(lockref_mark_dead);
+>   */
+>  int lockref_get_not_dead(struct lockref *lockref)
+>  {
+> -	int retval;
+> -
+>  	CMPXCHG_LOOP(
+>  		new.count++;
+>  		if (old.count < 0)
+> @@ -180,14 +165,8 @@ int lockref_get_not_dead(struct lockref *lockref)
+>  	,
+>  		return 1;
+>  	);
+> -
+> -	spin_lock(&lockref->lock);
+> -	retval = 0;
+> -	if (lockref->count >= 0) {
+> -		lockref->count++;
+> -		retval = 1;
+> -	}
+> -	spin_unlock(&lockref->lock);
+> -	return retval;
+> +	/* should never get here */
+> +	WARN_ON_ONCE(1);
+> +	return -1;
+>  }
+>  EXPORT_SYMBOL(lockref_get_not_dead);
+> 
+> -- 
+> 2.45.2
+> 
 
