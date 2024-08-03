@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-273328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB3E946785
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:33:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9431F946786
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 07:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14471F2188D
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:33:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E311C20C8F
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 05:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7113A13D8B2;
-	Sat,  3 Aug 2024 05:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722CB13F01A;
+	Sat,  3 Aug 2024 05:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vUjotTFQ"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=spwhitton.name header.i=@spwhitton.name header.b="RpFIvgg3";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="jQMFBPtO"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499C142A82
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 05:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD14542A82
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 05:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722663191; cv=none; b=p8/rMytaKPWROpwJbKUYhsosTo0dFWRmRWS8FsFA7w9NBP61P2dlbBo6ydtLCenLoT5xdNnF5fctbj0Gxb8cGcgaqjDLllSBDUgIHrdyuTGYk9hIeECjYcLZW28jOyFAzfkJxSgcRQ/gRY5PA6ykARgSiLcx3EJDbEZtXYyhKYU=
+	t=1722663251; cv=none; b=qBmaxlDjTkFrqIVXg8BmPM1VXvEXP8xc/Ly7DGdSBuSmkjtK9Rc6AsKnFjmjr3UNi8bgyDUdBY73knT42BHWUMp5KLe814lYe9BnTfA4Rc4ty6B2Jztzv6ahwGZYr/NcNVZ0MERM8JJ3f+Z3LtTaHWcGBw9z7JZF0doUs0do+U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722663191; c=relaxed/simple;
-	bh=hvUd3OORrhy9zSUxl2DS9XEmSs8zWXzIOk8rRpBAdt4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=aZ/dOCT+zrUlCYvnGxZZ3nc3uGLnKMGAkYeCdsAkdaXBIM+RPI5YWjuhh5lIIU6tRBrJ8M3HrEMsMQ1OVXANI2AqZPhxYukEq5wapmDxV6knwAexdXaKjkZfXxmDXZe9BHMBHsWmtJJwVZKjYBfMbudmWWu0Thwnqi+KVPVYkVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vUjotTFQ; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0be470f76bso3065375276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 22:33:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722663189; x=1723267989; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dVMABDG6zvtzBrluDCQkwCGip5NCjvJGZc7ooD15Ipc=;
-        b=vUjotTFQmXdoFgNjtnrNUgk/90RdJc06r0urhzJpvkRpzleVcQp3lY53gHiLXBa55l
-         FX1NdEiTB5979B1VQad7H2gL2j7A3duhmaCH1WfEbpH0n+cvBhKSD9gqJXR2ecHIoX2C
-         3FLgVCnWy+PGrjy2gV2/WbhBr0WKq1k53z1jU+DaaAJKbnU8wtXPPGNJJ5mY7W6TeHSa
-         zJeH8WUPKvOXWWOcIO8847cVxS7SNPNgRgSY0RiGSDshb90QYnTMF3idmlpfrrRw3MXv
-         fE7Enm0UiUPA4zArNghcsuWPN+EZF0O/9AUkBHDVhzbclNRVMMBVmjV+QaXaZbkmYKxn
-         +HWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722663189; x=1723267989;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dVMABDG6zvtzBrluDCQkwCGip5NCjvJGZc7ooD15Ipc=;
-        b=eDGIX4PaPBhr4IqHHKWOamZyEGNKCt+pvp+Kkg6pCrYUk4H7MVbxdb3xHnrTrciEOX
-         XTUwf0BOYDAWZf3gkGiK7NYpTFneMGCFledKEB9KxaI2DDGEaQBBKQCu6JvK5udfweDE
-         YfHX/lCaAUHmsMJBVWfgzkIo68Jcdk8m3oAuEfYWxNES+IwSMvq9YkPpCOPZ5uiRrHdb
-         Lad55ar8/3VVtweFb8Z7QGBeC9o3XDgKFHQ05Zq83XKvgGnxhr5BMFYOQhbW5yz5geDc
-         T1p7frGnMP1/t8QlPgrCbnfDcc52CCDtRTIE1eoC/an6lpIaTIdP6OUoqUPnj3NQOPoq
-         ZW+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWXohrM0ONBBL24/XZtWws8fLHKmj5takKhiW+1BWdszYsmVGVG427JriMamk4OWJYlzhQhlEKRcHJ64o7RquIzKHc6sHtoO3kOWgZm
-X-Gm-Message-State: AOJu0Yx0IlFkwUKmtJZmsCKqvjeAoszGyYlda+WQ/xIfIK4ePSvsFsgI
-	aSrFxmmgqs2okxZ4YlXNhzBpHfjstYMhHQzop2Ow4a9zv6kv5h6OkuqHhyay33jZqlYdQSDiSI3
-	Atbw7JWmR78cN9MCRxQ==
-X-Google-Smtp-Source: AGHT+IGiZEPPAQNY2/nwbwVwRsUGjO4TgUlfihhyR0VvwxRkt7mU9aLbAmPrEM8xOeTxVidxnOufplpnPgFzgwEo
-X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
- (user=yosryahmed job=sendgmr) by 2002:a05:6902:2313:b0:e05:65b7:32d9 with
- SMTP id 3f1490d57ef6-e0bde22af67mr16846276.6.1722663189151; Fri, 02 Aug 2024
- 22:33:09 -0700 (PDT)
-Date: Sat,  3 Aug 2024 05:33:06 +0000
+	s=arc-20240116; t=1722663251; c=relaxed/simple;
+	bh=EF6NEO5ohC294DVJau6zkSdXtr8oG5BVcmFPCUicuLg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gF/goui7ScmU3fLY2clC7w/ZJYUw6e47WwaE25ujziI8EtAM3dUqUYWKlwvhUJOGzbdu1/U9bYPBoU/M63qLvpESDq5oQUblmwSFvVWFbvjDhsmD7ozjFE5t2bo++Q5gqAzmwf1g+ybJIYDClcXble5mIO1g+Rz/ADubecfaDWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spwhitton.name; spf=pass smtp.mailfrom=spwhitton.name; dkim=pass (2048-bit key) header.d=spwhitton.name header.i=@spwhitton.name header.b=RpFIvgg3; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=jQMFBPtO; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spwhitton.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spwhitton.name
+DKIM-Signature: a=rsa-sha256; b=RpFIvgg3MrETYEC6o4HRMsx/LVlHrzozOsJWBfEyRNvwBg/p2LEL324+G1JdlPE6/rGCLkMMzSZqJrsz22ZIaPTItH6OWr7H3jWcR1951jKZ1J1deErFB/MTOhp9zN4M1XUKMxIdgGd7vjq7AXvofEphDtmtYdANBT6vIUUx46RWu4Uo+a8hF23JVwM/Abne469on8M9ZDTscsdToOp6zN0iD06qhfgyrI6pF9bq8ENc4isbroIeMyjNebc63FTsI0regbmijh6ZXdlh/09Uizqh/qntL5mgDICKrnhOy74/BZoCxTfawTmsCOYqcVVLPkFTkoADovlvu4q19wWxmQ==; s=purelymail2; d=spwhitton.name; v=1; bh=EF6NEO5ohC294DVJau6zkSdXtr8oG5BVcmFPCUicuLg=; h=Received:Received:From:To:Subject:Date;
+DKIM-Signature: a=rsa-sha256; b=jQMFBPtOk9WYTSq69gzV6jiwUoxZ54KNa59vycUW4FTrK69E2ZUigvBrrQr/VKoJ+NV4/RApaSAFCJCUQitPQJHtI8mAS3tJBPtnTE5n/SamLQWMdalauP8pYZUZ2iKwZP+0N/KQtNRuvf3H/8mqStyVwhFme04e/vMxnl33/CEp/4IhXLj9yRFNjdi4T5CmM+cxl6BEl4MMP2G2hudm8Fh1tWvq1F1XEDceGE1cI3EsbM0pRcNYFymNSH4FMWzzBFbs5+bnWr4BH73ns7437oXozhBP7y0Vlkl94ndVhiYnIIyJ+TQVaLu+y56PK6UTg/G6RRyWiDXpuKDtfWGYsg==; s=purelymail2; d=purelymail.com; v=1; bh=EF6NEO5ohC294DVJau6zkSdXtr8oG5BVcmFPCUicuLg=; h=Feedback-ID:Received:Received:From:To:Subject:Date;
+Feedback-ID: 20115:3760:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -537863146;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Sat, 03 Aug 2024 05:33:47 +0000 (UTC)
+Received: by melete.silentflame.com (Postfix, from userid 1000)
+	id 2151D7E3E0E; Sat,  3 Aug 2024 14:33:43 +0900 (KST)
+From: Sean Whitton <spwhitton@spwhitton.name>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+  ~lkcamp/patches@lists.sr.ht,  helen.koike@collabora.com,  Hans de Goede
+ <hdegoede@redhat.com>,  Mauro Carvalho Chehab <mchehab@kernel.org>,
+  Sakari Ailus <sakari.ailus@linux.intel.com>,
+  linux-media@vger.kernel.org,  linux-staging@lists.linux.dev,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: media: atomisp: Add parentheses around macro
+ definitions
+In-Reply-To: <8d383b9d-d029-4706-91c5-9623fddf5df3@suswa.mountain> (Dan
+	Carpenter's message of "Fri, 2 Aug 2024 23:28:43 -0500")
+References: <20240730062348.46205-2-spwhitton@spwhitton.name>
+	<2024073020-reload-vanquish-f937@gregkh>
+	<87v80i475p.fsf@melete.silentflame.com>
+	<8d383b9d-d029-4706-91c5-9623fddf5df3@suswa.mountain>
+Date: Sat, 03 Aug 2024 13:33:43 +0800
+Message-ID: <878qxe41c8.fsf@melete.silentflame.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240803053306.2685541-1-yosryahmed@google.com>
-Subject: [PATCH] mm: zswap: make the lock critical section obvious in shrink_worker()
-From: Yosry Ahmed <yosryahmed@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Takero Funaki <flintglass@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Move the comments and spin_{lock/unlock}() calls around in
-shrink_worker() to make it obvious the lock is protecting the loop
-updating zswap_next_shrink.
+Hello,
 
-Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
----
+On Fri 02 Aug 2024 at 11:28pm -05, Dan Carpenter wrote:
 
-This is intended to be squashed into "mm: zswap: fix global shrinker
-memcg iteration".
+> *You* need to figure out what the proper thing is.  Not us.  That's the
+> difficult part of writing a patch.  Once you know what the correct thing
+> is, then the rest is just typing.
+>
+> That business of defining STORAGE_CLASS_SP_C is weird.  Figure out the
+> authors intention and find a better way to do it.
+>
+> Figure out why your code compiled as well because putting parentheses
+> around (static inline) is a syntax error.
 
----
- mm/zswap.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+I asked follow-up questions because it seems like at least partially a
+matter of style to say that the business of defining STORAGE_CLASS_SP_C
+is weird.  Maybe there is a better approach than what is currently done,
+but maybe there isn't.  Maybe the checkpatch warning should just be
+suppressed (if that's something that can be done).  I would be grateful
+for some additional pointers.
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index babf0abbcc765..df620eacd1d11 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1364,24 +1364,22 @@ static void shrink_worker(struct work_struct *w)
- 	 * until the next run of shrink_worker().
- 	 */
- 	do {
--		spin_lock(&zswap_shrink_lock);
--
- 		/*
- 		 * Start shrinking from the next memcg after zswap_next_shrink.
- 		 * When the offline cleaner has already advanced the cursor,
- 		 * advancing the cursor here overlooks one memcg, but this
- 		 * should be negligibly rare.
-+		 *
-+		 * If we get an online memcg, keep the extra reference in case
-+		 * the original one obtained by mem_cgroup_iter() is dropped by
-+		 * zswap_memcg_offline_cleanup() while we are shrinking the
-+		 * memcg.
- 		 */
-+		spin_lock(&zswap_shrink_lock);
- 		do {
- 			memcg = mem_cgroup_iter(NULL, zswap_next_shrink, NULL);
- 			zswap_next_shrink = memcg;
- 		} while (memcg && !mem_cgroup_tryget_online(memcg));
--		/*
--		 * Note that if we got an online memcg, we will keep the extra
--		 * reference in case the original reference obtained by mem_cgroup_iter
--		 * is dropped by the zswap memcg offlining callback, ensuring that the
--		 * memcg is not killed when we are reclaiming.
--		 */
- 		spin_unlock(&zswap_shrink_lock);
- 
- 		if (!memcg) {
 -- 
-2.46.0.rc2.264.g509ed76dc8-goog
-
+Sean Whitton
 
