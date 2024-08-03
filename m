@@ -1,152 +1,188 @@
-Return-Path: <linux-kernel+bounces-273511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C141946A18
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:35:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EFE1946A1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 16:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45285B212A9
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DC371F216F1
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 14:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B5B1509AC;
-	Sat,  3 Aug 2024 14:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pZgrmZ/F"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4D114F9C8;
+	Sat,  3 Aug 2024 14:35:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3198C8F3
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 14:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DD514E2FC
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 14:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722695703; cv=none; b=f9bCKvzg86M7afTYBUi/pUoUbDmdY7xKAgXFgUcYUf0Li3V1Jnl9i/hVMaJdfCA4Ts4uOHlfhEzcNMsiPojDAtAuMjtuyAN+8Ld4qvlA3JVqeBWCBvWeKrVqZXdcHs7h+V2KOztPdFfcJFf6FZV85aAXdo9jMjnOnTuROggJkPw=
+	t=1722695704; cv=none; b=QOiYtkpdJuEUhZFFizM3I7rKSLtXM9T90JJKZlLo0470qScJXmh3FYax1Hv91F80nOPHVA8tEqQug5KKmISuSo/rzG4IEqPPC8VO0Seki1CDzKDTHp468rTdP4ZgG131shPGpNDyqq8h7a/pXeJqYK6DfEWfVmwMCf559grEz0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722695703; c=relaxed/simple;
-	bh=5pFFzSTcujJdisegGS8FWdXFpF2D46MNMhS2XZUFveE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvVjtHhyJ4McS6KTfw7Y3zlsuFU4tFfaHM4XP9y6yh6oFQrgmKHHx5eby7hCopJqUtL3+M9hxITCBItzYuHKqBdSv0Nom6ZYhx2MoBKQWKGa2Tapvi0rtg3PoycJUzl1gDSjs1j/g7w6NZbuJpP17ILDhzCant1piE3+EQEiF4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pZgrmZ/F; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722695700;
-	bh=5pFFzSTcujJdisegGS8FWdXFpF2D46MNMhS2XZUFveE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pZgrmZ/FnfVa0pBoimKJdixtWO2F255W1Rwof4O6C0HD7pOnvBp7v/sC12kvjaS1i
-	 ycnSd5+ygRrmaY0fX7u/7l+HYPCRT1eWYyCj0cTEowuTi//t8WrgEkEbalTSnTWdpN
-	 aSnONEUJuVLxK9xJS6XcGb1dK57ZU+ozgCIrgZaQ6ZsqcUCThCQWiTVMM6C4cchtHh
-	 Pj+mEE1rzqrjmlf95e4MFnOepQXk07/zRlhmV/SnE+rw905vwCdOhtL7J8/gendJhh
-	 x4LGKvXAfKWac13InTa9zmNtZoT+hxC6YC01MDOt+D9rYTDpKChVXQ6JJoXByZhjpi
-	 GTwgYtUHAA3CQ==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 06CFF3781480;
-	Sat,  3 Aug 2024 14:34:57 +0000 (UTC)
-Date: Sat, 3 Aug 2024 10:34:55 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: William-tw Lin <william-tw.lin@mediatek.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] nvmem: mtk-efuse: Only register socinfo device if
- needed cells are there
-Message-ID: <f52d33ec-a003-48f8-b74d-080b9b29eb67@notapiano>
-References: <20240708-mtk-socinfo-no-data-probe-err-v2-1-7ae252acbcc2@collabora.com>
- <a1914f2b-93f2-4de4-9c4b-2e1f6b39cf3a@collabora.com>
- <05dd24ec-d084-4708-a241-b4714391118a@notapiano>
- <e1e1b618-b505-482a-b556-99c6d42fd581@collabora.com>
+	s=arc-20240116; t=1722695704; c=relaxed/simple;
+	bh=JdgWNwwiTe5pPyMF4mkDnhwO5n2QhFjDyFPKOvNQe2g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GMh05RF87tTrRm3gpGrYlpMqKe5y3+62ZigeSq8Mv9tDQrO7i2Vb0bOLZnTvhzJZADcgmvX0LuMbbh6MJofLP8slPODwxsU4MulYnFQlXXyN483Fbtgm7t9L07pcTTsc4uo3ZWifw6s4Lzqn6dYX5X1+2sSbF2fmSrCc6gdWxnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-396c41de481so147066015ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 07:35:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722695702; x=1723300502;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pOX7iDSsj97sBQqRzELz1L0sHB1XuQ4x6QXvQoIlTxs=;
+        b=KDDWhIpdlzkJk5lUzw3Jd1RcUBPj8oAeVqSwUQTH2H3sBMZ76D3JM+1L4K9UMhkL9C
+         jZHF1xHN5KToenc/hLXWnp5EOyPTvInx82IMd0+9ghwb3jPWnacQw+NeMTSGsbq8TQBo
+         XzcAdS40oxX9NJmPS6SD0F5YcWfSBf/l14XgtRXz1h3aMl3IORfFlmBmJ36RE+W285U1
+         oD2HMeUs2SoRn8lxM53K9jlTZQJSKXD7lek4fTnCa+1Ogne0ElDBcFKK/pQtwQd9xwgW
+         vi8yYewFJ5EltkMW+sux8k2FCvjBoUlv87TUqSHHV+LXVA9punqCcT8qs9km7w1jmOaZ
+         R3hA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0P334yZ7FKSZYjC39YgnvzAcUmjwpGRgDhNVy3G+kD0l2oaHws8yYTvkLlwDREhVVaBQJ1AWgF4r2h8dgL5+4umXm49sEXavRrzrj
+X-Gm-Message-State: AOJu0YxLgEoCSugqnUuvmCJHEtDvdY5kpUIGo+3YnjLKVrm/XG5ZcVoP
+	/GEaYMjOWHs00p5pnF8J9fYl+snmHFCDcfkHxaMoAMXLbwEA22wjr35RtTY0e4l9BXjGDaACEww
+	TtzaXyVQk+czU2vvik1LV4mwiUfG8JL6VXm2dRkZD3QrLbZRy/IwWguE=
+X-Google-Smtp-Source: AGHT+IEk2tIEEFHEggOlrrgxjV9YPLsnZVfo3UKqoRwpR10rgQWMHhfYsP4sGAf0lYmYzNHK4O/0g5lyk2u3x5Peo5xHcLO358LD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e1e1b618-b505-482a-b556-99c6d42fd581@collabora.com>
+X-Received: by 2002:a05:6e02:1b0f:b0:382:6a83:f4fc with SMTP id
+ e9e14a558f8ab-39b1fc65098mr5205775ab.5.1722695702131; Sat, 03 Aug 2024
+ 07:35:02 -0700 (PDT)
+Date: Sat, 03 Aug 2024 07:35:02 -0700
+In-Reply-To: <20240803142426.d8uduX0h@linutronix.de>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000061c8a0061ec859b5@google.com>
+Subject: Re: [syzbot] [staging?] [usb?] WARNING in r8712_usb_write_mem/usb_submit_urb
+ (2)
+From: syzbot <syzbot+ca2eaaadab55de6a5a42@syzkaller.appspotmail.com>
+To: florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
+	namcao@linutronix.de, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 19, 2024 at 11:29:03AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 19/07/24 00:07, Nícolas F. R. A. Prado ha scritto:
-> > On Wed, Jul 10, 2024 at 11:31:11AM +0200, AngeloGioacchino Del Regno wrote:
-> > > Il 08/07/24 21:43, Nícolas F. R. A. Prado ha scritto:
-> > > > Not every efuse region has cells storing SoC information. Only register
-> > > > an socinfo device if the required cells are present.
-> > > > 
-> > > > This prevents the pointless process of creating an socinfo device,
-> > > > probing it with the socinfo driver only to ultimately error out like so
-> > > > 
-> > > >     mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
-> > > >     mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
-> > > > 
-> > > > This issue is observed on the mt8183-kukui-jacuzzi-juniper-sku16
-> > > > platform, which has two efuse regions, but only one of them contains the
-> > > > SoC data.
-> > > > 
-> > > 
-> > > I think that we should rather remove or disable the first eFuse region, as
-> > > even though that is enabled:
-> > > 
-> > >   - This is the only SoC having two regions
-> > >     - I'm not even sure that the region at 0x8000000 is really efuse
-> > >     - Not even referenced in datasheets....
-> > >   - It's unused, as in, it's not exposing any information and no declared cells
-> > > 
-> > > Don't misunderstand me, this is not an invalid change, but I rather prefer
-> > > to resolve this by disabling that (effectively unused!) node, avoiding to
-> > > add more lines to this driver that would be useless after fixing that small
-> > > single thing.
-> > 
-> > I'm not confident that we can say that that efuse is not exposing any
-> > information. Indeed there are no cells so it's not used by any other driver, but
-> > the efuse contents are still exposed to userspace if CONFIG_NVMEM_SYSFS is
-> > enabled.
-> > 
-> > I dumped it on one of the mt8183-kukui-jacuzzi-juniper-sku16 units:
-> > 
-> >    $ ls -l /sys/bus/nvmem/devices/
-> >    total 0
-> >    lrwxrwxrwx    1 root     root             0 Jul 18 21:43 mmtd0 -> ../../../devices/platform/soc/11010000.spi/spi_master/spi1/spi1.0/mtd/mtd0/mtd0
-> >    lrwxrwxrwx    1 root     root             0 Jul 18 21:43 nvmem0 -> ../../../devices/platform/soc/8000000.efuse/nvmem0
-> >    lrwxrwxrwx    1 root     root             0 Jul 18 21:43 nvmem1 -> ../../../devices/platform/soc/11f10000.efuse/nvmem1
-> >    $ hexdump -C /sys/bus/nvmem/devices/nvmem0/nvmem
-> >    00000000  88 07 00 00 00 8a 00 00  00 ca 00 00 00 00 00 00  |................|
-> >    00000010
-> > 
-> > I power cycled the unit and ran this again and it still showed the same
-> > contents. I also ran the same on a different unit of the same model and it
-> > showed the same contents. Of course this doesn't prove anything, but given that
-> > the contents seem to be constant across reboots and even different units, it
-> > does look like it could be an efuse to me. :)
-> > 
-> > As to whether the contents are useful at all, or if there are
-> > userspace applications making use of it I have no clue. But if in doubt,
-> > shouldn't we keep it around?
-> 
-> (Added William-tw Lin from MediaTek to the loop)
-> 
-> I'll say yes only if MediaTek (please!) says that this region has useful
-> information, and only if MediaTek actually tells us what those fuses are.
-> 
-> The reason is that sometimes when SoCs have multiple efuse regions, one contains
-> uncalibrated data for factory calibration (etc etc), one contains data that derives
-> from the uncalibrated regions and that is supposed to be used by the OS.
-> 
-> If we got the uncalibrated data that is *not* for OS usage in the MT8183 DT, then
-> we can as well just remove it.
-> 
-> Besides, I have no concern about any userspace application using that.
+Hello,
 
-No reply, so I've sent v3.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in r871xu_dev_remove
 
-Thanks,
-Nícolas
+INFO: task kworker/1:1:28 blocked for more than 143 seconds.
+      Not tainted 6.6.44-syzkaller-g721391060066-dirty #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:1     state:D stack:27456 pid:28    ppid:2      flags:0x00004000
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5380 [inline]
+ __schedule+0xca5/0x30d0 kernel/sched/core.c:6698
+ schedule+0xe7/0x1b0 kernel/sched/core.c:6772
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
+ __mutex_lock_common kernel/locking/mutex.c:679 [inline]
+ __mutex_lock+0x5bd/0x9d0 kernel/locking/mutex.c:747
+ unregister_netdev+0x12/0x30 net/core/dev.c:11102
+ r871xu_dev_remove+0x291/0x480 drivers/staging/rtl8712/usb_intf.c:596
+ usb_unbind_interface+0x1e0/0x8d0 drivers/usb/core/driver.c:458
+ device_remove drivers/base/dd.c:569 [inline]
+ device_remove+0x122/0x170 drivers/base/dd.c:561
+ __device_release_driver drivers/base/dd.c:1272 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1295
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
+ device_del+0x39d/0xa60 drivers/base/core.c:3838
+ usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1416
+ usb_disconnect+0x2e1/0x890 drivers/usb/core/hub.c:2276
+ hub_port_connect drivers/usb/core/hub.c:5329 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5629 [inline]
+ port_event drivers/usb/core/hub.c:5789 [inline]
+ hub_event+0x1be4/0x4f50 drivers/usb/core/hub.c:5871
+ process_one_work+0x889/0x15e0 kernel/workqueue.c:2631
+ process_scheduled_works kernel/workqueue.c:2704 [inline]
+ worker_thread+0x8b9/0x12a0 kernel/workqueue.c:2785
+ kthread+0x2c6/0x3b0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:293
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by kworker/0:1/9:
+ #0: ffff888109ba9138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x789/0x15e0 kernel/workqueue.c:2606
+ #1: ffffc9000009fd80 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work+0x7eb/0x15e0 kernel/workqueue.c:2607
+ #2: ffffffff89ad6da8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0x12/0x30 net/ipv6/addrconf.c:4684
+6 locks held by kworker/1:1/28:
+ #0: ffff88810a64fd38 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x789/0x15e0 kernel/workqueue.c:2606
+ #1: ffffc900001e7d80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x7eb/0x15e0 kernel/workqueue.c:2607
+ #2: ffff888104f2b190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:992 [inline]
+ #2: ffff888104f2b190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1be/0x4f50 drivers/usb/core/hub.c:5817
+ #3: ffff888114cd9190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:992 [inline]
+ #3: ffff888114cd9190 (&dev->mutex){....}-{3:3}, at: usb_disconnect+0x10a/0x890 drivers/usb/core/hub.c:2267
+ #4: ffff888100f5b160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:992 [inline]
+ #4: ffff888100f5b160 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
+ #4: ffff888100f5b160 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0xa4/0x610 drivers/base/dd.c:1292
+ #5: ffffffff89ad6da8 (rtnl_mutex){+.+.}-{3:3}, at: unregister_netdev+0x12/0x30 net/core/dev.c:11102
+1 lock held by khungtaskd/29:
+ #0: ffffffff888aece0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:334 [inline]
+ #0: ffffffff888aece0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:786 [inline]
+ #0: ffffffff888aece0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x75/0x340 kernel/locking/lockdep.c:6614
+1 lock held by kworker/u4:7/1043:
+ #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:558 [inline]
+ #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1375 [inline]
+ #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1684 [inline]
+ #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x290/0x30d0 kernel/sched/core.c:6613
+3 locks held by kworker/1:2/1939:
+ #0: ffff888109ba9138 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x789/0x15e0 kernel/workqueue.c:2606
+ #1: ffffc9000393fd80 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work+0x7eb/0x15e0 kernel/workqueue.c:2607
+ #2: ffffffff89ad6da8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0x12/0x30 net/ipv6/addrconf.c:4684
+1 lock held by klogd/2494:
+ #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:558 [inline]
+ #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1375 [inline]
+ #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1684 [inline]
+ #0: ffff8881f653b318 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x290/0x30d0 kernel/sched/core.c:6613
+2 locks held by dhcpcd/2543:
+ #0: ffffffff89ad6da8 (rtnl_mutex){+.+.}-{3:3}, at: devinet_ioctl+0x1d3/0x1f10 net/ipv4/devinet.c:1091
+ #1: ffff88811928cdb0 (&padapter->mutex_start){+.+.}-{3:3}, at: netdev_open+0x32/0x840 drivers/staging/rtl8712/os_intfs.c:392
+2 locks held by getty/2563:
+ #0: ffff88810af530a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900000432f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfc9/0x1480 drivers/tty/n_tty.c:2216
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 29 Comm: khungtaskd Not tainted 6.6.44-syzkaller-g721391060066-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd9/0x1b0 lib/dump_stack.c:106
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
+ watchdog+0xf87/0x1210 kernel/hung_task.c:379
+ kthread+0x2c6/0x3b0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:293
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+NMI backtrace for cpu 1 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:86 [inline]
+NMI backtrace for cpu 1 skipped: idling at acpi_safe_halt+0x1b/0x30 drivers/acpi/processor_idle.c:111
+
+
+Tested on:
+
+commit:         72139106 Linux 6.6.44
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.6.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=17be7b65980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cc2e57d9f035477b
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca2eaaadab55de6a5a42
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11be7b65980000
+
 
