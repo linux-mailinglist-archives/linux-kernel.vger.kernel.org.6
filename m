@@ -1,136 +1,162 @@
-Return-Path: <linux-kernel+bounces-273490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2B69469E1
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:38:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A91D9469E6
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 15:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5BF281CE6
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6BC1F215AF
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 13:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0183714EC41;
-	Sat,  3 Aug 2024 13:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D467B14F9C8;
+	Sat,  3 Aug 2024 13:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f24SNGhe"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATOwCuZo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CA11ABEA7
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 13:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9A749659;
+	Sat,  3 Aug 2024 13:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722692279; cv=none; b=n9XZCm7DSF7wrfH8A5urEUOdJKqwQFkL8R7hAmQPsZNf6EcPz0MNnEA8lWEofgkwu9sggoz32BSzN4xZdKiVK9MHXSgqqqFZ7sB9xiOJEPW5tXRwXYA6ogTsvj3nM+H5p8X7/pE/BuCEn69Quf4HvNlQ7qXzOGLkMjaAC5k6SfU=
+	t=1722692865; cv=none; b=gUaVWVJD3toNCqtm4bO4H3lwSi/Vv+068sLuPp+/V6WZJVC86RNgOkV2RQ3iBu4ILnR53CpeNRcomeJ4G+JdG6XmrkYU2jWUwpUZio+yGqyg4bJSsXmaF6ARPH0AOxGg/BRI4VaRm1sLhknx4vTus8kvD/mIWbHimBLvd3bMP8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722692279; c=relaxed/simple;
-	bh=3eobi2IwtvOki5drRqQ3fwX+2/8W/GuPR/3Aa8CVgXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LvupJ1WQPRqcitXWKvEpd7jNpCAOK61r60/c5VZX13KKo2jJBVkxdGT+prVmfosj3kR4LOf6nz+sKtCYRLQgOjzmwSuSRfFlqae18lyWv2WLsNnAseP9+ZqBlaX8xJlDJOVNFJfjpKBPvfhXAYfJXUzxWfuBBpTWqoRfBhQQLho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f24SNGhe; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-264545214efso5018419fac.3
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 06:37:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722692277; x=1723297077; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W3bgXFgypD/myAL9qkYZnwoJ5pcGO43srbDGKdmdiGw=;
-        b=f24SNGheI8Drq32uQVUCjK9Pnpl4tFBgrDm7ldY5PYXRZlXJZoFggsXnUWMAfyn1SV
-         EiKh5yhVstyMnYOvw9ESuiroYG3jrYsVVM/JmjXzSZ3CfMKGGUxqseeBuuRfrmvvk+uy
-         M5Pbzj53Qw76bnhl9NYZU9rCAjzJIhlcEI2pBJbUJcOiZk5xTIQ/qN5QwCVVLvg+oxYu
-         NvZkV9IxR9uh3VZmghG+n39WlD3LTQUuYG28MRrzS7ndBHQeO0nvLzet1EG6TFJLJl/1
-         huPwLt6bV/kKdr6xAVtQnT5b62eXVP83LJEANNIkMbttvqQwU5MuA6qcZb8bflgG1tmF
-         8JLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722692277; x=1723297077;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W3bgXFgypD/myAL9qkYZnwoJ5pcGO43srbDGKdmdiGw=;
-        b=Om6LIHScjv6xRYkrGSZsP57WxBh2Fb6DswslSa5GNdOMh0CNqXyjR1OaPzdKMSxqTJ
-         bx41xlDT4OaH6ns3wZdEmb+6TxSe+Yut6dYZ60U9SoXjzrQIFguD9VSL2nSF1EtQou1L
-         sJvwND9bhjphEPyXq8ShEJtb3Fx0qvS8TyCu626rRFufcPuSkabzzniyI5FdXK9zBoj0
-         ljkbTtBnYJmyxrc9q/S0gfaflfwbT7S4sOd2UWWQV9ArGWxPTBZz9e9AzBdO3Wsrs+5G
-         uUeRPl0ge4qAxeUPOHZXORixcpRCM8w/ybaZfx75iXXUImPiukoLT8CHaYq/bjMAng5T
-         3oWg==
-X-Gm-Message-State: AOJu0Yz5okhLeRNl5Fs9c2N68/p66BTi95IjZTxiFbFnzT8B44FooNQI
-	Ajb6T5kxyTDsyM6foz+eF5fE5c36e1/oVuY2DMKJWVCnS2XnddR+FvOFueV8
-X-Google-Smtp-Source: AGHT+IH3Cbh3UIMvUm9t9mnvk5o9GuciOig/1w9mBQ3dL2sk7xYJdtAEv5fr3tXRtLcdwHa6Wp4MYg==
-X-Received: by 2002:a05:6870:860f:b0:24f:d178:d48d with SMTP id 586e51a60fabf-26891e930cfmr7414642fac.31.1722692276943;
-        Sat, 03 Aug 2024 06:37:56 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9f2acsm2355349a12.3.2024.08.03.06.37.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 06:37:56 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: [PATCH] uapi: enforce non-asm rule for 128-bit bitmasks macros
-Date: Sat,  3 Aug 2024 06:37:52 -0700
-Message-ID: <20240803133753.1598137-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722692865; c=relaxed/simple;
+	bh=BZf+J9P3xhGu1F+Y38BajrpKDPEIjgThvCzDJeE7SqI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R6IuzYXvzvCqthG+qaqoch7CIldxn7mZcZlix94IydW/9vtofhMIw4712gV9gR2lWKkQuFgE3/E92EirRAHwQmGPP/vtvWxeAevuZjHSUOUGPNg1LfLHp2Jl6+tsmWv1IGsmUjiPhh5tKDHH9bvFx7q2urH7rBoia7kbjLv/9Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATOwCuZo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 871A0C4AF09;
+	Sat,  3 Aug 2024 13:47:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722692864;
+	bh=BZf+J9P3xhGu1F+Y38BajrpKDPEIjgThvCzDJeE7SqI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ATOwCuZoOgw1zJXf6grKcPaDHHpBwSZlraegviNB5tyDb8bW9GBtUjGSKJijqQbIz
+	 kcEwhHz5YVWkyQwnyxf2oHz4Svden6fYT2sY2ftdeloG/bTJOSzzF9qBcs4x1884Fz
+	 o1SZO2Rfhe/kQ7tbwC4zuc09ZfoXpxJG2rzwEQx9tRCjU/9ejUeOXOftyOozI5hy5E
+	 Fc7Im9vZfxnlf8qI/OqxA2kzexzwkSN53sKBQRQOZ2Uou89lXongptRTGTWUDC5cRE
+	 E5gDbhcw4GNCdxIUOyRFfC40POqO7TKD3rGFlY5rdb7ZOseAVZOqWrZEmrYNjNa3dE
+	 6KLtr/c60YBwg==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52efd8807aaso13309195e87.3;
+        Sat, 03 Aug 2024 06:47:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX8q8zUW/Vany8GViXkG5AbKXLVsnqCBMLsmXbW07K3mv66ybwbyYI950zttx6ZaM9pso3XCAVWlKlMatF8X399i96FffLoXn2wdsxL3P/QjuxoVXpHw4dKByIBrvsx9NOXq+ABx3Y4vZQE
+X-Gm-Message-State: AOJu0YzS1qhQ2r106QOohGxXD+zZ1gA4uKIKN+k/ZwRaQjd01/fJoYr/
+	jxR+GhK9eOB89wNkIY2hjX7HZjibmc6SBbtRFs8GNSy+b1fuJhKVAu7Fc1VqDen5Yisx8JEr80+
+	fNSszYT5Ytb32GPS5+oJSMBDePtQ=
+X-Google-Smtp-Source: AGHT+IG8xP76Vy2XB1+MNTptxFgNCsuauG1HUx4DRy/VulZ7r2UUrbHzMwxe8p8+FAtDLbj18/WEL/k8P1G9i8p8ooc=
+X-Received: by 2002:a05:6512:3d89:b0:52e:987f:cfe4 with SMTP id
+ 2adb3069b0e04-530bb396e7amr3994896e87.30.1722692863130; Sat, 03 Aug 2024
+ 06:47:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240803125153.216030-1-gnurou@gmail.com>
+In-Reply-To: <20240803125153.216030-1-gnurou@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 3 Aug 2024 22:47:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS83xr+MUMjQXj7LE1b1ZbRUOd4c+FYHUQv=y97O4Ymqg@mail.gmail.com>
+Message-ID: <CAK7LNAS83xr+MUMjQXj7LE1b1ZbRUOd4c+FYHUQv=y97O4Ymqg@mail.gmail.com>
+Subject: Re: [PATCH] Makefile: add $(srctree) to dependency of
+ compile_commands.json target
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The macros wouldn't work in all assembler flavors for reasons described
-in the comments on top of declarations. Enforce it for more by adding
-!__ASSEMBLY__ guard.
+On Sat, Aug 3, 2024 at 9:52=E2=80=AFPM Alexandre Courbot <gnurou@gmail.com>=
+ wrote:
+>
+> When trying to build the compile_commands.json target from an external
+> module's directory, the following error is displayed:
+>
+>         make[1]: *** No rule to make target 'scripts/clang-tools/gen_comp=
+ile_commands.py',
+>         needed by 'compile_commands.json'. Stop.
 
-Signed-off-by: Yury Norov <yury.norov@gmail.com>
----
- include/linux/bits.h       | 2 ++
- include/uapi/linux/const.h | 2 ++
- 2 files changed, 4 insertions(+)
 
-diff --git a/include/linux/bits.h b/include/linux/bits.h
-index bf99feb5570e..60044b608817 100644
---- a/include/linux/bits.h
-+++ b/include/linux/bits.h
-@@ -36,6 +36,7 @@
- #define GENMASK_ULL(h, l) \
- 	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
- 
-+#if !defined(__ASSEMBLY__)
- /*
-  * Missing asm support
-  *
-@@ -48,5 +49,6 @@
-  */
- #define GENMASK_U128(h, l) \
- 	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
-+#endif
- 
- #endif	/* __LINUX_BITS_H */
-diff --git a/include/uapi/linux/const.h b/include/uapi/linux/const.h
-index 5be12e8f8f9c..e16be0d37746 100644
---- a/include/uapi/linux/const.h
-+++ b/include/uapi/linux/const.h
-@@ -28,6 +28,7 @@
- #define _BITUL(x)	(_UL(1) << (x))
- #define _BITULL(x)	(_ULL(1) << (x))
- 
-+#if !defined(__ASSEMBLY__)
- /*
-  * Missing asm support
-  *
-@@ -42,6 +43,7 @@
-  * GENMASK_U128() which would then start supporting asm code.
-  */
- #define _BIT128(x)	((unsigned __int128)(1) << (x))
-+#endif
- 
- #define __ALIGN_KERNEL(x, a)		__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
- #define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
--- 
-2.43.0
+Good catch.
 
+But, to reproduce this, O=3D option is also needed, right?
+
+e.g.
+
+  $ make O=3Dpath/to/build/dir M=3Dpath/to/external/module/dir
+
+
+
+
+> This appears to be because gen_compile_commands.py is looked up using
+> relative path, which doesn't exist from the module's source tree.
+
+
+The phrase "appears to be ..." is somewhat modest.
+
+
+You can reword this to pin-point the first bad commit.
+
+
+For example:
+
+gen_compile_commands.py was previously looked up using a relative path
+to $(srctree), but commit b1992c3772e6 ("kbuild: use $(src) instead of
+$(srctree)/$(src) for source directory") stopped defining VPATH for
+external module builds.
+
+
+
+> Prefixing the dependency with $(srctree) fixes the problem.
+
+
+
+This needs back-porting.
+
+
+Please add this:
+
+Fixes: b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(src)
+for source directory")
+
+
+Thanks.
+
+
+
+
+> Signed-off-by: Alexandre Courbot <gnurou@gmail.com>
+> ---
+>  Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 8ad55d6e7b60..52d7dfe4212a 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1980,7 +1980,7 @@ nsdeps: modules
+>  quiet_cmd_gen_compile_commands =3D GEN     $@
+>        cmd_gen_compile_commands =3D $(PYTHON3) $< -a $(AR) -o $@ $(filter=
+-out $<, $(real-prereqs))
+>
+> -$(extmod_prefix)compile_commands.json: scripts/clang-tools/gen_compile_c=
+ommands.py \
+> +$(extmod_prefix)compile_commands.json: $(srctree)/scripts/clang-tools/ge=
+n_compile_commands.py \
+>         $(if $(KBUILD_EXTMOD),, vmlinux.a $(KBUILD_VMLINUX_LIBS)) \
+>         $(if $(CONFIG_MODULES), $(MODORDER)) FORCE
+>         $(call if_changed,gen_compile_commands)
+> --
+> 2.46.0
+>
+
+
+--
+Best Regards
+
+Masahiro Yamada
 
