@@ -1,142 +1,76 @@
-Return-Path: <linux-kernel+bounces-273414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F029468FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 11:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 048C99468FE
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 12:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 968601F21A26
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 09:58:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34F421C20DFF
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 10:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0364814EC66;
-	Sat,  3 Aug 2024 09:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+gp9f04"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD0567A0D;
-	Sat,  3 Aug 2024 09:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A48D1311B6;
+	Sat,  3 Aug 2024 10:03:26 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FE823CB;
+	Sat,  3 Aug 2024 10:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722679097; cv=none; b=qjik4rWJMZrK+IWaqyDE47Vpmr45rIE6n4tS7YOsik5ehMU7VacV6wfflZjBpelvieayIXG/ZkENZJ0Dq7TkdgXKRw1oy2WEL/mVMj4MEZT3TfU6hnE4kuODb9ZvLetCsruelfBvtv0SewYIkIoaBfKBFaOA6l6x41Oncu/XbL0=
+	t=1722679406; cv=none; b=T60RX+FlNNU/ylozuXKZ3MYA1aT9RyPr2tzgEJ5UICvPjbeITSZkzJDm+az6hfWSrCLRtAXfAtM7PhIqRefoS7ein/jnnNUsnSEtaZFNpbPqMbHnciqJzSClqDmQxQl3dKLd7tfgRH3+i7pQ1PlxSWUbI9gbonxkFgQ5Rbv93s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722679097; c=relaxed/simple;
-	bh=YtqrMf8aNUiFZOawhurcvYLojEsK3/to3ps38x3skNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FB7jqJf85rNYvor3u+ZGX0t9pEViOL10nwiIiks8CqhMPxnnFh+HS+Hm403J9/Jw/GzgndosLdGKXzYCLghvvNtGil+s2NKroRHo9ZWNEiqRwLWiD4L2XEKmG/Hv8kSyrHLJvBRlL36/VeRVFXAYk3CVIFsZCRR3Wngb3W7Ps0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+gp9f04; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8296C116B1;
-	Sat,  3 Aug 2024 09:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722679096;
-	bh=YtqrMf8aNUiFZOawhurcvYLojEsK3/to3ps38x3skNc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O+gp9f04vsDkvT68WjTeHMYN/sQ9s5MzoJrh1mJVlMSeeQ+1gpbJx+lzSVmrE50o7
-	 K9GS8y1eQf59e0OUZOIYS/bU4IKO4e1wT4NjZzEI/FIbnH3W4swPDe1/NTba/oMPUN
-	 pSBCKhdRjmlv+gDpp62sAt0hzf7Un37+zu7X5S7dHySRkkAW19a7W+f/63wm46w09p
-	 CxsFF0/iMLvyWJaQ4aYIYZFDBNvK5JrrMh41eJO77wz6Olkeiv1w2h1yB27ndR1p6l
-	 fpImKZSrz0YTHnjmuT1eLudh06UuTkotvwlErlBBMJS34bPtoalIVe+P0oAKMX0rpp
-	 IuE/b7A/OvjnA==
-Date: Sat, 3 Aug 2024 10:58:09 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
- <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v3 2/9] spi: add basic support for SPI offloading
-Message-ID: <20240803105809.1b36287d@jic23-huawei>
-In-Reply-To: <0e60b324-143a-4976-869c-15d1a288f922@baylibre.com>
-References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
-	<20240722-dlech-mainline-spi-engine-offload-2-v3-2-7420e45df69b@baylibre.com>
-	<20240727141512.6dfecc03@jic23-huawei>
-	<0e60b324-143a-4976-869c-15d1a288f922@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722679406; c=relaxed/simple;
+	bh=XgHkizURW65cUDWDv0m9inMJ7WqKs0VsoSHsx1KsFrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKb1qkUceIH6IUO6598oRrWJF+PYd+PbNUrKW/hJGWuZPUUqNP4t1j7YJnOqHai3dfL/8XjWysAgX2JmhrOg+GPbkUJMjdT6gBfK+KOepLRxkwe8KkYJqIo4D62RI8CQes/ugJQvlTolR6EVbJNhAA8zSc2QpKcWTIuSVG03uYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 473A3IfX029300;
+	Sat, 3 Aug 2024 12:03:18 +0200
+Date: Sat, 3 Aug 2024 12:03:18 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] tools/nolibc: pass argc, argv and envp to constructors
+Message-ID: <20240803100318.GG29127@1wt.eu>
+References: <20240728-nolibc-constructor-args-v1-1-36d0bf5cd4c0@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240728-nolibc-constructor-args-v1-1-36d0bf5cd4c0@weissschuh.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, 30 Jul 2024 14:35:09 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Sun, Jul 28, 2024 at 10:34:11PM +0200, Thomas Weißschuh wrote:
+> Mirror glibc behavior for compatibility.
 
-> On 7/27/24 8:15 AM, Jonathan Cameron wrote:
-> > On Mon, 22 Jul 2024 16:57:09 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >   
-> 
-> 
-> >> +/**
-> >> + * spi_offload_prepare - prepare offload hardware for a transfer
-> >> + * @spi:	The spi device to use for the transfers.
-> >> + * @id:		Function ID if SPI device uses more than one offload or NULL.
-> >> + * @msg:	The SPI message to use for the offload operation.
-> >> + *
-> >> + * Requests an offload instance with the specified ID and programs it with the
-> >> + * provided message.
-> >> + *
-> >> + * The message must not be pre-optimized (do not call spi_optimize_message() on
-> >> + * the message).
-> >> + *
-> >> + * Calls must be balanced with spi_offload_unprepare().
-> >> + *
-> >> + * Return: 0 on success, else a negative error code.
-> >> + */
-> >> +int spi_offload_prepare(struct spi_device *spi, const char *id,
-> >> +			struct spi_message *msg)
-> >> +{
-> >> +	struct spi_controller *ctlr = spi->controller;
-> >> +	int ret;
-> >> +
-> >> +	if (!ctlr->offload_ops)
-> >> +		return -EOPNOTSUPP;
-> >> +
-> >> +	msg->offload = true;  
-> > I'd set this later perhaps as...  
-> 
-> If we move it, then we would have to create a new function
-> to call instead of spi_optimize_message() so that the controller
-> driver can know that this is an offload message and not a
-> regular message since they will need to be handled differently
-> during the optimization phase.
-Ah. I'd missed that.
-> 
-> >> +
-> >> +	ret = spi_optimize_message(spi, msg);
-> >> +	if (ret)  
-> > 
-> > It otherwise needs clearing here so it doesn't have side
-> > effects if an error occurs.
+Generally speaking I think you should make a bit longer sentences in
+your commit messages, Thomas. One first reason is to think that during
+reviews the reviewer has to scroll up to find the subject for the context
+this sentence applies to. And doing so quickly encourages to give a little
+bit more background to justify a change. I have a simple principle that
+works reasonably fine for this, which is that a commit subject should
+normally be unique in a project (modulo rare cases, reverts or accidents)
+and that commit message bodies should really always be unique. Here we
+see that it doesn't work ;-)
 
-Then it needs clearing here I think.
+An example could be something like this:
 
-> >   
-> >> +		return ret;
-> >> +
-> >> +	mutex_lock(&ctlr->io_mutex);
-> >> +	ret = ctlr->offload_ops->prepare(spi, id, msg);
-> >> +	mutex_unlock(&ctlr->io_mutex);
-> >> +
-> >> +	if (ret) {
-> >> +		spi_unoptimize_message(msg);
-> >> +		msg->offload = false;
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(spi_offload_prepare);  
-> >   
+  Glibc has been passing argc/argv/envp to constructors since version XXX.
+  This is particularly convenient, and missing it can significantly
+  complicate some ports to nolibc. Let's do the same since it's an easy
+  change that comes at no cost.
 
+Anyway I agree with the change, I wasn't aware of this support from glibc,
+so thank you for enlighting me on this one ;-)
+
+Willy
 
