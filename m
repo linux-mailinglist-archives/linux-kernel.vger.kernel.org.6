@@ -1,179 +1,211 @@
-Return-Path: <linux-kernel+bounces-273583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C100E946AF3
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 21:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD073946AF4
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 21:12:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0FE281F72
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 19:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C006281ECC
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 19:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6151CD02;
-	Sat,  3 Aug 2024 19:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F03C1CFB9;
+	Sat,  3 Aug 2024 19:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VLNK5uoZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bstBDpqF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F5A15ACA
-	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 19:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650131B94F
+	for <linux-kernel@vger.kernel.org>; Sat,  3 Aug 2024 19:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722712102; cv=none; b=tjvmu1JtNzDUmFIrnQ3qCy88Kvm+GlKRz3gAsk5zgtMV2TCRVFa6t7PVAHuSincIWQrTC5S+G5b5bft48IW51LnM7e8LoFVEboj1D3G3kXMp1XVo40xcvV4xDg1X72rzV5hKkXJS59+m3TcOHTtoh+eXwZ3S3ZLzThKNk95pkRI=
+	t=1722712339; cv=none; b=E4TxptEGvmiwk4BLpQ1jZmsMBD1e34AIDcJHUhYLxY/uuFc/EhNJ1VKcQVbwWdK0yoZURJ8/4gtYp9lEGykQzDovcgmjhbHDhr5BCWYiFc4ykBRFeE7JwaOTY41crwaJ1kZe1NSHJfAIWTYB1ewGJpZxBqFPHgO4M/ZIf8lZiyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722712102; c=relaxed/simple;
-	bh=M4MvruE1F4Gz3Tgefob3wbbY6lpPmTqXqxP8x8F1p9E=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FJXiVtxKqqFLGmfrH+Z7HoT1CWSBc7ie6x7Au0hS5JIiMUg/kXyz0y1U5Grrjhw8nIgylrL8B8TyEfxMzUHT1yLic4wGyjB1hFxH6iVNsXR70D2uH4LtCKUOmlI1puVZRTSdTS99GNoj98EJS7qrUtIOwL2XKpcif0N00I+wGOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VLNK5uoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F02C116B1;
-	Sat,  3 Aug 2024 19:08:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1722712102;
-	bh=M4MvruE1F4Gz3Tgefob3wbbY6lpPmTqXqxP8x8F1p9E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VLNK5uoZn/RSkGEnGD++mhKTHZ6Hn/ntuYHrFSBubyI0M7T699Z9WWetd6WcmqUVy
-	 Txw1ZsxOnneKRX4TgtVilL8a78UlzSToOpNBdg4/lLRCBaDIroV5mcVkdZ6Uou79Tk
-	 vhbHtNTX/8epGxMSR+/72D/0uAj0AB56gLpOb8JQ=
-Date: Sat, 3 Aug 2024 12:08:19 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: linux-mm@kvack.org, baolin.wang@linux.alibaba.com, chrisl@kernel.org,
- david@redhat.com, hannes@cmpxchg.org, hughd@google.com,
- kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org,
- mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com,
- ryan.roberts@arm.com, senozhatsky@chromium.org, shakeel.butt@linux.dev,
- shy828301@gmail.com, surenb@google.com, v-songbaohua@oppo.com,
- willy@infradead.org, xiang@kernel.org, ying.huang@intel.com,
- yosryahmed@google.com, hch@infradead.org, Chuanhua Han
- <hanchuanhua@oppo.com>
-Subject: Re: [PATCH v6 2/2] mm: support large folios swap-in for zRAM-like
- devices
-Message-Id: <20240803120819.b2f539115ad3cec84de967bf@linux-foundation.org>
-In-Reply-To: <20240802122031.117548-3-21cnbao@gmail.com>
-References: <20240726094618.401593-1-21cnbao@gmail.com>
-	<20240802122031.117548-1-21cnbao@gmail.com>
-	<20240802122031.117548-3-21cnbao@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722712339; c=relaxed/simple;
+	bh=j0XCYJUkQ27QOKqepw8d573zOaisTMn7DfqFCZinWTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=APvqRRsf2CRYRvCfIlbHJzs6tl7qLHy5v7/RaEVsrhO8vq99wmxh10iICEztEfJMd4PISbUX7rwK1yww193kxAWcXusitUxQYH3h0giq5bdJSpVAeDn1+Z3WRt+kH6e2t/5rcIOLU1C2Zi2/kYYFv6oXeJBKH1Pz+IuKEmqnsJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bstBDpqF; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722712337; x=1754248337;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=j0XCYJUkQ27QOKqepw8d573zOaisTMn7DfqFCZinWTs=;
+  b=bstBDpqFO8HzAmoei6DSRYB7IQ0ZVluqdLXvHWuIUvm1X+f0Aq6We2eQ
+   0V7TwjZAaHkggI4KOKxnYrcSneTlQqt7JtjV7ImU7COY/WIkMyMAHXSag
+   aXtk6Ie1aCqpjwtQ2AdHcK0//zDjq88Cztem9ZcqTQmdFimvGfdFYjbSk
+   8ibyJJYc2udmX/kica3eIcm1b6bUXi8zdKz4M01Wa88+XXIo4hjgnwpqX
+   kuzvGGo4AboYtsAIEBTx9Yj1YV6l31udQEA/eRuzdN+JljDFL07zqF7IM
+   lOdtEcJCHqe8aOFQ2ckoZ2U2JAyyiPyFCsBpiH5I0hwtEuJSpmQvtLl45
+   Q==;
+X-CSE-ConnectionGUID: uGgdI6AzQq+hg7aiC+Q48A==
+X-CSE-MsgGUID: yY0X3WbsSSWV1Cmpmss+vg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11153"; a="20557658"
+X-IronPort-AV: E=Sophos;i="6.09,261,1716274800"; 
+   d="scan'208";a="20557658"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2024 12:12:16 -0700
+X-CSE-ConnectionGUID: JjnVZuvrTOiQuMv57CPmdQ==
+X-CSE-MsgGUID: +7KoKhdnSZ6VBerg4BzgKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,261,1716274800"; 
+   d="scan'208";a="56511172"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 03 Aug 2024 12:12:14 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1saKAl-0000rE-32;
+	Sat, 03 Aug 2024 19:12:11 +0000
+Date: Sun, 4 Aug 2024 03:11:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ian Abbott <abbotti@mev.co.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: ERROR: modpost: "__popcountsi2"
+ [drivers/comedi/drivers/adl_pci9111.ko] undefined!
+Message-ID: <202408040337.zq5qZ5bA-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat,  3 Aug 2024 00:20:31 +1200 Barry Song <21cnbao@gmail.com> wrote:
+Hi Ian,
 
-> From: Chuanhua Han <hanchuanhua@oppo.com>
-> 
-> Currently, we have mTHP features, but unfortunately, without support for large
-> folio swap-ins, once these large folios are swapped out, they are lost because
-> mTHP swap is a one-way process. The lack of mTHP swap-in functionality prevents
-> mTHP from being used on devices like Android that heavily rely on swap.
-> 
-> This patch introduces mTHP swap-in support. It starts from sync devices such
-> as zRAM. This is probably the simplest and most common use case, benefiting
-> billions of Android phones and similar devices with minimal implementation
-> cost. In this straightforward scenario, large folios are always exclusive,
-> eliminating the need to handle complex rmap and swapcache issues.
-> 
-> It offers several benefits:
-> 1. Enables bidirectional mTHP swapping, allowing retrieval of mTHP after
->    swap-out and swap-in. Large folios in the buddy system are also
->    preserved as much as possible, rather than being fragmented due
->    to swap-in.
-> 
-> 2. Eliminates fragmentation in swap slots and supports successful
->    THP_SWPOUT.
-> 
->    w/o this patch (Refer to the data from Chris's and Kairui's latest
->    swap allocator optimization while running ./thp_swap_allocator_test
->    w/o "-a" option [1]):
-> 
-> ...
->
-> +static struct folio *alloc_swap_folio(struct vm_fault *vmf)
-> +{
-> +	struct vm_area_struct *vma = vmf->vma;
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->
-> ...
->
-> +#endif
-> +	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vmf->address, false);
-> +}
+First bad commit (maybe != root cause):
 
-Generates an unused-variable warning with allnoconfig.  Because
-vma_alloc_folio_noprof() was implemented as a macro instead of an
-inlined C function.  Why do we keep doing this.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   17712b7ea0756799635ba159cc773082230ed028
+commit: 98a15816636044f25be4644db2a3e09fad68aaf7 Revert "comedi: add HAS_IOPORT dependencies"
+date:   11 months ago
+config: arm-randconfig-r054-20240802 (https://download.01.org/0day-ci/archive/20240804/202408040337.zq5qZ5bA-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408040337.zq5qZ5bA-lkp@intel.com/reproduce)
 
-Please check:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408040337.zq5qZ5bA-lkp@intel.com/
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: mm-support-large-folios-swap-in-for-zram-like-devices-fix
-Date: Sat Aug  3 11:59:00 AM PDT 2024
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-fix unused var warning
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-v3s-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-de2-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-r-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-de-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-usb-ccu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/omap-dma.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/qcom/spm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/xen/xenbus/xenbus_probe_frontend.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/xen/xen-evtchn.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/xen/xen-privcmd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/reset/hisilicon/hi6220_reset.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/dax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/device_dax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-omap2-mcspi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/mdio/mdio-bitbang.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/ethernet/ezchip/nps_enet.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/dummy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/arcnet.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/rfc1201.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/rfc1051.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/arc-rawmode.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/com90xx.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/com90io.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/arc-rimi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/fddi/skfp/skfp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/plip/plip.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/slip/slip.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/vivaldi-fmap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/ttpci/budget-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/mb86a16.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/hfcpci.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/avmfritz.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/mISDNinfineon.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/hardware/mISDN/mISDNipac.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/mISDN/mISDN_core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/isdn/mISDN/mISDN_dsp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_emmc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_uart.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/of_mmc_spi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/coreboot_table.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/vpd-sysfs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-loopback.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-power-supply.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-raw.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-vibrator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mm-interconnect.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mp-interconnect.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/qcom/interconnect_qcom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/qcom/icc-rpmh.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_cmdset_0020.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/maps/map_funcs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_cif.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_aec.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_netx.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_mf624.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/802/p8022.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/802/psnap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/802/fddi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/802/stp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_ingress.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_tbf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_multiq.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_skbprio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/sch_taprio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/cls_basic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/cls_cgroup.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/sched/em_meta.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/netlink/netlink_diag.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/packet/af_packet.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/bridge/bridge.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/caif/caif.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/caif/chnl_net.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/caif/caif_socket.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/nfc/nci/nci.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/nfc/nci/nci_spi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/nfc/nfc_digital.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/vmw_vsock/vsock_diag.o
+ERROR: modpost: "__popcountsi2" [drivers/input/keyboard/pmic8xxx-keypad.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/addi_apci_3120.ko] undefined!
+>> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/adl_pci9111.ko] undefined!
+>> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/adv_pci1710.ko] undefined!
+>> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/amplc_pci224.ko] undefined!
+>> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/amplc_pci230.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/cb_pcidas64.ko] undefined!
+>> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/cb_pcidas.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/ni_pcimio.ko] undefined!
+>> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/rtd520.ko] undefined!
+WARNING: modpost: suppressed 6 unresolved symbol warnings because there were too many)
 
-mm/memory.c: In function 'alloc_swap_folio':
-mm/memory.c:4062:32: warning: unused variable 'vma' [-Wunused-variable]
- 4062 |         struct vm_area_struct *vma = vmf->vma;
-      |                                ^~~
-
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Barry Song <v-songbaohua@oppo.com>
-Cc: Chris Li <chrisl@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Chuanhua Han <hanchuanhua@oppo.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Gao Xiang <xiang@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Kairui Song <kasong@tencent.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Nhat Pham <nphamcs@gmail.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Yang Shi <shy828301@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- mm/memory.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
---- a/mm/memory.c~mm-support-large-folios-swap-in-for-zram-like-devices-fix
-+++ a/mm/memory.c
-@@ -4059,8 +4059,8 @@ static inline bool can_swapin_thp(struct
- 
- static struct folio *alloc_swap_folio(struct vm_fault *vmf)
- {
--	struct vm_area_struct *vma = vmf->vma;
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	struct vm_area_struct *vma = vmf->vma;
- 	unsigned long orders;
- 	struct folio *folio;
- 	unsigned long addr;
-@@ -4128,7 +4128,8 @@ static struct folio *alloc_swap_folio(st
- 
- fallback:
- #endif
--	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vmf->address, false);
-+	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vmf->vma,
-+			       vmf->address, false);
- }
- 
- 
-_
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
