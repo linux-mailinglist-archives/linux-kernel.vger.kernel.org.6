@@ -1,157 +1,134 @@
-Return-Path: <linux-kernel+bounces-273244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F175094664D
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:58:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911E894666A
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 02:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BFFA1F222B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0D281C2113E
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 00:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA52013BC2F;
-	Fri,  2 Aug 2024 23:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hNkoehj8"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED99B81E;
+	Sat,  3 Aug 2024 00:13:24 +0000 (UTC)
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB4A13AA47
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 23:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279E9182;
+	Sat,  3 Aug 2024 00:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722643120; cv=none; b=POnwI9SKrESFwkq3WlL0OxjzSNXc2n2sJ0D7mWLV+9LUhc3zZv8N0fTZ1nckIiC2rboKd2+Wp92YFk+uK9UG1RuWtVGdJqpz61d6l76Ou4A1ZRBETOphl+sYkyKStv1hheiqa4sbfEe8Z8FY4WkcuyHaS4CNXkuwodf3dvLDC08=
+	t=1722644004; cv=none; b=Rgak3YmjPxniEaLscMX28dvmiPA3KT2R0YW2CkdrKxilqDI52lq8LmNQi7oUaUH2d4ErCxmVD/D2C+TyOYMgVSNVvV5Sdwhg+OFSYfHz3mbrZKDgi6OmJAAooZ4NHyuSCOHshKYS6p3t0UqRuXzr5t0W2oxGUDyKw4Lgx9rkRe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722643120; c=relaxed/simple;
-	bh=ek/Twkf/0KzDJOxl6HALvLL1GFA3f53vbYPKmu0cq8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tf+41imxkCOi40EHi7lBznQQvgcgSvMeUrbkm8jyzUvcZJpMbuC2+MTiS8ulLC9BsMTLL+edhHdeaF8uQLbtQrOdmyhW9uwAaJNcBNeMfaxeUmmy7LbKbeDrOoqY1JOnFM4QrgfgDfUKjOPpbAU1Dxe6+wk/9eNMeJDsrpn1/SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hNkoehj8; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722643114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vIQpQxNg2MyXYsuSEiANpsXDOnYEMzwRDvdV46avMd4=;
-	b=hNkoehj8SQFvqoNGAU3xYIlPtkmBu3wq4mO2bfPvELiR4pHFgu49d0eJr1gYnD62kxfOME
-	JOraAP21UfmZ9Z63EmTk1QSXiRXxr/LbPDu8MQUNCQUdUqRzYz0a3HHUOu/gidzcR4imVv
-	sTMkN1wPpVjOPFiooS0YmHx4jFKLSDI=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>,
-	cgroups@vger.kernel.org
-Subject: [PATCH] memcg: protect concurrent access to mem_cgroup_idr
-Date: Fri,  2 Aug 2024 16:58:22 -0700
-Message-ID: <20240802235822.1830976-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1722644004; c=relaxed/simple;
+	bh=ZKZBS/MH7im0JwkEk0PsV+A2uYf8zojcYPPsjYAnhAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EW2NEAtFPVeLq4iIqqtM3IaNZC/H1FzkAH0Efw+ZaWkGuGjw5soPQjZMvSOXtSK+DltVfH4yD8Y1TqDxIlpgsNMFf9HJ+W1keOeDHl0XMnf7jApcShBKYU7K3wrjStWuMplCtInkvdVdWbNYq1K2eWQi1k6bNyG4xpkwvMlO1UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3dc16d00ba6so564762b6e.0;
+        Fri, 02 Aug 2024 17:13:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722644002; x=1723248802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ccJOGn30bUAN8TsbHnPAhjA3sjnjxhCGVa7sB/q0q18=;
+        b=iEzvLhqckDH3XfXduYihNVvqwoR+cWigHfZlzLDUG1iWsHs3AgUr6NSLU2+lLS06iC
+         rXwjUy5iaVWG+NtBP88uO3BGrFWxAXTpmPm02XfK+nO+rgrG21N6q+vDvn3a6hK0vhAM
+         85gwHrPIfQLjljp4TCyF8tVEP4xgQhlf3uzIcLhhSw3AYyw4gs6w7M/aOQxTr870vpC5
+         kpA1VpCvLZBcfVDHhRoIw2E1IIFs3QcJZc/l84qxU0tlM3jncIsaTjsuGJubb/mZXuiF
+         uXHeHAFghpqz2lVIq2dmrVBrDbcysJNcpWfnLuZC1yF8ruPnnJnuSbvwPvgDc/sG7BgY
+         ORHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXy2aPRWZeJLCOmoag0esat+KdKiEtBgKS426LKGyPtKAPuUPlKRlQIFlD8dFp0m8SQ65TSwpUJfpYqGdcsu1zsbU6khyPC7cVrbHxkOjIc0moR2IeNOiGO1/PKru/3NqfhEUTyR4HULOO+
+X-Gm-Message-State: AOJu0YwysYeJPtjHU0FYSnNYoQl69YUEhunv5v7zL/VbD9Hdszd4ZHt9
+	EkH6WX3HAG2BJQx9eTEpiiYrq8Bktq7v2Pw/2srJMFgOhFwek2Vf
+X-Google-Smtp-Source: AGHT+IE1UQJI5eUtHMF2/Uke5fcUQiEaNcSw/b2w90jpRVoUFSKMFk1ufL0TsbHnePiXIsxtcfxOrQ==
+X-Received: by 2002:a05:6808:1449:b0:3d9:245c:4224 with SMTP id 5614622812f47-3db5582e282mr5345750b6e.40.1722644002134;
+        Fri, 02 Aug 2024 17:13:22 -0700 (PDT)
+Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b76346af44sm1874085a12.30.2024.08.02.17.13.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 17:13:21 -0700 (PDT)
+Date: Sat, 3 Aug 2024 00:13:20 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Roman Kisel <romank@linux.microsoft.com>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"sashal@kernel.org" <sashal@kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"apais@microsoft.com" <apais@microsoft.com>,
+	"benhill@microsoft.com" <benhill@microsoft.com>,
+	"ssengar@microsoft.com" <ssengar@microsoft.com>,
+	"sunilmut@microsoft.com" <sunilmut@microsoft.com>,
+	"vdso@hexbites.dev" <vdso@hexbites.dev>
+Subject: Re: [PATCH] Drivers: hv: vmbus: Fix the misplaced function
+ description
+Message-ID: <Zq12ILqoxEzjLOq2@liuwe-devbox-debian-v2>
+References: <20240801212235.352220-1-romank@linux.microsoft.com>
+ <SN6PR02MB41578B75E804B59A2B8A8E24D4B32@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB41578B75E804B59A2B8A8E24D4B32@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-The commit 73f576c04b94 ("mm: memcontrol: fix cgroup creation failure
-after many small jobs") decoupled the memcg IDs from the CSS ID space to
-fix the cgroup creation failures. It introduced IDR to maintain the
-memcg ID space. The IDR depends on external synchronization mechanisms
-for modifications. For the mem_cgroup_idr, the idr_alloc() and
-idr_replace() happen within css callback and thus are protected through
-cgroup_mutex from concurrent modifications. However idr_remove() for
-mem_cgroup_idr was not protected against concurrency and can be run
-concurrently for different memcgs when they hit their refcnt to zero.
-Fix that.
+On Fri, Aug 02, 2024 at 03:51:37PM +0000, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Thursday, August 1, 2024 2:23 PM
+> > 
+> > When hv_synic_disable_regs was introduced, it received the description
+> > of hv_synic_cleanup. Fix that.
+> > 
+> > Fixes: dba61cda3046 ("Drivers: hv: vmbus: Break out synic enable and disable
+> > operations")
+> > 
+> > Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> > ---
+> >  drivers/hv/hv.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> > index e0d676c74f14..36d9ba097ff5 100644
+> > --- a/drivers/hv/hv.c
+> > +++ b/drivers/hv/hv.c
+> > @@ -342,9 +342,6 @@ int hv_synic_init(unsigned int cpu)
+> >  	return 0;
+> >  }
+> > 
+> > -/*
+> > - * hv_synic_cleanup - Cleanup routine for hv_synic_init().
+> > - */
+> >  void hv_synic_disable_regs(unsigned int cpu)
+> >  {
+> >  	struct hv_per_cpu_context *hv_cpu =
+> > @@ -436,6 +433,9 @@ static bool hv_synic_event_pending(void)
+> >  	return pending;
+> >  }
+> > 
+> > +/*
+> > + * hv_synic_cleanup - Cleanup routine for hv_synic_init().
+> > + */
+> >  int hv_synic_cleanup(unsigned int cpu)
+> >  {
+> >  	struct vmbus_channel *channel, *sc;
+> > 
+> > base-commit: 831bcbcead6668ebf20b64fdb27518f1362ace3a
+> > --
+> > 2.34.1
+> > 
+> 
+> Reviewed-by: Michael Kelley <mhkelley@outlook.com>
+> 
 
-We have been seeing list_lru based kernel crashes at a low frequency in
-our fleet for a long time. These crashes were in different part of
-list_lru code including list_lru_add(), list_lru_del() and reparenting
-code. Upon further inspection, it looked like for a given object (dentry
-and inode), the super_block's list_lru didn't have list_lru_one for the
-memcg of that object. The initial suspicions were either the object is
-not allocated through kmem_cache_alloc_lru() or somehow
-memcg_list_lru_alloc() failed to allocate list_lru_one() for a memcg but
-returned success. No evidence were found for these cases.
-
-Looking more deeper, we started seeing situations where valid memcg's id
-is not present in mem_cgroup_idr and in some cases multiple valid memcgs
-have same id and mem_cgroup_idr is pointing to one of them. So, the most
-reasonable explanation is that these situations can happen due to race
-between multiple idr_remove() calls or race between
-idr_alloc()/idr_replace() and idr_remove(). These races are causing
-multiple memcgs to acquire the same ID and then offlining of one of them
-would cleanup list_lrus on the system for all of them. Later access from
-other memcgs to the list_lru cause crashes due to missing list_lru_one.
-
-Fixes: 73f576c04b94 ("mm: memcontrol: fix cgroup creation failure after many small jobs")
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- mm/memcontrol.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index b889a7fbf382..8971d3473a7b 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3364,11 +3364,28 @@ static void memcg_wb_domain_size_changed(struct mem_cgroup *memcg)
- 
- #define MEM_CGROUP_ID_MAX	((1UL << MEM_CGROUP_ID_SHIFT) - 1)
- static DEFINE_IDR(mem_cgroup_idr);
-+static DEFINE_SPINLOCK(memcg_idr_lock);
-+
-+static int mem_cgroup_alloc_id(void)
-+{
-+	int ret;
-+
-+	idr_preload(GFP_KERNEL);
-+	spin_lock(&memcg_idr_lock);
-+	ret = idr_alloc(&mem_cgroup_idr, NULL, 1, MEM_CGROUP_ID_MAX + 1,
-+			GFP_NOWAIT);
-+	spin_unlock(&memcg_idr_lock);
-+	idr_preload_end();
-+	return ret;
-+}
- 
- static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
- {
- 	if (memcg->id.id > 0) {
-+		spin_lock(&memcg_idr_lock);
- 		idr_remove(&mem_cgroup_idr, memcg->id.id);
-+		spin_unlock(&memcg_idr_lock);
-+
- 		memcg->id.id = 0;
- 	}
- }
-@@ -3502,8 +3519,7 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
- 	if (!memcg)
- 		return ERR_PTR(error);
- 
--	memcg->id.id = idr_alloc(&mem_cgroup_idr, NULL,
--				 1, MEM_CGROUP_ID_MAX + 1, GFP_KERNEL);
-+	memcg->id.id = mem_cgroup_alloc_id();
- 	if (memcg->id.id < 0) {
- 		error = memcg->id.id;
- 		goto fail;
-@@ -3648,7 +3664,9 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
- 	 * publish it here at the end of onlining. This matches the
- 	 * regular ID destruction during offlining.
- 	 */
-+	spin_lock(&memcg_idr_lock);
- 	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
-+	spin_unlock(&memcg_idr_lock);
- 
- 	return 0;
- offline_kmem:
--- 
-2.43.5
-
+Applied to hyperv-fixes. Thanks.
 
