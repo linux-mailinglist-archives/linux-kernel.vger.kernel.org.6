@@ -1,149 +1,127 @@
-Return-Path: <linux-kernel+bounces-273984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4025894705C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:33:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E20947060
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE73FB20B09
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8F8E1F21185
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 20:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC59D137772;
-	Sun,  4 Aug 2024 19:33:33 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709291339A4;
+	Sun,  4 Aug 2024 20:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LrbLq3Px"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C415EAD59
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 19:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7DE6FB9
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 20:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722800013; cv=none; b=gAyycJUi5TCEZMpOznziEr0viLpuI3BrJVcQlEc+9k4kgpgVTIOg4jauye7WNIHkQOgJLL7M4PJ2xUFQHQlLAK87irDCuC5T27OqnAG+S+PAqwsqNye0EZhP2NuSh5Jg81U8Vl3N6NfFZYj+UX/z69DqEWfEE/w2dlRiWKWC2XQ=
+	t=1722801728; cv=none; b=Ip83eZiJtn5CrkKH8CBkS5pyMaJXiq2tKwEn+Kcl+3dpM/iJhr6NH10rblCPJKP9cvVsBsFMSUQPmBGNhLAf+AbK+O0Q0A0yuJlp+GjzI6Vvur2cWCqZxxc7kFBWcDsUMqDhLkg6Ca8AzzOKx8pF2kQwKqKKMQoaB7AURsCIoqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722800013; c=relaxed/simple;
-	bh=Ege54MFq1DMrJcWiCDMbJ2HcM2ypStFyil/0AKIiHkg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=geYCef37+48fRNpM++KsePiBjVnYiVjFVj/r4/N1CZPG6N/k1erkJNPfSi2bDj5HTBwRDsPAO1OtfveHaCjkaAWbyaA1Ba5io7zPOobcDuEGCw0PnHre0Zcswo6tI5c+34+ny8PC1kDseHMZLp2HlOnFubU9+7HxEFQ2xH3dEzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b0bee2173so94457325ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 12:33:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722800010; x=1723404810;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=73bjFrgcVnbFT6bvTdW7jjEosldFBKTQFoMvFajDuwI=;
-        b=ri1HaGFcRYrLECpuawZXb2kDU/afgszgKY/+pXQaIQ2z+XPEkLLjhHphk2mPbm09iR
-         VWjuTgLFBR+gX7C8pQP5IChPH0WvBqyKcCYq3hYDZ7f3APFUlta2Cscx+djEqzdIqxpL
-         c9AxsBXIkSKWTw38vIacNUWMgn+j9wp157W6r5nXr6ze9DCqUhyHt+zAVYyHSizGjlJR
-         odh+WGzYjiqste1OMeLyBKdTMuBSa4Y2Qv7QJ2wh32UCsDWaK/9rCIE739LRSPZaYX5N
-         mI8R8swN788zVeMW9dI0CNmA+AXsL/fvvCfDgZCCekfOxZvOs6gkV2Dr4e1Vi1O3TR3g
-         iH1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSs2Gfe8oZRzrOGdViSIbhjMyjSCjVmaNbCarckcpCdo0pl7wi/CmpPdShjdNX/zZ8Hwz+GCqVPRUCJOa5pfl1ztbTgljnV/N60m3q
-X-Gm-Message-State: AOJu0Yz3FrohxyJgc/QUL24sMNqLz47ixVduS7NBisnM3m6cfJ02Oa80
-	emwdKOKYT1UItno6yFjY5mVc2f2lyuInyAbhh4c/LByuykALHXrQMTCV31dcoWm6y2sxCmfA+nB
-	VfnBVlXBGYbhejB4NN6cbFnxF19E980EbgVjLlE5xX6u+YnLXmm7zb7U=
-X-Google-Smtp-Source: AGHT+IEpmvVuM1dyybCZs19PSG3BgaBmUm0n42ONUF47VQ4nArKnGOTZj3Qrw1IGPV7u1PcBkBMonLeqdOsiozAsELfQ3R32+RI1
+	s=arc-20240116; t=1722801728; c=relaxed/simple;
+	bh=H+rtlATAt9OolKawgkfo2ZCZccJCrnu6Q2G3/BugDm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8HRPJ//SdMJWXdwDGwckqWqvU/F4EA4ZHqR1xnQ04JGBU+t/bhn/gKlLU6Onoy1p4WFKku7WfRq5zvHgfG6o6kAqB8qKEixn50pFLhbZNaU8zheNYuh2iK8xoBOF7rvjdTYJzH0EIuk0gRydRb4e+dYgmnoPnv9ixI21Z9Hflg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LrbLq3Px; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722801726;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H+rtlATAt9OolKawgkfo2ZCZccJCrnu6Q2G3/BugDm8=;
+	b=LrbLq3PxhxS61FAh/VWX0MErMy8X0x14ZFQp11Q7Bd4FUTAEcBalim8G78RbP8torjQNlg
+	al/jC8U8qNmS25WnFNGu6CRlpEc6Sm0lMKIA78QkXZ4bPT4UpgNS8+udsfxsNxPe2cGDuN
+	iXJiHKVWYrjeCPiyEin+zMgxBZkAXZk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-529-GSJVXezxNgeCIAJSp2csjg-1; Sun,
+ 04 Aug 2024 16:02:02 -0400
+X-MC-Unique: GSJVXezxNgeCIAJSp2csjg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DC6B1955D45;
+	Sun,  4 Aug 2024 20:02:00 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.47])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2E7E21955F40;
+	Sun,  4 Aug 2024 20:01:55 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  4 Aug 2024 22:01:58 +0200 (CEST)
+Date: Sun, 4 Aug 2024 22:01:53 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Brian Mak <makb@juniper.net>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first
+ in ELF cores)
+Message-ID: <20240804200153.GC27866@redhat.com>
+References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
+ <20240804152327.GA27866@redhat.com>
+ <CAHk-=whg0d5rxiEcPFApm+4FC2xq12sjynDkGHyTFNLr=tPmiw@mail.gmail.com>
+ <20240804185338.GB27866@redhat.com>
+ <CAHk-=wjr0p5CxbC-iGEznupau936D24iotTZi7eFXqgKX-otbg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2198:b0:39a:e900:7e3e with SMTP id
- e9e14a558f8ab-39b1fc4c0d9mr8100465ab.3.1722800010057; Sun, 04 Aug 2024
- 12:33:30 -0700 (PDT)
-Date: Sun, 04 Aug 2024 12:33:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009e7183061ee0a25f@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in btrfs_run_defrag_inodes (2)
-From: syzbot <syzbot+5833b186650f87c5b7c4@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjr0p5CxbC-iGEznupau936D24iotTZi7eFXqgKX-otbg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello,
+On 08/04, Linus Torvalds wrote:
+>
+> On Sun, 4 Aug 2024 at 11:53, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > Apart from SIGKILL, the dumper already has the full control.
+>
+> What do you mean? It's a regular usermodehelper. It gets the dump data
+> as input. That's all the control it has.
 
-syzbot found the following issue on:
+I meant, the dumping thread can't exit until the dumper reads the data
+from stdin or closes the pipe. Until then the damper can read /proc/pid/mem
+and do other things.
 
-HEAD commit:    e4fc196f5ba3 Merge tag 'for-6.11-rc1-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=133acef9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8b0cca2f3880513d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5833b186650f87c5b7c4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > And note that the dumper can already use ptrace.
+>
+> .. with the normal ptrace() rules, yes.
+>
+> You realize that some setups literally disable ptrace() system calls,
+> right? Which your patch now effectively sidesteps.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Well. If, say, selinux disables ptrace, then ptrace_attach() in this
+patch should also fail.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c4bed4c74b59/disk-e4fc196f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f90c5ef25b80/vmlinux-e4fc196f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3a4dad9a7e8e/bzImage-e4fc196f.xz
+But if some setups disable sys_ptrace() as a system call... then yes,
+I didn't know that.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5833b186650f87c5b7c4@syzkaller.appspotmail.com
+> THAT is why I don't like it. ptrace() is *dangerous*.
 
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:1819!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 1 UID: 0 PID: 10710 Comm: btrfs-cleaner Not tainted 6.11.0-rc1-syzkaller-00062-ge4fc196f5ba3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:iput+0x928/0x930 fs/inode.c:1819
-Code: ff e9 a7 fb ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 45 fe ff ff 4c 89 f7 e8 33 aa e7 ff e9 38 fe ff ff e8 29 71 80 ff 90 <0f> 0b 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900041ffc50 EFLAGS: 00010293
-RAX: ffffffff8212f547 RBX: 0000000000000040 RCX: ffff888023d05a00
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
-RBP: ffff88805e4f48e0 R08: ffffffff8212ec80 R09: 1ffffffff202f495
-R10: dffffc0000000000 R11: fffffbfff202f496 R12: ffff88805e4f49b0
-R13: ffff88806c102028 R14: 0000000000000005 R15: ffff888068e60350
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1c9b094108 CR3: 000000005d542000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- __btrfs_run_defrag_inode fs/btrfs/defrag.c:281 [inline]
- btrfs_run_defrag_inodes+0xa80/0xdf0 fs/btrfs/defrag.c:327
- cleaner_kthread+0x28c/0x3d0 fs/btrfs/disk-io.c:1527
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:iput+0x928/0x930 fs/inode.c:1819
-Code: ff e9 a7 fb ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 45 fe ff ff 4c 89 f7 e8 33 aa e7 ff e9 38 fe ff ff e8 29 71 80 ff 90 <0f> 0b 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900041ffc50 EFLAGS: 00010293
-RAX: ffffffff8212f547 RBX: 0000000000000040 RCX: ffff888023d05a00
-RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000000
-RBP: ffff88805e4f48e0 R08: ffffffff8212ec80 R09: 1ffffffff202f495
-R10: dffffc0000000000 R11: fffffbfff202f496 R12: ffff88805e4f49b0
-R13: ffff88806c102028 R14: 0000000000000005 R15: ffff888068e60350
-FS:  0000000000000000(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1c9b094108 CR3: 000000006b99e000 CR4: 0000000000350ef0
+And horrible ;)
 
+> Just adding some implicit tracing willy-nilly needs to be something
+> people really worry about.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Ok, as I said I won't insist.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Oleg.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
