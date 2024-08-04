@@ -1,202 +1,196 @@
-Return-Path: <linux-kernel+bounces-273989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AED494707A
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:39:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5340F94707E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4EB328118C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 20:39:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D933C1F21152
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 20:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C9312D20D;
-	Sun,  4 Aug 2024 20:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F7377102;
+	Sun,  4 Aug 2024 20:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="p4xgST/q"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011055.outbound.protection.outlook.com [52.101.65.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="iFB4P82R"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986806FB9
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 20:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722803973; cv=fail; b=BSI09ECvGoSwtu57gUTG4oSRfdOMwXs5e38OfvBqpmvPxquJOtGoZb4V2B78gVObKFBLo7G/RTWX+YnfY63l5DFpgnBKQIh1jaAtylVz7cnHVmzurDKfOvK13HLtXG1bxjLO5ll1ZR+Iw4cbuUHaGgRNy1XnJ0T3aUk6SyZmorI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722803973; c=relaxed/simple;
-	bh=P8J67U6iuuwInHkou2fx4X7AnbGzB/OKxk57rzKLv1Q=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=d2w28e+VfbvfqOzJ2KTuaLas/ws56x7+LOPAcpOYiZ4RUhZdmwlWsqUXKuIkAS78Ef2xarunsmpFsNt9EaV7Sco+6bl7DdOH1LjAtbfp9EpfRQJVX8ckZlgw7p/nxVmCs8I52zKa7PxhRaezTkiH5AWSF2fiqH8q4irohM9u6qw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=p4xgST/q; arc=fail smtp.client-ip=52.101.65.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IE1EAoxMsmCMzHNdNSlEKBP1J6ziTPCQi8xDVYUkwVdIUN0ynJCkZCVzfT+x9LggDkpSGaVDCUohfY9p1dwEXr4XB6Kfj0uusUpZnoFm8GqJ5Ph3GD1viTJzaSygFSxc77x9jveRaQwmejTs3Tn3WNdeO43arY+TRAfMq36XscSbXoIXYKyQDPkWE6Eis3cFVoPefZSmBmePxHVLLYoWy7aXgsqz0pFzyEyhqz2l3DkRXbwWGsz7U8BFEbyY/gVmybmWLx71Z+jAkAzJAi3uBJ5AvwCyLSzq3hxXRktT4x5NCGginvxodUBEophdrwrBvJlZwAmYbMdnUoKwDKe/Hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gUu5pbyXRjTd/6NStP04iFCQqXnqi2s9NTNiu7QWdjs=;
- b=ir+DjPDXEFm/PsldA3mehP+/iv2hlBKuWTcZi5tLCQEi4zib15H3gnktEEwkrjhOtyISyi/Od4lv/+kq9oL2MbjDu71AB00Y6gP2tI9PDTNkIvytdTk19lmtJb2w9F6waQySCwSlPcOjPA76k4O2gBuw4jEYP3EIlblBAT012DMAqNYA0GE99xs+wzrsPQIt4GPMLhNGgHA54cndmjpkFLwqzjS4lCwUChrOcJN8rcagRf3UlrpLQYbQ9cEwtiBIjmlXh9ig+UM5xrMsD7pRhNnEKYtmdenZiav8Vq1yQPjHqQUzBoZf8ZoZ9DDf0C9U/Wa4GZxv4dEMGu993dI4RQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gUu5pbyXRjTd/6NStP04iFCQqXnqi2s9NTNiu7QWdjs=;
- b=p4xgST/qoXVeG37ZHbSNuDW+rkQBrkskVBOQtkm4aOuNygcUlYGeGCV87IONZkEjXaoJltGoY6skoNP6ACGJrDhUsGi8zmxzxlBwOavV6FIGYlzccesbp0J2cdaQlmTFcEFzLORiJCBJ4DPzIN1FJux0PzZgVsQRd37dx3poHOVHtHwgVhjJiK+z4w+0oV1C2GzpL8fIJvyyq5DSDKdUCQx782RTPuwouEfFH/aUIX+oaLJjtnkJ8U+pI3hMUY3+tde+1LOodQE/Uj+Ok1yqbLqU1JbrcOJ4Zna/tTPTukoTL7EzojmYQD7+5dNPiwmO2FoUEHaAnveoAbgmki+irw==
-Received: from AM9PR04MB8506.eurprd04.prod.outlook.com (2603:10a6:20b:431::16)
- by AS8PR04MB8596.eurprd04.prod.outlook.com (2603:10a6:20b:427::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Sun, 4 Aug
- 2024 20:39:26 +0000
-Received: from AM9PR04MB8506.eurprd04.prod.outlook.com
- ([fe80::5f7:9bab:66a3:fe27]) by AM9PR04MB8506.eurprd04.prod.outlook.com
- ([fe80::5f7:9bab:66a3:fe27%4]) with mapi id 15.20.7828.024; Sun, 4 Aug 2024
- 20:39:26 +0000
-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: dl-S32 <S32@nxp.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Claudiu Manoil
-	<claudiu.manoil@nxp.com>
-Subject: [PATCH 0/6] Add support for Synopsis DWMAC IP on NXP Automotive SoCs
-Thread-Topic: [PATCH 0/6] Add support for Synopsis DWMAC IP on NXP Automotive
- SoCs
-Thread-Index: Adrmh82HhCYlBOqeSieajd3V15CcHw==
-Date: Sun, 4 Aug 2024 20:39:26 +0000
-Message-ID:
- <AM9PR04MB8506436F08F151DD5858BBABE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
-Accept-Language: cs-CZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM9PR04MB8506:EE_|AS8PR04MB8596:EE_
-x-ms-office365-filtering-correlation-id: bd6ff6aa-c44a-4abd-1e41-08dcb4c58820
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?kKwSaGNOdmAqtFM4hz/X26oNwG0kQ/2/CAAVF33TD9D3RIDTkbVIFbBkC4fz?=
- =?us-ascii?Q?g+Pbn19vo9muAUPF1ZZWUaFjSSRBTIn1Y7inEa0EYoF1fHwFg7kUi8YyMVwg?=
- =?us-ascii?Q?0wwTHQkScwo8Vt09w6ejTrwI+FEs+fOGwwwUr4GzDUZkxf49CCkoa6g9GHLt?=
- =?us-ascii?Q?5PJVZfQyBPRFoY5lnKE7G2TFtxRips/TGAhjGuTuhXFho3AdFxxiNdVqIISo?=
- =?us-ascii?Q?L/v+UudtvRIyd5YB0/GlqP4Rbwl7kcMA6mztSV75sUa0xi4/Bm2qfY2N43+z?=
- =?us-ascii?Q?T0NUAcbaJ2D1vkJ45TXhROamMlPhv/HBpxMtYmlSp7op6ENe/uoC8fqDwp+K?=
- =?us-ascii?Q?GZGT2rpaGnR+BTluVYAT6HiduRL79uYqZrJ+lU5t4w8kbx2RxGlFsT3AekEj?=
- =?us-ascii?Q?1J6sDfB9RgYprTyGOoUr5cRRFCXPeLV4o7FCwtsl4Kbg8d+bIAy9aCU0VhaT?=
- =?us-ascii?Q?FFk2cylMuUuhEKFATdOmP868IwS3rkWSmpDu3vYLG8tze1g420Baivtn37Kh?=
- =?us-ascii?Q?kOlIbRzhz8903hOy3se8FggisjFKz+iKylZaSeErd809GWSmm9KeRW++iPnp?=
- =?us-ascii?Q?Rk7g8I9dJdoP0lDnQ2rTr3HijUy+zB5bD9falextXHvyf33tXvwJ4gKtj4Vz?=
- =?us-ascii?Q?5L2FuR9elzw+uzqCdJpgnwz7e4kETI83Nl601y4AXMoh/Yg0T0IYfpKt1EUE?=
- =?us-ascii?Q?PaocBoO/iJMRTAZ7+oGurmz/nLtAdUHEGhUdTdOOuN+lvVYMAT1Z3sbk8D3t?=
- =?us-ascii?Q?wvyfO2uZBAdn9CULMUqaPWOwePe/vsaN63nrKcSdRY8h5Po1OJ0yiGtGxMQk?=
- =?us-ascii?Q?cmofcyO1FHavo0MGaeidtp5Wkx26YqArHPyVMZqYWyx5Vkfl4623jIonjU8e?=
- =?us-ascii?Q?l9dNYaPHRbwi3nYezMWMukCxFjICso3nX5doLYwqvFBR4rY9sskP6TLpqEMj?=
- =?us-ascii?Q?7tO7f0C+RWZYxmYILddDv7mQ4mM3+VlbsAKAOlO3iTyBaD1wFIx4wzSTMHIz?=
- =?us-ascii?Q?Hs9Mgfs3m1vu862S7C9BmCu3I/e8EpBuLUybO1BiFcbUlalRJm4MmZg7rlnm?=
- =?us-ascii?Q?V5puhD4Ymv0TbFK6MbXkppcGRcW+p5mcTuARAUHj78jBvyisd4ocZil0PHhI?=
- =?us-ascii?Q?SwBx5xfo/emMItkN+BbZXJMNZX3dUX4zfi282EEfTLFqRJmZBLimFDRSJ4DU?=
- =?us-ascii?Q?nfZwk29YqmelY7kM3DTDTq3jOjL0YuW/Wjzonbcq8mmKo41DGUjD9S856r6E?=
- =?us-ascii?Q?tFwkcHnOM9ELMaf80UdGlvYCNV3mcY+QTO+p8DBtkzdbg+dqxZ8LNjKoojEA?=
- =?us-ascii?Q?mF+vqQ3xE3v3gYgnFsTRBBClpVwQekA9ycctAHpqa1hsSyXxEn7xGHdPB99a?=
- =?us-ascii?Q?6n2a+Fo=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8506.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Sc43xUEVlyL507UGcCbnhiQexbxh+KQ+2noHV1/gbgNyGqmYNmrAlZ2rDol3?=
- =?us-ascii?Q?coav0PjNOaIycFapa/o1HNqjhaOwwW6BsFdWgl2RCO/Z0VaQCYJI9UlHEfHR?=
- =?us-ascii?Q?k2VCBqN4AVAdr9YqqUW0zPUwgIgp/lMLb1JXZwfnikWo/ItWGRCgqAVDPaYo?=
- =?us-ascii?Q?Bq22zaWgjWwblnfWvOUdcq5H4BL6N6UOwko71A20OiPQ4QFO7mu2V6QFxfxF?=
- =?us-ascii?Q?rZw62cbbtbdMfWx2rDJoEMM6mUKrshaqF0etvlH9ePZ4d8aob07hSnblu761?=
- =?us-ascii?Q?emGftfx7CxK1CeDmw0iDF9bgzDoPMO5J1cI8yhocamth2IwtCCIxBshBu6Ff?=
- =?us-ascii?Q?VHbTB5xONQSwfxjWS+V3xqFLGlf37HP+i+iEL48fje0u4vgspFh/AiIv1r5J?=
- =?us-ascii?Q?mUfBrnFpSt6PTbG5F/dxkhh+oNr4Fkb9VoFl6yEkkrQrivfBzBjpxoNpaiWg?=
- =?us-ascii?Q?q8/TE9ESLBhvY7t9M9wyJKpic6vhFDjeoCOWN58yQFY/8PJsyMQdp5dhdy80?=
- =?us-ascii?Q?Gr8KhyHn4tEgFxJ0o2SVQDPIINZ0sTyAYs/XCRBnG4J+/+6hqU+Uz0s9XCzr?=
- =?us-ascii?Q?rdvaWt2Pl+6w0Cn1jl9oh5qdfuMp4+WtgeqRKHc93U9vyaEztxVn8g07yO/j?=
- =?us-ascii?Q?+D3MFn3SNO0NNBM3Sycdh9VB8s5SS0Op9pFS3/uP8WMaoAlxpZd4KJMwanfu?=
- =?us-ascii?Q?VO9HqFVQJew4rzQtFcks0odBDpYHfh0ovIUztf8WXOg1k+Ehk8i7cHfrr5D0?=
- =?us-ascii?Q?qQuimBXfZfXMAcpPtHVs0r6hvnUf+OmkVamufGqa/duRZXr3Alwg7LLJ9Wub?=
- =?us-ascii?Q?XTS4WNY2nGPpGa6Ek64UMblTt8/QUieA7cgTGsoYhIhnlsQ9dAaj0OWJhbKU?=
- =?us-ascii?Q?O8uBztrwI+iS/SSC3EbEZiGfTTHWe+LT0bkTO14LpFM+I9jSMgE3Lw66ti+D?=
- =?us-ascii?Q?fPvC+ZAzgqf0WcnK8jX86Oqv0uouf5D/fmDZ2fSSh6NYrK+1DF+vts1/LTR5?=
- =?us-ascii?Q?luaM2M9EUM5B9sDBpmzcngdRKQv8BK4aSP7DBW3FacU+PU+MPrcg9vxP2oR9?=
- =?us-ascii?Q?wA2jN3KFed20JtmkpcdnjLnhXVTuiU/TSx4lLLTXeLw/Y8zXunOqY+b0SlNi?=
- =?us-ascii?Q?QucmwdqCsuc+wgVjQrqv9C5schs8SAAYkqzynaPOABWy65VaSrhs9sozJi0O?=
- =?us-ascii?Q?ThIv5iOY7HwjS7NVE3i3Sg0ZK/JCVZlKemGEzbfsUbez4h+0ujuZkRaV4otP?=
- =?us-ascii?Q?IN8DNU3KWR7J9JxzPk05p8EslxSfGzsnt3t7dYt0bT3iOexuaSUvTBnUloS8?=
- =?us-ascii?Q?/3OvxmlD0UrGxAqn8AgE0UW+Eim4IkRBfX/hz0B7gOhOO0wnAmpnaYyQJ+m3?=
- =?us-ascii?Q?zoG7DNR02OX/rAbGWYjez9hdP82I5NyZZ1gyFtD6xCZNLnjFfl6UMyi28hJm?=
- =?us-ascii?Q?1KQy3nGmVye7zb9OZnjbkimjwil0ZnsXcLjpOsDUj8/VzTDONGGa3F+AmwIn?=
- =?us-ascii?Q?guXYockpSsncMefjNqrfyxHc91TakUEN/VSS/CEmRWT9MoGemfTHWhnP9tzB?=
- =?us-ascii?Q?OUC8Q9ppik9E6j6YvzmMVIoXYArbxxyOs7ks16bC?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD13179AE
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 20:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722804455; cv=none; b=rp68pgcunEjYqeIKhUgkRlV/nvra15PlfLgLmjH2RtRJNSm6nkw0JZVHL0xO12CkY0ubzebuxU10iJ2AaF1ZHYb4AmZGXzB/IsjPMXKeXZASUO3wqgMCqaNf00oi31ir9rDl07zdnU4S27y7y2BLlMe9SEXHDKNvVmuWzlBVHIM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722804455; c=relaxed/simple;
+	bh=G7jG61sPUDWowFvdCKFsSrRg8yz96dOn7bPperHu144=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tNHFC9zs9GVjFL+gaFbudsvORUvVn6oTtaRY3TYhFPLpUiQ6oWAeG7e0P3vBwDe8ZYcFwydoEyzmdrrMcYIctb64WAfIM+YbOAoJb9nc1HUMhLp/GlWcHhk3Z5beMU5sm/ZrRuVncRWMXpQc18Xay5rOQiXioRYNPi8o88gKjqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=iFB4P82R; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=QGZqA/Ycc9erQs51urtOJPkn4CNpRCRgyhDr8Af1FMI=; b=iFB4P82RRgZeQYgKr2C7qfRaMi
+	NLniPV73dXt0vQwSuwzmuqoHHYyssDMEu5EfEEbsFXcllyxEajr1RsbbboOpHKbMjQZfuYjiAijqm
+	T6UmjoJK2aoHlhL8Qc2lEb88wc0awegGMfBf1uBIJclsvss0jk01sU1E76kGC4zjDV7sQfHTWC03t
+	2aUWfON4SoTXLAOPNufpnFx1IAVdGSOEKYuBn+yVygN70EvXnTC1DPgnlIeW7nlcRTxI8XLU9TNNY
+	ftAMb/19PYpl4kY73nrIH+97TQtBxnJ6mHtTVEtam+fxmsb0ezh6PqY7ZeJGydEj8W1EqTemZJXgu
+	Y26eCwjg==;
+Received: from [187.36.213.55] (helo=[192.168.1.212])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sai89-007pEc-0U; Sun, 04 Aug 2024 22:47:05 +0200
+Message-ID: <e6913c12-14a3-4c00-bf07-90a72313dd39@igalia.com>
+Date: Sun, 4 Aug 2024 17:46:55 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8506.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd6ff6aa-c44a-4abd-1e41-08dcb4c58820
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Aug 2024 20:39:26.4655
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vdhvCzWie3w77ssLFHZyTFq3tOhCcai/5Y2s8SXLUuDdCX/si6vDjBELa9NCFf+89nqqorQFFVIzxmFNuIJv+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8596
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] drm/vkms: Fix cpu_to_le16()/le16_to_cpu() warnings
+To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
+ rodrigosiqueiramelo@gmail.com
+Cc: melissa.srw@gmail.com, hamohammed.sa@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, louis.chauvet@bootlin.com
+References: <20240716161725.41408-2-jose.exposito89@gmail.com>
+ <Zq-29RHgywzw96xz@fedora>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+Autocrypt: addr=mcanal@igalia.com; keydata=
+ xjMEZIsaeRYJKwYBBAHaRw8BAQdAGU6aY8oojw61KS5rGGMrlcilFqR6p6ID45IZ6ovX0h3N
+ H01haXJhIENhbmFsIDxtY2FuYWxAaWdhbGlhLmNvbT7CjwQTFggANxYhBDMCqFtIvFKVRJZQ
+ hDSPnHLaGFVuBQJkixp5BQkFo5qAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQNI+cctoYVW5u
+ GAEAwpaC5rI3wD8zqETKwGVoXd6+AbmGfZuVD40xepy7z/8BAM5w95/oyPsHUqOsg/xUTlNp
+ rlbhA+WWoaOXA3XgR+wCzjgEZIsaeRIKKwYBBAGXVQEFAQEHQGoOK0jgh0IorMAacx6WUUWb
+ s3RLiJYWUU6iNrk5wWUbAwEIB8J+BBgWCAAmFiEEMwKoW0i8UpVEllCENI+cctoYVW4FAmSL
+ GnkFCQWjmoACGwwACgkQNI+cctoYVW6cqwD/Q9R98msvkhgRvi18fzUPFDwwogn+F+gQJJ6o
+ pwpgFkAA/R2zOfla3IT6G3SBoV5ucdpdCpnIXFpQLbmfHK7dXsAC
+In-Reply-To: <Zq-29RHgywzw96xz@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The SoC series S32G2xx and S32G3xx feature one DWMAC instance,
-the SoC S32R45 has two instances. The devices can use RGMII/RMII/MII
-interface over Pinctrl device or the output can be routed
-to the embedded SerDes for SGMII connectivity.
+Hi José,
 
-The provided stmmac glue code implements only basic functionality,
-interface support is restricted to RGMII only.
+On 8/4/24 14:14, José Expósito wrote:
+> On Tue, Jul 16, 2024 at 06:17:26PM +0200, José Expósito wrote:
+>> Building with Sparse enabled prints this warning for cpu_to_le16()
+>> calls:
+>>
+>>      warning: incorrect type in assignment (different base types)
+>>          expected unsigned short [usertype]
+>>          got restricted __le16 [usertype]
+>>
+>> And this warning for le16_to_cpu() calls:
+>>
+>>      warning: cast to restricted __le16
+>>
+>> Declare the target buffer as __le16 to fix both warnings.
+>>
+>> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+>>
+>> ---
+>>
+>> v1 -> v2: https://lore.kernel.org/dri-devel/20240712161656.7480-1-jose.exposito89@gmail.com/T/
+>>
+>>   - Thomas Zimmermann: Declare "pixels" cariable as __le16 instead of
+>>     multiple casting.
+>>
+>> v2 -> v3: https://lore.kernel.org/dri-devel/20240715151625.6968-2-jose.exposito89@gmail.com/
+>>
+>>   - Thomas Zimmermann: Use cpu_to_le16() instead of casting 0xffff
+>>   - Reviewed-by Thomas and Louis
+>> ---
+> 
+> Would it be possible to get an ACK from the maintainers? It is a very simple patch
+> and it already has 2 reviewed-by, hopefully we can get it merged.
 
-This patchset adds stmmac glue driver based on downstream NXP git [0].
+Acked-by: Maíra Canal <mcanal@igalia.com>
 
-[0] https://github.com/nxp-auto-linux/linux
+Could you please apply it to drm-misc-next?
 
+Best Regards,
+- Maíra
 
-Jan Petrous (OSS) (6):
-  net: driver: stmmac: extend CSR calc support
-  net: stmmac: Expand clock rate variables
-  dt-bindings: net: Add DT bindings for DWMAC on NXP S32G/R SoCs
-  net: stmmac: dwmac-s32cc: add basic NXP S32G/S32R glue driver
-  MAINTAINERS: Add Jan Petrous as the NXP S32G/R DWMAC driver maintainer
-  net: stmmac: dwmac-s32cc: Read PTP clock rate when ready
-
- .../bindings/net/nxp,s32cc-dwmac.yaml         | 127 +++++++++
- .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
- MAINTAINERS                                   |   7 +
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
- drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
- drivers/net/ethernet/stmicro/stmmac/common.h  |   2 +
- .../stmicro/stmmac/dwmac-qcom-ethqos.c        |   2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-s32cc.c | 248 ++++++++++++++++++
- .../net/ethernet/stmicro/stmmac/stmmac_main.c |   4 +
- .../ethernet/stmicro/stmmac/stmmac_platform.c |   2 +-
- include/linux/stmmac.h                        |  10 +-
- 11 files changed, 409 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.y=
-aml
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-s32cc.c
-
---=20
-2.45.2
-
+> 
+> Thanks a lot in advance!
+> 
+>>   drivers/gpu/drm/vkms/vkms_formats.c | 14 +++++++-------
+>>   1 file changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+>> index 36046b12f296..040b7f113a3b 100644
+>> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+>> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+>> @@ -75,7 +75,7 @@ static void XRGB8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixe
+>>   
+>>   static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+>>   {
+>> -	u16 *pixels = (u16 *)src_pixels;
+>> +	__le16 *pixels = (__force __le16 *)src_pixels;
+>>   
+>>   	out_pixel->a = le16_to_cpu(pixels[3]);
+>>   	out_pixel->r = le16_to_cpu(pixels[2]);
+>> @@ -85,7 +85,7 @@ static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
+>>   
+>>   static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+>>   {
+>> -	u16 *pixels = (u16 *)src_pixels;
+>> +	__le16 *pixels = (__force __le16 *)src_pixels;
+>>   
+>>   	out_pixel->a = (u16)0xffff;
+>>   	out_pixel->r = le16_to_cpu(pixels[2]);
+>> @@ -95,7 +95,7 @@ static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
+>>   
+>>   static void RGB565_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+>>   {
+>> -	u16 *pixels = (u16 *)src_pixels;
+>> +	__le16 *pixels = (__force __le16 *)src_pixels;
+>>   
+>>   	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
+>>   	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
+>> @@ -178,7 +178,7 @@ static void argb_u16_to_XRGB8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel
+>>   
+>>   static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>>   {
+>> -	u16 *pixels = (u16 *)dst_pixels;
+>> +	__le16 *pixels = (__force __le16 *)dst_pixels;
+>>   
+>>   	pixels[3] = cpu_to_le16(in_pixel->a);
+>>   	pixels[2] = cpu_to_le16(in_pixel->r);
+>> @@ -188,9 +188,9 @@ static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
+>>   
+>>   static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>>   {
+>> -	u16 *pixels = (u16 *)dst_pixels;
+>> +	__le16 *pixels = (__force __le16 *)dst_pixels;
+>>   
+>> -	pixels[3] = 0xffff;
+>> +	pixels[3] = cpu_to_le16(0xffff);
+>>   	pixels[2] = cpu_to_le16(in_pixel->r);
+>>   	pixels[1] = cpu_to_le16(in_pixel->g);
+>>   	pixels[0] = cpu_to_le16(in_pixel->b);
+>> @@ -198,7 +198,7 @@ static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
+>>   
+>>   static void argb_u16_to_RGB565(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>>   {
+>> -	u16 *pixels = (u16 *)dst_pixels;
+>> +	__le16 *pixels = (__force __le16 *)dst_pixels;
+>>   
+>>   	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
+>>   	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
+>> -- 
+>> 2.45.2
+>>
 
