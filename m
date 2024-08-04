@@ -1,88 +1,76 @@
-Return-Path: <linux-kernel+bounces-273915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2744946F94
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:22:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85DF946F95
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4D161C20B75
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF971F21862
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5263D757E5;
-	Sun,  4 Aug 2024 15:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1384361FE1;
+	Sun,  4 Aug 2024 15:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g2ZGQAdg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DKESF1/t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7698B4CE05;
-	Sun,  4 Aug 2024 15:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1743B405E6
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 15:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722784927; cv=none; b=EBi7FzlwBANrwTBPbD8+zM7ep69eNPy/Nta7/sUg+Ga6NlUIthXWQk6RxZryoXKXkAVjuTrLeTi7DXohkD7Og7UTocuawDVZi57N1zaEdHbTRp0A1kBD7lkIRbZQbtdlWRU976vfddzgu/ChQmpmSj/mJ5zanYmmgVA5XH1TTUA=
+	t=1722785024; cv=none; b=U+iUHyZyvTqjuG4u6DTBXC/mWFw2M0SbX4UaZ6wHPYUF0PjHONjFpPl43e8eOGGV1LoXL7Er8yLkj9snsziU1hpbEEbse494uz3q05PtosUSZ148Ouq8i3y/87sKoOXnkYE9Pob8pHnM4puOoMUhrTOzProiczGLYpEpTj8WlMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722784927; c=relaxed/simple;
-	bh=pMW2V5YCdfDRYopjZj7CafypLSiEa8//6/HwOwZDAaQ=;
+	s=arc-20240116; t=1722785024; c=relaxed/simple;
+	bh=M/HvJXNppM08outXt+xcpWtPDWshnBemU5T+LJtgsdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuQaNUhjny8Zah7T8sYQnUuHeFG9w953v/lM6ISNwEbuQH8Eu8u6EF1m35Lfz6h2rbIrQnstOl3dZMSg4kqVlkoQwAoCe5duXWywQ5w63XR0u81RLfYRwvIYLHpOUDpwJUoN9ZJIAbbKC9RDpssQGU/9qyLLYXylSmiiANFW1Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g2ZGQAdg; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722784924; x=1754320924;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pMW2V5YCdfDRYopjZj7CafypLSiEa8//6/HwOwZDAaQ=;
-  b=g2ZGQAdgoa+C1Nmuhw+Qdon5PwTLvRa21UgKT3h1A0ww9RN75dK+yLt7
-   d0EkHcx+V8cmaUDA6xDkkllwNh2WR35jn3oyjvj3zSJaruCke3bV1TZSC
-   QAS2Gvak1YiO6IxfskNlYXjy4ifoEEyJJdeQh2agvrq8xfi4fqQ0SBZx4
-   U1gq9BlcWCL9XT0nbrRzHDMk0OOoEdYLrcFge9UIi8S41wwo0ojRlEGN+
-   JkRSF9nnxIqj6KBhQ2XrbfVCATo/+wwC+gMxy3CeenNuvC7O25KdmPqw/
-   puo0oNwChVOBzlHkIMobUzoJt1MGREFh7p/x4QkOQPqOa9QKWvfMYghAi
-   A==;
-X-CSE-ConnectionGUID: uRZM58FoTdeqTlKqeRF2Ig==
-X-CSE-MsgGUID: 6SjXr1khTbicHuhEd4Xafw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="20910270"
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="20910270"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 08:22:04 -0700
-X-CSE-ConnectionGUID: g7fQh+VDQoWJtahEfnAHNg==
-X-CSE-MsgGUID: rFqPu/ZDQyOddIZtPRAcLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="60757645"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 04 Aug 2024 08:21:58 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sad3T-0001Ty-1T;
-	Sun, 04 Aug 2024 15:21:55 +0000
-Date: Sun, 4 Aug 2024 23:21:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-nvme@lists.infradead.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 2/6] nvme: assign of_node to nvme device
-Message-ID: <202408042203.CNpuv8Wt-lkp@intel.com>
-References: <20240804114108.1893-3-ansuelsmth@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ih9Hh4nusJm7CVWs3ndOBp2JgveGzjLL0BYFv1i7/KVWFge4i9xp7nwdKXAc/NeGIr4iDU6JPYGz2IEfo+QE+cQbzzpmyszK0bwPjWyVD/u4IGvG1aK6xCjoqmqi17xTpZtiQhFJa26zq2aRMCleKKJbI7v+NCwcood6EeaBxJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DKESF1/t; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722785021;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UscUOq8lFaSoakKdoY4BSP1iK/2oufX+q/kPRNFqhks=;
+	b=DKESF1/tBPhmHNTgKH7UkpN0fkCwLY7L4/VBgzOcOKvKrkCwLFfBXPU5ZaT7G5N4Hh4mr5
+	B8V+AfwsSmD9EHd1E59jGCiNSoEJ3bpcE8ugQT3H5ACII9LLWavevSCivf9cZ3a228A+E4
+	H7l2UXVR6w7fIGRRnytySVJHBoGlIvQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-460-gZqzruUtPhO3S_HyzHd0ZA-1; Sun,
+ 04 Aug 2024 11:23:39 -0400
+X-MC-Unique: gZqzruUtPhO3S_HyzHd0ZA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1EEA1955BF2;
+	Sun,  4 Aug 2024 15:23:34 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.47])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C54731955D42;
+	Sun,  4 Aug 2024 15:23:29 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  4 Aug 2024 17:23:33 +0200 (CEST)
+Date: Sun, 4 Aug 2024 17:23:27 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Brian Mak <makb@juniper.net>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first in
+ ELF cores)
+Message-ID: <20240804152327.GA27866@redhat.com>
+References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,195 +79,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240804114108.1893-3-ansuelsmth@gmail.com>
+In-Reply-To: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Christian,
+On 08/02, Brian Mak wrote:
+>
+> Large cores may be truncated in some scenarios, such as with daemons
+> with stop timeouts that are not large enough or lack of disk space. This
+> impacts debuggability with large core dumps since critical information
+> necessary to form a usable backtrace, such as stacks and shared library
+> information, are omitted.
+>
+> Attempting to find all the VMAs necessary to form a proper backtrace and
+> then prioritizing those VMAs specifically while core dumping is complex.
+> So instead, we can mitigate the impact of core dump truncation by
+> dumping smaller VMAs first, which may be more likely to contain memory
+> necessary to form a usable backtrace.
 
-kernel test robot noticed the following build errors:
+I thought of a another approach... See the simple patch below,
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.11-rc1 next-20240802]
-[cannot apply to mtd/mtd/next mtd/mtd/fixes]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+	- Incomplete, obviously not for inclusion. I think a new
+	  PTRACE_EVENT_COREDUMP makes sense, this will simplify
+	  the code even more.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvme-Document-nvme-card-compatible/20240804-194357
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240804114108.1893-3-ansuelsmth%40gmail.com
-patch subject: [PATCH 2/6] nvme: assign of_node to nvme device
-config: i386-buildonly-randconfig-005-20240804 (https://download.01.org/0day-ci/archive/20240804/202408042203.CNpuv8Wt-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408042203.CNpuv8Wt-lkp@intel.com/reproduce)
+	- Needs some preparations. In particular, I still think we
+	  should reintroduce SIGNAL_GROUP_COREDUMP regardless of
+	  this feature, but lets not discuss this right now.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408042203.CNpuv8Wt-lkp@intel.com/
+This patch adds the new %T specifier to core_pattern, so that
 
-All errors (new ones prefixed by >>):
+	$ echo '|/path/to/dumper %T' /proc/sys/kernel/core_pattern
 
->> drivers/nvme/host/core.c:4654:2: error: call to undeclared function 'of_node_put'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    4654 |         of_node_put(ctrl->device->of_node);
-         |         ^
->> drivers/nvme/host/core.c:4775:26: error: call to undeclared function 'of_get_compatible_child'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    4775 |         ctrl->device->of_node = of_get_compatible_child(ctrl->dev->of_node,
-         |                                 ^
->> drivers/nvme/host/core.c:4775:24: error: incompatible integer to pointer conversion assigning to 'struct device_node *' from 'int' [-Wint-conversion]
-    4775 |         ctrl->device->of_node = of_get_compatible_child(ctrl->dev->of_node,
-         |                               ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    4776 |                                                         "nvme-card");
-         |                                                         ~~~~~~~~~~~~
-   3 errors generated.
+means that the coredumping thread will run as a traced child of the
+"dumper" process, and it will stop in TASK_TRACED before it calls
+binfmt->core_dump().
 
+So the dumper process can extract/save the backtrace/registers/whatever
+first, then do PTRACE_CONT or kill the tracee if it doesn't need the
+"full" coredump.
 
-vim +/of_node_put +4654 drivers/nvme/host/core.c
+Of course this won't work if the dumping thread is already ptraced,
+but in this case the debugger has all the necessary info.
 
-  4648	
-  4649	void nvme_uninit_ctrl(struct nvme_ctrl *ctrl)
-  4650	{
-  4651		nvme_hwmon_exit(ctrl);
-  4652		nvme_fault_inject_fini(&ctrl->fault_inject);
-  4653		dev_pm_qos_hide_latency_tolerance(ctrl->device);
-> 4654		of_node_put(ctrl->device->of_node);
-  4655		cdev_device_del(&ctrl->cdev, ctrl->device);
-  4656		nvme_put_ctrl(ctrl);
-  4657	}
-  4658	EXPORT_SYMBOL_GPL(nvme_uninit_ctrl);
-  4659	
-  4660	static void nvme_free_cels(struct nvme_ctrl *ctrl)
-  4661	{
-  4662		struct nvme_effects_log	*cel;
-  4663		unsigned long i;
-  4664	
-  4665		xa_for_each(&ctrl->cels, i, cel) {
-  4666			xa_erase(&ctrl->cels, i);
-  4667			kfree(cel);
-  4668		}
-  4669	
-  4670		xa_destroy(&ctrl->cels);
-  4671	}
-  4672	
-  4673	static void nvme_free_ctrl(struct device *dev)
-  4674	{
-  4675		struct nvme_ctrl *ctrl =
-  4676			container_of(dev, struct nvme_ctrl, ctrl_device);
-  4677		struct nvme_subsystem *subsys = ctrl->subsys;
-  4678	
-  4679		if (!subsys || ctrl->instance != subsys->instance)
-  4680			ida_free(&nvme_instance_ida, ctrl->instance);
-  4681		key_put(ctrl->tls_key);
-  4682		nvme_free_cels(ctrl);
-  4683		nvme_mpath_uninit(ctrl);
-  4684		cleanup_srcu_struct(&ctrl->srcu);
-  4685		nvme_auth_stop(ctrl);
-  4686		nvme_auth_free(ctrl);
-  4687		__free_page(ctrl->discard_page);
-  4688		free_opal_dev(ctrl->opal_dev);
-  4689	
-  4690		if (subsys) {
-  4691			mutex_lock(&nvme_subsystems_lock);
-  4692			list_del(&ctrl->subsys_entry);
-  4693			sysfs_remove_link(&subsys->dev.kobj, dev_name(ctrl->device));
-  4694			mutex_unlock(&nvme_subsystems_lock);
-  4695		}
-  4696	
-  4697		ctrl->ops->free_ctrl(ctrl);
-  4698	
-  4699		if (subsys)
-  4700			nvme_put_subsystem(subsys);
-  4701	}
-  4702	
-  4703	/*
-  4704	 * Initialize a NVMe controller structures.  This needs to be called during
-  4705	 * earliest initialization so that we have the initialized structured around
-  4706	 * during probing.
-  4707	 *
-  4708	 * On success, the caller must use the nvme_put_ctrl() to release this when
-  4709	 * needed, which also invokes the ops->free_ctrl() callback.
-  4710	 */
-  4711	int nvme_init_ctrl(struct nvme_ctrl *ctrl, struct device *dev,
-  4712			const struct nvme_ctrl_ops *ops, unsigned long quirks)
-  4713	{
-  4714		int ret;
-  4715	
-  4716		WRITE_ONCE(ctrl->state, NVME_CTRL_NEW);
-  4717		ctrl->passthru_err_log_enabled = false;
-  4718		clear_bit(NVME_CTRL_FAILFAST_EXPIRED, &ctrl->flags);
-  4719		spin_lock_init(&ctrl->lock);
-  4720		mutex_init(&ctrl->namespaces_lock);
-  4721	
-  4722		ret = init_srcu_struct(&ctrl->srcu);
-  4723		if (ret)
-  4724			return ret;
-  4725	
-  4726		mutex_init(&ctrl->scan_lock);
-  4727		INIT_LIST_HEAD(&ctrl->namespaces);
-  4728		xa_init(&ctrl->cels);
-  4729		ctrl->dev = dev;
-  4730		ctrl->ops = ops;
-  4731		ctrl->quirks = quirks;
-  4732		ctrl->numa_node = NUMA_NO_NODE;
-  4733		INIT_WORK(&ctrl->scan_work, nvme_scan_work);
-  4734		INIT_WORK(&ctrl->async_event_work, nvme_async_event_work);
-  4735		INIT_WORK(&ctrl->fw_act_work, nvme_fw_act_work);
-  4736		INIT_WORK(&ctrl->delete_work, nvme_delete_ctrl_work);
-  4737		init_waitqueue_head(&ctrl->state_wq);
-  4738	
-  4739		INIT_DELAYED_WORK(&ctrl->ka_work, nvme_keep_alive_work);
-  4740		INIT_DELAYED_WORK(&ctrl->failfast_work, nvme_failfast_work);
-  4741		memset(&ctrl->ka_cmd, 0, sizeof(ctrl->ka_cmd));
-  4742		ctrl->ka_cmd.common.opcode = nvme_admin_keep_alive;
-  4743		ctrl->ka_last_check_time = jiffies;
-  4744	
-  4745		BUILD_BUG_ON(NVME_DSM_MAX_RANGES * sizeof(struct nvme_dsm_range) >
-  4746				PAGE_SIZE);
-  4747		ctrl->discard_page = alloc_page(GFP_KERNEL);
-  4748		if (!ctrl->discard_page) {
-  4749			ret = -ENOMEM;
-  4750			goto out;
-  4751		}
-  4752	
-  4753		ret = ida_alloc(&nvme_instance_ida, GFP_KERNEL);
-  4754		if (ret < 0)
-  4755			goto out;
-  4756		ctrl->instance = ret;
-  4757	
-  4758		ret = nvme_auth_init_ctrl(ctrl);
-  4759		if (ret)
-  4760			goto out_release_instance;
-  4761	
-  4762		nvme_mpath_init_ctrl(ctrl);
-  4763	
-  4764		device_initialize(&ctrl->ctrl_device);
-  4765		ctrl->device = &ctrl->ctrl_device;
-  4766		ctrl->device->devt = MKDEV(MAJOR(nvme_ctrl_base_chr_devt),
-  4767				ctrl->instance);
-  4768		ctrl->device->class = &nvme_class;
-  4769		ctrl->device->parent = ctrl->dev;
-  4770		if (ops->dev_attr_groups)
-  4771			ctrl->device->groups = ops->dev_attr_groups;
-  4772		else
-  4773			ctrl->device->groups = nvme_dev_attr_groups;
-  4774		ctrl->device->release = nvme_free_ctrl;
-> 4775		ctrl->device->of_node = of_get_compatible_child(ctrl->dev->of_node,
-  4776								"nvme-card");
-  4777		dev_set_drvdata(ctrl->device, ctrl);
-  4778	
-  4779		return ret;
-  4780	
-  4781	out_release_instance:
-  4782		ida_free(&nvme_instance_ida, ctrl->instance);
-  4783	out:
-  4784		if (ctrl->discard_page)
-  4785			__free_page(ctrl->discard_page);
-  4786		cleanup_srcu_struct(&ctrl->srcu);
-  4787		return ret;
-  4788	}
-  4789	EXPORT_SYMBOL_GPL(nvme_init_ctrl);
-  4790	
+What do you think?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Oleg.
+---
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 7f12ff6ad1d3..fbe8e5ae7c00 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -337,6 +337,10 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
+ 			case 'C':
+ 				err = cn_printf(cn, "%d", cprm->cpu);
+ 				break;
++			case 'T':
++				// XXX explain that we don't need get_task_struct()
++				cprm->traceme = current;
++				break;
+ 			default:
+ 				break;
+ 			}
+@@ -516,9 +520,30 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+ 	/* and disallow core files too */
+ 	current->signal->rlim[RLIMIT_CORE] = (struct rlimit){1, 1};
+ 
++	if (cp->traceme) {
++		if (ptrace_attach(cp->traceme, PTRACE_SEIZE, 0,0))
++			cp->traceme = NULL;
++	}
++
+ 	return err;
+ }
+ 
++static void umh_pipe_cleanup(struct subprocess_info *info)
++{
++	struct coredump_params *cp = (struct coredump_params *)info->data;
++	// XXX: we can't rely on this check, for example
++	// CONFIG_STATIC_USERMODEHELPER_PATH == ""
++	if (cp->traceme) {
++		// XXX: meaningful exit_code/message, maybe new PTRACE_EVENT_
++		ptrace_notify(SIGTRAP, 0);
++
++		spin_lock_irq(&current->sighand->siglock);
++		if (!__fatal_signal_pending(current))
++			clear_thread_flag(TIF_SIGPENDING);
++		spin_unlock_irq(&current->sighand->siglock);
++	}
++}
++
+ void do_coredump(const kernel_siginfo_t *siginfo)
+ {
+ 	struct core_state core_state;
+@@ -637,7 +662,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		retval = -ENOMEM;
+ 		sub_info = call_usermodehelper_setup(helper_argv[0],
+ 						helper_argv, NULL, GFP_KERNEL,
+-						umh_pipe_setup, NULL, &cprm);
++						umh_pipe_setup, umh_pipe_cleanup,
++						&cprm);
+ 		if (sub_info)
+ 			retval = call_usermodehelper_exec(sub_info,
+ 							  UMH_WAIT_EXEC);
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index 0904ba010341..490b6c5e05d8 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -28,6 +28,7 @@ struct coredump_params {
+ 	int vma_count;
+ 	size_t vma_data_size;
+ 	struct core_vma_metadata *vma_meta;
++	struct task_struct *traceme;
+ };
+ 
+ extern unsigned int core_file_note_size_limit;
+diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+index 90507d4afcd6..13aed4c358b6 100644
+--- a/include/linux/ptrace.h
++++ b/include/linux/ptrace.h
+@@ -46,6 +46,9 @@ extern int ptrace_access_vm(struct task_struct *tsk, unsigned long addr,
+ #define PT_EXITKILL		(PTRACE_O_EXITKILL << PT_OPT_FLAG_SHIFT)
+ #define PT_SUSPEND_SECCOMP	(PTRACE_O_SUSPEND_SECCOMP << PT_OPT_FLAG_SHIFT)
+ 
++extern int ptrace_attach(struct task_struct *task, long request,
++			 unsigned long addr, unsigned long flags);
++
+ extern long arch_ptrace(struct task_struct *child, long request,
+ 			unsigned long addr, unsigned long data);
+ extern int ptrace_readdata(struct task_struct *tsk, unsigned long src, char __user *dst, int len);
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index d5f89f9ef29f..47f1e09f8fc9 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -406,9 +406,8 @@ static inline void ptrace_set_stopped(struct task_struct *task, bool seize)
+ 	}
+ }
+ 
+-static int ptrace_attach(struct task_struct *task, long request,
+-			 unsigned long addr,
+-			 unsigned long flags)
++int ptrace_attach(struct task_struct *task, long request,
++		  unsigned long addr, unsigned long flags)
+ {
+ 	bool seize = (request == PTRACE_SEIZE);
+ 	int retval;
+
 
