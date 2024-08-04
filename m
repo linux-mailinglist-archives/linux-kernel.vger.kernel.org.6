@@ -1,194 +1,201 @@
-Return-Path: <linux-kernel+bounces-273946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0462B946FFF
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:14:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783E3947005
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6CE2812FF
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:14:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24E831F2136C
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F1C13699B;
-	Sun,  4 Aug 2024 17:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784FE1311AC;
+	Sun,  4 Aug 2024 17:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxHxxWiA"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6M3jiZR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7571EEE3
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 17:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA19B1DFE8
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 17:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722791675; cv=none; b=ccW76EziHE1wr2EydOv3jvwuh47fqFt1BNuPfJ/ns4zawmcQ3c6R5ZYWYs4/DpLrwD/84WwJChO+/Sjm2gQj4abbo9RLLFzIe47MvZB6gCvXYWdjv2bfWXooQTpyYr8fzgPA4tjmhQ6f1l2n2/JPFZKW9qOSBR/ZDWnJmyyzkbo=
+	t=1722792057; cv=none; b=MqFbMWbsWURAmKMuR8UcC5ihXCo8FOrkrrrGaMKcyg423myFg4JnePCFM8WXD/6ODIRgAk2XmMRyqgRkaqboi1mwloY5iGxNFfJkZuQu/MbbrxdyNXQgosRfuRP+Wu+a1OPaeLvS2yld24Sz3dQHmIRVC0bTAlCGSac5kOAEUM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722791675; c=relaxed/simple;
-	bh=nDXev3bBzvYDjacE8JnKe/sOKx1fOLIenf3flfS7Wyc=;
+	s=arc-20240116; t=1722792057; c=relaxed/simple;
+	bh=G1R24K2ESK7/Bkj/XCkWrPqcBxwbVuAcBmyP4C2KDGU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=of/IfC2YmX6sj1u/2cA61RjU72AasYSH7YJweuC7whpaucjEyTswZc3Od9T9aPlQmyTsXAi1vCk4dsCReKOXCb3NJmOVZpei0XL6+ehJAPIBCdqbd8FxuKMk9EO0sq+HKiLAMsiDxY39GwnzwjQ3sEKRaRi2my/v5VZKBVFyu/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxHxxWiA; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42812945633so68128075e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 10:14:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722791672; x=1723396472; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=p/4bczz6CJr9dhiOX7HKYOe1viOeV19Z0JANISgbZEs=;
-        b=KxHxxWiAFn7gxYl6J88k2YxfdhlGjZTGlr251RxLXVCPzxAmxI0JzC4XMXuygSguA8
-         bt5K2BCkTHt6G+fDdsrIgZN2wJKLMvS3rD3+cRbUJltKe8vZJqGgWrPG7yC+Pn4BitOk
-         4tcIto0DGIKGziGA4lDIWdFkE7D3HizRmIXdl2/aLGbqHdLgwPammmHhVZedFYGIM4ek
-         NDu8Fi0VF/WrE5ridhaS/egM31LaEvEQiRk/3tR4ojzTSqpkJZ4soPOQnRdlONkP/i32
-         UcIaeipSOJynsKT91/63zFciiZLrSEWgIUFy0MnsggHFjkptgfSPEWyAb3HBmbyy9mhz
-         z3QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722791672; x=1723396472;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/4bczz6CJr9dhiOX7HKYOe1viOeV19Z0JANISgbZEs=;
-        b=Tk6tlQUdKFh18vlMyOYKtYvksEB81ZYa9I7BHh/o/lxcCvhCetgnCoEzhDOW2tu6p0
-         LmX7l8kjUpTL1RLNR9W4Jn8hNE1jdzVpNFK5C+eES/Upe1fEM/ZNBI2G4bF+9l6quKVp
-         9l1jGnaFj8R6+r0MiH4AIu6rRJIZq9n6Mp/w+F+KZ+137CU0GOU83FhsjT4+jChD/K96
-         IpZq8NLrOI+PfBec8nQUhjZZjICyzs3QHtUjSS8yO2VDBF/hm4pT277ccuCyj2ZNdX41
-         A8EDq1kSLNy3biusdUwhdI0aaj45dKBDiW9x7lTbcc66mwhZ8LCwEDncaUHQkgZU7E/d
-         w+Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVM1jbZMCkXN5M6Qz4R0GlBGIgHuNRK0PN/+2KqhCByp7L/Nr66UOV4fqu+xmfTVWlm9tbRJDBWQ+Ty6XJ8G/g1tf7BCqLTY46ncN5
-X-Gm-Message-State: AOJu0YwZ0qytEtUqyGQ6g9yysLMbBPlUZ4OhvGO+k8DOO+ok9kZZPTpD
-	RsWiXGGuA0a5337KsrzmchoGIyKiuHHjWg7pIeW20TeMPHCiVrOY
-X-Google-Smtp-Source: AGHT+IEKO5RBYTDzHkiZWGRWKYYN7qHNgy8QdQzVisJNOAgr683jPNUBW7oHzC2AkIen8oLpIjxcIg==
-X-Received: by 2002:a05:600c:198f:b0:426:5c34:b19b with SMTP id 5b1f17b1804b1-428e6b00c7dmr67548935e9.20.1722791671988;
-        Sun, 04 Aug 2024 10:14:31 -0700 (PDT)
-Received: from fedora ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd05b92esm7541252f8f.85.2024.08.04.10.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 10:14:31 -0700 (PDT)
-Date: Sun, 4 Aug 2024 19:14:29 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: rodrigosiqueiramelo@gmail.com
-Cc: melissa.srw@gmail.com, mairacanal@riseup.net, hamohammed.sa@gmail.com,
-	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	louis.chauvet@bootlin.com
-Subject: Re: [PATCH v3] drm/vkms: Fix cpu_to_le16()/le16_to_cpu() warnings
-Message-ID: <Zq-29RHgywzw96xz@fedora>
-References: <20240716161725.41408-2-jose.exposito89@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ehMcidruVXJUp6vQb72+lJvlvMAMTru++T/Dz6sHn2TM/Z835qR+iYUg+lOUBWrPNnan3QQJCuhy5dVl29c1tMWhGPt3jsH6DDvjzsTb6tahLUFQsweYi5WuOptJmqCFefikBP6VSiiaCMOqBlhIZD+iSWwO1xWUvU7XsnTKq0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6M3jiZR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6BAFC32786;
+	Sun,  4 Aug 2024 17:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722792057;
+	bh=G1R24K2ESK7/Bkj/XCkWrPqcBxwbVuAcBmyP4C2KDGU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I6M3jiZRKsv/CsiXrOsP8IfQQEs5BDgEURSkcNao8fm6QwAg0WFgdEd1bGub3vhSv
+	 1VKov+rOTruPQikzyhlRmu1jSqv0AMjsD/qJWM30QXl76HszHR8Jjj2JOzkxgBFo0O
+	 zKfgjLLfydImZ92kdT7iFlIUnOxWV2AkWl/uKcPEYU7u55DnjEHemghxp2/XB5EvJ7
+	 kPF5Ob34xV/PAtZD6St5MIHOrXvYAXi7/FIMCu+Jp+vBDZTg3nRQfCbMoZNtRW5LFT
+	 khabTWhcxIqRtWRKKZF4jJw6ZLjvvap2jT0cVjq8dTxhk+i0o7Oi4DVNAH2kOdRD9C
+	 55Pijhc02rDmQ==
+Date: Sun, 4 Aug 2024 22:50:52 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: laurent.pinchart@ideasonboard.com, kishon@kernel.org,
+	michal.simek@amd.com, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	git@amd.com
+Subject: Re: [PATCH] phy: xilinx: phy-zynqmp: Fix SGMII linkup failure on
+ resume
+Message-ID: <Zq-4dH2dXzGXebYv@matsya>
+References: <1721155263-2913528-1-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240716161725.41408-2-jose.exposito89@gmail.com>
+In-Reply-To: <1721155263-2913528-1-git-send-email-radhey.shyam.pandey@amd.com>
 
-On Tue, Jul 16, 2024 at 06:17:26PM +0200, José Expósito wrote:
-> Building with Sparse enabled prints this warning for cpu_to_le16()
-> calls:
+On 17-07-24, 00:11, Radhey Shyam Pandey wrote:
+> From: Piyush Mehta <piyush.mehta@amd.com>
 > 
->     warning: incorrect type in assignment (different base types)
->         expected unsigned short [usertype]
->         got restricted __le16 [usertype]
+> On a few Kria KR260 Robotics Starter Kit the PS-GEM SGMII linkup is not
+> happening after the resume. This is because serdes registers are reset
+> when FPD is off (in suspend state) and needs to be reprogrammed in the
+> resume path with the same default initialization as done in the first
+> stage bootloader psu_init routine.
 > 
-> And this warning for le16_to_cpu() calls:
+> To address the failure introduce a set of serdes registers to be saved in
+> the suspend path and then restore it on resume.
 > 
->     warning: cast to restricted __le16
-> 
-> Declare the target buffer as __le16 to fix both warnings.
-> 
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-> 
+> Signed-off-by: Piyush Mehta <piyush.mehta@amd.com>
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
 > ---
+>  drivers/phy/xilinx/phy-zynqmp.c | 56 +++++++++++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
 > 
-> v1 -> v2: https://lore.kernel.org/dri-devel/20240712161656.7480-1-jose.exposito89@gmail.com/T/
-> 
->  - Thomas Zimmermann: Declare "pixels" cariable as __le16 instead of
->    multiple casting.
-> 
-> v2 -> v3: https://lore.kernel.org/dri-devel/20240715151625.6968-2-jose.exposito89@gmail.com/
-> 
->  - Thomas Zimmermann: Use cpu_to_le16() instead of casting 0xffff
->  - Reviewed-by Thomas and Louis
-> ---
+> diff --git a/drivers/phy/xilinx/phy-zynqmp.c b/drivers/phy/xilinx/phy-zynqmp.c
+> index dc8319bda43d..bdcc8d7c3dfa 100644
+> --- a/drivers/phy/xilinx/phy-zynqmp.c
+> +++ b/drivers/phy/xilinx/phy-zynqmp.c
+> @@ -165,6 +165,24 @@
+>  /* Timeout values */
+>  #define TIMEOUT_US			1000
+>  
+> +/* Lane 0/1/2/3 offset */
+> +#define DIG_8(n)		((0x4000 * (n)) + 0x1074)
+> +#define ILL13(n)		((0x4000 * (n)) + 0x1994)
+> +#define DIG_10(n)		((0x4000 * (n)) + 0x107C)
+> +#define RST_DLY(n)		((0x4000 * (n)) + 0x19A4)
+> +#define BYP_15(n)		((0x4000 * (n)) + 0x1038)
+> +#define BYP_12(n)		((0x4000 * (n)) + 0x102C)
+> +#define MISC3(n)		((0x4000 * (n)) + 0x19AC)
+> +#define EQ11(n)			((0x4000 * (n)) + 0x1978)
 
-Would it be possible to get an ACK from the maintainers? It is a very simple patch
-and it already has 2 reviewed-by, hopefully we can get it merged.
+Lower case hex value please
 
-Thanks a lot in advance!
-
->  drivers/gpu/drm/vkms/vkms_formats.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> +
+> +static u32 save_reg_address[] = {
+> +	/* Lane 0/1/2/3 Register */
+> +	DIG_8(0), ILL13(0), DIG_10(0), RST_DLY(0), BYP_15(0), BYP_12(0), MISC3(0), EQ11(0),
+> +	DIG_8(1), ILL13(1), DIG_10(1), RST_DLY(1), BYP_15(1), BYP_12(1), MISC3(1), EQ11(1),
+> +	DIG_8(2), ILL13(2), DIG_10(2), RST_DLY(2), BYP_15(2), BYP_12(2), MISC3(2), EQ11(2),
+> +	DIG_8(3), ILL13(3), DIG_10(3), RST_DLY(3), BYP_15(3), BYP_12(3), MISC3(3), EQ11(3),
+> +};
+> +
+>  struct xpsgtr_dev;
+>  
+>  /**
+> @@ -213,6 +231,7 @@ struct xpsgtr_phy {
+>   * @tx_term_fix: fix for GT issue
+>   * @saved_icm_cfg0: stored value of ICM CFG0 register
+>   * @saved_icm_cfg1: stored value of ICM CFG1 register
+> + * @saved_regs: registers to be saved/restored during suspend/resume
+>   */
+>  struct xpsgtr_dev {
+>  	struct device *dev;
+> @@ -225,6 +244,7 @@ struct xpsgtr_dev {
+>  	bool tx_term_fix;
+>  	unsigned int saved_icm_cfg0;
+>  	unsigned int saved_icm_cfg1;
+> +	u32 *saved_regs;
+>  };
+>  
+>  /*
+> @@ -298,6 +318,32 @@ static inline void xpsgtr_clr_set_phy(struct xpsgtr_phy *gtr_phy,
+>  	writel((readl(addr) & ~clr) | set, addr);
+>  }
+>  
+> +/**
+> + * xpsgtr_save_lane_regs - Saves registers on suspend
+> + * @gtr_dev: pointer to phy controller context structure
+> + */
+> +static void xpsgtr_save_lane_regs(struct xpsgtr_dev *gtr_dev)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(save_reg_address); i++)
+> +		gtr_dev->saved_regs[i] = xpsgtr_read(gtr_dev,
+> +						     save_reg_address[i]);
+> +}
+> +
+> +/**
+> + * xpsgtr_restore_lane_regs - Restores registers on resume
+> + * @gtr_dev: pointer to phy controller context structure
+> + */
+> +static void xpsgtr_restore_lane_regs(struct xpsgtr_dev *gtr_dev)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(save_reg_address); i++)
+> +		xpsgtr_write(gtr_dev, save_reg_address[i],
+> +			     gtr_dev->saved_regs[i]);
+> +}
+> +
+>  /*
+>   * Hardware Configuration
+>   */
+> @@ -837,6 +883,8 @@ static int xpsgtr_runtime_suspend(struct device *dev)
+>  	gtr_dev->saved_icm_cfg0 = xpsgtr_read(gtr_dev, ICM_CFG0);
+>  	gtr_dev->saved_icm_cfg1 = xpsgtr_read(gtr_dev, ICM_CFG1);
+>  
+> +	xpsgtr_save_lane_regs(gtr_dev);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -847,6 +895,8 @@ static int xpsgtr_runtime_resume(struct device *dev)
+>  	unsigned int i;
+>  	bool skip_phy_init;
+>  
+> +	xpsgtr_restore_lane_regs(gtr_dev);
+> +
+>  	icm_cfg0 = xpsgtr_read(gtr_dev, ICM_CFG0);
+>  	icm_cfg1 = xpsgtr_read(gtr_dev, ICM_CFG1);
+>  
+> @@ -992,6 +1042,12 @@ static int xpsgtr_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	gtr_dev->saved_regs = devm_kmalloc(gtr_dev->dev,
+> +					   sizeof(save_reg_address),
+> +					   GFP_KERNEL);
+> +	if (!gtr_dev->saved_regs)
+> +		return -ENOMEM;
+> +
+>  	return 0;
+>  }
+>  
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> index 36046b12f296..040b7f113a3b 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> @@ -75,7 +75,7 @@ static void XRGB8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixe
->  
->  static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
->  {
-> -	u16 *pixels = (u16 *)src_pixels;
-> +	__le16 *pixels = (__force __le16 *)src_pixels;
->  
->  	out_pixel->a = le16_to_cpu(pixels[3]);
->  	out_pixel->r = le16_to_cpu(pixels[2]);
-> @@ -85,7 +85,7 @@ static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
->  
->  static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
->  {
-> -	u16 *pixels = (u16 *)src_pixels;
-> +	__le16 *pixels = (__force __le16 *)src_pixels;
->  
->  	out_pixel->a = (u16)0xffff;
->  	out_pixel->r = le16_to_cpu(pixels[2]);
-> @@ -95,7 +95,7 @@ static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
->  
->  static void RGB565_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
->  {
-> -	u16 *pixels = (u16 *)src_pixels;
-> +	__le16 *pixels = (__force __le16 *)src_pixels;
->  
->  	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
->  	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
-> @@ -178,7 +178,7 @@ static void argb_u16_to_XRGB8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel
->  
->  static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
->  {
-> -	u16 *pixels = (u16 *)dst_pixels;
-> +	__le16 *pixels = (__force __le16 *)dst_pixels;
->  
->  	pixels[3] = cpu_to_le16(in_pixel->a);
->  	pixels[2] = cpu_to_le16(in_pixel->r);
-> @@ -188,9 +188,9 @@ static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
->  
->  static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
->  {
-> -	u16 *pixels = (u16 *)dst_pixels;
-> +	__le16 *pixels = (__force __le16 *)dst_pixels;
->  
-> -	pixels[3] = 0xffff;
-> +	pixels[3] = cpu_to_le16(0xffff);
->  	pixels[2] = cpu_to_le16(in_pixel->r);
->  	pixels[1] = cpu_to_le16(in_pixel->g);
->  	pixels[0] = cpu_to_le16(in_pixel->b);
-> @@ -198,7 +198,7 @@ static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
->  
->  static void argb_u16_to_RGB565(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
->  {
-> -	u16 *pixels = (u16 *)dst_pixels;
-> +	__le16 *pixels = (__force __le16 *)dst_pixels;
->  
->  	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
->  	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
+> base-commit: d67978318827d06f1c0fa4c31343a279e9df6fde
 > -- 
-> 2.45.2
-> 
+> 2.34.1
+
+-- 
+~Vinod
 
