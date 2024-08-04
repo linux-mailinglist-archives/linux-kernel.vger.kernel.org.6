@@ -1,300 +1,133 @@
-Return-Path: <linux-kernel+bounces-273702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C68B946CA8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C266946CAC
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93C271F21C0E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DBED1C21502
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80931200AE;
-	Sun,  4 Aug 2024 06:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063B910A19;
+	Sun,  4 Aug 2024 06:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xt//HnYV"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="bQkuVREs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d/aas5DN"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38E01CD00;
-	Sun,  4 Aug 2024 06:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452FAB67F;
+	Sun,  4 Aug 2024 06:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722752181; cv=none; b=bbzlPt48lUorvxk3BNuUJgbTswnUWQW9v/g9vt8jEhSsN7SFnjbY+SbLZ5c8uQxZS+PR/sQfkDvBVNHJN9nzFMMX5hYyxDpr5Zj5E+V/t+Kc5qxLzHtGqVgQ9bfL64ik4g6KTl82r3AviC5cnf9mqIl92rAMLmMGxnK2svVuqqE=
+	t=1722752406; cv=none; b=QMCe5Bh1iOXG9QJt29XniZ+AwHlj/cbeSzvbDCA+B7CgrG5e1OLrCImoOCFGIwq+Gm4ScjyvE1qqW2XqpfuTWeV98hdLqqXHDC8ENBYpDA8rLsrdrn/+OLxohFxyE0e7AWz9qkLDjAgGfyzgv7gtnQhBEaYXi38lfXBTAbyqcgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722752181; c=relaxed/simple;
-	bh=5d03ZuL6teJXOf/T1h1vDxrHa7R8OPBs+R4lJkRXRAc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CpXS8GLHMSMQ5gchPtQk63c6V+1ZWROimwncZWiMZFhl9nuNxpXlN0ea9FjF2K4fspikl9sVmJtpp97IblFYuyaUwWbvVgfKkknCs4Hr2djpnRZesb/t9PQJ9PmBJJcgHmyqqdC/Ba/ZZJFX7zw8xUiSH4PUmVMwFGz9Zju+v8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xt//HnYV; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ff1cd07f56so72808705ad.2;
-        Sat, 03 Aug 2024 23:16:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722752179; x=1723356979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7h4gurbNkAwaSKOgdNMh5biS07+9cUKmRAWUYCPb8sQ=;
-        b=Xt//HnYVhLdSHRMfs22Qfjvc14ofzl7tJfLQiw4KGuDPVVjT0Cz7rWV9Hp2yZExTIc
-         mGwp1XxaA9Vud5sEKM7/0/8XP5nenBW/Pr45TDk2xqiV+y0LT/9EspwWdDSAihWtuzxv
-         Fr1XXSPjK+ZpQ89K46t2wlSYAER0bP7MnMd5vL2HVhh53u1NcytISQd2YbAWErzNPciJ
-         sJvWmFo2MwVzwWtidOKP17h0G9pMrJsxL28qK2VV/up/W8C/r1I2m91CG2kgCrkWvy7g
-         A8lrLXMf71ita3PwDurZXLZzg+NQ1uXpOXmnf6IxEMNoxLTuvkskxF0+6zmjgwIALIcM
-         Rdlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722752179; x=1723356979;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7h4gurbNkAwaSKOgdNMh5biS07+9cUKmRAWUYCPb8sQ=;
-        b=sQsDaYf03eboUfRqDkhlfNJeW5zrEWtjFZ22Ep44DBWfzuTolAoklZY/leMdqOIh3T
-         nzJFdhdcf3uWUxEbCiO5N/UZ00GJwsBpWpTpfz6lHdx2qFVvQMJFmz8Xkc3pJRx11fi5
-         QYB4X8c2yojbBtghwGopyxLdo1ZHO1fTHObkj2yDbJ2LRRqdNhFYsvfXWJTCKC2Jvy/7
-         KbOblTbo91rEu7FdVriTJkihBshuqUbs2POWfGstSMoVOfoeZU584akhT9Kp30ZaWHyT
-         +6LNioVtqu0hKB/NP7ltq6IPKCC4vkyyhgbkGB3t4idS1iVNqP4EXpxty2LtQW05RTH3
-         SKQw==
-X-Forwarded-Encrypted: i=1; AJvYcCX417hhY90bqvY8hxujofzE++dT+z6cXWfdy7FmoGq5jIxhP0wTRgpTJkUx0eiOYkIWBWntpDH0U9po9lMcm5TmB2fM14qJj1LtIQ==
-X-Gm-Message-State: AOJu0YxKkN2BFP3MJflgjtBKGjkaTtZEgW+aH4lFoppzH8lgPKpW8dv0
-	SHbeO0BurhG4rohZqFi3qlUzwrodW8vp17ubIbSyg5bFzPsqzJipxVsdel25
-X-Google-Smtp-Source: AGHT+IEhKZcig863me6/HrPur2+0JA0iqPzNUhbXEnzntX/uc0LPnfNuF+Ep/g1/TKoZsdTbVmXwKA==
-X-Received: by 2002:a17:903:283:b0:1fe:d72d:13e9 with SMTP id d9443c01a7336-1ff572bc3bdmr110464375ad.33.1722752179037;
-        Sat, 03 Aug 2024 23:16:19 -0700 (PDT)
-Received: from noel.flets-west.jp ([2405:6586:4480:a10:167:9818:d778:5c14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29ef4sm44194195ad.14.2024.08.03.23.16.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 23:16:18 -0700 (PDT)
-From: Hironori KIKUCHI <kikuchan98@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Hironori KIKUCHI <kikuchan98@gmail.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v4 5/5] drm/panel: st7701: Add Anbernic RG28XX panel support
-Date: Sun,  4 Aug 2024 15:14:49 +0900
-Message-ID: <20240804061503.881283-6-kikuchan98@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240804061503.881283-1-kikuchan98@gmail.com>
-References: <20240804061503.881283-1-kikuchan98@gmail.com>
+	s=arc-20240116; t=1722752406; c=relaxed/simple;
+	bh=IphUcle/YlNZLckVN6EQiXF5A9lLgcQR62DUj0gDKwQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=rdmR9IPMWoKZ2Z9g5GSJxmT4SnSec1hhvBS+nhkZnPW0odzkZcsQlMydQJM0zZs0hpGm8x2Q5+B9237t1DNUjVwm0C6Xbm8uTKJI8BVYrl0/ymZzX2js8G9M1Out0km9xkx3KnaPmE1lfu2kklX+9V7F2+PRMOPtsR0IgikdmkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=bQkuVREs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d/aas5DN; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 5AC2B1148189;
+	Sun,  4 Aug 2024 02:20:03 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute6.internal (MEProxy); Sun, 04 Aug 2024 02:20:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1722752403;
+	 x=1722838803; bh=GYf0ZRVTpBy4ufVAa9+cD5JKJQ1v0Y4QcglHlI7azKU=; b=
+	bQkuVREsBaCpznOUsWXhEE0f7Y7nJPkctMjosUGyPyBHLVFXT1KTUEetmeKdAL4B
+	yYWgfQ5KJloVHl/zC61iJenSKKtCuWVJJO7tGN60YiCvPOHV0Vka0mlK5VXuKHtp
+	lrKnFLPUIW8hF4m8sWjgIbo9VapeNklsnqVeBxiGKnr6icw8hLEj6Nz9a+uhGI6o
+	k9AcpPUYe1oN7m/bTo4Wc17iG1gNDpB884TOJh8LBPbYOkPZT66ls0OJwnzXAdS9
+	eNP4igPeVsB7vLzY3gOFuQoSr6Dc087X3maAb9pwk50tR+XnO2X0RpudOD7XJQwY
+	V9m/ypihrB9dn1XGNXac9w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722752403; x=
+	1722838803; bh=GYf0ZRVTpBy4ufVAa9+cD5JKJQ1v0Y4QcglHlI7azKU=; b=d
+	/aas5DN+2uiWe7yb8XamI7+Xr1afeqYvutiuMWcWgvPYiL+UJqv3waxg1zeNf85v
+	Ih8XsOh7m8KogG4MIIwmMXmwsLGyHCLZd1cuM1oqp+rKzA2TnUE5WgQyGg8z+eV+
+	KG/57k7j6xoYl/+jNgoZHx9YtRdNd5AeIZoTU4JVvDU5kXoLdn0/7rME7BGQC/fh
+	nFMcz3+IG4bNv9CedT6U8cs4Rh58lTw9erFKShgMFvCpA3A7aIMv92OaYLkoeTyE
+	/zvus6UPkt4bJNy0Uf/3gZUX1B9iDt5du6XkC5h93divoQVraPO11cTOFLrBK3SL
+	OB4rlsTescIwVOZ6A0wLA==
+X-ME-Sender: <xms:kh2vZvbANGTozGrOrLUWKZhKfcwxrILbU2wjJ9zmkzrzsQ4adRtvRg>
+    <xme:kh2vZuZIkY6k5m9sRMIpIeM8iSRJBS_z4MmM7BtuTw_Ibu9vVsV_xAHotEvypy3C0
+    0qIZJAoH4snTD748yk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeefgddutdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedflfgr
+    nhhnvgcuifhruhhnrghufdcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvg
+    hrnhepheejtdeffeethfetgefhffejudegheefueejtedvhfeuheevfeekheetfeduffev
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjh
+    grnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:kh2vZh8Gw9rKwO1IvFtbEc-C_bLu4ACNdInGVp7KbpWnNHLv17BNqw>
+    <xmx:kh2vZlrhACg7iryYSuuBa9OIKmZ76-E1uKClYXk4wwrN-__3TJsFjg>
+    <xmx:kh2vZqqTEtqNAFjPwFBZLxM_E_uXXYtluDGGFn-3nWQ0_OE16Oq0sw>
+    <xmx:kh2vZrQ3MphM95hj0I2Z6fwdUdbcOGNecq03bhzwUcnGzu_wT0IWrA>
+    <xmx:kx2vZnSfVQXLeJglEDJic6jiezUcT-JlIE70Ii-8_NnfUxUnoeIV6CXR>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 97B5219C0069; Sun,  4 Aug 2024 02:20:02 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Sun, 04 Aug 2024 08:19:42 +0200
+From: "Janne Grunau" <j@jannau.net>
+To: "Aditya Garg" <gargaditya08@live.com>,
+ "devnull+j.jannau.net@kernel.org" <devnull+j.jannau.net@kernel.org>
+Cc: "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
+ "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+ "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
+ "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
+ "kvalo@kernel.org" <kvalo@kernel.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "Hector Martin" <marcan@marcan.st>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+Message-Id: <306c3010-a6ac-4f8a-a986-88c1a137ed84@app.fastmail.com>
+In-Reply-To: 
+ <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: 
+ <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The Anbernic RG28XX is a handheld gaming device with a 2.8 inch 480x640
-display. Add support for the display panel.
+Hej,
 
-This panel is driven by a variant of ST7701 driver IC internally,
-confirmed by dumping and analyzing its BSP initialization sequence
-by using a logic analyzer. It is very similar to the existing
-densitron,dmt028vghmcmi-1a panel, but differs in some unknown
-register values. Besides, it is connected via SPI, so add a new entry
-for the panel.
+On Sun, Aug 4, 2024, at 05:10, Aditya Garg wrote:
+> Hi
+>
+> wpa_supplicant 2.11 broke Wi-Fi on T2 Macs as well, but this patch 
+> doesn't seem to be fixing Wi-Fi. Instead, it's breaking it even on 
+> older 2.10 wpa_supplicant. Tested by a user on bcm4364b2 wifi chip with 
+> a WPA2-PSK [AES] network. dmesg output:
 
-Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/gpu/drm/panel/panel-sitronix-st7701.c | 151 ++++++++++++++++++
- 1 file changed, 151 insertions(+)
+On bcm4377, bcm4378 and bcm4388 (chipsets used in M1/M2 macs)
+WPA3-SAE and WPA2-PSK still works with Fedora's wpa_supplicant 2.10.
+Fedora's package carried SAE offload patches in 2.10.
+wpa_supplicant 2.11 still doesn't work with this patch but it prevents a
+kernel oops after a disconnect (due to an authentication timeout in the
+current broken state) in wpa_supplicant.
 
-diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7701.c b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-index 9e83a760a8a..eef03d04e0c 100644
---- a/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-+++ b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-@@ -471,6 +471,55 @@ static void rg_arc_gip_sequence(struct st7701 *st7701)
- 	msleep(120);
- }
- 
-+static void rg28xx_gip_sequence(struct st7701 *st7701)
-+{
-+	st7701_switch_cmd_bkx(st7701, true, 3);
-+	ST7701_WRITE(st7701, 0xEF, 0x08);
-+
-+	st7701_switch_cmd_bkx(st7701, true, 0);
-+	ST7701_WRITE(st7701, 0xC3, 0x02, 0x10, 0x02);
-+	ST7701_WRITE(st7701, 0xC7, 0x04);
-+	ST7701_WRITE(st7701, 0xCC, 0x10);
-+
-+	st7701_switch_cmd_bkx(st7701, true, 1);
-+	ST7701_WRITE(st7701, 0xEE, 0x42);
-+	ST7701_WRITE(st7701, 0xE0, 0x00, 0x00, 0x02);
-+
-+	ST7701_WRITE(st7701, 0xE1, 0x04, 0xA0, 0x06, 0xA0, 0x05, 0xA0, 0x07, 0xA0,
-+		   0x00, 0x44, 0x44);
-+	ST7701_WRITE(st7701, 0xE2, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+		   0x00, 0x00, 0x00, 0x00);
-+	ST7701_WRITE(st7701, 0xE3, 0x00, 0x00, 0x22, 0x22);
-+	ST7701_WRITE(st7701, 0xE4, 0x44, 0x44);
-+	ST7701_WRITE(st7701, 0xE5, 0x0C, 0x90, 0xA0, 0xA0, 0x0E, 0x92, 0xA0, 0xA0,
-+		   0x08, 0x8C, 0xA0, 0xA0, 0x0A, 0x8E, 0xA0, 0xA0);
-+	ST7701_WRITE(st7701, 0xE6, 0x00, 0x00, 0x22, 0x22);
-+	ST7701_WRITE(st7701, 0xE7, 0x44, 0x44);
-+	ST7701_WRITE(st7701, 0xE8, 0x0D, 0x91, 0xA0, 0xA0, 0x0F, 0x93, 0xA0, 0xA0,
-+		   0x09, 0x8D, 0xA0, 0xA0, 0x0B, 0x8F, 0xA0, 0xA0);
-+	ST7701_WRITE(st7701, 0xEB, 0x00, 0x00, 0xE4, 0xE4, 0x44, 0x00, 0x40);
-+	ST7701_WRITE(st7701, 0xED, 0xFF, 0xF5, 0x47, 0x6F, 0x0B, 0xA1, 0xBA, 0xFF,
-+		   0xFF, 0xAB, 0x1A, 0xB0, 0xF6, 0x74, 0x5F, 0xFF);
-+	ST7701_WRITE(st7701, 0xEF, 0x08, 0x08, 0x08, 0x45, 0x3F, 0x54);
-+
-+	st7701_switch_cmd_bkx(st7701, false, 0);
-+
-+	st7701_switch_cmd_bkx(st7701, true, 3);
-+	ST7701_WRITE(st7701, 0xE6, 0x16);
-+	ST7701_WRITE(st7701, 0xE8, 0x00, 0x0E);
-+
-+	st7701_switch_cmd_bkx(st7701, false, 0);
-+	ST7701_WRITE(st7701, MIPI_DCS_SET_ADDRESS_MODE, 0x10);
-+	ST7701_WRITE(st7701, MIPI_DCS_EXIT_SLEEP_MODE);
-+	msleep(120);
-+
-+	st7701_switch_cmd_bkx(st7701, true, 3);
-+	ST7701_WRITE(st7701, 0xE8, 0x00, 0x0C);
-+	msleep(10);
-+	ST7701_WRITE(st7701, 0xE8, 0x00, 0x00);
-+	st7701_switch_cmd_bkx(st7701, false, 0);
-+}
-+
- static int st7701_prepare(struct drm_panel *panel)
- {
- 	struct st7701 *st7701 = panel_to_st7701(panel);
-@@ -986,6 +1035,106 @@ static const struct st7701_panel_desc rg_arc_desc = {
- 	.gip_sequence = rg_arc_gip_sequence,
- };
- 
-+static const struct drm_display_mode rg28xx_mode = {
-+	.clock		= 22325,
-+
-+	.hdisplay	= 480,
-+	.hsync_start	= 480 + 40,
-+	.hsync_end	= 480 + 40 + 4,
-+	.htotal		= 480 + 40 + 4 + 20,
-+
-+	.vdisplay	= 640,
-+	.vsync_start	= 640 + 2,
-+	.vsync_end	= 640 + 2 + 40,
-+	.vtotal		= 640 + 2 + 40 + 16,
-+
-+	.width_mm	= 44,
-+	.height_mm	= 58,
-+
-+	.flags		= DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
-+
-+	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-+};
-+
-+static const struct st7701_panel_desc rg28xx_desc = {
-+	.mode = &rg28xx_mode,
-+
-+	.panel_sleep_delay = 80,
-+
-+	.pv_gamma = {
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC0_MASK, 0),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC4_MASK, 0x10),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC8_MASK, 0x17),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC16_MASK, 0xd),
-+
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC24_MASK, 0x11),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC52_MASK, 0x6),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC80_MASK, 0x5),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC108_MASK, 0x8),
-+
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC147_MASK, 0x7),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC175_MASK, 0x1f),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC203_MASK, 0x4),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC231_MASK, 0x11),
-+
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC239_MASK, 0xe),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC247_MASK, 0x29),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC251_MASK, 0x30),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC255_MASK, 0x1f)
-+	},
-+	.nv_gamma = {
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC0_MASK, 0),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC4_MASK, 0xd),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC8_MASK, 0x14),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC16_MASK, 0xe),
-+
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC24_MASK, 0x11),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC52_MASK, 0x6),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC80_MASK, 0x4),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC108_MASK, 0x8),
-+
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC147_MASK, 0x8),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC175_MASK, 0x20),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC203_MASK, 0x5),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC231_MASK, 0x13),
-+
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC239_MASK, 0x13),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC247_MASK, 0x26),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC251_MASK, 0x30),
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
-+		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC255_MASK, 0x1f)
-+	},
-+	.nlinv = 7,
-+	.vop_uv = 4800000,
-+	.vcom_uv = 1512500,
-+	.vgh_mv = 15000,
-+	.vgl_mv = -11730,
-+	.avdd_mv = 6600,
-+	.avcl_mv = -4400,
-+	.gamma_op_bias = OP_BIAS_MIDDLE,
-+	.input_op_bias = OP_BIAS_MIN,
-+	.output_op_bias = OP_BIAS_MIN,
-+	.t2d_ns = 1600,
-+	.t3d_ns = 10400,
-+	.eot_en = true,
-+	.gip_sequence = rg28xx_gip_sequence,
-+};
-+
- static void st7701_cleanup(void *data)
- {
- 	struct st7701 *st7701 = (struct st7701 *)data;
-@@ -1120,11 +1269,13 @@ static const struct of_device_id st7701_dsi_of_match[] = {
- MODULE_DEVICE_TABLE(of, st7701_dsi_of_match);
- 
- static const struct of_device_id st7701_spi_of_match[] = {
-+	{ .compatible = "anbernic,rg28xx-panel", .data = &rg28xx_desc },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, st7701_spi_of_match);
- 
- static const struct spi_device_id st7701_spi_ids[] = {
-+	{ "rg28xx-panel" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(spi, st7701_spi_ids);
--- 
-2.45.2
+I'll continue to debug the wpa_supplicant 2.11
 
+best regards,
+Janne
 
