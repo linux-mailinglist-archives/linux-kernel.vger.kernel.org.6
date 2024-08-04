@@ -1,155 +1,304 @@
-Return-Path: <linux-kernel+bounces-273805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58222946E5D
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DE36946E5E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94F81F2167F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7843282126
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EAA32C85;
-	Sun,  4 Aug 2024 11:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD4A39FC6;
+	Sun,  4 Aug 2024 11:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Po1AmelC"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exHQCFVN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294692B9D7
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 11:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43CC38F86;
+	Sun,  4 Aug 2024 11:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722769468; cv=none; b=OGPyBl3Me4odoJhYL0B5HsvW5nTE7L40Es8mE3RNOkaEodRoni/wXO54XEB/U0cltDbXJDWEEcEs1SRArB9/rPsEdtAndQknqKskjk1H6oU44qDq2chbKdpiZHKAbgXuq/ZQ6Fa55/sL/CqvbYko2QgG4DA6ax6AFMTGN5sWhQ0=
+	t=1722769512; cv=none; b=tfn3vwOA99ufXwozfS3hSMe1D3+PsLDoPf6ItMMyaLIV8LOwkKcPGbQk74RowhbzgThIeXUnbjf+T7S5uhCi0n6oRUMyW9IrWZM5LWN2RjZtoj4jQmkerNep/TNAMmtSlwmqBx97J+rcqM68l/miCrNkIGRjZ5c0u8pAnn8wIDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722769468; c=relaxed/simple;
-	bh=y8faSsy3GMkV8+GvhOybBMLzLnoGhpSAV3sFruwiIFM=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=oZJBVlwXjzqAGyyhb2V0XwgqHDszrEhMU/5BuVaIwCQBFzVlyde0LC/QE/KUewQRuuUYyA8r05SH+vwNwOgMaQzNU8hncaYOWd0Tr1yiRlCGSBwvtXUR3iarWZwnTZw/Uqxqw+GMSK01ABPMbChCSSr5oQElTHHe8L015QBE704=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Po1AmelC; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so13382359a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 04:04:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722769465; x=1723374265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sdhNjk3nlOQkHBfzhb9NvFAahhOzsHQURPXiWKXebgw=;
-        b=Po1AmelCAj1I3shf9bDUU9AKOag2KjZZV9kJbfcHimukVUVR8XZR1q7D+pZLecwAyB
-         d73YyZd4pYQxrUWP9PqmLjfWf44IV53FbZYmumdsh1vw9mHLvcGup2rm+SvjoqUlQCmf
-         UOa7ajqT7b9DdqPgoL/4cgVz+EmOklgEEg5IA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722769465; x=1723374265;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sdhNjk3nlOQkHBfzhb9NvFAahhOzsHQURPXiWKXebgw=;
-        b=tdyeQJMfBUM6cO53MMDTRfWfB68xhfFMxMRnu522NbqPwF+kYrvlwkJ9S3u0a2S8he
-         LfMMZF4sdL2nknRC4rnXChUYYAUL8gDhUPKE0gGACQNrqfI66+d8EVUKxizMM1ot+5Eu
-         YgQ363zdObb9QnXfls03P3+ZD4WRhVroAGuVBByN4Ru+2LOz0mac3s7wX2Q+4H0qanov
-         AX+aS8mEz1JJU+jxeSM+UT8jXWwFUA2pR9p1ZzBEi2hxl8nMiEuumvXbwwn8+5n344hj
-         Ta1ZdDpMoQ/8tUqkocsYtI+JqB9qPcnuO3m/fhqqJDVh/fn8vNk3yKYaXJFgNcgbC0Hs
-         0gfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvJrZaKIZABDMk8fGYFL6hBcvI8QsayyKPUt/Gt3c7nE+S6zCQ3hyd/zzD/rmvlyoNLqM0aJlL77FQUdw17RkB9VJmTm2CvqCMNjqW
-X-Gm-Message-State: AOJu0YwliyIx+95WY4MZq8BrXRAukmTcUIAV3vDaAF3BpW0DQJiYtCNg
-	0B60XalW09OdRpIzbXv0b1bzg+c/RzKSGLXSb+A+y/HZegJqgRk1UVyi4R7JWQ==
-X-Google-Smtp-Source: AGHT+IEFqAVqs9u6rzoc50lPwUIjKavo1CRQSGr6cYJBJrJGT82XBk1cw13Mtd2Q46406CN2I5y5xg==
-X-Received: by 2002:aa7:df97:0:b0:5a2:68a2:ae52 with SMTP id 4fb4d7f45d1cf-5b7f0dcf294mr6016827a12.0.1722769465200;
-        Sun, 04 Aug 2024 04:04:25 -0700 (PDT)
-Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83c32be67sm3453474a12.97.2024.08.04.04.04.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 04 Aug 2024 04:04:24 -0700 (PDT)
-From: Arend Van Spriel <arend.vanspriel@broadcom.com>
-To: Aditya Garg <gargaditya08@live.com>, Janne Grunau <j@jannau.net>, <devnull+j.jannau.net@kernel.org>
-CC: <asahi@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <brcm80211@lists.linux.dev>, <kvalo@kernel.org>, <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>, Hector Martin <marcan@marcan.st>, <stable@vger.kernel.org>
-Date: Sun, 04 Aug 2024 13:04:25 +0200
-Message-ID: <1911d0fdea8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <MA0P287MB021725DE596EF4E5294FA5DDB8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-References: <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <306c3010-a6ac-4f8a-a986-88c1a137ed84@app.fastmail.com>
- <MA0P287MB021725DE596EF4E5294FA5DDB8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-User-Agent: AquaMail/1.51.5 (build: 105105504)
-Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
+	s=arc-20240116; t=1722769512; c=relaxed/simple;
+	bh=Gy6I584IGzicBXyzg6q5/89C48fBtUYKR3xsKS4pyDo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t279JJuWg+Ea/svzmPYfAybWrF09TsOQ6ZZ91xOdPp02qt0ZYx0BmXu4Aefe5g6lD1y9mvLI68e4CVlJbHdGmmfamN+VVUOVvLTD2Dgb7jttejTCk45TEIDSyLh2UuxNEdICRBl2YvdBpZM3YGBhjm5MMcK7EChqmGpkCPGrQKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exHQCFVN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA8CC32786;
+	Sun,  4 Aug 2024 11:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722769511;
+	bh=Gy6I584IGzicBXyzg6q5/89C48fBtUYKR3xsKS4pyDo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=exHQCFVNTiJ28lW5EtNMPi34LogQvcUSA3Fpzdi3YolVUN4J51yHn1DEJ+EhXu1cG
+	 lNl2/4Q60ct2No56frPw1Z7XHNj65ds+TukisTx0+6/Wu0RIFJm7L1oLMplXYsZhmJ
+	 DmklP2aDIGRgS4vwsWhomLSmereRrXfyXxkODO30EWad3Utuc4tHHg+DetK5i0ijBW
+	 PJC5Sa/4RWKPpUFWwAAf/KI689o5+Dhep2k2/fZK51vnGWL1usxC2v6HxwumsHp+Vf
+	 lYhtZb/WmRqXOGFce+3LTMorccVfnPbdOCrlHNfIsl4S+SMH3YpDz06/rejyMCl3G/
+	 ZwxFQYBDQZeRQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1saZ2z-000l1v-06;
+	Sun, 04 Aug 2024 12:05:09 +0100
+Date: Sun, 04 Aug 2024 12:05:08 +0100
+Message-ID: <87sevk4kgr.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based FGU handling
+In-Reply-To: <fb9bef18-adf2-4d3a-8205-b22a65b0c6db@arm.com>
+References: <20240620065807.151540-1-anshuman.khandual@arm.com>
+	<20240620065807.151540-11-anshuman.khandual@arm.com>
+	<865xu3kh4r.wl-maz@kernel.org>
+	<4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
+	<878qyy35e5.wl-maz@kernel.org>
+	<47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
+	<86tthhi0nz.wl-maz@kernel.org>
+	<c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
+	<86o76c1b8p.wl-maz@kernel.org>
+	<d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
+	<86bk2b198o.wl-maz@kernel.org>
+	<fb9bef18-adf2-4d3a-8205-b22a65b0c6db@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On August 4, 2024 8:27:04 AM Aditya Garg <gargaditya08@live.com> wrote:
+On Sat, 03 Aug 2024 11:38:11 +0100,
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+> 
+> On 8/2/24 16:29, Marc Zyngier wrote:
+> > On Fri, 02 Aug 2024 10:25:44 +0100,
+> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> >>
+> >> On 8/1/24 21:33, Marc Zyngier wrote:
+> >>> On Thu, 01 Aug 2024 11:46:22 +0100,
+> >>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> > 
+> > [...]
+> > 
+> >>>> +	SR_FGT(SYS_SPMACCESSR_EL1,	HDFGRTR2, nSPMACCESSR_EL1, 0),
+> >>>
+> >>> This (and I take it most of the stuff here) is also gated by
+> >>> MDCR_EL2.SPM, which is a coarse grained trap. That needs to be
+> >>> described as well. For every new register that you add here.
+> >>
+> >> I did not find a SPM field in MDCR_EL2 either in latest ARM ARM or in
+> >> the latest XML. But as per current HDFGRTR2_EL2 description the field
+> >> nSPMACCESSR_EL1 is gated by FEAT_SPMU feature, which is being checked
+> >> via ID_AA64DFR1_EL1.PMU when required. So could you please give some
+> >> more details.
+> > 
+> > I misspelled it. It is MDCR_EL2.EnSPM.
+> > 
+> > And you are completely missing the point. It is not about
+> > HDFGRTR2_EL2, but about SPMACCESSR_EL1 (and all its little friends).
+> > 
+> > To convince yourself, just look at the pseudocode for SPMACCESSR_EL1,
+> > limited to an EL1 access:
+> > 
+> > elsif PSTATE.EL == EL1 then
+> >     if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
+> >         UNDEFINED;
+> >     elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMACCESSR_EL1 == '0') then
+> >         AArch64.SystemAccessTrap(EL2, 0x18);
+> >     elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
+> >         AArch64.SystemAccessTrap(EL2, 0x18);
+> >     elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
+> >         if EL3SDDUndef() then
+> >             UNDEFINED;
+> >         else
+> >             AArch64.SystemAccessTrap(EL3, 0x18);
+> >     elsif EffectiveHCR_EL2_NVx() IN {'111'} then
+> >         X[t, 64] = NVMem[0x8E8];
+> >     else
+> >         X[t, 64] = SPMACCESSR_EL1;
+> > 
+> > 
+> > Can you spot the *TWO* conditions where we take an exception to EL2
+> > with 0x18 as the EC?
+> > 
+> > - One is when HDFGxTR2_EL2.nSPMACCESSR_EL1 == '0': that's a fine
+> >   grained trap.
+> > - The other is when MDCR_EL2.EnSPM == '0': that's a coarse grained
+> >   trap.
+> > 
+> > Both conditions need to be captured in the various tables in this
+> > file, for each and every register that you describe.
+> 
+> Ahh, got it now. Because now KVM knows about SPMACCESSR_EL1 register,
+> access to that register must also be enabled via both fine grained trap
+> (HDFGxTR2_EL2.nSPMACCESSR_EL1) and coarse grained trap (MDCR_EL2.EnSPM).
+> 
+> For all the registers that are being added via FEAT_FGT2 here in this
+> patch, their corresponding CGT based path also needs to be enabled via
+> corresponding CGT_MDCR_XXX groups.
 
-> Hi
->
-> WPA3 is broken on T2 Macs (atleast on 4364) for a long time. I was under 
-> the impression brcmfmac doesn't support it.
->
-> Anyways, I've asked a fedora user to compile a kernel with CONFIG_BRCMDBG.
->
-> If you want logs without it, look over here:
-> https://pastebin.com/fnhH30JA
+Exactly.
 
-Not sure what to make of this. The interface comes up without any obvious 
-error and then another interface is created by another driver:
+> 
+> > 
+> > [...]
+> > 
+> >>> Now, the main issues are that:
+> >>>
+> >>> - you're missing the coarse grained trapping for all the stuff you
+> >>>   have just added. It's not a huge amount of work, but you need, for
+> >>>   each register, to describe what traps apply to it. The fine grained
+> >>>   stuff is most, but not all of it. There should be enough of it
+> >>>   already to guide you through it.
+> >>
+> >> Coarse grained trapping for FEAT_FGT2 based fine grained registers ?
+> > 
+> > Not for FEAT_FGT2. For the registers that FEAT_FGT2 traps. Can you see
+> > the difference?
+> 
+> Understood, for example PMIAR_EL1 register which FEAT_FGT2 now traps via
+> 
+> SR_FGT(SYS_PMIAR_EL1,           HDFGRTR2, nPMIAR_EL1, 0),
+> 
+> also needs to have corresponding coarse grained trap.
+> 
+> SR_TRAP(SYS_PMIAR_EL1,          CGT_MDCR_TPM),
 
-[ 7.006441] rtl8xxxu 1-8.3:1.0 wlp0s20f0u8u3: renamed from wlan0
+Yup.
 
-That interface connects:
+> 
+> Similarly corresponding SR_TRAP() needs to be covered for all registers
+> that are now being trapped with FEAT_FGT2.
+> 
+> Example code snippet.
+> 
+> ........
+> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(8), CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(9), CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(10),        CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(11),        CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(12),        CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(13),        CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(14),        CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(15),        CGT_MDCR_EnSPM),
 
-[ 9.103599] wlp0s20f0u8u3: authenticate with 98:da:c4:af:1f:c2 (local 
-address=2e:87:9a:a9:38:66)
-[ 9.103605] wlp0s20f0u8u3: send auth to 98:da:c4:af:1f:c2 (try 1/3)
-[ 9.109051] wlp0s20f0u8u3: authenticated
-[ 9.110202] wlp0s20f0u8u3: associate with 98:da:c4:af:1f:c2 (try 1/3)
-[ 9.126945] wlp0s20f0u8u3: RX AssocResp from 98:da:c4:af:1f:c2 
-(capab=0x1431 status=0 aid=5)
-[ 9.127678] usb 1-8.3: rtl8xxxu_bss_info_changed: HT supported
-[ 9.128606] wlp0s20f0u8u3: associated
+I think it is a bit more complicated than just that. Again, look at
+the pseudocode:
 
-Is brcmfmac setup to connect to the same access point. There are a lot of 
-unknowns here.
+elsif PSTATE.EL == EL1 then
+    if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
+        UNDEFINED;
+    elsif HaveEL(EL3) && EL3SDDUndefPriority() && SPMACCESSR_EL3<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
+        UNDEFINED;
+    elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMEVTYPERn_EL0 == '0') then
+        AArch64.SystemAccessTrap(EL2, 0x18);
+    elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
+        AArch64.SystemAccessTrap(EL2, 0x18);
+    elsif EL2Enabled() && SPMACCESSR_EL2<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
+        AArch64.SystemAccessTrap(EL2, 0x18);
+    elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
+        if EL3SDDUndef() then
+            UNDEFINED;
+        else
+            AArch64.SystemAccessTrap(EL3, 0x18);
+    elsif HaveEL(EL3) && SPMACCESSR_EL3<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
+        if EL3SDDUndef() then
+            UNDEFINED;
+        else
+            AArch64.SystemAccessTrap(EL3, 0x18);
+    elsif !IsSPMUCounterImplemented(UInt(SPMSELR_EL0.SYSPMUSEL), (UInt(SPMSELR_EL0.BANK) * 16) + m) then
+        X[t, 64] = Zeros(64);
+    else
+        X[t, 64] = SPMEVFILT2R_EL0[UInt(SPMSELR_EL0.SYSPMUSEL), (UInt(SPMSELR_EL0.BANK) * 16) + m];
 
-Regards,
-Arend
+which shows that an SPMEVFILT2Rn_EL0 access from EL1 traps to EL2 if:
 
-> ________________________________________
-> From: Janne Grunau <j@jannau.net>
-> Sent: 04 August 2024 11:49
-> To: Aditya Garg; devnull+j.jannau.net@kernel.org
-> Cc: arend.vanspriel@broadcom.com; asahi@lists.linux.dev; 
-> brcm80211-dev-list.pdl@broadcom.com; brcm80211@lists.linux.dev; 
-> kvalo@kernel.org; linus.walleij@linaro.org; LKML; 
-> linux-wireless@vger.kernel.org; Hector Martin; stable@vger.kernel.org
-> Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
->
-> Hej,
->
-> On Sun, Aug 4, 2024, at 05:10, Aditya Garg wrote:
->> Hi
->>
->> wpa_supplicant 2.11 broke Wi-Fi on T2 Macs as well, but this patch
->> doesn't seem to be fixing Wi-Fi. Instead, it's breaking it even on
->> older 2.10 wpa_supplicant. Tested by a user on bcm4364b2 wifi chip with
->> a WPA2-PSK [AES] network. dmesg output:
->
-> On bcm4377, bcm4378 and bcm4388 (chipsets used in M1/M2 macs)
-> WPA3-SAE and WPA2-PSK still works with Fedora's wpa_supplicant 2.10.
-> Fedora's package carried SAE offload patches in 2.10.
-> wpa_supplicant 2.11 still doesn't work with this patch but it prevents a
-> kernel oops after a disconnect (due to an authentication timeout in the
-> current broken state) in wpa_supplicant.
->
-> I'll continue to debug the wpa_supplicant 2.11
->
-> best regards,
-> Janne
+- either HDFGRTR2_EL2.nSPMEVTYPERn_EL0 == '0', (check)
+- or MDCR_EL2.EnSPM == '0', (check)
+- or SPMACCESSR_EL2<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00'
 
+and that last condition requires some more handling as you need to
+evaluate both SPMSELR_EL0.SYSPMUSEL and the corresponding field of
+SPMACCESSR_EL2 to make a decision. It's not majorly complicated, but
+it isn't solved by simply setting a static attribute.
 
+> +
+> +       SR_TRAP(SYS_SPMCGCR0_EL1,       CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMCGCR1_EL1,       CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMACCESSR_EL1,     CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMCFGR_EL1,        CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMCNTENCLR_EL0,    CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMCNTENSET_EL0,    CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMCR_EL0,          CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMDEVAFF_EL1,      CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMDEVARCH_EL1,     CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMIIDR_EL1,        CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMINTENCLR_EL1,    CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMINTENSET_EL1,    CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMOVSCLR_EL0,      CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMOVSSET_EL0,      CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMSCR_EL1,         CGT_MDCR_EnSPM),
+> +       SR_TRAP(SYS_SPMSELR_EL0,        CGT_MDCR_EnSPM),
 
+So please look at the pseudocode for each and every register you
+add. If there is a trap to EL2 that is described, you must have the
+corresponding handling. None of that is optional.
+
+> ........
+> 
+> > 
+> >> Afraid, did not understand this. Could you please give some pointers
+> >> on similar existing code.
+> > 
+> > See above. And if you want some example, just took at the file you are
+> > patching already. Look at how MDCR_EL2 conditions the trapping of all
+> > the debug, PMU, AMU registers, for example. There is no shortage of
+> > them.
+> 
+> Right, I understand your point now. I am planning to send out the following
+> patches (in reply to the current thread) for your review, before sending out
+> the entire series as V1.
+> 
+> - Patch adding VNCR details for virtual EL2 access
+> - Patch adding FEAT_FGT2 based FGU handling
+> - Patch adding corresponding CGT handling for registers being added above
+> 
+> Although, can skip that step and just send out the series directly if you so
+> prefer. Please do suggest. Thanks for all the detailed information above.
+
+My suggestion is that you take a good look at the pseudocode and
+implement all the existing requirements.  Yes, this is undesirably
+complicated, but I'm not the one making the rules here...
+
+Once you think you have all these requirements in place, please post
+the series. But not before that. If you have any question, just ask.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
