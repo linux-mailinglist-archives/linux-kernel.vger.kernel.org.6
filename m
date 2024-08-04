@@ -1,91 +1,91 @@
-Return-Path: <linux-kernel+bounces-273847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6A5946EE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:04:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFE9946EE4
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE7881C2112F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C280F1C206A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB03A12D20D;
-	Sun,  4 Aug 2024 13:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE80F13635F;
+	Sun,  4 Aug 2024 13:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="jsgF6qVn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ic0zytln"
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="IhSBqh1g";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SFki4GMw"
 Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7456A8CF
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E7876048
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722776562; cv=none; b=S99YtDRqUbd+TGUepjYPsUzyWHjjST6z1IAAaqgGtuVwJCFknrrZjaYQt6zGc+O3uFEopBBQISAwB6b90fewvZrHAnWigN3goLaVQPA11QBvQH2cJxV82T4qvy6lf7RofBuSZoCsYE9CO4Fa9Ty3fouLpfEUurqmIJi8tEXBwjA=
+	t=1722776563; cv=none; b=Rqn6bq8GiY4L4mDYJ58r65w6OlkooU5RfGaQVChzLtuCohXvmSNIpVW6M9dcvxNFQ44zDjtCcmcQeUvLc2mX9CnMgFl76ODAsklGjx1L2VFLK9YtQay9QDcPSxrKm5ylBGvOYzrL0388bOfwnAc5ts406x0MfBlFs4EarPdSWJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722776562; c=relaxed/simple;
-	bh=0zT4ELUdypbLDPtYPoNIq0nN4q+2KRKcNt9sf1SBc84=;
+	s=arc-20240116; t=1722776563; c=relaxed/simple;
+	bh=3M4QOIj5f1Z1b9G9IJV0Sp/2cF6cD0jloZp0mRO2NP0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VVkeczvl6DW3r1p9b2BXLRM1FR33+cn7/ilPm+yE1AJI0Ew+zqDW3buQf9D7W8mzzmVOEDusTJ24cPQIgCIlxAoroGNpL0wWkhuE0wcgGD7jqoqqohSbH7fvE53vgMzE1rjB3No/x88UC6NSN6es6ZvQ0S8kPiO9UTGItbtkl1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=jsgF6qVn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ic0zytln; arc=none smtp.client-ip=103.168.172.146
+	 MIME-Version; b=MQvwy08PWJg4uctSmGm7ZgngMu2r1Gh1EVebNqAhwAzQ4nrhYOnwz6hqjOi7iM6j4caL9VrTThh08hIcsXCOsmQ5CgjJR00aM+FIJyj1Zfk6yNThfF6KIO6oWfFBL3fS0a06vkDbtX/VST5TEXkYl3QNpyygsE9eZ28qXTfV4wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=IhSBqh1g; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SFki4GMw; arc=none smtp.client-ip=103.168.172.146
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 55AAA1388062;
-	Sun,  4 Aug 2024 09:02:40 -0400 (EDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id A388F138817A;
+	Sun,  4 Aug 2024 09:02:41 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Sun, 04 Aug 2024 09:02:40 -0400
+  by compute2.internal (MEProxy); Sun, 04 Aug 2024 09:02:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1722776560; x=
-	1722862960; bh=riXT/ZPaI3yITLXofYuDWzvYYTW64WraJqRL8dIk1u8=; b=j
-	sgF6qVnFxJ9MLP3LeORc+R1PNncoIFM9zgGsyGdkUPE+VW3VN1Ja51EWMWpxnSn3
-	pDNsVO6yLFDl2ScXZEHuzZnSfv2ykIZDHijt2kW6/QsIb9Fx/D0OY98NNIWykKbh
-	iPV2Czbb6d2OuGdw9st6R4DiVm3pT3bEsk8nu5BNfyWESaER8n/MhUKE3+JsA337
-	eLlFgs/qkmBL3nYZQnzWFtwIRDhQTFO8IRC5NnIKPBDYqjeX2FbfSx1hB+Yieg5P
-	XR6e4O4m0fIu386ZteCH6GA0fzCxMDoXoUnDbaADxMsVVaAoheReARD3XBkuGb+M
-	E073eCAh4cc6dHG4Z4P1w==
+	:reply-to:subject:subject:to:to; s=fm3; t=1722776561; x=
+	1722862961; bh=cnExW14OrezM7AAY2ZcP4bF1stBaSNMPihuGoMDdgLg=; b=I
+	hSBqh1gvrjtcsEc0nKOcGMM5dpTiQtMkhlsnKMX/GrX748Mwsxc99mAOuSCoRAdH
+	W+QoaDEg4pCiOVqk4jF2EdNjX0R0XTc55c9+jkq3fz1jJLpScfsiIT7bL8+bcRO8
+	TTC4ybgMzEhQpG1zRrXDpU7aOJb9mY5aMBw9dSifXONmfY6RNYOeu1T3gTT8ZCJ3
+	mH+VgTfkHufa4KXNmroiSuPJhSigHPeB/4W825hL4HPuE1m2V1GBXuI2aOD4xHa2
+	rnBNn90kz3RDfO4bmzUdmvDBjb/6a16fBO8wefeC+SO79RVj0dx+E29QE+X1u2Ng
+	1W9b2hskRPQenduOZfwrg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722776560; x=
-	1722862960; bh=riXT/ZPaI3yITLXofYuDWzvYYTW64WraJqRL8dIk1u8=; b=i
-	c0zytlny3tW5mxYP9Q96bT+HC5/eGZ4+XbqhrHtj7oSPjGkgdsIQsvvj8qOaGyZX
-	TdafKBoqN1ovXhgOHMWNTdlbTHTD+W3KVfVXGV7iqVxDn0UTn74gDuI0dAB3ic2X
-	zS0CfxxJZIw1ypWuUjvYGyyh9W8QkX0xqRs19QMxBBTbW5ZNthDASwtO5D2Dyrqj
-	B3hnqJRuOKezzOJuR/oO36IKSHw1nEDsqwNtBbnj1QtvZgW4OftQYY2d7CRHrshT
-	cKm3SZ2NmI5p7A5Q7ZHeziG/HdhSXA4h+/PJVca5P6zbLk3gggNgcA60PiKED+my
-	krK5Rus4OlhIzvV125SHg==
-X-ME-Sender: <xms:8HuvZnk5jbHd5FWrhKTIauz1eiLD1U3AEJYPqVnXokppjjBkiwf4_g>
-    <xme:8HuvZq1KRqyyVbYwScZWuZWw9s3hnPW1W6W0tlf10MBpUjFEO49G98mfG1LZ13cgY
-    af15ZB2aun8SiOYJPw>
-X-ME-Received: <xmr:8HuvZtqR4VV_22Sa4xPxaqR1XkZoOf1RBi6d6ufaPVfGr_T1yMkeqDKi1eAlLu_hes_Ph2Csvnoan5uy4GolKMPDEl57nxhjK_5qs23XBDtl5Q>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722776561; x=
+	1722862961; bh=cnExW14OrezM7AAY2ZcP4bF1stBaSNMPihuGoMDdgLg=; b=S
+	Fki4GMwOEDoZK8ctjVyZ3LgSQvwT+4TaR8tQcI8KUVK92bw3C3ODJvQgNoicwyo4
+	aboA8yb0tYl4Ekbb00KkphIZSb8NP7A0r/ykQOIA4UOSETXqNRfLAowERfS2oamU
+	vUA7PtJ2AlCXhr+beIgxhpvFQzvxtEF9edtdatCBuD3iubjPze75AHkbq0Z1UTty
+	OYDn7n+v/GX+LuV208ESMPIa3HX1xpznXVUrfSDaBu7uMp3vr91oPyjWOwKh4ojV
+	E+LlKpSvaEq0sfwyD+JW8Kh0pa4YRTQt/nwKDZLzOlBlVvUq1FLHFjJyotUCv53z
+	aR4ToR4EwREGRHTM6euxw==
+X-ME-Sender: <xms:8XuvZn3D8FSh53nYrPNrteV-Yug4vUQJhWXwl1kiCYg44ODzRO7r8A>
+    <xme:8XuvZmGmV18mt356_7ncmLmaU2HPbF_qOw-oOzoRCpEgeacC_MWsFmxbgg3OIMG1x
+    3hsXP0Qt_dTDARiJxw>
+X-ME-Received: <xmr:8XuvZn5Vmc72em-U_r2VKncAe7OW1XPj8iH0qO_dwHsJJxV5wEV8xeVYmrC2-PPRs0PTTCCY56xQEawXFsOZNXI_iIA6DgiRJ1rIx-2LUUOZtQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeggdehlecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
     dtredttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
     shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejue
     dvgfduudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgv
-    rhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
     grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:8HuvZvlh8P-Hj7GiMND1-be3ADT016lnynvvFDryW8WPBQt2SlSTug>
-    <xmx:8HuvZl0xL20k9DrqdB2VA00IeLInpPY7w6SQPkOaVN9aKbVshkUBkw>
-    <xmx:8HuvZusuFIy4VyEArVFZ-8Fr89DQUffpzdEaWKTIZniICh2S5HOLWw>
-    <xmx:8HuvZpWtAETnh6bjgL40PerGn4zaeBNn4GsNY1bvWsnUDAWnLiUJvQ>
-    <xmx:8HuvZjAt-gTKyCc7f6Yot7PYNQK953SRydj7aZkBkrnpmr5kYfje2MHB>
+X-ME-Proxy: <xmx:8XuvZs0GJBNThAt_fkNbaupspV0VxrhnLx2zcgc0TgLbWz3IdmM0xw>
+    <xmx:8XuvZqHXssuQniB9MlIDCp7OllbiUProQkgqqaiXYwIEE7Jst71zmA>
+    <xmx:8XuvZt8RM1AUKovIejb62x0H-YkK5fJ1WhjKx9Z0M1efU6V_XyCuWA>
+    <xmx:8XuvZnmH_lWuYm5lH3FUg_-21GYY_wy-0HoBkWKtChK77lZVBvf6Rg>
+    <xmx:8XuvZvTXCjwV-wtF9E3muvzK4WKUDN5f0nfguULuKUokt9dcxO-J6jku>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 4 Aug 2024 09:02:39 -0400 (EDT)
+ 4 Aug 2024 09:02:40 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 08/17] firewire: core: use guard macro to disable local IRQ
-Date: Sun,  4 Aug 2024 22:02:15 +0900
-Message-ID: <20240804130225.243496-9-o-takashi@sakamocchi.jp>
+Subject: [PATCH 09/17] firewire: core: use guard macro to maintain list of events for userspace clients
+Date: Sun,  4 Aug 2024 22:02:16 +0900
+Message-ID: <20240804130225.243496-10-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240804130225.243496-1-o-takashi@sakamocchi.jp>
 References: <20240804130225.243496-1-o-takashi@sakamocchi.jp>
@@ -97,57 +97,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The core function provides an operation for userspace application to
-retrieve current value of CYCLE_TIMER register with several types of
-system time. In the operation, local interrupt is disables so that the
-access of the register and ktime are done atomically.
+The core function maintains events to userspace by list in the instance of
+client. The concurrent access to the list is protected by spinlock in
+the instance.
 
-This commit uses guard macro to disable/enable local interrupts.
+This commit uses guard macro to maintain the spinlock.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/core-cdev.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/firewire/core-cdev.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
-index c3baf688bb70..90e9dfed8681 100644
+index 90e9dfed8681..2e2199eaa05b 100644
 --- a/drivers/firewire/core-cdev.c
 +++ b/drivers/firewire/core-cdev.c
-@@ -1263,29 +1263,27 @@ static int ioctl_get_cycle_timer2(struct client *client, union ioctl_arg *arg)
- 	struct fw_card *card = client->device->card;
- 	struct timespec64 ts = {0, 0};
- 	u32 cycle_time = 0;
--	int ret = 0;
-+	int ret;
+@@ -287,19 +287,17 @@ static int fw_device_op_open(struct inode *inode, struct file *file)
+ static void queue_event(struct client *client, struct event *event,
+ 			void *data0, size_t size0, void *data1, size_t size1)
+ {
+-	unsigned long flags;
+-
+ 	event->v[0].data = data0;
+ 	event->v[0].size = size0;
+ 	event->v[1].data = data1;
+ 	event->v[1].size = size1;
  
--	local_irq_disable();
-+	guard(irq)();
+-	spin_lock_irqsave(&client->lock, flags);
+-	if (client->in_shutdown)
+-		kfree(event);
+-	else
+-		list_add_tail(&event->link, &client->event_list);
+-	spin_unlock_irqrestore(&client->lock, flags);
++	scoped_guard(spinlock_irqsave, &client->lock) {
++		if (client->in_shutdown)
++			kfree(event);
++		else
++			list_add_tail(&event->link, &client->event_list);
++	}
  
- 	ret = fw_card_read_cycle_time(card, &cycle_time);
- 	if (ret < 0)
--		goto end;
-+		return ret;
- 
- 	switch (a->clk_id) {
- 	case CLOCK_REALTIME:      ktime_get_real_ts64(&ts);	break;
- 	case CLOCK_MONOTONIC:     ktime_get_ts64(&ts);		break;
- 	case CLOCK_MONOTONIC_RAW: ktime_get_raw_ts64(&ts);	break;
- 	default:
--		ret = -EINVAL;
-+		return -EINVAL;
- 	}
--end:
--	local_irq_enable();
- 
- 	a->tv_sec      = ts.tv_sec;
- 	a->tv_nsec     = ts.tv_nsec;
- 	a->cycle_timer = cycle_time;
- 
--	return ret;
-+	return 0;
+ 	wake_up_interruptible(&client->wait);
  }
+@@ -321,10 +319,10 @@ static int dequeue_event(struct client *client,
+ 		       fw_device_is_shutdown(client->device))
+ 		return -ENODEV;
  
- static int ioctl_get_cycle_timer(struct client *client, union ioctl_arg *arg)
+-	spin_lock_irq(&client->lock);
+-	event = list_first_entry(&client->event_list, struct event, link);
+-	list_del(&event->link);
+-	spin_unlock_irq(&client->lock);
++	scoped_guard(spinlock_irq, &client->lock) {
++		event = list_first_entry(&client->event_list, struct event, link);
++		list_del(&event->link);
++	}
+ 
+ 	total = 0;
+ 	for (i = 0; i < ARRAY_SIZE(event->v) && total < count; i++) {
+@@ -1887,9 +1885,8 @@ static int fw_device_op_release(struct inode *inode, struct file *file)
+ 		fw_iso_buffer_destroy(&client->buffer, client->device->card);
+ 
+ 	/* Freeze client->resource_idr and client->event_list */
+-	spin_lock_irq(&client->lock);
+-	client->in_shutdown = true;
+-	spin_unlock_irq(&client->lock);
++	scoped_guard(spinlock_irq, &client->lock)
++		client->in_shutdown = true;
+ 
+ 	wait_event(client->tx_flush_wait, !has_outbound_transactions(client));
+ 
 -- 
 2.43.0
 
