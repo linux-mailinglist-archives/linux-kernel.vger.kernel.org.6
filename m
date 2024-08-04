@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-273654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A2B946BB7
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:59:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5E7946BB9
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137001F24FAA
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53D81C2145F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B516D13C9D3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5FC13C9C0;
 	Sun,  4 Aug 2024 00:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A4uNr3mt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yk+sXboT"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TIf7HXDI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="suroxdUF"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC0A28DBC
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 00:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C525926AFB;
+	Sun,  4 Aug 2024 00:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722732718; cv=none; b=GcDpgSlYwLZm/sXe7JFO8EGAFLirxl1gOeCMDJu5jSguZ0495rGtnbHzKamytYMXCGElvE6eG72nUFc90Bd8Vadiu4oQTzzz+pJ9hQuX89COKJ0E/Gfggu/KYRaSwfsgBqJfisf7yttN0eULAq+YdJyhiKvptnGAk8fco0MMJWY=
+	t=1722732718; cv=none; b=T3/60Y9VYCYCG8G1V9WQgkZW/fzNLiMIISMREQ7eB3XJxjpQRl59onurk2a+xCmXvfsFPs8ODZaQDoEkU85zhh5xZCLMFqcgwZzqUkkGt7HnsIi/CZPtPZE3s8vc8g4ahim40MmGDmqxVqmm20p41IkvmU0xMR5eH5jn/hHMAg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722732718; c=relaxed/simple;
-	bh=rx8JQEOlPSXSGgJH/hN1890GlKdwGsxBTv9ERQw0ehM=;
+	bh=/gP8ujgnDmo/PH09xoPdDL8CnHUSID9dOyO0b21i7JQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CC5TPPFw1MgGdkVip72+tE/RugUFDV+Wtqu67IsouiKsTOV5Q4zbvH3XPTiCTZrGE1vLD5pJzTAYUU+ZhtgR2kSwyLVtns1dln8+Bhznzb9kkZZbLhbNlwPo/asku085dwAyzFbkGlij/vBPanBPJJBiUm6X6AGBmp4f76gR+JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A4uNr3mt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yk+sXboT; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=iLVtvWvXeTOJBFf5wr/DeXWT6ykcduyUGjOBolQag+fruoIxdIYbbsJjykGsv8HZvbbbq6m1kjhE+NZV0KKpb3u8BFhYDX3Wt+6RNgkYFMpbnuNuaD4zIeLmKIJQG+kgQ0JUdlQxt6o/LwSPn18uQpIS2tSgIHxYuz6t3EaPJEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TIf7HXDI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=suroxdUF; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: John Ogness <john.ogness@linutronix.de>
@@ -38,35 +38,40 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dtyMYwpXcYpG7D03C8lxtJgU1iwrqHDYPSpb3n5f5II=;
-	b=A4uNr3mtns0/fwdqdEI5WlnXILPV/noMt9yPjt5GUk0Bg/oVVlGTF1NJb21A00XooZy/iK
-	CmwplsYrkoIwfBgujIQUsfH8cHhdJvprCoYS44zkK/kFYou9HeR6KTMdD1IUR5TglHijgS
-	nZ2AzeJT0h0jmAV14fE53QP8wvoBM/gSyhLBwiW2DBfBCImBOn1ZuCzCqjl1VfGiEcFLu9
-	v/gUANqD+cF8stT5FFZxyNkuH7pQa3fltks1QuVRIPa7VS/Qrd4iHYzgWpQgHrpkdrSNea
-	CW3thc28KWhIiW15Yq2ht3NID3x7FQctfLWIO8dcMU3GYelTvnRky/xltVcADw==
+	bh=+J3uNsDrypTBncR2y3/sDGkKGKO6SJ0tlRYJyvsQeNQ=;
+	b=TIf7HXDIY0ugmmNb4KJw92Zvct+hsyeRHu07SMfhx7m1OdVEvQwyeyOVAkEpzwHkzMJ/qL
+	n8cLKA/joazxCvGboBUfsmgkCRv4EyDckVTDIZcUUORy6S81j/v+CUxY6IxGqz/oGlnRUo
+	dOOsAZa6Dj2gOV/8nDZ0M5ESfBRZaq8BW+MjbcgNhY3pjMLCZFT8WUgNOdnt5JsalQXkps
+	6jAvlwsn17pHLNjrS3wPGrGTnY8ATDlz1d6NoP2whr9TeYe9kcwz9W6UkuWMXKntBrD7Dl
+	km2fDLDrBwqcnq0/l5Q1/nefvClFwAfhV8Z1LTEEho/X6tcIQKFjKbrzHNZwWA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722732713;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dtyMYwpXcYpG7D03C8lxtJgU1iwrqHDYPSpb3n5f5II=;
-	b=Yk+sXboTJ4zsgdoLYQgpkav19TY9wl/aprDYzF0yshY31cX7VQjpyYLtjmhvq9fMofbRMo
-	NPs2gEdS51gwcCCw==
+	bh=+J3uNsDrypTBncR2y3/sDGkKGKO6SJ0tlRYJyvsQeNQ=;
+	b=suroxdUFbfVnC9Q5kzl6xAIA7Od+lvUWGLp/3RKKUwKdfAbRamDIA4OzjF+RMb7YDR1WWp
+	hz75EGEgWXGWrIAw==
 To: Petr Mladek <pmladek@suse.com>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Baoquan He <bhe@redhat.com>
-Subject: [PATCH printk v7 33/35] panic: Mark emergency section in oops
-Date: Sun,  4 Aug 2024 02:57:36 +0206
-Message-Id: <20240804005138.3722656-34-john.ogness@linutronix.de>
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	rcu@vger.kernel.org
+Subject: [PATCH printk v7 34/35] rcu: Mark emergency sections in rcu stalls
+Date: Sun,  4 Aug 2024 02:57:37 +0206
+Message-Id: <20240804005138.3722656-35-john.ogness@linutronix.de>
 In-Reply-To: <20240804005138.3722656-1-john.ogness@linutronix.de>
 References: <20240804005138.3722656-1-john.ogness@linutronix.de>
 Precedence: bulk
@@ -77,42 +82,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Mark an emergency section beginning with oops_enter() until the
-end of oops_exit(). In this section, every printk() call will
-attempt to directly flush to the consoles using the EMERGENCY
-priority.
-
-The very end of oops_exit() performs a kmsg_dump(). This is not
-included in the emergency section because it is another
-flushing mechanism that should occur after the consoles have
-flushed the oops messages.
+Mark emergency sections wherever multiple lines of
+rcu stall information are generated. In an emergency
+section, every printk() call will attempt to directly
+flush to the consoles using the EMERGENCY priority.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
 ---
- kernel/panic.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/rcu/tree_exp.h   | 7 +++++++
+ kernel/rcu/tree_stall.h | 9 +++++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 5fc44fd3b3dc..0843a275531a 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -679,6 +679,7 @@ bool oops_may_print(void)
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index 4acd29d16fdb..f6b35a0585a8 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -7,6 +7,7 @@
+  * Authors: Paul E. McKenney <paulmck@linux.ibm.com>
   */
- void oops_enter(void)
- {
-+	nbcon_cpu_emergency_enter();
- 	tracing_off();
- 	/* can't trust the integrity of the kernel anymore: */
- 	debug_locks_off();
-@@ -701,6 +702,7 @@ void oops_exit(void)
- {
- 	do_oops_enter_exit();
- 	print_oops_end_marker();
-+	nbcon_cpu_emergency_exit();
- 	kmsg_dump(KMSG_DUMP_OOPS);
- }
  
++#include <linux/console.h>
+ #include <linux/lockdep.h>
+ 
+ static void rcu_exp_handler(void *unused);
+@@ -590,6 +591,9 @@ static void synchronize_rcu_expedited_wait(void)
+ 			return;
+ 		if (rcu_stall_is_suppressed())
+ 			continue;
++
++		nbcon_cpu_emergency_enter();
++
+ 		j = jiffies;
+ 		rcu_stall_notifier_call_chain(RCU_STALL_NOTIFY_EXP, (void *)(j - jiffies_start));
+ 		trace_rcu_stall_warning(rcu_state.name, TPS("ExpeditedStall"));
+@@ -643,6 +647,9 @@ static void synchronize_rcu_expedited_wait(void)
+ 			rcu_exp_print_detail_task_stall_rnp(rnp);
+ 		}
+ 		jiffies_stall = 3 * rcu_exp_jiffies_till_stall_check() + 3;
++
++		nbcon_cpu_emergency_exit();
++
+ 		panic_on_rcu_stall();
+ 	}
+ }
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index 4b0e9d7c4c68..b3a6943127bc 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -7,6 +7,7 @@
+  * Author: Paul E. McKenney <paulmck@linux.ibm.com>
+  */
+ 
++#include <linux/console.h>
+ #include <linux/kvm_para.h>
+ #include <linux/rcu_notifier.h>
+ 
+@@ -605,6 +606,8 @@ static void print_other_cpu_stall(unsigned long gp_seq, unsigned long gps)
+ 	if (rcu_stall_is_suppressed())
+ 		return;
+ 
++	nbcon_cpu_emergency_enter();
++
+ 	/*
+ 	 * OK, time to rat on our buddy...
+ 	 * See Documentation/RCU/stallwarn.rst for info on how to debug
+@@ -657,6 +660,8 @@ static void print_other_cpu_stall(unsigned long gp_seq, unsigned long gps)
+ 	rcu_check_gp_kthread_expired_fqs_timer();
+ 	rcu_check_gp_kthread_starvation();
+ 
++	nbcon_cpu_emergency_exit();
++
+ 	panic_on_rcu_stall();
+ 
+ 	rcu_force_quiescent_state();  /* Kick them all. */
+@@ -677,6 +682,8 @@ static void print_cpu_stall(unsigned long gps)
+ 	if (rcu_stall_is_suppressed())
+ 		return;
+ 
++	nbcon_cpu_emergency_enter();
++
+ 	/*
+ 	 * OK, time to rat on ourselves...
+ 	 * See Documentation/RCU/stallwarn.rst for info on how to debug
+@@ -706,6 +713,8 @@ static void print_cpu_stall(unsigned long gps)
+ 			   jiffies + 3 * rcu_jiffies_till_stall_check() + 3);
+ 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 
++	nbcon_cpu_emergency_exit();
++
+ 	panic_on_rcu_stall();
+ 
+ 	/*
 -- 
 2.39.2
 
