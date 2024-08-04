@@ -1,109 +1,131 @@
-Return-Path: <linux-kernel+bounces-273732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68791946D16
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:38:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A45946D19
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7872C1C214D8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:38:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D81DB2136D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA3A17C68;
-	Sun,  4 Aug 2024 07:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1462119470;
+	Sun,  4 Aug 2024 07:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="AOI/rADU"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Emc8r4lg"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6037DB67E
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 07:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3772618028;
+	Sun,  4 Aug 2024 07:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722757075; cv=none; b=AIr9dVejpQ0G1aqYZfEwHA4REPItcnxX5xut9uPVDMXUVGGH/lHI61qL7IkLJpsFVhNNl4BrDKmlA1jmJrGWgx2WxV7uZOnRxEKtvtobaLgh8WRsYyzZFx6BJM8RIcoIgpgkR2CSyqn+dheJ7afdeGnkAxeo5BkyC65OuwgOGNs=
+	t=1722757172; cv=none; b=QwiW4nckvPIL/akC9Orof+kZSolUtb2wwDmsajziErP/ljXFVjzxdzrOR+aXS73rMKeVXR0SBl6jhK2djNcNJkVRwQ5e6zC8xsYIQHy0J19HlPP9iHRWilQAjtn0Wfnvx1ZFfBEW9wDc11cxK5cYXkUcXK7ladA50/mvBMw2Zx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722757075; c=relaxed/simple;
-	bh=d7MTlfsOFlhCujaapEC+0wi/rkr6DqF65rSr7xkhlbg=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Tng67AfkPlmlanFkHgAOHyNRpL9ZZV7hVVlsrS2SAgKIX1yZi51jfntTOlz6d3miT7joGRYV6Wc3y46SrCEv9OVNYQflnAgtKM8xdjH4P+2FO6HJUg2ytAXyB5VWSbKyJIA7paFSc5ZrxYLNj/S4cLSacziSckxkNzbu52jEDCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=AOI/rADU; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722756763; bh=omYkRP9fklddOT1lpvnvwQtdlKmLz7lo13X8d9alXho=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=AOI/rADURmj14ILnd7RhOe6Le99PWXyvGIVbWZVL93hRGGMW2UpNZzMqKaPoV84kV
-	 51IZc9x3bAwTYrPJSO68EIx51YCxFRfVn9KqqohD41ve108LjHQaNrzrlyFTtvtHjz
-	 fwkok/oHOqV28gSU3KOTD6gRVSxqrrB2/OuBAEKQ=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 829260CF; Sun, 04 Aug 2024 15:32:41 +0800
-X-QQ-mid: xmsmtpt1722756761txber3db0
-Message-ID: <tencent_3753976AB76BE6C03368E36CC96363BE2405@qq.com>
-X-QQ-XMAILINFO: NqN/wpVFVRYXUB8bZDyxXjZkoTNpZThpuixc5os0/u9FNsm9G72XVagO89/5tr
-	 BRpfaLrL1lL3+tbZnyu5vJZPIJouWI+pK5g/xiwE/+EuXuvf5ktGAeuoMiO/RBD6IvZxa9vjuGWc
-	 r8gjTBb84a4QiDqNunQ09C4R1Ce1HuGEYe5ue6sYTzC4lpQNTA/lu1PREoAI8A6ujp+a54ejTr4b
-	 TzEY1NriyoQw8ciDJr6hyE5XOEX2H6mbltUPoyfj/zZ5ELhk79b2kLHwqFlaAeu4OiKNwDRGhoQ7
-	 t+Z9lgZJtmQuVXYnvaIli2S/wjp2Clkxwe6xeJM3PPsGTMdiVGnhccChG27oPMJGw6O8yLY/qz8v
-	 xAVcAarcmu1YpaCh4GV0b8GpMTKJMICYHV33LAb68SBRPTkQ7RFgDv5xe4V7FQDTZ2ueONFegVxe
-	 uBH5WsAy25ftLTJULeRzLsv1t2YY6lH/X12MbS5rf7YYHBffdOiJkUmvC7V/Q0CU5itdJjFvrsmI
-	 5vtIQH17ZzcKlvILo4+bxs3AgnMXk9wTRHfQt78IhOYcUmeakbQ0D2fjWZ3iOv/ggZc8F5m+oCM+
-	 +Qe3smm5H0mXKFCgqBm3J4E6lTom+JFLxJuE9Lh8tgfmWU6PSCQdvTF/dhcjVbKD7rSzTSSY1M9j
-	 yHlzyPLZ80UFplRM2voyhp1FEQ8n9xg7zt2ICbeewmIXUpRycSvM0tVX7kx2V6LzTNnRlN2Dvz7t
-	 wqu2D9Cg9NAcUu5wLjWUk33jY/qeTJCPNZoBMUZduG7CZnzywMD8pjOcdj3RYWj2M+MST5ZLV492
-	 IBsOeA0C720Ly/5CjJ3SttbpKOX8qpiFPknYkpfARb6Swp+fHyE0tj685nbPRQPmDVg2uYmp8dyv
-	 AUpVDCKR9YB/0fZQMMcsw7JWpCkT7dvUbJtOxPeXZh
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+eda89a33c5856f66f823@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [jfs?] INFO: task hung in txBegin
-Date: Sun,  4 Aug 2024 15:32:36 +0800
-X-OQ-MSGID: <20240804073235.2495544-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000001f253b061bb8a953@google.com>
-References: <0000000000001f253b061bb8a953@google.com>
+	s=arc-20240116; t=1722757172; c=relaxed/simple;
+	bh=dx1qsJWwPqbDPWHNQRSyT6YxQ55c4Kz9aQMnwMhOiK0=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=bfreXouz4tX7VcToC338ngUiuI/l20hDViaZN8mFTbacN5b0Cm8MDqpfDEKiXDoou7J+NBCAyoloagvXDZw2OzwnDkrFfPhZqnHLKrTfqB2tTd4efUMalu3AqueSERN2ufnC19/RxSCHgE4ehF5Dcp2nky4Mf0y9NtYwOccOjJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Emc8r4lg; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:Subject
+	:Reply-To:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
+	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=VA7tExR2XPaZPXzIax6ElMB4EKjXC6966mpWAb1KBac=; t=1722757170;
+	x=1723189170; b=Emc8r4lgGpiS74tsqEdgVZbpUa5GfpkWoCV0ocE2yTL7nDO8uSUo878CjSx+H
+	w26OEaWUeraHvpYKXKFFNDZbxQwrYdmwv1rju0HHeY68BSCbENABLevqYAzNFjOcDDUILqq6PhUQJ
+	+lSG+kYts3woDXLueMqNtCNGU2Pw5wt9EbyOX55uXcdwQ75CaM+wZAekMScMYCQe0gyJi2/EmQ2w5
+	vsjpBVO4LLjk/pbToN/sG5WdW2/vtTcKoDnymru2OWIRKnFSurQsXqsr6MgMQi1nQegU5YcB8zUIY
+	GOcPgSMecknYlirVEjZ9VsBKh3goaQBLHYf1l6EoHl/kw7Eo+A==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1saVpv-0005fK-1W; Sun, 04 Aug 2024 09:39:27 +0200
+Message-ID: <412463d7-5259-4c99-bfda-1f5f9d2893cf@leemhuis.info>
+Date: Sun, 4 Aug 2024 09:39:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: Jann Horn <jannh@google.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Matan Ziv-Av <matan@svgalib.org>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: [regression] LG Gram Laptop Extra Features stopped working
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1722757170;ce8c2813;
+X-HE-SMSGID: 1saVpv-0005fK-1W
 
-with sb rwsem lock to order syncfs and wb worker
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
-#syz test: upstream 50736169ecc8
+Jann, I noticed a report about a regression in bugzilla.kernel.org that
+appears to be caused directly or indirectly by a change of yours:
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index b865a3fa52f3..172ca9e1eed5 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1865,6 +1865,7 @@ static long writeback_sb_inodes(struct super_block *sb,
- 	long total_wrote = 0;  /* count both pages and inodes */
- 	unsigned long dirtied_before = jiffies;
- 
-+	printk("path1, sb: %p, %s\n", sb, __func__);
- 	if (work->for_kupdate)
- 		dirtied_before = jiffies -
- 			msecs_to_jiffies(dirty_expire_interval * 10);
-@@ -1993,6 +1994,7 @@ static long writeback_sb_inodes(struct super_block *sb,
- 				break;
- 		}
- 	}
-+	printk("path1,end sb: %p, total_wrote:%lu, %s\n", sb, total_wrote, __func__);
- 	return total_wrote;
- }
- 
-@@ -2720,6 +2722,7 @@ void writeback_inodes_sb_nr(struct super_block *sb,
- 			    unsigned long nr,
- 			    enum wb_reason reason)
- {
-+	printk("path2: nr: %lu, sb: %p, %s\n", nr, sb, __func__);
- 	__writeback_inodes_sb_nr(sb, nr, reason, false);
- }
- EXPORT_SYMBOL(writeback_inodes_sb_nr);
+3cad1bc010416c ("filelock: Remove locks reliably when fcntl/close race
+is detected") [v6.10-rc7]
 
+As many (most?) kernel developers don't keep an eye on the bug tracker,
+I decided to write this mail. To quote from
+https://bugzilla.kernel.org/show_bug.cgi?id=219075 :
+
+> On my 2023, LG Gram laptop (kernel 6.9.10), the Laptop extra features
+> stopped working, and like in
+> https://bugzilla.kernel.org/show_bug.cgi?id=218901, none of the
+> kernel variables for the are writable. for example, trying to write
+> 80 to `/sys/devices/platform/lg-laptop/battery_care_limit` or
+> `/sys/class/power_supply/BAT0/charge_control_end_threshold` results
+> in 0 when running cat. The same issue occurs when I try set these
+> parameters with EndeavorOS.
+> 
+> 
+> Output of `sudo dmesg | grep -iC 3 "lg_laptop" `
+> 
+> ``
+> [    4.283723] ACPI Error: No handler for Region [XIN1] (0000000011d0c87d) [UserDefinedRegion] (20230628/evregion-126)
+> [    4.284919] ACPI Error: Region UserDefinedRegion (ID=143) has no handler (20230628/exfldio-261)
+> [    4.286191] ACPI Error: Aborting method \_SB.PC00.LPCB.LGEC.SEN1._TMP due to previous error (AE_NOT_EXIST) (20230628/psparse-529)
+> [    4.286773] lg_laptop: product: 16ZB90R-G.AA75G  year: 2019
+> [    4.292951] input: LG WMI hotkeys as /devices/virtual/input/input6
+> [    4.293115] ACPI: battery: new extension: LG Battery Extension
+> [    4.293296] resource: resource sanity check: requesting [mem 0x00000000fedc0000-0x00000000fedcffff], which spans more than pnp 00:04 [mem 0xfedc0000-0xfedc7fff]
+> ``
+
+6.11-rc1 is still affected.
+
+See the ticket for more details and additional comments. Note, you have
+to use bugzilla to reach the reporter, as I sadly[1] can not CCed them
+in mails like this.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+[1] because bugzilla.kernel.org tells users upon registration their
+"email address will never be displayed to logged out users"
+
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: 3cad1bc010416c6dd780643476bc59ed742436b9
+#regzbot title: vfs/platform-drivers: LG Gram Laptop Extra Features
+stopped working
+#regzbot from: Chris
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219075
+#regzbot ignore-activity
 
