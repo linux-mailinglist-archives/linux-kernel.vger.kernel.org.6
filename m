@@ -1,91 +1,91 @@
-Return-Path: <linux-kernel+bounces-273854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531A9946EEA
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:05:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 652CB946EEB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:05:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93F81F21F37
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88AA61C21005
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368C413C3E4;
-	Sun,  4 Aug 2024 13:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CD769DFF;
+	Sun,  4 Aug 2024 13:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="KtvtMoTc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kEOTm/Uh"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="sWfOarf8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uL3z1km6"
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BF513B2A9
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDCD13B787
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722776572; cv=none; b=R1upaQ8uv5HzA0AEGRcZd/RR3bBHnkAoPW5HhKMb9LbWtNn2zSvxeiLvc11MDxIMfM27zqPKdvKvErrbWx3g83zBH7mHUIjw78f48Lf8tupzCRvej0QdYRx0rGkYHIKGWYyt9Ra20FTXvHP1vZ8nywZ2DdEgx0VHR0CEziomTHM=
+	t=1722776573; cv=none; b=PD+rgWYge/923UjeqyVOTbI9X8fZpFCH3Brl1pEUYMWCcRWQuhYHYDJyzEXza82i8SZV7q3Xt0CxJrsoQezlgJ6ZWBDXVvEYpOI4fwH+a60GQxqxfK/c9va1t2RKl8nsMuSPUGWSH2o6I2x6R0G9u4b0yW/+MvOzhe+IvvQs9o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722776572; c=relaxed/simple;
-	bh=SYjPXH2iD1U1cMCRf7nypmxIm+fUZop8Ce0hqIrOg30=;
+	s=arc-20240116; t=1722776573; c=relaxed/simple;
+	bh=RQbpBuuhcdVRrS45TXow3FvE3qGBFt8WbWvDlTvxDVc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kYrJJXoKD3EgoSjUt5wdfKHLe+UzPjUreVatioi0/uDSHd/EUcZ4tQWjcQ7hVk78ula8yJWmXREfRIJoX0TYGmDW4uCLQMuu7GbyTPU+PO+LGBr98TdAEkGgJ+GQur5wsZl8tXHfKruPnnEs+94CUjy86NC9IsaaRtmjhlVvPww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=KtvtMoTc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kEOTm/Uh; arc=none smtp.client-ip=103.168.172.159
+	 MIME-Version; b=MyDVPxH5GzIlw7cjhWOBTuG/ZurCt2N9KtjqCQAk9DZwOFCBqoS5qIw94SJP0R0Izbu4hqgiRGwBUd+h1NN789OWsvHJ6EpZ6PHSvxtTuW9mrR8+ZF6WdpK5U/AsYMvmShhWgdDFjtcntkSvzl4aUx+lBNDvx3sCz0QC6aOHwnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=sWfOarf8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uL3z1km6; arc=none smtp.client-ip=103.168.172.146
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id A6259114814F;
-	Sun,  4 Aug 2024 09:02:49 -0400 (EDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 024DE138801E;
+	Sun,  4 Aug 2024 09:02:51 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sun, 04 Aug 2024 09:02:49 -0400
+  by compute2.internal (MEProxy); Sun, 04 Aug 2024 09:02:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1722776569; x=
-	1722862969; bh=bU5KUiELPtrWttit1O/f/6nD4P98n+MP8Do0wq0HKos=; b=K
-	tvtMoTcmx5jSUiz10zOZ0vgMH/H0UGOgxo/4kx8kArjArkdqZDjuDjVyxFK5AuM0
-	bt4uKKg08zH1uGCcPFAyEedGtnKV1ZIk4YPQMtzHdYnODuzAxUSk8+f7ZCDp0Ey2
-	RoMpZFb6jej80tpRpUWWVnB3XP7YAhiyHtosqnkF6mYL7YbCgutPbdKKkwelfuY+
-	G0g9wfmjhN9DTAsgQuRYA18Td+fpVeiz8jNctJ+Fc1jbTrLXPtFvopk/za/R42G5
-	nEstd4Vfol7UM7Q071PIcCQW0rCCf2R/Iyg1/ipDbWY2sjDbqaI+sad8UaoY26JJ
-	dmZ+r86P6IluKyf2xU3NA==
+	:reply-to:subject:subject:to:to; s=fm3; t=1722776570; x=
+	1722862970; bh=oi4YF8S7QF5qtDuzwiUeYwReqaCDQcNumgOf6dEv5Us=; b=s
+	WfOarf8pTTKkWEaVKu9pBTPICmfeNPNQnHPFPAPxY59lVmI7drnRcn3xXWqROPOy
+	Twjb2bZaA2ID1VT7mgY7KLivKERvAEfryrJEN6pC9LCbRrUog8j9Jz9HfoOaL8EB
+	/iL0i3bBwfJhFrbpGARPzIWj46NOw+cEl3BFWOssGXEVjkZ+/Lm93cjgj56HF+go
+	VdV3GTNAwxMz1eogwPpp5kyqpTy1+iquS+zzAPb7L630JLJVI6EqeK0fWeSRpjv/
+	5S6s/lsxJwLOCv3ABTHtkjOugoKtfSpv9dzkqbNXUrNu4CfdHBr6vxOMHIun34ri
+	9EZlzpRThpP0XjOhRg62A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722776569; x=
-	1722862969; bh=bU5KUiELPtrWttit1O/f/6nD4P98n+MP8Do0wq0HKos=; b=k
-	EOTm/UhtajSp8x0G807qlS6XiRnrqervBMh0oBatOketmDqjYfQHhnipGGabLbT+
-	/g1w+f6d3wZTgt0aV7q8FPRxE3qBOQpiR9J1eknZbNcx0hxCN47gpZ6VnlaMoFqL
-	5FFY3i7YwAxnKzyQWAcLKovG0Go9XnSG42O/GxWAqKE1UktW+JyIJPjVZorO1nul
-	cu6W6uukLfUgK6pZaoGqM7pm0iqoj1p+LklgXaSwpPCnndt9KcvxHub3jqZ1q+p1
-	AvrdGr3kZ6+b4m+E09QjfpnH+5e9gslaQ5Xs/kex0UdHaQbDpJmapJIULLmmJ1C7
-	KLwEWtNGV+lufLtDY+Teg==
-X-ME-Sender: <xms:-XuvZs08JTgKAfxAab0qCCMSiO4uWfhN88CNwW4yvA1yJMttpVsAtg>
-    <xme:-XuvZnEtbXcyzIWo36J73C8QrrDxF1ztDqiX2ZJCuvKQsK0wPAtauTM2gLt955krS
-    ypU9E8eE3qdvQPcuXw>
-X-ME-Received: <xmr:-XuvZk433MnL4-HcMdna_ulZvpfACPlcwj7XPoX8tGWmCmvGX--we527AKcKMst0jIoF9w4Oy58m-1-4wOkfpcF_b9EuHMYFSZXYHI-PxtONEA>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722776570; x=
+	1722862970; bh=oi4YF8S7QF5qtDuzwiUeYwReqaCDQcNumgOf6dEv5Us=; b=u
+	L3z1km6hJFFOgL1MWoUp39QyfdlPr9Z7RiOmeVd/b7bFrzJGD1AeGSfLWExezhg8
+	iiS4BwtMKwooNKvVJ1o4aSpeBRwJNmYXtX+GObrkWchGMi7rQrgBc1zJFBUZYOIH
+	PlfSqd3YI+Cn8gryxZ8LpYtkHfweTvHe2ow/FVOYPuldgQQJHGzj4/AGoRfMvU41
+	hSIZDYsJEeevYAnyo9wxSN3Yk1oN6ypmlPtkznRVOtwFFIVmBX7DpU9lbYQKmm8f
+	1ZGcynn2cUl5T0M1L8CzHXfV6NIU7xNfYWkq1C1SBKIYOJ4OPmYMHYMeeEEZwAZE
+	WZcxo6qfKfYHUYmna2h/A==
+X-ME-Sender: <xms:-nuvZg-KCvQFCBuk7_j_GENY7O4mM--XO2xnfIdbI6DEW-LE9f_aKQ>
+    <xme:-nuvZoteUPDrbGmqdVwM80I98tKU916O1IfxV3vzOgyfAK5shflz1f93Dr9f93mby
+    1Yd3gAoHtTOcng-szs>
+X-ME-Received: <xmr:-nuvZmB7rTCu248H5D7Ji4Nd32A5jmZYMnHdCNLFtqKa3bUwbOpyRubZ_MaW1PSfBTllBz4x7VqZ_GLbAHueRTZW4hpv6nGeRoOdsLm7bVBEug>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeggdehlecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
     dtredttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
     shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejue
     dvgfduudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgv
-    rhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
+    rhfuihiivgepfeenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
     grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:-XuvZl0MP7HHXqDVnxgY2w6YLRc7TyVfLY-OWtg44vYQcoPRnuZmdA>
-    <xmx:-XuvZvGV82TQ-5tlns0LheZTAg2UT8DGnnJohVQGDUJ26ZhO5C1gqw>
-    <xmx:-XuvZu_5f41x0RQW31OuAhcOdYkQU7GUZB9QxhlcywOaj1Cxuiht2A>
-    <xmx:-XuvZkm2-1ZxGHL6AGiDkwPymaqaU86-xbCFnNAq1MVsw9KPJnAWSQ>
-    <xmx:-XuvZkQQJ2VuWpJmGDSBdh5isnKEE7Z1_fDojs7eSgwnaSY6-li11B2A>
+X-ME-Proxy: <xmx:-nuvZgc0GdhwngxEI4p0FoUYwqAGKacUnWfTP3twCVuTqF56AAMMQg>
+    <xmx:-nuvZlM1Mey8s51QfDDoaWMn1mcOHx-P_L4pannrzPrWGdF2CjpkgQ>
+    <xmx:-nuvZqniRmpqnhWmP2c3bDZw08XdLO6-CiAFXmZ3PGSU0ZusQccYtA>
+    <xmx:-nuvZnvpO-Rv-m313FCClLHXGpz8r_hqtnq86HItNPGUteYf3GCCig>
+    <xmx:-nuvZuZ5QAGXW2C_k3UwUxkds0SEoWvEp7VSVNAKn4TCXFS0zuJehKcH>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 4 Aug 2024 09:02:48 -0400 (EDT)
+ 4 Aug 2024 09:02:49 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 15/17] firewire: ohci: use guard macro to maintain bus time
-Date: Sun,  4 Aug 2024 22:02:22 +0900
-Message-ID: <20240804130225.243496-16-o-takashi@sakamocchi.jp>
+Subject: [PATCH 16/17] firewire: ohci: use guard macro to maintain image of configuration ROM
+Date: Sun,  4 Aug 2024 22:02:23 +0900
+Message-ID: <20240804130225.243496-17-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240804130225.243496-1-o-takashi@sakamocchi.jp>
 References: <20240804130225.243496-1-o-takashi@sakamocchi.jp>
@@ -97,88 +97,157 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 1394 OHCI driver maintains bus time to respond to querying request.
-The concurrent access to the bus time is protected by spinlock.
+The 1394 OHCI driver uses spinlock for the process to update local
+configuration ROM.
 
 This commit uses guard macro to maintain the spinlock.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/ohci.c | 30 ++++++++++++------------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
+ drivers/firewire/ohci.c | 116 +++++++++++++++++-----------------------
+ 1 file changed, 49 insertions(+), 67 deletions(-)
 
 diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index 1461e008d265..5cb7c7603c2c 100644
+index 5cb7c7603c2c..368420e4b414 100644
 --- a/drivers/firewire/ohci.c
 +++ b/drivers/firewire/ohci.c
-@@ -2300,9 +2300,8 @@ static irqreturn_t irq_handler(int irq, void *data)
- 		handle_dead_contexts(ohci);
+@@ -2139,53 +2139,42 @@ static void bus_reset_work(struct work_struct *work)
+ 	at_context_flush(&ohci->at_request_ctx);
+ 	at_context_flush(&ohci->at_response_ctx);
  
- 	if (event & OHCI1394_cycle64Seconds) {
--		spin_lock(&ohci->lock);
-+		guard(spinlock)(&ohci->lock);
- 		update_bus_time(ohci);
--		spin_unlock(&ohci->lock);
- 	} else
- 		flush_writes(ohci);
- 
-@@ -2762,7 +2761,6 @@ static int ohci_enable_phys_dma(struct fw_card *card,
- static u32 ohci_read_csr(struct fw_card *card, int csr_offset)
- {
- 	struct fw_ohci *ohci = fw_ohci(card);
--	unsigned long flags;
- 	u32 value;
- 
- 	switch (csr_offset) {
-@@ -2786,16 +2784,14 @@ static u32 ohci_read_csr(struct fw_card *card, int csr_offset)
- 		return get_cycle_time(ohci);
- 
- 	case CSR_BUS_TIME:
--		/*
--		 * We might be called just after the cycle timer has wrapped
--		 * around but just before the cycle64Seconds handler, so we
--		 * better check here, too, if the bus time needs to be updated.
--		 */
--		spin_lock_irqsave(&ohci->lock, flags);
--		value = update_bus_time(ohci);
--		spin_unlock_irqrestore(&ohci->lock, flags);
--		return value;
-+	{
-+		// We might be called just after the cycle timer has wrapped around but just before
-+		// the cycle64Seconds handler, so we better check here, too, if the bus time needs
-+		// to be updated.
- 
-+		guard(spinlock_irqsave)(&ohci->lock);
-+		return update_bus_time(ohci);
-+	}
- 	case CSR_BUSY_TIMEOUT:
- 		value = reg_read(ohci, OHCI1394_ATRetries);
- 		return (value >> 4) & 0x0ffff00f;
-@@ -2813,7 +2809,6 @@ static u32 ohci_read_csr(struct fw_card *card, int csr_offset)
- static void ohci_write_csr(struct fw_card *card, int csr_offset, u32 value)
- {
- 	struct fw_ohci *ohci = fw_ohci(card);
--	unsigned long flags;
- 
- 	switch (csr_offset) {
- 	case CSR_STATE_CLEAR:
-@@ -2849,12 +2844,11 @@ static void ohci_write_csr(struct fw_card *card, int csr_offset, u32 value)
- 		break;
- 
- 	case CSR_BUS_TIME:
--		spin_lock_irqsave(&ohci->lock, flags);
--		ohci->bus_time = (update_bus_time(ohci) & 0x40) |
--		                 (value & ~0x7f);
--		spin_unlock_irqrestore(&ohci->lock, flags);
-+	{
-+		guard(spinlock_irqsave)(&ohci->lock);
-+		ohci->bus_time = (update_bus_time(ohci) & 0x40) | (value & ~0x7f);
- 		break;
+-	spin_lock_irq(&ohci->lock);
 -
+-	ohci->generation = generation;
+-	reg_write(ohci, OHCI1394_IntEventClear, OHCI1394_busReset);
+-	reg_write(ohci, OHCI1394_IntMaskSet, OHCI1394_busReset);
+-
+-	if (ohci->quirks & QUIRK_RESET_PACKET)
+-		ohci->request_generation = generation;
+-
+-	/*
+-	 * This next bit is unrelated to the AT context stuff but we
+-	 * have to do it under the spinlock also.  If a new config rom
+-	 * was set up before this reset, the old one is now no longer
+-	 * in use and we can free it. Update the config rom pointers
+-	 * to point to the current config rom and clear the
+-	 * next_config_rom pointer so a new update can take place.
+-	 */
+-
+-	if (ohci->next_config_rom != NULL) {
+-		if (ohci->next_config_rom != ohci->config_rom) {
+-			free_rom      = ohci->config_rom;
+-			free_rom_bus  = ohci->config_rom_bus;
++	scoped_guard(spinlock_irq, &ohci->lock) {
++		ohci->generation = generation;
++		reg_write(ohci, OHCI1394_IntEventClear, OHCI1394_busReset);
++		reg_write(ohci, OHCI1394_IntMaskSet, OHCI1394_busReset);
++
++		if (ohci->quirks & QUIRK_RESET_PACKET)
++			ohci->request_generation = generation;
++
++		// This next bit is unrelated to the AT context stuff but we have to do it under the
++		// spinlock also. If a new config rom was set up before this reset, the old one is
++		// now no longer in use and we can free it. Update the config rom pointers to point
++		// to the current config rom and clear the next_config_rom pointer so a new update
++		// can take place.
++		if (ohci->next_config_rom != NULL) {
++			if (ohci->next_config_rom != ohci->config_rom) {
++				free_rom      = ohci->config_rom;
++				free_rom_bus  = ohci->config_rom_bus;
++			}
++			ohci->config_rom      = ohci->next_config_rom;
++			ohci->config_rom_bus  = ohci->next_config_rom_bus;
++			ohci->next_config_rom = NULL;
++
++			// Restore config_rom image and manually update config_rom registers.
++			// Writing the header quadlet will indicate that the config rom is ready,
++			// so we do that last.
++			reg_write(ohci, OHCI1394_BusOptions, be32_to_cpu(ohci->config_rom[2]));
++			ohci->config_rom[0] = ohci->next_header;
++			reg_write(ohci, OHCI1394_ConfigROMhdr, be32_to_cpu(ohci->next_header));
+ 		}
+-		ohci->config_rom      = ohci->next_config_rom;
+-		ohci->config_rom_bus  = ohci->next_config_rom_bus;
+-		ohci->next_config_rom = NULL;
+ 
+-		/*
+-		 * Restore config_rom image and manually update
+-		 * config_rom registers.  Writing the header quadlet
+-		 * will indicate that the config rom is ready, so we
+-		 * do that last.
+-		 */
+-		reg_write(ohci, OHCI1394_BusOptions,
+-			  be32_to_cpu(ohci->config_rom[2]));
+-		ohci->config_rom[0] = ohci->next_header;
+-		reg_write(ohci, OHCI1394_ConfigROMhdr,
+-			  be32_to_cpu(ohci->next_header));
+-	}
+-
+-	if (param_remote_dma) {
+-		reg_write(ohci, OHCI1394_PhyReqFilterHiSet, ~0);
+-		reg_write(ohci, OHCI1394_PhyReqFilterLoSet, ~0);
++		if (param_remote_dma) {
++			reg_write(ohci, OHCI1394_PhyReqFilterHiSet, ~0);
++			reg_write(ohci, OHCI1394_PhyReqFilterLoSet, ~0);
++		}
+ 	}
+ 
+-	spin_unlock_irq(&ohci->lock);
+-
+ 	if (free_rom)
+ 		dmam_free_coherent(ohci->card.device, CONFIG_ROM_SIZE, free_rom, free_rom_bus);
+ 
+@@ -2626,33 +2615,26 @@ static int ohci_set_config_rom(struct fw_card *card,
+ 	if (next_config_rom == NULL)
+ 		return -ENOMEM;
+ 
+-	spin_lock_irq(&ohci->lock);
+-
+-	/*
+-	 * If there is not an already pending config_rom update,
+-	 * push our new allocation into the ohci->next_config_rom
+-	 * and then mark the local variable as null so that we
+-	 * won't deallocate the new buffer.
+-	 *
+-	 * OTOH, if there is a pending config_rom update, just
+-	 * use that buffer with the new config_rom data, and
+-	 * let this routine free the unused DMA allocation.
+-	 */
+-
+-	if (ohci->next_config_rom == NULL) {
+-		ohci->next_config_rom = next_config_rom;
+-		ohci->next_config_rom_bus = next_config_rom_bus;
+-		next_config_rom = NULL;
+-	}
++	scoped_guard(spinlock_irq, &ohci->lock) {
++		// If there is not an already pending config_rom update, push our new allocation
++		// into the ohci->next_config_rom and then mark the local variable as null so that
++		// we won't deallocate the new buffer.
++		//
++		// OTOH, if there is a pending config_rom update, just use that buffer with the new
++		// config_rom data, and let this routine free the unused DMA allocation.
++		if (ohci->next_config_rom == NULL) {
++			ohci->next_config_rom = next_config_rom;
++			ohci->next_config_rom_bus = next_config_rom_bus;
++			next_config_rom = NULL;
++		}
+ 
+-	copy_config_rom(ohci->next_config_rom, config_rom, length);
++		copy_config_rom(ohci->next_config_rom, config_rom, length);
+ 
+-	ohci->next_header = config_rom[0];
+-	ohci->next_config_rom[0] = 0;
++		ohci->next_header = config_rom[0];
++		ohci->next_config_rom[0] = 0;
+ 
+-	reg_write(ohci, OHCI1394_ConfigROMmap, ohci->next_config_rom_bus);
+-
+-	spin_unlock_irq(&ohci->lock);
++		reg_write(ohci, OHCI1394_ConfigROMmap, ohci->next_config_rom_bus);
 +	}
- 	case CSR_BUSY_TIMEOUT:
- 		value = (value & 0xf) | ((value & 0xf) << 4) |
- 			((value & 0xf) << 8) | ((value & 0x0ffff000) << 4);
+ 
+ 	/* If we didn't use the DMA allocation, delete it. */
+ 	if (next_config_rom != NULL) {
 -- 
 2.43.0
 
