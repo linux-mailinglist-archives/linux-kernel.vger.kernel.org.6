@@ -1,133 +1,111 @@
-Return-Path: <linux-kernel+bounces-273703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C266946CAC
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C518946CAF
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DBED1C21502
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:20:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ED3E1C211F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063B910A19;
-	Sun,  4 Aug 2024 06:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E1711711;
+	Sun,  4 Aug 2024 06:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="bQkuVREs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="d/aas5DN"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ys3DwchW"
+Received: from msa.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452FAB67F;
-	Sun,  4 Aug 2024 06:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CF5AD59;
+	Sun,  4 Aug 2024 06:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722752406; cv=none; b=QMCe5Bh1iOXG9QJt29XniZ+AwHlj/cbeSzvbDCA+B7CgrG5e1OLrCImoOCFGIwq+Gm4ScjyvE1qqW2XqpfuTWeV98hdLqqXHDC8ENBYpDA8rLsrdrn/+OLxohFxyE0e7AWz9qkLDjAgGfyzgv7gtnQhBEaYXi38lfXBTAbyqcgU=
+	t=1722752503; cv=none; b=QQ7W2re8AnkmBoRKBveSmeA1HQl+CTJuAm79C199zNkdUBe5fKl3UDJRaFOtDsGMOlGduJS5ix3bM/w6/XJE9RF7M4H1cNRxEIwpPQ72iEA+kszvYsF/5d9a+1uuZrWcqk2R5MT9Jimo/t4p+lrRn61FyKvz0cv7Q9fa/AKu9Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722752406; c=relaxed/simple;
-	bh=IphUcle/YlNZLckVN6EQiXF5A9lLgcQR62DUj0gDKwQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=rdmR9IPMWoKZ2Z9g5GSJxmT4SnSec1hhvBS+nhkZnPW0odzkZcsQlMydQJM0zZs0hpGm8x2Q5+B9237t1DNUjVwm0C6Xbm8uTKJI8BVYrl0/ymZzX2js8G9M1Out0km9xkx3KnaPmE1lfu2kklX+9V7F2+PRMOPtsR0IgikdmkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=bQkuVREs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=d/aas5DN; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 5AC2B1148189;
-	Sun,  4 Aug 2024 02:20:03 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute6.internal (MEProxy); Sun, 04 Aug 2024 02:20:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722752403;
-	 x=1722838803; bh=GYf0ZRVTpBy4ufVAa9+cD5JKJQ1v0Y4QcglHlI7azKU=; b=
-	bQkuVREsBaCpznOUsWXhEE0f7Y7nJPkctMjosUGyPyBHLVFXT1KTUEetmeKdAL4B
-	yYWgfQ5KJloVHl/zC61iJenSKKtCuWVJJO7tGN60YiCvPOHV0Vka0mlK5VXuKHtp
-	lrKnFLPUIW8hF4m8sWjgIbo9VapeNklsnqVeBxiGKnr6icw8hLEj6Nz9a+uhGI6o
-	k9AcpPUYe1oN7m/bTo4Wc17iG1gNDpB884TOJh8LBPbYOkPZT66ls0OJwnzXAdS9
-	eNP4igPeVsB7vLzY3gOFuQoSr6Dc087X3maAb9pwk50tR+XnO2X0RpudOD7XJQwY
-	V9m/ypihrB9dn1XGNXac9w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722752403; x=
-	1722838803; bh=GYf0ZRVTpBy4ufVAa9+cD5JKJQ1v0Y4QcglHlI7azKU=; b=d
-	/aas5DN+2uiWe7yb8XamI7+Xr1afeqYvutiuMWcWgvPYiL+UJqv3waxg1zeNf85v
-	Ih8XsOh7m8KogG4MIIwmMXmwsLGyHCLZd1cuM1oqp+rKzA2TnUE5WgQyGg8z+eV+
-	KG/57k7j6xoYl/+jNgoZHx9YtRdNd5AeIZoTU4JVvDU5kXoLdn0/7rME7BGQC/fh
-	nFMcz3+IG4bNv9CedT6U8cs4Rh58lTw9erFKShgMFvCpA3A7aIMv92OaYLkoeTyE
-	/zvus6UPkt4bJNy0Uf/3gZUX1B9iDt5du6XkC5h93divoQVraPO11cTOFLrBK3SL
-	OB4rlsTescIwVOZ6A0wLA==
-X-ME-Sender: <xms:kh2vZvbANGTozGrOrLUWKZhKfcwxrILbU2wjJ9zmkzrzsQ4adRtvRg>
-    <xme:kh2vZuZIkY6k5m9sRMIpIeM8iSRJBS_z4MmM7BtuTw_Ibu9vVsV_xAHotEvypy3C0
-    0qIZJAoH4snTD748yk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeefgddutdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedflfgr
-    nhhnvgcuifhruhhnrghufdcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvg
-    hrnhepheejtdeffeethfetgefhffejudegheefueejtedvhfeuheevfeekheetfeduffev
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjh
-    grnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:kh2vZh8Gw9rKwO1IvFtbEc-C_bLu4ACNdInGVp7KbpWnNHLv17BNqw>
-    <xmx:kh2vZlrhACg7iryYSuuBa9OIKmZ76-E1uKClYXk4wwrN-__3TJsFjg>
-    <xmx:kh2vZqqTEtqNAFjPwFBZLxM_E_uXXYtluDGGFn-3nWQ0_OE16Oq0sw>
-    <xmx:kh2vZrQ3MphM95hj0I2Z6fwdUdbcOGNecq03bhzwUcnGzu_wT0IWrA>
-    <xmx:kx2vZnSfVQXLeJglEDJic6jiezUcT-JlIE70Ii-8_NnfUxUnoeIV6CXR>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 97B5219C0069; Sun,  4 Aug 2024 02:20:02 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722752503; c=relaxed/simple;
+	bh=oURTL4z7EwTZ+wwgMJpvnhXRloDEhni/d+4fvczDmFE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qDy+mUyRwdr3XcFDtOv9ALghpn4VBz/GiiR8Rct2wYBI3FbstTTDyX9p4Vl0nnwe7seOqHs4+M/YMj8Bgq2WHQoRJcLr7Q1d2IXOHSGqG/vdzLyLZiiknPbnQzpUENKErgEemu4oC/XUImAXe8e9a1dAOZ2bnVF1yB/qF0w1D40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ys3DwchW; arc=none smtp.client-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id aUbMsJNvIHEYLaUbMseFez; Sun, 04 Aug 2024 08:20:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722752421;
+	bh=XhsuUlKPKCQxLvLuiaDj5BLJuAdn0Jr06e3Dg3PwYzo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Ys3DwchWGhwFiD1UbkMxIm2Np12uIUujKaV7JK4NrRNl/vgoZmWDCVL4O24V4k5Y4
+	 ExRIhS+qcsy+/ktEgA0Ajfi8pV8hmD8cM3jH/s32cdMmMEJU2x2oELCvvbMG13j79n
+	 TJeS3q1yo99xsH/MPvN+B0EHXkLyVTbEhccDOvzp81ZUqwrvaQo8EN9CKzvLvjGUf/
+	 Jix3yYgZH1mC9Y/xpFB3sSuQE4deIWqzx92xoEtMay2zvOk4LR7850zMxAlIMNZ6gZ
+	 tZHd6E9lx5BszDLHJmcdLLshGtTTa5lLyGcSQ3pE1MTm2dkm6ME+pn1MlC3RfS8Rrt
+	 /oid708nTux1g==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 04 Aug 2024 08:20:21 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v2] tcp: Use clamp() in htcp_alpha_update()
+Date: Sun,  4 Aug 2024 08:20:17 +0200
+Message-ID: <561bb4974499a328ac39aff31858465d9bd12b1c.1722752370.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 04 Aug 2024 08:19:42 +0200
-From: "Janne Grunau" <j@jannau.net>
-To: "Aditya Garg" <gargaditya08@live.com>,
- "devnull+j.jannau.net@kernel.org" <devnull+j.jannau.net@kernel.org>
-Cc: "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
- "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
- "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
- "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
- "kvalo@kernel.org" <kvalo@kernel.org>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "Hector Martin" <marcan@marcan.st>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Message-Id: <306c3010-a6ac-4f8a-a986-88c1a137ed84@app.fastmail.com>
-In-Reply-To: 
- <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-References: 
- <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hej,
+Using clamp instead of min(max()) is easier to read and it matches even
+better the comment just above it.
 
-On Sun, Aug 4, 2024, at 05:10, Aditya Garg wrote:
-> Hi
->
-> wpa_supplicant 2.11 broke Wi-Fi on T2 Macs as well, but this patch 
-> doesn't seem to be fixing Wi-Fi. Instead, it's breaking it even on 
-> older 2.10 wpa_supplicant. Tested by a user on bcm4364b2 wifi chip with 
-> a WPA2-PSK [AES] network. dmesg output:
+It also reduces the size of the preprocessed files by ~ 2.5 ko.
+(see [1] for a discussion about it)
 
-On bcm4377, bcm4378 and bcm4388 (chipsets used in M1/M2 macs)
-WPA3-SAE and WPA2-PSK still works with Fedora's wpa_supplicant 2.10.
-Fedora's package carried SAE offload patches in 2.10.
-wpa_supplicant 2.11 still doesn't work with this patch but it prevents a
-kernel oops after a disconnect (due to an authentication timeout in the
-current broken state) in wpa_supplicant.
+$ ls -l net/ipv4/tcp_htcp*.i
+ 5576024 27 juil. 10:19 net/ipv4/tcp_htcp.old.i
+ 5573550 27 juil. 10:21 net/ipv4/tcp_htcp.new.i
 
-I'll continue to debug the wpa_supplicant 2.11
+[1]: https://lore.kernel.org/all/23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com/
 
-best regards,
-Janne
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+
+Changes in v2:
+  - synch numbers with latest -next
+
+v1: https://lore.kernel.org/all/22c2e12d7a09202cc31a729fd29c0f2095ea34b7.1722083270.git.christophe.jaillet@wanadoo.fr/
+---
+ net/ipv4/tcp_htcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv4/tcp_htcp.c b/net/ipv4/tcp_htcp.c
+index 52b1f2665dfa..81b96331b2bb 100644
+--- a/net/ipv4/tcp_htcp.c
++++ b/net/ipv4/tcp_htcp.c
+@@ -185,7 +185,7 @@ static inline void htcp_alpha_update(struct htcp *ca)
+ 		u32 scale = (HZ << 3) / (10 * minRTT);
+ 
+ 		/* clamping ratio to interval [0.5,10]<<3 */
+-		scale = min(max(scale, 1U << 2), 10U << 3);
++		scale = clamp(scale, 1U << 2, 10U << 3);
+ 		factor = (factor << 3) / scale;
+ 		if (!factor)
+ 			factor = 1;
+-- 
+2.45.2
+
 
