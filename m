@@ -1,165 +1,106 @@
-Return-Path: <linux-kernel+bounces-273762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD6C946DB3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:58:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5471C946DAF
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 259E0280D96
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:58:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3D22B21880
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B7B22EED;
-	Sun,  4 Aug 2024 08:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E671D20B35;
+	Sun,  4 Aug 2024 08:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TreyUDPC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlamGhEq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0BB2135B;
-	Sun,  4 Aug 2024 08:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371261CF9B;
+	Sun,  4 Aug 2024 08:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722761878; cv=none; b=H8aKaNLIdcG9RLSK74hM1J6cSK6zsiM6XAjC5BdQ663PyHKsdlbnnVSX1KrUxraFoa1FZktjZ5dO2PBpjBp00dniL7S8yPKR4lOm/b92+e3YIV/ofKH4N6EXowOTdhiNnJdySoZWQS4q5KXgfuv2k8Xz8u95aOgXs+HKcFPBmmY=
+	t=1722761877; cv=none; b=kgA5RKAr4wWvt8IF0SeYkYQzAPENMBeriA8KQzvoI8QjduRNH8681Pe1u4SH2XGm7N8r9TciF0tBf4j3ke6AcxNVQrCiUxIwQt5gbmv+Uy0FJ7/6sOWJE8z1gDjdRi5yqc7aRZqef4bBdQOO5JyAT1eNUldFlHKJnHqSHM943Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722761878; c=relaxed/simple;
-	bh=1r85qcdUbfhXGrxKc4482D93gj8QKaeVkNspvjU7qmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Diic+KPL2sV83ucfe3+JBK3Ka0u6SslxZGLI0/YodL/zSodTaS57k9G/TuGUAj94tWVIlK14wqKAUlBGSxb6c16D/TUwRBWo/3mvSJJSoywKC1l9CmdLDCdOgHt8b/pdH7PMe2fnO6mca7c+yV7m28xvEcXFeHMKezMccmcp91A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TreyUDPC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCA71C32786;
-	Sun,  4 Aug 2024 08:57:51 +0000 (UTC)
+	s=arc-20240116; t=1722761877; c=relaxed/simple;
+	bh=LzzWpbndsCzxP0UVHsK60G7SP62Q14uzWV2Osr5LxI8=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=cRgfzPqwcpljAHpD3OXup/mKc2LNCJQlbxQ7FH1cPJijnUKFeY1GvbhXOCou06GgB4QNSOoFFlkoZVxww0TstWrGHdPlVq4C7YvqtDUD+5uozKYYvuvD+S6fxAcetDSEodljL6ePQp01pgCra5hR/2PqDM8DL4LGuM7LPwjqrCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlamGhEq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10AD2C4AF0C;
+	Sun,  4 Aug 2024 08:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722761878;
-	bh=1r85qcdUbfhXGrxKc4482D93gj8QKaeVkNspvjU7qmQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TreyUDPCwHnDcKgEcTw+w6e1TaICRZk1vV7BVYE+iuqBl8uz1cGnYWzs7PCA5Bywo
-	 AEofteTfDZ7eOFg/MCCN6Yxb/W8jb1A/Sj08ZtQQMiVdg259GT+BO/0gqSpVAjca9V
-	 8VPFjBFZWK8ijel+uosHJQD9SctQkq+Z2AoWuvw5rRHCi4SgHGfzsSh9HVrMBccE1T
-	 6KxJX0gGDeKkrNbU/INT/zQgpLRYyu3Ptym9oFuuxBi8Ttx3f/ke8x1rTnVwv8AecG
-	 WujdRBpvxmoY59zFPB69w4J6JlFlsZroz3rP3D5biDRrj7hRTon5fWeTBHxoPgSy+7
-	 l7hRdjSxbI0JQ==
-Message-ID: <fcfe1ce3-6835-44e8-807d-290a641813ed@kernel.org>
-Date: Sun, 4 Aug 2024 10:57:49 +0200
+	s=k20201202; t=1722761876;
+	bh=LzzWpbndsCzxP0UVHsK60G7SP62Q14uzWV2Osr5LxI8=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=RlamGhEq4I8pjQj2VF9stTMhQceAMCbaVrM2mcYtOzVESZEPiokn7KBiw1JvEydgg
+	 lTRPYIruS7ieIK3Ps004/zPjGgjeUkWLuSbmUZ+9IWH90baEPmTjeq1d9ysUhwIGsb
+	 QOCRvSotR2z45hC9xfNstky4Phn9AbLznYEFAv8dGQAEABvwOm4l2oy1qi9OLp8bcQ
+	 R9JHfBrVhvocqy9b/K4vjA4WBHaVkREH3xMjsTAw4t93dQnX6DNh7crhSkmWVLeh1b
+	 QIdHoBaerbK3V9MhKezWCQRV0K9QhIU2ngg0sQnkaEPsnXrFR6yVaiOE8cndcozhAJ
+	 ldkH/FjkuRyJw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] PCI: Enable Power and configure the QPS615 PCIe
- switch
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>,
- Jingoo Han <jingoohan1@gmail.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: andersson@kernel.org, quic_vbadigan@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 1/3] wifi: mwifiex: simplify WPA flags setting
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: 
+ <20240723-mwifiex-wpa-psk-sha256-v3-1-025168a91da1@pengutronix.de>
+References: <20240723-mwifiex-wpa-psk-sha256-v3-1-025168a91da1@pengutronix.de>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>, David Lin <yu-hao.lin@nxp.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172276187336.2804131.2752806886332298409.kvalo@kernel.org>
+Date: Sun,  4 Aug 2024 08:57:54 +0000 (UTC)
 
-On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
-> QPS615 is the PCIe switch which has one upstream and three downstream
-> ports. One of the downstream ports is used as endpoint device of Ethernet
-> MAC. Other two downstream ports are supposed to connect to external
-> device. One Host can connect to QPS615 by upstream port.
-> 
-> QPS615 switch power is controlled by the GPIO's. After powering on
-> the switch will immediately participate in the link training. if the
-> host is also ready by that time PCIe link will established. 
-> 
-> The QPS615 needs to configured certain parameters like de-emphasis,
-> disable unused port etc before link is established.
-> 
-> The device tree properties are parsed per node under pci-pci bridge in the
-> devicetree. Each node has unique bdf value in the reg property, driver
-> uses this bdf to differentiate ports, as there are certain i2c writes to
-> select particulat port.
->  
-> As the controller starts link training before the probe of pwrctl driver,
-> the PCIe link may come up before configuring the switch itself.
-> To avoid this introduce two functions in pci_ops to start_link() &
-> stop_link() which will disable the link training if the PCIe link is
-> not up yet.
-> 
-> Now PCI pwrctl device is the child of the pci-pcie bridge, if we want
-> to enable the suspend resume for pwrctl device there may be issues
-> since pci bridge will try to access some registers in the config which
-> may cause timeouts or Un clocked access as the power can be removed in
-> the suspend of pwrctl driver.
-> 
-> To solve this make PCIe controller as parent to the pci pwr ctrl driver
-> and create devlink between host bridge and pci pwrctl driver so that
-> pci pwrctl driver will go suspend only after all the PCIe devices went
-> to suspend.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
-> Changes in V1:
-> - Fix the code as per the comments given.
+Sascha Hauer <s.hauer@pengutronix.de> wrote:
 
-You did not implement the comments so such changelog is rather a joke.
-Respond to each comment from v1 and acknowledge it.
+> The WPA flags setting only depends on the wpa_versions bitfield and not
+> on the AKM suite, so move it out of the switch/case to simplify the code
+> a bit. Also set bss_config->protocol to zero explicitly. This is done
+> only to make the code clearer, bss_config has been zero alloced by the
+> caller, so should be zero already. No functional change intended.
+> 
+> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Acked-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-Then write detailed changelog.
+There were conflicts on wireless-next, please rebase.
 
-Best regards,
-Krzysztof
+Recorded preimage for 'drivers/net/wireless/marvell/mwifiex/fw.h'
+Recorded preimage for 'drivers/net/wireless/marvell/mwifiex/uap_cmd.c'
+error: Failed to merge in the changes.
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+Applying: wifi: mwifiex: add support for WPA-PSK-SHA256
+Using index info to reconstruct a base tree...
+M	drivers/net/wireless/marvell/mwifiex/fw.h
+M	drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+Falling back to patching base and 3-way merge...
+Auto-merging drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+CONFLICT (content): Merge conflict in drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+Auto-merging drivers/net/wireless/marvell/mwifiex/fw.h
+CONFLICT (content): Merge conflict in drivers/net/wireless/marvell/mwifiex/fw.h
+Patch failed at 0001 wifi: mwifiex: add support for WPA-PSK-SHA256
+
+3 patches set to Changes Requested.
+
+13739655 [v3,1/3] wifi: mwifiex: simplify WPA flags setting
+13739654 [v3,2/3] wifi: mwifiex: fix key_mgmt setting
+13739653 [v3,3/3] wifi: mwifiex: add support for WPA-PSK-SHA256
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240723-mwifiex-wpa-psk-sha256-v3-1-025168a91da1@pengutronix.de/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
 
