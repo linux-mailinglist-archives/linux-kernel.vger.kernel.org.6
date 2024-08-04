@@ -1,164 +1,107 @@
-Return-Path: <linux-kernel+bounces-273908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9D1946F76
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:03:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81085946F90
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9331C20FD5
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3948E1F21E51
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9478661FE1;
-	Sun,  4 Aug 2024 15:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6220858ABF;
+	Sun,  4 Aug 2024 15:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BePnZuNN"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="meoTYuVf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199D23A29A
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 15:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8B312B6C
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 15:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722783819; cv=none; b=UsOySP5zuBGCUEEv58FC+nvsPI9FRpOInLwIvpwwUo9XwiwU597AAGqaw4kC5pJQqpKj/grOLAWz0BZy6W9phagHKa/RWCNhZbmzQTVnqjFl5eusPnhuttVRAEBOA0M2FHrPhM6xlp9uHW+qjdMeacnGFVI5DxJlvS9/BTADLz4=
+	t=1722784656; cv=none; b=sZ2Ye5Xs/q5IHmYp7CoNBTbV2r3OGE7e+2VCnUtb2YLyCniEyvwvyAGuSqKU9JH+PfivWlHNlVlI239YMYfuO5OsU60ftjFIbxur5bDUtCYOX4rfsl3ZVCOd30hlnK87IhDqNrwlmkTiTbCi++P1+bCJzGL0Zn+jXvO9KJOzKzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722783819; c=relaxed/simple;
-	bh=64fQVaczufE3HS8AgC+4WNqdmfTFZLjyFnUF9JCrBCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eRBU0wSwvypo7UqGhzkXu38d8ybSOLMlQzwOuGp3OpT6voK2DcIp+jaH2bBE3Z6EfRIQ+tThz8ROf4jZhWBU7nvmBY4ohKCDuxXGMcXV7R6i4YoHfNbDbHjFMgnu9vJvN4IquhvZSpUfQ5zEI8/qHpxwi54Fu6egkw68cC3XmH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BePnZuNN; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52efa9500e0so11433241e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 08:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722783815; x=1723388615; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CEwiM67K6TOyUjPbByvDl5BteCRvkr/bmWWcBlwbZ5M=;
-        b=BePnZuNNulffrLMEFWGE2Hzjy64m4HroHTil2zVLTWaooJpRY3cADWtWhvoJLsoJEZ
-         CP+G9yjX1mbDlQruA3vCyFQNX/gkjSwbeWJwu2/TVfU8ivXNU+fk/mN8XLmReo0gws+m
-         Ok/azfLD2LyvHlwQThVQXoex75GyGpHwxXoZM6kYb3k8d2wjhDlZTY8R8YREfaOHZcHH
-         PkYvLAArE1pDS66c9WXVMiD8FNkFuht9XtFAJFP8Qadouad0QZlKpwQjg+IU2juwlPLz
-         RQCL+61jqATJnbP8cr98Zaoqic/MKcPCumHzpx5X8T8c2ViOCsqxOP3E1i3ItacK54Oy
-         74MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722783815; x=1723388615;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CEwiM67K6TOyUjPbByvDl5BteCRvkr/bmWWcBlwbZ5M=;
-        b=pOzT6XmE+YSoXeSuFuRLMzoF9MYEjB5SDFrIxELIkhKaBfiFHnBDn6ByQ1gy1HrSMN
-         HF7ZVzRI2tlHVL9Q2mMnZV1QVKgXnRW5UXlFCBg+oKbmi7xxYGfSJINueASJ1HfGaNxA
-         qYs1APlB07fTZbWfw64JcVgiGi7wAT0IbjTgYHE7qTDTz+BPJjNhBRftqQFfoUrG1QeM
-         PpRMHUWBSLeuLlicb9FXBhOaKpwvSWkLIv3E1s4AHQA0ySa4aB4qOVNE/JoYfkew3vSa
-         GhY0h5xJSA7Tk0DT/zJIBz44Hz8vXSQQSTCXXFl+pnOJlgffAgdvPI/Z5aXy0PJ9KBjF
-         zxoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdSVBr7Zzw+sNGF/SvJJPcacPHgpJCd0GmzdBVfcGbscxdfGimyE0Zp4f+mhcXNAhJ7omFact9Ce44L5brnaIbHXBgt5cdqgBXjsin
-X-Gm-Message-State: AOJu0YxDjVY2mMj3ALg6wihJTsH+g8a1wDZHCuskPRFYecVKJPQ6zO++
-	014J7H/KjqM6ebQ3HYsBqV0FQrxOD/nLAvcbhDerKbx/b3fYBzy0sNG7H3B1Y74=
-X-Google-Smtp-Source: AGHT+IGneXt1dFxPw+SaUnLoig2VToT62r4amOZ66tPHFqLmbLdAQjfxHZeozGHFzarvcyNU+kSM4g==
-X-Received: by 2002:a05:6512:b29:b0:52c:e047:5c38 with SMTP id 2adb3069b0e04-530bb36e672mr6513893e87.15.1722783815026;
-        Sun, 04 Aug 2024 08:03:35 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83a03b403sm3745364a12.42.2024.08.04.08.03.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Aug 2024 08:03:34 -0700 (PDT)
-Message-ID: <b00f98db-92f3-4fb2-b268-0d94e52d28f4@linaro.org>
-Date: Sun, 4 Aug 2024 17:03:32 +0200
+	s=arc-20240116; t=1722784656; c=relaxed/simple;
+	bh=Ot4YrU6tG6RVc29iz6ggink5xwevXCY9bRND5jdQ2ok=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=MTk5sPwA51IEagu9eJnJEE37IvyAK3fQP0uHs8qGi9sN9UERFYgJkEEdAedUGeDqSbvgK7391x8rY/ZYOaOBJuDhF2e6yDQNvnVUHK7PHPbe5g2TGCWjnxhoACOeaSmys7MzFt9Ku8W8L+Q0KQ0mRbG0w7YzXdjQ5WNjmliANWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=meoTYuVf; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722784655; x=1754320655;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=Ot4YrU6tG6RVc29iz6ggink5xwevXCY9bRND5jdQ2ok=;
+  b=meoTYuVfWfRdei/4x56z8Dh0rWY3305WBDrufGOisN0W/J9maZW/SNdV
+   67EfzsSb59BUHMTSw/0cmWJCRDMCKcbK9dKU7xENMnU8WSMQN1QahTKSu
+   OpMyJ3l5P+eYgKCkLkLM5t7f9xAHB6VCEmPOfb1Ubk+ioiNC0UMB0vLeI
+   6qd2mcyL8naOpFwKtBRtWr8TrAeQ8mwhYxFrtpR89fSr6N8XZfyfKtiwK
+   wff0/XZfXk5Q35Ii6aBqaPf1TauhpI6gZPuf0VVyaIqv8RGR5PTrN7XFp
+   hL3RecTfMKKOk86l5BFsUjnwrf59UaewMo8wnvEy7v6ZRvIK2A/EGlgkY
+   g==;
+X-CSE-ConnectionGUID: ODnfNmivQAOeeIFmHCIGWg==
+X-CSE-MsgGUID: 24CqUkxmScGChh8HK8UNIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="31402943"
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="31402943"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 08:17:35 -0700
+X-CSE-ConnectionGUID: cX205jJ1SYul/l9WjqbnPg==
+X-CSE-MsgGUID: dzauwrLNT2Sl25iSQbdblw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="55877102"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 08:17:33 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: tglx@linutronix.de
+Cc: leitao@debian.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	qiuxu.zhuo@intel.com
+Subject: Re: [patch 00/15] x86/ioapic: Robustness fix and cleanup
+Date: Sun,  4 Aug 2024 23:06:00 +0800
+Message-Id: <20240804150600.26989-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240802155038.556977544@linutronix.de>
+References: <20240802155038.556977544@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: codecs: lpass-macro: fix missing codec version
-To: Johan Hovold <johan+linaro@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, alsa-devel@alsa-project.org,
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-References: <20240729131351.27886-1-johan+linaro@kernel.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240729131351.27886-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 29/07/2024 15:13, Johan Hovold wrote:
-> Recent changes that started checking the codec version broke audio on
-> the Lenovo ThinkPad X13s:
-> 
-> 	wsa_macro 3240000.codec: Unsupported Codec version (0)
-> 	wsa_macro 3240000.codec: probe with driver wsa_macro failed with error -22
-> 	rx_macro 3200000.rxmacro: Unsupported Codec version (0)
-> 	rx_macro 3200000.rxmacro: probe with driver rx_macro failed with error -22
-> 
-> Add the missing codec version to the lookup table so that the codec
-> drivers probe successfully.
-> 
-> Note that I'm just assuming that this is a 2.0 codec based on the fact
-> that this device uses the older register layout.
-> 
-> Fixes: 378918d59181 ("ASoC: codecs: lpass-macro: add helpers to get codec version")
-> Fixes: dbacef05898d ("ASoC: codec: lpass-rx-macro: prepare driver to accomdate new codec versions")
-> Fixes: 727de4fbc546 ("ASoC: codecs: lpass-wsa-macro: Correct support for newer v2.5 version")
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+Hi Thomas,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> From: Thomas Gleixner <tglx@linutronix.de>
+> To: LKML <linux-kernel@vger.kernel.org>
+> Cc: x86@kernel.org, Breno Leitao <leitao@debian.org>
+> Subject: [patch 00/15] x86/ioapic: Robustness fix and cleanup
+> 
+> Breno reported a panic during testing with failslab in the IO-APIC
+> code. This is a historical leftover and can be handled gracefully.
+> 
+> While looking at that I stumbled over quite some historical leftovers of
+> debug printks, overly big comments for trivialities and a pile of coding
+> style violations.
+> 
+> So after fixing the failslab problem I just went through and modernized the
+> (IO)APIC code.
+> 
+> The series is also available from git:
+> 
+>     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git x86/apic
+> 
 
-Best regards,
-Krzysztof
+Tested this branch on an Intel Sandy Bridge server and an Ice Lake server.
+Both servers booted okay and worked well. No regressions were found.
+If the testing is sufficient, feel free to add:
 
+   Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+
+Thanks!
+-Qiuxu
 
