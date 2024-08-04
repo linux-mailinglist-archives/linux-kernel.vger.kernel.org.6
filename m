@@ -1,112 +1,141 @@
-Return-Path: <linux-kernel+bounces-273889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F1C946F3C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2987B946F38
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7C071F21558
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0C3281946
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F14481DA;
-	Sun,  4 Aug 2024 14:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77504CB2B;
+	Sun,  4 Aug 2024 14:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="G6Lhjg+O"
-Received: from smtp2.math.uni-bielefeld.de (smtp2.math.uni-bielefeld.de [129.70.45.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fViwKJpz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DBE28377
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 14:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0390C28377;
+	Sun,  4 Aug 2024 14:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722780452; cv=none; b=ZIu3qW8+UcUEXsKuPQRqy1Oqt8P65OSXxeD+QDiG29vCjAjec+d/E24kmI1FPq5RGiGJh78u+JQRPWAlDMCAn0PUdYQROJCz2UApPlAYS1GtbyWisub0slhik97f1/wlXHFhfOk22HpMh8N/ceK6w5MRMb0g8LMnUfD+BkkgkQU=
+	t=1722780332; cv=none; b=OWWRqrfYL2QK4wsm5qoU2dTDFzOC9ge+c84e5AJuBscIvqKU6oH4XDOCuQstQeqXkDoP8lTZWqzHrz92U28O8osxxQzHv+Rb2lUdNCUVD1DFVE4Tt6gV0YQ3Iv7UsPPVb85uCo5NnjXafUnoUQupdkeXjzaos9+5lh+MdFnZZ6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722780452; c=relaxed/simple;
-	bh=at9u804XWKg105DvZq8kuM2cMuEa9Th7oiyNnGkRZhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KYw6V9lkwSUG2Lf0OOlw8FHpyb4C4lr8rAhey7NZIDZJx8yfsQqjLiYObO1YDa7upVQsvTUpwP7aryTtemys691uRqUTHOP5iOEi4eDBUlANOFQsO3Uw8DjNe8DuQMXQKH0z4I/uz/O4aArjILwxgivm0sxR2kMBAs6SlDgGj5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=G6Lhjg+O; arc=none smtp.client-ip=129.70.45.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=math.uni-bielefeld.de; s=default; t=1722779929;
-	bh=at9u804XWKg105DvZq8kuM2cMuEa9Th7oiyNnGkRZhQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G6Lhjg+OV9MQqksP/lvS31W1wqwAVAyzH64mOHi8k1TYHnr7kr6A0Uf43ZBIpYWWH
-	 2F5ONhHMQcFoVbRkEvBpNRen/gCE1D3p1AR8gAQBNAPF8uw0GpWRNnz7iMJ4xKIzaD
-	 fzVYjxWOeJUavESsrK6FSmItq7+a45gkEccdMITzaoUkgliZVhD2vboP3px9JNwa7E
-	 BFJkLXyCBiLjavoI1dvdNhgUP8bnyGOuLUjDRI/0x/gjv4ERHiD2jrrZdcmafLqsLd
-	 NkX+j44rpLLEwSD/g3cRaEy9Q45dVlJPxb7rrCudDR2ueWs+48zLN2I+fLCWlknCte
-	 mQlcBNVsDLktw==
-Received: from localhost (dslb-088-074-203-146.088.074.pools.vodafone-ip.de [88.74.203.146])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp2.math.uni-bielefeld.de (Postfix) with ESMTPSA id 3A74C20C43;
-	Sun,  4 Aug 2024 15:58:49 +0200 (CEST)
-From: tjakobi@math.uni-bielefeld.de
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] drm/amd: Make amd_ip_funcs static for SDMA v5.0
-Date: Sun,  4 Aug 2024 15:56:27 +0200
-Message-ID: <3b29b06f95f051d9b43796105a306a30a1c64347.1722778722.git.tjakobi@math.uni-bielefeld.de>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <cover.1722778722.git.tjakobi@math.uni-bielefeld.de>
-References: <cover.1722778722.git.tjakobi@math.uni-bielefeld.de>
+	s=arc-20240116; t=1722780332; c=relaxed/simple;
+	bh=O9c7ewdxfWUyO4aktZqASNxBYVn+2cIu2ESX5kfSl7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+dxhgowmx1fu/LyDxpFxPKiYJBhdu0mOvhrZzGphTkIIOtesLI18wPe60jhCzlPKC+KfHmkeyJWLCi9f5g5qk1BR1QAm57XcwqxucLvGSfHq+qlRin2Zo0s7DfE+EVRqiDhppMkUFvlu3l65xP+IdpAiPUNH8DHcVf6N+byoyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fViwKJpz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C941C32786;
+	Sun,  4 Aug 2024 14:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722780331;
+	bh=O9c7ewdxfWUyO4aktZqASNxBYVn+2cIu2ESX5kfSl7s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fViwKJpzkMB+7D2rhjeAIQO4CFy0ao87LnET6ke53q98HlFqQECHM3a8IZo6mxXSi
+	 oy5jTfg1WBWfZERnCJMK+A6c+kSvoB5eeK6pSUbkpgcq7fBqHVL4Uf0+644QcaSTLK
+	 q8fSWwZ9tchFscm8NOWW9VZdSTs8sos4VicH41q5Si5Ieyqf/jNig6v7sIteIY1qhD
+	 5K728JpICPPOO5wVLgLjZLuJ96XH33RY7KkMJsAQzYdjoZzAl5MpOvLAxX8TZHMmR6
+	 heGUJQVP6yzQN7lt6kqJJU9iLC39uTdiwPNRZAqo5VqjNWQvt1bfFMAbX8BsXxbb+b
+	 3FASdRu9QOvFw==
+Message-ID: <b967ab05-dd0e-4fc5-bee6-ad7639e47bfb@kernel.org>
+Date: Sun, 4 Aug 2024 16:05:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+To: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+ Ondrej Jirman <megi@xff.cz>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <20240803125510.4699-5-ziyao@disroot.org>
+ <56bd1478-ce8c-4c1d-ab16-afe4ad462bf5@kernel.org>
+ <Zq-AFWYaqu7zGuz-@ziyaolaptop.my.domain>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Zq-AFWYaqu7zGuz-@ziyaolaptop.my.domain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+On 04/08/2024 15:20, Yao Zi wrote:
+>>
+>>> +		compatible = "fixed-clock";
+>>> +		#clock-cells = <0>;
+>>> +		clock-frequency = <24000000>;
+>>> +		clock-output-names = "xin24m";
+>>> +	};
+>>> +
+>>> +	gic: interrupt-controller@fed01000 {
+>>
+>> Why this all is outside of SoC?
+> 
+> Just as Heiko says, device tree for all other Rockchip SoCs don't have
+> a "soc" node. I didn't know why before but just follow the style.
+> 
+> If you prefer add a soc node, I am willing to.
 
-The struct can be static, as it is only used in this
-translation unit.
+Surprising as usually we expect MMIO nodes being part of SoC to be under
+soc@, but if that's Rockchip preference then fine.
 
-Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
----
- drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c | 2 +-
- drivers/gpu/drm/amd/amdgpu/sdma_v5_0.h | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-index b7d33d78bce0..846c05332cd8 100644
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.c
-@@ -1718,7 +1718,7 @@ static void sdma_v5_0_get_clockgating_state(void *handle, u64 *flags)
- 		*flags |= AMD_CG_SUPPORT_SDMA_LS;
- }
- 
--const struct amd_ip_funcs sdma_v5_0_ip_funcs = {
-+static const struct amd_ip_funcs sdma_v5_0_ip_funcs = {
- 	.name = "sdma_v5_0",
- 	.early_init = sdma_v5_0_early_init,
- 	.late_init = NULL,
-diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.h b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.h
-index d4e3c2e696f6..2ab71f21755a 100644
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.h
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_0.h
-@@ -24,7 +24,6 @@
- #ifndef __SDMA_V5_0_H__
- #define __SDMA_V5_0_H__
- 
--extern const struct amd_ip_funcs sdma_v5_0_ip_funcs;
- extern const struct amdgpu_ip_block_version sdma_v5_0_ip_block;
- 
- #endif /* __SDMA_V5_0_H__ */
--- 
-2.44.2
+Best regards,
+Krzysztof
 
 
