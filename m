@@ -1,306 +1,172 @@
-Return-Path: <linux-kernel+bounces-273747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAF4946D81
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:46:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6288946D85
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0981C20902
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:46:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25F6FB2136D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFAE1F95A;
-	Sun,  4 Aug 2024 08:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666792033A;
+	Sun,  4 Aug 2024 08:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YKgBOs71"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LuM28zjo"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D94A1CAA2
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 08:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9961CFBE
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 08:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722761201; cv=none; b=tWkUPBu5BbUYoH9UcrOeYlRj8SZrvKxnsfNYbRSUd3+2d7G05pUlWV4uwycTJN2kBY22j7zRJ31y+2o3jmQhoTpYGrTEL6AQWMs99KgR9mlK204SKz/6zLyX41mIlQheeny9M+mAJ3Ccqtj2GjRTMHkkEMdwYsgLHOG6zmhtejo=
+	t=1722761238; cv=none; b=RMuzxP+1vHQwf8b9Z4g4vmf//ofvzaF6lCb7Z1LqxcC3k+Uhh2Rfl7V5/lLHHp4XaIA0YWf3C5cI2bytdGqZBqp8Yg87dfhcZLh2Hs/fCY2Pe7xqxdgi0UHFvNCnPGy9cTsfI6u5AdTqRMLZTFboOqeYisy9VH49AXNTu0SOUkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722761201; c=relaxed/simple;
-	bh=uIWyX7Iu+tfviez0bkoOq9uUhA73cj3V2rpJKZK5jac=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=C7y9ObNBTXVMQv0ajHnKUg8avNL5lyRpRsdTOjHkD4dIhoFf5IH66dXVgvdky3ODzYikIOEgwQCEXFjkUNDh2y24c8J9ZIapsT8a98ODsm4NIst6SzTJBJd9IRFzoD5Fzvm2uciQ3J1gl5QLByjNrMBSQ8i7Xcsu1Ovp7ocpuzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kyletso.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YKgBOs71; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kyletso.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6902dc6d3ffso18502027b3.2
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 01:46:39 -0700 (PDT)
+	s=arc-20240116; t=1722761238; c=relaxed/simple;
+	bh=2jLSaEpu2v6/ztQDy5TBTo6ym8H/iZtsY3FjoNcgYfY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nNzW8+vFwiUcWsZqGiGRuEfIkikzOqrGSdR9kZqqafHC4WWWdvjsHf/rSEqMnfW82wPxWL/ieJO7fc5crGxC5nEoGoUAjwPyDIwqK0R6BwQ6VPjLWLA7/+1YCxBSIrhqci6AKba25kEKev41Vt45mOaF88GeFYs3J2o3icsLH6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LuM28zjo; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428178fc07eso60171135e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 01:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722761198; x=1723365998; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6M8YW/97huclA1gW/TKnb65DL5qWt+ctRlGI3kyliqY=;
-        b=YKgBOs71jvwvsnpwmbKCJo8US0/ESfePBlVplFg1xo8si6lXFjS7bsH+Vo+fU0v+xj
-         ljsXnKAzImPc9YziCE3QGueD0TaQS8RYQHWK03l/+60BLJUmMZYTljcWX5GDuhvVCj+P
-         b0IABo27Ez/25Q6/hcTwPf5al6SgjNVdW9uYYDQWfakQHDYzrkjOCztNOy7qsa4l7GaY
-         t1P5qXPGqThFYPPqq7yUNKeLipXLCCSTijAb6J2zao+LWxlpACGJxgfKSOb44FWnvOqT
-         hpdzWH3YHGIv4ROt1kkjiBtREzElAw6tifdMxma4De437SwXRM/mATNLF1NzrXTD3AI3
-         8CcA==
+        d=linaro.org; s=google; t=1722761234; x=1723366034; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8CitPlNE/SDD7urvRpgu8WV1xvuBvTbSWKqKmC6oEoQ=;
+        b=LuM28zjoYXi4FkrG+9Ut+ZDczDSr98TjkN5FsXF+cWEVDMcJkrLBJpIHb8md3IbFEo
+         WcCt5mnowITY8GT+++b5Ri0U8adZqTvGmnackMX38c3GeJKiFAWsU0ixWQ6gCsiFYDuD
+         Aj6IhHl7AcLYPe/+88GYBx/cNz5LaOx/Ar3KUOzVA98e/Kl16GIngCxgmkxCWmp5MYx5
+         sDF1enZEXvu/VTEf7+nGHnyqB98pvDpRSV8hyLBAT5RoV6Z/r6CUsCoom+uub7+dguQ4
+         v9SXcOk6ysC1OPGU27NDSHJB/xRmDBihUMn7T3K/xAik2nYDPMlhqJKdOsvKpfqluY1S
+         wBAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722761198; x=1723365998;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6M8YW/97huclA1gW/TKnb65DL5qWt+ctRlGI3kyliqY=;
-        b=oI2S/UO145N6EDSMQsgO+hGzwWyKv4hddL/qHp3AjrbM+eP/xNiQfiby9IQH+tde4S
-         9eBoyJbcTnva1WduM3GkJ4nALnGDKGOPnKV/oPjyta4J0rfKa0AE9NlOKE3CHUFRAknO
-         hrNuX/SD7Tj626biejJlGbIywAz982rriQdWYGcvICo8+q3SGjR7SZogq5TIDvt75D2+
-         dZ5JDMW1eABXtTX7soiLT6p7xVJyHdxz6gIBJs6iUvJBvUmUtPGU/twlSOlxrt7y1Oua
-         /InI/XSTKEXsZeUH7Kdujhwc19/nhb7Jy5cQv8BJNKv7JcOes6eKNED5jSvTdFKB9YEi
-         wReQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzDH9ccynKXNSnufvvZoUTVi/DCtANdVrhfdIjCZBmSlNAL3iT9NtWQwVwutHttfs2Lx75wzqtthDqK3xb6KGxHNZmrkZnwX8nwjq8
-X-Gm-Message-State: AOJu0YxaPoBh9UQMdj4EofgdsIJDFipi74Do5EG2CpScUdf0m6nko6Ed
-	7P+mXvoL1FbCvG9B1R1n/qm6qGRYYH1UuXZP+ku+ZIsRGM2nWZvRd7u+V41rgL5QC1MukHqM6xc
-	KOLvzWw==
-X-Google-Smtp-Source: AGHT+IH03c2j+KIKSgCeHiW2+Q2D2XoDioOLAw2DF1Ifv/CEZPmxrzYO5GKrG0RoK1ZbsxIYZM0OeTaUeK5p
-X-Received: from kyletso-p620lin01.ntc.corp.google.com ([2401:fa00:a7:c:a95c:c83d:79ae:99df])
- (user=kyletso job=sendgmr) by 2002:a05:690c:112:b0:65c:4528:d91c with SMTP id
- 00721157ae682-6895964bcebmr8198927b3.0.1722761198530; Sun, 04 Aug 2024
- 01:46:38 -0700 (PDT)
-Date: Sun,  4 Aug 2024 16:46:12 +0800
+        d=1e100.net; s=20230601; t=1722761234; x=1723366034;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8CitPlNE/SDD7urvRpgu8WV1xvuBvTbSWKqKmC6oEoQ=;
+        b=dtptNz/FjmOA4EQKKls0SZj4CZVaeAKwqQpmwAFTuEZSJXpx8rLMzwyU6FomEGb1Ej
+         YQ0HRxzxJ0DWOaYK4Gpf0PsmkfBoANsi9Bt4dKcbuB612cZt5Yx1Xj8KpKhwwrCXnFmO
+         4y/Ypt82ptgDqjPOEfB43BahLpHydlBCL4+EFKI6W/zqnuZfgVLIY2gU2frK1uMPI2Ao
+         NAtrka750mU7DHQ79KBWhhhUMZSbRg+7btcZaBJMOBUqkM1qnNbGXcEO50py2/oEJR+G
+         0wz3eGMN8jqabnZ2cQsMzpNJR0mZefKHVeeNN8rYmg1FMuNUdJKZDCYnCKyxSOiUOsJz
+         TDiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVotvauD/UPaSRXMfX06zhaUqTFaQks45eIjP0/b0r/64wZdXUC/Sn0zlB7Cua17ZG+WyL0pC+SgiqBQWP3KOYhmjaPPgmjC2kE27uh
+X-Gm-Message-State: AOJu0Yw9aLvDTyz3U7+m98RrTQfS8mC9vG0/008V6Gjge/5T3elEGNg7
+	yWmWHcrn6G7cBpDmuSzlh9IB6wStL5DL7hGEmJFUcEVvvanzkpyOIVlO+H69Scs=
+X-Google-Smtp-Source: AGHT+IFJhq/h5m1XaZO3dd2l7+V8KF6f4ePyJHTBOeKJLuAJojXkXCVyJUWdEXLhQZz/Y9cYOR0XYQ==
+X-Received: by 2002:a05:600c:5102:b0:428:52a:3580 with SMTP id 5b1f17b1804b1-428e6af4b58mr49602955e9.3.1722761233277;
+        Sun, 04 Aug 2024 01:47:13 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e7d57asm92117905e9.33.2024.08.04.01.47.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 01:47:12 -0700 (PDT)
+Message-ID: <448705b3-be39-4938-a421-2cc36d4c132b@linaro.org>
+Date: Sun, 4 Aug 2024 10:47:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240804084612.2561230-1-kyletso@google.com>
-Subject: [PATCH v3] usb: dwc3: Runtime get and put usb power_supply handle
-From: Kyle Tso <kyletso@google.com>
-To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, raychi@google.com
-Cc: badhri@google.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	royluo@google.com, bvanassche@acm.org, Kyle Tso <kyletso@google.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: qcom: Document samsung,j3ltetw
+To: "Lin, Meng-Bo" <linmengbo06890@proton.me>, linux-kernel@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240804065854.42437-1-linmengbo06890@proton.me>
+ <20240804065854.42437-2-linmengbo06890@proton.me>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240804065854.42437-2-linmengbo06890@proton.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-It is possible that the usb power_supply is registered after the probe
-of dwc3. In this case, trying to get the usb power_supply during the
-probe will fail and there is no chance to try again. Also the usb
-power_supply might be unregistered at anytime so that the handle of it
-in dwc3 would become invalid. To fix this, get the handle right before
-calling to power_supply functions and put it afterward.
+On 04/08/2024 08:59, Lin, Meng-Bo wrote:
+> Document samsung,j3ltetw bindings used in its device tree.
+> 
 
-dwc3_gadet_vbus_draw might be in interrupt context. Create a kthread
-worker beforehand and use it to process the "might-sleep"
-power_supply_put ASAP after the property set.
+Please do not work on old kernels... You *must* base on something recent.
 
-Fixes: 6f0764b5adea ("usb: dwc3: add a power supply for current control")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kyle Tso <kyletso@google.com>
----
-v2 -> v3:
-- Only move power_supply_put to a work. Still call _get_by_name and
-  _set_property in dwc3_gadget_vbus_draw.
-- Create a kthread_worker to handle the work
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
 
-v1 -> v2:
-- move power_supply_put out of interrupt context
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+</form letter>
 
- drivers/usb/dwc3/core.c   | 29 ++++++++++++----------------
- drivers/usb/dwc3/core.h   |  6 ++++--
- drivers/usb/dwc3/gadget.c | 40 +++++++++++++++++++++++++++++++++++----
- 3 files changed, 52 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 734de2a8bd21..82c8376330d7 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1631,8 +1631,6 @@ static void dwc3_get_properties(struct dwc3 *dwc)
- 	u8			tx_thr_num_pkt_prd = 0;
- 	u8			tx_max_burst_prd = 0;
- 	u8			tx_fifo_resize_max_num;
--	const char		*usb_psy_name;
--	int			ret;
- 
- 	/* default to highest possible threshold */
- 	lpm_nyet_threshold = 0xf;
-@@ -1667,12 +1665,7 @@ static void dwc3_get_properties(struct dwc3 *dwc)
- 
- 	dwc->sys_wakeup = device_may_wakeup(dwc->sysdev);
- 
--	ret = device_property_read_string(dev, "usb-psy-name", &usb_psy_name);
--	if (ret >= 0) {
--		dwc->usb_psy = power_supply_get_by_name(usb_psy_name);
--		if (!dwc->usb_psy)
--			dev_err(dev, "couldn't get usb power supply\n");
--	}
-+	device_property_read_string(dev, "usb-psy-name", &dwc->usb_psy_name);
- 
- 	dwc->has_lpm_erratum = device_property_read_bool(dev,
- 				"snps,has-lpm-erratum");
-@@ -2132,19 +2125,24 @@ static int dwc3_probe(struct platform_device *pdev)
- 
- 	dwc3_get_software_properties(dwc);
- 
-+	dwc->worker = kthread_create_worker(0, "dwc3-worker");
-+	if (IS_ERR(dwc->worker))
-+		return PTR_ERR(dwc->worker);
-+	sched_set_fifo(dwc->worker->task);
-+
- 	dwc->reset = devm_reset_control_array_get_optional_shared(dev);
- 	if (IS_ERR(dwc->reset)) {
- 		ret = PTR_ERR(dwc->reset);
--		goto err_put_psy;
-+		goto err_destroy_worker;
- 	}
- 
- 	ret = dwc3_get_clocks(dwc);
- 	if (ret)
--		goto err_put_psy;
-+		goto err_destroy_worker;
- 
- 	ret = reset_control_deassert(dwc->reset);
- 	if (ret)
--		goto err_put_psy;
-+		goto err_destroy_worker;
- 
- 	ret = dwc3_clk_enable(dwc);
- 	if (ret)
-@@ -2245,9 +2243,8 @@ static int dwc3_probe(struct platform_device *pdev)
- 	dwc3_clk_disable(dwc);
- err_assert_reset:
- 	reset_control_assert(dwc->reset);
--err_put_psy:
--	if (dwc->usb_psy)
--		power_supply_put(dwc->usb_psy);
-+err_destroy_worker:
-+	kthread_destroy_worker(dwc->worker);
- 
- 	return ret;
- }
-@@ -2258,6 +2255,7 @@ static void dwc3_remove(struct platform_device *pdev)
- 
- 	pm_runtime_get_sync(&pdev->dev);
- 
-+	kthread_destroy_worker(dwc->worker);
- 	dwc3_core_exit_mode(dwc);
- 	dwc3_debugfs_exit(dwc);
- 
-@@ -2276,9 +2274,6 @@ static void dwc3_remove(struct platform_device *pdev)
- 	pm_runtime_set_suspended(&pdev->dev);
- 
- 	dwc3_free_event_buffers(dwc);
--
--	if (dwc->usb_psy)
--		power_supply_put(dwc->usb_psy);
- }
- 
- #ifdef CONFIG_PM
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index 1e561fd8b86e..3fc58204db6e 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -993,6 +993,7 @@ struct dwc3_scratchpad_array {
- /**
-  * struct dwc3 - representation of our controller
-  * @drd_work: workqueue used for role swapping
-+ * @worker: dedicated kthread worker
-  * @ep0_trb: trb which is used for the ctrl_req
-  * @bounce: address of bounce buffer
-  * @setup_buf: used while precessing STD USB requests
-@@ -1045,7 +1046,7 @@ struct dwc3_scratchpad_array {
-  * @role_sw: usb_role_switch handle
-  * @role_switch_default_mode: default operation mode of controller while
-  *			usb role is USB_ROLE_NONE.
-- * @usb_psy: pointer to power supply interface.
-+ * @usb_psy_name: name of the usb power supply interface
-  * @usb2_phy: pointer to USB2 PHY
-  * @usb3_phy: pointer to USB3 PHY
-  * @usb2_generic_phy: pointer to array of USB2 PHYs
-@@ -1163,6 +1164,7 @@ struct dwc3_scratchpad_array {
-  */
- struct dwc3 {
- 	struct work_struct	drd_work;
-+	struct kthread_worker	*worker;
- 	struct dwc3_trb		*ep0_trb;
- 	void			*bounce;
- 	u8			*setup_buf;
-@@ -1223,7 +1225,7 @@ struct dwc3 {
- 	struct usb_role_switch	*role_sw;
- 	enum usb_dr_mode	role_switch_default_mode;
- 
--	struct power_supply	*usb_psy;
-+	const char		*usb_psy_name;
- 
- 	u32			fladj;
- 	u32			ref_clk_per;
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 89fc690fdf34..1ff583281eff 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -30,6 +30,11 @@
- #define DWC3_ALIGN_FRAME(d, n)	(((d)->frame_number + ((d)->interval * (n))) \
- 					& ~((d)->interval - 1))
- 
-+struct dwc3_psy_put {
-+	struct kthread_work work;
-+	struct power_supply *psy;
-+};
-+
- /**
-  * dwc3_gadget_set_test_mode - enables usb2 test modes
-  * @dwc: pointer to our context structure
-@@ -3047,22 +3052,49 @@ static void dwc3_gadget_set_ssp_rate(struct usb_gadget *g,
- 	spin_unlock_irqrestore(&dwc->lock, flags);
- }
- 
-+static void dwc3_gadget_psy_put(struct kthread_work *work)
-+{
-+	struct dwc3_psy_put	*psy_put = container_of(work, struct dwc3_psy_put, work);
-+
-+	power_supply_put(psy_put->psy);
-+	kfree(psy_put);
-+}
-+
- static int dwc3_gadget_vbus_draw(struct usb_gadget *g, unsigned int mA)
- {
--	struct dwc3		*dwc = gadget_to_dwc(g);
-+	struct dwc3			*dwc = gadget_to_dwc(g);
-+	struct power_supply		*usb_psy;
- 	union power_supply_propval	val = {0};
-+	struct dwc3_psy_put		*psy_put;
- 	int				ret;
- 
- 	if (dwc->usb2_phy)
- 		return usb_phy_set_power(dwc->usb2_phy, mA);
- 
--	if (!dwc->usb_psy)
-+	if (!dwc->usb_psy_name)
- 		return -EOPNOTSUPP;
- 
-+	usb_psy = power_supply_get_by_name(dwc->usb_psy_name);
-+	if (!usb_psy) {
-+		dev_err(dwc->dev, "couldn't get usb power supply\n");
-+		return -ENODEV;
-+	}
-+
- 	val.intval = 1000 * mA;
--	ret = power_supply_set_property(dwc->usb_psy, POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT, &val);
-+	ret = power_supply_set_property(usb_psy, POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT, &val);
-+	if (ret < 0) {
-+		dev_err(dwc->dev, "failed to set power supply property\n");
-+		return ret;
-+	}
- 
--	return ret;
-+	psy_put = kzalloc(sizeof(*psy_put), GFP_ATOMIC);
-+	if (!psy_put)
-+		return -ENOMEM;
-+	kthread_init_work(&psy_put->work, dwc3_gadget_psy_put);
-+	psy_put->psy = usb_psy;
-+	kthread_queue_work(dwc->worker, &psy_put->work);
-+
-+	return 0;
- }
- 
- /**
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
+> Signed-off-by: "Lin, Meng-Bo" <linmengbo06890@proton.me>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
