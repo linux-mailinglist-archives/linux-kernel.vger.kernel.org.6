@@ -1,94 +1,74 @@
-Return-Path: <linux-kernel+bounces-273776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3EC946DEC
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:26:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B13946DE3
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F91280F25
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B96D1C209C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721EC2261D;
-	Sun,  4 Aug 2024 09:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b="IZqO5DHA";
-	dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b="Opf364Oy"
-Received: from sphereful.davidgow.net (sphereful.davidgow.net [203.29.242.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878F0219EA;
+	Sun,  4 Aug 2024 09:20:27 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E78D20DC3
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 09:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.242.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E403A17588;
+	Sun,  4 Aug 2024 09:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722763571; cv=none; b=BZelh0/9od9t2AgoMc5EcIkmPWFYIRafwppPIu+/FT4u3Ey8nlmsvpJ3l82jSpGhhfSjdqIt4H5fWERt4ZAw5MNy7Ryg27GoWlTvlPHzywDEaVTrp8YPx2AoTAW8z120LqNT0gUbo8u/YHio+lT2kdDHbzigD7U+FvYdGXJx0YI=
+	t=1722763227; cv=none; b=EPkI9tR0hEeB5yvH/bVOn2fgcu/xc4RWw8pF4wJ4OMUfvTF5pUp67FQXQKe041kmkqUvxpx4pbgzBQ1foQdPQpDH2rQJwg/3aQNsPpEDX6IWXGLqRCGOSWbappjWST7Tm08kq46Ro+8SnumNsHyVwOzhZ+eFOCBxv53VV4ujkp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722763571; c=relaxed/simple;
-	bh=PUNtupVBkgdPaBkzwexADnKJVGtpOaVaXYTKNh/eqqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Tnp3PrYTYiQHzgHC9eECh2M/GCOyb8R063eXlA7DrkooyYfzWo77+al1QkDlDZgWWmrJwDeWpHTz7HeOzt/QPJdQCYw14LxrWwUs8Fdi+TRzRjqoZFMp3uZxE9QKDCSF3VGXR01NjZP2LlASW7teW5OzZu5X7EgvxskWgg8/MXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidgow.net; spf=pass smtp.mailfrom=davidgow.net; dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b=IZqO5DHA; dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b=Opf364Oy; arc=none smtp.client-ip=203.29.242.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidgow.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidgow.net
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=davidgow.net;
-	s=201606; t=1722763156;
-	bh=PUNtupVBkgdPaBkzwexADnKJVGtpOaVaXYTKNh/eqqQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IZqO5DHAAFf9tB7gHeSE6uGHFaV2B4b2HRTH74KOgrtIEQnCoN0cP9muXZf21EwIt
-	 gIGmD0E7srCvZVp+lqWEqLfTbAfvnI1/+uiz4ES/0XK0HpasQydBgTPv9THWsc+hr/
-	 pYqSg4sTVxP3visP+q1nDkS+OQbN+yfy4gjj1kIG0rLjvmdURKB8GGkwcy4UwEWWzK
-	 ZS3uzPnPsxyzxGcENyIx++KORTGQbEXM2U/nsSdpJcdSBFLEkj4gODBf2Jnan4Q82m
-	 p8Zt5RhBfHodUTDE1EyuAjvxhLk3q0Nm1gM7PZjiplvYy6y2n/yz2j6XArWQqqYxyz
-	 NuIaj80WIPMaQ2hecJq9Hu5nM9qH2wsSDdVWJU8W2gzSomvO4Ql2zPtK7jYXitVV2A
-	 sCO6VB/36y53YXaUBLRcLH/rG0mw0LhcnofjqpaENKqRMKwpAPr4A9x8bnir+VJadm
-	 KnY5Xv5+6oQl74jD3RrFuajs+tpmqPZf/rRZ7B+Xn0ciBqcFNpwX6x6KXs1s3vgD4I
-	 SryhTL5UKQqJezwk9VxTpBN/9WX/sOE/ueeyv0qiQM7ZvOLGGK2RDh1KJWNZ1aBHo7
-	 uq+xTYmfBHZ1GXyFMKnaeZy2JO7O9sf+OFHxQouVtHP8AAYIdHLjwV0qWpRn61I+IN
-	 V61CBmr9/qsyro/Xbdiktlq4=
-Received: by sphereful.davidgow.net (Postfix, from userid 119)
-	id 64BC71DC09C; Sun,  4 Aug 2024 17:19:16 +0800 (AWST)
-X-Spam-Level: 
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=davidgow.net;
-	s=201606; t=1722763150;
-	bh=PUNtupVBkgdPaBkzwexADnKJVGtpOaVaXYTKNh/eqqQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Opf364Oy1QRoUGbBsugeKctsO8VhOkTXLClJwlSx61qOgfSHEStTNrlHLU5cMIbfo
-	 6IEYAdAOsCYS7/hoXXPNRD8raEEdVxtIijDjLEzFP7rlDbwG/HNaV0j5zK95aC5aH5
-	 yeQG7nzlf+A1jl9o8OpWTzF5rqY8/TaXl9dl75L85AtUhcg0xG8iQu7osvMT6TXRRk
-	 QjSUacWDd3uBwdl57teCOQin6CA+lFqtMmr8Ip6AMMHrZYAmueE/UHqN1Nwkbf+zsr
-	 CT8YJ3V2zfuo1iKorZZwT1u4+YzPbUxyQsevzowJg5gBatF775JDJPNP4nnepmX+op
-	 RDVRMHDqO1VvgHazy8UWllt4JYNroz+9xzrmBbbZ12H/yTMHxPG31/xpVQQ2HawtI3
-	 6z4F5cNRiqGrDAFfB/+KzN9xXHgLkjvYfR/E1aFb3h4Z/j8GP8ean6P5tWMm0nup3v
-	 zZH0CFsiF4RGoOfvyL2JraoB7vCRpD5ec9l3xBwEj2uSnKUQwx0u/mfLj/s2c4kYGU
-	 xxmDnTwUk646X5vaShNWRRZvtLAyNQDr0Wug9nc40GY3v+czD/X+tcC24TPu2ilybB
-	 cXetXJqbxzi59hLtlE4NNX+VsQulBytz7DmpOQF59FwOd1p1vCJS/LAm9NFPEJOSRs
-	 JxRFBoqTuL0nG+CUodZsfRUk=
-Received: from sparky.lan (unknown [IPv6:2001:8003:8824:9e00::bec])
-	by sphereful.davidgow.net (Postfix) with ESMTPSA id 9512F1DC093;
-	Sun,  4 Aug 2024 17:19:10 +0800 (AWST)
-From: David Gow <david@davidgow.net>
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Somalapuram Amaranath <Amaranath.Somalapuram@amd.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Gow <david@davidgow.net>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/i915: Attempt to get pages without eviction first
-Date: Sun,  4 Aug 2024 17:18:48 +0800
-Message-ID: <20240804091851.122186-3-david@davidgow.net>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240804091851.122186-1-david@davidgow.net>
-References: <20240804091851.122186-1-david@davidgow.net>
+	s=arc-20240116; t=1722763227; c=relaxed/simple;
+	bh=ayQagBeZalevYPtQBI9YWjYEybeAhnI5SoE7BwzoLRU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d5nhn8baHXTULEr2VRGPfoHSGdcOdSwsnJHXga6b6Al3kMua5glLMZrLzqE6Isg3AoXjMEZV98msImTz52wr0+nPqFbTcR0s5lWYC14bz1enzciARKxK6olwSr2ZaAKhDJlNBWvx/XmTta9WBQPVXgEZIGHXxDyYFjIWaxACjsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: c312c516524211efa216b1d71e6e1362-20240804
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
+	DN_TRUSTED, SRC_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR, SN_UNTRUSTED
+	SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD_SPF, CIE_UNKNOWN, GTI_FG_BS, GTI_C_CI, GTI_FG_IT
+	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
+	AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:a3ab75a1-ac9f-465e-a91f-627088f0200b,IP:10,
+	URL:0,TC:0,Content:-5,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:35
+X-CID-INFO: VERSION:1.1.38,REQID:a3ab75a1-ac9f-465e-a91f-627088f0200b,IP:10,UR
+	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:35
+X-CID-META: VersionHash:82c5f88,CLOUDID:70af7d21835f03586e3743aae2453d02,BulkI
+	D:240804171638GUAHFMRT,BulkQuantity:1,Recheck:0,SF:72|19|43|74|66|23|200|1
+	02,TC:nil,Content:0,EDM:5,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
+	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
+X-UUID: c312c516524211efa216b1d71e6e1362-20240804
+X-User: zhanghao1@kylinos.cn
+Received: from pve.sebastian [(118.250.1.66)] by mailgw.kylinos.cn
+	(envelope-from <zhanghao1@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1697066970; Sun, 04 Aug 2024 17:20:16 +0800
+From: zhanghao <zhanghao1@kylinos.cn>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+1a11884d9c9f1353942d@syzkaller.appspotmail.com,
+	zhanghao <zhanghao1@kylinos.cn>
+Subject: [PATCH] bcachefs: Add check for the size of combined key and value
+Date: Sun,  4 Aug 2024 17:20:03 +0800
+Message-Id: <20240804092003.142093-1-zhanghao1@kylinos.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,67 +77,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In commit a78a8da51b36 ("drm/ttm: replace busy placement with flags v6"),
-__i915_ttm_get_pages was updated to use flags instead of the separate
-'busy' placement list. However, the behaviour was subtly changed.
-Originally, the function would attempt to use the preferred placement
-without eviction, and give an opportunity to restart the operation
-before falling back to allowing eviction.
+The bkey_val_bytes() gets the number of bytes of value
+stored in bkey->u64s.If u64s is smaller than BKEY_U64s,
+it causes a negative number to be converted to an
+unsigned number.
 
-This was unintentionally changed, as the preferred placement was not
-given the TTM_PL_FLAG_DESIRED flag, and so eviction could be triggered
-in that first pass. This caused thrashing, and a significant performance
-regression on DG2 systems with small BAR. For example, Minecraft and
-Team Fortress 2 would drop to single-digit framerates.
+Reported-by: syzbot+1a11884d9c9f1353942d@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1a11884d9c9f1353942d
+Fixes: ba81523eaac3 ("bcachefs: Split out bkey_types.h")
+Link: https://lore.kernel.org/all/00000000000025321f061d7b62ff@google.com/T/
 
-Restore the original behaviour by marking the initial placement as
-desired on that first attempt. Also, rework this to use a separate
-struct ttm_palcement, as the individual placements are marked 'const',
-so hot-patching the flags is even more dodgy than before.
-
-Thanks to Justin Brewer for bisecting this.
-
-Fixes: a78a8da51b36 ("drm/ttm: replace busy placement with flags v6")
-Link: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/11255
-Signed-off-by: David Gow <david@davidgow.net>
+Signed-off-by: zhanghao <zhanghao1@kylinos.cn>
 ---
- drivers/gpu/drm/i915/gem/i915_gem_ttm.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ fs/bcachefs/bkey_types.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c b/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
-index fb848fd8ba15..5c72462d1f57 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
-@@ -778,13 +778,16 @@ static int __i915_ttm_get_pages(struct drm_i915_gem_object *obj,
- 		.interruptible = true,
- 		.no_wait_gpu = false,
- 	};
--	int real_num_busy;
-+	struct ttm_placement initial_placement;
-+	struct ttm_place initial_place;
- 	int ret;
+diff --git a/fs/bcachefs/bkey_types.h b/fs/bcachefs/bkey_types.h
+index c9ae9e42b385..60fa5af93032 100644
+--- a/fs/bcachefs/bkey_types.h
++++ b/fs/bcachefs/bkey_types.h
+@@ -21,6 +21,8 @@ static inline struct bkey_i *bkey_next(struct bkey_i *k)
  
- 	/* First try only the requested placement. No eviction. */
--	real_num_busy = placement->num_placement;
--	placement->num_placement = 1;
--	ret = ttm_bo_validate(bo, placement, &ctx);
-+	initial_placement.num_placement = 1;
-+	memcpy(&initial_place, placement->placement, sizeof(struct ttm_place));
-+	initial_place.flags |= TTM_PL_FLAG_DESIRED;
-+	initial_placement.placement = &initial_place;
-+	ret = ttm_bo_validate(bo, &initial_placement, &ctx);
- 	if (ret) {
- 		ret = i915_ttm_err_to_gem(ret);
- 		/*
-@@ -799,7 +802,6 @@ static int __i915_ttm_get_pages(struct drm_i915_gem_object *obj,
- 		 * If the initial attempt fails, allow all accepted placements,
- 		 * evicting if necessary.
- 		 */
--		placement->num_placement = real_num_busy;
- 		ret = ttm_bo_validate(bo, placement, &ctx);
- 		if (ret)
- 			return i915_ttm_err_to_gem(ret);
+ static inline size_t bkey_val_bytes(const struct bkey *k)
+ {
++	if (k->u64s < BKEY_U64s)
++		return 0;
+ 	return bkey_val_u64s(k) * sizeof(u64);
+ }
+ 
+
+base-commit: defaf1a2113a22b00dfa1abc0fd2014820eaf065
+prerequisite-patch-id: 1ec511753fc7aab35ba0e982013cf91ba4403da6
 -- 
-2.46.0
+2.39.2
 
 
