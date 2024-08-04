@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-273661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72380946BF4
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 04:41:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA35946BF5
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 04:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F0F1F21841
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:41:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D5661F21BFB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8758BF3;
-	Sun,  4 Aug 2024 02:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03878BA4B;
+	Sun,  4 Aug 2024 02:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7Uhp7Mh"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQu42cSb"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C9623D2
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 02:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EEF7494
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 02:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722739255; cv=none; b=DZcat9eY0yVJarAe88umV9eZ5AquYIFMgVpGaMRtwMsLLD3nVSzzsaSzBXeMMm0wveBJ8D/uEx0KneLb1+37euCmxD5qMX8iVSGIQo9zxzjBPt0Fm/F9Hx9r6iAI38oDHZMjnCKybPx/6VvcbWmw7TBIrNQJfMeOesC/56Lcwgw=
+	t=1722739257; cv=none; b=PzWGXcdOaiF3ZtSXO2VI6fVPS24nBSftDN5WNq7S9h82Q+MwHiNXPzcsC/b5ady23/BUdt76WVklTfohK3Y4yEl8Mg7qXUwz0iBux+f4SIW7p5i5/yg6YFDjNatMRaPPLMtarVpjgPUYosy9MdOoBCbrhBwrZyg3dWejA+KJXik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722739255; c=relaxed/simple;
-	bh=mctxP5jPQZ0IfahNX0j4xqjDWcNRknz328tBzU8JeeA=;
+	s=arc-20240116; t=1722739257; c=relaxed/simple;
+	bh=uUh/QIxr6vJsVN1KfVp4pd+1zTrSeNAgZkX1miQB/Ow=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k/M3wm83x0BtEzih2AuBbMmWX/1erM7rRkpY/n4D0/U9pf591utujdDFi+IW7PI/AjlYTNtV5cWKeaGVcG3EHg2Q/gHb9KDcqZq2nouydYCnp+TK9NYcPwhQMKmLSIQxc5nnlMnm7IgwFdgUJoxQ9bSt9+I7CbiCakVZhXq+AlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7Uhp7Mh; arc=none smtp.client-ip=209.85.167.169
+	 MIME-Version; b=jyh7w6De7pi5NoLoujuNdtDNuR45Od85ePtB6P0F8C+VsXVevftYFFYNbh9uxr4wc3wPwuS1+KDXalEqRpcvsn8QHTdqOWVRknLw7BukZoEV9NTQvep+JG2XeyKb5v9DGSyLjso0wv/5SKQFLEyUzAAiCMU3zjwkDyRtlq5x+rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQu42cSb; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3db157cb959so6042092b6e.0
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 19:40:54 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso8135549b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 19:40:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722739253; x=1723344053; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722739255; x=1723344055; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YciBn9+Ahqw+FR/2jP76c8VaNWirYdidZpsKjxgZZTM=;
-        b=L7Uhp7MhQy4JzKSOTbXAE+qy60j2mQl+EvPDxJZUOfS9z76A1cAbjS06Lmw9FqhrUn
-         LqMaA80i6esU+rqYgxm61PIawk4GQq+cZ5aODAecp9HlcMQkl+xA9T1OjxXyHOptkMDv
-         ROwVtheHUahND/X6KvIVtu7h9yoDIB7cfN84tIazTXr+keD/uq/x8+3VmEVjVNvANPRQ
-         z7eYghxYO8CWGrOUs4IKHCvoPWO+JpyEX7qkf8HWnrYpUiDFqqx58Eqp4Og9AhUnBByR
-         g4fsGVyRFZjj8NajlJmu1WQFLnJpYTs6m6/X+Uji1YwrpYRizrIi8wVKvHuPovrhwxRL
-         f1zw==
+        bh=Q76mlaSdXuo4CDSVWc8lZaP0zGRz6esPqIsDNNA7MeI=;
+        b=gQu42cSbz0HBHXjV1gdp2uAfn46tB5bla8Md396EPgNtaqXIGBHzQTmlZtUHSfZC5X
+         r0bmmDBp5WeHkwM3f2zMK6+IsNVcat3OLyboM5zNvRz6sicwVz8okqxTyNgcOms2UDyA
+         06XVRJehA8rE8Qv/EtzNEWig4hfGoMni6Ute3/ya270iwwwQEMlGedod7gkeK4xNu1b2
+         DJ/SzHFuJhKCSWs5j0Cp6F5QQW2MGOZbZKIBO5SgpaRfLigGc298uBQ802LLg3uik1qP
+         b9UC5TRx0QZR6eukB8OBcSqaqR9fWeSk5rEKXYRk95GVc0wB7YESo4fIM/AHbeL5vxbC
+         pIew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722739253; x=1723344053;
+        d=1e100.net; s=20230601; t=1722739255; x=1723344055;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=YciBn9+Ahqw+FR/2jP76c8VaNWirYdidZpsKjxgZZTM=;
-        b=le0/g7LwQlqJ1QJfI7rsU9a65EuEgav5B0ftPht7nrJ9+/QmDjyQlWKDPJAjLrwBiM
-         YfGHWLDbCQysoqnQnrj7vKDKkeQ6Kic0axokwWfJmOqZE/SQdzXHbKI4CbvVcont+j0V
-         yN04ml70UcfJiPKgxXfR89c80eQSsGvazBcRSG2CQg3VeN6lW17g4VZJKNWwdfmJa4bE
-         AaA0WcuXwJqQZws9yqO7bq8uFmIMz1OiMbpduxc37vqvgTMgvB004sFBzmnpnIN4466l
-         XD1rrj5rxAet3Yslv6oZnbZk1C/rPqg8agiE5pmeej7magt+6iIzksfjKoTQSdjONSvl
-         pHXg==
-X-Gm-Message-State: AOJu0Yx783cOjPWWV2lHR1R6STPg0aNaFeM/lGB7pTqQP68dN4eyRf6O
-	oiVXMxyiEQzaUqdk2c/1RH9Z0SNbh2/G/LXqNf48oeN5/g1c1iAF
-X-Google-Smtp-Source: AGHT+IFbZJ1PJKF8JPKqGdY2ZtV1G2XI6nPA7lTcxu4Ss4yLDokGF/Uhcxf2g8s99P/W+TW3j/1+pA==
-X-Received: by 2002:a05:6808:181e:b0:3d5:63a2:6064 with SMTP id 5614622812f47-3db5583081amr10838222b6e.39.1722739253312;
-        Sat, 03 Aug 2024 19:40:53 -0700 (PDT)
+        bh=Q76mlaSdXuo4CDSVWc8lZaP0zGRz6esPqIsDNNA7MeI=;
+        b=iH5ZG3HGVBwjjGDpoGUJq7Na6qz+pi0kxJukxEqtEwnQh0oGK9TF7UgfggQG5XqGdB
+         c5306uP8QcdQkiUD9xDJiLc7BRaKlS7jyncNNWqMSheAeHjPZNo/bELq2ZIQnMpHtPIC
+         P4JrBMF4ww5QuqBSEdt17mGPO5yfcY+q1ATOWNod4xr0zyST0eRGTkvL2k5bJnTx8kc4
+         GQTVkGhrhQsnBpHn6vkhwJipM1c3pxMVAEMz9ztIN7o9tMNPY5PhLhX6LJXDCyQeE9fR
+         wSOZVm1wCklQsX2b4uqUM6+c8bKN1BkKRjtp30X503FOTbRZ019Sq4E9RloxFHSjUp7j
+         giUQ==
+X-Gm-Message-State: AOJu0YwD1QCFsCNvuVegr+DVIA17Vr+2TRhv0s/KcJ3e29ZD7aKV6MYH
+	RB5eMcbx7jpklsJ2K3ih+UbZGkYKzdpMZY9C6FVdLfgj4Xt/gCI5m1Wb8g==
+X-Google-Smtp-Source: AGHT+IF7HQRWSw3poa/9/YUi4lMNis5abblNCYmD5oCwo0+0P/A5UxbL5ZYkFgj8QLcvMKzaVWFsqg==
+X-Received: by 2002:a05:6a20:7f8e:b0:1c3:ce0f:bfb2 with SMTP id adf61e73a8af0-1c6995aa7f3mr11051559637.23.1722739254963;
+        Sat, 03 Aug 2024 19:40:54 -0700 (PDT)
 Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f5753dsm43314235ad.100.2024.08.03.19.40.52
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecdff69sm3344210b3a.118.2024.08.03.19.40.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 19:40:52 -0700 (PDT)
+        Sat, 03 Aug 2024 19:40:54 -0700 (PDT)
 Sender: Tejun Heo <htejun@gmail.com>
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com,
@@ -73,9 +73,9 @@ Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	mingo@redhat.com,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 1/6] sched_ext: Simplify scx_can_stop_tick() invocation in sched_can_stop_tick()
-Date: Sat,  3 Aug 2024 16:40:08 -1000
-Message-ID: <20240804024047.100355-2-tj@kernel.org>
+Subject: [PATCH 2/6] sched_ext: Add scx_enabled() test to @start_class promotion in put_prev_task_balance()
+Date: Sat,  3 Aug 2024 16:40:09 -1000
+Message-ID: <20240804024047.100355-3-tj@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240804024047.100355-1-tj@kernel.org>
 References: <20240804024047.100355-1-tj@kernel.org>
@@ -87,46 +87,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The way sched_can_stop_tick() used scx_can_stop_tick() was rather confusing
-and the behavior wasn't ideal when SCX is enabled in partial mode. Simplify
-it so that:
-
-- scx_can_stop_tick() can say no if scx_enabled().
-
-- CFS tests rq->cfs.nr_running > 1 instead of rq->nr_running.
-
-This is easier to follow and leads to the correct answer whether SCX is
-disabled, enabled in partial mode or all tasks are switched to SCX.
-
-Peter, note that this is a bit different from your suggestion where
-sched_can_stop_tick() unconditionally returns scx_can_stop_tick() iff
-scx_switched_all(). The problem is that in partial mode, tick can be stopped
-when there is only one SCX task even if the BPF scheduler didn't ask and
-isn't ready for it.
+SCX needs its balance() invoked even when waking up from a lower priority
+sched class (idle) and put_prev_task_balance() thus has the logic to promote
+@start_class if it's lower than ext_sched_class. This is only needed when
+SCX is enabled. Add scx_enabled() test to avoid unnecessary overhead when
+SCX is disabled.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Suggested-by: Peter Zijlstra <peterz@infradead.org>
 ---
- kernel/sched/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 22f86d5e9231..7994118eee53 100644
+index 7994118eee53..0532b27fd9af 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -1267,10 +1267,10 @@ bool sched_can_stop_tick(struct rq *rq)
- 	 * left. For CFS, if there's more than one we need the tick for
- 	 * involuntary preemption. For SCX, ask.
+@@ -5836,7 +5836,7 @@ static void put_prev_task_balance(struct rq *rq, struct task_struct *prev,
+ 	 * when waking up from SCHED_IDLE. If @start_class is below SCX, start
+ 	 * from SCX instead.
  	 */
--	if (!scx_switched_all() && rq->nr_running > 1)
-+	if (scx_enabled() && !scx_can_stop_tick(rq))
- 		return false;
+-	if (sched_class_above(&ext_sched_class, start_class))
++	if (scx_enabled() && sched_class_above(&ext_sched_class, start_class))
+ 		start_class = &ext_sched_class;
+ #endif
  
--	if (scx_enabled() && !scx_can_stop_tick(rq))
-+	if (rq->cfs.nr_running > 1)
- 		return false;
- 
- 	/*
 -- 
 2.46.0
 
