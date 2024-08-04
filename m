@@ -1,213 +1,165 @@
-Return-Path: <linux-kernel+bounces-273710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0DB8946CBF
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:34:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2051946CC1
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA341F21AD5
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:34:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD3F281758
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF2B12E48;
-	Sun,  4 Aug 2024 06:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44051101F7;
+	Sun,  4 Aug 2024 06:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eR0T9x1A"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNJSDyxD"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA092138C;
-	Sun,  4 Aug 2024 06:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29B0138C;
+	Sun,  4 Aug 2024 06:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722753254; cv=none; b=nvW+oTy1MZbEZ+C/OwwWT4ZQpumi/Y9nZnBjmXqNoQuwopUy2gNZRDM1g7mULU0X39A7nZqTV+D6kDOd9P0TbGb74YfWeuD3YJDSDOu6PuaLCro8lllT7LlRclMbS68oPgOSEdsDlex0Gf7KeGVOvakQuEQK1IgcXYUzscZ4awg=
+	t=1722753387; cv=none; b=d3njg8DGEvWgUEPtEq84HoGle6fmSHmVvtZB+kwzbxws79pCA1XVUHOxMeU6ULESGVVaY/FkEMVBUsjlEtEv679P2+GOSw4A7VTpzjA7snLQku359abc4aBd5eSXkIs/CV1Txrxxp6OBtW0A8mERgCnb1eir4uyBw7EZkmYWW4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722753254; c=relaxed/simple;
-	bh=65y8B3iOvbetXk0kCT+W0L47KQRUbVSELQc0VBU7qyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kYjr/XLHuZoT5NgT6NbWxpOUlBqB2IbTh+htIUZnQiLqlX0riNoFjsmzYrLpRZlVV89kV42MuziFhIcz14SWm6BA7/Hg9DCvAhscepeJRf9KTWRXET58CeghE8JNjWQbNISSBtCqhzgNgd2L14AbHeiU8yufBQCd7uKFAQ9Mhno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eR0T9x1A; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id aUnWsRt8sxIAraUnXsg7vi; Sun, 04 Aug 2024 08:32:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722753176;
-	bh=ICKtRqwRMeEcPWDeXOzQTCYIugTLoMTz+BaFN8kw9aI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=eR0T9x1A9eBKugJ1m+0ckxVIsfZK/MVtLvgZbkLKaoza8T2G4hPnRSt95UQ9BCPC5
-	 isKyThLcLhp0n68XRz3xuxfgkc9NnVEHMhnfX8rf24lErlbGRECnB+IXkvGk9AiFKs
-	 qTxgCkCocn8ckumvG4K4wv83nKGuhou+ElRX61zp+Tsm3xuCF7oTD75I5f+zc4fwS4
-	 kXYKQk4sG3gNZcclJPC+SfZSNrtHL/+NLbzh5MJbetlWM1wuLJpwfj56C78w1MFray
-	 CnvuKm1JZ56ZaN1t6Ov63NSH3xgm59JrYROlrAHrVbUquc1PwVFiFOxEgx49P/wMnk
-	 tWjddY1m1QMZg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 04 Aug 2024 08:32:56 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	b43-dev@lists.infradead.org
-Subject: [PATCH v2] wifi: b43: Constify struct lpphy_tx_gain_table_entry
-Date: Sun,  4 Aug 2024 08:32:44 +0200
-Message-ID: <e33bc9e6dff4a5b6cd8d0ab5399aa1abac5bef9d.1722753127.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722753387; c=relaxed/simple;
+	bh=89gmBydwfJuc7hr/nhlC9fJCSPqbNq8SfC+t53x0cIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pax+EWzgK1zfxEqcR+ER6DJ6ovu3u2FZ6kuDBCYZvRSM08aA2ohc6mx/Supa2y70ShSvF4lGdr0KoIvfOXmk4CgkrBth6fvG4XN6wsojtz14XK3Gnuwwzxom+vAraM4qCj7s+2LkeuvuCwY9tRhB54ya5ox8/IAnjYBvgAmvrcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNJSDyxD; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f00ad303aso14170601e87.2;
+        Sat, 03 Aug 2024 23:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722753384; x=1723358184; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4QGBhAOwbEmRox4+DxjD2M9GpPO+58govDv5LsijUYM=;
+        b=lNJSDyxDilIUuODfzBBOnBDgY6OtY2TIrZeTue73UPPqiJ+eMVICeAXcpUP8vwO1u4
+         DVmpUrzknE5mcAgyeb8PkIOSS8m/PNJNRTQ0KGrBpm96y8QJtc9TulfDSHECCqk1Li5b
+         Qjfjpn6VjCcwcCjByc9lDb2MCbDAZFDEM3cClntyN94qng6yq9RS9oDCDhRFx6E+cBAU
+         FAEPimRk8xBGWFDOcNFTgTS+PWRvcDWJITAeZc8gEzuZns+fX93X973UjNehP7+yNc32
+         U3IKYWMmWNDMAwk0ZXlG0tNjTaukVoxdIAjKnvS4tYE/DSxF861QYhnoS9vA2Ajag4aR
+         gHFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722753384; x=1723358184;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4QGBhAOwbEmRox4+DxjD2M9GpPO+58govDv5LsijUYM=;
+        b=pxCAx1S1c5kl6tU7GalzRZj6dgbR0FeF8HHlawcBUldELlyUTD76xUQy79AGu/tidp
+         /Sfta248dvnmMtQzHxjRZQZYcm1BcwCT1cFhvpdypGi01IX+K3i9z3mTxu2FGMDSfkLT
+         97+GuKyD8mdPj+DOy/s22OCD9yGUyASecmylB3GenDwmvv17A5QIljFPsIMa0s9N2P3s
+         bF4yBgbIPRmcdY8KAXR4DavLrwZXtMteFPwu+GLm7xIHcM/hhP97Pd8Qyh1/ROcmLYun
+         pI9um7zU0GkbuQYoXgq1J3b22Z3iS0xGocWBjFYhbU1UtxvQQrjB4stYQOuuWqZQ17BD
+         Kuyw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2vUkfbxc2bcjCZf8H7hGcmkKaeItWULc3YjsD5wPKJ5yk/Tn4nDNVM5JkkcPfYxLLuCoyFnPgMbFjwu6ukWOtwgDflOAl/+E/kKqa
+X-Gm-Message-State: AOJu0Yzd5TxZbm0ne6yLocZGNHzz96Xo/0Pb4/wckZllKP1FBhTXLCG0
+	DTwbq0BosAGHTBHmrRVuuEDZmurgbtnkXTXu6vksoxl7FStFaz96gj/H9MUc+crLZsiWAPOUnIk
+	kRtgNCuOoXPYtoSVpQKz4mPHCWcE=
+X-Google-Smtp-Source: AGHT+IEdfmuv2EkKcxh+7Lb40OP/oG3cP2VSdznWLo4k/BLx+i8b31l/jhv/Zy/qDEODlTKWeZpGsCPEP0qqDy4NbeY=
+X-Received: by 2002:a05:6512:138d:b0:52c:e054:4149 with SMTP id
+ 2adb3069b0e04-530bb397770mr5372629e87.15.1722753383693; Sat, 03 Aug 2024
+ 23:36:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240804033309.890181-1-masahiroy@kernel.org>
+In-Reply-To: <20240804033309.890181-1-masahiroy@kernel.org>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Sun, 4 Aug 2024 08:35:47 +0200
+Message-ID: <CA+icZUWpeZF-PGQJLR1tt0u7sFVZ+MANX4hE-DUCEt=PhXGs3w@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: modinst: remove the multithread option from zstd compression
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Terrell <terrelln@fb.com>, Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'struct lpphy_tx_gain_table_entry' are not modified in this driver.
+On Sun, Aug 4, 2024 at 5:33=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
+>
+> Parallel execution is supported by GNU Make:
+>
+>   $ make -j<N> modules_install
+>
+> It is questionable to enable multithreading within each zstd process
+> by default.
+>
+> If you still want to do it, you can use the environment variable:
+>
+>   $ ZSTD_NBTHREADS=3D<N> make modules_install
+>
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Hi Masahiro,
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  16481	   6232	      0	  22713	   58b9	drivers/net/wireless/broadcom/b43/tables_lpphy.o
+I have some understanding problems.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  22305	    395	      0	  22700	   58ac	drivers/net/wireless/broadcom/b43/tables_lpphy.o
+[ start-build.txt ]
+dileks     24225   24217  0 17:55 tty2     00:00:00 /usr/bin/perf stat
+make V=3D1 -k -j4 ARCH=3Dx86_64 LLVM=3D1 LLVM=3D/opt/llvm/bin/
+PAHOLE=3D/opt/pahole/bin/pahole KBUILD_BUILD_HOST=3Diniza
+KBUILD_BUILD_USER=3Dsedat.dilek@gmail.com
+KBUILD_BUILD_TIMESTAMP=3D2024-08-03
+KDEB_PKGVERSION=3D6.10.3-1~trixie+dileks1
+LOCALVERSION=3D-1-amd64-clang18-kcfi olddefconfig bindeb-pkg
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
+^^ How shall someone pass so that ... ZSTD_NBTHREADS=3D<N> make
+modules_install ... is used?
 
-lpphy_write_gain_table() and lpphy_write_gain_table_bulk() could also be
-made static and removed from tables_lpphy.h, but without knowing the reason
-why it is done this way, I've preferred to leave it as-is.
+As far as I understood, each kernel-module file is taken - in the
+Debian build-process - sequentially file for file - ZSTD compressed
+and afterwards deleted.
+Is there a benefit when 'make -j<N>' is used?
 
-Changes in v2:
-  - remove unrelated and un-needed constification   [Michael Büsch]
-  - update numbers in the commit log
+[ EXAMPLE - with my patch from [1] ]
+zstd -T0 -19 --rm -f -q
+debian/linux-image-6.10.3-1-amd64-clang18-kcfi/lib/modules/6.10.3-1-amd64-c=
+lang18-kcfi/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko
 
-v1: https://lore.kernel.org/all/38528f48c8069187823b774a6b2a53088f6c9599.1721161231.git.christophe.jaillet@wanadoo.fr/
----
- .../net/wireless/broadcom/b43/tables_lpphy.c  | 20 +++++++++----------
- .../net/wireless/broadcom/b43/tables_lpphy.h  |  2 +-
- 2 files changed, 11 insertions(+), 11 deletions(-)
+^^ How should ZSTD_NBTHREADS=3D<N> replace 'zstd -T0'?
 
-diff --git a/drivers/net/wireless/broadcom/b43/tables_lpphy.c b/drivers/net/wireless/broadcom/b43/tables_lpphy.c
-index 71a7cd8dc787..fb70a1e3544b 100644
---- a/drivers/net/wireless/broadcom/b43/tables_lpphy.c
-+++ b/drivers/net/wireless/broadcom/b43/tables_lpphy.c
-@@ -1066,7 +1066,7 @@ static const u32 lpphy_papd_mult_table[] = {
- 	0x00036963, 0x000339f2, 0x00030a89, 0x0002db28,
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev0_nopa_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev0_nopa_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 15, .pad = 14, .dac = 0, .bb_mult = 152, },
- 	{ .gm = 7, .pga = 15, .pad = 14, .dac = 0, .bb_mult = 147, },
- 	{ .gm = 7, .pga = 15, .pad = 14, .dac = 0, .bb_mult = 143, },
-@@ -1197,7 +1197,7 @@ static struct lpphy_tx_gain_table_entry lpphy_rev0_nopa_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 11, .pad = 6, .dac = 0, .bb_mult = 71, },
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev0_2ghz_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev0_2ghz_tx_gain_table[] = {
- 	{ .gm = 4, .pga = 15, .pad = 9, .dac = 0, .bb_mult = 64, },
- 	{ .gm = 4, .pga = 15, .pad = 9, .dac = 0, .bb_mult = 62, },
- 	{ .gm = 4, .pga = 15, .pad = 9, .dac = 0, .bb_mult = 60, },
-@@ -1328,7 +1328,7 @@ static struct lpphy_tx_gain_table_entry lpphy_rev0_2ghz_tx_gain_table[] = {
- 	{ .gm = 4, .pga = 4, .pad = 2, .dac = 0, .bb_mult = 72, },
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev0_5ghz_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev0_5ghz_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 99, },
- 	{ .gm = 7, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 96, },
- 	{ .gm = 7, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 93, },
-@@ -1459,7 +1459,7 @@ static struct lpphy_tx_gain_table_entry lpphy_rev0_5ghz_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 11, .pad = 6, .dac = 0, .bb_mult = 60, },
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev1_nopa_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev1_nopa_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 15, .pad = 14, .dac = 0, .bb_mult = 152, },
- 	{ .gm = 7, .pga = 15, .pad = 14, .dac = 0, .bb_mult = 147, },
- 	{ .gm = 7, .pga = 15, .pad = 14, .dac = 0, .bb_mult = 143, },
-@@ -1599,7 +1599,7 @@ static struct lpphy_tx_gain_table_entry lpphy_rev1_nopa_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 11, .pad = 6, .dac = 0, .bb_mult = 71, },
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev1_2ghz_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev1_2ghz_tx_gain_table[] = {
- 	{ .gm = 4, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 90, },
- 	{ .gm = 4, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 88, },
- 	{ .gm = 4, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 85, },
-@@ -1730,7 +1730,7 @@ static struct lpphy_tx_gain_table_entry lpphy_rev1_2ghz_tx_gain_table[] = {
- 	{ .gm = 4, .pga = 10, .pad = 6, .dac = 0, .bb_mult = 60, },
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev1_5ghz_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev1_5ghz_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 99, },
- 	{ .gm = 7, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 96, },
- 	{ .gm = 7, .pga = 15, .pad = 15, .dac = 0, .bb_mult = 93, },
-@@ -1861,7 +1861,7 @@ static struct lpphy_tx_gain_table_entry lpphy_rev1_5ghz_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 11, .pad = 6, .dac = 0, .bb_mult = 60, },
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev2_nopa_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev2_nopa_tx_gain_table[] = {
- 	{ .gm = 255, .pga = 255, .pad = 203, .dac = 0, .bb_mult = 152, },
- 	{ .gm = 255, .pga = 255, .pad = 203, .dac = 0, .bb_mult = 147, },
- 	{ .gm = 255, .pga = 255, .pad = 203, .dac = 0, .bb_mult = 143, },
-@@ -1992,7 +1992,7 @@ static struct lpphy_tx_gain_table_entry lpphy_rev2_nopa_tx_gain_table[] = {
- 	{ .gm = 255, .pga = 111, .pad = 29, .dac = 0, .bb_mult = 64, },
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev2_2ghz_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev2_2ghz_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 99, .pad = 255, .dac = 0, .bb_mult = 64, },
- 	{ .gm = 7, .pga = 96, .pad = 255, .dac = 0, .bb_mult = 64, },
- 	{ .gm = 7, .pga = 93, .pad = 255, .dac = 0, .bb_mult = 64, },
-@@ -2123,7 +2123,7 @@ static struct lpphy_tx_gain_table_entry lpphy_rev2_2ghz_tx_gain_table[] = {
- 	{ .gm = 7, .pga = 13, .pad = 52, .dac = 0, .bb_mult = 64, },
- };
- 
--static struct lpphy_tx_gain_table_entry lpphy_rev2_5ghz_tx_gain_table[] = {
-+static const struct lpphy_tx_gain_table_entry lpphy_rev2_5ghz_tx_gain_table[] = {
- 	{ .gm = 255, .pga = 255, .pad = 255, .dac = 0, .bb_mult = 152, },
- 	{ .gm = 255, .pga = 255, .pad = 255, .dac = 0, .bb_mult = 147, },
- 	{ .gm = 255, .pga = 255, .pad = 255, .dac = 0, .bb_mult = 143, },
-@@ -2392,7 +2392,7 @@ void lpphy_write_gain_table(struct b43_wldev *dev, int offset,
- }
- 
- void lpphy_write_gain_table_bulk(struct b43_wldev *dev, int offset, int count,
--				 struct lpphy_tx_gain_table_entry *table)
-+				 const struct lpphy_tx_gain_table_entry *table)
- {
- 	int i;
- 
-diff --git a/drivers/net/wireless/broadcom/b43/tables_lpphy.h b/drivers/net/wireless/broadcom/b43/tables_lpphy.h
-index 62002098bbda..1971ccccabf8 100644
---- a/drivers/net/wireless/broadcom/b43/tables_lpphy.h
-+++ b/drivers/net/wireless/broadcom/b43/tables_lpphy.h
-@@ -36,7 +36,7 @@ struct lpphy_tx_gain_table_entry {
- void lpphy_write_gain_table(struct b43_wldev *dev, int offset,
- 			    struct lpphy_tx_gain_table_entry data);
- void lpphy_write_gain_table_bulk(struct b43_wldev *dev, int offset, int count,
--				 struct lpphy_tx_gain_table_entry *table);
-+				 const struct lpphy_tx_gain_table_entry *table);
- 
- void lpphy_rev0_1_table_init(struct b43_wldev *dev);
- void lpphy_rev2plus_table_init(struct b43_wldev *dev);
--- 
-2.45.2
+When I pass '-T0 -L19' to ZSTD two cores are used on my CPU and a
+better compress-level produces smaller kernel-module files.
+I would like to benefit from both.
 
+Thanks.
+
+Best regards,
+-Sedat-
+
+Link: https://lore.kernel.org/all/CA+icZUUQadYjAXiCNx7PmKDV20WctvnzkXC3R2F7=
+FM4Gzcm39Q@mail.gmail.com/
+[1]
+
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>  scripts/Makefile.modinst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
+> index 0afd75472679..04f5229efa6b 100644
+> --- a/scripts/Makefile.modinst
+> +++ b/scripts/Makefile.modinst
+> @@ -146,7 +146,7 @@ quiet_cmd_gzip =3D GZIP    $@
+>  quiet_cmd_xz =3D XZ      $@
+>        cmd_xz =3D $(XZ) --check=3Dcrc32 --lzma2=3Ddict=3D1MiB -f $<
+>  quiet_cmd_zstd =3D ZSTD    $@
+> -      cmd_zstd =3D $(ZSTD) -T0 --rm -f -q $<
+> +      cmd_zstd =3D $(ZSTD) --rm -f -q $<
+>
+>  $(dst)/%.ko.gz: $(dst)/%.ko FORCE
+>         $(call cmd,gzip)
+> --
+> 2.43.0
+>
+>
 
