@@ -1,254 +1,225 @@
-Return-Path: <linux-kernel+bounces-274041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3321D9471C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:33:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512EF9471C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD96A281078
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:32:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D39E1C20ACF
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D90B13B59B;
-	Sun,  4 Aug 2024 23:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD8313B5B7;
+	Sun,  4 Aug 2024 23:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jCpsn69Z"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HkUEhLNX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808681ABED7
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 23:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971ED13B2A9
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 23:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722814372; cv=none; b=HRE3jRY4nnrfHdHFUiC+XttN5QpMYEnEC9dCXIzWgPLqgCzJT02B5pg0EioNjZtH9TY/bHUiTQtsiRUEitaFesU2bvPha2QyzmxrPlgpxixrVdzoeoaMT7jga8ih+T5rU9V84NlyWSPhtuUAzUJq0dJPy5Csk2FhPTn8D2bYv1s=
+	t=1722814436; cv=none; b=sHShBxukIZ2apvM7UfB+KmgE8WzIwXCeeF/zeeAsB+0vAaSZo0XU6NdF0MQohYpwKNBxU8Eb68nwyC9M60EWBUxesjEECfXy8cTUkeDKOR/MYiSsSrxCmrnwKimQly9UIYsFLtOyLuCGAvcotd4e28i4/b4DLkSGwY4hL9HZ+pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722814372; c=relaxed/simple;
-	bh=4LsECHc/bktRLSi/DL22ioxom+yXcnQxd04edAID2s0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JL7ZmH9SbSArlkD53wrMF8aOwSDge6TJ0KnE06HcXPsMOMTug3mQEKR03/5ilLyFEGhQSrvp8aiZSOplKZu3tMjWSBG7/mpEe+fLlCbxLbwNhEegbTEbTr5kgKrhUihjLq/VqMFRmWf2iuKn1GRuBgdSXIjERST4ARaIvzTx7i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jCpsn69Z; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-45029af1408so206551cf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 16:32:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722814369; x=1723419169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uSWV9wI/F0Nu15VWZNLks89MmE9d/uq9S3n4nyNsYwA=;
-        b=jCpsn69ZznwsIMXKjUMNPa5xK6odNxMKwCXMIzytkKUV+FrYvryvgcSfOuo3t4dd+Y
-         NMnBIwNau/2Dtv/qMG/R6yyqLL0w5PF91N+BUIK16S9Vqmc6Kl7HOtiEIwPeZqaTQJo9
-         l6oCXcEPf+1CipNSknqn53JSdQS3DbEZjguTUKSQgGeqvx4CHYRhEJA6v+ijufGmLFgo
-         nAOgzc0y1pQkNFtA5EH1PvOLYNlcC/g6CQEAlfujjDqBH3pj794JmEJ/TnziXSZ//Cgc
-         zVtiQLmi4doEpBcboJmsmG2GNTgZDnmVE6wuiSoCyn7B98gZTf4Aeu2i466Bv0fBTqA5
-         MNQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722814369; x=1723419169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uSWV9wI/F0Nu15VWZNLks89MmE9d/uq9S3n4nyNsYwA=;
-        b=fiZA6oNrGigTY0uNSRenMARRi1xo3luWS3Gkj0KSwt/42GuCVWNjp3P5sElM08cQ5w
-         ofcU3cnu0GuDK3pZ+l116j2UEa3uiF/hDjCKcvWk6H3qdQjQcv5t6blFxQCBZZOvrPu7
-         NIvNv1oicMtR1ZmKkSNFWRgKRs3H1830vndYE5b8VtrX++jF3srq1WltLZg63xU3bz7E
-         0OTO+fkfiyGPMSmaEC7dYobLTUtKBaT0/kp6/LvQycsAUD2511Q9mGf1LSbvCEeW4Caa
-         hJC5k22MNchav1ZJhg8/id+zFvg0f8cxhTAiZhabpa5C9Hc5nx3DGG5p64E+gL7g+QQv
-         32zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJtQJGxcmPrnmcVbzd44g4pM0X9RpfJ94PfIa/OjI8LIIp8PRIkDhzfJAfczC6e2dIsFhlS8DX5kWIuTQqOl2fh5Revfq9vsHbN/iy
-X-Gm-Message-State: AOJu0YwgITnpqWDQ3jPSzxWNB/kwBFC9C1KfqhLqkxJePfrc8j0Wkc2c
-	BJHJxuvDLZ54i7GBhQ6FrL+qYhtcODzvg2ggkBTX2MwH2GPB+XFNEV9b1UnW17WPiLKLrs9HLnj
-	BWrk/d3/zoJObwxE8Oocwp6Cy17/pUdJZcZDd
-X-Google-Smtp-Source: AGHT+IEKdwDaVjjqnObnyYMP24sqgkjO6Jq8MKGY9wblctbckt6KWnjz0IRuV6kc/xAQ9GsHiF+mdFc3dQgN0OWF/nI=
-X-Received: by 2002:a05:622a:18a2:b0:447:e0a6:9163 with SMTP id
- d75a77b69052e-4519ad1cf8bmr3137471cf.14.1722814369217; Sun, 04 Aug 2024
- 16:32:49 -0700 (PDT)
+	s=arc-20240116; t=1722814436; c=relaxed/simple;
+	bh=YNiK52tqjvH1YMSFEVG1g6kPtcgRQbMOB62OYCiVx0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dYZm028o3PblE3mQDiQ+Z//umwuTM+8lJE7Q78JKlQNleZ1GxacoBBTT+2D3Zzq2wjn3nFpORGdN4jRo272Ly1onShGLnuyCOSg9Yc43t1yZkvS8mnjzggZxDUUOqBovyn/wVzDfjHpafLXU+QkT3JW+7u5eWns5a/L2oJkxTwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HkUEhLNX; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722814435; x=1754350435;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YNiK52tqjvH1YMSFEVG1g6kPtcgRQbMOB62OYCiVx0A=;
+  b=HkUEhLNX+09fglnD1jke1lqynMroTzN4/qqn9tO+Zal6uyHt0yPPUL5L
+   4aZWu5kaNMGUS+ZtTxV6XivuRXxa/nq9yyVedZ++9XKRZVunv+vD8iM1E
+   MGbzBlbgfCPz5ZIsTcAxbCxl3fJYORfFliNe7ZnijvIsAFNmj+Ko1Xhlq
+   hxUML51iGVZSFjNMhmGAEQZXqTYsZOUZ7bNDZqfpR6zRuX4Z76O4dVHXh
+   BlUQQjn/b+/bKRUV/jj6Icc8GaSUfpQL2c4SD48ZHPxCj08NJojwxn4N0
+   4HS//t23Y+k9VAR4qxs8l3pEibV+K67au+wGB109TPCp3d+IC0SByck0Q
+   A==;
+X-CSE-ConnectionGUID: Cg6Knl1kThCSwS+co7nqxg==
+X-CSE-MsgGUID: o8NAVjfNQSKR37+NJUaM7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="46163227"
+X-IronPort-AV: E=Sophos;i="6.09,263,1716274800"; 
+   d="scan'208";a="46163227"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 16:33:54 -0700
+X-CSE-ConnectionGUID: x7F/yaDOQyuxCCTid+YdXA==
+X-CSE-MsgGUID: /J5BAN8rR0uB8knM867Q0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,263,1716274800"; 
+   d="scan'208";a="55933870"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 04 Aug 2024 16:33:52 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sakjW-0001e8-1w;
+	Sun, 04 Aug 2024 23:33:50 +0000
+Date: Mon, 5 Aug 2024 07:33:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	linux1394-devel@lists.sourceforge.net
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/17] firewire: ohci: use guard macro to serialize
+ operations for isochronous contexts
+Message-ID: <202408050730.y1eyRcTv-lkp@intel.com>
+References: <20240804130225.243496-18-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730125346.1580150-1-usamaarif642@gmail.com>
- <CAOUHufb7z13u51VCTGZMimoCXpmfT5AOAbrUpAvJjTx5+AXwew@mail.gmail.com>
- <f5c5f602-718a-4408-95d3-ed114398ac26@gmail.com> <524fb638-73b2-45e7-ae2c-7445d394ed50@redhat.com>
-In-Reply-To: <524fb638-73b2-45e7-ae2c-7445d394ed50@redhat.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Sun, 4 Aug 2024 17:32:12 -0600
-Message-ID: <CAOUHufZHpoeuMQ95-RPvtyHZ_4WQj6Sn2quv=gN5emtD1e3MmA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] mm: split underutilized THPs
-To: David Hildenbrand <david@redhat.com>
-Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	hannes@cmpxchg.org, riel@surriel.com, shakeel.butt@linux.dev, 
-	roman.gushchin@linux.dev, baohua@kernel.org, ryan.roberts@arm.com, 
-	rppt@kernel.org, willy@infradead.org, cerasuolodomenico@gmail.com, 
-	corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240804130225.243496-18-o-takashi@sakamocchi.jp>
 
-On Thu, Aug 1, 2024 at 10:27=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 01.08.24 18:22, Usama Arif wrote:
-> >
-> >
-> > On 01/08/2024 07:09, Yu Zhao wrote:
-> >> On Tue, Jul 30, 2024 at 6:54=E2=80=AFAM Usama Arif <usamaarif642@gmail=
-.com> wrote:
-> >>>
-> >>> The current upstream default policy for THP is always. However, Meta
-> >>> uses madvise in production as the current THP=3Dalways policy vastly
-> >>> overprovisions THPs in sparsely accessed memory areas, resulting in
-> >>> excessive memory pressure and premature OOM killing.
-> >>> Using madvise + relying on khugepaged has certain drawbacks over
-> >>> THP=3Dalways. Using madvise hints mean THPs aren't "transparent" and
-> >>> require userspace changes. Waiting for khugepaged to scan memory and
-> >>> collapse pages into THP can be slow and unpredictable in terms of per=
-formance
-> >>> (i.e. you dont know when the collapse will happen), while production
-> >>> environments require predictable performance. If there is enough memo=
-ry
-> >>> available, its better for both performance and predictability to have
-> >>> a THP from fault time, i.e. THP=3Dalways rather than wait for khugepa=
-ged
-> >>> to collapse it, and deal with sparsely populated THPs when the system=
- is
-> >>> running out of memory.
-> >>>
-> >>> This patch-series is an attempt to mitigate the issue of running out =
-of
-> >>> memory when THP is always enabled. During runtime whenever a THP is b=
-eing
-> >>> faulted in or collapsed by khugepaged, the THP is added to a list.
-> >>> Whenever memory reclaim happens, the kernel runs the deferred_split
-> >>> shrinker which goes through the list and checks if the THP was underu=
-tilized,
-> >>> i.e. how many of the base 4K pages of the entire THP were zero-filled=
-.
-> >>> If this number goes above a certain threshold, the shrinker will atte=
-mpt
-> >>> to split that THP. Then at remap time, the pages that were zero-fille=
-d are
-> >>> not remapped, hence saving memory. This method avoids the downside of
-> >>> wasting memory in areas where THP is sparsely filled when THP is alwa=
-ys
-> >>> enabled, while still providing the upside THPs like reduced TLB misse=
-s without
-> >>> having to use madvise.
-> >>>
-> >>> Meta production workloads that were CPU bound (>99% CPU utilzation) w=
-ere
-> >>> tested with THP shrinker. The results after 2 hours are as follows:
-> >>>
-> >>>                              | THP=3Dmadvise |  THP=3Dalways   | THP=
-=3Dalways
-> >>>                              |             |               | + shrink=
-er series
-> >>>                              |             |               | + max_pt=
-es_none=3D409
-> >>> ---------------------------------------------------------------------=
---------
-> >>> Performance improvement     |      -      |    +1.8%      |     +1.7%
-> >>> (over THP=3Dmadvise)          |             |               |
-> >>> ---------------------------------------------------------------------=
---------
-> >>> Memory usage                |    54.6G    | 58.8G (+7.7%) |   55.9G (=
-+2.4%)
-> >>> ---------------------------------------------------------------------=
---------
-> >>> max_ptes_none=3D409 means that any THP that has more than 409 out of =
-512
-> >>> (80%) zero filled filled pages will be split.
-> >>>
-> >>> To test out the patches, the below commands without the shrinker will
-> >>> invoke OOM killer immediately and kill stress, but will not fail with
-> >>> the shrinker:
-> >>>
-> >>> echo 450 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_no=
-ne
-> >>> mkdir /sys/fs/cgroup/test
-> >>> echo $$ > /sys/fs/cgroup/test/cgroup.procs
-> >>> echo 20M > /sys/fs/cgroup/test/memory.max
-> >>> echo 0 > /sys/fs/cgroup/test/memory.swap.max
-> >>> # allocate twice memory.max for each stress worker and touch 40/512 o=
-f
-> >>> # each THP, i.e. vm-stride 50K.
-> >>> # With the shrinker, max_ptes_none of 470 and below won't invoke OOM
-> >>> # killer.
-> >>> # Without the shrinker, OOM killer is invoked immediately irrespectiv=
-e
-> >>> # of max_ptes_none value and kill stress.
-> >>> stress --vm 1 --vm-bytes 40M --vm-stride 50K
-> >>>
-> >>> Patches 1-2 add back helper functions that were previously removed
-> >>> to operate on page lists (needed by patch 3).
-> >>> Patch 3 is an optimization to free zapped tail pages rather than
-> >>> waiting for page reclaim or migration.
-> >>> Patch 4 is a prerequisite for THP shrinker to not remap zero-filled
-> >>> subpages when splitting THP.
-> >>> Patches 6 adds support for THP shrinker.
-> >>>
-> >>> (This patch-series restarts the work on having a THP shrinker in kern=
-el
-> >>> originally done in
-> >>> https://lore.kernel.org/all/cover.1667454613.git.alexlzhu@fb.com/.
-> >>> The THP shrinker in this series is significantly different than the
-> >>> original one, hence its labelled v1 (although the prerequisite to not
-> >>> remap clean subpages is the same).)
-> >>>
-> >>> Alexander Zhu (1):
-> >>>    mm: add selftests to split_huge_page() to verify unmap/zap of zero
-> >>>      pages
-> >>>
-> >>> Usama Arif (3):
-> >>>    Revert "memcg: remove mem_cgroup_uncharge_list()"
-> >>>    Revert "mm: remove free_unref_page_list()"
-> >>>    mm: split underutilized THPs
-> >>>
-> >>> Yu Zhao (2):
-> >>>    mm: free zapped tail pages when splitting isolated thp
-> >>>    mm: don't remap unused subpages when splitting isolated thp
-> >>
-> >>   I would recommend shatter [1] instead of splitting so that
-> >> 1) whoever underutilized their THPs get punished for the overhead;
-> >> 2) underutilized THPs are kept intact and can be reused by others.
-> >>
-> >> [1] https://lore.kernel.org/20240229183436.4110845-3-yuzhao@google.com=
-/
-> >
-> > The objective of this series is to reduce memory usage, while trying to=
- keep the performance benefits you get of using THP=3Dalways. Punishing any=
- applications performance is the opposite of what I am trying to do here.
-> > For e.g. if there is only one main application running in production, a=
-nd its using majority of the THPs, then reducing its performance doesn't ma=
-ke sense.
-> >
->
-> I'm not sure if there would really be a performance degradation
-> regarding the THP, after all we zap PTEs either way.
->
-> Shattering will take longer because real migration is involved IIUC.
+Hi Takashi,
 
-Correct, and that's by design. Also using it in the THP shrinker path
-isn't a problem.
+kernel test robot noticed the following build errors:
 
-> > Also, just going through the commit, and found the line "The advantage =
-of shattering is that it keeps the original THP intact" a bit confusing. I =
-am guessing the THP is freed? i.e. if a 2M THP has 10 non-zero filled base =
-pages and the rest are zero-filled, then after shattering we will have 10*4=
-K memory and not 2M+10*4K? Is it the case the THP is reused at next fault?
->
-> The idea is (as I understand it) to free the full THP abck to the buddy,
-> replacing the individual pieces that are kept to freshly allocated
-> order-0 pages from the buddy.
+[auto build test ERROR on ieee1394-linux1394/for-next]
+[also build test ERROR on ieee1394-linux1394/for-linus linus/master v6.11-rc1 next-20240802]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Correct, and this is essential to our problem: we are under memory
-pressure with THP=3Dalways. Under this condition, we need to compare
-shatter with split + compaction, not with split alone.
+url:    https://github.com/intel-lab-lkp/linux/commits/Takashi-Sakamoto/firewire-core-use-guard-macro-to-maintain-static-packet-data-for-phy-configuration/20240804-210645
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git for-next
+patch link:    https://lore.kernel.org/r/20240804130225.243496-18-o-takashi%40sakamocchi.jp
+patch subject: [PATCH 17/17] firewire: ohci: use guard macro to serialize operations for isochronous contexts
+config: arm64-randconfig-003-20240805 (https://download.01.org/0day-ci/archive/20240805/202408050730.y1eyRcTv-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408050730.y1eyRcTv-lkp@intel.com/reproduce)
 
-To summarize, the ideal use cases are:
-1. split for THP=3Dalways with unlimited memory.
-2. shatter for THP=3Dalways under memory pressure.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408050730.y1eyRcTv-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/firewire/ohci.c:3138:2: error: expected expression
+    3138 |         guard(spinlock_irq)(&ohci->lock);
+         |         ^
+   include/linux/cleanup.h:167:2: note: expanded from macro 'guard'
+     167 |         CLASS(_name, __UNIQUE_ID(guard))
+         |         ^
+   include/linux/cleanup.h:122:2: note: expanded from macro 'CLASS'
+     122 |         class_##_name##_t var __cleanup(class_##_name##_destructor) =   \
+         |         ^
+   <scratch space>:133:1: note: expanded from here
+     133 | class_spinlock_irq_t
+         | ^
+   1 error generated.
+
+
+vim +3138 drivers/firewire/ohci.c
+
+  3059	
+  3060	static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
+  3061					int type, int channel, size_t header_size)
+  3062	{
+  3063		struct fw_ohci *ohci = fw_ohci(card);
+  3064		struct iso_context *ctx;
+  3065		descriptor_callback_t callback;
+  3066		u64 *channels;
+  3067		u32 *mask, regs;
+  3068		int index, ret = -EBUSY;
+  3069	
+  3070		scoped_guard(spinlock_irq, &ohci->lock) {
+  3071			switch (type) {
+  3072			case FW_ISO_CONTEXT_TRANSMIT:
+  3073				mask     = &ohci->it_context_mask;
+  3074				callback = handle_it_packet;
+  3075				index    = ffs(*mask) - 1;
+  3076				if (index >= 0) {
+  3077					*mask &= ~(1 << index);
+  3078					regs = OHCI1394_IsoXmitContextBase(index);
+  3079					ctx  = &ohci->it_context_list[index];
+  3080				}
+  3081				break;
+  3082	
+  3083			case FW_ISO_CONTEXT_RECEIVE:
+  3084				channels = &ohci->ir_context_channels;
+  3085				mask     = &ohci->ir_context_mask;
+  3086				callback = handle_ir_packet_per_buffer;
+  3087				index    = *channels & 1ULL << channel ? ffs(*mask) - 1 : -1;
+  3088				if (index >= 0) {
+  3089					*channels &= ~(1ULL << channel);
+  3090					*mask     &= ~(1 << index);
+  3091					regs = OHCI1394_IsoRcvContextBase(index);
+  3092					ctx  = &ohci->ir_context_list[index];
+  3093				}
+  3094				break;
+  3095	
+  3096			case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
+  3097				mask     = &ohci->ir_context_mask;
+  3098				callback = handle_ir_buffer_fill;
+  3099				index    = !ohci->mc_allocated ? ffs(*mask) - 1 : -1;
+  3100				if (index >= 0) {
+  3101					ohci->mc_allocated = true;
+  3102					*mask &= ~(1 << index);
+  3103					regs = OHCI1394_IsoRcvContextBase(index);
+  3104					ctx  = &ohci->ir_context_list[index];
+  3105				}
+  3106				break;
+  3107	
+  3108			default:
+  3109				index = -1;
+  3110				ret = -ENOSYS;
+  3111			}
+  3112	
+  3113			if (index < 0)
+  3114				return ERR_PTR(ret);
+  3115		}
+  3116	
+  3117		memset(ctx, 0, sizeof(*ctx));
+  3118		ctx->header_length = 0;
+  3119		ctx->header = (void *) __get_free_page(GFP_KERNEL);
+  3120		if (ctx->header == NULL) {
+  3121			ret = -ENOMEM;
+  3122			goto out;
+  3123		}
+  3124		ret = context_init(&ctx->context, ohci, regs, callback);
+  3125		if (ret < 0)
+  3126			goto out_with_header;
+  3127	
+  3128		if (type == FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL) {
+  3129			set_multichannel_mask(ohci, 0);
+  3130			ctx->mc_completed = 0;
+  3131		}
+  3132	
+  3133		return &ctx->base;
+  3134	
+  3135	 out_with_header:
+  3136		free_page((unsigned long)ctx->header);
+  3137	 out:
+> 3138		guard(spinlock_irq)(&ohci->lock);
+  3139	
+  3140		switch (type) {
+  3141		case FW_ISO_CONTEXT_RECEIVE:
+  3142			*channels |= 1ULL << channel;
+  3143			break;
+  3144	
+  3145		case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
+  3146			ohci->mc_allocated = false;
+  3147			break;
+  3148		}
+  3149		*mask |= 1 << index;
+  3150	
+  3151		return ERR_PTR(ret);
+  3152	}
+  3153	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
