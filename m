@@ -1,77 +1,92 @@
-Return-Path: <linux-kernel+bounces-274035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 603CE947194
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:12:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04D0947197
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FCAB1C20A85
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE201F212DF
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A09A13BC26;
-	Sun,  4 Aug 2024 23:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4GycfeVi"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB78A13BAE4;
+	Sun,  4 Aug 2024 23:16:04 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509B447F7A;
-	Sun,  4 Aug 2024 23:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F1222086
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 23:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722813136; cv=none; b=bRI7x8HkwPpvh3Uq4ip/2UrPsJvS15tdP7tk4TXuVjDft1KSagIsdxcUtikEceY0du0ux8VPZX18xqd0zh7LF1C0ISrWFeZbH1ore/nYANHqljJyfOR4btrJ8sXJ/D60+uzYFdxrQV0SsEo+9tVVVuHX7zadA7kauKCBRrkrRkU=
+	t=1722813364; cv=none; b=ITv1NdXVNxPK5t5OZarDSUkuAti4hj1nTPINK6PjB5iatwRmF+SvUnd/eyRoaBDthkLz5alDOj05GJc021E/67nHKTavgSAXmJ12cW0snmz2/RaJHW1fnZ6HqFumYiBqjQtBH9Lc/zB06PwgdLSkx9fbMpVH0JAl3LQgGKglRSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722813136; c=relaxed/simple;
-	bh=STSmyuvoEZeIJ76tZn5m21cnBSblhhhAhiOxFGzgZ6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bs/lfWLXPiIxQKOC/30ClumQ4+f4LWBNJJ1ehAUltibAOaJQuPaGtzv9yuvZxdHGqVXRJPsAMxqRkdQ018RnEm6Bs7uzHwUdyn+SOVO5Yz6aW1n4/9CNX4glAsycdZCgwjOu4qOMuZD6cjsuAwVRlfbVi0eGL2WIDT3oVZjnbQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4GycfeVi; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=uQzw6/bHjvnwxWG9DN+X28Op26Q/VqcHnuYp8+EIB68=; b=4GycfeVif7Ncyp+oeZsfT4sjqB
-	77jAhtgCdvNYgnrYFMIPcZ159BeaEEwZKBAGjvJLVY7DLfRnjvb62ab+r09Oyhk7I/XVaGu2kE9PV
-	EU9LAS3cC0BHJC9Akw7EpnytsPkwgKalU8Nw3q0HBPawNuaqoqVES7pL/GR29Yn0ZkdA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sakOW-003zhd-7p; Mon, 05 Aug 2024 01:12:08 +0200
-Date: Mon, 5 Aug 2024 01:12:08 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	dl-S32 <S32@nxp.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 2/6] net: stmmac: Expand clock rate variables
-Message-ID: <44221c82-b198-494b-b1fe-3f62292e1dbf@lunn.ch>
-References: <AM9PR04MB85062693F5ACB16F411FD0CFE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1722813364; c=relaxed/simple;
+	bh=9PV9AfTpJZbNBBWpH/BCpyTS50q62l5g3ctRYxZW8MU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BfN8JSczLtf3CejxecGCWFn2X0ZRyw4fNC1eG8PCARgcQ7be4iu2/I9eEDxi2NtG0DdrAtzY/OGRQLpq7EAoryzl5gDlFHazfcrwMHI+JZdy5AE+3ug8KJ2anO49n5QjdHp8iUykBpszBgrVCo81KrhU9cFyj6q1raRo3zyi910=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f9053ac4dso1370580039f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 16:16:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722813362; x=1723418162;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qWk/0YoGbb8Utpd84fDk+7sPr8KnZbi2EHV8pG46Pv0=;
+        b=Z7klC1n9YTcx5LnxcZWJznSjUkSczyQ7MXHvIfz7I7LPxnSFhgs0z0gnko7RKvRt2S
+         YZLy5Q1IXaZ1YaW5ooluBTPtUlDNP9ZxB2MkTbVAhdcgcACNCWF8O76EpWqroTNZEW6h
+         K49qLUczZdTsCOo7B494+L1orY2ian+VmHt6PWQ8JDymKZ1TXrUY7KgQ7Iec2yBkv0tf
+         6Ou9rBUoA7Rbxv+8g/Y2y5oNwBldfyt3LEBXnXrwDnwWoKPNBOY4W2dgyiKcdpwO2IVE
+         HNRhx/Jqen3nVopdIeSVYctaRy+AGDnn0KwXuUyp2/KT06m8/eWOLN4lpAl++0ulcFmz
+         i80w==
+X-Forwarded-Encrypted: i=1; AJvYcCXFiIBCRB5eHyNiOHGnNPC0RsNbjPPc9HtgWKTB1xdrOGROo99FcGxej00Wpz0un3SZgB1atvacDdGhrX0QYyx76zDm49Hohmcs9dIH
+X-Gm-Message-State: AOJu0Yw1NpLR+MuGGWuNb/LAovwoDEozpAFfjwxzdPUgBw8tVe0mS7o7
+	ERrFUFwC5pb4UxFomSZoIOK16TtLjJnNsRweVpPqk9V3rnLOG+QmOb7IAVdxe1l8ATpoTZhWG12
+	RyQD8kHsyPAjzfEhZ7EWtixHFXWXxSt1knhfBWgMcnQOx8OezIzFfeVU=
+X-Google-Smtp-Source: AGHT+IHLtfiZv3zhPfytIBJAweL1MBhjeajwYmXHFLBYFEydLENCH/5+XTQ0AiXTN+fjkLLxWMOr/wqjKPU6YlTMfp0FVgeHvUTJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB85062693F5ACB16F411FD0CFE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
+X-Received: by 2002:a05:6602:13d5:b0:809:b914:a53a with SMTP id
+ ca18e2360f4ac-81fd42b997emr30452039f.0.1722813362094; Sun, 04 Aug 2024
+ 16:16:02 -0700 (PDT)
+Date: Sun, 04 Aug 2024 16:16:02 -0700
+In-Reply-To: <0000000000004385ec06198753f8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000076525c061ee3be52@google.com>
+Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_nl_listener_set_doit
+From: syzbot <syzbot+d1e76d963f757db40f91@syzkaller.appspotmail.com>
+To: Dai.Ngo@oracle.com, chuck.lever@oracle.com, dai.ngo@oracle.com, 
+	jlayton@kernel.org, kolga@netapp.com, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, lorenzo@kernel.org, neilb@suse.de, 
+	syzkaller-bugs@googlegroups.com, tom@talpey.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Aug 04, 2024 at 08:49:49PM +0000, Jan Petrous (OSS) wrote:
-> The clock API clk_get_rate() returns unsigned long value.
-> Expand affected members of stmmac platform data.
-> 
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+syzbot has bisected this issue to:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+commit 16a471177496c8e04a9793812c187a2c1a2192fa
+Author: Lorenzo Bianconi <lorenzo@kernel.org>
+Date:   Tue Apr 23 13:25:44 2024 +0000
 
-    Andrew
+    NFSD: add listener-{set,get} netlink command
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16af38d3980000
+start commit:   ee78a17615ad Add linux-next specific files for 20240606
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15af38d3980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11af38d3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a8c69ee180de0793
+dashboard link: https://syzkaller.appspot.com/bug?extid=d1e76d963f757db40f91
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=173f2eac980000
+
+Reported-by: syzbot+d1e76d963f757db40f91@syzkaller.appspotmail.com
+Fixes: 16a471177496 ("NFSD: add listener-{set,get} netlink command")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
