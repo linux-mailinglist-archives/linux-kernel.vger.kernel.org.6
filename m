@@ -1,230 +1,199 @@
-Return-Path: <linux-kernel+bounces-273911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC56946F85
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:11:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4C4946F8E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E3C280ECB
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021641C20A38
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784B4745E4;
-	Sun,  4 Aug 2024 15:11:22 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C2F73459;
+	Sun,  4 Aug 2024 15:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="srl0srfE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EF93FBB2;
-	Sun,  4 Aug 2024 15:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6406541A8E;
+	Sun,  4 Aug 2024 15:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722784281; cv=none; b=ASDArnY6S9I5wRRXcvS9LjdrTEquWWmwrrG2ZP3NWK17KForUMumfS+DtFPtbjIMZ8KLDpNy1OZY65lZGjFNyeIMMbV1RVV2EQKt1W7H1CswxaFrvcDOLRAnsHaogpqM7ux1H4friEO0d1I13NYYqOdYlfnE/agp1hSwl56pYCo=
+	t=1722784609; cv=none; b=DtNURkSDSCN4ikIKlQ7A+zuO/mwsMHmy7vj8Lq5tmoXqrqOK1VzaLiVBol37DDwbqmN/hnUFic51ujQvp4aYjF7SLoIBbSki1o4KuIgMeL9tPTl9UznPUbiyEWoxyA6NysmNVpn8DaYBFYBSUcRrDT12uCh0BQN/+YHP8DfC5mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722784281; c=relaxed/simple;
-	bh=iGfh6DBKAHksxUBLVKs70Sh77nshqua2Pd6TDFL2Kes=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tOIXHeHdyvH0HjnivXLxFORgs6eR8Vtt4hWMnbV4jxidlhiBP6wv1EPhT0kt+A7jeCSgJqzDjTRUdbPCpGki0luGuvcl8FCpgY0gZMKuesTpZMA/veix9pFHMgG1kcmzSQNqi3jK5cWRtPSQLbPFNr8fgnkYDPO7ZLcdGZ/4iMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WcNJB6tQWz6K5Vy;
-	Sun,  4 Aug 2024 23:08:58 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id B33CF140A35;
-	Sun,  4 Aug 2024 23:11:09 +0800 (CST)
-Received: from localhost (10.195.244.131) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sun, 4 Aug
- 2024 16:11:08 +0100
-Date: Sun, 4 Aug 2024 16:11:19 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: Andrew Morton <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>, Andreas Larsson
-	<andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov
-	<bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>, "Davidlohr Bueso"
-	<dave@stgolabs.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko
- Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
- Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
-	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
-	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
-	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, "Thomas
- Bogendoerfer" <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
-	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
-Subject: Re: [PATCH v3 07/26] mm: drop CONFIG_HAVE_ARCH_NODEDATA_EXTENSION
-Message-ID: <20240804161119.00003a02@Huawei.com>
-In-Reply-To: <Zq8sn5iD1iOmYrss@kernel.org>
-References: <20240801060826.559858-1-rppt@kernel.org>
-	<20240801060826.559858-8-rppt@kernel.org>
-	<20240802104922.000051a0@Huawei.com>
-	<20240803115813.809f808f1afbe9f9feaae129@linux-foundation.org>
-	<Zq8sn5iD1iOmYrss@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722784609; c=relaxed/simple;
+	bh=PbZnK4gedPAzrBqyHpMY0nfx8YVLLtIZRcC5H3Bjs1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIZtCJ6TeU6w7qDF5m7vD+FEJF/tWDzmI7JSsDGuIrEZwfVxl7tgTn2DjLtMZ7DTSZ98nc2BYyJrwzR4unbRf3u4dg0sck63CWt8BHCjX6sl00sq1mBUQsOYwYXPSP3bSkVtKYxPcHcsfP/Y49mN5K40H4GlLmqDSkGAAMnq3h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=srl0srfE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0708C32786;
+	Sun,  4 Aug 2024 15:16:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722784609;
+	bh=PbZnK4gedPAzrBqyHpMY0nfx8YVLLtIZRcC5H3Bjs1I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=srl0srfEMJcvmRAqdIpwre+Yi3D6o4YrHiWRuL9HMSi+MuiYU3pMzcgeJ7JOyVUPi
+	 a7YJ0JVEftlsn46+su5RAYHi1Z0kZxi6vxakb/AjB8x9wBX6dl42AxcdD2mIHmmw7I
+	 tMnuHtaKEjP/Yh9n04vsrBbWgdiw3FNUqs+R+RSm8pPEvP2L90NnFnUQKL471ESl6y
+	 bWK/2YiidFSbeA05NSl2FQ0qWwOhHk3O5xvh1izP/Br+Nj74JzVYO+aAGsiSlQjdp/
+	 QJSQJOUqV05g+5chIOQZlJL+8Od5tr8k9VrR4SLKkUAS8t8NJsLPKGo/qgaltFB+CU
+	 mUi5O0eQVly3A==
+Date: Sun, 4 Aug 2024 17:16:40 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v3 06/25] rust: alloc: implement `Vmalloc` allocator
+Message-ID: <Zq-bWJFwtWG23O-L@pollux>
+References: <20240801000641.1882-1-dakr@kernel.org>
+ <20240801000641.1882-7-dakr@kernel.org>
+ <Zq8jamaDSKWmj_-4@boqun-archlinux>
+ <Zq927hO2fcV5LJME@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zq927hO2fcV5LJME@pollux>
 
-On Sun, 4 Aug 2024 10:24:15 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
-
-> On Sat, Aug 03, 2024 at 11:58:13AM -0700, Andrew Morton wrote:
-> > On Fri, 2 Aug 2024 10:49:22 +0100 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> >   
-> > > > --- a/mm/mm_init.c
-> > > > +++ b/mm/mm_init.c
-> > > > @@ -1838,11 +1838,10 @@ void __init free_area_init(unsigned long *max_zone_pfn)
-> > > >  
-> > > >  		if (!node_online(nid)) {
-> > > >  			/* Allocator not initialized yet */
-> > > > -			pgdat = arch_alloc_nodedata(nid);
-> > > > +			pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
-> > > >  			if (!pgdat)
-> > > >  				panic("Cannot allocate %zuB for node %d.\n",
-> > > >  				       sizeof(*pgdat), nid);
-> > > > -			arch_refresh_nodedata(nid, pgdat);  
+On Sun, Aug 04, 2024 at 02:41:26PM +0200, Danilo Krummrich wrote:
+> On Sat, Aug 03, 2024 at 11:44:58PM -0700, Boqun Feng wrote:
+> > On Thu, Aug 01, 2024 at 02:02:05AM +0200, Danilo Krummrich wrote:
+> > > Implement `Allocator` for `Vmalloc`, the kernel's virtually contiguous
+> > > allocator, typically used for larger objects, (much) larger than page
+> > > size.
 > > > 
-> > > This allocates pgdat but never sets node_data[nid] to it
-> > > and promptly leaks it on the line below. 
+> > > All memory allocations made with `Vmalloc` end up in `vrealloc()`.
 > > > 
-> > > Just to sanity check this I spun up a qemu machine with no memory
-> > > initially present on some nodes and it went boom as you'd expect.
+> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > > ---
+> > >  rust/helpers.c                      |  8 ++++++++
+> > >  rust/kernel/alloc/allocator.rs      | 24 ++++++++++++++++++++++++
+> > >  rust/kernel/alloc/allocator_test.rs |  1 +
+> > >  3 files changed, 33 insertions(+)
 > > > 
-> > > I tested with addition of
-> > > 			NODE_DATA(nid) = pgdat;
-> > > and it all seems to work as expected.  
+> > > diff --git a/rust/helpers.c b/rust/helpers.c
+> > > index 92d3c03ae1bd..4c628986f0c9 100644
+> > > --- a/rust/helpers.c
+> > > +++ b/rust/helpers.c
+> > > @@ -33,6 +33,7 @@
+> > >  #include <linux/sched/signal.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/spinlock.h>
+> > > +#include <linux/vmalloc.h>
+> > >  #include <linux/wait.h>
+> > >  #include <linux/workqueue.h>
+> > >  
+> > > @@ -200,6 +201,13 @@ rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(rust_helper_krealloc);
+> > >  
+> > > +void * __must_check __realloc_size(2)
+> > > +rust_helper_vrealloc(const void *p, size_t size, gfp_t flags)
+> > > +{
+> > > +	return vrealloc(p, size, flags);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(rust_helper_vrealloc);
+> > > +
+> > >  /*
+> > >   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
+> > >   * use it in contexts where Rust expects a `usize` like slice (array) indices.
+> > > diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
+> > > index 397ae5bcc043..e9a3d0694f41 100644
+> > > --- a/rust/kernel/alloc/allocator.rs
+> > > +++ b/rust/kernel/alloc/allocator.rs
+> > > @@ -16,6 +16,12 @@
+> > >  /// `bindings::krealloc`.
+> > >  pub struct Kmalloc;
+> > >  
+> > > +/// The virtually contiguous kernel allocator.
+> > > +///
+> > > +/// The vmalloc allocator allocates pages from the page level allocator and maps them into the
+> > > +/// contiguous kernel virtual space.
+> > > +pub struct Vmalloc;
+> > > +
+> > >  /// Returns a proper size to alloc a new object aligned to `new_layout`'s alignment.
+> > >  fn aligned_size(new_layout: Layout) -> usize {
+> > >      // Customized layouts from `Layout::from_size_align()` can have size < align, so pad first.
+> > > @@ -58,6 +64,10 @@ fn krealloc() -> Self {
+> > >          Self(bindings::krealloc)
+> > >      }
+> > >  
+> > > +    fn vrealloc() -> Self {
+> > > +        Self(bindings::vrealloc)
+> > > +    }
+> > > +
+> > >      // SAFETY: `call` has the exact same safety requirements as `Allocator::realloc`.
+> > >      unsafe fn call(
+> > >          &self,
+> > > @@ -136,6 +146,20 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+> > >      }
+> > >  }
+> > >  
+> > > +unsafe impl Allocator for Vmalloc {
+> > > +    unsafe fn realloc(
+> > > +        ptr: Option<NonNull<u8>>,
+> > > +        layout: Layout,
+> > > +        flags: Flags,
+> > > +    ) -> Result<NonNull<[u8]>, AllocError> {
+> > > +        let realloc = ReallocFunc::vrealloc();
+> > > +
 > > 
-> > Thanks, I added that.  It blew up on x86_64 allnoconfig because
-> > node_data[] (and hence NODE_DATA()) isn't an lvalue when CONFIG_NUMA=n.
+> > IIUC, vrealloc() calls __vmalloc_noprof() in allocation case, that is
+> > calling __vmalloc_node_noprof() with align=1. In such a case, how would
+> > vmalloc() guarantee the allocated memory is aligned to layout.align()?
+> 
+> True, good catch. I thought of this a while ago and then forgot to fix it.
+
+Just for clarification, we're always PAGE_SIZE aligned (guaranteed by
+__alloc_vmap_area()), which probably would always be sufficient. That's why I
+didn't gave it too much attention in the first place and then forgot about it.
+
+However, we indeed do not honor layout.align() if it's larger than PAGE_SIZE.
+
+> 
 > > 
-> > I'll put some #ifdef CONFIG_NUMAs in there for now but
+> > [Cc Vlastimil]
 > > 
-> > a) NODE_DATA() is upper-case. Implies "constant".  Shouldn't be assigned to.
+> > Regards,
+> > Boqun
 > > 
-> > b) NODE_DATA() should be non-lvalue when CONFIG_NUMA=y also.  But no,
-> >    we insist on implementing things in cpp instead of in C.  
-> 
-> This looks like a candidate for a separate tree-wide cleanup.
->  
-> > c) In fact assigning to anything which ends in "()" is nuts.  Please
-> >    clean up my tempfix.
+> > > +        // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
+> > > +        // allocated with this `Allocator`.
+> > > +        unsafe { realloc.call(ptr, layout, flags) }
+> > > +    }
+> > > +}
+> > > +
+> > >  #[global_allocator]
+> > >  static ALLOCATOR: Kmalloc = Kmalloc;
+> > >  
+> > > diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
+> > > index 4785efc474a7..e7bf2982f68f 100644
+> > > --- a/rust/kernel/alloc/allocator_test.rs
+> > > +++ b/rust/kernel/alloc/allocator_test.rs
+> > > @@ -7,6 +7,7 @@
+> > >  use core::ptr::NonNull;
+> > >  
+> > >  pub struct Kmalloc;
+> > > +pub type Vmalloc = Kmalloc;
+> > >  
+> > >  unsafe impl Allocator for Kmalloc {
+> > >      unsafe fn realloc(
+> > > -- 
+> > > 2.45.2
+> > > 
 > > 
-> > c) Mike, generally I'm wondering if there's a bunch of code here
-> >    which isn't needed on CONFIG_NUMA=n.  Please check all of this for
-> >    unneeded bloatiness.  
-> 
-> I believe the patch addresses your concerns, just with this the commit log
-> needs update. Instead of 
-> 
->     Replace the call to arch_alloc_nodedata() in free_area_init() with
->     memblock_alloc(), remove arch_refresh_nodedata() and cleanup
->     include/linux/memory_hotplug.h from the associated ifdefery.
-> 
-> it should be
-> 
->     Replace the call to arch_alloc_nodedata() in free_area_init() with a
->     new helper alloc_offline_node_data(), remove arch_refresh_nodedata()
->     and cleanup include/linux/memory_hotplug.h from the associated
->     ifdefery.
-> 
-> I can send an updated patch if you prefer.
-This solution looks good to me - except for a Freudian typo that means it won't
-compile :)
-
-Jonathan
-
-> 
-> diff --git a/include/linux/numa.h b/include/linux/numa.h
-> index 3b12d8ca0afd..5a749fd67f39 100644
-> --- a/include/linux/numa.h
-> +++ b/include/linux/numa.h
-> @@ -34,6 +34,7 @@ extern struct pglist_data *node_data[];
->  #define NODE_DATA(nid)	(node_data[nid])
->  
->  void __init alloc_node_data(int nid);
-> +void __init alloc_offline_node_data(int nit);
->  
->  /* Generic implementation available */
->  int numa_nearest_node(int node, unsigned int state);
-> @@ -62,6 +63,8 @@ static inline int phys_to_target_node(u64 start)
->  {
->  	return 0;
->  }
-> +
-> +static inline void alloc_offline_node_data(int nit) {}
-nid
->  #endif
->  
->  #define numa_map_to_online_node(node) numa_nearest_node(node, N_ONLINE)
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index bcc2f2dd8021..2785be04e7bb 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -1836,13 +1836,8 @@ void __init free_area_init(unsigned long *max_zone_pfn)
->  	for_each_node(nid) {
->  		pg_data_t *pgdat;
->  
-> -		if (!node_online(nid)) {
-> -			/* Allocator not initialized yet */
-> -			pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
-> -			if (!pgdat)
-> -				panic("Cannot allocate %zuB for node %d.\n",
-> -				       sizeof(*pgdat), nid);
-> -		}
-> +		if (!node_online(nid))
-> +			alloc_offline_node_data(nid);
->  
->  		pgdat = NODE_DATA(nid);
->  		free_area_init_node(nid);
-> diff --git a/mm/numa.c b/mm/numa.c
-> index da27eb151dc5..07e486a977c7 100644
-> --- a/mm/numa.c
-> +++ b/mm/numa.c
-> @@ -34,6 +34,18 @@ void __init alloc_node_data(int nid)
->  	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
->  }
->  
-> +void __init alloc_offline_node_data(int nit)
-
-nid
-
-> +{
-> +	pg_data_t *pgdat;
-> +
-> +	pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
-> +	if (!pgdat)
-> +		panic("Cannot allocate %zuB for node %d.\n",
-> +		      sizeof(*pgdat), nid);
-> +
-> +	node_data[nid] = pgdat;
-> +}
-> +
->  /* Stub functions: */
->  
->  #ifndef memory_add_physaddr_to_nid
-> 
->  
-> 
-
 
