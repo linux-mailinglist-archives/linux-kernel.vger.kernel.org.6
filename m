@@ -1,136 +1,149 @@
-Return-Path: <linux-kernel+bounces-274010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B549470C3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE559470CA
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3ABB1F214E5
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2E0280EFF
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326A1131BDF;
-	Sun,  4 Aug 2024 21:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E9913AA45;
+	Sun,  4 Aug 2024 21:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mwkuHo2V"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5mImu8i"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C5D1D530
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 21:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE236FB9;
+	Sun,  4 Aug 2024 21:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722807701; cv=none; b=JDC/rPEfh3t7yS5WRlFLBLbELuh2A+mIoQXZ++GJXVNbLGYGJWv5bCpPi7z23eHjbZMyMeyr/s7SrZxVw5AkzAMRbQlCxOTUaRCLz3ak3lXdYhHLaJ026sqH7vOztBnq0gZGtW8ari5gKFQMCSrgt6Qt1VCieb2NfZDTCFlIIXQ=
+	t=1722808505; cv=none; b=XKA8lw3qaVadWsWcuLWm4NggV62KxG7I9MiJ+45s6SpopYE7BR8Ag+18VqgYc2GwWBlBP08GAG7Xl42YlbXoZA4YCMp4Mmi+OJIgFp6uhd6J5Y8XTVGMb18ISer82sT3FwQCRdyTOGd03fuVj01Lqf+gtIOCJxUokPhHT7xaEWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722807701; c=relaxed/simple;
-	bh=h9yLbW0AOueU3qdpWD6uH9ApUjy+LFK+W3Hg3oEv2EA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IX6vtoPpGRsrihOK5fhYCsxBht5PxjrJAFw1zVlg0/jXA5lRvivS/ul6mThtKO8GLBerIquTTTOHU4ujoxJwKoxKmV7TW6h//8pvuiijb9g56jbauQY65zljyvb45Dt2Bz7/aKD8AGJeU3o7dutaFoNOqih662Hppuh5nEHH6uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mwkuHo2V; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eea0cbc96bso7390271fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 14:41:39 -0700 (PDT)
+	s=arc-20240116; t=1722808505; c=relaxed/simple;
+	bh=Sv8L92lRXPZxB1CQr2pJAqtj0Hm1AQ9ja/a86LMewjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QmPgVNqpvvMoLZPW7QFApoLMWoLQmNL690MaslNkeRCChBU6R5GwgquiE6h0OuB6qDVjNbYJFKGSizenp7Xmyauo0DV+TBLkpQEf2RgVL7sNgOuccHv1BJm4P/zDiZqibi+4gHOzRm6oyzGA+TC7kfEqGoaQCafPXXOc9fbjERs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A5mImu8i; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52fc4388a64so15700520e87.1;
+        Sun, 04 Aug 2024 14:55:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722807698; x=1723412498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1WJ8UtmpJsQBeRARPURQqj89l8MFq5AyQ+VU5FVdBQM=;
-        b=mwkuHo2V6ClPsZWDUpFhIHE95llmMmQJlwalEv67j7t2m9qQ1ngSzhEe6nTMjbGOry
-         oUcC99bsF+H3veQaTp6kDc+M1rDIWMEQWXCWrFvueQJZmBCV3OQlvEq5ZOJTdGVXmecf
-         hyV57tJwpJjBAT5LRYYfrh+op94GTyDciG6fE90Pk3FwBo/WxtjuPy4wbV9gOHS0YaGs
-         zaZiBXkgjpTecAdBSNle9qzwXOfPzvEZWWjcWpiISImYdYIllQJBpyTEEZWy0fOhA76l
-         h2a9dNIPbUAOrMvh1Nl/Q+/gdNUkRLUTjZ8+CW+OJT/yQ03/XMSASYXJxa/456bWuu1e
-         nArg==
+        d=gmail.com; s=20230601; t=1722808502; x=1723413302; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pCexiuddVYJqWOl0RZ40FcRzxOfCT1O1W+s5YZ9iMgc=;
+        b=A5mImu8ivb5pqZ+6VGhYnCEFvjwzAYNQEVibF6hpwg/190t1D8cc2RgaoyboBRLH6m
+         XsXAhY6jamfnIf9K453Kk5PHzGGj/IX2qrffWp/LRJ1SKPBkc66EgKN+5car4GgG9r8t
+         SX0QNaLN8yoeu7sQkTKfjd/7lxnuygPaORFq6DPw1j6g2934tULTEErEVdeLYqURSdA2
+         G2nzYnLCiGXMpaqR9k/pdjr+Fm5CFV3WaYfLQRqb7sguqGtkN+JAyIbN1CuNq+TFiiSH
+         ujAFoE0RaJaFVXJ2tfls8EpuY4/kWnLkRvBLDHClgiRS89frMAFPaQHEU+JasoMj3Vn6
+         DXUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722807698; x=1723412498;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1WJ8UtmpJsQBeRARPURQqj89l8MFq5AyQ+VU5FVdBQM=;
-        b=SPsqYkZLCjJhikppGQ1y9K7nEEXjIKRJohGYFFZxRN+RC8VCPUeYKXFEzuvfhHJ3gf
-         O6fOWo/eRgwmA3R5FhVf0Cs1+Zhh2e4z+lOtZdwTQnyIQOQIWFkrPlilERSXr+I8qYVb
-         cBbreDaKrfJqwN/6vvZMhZ3qg6iTmJZhysYiWwaEOKQo6XZ98hLDmDhBT8sXBKZFrJFR
-         z5AiSeY03K0X1CQEne8oTmVw0NWDPFsmChzispBGLOsi/AtEIjj3BfqMWhHdprvJztfD
-         nTRYo2THpjI6Z4zAa3JTjy/4F8mVQNsAt+GQ7HkCpJ83ILxb1D3SEd8nL+Cy+7mJ7vQb
-         bRIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi7ntmj/Gqp7G4+r/+841aTqclyveMlfnITsYSkPKa3ZhuTvjrl9SA6EqlE9KLIrdAPGFM3+Ll4R09tHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg0A9UYUcKpuEHPfKpYZdX4wAQo8DzzBBwwcq0UWdl8PbN6Ip+
-	3N4z1qdUWoDnDWHzZSSBRj+lKW/ZSlTI1sUVTWiBrX3TC0jGYahYBA0Yn7yPsRc=
-X-Google-Smtp-Source: AGHT+IHwIhcYw9EBZ7JZ/GQmjqzUENVBVYz1mxZf+3luWTxsjH6mrdYpV2L6abnhaRUz5AuZ4PT4Qg==
-X-Received: by 2002:a2e:9d8a:0:b0:2ef:27fa:1fc4 with SMTP id 38308e7fff4ca-2f15aa747e9mr33884141fa.1.1722807697871;
-        Sun, 04 Aug 2024 14:41:37 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f16848dfbfsm7169921fa.60.2024.08.04.14.41.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Aug 2024 14:41:37 -0700 (PDT)
-Message-ID: <07eba20a-9c15-4b57-b40e-f5553e7ac48e@linaro.org>
-Date: Mon, 5 Aug 2024 00:41:36 +0300
+        d=1e100.net; s=20230601; t=1722808502; x=1723413302;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pCexiuddVYJqWOl0RZ40FcRzxOfCT1O1W+s5YZ9iMgc=;
+        b=H7Ez2JVPG7V6nFOczQ3zx2lSHboZ9QYo1obvTTL2A52I2wjNOLiGdHA+jztgBq6GoO
+         NUQRuVvJ0ovH/qYvUq9kTqFV+zUpAK5XzhfpnUhW6+jljbpVxmTOKLcLmXwhJcxmuVp8
+         AjDoNmzs9NLL6UzyoUZGCPuDRUrN/caoYWKEqg7wYqdOhGxyMe87dHuKhlNKzp/yFlPu
+         A1fa1bkD0HN+6tYAy0k8NxKLzA6keyHhmb7SWEM+3sEMSoSkPjoTl6E1+nc5NhSmtQEr
+         IaBmhDhVaNjnXJC4G5IGb+C+KnkKgKdWKfaGa7hY6V542qwwhfI6SoNqe/hKsj4SZ9R+
+         DHTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfRiVsXyANTXlKi4aou2a99IZXVDqJJLoT5KuRCSCL1c6wfY0AUrRO8JFF2FV5qWnsY7+Oley2N54J7kWuaAldksd5OK9tgW5+vbrdMCWKg+GVOTUZbgmxTaEcxyw94PXpsOILxT0UwE33JDHsIwx2dR1zo1obD3Ur2USt3jhDvLDfU+F5JrbuxC+jxlUa8Iy6LWfvCD1vN9quuLZhl3j7oqJFAEVdNVmm4UihQHgy4FDNoR91kDsuXceebrYvMINf
+X-Gm-Message-State: AOJu0Yy6ZvDIdfhLq4xbAge8SYH8C6ep1GeP19iX+UulseegHhFQdLK+
+	SJh4vNqnR+6RycgBNgexqOpVAoPuTam7IMuhYtNkCvmJgHVZQe+2
+X-Google-Smtp-Source: AGHT+IFCPz2n+bI1kGoQLioilhFkYLeYs33IRkQdvNgAiTf2rhaF9PMzLiX5ATzV7KlWpxZkXOFHHw==
+X-Received: by 2002:a05:6512:3d04:b0:52e:9b15:1c60 with SMTP id 2adb3069b0e04-530bb3a5035mr7252667e87.48.1722808501427;
+        Sun, 04 Aug 2024 14:55:01 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.55.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Aug 2024 14:55:01 -0700 (PDT)
+From: David Virag <virag.david003@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	David Virag <virag.david003@gmail.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 00/13] Add USB support to Exynos7885
+Date: Sun,  4 Aug 2024 23:53:45 +0200
+Message-ID: <20240804215458.404085-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 1/2] dt-bindings: clock: qcom: Drop required-opps in
- required on sm8650 videocc
-Content-Language: en-US
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
-References: <20240801064448.29626-1-quic_jkona@quicinc.com>
- <20240801064448.29626-2-quic_jkona@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240801064448.29626-2-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/1/24 09:44, Jagadeesh Kona wrote:
-> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
-> sufficient for clock controllers to operate and there is no need to specify
-> the required-opps. Hence remove the required-opps property from the list of
-> required properties for SM8650 videocc bindings.
-> 
-> This fixes:
-> 
-> arch/arm64/boot/dts/qcom/sm8650-hdk.dtb: clock-controller@aaf0000:
-> 'required-opps' is a required property
-> 
-> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
-> 'required-opps' is a required property
-> 
-> arch/arm64/boot/dts/qcom/sm8650-qrd.dtb: clock-controller@aaf0000:
-> 'required-opps' is a required property
-> 
-> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
-> Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> Closes: https://lore.kernel.org/all/0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org/
+This set of patches adds support for USB on the Exynos7885 SoC.
 
-As Krzysztof said absolutely fairly, this one warning was not reported by me.
+The Exynos7885 has a DWC3 compatible USB controller and an Exynos USB
+PHY that theoretically supports USB3 SuperSpeed, but is not implemented
+in any known device. The vendor kernel also stubs out USB3 functions, so
+we do not support it.
 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+While at it, since we need some new clocks implemented, also fix some
+issues with the existing clock driver/bindings.
 
-But I'm happy to review the change.
+p.s.: Not realizing the USB PLL has a MUX on it made me waste I don't
+even want to know how much time on troubleshooting why it's not
+working...
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+David Virag (13):
+  dt-bindings: clock: exynos7885: Fix duplicated binding
+  dt-bindings: clock: exynos7885: Add CMU_TOP PLL MUX indices
+  dt-bindings: clock: exynos7885: Add indices for USB clocks
+  dt-bindings: phy: samsung,usb3-drd-phy: Add Exynos7885 support
+  dt-bindings: usb: samsung,exynos-dwc3: Add Exynos7885 support
+  clk: samsung: exynos7885: Update CLKS_NR_FSYS after bindings fix
+  clk: samsung: exynos7885: Add missing MUX clocks from PLLs in CMU_TOP
+  clk: samsung: clk-pll: Add support for pll_1418x
+  clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
+  usb: dwc3: exynos: Add support for Exynos7885
+  phy: exynos5-usbdrd: support Exynos7885 USB PHY
+  arm64: dts: exynos: Enable USB in Exynos7885
+  arm64: dts: exynos: exynos7885-jackpotlte: Enable USB support
 
---
-Best wishes,
-Vladimir
+ .../bindings/phy/samsung,usb3-drd-phy.yaml    |  2 +
+ .../bindings/usb/samsung,exynos-dwc3.yaml     |  5 +-
+ .../boot/dts/exynos/exynos7885-jackpotlte.dts | 20 ++++
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 35 +++++++
+ drivers/clk/samsung/clk-exynos7885.c          | 95 +++++++++++++++----
+ drivers/clk/samsung/clk-pll.c                 | 20 +++-
+ drivers/clk/samsung/clk-pll.h                 |  1 +
+ drivers/phy/samsung/phy-exynos5-usbdrd.c      | 21 ++++
+ drivers/usb/dwc3/dwc3-exynos.c                |  3 +
+ include/dt-bindings/clock/exynos7885.h        | 32 ++++---
+ include/linux/soc/samsung/exynos-regs-pmu.h   |  3 +
+ 11 files changed, 201 insertions(+), 36 deletions(-)
+
+-- 
+2.46.0
+
 
