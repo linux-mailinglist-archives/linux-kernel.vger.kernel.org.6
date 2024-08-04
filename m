@@ -1,142 +1,139 @@
-Return-Path: <linux-kernel+bounces-273894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A639946F4E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D25946F54
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2FFC1F216EC
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F17E2819EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F037347D;
-	Sun,  4 Aug 2024 14:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E884524B0;
+	Sun,  4 Aug 2024 14:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Egql+PYo"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="b69pP5fh"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F0F61FDA;
-	Sun,  4 Aug 2024 14:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E053BB32
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 14:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722781431; cv=none; b=bvBOXQ1o6hXswVa5tDCJS72in1U3RUYuhHkeDL0DviryJEf8ZtJ1I2dD+bij5krkZQMZD0kAkYP6PoK0FFEpD038ukYEJ7CMtp4iVy2IfVSuVyyEACK657QDQM/bavMp7DKRwV/zzX7Fh4hNf3OQReS/eBkmDo7YJ1BDVJ7js2w=
+	t=1722782114; cv=none; b=mQysFrU+d9c8ujlUMBkxA78zGaxun62d8usUJRf+kAtUfnz/Pyj+9USJWgHyeSzrmmnlyXAkVptAv4gGExuzpUpeXLVIOeXshB/GVrMZWs7Pb5+PYvUaKChzkcHl0H8NxNR2fXRopTfbJuY2+oGkr162wWgj8E6dO1yGLJznH6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722781431; c=relaxed/simple;
-	bh=RgvFY5hMdtkZMQD226LXln+PQFCch/QPC/FIkEkOe8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rv9gBSTCAfPd5tih3nqdEYycZdjsbPPHBt1+IDXmPGiP5hNkd9GuSjvJCcnsdwLHn/kSRpfT2N0XhcIIH9/pqI9JCNPnBdFlr1/vwwApm8Dh1nQRevJ5ayGjmGe1O3srdYHV9bB13HaDwIZbicnM08RoYIFJ0tYmrD5LwyjU1+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Egql+PYo; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd69e44596so34070845ad.1;
-        Sun, 04 Aug 2024 07:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722781429; x=1723386229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JIV9l5apoDFp6zNENoVkKZFaD01MLNp+jT9vLQjnNaY=;
-        b=Egql+PYo4KF9rcKQu7dnJ5yiqb57tosPgIibOf7o8jtOv8PAcfCvY/yNWUayo7cuaX
-         syBxvQTX9ydLXqUxZXUw793/UN5wQQjHaABAMqsJ0/OyaZ/apLqebw/4o4q2cgVXynYh
-         j5hIb/BwrEW4LA1PQt+BNVB2GIpESdj1U/2UgWoiTk1B3gysEC/sBrR4vk8d5f2v7d8U
-         Sjs+PJAZCLLl8aTO5vwSq7wwiuQNwbs83TL4tVkL/rCLR15FYqscA6cdL5wXSVloQpQ2
-         7OKPiY+9PdWN8CVis2UdKndUPBWhSBJCi2SsVsIw26SVxeCikKsO5evEoy1TLJRTUJD7
-         nydg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722781429; x=1723386229;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JIV9l5apoDFp6zNENoVkKZFaD01MLNp+jT9vLQjnNaY=;
-        b=fDvmLHO3s3alTg0oMlFMUgug8ajERSOT1Xl701Ro8iPbByoyYfShtKRrnPSz6WWzjj
-         qetgpfsTfecvAvdM69fMfuK1reUGWXElHi5TfxjobKfW/mnRafdrmL1gI/2wyyhFxRJb
-         qU3UXLZ6oRtFG2JOYhBArl6aAQs6SDXKHbC/s6VJ9cHPlOiSBHi5QOn0LaA0G4b5O3kn
-         W+ydBNjMWFbWmEUZWll8AYjjOlaW0sDX8K/izaGzjRP/urJBomno3tGy1roO2z2Vt1NP
-         Hy1qFcTxiSSq1ZsGoBPrGxCqud/QvIHRYFClOQLyp/1DIfLOD2h8QB/qwgulB2gJWXdK
-         Fw0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXauAl9gWxpqEUF0u2zTt8BAEAqdxfbDDoKG9EDa0yCUrfnDKqw67zmZJgz+jaWxoL85WGkzsFxdlZ480AkwhhXWlYOB55wzrDITpeP
-X-Gm-Message-State: AOJu0Ywd+ns7UQkkHZQQjRuMBLO2MSPBjI6ngZdcjUDunYV4rgu+TtfT
-	cCDaXTVTcvu+zCOZl5m+qSwMuOMaXH9ejuQuiE+sioAYgaZBJ0XE59rA3f3f8gYBvg==
-X-Google-Smtp-Source: AGHT+IGVArPprnGaLw7XRoCwgJNlyx0zXN5NSuIIJxQ+BD/dgvExuk9FGM4ahOTCGxFwWLB7Ed+N2A==
-X-Received: by 2002:a17:902:d4c1:b0:1f7:3a70:9e71 with SMTP id d9443c01a7336-1ff57bae470mr152223105ad.13.1722781428922;
-        Sun, 04 Aug 2024 07:23:48 -0700 (PDT)
-Received: from localhost.localdomain ([136.233.9.100])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ff59293a90sm49735375ad.235.2024.08.04.07.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 07:23:48 -0700 (PDT)
-From: Abhash Jha <abhashkumarjha123@gmail.com>
-To: linux-iio@vger.kernel.org
-Cc: anshulusr@gmail.com,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	linux-kernel@vger.kernel.org,
-	Abhash Jha <abhashkumarjha123@gmail.com>
-Subject: [PATCH v7 2/2] iio: light: ltr390: Calculate 'counts_per_uvi' dynamically
-Date: Sun,  4 Aug 2024 19:53:21 +0530
-Message-ID: <20240804142321.54586-3-abhashkumarjha123@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240804142321.54586-1-abhashkumarjha123@gmail.com>
-References: <20240804142321.54586-1-abhashkumarjha123@gmail.com>
+	s=arc-20240116; t=1722782114; c=relaxed/simple;
+	bh=hlvMZsWV17kzBWXwb2c9hd4i8thidyFkCEQJhYO2E/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L0p8fOH2ZYxldq8n0YIy6Ajo8OlXOFTs2SGfuzL8YdIuZgAcpMPsDd1wIieqRpME0+ruxkBlj9hqVbuSJhIpW0Kqr1bKklDaVc8T2thstXQowfTKRMmy+YQanCoLL6y+jGlknZ4NbNqjrsFJNIPjsFgTbGp8FrZqJpKohAx9fJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=b69pP5fh; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=6SNJ
+	SJvr7NqL7MpFM+fpnwgb/mSlFGoOetrtdmHHnlw=; b=b69pP5fh8TkqctCG1P2j
+	MyX/n4DKSKrYmz9gdyV+RNjWEde3Tg4FJVrgDXb2jGVtdDbcwDsz1kjrM/H8UVmu
+	wmb3+u73protKSoWn42F0ObWRRD2Ng0gzBSYTTZBCnpdELXZ1dgy+1Xn6JH3wxIj
+	PQ/hY2DUHe/GfFQy8pzZv3BmKy2qj2eCwhGGDKunJKfpGcaxNsRP1L4jfuScKvJf
+	Ihq1UQLnMzpaQnjH56jZ8aakWsQS7KrjxOOgDK3tdOXAj1n3+J8FyPcNfLtR2bVx
+	xHmgMJ8l3Tpz3IMZpQ3YxtmDau91285nCmA+kmq2y6UNqXl5jREZ+8TK1m+tMGy0
+	Yg==
+Received: (qmail 1703051 invoked from network); 4 Aug 2024 16:28:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Aug 2024 16:28:27 +0200
+X-UD-Smtp-Session: l3s3148p1@Ige2X9weds1ehhtX
+Date: Sun, 4 Aug 2024 16:28:26 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: smbus: Send alert notifications to all devices
+ if source not found
+Message-ID: <Zq-QCvhEhk_Bd3xG@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20240730141941.2402435-1-linux@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1esLGUbMCDPdwLQF"
+Content-Disposition: inline
+In-Reply-To: <20240730141941.2402435-1-linux@roeck-us.net>
 
-counts_per_uvi depends on the current value of gain and resolution.
-Hence, we cannot use the hardcoded value 96.
-The `counts_per_uvi` function gives the count based on the current gain
-and resolution (integration time).
 
-Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
----
- drivers/iio/light/ltr390.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+--1esLGUbMCDPdwLQF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
-index 16e06f2ab..7e58b50f3 100644
---- a/drivers/iio/light/ltr390.c
-+++ b/drivers/iio/light/ltr390.c
-@@ -46,6 +46,8 @@
- #define LTR390_UVS_MODE	      BIT(3)
- #define LTR390_SENSOR_ENABLE  BIT(1)
- 
-+#define LTR390_FRACTIONAL_PRECISION 100
-+
- /*
-  * At 20-bit resolution (integration time: 400ms) and 18x gain, 2300 counts of
-  * the sensor are equal to 1 UV Index [Datasheet Page#8].
-@@ -125,6 +127,14 @@ static int ltr390_set_mode(struct ltr390_data *data, enum ltr390_mode mode)
- 	return 0;
- }
- 
-+static int ltr390_counts_per_uvi(struct ltr390_data *data)
-+{
-+	const int orig_gain = 18;
-+	const int orig_int_time = 400;
-+
-+	return DIV_ROUND_CLOSEST(23 * data->gain * data->int_time_us, 10 * orig_gain * orig_int_time);
-+}
-+
- static int ltr390_read_raw(struct iio_dev *iio_device,
- 			   struct iio_chan_spec const *chan, int *val,
- 			   int *val2, long mask)
-@@ -164,8 +174,8 @@ static int ltr390_read_raw(struct iio_dev *iio_device,
- 	case IIO_CHAN_INFO_SCALE:
- 		switch (chan->type) {
- 		case IIO_UVINDEX:
--			*val = LTR390_WINDOW_FACTOR;
--			*val2 = LTR390_COUNTS_PER_UVI;
-+			*val = LTR390_WINDOW_FACTOR * LTR390_FRACTIONAL_PRECISION;
-+			*val2 = ltr390_counts_per_uvi(data);
- 			return IIO_VAL_FRACTIONAL;
- 
- 		case IIO_LIGHT:
--- 
-2.43.0
+On Tue, Jul 30, 2024 at 07:19:41AM -0700, Guenter Roeck wrote:
+> If a SMBUs alert is received and the originating device is not found,
 
+Fixed this capital 'U' while applying.
+
+> the reason may be that the address reported on the SMBus alert address
+> is corrupted, for example because multiple devices asserted alert and
+> do not correctly implement SMBus arbitration.
+>=20
+> If this happens, call alert handlers on all devices connected to the
+> given I2C bus, in the hope that this cleans up the situation.
+>=20
+> This change reliably fixed the problem on a system with multiple devices
+> on a single bus. Example log where the device on address 0x18 (ADM1021)
+> and on address 0x4c (ADT7461A) both had the alert line asserted:
+>=20
+> smbus_alert 3-000c: SMBALERT# from dev 0x0c, flag 0
+> smbus_alert 3-000c: no driver alert()!
+> smbus_alert 3-000c: SMBALERT# from dev 0x0c, flag 0
+> smbus_alert 3-000c: no driver alert()!
+> lm90 3-0018: temp1 out of range, please check!
+> lm90 3-0018: Disabling ALERT#
+> lm90 3-0029: Everything OK
+> lm90 3-002a: Everything OK
+> lm90 3-004c: temp1 out of range, please check!
+> lm90 3-004c: temp2 out of range, please check!
+> lm90 3-004c: Disabling ALERT#
+>=20
+> Fixes: b5527a7766f0 ("i2c: Add SMBus alert support")
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+
+Applied to for-current, thanks!
+
+> -		 * the loop because it will never terminate.
+> -		 * Bail out in this case.
+> +		 * the loop because it will never terminate. Try again, this
+> +		 * time calling the alert handlers of all devices connected to
+> +		 * the bus, and abort the loop afterwards. If this helps, we
+> +		 * are all set. If it doesn't, there is nothing else we can do,
+> +		 * so we might as well abort the loop.
+
+I really like this updated comment. Kudos!
+
+
+--1esLGUbMCDPdwLQF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmavkAYACgkQFA3kzBSg
+KbYoEA/+J8mqBaoaeJPSi6cnvuWdt1mMc1qbmfakfdj8hVE3Vv3+CnfGyp9hqSjX
+M5X5gFEdC9ABXfY4tf0YHqnsXHiBQI/UnNeSERiwd6HC3s81zl4tri9HpfxDJr1U
+gwqCI2IQH69TCyJYWiIbW+8hKZQmOq+7i5CjXfJJtDnWmEISNuqpDQnTbWgTATgo
+o18WfoNxuomtNKT6FcbMl/FefqvY9k+22td7karzQqAplU3dFAaxilap77zX1/0O
+L+4td9uExU59Dc+YOqbtQHI+2An0Asv1c8trCuoKZ+EG81umX6GV7RGMF5xDzI8T
+vr7RpMRjE+7ANUysfAnCwEcaa39KNGzvKdPZls1LESIlIeye2L5M4+xFhx2xoOWy
+KTf6knZ+n/x7tYh3aTck01xZfW1ADuUJ+P1b/EP/QcVqalUCcfWJb7HKrTpyXOQ1
+Npf+IcmrWbUvsZklWXSXdPgH39f64B8b5+uEpDseC08LJ1ZrpS+vaMyDDZqrk4By
+clqgC0OTFysqDdbJjW823pC8lRfDo0YkLwKZE22A6ok6m2qCg9WffU24bpzhz/8n
+p5kgnYrqO6j6M1mekyQHysYXvUrcQMcNs8snh/O1/5Dal3C13qMNwLlTB2A9Mkcp
+r4Nz3iu1pfQWW3xh4jeE+C/tEPGhmtfkd3IDo35BmqssXpzq/xg=
+=uwFQ
+-----END PGP SIGNATURE-----
+
+--1esLGUbMCDPdwLQF--
 
