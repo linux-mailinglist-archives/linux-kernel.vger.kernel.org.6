@@ -1,266 +1,128 @@
-Return-Path: <linux-kernel+bounces-273770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340A4946DD9
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:14:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E680946DE0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF52E1F21722
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C58DC2816E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ACF2135B;
-	Sun,  4 Aug 2024 09:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC82C224FA;
+	Sun,  4 Aug 2024 09:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SW5pehCa"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IFGsWleN"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0AC1F94A;
-	Sun,  4 Aug 2024 09:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9870B20DC3
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 09:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722762856; cv=none; b=LwlqDnggIOg5xwIIeFhZM/sf4wh2CCQIA7E7wGcn3IG9aY2UtWDMYFIHsOC3AmylGeSIL8vFfT91I0oc/klzjWFETUn/MKJ/SMqhLej88eiXorRX2Hlcs0nv0xUZFn/gL9hy63nVHwRCgSEG6KqZ058YxstD4iLNMnHhUq+Zzr4=
+	t=1722763034; cv=none; b=DPJrXYLwXi6JIl0tpXlMpi+OeP+ctrtcANDEbP/mY6T/8WeW635H0Vtnxo1Ln5iZV2On6x9rwLkSVjB+VzkmajkPft6F/Hi6b6C3r65cB4Ly2+vjlahBjryXKTUj5Rn2xuPmwYI0Khre4RSscQTZlhhfpbxZBitFNY63L+N890w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722762856; c=relaxed/simple;
-	bh=Tsv1Zf8TZmbR1ofzjrLs16xA1rHFmbB/wMkp2gb68VE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=g6K+3yNtYRjk/X71Je2BFln/WWFkTiiMMdwFWT1vkYSoIHk5/c2OXbney49dj0so95kNv67xGuhQ/12JA2I8BvFSa9qUnkJoKG/ONJeH0LG9K2zFoxHN2HFHOzln4Th3jYgV6VJHVpCFWHpjS3LXBvjF0eS7WtLaZyJFCDgfrs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SW5pehCa; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso106048181fa.3;
-        Sun, 04 Aug 2024 02:14:13 -0700 (PDT)
+	s=arc-20240116; t=1722763034; c=relaxed/simple;
+	bh=8t4KkhEqwa8vESWacxIB0ZboE9iO2+3ko0q2paQ4RL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AjIP4hPhMnBOQdCIELAsbNc5b+vZ5+antZpkliFWVUJmJPIaB11zWkzx91aECgb8LEi/wJMX6JbO5E481WPt6vGPPTtQOJguNJVE3cYpxrm6l8pETAS0Xk9nj/kiS/W+nv1MVX9ssoLAQQsn+DlKLkU0RcNxCaYsv02bH5xi4g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IFGsWleN; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-66a048806e6so80856037b3.3
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 02:17:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722762852; x=1723367652; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q8xhaK+HKr8txiVLN5oIG6mLd/CNIxGQ/Xronjna7FY=;
-        b=SW5pehCa9ytWVtCBqT3jSzY5jfKrP0+ZwnhtknG/662aZwxyliO2Tt2pDRYE9a08XK
-         /17VpEsZ+CuGMdgLZet5/cbb0oROzavCVV8CaI3o0NTpl6MJvhPESiafH9JtfjFM+sDZ
-         8DXY9Hdd78LmQhBFqlnAr/33Sh+hq+diBIT7rm0Zqb5dXU9zShRYSZNcER2Ay6RUqYy/
-         MZi+MQHbKvWKC0ZBSDX36200F2sP/7OTuV6P2PcogHrAkMOo6/sZjiQa30RPxIoW+5nQ
-         ykpCuTHJpo6vnC/VkFnwDVxrjB6UZdBSY6y9ZlyubQy4rnA6N6l5GxMWp/KovqqCl0oC
-         Nkzw==
+        d=linaro.org; s=google; t=1722763030; x=1723367830; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mwig1T/GI7J6NZajQWaoVMnmbX4imhd/r3iYNF53W6Y=;
+        b=IFGsWleNSnPNpVpwGrPUpZj7iCAzjkklZfxK9bCkcnmS7VB4jf6h+0XjXMGyVl50H6
+         28FAD6whFjSzEY6KEgvQQGHczcFbkpGRh1t3D67v9jrLCTb24QH+M7W6k9WcT6x/uE90
+         d8Z5mnpXCg4JjoqneBomYVpJIJSm0aCVb6IBHiiuBV/eq7oBpd0Q9epWK/1Ff8jNHOyO
+         3W95E01znQh6qCXexkrY2+M+QR77icatJULeYG4IOYleyCcnHVLS6LGPXs+lohLWiWsA
+         /n16I+Y+0n89258pyP8BzS576johplzLIvvbZbHOK4HajdWKBlTpWu/Ak1+DdgKDR4zv
+         KMeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722762852; x=1723367652;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q8xhaK+HKr8txiVLN5oIG6mLd/CNIxGQ/Xronjna7FY=;
-        b=mPdiwnEgesXYOlPVsdRzZi2z5aKCs2b7UBMX1noJifEGMQ0VisIh0RsGtajWGSs0aI
-         gIh12NqHs6lVqLvz4mk8ouDcRMWWUxXBocivKLsCI23j3x9Drz92G97j2Zq7x5Om16sp
-         hkMtzOaGNHd5MVi770MiYA4g2mg3mwRK7ir/T2zgl1hbDEtVm0AtjjnURayVE0WG/3nb
-         DPqRDy8uq3dJ2xFl02HlOAjemdSodSVNk4WqrWVaSz+Qaksj/EhhXFEgz11BoTfc9bZL
-         Bsti8MN5ZdyIHswD+HV3zqKl7eW6Sgf5QFXrKlzZaWpbK003Z40JUr6a4QnQd8SDMTLs
-         JRyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxldpHGW2EcWTb8PYVzbluKPXVusC5DvpSlMC73tJSPOfc1cTLouF1lBFfpQi8kbXfT6rqToiDootuUo8gEDhxstLcWPB/+ErdqYDKtTYiRD4bQwzvXCRIo6658G+vCfRenwsd7gjjox+ihldu264kwOwFK54YZ5TCTiBbRpmu5PiIq2TSMw==
-X-Gm-Message-State: AOJu0YzAPoYmKGBirB2RvnR1OPAwsJEy/TPIQiedPy7WmmPU798iPosq
-	cm3y/K4Xx8XakyroWIRrE8REWEHFgyCnWdJOLqnn+520D6GEMpwg
-X-Google-Smtp-Source: AGHT+IGyj5V/OyfV2RPE4TLntui3QqyFRdRf2CycS7NXzrsfltpIxE6G4LIrujK/h4qDZiDBxzPkuA==
-X-Received: by 2002:a2e:8456:0:b0:2ef:286e:ca68 with SMTP id 38308e7fff4ca-2f15aac2b49mr53430811fa.23.1722762851736;
-        Sun, 04 Aug 2024 02:14:11 -0700 (PDT)
-Received: from smtpclient.apple (84-10-100-139.static.chello.pl. [84.10.100.139])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e1c7581sm6843141fa.68.2024.08.04.02.14.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 04 Aug 2024 02:14:11 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1722763030; x=1723367830;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mwig1T/GI7J6NZajQWaoVMnmbX4imhd/r3iYNF53W6Y=;
+        b=qcVT6GmUGgSW+AfhJDfmqSWeDp8v95Nv5oR6x90j8sesgirs0IRydZsmowDCOOngaP
+         jC90qJ2/iJqczSSL6emmGI1AGfkQT8Oboq+X+yEZBz6TpssC8r+Le/Z+grrCMTAK29wW
+         kbSoh2NCLoyg06vRsWtdKSDyt97EqY0vNc7Uol+Fj3FD8lTiwphIDH4fZww3izlUmXFn
+         v0H8bClz3iLxXtUBaNJwwF+h/AYN+I3KwE8lHg5JLIZVA3+4WyBeLqhSW8f3jn3ESesY
+         t6YKIEVDMjPGryaDzOtO0QVSltFeXdxSRZzXQWbzUYTYx2oLdICjqqBRM4n2nj8BVtVd
+         O+Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWct/VQAybNBugkgRgLm/uilRAZLD3XG5CHAGjX7HSvn/8wKOQxkbw7C33yO2M4ifoCmCKE1uY/5JbBU613/cvqvypfOvOIXDe2UoZE
+X-Gm-Message-State: AOJu0Yyqq0zHmdGI3MFo1FG+Qi8Pc4rZzxkp6yc7YQnXgZVvOroVyzYy
+	mZkX5HR7GUpbXeK9Qf2MHXDwWD5jl8BuRgL2xEQDZZmBKl8cakeA3oPBkeqxhpmGnJyB8BQ0jJ8
+	W7DxTpKF3XrtIzzZuMu7cuYuT2vNVqW0fkmV6pA==
+X-Google-Smtp-Source: AGHT+IEjvRALfHiK20+HqWr/VOyns/i1THpuPrDOhczyqEMfLwxtq9r+VorCam7xfy5I9cowlh1ysHraCKWf6o+C75Q=
+X-Received: by 2002:a0d:c247:0:b0:644:ffb2:5b19 with SMTP id
+ 00721157ae682-6895fbdbd45mr94218977b3.9.1722763030652; Sun, 04 Aug 2024
+ 02:17:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH 0/4] Add initial support for Rockchip RK3528 SoC
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <Zq8eJB7zqOvYQvmw@ziyaolaptop.my.domain>
-Date: Sun, 4 Aug 2024 11:13:59 +0200
-Cc: Dragan Simic <dsimic@manjaro.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>,
- Tim Lunn <tim@feathertop.org>,
- Andy Yan <andyshrk@163.com>,
- Muhammed Efe Cetin <efectn@protonmail.com>,
- Jagan Teki <jagan@edgeble.ai>,
- Ondrej Jirman <megi@xff.cz>,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3EA59A56-C6E5-40B7-A5C4-C280B001E981@gmail.com>
-References: <20240803125510.4699-2-ziyao@disroot.org>
- <0c77f99f4af96807a2a8c3028e3c1d4d@manjaro.org>
- <Zq8eJB7zqOvYQvmw@ziyaolaptop.my.domain>
-To: Yao Zi <ziyao@disroot.org>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+References: <20240804-sm8350-fixes-v1-7-1149dd8399fe@linaro.org> <202408041643.qHy043eG-lkp@intel.com>
+In-Reply-To: <202408041643.qHy043eG-lkp@intel.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sun, 4 Aug 2024 12:16:59 +0300
+Message-ID: <CAA8EJppbLUvSyq_AEh4Cw4ZOf2h=2-A3EuG5SPuhc2RDChWMFg@mail.gmail.com>
+Subject: Re: [PATCH 07/11] dt-bindings: interconnect: qcom,sm8450: drop DISP nodes
+To: kernel test robot <lkp@intel.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Jonathan Marek <jonathan@marek.ca>, Robert Foss <rfoss@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mike Tipton <quic_mdtipton@quicinc.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, oe-kbuild-all@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Sun, 4 Aug 2024 at 11:50, kernel test robot <lkp@intel.com> wrote:
+>
+> Hi Dmitry,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on 668d33c9ff922c4590c58754ab064aaf53c387dd]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/clk-qcom-dispcc-sm8250-use-CLK_SET_RATE_PARENT-for-branch-clocks/20240804-134328
+> base:   668d33c9ff922c4590c58754ab064aaf53c387dd
+> patch link:    https://lore.kernel.org/r/20240804-sm8350-fixes-v1-7-1149dd8399fe%40linaro.org
+> patch subject: [PATCH 07/11] dt-bindings: interconnect: qcom,sm8450: drop DISP nodes
+> config: arm64-randconfig-051-20240804 (https://download.01.org/0day-ci/archive/20240804/202408041643.qHy043eG-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 14.1.0
+> dtschema version: 2024.6.dev8+gf13c181
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408041643.qHy043eG-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408041643.qHy043eG-lkp@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+> >> Error: arch/arm64/boot/dts/qcom/sm8450.dtsi:3055.31-32 syntax error
+>    FATAL ERROR: Unable to parse input tree
 
+I see, I had this patched in my tree. So for sm8450 we have to keep
+backwards compatibility. Please ignore sm8450 patches.
 
-> Wiadomo=C5=9B=C4=87 napisana przez Yao Zi <ziyao@disroot.org> w dniu =
-04.08.2024, o godz. 08:22:
->=20
-> On Sun, Aug 04, 2024 at 07:40:43AM +0200, Dragan Simic wrote:
->> Hello all,
->>=20
->> On 2024-08-03 14:55, Yao Zi wrote:
->>> Rockchip RK3528 is a quad-core ARM Cortex-A53 SoC designed for
->>> multimedia application. This series add a basic device tree with =
-CPU,
->>> interrupts and UART nodes for it and is able to boot into a kernel =
-with
->>> only UART console.
->>>=20
->>> Has been tested on Radxa E20C board[1] with vendor U-boot, =
-successfully
->>> booted into initramfs with this log[2].
->>=20
->> I wonder will at least the RK3528 datasheet become available =
-publicly?
->=20
-> I found none for now, and I am not someone from Rockchip, thus don't
-> know whether they have a plan to make it public, either. But there has
-> been some devices shipping it already and getting them mainlined will
-> be a neat thing.
->=20
-
-Maybe this hight be useful: at some point in time I started to hack with =
-rk3528 support in mainline kernel.
-HW I=E2=80=99m using is vontar rk3528 tvbox.
-
-So far - on mainline 6.10 kernel - I got working: clocks, pin control, =
-uart, sdcard, eth, usb.
-
-I started to work on dw hdmi and got to stage with correct mode sets by =
-dw-hdmi but I stuck with vop3 support.
-
-Generally - I was back porting code from bsp but rockchip bsp is too =
-divergent from mainline to my back porting skills :-(
-
-If anybody can help with vop3 - then we can have quite good initial =
-support of rk3528 in mainline (the, sdcard, usb, eth, hdmi)
-gpu, hdmi audio should be probably easy=E2=80=A6
-
-My rk3528 enablements:
-
-Bindings: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1100-dt-bindings-clock-add-rk3528-clock-definitions.patch
-
-Clocks: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1101-clk-rockchip-add-clock-controller-for-the-RK3528.patch
-
-Pincontrol: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1102-pinctrl-rockchip-add-rk3528-support.patch
-
-Power domain bindings: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1103-dt-bindings-power-add-RK3528-SoCs-header-for-idle.patch
-
-Ethernet support: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1104-ethernet-stmmac-dwmac-rk3528-add-GMAC-support.patch
-
-Power domains support: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1105-soc-rockchip-power-domain-add-rk3528-support.patch
-
-usb: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1106-phy-rockchip-inno-usb2-add-phy-support-for-rk3528.patch
-
-SoC power domains: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1108-soc-rockchip-power-domain-add-rk3528-support.patch
-
-Thermal: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1108-thermal-rockchip-add-support-for-rk3528.patch
-
-Naneng phy: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1109-phy-rockchip-naneng-combphy-add-support-for-rk3528.patch
-
-dw hdmi: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1110-phy-rockchip-inno-hdmi-add-support-for-rk3528.patch
-
-Inno hdmi: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1111-drm-rockchip-dw_hdmi-add-support-for-rk3528.patch       Nvmem: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1113-nvmem-rockchip-otp-add-support-for-rk3528.patch
-
-Sound soc: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1114-sound-soc-codecs-add-rk3528-support.patch
-
-rk3528 dtsi: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1150-arm64-dtsi-rockchip-add-3528.dtsi.patch:=20
-
-Vontar tvbox dts: =
-https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
-iles/1151-arm64-dts-rockchip-add-dts-for-vontar_r3.patch
-
-It may happen that above patches will not apply clean on vanilla 6.10 as =
-I=E2=80=99m patching kernel for =
-s905/s912/sm1/g12/rpi3/rpi4/rpi5/3328/3399//3566/3568/3588/3528 and =
-rk3528 patches are after applied =
-s905/s912/sm1/g12/rpi3/rpi4/rpi5/3328/3399/3566/3568/3588 patches.
-
-If anybody is interested in adding vop3 support - pls give me sign - we =
-can work together=E2=80=A6
-=20
-
-> Just FYI, the vendor kernel is available here[1] on the "develop-5.10"
-> branch.
->=20
-> Best regards,
-> Yao Zi
->=20
-> [1]: https://github.com/rockchip-linux/kernel
->=20
->>=20
->>> [1]: https://docs.radxa.com/en/e/e20c
->>> [2]: =
-https://gist.github.com/ziyao233/b74523a1e3e8bf36286a572e008ca319
->>>=20
->>> Yao Zi (4):
->>>  dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
->>>  dt-bindings: arm: rockchip: Add Radxa E20C board
->>>  arm64: dts: rockchip: Add base DT for rk3528 SoC
->>>  arm64: dts: rockchip: Add Radxa e20c board
->>>=20
->>> .../devicetree/bindings/arm/rockchip.yaml     |   5 +
->>> .../bindings/serial/snps-dw-apb-uart.yaml     |   1 +
->>> arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->>> .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  22 +++
->>> arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 182 =
-++++++++++++++++++
->>> 5 files changed, 211 insertions(+)
->>> create mode 100644 =
-arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
->>> create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
->>>=20
->>>=20
->>> base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
->=20
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
+-- 
+With best wishes
+Dmitry
 
