@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-273629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB95946BA0
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:53:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF859946B9E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D20421F21C92
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8B828229B
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCA01F947;
-	Sun,  4 Aug 2024 00:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43B31CF9B;
+	Sun,  4 Aug 2024 00:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jQNbmIkU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DCyfti99"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iFutFd+n";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SBE5EMqj"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D44A930
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 00:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC192B673;
+	Sun,  4 Aug 2024 00:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722732713; cv=none; b=JyGUN57n31HHPvAc7r9daJ5UcI0kiEDUv6GF3dl4tYnIps8w73fPhzOX7jELo9ke0Up27oXH8kMU35zJUNBf5HvWqB8zu5cVMIGVfr9aSRiFobLsL97Fds+00gsNQVGha+Wi1YBiaDKUQ2P/VUOVyH09y+PsBt1i6w9tTh9KfZM=
+	t=1722732713; cv=none; b=iKQ8dL6Ogh064QE3/Vjv47pqCYLVBX9/C9lwqIaPc7+acxq6EoswOOx0Lqau1IfkT5fLkzx+2eKLz7x+p6Mk+n3NLUnJnYel2L6izceYLpYN7E50WmGlxv7J0avkEht98sy8ADvmlApdhGuPgkKfkP80XNWNWpEztUxrV/8v2Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722732713; c=relaxed/simple;
-	bh=EE0q3hdpnMtsse57YJgp4zis2zjcR6z0zeU0j659B84=;
+	bh=i7g9Rk6E1rRqftOtHZzjKlxcVFM+YP6E/P/94xSlZdE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mK9ZfOGU1gTyL92SLRNYjO1KigeW8SSnfkDnQYK4f4pV7ZMBWkJUvYgssuWFDQ9UoRUK9PLrnAa7+++228vj6Vpt32n0tTF17/oxnYXNdtxT9p5oCt30a9ynL7CeKNE/kqcP2VsVQ7oOc5cyXKEqJI5HPhbkevhIEqdr5x/5oG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jQNbmIkU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DCyfti99; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=WFnmpDorX0pqKr7CKin1CWm8K4XawszJ6WKifxaWv8C/O/2yoL3r7MCRZznioCLIz2pHj5nZ/uAdX4P8lbbCI+mga1W/mJptqkz8fkBrNkaL2v3EMx2EqHvWyQT6Xom50TF0k7nPzUJIKTesRvF3d3qujv60HWrmKTOwXEWkABk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iFutFd+n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SBE5EMqj; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: John Ogness <john.ogness@linutronix.de>
@@ -38,29 +38,32 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tk3o2TzJsqHT2V8VmhzoN1L6WaQ5SSmi/WNwun+0Gss=;
-	b=jQNbmIkU2VQS4oUQUmd3IuYRYJ4dx5rt8gWGlhP7JfX1+S8PH+wxm+YZpkoaXvFBikcC2i
-	o5Ci+srLl0//3Vs1RG72lDBpfHBeT2oBUziQUFfidbIZHS/EHcPYrnwkPA7Wc5PWf6CAqr
-	83ja8qRGECpiUG96MhYOa981mp8Nz1o41d8jl7RChMW/f0cSWI4oagYbp6io7sIDhMgRQh
-	gu4/XdRcopwf1CW2H5DOM+4qb77OTFoKYZBR/1dZf+psOMRDHYs0l9+tIDWiP+MwBzBGIu
-	DTe9EFt8yhei7GunKKNUWRX0NuWndOUVeRLzcBRQbcrbR+FWYgHYgf2C+6gruw==
+	bh=EwPBydyTGTYXegM2JVbnpVHJON//wTjw/xvV7q8bAP0=;
+	b=iFutFd+nbFnB13SQ9hIqx4evQV3KuPsbFZrZfQj0rSBNxSr0adh4NRrPSHbTRuLjNRBU4n
+	bGa0pU2JCzxzlMMqqHOvtdshDf05EzUgG+8t1Sd0gMI/m9TI5eyILXqQIjiHgFy6Dh/G2/
+	dEFqu2+gtSSQxi6kyjVz8512VzhdHyjX6IkYS/VeZtOumHWGoqS0fOL+1QHw+iKj0DwSbz
+	t2Jpv+bslMfpOVzT9fgHSnOfgdPiDP48M/iI1a+lXU4adfTEQom6gncWaFGeBDbbMCf9ND
+	i0jbbY1IEcUmvJv2eSGKQY888apUuKoBSbhx/UNlp0fmxINM8JZoipcQ6ADFLg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722732704;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tk3o2TzJsqHT2V8VmhzoN1L6WaQ5SSmi/WNwun+0Gss=;
-	b=DCyfti99YHcIKVVzy+RqUXbFZY9zAAH05CHg5HtOcJPVJsLPnYIUg6/jQmfjZSwEf+jw4o
-	a24pRIyshAEVIqCQ==
+	bh=EwPBydyTGTYXegM2JVbnpVHJON//wTjw/xvV7q8bAP0=;
+	b=SBE5EMqjeqcj2iTPMMaONIt+erFukqHHiehMt+23DxJToxZWAiKjamvhCzEEAw8tRiPo63
+	KdVZe0XST2lXL5Bg==
 To: Petr Mladek <pmladek@suse.com>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH printk v7 09/35] printk: nbcon: Use driver synchronization while (un)registering
-Date: Sun,  4 Aug 2024 02:57:12 +0206
-Message-Id: <20240804005138.3722656-10-john.ogness@linutronix.de>
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org
+Subject: [PATCH printk v7 10/35] serial: core: Provide low-level functions to lock port
+Date: Sun,  4 Aug 2024 02:57:13 +0206
+Message-Id: <20240804005138.3722656-11-john.ogness@linutronix.de>
 In-Reply-To: <20240804005138.3722656-1-john.ogness@linutronix.de>
 References: <20240804005138.3722656-1-john.ogness@linutronix.de>
 Precedence: bulk
@@ -71,123 +74,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Console drivers typically have to deal with access to the
-hardware via user input/output (such as an interactive login
-shell) and output of kernel messages via printk() calls.
+It will be necessary at times for the uart nbcon console
+drivers to acquire the port lock directly (without the
+additional nbcon functionality of the port lock wrappers).
+These are special cases such as the implementation of the
+device_lock()/device_unlock() callbacks or for internal
+port lock wrapper synchronization.
 
-They use some classic driver-specific locking mechanism in most
-situations. But console->write_atomic() callbacks, used by nbcon
-consoles, are synchronized only by acquiring the console
-context.
-
-The synchronization via the console context ownership is possible
-only when the console driver is registered. It is when a
-particular device driver is connected with a particular console
-driver.
-
-The two synchronization mechanisms must be synchronized between
-each other. It is tricky because the console context ownership
-is quite special. It might be taken over by a higher priority
-context. Also CPU migration must be disabled. The most tricky
-part is to (dis)connect these two mechanisms during the console
-(un)registration.
-
-Use the driver-specific locking callbacks: device_lock(),
-device_unlock(). They allow taking the device-specific lock
-while the device is being (un)registered by the related console
-driver.
-
-For example, these callbacks lock/unlock the port lock for
-serial port drivers.
-
-Note that the driver-specific locking is only needed during
-(un)register if it is an nbcon console with the write_atomic()
-callback implemented. If write_atomic() is not implemented, the
-driver should never attempt to access the hardware without
-first acquiring its driver-specific lock.
+Provide low-level variants __uart_port_lock_irqsave() and
+__uart_port_unlock_irqrestore() for this purpose.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/printk/printk.c | 33 ++++++++++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+ include/linux/serial_core.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 6ac333938ffc..7027f0868ef4 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3548,9 +3548,11 @@ static int unregister_console_locked(struct console *console);
-  */
- void register_console(struct console *newcon)
- {
--	struct console *con;
-+	bool use_device_lock = (newcon->flags & CON_NBCON) && newcon->write_atomic;
- 	bool bootcon_registered = false;
- 	bool realcon_registered = false;
-+	struct console *con;
-+	unsigned long flags;
- 	u64 init_seq;
- 	int err;
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index aea25eef9a1a..8872cd21e70a 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -590,6 +590,24 @@ struct uart_port {
+ 	void			*private_data;		/* generic platform data pointer */
+ };
  
-@@ -3637,6 +3639,19 @@ void register_console(struct console *newcon)
- 		newcon->seq = init_seq;
- 	}
- 
-+	/*
-+	 * If another context is actively using the hardware of this new
-+	 * console, it will not be aware of the nbcon synchronization. This
-+	 * is a risk that two contexts could access the hardware
-+	 * simultaneously if this new console is used for atomic printing
-+	 * and the other context is still using the hardware.
-+	 *
-+	 * Use the driver synchronization to ensure that the hardware is not
-+	 * in use while this new console transitions to being registered.
-+	 */
-+	if (use_device_lock)
-+		newcon->device_lock(newcon, &flags);
++/*
++ * Only for console->device_lock()/_unlock() callbacks and internal
++ * port lock wrapper synchronization.
++ */
++static inline void __uart_port_lock_irqsave(struct uart_port *up, unsigned long *flags)
++{
++	spin_lock_irqsave(&up->lock, *flags);
++}
 +
- 	/*
- 	 * Put this console in the list - keep the
- 	 * preferred driver at the head of the list.
-@@ -3661,6 +3676,10 @@ void register_console(struct console *newcon)
- 	 * register_console() completes.
- 	 */
- 
-+	/* This new console is now registered. */
-+	if (use_device_lock)
-+		newcon->device_unlock(newcon, flags);
++/*
++ * Only for console->device_lock()/_unlock() callbacks and internal
++ * port lock wrapper synchronization.
++ */
++static inline void __uart_port_unlock_irqrestore(struct uart_port *up, unsigned long flags)
++{
++	spin_unlock_irqrestore(&up->lock, flags);
++}
 +
- 	console_sysfs_notify();
- 
- 	/*
-@@ -3689,6 +3708,8 @@ EXPORT_SYMBOL(register_console);
- /* Must be called under console_list_lock(). */
- static int unregister_console_locked(struct console *console)
- {
-+	bool use_device_lock = (console->flags & CON_NBCON) && console->write_atomic;
-+	unsigned long flags;
- 	int res;
- 
- 	lockdep_assert_console_list_lock_held();
-@@ -3707,8 +3728,18 @@ static int unregister_console_locked(struct console *console)
- 	if (!console_is_registered_locked(console))
- 		return -ENODEV;
- 
-+	/*
-+	 * Use the driver synchronization to ensure that the hardware is not
-+	 * in use while this console transitions to being unregistered.
-+	 */
-+	if (use_device_lock)
-+		console->device_lock(console, &flags);
-+
- 	hlist_del_init_rcu(&console->node);
- 
-+	if (use_device_lock)
-+		console->device_unlock(console, flags);
-+
- 	/*
- 	 * <HISTORICAL>
- 	 * If this isn't the last console and it has CON_CONSDEV set, we
+ /**
+  * uart_port_lock - Lock the UART port
+  * @up:		Pointer to UART port structure
 -- 
 2.39.2
 
