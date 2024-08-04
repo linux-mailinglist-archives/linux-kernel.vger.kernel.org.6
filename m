@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-273672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E32946C0C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 05:19:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CDE4946C0F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 05:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98E131F21437
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 03:19:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53BC281DF4
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 03:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB9CD304;
-	Sun,  4 Aug 2024 03:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F0B6FB6;
+	Sun,  4 Aug 2024 03:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="QDorUNt1"
-Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxSIrgiF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269E46FB6;
-	Sun,  4 Aug 2024 03:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E343B23D2;
+	Sun,  4 Aug 2024 03:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722741527; cv=none; b=BIzMRUhovZzwgLaY58LNirUcdJYUb2JW8LxeVchRIc+UGkka1A9IFXiR/9jRtgehR+AfBpkMvPrqYKGH2E7ivAZgXocUnI8PoT6tZP+EbkRHqIp3niklqaUZrvB2JWdz4vsptuyX4QpXzhyLQqhpP0kspIFAu5q+bnM41xDw/58=
+	t=1722742394; cv=none; b=NJlvqlkyGxrWgLDke1fh/owy5Cku8RS+G9Ij6vKgmFlRI2aW2/oz18+jTt91M5qQ6U0J8K0ps3p8yEj+yeXOlnki/4MPtVJhfOSYyx5lwNLXQICc0Fvcct3lOe0uAlMK9eCfTePZ9Gjuwd3b8I6Z5RISn2QkrnoqYUFa1x/0jf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722741527; c=relaxed/simple;
-	bh=45pty/eZpML1yb7K8GkXSNck+koagf3u91ssApd9WkM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r8FuOfoJBzuY90bKEpX9Sc8JO2I5AD9Iua34fYbuqIlDMVbz5oMnX0LuCCqJ2mhBLyqniENcNBAvvppOgWHCVZLzL9bVqy7ntmoFtE5+5JCpykkjI2Mi6m/BdcgfP4Jm/JCYsKySsDt5W1pMC8kHsrzp0sT9N1imFR5GdNoOBik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=QDorUNt1; arc=none smtp.client-ip=54.39.219.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 67E94C006E;
-	Sat,  3 Aug 2024 23:13:39 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
-	t=1722741219; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=jIKDti4xNGbVdw8WRRwvN4RS6nL1CFIRo0ElCLglETU=;
-	b=QDorUNt1+9FSinJAN+Nf9y9sg4bfnsbI+T8mEAFNA3PBT85N/zdWeKOcMAAhJSnZnFvhv8
-	nnsXhDuulEJ3iSd3T7VLbW19yrTgqlLn7zDSNGVl9QwxcG2C6JcUOMoxAj1KP1pLW8+j2f
-	Pq9iitS78UMrrc1SF2D4nnN640mFrkk=
-From: Felix Kaechele <felix@kaechele.ca>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] Input: edt-ft5x06 - add support for FocalTech FT8201
-Date: Sat,  3 Aug 2024 23:13:10 -0400
-Message-ID: <20240804031310.331871-3-felix@kaechele.ca>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240804031310.331871-1-felix@kaechele.ca>
-References: <20240804031310.331871-1-felix@kaechele.ca>
+	s=arc-20240116; t=1722742394; c=relaxed/simple;
+	bh=tG5F7G63lJm60LqxHyERkf+AVX+0ZwPG5mG0rZ7QYSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e5PvNchHP1uSsxTVRv49Q/P/pGGyhm4uQrYNvJRej0FeCj3cxdDQXZbxYQzokbop0VSuYueS64reC3TT5kT42ajwltFIrCXzIPNh6lSnuA/Pl+c3ol98UFuP0OoBjDu9VYBpHHDreQ79hgAhVNnceY6jedbvmu6u4WNhAk+/M+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxSIrgiF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11706C32786;
+	Sun,  4 Aug 2024 03:33:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722742393;
+	bh=tG5F7G63lJm60LqxHyERkf+AVX+0ZwPG5mG0rZ7QYSw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HxSIrgiFg5/q1O5kX+AVD2I4oWfjV77W5WGjudx3/IhiPYhttG2qTbFUBpRKTxvhV
+	 owUhubPaBT91c+b/iDk5SrSeoupeuh2ZL5G+Fy9CnmMhETQa6Znbp+trTqDGTH/3w6
+	 aXkfL5Y5VkM0os8P2axKwWPXS8dA5ctKHEHaQ4IG4YQlKoQcp+1bq9cEaI7nbvA3jP
+	 NLEiLq3AzAMr+qlLey/6vCyKDOkznag4S+JJSpCIUJ11PgYpOV1MgEgzuFgB8LjB8e
+	 kNji7WxrHLx0Sjs1ERNn4IZweqdYQGoXtB2L2q4mCnuRY8aAOhDKev1+quacu22HX+
+	 IYa4dJX+PZuCw==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Terrell <terrelln@fb.com>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH] kbuild: modinst: remove the multithread option from zstd compression
+Date: Sun,  4 Aug 2024 12:33:07 +0900
+Message-ID: <20240804033309.890181-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,50 +57,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-The driver supports the FT8201 chip as well. It registers up to 10 touch
-points.
+Parallel execution is supported by GNU Make:
 
-Tested on: Lenovo ThinkSmart View (CD-18781Y), LCM: BOE TV080WXM-LL4
+  $ make -j<N> modules_install
 
-Signed-off-by: Felix Kaechele <felix@kaechele.ca>
+It is questionable to enable multithreading within each zstd process
+by default.
+
+If you still want to do it, you can use the environment variable:
+
+  $ ZSTD_NBTHREADS=<N> make modules_install
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
- drivers/input/touchscreen/edt-ft5x06.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index 42f99e57fbb7..e70415f189a5 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -1474,6 +1474,10 @@ static const struct edt_i2c_chip_data edt_ft6236_data = {
- 	.max_support_points = 2,
- };
+ scripts/Makefile.modinst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
+index 0afd75472679..04f5229efa6b 100644
+--- a/scripts/Makefile.modinst
++++ b/scripts/Makefile.modinst
+@@ -146,7 +146,7 @@ quiet_cmd_gzip = GZIP    $@
+ quiet_cmd_xz = XZ      $@
+       cmd_xz = $(XZ) --check=crc32 --lzma2=dict=1MiB -f $<
+ quiet_cmd_zstd = ZSTD    $@
+-      cmd_zstd = $(ZSTD) -T0 --rm -f -q $<
++      cmd_zstd = $(ZSTD) --rm -f -q $<
  
-+static const struct edt_i2c_chip_data edt_ft8201_data = {
-+	.max_support_points = 10,
-+};
-+
- static const struct edt_i2c_chip_data edt_ft8719_data = {
- 	.max_support_points = 10,
- };
-@@ -1485,6 +1489,7 @@ static const struct i2c_device_id edt_ft5x06_ts_id[] = {
- 	{ .name = "ft5452", .driver_data = (long)&edt_ft5452_data },
- 	/* Note no edt- prefix for compatibility with the ft6236.c driver */
- 	{ .name = "ft6236", .driver_data = (long)&edt_ft6236_data },
-+	{ .name = "ft8201", .driver_data = (long)&edt_ft8201_data },
- 	{ .name = "ft8719", .driver_data = (long)&edt_ft8719_data },
- 	{ /* sentinel */ }
- };
-@@ -1500,6 +1505,7 @@ static const struct of_device_id edt_ft5x06_of_match[] = {
- 	{ .compatible = "focaltech,ft5452", .data = &edt_ft5452_data },
- 	/* Note focaltech vendor prefix for compatibility with ft6236.c */
- 	{ .compatible = "focaltech,ft6236", .data = &edt_ft6236_data },
-+	{ .compatible = "focaltech,ft8201", .data = &edt_ft8201_data },
- 	{ .compatible = "focaltech,ft8719", .data = &edt_ft8719_data },
- 	{ /* sentinel */ }
- };
+ $(dst)/%.ko.gz: $(dst)/%.ko FORCE
+ 	$(call cmd,gzip)
 -- 
-2.45.2
+2.43.0
 
 
