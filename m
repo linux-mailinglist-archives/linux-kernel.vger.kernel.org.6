@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E49946DC6
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:04:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E442946DCD
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A32A281155
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:04:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9DF1C20C92
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356E520DF4;
-	Sun,  4 Aug 2024 09:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6A5210E7;
+	Sun,  4 Aug 2024 09:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKsX4nr+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dECVOp7m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3A31BC44;
-	Sun,  4 Aug 2024 09:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FAC1BC44;
+	Sun,  4 Aug 2024 09:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722762251; cv=none; b=bu84zQ2YoIX2+8lqNkDxuEnO5yM0lz2ukOP/wg5sPvOcMX9ucpxF/PMZtUHj0H4si3L9Y75WJF48PpA71Kv4Q3JSy9ZV6cfCvBcWCnhWzUZ6IeR1lh5Iqgl/+EhgfpF3jMqOfvMsqNfxujqkjkoOJ0ILgs//ks2s5I5aQVaEUvg=
+	t=1722762306; cv=none; b=qd5xm/heSHegLPE8kFpCI1OiXZh2VN9cra6EjaT5WEI2vph3zFgXyFtfAIBeUCLj0oWZNdiB58xka/DGsd97FPLBMiU40mX/4j/K1BInUavyELs2oxB+hOZRb0JC6pyemY9aMbyrNZCUY3kppZv1ZMx66wWV9bBQ/6MdXtHlYa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722762251; c=relaxed/simple;
-	bh=ACaYkWhGN5T4GVZym7z4bjMyvPmnMqrHlLrpECzxhyQ=;
+	s=arc-20240116; t=1722762306; c=relaxed/simple;
+	bh=evd2jHIsrMeCaLxMxBb98/GJ50/0XM8TgDQzHU8Dj+w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SbalmlQN0nDaeE3pxvDgNoAi6s5eaFC3gpTuCaIyQtWaXQL1jN3/FGFlvNWpJF8rOziUFT82rOKqc41MrxA/+6H7yxW0PpNjT4ISJ2JRR19bZ6UBkMiXg2wdbf0ILq7cusP6ugwk6kGafgUuztIOWq1HSdHR2R27uoAldJ/MBnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKsX4nr+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0414C4AF10;
-	Sun,  4 Aug 2024 09:04:05 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=e7RALKPL+Al5YtylNVljblRESsH9yjkHw7OAZWeCvmhfbhln/Ht16u86R1iCJ10DHTQXvqkEUabTEq201P2cRgujyL7ncUq3sXiEOJETTwsm5h0PdvHWfqch6A+dw5tIYEEzQgWlgySNxLjRIjI3CLUNOcUfDSqhQTjNgYTaiDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dECVOp7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D4DC32786;
+	Sun,  4 Aug 2024 09:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722762251;
-	bh=ACaYkWhGN5T4GVZym7z4bjMyvPmnMqrHlLrpECzxhyQ=;
+	s=k20201202; t=1722762305;
+	bh=evd2jHIsrMeCaLxMxBb98/GJ50/0XM8TgDQzHU8Dj+w=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iKsX4nr+y0jI1UYP0kvlGksPBIEEybGs8xZjZ3i4BJfYsAkNts8XTZV8TYj8Syrux
-	 HBNX4jdOSSrofUlBUqBMEd6q7/LGx5qpiZdT1aILO/AS4gBplHM05QatclKxtLUvWS
-	 JPhq4dnHgz2XeheuaHSdb/2wuv1IfEcuI+jcPe9u6atDaZtnthi+ZxJZX+gJg5JmTt
-	 /LElVH5Km1ilA4ZQ93g9sViOUoUaB+I5GAWFhR/6ZregKA8UZuX0E1EtIsyA9CM+Kd
-	 JGhP/S017DWK6snDSJyGBA6giGgUq/GUMdJL1DQFubzPJRTE43zTRhGsgQqw5NsN3h
-	 7ztzbL+fUyAlA==
-Message-ID: <5948f7b2-b4dc-4225-9f88-0d5da647d84c@kernel.org>
-Date: Sun, 4 Aug 2024 11:04:03 +0200
+	b=dECVOp7mApjFdeFSW9ZX429hcSCFebbXRm/z8TOceerIVQ7gbkAn/jwW6a/swnO0e
+	 k8GZ0JoJagPdRYzy9QPLNTRYj4F2/r3di2JU+1ARKSVFhv7f3in4F3DWNXAfpgXhyp
+	 GlSS654AiSBYiVfkV5G/9DFGQJJAkRTy2IydEs1N18AMVoUT/Meh/5hVkYeAQY1/dc
+	 Y4bSS8j4veiBPtPkhPVS6ic9YnY41z2Sx2YQ4tgR0+0pQCsO4wYY1jUThjXq9e1kq6
+	 g2jJeMLyw9xBTdjZOwPIr1uaXwBPXOzV5AR4FobSp02Zcec6pB+DPVGyewm5WmAP4/
+	 U1MuT1zYGm3Vg==
+Message-ID: <79f920f2-c263-4c31-81cf-fadade3ff779@kernel.org>
+Date: Sun, 4 Aug 2024 11:04:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] dt-bindings: clock: xilinx: add description of
- user monitor interrupt
+Subject: Re: [PATCH v2 8/9] dt-bindings: clock: xilinx: describe whether
+ dynamic reconfig is enabled
 To: Harry Austen <hpausten@protonmail.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -62,7 +62,7 @@ Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
  linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20240803105702.9621-1-hpausten@protonmail.com>
- <20240803105702.9621-6-hpausten@protonmail.com>
+ <20240803105702.9621-9-hpausten@protonmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,54 +108,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240803105702.9621-6-hpausten@protonmail.com>
+In-Reply-To: <20240803105702.9621-9-hpausten@protonmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 03/08/2024 12:58, Harry Austen wrote:
-> This Xilinx clocking wizard IP core outputs this interrupt signal to
-> indicate when one of the four optional user clock inputs is either
-> stopped, overruns, underruns or glitches.
-> 
-> This functionality was only added from version 6.0 onwards, so restrict
-> it to particular compatible strings.
+> Xilinx clocking wizard IP core's dynamic reconfiguration support is
+> optionally enabled at build time. Add a devicetree boolean property to
+> describe whether the hardware supports this feature or not.
 > 
 > Signed-off-by: Harry Austen <hpausten@protonmail.com>
 > ---
-> v1 -> v2: Fix binding errors by moving interrupts up front, restrict later
-> 
->  .../bindings/clock/xlnx,clocking-wizard.yaml  | 25 ++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> index 9d5324dc1027a..9e5078cef2962 100644
-> --- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> @@ -39,6 +39,14 @@ properties:
->        - const: clk_in1
->        - const: s_axi_aclk
->  
-> +  interrupts:
-> +    items:
-> +      - description: user clock monitor interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: monitor
-> +
->  
+> v1 -> v2: Use "flag" instead of boolean type
 
-Why multiple blank lines? Only one.
-
->    xlnx,speed-grade:
->      $ref: /schemas/types.yaml#/definitions/uint32
-> @@ -62,17 +70,32 @@ required:
->    - xlnx,speed-grade
->    - xlnx,nr-outputs
-
-With above fixed:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
