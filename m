@@ -1,207 +1,194 @@
-Return-Path: <linux-kernel+bounces-273945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD4C946FFD
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:14:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0462B946FFF
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102E41F2137F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6CE2812FF
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E877313541B;
-	Sun,  4 Aug 2024 17:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F1C13699B;
+	Sun,  4 Aug 2024 17:14:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j5suyyH6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxHxxWiA"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB698174E
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 17:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7571EEE3
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 17:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722791662; cv=none; b=Y0e+EndCJq3s0DpGukkSCfl2AhNZGiREmlEnYBmtzNvKKULMCbXposB6yei8XJXv34mx6sDR3vdyj1+hOm4ljJlPw28n4tKprXukedT3val4aVb1J+TjSYQAhueJa9XqacQKnRiJxmqkRuFZa7f/NgyQgdxgty0dm70pCeyQWFU=
+	t=1722791675; cv=none; b=ccW76EziHE1wr2EydOv3jvwuh47fqFt1BNuPfJ/ns4zawmcQ3c6R5ZYWYs4/DpLrwD/84WwJChO+/Sjm2gQj4abbo9RLLFzIe47MvZB6gCvXYWdjv2bfWXooQTpyYr8fzgPA4tjmhQ6f1l2n2/JPFZKW9qOSBR/ZDWnJmyyzkbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722791662; c=relaxed/simple;
-	bh=GMQApKlg/bFCKR7G6l3x8mkAa/Kt+X8b4GwqON/bj7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jF4yJYgomo2w8FRyHYrIh4YT6f9/UgJxtpz4lZZk8CwL2V8e0QyTsTlgMCSRU7+851xXVY5tOHjPxmIJeLiWFXdJVAu+Ucy7ey/v+G3vK+XCuZnLI2oPeXzln3oMQmhQ1caxzOgHKiKTp+3PPSa/VQPDBAT7XbDf1BHa+HM/8WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j5suyyH6; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722791660; x=1754327660;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=GMQApKlg/bFCKR7G6l3x8mkAa/Kt+X8b4GwqON/bj7Y=;
-  b=j5suyyH6PJI2NaICfTSLkOjua1JgkV3Pzh6GZtgr429KwBx4AoDP4+od
-   5f5AP6nclYpRDeqLlb3LDDYA4qhEL3Zo2jWfK11Hzz9k959nRwJncFnZl
-   8QYKAOXv8XI7Lc+XQWnHgb6lLMHjjvWsJ2P8d37GRhXmHm3eJb5tVqi6Q
-   QThtYuLG9eJBxWKEm/SZAsDCdBVkdzR/qZcdbyOP0cN5Sd3WdBk0VzywL
-   sqM3HQ726TKzIQ27EOCFwJcQGridhu6YGbY89e+GBfWgEV4NCmD368urA
-   UJL543oT+66vqlaJpiAF2CR/8pWXetr9bX5rv20iVykhQtbKuidAoEjpQ
-   g==;
-X-CSE-ConnectionGUID: qL0E2jo/TQ2hndInT63E4A==
-X-CSE-MsgGUID: zQHUZAeySO+85iR4B4SUlw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="32124737"
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="32124737"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 10:14:20 -0700
-X-CSE-ConnectionGUID: 1JZYvvCgTzCWCJZmkR9Sxw==
-X-CSE-MsgGUID: 0B34EsA/SwWHG9pR5X6LIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="79208047"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 04 Aug 2024 10:14:18 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1saeoB-0001Ya-0a;
-	Sun, 04 Aug 2024 17:14:15 +0000
-Date: Mon, 5 Aug 2024 01:13:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Damien Le Moal <dlemoal@kernel.org>
-Subject: ERROR: modpost: "__popcountsi2"
- [drivers/comedi/drivers/usbduxsigma.ko] undefined!
-Message-ID: <202408050106.nL2F1M8o-lkp@intel.com>
+	s=arc-20240116; t=1722791675; c=relaxed/simple;
+	bh=nDXev3bBzvYDjacE8JnKe/sOKx1fOLIenf3flfS7Wyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=of/IfC2YmX6sj1u/2cA61RjU72AasYSH7YJweuC7whpaucjEyTswZc3Od9T9aPlQmyTsXAi1vCk4dsCReKOXCb3NJmOVZpei0XL6+ehJAPIBCdqbd8FxuKMk9EO0sq+HKiLAMsiDxY39GwnzwjQ3sEKRaRi2my/v5VZKBVFyu/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxHxxWiA; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42812945633so68128075e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 10:14:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722791672; x=1723396472; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=p/4bczz6CJr9dhiOX7HKYOe1viOeV19Z0JANISgbZEs=;
+        b=KxHxxWiAFn7gxYl6J88k2YxfdhlGjZTGlr251RxLXVCPzxAmxI0JzC4XMXuygSguA8
+         bt5K2BCkTHt6G+fDdsrIgZN2wJKLMvS3rD3+cRbUJltKe8vZJqGgWrPG7yC+Pn4BitOk
+         4tcIto0DGIKGziGA4lDIWdFkE7D3HizRmIXdl2/aLGbqHdLgwPammmHhVZedFYGIM4ek
+         NDu8Fi0VF/WrE5ridhaS/egM31LaEvEQiRk/3tR4ojzTSqpkJZ4soPOQnRdlONkP/i32
+         UcIaeipSOJynsKT91/63zFciiZLrSEWgIUFy0MnsggHFjkptgfSPEWyAb3HBmbyy9mhz
+         z3QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722791672; x=1723396472;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p/4bczz6CJr9dhiOX7HKYOe1viOeV19Z0JANISgbZEs=;
+        b=Tk6tlQUdKFh18vlMyOYKtYvksEB81ZYa9I7BHh/o/lxcCvhCetgnCoEzhDOW2tu6p0
+         LmX7l8kjUpTL1RLNR9W4Jn8hNE1jdzVpNFK5C+eES/Upe1fEM/ZNBI2G4bF+9l6quKVp
+         9l1jGnaFj8R6+r0MiH4AIu6rRJIZq9n6Mp/w+F+KZ+137CU0GOU83FhsjT4+jChD/K96
+         IpZq8NLrOI+PfBec8nQUhjZZjICyzs3QHtUjSS8yO2VDBF/hm4pT277ccuCyj2ZNdX41
+         A8EDq1kSLNy3biusdUwhdI0aaj45dKBDiW9x7lTbcc66mwhZ8LCwEDncaUHQkgZU7E/d
+         w+Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVM1jbZMCkXN5M6Qz4R0GlBGIgHuNRK0PN/+2KqhCByp7L/Nr66UOV4fqu+xmfTVWlm9tbRJDBWQ+Ty6XJ8G/g1tf7BCqLTY46ncN5
+X-Gm-Message-State: AOJu0YwZ0qytEtUqyGQ6g9yysLMbBPlUZ4OhvGO+k8DOO+ok9kZZPTpD
+	RsWiXGGuA0a5337KsrzmchoGIyKiuHHjWg7pIeW20TeMPHCiVrOY
+X-Google-Smtp-Source: AGHT+IEKO5RBYTDzHkiZWGRWKYYN7qHNgy8QdQzVisJNOAgr683jPNUBW7oHzC2AkIen8oLpIjxcIg==
+X-Received: by 2002:a05:600c:198f:b0:426:5c34:b19b with SMTP id 5b1f17b1804b1-428e6b00c7dmr67548935e9.20.1722791671988;
+        Sun, 04 Aug 2024 10:14:31 -0700 (PDT)
+Received: from fedora ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd05b92esm7541252f8f.85.2024.08.04.10.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Aug 2024 10:14:31 -0700 (PDT)
+Date: Sun, 4 Aug 2024 19:14:29 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: rodrigosiqueiramelo@gmail.com
+Cc: melissa.srw@gmail.com, mairacanal@riseup.net, hamohammed.sa@gmail.com,
+	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	louis.chauvet@bootlin.com
+Subject: Re: [PATCH v3] drm/vkms: Fix cpu_to_le16()/le16_to_cpu() warnings
+Message-ID: <Zq-29RHgywzw96xz@fedora>
+References: <20240716161725.41408-2-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716161725.41408-2-jose.exposito89@gmail.com>
 
-Hi John,
+On Tue, Jul 16, 2024 at 06:17:26PM +0200, José Expósito wrote:
+> Building with Sparse enabled prints this warning for cpu_to_le16()
+> calls:
+> 
+>     warning: incorrect type in assignment (different base types)
+>         expected unsigned short [usertype]
+>         got restricted __le16 [usertype]
+> 
+> And this warning for le16_to_cpu() calls:
+> 
+>     warning: cast to restricted __le16
+> 
+> Declare the target buffer as __le16 to fix both warnings.
+> 
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> 
+> ---
+> 
+> v1 -> v2: https://lore.kernel.org/dri-devel/20240712161656.7480-1-jose.exposito89@gmail.com/T/
+> 
+>  - Thomas Zimmermann: Declare "pixels" cariable as __le16 instead of
+>    multiple casting.
+> 
+> v2 -> v3: https://lore.kernel.org/dri-devel/20240715151625.6968-2-jose.exposito89@gmail.com/
+> 
+>  - Thomas Zimmermann: Use cpu_to_le16() instead of casting 0xffff
+>  - Reviewed-by Thomas and Louis
+> ---
 
-First bad commit (maybe != root cause):
+Would it be possible to get an ACK from the maintainers? It is a very simple patch
+and it already has 2 reviewed-by, hopefully we can get it merged.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   17712b7ea0756799635ba159cc773082230ed028
-commit: af2817229158cea7960b9132e0a8c4470ebbfef5 virtio_blk: Don't bother validating blocksize
-date:   4 weeks ago
-config: arm-randconfig-r113-20240803 (https://download.01.org/0day-ci/archive/20240805/202408050106.nL2F1M8o-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-reproduce: (https://download.01.org/0day-ci/archive/20240805/202408050106.nL2F1M8o-lkp@intel.com/reproduce)
+Thanks a lot in advance!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408050106.nL2F1M8o-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-r.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_utf8.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-croatian.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-iceland.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-inuit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_script.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/minix/minix.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/isofs/isofs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/hfs/hfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/sysv/sysv.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/btrfs/btrfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/encrypted-keys/encrypted-keys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/xor.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libarc4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libdes.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/bus/vexpress-config.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_spi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/vfb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/clk-vexpress-osc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_hdlc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-spmi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/loop.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ublk_drv.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/vexpress-sysreg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x-control.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/isight_firmware.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/yurex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/vivaldi-fmap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/mmc_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_simple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-belkin.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cherry.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-emsff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-elecom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-evision.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ezkey.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-vivaldi-common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kye.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lenovo.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-magicmouse.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-mf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-monterey.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-pl.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-petalynx.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-razer.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-semitek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sjoy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sunplus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gaff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-tivo.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-topseed.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-twinhan.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-xinmo.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zpff.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-viewsonic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-waltop.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-hid.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-loopback.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-raw.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rpmsg/rpmsg_char.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/gb-es2.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
-ERROR: modpost: "__popcountsi2" [fs/ext4/ext4.ko] undefined!
-ERROR: modpost: "__popcountsi2" [fs/xfs/xfs.ko] undefined!
-ERROR: modpost: "__popcountdi2" [fs/btrfs/btrfs.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/block/loop.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/hwtracing/intel_th/intel_th_pti.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/hsi/clients/hsi_char.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/vhost/vhost.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/comedi_test.ko] undefined!
-ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/usbduxfast.ko] undefined!
->> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/usbduxsigma.ko] undefined!
-WARNING: modpost: suppressed 2 unresolved symbol warnings because there were too many)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  drivers/gpu/drm/vkms/vkms_formats.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index 36046b12f296..040b7f113a3b 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -75,7 +75,7 @@ static void XRGB8888_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixe
+>  
+>  static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+>  {
+> -	u16 *pixels = (u16 *)src_pixels;
+> +	__le16 *pixels = (__force __le16 *)src_pixels;
+>  
+>  	out_pixel->a = le16_to_cpu(pixels[3]);
+>  	out_pixel->r = le16_to_cpu(pixels[2]);
+> @@ -85,7 +85,7 @@ static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
+>  
+>  static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+>  {
+> -	u16 *pixels = (u16 *)src_pixels;
+> +	__le16 *pixels = (__force __le16 *)src_pixels;
+>  
+>  	out_pixel->a = (u16)0xffff;
+>  	out_pixel->r = le16_to_cpu(pixels[2]);
+> @@ -95,7 +95,7 @@ static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
+>  
+>  static void RGB565_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
+>  {
+> -	u16 *pixels = (u16 *)src_pixels;
+> +	__le16 *pixels = (__force __le16 *)src_pixels;
+>  
+>  	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
+>  	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
+> @@ -178,7 +178,7 @@ static void argb_u16_to_XRGB8888(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel
+>  
+>  static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>  {
+> -	u16 *pixels = (u16 *)dst_pixels;
+> +	__le16 *pixels = (__force __le16 *)dst_pixels;
+>  
+>  	pixels[3] = cpu_to_le16(in_pixel->a);
+>  	pixels[2] = cpu_to_le16(in_pixel->r);
+> @@ -188,9 +188,9 @@ static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
+>  
+>  static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>  {
+> -	u16 *pixels = (u16 *)dst_pixels;
+> +	__le16 *pixels = (__force __le16 *)dst_pixels;
+>  
+> -	pixels[3] = 0xffff;
+> +	pixels[3] = cpu_to_le16(0xffff);
+>  	pixels[2] = cpu_to_le16(in_pixel->r);
+>  	pixels[1] = cpu_to_le16(in_pixel->g);
+>  	pixels[0] = cpu_to_le16(in_pixel->b);
+> @@ -198,7 +198,7 @@ static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
+>  
+>  static void argb_u16_to_RGB565(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
+>  {
+> -	u16 *pixels = (u16 *)dst_pixels;
+> +	__le16 *pixels = (__force __le16 *)dst_pixels;
+>  
+>  	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
+>  	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
+> -- 
+> 2.45.2
+> 
 
