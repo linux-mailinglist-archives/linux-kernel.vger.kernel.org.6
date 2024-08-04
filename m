@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-273683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2473946C5F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:41:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDEC8946C65
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF7501C2154F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 05:41:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFDD11C2157A
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 05:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD8F1CD00;
-	Sun,  4 Aug 2024 05:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF1A1AACC;
+	Sun,  4 Aug 2024 05:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ngwoZELE"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oFenis/h"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26DE14A84
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 05:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6784E1B970
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 05:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722750026; cv=none; b=Hfj7/WN3BixBeLgZ/wcUg7fU4uHRolOG+hoH2IY66QaVInnDqzkM8T17E+9NsNFR0takUKcFtansUul4xOWwOF6vKh0LQp9ZU1yRYYiWD6yfGCkhzcYfOnC26Y1e66vjxtMz8wkGF9mDffSttAJoyJx/55BQMSAmQqN4ALnJpyM=
+	t=1722750028; cv=none; b=snEsEyJz567APYxTDSeHIhTsyHf92k6VfYk7YgQdWskdIzazZ5S8diL2GqM0IWQ7qkyvo2k+QTou+u54DDXdf7l3kqmruYNiKFvVL5rzCZ4zfZovIZCyFylmaqSZR+JIiUv1pM1oKou7f5OhMaYj0CVLeV4C6bHbSYSmx35b1p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722750026; c=relaxed/simple;
-	bh=ZrQo3KWLh48xJDJlDCJhnd58UA7Hm/hQisnNq+wC8eQ=;
+	s=arc-20240116; t=1722750028; c=relaxed/simple;
+	bh=tcJ7LQ1yfUyMvLJV6hSYPEPDWM/piu7AD4k8+F7Xn8M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n9TtfvcvgURY6qqsoUhQzWA3zIYZaaav0wokpkhgykxe9gPPoz+AkQRrnLz4lN55mQIA7uw9ktH0QbJJmw3rF79xCPSwJJ3x6eRl+KE2KesScHRpMQdt21qEC6rdki1PJR+dUPjbTdKn0iEPn6KPLui6ZYC91lRiWZ0iymw6KfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ngwoZELE; arc=none smtp.client-ip=209.85.208.43
+	 In-Reply-To:To:Cc; b=MJWaLgf/peM3SpMfK/WU7sxscNP6KY4K1XtAR1I6EpPWU6rn/IHe84oDwTpEDDiG80qWEGz6hUGoiJY6Gld1TvVmz1xpgUZp8f5avlwfI5lyt30nR7Ty1ESvpYZkGOJMmca8WCbzyzCyXgEorKukaQCJkIOgaFPtrtOI6O9NT3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oFenis/h; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso10827863a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 22:40:24 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so1197417466b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 22:40:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722750023; x=1723354823; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722750025; x=1723354825; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EYBxyQ/YvwiIHaG8jzR0Y70dVbuym8PFNWRpFtHQEf8=;
-        b=ngwoZELE+oofageJ+Jk7kU3B+XlQdxE2snHsdxOPDGbyemKbEYwIEYNNBATA+iuYSU
-         O32EHhkhDrMMTmABzzGbzqiioDZX+q0fUC6qurywgbtgftM9oRRO5LdNrgLNHOl3L5s9
-         yR/4eNVdMmNTtwtIlW6A2IJDz34PMiZhV7YwvGUh/PTsfvzsHEI2FE6UVB30gV7yA0GT
-         jVFNlDXxK8hZ93EQsVgRDmV67ggJPEuTvAzTFf5OlV+qYp6VNd3zboPyDORrl7Z2up6G
-         nV0Ju3qt4eFvl1+muhv9hAK9LyAj/dnmf4K6uhemMJP50lhgSy8fFVm5uLmj8JLK5l8L
-         MuHA==
+        bh=F5mt80rOA9qN8jWsdvy84Xdf9Lmua8radXA2BhT4YbQ=;
+        b=oFenis/hQBf50znog9TLO6yEDOtR0wLSf6498uf/JZBDwKNWUdoxoHRIpXkuen9FBD
+         poOAPyZJDKPZsUr9NjDzslPPuL47qh3h0CA9c0KzkgdR3goIb0CDg9TTYEhUNgDGC7PG
+         DzBeM3DssAmaSSGEJN8uWLFP1wfJajKVxTBYao91Gtm9ne292tTJ1YyVNl7WtQfHPtrn
+         VPEGuezETwOnofCwBINp/uOmSPO9ujfYJyqaZhIQtLEKFFvlyvyeKGKWKGV15JJoOO6s
+         FjV87So42c8aOd6INkV+H2Aqe5RGsYi83xGHBt0HWVDk1XqkZK/fLC5UrkxKdgX1fLmv
+         eqSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722750023; x=1723354823;
+        d=1e100.net; s=20230601; t=1722750025; x=1723354825;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EYBxyQ/YvwiIHaG8jzR0Y70dVbuym8PFNWRpFtHQEf8=;
-        b=v9Pzd59H41L6mtPbrhOTpw0+TWTFJnPWDIoOy3daOPCgJOJRMwiQXH+OvsJY1XRLE2
-         pSzubJd+4LlLUqpb9VPdwMOFnLNa6eGcxDj79rrbbfi97BGEvDUcP/1dlgbZf8KQAlR4
-         geAJ6Ylz2PG1hQYtfM6uNbpNrgnlw+/d9rur6H87wHM31Wfdhkgjqrv6Xd9eyA8bOOns
-         yhC4W5d08y6gso8TwbV/CuhHxVz0UbrtjVbctVuAI9pPYGQcLW56eCcveTzmDKpJ0gCW
-         Zappfkm7S4qir1hgH0DqXW9jSO2hbwJYH7aKqjfV8H3Bs8HWGpwRWpFGyQeuiQ0SXCiN
-         +a3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXP11p7JpPWX3mPbielXNWNGxNgYDwN44t6xYmd+cGrekazA+PrBsTy8YyKUqsr/mmLwC8fOekVBC40Mekh4s40DfIuj/Wf0dx7FKaz
-X-Gm-Message-State: AOJu0Yz7ZGFN5U2JusgMEFEnZS2PuzWdmHcB/k/tRCTpcnh35dMFcjV8
-	0MXyXDXx5rYMC4MQBm+YkL+e2uUXWhuFQcrT6UspZuRo0mtIs5OONqirbt6JGsM=
-X-Google-Smtp-Source: AGHT+IEb56JcXEdp3cHrbP3Zdb4R00iMmwymYCH9bJ87K9H4uB8Y3mr62+YvNqwi5wZXe7TBUA0HwQ==
-X-Received: by 2002:a17:907:7b8d:b0:a7a:97a9:ba28 with SMTP id a640c23a62f3a-a7dc4fb6a93mr575059266b.26.1722750023107;
-        Sat, 03 Aug 2024 22:40:23 -0700 (PDT)
+        bh=F5mt80rOA9qN8jWsdvy84Xdf9Lmua8radXA2BhT4YbQ=;
+        b=alIUtwQENxR4C0/OThMiZ+HEmQtDTJ6PEUv6HiOXhMXoWJppmdjtkQbD2MnVW6gp3r
+         4V+dkjs35NDonfaMCDkhqDDAYh28bf/9P1FoE2o4pEGV3pH2L6Op3976Jse1+EEHXFZR
+         5cX6/ueLCfJTWSRE0m2jVv7prIrAmcbzB/CQKFG8Ytlhw7BHzQjMkyXYyJYESkhhPAXZ
+         m/ZqbRikK/KtnulcRjV6+Umvb57mubRagpfGVgt8/1j9lDLPAfRsJIZf7YuHB/adzp97
+         uijQTZdjGcoK05aJ0ufJOhS6J1C+QkwLzsha9amQoMDIb2g7LsmU05+NVZNDi30Lixew
+         ZuDw==
+X-Forwarded-Encrypted: i=1; AJvYcCULPbpBV9my3LubJqv44brRyEwX+5PMOOgdcdjOVuVGAAj1Hk8XpdBbGKnuW1cqR2bK0S5XekQJvAt5AKDGYBIPvXXq8nVp2qK+Vi38
+X-Gm-Message-State: AOJu0YwNPpivu/tqvJCPG8RUkW/7NQ1ZuNLfdQXg2nbsLGo8R5ezdfIQ
+	/o6nnEZqLnbzUc55mf7UcORb+Q6ZSXEOJVsU1iT8GAztsaSngshjp0hCxIfbR+0=
+X-Google-Smtp-Source: AGHT+IFcXcCjeK+kirr9HxHNSNYgUwoTUFv8rKvg+BBRx9kFrveQa6yajGPUP6ydfDNRdEA9/ap3lQ==
+X-Received: by 2002:a17:907:3f0c:b0:a77:eb34:3b4d with SMTP id a640c23a62f3a-a7dc4db8ba5mr615532466b.13.1722750024706;
+        Sat, 03 Aug 2024 22:40:24 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3bd7sm292248466b.34.2024.08.03.22.40.21
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3bd7sm292248466b.34.2024.08.03.22.40.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 22:40:22 -0700 (PDT)
+        Sat, 03 Aug 2024 22:40:24 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 04 Aug 2024 08:40:07 +0300
-Subject: [PATCH 03/11] drm/msm/dsi: correct programming sequence for SM8350
- / SM8450
+Date: Sun, 04 Aug 2024 08:40:08 +0300
+Subject: [PATCH 04/11] interconnect: qcom: sm8350: drop DISP nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240804-sm8350-fixes-v1-3-1149dd8399fe@linaro.org>
+Message-Id: <20240804-sm8350-fixes-v1-4-1149dd8399fe@linaro.org>
 References: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
 In-Reply-To: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -98,59 +97,270 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1635;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7265;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=ZrQo3KWLh48xJDJlDCJhnd58UA7Hm/hQisnNq+wC8eQ=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmrxQ+6l4NppYjUOt2B1Mrx0jUAAKAzHN1dYY7o
- symZsDcsH6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZq8UPgAKCRCLPIo+Aiko
- 1REzB/9ap2qNIrseQCvZa/pTU/KUPvVlida6gouDBjhpuq7T3vUAUBKa74AAqkQOHqraSmgVJ+V
- SnR9/o7ICUDZaE8E9VS16WvKFpcOOw4OaiaCroRfcqvQLCmu0w+72VZ7YAj+Wyq/JqR7g+asp8D
- ZDXh/perTUkRZ6OmXanv4Y2J7IxckRnIShcfucpigmfnyPwI3cBaaUiquig/eEBYWGrdmtISth0
- Hfl9rpFXrXWvTWgAn1OvlDqKbrlNV5liXA2oOAQr2YruWmCjq1+xqTFcHvxuL/CBMwsAHINjojk
- RUtYD2MMuk4xqwqJvLOJ7w7LtPfbGJ8VzQCKA/PK5N4aWiWG
+ bh=tcJ7LQ1yfUyMvLJV6hSYPEPDWM/piu7AD4k8+F7Xn8M=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmrxQ+ycn2GSCazqz66VoIUtMr5Q536pilX24Rk
+ FCuX2JYrTyJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZq8UPgAKCRCLPIo+Aiko
+ 1U+mCACCX8GXfbbnShUSyy2kUZweMQ3X+zXZnp1j4Y19+e8ylvhlxJJkWdiTinLXXILjm81rmzH
+ NTE019I3z/wpfIyt29BJZ4GTnZhCgwH0AemWgRpIng9WbpST14WHHPeJEhSMx7+Mg1WfBLobiGv
+ 4kUa9oHRT7XEFPGPEP7Oyf5vOkilJZXSgHx04kBgAh+u4UhlXzLfHZuhgE64WHIepBb9/XFE/AI
+ Y0nlAhwYY6l18Ha3/GIxdt54kwf0+jaIvei7zvg895bwWmvvieBkZzr7Klxrf0Jv3D9mzId5tEW
+ KB+wOX/I0cC4qTmC79KjzpoBLPnmjpJPNd6o6lGpPIhUphuG
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-According to the display-drivers, 5nm DSI PLL (v4.2, v4.3) have
-different boundaries for pll_clock_inverters programming. Follow the
-vendor code and use correct values.
+The msm-5.x kernels have additional display RSC and separate display BCM
+voter. Since upstream kernel doesn't yet provide display RSC, we end up
+duplicating several nodes, which can result in incorrect votes being
+cast. Drop *_DISP nodes.
 
-Fixes: 2f9ae4e395ed ("drm/msm/dsi: add support for DSI-PHY on SM8350 and SM8450")
+Fixes: d26a56674497 ("interconnect: qcom: Add SM8350 interconnect provider driver")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/interconnect/qcom/sm8350.c | 154 -------------------------------------
+ drivers/interconnect/qcom/sm8350.h |  10 ---
+ 2 files changed, 164 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-index 3b59137ca674..031446c87dae 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-@@ -135,7 +135,7 @@ static void dsi_pll_calc_dec_frac(struct dsi_pll_7nm *pll, struct dsi_pll_config
- 			config->pll_clock_inverters = 0x00;
- 		else
- 			config->pll_clock_inverters = 0x40;
--	} else {
-+	} else if (pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_1) {
- 		if (pll_freq <= 1000000000ULL)
- 			config->pll_clock_inverters = 0xa0;
- 		else if (pll_freq <= 2500000000ULL)
-@@ -144,6 +144,16 @@ static void dsi_pll_calc_dec_frac(struct dsi_pll_7nm *pll, struct dsi_pll_config
- 			config->pll_clock_inverters = 0x00;
- 		else
- 			config->pll_clock_inverters = 0x40;
-+	} else {
-+		/* 4.2, 4.3 */
-+		if (pll_freq <= 1000000000ULL)
-+			config->pll_clock_inverters = 0xa0;
-+		else if (pll_freq <= 2500000000ULL)
-+			config->pll_clock_inverters = 0x20;
-+		else if (pll_freq <= 3500000000ULL)
-+			config->pll_clock_inverters = 0x00;
-+		else
-+			config->pll_clock_inverters = 0x40;
- 	}
+diff --git a/drivers/interconnect/qcom/sm8350.c b/drivers/interconnect/qcom/sm8350.c
+index b321c3009acb..108934fc8ebf 100644
+--- a/drivers/interconnect/qcom/sm8350.c
++++ b/drivers/interconnect/qcom/sm8350.c
+@@ -628,60 +628,6 @@ static struct qcom_icc_node xm_gic = {
+ 	.links = { SM8350_SLAVE_SNOC_GEM_NOC_GC },
+ };
  
- 	config->decimal_div_start = dec;
+-static struct qcom_icc_node qnm_mnoc_hf_disp = {
+-	.name = "qnm_mnoc_hf_disp",
+-	.id = SM8350_MASTER_MNOC_HF_MEM_NOC_DISP,
+-	.channels = 2,
+-	.buswidth = 32,
+-	.num_links = 1,
+-	.links = { SM8350_SLAVE_LLCC_DISP },
+-};
+-
+-static struct qcom_icc_node qnm_mnoc_sf_disp = {
+-	.name = "qnm_mnoc_sf_disp",
+-	.id = SM8350_MASTER_MNOC_SF_MEM_NOC_DISP,
+-	.channels = 2,
+-	.buswidth = 32,
+-	.num_links = 1,
+-	.links = { SM8350_SLAVE_LLCC_DISP },
+-};
+-
+-static struct qcom_icc_node llcc_mc_disp = {
+-	.name = "llcc_mc_disp",
+-	.id = SM8350_MASTER_LLCC_DISP,
+-	.channels = 4,
+-	.buswidth = 4,
+-	.num_links = 1,
+-	.links = { SM8350_SLAVE_EBI1_DISP },
+-};
+-
+-static struct qcom_icc_node qxm_mdp0_disp = {
+-	.name = "qxm_mdp0_disp",
+-	.id = SM8350_MASTER_MDP0_DISP,
+-	.channels = 1,
+-	.buswidth = 32,
+-	.num_links = 1,
+-	.links = { SM8350_SLAVE_MNOC_HF_MEM_NOC_DISP },
+-};
+-
+-static struct qcom_icc_node qxm_mdp1_disp = {
+-	.name = "qxm_mdp1_disp",
+-	.id = SM8350_MASTER_MDP1_DISP,
+-	.channels = 1,
+-	.buswidth = 32,
+-	.num_links = 1,
+-	.links = { SM8350_SLAVE_MNOC_HF_MEM_NOC_DISP },
+-};
+-
+-static struct qcom_icc_node qxm_rot_disp = {
+-	.name = "qxm_rot_disp",
+-	.id = SM8350_MASTER_ROTATOR_DISP,
+-	.channels = 1,
+-	.buswidth = 32,
+-	.num_links = 1,
+-	.links = { SM8350_SLAVE_MNOC_SF_MEM_NOC_DISP },
+-};
+-
+ static struct qcom_icc_node qns_a1noc_snoc = {
+ 	.name = "qns_a1noc_snoc",
+ 	.id = SM8350_SLAVE_A1NOC_SNOC,
+@@ -1320,40 +1266,6 @@ static struct qcom_icc_node srvc_snoc = {
+ 	.buswidth = 4,
+ };
+ 
+-static struct qcom_icc_node qns_llcc_disp = {
+-	.name = "qns_llcc_disp",
+-	.id = SM8350_SLAVE_LLCC_DISP,
+-	.channels = 4,
+-	.buswidth = 16,
+-	.num_links = 1,
+-	.links = { SM8350_MASTER_LLCC_DISP },
+-};
+-
+-static struct qcom_icc_node ebi_disp = {
+-	.name = "ebi_disp",
+-	.id = SM8350_SLAVE_EBI1_DISP,
+-	.channels = 4,
+-	.buswidth = 4,
+-};
+-
+-static struct qcom_icc_node qns_mem_noc_hf_disp = {
+-	.name = "qns_mem_noc_hf_disp",
+-	.id = SM8350_SLAVE_MNOC_HF_MEM_NOC_DISP,
+-	.channels = 2,
+-	.buswidth = 32,
+-	.num_links = 1,
+-	.links = { SM8350_MASTER_MNOC_HF_MEM_NOC_DISP },
+-};
+-
+-static struct qcom_icc_node qns_mem_noc_sf_disp = {
+-	.name = "qns_mem_noc_sf_disp",
+-	.id = SM8350_SLAVE_MNOC_SF_MEM_NOC_DISP,
+-	.channels = 2,
+-	.buswidth = 32,
+-	.num_links = 1,
+-	.links = { SM8350_MASTER_MNOC_SF_MEM_NOC_DISP },
+-};
+-
+ static struct qcom_icc_bcm bcm_acv = {
+ 	.name = "ACV",
+ 	.enable_mask = BIT(3),
+@@ -1583,55 +1495,6 @@ static struct qcom_icc_bcm bcm_sn14 = {
+ 	.nodes = { &qns_pcie_mem_noc },
+ };
+ 
+-static struct qcom_icc_bcm bcm_acv_disp = {
+-	.name = "ACV",
+-	.keepalive = false,
+-	.num_nodes = 1,
+-	.nodes = { &ebi_disp },
+-};
+-
+-static struct qcom_icc_bcm bcm_mc0_disp = {
+-	.name = "MC0",
+-	.keepalive = false,
+-	.num_nodes = 1,
+-	.nodes = { &ebi_disp },
+-};
+-
+-static struct qcom_icc_bcm bcm_mm0_disp = {
+-	.name = "MM0",
+-	.keepalive = false,
+-	.num_nodes = 1,
+-	.nodes = { &qns_mem_noc_hf_disp },
+-};
+-
+-static struct qcom_icc_bcm bcm_mm1_disp = {
+-	.name = "MM1",
+-	.keepalive = false,
+-	.num_nodes = 2,
+-	.nodes = { &qxm_mdp0_disp, &qxm_mdp1_disp },
+-};
+-
+-static struct qcom_icc_bcm bcm_mm4_disp = {
+-	.name = "MM4",
+-	.keepalive = false,
+-	.num_nodes = 1,
+-	.nodes = { &qns_mem_noc_sf_disp },
+-};
+-
+-static struct qcom_icc_bcm bcm_mm5_disp = {
+-	.name = "MM5",
+-	.keepalive = false,
+-	.num_nodes = 1,
+-	.nodes = { &qxm_rot_disp },
+-};
+-
+-static struct qcom_icc_bcm bcm_sh0_disp = {
+-	.name = "SH0",
+-	.keepalive = false,
+-	.num_nodes = 1,
+-	.nodes = { &qns_llcc_disp },
+-};
+-
+ static struct qcom_icc_bcm * const aggre1_noc_bcms[] = {
+ };
+ 
+@@ -1785,7 +1648,6 @@ static struct qcom_icc_bcm * const gem_noc_bcms[] = {
+ 	&bcm_sh2,
+ 	&bcm_sh3,
+ 	&bcm_sh4,
+-	&bcm_sh0_disp,
+ };
+ 
+ static struct qcom_icc_node * const gem_noc_nodes[] = {
+@@ -1808,9 +1670,6 @@ static struct qcom_icc_node * const gem_noc_nodes[] = {
+ 	[SLAVE_SERVICE_GEM_NOC_1] = &srvc_even_gemnoc,
+ 	[SLAVE_SERVICE_GEM_NOC_2] = &srvc_odd_gemnoc,
+ 	[SLAVE_SERVICE_GEM_NOC] = &srvc_sys_gemnoc,
+-	[MASTER_MNOC_HF_MEM_NOC_DISP] = &qnm_mnoc_hf_disp,
+-	[MASTER_MNOC_SF_MEM_NOC_DISP] = &qnm_mnoc_sf_disp,
+-	[SLAVE_LLCC_DISP] = &qns_llcc_disp,
+ };
+ 
+ static const struct qcom_icc_desc sm8350_gem_noc = {
+@@ -1843,15 +1702,11 @@ static const struct qcom_icc_desc sm8350_lpass_ag_noc = {
+ static struct qcom_icc_bcm * const mc_virt_bcms[] = {
+ 	&bcm_acv,
+ 	&bcm_mc0,
+-	&bcm_acv_disp,
+-	&bcm_mc0_disp,
+ };
+ 
+ static struct qcom_icc_node * const mc_virt_nodes[] = {
+ 	[MASTER_LLCC] = &llcc_mc,
+ 	[SLAVE_EBI1] = &ebi,
+-	[MASTER_LLCC_DISP] = &llcc_mc_disp,
+-	[SLAVE_EBI1_DISP] = &ebi_disp,
+ };
+ 
+ static const struct qcom_icc_desc sm8350_mc_virt = {
+@@ -1866,10 +1721,6 @@ static struct qcom_icc_bcm * const mmss_noc_bcms[] = {
+ 	&bcm_mm1,
+ 	&bcm_mm4,
+ 	&bcm_mm5,
+-	&bcm_mm0_disp,
+-	&bcm_mm1_disp,
+-	&bcm_mm4_disp,
+-	&bcm_mm5_disp,
+ };
+ 
+ static struct qcom_icc_node * const mmss_noc_nodes[] = {
+@@ -1886,11 +1737,6 @@ static struct qcom_icc_node * const mmss_noc_nodes[] = {
+ 	[SLAVE_MNOC_HF_MEM_NOC] = &qns_mem_noc_hf,
+ 	[SLAVE_MNOC_SF_MEM_NOC] = &qns_mem_noc_sf,
+ 	[SLAVE_SERVICE_MNOC] = &srvc_mnoc,
+-	[MASTER_MDP0_DISP] = &qxm_mdp0_disp,
+-	[MASTER_MDP1_DISP] = &qxm_mdp1_disp,
+-	[MASTER_ROTATOR_DISP] = &qxm_rot_disp,
+-	[SLAVE_MNOC_HF_MEM_NOC_DISP] = &qns_mem_noc_hf_disp,
+-	[SLAVE_MNOC_SF_MEM_NOC_DISP] = &qns_mem_noc_sf_disp,
+ };
+ 
+ static const struct qcom_icc_desc sm8350_mmss_noc = {
+diff --git a/drivers/interconnect/qcom/sm8350.h b/drivers/interconnect/qcom/sm8350.h
+index 328d15238a0d..074c6131ab36 100644
+--- a/drivers/interconnect/qcom/sm8350.h
++++ b/drivers/interconnect/qcom/sm8350.h
+@@ -154,15 +154,5 @@
+ #define SM8350_SLAVE_PCIE_1				143
+ #define SM8350_SLAVE_QDSS_STM				144
+ #define SM8350_SLAVE_TCU				145
+-#define SM8350_MASTER_LLCC_DISP				146
+-#define SM8350_MASTER_MNOC_HF_MEM_NOC_DISP		147
+-#define SM8350_MASTER_MNOC_SF_MEM_NOC_DISP		148
+-#define SM8350_MASTER_MDP0_DISP				149
+-#define SM8350_MASTER_MDP1_DISP				150
+-#define SM8350_MASTER_ROTATOR_DISP			151
+-#define SM8350_SLAVE_EBI1_DISP				152
+-#define SM8350_SLAVE_LLCC_DISP				153
+-#define SM8350_SLAVE_MNOC_HF_MEM_NOC_DISP		154
+-#define SM8350_SLAVE_MNOC_SF_MEM_NOC_DISP		155
+ 
+ #endif
 
 -- 
 2.39.2
