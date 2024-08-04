@@ -1,95 +1,201 @@
-Return-Path: <linux-kernel+bounces-273755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C43946DA0
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:54:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CADE0946DA4
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A2A2814CD
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:54:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3826CB20A61
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FBC208B8;
-	Sun,  4 Aug 2024 08:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC430210E7;
+	Sun,  4 Aug 2024 08:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nuf+Linf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pc/DMgRx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485603FC2;
-	Sun,  4 Aug 2024 08:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54CC200C7;
+	Sun,  4 Aug 2024 08:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722761654; cv=none; b=KSueFx+gTvZbKvq406Cq8+zElWojm9udh7YSN9fOaM1LxndQMsYYN53OEI3tPwGwsPkQxA+NeDV3d6GhQ0j1T6qtBC+x/mroWS94zWzRo5SARO50bCgVnstFmihX7/1P6Ef9Z1f8O0BxMYquVJ1zYc8ucXRV0hll/FEUgM+Gv6s=
+	t=1722761672; cv=none; b=kZhCAnjjvEV8xtefM/UaF195+rMqeI6HcEEnOa/y9dupDSslNRe7UzDj6eVSznoReLnluMeEuv0FRrxrz2Zis4dcDmRin/DbsiKsulKsTy/PMad1RXAP2rXFkeUyUE7u5mOWbA4mi8O0bT4uHh1Dn4J2R1gvEnAOp93jVJ/2Zic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722761654; c=relaxed/simple;
-	bh=EnPID6ABFQiU3CywfoiNeZaGER0APilwi5tKfaltBY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a10Xc2wy38m4rWiWYDAZWIqnRhdeeunUevAgYl8R1Cw8XqTn3V8k8qjtSrgRyJ/dwqmmNfCxGJFkUG4QIO2vmO9M/4S0iNZkZkzejByVT58tYG6/pthe4fI2YITOc9MFh9uMH2prG8ZjVT7fr+G/YCTwQ56CPIPKaaBqJcQM24U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nuf+Linf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55FEFC32786;
-	Sun,  4 Aug 2024 08:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722761653;
-	bh=EnPID6ABFQiU3CywfoiNeZaGER0APilwi5tKfaltBY0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nuf+LinfI/eaULfi7GdJGNc0oQ/mr6y8wiuY4CJAS1maGFsBWqYGZ+DVopBc39Nfz
-	 lfbLbOIPH08EWtGGx8o60wqqmH9fOOcYEKD5GhXXxrrZK7mXPk/9MSdig8kIKMamdQ
-	 23v7gUKpCNQTDCqCRp3v82yCnlSEqDcBey6ET66o=
-Date: Sun, 4 Aug 2024 10:54:10 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "John B. Wyatt IV" <jwyatt@redhat.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-pm@vger.kernel.org,
-	Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: Re: [PATCH 0/2][RFC] Add SWIG Bindings to libcpupower
-Message-ID: <2024080405-roundish-casket-2474@gregkh>
-References: <20240724221122.54601-1-jwyatt@redhat.com>
- <1f5c24b6-f3ee-4863-8b7a-49344a550206@linuxfoundation.org>
- <Zqv9BOjxLAgyNP5B@hatbackup>
+	s=arc-20240116; t=1722761672; c=relaxed/simple;
+	bh=OCJ2ODVjuk7fW2FE5oROXlZe+cqyRfkkcK6wHWuKCFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VSZrih8YGlarPbYJRarhluxqLZb0t5dbrzhjDLHIwW9CsM0QBU0SWkBNZ5SL+/0clU1eTv2mRWKZfgaHxpuvlzy5cjQBGrdyEbA2diwypBcUk+qnf0Z4Dmr1Tm6344wyd4czDEum1InrkpFTUY6grTz+vLLQ4RY+sNZZ62WDciE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pc/DMgRx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66223C32786;
+	Sun,  4 Aug 2024 08:54:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722761671;
+	bh=OCJ2ODVjuk7fW2FE5oROXlZe+cqyRfkkcK6wHWuKCFU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pc/DMgRxAB5MmmPDU7OyNWZqnD21l4qh6520a5aosw4zSDf1WyXDZyU6pqyjx0bEq
+	 jkuJFf9i1sVDkYYkjUU6JJE7bf+y+zorKRyskDBfiz/sbRhVDnJWN8YVTra3ajUgBR
+	 +tQk2jPB0Ww/Tn7CcwDRYVoQICp/Qru03GDUeWSNYDQKVTM0T69gMr5tsJRZbXmAEl
+	 HG7wssHHndtILwergLZGmIMtV1cCnNvUTb+i8TK/NYA3m0exoJ5IrTWhXhKROgmOmF
+	 aqHuw31ZLhSRHD+qKwBb1UdaUyN6LIImuK2ajzbwW8mxqeDBWdldNwBpkXuzsJyQYc
+	 3exlVVpfuReug==
+Message-ID: <e0f61e73-3321-48b2-9fe9-1ffa547cab08@kernel.org>
+Date: Sun, 4 Aug 2024 10:54:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zqv9BOjxLAgyNP5B@hatbackup>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] arm64: dts: qcom: qcs6490-rb3gen2: Add node for
+ qps615
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Jingoo Han <jingoohan1@gmail.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: andersson@kernel.org, quic_vbadigan@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-3-9560b7c71369@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240803-qps615-v2-3-9560b7c71369@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 05:24:20PM -0400, John B. Wyatt IV wrote:
-> > On 7/24/24 16:11, John B. Wyatt IV wrote:
-> > > SWIG is a tool packaged in Fedora and other distros that can generate
-> > > bindings from C and C++ code for several languages including Python,
-> > > Perl, and Go. We at Red Hat are interested in adding binding support to
-> > > libcpupower so Python tools like rteval or tuned can make easy use of it.
-> > > 
-> > 
-> > Can you elaborate on the use-case and what rteval currently does and
-> > how it could benefit from using libcpupower with the bindings?
+On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
+> Add QPS615 PCIe switch node which has 3 downstream ports and in one
+> downstream port two embedded ethernet devices are present.
 > 
-> rteval is a Python program used to measure realtime performance. We wanted to
-> test the effect of enabling some levels of idle-stat to see how it affects
-> latency, and didn't want to reinvent the wheel. We thought that the Python
-> bindings could be useful to other people as well who might want to call
-> cpupower too from Python. I did some testing and was able to achieve this with
-> SWIG. We sent the patchset to see what folks thought about this.
+> Power to the QPS615 is supplied through two LDO regulators, controlled
+> by two GPIOs, these are added as fixed regulators.
+> 
+> Add i2c device node which is used to configure the switch.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 121 +++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi         |   2 +-
+>  2 files changed, 122 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> index 0d45662b8028..59d209768636 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -202,6 +202,30 @@ vph_pwr: vph-pwr-regulator {
+>  		regulator-min-microvolt = <3700000>;
+>  		regulator-max-microvolt = <3700000>;
+>  	};
+> +
+> +	vdd_ntn_0p9: regulator-vdd-ntn-0p9 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDD_NTN_0P9";
+> +		gpio = <&pm8350c_gpios 2 GPIO_ACTIVE_HIGH>;
+> +		regulator-min-microvolt = <899400>;
+> +		regulator-max-microvolt = <899400>;
+> +		enable-active-high;
+> +		pinctrl-0 = <&ntn_0p9_en>;
+> +		pinctrl-names = "default";
+> +		regulator-enable-ramp-delay = <4300>;
+> +	};
+> +
+> +	vdd_ntn_1p8: regulator-vdd-ntn-1p8 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDD_NTN_1P8";
+> +		gpio = <&pm8350c_gpios 3 GPIO_ACTIVE_HIGH>;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		enable-active-high;
+> +		pinctrl-0 = <&ntn_1p8_en>;
+> +		pinctrl-names = "default";
+> +		regulator-enable-ramp-delay = <10000>;
+> +	};
+>  };
+>  
+>  &apps_rsc {
+> @@ -595,6 +619,12 @@ lt9611_out: endpoint {
+>  			};
+>  		};
+>  	};
+> +
+> +	qps615_switch: pcie-switch@77 {
+> +		compatible = "qcom,qps615";
+> +		reg = <0x77>;
+> +		status = "okay";
 
-Is this going to require a built-time dependency on SWIG?  If not, when
-would it be run, and who will be in charge of running it and updating
-the bindings?
+Where is it disabled?
 
-And finally, why do we need these at all?  You are saying these are new
-tests that external tools will be using, but why, if external tools are
-required to run them, are they needed in the kernel tree at all?  Why
-isn't this just another external test-suite that people who care about
-measuring this type of thing going to just run on their own if desired?
+> +	};
+>  };
+>  
+>  &i2c1 {
+> @@ -688,6 +718,75 @@ &pmk8350_rtc {
+>  	status = "okay";
+>  };
+>  
+> +&pcie1 {
 
-thanks,
+Entries are ordered.
 
-greg k-h
+> +	status = "okay";
+> +};
+
+
+> 
+
+Best regards,
+Krzysztof
+
 
