@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33AF946D6B
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:34:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D14F946D70
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3881C1F214F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:34:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ECB8B211D8
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5E61CD29;
-	Sun,  4 Aug 2024 08:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BFD1CF9A;
+	Sun,  4 Aug 2024 08:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXxEVfMK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dxrs9u/9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F6B1B5A4;
-	Sun,  4 Aug 2024 08:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A22749C;
+	Sun,  4 Aug 2024 08:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722760486; cv=none; b=AzAzsSj+A7/Uh86LdHu+2BAQ8uoiTzDRNH9OOC04mJmq+W4mhYBhMzmLLuJkl1DfCqnxri+vFvsUsNMliNFHklN/CjSedx3gUiycQiBRxgsPBrPbmYRRTZfXHkoQUaN0bztoT+pnkTS4Z62/ZK/+4JAy+tdp6512NXVfgOcZWyE=
+	t=1722760792; cv=none; b=A9h5agWS/CqbvdyjsjEiF7h39hGfGGicpq/Yedl/dyxszu2BJFnDyaTERS+GkzN8Isu0X/3k9TJuDG3hsixoWI2zLV1PmDyZ3zS/7a4kfslXgQpz3hYeu+fy8QXIYQogVMB5L4dM5JwraXryW3PdS2s11FwLvccd+fNkCR+/E8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722760486; c=relaxed/simple;
-	bh=KfS2EzghKVzY6FYRHqItJtKczN2LRbKcRc4md5zjYlI=;
+	s=arc-20240116; t=1722760792; c=relaxed/simple;
+	bh=ZYUvZnNENcu6FGX5RLTVX9OUHlsv9nF8X0+i7Pa1xQE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukqd0dgphEeurcUI+z3ohA2pMlXIz+40BD7wzS7BpT4jLzl0wqYsGc7cPlTC1J+WbCjdzNu91WBMDhfVKW6RNWJHZ0fomRxfd/nuMldhVOt+cRHvn1l3AWk/WXKpxmWoDI/Yk/nl++qO9ss1W7lpiJWhU1vFF34yPU/L8zoesrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXxEVfMK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77E2EC32786;
-	Sun,  4 Aug 2024 08:34:43 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=QPDkUoooBNmAqT8i6Au7H00USX31nDWMudtPge4/PeDR8EsZYhEpK8TyQZOcp71PXWMfG7rS1o/VLIaGXAeA+6AG36hoxU+Z7yd+g+EfuxybYlJh62xGs2URJpoxZf9gfHuD6+CoTsvls/KhaRJZL7X6pZmbqQrN3MyQwqXXzwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dxrs9u/9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E427FC32786;
+	Sun,  4 Aug 2024 08:39:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722760485;
-	bh=KfS2EzghKVzY6FYRHqItJtKczN2LRbKcRc4md5zjYlI=;
+	s=k20201202; t=1722760792;
+	bh=ZYUvZnNENcu6FGX5RLTVX9OUHlsv9nF8X0+i7Pa1xQE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GXxEVfMKbA9fxiSn22GPOgRbl6hTu28FUL7PjFCmmsPrNQUpmWFQKTiIk7NVRXo0r
-	 jwQv47lsUrldk/auQMdf0bMHaw+x5P3ave4e/XFhWjsrLwUQpkdFc2l2ScouS9qeWN
-	 N6rUKDTSBeniCojemD4bsxGDbzJ0CmALqFsCtOSVBIklrqi3pDgD7fkpwCCqJABo/o
-	 G5H5anb6RixUcnal0fpZqXCAihPmhLanLVnOj7qyNr8WuvRr/i43rHjP5DIQz2gpQ2
-	 2sTFmMHQ39JpKDtYIw8ZhD1OWJ3yyUqFsnICLQv4IU8UWT6rr2hTf18smqhmhMjOdF
-	 oWY6qTGpi4lkg==
-Message-ID: <5a180c6b-aed6-4060-94c5-bdbd9ce06934@kernel.org>
-Date: Sun, 4 Aug 2024 10:34:41 +0200
+	b=Dxrs9u/9sTuYzRrRFACqbeaGf3E40NkiOtovRHL8DdgGgTQshSTezUrsdyd9dqvvN
+	 Hrn8RVO+NK3gGCu9VrnUNDYOtiylOvsD/OCiKi4uCldR9bGtNIWI3+KLfCKarPbwl+
+	 g/xsP+Ewd6+7kuQKt2asMyAJsZ+gbfBrV3J19PMLuj4rHxe8mccEhSy1p3pp/Pr9GR
+	 9cFXkc9gj9SLAbj5mjv0OLXh9P7mO9/ZddFgAcj2THxCisir7VszkaImCfE0R5+RH5
+	 I4QjDvPFYuBmxhV3bti4gzTfRB6tODP9tvq+nYdyZ16XSqeA8Z4G3WAxqMbD67lf0j
+	 3IoUwEjuegggA==
+Message-ID: <f412c9f4-4813-4e81-babc-eb8850548a63@kernel.org>
+Date: Sun, 4 Aug 2024 10:39:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] dt-bindings: edac: Add Altera SOCFPGA SDRAM EDAC
- binding
-To: Alessandro Zanni <alessandro.zanni87@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- skhan@linuxfoundation.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240801161005.120111-1-alessandro.zanni87@gmail.com>
- <20d128b3-ad81-4338-bd59-a039ddcbbadf@kernel.org>
- <CABq9Dx4LDdHaknB6XgMvtT41tWtDx7YGnFCi6geSS-0J1UxrzQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: Add X1E80100 Samsung Galaxy Book4 Edge
+To: Marcus Glocker <marcus@nazgul.ch>, Bjorn Andersson
+ <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+ Johan Hovold <johan@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <o2ysrhejn2xlba6mh4wueh7mgb4l54zvh4tcep3g5wizpaidk6@33mqoj3246zv>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,38 +103,315 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CABq9Dx4LDdHaknB6XgMvtT41tWtDx7YGnFCi6geSS-0J1UxrzQ@mail.gmail.com>
+In-Reply-To: <o2ysrhejn2xlba6mh4wueh7mgb4l54zvh4tcep3g5wizpaidk6@33mqoj3246zv>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2024 16:32, Alessandro Zanni wrote:
-> Thank you for the review.
+On 04/08/2024 10:10, Marcus Glocker wrote:
+> Hi,
 > 
-> This patch aims to be a conversion from txt file
-> "bindings/arm/altera/socfpga-sdram-edac.txt" to this
-> "bindings/edac/altr,sdram-edac.yaml" file.
-> That's why I also deleted the txt file in the patch.
-> 
-> Maybe I should have put a different title to make it clearer.
-> 
-> This is the original example in the txt file:
-> sdramedac {
->     compatible = "altr,sdram-edac";
->     altr,sdr-syscon = <&sdr>;
->     interrupts = <0 39 4>;
-> 
-> and this is my conversion:
->> +  - |
->> +    memory-controller {
->> +      compatible = "altr,sdram-edac";
->> +      altr,sdr-syscon = <&sdr>;
->> +      interrupts = <0 39 4>;
-> 
-> Sorry for that but, to me, it's not clear what I should convert in
-> this example to complete the yaml file.
-> 
+> We recently added initial support in OpenBSD for the Samsung Galaxy
+> Book4 Edge by below DTS diff.
 
-Don't top-post. I have no clue what you are referring to.
+
+Please write commig msgs matching Linux kernel style, see submitting
+patches.
+
+That's not a letter but explanation of what and why you are doing.
+
+> 
+> - x1e80100-samsung-galaxy-book4-edge.dts:
+>   Is a copy of x1e80100-crd.dts, and then modified to our needs.
+> 
+> - x1e80100.dtsi:
+>   Includes the UFSHCI peaces, which was basically pulled from
+>   sc7180.dtsi.
+> 
+> Main stuff working:
+> 
+> - UFSHCI.
+> - Keyboard.
+> - Touch-pad.
+> - USB (as far tested).
+> 
+> Main stuff not working yet:
+> 
+> - Touch-screen:  Pin 51, which mostly works on the other X1E80100
+>   models, is creating an interrupt storm on the Samsung Galaxy Book4
+>   Edge.  Probing the other pins didn't showed success yet.  Not sure at
+>   this point what the problem is.
+> 
+> Regards,
+> Marcus
+> 
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dts b/arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dts
+> new file mode 100644
+> index 000000000000..83751455211a
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dts
+> @@ -0,0 +1,986 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +
+> +#include "x1e80100.dtsi"
+> +#include "x1e80100-pmics.dtsi"
+> +
+> +/ {
+> +	model = "Samsung Galaxy Book4 Edge";
+> +	compatible = "samsung,galaxy-book4-edge", "qcom,x1e80100";
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+> +	chassis-type = "laptop";
+> +
+> +	pmic-glink {
+> +		compatible = "qcom,x1e80100-pmic-glink",
+> +			     "qcom,sm8550-pmic-glink",
+> +			     "qcom,pmic-glink";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
+> +				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
+> +				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
+> +
+> +		/* Left-side rear port */
+> +		connector@0 {
+> +			compatible = "usb-c-connector";
+> +			reg = <0>;
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_ss0_hs_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss0_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss0_ss_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		/* Left-side front port */
+> +		connector@1 {
+> +			compatible = "usb-c-connector";
+> +			reg = <1>;
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_ss1_hs_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss1_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss1_ss_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		/* Right-side port */
+> +		connector@2 {
+> +			compatible = "usb-c-connector";
+> +			reg = <2>;
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_ss2_hs_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss2_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss2_ss_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss2_qmpphy_out>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	reserved-memory {
+> +		linux,cma {
+> +			compatible = "shared-dma-pool";
+> +			size = <0x0 0x8000000>;
+> +			reusable;
+> +			linux,cma-default;
+> +		};
+> +	};
+> +
+> +	sound {
+> +		compatible = "qcom,x1e80100-sndcard";
+> +		model = "X1E80100-CRD";
+
+That's not a CRD board.
+
+> +		audio-routing = "WooferLeft IN", "WSA WSA_SPK1 OUT",
+> +				"TwitterLeft IN", "WSA WSA_SPK2 OUT",
+> +				"WooferRight IN", "WSA2 WSA_SPK2 OUT",
+> +				"TwitterRight IN", "WSA2 WSA_SPK2 OUT",
+
+Is this correct?
+
+> +				"IN1_HPHL", "HPHL_OUT",
+> +				"IN2_HPHR", "HPHR_OUT",
+> +				"AMIC2", "MIC BIAS2",
+
+And this?
+
+> +				"VA DMIC0", "MIC BIAS3",
+> +				"VA DMIC1", "MIC BIAS3",
+> +				"VA DMIC2", "MIC BIAS1",
+> +				"VA DMIC3", "MIC BIAS1",
+> +				"VA DMIC0", "VA MIC BIAS3",
+> +				"VA DMIC1", "VA MIC BIAS3",
+> +				"VA DMIC2", "VA MIC BIAS1",
+> +				"VA DMIC3", "VA MIC BIAS1",
+> +				"TX SWR_INPUT1", "ADC2_OUTPUT";
+> +
+> +		wsa-dai-link {
+> +			link-name = "WSA Playback";
+> +
+> +			cpu {
+> +				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
+> +			};
+> +
+> +			codec {
+> +				sound-dai = <&left_woofer>, <&left_tweeter>,
+> +					    <&swr0 0>, <&lpass_wsamacro 0>,
+> +					    <&right_woofer>, <&right_tweeter>,
+> +					    <&swr3 0>, <&lpass_wsa2macro 0>;
+> +			};
+> +
+> +			platform {
+> +				sound-dai = <&q6apm>;
+> +			};
+> +		};
+> +
+> +		va-dai-link {
+> +			link-name = "VA Capture";
+> +
+> +			cpu {
+> +				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
+> +			};
+> +
+> +			codec {
+> +				sound-dai = <&lpass_vamacro 0>;
+> +			};
+> +
+> +			platform {
+> +				sound-dai = <&q6apm>;
+> +			};
+> +		};
+> +	};
+> +
+> +	vph_pwr: vph-pwr-regulator {
+
+Use consistent naming, so either prefix or suffix, not both. E.g.
+consistent regualtor-foo.
+
+...
+
+> +&i2c8 {
+> +	clock-frequency = <400000>;
+> +
+> +	status = "disabled";
+> +
+> +	touchscreen@5d {
+> +		compatible = "hid-over-i2c";
+> +		reg = <0x5d>;
+> +
+> +		hid-descr-addr = <0x1>;
+> +		/*
+> +		 * Pin 51 is creating an interrupt storm.  Hence, choosing
+> +		 * some other pin which just does nothing.  But obviously,
+
+No, you cannot add incorrect hardware description.
+
+> +		 * the touchscreen won't work for now.
+
+So disable the device.
+
+> +		 */
+> +		 //interrupts-extended = <&tlmm 51 IRQ_TYPE_LEVEL_LOW>;
+
+Odd indentation.
+
+
+...
+
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 7bca5fcd7d52..62d8a91dd707 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -2878,6 +2878,77 @@ mmss_noc: interconnect@1780000 {
+>  			#interconnect-cells = <2>;
+>  		};
+>  
+> +		ufs_mem_hc: ufshc@1d84000 {
+
+ufs@
+
+> +			compatible = "qcom,x1e80100-ufshc", "qcom,ufshc",
+
+Nope, pleasr test before.
+
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
+
+
 
 Best regards,
 Krzysztof
