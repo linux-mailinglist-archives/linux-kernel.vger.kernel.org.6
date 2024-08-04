@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-273900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9F0946F5E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:50:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83107946F62
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CD91C20CB8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38C83281716
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4231857323;
-	Sun,  4 Aug 2024 14:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9817A60B96;
+	Sun,  4 Aug 2024 14:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fES27Shz"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvTAlS8A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ABD381C7
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 14:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914FD51A;
+	Sun,  4 Aug 2024 14:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722782991; cv=none; b=XeDwmFryQ+fHJLu9GmBR8X6YDG+oUhwC+7v47F8bagMjAeZW5+Zq5e8Iz30cR/JfiP6HEX/0l88AV0vresBJDn/SSI8mruEjoEfecB/OMNayPak1IUfqPwnYKSn2HM1RBq/tsiNCSjU0tDlyYjNA3BeydcmJpZ1x6pwjTSdwQG8=
+	t=1722783153; cv=none; b=n/T887JZQSs5Yyoi42uQ/SyyBvaUNVS1VQRwkA/l3kFMAT4c8sZHyBDR/6A+5T5e+aDLu1MOmvLDlm0eYtnfb0mFblEYzBxlsTNL7KDcMjGCD+aJkO0xw03BIRD7Im/B/ckWtWAWOqR9ddWVb3Yt5XVLVWglolb1nPc/zaBVYcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722782991; c=relaxed/simple;
-	bh=AuZHhjCN5jCQg2kvs3f8QvzEyIHWanB3hCnP8dwX81Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WoBo5P8wu3UtdPs6V6/ue3UcfTjF2qAvAu9HFdJoodXDcItDIsqkQV6AqPwNuYVvDab5N8u9qUywIuM9NF6pYukQ1HijChTe5VOfwn6ndlG3MyFEUqM0ByOdmmEsBo5Uoic4CIYJ4haiIXYaOmawTPnYj5Klxaf5lnElBSXPit4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fES27Shz; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so8764231a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 07:49:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722782988; x=1723387788; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AuZHhjCN5jCQg2kvs3f8QvzEyIHWanB3hCnP8dwX81Y=;
-        b=fES27Shzwhm/IJ7TsL8lx/huSieCx2okPgFMeoNNKexpzUcmBHF4vdqMtNRsEG/Nmc
-         UJdkYUXvPq6BmfQ1ZHYJzTinz1eHKgh7SOpmKyyUmcwR2VdSEeouQwVV8EwT3HOh4sRl
-         nnC+vgQBdLXtt67oDXEfGWzxbL2TJgjWz/5Ynuf2tJGHoe8GknnAPdlOd4VYH6iRI/fQ
-         FrPpQk5+e7/T+allrPsUZYZwlg+5k7HRFXUpuDKSs0dldzSUJWxRtL4ANQe/+vDhgb6J
-         aWZHySkEemzlWH6FQ7ExaE9tVcQU/X3NbRb20qHRH06wsGC4KWCNrzOImF8J74cFCqtA
-         GiWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722782988; x=1723387788;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AuZHhjCN5jCQg2kvs3f8QvzEyIHWanB3hCnP8dwX81Y=;
-        b=Xdv4uWj0GNSdTsB78tNtOTENW97+ZUIEcDyV/QgawudUZzN6cGau/BgTZyM7aT+ZmJ
-         04rawMbRkRwOf+8683qwpXfE4km9ABBSK7rEWwK8CBsstWR7qBYuunnHBe5EksjZM+b2
-         6mtf4RyHz6QfcTcj7Lzg4GhGvkxV2OYcjMNlTB0qdrwzKBwHPgBSFefcOj/fWTZAZGeF
-         ViUkKaesUFjpyzExTXmJqA8ZxaVTvglWQb8vclL/A3eR/Urv20x2r/pcU0A1EgaV7rza
-         OjtPLhy1rnGjKwbDN4Lk5kEb/OYlaRdAxw4BsjXeBg9Dvzd/06kgE3faS3rRGg2tIyS5
-         Mxmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo8ZuXNL3ixZDhOPf2L86rdi4uTSXo6ViUpJeZwubsf6rgy03vY9qzoOQ1cd9xP9DRLnZyDdcZoYiDApyPvKbkJeMjDr+7H6UOKPdO
-X-Gm-Message-State: AOJu0Yz29B28qykdg07b2a7W+2bszb0t33dy0ZM4MubaINke6EsHfIf1
-	PoF2ACqHNdRWrg2ExJTqEMwADn2D2yxBdGh8QHwy9UvyTGmnJVszfmxiTNDOMwo=
-X-Google-Smtp-Source: AGHT+IHUS2Q/DAwa9nBlsAuDvEzxLcxVuIliG01F8tdRYqbu2WjNfjWXFKb/ECNz7uYxBkM7e3iwDg==
-X-Received: by 2002:a05:6402:60c:b0:595:71c7:39dd with SMTP id 4fb4d7f45d1cf-5b7f5dc1413mr6890631a12.34.1722782988248;
-        Sun, 04 Aug 2024 07:49:48 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b839b2b0f0sm3626118a12.28.2024.08.04.07.49.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Aug 2024 07:49:47 -0700 (PDT)
-Message-ID: <bf1faea5-bc1e-46df-bf68-c222570c09a2@linaro.org>
-Date: Sun, 4 Aug 2024 16:49:45 +0200
+	s=arc-20240116; t=1722783153; c=relaxed/simple;
+	bh=+CxXwu9gHav08Z39Ndm7bqrsS3hSpnAC7qU0Tm8Bwh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TVKqah5dnXHV/zEVmVxk8GQYnxD6YmGRJSGRmHZXpHOW60MWpUL/2XOIkGE4ODaKKyoiuUJVP67LEU/a+xvdtSqHxZaDBxl32t4uQhhcGLd+qSd9d9ADQk9k4fzK1dOO8PyUSvM+8Y9AhueT62Nu5tvUnRJVe5cCRCPIOL8AzYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvTAlS8A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE5DC32786;
+	Sun,  4 Aug 2024 14:52:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722783153;
+	bh=+CxXwu9gHav08Z39Ndm7bqrsS3hSpnAC7qU0Tm8Bwh0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KvTAlS8AGAIaGZ81aK3i29sZQDobgYVExxeR7C9H7YP7eRZU78mJw5HrJdyHAcn7k
+	 ZCx36t7Lgp6MLZafwPs/s4F97yT5cEZH0rlLl2rRj6XhZdma0z3Ixvbi7lwL120C5c
+	 DkPd9DfVQsqYR+ZDkcF+Wnd4L0VTLpkrGOEnDnCb7WWRiWoRRsj5QdRW54f58YoHZF
+	 Vs6neVYwxTWGUfbAcCriWVG9uChrf5aJqMSeQhJBzU6h8EHmUcOAQXzk3HkEBl2foQ
+	 sVIYS3ypNjJ1d5AvES4gALFwn1eEwiH8G8SsV/pSI0hyHxvtz3459hywy64hsmffRo
+	 n9iOW/SMWXceA==
+Date: Sun, 4 Aug 2024 17:52:27 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Si-Wei Liu <si-wei.liu@oracle.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH vhost 0/7] vdpa/mlx5: Parallelize device suspend/resume
+Message-ID: <20240804145227.GB22826@unreal>
+References: <20240802072039.267446-1-dtatulea@nvidia.com>
+ <20240802091307-mutt-send-email-mst@kernel.org>
+ <20240804084839.GA22826@unreal>
+ <20240804093909-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] pinctrl: pinctrl-zynqmp: Add Versal platform
- support
-To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
- Linus Walleij <linus.walleij@linaro.org>, Michal Simek
- <michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
- Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- saikrishna12468@gmail.com, git@amd.com
-References: <20240801120029.1807180-1-sai.krishna.potthuri@amd.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240801120029.1807180-1-sai.krishna.potthuri@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240804093909-mutt-send-email-mst@kernel.org>
 
-On 01/08/2024 14:00, Sai Krishna Potthuri wrote:
-> Update the binding and pinctrl-zynqmp driver to add Versal platform
-> support.
-> Add Get Attribute ID in the Xilinx firmware driver to get the pin
-> information from Xilinx Platform Management Firmware.
+On Sun, Aug 04, 2024 at 09:39:29AM -0400, Michael S. Tsirkin wrote:
+> On Sun, Aug 04, 2024 at 11:48:39AM +0300, Leon Romanovsky wrote:
+> > On Fri, Aug 02, 2024 at 09:14:28AM -0400, Michael S. Tsirkin wrote:
+> > > On Fri, Aug 02, 2024 at 10:20:17AM +0300, Dragos Tatulea wrote:
+> > > > This series parallelizes the mlx5_vdpa device suspend and resume
+> > > > operations through the firmware async API. The purpose is to reduce live
+> > > > migration downtime.
+> > > > 
+> > > > The series starts with changing the VQ suspend and resume commands
+> > > > to the async API. After that, the switch is made to issue multiple
+> > > > commands of the same type in parallel.
+> > > > 
+> > > > Finally, a bonus improvement is thrown in: keep the notifierd enabled
+> > > > during suspend but make it a NOP. Upon resume make sure that the link
+> > > > state is forwarded. This shaves around 30ms per device constant time.
+> > > > 
+> > > > For 1 vDPA device x 32 VQs (16 VQPs), on a large VM (256 GB RAM, 32 CPUs
+> > > > x 2 threads per core), the improvements are:
+> > > > 
+> > > > +-------------------+--------+--------+-----------+
+> > > > | operation         | Before | After  | Reduction |
+> > > > |-------------------+--------+--------+-----------|
+> > > > | mlx5_vdpa_suspend | 37 ms  | 2.5 ms |     14x   |
+> > > > | mlx5_vdpa_resume  | 16 ms  | 5 ms   |      3x   |
+> > > > +-------------------+--------+--------+-----------+
+> > > > 
+> > > > Note for the maintainers:
+> > > > The first patch contains changes for mlx5_core. This must be applied
+> > > > into the mlx5-vhost tree [0] first. Once this patch is applied on
+> > > > mlx5-vhost, the change has to be pulled from mlx5-vdpa into the vhost
+> > > > tree and only then the remaining patches can be applied.
+> > > 
+> > > Or maintainer just acks it and I apply directly.
+> > 
+> > We can do it, but there is a potential to create a conflict between your tree
+> > and netdev for whole cycle, which will be a bit annoying. Easiest way to avoid
+> > this is to have a shared branch, but in august everyone is on vacation, so it
+> > will be probably fine to apply such patch directly.
+> > 
+> > Thanks
+> 
+> We can let Linus do something, it's ok ;)
 
-Any particular reason why you are developing patches on some quite old
-kernel?
+Right and this is how it was for years - Linus dealt with the conflicts
+between RDMA and netdev, until he pushed us to have a shared branch :).
 
-Best regards,
-Krzysztof
+However, in this specific cycle and for this specific change, we probably won't
+get any conflicts between various trees.
 
+Thanks
+
+> 
+> > > 
+> > > Let me know when all this can happen.
+> > > 
+> > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/log/?h=mlx5-vhost
+> > > > 
+> > > > Dragos Tatulea (7):
+> > > >   net/mlx5: Support throttled commands from async API
+> > > >   vdpa/mlx5: Introduce error logging function
+> > > >   vdpa/mlx5: Use async API for vq query command
+> > > >   vdpa/mlx5: Use async API for vq modify commands
+> > > >   vdpa/mlx5: Parallelize device suspend
+> > > >   vdpa/mlx5: Parallelize device resume
+> > > >   vdpa/mlx5: Keep notifiers during suspend but ignore
+> > > > 
+> > > >  drivers/net/ethernet/mellanox/mlx5/core/cmd.c |  21 +-
+> > > >  drivers/vdpa/mlx5/core/mlx5_vdpa.h            |   7 +
+> > > >  drivers/vdpa/mlx5/net/mlx5_vnet.c             | 435 +++++++++++++-----
+> > > >  3 files changed, 333 insertions(+), 130 deletions(-)
+> > > > 
+> > > > -- 
+> > > > 2.45.2
+> > > 
+> > > 
+> 
 
