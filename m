@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A99B946D69
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:34:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33AF946D6B
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB9B1F215DE
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3881C1F214F8
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8011CD1F;
-	Sun,  4 Aug 2024 08:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5E61CD29;
+	Sun,  4 Aug 2024 08:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZK3AEC8p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXxEVfMK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C701CD29;
-	Sun,  4 Aug 2024 08:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F6B1B5A4;
+	Sun,  4 Aug 2024 08:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722760444; cv=none; b=Oft4wP3cABPbl/adsquTIa9OCRiEr973bGedPfC2tvA+TTrwRS0OgU4PuCwE8L7d1qCHWIr8fvzMdJ5wGnmDMa70e9PdAoxGAgjU+b8svHihLqcLF2u80DFg8utNDIvKS7izH0pPKseZNbhbt5LgXDH72gpF80Na8GIsbwqXbl8=
+	t=1722760486; cv=none; b=AzAzsSj+A7/Uh86LdHu+2BAQ8uoiTzDRNH9OOC04mJmq+W4mhYBhMzmLLuJkl1DfCqnxri+vFvsUsNMliNFHklN/CjSedx3gUiycQiBRxgsPBrPbmYRRTZfXHkoQUaN0bztoT+pnkTS4Z62/ZK/+4JAy+tdp6512NXVfgOcZWyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722760444; c=relaxed/simple;
-	bh=OMK/1AlyjBhsJbz0/YMwqYNLlUR2T3JfGFvZmUPddjE=;
+	s=arc-20240116; t=1722760486; c=relaxed/simple;
+	bh=KfS2EzghKVzY6FYRHqItJtKczN2LRbKcRc4md5zjYlI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W1c+9w3chzwbrBDKE2R3xCb4huYIEeMk2zwAgkfP8/9Mu73Oj9x0moY5Aapw5pArSSXokJxNFYI2HB/KWvbAo2XzrHRXtvgIdW95SXvo0AubBb6bLIT2Km4qlS/prV/pp8bE6nU6zlpiCoh4i6UpoOQ9c+Gm9pwyB6vmPVaILaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZK3AEC8p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B86C32786;
-	Sun,  4 Aug 2024 08:33:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ukqd0dgphEeurcUI+z3ohA2pMlXIz+40BD7wzS7BpT4jLzl0wqYsGc7cPlTC1J+WbCjdzNu91WBMDhfVKW6RNWJHZ0fomRxfd/nuMldhVOt+cRHvn1l3AWk/WXKpxmWoDI/Yk/nl++qO9ss1W7lpiJWhU1vFF34yPU/L8zoesrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXxEVfMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77E2EC32786;
+	Sun,  4 Aug 2024 08:34:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722760443;
-	bh=OMK/1AlyjBhsJbz0/YMwqYNLlUR2T3JfGFvZmUPddjE=;
+	s=k20201202; t=1722760485;
+	bh=KfS2EzghKVzY6FYRHqItJtKczN2LRbKcRc4md5zjYlI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZK3AEC8pjgllzcUU6P8HveTEq2HVeVY+u+Zy34LRf30i2IYPYhfmYAJSZfD6VED6s
-	 Spj7RBce8HXZOwFBSCb0NNy7wiWCxMVG8BEpd42iZO/n6KiVWiLg2/W5p9U1mKefQu
-	 Vh4Tjj0n6m5eXSFKvvsWkyhelmU08myJqAsUc+96aDUYmig5SrESkg4BhgBYXoF0FT
-	 CI+fZitn/Onv++HDJLThZnUbiXwCXRrWi3ayZQCmuQY834DvmKw6/kox8KQrEKn8fW
-	 Dmt58jCMB8rZQwUuLfX/SJzrjOn1d+lObplrao83oZqxroMStHn8QTUUSY+eg5iaxH
-	 jeJEzwvAnU9sQ==
-Message-ID: <80fd755e-071e-44d3-a3b9-6ca16e97a447@kernel.org>
-Date: Sun, 4 Aug 2024 10:33:57 +0200
+	b=GXxEVfMKbA9fxiSn22GPOgRbl6hTu28FUL7PjFCmmsPrNQUpmWFQKTiIk7NVRXo0r
+	 jwQv47lsUrldk/auQMdf0bMHaw+x5P3ave4e/XFhWjsrLwUQpkdFc2l2ScouS9qeWN
+	 N6rUKDTSBeniCojemD4bsxGDbzJ0CmALqFsCtOSVBIklrqi3pDgD7fkpwCCqJABo/o
+	 G5H5anb6RixUcnal0fpZqXCAihPmhLanLVnOj7qyNr8WuvRr/i43rHjP5DIQz2gpQ2
+	 2sTFmMHQ39JpKDtYIw8ZhD1OWJ3yyUqFsnICLQv4IU8UWT6rr2hTf18smqhmhMjOdF
+	 oWY6qTGpi4lkg==
+Message-ID: <5a180c6b-aed6-4060-94c5-bdbd9ce06934@kernel.org>
+Date: Sun, 4 Aug 2024 10:34:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] arm64: dts: imx93: add lpi2c1 and child node
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240801160915.2505610-1-Frank.Li@nxp.com>
- <944715e8-e91e-46dd-a053-7e00a17dea72@kernel.org>
- <Zqztwh3yghN8Drnj@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v3] dt-bindings: edac: Add Altera SOCFPGA SDRAM EDAC
+ binding
+To: Alessandro Zanni <alessandro.zanni87@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ skhan@linuxfoundation.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240801161005.120111-1-alessandro.zanni87@gmail.com>
+ <20d128b3-ad81-4338-bd59-a039ddcbbadf@kernel.org>
+ <CABq9Dx4LDdHaknB6XgMvtT41tWtDx7YGnFCi6geSS-0J1UxrzQ@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,25 +103,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <Zqztwh3yghN8Drnj@lizhi-Precision-Tower-5810>
+In-Reply-To: <CABq9Dx4LDdHaknB6XgMvtT41tWtDx7YGnFCi6geSS-0J1UxrzQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2024 16:31, Frank Li wrote:
-> On Fri, Aug 02, 2024 at 09:25:54AM +0200, Krzysztof Kozlowski wrote:
->> On 01/08/2024 18:09, Frank Li wrote:
->>> From: Clark Wang <xiaoning.wang@nxp.com>
->>>
->>> Add lpi2c1 and child node for imx93-11x11-evk board.
->>
->> Why? What for? What are these? We see all this from the diff, so commit
->> msg should explain why and what do you want to achieve.
+On 02/08/2024 16:32, Alessandro Zanni wrote:
+> Thank you for the review.
 > 
-> I really don't know how to explain why/what for these straing forward
-> thing, hardware board has such component, just add it dts file.
+> This patch aims to be a conversion from txt file
+> "bindings/arm/altera/socfpga-sdram-edac.txt" to this
+> "bindings/edac/altr,sdram-edac.yaml" file.
+> That's why I also deleted the txt file in the patch.
+> 
+> Maybe I should have put a different title to make it clearer.
+> 
+> This is the original example in the txt file:
+> sdramedac {
+>     compatible = "altr,sdram-edac";
+>     altr,sdr-syscon = <&sdr>;
+>     interrupts = <0 39 4>;
+> 
+> and this is my conversion:
+>> +  - |
+>> +    memory-controller {
+>> +      compatible = "altr,sdram-edac";
+>> +      altr,sdr-syscon = <&sdr>;
+>> +      interrupts = <0 39 4>;
+> 
+> Sorry for that but, to me, it's not clear what I should convert in
+> this example to complete the yaml file.
+> 
 
-You can explain what you are adding in terms of hardware. "child node"
-is really useless description.
+Don't top-post. I have no clue what you are referring to.
 
 Best regards,
 Krzysztof
