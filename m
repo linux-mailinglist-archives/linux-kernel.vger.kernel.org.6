@@ -1,109 +1,97 @@
-Return-Path: <linux-kernel+bounces-273707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B37C946CB7
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBCC946CBC
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDE141C214BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:27:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5711B2817AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79F31173F;
-	Sun,  4 Aug 2024 06:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AUB4Fw2Q"
-Received: from msa.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7B51078B;
+	Sun,  4 Aug 2024 06:32:31 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB12B17999;
-	Sun,  4 Aug 2024 06:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E10E17C64;
+	Sun,  4 Aug 2024 06:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722752841; cv=none; b=UvFDvX8ITvxPquhCEaHEKRG36GC0eBj38Z6Mey+497iE/xbCVE2mk/FPoNl7pqvbLT5H+4y8eXBMJg9iI33FctkyNmulC2bIqP4/ImVaAmX4aFhWl8gRW4WQsDjEc/H4pDNpHErq6E+Xu13E6X8IBhety4usRnqaGi6SWox0d+A=
+	t=1722753151; cv=none; b=SGQaapl/8Zii0lWKNbt5aSbsQR8OS4zgQFEkp+Fzqos0mwBuOhGDm0um4jqEW2q9blkoltt+fCwG6XI6xJDsDaKIb3XbhtpBEzRsxBF88JPheIEWUFhZ+S4D4j1uhdKHa3Psx9uwdangDcIH7POxa9uHlqr3Tr/lPpQYCnx4U30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722752841; c=relaxed/simple;
-	bh=lhndWAeFHr6FlmVuGr0sHq7jlCpyqORUtsItvsC44ts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CuRlqjgXb+39stNGu8XnWj3SwxPsk42bfnvrB8rdyl72Z53CLk8FlWvjmXhJf8ipEiFGL9l1q+GhsthTlfvGKEiqqKz/6JjaYDCMbVpbsbPgA2PWnqSrJhz21gVk/ZPmN7N4R3lAZPQkkfQEo9jpn4xaCIvbxAp0q++YH0dGPe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AUB4Fw2Q; arc=none smtp.client-ip=80.12.242.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id aUi4szd3e95X4aUi4sqB7f; Sun, 04 Aug 2024 08:27:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722752837;
-	bh=8X9F99mm4QYNIwKVcFQ2SYZwZgY/uQ0zZxFeYsHM8Sc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=AUB4Fw2QEDgEJT7xUvaaoBKaLQVSpWdHt69uOZFyI+G56TcYraHSoIi60t74XUmWZ
-	 ha0OIm4aplGvzOAlMtMW280QcyKfM8bUcLK65dgQzfrtKpUeXTupRvP7fJrq9gxjfa
-	 xaAbSzyFTDhvTV19v1oWv/yLsbU83oDwP3i0FE4wVOUkKc2iZcVtMNQwNAmhdNf1X9
-	 lzC0rbEXz134298XZBibcQ/SZiSjpBsSeXrUAmrK5hgmLx3aahfQPzZUUIbCdVX7uk
-	 R349TFhMHjn6U6kdbOtYTQzriFVyfkNylVMP8gdCta1Nk/7AsVD5L6YQz70yR3pu+k
-	 zSoM7oxhA42lg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 04 Aug 2024 08:27:17 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <68d63e24-ccd7-48ad-af38-0c9e2202a8f9@wanadoo.fr>
-Date: Sun, 4 Aug 2024 08:27:15 +0200
+	s=arc-20240116; t=1722753151; c=relaxed/simple;
+	bh=apnte0YLRp9ITKzQNsbkX3OBwSADjQ8BSHYEeJJVcY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NRuwcTDKLehoAK1jsnk3d+4RvLOAqs36IdbxGWw6p1FwyN1TqDNoiBvF0rr8UxAgiDmymkwvZjHBpDT7DetEiTrpdgd1N1xqTDYwifFHoFxp35BVIqoP7XZXEwzlRS2fN0cCc1rnAlutru6Ixl80drzuh7nfonSpPwODMToweFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 3C539100B04C5;
+	Sun,  4 Aug 2024 08:32:18 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 138A839041D; Sun,  4 Aug 2024 08:32:18 +0200 (CEST)
+Date: Sun, 4 Aug 2024 08:32:18 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Alistair Francis <alistair23@gmail.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, alex.williamson@redhat.com,
+	christian.koenig@amd.com, kch@nvidia.com,
+	gregkh@linuxfoundation.org, logang@deltatee.com,
+	linux-kernel@vger.kernel.org, chaitanyak@nvidia.com,
+	rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH v14 3/4] PCI/DOE: Expose the DOE features via sysfs
+Message-ID: <Zq8gciQnRjDZwSTK@wunner.de>
+References: <20240710023310.480713-1-alistair.francis@wdc.com>
+ <20240710023310.480713-3-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: b43: Constify struct lpphy_tx_gain_table_entry
-To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org
-References: <38528f48c8069187823b774a6b2a53088f6c9599.1721161231.git.christophe.jaillet@wanadoo.fr>
- <20240717195743.31bdb01d@barney>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240717195743.31bdb01d@barney>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710023310.480713-3-alistair.francis@wdc.com>
 
-Le 17/07/2024 à 19:57, Michael Büsch a écrit :
-> On Tue, 16 Jul 2024 22:21:13 +0200
-> Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-> 
->>   static void lpphy_rev0_1_write_gain_table(struct b43_wldev *dev, int offset,
->> -				struct lpphy_tx_gain_table_entry data)
->> +				const struct lpphy_tx_gain_table_entry data)
->>   {
->>   	u32 tmp;
->>   
->> @@ -2356,7 +2356,7 @@ static void lpphy_rev0_1_write_gain_table(struct b43_wldev *dev, int offset,
->>   }
->>   
->>   static void lpphy_rev2plus_write_gain_table(struct b43_wldev *dev, int offset,
->> -				struct lpphy_tx_gain_table_entry data)
->> +				const struct lpphy_tx_gain_table_entry data)
->>   {
->>   	u32 tmp;
->>   
->> @@ -2383,7 +2383,7 @@ static void lpphy_rev2plus_write_gain_table(struct b43_wldev *dev, int offset,
->>   }
->>   
->>   void lpphy_write_gain_table(struct b43_wldev *dev, int offset,
->> -			    struct lpphy_tx_gain_table_entry data)
->> +			    const struct lpphy_tx_gain_table_entry data)
->>   {
->>   	if (dev->phy.rev >= 2)
->>   		lpphy_rev2plus_write_gain_table(dev, offset, data);
->> @@ -2392,7 +2392,7 @@ void lpphy_write_gain_table(struct b43_wldev *dev, int offset,
->>   }
-> 
-> These three changes look like they are not necessary.
-> 
+On Wed, Jul 10, 2024 at 12:33:09PM +1000, Alistair Francis wrote:
+> v14:
+>  - Revert back to v12 with extra pci_remove_resource_files() call
+> v13:
+>  - Drop pci_doe_sysfs_init() and use pci_doe_sysfs_group
+>      - As discussed in https://lore.kernel.org/all/20231019165829.GA1381099@bhelgaas/
+>        we can just modify pci_doe_sysfs_group at the DOE init and let
+>        device_add() handle the sysfs attributes.
+> v12:
+>  - Drop pci_doe_features_sysfs_attr_visible()
+> v11:
+>  - Gracefully handle multiple entried of same feature
+>  - Minor fixes and code cleanups
 
-Correct. I'll send a v2.
+Hm, it looks like the review comments I left for v11 were never addressed :(
 
-CJ
+https://lore.kernel.org/all/ZmxvnLDBhkWPrXGK@wunner.de/
+https://lore.kernel.org/all/Zm2RmWnSWEEX8WtV@wunner.de/
+
+In particular, pci_{create,remove}_resource_files() is not the right place
+to dynamically add attributes.  Move the calls of pci_doe_sysfs_init()
+and pci_doe_sysfs_teardown() to pci_device_add() and pci_destroy_dev(),
+respectively.  This is also what I'm doing for dynamic CMA attributes
+and what Mariusz is doing for LEDs added on enumeration:
+
+https://lore.kernel.org/all/77f549685f994981c010aebb1e9057aa3555b18a.1719771133.git.lukas@wunner.de/
+(search for pci_cma_publish)
+
+https://lore.kernel.org/all/20240711083009.5580-3-mariusz.tkaczyk@linux.intel.com/
+(search for pci_npem_create and pci_npem_remove)
+
+Thanks,
+
+Lukas
 
