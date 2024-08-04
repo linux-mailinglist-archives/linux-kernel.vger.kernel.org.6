@@ -1,129 +1,94 @@
-Return-Path: <linux-kernel+bounces-273767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E442946DCD
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:05:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2698946DD0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9DF1C20C92
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:05:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 234E5B20BA2
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6A5210E7;
-	Sun,  4 Aug 2024 09:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C6922081;
+	Sun,  4 Aug 2024 09:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dECVOp7m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bA25U3Kg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FAC1BC44;
-	Sun,  4 Aug 2024 09:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3640D1F94A;
+	Sun,  4 Aug 2024 09:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722762306; cv=none; b=qd5xm/heSHegLPE8kFpCI1OiXZh2VN9cra6EjaT5WEI2vph3zFgXyFtfAIBeUCLj0oWZNdiB58xka/DGsd97FPLBMiU40mX/4j/K1BInUavyELs2oxB+hOZRb0JC6pyemY9aMbyrNZCUY3kppZv1ZMx66wWV9bBQ/6MdXtHlYa8=
+	t=1722762570; cv=none; b=F55oAkjY4qerqMX8yXHZDAj1c2Vz9+azoVFNuX5QLCY2xGDgQM9gQRWVWtxtrK6ACTn5MFjkalWE7uayv/XCwxe4D1yYL67hGgFtKHjcWr3dAa+ZzOInq7rWnt6KLpOKSeHigZNfDkj2n7QSFf5nMvN5wNAjGTLBYoHJO+itFdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722762306; c=relaxed/simple;
-	bh=evd2jHIsrMeCaLxMxBb98/GJ50/0XM8TgDQzHU8Dj+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e7RALKPL+Al5YtylNVljblRESsH9yjkHw7OAZWeCvmhfbhln/Ht16u86R1iCJ10DHTQXvqkEUabTEq201P2cRgujyL7ncUq3sXiEOJETTwsm5h0PdvHWfqch6A+dw5tIYEEzQgWlgySNxLjRIjI3CLUNOcUfDSqhQTjNgYTaiDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dECVOp7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D4DC32786;
-	Sun,  4 Aug 2024 09:04:59 +0000 (UTC)
+	s=arc-20240116; t=1722762570; c=relaxed/simple;
+	bh=5K0JqgWBSyP508UKS4b4thXnYjHaE4ytgB/mhkj33qA=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=t4G/ESL5Se928dd2725CX4gqRlDNWszaL4attWeHRE/9VMcStiXzHfTTzrgFY8YzCANA/C3myGRmwjR9a2DyHpRqSRtJes8CMLFR9tMpee13XiR8tT+TInKywqAj+rI4quN9eCN3WKVIXpHmlklMaL1/bAiLe0aAP4YhZQgqsTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bA25U3Kg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E8D6C32786;
+	Sun,  4 Aug 2024 09:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722762305;
-	bh=evd2jHIsrMeCaLxMxBb98/GJ50/0XM8TgDQzHU8Dj+w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dECVOp7mApjFdeFSW9ZX429hcSCFebbXRm/z8TOceerIVQ7gbkAn/jwW6a/swnO0e
-	 k8GZ0JoJagPdRYzy9QPLNTRYj4F2/r3di2JU+1ARKSVFhv7f3in4F3DWNXAfpgXhyp
-	 GlSS654AiSBYiVfkV5G/9DFGQJJAkRTy2IydEs1N18AMVoUT/Meh/5hVkYeAQY1/dc
-	 Y4bSS8j4veiBPtPkhPVS6ic9YnY41z2Sx2YQ4tgR0+0pQCsO4wYY1jUThjXq9e1kq6
-	 g2jJeMLyw9xBTdjZOwPIr1uaXwBPXOzV5AR4FobSp02Zcec6pB+DPVGyewm5WmAP4/
-	 U1MuT1zYGm3Vg==
-Message-ID: <79f920f2-c263-4c31-81cf-fadade3ff779@kernel.org>
-Date: Sun, 4 Aug 2024 11:04:57 +0200
+	s=k20201202; t=1722762569;
+	bh=5K0JqgWBSyP508UKS4b4thXnYjHaE4ytgB/mhkj33qA=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=bA25U3Kg1wZu0KQtOHvHJlRTmPvBJFAeUHV955id7fUixv0KvP6MSuPQa7KEUU44Z
+	 05Hf2a9D9b3Wwm3ioF5B616l/do8gpq7pQ73VACO08nCu0aFzZqTa6cT4cJGFdiTN8
+	 rpPcAlO7qNjJ00dF6ykvaMAyJfMUDD1S5jjMda55g7roKVpZYjBc77UO2CVZ4JAgRl
+	 mZ1MGmiMen9XYXQn+gpktdg6tet0mY/GV/NG8oInPIdV6xhEYvxvAQBM6HIIW+S7cC
+	 g7sTn+mvSADaUjC3WYT/pfz2oPrcA41V1Tl2F6h+dSzq7xnuS1wZ4ful/8NGuni2OG
+	 jlYeSqlNAB35g==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/9] dt-bindings: clock: xilinx: describe whether
- dynamic reconfig is enabled
-To: Harry Austen <hpausten@protonmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240803105702.9621-1-hpausten@protonmail.com>
- <20240803105702.9621-9-hpausten@protonmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240803105702.9621-9-hpausten@protonmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+Subject: Re: [v2] wifi: brcmfmac: fwsignal: Use struct_size() to simplify
+ brcmf_fws_rxreorder()
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: 
+ <f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr>
+References: 
+ <f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+ brcm80211-dev-list.pdl@broadcom.com
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172276256603.2804131.6125500029059282435.kvalo@kernel.org>
+Date: Sun,  4 Aug 2024 09:09:27 +0000 (UTC)
 
-On 03/08/2024 12:58, Harry Austen wrote:
-> Xilinx clocking wizard IP core's dynamic reconfiguration support is
-> optionally enabled at build time. Add a devicetree boolean property to
-> describe whether the hardware supports this feature or not.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+
+> In the "struct brcmf_ampdu_rx_reorder", change the 'pktslots' field into
+> flexible array.
 > 
-> Signed-off-by: Harry Austen <hpausten@protonmail.com>
-> ---
-> v1 -> v2: Use "flag" instead of boolean type
+> It saves the size of a pointer when the memory is allocated and avoids
+> an indirection when the array is used.
+> It also removes the usage of a pointer arithmetic and saves a few lines of
+> code.
+> 
+> Finally, struct_size() can be used. It is not a must have here, because
+> it is easy to see that buf_size can not overflow, but still, it is a good
+> practice.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Patch applied to wireless-next.git, thanks.
 
-Best regards,
-Krzysztof
+16b31ecb8029 wifi: brcmfmac: fwsignal: Use struct_size() to simplify brcmf_fws_rxreorder()
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/f4ca6b887ca1290c71e76247218adea4d1c42442.1721547559.git.christophe.jaillet@wanadoo.fr/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
 
