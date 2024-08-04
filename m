@@ -1,144 +1,234 @@
-Return-Path: <linux-kernel+bounces-274007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560209470B9
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:36:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44039470BC
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5117EB20C67
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB37280D26
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893D3139590;
-	Sun,  4 Aug 2024 21:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E03213AD11;
+	Sun,  4 Aug 2024 21:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U2WFCUrO"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tlQC1WsQ"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460AE1D530
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 21:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7594C13AA32
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 21:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722807400; cv=none; b=khR9rnsrpjaaNB6FLsGZx3QLJbxy7IU9Fx6NaMqlUlwZqTxXzhFrg/lgGUZCREWL8SFcM9VdY7UBNW0d/dZkNB2vYW9BXs5oEZF1Q72ORh5rLQGmDG4VOUDZGSbeAmCJDGn9tkBNXVxJGMVcZHmTbvcrgGURlz077wCFhl9Dzv0=
+	t=1722807406; cv=none; b=Vg6Hgzmzihf+RVzN6WczOrqy0AhVnQ/tHZfo37hsCdQIeeUIIgO9OtkCJYXkS6g600JJu34cS2LLYDPMQQKrtJ7Vl0zTY6SOyrIA6eFz5kkbcXsvqYyjf23cDnNnzZ1W/uKevlipPe3WdWWO7MogXnvObTy/kTCHYlilOVGFhJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722807400; c=relaxed/simple;
-	bh=ZPEVfY3/nEAfvW+8VXAP7RTU+XtAjUToYEsl0tMMP4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jHVS6fH+UNdr+vB1VWmiX7kwD79X5oBmnR/0ParyXPZP2YSapFABaugKa4yT0Qzxj6sZtFvcP5ez4AFuyJZsCcmfrZ6IVPlhynzCvRVYCARVtl/zlN4uxGgP5CR96AHfBnX6Z5XjF7lqIEGLlJ5u9Bj3qOV2x9kmGzX2YpTFRAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U2WFCUrO; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44fdc70e695so1873431cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 14:36:39 -0700 (PDT)
+	s=arc-20240116; t=1722807406; c=relaxed/simple;
+	bh=ArgHiXK+E10POIqt7X2mD9Ws4E8BiW9hK/xbYUqpl2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SQ/mIRClT6i4scTe3rmyda5gbP1Y9qTyo/Q8T6vGtlc3AjKLW94o1hNPH+zWeuTpIAT+34Usz32atp3h3IEueK5Y+Tze58lp1E3F+bz84U7znOlNLgZtfPaGwBfLJD/n0yGrWjE7rUbi86iQrNcNkjMtsrRVnlpr8rbdjI/gwuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tlQC1WsQ; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef298ff716so17478621fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 14:36:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722807398; x=1723412198; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pm0EQe6cqyEwEGwUeusTWSiaU01FEzLSnQnEeovsSh4=;
-        b=U2WFCUrOvgQ0a2aZTQU4VjqZ4GLz51a7/e+7gk9X5NQeQzpamYWwe3NVz3EWWsqBy4
-         F6snc3yiTTi2rhYl4j/F54g47Va+f6WW5fPbiyzu2xNNJi3bSoyNdDfd/WwQJ3Po5lzV
-         z0H0veXFjjUlHfyi3ntneSLPSK/ZHdAS2ynLiZ21cnm9wp03FcEDIW7BSaBtSPDDIX2d
-         TRbdOJxsgAAfghxrH0PFowF7R0jvPPCdJlPIjkF6pCW6tOjbFL9QLDUB2OuPLQ1uxazI
-         4JlPeWCq4yoLmGJhQ6O43uD2fbwNzQX88uN5AV1Uxcj4KxSd45S+sAmGAopkrrZIlMPg
-         UCew==
+        d=linaro.org; s=google; t=1722807402; x=1723412202; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yKLD6KyDoX7AgkcyauFphlHOiGQnDdyHF9px21RJdGI=;
+        b=tlQC1WsQRXBFLTAw37JbceIpck/LR74crdFW9gqc4FHR3B5TMf3fgOEGJCOdqr5pDR
+         OTNpXN/D9RkLHMgom/ROvQSfAgKV2e32HaOS+vUw7OHmPmR3rsECoijw68foXp0mwNPF
+         AaS9b92XRgGx1L7oxA9sXnPKYYqHNK7S+KwROaJ0YsOORRGx+Q9OiM1eDse6kbhJHESp
+         W/sWzz2kLifLQ94yOkUG+xFj+Myw4dYvqmRr81PAp4gAL2fgkW/NNEh7LrD1aJLsgcIi
+         kK9r9n25xd+Vb7hYGZcvBKvjfdxnf1c7R/n3/tPFHKL1Aq8LzaEy2Jc2mJym6tdictXj
+         AdxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722807398; x=1723412198;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pm0EQe6cqyEwEGwUeusTWSiaU01FEzLSnQnEeovsSh4=;
-        b=K82+7IHMwu/hQIztd/HVADc7hb4bO6ZWTx6W/+DFhmiUtBRXiKhfh1uVHTZ2zTYZLf
-         dHf+GQdzhs4gQl3zmBIbdxGK6UQk59a8HkdEZFtfSLpMNbQ9vR2hZtzk6Om9fL+KH/+I
-         EWFQvVS4Ly/jpSTsPAFtZZHvcD6o/avEBSU3Q4YRejX8ZNHQp3uIClQyX1eeMp+0s47h
-         XNsksNDYbUgSZ9n3+lcElNPU9HmVg2AdGPPUPP/eDp96W1k3ZO3/DTo4Yf/ljcMIenlb
-         20P+5nGvd4JaIogtkC32JT+72AG5phbLHLSacunuYTgrC/y6BFvi5JzDaAVBqea+s/GL
-         Dqgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWziYGr/lJSzZKBDGKgJQzINPpDN5OvjMdYtwRElziNgZtmeuif1R7+lRhx/PsBRlrGwMzQZ+d08mVU8SpK4iIQC03EZ0MXMqCM5Y62
-X-Gm-Message-State: AOJu0YypJ2fQ477d2kk+BIgkFxpInPKPF3rbw7JRk5SHKS1BKp3egnEo
-	X4iGkHYPuSFFSGSW4AfcD1F2B5DXuLKEoIesMMfdv13qYr4udpli/wlsEnW+FQ==
-X-Google-Smtp-Source: AGHT+IHF4cYuR9nH/fmhJovpmdm1W3c1Oo8PRMo0vGC1+crL4As5vBcywNlgSK3EOIFJcthYcEefQQ==
-X-Received: by 2002:a05:622a:198a:b0:444:ccc5:f4c0 with SMTP id d75a77b69052e-4519b45531emr2747161cf.15.1722807397872;
-        Sun, 04 Aug 2024 14:36:37 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2e28:6:3617:5ec9:bfc:ae3f])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a4b04asm1430115173.154.2024.08.04.14.36.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 14:36:37 -0700 (PDT)
-Date: Sun, 4 Aug 2024 15:36:31 -0600
-From: Yu Zhao <yuzhao@google.com>
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <21cnbao@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable v1 5/5] mm/swap: remove boilerplate
-Message-ID: <Zq_0X04WsqgUnz30@google.com>
-References: <20240711021317.596178-1-yuzhao@google.com>
- <20240711021317.596178-6-yuzhao@google.com>
- <714e77d3-f629-bc06-4808-f7f33ac6872d@google.com>
+        d=1e100.net; s=20230601; t=1722807402; x=1723412202;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yKLD6KyDoX7AgkcyauFphlHOiGQnDdyHF9px21RJdGI=;
+        b=uFlZXjBDT2VWhbwdj90oDs5AAF/db3F9/+BNhaV4apSGkXOqUXnUuyrclJknRdijVD
+         GaePsMhKkeK2CjCTz2hBKO7RyOiGnRb5A3V1vJMgYowYqoRbHbCQtMhkFRisLzZ1pHND
+         9fc3Kpyi+N3A0FGfPRgz+oCovP2hSY/Yef0cQhH/RmtdlLL45TZq+k4ZNSPHVWy2a0OO
+         wkdnIxAkFaG64SWyHTeumicYW8gJkjVUliFGhhgFYq/BuzCVYwMuI6yFLhmL9COk80ZN
+         Hf8Rr7eVjaOM/naIbUcVhIZMpiitUzTvTdcX4YqUwnHnB6EiI43sPo/JGXA7LNwO5H+a
+         AZvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwHF24W4r+l1OQ6t/sTMwuO6VwqgP0S4t2mAucHvelcelYChXoybG52G/4YbvJR0xUXQRcuPh67jrtf66oQzFh/Y0vBQI+LvR/aVGv
+X-Gm-Message-State: AOJu0YwRcw+8PCnYWuPSlqVka2AR9g0pM9od+hhD3TXQsSMjmmtOSOGz
+	wLtGEK2aECv1q/0QRHSsGDJhPjpYgxmUfXXzNEqjL5xjYFrOFQ9SAu/R7Qi8u5w=
+X-Google-Smtp-Source: AGHT+IH3Xf8iTeDmtSywe5AbtllbBB/BSeWPubvJKtyp6gMX8wyOzyR+3a5QWmj6YCB+JA//50zF7A==
+X-Received: by 2002:a05:651c:b0e:b0:2f1:5c54:7539 with SMTP id 38308e7fff4ca-2f15c54780bmr39187361fa.9.1722807402320;
+        Sun, 04 Aug 2024 14:36:42 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e2507c8sm8896641fa.95.2024.08.04.14.36.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 14:36:41 -0700 (PDT)
+Message-ID: <1d63d916-72e3-4a89-9fad-8baef584f9d5@linaro.org>
+Date: Mon, 5 Aug 2024 00:36:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <714e77d3-f629-bc06-4808-f7f33ac6872d@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: sc8280xp-x13s: Enable RGB sensor
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240802-b4-linux-next-24-07-31-camss-sc8280xp-lenovo-rgb-v2-v2-1-a80a301dba16@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20240802-b4-linux-next-24-07-31-camss-sc8280xp-lenovo-rgb-v2-v2-1-a80a301dba16@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Aug 03, 2024 at 11:55:51PM -0700, Hugh Dickins wrote:
-> On Wed, 10 Jul 2024, Yu Zhao wrote:
-> 
-> > Remove boilerplate by using a macro to choose the corresponding lock
-> > and handler for each folio_batch in cpu_fbatches.
-> > 
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> 
-> Andrew, please revert this "remove boilerplate" patch (and of course its
-> followup fix) from mm-unstable. From the title I presume it was intended
-> to make no functional change, but that's far from so.
-> 
-> Under tmpfs swapping load, on different runs I see various badnesses:
-> "Bad page" in __free_one_page(), Oops in __run_timer_base(),
-> WARNING at kernel/workqueue.c:790 in set_work_data(), PageBuddy BUG
-> at page-flags.h:1009 from __del_page_from_freelist(), something (I'd
-> given up taking better notes by this time) in __queue_work(), others.
-> 
-> All those were including the fix to Barry's report: without that fix,
-> the boot is drowned in warnings scrolling past too fast to be read.
-> 
-> (All the above were on the HP workstation, swapping to SSD; whereas on
-> this ThinkPad, swapping to NVMe, no problem seen at all - I mention the
-> swapping medium, but have no idea whether that's a relevant difference.
-> In each case, MGLRU compiled in but not enabled. THPs and 64kTHPs active.)
-> 
-> Sorry, but I've put no effort whatsoever into debugging this: "remove
-> boilerplate" didn't seem worth the effort, and my personal preference
-> is for readable boilerplate over hiding in a macro.  If you prefer the
-> macro, I expect Yu can soon come up with a fix (which I could test here):
-> but for now please revert "remove boilerplate", since its issues get in
-> the way of further mm testing.
+Hi Bryan.
 
-Sorry for getting in your way, Hugh.
+On 8/2/24 14:05, Bryan O'Donoghue wrote:
+> Enable the main RGB sensor on the Lenovo x13s a five megapixel 2 lane DPHY
+> MIPI sensor connected to cisphy0.
+> 
+> With the pm8008 patches recently applied to the x13s dtsi we can now also
+> enable the RGB sensor. Once done we have all upstream support necessary for
+> the RGB sensor on x13s.
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+> The Lenovo x13s has a five megapixel ov5675 sensor as well as a one
+> megpixel ov9734 B+W NOIR sensor for low-light face detection login.
+> 
+> This patch enables the RGB sensor.
+> 
+> A gpio exists in the upstream dts to indicate camera activity which
+> currently we don't tie to CAMSS activity yet.
+> 
+> Running
+> 
+> - A Linux distro which ships libcamera > 0.3.0
+> - Firefox nightly
+> - Setting Firefox about:config:media.webrtc.capture.allow-pipewire = true
+> 
+> It should then be possible to use the on-board MIPI camera for Zoom,
+> Hangouts etc.
+> 
+> Changes in v2:
+> - Drops useless assigned-clocks entry
+> - Link to v1: https://lore.kernel.org/r/20240801-b4-linux-next-24-07-31-camss-sc8280xp-lenovo-rgb-v2-v1-1-30622c6a0c48@linaro.org
+> ---
+>   .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     | 72 ++++++++++++++++++++++
+>   1 file changed, 72 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> index a7c5a3f5926c7..2bdfff2a16cad 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+> @@ -592,6 +592,62 @@ vreg_l10d: ldo10 {
+>   	};
+>   };
+>   
+> +&camcc {
+> +	status = "okay";
+> +};
 
-Apparently I didn't expect local_lock_t to be zero length, i.e., when
-CONFIG_DEBUG_LOCK_ALLOC is not set. So that might explain why you only
-had problems with one of the two machines, where it failed to disable
-IRQ when rotating clean pages after writeback.
+This is not needed, it's not disabled, please remove.
 
-The following should fix it, in case you want to verify the above:
+> +
+> +&camss {
+> +	vdda-phy-supply = <&vreg_l6d>;
+> +	vdda-pll-supply = <&vreg_l4d>;
+> +
+> +	status = "okay";
+> +
+> +	ports {
+> +		/* The port index denotes CSIPHY id i.e. csiphy0 */
 
-diff --git a/mm/swap.c b/mm/swap.c
-index 4bc08352ad87..67a246772811 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -254,7 +254,7 @@ static void __folio_batch_add_and_move(struct folio_batch __percpu *fbatch,
- 		folio,										\
- 		op,										\
- 		on_lru,										\
--		offsetof(struct cpu_fbatches, op) > offsetof(struct cpu_fbatches, lock_irq)	\
-+		offsetof(struct cpu_fbatches, op) >= offsetof(struct cpu_fbatches, lock_irq)	\
- 	)
- 
- static void lru_move_tail(struct lruvec *lruvec, struct folio *folio)
+I believe a better place for such a comment would be at sc8280xp.dtsi
+
+> +		port@0 {
+> +			csiphy0_lanes01_ep: endpoint@0 {
+> +				reg = <0>;
+> +				clock-lanes = <7>;
+> +				data-lanes = <0 1>;
+> +				remote-endpoint = <&ov5675_ep>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&cci2 {
+> +	status = "okay";
+> +};
+> +
+> +&cci2_i2c1 {
+> +	camera@10 {
+> +		compatible = "ovti,ov5675";
+> +		reg = <0x10>;
+> +
+> +		reset-gpios = <&tlmm 15 GPIO_ACTIVE_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&cam_rgb_default>;
+> +
+> +		clocks = <&camcc CAMCC_MCLK3_CLK>;
+> +
+> +		orientation = <0>;	/* Front facing */
+> +
+> +		avdd-supply = <&vreg_l6q>;
+> +		dvdd-supply = <&vreg_l2q>;
+> +		dovdd-supply = <&vreg_l7q>;
+> +
+> +		port {
+> +			ov5675_ep: endpoint {
+> +				clock-lanes = <0>;
+> +				data-lanes = <1 2>;
+> +				link-frequencies = /bits/ 64 <450000000>;
+> +				remote-endpoint = <&csiphy0_lanes01_ep>;
+> +			};
+> +		};
+> +
+> +	};
+> +};
+> +
+>   &dispcc0 {
+>   	status = "okay";
+>   };
+> @@ -1436,6 +1492,22 @@ cam_indicator_en: cam-indicator-en-state {
+>   		bias-disable;
+>   	};
+>   
+> +	cam_rgb_default: cam-rgb-default-state {
+> +		mclk-pins {
+> +			pins = "gpio17";
+> +			function = "cam_mclk";
+> +			drive-strength = <16>;
+> +			bias-disable;
+> +		};
+> +
+> +		sc-rgb-xshut-n-pins {
+> +			pins = "gpio15";
+> +			function = "gpio";
+> +			drive-strength = <2>;
+> +			bias-disable;
+> +		};
+> +	};
+> +
+>   	edp_reg_en: edp-reg-en-state {
+>   		pins = "gpio25";
+>   		function = "gpio";
+> 
+> ---
+> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
+> change-id: 20240731-b4-linux-next-24-07-31-camss-sc8280xp-lenovo-rgb-v2-525b250dfb84
+
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+
+--
+Best wishes,
+Vladimir
 
