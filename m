@@ -1,182 +1,129 @@
-Return-Path: <linux-kernel+bounces-273987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90445947064
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:31:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EC13947066
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB0EE1C2084F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 20:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A840281164
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 20:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5BD12E1DB;
-	Sun,  4 Aug 2024 20:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168B28174E;
+	Sun,  4 Aug 2024 20:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="NmAki8m5"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WxsCRjf4"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA96D10A2A
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 20:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0D910A2A
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 20:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722803486; cv=none; b=urHJtXc5ti99YRZXSA4M8ENXfkc8gsgIfglGiy981CwAPdPW+bqe5NyHquFCLXdC1VULYEFJYCGtAPVBMT9XTPAkbVUTomAbPQ27mif5wMmayw4UL5gHjjyh/8bmJpNvKRAotUkKnGKif5Ba3xnogD2JFnx7GyuXmyoBGlgzgnI=
+	t=1722803585; cv=none; b=F9SZcvdo1hjHSgLdO/NrDl5PrdJ4Md+Aq4ixv8Sck15aS9ONQ//vgUevF/PpM0yzCqx16x49KYtvTMB+VzHlZNDZ5+c6YxJOo/jsMeAq5kN8vE0nxrWCwGMMDFy0dEVQNV19GfUG6fRZx8MSyjFG0jtnF8fU7lB9JCDyV/EnWXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722803486; c=relaxed/simple;
-	bh=uCNoB8DQco0PHTw2EPGdis203+HLDvhXj0PSS2jaS7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l7RkAMmjNiAXjngWeh7X2rREjCGLTejzZ80NxDnpF7gGT3Nfcxv9NBe8pzqITrH2s9Qj5t1Rm0HvIg14CRai+iMjTh6GpDA0LbyuYyb0vJrTdRvmnXT9jMQ/BCEFZdYRMu7rnthoUZqk5GdIOgudq1f9ON0dAW+9EN1vZAxgbLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=NmAki8m5; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1sahsj-008tmZ-E6
-	for linux-kernel@vger.kernel.org; Sun, 04 Aug 2024 22:31:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=XTf+fXHW3IlWBE1bwsGtE6/YH5VNklVhWfZczpPwRMY=; b=NmAki8m5tOG1TPc7xnIgmgZAmN
-	bH5x1QcLwmTWBOuWP+Lqsbj/1d3nVK8kUcU4XuzWgY70FBh9TMifbzu9twOIFi/+gWoRr80bmTem6
-	K/iPQlA2wbyUUFAeJgZAt4AOit/5DGA6uWgI5TV9o3ZTfnCKGE/cFjVLi29StsznJA4gPqe6P2StZ
-	awZL3Qbe1OKA+ir62RDDGuZtyBqrG86s2uRtac7b7UOHmu36mcoxsFZlZDFdinQY9rgUG7s4jO9IB
-	29mrDiVXK0M0t/QB/bS+DsdDMCY0STQuNez7ju/e156/dVvfkYenmJHBMrxHMdEztOfFK4tBE3LVO
-	fsdLMeag==;
-Received: from [10.9.9.74] (helo=submission03.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1sahsi-00072X-K7; Sun, 04 Aug 2024 22:31:08 +0200
-Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1sahsS-00Ctww-R0; Sun, 04 Aug 2024 22:30:52 +0200
-Message-ID: <eaa907ef-6839-48c6-bfb7-0e6ba2706c52@rbox.co>
-Date: Sun, 4 Aug 2024 22:30:51 +0200
+	s=arc-20240116; t=1722803585; c=relaxed/simple;
+	bh=AZliAsMy1KQ0MTCOfVVvKYar8vTnwBzGjMoUW1Wh39k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LHhy7wGITvmFYhhs8263PtvRsTAqaC4VAMRyKuc8M8s2gVm1yGmknK0lbT2/RILbrZZYDQEz0sVqXExopE0Wx8gWGJzHhWUPCp+sVKmGtkR+niX6yHXcmsHO+mzIIucHkklMLBg7BzLUucYOWsfQkWZXZhQC5wOQVcV+UKNLTjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WxsCRjf4; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so8520989a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 13:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722803581; x=1723408381; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LJPoUhGsSbI3MesTWfLPEQy046rL3cbhs+jom/8YIqc=;
+        b=WxsCRjf4bRIkOyDOpbnem1k5VncSmonFv/+u8tOch96tjTBK5gQf2NPAFCP/8zN/T1
+         BouFCI5cLpP6DN2QzRr+qBAJ0ivNMFaPGSWphlLZkaT+PFUlPRMIjvHZ5KIa5TatLXk2
+         3KgGnAP9plpTK+kAHljoQheXxjXD5zAynd3G4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722803581; x=1723408381;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LJPoUhGsSbI3MesTWfLPEQy046rL3cbhs+jom/8YIqc=;
+        b=q4HLiuQvGGhocb8U14Co6YMSDW2z8zaic14r8eH2esXAJSCYcmm9EDrOKIi0YN7ghg
+         h7teSQ8ZqDo5kQuN5rWiCMO1NgOPy/XinMZC2HLgaoarRwytA7u/riVqI7k7zQBAmjZ9
+         i/rLyvkX1zcMrpc6z+wYREQMDCRwgkim00YBCIne//Ern1a/GZAh6674l1zyjp0saGRx
+         B1Bt1qFleoetwS4S3ojiRmgMEiBdHWCSIDJO86kKHvNDHuJm+G4bRuAvcS/BumfVd2LA
+         ZtAfz7ah+/OasP9rO+KRcg23wXMpX+bZM5l6Q4C/IIP/s502rJG2Z3xdsllWWu5gMv2q
+         Vfsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUr8I9llXQSvBIEJt8ZkojUmtGMDq9ZiP2R5+epjqiNw4DoZprJ0owpNB+Ni2AAzrznJwn0IPNWQ1hBIcFAJHis+huCXqOBvVZybBsS
+X-Gm-Message-State: AOJu0YwPthgOJDIkYCjQvliP38nSR0jss6WDCJ7WZOYf00cc0AWevB52
+	MIp1zcX6R4/cGFuMBUON9+TTVBfVm8dbE3lLKXoyEhqo5cDr9pHzPh0M+G7ZDqPPiIWcENz2jMr
+	6mUdxgg==
+X-Google-Smtp-Source: AGHT+IGN0yPKQCCJ7g1M/HnZb6lucoCDj6CIrUorGwXZUPE3ofYIx0a95Tc4pwwtsf5ufrv6mZSz3g==
+X-Received: by 2002:a17:907:94d4:b0:a7a:ab1a:2d79 with SMTP id a640c23a62f3a-a7dc6287000mr957613066b.29.1722803580929;
+        Sun, 04 Aug 2024 13:33:00 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec8deasm364973066b.208.2024.08.04.13.33.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 13:33:00 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so8520972a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 13:33:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVZFBi1q/GlD4lYWqDtIeYeeLX7TieahJUOMxJDfa1GRNaxelvRiVeQWsgg/7mswLRjHotZnEBMISEijHyFAwSd0knKvw2ZB6bNS+GW
+X-Received: by 2002:a17:907:608c:b0:a7a:1c7b:dc17 with SMTP id
+ a640c23a62f3a-a7dbe63440dmr975332366b.22.1722803580241; Sun, 04 Aug 2024
+ 13:33:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] KVM: x86: Make x2APIC ID 100% readonly
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Haoyu Wu <haoyuwu254@gmail.com>,
- syzbot+545f1326f405db4e1c3e@syzkaller.appspotmail.com
-References: <20240802202941.344889-1-seanjc@google.com>
- <20240802202941.344889-2-seanjc@google.com>
-From: Michal Luczaj <mhal@rbox.co>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <20240802202941.344889-2-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <202408041602.caa0372-oliver.sang@intel.com>
+In-Reply-To: <202408041602.caa0372-oliver.sang@intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 4 Aug 2024 13:32:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+Message-ID: <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
+ -4.4% regression
+To: kernel test robot <oliver.sang@intel.com>
+Cc: Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kees Cook <keescook@chromium.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Pedro Falcato <pedro.falcato@gmail.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/2/24 22:29, Sean Christopherson wrote:
-> [...]
-> Making the x2APIC ID fully readonly fixes a WARN in KVM's optimized map
-> calculation, which expects the LDR to align with the x2APIC ID.
-> 
->   WARNING: CPU: 2 PID: 958 at arch/x86/kvm/lapic.c:331 kvm_recalculate_apic_map+0x609/0xa00 [kvm]
->   CPU: 2 PID: 958 Comm: recalc_apic_map Not tainted 6.4.0-rc3-vanilla+ #35
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.2-1-1 04/01/2014
->   RIP: 0010:kvm_recalculate_apic_map+0x609/0xa00 [kvm]
->   Call Trace:
->    <TASK>
->    kvm_apic_set_state+0x1cf/0x5b0 [kvm]
->    kvm_arch_vcpu_ioctl+0x1806/0x2100 [kvm]
->    kvm_vcpu_ioctl+0x663/0x8a0 [kvm]
->    __x64_sys_ioctl+0xb8/0xf0
->    do_syscall_64+0x56/0x80
->    entry_SYSCALL_64_after_hwframe+0x46/0xb0
->   RIP: 0033:0x7fade8b9dd6f
+On Sun, 4 Aug 2024 at 01:59, kernel test robot <oliver.sang@intel.com> wrote:
+>
+> kernel test robot noticed a -4.4% regression of stress-ng.pagemove.page_remaps_per_sec on
+> commit 8be7258aad44 ("mseal: add mseal syscall")
 
-Isn't this WARN_ON_ONCE() inherently racy, though? With your patch applied,
-it can still be hit by juggling the APIC modes.
+Ok, it's basically just the vma walk in can_modify_mm():
 
-[   53.882945] WARNING: CPU: 13 PID: 1181 at arch/x86/kvm/lapic.c:355 kvm_recalculate_apic_map+0x335/0x650 [kvm]
-[   53.883007] CPU: 13 UID: 1000 PID: 1181 Comm: recalc_logical_ Not tainted 6.11.0-rc1nokasan+ #18
-[   53.883009] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
-[   53.883010] RIP: 0010:kvm_recalculate_apic_map+0x335/0x650 [kvm]
-[   53.883057] Call Trace:
-[   53.883058]  <TASK>
-[   53.883169]  kvm_apic_set_state+0x105/0x3d0 [kvm]
-[   53.883201]  kvm_arch_vcpu_ioctl+0xf09/0x19c0 [kvm]
-[   53.883285]  kvm_vcpu_ioctl+0x6cc/0x920 [kvm]
-[   53.883310]  __x64_sys_ioctl+0x90/0xd0
-[   53.883313]  do_syscall_64+0x93/0x180
-[   53.883623]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   53.883625] RIP: 0033:0x7fd90fee0d2d
+>       1.06            +0.1        1.18        perf-profile.self.cycles-pp.mas_next_slot
+>       1.50            +0.5        1.97        perf-profile.self.cycles-pp.mas_find
+>       0.00            +1.4        1.35        perf-profile.self.cycles-pp.can_modify_mm
+>       3.13            +2.0        5.13        perf-profile.self.cycles-pp.mas_walk
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 48d32c5aa3eb..3344f1478230 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -129,6 +129,7 @@ TEST_GEN_PROGS_x86_64 += x86_64/amx_test
- TEST_GEN_PROGS_x86_64 += x86_64/max_vcpuid_cap_test
- TEST_GEN_PROGS_x86_64 += x86_64/triple_fault_event_test
- TEST_GEN_PROGS_x86_64 += x86_64/recalc_apic_map_test
-+TEST_GEN_PROGS_x86_64 += x86_64/recalc_logical_map_warn
- TEST_GEN_PROGS_x86_64 += access_tracking_perf_test
- TEST_GEN_PROGS_x86_64 += demand_paging_test
- TEST_GEN_PROGS_x86_64 += dirty_log_test
-diff --git a/tools/testing/selftests/kvm/x86_64/recalc_logical_map_warn.c b/tools/testing/selftests/kvm/x86_64/recalc_logical_map_warn.c
-new file mode 100644
-index 000000000000..ad3ae0433230
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86_64/recalc_logical_map_warn.c
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * WARN_ON_ONCE(ldr != kvm_apic_calc_x2apic_ldr(kvm_x2apic_id(apic)))
-+ * in arch/x86/kvm/lapic.c:kvm_recalculate_logical_map()
-+ */
-+
-+#include <pthread.h>
-+
-+#include "processor.h"
-+#include "kvm_util.h"
-+#include "apic.h"
-+
-+#define LAPIC_XAPIC	MSR_IA32_APICBASE_ENABLE
-+#define LAPIC_X2APIC	(MSR_IA32_APICBASE_ENABLE | X2APIC_ENABLE)
-+
-+static void *race(void *arg)
-+{
-+	struct kvm_lapic_state state = {};
-+	struct kvm_vcpu *vcpu0 = arg;
-+
-+	/* Trigger kvm_recalculate_apic_map(). */
-+	for (;;)
-+		__vcpu_ioctl(vcpu0, KVM_SET_LAPIC, &state);
-+
-+	return NULL;
-+}
-+
-+int main(void)
-+{
-+	struct kvm_vcpu *vcpus[2];
-+	struct kvm_vm *vm;
-+	pthread_t thread;
-+
-+	vm = vm_create_with_vcpus(2, NULL, vcpus);
-+
-+	vcpu_set_msr(vcpus[1], MSR_IA32_APICBASE, LAPIC_X2APIC);
-+	vcpu_set_msr(vcpus[1], APIC_BASE_MSR + (APIC_SPIV >> 4), APIC_SPIV_APIC_ENABLED);
-+
-+	TEST_ASSERT_EQ(pthread_create(&thread, NULL, race, vcpus[0]), 0);
-+
-+	for (;;) {
-+		_vcpu_set_msr(vcpus[1], MSR_IA32_APICBASE, LAPIC_XAPIC);
-+		_vcpu_set_msr(vcpus[1], MSR_IA32_APICBASE, LAPIC_X2APIC);
-+	}
-+
-+	kvm_vm_free(vm);
-+
-+	return 0;
-+}
+and looks like it's two different pathways. We have __do_sys_mremap ->
+mremap_to -> do_munmap -> do_vmi_munmap -> can_modify_mm for the
+destination mapping, but we also have mremap_to() calling
+can_modify_mm() directly for the source mapping.
 
+And then do_vmi_munmap() will do it's *own* vma_find() after having
+done arch_unmap().
+
+And do_munmap() will obviously do its own vma lookup as part of
+calling vma_to_resize().
+
+So it looks like a large portion of this regression is because the
+mseal addition just ends up walking the vma list way too much.
+
+              Linus
 
