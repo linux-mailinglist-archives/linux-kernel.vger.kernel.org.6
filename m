@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D7A946D7C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:43:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7E4946D7F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6902A1C209B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:43:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E951F2132D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D051F94A;
-	Sun,  4 Aug 2024 08:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8C11F959;
+	Sun,  4 Aug 2024 08:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/PUAMkN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsISCyfg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F981CD13;
-	Sun,  4 Aug 2024 08:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758AE1CD1F;
+	Sun,  4 Aug 2024 08:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722761005; cv=none; b=VaXO8pfnHn6+ixrKQfyygWuHxdz/jN/RdJORIUP7AEsrvhICNQfmZjBfuGo10z9w3gf4Gpa2zyq0/BlKJxBrCKpMb19ifKMmHexBCdDu9addqQwBlgcjSTzSGFp0iT/qU7BqQGA/lJsRG1CX/jXvb05btTOprJhjv13WklVJv/M=
+	t=1722761051; cv=none; b=dzk3zlHRrMho4fRlMCj0iLkOHUERJjPcY5EJaNNPe8/NL0a7yS1hjfdfJAYZAURxvj0+6koBiX5rSOAaegtX+CE4gpLk8/IW9FOW66mtNA38I0fgO3wD+cb0sztB1VrbfBX4hjTXpNwb+UiH5nkp6rpXlMObw96LhWjlQAFvCWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722761005; c=relaxed/simple;
-	bh=yu8JR2r310uHdZfQ80kMnDz/ATjnOx1BnBm1P51VF6Q=;
+	s=arc-20240116; t=1722761051; c=relaxed/simple;
+	bh=b/OCLibPdA2De1Wa0aeN8irbOQm0GH8R4Vhdp4C9rv0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DJf5ARicYHDiF34U76mXCty/+JOPau7/sY0OxPZahX/K7L0awxdnA4wyI3AWQfLkxiqoSRm44aYeJeHF11WnBNpJhb3mvOyqHUObmLsD7fzGLabMBOY7yIDhHPrsdTar7OE1/xA0Onps6fdI7x0V8EGKPz6z3VlZ+Jsy/P/pL0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/PUAMkN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C6FC32786;
-	Sun,  4 Aug 2024 08:43:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=oW23wLaca1aPO0VCZFpGSXSjrUeGABChTOmTSv1OuQSDu+uW+w/ATVu00t1c2zr2Nro01qNvCWHdJMUEB89zFJiLIJ1vJbQkVzm8g91F03cmVjqayL0phP4tWR0PMUoF822An8vtA7nLBGnntBVHKfWZ0vKQ13at/C5QtBbE/GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsISCyfg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE368C32786;
+	Sun,  4 Aug 2024 08:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722761004;
-	bh=yu8JR2r310uHdZfQ80kMnDz/ATjnOx1BnBm1P51VF6Q=;
+	s=k20201202; t=1722761051;
+	bh=b/OCLibPdA2De1Wa0aeN8irbOQm0GH8R4Vhdp4C9rv0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l/PUAMkNTce527p75JtliDIMQQMoAnAXKNAJrMhcBllpsGng7p8HDocFwujQryWYb
-	 eWDNcG3BcO4nMofMjJbG18eh4CXGkVxmIlSo1uyNlwnuA6oOjdwOgLTiqD4hAgX2gp
-	 mFpNgU+d0gVSRelJ3DWHaeAKOcu6w4TEXslyDT5u0VoQFkaKF/FVNtYV545SytExNh
-	 H2NjRCcYqtIymVw1hCalAMR1Q+WKzoyo2yFFZuZ40IZxPiJj3cCxdy0acO4x8rXDJI
-	 U+USs+4McTw7ZWG1sASiNjCwS739VCSyxsgN6grL2NMyIGcNJAdXPHSNTE0xuGIwjs
-	 RSnBxdHRg5MbQ==
-Message-ID: <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
-Date: Sun, 4 Aug 2024 10:43:18 +0200
+	b=fsISCyfgsjwJ06+kM/6qhcNuHMt++uLyKjaePbLaldl8vCyrTM/BiYUXAgkE8UkGP
+	 iG6E+x+vN5am49Z1IYe4VTVjlk32QRx33yFcTn+ejCjjKQO5xuTldEikVwPDA17d70
+	 GD0Ji2dIpbjB/nA7EHPch00hYMxkhZFsJh0xQKCLDKXBFiO7/fI5ACV0bXFiXibP0K
+	 LhKR6MRu8Cm+g9MUvF/a/s21PQSS8J2A+1mFXLxbPb6GepY8qtut/bh7J5khkMu/c+
+	 /X/X3cgXoGI38mWaWkyaU5CKR1X45U34NkD30CSN0Lphl5mAXLXxNnhOX/Apq4tokq
+	 UfEY+Wea5ECHQ==
+Message-ID: <8905c59c-94e0-495d-ae35-0e4774b8bb21@kernel.org>
+Date: Sun, 4 Aug 2024 10:44:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
-To: zhenghaowei@loongson.cn, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
- p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, loongarch@lists.linux.dev
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+Subject: Re: [PATCH 1/2] dt-bindings: input: touchscreen: edt-ft5x06: Document
+ FT8201 support
+To: Felix Kaechele <felix@kaechele.ca>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240804031310.331871-1-felix@kaechele.ca>
+ <20240804031310.331871-2-felix@kaechele.ca>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,100 +103,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+In-Reply-To: <20240804031310.331871-2-felix@kaechele.ca>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/08/2024 08:38, zhenghaowei@loongson.cn wrote:
+On 04/08/2024 05:13, Felix Kaechele wrote:
+> Document FocalTech FT8201 support by adding the compatible.
+> 
+> Signed-off-by: Felix Kaechele <felix@kaechele.ca>
 
-Due to lack of changelog, I assume you send the same patch, so:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+---
 
 <form letter>
-This is a friendly reminder during the review process.
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-Thank you.
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 </form letter>
-
-Also:
-
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  fractional-division:
-
-Where are this and following defined? In which schema?
-
-> +    description: Enables fractional-N division. Currently,
-> +      only LS2K1500 and LS2K2000 support this feature.
-> +
-> +  rts-invert:
-> +    description: Inverts the RTS value in the MCR register.
-> +      This should be used on Loongson-3 series CPUs, Loongson-2K
-> +      series CPUs, and Loongson LS7A bridge chips.
-> +
-> +  dtr-invert:
-> +    description: Inverts the DTR value in the MCR register.
-> +      This should be used on Loongson-3 series CPUs, Loongson-2K
-> +      series CPUs, and Loongson LS7A bridge chips.
-> +
-> +  cts-invert:
-> +    description: Inverts the CTS value in the MSR register.
-> +      This should be used on Loongson-2K0500, Loongson-2K1000,
-> +      and Loongson LS7A bridge chips.
-> +
-> +  dsr-invert:
-> +    description: Inverts the DSR value in the MSR register.
-> +      This should be used on Loongson-2K0500, Loongson-2K1000,
-> +      and Loongson LS7A bridge chips.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +
-> +allOf:
-> +  - $ref: serial.yaml
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/clock/loongson,ls2k-clk.h>
-> +
-> +    serial@1fe001e0 {
-> +        compatible = "loongson,ls7a-uart";
-> +        reg = <0x0 0x1fe001e0 0x0 0x10>;
-> +        clock-frequency = <100000000>;
-> +        interrupt-parent = <&liointc>;
-> +        interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
-> +        fractional-division;
-> +        rts-invert;
-> +        dtr-invert;
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8766f3e5e87e..a6306327dba5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13189,6 +13189,13 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/i2c/loongson,ls2x-i2c.yaml
->  F:	drivers/i2c/busses/i2c-ls2x.c
->  
-> +LOONGSON UART DRIVER
-> +M:	Haowei Zheng <zhenghaowei@loongson.cn>
-> +L:	linux-serial@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml
-> +F:	drivers/tty/serial/8250/8250_loongson.c
-
-There is no such file.
 
 Best regards,
 Krzysztof
