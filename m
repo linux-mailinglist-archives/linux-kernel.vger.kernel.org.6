@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04613946E39
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 12:01:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A33946E3C
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 12:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6759BB20FB4
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:01:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582B21F21B63
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FE42557A;
-	Sun,  4 Aug 2024 10:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFC828DBC;
+	Sun,  4 Aug 2024 10:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghvGo0wK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BH9ClIKF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEBA1ABEBE;
-	Sun,  4 Aug 2024 10:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8F22E633;
+	Sun,  4 Aug 2024 10:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722765688; cv=none; b=g+jawLQcMzRpPBY02GROTC2UPik/zrrD21bsDY0UwOUvkIhUhRIHA8QyDcclZMDiL7kDs87D58gXtywmhUfumJQwos9bNdmyT/YvX8Tfzum2jPcDrVUhXC27Od3+0vVru4d8nwfoEThXX9wdgPNiVdLqKhJKC66rTpcjHzhy3IM=
+	t=1722765719; cv=none; b=HLgOCYUmxI8JYlry6ghrebPBGK7f8UBm/UcaC6EraeB3cMHtunEdOKAIkrGXZlIlUx8MvOmAGIS8OoZi/xpFABUzMjCo2oPozjWtvHiU18l21sKhwbEDduStjis8GmZdFiYR2ZuGU2v7YYRePbo5GFPVM/4ucwUqCFc/7/sU688=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722765688; c=relaxed/simple;
-	bh=P4c+/HYGZO8C2ZqfanMjOcFHbLeRoRdtHjLuHpuDohE=;
+	s=arc-20240116; t=1722765719; c=relaxed/simple;
+	bh=i6qyUsLnam0YxhCM0p1RR1sn4VEEU9wicB1dBImWJpQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ee6lHpBgTdB9X4sKnLPEf86l/nOlUfYQ1tqoN1kHs/rK153gpfl8Dk46XaLyYACn3oYTeavgRFAtienhckhTeADyyEzz6k6KydYqjfPhw9TiPfuEJMTUDa33H1BU2zfbONo+LXgSA9r9U7PBlcrSi1Do/3WG7zxFKee/uwWWocM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghvGo0wK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3F2C32786;
-	Sun,  4 Aug 2024 10:01:23 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=FU8QDyTXKrPNVMHuc1eyXXQVxGKtw1OUZmECwir+KDbEC/rqBqW7MDAYyvT/hHkmpRa7u/lvak4S8va3GJRU1w6BiGe6zewetaxvr4w3saUnmv/pc/qYoPq8YtdI5h856pUSYFVKkYR6/3dxOaQPr8P0lIMcBqfmjSjDkUlejrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BH9ClIKF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 904DCC32786;
+	Sun,  4 Aug 2024 10:01:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722765687;
-	bh=P4c+/HYGZO8C2ZqfanMjOcFHbLeRoRdtHjLuHpuDohE=;
+	s=k20201202; t=1722765718;
+	bh=i6qyUsLnam0YxhCM0p1RR1sn4VEEU9wicB1dBImWJpQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ghvGo0wKiYXcD8frnOXDwtjkMmuHxVVgfAWr3pTr96/Tju/eUg80xpeis/wJZNC7V
-	 nGaPhQvEZvuhsh1EgnFvkrb0RKme3ryptssAYBdAq08VRq2woa3ti0+2gWUMogGBOw
-	 igvX6SXmcvkNB9vKOiEfJSYPq6dFpUpto4faKfiuWsEpPMS7Gih02lT6D+R5G3E+/x
-	 hHDVPM0JNGN3VzQnw/nxz33JZyETvesuQpuwJrL04YUBexqgmAoM2cIUkOiH0oyepa
-	 ijQD0sgQK3PRcWNtyncDtSHa3lrha64iUR3qd8Do1pZ2NL9/k8pt75hIqxgGhc70zG
-	 CXJiyYfMS0TWw==
-Message-ID: <9b652047-508d-4385-86bf-620ff9afae9f@kernel.org>
-Date: Sun, 4 Aug 2024 12:01:21 +0200
+	b=BH9ClIKFJNvbqwk/IgUy7IwhefmfRm3HBbia/8AUAUTcrFDlBiCddGwMWKtnmivvs
+	 aDO6lTTfYSpkJsyHb8fbaSJJtWibR+8TaU3pe1sB1jAO3pIkUxDM2NKIGe3s2au8jY
+	 oI4G00sg8Z8MAsSzwU87cCF/8MhplDrxPsFi5HqxtUnMbWdCrbyefnnxQC2p/j5y+c
+	 aXTZjzLlAN3qWsK16ohHkobdOoXoWXnWo0t++sdJ4EO0eeNB1L9sh79qPF9ssd5VEz
+	 LpJIR7MpU4PU3Pp3RFgFGRfB+z/RYl6KwdemtwDYytn+cgzwvJ6xu9vPoXJI4D+Zv5
+	 ebeeeqUuCnz3A==
+Message-ID: <62edbe11-b0e6-4e73-a41d-f21573c5dc88@kernel.org>
+Date: Sun, 4 Aug 2024 12:01:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: rockchip: Add Cool Pi CM5
- GenBook
-To: Andy Yan <andyshrk@163.com>, heiko@sntech.de
-Cc: dsimic@manjaro.org, krzk+dt@kernel.org, robh@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20240730102433.540260-1-andyshrk@163.com>
- <20240730102433.540260-2-andyshrk@163.com>
+Subject: Re: [PATCH 1/4] dt-bindings: serial: snps-dw-apb-uart: Document
+ Rockchip RK3528
+To: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+ Ondrej Jirman <megi@xff.cz>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <20240803125510.4699-3-ziyao@disroot.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,19 +110,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240730102433.540260-2-andyshrk@163.com>
+In-Reply-To: <20240803125510.4699-3-ziyao@disroot.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/07/2024 12:24, Andy Yan wrote:
-> Add Cool Pi CM5 GenBook, a laptop powered by RK3588.
+On 03/08/2024 14:55, Yao Zi wrote:
+> Rockchip RK3528 comes with a snps-dw-apb-uart compatible UART. Document
+> it in dt-bindings.
 > 
-> Cool Pi GenBook works with a carrier board connect with CM5.
-> 
-> Signed-off-by: Andy Yan <andyshrk@163.com>
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
 
 Best regards,
 Krzysztof
