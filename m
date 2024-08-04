@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-273917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34A4946F9A
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:33:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355EF946FAB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96FBAB20C83
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:33:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96906B20CC9
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C753974424;
-	Sun,  4 Aug 2024 15:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0438174E;
+	Sun,  4 Aug 2024 15:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fo1E1CoL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9PYLmuf"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2885A95B;
-	Sun,  4 Aug 2024 15:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E349461;
+	Sun,  4 Aug 2024 15:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722785601; cv=none; b=gimSd+C+anPO40bA3Z8e6na59aPQPbZgf3lM9mnhGODIRSfwTzQGVqmjokJcuc/NGs4+USIbwgQuxxSzBGTdhbPcQI4Ri5xPsh6k4dUQKeTF5yGnNGLuDbnE8H6suOW7ZgmJftXEyXXhL4znjz+N86D+MlbAypw+qSWxqFxREIE=
+	t=1722786056; cv=none; b=Y+6vJvO+2ZmokFmm4HafSTsEjokL08pbb+rRxb/0+F/azbM7rZqxbR5wfjTmAgOJ7saEiervSB42C5Yz/KfnlCfiNIxIznnlAC0/1FoSVeCGUaAz5PZeGY5/hfHdgX8FR75LNttEa2kQk0rh9FD+LFY/y/vh4dKgrMIqN6i1SQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722785601; c=relaxed/simple;
-	bh=pMFr/e0KsbkJrhJe9wfumPNt3xbbmQcMZktr3u4sg0o=;
+	s=arc-20240116; t=1722786056; c=relaxed/simple;
+	bh=stO15Vp2MTSUoK0r6Bw0WqMsKzKKaQBVjXW35KKw0Wc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K4dxdSL97sBHcCBfZZ53MG7rsf/zgWDTq6kNnSRm/6Tz9DahagTdhY0MP2MJgs568xnIJN61xhT/gnY1aXZKdHDqtIi1twr8gMNgrx0yntoi+Ae73MYG3/85W7LuPmUECe8/5FiBcW/kIH+ANtg13nbc0GZL82KCHiFlsJYl+ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fo1E1CoL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48220C32786;
-	Sun,  4 Aug 2024 15:33:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722785601;
-	bh=pMFr/e0KsbkJrhJe9wfumPNt3xbbmQcMZktr3u4sg0o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fo1E1CoLq7eWS5NjwZFhoaVmkfhTPdJKOGqgNsGzBcI0L+OYhiefH9kMAD3HqN05e
-	 N7iiV/LfbMEypsjssqAClEE1UTpYtuXb3mb+bissM1a91bnlfctIOGNFduqSelcPC8
-	 IF6cgBU7fEUmzOBv25b6jNNobjAkfqXMAT38/o4GCPsFUlSXqYAnc6J0OpnhCB92sv
-	 8gtGz+2a7dSkntKJwIwqWW5o1pNmYRwCqXf3GDiwAqiuF0pDAG8XQVhPTbwm5uQlC/
-	 ahTFR1gKoYbZeTTppzFzQkkcM8w4FM+Oe9/X2WfrVfZktssKiMKddPBYhvpyAP3F6v
-	 A6XM1tUes8lOQ==
-Message-ID: <84ff11bd-1d11-4d66-a56b-84bf915af346@kernel.org>
-Date: Sun, 4 Aug 2024 17:33:14 +0200
+	 In-Reply-To:Content-Type; b=T+cMFsbblI0t4NTU2YSXKvKfjlK9PMDT4NlMaSQvg/JgcvDuNAvofP0KNccQIZYDtjzS+hHGVc5KT6TZZRLfx3AX9yZc0OvyxyT3MNGcs/nF45vpjqgxqE+nC3SxPYLemCrls5H4+JHHXYrkgTm1nJXwhvdQrAA4Hj4/sugyJuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9PYLmuf; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f04c29588so15696198e87.3;
+        Sun, 04 Aug 2024 08:40:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722786053; x=1723390853; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qNZb+BVswMBSb2cwkZqZ2BFYdKJnDxJlOV2lgMbFE5k=;
+        b=Z9PYLmuf1c2ZB70Mpeee97L8uRrsbrvSVOtvnN0a5fs9Rc8oQoQoYnZNQ3bhczm3kk
+         rc0DxcUsbvnlRla6+eXUAoOs9uBKMw5HGfSAIsQBFWF+Pb2fMOr6s0jTBOOFmotfpgf1
+         LH4MGd5vHFxPiAKNMjT2vRRVrjcv5SSTNdg6dUA16Y/UtPq1FiImC76l6P1LIXMuRfaP
+         kMC0eX/F7grLtXRz28uG1sx8pX9/p1E8HIbNiHW3h9gAIkAmaLuyUxZGVWrbOj5+NY/j
+         aLhzUwBZdcnacv/V4FtxTU20og4x3XDXZpX+aXZhsshVBNQQyBOZX+ovQpZZflYuNNjq
+         6MMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722786053; x=1723390853;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qNZb+BVswMBSb2cwkZqZ2BFYdKJnDxJlOV2lgMbFE5k=;
+        b=xESOpUTEvP4C0lrMSwT58uHnJfVbsR4ThpJY+oOxalCbt6c8Hsq0Bj0ouw1O8hMzsc
+         x0DnZj9iuwJFmXWBsvcTRDAxt/iNNNw09zLPl1/K6pLGqRfkqe6HyufDch0ayi7FfeaB
+         cJ2bxIVop2svJc+pPJrVW6E/aWh0zC4xvNy+pzHR3GgruVeukZjEFVB3iK23MbwKw7fd
+         lDdLr7zrNI/7upvRtu5uCLOb9oBhaeB4tIIZrloHINy/6ykYdxwx18p+tt3vhL5ET4UE
+         C+2Y6bOhLDAjLwMUhu78aVfdF0QDhwVdEWje5TbIL7wESe3UQ5c6Q8mo9m0m50/se1z3
+         bQ3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW50HDtCL5M6hCwGWVrWHSP4Gx0H8BaEBVTSmJdxxZ54dwfD9t1WguNHtiBh3UWA8jJO7E75fxdLtaXXpg8T5pOH/P28agD+fl6Y7kSEqDDh8LW9wijF/8pgfDv09TQfL4L3QcdrCL7
+X-Gm-Message-State: AOJu0YzZHsKJh6Maptfdiu3kLZV7CxobwY8zlHfVM5H4sOpnI7+XIGBE
+	rNMRhfS/8LTbcjJ+tqJq8ReOXoJtUfryIS09K00mXc22UGhUEws1
+X-Google-Smtp-Source: AGHT+IH2k84BS7srRcYYu8bjFP9JIewD3T1LchYzjZdmwHMc9YReQQB2D56rkmY8UnGSp3mWSlVDew==
+X-Received: by 2002:a05:6512:3105:b0:530:c323:46a8 with SMTP id 2adb3069b0e04-530c32346e8mr2835046e87.23.1722786052592;
+        Sun, 04 Aug 2024 08:40:52 -0700 (PDT)
+Received: from [192.168.1.127] ([151.49.86.220])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0b62esm343737066b.62.2024.08.04.08.40.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 08:40:52 -0700 (PDT)
+Message-ID: <b7e91e68-9f5f-4dd0-aa96-e57983e4a56d@gmail.com>
+Date: Sun, 4 Aug 2024 17:40:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,305 +75,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] tty: serial: 8250: Add loongson uart driver
- support
-To: zhenghaowei@loongson.cn, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
- p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, loongarch@lists.linux.dev
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
- <20240804063834.70022-2-zhenghaowei@loongson.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240804063834.70022-2-zhenghaowei@loongson.cn>
+Subject: Re: [PATCH v2 2/2] iio: bmi323: suspend and resume triggering on
+ relevant pm operations
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Jagath Jog J <jagathjog1996@gmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Luke D . Jones" <luke@ljones.dev>,
+ Jonathan LoBue <jlobue10@gmail.com>
+References: <20240727123034.5541-1-benato.denis96@gmail.com>
+ <20240727123034.5541-3-benato.denis96@gmail.com>
+ <20240803164428.50fdd15c@jic23-huawei>
+Content-Language: en-US, it-IT, en-US-large
+From: Denis Benato <benato.denis96@gmail.com>
+In-Reply-To: <20240803164428.50fdd15c@jic23-huawei>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 04/08/2024 08:38, zhenghaowei@loongson.cn wrote:
-> From: Haowei Zheng <zhenghaowei@loongson.cn>
+On 03/08/24 17:44, Jonathan Cameron wrote:
+> On Sat, 27 Jul 2024 14:30:34 +0200
+> Denis Benato <benato.denis96@gmail.com> wrote:
 > 
-> Due to certain hardware design challenges, we have opted to
-> utilize a dedicated UART driver to probe the UART interface.
+>> Prevent triggers from stop working after the device has entered sleep:
+>> use iio_device_suspend_triggering and iio_device_resume_triggering helpers.
 > 
-> Presently, we have defined four parameters — 'fractional-division',
-> 'invert-rts', 'invert-dtr', 'invert-cts', and 'invert-dsr' — which
-> will be employed as needed.
+> Hi Denis,
 > 
-> Signed-off-by: Haowei Zheng <zhenghaowei@loongson.cn>
-> ---
->  drivers/tty/serial/8250/8250_loongson.c | 208 ++++++++++++++++++++++++
->  drivers/tty/serial/8250/8250_port.c     |   8 +
->  drivers/tty/serial/8250/Kconfig         |   9 +
->  drivers/tty/serial/8250/Makefile        |   1 +
->  include/uapi/linux/serial_core.h        |   1 +
->  5 files changed, 227 insertions(+)
->  create mode 100644 drivers/tty/serial/8250/8250_loongson.c
+Hello Jonathan,
+> I'd got it into my head this was about main suspend / resume, but
+> it's runtime PM. I assume the s2idle uses only that level which is
+> interesting.
 > 
-> diff --git a/drivers/tty/serial/8250/8250_loongson.c b/drivers/tty/serial/8250/8250_loongson.c
-> new file mode 100644
-> index 000000000000..eb16677f1dde
-> --- /dev/null
-> +++ b/drivers/tty/serial/8250/8250_loongson.c
-> @@ -0,0 +1,208 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2020-2024 Loongson Technology Corporation Limited
-> + */
-> +
-> +#include <linux/acpi.h>
+I have catched the problem with s2idle, but I don-t fully understand
+it will manifest outside of said scenario, nor if it will at all and
+only s2idle is affected.
 
-How is this used?
+> Anyhow, solution seems safe. We might be able to do something nicer
+> in the long run as potentially we could have the trigger driver
+> notified when all consumers have entered this state at which point it
+> could stop generating triggers at all.
+> Totally agree.
+> Anyhow, that's a job for when we actually care about it.
+> 
+> Applied to the togreg branch of iio.git and pushed out as testing
+> for 0-day to poke at it.
+> 
+I have made a mistake while cleaning up patch 1/2 for submission and lost a piece:
+the pollfunc->irq=0 you suggested in your first mail.
 
-> +#include <linux/clk.h>
+I would be more than happy to provide a v3, but if you prefer I can also send
+a separate patch.
 
-And this?
+I am sorry about that and I would like guidance on what to do in cases like this.
+> For now I'm not keen to see this pushed into drivers where we don't
+> know if anyone is running into this particular situation.  We can
+> reevaluate that if we start getting lots of reports of this.
+> 
+I catched the issue while developing an application for a handheld PC.
 
-> +#include <linux/console.h>
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/reset.h>
-> +
-> +#include "8250.h"
-> +
-> +struct loongson_uart_data {
-> +	struct reset_control *rst;
-> +	int line;
-> +	int mcr_invert;
-> +	int msr_invert;
-> +};
+As the application will target these kind of devices we can apply the fix
+to every relevant driver (bmi260 comes to mind) and have that well-tested
+on multiple drivers.
+> I'm also not going to rush this in as a fix. We can consider backporting
+> it once it's been in mainline for a bit and no side effects have
+> shown up.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+Thanks,
 
-...
-
-> +static int loongson_uart_probe(struct platform_device *pdev)
-> +{
-> +	struct uart_8250_port uart = {};
-> +	struct loongson_uart_data *data;
-> +	struct uart_port *port;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	port = &uart.port;
-> +	spin_lock_init(&port->lock);
-> +
-> +	port->flags		= UPF_SHARE_IRQ | UPF_FIXED_PORT | UPF_FIXED_TYPE;
-> +	port->iotype		= UPIO_MEM;
-> +	port->regshift		= 0;
-> +	port->dev		= &pdev->dev;
-> +	port->type		= (unsigned long)device_get_match_data(&pdev->dev);
-> +	port->serial_in		= loongson_serial_in;
-> +	port->serial_out	= loongson_serial_out;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -ENODEV;
-> +
-> +	port->membase = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-> +	if (!port->membase)
-> +		return -ENOMEM;
-> +
-
-Use wrapper combining both calls.
-
-> +	port->mapbase = res->start;
-> +	port->mapsize = resource_size(res);
-> +
-> +	port->irq = platform_get_irq(pdev, 0);
-> +	if (port->irq < 0)
-> +		return -EINVAL;
-> +
-> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	port->private_data = data;
-> +
-> +	if (device_property_read_bool(&pdev->dev, "fractional-division")) {
-> +		port->get_divisor = loongson_frac_get_divisor;
-> +		port->set_divisor = loongson_frac_set_divisor;
-> +	}
-> +
-> +	if (device_property_read_bool(&pdev->dev, "rts-invert"))
-> +		data->mcr_invert |= UART_MCR_RTS;
-> +
-> +	if (device_property_read_bool(&pdev->dev, "dtr-invert"))
-> +		data->mcr_invert |= UART_MCR_DTR;
-> +
-> +	if (device_property_read_bool(&pdev->dev, "cts-invert"))
-> +		data->msr_invert |= UART_MSR_CTS;
-> +
-> +	if (device_property_read_bool(&pdev->dev, "dsr-invert"))
-> +		data->msr_invert |= UART_MSR_DSR;
-> +
-> +	data->rst = devm_reset_control_get_optional_shared(&pdev->dev, NULL);
-> +	if (IS_ERR(data->rst))
-> +		return PTR_ERR(data->rst);
-> +
-> +	device_property_read_u32(&pdev->dev, "clock-frequency", &port->uartclk);
-> +
-> +	ret = reset_control_deassert(data->rst);
-> +	if (ret)
-> +		goto err_unprepare;
-> +
-> +	ret = serial8250_register_8250_port(&uart);
-> +	if (ret < 0)
-> +		goto err_unprepare;
-> +
-> +	platform_set_drvdata(pdev, data);
-> +	data->line = ret;
-> +
-> +	return 0;
-> +
-> +err_unprepare:
-> +
-> +	return ret;
-> +}
-> +
-> +static void loongson_uart_remove(struct platform_device *pdev)
-> +{
-> +	struct loongson_uart_data *data = platform_get_drvdata(pdev);
-> +
-> +	serial8250_unregister_port(data->line);
-> +	reset_control_assert(data->rst);
-> +}
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int loongson_uart_suspend(struct device *dev)
-> +{
-> +	struct loongson_uart_data *data = dev_get_drvdata(dev);
-> +
-> +	serial8250_suspend_port(data->line);
-> +
-> +	return 0;
-> +}
-> +
-> +static int loongson_uart_resume(struct device *dev)
-> +{
-> +	struct loongson_uart_data *data = dev_get_drvdata(dev);
-> +
-> +	serial8250_resume_port(data->line);
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
-> +static const struct dev_pm_ops loongson_uart_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(loongson_uart_suspend, loongson_uart_resume)
-> +};
-> +
-> +static const struct of_device_id of_platform_serial_table[] = {
-> +	{.compatible = "loongson,ls7a-uart", .data = (void *)PORT_LOONGSON},
-
-Why do you need match data if there is no choice?
-
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, of_platform_serial_table);
-> +
-> +static struct platform_driver loongson_uart_driver = {
-> +	.probe = loongson_uart_probe,
-> +	.remove = loongson_uart_remove,
-> +	.driver = {
-> +		.name = "ls7a-uart",
-> +		.pm = &loongson_uart_pm_ops,
-> +		.of_match_table = of_match_ptr(of_platform_serial_table),
-
-Except that this does not build... drop of_match_ptr(), not needed and
-causes warnings.
-
-> +	},
-> +};
-> +
-> +module_platform_driver(loongson_uart_driver);
-> +
-> +MODULE_DESCRIPTION("LOONGSON 8250 Driver");
-> +MODULE_AUTHOR("Haowei Zheng <zhenghaowei@loongson.cn>");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> index 2786918aea98..60b72c785028 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -319,6 +319,14 @@ static const struct serial8250_config uart_config[] = {
->  		.rxtrig_bytes	= {1, 8, 16, 30},
->  		.flags		= UART_CAP_FIFO | UART_CAP_AFE,
->  	},
-> +	[PORT_LOONGSON] = {
-> +		.name		= "Loongson",
-> +		.fifo_size	= 16,
-> +		.tx_loadsz	= 16,
-> +		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10,
-> +		.rxtrig_bytes   = {1, 4, 8, 14},
-> +		.flags		= UART_CAP_FIFO,
-> +	},
->  };
->  
->  /* Uart divisor latch read */
-> diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
-> index 47ff50763c04..a696afc4f8a8 100644
-> --- a/drivers/tty/serial/8250/Kconfig
-> +++ b/drivers/tty/serial/8250/Kconfig
-> @@ -568,6 +568,15 @@ config SERIAL_8250_BCM7271
->  	  including DMA support and high accuracy BAUD rates, say
->  	  Y to this option. If unsure, say N.
->  
-> +config SERIAL_8250_LOONGSON
-> +	tristate "Loongson 8250 serial port support"
-> +	default SERIAL_8250
-> +	depends on SERIAL_8250
-> +	depends on LOONGARCH || MIPS
-
-MIPS? Why?
-
-You also miss COMPILE_TEST.
-
-
-
-Best regards,
-Krzysztof
+Denis
+>>
+>> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+>> ---
+>>  drivers/iio/imu/bmi323/bmi323.h      |  1 +
+>>  drivers/iio/imu/bmi323/bmi323_core.c | 23 +++++++++++++++++++++++
+>>  drivers/iio/imu/bmi323/bmi323_i2c.c  |  1 +
+>>  drivers/iio/imu/bmi323/bmi323_spi.c  |  1 +
+>>  4 files changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/iio/imu/bmi323/bmi323.h b/drivers/iio/imu/bmi323/bmi323.h
+>> index dff126d41658..209bccb1f335 100644
+>> --- a/drivers/iio/imu/bmi323/bmi323.h
+>> +++ b/drivers/iio/imu/bmi323/bmi323.h
+>> @@ -205,5 +205,6 @@
+>>  struct device;
+>>  int bmi323_core_probe(struct device *dev);
+>>  extern const struct regmap_config bmi323_regmap_config;
+>> +extern const struct dev_pm_ops bmi323_core_pm_ops;
+>>  
+>>  #endif
+>> diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
+>> index d708d1fe3e42..4b2b211a3e88 100644
+>> --- a/drivers/iio/imu/bmi323/bmi323_core.c
+>> +++ b/drivers/iio/imu/bmi323/bmi323_core.c
+>> @@ -2121,6 +2121,29 @@ int bmi323_core_probe(struct device *dev)
+>>  }
+>>  EXPORT_SYMBOL_NS_GPL(bmi323_core_probe, IIO_BMI323);
+>>  
+>> +#if defined(CONFIG_PM)
+>> +static int bmi323_core_runtime_suspend(struct device *dev)
+>> +{
+>> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>> +
+>> +	return iio_device_suspend_triggering(indio_dev);
+>> +}
+>> +
+>> +static int bmi323_core_runtime_resume(struct device *dev)
+>> +{
+>> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+>> +
+>> +	return iio_device_resume_triggering(indio_dev);
+>> +}
+>> +
+>> +#endif
+>> +
+>> +const struct dev_pm_ops bmi323_core_pm_ops = {
+>> +	SET_RUNTIME_PM_OPS(bmi323_core_runtime_suspend,
+>> +			   bmi323_core_runtime_resume, NULL)
+>> +};
+>> +EXPORT_SYMBOL_NS_GPL(bmi323_core_pm_ops, IIO_BMI323);
+>> +
+>>  MODULE_DESCRIPTION("Bosch BMI323 IMU driver");
+>>  MODULE_AUTHOR("Jagath Jog J <jagathjog1996@gmail.com>");
+>>  MODULE_LICENSE("GPL");
+>> diff --git a/drivers/iio/imu/bmi323/bmi323_i2c.c b/drivers/iio/imu/bmi323/bmi323_i2c.c
+>> index 52140bf05765..057342f4f816 100644
+>> --- a/drivers/iio/imu/bmi323/bmi323_i2c.c
+>> +++ b/drivers/iio/imu/bmi323/bmi323_i2c.c
+>> @@ -128,6 +128,7 @@ MODULE_DEVICE_TABLE(of, bmi323_of_i2c_match);
+>>  static struct i2c_driver bmi323_i2c_driver = {
+>>  	.driver = {
+>>  		.name = "bmi323",
+>> +		.pm = pm_ptr(&bmi323_core_pm_ops),
+>>  		.of_match_table = bmi323_of_i2c_match,
+>>  		.acpi_match_table = bmi323_acpi_match,
+>>  	},
+>> diff --git a/drivers/iio/imu/bmi323/bmi323_spi.c b/drivers/iio/imu/bmi323/bmi323_spi.c
+>> index 7b1e8127d0dd..487d4ee05246 100644
+>> --- a/drivers/iio/imu/bmi323/bmi323_spi.c
+>> +++ b/drivers/iio/imu/bmi323/bmi323_spi.c
+>> @@ -79,6 +79,7 @@ MODULE_DEVICE_TABLE(of, bmi323_of_spi_match);
+>>  static struct spi_driver bmi323_spi_driver = {
+>>  	.driver = {
+>>  		.name = "bmi323",
+>> +		.pm = pm_ptr(&bmi323_core_pm_ops),
+>>  		.of_match_table = bmi323_of_spi_match,
+>>  	},
+>>  	.probe = bmi323_spi_probe,
+> 
 
 
