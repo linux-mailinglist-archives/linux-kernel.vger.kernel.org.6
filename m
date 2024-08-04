@@ -1,147 +1,242 @@
-Return-Path: <linux-kernel+bounces-273879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B521D946F22
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:58:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11D6946F2D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AEA9281862
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D591C2111D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C984963A;
-	Sun,  4 Aug 2024 13:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3242556B7C;
+	Sun,  4 Aug 2024 13:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQ9ZI212"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SKxd5yf1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C3B28DCC;
-	Sun,  4 Aug 2024 13:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874894D8B9;
+	Sun,  4 Aug 2024 13:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722779892; cv=none; b=eaOkixTrDdeZz6HNFvayg9OivDx9Oy1RtwSz8ynZpoFObgAeRadT9xUOBkB3SF8F5o5y67AhYVfZ6rddD5BE4pShoVh7T2Z85aBDKreBmwGSXCAzuOxS67Nhu9NtjBlP+6rf2/jYsYTjvnaGWCcDV/zSdUPYXEO+RULIA1Kwia0=
+	t=1722779954; cv=none; b=mMYWhNKTAltOTHu+W/7VG0sS452CEXW3dDFjNAnuZ/GCLZ/XkBKELvjpSmrJpaaaOYkxEwUdoxiC7yYZBKDseZvpKMRGm1OGJ7Fr97GBiV6RC/2cfboyf6Y/penWXrCgal3SdjnGnZzSfNollqctrr2Rmz7GTrli908MvdKCE8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722779892; c=relaxed/simple;
-	bh=eGDE+f0BaGsJCgB3xL7YwQKssI6mz9Ing5GSmVS1HYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BsZ3p+dOtCHhjs3S1VNCG6J0gj74M2ZOK29JJxc9hiC9KYJgEGBbe+CWeN0NRfZCwxtTDUuIMXY7CSkmYZfyWhbMnL+/yjZcFaKbftZ2NNEsMnd5O78M+FxjXQvhdyF5KeAHz0wPmgnq76ai4hiNE7pBfXcTPd6WurUcwKRQ1yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQ9ZI212; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AFAC32786;
-	Sun,  4 Aug 2024 13:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722779892;
-	bh=eGDE+f0BaGsJCgB3xL7YwQKssI6mz9Ing5GSmVS1HYw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FQ9ZI212JFmftFY0TLsNcr3+J6xE7efyZgecfKOPwBwpknAkqioEe4coroq8IPxQQ
-	 /TyOF/GEXEQ6gndMsqGY/ilHErEmdxkmHSrE3OVeCMqv8OT0i0ZVv7M/D033zDVVmh
-	 dpWGweRhI9sBNCYC09T3vFgLhFtCQZC5YZrJmcSfECj1r/wEhKmGBnMrTwFyfMfmA+
-	 xKx1cUdSh0Jgw+wbu6FX1S8KqB7B3VVNG1huDBaHjzxysF8/w6UwjWL4fTW9ny5I7v
-	 IgI9AvMr/0E7EPSXv71shOlwPijAVlPknjsVjmijFtUPn1Esz/I060h5uZKok4fRh3
-	 O0JrTY2jwWwZw==
-Message-ID: <1f60e4d1-ee8a-47fc-8fad-a75ec6485a28@kernel.org>
-Date: Sun, 4 Aug 2024 15:58:05 +0200
+	s=arc-20240116; t=1722779954; c=relaxed/simple;
+	bh=Hw0uflrUJ7vQqndEmg42vDKC3Kxb745Qp0ejtEqvO+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8iZ1FVyj6XpXZYbkDIxqvQDnhcOv0S573IAhH9RnGSaWEmoUyL7pZFxnewWKqNbNl4Dgy2swm4B3lbIcj8XQLespCaORP0CEFDwyclGyO1F8QZ5/AnkuTaVVxS53BjW8NuDrUdU3V3/giWuzceYY9+NJMLfAJ7/IvS0+M8NAgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SKxd5yf1; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722779953; x=1754315953;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Hw0uflrUJ7vQqndEmg42vDKC3Kxb745Qp0ejtEqvO+c=;
+  b=SKxd5yf176Og7QJ1petyMh6Abk0J2I4JEI2wviBq/U8KHBMJYIiGvhdP
+   9G2TP75phat0YwkADHBQoDkshRaMF+YjQxPOuWH4fSsC2oa5g11JmzhVI
+   8DKkTFFVyYUo7Yc+lHuV7aiS97VrDz7C6s669beBz9tWUdQOJHZlfKE/9
+   HmNk1CvsrzVr0z50qxj+P0r9knr6a1ABKmWvkG9Kre8+Kxx7zNyWMMtQq
+   9VvX41z0nQCfcFgw/U7T22+VovtX2PmJdfG7VEfh7rE3j+OEXRzfWE6mr
+   hpb54CtY2d1qK8zHdP1Az3V9v/kFxwr7vRo9Y7+q9/D1t/W9bP7QJb5QS
+   Q==;
+X-CSE-ConnectionGUID: uvQckt+3SOijd/LP/t1djw==
+X-CSE-MsgGUID: Ut82/kWzSGCqdKli1c4LqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="31323661"
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="31323661"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 06:59:12 -0700
+X-CSE-ConnectionGUID: HTLxOMkET+6kj9cLG0Dyew==
+X-CSE-MsgGUID: HZ7X5HwaThCOen4fcgsdqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="56658499"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 04 Aug 2024 06:59:06 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sablH-0001Sk-1u;
+	Sun, 04 Aug 2024 13:59:03 +0000
+Date: Sun, 4 Aug 2024 21:58:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Joern Engel <joern@lazybastard.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-nvme@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 4/6] block2mtd: attach device OF node to MTD device
+Message-ID: <202408042135.nXaBv2UM-lkp@intel.com>
+References: <20240804114108.1893-5-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] clk: clocking-wizard: add user clock monitor
- support
-To: Harry Austen <hpausten@protonmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240803105702.9621-1-hpausten@protonmail.com>
- <a35918fe-d0d5-4418-b6ad-0150873cb507@kernel.org>
- <D374LM180ETW.M8ESN44FLCVX@protonmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <D374LM180ETW.M8ESN44FLCVX@protonmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240804114108.1893-5-ansuelsmth@gmail.com>
 
-On 04/08/2024 14:28, Harry Austen wrote:
-> On Sun Aug 4, 2024 at 10:01 AM BST, Krzysztof Kozlowski wrote:
->> On 03/08/2024 12:57, Harry Austen wrote:
->>> Improve utilised clk/notifier APIs, making use of device managed versions
->>> of functions, make dynamic reconfiguration support optional (because it is
->>> in hardware) and add support for the clock monitor functionailty added in
->>> version 6.0 of the Xilinx clocking wizard IP core, through use of the
->>> auxiliary bus and UIO frameworks.
->>>
->>> The combined addition of all of these patches allows, for example, to use
->>> the clocking wizard solely for its user clock monitoring logic, keeping
->>> dynamic reconfiguration support disabled.
->>>
->>> This is currently untested on hardware, so any help testing this would be
->>> much appreciated!
->>>
->>> v1 -> v2:
->>> - Split and improve clk_hw+devres transition patch (2+3)
->>> - Fix/improve DT binding patches (5+8)
->>
->> Be specific, what did you change? Anything can be a fix or improvement.
-> 
-> This was intended as more of a summary, referencing the patches which have
-> their own more detailed changelogs. But I will be more descriptive in the
-> cover letter too in future.
+Hi Christian,
 
-No, if more descriptive changelog is in each patch, then it is fine.
+kernel test robot noticed the following build errors:
 
-Best regards,
-Krzysztof
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.11-rc1 next-20240802]
+[cannot apply to mtd/mtd/next mtd/mtd/fixes]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvme-Document-nvme-card-compatible/20240804-194357
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240804114108.1893-5-ansuelsmth%40gmail.com
+patch subject: [PATCH 4/6] block2mtd: attach device OF node to MTD device
+config: i386-buildonly-randconfig-001-20240804 (https://download.01.org/0day-ci/archive/20240804/202408042135.nXaBv2UM-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408042135.nXaBv2UM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408042135.nXaBv2UM-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/mtd/devices/block2mtd.c: In function 'add_device':
+>> drivers/mtd/devices/block2mtd.c:332:9: error: 'ddev' undeclared (first use in this function); did you mean 'dev'?
+     332 |         ddev = disk_to_dev(dev->blkdev->bd_disk);
+         |         ^~~~
+         |         dev
+   drivers/mtd/devices/block2mtd.c:332:9: note: each undeclared identifier is reported only once for each function it appears in
+   In file included from drivers/mtd/devices/block2mtd.c:22:
+>> drivers/mtd/devices/block2mtd.c:332:31: error: 'struct block2mtd_dev' has no member named 'blkdev'
+     332 |         ddev = disk_to_dev(dev->blkdev->bd_disk);
+         |                               ^~
+   include/linux/blkdev.h:258:13: note: in definition of macro 'disk_to_dev'
+     258 |         (&((disk)->part0->bd_device))
+         |             ^~~~
+   drivers/mtd/devices/block2mtd.c:333:25: error: 'struct block2mtd_dev' has no member named 'blkdev'
+     333 |         if (ddev == &dev->blkdev->bd_device)
+         |                         ^~
+
+
+vim +332 drivers/mtd/devices/block2mtd.c
+
+   260	
+   261	static struct block2mtd_dev *add_device(char *devname, int erase_size,
+   262			char *label, int timeout)
+   263	{
+   264		const blk_mode_t mode = BLK_OPEN_READ | BLK_OPEN_WRITE;
+   265		struct file *bdev_file;
+   266		struct block_device *bdev;
+   267		struct block2mtd_dev *dev;
+   268		loff_t size;
+   269		char *name;
+   270	
+   271		if (!devname)
+   272			return NULL;
+   273	
+   274		dev = kzalloc(sizeof(struct block2mtd_dev), GFP_KERNEL);
+   275		if (!dev)
+   276			return NULL;
+   277	
+   278		/* Get a handle on the device */
+   279		bdev_file = bdev_file_open_by_path(devname, mode, dev, NULL);
+   280		if (IS_ERR(bdev_file))
+   281			bdev_file = mdtblock_early_get_bdev(devname, mode, timeout,
+   282							      dev);
+   283		if (IS_ERR(bdev_file)) {
+   284			pr_err("error: cannot open device %s\n", devname);
+   285			goto err_free_block2mtd;
+   286		}
+   287		dev->bdev_file = bdev_file;
+   288		bdev = file_bdev(bdev_file);
+   289	
+   290		if (MAJOR(bdev->bd_dev) == MTD_BLOCK_MAJOR) {
+   291			pr_err("attempting to use an MTD device as a block device\n");
+   292			goto err_free_block2mtd;
+   293		}
+   294	
+   295		size = bdev_nr_bytes(bdev);
+   296		if ((long)size % erase_size) {
+   297			pr_err("erasesize must be a divisor of device size\n");
+   298			goto err_free_block2mtd;
+   299		}
+   300	
+   301		mutex_init(&dev->write_mutex);
+   302	
+   303		/* Setup the MTD structure */
+   304		/* make the name contain the block device in */
+   305		if (!label)
+   306			name = kasprintf(GFP_KERNEL, "block2mtd: %s", devname);
+   307		else
+   308			name = kstrdup(label, GFP_KERNEL);
+   309		if (!name)
+   310			goto err_destroy_mutex;
+   311	
+   312		dev->mtd.name = name;
+   313	
+   314		dev->mtd.size = size & PAGE_MASK;
+   315		dev->mtd.erasesize = erase_size;
+   316		dev->mtd.writesize = 1;
+   317		dev->mtd.writebufsize = PAGE_SIZE;
+   318		dev->mtd.type = MTD_RAM;
+   319		dev->mtd.flags = MTD_CAP_RAM;
+   320		dev->mtd._erase = block2mtd_erase;
+   321		dev->mtd._write = block2mtd_write;
+   322		dev->mtd._sync = block2mtd_sync;
+   323		dev->mtd._read = block2mtd_read;
+   324		dev->mtd.priv = dev;
+   325		dev->mtd.owner = THIS_MODULE;
+   326	
+   327		/*
+   328		 * Check if we are using root blockdev.
+   329		 * If it's the case, connect the MTD of_node to the ddev parent
+   330		 * to support providing partition in DT node.
+   331		 */
+ > 332		ddev = disk_to_dev(dev->blkdev->bd_disk);
+   333		if (ddev == &dev->blkdev->bd_device)
+   334			dev->mtd.dev.of_node = of_node_get(ddev->parent->of_node);
+   335	
+   336		if (mtd_device_register(&dev->mtd, NULL, 0)) {
+   337			/* Device didn't get added, so free the entry */
+   338			goto err_destroy_mutex;
+   339		}
+   340	
+   341		list_add(&dev->list, &blkmtd_device_list);
+   342		pr_info("mtd%d: [%s] erase_size = %dKiB [%d]\n",
+   343			dev->mtd.index,
+   344			label ? label : dev->mtd.name + strlen("block2mtd: "),
+   345			dev->mtd.erasesize >> 10, dev->mtd.erasesize);
+   346		return dev;
+   347	
+   348	err_destroy_mutex:
+   349		of_node_put(dev->mtd.dev.of_node);
+   350		mutex_destroy(&dev->write_mutex);
+   351	err_free_block2mtd:
+   352		block2mtd_free_device(dev);
+   353		return NULL;
+   354	}
+   355	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
