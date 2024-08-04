@@ -1,262 +1,114 @@
-Return-Path: <linux-kernel+bounces-273728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C41946CFD
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:23:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACF1946D00
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE271C21470
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:23:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718AC1F2204E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DBA1CD15;
-	Sun,  4 Aug 2024 07:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9C018046;
+	Sun,  4 Aug 2024 07:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="a7cCJDDs"
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXYCpmm6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BFB156E4;
-	Sun,  4 Aug 2024 07:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC4514F98;
+	Sun,  4 Aug 2024 07:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722756169; cv=none; b=ren7CYCny6bJJw0W6GD39yP/I4LZbI9eLTEWNW7D8cu+kQIlzd7i00N95LJ3fXws6uJysifngDKCXWufdyJt7sIY5JaOlkQ5abWTPbqrU6+FLriviuigR4b89vy33Fzbk6CnD3KsRbH9RdFXxpTWoMTcwUPwHZRYA6AQmdyfIa8=
+	t=1722756223; cv=none; b=kENEF56iCOjytVqlEUMhrIxsfEwa4bhgmuZp+oJkpe9vduo591QX/Z492v8JMM0ufA0gqQYQiiCxp773N3Pswg+NK3/mWrCxpug85zKL3MLKprQLiIAF1BGqaTd0zlwVfWJLVN4IRJP/mJ7WQp8LGAj3jxFgRiRFLFAeVjxMjOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722756169; c=relaxed/simple;
-	bh=wtCYCVL7Tbpaue8Pa3D9laRV3mCidQ14oMghxtZzCro=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gCyruyZsc5CJQfAsyACRisxCDTn2oK/RP5xqp26+m1HtPj5A7gtjwkvas+dDINCXNh9f61lilorfyJyhqGPa/3AxASyHkGJQMh4Qg7d9DEG93bmNPCk40e0Y6Ejc1l7wazW0SN3wg1X1wTkukVzD1pr0yPS3NQKB0T/02NnmRuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=a7cCJDDs; arc=none smtp.client-ip=216.71.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1722756168; x=1754292168;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wtCYCVL7Tbpaue8Pa3D9laRV3mCidQ14oMghxtZzCro=;
-  b=a7cCJDDs8x8Wyqhjm/j/oEBmmPrV2iN3//ONqUyxvratkSYXvoekjE0G
-   PYVTWlyU6p5mCAxgGr7B9uUQpXFAXXaLacty1DpLyxwnwdCGxkfFMHwgr
-   e+or5SKmFIy+8yxPUs7mklK2nKlCPVAYFkXFYN2BjY4wqOoSEY13n7i1J
-   qifkpHbXqtiUOBbtcc3RjfMt7ofXEw4s4+SOxOxW6AS2NzFfaeOZIj0v0
-   th9G1AmMO63E4rreN0UcbzpCCWXY3y5Q7+Y7cVBbe0oTtk8i5c08+lt7A
-   oBubGsLPs8GJeaYT3vATwpeNNmTFOyLH6Dw+N1XB1wT+CAY+iEZyWtqB/
-   Q==;
-X-CSE-ConnectionGUID: Be9fHSXfR3yfv3/b36ycnQ==
-X-CSE-MsgGUID: GF9AIsEwS/ifRim3PA1kwA==
-X-IronPort-AV: E=Sophos;i="6.09,262,1716220800"; 
-   d="scan'208";a="23384662"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Aug 2024 15:22:43 +0800
-IronPort-SDR: 66af1fa0_BNf2az/xaAtHIFi/JsUmAAGMd8XCUAWs+/MgHsCgsqwSSUQ
- MEbLacyFpbSjpYOh/TSk4DeNLMX44WLvC9aRI2w==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Aug 2024 23:28:49 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Aug 2024 00:22:41 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v2 2/2] scsi: ufs: Add HCI capabilities sysfs group
-Date: Sun,  4 Aug 2024 10:21:09 +0300
-Message-Id: <20240804072109.2330880-3-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240804072109.2330880-1-avri.altman@wdc.com>
-References: <20240804072109.2330880-1-avri.altman@wdc.com>
+	s=arc-20240116; t=1722756223; c=relaxed/simple;
+	bh=jQiJOpRAAEffBgCAE+wAqMVZconq0jXGk3ZQfZAVTR4=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=JNDcZ9fkFNyj52+OqEhQYM9SUIz2GqsJliaWkWyq17XCbmWpAj546SZmudh/rYO5iN9Z4chOYnGP0rxwaxyAtNKUWuDpt2uw/7/6MM74Jl8T5PIVtTtG8r8RYrbIqpuGJxvn83tAX1DlFfR+4qcEg9WOvBkpKlsRULNu8E6JdjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXYCpmm6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A243C32786;
+	Sun,  4 Aug 2024 07:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722756222;
+	bh=jQiJOpRAAEffBgCAE+wAqMVZconq0jXGk3ZQfZAVTR4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=qXYCpmm6WRM/h5S9iJLmxp8x5LOwr8+0FYoaw8AyydJzVPotwdderP7s7G9oEyyky
+	 QCq8CF/HDqiN9izjuYLkxxLPl2oyh98Mzd+cyEnxl08JINMWju+Un/axwz3tlG+hPE
+	 fonG9U28asGmkcYcPLsL0HIRgYwTLhg6OUD7aVn+O91eR76qX2Vgxo06YDJJxZ63m7
+	 wZzAy5DOMATw4Qz3xUpjlxD0EJEbWFr0xhNIKORLDyY32yhyRHtbrnvZrUPdskxUL+
+	 mU4/Yd0I2S9xFdDF1Rkpco9tQ7emop0G5xajvA3YlGDtleyA+0W1O6blB+cVAt3enj
+	 NoQwM5KUlMgzQ==
+Date: Sun, 04 Aug 2024 01:23:41 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: zhenghaowei@loongson.cn
+Cc: kernel@xen0n.name, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
+ linux-serial@vger.kernel.org, gregkh@linuxfoundation.org, 
+ devicetree@vger.kernel.org, p.zabel@pengutronix.de, 
+ loongarch@lists.linux.dev, conor+dt@kernel.org, chenhuacai@kernel.org, 
+ jirislaby@kernel.org
+In-Reply-To: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+Message-Id: <172275622121.3211162.12520346466286897443.robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART
+ controller
 
-The standard register map of UFSHCI is comprised of several groups.  The
-first group (starting from offset 0x00), is the host capabilities group.
-It contains some interesting information, that otherwise is not
-available, e.g. the UFS version of the platform etc.
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
----
- Documentation/ABI/testing/sysfs-driver-ufs | 48 +++++++++++
- drivers/ufs/core/ufs-sysfs.c               | 95 ++++++++++++++++++++++
- 2 files changed, 143 insertions(+)
+On Sun, 04 Aug 2024 14:38:32 +0800, zhenghaowei@loongson.cn wrote:
+> From: Haowei Zheng <zhenghaowei@loongson.cn>
+> 
+> Add Loongson UART controller binding with DT schema format using
+> json-schema.
+> 
+> Signed-off-by: Haowei Zheng <zhenghaowei@loongson.cn>
+> ---
+>  .../bindings/serial/loongson,ls7a-uart.yaml   | 74 +++++++++++++++++++
+>  MAINTAINERS                                   |  7 ++
+>  2 files changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml
+> 
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index fe943ce76c60..6c6cf12d25ca 100644
---- a/Documentation/ABI/testing/sysfs-driver-ufs
-+++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -1532,3 +1532,51 @@ Contact:	Bean Huo <beanhuo@micron.com>
- Description:
- 		rtc_update_ms indicates how often the host should synchronize or update the
- 		UFS RTC. If set to 0, this will disable UFS RTC periodic update.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/ufshci_capabilities/capabilities
-+What:		/sys/bus/platform/devices/*.ufs/ufshci_capabilities/capabilities
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: host controller capabiities register.
-+		Symbol - CAP.  Offset: 0x00 - 0x03.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/ufshci_capabilities/mcq_cap
-+What:		/sys/bus/platform/devices/*.ufs/ufshci_capabilities/mcq_cap
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: multi-circular queue capability register.
-+		Symbol - MCQCAP.  Offset: 0x04 - 0x07.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/ufshci_capabilities/version
-+What:		/sys/bus/platform/devices/*.ufs/ufshci_capabilities/version
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: UFS version register.
-+		Symbol - VER.  Offset: 0x08 - 0x0B.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/ufshci_capabilities/ext_capabilities
-+What:		/sys/bus/platform/devices/*.ufs/ufshci_capabilities/ext_capabilities
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: extended controller capabilities register.
-+		Symbol - EXT_CAP.  Offset: 0x0C - 0x0F.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/ufshci_capabilities/product_id
-+What:		/sys/bus/platform/devices/*.ufs/ufshci_capabilities/product_id
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: product ID register.
-+		Symbol - HCPID.  Offset: 0x10 - 0x13.
-+
-+What:		/sys/bus/platform/drivers/ufshcd/ufshci_capabilities/man_id
-+What:		/sys/bus/platform/devices/*.ufs/ufshci_capabilities/man_id
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: manufacturer ID register.
-+		Symbol - HCMID.  Offset: 0x14 - 0x17.
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index dec7746c98e0..751d5ff406da 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -525,6 +525,100 @@ static const struct attribute_group ufs_sysfs_capabilities_group = {
- 	.attrs = ufs_sysfs_capabilities_attrs,
- };
- 
-+static ssize_t capabilities_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "0x%x\n", hba->capabilities);
-+}
-+
-+static ssize_t mcq_cap_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	if (hba->ufs_version < ufshci_version(4, 0))
-+		return -EOPNOTSUPP;
-+
-+	return sysfs_emit(buf, "0x%x\n", hba->mcq_capabilities);
-+}
-+
-+static ssize_t version_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "0x%x\n", hba->ufs_version);
-+}
-+
-+static ssize_t ext_capabilities_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	int ret;
-+	u32 val;
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	if (hba->ufs_version < ufshci_version(4, 0))
-+		return -EOPNOTSUPP;
-+
-+	ret = ufshcd_read_hci_reg(hba, &val, REG_EXT_CONTROLLER_CAPABILITIES);
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "0x%x\n", val);
-+}
-+
-+static ssize_t product_id_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	int ret;
-+	u32 val;
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	ret = ufshcd_read_hci_reg(hba, &val, REG_CONTROLLER_PID);
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "0x%x\n", val);
-+}
-+
-+static ssize_t man_id_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	int ret;
-+	u32 val;
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	ret = ufshcd_read_hci_reg(hba, &val, REG_CONTROLLER_MID);
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "0x%x\n", val);
-+}
-+
-+static DEVICE_ATTR_RO(capabilities);
-+static DEVICE_ATTR_RO(mcq_cap);
-+static DEVICE_ATTR_RO(version);
-+static DEVICE_ATTR_RO(ext_capabilities);
-+static DEVICE_ATTR_RO(product_id);
-+static DEVICE_ATTR_RO(man_id);
-+
-+static struct attribute *ufs_sysfs_ufshci_cap_attrs[] = {
-+	&dev_attr_capabilities.attr,
-+	&dev_attr_mcq_cap.attr,
-+	&dev_attr_version.attr,
-+	&dev_attr_ext_capabilities.attr,
-+	&dev_attr_product_id.attr,
-+	&dev_attr_man_id.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group ufs_sysfs_ufshci_group = {
-+	.name = "ufshci_capabilities",
-+	.attrs = ufs_sysfs_ufshci_cap_attrs,
-+};
-+
- static ssize_t monitor_enable_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -1508,6 +1602,7 @@ static const struct attribute_group ufs_sysfs_attributes_group = {
- static const struct attribute_group *ufs_sysfs_groups[] = {
- 	&ufs_sysfs_default_group,
- 	&ufs_sysfs_capabilities_group,
-+	&ufs_sysfs_ufshci_group,
- 	&ufs_sysfs_monitor_group,
- 	&ufs_sysfs_power_info_group,
- 	&ufs_sysfs_device_descriptor_group,
--- 
-2.25.1
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: fractional-division: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: rts-invert: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: dtr-invert: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: cts-invert: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: dsr-invert: missing type definition
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.example.dtb: serial@1fe001e0: reg: [[0, 534774240], [0, 16]] is too long
+	from schema $id: http://devicetree.org/schemas/loongson,ls7a-uart.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.example.dtb: serial@1fe001e0: 'clocks' is a required property
+	from schema $id: http://devicetree.org/schemas/loongson,ls7a-uart.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.example.dtb: serial@1fe001e0: Unevaluated properties are not allowed ('clock-frequency', 'reg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/loongson,ls7a-uart.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240804063834.70022-1-zhenghaowei@loongson.cn
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
