@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-273926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B52946FCC
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 18:24:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C70946FCE
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 18:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D03A1C20A3E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:24:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04078281551
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BAD74063;
-	Sun,  4 Aug 2024 16:24:44 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE2876025;
+	Sun,  4 Aug 2024 16:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="iGWs0PmW"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D167A2744D;
-	Sun,  4 Aug 2024 16:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3857279C2;
+	Sun,  4 Aug 2024 16:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722788684; cv=none; b=JXF4PpdwnWvTmXgkIAlN6tKNA2hoHXa/4eS4Mnr7yjOR+Jq0NMkv7BmEFbxH+Lj0r8wfn6ThnC4raDdvVu1w8h2H+X6fQBoVcws/XH9gUaN9a7eD0UOk7UzBo4HqmdzUOsLieG5Wr1u5zepv2MRnlFPwPJNPG02p5EhgRMFd0MQ=
+	t=1722788990; cv=none; b=AqYLxXVkcFOG1yK74I6cW67EMnVHIjK1L5WgWObeY+4Jv93pMC06xa+UDwSXpfX6QUojg8N72V3PfnfsDZqTX7WLICdscaz1wx900luQDzQQsEzUw8VEn8n3xx+64mrmNA8cp8bbJp8g4C1HpSqmmKbVEKpwRgTuddsAcqwESxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722788684; c=relaxed/simple;
-	bh=L0ai+hB2ujAmB3bk3dLz9OmYHyA3dryG6Sg5Iu3N4eA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r0WwydgElduBn1i2lQNVZOaeGlVgKDCRnepnvF7/mLpmlJmaiLDxcjp2H4JsgHZiuZkT+PDagHNv5fTVrN6O7vkyNrmSx8OGrSmqEIXJ6RnchyTZ7TGsAgZ/m8XZbS9kOtJRxWda7mXVaAodnRFV4hrEYauT89vde/SWfdI8IPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WcPwy6b8dz6K5Yr;
-	Mon,  5 Aug 2024 00:22:26 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id D1FA71406AC;
-	Mon,  5 Aug 2024 00:24:37 +0800 (CST)
-Received: from localhost (10.195.244.131) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sun, 4 Aug
- 2024 17:24:37 +0100
-Date: Sun, 4 Aug 2024 17:24:36 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Huang Ying <ying.huang@intel.com>
-CC: Dan Williams <dan.j.williams@intel.com>, Dave Jiang
-	<dave.jiang@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Alison
- Schofield" <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, "Alejandro
- Lucero" <alucerop@amd.com>
-Subject: Re: [PATCH 1/3] cxl: Set target type of root decoder based on CFMWS
- restrictions
-Message-ID: <20240804172436.00003275@Huawei.com>
-In-Reply-To: <20240729084611.502889-2-ying.huang@intel.com>
-References: <20240729084611.502889-1-ying.huang@intel.com>
-	<20240729084611.502889-2-ying.huang@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722788990; c=relaxed/simple;
+	bh=f0NlaCtt5Gf1nH692kjaX/e8x0tkeOxFgFp66UrzRNo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DH7VhSetGcxqOSD2KGEYkNa6erg9qH+jO+CUe0TaolP7ndGRVVv2wLi37UVLj/nAodzpEozDPQ413yKGL2mbYu8LXX4aVapkjRRU6h3OOGUX9tkivXGpOAM5nIRPPo3O3E5OUy9FdGf55nS3NxjKzAAgMk+9hWXgdQwsQjnr7fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=iGWs0PmW; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1722788985;
+	bh=f0NlaCtt5Gf1nH692kjaX/e8x0tkeOxFgFp66UrzRNo=;
+	h=From:Date:Subject:To:Cc:From;
+	b=iGWs0PmWzGK/LWGKTE9cRWNmMSWMkqyHKZpShZSluVOgMkaHeVVsgJ/F7CFAnt6z1
+	 7zhKa3Bml17F3cQ5UL7qh7ULJl62IvObvBWo2rklBurCP9bHmaKUvniZbjX2GnQoAJ
+	 PRFD29erDDZLzVN1rV6e78eIDNUlG/Np0y/kBvr8=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sun, 04 Aug 2024 18:29:37 +0200
+Subject: [PATCH] HID: winwing: constify read-only structs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240804-hid-const-winwing-v1-1-5a6c714753b1@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAHCsr2YC/x2MywqAIBAAf0X23IKaQfUr0cHHVnux0Kgg/Pckm
+ MscZl7IlJgyjOKFRBdn3mMV1Qjwm40rIYfqoKU2spcGNw7o95hPvDlWVvRWtc7JwXbBQ+2ORAs
+ //3OaS/kApIKu/2MAAAA=
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ivan Gorinov <ivan.gorinov@jobyaviation.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722788984; l=1549;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=f0NlaCtt5Gf1nH692kjaX/e8x0tkeOxFgFp66UrzRNo=;
+ b=iqoKJ3TQyASgio7HiFbsQoC+E4YyPtL4UZqXOVYCTRJukuVVk2zVB+EN06SwQEuMazTb2ERIU
+ 2/vObygLQX7AuSXqkSHkp1eEMMRqJpka/jsXC0/AQ7h2TAA+iGYLfcP
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Mon, 29 Jul 2024 16:46:09 +0800
-Huang Ying <ying.huang@intel.com> wrote:
+These structs are never modified, so mark them as const.
 
-> Now, the target type of root decoder is hard-coded to HOSTONLYMEM,
-> because only type3 expanders are supported.  To support type2
-> accelerators, set the target type of root decoder based on the
-> window restrictions field of CFMWS entry.
-> 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Alejandro Lucero <alucerop@amd.com>
-> ---
->  drivers/cxl/acpi.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index 82b78e331d8e..40c92ad29122 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -382,7 +382,10 @@ static int __cxl_parse_cfmws(struct acpi_cedt_cfmws *cfmws,
->  
->  	cxld = &cxlrd->cxlsd.cxld;
->  	cxld->flags = cfmws_to_decoder_flags(cfmws->restrictions);
-> -	cxld->target_type = CXL_DECODER_HOSTONLYMEM;
-> +	if (cxld->flags & CXL_DECODER_F_TYPE2)
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+While I stumbled upon this during the rdesc constification work,
+this patch is unrelated to it and can be applied independently.
+---
+ drivers/hid/hid-winwing.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-These flags need updating or we are going to run into problems
-long term.
+diff --git a/drivers/hid/hid-winwing.c b/drivers/hid/hid-winwing.c
+index 10a5d87ccb96..7d1c0226ab60 100644
+--- a/drivers/hid/hid-winwing.c
++++ b/drivers/hid/hid-winwing.c
+@@ -27,7 +27,7 @@ struct winwing_led_info {
+ 	const char *led_name;
+ };
+ 
+-static struct winwing_led_info led_info[3] = {
++static const struct winwing_led_info led_info[3] = {
+ 	{ 0, 255, "backlight" },
+ 	{ 1, 1, "a-a" },
+ 	{ 2, 1, "a-g" },
+@@ -94,7 +94,7 @@ static int winwing_init_led(struct hid_device *hdev,
+ 		return -ENOMEM;
+ 
+ 	for (i = 0; i < 3; i += 1) {
+-		struct winwing_led_info *info = &led_info[i];
++		const struct winwing_led_info *info = &led_info[i];
+ 
+ 		led = &data->leds[i];
+ 		led->hdev = hdev;
+@@ -150,7 +150,7 @@ static int winwing_input_configured(struct hid_device *hdev,
+ 	return ret;
+ }
+ 
+-static __u8 original_rdesc_buttons[] = {
++static const __u8 original_rdesc_buttons[] = {
+ 	0x05, 0x09, 0x19, 0x01, 0x29, 0x6F,
+ 	0x15, 0x00, 0x25, 0x01, 0x35, 0x00,
+ 	0x45, 0x01, 0x75, 0x01, 0x95, 0x6F,
 
-As of more recent specs, the distinction is messier than it was and
-it's device coherent HDM-D / HDM-DB (second one being type2 or type3 with
-BI support) and/or Host only coherent HDM-H.
+---
+base-commit: a5dbd76a89423eca9f8de338350f2666aacfb432
+change-id: 20240804-hid-const-winwing-ca13bb09a5dc
 
-I'm curious on whether anyone is support both on same CFWMS?
-I believe it is possible and the spec doesn't rule it out.
-
-Jonathan
-
-
-> +		cxld->target_type = CXL_DECODER_DEVMEM;
-> +	else
-> +		cxld->target_type = CXL_DECODER_HOSTONLYMEM;
->  	cxld->hpa_range = (struct range) {
->  		.start = cfmws->base_hpa,
->  		.end = cfmws->base_hpa + cfmws->window_size - 1,
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
 
