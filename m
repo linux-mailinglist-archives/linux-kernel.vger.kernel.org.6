@@ -1,396 +1,274 @@
-Return-Path: <linux-kernel+bounces-273856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49663946EEC
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:05:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63CD946EED
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:06:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7A21F20F29
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:05:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2FA2828CA
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1A113CA8D;
-	Sun,  4 Aug 2024 13:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A3E13D298;
+	Sun,  4 Aug 2024 13:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="EWkCcxkd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GGt8fz1f"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zxh+VJPX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HzOE7jEn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE8413C661
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C216D13C8E2
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722776574; cv=none; b=r2naN+wEapAQFkPMW6W6cjHu0WDwqHehe+uJn4m/UVFmXa9tbHrftU4msNIcn5DfUHxpOI5bYE9vKSBH2C0LaogCisDhlRIBx0U4ROtXz2Pda4eExhJqO7SQlC0T0VdZMznNFkE8mMJPGdVrHNVLKYIUD3GBNIFCtg17in4CbPA=
+	t=1722776577; cv=none; b=qH4PCFg3xdpJaosy+oLF6LT9ERrL9Z0P/W3WEy3q/QRW8kuQx+cs2ZgdX892bT22W9XDxY988sT//lLMoqZAcNYJdyh54Sf5dG43NLRBTVO2WjUBcNG8F1wfKzdx3GYmvB/q7ur4O2UD9UGaNdJY6phFueB0/xC0Lpyci6dVhaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722776574; c=relaxed/simple;
-	bh=QvOuD/5y8rCGroBROVtigY3efPBGAl1FYLFEGbesjng=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VFOCVsclwGnfS/CmDsABtKA3koUynNSdjQDYVUQtctgBfDJMkBO/7F5+9BW+WyTNRp0MTEf84C1e3yT44thMFka09m9OAHa6jvVbkFUKtKvqSwpSVLx+boVB4BTLWltWtXdb6DMbu7+H0BFtIV6tXscxouv47j0U8I8iRNkluLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=EWkCcxkd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GGt8fz1f; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6726A11481AC;
-	Sun,  4 Aug 2024 09:02:52 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Sun, 04 Aug 2024 09:02:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1722776572; x=
-	1722862972; bh=ce1PvFpqfMZ6coYFn9GbZNurf1sO48K6AvhhScalZL0=; b=E
-	WkCcxkdxBsvVGip1trnbama6KMLb54d8OWVoUzQnZXjrM4pO9xXTRIsxoToSky1I
-	3cDHtpZAjXsnNLVD+gVFZXhxe54w/mwWbyYky9IS6efd28nUBqdT+HHZdZSm1em/
-	OKb6+gO7jjskau+L3mbrWjBJdQ8+8Af3abbDEEl5/CFPtGfRi9X/md8Rbxr2EnJC
-	S+CpEBnptBZ2ji5BwvgsRZ8O9qhF/bK/Yd1ZKwn/8sVo9i5xoOa3jqzS7AFKXuDu
-	2z/iaqLYMu0MDYkJlTUl7knduAQped1zM+fCmT+6c/8zm6svNmg2gx5s2EdrUtrx
-	hIUmFgAh0z6Bl7l62UIRg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722776572; x=
-	1722862972; bh=ce1PvFpqfMZ6coYFn9GbZNurf1sO48K6AvhhScalZL0=; b=G
-	Gt8fz1fAfLbK4x606Rw1ZAC+GazGslRtjrxccs4Qd4cQy7WjpQ2+qiwD5kHBijkS
-	O6TMt0EWevU1pqJbK/OwyB4hw/iwUm9OZZAbvcddIga4uI4ql9FhiaSH5fcpPIbH
-	2/3HQv9yF4qjan2TtqRP+k9vrpFJ6ZvhjQAxHhP2gSOy3Em/zl9iRYTdp5FyYu0O
-	VvLnZ2zUcTmysYzDRcG84DNkKGIPhGibIRneTWLbDcIRl08OEHVeyWgbLTA4ZRA4
-	C3yQ4/bQG5X6Q1FxL94jIBPx7MMQDdaEd1elVK/yzwubkZNFid/HTnrMfAATgIlD
-	z9VA5cj+SntmksN9CarhQ==
-X-ME-Sender: <xms:_HuvZiwsAk-NMVCwYKVtO6-yjdhIbgyA8lyGklAyMCwzs4c1SA5few>
-    <xme:_HuvZuRyIsBLdL1Sv6d8oxjDP6BJGU-s0GkdloqMklpSVXKilb9-T2o6oACjzsdM0
-    fsxCmnqypE-hxFIoz4>
-X-ME-Received: <xmr:_HuvZkUbdFvo2PjVQJewqFgDkPKJcvUgpUYIb06dQRuqJQCYr9D-QZPDE0pmjT4sdEGwaZ29LkF_7qcf6TnhF4VXi_u4wkpwIS7XLgXNIwAeXQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeggdehlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
-    dtredttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
-    shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejue
-    dvgfduudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgv
-    rhfuihiivgepgeenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
-    grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:_HuvZogGb39vZuj1agBXUgn7XN0dqq3_aTcFKpcOYjFxoiZxg3Vk4w>
-    <xmx:_HuvZkC8xzP1lXOOXvRuMUt8pBEbSf7ITRdrXA_llq7vlrCDQ1hnpQ>
-    <xmx:_HuvZpJDEwvLqaPsDnkKyTYx-XFNYoVdXGQ0SfZ-F4DvFWjHoSo1LA>
-    <xmx:_HuvZrCCHl_kHp61PVVx-K9byTjPRuD5g6EsJJdFEHnMkPLJT3LfHg>
-    <xmx:_HuvZnMRtmyKGZS0w-fxKx5GqsjKssoMrQRZIH_NmJwsqHVqlQFBHjT4>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 4 Aug 2024 09:02:51 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 17/17] firewire: ohci: use guard macro to serialize operations for isochronous contexts
-Date: Sun,  4 Aug 2024 22:02:24 +0900
-Message-ID: <20240804130225.243496-18-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240804130225.243496-1-o-takashi@sakamocchi.jp>
-References: <20240804130225.243496-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1722776577; c=relaxed/simple;
+	bh=tRLk/TvS98YdupTDjl9q7x/mMD7P/49029EJk8kt74Q=;
+	h=From:To:Cc:Subject:Message-ID:Content-Type:MIME-Version:Date; b=giMkVqVEaDOR8W5GfMXLY9YlgdG10vLLbEs+or5OBYvGa4A9hPs3oqqeX2r3Omxb+YUarGA8e/B4miKeNAq2dj24hb4tdXXCCUrzoKQYVJCPD6jEKHdtvGQlsdKcTgwkAIuWA3HqipLIi37lgzCJnpkH1IwYLQoIgVm5xyj4IfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zxh+VJPX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HzOE7jEn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722776572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MuN4xzF32bAtgY+PBsjK2SNDY6cWQFFqdFAOpv+mFMM=;
+	b=zxh+VJPXQOwfz2VWujQ3TPwV9FVkayqOBkEpD5UCfDEkQYit2aBjioLI0biar4Hp0akSXX
+	yPJHdFm/zWldVWegV/mmwyk0X4gnzs2aPFP6eL6l6FTdUsFMcdcBGY4XnNX9hfAhUivNc2
+	cyF66oZYbftigAknroM7YpMj54dBIFzfuI5m3e/KIhW9/dZeiRNEi+tq31sDJvsYVvsZoV
+	NFWvMOqzmi+32z3Omu7E4gW9dQp4Yq/eM1EnXb2Gv22rZeaENkqu5PRrBiIoK7tp63aAvX
+	W4QTVMUZ4KfMqQ/vCQqWF0wDma8rXT5Hl0kC6YgwMW0B2lOjWUXq8gEEVTH9WA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722776572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MuN4xzF32bAtgY+PBsjK2SNDY6cWQFFqdFAOpv+mFMM=;
+	b=HzOE7jEn/8ratqM7S/PfjmGc54qU40+sI78syiBVhDF0IIx0NNhijuhMuJD3WoTKNCLeJA
+	184BFqurnOq0AnAQ==
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [GIT pull] irq/urgent for v6.11-rc2
+Message-ID: <172277654174.866296.10517632866315552419.tglx@xen13>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Sun,  4 Aug 2024 15:02:51 +0200 (CEST)
 
-The 1394 OHCI driver uses spinlock to serialize operations for
-isochronous contexts.
+Linus,
 
-This commit uses guard macro to maintain the spinlock.
+please pull the latest irq/urgent branch from:
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/ohci.c | 164 +++++++++++++++++-----------------------
- 1 file changed, 68 insertions(+), 96 deletions(-)
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2024-=
+08-04
 
-diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index 368420e4b414..f36a0c853673 100644
---- a/drivers/firewire/ohci.c
-+++ b/drivers/firewire/ohci.c
-@@ -1173,13 +1173,11 @@ static void context_tasklet(unsigned long data)
- 			break;
- 
- 		if (old_desc != desc) {
--			/* If we've advanced to the next buffer, move the
--			 * previous buffer to the free list. */
--			unsigned long flags;
-+			// If we've advanced to the next buffer, move the previous buffer to the
-+			// free list.
- 			old_desc->used = 0;
--			spin_lock_irqsave(&ctx->ohci->lock, flags);
-+			guard(spinlock_irqsave)(&ctx->ohci->lock);
- 			list_move_tail(&old_desc->list, &ctx->buffer_list);
--			spin_unlock_irqrestore(&ctx->ohci->lock, flags);
- 		}
- 		ctx->last = last;
- 	}
-@@ -2122,14 +2120,12 @@ static void bus_reset_work(struct work_struct *work)
- 		return;
- 	}
- 
--	/* FIXME: Document how the locking works. */
--	spin_lock_irq(&ohci->lock);
--
--	ohci->generation = -1; /* prevent AT packet queueing */
--	context_stop(&ohci->at_request_ctx);
--	context_stop(&ohci->at_response_ctx);
--
--	spin_unlock_irq(&ohci->lock);
-+	// FIXME: Document how the locking works.
-+	scoped_guard(spinlock_irq, &ohci->lock) {
-+		ohci->generation = -1; // prevent AT packet queueing
-+		context_stop(&ohci->at_request_ctx);
-+		context_stop(&ohci->at_response_ctx);
-+	}
- 
- 	/*
- 	 * Per OHCI 1.2 draft, clause 7.2.3.3, hardware may leave unsent
-@@ -2704,7 +2700,6 @@ static int ohci_enable_phys_dma(struct fw_card *card,
- 				int node_id, int generation)
+up to:  6be6cba9c437: irqchip/mbigen: Fix mbigen node address layout
+
+A couple of fixes for interrupt chip drivers:
+
+  - Ensure to skip the clear register space in the MBIGEN driver when
+    calculating the node register index. Otherwise the clear register is
+    clobbered and the wrong node registers are accessed.
+
+  - Fix a signed/unsigned confusion in the loongarch CPU driver which
+    converts an error code to a huge "valid" interrupt number.
+
+  - Convert the mesion GPIO interrupt controller lock to a raw spinlock so
+    it works on RT.
+
+  - Add a missing static to a internal function in the pic32 EVIC driver.
+
+Thanks,
+
+	tglx
+
+------------------>
+Arseniy Krasnov (1):
+      irqchip/meson-gpio: Convert meson_gpio_irq_controller::lock to 'raw_spi=
+nlock_t'
+
+Huacai Chen (1):
+      irqchip/loongarch-cpu: Fix return value of lpic_gsi_to_irq()
+
+Luca Ceresoli (1):
+      irqchip/irq-pic32-evic: Add missing 'static' to internal function
+
+Yipeng Zou (1):
+      irqchip/mbigen: Fix mbigen node address layout
+
+
+ drivers/irqchip/irq-loongarch-cpu.c |  6 ++++--
+ drivers/irqchip/irq-mbigen.c        | 20 ++++++++++++++++----
+ drivers/irqchip/irq-meson-gpio.c    | 14 +++++++-------
+ drivers/irqchip/irq-pic32-evic.c    |  6 +++---
+ 4 files changed, 30 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/irqchip/irq-loongarch-cpu.c b/drivers/irqchip/irq-loonga=
+rch-cpu.c
+index 9d8f2c406043..b35903a06902 100644
+--- a/drivers/irqchip/irq-loongarch-cpu.c
++++ b/drivers/irqchip/irq-loongarch-cpu.c
+@@ -18,11 +18,13 @@ struct fwnode_handle *cpuintc_handle;
+=20
+ static u32 lpic_gsi_to_irq(u32 gsi)
  {
- 	struct fw_ohci *ohci = fw_ohci(card);
--	unsigned long flags;
- 	int n, ret = 0;
- 
- 	if (param_remote_dma)
-@@ -2715,12 +2710,10 @@ static int ohci_enable_phys_dma(struct fw_card *card,
- 	 * interrupt bit.  Clear physReqResourceAllBuses on bus reset.
- 	 */
- 
--	spin_lock_irqsave(&ohci->lock, flags);
-+	guard(spinlock_irqsave)(&ohci->lock);
- 
--	if (ohci->generation != generation) {
--		ret = -ESTALE;
--		goto out;
--	}
-+	if (ohci->generation != generation)
-+		return -ESTALE;
- 
++	int irq =3D 0;
++
+ 	/* Only pch irqdomain transferring is required for LoongArch. */
+ 	if (gsi >=3D GSI_MIN_PCH_IRQ && gsi <=3D GSI_MAX_PCH_IRQ)
+-		return acpi_register_gsi(NULL, gsi, ACPI_LEVEL_SENSITIVE, ACPI_ACTIVE_HIGH=
+);
++		irq =3D acpi_register_gsi(NULL, gsi, ACPI_LEVEL_SENSITIVE, ACPI_ACTIVE_HIG=
+H);
+=20
+-	return 0;
++	return (irq > 0) ? irq : 0;
+ }
+=20
+ static struct fwnode_handle *lpic_get_gsi_domain_id(u32 gsi)
+diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
+index 093fd42893a7..53cc08387588 100644
+--- a/drivers/irqchip/irq-mbigen.c
++++ b/drivers/irqchip/irq-mbigen.c
+@@ -64,6 +64,20 @@ struct mbigen_device {
+ 	void __iomem		*base;
+ };
+=20
++static inline unsigned int get_mbigen_node_offset(unsigned int nid)
++{
++	unsigned int offset =3D nid * MBIGEN_NODE_OFFSET;
++
++	/*
++	 * To avoid touched clear register in unexpected way, we need to directly
++	 * skip clear register when access to more than 10 mbigen nodes.
++	 */
++	if (nid >=3D (REG_MBIGEN_CLEAR_OFFSET / MBIGEN_NODE_OFFSET))
++		offset +=3D MBIGEN_NODE_OFFSET;
++
++	return offset;
++}
++
+ static inline unsigned int get_mbigen_vec_reg(irq_hw_number_t hwirq)
+ {
+ 	unsigned int nid, pin;
+@@ -72,8 +86,7 @@ static inline unsigned int get_mbigen_vec_reg(irq_hw_number=
+_t hwirq)
+ 	nid =3D hwirq / IRQS_PER_MBIGEN_NODE + 1;
+ 	pin =3D hwirq % IRQS_PER_MBIGEN_NODE;
+=20
+-	return pin * 4 + nid * MBIGEN_NODE_OFFSET
+-			+ REG_MBIGEN_VEC_OFFSET;
++	return pin * 4 + get_mbigen_node_offset(nid) + REG_MBIGEN_VEC_OFFSET;
+ }
+=20
+ static inline void get_mbigen_type_reg(irq_hw_number_t hwirq,
+@@ -88,8 +101,7 @@ static inline void get_mbigen_type_reg(irq_hw_number_t hwi=
+rq,
+ 	*mask =3D 1 << (irq_ofst % 32);
+ 	ofst =3D irq_ofst / 32 * 4;
+=20
+-	*addr =3D ofst + nid * MBIGEN_NODE_OFFSET
+-		+ REG_MBIGEN_TYPE_OFFSET;
++	*addr =3D ofst + get_mbigen_node_offset(nid) + REG_MBIGEN_TYPE_OFFSET;
+ }
+=20
+ static inline void get_mbigen_clear_reg(irq_hw_number_t hwirq,
+diff --git a/drivers/irqchip/irq-meson-gpio.c b/drivers/irqchip/irq-meson-gpi=
+o.c
+index 27e30ce41db3..cd789fa51519 100644
+--- a/drivers/irqchip/irq-meson-gpio.c
++++ b/drivers/irqchip/irq-meson-gpio.c
+@@ -178,7 +178,7 @@ struct meson_gpio_irq_controller {
+ 	void __iomem *base;
+ 	u32 channel_irqs[MAX_NUM_CHANNEL];
+ 	DECLARE_BITMAP(channel_map, MAX_NUM_CHANNEL);
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ };
+=20
+ static void meson_gpio_irq_update_bits(struct meson_gpio_irq_controller *ctl,
+@@ -187,14 +187,14 @@ static void meson_gpio_irq_update_bits(struct meson_gpi=
+o_irq_controller *ctl,
+ 	unsigned long flags;
+ 	u32 tmp;
+=20
+-	spin_lock_irqsave(&ctl->lock, flags);
++	raw_spin_lock_irqsave(&ctl->lock, flags);
+=20
+ 	tmp =3D readl_relaxed(ctl->base + reg);
+ 	tmp &=3D ~mask;
+ 	tmp |=3D val;
+ 	writel_relaxed(tmp, ctl->base + reg);
+=20
+-	spin_unlock_irqrestore(&ctl->lock, flags);
++	raw_spin_unlock_irqrestore(&ctl->lock, flags);
+ }
+=20
+ static void meson_gpio_irq_init_dummy(struct meson_gpio_irq_controller *ctl)
+@@ -244,12 +244,12 @@ meson_gpio_irq_request_channel(struct meson_gpio_irq_co=
+ntroller *ctl,
+ 	unsigned long flags;
+ 	unsigned int idx;
+=20
+-	spin_lock_irqsave(&ctl->lock, flags);
++	raw_spin_lock_irqsave(&ctl->lock, flags);
+=20
+ 	/* Find a free channel */
+ 	idx =3D find_first_zero_bit(ctl->channel_map, ctl->params->nr_channels);
+ 	if (idx >=3D ctl->params->nr_channels) {
+-		spin_unlock_irqrestore(&ctl->lock, flags);
++		raw_spin_unlock_irqrestore(&ctl->lock, flags);
+ 		pr_err("No channel available\n");
+ 		return -ENOSPC;
+ 	}
+@@ -257,7 +257,7 @@ meson_gpio_irq_request_channel(struct meson_gpio_irq_cont=
+roller *ctl,
+ 	/* Mark the channel as used */
+ 	set_bit(idx, ctl->channel_map);
+=20
+-	spin_unlock_irqrestore(&ctl->lock, flags);
++	raw_spin_unlock_irqrestore(&ctl->lock, flags);
+=20
  	/*
- 	 * Note, if the node ID contains a non-local bus ID, physical DMA is
-@@ -2734,8 +2727,6 @@ static int ohci_enable_phys_dma(struct fw_card *card,
- 		reg_write(ohci, OHCI1394_PhyReqFilterHiSet, 1 << (n - 32));
- 
- 	flush_writes(ohci);
-- out:
--	spin_unlock_irqrestore(&ohci->lock, flags);
- 
+ 	 * Setup the mux of the channel to route the signal of the pad
+@@ -567,7 +567,7 @@ static int meson_gpio_irq_of_init(struct device_node *nod=
+e, struct device_node *
+ 	if (!ctl)
+ 		return -ENOMEM;
+=20
+-	spin_lock_init(&ctl->lock);
++	raw_spin_lock_init(&ctl->lock);
+=20
+ 	ctl->base =3D of_iomap(node, 0);
+ 	if (!ctl->base) {
+diff --git a/drivers/irqchip/irq-pic32-evic.c b/drivers/irqchip/irq-pic32-evi=
+c.c
+index 1d9bb28d13e5..277240325cbc 100644
+--- a/drivers/irqchip/irq-pic32-evic.c
++++ b/drivers/irqchip/irq-pic32-evic.c
+@@ -161,9 +161,9 @@ static int pic32_irq_domain_map(struct irq_domain *d, uns=
+igned int virq,
  	return ret;
  }
-@@ -3076,55 +3067,53 @@ static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
- 	u32 *mask, regs;
- 	int index, ret = -EBUSY;
- 
--	spin_lock_irq(&ohci->lock);
-+	scoped_guard(spinlock_irq, &ohci->lock) {
-+		switch (type) {
-+		case FW_ISO_CONTEXT_TRANSMIT:
-+			mask     = &ohci->it_context_mask;
-+			callback = handle_it_packet;
-+			index    = ffs(*mask) - 1;
-+			if (index >= 0) {
-+				*mask &= ~(1 << index);
-+				regs = OHCI1394_IsoXmitContextBase(index);
-+				ctx  = &ohci->it_context_list[index];
-+			}
-+			break;
- 
--	switch (type) {
--	case FW_ISO_CONTEXT_TRANSMIT:
--		mask     = &ohci->it_context_mask;
--		callback = handle_it_packet;
--		index    = ffs(*mask) - 1;
--		if (index >= 0) {
--			*mask &= ~(1 << index);
--			regs = OHCI1394_IsoXmitContextBase(index);
--			ctx  = &ohci->it_context_list[index];
--		}
--		break;
-+		case FW_ISO_CONTEXT_RECEIVE:
-+			channels = &ohci->ir_context_channels;
-+			mask     = &ohci->ir_context_mask;
-+			callback = handle_ir_packet_per_buffer;
-+			index    = *channels & 1ULL << channel ? ffs(*mask) - 1 : -1;
-+			if (index >= 0) {
-+				*channels &= ~(1ULL << channel);
-+				*mask     &= ~(1 << index);
-+				regs = OHCI1394_IsoRcvContextBase(index);
-+				ctx  = &ohci->ir_context_list[index];
-+			}
-+			break;
- 
--	case FW_ISO_CONTEXT_RECEIVE:
--		channels = &ohci->ir_context_channels;
--		mask     = &ohci->ir_context_mask;
--		callback = handle_ir_packet_per_buffer;
--		index    = *channels & 1ULL << channel ? ffs(*mask) - 1 : -1;
--		if (index >= 0) {
--			*channels &= ~(1ULL << channel);
--			*mask     &= ~(1 << index);
--			regs = OHCI1394_IsoRcvContextBase(index);
--			ctx  = &ohci->ir_context_list[index];
--		}
--		break;
-+		case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
-+			mask     = &ohci->ir_context_mask;
-+			callback = handle_ir_buffer_fill;
-+			index    = !ohci->mc_allocated ? ffs(*mask) - 1 : -1;
-+			if (index >= 0) {
-+				ohci->mc_allocated = true;
-+				*mask &= ~(1 << index);
-+				regs = OHCI1394_IsoRcvContextBase(index);
-+				ctx  = &ohci->ir_context_list[index];
-+			}
-+			break;
- 
--	case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
--		mask     = &ohci->ir_context_mask;
--		callback = handle_ir_buffer_fill;
--		index    = !ohci->mc_allocated ? ffs(*mask) - 1 : -1;
--		if (index >= 0) {
--			ohci->mc_allocated = true;
--			*mask &= ~(1 << index);
--			regs = OHCI1394_IsoRcvContextBase(index);
--			ctx  = &ohci->ir_context_list[index];
-+		default:
-+			index = -1;
-+			ret = -ENOSYS;
- 		}
--		break;
- 
--	default:
--		index = -1;
--		ret = -ENOSYS;
-+		if (index < 0)
-+			return ERR_PTR(ret);
- 	}
- 
--	spin_unlock_irq(&ohci->lock);
--
--	if (index < 0)
--		return ERR_PTR(ret);
--
- 	memset(ctx, 0, sizeof(*ctx));
- 	ctx->header_length = 0;
- 	ctx->header = (void *) __get_free_page(GFP_KERNEL);
-@@ -3146,7 +3135,7 @@ static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
-  out_with_header:
- 	free_page((unsigned long)ctx->header);
-  out:
--	spin_lock_irq(&ohci->lock);
-+	guard(spinlock_irq)(&ohci->lock);
- 
- 	switch (type) {
- 	case FW_ISO_CONTEXT_RECEIVE:
-@@ -3159,8 +3148,6 @@ static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
- 	}
- 	*mask |= 1 << index;
- 
--	spin_unlock_irq(&ohci->lock);
--
- 	return ERR_PTR(ret);
- }
- 
-@@ -3243,14 +3230,13 @@ static void ohci_free_iso_context(struct fw_iso_context *base)
+=20
+-int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *ctrlr,
+-			   const u32 *intspec, unsigned int intsize,
+-			   irq_hw_number_t *out_hwirq, unsigned int *out_type)
++static int pic32_irq_domain_xlate(struct irq_domain *d, struct device_node *=
+ctrlr,
++				  const u32 *intspec, unsigned int intsize,
++				  irq_hw_number_t *out_hwirq, unsigned int *out_type)
  {
- 	struct fw_ohci *ohci = fw_ohci(base->card);
- 	struct iso_context *ctx = container_of(base, struct iso_context, base);
--	unsigned long flags;
- 	int index;
- 
- 	ohci_stop_iso(base);
- 	context_release(&ctx->context);
- 	free_page((unsigned long)ctx->header);
- 
--	spin_lock_irqsave(&ohci->lock, flags);
-+	guard(spinlock_irqsave)(&ohci->lock);
- 
- 	switch (base->type) {
- 	case FW_ISO_CONTEXT_TRANSMIT:
-@@ -3272,38 +3258,29 @@ static void ohci_free_iso_context(struct fw_iso_context *base)
- 		ohci->mc_allocated = false;
- 		break;
- 	}
--
--	spin_unlock_irqrestore(&ohci->lock, flags);
- }
- 
- static int ohci_set_iso_channels(struct fw_iso_context *base, u64 *channels)
- {
- 	struct fw_ohci *ohci = fw_ohci(base->card);
--	unsigned long flags;
--	int ret;
- 
- 	switch (base->type) {
- 	case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
-+	{
-+		guard(spinlock_irqsave)(&ohci->lock);
- 
--		spin_lock_irqsave(&ohci->lock, flags);
--
--		/* Don't allow multichannel to grab other contexts' channels. */
-+		// Don't allow multichannel to grab other contexts' channels.
- 		if (~ohci->ir_context_channels & ~ohci->mc_channels & *channels) {
- 			*channels = ohci->ir_context_channels;
--			ret = -EBUSY;
-+			return -EBUSY;
- 		} else {
- 			set_multichannel_mask(ohci, *channels);
--			ret = 0;
-+			return 0;
- 		}
--
--		spin_unlock_irqrestore(&ohci->lock, flags);
--
--		break;
-+	}
- 	default:
--		ret = -EINVAL;
-+		return -EINVAL;
- 	}
--
--	return ret;
- }
- 
- #ifdef CONFIG_PM
-@@ -3573,24 +3550,19 @@ static int ohci_queue_iso(struct fw_iso_context *base,
- 			  unsigned long payload)
- {
- 	struct iso_context *ctx = container_of(base, struct iso_context, base);
--	unsigned long flags;
--	int ret = -ENOSYS;
- 
--	spin_lock_irqsave(&ctx->context.ohci->lock, flags);
-+	guard(spinlock_irqsave)(&ctx->context.ohci->lock);
-+
- 	switch (base->type) {
- 	case FW_ISO_CONTEXT_TRANSMIT:
--		ret = queue_iso_transmit(ctx, packet, buffer, payload);
--		break;
-+		return queue_iso_transmit(ctx, packet, buffer, payload);
- 	case FW_ISO_CONTEXT_RECEIVE:
--		ret = queue_iso_packet_per_buffer(ctx, packet, buffer, payload);
--		break;
-+		return queue_iso_packet_per_buffer(ctx, packet, buffer, payload);
- 	case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
--		ret = queue_iso_buffer_fill(ctx, packet, buffer, payload);
--		break;
-+		return queue_iso_buffer_fill(ctx, packet, buffer, payload);
-+	default:
-+		return -ENOSYS;
- 	}
--	spin_unlock_irqrestore(&ctx->context.ohci->lock, flags);
--
--	return ret;
- }
- 
- static void ohci_flush_queue_iso(struct fw_iso_context *base)
--- 
-2.43.0
+ 	struct evic_chip_data *priv =3D d->host_data;
+=20
 
 
