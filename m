@@ -1,302 +1,167 @@
-Return-Path: <linux-kernel+bounces-273618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF8C7946B8E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:23:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E15AB946B90
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ECCB1F2148C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:23:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 197381C213DB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAE123D0;
-	Sun,  4 Aug 2024 00:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="In3hWyi/"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECDD1C20;
+	Sun,  4 Aug 2024 00:28:07 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C65DEC5;
-	Sun,  4 Aug 2024 00:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12460138C;
+	Sun,  4 Aug 2024 00:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722731004; cv=none; b=YW+dsYWCxq2Cww1mDeudBj1QV2L9VsfQu4tjvclSrKQpbR67V5lUwpu+ehrlsDpNbctzVJTY1NptNSgwF2yMBew6mEiQtt7f4llMru0RKJA3wU5b6Aa6iCvc9oTDpR2VUYANxtqzDF9Fiig7PrwVvHZ+f9TBdtFmAHqhfXjYI64=
+	t=1722731286; cv=none; b=KXDbQLfKpedRkt6/KDPtYaoHPp63vW0J7gpYjACA6Rf9k2rKxkYZ0z7S44CBmg6274JWfNk4ZRMqqm8g7uA7O4J9W8IxXCxUVc/XKDaeq+6ytRqDU1dDgEpecKcXvO5qqEY8t4F8Fe1G8ciGRj69iSWwwrUWqKQmL0JPBhfiXaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722731004; c=relaxed/simple;
-	bh=lZj8h77mrM1pl0ZdrfmwKTiHqursXvc1gsqORiXOtJI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MoaPcDgJlZ+6KGyXl74p7q4+Sxy8/ER3JrgHjlxdqxUIqiaZmJEs9sGH7w5LX6GCHNWiUZTeysycXQHKCXEdFmWuFpBqtOZDD08B/dMUItdtW9gPuH4Ts3w6oh510iQliWCE7QbH8NnAvIujTsmwOK9D4gDIb9GXk25ngmGPcxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=In3hWyi/; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-367963ea053so6108047f8f.2;
-        Sat, 03 Aug 2024 17:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722731000; x=1723335800; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cSAG/u3sY54xUN4xbntEq10oQnmxfuAyYjqopUt/Dw4=;
-        b=In3hWyi/ziaeNVUGB4r9h8Kbw/A5HH6oZ8Pr0axfGaYgLjus3pekq+fSWzPkOGrl1H
-         OPHiktFKBOenLW7aPHGE6KCNiJcXbeHFwmVUp6iw8Gt55m0iNfxg7PUARvD7P80PbxQX
-         zWDncrD7c0ejmWdZNCdF1qJAb4P9DbGmt3H59LvztJZYekhPU+ZAG0EMRXNHnBIldXpx
-         DzaRH+KlvKh3y4zE57RlfqorZtGoFg6gOY1wq8fHXiG1i1DQuU7zpX5dsvOds6hlZnsn
-         0LpeFWtck5td4NAPukzf81tLd/BndH5xUsNhnRSajm4m7DPsWyLDsoYtFBVHWVJjhGd4
-         jIkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722731000; x=1723335800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cSAG/u3sY54xUN4xbntEq10oQnmxfuAyYjqopUt/Dw4=;
-        b=Kjos2X5Yy7yrQSgk1WdlbdqGRpkCei4H1I/mfO5y67ROzf6fgM8YuPELojw2STnyYp
-         aJJXeGw+egeLAKZwITnXUQAOdIRIDMjSIUMzueFUVjxRdFEe8/ktc6xLXnDkQzY8a7Oz
-         5VKYyigkeOzh/r58hQHZEPJKPSu3X93P6oTT5jV7QJKyICQpZ67Z2Wd7bBzO1J2CiZX/
-         gO5C4Yp34ZLaekv0JQsmImDCYEo0o9+/9Ilr2b+J8wmwDRtbcI/4txYuEj2alMLIz0sd
-         vZtjxBV8l5UbEuiE3ZB9wywBR19ityfnYkiH+ZP18oh+nTMLYuMONfV7B81Z5wT/22L0
-         h6Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9teLaKl/ghx51hK98kg4bfz7KGO1yN5C22eCHuCIaiIlrD/wzfcXIOTYIiHJLsZypB7xNr5tgDEFp1ychCCwfwKiymOZMnooRMGB5
-X-Gm-Message-State: AOJu0YwDM+b0vLPz3gt1NhmLYPNO1cv+saC5OTzoWXxsVTBT89y2MCW6
-	YnzBatQ6C3zC0utTafsIKhzG2KnNaNE+LYmm93TkyqqYZZa7jhAxjZKYUllkIWLYtjdu34oqvOL
-	ieaO3wz9/o1Lg+fN5Bz16ZdcXATaerA==
-X-Google-Smtp-Source: AGHT+IEEOX3ARaE1wTZ4dZrATqOFRna0SUWAX8l5smNOKnt6sXOJpo+kovumNkFtrk1HX+qrUN+S1ntQpBYGBq3KRBE=
-X-Received: by 2002:a5d:4590:0:b0:366:f04d:676f with SMTP id
- ffacd0b85a97d-36bbc0e09f9mr6017778f8f.12.1722731000356; Sat, 03 Aug 2024
- 17:23:20 -0700 (PDT)
+	s=arc-20240116; t=1722731286; c=relaxed/simple;
+	bh=5llG49YrGPoFYWPkv4FgKVoer70XEMlocCwipZhVGjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nrZYb4by1YaoiVtFiWrBpGkJ3tQhxlMBE8MOIg/Q3SaedKrpwMVsXs8+5HDtfHIdgs8OqJ+a4yE4jyByD50+7zdw07nrCJu50KQ+0OugC3e8dKzr47+9YXIOIuNDO12PZew8s6ASk9h43orXg2RNfWA7IfjP0llMB0qz/C2BXV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1saP6L-000000008CO-2Cfm;
+	Sun, 04 Aug 2024 00:27:57 +0000
+Date: Sun, 4 Aug 2024 01:27:50 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Sergey Bostandzhyan <jin@mediatomb.cc>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/2 RESEND] arm64: dts: rockchip: Add DTS for
+ FriendlyARM NanoPi R2S Plus
+Message-ID: <Zq7LBqKVvVVVLg7a@makrotopia.org>
+References: <22bbec28-41c1-4f36-b776-6e091bf118d9@kernel.org>
+ <20240801175736.16591-1-jin@mediatomb.cc>
+ <20240801175736.16591-2-jin@mediatomb.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240803232722.3220995-2-crwulff@gmail.com>
-In-Reply-To: <20240803232722.3220995-2-crwulff@gmail.com>
-From: Chris Wulff <crwulff@gmail.com>
-Date: Sat, 3 Aug 2024 20:23:09 -0400
-Message-ID: <CAB0kiBJiK=fQ_g0bjUkVTLzisQT+A5i-X9fxvM5Lvr1efpkYCA@mail.gmail.com>
-Subject: Re: [PATCH v2] usb: gadget: f_uac1: Change volume name and remove alt names
-To: linux-usb@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee@kernel.org>, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>, Perr Zhang <perr@usb7.net>, 
-	Pavel Hofman <pavel.hofman@ivitera.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801175736.16591-2-jin@mediatomb.cc>
 
-I just realized the name semantics are backwards in the original patch as w=
-ell.
-(c_/p_ are device centric semantics and I made them host centric)
-I will update that and send out a new version.
-
-  -- Chris Wulff
-
-On Sat, Aug 3, 2024 at 7:27=E2=80=AFPM <crwulff@gmail.com> wrote:
->
-> From: Chris Wulff <crwulff@gmail.com>
->
-> This changes the UAPI to align with disussion of alt settings work.
->
-> fu_name is renamed to fu_vol_name, and alt settings mode names
-> are removed for now in favor of future work where they will be
-> settable in subdirectories for each alt mode.
->
-> discussion thread for api changes for alt mode settings:
-> https://lore.kernel.org/linux-usb/35be4668-58d3-894a-72cf-de1afaacae45@iv=
-itera.com/T/
->
-> Signed-off-by: Chris Wulff <crwulff@gmail.com>
+On Thu, Aug 01, 2024 at 05:57:35PM +0000, Sergey Bostandzhyan wrote:
+> The R2S Plus is basically an R2S with additional eMMC.
+> 
+> The eMMC configuration for the DTS has been extracted and copied from
+> rk3328-nanopi-r2.dts, v2017.09 branch from the friendlyarm/uboot-rockchip
+> repository.
+> 
+> Signed-off-by: Sergey Bostandzhyan <jin@mediatomb.cc>
 > ---
-> v2: Moved discussion thread tidbit into commit message
-> v1: https://lore.kernel.org/all/20240803155215.2746444-2-crwulff@gmail.co=
-m/
-> ---
->  .../ABI/testing/configfs-usb-gadget-uac1      |  8 ++---
->  Documentation/usb/gadget-testing.rst          |  8 ++---
->  drivers/usb/gadget/function/f_uac1.c          | 36 +++++++------------
->  drivers/usb/gadget/function/u_uac1.h          |  8 ++---
->  4 files changed, 18 insertions(+), 42 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/configfs-usb-gadget-uac1 b/Documen=
-tation/ABI/testing/configfs-usb-gadget-uac1
-> index cf93b98b274d..64188a85592b 100644
-> --- a/Documentation/ABI/testing/configfs-usb-gadget-uac1
-> +++ b/Documentation/ABI/testing/configfs-usb-gadget-uac1
-> @@ -33,13 +33,9 @@ Description:
->                 p_it_name               playback input terminal name
->                 p_it_ch_name            playback channels name
->                 p_ot_name               playback output terminal name
-> -               p_fu_name               playback functional unit name
-> -               p_alt0_name             playback alt mode 0 name
-> -               p_alt1_name             playback alt mode 1 name
-> +               p_fu_vol_name           playback mute/volume functional u=
-nit name
->                 c_it_name               capture input terminal name
->                 c_it_ch_name            capture channels name
->                 c_ot_name               capture output terminal name
-> -               c_fu_name               capture functional unit name
-> -               c_alt0_name             capture alt mode 0 name
-> -               c_alt1_name             capture alt mode 1 name
-> +               c_fu_vol_name           capture mute/volume functional un=
-it name
->                 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/Documentation/usb/gadget-testing.rst b/Documentation/usb/gad=
-get-testing.rst
-> index a89b49e639c3..7a94490fb2fd 100644
-> --- a/Documentation/usb/gadget-testing.rst
-> +++ b/Documentation/usb/gadget-testing.rst
-> @@ -960,15 +960,11 @@ The uac1 function provides these attributes in its =
-function directory:
->         p_it_name        playback input terminal name
->         p_it_ch_name     playback channels name
->         p_ot_name        playback output terminal name
-> -       p_fu_name        playback functional unit name
-> -       p_alt0_name      playback alt mode 0 name
-> -       p_alt1_name      playback alt mode 1 name
-> +       p_fu_vol_name    playback mute/volume functional unit name
->         c_it_name        capture input terminal name
->         c_it_ch_name     capture channels name
->         c_ot_name        capture output terminal name
-> -       c_fu_name        capture functional unit name
-> -       c_alt0_name      capture alt mode 0 name
-> -       c_alt1_name      capture alt mode 1 name
-> +       c_fu_vol_name    capture mute/volume functional unit name
->         =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->  The attributes have sane default values.
-> diff --git a/drivers/usb/gadget/function/f_uac1.c b/drivers/usb/gadget/fu=
-nction/f_uac1.c
-> index 06a220fb7a87..bb36ce2be569 100644
-> --- a/drivers/usb/gadget/function/f_uac1.c
-> +++ b/drivers/usb/gadget/function/f_uac1.c
-> @@ -1254,16 +1254,16 @@ static int f_audio_bind(struct usb_configuration =
-*c, struct usb_function *f)
->         strings_uac1[STR_USB_OUT_IT].s =3D audio_opts->p_it_name;
->         strings_uac1[STR_USB_OUT_IT_CH_NAMES].s =3D audio_opts->p_it_ch_n=
-ame;
->         strings_uac1[STR_IO_OUT_OT].s =3D audio_opts->p_ot_name;
-> -       strings_uac1[STR_FU_OUT].s =3D audio_opts->p_fu_name;
-> -       strings_uac1[STR_AS_OUT_IF_ALT0].s =3D audio_opts->p_alt0_name;
-> -       strings_uac1[STR_AS_OUT_IF_ALT1].s =3D audio_opts->p_alt1_name;
-> +       strings_uac1[STR_FU_OUT].s =3D audio_opts->p_fu_vol_name;
-> +       strings_uac1[STR_AS_OUT_IF_ALT0].s =3D "Playback Inactive";
-> +       strings_uac1[STR_AS_OUT_IF_ALT1].s =3D "Playback Active";
->
->         strings_uac1[STR_IO_IN_IT].s =3D audio_opts->c_it_name;
->         strings_uac1[STR_IO_IN_IT_CH_NAMES].s =3D audio_opts->c_it_ch_nam=
-e;
->         strings_uac1[STR_USB_IN_OT].s =3D audio_opts->c_ot_name;
-> -       strings_uac1[STR_FU_IN].s =3D audio_opts->c_fu_name;
-> -       strings_uac1[STR_AS_IN_IF_ALT0].s =3D audio_opts->c_alt0_name;
-> -       strings_uac1[STR_AS_IN_IF_ALT1].s =3D audio_opts->c_alt1_name;
-> +       strings_uac1[STR_FU_IN].s =3D audio_opts->c_fu_vol_name;
-> +       strings_uac1[STR_AS_IN_IF_ALT0].s =3D "Capture Inactive";
-> +       strings_uac1[STR_AS_IN_IF_ALT1].s =3D "Capture Active";
->
->         us =3D usb_gstrings_attach(cdev, uac1_strings, ARRAY_SIZE(strings=
-_uac1));
->         if (IS_ERR(us))
-> @@ -1687,16 +1687,12 @@ UAC1_ATTRIBUTE_STRING(function_name);
->  UAC1_ATTRIBUTE_STRING(p_it_name);
->  UAC1_ATTRIBUTE_STRING(p_it_ch_name);
->  UAC1_ATTRIBUTE_STRING(p_ot_name);
-> -UAC1_ATTRIBUTE_STRING(p_fu_name);
-> -UAC1_ATTRIBUTE_STRING(p_alt0_name);
-> -UAC1_ATTRIBUTE_STRING(p_alt1_name);
-> +UAC1_ATTRIBUTE_STRING(p_fu_vol_name);
->
->  UAC1_ATTRIBUTE_STRING(c_it_name);
->  UAC1_ATTRIBUTE_STRING(c_it_ch_name);
->  UAC1_ATTRIBUTE_STRING(c_ot_name);
-> -UAC1_ATTRIBUTE_STRING(c_fu_name);
-> -UAC1_ATTRIBUTE_STRING(c_alt0_name);
-> -UAC1_ATTRIBUTE_STRING(c_alt1_name);
-> +UAC1_ATTRIBUTE_STRING(c_fu_vol_name);
->
->  static struct configfs_attribute *f_uac1_attrs[] =3D {
->         &f_uac1_opts_attr_c_chmask,
-> @@ -1724,16 +1720,12 @@ static struct configfs_attribute *f_uac1_attrs[] =
-=3D {
->         &f_uac1_opts_attr_p_it_name,
->         &f_uac1_opts_attr_p_it_ch_name,
->         &f_uac1_opts_attr_p_ot_name,
-> -       &f_uac1_opts_attr_p_fu_name,
-> -       &f_uac1_opts_attr_p_alt0_name,
-> -       &f_uac1_opts_attr_p_alt1_name,
-> +       &f_uac1_opts_attr_p_fu_vol_name,
->
->         &f_uac1_opts_attr_c_it_name,
->         &f_uac1_opts_attr_c_it_ch_name,
->         &f_uac1_opts_attr_c_ot_name,
-> -       &f_uac1_opts_attr_c_fu_name,
-> -       &f_uac1_opts_attr_c_alt0_name,
-> -       &f_uac1_opts_attr_c_alt1_name,
-> +       &f_uac1_opts_attr_c_fu_vol_name,
->
->         NULL,
->  };
-> @@ -1792,16 +1784,12 @@ static struct usb_function_instance *f_audio_allo=
-c_inst(void)
->         scnprintf(opts->p_it_name, sizeof(opts->p_it_name), "Playback Inp=
-ut terminal");
->         scnprintf(opts->p_it_ch_name, sizeof(opts->p_it_ch_name), "Playba=
-ck Channels");
->         scnprintf(opts->p_ot_name, sizeof(opts->p_ot_name), "Playback Out=
-put terminal");
-> -       scnprintf(opts->p_fu_name, sizeof(opts->p_fu_name), "Playback Vol=
-ume");
-> -       scnprintf(opts->p_alt0_name, sizeof(opts->p_alt0_name), "Playback=
- Inactive");
-> -       scnprintf(opts->p_alt1_name, sizeof(opts->p_alt1_name), "Playback=
- Active");
-> +       scnprintf(opts->p_fu_vol_name, sizeof(opts->p_fu_vol_name), "Play=
-back Volume");
->
->         scnprintf(opts->c_it_name, sizeof(opts->c_it_name), "Capture Inpu=
-t terminal");
->         scnprintf(opts->c_it_ch_name, sizeof(opts->c_it_ch_name), "Captur=
-e Channels");
->         scnprintf(opts->c_ot_name, sizeof(opts->c_ot_name), "Capture Outp=
-ut terminal");
-> -       scnprintf(opts->c_fu_name, sizeof(opts->c_fu_name), "Capture Volu=
-me");
-> -       scnprintf(opts->c_alt0_name, sizeof(opts->c_alt0_name), "Capture =
-Inactive");
-> -       scnprintf(opts->c_alt1_name, sizeof(opts->c_alt1_name), "Capture =
-Active");
-> +       scnprintf(opts->c_fu_vol_name, sizeof(opts->c_fu_vol_name), "Capt=
-ure Volume");
->
->         return &opts->func_inst;
->  }
-> diff --git a/drivers/usb/gadget/function/u_uac1.h b/drivers/usb/gadget/fu=
-nction/u_uac1.h
-> index 67784de9782b..feb6eb76462f 100644
-> --- a/drivers/usb/gadget/function/u_uac1.h
-> +++ b/drivers/usb/gadget/function/u_uac1.h
-> @@ -57,16 +57,12 @@ struct f_uac1_opts {
->         char                    p_it_name[USB_MAX_STRING_LEN];
->         char                    p_it_ch_name[USB_MAX_STRING_LEN];
->         char                    p_ot_name[USB_MAX_STRING_LEN];
-> -       char                    p_fu_name[USB_MAX_STRING_LEN];
-> -       char                    p_alt0_name[USB_MAX_STRING_LEN];
-> -       char                    p_alt1_name[USB_MAX_STRING_LEN];
-> +       char                    p_fu_vol_name[USB_MAX_STRING_LEN];
->
->         char                    c_it_name[USB_MAX_STRING_LEN];
->         char                    c_it_ch_name[USB_MAX_STRING_LEN];
->         char                    c_ot_name[USB_MAX_STRING_LEN];
-> -       char                    c_fu_name[USB_MAX_STRING_LEN];
-> -       char                    c_alt0_name[USB_MAX_STRING_LEN];
-> -       char                    c_alt1_name[USB_MAX_STRING_LEN];
-> +       char                    c_fu_vol_name[USB_MAX_STRING_LEN];
->
->         struct mutex                    lock;
->         int                             refcnt;
-> --
-> 2.43.0
->
+>  arch/arm64/boot/dts/rockchip/Makefile         |  1 +
+>  .../dts/rockchip/rk3328-nanopi-r2s-plus.dts   | 31 +++++++++++++++++++
+>  2 files changed, 32 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+> index fda1b980eb4b..36258dc8dafd 100644
+> --- a/arch/arm64/boot/dts/rockchip/Makefile
+> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+> @@ -20,6 +20,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-evb.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c-plus.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2s.dtb
+> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2s-plus.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-orangepi-r1-plus.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-orangepi-r1-plus-lts.dtb
+>  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock64.dtb
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+> new file mode 100644
+> index 000000000000..7b83090a2145
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+> @@ -0,0 +1,31 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * (C) Copyright 2018 FriendlyElec Computer Tech. Co., Ltd.
+> + * (http://www.friendlyarm.com)
+> + *
+> + * (C) Copyright 2016 Rockchip Electronics Co., Ltd
+> + */
+> +
+> +/dts-v1/;
+> +#include "rk3328-nanopi-r2s.dts"
+> +
+> +/ {
+> +	model = "FriendlyElec NanoPi R2S Plus";
+> +	compatible = "friendlyarm,nanopi-r2s-plus", "rockchip,rk3328";
+> +
+> +	aliases {
+> +		mmc1 = &emmc;
+> +	};
+> +};
+> +
+> +&emmc {
+> +	bus-width = <8>;
+> +	cap-mmc-highspeed;
+> +	supports-emmc;
+> +	disable-wp;
+> +	non-removable;
+> +	num-slots = <1>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_bus8>;
+
+I think it's worth adding
+
+	mmc-hs200-1_8v;
+
+
+I've tried getting the best speed possible and while HS400 with and
+without enhanced strobe did NOT work, hs200 works just fine.
+[    0.459863] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ div = 0)
+[    0.460884] mmc_host mmc1: Bus speed (slot 0) = 150000000Hz (slot req 150000000Hz, actual 150000000HZ div = 0)
+...
+[    0.728220] dwmmc_rockchip ff520000.mmc: Successfully tuned phase to 194
+[    0.728940] mmc1: new HS200 MMC card at address 0001
+[    0.730774] mmcblk1: mmc1:0001 A3A551 28.9 GiB
+[    0.733262]  mmcblk1: p1 p2
+[    0.734562] mmcblk1boot0: mmc1:0001 A3A551 4.00 MiB
+[    0.736818] mmcblk1boot1: mmc1:0001 A3A551 4.00 MiB
+[    0.738503] mmcblk1rpmb: mmc1:0001 A3A551 16.0 MiB, chardev (245:0)
+
+root@OpenWrt:/# hdparm -t /dev/mmcblk1
+
+/dev/mmcblk1:
+ Timing buffered disk reads: 342 MB in  3.00 seconds = 113.81 MB/sec
+
+
+Without 'mmc-hs200-1_8v' property in DT the eMMC is detected as
+[    0.440465] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ div = 0)
+[    0.442032] mmc1: new high speed MMC card at address 0001
+[    0.444261] mmcblk1: mmc1:0001 A3A551 28.9 GiB
+[    0.447388]  mmcblk1: p1 p2
+[    0.448744] mmcblk1boot0: mmc1:0001 A3A551 4.00 MiB
+[    0.451065] mmcblk1boot1: mmc1:0001 A3A551 4.00 MiB
+[    0.452871] mmcblk1rpmb: mmc1:0001 A3A551 16.0 MiB, chardev (245:0)
+
+
+root@OpenWrt:/# hdparm -t /dev/mmcblk1
+
+/dev/mmcblk1:
+ Timing buffered disk reads: 134 MB in  3.03 seconds =  44.18 MB/sec
+
+
+> +	status = "okay";
+> +};
+
+I'm right now trying to get SDIO RTL8822CS working, so far I'm out of luck,
+but it can be added later once we got it working.
 
