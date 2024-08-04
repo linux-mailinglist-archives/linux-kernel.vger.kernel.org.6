@@ -1,156 +1,137 @@
-Return-Path: <linux-kernel+bounces-273808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B161946E64
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:24:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B05BF946E68
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B319C282110
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:24:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14167B2187D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD530364AE;
-	Sun,  4 Aug 2024 11:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723672C87C;
+	Sun,  4 Aug 2024 11:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPvnVOiX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="QrLFVnQ9"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E530617C9E;
-	Sun,  4 Aug 2024 11:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D880EFC0E
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 11:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722770688; cv=none; b=AlkLUr7V2doimVMCsQ79eeycXUWuxkg1WJTo/grB2C+mMLUE8YVN5DxQZvX6xKGSiwDnozFOLRZFuwbvT6zhkCK1Qt9LxGJKTigvpNiiFntY2bYPV9o+iF/Zb9mIsI/URo4wOavrCkqv0JTqNcfWKB4F8/aM7HNQlHwyC6C9g0s=
+	t=1722770870; cv=none; b=J2A8cEMZvkHyY/tVrsQzbxbIyYi1s/gN0EGfT27/Ud79CX7lGkL4DzJAbIXtTW4nYoTO+G297vKSdaEYVw8c86lt516NqJIIGAIHDu9SLG/o17YQTfcdvVY+XLbgccXnlfjh9E1HTPVzpCbUj+UILoDNFUdm+5jqaWuCG9jSc14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722770688; c=relaxed/simple;
-	bh=jfqjxc5xPJuMgsSjsvqDsL7sb1Gzrg2zNgXmKJd1RW4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p1SVRfMgP+jvc8DIwiO6mpf6KIvpe1kfVfNfFunHFYNRKaCJeSZ9SBB2IKDoWVUbT8JS2aNdH73MOqhuPDNe2w5pJnoi8iZ8Gn3sRAEqK10L+mWgqMPjnpypkqvILcuASkw9x/WCRvgW2LqpP452XT0bnWof/JzYO/uvBuEOIys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPvnVOiX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A82C32786;
-	Sun,  4 Aug 2024 11:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722770687;
-	bh=jfqjxc5xPJuMgsSjsvqDsL7sb1Gzrg2zNgXmKJd1RW4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hPvnVOiXthTCqw0/iV56gPy/TMy2T4AkkOp5tsUnNZz6CS5dtk9Yof7AYm/h/Rf2z
-	 F7Ra0+Vr9o1lNzSrTqSFIP3DTbPVzw3PHVxtxtWLSTPwPKJtiiDaD7SaobPt/GC0G8
-	 TpA6GnJKe20aSTTbL0ANvK+2pfpPlseoot5T2+uSQ0WEQ8G8OYZB0DkG3d2miXu/tP
-	 1sf8jyRPRRxVrzt2JEeIVDfXelPO9ak4PpkPii/9QOBibN+trHbkB5fiH1w0kxE9Q+
-	 u+F7dpYCmlkib7H+ltxBPtsXNOSMmjJz8ZjEPSE0QfD5CynpDxsiY/DRGpLzjtvilS
-	 HaBn3avYTHsNQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1saZLx-000l99-7K;
-	Sun, 04 Aug 2024 12:24:45 +0100
-Date: Sun, 04 Aug 2024 12:24:44 +0100
-Message-ID: <87r0b44jk3.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] KVM: selftests: arm64: Simplify specification of filtered registers
-In-Reply-To: <20240802-kvm-arm64-get-reg-list-v1-1-3a5bf8f80765@kernel.org>
-References: <20240802-kvm-arm64-get-reg-list-v1-0-3a5bf8f80765@kernel.org>
-	<20240802-kvm-arm64-get-reg-list-v1-1-3a5bf8f80765@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1722770870; c=relaxed/simple;
+	bh=6WTWTv7xN+Wsf3mjUSvFKRctXZL7CXQtw0vVYnbC+eE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Opmrsl6tI7uSwR5wS2O8P3q39Vc+Q/wCR125c4GdBvOllf0cN1B6W8LcqnPDpV1IBtF1bk2PDgpOksPRC7+VBJvdDjz3lTH/yhatVlHLHY+ymOWyUdyVbF5529uzernkPndNaRXuE7FL8m85eu1GCMeB2gATHxthMfZXKB9Rf5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=QrLFVnQ9; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1722770866;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MJQz41jQBJqqx/MG8xPjrVEqBddVWd1a3QNgEsqP5KI=;
+	b=QrLFVnQ9nxrML1Lv2rIBRIKWhtHtacXtXTTu6r401eRGTwSFkmtvi1WZkXyvqUy3YYVurY
+	TMnZeqPcvh2RegkaD01er2QqM7NCixV6KdIkkN/HdA6eB2tpIRxQtED7B9GL6Lv8Q1K3Jv
+	b9L4maSPSPQexki+f+3kaxqEe3ts6I0ohxGRHx2S/qhINivyTDkUPqFQCCUj8G6Uzh1Fi6
+	4TDZ6J08vBithTygoIsY0NabC1NxVfcJVAGbs3wO6Z/wKctIdza7DNDN9ZulzsgToIdjOn
+	M+8r8+ymfgEQGwyRmeVW7D6+k3HA3ll5UJNyuw+c0+KR25xkIvpOjDwEOGB6yA==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+ Ondrej Jirman <megi@xff.cz>, linux-rockchip@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, Yao Zi <ziyao@disroot.org>,
+ Yao Zi <ziyao@disroot.org>
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+Date: Sun, 04 Aug 2024 13:27:35 +0200
+Message-ID: <3483951.iGylCHCCq3@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <20240803125510.4699-5-ziyao@disroot.org>
+References:
+ <20240803125510.4699-2-ziyao@disroot.org>
+ <20240803125510.4699-5-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, catalin.marinas@arm.com, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart2013840.3XhD2mlfif";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 02 Aug 2024 22:57:53 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> Since we already import the generated sysreg definitions from the main
-> kernel and reference them in processor.h for use in other KVM tests we
-> can also make use of them for get-reg-list as well instead of having hard
-> coded magic numbers in the program. Do this for the table defining which
-> registers should be gated on ID register values, using a macro which allows
-> us to specify the register and ID register field in a much more compact
-> and direct fashion.
-> 
-> In the process we fix the ID register checked for S1PIE specific registers
-> which was using an incorrect shift of 4, checking SCTLRX support instead.
-> No other change is seen in the generated data.
-> 
-> Fixes: 5f0419a0083b ("KVM: selftests: get-reg-list: add Permission Indirection registers")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/kvm/aarch64/get-reg-list.c | 29 ++++++++--------------
->  1 file changed, 11 insertions(+), 18 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/aarch64/get-reg-list.c b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-> index 709d7d721760..a00322970578 100644
-> --- a/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-> +++ b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-> @@ -22,25 +22,18 @@ struct feature_id_reg {
->  	__u64 feat_min;
->  };
->  
-> -static struct feature_id_reg feat_id_regs[] = {
-> -	{
-> -		ARM64_SYS_REG(3, 0, 2, 0, 3),	/* TCR2_EL1 */
-> -		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
-> -		0,
-> -		1
-> -	},
-> -	{
-> -		ARM64_SYS_REG(3, 0, 10, 2, 2),	/* PIRE0_EL1 */
-> -		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
-> -		4,
-> -		1
-> -	},
-> -	{
-> -		ARM64_SYS_REG(3, 0, 10, 2, 3),	/* PIR_EL1 */
-> -		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
-> -		4,
-> -		1
-> +#define FEAT_ID_CHECK(reg, id_reg, id_field, id_val)	\
-> +	{						\
-> +		KVM_ARM64_SYS_REG(SYS_##reg),		\
-> +		KVM_ARM64_SYS_REG(SYS_##id_reg),	\
-> +		id_reg##_##id_field##_SHIFT,		\
-> +		id_reg##_##id_field##_##id_val,		\
+--nextPart2013840.3XhD2mlfif
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Sun, 04 Aug 2024 13:27:35 +0200
+Message-ID: <3483951.iGylCHCCq3@bagend>
+Organization: Connecting Knowledge
+In-Reply-To: <20240803125510.4699-5-ziyao@disroot.org>
+MIME-Version: 1.0
 
-Please use designated initialisers.
-
->  	}
+On Saturday, 3 August 2024 14:55:10 CEST Yao Zi wrote:
+> +       gic: interrupt-controller@fed01000 {
+> +               compatible = "arm,gic-400";
+> +               #interrupt-cells = <3>;
+> +               #address-cells = <0>;
+> +               interrupt-controller;
+> +               reg = <0x0 0xfed01000 0 0x1000>,
+> +                     <0x0 0xfed02000 0 0x2000>,
+> +                     <0x0 0xfed04000 0 0x2000>,
+> +                     <0x0 0xfed06000 0 0x2000>;
+> +               interrupts = <GIC_PPI 9
+> +                       (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +       };
 > +
-> +static struct feature_id_reg feat_id_regs[] = {
-> +	FEAT_ID_CHECK(TCR2_EL1, ID_AA64MMFR3_EL1, TCRX, IMP),
-> +	FEAT_ID_CHECK(PIRE0_EL1, ID_AA64MMFR3_EL1, S1PIE, IMP),
-> +	FEAT_ID_CHECK(PIR_EL1, ID_AA64MMFR3_EL1, S1PIE, IMP),
->  };
->  
->  bool filter_reg(__u64 reg)
+> +       uart0: serial@ff9f0000 {
+> +               compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+> +               reg = <0x0 0xff9f0000 0x0 0x100>;
+> +               interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+> +               reg-shift = <2>;
+> +               reg-io-width = <4>;
+> +               clock-frequency = <24000000>;
+> +               status = "disabled";
+> +       };
 
-Thanks,
+The properties should be sorted as follows:
+- compatible
+- reg
+- <other properties sorted alphabetically>
+- status
 
-	M.
+This also applies to the other blocks which I didn't quote.
 
--- 
-Without deviation from the norm, progress is not possible.
+Cheers,
+  Diederik
+--nextPart2013840.3XhD2mlfif
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZq9lpwAKCRDXblvOeH7b
+bnHyAQD8wsAMQjsb0Ikzu8H5TXIwKe/0e07lJCrzJlvovJaVzgD/WZBgbVZnTLND
+Y3HfPGfi3UhbL+6yrSDh/M0Qok4/9QU=
+=1NSP
+-----END PGP SIGNATURE-----
+
+--nextPart2013840.3XhD2mlfif--
+
+
+
 
