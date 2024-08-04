@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541A3946E21
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:51:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC16946E24
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D581E1F211F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:51:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C621F214B7
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929542557F;
-	Sun,  4 Aug 2024 09:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47182249ED;
+	Sun,  4 Aug 2024 09:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIzA/+yc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzgD4cZW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8800D1C694;
-	Sun,  4 Aug 2024 09:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6634E2263A;
+	Sun,  4 Aug 2024 09:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722765082; cv=none; b=Bt9UWWXUeEjm9Tz3eFFrpNL46w4Xf16bqrRrhcYKILnVxo+75MEoTFT0Hb4VZ0nHCzCrlV+kWt8fNF2rAz61nbOwvAXrL66t9AsHeIGUM51ECsBQoSg8Rdnf+1q8PgCg/gQ+qHZjrlLnoy2AxjiJSHwi4IYEj8V8UINbKjRncvg=
+	t=1722765181; cv=none; b=Qqhw8AQKqt8rGKkSBGTBOrkIQoQsA8mSqIAt0TA5YWdl/tYsMYpH0pDxkvufNj8DKXw1f+PgQtmfxf46WC0neISF9v+HjNDLvwqfxaSuoM8wf49RijPMEnN/anpnn5FiquWDVR0MPyA5i1aIl3VSjk/Ra2cxtaLsRceKH4put0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722765082; c=relaxed/simple;
-	bh=t+twIQ0tuzEuLnqRdIxbcSGF2toNHMqJ2/CmWTvS3nM=;
+	s=arc-20240116; t=1722765181; c=relaxed/simple;
+	bh=2V4bwc4EGQDBu7h5327C3Wy4iLbvMzYSTOhrOTbqqMk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oVFkQpjcvREP/U6yP7qXkA1r68WnTqc1mcNqxMm/KeCtaPVS41TwuEWF7UBngSMX8PQSDSrV5FqTxtM7DW4JnehWDgWWI2YVtBjdVhXc+7UXBiKkwnEzbraC8dijoVDXg3e6qLgjCiB+Lk5QvmvmZLL4o4zVz11NGTeMJudOHIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIzA/+yc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 412B5C32786;
-	Sun,  4 Aug 2024 09:51:11 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=OJtTuM1Xb8W+GTXPnsANIzEdGWf5usWj0MPZArLeAO9umPcEoOHoD7g6oV/G00ntVgbCr8NdAU7YlO1IECBNv8iy4IpUtE/n/qXbis8UnvZ/nUoM492DP6wh8R3GioRdLbnDml4unRCL0vvrrsxy5cI8jR17AQSE3NRdvOtld4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RzgD4cZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C80FBC32786;
+	Sun,  4 Aug 2024 09:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722765082;
-	bh=t+twIQ0tuzEuLnqRdIxbcSGF2toNHMqJ2/CmWTvS3nM=;
+	s=k20201202; t=1722765180;
+	bh=2V4bwc4EGQDBu7h5327C3Wy4iLbvMzYSTOhrOTbqqMk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cIzA/+ycRI7t/F4KFLeoq+ZTj0VV7LNPgKrusLz0C80jOhz7rUfpWqcmJZl9FdTr+
-	 mgDDB69HQnaS53U3zPicbbNf17WNB+om9z+PvnMSa1VF+DtPvXU0IDRQTBcSLIZeIK
-	 DE3yNTV8Wb/GRQ2x2UXPg16svmUg6AOTBqtq/m5x2otfC9rKeSQzxrZ+Ex6T9VaqVW
-	 B0ISMxZvdEkqu8mDD7wRHmQc4gKurSmSXyYJ+nyXMVZINkL6c9oOW0OZKlaDaT8PzP
-	 pUMk4LtpVRE5J3XeKeIL+1/OJcE8xOs2nUsPkga4WJkbhR7vduId1vgv/rxqyxgiRz
-	 J4a0eEyGf85lA==
-Message-ID: <f8d281ce-7554-46b3-a816-db854e736e6b@kernel.org>
-Date: Sun, 4 Aug 2024 11:51:08 +0200
+	b=RzgD4cZWYz7mqyo2JXz21QGjHm1HNNAaEQNcvSosSy4CkJzTIoN1lNIkvjGGZWgsB
+	 /1JGHQWAp78LwW3lmOz0DZukBAbiY5w/4my9ezBKf4wE+RdMwfPR+dsP5MD2v1zK52
+	 k7O9cXyaeW80eKQy9qdJbsOyLjDDaUPdtULWUgzSOnBoheMGfic+a19LEIfWvKvvBD
+	 bgU1rGY+UA40ZxTJwldeXVpE1a+xU65r6loHw9fg/aApppm+k1LxktkgPTrKDjqREF
+	 NhPd9qMtwt2j/0wo+2wRkjaO9atvKSqlTjdgXQE6Jm49K9vC+BZv9cQAvm4/Lpk43U
+	 aPKGnzleb/4PA==
+Message-ID: <87503c5b-95dc-463b-8363-3e1fab03f8f2@kernel.org>
+Date: Sun, 4 Aug 2024 11:52:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,31 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/10] arm64: dts: rockchip: Add rk3576-armsom-sige5 board
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add rk3576 cru bindings
 To: Detlev Casanova <detlev.casanova@collabora.com>,
  linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
- Chris Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Tim Lunn <tim@feathertop.org>, Muhammed Efe Cetin <efectn@protonmail.com>,
- Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>,
- Dragan Simic <dsimic@manjaro.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
- Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
- Yifeng Zhao <yifeng.zhao@rock-chips.com>,
- Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
-References: <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-11-detlev.casanova@collabora.com>
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <20240802214053.433493-1-detlev.casanova@collabora.com>
+ <20240802214053.433493-2-detlev.casanova@collabora.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -119,189 +107,121 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802214612.434179-11-detlev.casanova@collabora.com>
+In-Reply-To: <20240802214053.433493-2-detlev.casanova@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2024 23:45, Detlev Casanova wrote:
-> Add board file for the rk3576 based ArmSoM Sige5 board. While the hardware
-> offers plenty of peripherals and connectivity this basic implementation
-> just handles things required to successfully boot Linux from SD card and
-> connect via UART or Ethernet.
+On 02/08/2024 23:35, Detlev Casanova wrote:
+> Document the device tree bindings of the rockchip rk3576 SoC
+> clock and reset unit.
 > 
 > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
 > ---
->  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->  .../boot/dts/rockchip/rk3576-armsom-sige5.dts | 613 ++++++++++++++++++
->  2 files changed, 614 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+>  .../bindings/clock/rockchip,rk3576-cru.yaml   | 73 +++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> index fda1b980eb4bc..e49c7753b148c 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -103,6 +103,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-soquartz-cm4.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-soquartz-model-a.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-box-demo.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3566-lubancat-1.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r66s.dtb
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
 > new file mode 100644
-> index 0000000000000..ee1fdd7612cb0
+> index 0000000000000..929eb6183bf18
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts
-> @@ -0,0 +1,613 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2024 Rockchip Electronics Co., Ltd.
-> + *
-> + */
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,rk3576-cru.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +/dts-v1/;
+> +title: Rockchip rk3576 Family Clock and Reset Control Module
 > +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/pinctrl/rockchip.h>
-> +#include <dt-bindings/pwm/pwm.h>
-> +#include <dt-bindings/usb/pd.h>
-> +#include "rk3576.dtsi"
+> +maintainers:
+> +  - Elaine Zhang <zhangqing@rock-chips.com>
+> +  - Heiko Stuebner <heiko@sntech.de>
 > +
-> +/ {
-> +	model = "ArmSoM Sige5";
-> +	compatible = "armsom,sige5", "rockchip,rk3576";
-> +
-> +	chosen {
-> +		stdout-path = "serial0:1500000n8";
-> +	};
-> +
-> +	leds: leds {
-> +		compatible = "gpio-leds";
-> +		work_led: work-led {
-> +			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +	};
-> +
-> +	vcc12v_dcin: vcc12v-dcin {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc12v_dcin";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +	};
-> +
-> +	vcc_sys: vcc5v0-sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		vin-supply = <&vcc12v_dcin>;
-> +	};
-> +
-> +	vcc5v0_device: vcc5v0-device {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_device";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		vin-supply = <&vcc12v_dcin>;
-> +	};
-> +
-> +	vcc_2v0_pldo_s3: vcc-2v0-pldo-s3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_2v0_pldo_s3";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <2000000>;
-> +		regulator-max-microvolt = <2000000>;
-> +		vin-supply = <&vcc_sys>;
-> +	};
-> +
-> +	vcc_1v1_nldo_s3: vcc-1v1-nldo-s3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_1v1_nldo_s3";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <1100000>;
-> +		regulator-max-microvolt = <1100000>;
-> +		vin-supply = <&vcc_sys>;
-> +	};
-> +
-> +	vcc3v3_rtc_s5: vcc3v3-rtc-s5 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3_rtc_s5";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		vin-supply = <&vcc_sys>;
-> +	};
-> +	vcc_1v8_s0: vcc-1v8-s0 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_1v8_s0";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		vin-supply = <&vcc_1v8_s3>;
-> +	};
-> +
-> +	vcc_3v3_s0: vcc-3v3-s0 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_3v3_s0";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		vin-supply = <&vcc_3v3_s3>;
-> +	};
-> +
-> +	vcc_ufs_s0: vcc-ufs-s0 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc_ufs_s0";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		vin-supply = <&vcc_sys>;
-> +	};
-> +
-> +	vcc1v8_ufs_vccq2_s0: vcc1v8-ufs-vccq2-s0 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc1v8_ufs_vccq2_s0";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		vin-supply = <&vcc_1v8_s3>;
-> +	};
-> +
-> +	vcc1v2_ufs_vccq_s0: vcc1v2-ufs-vccq-s0 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc1v2_ufs_vccq_s0";
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-min-microvolt = <1200000>;
-> +		regulator-max-microvolt = <1200000>;
-> +		vin-supply = <&vcc_sys>;
-> +	};
-> +
-> +	vcc3v3_pcie: gpio-regulator {
+> +description: |
+> +  The RK3576 clock controller generates the clock and also implements a reset
+> +  controller for SoC peripherals. For example it provides SCLK_UART2 and
+> +  PCLK_UART2, as well as SRST_P_UART2 and SRST_S_UART2 for the second UART
+> +  module.
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All available clock and reset IDs
+> +  are defined as preprocessor macros in dt-binding headers.
 
-Why all other regulators have names matching schematics, but this one
-does not? Be consistent. I would recommend to use naming RECOMMENDED by
-the bindings - 'regulator-[0-9]+v[0-9]+'
+Drop paragraph, it is obvious. You could provide here the name of the
+header...
 
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git/commit/?id=b6d4b3500d57370f5b3abf0701c9166b384db976
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - rockchip,rk3576-cru
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    minItems: 2
 
+You can drop minitems
 
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xin24m
+> +      - const: xin32k
+> +
+> +  assigned-clocks: true
+> +
+> +  assigned-clock-rates: true
+> +
+> +  assigned-clock-parents: true
+
+Drop  all these three
+
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: >
+> +      phandle to the syscon managing the "general register files". It is used
+> +      for GRF muxes, if missing any muxes present in the GRF will not be
+> +      available.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    cru: clock-controller@27200000 {
+
+Drop unused label
+
+> +      compatible = "rockchip,rk3576-cru";
+> +      reg = <0xfd7c0000 0x5c000>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+
+Make the example complete.
+
+> +    };
 
 Best regards,
 Krzysztof
