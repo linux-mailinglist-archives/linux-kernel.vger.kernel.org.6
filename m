@@ -1,161 +1,116 @@
-Return-Path: <linux-kernel+bounces-273715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42019946CCE
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA8D946CD5
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73AAA1C214BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68DDD1C21554
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F8618040;
-	Sun,  4 Aug 2024 06:38:46 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A20125B9;
-	Sun,  4 Aug 2024 06:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BEA17BAF;
+	Sun,  4 Aug 2024 06:44:43 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2CDB67E;
+	Sun,  4 Aug 2024 06:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722753526; cv=none; b=Gg/+Nm8i6vNvWdyed91mxniu9Iz8dXafCplZgHmjjnSEXXgCBrnhGuWOTAXqwMoUIwdvcGpEHNVp5YjytOc/ocTCNHaq5o0udNA7y7AsH0M2SXX6PJpm/B5AnL1NLDkWPD3iwe0PAvGrRrbwJXgAz/LF2rEi89243qrSQyT2Xj8=
+	t=1722753883; cv=none; b=sBm/DjUEvsQ7F3vAVsqSHkKQPNrrTHvBmHUaQUXwjK/+hQ2XhsQQ2hK6QWH/vgq1EQRHvuCbXW1rwv6sn7TV0ZxeWoDBzcg7o0XaBrH+6QWkpdlon8Ni5LiKeNSEyEIcDkGbho4BtXYqj0yGaHz8qpu+noi3fjU00CRd6MYBfbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722753526; c=relaxed/simple;
-	bh=u4eTnty3R3Uj+xeYbUHoU9749kBEhGCxQnpjqsF4gFY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EgTmQrXs9aHimvBxEQdzHGFC7W7iKJKR4bzEDwGwujCHezPXfNzsV8KwBsvT4rnMFZAnu55x6thzlM7ayQtA/nmP01x4OeL39pPvcbS+MPtd47NqeiWaAEfbBXRx/M0CFaInzt1UkSPzInnvmF+ucishlleoUT052QxRgAF53iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.4.132])
-	by gateway (Coremail) with SMTP id _____8BxKuryIa9m7msHAA--.25643S3;
-	Sun, 04 Aug 2024 14:38:42 +0800 (CST)
-Received: from haword-linux.loongson.cn (unknown [10.20.4.132])
-	by front1 (Coremail) with SMTP id qMiowMAxYeHuIa9mVqcCAA--.14675S4;
-	Sun, 04 Aug 2024 14:38:42 +0800 (CST)
-From: zhenghaowei@loongson.cn
-To: zhenghaowei@loongson.cn,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	p.zabel@pengutronix.de
-Cc: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	loongarch@lists.linux.dev
-Subject: [PATCH v2 3/3] LoongArch: dts: Update UART driver to Loongson-2K0500, Loongson-2K1000 and Loongson-2K2000.
-Date: Sun,  4 Aug 2024 14:38:34 +0800
-Message-ID: <20240804063834.70022-3-zhenghaowei@loongson.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240804063834.70022-1-zhenghaowei@loongson.cn>
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+	s=arc-20240116; t=1722753883; c=relaxed/simple;
+	bh=sM563CEGX+iYVBrLjeDfGXla4ALwff+kdJMmGjR+TG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CiNCzm6roATHJrWVjv3vOSYYi+58U6bzsQI/Vluo8/D77dCIwKoCQZQ+D4pFx7aYcA/1PZw0/9MEAi+8V/M9fan9/y94WVEtL4SSDtlx2OrqWd+HIYMjbZvqT4SNkRBvQlVim8J3gTeUNEOPw1gtJiSck4hWZ8kedQDdjwd3Iqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-36841f56cf6so1199520f8f.3;
+        Sat, 03 Aug 2024 23:44:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722753880; x=1723358680;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sM563CEGX+iYVBrLjeDfGXla4ALwff+kdJMmGjR+TG8=;
+        b=GM2ikA/O08cPyWwYu+2fZM0wj972RkpYPhklVYJJzLYp0wnO1MKCe98whXzP3ELUbc
+         m8b4Hxtlg1HcjiEXkZKz24JViyz3qnmuUYCdV/kOgNizT6rGDKd++KSb3kYJFpUv4S4z
+         q5k1mlVxAGbosw8fxEe2rvNnXA9LZcc09+ZlrvuGVTOTa3ZbB9NIaCrqi5ynHPjhAF0q
+         d6doObb/w0TS+uUJRSA5N4utWrDoM54z+e3nIlr1SPO3Zbtjo0OrvfSutvIiJQiwIJNk
+         hSw6MrIUIeK6gEh6xa4cngY90I/qcpDIjKFhovcPitGNgItXCiv4l2sBh/rAX6+vDd6O
+         yfkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJNVELJXigKNfYeESPDcupSvTLISLEuMNeDt/LdZej8Ej3E5hEKr3BQHgK5JU9QuI6xpYH9WifrzoX@vger.kernel.org, AJvYcCUkkP829RGxU5FAS9Glf7lSlcJ0a6JYQ1wuiMhYwExEaEGZrvaAygJtOICutouDh16VXnY=@vger.kernel.org, AJvYcCV56d+0N4UMCs6CDjfwbMKYS+njyxLu5TWxQrmLoTbpNZ1N/gfU9sHb94QTJBPv+CYdxRN9MMnEdDpdPQGp@vger.kernel.org, AJvYcCVGizSPx6jV89AJAU6w6sr4O1SW4M/zs4KZmU6PXwV7e0WXNREzMTdcBEqQTMulPmktYnyT@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvMGPEbM/gzkf6MvBbQKpYmqFTZQTVVsp3VMwY/QfNVCi/lifR
+	62ISNbi19wAgXa9FqzDCkl0wMTHUS3E2K5AmWhSDsr3aoeos2VLJ
+X-Google-Smtp-Source: AGHT+IF+HIEN3u4KbARF8SJvOwd5zbIiuHalh5c4I/D6/TshZm+RxUSfK1q1kRjeS4JttPgnFZS+0w==
+X-Received: by 2002:a5d:648d:0:b0:368:aa2:2b4e with SMTP id ffacd0b85a97d-36bbc0c8bbemr3329655f8f.4.1722753879500;
+        Sat, 03 Aug 2024 23:44:39 -0700 (PDT)
+Received: from [10.50.4.202] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06e0f5sm5973058f8f.104.2024.08.03.23.44.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 03 Aug 2024 23:44:39 -0700 (PDT)
+Message-ID: <ddf1824f-c60a-4908-a67b-ebe7546be870@grimberg.me>
+Date: Sun, 4 Aug 2024 09:44:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxYeHuIa9mVqcCAA--.14675S4
-X-CM-SenderInfo: x2kh0w5kdr4v3l6o00pqjv00gofq/1tbiAgETBGauHZgENgADso
-X-Coremail-Antispam: 1Uk129KBj93XoW7Cw1xKF13Xr4DKF4kGF1Utwc_yoW5Jr4xp3
-	9I9ws7Gr4Igr1fur9rtFWUXr4DAF95CFnFganxArWUArZIqw1jvr4rJF9IqF1UX3yrX3y0
-	qrn5Gry29F4UZabCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
-	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JM4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2Iq
-	xVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r
-	18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vI
-	r41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
-	1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvE
-	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j4PfQUUUUU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 04/14] mm: page_frag: add '_va' suffix to
+ page_frag API
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexander Duyck <alexander.duyck@gmail.com>,
+ Subbaraya Sundeep <sbhatta@marvell.com>,
+ Jeroen de Borst <jeroendb@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Shailend Chand <shailend@google.com>, Eric Dumazet <edumazet@google.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>,
+ hariprasad <hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>,
+ Sean Wang <sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Chaitanya Kulkarni <kch@nvidia.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
+ Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+ Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
+ Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-nvme@lists.infradead.org,
+ kvm@vger.kernel.org, virtualization@lists.linux.dev, linux-mm@kvack.org,
+ bpf@vger.kernel.org, linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org
+References: <20240731124505.2903877-1-linyunsheng@huawei.com>
+ <20240731124505.2903877-5-linyunsheng@huawei.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240731124505.2903877-5-linyunsheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Haowei Zheng <zhenghaowei@loongson.cn>
+Regardless of the API discussion,
 
-Change to use the Loongson UART driver by default.
-
-Signed-off-by: Haowei Zheng <zhenghaowei@loongson.cn>
----
- arch/loongarch/boot/dts/loongson-2k0500.dtsi | 6 +++++-
- arch/loongarch/boot/dts/loongson-2k1000.dtsi | 6 +++++-
- arch/loongarch/boot/dts/loongson-2k2000.dtsi | 5 ++++-
- 3 files changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/arch/loongarch/boot/dts/loongson-2k0500.dtsi b/arch/loongarch/boot/dts/loongson-2k0500.dtsi
-index 3b38ff8853a7..aba6c0991b36 100644
---- a/arch/loongarch/boot/dts/loongson-2k0500.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k0500.dtsi
-@@ -220,12 +220,16 @@ tsensor: thermal-sensor@1fe11500 {
- 		};
- 
- 		uart0: serial@1ff40800 {
--			compatible = "ns16550a";
-+			compatible = "loongson,ls7a-uart";
- 			reg = <0x0 0x1ff40800 0x0 0x10>;
- 			clock-frequency = <100000000>;
- 			interrupt-parent = <&eiointc>;
- 			interrupts = <2>;
- 			no-loopback-test;
-+			rts-invert;
-+			dtr-invert;
-+			cts-invert;
-+			dsr-invert;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/loongarch/boot/dts/loongson-2k1000.dtsi b/arch/loongarch/boot/dts/loongson-2k1000.dtsi
-index 92180140eb56..44c57d2e5dc2 100644
---- a/arch/loongarch/boot/dts/loongson-2k1000.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k1000.dtsi
-@@ -297,12 +297,16 @@ dma-controller@1fe00c40 {
- 		};
- 
- 		uart0: serial@1fe20000 {
--			compatible = "ns16550a";
-+			compatible = "loongson,ls7a-uart";
- 			reg = <0x0 0x1fe20000 0x0 0x10>;
- 			clock-frequency = <125000000>;
- 			interrupt-parent = <&liointc0>;
- 			interrupts = <0x0 IRQ_TYPE_LEVEL_HIGH>;
- 			no-loopback-test;
-+			rts-invert;
-+			dtr-invert;
-+			cts-invert;
-+			dsr-invert;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/loongarch/boot/dts/loongson-2k2000.dtsi b/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-index 0953c5707825..394494aaa242 100644
---- a/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-+++ b/arch/loongarch/boot/dts/loongson-2k2000.dtsi
-@@ -174,12 +174,15 @@ rtc0: rtc@100d0100 {
- 		};
- 
- 		uart0: serial@1fe001e0 {
--			compatible = "ns16550a";
-+			compatible = "loongson,ls7a-uart";
- 			reg = <0x0 0x1fe001e0 0x0 0x10>;
- 			clock-frequency = <100000000>;
- 			interrupt-parent = <&liointc>;
- 			interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
- 			no-loopback-test;
-+			fractional-division;
-+			rts-invert;
-+			dtr-invert;
- 			status = "disabled";
- 		};
- 
--- 
-2.43.0
-
+The nvme-tcp bits look straight-forward:
+Acked-by: Sagi Grimberg <sagi@grimberg.me>
 
