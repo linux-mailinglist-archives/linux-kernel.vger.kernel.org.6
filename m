@@ -1,114 +1,227 @@
-Return-Path: <linux-kernel+bounces-273729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACF1946D00
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:23:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D0D946D0F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:27:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718AC1F2204E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:23:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D729B2051D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9C018046;
-	Sun,  4 Aug 2024 07:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0B71CA9E;
+	Sun,  4 Aug 2024 07:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXYCpmm6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIU8LoVO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC4514F98;
-	Sun,  4 Aug 2024 07:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8323182AE;
+	Sun,  4 Aug 2024 07:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722756223; cv=none; b=kENEF56iCOjytVqlEUMhrIxsfEwa4bhgmuZp+oJkpe9vduo591QX/Z492v8JMM0ufA0gqQYQiiCxp773N3Pswg+NK3/mWrCxpug85zKL3MLKprQLiIAF1BGqaTd0zlwVfWJLVN4IRJP/mJ7WQp8LGAj3jxFgRiRFLFAeVjxMjOc=
+	t=1722756394; cv=none; b=Z7CadaDeegNVS7gRk3bQlQXC0tSwb295nAVtwl8CiSOyK3Sya2a+6tPgPKn0eZlj5KcsMAxtP/qTN3es5P/1n5mI+MAId4P/pAzOpBuBHBNCkfo99twUzKF+qR9UL+XZgkv7uTdAMvXbL0pk3tmqiz57iMlFllu9bp9hpT7xHRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722756223; c=relaxed/simple;
-	bh=jQiJOpRAAEffBgCAE+wAqMVZconq0jXGk3ZQfZAVTR4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=JNDcZ9fkFNyj52+OqEhQYM9SUIz2GqsJliaWkWyq17XCbmWpAj546SZmudh/rYO5iN9Z4chOYnGP0rxwaxyAtNKUWuDpt2uw/7/6MM74Jl8T5PIVtTtG8r8RYrbIqpuGJxvn83tAX1DlFfR+4qcEg9WOvBkpKlsRULNu8E6JdjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXYCpmm6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A243C32786;
-	Sun,  4 Aug 2024 07:23:42 +0000 (UTC)
+	s=arc-20240116; t=1722756394; c=relaxed/simple;
+	bh=rx2UdBu3Jn4YvMBlkSpIvWfaZAHG3g5eVDYxreRC0w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X20AeBFAVk/Wo5HEZjYW3gPQIelM1eCMXWKq8vKdHwmk8E/N/Nct7eEC5LGF0vkZMmAE6I4fQ6F42FlLpYZEXrNUw4QAGlptnhT4Tho9LTiU3ik5alz5qy8RJaeel0D+gT68fkYAoIRSSPWHOHV+ovPbDUNsAadScBG+oLr7c6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIU8LoVO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD611C32786;
+	Sun,  4 Aug 2024 07:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722756222;
-	bh=jQiJOpRAAEffBgCAE+wAqMVZconq0jXGk3ZQfZAVTR4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=qXYCpmm6WRM/h5S9iJLmxp8x5LOwr8+0FYoaw8AyydJzVPotwdderP7s7G9oEyyky
-	 QCq8CF/HDqiN9izjuYLkxxLPl2oyh98Mzd+cyEnxl08JINMWju+Un/axwz3tlG+hPE
-	 fonG9U28asGmkcYcPLsL0HIRgYwTLhg6OUD7aVn+O91eR76qX2Vgxo06YDJJxZ63m7
-	 wZzAy5DOMATw4Qz3xUpjlxD0EJEbWFr0xhNIKORLDyY32yhyRHtbrnvZrUPdskxUL+
-	 mU4/Yd0I2S9xFdDF1Rkpco9tQ7emop0G5xajvA3YlGDtleyA+0W1O6blB+cVAt3enj
-	 NoQwM5KUlMgzQ==
-Date: Sun, 04 Aug 2024 01:23:41 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1722756393;
+	bh=rx2UdBu3Jn4YvMBlkSpIvWfaZAHG3g5eVDYxreRC0w8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KIU8LoVOwFPBw/i+e9r4MNw3lCZ9Vibx6Dii6JlG87646MCH9g5WB4uLhl1sgD8XY
+	 fdhDH8dGci/plC04bp2qqqFN5dQbJHMWc6fWKJYivJ+bk5+GubVSlg3B3t+HSNIfir
+	 JTwRTaCcEoGzTNU1jYvwPfIqnBAdwUe1xFf3HqAX19LfaXMjWdmtrEyuqIK93JEmBz
+	 EFHb56nL5u7GvI90DNZwVtfaVmCpUg9fU4iOezzHPPuQFpcF1invnI5Iw9ThB6TUT4
+	 ADe9mcgPXLgojRwwccp6Y65CANZWgRQC4iHBhVf31YxxkVq1gi+zDus1lvqFhKf27J
+	 Jc+qx/YNiH/Gg==
+Date: Sun, 4 Aug 2024 10:24:15 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	Zi Yan <ziy@nvidia.com>, devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	nvdimm@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 07/26] mm: drop CONFIG_HAVE_ARCH_NODEDATA_EXTENSION
+Message-ID: <Zq8sn5iD1iOmYrss@kernel.org>
+References: <20240801060826.559858-1-rppt@kernel.org>
+ <20240801060826.559858-8-rppt@kernel.org>
+ <20240802104922.000051a0@Huawei.com>
+ <20240803115813.809f808f1afbe9f9feaae129@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: zhenghaowei@loongson.cn
-Cc: kernel@xen0n.name, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
- linux-serial@vger.kernel.org, gregkh@linuxfoundation.org, 
- devicetree@vger.kernel.org, p.zabel@pengutronix.de, 
- loongarch@lists.linux.dev, conor+dt@kernel.org, chenhuacai@kernel.org, 
- jirislaby@kernel.org
-In-Reply-To: <20240804063834.70022-1-zhenghaowei@loongson.cn>
-References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
-Message-Id: <172275622121.3211162.12520346466286897443.robh@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART
- controller
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240803115813.809f808f1afbe9f9feaae129@linux-foundation.org>
 
-
-On Sun, 04 Aug 2024 14:38:32 +0800, zhenghaowei@loongson.cn wrote:
-> From: Haowei Zheng <zhenghaowei@loongson.cn>
+On Sat, Aug 03, 2024 at 11:58:13AM -0700, Andrew Morton wrote:
+> On Fri, 2 Aug 2024 10:49:22 +0100 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
 > 
-> Add Loongson UART controller binding with DT schema format using
-> json-schema.
+> > > --- a/mm/mm_init.c
+> > > +++ b/mm/mm_init.c
+> > > @@ -1838,11 +1838,10 @@ void __init free_area_init(unsigned long *max_zone_pfn)
+> > >  
+> > >  		if (!node_online(nid)) {
+> > >  			/* Allocator not initialized yet */
+> > > -			pgdat = arch_alloc_nodedata(nid);
+> > > +			pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
+> > >  			if (!pgdat)
+> > >  				panic("Cannot allocate %zuB for node %d.\n",
+> > >  				       sizeof(*pgdat), nid);
+> > > -			arch_refresh_nodedata(nid, pgdat);
+> > 
+> > This allocates pgdat but never sets node_data[nid] to it
+> > and promptly leaks it on the line below. 
+> > 
+> > Just to sanity check this I spun up a qemu machine with no memory
+> > initially present on some nodes and it went boom as you'd expect.
+> > 
+> > I tested with addition of
+> > 			NODE_DATA(nid) = pgdat;
+> > and it all seems to work as expected.
 > 
-> Signed-off-by: Haowei Zheng <zhenghaowei@loongson.cn>
-> ---
->  .../bindings/serial/loongson,ls7a-uart.yaml   | 74 +++++++++++++++++++
->  MAINTAINERS                                   |  7 ++
->  2 files changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml
+> Thanks, I added that.  It blew up on x86_64 allnoconfig because
+> node_data[] (and hence NODE_DATA()) isn't an lvalue when CONFIG_NUMA=n.
 > 
+> I'll put some #ifdef CONFIG_NUMAs in there for now but
+> 
+> a) NODE_DATA() is upper-case. Implies "constant".  Shouldn't be assigned to.
+> 
+> b) NODE_DATA() should be non-lvalue when CONFIG_NUMA=y also.  But no,
+>    we insist on implementing things in cpp instead of in C.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+This looks like a candidate for a separate tree-wide cleanup.
+ 
+> c) In fact assigning to anything which ends in "()" is nuts.  Please
+>    clean up my tempfix.
+> 
+> c) Mike, generally I'm wondering if there's a bunch of code here
+>    which isn't needed on CONFIG_NUMA=n.  Please check all of this for
+>    unneeded bloatiness.
 
-yamllint warnings/errors:
+I believe the patch addresses your concerns, just with this the commit log
+needs update. Instead of 
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: fractional-division: missing type definition
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: rts-invert: missing type definition
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: dtr-invert: missing type definition
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: cts-invert: missing type definition
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.yaml: dsr-invert: missing type definition
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.example.dtb: serial@1fe001e0: reg: [[0, 534774240], [0, 16]] is too long
-	from schema $id: http://devicetree.org/schemas/loongson,ls7a-uart.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.example.dtb: serial@1fe001e0: 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/loongson,ls7a-uart.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/loongson,ls7a-uart.example.dtb: serial@1fe001e0: Unevaluated properties are not allowed ('clock-frequency', 'reg' were unexpected)
-	from schema $id: http://devicetree.org/schemas/loongson,ls7a-uart.yaml#
+    Replace the call to arch_alloc_nodedata() in free_area_init() with
+    memblock_alloc(), remove arch_refresh_nodedata() and cleanup
+    include/linux/memory_hotplug.h from the associated ifdefery.
 
-doc reference errors (make refcheckdocs):
+it should be
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240804063834.70022-1-zhenghaowei@loongson.cn
+    Replace the call to arch_alloc_nodedata() in free_area_init() with a
+    new helper alloc_offline_node_data(), remove arch_refresh_nodedata()
+    and cleanup include/linux/memory_hotplug.h from the associated
+    ifdefery.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+I can send an updated patch if you prefer.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+diff --git a/include/linux/numa.h b/include/linux/numa.h
+index 3b12d8ca0afd..5a749fd67f39 100644
+--- a/include/linux/numa.h
++++ b/include/linux/numa.h
+@@ -34,6 +34,7 @@ extern struct pglist_data *node_data[];
+ #define NODE_DATA(nid)	(node_data[nid])
+ 
+ void __init alloc_node_data(int nid);
++void __init alloc_offline_node_data(int nit);
+ 
+ /* Generic implementation available */
+ int numa_nearest_node(int node, unsigned int state);
+@@ -62,6 +63,8 @@ static inline int phys_to_target_node(u64 start)
+ {
+ 	return 0;
+ }
++
++static inline void alloc_offline_node_data(int nit) {}
+ #endif
+ 
+ #define numa_map_to_online_node(node) numa_nearest_node(node, N_ONLINE)
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index bcc2f2dd8021..2785be04e7bb 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -1836,13 +1836,8 @@ void __init free_area_init(unsigned long *max_zone_pfn)
+ 	for_each_node(nid) {
+ 		pg_data_t *pgdat;
+ 
+-		if (!node_online(nid)) {
+-			/* Allocator not initialized yet */
+-			pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
+-			if (!pgdat)
+-				panic("Cannot allocate %zuB for node %d.\n",
+-				       sizeof(*pgdat), nid);
+-		}
++		if (!node_online(nid))
++			alloc_offline_node_data(nid);
+ 
+ 		pgdat = NODE_DATA(nid);
+ 		free_area_init_node(nid);
+diff --git a/mm/numa.c b/mm/numa.c
+index da27eb151dc5..07e486a977c7 100644
+--- a/mm/numa.c
++++ b/mm/numa.c
+@@ -34,6 +34,18 @@ void __init alloc_node_data(int nid)
+ 	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+ }
+ 
++void __init alloc_offline_node_data(int nit)
++{
++	pg_data_t *pgdat;
++
++	pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
++	if (!pgdat)
++		panic("Cannot allocate %zuB for node %d.\n",
++		      sizeof(*pgdat), nid);
++
++	node_data[nid] = pgdat;
++}
++
+ /* Stub functions: */
+ 
+ #ifndef memory_add_physaddr_to_nid
 
-pip3 install dtschema --upgrade
+ 
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+Sincerely yours,
+Mike.
 
