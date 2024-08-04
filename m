@@ -1,130 +1,149 @@
-Return-Path: <linux-kernel+bounces-273919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC41946FAE
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:44:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4590B946FB0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 864551F213B2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A5F2818C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5E981732;
-	Sun,  4 Aug 2024 15:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C2377102;
+	Sun,  4 Aug 2024 15:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B28wd9a1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oLG2dYA5"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRqILuTJ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5309376048;
-	Sun,  4 Aug 2024 15:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C2A1DFDE;
+	Sun,  4 Aug 2024 15:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722786287; cv=none; b=ELpBTbBgm8yiQY1DCxkPUCn/JPSs0r6EF8tXvG5oBKr+J9L1wLRyHKvU3x05sxypgYz2+edYwhBDy2pwK7SioaBKn5J0uzPgwW9x4H/l+2ug+GUvVUtO8ESR97QyFzHwKMG1FjLcUTlD4LJVbCeGhQ7HAn19Y3rYvmnFjflblQU=
+	t=1722786417; cv=none; b=BqavzQO5tzxpTzbUlrjpW6MVUQ0m6fpX1rmj0pmsG2pfzHcXsS2Cd4LyHLYVzH/OBz2vLMHHDKRoWecQBlZMt9lePyaKjdZy90fR1dk7eXPifYZVtJHTpTHFGbdVkdQ8IaGWGiEvuSrRk+fRsuJjg44PmDgPv8lFvLaU80GI09w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722786287; c=relaxed/simple;
-	bh=jjsqjyevgR8nj0LUR652BZZNzSUXeU2Wv2C8jMwCi60=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K98MZc1KOnqzKoSw5pv/gRndyaeV57MBlqfF0y6OraTTLFV7UHgrJ1UkyqdYHjFVnUNFpoYwiwSWGOsuQimZFpJkQmBLjVeXsAg5X6bpH3thpl5RAIgb1ThrCsm7WonCCwhBl1Q/6kYFzDBAWcu765sxfZZux+gceZOaTDQ2OoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B28wd9a1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oLG2dYA5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722786284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9PRY1CFqlIzSqbDXhGPctanQ/REMZNZMr4UIxhNB5ks=;
-	b=B28wd9a1QW3OTEzklFt8ziiH1LYm2OLqn2jqiYdjhD4ak2SeYvSmNrFr8x4+z3RNRmyegh
-	Kf4LKxu3PnyDtpqXXRUv6r/pX/kME4S+65WlTQykEhqmQOW+MUgOpCc9aw8dDIDODSZPpc
-	tzMuqMRkYnyputh09/0kIkdLNluNX8sWmQb2caeN7SnXzWFUr8eCl5JjdbdiV00afHUaBw
-	mDZveLBpznd+cXnbAn5EICtRtk1ScPTZ00bo65skiAiTymFngmOWdkPIZ9afyHqB7ybmYi
-	a3TDXfSmr8y9a0Z9FYnQW/MV10agu7PAF0L65VeXuAev8u3hEU7dNDIdfp9/3A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722786284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9PRY1CFqlIzSqbDXhGPctanQ/REMZNZMr4UIxhNB5ks=;
-	b=oLG2dYA5uEGWMcl5AmvAFhkkXEGzIt7iFGIe2DMtsTbQRjA2MOpqqVkL7X0cbL4C6u+C0g
-	GlsnAFnjZHNLfMBA==
-To: Koakuma via B4 Relay <devnull+koachan.protonmail.com@kernel.org>, "David
- S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino
- <vincenzo.frascino@arm.com>, Nathan Chancellor <nathan@kernel.org>, Nick
- Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, Koakuma <koachan@protonmail.com>
-Subject: Re: [PATCH] sparc/vdso: Add helper function for 64-bit right shift
- on 32-bit target
-In-Reply-To: <20240804-sparc-shr64-v1-1-25050968339a@protonmail.com>
-References: <20240804-sparc-shr64-v1-1-25050968339a@protonmail.com>
-Date: Sun, 04 Aug 2024 17:44:44 +0200
-Message-ID: <871q3470nn.ffs@tglx>
+	s=arc-20240116; t=1722786417; c=relaxed/simple;
+	bh=0roKzM1fRBmXSj0WEesBXbXW+PAoYQryLclvNVrlveY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TMA2UNgeUA+W0nP+5r5nXwNf7pDrR4FGKGN7lIyiUXdKWixYu3rArb/btyyoB48tDG4URb4tjmoGzGkZvnoYQftx8oy9CMqJGo7m2qa/cbaRuonf0Sd0EQyVxrPnD2vzGbB7/sekR1mpserixxHCqj69Pbg+3uxZS5q09jPW0ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRqILuTJ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3685a564bafso4913103f8f.3;
+        Sun, 04 Aug 2024 08:46:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722786413; x=1723391213; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mlp/x+HwXkbRiwsuFRhzSuMJwunaJ+O88frp4ecnldM=;
+        b=bRqILuTJ9PPp4BLPefQoAouBSRLDTByTXifWJevW0CP6NAJnjodbq/XOo7OMmR4CxS
+         AUW7DKTZ9v4r0Rhi9YlYIehtddhlwlLMRjjOmdk3TkyX0gUKcgm9cOS60qb8uMl/ycLm
+         N758lwdXAaiZR3gs1iNw8dbnLGtBe9W4VVKFPj7OcU7AShnhW1epgnKDghIRIWVTDtgz
+         5sTeE+I3O+nsvY1kMK/5e1MfU7f5RwzWiBS1QfYCfmAnwkrAeQkC5FwwrnkwzYQRTaij
+         hP2nNwR7im/EQ/+YIL+rBkwB5SuEVvWRJANwAsQX+km9kqhCe5WcN/rwXkjOgoGtu4Ij
+         GZ6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722786413; x=1723391213;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mlp/x+HwXkbRiwsuFRhzSuMJwunaJ+O88frp4ecnldM=;
+        b=EBi/J+DE6RL1cm974cypfO2l/F4kSV8FI0FtrMvloRuSZDVKWh0oROScc/iHvS5nv0
+         umvCNdUMfZjN0zx8Bx0H5aAHX+zUssF81RhcP8941viuHVRrZ6QEy+tfFDrdyc0/O0Jr
+         RCfccjNC61iTM5fA38WFnTc3kTNIDWoPvZr7e09PR8KpOXuMbiRDNLJD2FQDX2/sPO6X
+         EOfwFIdz7I+x/2lbyIWt5rGJAWhEp49iyxBMzkILwCMhcXr4InuR7sMlI9t5PLldltKa
+         C5xF3kdLW9UkxoBIpV3BpqLTfxmljqUvogdXq16gWTuS2k0I7UpFcuJJiWcuHfcIW6DF
+         JPdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVV/T/EjNKqPZ+079gM0XKJe1qUZBT1Nn4J5ecAoLDkeTFwZ+0coRZsM0Hg4+L37x/zwSuRbwXJWmQCsSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2XCfwCi4D4+7ptdy+UwWwbPVyd8R7KuT5jJBcQnl+Kk+Qr2VA
+	MRgHQdTTM9QMKpYitmHPjoimrV8z1Dbu1pwPZrtAdfB8L+X6Z/za8WZQEQ==
+X-Google-Smtp-Source: AGHT+IEezCcCjJ/kHEdUKrURcd9JboOtK0pJV49pF+mIsfjLELi4ryVv/+0pkHWdRe11tJvGc2X72A==
+X-Received: by 2002:adf:dd87:0:b0:367:f104:d9e8 with SMTP id ffacd0b85a97d-36bbc16102bmr6211959f8f.47.1722786413330;
+        Sun, 04 Aug 2024 08:46:53 -0700 (PDT)
+Received: from localhost.localdomain (93-103-32-68.dynamic.t-2.net. [93.103.32.68])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0cc58sm7291079f8f.2.2024.08.04.08.46.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Aug 2024 08:46:52 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH v2] net/chelsio/libcxgb: Add __percpu annotations to libcxgb_ppm.c
+Date: Sun,  4 Aug 2024 17:46:09 +0200
+Message-ID: <20240804154635.4249-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 04 2024 at 10:39, Koakuma via wrote:
-> From: Koakuma <koachan@protonmail.com>
->
-> Add helper function for 64-bit right shift on 32-bit target so that
-> clang does not emit a runtime library call.
->
-> Signed-off-by: Koakuma <koachan@protonmail.com>
-> ---
-> Hi~
->
-> This adds a small function to do 64-bit right shifts for use in vDSO
-> code, needed so that clang does not emit a call to runtime library.
-> ---
->  arch/sparc/vdso/vclock_gettime.c |  8 ++++----
->  include/vdso/math64.h            | 28 ++++++++++++++++++++++++++++
+Compiling libcxgb_ppm.c results in several sparse warnings:
 
-> --- a/include/vdso/math64.h
-> +++ b/include/vdso/math64.h
-> @@ -21,6 +21,34 @@ __iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
->  	return ret;
->  }
->  
-> +#if BITS_PER_LONG == 32
-> +/* This is to prevent the compiler from emitting a call to __lshrdi3. */
-> +static __always_inline u64
-> +__shr64(u64 val, int amt)
-> +{
-> +	u32 mask = (1U << amt) - 1;
-> +	u32 lo = val;
-> +	u32 hi = val >> 32;
-> +	u32 mi;
-> +
-> +	if (amt >= 32)
-> +		return hi >> (amt - 32);
-> +
-> +
-> +	mi = (hi & mask) << (32 - amt);
-> +	hi >>= amt;
-> +	lo = (lo >> amt) | mi;
-> +
-> +	return ((u64) hi) << 32 | lo;
-> +}
-> +#else
-> +static __always_inline u64
-> +__shr64(u64 val, int amt)
-> +{
-> +	return val >> amt;
-> +}
+libcxgb_ppm.c:368:15: warning: incorrect type in assignment (different address spaces)
+libcxgb_ppm.c:368:15:    expected struct cxgbi_ppm_pool *pools
+libcxgb_ppm.c:368:15:    got void [noderef] __percpu *_res
+libcxgb_ppm.c:374:48: warning: incorrect type in initializer (different address spaces)
+libcxgb_ppm.c:374:48:    expected void const [noderef] __percpu *__vpp_verify
+libcxgb_ppm.c:374:48:    got struct cxgbi_ppm_pool *
+libcxgb_ppm.c:484:19: warning: incorrect type in assignment (different address spaces)
+libcxgb_ppm.c:484:19:    expected struct cxgbi_ppm_pool [noderef] __percpu *pool
+libcxgb_ppm.c:484:19:    got struct cxgbi_ppm_pool *[assigned] pool
+libcxgb_ppm.c:511:21: warning: incorrect type in argument 1 (different address spaces)
+libcxgb_ppm.c:511:21:    expected void [noderef] __percpu *__pdata
+libcxgb_ppm.c:511:21:    got struct cxgbi_ppm_pool *[assigned] pool
 
-Why does this sparc'ism need to be in generic code?
+Add __percpu annotation to *pools and *pool percpu pointers and to
+ppm_alloc_cpu_pool() function that returns percpu pointer to fix
+these warnings.
 
-Thanks,
+Compile tested only, but there is no difference in the resulting object file.
 
-        tglx
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+---
+v2: Limit source to less than 80 columns wide.
+---
+ drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+index 854d87e1125c..2e3973a32d9d 100644
+--- a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
++++ b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+@@ -342,10 +342,10 @@ int cxgbi_ppm_release(struct cxgbi_ppm *ppm)
+ }
+ EXPORT_SYMBOL(cxgbi_ppm_release);
+ 
+-static struct cxgbi_ppm_pool *ppm_alloc_cpu_pool(unsigned int *total,
+-						 unsigned int *pcpu_ppmax)
++static struct cxgbi_ppm_pool __percpu *
++ppm_alloc_cpu_pool(unsigned int *total, unsigned int *pcpu_ppmax)
+ {
+-	struct cxgbi_ppm_pool *pools;
++	struct cxgbi_ppm_pool __percpu *pools;
+ 	unsigned int ppmax = (*total) / num_possible_cpus();
+ 	unsigned int max = (PCPU_MIN_UNIT_SIZE - sizeof(*pools)) << 3;
+ 	unsigned int bmap;
+@@ -392,7 +392,7 @@ int cxgbi_ppm_init(void **ppm_pp, struct net_device *ndev,
+ 		   unsigned int iscsi_edram_size)
+ {
+ 	struct cxgbi_ppm *ppm = (struct cxgbi_ppm *)(*ppm_pp);
+-	struct cxgbi_ppm_pool *pool = NULL;
++	struct cxgbi_ppm_pool __percpu *pool = NULL;
+ 	unsigned int pool_index_max = 0;
+ 	unsigned int ppmax_pool = 0;
+ 	unsigned int ppod_bmap_size;
+-- 
+2.45.2
+
 
