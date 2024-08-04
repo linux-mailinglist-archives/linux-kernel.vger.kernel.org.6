@@ -1,237 +1,136 @@
-Return-Path: <linux-kernel+bounces-273678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4EB946C24
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:31:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669A0946C30
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4463B217C4
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 04:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141641F21C92
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 05:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EE6E552;
-	Sun,  4 Aug 2024 04:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7989CBE47;
+	Sun,  4 Aug 2024 05:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aKKSMq+R"
-Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fBYXf47t"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D6B2F2E;
-	Sun,  4 Aug 2024 04:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102368468
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 05:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722745840; cv=none; b=NwmbsWEw6zROZENcbiNqfm0b5tSo3ztGgZtMfHuXlH+OXOBaxegd5rsEZUUfd52hDYyKMPGFk5rmEYZQo66/fEzOP0MOmCvU0j2ZWJuLUd6AiHKfQ3SrB+fkPo8kveuzPMF7vMMPqYIkNPirM15vmBayUebt8chNio7BkkkTQcM=
+	t=1722748531; cv=none; b=MQvanCA1YS9wmuQnlh5Aq6oV3WSKVo3X68gFWwrROoLwERUxlg7diZuYM18tPL26WiUZ7lHNZoh0IB4OVjQVJQQWwG2q+pcKjHBlpsu3q4ZVmOmDVTL6qPu8N04sIoACza2dEp9obcRzjCC1qEQtSFFBK9eMAd9CGZ/eV/5rFTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722745840; c=relaxed/simple;
-	bh=xoY1WzZPEPZ9zAsX+Nnqw7SzRfo1OpiTjGhSMUtJtEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NdNj8S68gi+JFTU4fa0c1nT/p478l7S2g3latHV/dnxXRFNGHgBX2OAe+KlAwZbFzSmn1QCTq9jTsJdy2q2RIGDF+uENTam+FdnCK38Z9t98EzhT1JEUwt97h4gW/GLSJfJ/bEaMhmh18AH9k6zFlptXEY5naeNlRtB/yW5wj3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aKKSMq+R; arc=none smtp.client-ip=209.85.215.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-7a1be7b5d70so3307797a12.0;
-        Sat, 03 Aug 2024 21:30:38 -0700 (PDT)
+	s=arc-20240116; t=1722748531; c=relaxed/simple;
+	bh=hC94lJtk6TXXcWzwvKA6sgtgiBt9hLLyMvUa+xoW4ks=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=F96vlCCoePuViD9KCqaokb3qOJnicYtjswiKS7/X+TXMcCrYlVCHX67Z00CtyWGnj+CvaAS9dmKA3ebVFt7prfPd0R7bkYgJjmg1TGr8x1r+vlDi1xY16P3wMf/HEqCxYK97T9+Vsnwj7xVRbk1bQqloomgyEbY7r8POkeNZfaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fBYXf47t; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa63so10593228a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 22:15:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722745838; x=1723350638; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xlk57dWXqV77ALqJZrDySJJvovhv9kbwJVS4WA6M5w0=;
-        b=aKKSMq+RhNBYIt8V/r2WOc8MypCENcKF78dKysOu486R7FKA1pNZDndCE3MLJ7Hscm
-         CGCFbOQiq4rfPH93aof/VpoA6EfGI8iWO2xo3KZsISA07ymH58i6h4cbhEZP5vhD0Spf
-         rO+evI5+ZWYYD3aW7BVxtkQfratvg9eHVf79j4v2415M9TkUDGGZ3aSsX7QXFAHb3hop
-         aly22D01kTwhWlvFpe9eOTFdiFtQg6dRgMSq2cqfWyHNYEaUIxI+T2AwIF6M0DnHL1l3
-         f/li+FOYFj+6nu0oUg428wnuwDKxtyAOHVdoOGhVEY3++S+SduuGGRwULlqsITIWNjQ6
-         23wA==
+        d=broadcom.com; s=google; t=1722748528; x=1723353328; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IfRRcniaBVMwO5ZH+xc0aRIPkDBM+y8KvVhsHnScZT8=;
+        b=fBYXf47tGu7BavOXI0hpqRURhswbvNgiqXi3vW6LYL6lzJ74eyxD8GLGXXaooelCJW
+         o1WRrj+Bepc4eSsTgvPQLSKxMBG3+2So4Al9pqV6UPODM69YgyWDzjaUUrzYKvshT1kR
+         XDrJr+hyraGDnp16g6NUybqVv97Om7TGctSbU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722745838; x=1723350638;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1722748528; x=1723353328;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xlk57dWXqV77ALqJZrDySJJvovhv9kbwJVS4WA6M5w0=;
-        b=T3+dK+Ovs5O29pbUfwP+0nRGsJW0H4eUfaCeZcdaNFUTuKChHZXPCdDOXA3Fgdvveq
-         QBPQf5nWOQOcGnF/Uy6mWg+XAPj6dbxK7/xHDQvvhf2xEEPrJ01x9dit62AYD6FsdMAl
-         FZQs+xTi06nXevSgDtpVA1Ycx4YsJAvwif2Z0gumTwBbhcWBKh315M6c3nYfs9V2xIg0
-         BA2AbIGfAvLie6bT8TzDp94Y/1PXLZX3/gx8i6qsVVchKY8F3l+X+hOeJSPscy/7u3ga
-         oOba1mWCf/ZS477PwbaE1GQ0iahIRPjBJcJQcpRUVEFzLeBEFkqEzsZY7BGHbyHw4f+O
-         DVwg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2QxRPToWRskOIhE+7hszw6xnqWu8NCYwGv5n0BbKJSev8qEI0KYMwhysLnliqD951kq78dWBmP6apwmBdXRi5jDyVZ3JO9u32DK+qsISyPaVmjWyMj2RqBZqKxkSYA8thEA0NyqBL+KTscyLSclR/SOd+O+sAl9QzEdpX4EWUyBvb52H5g6Cbz47sGqPEO5A3KcOQXL2Ze3Vpy/D2zzZK+rH1YVd6+Ps8
-X-Gm-Message-State: AOJu0Yzx7X5KdnJQmkiBtHuuL1vB/fQbDfn7w+b6jUm8hIO1Wkiyv5dN
-	3u+YbKYdnQTswSmEK1nvCRNmaz4HdB9KdDs6uxllfOhwuvkLPLJx
-X-Google-Smtp-Source: AGHT+IGsvTDJ4EYqxMHnrnabL29RSd4zV3sYpylbcRFlgCkQFp8MTku4ddABSnqWe2wodzlqv0aHUA==
-X-Received: by 2002:a05:6a21:3d8b:b0:1c6:9968:f4f4 with SMTP id adf61e73a8af0-1c699690eacmr14086917637.11.1722745837611;
-        Sat, 03 Aug 2024 21:30:37 -0700 (PDT)
-Received: from ?IPV6:2409:8a55:301b:e120:f82c:57ba:8bf:3093? ([2409:8a55:301b:e120:f82c:57ba:8bf:3093])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b764fb4994sm3417427a12.62.2024.08.03.21.30.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 03 Aug 2024 21:30:37 -0700 (PDT)
-Message-ID: <2a29ce61-7136-4b9b-9940-504228b10cba@gmail.com>
-Date: Sun, 4 Aug 2024 12:30:22 +0800
+        bh=IfRRcniaBVMwO5ZH+xc0aRIPkDBM+y8KvVhsHnScZT8=;
+        b=iwOZjnBbvYHJdjz+fu6AxOFofmwDpC6x3yqBUg20GkRdmAWtVpV3L4MMKhfzKijo5b
+         /cU3fppBPqFyD/gQAyuixbfV7IUCdq8cZz+W6tCz3/Nzv3YCebi2KYNF25wxfN4JTMU/
+         wYhJq3y8u7EilGdcTUI3MA3XP8tD0GohywCOYZcp22LrXv8BoKpF6OLHEmTYJqte/e6T
+         j0g3vWKE8tN712Eh+FPDDNmwlglrT+1Q8TWGSxzZZ6nNApQCMQPk1se1MTuWdCIMZT2p
+         4u8X4koAG3wHoeo92dOmfWRKui0wMR4n/4KPqf6qchXBeEjASkPsAFw8+XkoYgyDCdj8
+         e1hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeFmSLh84ovWfcsVGwhWm2oPoNKlAQMLFXU7xPa3h6HA1l7PXvLtfj9hbzkwLleGYbzw2Pu7g0tr8TnAcqkAtv1YaPMcbz6fSUG242
+X-Gm-Message-State: AOJu0YzSvzQQo7f7ooz0dT+ZK6Uriq5AuE8IlE96VgNaLWS7Jl4I7vF4
+	w2/4xhJOdO5Q/zCJp5Bbfh1fDpAss1sjhtLqGjhi62lifly7jeV55QQY3R+8tg==
+X-Google-Smtp-Source: AGHT+IGRATyaylaBzEG3ZZ7Q/CU5ff7wZmkBUSPsjwNUhxOc6yzMFhwG4JmIpQNT4OFEDxjCVH6e4g==
+X-Received: by 2002:a50:e602:0:b0:5a1:f74d:2d58 with SMTP id 4fb4d7f45d1cf-5b7f541365cmr5444803a12.24.1722748528160;
+        Sat, 03 Aug 2024 22:15:28 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5baff14989fsm521960a12.55.2024.08.03.22.15.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 03 Aug 2024 22:15:27 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Aditya Garg <gargaditya08@live.com>, <devnull+j.jannau.net@kernel.org>
+CC: <asahi@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <brcm80211@lists.linux.dev>, <j@jannau.net>, <kvalo@kernel.org>, <linus.walleij@linaro.org>, <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>, <marcan@marcan.st>, <stable@vger.kernel.org>
+Date: Sun, 04 Aug 2024 07:15:27 +0200
+Message-ID: <1911bd06198.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 04/14] mm: page_frag: add '_va' suffix to
- page_frag API
-To: Alexander Duyck <alexander.duyck@gmail.com>,
- Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Subbaraya Sundeep <sbhatta@marvell.com>,
- Jeroen de Borst <jeroendb@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Eric Dumazet <edumazet@google.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>,
- hariprasad <hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>,
- Sean Wang <sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
- Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- intel-wired-lan@lists.osuosl.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-nvme@lists.infradead.org,
- kvm@vger.kernel.org, virtualization@lists.linux.dev, linux-mm@kvack.org,
- bpf@vger.kernel.org, linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org
-References: <20240731124505.2903877-1-linyunsheng@huawei.com>
- <20240731124505.2903877-5-linyunsheng@huawei.com>
- <CAKgT0UcqdeSJdjZ_FfwyCnT927TwOkE4zchHLOkrBEmhGzex9g@mail.gmail.com>
- <22fda86c-d688-42e7-99e8-e2f8fcf1a5ba@huawei.com>
- <CAKgT0UcuGj8wvC87=A+hkarRupfhjGM0BPzLUT2AJc8Ovg_TFg@mail.gmail.com>
- <877efebe-f316-4192-aada-dd2657b74125@huawei.com>
- <CAKgT0UfUkqR2TJQt6cSEdANNxQEOkjGqpPXhaXmrrxB0KwXmEQ@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-In-Reply-To: <CAKgT0UfUkqR2TJQt6cSEdANNxQEOkjGqpPXhaXmrrxB0KwXmEQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; format=flowed; charset="us-ascii"
 Content-Transfer-Encoding: 8bit
 
-On 8/3/2024 1:00 AM, Alexander Duyck wrote:
+On August 4, 2024 5:11:00 AM Aditya Garg <gargaditya08@live.com> wrote:
 
->>
->>>
->>> As far as your API extension and naming maybe you should look like
->>> something like bio_vec and borrow the naming from that since that is
->>> essentially what you are passing back and forth is essentially that
->>> instead of a page frag which is normally a virtual address.
->>
->> I thought about adding something like bio_vec before, but I am not sure
->> what you have in mind is somthing like I considered before?
->> Let's say that we reuse bio_vec like something below for the new APIs:
->>
->> struct bio_vec {
->>          struct page     *bv_page;
->>          void            *va;
->>          unsigned int    bv_len;
->>          unsigned int    bv_offset;
->> };
-> 
-> I wasn't suggesting changing the bio_vec. I was suggesting that be
-> what you pass as a pointer reference instead of the offset. Basically
-> your use case is mostly just for populating bio_vec style structures
-> anyway.
+> Hi
+>
+> wpa_supplicant 2.11 broke Wi-Fi on T2 Macs as well, but this patch doesn't 
+> seem to be fixing Wi-Fi. Instead, it's breaking it even on older 2.10 
+> wpa_supplicant. Tested by a user on bcm4364b2 wifi chip with a WPA2-PSK 
+> [AES] network. dmesg output:
+>
+> However dmesg outputs more info
 
-I wasn't trying/going to reuse/change bio_vec for page_frag, I was just
-having a hard time coming with a good new name for it.
-The best one I came up with is pfrag_vec, but I am not sure about the
-'vec' as the "vec" portion of the name would suggest, iovec structures 
-tend to come in arrays, mentioned in the below article:
-https://lwn.net/Articles/625077/
+Not seeing much info in this output which indicate an issue.
 
-Anther one is page_frag, which is currently in use.
+> [    5.852978] usbcore: registered new interface driver brcmfmac
+> [    5.853114] brcmfmac 0000:01:00.0: enabling device (0000 -> 0002)
+> [    5.992212] brcmfmac: brcmf_fw_alloc_request: using 
+> brcm/brcmfmac4364b2-pcie for chip BCM4364/3
+> [    5.993923] brcmfmac 0000:01:00.0: Direct firmware load for 
+> brcm/brcmfmac4364b2-pcie.apple,maui-HRPN-u-7.5-X0.bin failed with error -2
+> [    5.993968] brcmfmac 0000:01:00.0: Direct firmware load for 
+> brcm/brcmfmac4364b2-pcie.apple,maui-HRPN-u-7.5.bin failed with error -2
+> [    5.994004] brcmfmac 0000:01:00.0: Direct firmware load for 
+> brcm/brcmfmac4364b2-pcie.apple,maui-HRPN-u.bin failed with error -2
+> [    5.994041] brcmfmac 0000:01:00.0: Direct firmware load for 
+> brcm/brcmfmac4364b2-pcie.apple,maui-HRPN.bin failed with error -2
+> [    5.994076] brcmfmac 0000:01:00.0: Direct firmware load for 
+> brcm/brcmfmac4364b2-pcie.apple,maui-X0.bin failed with error -2
+> [    6.162830] Bluetooth: hci0: BCM: 'brcm/BCM.hcd'
+> [    6.796637] brcmfmac: brcmf_c_process_txcap_blob: TxCap blob found, loading
+> [    6.798396] brcmfmac: brcmf_c_preinit_dcmds: Firmware: BCM4364/3 wl0: 
+> Jul 10 2023 12:30:19 version 9.30.503.0.32.5.92 FWID 01-88a8883
 
-Or any better one in your mind?
+This message means the firmware download was completed successfully.
 
-> 
->> It seems we have the below options for the new API:
->>
->> option 1, it seems like a better option from API naming point of view, but
->> it needs to return a bio_vec pointer to the caller, it seems we need to have
->> extra space for the pointer, I am not sure how we can avoid the memory waste
->> for sk_page_frag() case in patch 12:
->> struct bio_vec *page_frag_alloc_bio(struct page_frag_cache *nc,
->>                                      unsigned int fragsz, gfp_t gfp_mask);
->>
->> option 2, it need both the caller and callee to have a its own local space
->> for 'struct bio_vec ', I am not sure if passing the content instead of
->> the pointer of a struct through the function returning is the common pattern
->> and if it has any performance impact yet:
->> struct bio_vec page_frag_alloc_bio(struct page_frag_cache *nc,
->>                                     unsigned int fragsz, gfp_t gfp_mask);
->>
->> option 3, the caller passes the pointer of 'struct bio_vec ' to the callee,
->> and page_frag_alloc_bio() fills in the data, I am not sure what is the point
->> of indirect using 'struct bio_vec ' instead of passing 'va' & 'fragsz' &
->> 'offset' through pointers directly:
->> bool page_frag_alloc_bio(struct page_frag_cache *nc,
->>                           unsigned int fragsz, gfp_t gfp_mask, struct bio_vec *bio);
->>
->> If one of the above option is something in your mind? Yes, please be more specific
->> about which one is the prefer option, and why it is the prefer option than the one
->> introduced in this patchset?
->>
->> If no, please be more specific what that is in your mind?
-> 
-> Option 3 is more or less what I had in mind. Basically you would
-> return an int to indicate any errors and you would be populating a
-> bio_vec during your allocation. In addition you would use the bio_vec
+> [    6.885876] brcmfmac 0000:01:00.0 wlp1s0: renamed from wlan0
+> [    8.195243] ieee80211 phy0: brcmf_p2p_set_firmware: failed to update 
+> device address ret -52
+> [    8.196584] ieee80211 phy0: brcmf_p2p_create_p2pdev: set p2p_disc error
+> [    8.196588] ieee80211 phy0: brcmf_cfg80211_add_iface: add iface 
+> p2p-dev-wlp1s0 type 10 failed: err=-52
 
-Actually using this new bio_vec style structures does not seem to solve
-the APIs naming issue this patch is trying to solve as my understanding,
-as the new struct is only about passing one pointer or multi-pointers
-from API naming perspective. It is part of the API naming, but not all
-of it.
+The creation of P2P device fails, but this only disables P2P aka 
+WiFi-Direct. A full kernel log would be helpful. Even better to build the 
+driver with CONFIG_BRCMDBG and load the driver with modparam 
+'debug=0x9416'. That will show a lot more driver logging which may provide 
+more clues.
 
-> as a tracker of the actual fragsz so when you commit you are
-> committing with the fragsz as it was determined at the time of putting
-> the bio_vec together so you can theoretically catch things like if the
-> underlying offset had somehow changed from the time you setup the
+Regards,
+Arend
 
-I think we might need a stronger argument than the above to use the new
-*vec thing other than the above debugging feature.
-
-I looked throught the bio_vec related info, and come along somewhat not
-really related, but really helpful "What’s all this get us" section:
-https://docs.kernel.org/block/biovecs.html
-
-So the question seems to be: what is this new struct for page_frag get
-us?
-
-Generally, I am argeed with the new struct thing if it does bring us
-something other than the above debugging feature. Otherwise we should
-avoid introducing a new thing which is hard to argue about its existent.
-
-> allocation. It would fit well into your probe routines since they are
-> all essentially passing the page, offset, and fragsz throughout the
-> code.
-
-For the current probe routines, the 'va' need to be passed, do you
-expect the 'va' to be passed by function return, double pointer, or
-new the *_vec pointer?
-
-> 
 
 
 
