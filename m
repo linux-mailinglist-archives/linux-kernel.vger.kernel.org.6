@@ -1,157 +1,156 @@
-Return-Path: <linux-kernel+bounces-273807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064C1946E60
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:14:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B161946E64
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DBC81C215D1
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:14:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B319C282110
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068AD2D03B;
-	Sun,  4 Aug 2024 11:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD530364AE;
+	Sun,  4 Aug 2024 11:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BB3hgHOe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPvnVOiX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B8B368
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 11:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E530617C9E;
+	Sun,  4 Aug 2024 11:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722770045; cv=none; b=MoXoXQHSHdWM/eIcgE0bMIT8FAYCHtGCGVrHxHZ1AAKnrpKPzjuLT56jwapsuEBxn1K4Ixol3LIkKu5ulsgYPeQWmvZIEt62oFdNzvOsHJ7iMBx+WgWiCGfVLsHLizAYWm9muYYrGjVv/1ENwfH2yR2QcyxayUgsuAd+/3nRYXY=
+	t=1722770688; cv=none; b=AlkLUr7V2doimVMCsQ79eeycXUWuxkg1WJTo/grB2C+mMLUE8YVN5DxQZvX6xKGSiwDnozFOLRZFuwbvT6zhkCK1Qt9LxGJKTigvpNiiFntY2bYPV9o+iF/Zb9mIsI/URo4wOavrCkqv0JTqNcfWKB4F8/aM7HNQlHwyC6C9g0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722770045; c=relaxed/simple;
-	bh=ioIwD0o1sduzrWtKVUj1e8K+qYXxSjv2nF3EdoOaAco=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=et9Bs38MuV+1t0Q01vMoAoTg5RBiKEGp8c83swYUAA8Zl6dotdnXFgbhYEEnPxX7A/VO2ZdiNsVpviGijsNRGoYgOuRf7xjONgHQwzmuhhMBecSShhH5B3voNVpI6Ab5LsHMEWpAA9scRmOIXPINUIDdyVQ/gU1ia9sE9to+OkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BB3hgHOe; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722770043; x=1754306043;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ioIwD0o1sduzrWtKVUj1e8K+qYXxSjv2nF3EdoOaAco=;
-  b=BB3hgHOeFsdEfoWrAjRKQSM9jUniXL14Z1GNsTtqmZh/2YX9bJcBSVLu
-   Fe+Z/8joMWrLqUhbWR7ZlVvDQMQ3941xuhi9rVXDiB7CB2lDgJtX6qGP7
-   fqmkUxOg2FLzrkkzG4gzOBQXUof4dnnbBfO1TUsa8POXGutMZkStfKxID
-   nSpNiSAiScuRZKyAxBHdRz4s+0stxHUyDsSXMy/xj6gQvozKLkMLpAftI
-   ciHpatLNVVKP1M//9SXA4zM9MR6HBh+ITKayuCaoJlaOVDXlBqyrGSRen
-   wPf/y2o9/z4npJsaxjhejsK2fBRuwJZ79KiGuzvssUji8VBvtUKVDK27F
-   g==;
-X-CSE-ConnectionGUID: dskAIRMaQ2iO7szzM+rVdw==
-X-CSE-MsgGUID: zalP9ZExRP+Vl/6Jmcau6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11153"; a="20408738"
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="20408738"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 04:14:02 -0700
-X-CSE-ConnectionGUID: YJM79CzaTLiTfJOXurynzA==
-X-CSE-MsgGUID: oukP7wRkSZKRIfIuWwt7lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="55839138"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 04 Aug 2024 04:14:01 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1saZBW-0001Q2-2Q;
-	Sun, 04 Aug 2024 11:13:58 +0000
-Date: Sun, 4 Aug 2024 19:13:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	David Gow <davidgow@google.com>
-Subject: ERROR: modpost: "__popcountdi2" [lib/kunit/kunit-example-test.ko]
- undefined!
-Message-ID: <202408041932.EzITeEV4-lkp@intel.com>
+	s=arc-20240116; t=1722770688; c=relaxed/simple;
+	bh=jfqjxc5xPJuMgsSjsvqDsL7sb1Gzrg2zNgXmKJd1RW4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p1SVRfMgP+jvc8DIwiO6mpf6KIvpe1kfVfNfFunHFYNRKaCJeSZ9SBB2IKDoWVUbT8JS2aNdH73MOqhuPDNe2w5pJnoi8iZ8Gn3sRAEqK10L+mWgqMPjnpypkqvILcuASkw9x/WCRvgW2LqpP452XT0bnWof/JzYO/uvBuEOIys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPvnVOiX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A82C32786;
+	Sun,  4 Aug 2024 11:24:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722770687;
+	bh=jfqjxc5xPJuMgsSjsvqDsL7sb1Gzrg2zNgXmKJd1RW4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hPvnVOiXthTCqw0/iV56gPy/TMy2T4AkkOp5tsUnNZz6CS5dtk9Yof7AYm/h/Rf2z
+	 F7Ra0+Vr9o1lNzSrTqSFIP3DTbPVzw3PHVxtxtWLSTPwPKJtiiDaD7SaobPt/GC0G8
+	 TpA6GnJKe20aSTTbL0ANvK+2pfpPlseoot5T2+uSQ0WEQ8G8OYZB0DkG3d2miXu/tP
+	 1sf8jyRPRRxVrzt2JEeIVDfXelPO9ak4PpkPii/9QOBibN+trHbkB5fiH1w0kxE9Q+
+	 u+F7dpYCmlkib7H+ltxBPtsXNOSMmjJz8ZjEPSE0QfD5CynpDxsiY/DRGpLzjtvilS
+	 HaBn3avYTHsNQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1saZLx-000l99-7K;
+	Sun, 04 Aug 2024 12:24:45 +0100
+Date: Sun, 04 Aug 2024 12:24:44 +0100
+Message-ID: <87r0b44jk3.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] KVM: selftests: arm64: Simplify specification of filtered registers
+In-Reply-To: <20240802-kvm-arm64-get-reg-list-v1-1-3a5bf8f80765@kernel.org>
+References: <20240802-kvm-arm64-get-reg-list-v1-0-3a5bf8f80765@kernel.org>
+	<20240802-kvm-arm64-get-reg-list-v1-1-3a5bf8f80765@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, catalin.marinas@arm.com, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Michal,
+On Fri, 02 Aug 2024 22:57:53 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> Since we already import the generated sysreg definitions from the main
+> kernel and reference them in processor.h for use in other KVM tests we
+> can also make use of them for get-reg-list as well instead of having hard
+> coded magic numbers in the program. Do this for the table defining which
+> registers should be gated on ID register values, using a macro which allows
+> us to specify the register and ID register field in a much more compact
+> and direct fashion.
+> 
+> In the process we fix the ID register checked for S1PIE specific registers
+> which was using an incorrect shift of 4, checking SCTLRX support instead.
+> No other change is seen in the generated data.
+> 
+> Fixes: 5f0419a0083b ("KVM: selftests: get-reg-list: add Permission Indirection registers")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  tools/testing/selftests/kvm/aarch64/get-reg-list.c | 29 ++++++++--------------
+>  1 file changed, 11 insertions(+), 18 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/aarch64/get-reg-list.c b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
+> index 709d7d721760..a00322970578 100644
+> --- a/tools/testing/selftests/kvm/aarch64/get-reg-list.c
+> +++ b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
+> @@ -22,25 +22,18 @@ struct feature_id_reg {
+>  	__u64 feat_min;
+>  };
+>  
+> -static struct feature_id_reg feat_id_regs[] = {
+> -	{
+> -		ARM64_SYS_REG(3, 0, 2, 0, 3),	/* TCR2_EL1 */
+> -		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
+> -		0,
+> -		1
+> -	},
+> -	{
+> -		ARM64_SYS_REG(3, 0, 10, 2, 2),	/* PIRE0_EL1 */
+> -		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
+> -		4,
+> -		1
+> -	},
+> -	{
+> -		ARM64_SYS_REG(3, 0, 10, 2, 3),	/* PIR_EL1 */
+> -		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
+> -		4,
+> -		1
+> +#define FEAT_ID_CHECK(reg, id_reg, id_field, id_val)	\
+> +	{						\
+> +		KVM_ARM64_SYS_REG(SYS_##reg),		\
+> +		KVM_ARM64_SYS_REG(SYS_##id_reg),	\
+> +		id_reg##_##id_field##_SHIFT,		\
+> +		id_reg##_##id_field##_##id_val,		\
 
-First bad commit (maybe != root cause):
+Please use designated initialisers.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   17712b7ea0756799635ba159cc773082230ed028
-commit: ee5f8cc2770b2f0f7cfefb5bf7534e2859e39485 kunit: Reset test status on each param iteration
-date:   11 months ago
-config: riscv-randconfig-001-20240804 (https://download.01.org/0day-ci/archive/20240804/202408041932.EzITeEV4-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408041932.EzITeEV4-lkp@intel.com/reproduce)
+>  	}
+> +
+> +static struct feature_id_reg feat_id_regs[] = {
+> +	FEAT_ID_CHECK(TCR2_EL1, ID_AA64MMFR3_EL1, TCRX, IMP),
+> +	FEAT_ID_CHECK(PIRE0_EL1, ID_AA64MMFR3_EL1, S1PIE, IMP),
+> +	FEAT_ID_CHECK(PIR_EL1, ID_AA64MMFR3_EL1, S1PIE, IMP),
+>  };
+>  
+>  bool filter_reg(__u64 reg)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408041932.EzITeEV4-lkp@intel.com/
+Thanks,
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/torture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/resource_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/sysctl-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/dmapool_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/rational-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hexdump.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/find_bit_benchmark.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cpumask_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sysctl.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hash.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ida.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test-kstrtox.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_list_sort.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sort.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_printf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_scanf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_uuid.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_maple_tree.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_free_pages.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_kprobes.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/bitfield_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/checksum_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/list-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/hashtable_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bits.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cmdline_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/slub_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/memcpy_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/is_signed_type_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/overflow_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/stackinit_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/fortify_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/strcat_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/strscpy_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/siphash_kunit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-gate_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/core/dev_addr_lists_test.o
->> ERROR: modpost: "__popcountdi2" [lib/kunit/kunit-example-test.ko] undefined!
-ERROR: modpost: "__popcountdi2" [lib/test_hexdump.ko] undefined!
+	M.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Without deviation from the norm, progress is not possible.
 
