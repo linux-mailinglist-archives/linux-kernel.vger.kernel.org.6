@@ -1,137 +1,74 @@
-Return-Path: <linux-kernel+bounces-273809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05BF946E68
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:28:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD440946E6A
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14167B2187D
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:27:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AAE21C20CAF
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723672C87C;
-	Sun,  4 Aug 2024 11:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A313E339AC;
+	Sun,  4 Aug 2024 11:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="QrLFVnQ9"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="j0pXGFBU"
+Received: from mr85p00im-zteg06011601.me.com (mr85p00im-zteg06011601.me.com [17.58.23.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D880EFC0E
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 11:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE93CB653
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 11:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722770870; cv=none; b=J2A8cEMZvkHyY/tVrsQzbxbIyYi1s/gN0EGfT27/Ud79CX7lGkL4DzJAbIXtTW4nYoTO+G297vKSdaEYVw8c86lt516NqJIIGAIHDu9SLG/o17YQTfcdvVY+XLbgccXnlfjh9E1HTPVzpCbUj+UILoDNFUdm+5jqaWuCG9jSc14=
+	t=1722771075; cv=none; b=LF8Jkq1s9yfOQk9cbO2npGoIgU8eB/f7SG3VGdhD3xpaTJ/SMmkTqN0omG/IHvvASqI7sty2v5GSraQ+kyVvUxbIDk4AGhv/q5Z9rTLD2mTfZG+TAsIhJuRqOVCqhhcEHCJUk7w42esML8a6eOXEebEm2eqq3bX+yUhzPbRgT/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722770870; c=relaxed/simple;
-	bh=6WTWTv7xN+Wsf3mjUSvFKRctXZL7CXQtw0vVYnbC+eE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Opmrsl6tI7uSwR5wS2O8P3q39Vc+Q/wCR125c4GdBvOllf0cN1B6W8LcqnPDpV1IBtF1bk2PDgpOksPRC7+VBJvdDjz3lTH/yhatVlHLHY+ymOWyUdyVbF5529uzernkPndNaRXuE7FL8m85eu1GCMeB2gATHxthMfZXKB9Rf5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=QrLFVnQ9; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1722770866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MJQz41jQBJqqx/MG8xPjrVEqBddVWd1a3QNgEsqP5KI=;
-	b=QrLFVnQ9nxrML1Lv2rIBRIKWhtHtacXtXTTu6r401eRGTwSFkmtvi1WZkXyvqUy3YYVurY
-	TMnZeqPcvh2RegkaD01er2QqM7NCixV6KdIkkN/HdA6eB2tpIRxQtED7B9GL6Lv8Q1K3Jv
-	b9L4maSPSPQexki+f+3kaxqEe3ts6I0ohxGRHx2S/qhINivyTDkUPqFQCCUj8G6Uzh1Fi6
-	4TDZ6J08vBithTygoIsY0NabC1NxVfcJVAGbs3wO6Z/wKctIdza7DNDN9ZulzsgToIdjOn
-	M+8r8+ymfgEQGwyRmeVW7D6+k3HA3ll5UJNyuw+c0+KR25xkIvpOjDwEOGB6yA==
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
- Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
- Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
- Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
- Ondrej Jirman <megi@xff.cz>, linux-rockchip@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, Yao Zi <ziyao@disroot.org>,
- Yao Zi <ziyao@disroot.org>
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
-Date: Sun, 04 Aug 2024 13:27:35 +0200
-Message-ID: <3483951.iGylCHCCq3@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240803125510.4699-5-ziyao@disroot.org>
-References:
- <20240803125510.4699-2-ziyao@disroot.org>
- <20240803125510.4699-5-ziyao@disroot.org>
+	s=arc-20240116; t=1722771075; c=relaxed/simple;
+	bh=4ht9G50SlYlr7BPTCuy+KjNotHQlLEXbSKghIYlF3TI=;
+	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:Cc:To; b=J4PAL/+UO6KWvzwIFvpAkHAc93GPxIKX60M42UzoCoQWozbWClrMVmZ2AJJN8+Vu/NwwnWyqB0BCUwxQ7aKWfvw/PIf3AdZWcUghBAfkYo+CW3IblAfIq+6lQuJurRnJHxXxP+w4EcF2IY1bFN74ZzIplUVo5b2TfuQjmQ+aquE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=j0pXGFBU; arc=none smtp.client-ip=17.58.23.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1722771073;
+	bh=4ht9G50SlYlr7BPTCuy+KjNotHQlLEXbSKghIYlF3TI=;
+	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:To;
+	b=j0pXGFBUkuST4aGUnxYaN4QYsXXTsKyNVQbh+CO4T9xDOZagyI7eC9FpAk87UKb5Q
+	 +JSXpW8lX0LPhkGFKH2l95ZLbnntJNkYhKxCFYukHEcNIFAynsBbQ05RXSXogUglky
+	 qYlIlxllaq7Oig8NSr2i7HuuYL7xCLKmsXtR8sNxRNudvTMzc0TI1zfN6Gxl7NaKIF
+	 lOqw8qRGDlsC273rMgzDUQfUZUVaE5769DKzZoZurj8wYFuKZ2Fak4N4GNySD4EmEA
+	 r0QDBTcYA6SKrZLCRq0CQP4FPnNQTXxXgOAvDReZU+UYkY//R2ZnOtj7geVQarF2iN
+	 ZaHWUbN30HxfA==
+Received: from smtpclient.apple (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-zteg06011601.me.com (Postfix) with ESMTPSA id B1827180036;
+	Sun,  4 Aug 2024 11:31:11 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+From: Jasoor WW <jasoor777@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2013840.3XhD2mlfif";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
-
---nextPart2013840.3XhD2mlfif
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Date: Sun, 04 Aug 2024 13:27:35 +0200
-Message-ID: <3483951.iGylCHCCq3@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <20240803125510.4699-5-ziyao@disroot.org>
-MIME-Version: 1.0
-
-On Saturday, 3 August 2024 14:55:10 CEST Yao Zi wrote:
-> +       gic: interrupt-controller@fed01000 {
-> +               compatible = "arm,gic-400";
-> +               #interrupt-cells = <3>;
-> +               #address-cells = <0>;
-> +               interrupt-controller;
-> +               reg = <0x0 0xfed01000 0 0x1000>,
-> +                     <0x0 0xfed02000 0 0x2000>,
-> +                     <0x0 0xfed04000 0 0x2000>,
-> +                     <0x0 0xfed06000 0 0x2000>;
-> +               interrupts = <GIC_PPI 9
-> +                       (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> +       };
-> +
-> +       uart0: serial@ff9f0000 {
-> +               compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
-> +               reg = <0x0 0xff9f0000 0x0 0x100>;
-> +               interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-> +               reg-shift = <2>;
-> +               reg-io-width = <4>;
-> +               clock-frequency = <24000000>;
-> +               status = "disabled";
-> +       };
-
-The properties should be sorted as follows:
-- compatible
-- reg
-- <other properties sorted alphabetically>
-- status
-
-This also applies to the other blocks which I didn't quote.
-
-Cheers,
-  Diederik
---nextPart2013840.3XhD2mlfif
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZq9lpwAKCRDXblvOeH7b
-bnHyAQD8wsAMQjsb0Ikzu8H5TXIwKe/0e07lJCrzJlvovJaVzgD/WZBgbVZnTLND
-Y3HfPGfi3UhbL+6yrSDh/M0Qok4/9QU=
-=1NSP
------END PGP SIGNATURE-----
-
---nextPart2013840.3XhD2mlfif--
+Mime-Version: 1.0 (1.0)
+Date: Sun, 4 Aug 2024 16:01:02 +0430
+Subject: Re: [PATCH 3.2 054/102] iscsi-target: avoid NULL pointer in iscsi_copy_param_list failure
+Message-Id: <62401A5F-A8A7-479F-8351-06E03A7A6489@icloud.com>
+Cc: akpm@linux-foundation.org, joern@logfs.org, linux-kernel@vger.kernel.org,
+ nab@linux-iscsi.org, stable@vger.kernel.org
+To: ben@decadent.org.uk
+X-Mailer: iPhone Mail (19H386)
+X-Proofpoint-GUID: 2cKBbkR8QSy7Fj4iFNakX_iKhegw-lr-
+X-Proofpoint-ORIG-GUID: 2cKBbkR8QSy7Fj4iFNakX_iKhegw-lr-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-04_08,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=486 bulkscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 mlxscore=0
+ adultscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408040084
 
 
 
+Sent from my iPhone
 
