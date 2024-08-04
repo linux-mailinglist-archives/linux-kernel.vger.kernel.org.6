@@ -1,210 +1,710 @@
-Return-Path: <linux-kernel+bounces-273996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C85947091
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:51:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BB0947092
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557831C210B6
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 20:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7251C20B96
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A982813C3D3;
-	Sun,  4 Aug 2024 20:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE5D137C37;
+	Sun,  4 Aug 2024 21:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="tHuZeLIZ"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010036.outbound.protection.outlook.com [52.101.69.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HRjmmIPL"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8315E137932;
-	Sun,  4 Aug 2024 20:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722804630; cv=fail; b=icTG5xszmrq4KtCE98E/zbSDcaxYitZDroGstJlfGwaXSQwDGOFhVSiDzRbclHkUJABwdbxJ21bfkIHxHxMqSov7VW+TJHWV4Gm1RcqzrQ50Xr8q6pHbna7ymn5kD9m76Pr9YBekbe9sM3GycNqaSI0fc/iG8cdfGbXYn++O7PM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722804630; c=relaxed/simple;
-	bh=zSt5RuGrCAB03t8wJRaHtFuSXUZq8vpdAvTJioGHhag=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=e8tQf3NVDmrbGMCg67m7VprJOXa67Lo0Z04/n/0vYsaKXzhW/coI/3YO1HgfC/Q25EhXWCOdnoOFrKlqvHxJjbvYnGnLEo5/y5aYFZKdctKluLtxAGDrskBrzPNqfrAr63FzE7R/YB8Gxfc/JOOE6VNrHFZanYf9TFogZ+YX100=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=tHuZeLIZ; arc=fail smtp.client-ip=52.101.69.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hI1aNdeu/fT68LdJ9MonaXUERBbtAehru6/kxYdGGbXcOicU1lclLaIVn0kcqJXAPPA6NwRxnfRoWXoemtxOQFVlJe69qeWDAnAlBz8Fm7nMs/lhiQ/rNAiEKMdWY1wC2oGfiqpYe8PumSbPQQbo506cZLoPtGh9N+sKMJAvmVB/PDXW05do8hZ5Mo2SPLt3OEvvsz/uOi7EacDv9aL0gj7jSK/aXZJswzBtdMgzXzKI1L00D6UfAQILr+JHjexXEwjYnSqJN39sW0hSfC1FdHQ2YCVFIFtV6CYE/Wf2BnXUpX7LRjsTBAmXHK2GFpB8oUOY5xwnCie/7AHTHuOOhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pk684LV3ynuEpTxv6M+A6nHw0iSspAsQbxmxZm6K8rU=;
- b=R6jIOnC04q1B8JIyW6vt+aEXc26Tz6SR81jCIhHnUUeCfDXn+1AAvVfjGg3bdCxFOpjr7UxxxAXJR7+xWlilWDNStrNVPDs3LfR/6YaAzKe3Lib1YGqnEdZqbVRGvlkbaGrvDWOKNAZBtTpdP33ftwaoqCaW//KbFFhcIMhiLm7kMNfWIIXcRvmjGK0H226wWaWYPi+cwCSAp9H1QzKwGUQpplMGPb224cb2VCu21d5Rus6BTdI7fFwwcDFR+17hRrGLHFugJ4NMCfvje0l0g2z/KLhNZxy6rhsMZzPMvr8wrhMUQ+IgSibNO4/Jj9d6qZre31As1sjgp0AjEeRnjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pk684LV3ynuEpTxv6M+A6nHw0iSspAsQbxmxZm6K8rU=;
- b=tHuZeLIZShKmjMHA6jNRtXVhTCFFwSWZrwC+ue+AS5wvxri1ihfH6aHYiIUS6UIUvasTwwI2wwbXxaPv9BE1luj6Sgl09hTG2nF3VDSgHb36mn4DqcNqkAW0wyIu4N6Az9Nx6FuR/wS0XpelEFSdI365eLJnAbzfn4KmcdMHBcmbPYlhCNyWeKLGI+htGgAHI/uK7fjAOtk0LXF22tkR1LzKFw9FIzf3JfYt6dE4lPpLAnDZcEs+tRKlW2YJWwqu0QWzq8CTxgTi0Uv3UXYicEEEddpaaNA8sIlVRDmIUbiS8yOCTuRIuzJJSyqCi0W0ppp8Irva0S0qPsUlEI86Pw==
-Received: from AM9PR04MB8506.eurprd04.prod.outlook.com (2603:10a6:20b:431::16)
- by PA4PR04MB7965.eurprd04.prod.outlook.com (2603:10a6:102:c9::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.25; Sun, 4 Aug
- 2024 20:50:25 +0000
-Received: from AM9PR04MB8506.eurprd04.prod.outlook.com
- ([fe80::5f7:9bab:66a3:fe27]) by AM9PR04MB8506.eurprd04.prod.outlook.com
- ([fe80::5f7:9bab:66a3:fe27%4]) with mapi id 15.20.7828.024; Sun, 4 Aug 2024
- 20:50:25 +0000
-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: dl-S32 <S32@nxp.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Claudiu Manoil
-	<claudiu.manoil@nxp.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: [PATCH 6/6] net: stmmac: dwmac-s32cc: Read PTP clock rate when ready
-Thread-Topic: [PATCH 6/6] net: stmmac: dwmac-s32cc: Read PTP clock rate when
- ready
-Thread-Index: AdrmrgHXkavt0RGESJ+P/uF7MetJwg==
-Date: Sun, 4 Aug 2024 20:50:25 +0000
-Message-ID:
- <AM9PR04MB850624C6D994A879E395D3EAE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
-Accept-Language: cs-CZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM9PR04MB8506:EE_|PA4PR04MB7965:EE_
-x-ms-office365-filtering-correlation-id: 3e2d5d09-4b3b-4f3c-3a6d-08dcb4c710c7
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?K29UH49iorDjiYOA3R6kAjAedIOD2+I2AqMsy7/nmj2wwz/DtdcdjQ6q2pPN?=
- =?us-ascii?Q?5msSHpC3LN+oodA0yW7EYAHS179jl/X4i4fjkaTQIBHxlzv9UOQg/QKOpBN+?=
- =?us-ascii?Q?8CvuEIOyEJ+Z+evsS1o2Xabtxjsp6OyBEmIlB/DrFbStOWqAqf92D7THLU5k?=
- =?us-ascii?Q?cvmfiz0FOZLs6k6FaQrUyu80+c5RTFvr1wyM4p+hsdFSzn+/iZlInPzsKd3v?=
- =?us-ascii?Q?cpTkh9Kng7RL2J3ZZLii3VCBYk2oBPArvFncwvN9FljCA5M8rz0vg4BTAC0L?=
- =?us-ascii?Q?0FXIPm+P+gPF5oU1C6Y32707XTn/yOrQnjc8B5M1+n8bcBHiIxpmrvPvJrBd?=
- =?us-ascii?Q?uV3++TeuRHc4j5DZS22pH48CDJ4ks2k7iGSlv+nfRky+LNmifEm9VzWOcRrK?=
- =?us-ascii?Q?+Yt/yXB6jiYVnkJ1bOcQTPdbCrGPSPsJKzNzQWK+nA1ZQ1LAK7tthQ7i35lP?=
- =?us-ascii?Q?K3agtiv8NA5lOuw685cSNmUaEjjJVWQ7v8ZYkRX/2DsDatwmzehb6n8tshTr?=
- =?us-ascii?Q?28OBZJkVdnA15UZMMV4eurGzltsJcJPQdqE0z5DEus0JY7QuBA5CQ8tti6Mu?=
- =?us-ascii?Q?/aH917+EC8j8qJXCbOZRFIn/MsLTNd1sEnwObSf15n6xEtTiFP+N+gW5U9CK?=
- =?us-ascii?Q?TMGjc5q5ZML5LKTI/ejiL7AGDlnJPNjLTvFQ9zhZS9LjpF3RD+KYmE2UMpHH?=
- =?us-ascii?Q?pN886gtt4BhSwrMo4r3SxJyF/kQd4BFCcS13vUm06/KTCSov7hvrEAXlBwQ2?=
- =?us-ascii?Q?57+7FOJycX3PFEAWs6M333OZ6sQo+Ej8GalOKQzOWmxeIey5tlwRNrjR5jym?=
- =?us-ascii?Q?QYyqGdS9Xuh6AtExa8wO44JA0IcU12u/gPVbfvClPHgVHTJkIQXfhp1XKdDd?=
- =?us-ascii?Q?mldgclq0e4diIqhuSDmy9rCpwKTOT7xSm3U7ekiC9/h1y+srme9wCDffBgHX?=
- =?us-ascii?Q?S63x2/RcgznWsHNxCSVsMykWa4wvQ+wbQIv8H0ksT6XE45ZIhZQIHuAHZKzS?=
- =?us-ascii?Q?CkQad8wY74oElu55qsZGPx2RX5Wo6842azeRLxjdHH+FDd79h5vC9CFgjk3j?=
- =?us-ascii?Q?5Db6T2YBrtRvwPrQiLKfIZMb1RzlbZSnWavIulIOwJAsuxdFYWvEZXZjbfMG?=
- =?us-ascii?Q?FJXs2lkGd7vnN//ggTMUj0zsKT9MFKyiYrPRxvgABtH4xW3z6pxT6wBELL5n?=
- =?us-ascii?Q?sz+6ay13X0NN3Rnshf0IV2wn+40Btfni/+zDL/kFdU6jDJ2L9ey+AgkTuOT2?=
- =?us-ascii?Q?6o0jZ0bpOfduv0zMOpdWIEx4Vn92Y4TihcVinjsdw4IyuRp/4eM/bJSKvtvC?=
- =?us-ascii?Q?/C449WFRkbCK2F5s06sopZWJxMD9NhOi563p46IOPzMGcrRpU7fWiqmWNu4i?=
- =?us-ascii?Q?quKBHqxHSJbYMtVX8CKnoT1eiU632BFU7un0aw2l26PSfOnC0w=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8506.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?rwJiN/hwSTt/sLrNysZVruLj3jKxjbI2DbntMju7nRuu0pWhYZwqi3E5z8+X?=
- =?us-ascii?Q?xz9lI3f58dN80Y7uopN1yyG8bRLkY4gE0ACUl5nMGFdDPsKYVyKzOIRA8dTy?=
- =?us-ascii?Q?9qmdvYGXadWPR3EzDii6KxqmM+EVNJP2O2/9r95ueFTn1evMcrrTwlysBKH+?=
- =?us-ascii?Q?lnfKfmIDrxGPyAQ7hOhDIxNfv0U/I9Xz06v98ediN986EiPsdhJHymNKLOD0?=
- =?us-ascii?Q?1FFG1cMhCTKvwKIAt3uIBPLcQcqgkKRHY4FhKNg3qgJS1Elvs4B3XtaZVt0V?=
- =?us-ascii?Q?zOD5dl7nDv7/nW8cvJlsNefmvokM9e6+YkDQQrf56xhZNyzGcdOyW0fvR+PX?=
- =?us-ascii?Q?D9HUtaIpUAeShtcW1y6eTiRSISId5Jq/EYoUgWYSNgtBsZ0yE3T3aF3Yv1lF?=
- =?us-ascii?Q?ha82kTnk5OeX3VBxtwDxCUsDMOmC34IMtK0AMFA2lYEolCwllRe8GvXzgCqx?=
- =?us-ascii?Q?tTGiGoHjVSCm16lRvp8xLbMLgDtEBqcBq1RFxRBh0XU9///Yr1yrPB82x1tl?=
- =?us-ascii?Q?R7YdoCsNd8DKauAk8qUR9El8aVOBNyeR8nQGgUMO5kqXw3sTxkzsRmKm3rPz?=
- =?us-ascii?Q?F3sUFrPNBEAY71q2NcwdlM6PywAWPkeQKLkcpP+OKlTek+UScmsMGzljHGdF?=
- =?us-ascii?Q?S/WOjso5fEtUQZI6Xe7HpEfLMNRyhmBNL1T/EL6lJZoLUmC3aa907omz69Gc?=
- =?us-ascii?Q?VSrkv5tZFrWc/dM7e3mrcWtfoqv3gfLy25GMhOmwGs+mdOTyRBxYfo3X4tMt?=
- =?us-ascii?Q?NnZP2PZmVDJFP4Nf+TddRaBhxWb6PZLQOsCTS/ndQdfN0iXyhtxjKnilbL+s?=
- =?us-ascii?Q?qypRiUKTt/sdPgpayxroEETyQ+2wadsgkr8ru6bj0YFf0wijirzzWRPXHow0?=
- =?us-ascii?Q?/wIuTWgtyUe3iCo/aIGy4yfC1KHDR48fQqLjXGn2zU01c9MFBgsldv/88aC1?=
- =?us-ascii?Q?Tki1eZ0+m6rEunWwBICYTEgVaep1UHh0bn9CpRKmzo7OsS19F/Pvn2AAphgc?=
- =?us-ascii?Q?+Ll1eNb4uYAkc/uqvu71akafSDa1vB1VVTM40ekyi5AtdjImVtGG1rcO9c37?=
- =?us-ascii?Q?cGS4xInoNSoCE9dFPJ2Jer7fTcqhYixJ9W4i3adtqwK5FrjyLttElkho8Ri7?=
- =?us-ascii?Q?j0+F71cMerPvob1ejnkLRKL7vESKMIU64nn3ME/574QMXmDjBksK9xVSJaic?=
- =?us-ascii?Q?o8PYoGueSQclUK2XeTQGdx71I0/fCWbgBiYEhGDbqZPQYpa4ycCMnexCyMMO?=
- =?us-ascii?Q?hJX+Mrw92lmfn4YSGVoIGB5bD95gzHWaVJh2i6RSQeIgFbp4+CUM0oay0ZBa?=
- =?us-ascii?Q?JbwnhDe4FcMBbPs2aB4oFv+MCgOGI39rBb/nRxzNpFDezkbcfdX4mG2/3CPK?=
- =?us-ascii?Q?bt8Xij+1ErcBP+6GwUEWx1BRYClZ1M3zPr/Dtw+HVOmbgFFSCzsKpKdmPYtA?=
- =?us-ascii?Q?38z02uQs7GCKIPMJUz5EZBpiJO9KQx+NSjrsJRJypOmGbNjSmKPMkyxh+HSx?=
- =?us-ascii?Q?ipfq/6IrvytenZdb3Ab3B/y3y/x9AVf+Rs6EqCVkUripleO9Gd26FGSEXIlv?=
- =?us-ascii?Q?Oa2UuZPvS7JTBXpOh1I7pjZWQcJsaI5UFAOCZVy2?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96153BB47
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 21:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722805280; cv=none; b=JBM/hYfYcy5j39Kjf1CNFVZIu32wFEEMnWtzIjqyW2a+ZOl173fYEIj0v8gPFdqN4IF6I113WN8ZhgVDTpNFhbHlkfCTFJw//eeDfeQH+Q3zH4ASicU8a7ATeUKD5WzwuI+CaJ2Sd6zRxMnDwArhWEWHvNbUGyiyl7mT1nSd7Yg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722805280; c=relaxed/simple;
+	bh=VUqn6Yjok9YQS33e5NwlMXuSMOI5ZMwUcXPC6x+37IE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=BgU6tZ2HW8ZAa3uXnXApF7UIoCGKPJmpPkCfr4t6tZA8nUCaymleTGJMHr+KK8oFf8As9VlDiWqBTDcG0xc+9ttbdBTJ/h4TI5kuEb0VENGVLEti/Y0bOErVC5GvJw7Q1A7gU4+4iOQP6qUzj6at9nQz4eopC0dpu4PVaCYfHns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HRjmmIPL; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a1c49632deso12296673a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 14:01:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722805276; x=1723410076; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4WPgpDf5ERYhTys+3jUVyoFKYUykWikkEhYbg5eMpFI=;
+        b=HRjmmIPL41uA59vtIl+cvqR0mbbA8IfmflE14uhHipv+7tiWguEjUfGnUJRHcPJIUu
+         swkIhHUzJ4EyYZhYHZZg3ZaCTWcGz/SgAo4kIdDIiGX7Yhu3enbzOVbAGLHJcsf66BOM
+         jypYG29K4FF8eltumy2fGEKGi4xecNVflS9NU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722805276; x=1723410076;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4WPgpDf5ERYhTys+3jUVyoFKYUykWikkEhYbg5eMpFI=;
+        b=gGs7AwHKtLxllilRnP2fq+2QtViAQujj9xBiP6M+aqrgcr68KA7WLAH4Q4HSCE6OOy
+         svZEdc0vsejdLwBTjd17dpouAhwH77k7zAOrXCpIwPn+JuDpMKOncZIX73jsCC1l5GeD
+         i9vhXdnqYI+bdIxo6/QOL3vZEx4hvXiRJAZpehnA1rl3ejdcsA9amM+FAbV5KqjTJQRd
+         AmxlVzdPQjdzOD1VCpUEroWRXd84BnxF16FeF5hnjwpHIJkEqFz94TpUiMujdxQxEk/l
+         8Cd80+HyURAaS0novNvO9P1YGfSEYm3T9CWzb+QCplpZyniJxwWckJBEgIajAWCUy74E
+         jLRA==
+X-Gm-Message-State: AOJu0Yywz1GaUP6QAIeyHmxd25NEj+WhwzzixM5tPL9W857iL16j6FGJ
+	bNTRn6trp6Dgj2UuXPJG1sj3o+YPcgtqmDcPAt2L5IjyM7N1EN015ySkTd2aaJMkCn4wTzO4KF4
+	jZp5adQ==
+X-Google-Smtp-Source: AGHT+IEDPugHgbM7D9NglG6fd94kWVDN0ujN3H0/TCpUNFzb/V5xEnLWfDQxctKwhyyvmj/GsroBiA==
+X-Received: by 2002:a05:6402:3417:b0:58e:4088:ed2 with SMTP id 4fb4d7f45d1cf-5b7f3eb5f2cmr6131393a12.16.1722805275563;
+        Sun, 04 Aug 2024 14:01:15 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83a03b403sm4053014a12.42.2024.08.04.14.01.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 14:01:15 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a728f74c23dso1262391166b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 14:01:15 -0700 (PDT)
+X-Received: by 2002:a17:906:6a29:b0:a7a:9f0f:ab26 with SMTP id
+ a640c23a62f3a-a7dc4de2f92mr676436066b.23.1722805274343; Sun, 04 Aug 2024
+ 14:01:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8506.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e2d5d09-4b3b-4f3c-3a6d-08dcb4c710c7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Aug 2024 20:50:25.2581
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KbhsZ0uD8PuqvxheAmmy+KZ67/iT/ox44KEhza25TebgbEDvVdiPOZ+IPqWWe/nZgEZH0uHvDiDEsvJzZEUIrA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7965
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 4 Aug 2024 14:00:57 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh01xPAWUT_=J1TehFOu3SST12UTNuB=QQTeRw+1N4pDQ@mail.gmail.com>
+Message-ID: <CAHk-=wh01xPAWUT_=J1TehFOu3SST12UTNuB=QQTeRw+1N4pDQ@mail.gmail.com>
+Subject: Linux 6.11-rc2
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The PTP clock is read by stmmac_platform during DT parse.
-On S32G/R the clock is not ready and returns 0. Postpone
-reading of the clock on PTP init.
+So rc1 had a fair number of annoying small build or test failures on
+Guenter's test matrix, which never looks good. But most of them seemed
+to be of the "stupid and trivial" variety, which obviously doesn't
+instill confidence in the process, but also isn't exactly scary. When
+the microblaze tinyconfig doesn't build cleanly, it may not be a great
+look, but it's also probably not a showstopper for actual use.
 
-Co-developed-by: Andrei Botila <andrei.botila@nxp.org>
-Signed-off-by: Andrei Botila <andrei.botila@nxp.org>
-Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+Hopefully we've gotten rid of the bulk of the silly noise here in rc2,
+and not added too much new noise, so that we can get on with the
+process of finding more meaningful issues.
+
+         Linus
+
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-s32cc.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-s32cc.c b/drivers/ne=
-t/ethernet/stmicro/stmmac/dwmac-s32cc.c
-index 2ef961efa01c..ad05f72fefbf 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-s32cc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32cc.c
-@@ -149,6 +149,18 @@ static void s32cc_fix_mac_speed(void *priv, unsigned i=
-nt speed, unsigned int mod
- 		dev_err(gmac->dev, "Can't set tx clock\n");
- }
-=20
-+static void s32cc_gmac_ptp_clk_freq_config(struct stmmac_priv *priv)
-+{
-+	struct plat_stmmacenet_data *plat =3D priv->plat;
-+
-+	if (!plat->clk_ptp_ref)
-+		return;
-+
-+	plat->clk_ptp_rate =3D clk_get_rate(plat->clk_ptp_ref);
-+
-+	netdev_dbg(priv->dev, "PTP rate %lu\n", plat->clk_ptp_rate);
-+}
-+
- static int s32cc_dwmac_probe(struct platform_device *pdev)
- {
- 	struct device *dev =3D &pdev->dev;
-@@ -204,6 +216,7 @@ static int s32cc_dwmac_probe(struct platform_device *pd=
-ev)
- 	plat->init =3D s32cc_gmac_init;
- 	plat->exit =3D s32cc_gmac_exit;
- 	plat->fix_mac_speed =3D s32cc_fix_mac_speed;
-+	plat->ptp_clk_freq_config =3D s32cc_gmac_ptp_clk_freq_config;
-=20
- 	plat->bsp_priv =3D gmac;
-=20
---=20
-2.45.2
+Ackerley Tng (1):
+      KVM: x86/mmu: fix determination of max NPT mapping level for private =
+pages
 
+Al Viro (1):
+      protect the fetch of ->fd[fd] in do_dup2() from mispredictions
+
+Alex Deucher (1):
+      drm/amdgpu: Fix APU handling in amdgpu_pm_load_smu_firmware()
+
+Alexander Duyck (1):
+      fbnic: Change kconfig prompt from S390=3Dn to !S390
+
+Alexandra Winter (1):
+      net/iucv: fix use after free in iucv_sock_close()
+
+Alice Ryhl (1):
+      rust: SHADOW_CALL_STACK is incompatible with Rust
+
+Andr=C3=A9 Almeida (2):
+      drm/atomic: Allow userspace to use explicit sync with atomic async fl=
+ips
+      drm/atomic: Allow userspace to use damage clips with async flips
+
+Andy Chiu (1):
+      net: axienet: start napi before enabling Rx/Tx
+
+Arnd Bergmann (7):
+      hid: bpf: add BPF_JIT dependency
+      Bluetooth: btmtk: Fix btmtk.c undefined reference build error harder
+      Bluetooth: btmtk: remove #ifdef around declarations
+      media: ipu-bridge: fix ipu6 Kconfig dependencies
+      alpha: fix ioread64be()/iowrite64be() helpers
+      uretprobe: change syscall number, again
+      syscalls: fix syscall macros for newfstat/newfstatat
+
+Arseniy Krasnov (1):
+      irqchip/meson-gpio: Convert meson_gpio_irq_controller::lock to
+'raw_spinlock_t'
+
+Baochen Qiang (1):
+      wifi: ath12k: fix reusing outside iterator in ath12k_wow_vif_set_wake=
+ups()
+
+Bartosz Golaszewski (1):
+      net: phy: aquantia: only poll GLOBAL_CFG regs on aqr113, aqr113c
+and aqr115c
+
+Basavaraj Natikar (1):
+      HID: amd_sfh: Move sensor discovery before HID device initialization
+
+Benjamin Tissoires (4):
+      selftests/hid: fix bpf_wq new API
+      selftests/hid: disable struct_ops auto-attach
+      HID: bpf: prevent the same struct_ops to be attached more than once
+      selftests/hid: add test for attaching multiple time the same struct_o=
+ps
+
+Bingbu Cao (1):
+      media: intel/ipu6: select AUXILIARY_BUS in Kconfig
+
+Blazej Kucman (1):
+      PCI: pciehp: Retain Power Indicator bits for userspace indicators
+
+Boris Burkov (1):
+      btrfs: make cow_file_range_inline() honor locked_page on error
+
+Borislav Petkov (AMD) (1):
+      x86/setup: Parse the builtin command line before merging
+
+Breno Leitao (1):
+      net: Add skbuff.h to MAINTAINERS
+
+Casey Chen (1):
+      perf tool: fix dereferencing NULL al->maps
+
+Chang Yu (1):
+      KVM: Documentation: Fix title underline too short warning
+
+Chen Ni (2):
+      xfs: convert comma to semicolon
+      xfs: convert comma to semicolon
+
+Chris Lu (2):
+      Bluetooth: btmtk: Fix kernel crash when entering btmtk_usb_suspend
+      Bluetooth: btmtk: Fix btmtk.c undefined reference build error
+
+Chris Mi (1):
+      net/mlx5e: Fix CT entry update leaks of modify header context
+
+Christian K=C3=B6nig (1):
+      drm/amdgpu: fix contiguous handling for IB parsing v2
+
+D. Wythe (1):
+      net/smc: prevent UAF in inet_create()
+
+Damien Le Moal (2):
+      scsi: mpi3mr: Avoid IOMMU page faults on REPORT ZONES
+      scsi: mpt3sas: Avoid IOMMU page faults on REPORT ZONES
+
+Dan Carpenter (3):
+      vdpa/octeon_ep: Fix error code in octep_process_mbox()
+      drm/client: Fix error code in drm_client_buffer_vmap_local()
+      net: mvpp2: Don't re-use loop iterator
+
+Daniel Maslowski (1):
+      riscv/purgatory: align riscv_kernel_entry
+
+Danilo Krummrich (2):
+      drm/gpuvm: fix missing dependency to DRM_EXEC
+      drm/nouveau: prime: fix refcount underflow
+
+Darrick J. Wong (2):
+      xfs: fix a memory leak
+      xfs: fix file_path handling in tracepoints
+
+Dave Airlie (2):
+      nouveau: set placement to original placement on uvmm validate.
+      Revert "nouveau: rip out busy fence waits"
+
+David Gow (1):
+      x86/uaccess: Zero the 8-byte get_range case on failure on 32-bit
+
+David Howells (1):
+      cifs: Remove cifs_aio_ctx
+
+David Sterba (1):
+      btrfs: initialize location to fix -Wmaybe-uninitialized in
+btrfs_lookup_dentry()
+
+Dmitry Osipenko (1):
+      drm/virtio: Fix type of dma-fence context variable
+
+Dr. David Alan Gilbert (1):
+      ARM: 9400/1: Remove unused struct 'mod_unwind_map'
+
+Edmund Raile (2):
+      Revert "ALSA: firewire-lib: obsolete workqueue for period update"
+      Revert "ALSA: firewire-lib: operate for period elapse event in
+process context"
+
+Eric Biggers (1):
+      scsi: ufs: exynos: Don't resume FMP when crypto support is disabled
+
+Eric Dumazet (1):
+      sched: act_ct: take care of padding in struct zones_ht_key
+
+Eric Lin (1):
+      perf arch events: Fix duplicate RISC-V SBI firmware event name
+
+Eric Sandeen (1):
+      xfs: allow SECURE namespace xattrs to use reserved block pool
+
+Faizal Rahim (1):
+      igc: Fix double reset adapter triggered from a single taprio cmd
+
+Filipe Manana (2):
+      btrfs: fix corrupt read due to bad offset of a compressed extent map
+      btrfs: fix corruption after buffer fault in during direct IO append w=
+rite
+
+Geert Uytterhoeven (2):
+      ARM: 9402/1: Kconfig: Spelling s/Cortex A-/Cortex-A/
+      ARM: 9403/1: Alpine: Spelling s/initialiing/initializing/
+
+Heiko Carstens (8):
+      s390/fpu: Re-add exception handling in load_fpu_state()
+      s390/alternatives: Remove unused empty header file
+      s390/mm/ptdump: Fix handling of identity mapping area
+      s390/mm/ptdump: Add support for relocated lowcore mapping
+      s390/mm/ptdump: Improve sorting of markers
+      s390/mm: Get rid of RELOC_HIDE()
+      s390/vmlinux.lds.S: Move ro_after_init section behind rodata section
+      s390: Keep inittext section writable
+
+Heiko Stuebner (1):
+      dt-bindings: ata: rockchip-dwc-ahci: add missing power-domains
+
+Heiner Kallweit (1):
+      r8169: don't increment tx_dropped in case of NETDEV_TX_BUSY
+
+Herve Codina (2):
+      net: wan: fsl_qmc_hdlc: Convert carrier_lock spinlock to a mutex
+      net: wan: fsl_qmc_hdlc: Discard received CRC
+
+Huacai Chen (1):
+      irqchip/loongarch-cpu: Fix return value of lpic_gsi_to_irq()
+
+Ian Forbes (2):
+      drm/vmwgfx: Fix overlay when using Screen Targets
+      drm/vmwgfx: Trigger a modeset when the screen moves
+
+Jakub Kicinski (7):
+      netlink: specs: correct the spec of ethtool
+      ethtool: rss: echo the context number back
+      eth: bnxt: reject unsupported hash functions
+      eth: bnxt: populate defaults in the RSS context struct
+      ethtool: fix setting key and resetting indir at once
+      ethtool: fix the state of additional contexts with old API
+      selftests: drv-net: rss_ctx: check for all-zero keys
+
+Jammy Huang (1):
+      drm/ast: Fix black screen after resume
+
+Jean-Michel Hautbois (1):
+      media: v4l: Fix missing tabular column hint for Y14P format
+
+Jeff Johnson (2):
+      virtio: add missing MODULE_DESCRIPTION() macro
+      s390/cio: Add missing MODULE_DESCRIPTION() macros
+
+Jeongjun Park (1):
+      tun: Add missing bpf_net_ctx_clear() in do_xdp_generic()
+
+Jim Mattson (1):
+      KVM: x86: Eliminate log spam from limited APIC timer periods
+
+Jinjie Ruan (2):
+      ARM: 9406/1: Fix callchain_trace() return value
+      ARM: 9407/1: Add support for STACKLEAK gcc plugin
+
+Jiri Olsa (1):
+      bpf/selftests: Fix ASSERT_OK condition check in uprobe_syscall test
+
+Jiri Pirko (13):
+      virtio_pci: push out single vq find code to vp_find_one_vq_msix()
+      virtio_pci: simplify vp_request_msix_vectors() call a bit
+      virtio_pci: pass vector policy enum to vp_find_vqs_msix()
+      virtio_pci: pass vector policy enum to vp_find_one_vq_msix()
+      virtio_pci: introduce vector allocation fallback for slow path virtqu=
+eues
+      virtio_pci_modern: treat vp_dev->admin_vq.info.vq pointer as static
+      virtio: push out code to vp_avq_index()
+      virtio_pci: pass vq info as an argument to vp_setup_vq()
+      virtio: create admin queues alongside other virtqueues
+      virtio_pci_modern: create admin queue of queried size
+      virtio_pci_modern: pass cmd as an identification token
+      virtio_pci_modern: use completion instead of busy loop to wait
+on admin cmd result
+      virtio_pci_modern: remove admin queue serialization lock
+
+Johan Hovold (2):
+      scsi: Revert "scsi: sd: Do not repeat the starting disk message"
+      wifi: ath12k: fix soft lockup on suspend
+
+Johannes Berg (2):
+      wifi: mac80211: use monitor sdata with driver only if desired
+      wifi: cfg80211: correct S1G beacon length calculation
+
+Jonathan Cameron (1):
+      x86/aperfmperf: Fix deadlock on cpu_hotplug_lock
+
+Julian Sun (1):
+      xfs: remove unused parameter in macro XFS_DQUOT_LOGRES
+
+Kenneth Feng (1):
+      drm/amdgpu/pm: support gpu_metrics sysfs interface for smu v14.0.2/3
+
+Kiran K (1):
+      Bluetooth: btintel: Fail setup on error
+
+Krzysztof Kozlowski (1):
+      net: MAINTAINERS: Demote Qualcomm IPA to "maintained"
+
+Kuniyuki Iwashima (3):
+      rtnetlink: Don't ignore IFLA_TARGET_NETNSID when ifname is
+specified in rtnl_dellink().
+      netfilter: iptables: Fix null-ptr-deref in iptable_nat_table_init().
+      netfilter: iptables: Fix potential null-ptr-deref in
+ip6table_nat_table_init().
+
+Kyoungrul Kim (1):
+      scsi: ufs: core: Check LSDBS cap when !mcq
+
+Leo Yan (6):
+      perf: build: Setup PKG_CONFIG_LIBDIR for cross compilation
+      perf: build: Set Python configuration for cross compilation
+      perf: build: Only link libebl.a for old libdw
+      perf: build: Link lib 'lzma' for static build
+      perf: build: Link lib 'zstd' for static build
+      perf docs: Document cross compilation
+
+Li Huafei (1):
+      perf/x86: Fix smp_processor_id()-in-preemptible warnings
+
+Linus Torvalds (11):
+      minmax: make generic MIN() and MAX() macros available everywhere
+      minmax: scsi: fix mis-use of 'clamp()' in sr.c
+      minmax: don't use max() in situations that want a C constant expressi=
+on
+      minmax: simplify min()/max()/clamp() implementation
+      profiling: attempt to remove per-cpu profile flip buffer
+      task_work: make TWA_NMI_CURRENT handling conditional on IRQ_WORK
+      profiling: remove stale percpu flip buffer variables
+      minmax: improve macro expansion and type checking
+      minmax: fix up min3() and max3() too
+      runtime constants: deal with old decrepit linkers
+      Linux 6.11-rc2
+
+Linus Walleij (1):
+      ARM: 9408/1: mm: CFI: Fix some erroneous reset prototypes
+
+Liu Jing (1):
+      selftests: mptcp: always close input's FD if opened
+
+Luca Ceresoli (1):
+      irqchip/irq-pic32-evic: Add missing 'static' to internal function
+
+Luiz Augusto von Dentz (2):
+      Bluetooth: hci_sync: Fix suspending with wrong filter policy
+      Bluetooth: hci_event: Fix setting DISCOVERY_FINDING for passive scann=
+ing
+
+Ma Ke (1):
+      net: usb: sr9700: fix uninitialized variable use in sr_mdio_read
+
+Maciej Fijalkowski (7):
+      ice: don't busy wait for Rx queue disable in ice_qp_dis()
+      ice: replace synchronize_rcu with synchronize_net
+      ice: modify error handling when setting XSK pool in ndo_bpf
+      ice: toggle netif_carrier when setting up XSK pool
+      ice: improve updating ice_{t,r}x_ring::xsk_pool
+      ice: add missing WRITE_ONCE when clearing ice_rx_ring::xdp_prog
+      ice: xsk: fix txq interrupt mapping
+
+Maciej =C5=BBenczykowski (1):
+      ipv6: fix ndisc_is_useropt() handling for PIO
+
+Manivannan Sadhasivam (1):
+      scsi: ufs: core: Do not set link to OFF state while waking up
+from hibernation
+
+Mark Bloch (1):
+      net/mlx5: Lag, don't use the hardcoded value of the first port
+
+Mark Mentovai (1):
+      net: phy: realtek: add support for RTL8366S Gigabit PHY
+
+Mark Rutland (3):
+      arm64: cputype: Add Cortex-X1C definitions
+      arm64: cputype: Add Cortex-A725 definitions
+      arm64: errata: Expand speculative SSBS workaround (again)
+
+Matthieu Baerts (NGI0) (7):
+      mptcp: sched: check both directions for backup
+      mptcp: distinguish rcv vs sent backup flag in requests
+      mptcp: pm: only set request_bkup flag when sending MP_PRIO
+      mptcp: mib: count MPJ with backup flag
+      selftests: mptcp: join: validate backup in MPJ
+      mptcp: pm: fix backup support in signal endpoints
+      selftests: mptcp: join: check backup support in signal endp
+
+Mavroudis Chatzilazaridis (1):
+      ALSA: hda/realtek: Add quirk for Acer Aspire E5-574G
+
+Michael Chen (1):
+      drm/amdgpu: increase mes log buffer size for gfx12
+
+Michal Kubiak (1):
+      ice: respect netif readiness in AF_XDP ZC related ndo's
+
+Mikulas Patocka (2):
+      parisc: fix unaligned accesses in BPF
+      parisc: fix a possible DMA corruption
+
+Moshe Shemesh (1):
+      net/mlx5: Fix missing lock on sync reset reload
+
+Naohiro Aota (2):
+      btrfs: do not subtract delalloc from avail bytes
+      btrfs: zoned: fix zone_unusable accounting on making block group
+read-write again
+
+Nick Hu (1):
+      RISC-V: Enable the IPI before workqueue_online_cpu()
+
+Nikita Zhandarovich (1):
+      drm/i915: Fix possible int overflow in skl_ddi_calculate_wrpll()
+
+Olivier Langlois (2):
+      io_uring: keep multishot request NAPI timeout current
+      io_uring: remove unused local list heads in NAPI functions
+
+Palmer Dabbelt (1):
+      cache: StarFive: Require a 64-bit system
+
+Paolo Abeni (6):
+      mptcp: fix user-space PM announced address accounting
+      mptcp: fix NL PM announced address accounting
+      selftests: mptcp: add explicit test case for remove/readd
+      selftests: mptcp: fix error path
+      mptcp: fix bad RCVPRUNED mib accounting
+      mptcp: fix duplicate data handling
+
+Paolo Bonzini (14):
+      KVM: x86: disallow pre-fault for SNP VMs before initialization
+      KVM: guest_memfd: return folio from __kvm_gmem_get_pfn()
+      KVM: guest_memfd: delay folio_mark_uptodate() until after
+successful preparation
+      KVM: guest_memfd: do not go through struct page
+      KVM: rename CONFIG_HAVE_KVM_GMEM_* to CONFIG_HAVE_KVM_ARCH_GMEM_*
+      KVM: guest_memfd: return locked folio from __kvm_gmem_get_pfn
+      KVM: guest_memfd: delay kvm_gmem_prepare_folio() until the
+memory is passed to the guest
+      KVM: guest_memfd: make kvm_gmem_prepare_folio() operate on a
+single struct kvm
+      KVM: remove kvm_arch_gmem_prepare_needed()
+      KVM: guest_memfd: move check for already-populated page to common cod=
+e
+      KVM: cleanup and add shortcuts to kvm_range_has_memory_attributes()
+      KVM: extend kvm_range_has_memory_attributes() to check subset of
+attributes
+      KVM: guest_memfd: let kvm_gmem_populate() operate only on private gfn=
+s
+      KVM: guest_memfd: abstract how prepared folios are recorded
+
+Patryk Duda (1):
+      platform/chrome: cros_ec_proto: Lock device when updating MKBP versio=
+n
+
+Paul E. McKenney (1):
+      clocksource: Fix brown-bag boolean thinko in cs_watchdog_read()
+
+Paulo Alcantara (2):
+      smb: client: handle lack of FSCTL_GET_REPARSE_POINT support
+      smb: client: fix FSCTL_GET_REPARSE_POINT against NetApp
+
+Pavan Chebbi (1):
+      bnxt_en: Fix RSS logic in __bnxt_reserve_rings()
+
+Pavan Kumar Paluri (1):
+      x86/sev: Fix __reserved field in sev_config
+
+Perry Yuan (1):
+      x86/CPU/AMD: Add models 0x60-0x6f to the Zen5 range
+
+Peter Wang (2):
+      scsi: ufs: core: Bypass quick recovery if force reset is needed
+      scsi: ufs: core: Fix deadlock during RTC update
+
+Peter Zijlstra (3):
+      jump_label: Fix the fix, brown paper bags galore
+      x86/mm: Fix pti_clone_pgtable() alignment assumption
+      x86/mm: Fix pti_clone_entry_text() for i386
+
+Philip Mueller (1):
+      drm: panel-orientation-quirks: Add quirk for OrangePi Neo
+
+Philipp Stanner (1):
+      PCI: Fix devres regression in pci_intx()
+
+Qiuxu Zhuo (1):
+      drm/fb-helper: Don't schedule_work() to flush frame buffer during pan=
+ic()
+
+Qu Wenruo (1):
+      btrfs: tree-checker: validate dref root and objectid
+
+Rafael J. Wysocki (2):
+      thermal: trip: Avoid skipping trips in thermal_zone_set_trips()
+      thermal: core: Update thermal zone registration documentation
+
+Rahul Rameshbabu (1):
+      net/mlx5e: Require mlx5 tc classifier action support for IPsec
+prio capability
+
+Raju Lakkaraju (1):
+      net: phy: micrel: Fix the KSZ9131 MDI-X status issue
+
+Ricardo Ribalda (1):
+      media: uvcvideo: Fix custom control mapping probing
+
+Rob Herring (Arm) (1):
+      arm: dts: arm: versatile-ab: Fix duplicate clock node name
+
+Samuel Holland (1):
+      riscv: cpufeature: Do not drop Linux-internal extensions
+
+Sean Wang (1):
+      wifi: mt76: mt7921: fix null pointer access in mt792x_mac_link_bss_re=
+move
+
+Shahar Shitrit (1):
+      net/mlx5e: Add a check for the return value from mlx5_port_set_eth_pt=
+ys
+
+Shay Drory (2):
+      net/mlx5: Always drain health in shutdown callback
+      net/mlx5: Fix error handling in irq_pool_request_irq
+
+Shifrin Dmitry (1):
+      perf: riscv: Fix selecting counters in legacy mode
+
+Srinivas Pandruvada (3):
+      thermal: intel: int340x: Fix kernel warning during MSI cleanup
+      thermal: intel: int340x: Allow limited thermal MSI support
+      thermal: intel: int340x: Free MSI IRQ vectors on module exit
+
+Stanislav Fomichev (1):
+      selftests/bpf: Filter out _GNU_SOURCE when compiling test_cpp
+
+Steve French (2):
+      smb3: add dynamic tracepoints for shutdown ioctl
+      cifs: update internal version number
+
+Stuart Menefy (1):
+      riscv: Fix linear mapping checks for non-contiguous memory regions
+
+Subash Abhinov Kasiviswanathan (1):
+      tcp: Adjust clamping window for applications specifying SO_RCVBUF
+
+Suraj Kandpal (1):
+      drm/i915/hdcp: Fix HDCP2_STREAM_STATUS macro
+
+Takashi Iwai (10):
+      ALSA: hda/generic: Add a helper to mute speakers at suspend/shutdown
+      ALSA: hda/conexant: Mute speakers at suspend / shutdown
+      ALSA: seq: ump: Optimize conversions from SysEx to UMP
+      ALSA: ump: Transmit RPN/NRPN message at each MSB/LSB data reception
+      ALSA: ump: Explicitly reset RPN with Null RPN
+      ALSA: seq: ump: Use the common RPN/bank conversion context
+      ALSA: seq: ump: Transmit RPN/NRPN message at each MSB/LSB data recept=
+ion
+      ALSA: seq: ump: Explicitly reset RPN with Null RPN
+      ALSA: usb-audio: Correct surround channels in UAC1 channel map
+      ALSA: hda: Conditionally use snooping for AMD HDMI
+
+Tatsunosuke Tobita (2):
+      HID: wacom: Modify pen IDs
+      HID: wacom: more appropriate tool type categorization
+
+Tetsuo Handa (3):
+      Input: MT - limit max slots
+      profiling: remove prof_cpu_mask
+      profiling: remove profile=3Dsleep support
+
+Thomas Gleixner (1):
+      tick/broadcast: Move per CPU pointer access into the atomic section
+
+Thomas Zimmermann (1):
+      drm/ast: astdp: Wake up during connector status detection
+
+Tvrtko Ursulin (5):
+      drm/v3d: Prevent out of bounds access in performance query extensions
+      drm/v3d: Fix potential memory leak in the timestamp extension
+      drm/v3d: Fix potential memory leak in the performance extension
+      drm/v3d: Validate passed in drm syncobj handles in the timestamp exte=
+nsion
+      drm/v3d: Validate passed in drm syncobj handles in the
+performance extension
+
+Umesh Nerlige Ramappa (1):
+      i915/perf: Remove code to update PWR_CLK_STATE for gen12
+
+Uros Bizjak (1):
+      locking/pvqspinlock: Correct the type of "old" variable in pv_kick_no=
+de()
+
+Veerendranath Jakkam (1):
+      wifi: cfg80211: fix reporting failed MLO links status with
+cfg80211_connect_done
+
+Will Deacon (1):
+      arm64: jump_label: Ensure patched jump_labels are visible to all CPUs
+
+Willem de Bruijn (1):
+      net: drop bad gso csum_start and offset in virtio_net_hdr
+
+Xiubo Li (1):
+      ceph: force sending a cap update msg back to MDS for revoke op
+
+Yang Yingliang (4):
+      sched/smt: Introduce sched_smt_present_inc/dec() helper
+      sched/smt: Fix unbalance sched_smt_present dec/inc
+      sched/core: Introduce sched_set_rq_on/offline() helper
+      sched/core: Fix unbalance set_rq_online/offline() in
+sched_cpu_deactivate()
+
+Yevgeny Kliteynik (1):
+      net/mlx5: DR, Fix 'stack guard page was hit' error in dr_rule
+
+Yipeng Zou (1):
+      irqchip/mbigen: Fix mbigen node address layout
+
+Yong-Xuan Wang (1):
+      KVM: riscv: selftests: Fix compile error
+
+Yuntao Liu (1):
+      ARM: 9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION
+
+Zack Rusin (4):
+      drm/vmwgfx: Fix a deadlock in dma buf fence polling
+      drm/vmwgfx: Make sure the screen surface is ref counted
+      drm/vmwgfx: Fix handling of dumb buffers
+      drm/vmwgfx: Add basic support for external buffers
+
+Zenghui Yu (1):
+      kselftests: dmabuf-heaps: Ensure the driver name is null-terminated
+
+Zhe Qiao (1):
+      riscv/mm: Add handling for VM_FAULT_SIGSEGV in mm_fault_error()
+
+Zheng Zucheng (1):
+      sched/cputime: Fix mul_u64_u64_div_u64() precision for cputime
+
+Zhenyu Wang (1):
+      perf/x86/intel/cstate: Add pkg C2 residency counter for Sierra Forest
+
+songxiebing (1):
+      ALSA: hda: conexant: Fix headset auto detect fail in the polling mode
 
