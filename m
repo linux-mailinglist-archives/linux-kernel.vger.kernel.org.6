@@ -1,145 +1,207 @@
-Return-Path: <linux-kernel+bounces-273944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E24BE946FFC
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:12:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD4C946FFD
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B23C281305
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102E41F2137F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027F4131BDF;
-	Sun,  4 Aug 2024 17:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E877313541B;
+	Sun,  4 Aug 2024 17:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dUpPzfsW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j5suyyH6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4756CA953;
-	Sun,  4 Aug 2024 17:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB698174E
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 17:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722791563; cv=none; b=BH00cmD8m06Rcjo2d1bNQkLYEKy+R+bXB4tRew36EmZGZi6gabaCSb02PVwRrnguTX4ussMQMsLJA6L3svaq/3egY6HGaJ0KHKIm0kFVS1rp1sfSoPzmUjUvtUUDotnEUgYNMHTy+FI6SQnSxmMagbpN3qIDOcGI6GiQlzhDqmc=
+	t=1722791662; cv=none; b=Y0e+EndCJq3s0DpGukkSCfl2AhNZGiREmlEnYBmtzNvKKULMCbXposB6yei8XJXv34mx6sDR3vdyj1+hOm4ljJlPw28n4tKprXukedT3val4aVb1J+TjSYQAhueJa9XqacQKnRiJxmqkRuFZa7f/NgyQgdxgty0dm70pCeyQWFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722791563; c=relaxed/simple;
-	bh=Uzrlv8zq+haa0MpkkWqTgdXs4kY12SIn3JXRFM1ld10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rVw71GhPn+t7RJCdUpr6xX3LJB0ohVws1ySzQXIGWokNuTt6vZfP7vUdWmhU+lq+ZyjXcmxauEp7meqc/Uy/AofjR0+5/vaKtf2XLxQevgakI4wRoDqBw2UAkOXEEqn9U/1r8NYK4KZ1Hfefc4WoDeJMY0Vey0jlWOACOLs44kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dUpPzfsW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B08C4AF11;
-	Sun,  4 Aug 2024 17:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722791562;
-	bh=Uzrlv8zq+haa0MpkkWqTgdXs4kY12SIn3JXRFM1ld10=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dUpPzfsWhT8fsb8oLq0XRCnQ9aDJo+o2zB2MjfEDlBI37PEeVJVwNKs+leOddil2X
-	 Nnj7v6PHZPgKQNMsFbO01tiSHAHIE9GCMS1I95Qh6p4jL9ivxj6IgJ/9xZgVauEdDl
-	 FTc4bOC+8dsO+nT+SJDxDuK1BLSWZXlkQQ2xFtsawqQf0H+jU229cQGhquhtOiicFu
-	 coXwvIh9KXMDPtWQm/rJ8EcNdWQcCWSWiN7GW3nPBZKXPflX1IlUpVN+8onHcDbH4G
-	 zpn+SuIptpALG34NZrtlTMkkdjfbh9xrCa17h25SvEQ12CM9xYBaA9BqNnf/FlVINI
-	 udKYHGOm3d6aw==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f04150796so15149995e87.3;
-        Sun, 04 Aug 2024 10:12:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVa2Tnj9BfCdlcy8R4HIPhVbvTjqL4B8cN8VZe22auEJF5LbGDGnUZT5XA/id0SG3Tsq6s+3GTi/2CgBxLX2DWK9ZAr4GamTIi3DOaT
-X-Gm-Message-State: AOJu0YxwPP5hRTNiVRe4+3Qu0jFg2ScPyyaTRWz1bpqX+Ui87GeHV0LE
-	Po8jxm1dsb3JhH1Scj+eiKZ+aWdLhLceRT2Y2wmQ9ppe2Vmmh47fLyvAHsaLQFMscL/CDtXGfvy
-	fqINyf+9z37qt0XWbPjM9pTV9G5I=
-X-Google-Smtp-Source: AGHT+IHtLqMDvxlpCdfhrO2NDr0HowjhdrZySRvfDY+lz772AgdGW6K2/JoGJ2zau5UiRCsuIS3Px8IudFRmjJrUhz0=
-X-Received: by 2002:a05:6512:b1f:b0:52e:9d6c:4462 with SMTP id
- 2adb3069b0e04-530bb3797d6mr6409197e87.23.1722791561425; Sun, 04 Aug 2024
- 10:12:41 -0700 (PDT)
+	s=arc-20240116; t=1722791662; c=relaxed/simple;
+	bh=GMQApKlg/bFCKR7G6l3x8mkAa/Kt+X8b4GwqON/bj7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jF4yJYgomo2w8FRyHYrIh4YT6f9/UgJxtpz4lZZk8CwL2V8e0QyTsTlgMCSRU7+851xXVY5tOHjPxmIJeLiWFXdJVAu+Ucy7ey/v+G3vK+XCuZnLI2oPeXzln3oMQmhQ1caxzOgHKiKTp+3PPSa/VQPDBAT7XbDf1BHa+HM/8WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j5suyyH6; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722791660; x=1754327660;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=GMQApKlg/bFCKR7G6l3x8mkAa/Kt+X8b4GwqON/bj7Y=;
+  b=j5suyyH6PJI2NaICfTSLkOjua1JgkV3Pzh6GZtgr429KwBx4AoDP4+od
+   5f5AP6nclYpRDeqLlb3LDDYA4qhEL3Zo2jWfK11Hzz9k959nRwJncFnZl
+   8QYKAOXv8XI7Lc+XQWnHgb6lLMHjjvWsJ2P8d37GRhXmHm3eJb5tVqi6Q
+   QThtYuLG9eJBxWKEm/SZAsDCdBVkdzR/qZcdbyOP0cN5Sd3WdBk0VzywL
+   sqM3HQ726TKzIQ27EOCFwJcQGridhu6YGbY89e+GBfWgEV4NCmD368urA
+   UJL543oT+66vqlaJpiAF2CR/8pWXetr9bX5rv20iVykhQtbKuidAoEjpQ
+   g==;
+X-CSE-ConnectionGUID: qL0E2jo/TQ2hndInT63E4A==
+X-CSE-MsgGUID: zQHUZAeySO+85iR4B4SUlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="32124737"
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="32124737"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 10:14:20 -0700
+X-CSE-ConnectionGUID: 1JZYvvCgTzCWCJZmkR9Sxw==
+X-CSE-MsgGUID: 0B34EsA/SwWHG9pR5X6LIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="79208047"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 04 Aug 2024 10:14:18 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1saeoB-0001Ya-0a;
+	Sun, 04 Aug 2024 17:14:15 +0000
+Date: Mon, 5 Aug 2024 01:13:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	Damien Le Moal <dlemoal@kernel.org>
+Subject: ERROR: modpost: "__popcountsi2"
+ [drivers/comedi/drivers/usbduxsigma.ko] undefined!
+Message-ID: <202408050106.nL2F1M8o-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804033309.890181-1-masahiroy@kernel.org> <CA+icZUWpeZF-PGQJLR1tt0u7sFVZ+MANX4hE-DUCEt=PhXGs3w@mail.gmail.com>
-In-Reply-To: <CA+icZUWpeZF-PGQJLR1tt0u7sFVZ+MANX4hE-DUCEt=PhXGs3w@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 5 Aug 2024 02:12:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASB1qFv1GdxTHvLpcJu1NbWrze5VsfFRYbFMeiFv_JPhQ@mail.gmail.com>
-Message-ID: <CAK7LNASB1qFv1GdxTHvLpcJu1NbWrze5VsfFRYbFMeiFv_JPhQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: modinst: remove the multithread option from zstd compression
-To: sedat.dilek@gmail.com
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Terrell <terrelln@fb.com>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sun, Aug 4, 2024 at 3:36=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com> =
-wrote:
->
-> On Sun, Aug 4, 2024 at 5:33=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
-> >
-> > Parallel execution is supported by GNU Make:
-> >
-> >   $ make -j<N> modules_install
-> >
-> > It is questionable to enable multithreading within each zstd process
-> > by default.
-> >
-> > If you still want to do it, you can use the environment variable:
-> >
-> >   $ ZSTD_NBTHREADS=3D<N> make modules_install
-> >
->
-> Hi Masahiro,
->
-> I have some understanding problems.
->
-> [ start-build.txt ]
-> dileks     24225   24217  0 17:55 tty2     00:00:00 /usr/bin/perf stat
-> make V=3D1 -k -j4 ARCH=3Dx86_64 LLVM=3D1 LLVM=3D/opt/llvm/bin/
-> PAHOLE=3D/opt/pahole/bin/pahole KBUILD_BUILD_HOST=3Diniza
-> KBUILD_BUILD_USER=3Dsedat.dilek@gmail.com
-> KBUILD_BUILD_TIMESTAMP=3D2024-08-03
-> KDEB_PKGVERSION=3D6.10.3-1~trixie+dileks1
-> LOCALVERSION=3D-1-amd64-clang18-kcfi olddefconfig bindeb-pkg
->
-> ^^ How shall someone pass so that ... ZSTD_NBTHREADS=3D<N> make
-> modules_install ... is used?
+Hi John,
 
+First bad commit (maybe != root cause):
 
-Option 1
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   17712b7ea0756799635ba159cc773082230ed028
+commit: af2817229158cea7960b9132e0a8c4470ebbfef5 virtio_blk: Don't bother validating blocksize
+date:   4 weeks ago
+config: arm-randconfig-r113-20240803 (https://download.01.org/0day-ci/archive/20240805/202408050106.nL2F1M8o-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
+reproduce: (https://download.01.org/0day-ci/archive/20240805/202408050106.nL2F1M8o-lkp@intel.com/reproduce)
 
-$ export ZSTD_NBTHREADS=3D<N>
-$ make V=3D1 -k  [snip] olddefconfig bindeb-pkg
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408050106.nL2F1M8o-lkp@intel.com/
 
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-r.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_utf8.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-croatian.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-iceland.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-inuit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_script.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/minix/minix.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/isofs/isofs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/hfs/hfs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/sysv/sysv.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/autofs/autofs4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/btrfs/btrfs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/encrypted-keys/encrypted-keys.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/xor.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libarc4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libdes.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/bus/vexpress-config.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_spi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/vfb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/clk-vexpress-osc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_hdlc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-spmi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/loop.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ublk_drv.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/vexpress-sysreg.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x-control.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/isight_firmware.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/yurex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/vivaldi-fmap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/mmc_core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_simple.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_uart.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-belkin.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cherry.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-emsff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-elecom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-evision.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ezkey.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-vivaldi-common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kye.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lenovo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-magicmouse.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-mf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-monterey.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-pl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-petalynx.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-razer.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-semitek.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sjoy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sunplus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gaff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-tivo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-topseed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-twinhan.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-xinmo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zpff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-viewsonic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-waltop.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-hid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-loopback.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-raw.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rpmsg/rpmsg_char.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/gb-es2.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
+ERROR: modpost: "__popcountsi2" [fs/ext4/ext4.ko] undefined!
+ERROR: modpost: "__popcountsi2" [fs/xfs/xfs.ko] undefined!
+ERROR: modpost: "__popcountdi2" [fs/btrfs/btrfs.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/block/loop.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/hwtracing/intel_th/intel_th_pti.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/hsi/clients/hsi_char.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/vhost/vhost.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/comedi_test.ko] undefined!
+ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/usbduxfast.ko] undefined!
+>> ERROR: modpost: "__popcountsi2" [drivers/comedi/drivers/usbduxsigma.ko] undefined!
+WARNING: modpost: suppressed 2 unresolved symbol warnings because there were too many)
 
-Option 2
-
-$ ZSTD_NBTHREADS=3D<N> make V=3D1 -k [snip] olddefconfig bindeb-pkg
-
-
-
-
->
-> As far as I understood, each kernel-module file is taken - in the
-> Debian build-process - sequentially file for file - ZSTD compressed
-> and afterwards deleted.
-> Is there a benefit when 'make -j<N>' is used?
-
-
-
-zstd --rm -f -q foo.ko
-zstd --rm -f -q bar.ko
-zstd --rm -f -q baz.ko
-
-will run in parallel with Make's -j<N> option.
-
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
