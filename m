@@ -1,226 +1,220 @@
-Return-Path: <linux-kernel+bounces-273909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195EA946F78
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:06:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60ED946F79
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42872816E6
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:06:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2FD51C20BD7
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE4959147;
-	Sun,  4 Aug 2024 15:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F8E60B8A;
+	Sun,  4 Aug 2024 15:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q9bqMHcK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="mOZFEhQq"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9990CA934
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 15:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D9EA934
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 15:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722783974; cv=none; b=rk5u6KdeckWIb6bvrgL8znq3mkJihI00K2JeZ6++VEiSfIo86iGMctUpXDjaRRttX2ePlnRZpA7XFH7utDZZwtV5tCrBJktWSmS+Ud+pz6rzyC6FJ/8ogPYpDt6oSLYxCyeBLhgs4Kq5/SKdyoNfVenQ8kWyx88y8L3gzH2abE0=
+	t=1722784011; cv=none; b=pnKploftbtbmptp4kVCLSTTUIses+rr0CdvXuxaFiBJdPM4pQRZ1q6ZwoFgoMQFEbhBMFZVHv7G5BTzABduZjQrDSoljnTpO60ZZLZWqE/EbrmzBxuvzYBcsKBMAV0Lgx2oMPddPYUmX2D9d/rwwCcrQoZkxEAAvtnU1eG7re30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722783974; c=relaxed/simple;
-	bh=BdhIlGwADfl7fNRHvU4/c2Josu1FQUkZqG9Bf9FedAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vjr7cH2fVxHJ3nSo+QBUnP3i7CpnCiZSvmFo2UDOPV9QSzZMABRsA8/s0Dhga6nIR5mFYm+Ij5JiLcZ6GshbXk9Em/lUgk2LV8q3UxUbhGdHvoa12HVJM7f5L3CPhhq4SXu4APoZ6ssO5pxRiXWm5F1IbKtZxkq4PUhzomQFWe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q9bqMHcK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722783971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SvbvcFjU58ktq+KRI5iYfFYfuh6LM7bmOviBHt03oLI=;
-	b=Q9bqMHcKQ3vGFx4oo0ujLHiRdYIOGlyLmr4NbSFznzuupBzaSInM70xwWxWDxEE9wSnzmd
-	MD7bxuZj+offm4sJSpsg9Kt1PmwhZVegZxa6WfdDl2LItJJ1vasIB4EBScol9lK+T5GKKe
-	1D1Qyq6JHOqvpFFs36nKEJggZXKUlgM=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-298-CbdNhNWhNp-PQDjoxBUR_Q-1; Sun, 04 Aug 2024 11:06:10 -0400
-X-MC-Unique: CbdNhNWhNp-PQDjoxBUR_Q-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b7b1d79bacso22267736d6.0
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 08:06:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722783969; x=1723388769;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1722784011; c=relaxed/simple;
+	bh=7o2CbQ5M5VplzpINhdgvlhzIhLoaAvpBzWOXo6fCLL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I3pNVVHbwvZQt2thRcWzVgmvdHuE00wKg7s+frkFU6i2NtbmZ9Ivex5rcjcikVx6k4JBpr+BKeaa0Sq1S9JE4964MUUjSy4F4ZablgAIAtLdM6TLnuRuzmrupsA3hCYo6Hea5prw9C/4KUXlWhJnEDrmQefX4zxaiJusduR3IX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=mOZFEhQq; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f025b94e07so122684001fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 08:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1722784008; x=1723388808; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SvbvcFjU58ktq+KRI5iYfFYfuh6LM7bmOviBHt03oLI=;
-        b=qZ9uxp6FGEwSw+Z5lNs1Pwo3PS4Gtw6uOIdtCu1elgX69DAtHcNSQfdgp7hkqXltAK
-         0UDNSyn6ENi16QtjXPmBGRv4vD6uUUPAiUB7KnmlXiGw3GyxXBzkRPGzQyd81455IQ0X
-         5L6KaXOR0Ri0FE9g9UeH5hr7vN/rY2LkHg3kdGGcFQ4JypZwj6Yt+eNVI+aLIeyaxZTn
-         kWTg7SEvvguwvjzDHICjdlx6z0oRUzk+Zr7jeW0KK3+eTdJGBiRoMq3swdD+7tC7UrLo
-         WtU+NR4rZ2OvKpL+WIoxBOuJSrImkgEUOLlYf7h3GliXE4ribHNnN9Sj3ioecofRdqjA
-         LMhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZYAtqHycZn9zt2PlN9/LZrLre19haxI7Xrc+b58shXZL+XR8ZCa/F3vhQ7xW0TpE8xXidLsDGIxkQEDjcLycWnxPpQS+pIbhnZRTj
-X-Gm-Message-State: AOJu0YyVVLS++UTat14xGKtpmBIApkm3NjOFk0AczGCD9kUI/ZFFpWbD
-	rP3fBzZss3JkaQAT970WeFdCwlzRkeV73c6v9uMmsx86xxavb+Qi3ISVJ6NvpYxO70NE0pJJoO+
-	Jz1cSfrtO/kEz08OXiAG0YXPsGaZYkL+22vnqlbYADTCQU3YO2Ol1RHgVcUVAXw==
-X-Received: by 2002:ad4:4ee1:0:b0:6b7:b2fb:7dcd with SMTP id 6a1803df08f44-6bb98408bc3mr68328506d6.8.1722783969507;
-        Sun, 04 Aug 2024 08:06:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFAHSZ75g6qzRAE6XgtCfAsaJachILokCvd/ttfnqNGQLClyVvD5fN6U4DiFXAwrTwReCdoYA==
-X-Received: by 2002:ad4:4ee1:0:b0:6b7:b2fb:7dcd with SMTP id 6a1803df08f44-6bb98408bc3mr68328306d6.8.1722783969070;
-        Sun, 04 Aug 2024 08:06:09 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c797741sm26466216d6.44.2024.08.04.08.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 08:06:08 -0700 (PDT)
-Date: Sun, 4 Aug 2024 11:06:06 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Dave Jiang <dave.jiang@intel.com>, Rik van Riel <riel@surriel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	linuxppc-dev@lists.ozlabs.org, Matthew Wilcox <willy@infradead.org>,
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huang Ying <ying.huang@intel.com>,
-	"Kirill A . Shutemov" <kirill@shutemov.name>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Hugh Dickins <hughd@google.com>, x86@kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Ingo Molnar <mingo@redhat.com>,
-	Alex Thorlton <athorlton@sgi.com>
-Subject: Re: [PATCH v3 2/8] mm/mprotect: Remove NUMA_HUGE_PTE_UPDATES
-Message-ID: <Zq-Y3qs5_PZW04bt@x1n>
-References: <20240715192142.3241557-1-peterx@redhat.com>
- <20240715192142.3241557-3-peterx@redhat.com>
- <added2d0-b8be-4108-82ca-1367a388d0b1@redhat.com>
+        bh=tQrCWp4OKK3+4deiYD4tlmq/nQtsx0T40/K2NKppM94=;
+        b=mOZFEhQqOm//xD6kVhWQDMKLe9TRin+f4j9wmc/YbIeW1qGR/jWAy8Rqz1f/zhNrkY
+         qYEwKRa7WamBT79Ejw6WtP28wfPdajVLL7KbqPuB7ukU82xDUHHzF5JTMSx+zi65fJWl
+         NdQxHLceDRlZXg0DpWSD3jIydUAzYdNIkwTIfWhYM1mL0VCfDx5D3XuZZ95vSiBjrwOX
+         MqqTGnueeBo9fDPE8esxZaHPHAvQv8bjp7TbOGwxK1C0vXnclc3PO4wMexPr3f3OHc96
+         RCwpxLYp7R6HhG3ZbsWwySGYkO48De0BJwY0B873N9GOhnNIXAPl9w7nCktuRuzVN2yQ
+         CCzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722784008; x=1723388808;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tQrCWp4OKK3+4deiYD4tlmq/nQtsx0T40/K2NKppM94=;
+        b=uO41mxq/a5rm8kW4VE1vMiZr1m5Vps0dq9r/40vWqNHPhL9HP9qgSNptJbSvOMbecy
+         aIVPjNKg7LYqfkfuaylbOFKivNMZqNFJSEAgcol44uwt/RrsfcPgLXsphYz1T0mQudSt
+         GU7GKdq3dy5piE1rUNATKYS4/iLCPKFyLq/qgRJw8E0EJWOHniV6v7cZ7k05eePYpFsz
+         7iUeGtkAg5fIcbSDP+hUQumZDNLuTTIGeWZAkYBSK9+Zxupb3kmpcAkInFXE8iLtQDgR
+         qAFri537To5pRFtCt1FTPHBTcY4DgTT/wqS7+c2fyY1ss11Yc44IdHoqkK11SJ54Gsd9
+         UtVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfF8jJwgNK1XPGI/yMnQWf+L0ZvVMxhtDjIPgIR9XQLrK8aaaaUtgtovTMSyBS01dXDxJiLNArzPvgrmocoB9ueNNJcckshMGZ6/jf
+X-Gm-Message-State: AOJu0YysQe+gNNdBsH35pmeXCkloBp1mzTPeTmLRs42glznRTCS8rbgW
+	amBOipQvcOATDBjQBArhyBXKQLia9MBsL2oKsud8Xt4C6PZECxxshhX57+i2VH4B4Voh1HN75Ih
+	m+W3Di7JNeMfGgcj3doGO0zi2KfRTho1UvGcT/g==
+X-Google-Smtp-Source: AGHT+IGc7VLuH0x7LzkjPJKoBbtGsdNPJ6msqbLAQ/TihoPa5KnqLDpmmDtfWXMvB3VYYYY5/sXnYC83XdOQkVqHiWA=
+X-Received: by 2002:a2e:2418:0:b0:2ef:3258:4961 with SMTP id
+ 38308e7fff4ca-2f15aa9919cmr58377721fa.15.1722784007404; Sun, 04 Aug 2024
+ 08:06:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <added2d0-b8be-4108-82ca-1367a388d0b1@redhat.com>
+References: <20240719081651.24853-1-eric.lin@sifive.com> <2C7FF61F-2165-47D4-83A4-B0230D50844D@linux.vnet.ibm.com>
+ <CAPqJEFrkurD9B9smy908Y-z-f6ckv+ZFJzo6ptwXmxD0ru5=CA@mail.gmail.com>
+In-Reply-To: <CAPqJEFrkurD9B9smy908Y-z-f6ckv+ZFJzo6ptwXmxD0ru5=CA@mail.gmail.com>
+From: Eric Lin <eric.lin@sifive.com>
+Date: Sun, 4 Aug 2024 23:06:36 +0800
+Message-ID: <CAPqJEFqCXd1FWCgB0919r+J0XW7KVX_OWZNdocva-bxcscjTrw@mail.gmail.com>
+Subject: Re: [PATCH] perf pmus: Fix duplicate events caused segfault
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@arm.com>, linux-perf-users <linux-perf-users@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, vincent.chen@sifive.com, 
+	greentime.hu@sifive.com, Samuel Holland <samuel.holland@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 02:18:26PM +0200, David Hildenbrand wrote:
-> On 15.07.24 21:21, Peter Xu wrote:
-> > In 2013, commit 72403b4a0fbd ("mm: numa: return the number of base pages
-> > altered by protection changes") introduced "numa_huge_pte_updates" vmstat
-> > entry, trying to capture how many huge ptes (in reality, PMD thps at that
-> > time) are marked by NUMA balancing.
-> > 
-> > This patch proposes to remove it for some reasons.
-> > 
-> > Firstly, the name is misleading. We can have more than one way to have a
-> > "huge pte" at least nowadays, and that's also the major goal of this patch,
-> > where it paves way for PUD handling in change protection code paths.
-> > 
-> > PUDs are coming not only for dax (which has already came and yet broken..),
-> > but also for pfnmaps and hugetlb pages.  The name will simply stop making
-> > sense when PUD will start to be involved in mprotect() world.
-> > 
-> > It'll also make it not reasonable either if we boost the counter for both
-> > pmd/puds.  In short, current accounting won't be right when PUD comes, so
-> > the scheme was only suitable at that point in time where PUD wasn't even
-> > possible.
-> > 
-> > Secondly, the accounting was simply not right from the start as long as it
-> > was also affected by other call sites besides NUMA.  mprotect() is one,
-> > while userfaultfd-wp also leverages change protection path to modify
-> > pgtables.  If it wants to do right it needs to check the caller but it
-> > never did; at least mprotect() should be there even in 2013.
-> > 
-> > It gives me the impression that nobody is seriously using this field, and
-> > it's also impossible to be serious.
-> 
-> It's weird and the implementation is ugly. The intention really was to only
-> consider MM_CP_PROT_NUMA, but that apparently is not the case.
-> 
-> hugetlb/mprotect/... should have never been accounted.
-> 
-> [...]
-> 
-> > diff --git a/mm/vmstat.c b/mm/vmstat.c
-> > index 73d791d1caad..53656227f70d 100644
-> > --- a/mm/vmstat.c
-> > +++ b/mm/vmstat.c
-> > @@ -1313,7 +1313,6 @@ const char * const vmstat_text[] = {
-> >   #ifdef CONFIG_NUMA_BALANCING
-> >   	"numa_pte_updates",
-> > -	"numa_huge_pte_updates",
-> >   	"numa_hint_faults",
-> >   	"numa_hint_faults_local",
-> >   	"numa_pages_migrated",
-> 
-> It's a user-visible update. I assume most tools should be prepared for this
-> stat missing (just like handling !CONFIG_NUMA_BALANCING).
-> 
-> Apparently it's documented [1][2] for some distros:
+Hi,
 
-Yes, and AFAIU, [2] is a document to explain an issue relevant to numa
-balancing, and I'd highly doubt [2] referenced [1] here; even the order of
-the parameters are the same to be listed.
+On Sun, Jul 21, 2024 at 11:44=E2=80=AFPM Eric Lin <eric.lin@sifive.com> wro=
+te:
+>
+> Hi Athira,
+>
+> On Sat, Jul 20, 2024 at 4:35=E2=80=AFPM Athira Rajeev
+> <atrajeev@linux.vnet.ibm.com> wrote:
+> >
+> >
+> >
+> > > On 19 Jul 2024, at 1:46=E2=80=AFPM, Eric Lin <eric.lin@sifive.com> wr=
+ote:
+> > >
+> > > Currently, if vendor JSON files have two duplicate event names,
+> > > the "perf list" command will trigger a segfault.
+> > >
+> > > In commit e6ff1eed3584 ("perf pmu: Lazily add JSON events"),
+> > > pmu_events_table__num_events() gets the number of JSON events
+> > > from table_pmu->num_entries, which includes duplicate events
+> > > if there are duplicate event names in the JSON files.
+> >
+> > Hi Eric,
+> >
+> > Let us consider there are duplicate event names in the JSON files, say =
+:
+> >
+> > metric.json with: EventName as pmu_cache_miss, EventCode as 0x1
+> > cache.json with:  EventName as pmu_cache_miss, EventCode as 0x2
+> >
+> > If we fix the segfault and proceed, still =E2=80=9Cperf list=E2=80=9D w=
+ill list only one entry for pmu_cache_miss with may be 0x1/0x2 as event cod=
+e ?
+> > Can you check the result to confirm what =E2=80=9Cperf list=E2=80=9D wi=
+ll list in this case ? If it=E2=80=99s going to have only one entry in perf=
+ list, does it mean there are two event codes for pmu_cache_miss and it can=
+ work with either of the event code ?
+> >
+>
+> Sorry for the late reply.
+> Yes, I've checked if there are duplicate pmu_cache_miss events in the
+> JSON files, the perf list will have only one entry in perf list.
+>
+> > If it happens to be a mistake in json file to have duplicate entry with=
+ different event code (ex: with some broken commit), I am thinking if the b=
+etter fix is to keep only the valid entry in json file ?
+> >
+>
+> Yes, I agree we should fix the duplicate events in vendor JSON files.
+>
+> According to this code snippet [1], it seems the perf tool originally
+> allowed duplicate events to exist and it will skip the duplicate
+> events not shown on the perf list.
+> However, after this commit e6ff1eed3584 ("perf pmu: Lazily add JSON
+> events"),  if there are two duplicate events, it causes a segfault.
+>
+> Can I ask, do you have any suggestions? Thanks.
+>
+> [1] https://github.com/torvalds/linux/blob/master/tools/perf/util/pmus.c#=
+L491
+>
 
-> 
-> "The amount of transparent huge pages that were marked for NUMA hinting
-> faults. In combination with numa_pte_updates the total address space that
-> was marked can be calculated."
-> 
-> And now I realize that change_prot_numa() would account these PMD updates as
-> well in numa_pte_updates and I am confused about the SUSE documentation: "In
-> combination with numa_pte_updates" doesn't really apply, right?
-> 
-> At this point I don't know what's right or wrong.
+Kindly ping.
 
-Me neither, even without PUD involvement.
+Can I ask, are there any more comments about this patch? Thanks.
 
-Talking about numa_pte_updates, hugetlb_change_protection() returns "number
-of huge ptes", so one 2M hugetlb page is accounted once; while comparing to
-the generic THP (change_protection_range()) it's HPAGE_PUD_NR.  It'll make
-more sense to me if it sticks with PAGE_SIZE.  So all these counters look a
-bit confusing.
 
-> 
-> If we'd want to fix it instead, the right thing to do would be doing the
-> accounting only with MM_CP_PROT_NUMA. But then, numa_pte_updates is also
-> wrongly updated I believe :(
+Regards,
+Eric Lin
 
-Right.
-
-I don't have a reason to change numa_pte_updates semantics yet so far, but
-here there's the problem where numa_huge_pte_updates can be ambiguous when
-there is even PUD involved.
-
-In general, I don't know how I should treat this counter in PUD path even
-if NUMA isn't involved in dax yet; it can be soon involved if we move on
-with using this same path for hugetlb, or when 1G thp can be possible (with
-Yu Zhao's TAO?).
-
-One other thing I can do is I drop this patch, ignore NUMA_HUGE_PTE_UPDATES
-in PUD dax processing for now.  It'll work for this series, but it'll still
-be a problem later.  I figured maybe we should simply drop it from now.
-
-Thanks,
-
-> 
-> 
-> [1] https://documentation.suse.com/de-de/sles/12-SP5/html/SLES-all/cha-tuning-numactl.html
-> [2] https://support.oracle.com/knowledge/Oracle%20Linux%20and%20Virtualization/2749259_1.html
-> 
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
-
--- 
-Peter Xu
-
+> Regards,
+> Eric Lin
+>
+> > Thanks
+> > Athira
+> >
+> > >
+> > > perf_pmu__for_each_event() adds JSON events to the pmu->alias
+> > > list and copies sevent data to the aliases array. However, the
+> > > pmu->alias list does not contain duplicate events, as
+> > > perf_pmu__new_alias() checks if the name was already created.
+> > >
+> > > When sorting the alias data, if there are two duplicate events,
+> > > it causes a segfault in cmp_sevent() due to invalid aliases in
+> > > the aliases array.
+> > >
+> > > To avoid such segfault caused by duplicate event names in the
+> > > JSON files, the len should be updated before sorting the aliases.
+> > >
+> > > Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
+> > > Signed-off-by: Eric Lin <eric.lin@sifive.com>
+> > > ---
+> > > tools/perf/util/pmus.c | 5 +++--
+> > > 1 file changed, 3 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+> > > index b9b4c5eb5002..e38c3fd4d1ff 100644
+> > > --- a/tools/perf/util/pmus.c
+> > > +++ b/tools/perf/util/pmus.c
+> > > @@ -443,7 +443,7 @@ void perf_pmus__print_pmu_events(const struct pri=
+nt_callbacks *print_cb, void *p
+> > > {
+> > > struct perf_pmu *pmu;
+> > > int printed =3D 0;
+> > > - int len;
+> > > + size_t len, j;
+> > > struct sevent *aliases;
+> > > struct events_callback_state state;
+> > > bool skip_duplicate_pmus =3D print_cb->skip_duplicate_pmus(print_stat=
+e);
+> > > @@ -474,8 +474,9 @@ void perf_pmus__print_pmu_events(const struct pri=
+nt_callbacks *print_cb, void *p
+> > > perf_pmu__for_each_event(pmu, skip_duplicate_pmus, &state,
+> > > perf_pmus__print_pmu_events__callback);
+> > > }
+> > > + len =3D state.index;
+> > > qsort(aliases, len, sizeof(struct sevent), cmp_sevent);
+> > > - for (int j =3D 0; j < len; j++) {
+> > > + for (j =3D 0; j < len; j++) {
+> > > /* Skip duplicates */
+> > > if (j > 0 && pmu_alias_is_duplicate(&aliases[j], &aliases[j - 1]))
+> > > continue;
+> > > --
+> > > 2.43.2
+> > >
+> > >
+> >
 
