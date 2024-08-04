@@ -1,342 +1,95 @@
-Return-Path: <linux-kernel+bounces-273754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EAB946D9E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C43946DA0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4129A1F213FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:53:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A2A2814CD
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E9E20DF4;
-	Sun,  4 Aug 2024 08:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FBC208B8;
+	Sun,  4 Aug 2024 08:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="umLdkSUn"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nuf+Linf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D223FC2;
-	Sun,  4 Aug 2024 08:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485603FC2;
+	Sun,  4 Aug 2024 08:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722761615; cv=none; b=AYIrVHC34q7xeS127xmdvqIItHwcOwSQvsIqpG3cdA+ueGa+a1EXWHig7t5ByXrGQ6b+0DJIg3/cnrcoxumJ6N/8QlZ6+MaCC4+jaoOAlBZ1b2HFELLyft9oCNWrkKQECfxMgljL8wjw8aSyZdW5AdvlUsZmbwHgd4QEgAHxvjY=
+	t=1722761654; cv=none; b=KSueFx+gTvZbKvq406Cq8+zElWojm9udh7YSN9fOaM1LxndQMsYYN53OEI3tPwGwsPkQxA+NeDV3d6GhQ0j1T6qtBC+x/mroWS94zWzRo5SARO50bCgVnstFmihX7/1P6Ef9Z1f8O0BxMYquVJ1zYc8ucXRV0hll/FEUgM+Gv6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722761615; c=relaxed/simple;
-	bh=wmsZ2jWnPHgGyd/g/C15G8QictFNg0C35k2hEEI14bY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jygXAmNeqeqM8XXn2tCbAFiNpa7lbooqytp/E8C3ccaaKnXSumstMBrQAFgdVhIADNpvSGEWKXi1tjWlQd8+Mb9puMUIULNbj6Bt5nrLpSv7HREGsvnnEk4Vr+/uSt0AOgCZA/QkUWJtFiOAe1wXAb+kK3sbnoqqlQejaIc76hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=umLdkSUn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AFC0C32786;
-	Sun,  4 Aug 2024 08:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722761614;
-	bh=wmsZ2jWnPHgGyd/g/C15G8QictFNg0C35k2hEEI14bY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=umLdkSUn9nXQMvr2VeqCR0+3A82pk0kphBa4AgIkd6rSn67gnQ7zSAQC/ciCzKY+B
-	 Ib2zDUXcPPqunFR17RqoCrRre4755Gah5elolhm4g8RnHCDO/P6wHPulAqfBhAtEBe
-	 sXh8QyFygOCPYGGtXclWh5msVvHoZYV/AR+CqEk1yOhMWi2Nr8ZJKjwkOiBK0h9PpN
-	 +dXh54kWEXTCTbCa8nuQvUJ3ucUibRt6+rwPx9+b/L4ugT9/iSVa4LdBAnfqbl0CR1
-	 af8qyVqTjqd65dZKhOkXYr8/jxZz0feJa7KtUmcEwwzMCjXOL3zubQO91+5sK+5F8j
-	 fv+00CWiT28ag==
-Message-ID: <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
-Date: Sun, 4 Aug 2024 10:53:25 +0200
+	s=arc-20240116; t=1722761654; c=relaxed/simple;
+	bh=EnPID6ABFQiU3CywfoiNeZaGER0APilwi5tKfaltBY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a10Xc2wy38m4rWiWYDAZWIqnRhdeeunUevAgYl8R1Cw8XqTn3V8k8qjtSrgRyJ/dwqmmNfCxGJFkUG4QIO2vmO9M/4S0iNZkZkzejByVT58tYG6/pthe4fI2YITOc9MFh9uMH2prG8ZjVT7fr+G/YCTwQ56CPIPKaaBqJcQM24U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nuf+Linf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55FEFC32786;
+	Sun,  4 Aug 2024 08:54:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722761653;
+	bh=EnPID6ABFQiU3CywfoiNeZaGER0APilwi5tKfaltBY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nuf+LinfI/eaULfi7GdJGNc0oQ/mr6y8wiuY4CJAS1maGFsBWqYGZ+DVopBc39Nfz
+	 lfbLbOIPH08EWtGGx8o60wqqmH9fOOcYEKD5GhXXxrrZK7mXPk/9MSdig8kIKMamdQ
+	 23v7gUKpCNQTDCqCRp3v82yCnlSEqDcBey6ET66o=
+Date: Sun, 4 Aug 2024 10:54:10 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "John B. Wyatt IV" <jwyatt@redhat.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-pm@vger.kernel.org,
+	Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	"John B. Wyatt IV" <sageofredondo@gmail.com>
+Subject: Re: [PATCH 0/2][RFC] Add SWIG Bindings to libcpupower
+Message-ID: <2024080405-roundish-casket-2474@gregkh>
+References: <20240724221122.54601-1-jwyatt@redhat.com>
+ <1f5c24b6-f3ee-4863-8b7a-49344a550206@linuxfoundation.org>
+ <Zqv9BOjxLAgyNP5B@hatbackup>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>,
- Jingoo Han <jingoohan1@gmail.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: andersson@kernel.org, quic_vbadigan@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zqv9BOjxLAgyNP5B@hatbackup>
 
-On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
-> Add binding describing the Qualcomm PCIe switch, QPS615,
-> which provides Ethernet MAC integrated to the 3rd downstream port
-> and two downstream PCIe ports.
+On Thu, Aug 01, 2024 at 05:24:20PM -0400, John B. Wyatt IV wrote:
+> > On 7/24/24 16:11, John B. Wyatt IV wrote:
+> > > SWIG is a tool packaged in Fedora and other distros that can generate
+> > > bindings from C and C++ code for several languages including Python,
+> > > Perl, and Go. We at Red Hat are interested in adding binding support to
+> > > libcpupower so Python tools like rteval or tuned can make easy use of it.
+> > > 
+> > 
+> > Can you elaborate on the use-case and what rteval currently does and
+> > how it could benefit from using libcpupower with the bindings?
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  .../devicetree/bindings/pci/qcom,qps615.yaml       | 191 +++++++++++++++++++++
->  1 file changed, 191 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
-> new file mode 100644
-> index 000000000000..ea0c953ee56f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
-> @@ -0,0 +1,191 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/qcom,qps615.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QPS615 PCIe switch
-> +
-> +maintainers:
-> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
-> +  ports. The 3rd downstream port has integrated endpoint device of
-> +  Ethernet MAC. Other two downstream ports are supposed to connect
-> +  to external device.
-> +
-> +  The QPS615 PCIe switch can be configured through I2C interface before
-> +  PCIe link is established to change FTS, ASPM related entry delays,
-> +  tx amplitude etc for better power efficiency and functionality.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - pci1179,0623
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  qcom,qps615-controller:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Reference to the I2C client used to do configure qps615
+> rteval is a Python program used to measure realtime performance. We wanted to
+> test the effect of enabling some levels of idle-stat to see how it affects
+> latency, and didn't want to reinvent the wheel. We thought that the Python
+> bindings could be useful to other people as well who might want to call
+> cpupower too from Python. I did some testing and was able to achieve this with
+> SWIG. We sent the patchset to see what folks thought about this.
 
-Why?
+Is this going to require a built-time dependency on SWIG?  If not, when
+would it be run, and who will be in charge of running it and updating
+the bindings?
 
-> +
-> +  vdd18-supply: true
-> +
-> +  vdd09-supply: true
-> +
-> +  vddc-supply: true
-> +
-> +  vddio1-supply: true
-> +
-> +  vddio2-supply: true
-> +
-> +  vddio18-supply: true
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description:
-> +      GPIO controlling the RESX# pin.
-> +
-> +  qps615,axi-clk-freq-hz:
-> +    description:
-> +      AXI clock which internal bus of the switch.
+And finally, why do we need these at all?  You are saying these are new
+tests that external tools will be using, but why, if external tools are
+required to run them, are they needed in the kernel tree at all?  Why
+isn't this just another external test-suite that people who care about
+measuring this type of thing going to just run on their own if desired?
 
-No need, use CCF.
+thanks,
 
-> +
-> +  qcom,l0s-entry-delay-ns:
-> +    description: Aspm l0s entry delay in nanoseconds.
-> +
-> +  qcom,l1-entry-delay-ns:
-> +    description: Aspm l1 entry delay in nanoseconds.
-> +
-> +  qcom,tx-amplitude-millivolt:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Change Tx Margin setting for low power consumption.
-> +
-> +  qcom,no-dfe:
-> +    type: boolean
-> +    description: Disables DFE (Decision Feedback Equalizer).
-
-You described the desired Linux feature or behavior, not the actual
-hardware. The bindings are about the latter, so instead you need to
-rephrase the property and its description to match actual hardware
-capabilities/features/configuration etc.
-
-> +
-> +  qcom,nfts:
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    description:
-> +      Fast Training Sequence (FTS) is the mechanism that
-> +      is used for bit and Symbol lock.
-
-What are the values? Why this is uint8?
-
-You described the desired Linux feature or behavior, not the actual
-hardware. The bindings are about the latter, so instead you need to
-rephrase the property and its description to match actual hardware
-capabilities/features/configuration etc.
-
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-bus-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: pci1179,0623
-> +      required:
-> +        - compatible
-
-Why do you have entire if? You do not have multiple variants, drop.
-
-> +    then:
-> +      required:
-> +        - vdd18-supply
-> +        - vdd09-supply
-> +        - vddc-supply
-> +        - vddio1-supply
-> +        - vddio2-supply
-> +        - vddio18-supply
-> +        - qcom,qps615-controller
-> +        - reset-gpios
-> +
-> +patternProperties:
-> +  "@1?[0-9a-f](,[0-7])?$":
-> +    type: object
-> +    $ref: qcom,qps615.yaml#
-> +    additionalProperties: true
-
-Nope, drop pattern Properties or explain what is this.
-
-> +
-> +additionalProperties: true
-
-This cannot be true,
-
-> +
-> +examples:
-> +  - |
-> +
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    pcie {
-> +        #address-cells = <3>;
-> +        #size-cells = <2>;
-> +
-> +        pcie@0 {
-> +            device_type = "pci";
-> +            reg = <0x0 0x0 0x0 0x0 0x0>;
-> +
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            ranges;
-> +
-> +            pcie@0,0 {
-> +                compatible = "pci1179,0623";
-> +                reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +                device_type = "pci";
-> +                #address-cells = <3>;
-> +                #size-cells = <2>;
-> +                ranges;
-> +
-> +                qcom,qps615-controller = <&qps615_controller>;
-> +
-> +                vdd18-supply = <&vdd>;
-> +                vdd09-supply = <&vdd>;
-> +                vddc-supply = <&vdd>;
-> +                vddio1-supply = <&vdd>;
-> +                vddio2-supply = <&vdd>;
-> +                vddio18-supply = <&vdd>;
-> +
-> +                reset-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
-> +
-> +                pcie@1,0 {
-> +                    reg = <0x20800 0x0 0x0 0x0 0x0>;
-
-Where is the compatible? You claim this is the same device as child?
-
-> +                    #address-cells = <3>;
-> +                    #size-cells = <2>;
-> +                    device_type = "pci";
-> +                    ranges;
-> +
-> +                    qcom,no-dfe;
-> +                };
-> +
-> +                pcie@2,0 {
-> +                    reg = <0x21000 0x0 0x0 0x0 0x0>;
-> +                    #address-cells = <3>;
-> +                    #size-cells = <2>;
-> +                    device_type = "pci";
-> +                    ranges;
-> +
-> +                    qcom,nfts = /bits/ 8 <10>;
-> +                };
-> +
-> +                pcie@3,0 {
-> +                    reg = <0x21800 0x0 0x0 0x0 0x0>;
-> +                    #address-cells = <3>;
-> +                    #size-cells = <2>;
-> +                    device_type = "pci";
-> +                    ranges;
-> +
-> +                    qcom,tx-amplitude-millivolt = <10>;
-> +
-> +                         pcie@0,0 {
-
-Total mess in indentation.
-
-
-
-Best regards,
-Krzysztof
-
+greg k-h
 
