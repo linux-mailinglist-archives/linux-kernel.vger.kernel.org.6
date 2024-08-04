@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-273895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1341946F52
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:34:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18838946F59
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9181F21B4B
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FA92816C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C626F558BB;
-	Sun,  4 Aug 2024 14:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B29750288;
+	Sun,  4 Aug 2024 14:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MJh13q/v"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z6I8/f52"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CB9200AE
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 14:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421971E86A
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 14:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722782055; cv=none; b=CXi5zJ6GSh9OSekz3amUONHfr1wdoGQuOzFt2HjjuHjY1oG9tl1/u14hYAuQLKEOVlKXVEy9uUSP5dM2Xwz6nYzx+GmsVWSvzhOl8aF31A8Qkl0EIi6/DiXESkfQwpW7T6ip9C7+MkyOnkaPfC2FKl4+DX1VU/q2eTYCQ5+i730=
+	t=1722782779; cv=none; b=SJFbPwgnFxaSgIPCeSnDCJKaQ6EhuvzPONf4lj59xJTkrArA69d+Ll/dz9XnkBdvHut73EZV7tokL8rbgzPM/tNRB4RyF0mBnj1iq5qME7Gsx8hR2tuVZFBHESZFOkK3DbPAkRW90YBWR3Y2RZxPThLgwKeJXwB6a3iXGRtdcVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722782055; c=relaxed/simple;
-	bh=2lx3g7N36zwl+ThoqCfB7bZOdmmAoxKPpweee5Hr2W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WmtvEjmUQxWsOIuYDy2BgCWpM9B/5FdwoB8ETq/UcoHlgAQjFFjrdMZUKrcKLKzwiTK53WDSrkMzNmK3WalohsHEa7JnCnR/9GWR3VhKmcJzMB8/s4uc6bgnxVDek33//nhpUOzkvgZOrPRkbycsEZgpBhRKcfK1Mkxu0YlnPgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=MJh13q/v; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=2lx3
-	g7N36zwl+ThoqCfB7bZOdmmAoxKPpweee5Hr2W4=; b=MJh13q/vmVE2a0vqrBQi
-	+hNRiubSP7c8MJ+S3suTHjV0BvYqaVAfhRvA1XESe4nPonoep/7v18aGCnQKUyd5
-	AMAqPUKluopu3/23u2Z9A0xWOtn8d4mTeCghbKyoTsOBej2zL++hClFpwpmcXiR2
-	xUxSMalKS9E2xG4ZK3bH9nSfarMJD0jwfFEpcN4ESGKL7W0lt12j7DPYpHzWH8+b
-	BmO4uZVLdFGe3642ejEd19Tr5jkHJ5ba+1iVddnGH/ThMllP0fh3vxdHhFqozlG6
-	GAPfZK9hgflqweiRzUNrJVaaeEOcwpQPDue1TOsx+RujOiNS3zU2/kxyyfi0EW0y
-	mw==
-Received: (qmail 1704320 invoked from network); 4 Aug 2024 16:34:07 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Aug 2024 16:34:07 +0200
-X-UD-Smtp-Session: l3s3148p1@dzzsc9weyOVehhtX
-Date: Sun, 4 Aug 2024 16:34:06 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: tiwai@suse.com, broonie@kernel.org, mika.westerberg@linux.intel.com,
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH v2 2/3] i2c: Fix conditional for substituting empty ACPI
- functions
-Message-ID: <Zq-RXoAhH1kZvdRZ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>, tiwai@suse.com,
-	broonie@kernel.org, mika.westerberg@linux.intel.com,
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-References: <20240802152215.20831-1-rf@opensource.cirrus.com>
- <20240802152215.20831-3-rf@opensource.cirrus.com>
+	s=arc-20240116; t=1722782779; c=relaxed/simple;
+	bh=tX2MZCGvCBsJFE1Fnbp5nwfRaRqQG7QQf6nwoYU3/XM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=BorSZgdU+3e1kfjZE3J4A2hoMcruKIv9AzPfLCZzKsjz0qg1ejCP5+b6dcUnS4xjkAtw+vsPQBgEPeWqqhIuKyk/ELMVHFRWx6tuzXsBUgkuEdEWysoIf1tXjhhLoBr2De1Wjk9drTPcen4YSSqTKMIvszzg5piyYthEUGY9FCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z6I8/f52; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722782777; x=1754318777;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=tX2MZCGvCBsJFE1Fnbp5nwfRaRqQG7QQf6nwoYU3/XM=;
+  b=Z6I8/f52NQkNRpWvf+/MBMgExmFqJeTvfPyHLlms/bGn0U8U9a7r67XY
+   ajDCfbl82BgvFSEZon8U50YYzcGvG2fVNsqpH+Rj5Vjm6ihLiLqXZIyRv
+   rMd3Qmiinb+mU4H0wEqOPer4k7SChl1nwN2riZuFUpYiRVSOSQm7G1RTS
+   +V0MF224KSR3ce9n3rwatB03t9IuCQnhrvTYoImRC5JtxuhXKBw3zvjmX
+   zZFEuSW7c9uqCgUrQFECVSEFQvag5FvORanU4HYJD7ykJ7F8uDUA3H823
+   2IsW/+HY2MvfQzxwW1Ywm3z3krPE7pXb+jdEkpnH+8iRhMMCeqsd6NIOT
+   g==;
+X-CSE-ConnectionGUID: iNllnTaXR4yWcaiZpiszdw==
+X-CSE-MsgGUID: AoPR4IfgQLirpkpIAPQ+9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="20559222"
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="20559222"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 07:46:17 -0700
+X-CSE-ConnectionGUID: wCMpDcHrQ1+ak08//FXsHQ==
+X-CSE-MsgGUID: XTERBRsZSW2ycGd9p59/KA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="60051809"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 07:46:15 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	qiuxu.zhuo@intel.com
+Subject: Re: [patch 08/15] x86/ioapic: Cleanup guarded debug printk()s
+Date: Sun,  4 Aug 2024 22:34:43 +0800
+Message-Id: <20240804143443.25139-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240802155440.714763708@linutronix.de>
+References: <20240802155440.714763708@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="K5x/eKI0KCQaJbDH"
-Content-Disposition: inline
-In-Reply-To: <20240802152215.20831-3-rf@opensource.cirrus.com>
 
+> From: Thomas Gleixner <tglx@linutronix.de>
+> To: LKML <linux-kernel@vger.kernel.org>
+> Cc: x86@kernel.org
+> Subject: [patch 08/15] x86/ioapic: Cleanup guarded debug printk()s
+> 
+> Cleanup the APIC printk()s which are inside of a apic verbosity guarded
+> region by using apic_dbg() for the KERN_DEBUG level prints.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  arch/x86/kernel/apic/io_apic.c |   67 +++++++++++++++++------------------------
+>  1 file changed, 29 insertions(+), 38 deletions(-)
+> 
+> --- a/arch/x86/kernel/apic/io_apic.c
+> +++ b/arch/x86/kernel/apic/io_apic.c
+> @@ -1186,26 +1186,21 @@ static void io_apic_print_entries(unsign
+>  	char buf[256];
+>  	int i;
+>  
+> -	printk(KERN_DEBUG "IOAPIC %d:\n", apic);
+> +	apic_dbg("IOAPIC %d:\n", apic);
+>  	for (i = 0; i <= nr_entries; i++) {
+>  		entry = ioapic_read_entry(apic, i);
+> -		snprintf(buf, sizeof(buf),
+> -			 " pin%02x, %s, %s, %s, V(%02X), IRR(%1d), S(%1d)",
+> -			 i,
+> -			 entry.masked ? "disabled" : "enabled ",
+> +		snprintf(buf, sizeof(buf)," pin%02x, %s, %s, %s, V(%02X), IRR(%1d), S(%1d)",
 
---K5x/eKI0KCQaJbDH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Need a space after the 2nd ','.
 
-On Fri, Aug 02, 2024 at 04:22:14PM +0100, Richard Fitzgerald wrote:
-> Add IS_ENABLED(CONFIG_I2C) to the conditional around a bunch of ACPI
-> functions.
->=20
-> The conditional around these functions depended only on CONFIG_ACPI.
-> But the functions are implemented in I2C core, so are only present if
-> CONFIG_I2C is enabled.
->=20
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> +			 i, entry.masked ? "disabled" : "enabled ",
+>  			 entry.is_level ? "level" : "edge ",
 
-Applied to for-current, thanks!
+> [...]
 
+> @@ -1226,19 +1221,15 @@ static void __init print_IO_APIC(int ioa
+>  			reg_03.raw = io_apic_read(ioapic_idx, 3);
+>  	}
+>  
+> [...]
+> +	apic_dbg(".... register #01: %08X\n", *(int *)&reg_01);
+> +	apic_dbg(".......     : max redirection entries: %02X\n",reg_01.bits.entries);
 
---K5x/eKI0KCQaJbDH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmavkV4ACgkQFA3kzBSg
-Kba8kQ//R2hJFFtxTxAWIj5wBKxOw1RDWxS5D/37YhhcWnBCvMzImW/Dtlt7uoYB
-P9O1xQTLK7B0dxkzDX6glvIg94j46CWLsBTtUzCMu1yBVQK2FojAfxrOfVePSoGR
-FkBTjSAMhG6lJDQcipJGnDG1KdnMi0RJ9Y8FERD1A81YsLIkIDmIIUXPU6kmolsn
-RV1fZARoqLo0BuWwE2xZAv4fAULs2t62Z9LEIHlY//8IJnaCZT256BPU7BNK2tHj
-Rg3pa4U1aKmi8aWtiw2KTTrsTilvZFSvtdpjuePaFXZ+OJdH3JSh46dpajZ9b8qU
-/uEf8tz/O+UwDRvNLDlaTrH3mwjk1ks5D0tx5cXe4kpPhk9b/RXEFkGZiY5+owot
-N5WrNepRptCuJMDdv0XYbF/Hr/c9k9PsTasEkM74bxjJ74NinsMNua9jye8hV7n5
-HKJWiXRCjXMA5cjG+RCpshi5sDu0K3oBgTonKhl1RasqndzwL4mljYGRgkjtabvG
-MiR7lVvmqSwX/xRqKaK5d3tx0f7F6PY8KMJ0a0zVTmC1JwfjQh2CuzGNw8AUxWy/
-l+1sRjuc0lWFtG7YcVPnZenNKxX/yy3raDgpHL+dtJZmoRSqFQj7oapUbhhakf8H
-F+IQ72ohmiUnHz9POIDEr9/aGdtJn6K5B24xl+PIFh8IOlWXMjM=
-=nS/5
------END PGP SIGNATURE-----
-
---K5x/eKI0KCQaJbDH--
+Need a space after ','.
 
