@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-274000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57AD99470A1
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:17:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67179470A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894D31C208E8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:17:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F21C1F211EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239A41386D1;
-	Sun,  4 Aug 2024 21:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34E213A24A;
+	Sun,  4 Aug 2024 21:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UNea31ec"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="UJ0k+Dtj"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3A9A2A;
-	Sun,  4 Aug 2024 21:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166C0A2A;
+	Sun,  4 Aug 2024 21:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722806258; cv=none; b=PR/f6xhcjee45+YyM/54K0170Xaf3VI2yshAHPjq5lo5XCzBs3tFQ0CC8CTl2OWykjdJtJ9OYyvGR/ZvGveiEefs4sXikgCVazHnRydff2ioIyHLQ85YV9C9gcNIFJZZT88qRUlwp3D3k15QHIYhDN0KnyAOvd7l+Rt/wE9/qSo=
+	t=1722806441; cv=none; b=VbTxNKvXKovPShBxO+IHJb5SZKRVVg0ZGFAIuwY/nXVzJUzgwggedBlKmsVzMMCCqPD3CRNT7xkhU9aoDwOyyCyyzbZ46XZs6P3R14DpyyGxJX/67KgDYvVt/i+5+pdWLwCXWKGIe36zAQoFTAznSrcvVt7AIU424Xz3FQQLApA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722806258; c=relaxed/simple;
-	bh=UI2uq4D1/BMGdVP3uULNzeZa88ZXAdb9J9sb8Lum+GE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=c8rU9q+5VXRmeTMgFNdADIytBMzeU1oWW4qpqfl0S/tyMdr160cbzhfHyIguXpSSWGZoM55N31aJ1cZWdTaCcYa4ccfPb/VXxSVAmlwdk6NZZa5WrHQe4wktmO78ULUBLDrIEkrtJzpr1o9g/RIOUxMVITYp8NedQsTTSn5E3rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UNea31ec; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722806245;
-	bh=cZnut/m33D3KNXROflAPe0MPjd0m+V9GHvg4mneIeLE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UNea31ecCyl/NEhkqoh7CDI55nM1J3cmEO6KoHjEPDKvMslRoEdw0tgN9HiIf1pHq
-	 TW1Sbdo6flrAhsx8aJZyEO/h/L0ObOfdhmekbVDeyxDNycXGBncSYGK4D3Z70R+2dt
-	 TpX5JJEDua2y/vYPicKEMDpDK1cRYuc4H0g98uPL10fDFCbcrQ579imN51spZ2dfDj
-	 FXXCfjDN9LWz65WeI2xbQbTTbfCRur3koVweyDc1YzmyJTIvCea+oeJyp8wsm7T35a
-	 WGZxX1aGH28FUG2uzlSXEbQeaJ5nI19/JAnJk/bPd8/5K1b8uNgabAHPyOOoZTAy16
-	 u5urF12uJ1kgw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WcXTJ6KKNz4wcl;
-	Mon,  5 Aug 2024 07:17:24 +1000 (AEST)
-Date: Mon, 5 Aug 2024 07:17:23 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Muchun Song <muchun.song@linux.dev>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the mm-hotfixes tree
-Message-ID: <20240805071723.571c7654@canb.auug.org.au>
+	s=arc-20240116; t=1722806441; c=relaxed/simple;
+	bh=aPTaDxNybIUHkTdFDlbequzDizZglvsYGmVQr6fmGiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=THXPmH7/ezRAOx+bKqy2Az0ncKFIOVQ+mFsghU17JTWIYERMvfZhR8f/ugqtikJ3oGqQR5gTh8ZxwbAZqMMvRnzFKhkoLKeRKklsTQ40VRyihLtg8OE008SKIHzSgxICVP5ipGysYjKk8dYgRCTjiPTSozvxm4LXV8ljImLGaeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=UJ0k+Dtj; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=SilnIHq1rXzSKSjdFmsxn3mGUgHCRMMxsB1dAgKhThw=; b=UJ0k+DtjrUVNK4PCBt/QxwwQ+j
+	juiLDjpuaHRvJe00B54yXANoFeMryp9SDSlsJ56rHTTfsueCCaK/iAvv3RXSnAWwPK5vXp7YSJXqq
+	YJ9jk7FnqMfnCDjv3C6hlNWWCEjg4mW/FZTkXVbgx8TaGpXj5j1FVVIlyJqLyw6ROyx6dJH0B+YS3
+	coYdo7w4XBi8tp3kBHxpoNnPp3jCEbzn/N82PngqZq1OBmOVVochQaK4aD8fwn3810nLrCbgKfj5I
+	9Fm61lci3709skrowVuRk/ptijBdSUC6zXkK06jFDCpw7fYdqUf52KuHMQBOrGciSmo/ekDgKM0fF
+	wAi0Jjdw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1saieY-00000001aqe-2LEL;
+	Sun, 04 Aug 2024 21:20:34 +0000
+Date: Sun, 4 Aug 2024 22:20:34 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Phillip Lougher <phillip@squashfs.org.uk>
+Cc: Lizhi Xu <lizhi.xu@windriver.com>, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	squashfs-devel@lists.sourceforge.net,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V7] squashfs: Add symlink size check in squash_read_inode
+Message-ID: <20240804212034.GE5334@ZenIV>
+References: <20240803040729.1677477-1-lizhi.xu@windriver.com>
+ <20240803074349.3599957-1-lizhi.xu@windriver.com>
+ <ee839d00-fd42-4b69-951d-8571140c077b@squashfs.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kAf1eKuN.iIf.xBUlGLVpAA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee839d00-fd42-4b69-951d-8571140c077b@squashfs.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
---Sig_/kAf1eKuN.iIf.xBUlGLVpAA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Aug 04, 2024 at 10:16:05PM +0100, Phillip Lougher wrote:
 
-Hi all,
+> NACK. I see no reason to introduce an intermediate variable here.
+> 
+> Please do what Al Viro suggested.
 
-In commit
-
-  cbd28071cdab ("mm: list_lru: fix UAF for memory cgroup")
-
-Fixes tag
-
-  Fixes: 0a97c01cd20b ("list_lru: allow explicit memcg and NUMA node select=
-ion)
-
-has these problem(s):
-
-  - Subject has leading but no trailing quotes
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kAf1eKuN.iIf.xBUlGLVpAA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmav7+MACgkQAVBC80lX
-0GzQyAgAjIbdLSRCPIidKnexA+GYbNuMhdP+F6BG2WiGJK9AxJqJGW5C2zG3/um4
-Ds9DM73Q2JM2LBlA3YnkqwO/2+LlVpcDiyvI0YvDsrzpzmZe7A2+Z4G3gUuuz8pN
-U2rL6aWZczukwWvxBQ7rjPzRBmOG6HELpX0kv6JjJ6w31Ucqhq0QxayAifEa0Aeo
-WMY+sv6c4ZDhvNauoq/liZw1eD7ztLc5mw+bh4VHExwvZ6uv+gw/JywJZxOe04yy
-Gzf6Eo7v/gEa8FQm8tM5wp0TvhF7xXTK7CWBTAEBfJzyQtSqpuAEgyurmS3vimOV
-uJMSbrnzGBi2BdIceK6Hql1AwEvZIw==
-=SBMy
------END PGP SIGNATURE-----
-
---Sig_/kAf1eKuN.iIf.xBUlGLVpAA--
+Alternatively, just check ->i_size after assignment.  loff_t is
+always a 64bit signed; le32_to_cpu() returns 32bit unsigned.
+Conversion from u32 to s64 is always going to yield a non-negative
+result; comparison with PAGE_SIZE is all you need there.
 
