@@ -1,88 +1,75 @@
-Return-Path: <linux-kernel+bounces-273883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11D6946F2D
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:59:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC36946F2A
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D591C2111D
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:59:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFB4CB20A0D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3242556B7C;
-	Sun,  4 Aug 2024 13:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B08481B4;
+	Sun,  4 Aug 2024 13:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SKxd5yf1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Z1sAnBqd"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874894D8B9;
-	Sun,  4 Aug 2024 13:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F093FBA5;
+	Sun,  4 Aug 2024 13:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722779954; cv=none; b=mMYWhNKTAltOTHu+W/7VG0sS452CEXW3dDFjNAnuZ/GCLZ/XkBKELvjpSmrJpaaaOYkxEwUdoxiC7yYZBKDseZvpKMRGm1OGJ7Fr97GBiV6RC/2cfboyf6Y/penWXrCgal3SdjnGnZzSfNollqctrr2Rmz7GTrli908MvdKCE8M=
+	t=1722779951; cv=none; b=Fp72V3VBnHpCv+DJrR0ZR+rRpYlzTbyLGQ04CprM1hHptfQpT247de70d/+mhjL0G1mU6AhHlnGHN5rDBnH/b72RSuwaSLUbYOyk3Wv0/z/PM9x6+oPZ7PYB82hV16l9eujYZy5+KQQT+2aVHRPOp+9MCLK6WB0hcSElp4nny8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722779954; c=relaxed/simple;
-	bh=Hw0uflrUJ7vQqndEmg42vDKC3Kxb745Qp0ejtEqvO+c=;
+	s=arc-20240116; t=1722779951; c=relaxed/simple;
+	bh=LczjTVK6GgkV9/v10Gm17CRRqAMbSIspbasJ2WaV4nM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8iZ1FVyj6XpXZYbkDIxqvQDnhcOv0S573IAhH9RnGSaWEmoUyL7pZFxnewWKqNbNl4Dgy2swm4B3lbIcj8XQLespCaORP0CEFDwyclGyO1F8QZ5/AnkuTaVVxS53BjW8NuDrUdU3V3/giWuzceYY9+NJMLfAJ7/IvS0+M8NAgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SKxd5yf1; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722779953; x=1754315953;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Hw0uflrUJ7vQqndEmg42vDKC3Kxb745Qp0ejtEqvO+c=;
-  b=SKxd5yf176Og7QJ1petyMh6Abk0J2I4JEI2wviBq/U8KHBMJYIiGvhdP
-   9G2TP75phat0YwkADHBQoDkshRaMF+YjQxPOuWH4fSsC2oa5g11JmzhVI
-   8DKkTFFVyYUo7Yc+lHuV7aiS97VrDz7C6s669beBz9tWUdQOJHZlfKE/9
-   HmNk1CvsrzVr0z50qxj+P0r9knr6a1ABKmWvkG9Kre8+Kxx7zNyWMMtQq
-   9VvX41z0nQCfcFgw/U7T22+VovtX2PmJdfG7VEfh7rE3j+OEXRzfWE6mr
-   hpb54CtY2d1qK8zHdP1Az3V9v/kFxwr7vRo9Y7+q9/D1t/W9bP7QJb5QS
-   Q==;
-X-CSE-ConnectionGUID: uvQckt+3SOijd/LP/t1djw==
-X-CSE-MsgGUID: Ut82/kWzSGCqdKli1c4LqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="31323661"
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="31323661"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 06:59:12 -0700
-X-CSE-ConnectionGUID: HTLxOMkET+6kj9cLG0Dyew==
-X-CSE-MsgGUID: HZ7X5HwaThCOen4fcgsdqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="56658499"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 04 Aug 2024 06:59:06 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sablH-0001Sk-1u;
-	Sun, 04 Aug 2024 13:59:03 +0000
-Date: Sun, 4 Aug 2024 21:58:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=B0QutcWB04dUI3A3aOOO0jYXH8Qazj4WP5CXiEbrGKN6mb3oULy8HegmDN2HEhfeAvVxqAteUmOlkh2AR8yWG0c7xEMaMZ0+i8lrikcWdxuCDUmDfdC+Wh8w+n10N1Mb/cy8CTtzgX0WqaPxBA6ckRvkXLbN4HJmlkXUKutyMJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Z1sAnBqd; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 4A95741A9D;
+	Sun,  4 Aug 2024 15:59:07 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id GjuTO6ky1SeZ; Sun,  4 Aug 2024 15:59:06 +0200 (CEST)
+Date: Sun, 4 Aug 2024 21:58:39 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1722779946; bh=LczjTVK6GgkV9/v10Gm17CRRqAMbSIspbasJ2WaV4nM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Z1sAnBqd1qbGqNYR0Zb3SsA2zoOPwUHHtSQbZfm9BJ+CGPGMZWQ4WzV4rLiwGvKky
+	 r3R0fjK2x3PkSQwJRewA8JpJpMhJiwinW+dAoQcQa71qJLPy3LWFFTY982W4r1UuxN
+	 x6azu4cJX9yPWIW1zaJ5ougVD6XUiScYDdsk9INBptuHSskYNi37bFKNVXWq0F1OeL
+	 hvFbMR9XOWaENoc7U0JZkeLFDjuxyhH8Sae9VfkiffwDN2CNJb9U+SYkeF4m5cogTh
+	 Wxts0D+tMvzpccxqkld7GAepyahGUUWdNv/PPh8WJvQwUb+QhdW8ys7xLVtHC3K1V5
+	 2ws59eLM56SqQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-nvme@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 4/6] block2mtd: attach device OF node to MTD device
-Message-ID: <202408042135.nXaBv2UM-lkp@intel.com>
-References: <20240804114108.1893-5-ansuelsmth@gmail.com>
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+	Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>, Ondrej Jirman <megi@xff.cz>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+Message-ID: <Zq-JD8Ia_eoG6hGw@ziyaolaptop.my.domain>
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <20240803125510.4699-5-ziyao@disroot.org>
+ <56bd1478-ce8c-4c1d-ab16-afe4ad462bf5@kernel.org>
+ <Zq-AFWYaqu7zGuz-@ziyaolaptop.my.domain>
+ <88dd5910904c03280f37ca0051f5de4e@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,152 +78,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240804114108.1893-5-ansuelsmth@gmail.com>
+In-Reply-To: <88dd5910904c03280f37ca0051f5de4e@manjaro.org>
 
-Hi Christian,
+On Sun, Aug 04, 2024 at 03:25:47PM +0200, Dragan Simic wrote:
+> On 2024-08-04 15:20, Yao Zi wrote:
+> > On Sun, Aug 04, 2024 at 12:05:11PM +0200, Krzysztof Kozlowski wrote:
+> > > On 03/08/2024 14:55, Yao Zi wrote:
+> > > > This initial device tree describes CPU, interrupts and UART on the chip
+> > > > and is able to boot into basic kernel with only UART. Cache information
+> > > > is omitted for now as there is no precise documentation. Support for
+> > > > other features will be added later.
+> > > >
+> > > > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > > > ---
+> > > >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 182 +++++++++++++++++++++++
+> > > >  1 file changed, 182 insertions(+)
+> > > >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > > > new file mode 100644
+> > > > index 000000000000..77687d9e7e80
+> > > > --- /dev/null
+> > > > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > > > @@ -0,0 +1,182 @@
+> > > > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > > > +/*
+> > > > + * Copyright (c) 2022 Rockchip Electronics Co., Ltd.
+> > > > + * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+> > > > + */
+> > > > +
+> > > > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > > +#include <dt-bindings/interrupt-controller/irq.h>
+> > > > +
+> > > > +/ {
+> > > > +	compatible = "rockchip,rk3528";
+> > > > +
+> > > > +	interrupt-parent = <&gic>;
+> > > > +	#address-cells = <2>;
+> > > > +	#size-cells = <2>;
+> > > > +
+> > > > +	aliases {
+> > > > +		serial0 = &uart0;
+> > > > +		serial1 = &uart1;
+> > > > +		serial2 = &uart2;
+> > > > +		serial3 = &uart3;
+> > > > +		serial4 = &uart4;
+> > > > +		serial5 = &uart5;
+> > > > +		serial6 = &uart6;
+> > > > +		serial7 = &uart7;
+> > > > +	};
+> > > > +
+> > > > +	cpus {
+> > > > +		#address-cells = <1>;
+> > > > +		#size-cells = <0>;
+> > > > +
+> > > > +		cpu-map {
+> > > > +			cluster0 {
+> > > > +				core0 {
+> > > > +					cpu = <&cpu0>;
+> > > > +				};
+> > > > +				core1 {
+> > > > +					cpu = <&cpu1>;
+> > > > +				};
+> > > > +				core2 {
+> > > > +					cpu = <&cpu2>;
+> > > > +				};
+> > > > +				core3 {
+> > > > +					cpu = <&cpu3>;
+> > > > +				};
+> > > > +			};
+> > > > +		};
+> > > > +
+> > > > +		cpu0: cpu@0 {
+> > > > +			device_type = "cpu";
+> > > > +			compatible = "arm,cortex-a53";
+> > > > +			reg = <0x0>;
+> > > > +			enable-method = "psci";
+> > > > +		};
+> > > > +
+> > > > +		cpu1: cpu@1 {
+> > > > +			device_type = "cpu";
+> > > > +			compatible = "arm,cortex-a53";
+> > > > +			reg = <0x1>;
+> > > > +			enable-method = "psci";
+> > > > +		};
+> > > > +
+> > > > +		cpu2: cpu@2 {
+> > > > +			device_type = "cpu";
+> > > > +			compatible = "arm,cortex-a53";
+> > > > +			reg = <0x2>;
+> > > > +			enable-method = "psci";
+> > > > +		};
+> > > > +
+> > > > +		cpu3: cpu@3 {
+> > > > +			device_type = "cpu";
+> > > > +			compatible = "arm,cortex-a53";
+> > > > +			reg = <0x3>;
+> > > > +			enable-method = "psci";
+> > > > +		};
+> > > > +	};
+> > > > +
+> > > > +	psci {
+> > > > +		compatible = "arm,psci-1.0", "arm,psci-0.2";
+> > > > +		method = "smc";
+> > > > +	};
+> > > > +
+> > > > +	timer {
+> > > > +		compatible = "arm,armv8-timer";
+> > > > +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> > > > +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> > > > +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> > > > +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> > > > +	};
+> > > > +
+> > > > +	xin24m: xin24m {
+> > > 
+> > > Please use name for all fixed clocks which matches current format
+> > > recommendation: 'clock-([0-9]+|[a-z0-9-]+)+'
+> > 
+> > Will be fixed in next revision.
+> 
+> Hmm, why should we apply that rule to the xin24m clock, which is
+> named exactly like that everywhere else in Rockchip SoC dtsi files?
+> It's much better to remain consistent.
 
-kernel test robot noticed the following build errors:
+Historical reasons should not affect new code. And if we don't follow
+the new rules now, they may never get followed.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.11-rc1 next-20240802]
-[cannot apply to mtd/mtd/next mtd/mtd/fixes]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Best regards,
+Yao Zi
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvme-Document-nvme-card-compatible/20240804-194357
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240804114108.1893-5-ansuelsmth%40gmail.com
-patch subject: [PATCH 4/6] block2mtd: attach device OF node to MTD device
-config: i386-buildonly-randconfig-001-20240804 (https://download.01.org/0day-ci/archive/20240804/202408042135.nXaBv2UM-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408042135.nXaBv2UM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408042135.nXaBv2UM-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/mtd/devices/block2mtd.c: In function 'add_device':
->> drivers/mtd/devices/block2mtd.c:332:9: error: 'ddev' undeclared (first use in this function); did you mean 'dev'?
-     332 |         ddev = disk_to_dev(dev->blkdev->bd_disk);
-         |         ^~~~
-         |         dev
-   drivers/mtd/devices/block2mtd.c:332:9: note: each undeclared identifier is reported only once for each function it appears in
-   In file included from drivers/mtd/devices/block2mtd.c:22:
->> drivers/mtd/devices/block2mtd.c:332:31: error: 'struct block2mtd_dev' has no member named 'blkdev'
-     332 |         ddev = disk_to_dev(dev->blkdev->bd_disk);
-         |                               ^~
-   include/linux/blkdev.h:258:13: note: in definition of macro 'disk_to_dev'
-     258 |         (&((disk)->part0->bd_device))
-         |             ^~~~
-   drivers/mtd/devices/block2mtd.c:333:25: error: 'struct block2mtd_dev' has no member named 'blkdev'
-     333 |         if (ddev == &dev->blkdev->bd_device)
-         |                         ^~
-
-
-vim +332 drivers/mtd/devices/block2mtd.c
-
-   260	
-   261	static struct block2mtd_dev *add_device(char *devname, int erase_size,
-   262			char *label, int timeout)
-   263	{
-   264		const blk_mode_t mode = BLK_OPEN_READ | BLK_OPEN_WRITE;
-   265		struct file *bdev_file;
-   266		struct block_device *bdev;
-   267		struct block2mtd_dev *dev;
-   268		loff_t size;
-   269		char *name;
-   270	
-   271		if (!devname)
-   272			return NULL;
-   273	
-   274		dev = kzalloc(sizeof(struct block2mtd_dev), GFP_KERNEL);
-   275		if (!dev)
-   276			return NULL;
-   277	
-   278		/* Get a handle on the device */
-   279		bdev_file = bdev_file_open_by_path(devname, mode, dev, NULL);
-   280		if (IS_ERR(bdev_file))
-   281			bdev_file = mdtblock_early_get_bdev(devname, mode, timeout,
-   282							      dev);
-   283		if (IS_ERR(bdev_file)) {
-   284			pr_err("error: cannot open device %s\n", devname);
-   285			goto err_free_block2mtd;
-   286		}
-   287		dev->bdev_file = bdev_file;
-   288		bdev = file_bdev(bdev_file);
-   289	
-   290		if (MAJOR(bdev->bd_dev) == MTD_BLOCK_MAJOR) {
-   291			pr_err("attempting to use an MTD device as a block device\n");
-   292			goto err_free_block2mtd;
-   293		}
-   294	
-   295		size = bdev_nr_bytes(bdev);
-   296		if ((long)size % erase_size) {
-   297			pr_err("erasesize must be a divisor of device size\n");
-   298			goto err_free_block2mtd;
-   299		}
-   300	
-   301		mutex_init(&dev->write_mutex);
-   302	
-   303		/* Setup the MTD structure */
-   304		/* make the name contain the block device in */
-   305		if (!label)
-   306			name = kasprintf(GFP_KERNEL, "block2mtd: %s", devname);
-   307		else
-   308			name = kstrdup(label, GFP_KERNEL);
-   309		if (!name)
-   310			goto err_destroy_mutex;
-   311	
-   312		dev->mtd.name = name;
-   313	
-   314		dev->mtd.size = size & PAGE_MASK;
-   315		dev->mtd.erasesize = erase_size;
-   316		dev->mtd.writesize = 1;
-   317		dev->mtd.writebufsize = PAGE_SIZE;
-   318		dev->mtd.type = MTD_RAM;
-   319		dev->mtd.flags = MTD_CAP_RAM;
-   320		dev->mtd._erase = block2mtd_erase;
-   321		dev->mtd._write = block2mtd_write;
-   322		dev->mtd._sync = block2mtd_sync;
-   323		dev->mtd._read = block2mtd_read;
-   324		dev->mtd.priv = dev;
-   325		dev->mtd.owner = THIS_MODULE;
-   326	
-   327		/*
-   328		 * Check if we are using root blockdev.
-   329		 * If it's the case, connect the MTD of_node to the ddev parent
-   330		 * to support providing partition in DT node.
-   331		 */
- > 332		ddev = disk_to_dev(dev->blkdev->bd_disk);
-   333		if (ddev == &dev->blkdev->bd_device)
-   334			dev->mtd.dev.of_node = of_node_get(ddev->parent->of_node);
-   335	
-   336		if (mtd_device_register(&dev->mtd, NULL, 0)) {
-   337			/* Device didn't get added, so free the entry */
-   338			goto err_destroy_mutex;
-   339		}
-   340	
-   341		list_add(&dev->list, &blkmtd_device_list);
-   342		pr_info("mtd%d: [%s] erase_size = %dKiB [%d]\n",
-   343			dev->mtd.index,
-   344			label ? label : dev->mtd.name + strlen("block2mtd: "),
-   345			dev->mtd.erasesize >> 10, dev->mtd.erasesize);
-   346		return dev;
-   347	
-   348	err_destroy_mutex:
-   349		of_node_put(dev->mtd.dev.of_node);
-   350		mutex_destroy(&dev->write_mutex);
-   351	err_free_block2mtd:
-   352		block2mtd_free_device(dev);
-   353		return NULL;
-   354	}
-   355	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
+> > > 
+> > > > +		compatible = "fixed-clock";
+> > > > +		#clock-cells = <0>;
+> > > > +		clock-frequency = <24000000>;
+> > > > +		clock-output-names = "xin24m";
+> > > > +	};
+> > > > +
+> > > > +	gic: interrupt-controller@fed01000 {
+> > > 
+> > > Why this all is outside of SoC?
+> > 
+> > Just as Heiko says, device tree for all other Rockchip SoCs don't have
+> > a "soc" node. I didn't know why before but just follow the style.
+> > 
+> > If you prefer add a soc node, I am willing to.
 
