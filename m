@@ -1,154 +1,230 @@
-Return-Path: <linux-kernel+bounces-273912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292C4946F89
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC56946F85
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F631F216D6
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E3C280ECB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1887461FE1;
-	Sun,  4 Aug 2024 15:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUosQiuG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784B4745E4;
+	Sun,  4 Aug 2024 15:11:22 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32F261FCF;
-	Sun,  4 Aug 2024 15:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EF93FBB2;
+	Sun,  4 Aug 2024 15:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722784311; cv=none; b=RhwL8uxL2VqUUIgVpucp6oFtv1yqbmDTKUfUPf9XwoW9uze+LMJbxoyaX8U57kChqzSQcwuOrYJYBphXiwa4Mou8KeeYKS1mH9hNlrltBw7C1t8Pc3sS+lCeNuj5E1mdhxBjA+bWJM1wgO8Y+6F//jaw4rWjcOQFXBddS1U9YWc=
+	t=1722784281; cv=none; b=ASDArnY6S9I5wRRXcvS9LjdrTEquWWmwrrG2ZP3NWK17KForUMumfS+DtFPtbjIMZ8KLDpNy1OZY65lZGjFNyeIMMbV1RVV2EQKt1W7H1CswxaFrvcDOLRAnsHaogpqM7ux1H4friEO0d1I13NYYqOdYlfnE/agp1hSwl56pYCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722784311; c=relaxed/simple;
-	bh=Zhi1Y/og0cWe4Q4rMi/KieLjzrfywbdgNBTRJ/VZ1Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewh2BD1xmt4YpbgKQ74M8OlwO0rO46ZtzUEsUdchpK5XhUDs6PpzCENr+161Du4y7JNZBFeh1xzV+AhVLhBHO1XIv5feInnTy8axHMsHLyUgfL2BaNXZVPrGDPYWwd5lQWgvMcyOSf6vjFftHnFOZP1qEkalODyH/uZAunNS8ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bUosQiuG; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722784308; x=1754320308;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zhi1Y/og0cWe4Q4rMi/KieLjzrfywbdgNBTRJ/VZ1Cg=;
-  b=bUosQiuGZesceoc2Pn6lJxZxv6OepgqpvftGL6wiL5DnOLwyTDWAl2+k
-   ThAly7fvfp/lPLysXU92sO06oWhyyXkivAgBr69n/IgT/Aa8z0H/RU6Aw
-   oVcaiPOFB0UsXYzdITNoq4W5NQiUgffknioicX8xxQPuDNJ1ZXRvGngtZ
-   RF6X+qenK/7ERexVyOhK2pnPxcd5SCwOT7e4zBmgxAwNSsk+MjF7lb8wo
-   s+5HriX/2jyWxt1FdezOdTIIQjJzMJlS5le5tUzI6mywXJIarTwJ3dXhy
-   cQHLAod0LHVGCMEYw3h8j8iyTvn8LVS46EOGAYdDdtEC737Bd4AMLCtj1
-   w==;
-X-CSE-ConnectionGUID: PTGBgRCMRqmSwiO+kFSOkQ==
-X-CSE-MsgGUID: GfHGXxFgQWO3cMqsm6SOlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="23660039"
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="23660039"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 08:11:48 -0700
-X-CSE-ConnectionGUID: MRZcdSQqR8WQDWbR7wdhlw==
-X-CSE-MsgGUID: LNlWNa+gRM2fJwes5cZcNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
-   d="scan'208";a="55838409"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 04 Aug 2024 08:11:44 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sactZ-0001Tl-2O;
-	Sun, 04 Aug 2024 15:11:41 +0000
-Date: Sun, 4 Aug 2024 23:11:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: zhenghaowei@loongson.cn, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
-	p.zabel@pengutronix.de
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH v2 2/3] tty: serial: 8250: Add loongson uart driver
- support
-Message-ID: <202408042241.zkkSuA60-lkp@intel.com>
-References: <20240804063834.70022-2-zhenghaowei@loongson.cn>
+	s=arc-20240116; t=1722784281; c=relaxed/simple;
+	bh=iGfh6DBKAHksxUBLVKs70Sh77nshqua2Pd6TDFL2Kes=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tOIXHeHdyvH0HjnivXLxFORgs6eR8Vtt4hWMnbV4jxidlhiBP6wv1EPhT0kt+A7jeCSgJqzDjTRUdbPCpGki0luGuvcl8FCpgY0gZMKuesTpZMA/veix9pFHMgG1kcmzSQNqi3jK5cWRtPSQLbPFNr8fgnkYDPO7ZLcdGZ/4iMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WcNJB6tQWz6K5Vy;
+	Sun,  4 Aug 2024 23:08:58 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id B33CF140A35;
+	Sun,  4 Aug 2024 23:11:09 +0800 (CST)
+Received: from localhost (10.195.244.131) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Sun, 4 Aug
+ 2024 16:11:08 +0100
+Date: Sun, 4 Aug 2024 16:11:19 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mike Rapoport <rppt@kernel.org>
+CC: Andrew Morton <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>, Andreas Larsson
+	<andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov
+	<bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>, Dave
+ Hansen <dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>, "Davidlohr Bueso"
+	<dave@stgolabs.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Heiko
+ Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
+ Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
+	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
+	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
+	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, "Thomas
+ Bogendoerfer" <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
+	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
+Subject: Re: [PATCH v3 07/26] mm: drop CONFIG_HAVE_ARCH_NODEDATA_EXTENSION
+Message-ID: <20240804161119.00003a02@Huawei.com>
+In-Reply-To: <Zq8sn5iD1iOmYrss@kernel.org>
+References: <20240801060826.559858-1-rppt@kernel.org>
+	<20240801060826.559858-8-rppt@kernel.org>
+	<20240802104922.000051a0@Huawei.com>
+	<20240803115813.809f808f1afbe9f9feaae129@linux-foundation.org>
+	<Zq8sn5iD1iOmYrss@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240804063834.70022-2-zhenghaowei@loongson.cn>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi,
+On Sun, 4 Aug 2024 10:24:15 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-kernel test robot noticed the following build errors:
+> On Sat, Aug 03, 2024 at 11:58:13AM -0700, Andrew Morton wrote:
+> > On Fri, 2 Aug 2024 10:49:22 +0100 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+> >   
+> > > > --- a/mm/mm_init.c
+> > > > +++ b/mm/mm_init.c
+> > > > @@ -1838,11 +1838,10 @@ void __init free_area_init(unsigned long *max_zone_pfn)
+> > > >  
+> > > >  		if (!node_online(nid)) {
+> > > >  			/* Allocator not initialized yet */
+> > > > -			pgdat = arch_alloc_nodedata(nid);
+> > > > +			pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
+> > > >  			if (!pgdat)
+> > > >  				panic("Cannot allocate %zuB for node %d.\n",
+> > > >  				       sizeof(*pgdat), nid);
+> > > > -			arch_refresh_nodedata(nid, pgdat);  
+> > > 
+> > > This allocates pgdat but never sets node_data[nid] to it
+> > > and promptly leaks it on the line below. 
+> > > 
+> > > Just to sanity check this I spun up a qemu machine with no memory
+> > > initially present on some nodes and it went boom as you'd expect.
+> > > 
+> > > I tested with addition of
+> > > 			NODE_DATA(nid) = pgdat;
+> > > and it all seems to work as expected.  
+> > 
+> > Thanks, I added that.  It blew up on x86_64 allnoconfig because
+> > node_data[] (and hence NODE_DATA()) isn't an lvalue when CONFIG_NUMA=n.
+> > 
+> > I'll put some #ifdef CONFIG_NUMAs in there for now but
+> > 
+> > a) NODE_DATA() is upper-case. Implies "constant".  Shouldn't be assigned to.
+> > 
+> > b) NODE_DATA() should be non-lvalue when CONFIG_NUMA=y also.  But no,
+> >    we insist on implementing things in cpp instead of in C.  
+> 
+> This looks like a candidate for a separate tree-wide cleanup.
+>  
+> > c) In fact assigning to anything which ends in "()" is nuts.  Please
+> >    clean up my tempfix.
+> > 
+> > c) Mike, generally I'm wondering if there's a bunch of code here
+> >    which isn't needed on CONFIG_NUMA=n.  Please check all of this for
+> >    unneeded bloatiness.  
+> 
+> I believe the patch addresses your concerns, just with this the commit log
+> needs update. Instead of 
+> 
+>     Replace the call to arch_alloc_nodedata() in free_area_init() with
+>     memblock_alloc(), remove arch_refresh_nodedata() and cleanup
+>     include/linux/memory_hotplug.h from the associated ifdefery.
+> 
+> it should be
+> 
+>     Replace the call to arch_alloc_nodedata() in free_area_init() with a
+>     new helper alloc_offline_node_data(), remove arch_refresh_nodedata()
+>     and cleanup include/linux/memory_hotplug.h from the associated
+>     ifdefery.
+> 
+> I can send an updated patch if you prefer.
+This solution looks good to me - except for a Freudian typo that means it won't
+compile :)
 
-[auto build test ERROR on tty/tty-testing]
-[also build test ERROR on tty/tty-next tty/tty-linus robh/for-next usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.11-rc1 next-20240802]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Jonathan
 
-url:    https://github.com/intel-lab-lkp/linux/commits/zhenghaowei-loongson-cn/tty-serial-8250-Add-loongson-uart-driver-support/20240804-145047
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
-patch link:    https://lore.kernel.org/r/20240804063834.70022-2-zhenghaowei%40loongson.cn
-patch subject: [PATCH v2 2/3] tty: serial: 8250: Add loongson uart driver support
-config: mips-gpr_defconfig (https://download.01.org/0day-ci/archive/20240804/202408042241.zkkSuA60-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408042241.zkkSuA60-lkp@intel.com/reproduce)
+> 
+> diff --git a/include/linux/numa.h b/include/linux/numa.h
+> index 3b12d8ca0afd..5a749fd67f39 100644
+> --- a/include/linux/numa.h
+> +++ b/include/linux/numa.h
+> @@ -34,6 +34,7 @@ extern struct pglist_data *node_data[];
+>  #define NODE_DATA(nid)	(node_data[nid])
+>  
+>  void __init alloc_node_data(int nid);
+> +void __init alloc_offline_node_data(int nit);
+>  
+>  /* Generic implementation available */
+>  int numa_nearest_node(int node, unsigned int state);
+> @@ -62,6 +63,8 @@ static inline int phys_to_target_node(u64 start)
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline void alloc_offline_node_data(int nit) {}
+nid
+>  #endif
+>  
+>  #define numa_map_to_online_node(node) numa_nearest_node(node, N_ONLINE)
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index bcc2f2dd8021..2785be04e7bb 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -1836,13 +1836,8 @@ void __init free_area_init(unsigned long *max_zone_pfn)
+>  	for_each_node(nid) {
+>  		pg_data_t *pgdat;
+>  
+> -		if (!node_online(nid)) {
+> -			/* Allocator not initialized yet */
+> -			pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
+> -			if (!pgdat)
+> -				panic("Cannot allocate %zuB for node %d.\n",
+> -				       sizeof(*pgdat), nid);
+> -		}
+> +		if (!node_online(nid))
+> +			alloc_offline_node_data(nid);
+>  
+>  		pgdat = NODE_DATA(nid);
+>  		free_area_init_node(nid);
+> diff --git a/mm/numa.c b/mm/numa.c
+> index da27eb151dc5..07e486a977c7 100644
+> --- a/mm/numa.c
+> +++ b/mm/numa.c
+> @@ -34,6 +34,18 @@ void __init alloc_node_data(int nid)
+>  	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+>  }
+>  
+> +void __init alloc_offline_node_data(int nit)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408042241.zkkSuA60-lkp@intel.com/
+nid
 
-All errors (new ones prefixed by >>):
+> +{
+> +	pg_data_t *pgdat;
+> +
+> +	pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
+> +	if (!pgdat)
+> +		panic("Cannot allocate %zuB for node %d.\n",
+> +		      sizeof(*pgdat), nid);
+> +
+> +	node_data[nid] = pgdat;
+> +}
+> +
+>  /* Stub functions: */
+>  
+>  #ifndef memory_add_physaddr_to_nid
+> 
+>  
+> 
 
-   In file included from drivers/tty/serial/8250/8250_loongson.c:14:
-   In file included from drivers/tty/serial/8250/8250.h:11:
-   In file included from include/linux/serial_8250.h:11:
-   In file included from include/linux/serial_core.h:16:
-   In file included from include/linux/tty.h:11:
-   In file included from include/linux/tty_port.h:5:
-   In file included from include/linux/kfifo.h:40:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/tty/serial/8250/8250_loongson.c:200:21: error: call to undeclared function 'of_match_ptr'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     200 |                 .of_match_table = of_match_ptr(of_platform_serial_table),
-         |                                   ^
->> drivers/tty/serial/8250/8250_loongson.c:200:21: error: incompatible integer to pointer conversion initializing 'const struct of_device_id *' with an expression of type 'int' [-Wint-conversion]
-     200 |                 .of_match_table = of_match_ptr(of_platform_serial_table),
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/tty/serial/8250/8250_loongson.c:200:21: error: initializer element is not a compile-time constant
-     200 |                 .of_match_table = of_match_ptr(of_platform_serial_table),
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning and 3 errors generated.
-
-
-vim +/of_match_ptr +200 drivers/tty/serial/8250/8250_loongson.c
-
-   193	
-   194	static struct platform_driver loongson_uart_driver = {
-   195		.probe = loongson_uart_probe,
-   196		.remove = loongson_uart_remove,
-   197		.driver = {
-   198			.name = "ls7a-uart",
-   199			.pm = &loongson_uart_pm_ops,
- > 200			.of_match_table = of_match_ptr(of_platform_serial_table),
-   201		},
-   202	};
-   203	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
