@@ -1,321 +1,347 @@
-Return-Path: <linux-kernel+bounces-273718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450EB946CDC
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:53:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA094946CDD
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE9E11F21F1F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE8F1C214BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031C21400A;
-	Sun,  4 Aug 2024 06:53:21 +0000 (UTC)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317D914F98;
+	Sun,  4 Aug 2024 06:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PsW4d7Z5"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA8E11711
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 06:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACE0FC19;
+	Sun,  4 Aug 2024 06:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722754400; cv=none; b=TBp5fsMj+HGFKUmSwfIbwF010EAd0QpFSgcxiwRbcs0qFqGUHyPrNC9phybuqyq+j/dq7LZLtFx/ImDeBuGiJcBukCCkkVCLxG7ZhhL3ynBscHaYWfbtiA17Cmz0Kq4qmB5IKajWv8cvDr8NtHIKKSOx3JFOOY8SphYZIbpF1WI=
+	t=1722754521; cv=none; b=Vl6mXMOjKiFwUXfPLcESNdRdebRHvk/9pYkekHf3UGOZS/cMfnIp8uCmDuRu0Fkx7siprXkUIAOt1K3Qk4QLPJU/1QWklt4CoTrVR8VK7SMB2qim/9cwjD4Bt5GWpLHMy9Vou0Z+CwswRSXX1/RWo5qyvfEwh23vFfGlYRr8wgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722754400; c=relaxed/simple;
-	bh=bRhzhthEAoUj5RBo9IdM4L8TlS8+VYaYHwVRAES+WYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ap30X8fPqm597jk0knsJ0x2kw5MDWlhYrXKMXWA07we8fRBgTk+zvcLfzi0uxX8CXrX7vGQVMHCs44OEndqfZnUgAOds1ZZZbMHFwd1O9ZgrR64QBKGivSh+MUppdAeruXRI253LzGS1WDIX93wDPSYIMGfDr2AmMhqOjDHAIzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	s=arc-20240116; t=1722754521; c=relaxed/simple;
+	bh=6D/+j4eNn56ySxxT28Z42uljRo92JoDAZoLs78OI/2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+0KA5nnNxF1i3E045PGw/82l6Gbe0FBgz2IAf9TQLE+KNS6UuGHvRWGjS5+taFUem5k0DZJAiiDnEi/7e87WU4TvypGGHlcCefotooDu7JRvmlqC9QmnEL7wCh5mY80aiL0Fw6qBzKm4RI94Vf/Qw+2q9wPTnCVP08ehUimV2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PsW4d7Z5; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3684c05f7afso1203708f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 03 Aug 2024 23:53:18 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b7a4668f07so52265936d6.1;
+        Sat, 03 Aug 2024 23:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722754518; x=1723359318; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sy8FGn/BTbcPJC5MMyxJCn4sZraMIh/6JsCawGK/LUY=;
+        b=PsW4d7Z5H+7AWyc09N4hpnD+L27nIgTNyi4xjxkPsgzhi8L1ams7wBq2JpIP9XJiey
+         nuvPpoLDdT8AGRrJZ7BAG7LOmu6Kf+eKHzAC0pEgdRT6jQWiZLooQvqDI+JWbY4Nu61A
+         Lhc223i87rPaIDMCh/7s9Ym8B9/sXVpRR0pf5FqPX1DpR6utB4ZgELRXL65HMdHUl3Bd
+         5p/SJViEjcYYEyX/iPaZ6EHYgZnFHqLuzhk6GvyzhMmudbs2e2eNXbiXuQqhe8xZ6kSi
+         Fl9ZYSsV/KS8Dvv3jyg2kWsathU121aUl1fi5LVt6duCJSE2rYNg5p4uUhhKt9Sl8YRy
+         2PUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722754397; x=1723359197;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQ3fFs0zirKgueE/jg0W4+3mQDUKFrLvd69SWwZOho8=;
-        b=usdOjFkWfRk6AAMqoIUbv3Bn0PIoMCWVZ3NMo3Jxg7xFl26tRWIjt2CXQ+gGlr5cXv
-         MvrFDK6ALA2AdcrCxpIyrVSlfvRh3JLeVBCoIFH7bFsu9D0OzP7IwQjlOqf5Wa1wmKTJ
-         094826AnNVOaVA5xn7PxJA0np1ZjUczulQt6DDOflr1Q52bhV83q3671ECKDQGqViV8t
-         Xcm1S1EIL6TfubZnGcOfYoQESHdcAdbhWxXjDo5W/regaVjGM6u0lejSfEXsQ1Gs8C0f
-         V50O6EVlwyW2TyUoDex/7hsFK24O5FUVwmuV4cOCpLJb/nTaSWlFQEBeYbJudRsPLBo+
-         5X6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXFVf2YHzDXvfXG6pJQaJ/lH24KiYUgh4D2eh42IkqzMkLo3p0S9i9fRpHVVe+ADsMQ3MMyxC64pN9jhtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeLz+1mdSsGbX2POYpaZ8g5nx4tAIRmsLcNQdxWFKiK1Zi/n4Y
-	9OmPmRcimJN7wQ4i3y6KHjeUwfpl7idK0Di2WPCQG8aY7Sn6S3E2
-X-Google-Smtp-Source: AGHT+IEMso4KTi2NOFueaIe44ywRC+jaeDCRkIzUDPdeLej2S6FDKEEGrzEg8ImsyWD/NQ172QxWlA==
-X-Received: by 2002:a5d:47af:0:b0:35f:2929:8460 with SMTP id ffacd0b85a97d-36bbc0c82e6mr3501231f8f.3.1722754396351;
-        Sat, 03 Aug 2024 23:53:16 -0700 (PDT)
-Received: from [10.50.4.202] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf1e0bcsm5991008f8f.30.2024.08.03.23.53.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 03 Aug 2024 23:53:15 -0700 (PDT)
-Message-ID: <d61a36d8-ed26-43e8-b960-58f458ba13e1@grimberg.me>
-Date: Sun, 4 Aug 2024 09:53:14 +0300
+        d=1e100.net; s=20230601; t=1722754518; x=1723359318;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sy8FGn/BTbcPJC5MMyxJCn4sZraMIh/6JsCawGK/LUY=;
+        b=KCZVG0Do3p97INLKfSElQ9S9yIiRnX3SGQLbhQD3GzkW8X7iMO+V/NkLHQHT6/ZUxc
+         WV32kpfHoWDIB6uIQFqS3RiPEAyv++tKNrdlLsdji/5Vq2Yvu0ZGPmO/PNUpUmLyIbXl
+         OHIDjWlwl6uTQ5oEZDUJHRbsQLkZqblTboB3ZfLtsiMX3Oy/aCppKdaIx27Cb/PpEd1w
+         hp+HuYkmErv6dr5QXjgoS4D3Mm7mluap3F43iQy20lA3xs2jKy4vFO/6n9rIEOOAbzKC
+         8fx1TktNQBxGUderIzT5GOetAOMefOwUR/fyVTyJtpiLwZbJvuWML4JmGo5ubasi43YT
+         o09A==
+X-Forwarded-Encrypted: i=1; AJvYcCUPHS2xlibDzDf+fuMOs2nSriLMv/pvHL/bkpi6yMU+KUnFueD5dea+yHDRlwM766d/gIRjEdxOMa75/2iik8Yz2UXsk+nG+72CZw99crtWjlf0LLuSC3FXJG3T0HCoKB15FvfBl15aa7OhTN4=
+X-Gm-Message-State: AOJu0Yz91e62LE0zzJ080bVwujvojS7eZk4hlRWlu9VUP9FoCoY1XmzO
+	h2NWSODv6aKsdhCU4QU6va/tD7dVwyGq8JPW1jnHK7NhAE7wiDPA
+X-Google-Smtp-Source: AGHT+IEZzvju0oH2WTEc5x1rknfx0xEx4H+x73atNK4I8YNXMMBWEeXs6uVEgXnER87ogp6NHIi6rA==
+X-Received: by 2002:a05:6214:5984:b0:6b0:6400:3b6f with SMTP id 6a1803df08f44-6bb9833d816mr132610476d6.8.1722754518089;
+        Sat, 03 Aug 2024 23:55:18 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c760453sm23062286d6.26.2024.08.03.23.55.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Aug 2024 23:55:17 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id ECA84120006E;
+	Sun,  4 Aug 2024 02:55:16 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Sun, 04 Aug 2024 02:55:16 -0400
+X-ME-Sender: <xms:1CWvZpIRKWvW3XbCRf5rDSvmHyCc86PEnrwfa1vZRnduv-dmCGl6sQ>
+    <xme:1CWvZlLD05xXPzVenzUVYZoI1SCIzKlvITMjCvhoBX9urLrOScD9NEzh2istzwPyd
+    I4OE2OZY1KIqT-3-Q>
+X-ME-Received: <xmr:1CWvZhsunipDn-SNX_oe5UgdTRYtYsBs7dZEQBTFNbfppr__9xKi3FL_lcdasw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeefgdduudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeefiefhueeghfdtfedvudejgeeltdetjeduhfeltdefteduhfehveelfefg
+    feeileenucffohhmrghinhepghhithhhuhgsrdgtohhmpddtjeeiledqshhouhhnugdqgh
+    gvnhgvrhhitgdqughrohhprdhmugdpphhoihhnthgvrhdrrghspdgrshgpphhtrhdrshgr
+    fhgvthihnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:1CWvZqZPjXID0EkXMPwMkppFrs9T3d00JlyEJMZlw9zG8OowyOCINA>
+    <xmx:1CWvZgbSBVkPl1qOD_X4rheCCQmcswfl5JAXwOHuRbfUuvSaLLC_xw>
+    <xmx:1CWvZuBsmnQxE5dvDBvEZHECr1u6TclVpT3epAVxHVQJrhGDn4sNfg>
+    <xmx:1CWvZuYsr3T48hzVvm5FWyBZKFgbrewsFIDE_PVE5wusLS1cV0ZjfA>
+    <xmx:1CWvZsqOpfF06P8zLqZtNZ0c8TdInOFVZ5XID9AU0VUVT4TzXKgksING>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 4 Aug 2024 02:55:16 -0400 (EDT)
+Date: Sat, 3 Aug 2024 23:54:20 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com,
+	akpm@linux-foundation.org, daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
+	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
+	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v3 08/25] rust: types: implement `Unique<T>`
+Message-ID: <Zq8lnBvgqXAk1B5e@boqun-archlinux>
+References: <20240801000641.1882-1-dakr@kernel.org>
+ <20240801000641.1882-9-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30/2] nvmet: use unbound_wq for RDMA and TCP by default
-To: Ping Gan <jacky_gam_2001@163.com>, hare@suse.de, hch@lst.de
-Cc: ping.gan@dell.com, kch@nvidia.com, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <ae3047fc-bdeb-4b63-91ac-f4cc39434415@grimberg.me>
- <20240802033952.125753-1-jacky_gam_2001@163.com>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20240802033952.125753-1-jacky_gam_2001@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801000641.1882-9-dakr@kernel.org>
 
+On Thu, Aug 01, 2024 at 02:02:07AM +0200, Danilo Krummrich wrote:
+> Implement the `Unique` type as a prerequisite for `Box` and `Vec`
+> introduced in subsequent patches.
+> 
+> `Unique` serves as wrapper around a `NonNull`, but indicates that the
+> possessor of this wrapper owns the referent.
+> 
+> This type already exists in Rust's core library, but, unfortunately, is
+> exposed as unstable API and hence shouldn't be used in the kernel.
+> 
+> This implementation of `Unique` is almost identical, but mostly stripped
+> down to the functionality we need for `Box` and `Vec`. Additionally, all
+> unstable features are removed and / or replaced by stable ones.
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
+If I understand correctly, `Unique` does nothing unless the compiler
+supports putting noalias at the corresponding IRs. If so, should this
+depend on whether Rust compiler supports using `Unique` outside std
+libraries?
 
+Regards,
+Boqun
 
-On 02/08/2024 6:39, Ping Gan wrote:
->> On 31/07/2024 10:03, Ping Gan wrote:
->>>> On 26/07/2024 5:34, Ping Gan wrote:
->>>>>> On 19/07/2024 12:19, Ping Gan wrote:
->>>>>>> When running nvmf on SMP platform, current nvme target's RDMA and
->>>>>>> TCP use bounded workqueue to handle IO, but when there is other
->>>>>>> high
->>>>>>> workload on the system(eg: kubernetes), the competition between
->>>>>>> the
->>>>>>> bounded kworker and other workload is very radical. To decrease
->>>>>>> the
->>>>>>> resource race of OS among them, this patchset will switch to
->>>>>>> unbounded
->>>>>>> workqueue for nvmet-rdma and nvmet-tcp; besides that, it can also
->>>>>>> get some performance improvement. And this patchset bases on
->>>>>>> previous
->>>>>>> discussion from below session.
->>>>>>>
->>>>>>> https://lore.kernel.org/lkml/20240719084953.8050-1-jacky_gam_2001@163.com/
->>>>>> Hold your horses.
->>>>>>
->>>>>> This cannot be just switched without a thorough testing and actual
->>>>>> justification/proof of
->>>>>> a benefit beyond just a narrow use-case brought initially by Ping
->>>>>> Gan.
->>>>>>
->>>>>> If the ask is to universally use an unbound workqueue, please
->>>>>> provide
->>>>>> detailed
->>>>>> benchmarking convincing us that this makes sense.
->>>>> So you think we should not do a radical change for the narrow
->>>>> usecase
->>>>> but
->>>>> keep the parameter to enable it in previous version patch, right?
->>>> What I'm saying is that if you want to change the default, please
->>>> provide
->>>> justification in the form of benchmarks that support the change.
->>>> This
->>>> benchmarks should include both throughput, iops and latency
->>>> measurements
->>>> and without the cpu-set constraints you presented originally.
->>> We tested it on our testbed which has 4 numa 96 cores, 190GB memory
->>> and 24 nvme disks, it seems unbound_wq has pretty improvment.  The
->>> creating target test script is below:
->>>
->>> #!/bin/bash
->>> if [ "$#" -ne 3 ] ; then
->>> echo "$0 addr_trtype(tcp/rdma) target_IP target_port"
->>> exit -1
->>> fi
->>> addr_trtype=$1
->>> target_IP=$2
->>> target_port=$3
->>> # there are 24 nvme disks on the testbed
->>> disk_list=(nvme0n1 nvme1n1 nvme2n1 nvme3n1 nvme4n1 nvme5n1 nvme6n1
->>> nvme7n1 nvme8n1 nvme9n1 nvme10n1 nvme11n1 nvme12n1 nvme13n1 nvme14n1
->>> nvme15n1 nvme16n1 nvme17n1 nvme18n1 nvme19n1 nvme20n1 nvme21n1
->>> nvme22n1
->>> nvme23n1)
->>> # create target with multiple disks
->>> create_target_multi_disks() {
->>>           local nqn_name=$1
->>>           local svr_ip=$2
->>>           local svr_port=$3
->>>           local i
->>>           local blk_dev
->>>           local blk_dev_idx=0
->>>           local port_idx=25
->>>           echo "create target: $nqn_name $svr_ip $svr_port"
->>>           mkdir /sys/kernel/config/nvmet/subsystems/${nqn_name}
->>>           echo 1
->>>> /sys/kernel/config/nvmet/subsystems/${nqn_name}/attr_allow_any_host
->>>           for((i=0;i<${#disk_list[@]};i++)); do
->>>                   blk_dev_idx=$((${blk_dev_idx}+1))
->>>                   blk_dev=/dev/${disk_list[$i]}
->>>                   mkdir
->>> /sys/kernel/config/nvmet/subsystems/${nqn_name}/namespaces/${blk_dev_idx}
->>>                   echo  ${blk_dev} >
->>> /sys/kernel/config/nvmet/subsystems/${nqn_name}/namespaces/${blk_dev_idx}/device_path
->>>                   echo 1 >
->>> /sys/kernel/config/nvmet/subsystems/${nqn_name}/namespaces/${blk_dev_idx}/enable
->>>           done
->>>           mkdir /sys/kernel/config/nvmet/ports/${port_idx}
->>>           echo ${addr_trtype}
->>>> /sys/kernel/config/nvmet/ports/${port_idx}/addr_trtype
->>>           echo ipv4
->>>> /sys/kernel/config/nvmet/ports/${port_idx}/addr_adrfam
->>>           echo ${svr_ip}
->>>> /sys/kernel/config/nvmet/ports/${port_idx}/addr_traddr
->>>           echo ${svr_port}
->>>> /sys/kernel/config/nvmet/ports/${port_idx}/addr_trsvcid
->>>           ln -s /sys/kernel/config/nvmet/subsystems/${nqn_name}/
->>> /sys/kernel/config/nvmet/ports/${port_idx}/subsystems/${nqn_name}
->>> }
->>> nvmetcli clear
->>> nqn_name="testnqn_25"
->>> mkdir /sys/kernel/config/nvmet/hosts/hostnqn
->>> create_target_multi_disks ${nqn_name} ${target_IP} ${target_port}
->>>
->>> And the simulation of high workload program is below:
->>>
->>> #define _GNU_SOURCE
->>> #include <stdio.h>
->>> #include <unistd.h>
->>> #include <string.h>
->>> #include <stdlib.h>
->>> #include <pthread.h>
->>> #include <sched.h>
->>> #define THREAD_NUM  (85)
->>> #define MALLOC_SIZE (104857600)
->>> void *loopcostcpu(void *args)
->>> {
->>>           sleep(1);
->>>           int *core_id = (int *)args;
->>>           cpu_set_t cpuset;
->>>           CPU_ZERO(&cpuset);
->>>           CPU_SET(*core_id, &cpuset);
->>>           sched_setaffinity(0, sizeof(cpuset), &cpuset);
->>>           nice(-20);
->>>           long *pt = malloc(MALLOC_SIZE*sizeof(long));
->>>           if (!pt) {
->>>                   printf("error malloc\n");
->>>                   return;
->>>           }
->>>           long i = 0;
->>>           while (1) {
->>>                   for (i = 0; i < MALLOC_SIZE; i++) {
->>>                           pt[i] = i;
->>>                   }
->>>                   //sleep 10ms
->>>                   usleep(10000);
->>>           }
->>>           return;
->>> }
->>> int main(int argc, char *argv[])
->>> {
->>>           pthread_t tid[THREAD_NUM];
->>>           int core_id[THREAD_NUM];
->>>           int result, i, j = 1;
->>>           for (i = 0; i < THREAD_NUM; i++) {
->>>                   core_id[i] = j;
->>>                   j++;
->>>                   result = pthread_create(&tid[i], NULL, loopcostcpu,
->>> 									(void*)
->>> &core_id[i]);
->>>                   if (result) {
->>>                           printf("create thread %d failure\n", i);
->>>                   }
->>>           }
->>>           while(1)
->>>                   sleep(5);
->>>           return 0;
->>> }
->>>
->>> When running above program on target testbed, and we reserved 8
->>> cores(88-95) for nvmet target io threads(both rdma and tcp), then we
->>> used spdk perf(V20.04) as initiator to create 8 IO queues and per
->>> queue has 32 queue depths and 1M randrw io size on another testbed
->>> to verify it.
->>> TCP's test command shown below:
->>> ./spdk_perf_tcp -q 32 -S -P 8 -s 4096 -w randrw -t 300 -c 0xff00000
->>> -o
->>> 1048576 -M 50 -r 'trtype:TCP adrfam:IPv4 traddr:169.254.2.104
->>> trsvcid:4444'
->>> RDMA's test command shown below:
->>> ./spkd_perf_rdma -q 32 -S -P 8 -s 4096 -w randrw -t 300 -c 0xff00000
->>> -o
->>> 1048576 -M 50 -r 'trtype:RDMA adrfam:IPv4 traddr:169.254.2.104
->>> trsvcid:4444'
->>> And we got below test results:
->>> TCP's unbound_wq:  IOPS:4585.64, BW:4585.64 MiB/s, Avglat:167515.56us
->>> TCP's bound_wq:    IOPS:3588.40, BW:3588.40 MiB/s, Avglat:214088.55us
->>> RDMA's unbound_wq: IOPS:6421.47, BW:6421.47 MiB/s, Avglat:119605.17us
->>> RDMA's bound_wq:   IOPS:5919.94, BW:5919.94 MiB/s, Avglat:129744.70us
->>>
->>> It seems using unbound_wq to decreasing competition of CPU between
->>> target IO worker thread and other high workload does make sense.
->> It makes sense for the use case, I agree. What I was asking is to test
->> outside this use-case, where nvmet is used as a JBOF, and not
->> competing
->> with other intensive workloads. Does unbound workqueues damage
->> performance?
->> Back in 2016 it absolutely did.
->>
->> What I would also want to see is a test that addresses latency
->> sensitive
->> workloads, such
->> that the load is not high with large block size, but rather small
->> block
->> size, with medium/low
->> load and see what is the latency for the two options.
-> We had done two group tests for unbound_wq and bound_wq; per group had
-> 6 round tests which included TCP 1M IO size without other workload,
-> TCP 4K IO size without other workload, TCP 4K IO size with medium
-> workload(about 45% CPU cost and 25% memory cost), RDMA 1M IO size
-> without other workload, RDMA 4K IO size without other workload,
-> RDMA 4K IO size with medium workload. And every round test we used
-> 8 IO queues, per queue had 32 queue depths and no CPU affinity with
-> randrw disk to run 1 hour test and we got below results.
->
-> TCP 1M bound_wq:   IOPS:8120.38, BW:8120.38 MiB/s, Avglat:94577.77us
-> TCP 1M unbound_wq: IOPS:8236.16, BW:8236.16 MiB/s, Avglat:93248.18us
->
-> TCP 4K bound_wq:   IOPS:1326767.00, BW:5182.68 MiB/s, Avglat:578.83us
-> TCP 4K unbound_wq: IOPS:952239.52,  BW:3719.69 MiB/s, Avglat:806.49us
->
-> TCP 4K with medium workload bound_wq:
->                     IOPS:944414.21, BW:3689.12 MiB/s, Avglat:813.18us
-> TCP 4K with medium workload unbound_wq:
->                     IOPS:855103.18, BW:3340.25 MiB/s, Avglat:898.11us
->
-> RDMA 1M bound_wq:  IOPS:10111.35, BW:10111.35 MiB/s, Avglat:75954.55us
-> RDMA 1M unbound_wq:IOPS:10108.84, BW:10108.84 MiB/s, Avglat:75973.39us
->
-> RDMA 4K bound_wq:  IOPS:2645207.01, BW:10332.84 MiB/s, Avglat:290.31us
-> RDMA 4K unbound_wq:IOPS:2644785.78, BW:10331.19 MiB/s, Avglat:290.35us
->
-> RDMA 4K with medium workload bound_wq:
->                     IOPS:2595758.58, BW:10139.68 MiB/s, Avglat:295.84us
-> RDMA 4K with medium workload unbound_wq:
->                     IOPS:2551177.45, BW:9965.54 MiB/s, Avglat:301.01us
->
-> It seems in TCP small block size case the unbound_wq has tremendous
-> performance drop.
-
-That is consistent with what I saw back in 2016.
-
->   So I think we should not radically change the default
-> workqueue as unbounded but keep the previous patch with parameter to
-> support the narrow case for performance improvement.
-
-Interestingly though, rdma does not seem to have the same 
-characteristics, although
-I do expect that in *some* workloads the overhead is meaningful.
-
-My position is that this change should be presented as a modparam. In 
-the long run, I'd think
-we want to introduce polling threads to nvmet and move the scheduling to 
-it, but it is a larger project,
-and when when that happens, I'd rather deprecate the modparam instead of 
-introducing this change
-that impacts performance in any meaningful way.
+> ---
+>  rust/kernel/types.rs | 183 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 183 insertions(+)
+> 
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index bd189d646adb..7cf89067b5fc 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+> @@ -473,3 +473,186 @@ unsafe impl AsBytes for str {}
+>  // does not have any uninitialized portions either.
+>  unsafe impl<T: AsBytes> AsBytes for [T] {}
+>  unsafe impl<T: AsBytes, const N: usize> AsBytes for [T; N] {}
+> +
+> +/// A wrapper around a raw non-null `*mut T` that indicates that the possessor
+> +/// of this wrapper owns the referent. Useful for building abstractions like
+> +/// `Box<T>`, `Vec<T>`, `String`, and `HashMap<K, V>`.
+> +///
+> +/// Unlike `*mut T`, `Unique<T>` behaves "as if" it were an instance of `T`.
+> +/// It implements `Send`/`Sync` if `T` is `Send`/`Sync`. It also implies
+> +/// the kind of strong aliasing guarantees an instance of `T` can expect:
+> +/// the referent of the pointer should not be modified without a unique path to
+> +/// its owning Unique.
+> +///
+> +/// If you're uncertain of whether it's correct to use `Unique` for your purposes,
+> +/// consider using `NonNull`, which has weaker semantics.
+> +///
+> +/// Unlike `*mut T`, the pointer must always be non-null, even if the pointer
+> +/// is never dereferenced. This is so that enums may use this forbidden value
+> +/// as a discriminant -- `Option<Unique<T>>` has the same size as `Unique<T>`.
+> +/// However the pointer may still dangle if it isn't dereferenced.
+> +///
+> +/// Unlike `*mut T`, `Unique<T>` is covariant over `T`. This should always be correct
+> +/// for any type which upholds Unique's aliasing requirements.
+> +#[repr(transparent)]
+> +pub struct Unique<T: ?Sized> {
+> +    pointer: NonNull<T>,
+> +    // NOTE: this marker has no consequences for variance, but is necessary
+> +    // for dropck to understand that we logically own a `T`.
+> +    //
+> +    // For details, see:
+> +    // https://github.com/rust-lang/rfcs/blob/master/text/0769-sound-generic-drop.md#phantom-data
+> +    _marker: PhantomData<T>,
+> +}
+> +
+> +/// `Unique` pointers are `Send` if `T` is `Send` because the data they
+> +/// reference is unaliased. Note that this aliasing invariant is
+> +/// unenforced by the type system; the abstraction using the
+> +/// `Unique` must enforce it.
+> +unsafe impl<T: Send + ?Sized> Send for Unique<T> {}
+> +
+> +/// `Unique` pointers are `Sync` if `T` is `Sync` because the data they
+> +/// reference is unaliased. Note that this aliasing invariant is
+> +/// unenforced by the type system; the abstraction using the
+> +/// `Unique` must enforce it.
+> +unsafe impl<T: Sync + ?Sized> Sync for Unique<T> {}
+> +
+> +impl<T: Sized> Unique<T> {
+> +    /// Creates a new `Unique` that is dangling, but well-aligned.
+> +    ///
+> +    /// This is useful for initializing types which lazily allocate, like
+> +    /// `Vec::new` does.
+> +    ///
+> +    /// Note that the pointer value may potentially represent a valid pointer to
+> +    /// a `T`, which means this must not be used as a "not yet initialized"
+> +    /// sentinel value. Types that lazily allocate must track initialization by
+> +    /// some other means.
+> +    #[must_use]
+> +    #[inline]
+> +    pub const fn dangling() -> Self {
+> +        Unique {
+> +            pointer: NonNull::dangling(),
+> +            _marker: PhantomData,
+> +        }
+> +    }
+> +}
+> +
+> +impl<T: ?Sized> Unique<T> {
+> +    /// Creates a new `Unique`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `ptr` must be non-null.
+> +    #[inline]
+> +    pub const unsafe fn new_unchecked(ptr: *mut T) -> Self {
+> +        // SAFETY: the caller must guarantee that `ptr` is non-null.
+> +        unsafe {
+> +            Unique {
+> +                pointer: NonNull::new_unchecked(ptr),
+> +                _marker: PhantomData,
+> +            }
+> +        }
+> +    }
+> +
+> +    /// Creates a new `Unique` if `ptr` is non-null.
+> +    #[allow(clippy::manual_map)]
+> +    #[inline]
+> +    pub fn new(ptr: *mut T) -> Option<Self> {
+> +        if let Some(pointer) = NonNull::new(ptr) {
+> +            Some(Unique {
+> +                pointer,
+> +                _marker: PhantomData,
+> +            })
+> +        } else {
+> +            None
+> +        }
+> +    }
+> +
+> +    /// Acquires the underlying `*mut` pointer.
+> +    #[must_use = "`self` will be dropped if the result is not used"]
+> +    #[inline]
+> +    pub const fn as_ptr(self) -> *mut T {
+> +        self.pointer.as_ptr()
+> +    }
+> +
+> +    /// Dereferences the content.
+> +    ///
+> +    /// The resulting lifetime is bound to self so this behaves "as if"
+> +    /// it were actually an instance of T that is getting borrowed. If a longer
+> +    /// (unbound) lifetime is needed, use `&*my_ptr.as_ptr()`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Safety requirements for this function are inherited from [NonNull::as_ref].
+> +    ///
+> +    #[must_use]
+> +    #[inline]
+> +    pub const unsafe fn as_ref(&self) -> &T {
+> +        // SAFETY: the caller must guarantee that `self` meets all the
+> +        // requirements for a reference.
+> +        unsafe { self.pointer.as_ref() }
+> +    }
+> +
+> +    /// Mutably dereferences the content.
+> +    ///
+> +    /// The resulting lifetime is bound to self so this behaves "as if"
+> +    /// it were actually an instance of T that is getting borrowed. If a longer
+> +    /// (unbound) lifetime is needed, use `&mut *my_ptr.as_ptr()`.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Safety requirements for this function are inherited from [NonNull::as_mut].
+> +    #[must_use]
+> +    #[inline]
+> +    pub unsafe fn as_mut(&mut self) -> &mut T {
+> +        // SAFETY: the caller must guarantee that `self` meets all the
+> +        // requirements for a mutable reference.
+> +        unsafe { self.pointer.as_mut() }
+> +    }
+> +
+> +    /// Casts to a pointer of another type.
+> +    #[must_use = "`self` will be dropped if the result is not used"]
+> +    #[inline]
+> +    pub fn cast<U>(self) -> Unique<U> {
+> +        Unique::from(self.pointer.cast())
+> +    }
+> +
+> +    /// Acquires the underlying `*mut` pointer.
+> +    #[must_use = "`self` will be dropped if the result is not used"]
+> +    #[inline]
+> +    pub const fn as_non_null(self) -> NonNull<T> {
+> +        self.pointer
+> +    }
+> +}
+> +
+> +impl<T: ?Sized> Clone for Unique<T> {
+> +    #[inline]
+> +    fn clone(&self) -> Self {
+> +        *self
+> +    }
+> +}
+> +
+> +impl<T: ?Sized> Copy for Unique<T> {}
+> +
+> +impl<T: ?Sized> From<&mut T> for Unique<T> {
+> +    /// Converts a `&mut T` to a `Unique<T>`.
+> +    ///
+> +    /// This conversion is infallible since references cannot be null.
+> +    #[inline]
+> +    fn from(reference: &mut T) -> Self {
+> +        Self::from(NonNull::from(reference))
+> +    }
+> +}
+> +
+> +impl<T: ?Sized> From<NonNull<T>> for Unique<T> {
+> +    /// Converts a `NonNull<T>` to a `Unique<T>`.
+> +    ///
+> +    /// This conversion is infallible since `NonNull` cannot be null.
+> +    #[inline]
+> +    fn from(pointer: NonNull<T>) -> Self {
+> +        Unique {
+> +            pointer,
+> +            _marker: PhantomData,
+> +        }
+> +    }
+> +}
+> -- 
+> 2.45.2
+> 
 
