@@ -1,285 +1,129 @@
-Return-Path: <linux-kernel+bounces-273957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8A4947024
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:46:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8203D947026
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29A4E2813F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:46:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD435B20EB6
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2970B13CFAD;
-	Sun,  4 Aug 2024 17:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F48137C35;
+	Sun,  4 Aug 2024 17:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDGYKwkG"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a20N6OPA"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7082A13C9B3;
-	Sun,  4 Aug 2024 17:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AB879C2
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 17:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722793486; cv=none; b=JX+J7okosr4GylRW+FylPTvpfm6Zm1ufWLcDInhokg8I9Kgp5AI4SDULPSLlDguPm90KB/0InYfuteX/eEHGXp+TrvdN8iZHTnKKaRKHBRUYVfd/dVCCgAaIPgZCxIGlP2y/fEg+anWmf38meWkUo3d+gcxLty9AglklspVgDzM=
+	t=1722793665; cv=none; b=hF7yfBLHYYDcA7VsVdy13HLPCA82mb5msR1g6mXE4UiI+DulwPsVXQ6Razm48KVZkQ+y96NnCOc+zxKifSyFzSKA3DB24U0QTZtALPkpovbdoUbg1IpbVhTFZbJG4USbu25eRGLEpotB/6v2GJbXnhC2QnJEktHHQ2Lsmd7I0n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722793486; c=relaxed/simple;
-	bh=lmFBhiEFLBTNsYdGWhN1b++NrZ+263IZTBSJ7kubIr0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MtpGp3pn/n8NB8/FpvZRwdFllaHUlGCMIupkvyaAJDoH/a8dvW9rwedF3ThQsc+sPZqxUle62bcV0i6JCLxNYg28t08ndLpyonbkvQXYCTOZVqiMQlQ6c8z38ds6uQ+ookiRYYnNFofeVWzRLkkxD2Pt/Km/HON10bmaZr/yEwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDGYKwkG; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so58153025e9.2;
-        Sun, 04 Aug 2024 10:44:44 -0700 (PDT)
+	s=arc-20240116; t=1722793665; c=relaxed/simple;
+	bh=bOgLAWiryn7xEv3dr/gbDtDBKa2ZiHm5hldnXh/vfMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ir2DEaTgOM/OPyiv1KndDeBsjEO7Oe8IcfGhJzBdMBymdCsU/yE/LT9BEYGHzOGj9nhg/TgpetZFmFOHS3cIm4sSfXHcYs4m0Jjtl6nNoF6iNjj3eOFF2swavTeP3YuQfjhaN90yB7L2BnZe9bSbGZzDlwtNkCmn5DjL5cYEYk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=a20N6OPA; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7aada2358fso803625066b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 10:47:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722793483; x=1723398283; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9UVSgx2w+2h8saQn7Nf58i+A85otGYnCOTiNQf2qOnE=;
-        b=EDGYKwkGKiZj9hr6qh6zBNxbLtkYsvyMxIDlaVtTJvMOnT/JgYPeiHlm2/dzBQkEqI
-         kz7J8Nfuh7+8EUSq5b6zNbGC1vvf45m+sFTevNtR/qt+FGd769SNz4Sds+aVhf4JdZY+
-         idb1dWbgAzXdEVq2QhUMJ4B52qVOjJB++xK3SikF7yRhgby7yREUOwMmKTV2RLqrk83j
-         0b5KSg3Sg8pldrqFdwh9jNoGiKjZLuwGUWj+qk3mogOi2vTYuDWoiggfOLuhKKHdG9h6
-         XteCawB13GrIQoVG7icKAEjgmRY0OtY0JHCy7RQ+3gTGlsZXXzxpXc/VtWV6kS/tYwAe
-         fBLg==
+        d=linux-foundation.org; s=google; t=1722793661; x=1723398461; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eFhZkSjf7SjBgrgKTzxQPt8eoEIiy87wk6mCd461L7Y=;
+        b=a20N6OPACT4t7hJSur6lcM6D4ohi4Alagq07VgYjymdFB7MkWhWnww++mSPfM7UQqq
+         9O3azp1TmEXLYLvsa6kXS9PZAVO0skTAoPrLcILWThoF8bo8JxVg6hZGm7vKi+ZAG/lA
+         yAfDzQYzgCs4wGTPwNlToLWD8Jh4r8EbqZG0M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722793483; x=1723398283;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9UVSgx2w+2h8saQn7Nf58i+A85otGYnCOTiNQf2qOnE=;
-        b=IkcpEYVtVhn4QN4GVNsxdoDKLMfSpiaA2gfkSkM2ZpMQ1jpG4VoghEfICc1eTSRt6w
-         npW2vXNzp9TkRa4RKWyQC0uMj1GCXiRQlZ9TAYuAu1nXNSle8Nft4xNtGeOoD5Phf6kb
-         OhI+TC1vDcmmtWTmTfJnVTyHCDl5+afJzJxX8kaHLkUbXAoL7XdO5jOpmB22x/Yw6rU/
-         oiy2CfDdaNz+0eZVXLpQhGM0vLdnD6h0xMtLHFpBwYcpQNf+eGu9VBprrkVWTbDajTkA
-         T2OX+MbzmYZF104n9krtJZJNB8rjGYyJjCpu6NxvBPCJglagO2xAuwlFRVBGJhYQzUjt
-         tmiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVVFbQel7k8K6k3Fq9Avc/SEyldWWap0tXfOx8htN2FqZoczsiRuJpjPKdu7REwpgG4n8kJ32/vzfT5fMtYhRXK/xE4Hr+RcrENG8BzgaLW6OccScBpifXkAyA9XC9/Jv3ZT2eblRuWoKBB1ZfahWPlFbl5emjqp0/FW2coPAGF+AaOg==
-X-Gm-Message-State: AOJu0YxdSfAjQOz/klo/xNN9fdSlwF+DlMZfc0ZyqYu03Hg1BL6fS75S
-	LyFdKIpdWmazPqj3S2LrHz0X1ScL3uiCM+rQsjnUxAFZjPWnG/pv
-X-Google-Smtp-Source: AGHT+IEDPxzd3sx2oWn1F3P5fvzhOdH1szNT0s2kg9Hk1mFyBChT102gESKjdtASr5YYir/D+vGkrQ==
-X-Received: by 2002:a7b:c846:0:b0:426:6f17:531 with SMTP id 5b1f17b1804b1-428e6afe872mr64997295e9.13.1722793482561;
-        Sun, 04 Aug 2024 10:44:42 -0700 (PDT)
-Received: from localhost.localdomain (host-87-6-196-30.retail.telecomitalia.it. [87.6.196.30])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-428e6e0357asm109530485e9.12.2024.08.04.10.44.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 10:44:42 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-nvme@lists.infradead.org
-Subject: [PATCH v2 6/6] mtd: parser: add support for Airoha parser
-Date: Sun,  4 Aug 2024 19:44:10 +0200
-Message-ID: <20240804174414.18171-7-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240804174414.18171-1-ansuelsmth@gmail.com>
-References: <20240804174414.18171-1-ansuelsmth@gmail.com>
+        d=1e100.net; s=20230601; t=1722793661; x=1723398461;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eFhZkSjf7SjBgrgKTzxQPt8eoEIiy87wk6mCd461L7Y=;
+        b=IQX0FItG1eW1O9XMw0HlTS2ejpj/3tbOR2zmfwZC+UnuQacfbJ8kbbONVC/z1MU5kW
+         xFennyQgf+i5S5pJmxXs/8ZoSnsDLspI/c3lBAmfCo7rK/frWIKl/+eW3KaApVcvWSf5
+         mwN+nZNE+xoIYxpUSh82yLokAKOo6mOHiJOeNdKzCWSKXQI3hf/d+1ZFDkPCmnaBguxF
+         Q2unBMD6TOUqLrBFhBT3yUxGWLl4gY6P4QAWcXu9EIOCbCG3MhAF7QA7jSk3g9UtdZQW
+         uBSVe+6Qt83RUGrnVGzHpBX435KmyyM4hY3Vr9JKdb22saNMKGB6NFVn6+SMMb0rYXPe
+         fIuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvEOifDMo5841RQ1YqXvq3cu0uTBidohzVwSfvLLjpXfXvmoYZtrQFq4EiVb8WGcZqq/Wx6R+XIhzthWE7DhyL7f3Izb/msJtZeS8m
+X-Gm-Message-State: AOJu0YyVix8aX+7bzm23zQT0UbMvkUTeCENDSQDBn236d34NQCWWxxGM
+	1QmXV4lmRacuEXASRMjfnM6TuCuImInrHLSC1gY1wAEWyPqcOEm2V5O+VxukMwyOO4XR19lloG4
+	GhoMehg==
+X-Google-Smtp-Source: AGHT+IEJURgz+g+bBk7SGK182Y2VRRDuqNNFH0KKQbYktAT/qFU6vcxkD4gVXHhF4q4O2pwILRXF0A==
+X-Received: by 2002:a17:907:6e87:b0:a7a:b26d:fb5 with SMTP id a640c23a62f3a-a7dbcc28512mr904850466b.19.1722793661631;
+        Sun, 04 Aug 2024 10:47:41 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9eca4f4sm349215066b.218.2024.08.04.10.47.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 10:47:40 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7a94478a4eso828597966b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 10:47:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWF47rBntOjuM/hBSXGu6ybWlYKbc1A2p/jmrmqpPY2U1PGLerGxIKt59BYHE/7pGgpm+BtmYoJ9he44cZQgOdUR92p6scU6VL8hZv1
+X-Received: by 2002:a17:907:804:b0:a7a:130e:fb6e with SMTP id
+ a640c23a62f3a-a7dbcc21307mr914595866b.15.1722793659883; Sun, 04 Aug 2024
+ 10:47:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net> <20240804152327.GA27866@redhat.com>
+In-Reply-To: <20240804152327.GA27866@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 4 Aug 2024 10:47:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whg0d5rxiEcPFApm+4FC2xq12sjynDkGHyTFNLr=tPmiw@mail.gmail.com>
+Message-ID: <CAHk-=whg0d5rxiEcPFApm+4FC2xq12sjynDkGHyTFNLr=tPmiw@mail.gmail.com>
+Subject: Re: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first
+ in ELF cores)
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Brian Mak <makb@juniper.net>, "Eric W. Biederman" <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for Airoha parser based on a post parse ofpart function.
+On Sun, 4 Aug 2024 at 08:23, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> What do you think?
 
-Airoha partition table follow normal fixed-partition implementation
-with a special implementation for the ART partition. This is always the
-last partition and is placed from the end of the flash - the partition
-size.
+Eww. I really don't like giving the dumper ptrace rights.
 
-To enable this special implementation for ART partition, the relevant
-node require the "airoha,dynamic-art" compatible. With that declared,
-offset value is ignored and real offset is updated with the calculated
-value.
+I think the real limitations of the "dump to pipe" is that it's just
+being very stupid. Which is fine in the sense that core dumps aren't
+likely to be a huge priority. But if or when they _are_ a priority,
+it's not a great model.
 
-Due to usage of specific bad block management driver, the MTD size might
-vary hence the ART partition offset needs to be dynamically parsed and
-can't be declared statically.
+So I prefer the original patch because it's also small, but it's
+conceptually much smaller.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/mtd/parsers/Kconfig         | 10 ++++++
- drivers/mtd/parsers/Makefile        |  1 +
- drivers/mtd/parsers/ofpart_airoha.c | 56 +++++++++++++++++++++++++++++
- drivers/mtd/parsers/ofpart_airoha.h | 18 ++++++++++
- drivers/mtd/parsers/ofpart_core.c   |  6 ++++
- 5 files changed, 91 insertions(+)
- create mode 100644 drivers/mtd/parsers/ofpart_airoha.c
- create mode 100644 drivers/mtd/parsers/ofpart_airoha.h
+That said, even that simplified v2 looks a bit excessive to me.
 
-diff --git a/drivers/mtd/parsers/Kconfig b/drivers/mtd/parsers/Kconfig
-index da03ab6efe04..d6c53aa16ea6 100644
---- a/drivers/mtd/parsers/Kconfig
-+++ b/drivers/mtd/parsers/Kconfig
-@@ -72,6 +72,16 @@ config MTD_OF_PARTS
- 	  flash memory node, as described in
- 	  Documentation/devicetree/bindings/mtd/mtd.yaml.
- 
-+config MTD_OF_PARTS_AIROHA
-+	bool "Airoha EN7815 partitioning support"
-+	depends on MTD_OF_PARTS && (ARCH_AIROHA || COMPILE_TEST)
-+	default ARCH_AIROHA
-+	help
-+	  This provides partitions parser for Airoha EN7815 family devices
-+	  that can have dynamic "ART" partition at the end of the flash.
-+	  It takes care of finding the correct offset and update property
-+	  with it.
-+
- config MTD_OF_PARTS_BCM4908
- 	bool "BCM4908 partitioning support"
- 	depends on MTD_OF_PARTS && (ARCH_BCMBCA || COMPILE_TEST)
-diff --git a/drivers/mtd/parsers/Makefile b/drivers/mtd/parsers/Makefile
-index 9b00c62b837a..d67f9b4d39ac 100644
---- a/drivers/mtd/parsers/Makefile
-+++ b/drivers/mtd/parsers/Makefile
-@@ -5,6 +5,7 @@ obj-$(CONFIG_MTD_BRCM_U_BOOT)		+= brcm_u-boot.o
- obj-$(CONFIG_MTD_CMDLINE_PARTS)		+= cmdlinepart.o
- obj-$(CONFIG_MTD_OF_PARTS)		+= ofpart.o
- ofpart-y				+= ofpart_core.o
-+ofpart-$(CONFIG_MTD_OF_PARTS_AIROHA)	+= ofpart_airoha.o
- ofpart-$(CONFIG_MTD_OF_PARTS_BCM4908)	+= ofpart_bcm4908.o
- ofpart-$(CONFIG_MTD_OF_PARTS_LINKSYS_NS)+= ofpart_linksys_ns.o
- obj-$(CONFIG_MTD_PARSER_IMAGETAG)	+= parser_imagetag.o
-diff --git a/drivers/mtd/parsers/ofpart_airoha.c b/drivers/mtd/parsers/ofpart_airoha.c
-new file mode 100644
-index 000000000000..905df53f7716
---- /dev/null
-+++ b/drivers/mtd/parsers/ofpart_airoha.c
-@@ -0,0 +1,56 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Christian Marangi <ansuelsmth@gmail.com>
-+ */
-+
-+#include <linux/mtd/mtd.h>
-+#include <linux/mtd/partitions.h>
-+
-+#include "ofpart_airoha.h"
-+
-+int airoha_partitions_post_parse(struct mtd_info *mtd,
-+				 struct mtd_partition *parts,
-+				 int nr_parts)
-+{
-+	struct mtd_partition *part;
-+	int len, a_cells, s_cells;
-+	struct device_node *pp;
-+	struct property *prop;
-+	const __be32 *reg;
-+	__be32 *new_reg;
-+
-+	part = &parts[nr_parts - 1];
-+	pp = part->of_node;
-+
-+	/* Skip if ART partition have a valid offset instead of a dynamic one */
-+	if (!of_device_is_compatible(pp, "airoha,dynamic-art"))
-+		return 0;
-+
-+	/* ART partition is set at the end of flash - size */
-+	part->offset = mtd->size - part->size;
-+
-+	/* Update the offset with the new calculate value in DT */
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop)
-+		return -ENOMEM;
-+
-+	/* Reg already validated by fixed-partition parser */
-+	reg = of_get_property(pp, "reg", &len);
-+
-+	/* Fixed partition */
-+	a_cells = of_n_addr_cells(pp);
-+	s_cells = of_n_size_cells(pp);
-+
-+	prop->name = "reg";
-+	prop->length = (a_cells + s_cells) * sizeof(__be32);
-+	prop->value = kmemdup(reg, (a_cells + s_cells) * sizeof(__be32),
-+			      GFP_KERNEL);
-+	new_reg = prop->value;
-+	memset(new_reg, 0, a_cells * sizeof(__be32));
-+	new_reg[a_cells - 1] = cpu_to_be32(part->offset);
-+	if (a_cells > 1)
-+		new_reg[0] = cpu_to_be32(part->offset >> 32);
-+	of_update_property(pp, prop);
-+
-+	return 0;
-+}
-diff --git a/drivers/mtd/parsers/ofpart_airoha.h b/drivers/mtd/parsers/ofpart_airoha.h
-new file mode 100644
-index 000000000000..3e8a8456c13a
---- /dev/null
-+++ b/drivers/mtd/parsers/ofpart_airoha.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __OFPART_AIROHA_H
-+#define __OFPART_AIROHA_H
-+
-+#ifdef CONFIG_MTD_OF_PARTS_AIROHA
-+int airoha_partitions_post_parse(struct mtd_info *mtd,
-+				 struct mtd_partition *parts,
-+				 int nr_parts);
-+#else
-+static inline int airoha_partitions_post_parse(struct mtd_info *mtd,
-+					       struct mtd_partition *parts,
-+					       int nr_parts)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+
-+#endif
-diff --git a/drivers/mtd/parsers/ofpart_core.c b/drivers/mtd/parsers/ofpart_core.c
-index e7b8e9d0a910..9e078636d158 100644
---- a/drivers/mtd/parsers/ofpart_core.c
-+++ b/drivers/mtd/parsers/ofpart_core.c
-@@ -16,6 +16,7 @@
- #include <linux/slab.h>
- #include <linux/mtd/partitions.h>
- 
-+#include "ofpart_airoha.h"
- #include "ofpart_bcm4908.h"
- #include "ofpart_linksys_ns.h"
- 
-@@ -23,6 +24,10 @@ struct fixed_partitions_quirks {
- 	int (*post_parse)(struct mtd_info *mtd, struct mtd_partition *parts, int nr_parts);
- };
- 
-+static struct fixed_partitions_quirks airoha_partitions_quirks = {
-+	.post_parse = airoha_partitions_post_parse,
-+};
-+
- static struct fixed_partitions_quirks bcm4908_partitions_quirks = {
- 	.post_parse = bcm4908_partitions_post_parse,
- };
-@@ -192,6 +197,7 @@ static const struct of_device_id parse_ofpart_match_table[] = {
- 	/* Generic */
- 	{ .compatible = "fixed-partitions" },
- 	/* Customized */
-+	{ .compatible = "airoha,fixed-partitions", .data = &airoha_partitions_quirks, },
- 	{ .compatible = "brcm,bcm4908-partitions", .data = &bcm4908_partitions_quirks, },
- 	{ .compatible = "linksys,ns-partitions", .data = &linksys_ns_partitions_quirks, },
- 	{},
--- 
-2.45.2
+Does it really help so much to create a new array of core_vma_metadata
+pointers - could we not just sort those things in place?
 
+Also, honestly, if the issue is core dump truncation, at some point we
+should just support truncating individual mappings rather than the
+whole core file anyway. No?
+
+Depending on what the major issue is, we might also tweak the
+heuristics for which vmas get written out.
+
+For example, I wouldn't be surprised if there's a fair number of "this
+read-only private file mapping gets written out because it has been
+written to" due to runtime linking. And I kind of suspect that in many
+cases that's not all that interesting.
+
+Anyway, I assume that Brian had some specific problem case that
+triggered this all, and I'd like to know a bit more.
+
+           Linus
 
