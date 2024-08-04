@@ -1,84 +1,99 @@
-Return-Path: <linux-kernel+bounces-273966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E19947033
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:53:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220A2947034
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1F89B21267
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7AE0280E4C
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CCF21350;
-	Sun,  4 Aug 2024 17:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBBC1369B1;
+	Sun,  4 Aug 2024 17:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjKSPxcJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlRkwqE9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AE213C66A;
-	Sun,  4 Aug 2024 17:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EF379C2;
+	Sun,  4 Aug 2024 17:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722793930; cv=none; b=RxIuqCkLm579Y7FOFWkObrE0rSQhv+TD0/YRH076DjIERPbqhIFZFsaRHliiH0HZLSzBZQ8f2se2JxDSXqRuQ926WCKPy8R48k2nd62+HQ++YnIiIOa+SsUrUXoG6JkUpz1LG5Xi836uXSSeFK+0gDsBJY8lc1omGzkWuZYAIGs=
+	t=1722794086; cv=none; b=t1QnXRxHUlALMF3Chg+UIz8J7qdlAsFA7FbfDF4CUgGUGN60IlP0EFptywXFcnGs67KgUQ/VCCr+BQNumA4/N2tgIRWMxO5M1MJx1HDP/UhRprQUWt52nS/yABxrnNOULXsXWgE+a7Ez0SnWf16Sjj6FkKShzktu+5qQTszww5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722793930; c=relaxed/simple;
-	bh=Us0lXeHWzyR7k9ugOLi0cBmrKAZznLPVB/DSKGK+xlY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lI7lF3G3V5Fr7WifgDtg+rSl06jOOv1TV6SuIU+DqqZl305BVZOXhl2yTc0USyfS90+1yFX16mMlXGJnlqB3MH11u7Zd15AGbnDi9z6ioCDmePtQaI2FNcuAGqVBt42hUsxdZRwk8uRdkiKR40Y3uMfuMY4UfZiamLc0/Bftj5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GjKSPxcJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F001C4AF1D;
-	Sun,  4 Aug 2024 17:52:06 +0000 (UTC)
+	s=arc-20240116; t=1722794086; c=relaxed/simple;
+	bh=CiZr9g0FV8fPACr6xthb7JjGo6m95xlIky84HIGH0NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J/6E0HIFPAqGhN/6k2CjorRwajR6HQWZdJlThvIqXNOPeJP3KgmCOU41W3TBICDrXsyUKeio9Uj0tODgODxxNHcb8V5/k7nI5lFSV1OD+Ad8jjMsWmZcAokYV8dFqWTVW3ge6hbjBF/ts512Vm/yZX4w9m/GdvT7Iq9enmSq30k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlRkwqE9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4678AC32786;
+	Sun,  4 Aug 2024 17:54:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722793930;
-	bh=Us0lXeHWzyR7k9ugOLi0cBmrKAZznLPVB/DSKGK+xlY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=GjKSPxcJCs71o677BS6gX5usbzQ4C6Bu4IuTBO0snjW3uFuCli48wzWShb2eAfm+x
-	 pjMW4mZSdyZWJGszs5blrOcGJXXzFbFT82tFH1hg2OHlq4igguH10oiQBwOa5TivXo
-	 E1sF6IM0Athg3VoSNpvvZibf/us0Mt4t87zT2QB3/CSTHDjP+vFC3jJh8VGEAQuN6M
-	 5yrHib9uPrZ0j7CtENPTl5r4CltEb3hCnmbomhlCalOIMlgHEizTygXcUqx15mLNJk
-	 eNSyhbywwKaHYy8g1tmZ+A7WuaoIHhi1smPVP6xY6MqYuQji/7+d4wbWlMgofXRX4E
-	 frstCGG0HyonA==
-From: Vinod Koul <vkoul@kernel.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
-Message-Id: <172279392602.406224.4966447752583319349.b4-ty@kernel.org>
-Date: Sun, 04 Aug 2024 23:22:06 +0530
+	s=k20201202; t=1722794085;
+	bh=CiZr9g0FV8fPACr6xthb7JjGo6m95xlIky84HIGH0NE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rlRkwqE9XJor4TjmfM8E5NuhU5zMgaEKFsoFYuA52Y27VVChXATSX4jYYyx0p5Zdg
+	 4glpsGU9A/W0pGGvRfhztSYi1M3jhBPptB+os8gDA5SByQs9n5YZNiFsHztHjYr1kT
+	 udmDb9eujXaL88YzoQc2D8rxn+ldYRvUFjowMl0GxSFq/mq4/yjagzNrhYuFOtywZx
+	 JrZ4OWGQvtfcqnSVv1wdJ4ZaIkX8mU8VhV3TMd33S22hS/ZHAud50DP7lh1C5V7385
+	 xGiRQvbaXqCAlwOqKzWhSg7VcZIaaxzbx/zI6673egnziRTiFEcblUAAoNX5RtUUvC
+	 N3x382hZeysLA==
+Date: Sun, 4 Aug 2024 10:54:43 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH 1/5] Compiler Attributes: update GCC and Clang's
+ `counted_by` URLs
+Message-ID: <20240804175443.GA2627063@thelio-3990X>
+References: <20240803171933.483316-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240803171933.483316-1-ojeda@kernel.org>
 
-
-On Mon, 08 Jul 2024 12:04:33 -0500, Dan Carpenter wrote:
-> Return negative -ENOMEM instead of positive ENOMEM.
+On Sat, Aug 03, 2024 at 07:19:29PM +0200, Miguel Ojeda wrote:
+> Clang 18 was released with support for `counted_by`, thus point to the
+> documentation now instead of the implementation PR.
 > 
+> Similarly, GCC's bugzilla issue is now closed and GCC has a documentation
+> page for it.
 > 
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Applied, thanks!
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-[1/1] phy: exynos5-usbdrd: fix error code in probe()
-      commit: 3a07703a523045cbdb0a5fa5e0902a9145ee43e9
-
-Best regards,
--- 
-Vinod Koul <vkoul@kernel.org>
-
+> ---
+>  include/linux/compiler_attributes.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+> index 32284cd26d52..b658136e6cda 100644
+> --- a/include/linux/compiler_attributes.h
+> +++ b/include/linux/compiler_attributes.h
+> @@ -98,8 +98,8 @@
+>   * Optional: only supported since gcc >= 15
+>   * Optional: only supported since clang >= 18
+>   *
+> - *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
+> - * clang: https://github.com/llvm/llvm-project/pull/76348
+> + *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-counted_005fby-variable-attribute
+> + * clang: https://clang.llvm.org/docs/AttributeReference.html#counted-by
+>   */
+>  #if __has_attribute(__counted_by__)
+>  # define __counted_by(member)		__attribute__((__counted_by__(member)))
+> 
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> -- 
+> 2.46.0
+> 
 
