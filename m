@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-273699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6623946CA0
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E707E946CA3
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB3031C20AB4
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9F81F21CBD
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115E315E81;
-	Sun,  4 Aug 2024 06:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3C4DDC7;
+	Sun,  4 Aug 2024 06:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRDTNl8g"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3t3bRC/"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD05812B72;
-	Sun,  4 Aug 2024 06:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AA817C91;
+	Sun,  4 Aug 2024 06:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722752170; cv=none; b=Uyx6K1PklxrDWQS9CppvcgGLUBfN+Ctj6q8SXC6zC68u/LTDaKIPvyzmYTFrOaxEmCJo0CgBBX69wRZPdXhR1htgKT+BZCb8zU3hPQG+uUWrLjRLzlZGl8pz7/iuERYdH3UIrRVo1OdnSP5GN3xtUxzjB+fuehwnKjcr2JrAPF4=
+	t=1722752173; cv=none; b=E0JdJl6A/8RL3Rzl8iVd6tgKyMsFHwUS3pVoac5WVHLFUoelGMIn+0i368bYY3erzZLcUWVloUwXy3l68tyjgl1jJWncSfowgY5xsw938pp8mQ1Dvfx2D26Me0yxYsL3PIoiJDJpTz31KhVQ9mHZmirGhs/wOT9iRK50epcogpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722752170; c=relaxed/simple;
-	bh=cGU/hLohP2jwLFnKHyuRm6DaFnX3MmjOh1Ousc2m1XE=;
+	s=arc-20240116; t=1722752173; c=relaxed/simple;
+	bh=uuJEVRc6EdWMtxFULOKYVzWbEJzMtPlm1a9bxPzbs/A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q0gKYgnYHmL/Q4YtlczN66V5CyGA+eS66dwUTF6EMVuHsJ4XXFv1rwfUIG2sVVa4bmbsW1eBV2UAzeEr43DOIBLnbp9FW05zqRuOveXUbU6GeM1aKo3K4o1MXrxXGQEOYb3UMgiz207IHidZmzDjQn6NgObyV5IJ9CBPWWKEXlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRDTNl8g; arc=none smtp.client-ip=209.85.214.173
+	 MIME-Version; b=AneQ/iOUr/M1/F04Uzci2/iTwgECA1eNcC6FWSCkfPAxtbni36PebXGr0ELvurDTLA7H09hKifIFGAcPb7U7HBB44R/QFEk/nNdMhEwDIK6j8t7eV0JO5qupmOKjjmwsEdtPF7pyT5fRqUz1NpLX8HI5QcckkC5GrVbOqs5mh6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3t3bRC/; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd70ba6a15so71968355ad.0;
-        Sat, 03 Aug 2024 23:16:08 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc569440e1so83857895ad.3;
+        Sat, 03 Aug 2024 23:16:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722752168; x=1723356968; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722752172; x=1723356972; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1QCBHipd9ju2B6kDRIPqyXO7nCYrctm5/4ZaKFrTgHo=;
-        b=gRDTNl8gOYZFSwaslDbJ76cOmLfyyzYjpz0tYPMKvCVcqaJ5iwbbIbZ6dnMKC5/Lmm
-         WEgvNdU3/dy//brKS2Rz5uEWr6H1oplyuDA6q2G/bWKA03J2CIKhSygMI/jeNXX3ihgy
-         DuxFoOcrzNQrXLQgu69oYjFndeEcpM9TL27gw803mRq0ZyfOF8Jala2VrltILb1TDk/J
-         k5T0f6nYc6gp2AqmkJ7ZVThsyTrffmLh84tepIygwiRzKlCGiMuSf8qhLM0VpOSkhhrL
-         WY15VvhDZn50gS2U8ilTh62eOBiXYG3pTHBh0JuU3MB7FeAqwq1gd0v7bvxGhppE90sU
-         Uohg==
+        bh=+cz+seGpILxawIlaSSD47XDWHvw876gqL+2G/I4oXFk=;
+        b=X3t3bRC/s++EDe860IhgP9QRchBfrUd+k3irDoc8aozxtWKK08tDSlv0yy6rOpyKTL
+         nbY69LshsMGvBj4VMD4OtHlkc9CmXOxm7Szvoxy5MNLpG/aZdjON+liuShNVRKpTgq2w
+         HbH/OmfuK8fQb9xTjCyiXqO0jprRmmunnNBf0vSzCQcvIf+Lt9kvhDSCPPsRt+VtIZ4h
+         Mla8JABUFZcxCYfJOx+qmXQAgxIlhnn0YmjIK59L3U2j/U9D3khnfbknrjnJqeSUYY77
+         ZpKjShUap7SfbELaXo8eMdJ5QEOTIW8WYIhZJZ5bSq/qDKyHMv/Z6oNb0dlBDY2rbFKf
+         5kFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722752168; x=1723356968;
+        d=1e100.net; s=20230601; t=1722752172; x=1723356972;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1QCBHipd9ju2B6kDRIPqyXO7nCYrctm5/4ZaKFrTgHo=;
-        b=CGN14e+xFdZ0T4BD9ryum0cLn4twVUb9OUPb4FmqLjJfOErq6ytM+dKGCgMRw3WA1R
-         lRnWIl4+/g+h9c9Z1Imfz+IfK6Tc3rgd6pO/LcQ0N/GVx9V122vOOljKWSyvD9gibuXf
-         BHgWjoXa0fsozqpeATG2HXSm1X+QeX5/g90AVNvY6VDLr5I2SExBPRkK7LafSBNHkf5s
-         pFtVEZzgq8yaqBj057ijyqNCvpVYFyZrwxM2/RkhYcYOuAlZpBy2CnwtFvDanuk0MNUv
-         95p/QV78tcWHR7ZDJeXGFcbcrliCQcBh+eZJsW5bHCAjXXGnCLasTZXztWMBr86nXA2x
-         bPzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWF73K9DUW8IufyC6HqTt/+h2rQ+DBw2VrSEkEbqqCPBbtWZgvPLN6lIHd++JhI6UoZthKgi3VAR3CfOnsKAvgm1r1IGreL7NLwkw==
-X-Gm-Message-State: AOJu0YwmYSFLm66EApHacHYAgaBBrpHaK5FjJU9JNou7Bw59jyM/4Nr2
-	c/WjD4o2o1zLzCfRY/TJmtK3VrpTN6DLqyvYGEAOkXqrLkxFO6XsktSsETby
-X-Google-Smtp-Source: AGHT+IF2nVOyQC7h9YelKyVOaAywKnE46vjSEtLS5cAVyCk6ig+Yg/Q6vLleff/wH5lSdJpCHHoUng==
-X-Received: by 2002:a17:902:f54b:b0:1fb:74b3:53d5 with SMTP id d9443c01a7336-1ff572d43dcmr93610485ad.35.1722752167823;
-        Sat, 03 Aug 2024 23:16:07 -0700 (PDT)
+        bh=+cz+seGpILxawIlaSSD47XDWHvw876gqL+2G/I4oXFk=;
+        b=UJxXSHG6/faw7OAu7mS36f9g+/iJ/ryquuv8tF0rhfeaEV7cUbJ6mYUtqWyJLz0EH0
+         kHbyT1VKZp/Kf1Q5PXl2IOrX6I3r2314cs+WRJMlyIXMq3APjCUBMGjmjqbjYO0g/I0M
+         +3uddv/wlTjPKOByh2vc3fYVjyIzf2G3wVR4qMmxb4vkLNGOlFhCisFG/NrYXmEg1R4e
+         MfDBuIky1tvhkJCsM3Bzj4PcaWXn4OWEFfMqovLtEPl6V3l9KKqhm3c/QiOtKAEG5z6L
+         Lt0z1I7JzxbUsUhYjJhTBpgSNUFMVbZhPfMvBErgDc7iIAi42jdaL7dxOeLSncMn9PAQ
+         pgeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaUr0hOXiTnZBTSiiIGRPYhujNZ/ldMpg8s7NFyIBFiyesJq4h10513QfQwxk8UW14264OLNTTHmj/410DE/Zr64lhrd1Q9cIGeQ==
+X-Gm-Message-State: AOJu0YwncPiMxxqw7E4fm/oVePq/maYgLk9aYmMdnBRYE6Msk/PWk93y
+	/aegUOCchAoS+dj8WxmrwqSO8sjtARe0KNEgtp4WjrmCPs7C8og9A51Oqqlb
+X-Google-Smtp-Source: AGHT+IEFqt86zqX8dMZiR7DKDz3o2UunpKDibmO7X4MHgtYm5K2Ia4Um+0fJFjOJPsqOAfrG8pmQqQ==
+X-Received: by 2002:a17:902:c405:b0:1fb:8620:c0bd with SMTP id d9443c01a7336-1ff5725870bmr127684215ad.15.1722752171673;
+        Sat, 03 Aug 2024 23:16:11 -0700 (PDT)
 Received: from noel.flets-west.jp ([2405:6586:4480:a10:167:9818:d778:5c14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29ef4sm44194195ad.14.2024.08.03.23.16.04
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29ef4sm44194195ad.14.2024.08.03.23.16.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 23:16:07 -0700 (PDT)
+        Sat, 03 Aug 2024 23:16:11 -0700 (PDT)
 From: Hironori KIKUCHI <kikuchan98@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Hironori KIKUCHI <kikuchan98@gmail.com>,
@@ -82,10 +82,11 @@ Cc: Hironori KIKUCHI <kikuchan98@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v4 2/5] drm/panel: st7701: Decouple DSI and DRM parts
-Date: Sun,  4 Aug 2024 15:14:46 +0900
-Message-ID: <20240804061503.881283-3-kikuchan98@gmail.com>
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v4 3/5] dt-bindings: display: st7701: Add Anbernic RG28XX panel
+Date: Sun,  4 Aug 2024 15:14:47 +0900
+Message-ID: <20240804061503.881283-4-kikuchan98@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240804061503.881283-1-kikuchan98@gmail.com>
 References: <20240804061503.881283-1-kikuchan98@gmail.com>
@@ -97,145 +98,138 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Split into a DSI-specific part and a DRM-specific part.
+The RG28XX panel is a display panel of the Anbernic RG28XX, a handheld
+gaming device from Anbernic. It is 2.8 inches in size (diagonally) with
+a resolution of 480x640.
 
-Additionally, use devm_add_action_or_reset() to simplify the flow,
-and disable and unprepare the panel on cleanup.
+This panel is driven by a variant of the ST7701 driver IC internally,
+confirmed by dumping and analyzing its BSP initialization sequence
+by using a logic analyzer. It is very similar to the existing
+densitron,dmt028vghmcmi-1a panel, but differs in some unknown
+register values, so add a new entry for the panel to distinguish them.
+
+Additionally, the panel only has an SPI instead of MIPI DSI.
+So add and modify for SPI as well.
+
+Although a panel connected via SPI with a D/CX pin theoretically exists,
+no such panels have been found for this driver yet. Therefore, disable
+the use of the dc-gpios property for all currently known devices.
 
 Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- drivers/gpu/drm/panel/panel-sitronix-st7701.c | 72 ++++++++++++-------
- 1 file changed, 45 insertions(+), 27 deletions(-)
+ .../display/panel/sitronix,st7701.yaml        | 69 +++++++++++++++++--
+ 1 file changed, 64 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7701.c b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-index a9a8fd85057..a0644f7a4c8 100644
---- a/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-+++ b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-@@ -539,7 +539,7 @@ static int st7701_get_modes(struct drm_panel *panel,
+diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
+index b348f5bf0a9..b07f3eca669 100644
+--- a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
++++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
+@@ -20,21 +20,19 @@ description: |
+   Densitron DMT028VGHMCMI-1A is 480x640, 2-lane MIPI DSI LCD panel
+   which has built-in ST7701 chip.
  
- 	mode = drm_mode_duplicate(connector->dev, desc_mode);
- 	if (!mode) {
--		dev_err(&st7701->dsi->dev, "failed to add mode %ux%u@%u\n",
-+		dev_err(panel->dev, "failed to add mode %ux%u@%u\n",
- 			desc_mode->hdisplay, desc_mode->vdisplay,
- 			drm_mode_vrefresh(desc_mode));
- 		return -ENOMEM;
-@@ -974,42 +974,48 @@ static const struct st7701_panel_desc rg_arc_desc = {
- 	.gip_sequence = rg_arc_gip_sequence,
- };
- 
--static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
-+static void st7701_cleanup(void *data)
-+{
-+	struct st7701 *st7701 = (struct st7701 *)data;
-+
-+	drm_panel_remove(&st7701->panel);
-+	drm_panel_disable(&st7701->panel);
-+	drm_panel_unprepare(&st7701->panel);
-+}
-+
-+static int st7701_probe(struct device *dev, int connector_type)
- {
- 	const struct st7701_panel_desc *desc;
- 	struct st7701 *st7701;
- 	int ret;
- 
--	st7701 = devm_kzalloc(&dsi->dev, sizeof(*st7701), GFP_KERNEL);
-+	st7701 = devm_kzalloc(dev, sizeof(*st7701), GFP_KERNEL);
- 	if (!st7701)
- 		return -ENOMEM;
- 
--	desc = of_device_get_match_data(&dsi->dev);
--	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
--			  MIPI_DSI_MODE_LPM | MIPI_DSI_CLOCK_NON_CONTINUOUS;
--	dsi->format = desc->format;
--	dsi->lanes = desc->lanes;
-+	desc = of_device_get_match_data(dev);
-+	if (!desc)
-+		return -ENODEV;
- 
- 	st7701->supplies[0].supply = "VCC";
- 	st7701->supplies[1].supply = "IOVCC";
- 
--	ret = devm_regulator_bulk_get(&dsi->dev, ARRAY_SIZE(st7701->supplies),
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(st7701->supplies),
- 				      st7701->supplies);
- 	if (ret < 0)
- 		return ret;
- 
--	st7701->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_LOW);
-+	st7701->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
- 	if (IS_ERR(st7701->reset)) {
--		dev_err(&dsi->dev, "Couldn't get our reset GPIO\n");
-+		dev_err(dev, "Couldn't get our reset GPIO\n");
- 		return PTR_ERR(st7701->reset);
- 	}
- 
--	ret = of_drm_get_panel_orientation(dsi->dev.of_node, &st7701->orientation);
-+	ret = of_drm_get_panel_orientation(dev->of_node, &st7701->orientation);
- 	if (ret < 0)
--		return dev_err_probe(&dsi->dev, ret, "Failed to get orientation\n");
-+		return dev_err_probe(dev, ret, "Failed to get orientation\n");
- 
--	drm_panel_init(&st7701->panel, &dsi->dev, &st7701_funcs,
--		       DRM_MODE_CONNECTOR_DSI);
-+	drm_panel_init(&st7701->panel, dev, &st7701_funcs, connector_type);
- 
- 	/**
- 	 * Once sleep out has been issued, ST7701 IC required to wait 120ms
-@@ -1028,27 +1034,39 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
- 
- 	drm_panel_add(&st7701->panel);
- 
--	mipi_dsi_set_drvdata(dsi, st7701);
--	st7701->dsi = dsi;
-+	dev_set_drvdata(dev, st7701);
- 	st7701->desc = desc;
- 
--	ret = mipi_dsi_attach(dsi);
--	if (ret)
--		goto err_attach;
-+	return devm_add_action_or_reset(dev, st7701_cleanup, st7701);
-+}
-+
-+static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct st7701 *st7701;
-+	int err;
-+
-+	err = st7701_probe(&dsi->dev, DRM_MODE_CONNECTOR_DSI);
-+	if (err)
-+		return err;
-+
-+	st7701 = dev_get_drvdata(&dsi->dev);
-+	st7701->dsi = dsi;
-+
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_MODE_LPM | MIPI_DSI_CLOCK_NON_CONTINUOUS;
-+	dsi->format = st7701->desc->format;
-+	dsi->lanes = st7701->desc->lanes;
-+
-+	err = mipi_dsi_attach(dsi);
-+	if (err)
-+		return dev_err_probe(&dsi->dev, err, "Failed to init MIPI DSI\n");
- 
- 	return 0;
+-allOf:
+-  - $ref: panel-common.yaml#
 -
--err_attach:
--	drm_panel_remove(&st7701->panel);
--	return ret;
- }
+ properties:
+   compatible:
+     items:
+       - enum:
+           - anbernic,rg-arc-panel
++          - anbernic,rg28xx-panel
+           - densitron,dmt028vghmcmi-1a
+           - elida,kd50t048a
+           - techstar,ts8550b
+       - const: sitronix,st7701
  
- static void st7701_dsi_remove(struct mipi_dsi_device *dsi)
- {
--	struct st7701 *st7701 = mipi_dsi_get_drvdata(dsi);
--
- 	mipi_dsi_detach(dsi);
--	drm_panel_remove(&st7701->panel);
- }
+   reg:
+-    description: DSI virtual channel used by that screen
++    description: DSI / SPI channel used by that screen
+     maxItems: 1
  
- static const struct of_device_id st7701_of_match[] = {
+   VCC-supply:
+@@ -43,6 +41,13 @@ properties:
+   IOVCC-supply:
+     description: I/O system regulator
+ 
++  dc-gpios:
++    maxItems: 1
++    description:
++      Controller data/command selection (D/CX) in 4-line SPI mode.
++      If not set, the controller is in 3-line SPI mode.
++      Disallowed for DSI.
++
+   port: true
+   reset-gpios: true
+   rotation: true
+@@ -57,7 +62,38 @@ required:
+   - port
+   - reset-gpios
+ 
+-additionalProperties: false
++allOf:
++  - $ref: panel-common.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            # SPI connected panels
++            enum:
++              - anbernic,rg28xx-panel
++    then:
++      $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++  - if:
++      properties:
++        compatible:
++          not:
++            contains:
++              # DSI or SPI without D/CX pin
++              enum:
++                - anbernic,rg-arc-panel
++                - anbernic,rg28xx-panel
++                - densitron,dmt028vghmcmi-1a
++                - elida,kd50t048a
++                - techstar,ts8550b
++    then:
++      required:
++        - dc-gpios
++    else:
++      properties:
++        dc-gpios: false
++
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+@@ -82,3 +118,26 @@ examples:
+             };
+         };
+     };
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        panel@0 {
++            compatible = "anbernic,rg28xx-panel", "sitronix,st7701";
++            reg = <0>;
++            spi-max-frequency = <3125000>;
++            VCC-supply = <&reg_lcd>;
++            IOVCC-supply = <&reg_lcd>;
++            reset-gpios = <&pio 8 14 GPIO_ACTIVE_HIGH>; /* LCD-RST: PI14 */
++            backlight = <&backlight>;
++
++            port {
++                panel_in_rgb: endpoint {
++                    remote-endpoint = <&tcon_lcd0_out_lcd>;
++                };
++            };
++        };
++    };
 -- 
 2.45.2
 
