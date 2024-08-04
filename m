@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B96F946E2F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:56:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F80B946E31
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CD5A1C20ECB
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3F51C21261
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B29288DB;
-	Sun,  4 Aug 2024 09:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF3A25740;
+	Sun,  4 Aug 2024 09:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSgcKQ7Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uekmcjx3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EA12374C;
-	Sun,  4 Aug 2024 09:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B170F2374C;
+	Sun,  4 Aug 2024 09:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722765407; cv=none; b=LZI0wLtq0vcItkwyf9jgE5xjWqwed5swDQghI+3tHChuyLSSbK+iQ9iGmjiLh41lvsy4tIYpSuuTQaXeP4JpW0w2BV7sHzoY5GWHw5r7YLVhqrIe5qCqt6eDOk8TlcVT2dgHwC3ohzhfxTGZM207XdOFKI9IllZuT2eHmX8s6yo=
+	t=1722765492; cv=none; b=TJe8G2S2FSK/5rCdg+Xf2iGOQGRC3kK5ZC7fCdr9liBKlr+RYSZOCAvr4el/3Mz8eIkjR4gZxOXwBS8uK3mPIBBhasMU2R9nRkTZduocYnW00Wev7TTfkoBVFHDLk+jKKx+BBeqfEBIwcaUNt2fNZ65A4ORT0LeGcsPYyZkPjxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722765407; c=relaxed/simple;
-	bh=74iIi3ysijcnAnukqflV6pp71g4JoQ1CiUa4Bpj4IIc=;
+	s=arc-20240116; t=1722765492; c=relaxed/simple;
+	bh=EOUjBy9rrG/GDZG9Kp9n9d33+UGi1uo5OiMu+Sxji10=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=roUsVAY4peeZLkWxRWJ9rX71Ap8i+sJIorYJUyejL0BFajKhBBFCyYxkNQCcwlS5hQ44mpyWfO0GUSgxgb4p7vodFDqO/iK3ezeUd8jNoAm8SXv0LoTZnAWkl3s+gHLE4jidFwlj8RAle9m/fG+C+wd8top9C1CuC8gAFII78xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSgcKQ7Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D386C32786;
-	Sun,  4 Aug 2024 09:56:42 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nOTIgXD7jTfvong960eb1Iq/hzwRzp9CJQNFi9Yt8CXbEIhinTfno2yDvMH6TyTsehL/gG+h0DK/aZWbnYxUeS5no5limadM3RRshRcKKy6i646U6i0cKbfAyvZeUsC63bn+nAWx0Wm7Xu25A8LQAeMXT1o1uRz4ONxSQ8j0w6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uekmcjx3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB3AC32786;
+	Sun,  4 Aug 2024 09:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722765407;
-	bh=74iIi3ysijcnAnukqflV6pp71g4JoQ1CiUa4Bpj4IIc=;
+	s=k20201202; t=1722765492;
+	bh=EOUjBy9rrG/GDZG9Kp9n9d33+UGi1uo5OiMu+Sxji10=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PSgcKQ7ZB4ZshMyiGTV/O8PlYFKc0V6MPAFh2OyY4ZRdQmGPQIS3aTuz5+8g0vvQI
-	 E0V/zGS68NRL3HK5e4THJ+vL9DdMpHtsVUHV8YSnIR3vA4fT6t7t0es7gGGE/17VfU
-	 BocaPCXdt0htweCZVkt0bNVyETZUYURAh26gz6aDRtOrHpNq0R+UJaT5lgpBgFssmI
-	 jnLVnnUt8x9vs9jB8jVaExDFEXw/NYDOxQVMLqP/5Eavjkmb0jLvXLqCXB+YnznIAs
-	 eSITWskI+Y4NTOKDnqOLoSoSUBTQE9GwnNYOt5fFivCV4TTikbSAI2wMMh8wl0ehgU
-	 kGw43UYTWfrGw==
-Message-ID: <e04258dc-07c4-45c7-90d4-bc1ed9eb100b@kernel.org>
-Date: Sun, 4 Aug 2024 11:56:39 +0200
+	b=Uekmcjx3hNmjOJqHap13oSx1QdS7AjJ0Bx5PPo/T7PbmwOG7GTPaygKEz23rU2458
+	 O5bUnYozDtkA+k3yOI1uE52/k3chxAAxv84XncaICsMBirN9G9Odozfc9W0Cm1xKLH
+	 /Dw+b2VTbCdIIT3vr94+UgYiisIMrOXwVR2TQp4NdYLP+G4Fb8C4vF8CIFEdyeBDlg
+	 4ksvo18itiFbOIdq4r1jjOCX43mJ2rPyIqL3YG9sc98kgWksLdPNwa3SNZ1BhVxRMC
+	 M0zIwYKJwZ2sf9tE0nF0yYtDU++nNjHa3EIB2RYmsrql5N92tbIGI2FA4yPYA8qjY9
+	 0Pl2RVEX4Pd/g==
+Message-ID: <0a4c8b5c-a394-4e16-a5a6-c8c4f588fd1e@kernel.org>
+Date: Sun, 4 Aug 2024 11:58:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: Add power-domain header for RK3576 SoCs
+Subject: Re: [PATCH 2/2] dt-bindings: pinctrl: Add rk3576 pinctrl bindings
 To: Detlev Casanova <detlev.casanova@collabora.com>,
  linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
- Elaine Zhang <zhangqing@rock-chips.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-pm@vger.kernel.org
-References: <20240802151647.294307-1-detlev.casanova@collabora.com>
- <20240802151647.294307-3-detlev.casanova@collabora.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20240802145458.291890-1-detlev.casanova@collabora.com>
+ <20240802145458.291890-3-detlev.casanova@collabora.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,45 +104,49 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802151647.294307-3-detlev.casanova@collabora.com>
+In-Reply-To: <20240802145458.291890-3-detlev.casanova@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2024 17:14, Detlev Casanova wrote:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
-> 
-> Define power domain IDs as described in the TRM.
+On 02/08/2024 16:52, Detlev Casanova wrote:
+> This adds the compatible string as well as the optional rockchip,sys-grf field.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
 > 
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> [reword]
 > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 > ---
->  include/dt-bindings/power/rk3576-power.h | 30 ++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 include/dt-bindings/power/rk3576-power.h
-
-This is part of bindings.
-
+>  .../devicetree/bindings/pinctrl/rockchip,pinctrl.yaml       | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/include/dt-bindings/power/rk3576-power.h b/include/dt-bindings/power/rk3576-power.h
+> diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> index 20e806dce1ecb..a202b6681624c 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.yaml
+> @@ -45,6 +45,7 @@ properties:
+>        - rockchip,rk3368-pinctrl
+>        - rockchip,rk3399-pinctrl
+>        - rockchip,rk3568-pinctrl
+> +      - rockchip,rk3576-pinctrl
+>        - rockchip,rk3588-pinctrl
+>        - rockchip,rv1108-pinctrl
+>        - rockchip,rv1126-pinctrl
+> @@ -54,6 +55,11 @@ properties:
+>      description:
+>        The phandle of the syscon node for the GRF registers.
+>  
+> +  rockchip,sys-grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      The phandle of the syscon node for the SYS GRF registers.
 
-Missing vendor prefix. This should be named after compatible.
-
-> new file mode 100644
-> index 0000000000000..cb33a32c1aed9
-> --- /dev/null
-> +++ b/include/dt-bindings/power/rk3576-power.h
-> @@ -0,0 +1,30 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-
-Weird license.
+Describe what for.
 
 Best regards,
 Krzysztof
