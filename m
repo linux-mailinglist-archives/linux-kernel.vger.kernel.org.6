@@ -1,115 +1,71 @@
-Return-Path: <linux-kernel+bounces-273708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4203B946CBA
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:31:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61211946CB2
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01651F21DA2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AEC31F221A3
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893E310A3D;
-	Sun,  4 Aug 2024 06:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E2CFC19;
+	Sun,  4 Aug 2024 06:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jENhFP9R"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="BAPOxYD2"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2216F138C;
-	Sun,  4 Aug 2024 06:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E923FC2;
+	Sun,  4 Aug 2024 06:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722753078; cv=none; b=IOVl20OIPaIBVnTIR1FBfeM95jyC2UD+Ccn3+ViWBvROJn+qYMlqof+deM4+D91bOwXNOJRV4jB5PN5Y7HcVVyncpWNji9ebzbYKk4iDIKf2JRsNHgZkfgfNa01HZ5v97qzdJyNS+Z8HNjpahqrXKRdBXmflxBGKWq+Qi0dG0Xk=
+	t=1722752581; cv=none; b=bixVaduZ4Ck7KgPMqMzbaOTDMB22NpOdVinKka/bKOAD77B4gNyLKWyaDjpXrEGZ1/71dtT5V/uG9Lv5Hl2IP5yu7mtP4SiJQO9rSfdrXhL4/leks8jBoNByn2RYEW9rx6QBmY0HFb37q/IaIvn+24FSZTsDuEGI0ge+rPNNL+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722753078; c=relaxed/simple;
-	bh=SbSgs4MFpL6KZRQuV1LLX5H6iF+zg+wO2Gaqqk0dRPI=;
+	s=arc-20240116; t=1722752581; c=relaxed/simple;
+	bh=e2KwdmpAEeu/CxUB955zMwv6k2v7QDlGFFwf4VhPBZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ioCsaX3wP5dnvfdLSfYRQpq1yDHDhr6q/fGxF0K3EkmsvN2kU/BuQGejvOznKBayb7D4WkQ+3hX/6h7YEJud/9iH7r6nbGxJEe2C71Cc54bc4CTDLBRkzBR/H0kWVO8BPm5Phn+nSmb4dNfQrZ5i2jPfjxdiUPllsWn1YPKXnmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jENhFP9R; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b797fb1c4aso69674806d6.2;
-        Sat, 03 Aug 2024 23:31:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722753076; x=1723357876; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/NZxw82SfdAXEz+K8bi67990DiXrbNqIt6CzOagLaek=;
-        b=jENhFP9RcWqyC7Kp3tvNdeLXigYM20hv/vbkqmFRjgEpMcnkNqgFmAZWD7ZJxKwUYd
-         jvPPn6SEdKIgo3DGAdKFOXsX/Ecc+PD9ulGL6KPMCX0bRvCgm0VBJPYrBus7113+SO3O
-         kU0n4DZ7hcS2GAmQ3KVCBz6+mrsnbKiGgTCpIv8vjol/1r0KZU6qWNlzvXvkqxoRBBuR
-         hbnpco5sLqidQtGK6D5HJFB9gYpejBVHGine/QABp/CcymRO504dsnNpcGjkXIDisang
-         lliIMr4jUUdN9+MDS2y2AjPDMI7BWihLxJxSg55hLtJ8zY7Ob3ZN5kpqwQvZJWztYBTH
-         xRcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722753076; x=1723357876;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/NZxw82SfdAXEz+K8bi67990DiXrbNqIt6CzOagLaek=;
-        b=VpBMnjp5acUbUB1+UufH2OmW+qA2aGHSVBd/KMYveKJsrbzauqDLlO4hMTtkXUpulk
-         QfC4YfnR6o3BTR5ng5FjWRtU8ouUqy0PtVuNu/cizaoohJorMHbGWYAQUKtuklVvp64k
-         Fp1tP+2Zy45xhITZY0Msdpl3NV70jqsEa1m8DBzUYdpJSVU9D7Ubi8QsIaDAWjB6wnab
-         Kp9qcnzDYgPGzzuL6+ONAeptdHfDBbysEc4wSplWhi3FCxYZYL82W9hAPRZ9CSOEh7Pi
-         /Ybi+MoOQo8/Ej67B9Puzit7pcyH8L9RyhrKKgfAatgpk6vbwiz02Wl8T3ioir2zbB36
-         BZIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeemdgIn+mcfuABCcmNsfSiNIzkZ1NcM76X1R9iP+yZ0hxIAe8G5uIDR/ecxCozIwoJTmRJ0AM3u6THYtlmWPHCC9nWeuS0hiI/LBe5rni+h1Bc+M4vhf9uas3/OqWqeSwfyqlB6uhzq4GR7g=
-X-Gm-Message-State: AOJu0YzjG55AAzpRK7IJNXD6I1Rr1TujpsyFeLpvk1KmEA13UtRkoHEu
-	VLdP9BTgJij90kl2a/pYlSZNUU4/ZwljaTJMuxkrYKYW55Sf5XvBxbIOOA==
-X-Google-Smtp-Source: AGHT+IHBTO+D88JzfW6pu9QPm3Lvx4nQGCDMnbUFWj/ag9pX33msBTQ3hbPO/V+yYk0ZXWdu3W1w2g==
-X-Received: by 2002:a05:6214:3f8b:b0:6b5:40d:c2d9 with SMTP id 6a1803df08f44-6bb9836ed10mr115535966d6.19.1722753075899;
-        Sat, 03 Aug 2024 23:31:15 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c8631d0sm22519876d6.106.2024.08.03.23.31.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 23:31:15 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id BDEDC120006E;
-	Sun,  4 Aug 2024 02:22:17 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Sun, 04 Aug 2024 02:22:17 -0400
-X-ME-Sender: <xms:GR6vZjmj6NqCvj-ExoPQ9kCP_1CDBUuIRPlfXc7uggJxGbNgd19Tug>
-    <xme:GR6vZm3RNGYtSkOrNoFgIFqhonYfbfTz3MOzHaex6Ad_cUGwtrZxHpETF1EHBtOi5
-    6e_QHIxNg1xMn4ipA>
-X-ME-Received: <xmr:GR6vZppxgYazLvrrYBP4qpOaH5ROOBtJqDjborLAUCBy6ZvS9u5VcACsYTQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeefgddutdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:GR6vZrkmCRzKvlm3tNQ6ORObZ1Vdq7VcdSktoQ7GII516aDNTfGzow>
-    <xmx:GR6vZh13f4V4tK_byHEA8M2lgVjKgURzAQaufiaF4oVJyS0hPVjewA>
-    <xmx:GR6vZqth7NHsCTN7HZNQCa2LoMUfzzm9hmzm4V7i8Ai7AbzUz3yv_Q>
-    <xmx:GR6vZlXJpodoAH9rlIObdqZTIEx0VBMS2Fh45qa5B-50RlsMTy0MIw>
-    <xmx:GR6vZg3k8vP5XS9pXJqHCxaAlRPQnx9hgg2armd451g8FXy4PSOw8BBN>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 4 Aug 2024 02:22:17 -0400 (EDT)
-Date: Sat, 3 Aug 2024 23:21:21 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 01/25] rust: alloc: add `Allocator` trait
-Message-ID: <Zq8d4fKUhXchuZBR@boqun-archlinux>
-References: <20240801000641.1882-1-dakr@kernel.org>
- <20240801000641.1882-2-dakr@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQA1AVVV3+kTC6rquFvLPnwDz1UgBcpG2uHAygHh50AE5MqJ6xnkegrzr+jGhtxCVEX7aAHT/+vkUpftgVpFbQpuVMynws+j9kvltaSogrO1oJO51cqo3pbUryG7yoDrJiWXSk0of3fflhAawNv1Pm3WXc4FyLchfhfrJn/sKQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=BAPOxYD2; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id AC7A541943;
+	Sun,  4 Aug 2024 08:22:55 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id bfxzql5IWaIV; Sun,  4 Aug 2024 08:22:54 +0200 (CEST)
+Date: Sun, 4 Aug 2024 14:22:28 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1722752574; bh=e2KwdmpAEeu/CxUB955zMwv6k2v7QDlGFFwf4VhPBZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=BAPOxYD2ErIWPwE9V9eroZvbUZjtUETM32iyvVLYXnNJrLwHODsPUGINv5AT46fzy
+	 5hgksWLOaCdHsfYGYpJczmnPTWzptsoQ0KORgHeQ8GUpKMeAaVhD5ootDDjfFtXA++
+	 87E6wFBgI1dehnR8fRZokTKmbc3hPnWmu5z3TK3d0ak2tvlkvPWlJeDgl8/Cd4jGw6
+	 HtCqVwY/zMfkdgix4TGzg6GgNqM6Pt9IXPb28avNrPQPLT2gLUHz/EiLi9gH/nNt7t
+	 cRQ4bGzultoUXW8jfov0BIFWr2l1hxVeJWqB4wO4h+QYbywG80aKtwuQXuRXF17cyf
+	 NJiemnfL4FG/w==
+From: Yao Zi <ziyao@disroot.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+	Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>, Ondrej Jirman <megi@xff.cz>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH 0/4] Add initial support for Rockchip RK3528 SoC
+Message-ID: <Zq8eJB7zqOvYQvmw@ziyaolaptop.my.domain>
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <0c77f99f4af96807a2a8c3028e3c1d4d@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -118,89 +74,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240801000641.1882-2-dakr@kernel.org>
+In-Reply-To: <0c77f99f4af96807a2a8c3028e3c1d4d@manjaro.org>
 
-On Thu, Aug 01, 2024 at 02:02:00AM +0200, Danilo Krummrich wrote:
-[...]
-> +/// The kernel's [`Allocator`] trait.
-> +///
-> +/// An implementation of [`Allocator`] can allocate, re-allocate and free memory buffer described
-> +/// via [`Layout`].
-> +///
-> +/// [`Allocator`] is designed to be implemented as a ZST; [`Allocator`] functions do not operate on
-> +/// an object instance.
-> +///
-> +/// # Safety
-> +///
-> +/// Memory returned from an allocator must point to a valid memory buffer and remain valid until
-> +/// it is explicitly freed.
-> +///
-> +/// Any pointer to a memory buffer which is currently allocated must be valid to be passed to any
-> +/// other [`Allocator`] function. The same applies for a NULL pointer.
-> +///
-
-Are you saying you could kmalloc() a memory buffer and pass it to a
-vfree()? Or am I missing something here?
-
-Regards,
-Boqun
-
-> +/// If `realloc` is called with:
-> +///   - a size of zero, the given memory allocation, if any, must be freed
-> +///   - a NULL pointer, a new memory allocation must be created
-> +pub unsafe trait Allocator {
-> +    /// Allocate memory based on `layout` and `flags`.
-> +    ///
-> +    /// On success, returns a buffer represented as `NonNull<[u8]>` that satisfies the layout
-> +    /// constraints (i.e. minimum size and alignment as specified by `layout`).
-> +    ///
-> +    /// This function is equivalent to `realloc` when called with a NULL pointer.
-> +    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
-> +        // SAFETY: Passing a NULL pointer to `realloc` is valid by it's safety requirements and asks
-> +        // for a new memory allocation.
-> +        unsafe { Self::realloc(None, layout, flags) }
-> +    }
-> +
-> +    /// Re-allocate an existing memory allocation to satisfy the requested `layout`. If the
-> +    /// requested size is zero, `realloc` behaves equivalent to `free`.
-> +    ///
-> +    /// If the requested size is larger than the size of the existing allocation, a successful call
-> +    /// to `realloc` guarantees that the new or grown buffer has at least `Layout::size` bytes, but
-> +    /// may also be larger.
-> +    ///
-> +    /// If the requested size is smaller than the size of the existing allocation, `realloc` may or
-> +    /// may not shrink the buffer; this is implementation specific to the allocator.
-> +    ///
-> +    /// On allocation failure, the existing buffer, if any, remains valid.
-> +    ///
-> +    /// The buffer is represented as `NonNull<[u8]>`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must point to an existing and valid memory allocation created by this allocator
-> +    /// instance.
-> +    ///
-> +    /// Additionally, `ptr` is allowed to be a NULL pointer; in this case a new memory allocation is
-> +    /// created.
-> +    unsafe fn realloc(
-> +        ptr: Option<NonNull<u8>>,
-> +        layout: Layout,
-> +        flags: Flags,
-> +    ) -> Result<NonNull<[u8]>, AllocError>;
-> +
-> +    /// Free an existing memory allocation.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` must point to an existing and valid memory allocation created by this `Allocator`
-> +    /// instance.
-> +    unsafe fn free(ptr: NonNull<u8>) {
-> +        // SAFETY: `ptr` is guaranteed to be previously allocated with this `Allocator` or NULL.
-> +        // Calling `realloc` with a buffer size of zero, frees the buffer `ptr` points to.
-> +        let _ = unsafe { Self::realloc(Some(ptr), Layout::new::<()>(), Flags(0)) };
-> +    }
-> +}
-> -- 
-> 2.45.2
+On Sun, Aug 04, 2024 at 07:40:43AM +0200, Dragan Simic wrote:
+> Hello all,
 > 
+> On 2024-08-03 14:55, Yao Zi wrote:
+> > Rockchip RK3528 is a quad-core ARM Cortex-A53 SoC designed for
+> > multimedia application. This series add a basic device tree with CPU,
+> > interrupts and UART nodes for it and is able to boot into a kernel with
+> > only UART console.
+> > 
+> > Has been tested on Radxa E20C board[1] with vendor U-boot, successfully
+> > booted into initramfs with this log[2].
+> 
+> I wonder will at least the RK3528 datasheet become available publicly?
+
+I found none for now, and I am not someone from Rockchip, thus don't
+know whether they have a plan to make it public, either. But there has
+been some devices shipping it already and getting them mainlined will
+be a neat thing.
+
+Just FYI, the vendor kernel is available here[1] on the "develop-5.10"
+branch.
+
+Best regards,
+Yao Zi
+
+[1]: https://github.com/rockchip-linux/kernel
+
+> 
+> > [1]: https://docs.radxa.com/en/e/e20c
+> > [2]: https://gist.github.com/ziyao233/b74523a1e3e8bf36286a572e008ca319
+> > 
+> > Yao Zi (4):
+> >   dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
+> >   dt-bindings: arm: rockchip: Add Radxa E20C board
+> >   arm64: dts: rockchip: Add base DT for rk3528 SoC
+> >   arm64: dts: rockchip: Add Radxa e20c board
+> > 
+> >  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+> >  .../bindings/serial/snps-dw-apb-uart.yaml     |   1 +
+> >  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+> >  .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  22 +++
+> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 182 ++++++++++++++++++
+> >  5 files changed, 211 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > 
+> > 
+> > base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
 
