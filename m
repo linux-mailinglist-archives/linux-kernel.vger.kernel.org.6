@@ -1,112 +1,226 @@
-Return-Path: <linux-kernel+bounces-273783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F450946E07
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:48:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBEE946E12
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5564A1C209EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:48:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BFBEB2199D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CF8288DB;
-	Sun,  4 Aug 2024 09:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sC8kizr5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791692E3EB;
+	Sun,  4 Aug 2024 09:48:50 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE102261D;
-	Sun,  4 Aug 2024 09:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB42D225A8
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 09:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722764877; cv=none; b=COoOC5hXPvrJr3oAWLiSuUI59C0ulBQOorcCi3lkKbjRo4p0/o4tqB8nOL8EoqOgnsvW75eR430cY5gE3hgdAPMYHCHCM4NIOH83NCDC/vzxXxCAON4VfsKb5xANUC/p86fAzhxiKkjz/eD9ZNGR1uuE627FMj0j3sNPfNakceo=
+	t=1722764929; cv=none; b=MRlyCgWo0zJ9FZy1W2LFCtQtCXlQjkfoWgPRWM2iAQHjqC2JWA1/ZN8XWokUfP+sNS88fD130WZKSWWeAQYfBMerAktUmMViLXhgEvBqwODfIsIrO4KOnY2yH9vMiCIlwFbKyW8qm5Aqgs68HFOT4FDbnFHmtiSdq/63lyom06E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722764877; c=relaxed/simple;
-	bh=Y4yAUSj7QlQcoQO23GqfLCmwwtbokos9WK+Uvxuiluk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kt2GDhtGDGNnYULQcSSwd+ewfoTwlTDKf5aYIl8bRR41pJzyh84h4/8BImHWksY9FhY8seu8+0k+Q1+eLIl/Ayt8cOkiDDZYUtydfQ42hcm4SOWmelYpLrr3ATS2iSFk/gNqaal85EvRp6vsiiRiwAMQTPSg0lKJpqxitok87ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sC8kizr5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2571C4AF0C;
-	Sun,  4 Aug 2024 09:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722764877;
-	bh=Y4yAUSj7QlQcoQO23GqfLCmwwtbokos9WK+Uvxuiluk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sC8kizr5zjsY+Xtf1ki45epTasq37SPx/lADE2WXNHlexOHZagganrAH0grQ1QhBX
-	 X0O67lmLxCllk2DcPRP2DF1VIQ7CNEJYblTiXS4meoLmLysPajy5E2cmEt3oUnOWGm
-	 RQ0bH+384g3aKEQ9TTqRv4clfRWDGO4uT9+jaJjlUmaZqsNzkbWN1SahPoa+MDtbCN
-	 1+WVUtwab/lTFbRxOZsBtAzr1fH12Sc878eY1ZRrhg+SpcDXO0cyJ9Hi6cBFD6zDY+
-	 ulob7hlECqUapbuX7lwvHSvHPu0iFVvdBNAbU2s9/cGd2tpPZNGVWhK9CO0vI+lPqI
-	 dnmjqp9VbV6iQ==
-Date: Sun, 4 Aug 2024 10:47:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Mohammad Nassiri <mnassiri@ciena.com>, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dmitry Safonov <0x7f454c46@gmail.com>
-Subject: Re: [PATCH net-next v2 6/7] selftests/net: Synchronize client/server
- before counters checks
-Message-ID: <20240804094751.GH2504122@kernel.org>
-References: <20240802-tcp-ao-selftests-upd-6-12-v2-0-370c99358161@gmail.com>
- <20240802-tcp-ao-selftests-upd-6-12-v2-6-370c99358161@gmail.com>
+	s=arc-20240116; t=1722764929; c=relaxed/simple;
+	bh=0wwXUbBMf2EYodd3WDlVkTkV/vISnnhDv7ar/WjH+Tg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=riEQa+w2eX6W6yu9MAa3Tmlf3NvJAvuk1HYG9YLV2QK/4KIphq8lz6bQjuqOtSsDV711HIIaV4lvw2dcA3EBDe9s31p4sjHKZJU9uBi1S3+u/G1DzUywtRNzZeIgCnOWUzuhNIn0TlkN7v3vqE4Mu8GS1OlhoszVk09SKuf0/A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav314.sakura.ne.jp (fsav314.sakura.ne.jp [153.120.85.145])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4749mAQ6003904;
+	Sun, 4 Aug 2024 18:48:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav314.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp);
+ Sun, 04 Aug 2024 18:48:10 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4749mApD003899
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 4 Aug 2024 18:48:10 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <74cdf283-cc4f-40e7-9cee-a90939eba38d@I-love.SAKURA.ne.jp>
+Date: Sun, 4 Aug 2024 18:48:10 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802-tcp-ao-selftests-upd-6-12-v2-6-370c99358161@gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Kees Cook <kees@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] profiling: remove profile=sleep support
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 02, 2024 at 10:23:30AM +0100, Dmitry Safonov via B4 Relay wrote:
-> From: Dmitry Safonov <0x7f454c46@gmail.com>
-> 
-> On tests that are expecting failure the timeout value is
-> TEST_RETRANSMIT_SEC == 1 second. Which is big enough for most of devices
-> under tests. But on a particularly slow machine/VM, 1 second might be
-> not enough for another thread to be scheduled and attempt to connect().
-> It is not a problem for tests that expect connect() to succeed as
-> the timeout value for them (TEST_TIMEOUT_SEC) is intentionally bigger.
-> 
-> One obvious way to solve this would be to increase TEST_RETRANSMIT_SEC.
-> But as all tests would increase the timeouts, that's going to sum up.
-> 
-> But here is less obvious way that keeps timeouts for expected connect()
-> failures low: just synchronize the two threads, which will assure that
-> before counter checks the other thread got a chance to run and timeout
-> on connect(). The expected increase of the related counter for listen()
-> socket will yet test the expected failure.
-> 
-> Never happens on my machine, but I suppose the majority of netdev's
-> connect-deny-* flakes [1] are caused by this.
-> 
-> Fixes:
+The kernel sleep profile is no longer working due to a recursive locking
+bug introduced by commit 42a20f86dc19 ("sched: Add wrapper for get_wchan()
+to keep task blocked"); either booting with
 
-Hi Dmitry,
+  profile=sleep
 
-I realise it probably wasn't intended to be a fixes tag,
-but it turns out to be an invalid one. Could you express this
-in a different way?
+kernel command line option added or executing
 
-> > # selftests: net/tcp_ao: connect-deny_ipv6
-> > # 1..21
-> > # # 462[lib/setup.c:243] rand seed 1720905426
-> > # TAP version 13
-> > # ok 1 Non-AO server + AO client
-> > # not ok 2 Non-AO server + AO client: TCPAOKeyNotFound counter did not increase: 0 <= 0
-> > # ok 3 AO server + Non-AO client
-> > # ok 4 AO server + Non-AO client: counter TCPAORequired increased 0 => 1
-> ...
-> 
-> [1]: https://netdev-3.bots.linux.dev/vmksft-tcp-ao/results/681741/6-connect-deny-ipv6/stdout
-> Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+  # echo -n sleep > /sys/kernel/profiling
 
-...
+after boot causes the system to lock up.
+
+
+  ============================================
+  WARNING: possible recursive locking detected
+  5.15.0-rc4+ #104 Not tainted
+  --------------------------------------------
+  kthreadd/3 is trying to acquire lock:
+  ffff93ac82e08d58 (&p->pi_lock){....}-{2:2}, at: get_wchan+0x32/0x70
+
+  but task is already holding lock:
+  ffff93ac82e08d58 (&p->pi_lock){....}-{2:2}, at: try_to_wake_up+0x53/0x370
+
+  other info that might help us debug this:
+   Possible unsafe locking scenario:
+
+         CPU0
+         ----
+    lock(&p->pi_lock);
+    lock(&p->pi_lock);
+
+   *** DEADLOCK ***
+
+   May be due to missing lock nesting notation
+
+  3 locks held by kthreadd/3:
+   #0: ffffae5ac2833d68 (&x->wait){....}-{2:2}, at: complete+0x18/0x40
+   #1: ffff93ac82e08d58 (&p->pi_lock){....}-{2:2}, at: try_to_wake_up+0x53/0x370
+   #2: ffff93ad29fe9458 (&rq->__lock){-...}-{2:2}, at: try_to_wake_up+0x19f/0x370
+
+  stack backtrace:
+  CPU: 0 PID: 3 Comm: kthreadd Not tainted 5.15.0-rc4+ #104
+  Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 11/12/2020
+  Call Trace:
+   dump_stack_lvl+0x57/0x72
+   validate_chain.cold+0x122/0x127
+   __lock_acquire+0x4d2/0x930
+   lock_acquire+0xc8/0x2f0
+   ? get_wchan+0x32/0x70
+   ? rcu_read_lock_sched_held+0x3f/0x80
+   _raw_spin_lock_irq+0x47/0x90
+   ? get_wchan+0x32/0x70
+   get_wchan+0x32/0x70
+   __update_stats_enqueue_sleeper+0x151/0x430
+   enqueue_entity+0x4b0/0x520
+   enqueue_task_fair+0x92/0x6b0
+   ? lock_is_held_type+0xa7/0x120
+   ttwu_do_activate+0x73/0x140
+   try_to_wake_up+0x213/0x370
+   swake_up_locked+0x20/0x50
+   complete+0x2f/0x40
+   ? __cancel_work_timer+0x1b0/0x1b0
+   kthread+0xfb/0x180
+   ? set_kthread_struct+0x40/0x40
+   ret_from_fork+0x22/0x30
+
+
+However, since nobody noticed this regression for more than 2 years, let's
+remove profile=sleep support based on an assumption that nobody needs this
+functionality.
+
+Fixes: 42a20f86dc19 ("sched: Add wrapper for get_wchan() to keep task blocked")
+Cc: stable@vger.kernel.org # v5.16+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+Some distro kernel (e.g. 5.14.0-427.28.1.el9_4.x86_64) includes that commit.
+I hope that distro agrees with removing this functionality...
+
+ Documentation/admin-guide/kernel-parameters.txt |  4 +---
+ include/linux/profile.h                         |  1 -
+ kernel/profile.c                                | 11 +----------
+ kernel/sched/stats.c                            | 10 ----------
+ 4 files changed, 2 insertions(+), 24 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index f1384c7b59c9..09126bb8cc9f 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4798,11 +4798,9 @@
+ 
+ 	profile=	[KNL] Enable kernel profiling via /proc/profile
+ 			Format: [<profiletype>,]<number>
+-			Param: <profiletype>: "schedule", "sleep", or "kvm"
++			Param: <profiletype>: "schedule" or "kvm"
+ 				[defaults to kernel profiling]
+ 			Param: "schedule" - profile schedule points.
+-			Param: "sleep" - profile D-state sleeping (millisecs).
+-				Requires CONFIG_SCHEDSTATS
+ 			Param: "kvm" - profile VM exits.
+ 			Param: <number> - step/bucket size as a power of 2 for
+ 				statistical time based profiling.
+diff --git a/include/linux/profile.h b/include/linux/profile.h
+index 2fb487f61d12..3f53cdb0c27c 100644
+--- a/include/linux/profile.h
++++ b/include/linux/profile.h
+@@ -10,7 +10,6 @@
+ 
+ #define CPU_PROFILING	1
+ #define SCHED_PROFILING	2
+-#define SLEEP_PROFILING	3
+ #define KVM_PROFILING	4
+ 
+ struct proc_dir_entry;
+diff --git a/kernel/profile.c b/kernel/profile.c
+index ff68d3816182..1fcf1adcf4eb 100644
+--- a/kernel/profile.c
++++ b/kernel/profile.c
+@@ -50,20 +50,11 @@ EXPORT_SYMBOL_GPL(prof_on);
+ int profile_setup(char *str)
+ {
+ 	static const char schedstr[] = "schedule";
+-	static const char sleepstr[] = "sleep";
+ 	static const char kvmstr[] = "kvm";
+ 	const char *select = NULL;
+ 	int par;
+ 
+-	if (!strncmp(str, sleepstr, strlen(sleepstr))) {
+-#ifdef CONFIG_SCHEDSTATS
+-		force_schedstat_enabled();
+-		prof_on = SLEEP_PROFILING;
+-		select = sleepstr;
+-#else
+-		pr_warn("kernel sleep profiling requires CONFIG_SCHEDSTATS\n");
+-#endif /* CONFIG_SCHEDSTATS */
+-	} else if (!strncmp(str, schedstr, strlen(schedstr))) {
++	if (!strncmp(str, schedstr, strlen(schedstr))) {
+ 		prof_on = SCHED_PROFILING;
+ 		select = schedstr;
+ 	} else if (!strncmp(str, kvmstr, strlen(kvmstr))) {
+diff --git a/kernel/sched/stats.c b/kernel/sched/stats.c
+index 78e48f5426ee..eb0cdcd4d921 100644
+--- a/kernel/sched/stats.c
++++ b/kernel/sched/stats.c
+@@ -92,16 +92,6 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
+ 
+ 			trace_sched_stat_blocked(p, delta);
+ 
+-			/*
+-			 * Blocking time is in units of nanosecs, so shift by
+-			 * 20 to get a milliseconds-range estimation of the
+-			 * amount of time that the task spent sleeping:
+-			 */
+-			if (unlikely(prof_on == SLEEP_PROFILING)) {
+-				profile_hits(SLEEP_PROFILING,
+-					     (void *)get_wchan(p),
+-					     delta >> 20);
+-			}
+ 			account_scheduler_latency(p, delta >> 10, 0);
+ 		}
+ 	}
+-- 
+2.43.5
 
