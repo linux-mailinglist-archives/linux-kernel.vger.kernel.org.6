@@ -1,114 +1,150 @@
-Return-Path: <linux-kernel+bounces-273772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B13946DE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:20:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E374F946DE5
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B96D1C209C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:20:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30FB5281844
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878F0219EA;
-	Sun,  4 Aug 2024 09:20:27 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DEB224D2;
+	Sun,  4 Aug 2024 09:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l81fgcw3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E403A17588;
-	Sun,  4 Aug 2024 09:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274DF320B;
+	Sun,  4 Aug 2024 09:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722763227; cv=none; b=EPkI9tR0hEeB5yvH/bVOn2fgcu/xc4RWw8pF4wJ4OMUfvTF5pUp67FQXQKe041kmkqUvxpx4pbgzBQ1foQdPQpDH2rQJwg/3aQNsPpEDX6IWXGLqRCGOSWbappjWST7Tm08kq46Ro+8SnumNsHyVwOzhZ+eFOCBxv53VV4ujkp4=
+	t=1722763307; cv=none; b=Q2KGZCmRR4Q2xws4BG+0YYMnICrsVKo2CKQE0ErL/6r8T02G9lkFZo9ccgTvR20Uso+sd1ZrSlifb+32kwVyjOIYOZzfUa/yjgJQLJ/Ru96Q+UVfdsDGQH8iyPMPP5VH5/8vW8Vj6zX3iBZbQvIIwP81C6RAWByWrexEyUrbmIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722763227; c=relaxed/simple;
-	bh=ayQagBeZalevYPtQBI9YWjYEybeAhnI5SoE7BwzoLRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d5nhn8baHXTULEr2VRGPfoHSGdcOdSwsnJHXga6b6Al3kMua5glLMZrLzqE6Isg3AoXjMEZV98msImTz52wr0+nPqFbTcR0s5lWYC14bz1enzciARKxK6olwSr2ZaAKhDJlNBWvx/XmTta9WBQPVXgEZIGHXxDyYFjIWaxACjsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c312c516524211efa216b1d71e6e1362-20240804
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
-	HR_FROM_NAME, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
-	DN_TRUSTED, SRC_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR, SN_UNTRUSTED
-	SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
-	CIE_GOOD_SPF, CIE_UNKNOWN, GTI_FG_BS, GTI_C_CI, GTI_FG_IT
-	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
-	AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:a3ab75a1-ac9f-465e-a91f-627088f0200b,IP:10,
-	URL:0,TC:0,Content:-5,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:35
-X-CID-INFO: VERSION:1.1.38,REQID:a3ab75a1-ac9f-465e-a91f-627088f0200b,IP:10,UR
-	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:35
-X-CID-META: VersionHash:82c5f88,CLOUDID:70af7d21835f03586e3743aae2453d02,BulkI
-	D:240804171638GUAHFMRT,BulkQuantity:1,Recheck:0,SF:72|19|43|74|66|23|200|1
-	02,TC:nil,Content:0,EDM:5,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
-	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
-X-UUID: c312c516524211efa216b1d71e6e1362-20240804
-X-User: zhanghao1@kylinos.cn
-Received: from pve.sebastian [(118.250.1.66)] by mailgw.kylinos.cn
-	(envelope-from <zhanghao1@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1697066970; Sun, 04 Aug 2024 17:20:16 +0800
-From: zhanghao <zhanghao1@kylinos.cn>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
+	s=arc-20240116; t=1722763307; c=relaxed/simple;
+	bh=YqVP8ZHxp1yJban5jv+izZlf+awTJjF2bAUM/uiFMDg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OOVAuJdVola7LCZs2AoapY17uT4Ov7qSYJWJNDc16UnGdL7y3GHc/1l5h3jm9nbXeHn+gBsISsW+0JrraSW1NAddnRFehzNKtwVRa3LjrYQNdQyNAlPhGZrHLsTaG7QwR1ihWYYqXciXAQZtmB5Gk+DjAfp+ZZV5zrALTKUGhDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l81fgcw3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CF5C32786;
+	Sun,  4 Aug 2024 09:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722763306;
+	bh=YqVP8ZHxp1yJban5jv+izZlf+awTJjF2bAUM/uiFMDg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l81fgcw3S5FNSYeV+Q8QEnZ/szHofUY9q6fZeCCOeMyjlDR4fu+iTQ0i1oJZYhHQ0
+	 cxzERANif8Fd137qhTWlkAtKVmvXcTtoMsrTaUgsqsVxsiXXiZnCvejAKZxPixiOXa
+	 2soST4lUHju5qpJo+gpL2I4Bpeyxagb+EtS7yuu7jsazgDpDwRBLzvCvyqcvzEdU0i
+	 k9O+Ls8ekj4QKEf7cvcmqCcjRqlm7o378JTY5rnXSr5ZKV7vA1THTql0bJ96nlr2N+
+	 KqKWgCpiwkgiCyGvFedNGmoUBU4CGJIZ2K5N8lVlpMgW3fvRbagZFxW3WsVJyRSOXr
+	 tMBYk/617UqdA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1saXQu-000kBS-Ac;
+	Sun, 04 Aug 2024 10:21:44 +0100
+Date: Sun, 04 Aug 2024 10:21:44 +0100
+Message-ID: <867ccw1w47.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: 	Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <zenghui.yu@linux.dev>
+Cc: Takahiro Itazuri <itazur@amazon.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dave Martin <Dave.Martin@arm.com>,
+	linux-doc@vger.kernel.org,
+	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	syzbot+1a11884d9c9f1353942d@syzkaller.appspotmail.com,
-	zhanghao <zhanghao1@kylinos.cn>
-Subject: [PATCH] bcachefs: Add check for the size of combined key and value
-Date: Sun,  4 Aug 2024 17:20:03 +0800
-Message-Id: <20240804092003.142093-1-zhanghao1@kylinos.cn>
-X-Mailer: git-send-email 2.39.2
+	zulinx86@gmail.com,
+	kvmarm@lists.linux.dev,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	glider@google.com
+Subject: Re: [PATCH v2] docs: KVM: Fix register ID of SPSR_FIQ
+In-Reply-To: <401bebca-9637-4626-901f-e46b2d058768@linux.dev>
+References: <20230606154628.95498-1-itazur@amazon.com>
+	<401bebca-9637-4626-901f-e46b2d058768@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, zenghui.yu@linux.dev, itazur@amazon.com, pbonzini@redhat.com, corbet@lwn.net, Dave.Martin@arm.com, linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, zulinx86@gmail.com, kvmarm@lists.linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, glider@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The bkey_val_bytes() gets the number of bytes of value
-stored in bkey->u64s.If u64s is smaller than BKEY_U64s,
-it causes a negative number to be converted to an
-unsigned number.
+On Sun, 04 Aug 2024 09:17:47 +0100,
+Zenghui Yu <zenghui.yu@linux.dev> wrote:
+> 
+> +Cc kvmarm people and the list ...
 
-Reported-by: syzbot+1a11884d9c9f1353942d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=1a11884d9c9f1353942d
-Fixes: ba81523eaac3 ("bcachefs: Split out bkey_types.h")
-Link: https://lore.kernel.org/all/00000000000025321f061d7b62ff@google.com/T/
+Thanks Zenghui.
 
-Signed-off-by: zhanghao <zhanghao1@kylinos.cn>
----
- fs/bcachefs/bkey_types.h | 2 ++
- 1 file changed, 2 insertions(+)
+> 
+> On 2023/6/6 23:46, Takahiro Itazuri wrote:
+> > Fixes the register ID of SPSR_FIQ.
+> > 
+> > SPSR_FIQ is a 64-bit register and the 64-bit register size mask is
+> > 0x0030000000000000ULL.
+> > 
+> > Fixes: fd3bc912d3d1 ("KVM: Documentation: Document arm64 core registers in detail")
+> > Signed-off-by: Takahiro Itazuri <itazur@amazon.com>
+> 
+> ... since you're fixing the encoding of an *arm64* core register and the
+> mentioned commit fd3bc912d3d1 was merged via the kvmarm tree. I guess
+> this is the main reason why this patch has been blocked on the list for
+> over a year, as pointed out recently by Alexander [*].
 
-diff --git a/fs/bcachefs/bkey_types.h b/fs/bcachefs/bkey_types.h
-index c9ae9e42b385..60fa5af93032 100644
---- a/fs/bcachefs/bkey_types.h
-+++ b/fs/bcachefs/bkey_types.h
-@@ -21,6 +21,8 @@ static inline struct bkey_i *bkey_next(struct bkey_i *k)
- 
- static inline size_t bkey_val_bytes(const struct bkey *k)
- {
-+	if (k->u64s < BKEY_U64s)
-+		return 0;
- 	return bkey_val_u64s(k) * sizeof(u64);
- }
- 
+That, and the fact that this is send to an email address I haven't
+been reachable on for about 5 years...
 
-base-commit: defaf1a2113a22b00dfa1abc0fd2014820eaf065
-prerequisite-patch-id: 1ec511753fc7aab35ba0e982013cf91ba4403da6
+> 
+> > 
+> > ---
+> > Changes from v1
+> > - Add a description about the 64-bit register size mask in the commit
+> >   message.
+> > - Link: https://lore.kernel.org/all/20230410121927.26953-1-itazur@amazon.com/
+> > 
+> > ---
+> >  Documentation/virt/kvm/api.rst | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> > index a5c803f39832..65dad2581751 100644
+> > --- a/Documentation/virt/kvm/api.rst
+> > +++ b/Documentation/virt/kvm/api.rst
+> > @@ -2535,7 +2535,7 @@ Specifically:
+> >    0x6030 0000 0010 004a SPSR_ABT    64  spsr[KVM_SPSR_ABT]
+> >    0x6030 0000 0010 004c SPSR_UND    64  spsr[KVM_SPSR_UND]
+> >    0x6030 0000 0010 004e SPSR_IRQ    64  spsr[KVM_SPSR_IRQ]
+> > -  0x6060 0000 0010 0050 SPSR_FIQ    64  spsr[KVM_SPSR_FIQ]
+> > +  0x6030 0000 0010 0050 SPSR_FIQ    64  spsr[KVM_SPSR_FIQ]
+> >    0x6040 0000 0010 0054 V0         128  fp_regs.vregs[0]    [1]_
+> >    0x6040 0000 0010 0058 V1         128  fp_regs.vregs[1]    [1]_
+> >    ...
+> 
+> The change itself looks reasonable.
+> 
+> Thanks,
+> Zenghui
+> 
+> [*] https://lore.kernel.org/all/20240802132036.914457-1-glider@google.com
+
+In case Oliver picks this up for 6.11:
+
+Acked-by: Marc Zyngier <maz@kernel.org>
+
+	M.
+
 -- 
-2.39.2
-
+Without deviation from the norm, progress is not possible.
 
