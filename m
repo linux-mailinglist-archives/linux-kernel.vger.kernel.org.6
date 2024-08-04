@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-273700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E707E946CA3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EED946CA6
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9F81F21CBD
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A15AB1C212B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 06:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3C4DDC7;
-	Sun,  4 Aug 2024 06:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3CC1B5A4;
+	Sun,  4 Aug 2024 06:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3t3bRC/"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+u8VSaW"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AA817C91;
-	Sun,  4 Aug 2024 06:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638801BF2A;
+	Sun,  4 Aug 2024 06:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722752173; cv=none; b=E0JdJl6A/8RL3Rzl8iVd6tgKyMsFHwUS3pVoac5WVHLFUoelGMIn+0i368bYY3erzZLcUWVloUwXy3l68tyjgl1jJWncSfowgY5xsw938pp8mQ1Dvfx2D26Me0yxYsL3PIoiJDJpTz31KhVQ9mHZmirGhs/wOT9iRK50epcogpA=
+	t=1722752178; cv=none; b=OnyVQ4LsAXlayNbnhqFmzVcanTt/uxzrVh/8LmE6SNRwD9oT0wINxI7rlsE4C3TDQB/0ibSkvdvfrUa8YYX8AB7DEaH+uYn8x1t7MFNRqBGuNz4OHYpjnwBx8PkgC1Br814b/eKpd5TVvwfiYtx/70hfFhoz5rKXCWNWQaTUT/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722752173; c=relaxed/simple;
-	bh=uuJEVRc6EdWMtxFULOKYVzWbEJzMtPlm1a9bxPzbs/A=;
+	s=arc-20240116; t=1722752178; c=relaxed/simple;
+	bh=zo1jPPGZRyh7xdwbknWlWhN3yC+6aa+tj0B+EzgtMWE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AneQ/iOUr/M1/F04Uzci2/iTwgECA1eNcC6FWSCkfPAxtbni36PebXGr0ELvurDTLA7H09hKifIFGAcPb7U7HBB44R/QFEk/nNdMhEwDIK6j8t7eV0JO5qupmOKjjmwsEdtPF7pyT5fRqUz1NpLX8HI5QcckkC5GrVbOqs5mh6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3t3bRC/; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=ePLCclk6TCYrZ9lw7B8aOgmeU8cFxsb55+B2uXPIikg0c3KP7rOJDrF7xCvavnE/DUloMkoDwSUAin+lLk1/01rmy4Qzw3hb7XWuQwhWMoLPmDB77nLDEr7DL8L5v19XPw5ihBKN9BBR1J4puwhQgwiZU/8GGATPpp3MMWngBSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j+u8VSaW; arc=none smtp.client-ip=209.85.167.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc569440e1so83857895ad.3;
-        Sat, 03 Aug 2024 23:16:12 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db1d4dab7fso5807553b6e.1;
+        Sat, 03 Aug 2024 23:16:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722752172; x=1723356972; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722752175; x=1723356975; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+cz+seGpILxawIlaSSD47XDWHvw876gqL+2G/I4oXFk=;
-        b=X3t3bRC/s++EDe860IhgP9QRchBfrUd+k3irDoc8aozxtWKK08tDSlv0yy6rOpyKTL
-         nbY69LshsMGvBj4VMD4OtHlkc9CmXOxm7Szvoxy5MNLpG/aZdjON+liuShNVRKpTgq2w
-         HbH/OmfuK8fQb9xTjCyiXqO0jprRmmunnNBf0vSzCQcvIf+Lt9kvhDSCPPsRt+VtIZ4h
-         Mla8JABUFZcxCYfJOx+qmXQAgxIlhnn0YmjIK59L3U2j/U9D3khnfbknrjnJqeSUYY77
-         ZpKjShUap7SfbELaXo8eMdJ5QEOTIW8WYIhZJZ5bSq/qDKyHMv/Z6oNb0dlBDY2rbFKf
-         5kFw==
+        bh=Fnql3FbykIepF8kn8jYdsbjwm/J1dth3YluSeiLe3RM=;
+        b=j+u8VSaW2BE9QN6UfzWZNNRGCEgrlqOmVCrvUASkaS+DIbw4Zzmc39B9h+LA1t/9Li
+         JYPiy+W9JgEHc8H0D32i/AJE6mQw7kYdluLl3anob739OPILpWZNn5zxc1oqineL+v+N
+         HhEmrBM025FUqOrI7MPjPktmggt4aqJ+X7n5oasEiDe7iVTGhehiB17v/PuCybjuYgur
+         UUpzWuXnxtIvpq/k05k6NTILVr52y9MuORkKHmE/K4d5NZMS7p8d+3ErGHC8qiRko4n0
+         C3a9zIdQ8SvV0dim2MUbxTeh2MGBoZLk07EaC/t+vvnrn5OTLZdi876OTFdQOh7lP2qw
+         qYWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722752172; x=1723356972;
+        d=1e100.net; s=20230601; t=1722752175; x=1723356975;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+cz+seGpILxawIlaSSD47XDWHvw876gqL+2G/I4oXFk=;
-        b=UJxXSHG6/faw7OAu7mS36f9g+/iJ/ryquuv8tF0rhfeaEV7cUbJ6mYUtqWyJLz0EH0
-         kHbyT1VKZp/Kf1Q5PXl2IOrX6I3r2314cs+WRJMlyIXMq3APjCUBMGjmjqbjYO0g/I0M
-         +3uddv/wlTjPKOByh2vc3fYVjyIzf2G3wVR4qMmxb4vkLNGOlFhCisFG/NrYXmEg1R4e
-         MfDBuIky1tvhkJCsM3Bzj4PcaWXn4OWEFfMqovLtEPl6V3l9KKqhm3c/QiOtKAEG5z6L
-         Lt0z1I7JzxbUsUhYjJhTBpgSNUFMVbZhPfMvBErgDc7iIAi42jdaL7dxOeLSncMn9PAQ
-         pgeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaUr0hOXiTnZBTSiiIGRPYhujNZ/ldMpg8s7NFyIBFiyesJq4h10513QfQwxk8UW14264OLNTTHmj/410DE/Zr64lhrd1Q9cIGeQ==
-X-Gm-Message-State: AOJu0YwncPiMxxqw7E4fm/oVePq/maYgLk9aYmMdnBRYE6Msk/PWk93y
-	/aegUOCchAoS+dj8WxmrwqSO8sjtARe0KNEgtp4WjrmCPs7C8og9A51Oqqlb
-X-Google-Smtp-Source: AGHT+IEFqt86zqX8dMZiR7DKDz3o2UunpKDibmO7X4MHgtYm5K2Ia4Um+0fJFjOJPsqOAfrG8pmQqQ==
-X-Received: by 2002:a17:902:c405:b0:1fb:8620:c0bd with SMTP id d9443c01a7336-1ff5725870bmr127684215ad.15.1722752171673;
-        Sat, 03 Aug 2024 23:16:11 -0700 (PDT)
+        bh=Fnql3FbykIepF8kn8jYdsbjwm/J1dth3YluSeiLe3RM=;
+        b=BDxD8fy/fYcDdBImQzOtWlXA2dyqOA5ojHNrEK3Hiyprwy2TNptPmPnvT4buInajmq
+         XjqTP/gvRP6DgwlNUY09sQT3KRLBiTCPjWJuD6Vt8gob4dAceynZsqFrEJmvEeTsEps4
+         HKib6d4HSV/26o71Bj8J73FLoorQEtxvyyrB6WcTWi+vaMft4bWL0oJe+dVvu1fxHwoR
+         SOLrOb0c9tFkadAQ8KVKlMPm78PAXw4sxCvu/q3Fln0xgzrFVg4S5Aw7tckq/jPKWbQS
+         11lxKg4HadJ3fJcR3KQFEg2wYmb8kBObnuDRBFh1tBlihD0GysSWbMysIYOyvbnsHlGj
+         C1CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXShRf6QYOXzwwAuXVwr5MrlitA/TlY027J1C6Im6GhkVrhLRIoSBDuHk0fAYd/qa+Y/pic6XtNHAwKpDZhOcMpzR/XFXYpc/pOsQ==
+X-Gm-Message-State: AOJu0YwgOrs91f70ApM8Np9nm5FMu3w/ihQaM7s3zYJ8L/9Rnw6gCHjj
+	1zc477pq0txdbNzrxvPVNbMqqJNweBZWIyQyH/WG3gZRqxcr2XWmZ/2EYrSR
+X-Google-Smtp-Source: AGHT+IEJzz1gHaqM2q/OdiVr5f66AvMuo9n4CECuHPcEhxtVPnmU2yXtswZqOsJRNmBEGBzil0HePw==
+X-Received: by 2002:a05:6808:1a01:b0:3da:c428:1c51 with SMTP id 5614622812f47-3db557fc32dmr12228412b6e.8.1722752175351;
+        Sat, 03 Aug 2024 23:16:15 -0700 (PDT)
 Received: from noel.flets-west.jp ([2405:6586:4480:a10:167:9818:d778:5c14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29ef4sm44194195ad.14.2024.08.03.23.16.08
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29ef4sm44194195ad.14.2024.08.03.23.16.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 23:16:11 -0700 (PDT)
+        Sat, 03 Aug 2024 23:16:15 -0700 (PDT)
 From: Hironori KIKUCHI <kikuchan98@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Hironori KIKUCHI <kikuchan98@gmail.com>,
@@ -82,11 +82,10 @@ Cc: Hironori KIKUCHI <kikuchan98@gmail.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v4 3/5] dt-bindings: display: st7701: Add Anbernic RG28XX panel
-Date: Sun,  4 Aug 2024 15:14:47 +0900
-Message-ID: <20240804061503.881283-4-kikuchan98@gmail.com>
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 4/5] drm/panel: st7701: Add support for SPI for configuration
+Date: Sun,  4 Aug 2024 15:14:48 +0900
+Message-ID: <20240804061503.881283-5-kikuchan98@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240804061503.881283-1-kikuchan98@gmail.com>
 References: <20240804061503.881283-1-kikuchan98@gmail.com>
@@ -98,138 +97,236 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The RG28XX panel is a display panel of the Anbernic RG28XX, a handheld
-gaming device from Anbernic. It is 2.8 inches in size (diagonally) with
-a resolution of 480x640.
-
-This panel is driven by a variant of the ST7701 driver IC internally,
-confirmed by dumping and analyzing its BSP initialization sequence
-by using a logic analyzer. It is very similar to the existing
-densitron,dmt028vghmcmi-1a panel, but differs in some unknown
-register values, so add a new entry for the panel to distinguish them.
-
-Additionally, the panel only has an SPI instead of MIPI DSI.
-So add and modify for SPI as well.
-
-Although a panel connected via SPI with a D/CX pin theoretically exists,
-no such panels have been found for this driver yet. Therefore, disable
-the use of the dc-gpios property for all currently known devices.
+The ST7701 supports not only MIPI DSI, but also SPI as an interface
+for configuration. To support a panel connected via SPI with an RGB
+parallel interface, add support for SPI using MIPI DBI helpers.
 
 Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- .../display/panel/sitronix,st7701.yaml        | 69 +++++++++++++++++--
- 1 file changed, 64 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/panel/Kconfig                 |   3 +-
+ drivers/gpu/drm/panel/panel-sitronix-st7701.c | 123 +++++++++++++++---
+ 2 files changed, 110 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
-index b348f5bf0a9..b07f3eca669 100644
---- a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
-+++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
-@@ -20,21 +20,19 @@ description: |
-   Densitron DMT028VGHMCMI-1A is 480x640, 2-lane MIPI DSI LCD panel
-   which has built-in ST7701 chip.
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 9f49b0189d3..5d83ddc06ec 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -784,7 +784,8 @@ config DRM_PANEL_SHARP_LS060T1SX01
+ config DRM_PANEL_SITRONIX_ST7701
+ 	tristate "Sitronix ST7701 panel driver"
+ 	depends on OF
+-	depends on DRM_MIPI_DSI
++	depends on SPI || DRM_MIPI_DSI
++	select DRM_MIPI_DBI if SPI
+ 	depends on BACKLIGHT_CLASS_DEVICE
+ 	help
+ 	  Say Y here if you want to enable support for the Sitronix
+diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7701.c b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
+index a0644f7a4c8..9e83a760a8a 100644
+--- a/drivers/gpu/drm/panel/panel-sitronix-st7701.c
++++ b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
+@@ -4,6 +4,7 @@
+  * Author: Jagan Teki <jagan@amarulasolutions.com>
+  */
  
--allOf:
--  - $ref: panel-common.yaml#
--
- properties:
-   compatible:
-     items:
-       - enum:
-           - anbernic,rg-arc-panel
-+          - anbernic,rg28xx-panel
-           - densitron,dmt028vghmcmi-1a
-           - elida,kd50t048a
-           - techstar,ts8550b
-       - const: sitronix,st7701
++#include <drm/drm_mipi_dbi.h>
+ #include <drm/drm_mipi_dsi.h>
+ #include <drm/drm_modes.h>
+ #include <drm/drm_panel.h>
+@@ -14,6 +15,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/spi/spi.h>
  
-   reg:
--    description: DSI virtual channel used by that screen
-+    description: DSI / SPI channel used by that screen
-     maxItems: 1
+ #include <video/mipi_display.h>
  
-   VCC-supply:
-@@ -43,6 +41,13 @@ properties:
-   IOVCC-supply:
-     description: I/O system regulator
+@@ -130,12 +132,16 @@ struct st7701_panel_desc {
+ struct st7701 {
+ 	struct drm_panel panel;
+ 	struct mipi_dsi_device *dsi;
++	struct mipi_dbi dbi;
+ 	const struct st7701_panel_desc *desc;
  
-+  dc-gpios:
-+    maxItems: 1
-+    description:
-+      Controller data/command selection (D/CX) in 4-line SPI mode.
-+      If not set, the controller is in 3-line SPI mode.
-+      Disallowed for DSI.
+ 	struct regulator_bulk_data supplies[2];
+ 	struct gpio_desc *reset;
+ 	unsigned int sleep_delay;
+ 	enum drm_panel_orientation orientation;
 +
-   port: true
-   reset-gpios: true
-   rotation: true
-@@ -57,7 +62,38 @@ required:
-   - port
-   - reset-gpios
++	int (*write_command)(struct st7701 *st7701, u8 cmd, const u8 *seq,
++			     size_t len);
+ };
  
--additionalProperties: false
-+allOf:
-+  - $ref: panel-common.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            # SPI connected panels
-+            enum:
-+              - anbernic,rg28xx-panel
-+    then:
-+      $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+  - if:
-+      properties:
-+        compatible:
-+          not:
-+            contains:
-+              # DSI or SPI without D/CX pin
-+              enum:
-+                - anbernic,rg-arc-panel
-+                - anbernic,rg28xx-panel
-+                - densitron,dmt028vghmcmi-1a
-+                - elida,kd50t048a
-+                - techstar,ts8550b
-+    then:
-+      required:
-+        - dc-gpios
-+    else:
-+      properties:
-+        dc-gpios: false
-+
-+unevaluatedProperties: false
+ static inline struct st7701 *panel_to_st7701(struct drm_panel *panel)
+@@ -143,16 +149,22 @@ static inline struct st7701 *panel_to_st7701(struct drm_panel *panel)
+ 	return container_of(panel, struct st7701, panel);
+ }
  
- examples:
-   - |
-@@ -82,3 +118,26 @@ examples:
-             };
-         };
-     };
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
+-static inline int st7701_dsi_write(struct st7701 *st7701, const void *seq,
+-				   size_t len)
++static int st7701_dsi_write(struct st7701 *st7701, u8 cmd, const u8 *seq,
++			    size_t len)
+ {
+-	return mipi_dsi_dcs_write_buffer(st7701->dsi, seq, len);
++	return mipi_dsi_dcs_write(st7701->dsi, cmd, seq, len);
+ }
+ 
+-#define ST7701_WRITE(st7701, seq...)				\
+-	{							\
+-		const u8 d[] = { seq };				\
+-		st7701_dsi_write(st7701, d, ARRAY_SIZE(d));	\
++static int st7701_dbi_write(struct st7701 *st7701, u8 cmd, const u8 *seq,
++			    size_t len)
++{
++	return mipi_dbi_command_stackbuf(&st7701->dbi, cmd, seq, len);
++}
 +
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++#define ST7701_WRITE(st7701, cmd, seq...)				\
++	{								\
++		const u8 d[] = { seq };					\
++		st7701->write_command(st7701, cmd, d, ARRAY_SIZE(d));	\
+ 	}
+ 
+ static u8 st7701_vgls_map(struct st7701 *st7701)
+@@ -211,10 +223,10 @@ static void st7701_init_sequence(struct st7701 *st7701)
+ 	/* Command2, BK0 */
+ 	st7701_switch_cmd_bkx(st7701, true, 0);
+ 
+-	mipi_dsi_dcs_write(st7701->dsi, ST7701_CMD2_BK0_PVGAMCTRL,
+-			   desc->pv_gamma, ARRAY_SIZE(desc->pv_gamma));
+-	mipi_dsi_dcs_write(st7701->dsi, ST7701_CMD2_BK0_NVGAMCTRL,
+-			   desc->nv_gamma, ARRAY_SIZE(desc->nv_gamma));
++	st7701->write_command(st7701, ST7701_CMD2_BK0_PVGAMCTRL, desc->pv_gamma,
++			      ARRAY_SIZE(desc->pv_gamma));
++	st7701->write_command(st7701, ST7701_CMD2_BK0_NVGAMCTRL, desc->nv_gamma,
++			      ARRAY_SIZE(desc->nv_gamma));
+ 	/*
+ 	 * Vertical line count configuration:
+ 	 * Line[6:0]: select number of vertical lines of the TFT matrix in
+@@ -1051,6 +1063,10 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
+ 
+ 	st7701 = dev_get_drvdata(&dsi->dev);
+ 	st7701->dsi = dsi;
++	st7701->write_command = st7701_dsi_write;
 +
-+        panel@0 {
-+            compatible = "anbernic,rg28xx-panel", "sitronix,st7701";
-+            reg = <0>;
-+            spi-max-frequency = <3125000>;
-+            VCC-supply = <&reg_lcd>;
-+            IOVCC-supply = <&reg_lcd>;
-+            reset-gpios = <&pio 8 14 GPIO_ACTIVE_HIGH>; /* LCD-RST: PI14 */
-+            backlight = <&backlight>;
++	if (!st7701->desc->lanes)
++		return dev_err_probe(&dsi->dev, -EINVAL, "This panel is not for MIPI DSI\n");
+ 
+ 	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+ 			  MIPI_DSI_MODE_LPM | MIPI_DSI_CLOCK_NON_CONTINUOUS;
+@@ -1064,30 +1080,107 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
+ 	return 0;
+ }
+ 
++static int st7701_spi_probe(struct spi_device *spi)
++{
++	struct st7701 *st7701;
++	struct gpio_desc *dc;
++	int err;
 +
-+            port {
-+                panel_in_rgb: endpoint {
-+                    remote-endpoint = <&tcon_lcd0_out_lcd>;
-+                };
-+            };
-+        };
-+    };
++	err = st7701_probe(&spi->dev, DRM_MODE_CONNECTOR_DPI);
++	if (err)
++		return err;
++
++	st7701 = dev_get_drvdata(&spi->dev);
++	st7701->write_command = st7701_dbi_write;
++
++	dc = devm_gpiod_get_optional(&spi->dev, "dc", GPIOD_OUT_LOW);
++	if (IS_ERR(dc))
++		return dev_err_probe(&spi->dev, PTR_ERR(dc), "Failed to get GPIO for D/CX\n");
++
++	err = mipi_dbi_spi_init(spi, &st7701->dbi, dc);
++	if (err)
++		return dev_err_probe(&spi->dev, err, "Failed to init MIPI DBI\n");
++	st7701->dbi.read_commands = NULL;
++
++	return 0;
++}
++
+ static void st7701_dsi_remove(struct mipi_dsi_device *dsi)
+ {
+ 	mipi_dsi_detach(dsi);
+ }
+ 
+-static const struct of_device_id st7701_of_match[] = {
++static const struct of_device_id st7701_dsi_of_match[] = {
+ 	{ .compatible = "anbernic,rg-arc-panel", .data = &rg_arc_desc },
+ 	{ .compatible = "densitron,dmt028vghmcmi-1a", .data = &dmt028vghmcmi_1a_desc },
+ 	{ .compatible = "elida,kd50t048a", .data = &kd50t048a_desc },
+ 	{ .compatible = "techstar,ts8550b", .data = &ts8550b_desc },
+ 	{ }
+ };
+-MODULE_DEVICE_TABLE(of, st7701_of_match);
++MODULE_DEVICE_TABLE(of, st7701_dsi_of_match);
++
++static const struct of_device_id st7701_spi_of_match[] = {
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, st7701_spi_of_match);
++
++static const struct spi_device_id st7701_spi_ids[] = {
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(spi, st7701_spi_ids);
+ 
+ static struct mipi_dsi_driver st7701_dsi_driver = {
+ 	.probe		= st7701_dsi_probe,
+ 	.remove		= st7701_dsi_remove,
+ 	.driver = {
+ 		.name		= "st7701",
+-		.of_match_table	= st7701_of_match,
++		.of_match_table	= st7701_dsi_of_match,
+ 	},
+ };
+-module_mipi_dsi_driver(st7701_dsi_driver);
++
++static struct spi_driver st7701_spi_driver = {
++	.probe		= st7701_spi_probe,
++	.id_table	= st7701_spi_ids,
++	.driver = {
++		.name		= "st7701",
++		.of_match_table	= st7701_spi_of_match,
++	},
++};
++
++static int __init st7701_driver_init(void)
++{
++	int err;
++
++	if (IS_ENABLED(CONFIG_SPI)) {
++		err = spi_register_driver(&st7701_spi_driver);
++		if (err)
++			return err;
++	}
++
++	if (IS_ENABLED(CONFIG_DRM_MIPI_DSI)) {
++		err = mipi_dsi_driver_register(&st7701_dsi_driver);
++		if (err) {
++			if (IS_ENABLED(CONFIG_SPI))
++				spi_unregister_driver(&st7701_spi_driver);
++			return err;
++		}
++	}
++
++	return 0;
++}
++module_init(st7701_driver_init);
++
++static void __exit st7701_driver_exit(void)
++{
++	if (IS_ENABLED(CONFIG_DRM_MIPI_DSI))
++		mipi_dsi_driver_unregister(&st7701_dsi_driver);
++
++	if (IS_ENABLED(CONFIG_SPI))
++		spi_unregister_driver(&st7701_spi_driver);
++}
++module_exit(st7701_driver_exit);
+ 
+ MODULE_AUTHOR("Jagan Teki <jagan@amarulasolutions.com>");
++MODULE_AUTHOR("Hironori KIKUCHI <kikuchan98@gmail.com>");
+ MODULE_DESCRIPTION("Sitronix ST7701 LCD Panel Driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.45.2
 
