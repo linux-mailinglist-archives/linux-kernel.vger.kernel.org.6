@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-273786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DBEE946E12
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:49:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF57946E0C
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BFBEB2199D
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:49:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A770B21894
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791692E3EB;
-	Sun,  4 Aug 2024 09:48:50 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE33023775;
+	Sun,  4 Aug 2024 09:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AS5ts1nX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB42D225A8
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 09:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CB7224D4;
+	Sun,  4 Aug 2024 09:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722764929; cv=none; b=MRlyCgWo0zJ9FZy1W2LFCtQtCXlQjkfoWgPRWM2iAQHjqC2JWA1/ZN8XWokUfP+sNS88fD130WZKSWWeAQYfBMerAktUmMViLXhgEvBqwODfIsIrO4KOnY2yH9vMiCIlwFbKyW8qm5Aqgs68HFOT4FDbnFHmtiSdq/63lyom06E=
+	t=1722764920; cv=none; b=N/BHzaiOSa+T+E0K0Oboo1Q/o62lhoiTDFJnv15WYa5W1Wz/UJJIiC+2XDnbMSAyj7Xd89fjnz0Or9HFI3UNic2HZKsn8FvqYrN/2oPuK240YhfMmbySrrjovpddluQdywftTLFTt0uLHnSfythUs1M+dFnXk5cPgBInIvEnM44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722764929; c=relaxed/simple;
-	bh=0wwXUbBMf2EYodd3WDlVkTkV/vISnnhDv7ar/WjH+Tg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=riEQa+w2eX6W6yu9MAa3Tmlf3NvJAvuk1HYG9YLV2QK/4KIphq8lz6bQjuqOtSsDV711HIIaV4lvw2dcA3EBDe9s31p4sjHKZJU9uBi1S3+u/G1DzUywtRNzZeIgCnOWUzuhNIn0TlkN7v3vqE4Mu8GS1OlhoszVk09SKuf0/A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav314.sakura.ne.jp (fsav314.sakura.ne.jp [153.120.85.145])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4749mAQ6003904;
-	Sun, 4 Aug 2024 18:48:10 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav314.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp);
- Sun, 04 Aug 2024 18:48:10 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav314.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4749mApD003899
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 4 Aug 2024 18:48:10 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <74cdf283-cc4f-40e7-9cee-a90939eba38d@I-love.SAKURA.ne.jp>
-Date: Sun, 4 Aug 2024 18:48:10 +0900
+	s=arc-20240116; t=1722764920; c=relaxed/simple;
+	bh=SaK4XvoclEBkrnrsgQAptzUeCU5PqYnX0IcNKYyo+Kg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IK6ViRBGC54embcPh6VyZ1x/j35M5ufIU2inwqPEZ5RWSiuMVy2Zl0+uVRrqZdGXrz6UMGpPqPtdt6QlkMA5NYXmF+IgSRJY5lasMEscbn78s11AFJPPLQAxGF2bRMBby7Qjff/bFwx3jNHNro0hjlmpOxhJCAxdgXJ5h4PVzYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AS5ts1nX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56F87C32786;
+	Sun,  4 Aug 2024 09:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722764919;
+	bh=SaK4XvoclEBkrnrsgQAptzUeCU5PqYnX0IcNKYyo+Kg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AS5ts1nXYnjY3YGK6ok+IB1KPymFdJyyhiGDz7KlUY6dHBMLU4EMBy5m8YPozyGRU
+	 y2l/oUMmlzMv6a2xl4bac3qJCnmnW64Mgb8Rsov421eo+3La3gc8qEO9zlWDsbwLEa
+	 w2C9d4g4vwz3yK3u1rDC+hSfkfCX/DFiQ2Ndl76OxGigLg9Z+t+K0JEySwscfgzpKX
+	 HteJ54iGljrYVBVw1qfzjiYv8qJ9twdG4tyTRzcA7HQGrqH+F3jlBi7ECETlM3QhGj
+	 ik3f+v/+Qf9rFHry7y1EAqbhtj77vvZM7BEf6TJS2N9z0hInCoTRRSrRHvlVH8bADe
+	 Fg7k86LurySZg==
+Message-ID: <70f44083-cbeb-40b9-9efd-c54e967f680d@kernel.org>
+Date: Sun, 4 Aug 2024 11:48:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,177 +49,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/10] dt-bindings: mfd: syscon: Add rk3576 QoS register
+ compatible
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Andi Shyti <andi.shyti@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Chris Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Tim Lunn <tim@feathertop.org>, Muhammed Efe Cetin <efectn@protonmail.com>,
+ Andy Yan <andyshrk@163.com>, Jagan Teki <jagan@edgeble.ai>,
+ Dragan Simic <dsimic@manjaro.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>, Ondrej Jirman <megi@xff.cz>,
+ Weizhao Ouyang <weizhao.ouyang@arm.com>, Alexey Charkov <alchark@gmail.com>,
+ Jimmy Hon <honyuenkwun@gmail.com>, Finley Xiao <finley.xiao@rock-chips.com>,
+ Yifeng Zhao <yifeng.zhao@rock-chips.com>,
+ Elaine Zhang <zhangqing@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-serial@vger.kernel.org, kernel@collabora.com
+References: <20240802214612.434179-1-detlev.casanova@collabora.com>
+ <20240802214612.434179-6-detlev.casanova@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>, Kees Cook <kees@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] profiling: remove profile=sleep support
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240802214612.434179-6-detlev.casanova@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The kernel sleep profile is no longer working due to a recursive locking
-bug introduced by commit 42a20f86dc19 ("sched: Add wrapper for get_wchan()
-to keep task blocked"); either booting with
+On 02/08/2024 23:45, Detlev Casanova wrote:
+> Document rk3576 compatible for QoS registers.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 
-  profile=sleep
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-kernel command line option added or executing
+Best regards,
+Krzysztof
 
-  # echo -n sleep > /sys/kernel/profiling
-
-after boot causes the system to lock up.
-
-
-  ============================================
-  WARNING: possible recursive locking detected
-  5.15.0-rc4+ #104 Not tainted
-  --------------------------------------------
-  kthreadd/3 is trying to acquire lock:
-  ffff93ac82e08d58 (&p->pi_lock){....}-{2:2}, at: get_wchan+0x32/0x70
-
-  but task is already holding lock:
-  ffff93ac82e08d58 (&p->pi_lock){....}-{2:2}, at: try_to_wake_up+0x53/0x370
-
-  other info that might help us debug this:
-   Possible unsafe locking scenario:
-
-         CPU0
-         ----
-    lock(&p->pi_lock);
-    lock(&p->pi_lock);
-
-   *** DEADLOCK ***
-
-   May be due to missing lock nesting notation
-
-  3 locks held by kthreadd/3:
-   #0: ffffae5ac2833d68 (&x->wait){....}-{2:2}, at: complete+0x18/0x40
-   #1: ffff93ac82e08d58 (&p->pi_lock){....}-{2:2}, at: try_to_wake_up+0x53/0x370
-   #2: ffff93ad29fe9458 (&rq->__lock){-...}-{2:2}, at: try_to_wake_up+0x19f/0x370
-
-  stack backtrace:
-  CPU: 0 PID: 3 Comm: kthreadd Not tainted 5.15.0-rc4+ #104
-  Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 11/12/2020
-  Call Trace:
-   dump_stack_lvl+0x57/0x72
-   validate_chain.cold+0x122/0x127
-   __lock_acquire+0x4d2/0x930
-   lock_acquire+0xc8/0x2f0
-   ? get_wchan+0x32/0x70
-   ? rcu_read_lock_sched_held+0x3f/0x80
-   _raw_spin_lock_irq+0x47/0x90
-   ? get_wchan+0x32/0x70
-   get_wchan+0x32/0x70
-   __update_stats_enqueue_sleeper+0x151/0x430
-   enqueue_entity+0x4b0/0x520
-   enqueue_task_fair+0x92/0x6b0
-   ? lock_is_held_type+0xa7/0x120
-   ttwu_do_activate+0x73/0x140
-   try_to_wake_up+0x213/0x370
-   swake_up_locked+0x20/0x50
-   complete+0x2f/0x40
-   ? __cancel_work_timer+0x1b0/0x1b0
-   kthread+0xfb/0x180
-   ? set_kthread_struct+0x40/0x40
-   ret_from_fork+0x22/0x30
-
-
-However, since nobody noticed this regression for more than 2 years, let's
-remove profile=sleep support based on an assumption that nobody needs this
-functionality.
-
-Fixes: 42a20f86dc19 ("sched: Add wrapper for get_wchan() to keep task blocked")
-Cc: stable@vger.kernel.org # v5.16+
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-Some distro kernel (e.g. 5.14.0-427.28.1.el9_4.x86_64) includes that commit.
-I hope that distro agrees with removing this functionality...
-
- Documentation/admin-guide/kernel-parameters.txt |  4 +---
- include/linux/profile.h                         |  1 -
- kernel/profile.c                                | 11 +----------
- kernel/sched/stats.c                            | 10 ----------
- 4 files changed, 2 insertions(+), 24 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f1384c7b59c9..09126bb8cc9f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4798,11 +4798,9 @@
- 
- 	profile=	[KNL] Enable kernel profiling via /proc/profile
- 			Format: [<profiletype>,]<number>
--			Param: <profiletype>: "schedule", "sleep", or "kvm"
-+			Param: <profiletype>: "schedule" or "kvm"
- 				[defaults to kernel profiling]
- 			Param: "schedule" - profile schedule points.
--			Param: "sleep" - profile D-state sleeping (millisecs).
--				Requires CONFIG_SCHEDSTATS
- 			Param: "kvm" - profile VM exits.
- 			Param: <number> - step/bucket size as a power of 2 for
- 				statistical time based profiling.
-diff --git a/include/linux/profile.h b/include/linux/profile.h
-index 2fb487f61d12..3f53cdb0c27c 100644
---- a/include/linux/profile.h
-+++ b/include/linux/profile.h
-@@ -10,7 +10,6 @@
- 
- #define CPU_PROFILING	1
- #define SCHED_PROFILING	2
--#define SLEEP_PROFILING	3
- #define KVM_PROFILING	4
- 
- struct proc_dir_entry;
-diff --git a/kernel/profile.c b/kernel/profile.c
-index ff68d3816182..1fcf1adcf4eb 100644
---- a/kernel/profile.c
-+++ b/kernel/profile.c
-@@ -50,20 +50,11 @@ EXPORT_SYMBOL_GPL(prof_on);
- int profile_setup(char *str)
- {
- 	static const char schedstr[] = "schedule";
--	static const char sleepstr[] = "sleep";
- 	static const char kvmstr[] = "kvm";
- 	const char *select = NULL;
- 	int par;
- 
--	if (!strncmp(str, sleepstr, strlen(sleepstr))) {
--#ifdef CONFIG_SCHEDSTATS
--		force_schedstat_enabled();
--		prof_on = SLEEP_PROFILING;
--		select = sleepstr;
--#else
--		pr_warn("kernel sleep profiling requires CONFIG_SCHEDSTATS\n");
--#endif /* CONFIG_SCHEDSTATS */
--	} else if (!strncmp(str, schedstr, strlen(schedstr))) {
-+	if (!strncmp(str, schedstr, strlen(schedstr))) {
- 		prof_on = SCHED_PROFILING;
- 		select = schedstr;
- 	} else if (!strncmp(str, kvmstr, strlen(kvmstr))) {
-diff --git a/kernel/sched/stats.c b/kernel/sched/stats.c
-index 78e48f5426ee..eb0cdcd4d921 100644
---- a/kernel/sched/stats.c
-+++ b/kernel/sched/stats.c
-@@ -92,16 +92,6 @@ void __update_stats_enqueue_sleeper(struct rq *rq, struct task_struct *p,
- 
- 			trace_sched_stat_blocked(p, delta);
- 
--			/*
--			 * Blocking time is in units of nanosecs, so shift by
--			 * 20 to get a milliseconds-range estimation of the
--			 * amount of time that the task spent sleeping:
--			 */
--			if (unlikely(prof_on == SLEEP_PROFILING)) {
--				profile_hits(SLEEP_PROFILING,
--					     (void *)get_wchan(p),
--					     delta >> 20);
--			}
- 			account_scheduler_latency(p, delta >> 10, 0);
- 		}
- 	}
--- 
-2.43.5
 
