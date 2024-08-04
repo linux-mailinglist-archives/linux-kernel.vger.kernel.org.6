@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-273773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E374F946DE5
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A705946DEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30FB5281844
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35C4E28173C
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DEB224D2;
-	Sun,  4 Aug 2024 09:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658F4219F3;
+	Sun,  4 Aug 2024 09:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l81fgcw3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="rSvMfWuQ"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274DF320B;
-	Sun,  4 Aug 2024 09:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9932224CC;
+	Sun,  4 Aug 2024 09:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722763307; cv=none; b=Q2KGZCmRR4Q2xws4BG+0YYMnICrsVKo2CKQE0ErL/6r8T02G9lkFZo9ccgTvR20Uso+sd1ZrSlifb+32kwVyjOIYOZzfUa/yjgJQLJ/Ru96Q+UVfdsDGQH8iyPMPP5VH5/8vW8Vj6zX3iBZbQvIIwP81C6RAWByWrexEyUrbmIM=
+	t=1722763474; cv=none; b=ElVKw6ttFetP9gsynU6XvJYZGe1jn5q3OnOwT3rNKHiXeLNeK2c1Mj4RVeiJBXs6rYAfbDPA+cnYIYzDlMZwXTypDMxuMivNIT+e0oTM169Q7JZBNMsqTQSk77lIGHAAavnRQsQc0Q2tFZSY+JQ0M8KheHvLIJ1nKKicuBfl10o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722763307; c=relaxed/simple;
-	bh=YqVP8ZHxp1yJban5jv+izZlf+awTJjF2bAUM/uiFMDg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OOVAuJdVola7LCZs2AoapY17uT4Ov7qSYJWJNDc16UnGdL7y3GHc/1l5h3jm9nbXeHn+gBsISsW+0JrraSW1NAddnRFehzNKtwVRa3LjrYQNdQyNAlPhGZrHLsTaG7QwR1ihWYYqXciXAQZtmB5Gk+DjAfp+ZZV5zrALTKUGhDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l81fgcw3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CF5C32786;
-	Sun,  4 Aug 2024 09:21:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722763306;
-	bh=YqVP8ZHxp1yJban5jv+izZlf+awTJjF2bAUM/uiFMDg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l81fgcw3S5FNSYeV+Q8QEnZ/szHofUY9q6fZeCCOeMyjlDR4fu+iTQ0i1oJZYhHQ0
-	 cxzERANif8Fd137qhTWlkAtKVmvXcTtoMsrTaUgsqsVxsiXXiZnCvejAKZxPixiOXa
-	 2soST4lUHju5qpJo+gpL2I4Bpeyxagb+EtS7yuu7jsazgDpDwRBLzvCvyqcvzEdU0i
-	 k9O+Ls8ekj4QKEf7cvcmqCcjRqlm7o378JTY5rnXSr5ZKV7vA1THTql0bJ96nlr2N+
-	 KqKWgCpiwkgiCyGvFedNGmoUBU4CGJIZ2K5N8lVlpMgW3fvRbagZFxW3WsVJyRSOXr
-	 tMBYk/617UqdA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1saXQu-000kBS-Ac;
-	Sun, 04 Aug 2024 10:21:44 +0100
-Date: Sun, 04 Aug 2024 10:21:44 +0100
-Message-ID: <867ccw1w47.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: 	Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <zenghui.yu@linux.dev>
-Cc: Takahiro Itazuri <itazur@amazon.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Martin <Dave.Martin@arm.com>,
-	linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zulinx86@gmail.com,
-	kvmarm@lists.linux.dev,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	glider@google.com
-Subject: Re: [PATCH v2] docs: KVM: Fix register ID of SPSR_FIQ
-In-Reply-To: <401bebca-9637-4626-901f-e46b2d058768@linux.dev>
-References: <20230606154628.95498-1-itazur@amazon.com>
-	<401bebca-9637-4626-901f-e46b2d058768@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1722763474; c=relaxed/simple;
+	bh=ZVi3UtmEl0+XyD/BENEZt8gqCnQ/rBHKD34J0+Bcs9E=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=E0dkPSGpx3EXXxaf4exDyBN5MwMMvonGKIunPsFS+X4MxsokwTenHAYDYLUHpKvId5lpNm5N0fcb5rbjEStt/MbrfSX0UF0Qwc5s6c689XoIeaJKd6O73cX2kp7VIvWrkpfXeCkWcWp8/LYhx0iYCOTGqwM/Ym9D/328ZqYt0uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=rSvMfWuQ; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 8180FE450D;
+	Sun,  4 Aug 2024 09:24:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1722763464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JHrUfDJ8wOPMyYjj64os5C3jTH7IZahgW6h7gmn5AHg=;
+	b=rSvMfWuQrV+Eh9PLNkIh0X6tMnh3DQ0gbYumXjuBD98e9JMoJO1Zt9CY11e+SQ1Kt60TpQ
+	92gila1c6Q+dO2mdpfLPjiRWtehkex36K8jUKh0CLs2U5S4I5bur9gsMoz76Rskx26E6S5
+	p264V9FHgMMuLr/wfO81DiwtgUmwwzDnVInG0frpJAyNhAbhRfMIht3I8wUh0PeGShjCPu
+	Ah51N2qBEqkjNC1g/BmopVWRXNY+T45ROmsFit1N71uSm/eowSj4VJfgYUTQPngaaCfxZ+
+	yk1bI5gB2rQ6/YgZtLo3ycP9iWqb2v2Bpp4T4kusqqqOD4ukQkasNON3uSTCCQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, zenghui.yu@linux.dev, itazur@amazon.com, pbonzini@redhat.com, corbet@lwn.net, Dave.Martin@arm.com, linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, zulinx86@gmail.com, kvmarm@lists.linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, glider@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Date: Sun, 04 Aug 2024 11:24:24 +0200
+From: barnabas.czeman@mainlining.org
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@somainline.org>
+Subject: Re: [PATCH 0/2] Add MSM8996/MSM8953 dpu catalog
+In-Reply-To: <zeek3j7skstysho5bduxn23xipz3fpqsfwggue66dlyozhepnn@4wnnd7q6xf22>
+References: <20240628-dpu-msm8953-msm8996-v1-0-a31c77248db7@mainlining.org>
+ <zeek3j7skstysho5bduxn23xipz3fpqsfwggue66dlyozhepnn@4wnnd7q6xf22>
+Message-ID: <202f4237b0019fda0cf860bf55e534e1@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 04 Aug 2024 09:17:47 +0100,
-Zenghui Yu <zenghui.yu@linux.dev> wrote:
+On 2024-08-01 21:25, Dmitry Baryshkov wrote:
+> On Fri, Jun 28, 2024 at 04:39:38PM GMT, Barnabás Czémán wrote:
+>> This patch series add dpu support for MSM8996/MSM8953 devices.
+>> 
+>> Note, by default these platforms are still handled by the MDP5 driver
+>> unless the `msm.prefer_mdp5=false' parameter is provided.
 > 
-> +Cc kvmarm people and the list ...
-
-Thanks Zenghui.
-
+> Could you please provide a summary of features actually tested with the
+> DPU driver? Have you tested YUV output? Have you tested RGB planes?
+> Which LMs have you tested?
 > 
-> On 2023/6/6 23:46, Takahiro Itazuri wrote:
-> > Fixes the register ID of SPSR_FIQ.
-> > 
-> > SPSR_FIQ is a 64-bit register and the 64-bit register size mask is
-> > 0x0030000000000000ULL.
-> > 
-> > Fixes: fd3bc912d3d1 ("KVM: Documentation: Document arm64 core registers in detail")
-> > Signed-off-by: Takahiro Itazuri <itazur@amazon.com>
-> 
-> ... since you're fixing the encoding of an *arm64* core register and the
-> mentioned commit fd3bc912d3d1 was merged via the kvmarm tree. I guess
-> this is the main reason why this patch has been blocked on the list for
-> over a year, as pointed out recently by Alexander [*].
+It was tested in usage on multiple msm8953 (sdm450, msm8953, sdm632) 
+devices like
+- Samsung A6+ LTE (sdm450, cmd panel)
+- Xiaomi Redmi 7 (sdm632, video panel)
+- Xiaomi Redmi 5 (sdm450, video panel)
+- Xiaomi Redmi 5 Plus (msm8953, video panel)
+- Xiaomi Redmi Note 4 (msm8953, video panel)
+- Xiaomi Mi A1 (msm8953, video panel)
+- Xiaomi Mi A2 Lite/Redmi 6 Pro (msm8953, video panel)
+- Xiaomi Redmi S2 (msm8953, video panel)
+- Motorola G5 Plus (msm8953, video panel)
+and couple of msm8996 devices like
+- Xiaomi Mi Note 2 (video panel)
+- Xiaomi Mi5s (cmd panel)
+It was tested with glmark2 and with mobile shells like plasma-mobile 
+(dpu fixes night light) and phosh.
+If you can help how can I test specific features i will do it.
+How can I find out which LM is in use?
 
-That, and the fact that this is send to an email address I haven't
-been reachable on for about 5 years...
-
-> 
-> > 
-> > ---
-> > Changes from v1
-> > - Add a description about the 64-bit register size mask in the commit
-> >   message.
-> > - Link: https://lore.kernel.org/all/20230410121927.26953-1-itazur@amazon.com/
-> > 
-> > ---
-> >  Documentation/virt/kvm/api.rst | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> > index a5c803f39832..65dad2581751 100644
-> > --- a/Documentation/virt/kvm/api.rst
-> > +++ b/Documentation/virt/kvm/api.rst
-> > @@ -2535,7 +2535,7 @@ Specifically:
-> >    0x6030 0000 0010 004a SPSR_ABT    64  spsr[KVM_SPSR_ABT]
-> >    0x6030 0000 0010 004c SPSR_UND    64  spsr[KVM_SPSR_UND]
-> >    0x6030 0000 0010 004e SPSR_IRQ    64  spsr[KVM_SPSR_IRQ]
-> > -  0x6060 0000 0010 0050 SPSR_FIQ    64  spsr[KVM_SPSR_FIQ]
-> > +  0x6030 0000 0010 0050 SPSR_FIQ    64  spsr[KVM_SPSR_FIQ]
-> >    0x6040 0000 0010 0054 V0         128  fp_regs.vregs[0]    [1]_
-> >    0x6040 0000 0010 0058 V1         128  fp_regs.vregs[1]    [1]_
-> >    ...
-> 
-> The change itself looks reasonable.
-> 
-> Thanks,
-> Zenghui
-> 
-> [*] https://lore.kernel.org/all/20240802132036.914457-1-glider@google.com
-
-In case Oliver picks this up for 6.11:
-
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+>> Dmitry Baryshkov (1):
+>>       drm/msm/dpu: add support for MSM8953
+>> 
+>> Konrad Dybcio (1):
+>>       drm/msm/dpu: Add MSM8996 support
+>> 
+>>  .../drm/msm/disp/dpu1/catalog/dpu_1_16_msm8953.h   | 218 
+>> +++++++++++++
+>>  .../drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996.h    | 348 
+>> +++++++++++++++++++++
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     | 106 +++++++
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   2 +
+>>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   2 +
+>>  drivers/gpu/drm/msm/msm_drv.c                      |   2 +
+>>  6 files changed, 678 insertions(+)
+>> ---
+>> base-commit: df9574a57d02b265322e77fb8628d4d33641dda9
+>> change-id: 20240528-dpu-msm8953-msm8996-5d0fb7e387b8
+>> 
+>> Best regards,
+>> --
+>> Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> 
 
