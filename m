@@ -1,216 +1,155 @@
-Return-Path: <linux-kernel+bounces-273804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8561B946E57
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 12:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58222946E5D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13D7D1F2175C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:59:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94F81F2167F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC9F2D61B;
-	Sun,  4 Aug 2024 10:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EAA32C85;
+	Sun,  4 Aug 2024 11:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b="cbzRaOqp"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Po1AmelC"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8042557F
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 10:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294692B9D7
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 11:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722769187; cv=none; b=HyUD6gST9zjDzFDVeE7dc/dFmyLfAN+MdMki7aD9NA1br5dl4GSyMY+VRt5lxJCh4FwnZdC4zNNQlKPsMw0EVRY2Q8hFB5lSi4CNtMB+dGW+siMAeXbHYbb+P4RVpIVLDVS1DwMEjVYRyB7M8lyVIJpJeugMRvMSwPg8sElQq98=
+	t=1722769468; cv=none; b=OGPyBl3Me4odoJhYL0B5HsvW5nTE7L40Es8mE3RNOkaEodRoni/wXO54XEB/U0cltDbXJDWEEcEs1SRArB9/rPsEdtAndQknqKskjk1H6oU44qDq2chbKdpiZHKAbgXuq/ZQ6Fa55/sL/CqvbYko2QgG4DA6ax6AFMTGN5sWhQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722769187; c=relaxed/simple;
-	bh=L5Vrw3PKvawaKJnULY9jEBAZo/94igeafx99+6TgBFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZY/deaNslXMXXqjy+hAsEnQeSjPZnu/ATRdoNAlN6simBTLn/h/u17PP1uownDD3AqDNn6HxgTLcBLFtXZF7uLT+ctLjxRenWkEzYrbg7ewDJr50gHfNkqVsoalFosbLrdMzpS3klKRoDElGQkJEN3tMFVCQvjqEAULkeM1O3Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se; spf=pass smtp.mailfrom=grimler.se; dkim=pass (1024-bit key) header.d=grimler.se header.i=@grimler.se header.b=cbzRaOqp; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=grimler.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grimler.se
-Date: Sun, 4 Aug 2024 12:59:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-	t=1722769181;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D73264s0rVgukFWFnLR+vhWZQ06smgTwC5awVs888Oo=;
-	b=cbzRaOqpNdt0nkCPe1REyNFoxFAt3LxF1sfg91oYwLswUpazCyM3ajF/GDqm52fr6A49ut
-	S2Z0/jlSgpicapb27uC9ISakign8gj+erkvowgPE/jVRKjQsRIEmVHz8vk1amegcFFTZv4
-	gBZpGNFFqaJgL28qqk5Tm1WWbX6b0xw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Henrik Grimler <henrik@grimler.se>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Wolfgang Wiedmeyer <wolfgit@wiedmeyer.de>,
-	Denis 'GNUtoo' Carikli <GNUtoo@cyberdimension.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 00/10] power: supply: max77693: Toggle charging/OTG
- based on extcon status
-Message-ID: <20240804105937.GA20421@l14.localdomain>
-References: <20240729-max77693-charger-extcon-v3-0-02315a6869d4@gmail.com>
- <20240801062253.GA2681@l14.localdomain>
+	s=arc-20240116; t=1722769468; c=relaxed/simple;
+	bh=y8faSsy3GMkV8+GvhOybBMLzLnoGhpSAV3sFruwiIFM=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=oZJBVlwXjzqAGyyhb2V0XwgqHDszrEhMU/5BuVaIwCQBFzVlyde0LC/QE/KUewQRuuUYyA8r05SH+vwNwOgMaQzNU8hncaYOWd0Tr1yiRlCGSBwvtXUR3iarWZwnTZw/Uqxqw+GMSK01ABPMbChCSSr5oQElTHHe8L015QBE704=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Po1AmelC; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so13382359a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 04:04:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1722769465; x=1723374265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sdhNjk3nlOQkHBfzhb9NvFAahhOzsHQURPXiWKXebgw=;
+        b=Po1AmelCAj1I3shf9bDUU9AKOag2KjZZV9kJbfcHimukVUVR8XZR1q7D+pZLecwAyB
+         d73YyZd4pYQxrUWP9PqmLjfWf44IV53FbZYmumdsh1vw9mHLvcGup2rm+SvjoqUlQCmf
+         UOa7ajqT7b9DdqPgoL/4cgVz+EmOklgEEg5IA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722769465; x=1723374265;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sdhNjk3nlOQkHBfzhb9NvFAahhOzsHQURPXiWKXebgw=;
+        b=tdyeQJMfBUM6cO53MMDTRfWfB68xhfFMxMRnu522NbqPwF+kYrvlwkJ9S3u0a2S8he
+         LfMMZF4sdL2nknRC4rnXChUYYAUL8gDhUPKE0gGACQNrqfI66+d8EVUKxizMM1ot+5Eu
+         YgQ363zdObb9QnXfls03P3+ZD4WRhVroAGuVBByN4Ru+2LOz0mac3s7wX2Q+4H0qanov
+         AX+aS8mEz1JJU+jxeSM+UT8jXWwFUA2pR9p1ZzBEi2hxl8nMiEuumvXbwwn8+5n344hj
+         Ta1ZdDpMoQ/8tUqkocsYtI+JqB9qPcnuO3m/fhqqJDVh/fn8vNk3yKYaXJFgNcgbC0Hs
+         0gfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvJrZaKIZABDMk8fGYFL6hBcvI8QsayyKPUt/Gt3c7nE+S6zCQ3hyd/zzD/rmvlyoNLqM0aJlL77FQUdw17RkB9VJmTm2CvqCMNjqW
+X-Gm-Message-State: AOJu0YwliyIx+95WY4MZq8BrXRAukmTcUIAV3vDaAF3BpW0DQJiYtCNg
+	0B60XalW09OdRpIzbXv0b1bzg+c/RzKSGLXSb+A+y/HZegJqgRk1UVyi4R7JWQ==
+X-Google-Smtp-Source: AGHT+IEFqAVqs9u6rzoc50lPwUIjKavo1CRQSGr6cYJBJrJGT82XBk1cw13Mtd2Q46406CN2I5y5xg==
+X-Received: by 2002:aa7:df97:0:b0:5a2:68a2:ae52 with SMTP id 4fb4d7f45d1cf-5b7f0dcf294mr6016827a12.0.1722769465200;
+        Sun, 04 Aug 2024 04:04:25 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83c32be67sm3453474a12.97.2024.08.04.04.04.24
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 04 Aug 2024 04:04:24 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Aditya Garg <gargaditya08@live.com>, Janne Grunau <j@jannau.net>, <devnull+j.jannau.net@kernel.org>
+CC: <asahi@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <brcm80211@lists.linux.dev>, <kvalo@kernel.org>, <linus.walleij@linaro.org>, LKML <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>, Hector Martin <marcan@marcan.st>, <stable@vger.kernel.org>
+Date: Sun, 04 Aug 2024 13:04:25 +0200
+Message-ID: <1911d0fdea8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <MA0P287MB021725DE596EF4E5294FA5DDB8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+References: <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <306c3010-a6ac-4f8a-a986-88c1a137ed84@app.fastmail.com>
+ <MA0P287MB021725DE596EF4E5294FA5DDB8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801062253.GA2681@l14.localdomain>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Hi again Artur,
+On August 4, 2024 8:27:04 AM Aditya Garg <gargaditya08@live.com> wrote:
 
-On Thu, Aug 01, 2024 at 08:23:26AM +0200, Henrik Grimler wrote:
-> Hi Artur,
-> 
-> On Mon, Jul 29, 2024 at 07:47:34PM +0200, Artur Weber wrote:
-> > This patchset does the following:
-> > 
-> > - Add CURRENT_MAX and INPUT_CURRENT_MAX power supply properties to
-> >   expose the "fast charge current" (maximum current from charger to
-> >   battery) and "CHGIN input current limit" (maximum current from
-> >   external supply to charger).
-> > 
-> > - Add functions for toggling charging and OTG modes.
-> > 
-> > - Add an extcon-based handler that enables charging or OTG depending
-> >   on the cable type plugged in. The extcon device to use for cable
-> >   detection can be specified in the device tree, and is entirely
-> >   optional.
-> > 
-> > The extcon listener implementation is inspired by the rt5033 charger
-> > driver (commit 8242336dc8a8 ("power: supply: rt5033_charger: Add cable
-> > detection and USB OTG supply")).
-> 
-> Tested on exynos4412-i9305 (after applying the changes in patch 8 - 10
-> to exynos4412-midas.dtsi).  It works well, device correctly identifies
-> a usb cable connected to charger or a usb cable connected to computer,
-> and sets a limit of 1.8 A and 0.5 A in the two cases.
-> 
-> I did notice that device does not always detect cable insertion, so I
-> can occassionally get two de-attach events in a row.  Cable was
-> inserted between 428 and 462 in below log snippet:
-> 
-> [  389.458399] max77693-muic max77693-muic: external connector is attached(chg_type:0x3, prev_chg_type:0x3)
-> [  389.469765] max77693-charger max77693-charger: fast charging. connector type: 6
-> [  428.151857] max77693-muic max77693-muic: external connector is detached(chg_type:0x3, prev_chg_type:0x0)
-> [  428.160319] max77693-charger max77693-charger: not charging. connector type: 13
-> [  462.156048] max77693-muic max77693-muic: external connector is detached(chg_type:0x0, prev_chg_type:0x0)
-> [  469.881925] max77693-muic max77693-muic: external connector is attached(chg_type:0x3, prev_chg_type:0x3)
-> [  469.890049] max77693-charger max77693-charger: fast charging. connector type: 6
-> 
-> but this is probably an issue in extcon driver though rather than
-> charger.
-> 
-> I have not tested so that MHL still works, as I do not have access to
-> that cable at the moment, will try it in a few days.
+> Hi
+>
+> WPA3 is broken on T2 Macs (atleast on 4364) for a long time. I was under 
+> the impression brcmfmac doesn't support it.
+>
+> Anyways, I've asked a fedora user to compile a kernel with CONFIG_BRCMDBG.
+>
+> If you want logs without it, look over here:
+> https://pastebin.com/fnhH30JA
 
-MHL now tested on exynos4412-i9300 as well.  It works, and the series
-fixes so that we can hotplug the cable (with a few patches to make
-sii9324 use extcon as well), before we had to connect cable before
-boot and rely on bootloader to setup everything.  Thanks!
+Not sure what to make of this. The interface comes up without any obvious 
+error and then another interface is created by another driver:
 
-> > Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+[ 7.006441] rtl8xxxu 1-8.3:1.0 wlp0s20f0u8u3: renamed from wlan0
 
-Tested-by: Henrik Grimler <henrik@grimler.se>
+That interface connects:
 
-Best regards,
-Henrik Grimler
+[ 9.103599] wlp0s20f0u8u3: authenticate with 98:da:c4:af:1f:c2 (local 
+address=2e:87:9a:a9:38:66)
+[ 9.103605] wlp0s20f0u8u3: send auth to 98:da:c4:af:1f:c2 (try 1/3)
+[ 9.109051] wlp0s20f0u8u3: authenticated
+[ 9.110202] wlp0s20f0u8u3: associate with 98:da:c4:af:1f:c2 (try 1/3)
+[ 9.126945] wlp0s20f0u8u3: RX AssocResp from 98:da:c4:af:1f:c2 
+(capab=0x1431 status=0 aid=5)
+[ 9.127678] usb 1-8.3: rtl8xxxu_bss_info_changed: HT supported
+[ 9.128606] wlp0s20f0u8u3: associated
 
-> > v3 no longer uses the CHARGER regulator to manage the power status, and
-> > that's for two reasons:
-> > 
-> > - Regulator enable/disable behavior was interfering with how the power
-> >   supply driver worked (we occasionally got "unbalanced disables"
-> >   errors when switching charging state, despite checking for the
-> >   regulator status with regulator_is_enabled() - the CHARGER reg would
-> >   report as enabled despite the enable count being 0).
-> >   This broke OTG insertion if the OTG cable was plugged in first, and
-> >   sometimes caused warnings on unsuspend.
-> > 
-> > - Changing the charging values directly in the power supply driver is
-> >   less opaque and lets us avoid bringing in a dependency on regulators.
-> > 
-> > It also splits the current limits back into two properties:
-> > INPUT_CURRENT_LIMIT and CONSTANT_CHARGE_CURRENT_MAX. Again, there are
-> > two reasons for this split:
-> > 
-> > - They are two separate current controls, one for USB->charger and one
-> >   for charger->battery, and they have different limits (0-2.1A for CC
-> >   vs 60mA-2.58A for input). Given that the power supply core has the
-> >   properties for both values separately, it's more logical to present
-> >   them as such.
-> > 
-> > - It's safer to keep these separate; CONSTANT_CHARGE_CURRENT_MAX is
-> >   pretty explicitly only set *once* - at probe time with a safe value
-> >   specified in the DT. This way, INPUT_CURRENT_LIMIT is safer to modify
-> >   since in the event of an invalid value the CC current will hold back
-> >   the extra current thus preventing damage to the battery.
-> > 
-> > The latter is relevant as I'm working on a follow-up patchset that
-> > allows for controlling the charging parameters using power supply
-> > properties/sysfs properties rather than the CHARGER regulator.
-> > 
-> > Note that the CHARGER regulator gets disabled automatically if it's
-> > not used, which will disable charging if it was auto-enabled by the
-> > extcon code. This can be worked around by re-attaching the cable, or
-> > more properly by removing the CHARGER regulator from DT for devices
-> > that use the extcon-based charger management, as has been done in the
-> > Galaxy Tab 3 8.0 DTSI.
-> > 
-> > See v1 for old description:
-> > 
-> > https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
-> > ---
-> > Changes in v3:
-> > - Drop uses of CHARGER regulator, manage registers directly in power
-> >   supply driver instead
-> > - Link to v2: https://lore.kernel.org/r/20240715-max77693-charger-extcon-v2-0-0838ffbb18c3@gmail.com
-> > 
-> > Changes in v2:
-> > - Changed to use monitored-battery for charge current value
-> > - Both current limit variables are now set by the CHARGER regulator
-> > - Link to v1: https://lore.kernel.org/r/20240530-max77693-charger-extcon-v1-0-dc2a9e5bdf30@gmail.com
-> > 
-> > ---
-> > Artur Weber (10):
-> >       dt-bindings: power: supply: max77693: Add monitored-battery property
-> >       dt-bindings: power: supply: max77693: Add maxim,usb-connector property
-> >       power: supply: max77693: Expose input current limit and CC current properties
-> >       power: supply: max77693: Set charge current limits during init
-> >       power: supply: max77693: Add USB extcon detection for enabling charging
-> >       power: supply: max77693: Add support for detecting and enabling OTG
-> >       power: supply: max77693: Set up charge/input current according to cable type
-> >       ARM: dts: samsung: exynos4212-tab3: Add battery node with charge current value
-> >       ARM: dts: samsung: exynos4212-tab3: Add USB connector node
-> >       ARM: dts: exynos4212-tab3: Drop CHARGER regulator
-> > 
-> >  .../bindings/power/supply/maxim,max77693.yaml      |  15 +
-> >  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi     |  22 +-
-> >  drivers/power/supply/Kconfig                       |   1 +
-> >  drivers/power/supply/max77693_charger.c            | 302 ++++++++++++++++++++-
-> >  include/linux/mfd/max77693-private.h               |  12 +
-> >  5 files changed, 337 insertions(+), 15 deletions(-)
-> > ---
-> > base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-> > change-id: 20240525-max77693-charger-extcon-9ebb7bad83ce
-> > 
-> > Best regards,
-> > -- 
-> > Artur Weber <aweber.kernel@gmail.com>
-> > 
+Is brcmfmac setup to connect to the same access point. There are a lot of 
+unknowns here.
+
+Regards,
+Arend
+
+> ________________________________________
+> From: Janne Grunau <j@jannau.net>
+> Sent: 04 August 2024 11:49
+> To: Aditya Garg; devnull+j.jannau.net@kernel.org
+> Cc: arend.vanspriel@broadcom.com; asahi@lists.linux.dev; 
+> brcm80211-dev-list.pdl@broadcom.com; brcm80211@lists.linux.dev; 
+> kvalo@kernel.org; linus.walleij@linaro.org; LKML; 
+> linux-wireless@vger.kernel.org; Hector Martin; stable@vger.kernel.org
+> Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
+>
+> Hej,
+>
+> On Sun, Aug 4, 2024, at 05:10, Aditya Garg wrote:
+>> Hi
+>>
+>> wpa_supplicant 2.11 broke Wi-Fi on T2 Macs as well, but this patch
+>> doesn't seem to be fixing Wi-Fi. Instead, it's breaking it even on
+>> older 2.10 wpa_supplicant. Tested by a user on bcm4364b2 wifi chip with
+>> a WPA2-PSK [AES] network. dmesg output:
+>
+> On bcm4377, bcm4378 and bcm4388 (chipsets used in M1/M2 macs)
+> WPA3-SAE and WPA2-PSK still works with Fedora's wpa_supplicant 2.10.
+> Fedora's package carried SAE offload patches in 2.10.
+> wpa_supplicant 2.11 still doesn't work with this patch but it prevents a
+> kernel oops after a disconnect (due to an authentication timeout in the
+> current broken state) in wpa_supplicant.
+>
+> I'll continue to debug the wpa_supplicant 2.11
+>
+> best regards,
+> Janne
+
+
+
 
