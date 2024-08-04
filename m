@@ -1,80 +1,77 @@
-Return-Path: <linux-kernel+bounces-273985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E20947060
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:02:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE48947063
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8F8E1F21185
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 20:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14C81F21182
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 20:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709291339A4;
-	Sun,  4 Aug 2024 20:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F131E7172F;
+	Sun,  4 Aug 2024 20:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LrbLq3Px"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VKhMY6Ap"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7DE6FB9
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 20:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E7B171D2
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 20:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722801728; cv=none; b=Ip83eZiJtn5CrkKH8CBkS5pyMaJXiq2tKwEn+Kcl+3dpM/iJhr6NH10rblCPJKP9cvVsBsFMSUQPmBGNhLAf+AbK+O0Q0A0yuJlp+GjzI6Vvur2cWCqZxxc7kFBWcDsUMqDhLkg6Ca8AzzOKx8pF2kQwKqKKMQoaB7AURsCIoqc=
+	t=1722802750; cv=none; b=Ur3qwN7db0lwVzJcfov9HiL/ZpIKVMpq2E0Dzxlx2ko24MByrI9qXxuu2TmxTm3wXomHpYNV7kLWHxRUPUhsBqFYQXZeBWjVfZH8oGmZaEYqhfzC/9PSxILVV9KpEYGiGevxpSkiyZVRQ009fFV1i/66T6KgBPcLoo1TnE6eVPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722801728; c=relaxed/simple;
-	bh=H+rtlATAt9OolKawgkfo2ZCZccJCrnu6Q2G3/BugDm8=;
+	s=arc-20240116; t=1722802750; c=relaxed/simple;
+	bh=NWMwfLCQ0Wc3du6MqhN+a2x8w309gpLGxX3t4hNWdCk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8HRPJ//SdMJWXdwDGwckqWqvU/F4EA4ZHqR1xnQ04JGBU+t/bhn/gKlLU6Onoy1p4WFKku7WfRq5zvHgfG6o6kAqB8qKEixn50pFLhbZNaU8zheNYuh2iK8xoBOF7rvjdTYJzH0EIuk0gRydRb4e+dYgmnoPnv9ixI21Z9Hflg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LrbLq3Px; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722801726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H+rtlATAt9OolKawgkfo2ZCZccJCrnu6Q2G3/BugDm8=;
-	b=LrbLq3PxhxS61FAh/VWX0MErMy8X0x14ZFQp11Q7Bd4FUTAEcBalim8G78RbP8torjQNlg
-	al/jC8U8qNmS25WnFNGu6CRlpEc6Sm0lMKIA78QkXZ4bPT4UpgNS8+udsfxsNxPe2cGDuN
-	iXJiHKVWYrjeCPiyEin+zMgxBZkAXZk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-529-GSJVXezxNgeCIAJSp2csjg-1; Sun,
- 04 Aug 2024 16:02:02 -0400
-X-MC-Unique: GSJVXezxNgeCIAJSp2csjg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DC6B1955D45;
-	Sun,  4 Aug 2024 20:02:00 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.47])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2E7E21955F40;
-	Sun,  4 Aug 2024 20:01:55 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  4 Aug 2024 22:01:58 +0200 (CEST)
-Date: Sun, 4 Aug 2024 22:01:53 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Brian Mak <makb@juniper.net>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first
- in ELF cores)
-Message-ID: <20240804200153.GC27866@redhat.com>
-References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
- <20240804152327.GA27866@redhat.com>
- <CAHk-=whg0d5rxiEcPFApm+4FC2xq12sjynDkGHyTFNLr=tPmiw@mail.gmail.com>
- <20240804185338.GB27866@redhat.com>
- <CAHk-=wjr0p5CxbC-iGEznupau936D24iotTZi7eFXqgKX-otbg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SLnvawLWRSw39dUB9NXDSG6XjI/yuxg/tdijidWCAvpyZKXqu/SPhmUCdGnXS+zZTeG40DFeSlfsH+2i6hCgZ7XVYJXXC6ixB2s4dtnkxIXn8961WKLXFDTfNZBnh3KW72Z+9Rsy+qlnZTX01gqNaB/BpeDCds1OJAl5PhHI68s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VKhMY6Ap; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722802748; x=1754338748;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NWMwfLCQ0Wc3du6MqhN+a2x8w309gpLGxX3t4hNWdCk=;
+  b=VKhMY6Ap/s4kwJmTLMbfYpzFHUPgbpqHWJOoefvoC8JniwoC5K5H33z8
+   xFAM7aXcaPMSnbsbsC9C5OnVOCeatyia6lMseKqlVTVkA62YXSW3l3Qfn
+   jpkp7XuQaB7rtdOm0i1Fv2ktGhaAzaN63KuuP/wAMSKaOqUmFtOAuSS4K
+   mppebHwo657RXI2LkAsQp1n+tLlVXNxEJBgdXQabnbTxLNs+d9WiX1y29
+   NYLvGpsEPyxQiwGU8cIiGF+dCSl5LMtuaK3V6EstqwCxNQA8RwH5kOwUw
+   mQ6/Ee66vEl+1aCjbeqUyJG3BkEijbjdHsn5oNT5rZx6XNIQ7BTv92t7b
+   w==;
+X-CSE-ConnectionGUID: 8jlIvnW5SN2eWKSAmMT4GA==
+X-CSE-MsgGUID: sOH/iQNjSFmb6pGu5RuXbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="32159776"
+X-IronPort-AV: E=Sophos;i="6.09,263,1716274800"; 
+   d="scan'208";a="32159776"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 13:19:07 -0700
+X-CSE-ConnectionGUID: CezMV2roS+atbOu9bEPdXQ==
+X-CSE-MsgGUID: ri672EsKSV6Yw0+ERSuHyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,263,1716274800"; 
+   d="scan'208";a="60328265"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 04 Aug 2024 13:19:05 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sahh1-0001au-1g;
+	Sun, 04 Aug 2024 20:19:03 +0000
+Date: Mon, 5 Aug 2024 04:18:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: oe-kbuild-all@lists.linux.dev, Arnd Bergmann <arnd@arndb.de>,
+	kernel test robot <lkp@intel.com>,
+	Greg Ungerer <gerg@linux-m68k.org>, linux-m68k@lists.linux-m68k.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] m68k: move sun3 into a top-level platform option
+Message-ID: <202408050338.LSLH0NA3-lkp@intel.com>
+References: <20240803140115.3305547-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,45 +80,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjr0p5CxbC-iGEznupau936D24iotTZi7eFXqgKX-otbg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20240803140115.3305547-1-arnd@kernel.org>
 
-On 08/04, Linus Torvalds wrote:
->
-> On Sun, 4 Aug 2024 at 11:53, Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > Apart from SIGKILL, the dumper already has the full control.
->
-> What do you mean? It's a regular usermodehelper. It gets the dump data
-> as input. That's all the control it has.
+Hi Arnd,
 
-I meant, the dumping thread can't exit until the dumper reads the data
-from stdin or closes the pipe. Until then the damper can read /proc/pid/mem
-and do other things.
+kernel test robot noticed the following build errors:
 
-> > And note that the dumper can already use ptrace.
->
-> .. with the normal ptrace() rules, yes.
->
-> You realize that some setups literally disable ptrace() system calls,
-> right? Which your patch now effectively sidesteps.
+[auto build test ERROR on geert-m68k/for-next]
+[also build test ERROR on geert-m68k/for-linus soc/for-next gerg-m68knommu/for-next linus/master v6.11-rc1 next-20240802]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Well. If, say, selinux disables ptrace, then ptrace_attach() in this
-patch should also fail.
+url:    https://github.com/intel-lab-lkp/linux/commits/Arnd-Bergmann/m68k-move-sun3-into-a-top-level-platform-option/20240804-001711
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git for-next
+patch link:    https://lore.kernel.org/r/20240803140115.3305547-1-arnd%40kernel.org
+patch subject: [PATCH] m68k: move sun3 into a top-level platform option
+config: m68k-m5475evb_defconfig (https://download.01.org/0day-ci/archive/20240805/202408050338.LSLH0NA3-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408050338.LSLH0NA3-lkp@intel.com/reproduce)
 
-But if some setups disable sys_ptrace() as a system call... then yes,
-I didn't know that.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408050338.LSLH0NA3-lkp@intel.com/
 
-> THAT is why I don't like it. ptrace() is *dangerous*.
+All errors (new ones prefixed by >>):
 
-And horrible ;)
+   {standard input}: Assembler messages:
+>> {standard input}:1135: Error: operands mismatch -- statement `movec %cacr,%d0' ignored
+   {standard input}:1135: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d0' ignored
+   {standard input}:2182: Error: invalid instruction for this architecture; needs 68010 or higher (68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `moves.l %d0,(%a1)' ignored
+   {standard input}:2216: Error: invalid instruction for this architecture; needs 68010 or higher (68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `moves.l %d0,(%a1)' ignored
+   {standard input}:3614: Error: invalid instruction for this architecture; needs 68010 or higher (68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `moves.l %d5,(%a0)' ignored
+   {standard input}:3949: Error: invalid instruction for this architecture; needs 68010 or higher (68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `moves.l %d3,(%a0)' ignored
+--
+   {standard input}: Assembler messages:
+>> {standard input}:1014: Error: operands mismatch -- statement `movec %cacr,%d1' ignored
+   {standard input}:1014: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d1' ignored
+>> {standard input}:1051: Error: operands mismatch -- statement `movec %cacr,%d3' ignored
+   {standard input}:1051: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d3' ignored
+   {standard input}:1348: Error: operands mismatch -- statement `movec %cacr,%d1' ignored
+   {standard input}:1348: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d1' ignored
+   {standard input}:4385: Error: operands mismatch -- statement `movec %cacr,%d0' ignored
+   {standard input}:4385: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d0' ignored
+   {standard input}:5373: Error: operands mismatch -- statement `movec %cacr,%d3' ignored
+   {standard input}:5373: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d3' ignored
+   {standard input}:6031: Error: operands mismatch -- statement `movec %cacr,%d0' ignored
+   {standard input}:6031: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d0' ignored
+   {standard input}:6376: Error: operands mismatch -- statement `movec %cacr,%d0' ignored
+   {standard input}:6376: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d0' ignored
+   {standard input}:6455: Error: operands mismatch -- statement `movec %cacr,%d0' ignored
+   {standard input}:6455: Error: invalid instruction for this architecture; needs 68000 or higher (68000 [68ec000, 68hc000, 68hc001, 68008, 68302, 68306, 68307, 68322, 68356], 68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `orw #2056,%d0' ignored
+--
+   {standard input}: Assembler messages:
+   {standard input}:55: Error: operands mismatch -- statement `movec %cacr,%d0' ignored
+   {standard input}:91: Error: operands mismatch -- statement `movec %cacr,%d1' ignored
+>> {standard input}:108: Error: operands mismatch -- statement `movec %d3,%caar' ignored
+   {standard input}:113: Error: operands mismatch -- statement `movec %d3,%caar' ignored
+   {standard input}:213: Error: invalid instruction for this architecture; needs 68010 or higher (68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `moves.l (%a0),%d4' ignored
+   {standard input}:227: Error: invalid instruction for this architecture; needs 68010 or higher (68010, 68020 [68k, 68ec020], 68030 [68ec030], 68040 [68ec040], 68060 [68ec060], cpu32 [68330, 68331, 68332, 68333, 68334, 68336, 68340, 68341, 68349, 68360], fidoa [fido]) -- statement `moves.l %d0,(%a0)' ignored
+--
+   {standard input}: Assembler messages:
+>> {standard input}:59: Error: operands mismatch -- statement `movec %d0,%sfc' ignored
+>> {standard input}:59: Error: operands mismatch -- statement `movec %d0,%dfc' ignored
+   {standard input}:74: Error: operands mismatch -- statement `movec %d0,%sfc' ignored
+   {standard input}:74: Error: operands mismatch -- statement `movec %d0,%dfc' ignored
+   {standard input}:89: Error: operands mismatch -- statement `movec %d0,%sfc' ignored
+   {standard input}:89: Error: operands mismatch -- statement `movec %d0,%dfc' ignored
+   {standard input}:104: Error: operands mismatch -- statement `movec %d0,%sfc' ignored
+   {standard input}:104: Error: operands mismatch -- statement `movec %d0,%dfc' ignored
 
-> Just adding some implicit tracing willy-nilly needs to be something
-> people really worry about.
-
-Ok, as I said I won't insist.
-
-Oleg.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
