@@ -1,195 +1,147 @@
-Return-Path: <linux-kernel+bounces-273880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 015F8946F26
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:58:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B521D946F22
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57165B21055
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AEA9281862
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA6258210;
-	Sun,  4 Aug 2024 13:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C984963A;
+	Sun,  4 Aug 2024 13:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="VO5GPWW6"
-Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQ9ZI212"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D0DAD55;
-	Sun,  4 Aug 2024 13:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C3B28DCC;
+	Sun,  4 Aug 2024 13:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722779895; cv=none; b=A6Hd4mWA+5ejYxSP5pqc5AOyF8tsm6gKd816yB3a9cdqRkgHR6dtmgfOxU8l+ocyTZXtJ8QLjlWirubtCo6iAYFFwZ06q23rdKNNF2UpKrJk4Ul6gTuimla+LtHlmpvqWNqD7wFaQHPdSMyYvdNxIBHRdFSEuyyqzCYVQjkfAIo=
+	t=1722779892; cv=none; b=eaOkixTrDdeZz6HNFvayg9OivDx9Oy1RtwSz8ynZpoFObgAeRadT9xUOBkB3SF8F5o5y67AhYVfZ6rddD5BE4pShoVh7T2Z85aBDKreBmwGSXCAzuOxS67Nhu9NtjBlP+6rf2/jYsYTjvnaGWCcDV/zSdUPYXEO+RULIA1Kwia0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722779895; c=relaxed/simple;
-	bh=ETnqFYAnoHQIpW7ILDV1tL4TbB923ixWcTBW6ZXtE7I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c5kxwdDi4hHR9pGYMP44GMV/WSaQ6a98a4en13Zayacb3+FIdL+Whq2c9cy33X1+znioZqUxNlIUzDjjK4XU8SFM0BZEMf+/xfB7O+5ivj5rQyQnNJEFkOKpyCENKKd8AjSaJOWTdgFEjmrzk017CgpwK4/M9ODSRzflje7BXck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=VO5GPWW6; arc=none smtp.client-ip=213.240.239.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
-	s=default; h=Content-Type:Date:To:From:Subject:Message-ID:
-	Content-Transfer-Encoding:Reply-To:Sender;
-	bh=2BHCBiQNbBm/UXW3qyZfWY7r56zwJfCgAUwdjP+slDw=; b=VO5GPWW6bNLuaZhCNhpRgEmY8m
-	vK+pXGaKWYYUuxFZ1jI3m1Df2oKtLE8+ZfuEjbzS5p6hslaayQoREf/7Qbq2pVQxPTNauLjFtfJl5
-	fBLzQu+FMh3bn0yGQd4anBjYmE9uQudZUK87Lit1w5Z8mqfTSEAHzcSFSdY7bO9rQf4yLjxiiOnm9
-	gGQEgsp7APlOTmg4cmN8nmoO1SsGcEXOepO0BClZgb3TJdPmfh/fE3ISgbkyoReiFxj6mZDpuLOm7
-	Mhtq1wwOeLtsQFsT3STlSHR1ZVYKbUaEagkS4xO+qSGjKqDRqC4DMYtAf33l9ah1NW7d3/EAOICIC
-	68a1Z82AVV60aLRhMsbA+S+Rf9gQGLdrbZmDHSq2xsNya6wN3nVxHxTkS0glPJtIBm+49YItUvk0O
-	RoECRWB1kJsYHCJ0XORFc+t8qQIbDl4baVd8CLv/6Ik3BGC42A9fhyZXq8YurDNDho1i06cgSEzLg
-	kWABAL8erDUajjNZD5pwDYUNSrh7/5gYUCrpev4UhqQI577HwD1/hXKCxz6d0oHMygTlA0Yj5A4ym
-	lIFZslQlxyKxasf1oSSNpA3dAWq7x5hxwL5lIlmHigAVwoneGVxOoPPFsBGqcwSdAiXwzv+9fgIO+
-	G4QNVe8Ek1ol0AdynLOhL/q71xMBuI6x7FCBG2pJM=;
-Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
-	by a1-bg02.venev.name with esmtps
-	id 1sabkD-00000003j2d-3j0q
-	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	(envelope-from <hristo@venev.name>);
-	Sun, 04 Aug 2024 13:57:57 +0000
-Received: from a1-bg02.venev.name ([213.240.239.49])
-	by pmx1.venev.name with ESMTPSA
-	id ISajK+WIr2Y8jQ0AT9YxdQ
-	(envelope-from <hristo@venev.name>); Sun, 04 Aug 2024 13:57:57 +0000
-Message-ID: <845520c7e608c31751506f8162f994b48d235776.camel@venev.name>
-Subject: [PATCH] netfs: Set NETFS_RREQ_WRITE_TO_CACHE when caching is
- possible
-From: Hristo Venev <hristo@venev.name>
-To: Max Kellermann <max.kellermann@ionos.com>, David Howells
-	 <dhowells@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, Jeff
- Layton <jlayton@kernel.org>, willy@infradead.org,
- ceph-devel@vger.kernel.org,  netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, blokos <blokos@free.fr>,  Trond Myklebust
- <trondmy@hammerspace.com>, "dan.aloni@vastdata.com" <dan.aloni@vastdata.com>
-Date: Sun, 04 Aug 2024 16:57:38 +0300
-In-Reply-To: <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
-References: <20240729091532.855688-1-max.kellermann@ionos.com>
-	 <3575457.1722355300@warthog.procyon.org.uk>
-	 <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
-	 <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com>
-	 <3717298.1722422465@warthog.procyon.org.uk>
-	 <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
-Autocrypt: addr=hristo@venev.name; prefer-encrypt=mutual;
- keydata=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
- AjQ6o01lu
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-qzV6eqKdREc03lDMjxSa"
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1722779892; c=relaxed/simple;
+	bh=eGDE+f0BaGsJCgB3xL7YwQKssI6mz9Ing5GSmVS1HYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BsZ3p+dOtCHhjs3S1VNCG6J0gj74M2ZOK29JJxc9hiC9KYJgEGBbe+CWeN0NRfZCwxtTDUuIMXY7CSkmYZfyWhbMnL+/yjZcFaKbftZ2NNEsMnd5O78M+FxjXQvhdyF5KeAHz0wPmgnq76ai4hiNE7pBfXcTPd6WurUcwKRQ1yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQ9ZI212; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AFAC32786;
+	Sun,  4 Aug 2024 13:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722779892;
+	bh=eGDE+f0BaGsJCgB3xL7YwQKssI6mz9Ing5GSmVS1HYw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FQ9ZI212JFmftFY0TLsNcr3+J6xE7efyZgecfKOPwBwpknAkqioEe4coroq8IPxQQ
+	 /TyOF/GEXEQ6gndMsqGY/ilHErEmdxkmHSrE3OVeCMqv8OT0i0ZVv7M/D033zDVVmh
+	 dpWGweRhI9sBNCYC09T3vFgLhFtCQZC5YZrJmcSfECj1r/wEhKmGBnMrTwFyfMfmA+
+	 xKx1cUdSh0Jgw+wbu6FX1S8KqB7B3VVNG1huDBaHjzxysF8/w6UwjWL4fTW9ny5I7v
+	 IgI9AvMr/0E7EPSXv71shOlwPijAVlPknjsVjmijFtUPn1Esz/I060h5uZKok4fRh3
+	 O0JrTY2jwWwZw==
+Message-ID: <1f60e4d1-ee8a-47fc-8fad-a75ec6485a28@kernel.org>
+Date: Sun, 4 Aug 2024 15:58:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/9] clk: clocking-wizard: add user clock monitor
+ support
+To: Harry Austen <hpausten@protonmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240803105702.9621-1-hpausten@protonmail.com>
+ <a35918fe-d0d5-4418-b6ad-0150873cb507@kernel.org>
+ <D374LM180ETW.M8ESN44FLCVX@protonmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <D374LM180ETW.M8ESN44FLCVX@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 04/08/2024 14:28, Harry Austen wrote:
+> On Sun Aug 4, 2024 at 10:01 AM BST, Krzysztof Kozlowski wrote:
+>> On 03/08/2024 12:57, Harry Austen wrote:
+>>> Improve utilised clk/notifier APIs, making use of device managed versions
+>>> of functions, make dynamic reconfiguration support optional (because it is
+>>> in hardware) and add support for the clock monitor functionailty added in
+>>> version 6.0 of the Xilinx clocking wizard IP core, through use of the
+>>> auxiliary bus and UIO frameworks.
+>>>
+>>> The combined addition of all of these patches allows, for example, to use
+>>> the clocking wizard solely for its user clock monitoring logic, keeping
+>>> dynamic reconfiguration support disabled.
+>>>
+>>> This is currently untested on hardware, so any help testing this would be
+>>> much appreciated!
+>>>
+>>> v1 -> v2:
+>>> - Split and improve clk_hw+devres transition patch (2+3)
+>>> - Fix/improve DT binding patches (5+8)
+>>
+>> Be specific, what did you change? Anything can be a fix or improvement.
+> 
+> This was intended as more of a summary, referencing the patches which have
+> their own more detailed changelogs. But I will be more descriptive in the
+> cover letter too in future.
 
---=-qzV6eqKdREc03lDMjxSa
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+No, if more descriptive changelog is in each patch, then it is fine.
 
-In addition to Ceph, in NFS there are also some crashes related to the
-use of 0x356 as a pointer.
+Best regards,
+Krzysztof
 
-`netfs_is_cache_enabled()` only returns true when the fscache cookie is
-fully initialized. This may happen after the request has been created,
-so check for the cookie's existence instead.
-
-Link: https://lore.kernel.org/linux-nfs/b78c88db-8b3a-4008-94cb-82ae08f0e37=
-b@free.fr/T/
-Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private a=
-nd marking dirty")
-Cc: linux-nfs@vger.kernel.org <linux-nfs@vger.kernel.org>
-Cc: blokos <blokos@free.fr>
-Cc: Trond Myklebust <trondmy@hammerspace.com>
-Cc: dan.aloni@vastdata.com <dan.aloni@vastdata.com>
-Signed-off-by: Hristo Venev <hristo@venev.name>
----
- fs/netfs/objects.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index f4a6427274792..a74ca90c86c9b 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -27,7 +27,6 @@ struct netfs_io_request *netfs_alloc_request(struct addre=
-ss_space *mapping,
- 	bool is_unbuffered =3D (origin =3D=3D NETFS_UNBUFFERED_WRITE ||
- 			      origin =3D=3D NETFS_DIO_READ ||
- 			      origin =3D=3D NETFS_DIO_WRITE);
--	bool cached =3D !is_unbuffered && netfs_is_cache_enabled(ctx);
- 	int ret;
-=20
- 	for (;;) {
-@@ -56,8 +55,9 @@ struct netfs_io_request *netfs_alloc_request(struct addre=
-ss_space *mapping,
- 	refcount_set(&rreq->ref, 1);
-=20
- 	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
--	if (cached) {
--		__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq->flags);
-+	if (!is_unbuffered && fscache_cookie_valid(netfs_i_cookie(ctx))) {
-+		if(netfs_is_cache_enabled(ctx))
-+			__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq->flags);
- 		if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags))
- 			/* Filesystem uses deprecated PG_private_2 marking. */
- 			__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags);
-
-
---=-qzV6eqKdREc03lDMjxSa
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQJGBAABCgAwFiEEb/2s7vGPWBH9BOGpSkmD6rj9B8sFAmaviNISHGhyaXN0b0B2
-ZW5ldi5uYW1lAAoJEEpJg+q4/QfLPM8QAMlcnpejkhomlkis4nCVv0M5EBzHsPIo
-YWJIrylG81BSH9p2adxgqmzq17G4uYScKEm961qyFyIo8uZNLKWA/5tzCnjeC8sx
-dkyqAnMFuxoG2oEWC++6Z8F45NPxFKrKzIKXB6Fq8JObXHlKV2VXdNDEHCgZFV6d
-AadswPY/YLQi1hc/akw7TAht3IcSUdPCcfWifeOXcGcCoNqEz+D8Gi6VKRJmJkh/
-KDF2MpM4sX3w3R3sTBnhIeM+PTLBvV65N/Brqty3UM4HFAEdwPhksIiOTaoUwXXh
-VNMjifa335G8XPTa8PI2zi9vmO2yzwLzrhdvfWnE8q2LaiAMnPVYiYnP/xs3FdsZ
-GVgCWXEVXRcC1c/CyObEO3muwhFcD3eYo93yDw9nUmD/Zh4PMYqxeiL/C3j9EMHb
-Mc/wamhFQToRa3gZcORi3Bg94dRWPGLuWsBPGP3o04VaOHzveF5aW9oLZtcRedsp
-NQP2nsO7OuTcecCwPihmwWYE2JW1ygyj3Pp0NwdF1Ttn+HG7+Gj6V7Psraoq8IRL
-+wNKdzC4+bbdCnefQukR6JF1olapLWvuBYzkfDRtebFE3x8zpvbWYpihw82rM81a
-pvsmHVcQSfPbShpjOxFfcLCYhBmUzgDXgwbWk6hvY5pX3GWnXcOae713wodUbHD8
-3/q6OoLkyoOl
-=/GFb
------END PGP SIGNATURE-----
-
---=-qzV6eqKdREc03lDMjxSa--
 
