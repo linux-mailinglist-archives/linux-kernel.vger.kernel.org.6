@@ -1,60 +1,80 @@
-Return-Path: <linux-kernel+bounces-273695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F33946C90
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:55:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE2F946C8D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 07:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6753AB2190E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 05:55:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AD732822DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 05:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66648AD59;
-	Sun,  4 Aug 2024 05:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC0AB641;
+	Sun,  4 Aug 2024 05:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="Q+7qsEz1"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AU53/l5n"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD21EDB
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 05:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C335320F;
+	Sun,  4 Aug 2024 05:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722750934; cv=none; b=fTmRlig287CClQpIoika4F1lqMGCj++fiiL8l0DecxPeTj3VpCdl2v5jh6RsoSGce6TbE3aDgNDCQujkGqhTVvohoRvoCZGCPO40ncnstqPND9A4E0ICOvBBRMU5gVVBUPr12eBUXRiO9evMREQrmwrzoPx+wsWTbajlXIsriqU=
+	t=1722750665; cv=none; b=f+ytkaVfdYxlgHYXuIAxTY+uzEACKPdS+zxDavvD5D0em/J/LbO+Ni7UOgsq5tDzbNyJALmPI4eFygogS3DCNwkheL5ARKAfpX2M/mPIN/r+A6F1DdwZRHPwWgA1poLRA2UWi/IE2zZxriNIENSoo1RiR/NoQPmNbJzUvyRs99M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722750934; c=relaxed/simple;
-	bh=LaUr5jmpNkxM0+0xOl+MvnDjjvsWKy+9sfb+ovhI1tM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gUoW5olmo6wfldg/Bkj5+IRSBbny11jfzf/pY3HwacUeFIKfvsh2QCQvu2ywluXdATFJi1Jb5g35plHt/LE+ZG7U17PPw/MSkm3qod1Ly9UngnUWsIW5wupnzM0X1QrSFXrXbPdoXdKCmV7CzrLAJsn+BpRchAGxpPsDi0rrzTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=Q+7qsEz1; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from newone.debconf24.debconf.org (unknown [116.89.172.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id D92A61655D4;
-	Sun,  4 Aug 2024 07:47:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1722750435;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YG3PozLdEKpr64Bofty37AWfM8NSumKRFyU1RGZLSDE=;
-	b=Q+7qsEz1PWi3XMk3CR04o3de/fO8FKU3+5XkPKmpew9PCzuorcVRVg+XDjB0jv05/HCKCV
-	r8wDM6vUtqBUj2bSKHjmUYF5R6kDthENv36swaQ6zT87M/5h+iiJk/yqJCVMaa+nn1ghvs
-	fq8l6we8lxXXLiojoqgJAKOZE4QxTqk=
-From: David Heidelberg <david@ixit.cz>
-To: linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Jiri Kosina <jikos@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: David Heidelberg <david@ixit.cz>
-Subject: [PATCH] mailmap: update entry for David Heidelberg
-Date: Sun,  4 Aug 2024 14:45:54 +0900
-Message-ID: <20240804054704.859503-1-david@ixit.cz>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722750665; c=relaxed/simple;
+	bh=CHx67+AWIMhwksb0gUufS+ozdzIpl8bCGpgTob7eu3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ORHe9cS8+Ie5WSQkvS85JqshrcNceoWav9f39mf/Q/f10W9SqNxY6mwd1ngRFUirb28Lv1cBFZ9qPy9ItO/tlRi7HulaT+1MouYZoNdiY2Yr3vPpBM3RASsBeLnDuYp3Jy1uv7CrZa+6LI7Foe4Z60hOiusHZYf5OuF68X08EuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AU53/l5n; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d199fb3dfso7937138b3a.3;
+        Sat, 03 Aug 2024 22:51:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722750663; x=1723355463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Sxku0HqR8yKKcKYUQ0hg4O8X0+yABmWMgJK9/GJXNA=;
+        b=AU53/l5nnj1x0JAeVIUdRF0nWGOAgz84RzXH786rtRwLNT+/SuDhbUb0CDXTY0QHpM
+         cIpMRe4l6uAZrk1a1mTqhD6HU3i2LOpEsDxC/B/yJ6kGKyTXJlsJ2GfXhGJcCqcKpUC0
+         ZnFcPxyXv7F0Bd/MORrvZmw3CbN7/nGlpxpfbew/7XruutUP0RuyDn6oRqSwEuYl9/S6
+         ZAElXRQVrsYPv30PlsSpI6zj+YXNgRdHqCKDAB0PuKhDZJ5M8b3eGesv+0WEQPaTTvDH
+         9mqZBK3wak+I1V2ihf4NwVpRkhoNFxK5AZjOOo8tHZQbyqIW8yWED/FgHc6A2kzSyGNs
+         djbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722750663; x=1723355463;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4Sxku0HqR8yKKcKYUQ0hg4O8X0+yABmWMgJK9/GJXNA=;
+        b=qjImXWccJBru/mYzNeqtyeIhkL5Igwz7khqnQf9CHcUzxU+Cdi2DcfoBxT5oi8qA71
+         Lij5wC3ZyTuZbsU0pO7GBOphbq4R1cO10KQx1BOVqaOIlng6syi47W9uBfIB1sADii8+
+         2U1bHqocTivbvPHhnlZ0bSD7aPJvEgLaefkD61AZylIFXr+UMITsgVsphEDNBjZGkWVt
+         Vvo8uCcyHogm4EghrP5mHy8jJGgVwbJTCGkxqnI7I2rDXc2BZRSFae1QRPO+g+2xSyIg
+         oa/IfhkCwhcyeUNIx4nBzv/rqsORYypKs8+KswdVZowtP5eE9GFGL08jtivC4vi/FTDc
+         5M6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUzD8yqNOpGM1ldvbpIrXhEFkhrh3gaGNuzPb4uB5vcNazE6vPAtaqjVSrqtKDu2hM0vMDlkpNDYZ/pRf6hFvO+cjNJEyFxqmFIDl3E
+X-Gm-Message-State: AOJu0YyLOO/4c0PJh4WboeQTXP6nhArZnWSaRrWhmpzSSxqN8DgDKO0N
+	c3No+LWhnzCxOdTdPOnID4IAAI66e84mUsr24Ok4Q+PS+bgVhaep
+X-Google-Smtp-Source: AGHT+IHYjStS0OYmvyzheM8+FSb5kSepsj3t7rXV5SL9QSn3bNiQ/hktRWAWjbzk3EqVcvWVp4pinw==
+X-Received: by 2002:a05:6a00:240f:b0:705:6a0a:de14 with SMTP id d2e1a72fcca58-7106cf8bf93mr10855632b3a.1.1722750663262;
+        Sat, 03 Aug 2024 22:51:03 -0700 (PDT)
+Received: from localhost.localdomain ([240d:1a:f76:b500:4431:46e3:c76b:79bc])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7107f9a46d2sm1880148b3a.130.2024.08.03.22.51.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 03 Aug 2024 22:51:02 -0700 (PDT)
+From: Alexandre Courbot <gnurou@gmail.com>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Cc: linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexandre Courbot <gnurou@gmail.com>
+Subject: [PATCH v2] Makefile: add $(srctree) to dependency of compile_commands.json target
+Date: Sun,  4 Aug 2024 14:50:57 +0900
+Message-ID: <20240804055057.262682-1-gnurou@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,26 +83,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Link my old gmail address to my active email.
+When trying to build the compile_commands.json target from an external
+module's directory, the following error is displayed:
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
+	make[1]: *** No rule to make target 'scripts/clang-tools/gen_compile_commands.py',
+	needed by 'compile_commands.json'. Stop.
+
+This is because gen_compile_commands.py was previously looked up using a
+relative path to $(srctree), but commit b1992c3772e6 ("kbuild: use
+$(src) instead of $(srctree)/$(src) for source directory") stopped
+defining VPATH for external module builds.
+
+Prefixing gen_compile_commands.py with $(srctree) fixes the problem.
+
+Fixes: b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(src) for source directory")
+Signed-off-by: Alexandre Courbot <gnurou@gmail.com>
 ---
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git ./.mailmap ./.mailmap
-index a6c619e22efc..a70b930bc93d 100644
---- ./.mailmap
-+++ ./.mailmap
-@@ -166,6 +166,7 @@ Daniel Borkmann <daniel@iogearbox.net> <dborkman@redhat.com>
- Daniel Borkmann <daniel@iogearbox.net> <dxchgb@gmail.com>
- David Brownell <david-b@pacbell.net>
- David Collins <quic_collinsd@quicinc.com> <collinsd@codeaurora.org>
-+David Heidelberg <david@ixit.cz> <d.okias@gmail.com>
- David Rheinsberg <david@readahead.eu> <dh.herrmann@gmail.com>
- David Rheinsberg <david@readahead.eu> <dh.herrmann@googlemail.com>
- David Rheinsberg <david@readahead.eu> <david.rheinsberg@gmail.com>
+diff --git a/Makefile b/Makefile
+index 8ad55d6e7b60..52d7dfe4212a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1980,7 +1980,7 @@ nsdeps: modules
+ quiet_cmd_gen_compile_commands = GEN     $@
+       cmd_gen_compile_commands = $(PYTHON3) $< -a $(AR) -o $@ $(filter-out $<, $(real-prereqs))
+ 
+-$(extmod_prefix)compile_commands.json: scripts/clang-tools/gen_compile_commands.py \
++$(extmod_prefix)compile_commands.json: $(srctree)/scripts/clang-tools/gen_compile_commands.py \
+ 	$(if $(KBUILD_EXTMOD),, vmlinux.a $(KBUILD_VMLINUX_LIBS)) \
+ 	$(if $(CONFIG_MODULES), $(MODORDER)) FORCE
+ 	$(call if_changed,gen_compile_commands)
 -- 
-2.45.2
+2.46.0
 
 
