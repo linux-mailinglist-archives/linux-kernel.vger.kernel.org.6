@@ -1,158 +1,218 @@
-Return-Path: <linux-kernel+bounces-274025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C189B94710E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:59:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D4A9470EB
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782C71F21000
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:59:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 525D2B20D2D
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798DF14AD3E;
-	Sun,  4 Aug 2024 21:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B9E1428E4;
+	Sun,  4 Aug 2024 21:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="chCriVGo"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uNoUi4fm"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBDC13CA93;
-	Sun,  4 Aug 2024 21:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7897613E881
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 21:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722808573; cv=none; b=Qm0ZyYIMW6sK7PwndQalIn6rr9P82qlCfu+RdxQvqXZIMaEjvFvxo9LG1K6XU8RadAF6Daqfdk1r4jBRlosstFMVygqTyDw9z9ZAjo+nF4xN2qn6KQXzf0Wmqw4Sa9xcLh2dkjFA+KUj4VA/XHACbPpasgBvGEFWJQ8En9ELJJQ=
+	t=1722808537; cv=none; b=uLxmoTVX8Cqw9mQYvqKLXZDndwj2ECK7oaDMPSkqdJthORio+n60DDL6VLKRR7rowyf6eO5l1v153sSW2ozSuJU2Y6bmVJY6g+LziuflZHsQyrV2QCiT/JgDU1G3qizM0nxG8DXwyCVpg++x/Wp0ymSNlKeQEiHIHAQT7Wu5/B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722808573; c=relaxed/simple;
-	bh=TP7X/omtcHtBfHRPIrG0hq0mQdX8zrTcBzIFqmw3S6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iMlUxopbjbk3p0aWyzJ11ryYKkF11Yhp5keCV7RbueMEOKoJUgDrBC4BrVvGXfRhqx6KPD53TZhMaYSZsRwf4l2fqGu7xQ02Dww93N2fvjahXCqMUBg3ZvEYfQ0sw/XQgVs9+LH0UltPjHNgzcDIoQ+aTptR6YQM0nZuy/2hf6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=chCriVGo; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ab2baf13d9so13522420a12.2;
-        Sun, 04 Aug 2024 14:56:11 -0700 (PDT)
+	s=arc-20240116; t=1722808537; c=relaxed/simple;
+	bh=QYoMfwmKvpsnQt/hTVfgfdrvBR0EWL2Xjo/mAdvPVUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gzLqySF55jvdv+ScITuWRMVIR2ZeAjJLOhQpIpEXF2B8Fd1F7uJT8we80AJvht834ry/FgpKwl7Uix9/PcOZ0SNhiRa6kTL3JhHJYjFLTkXrX+tXMkjiO3ucLdxnKMcyns/ZUHrSbwcjPX34fBAyOrrD3GUXswRqDCCb0D4Jqwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uNoUi4fm; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-45029af1408so198661cf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 14:55:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722808570; x=1723413370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1722808534; x=1723413334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2+/p7MgZYWM5kh+9ECMA6cWE3o9ZU9hqg6eDjlHC2ns=;
-        b=chCriVGoctm521fo51edOl3ETgiVR5TgJhbkFHdxhdJgnYfcTpmkyzkXy76DfzqQf+
-         KnAi9OTkeWQr3u1Y7E41GVFQBCw8OKrE8v0dVU263QgUrntCwUnF5vnpQipy+gmhV4Jm
-         nktPlQ5UvQxLSAdBQiK4rd5eBmJcwpTpza29fNApl2kveMbTzL52m19U0I5WGlQQBHeX
-         pMkWQZ0ZiFz2hLecDsDUZld81/BXHlIc7SNOnwAScnXmQ4O/4oZk0tNsMl6+VCAysgky
-         YFwUeAbxS5IhUjeySxKi0bw6EH9g5dZlY2cLmz8SaiiskGguO2I1bppxL700xXwpiakm
-         btNg==
+        bh=P8s6/ypPv2wbuWHf/ATun4VhYJJ06DR5ZHtUhhgqlE8=;
+        b=uNoUi4fm6Dj1HunXCL0Xc2wx3pzpxJAAb0Mjhssw1bg+9TTGkLsO4nSCDQlkYcVcnL
+         v5C80tkX1WkX5tkkhTKJ9BCHt97F7nguYN1E2GUAbvydEBFVbCfetAw2O2cm2wbT5Hmv
+         kWzbbLllLrnxnUhC001XkxCb5nn4J/NkI54D3L2qakPdWj8hDiULsETOiTteY6JudHtd
+         EjasX6nXZbWoZpc9zWxeeKBvSjdE5+AYLjzsM+2F1SJDM2TswxDrXymVTczI3/YdZEq+
+         LnGsvD4UTk4hhojYJApCSu8rPUAy0IG1YCDyR0hktUB9hDkagxo0wjzInoWvFOz9rKT/
+         oW1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722808570; x=1723413370;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722808534; x=1723413334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2+/p7MgZYWM5kh+9ECMA6cWE3o9ZU9hqg6eDjlHC2ns=;
-        b=uLhRJeIA7tDVyT6Tq3Mj1qPiqGiVGM44A5ZKMzeb2yep7qauJHrO6Tu4lQdsN1OsZH
-         Gk3IpTcT3XMJ8xKauAxiLHycIWh5IsZhtHTYqnur5cb7eSk1XRbfY3C1mA+a0cwlP0wn
-         +SzAJ7PRTfWjQXW0lTwxzQGjy9kOrVeav8pPlE0oQffaph3iZnRdKWlN9vDMS5hLi5MO
-         ahnFl2uFNz6cTcFldqimqj9pR7Vok6zGZi/FwAQQQHt8u6mx1ihr6VKN5gYlEbZBD0md
-         tzHH9MQWSbiduAR8EV3TwxHKDELvKDOA7NC1qG5f7WNmEpk9LRbSxldMhmRwYr/jFLbJ
-         dqFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2gfO43xkeQLeM+lRoV2RLk8+brwkn//BneP8jWvKnB9FuJeTy8j5MyW/sG3EGCvrhzVMY39A8NW4Uyiao6gheprPg7v/j17GVeIb/c0YGh6NZceiW+mlBa4PBtrQTcIAszTZsNoP0/T1AMAAUOnwj3TlmsNgilMUi48CZnzuA27sWYbjORuVRfeu8jk74myx4RoFcoPr8ft7YiHLiC9sRgj2RpMGRrtXg3zfs/bIGBQgYxXciiXvrnpnWwhQ+IrIM
-X-Gm-Message-State: AOJu0YyKMOPYFqN1DmD0woDfmPCJqqVF+4cAoYuXUYF+eqZwe4mUop2v
-	izZvkN3NIK5LlJfVRd8MoewOiP0XMcflZqSumWa+G0AT1DEg+ZKE
-X-Google-Smtp-Source: AGHT+IH8zoNedZrAXYOj7WYBa3ZkPcxPBBxBMYkykvUuk74jILXSIRAvBgxRPdz930MQzYMKOYCdgA==
-X-Received: by 2002:a17:907:3f13:b0:a77:cc6f:e791 with SMTP id a640c23a62f3a-a7dc4ff1addmr811525166b.38.1722808570071;
-        Sun, 04 Aug 2024 14:56:10 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9d45452sm370485066b.111.2024.08.04.14.56.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 14:56:09 -0700 (PDT)
-From: David Virag <virag.david003@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	David Virag <virag.david003@gmail.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH 13/13] arm64: dts: exynos: exynos7885-jackpotlte: Enable USB support
-Date: Sun,  4 Aug 2024 23:53:58 +0200
-Message-ID: <20240804215458.404085-14-virag.david003@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240804215458.404085-1-virag.david003@gmail.com>
-References: <20240804215458.404085-1-virag.david003@gmail.com>
+        bh=P8s6/ypPv2wbuWHf/ATun4VhYJJ06DR5ZHtUhhgqlE8=;
+        b=AGfRO8+g2hcTC+um82Ih20csw+ej7Y03Xe6WbRo+OE/NtSXvVeZgCx3ctJPxji5IGL
+         8G/fWjd9Aa7JPr+TvMRp7/b5VMJ63bYO96asejwB1Etr89F54L+3u2/rQWSulErHTCMK
+         9zcH20j6La7PKTcoJrfI5i49Jt9LA3nZxdAFe6GnKsJrtq7zM0hJFv3sSaYvXXUY6J8B
+         E/fnSAhjJjJVxJ+zJxaJEF0Wh6YRh+5oQJwX1uqz6LnZdyUj/vICC85QEFk+F3O3jFbd
+         vAhjtnBVLyVMi6wH/HOSdqs1dMXlOcL66TjQNv3SAElG+DtE+bEO3atJuC1/DTyiMhMM
+         dfXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVo6W+oL+C6xn4560vN1fHk9tCYJS3xdnwsB4LlIeMFr28J1krVeL3/WPhTeHyuEcO8/W55nn5MK+biRmJmk/Xhe3R7bLXyZoZrVn/g
+X-Gm-Message-State: AOJu0YzAEYijK9iz9NVn2FS8svgTACc+qf2hCNgR4l3gSrgykE6/JhzE
+	W01zg3XuNgs0ie2OOBIE7oqgw1tqIzZ4QGf9X89iG3geLre46UVQYmVV4CLUVGrBZVm30/nttVb
+	FkS5HPULUCxz31Lqdp1GNT5uY+9Jy3B30L3SR
+X-Google-Smtp-Source: AGHT+IEqf9okWn67PocUy8Jocw+dhghNQyk3Kfdq2yIp+/9Gkk10jzuGIlDmiYcXIwua7o+f+NVqtl0RNtMVswl/hqQ=
+X-Received: by 2002:ac8:7e8b:0:b0:447:dd54:2cd4 with SMTP id
+ d75a77b69052e-4519adec1a8mr3133101cf.22.1722808533991; Sun, 04 Aug 2024
+ 14:55:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240730125346.1580150-1-usamaarif642@gmail.com>
+ <CAOUHufb7z13u51VCTGZMimoCXpmfT5AOAbrUpAvJjTx5+AXwew@mail.gmail.com> <aea333fb-44ab-41eb-9060-472b08e3010d@redhat.com>
+In-Reply-To: <aea333fb-44ab-41eb-9060-472b08e3010d@redhat.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Sun, 4 Aug 2024 15:54:57 -0600
+Message-ID: <CAOUHufZ=Oquy_UGBC0FTjJ5QvQnhk0UipHBMfJ5yqSYn06qevg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] mm: split underutilized THPs
+To: David Hildenbrand <david@redhat.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	hannes@cmpxchg.org, riel@surriel.com, shakeel.butt@linux.dev, 
+	roman.gushchin@linux.dev, baohua@kernel.org, ryan.roberts@arm.com, 
+	rppt@kernel.org, willy@infradead.org, cerasuolodomenico@gmail.com, 
+	corbet@lwn.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Samsung Galaxy A8 (2018) has an USB-C port capable of USB 2.0
-speeds, used both as host and device, and is used for charging the
-phone.
+On Thu, Aug 1, 2024 at 9:47=E2=80=AFAM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 01.08.24 08:09, Yu Zhao wrote:
+> > On Tue, Jul 30, 2024 at 6:54=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
+com> wrote:
+> >>
+> >> The current upstream default policy for THP is always. However, Meta
+> >> uses madvise in production as the current THP=3Dalways policy vastly
+> >> overprovisions THPs in sparsely accessed memory areas, resulting in
+> >> excessive memory pressure and premature OOM killing.
+> >> Using madvise + relying on khugepaged has certain drawbacks over
+> >> THP=3Dalways. Using madvise hints mean THPs aren't "transparent" and
+> >> require userspace changes. Waiting for khugepaged to scan memory and
+> >> collapse pages into THP can be slow and unpredictable in terms of perf=
+ormance
+> >> (i.e. you dont know when the collapse will happen), while production
+> >> environments require predictable performance. If there is enough memor=
+y
+> >> available, its better for both performance and predictability to have
+> >> a THP from fault time, i.e. THP=3Dalways rather than wait for khugepag=
+ed
+> >> to collapse it, and deal with sparsely populated THPs when the system =
+is
+> >> running out of memory.
+> >>
+> >> This patch-series is an attempt to mitigate the issue of running out o=
+f
+> >> memory when THP is always enabled. During runtime whenever a THP is be=
+ing
+> >> faulted in or collapsed by khugepaged, the THP is added to a list.
+> >> Whenever memory reclaim happens, the kernel runs the deferred_split
+> >> shrinker which goes through the list and checks if the THP was underut=
+ilized,
+> >> i.e. how many of the base 4K pages of the entire THP were zero-filled.
+> >> If this number goes above a certain threshold, the shrinker will attem=
+pt
+> >> to split that THP. Then at remap time, the pages that were zero-filled=
+ are
+> >> not remapped, hence saving memory. This method avoids the downside of
+> >> wasting memory in areas where THP is sparsely filled when THP is alway=
+s
+> >> enabled, while still providing the upside THPs like reduced TLB misses=
+ without
+> >> having to use madvise.
+> >>
+> >> Meta production workloads that were CPU bound (>99% CPU utilzation) we=
+re
+> >> tested with THP shrinker. The results after 2 hours are as follows:
+> >>
+> >>                              | THP=3Dmadvise |  THP=3Dalways   | THP=
+=3Dalways
+> >>                              |             |               | + shrinke=
+r series
+> >>                              |             |               | + max_pte=
+s_none=3D409
+> >> ----------------------------------------------------------------------=
+-------
+> >> Performance improvement     |      -      |    +1.8%      |     +1.7%
+> >> (over THP=3Dmadvise)          |             |               |
+> >> ----------------------------------------------------------------------=
+-------
+> >> Memory usage                |    54.6G    | 58.8G (+7.7%) |   55.9G (+=
+2.4%)
+> >> ----------------------------------------------------------------------=
+-------
+> >> max_ptes_none=3D409 means that any THP that has more than 409 out of 5=
+12
+> >> (80%) zero filled filled pages will be split.
+> >>
+> >> To test out the patches, the below commands without the shrinker will
+> >> invoke OOM killer immediately and kill stress, but will not fail with
+> >> the shrinker:
+> >>
+> >> echo 450 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_non=
+e
+> >> mkdir /sys/fs/cgroup/test
+> >> echo $$ > /sys/fs/cgroup/test/cgroup.procs
+> >> echo 20M > /sys/fs/cgroup/test/memory.max
+> >> echo 0 > /sys/fs/cgroup/test/memory.swap.max
+> >> # allocate twice memory.max for each stress worker and touch 40/512 of
+> >> # each THP, i.e. vm-stride 50K.
+> >> # With the shrinker, max_ptes_none of 470 and below won't invoke OOM
+> >> # killer.
+> >> # Without the shrinker, OOM killer is invoked immediately irrespective
+> >> # of max_ptes_none value and kill stress.
+> >> stress --vm 1 --vm-bytes 40M --vm-stride 50K
+> >>
+> >> Patches 1-2 add back helper functions that were previously removed
+> >> to operate on page lists (needed by patch 3).
+> >> Patch 3 is an optimization to free zapped tail pages rather than
+> >> waiting for page reclaim or migration.
+> >> Patch 4 is a prerequisite for THP shrinker to not remap zero-filled
+> >> subpages when splitting THP.
+> >> Patches 6 adds support for THP shrinker.
+> >>
+> >> (This patch-series restarts the work on having a THP shrinker in kerne=
+l
+> >> originally done in
+> >> https://lore.kernel.org/all/cover.1667454613.git.alexlzhu@fb.com/.
+> >> The THP shrinker in this series is significantly different than the
+> >> original one, hence its labelled v1 (although the prerequisite to not
+> >> remap clean subpages is the same).)
+> >>
+> >> Alexander Zhu (1):
+> >>    mm: add selftests to split_huge_page() to verify unmap/zap of zero
+> >>      pages
+> >>
+> >> Usama Arif (3):
+> >>    Revert "memcg: remove mem_cgroup_uncharge_list()"
+> >>    Revert "mm: remove free_unref_page_list()"
+> >>    mm: split underutilized THPs
+> >>
+> >> Yu Zhao (2):
+> >>    mm: free zapped tail pages when splitting isolated thp
+> >>    mm: don't remap unused subpages when splitting isolated thp
+> >
+> >   I would recommend shatter [1] instead of splitting so that
+> > 1) whoever underutilized their THPs get punished for the overhead;
+> > 2) underutilized THPs are kept intact and can be reused by others.
+> >
+> > [1] https://lore.kernel.org/20240229183436.4110845-3-yuzhao@google.com/
+> >
+>
+> Do you have any plans to upstream the shattering also during "ordinary"
+> deferred splitting?
 
-The physical port is directly connected to an S2MU004 IC, but until we
-have support for it, we can still use the USB device funtionality.
-
-Signed-off-by: David Virag <virag.david003@gmail.com>
----
- .../boot/dts/exynos/exynos7885-jackpotlte.dts | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-index 47a389d9ff7d..c1902d2f57cf 100644
---- a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
-@@ -59,6 +59,12 @@ power-key {
- 			wakeup-source;
- 		};
- 	};
-+
-+	/* TODO: Remove this once PMIC is implemented  */
-+	reg_dummy: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "dummy_reg";
-+	};
- };
- 
- &mmc_0 {
-@@ -111,3 +117,17 @@ key_power: key-power-pins {
- &serial_2 {
- 	status = "okay";
- };
-+
-+&usbdrd {
-+	status = "okay";
-+	vdd10-supply = <&reg_dummy>;
-+	vdd33-supply = <&reg_dummy>;
-+};
-+
-+&usbdrd_dwc3 {
-+	dr_mode = "peripheral"; /* Force to peripheral until we have Type-C working */
-+};
-+
-+&usbdrd_phy {
-+	status = "okay";
-+};
--- 
-2.46.0
-
+Yes, once we finish verifying it in our production.
 
