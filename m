@@ -1,91 +1,91 @@
-Return-Path: <linux-kernel+bounces-273855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652CB946EEB
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:05:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49663946EEC
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88AA61C21005
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:05:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7A21F20F29
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CD769DFF;
-	Sun,  4 Aug 2024 13:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1A113CA8D;
+	Sun,  4 Aug 2024 13:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="sWfOarf8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uL3z1km6"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="EWkCcxkd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GGt8fz1f"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDCD13B787
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE8413C661
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722776573; cv=none; b=PD+rgWYge/923UjeqyVOTbI9X8fZpFCH3Brl1pEUYMWCcRWQuhYHYDJyzEXza82i8SZV7q3Xt0CxJrsoQezlgJ6ZWBDXVvEYpOI4fwH+a60GQxqxfK/c9va1t2RKl8nsMuSPUGWSH2o6I2x6R0G9u4b0yW/+MvOzhe+IvvQs9o0=
+	t=1722776574; cv=none; b=r2naN+wEapAQFkPMW6W6cjHu0WDwqHehe+uJn4m/UVFmXa9tbHrftU4msNIcn5DfUHxpOI5bYE9vKSBH2C0LaogCisDhlRIBx0U4ROtXz2Pda4eExhJqO7SQlC0T0VdZMznNFkE8mMJPGdVrHNVLKYIUD3GBNIFCtg17in4CbPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722776573; c=relaxed/simple;
-	bh=RQbpBuuhcdVRrS45TXow3FvE3qGBFt8WbWvDlTvxDVc=;
+	s=arc-20240116; t=1722776574; c=relaxed/simple;
+	bh=QvOuD/5y8rCGroBROVtigY3efPBGAl1FYLFEGbesjng=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MyDVPxH5GzIlw7cjhWOBTuG/ZurCt2N9KtjqCQAk9DZwOFCBqoS5qIw94SJP0R0Izbu4hqgiRGwBUd+h1NN789OWsvHJ6EpZ6PHSvxtTuW9mrR8+ZF6WdpK5U/AsYMvmShhWgdDFjtcntkSvzl4aUx+lBNDvx3sCz0QC6aOHwnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=sWfOarf8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uL3z1km6; arc=none smtp.client-ip=103.168.172.146
+	 MIME-Version; b=VFOCVsclwGnfS/CmDsABtKA3koUynNSdjQDYVUQtctgBfDJMkBO/7F5+9BW+WyTNRp0MTEf84C1e3yT44thMFka09m9OAHa6jvVbkFUKtKvqSwpSVLx+boVB4BTLWltWtXdb6DMbu7+H0BFtIV6tXscxouv47j0U8I8iRNkluLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=EWkCcxkd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GGt8fz1f; arc=none smtp.client-ip=103.168.172.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 024DE138801E;
-	Sun,  4 Aug 2024 09:02:51 -0400 (EDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 6726A11481AC;
+	Sun,  4 Aug 2024 09:02:52 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sun, 04 Aug 2024 09:02:51 -0400
+  by compute3.internal (MEProxy); Sun, 04 Aug 2024 09:02:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1722776570; x=
-	1722862970; bh=oi4YF8S7QF5qtDuzwiUeYwReqaCDQcNumgOf6dEv5Us=; b=s
-	WfOarf8pTTKkWEaVKu9pBTPICmfeNPNQnHPFPAPxY59lVmI7drnRcn3xXWqROPOy
-	Twjb2bZaA2ID1VT7mgY7KLivKERvAEfryrJEN6pC9LCbRrUog8j9Jz9HfoOaL8EB
-	/iL0i3bBwfJhFrbpGARPzIWj46NOw+cEl3BFWOssGXEVjkZ+/Lm93cjgj56HF+go
-	VdV3GTNAwxMz1eogwPpp5kyqpTy1+iquS+zzAPb7L630JLJVI6EqeK0fWeSRpjv/
-	5S6s/lsxJwLOCv3ABTHtkjOugoKtfSpv9dzkqbNXUrNu4CfdHBr6vxOMHIun34ri
-	9EZlzpRThpP0XjOhRg62A==
+	:reply-to:subject:subject:to:to; s=fm3; t=1722776572; x=
+	1722862972; bh=ce1PvFpqfMZ6coYFn9GbZNurf1sO48K6AvhhScalZL0=; b=E
+	WkCcxkdxBsvVGip1trnbama6KMLb54d8OWVoUzQnZXjrM4pO9xXTRIsxoToSky1I
+	3cDHtpZAjXsnNLVD+gVFZXhxe54w/mwWbyYky9IS6efd28nUBqdT+HHZdZSm1em/
+	OKb6+gO7jjskau+L3mbrWjBJdQ8+8Af3abbDEEl5/CFPtGfRi9X/md8Rbxr2EnJC
+	S+CpEBnptBZ2ji5BwvgsRZ8O9qhF/bK/Yd1ZKwn/8sVo9i5xoOa3jqzS7AFKXuDu
+	2z/iaqLYMu0MDYkJlTUl7knduAQped1zM+fCmT+6c/8zm6svNmg2gx5s2EdrUtrx
+	hIUmFgAh0z6Bl7l62UIRg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722776570; x=
-	1722862970; bh=oi4YF8S7QF5qtDuzwiUeYwReqaCDQcNumgOf6dEv5Us=; b=u
-	L3z1km6hJFFOgL1MWoUp39QyfdlPr9Z7RiOmeVd/b7bFrzJGD1AeGSfLWExezhg8
-	iiS4BwtMKwooNKvVJ1o4aSpeBRwJNmYXtX+GObrkWchGMi7rQrgBc1zJFBUZYOIH
-	PlfSqd3YI+Cn8gryxZ8LpYtkHfweTvHe2ow/FVOYPuldgQQJHGzj4/AGoRfMvU41
-	hSIZDYsJEeevYAnyo9wxSN3Yk1oN6ypmlPtkznRVOtwFFIVmBX7DpU9lbYQKmm8f
-	1ZGcynn2cUl5T0M1L8CzHXfV6NIU7xNfYWkq1C1SBKIYOJ4OPmYMHYMeeEEZwAZE
-	WZcxo6qfKfYHUYmna2h/A==
-X-ME-Sender: <xms:-nuvZg-KCvQFCBuk7_j_GENY7O4mM--XO2xnfIdbI6DEW-LE9f_aKQ>
-    <xme:-nuvZoteUPDrbGmqdVwM80I98tKU916O1IfxV3vzOgyfAK5shflz1f93Dr9f93mby
-    1Yd3gAoHtTOcng-szs>
-X-ME-Received: <xmr:-nuvZmB7rTCu248H5D7Ji4Nd32A5jmZYMnHdCNLFtqKa3bUwbOpyRubZ_MaW1PSfBTllBz4x7VqZ_GLbAHueRTZW4hpv6nGeRoOdsLm7bVBEug>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722776572; x=
+	1722862972; bh=ce1PvFpqfMZ6coYFn9GbZNurf1sO48K6AvhhScalZL0=; b=G
+	Gt8fz1fAfLbK4x606Rw1ZAC+GazGslRtjrxccs4Qd4cQy7WjpQ2+qiwD5kHBijkS
+	O6TMt0EWevU1pqJbK/OwyB4hw/iwUm9OZZAbvcddIga4uI4ql9FhiaSH5fcpPIbH
+	2/3HQv9yF4qjan2TtqRP+k9vrpFJ6ZvhjQAxHhP2gSOy3Em/zl9iRYTdp5FyYu0O
+	VvLnZ2zUcTmysYzDRcG84DNkKGIPhGibIRneTWLbDcIRl08OEHVeyWgbLTA4ZRA4
+	C3yQ4/bQG5X6Q1FxL94jIBPx7MMQDdaEd1elVK/yzwubkZNFid/HTnrMfAATgIlD
+	z9VA5cj+SntmksN9CarhQ==
+X-ME-Sender: <xms:_HuvZiwsAk-NMVCwYKVtO6-yjdhIbgyA8lyGklAyMCwzs4c1SA5few>
+    <xme:_HuvZuRyIsBLdL1Sv6d8oxjDP6BJGU-s0GkdloqMklpSVXKilb9-T2o6oACjzsdM0
+    fsxCmnqypE-hxFIoz4>
+X-ME-Received: <xmr:_HuvZkUbdFvo2PjVQJewqFgDkPKJcvUgpUYIb06dQRuqJQCYr9D-QZPDE0pmjT4sdEGwaZ29LkF_7qcf6TnhF4VXi_u4wkpwIS7XLgXNIwAeXQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeggdehlecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
     dtredttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
     shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejue
     dvgfduudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgv
-    rhfuihiivgepfeenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
+    rhfuihiivgepgeenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
     grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:-nuvZgc0GdhwngxEI4p0FoUYwqAGKacUnWfTP3twCVuTqF56AAMMQg>
-    <xmx:-nuvZlM1Mey8s51QfDDoaWMn1mcOHx-P_L4pannrzPrWGdF2CjpkgQ>
-    <xmx:-nuvZqniRmpqnhWmP2c3bDZw08XdLO6-CiAFXmZ3PGSU0ZusQccYtA>
-    <xmx:-nuvZnvpO-Rv-m313FCClLHXGpz8r_hqtnq86HItNPGUteYf3GCCig>
-    <xmx:-nuvZuZ5QAGXW2C_k3UwUxkds0SEoWvEp7VSVNAKn4TCXFS0zuJehKcH>
+X-ME-Proxy: <xmx:_HuvZogGb39vZuj1agBXUgn7XN0dqq3_aTcFKpcOYjFxoiZxg3Vk4w>
+    <xmx:_HuvZkC8xzP1lXOOXvRuMUt8pBEbSf7ITRdrXA_llq7vlrCDQ1hnpQ>
+    <xmx:_HuvZpJDEwvLqaPsDnkKyTYx-XFNYoVdXGQ0SfZ-F4DvFWjHoSo1LA>
+    <xmx:_HuvZrCCHl_kHp61PVVx-K9byTjPRuD5g6EsJJdFEHnMkPLJT3LfHg>
+    <xmx:_HuvZnMRtmyKGZS0w-fxKx5GqsjKssoMrQRZIH_NmJwsqHVqlQFBHjT4>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 4 Aug 2024 09:02:49 -0400 (EDT)
+ 4 Aug 2024 09:02:51 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 16/17] firewire: ohci: use guard macro to maintain image of configuration ROM
-Date: Sun,  4 Aug 2024 22:02:23 +0900
-Message-ID: <20240804130225.243496-17-o-takashi@sakamocchi.jp>
+Subject: [PATCH 17/17] firewire: ohci: use guard macro to serialize operations for isochronous contexts
+Date: Sun,  4 Aug 2024 22:02:24 +0900
+Message-ID: <20240804130225.243496-18-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240804130225.243496-1-o-takashi@sakamocchi.jp>
 References: <20240804130225.243496-1-o-takashi@sakamocchi.jp>
@@ -97,157 +97,299 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 1394 OHCI driver uses spinlock for the process to update local
-configuration ROM.
+The 1394 OHCI driver uses spinlock to serialize operations for
+isochronous contexts.
 
 This commit uses guard macro to maintain the spinlock.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/ohci.c | 116 +++++++++++++++++-----------------------
- 1 file changed, 49 insertions(+), 67 deletions(-)
+ drivers/firewire/ohci.c | 164 +++++++++++++++++-----------------------
+ 1 file changed, 68 insertions(+), 96 deletions(-)
 
 diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index 5cb7c7603c2c..368420e4b414 100644
+index 368420e4b414..f36a0c853673 100644
 --- a/drivers/firewire/ohci.c
 +++ b/drivers/firewire/ohci.c
-@@ -2139,53 +2139,42 @@ static void bus_reset_work(struct work_struct *work)
- 	at_context_flush(&ohci->at_request_ctx);
- 	at_context_flush(&ohci->at_response_ctx);
+@@ -1173,13 +1173,11 @@ static void context_tasklet(unsigned long data)
+ 			break;
  
+ 		if (old_desc != desc) {
+-			/* If we've advanced to the next buffer, move the
+-			 * previous buffer to the free list. */
+-			unsigned long flags;
++			// If we've advanced to the next buffer, move the previous buffer to the
++			// free list.
+ 			old_desc->used = 0;
+-			spin_lock_irqsave(&ctx->ohci->lock, flags);
++			guard(spinlock_irqsave)(&ctx->ohci->lock);
+ 			list_move_tail(&old_desc->list, &ctx->buffer_list);
+-			spin_unlock_irqrestore(&ctx->ohci->lock, flags);
+ 		}
+ 		ctx->last = last;
+ 	}
+@@ -2122,14 +2120,12 @@ static void bus_reset_work(struct work_struct *work)
+ 		return;
+ 	}
+ 
+-	/* FIXME: Document how the locking works. */
 -	spin_lock_irq(&ohci->lock);
 -
--	ohci->generation = generation;
--	reg_write(ohci, OHCI1394_IntEventClear, OHCI1394_busReset);
--	reg_write(ohci, OHCI1394_IntMaskSet, OHCI1394_busReset);
+-	ohci->generation = -1; /* prevent AT packet queueing */
+-	context_stop(&ohci->at_request_ctx);
+-	context_stop(&ohci->at_response_ctx);
 -
--	if (ohci->quirks & QUIRK_RESET_PACKET)
--		ohci->request_generation = generation;
--
--	/*
--	 * This next bit is unrelated to the AT context stuff but we
--	 * have to do it under the spinlock also.  If a new config rom
--	 * was set up before this reset, the old one is now no longer
--	 * in use and we can free it. Update the config rom pointers
--	 * to point to the current config rom and clear the
--	 * next_config_rom pointer so a new update can take place.
--	 */
--
--	if (ohci->next_config_rom != NULL) {
--		if (ohci->next_config_rom != ohci->config_rom) {
--			free_rom      = ohci->config_rom;
--			free_rom_bus  = ohci->config_rom_bus;
+-	spin_unlock_irq(&ohci->lock);
++	// FIXME: Document how the locking works.
 +	scoped_guard(spinlock_irq, &ohci->lock) {
-+		ohci->generation = generation;
-+		reg_write(ohci, OHCI1394_IntEventClear, OHCI1394_busReset);
-+		reg_write(ohci, OHCI1394_IntMaskSet, OHCI1394_busReset);
-+
-+		if (ohci->quirks & QUIRK_RESET_PACKET)
-+			ohci->request_generation = generation;
-+
-+		// This next bit is unrelated to the AT context stuff but we have to do it under the
-+		// spinlock also. If a new config rom was set up before this reset, the old one is
-+		// now no longer in use and we can free it. Update the config rom pointers to point
-+		// to the current config rom and clear the next_config_rom pointer so a new update
-+		// can take place.
-+		if (ohci->next_config_rom != NULL) {
-+			if (ohci->next_config_rom != ohci->config_rom) {
-+				free_rom      = ohci->config_rom;
-+				free_rom_bus  = ohci->config_rom_bus;
-+			}
-+			ohci->config_rom      = ohci->next_config_rom;
-+			ohci->config_rom_bus  = ohci->next_config_rom_bus;
-+			ohci->next_config_rom = NULL;
-+
-+			// Restore config_rom image and manually update config_rom registers.
-+			// Writing the header quadlet will indicate that the config rom is ready,
-+			// so we do that last.
-+			reg_write(ohci, OHCI1394_BusOptions, be32_to_cpu(ohci->config_rom[2]));
-+			ohci->config_rom[0] = ohci->next_header;
-+			reg_write(ohci, OHCI1394_ConfigROMhdr, be32_to_cpu(ohci->next_header));
- 		}
--		ohci->config_rom      = ohci->next_config_rom;
--		ohci->config_rom_bus  = ohci->next_config_rom_bus;
--		ohci->next_config_rom = NULL;
++		ohci->generation = -1; // prevent AT packet queueing
++		context_stop(&ohci->at_request_ctx);
++		context_stop(&ohci->at_response_ctx);
++	}
  
--		/*
--		 * Restore config_rom image and manually update
--		 * config_rom registers.  Writing the header quadlet
--		 * will indicate that the config rom is ready, so we
--		 * do that last.
--		 */
--		reg_write(ohci, OHCI1394_BusOptions,
--			  be32_to_cpu(ohci->config_rom[2]));
--		ohci->config_rom[0] = ohci->next_header;
--		reg_write(ohci, OHCI1394_ConfigROMhdr,
--			  be32_to_cpu(ohci->next_header));
+ 	/*
+ 	 * Per OHCI 1.2 draft, clause 7.2.3.3, hardware may leave unsent
+@@ -2704,7 +2700,6 @@ static int ohci_enable_phys_dma(struct fw_card *card,
+ 				int node_id, int generation)
+ {
+ 	struct fw_ohci *ohci = fw_ohci(card);
+-	unsigned long flags;
+ 	int n, ret = 0;
+ 
+ 	if (param_remote_dma)
+@@ -2715,12 +2710,10 @@ static int ohci_enable_phys_dma(struct fw_card *card,
+ 	 * interrupt bit.  Clear physReqResourceAllBuses on bus reset.
+ 	 */
+ 
+-	spin_lock_irqsave(&ohci->lock, flags);
++	guard(spinlock_irqsave)(&ohci->lock);
+ 
+-	if (ohci->generation != generation) {
+-		ret = -ESTALE;
+-		goto out;
 -	}
--
--	if (param_remote_dma) {
--		reg_write(ohci, OHCI1394_PhyReqFilterHiSet, ~0);
--		reg_write(ohci, OHCI1394_PhyReqFilterLoSet, ~0);
-+		if (param_remote_dma) {
-+			reg_write(ohci, OHCI1394_PhyReqFilterHiSet, ~0);
-+			reg_write(ohci, OHCI1394_PhyReqFilterLoSet, ~0);
-+		}
++	if (ohci->generation != generation)
++		return -ESTALE;
+ 
+ 	/*
+ 	 * Note, if the node ID contains a non-local bus ID, physical DMA is
+@@ -2734,8 +2727,6 @@ static int ohci_enable_phys_dma(struct fw_card *card,
+ 		reg_write(ohci, OHCI1394_PhyReqFilterHiSet, 1 << (n - 32));
+ 
+ 	flush_writes(ohci);
+- out:
+-	spin_unlock_irqrestore(&ohci->lock, flags);
+ 
+ 	return ret;
+ }
+@@ -3076,55 +3067,53 @@ static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
+ 	u32 *mask, regs;
+ 	int index, ret = -EBUSY;
+ 
+-	spin_lock_irq(&ohci->lock);
++	scoped_guard(spinlock_irq, &ohci->lock) {
++		switch (type) {
++		case FW_ISO_CONTEXT_TRANSMIT:
++			mask     = &ohci->it_context_mask;
++			callback = handle_it_packet;
++			index    = ffs(*mask) - 1;
++			if (index >= 0) {
++				*mask &= ~(1 << index);
++				regs = OHCI1394_IsoXmitContextBase(index);
++				ctx  = &ohci->it_context_list[index];
++			}
++			break;
+ 
+-	switch (type) {
+-	case FW_ISO_CONTEXT_TRANSMIT:
+-		mask     = &ohci->it_context_mask;
+-		callback = handle_it_packet;
+-		index    = ffs(*mask) - 1;
+-		if (index >= 0) {
+-			*mask &= ~(1 << index);
+-			regs = OHCI1394_IsoXmitContextBase(index);
+-			ctx  = &ohci->it_context_list[index];
+-		}
+-		break;
++		case FW_ISO_CONTEXT_RECEIVE:
++			channels = &ohci->ir_context_channels;
++			mask     = &ohci->ir_context_mask;
++			callback = handle_ir_packet_per_buffer;
++			index    = *channels & 1ULL << channel ? ffs(*mask) - 1 : -1;
++			if (index >= 0) {
++				*channels &= ~(1ULL << channel);
++				*mask     &= ~(1 << index);
++				regs = OHCI1394_IsoRcvContextBase(index);
++				ctx  = &ohci->ir_context_list[index];
++			}
++			break;
+ 
+-	case FW_ISO_CONTEXT_RECEIVE:
+-		channels = &ohci->ir_context_channels;
+-		mask     = &ohci->ir_context_mask;
+-		callback = handle_ir_packet_per_buffer;
+-		index    = *channels & 1ULL << channel ? ffs(*mask) - 1 : -1;
+-		if (index >= 0) {
+-			*channels &= ~(1ULL << channel);
+-			*mask     &= ~(1 << index);
+-			regs = OHCI1394_IsoRcvContextBase(index);
+-			ctx  = &ohci->ir_context_list[index];
+-		}
+-		break;
++		case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
++			mask     = &ohci->ir_context_mask;
++			callback = handle_ir_buffer_fill;
++			index    = !ohci->mc_allocated ? ffs(*mask) - 1 : -1;
++			if (index >= 0) {
++				ohci->mc_allocated = true;
++				*mask &= ~(1 << index);
++				regs = OHCI1394_IsoRcvContextBase(index);
++				ctx  = &ohci->ir_context_list[index];
++			}
++			break;
+ 
+-	case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
+-		mask     = &ohci->ir_context_mask;
+-		callback = handle_ir_buffer_fill;
+-		index    = !ohci->mc_allocated ? ffs(*mask) - 1 : -1;
+-		if (index >= 0) {
+-			ohci->mc_allocated = true;
+-			*mask &= ~(1 << index);
+-			regs = OHCI1394_IsoRcvContextBase(index);
+-			ctx  = &ohci->ir_context_list[index];
++		default:
++			index = -1;
++			ret = -ENOSYS;
+ 		}
+-		break;
+ 
+-	default:
+-		index = -1;
+-		ret = -ENOSYS;
++		if (index < 0)
++			return ERR_PTR(ret);
  	}
  
 -	spin_unlock_irq(&ohci->lock);
 -
- 	if (free_rom)
- 		dmam_free_coherent(ohci->card.device, CONFIG_ROM_SIZE, free_rom, free_rom_bus);
- 
-@@ -2626,33 +2615,26 @@ static int ohci_set_config_rom(struct fw_card *card,
- 	if (next_config_rom == NULL)
- 		return -ENOMEM;
- 
+-	if (index < 0)
+-		return ERR_PTR(ret);
+-
+ 	memset(ctx, 0, sizeof(*ctx));
+ 	ctx->header_length = 0;
+ 	ctx->header = (void *) __get_free_page(GFP_KERNEL);
+@@ -3146,7 +3135,7 @@ static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
+  out_with_header:
+ 	free_page((unsigned long)ctx->header);
+  out:
 -	spin_lock_irq(&ohci->lock);
--
--	/*
--	 * If there is not an already pending config_rom update,
--	 * push our new allocation into the ohci->next_config_rom
--	 * and then mark the local variable as null so that we
--	 * won't deallocate the new buffer.
--	 *
--	 * OTOH, if there is a pending config_rom update, just
--	 * use that buffer with the new config_rom data, and
--	 * let this routine free the unused DMA allocation.
--	 */
--
--	if (ohci->next_config_rom == NULL) {
--		ohci->next_config_rom = next_config_rom;
--		ohci->next_config_rom_bus = next_config_rom_bus;
--		next_config_rom = NULL;
--	}
-+	scoped_guard(spinlock_irq, &ohci->lock) {
-+		// If there is not an already pending config_rom update, push our new allocation
-+		// into the ohci->next_config_rom and then mark the local variable as null so that
-+		// we won't deallocate the new buffer.
-+		//
-+		// OTOH, if there is a pending config_rom update, just use that buffer with the new
-+		// config_rom data, and let this routine free the unused DMA allocation.
-+		if (ohci->next_config_rom == NULL) {
-+			ohci->next_config_rom = next_config_rom;
-+			ohci->next_config_rom_bus = next_config_rom_bus;
-+			next_config_rom = NULL;
-+		}
++	guard(spinlock_irq)(&ohci->lock);
  
--	copy_config_rom(ohci->next_config_rom, config_rom, length);
-+		copy_config_rom(ohci->next_config_rom, config_rom, length);
+ 	switch (type) {
+ 	case FW_ISO_CONTEXT_RECEIVE:
+@@ -3159,8 +3148,6 @@ static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
+ 	}
+ 	*mask |= 1 << index;
  
--	ohci->next_header = config_rom[0];
--	ohci->next_config_rom[0] = 0;
-+		ohci->next_header = config_rom[0];
-+		ohci->next_config_rom[0] = 0;
- 
--	reg_write(ohci, OHCI1394_ConfigROMmap, ohci->next_config_rom_bus);
--
 -	spin_unlock_irq(&ohci->lock);
-+		reg_write(ohci, OHCI1394_ConfigROMmap, ohci->next_config_rom_bus);
-+	}
+-
+ 	return ERR_PTR(ret);
+ }
  
- 	/* If we didn't use the DMA allocation, delete it. */
- 	if (next_config_rom != NULL) {
+@@ -3243,14 +3230,13 @@ static void ohci_free_iso_context(struct fw_iso_context *base)
+ {
+ 	struct fw_ohci *ohci = fw_ohci(base->card);
+ 	struct iso_context *ctx = container_of(base, struct iso_context, base);
+-	unsigned long flags;
+ 	int index;
+ 
+ 	ohci_stop_iso(base);
+ 	context_release(&ctx->context);
+ 	free_page((unsigned long)ctx->header);
+ 
+-	spin_lock_irqsave(&ohci->lock, flags);
++	guard(spinlock_irqsave)(&ohci->lock);
+ 
+ 	switch (base->type) {
+ 	case FW_ISO_CONTEXT_TRANSMIT:
+@@ -3272,38 +3258,29 @@ static void ohci_free_iso_context(struct fw_iso_context *base)
+ 		ohci->mc_allocated = false;
+ 		break;
+ 	}
+-
+-	spin_unlock_irqrestore(&ohci->lock, flags);
+ }
+ 
+ static int ohci_set_iso_channels(struct fw_iso_context *base, u64 *channels)
+ {
+ 	struct fw_ohci *ohci = fw_ohci(base->card);
+-	unsigned long flags;
+-	int ret;
+ 
+ 	switch (base->type) {
+ 	case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
++	{
++		guard(spinlock_irqsave)(&ohci->lock);
+ 
+-		spin_lock_irqsave(&ohci->lock, flags);
+-
+-		/* Don't allow multichannel to grab other contexts' channels. */
++		// Don't allow multichannel to grab other contexts' channels.
+ 		if (~ohci->ir_context_channels & ~ohci->mc_channels & *channels) {
+ 			*channels = ohci->ir_context_channels;
+-			ret = -EBUSY;
++			return -EBUSY;
+ 		} else {
+ 			set_multichannel_mask(ohci, *channels);
+-			ret = 0;
++			return 0;
+ 		}
+-
+-		spin_unlock_irqrestore(&ohci->lock, flags);
+-
+-		break;
++	}
+ 	default:
+-		ret = -EINVAL;
++		return -EINVAL;
+ 	}
+-
+-	return ret;
+ }
+ 
+ #ifdef CONFIG_PM
+@@ -3573,24 +3550,19 @@ static int ohci_queue_iso(struct fw_iso_context *base,
+ 			  unsigned long payload)
+ {
+ 	struct iso_context *ctx = container_of(base, struct iso_context, base);
+-	unsigned long flags;
+-	int ret = -ENOSYS;
+ 
+-	spin_lock_irqsave(&ctx->context.ohci->lock, flags);
++	guard(spinlock_irqsave)(&ctx->context.ohci->lock);
++
+ 	switch (base->type) {
+ 	case FW_ISO_CONTEXT_TRANSMIT:
+-		ret = queue_iso_transmit(ctx, packet, buffer, payload);
+-		break;
++		return queue_iso_transmit(ctx, packet, buffer, payload);
+ 	case FW_ISO_CONTEXT_RECEIVE:
+-		ret = queue_iso_packet_per_buffer(ctx, packet, buffer, payload);
+-		break;
++		return queue_iso_packet_per_buffer(ctx, packet, buffer, payload);
+ 	case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
+-		ret = queue_iso_buffer_fill(ctx, packet, buffer, payload);
+-		break;
++		return queue_iso_buffer_fill(ctx, packet, buffer, payload);
++	default:
++		return -ENOSYS;
+ 	}
+-	spin_unlock_irqrestore(&ctx->context.ohci->lock, flags);
+-
+-	return ret;
+ }
+ 
+ static void ohci_flush_queue_iso(struct fw_iso_context *base)
 -- 
 2.43.0
 
