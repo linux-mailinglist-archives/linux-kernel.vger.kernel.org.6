@@ -1,123 +1,108 @@
-Return-Path: <linux-kernel+bounces-273742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4161D946D73
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8114946D5E
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AA4B1C20C94
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 958FB28180F
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 08:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2441D556;
-	Sun,  4 Aug 2024 08:40:30 +0000 (UTC)
-Received: from bues.ch (bues.ch [80.190.117.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F051CD0C;
+	Sun,  4 Aug 2024 08:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e9f8WXCY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0C21CAB9;
-	Sun,  4 Aug 2024 08:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.190.117.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A106FC7;
+	Sun,  4 Aug 2024 08:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722760829; cv=none; b=pEui2XvP7gABERKoEZKQp7tWH4VnOba8YndGxA/QfOg7V8o1Hje0KcNtG2iot2jB7yCjy8t3SlixGR6w4H8NJDApUq0H/rmb8xQzfBeAGfV73rGbATHVbDyEZnO6FZL3n004MrBEXkFXIQi/BLnD1vMkv9nu2YUTpEOYi/WLpkQ=
+	t=1722758861; cv=none; b=H6OmAGm8r/qMb/FYsFI3GR1o5cwm1T4lz/8yotELcDspAaq/RkxbjqB60QksQ5pjnhktM+9XHMUT+ds+tNIlj6dEB7y8ZHfFwhSkFuzWiqs/jw4ATwV53bQlvLRRMIXqzyXE9u3I9YnCvPoQfVZUE+Pn0kEMCxXcFXn88B545T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722760829; c=relaxed/simple;
-	bh=KDLsy9QoaiK6Y/X+0TMFFzpHTxsKNIRagpeaknjsurw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TZIBWdX5WVyOsGiv9yn4jF89OP+daTeIy6sgodtq+CamIQLJTy6EUcPch13YruGrIwVzbD+8tsMPCDDihIZQsy3GMqwGVN6SFRrinkdhbwNwXzWWRW0yr+T+B8ONv4P0D+OKYWlzG69rbU6UUQmlz6QX7tE7+7mrrRq63RIDPVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch; spf=pass smtp.mailfrom=bues.ch; arc=none smtp.client-ip=80.190.117.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bues.ch
-Received: by bues.ch with esmtpsa (Exim 4.96)
-	(envelope-from <m@bues.ch>)
-	id 1saWFo-00049Y-33;
-	Sun, 04 Aug 2024 10:06:12 +0200
-Date: Sun, 4 Aug 2024 10:05:26 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Kalle Valo <kvalo@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
- b43-dev@lists.infradead.org
-Subject: Re: [PATCH v2] wifi: b43: Constify struct lpphy_tx_gain_table_entry
-Message-ID: <20240804100526.19942fbe@barney>
-In-Reply-To: <e33bc9e6dff4a5b6cd8d0ab5399aa1abac5bef9d.1722753127.git.christophe.jaillet@wanadoo.fr>
-References: <e33bc9e6dff4a5b6cd8d0ab5399aa1abac5bef9d.1722753127.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722758861; c=relaxed/simple;
+	bh=1kfWGFShfHsHnpgzpsFlHNjLwYlqbL1QurqwJ0PzOWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=a3VX18xP5z9EU1FJzomzcf0/s1dxsMUsc0GhE5hqP0/yxqVykP3FhvcHVXb8TQWWp2CTZiZA6o16WdD3l+U/rN8OX1jeRJXIEqJuRxKMpWv7XdZN6+zey0Um3CHk5Wy3etvlP+wv4N82Pb2nz9qk2u+mn6S5eRyY0O2UvIm9cAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e9f8WXCY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5730FC32786;
+	Sun,  4 Aug 2024 08:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722758860;
+	bh=1kfWGFShfHsHnpgzpsFlHNjLwYlqbL1QurqwJ0PzOWA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=e9f8WXCYQJBrCMMVaJVPpZJadw+4u+B+9qMfvkBC8qhK2bnIlujPhrHKVB/dOOESw
+	 0X4K5YITZWu/t62+QBRp1zNz4HFnlbcRo6OPxu7L7BnNBYFF5ohdm9b43Y9091QvFY
+	 l1kQoWN7bmmq5DuSOSl1ki/ZZWewsOw9I4yFUoiqkhaKF9QrtCi/A8Uoqj5GwzEHVX
+	 d5+Rc8rJOU64qt738n73OtvDJb+w3qUkfHTytid/7h2bYkreXM0+NzuGHyG1DcaXui
+	 QF792kH/YqwPDx48Htp7MJOC8ICcxhP48x+uPoEwpu4mrgAoq+iCX9sduVOdhKh1/U
+	 yKNo+3ZYw/Kng==
+Date: Sun, 4 Aug 2024 10:07:36 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Linux Media Mailing List
+ <linux-media@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL for v6.11-rc2] media fixes
+Message-ID: <20240804100736.7fa85b34@foz.lan>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UpsqFUdF5AJEbJWQ0oj=SGZ";
- protocol="application/pgp-signature"; micalg=pgp-sha512
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
---Sig_/UpsqFUdF5AJEbJWQ0oj=SGZ
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-On Sun,  4 Aug 2024 08:32:44 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+Please pull from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.11-2
 
-> 'struct lpphy_tx_gain_table_entry' are not modified in this driver.
->=20
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
->=20
-> On a x86_64, with allmodconfig:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text	   data	    bss	    dec	    hex	filename
->   16481	   6232	      0	  22713	   58b9	drivers/net/wireless/broadcom/b43=
-/tables_lpphy.o
->=20
-> After:
-> =3D=3D=3D=3D=3D
->    text	   data	    bss	    dec	    hex	filename
->   22305	    395	      0	  22700	   58ac	drivers/net/wireless/broadcom/b43=
-/tables_lpphy.o
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
->=20
-> lpphy_write_gain_table() and lpphy_write_gain_table_bulk() could also be
-> made static and removed from tables_lpphy.h, but without knowing the reas=
-on
-> why it is done this way, I've preferred to leave it as-is.
->=20
-> Changes in v2:
->   - remove unrelated and un-needed constification   [Michael B=C3=BCsch]
->   - update numbers in the commit log
+For:
+  - two Kconfig fixes;
+  - one fix at UVC driver addressing probing time detection of a UVC custom 
+    controls;
+  - one fix related to PDF generation.
 
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Acked-By: Michael B=C3=BCsch <m@bues.ch>
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
+are available in the Git repository at:
 
---=20
-Michael B=C3=BCsch
-https://bues.ch/
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.11-2
 
---Sig_/UpsqFUdF5AJEbJWQ0oj=SGZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+for you to fetch changes up to e2ed53694e5356a55fd539a4d8dc56c2fa42b2ff:
 
------BEGIN PGP SIGNATURE-----
+  Merge tag 'tags/fixes-media-uvc-20230722' of git://git.kernel.org/pub/scm/linux/kernel/git/pinchartl/linux.git (2024-08-03 11:01:04 +0200)
 
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmavNkYACgkQ9TK+HZCN
-iw59LxAAx5uah1po1RFYdhFEMNeDkZRN/vjPNfykHH+zmBb1qeL6ZlqaWkS8ja2u
-lAMOsBdIN60E9xO2opbn6KV3Ag1ti6gVtL1inIOsdNKnIvjINe3lm7mSgiyTdMUz
-oIY1halx6umYdV5CHNi/91Zrp9wcysvAfc+Uu0dWs0Qp2sZWrJQSa8ZdIf8kNyII
-j/MeopgVWHHV3V8Pyugaps2bQvc1dDRnfq1hbxfAWG+QUQPzIoOvA3NqX/aImcnf
-dLeoAuWxeo1v9JzEOtvIH6MFojUWHw1W2X9FPB8gDckELi8XeYwiMLi38Hark6Bg
-JVAzgEx8JN9weaOpgcA8kVflKMLetSo3T73DgMM3d8E+8E4hzbVGPStL5MP4wYON
-o5lyk7AswaxK3/0SZ/L6EH5anDgoJZlv/yHlzoe8pLXMk7jlM3GM0pYq1UfPh35l
-SlcW6sAl12dNEGELaZqqHD189Wtm2Pf+1HP0YoJw4VkLLifY9Txf0uIFoyNWVoMw
-s2kZ0JnsU7uyMjB009+BM/Dt0XCjyM/m8gMxkSVSu9zen2EbU3M1wmJ4bo+Lovqm
-ffxPyx3MroDvgcLMyL40LNv1Tbjg+ynTKrE2lC7JC54YlX98bI+NUEF3FVSQUsM4
-ATS47ibyPZhmzWsohHe5+NROCK5AI+GJNrVMKcBpXQBs/tRl+8Y=
-=+81O
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+media fixes for v6.11-rc2
 
---Sig_/UpsqFUdF5AJEbJWQ0oj=SGZ--
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      media: ipu-bridge: fix ipu6 Kconfig dependencies
+
+Bingbu Cao (1):
+      media: intel/ipu6: select AUXILIARY_BUS in Kconfig
+
+Hans Verkuil (1):
+      Merge tag 'tags/fixes-media-uvc-20230722' of git://git.kernel.org/pub/scm/linux/kernel/git/pinchartl/linux.git
+
+Jean-Michel Hautbois (1):
+      media: v4l: Fix missing tabular column hint for Y14P format
+
+Ricardo Ribalda (1):
+      media: uvcvideo: Fix custom control mapping probing
+
+ Documentation/userspace-api/media/v4l/pixfmt-yuv-luma.rst | 4 ++--
+ drivers/media/pci/intel/ipu6/Kconfig                      | 3 ++-
+ drivers/media/usb/uvc/uvc_ctrl.c                          | 8 +++++---
+ 3 files changed, 9 insertions(+), 6 deletions(-)
+
 
