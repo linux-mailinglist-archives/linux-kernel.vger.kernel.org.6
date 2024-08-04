@@ -1,97 +1,117 @@
-Return-Path: <linux-kernel+bounces-273981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CDB8947053
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:16:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88649947056
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E1D1F210EA
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F031C2048B
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 19:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79024770F5;
-	Sun,  4 Aug 2024 19:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596AF13635D;
+	Sun,  4 Aug 2024 19:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tlkPkAhe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZPfLHY9p"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZOnlba86"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8E51171D;
-	Sun,  4 Aug 2024 19:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70CAA95B
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 19:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722799009; cv=none; b=KYNC+WB2infhd1qJZvq9HbiZrtP/aQ5ClKIR8zRWfOzKObZNOC2qmphfmEHcGgL0vkEZbaQYPMvX2GDSD/I13PzyqODfJJhh6AKxAh4aId826XGXguLu0SZDD/20brvOQ1+1mhykrcv+w3jfCTM7pMvCsTibo5XipMhg7aPbwsY=
+	t=1722799107; cv=none; b=nNuZnZcZfBOjxL382TFdYJTy4POsQCVtV84O7fksMFsrV7BJXsMZISeoy4SGrDzcDKo48t0PFncWPdWGDWBt0kTGA7uH219/o2VkHztJyLgp2mQGP/FsMjoPjOqVlIP5IffGEJAPf30oDAaHmP8qNVWl5OzXTAxzD5uVGoCg3kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722799009; c=relaxed/simple;
-	bh=l7+erS5UQeOqcyD+eTBREFeT9yuScxFrP8dGxndw1S0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OSdodH/WTGAriFT+prsFgU6IFJnsvjzwJQuPjp6HQNvH1zZL3puq4soFcW4BdQn8IOZQ4Asig/esa0X2U1RNKXBMB8dhXcXgjgpd/db3QcZLrLUIpNJFgTKyx/LPkF7ukWoB9yMNsdcwLVBFh2lpRgJLkFqzbK9iPLtetUNJwz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tlkPkAhe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZPfLHY9p; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722799006;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1hT4RsXjcr24UFgRDoW9KNmLIfwaA8bAOKgEc4/mRzA=;
-	b=tlkPkAheTwov5UrNWDc0Zngh5B95C2rZYC/KnX7PMRWtNTUkAdXL0dP9I6heicycrWznWq
-	gz73ZIoX0SA+8K7CznO8Wv7WpYNYSvzGJ/v5PJd3Pj0wM5pEk803wFr5UjjMF7PJoruFYm
-	pntLgd+kjYV2H4LvLCNvtTttPLH44sz3+QzuNreVLfjIQmQ0cLy78XdnfR3Vlj4gvBn/f0
-	D0J1i3XX/QmTZNqPBcMMIJQyqLpSAai0K/f+z42qPqIvP0yLw86ThhXGfUXMIe9W4Jpgru
-	JA8RIqUgXhBJ9uxjnWg0AuS/Wup+C8ef1kruvlBDMrSAmj6d0QGhmkbKOpj+Ug==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722799006;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1hT4RsXjcr24UFgRDoW9KNmLIfwaA8bAOKgEc4/mRzA=;
-	b=ZPfLHY9p8dQTXBMOy6UJgEObprWxJFu0JYkNpcztf0tsbM1rmnGsvfPF1GvmJNDqUHSeh7
-	2VNJ5D+nwgpJQ+Ag==
-To: Koakuma <koachan@protonmail.com>
-Cc: Koakuma via B4 Relay <devnull+koachan.protonmail.com@kernel.org>, "David
- S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
- Andy Lutomirski <luto@kernel.org>, Vincenzo Frascino
- <vincenzo.frascino@arm.com>, Nathan Chancellor <nathan@kernel.org>, Nick
- Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] sparc/vdso: Add helper function for 64-bit right shift
- on 32-bit target
-In-Reply-To: <Y5IejvnMTMbzucl5EK4C9ptWTnkPJlPJVKyCj1L1o2_2GPbmY5GZ55bKckWzKATaZcFF9SLCcvI4EMOhG3sifxCgEtkSdV2KDhv5jRBy9wk=@protonmail.com>
-References: <20240804-sparc-shr64-v1-1-25050968339a@protonmail.com>
- <871q3470nn.ffs@tglx>
- <Y5IejvnMTMbzucl5EK4C9ptWTnkPJlPJVKyCj1L1o2_2GPbmY5GZ55bKckWzKATaZcFF9SLCcvI4EMOhG3sifxCgEtkSdV2KDhv5jRBy9wk=@protonmail.com>
-Date: Sun, 04 Aug 2024 21:16:45 +0200
-Message-ID: <87y15c5c9u.ffs@tglx>
+	s=arc-20240116; t=1722799107; c=relaxed/simple;
+	bh=Ue6l5shIUrT8wMm17lIP3BKxCaSy6fSCFmIivr24iwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XQ1DRkHdVD6CX6AtNOWt0j8PN9Ojc4ulMpIPG0ZmwAM7z1SP/aIKjrO2Citao9NoeoEQ8yU9L1NfPsrzRQPjNt1PWIGjr905d5ISEy6igYjxpaCXo7Wf+zHhUBoH0HFcSeJHbIBjwdTmk9tFnLOLstmUETnOxaXYLKKN2i2BRe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZOnlba86; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f01afa11cso14714861e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 12:18:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722799103; x=1723403903; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uxT8jHbQgsljoFK5tUqYBXZZvkA8DBMp9CWiKYLgVTQ=;
+        b=ZOnlba86/HsKwpQbtASYtTdkV1jdWA9s8YW/HYMMIa3K0kne9VcxGA2F8PvdAVuoIa
+         zylgb2YkWDjpHbJEsMWx0bPGSOVCTG+uiBEgjzL9UVmCV4lTjUN+G/TP619WGGNVj23F
+         wd2P/nQ1Y/TGp12UVUu9AFkzq+icP2mADkQec=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722799103; x=1723403903;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uxT8jHbQgsljoFK5tUqYBXZZvkA8DBMp9CWiKYLgVTQ=;
+        b=GRKVlMd6SSffyiMjA8FVKPFy5n5c9b5nEr1PmPKTrWQ1nxDXP5sxos1Kmb6zvoT3di
+         NWw8AWdkrSoJ8jsefCYI5ZLmSMRvENJn5GTcsZW3P5AfIxEHPwnK5xtXKKyWkEuHfZnI
+         eNNSSzoOfQZ8uQYCsjEpX0X97gM8KCwQS3waYvCnuCKFZZyFodFU36v4LiHVEQ9mFf0T
+         5fvvTb4LALA/HAND/sbQP+XPC2vRTVTGsBisCj3lRUH49Ahtlr2VZWM8EBsiJ0FCJcGW
+         iOwvuQVaRHf+uNiflZcHIK6N4jO40zcbXHMJ2HbmsBo09qmuY07/47V3h46TRHGl59y/
+         e7RA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxMBHfVN91j31Q/0hiVYkuUEDqJ/mPT/5ITV14C1R6FQb7fc1W01V0XdxGD1VACqe6XEAhMTM3IdAQwJHb8/1/v9KAcQwE1CgvESSw
+X-Gm-Message-State: AOJu0YxXoeLbt+ihWuM5Y/9itpDGqnccXW9fNR6tjYOHahS5RjkdxrkC
+	a1h/vymx28sNRjlVOCZAxmYgL5NKf2cb5nUZ+osKwsRwR8/VKYbqWktFyga+AB5rvX4ALIdwQvC
+	OoeO6Wg==
+X-Google-Smtp-Source: AGHT+IGs4o9SbadzhjUfmgS8YlF6rQS9MndScxf5/akuQ5rqD63d7W+keOxoaWqARGy2W7sriCTIkg==
+X-Received: by 2002:a05:6512:3a93:b0:52d:6673:11da with SMTP id 2adb3069b0e04-530bb3b46e5mr6248097e87.57.1722799103470;
+        Sun, 04 Aug 2024 12:18:23 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bad7df314asm1391514a12.4.2024.08.04.12.18.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 12:18:22 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso877339166b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 12:18:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUb8Gitgy8hu+3/1FhWPAxsPzetoGKrMtojq/qh5NbmvWoQmdTam+r9PptBvnQuHMc43A4ZNzMGxCyGFql0DzFNtwaFUM4MN78YGMDu
+X-Received: by 2002:a17:907:1c92:b0:a7a:acae:340e with SMTP id
+ a640c23a62f3a-a7dc4fa3fb7mr733558966b.26.1722799102160; Sun, 04 Aug 2024
+ 12:18:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
+ <20240804152327.GA27866@redhat.com> <CAHk-=whg0d5rxiEcPFApm+4FC2xq12sjynDkGHyTFNLr=tPmiw@mail.gmail.com>
+ <20240804185338.GB27866@redhat.com>
+In-Reply-To: <20240804185338.GB27866@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 4 Aug 2024 12:18:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjr0p5CxbC-iGEznupau936D24iotTZi7eFXqgKX-otbg@mail.gmail.com>
+Message-ID: <CAHk-=wjr0p5CxbC-iGEznupau936D24iotTZi7eFXqgKX-otbg@mail.gmail.com>
+Subject: Re: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first
+ in ELF cores)
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Brian Mak <makb@juniper.net>, "Eric W. Biederman" <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Aug 04 2024 at 17:30, Koakuma wrote:
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->> Why does this sparc'ism need to be in generic code?
+On Sun, 4 Aug 2024 at 11:53, Oleg Nesterov <oleg@redhat.com> wrote:
 >
-> Doesn't x86 also have a couple functions that live in math64.h anyway?
+> Apart from SIGKILL, the dumper already has the full control.
 
-No. Both functions are used in the generic lib/vdso/ code.
+What do you mean? It's a regular usermodehelper. It gets the dump data
+as input. That's all the control it has.
 
-> That's why I thought it is fine to put it in there...
->
-> In any case, though, I am open to moving the function to sparc directory,
-> if that is indeed the proper place for that function.
+> And note that the dumper can already use ptrace.
 
-I think so as sparc is having it's own VDSO implementation and does not
-use the generic one.
+.. with the normal ptrace() rules, yes.
 
-Thanks,
+You realize that some setups literally disable ptrace() system calls,
+right? Which your patch now effectively sidesteps.
 
-        tglx
+THAT is why I don't like it. ptrace() is *dangerous*. It is very
+typically one of the things that people limit for various reasons.
+
+Just adding some implicit tracing willy-nilly needs to be something
+people really worry about.
+
+             Linus
 
