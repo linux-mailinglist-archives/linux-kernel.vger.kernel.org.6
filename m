@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-273638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82717946BA9
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:56:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF2F946BA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 02:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DAEF1C2093F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:56:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87D87B21E52
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 00:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D293A548EE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786F544C76;
 	Sun,  4 Aug 2024 00:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NIpd4oll";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZxqrHUmh"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xHVfOPKN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mWJr5YiA"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5FC1B28A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26F519470
 	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 00:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722732716; cv=none; b=WauvKlu4QNi9pnb9LjQ/5VtcgbGPr2O154Srx2OBgPcgGP85/rqMUJXGq9cJI7xOJNeqsBOr/5PlxXiXL/t10tKnqM4S9ef7rrB2AfY7I3fzZ0izDnynQsuvX4hlFWXFw/ak+0IeZ9Ei/2SeyWNE0lOHFymDk95ZJ/vaDqbi7oE=
+	t=1722732715; cv=none; b=qI8rUUZGAp3JNWoREetZkWroP9hOPB3l/5qPmpt7wbA0T+Udcqqi6+8JVGL+Hd219GaWypkrc0H7ngvPdREoHSsUQ/6nQfVK0XKueRUDPE7vV4wS5hMGmH7KneP13kIY5gTEc9Vfn35EEABVf19sT6E1IKM2xrblqizvvHK57iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722732716; c=relaxed/simple;
-	bh=JFMKZtGPkrU5SIuPBdCMEj2nzyR/bidpQHk9sb/QEjk=;
+	s=arc-20240116; t=1722732715; c=relaxed/simple;
+	bh=Ov5T451CRpMNZDviwPZPsNDiuJcBYgBNHBKPViE70gg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l4Hgg/FYcyCVQQmxFOlNxZr//tcc4Wz3lVkKUgHsmGqvy6chOIQ6QIjsPTRd2tTmQKOkHplkknWpPqxDQydmCPKsKhe93YP02VykUvUIk9CcI5GTbm/TuapKqj0Klw0NJleysMKXcoMqmw9x2zrZFs0Gl0TsQW8FgVIE7pajdZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NIpd4oll; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZxqrHUmh; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=eybfKVMgu9S872jmaIumhiEHTqRQN1x959TE3/SsXnwNvt0So9t/+ZcvuHjH1XEkyb2a9h95GeZntUovFfGYn1qOGy6aMTqM5pdAPWdg523Pfd8uW9pwOEZthNkZr5ZIxAWXYLMr/O7AfLRX3nU/DE5kJTuC3UINWmmNhcetsxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xHVfOPKN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mWJr5YiA; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: John Ogness <john.ogness@linutronix.de>
@@ -38,29 +38,29 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=V3J+O0K9BaumAkEip6m7BqVS+0WrsRdwTh0cSg6mOBk=;
-	b=NIpd4ollVWMMPN/4Yd3Ek5Kgd2DEKwLeKrKEQc1SByi/oyorRTUUxy1zvdml1I4RpQi8eh
-	3qXDaBX2uJtyGww6r39s/F4v40beFDrgHrhA34mtYntwGSeRSv7qR9xJIdsH8ZJ4AAuFIu
-	M1GUEpmMK6buWTYAuiilAO3S4yOJQZ7p8AbCPvUWKpIdxdJxAYcRUVP5bSIuHQmxiSSu/0
-	kJGyoMvFa//mYiMxEyCknbFd8QbE4OPQg1oxh4Cb04NgJW35tihXkSthXNUwEuej5AdhXW
-	TNJ4WnheykWm0vXldeyqSi4iU9sn007zWMVmJ7OCbKqic9336ap0jGFj/coPug==
+	bh=SIvGXSI9zL3LqtnkQPrC0V491Iai+TRLLKit8ny2zJg=;
+	b=xHVfOPKNjTQzcqRuLdxwA9LkG8+GCGmjmiL/RYaVYIWWtASK6FdKbeCYyA9txT+VIUiuI9
+	fuwhBYcOJk7wlPhgkXPRn/15JMCAenw2jfZ52t2+ijGmvYhcpaS9K6d9WsNMSVNR9+Pey+
+	4YpeG5TzEDNpzPYu3SdPU31htAJr4t870Jcs3WpGkPzzF9HP5gxMtGOl3uw40rXy0OyTdu
+	CsqD4f+HIrf63XOWXiJHtQhhkCV9/VnlyLQ6Bym06ICCWfySPdT+A1tRgbBcyn15gXHzbo
+	Qlo7KjK94L29GcthRGiQzMVZmWVBKxdoF2XH3azk7NuCmJ+1ak8fLo91I/hr8w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722732707;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=V3J+O0K9BaumAkEip6m7BqVS+0WrsRdwTh0cSg6mOBk=;
-	b=ZxqrHUmhPcuJG05UWRkif/Ig2bIHAAP4CIX9fI/Wa5QziHbAexLCpnK8b+Aw6gkrKRe7BU
-	O9FgXuP/9HNF2ODQ==
+	bh=SIvGXSI9zL3LqtnkQPrC0V491Iai+TRLLKit8ny2zJg=;
+	b=mWJr5YiAamoJP+/EYI7lwo0JVoowG+VwS8RkaY38zS+uRCXJWjHkRgxbcf/6BDhJeVgZSj
+	EKmo4i6zkttdIqBA==
 To: Petr Mladek <pmladek@suse.com>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH printk v7 16/35] printk: Make console_is_usable() available to nbcon.c
-Date: Sun,  4 Aug 2024 02:57:19 +0206
-Message-Id: <20240804005138.3722656-17-john.ogness@linutronix.de>
+Subject: [PATCH printk v7 17/35] printk: Let console_is_usable() handle nbcon
+Date: Sun,  4 Aug 2024 02:57:20 +0206
+Message-Id: <20240804005138.3722656-18-john.ogness@linutronix.de>
 In-Reply-To: <20240804005138.3722656-1-john.ogness@linutronix.de>
 References: <20240804005138.3722656-1-john.ogness@linutronix.de>
 Precedence: bulk
@@ -71,107 +71,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move console_is_usable() as-is into internal.h so that it can
-be used by nbcon printing functions as well.
+The nbcon consoles use a different printing callback. For nbcon
+consoles, check for the write_atomic() callback instead of
+write().
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
 ---
- kernel/printk/internal.h | 32 ++++++++++++++++++++++++++++++++
- kernel/printk/printk.c   | 30 ------------------------------
- 2 files changed, 32 insertions(+), 30 deletions(-)
+ kernel/printk/internal.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index ccb916688178..5d9deb56b582 100644
+index 5d9deb56b582..448a5fcd5228 100644
 --- a/kernel/printk/internal.h
 +++ b/kernel/printk/internal.h
-@@ -84,6 +84,36 @@ void nbcon_seq_force(struct console *con, u64 seq);
- bool nbcon_alloc(struct console *con);
- void nbcon_free(struct console *con);
+@@ -86,6 +86,8 @@ void nbcon_free(struct console *con);
  
-+/*
-+ * Check if the given console is currently capable and allowed to print
-+ * records.
-+ *
-+ * Requires the console_srcu_read_lock.
-+ */
-+static inline bool console_is_usable(struct console *con)
-+{
-+	short flags = console_srcu_read_flags(con);
-+
-+	if (!(flags & CON_ENABLED))
-+		return false;
-+
-+	if ((flags & CON_SUSPENDED))
-+		return false;
-+
-+	if (!con->write)
-+		return false;
-+
-+	/*
-+	 * Console drivers may assume that per-cpu resources have been
-+	 * allocated. So unless they're explicitly marked as being able to
-+	 * cope (CON_ANYTIME) don't call them until this CPU is officially up.
-+	 */
-+	if (!cpu_online(raw_smp_processor_id()) && !(flags & CON_ANYTIME))
-+		return false;
-+
-+	return true;
-+}
-+
- #else
+ /*
+  * Check if the given console is currently capable and allowed to print
++ * records. Note that this function does not consider the current context,
++ * which can also play a role in deciding if @con can be used to print
+  * records.
+  *
+  * Requires the console_srcu_read_lock.
+@@ -100,8 +102,13 @@ static inline bool console_is_usable(struct console *con)
+ 	if ((flags & CON_SUSPENDED))
+ 		return false;
  
- #define PRINTK_PREFIX_MAX	0
-@@ -104,6 +134,8 @@ static inline void nbcon_seq_force(struct console *con, u64 seq) { }
- static inline bool nbcon_alloc(struct console *con) { return false; }
- static inline void nbcon_free(struct console *con) { }
- 
-+static inline bool console_is_usable(struct console *con) { return false; }
-+
- #endif /* CONFIG_PRINTK */
- 
- extern struct printk_buffers printk_shared_pbufs;
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 7027f0868ef4..5a1fa8eebe5a 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -2767,36 +2767,6 @@ int is_console_locked(void)
- }
- EXPORT_SYMBOL(is_console_locked);
- 
--/*
-- * Check if the given console is currently capable and allowed to print
-- * records.
-- *
-- * Requires the console_srcu_read_lock.
-- */
--static inline bool console_is_usable(struct console *con)
--{
--	short flags = console_srcu_read_flags(con);
--
--	if (!(flags & CON_ENABLED))
--		return false;
--
--	if ((flags & CON_SUSPENDED))
--		return false;
--
 -	if (!con->write)
 -		return false;
--
--	/*
--	 * Console drivers may assume that per-cpu resources have been
--	 * allocated. So unless they're explicitly marked as being able to
--	 * cope (CON_ANYTIME) don't call them until this CPU is officially up.
--	 */
--	if (!cpu_online(raw_smp_processor_id()) && !(flags & CON_ANYTIME))
--		return false;
--
--	return true;
--}
--
- static void __console_unlock(void)
- {
- 	console_locked = 0;
++	if (flags & CON_NBCON) {
++		if (!con->write_atomic)
++			return false;
++	} else {
++		if (!con->write)
++			return false;
++	}
+ 
+ 	/*
+ 	 * Console drivers may assume that per-cpu resources have been
 -- 
 2.39.2
 
