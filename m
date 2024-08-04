@@ -1,235 +1,225 @@
-Return-Path: <linux-kernel+bounces-274027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A65947129
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 00:16:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D4A94717D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 00:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C6D1F210C5
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EF941C208F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 22:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F012137750;
-	Sun,  4 Aug 2024 22:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332A312E4A;
+	Sun,  4 Aug 2024 22:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZThOapIB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q4DEdzhE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE5CAD59
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 22:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A435FA2A
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 22:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722809752; cv=none; b=awBbHERh8dV7C8R9zij0kEVuGiVLjdurQ4wjyLUKeeG4oJi5XPKBQKAycpvaLXUR0ZrZFcOum9lkLylT0/7N6gkX7YLBoAawgXtTKjQIHVcp22Kw2ICbg3ZQg+CAQt+8wl7/JFf+Yfote9U3gQZsd4Sp0M64+snAod00uyfvojo=
+	t=1722810706; cv=none; b=BKK93HwZ3vzT0Kx2q++g9t7XWFrKx9VXrBJmRRhYJzTTLIQAjMr+3zOjsaOWRxBGfDSUi9fW+SWfnu4B+9rEm0msWNIQ+m7B278gvLLBGQ7vKaIjiaO7oAtrbyBzALabKP0/eB/33wsPRhmS3wKYycCzETHt9wD1WDbWN8G2G1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722809752; c=relaxed/simple;
-	bh=1oqBZkcUEQ5WhhiwYcCFSLchEbm56fpcYEkTVNO0njk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ucWpgXfEfSbNd044zbGltY5fCpsCTrFX2o/QyxPsrp9GXRwh+Or0JH2ewsXWKz3G2ynE85H0VWV2iMgjZOPQ69uFgvEA0uNW0XAkg79a8dXKH3XkFFcWHQ8SdhHSwg9SBsFSRXLskV3cOEWpGfXeyzSmkL9VGehY8vizLJkdKmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZThOapIB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A31A1C32786;
-	Sun,  4 Aug 2024 22:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722809751;
-	bh=1oqBZkcUEQ5WhhiwYcCFSLchEbm56fpcYEkTVNO0njk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZThOapIBT6ysrJlvawL9S3SQCMkW0eIBREoUOcPxTWdCwi1iGMj76dmbT9m86J6vm
-	 aFEgu+w1Flwdy47l7NmEK16QkqxIPEoc4oSWCdNxC9DNDt715FRRqsQ2tlc25sw00p
-	 DKYPYkE5W6A03EdSPQ2Tsd0QJ8XG75nRgVvTDBMTtkW/6Ppx82EzueUNwoPMrE/aCe
-	 1jib62FmmekImw27rTaIMWpZz7eRVMBf+XtPX0Pi8oTT2gu1YoRYEIRULKvZvNRq90
-	 DIGSgwNRJP2NYx+JlO5vWaX2fRGrfTOc9nTDseYmOjymsrjBEoUN/aR/IrPbw+1XgU
-	 k0jpC4qJR8hyA==
-From: Michael Walle <mwalle@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org,
+	s=arc-20240116; t=1722810706; c=relaxed/simple;
+	bh=FLPM1VU3GQt6d9UpfsksOoBdSBBHGKFSEOHUAsYrMbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ScgvCuS8mX+cj+HL7NV/AOAgmZ1vYF8jgNSxYJFoldHfD2AI9wYdUZSpom9dr16mZ5YJTMhFhe2EHJSq0pXKyYUOJ+pvS06aCQtb/7snkJiS4t8pIkSw9AA4WYoch4obkYpMZzPUKxs7DgSgYJt0dIN2HcFVWYCNtvJzFMO+3hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q4DEdzhE; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722810705; x=1754346705;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FLPM1VU3GQt6d9UpfsksOoBdSBBHGKFSEOHUAsYrMbM=;
+  b=Q4DEdzhET4w4dZJadDoEYyVa/GHqqfWhC9okxDsG1Yju2HREFzcBCSUo
+   aVlacXUsZE9p9FfIeyaj0e5U4ttonk13yEt76uHQ5bBqdHiMy4IWLAX+6
+   KpH2b/g2fKK3RakqQ+dNAqWPyDa0ebh17vvZBsa98OFEkD5Uhu3FALIl1
+   QNath/bJKllLwbDIRK0N2g6rFOsVQxoAGwq2vMWhqB/3a5xSQVH2UTNRF
+   kxBbMmKvkBCXljSbK3VCZJ7DMUVQ+8reDbX7IhApmNrZw0uEIkCvSKvju
+   SkfdPscblJR3Uulwzh7Ei7FOJaA/BA4amjqMvgrccD3vyfP8s/1LVTU4H
+   Q==;
+X-CSE-ConnectionGUID: lg+XpQ7wTEy4vlk8nTyR+A==
+X-CSE-MsgGUID: 7cAT5OzeQV6MOPMbQUQplw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="23671526"
+X-IronPort-AV: E=Sophos;i="6.09,263,1716274800"; 
+   d="scan'208";a="23671526"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 15:31:44 -0700
+X-CSE-ConnectionGUID: 1Uygf4b0SQa+Z2TaaAAmOg==
+X-CSE-MsgGUID: nHS3SMEwS4SYhKLhMNLJWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,263,1716274800"; 
+   d="scan'208";a="55924905"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 04 Aug 2024 15:31:43 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sajlM-0001dI-2k;
+	Sun, 04 Aug 2024 22:31:40 +0000
+Date: Mon, 5 Aug 2024 06:31:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	linux1394-devel@lists.sourceforge.net
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: spi-nor: winbond: add Zetta ZD25Q128C support
-Date: Mon,  5 Aug 2024 00:15:35 +0200
-Message-Id: <20240804221535.291923-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
+Subject: Re: [PATCH 17/17] firewire: ohci: use guard macro to serialize
+ operations for isochronous contexts
+Message-ID: <202408050633.0nI12cmo-lkp@intel.com>
+References: <20240804130225.243496-18-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240804130225.243496-18-o-takashi@sakamocchi.jp>
 
-Zetta normally uses BAh as its vendor ID. But for the ZD25Q128C they
-took the one from Winbond and messed up the size parameters in SFDP.
-Most functions seem compatible with the W25Q128, we just have to fix up
-the size.
+Hi Takashi,
 
-Link: http://www.zettadevice.com/upload/file/20150821/DS_Zetta_25Q128_RevA.pdf
-Link: https://www.lcsc.com/datasheet/lcsc_datasheet_2312081757_Zetta-ZD25Q128CSIGT_C19626875.pdf
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
-$ cat /sys/class/spi_master/spi0/spi0.0/spi-nor/jedec_id
-ef4018
+kernel test robot noticed the following build warnings:
 
-$ md5sum /sys/class/spi_master/spi0/spi0.0/spi-nor/sfdp
-f19e214c6709a259511bac4bd9c87407  /sys/class/spi_master/spi0/spi0.0/spi-nor/sfdp
+[auto build test WARNING on ieee1394-linux1394/for-next]
+[also build test WARNING on ieee1394-linux1394/for-linus linus/master v6.11-rc1 next-20240802]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-$ xxd -p /sys/class/spi_master/spi0/spi0.0/spi-nor/sfdp
-53464450000101ff00000109300000ffb3000103600000ffffffffffffff
-ffffffffffffffffffffffffffffffffffffe520f9ffffffff0044eb086b
-083b80bbeeffffffffff00ffffff00ff0c200f5210d80881ffffffffffff
-ffffffffffff003600279ff97764fccbffff
+url:    https://github.com/intel-lab-lkp/linux/commits/Takashi-Sakamoto/firewire-core-use-guard-macro-to-maintain-static-packet-data-for-phy-configuration/20240804-210645
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git for-next
+patch link:    https://lore.kernel.org/r/20240804130225.243496-18-o-takashi%40sakamocchi.jp
+patch subject: [PATCH 17/17] firewire: ohci: use guard macro to serialize operations for isochronous contexts
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240805/202408050633.0nI12cmo-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408050633.0nI12cmo-lkp@intel.com/reproduce)
 
-$ cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
-Supported read modes by the flash
- 1S-1S-1S
-  opcode	0x03
-  mode cycles	0
-  dummy cycles	0
- 1S-1S-1S (fast read)
-  opcode	0x0b
-  mode cycles	0
-  dummy cycles	8
- 1S-1S-2S
-  opcode	0x3b
-  mode cycles	0
-  dummy cycles	8
- 1S-2S-2S
-  opcode	0xbb
-  mode cycles	4
-  dummy cycles	0
- 1S-1S-4S
-  opcode	0x6b
-  mode cycles	0
-  dummy cycles	8
- 1S-4S-4S
-  opcode	0xeb
-  mode cycles	2
-  dummy cycles	4
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408050633.0nI12cmo-lkp@intel.com/
 
-Supported page program modes by the flash
- 1S-1S-1S
-  opcode	0x02
+All warnings (new ones prefixed by >>):
 
-$ cat /sys/kernel/debug/spi-nor/spi0.0/params
-name		w25q128
-id		ef 40 18 ef 40 18
-size		16.0 MiB
-write size	1
-page size	256
-address nbytes	3
-flags		HAS_SR_TB | HAS_LOCK | HAS_16BIT_SR
+>> drivers/firewire/ohci.c:3138:2: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+    3138 |         guard(spinlock_irq)(&ohci->lock);
+         |         ^
+   include/linux/cleanup.h:167:2: note: expanded from macro 'guard'
+     167 |         CLASS(_name, __UNIQUE_ID(guard))
+         |         ^
+   include/linux/cleanup.h:122:2: note: expanded from macro 'CLASS'
+     122 |         class_##_name##_t var __cleanup(class_##_name##_destructor) =   \
+         |         ^
+   <scratch space>:86:1: note: expanded from here
+      86 | class_spinlock_irq_t
+         | ^
+   1 warning generated.
 
-opcodes
- read		0x0b
-  dummy cycles	8
- erase		0x20
- program	0x02
- 8D extension	none
 
-protocols
- read		1S-1S-1S
- write		1S-1S-1S
- register	1S-1S-1S
+vim +3138 drivers/firewire/ohci.c
 
-erase commands
- 81 (256 B) [0]
- 20 (4.00 KiB) [1]
- 52 (32.0 KiB) [2]
- d8 (64.0 KiB) [3]
- c7 (16.0 MiB)
+  3059	
+  3060	static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
+  3061					int type, int channel, size_t header_size)
+  3062	{
+  3063		struct fw_ohci *ohci = fw_ohci(card);
+  3064		struct iso_context *ctx;
+  3065		descriptor_callback_t callback;
+  3066		u64 *channels;
+  3067		u32 *mask, regs;
+  3068		int index, ret = -EBUSY;
+  3069	
+  3070		scoped_guard(spinlock_irq, &ohci->lock) {
+  3071			switch (type) {
+  3072			case FW_ISO_CONTEXT_TRANSMIT:
+  3073				mask     = &ohci->it_context_mask;
+  3074				callback = handle_it_packet;
+  3075				index    = ffs(*mask) - 1;
+  3076				if (index >= 0) {
+  3077					*mask &= ~(1 << index);
+  3078					regs = OHCI1394_IsoXmitContextBase(index);
+  3079					ctx  = &ohci->it_context_list[index];
+  3080				}
+  3081				break;
+  3082	
+  3083			case FW_ISO_CONTEXT_RECEIVE:
+  3084				channels = &ohci->ir_context_channels;
+  3085				mask     = &ohci->ir_context_mask;
+  3086				callback = handle_ir_packet_per_buffer;
+  3087				index    = *channels & 1ULL << channel ? ffs(*mask) - 1 : -1;
+  3088				if (index >= 0) {
+  3089					*channels &= ~(1ULL << channel);
+  3090					*mask     &= ~(1 << index);
+  3091					regs = OHCI1394_IsoRcvContextBase(index);
+  3092					ctx  = &ohci->ir_context_list[index];
+  3093				}
+  3094				break;
+  3095	
+  3096			case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
+  3097				mask     = &ohci->ir_context_mask;
+  3098				callback = handle_ir_buffer_fill;
+  3099				index    = !ohci->mc_allocated ? ffs(*mask) - 1 : -1;
+  3100				if (index >= 0) {
+  3101					ohci->mc_allocated = true;
+  3102					*mask &= ~(1 << index);
+  3103					regs = OHCI1394_IsoRcvContextBase(index);
+  3104					ctx  = &ohci->ir_context_list[index];
+  3105				}
+  3106				break;
+  3107	
+  3108			default:
+  3109				index = -1;
+  3110				ret = -ENOSYS;
+  3111			}
+  3112	
+  3113			if (index < 0)
+  3114				return ERR_PTR(ret);
+  3115		}
+  3116	
+  3117		memset(ctx, 0, sizeof(*ctx));
+  3118		ctx->header_length = 0;
+  3119		ctx->header = (void *) __get_free_page(GFP_KERNEL);
+  3120		if (ctx->header == NULL) {
+  3121			ret = -ENOMEM;
+  3122			goto out;
+  3123		}
+  3124		ret = context_init(&ctx->context, ohci, regs, callback);
+  3125		if (ret < 0)
+  3126			goto out_with_header;
+  3127	
+  3128		if (type == FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL) {
+  3129			set_multichannel_mask(ohci, 0);
+  3130			ctx->mc_completed = 0;
+  3131		}
+  3132	
+  3133		return &ctx->base;
+  3134	
+  3135	 out_with_header:
+  3136		free_page((unsigned long)ctx->header);
+  3137	 out:
+> 3138		guard(spinlock_irq)(&ohci->lock);
+  3139	
+  3140		switch (type) {
+  3141		case FW_ISO_CONTEXT_RECEIVE:
+  3142			*channels |= 1ULL << channel;
+  3143			break;
+  3144	
+  3145		case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
+  3146			ohci->mc_allocated = false;
+  3147			break;
+  3148		}
+  3149		*mask |= 1 << index;
+  3150	
+  3151		return ERR_PTR(ret);
+  3152	}
+  3153	
 
-sector map
- region (in hex)   | erase mask | overlaid
- ------------------+------------+----------
- 00000000-00ffffff |     [ 1  ] | no
-
-$ dd if=/dev/urandom of=spi_test bs=1M count=2
-2+0 records in
-2+0 records out
-$ mtd_debug erase /dev/mtd0 0 2097152
-Erased 2097152 bytes from address 0x00000000 in flash
-$ mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-$ hexdump spi_read
-0000000 ffff ffff ffff ffff ffff ffff ffff ffff
-*
-0200000
-$ sha256sum spi_read
-4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-$ mtd_debug write /dev/mtd0 0 2097152 spi_test
-Copied 2097152 bytes from spi_test to address 0x00000000 in flash
-$ mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-$ sha256sum spi*
-90145978caa36e84ecc07734d193c97a54ae601884a5ff4e0b90ff8c1f540a03  spi_read
-90145978caa36e84ecc07734d193c97a54ae601884a5ff4e0b90ff8c1f540a03  spi_test
-$ mtd_debug erase /dev/mtd0 0 2097152
-Erased 2097152 bytes from address 0x00000000 in flash
-$ mtd_debug read /dev/mtd0 0 2097152 spi_read
-Copied 2097152 bytes from address 0x00000000 in flash to spi_read
-$ sha256sum spi*
-4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
-90145978caa36e84ecc07734d193c97a54ae601884a5ff4e0b90ff8c1f540a03  spi_test
-
-$ mtd_debug info /dev/mtd0
-mtd.type = MTD_NORFLASH
-mtd.flags = MTD_CAP_NORFLASH
-mtd.size = 16777216 (16M)
-mtd.erasesize = 4096 (4K)
-mtd.writesize = 1
-mtd.oobsize = 0
-regions = 0
----
- drivers/mtd/spi-nor/winbond.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-index e065e4fd42a3..9f7ce5763e71 100644
---- a/drivers/mtd/spi-nor/winbond.c
-+++ b/drivers/mtd/spi-nor/winbond.c
-@@ -17,6 +17,31 @@
- 		   SPI_MEM_OP_NO_DUMMY,					\
- 		   SPI_MEM_OP_DATA_OUT(1, buf, 0))
- 
-+static int
-+w25q128_post_bfpt_fixups(struct spi_nor *nor,
-+			 const struct sfdp_parameter_header *bfpt_header,
-+			 const struct sfdp_bfpt *bfpt)
-+{
-+	/*
-+	 * Zetta ZD25Q128C is a clone of the Winbond device. But the encoded
-+	 * size is really wrong. It seems that they confused Mbit with MiB.
-+	 * Thus the flash is discovered as a 2MiB device.
-+	 */
-+	if (bfpt_header->major == SFDP_JESD216_MAJOR &&
-+	    bfpt_header->minor == SFDP_JESD216_MINOR &&
-+	    nor->params->size == SZ_2M &&
-+	    nor->params->erase_map.regions[0].size == SZ_2M) {
-+		nor->params->size = SZ_16M;
-+		nor->params->erase_map.regions[0].size = SZ_16M;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct spi_nor_fixups w25q128_fixups = {
-+	.post_bfpt = w25q128_post_bfpt_fixups,
-+};
-+
- static int
- w25q256_post_bfpt_fixups(struct spi_nor *nor,
- 			 const struct sfdp_parameter_header *bfpt_header,
-@@ -108,6 +133,7 @@ static const struct flash_info winbond_nor_parts[] = {
- 		.size = SZ_16M,
- 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
- 		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+		.fixups = &w25q128_fixups,
- 	}, {
- 		.id = SNOR_ID(0xef, 0x40, 0x19),
- 		.name = "w25q256",
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
