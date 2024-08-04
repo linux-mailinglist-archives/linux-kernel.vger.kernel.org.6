@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-274001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9009470A2
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:18:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AD99470A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 23:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7709A1F211A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894D31C208E8
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 21:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A53A136358;
-	Sun,  4 Aug 2024 21:18:39 +0000 (UTC)
-Received: from sxb1plsmtpa01-01.prod.sxb1.secureserver.net (sxb1plsmtpa01-01.prod.sxb1.secureserver.net [188.121.53.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239A41386D1;
+	Sun,  4 Aug 2024 21:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UNea31ec"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A6AA2A
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 21:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3A9A2A;
+	Sun,  4 Aug 2024 21:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722806319; cv=none; b=XJiAKXwPz0qSlIJVTmVvdbsddoLLS0Epa1ACdNRVdbZarlIENflHgt9Kr9iO0GZuKb12uFZXFlbE2m6/703OiUndSccEGBK/puHaN2UL/HQDuL5Gea9X9kcCryEkhY0l8Qiq0lfNZQ/7/fT37PpQwrlIAvwyxWcCHX1tw5dSIZ0=
+	t=1722806258; cv=none; b=PR/f6xhcjee45+YyM/54K0170Xaf3VI2yshAHPjq5lo5XCzBs3tFQ0CC8CTl2OWykjdJtJ9OYyvGR/ZvGveiEefs4sXikgCVazHnRydff2ioIyHLQ85YV9C9gcNIFJZZT88qRUlwp3D3k15QHIYhDN0KnyAOvd7l+Rt/wE9/qSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722806319; c=relaxed/simple;
-	bh=Mvx7rAiUch3Cfin57xpAs/8PbH19eIrf6E8R7cmXm98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJbNWnhT8zii66W/EMujDwj9aP/kQJ92e/fTTU/ZCUJTnF2l6yWXdn+yErl+VlXKQPAm5hMLrRXBKFSKqHWImqaqQl+jhg/EfDnsOOwEGIUTxacyUNqC89YwCVQhweSOsSjbmsYT08VDWvoad8VTAIGuMKIjfEG26io1YbQVtks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from [192.168.178.90] ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPA
-	id aiaIsPLtwT7r3aiaJs6CIe; Sun, 04 Aug 2024 14:16:12 -0700
-X-CMAE-Analysis: v=2.4 cv=eKHYj2p1 c=1 sm=1 tr=0 ts=66afef9c
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8
- a=AYFBRnY8-RZy9VRH-ocA:9 a=QEXdDO2ut3YA:10 a=cQPPKAXgyycSBL8etih5:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <ee839d00-fd42-4b69-951d-8571140c077b@squashfs.org.uk>
-Date: Sun, 4 Aug 2024 22:16:05 +0100
+	s=arc-20240116; t=1722806258; c=relaxed/simple;
+	bh=UI2uq4D1/BMGdVP3uULNzeZa88ZXAdb9J9sb8Lum+GE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=c8rU9q+5VXRmeTMgFNdADIytBMzeU1oWW4qpqfl0S/tyMdr160cbzhfHyIguXpSSWGZoM55N31aJ1cZWdTaCcYa4ccfPb/VXxSVAmlwdk6NZZa5WrHQe4wktmO78ULUBLDrIEkrtJzpr1o9g/RIOUxMVITYp8NedQsTTSn5E3rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UNea31ec; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722806245;
+	bh=cZnut/m33D3KNXROflAPe0MPjd0m+V9GHvg4mneIeLE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UNea31ecCyl/NEhkqoh7CDI55nM1J3cmEO6KoHjEPDKvMslRoEdw0tgN9HiIf1pHq
+	 TW1Sbdo6flrAhsx8aJZyEO/h/L0ObOfdhmekbVDeyxDNycXGBncSYGK4D3Z70R+2dt
+	 TpX5JJEDua2y/vYPicKEMDpDK1cRYuc4H0g98uPL10fDFCbcrQ579imN51spZ2dfDj
+	 FXXCfjDN9LWz65WeI2xbQbTTbfCRur3koVweyDc1YzmyJTIvCea+oeJyp8wsm7T35a
+	 WGZxX1aGH28FUG2uzlSXEbQeaJ5nI19/JAnJk/bPd8/5K1b8uNgabAHPyOOoZTAy16
+	 u5urF12uJ1kgw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WcXTJ6KKNz4wcl;
+	Mon,  5 Aug 2024 07:17:24 +1000 (AEST)
+Date: Mon, 5 Aug 2024 07:17:23 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Muchun Song <muchun.song@linux.dev>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the mm-hotfixes tree
+Message-ID: <20240805071723.571c7654@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V7] squashfs: Add symlink size check in squash_read_inode
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, squashfs-devel@lists.sourceforge.net,
- syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <20240803040729.1677477-1-lizhi.xu@windriver.com>
- <20240803074349.3599957-1-lizhi.xu@windriver.com>
-Content-Language: en-GB
-From: Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <20240803074349.3599957-1-lizhi.xu@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfDB39zMuKKKGl0cRk055VM/7sOXB+HnqoLITDfM9xE1xUANA6G3b+/JvI6+zDqGRPd1eI5bq9/MMC4F4Dk/xP7JnyEusxHloHYR5RmJW9zaAsQJeDgpN
- OF9+z5yVJj+JgI6ScB2c0DUAreC8dcrHP8KCtDuWs4RlbRDZwOu+n8+AdFKt4bSLwgrRVk/Ag1uxnLH1dWgXUn54l+2GqXF+kqLjvq5sItCEC5CMuiLgusaO
- k+V9In1ctMh+9k+wE0e2/9meKkNuPR/nhDptnb1pAogFplkMC4Bd+yuGJFrmZTOtNTvEm9kX5oi8Alfuo4WzeIsZajSHSMpLo5eJbfoCa72qtwxUrPr944Cg
- Ys02USnup0N/Yy+cUgGUKolQ0EwWUf6JnMgyKb2WebFP4NcTES+hz2wvoDzFEYVirLz6nqeMeIwlf4xKV8DYVbPg/fcT+ob8rgBGInNrCza5OCS+Q8fdvDmm
- UfeIlDrGrvwivP1+AyubIg7lu1Sa3XA2TIDvWxdAGhoCmkF6hf/DxKaK1J3E3itweHuVdK03QvxBuQ13
+Content-Type: multipart/signed; boundary="Sig_/kAf1eKuN.iIf.xBUlGLVpAA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 03/08/2024 08:43, Lizhi Xu wrote:
-> syzbot report KMSAN: uninit-value in pick_link, the root cause is that
-> squashfs_symlink_read_folio did not check the length, resulting in folio
-> not being initialized and did not return the corresponding error code.
-> 
-> The length is calculated from i_size, this case is about symlink, so i_size
-> value is derived from symlink_size, so it is necessary to add a check to
-> confirm that symlink_size value is valid, otherwise an error -EINVAL will
-> be returned.
-> 
-> If symlink_size is too large, it may result in a negative value when
-> calculating length in squashfs_symlink_read_folio due to int overflow,
-> and its value must be greater than PAGE_SIZE at this time.
-> 
-> Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->   fs/squashfs/inode.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
-> index 16bd693d0b3a..bed6764e4461 100644
-> --- a/fs/squashfs/inode.c
-> +++ b/fs/squashfs/inode.c
-> @@ -273,14 +273,21 @@ int squashfs_read_inode(struct inode *inode, long long ino)
->   	case SQUASHFS_SYMLINK_TYPE:
->   	case SQUASHFS_LSYMLINK_TYPE: {
->   		struct squashfs_symlink_inode *sqsh_ino = &squashfs_ino.symlink;
-> +		loff_t symlink_size;
->   
->   		err = squashfs_read_metadata(sb, sqsh_ino, &block, &offset,
->   				sizeof(*sqsh_ino));
->   		if (err < 0)
->   			goto failed_read;
->   
-> +		symlink_size = le32_to_cpu(sqsh_ino->symlink_size);
-> +		if (symlink_size > PAGE_SIZE) {
-> +			ERROR("Corrupted symlink, size [%llu]\n", symlink_size);
-> +			return -EINVAL;
-> +		}
-> +
->   		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
-> -		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
-> +		inode->i_size = symlink_size;
+--Sig_/kAf1eKuN.iIf.xBUlGLVpAA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-NACK. I see no reason to introduce an intermediate variable here.
+Hi all,
 
-Please do what Al Viro suggested.
+In commit
 
-Thanks
+  cbd28071cdab ("mm: list_lru: fix UAF for memory cgroup")
 
-Phillip Lougher
---
-Squashfs author and maintainer
+Fixes tag
 
-BTW I have been on vacation since last week, and only saw
-this today.
+  Fixes: 0a97c01cd20b ("list_lru: allow explicit memcg and NUMA node select=
+ion)
 
->   		inode->i_op = &squashfs_symlink_inode_ops;
->   		inode_nohighmem(inode);
->   		inode->i_data.a_ops = &squashfs_symlink_aops;
+has these problem(s):
 
+  - Subject has leading but no trailing quotes
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/kAf1eKuN.iIf.xBUlGLVpAA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmav7+MACgkQAVBC80lX
+0GzQyAgAjIbdLSRCPIidKnexA+GYbNuMhdP+F6BG2WiGJK9AxJqJGW5C2zG3/um4
+Ds9DM73Q2JM2LBlA3YnkqwO/2+LlVpcDiyvI0YvDsrzpzmZe7A2+Z4G3gUuuz8pN
+U2rL6aWZczukwWvxBQ7rjPzRBmOG6HELpX0kv6JjJ6w31Ucqhq0QxayAifEa0Aeo
+WMY+sv6c4ZDhvNauoq/liZw1eD7ztLc5mw+bh4VHExwvZ6uv+gw/JywJZxOe04yy
+Gzf6Eo7v/gEa8FQm8tM5wp0TvhF7xXTK7CWBTAEBfJzyQtSqpuAEgyurmS3vimOV
+uJMSbrnzGBi2BdIceK6Hql1AwEvZIw==
+=SBMy
+-----END PGP SIGNATURE-----
+
+--Sig_/kAf1eKuN.iIf.xBUlGLVpAA--
 
