@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-273825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C154946E9F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:25:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D5A946EA2
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472E3281577
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 12:25:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EDD1C20D26
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 12:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415E8381B8;
-	Sun,  4 Aug 2024 12:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6074F38FB9;
+	Sun,  4 Aug 2024 12:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPfBku7B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="UJl/I8Wq"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703ED2D7B8;
-	Sun,  4 Aug 2024 12:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD7C35894;
+	Sun,  4 Aug 2024 12:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722774293; cv=none; b=qfrVFiItUUs4DMOVXWu2KOj0TAkbXvK+IL5fYy0DX1cY3JS2J2oAWnVii0CiJn7VL4UmVezpOJ+Jt2ruORTebI5DcYiOxw7yRT3lUv3eM6Z9lPT7JK6IeDiw1BzrDVJdlN694Z3AWZo9wm16uAfo5bpkSzkjeRazAINLUpzzuls=
+	t=1722774468; cv=none; b=DHPJagrL0H/o+dk8q2LFJBcX5djqoA6bfpdHq5pvyeXnK3Kvcp9I96/JKQBdzsaqFKxaWJ6wG21NGDGJmahaPsWMZ2BflyCsLh+WS9FQJnoV9RavNq6pdZomK9UneT3e0ZTrAi8g1FGVblae8w0BTJ9rgd0H01SeAFzrtMaTxGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722774293; c=relaxed/simple;
-	bh=L0HvgUcTzvuY++NgzjIc33b0gY8p82E/q9HfyXR7HMM=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=r0sZzGADqudBQiSxG9Ep9EABZk6Pb40NMdG6PFP+54B3ixuLAwDunPV+mdmUNgxFdtpGSkZ+nXRDV8Q66AuzjmpOvhr4UAT4LwJ/KpvBnsYbkfYpaJMNq4n+hYjwDZJ2Bb5QG50pTzifQDsxLAu+mfpOGfB/4OOxPWBGPIU6x48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPfBku7B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE18C32786;
-	Sun,  4 Aug 2024 12:24:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722774292;
-	bh=L0HvgUcTzvuY++NgzjIc33b0gY8p82E/q9HfyXR7HMM=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=vPfBku7BbNkqVihw9JIw5JHXxeOgSqm9YubloUJMMoi3z/QBjenmzfVpAfAzOQ1KD
-	 FH+oBT6KI7xstHlNmtfJgVvo2JFkberlKbI/apvOYqK9IYf0eYDmGXtTrbdAyiosbm
-	 rLSLWoHJZNDxmJho4JKrAz20LiP5OQWwUS4fvoJ9BT6OouyVcU3N/UfsPVoAkzCJyz
-	 HSf+hpItAPY9RfLx3TsWwmtgVMmrlISMP0tWfvN8H944+YEtFLdvCnxlkcPe0zDji3
-	 TbODPpHp1L3Vh5ok6xIznfQ1iWq08a2RBnjMOLE9tIj5rnxgf5BaD8PfRPOp88sYRi
-	 jXsLRTZiZvFPg==
-Date: Sun, 04 Aug 2024 06:24:51 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1722774468; c=relaxed/simple;
+	bh=6nEw/qsql7GLNQtUnK0NN5bFtdT4n8J/chPAeQ3SDis=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WDaJ05AhFrwlm3ud4zPdhAiLTgnJLjgFvYkiErGCovYjRwV8e8S3hOjYn4Cg8VQmthu6K56Lz07MM95+ASIlQ6HSEscieOCuB5ddL6kUFgMSbh4T75vl/imX/jN0Nm8ntvsinG1/UHe1EAYV01TOnIE/GM3jZODVLN1R6SdVlwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=UJl/I8Wq; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1722774458; x=1723033658;
+	bh=HbxeQuACBzRlKisgDmzJ5BbLdirFZhGLjMA7Twqonsk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=UJl/I8WqNeQcEXjHYTm8zbJB1Lxqqfymir1PJbQOmn4mcEpVd0D/UTjLpyLtVN+0/
+	 P/J1kRxdkekL2+GmvDTSqKJZunpvHUo1XqsAZb/R5huTS8L3AJZd7hPqR2rbB9Egrg
+	 1QeRKm6WAmo97DL68h4LxHhTnapQh27FVx7hPrn3uvGmuahu8AQd7O/+f6KGwCYQrS
+	 BAWPj8HYUT5Y1zxmqulb3q1LWDwbrgFtUf56Hp3Sf58h1otXjKB52EqIw/R2p5Gil3
+	 9Bobn24vJ/VFw7sPAXFO4oSqjS3UCD74X3Y1TsAITbL3nol+hK/aJDGj00J4fcINCR
+	 PTkNmtA/IEKag==
+Date: Sun, 04 Aug 2024 12:27:32 +0000
+To: Harry Austen <hpausten@protonmail.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/9] clk: clocking-wizard: use newer clk_hw API
+Message-ID: <D374KN1NZT6O.3P6C0M5FEHJ6F@protonmail.com>
+In-Reply-To: <20240803105702.9621-3-hpausten@protonmail.com>
+References: <20240803105702.9621-1-hpausten@protonmail.com> <20240803105702.9621-3-hpausten@protonmail.com>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: 9a5e5ed345d8ed34ebabf1020072b0c79d4d664c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Joern Engel <joern@lazybastard.org>, linux-nvme@lists.infradead.org, 
- Ulf Hansson <ulf.hansson@linaro.org>, linux-mtd@lists.infradead.org, 
- linux-mmc@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, 
- Jens Axboe <axboe@kernel.dk>, devicetree@vger.kernel.org, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Christoph Hellwig <hch@lst.de>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org, 
- Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>, 
- Conor Dooley <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>
-In-Reply-To: <20240804114108.1893-6-ansuelsmth@gmail.com>
-References: <20240804114108.1893-1-ansuelsmth@gmail.com>
- <20240804114108.1893-6-ansuelsmth@gmail.com>
-Message-Id: <172277429149.3783478.13649526225862642200.robh@kernel.org>
-Subject: Re: [PATCH 5/6] dt-bindings: mtd: Add Documentation for Airoha
- fixed-partitions
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-On Sun, 04 Aug 2024 13:41:05 +0200, Christian Marangi wrote:
-> Add Documentation for Airoha fixed-partitions compatibles.
-> 
-> Airoha based SoC declare a dedicated partition at the end of the flash to
-> store calibration and device specific data, in addition to fixed
-> partitions.
-> The offset of this special partition is not well defined as it depends on
-> flash bad block management that might require reserving additional space
-> at the end of the flash.
-> 
-> This binding allows defining all fixed partitions and marking the last one
-> to detect the correct offset.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+On Sat Aug 3, 2024 at 11:57 AM BST, Harry Austen wrote:
+> Utilise clock provider API with struct clk_hw instances instead of the
+> consumer-side struct clk.
+>
+> Signed-off-by: Harry Austen <hpausten@protonmail.com>
 > ---
->  .../partitions/airoha,fixed-partitions.yaml   | 80 +++++++++++++++++++
->  1 file changed, 80 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
-> 
+> v1 -> v2:
+> - Move onecell data to end of struct for single allocation
+> - Just move to clk_hw API. Move devres transition to subsequent patch
+>
+>  drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 77 +++++++++++-----------
+>  1 file changed, 40 insertions(+), 37 deletions(-)
+>
+> diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xil=
+inx/clk-xlnx-clock-wizard.c
+> index 0ca045849ea3e..ccaf30c2d9481 100644
+> --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/of.h>
+>  #include <linux/math64.h>
+>  #include <linux/module.h>
+> +#include <linux/overflow.h>
+>  #include <linux/err.h>
+>  #include <linux/iopoll.h>
+> =20
+> @@ -121,26 +122,24 @@ enum clk_wzrd_int_clks {
+>  /**
+>   * struct clk_wzrd - Clock wizard private data structure
+>   *
+> - * @clk_data:=09=09Clock data
+> + * @clk_data:=09=09Output clock data
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Realised I probably should have moved this doc comment to the bottom too,
+which also resulted in me putting the new `adev` parameter documentation in
+a weird location in patch 6. Will fix in v3.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.example.dtb: /example-0/partitions: failed to match any schema with compatible: ['airoha,fixed-partitions']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240804114108.1893-6-ansuelsmth@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+>   * @nb:=09=09=09Notifier block
+>   * @base:=09=09Memory base
+>   * @clk_in1:=09=09Handle to input clock 'clk_in1'
+>   * @axi_clk:=09=09Handle to input clock 's_axi_aclk'
+>   * @clks_internal:=09Internal clocks
+> - * @clkout:=09=09Output clocks
+>   * @speed_grade:=09Speed grade of the device
+>   * @suspended:=09=09Flag indicating power state of the device
+>   */
+>  struct clk_wzrd {
 
 
