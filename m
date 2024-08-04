@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-273885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FAC946F32
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:00:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C8F946F33
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 16:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32B47B20C5F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:00:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305AD1C21265
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 14:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22F65589A;
-	Sun,  4 Aug 2024 13:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BA549654;
+	Sun,  4 Aug 2024 14:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="Lb3av0c5"
+	dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b="RPSe+GaA"
 Received: from smtp2.math.uni-bielefeld.de (smtp2.math.uni-bielefeld.de [129.70.45.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCD66BFB5
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 13:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7273CF7E
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 14:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.70.45.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722779975; cv=none; b=kOVJGiHDGIKdE41CXmIhVHPG6DsNdOZdYge1g1rV80jGAanGchbU3FaArDn4CMOC7JUui3YsSykDb98V98eRmb6yl5Z3YKVhPXeiENciRRZj7kojnfRc9cq9YZbdh9oN8ptQqZzd04VAVMCfZgYrbN7fFVweHfbPDM8qghM1q5A=
+	t=1722780020; cv=none; b=SDXP2k4QiSQE6CICsA/AmQJiDPOgenLbCvbE4vk14rwcelTwUBb1LZ06S+IcQe8p7vXXMiQV+toec4CDb9I5JXe5vgbunyQWT4xXTwHEvd68TDgJXmSn1OOcvpjD+hindjY6QzBfubQinxvbwFNSqrT1LuxW8AVPWVwIDD7jizE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722779975; c=relaxed/simple;
-	bh=ricJaOpwguMV/eqHdvuZbbkftQ+RBPZjBXgBbOHVmzs=;
+	s=arc-20240116; t=1722780020; c=relaxed/simple;
+	bh=m876A2GsQgfOTGHpdHgrxcX3ISbk2r46rH1W+Dyrem4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y71dA81l0wWJmrtzis3QcrcJEjyxUGylfBipDqFJmjaTLELwGHMNLLHkly+Fd46Wg4GiInU7MmzN1nxsG/6zojyeAT3wcDAlkWDpiOnzC9zMaqJTlgj9xiTQK41+SnNUI8HdGYaCtA8z5QvjmJcw7iizh/cj+w9TfR3qd5delqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=Lb3av0c5; arc=none smtp.client-ip=129.70.45.13
+	 MIME-Version; b=XP9hYZjRtPx0r9LDzS/e+r0s8w2fpKcVuzssf7vMfc2RWSf7OHjhMi6YyjJZZfgQDvdPuQfWNDa1nlUunbCBGhetLBRXWC4Vux98LbvjNj3XZnnFjJqFyvODMjl1nVPPo9zBinULBgWPzduV3HWXFGy5fPKnf/qRSBrV9LaQpPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de; spf=pass smtp.mailfrom=math.uni-bielefeld.de; dkim=pass (2048-bit key) header.d=math.uni-bielefeld.de header.i=@math.uni-bielefeld.de header.b=RPSe+GaA; arc=none smtp.client-ip=129.70.45.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=math.uni-bielefeld.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=math.uni-bielefeld.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=math.uni-bielefeld.de; s=default; t=1722779966;
-	bh=ricJaOpwguMV/eqHdvuZbbkftQ+RBPZjBXgBbOHVmzs=;
+	d=math.uni-bielefeld.de; s=default; t=1722780013;
+	bh=m876A2GsQgfOTGHpdHgrxcX3ISbk2r46rH1W+Dyrem4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Lb3av0c5WijER/d6En96BoOLhshFin23KIXWGzAwCHvixjwSWcAmrlnzvy/46h3sv
-	 h1qW19TaBFFZDzX8XC6r1OVoNcDGukllll3zN1BkV42kj8O9Na1+Px0eSZi+24yJye
-	 xmSI/lNMhb7yaV1MVgPkNtSi7x1Hxg/2aMuUGtGzUzQmTyRGS0jISJgxpXACwe7r3M
-	 P9NCUGPAS90qoflpw2xE/s+LTOJiJO3kHtl/LaW1YF3hI2mPuCkFmgdx7v++jHji9n
-	 kltq3tOP07v+L73KCqaTAszzwsRf48AgDRG/CHaYSpEc7kUnZzd089g2o/1TMlfX4p
-	 LCOwg+n6stXsw==
+	b=RPSe+GaAbVD7/kHTEEsKRQlkLMmquP4kVooxiB9KCB3PvNKHcf8MusIu2fCK8W8bJ
+	 bijPkhBtUoNzwhuGJ33Hu8snD8colrtVVi4tpeX6y2HvTY9FEAD+JoqdZHo+ijtkWh
+	 RV+uWPzYd3G7VIBcvoGpT4kMbAYBZDpTGP5cYcfJxfJsK5JXbysmGTxJ/GVlCYvzP+
+	 AUvy5M5e0oJftXyioSmftLDiTrITMSkJhZBn8H6O5WediVx4W3N3Vto6wAolaINAJD
+	 3vnQPozr3gGYIoHxbCyBONy7+LSqS8FYevBt4IoH//LwSTtNSsWQ1FhkXQTzkadVXr
+	 84651KGijGvYQ==
 Received: from localhost (dslb-088-074-203-146.088.074.pools.vodafone-ip.de [88.74.203.146])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by smtp2.math.uni-bielefeld.de (Postfix) with ESMTPSA id E189E20F4B;
-	Sun,  4 Aug 2024 15:59:25 +0200 (CEST)
+	by smtp2.math.uni-bielefeld.de (Postfix) with ESMTPSA id 320D921086;
+	Sun,  4 Aug 2024 16:00:13 +0200 (CEST)
 From: tjakobi@math.uni-bielefeld.de
-To: Alex Deucher <alexander.deucher@amd.com>,
+To: Evan Quan <evan.quan@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
 	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
 	David Airlie <airlied@gmail.com>,
@@ -56,9 +57,9 @@ Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] drm/amd: Make amd_ip_funcs static for SDMA v5.2
-Date: Sun,  4 Aug 2024 15:56:28 +0200
-Message-ID: <76780ac4164e7e86f45d8673a7e91ad77e26b1c0.1722778722.git.tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH 3/3] drm/amdgpu/swsmu: fix SMU11 typos (memlk -> memclk)
+Date: Sun,  4 Aug 2024 15:56:29 +0200
+Message-ID: <ba5afac355b7c74b417c8f886e992abbfa3c046c.1722778722.git.tjakobi@math.uni-bielefeld.de>
 X-Mailer: git-send-email 2.44.2
 In-Reply-To: <cover.1722778722.git.tjakobi@math.uni-bielefeld.de>
 References: <cover.1722778722.git.tjakobi@math.uni-bielefeld.de>
@@ -72,40 +73,58 @@ Content-Transfer-Encoding: 8bit
 
 From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-The struct can be static, as it is only used in this
-translation unit.
+No functional changes.
 
 Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 ---
- drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c | 2 +-
- drivers/gpu/drm/amd/amdgpu/sdma_v5_2.h | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/amd/pm/swsmu/smu11/navi10_ppt.c         | 4 ++--
+ drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
-index af1e90159ce3..3196663dd4f4 100644
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.c
-@@ -1674,7 +1674,7 @@ static void sdma_v5_2_ring_end_use(struct amdgpu_ring *ring)
- 	amdgpu_gfx_off_ctrl(adev, true);
- }
- 
--const struct amd_ip_funcs sdma_v5_2_ip_funcs = {
-+static const struct amd_ip_funcs sdma_v5_2_ip_funcs = {
- 	.name = "sdma_v5_2",
- 	.early_init = sdma_v5_2_early_init,
- 	.late_init = NULL,
-diff --git a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.h b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.h
-index b70414fef2a1..863145b3a77e 100644
---- a/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.h
-+++ b/drivers/gpu/drm/amd/amdgpu/sdma_v5_2.h
-@@ -24,7 +24,6 @@
- #ifndef __SDMA_V5_2_H__
- #define __SDMA_V5_2_H__
- 
--extern const struct amd_ip_funcs sdma_v5_2_ip_funcs;
- extern const struct amdgpu_ip_block_version sdma_v5_2_ip_block;
- 
- #endif /* __SDMA_V5_2_H__ */
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/navi10_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/navi10_ppt.c
+index 5a68d365967f..a1a0e6224d72 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu11/navi10_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/navi10_ppt.c
+@@ -1978,7 +1978,7 @@ static int navi10_get_power_profile_mode(struct smu_context *smu, char *buf)
+ 		size += sysfs_emit_at(buf, size, "%19s %d(%13s) %7d %7d %7d %7d %7d %7d %7d %7d %7d\n",
+ 			" ",
+ 			2,
+-			"MEMLK",
++			"MEMCLK",
+ 			activity_monitor.Mem_FPS,
+ 			activity_monitor.Mem_MinFreqStep,
+ 			activity_monitor.Mem_MinActiveFreqType,
+@@ -2038,7 +2038,7 @@ static int navi10_set_power_profile_mode(struct smu_context *smu, long *input, u
+ 			activity_monitor.Soc_PD_Data_error_coeff = input[8];
+ 			activity_monitor.Soc_PD_Data_error_rate_coeff = input[9];
+ 			break;
+-		case 2: /* Memlk */
++		case 2: /* Memclk */
+ 			activity_monitor.Mem_FPS = input[1];
+ 			activity_monitor.Mem_MinFreqStep = input[2];
+ 			activity_monitor.Mem_MinActiveFreqType = input[3];
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c
+index e426f457a017..a7340569b9a1 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/sienna_cichlid_ppt.c
+@@ -1691,7 +1691,7 @@ static int sienna_cichlid_get_power_profile_mode(struct smu_context *smu, char *
+ 		size += sysfs_emit_at(buf, size, "%19s %d(%13s) %7d %7d %7d %7d %7d %7d %7d %7d %7d\n",
+ 			" ",
+ 			2,
+-			"MEMLK",
++			"MEMCLK",
+ 			activity_monitor->Mem_FPS,
+ 			activity_monitor->Mem_MinFreqStep,
+ 			activity_monitor->Mem_MinActiveFreqType,
+@@ -1754,7 +1754,7 @@ static int sienna_cichlid_set_power_profile_mode(struct smu_context *smu, long *
+ 			activity_monitor->Fclk_PD_Data_error_coeff = input[8];
+ 			activity_monitor->Fclk_PD_Data_error_rate_coeff = input[9];
+ 			break;
+-		case 2: /* Memlk */
++		case 2: /* Memclk */
+ 			activity_monitor->Mem_FPS = input[1];
+ 			activity_monitor->Mem_MinFreqStep = input[2];
+ 			activity_monitor->Mem_MinActiveFreqType = input[3];
 -- 
 2.44.2
 
