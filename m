@@ -1,112 +1,266 @@
-Return-Path: <linux-kernel+bounces-273769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90480946DD3
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:09:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340A4946DD9
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D78128164C
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF52E1F21722
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152C6210EC;
-	Sun,  4 Aug 2024 09:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ACF2135B;
+	Sun,  4 Aug 2024 09:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qtC3LEO7"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SW5pehCa"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92192374E
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 09:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0AC1F94A;
+	Sun,  4 Aug 2024 09:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722762589; cv=none; b=l5vkasI33NQkjr7vhWqknGkAx+cQI0D48086n2am+mhpdzi/zP2mzfUHmFiuyZ4pQicTM77Rmz0MGeEo2lzl0GIgX5KwgLvxw1iRaBnjLfg/gyH9oIpvJE63IfB09QsLdpTi9VYmsYKtutuvSPXir2xUPq6rD8CbyGWBxzCDYVc=
+	t=1722762856; cv=none; b=LwlqDnggIOg5xwIIeFhZM/sf4wh2CCQIA7E7wGcn3IG9aY2UtWDMYFIHsOC3AmylGeSIL8vFfT91I0oc/klzjWFETUn/MKJ/SMqhLej88eiXorRX2Hlcs0nv0xUZFn/gL9hy63nVHwRCgSEG6KqZ058YxstD4iLNMnHhUq+Zzr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722762589; c=relaxed/simple;
-	bh=msD+Pu+Q6D1xBrZhQ7xYLQP5vBlKSa93nvdA9bCO7Jg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=l6USHjd4bS0IbA2SOUrKztob5FhWvy/hS8PUfZXaSalnwhGTOsx+2fKcalQTKn+coizA0A8wEKojB9MRLFIS8n2/fdMxWSgzf0jjyMrh6hrmRZpESNTUaDFUrZs+sDDGAgL+b1j0L7eerwPzgmrzpBRKLLR4qpd5vRM1JJ8lwBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qtC3LEO7; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-367990aaef3so5110574f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 02:09:47 -0700 (PDT)
+	s=arc-20240116; t=1722762856; c=relaxed/simple;
+	bh=Tsv1Zf8TZmbR1ofzjrLs16xA1rHFmbB/wMkp2gb68VE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=g6K+3yNtYRjk/X71Je2BFln/WWFkTiiMMdwFWT1vkYSoIHk5/c2OXbney49dj0so95kNv67xGuhQ/12JA2I8BvFSa9qUnkJoKG/ONJeH0LG9K2zFoxHN2HFHOzln4Th3jYgV6VJHVpCFWHpjS3LXBvjF0eS7WtLaZyJFCDgfrs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SW5pehCa; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso106048181fa.3;
+        Sun, 04 Aug 2024 02:14:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722762586; x=1723367386; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722762852; x=1723367652; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DHLoWshexZhuP2J8+WGpm+0qtk9I2Aug6souXmLzt8E=;
-        b=qtC3LEO7hADTBlKAjiicGaI85SYvsNPdTej84ruDwA0XRK/iZMDaJqLqDVa56mOWmw
-         WjDxlx+LIZOgeS9WhopbUiBOgPApnoYkzXC2fMNAGmo5n+HvkFcYv4+IzzrV6ePaXSGl
-         ED71YXCaVfL70QQ+nJDNqAcj+qPmzciGIG3JnfFbehOGaerUC8fxgaa8QUU5juHa6KHk
-         1MBYpU6aA08ENWN/p7qlp2kkxWgERxSKVuAF9IF0Odxjk7ddZcHIlOj9HjBrbNMGqPjX
-         3jvKgAO3RXOPZPVj6MVLtfaHG0yG6PHKU3P+IugiWjwh88FBZQiyMYJRL95bIu59GPAE
-         nT/g==
+        bh=Q8xhaK+HKr8txiVLN5oIG6mLd/CNIxGQ/Xronjna7FY=;
+        b=SW5pehCa9ytWVtCBqT3jSzY5jfKrP0+ZwnhtknG/662aZwxyliO2Tt2pDRYE9a08XK
+         /17VpEsZ+CuGMdgLZet5/cbb0oROzavCVV8CaI3o0NTpl6MJvhPESiafH9JtfjFM+sDZ
+         8DXY9Hdd78LmQhBFqlnAr/33Sh+hq+diBIT7rm0Zqb5dXU9zShRYSZNcER2Ay6RUqYy/
+         MZi+MQHbKvWKC0ZBSDX36200F2sP/7OTuV6P2PcogHrAkMOo6/sZjiQa30RPxIoW+5nQ
+         ykpCuTHJpo6vnC/VkFnwDVxrjB6UZdBSY6y9ZlyubQy4rnA6N6l5GxMWp/KovqqCl0oC
+         Nkzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722762586; x=1723367386;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722762852; x=1723367652;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DHLoWshexZhuP2J8+WGpm+0qtk9I2Aug6souXmLzt8E=;
-        b=V6Wxq48d+myiM+IuF+Mh7AWzv2rK7nVBnA2qhbJARRlMEDLdHpv4GYCVJuN5VyTBi4
-         DOsEYgz8yvW0Kr0eacfvrKA0NhISvuIU7s3ugcTeHZRjdTkUCHSjF1qpksXmZDbSCK/z
-         lo8bXM6wIdNEXjqHEPPcuIQ9qqDgIIgxjtH+NAUGcINCgLbPUCFv/D3Jy400bKl+MeBB
-         WB0a33molcdZgyCJ2ZJHyG0vlgOY6jnJ426q9xwUy4ukxpsSicjuaqZyMsjOfl72Za1J
-         f3b2fxQA2H0rEERx2DAGoOzHDIY1Gv5By1FdOrGkuDCUl3Qyw3xSSo1uzSLJ9zd15hTJ
-         ae1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVSMA794isiQF9zxNIRQsH6ldMiYyTQIIQeIWpARXdDyF4CpA2lbvLkn6jP1hcOe9mZHfgdJ4yhs/Olesad+SG4KYZirHKkrArxzRSz
-X-Gm-Message-State: AOJu0YwS5axGhKEsRshuZ57rUUmo/TmSdkQtlcGepfB9ZswLZOSfLIFF
-	O5wI5BnUo7TfeowJiSjMa4bkNWDbCg6XZGgw8WA2MG8/E/wGGf9Po8MmAyqKvnM=
-X-Google-Smtp-Source: AGHT+IHCO1fd/5h1ijS72pP957S/1fryoMWPBggf8fwYHEKJsA9djK2DDYTC7fOb8ySFt7DWWO/kBQ==
-X-Received: by 2002:a5d:5c87:0:b0:36b:bd75:ed73 with SMTP id ffacd0b85a97d-36bbd75ef23mr5985987f8f.23.1722762585867;
-        Sun, 04 Aug 2024 02:09:45 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd075100sm6244814f8f.105.2024.08.04.02.09.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 02:09:45 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240731191312.1710417-16-robh@kernel.org>
-References: <20240731191312.1710417-16-robh@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: Use of_property_present()
-Message-Id: <172276258438.8347.5786673357734721862.b4-ty@linaro.org>
-Date: Sun, 04 Aug 2024 11:09:44 +0200
+        bh=Q8xhaK+HKr8txiVLN5oIG6mLd/CNIxGQ/Xronjna7FY=;
+        b=mPdiwnEgesXYOlPVsdRzZi2z5aKCs2b7UBMX1noJifEGMQ0VisIh0RsGtajWGSs0aI
+         gIh12NqHs6lVqLvz4mk8ouDcRMWWUxXBocivKLsCI23j3x9Drz92G97j2Zq7x5Om16sp
+         hkMtzOaGNHd5MVi770MiYA4g2mg3mwRK7ir/T2zgl1hbDEtVm0AtjjnURayVE0WG/3nb
+         DPqRDy8uq3dJ2xFl02HlOAjemdSodSVNk4WqrWVaSz+Qaksj/EhhXFEgz11BoTfc9bZL
+         Bsti8MN5ZdyIHswD+HV3zqKl7eW6Sgf5QFXrKlzZaWpbK003Z40JUr6a4QnQd8SDMTLs
+         JRyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxldpHGW2EcWTb8PYVzbluKPXVusC5DvpSlMC73tJSPOfc1cTLouF1lBFfpQi8kbXfT6rqToiDootuUo8gEDhxstLcWPB/+ErdqYDKtTYiRD4bQwzvXCRIo6658G+vCfRenwsd7gjjox+ihldu264kwOwFK54YZ5TCTiBbRpmu5PiIq2TSMw==
+X-Gm-Message-State: AOJu0YzAPoYmKGBirB2RvnR1OPAwsJEy/TPIQiedPy7WmmPU798iPosq
+	cm3y/K4Xx8XakyroWIRrE8REWEHFgyCnWdJOLqnn+520D6GEMpwg
+X-Google-Smtp-Source: AGHT+IGyj5V/OyfV2RPE4TLntui3QqyFRdRf2CycS7NXzrsfltpIxE6G4LIrujK/h4qDZiDBxzPkuA==
+X-Received: by 2002:a2e:8456:0:b0:2ef:286e:ca68 with SMTP id 38308e7fff4ca-2f15aac2b49mr53430811fa.23.1722762851736;
+        Sun, 04 Aug 2024 02:14:11 -0700 (PDT)
+Received: from smtpclient.apple (84-10-100-139.static.chello.pl. [84.10.100.139])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e1c7581sm6843141fa.68.2024.08.04.02.14.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 04 Aug 2024 02:14:11 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH 0/4] Add initial support for Rockchip RK3528 SoC
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <Zq8eJB7zqOvYQvmw@ziyaolaptop.my.domain>
+Date: Sun, 4 Aug 2024 11:13:59 +0200
+Cc: Dragan Simic <dsimic@manjaro.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Tim Lunn <tim@feathertop.org>,
+ Andy Yan <andyshrk@163.com>,
+ Muhammed Efe Cetin <efectn@protonmail.com>,
+ Jagan Teki <jagan@edgeble.ai>,
+ Ondrej Jirman <megi@xff.cz>,
+ devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3EA59A56-C6E5-40B7-A5C4-C280B001E981@gmail.com>
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <0c77f99f4af96807a2a8c3028e3c1d4d@manjaro.org>
+ <Zq8eJB7zqOvYQvmw@ziyaolaptop.my.domain>
+To: Yao Zi <ziyao@disroot.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
 
-On Wed, 31 Jul 2024 13:12:54 -0600, Rob Herring (Arm) wrote:
-> Use of_property_present() to test for property presence rather than
-> of_find_property(). This is part of a larger effort to remove callers
-> of of_find_property() and similar functions. of_find_property() leaks
-> the DT struct property and data pointers which is a problem for
-> dynamically allocated nodes which may be freed.
-> 
-> 
-> [...]
 
-Applied, thanks!
+> Wiadomo=C5=9B=C4=87 napisana przez Yao Zi <ziyao@disroot.org> w dniu =
+04.08.2024, o godz. 08:22:
+>=20
+> On Sun, Aug 04, 2024 at 07:40:43AM +0200, Dragan Simic wrote:
+>> Hello all,
+>>=20
+>> On 2024-08-03 14:55, Yao Zi wrote:
+>>> Rockchip RK3528 is a quad-core ARM Cortex-A53 SoC designed for
+>>> multimedia application. This series add a basic device tree with =
+CPU,
+>>> interrupts and UART nodes for it and is able to boot into a kernel =
+with
+>>> only UART console.
+>>>=20
+>>> Has been tested on Radxa E20C board[1] with vendor U-boot, =
+successfully
+>>> booted into initramfs with this log[2].
+>>=20
+>> I wonder will at least the RK3528 datasheet become available =
+publicly?
+>=20
+> I found none for now, and I am not someone from Rockchip, thus don't
+> know whether they have a plan to make it public, either. But there has
+> been some devices shipping it already and getting them mainlined will
+> be a neat thing.
+>=20
 
-[1/1] pinctrl: samsung: Use of_property_present()
-      https://git.kernel.org/pinctrl/samsung/c/aa85d45338692e8b29b0c023826c404c3e7113a6
+Maybe this hight be useful: at some point in time I started to hack with =
+rk3528 support in mainline kernel.
+HW I=E2=80=99m using is vontar rk3528 tvbox.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+So far - on mainline 6.10 kernel - I got working: clocks, pin control, =
+uart, sdcard, eth, usb.
+
+I started to work on dw hdmi and got to stage with correct mode sets by =
+dw-hdmi but I stuck with vop3 support.
+
+Generally - I was back porting code from bsp but rockchip bsp is too =
+divergent from mainline to my back porting skills :-(
+
+If anybody can help with vop3 - then we can have quite good initial =
+support of rk3528 in mainline (the, sdcard, usb, eth, hdmi)
+gpu, hdmi audio should be probably easy=E2=80=A6
+
+My rk3528 enablements:
+
+Bindings: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1100-dt-bindings-clock-add-rk3528-clock-definitions.patch
+
+Clocks: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1101-clk-rockchip-add-clock-controller-for-the-RK3528.patch
+
+Pincontrol: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1102-pinctrl-rockchip-add-rk3528-support.patch
+
+Power domain bindings: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1103-dt-bindings-power-add-RK3528-SoCs-header-for-idle.patch
+
+Ethernet support: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1104-ethernet-stmmac-dwmac-rk3528-add-GMAC-support.patch
+
+Power domains support: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1105-soc-rockchip-power-domain-add-rk3528-support.patch
+
+usb: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1106-phy-rockchip-inno-usb2-add-phy-support-for-rk3528.patch
+
+SoC power domains: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1108-soc-rockchip-power-domain-add-rk3528-support.patch
+
+Thermal: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1108-thermal-rockchip-add-support-for-rk3528.patch
+
+Naneng phy: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1109-phy-rockchip-naneng-combphy-add-support-for-rk3528.patch
+
+dw hdmi: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1110-phy-rockchip-inno-hdmi-add-support-for-rk3528.patch
+
+Inno hdmi: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1111-drm-rockchip-dw_hdmi-add-support-for-rk3528.patch       Nvmem: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1113-nvmem-rockchip-otp-add-support-for-rk3528.patch
+
+Sound soc: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1114-sound-soc-codecs-add-rk3528-support.patch
+
+rk3528 dtsi: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1150-arm64-dtsi-rockchip-add-3528.dtsi.patch:=20
+
+Vontar tvbox dts: =
+https://github.com/warpme/minimyth2/blob/master/script/kernel/linux-6.10/f=
+iles/1151-arm64-dts-rockchip-add-dts-for-vontar_r3.patch
+
+It may happen that above patches will not apply clean on vanilla 6.10 as =
+I=E2=80=99m patching kernel for =
+s905/s912/sm1/g12/rpi3/rpi4/rpi5/3328/3399//3566/3568/3588/3528 and =
+rk3528 patches are after applied =
+s905/s912/sm1/g12/rpi3/rpi4/rpi5/3328/3399/3566/3568/3588 patches.
+
+If anybody is interested in adding vop3 support - pls give me sign - we =
+can work together=E2=80=A6
+=20
+
+> Just FYI, the vendor kernel is available here[1] on the "develop-5.10"
+> branch.
+>=20
+> Best regards,
+> Yao Zi
+>=20
+> [1]: https://github.com/rockchip-linux/kernel
+>=20
+>>=20
+>>> [1]: https://docs.radxa.com/en/e/e20c
+>>> [2]: =
+https://gist.github.com/ziyao233/b74523a1e3e8bf36286a572e008ca319
+>>>=20
+>>> Yao Zi (4):
+>>>  dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
+>>>  dt-bindings: arm: rockchip: Add Radxa E20C board
+>>>  arm64: dts: rockchip: Add base DT for rk3528 SoC
+>>>  arm64: dts: rockchip: Add Radxa e20c board
+>>>=20
+>>> .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+>>> .../bindings/serial/snps-dw-apb-uart.yaml     |   1 +
+>>> arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>>> .../boot/dts/rockchip/rk3528-radxa-e20c.dts   |  22 +++
+>>> arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 182 =
+++++++++++++++++++
+>>> 5 files changed, 211 insertions(+)
+>>> create mode 100644 =
+arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+>>> create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>>=20
+>>>=20
+>>> base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
+>=20
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
 
