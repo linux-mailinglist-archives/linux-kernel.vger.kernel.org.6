@@ -1,304 +1,157 @@
-Return-Path: <linux-kernel+bounces-273806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE36946E5E
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:05:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064C1946E60
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 13:14:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7843282126
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DBC81C215D1
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD4A39FC6;
-	Sun,  4 Aug 2024 11:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068AD2D03B;
+	Sun,  4 Aug 2024 11:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exHQCFVN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BB3hgHOe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43CC38F86;
-	Sun,  4 Aug 2024 11:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B8B368
+	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 11:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722769512; cv=none; b=tfn3vwOA99ufXwozfS3hSMe1D3+PsLDoPf6ItMMyaLIV8LOwkKcPGbQk74RowhbzgThIeXUnbjf+T7S5uhCi0n6oRUMyW9IrWZM5LWN2RjZtoj4jQmkerNep/TNAMmtSlwmqBx97J+rcqM68l/miCrNkIGRjZ5c0u8pAnn8wIDo=
+	t=1722770045; cv=none; b=MoXoXQHSHdWM/eIcgE0bMIT8FAYCHtGCGVrHxHZ1AAKnrpKPzjuLT56jwapsuEBxn1K4Ixol3LIkKu5ulsgYPeQWmvZIEt62oFdNzvOsHJ7iMBx+WgWiCGfVLsHLizAYWm9muYYrGjVv/1ENwfH2yR2QcyxayUgsuAd+/3nRYXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722769512; c=relaxed/simple;
-	bh=Gy6I584IGzicBXyzg6q5/89C48fBtUYKR3xsKS4pyDo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t279JJuWg+Ea/svzmPYfAybWrF09TsOQ6ZZ91xOdPp02qt0ZYx0BmXu4Aefe5g6lD1y9mvLI68e4CVlJbHdGmmfamN+VVUOVvLTD2Dgb7jttejTCk45TEIDSyLh2UuxNEdICRBl2YvdBpZM3YGBhjm5MMcK7EChqmGpkCPGrQKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exHQCFVN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA8CC32786;
-	Sun,  4 Aug 2024 11:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722769511;
-	bh=Gy6I584IGzicBXyzg6q5/89C48fBtUYKR3xsKS4pyDo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=exHQCFVNTiJ28lW5EtNMPi34LogQvcUSA3Fpzdi3YolVUN4J51yHn1DEJ+EhXu1cG
-	 lNl2/4Q60ct2No56frPw1Z7XHNj65ds+TukisTx0+6/Wu0RIFJm7L1oLMplXYsZhmJ
-	 DmklP2aDIGRgS4vwsWhomLSmereRrXfyXxkODO30EWad3Utuc4tHHg+DetK5i0ijBW
-	 PJC5Sa/4RWKPpUFWwAAf/KI689o5+Dhep2k2/fZK51vnGWL1usxC2v6HxwumsHp+Vf
-	 lYhtZb/WmRqXOGFce+3LTMorccVfnPbdOCrlHNfIsl4S+SMH3YpDz06/rejyMCl3G/
-	 ZwxFQYBDQZeRQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1saZ2z-000l1v-06;
-	Sun, 04 Aug 2024 12:05:09 +0100
-Date: Sun, 04 Aug 2024 12:05:08 +0100
-Message-ID: <87sevk4kgr.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based FGU handling
-In-Reply-To: <fb9bef18-adf2-4d3a-8205-b22a65b0c6db@arm.com>
-References: <20240620065807.151540-1-anshuman.khandual@arm.com>
-	<20240620065807.151540-11-anshuman.khandual@arm.com>
-	<865xu3kh4r.wl-maz@kernel.org>
-	<4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
-	<878qyy35e5.wl-maz@kernel.org>
-	<47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
-	<86tthhi0nz.wl-maz@kernel.org>
-	<c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
-	<86o76c1b8p.wl-maz@kernel.org>
-	<d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
-	<86bk2b198o.wl-maz@kernel.org>
-	<fb9bef18-adf2-4d3a-8205-b22a65b0c6db@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1722770045; c=relaxed/simple;
+	bh=ioIwD0o1sduzrWtKVUj1e8K+qYXxSjv2nF3EdoOaAco=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=et9Bs38MuV+1t0Q01vMoAoTg5RBiKEGp8c83swYUAA8Zl6dotdnXFgbhYEEnPxX7A/VO2ZdiNsVpviGijsNRGoYgOuRf7xjONgHQwzmuhhMBecSShhH5B3voNVpI6Ab5LsHMEWpAA9scRmOIXPINUIDdyVQ/gU1ia9sE9to+OkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BB3hgHOe; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722770043; x=1754306043;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ioIwD0o1sduzrWtKVUj1e8K+qYXxSjv2nF3EdoOaAco=;
+  b=BB3hgHOeFsdEfoWrAjRKQSM9jUniXL14Z1GNsTtqmZh/2YX9bJcBSVLu
+   Fe+Z/8joMWrLqUhbWR7ZlVvDQMQ3941xuhi9rVXDiB7CB2lDgJtX6qGP7
+   fqmkUxOg2FLzrkkzG4gzOBQXUof4dnnbBfO1TUsa8POXGutMZkStfKxID
+   nSpNiSAiScuRZKyAxBHdRz4s+0stxHUyDsSXMy/xj6gQvozKLkMLpAftI
+   ciHpatLNVVKP1M//9SXA4zM9MR6HBh+ITKayuCaoJlaOVDXlBqyrGSRen
+   wPf/y2o9/z4npJsaxjhejsK2fBRuwJZ79KiGuzvssUji8VBvtUKVDK27F
+   g==;
+X-CSE-ConnectionGUID: dskAIRMaQ2iO7szzM+rVdw==
+X-CSE-MsgGUID: zalP9ZExRP+Vl/6Jmcau6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11153"; a="20408738"
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="20408738"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 04:14:02 -0700
+X-CSE-ConnectionGUID: YJM79CzaTLiTfJOXurynzA==
+X-CSE-MsgGUID: oukP7wRkSZKRIfIuWwt7lw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,262,1716274800"; 
+   d="scan'208";a="55839138"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 04 Aug 2024 04:14:01 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1saZBW-0001Q2-2Q;
+	Sun, 04 Aug 2024 11:13:58 +0000
+Date: Sun, 4 Aug 2024 19:13:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michal Wajdeczko <michal.wajdeczko@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	David Gow <davidgow@google.com>
+Subject: ERROR: modpost: "__popcountdi2" [lib/kunit/kunit-example-test.ko]
+ undefined!
+Message-ID: <202408041932.EzITeEV4-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 03 Aug 2024 11:38:11 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
-> 
-> On 8/2/24 16:29, Marc Zyngier wrote:
-> > On Fri, 02 Aug 2024 10:25:44 +0100,
-> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> >>
-> >> On 8/1/24 21:33, Marc Zyngier wrote:
-> >>> On Thu, 01 Aug 2024 11:46:22 +0100,
-> >>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> > 
-> > [...]
-> > 
-> >>>> +	SR_FGT(SYS_SPMACCESSR_EL1,	HDFGRTR2, nSPMACCESSR_EL1, 0),
-> >>>
-> >>> This (and I take it most of the stuff here) is also gated by
-> >>> MDCR_EL2.SPM, which is a coarse grained trap. That needs to be
-> >>> described as well. For every new register that you add here.
-> >>
-> >> I did not find a SPM field in MDCR_EL2 either in latest ARM ARM or in
-> >> the latest XML. But as per current HDFGRTR2_EL2 description the field
-> >> nSPMACCESSR_EL1 is gated by FEAT_SPMU feature, which is being checked
-> >> via ID_AA64DFR1_EL1.PMU when required. So could you please give some
-> >> more details.
-> > 
-> > I misspelled it. It is MDCR_EL2.EnSPM.
-> > 
-> > And you are completely missing the point. It is not about
-> > HDFGRTR2_EL2, but about SPMACCESSR_EL1 (and all its little friends).
-> > 
-> > To convince yourself, just look at the pseudocode for SPMACCESSR_EL1,
-> > limited to an EL1 access:
-> > 
-> > elsif PSTATE.EL == EL1 then
-> >     if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
-> >         UNDEFINED;
-> >     elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMACCESSR_EL1 == '0') then
-> >         AArch64.SystemAccessTrap(EL2, 0x18);
-> >     elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
-> >         AArch64.SystemAccessTrap(EL2, 0x18);
-> >     elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
-> >         if EL3SDDUndef() then
-> >             UNDEFINED;
-> >         else
-> >             AArch64.SystemAccessTrap(EL3, 0x18);
-> >     elsif EffectiveHCR_EL2_NVx() IN {'111'} then
-> >         X[t, 64] = NVMem[0x8E8];
-> >     else
-> >         X[t, 64] = SPMACCESSR_EL1;
-> > 
-> > 
-> > Can you spot the *TWO* conditions where we take an exception to EL2
-> > with 0x18 as the EC?
-> > 
-> > - One is when HDFGxTR2_EL2.nSPMACCESSR_EL1 == '0': that's a fine
-> >   grained trap.
-> > - The other is when MDCR_EL2.EnSPM == '0': that's a coarse grained
-> >   trap.
-> > 
-> > Both conditions need to be captured in the various tables in this
-> > file, for each and every register that you describe.
-> 
-> Ahh, got it now. Because now KVM knows about SPMACCESSR_EL1 register,
-> access to that register must also be enabled via both fine grained trap
-> (HDFGxTR2_EL2.nSPMACCESSR_EL1) and coarse grained trap (MDCR_EL2.EnSPM).
-> 
-> For all the registers that are being added via FEAT_FGT2 here in this
-> patch, their corresponding CGT based path also needs to be enabled via
-> corresponding CGT_MDCR_XXX groups.
+Hi Michal,
 
-Exactly.
+First bad commit (maybe != root cause):
 
-> 
-> > 
-> > [...]
-> > 
-> >>> Now, the main issues are that:
-> >>>
-> >>> - you're missing the coarse grained trapping for all the stuff you
-> >>>   have just added. It's not a huge amount of work, but you need, for
-> >>>   each register, to describe what traps apply to it. The fine grained
-> >>>   stuff is most, but not all of it. There should be enough of it
-> >>>   already to guide you through it.
-> >>
-> >> Coarse grained trapping for FEAT_FGT2 based fine grained registers ?
-> > 
-> > Not for FEAT_FGT2. For the registers that FEAT_FGT2 traps. Can you see
-> > the difference?
-> 
-> Understood, for example PMIAR_EL1 register which FEAT_FGT2 now traps via
-> 
-> SR_FGT(SYS_PMIAR_EL1,           HDFGRTR2, nPMIAR_EL1, 0),
-> 
-> also needs to have corresponding coarse grained trap.
-> 
-> SR_TRAP(SYS_PMIAR_EL1,          CGT_MDCR_TPM),
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   17712b7ea0756799635ba159cc773082230ed028
+commit: ee5f8cc2770b2f0f7cfefb5bf7534e2859e39485 kunit: Reset test status on each param iteration
+date:   11 months ago
+config: riscv-randconfig-001-20240804 (https://download.01.org/0day-ci/archive/20240804/202408041932.EzITeEV4-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408041932.EzITeEV4-lkp@intel.com/reproduce)
 
-Yup.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408041932.EzITeEV4-lkp@intel.com/
 
-> 
-> Similarly corresponding SR_TRAP() needs to be covered for all registers
-> that are now being trapped with FEAT_FGT2.
-> 
-> Example code snippet.
-> 
-> ........
-> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(8), CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(9), CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(10),        CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(11),        CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(12),        CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(13),        CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(14),        CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(15),        CGT_MDCR_EnSPM),
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-I think it is a bit more complicated than just that. Again, look at
-the pseudocode:
-
-elsif PSTATE.EL == EL1 then
-    if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
-        UNDEFINED;
-    elsif HaveEL(EL3) && EL3SDDUndefPriority() && SPMACCESSR_EL3<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
-        UNDEFINED;
-    elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMEVTYPERn_EL0 == '0') then
-        AArch64.SystemAccessTrap(EL2, 0x18);
-    elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
-        AArch64.SystemAccessTrap(EL2, 0x18);
-    elsif EL2Enabled() && SPMACCESSR_EL2<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
-        AArch64.SystemAccessTrap(EL2, 0x18);
-    elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
-        if EL3SDDUndef() then
-            UNDEFINED;
-        else
-            AArch64.SystemAccessTrap(EL3, 0x18);
-    elsif HaveEL(EL3) && SPMACCESSR_EL3<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
-        if EL3SDDUndef() then
-            UNDEFINED;
-        else
-            AArch64.SystemAccessTrap(EL3, 0x18);
-    elsif !IsSPMUCounterImplemented(UInt(SPMSELR_EL0.SYSPMUSEL), (UInt(SPMSELR_EL0.BANK) * 16) + m) then
-        X[t, 64] = Zeros(64);
-    else
-        X[t, 64] = SPMEVFILT2R_EL0[UInt(SPMSELR_EL0.SYSPMUSEL), (UInt(SPMSELR_EL0.BANK) * 16) + m];
-
-which shows that an SPMEVFILT2Rn_EL0 access from EL1 traps to EL2 if:
-
-- either HDFGRTR2_EL2.nSPMEVTYPERn_EL0 == '0', (check)
-- or MDCR_EL2.EnSPM == '0', (check)
-- or SPMACCESSR_EL2<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00'
-
-and that last condition requires some more handling as you need to
-evaluate both SPMSELR_EL0.SYSPMUSEL and the corresponding field of
-SPMACCESSR_EL2 to make a decision. It's not majorly complicated, but
-it isn't solved by simply setting a static attribute.
-
-> +
-> +       SR_TRAP(SYS_SPMCGCR0_EL1,       CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMCGCR1_EL1,       CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMACCESSR_EL1,     CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMCFGR_EL1,        CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMCNTENCLR_EL0,    CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMCNTENSET_EL0,    CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMCR_EL0,          CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMDEVAFF_EL1,      CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMDEVARCH_EL1,     CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMIIDR_EL1,        CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMINTENCLR_EL1,    CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMINTENSET_EL1,    CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMOVSCLR_EL0,      CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMOVSSET_EL0,      CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMSCR_EL1,         CGT_MDCR_EnSPM),
-> +       SR_TRAP(SYS_SPMSELR_EL0,        CGT_MDCR_EnSPM),
-
-So please look at the pseudocode for each and every register you
-add. If there is a trap to EL2 that is described, you must have the
-corresponding handling. None of that is optional.
-
-> ........
-> 
-> > 
-> >> Afraid, did not understand this. Could you please give some pointers
-> >> on similar existing code.
-> > 
-> > See above. And if you want some example, just took at the file you are
-> > patching already. Look at how MDCR_EL2 conditions the trapping of all
-> > the debug, PMU, AMU registers, for example. There is no shortage of
-> > them.
-> 
-> Right, I understand your point now. I am planning to send out the following
-> patches (in reply to the current thread) for your review, before sending out
-> the entire series as V1.
-> 
-> - Patch adding VNCR details for virtual EL2 access
-> - Patch adding FEAT_FGT2 based FGU handling
-> - Patch adding corresponding CGT handling for registers being added above
-> 
-> Although, can skip that step and just send out the series directly if you so
-> prefer. Please do suggest. Thanks for all the detailed information above.
-
-My suggestion is that you take a good look at the pseudocode and
-implement all the existing requirements.  Yes, this is undesirably
-complicated, but I'm not the one making the rules here...
-
-Once you think you have all these requirements in place, please post
-the series. But not before that. If you have any question, just ask.
-
-Thanks,
-
-	M.
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/torture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/resource_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/sysctl-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/dmapool_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/rational-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hexdump.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/find_bit_benchmark.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cpumask_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sysctl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hash.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ida.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test-kstrtox.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_list_sort.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_sort.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_printf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_scanf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_uuid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_maple_tree.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_free_pages.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_kprobes.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/bitfield_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/checksum_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/list-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/hashtable_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bits.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/cmdline_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/slub_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/memcpy_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/is_signed_type_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/overflow_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/stackinit_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/fortify_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/strcat_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/strscpy_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/siphash_kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-gate_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in net/core/dev_addr_lists_test.o
+>> ERROR: modpost: "__popcountdi2" [lib/kunit/kunit-example-test.ko] undefined!
+ERROR: modpost: "__popcountdi2" [lib/test_hexdump.ko] undefined!
 
 -- 
-Without deviation from the norm, progress is not possible.
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
