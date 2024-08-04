@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-273796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92DE946E35
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 11:58:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04613946E39
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 12:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54731B20F5F
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 09:58:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6759BB20FB4
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 10:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21ED288DB;
-	Sun,  4 Aug 2024 09:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FE42557A;
+	Sun,  4 Aug 2024 10:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qni/DZOe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghvGo0wK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C502E416;
-	Sun,  4 Aug 2024 09:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEBA1ABEBE;
+	Sun,  4 Aug 2024 10:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722765505; cv=none; b=bDEmF0uma+rEVuUj9Pyb875+b9LYxjIUkyr1YPa5Qmn62rPNRH9YEcnFNe57wrhoCbsSz8ee8LmYgZhAdF9K6hWlkJwP37bskMT1Iw0cyHUZ4o/297MJwMo0WP3kpSq8ZE1lEce1JW5bhwjEvbLo3RYWQIG1XgEKQWJOAui9lbo=
+	t=1722765688; cv=none; b=g+jawLQcMzRpPBY02GROTC2UPik/zrrD21bsDY0UwOUvkIhUhRIHA8QyDcclZMDiL7kDs87D58gXtywmhUfumJQwos9bNdmyT/YvX8Tfzum2jPcDrVUhXC27Od3+0vVru4d8nwfoEThXX9wdgPNiVdLqKhJKC66rTpcjHzhy3IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722765505; c=relaxed/simple;
-	bh=ZHEgrCibrJb5OWWJP5vV2NJK42XUHDHM2h8UGzr1RZM=;
+	s=arc-20240116; t=1722765688; c=relaxed/simple;
+	bh=P4c+/HYGZO8C2ZqfanMjOcFHbLeRoRdtHjLuHpuDohE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+7xK3MT9O6NvKBlfaxCZb2hrub7hx3ccsqHuVw4jF7BeuyHPS3wOhC1BgkAnMi4GAyCigLB2i+37DTO8BdCGGxCXtFYxK19g64L/qxZdQ2o/tbxBwyoJ5rX9jinTq5pjRqczNm88FJgaN1zQ5EWy/ReQBYDW8dX7ohIu5Vrmlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qni/DZOe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CB3FC32786;
-	Sun,  4 Aug 2024 09:58:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Ee6lHpBgTdB9X4sKnLPEf86l/nOlUfYQ1tqoN1kHs/rK153gpfl8Dk46XaLyYACn3oYTeavgRFAtienhckhTeADyyEzz6k6KydYqjfPhw9TiPfuEJMTUDa33H1BU2zfbONo+LXgSA9r9U7PBlcrSi1Do/3WG7zxFKee/uwWWocM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghvGo0wK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3F2C32786;
+	Sun,  4 Aug 2024 10:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722765505;
-	bh=ZHEgrCibrJb5OWWJP5vV2NJK42XUHDHM2h8UGzr1RZM=;
+	s=k20201202; t=1722765687;
+	bh=P4c+/HYGZO8C2ZqfanMjOcFHbLeRoRdtHjLuHpuDohE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qni/DZOeBe4bW7wbetJPp8Sq7IfLBO8KX+AEmrkOsJL62/in5TafL5r7GWT5ASsyo
-	 e9vncTnIQRkXt3Rx0dxcNQ9PqHWTqLr0xnIAQegaoAdwh1ok7Nf47F4KXUw+SAt+JK
-	 9HS1p/SK71dldAfoo8F7s/T62rbPRTvn9R9ajztYre8h4TOxUmBhVYkMLpNXu2T+DR
-	 45XSBbzpS/umtQYaPhkrQHaLsavY9zwz6/diH8BgBz9xsPXGw1ABM6HhwH3i4HsGRn
-	 jL/gZR4CdZ9gzN9oUWoeEXy/DmI/Bu5oi/+ypm60rAJLZeDj/PHyru1rrnAwr7fej8
-	 EG2UX6F9SNV+A==
-Message-ID: <e65160a7-53c6-48d2-bfb2-50c807e56299@kernel.org>
-Date: Sun, 4 Aug 2024 11:58:17 +0200
+	b=ghvGo0wKiYXcD8frnOXDwtjkMmuHxVVgfAWr3pTr96/Tju/eUg80xpeis/wJZNC7V
+	 nGaPhQvEZvuhsh1EgnFvkrb0RKme3ryptssAYBdAq08VRq2woa3ti0+2gWUMogGBOw
+	 igvX6SXmcvkNB9vKOiEfJSYPq6dFpUpto4faKfiuWsEpPMS7Gih02lT6D+R5G3E+/x
+	 hHDVPM0JNGN3VzQnw/nxz33JZyETvesuQpuwJrL04YUBexqgmAoM2cIUkOiH0oyepa
+	 ijQD0sgQK3PRcWNtyncDtSHa3lrha64iUR3qd8Do1pZ2NL9/k8pt75hIqxgGhc70zG
+	 CXJiyYfMS0TWw==
+Message-ID: <9b652047-508d-4385-86bf-620ff9afae9f@kernel.org>
+Date: Sun, 4 Aug 2024 12:01:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] pinctrl: rockchip: Add rk3576 pinctrl support
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- Steven Liu <steven.liu@rock-chips.com>
-References: <20240802145458.291890-1-detlev.casanova@collabora.com>
- <20240802145458.291890-2-detlev.casanova@collabora.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: rockchip: Add Cool Pi CM5
+ GenBook
+To: Andy Yan <andyshrk@163.com>, heiko@sntech.de
+Cc: dsimic@manjaro.org, krzk+dt@kernel.org, robh@kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20240730102433.540260-1-andyshrk@163.com>
+ <20240730102433.540260-2-andyshrk@163.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,39 +102,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802145458.291890-2-detlev.casanova@collabora.com>
+In-Reply-To: <20240730102433.540260-2-andyshrk@163.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2024 16:52, Detlev Casanova wrote:
-> From: Steven Liu <steven.liu@rock-chips.com>
+On 30/07/2024 12:24, Andy Yan wrote:
+> Add Cool Pi CM5 GenBook, a laptop powered by RK3588.
 > 
-> Add support for the 5 rk3576 GPIO banks.
+> Cool Pi GenBook works with a carrier board connect with CM5.
 > 
+> Signed-off-by: Andy Yan <andyshrk@163.com>
 
 
-> +static struct rockchip_pin_ctrl rk3576_pin_ctrl __maybe_unused = {
-> +	.pin_banks		= rk3576_pin_banks,
-> +	.nr_banks		= ARRAY_SIZE(rk3576_pin_banks),
-> +	.label			= "RK3576-GPIO",
-> +	.type			= RK3576,
-> +	.pull_calc_reg		= rk3576_calc_pull_reg_and_bit,
-> +	.drv_calc_reg		= rk3576_calc_drv_reg_and_bit,
-> +	.schmitt_calc_reg	= rk3576_calc_schmitt_reg_and_bit,
-> +};
-> +
->  static struct rockchip_pin_bank rk3588_pin_banks[] = {
->  	RK3588_PIN_BANK_FLAGS(0, 32, "gpio0",
->  			      IOMUX_WIDTH_4BIT, PULL_TYPE_IO_1V8_ONLY),
-> @@ -4005,6 +4231,8 @@ static const struct of_device_id rockchip_pinctrl_dt_match[] = {
->  		.data = &rk3399_pin_ctrl },
->  	{ .compatible = "rockchip,rk3568-pinctrl",
->  		.data = &rk3568_pin_ctrl },
-> +	{ .compatible = "rockchip,rk3576-pinctrl",
-> +		.data = &rk3576_pin_ctrl },
-
-Undocumented compatible. Bindings come before users.
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
