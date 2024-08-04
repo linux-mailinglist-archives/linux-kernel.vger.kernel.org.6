@@ -1,229 +1,353 @@
-Return-Path: <linux-kernel+bounces-273916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85DF946F95
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:23:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A34A4946F9A
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 17:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF971F21862
-	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:23:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96FBAB20C83
+	for <lists+linux-kernel@lfdr.de>; Sun,  4 Aug 2024 15:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1384361FE1;
-	Sun,  4 Aug 2024 15:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C753974424;
+	Sun,  4 Aug 2024 15:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DKESF1/t"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fo1E1CoL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1743B405E6
-	for <linux-kernel@vger.kernel.org>; Sun,  4 Aug 2024 15:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2885A95B;
+	Sun,  4 Aug 2024 15:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722785024; cv=none; b=U+iUHyZyvTqjuG4u6DTBXC/mWFw2M0SbX4UaZ6wHPYUF0PjHONjFpPl43e8eOGGV1LoXL7Er8yLkj9snsziU1hpbEEbse494uz3q05PtosUSZ148Ouq8i3y/87sKoOXnkYE9Pob8pHnM4puOoMUhrTOzProiczGLYpEpTj8WlMQ=
+	t=1722785601; cv=none; b=gimSd+C+anPO40bA3Z8e6na59aPQPbZgf3lM9mnhGODIRSfwTzQGVqmjokJcuc/NGs4+USIbwgQuxxSzBGTdhbPcQI4Ri5xPsh6k4dUQKeTF5yGnNGLuDbnE8H6suOW7ZgmJftXEyXXhL4znjz+N86D+MlbAypw+qSWxqFxREIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722785024; c=relaxed/simple;
-	bh=M/HvJXNppM08outXt+xcpWtPDWshnBemU5T+LJtgsdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ih9Hh4nusJm7CVWs3ndOBp2JgveGzjLL0BYFv1i7/KVWFge4i9xp7nwdKXAc/NeGIr4iDU6JPYGz2IEfo+QE+cQbzzpmyszK0bwPjWyVD/u4IGvG1aK6xCjoqmqi17xTpZtiQhFJa26zq2aRMCleKKJbI7v+NCwcood6EeaBxJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DKESF1/t; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722785021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UscUOq8lFaSoakKdoY4BSP1iK/2oufX+q/kPRNFqhks=;
-	b=DKESF1/tBPhmHNTgKH7UkpN0fkCwLY7L4/VBgzOcOKvKrkCwLFfBXPU5ZaT7G5N4Hh4mr5
-	B8V+AfwsSmD9EHd1E59jGCiNSoEJ3bpcE8ugQT3H5ACII9LLWavevSCivf9cZ3a228A+E4
-	H7l2UXVR6w7fIGRRnytySVJHBoGlIvQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-460-gZqzruUtPhO3S_HyzHd0ZA-1; Sun,
- 04 Aug 2024 11:23:39 -0400
-X-MC-Unique: gZqzruUtPhO3S_HyzHd0ZA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1EEA1955BF2;
-	Sun,  4 Aug 2024 15:23:34 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.47])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C54731955D42;
-	Sun,  4 Aug 2024 15:23:29 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun,  4 Aug 2024 17:23:33 +0200 (CEST)
-Date: Sun, 4 Aug 2024 17:23:27 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Brian Mak <makb@juniper.net>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first in
- ELF cores)
-Message-ID: <20240804152327.GA27866@redhat.com>
-References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
+	s=arc-20240116; t=1722785601; c=relaxed/simple;
+	bh=pMFr/e0KsbkJrhJe9wfumPNt3xbbmQcMZktr3u4sg0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K4dxdSL97sBHcCBfZZ53MG7rsf/zgWDTq6kNnSRm/6Tz9DahagTdhY0MP2MJgs568xnIJN61xhT/gnY1aXZKdHDqtIi1twr8gMNgrx0yntoi+Ae73MYG3/85W7LuPmUECe8/5FiBcW/kIH+ANtg13nbc0GZL82KCHiFlsJYl+ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fo1E1CoL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48220C32786;
+	Sun,  4 Aug 2024 15:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722785601;
+	bh=pMFr/e0KsbkJrhJe9wfumPNt3xbbmQcMZktr3u4sg0o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Fo1E1CoLq7eWS5NjwZFhoaVmkfhTPdJKOGqgNsGzBcI0L+OYhiefH9kMAD3HqN05e
+	 N7iiV/LfbMEypsjssqAClEE1UTpYtuXb3mb+bissM1a91bnlfctIOGNFduqSelcPC8
+	 IF6cgBU7fEUmzOBv25b6jNNobjAkfqXMAT38/o4GCPsFUlSXqYAnc6J0OpnhCB92sv
+	 8gtGz+2a7dSkntKJwIwqWW5o1pNmYRwCqXf3GDiwAqiuF0pDAG8XQVhPTbwm5uQlC/
+	 ahTFR1gKoYbZeTTppzFzQkkcM8w4FM+Oe9/X2WfrVfZktssKiMKddPBYhvpyAP3F6v
+	 A6XM1tUes8lOQ==
+Message-ID: <84ff11bd-1d11-4d66-a56b-84bf915af346@kernel.org>
+Date: Sun, 4 Aug 2024 17:33:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] tty: serial: 8250: Add loongson uart driver
+ support
+To: zhenghaowei@loongson.cn, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, chenhuacai@kernel.org, kernel@xen0n.name,
+ p.zabel@pengutronix.de
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <20240804063834.70022-2-zhenghaowei@loongson.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240804063834.70022-2-zhenghaowei@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 08/02, Brian Mak wrote:
->
-> Large cores may be truncated in some scenarios, such as with daemons
-> with stop timeouts that are not large enough or lack of disk space. This
-> impacts debuggability with large core dumps since critical information
-> necessary to form a usable backtrace, such as stacks and shared library
-> information, are omitted.
->
-> Attempting to find all the VMAs necessary to form a proper backtrace and
-> then prioritizing those VMAs specifically while core dumping is complex.
-> So instead, we can mitigate the impact of core dump truncation by
-> dumping smaller VMAs first, which may be more likely to contain memory
-> necessary to form a usable backtrace.
+On 04/08/2024 08:38, zhenghaowei@loongson.cn wrote:
+> From: Haowei Zheng <zhenghaowei@loongson.cn>
+> 
+> Due to certain hardware design challenges, we have opted to
+> utilize a dedicated UART driver to probe the UART interface.
+> 
+> Presently, we have defined four parameters — 'fractional-division',
+> 'invert-rts', 'invert-dtr', 'invert-cts', and 'invert-dsr' — which
+> will be employed as needed.
+> 
+> Signed-off-by: Haowei Zheng <zhenghaowei@loongson.cn>
+> ---
+>  drivers/tty/serial/8250/8250_loongson.c | 208 ++++++++++++++++++++++++
+>  drivers/tty/serial/8250/8250_port.c     |   8 +
+>  drivers/tty/serial/8250/Kconfig         |   9 +
+>  drivers/tty/serial/8250/Makefile        |   1 +
+>  include/uapi/linux/serial_core.h        |   1 +
+>  5 files changed, 227 insertions(+)
+>  create mode 100644 drivers/tty/serial/8250/8250_loongson.c
+> 
+> diff --git a/drivers/tty/serial/8250/8250_loongson.c b/drivers/tty/serial/8250/8250_loongson.c
+> new file mode 100644
+> index 000000000000..eb16677f1dde
+> --- /dev/null
+> +++ b/drivers/tty/serial/8250/8250_loongson.c
+> @@ -0,0 +1,208 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2020-2024 Loongson Technology Corporation Limited
+> + */
+> +
+> +#include <linux/acpi.h>
 
-I thought of a another approach... See the simple patch below,
+How is this used?
 
-	- Incomplete, obviously not for inclusion. I think a new
-	  PTRACE_EVENT_COREDUMP makes sense, this will simplify
-	  the code even more.
+> +#include <linux/clk.h>
 
-	- Needs some preparations. In particular, I still think we
-	  should reintroduce SIGNAL_GROUP_COREDUMP regardless of
-	  this feature, but lets not discuss this right now.
+And this?
 
-This patch adds the new %T specifier to core_pattern, so that
+> +#include <linux/console.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/reset.h>
+> +
+> +#include "8250.h"
+> +
+> +struct loongson_uart_data {
+> +	struct reset_control *rst;
+> +	int line;
+> +	int mcr_invert;
+> +	int msr_invert;
+> +};
 
-	$ echo '|/path/to/dumper %T' /proc/sys/kernel/core_pattern
+...
 
-means that the coredumping thread will run as a traced child of the
-"dumper" process, and it will stop in TASK_TRACED before it calls
-binfmt->core_dump().
+> +static int loongson_uart_probe(struct platform_device *pdev)
+> +{
+> +	struct uart_8250_port uart = {};
+> +	struct loongson_uart_data *data;
+> +	struct uart_port *port;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	port = &uart.port;
+> +	spin_lock_init(&port->lock);
+> +
+> +	port->flags		= UPF_SHARE_IRQ | UPF_FIXED_PORT | UPF_FIXED_TYPE;
+> +	port->iotype		= UPIO_MEM;
+> +	port->regshift		= 0;
+> +	port->dev		= &pdev->dev;
+> +	port->type		= (unsigned long)device_get_match_data(&pdev->dev);
+> +	port->serial_in		= loongson_serial_in;
+> +	port->serial_out	= loongson_serial_out;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res)
+> +		return -ENODEV;
+> +
+> +	port->membase = devm_ioremap(&pdev->dev, res->start, resource_size(res));
+> +	if (!port->membase)
+> +		return -ENOMEM;
+> +
 
-So the dumper process can extract/save the backtrace/registers/whatever
-first, then do PTRACE_CONT or kill the tracee if it doesn't need the
-"full" coredump.
+Use wrapper combining both calls.
 
-Of course this won't work if the dumping thread is already ptraced,
-but in this case the debugger has all the necessary info.
+> +	port->mapbase = res->start;
+> +	port->mapsize = resource_size(res);
+> +
+> +	port->irq = platform_get_irq(pdev, 0);
+> +	if (port->irq < 0)
+> +		return -EINVAL;
+> +
+> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	port->private_data = data;
+> +
+> +	if (device_property_read_bool(&pdev->dev, "fractional-division")) {
+> +		port->get_divisor = loongson_frac_get_divisor;
+> +		port->set_divisor = loongson_frac_set_divisor;
+> +	}
+> +
+> +	if (device_property_read_bool(&pdev->dev, "rts-invert"))
+> +		data->mcr_invert |= UART_MCR_RTS;
+> +
+> +	if (device_property_read_bool(&pdev->dev, "dtr-invert"))
+> +		data->mcr_invert |= UART_MCR_DTR;
+> +
+> +	if (device_property_read_bool(&pdev->dev, "cts-invert"))
+> +		data->msr_invert |= UART_MSR_CTS;
+> +
+> +	if (device_property_read_bool(&pdev->dev, "dsr-invert"))
+> +		data->msr_invert |= UART_MSR_DSR;
+> +
+> +	data->rst = devm_reset_control_get_optional_shared(&pdev->dev, NULL);
+> +	if (IS_ERR(data->rst))
+> +		return PTR_ERR(data->rst);
+> +
+> +	device_property_read_u32(&pdev->dev, "clock-frequency", &port->uartclk);
+> +
+> +	ret = reset_control_deassert(data->rst);
+> +	if (ret)
+> +		goto err_unprepare;
+> +
+> +	ret = serial8250_register_8250_port(&uart);
+> +	if (ret < 0)
+> +		goto err_unprepare;
+> +
+> +	platform_set_drvdata(pdev, data);
+> +	data->line = ret;
+> +
+> +	return 0;
+> +
+> +err_unprepare:
+> +
+> +	return ret;
+> +}
+> +
+> +static void loongson_uart_remove(struct platform_device *pdev)
+> +{
+> +	struct loongson_uart_data *data = platform_get_drvdata(pdev);
+> +
+> +	serial8250_unregister_port(data->line);
+> +	reset_control_assert(data->rst);
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int loongson_uart_suspend(struct device *dev)
+> +{
+> +	struct loongson_uart_data *data = dev_get_drvdata(dev);
+> +
+> +	serial8250_suspend_port(data->line);
+> +
+> +	return 0;
+> +}
+> +
+> +static int loongson_uart_resume(struct device *dev)
+> +{
+> +	struct loongson_uart_data *data = dev_get_drvdata(dev);
+> +
+> +	serial8250_resume_port(data->line);
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static const struct dev_pm_ops loongson_uart_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(loongson_uart_suspend, loongson_uart_resume)
+> +};
+> +
+> +static const struct of_device_id of_platform_serial_table[] = {
+> +	{.compatible = "loongson,ls7a-uart", .data = (void *)PORT_LOONGSON},
 
-What do you think?
+Why do you need match data if there is no choice?
 
-Oleg.
----
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, of_platform_serial_table);
+> +
+> +static struct platform_driver loongson_uart_driver = {
+> +	.probe = loongson_uart_probe,
+> +	.remove = loongson_uart_remove,
+> +	.driver = {
+> +		.name = "ls7a-uart",
+> +		.pm = &loongson_uart_pm_ops,
+> +		.of_match_table = of_match_ptr(of_platform_serial_table),
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 7f12ff6ad1d3..fbe8e5ae7c00 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -337,6 +337,10 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
- 			case 'C':
- 				err = cn_printf(cn, "%d", cprm->cpu);
- 				break;
-+			case 'T':
-+				// XXX explain that we don't need get_task_struct()
-+				cprm->traceme = current;
-+				break;
- 			default:
- 				break;
- 			}
-@@ -516,9 +520,30 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
- 	/* and disallow core files too */
- 	current->signal->rlim[RLIMIT_CORE] = (struct rlimit){1, 1};
- 
-+	if (cp->traceme) {
-+		if (ptrace_attach(cp->traceme, PTRACE_SEIZE, 0,0))
-+			cp->traceme = NULL;
-+	}
-+
- 	return err;
- }
- 
-+static void umh_pipe_cleanup(struct subprocess_info *info)
-+{
-+	struct coredump_params *cp = (struct coredump_params *)info->data;
-+	// XXX: we can't rely on this check, for example
-+	// CONFIG_STATIC_USERMODEHELPER_PATH == ""
-+	if (cp->traceme) {
-+		// XXX: meaningful exit_code/message, maybe new PTRACE_EVENT_
-+		ptrace_notify(SIGTRAP, 0);
-+
-+		spin_lock_irq(&current->sighand->siglock);
-+		if (!__fatal_signal_pending(current))
-+			clear_thread_flag(TIF_SIGPENDING);
-+		spin_unlock_irq(&current->sighand->siglock);
-+	}
-+}
-+
- void do_coredump(const kernel_siginfo_t *siginfo)
- {
- 	struct core_state core_state;
-@@ -637,7 +662,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		retval = -ENOMEM;
- 		sub_info = call_usermodehelper_setup(helper_argv[0],
- 						helper_argv, NULL, GFP_KERNEL,
--						umh_pipe_setup, NULL, &cprm);
-+						umh_pipe_setup, umh_pipe_cleanup,
-+						&cprm);
- 		if (sub_info)
- 			retval = call_usermodehelper_exec(sub_info,
- 							  UMH_WAIT_EXEC);
-diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-index 0904ba010341..490b6c5e05d8 100644
---- a/include/linux/coredump.h
-+++ b/include/linux/coredump.h
-@@ -28,6 +28,7 @@ struct coredump_params {
- 	int vma_count;
- 	size_t vma_data_size;
- 	struct core_vma_metadata *vma_meta;
-+	struct task_struct *traceme;
- };
- 
- extern unsigned int core_file_note_size_limit;
-diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
-index 90507d4afcd6..13aed4c358b6 100644
---- a/include/linux/ptrace.h
-+++ b/include/linux/ptrace.h
-@@ -46,6 +46,9 @@ extern int ptrace_access_vm(struct task_struct *tsk, unsigned long addr,
- #define PT_EXITKILL		(PTRACE_O_EXITKILL << PT_OPT_FLAG_SHIFT)
- #define PT_SUSPEND_SECCOMP	(PTRACE_O_SUSPEND_SECCOMP << PT_OPT_FLAG_SHIFT)
- 
-+extern int ptrace_attach(struct task_struct *task, long request,
-+			 unsigned long addr, unsigned long flags);
-+
- extern long arch_ptrace(struct task_struct *child, long request,
- 			unsigned long addr, unsigned long data);
- extern int ptrace_readdata(struct task_struct *tsk, unsigned long src, char __user *dst, int len);
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index d5f89f9ef29f..47f1e09f8fc9 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -406,9 +406,8 @@ static inline void ptrace_set_stopped(struct task_struct *task, bool seize)
- 	}
- }
- 
--static int ptrace_attach(struct task_struct *task, long request,
--			 unsigned long addr,
--			 unsigned long flags)
-+int ptrace_attach(struct task_struct *task, long request,
-+		  unsigned long addr, unsigned long flags)
- {
- 	bool seize = (request == PTRACE_SEIZE);
- 	int retval;
+Except that this does not build... drop of_match_ptr(), not needed and
+causes warnings.
+
+> +	},
+> +};
+> +
+> +module_platform_driver(loongson_uart_driver);
+> +
+> +MODULE_DESCRIPTION("LOONGSON 8250 Driver");
+> +MODULE_AUTHOR("Haowei Zheng <zhenghaowei@loongson.cn>");
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+> index 2786918aea98..60b72c785028 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -319,6 +319,14 @@ static const struct serial8250_config uart_config[] = {
+>  		.rxtrig_bytes	= {1, 8, 16, 30},
+>  		.flags		= UART_CAP_FIFO | UART_CAP_AFE,
+>  	},
+> +	[PORT_LOONGSON] = {
+> +		.name		= "Loongson",
+> +		.fifo_size	= 16,
+> +		.tx_loadsz	= 16,
+> +		.fcr		= UART_FCR_ENABLE_FIFO | UART_FCR_R_TRIG_10,
+> +		.rxtrig_bytes   = {1, 4, 8, 14},
+> +		.flags		= UART_CAP_FIFO,
+> +	},
+>  };
+>  
+>  /* Uart divisor latch read */
+> diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+> index 47ff50763c04..a696afc4f8a8 100644
+> --- a/drivers/tty/serial/8250/Kconfig
+> +++ b/drivers/tty/serial/8250/Kconfig
+> @@ -568,6 +568,15 @@ config SERIAL_8250_BCM7271
+>  	  including DMA support and high accuracy BAUD rates, say
+>  	  Y to this option. If unsure, say N.
+>  
+> +config SERIAL_8250_LOONGSON
+> +	tristate "Loongson 8250 serial port support"
+> +	default SERIAL_8250
+> +	depends on SERIAL_8250
+> +	depends on LOONGARCH || MIPS
+
+MIPS? Why?
+
+You also miss COMPILE_TEST.
+
+
+
+Best regards,
+Krzysztof
 
 
