@@ -1,162 +1,144 @@
-Return-Path: <linux-kernel+bounces-275493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7FF948676
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BB7948675
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF242B230E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C753328499F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76FA16EBF4;
-	Mon,  5 Aug 2024 23:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CF916EC0B;
+	Mon,  5 Aug 2024 23:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QOhRcbcq"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="BTB9+Y3z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pq5gODej"
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617D016D9DD
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 23:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A153D14830D;
+	Mon,  5 Aug 2024 23:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722902325; cv=none; b=uKSIxU2EP2zcvHXNTk+r5VJZWDlimXeaDcV4pFHUiVnoghcIrPpl0OSh7dKRSi2epQwqr/tH14YcvNLFAVVsZ7+Fj8OD7oR6TdXsKPlEWYx+ffXqFqrMAddlkrmd5M30KDegn3dPFXV1Rj4EmDXcP5dIEj2h7dGtWU9pIHuQtTs=
+	t=1722902299; cv=none; b=hvFJeANc4P/Iu6WfBAUh4l67b7SMeJxS0ewUqRH+c+5OIedn1tBmKfOPKqEvwaf0eudCfQIyINhLoxDMiM7aNUqvbDPQ/cIWoEtPqNR2tjb/nEu0wU6BnAgKdExgRxLPjDryuXglB/QBZVCqZJa3NPNitgeWaDdk7i7XIlH0Jpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722902325; c=relaxed/simple;
-	bh=HE7iNn2NDlUw1mc8XnNzsxOuK2NZD3N1Yoq1DReuLqI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kepAfVN/VEtFZauGD247IV2s6RH/fLyptJJSZZO7JIu+VAj0T71WeVacEWHWxxRWOWYIdqNFHShBkGU/eq2z+pduvEeXO/MNYXNdT8TTflUD5b3Vkqkk/PTNJYXYvylz6MvPNkyxMpx8KWE455azrl3e9k29YgTCMhOrFbBMBzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QOhRcbcq; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso10163566b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 16:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722902322; x=1723507122; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cQU7vbPtaOjGnv/hbhN+ll2t7sFr0pUqNwdbWYE25jw=;
-        b=QOhRcbcqtaUD01DMVdYVJ8FwjRlmnOcU0nKx9x7SLqj8uxAd73/UjsjAuP6w22k0bh
-         InNEExnmMOtJvtQgZ/S+s3Sy0CRaObyM9BEKuVJU012t9o07Im2cNaseDk1yCoYqZwvQ
-         cN2R7jdeQTAEqS11NmEvYfmIQEGxAzLpqAkYZgAu7dDoUZyp5/ypp5vipb47GWYL+jsM
-         nbADFt923+DtP6iX45dKhWsnGe4heqzXyXA6+kZig/CoDWaP7uD3YOZBeg5CbaDHRMwY
-         79Uv7Md/xYvePrFapUS3L4nZS5TZHVywr7lC/FT6e1aTrqWJ4Yxkh6YHEeKExjp5ZOoW
-         X/Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722902322; x=1723507122;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cQU7vbPtaOjGnv/hbhN+ll2t7sFr0pUqNwdbWYE25jw=;
-        b=E6plh+/+KzmtTAFnb2uB5XRyY/r1ZnLjNKL+jqnF3NvyGVQpMwAakqh0Rsv+hn1699
-         F78j8XKAN1hDIFFEaf5JOpS7nszQg+kcq7o2+3Hmnz4mGepTzKj76KCV93e/eWpnez19
-         9ub0FlAkCbp7PMHSyoUmtP8Ypnwx2fpg9JfJ5XfI8Qbm5UDBbe+sagy58XclECj1+I7N
-         JpFSn9xk4uS4fN1kUMIoqK1CEpDFWjnCHpyx5zCAGT/b6OWjCLedFkeO50KUAdyfVk/h
-         rIHufva94BUKLsBuieEZHhy2qu8/52yetlXq6hgY9EeO+H597ZQvDrRdlzVlpB5J5374
-         Ounw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSPD83NGSImATAoz2wbFDNE39o9i9h83TlnEZY3sdk0ZOjQh45xRfXW1HkQaAcHl+ebacJPmetco4h9CQFX0yVdgLGWSqg6qptqL7S
-X-Gm-Message-State: AOJu0YxVLq/jema5nXaRJ1f1QIAU4S1yQ4PI8SyafXHF+4n4AUaRZvcX
-	3qm16fWima6R975Dm77w7cSNFs7jSp38ZxSxSjTc8408jLtqCe8betUiyqbsKGYKk0VY2HTrUbs
-	mwVj9fzoI1J0sJtpjpIG3JBJAEnPKORO9h452
-X-Google-Smtp-Source: AGHT+IFhzRWuwR+Bscc36sL5v+77kZ17PKyFf336ahwHyrg3XZAIIO4MGEqH31ONzuCB1w/8YnlnkSEK4Uq5DsRxr2s=
-X-Received: by 2002:a17:907:7e87:b0:a7a:ab8a:391 with SMTP id
- a640c23a62f3a-a7dc509fc5dmr1018125166b.45.1722902321079; Mon, 05 Aug 2024
- 16:58:41 -0700 (PDT)
+	s=arc-20240116; t=1722902299; c=relaxed/simple;
+	bh=W9GtxTd9T+38Pj4tNG9Q1S18UlkoVJ2nfUbToI+tdr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UII2PHp3zxHcia+oJEhAHw26pikAf3fay3Gn3TbDRUvuPvpih5boCLZ1WSGDQZsx/sHBf4kCN0jGsZxNUI6nV0aR5yoxEiESM3DkIXu+Kj6UOBYgAqVPBNBe+GI/0hzuoB3C9Dm8oV5nz29LXnnvZAXf/kgwpYsRvUhePFPSumg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=BTB9+Y3z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pq5gODej; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id E84CD114E9D5;
+	Mon,  5 Aug 2024 19:58:16 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 05 Aug 2024 19:58:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm1; t=1722902296; x=1722988696; bh=Qs2ZX7Tx/MCvMucJo4+0l
+	WeQSNbdGfxg/N8nwlZzDgs=; b=BTB9+Y3zVCBLPck7TXMAcn7U4cUH/2KLQwwCG
+	kG8SVSkCFmRYuKQJOGKcVz7PcQ8WYZ8a3MA4nrIW6yMoj2aTpDLPWwrty5xI0sZw
+	C+iRbGxuWmczrOBIdr3575EhsxCzWDXNnUfFrezlyD2rgNmUjiRr4lwxwhxts9wA
+	xv6G3NbxLCnKr5g2zVI31M7YmblO0jY+F0L/Ks83YBzCjwJyYIZKf1I1XFUlzi6N
+	MEgkXZ8GuRpBKIb1sg5e/igV9AfVv8zi5I45s0Z8SY2rdjDfuPNjfJa7h1FdzIoj
+	iaOfLqqYa7Hovrf+8AE4oTsxg/IVDUw4Wo5x/FT3Juq+rHBCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1722902296; x=1722988696; bh=Qs2ZX7Tx/MCvMucJo4+0lWeQSNbd
+	Gfxg/N8nwlZzDgs=; b=pq5gODejx7+uGLek1ku2m+rhISK/sTusGKx/kAVPmHjv
+	lORUMcDhZtvBveKXmTJvtZ3y4aD2NxogkfZHx9RgpYi5fm/E0BYgjfY9qyiBexee
+	7NLOES+YxXMJESNyzalvF9/y7hxzbcgBS8yxnKCgarD0Lmos4kS/lkQBTiV6twFW
+	7otpksuKBH2gy2xOr/Tngqt5/3intZ9EYqQchFdJ/W+GG3RYEQNuM2+uA/DbHMM/
+	VP22dxiq64LXsICLhQcthEG5vgsIFGgW4eJluYlv2C2bCsSj2wSnaQB+R/qwFDAX
+	zzC9n8cDAe5xm99ritpHO+I8BPPtBRyOeGOtsGvr8Q==
+X-ME-Sender: <xms:GGexZinuDgS5O9NSc5d7sEgNSEJeoeU1TmHgRRVDicf85T2f54PUXQ>
+    <xme:GGexZp1ZFogqZuPeCncVPB6d5Zr87_iHBipv_dY_rZ1p2CffozzY9__Ah20tox6_q
+    5ydnECcDuDw7cFhpwA>
+X-ME-Received: <xmr:GGexZgqOI8A2U-gOm4Ui6rBgHvdQ9WeRvLyC6thkcwgelo8eDhGDNHb0Sn-3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeejgddvlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtre
+    dttdenucfhrhhomhepfdfnuhhkvgcuffdrucflohhnvghsfdcuoehluhhkvgeslhhjohhn
+    vghsrdguvghvqeenucggtffrrghtthgvrhhnpefgudejtdfhuddukefffeekiefftddtvd
+    fhgeduudeuffeuhfefgfegfeetvedvgeenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtph
+    htthhopedt
+X-ME-Proxy: <xmx:GGexZmni26LUBeC90wEwHDRhXIfEOVKFwLAmVUoDpGFJ-mOKTsiekQ>
+    <xmx:GGexZg2BGegyS7PpNEYFwAE8ySHMnjRFP7_fd4rSGFLC6rFbPPrJSg>
+    <xmx:GGexZts8sHuSL46ProKijybQso9blv649fHcJXNlUmS6D6FtKbNyPQ>
+    <xmx:GGexZsU8OHe4NRCPWESrRrWbePZ3mWkk-mQpdnLJ7C4mSnjDxabhlQ>
+    <xmx:GGexZk8Xm0wzhPD4nWZj9YvpZ149CIIbViC6wq3Wh8w9fjhYinEFg1RA>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 5 Aug 2024 19:58:13 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	corentin.chary@gmail.com,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH v2] platform/x86: asus-wmi: don't fail if platform_profile already registered
+Date: Tue,  6 Aug 2024 11:58:08 +1200
+Message-ID: <20240805235808.40944-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730222707.2324536-1-nphamcs@gmail.com> <20240730222707.2324536-2-nphamcs@gmail.com>
- <CAJD7tkYujNCPzrXfmRqFYESeAnrzgJYys-R_=Ftx=rJkUuhBWw@mail.gmail.com> <CAKEwX=M24GgiAHbwEqef=rBT94SvSnHwX-zKz78WO+C9HjJjOQ@mail.gmail.com>
-In-Reply-To: <CAKEwX=M24GgiAHbwEqef=rBT94SvSnHwX-zKz78WO+C9HjJjOQ@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 5 Aug 2024 16:58:04 -0700
-Message-ID: <CAJD7tkbE+RihoMWG2hKt4PmSoHGmYxeoaz5fmwiQifDGbqU56Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] zswap: implement a second chance algorithm for
- dynamic zswap shrinker
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, shakeel.butt@linux.dev, 
-	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	flintglass@gmail.com, chengming.zhou@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-[..]
-> > > @@ -1167,25 +1189,6 @@ static unsigned long zswap_shrinker_scan(struct shrinker *shrinker,
-> > >                 return SHRINK_STOP;
-> > >         }
-> > >
-> > > -       nr_protected =
-> > > -               atomic_long_read(&lruvec->zswap_lruvec_state.nr_zswap_protected);
-> > > -       lru_size = list_lru_shrink_count(&zswap_list_lru, sc);
-> > > -
-> > > -       /*
-> > > -        * Abort if we are shrinking into the protected region.
-> > > -        *
-> > > -        * This short-circuiting is necessary because if we have too many multiple
-> > > -        * concurrent reclaimers getting the freeable zswap object counts at the
-> > > -        * same time (before any of them made reasonable progress), the total
-> > > -        * number of reclaimed objects might be more than the number of unprotected
-> > > -        * objects (i.e the reclaimers will reclaim into the protected area of the
-> > > -        * zswap LRU).
-> > > -        */
-> > > -       if (nr_protected >= lru_size - sc->nr_to_scan) {
-> > > -               sc->nr_scanned = 0;
-> > > -               return SHRINK_STOP;
-> > > -       }
-> > > -
-> >
-> > Do we need a similar mechanism to protect against concurrent shrinkers
-> > quickly consuming nr_swapins?
->
-> Not for nr_swapins consumption per se, and the original reason why I
-> included this (racy) check is just so that concurrent reclaimers do
-> not disrespect the protection scheme. We had no guarantee that we
-> wouldn't just reclaim into the protected region (well even with this
-> racy check technically). With the second chance scheme, a "protected"
-> page (i.e with its referenced bit set) would not be reclaimed right
-> away - a shrinker encountering it would have to "age" it first (by
-> unsetting the referenced bit), so the intended protection is enforced.
->
-> That said, I do believe we need a mechanism to limit the concurrency
-> here. The amount of pages aged/reclaimed should scale (linearly?
-> proportionally?) with the reclaim pressure, i.e more reclaimers ==
-> more pages reclaimed/aged, so the current behavior is desired.
-> However, at some point, if we have more shrinkers than there are work
-> assigned to each of them, we might be unnecessarily wasting resources
-> (and potentially building up the nr_deferred counter that we discussed
-> in v1 of the patch series). Additionally, we might be overshrinking in
-> a very short amount of time, without letting the system have the
-> chance to react and provide feedback (through swapins/refaults) to the
-> memory reclaimers.
->
-> But let's do this as a follow-up work :) It seems orthogonal to what
-> we have here.
+On some newer laptops it appears that an AMD driver can register a
+platform_profile handler. If this happens then the asus_wmi driver would
+error with -EEXIST when trying to register its own handler leaving the
+user with a possibly unusable system - this is especially true for
+laptops with an MCU that emit a stream of HID packets, some of which can
+be misinterpreted as shutdown signals.
 
-Agreed, as long as the data shows we don't regress by removing this
-part I am fine with doing this as a follow-up work.
+We can safely continue loading the driver instead of bombing out.
 
->
-> > > -        * Subtract the lru size by an estimate of the number of pages
-> > > -        * that should be protected.
-> > > +        * Subtract the lru size by the number of pages that are recently swapped
-> >
-> > nit: I don't think "subtract by" is correct, it's usually "subtract
-> > from". So maybe "Subtract the number of pages that are recently
-> > swapped in from the lru size"? Also, should we remain consistent about
-> > mentioning that these are disk swapins throughout all the comments to
-> > keep things clear?
->
-> Yeah I should be clearer here - it should be swapped in from disk, or
-> more generally (accurately?) swapped in from the backing swap device
-> (but the latter can change once we decoupled swap from zswap). Or
-> maybe swapped in from the secondary tier?
->
-> Let's just not overthink and go with swapped in from disk for now :)
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+---
+ drivers/platform/x86/asus-wmi.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Agreed :)
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index cc5dc296fb2d..2fdfa84f7efb 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -3897,8 +3897,13 @@ static int platform_profile_setup(struct asus_wmi *asus)
+ 		asus->platform_profile_handler.choices);
+ 
+ 	err = platform_profile_register(&asus->platform_profile_handler);
+-	if (err)
++	if (err == -EEXIST) {
++		pr_warn("A platform_profile handler is already registered, this may be a driver conflict.\n");
++		return 0;
++	} else if (err) {
++		pr_err("Failed to register platform_profile: %d\n", err);
+ 		return err;
++	}
+ 
+ 	asus->platform_profile_support = true;
+ 	return 0;
+@@ -4773,7 +4778,7 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		goto fail_fan_boost_mode;
+ 
+ 	err = platform_profile_setup(asus);
+-	if (err)
++	if (err && err != -EEXIST)
+ 		goto fail_platform_profile_setup;
+ 
+ 	err = asus_wmi_sysfs_init(asus->platform_device);
+-- 
+2.45.2
 
-I will take a look at the new version soon, thanks for working on this.
 
