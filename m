@@ -1,172 +1,133 @@
-Return-Path: <linux-kernel+bounces-275394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5F19484DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:34:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 317EE9484DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3208B237A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:34:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D1261C22050
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17E7171E43;
-	Mon,  5 Aug 2024 21:29:39 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE211172BDC;
+	Mon,  5 Aug 2024 21:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkWxoyUM"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08EE170A35
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CB9172BBC;
+	Mon,  5 Aug 2024 21:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893379; cv=none; b=VUR1i+MBEe2O4LNUwF1mweHhT9TxOb6YNJyh2K5UpuiPY0xnp1XMG2OcLlGsLsNYAgRcAX5wgVGm5wdxk2LFT99kXSDKpaCDCkDpjGzWO9QPcMCok6mCWtSD6k2ZDH/S2RTBxbBmR+Y/asY3Ll+2HQrxx0rbjQw7mDkgf8a7gXc=
+	t=1722893384; cv=none; b=Bs9Y0o3F7J0dPz7N32uV3qL2hMo/bjz3Dta5km5QLd0E52JkuOrk1Z4INUrqFUEcGRC5aO4jgIcTVCY3u5PstywK+Sdr2aGzrfS62a7jO22tNaa0c/0A9upMDrvUX19kjORGbyvUdivMrU82f8fpmyr5xQG9JdMMcIIeQMt4DJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893379; c=relaxed/simple;
-	bh=R5FH0585GLONubfqzvRxY1SYFTTpoc2SBHN3HVIAlk8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gN5VOnsqM0jyMX/NuxJQu7tUApvLKLaKomXeZQffwSKIiJdT1P1Nn40KZ511+pzpIP+tuh7ffvIkmQoQ/PzvkEEiIQQBoudGVJSZzbw78BcwQW5b+wDGNZBE10EoHKR4FyEvuikayBpYDq5fAGq3eMktNfMeg9O1LIXKkEpIf3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-396c41de481so177566685ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:29:37 -0700 (PDT)
+	s=arc-20240116; t=1722893384; c=relaxed/simple;
+	bh=Rc9/Scd9LV1mp7Rp5OWAaSkGROsvNZErc9Y8out3dD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M9TC8s3BGcflwIqL0rfNwl0GHfcKjnYfreskVe7ezGGgBm6fK7Z3Nep5BkZR+8u8dKq1b/jKrddG8aDKPPdpLCqerK1V4pDB5cyf7oSntkAz4wJXs9vrQLuEyTYxMtlLM6UFiSxhzZdAMvEswjkUi2UVbVh0Oyz3pTXW3lim5Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkWxoyUM; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fd70ba6a15so83525525ad.0;
+        Mon, 05 Aug 2024 14:29:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722893382; x=1723498182; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5R8qingnKHE1sSnceSvImf+uxhthRiDd71Y2tMBRrYo=;
+        b=QkWxoyUMBWMSXoiQvg4mv1G+qAyqWNa4HkLedN/w8EzYpEGTvTGOEjxoVXUfNDyyH0
+         bc7JiBYK/IawORqlgy+RtyUtVWksAC3ByZIrv975FalGd/aPp+nIKEmX9qU42jddnwRN
+         gy3lXU0+ojYt7cenUPHo3tejmOj8U4x26xS9t6yvpSQ++qtTIUJKdJ26lD99/MMROjsY
+         /k/WBmhmCVtixJ/3NqHl1q2CbMdoOy8ozjWAmAtf1NI/0+gDuhUDCbPOtDuh5lNHZ36h
+         f1KNqrocOERkgzcvEjsQoCaFPsUeh4UFjceBP6jshndofWRutFdqkKHqKV2c/pM9Ol1U
+         1W2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893377; x=1723498177;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yPMsp4iAjFXmhGlUB5aK2jt2H3yu8iP9jPB6KmKxsZw=;
-        b=IkYS0HLxCW5pC+ywiEA4CwX+a8whLOhm6677roCPDAB8khQJAuwfBKPCEW5Cv5CS7K
-         ndu27Oq/y4IIbSjhFYPOVxkRcw7BOWwCTH/cRb4nc0Wz53IqZkiCTr7APV091lSOcJ4c
-         1odL9TxVw/3FP3YSHblpttg7oWQtg++MDcWLXQu/ABHqfz/UA6uKq9ZGK/C0P/sTURbd
-         NhJOOSmz2wc8DQQ2Jg3wkJG9j03eUXdeK/gEXj4za+KEUyh++ezwUQ2VMLDQ0fjQuAde
-         q2SZn2ZHpVyXsUwvNSgkq4oljGuZY+0YHEH6Lo7A/zbxUGYEIsfTfowEu0/mCBTJVr1J
-         zPow==
-X-Forwarded-Encrypted: i=1; AJvYcCVEwyK3oEiXvAbDFOjPgfXqu4BycuzMQ0IdEfrfChVSo0+aUBA7eL95QNkkrVOHo7u35CwuRi/k2/spGrUFQBtpoRFitDokZwWdayjA
-X-Gm-Message-State: AOJu0YyxCJnIAXQM5C8r49gubNOavz7FPyIVCDsG6LK5d6ysfFUMIpkQ
-	TyetjdlUpvk6RJG0hKm6ryyGTxdyN7pWLwFYIPM99xsUQ4SKTVRmgjdUYVEA5SwAjxLcvdLHw1t
-	tgeWm3ulKihkz5hKPTfT778cRm81eT0YN8Aa/9Zc1U1jFmetjAUoJR3w=
-X-Google-Smtp-Source: AGHT+IEEkC62LVfM7geGN1HBRDfv7b7BTxF/9GGbTyQ5sZ3tWhTTDD34KkP9IY+WDU+JW1aYpH0hi7XTU0Q68xFfhT1oMb8S5QXL
+        d=1e100.net; s=20230601; t=1722893382; x=1723498182;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5R8qingnKHE1sSnceSvImf+uxhthRiDd71Y2tMBRrYo=;
+        b=YtSVo/kypzJgsdFG6JOqcGRghUp2F9ubrY548Eg79oAMXf/InBz24DKTC0SFH2MoFf
+         9tY0vwWf+0LvDnzDLCjedeR+jEQcQxYjxsSDh3oTUxKQIUnkFMKFq8gu5NU7GVrh+tXq
+         3j3Gqs9Pm2v2b/oqoSzxBw35X/B96wyXkPYCsNyulHCO+64Kls6vpTpXi42fRcdYa82+
+         1hmOILG1dgUSYLOHvhRkyZV1Q77TTauK2LDE09ZU+/EfI7soRwmntmgy5eoXeGScNf6V
+         MGozCsPQhnesahHV2Md6usw1xWxA1iOKFxKJR4Q5d2MAIjECZpVfDg9DstxfF2c0s6W+
+         lVbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ7NYNZzpRXsm8b5nnRGbWf7ARiOxly9nXDiSV9WGFcAjCbyIJfYBIMd5R7jRhTdC6AeSP8ZvpeqiTuxZfP3Iva5FhMFjck7GJeRUNRYeAPltKdaDEjLKKeBO/1NrWDo3R+KvYzuwAKZU=
+X-Gm-Message-State: AOJu0YxI3XtVfMP2/hlCdju591roFA2cKSxw+qSOHOmYYC/Rnzgt3fVX
+	63cOvnn8vSdq4bMqjBzpp40NzH+IIOazx+YWws/7hoO9KmBTBjSC
+X-Google-Smtp-Source: AGHT+IF2j7ps9k+6l1cQEnPtesTFVF3Ua6BRrBnA3eWbVWcHwO1aQYqz6PxwW7dFR1rzA0ouq8840A==
+X-Received: by 2002:a17:902:d2d2:b0:1fb:7b96:8467 with SMTP id d9443c01a7336-1ff574cf808mr124076865ad.63.1722893381804;
+        Mon, 05 Aug 2024 14:29:41 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:b116:76da:13a7:247b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f5713fsm73331435ad.95.2024.08.05.14.29.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 14:29:41 -0700 (PDT)
+Date: Mon, 5 Aug 2024 14:29:38 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Vojtech Pavlik <vojtech@suse.cz>
+Cc: Clemens Ladisch <clemens@ladisch.de>, Takashi Iwai <tiwai@suse.de>,
+	Andreas Mohr <andi@lisas.de>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH 1/2] SOUND: kill gameport bits
+Message-ID: <ZrFEQkveaV6Q-Ayf@google.com>
+References: <20140820024638.GA25240@rhlx01.hs-esslingen.de>
+ <20140820051815.GA1109@core.coreip.homeip.net>
+ <s5hwqa3hetu.wl-tiwai@suse.de>
+ <20140820063130.GA11226@core.coreip.homeip.net>
+ <s5htx57hc89.wl-tiwai@suse.de>
+ <s5h4mx6rshs.wl-tiwai@suse.de>
+ <20140824050716.GA523@rhlx01.hs-esslingen.de>
+ <s5hppfpt520.wl-tiwai@suse.de>
+ <53FF8B2B.3050506@ladisch.de>
+ <20140828211110.GA24519@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d03:b0:382:56bd:dfbc with SMTP id
- e9e14a558f8ab-39b1fb83a10mr7747185ab.2.1722893376792; Mon, 05 Aug 2024
- 14:29:36 -0700 (PDT)
-Date: Mon, 05 Aug 2024 14:29:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b5bde0061ef65fc8@google.com>
-Subject: [syzbot] [can?] WARNING: refcount bug in j1939_xtp_rx_cts
-From: syzbot <syzbot+5a1281566cc25c9881e0@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kernel@pengutronix.de, 
-	kuba@kernel.org, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mkl@pengutronix.de, netdev@vger.kernel.org, o.rempel@pengutronix.de, 
-	pabeni@redhat.com, robin@protonic.nl, socketcan@hartkopp.net, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20140828211110.GA24519@suse.cz>
 
-Hello,
+Hi everyone,
 
-syzbot found the following issue on:
+On Thu, Aug 28, 2014 at 11:11:10PM +0200, Vojtech Pavlik wrote:
+> On Thu, Aug 28, 2014 at 10:03:55PM +0200, Clemens Ladisch wrote:
+> > Takashi Iwai wrote:
+> > > did anyone test the patch at all...?
+> > 
+> > Appears to work.  The ymfpci gameport seems to be somewhat unreliable:
+> > 
+> >  analog.c: 100 out of 17347 reads (0%) on pci0000:06:06.1/gameport0 failed
+> >  analog.c: 122 out of 1111 reads (10%) on pci0000:06:07.0/gameport0 failed
+> 
+> The analog.c gameport read routine is unreliable by design. 
+> 
+> The 558 chip is not an ADC, it's an one-shot timer from 1971. The analog
+> position of the joystick is measured by timing bit changes on the
+> gameport.
+> 
+> analog.c does that without disabling interrupts, as the read can take
+> several milliseconds. analog.c instead detects when an interrupt influenced
+> the measurement too much and retries.
+> 
+> The retries are counted and reported.
+> 
+> 10% is a largeish number, but still something the analog.c driver can
+> cope with and give reliable results. 
 
-HEAD commit:    743ff02152bc ethtool: Don't check for NULL info in prepare..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1058b26d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a1281566cc25c9881e0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15041155980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162bd19d980000
+So 10 years have passed since I tried to remove gameport support from
+the kernel. I do not believe there were a lot of meaningful fixes.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/69cb8d5cd046/disk-743ff021.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8f52c95a23c5/vmlinux-743ff021.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/93f2f40e650b/bzImage-743ff021.xz
+Do we still want to keep this in the kernel or is it time for gameport
+to retire?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5a1281566cc25c9881e0@syzkaller.appspotmail.com
+Thanks.
 
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 0 PID: 8 at lib/refcount.c:28 refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
-Modules linked in:
-CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.10.0-syzkaller-12610-g743ff02152bc #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: events nsim_dev_trap_report_work
-RIP: 0010:refcount_warn_saturate+0x15a/0x1d0 lib/refcount.c:28
-Code: 00 17 40 8c e8 67 97 a5 fc 90 0f 0b 90 90 eb 99 e8 1b 89 e3 fc c6 05 76 7d 31 0b 01 90 48 c7 c7 60 17 40 8c e8 47 97 a5 fc 90 <0f> 0b 90 90 e9 76 ff ff ff e8 f8 88 e3 fc c6 05 50 7d 31 0b 01 90
-RSP: 0018:ffffc900000076e0 EFLAGS: 00010246
-RAX: b72359b2da0c4a00 RBX: ffff8880213d1864 RCX: ffff8880176cda00
-RDX: 0000000080000102 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000003 R08: ffffffff81559432 R09: 1ffff1101724519a
-R10: dffffc0000000000 R11: ffffed101724519b R12: ffff88802b3dac00
-R13: ffff8880213d1864 R14: ffff88802b3dac00 R15: ffff888077daa118
-FS:  0000000000000000(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005626f04f7000 CR3: 000000007c7d2000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- kfree_skb_reason include/linux/skbuff.h:1260 [inline]
- kfree_skb include/linux/skbuff.h:1269 [inline]
- j1939_session_skb_drop_old net/can/j1939/transport.c:347 [inline]
- j1939_xtp_rx_cts_one net/can/j1939/transport.c:1445 [inline]
- j1939_xtp_rx_cts+0x54f/0xc70 net/can/j1939/transport.c:1484
- j1939_tp_cmd_recv net/can/j1939/transport.c:2089 [inline]
- j1939_tp_recv+0x8ae/0x1050 net/can/j1939/transport.c:2161
- j1939_can_recv+0x732/0xb20 net/can/j1939/main.c:108
- deliver net/can/af_can.c:572 [inline]
- can_rcv_filter+0x359/0x7f0 net/can/af_can.c:606
- can_receive+0x31c/0x470 net/can/af_can.c:663
- can_rcv+0x144/0x260 net/can/af_can.c:687
- __netif_receive_skb_one_core net/core/dev.c:5660 [inline]
- __netif_receive_skb+0x2e0/0x650 net/core/dev.c:5774
- process_backlog+0x662/0x15b0 net/core/dev.c:6107
- __napi_poll+0xcb/0x490 net/core/dev.c:6771
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- spin_unlock_bh include/linux/spinlock.h:396 [inline]
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:820 [inline]
- nsim_dev_trap_report_work+0x75d/0xaa0 drivers/net/netdevsim/dev.c:850
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Dmitry
 
