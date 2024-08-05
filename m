@@ -1,276 +1,404 @@
-Return-Path: <linux-kernel+bounces-274802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09654947CEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:35:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D73D947CF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE4B1C21E6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31023282A91
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E350213C3F9;
-	Mon,  5 Aug 2024 14:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9FF13B5A0;
+	Mon,  5 Aug 2024 14:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7RwbUT0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALC/rwT8"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94F9762D2;
-	Mon,  5 Aug 2024 14:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1707E139CFF;
+	Mon,  5 Aug 2024 14:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868523; cv=none; b=nvtNLQlZ/D3wBhluub2kfwNZtNw105/AgX+guRXx1S64Be+UfvNgcDCJ442RdJeVOV6zoF3M7ipGjIsqUi0HcxEGCKCwxTfkUizgLGJbYUhdE4pdwUxA23rQZaPkZX33xJDPfZ8OBihbCXe2lyO+wp/6vU1YKl5HFFeD/zsOUpk=
+	t=1722868616; cv=none; b=jGINN9/XNqEt/HfrtiPL490dhLa6GmZmmLs5UuiWUg95Ugsr/HIxIh6pt3vNZwrpASvkd7nYqQHXT5V4NCSsK0h2rNMibOhhv63PlPm38qYWQqy7ZyT4kSHZyA4lZh1kTuQ0RqFJiK5ZsvJt58fTvDEhvZRBh09PpRWNm3S9pw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868523; c=relaxed/simple;
-	bh=ud+YL7bhdQGWcyR5JiY7tP1I+YwfWtHLvIQtbdVEP/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBRLeHN8eWN0+mEn6N6L1gsmOvBGDyRxV2cP9XPpbu55ZeCcG+9j2bC7I5sYepwVbsaoB4beuv8E7efZUL4V0Web0+fazXs6/a9EG/007ZllxNXv4iQ1mHsnXzvkap2zLBJAt1mr4oqZigtXLahH8XWk91ohxiD11P0kS7FDJEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7RwbUT0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393DFC32782;
-	Mon,  5 Aug 2024 14:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722868523;
-	bh=ud+YL7bhdQGWcyR5JiY7tP1I+YwfWtHLvIQtbdVEP/Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M7RwbUT0Ryxlarp5gkNOWpA8ZkUr/EnZs/ojiWz4AXrd6zLegQt59CSDAHssdCsII
-	 1kHGEzI4pC1VQ1gRMwOTZWsMRuc3CtENc80OxnHxCd1awYLaaY2A1NlQYmIBq5+j3t
-	 JZaHRfu6NFuTImQgKtAi5+X6I9+116ChjPQQLqWQeiuKJz+MN3Ey+9HYyPWAknIRpp
-	 705KyFUHrXPH71qw8/EXKGWN6SACSl+aX71f6kTCB6qttrbp44iquIqTnLiP00637+
-	 wkmrMKZ5gCnQLfYZTocRN9rS2XLZsnCNoJlQk/RIDpDwi2587giC6d12f03me/1f7a
-	 wGSIu47hCHjYQ==
-Date: Mon, 5 Aug 2024 07:35:22 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org,
-	tglx@linutronix.de
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240805143522.GA623936@frogsfrogsfrogs>
-References: <20240730033849.GH6352@frogsfrogsfrogs>
- <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240730132626.GV26599@noisy.programming.kicks-ass.net>
- <20240731001950.GN6352@frogsfrogsfrogs>
- <20240731031033.GP6352@frogsfrogsfrogs>
- <20240731053341.GQ6352@frogsfrogsfrogs>
- <20240731105557.GY33588@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1722868616; c=relaxed/simple;
+	bh=T9bcwuHy+FpoNQ1LefO/4VAnTrOu4F3oksknf0RGFIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BdXWVd2jzfkzG4vaV7axFSPHmsuVl5biNJwYADWfKSYA+DsaRFd4lgoKqzAxgW+NmD6PiQAzvTAy7jbd6nH6l9LIui/bz2fxWuJ2muDCOjMemtfX+R1ITM7gWEHKlQ+qyWdSGTtLAN+oz/x+3FVr/+/Kj/Tf9/ICjLhyYB8krwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALC/rwT8; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc65329979so94547025ad.0;
+        Mon, 05 Aug 2024 07:36:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722868613; x=1723473413; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JHAzP3S88dfaqn+qscjv4QEzSFpizfKFOZ1oCnJxWko=;
+        b=ALC/rwT8IgrhHVLHc6Fa0dx2XBXqIJvufQHEc2FudUCUpuB5ReMOJA+/3YRTocA+Y9
+         NVhE6GA1U53hhqUxqS7tPsFArfDB+vSECPSkkipEduDgPQeGfznAZ9OwUIZT+pd/XqEc
+         Uq5+kN4d5HdDvUjCEwPKQbMYrTS1Yvxmk1YKge1O8dxefvfgdRtMInxk/IcxMaiVfgTj
+         J6UU76XhZ/Ko/rorWqISyzgTl7mieznlZ7wOjtN5v7p7x88v/pPV1NwwojHu+0xz31GN
+         Ge4WSwYOhSk9TISU1ss8hnWas3g167aiPkGuWZV0pq73cWCefFqQXLIpQeN8Pv80M66C
+         gz0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722868613; x=1723473413;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JHAzP3S88dfaqn+qscjv4QEzSFpizfKFOZ1oCnJxWko=;
+        b=bpskXV8D5DcIFzIjXZP94TQHz44lwcfJkaQTob4f3/cibwQ83QlgesUYB5yyXmVjZU
+         bJ9UM575vLhHp4JTm5v9OI841K2TT7vDgyokRWAKr02NZrQ2p3qZqHpbMX63mouREGAh
+         1qkYYo6PX3c+i2CLyr2hcPF9WX8UHYTbQetnozZe6w8EYAduoRybc2KNpCa6GKoOD1Xl
+         Ioz5dChdUnOVJ5Z+j8IqNxzurljbfZYtcaBL1ON4VzZn+j3s5bwKMVAJ/V/BSJZ/C3TH
+         IfqUQka4+WUp7KkF30s0Tf02oPFqapSarbAqVm+SnHCsIMA9Pqh91OqbfJV5GzfM+RSQ
+         +xKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtlUL69izROV7YR36acSQ/jz/LybKdGotLHihl3c7eJuQKPoqHKf6fi5jjMEBMA9sIR5EbcTH+zFnz2cZfWJkbILfgwGTUv0mkLor5VozLyNYIEPII0WmMBjLvvQrpOEe6HLKC
+X-Gm-Message-State: AOJu0YwFI1sYVsA/XfoEGtTIS6TNF9l3L5A+L0lRiVRGLxVfvv/kuQy1
+	f+tns170HdYCTssSeYvd5G7g9kb37nZaafNnxjuMIS92ZIkkAW89gTNg7HaubFbR/kownZQICaj
+	a0S7cwwBI91XzwLZ3ewj/16zIpCQ=
+X-Google-Smtp-Source: AGHT+IG5uYH964HVm7D3GRTxDtKerP1rDMTVkDhDfFhFHkLVHjFdE7m3jLdLoL4arwmIPldmNUcJXv2cmahjhdEebto=
+X-Received: by 2002:a17:902:da82:b0:1fd:791d:1437 with SMTP id
+ d9443c01a7336-1ff5722da46mr166655175ad.6.1722868613038; Mon, 05 Aug 2024
+ 07:36:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731105557.GY33588@noisy.programming.kicks-ass.net>
+References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
+ <e5199bf0-0861-4b79-8f32-d14a784b116f@amd.com> <CADnq5_PuzU12x=M09HaGkG7Yqg8Lk1M1nWDAut7iP09TT33D6g@mail.gmail.com>
+ <fb530f45-df88-402a-9dc0-99298b88754c@amd.com> <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
+ <1914cfcb-9700-4274-8120-9746e241cb54@amd.com> <cb85a5c1-526b-4024-8e8f-23c2fe0d8381@amd.com>
+ <158d9e56-d8af-4d0f-980c-4355639f6ff8@fintech.ru> <a80ec052-72a3-4630-8381-bc24ad3a6ab6@amd.com>
+ <66f8503f-4c36-4ac7-b66c-f9526409a0eb@fintech.ru>
+In-Reply-To: <66f8503f-4c36-4ac7-b66c-f9526409a0eb@fintech.ru>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 5 Aug 2024 10:36:41 -0400
+Message-ID: <CADnq5_NaMr+vpqwqhsMoSeGrto2Lw5v0KXWEp2HRK=++orScMg@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
+ track offsets
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Jerome Glisse <jglisse@redhat.com>, 
+	Dave Airlie <airlied@redhat.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 12:55:57PM +0200, Peter Zijlstra wrote:
-> On Tue, Jul 30, 2024 at 10:33:41PM -0700, Darrick J. Wong wrote:
-> 
-> > Sooooo... it turns out that somehow your patch got mismerged on the
-> > first go-round, and that worked.  The second time, there was no
-> > mismerge, which mean that the wrong atomic_cmpxchg() callsite was
-> > tested.
-> > 
-> > Looking back at the mismerge, it actually changed
-> > __static_key_slow_dec_cpuslocked, which had in 6.10:
-> > 
-> > 	if (atomic_dec_and_test(&key->enabled))
-> > 		jump_label_update(key);
-> > 
-> > Decrement, then return true if the value was set to zero.  With the 6.11
-> > code, it looks like we want to exchange a 1 with a 0, and act only if
-> > the previous value had been 1.
-> > 
-> > So perhaps we really want this change?  I'll send it out to the fleet
-> > and we'll see what it reports tomorrow morning.
-> 
-> Bah yes, I missed we had it twice. Definitely both sites want this.
-> 
-> I'll tentatively merge the below patch in tip/locking/urgent. I can
-> rebase if there is need.
+On Mon, Aug 5, 2024 at 3:34=E2=80=AFAM Nikita Zhandarovich
+<n.zhandarovich@fintech.ru> wrote:
+>
+>
+>
+> On 7/30/24 23:56, Christian K=C3=B6nig wrote:
+> > Am 30.07.24 um 19:36 schrieb Nikita Zhandarovich:
+> >> On 7/29/24 11:12, Christian K=C3=B6nig wrote:
+> >>> Am 29.07.24 um 20:04 schrieb Christian K=C3=B6nig:
+> >>>> Am 29.07.24 um 19:26 schrieb Nikita Zhandarovich:
+> >>>>> Hi,
+> >>>>>
+> >>>>> On 7/29/24 02:23, Christian K=C3=B6nig wrote:
+> >>>>>> Am 26.07.24 um 14:52 schrieb Alex Deucher:
+> >>>>>>> On Fri, Jul 26, 2024 at 3:05=E2=80=AFAM Christian K=C3=B6nig
+> >>>>>>> <christian.koenig@amd.com> wrote:
+> >>>>>>>> Am 25.07.24 um 20:09 schrieb Nikita Zhandarovich:
+> >>>>>>>>> Several cs track offsets (such as 'track->db_s_read_offset')
+> >>>>>>>>> either are initialized with or plainly take big enough values
+> >>>>>>>>> that,
+> >>>>>>>>> once shifted 8 bits left, may be hit with integer overflow if t=
+he
+> >>>>>>>>> resulting values end up going over u32 limit.
+> >>>>>>>>>
+> >>>>>>>>> Some debug prints take this into account (see according
+> >>>>>>>>> dev_warn() in
+> >>>>>>>>> evergreen_cs_track_validate_stencil()), even if the actual
+> >>>>>>>>> calculated value assigned to local 'offset' variable is missing
+> >>>>>>>>> similar proper expansion.
+> >>>>>>>>>
+> >>>>>>>>> Mitigate the problem by casting the type of right operands to t=
+he
+> >>>>>>>>> wider type of corresponding left ones in all such cases.
+> >>>>>>>>>
+> >>>>>>>>> Found by Linux Verification Center (linuxtesting.org) with stat=
+ic
+> >>>>>>>>> analysis tool SVACE.
+> >>>>>>>>>
+> >>>>>>>>> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni
+> >>>>>>>>> tiling informations v11")
+> >>>>>>>>> Cc: stable@vger.kernel.org
+> >>>>>>>> Well first of all the long cast doesn't makes the value 64bit, i=
+t
+> >>>>>>>> depends on the architecture.
+> >>>>>>>>
+> >>>>>>>> Then IIRC the underlying hw can only handle a 32bit address
+> >>>>>>>> space so
+> >>>>>>>> having the offset as long is incorrect to begin with.
+> >>>>>>> Evergreen chips support a 36 bit internal address space and NI an=
+d
+> >>>>>>> newer support a 40 bit one, so this is applicable.
+> >>>>>> In that case I strongly suggest that we replace the unsigned long
+> >>>>>> with
+> >>>>>> u64 or otherwise we get different behavior on 32 and 64bit machine=
+s.
+> >>>>>>
+> >>>>>> Regards,
+> >>>>>> Christian.
+> >>>>>>
+> >>>>> To be clear, I'll prepare v2 patch that changes 'offset' to u64 as
+> >>>>> well
+> >>>>> as the cast of 'track->db_z_read_offset' (and the likes) to u64 too=
+.
+> >>>>>
+> >>>>> On the other note, should I also include casting to wider type of t=
+he
+> >>>>> expression surf.layer_size * mslice (example down below) in
+> >>>>> evergreen_cs_track_validate_cb() and other similar functions? I can=
+'t
+> >>>>> properly gauge if the result will definitively fit into u32, maybe =
+it
+> >>>>> makes sense to expand it as well?
+> >>>> The integer overflows caused by shifts are irrelevant and doesn't ne=
+ed
+> >>>> any fixing in the first place.
+> >>> Wait a second.
+> >>>
+> >>> Thinking more about it the integer overflows are actually necessary
+> >>> because that is exactly what happens in the hardware as well.
+> >>>
+> >>> If you don't overflow those shifts you actually create a security
+> >>> problem because the HW the might access at a different offset then yo=
+u
+> >>> calculated here.
+> >>>
+> >>> We need to use something like a mask or use lower_32_bits() here.
+> >> Christian,
+> >>
+> >> My apologies, I may be getting a bit confused here.
+> >>
+> >> If integer overflows caused by shifts are predictable and constitute
+> >> normal behavior in this case, and there is no need to "fix" them, does
+> >> it still make sense to use any mitigations at all, i.e. masks or macro=
+s?
+> >
+> > Well you stumbled over that somehow, so some automated checker things
+> > that this is a bad idea.
+> >
+> >> Leaving these shifts to u32 variables as they are now will achieve the
+> >> same result as, for example, doing something along the lines of:
+> >>
+> >> offset =3D lower_32_bits((u64)track->cb_color_bo_offset[id] << 8);
+> >>
+> >> which seems clunky and unnecessary, even if it suppresses some static
+> >> analyzer triggers (and that seems overboard).
+> >> Or am I missing something obvious here?
+> >
+> > No, it's just about suppressing the static checker warnings.
+> >
+> > I'm also not 100% sure how that old hw works. Alex mentioned that it is
+> > using 36bits internally.
+> >
+> > So it could be that we need to switch to using u64 here. I need to
+> > double check that with Alex.
+> >
+> > But using unsigned long is certainly incorrect cause we then get
+> > different behavior based on the CPU architecture.
+> >
+> > Thanks for pointing this out,
+> > Christian.> >
+>
+> Hi,
+>
+> Christian, did you get a chance to go over hw specifics with Alex?
+> I'd really like to get on with v2 patch but I can't really start
+> properly if I don't know what (and how) exactly to fix.
+>
+> I am also hesitant to split the fix into parts and I'd rather do the
+> whole int overflow mitigation in one set.
 
-Hi Peter,
+The HW has a 36 or 40 bit internal address space depending on the
+generation, so we should be using 64 bit data types.  The addresses
+stored in the registers are 256 byte aligned so they can fit the
+address into a 32 bit register.
 
-This morning, I noticed the splat below with -rc2.
-
-WARNING: CPU: 0 PID: 8578 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-
-Line 295 is the else branch of this code:
-
-	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
-		jump_label_update(key);
-	else
-		WARN_ON_ONCE(!static_key_slow_try_dec(key));
-
-Apparently static_key_slow_try_dec returned false?  Looking at that
-function, I suppose the atomic_read of key->enabled returned 0, since it
-didn't trigger the "WARN_ON_ONCE(v < 0)" code.  Does that mean the value
-must have dropped from positive N to 0 without anyone ever taking the
-jump_label_mutex?
-
-Unfortunately I'm a little too covfid-brained to figure this out today.
-:(
-
---D
-
-[  104.985250] run fstests xfs/1877 at 2024-08-04 15:46:00
-[  107.669818] XFS (sda4): EXPERIMENTAL exchange-range feature enabled. Use at your own risk!
-[  107.672983] XFS (sda4): EXPERIMENTAL parent pointer feature enabled. Use at your own risk!
-[  107.676466] XFS (sda4): Mounting V5 Filesystem e1e9e96c-0d94-4a7e-8405-86e4d16d331d
-[  107.732210] XFS (sda4): Ending clean mount
-[  107.744657] XFS (sda4): EXPERIMENTAL online scrub feature in use. Use at your own risk!
-[  120.562636] Direct I/O collision with buffered writes! File: d2d4/d50c/d4a2/fe7 Comm: fsstress
-[  132.078284] Direct I/O collision with buffered writes! File: d820/d6b9/d6f5/fbcc Comm: fsstress
-[  134.261151] Direct I/O collision with buffered writes! File: d13e/d261/d896/fc9e Comm: fsstress
-[  172.025695] Direct I/O collision with buffered writes! File: rt/p2/d1/f194c Comm: fsstress
-[  238.690588] Direct I/O collision with buffered writes! File: dca1/dd3f/d2346/f26e3 Comm: fsstress
-[  374.677179] Direct I/O collision with buffered writes! File: de70/dd75/de74/f2f38 Comm: fsstress
-[  399.084085] Direct I/O collision with buffered writes! File: dd50/d1584/d1f9/f1e65 Comm: fsstress
-[  547.895266] ------------[ cut here ]------------
-[  547.905274] WARNING: CPU: 0 PID: 8578 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-[  547.914707] Modules linked in: xfs rpcsec_gss_krb5 auth_rpcgss nft_chain_nat xt_REDIRECT nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set nft_compat ip_set_hash_mac ip_set nf_tables libcrc32c nfnetlink bfq sha512_ssse3 sha512_generic pvpanic_mmio sha256_ssse3 pvpanic sch_fq_codel configfs fuse ip_tables x_tables overlay nfsv4 af_packet
-[  547.934623] CPU: 0 UID: 0 PID: 8578 Comm: xfs_scrub Not tainted 6.11.0-rc2-djwx #rc2 d9817e54d8a35981d261570492175bf5e1b3bc11
-[  547.941392] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
-[  547.948411] RIP: 0010:__static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-[  547.958769] Code: 74 16 e8 a3 f7 ff ff 84 c0 74 1f 5b 48 c7 c7 60 96 13 82 e9 82 15 6f 00 e8 dd fb ff ff 5b 48 c7 c7 60 96 13 82 e9 70 15 6f 00 <0f> 0b eb dd 66 66 2e 0f 1f 84 00 00 00 00 00 90 0f 1f 44 00 00 55
-[  547.990804] RSP: 0018:ffffc9000a033c58 EFLAGS: 00010246
-[  547.996006] RAX: 0000000000000000 RBX: ffffffffa0755a40 RCX: 0000000000000000
-[  548.005476] RDX: 0000000000000000 RSI: 000000000000011b RDI: ffffffffa0755a40
-[  548.020780] RBP: 0000000000000001 R08: ffffe8ffffc1d808 R09: ffffe8ffffc1d820
-[  548.022169] R10: ffffc9000a033b28 R11: 0000000092a11c8d R12: 00000000ffffffa1
-[  548.023686] R13: ffff888101deca00 R14: ffff888102b5d000 R15: 0000007f8ffa83f7
-[  548.031184] FS:  00007f41b1000680(0000) GS:ffff88842d000000(0000) knlGS:0000000000000000
-[  548.039927] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  548.044941] CR2: 00007f41842b43a8 CR3: 00000002d0745000 CR4: 00000000003506f0
-[  548.049473] Call Trace:
-[  548.050026]  <TASK>
-[  548.050543]  ? __warn+0x7c/0x120
-[  548.051235]  ? __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-[  548.053966]  ? report_bug+0x1a7/0x210
-[  548.059439]  ? handle_bug+0x3c/0x60
-[  548.063914]  ? exc_invalid_op+0x13/0x60
-[  548.070776]  ? asm_exc_invalid_op+0x16/0x20
-[  548.074709]  ? __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-[  548.078116]  ? __static_key_slow_dec_cpuslocked.part.0+0x2d/0x60
-[  548.081773]  static_key_slow_dec+0x3e/0x60
-[  548.084107]  xchk_teardown+0x1a2/0x1d0 [xfs 6c824b8f28c8b3bc861384b1edb6577088bd4dda]
-[  548.089682]  xfs_scrub_metadata+0x448/0x5c0 [xfs 6c824b8f28c8b3bc861384b1edb6577088bd4dda]
-[  548.098202]  xfs_ioc_scrubv_metadata+0x389/0x550 [xfs 6c824b8f28c8b3bc861384b1edb6577088bd4dda]
-[  548.101209]  xfs_file_ioctl+0x8f0/0xe80 [xfs 6c824b8f28c8b3bc861384b1edb6577088bd4dda]
-[  548.110146]  ? preempt_count_add+0x4a/0xa0
-[  548.116282]  ? up_write+0x64/0x180
-[  548.117009]  ? shmem_file_write_iter+0x5a/0x90
-[  548.117987]  ? preempt_count_add+0x4a/0xa0
-[  548.122761]  ? vfs_write+0x3a2/0x4a0
-[  548.125244]  __x64_sys_ioctl+0x8a/0xb0
-[  548.125987]  do_syscall_64+0x47/0x100
-[  548.126895]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[  548.128056] RIP: 0033:0x7f41b491ec5b
-[  548.128874] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-[  548.133010] RSP: 002b:00007f41b0fff4c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[  548.134754] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f41b491ec5b
-[  548.136731] RDX: 00007f41b0fff610 RSI: 00000000c0285840 RDI: 0000000000000004
-[  548.138545] RBP: 00007f41b0fff610 R08: 0000000000000000 R09: 0000000000000064
-[  548.140068] R10: 00007f41b0fff235 R11: 0000000000000246 R12: 00007ffe4738a3b0
-[  548.141605] R13: 000000000000001d R14: 00007ffe4738a558 R15: 00007f418824e4e0
-[  548.143161]  </TASK>
-[  548.143659] ---[ end trace 0000000000000000 ]---
-[  564.628369] Direct I/O collision with buffered writes! File: d23/d2b9/db54/f14fc Comm: fsstress
-[  677.002836] u16:0 (11) used greatest stack depth: 11408 bytes left
-[  706.851715] Direct I/O collision with buffered writes! File: d2ee3/da3b/d3258/f255e Comm: fsstress
-[  853.054101] Direct I/O collision with buffered writes! File: d1b4b/d2ac/d8b5/f13f8 Comm: fsstress
-[  895.426556] Direct I/O collision with buffered writes! File: d747b/d577c/d5893/f6014 Comm: fsstress
-[ 1037.454921] u16:5 (67) used greatest stack depth: 11016 bytes left
-[ 1064.482959] Direct I/O collision with buffered writes! File: d60b4/d6e91/d6852/f6a87 Comm: fsstress
-[ 1159.694683] XFS (sda3): Unmounting Filesystem eef3561a-2a86-49c8-9aa1-5024529cd3e7
-[ 1170.139417] XFS (sda4): Unmounting Filesystem e1e9e96c-0d94-4a7e-8405-86e4d16d331d
-[ 1179.548273] XFS (sda4): EXPERIMENTAL exchange-range feature enabled. Use at your own risk!
-[ 1179.553727] XFS (sda4): EXPERIMENTAL parent pointer feature enabled. Use at your own risk!
-[ 1179.558023] XFS (sda4): Mounting V5 Filesystem e1e9e96c-0d94-4a7e-8405-86e4d16d331d
-[ 1179.590448] XFS (sda4): Ending clean mount
-[ 1179.600826] XFS (sda4): Unmounting Filesystem e1e9e96c-0d94-4a7e-8405-86e4d16d331d
+Alex
 
 
-[  104.985250] run fstests xfs/1877 at 2024-08-04 15:46:00
-[  107.669818] XFS (sda4): EXPERIMENTAL exchange-range feature enabled. Use at your own risk!
-[  107.672983] XFS (sda4): EXPERIMENTAL parent pointer feature enabled. Use at your own risk!
-[  107.676466] XFS (sda4): Mounting V5 Filesystem e1e9e96c-0d94-4a7e-8405-86e4d16d331d
-[  107.732210] XFS (sda4): Ending clean mount
-[  107.744657] XFS (sda4): EXPERIMENTAL online scrub feature in use. Use at your own risk!
-[  120.562636] Direct I/O collision with buffered writes! File: d2d4/d50c/d4a2/fe7 Comm: fsstress
-[  132.078284] Direct I/O collision with buffered writes! File: d820/d6b9/d6f5/fbcc Comm: fsstress
-[  134.261151] Direct I/O collision with buffered writes! File: d13e/d261/d896/fc9e Comm: fsstress
-[  172.025695] Direct I/O collision with buffered writes! File: rt/p2/d1/f194c Comm: fsstress
-[  238.690588] Direct I/O collision with buffered writes! File: dca1/dd3f/d2346/f26e3 Comm: fsstress
-[  374.677179] Direct I/O collision with buffered writes! File: de70/dd75/de74/f2f38 Comm: fsstress
-[  399.084085] Direct I/O collision with buffered writes! File: dd50/d1584/d1f9/f1e65 Comm: fsstress
-[  547.895266] ------------[ cut here ]------------
-[  547.905274] WARNING: CPU: 0 PID: 8578 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-[  547.914707] Modules linked in: xfs rpcsec_gss_krb5 auth_rpcgss nft_chain_nat xt_REDIRECT nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set nft_compat ip_set_hash_mac ip_set nf_tables libcrc32c nfnetlink bfq sha512_ssse3 sha512_generic pvpanic_mmio sha256_ssse3 pvpanic sch_fq_codel configfs fuse ip_tables x_tables overlay nfsv4 af_packet
-[  547.934623] CPU: 0 UID: 0 PID: 8578 Comm: xfs_scrub Not tainted 6.11.0-rc2-djwx #rc2 d9817e54d8a35981d261570492175bf5e1b3bc11
-[  547.941392] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
-[  547.948411] RIP: 0010:__static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-[  547.958769] Code: 74 16 e8 a3 f7 ff ff 84 c0 74 1f 5b 48 c7 c7 60 96 13 82 e9 82 15 6f 00 e8 dd fb ff ff 5b 48 c7 c7 60 96 13 82 e9 70 15 6f 00 <0f> 0b eb dd 66 66 2e 0f 1f 84 00 00 00 00 00 90 0f 1f 44 00 00 55
-[  547.990804] RSP: 0018:ffffc9000a033c58 EFLAGS: 00010246
-[  547.996006] RAX: 0000000000000000 RBX: ffffffffa0755a40 RCX: 0000000000000000
-[  548.005476] RDX: 0000000000000000 RSI: 000000000000011b RDI: ffffffffa0755a40
-[  548.020780] RBP: 0000000000000001 R08: ffffe8ffffc1d808 R09: ffffe8ffffc1d820
-[  548.022169] R10: ffffc9000a033b28 R11: 0000000092a11c8d R12: 00000000ffffffa1
-[  548.023686] R13: ffff888101deca00 R14: ffff888102b5d000 R15: 0000007f8ffa83f7
-[  548.031184] FS:  00007f41b1000680(0000) GS:ffff88842d000000(0000) knlGS:0000000000000000
-[  548.039927] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  548.044941] CR2: 00007f41842b43a8 CR3: 00000002d0745000 CR4: 00000000003506f0
-[  548.049473] Call Trace:
-[  548.050026]  <TASK>
-[  548.050543]  ? __warn+0x7c/0x120
-[  548.051235]  ? __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-[  548.053966]  ? report_bug+0x1a7/0x210
-[  548.059439]  ? handle_bug+0x3c/0x60
-[  548.063914]  ? exc_invalid_op+0x13/0x60
-[  548.070776]  ? asm_exc_invalid_op+0x16/0x20
-[  548.074709]  ? __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-[  548.078116]  ? __static_key_slow_dec_cpuslocked.part.0+0x2d/0x60
-[  548.081773]  static_key_slow_dec+0x3e/0x60
-[  548.084107]  xchk_teardown+0x1a2/0x1d0 [xfs 6c824b8f28c8b3bc861384b1edb6577088bd4dda]
-[  548.089682]  xfs_scrub_metadata+0x448/0x5c0 [xfs 6c824b8f28c8b3bc861384b1edb6577088bd4dda]
-[  548.098202]  xfs_ioc_scrubv_metadata+0x389/0x550 [xfs 6c824b8f28c8b3bc861384b1edb6577088bd4dda]
-[  548.101209]  xfs_file_ioctl+0x8f0/0xe80 [xfs 6c824b8f28c8b3bc861384b1edb6577088bd4dda]
-[  548.110146]  ? preempt_count_add+0x4a/0xa0
-[  548.116282]  ? up_write+0x64/0x180
-[  548.117009]  ? shmem_file_write_iter+0x5a/0x90
-[  548.117987]  ? preempt_count_add+0x4a/0xa0
-[  548.122761]  ? vfs_write+0x3a2/0x4a0
-[  548.125244]  __x64_sys_ioctl+0x8a/0xb0
-[  548.125987]  do_syscall_64+0x47/0x100
-[  548.126895]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[  548.128056] RIP: 0033:0x7f41b491ec5b
-[  548.128874] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-[  548.133010] RSP: 002b:00007f41b0fff4c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[  548.134754] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007f41b491ec5b
-[  548.136731] RDX: 00007f41b0fff610 RSI: 00000000c0285840 RDI: 0000000000000004
-[  548.138545] RBP: 00007f41b0fff610 R08: 0000000000000000 R09: 0000000000000064
-[  548.140068] R10: 00007f41b0fff235 R11: 0000000000000246 R12: 00007ffe4738a3b0
-[  548.141605] R13: 000000000000001d R14: 00007ffe4738a558 R15: 00007f418824e4e0
-[  548.143161]  </TASK>
-[  548.143659] ---[ end trace 0000000000000000 ]---
-[  564.628369] Direct I/O collision with buffered writes! File: d23/d2b9/db54/f14fc Comm: fsstress
-[  677.002836] u16:0 (11) used greatest stack depth: 11408 bytes left
-[  706.851715] Direct I/O collision with buffered writes! File: d2ee3/da3b/d3258/f255e Comm: fsstress
-[  853.054101] Direct I/O collision with buffered writes! File: d1b4b/d2ac/d8b5/f13f8 Comm: fsstress
-[  895.426556] Direct I/O collision with buffered writes! File: d747b/d577c/d5893/f6014 Comm: fsstress
-[ 1037.454921] u16:5 (67) used greatest stack depth: 11016 bytes left
-[ 1064.482959] Direct I/O collision with buffered writes! File: d60b4/d6e91/d6852/f6a87 Comm: fsstress
-[ 1159.694683] XFS (sda3): Unmounting Filesystem eef3561a-2a86-49c8-9aa1-5024529cd3e7
-[ 1170.139417] XFS (sda4): Unmounting Filesystem e1e9e96c-0d94-4a7e-8405-86e4d16d331d
-[ 1179.548273] XFS (sda4): EXPERIMENTAL exchange-range feature enabled. Use at your own risk!
-[ 1179.553727] XFS (sda4): EXPERIMENTAL parent pointer feature enabled. Use at your own risk!
-[ 1179.558023] XFS (sda4): Mounting V5 Filesystem e1e9e96c-0d94-4a7e-8405-86e4d16d331d
-[ 1179.590448] XFS (sda4): Ending clean mount
-[ 1179.600826] XFS (sda4): Unmounting Filesystem e1e9e96c-0d94-4a7e-8405-86e4d16d331d
-
+>
+> Thanks,
+> Nikita
+>
+> >>> Regards,
+> >>> Christian.
+> >>>
+> >>>> The point is rather that we need to avoid multiplication overflows a=
+nd
+> >>>> the security problems which come with those.
+> >>>>
+> >>>>> 441         }
+> >>>>> 442
+> >>>>> 443         offset +=3D surf.layer_size * mslice;
+> >>>> In other words that here needs to be validated correctly.
+> >>>>
+> >> Agreed, I think either casting right operand to u64 (once 'offset' is
+> >> also changed from unsigned long to u64) or using mul_u32_u32() here an=
+d
+> >> in other places should suffice.
+> >>
+> >>>> Regards,
+> >>>> Christian.
+> >>>>
+> >>>>> 444         if (offset > radeon_bo_size(track->cb_color_bo[id])) {
+> >>>>> 445                 /* old ddx are broken they allocate bo with
+> >>>>> w*h*bpp
+> >>>>>
+> >>>>> Regards,
+> >>>>> Nikita
+> >>>>>>> Alex
+> >>>>>>>
+> >>>>>>>> And finally that is absolutely not material for stable.
+> >>>>>>>>
+> >>>>>>>> Regards,
+> >>>>>>>> Christian.
+> >>>>>>>>
+> >>>>>>>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> >>>>>>>>> ---
+> >>>>>>>>> P.S. While I am not certain that track->cb_color_bo_offset[id]
+> >>>>>>>>> actually ends up taking values high enough to cause an overflow=
+,
+> >>>>>>>>> nonetheless I thought it prudent to cast it to ulong as well.
+> >>>>>>>>>
+> >>>>>>>>>      drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++------=
+---
+> >>>>>>>>>      1 file changed, 9 insertions(+), 9 deletions(-)
+> >>>>>>>>>
+> >>>>>>>>> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c
+> >>>>>>>>> b/drivers/gpu/drm/radeon/evergreen_cs.c
+> >>>>>>>>> index 1fe6e0d883c7..d734d221e2da 100644
+> >>>>>>>>> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
+> >>>>>>>>> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+> >>>>>>>>> @@ -433,7 +433,7 @@ static int
+> >>>>>>>>> evergreen_cs_track_validate_cb(struct
+> >>>>>>>>> radeon_cs_parser *p, unsigned i
+> >>>>>>>>>                  return r;
+> >>>>>>>>>          }
+> >>>>>>>>>
+> >>>>>>>>> -     offset =3D track->cb_color_bo_offset[id] << 8;
+> >>>>>>>>> +     offset =3D (unsigned long)track->cb_color_bo_offset[id] <=
+< 8;
+> >>>>>>>>>          if (offset & (surf.base_align - 1)) {
+> >>>>>>>>>                  dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not
+> >>>>>>>>> aligned with %ld\n",
+> >>>>>>>>>                           __func__, __LINE__, id, offset,
+> >>>>>>>>> surf.base_align);
+> >>>>>>>>> @@ -455,7 +455,7 @@ static int
+> >>>>>>>>> evergreen_cs_track_validate_cb(struct
+> >>>>>>>>> radeon_cs_parser *p, unsigned i
+> >>>>>>>>>                                  min =3D surf.nby - 8;
+> >>>>>>>>>                          }
+> >>>>>>>>>                          bsize =3D
+> >>>>>>>>> radeon_bo_size(track->cb_color_bo[id]);
+> >>>>>>>>> -                     tmp =3D track->cb_color_bo_offset[id] << =
+8;
+> >>>>>>>>> +                     tmp =3D (unsigned
+> >>>>>>>>> long)track->cb_color_bo_offset[id] << 8;
+> >>>>>>>>>                          for (nby =3D surf.nby; nby > min; nby-=
+-) {
+> >>>>>>>>>                                  size =3D nby * surf.nbx *
+> >>>>>>>>> surf.bpe *
+> >>>>>>>>> surf.nsamples;
+> >>>>>>>>>                                  if ((tmp + size * mslice) <=3D
+> >>>>>>>>> bsize) {
+> >>>>>>>>> @@ -476,10 +476,10 @@ static int
+> >>>>>>>>> evergreen_cs_track_validate_cb(struct radeon_cs_parser *p,
+> >>>>>>>>> unsigned i
+> >>>>>>>>>                          }
+> >>>>>>>>>                  }
+> >>>>>>>>>                  dev_warn(p->dev, "%s:%d cb[%d] bo too small
+> >>>>>>>>> (layer
+> >>>>>>>>> size %d, "
+> >>>>>>>>> -                      "offset %d, max layer %d, bo size %ld,
+> >>>>>>>>> slice
+> >>>>>>>>> %d)\n",
+> >>>>>>>>> +                      "offset %ld, max layer %d, bo size %ld,
+> >>>>>>>>> slice
+> >>>>>>>>> %d)\n",
+> >>>>>>>>>                           __func__, __LINE__, id, surf.layer_si=
+ze,
+> >>>>>>>>> -                     track->cb_color_bo_offset[id] << 8, mslic=
+e,
+> >>>>>>>>> - radeon_bo_size(track->cb_color_bo[id]), slice);
+> >>>>>>>>> +                     (unsigned long)track->cb_color_bo_offset[=
+id]
+> >>>>>>>>> << 8,
+> >>>>>>>>> +                     mslice,
+> >>>>>>>>> radeon_bo_size(track->cb_color_bo[id]), slice);
+> >>>>>>>>>                  dev_warn(p->dev, "%s:%d problematic surf: (%d =
+%d)
+> >>>>>>>>> (%d
+> >>>>>>>>> %d %d %d %d %d %d)\n",
+> >>>>>>>>>                           __func__, __LINE__, surf.nbx, surf.nb=
+y,
+> >>>>>>>>>                          surf.mode, surf.bpe, surf.nsamples,
+> >>>>>>>>> @@ -608,7 +608,7 @@ static int
+> >>>>>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+> >>>>>>>>>                  return r;
+> >>>>>>>>>          }
+> >>>>>>>>>
+> >>>>>>>>> -     offset =3D track->db_s_read_offset << 8;
+> >>>>>>>>> +     offset =3D (unsigned long)track->db_s_read_offset << 8;
+> >>>>>>>>>          if (offset & (surf.base_align - 1)) {
+> >>>>>>>>>                  dev_warn(p->dev, "%s:%d stencil read bo base
+> >>>>>>>>> %ld not
+> >>>>>>>>> aligned with %ld\n",
+> >>>>>>>>>                           __func__, __LINE__, offset,
+> >>>>>>>>> surf.base_align);
+> >>>>>>>>> @@ -627,7 +627,7 @@ static int
+> >>>>>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+> >>>>>>>>>                  return -EINVAL;
+> >>>>>>>>>          }
+> >>>>>>>>>
+> >>>>>>>>> -     offset =3D track->db_s_write_offset << 8;
+> >>>>>>>>> +     offset =3D (unsigned long)track->db_s_write_offset << 8;
+> >>>>>>>>>          if (offset & (surf.base_align - 1)) {
+> >>>>>>>>>                  dev_warn(p->dev, "%s:%d stencil write bo base =
+%ld
+> >>>>>>>>> not
+> >>>>>>>>> aligned with %ld\n",
+> >>>>>>>>>                           __func__, __LINE__, offset,
+> >>>>>>>>> surf.base_align);
+> >>>>>>>>> @@ -706,7 +706,7 @@ static int
+> >>>>>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+> >>>>>>>>>                  return r;
+> >>>>>>>>>          }
+> >>>>>>>>>
+> >>>>>>>>> -     offset =3D track->db_z_read_offset << 8;
+> >>>>>>>>> +     offset =3D (unsigned long)track->db_z_read_offset << 8;
+> >>>>>>>>>          if (offset & (surf.base_align - 1)) {
+> >>>>>>>>>                  dev_warn(p->dev, "%s:%d stencil read bo base
+> >>>>>>>>> %ld not
+> >>>>>>>>> aligned with %ld\n",
+> >>>>>>>>>                           __func__, __LINE__, offset,
+> >>>>>>>>> surf.base_align);
+> >>>>>>>>> @@ -722,7 +722,7 @@ static int
+> >>>>>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+> >>>>>>>>>                  return -EINVAL;
+> >>>>>>>>>          }
+> >>>>>>>>>
+> >>>>>>>>> -     offset =3D track->db_z_write_offset << 8;
+> >>>>>>>>> +     offset =3D (unsigned long)track->db_z_write_offset << 8;
+> >>>>>>>>>          if (offset & (surf.base_align - 1)) {
+> >>>>>>>>>                  dev_warn(p->dev, "%s:%d stencil write bo base =
+%ld
+> >>>>>>>>> not
+> >>>>>>>>> aligned with %ld\n",
+> >>>>>>>>>                           __func__, __LINE__, offset,
+> >>>>>>>>> surf.base_align);
+> >
 
