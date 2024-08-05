@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-274544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1767E9479D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:30:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556249479D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A75BB2279E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1006B281A2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE52155733;
-	Mon,  5 Aug 2024 10:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5FD1547D8;
+	Mon,  5 Aug 2024 10:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="c+xSjutt"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwVnUpdr"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01891547DD;
-	Mon,  5 Aug 2024 10:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAF51E505;
+	Mon,  5 Aug 2024 10:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722853800; cv=none; b=NHZF57P6RRhmMMVeApFxwe7uxDBmRyYfVDOpodaLe9pXrrc0+tJS6kEdlzpq0kA4VHzjG3798+TaoBSQcj3XODjmL7dkUOufTJ86wspS/E/Ox9d9wAeKaDWquArg+5y46/BvFcPZBD3MlhP4Qb2+WR3wFEpRoceC/YQZJqOyQcQ=
+	t=1722853729; cv=none; b=griOaZ5GwTYsqEDuNB3TYAvzKXsh76Y25sjxXbEf8DlbfbqPdmqIy5BspGzUkHbqHnC60Uq0/+PNkLBS2DvTRjWfiRuIgIWSrgS1Fd86OO/4X/hXj9C9JlJW3OBtE1qAMCUCil+VG4q68quZBdk6NjAZj6bHdbKuKD/3Hz+d5No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722853800; c=relaxed/simple;
-	bh=9RcYMtMM4r+MQSxgDOMv3UjOKLUb1JBAjfVJavx3WSE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cz9UNdUYfk7prfW4E2XCU9C7aGLURXq4DD3Pw4tQowE1t/Zcd3OSRcrMKMc4aSn3Txju4L/qGTnQVIe8wfkYsKAiBNLxj19bB3JDiExJj4m9hrc81IvUyU/QV52L6MoHwhTNS/ZiEoGGf/0hC+Zg8vuc7mP4MGx3uaxuPjFXhpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=c+xSjutt; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4755WGqT021667;
-	Mon, 5 Aug 2024 05:27:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=d2cHf22ZBP8FBiZHr6wfdXREEjqKc/hSUSPbj/TXBFw=; b=
-	c+xSjuttdqX8ncc91jkijhbgVBzbb9knAtvIarBKShOMSWjlk9CcLux0QEqAWFdP
-	cGAtXiE1SlZ6sVH1dDks1tzW7XTo7PanQ4lirmFEW0pnBF4iqpqSrX3XcCywb6wG
-	DtZXdNz+lhHKuXIe9pewCTfm0hL+7ecsl/V8hz08jD2aJX+/FtNznhgmGNajqXUS
-	1b8q/IWEt/Yd/LC8B95VlV5GpG/YXN0QbhR2VHsG1k6EeC+aDo1CrX334Xay7fa9
-	+Jnr3VcOFatHUMdQXVy9l1G+0e0a7o/qMKooYLihqxY3tIbnvmdlaqeBG3TUrZp3
-	AlZ61JyVr5Xfe3U1KIP5NA==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40shxx1n3t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 05:27:44 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 5 Aug 2024
- 11:27:42 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 5 Aug 2024 11:27:41 +0100
-Received: from lonswws01.ad.cirrus.com (lonswws01.ad.cirrus.com [198.90.188.26])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id C8A62820241;
-	Mon,  5 Aug 2024 10:27:41 +0000 (UTC)
-From: Simon Trimmer <simont@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        "Simon
- Trimmer" <simont@opensource.cirrus.com>
-Subject: [PATCH 2/2] ASoC: cs35l56: Stop creating ALSA controls for firmware coefficients
-Date: Mon, 5 Aug 2024 10:27:21 +0000
-Message-ID: <20240805102721.30102-3-simont@opensource.cirrus.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240805102721.30102-1-simont@opensource.cirrus.com>
-References: <20240805102721.30102-1-simont@opensource.cirrus.com>
+	s=arc-20240116; t=1722853729; c=relaxed/simple;
+	bh=we3oxTn6hETz8INVEye2nJuMXpHgH2R91W0fDhDvYSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rPAtAWx9B0MkM5BdWp0dplqruQszP7QH7OUyvlpLpOgik/aFWv0UH9S0xhVVeeVz8gmZ97cys14rsEPONkD4vleyklobr5a680RAV5tUX9ShgGR6ftTZ0hX+Y99GuV1xsounDola82mrEqArJY4UuTmTt46dTHEqTa4nk1uk0UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PwVnUpdr; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so115299561fa.0;
+        Mon, 05 Aug 2024 03:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722853726; x=1723458526; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T6AaE1bRufEKsPZbCdARUjQJfzT+p05vZdiBhOYyzZg=;
+        b=PwVnUpdrjuGM6v1CQZH9ZtT4BSoRKyDurgJi0hMgGBWFTSsgfV/Hco/0vG7p9baSrl
+         y+ZAT+W4znwgq2LO7W4D3WyxwSEQVNELMWTEQl1wKMagfQtTQM6Z1ufnXxIdDfpH4ayR
+         guQ1ppV/sy/H4EEyGI6fLSxwjFtdSkeiWi6YhOIzSxLW6dZpanEJrW9uJuXXi/LN9gB5
+         NyRlWe3J/CidBAljIx/dpwUdLNUutgYCWd4iWp7Ag6UTOGt88daAW9o3nfgNnKvRGOwL
+         Bg2R1RR8rCbfovkzjUZ/nhSilcb6coPpjz3lzRU7svgsJBTpeKqxAKDEs6QQRxcJjKgm
+         i0pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722853726; x=1723458526;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T6AaE1bRufEKsPZbCdARUjQJfzT+p05vZdiBhOYyzZg=;
+        b=BlzPiKGsiMKEGOBanmtRpkTrKe+QDIbuX1i2ft9JelmGp/UiqBSWPjIAkxwZi3hIAg
+         0SOxqCnn3z+O5T5z69xTWF1Tg8L9lqUfUCGT3L+BvsJc2Sgq88BcOn52haaLxY+Ceb1+
+         qmvHUToSylvYPx4xtd/Dq/y2FWg6hw5EZ4QFOlBzu+XAqbn8RkV+wzIKTh76RUvrCIyM
+         jvvZo7OOB9tLObW+SYu1TJ+3FZD/AxRmMKPYhXJgy08uN0BJsYeDUhhjkccXqT1Kx/G4
+         mi2SSnXm7PeFb5n3iZRkpef3vKyhwfaOH01LNj1xvu4Ty9KFs5gcwZ9gyko6HQB5UWI1
+         /Diw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWRUnqnUJLFParnXhHaKk1k1J6imahYtj6CRM+n32oMcG5i+suACMUF+wnkhBslso9Q4AM1OzS752/FQxVphS5tVoqBksyzK3by3HBfZtvIXG/T6y5k+DoXeInLttthQflvS7CHA==
+X-Gm-Message-State: AOJu0YypRJFXdbgXa/vy1itbZfhBS4xyRQAFfOQDieWtQWdJoF3VIEZM
+	5beTkd7y3o6wAHWG5yWLIo4ycf090pj1dX5zzFSZagIXm5lT3HJhNSveOw==
+X-Google-Smtp-Source: AGHT+IEa6os5riobehR69li/EKLxp5m3BW1qc3/CoEYByRbHrHmIH06hpdZc7+HPrJf3bUqkGDudeg==
+X-Received: by 2002:a05:6512:3051:b0:52c:8206:b986 with SMTP id 2adb3069b0e04-530bb4d5720mr7508716e87.56.1722853724751;
+        Mon, 05 Aug 2024 03:28:44 -0700 (PDT)
+Received: from [172.16.183.82] ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba10fe4sm1094022e87.114.2024.08.05.03.28.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 03:28:44 -0700 (PDT)
+Message-ID: <5622f011-222a-459e-9086-138adf0796aa@gmail.com>
+Date: Mon, 5 Aug 2024 13:28:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: sBVzMXPYgLNwkSpv0ZkT_I88tf6S0Cns
-X-Proofpoint-ORIG-GUID: sBVzMXPYgLNwkSpv0ZkT_I88tf6S0Cns
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/2] iio: light: ROHM BH1745 colour sensor
+To: Mudit Sharma <muditsharma.info@gmail.com>, jic23@kernel.org,
+ lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, Ivan Orlov <ivan.orlov0322@gmail.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+References: <20240718220208.331942-1-muditsharma.info@gmail.com>
+ <20240718220208.331942-2-muditsharma.info@gmail.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240718220208.331942-2-muditsharma.info@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A number of laptops have gone to market with old firmware versions that
-export controls that have since been hidden, but we can't just install a
-newer firmware because the firmware for each product is customized and
-qualified by the OEM. The issue is that alsactl save and restore has no
-idea what controls are good to persist which can lead to
-misconfiguration.
+On 7/19/24 01:02, Mudit Sharma wrote:
+> Add support for BH1745, which is an I2C colour sensor with red, green,
+> blue and clear channels. It has a programmable active low interrupt
+> pin. Interrupt occurs when the signal from the selected interrupt
+> source channel crosses set interrupt threshold high or low level.
+> 
+> Interrupt source for the device can be configured by enabling the
+> corresponding event. Interrupt latch is always enabled when setting
+> up interrupt.
+> 
+> Add myself as the maintainer for this driver in MAINTAINERS.
+> 
+> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+> Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-There is no reason that the UCM or user should need to interact with any
-of the ALSA controls for the firmware coefficients so they can be
-removed entirely.
+Hi Mudit & All :)
 
-Fixes: e49611252900 ("ASoC: cs35l56: Add driver for Cirrus Logic CS35L56")
-Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
----
- sound/soc/codecs/cs35l56.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+I know I am late. The series has already been applied (thanks 
+Jonathan!). I've mostly been offline for the last 1.5 months or so - 
+"all work and no play makes Jack a dull boy", you know ;)
 
-diff --git a/sound/soc/codecs/cs35l56.c b/sound/soc/codecs/cs35l56.c
-index 84c34f5b1a51..757ade6373ed 100644
---- a/sound/soc/codecs/cs35l56.c
-+++ b/sound/soc/codecs/cs35l56.c
-@@ -1095,6 +1095,11 @@ int cs35l56_system_resume(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(cs35l56_system_resume);
- 
-+static int cs35l56_control_add_nop(struct wm_adsp *dsp, struct cs_dsp_coeff_ctl *cs_ctl)
-+{
-+	return 0;
-+}
-+
- static int cs35l56_dsp_init(struct cs35l56_private *cs35l56)
- {
- 	struct wm_adsp *dsp;
-@@ -1117,6 +1122,12 @@ static int cs35l56_dsp_init(struct cs35l56_private *cs35l56)
- 	dsp->fw = 12;
- 	dsp->wmfw_optional = true;
- 
-+	/*
-+	 * None of the firmware controls need to be exported so add a no-op
-+	 * callback that suppresses creating an ALSA control.
-+	 */
-+	dsp->control_add = &cs35l56_control_add_nop;
-+
- 	dev_dbg(cs35l56->base.dev, "DSP system name: '%s'\n", dsp->system_name);
- 
- 	ret = wm_halo_init(dsp);
+Anyways, as Jonathan asked me to take a look at the GTS stuff (at v7), I 
+tried to quickly glance at this. It looks good to me!
+
+Well, the real test will be the users of the sensor driver - so please 
+let us know if GTS stuff brings problems to users. I am mostly 
+interested in knowing if gain changes caused by integration time changes 
+are handled gracefully by the users. :) Well, seeing there is no 
+per-channel gain or integration time setting, you should be safe from 
+the worst side-effects :)
+
+Nice driver!
+
+Yours,
+	-- Matti
+
 -- 
-2.43.0
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
 
 
