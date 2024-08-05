@@ -1,374 +1,294 @@
-Return-Path: <linux-kernel+bounces-274627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD85947AE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B886D947AEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1C9EB22046
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:13:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C41AFB21A65
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E9E156862;
-	Mon,  5 Aug 2024 12:13:28 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E53156862;
+	Mon,  5 Aug 2024 12:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EldSn5YW";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Ha6ks3Jq"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25551553BD
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 12:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722860008; cv=none; b=ql0RGaLwMNEfmV8cYtT6EG2Gz1QXXsRcdu0pw+J0ebsbaKSHQbSkbgWFIJjhh+QJthdT30S3CSu6phybjBRNMet/hOzWQP7DNMqBygHjDLWW4BOjPDkgIBd7w2XKuHsq6swT5v0oy0L9Acn6PbbY30Y/RmHG1SGi3PaDQtjOWb8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722860008; c=relaxed/simple;
-	bh=xDfcxY/ms6YBxFl6JZriXdo+9JcnpiGfry0Ktt/nnMI=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Y42cIHfr+r67FkWpYbkc4Jn8cH9rzbNiM7IstRH4DJuijm+5V1fqcNf7TFrGg7gfHW2ttSAFK9WYqu9F1vxdw7P6iEhJxoki5WRiaOTI4HAsC+k9T6DV+3iJ2TCPR/JAQopq7eBn47QaC0MifOxywyKQhGJ9AkdQ5d9tC7mvsbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WcwJx0TdCzfZmw;
-	Mon,  5 Aug 2024 20:11:29 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id F37C8140109;
-	Mon,  5 Aug 2024 20:13:21 +0800 (CST)
-Received: from [10.174.176.125] (10.174.176.125) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 20:13:20 +0800
-Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-To: Pranjal Shrivastava <praan@google.com>, Baolu Lu
-	<baolu.lu@linux.intel.com>
-CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Joerg
- Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen
-	<nicolinc@nvidia.com>, Michael Shavit <mshavit@google.com>, Mostafa Saleh
-	<smostafa@google.com>, "moderated list:ARM SMMU DRIVERS"
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
-	<yuzenghui@huawei.com>, <tangnianyao@huawei.com>
-References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
- <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
- <20240724102417.GA27376@willie-the-truck>
- <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
- <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
-From: Kunkun Jiang <jiangkunkun@huawei.com>
-Message-ID: <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
-Date: Mon, 5 Aug 2024 20:13:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294F614D290
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 12:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722860069; cv=fail; b=lIzVyhcMsAqeiuXiJZUSI9KOGTVvVdCwzDPAY1U82s+2sES/JWRcc6ZFRmHTayw5CWBRB2d2K/In6Md1vZXqmXsPad4kkxnRvYFjjviqkE61rP7I0AvlpY21qIURpnWc6nOOjfE18rV5Zv81cxm7SRRS2JQquGFxGLdQgD0dtZk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722860069; c=relaxed/simple;
+	bh=waC2NLuZD8iDs+TUHOjhenhKCknQsaJjdh9gr5GuUgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kKI60dWv98HlMXiAwg4+Dqvcizascox3vUsYd4VtKXfLxLlvBN/ZJXsD4VFFBOYdCF+LkaRgB5G/z6pPcYEeLqKrjn938uE5aau1/QF1XU5CedeQVyLBfjUMmrMsU9h3k7dMhQreanCZM30cJ+sKIiwjI1ZOMsI8QW+UKtQDMaQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EldSn5YW; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Ha6ks3Jq; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4758fb3j027500;
+	Mon, 5 Aug 2024 12:14:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:content-transfer-encoding
+	:content-type:mime-version; s=corp-2023-11-20; bh=cmA0sSzWLBBHHP
+	YNAAlVaWgReAkK72HcEFMcZn7yt7I=; b=EldSn5YW2qryNcHfiQHRt1qmQafawJ
+	rn7bdY+Li4KtUmup8nLgzQ9e37k5MB6yOrTQT3eakGy4ehVbz2ht+BRP3pcSfOD4
+	bWH9t/f0SaVSvyx29Ydf0j0t0P8uq5wcv7wi8zUB/Oh5r3HYtc41Eny75mhkM6pL
+	JY9E0DZyER7FcvD+SNmhKGfqclT8tqSpyPMM2ZSIviQ2K+6tLHukLHaoEvYXFB/o
+	u76k1U0J0tWdP71Z7hTk/Ia1IimW+oFZiw1sVZn9e7OLJRzb03sES8oSTKoMyQt3
+	0V5U5gwa8w4gphZIedLQqbi90TOuyrMIxY+o+M3Lb2axOfmChcttR4iQ==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40sbfajgjs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 05 Aug 2024 12:14:19 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 475C9Gb7018638;
+	Mon, 5 Aug 2024 12:14:18 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40sb076nvu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 05 Aug 2024 12:14:18 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CkVsNw+reN5ZXNyY5L5yqSLpXbhlOLxmrSgRS0qfI9Xw7CpEv0Axcaw4FktmJpQ0XYRSWSD6n92O+odbybfOTS8uipAFxVtscI1RPFy5U8RASkgHJ0A0i2rlihd2JFkLErrBArS2g3R3VRMjFBA4/t97I323Roj+8IQ/g0l0yw4KDrd/OeB9Mw2DkUp2zxGVs+6vz1wtj+AGTWp3FdNKpRUnA76KDIDJ/odtSeOKfUpr3rl0PbK79YwxNF2uT7cLpJ+GQyRRYNh0v9UvOvXCMbwfpGAsZFyPWY9A/RWH+btJ9QpAqw9KQ2hsZ0Ou1j6DG5TcsPMuoWeITJHeXQhR9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cmA0sSzWLBBHHPYNAAlVaWgReAkK72HcEFMcZn7yt7I=;
+ b=UbM1vISn6sB4GOV5kknVgXyc4lDfuhVY6wuvLABRILjr7/rJlTdblxkBJ9nau5C7KSuQ3YkQ74Q9PhFNCCX3Vz7ynvTNWzyfaHf0NazEVyZzMtqZ0oHMACXNjOWLnWPtpPtr/njgFXSVXt32s+GWt1b+MIcPnNyT+r5RydaTkG1RkkwpqqPIpaegbtg3mtY7uyC0eMVcIfLSGU6IGzcWEcLjA8c9/H3MaZ6YfVe/GABD4Di3inncTjY61Purg/M5jr/VRVZrVYQVBxkLUPLDLWkfNLjRtA8cDytZMkcJetBtVAwnWdGZq29qu3pd7rPNB4G4RxwaDzYbq6djFE6BwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cmA0sSzWLBBHHPYNAAlVaWgReAkK72HcEFMcZn7yt7I=;
+ b=Ha6ks3Jq7cUUBqCc7U3ZaEQFtjDSjW/ho15XYCi9vMRwQjvrDqSrkvOrz3luHv5RKkbvsoa67mK8ENx93R6j8NIZZSyCPB2dJaQ5Pmio9+GX+nBarWt/2jCXeIh/0BDdZzMlPuSWVf2kXSL4IGcrKTYpGVpe6DJtixw9CDMKtGI=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by SJ2PR10MB7760.namprd10.prod.outlook.com (2603:10b6:a03:574::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Mon, 5 Aug
+ 2024 12:14:12 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
+ 12:14:12 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 00/10] mm: remove vma_merge()
+Date: Mon,  5 Aug 2024 13:13:47 +0100
+Message-ID: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P265CA0071.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2af::13) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600007.china.huawei.com (7.193.23.208)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SJ2PR10MB7760:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1bac94d2-f467-466c-9b64-08dcb5481e09
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XCoGV3s/riLjMTkzI9HKu9wyHyX7lsp/wxDKIVuQWQawJpD8By2lf2QFM8el?=
+ =?us-ascii?Q?E5nGIf4UDd4OqZ3VPQXwdtHOGoxGCvGqNLUq4qzWCa6Iwcm4BLZ/FSXV78s6?=
+ =?us-ascii?Q?tQGtPtBuH55hAyfIXTpqwW0w4cZR90Lq1jY4f2wrelNqnFBtT4yTfxj5s9a+?=
+ =?us-ascii?Q?NMGktreDaJ/YBMrNEGNzvIEI1ynKkFQ7x/eenvU3Zy8i3rqA1wBlXsPjfEHp?=
+ =?us-ascii?Q?AMpOjh1zDTg1EOc/UEowinzucJcZCkPbhTJ3xEG1MmwBK8M6CpyFY+skq7Ww?=
+ =?us-ascii?Q?kKgNRJYZwf5/Ysx/G+jqNH0WHB10ZwV7ciCao4C1bfSIFOwVkoavis6eE3Kk?=
+ =?us-ascii?Q?krf/9Vtmd4UicW+7YP7m0LDbYWGKIKBBOPkDWS0x0PTZpvNgS2qzocpJdPlS?=
+ =?us-ascii?Q?Tmnh1GVUD2tfm4hrTlzbwm6QxJu7KSwH5Y4wBeJYnytz8C+ZuGbMyXqMEaVw?=
+ =?us-ascii?Q?JunK6ZjkEjLoDIhMNE7tgijO8lj79gPwCge7uTs+pzkj5KzNHaSSONaP68UN?=
+ =?us-ascii?Q?DM3Mdsjc1m6LsO2BEoyH3OBIGMojA7myNu0trOydI7ffdyHclYUFpls+wnyl?=
+ =?us-ascii?Q?tXHIzkGhaNOaDk9SRPFR3Heat1GXOm66hzag4ELXhWl7bHg11Jb+9DRG7bpA?=
+ =?us-ascii?Q?MMccaEHwPlsqmBRTIK0HPU3pBTyVMaJndKRHActtnsqwBL1HX3qilDylbHvB?=
+ =?us-ascii?Q?Q/Jxb2MOL6C7oc/+nPlToa+NXSAkmXQJnEnvmrI9rm4Q3g2DOye5Go+PNcfr?=
+ =?us-ascii?Q?//h2wzG6tkmP10q8zs+nmUJ4L9X93tyfjMpnbO0dUYfpBdoAm+QDtbetjLEP?=
+ =?us-ascii?Q?3k086p+cwsMOHzoaYRqWRqXFakTzTQP8tyfCm9G6LmsSeYcfsM3hZxpbhJnl?=
+ =?us-ascii?Q?XZzc6I6SDiM7KJekjWzuIoPULvaEMvzTabWVy7y/nVZUcYV9J8zPdroJuhVe?=
+ =?us-ascii?Q?ld3t6ToLeH8vn01sFdLjPhaSz0dX+UXvk+vk6uxCKHYEpThN+D1Hwmj962HA?=
+ =?us-ascii?Q?ib1Gxmcn2dnKbgTDWdzkKeUCsvauOsjK7AojipxwJdmgc0NYSZdle7BPgO9A?=
+ =?us-ascii?Q?e8Ss7CZpHHDzahvPH0dF/kMXQnnh+HtPN1CqP5Nl5BxJkpuvL6t6KeIqy54V?=
+ =?us-ascii?Q?cKtsndn+uzXTZK765HqViFzvTzs/glPXW26oKbjr4UPhGH+61hbbFVA/gA1E?=
+ =?us-ascii?Q?WS4CZlGESqJWvnbXUz7QSZa2AyeZQr6t0npDB/VIi+Dmiqxvfks/enIeJHwb?=
+ =?us-ascii?Q?NYaKiQTj4QJ8ZAkwOMwKuMX/m583JP8DxsDLJzB2Psdl3y25T3how8TdLhAt?=
+ =?us-ascii?Q?9u4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ES68WdKMcxFkd0FPwiIIaPKBcSoLpwaYExHru5PFY9aE4h5w3OmjxPswXkeW?=
+ =?us-ascii?Q?OLaOKqifEon3MOAbygXn6cTCU+9l3zVFa4tEG2lAaWxyKkkSZ7gOTvp54AvH?=
+ =?us-ascii?Q?f3m8zD5wLe62/ZATcHVqdlRXEgutN5iS+s/k9rUlytr8AvCTx6dHCCHgBCGH?=
+ =?us-ascii?Q?B7yvYEWy8Xx+DRFErffQM8mYj4DB38OrFqGxuTlwxhjy89EBnoYzMNlGlJU3?=
+ =?us-ascii?Q?TYSMqGnY0GI+XBW9jGSKLIi1XU4ajFwNQNX0wnEeQu+rYTsiMWPsYV59+7Uu?=
+ =?us-ascii?Q?mIGTS5vQLspbfICXwkUMtLujpf/2gj7KtsflQJyRiwnmlkiuwUs6dGQXmAmA?=
+ =?us-ascii?Q?DyZ6gcGVl/Vesi5HX/UYoTpKfCy81j5KINIG7+GQ+5944NflD0FN9HMh9Yb/?=
+ =?us-ascii?Q?xT6fvAaUBgiC7srMm/2d4s+S18xDpqHqZrKEZSdtUPAj6YTK0B1kXwgpVyTA?=
+ =?us-ascii?Q?+KLvmwVGRhqXDRd3xwIbL2YfEC5doEAkqF6Xe14B2WDRQZ8lj/dSNp7+a3Vu?=
+ =?us-ascii?Q?J5rmD0kWWD22k1ROnwZwCnsdoQuEB0DOArbcyj7Ha68Wyn79bNBp67SQISYL?=
+ =?us-ascii?Q?bCo0oFdUiNP97+T33KXWSy1hiN1e0PJcQ0cahioDt3jWyOHJbTlA72YJqzPp?=
+ =?us-ascii?Q?WEZ/bf5lv5f/MBnYQ8isiA9q9rHwgiwr/0cALUyEVk9prij5f1GhAJyQOK3d?=
+ =?us-ascii?Q?SVsqmsTFKqGNpCQM5edAYTUGezUpTpIIY1rIj//193xHK8nklPGuuIRklOXM?=
+ =?us-ascii?Q?AQk6EGIIjmqcuWUUC/rFeDm3We5hztM1MuGMVrp10C3NMiAgEpEY6+u6esHr?=
+ =?us-ascii?Q?Mm/l0luhY7Dk4CJ0StGNJA0xmp7GC5K3p5Ml4crxesKmEjBLXC7tqWjXI5e0?=
+ =?us-ascii?Q?63D+FsdDDIrrgP8tGuNsdDjbCNEmvTiBdjCzMSp12qP+h0QtSFUQlxYtn46d?=
+ =?us-ascii?Q?eAaN5LITDfc0sKTtFFKfe2yvL8fIMGQ722HCUth3Ang41ZhrasP1/G4zZoRr?=
+ =?us-ascii?Q?v1zWXLDWwkFB7dqahronjhEmhFAc6Wa7czIgfmUmi6DdJeMR+WMw2sLZ4/Mn?=
+ =?us-ascii?Q?ZRpbsyt41jyhB7k7j6CN1QBR3qUim5ORmGlLdAt5QDVVavi8po004KiOLRl1?=
+ =?us-ascii?Q?dA4f7clRsBv2SOc/X3Moht2a8wWCLflP3cBHSRBz9cAWDCBygVn0NxQt0DGw?=
+ =?us-ascii?Q?Ji/Ts3XKQ7DmzXcf/qVifwP09Hi6qY0LMh9UdXh0YSycrbYk716Y7r+QGPc5?=
+ =?us-ascii?Q?cncWQNG81+IosKjT92Fg062zUh1WMiQ/zEzfE1i7iw/UKIyPDgQWF851qpEU?=
+ =?us-ascii?Q?q/63bszfgfahPhJmp1JH7VpHqLM6yTB/gPu3ESNF1TP36zzOT672arcObqRb?=
+ =?us-ascii?Q?WOWOHlNt9GZK4sH8UVeeBrvuq8yfonAguUdiLjYan99SDO4TANyi0//aSz4S?=
+ =?us-ascii?Q?ubgQivLj61vJyJSnSBV+dV0WY07AFovPWgHieT5ZbjfkwFKIPhWQZn1Gd9+K?=
+ =?us-ascii?Q?RVEa5IjMXbBykcalV1vsc/BEPe4D2KIU5FqqXv9NoEfrnj8sCNM/vWXtnhIZ?=
+ =?us-ascii?Q?4bsd+QJkvToartiUNSp4/2e60wC4qKGdKINGd9jYBtC8NaW3bqXDbLXrneBK?=
+ =?us-ascii?Q?UviDQtpYDPh39obMD1brm858bmeMnBnd7U4TS6MOEbAmTu7gVVw2HvbJnhMk?=
+ =?us-ascii?Q?LxxcXQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	g/KUrTL10kc+ujawXv8dzC1f9nPUahps9fCVGc2AkJj/Raeu4GsJE6+0nmvwN12OWt1npPkU4lvrd/uUpswhDgizZHL+sK76KiMORPthII1q2G9i3axoOf8jJkK248DR+j2pd7QUo60O9i8tydNKtirBDU4p0rj5vGUKOHqXekkBMwP7f+LxkdmQaFqrbL2lAtylthS6y6ljxuFp4deINWI61RuPgsoMrRED6pZaLtsMP6ZnXz07yEfVRaptSoLiMTduCu2gu/NNfu/kb71LDmYOx0QpF9eVj5HgyIu5RvhtVpohTux3SYakzYG19u2bx9n7ZUK5++lnXPdGQ9LJ652iHHlATEPiiPC0Pd/TyeXgd8DkCd6YFDvfVMEdBrbeR6qU6XCG1HD0Aqpnsk8gWJAXaRC3/HF9tKvIN28sYd+Q7aM25lXH9lVMMjqpf9yH2bKFHep5IWfupZ459D2aRJ8zleGygJhTwH0sGmLPS+fwumJ4cepI1WNc2KpB4mxceBhX4higAZB4GcMY26Y499XZfEyjebS7BxXGPgEdKF4tXRnh8cmeDa77jecXw+xhnxmArUWGIBCRfMKxJQ2lLnRuVCxOeuQ9wIJP6q3MDTM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1bac94d2-f467-466c-9b64-08dcb5481e09
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 12:14:12.7416
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yLHSNHF9Fqb+INKZrjWBg31rsf6E4IsWLXGg8bD2Eoxp7EHyusY6cdWqvO8cdLAIYntjuIxKj4YhVF5EHvLNzeIrf/3xbNjBZi7T/wUF4uc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7760
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-05_01,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 adultscore=0
+ mlxscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408050088
+X-Proofpoint-GUID: iEdfQxuRDS6F_9_EC3g5f1ssehUAJHJ1
+X-Proofpoint-ORIG-GUID: iEdfQxuRDS6F_9_EC3g5f1ssehUAJHJ1
 
-Hi,
+The infamous vma_merge() function has been the cause of a great deal of
+pain, bugs and confusion for a very long time.
 
-On 2024/8/2 22:38, Pranjal Shrivastava wrote:
-> Hey,
-> On Mon, Jul 29, 2024 at 11:02 AM Baolu Lu <baolu.lu@linux.intel.com> wrote:
->> On 2024/7/24 18:24, Will Deacon wrote:
->>> On Wed, Jul 24, 2024 at 05:22:59PM +0800, Kunkun Jiang wrote:
->>>> On 2024/7/24 9:42, Kunkun Jiang wrote:
->>>>> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->>>>> 1797                 while (!queue_remove_raw(q, evt)) {
->>>>> 1798                         u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
->>>>> 1799
->>>>> 1800                         ret = arm_smmu_handle_evt(smmu, evt);
->>>>> 1801                         if (!ret || !__ratelimit(&rs))
->>>>> 1802                                 continue;
->>>>> 1803
->>>>> 1804                         dev_info(smmu->dev, "event 0x%02x
->>>>> received:\n", id);
->>>>> 1805                         for (i = 0; i < ARRAY_SIZE(evt); ++i)
->>>>> 1806                                 dev_info(smmu->dev, "\t0x%016llx\n",
->>>>> 1807                                          (unsigned long
->>>>> long)evt[i]);
->>>>> 1808
->>>>> 1809                         cond_resched();
->>>>> 1810                 }
->>>>>
->>>>> The smmu-v3 driver cannot print event information when "ret" is 0.
->>>>> Unfortunately due to commit 3dfa64aecbaf
->>>>> ("iommu: Make iommu_report_device_fault() return void"), the default
->>>>> return value in arm_smmu_handle_evt() is 0. Maybe a trace should
->>>>> be added here?
->>>> Additional explanation. Background introduction:
->>>> 1.A device(VF) is passthrough(VFIO-PCI) to a VM.
->>>> 2.The SMMU has the stall feature.
->>>> 3.Modified guest device driver to generate an event.
->>>>
->>>> This event handling process is as follows:
->>>> arm_smmu_evtq_thread
->>>>       ret = arm_smmu_handle_evt
->>>>           iommu_report_device_fault
->>>>               iopf_param = iopf_get_dev_fault_param(dev);
->>>>               // iopf is not enabled.
->>>> // No RESUME will be sent!
->>>>               if (WARN_ON(!iopf_param))
->>>>                   return;
->>>>       if (!ret || !__ratelimit(&rs))
->>>>           continue;
->>>>
->>>> In this scenario, the io page-fault capability is not enabled.
->>>> There are two problems here:
->>>> 1. The event information is not printed.
->>>> 2. The entire device(PF level) is stalled,not just the current
->>>> VF. This affects other normal VFs.
->>> Oh, so that stall is probably also due to b554e396e51c ("iommu: Make
->>> iopf_group_response() return void"). I agree that we need a way to
->>> propagate error handling back to the driver in the case that
->>> 'iopf_param' is NULL, otherwise we're making the unexpected fault
->>> considerably more problematic than it needs to be.
->>>
->>> Lu -- can we add the -ENODEV return back in the case that
->>> iommu_report_device_fault() doesn't even find a 'iommu_fault_param' for
->>> the device?
->> Yes, of course. The commit b554e396e51c was added to consolidate the
->> drivers' auto response code in the core with the assumption that driver
->> only needs to call iommu_report_device_fault() for reporting an iopf.
->>
-> I had a go at taking Jason's diff and implementing the suggestions in
-> this thread.
-> Kunkun -- please can you see if this fixes the problem for you?
-Okay, I'll test it as soon as I can.
+It is subtle, contains many corner cases, tries to do far too much and is
+as a result very fragile.
 
-Thanks,
-Kunkun Jiang
-> Lu -- it looks like the intel ->page_response callback doesn't expect
-> a NULL event
-> pointer, so for now I return immediately in that case as we did in v6.7.
->
->> Thanks,
->> baolu
->>
-> Thanks,
-> Pranjal
->
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index a31460f9f3d4..ed2b106e02dd 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -1777,7 +1777,7 @@ static int arm_smmu_handle_evt(struct
-> arm_smmu_device *smmu, u64 *evt)
->    goto out_unlock;
->    }
->
-> - iommu_report_device_fault(master->dev, &fault_evt);
-> + ret = iommu_report_device_fault(master->dev, &fault_evt);
->   out_unlock:
->    mutex_unlock(&smmu->streams_mutex);
->    return ret;
-> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
-> index 0e3a9b38bef2..7684e7562584 100644
-> --- a/drivers/iommu/intel/svm.c
-> +++ b/drivers/iommu/intel/svm.c
-> @@ -532,6 +532,9 @@ void intel_svm_page_response(struct device *dev,
-> struct iopf_fault *evt,
->    bool last_page;
->    u16 sid;
->
-> + if (!evt)
-> + return;
-> +
->    prm = &evt->fault.prm;
->    sid = PCI_DEVID(bus, devfn);
->    pasid_present = prm->flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID;
-> diff --git a/drivers/iommu/io-pgfault.c b/drivers/iommu/io-pgfault.c
-> index 7c9011992d3f..0c3b2125563e 100644
-> --- a/drivers/iommu/io-pgfault.c
-> +++ b/drivers/iommu/io-pgfault.c
-> @@ -113,6 +113,57 @@ static struct iopf_group *iopf_group_alloc(struct
-> iommu_fault_param *iopf_param,
->    return group;
->   }
->
-> +static struct iommu_attach_handle *find_fault_handler(struct device *dev,
-> +                                                     struct iopf_fault *evt)
-> +{
-> +       struct iommu_fault *fault = &evt->fault;
-> +       struct iommu_attach_handle *attach_handle;
-> +
-> +       if (fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) {
-> +               attach_handle = iommu_attach_handle_get(dev->iommu_group,
-> +                                                       fault->prm.pasid, 0);
-> +               if (IS_ERR(attach_handle)) {
-> +                       const struct iommu_ops *ops = dev_iommu_ops(dev);
-> +
-> +                       if (!ops->user_pasid_table)
-> +                               return NULL;
-> +
-> +                       /*
-> +                        * The iommu driver for this device supports user-
-> +                        * managed PASID table. Therefore page faults for
-> +                        * any PASID should go through the NESTING domain
-> +                        * attached to the device RID.
-> +                        */
-> +                       attach_handle = iommu_attach_handle_get(
-> +                               dev->iommu_group, IOMMU_NO_PASID,
-> +                               IOMMU_DOMAIN_NESTED);
-> +                       if (IS_ERR(attach_handle))
-> +                               return NULL;
-> +               }
-> +       } else {
-> +               attach_handle = iommu_attach_handle_get(dev->iommu_group,
-> +                                                       IOMMU_NO_PASID, 0);
-> +               if (IS_ERR(attach_handle))
-> +                       return NULL;
-> +       }
-> +
-> +       if (!attach_handle->domain->iopf_handler)
-> +               return NULL;
-> +       return attach_handle;
-> +}
-> +
-> +static void iopf_error_response(struct device *dev, struct iommu_fault *fault)
-> +{
-> + const struct iommu_ops *ops = dev_iommu_ops(dev);
-> + struct iommu_page_response resp = {
-> + .pasid = fault->prm.pasid,
-> + .grpid = fault->prm.grpid,
-> + .code = IOMMU_PAGE_RESP_INVALID
-> + };
-> +
-> + ops->page_response(dev, NULL, &resp);
-> +}
-> +
->   /**
->    * iommu_report_device_fault() - Report fault event to device driver
->    * @dev: the device
-> @@ -153,16 +204,25 @@ static struct iopf_group
-> *iopf_group_alloc(struct iommu_fault_param *iopf_param,
->    * hardware has been set to block the page faults) and the pending page faults
->    * have been flushed.
->    */
-> -void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
-> +int iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
->   {
-> + struct iommu_attach_handle *attach_handle;
->    struct iommu_fault *fault = &evt->fault;
->    struct iommu_fault_param *iopf_param;
->    struct iopf_group abort_group = {};
->    struct iopf_group *group;
->
-> + attach_handle = find_fault_handler(dev, evt);
-> + if (!attach_handle)
-> + goto err_bad_iopf;
-> +
-> + /*
-> + * Something has gone wrong if a fault capable domain is attached but no
-> + * iopf_param is setup
-> + */
->    iopf_param = iopf_get_dev_fault_param(dev);
->    if (WARN_ON(!iopf_param))
-> - return;
-> + goto err_bad_iopf;
->
->    if (!(fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE)) {
->    report_partial_fault(iopf_param, fault);
-> @@ -182,38 +242,7 @@ void iommu_report_device_fault(struct device
-> *dev, struct iopf_fault *evt)
->    if (group == &abort_group)
->    goto err_abort;
->
-> - if (fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) {
-> - group->attach_handle = iommu_attach_handle_get(dev->iommu_group,
-> -       fault->prm.pasid,
-> -       0);
-> - if (IS_ERR(group->attach_handle)) {
-> - const struct iommu_ops *ops = dev_iommu_ops(dev);
-> -
-> - if (!ops->user_pasid_table)
-> - goto err_abort;
-> -
-> - /*
-> - * The iommu driver for this device supports user-
-> - * managed PASID table. Therefore page faults for
-> - * any PASID should go through the NESTING domain
-> - * attached to the device RID.
-> - */
-> - group->attach_handle =
-> - iommu_attach_handle_get(dev->iommu_group,
-> - IOMMU_NO_PASID,
-> - IOMMU_DOMAIN_NESTED);
-> - if (IS_ERR(group->attach_handle))
-> - goto err_abort;
-> - }
-> - } else {
-> - group->attach_handle =
-> - iommu_attach_handle_get(dev->iommu_group, IOMMU_NO_PASID, 0);
-> - if (IS_ERR(group->attach_handle))
-> - goto err_abort;
-> - }
-> -
-> - if (!group->attach_handle->domain->iopf_handler)
-> - goto err_abort;
-> + group->attach_handle = attach_handle;
->
->    /*
->    * On success iopf_handler must call iopf_group_response() and
-> @@ -222,7 +251,7 @@ void iommu_report_device_fault(struct device *dev,
-> struct iopf_fault *evt)
->    if (group->attach_handle->domain->iopf_handler(group))
->    goto err_abort;
->
-> - return;
-> + return 0;
->
->   err_abort:
->    dev_warn_ratelimited(dev, "iopf with pasid %d aborted\n",
-> @@ -232,6 +261,14 @@ void iommu_report_device_fault(struct device
-> *dev, struct iopf_fault *evt)
->    __iopf_free_group(group);
->    else
->    iopf_free_group(group);
-> +
-> + return 0;
-> +
-> +err_bad_iopf:
-> + if (fault->type == IOMMU_FAULT_PAGE_REQ)
-> + iopf_error_response(dev, fault);
-> +
-> + return -EINVAL;
->   }
->   EXPORT_SYMBOL_GPL(iommu_report_device_fault);
->
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index d87f9cbfc01e..062156a8d87b 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -1561,7 +1561,7 @@ struct iopf_queue *iopf_queue_alloc(const char *name);
->   void iopf_queue_free(struct iopf_queue *queue);
->   int iopf_queue_discard_partial(struct iopf_queue *queue);
->   void iopf_free_group(struct iopf_group *group);
-> -void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt);
-> +int iommu_report_device_fault(struct device *dev, struct iopf_fault *evt);
->   void iopf_group_response(struct iopf_group *group,
->    enum iommu_page_response_code status);
->   #else
-> @@ -1599,9 +1599,10 @@ static inline void iopf_free_group(struct
-> iopf_group *group)
->   {
->   }
->
-> -static inline void
-> +static inline int
->   iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
->   {
-> + return -ENODEV;
->   }
->
->   static inline void iopf_group_response(struct iopf_group *group,
-> .
+The fact that the function requires there to be a numbering system to cover
+each possible eventuality with references to each in the many branches of
+its implementation as to which case you are looking at speaks to all this.
+
+Some of this complexity is inherent - unfortunately there is no getting
+away from the need to figure out precisely how to execute the merge,
+whether we need to remove VMAs, whether it is safe to do so, what
+constitutes a mergeable VMA and so on.
+
+However, a lot of the complexity is not inherent but instead a product of
+the function's 'organic' development.
+
+Liam has gone to great lengths to improve the situation as a part of his
+maple tree implementation, greatly improving the readability of the code,
+and Vlastimil and myself have additionally gone to lengths to try to
+improve things further.
+
+However, with the availability of userland VMA testing, it now becomes
+possible to perform a rather more significant refactoring while maintaining
+confidence in its correct operation.
+
+An attempt was previously made by Vlastimil [0] to eliminate vma_merge(),
+however it was rather - brutal - and an astute reader might refer to the
+date of that patch for insight as to its intent.
+
+This series instead divides merge operations into two natural kinds -
+merges which occur when a NEW vma is being added to the address space, and
+merges which occur when a vma is being MODIFIED.
+
+Happily, the vma_expand() function introduced by Liam, which has the
+capacity for also deleting a subsequent VMA, covers each of the NEW vma
+cases.
+
+By abstracting the actual final commit of changes to a VMA to its own
+function, commit_merge() and writing a wrapper around vma_expand() for new
+VMA cases vma_merge_new_vma(), we can avoid having to use vma_merge() for
+these instances altogether.
+
+By doing so we are also able to then de-duplicate all existing merge logic
+in mmap_region() and do_brk_flags() and have everything invoke this new
+function, so we universally take the same approach to merging new VMAs.
+
+Having done so, we can then completely rework vma_merge() into
+vma_merge_modified() and use this for the instances where a merge is
+proposed for a region of an existing VMA.
+
+This function completely reworks vma_merge(), eliminates the numbered cases
+and instead divides things into logical cases - merge both, merge left,
+merge right (the latter 2 being either partial or full merges).
+
+The code is heavily annotated with ASCII diagrams and greatly simplified in
+comparison to the existing vma_merge() function.
+
+Having made this change, we take the opportunity to address an issue with
+merging VMAs possessing a vm_ops->close() hook - commit 714965ca8252
+("mm/mmap: start distinguishing if vma can be removed in mergeability
+test") and commit fc0c8f9089c2 ("mm, mmap: fix vma_merge() case 7 with
+vma_ops->close") make efforts to relax how we handle these, making
+assumptions about which VMAs might end up deleted (and thus, if possessing
+a vm_ops->close() hook, cannot be).
+
+This refactor means we do not need to guess, so instead explicitly only
+disallow merge in instances where a VMA with a vm_ops->close() hook would
+be deleted (and try a smaller merge in cases where this is possible).
+
+In addition to these changes, we introduce a new vma_merge_struct
+abstraction to allow VMA merge state to be threaded through the operation
+neatly.
+
+There is heavy unit testing provided for all merge functionality, added
+prior to the refactoring, allowing for before/after testing.
+
+The vm_ops->close() change also introduces exhaustive testing to
+demonstrate that this functions as expected, and in addition to this the
+reproduction code from commit fc0c8f9089c2 ("mm, mmap: fix vma_merge() case
+7 with vma_ops->close") was tested and confirmed passing.
+
+[0]: https://lore.kernel.org/linux-mm/20240401192623.18575-2-vbabka@suse.cz/
+
+Lorenzo Stoakes (10):
+  tools: improve vma test Makefile
+  mm: introduce vma_merge_struct and abstract merge parameters
+  mm: abstract duplicated policy comparison
+  mm: abstract parameters for vma_expand/shrink()
+  mm: abstract vma_merge_new_vma() to use vma_merge_struct
+  tools: add VMA merge tests
+  mm: avoid using vma_merge() for new VMAs
+  mm: introduce commit_merge(), abstracting merge operation
+  mm: refactor vma_merge() into modify-only vma_merge_modified()
+  mm: rework vm_ops->close() handling on VMA merge
+
+ mm/mmap.c                        |  115 +--
+ mm/vma.c                         | 1399 ++++++++++++++++++------------
+ mm/vma.h                         |  104 +--
+ tools/testing/vma/Makefile       |    6 +-
+ tools/testing/vma/vma.c          |  885 ++++++++++++++++++-
+ tools/testing/vma/vma_internal.h |   10 +-
+ 6 files changed, 1799 insertions(+), 720 deletions(-)
+
+--
+2.45.2
 
