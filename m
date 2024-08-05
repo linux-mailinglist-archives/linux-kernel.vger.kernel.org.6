@@ -1,136 +1,92 @@
-Return-Path: <linux-kernel+bounces-274059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D99E9472F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:23:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DE79472F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1288B20B51
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:23:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E298B1F210E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233E413C80C;
-	Mon,  5 Aug 2024 01:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RPO60WLP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D9313C81C;
+	Mon,  5 Aug 2024 01:23:57 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F7017C
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 01:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95DD17C
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 01:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722821008; cv=none; b=ltZ/+ZPoKJRTlbgYJf+nafA/Ozs3KXNoyzTc3Bq12sPgNPuMJnRhXF0JLb5MQNtuAN4fmp/479Z3PlZOp6UpIWzwQCPFiTaK/nNyiQMCCVbrBQIDHzewhQr9Dkelg6/vNQb1VsSA2oicUWrjY37gZydLuEQGYRGW7MSEXBvhttU=
+	t=1722821037; cv=none; b=BKz1X9OFydNpBIbXdk2MrOvYZJ9bXlCv1bMg6LxfdaWpWm1H3G/vZDBFufl7IIrTO5abrqXxRRkorYjlcZUzKQwrUOHb7XCfx06cIP3gnBE0rbsc51Y7fQgsuXHhOuekvMnNGwGDGOdFOymRQl/3TYslQ6Wc2AE7iG5mm+1MLwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722821008; c=relaxed/simple;
-	bh=TWAZCKc/8sdi9bViyLItAX5wY99RNU5L4u+VGSfnumE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qqy61O572QKIYOUu2U5QqwoyMe8lLjbq8H7YW1w1LHsK58hA5bOwVNUrnTiPu98WsI+lDWkePVl3tF9oq9gmNYhDfEYMTNcUvioVfTsbVohb8AExBcsyCEZz5yiU5JKBi0SCz0VK+1mYaeWA+32L7hzJtVZyGn4AjQAsQ4ef8WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RPO60WLP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722821005;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tVIi7B3AYBw3NNFHNxFdJ1PfaBxB+CqFqO3o2h/IpZ4=;
-	b=RPO60WLPui2+g0CLRewq1bgjl8cOmtq0lEYEvZ5SYcWqFJ9zcLfsKnf6Yi4vdq6tHtO9Iw
-	5U6lNRNl55HdbIaVB3YL9dbj3NqjFzThtiSGeqU7XOr/64bUa12lMrZDQLeXa9TWEt9Jtc
-	44Dk20Sww1xw51kDeyqNQJwCAQd6Tl0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-310-ePaFIir1PZ6xL-wVrX2Gpg-1; Sun,
- 04 Aug 2024 21:23:21 -0400
-X-MC-Unique: ePaFIir1PZ6xL-wVrX2Gpg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79C8B1955F56;
-	Mon,  5 Aug 2024 01:23:19 +0000 (UTC)
-Received: from [10.2.16.2] (unknown [10.2.16.2])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 33D9C19560AE;
-	Mon,  5 Aug 2024 01:23:16 +0000 (UTC)
-Message-ID: <e8186bf5-51ed-453f-8ba2-350735a2b058@redhat.com>
-Date: Sun, 4 Aug 2024 21:23:16 -0400
+	s=arc-20240116; t=1722821037; c=relaxed/simple;
+	bh=CRTLw6JnGWJ12BXI3GDrt1wEsDE/p2so/Qqx9kOS958=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tGBNX1Y6PRj7okx4xA5lFnVSDTAqTxW4gjmeSetyerZx0KHhQxo0x9CDcacvDpUp1+9sBUdJUDo3/Qua5D3BA+nexUqCtEXL3TdSSmKEEOqE1GFQTiVGtF+3NGJv3iFd1UrvoYmYemzQN8f6nADMcTwQvpi5Z3m077diukyFjeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WcdvW1FYKzfZ7b;
+	Mon,  5 Aug 2024 09:21:59 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id DB4E518009B;
+	Mon,  5 Aug 2024 09:23:51 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 5 Aug 2024 09:23:51 +0800
+Message-ID: <6c0a45c3-08a2-f889-9e66-ab8aff66ae8c@huawei.com>
+Date: Mon, 5 Aug 2024 09:23:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next] cgroup/pids: Remove unreachable paths of
- pids_{can,cancel}_fork
-To: Xiu Jianfeng <xiujianfeng@huaweicloud.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiujianfeng@huawei.com
-References: <20240805004304.57314-1-xiujianfeng@huaweicloud.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [RFC PATCH] ARM: Support allocating crashkernel above 4G for LPAE
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240805004304.57314-1-xiujianfeng@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: <bhe@redhat.com>, <akpm@linux-foundation.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240802092510.3915986-1-ruanjinjie@huawei.com>
+ <Zqy8lwZM2Z6RlV5H@shell.armlinux.org.uk>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zqy8lwZM2Z6RlV5H@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
 
-On 8/4/24 20:43, Xiu Jianfeng wrote:
-> From: Xiu Jianfeng <xiujianfeng@huawei.com>
->
-> According to the implementation of cgroup_css_set_fork(), it will fail
-> if cset cannot be found and the can_fork/cancel_fork methods will not
-> be called in this case, which means that the argument 'cset' for these
-> methods must not be NULL, so remove the unrechable paths in them.
->
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
-> ---
-> v2: reword the commit message
-> ---
->   kernel/cgroup/pids.c | 14 ++------------
->   1 file changed, 2 insertions(+), 12 deletions(-)
->
-> diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
-> index 34aa63d7c9c6..8f61114c36dd 100644
-> --- a/kernel/cgroup/pids.c
-> +++ b/kernel/cgroup/pids.c
-> @@ -272,15 +272,10 @@ static void pids_event(struct pids_cgroup *pids_forking,
->    */
->   static int pids_can_fork(struct task_struct *task, struct css_set *cset)
->   {
-> -	struct cgroup_subsys_state *css;
->   	struct pids_cgroup *pids, *pids_over_limit;
->   	int err;
->   
-> -	if (cset)
-> -		css = cset->subsys[pids_cgrp_id];
-> -	else
-> -		css = task_css_check(current, pids_cgrp_id, true);
-> -	pids = css_pids(css);
-> +	pids = css_pids(cset->subsys[pids_cgrp_id]);
->   	err = pids_try_charge(pids, 1, &pids_over_limit);
->   	if (err)
->   		pids_event(pids, pids_over_limit);
-> @@ -290,14 +285,9 @@ static int pids_can_fork(struct task_struct *task, struct css_set *cset)
->   
->   static void pids_cancel_fork(struct task_struct *task, struct css_set *cset)
->   {
-> -	struct cgroup_subsys_state *css;
->   	struct pids_cgroup *pids;
->   
-> -	if (cset)
-> -		css = cset->subsys[pids_cgrp_id];
-> -	else
-> -		css = task_css_check(current, pids_cgrp_id, true);
-> -	pids = css_pids(css);
-> +	pids = css_pids(cset->subsys[pids_cgrp_id]);
->   	pids_uncharge(pids, 1);
->   }
->   
-Reviewed-by: Waiman Long <longman@redhat.com>
 
+On 2024/8/2 19:01, Russell King (Oracle) wrote:
+> On Fri, Aug 02, 2024 at 05:25:10PM +0800, Jinjie Ruan wrote:
+>> As ARM LPAE feature support accessing memory beyond the 4G limit, define
+>> HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH macro to support reserving crash
+>> memory above 4G for ARM32 LPAE.
+>>
+>> No test because there is no LPAE ARM32 hardware.
+> 
+> Why are you submitting patches for features you can't test?
+> 
+> I'm not going to apply this without it being properly tested, because I
+> don't believe that this will work in the generic case.
+> 
+> If the crash kernel is located in memory outside of the lower 4GiB of
+> address space, and there is no alias within physical address space
+> for that memory, then there is *no* *way* for such a kernel to boot.
+
+I'm sorry that I released this patch without testing it. I actually
+intended to bring up this issue for discussion. If anyone has the
+environment to test it, that would be great. In the meantime, we could
+have a discussion on the significance and relevance of this approach.
+
+> 
+> So, right now I believe this patch to be *fundamentally* wrong.
+> 
 
