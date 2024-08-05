@@ -1,94 +1,72 @@
-Return-Path: <linux-kernel+bounces-274554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1549479F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:38:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE5D9479FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1DFBB20FE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D9701C20D8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8341547F9;
-	Mon,  5 Aug 2024 10:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4213C154C0E;
+	Mon,  5 Aug 2024 10:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OPloIyiL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3uMzWRbs";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OPloIyiL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3uMzWRbs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SAKce3OV"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B080813CFAD
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9113CFAD;
+	Mon,  5 Aug 2024 10:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722854314; cv=none; b=CBRfElR+BdRY6AeNLcwNAfksPM29zc8iZueUcWgNKd+tcPA/HfrqT9ocjYw7iqHgd1LI0qrAyiS0q3meVk5TnbEt/mSRow5E3FMkztc7DgOgcGsXqzxXLjPSl91/Q7rXAq1Bu6obr37RQek0KPwEv9Q+3t0oYPacdAje2EdRuw4=
+	t=1722854430; cv=none; b=tOAyi/Yg1tZAIdAZx6Bb+2G+/pmvld+Ru5miYIbzR33IBYfPkwvD6hAv/azES3BlqSsKdv5u/idw2hpui4Yqzg8QK6N4QdaM+eVDsLd81kgHMlZdEqeoNBAOUuULimaQ2wHxWcn5PaW6j6wewYI9K4VwDDoGAI9s9NymM9Vyfx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722854314; c=relaxed/simple;
-	bh=clPpvsV2TQKaAY6ev/ha5ci48BoCSTD5NbEbHu2u2PE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dsE8WUUJnS8dgVoYa7ghztB3vtGA26x+X8QwhCPx0AQLYMBoLj0mkqgSyD2hjP3Kx6lUb3M0tmWE40db1aD2Q9371IlsJq4PrcZfV7rFcUQL6seVran1dxeqrmBBHMtHlFcMMW2gA7tbeSk59D2gxlzRsrcbjz1DwkSqro/jCik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OPloIyiL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3uMzWRbs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OPloIyiL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3uMzWRbs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E58FF1F831;
-	Mon,  5 Aug 2024 10:38:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722854309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vnBWnFwJKfaa5k4oPmmx2WyIgoL5aERcGe2MFm4Hrso=;
-	b=OPloIyiLHjdXT+/nW4JauFZupCyvQxOLooXxPJPNQipoPUKx1tiN4Mh3UWYSu/Ucfs0qzJ
-	qJTyto0Ns/uO0Dkg94d3BkzoqtUqddrU7E05Dqj6EzC8ehs1af25PoGws3tYWNvOb2aBJr
-	R8CjoU0tvc4c2mDJvlIIqo+6ZSGUgPg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722854309;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vnBWnFwJKfaa5k4oPmmx2WyIgoL5aERcGe2MFm4Hrso=;
-	b=3uMzWRbsxAc3OmR+J13x99HIUtCPW59IiGWCE5MtEeLrBTvOYQR9TIdXb/110FyB0deKxf
-	c9KsQTqF+FAZ5fBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722854309; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vnBWnFwJKfaa5k4oPmmx2WyIgoL5aERcGe2MFm4Hrso=;
-	b=OPloIyiLHjdXT+/nW4JauFZupCyvQxOLooXxPJPNQipoPUKx1tiN4Mh3UWYSu/Ucfs0qzJ
-	qJTyto0Ns/uO0Dkg94d3BkzoqtUqddrU7E05Dqj6EzC8ehs1af25PoGws3tYWNvOb2aBJr
-	R8CjoU0tvc4c2mDJvlIIqo+6ZSGUgPg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722854309;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vnBWnFwJKfaa5k4oPmmx2WyIgoL5aERcGe2MFm4Hrso=;
-	b=3uMzWRbsxAc3OmR+J13x99HIUtCPW59IiGWCE5MtEeLrBTvOYQR9TIdXb/110FyB0deKxf
-	c9KsQTqF+FAZ5fBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA53513ACF;
-	Mon,  5 Aug 2024 10:38:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2UOrMKWrsGafBAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 05 Aug 2024 10:38:29 +0000
-Message-ID: <cdc52bd0-dac8-4f3e-bd7b-aca7513a0464@suse.cz>
-Date: Mon, 5 Aug 2024 12:38:29 +0200
+	s=arc-20240116; t=1722854430; c=relaxed/simple;
+	bh=XSYTLv4bAh2d+A6CoIlCznZA/o4OWh7G8YPyBG7cogI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Qx1dwVw8mBHd+88KnWvxQZDuhvX5EFTApS8w9YRxSOJqGJcxkkB1Ak51swYF5lsBZ6Mw1GzJuvvTpyAJSfdtTbezabXlEcE8wG/09I4uH09Tv8u4QIsnnTn/euCXLslDmnjM4ecnbEegnwVfxYMrBSLbJMCrOCF9jHj3JND6RPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SAKce3OV; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52f01b8738dso9846696e87.1;
+        Mon, 05 Aug 2024 03:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722854426; x=1723459226; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/+E2WrCQ61nPVihTt4NlfdO5ABzCT7bvyI/mF+WDxUQ=;
+        b=SAKce3OVrDXsKWcYjAy2il3xXS0EZtl3vhr8AfnnSVGExvFMKkGuTXKdwQ5qLRtnvY
+         eSLWHWlAhPaaDCvDYUopjqgXP5BK/TyWiUW5U15t2j/mrAj+Ict+VTh3DN+lV+MPjuZq
+         OeumkzCdR9sJyEvF4aJjrVW1iOGdn/hM912rTYV/88YoIBzwkD+YJM/he42MJE9zyokx
+         YhRDXaSGCgHZDz5d8Qq7NGgghVuuJfV07Fm1HpKstdXB6Pss4RgdInd3txbDisx+dWoK
+         aGxfAJYFVzBbCdwrifDvHc+47ouCJ658ndsRUspjpW4WtB+Gl8i6VmWchsenW5TOCFx+
+         AZrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722854426; x=1723459226;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/+E2WrCQ61nPVihTt4NlfdO5ABzCT7bvyI/mF+WDxUQ=;
+        b=BuybnL2b54CsT1wtLuD9o188zTqhIUkYER723afdSz6+U9dy+3uDtWek9hlbfwVhOO
+         PJxdTBaHS9h9rHCWnD2bgE2MYOmm443vV3o/OlL1zJ04oqzOHbuJt46hjpbfctXRKDdK
+         FR7KZpOiw6lT7f1gE6jfhbPt445R+qEiHs6yP9Lo+ntYQtjPW5ibdQJAfH5cvaoer6sx
+         kyc2rBWj3lePSBk2MyX+YgbwyrRxKxD3Z60AYt6oCAWY8YsYcfOatNJEhZY0nDu80szj
+         gxpokRV6uqK603rIUTE/y1UZWqmXH0WKhyV9LODBJJUXoRZ1EmSvscGv6EIf0bN4SF79
+         7XjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQkLLqIhtGO6Usb52YM/4txD3k3HPyUadW1VWuJRFZ5xXFGzseMg6nX0lMR3ydXHkSJKH9ulX/WD3J8gH3IGUnelIXKp7maL9TN1fdDRg6mGRGmQ4ytpRGJTET0zhXE/xARUAKZtmxY4XtcySjly0zWX4Sw2/p53ZUj7+8GNJt
+X-Gm-Message-State: AOJu0YxyTddyLM9pC9G5ZY4HXQTyG//9RQEdV4ZzdMetPk1HB1YLXSAI
+	x7Wyp93BOk/rybuFimuS2IBT2PyHM0IKjDJEgK5AAfWUH6or24ba
+X-Google-Smtp-Source: AGHT+IEl9uopJR6SKs8BVLV60Pw9kWaG0gmOPtR6cYTbiOr7IntFjcq1N4xdI1YY7sC8a4uFFWlRBw==
+X-Received: by 2002:a05:6512:b1f:b0:52e:9d6c:4462 with SMTP id 2adb3069b0e04-530bb3797d6mr7683483e87.23.1722854425029;
+        Mon, 05 Aug 2024 03:40:25 -0700 (PDT)
+Received: from [10.158.37.53] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb9d54esm193863965e9.43.2024.08.05.03.40.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 03:40:24 -0700 (PDT)
+Message-ID: <aeea3ae5-5c0b-48fa-942b-4d17acfd8cba@gmail.com>
+Date: Mon, 5 Aug 2024 13:40:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,141 +74,572 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slab: Error out on duplicate cache names when DEBUG_VM=y
-To: Pedro Falcato <pedro.falcato@gmail.com>, Christoph Lameter
- <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240804212839.685795-1-pedro.falcato@gmail.com>
- <CAKbZUD0hBFeMm=Rwb1LX6MYEpLK_qAnr8jfczLzY8V-DKEDn4w@mail.gmail.com>
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+Subject: [Bug report] NFS patch breaks TLS device-offloaded TX zerocopy
+To: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Anna Schumaker <Anna.Schumaker@Netapp.com>,
+ Trond Myklebust <trondmy@kernel.org>, linux-nfs@vger.kernel.org,
+ Boris Pismenny <borisp@nvidia.com>, John Fastabend
+ <john.fastabend@gmail.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+ Networking <netdev@vger.kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <CAKbZUD0hBFeMm=Rwb1LX6MYEpLK_qAnr8jfczLzY8V-DKEDn4w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,linux.com,kernel.org,google.com,lge.com,linux-foundation.org];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.dev,gmail.com,kvack.org,vger.kernel.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -2.79
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 8/5/24 12:24, Pedro Falcato wrote:
-> On Sun, Aug 4, 2024 at 10:28 PM Pedro Falcato <pedro.falcato@gmail.com> wrote:
->>
->> Duplicate slab cache names can create havoc for userspace tooling that
->> expects slab cache names to be unique. This is a reasonable expectation.
-> 
-> For completeness, I just had a look at duplicate cache names around
-> the kernel using
-> git grep -Eoh "kmem_cache_create.*\"," | grep -Eo \".*\" | uniq -d
-> (which seems to be correct)
-> 
-> which results in the following patch (on top of torvalds/linux.git
-> master, so file_lock_cache hasn't been fixed yet)
-> 
-> This patch being so small is what leads me to believe that erroring
-> out here is safe. Of course, no one knows what the out-of-tree modules
-> do.
+Hi,
 
-What about module unload/reload with a SLAB_TYPESAFE_BY_RCU cache that will
-delay its freeing. Soon also if there are kfree_rcu()'s in flight. And the
-zombie cache can stay also permamently around if it fails to be destroy
-because some objects were not freed.
+A recent patch [1] to 'fs' broke the TX TLS device-offloaded flow 
+starting from v6.11-rc1.
 
-In all these cases the cache's refcount should be 0 at that point, so
-minimally the check should ignore those. But I would also rather make it be
-a warning anyway, at least for a few releases.
+The kernel crashes. Different runs result in different kernel traces.
+See below [2].
+All of them disappear once patch [1] is reverted.
 
-> diff --git a/drivers/scsi/snic/snic_main.c b/drivers/scsi/snic/snic_main.c
-> index cc824dcfe7d..abc78320c66 100644
-> --- a/drivers/scsi/snic/snic_main.c
-> +++ b/drivers/scsi/snic/snic_main.c
-> @@ -873,7 +873,7 @@ snic_global_data_init(void)
->        snic_glob->req_cache[SNIC_REQ_CACHE_MAX_SGL] = cachep;
-> 
->        len = sizeof(struct snic_host_req);
-> -       cachep = kmem_cache_create("snic_req_maxsgl", len, SNIC_SG_DESC_ALIGN,
-> +       cachep = kmem_cache_create("snic_req_tm", len, SNIC_SG_DESC_ALIGN,
->                                   SLAB_HWCACHE_ALIGN, NULL);
->        if (!cachep) {
->                SNIC_ERR("Failed to create snic tm req slab\n");
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 9afb16e0683..e45cad40f8b 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2984,7 +2984,7 @@ static int __init filelock_init(void)
->        filelock_cache = kmem_cache_create("file_lock_cache",
->                        sizeof(struct file_lock), 0, SLAB_PANIC, NULL);
-> 
-> -       filelease_cache = kmem_cache_create("file_lock_cache",
-> +       filelease_cache = kmem_cache_create("file_lease_cache",
->                        sizeof(struct file_lease), 0, SLAB_PANIC, NULL);
-> 
->        for_each_possible_cpu(i) {
+The issues appears only with "sendfile on and zerocopy on".
+We couldn't repro with "sendfile off", or with "sendfile on and zerocopy 
+off".
+
+The repro test is as simple as a repeated client/server communication 
+(wrk/nginx), with sendfile on and zc on, and with "tls-hw-tx-offload: on".
+
+$ for i in `seq 10`; do wrk -b::2:2:2:3 -t10 -c100 -d15 --timeout 5s 
+https://[::2:2:2:2]:20448/16000b.img; done
+
+We can provide more details if needed, to help with the analysis and debug.
+
+Regards,
+Tariq
+
+[1]
+commit 49b29a573da83b65d5f4ecf2db6619bab7aa910c
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Mon May 27 18:36:09 2024 +0200
+
+     nfs: add support for large folios
+
+     NFS already is void of folio size assumption, so just pass the 
+chunk size
+     to __filemap_get_folio and set the large folio address_space flag 
+for all
+     regular files.
+
+     Signed-off-by: Christoph Hellwig <hch@lst.de>
+     Tested-by: Sagi Grimberg <sagi@grimberg.me>
+     Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+
+  fs/nfs/file.c  | 4 +++-
+  fs/nfs/inode.c | 1 +
+  2 files changed, 4 insertions(+), 1 deletion(-)
+
+
+[2]
+
+Example #1:
+
+rcu: INFO: rcu_sched self-detected stall on CPU
+rcu:     0-....: (5249 ticks this GP) idle=cfb4/1/0x4000000000000000 
+softirq=1809/1813 fqs=2527
+rcu:     (t=5250 jiffies g=2281 q=2004 ncpus=24)
+CPU: 0 PID: 1047 Comm: nginx_openssl_3 Not tainted 6.10.0-bisect+ #21
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+RIP: 0010:xas_start+0x3f/0xc0
+Code: 05 c0 ff ff 77 2d 48 8b 07 48 8b 57 08 48 8b 40 08 48 89 c1 83 e1 
+03 48 83 f9 02 75 08 48 3d 00 10 00 00 77 19 48 85 d2 75 21 <48> c7 47 
+18 00 00 00 00 c3 48 c1 fa 02 85 d2 74 cb 31 c0 c3 0f b6
+RSP: 0018:ffff888108a4bad8 EFLAGS: 00000293
+RAX: ffff88810c236912 RBX: ffff888108a4bc58 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888108a4bae8
+RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888103d30318
+R13: ffff8881002a3700 R14: 0000000000000000 R15: ffff888105ba2e40
+FS:  00007fa598930740(0000) GS:ffff88885f800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055dd8d91fca0 CR3: 0000000108b7e005 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  ? rcu_dump_cpu_stacks+0xc7/0x100
+  ? rcu_sched_clock_irq+0x516/0xb20
+  ? update_process_times+0x69/0xa0
+  ? tick_nohz_handler+0x87/0x110
+  ? tick_do_update_jiffies64+0xd0/0xd0
+  ? __hrtimer_run_queues+0x121/0x270
+  ? hrtimer_interrupt+0x10f/0x260
+  ? __sysvec_apic_timer_interrupt+0x4f/0x110
+  ? sysvec_apic_timer_interrupt+0x6c/0x90
+  </IRQ>
+  <TASK>
+  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+  ? xas_start+0x3f/0xc0
+  xas_load+0x5/0xa0
+  filemap_get_read_batch+0x19e/0x2a0
+  filemap_get_pages+0x97/0x600
+  ? nfs_update_inode+0x4b9/0xb70
+  filemap_splice_read+0x12b/0x300
+  ? tls_push_sg+0x13e/0x220
+  ? tls_push_data+0x6bd/0xa40
+  nfs_file_splice_read+0x78/0xa0
+  splice_direct_to_actor+0xb0/0x230
+  ? splice_file_range_actor+0x40/0x40
+  do_splice_direct+0x73/0xb0
+  ? propagate_umount+0x560/0x560
+  do_sendfile+0x33b/0x3e0
+  __x64_sys_sendfile64+0x5d/0xd0
+  do_syscall_64+0x4c/0x100
+  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+RIP: 0033:0x7fa598705dae
+Code: c3 0f 1f 00 4c 89 d2 4c 89 c6 e9 fd fd ff ff 0f 1f 44 00 00 31 c0 
+c3 0f 1f 44 00 00 f3 0f 1e fa 49 89 ca b8 28 00 00 00 0f 05 <48> 3d 01 
+f0 ff ff 73 01 c3 48 8b 0d 4a 40 0f 00 f7 d8 64 89 01 48
+RSP: 002b:00007ffc17804728 EFLAGS: 00000206 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 0000000039960ce0 RCX: 00007fa598705dae
+RDX: 00007ffc17804738 RSI: 0000000000000030 RDI: 0000000000000020
+RBP: 0000000000000030 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000003e80 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000003e80 R15: 00000000399b8a68
+  </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 1048 Comm: nginx_openssl_3 Not tainted 6.10.0-bisect+ #21
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+RIP: 0010:xas_load+0x5/0xa0
+Code: 48 c1 e8 02 0f b6 c0 48 83 c0 04 48 8b 44 c2 08 c3 48 8b 07 48 8b 
+40 08 c3 66 66 2e 0f 1f 84 00 00 00 00 00 90 e8 3b ff ff ff <48> 89 c2 
+83 e2 03 48 83 fa 02 75 08 48 3d 00 10 00 00 77 01 c3 0f
+RSP: 0018:ffff888108a3bae0 EFLAGS: 00000293
+RAX: ffff88810c236912 RBX: ffff888108a3bc58 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888108a3bae8
+RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888103d30318
+R13: ffff888103b14700 R14: 0000000000000000 R15: ffff888105fbbc80
+FS:  00007fa598930740(0000) GS:ffff88885f840000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe83bffd550 CR3: 0000000108f09002 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <NMI>
+  ? nmi_cpu_backtrace+0x7f/0xe0
+  ? nmi_cpu_backtrace_handler+0xd/0x20
+  ? nmi_handle+0x56/0x150
+  ? default_do_nmi+0x3e/0xd0
+  ? exc_nmi+0xd8/0x100
+  ? end_repeat_nmi+0xf/0x18
+  ? xas_load+0x5/0xa0
+  ? xas_load+0x5/0xa0
+  ? xas_load+0x5/0xa0
+  </NMI>
+  <TASK>
+  filemap_get_read_batch+0x19e/0x2a0
+  filemap_get_pages+0x97/0x600
+  ? nfs_update_inode+0x4b9/0xb70
+  filemap_splice_read+0x12b/0x300
+  ? tls_push_sg+0x13e/0x220
+  ? tls_push_data+0x6bd/0xa40
+  nfs_file_splice_read+0x78/0xa0
+  splice_direct_to_actor+0xb0/0x230
+  ? splice_file_range_actor+0x40/0x40
+  do_splice_direct+0x73/0xb0
+  ? propagate_umount+0x560/0x560
+  do_sendfile+0x33b/0x3e0
+  __x64_sys_sendfile64+0x5d/0xd0
+  do_syscall_64+0x4c/0x100
+  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+RIP: 0033:0x7fa598705dae
+Code: c3 0f 1f 00 4c 89 d2 4c 89 c6 e9 fd fd ff ff 0f 1f 44 00 00 31 c0 
+c3 0f 1f 44 00 00 f3 0f 1e fa 49 89 ca b8 28 00 00 00 0f 05 <48> 3d 01 
+f0 ff ff 73 01 c3 48 8b 0d 4a 40 0f 00 f7 d8 64 89 01 48
+RSP: 002b:00007ffc17804728 EFLAGS: 00000206 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 000000003993d090 RCX: 00007fa598705dae
+RDX: 00007ffc17804738 RSI: 000000000000002d RDI: 0000000000000019
+RBP: 000000000000002d R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000003e80 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000003e80 R15: 000000003999f4d8
+  </TASK>
+Sending NMI from CPU 0 to CPUs 2:
+NMI backtrace for cpu 2
+CPU: 2 PID: 1049 Comm: nginx_openssl_3 Not tainted 6.10.0-bisect+ #21
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+RIP: 0010:xas_load+0x53/0xa0
+Code: 77 08 48 d3 ee 83 e6 3f 89 f0 48 83 c0 04 48 8b 44 c2 08 48 89 57 
+18 48 89 c1 83 e1 03 48 83 f9 02 74 10 40 88 77 12 80 3a 00 <75> b0 c3 
+48 83 f9 02 75 f0 48 3d fd 00 00 00 77 e8 48 c1 e8 02 89
+RSP: 0018:ffff888103813ae0 EFLAGS: 00000246
+RAX: ffffea00046ee800 RBX: ffff888103813c58 RCX: 0000000000000000
+RDX: ffff88810c236910 RSI: 0000000000000000 RDI: ffff888103813ae8
+RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888103d30318
+R13: ffff888103b08700 R14: 0000000000000000 R15: ffff888117432480
+FS:  00007fa598930740(0000) GS:ffff88885f880000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7704001950 CR3: 000000010d823002 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <NMI>
+  ? nmi_cpu_backtrace+0x7f/0xe0
+  ? nmi_cpu_backtrace_handler+0xd/0x20
+  ? nmi_handle+0x56/0x150
+  ? default_do_nmi+0x3e/0xd0
+  ? exc_nmi+0xd8/0x100
+  ? end_repeat_nmi+0xf/0x18
+  ? xas_load+0x53/0xa0
+  ? xas_load+0x53/0xa0
+  ? xas_load+0x53/0xa0
+  </NMI>
+  <TASK>
+  filemap_get_read_batch+0x19e/0x2a0
+  filemap_get_pages+0x97/0x600
+  ? nfs_update_inode+0x4b9/0xb70
+  filemap_splice_read+0x12b/0x300
+  ? tls_push_sg+0x13e/0x220
+  ? tls_push_data+0x6bd/0xa40
+  nfs_file_splice_read+0x78/0xa0
+  splice_direct_to_actor+0xb0/0x230
+  ? splice_file_range_actor+0x40/0x40
+  do_splice_direct+0x73/0xb0
+  ? propagate_umount+0x560/0x560
+  do_sendfile+0x33b/0x3e0
+  __x64_sys_sendfile64+0x5d/0xd0
+  do_syscall_64+0x4c/0x100
+  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+RIP: 0033:0x7fa598705dae
+Code: c3 0f 1f 00 4c 89 d2 4c 89 c6 e9 fd fd ff ff 0f 1f 44 00 00 31 c0 
+c3 0f 1f 44 00 00 f3 0f 1e fa 49 89 ca b8 28 00 00 00 0f 05 <48> 3d 01 
+f0 ff ff 73 01 c3 48 8b 0d 4a 40 0f 00 f7 d8 64 89 01 48
+RSP: 002b:00007ffc17804728 EFLAGS: 00000206 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 0000000039906100 RCX: 00007fa598705dae
+RDX: 00007ffc17804738 RSI: 0000000000000034 RDI: 000000000000001c
+RBP: 0000000000000034 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000003e80 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000003e80 R15: 00000000399b3888
+  </TASK>
+Sending NMI from CPU 0 to CPUs 3:
+NMI backtrace for cpu 3
+CPU: 3 PID: 1050 Comm: nginx_openssl_3 Not tainted 6.10.0-bisect+ #21
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+RIP: 0010:xas_start+0x53/0xc0
+Code: 83 e1 03 48 83 f9 02 75 08 48 3d 00 10 00 00 77 19 48 85 d2 75 21 
+48 c7 47 18 00 00 00 00 c3 48 c1 fa 02 85 d2 74 cb 31 c0 c3 <0f> b6 48 
+fe 48 d3 ea 48 83 fa 3f 76 df 48 c7 47 18 01 00 00 00 31
+RSP: 0018:ffff8881328dbad8 EFLAGS: 00000286
+RAX: ffff88810c236912 RBX: ffff8881328dbc58 RCX: 0000000000000002
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8881328dbae8
+RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888103d30318
+R13: ffff88810402e100 R14: 0000000000000000 R15: ffff888104032780
+FS:  00007fa598930740(0000) GS:ffff88885f8c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055ddbea4a678 CR3: 0000000108b12001 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <NMI>
+  ? nmi_cpu_backtrace+0x7f/0xe0
+  ? nmi_cpu_backtrace_handler+0xd/0x20
+  ? nmi_handle+0x56/0x150
+  ? default_do_nmi+0x3e/0xd0
+  ? exc_nmi+0xd8/0x100
+  ? end_repeat_nmi+0xf/0x18
+  ? xas_start+0x53/0xc0
+  ? xas_start+0x53/0xc0
+  ? xas_start+0x53/0xc0
+  </NMI>
+  <TASK>
+  xas_load+0x5/0xa0
+  filemap_get_read_batch+0x19e/0x2a0
+  filemap_get_pages+0x97/0x600
+  ? nfs_update_inode+0x4b9/0xb70
+  filemap_splice_read+0x12b/0x300
+  ? tls_push_sg+0x13e/0x220
+  ? common_interrupt+0xf/0xa0
+  ? asm_common_interrupt+0x22/0x40
+  ? _raw_spin_lock+0x10/0x20
+  nfs_file_splice_read+0x78/0xa0
+  splice_direct_to_actor+0xb0/0x230
+  ? splice_file_range_actor+0x40/0x40
+  do_splice_direct+0x73/0xb0
+  ? propagate_umount+0x560/0x560
+  do_sendfile+0x33b/0x3e0
+  __x64_sys_sendfile64+0x5d/0xd0
+  do_syscall_64+0x4c/0x100
+  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+RIP: 0033:0x7fa598705dae
+Code: c3 0f 1f 00 4c 89 d2 4c 89 c6 e9 fd fd ff ff 0f 1f 44 00 00 31 c0 
+c3 0f 1f 44 00 00 f3 0f 1e fa 49 89 ca b8 28 00 00 00 0f 05 <48> 3d 01 
+f0 ff ff 73 01 c3 48 8b 0d 4a 40 0f 00 f7 d8 64 89 01 48
+RSP: 002b:00007ffc17804728 EFLAGS: 00000206 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 000000003994a6d0 RCX: 00007fa598705dae
+RDX: 00007ffc17804738 RSI: 000000000000002f RDI: 0000000000000016
+RBP: 000000000000002f R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000003e80 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000003e80 R15: 000000003998d548
+  </TASK>
+
+
+Example #2:
+
+Oops: general protection fault, probably for non-canonical address 
+0xdead000000000122: 0000 [#1] SMP
+CPU: 4 PID: 0 Comm: swapper/4 Not tainted 6.10.0-bisect+ #23
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+RIP: 0010:free_pcppages_bulk+0x12f/0x1e0
+Code: 89 34 24 e8 a3 ed ff ff 49 8b 14 24 45 31 c9 4c 89 ff 49 89 c0 89 
+44 24 20 49 8b 44 24 08 8b 4c 24 0c 48 8b 34 24 48 89 42 08 <48> 89 10 
+48 8b 54 24 18 48 b8 00 01 00 00 00 00 ad de 49 89 04 24
+RSP: 0018:ffff88885f905888 EFLAGS: 00010046
+RAX: dead000000000122 RBX: ffff88885f932810 RCX: 0000000000000000
+RDX: ffff88885f932830 RSI: 00000000001144a0 RDI: ffffea0004512800
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: dead000000000100 R12: ffffea0004512808
+R13: 000000000000003a R14: ffff88885f932800 R15: ffffea0004512800
+FS:  0000000000000000(0000) GS:ffff88885f900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056063c04b2e8 CR3: 000000000282b003 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  ? die_addr+0x33/0x90
+  ? exc_general_protection+0x1a2/0x390
+  ? asm_exc_general_protection+0x22/0x30
+  ? free_pcppages_bulk+0x12f/0x1e0
+  ? free_pcppages_bulk+0x10d/0x1e0
+  free_unref_page_commit+0x14d/0x2b0
+  free_unref_page+0x18a/0x3e0
+  skb_release_data+0x10d/0x180
+  __kfree_skb+0x25/0x30
+  tcp_ack+0x70d/0x14d0
+  ? tcp_v6_rcv+0xf3c/0x1240
+  tcp_rcv_established+0x5a9/0x760
+  tcp_v6_do_rcv+0xd3/0x4a0
+  tcp_v6_rcv+0xf3c/0x1240
+  ? ip6_sublist_rcv+0x231/0x270
+  ip6_protocol_deliver_rcu+0x56/0x450
+  ip6_input+0xbf/0xe0
+  ? tcp_v6_early_demux+0xb2/0x190
+  ip6_sublist_rcv_finish+0x32/0x40
+  ip6_sublist_rcv+0x231/0x270
+  ? ip6_sublist_rcv+0x270/0x270
+  ipv6_list_rcv+0xfc/0x120
+  __netif_receive_skb_list_core+0x180/0x1e0
+  netif_receive_skb_list_internal+0x1b5/0x2c0
+  napi_complete_done+0x6f/0x190
+  mlx5e_napi_poll+0x149/0x6a0 [mlx5_core]
+  __napi_poll+0x24/0x190
+  net_rx_action+0x328/0x3b0
+  ? mlx5_eq_comp_int+0x1bc/0x1e0 [mlx5_core]
+  ? notifier_call_chain+0x35/0xa0
+  handle_softirqs+0xcc/0x270
+  irq_exit_rcu+0x67/0x90
+  common_interrupt+0x7f/0xa0
+  </IRQ>
+  <TASK>
+  asm_common_interrupt+0x22/0x40
+RIP: 0010:default_idle+0x13/0x20
+Code: c0 08 00 00 00 4d 29 c8 4c 01 c7 4c 29 c2 e9 72 ff ff ff cc cc cc 
+cc 8b 05 ca 29 4e 01 85 c0 7e 07 0f 00 2d f1 5a 25 00 fb f4 <fa> c3 66 
+66 2e 0f 1f 84 00 00 00 00 00 65 48 8b 35 38 7f 46 7e f0
+RSP: 0018:ffff8881018cbee0 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: ffff88810189d500 RCX: 7fffffffffffffff
+RDX: 0000000000000000 RSI: 000000089ca81700 RDI: 000000000014f654
+RBP: 0000000000000004 R08: 7fffffffffffffff R09: 00000000fffeff0f
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  default_idle_call+0x39/0xd0
+  do_idle+0x1ab/0x1c0
+  cpu_startup_entry+0x25/0x30
+  start_secondary+0x105/0x130
+  common_startup_64+0x129/0x138
+  </TASK>
+Modules linked in: xt_conntrack xt_MASQUERADE nf_conntrack_netlink 
+nfnetlink xt_addrtype iptable_nat nf_nat br_netfilter rpcsec_gss_krb5 
+auth_rpcgss oid_registry overlay mlx5_ib zram zsmalloc mlx5_core rpcrdma 
+rdma_ucm ib_uverbs ib_iser libiscsi scsi_transport_iscsi ib_umad rdma_cm 
+ib_ipoib iw_cm ib_cm fuse ib_core
+---[ end trace 0000000000000000 ]---
+RIP: 0010:free_pcppages_bulk+0x12f/0x1e0
+Code: 89 34 24 e8 a3 ed ff ff 49 8b 14 24 45 31 c9 4c 89 ff 49 89 c0 89 
+44 24 20 49 8b 44 24 08 8b 4c 24 0c 48 8b 34 24 48 89 42 08 <48> 89 10 
+48 8b 54 24 18 48 b8 00 01 00 00 00 00 ad de 49 89 04 24
+RSP: 0018:ffff88885f905888 EFLAGS: 00010046
+RAX: dead000000000122 RBX: ffff88885f932810 RCX: 0000000000000000
+RDX: ffff88885f932830 RSI: 00000000001144a0 RDI: ffffea0004512800
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: dead000000000100 R12: ffffea0004512808
+R13: 000000000000003a R14: ffff88885f932800 R15: ffffea0004512800
+FS:  0000000000000000(0000) GS:ffff88885f900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056063c04b2e8 CR3: 000000000282b003 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Kernel panic - not syncing: Fatal exception in interrupt
+Shutting down cpus with NMI
+Kernel Offset: disabled
+---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+
+
+Example #3:
+
+BUG: kernel NULL pointer dereference, address: 0000000000000008
+#PF: supervisor write access in kernel mode
+#PF: error_code(0x0002) - not-present page
+PGD 108898067 P4D 108898067 PUD 108891067 PMD 0
+Oops: Oops: 0002 [#1] SMP
+CPU: 1 PID: 1157 Comm: nginx_openssl_3 Not tainted 6.10.0-bisect+ #26
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+RIP: 0010:__page_cache_release+0xc7/0x260
+Code: 8b 03 48 8b 53 08 48 c1 ed 12 83 e5 01 48 c1 e8 08 83 f5 01 83 e0 
+01 40 0f b6 ed 01 ed 3c 01 48 8b 43 10 83 dd ff 44 8d 7d 01 <48> 89 42 
+08 48 89 10 48 b8 00 01 00 00 00 00 ad de 48 89 43 08 48
+RSP: 0018:ffff888110197b78 EFLAGS: 00010013
+RAX: dead000000000122 RBX: ffffea0004e9aa00 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff888110197bc8 RDI: ffff8881001e1050
+RBP: 0000000000000002 R08: 000000000000005a R09: 00000000000009bc
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881001e1000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000003
+FS:  00007fa91da46740(0000) GS:ffff88885f840000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000008 CR3: 000000010889c001 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <TASK>
+  ? __die+0x20/0x60
+  ? page_fault_oops+0x150/0x3e0
+  ? exc_page_fault+0x74/0x130
+  ? asm_exc_page_fault+0x22/0x30
+  ? __page_cache_release+0xc7/0x260
+  ? __page_cache_release+0x84/0x260
+  ? folio_activate_fn+0x2d0/0x2d0
+  folios_put_refs+0x6d/0x170
+  filemap_splice_read+0x2b8/0x300
+  ? tls_push_sg+0x13e/0x220
+  ? tls_push_data+0x6bd/0xa40
+  nfs_file_splice_read+0x78/0xa0
+  splice_direct_to_actor+0xb0/0x230
+  ? splice_file_range_actor+0x40/0x40
+  do_splice_direct+0x73/0xb0
+  ? propagate_umount+0x560/0x560
+  do_sendfile+0x33b/0x3e0
+  __x64_sys_sendfile64+0x5d/0xd0
+  do_syscall_64+0x4c/0x100
+  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+RIP: 0033:0x7fa91d905dae
+Code: c3 0f 1f 00 4c 89 d2 4c 89 c6 e9 fd fd ff ff 0f 1f 44 00 00 31 c0 
+c3 0f 1f 44 00 00 f3 0f 1e fa 49 89 ca b8 28 00 00 00 0f 05 <48> 3d 01 
+f0 ff ff 73 01 c3 48 8b 0d 4a 40 0f 00 f7 d8 64 89 01 48
+RSP: 002b:00007ffda039ab98 EFLAGS: 00000202 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 0000000029e45110 RCX: 00007fa91d905dae
+RDX: 00007ffda039aba8 RSI: 0000000000000031 RDI: 000000000000001e
+RBP: 0000000000000031 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000003e80 R11: 0000000000000202 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000003e80 R15: 0000000029e02c88
+  </TASK>
+Modules linked in: xt_conntrack xt_MASQUERADE nf_conntrack_netlink 
+nfnetlink xt_addrtype iptable_nat nf_nat br_netfilter rpcsec_gss_krb5 
+auth_rpcgss oid_registry overlay mlx5_ib zram zsmalloc mlx5_core rpcrdma 
+rdma_ucm ib_uverbs ib_iser libiscsi scsi_transport_iscsi ib_umad rdma_cm 
+ib_ipoib iw_cm ib_cm fuse ib_core
+CR2: 0000000000000008
+---[ end trace 0000000000000000 ]---
+BUG: kernel NULL pointer dereference, address: 0000000000000008
+RIP: 0010:__page_cache_release+0xc7/0x260
+#PF: supervisor write access in kernel mode
+Code: 8b 03 48 8b 53 08 48 c1 ed 12 83 e5 01 48 c1 e8 08 83 f5 01 83 e0 
+01 40 0f b6 ed 01 ed 3c 01 48 8b 43 10 83 dd ff 44 8d 7d 01 <48> 89 42 
+08 48 89 10 48 b8 00 01 00 00 00 00 ad de 48 89 43 08 48
+#PF: error_code(0x0002) - not-present page
+RSP: 0018:ffff888110197b78 EFLAGS: 00010013
+PGD 1092fc067
+
+P4D 1092fc067
+RAX: dead000000000122 RBX: ffffea0004e9aa00 RCX: 0000000000000000
+PUD 1092fb067 PMD 0
+RDX: 0000000000000000 RSI: ffff888110197bc8 RDI: ffff8881001e1050
+
+RBP: 0000000000000002 R08: 000000000000005a R09: 00000000000009bc
+Oops: Oops: 0002 [#2] SMP
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881001e1000
+CPU: 3 PID: 1159 Comm: nginx_openssl_3 Tainted: G      D 6.10.0-bisect+ #26
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000003
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 
+rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+FS:  00007fa91da46740(0000) GS:ffff88885f840000(0000) knlGS:0000000000000000
+RIP: 0010:__page_cache_release+0xc7/0x260
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Code: 8b 03 48 8b 53 08 48 c1 ed 12 83 e5 01 48 c1 e8 08 83 f5 01 83 e0 
+01 40 0f b6 ed 01 ed 3c 01 48 8b 43 10 83 dd ff 44 8d 7d 01 <48> 89 42 
+08 48 89 10 48 b8 00 01 00 00 00 00 ad de 48 89 43 08 48
+CR2: 0000000000000008 CR3: 000000010889c001 CR4: 0000000000370eb0
+RSP: 0018:ffff888124553cb8 EFLAGS: 00010013
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+RAX: dead000000000122 RBX: ffffea0004e9aa00 RCX: 0000000000000000
+note: nginx_openssl_3[1157] exited with irqs disabled
+RDX: 0000000000000000 RSI: ffff888124553d08 RDI: ffff888110672850
+RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000001 R11: 0000000000000000 R12: ffff888110672800
+R13: 000000000000008e R14: 0000000000000058 R15: 0000000000000003
+FS:  00007fa91da46740(0000) GS:ffff88885f8c0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000008 CR3: 00000001092ff006 CR4: 0000000000370eb0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <TASK>
+  ? __die+0x20/0x60
+  ? page_fault_oops+0x150/0x3e0
+  ? exc_page_fault+0x74/0x130
+  ? asm_exc_page_fault+0x22/0x30
+  ? __page_cache_release+0xc7/0x260
+  ? __page_cache_release+0x84/0x260
+  __folio_put+0x43/0xe0
+  __filemap_get_folio+0x20c/0x2a0
+  ext4_da_write_begin+0xe1/0x240
+  generic_perform_write+0xe0/0x2c0
+  ext4_buffered_write_iter+0x62/0xe0
+  vfs_write+0x2c8/0x3f0
+  ksys_write+0x5f/0xe0
+  do_syscall_64+0x4c/0x100
+  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+RIP: 0033:0x7fa91d9018b7
+Code: 0f 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e 
+fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 
+f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
+RSP: 002b:00007ffda039af78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000029e45270 RCX: 00007fa91d9018b7
+RDX: 0000000000000058 RSI: 0000000029e160f8 RDI: 0000000000000004
+RBP: 0000000029ce3700 R08: 00000000cccccccd R09: 0000000000000000
+R10: 0000000029e16142 R11: 0000000000000246 R12: 0000000000000058
+R13: 0000000029ce35d0 R14: 0000000000000000 R15: 0000000029e45270
+  </TASK>
+Modules linked in: xt_conntrack xt_MASQUERADE nf_conntrack_netlink 
+nfnetlink xt_addrtype iptable_nat nf_nat br_netfilter rpcsec_gss_krb5 
+auth_rpcgss oid_registry overlay mlx5_ib zram zsmalloc mlx5_core rpcrdma 
+rdma_ucm ib_uverbs ib_iser libiscsi scsi_transport_iscsi ib_umad rdma_cm 
+ib_ipoib iw_cm ib_cm fuse ib_core
+CR2: 0000000000000008
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__page_cache_release+0xc7/0x260
+Code: 8b 03 48 8b 53 08 48 c1 ed 12 83 e5 01 48 c1 e8 08 83 f5 01 83 e0 
+01 40 0f b6 ed 01 ed 3c 01 48 8b 43 10 83 dd ff 44 8d 7d 01 <48> 89 42 
+08 48 89 10 48 b8 00 01 00 00 00 00 ad de 48 89 43 08 48
+RSP: 0018:ffff888110197b78 EFLAGS: 00010013
+RAX: dead000000000122 RBX: ffffea0004e9aa00 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff888110197bc8 RDI: ffff8881001e1050
+RBP: 0000000000000002 R08: 000000000000005a R09: 00000000000009bc
 
 
