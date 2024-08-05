@@ -1,232 +1,176 @@
-Return-Path: <linux-kernel+bounces-275223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A226894820C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:05:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10375948210
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F7C1F2348E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:05:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3451B1C21BCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CC016B39C;
-	Mon,  5 Aug 2024 19:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7561816B396;
+	Mon,  5 Aug 2024 19:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLd76+zy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HOplSHU9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BCA2AD13;
-	Mon,  5 Aug 2024 19:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE5B2AD13;
+	Mon,  5 Aug 2024 19:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722884729; cv=none; b=gYQiL0Pj3RQOFcsA66PrR/SCufxJLVktIHLyNx/fq80bGunM5Au9FJ/Wq7RONqTgFELLEK/oVq8pjpZLT9Mmxmz+Fsrzm58aMTRz6ZXidMK4fr0RhTqyhiP1QcWdfkKOtebMzQZy6Qw825KWlHyiRkvneViF3iVK6lN3N9ZWbfY=
+	t=1722884883; cv=none; b=BVXSj9hfoHKUIMTbLrfoiYX08OaMzu95lDftJid+tPtoFZWLm3ow8eZVuVJvYUMvkdwPr7xd215SVdTOdaQTRHDXlXGRiGZznv1so0yI1l89M24+2m39aK2tF1Rseq1AtkopeeXUg1PRgDhOYZ++CZh7dUHyWulzxVt/9aOY3mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722884729; c=relaxed/simple;
-	bh=cPCmldVPRgFeIxgMTiKS36c+Aixa8bS03HsjdsooKlI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=US5yQHHPuvPUIFcYOCjxMp76pt/PrFY76qXoIGJkJqL0WUeVoUYQPTb4fRZpLHq6KuJadTS3Uz1/jWj/s4XGsvmt967U8A1TOEpAIakz2DqLLbsl8S+K9NVlMKc2vU2eKAFkrBHk/uC13vc6uDonTI9Yi5Y8+bsLhCjSoAaA/Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLd76+zy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C95C4AF10;
-	Mon,  5 Aug 2024 19:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722884728;
-	bh=cPCmldVPRgFeIxgMTiKS36c+Aixa8bS03HsjdsooKlI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TLd76+zy5670BgKGblI39Qmaa62vVzSVaTi7TCqB5Ax3sAX92bbAkhp8AQ3TDlVA5
-	 +8Q9VQAYWUD7tb1RcfX7sCz1zlkXmF9oIEK07gXHtwYAwUwrF2gNuOpPEjz72WHYS/
-	 Dm6zGgWYeVHyexsd8saVdodiowLf9o/X3XJs3nyLSq2WgZMPj85g32k2KMEe++QJUa
-	 i4SGIOKAQiW1l+K1QbQOIatLKX1I0I+vKOAOocwzLBqTM7X3FcPSHv4GhJOXA+lJTG
-	 7APO4yabS0CR97bbmAQhrDSuvCvFPNVjooUQlVx1CBbDnSga5VGSyFI740XVmFgaSh
-	 dqnF2nr5Pg1JQ==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so121101011fa.0;
-        Mon, 05 Aug 2024 12:05:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVDiVQOlIjje0VAA0tnyN1J4+TB9m/MkofZcfR61ZOfnUC1ge+3TgfYItk18VbM14HmP54rA9z/KBO3d8niwdZDYqeVmtkj+F7z/9bzipInPkLQCBWPKRX4kcQ38Ep1AtqdxBB6M2bJfEXXPcrvqdiUnIupMdlwzi8HLZDQKj3O
-X-Gm-Message-State: AOJu0YxclMCV9XCATkELmLkIWqKRd6gIp97MqPcSDmLcousUa1aOLDQS
-	qLxhqoPXMJuucLq0p2dwYdLR9Kj8aHO0m6RBsMYfEjOTlK4OajYoV2eBIZh+ppr3Ba72sIjQtib
-	5258bnUFm6+LwEe3d6ir12a3QDQ==
-X-Google-Smtp-Source: AGHT+IET6gczs3GfflEbuJJZODloldeME4HEE+ZdKsBacwO7Aftaf7g/qzwvp1wwGmaiDZFabuyXcVsRNwH0G49eiLE=
-X-Received: by 2002:a2e:be2c:0:b0:2f1:8622:dc6b with SMTP id
- 38308e7fff4ca-2f18622eb9dmr20197831fa.1.1722884727060; Mon, 05 Aug 2024
- 12:05:27 -0700 (PDT)
+	s=arc-20240116; t=1722884883; c=relaxed/simple;
+	bh=Nnd3+0bNF5gwDJ3usiJzo0bDZKWUrE3VhKWFRbcifzc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=McogNsGVKbX0Ic50xPCLweoof2NbmCTV7+UUY3tK4rNRUFCURJLl8hJry2go5ZMfGa8PZf8mL2vXnXUxjWaoaaKHG5vRMGKjoHYBP42s6rB+SUdqvMVr4HDS5EPksuTdfCa09Ku1OQv9yW3nufVf1MKBb/RHYLjxIBdqDSo3MW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HOplSHU9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475C9avS000420;
+	Mon, 5 Aug 2024 19:07:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=PmXKmmE8mhxPHJoh9iy5H4c/
+	6TQngI+cxRP2LH5NW30=; b=HOplSHU9F6by8nU1YxrsCSFWmjgcybHcxkKcuNE+
+	rvaZ4Cbr3E/TVrN+hmMLQteE2ITRPIRw5BXld/vAauZ9vffa+83oeDzYyjarBMGf
+	k+bTVAQJyrgGpGtLxPmZYE4fEX+kCwTJ/00/zCIUvPIFHrpwti5HSLzLXWgBrcm0
+	iV1h70fpdbdh+WrvOyL1L+kSQxLf2GZXI8TUaZthrXQ0Gd+Se0I2ERtEqnsshg+t
+	B2/Zf5fLCB0mlUbUzZpdq5xxdTZH97DTVVgZ6ncK9whJ+zdENsKFyHYjIH/9v6my
+	O5OPZS+JO4xhbIqEyr0lQIZ7fjHHI8pdpPvjV0etV2bSPQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbvgd2kj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 19:07:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 475J7q52021607
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 19:07:52 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 5 Aug 2024 12:07:48 -0700
+Date: Tue, 6 Aug 2024 00:37:44 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Vladimir Lypak <vladimir.lypak@gmail.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
+        Jordan Crouse
+	<jordan@cosmicpenguin.net>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/4] drm/msm/a5xx: properly clear preemption records on
+ resume
+Message-ID: <20240805190744.vi3553ht6q3mi4s2@hu-akhilpo-hyd.qualcomm.com>
+References: <20240711100038.268803-1-vladimir.lypak@gmail.com>
+ <20240711100038.268803-3-vladimir.lypak@gmail.com>
+ <20240801131610.jtcpo5l2gd34uqbf@hu-akhilpo-hyd.qualcomm.com>
+ <ZqziDJlrhvSnijpw@trashcan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724065048.285838-1-s-vadapalli@ti.com> <20240724161916.GG3349@thinkpad>
- <20240725042001.GC2317@thinkpad> <93e864fb-cf52-4cc0-84a0-d689dd829afb@ti.com>
- <20240726115609.GF2628@thinkpad> <CAL_JsqJ-mfU88E_Ri=BzH6nAFg405gkPPJTtjdp7UR2n96QMkw@mail.gmail.com>
- <20240805164519.GF7274@thinkpad>
-In-Reply-To: <20240805164519.GF7274@thinkpad>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 5 Aug 2024 13:05:14 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
-Message-ID: <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
-Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, bhelgaas@google.com, lpieralisi@kernel.org, 
-	kw@linux.com, vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	stable@vger.kernel.org, ahalaney@redhat.com, srk@ti.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZqziDJlrhvSnijpw@trashcan>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: J-fGG7FMtbjQU2Ae89ggPEt3ZSwArtS0
+X-Proofpoint-ORIG-GUID: J-fGG7FMtbjQU2Ae89ggPEt3ZSwArtS0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-05_07,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 clxscore=1015
+ phishscore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408050137
 
-On Mon, Aug 5, 2024 at 10:45=E2=80=AFAM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Mon, Aug 05, 2024 at 10:01:37AM -0600, Rob Herring wrote:
-> > On Fri, Jul 26, 2024 at 5:56=E2=80=AFAM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > >
-> > > On Thu, Jul 25, 2024 at 01:50:16PM +0530, Siddharth Vadapalli wrote:
-> > > > On Thu, Jul 25, 2024 at 09:50:01AM +0530, Manivannan Sadhasivam wro=
-te:
-> > > > > On Wed, Jul 24, 2024 at 09:49:21PM +0530, Manivannan Sadhasivam w=
-rote:
-> > > > > > On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli w=
-rote:
-> > > > > > > Since the configuration of Legacy Interrupts (INTx) is not su=
-pported, set
-> > > > > > > the .map_irq and .swizzle_irq callbacks to NULL. This fixes t=
-he error:
-> > > > > > >   of_irq_parse_pci: failed with rc=3D-22
-> > > > > > > due to the absence of Legacy Interrupts in the device-tree.
-> > > > > > >
-> > > > > >
-> > > > > > Do you really need to set 'swizzle_irq' to NULL? pci_assign_irq=
-() will bail out
-> > > > > > if 'map_irq' is set to NULL.
-> > > > > >
-> > > > >
-> > > > > Hold on. The errono of of_irq_parse_pci() is not -ENOENT. So the =
-INTx interrupts
-> > > > > are described in DT? Then why are they not supported?
-> > > >
-> > > > No, the INTx interrupts are not described in the DT. It is the pcie=
-port
-> > > > driver that is attempting to setup INTx via "of_irq_parse_and_map_p=
-ci()"
-> > > > which is the .map_irq callback. The sequence of execution leading t=
-o the
-> > > > error is as follows:
-> > > >
-> > > > pcie_port_probe_service()
-> > > >   pci_device_probe()
-> > > >     pci_assign_irq()
-> > > >       hbrg->map_irq
-> > > >         of_pciof_irq_parse_and_map_pci()
-> > > >         of_irq_parse_pci()
-> > > >           of_irq_parse_raw()
-> > > >             rc =3D -EINVAL
-> > > >             ...
-> > > >             [DEBUG] OF: of_irq_parse_raw: ipar=3D/bus@100000/interr=
-upt-controller@1800000, size=3D3
-> > > >             if (out_irq->args_count !=3D intsize)
-> > > >               goto fail
-> > > >                 return rc
-> > > >
-> > > > The call to of_irq_parse_raw() results in the Interrupt-Parent for =
-the
-> > > > PCIe node in the device-tree being found via of_irq_find_parent(). =
-The
-> > > > Interrupt-Parent for the PCIe node for MSI happens to be GIC_ITS:
-> > > > msi-map =3D <0x0 &gic_its 0x0 0x10000>;
-> > > > and the parent of GIC_ITS is:
-> > > > gic500: interrupt-controller@1800000
-> > > > which has the following:
-> > > > #interrupt-cells =3D <3>;
-> > > >
-> > > > The "size=3D3" portion of the DEBUG print above corresponds to the
-> > > > #interrupt-cells property above. Now, "out_irq->args_count" is set =
-to 1
-> > > > as __assumed__ by of_irq_parse_pci() and mentioned as a comment in =
-that
-> > > > function:
-> > > >       /*
-> > > >        * Ok, we don't, time to have fun. Let's start by building up=
- an
-> > > >        * interrupt spec.  we assume #interrupt-cells is 1, which is=
- standard
-> > > >        * for PCI. If you do different, then don't use that routine.
-> > > >        */
-> > > >
-> > > > In of_irq_parse_pci(), since the PCIe-Port driver doesn't have a
-> > > > device-tree node, the following doesn't apply:
-> > > >   dn =3D pci_device_to_OF_node(pdev);
-> > > > and we skip to the __assumption__ above and proceed as explained in=
- the
-> > > > execution sequence above.
-> > > >
-> > > > If the device-tree nodes for the INTx interrupts were present, the
-> > > > "ipar" sequence to find the interrupt parent would be skipped and w=
-e
-> > > > wouldn't end up with the -22 (-EINVAL) error code.
-> > > >
-> > > > I hope this clarifies the relation between the -22 error code and t=
-he
-> > > > missing device-tree nodes for INTx.
-> > > >
-> > >
-> > > Thanks for explaining the logic. Still I think the logic is flawed. B=
-ecause the
-> > > parent (host bridge) doesn't have 'interrupt-map', which means INTx i=
-s not
-> > > supported. But parsing one level up to the GIC node and not returning=
- -ENOENT
-> > > doesn't make sense to me.
-> > >
-> > > Rob, what is your opinion on this behavior?
-> >
-> > Not sure I get the question. How should we handle/determine no INTx? I
-> > suppose that's either based on the platform (as this patch did) or by
->
-> Platform !=3D driver. Here the driver is making the call, but the platfor=
-m
-> capability should come from DT, no? I don't like the idea of disabling IN=
-Tx in
-> the driver because, the driver may support multiple SoCs and these capabi=
-lity
-> may differ between them. So the driver will end up just hardcoding the in=
-fo
-> which is already present in DT :/
+On Fri, Aug 02, 2024 at 01:41:32PM +0000, Vladimir Lypak wrote:
+> On Thu, Aug 01, 2024 at 06:46:10PM +0530, Akhil P Oommen wrote:
+> > On Thu, Jul 11, 2024 at 10:00:19AM +0000, Vladimir Lypak wrote:
+> > > Two fields of preempt_record which are used by CP aren't reset on
+> > > resume: "data" and "info". This is the reason behind faults which happen
+> > > when we try to switch to the ring that was active last before suspend.
+> > > In addition those faults can't be recovered from because we use suspend
+> > > and resume to do so (keeping values of those fields again).
+> > > 
+> > > Fixes: b1fc2839d2f9 ("drm/msm: Implement preemption for A5XX targets")
+> > > Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> > > index f58dd564d122..67a8ef4adf6b 100644
+> > > --- a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> > > +++ b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> > > @@ -204,6 +204,8 @@ void a5xx_preempt_hw_init(struct msm_gpu *gpu)
+> > >  		return;
+> > >  
+> > >  	for (i = 0; i < gpu->nr_rings; i++) {
+> > > +		a5xx_gpu->preempt[i]->data = 0;
+> > > +		a5xx_gpu->preempt[i]->info = 0;
+> > 
+> > I don't see this bit in the downstream driver. Just curious, do we need
+> > to clear both fields to avoid the gpu faults?
+> 
+> Downstream gets away without doing so because it resumes on the same
+> ring that it suspended on. On mainline we always do GPU resume on first
+> ring. It was enough to zero info field to avoid faults but clearing
+> both shouldn't hurt.
+> 
+> I have tried to replicate faults again with local preemption disabled
+> and unmodified mesa and couldn't do so. It only happens when fine-grain
+> preemption is used and there was a switch from IB1.
 
-Let me rephrase it to "a decision made within the driver" (vs.
-globally decided). That could be hardcoded (for now) or as match data
-based on compatible.
+So, I guess gpu is going to rpm suspend while there is pending
+(preempted) submits present in another ringbuffer. Probably the other
+fixes you have in this series make this not necessary during rpm suspend.
+But we can keep as it is harmless and might help during gpu recovery.
 
-> Moreover, the issue I'm seeing is, even if the platform doesn't support I=
-NTx (as
-> described by DT in this case), of_irq_parse_pci() doesn't report correct
-> error/log. So of_irq_parse_pci() definitely needs a fixup.
+> This made me come up with explanation of what could be happening.
+> If preemption switch is initiated on a some ring at checkpoint in IB1,
+> CP should save position of that checkpoint in the preemption record and
+> set some flag in "info" field which will tell it to continue from that
+> checkpoint when switching back.
+> When switching back to that ring we program address of its preemption
+> record to CP_CONTEXT_SWITCH_RESTORE_ADDR. Apparently this won't remove
+> the flag from "info" field because the preemption record is only being
+> read from. This leaves preemption record outdated on that ring until
+> next switch will override it. This doesn't cause issues on downstream
+> because it won't try to restore from that record since it's ignored
+> during GPU power-up.
 
-Possibly. What's correct here?
+I guess it is fine if you never go to rpm suspend without idling all
+RBs!
 
-There was some rework in 6.11 of the interrupt parsing. So it is
-possible something changed here. There's also this issue still
-pending:
+-Akhil
 
-https://lore.kernel.org/all/2046da39e53a8bbca5166e04dfe56bd5.squirrel@_/
-
-> > or by
-> > failing to parse the interrupts. The interrupt parsing code is pretty
-> > tricky as it has to deal with some ancient DTs, so I'm a little
-> > hesitant to rely on that failing. Certainly I wouldn't rely on a
-> > specific errno value. The downside to doing that is also if someone
-> > wants interrupts, but has an error in their DT, then all we can do is
-> > print 'INTx not supported' or something. So we couldn't fail probe as
-> > the common code wouldn't be able to distinguish. I suppose we could
-> > just check for 'interrupt-map' present in the host bridge node or not.
->
-> Yeah, as simple as that. But I don't know if that is globally applicable =
-to
-> all platforms.
-
-There's a lot of history and the interrupt parsing is fragile due to
-all the "interesting" DT interrupt hierarchies. So while I think it
-would work, that's just a guess. I'm open to trying it and seeing.
-
-Rob
+> 
+> Vladimir
+> 
+> > 
+> > -Akhil
+> > >  		a5xx_gpu->preempt[i]->wptr = 0;
+> > >  		a5xx_gpu->preempt[i]->rptr = 0;
+> > >  		a5xx_gpu->preempt[i]->rbase = gpu->rb[i]->iova;
+> > > -- 
+> > > 2.45.2
+> > > 
 
