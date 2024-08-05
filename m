@@ -1,258 +1,279 @@
-Return-Path: <linux-kernel+bounces-275249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AACC94825B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:34:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2266948258
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DD791C21DFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:34:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3752B1F23E48
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84A216BE0E;
-	Mon,  5 Aug 2024 19:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3221716B3B6;
+	Mon,  5 Aug 2024 19:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PxVcdz0D"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxFSSn1b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5957116BE00
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90C15D5D9;
+	Mon,  5 Aug 2024 19:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722886459; cv=none; b=qnOqMNC4bxZXxa8rzhXEWdvJsMhXyPAjOjLTMvuIbmJGMT/IoM/VzPI8n0KVRhgdTuVHrPEZEmL7gWDq/4u6/w+/n0bD1jnry+sTFWLyWJi4f1IWml5uHgieEF0zT87qJxo/jC+JnAfVzm7p2y6SRZfFGmIEl9kHPhSnBxp9Zek=
+	t=1722886444; cv=none; b=m9N9cb+RkMeRD5ngk1QCEWgqOORtT2O4yu4lcv7eLxsQRuGYImzDdU2zG+PXCJBLUhKBKTP0Ipji7CBSjWqDGYMAyzxryKGJBf5/07S0AIZB/S+NXlKlT+KkD3DH3lH4LdpxbKiiL3pPw0WF9xn2S6PUIh9ddGP0bbxb4KPi52o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722886459; c=relaxed/simple;
-	bh=WiV+lwMm5NzYt8US5CGvOxBobzJuEhvUWC03doxEWNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fMCXQ/cpIAZY6BQWr4yleBRxm6GO5IwcJLROTCgnCa7bc4fQ8Bl+ZMAYNGDgDTKJ2H/zksgfptvXxUqdxLV7Cd2TGKX39M9hknSnlXjUjLgYJLIxYOuASICVYtbfTu0BbMbmspoPf6H7vMyPTa4OgueGWCKb2uy1J9iabkkW/TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PxVcdz0D; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so1174976566b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:34:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722886456; x=1723491256; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NzT2B9YvB0hJnKZw1ow69fHG8NCpJy8+4aiEYoSj3/o=;
-        b=PxVcdz0Dw4x8Ypbfnedbgb1ML7t9lLMtphGyl1MEWKf4P77bH7ZrfTQy6yEZnfdeli
-         RPdvD4MPM4QDLCvJydeNjPVbrFetRDAQFGZbfuuzbW+bEGITAruZmnQfpP3vGP1UAll+
-         xj7jnai5C5SVu1XgBQLwfoNIr4MhN+8FunEfY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722886456; x=1723491256;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NzT2B9YvB0hJnKZw1ow69fHG8NCpJy8+4aiEYoSj3/o=;
-        b=fVOtA68hTmXmy2YkkaeDmpQT0vUteIdM6xRVFefXygpxRDcD7jeTBhs60iI54X9zuk
-         FhgvcsfhZubJq/Ta24nE+z/CrS0oL1LvsbWpuGBo+Ml+aw/fHjV7Zz0SQgXaYeN/kajY
-         nVBh/mDqYX00fTcqbKQdghHap9tUFoUqnGQ8gz9QGaa3g9RNp78eUF0nos1pFyiPwoVO
-         UmiDGYdxVUpOtB7W6zj8oZ4z9Nd4U4JV9gu9SsqccQIb7J4SKfw4fDcvXbdFgu26BRDy
-         CS5FCCJOzpsccISVxL8ySM8E8TSMgjNh13R76CU4vLVLV6iH80Y0NyJf34lhLqPCrkPg
-         NaXw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3Hmvh1FfDg4b9iK5CkrDcY19XoRvR9HoCA/gjv7AcfN0ESTqhtqVupIFABEJHrBq0vMPpzwJ4zGFcWODU5hXb+q/bGnCJgb8sgg1f
-X-Gm-Message-State: AOJu0Yx9cswx0lwpY6ow5RMwb2WPaaEYV3HQWQuPsRBXzMf+t03SPAbZ
-	A1zIdsCacooF5aLPmkhgUCX4ph2ChggTmwQOWffpXe4m3E1t/LHUSQzVksFweW44WDPXTeBxCYY
-	GBDrdtA==
-X-Google-Smtp-Source: AGHT+IG7PQJYTKvgxe0akbqoXeODMGf6Fw0c23iHOflZhw0+v9DOz29J9l3Lpk8Ipk+PCeJuLc4/Mg==
-X-Received: by 2002:a17:907:7e9e:b0:a6f:e47d:a965 with SMTP id a640c23a62f3a-a7dc502e77amr821273066b.41.1722886455496;
-        Mon, 05 Aug 2024 12:34:15 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec4a8dsm480002766b.190.2024.08.05.12.34.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 12:34:15 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7de4364ca8so262137066b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:34:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVt/uH9w5WM31M0+1PSEGDbvBoPNA+GgccU4BcujnXyHAT5+UT1w8/VGu1AzwwosvK4J9QEBjKuO5D7NktLhp/ptRt45PDUz1A3SkTo
-X-Received: by 2002:a17:906:f5a6:b0:a77:b726:4fc with SMTP id
- a640c23a62f3a-a7dc4dc193fmr950383566b.1.1722886454780; Mon, 05 Aug 2024
- 12:34:14 -0700 (PDT)
+	s=arc-20240116; t=1722886444; c=relaxed/simple;
+	bh=SPYHuMh/eIAY+lGpWmzoQFp+5wNyKvoUp0CwVbmHH8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXODYodqtAs+vdBxoviag9TkQCEdcC1GLjmxdb2pSCDx8KhldUYJ0HIDrF2lursErI4O60bfI/pOlfQbxDHbKPUo6JRcOma52Q9/5ZsxrR+bYI5jyYpyP/3ifGzGjh+m/GUiEPZHafOnzxCG/Yqq3xb6uBHw7995v5R2pxF4QtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxFSSn1b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDAB2C32782;
+	Mon,  5 Aug 2024 19:34:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722886443;
+	bh=SPYHuMh/eIAY+lGpWmzoQFp+5wNyKvoUp0CwVbmHH8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RxFSSn1bVeq2sEIT1rYh6VLuIQlOsn8gYFO7d44unyIB/DEnsp0qj4BKa8JhdqZZq
+	 +OD4C/EG+2DMLhWQm1A38xnAseHyYSwv2c6kNLQmevDKJcjgSRgMBnMuG+ULQL4j4j
+	 6mf8p06f8rEf/4n0Ulndtiwzcf4G3UONlbjYvNYvjw+4xuOGoj8vE5ERU0VPl7tx4b
+	 NRf92i5tyoAR+i5TtGTcG/dSfPj6YZ1RcWG4w2OnYa1TNi5c3lbrR/UqBgIBfBZy26
+	 b7M3ymbNohWFU6ESUaWyGnrcsQ0cgf6AbmAofIYHk3eTngLUPdYDr8QyeLUuYiq+c1
+	 a+6d/cISf2YUQ==
+Date: Mon, 5 Aug 2024 16:33:59 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, weilin.wang@intel.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Perry Taylor <perry.taylor@intel.com>,
+	Samantha Alt <samantha.alt@intel.com>,
+	Caleb Biggers <caleb.biggers@intel.com>
+Subject: Re: [RFC PATCH v18 0/8] TPEBS counting mode support
+Message-ID: <ZrEpJxtm5zlp5rbo@x1>
+References: <20240720062102.444578-1-weilin.wang@intel.com>
+ <CAM9d7cgoTyf3Zjt=+2yZi5Pat4UrxKxN=rkLHmyUWZqwZk8_Kw@mail.gmail.com>
+ <CAP-5=fWr2Qna9ikzUCFavo3OTUDSP3ztr=i6E=R962CXCdHckg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
- <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
- <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com> <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
-In-Reply-To: <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Aug 2024 12:33:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com>
-Message-ID: <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com>
-Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
- -4.4% regression
-To: Jeff Xu <jeffxu@google.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>, kernel test robot <oliver.sang@intel.com>, 
-	Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, lkp@intel.com, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kees Cook <keescook@chromium.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Dave Hansen <dave.hansen@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Guenter Roeck <groeck@chromium.org>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
-	feng.tang@intel.com, fengwei.yin@intel.com
-Content-Type: multipart/mixed; boundary="000000000000205ca7061ef4c39c"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWr2Qna9ikzUCFavo3OTUDSP3ztr=i6E=R962CXCdHckg@mail.gmail.com>
 
---000000000000205ca7061ef4c39c
-Content-Type: text/plain; charset="UTF-8"
+On Mon, Aug 05, 2024 at 08:10:12AM -0700, Ian Rogers wrote:
+> On Mon, Jul 22, 2024 at 10:38 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Hello Weilin,
+> >
+> > On Fri, Jul 19, 2024 at 11:21 PM <weilin.wang@intel.com> wrote:
+> > >
+> > > From: Weilin Wang <weilin.wang@intel.com>
+> > >
+> > > Change in v18:
+> > >  - Update to exit 2 in TPEBS shell test when not on Intel platform.
+> > >  - Several updates to use EVLIST_CTL_CMD_ENABLE_TAG, EVLIST_CTL_CMD_ACK_TAG, and
+> > >  etc.
+> > >
+> > > Changes in v17:
+> > >  - Add a poll on control fifo ack_fd to ensure program returns successfully when
+> > >  perf record failed for any reason.
+> > >  - Add a check in the tpebs test to only run on Intel platforms.
+> > >
+> > > Changes in v16:
+> > >  - Update tpebs bash test code and variable name.
+> > >  - Add a check to ensure only use "-C" option when cpumap is not "-1" when
+> > >  forking "perf record".
+> > >
+> > > Changes in v15:
+> > >  - Revert changes added for python import test failure in v14 because the code
+> > >  works correctly with the new python build code.
+> > >  - Update the command line option to --record-tpebs.
+> > >
+> > > Changes in v14:
+> > >  - Fix the python import test failure. We cannot support PYTHON_PERF because it
+> > >  will trigger a chain of dependency issues if we add intel-tpebs.c to it. So,
+> > >  only enable tpebs functions in evsel and evlist when PYTHON_PERF is not
+> > >  defined.
+> > >  - Fix shellcheck warning for the tpebs test.
+> > >
+> > > Changes in v13:
+> > >  - Add document for the command line option and fix build error in non-x86_64.
+> > >  - Update example with non-zero retire_latency value when tpebs recording is
+> > >  enabled.
+> > >  - Add tpebs_stop() back to tpebs_set_evsel() because in hybrid platform, when
+> > >  the forked perf record is not killed, the reader thread does not get any
+> > >  sampled data from the PIPE. As a result, tpebs_set_evesel() will always return
+> > >  zero on retire_latency values. This does not happen on my test GNR machine.
+> > >  Since -I is not supported yet, I think we should add tpebs_stop() to ensure
+> > >  correctness for now. More investigation is required here when we work on
+> > >  supporting -I mode.
+> > >  - Rebase code on top of perf-tools-next.
+> > >
+> > > Changes in v12:
+> > >  - Update MTL metric JSON file to include E-Core TMA3.6 changes.
+> > >  - Update comments and code for better code quality. Keep tpebs_start() and
+> > >  tpebs_delete() at evsel level for now and add comments on these functions with
+> > >  more details about potential future changes. Remove tpebs_stop() call from
+> > >  tpebs_set_evsel(). Simplify the tpebs_start() and tpebs_stop()/tpebs_delete()
+> > >  interfaces. Also fixed the bugs on not freed "new" pointer and the incorrect
+> > >  variable value assignment to val instead of counter->val.
+> > >
+> > > Changes in v11:
+> > >  - Make retire_latency evsels not opened for counting. This works correctly now
+> > >  with the code Namhyung suggested that adjusting group read size when
+> > >  retire_latency evsels included in the group.
+> > >  - Update retire_latency value assignment using rint() to reduce precision loss
+> > >  while keeping code generic.
+> > >  - Fix the build error caused by not used variable in the test.
+> > >
+> > > Other changes in v10:
+> > >  - Change perf record fork from perf stat to evsel. All the major operations
+> > >  like tpebs start, stop, read_evsel should directly work through evsel.
+> > >  - Make intel-tpebs x86_64 only. This change is cross-compiled to arm64.
+> > >  - Put tpebs code to intel-tepbs and simplify intel-tpebs APIs to minimum number
+> > > of functions and variables. Update funtion name and variable names to use
+> > > consistent prefix. Also improve error handling.
+> > >  - Integrate code patch from Ian for the :R parser.
+> > >  - Update MTL metrics to TMA 4.8.
+> > >
+> > > V9: https://lore.kernel.org/all/20240521173952.3397644-1-weilin.wang@intel.com/
+> > >
+> > > Changes in v9:
+> > >  - Update the retire_latency result print and metric calculation method. Plugin
+> > > the value to evsel so that no special code is required.
+> > >  - Update --control:fifo to use pipe instead of named pipe.
+> > >  - Add test for TPEBS counting mode.
+> > >  - Update Document with more details.
+> > >
+> > > Changes in v8:
+> > >  - In this revision, the code is updated to base on Ian's patch on R modifier
+> > > parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@google.com/
+> > > After this change, there is no special code required for R modifier in
+> > > metricgroup.c and metricgroup.h files.
+> > >
+> > > Caveat of this change:
+> > >   Ideally, we will need to add special handling to skip counting events with R
+> > > modifier in evsel. Currently, this is not implemented so the event with :R will
+> > > be both counted and sampled. Usually, in a metric formula that uses retire_latency,
+> > > it would already require to count the event. As a result, we will endup count the
+> > > same event twice. This should be able to be handled properly when we finalize our
+> > > design on evsel R modifier support.
+> > >
+> > >  - Move TPEBS specific code out from main perf stat code to separate files in
+> > > util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
+> > >  - Use --control:fifo to ack perf stat from forked perf record instead of sleep(2) [Namhyung]
+> > >  - Add introductions about TPEBS and R modifier in Documents. [Namhyung]
+> > >
+> > >
+> > > Changes in v7:
+> > >  - Update code and comments for better code quality [Namhyung]
+> > >  - Add a separate commit for perf data [Namhyung]
+> > >  - Update retire latency print function to improve alignment [Namhyung]
+> > >
+> > > Changes in v6:
+> > >  - Update code and add comments for better code quality [Namhyung]
+> > >  - Remove the added fd var and directly pass the opened fd to data.file.fd [Namhyung]
+> > >  - Add kill() to stop perf record when perf stat exists early [Namhyung]
+> > >  - Add command opt check to ensure only start perf record when -a/-C given [Namhyung]
+> > >  - Squash commits [Namhyung]
+> > >
+> > > Changes in v5:
+> > >  - Update code and add comments for better code quality [Ian]
+> > >
+> > > Changes in v4:
+> > >  - Remove uncessary debug print and update code and comments for better
+> > > readability and quality [Namhyung]
+> > >  - Update mtl metric json file with consistent TmaL1 and TopdownL1 metricgroup
+> > >
+> > > Changes in v3:
+> > >  - Remove ':' when event name has '@' [Ian]
+> > >  - Use 'R' as the modifier instead of "retire_latency" [Ian]
+> > >
+> > > Changes in v2:
+> > >  - Add MTL metric file
+> > >  - Add more descriptions and example to the patch [Arnaldo]
+> > >
+> > > Here is an example of running perf stat to collect a metric that uses
+> > > retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL system.
+> > >
+> > > In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES sample.
+> > > Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_latency value
+> > > are all 0.
+> > >
+> > > ./perf stat -M tma_dtlb_store -a -- sleep 1
+> > >
+> > > [ perf record: Woken up 1 times to write data ]
+> > > [ perf record: Captured and wrote 0.000 MB - ]
+> > >
+> > >  Performance counter stats for 'system wide':
+> > >
+> > >        181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  tma_dtlb_store
+> > >          3,195,608      cpu_core/topdown-retiring/
+> > >         40,156,649      cpu_core/topdown-mem-bound/
+> > >          3,550,925      cpu_core/topdown-bad-spec/
+> > >        117,571,818      cpu_core/topdown-fe-bound/
+> > >         57,118,087      cpu_core/topdown-be-bound/
+> > >             69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
+> > >              4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
+> > >         30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
+> > >         30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
+> > >            168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
+> > >               0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
+> > >
+> > >        1.003105924 seconds time elapsed
+> > >
+> > > v1:
+> > > TPEBS is one of the features provided by the next generation of Intel PMU.
+> > > Please refer to Section 8.4.1 of "Intel® Architecture Instruction Set Extensions
+> > > Programming Reference" [1] for more details about this feature.
+> > >
+> > > This set of patches supports TPEBS in counting mode. The code works in the
+> > > following way: it forks a perf record process from perf stat when retire_latency
+> > > of one or more events are used in a metric formula. Perf stat would send a
+> > > SIGTERM signal to perf record before it needs the retire latency value for
+> > > metric calculation. Perf stat will then process sample data to extract the
+> > > retire latency data for metric calculations. Currently, the code uses the
+> > > arithmetic average of retire latency values.
+> > >
+> > > [1] https://www.intel.com/content/www/us/en/content-details/812218/intel-architecture-instruction-set-extensions-programming-reference.html?wapkw=future%20features
+> > >
+> > >
+> > >
+> > >
+> > > Ian Rogers (1):
+> > >   perf parse-events: Add a retirement latency modifier
+> > >
+> > > Weilin Wang (7):
+> > >   perf data: Allow to use given fd in data->file.fd
+> > >   perf stat: Fork and launch perf record when perf stat needs to get
+> > >     retire latency value for a metric.
+> > >   perf stat: Plugin retire_lat value from sampled data to evsel
+> > >   perf vendor events intel: Add MTL metric json files
+> > >   perf stat: Add command line option for enabling tpebs recording
+> > >   perf Document: Add TPEBS to Documents
+> > >   perf test: Add test for Intel TPEBS counting mode
+> >
+> > Thanks for your persistence!
+> >
+> > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+> 
+> Ping.
 
-On Mon, 5 Aug 2024 at 11:55, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> So please consider this a "maybe something like this" patch, but that
-> 'arch_unmap()' really is pretty nasty
+I guess Namhyung's reviewed-by should suffice, but since you're pinging
+and I saw previous comments about this serie, would it be possible to
+get your Reviewed-by as well?
 
-Actually, the whole powerpc vdso code confused me. It's not the vvar
-thing that wants this close thing, it's the other ones that have the
-remap thing.
+Thanks,
 
-.. and there were two of those error cases that needed to reset the
-vdso pointer.
-
-That all shows just how carefully I was reading this code.
-
-New version - still untested, but now I've read through it one more
-time - attached.
-
-                Linus
-
---000000000000205ca7061ef4c39c
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lzhe3lwz0>
-X-Attachment-Id: f_lzhe3lwz0
-
-IGFyY2gvcG93ZXJwYy9pbmNsdWRlL2FzbS9tbXVfY29udGV4dC5oIHwgIDkgLS0tLS0tLS0tCiBh
-cmNoL3Bvd2VycGMva2VybmVsL3Zkc28uYyAgICAgICAgICAgICB8IDE3ICsrKysrKysrKysrKysr
-Ky0tCiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9tbXVfY29udGV4dC5oICAgICB8ICA1IC0tLS0tCiBp
-bmNsdWRlL2FzbS1nZW5lcmljL21tX2hvb2tzLmggICAgICAgICB8IDExICsrKy0tLS0tLS0tCiBp
-bmNsdWRlL2xpbnV4L21tX3R5cGVzLmggICAgICAgICAgICAgICB8ICAyICsrCiBtbS9tbWFwLmMg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDE1ICsrKysrKy0tLS0tLS0tLQogNiBmaWxl
-cyBjaGFuZ2VkLCAyNiBpbnNlcnRpb25zKCspLCAzMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vbW11X2NvbnRleHQuaCBiL2FyY2gvcG93ZXJwYy9p
-bmNsdWRlL2FzbS9tbXVfY29udGV4dC5oCmluZGV4IDM3YmZmYTBmNzkxOC4uYTMzNGExMzY4ODQ4
-IDEwMDY0NAotLS0gYS9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vbW11X2NvbnRleHQuaAorKysg
-Yi9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vbW11X2NvbnRleHQuaApAQCAtMjYwLDE1ICsyNjAs
-NiBAQCBzdGF0aWMgaW5saW5lIHZvaWQgZW50ZXJfbGF6eV90bGIoc3RydWN0IG1tX3N0cnVjdCAq
-bW0sCiAKIGV4dGVybiB2b2lkIGFyY2hfZXhpdF9tbWFwKHN0cnVjdCBtbV9zdHJ1Y3QgKm1tKTsK
-IAotc3RhdGljIGlubGluZSB2b2lkIGFyY2hfdW5tYXAoc3RydWN0IG1tX3N0cnVjdCAqbW0sCi0J
-CQkgICAgICB1bnNpZ25lZCBsb25nIHN0YXJ0LCB1bnNpZ25lZCBsb25nIGVuZCkKLXsKLQl1bnNp
-Z25lZCBsb25nIHZkc29fYmFzZSA9ICh1bnNpZ25lZCBsb25nKW1tLT5jb250ZXh0LnZkc287Ci0K
-LQlpZiAoc3RhcnQgPD0gdmRzb19iYXNlICYmIHZkc29fYmFzZSA8IGVuZCkKLQkJbW0tPmNvbnRl
-eHQudmRzbyA9IE5VTEw7Ci19Ci0KICNpZmRlZiBDT05GSUdfUFBDX01FTV9LRVlTCiBib29sIGFy
-Y2hfdm1hX2FjY2Vzc19wZXJtaXR0ZWQoc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEsIGJvb2wg
-d3JpdGUsCiAJCQkgICAgICAgYm9vbCBleGVjdXRlLCBib29sIGZvcmVpZ24pOwpkaWZmIC0tZ2l0
-IGEvYXJjaC9wb3dlcnBjL2tlcm5lbC92ZHNvLmMgYi9hcmNoL3Bvd2VycGMva2VybmVsL3Zkc28u
-YwppbmRleCA3YTJmZjkwMTBmMTcuLjZmYTA0MWE2NjkwYSAxMDA2NDQKLS0tIGEvYXJjaC9wb3dl
-cnBjL2tlcm5lbC92ZHNvLmMKKysrIGIvYXJjaC9wb3dlcnBjL2tlcm5lbC92ZHNvLmMKQEAgLTgx
-LDYgKzgxLDEzIEBAIHN0YXRpYyBpbnQgdmRzbzY0X21yZW1hcChjb25zdCBzdHJ1Y3Qgdm1fc3Bl
-Y2lhbF9tYXBwaW5nICpzbSwgc3RydWN0IHZtX2FyZWFfc3RyCiAJcmV0dXJuIHZkc29fbXJlbWFw
-KHNtLCBuZXdfdm1hLCAmdmRzbzY0X2VuZCAtICZ2ZHNvNjRfc3RhcnQpOwogfQogCitzdGF0aWMg
-aW50IHZ2YXJfY2xvc2UoY29uc3Qgc3RydWN0IHZtX3NwZWNpYWxfbWFwcGluZyAqc20sCisJCSAg
-ICAgIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQoreworCXN0cnVjdCBtbV9zdHJ1Y3QgKm1t
-ID0gdm1hLT52bV9tbTsKKwltbS0+Y29udGV4dC52ZHNvID0gTlVMTDsKK30KKwogc3RhdGljIHZt
-X2ZhdWx0X3QgdnZhcl9mYXVsdChjb25zdCBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBwaW5nICpzbSwK
-IAkJCSAgICAgc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEsIHN0cnVjdCB2bV9mYXVsdCAqdm1m
-KTsKIApAQCAtOTIsMTEgKzk5LDEzIEBAIHN0YXRpYyBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBwaW5n
-IHZ2YXJfc3BlYyBfX3JvX2FmdGVyX2luaXQgPSB7CiBzdGF0aWMgc3RydWN0IHZtX3NwZWNpYWxf
-bWFwcGluZyB2ZHNvMzJfc3BlYyBfX3JvX2FmdGVyX2luaXQgPSB7CiAJLm5hbWUgPSAiW3Zkc29d
-IiwKIAkubXJlbWFwID0gdmRzbzMyX21yZW1hcCwKKwkuY2xvc2UgPSB2dmFyX2Nsb3NlLAogfTsK
-IAogc3RhdGljIHN0cnVjdCB2bV9zcGVjaWFsX21hcHBpbmcgdmRzbzY0X3NwZWMgX19yb19hZnRl
-cl9pbml0ID0gewogCS5uYW1lID0gIlt2ZHNvXSIsCiAJLm1yZW1hcCA9IHZkc282NF9tcmVtYXAs
-CisJLmNsb3NlID0gdnZhcl9jbG9zZSwKIH07CiAKICNpZmRlZiBDT05GSUdfVElNRV9OUwpAQCAt
-MjA3LDggKzIxNiwxMCBAQCBzdGF0aWMgaW50IF9fYXJjaF9zZXR1cF9hZGRpdGlvbmFsX3BhZ2Vz
-KHN0cnVjdCBsaW51eF9iaW5wcm0gKmJwcm0sIGludCB1c2VzX2ludAogCXZtYSA9IF9pbnN0YWxs
-X3NwZWNpYWxfbWFwcGluZyhtbSwgdmRzb19iYXNlLCB2dmFyX3NpemUsCiAJCQkJICAgICAgIFZN
-X1JFQUQgfCBWTV9NQVlSRUFEIHwgVk1fSU8gfAogCQkJCSAgICAgICBWTV9ET05URFVNUCB8IFZN
-X1BGTk1BUCwgJnZ2YXJfc3BlYyk7Ci0JaWYgKElTX0VSUih2bWEpKQorCWlmIChJU19FUlIodm1h
-KSkgeworCQltbS0+Y29udGV4dC52ZHNvID0gTlVMTDsKIAkJcmV0dXJuIFBUUl9FUlIodm1hKTsK
-Kwl9CiAKIAkvKgogCSAqIG91ciB2bWEgZmxhZ3MgZG9uJ3QgaGF2ZSBWTV9XUklURSBzbyBieSBk
-ZWZhdWx0LCB0aGUgcHJvY2VzcyBpc24ndApAQCAtMjIzLDggKzIzNCwxMCBAQCBzdGF0aWMgaW50
-IF9fYXJjaF9zZXR1cF9hZGRpdGlvbmFsX3BhZ2VzKHN0cnVjdCBsaW51eF9iaW5wcm0gKmJwcm0s
-IGludCB1c2VzX2ludAogCXZtYSA9IF9pbnN0YWxsX3NwZWNpYWxfbWFwcGluZyhtbSwgdmRzb19i
-YXNlICsgdnZhcl9zaXplLCB2ZHNvX3NpemUsCiAJCQkJICAgICAgIFZNX1JFQUQgfCBWTV9FWEVD
-IHwgVk1fTUFZUkVBRCB8CiAJCQkJICAgICAgIFZNX01BWVdSSVRFIHwgVk1fTUFZRVhFQywgdmRz
-b19zcGVjKTsKLQlpZiAoSVNfRVJSKHZtYSkpCisJaWYgKElTX0VSUih2bWEpKSB7CisJCW1tLT5j
-b250ZXh0LnZkc28gPSBOVUxMOwogCQlkb19tdW5tYXAobW0sIHZkc29fYmFzZSwgdnZhcl9zaXpl
-LCBOVUxMKTsKKwl9CiAKIAlyZXR1cm4gUFRSX0VSUl9PUl9aRVJPKHZtYSk7CiB9CmRpZmYgLS1n
-aXQgYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tbXVfY29udGV4dC5oIGIvYXJjaC94ODYvaW5jbHVk
-ZS9hc20vbW11X2NvbnRleHQuaAppbmRleCA4ZGFjNDVhMmM3ZmMuLjgwZjJhMzE4N2FhNiAxMDA2
-NDQKLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vbW11X2NvbnRleHQuaAorKysgYi9hcmNoL3g4
-Ni9pbmNsdWRlL2FzbS9tbXVfY29udGV4dC5oCkBAIC0yMzIsMTEgKzIzMiw2IEBAIHN0YXRpYyBp
-bmxpbmUgYm9vbCBpc182NGJpdF9tbShzdHJ1Y3QgbW1fc3RydWN0ICptbSkKIH0KICNlbmRpZgog
-Ci1zdGF0aWMgaW5saW5lIHZvaWQgYXJjaF91bm1hcChzdHJ1Y3QgbW1fc3RydWN0ICptbSwgdW5z
-aWduZWQgbG9uZyBzdGFydCwKLQkJCSAgICAgIHVuc2lnbmVkIGxvbmcgZW5kKQotewotfQotCiAv
-KgogICogV2Ugb25seSB3YW50IHRvIGVuZm9yY2UgcHJvdGVjdGlvbiBrZXlzIG9uIHRoZSBjdXJy
-ZW50IHByb2Nlc3MKICAqIGJlY2F1c2Ugd2UgZWZmZWN0aXZlbHkgaGF2ZSBubyBhY2Nlc3MgdG8g
-UEtSVSBmb3Igb3RoZXIKZGlmZiAtLWdpdCBhL2luY2x1ZGUvYXNtLWdlbmVyaWMvbW1faG9va3Mu
-aCBiL2luY2x1ZGUvYXNtLWdlbmVyaWMvbW1faG9va3MuaAppbmRleCA0ZGJiMTc3ZDExNTAuLjZl
-ZWEzYjNjMWU2NSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9hc20tZ2VuZXJpYy9tbV9ob29rcy5oCisr
-KyBiL2luY2x1ZGUvYXNtLWdlbmVyaWMvbW1faG9va3MuaApAQCAtMSw4ICsxLDggQEAKIC8qIFNQ
-RFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wICovCiAvKgotICogRGVmaW5lIGdlbmVyaWMg
-bm8tb3AgaG9va3MgZm9yIGFyY2hfZHVwX21tYXAsIGFyY2hfZXhpdF9tbWFwCi0gKiBhbmQgYXJj
-aF91bm1hcCB0byBiZSBpbmNsdWRlZCBpbiBhc20tRk9PL21tdV9jb250ZXh0LmggZm9yIGFueQot
-ICogYXJjaCBGT08gd2hpY2ggZG9lc24ndCBuZWVkIHRvIGhvb2sgdGhlc2UuCisgKiBEZWZpbmUg
-Z2VuZXJpYyBuby1vcCBob29rcyBmb3IgYXJjaF9kdXBfbW1hcCBhbmQgYXJjaF9leGl0X21tYXAK
-KyAqIHRvIGJlIGluY2x1ZGVkIGluIGFzbS1GT08vbW11X2NvbnRleHQuaCBmb3IgYW55IGFyY2gg
-Rk9PIHdoaWNoCisgKiBkb2Vzbid0IG5lZWQgdG8gaG9vayB0aGVzZS4KICAqLwogI2lmbmRlZiBf
-QVNNX0dFTkVSSUNfTU1fSE9PS1NfSAogI2RlZmluZSBfQVNNX0dFTkVSSUNfTU1fSE9PS1NfSApA
-QCAtMTcsMTEgKzE3LDYgQEAgc3RhdGljIGlubGluZSB2b2lkIGFyY2hfZXhpdF9tbWFwKHN0cnVj
-dCBtbV9zdHJ1Y3QgKm1tKQogewogfQogCi1zdGF0aWMgaW5saW5lIHZvaWQgYXJjaF91bm1hcChz
-dHJ1Y3QgbW1fc3RydWN0ICptbSwKLQkJCXVuc2lnbmVkIGxvbmcgc3RhcnQsIHVuc2lnbmVkIGxv
-bmcgZW5kKQotewotfQotCiBzdGF0aWMgaW5saW5lIGJvb2wgYXJjaF92bWFfYWNjZXNzX3Blcm1p
-dHRlZChzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwKIAkJYm9vbCB3cml0ZSwgYm9vbCBleGVj
-dXRlLCBib29sIGZvcmVpZ24pCiB7CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21tX3R5cGVz
-LmggYi9pbmNsdWRlL2xpbnV4L21tX3R5cGVzLmgKaW5kZXggNDg1NDI0OTc5MjU0Li5lZjMyZDg3
-YTNhZGMgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvbW1fdHlwZXMuaAorKysgYi9pbmNsdWRl
-L2xpbnV4L21tX3R5cGVzLmgKQEAgLTEzMTMsNiArMTMxMyw4IEBAIHN0cnVjdCB2bV9zcGVjaWFs
-X21hcHBpbmcgewogCiAJaW50ICgqbXJlbWFwKShjb25zdCBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBw
-aW5nICpzbSwKIAkJICAgICBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKm5ld192bWEpOworCXZvaWQg
-KCpjbG9zZSkoY29uc3Qgc3RydWN0IHZtX3NwZWNpYWxfbWFwcGluZyAqc20sCisJCSAgICAgIHN0
-cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKTsKIH07CiAKIGVudW0gdGxiX2ZsdXNoX3JlYXNvbiB7
-CmRpZmYgLS1naXQgYS9tbS9tbWFwLmMgYi9tbS9tbWFwLmMKaW5kZXggZDBkZmM4NWIyMDliLi5h
-ZGFhZjFlZjE5N2EgMTAwNjQ0Ci0tLSBhL21tL21tYXAuYworKysgYi9tbS9tbWFwLmMKQEAgLTI3
-ODksNyArMjc4OSw3IEBAIGRvX3ZtaV9hbGlnbl9tdW5tYXAoc3RydWN0IHZtYV9pdGVyYXRvciAq
-dm1pLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwKICAqCiAgKiBUaGlzIGZ1bmN0aW9uIHRh
-a2VzIGEgQG1hcyB0aGF0IGlzIGVpdGhlciBwb2ludGluZyB0byB0aGUgcHJldmlvdXMgVk1BIG9y
-IHNldAogICogdG8gTUFfU1RBUlQgYW5kIHNldHMgaXQgdXAgdG8gcmVtb3ZlIHRoZSBtYXBwaW5n
-KHMpLiAgVGhlIEBsZW4gd2lsbCBiZQotICogYWxpZ25lZCBhbmQgYW55IGFyY2hfdW5tYXAgd29y
-ayB3aWxsIGJlIHByZWZvcm1lZC4KKyAqIGFsaWduZWQuCiAgKgogICogUmV0dXJuOiAwIG9uIHN1
-Y2Nlc3MgYW5kIGRyb3BzIHRoZSBsb2NrIGlmIHNvIGRpcmVjdGVkLCBlcnJvciBhbmQgbGVhdmVz
-IHRoZQogICogbG9jayBoZWxkIG90aGVyd2lzZS4KQEAgLTI4MDksMTYgKzI4MDksMTIgQEAgaW50
-IGRvX3ZtaV9tdW5tYXAoc3RydWN0IHZtYV9pdGVyYXRvciAqdm1pLCBzdHJ1Y3QgbW1fc3RydWN0
-ICptbSwKIAkJcmV0dXJuIC1FSU5WQUw7CiAKIAkvKgotCSAqIENoZWNrIGlmIG1lbW9yeSBpcyBz
-ZWFsZWQgYmVmb3JlIGFyY2hfdW5tYXAuCi0JICogUHJldmVudCB1bm1hcHBpbmcgYSBzZWFsZWQg
-Vk1BLgorCSAqIENoZWNrIGlmIG1lbW9yeSBpcyBzZWFsZWQsIHByZXZlbnQgdW5tYXBwaW5nIGEg
-c2VhbGVkIFZNQS4KIAkgKiBjYW5fbW9kaWZ5X21tIGFzc3VtZXMgd2UgaGF2ZSBhY3F1aXJlZCB0
-aGUgbG9jayBvbiBNTS4KIAkgKi8KIAlpZiAodW5saWtlbHkoIWNhbl9tb2RpZnlfbW0obW0sIHN0
-YXJ0LCBlbmQpKSkKIAkJcmV0dXJuIC1FUEVSTTsKIAotCSAvKiBhcmNoX3VubWFwKCkgbWlnaHQg
-ZG8gdW5tYXBzIGl0c2VsZi4gICovCi0JYXJjaF91bm1hcChtbSwgc3RhcnQsIGVuZCk7Ci0KIAkv
-KiBGaW5kIHRoZSBmaXJzdCBvdmVybGFwcGluZyBWTUEgKi8KIAl2bWEgPSB2bWFfZmluZCh2bWks
-IGVuZCk7CiAJaWYgKCF2bWEpIHsKQEAgLTMyMzIsMTQgKzMyMjgsMTIgQEAgaW50IGRvX3ZtYV9t
-dW5tYXAoc3RydWN0IHZtYV9pdGVyYXRvciAqdm1pLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZt
-YSwKIAlzdHJ1Y3QgbW1fc3RydWN0ICptbSA9IHZtYS0+dm1fbW07CiAKIAkvKgotCSAqIENoZWNr
-IGlmIG1lbW9yeSBpcyBzZWFsZWQgYmVmb3JlIGFyY2hfdW5tYXAuCi0JICogUHJldmVudCB1bm1h
-cHBpbmcgYSBzZWFsZWQgVk1BLgorCSAqIENoZWNrIGlmIG1lbW9yeSBpcyBzZWFsZWQsIHByZXZl
-bnQgdW5tYXBwaW5nIGEgc2VhbGVkIFZNQS4KIAkgKiBjYW5fbW9kaWZ5X21tIGFzc3VtZXMgd2Ug
-aGF2ZSBhY3F1aXJlZCB0aGUgbG9jayBvbiBNTS4KIAkgKi8KIAlpZiAodW5saWtlbHkoIWNhbl9t
-b2RpZnlfbW0obW0sIHN0YXJ0LCBlbmQpKSkKIAkJcmV0dXJuIC1FUEVSTTsKIAotCWFyY2hfdW5t
-YXAobW0sIHN0YXJ0LCBlbmQpOwogCXJldHVybiBkb192bWlfYWxpZ25fbXVubWFwKHZtaSwgdm1h
-LCBtbSwgc3RhcnQsIGVuZCwgdWYsIHVubG9jayk7CiB9CiAKQEAgLTM2MjQsNiArMzYxOCw5IEBA
-IHN0YXRpYyB2bV9mYXVsdF90IHNwZWNpYWxfbWFwcGluZ19mYXVsdChzdHJ1Y3Qgdm1fZmF1bHQg
-KnZtZik7CiAgKi8KIHN0YXRpYyB2b2lkIHNwZWNpYWxfbWFwcGluZ19jbG9zZShzdHJ1Y3Qgdm1f
-YXJlYV9zdHJ1Y3QgKnZtYSkKIHsKKwljb25zdCBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBwaW5nICpz
-bSA9IHZtYS0+dm1fcHJpdmF0ZV9kYXRhOworCWlmIChzbS0+Y2xvc2UpCisJCXNtLT5jbG9zZShz
-bSwgdm1hKTsKIH0KIAogc3RhdGljIGNvbnN0IGNoYXIgKnNwZWNpYWxfbWFwcGluZ19uYW1lKHN0
-cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQo=
---000000000000205ca7061ef4c39c--
+- Arnaldo
 
