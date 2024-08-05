@@ -1,153 +1,122 @@
-Return-Path: <linux-kernel+bounces-274796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4389C947CCF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:28:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A7B947CD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B5A1F2228B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F771C21E5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A455313AD26;
-	Mon,  5 Aug 2024 14:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC7113AA38;
+	Mon,  5 Aug 2024 14:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BJ7rhVVY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDFUOX5u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B7D3EA64;
-	Mon,  5 Aug 2024 14:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7613EA64;
+	Mon,  5 Aug 2024 14:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868099; cv=none; b=apRCEaBYjWV3bWOUaTXY0JxSQ+T72uZO1qatRlKQpCnOr51MzrzTtpw1E5NtS2FMat/6Lt6bY4EjTBBk2W1BoggrMqo8jtMIpndSoRGQtjjzj2bdsfT3tIjSTwnqTYXSABQirr8vkpyOA89huWUgxo+qFsNgDIS2rjH2orjDHho=
+	t=1722868139; cv=none; b=QtHhtrvz6+lGNb0vQ5AlavOv04/HbVSy7xnG00YH11lGnKO4o15fkerYPjHc178Ek4DWTAm3SKYMDUPRcKMFH74tHmELfNOw1x+IvQlUPwnXZP3vgQNsKR5vDCbZXiG8QZ6Xn1kChN9Jd1tbHEFVWZuOvGlqR0xZoSI27peCvtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868099; c=relaxed/simple;
-	bh=yKbtl95xINhTP7J1jRhAX6V0rXoLD64gANcmv8E/gsw=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=HROIrX8XtjoUXo+0iEMojhvdrA1kuL2jHG2ZC7XDvcdZXkRFCNPYvTGgLSO9xEXXuFWNuWJbGGF7myUufjMbcYprTmzG3QnJdGhk+QHed8BSowsqeRo6AjzCbt0iTFJHIyiHt9whfJchEu5KDWOgIbF2bBvrxZF4ldWKX58TL3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BJ7rhVVY; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722868098; x=1754404098;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=yKbtl95xINhTP7J1jRhAX6V0rXoLD64gANcmv8E/gsw=;
-  b=BJ7rhVVYY51YFMXoMkRwJ28qoJ/lPLumbUEs0NoZ9bB03cfO6HtNrx9M
-   fP2+rRQUaqwVw6S+C2CrB0CrT2XC2vwv4aNwTUFKISf5YdYF3+CMbfo/q
-   8Y+nqLRXiVAbJPGIl5YRbo40IEUwGt39qNG8/GzukyPg7Sc/K1CHa5URd
-   qGDFNNK8fTBiTJTiOolFjCTJFxWT1QJ+KpofPQfqLkNHShRwXFcMwKeXx
-   E69wXbfLknT3LHaA8yXhjIL6d2G3K45y6AFUAoob+3IzZAIHWez8q6LVh
-   +JfCRChzKXiPKylhcpNnC5HT7N/UfcBnJ+aTWxdB+VhInce/G7xzCaacR
-   Q==;
-X-CSE-ConnectionGUID: UmpTSRWKSSiSNy/80IELHA==
-X-CSE-MsgGUID: P5K+ZroUQQ2oGeQRNr2HVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="38340355"
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="38340355"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 07:28:11 -0700
-X-CSE-ConnectionGUID: Ric531ExQP+mpO47+vxDCg==
-X-CSE-MsgGUID: /6vJNaXKRhipark9yiKOQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="56123772"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.5])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 07:28:09 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 5 Aug 2024 17:28:05 +0300 (EEST)
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    linux-serial <linux-serial@vger.kernel.org>, 
-    LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org, 
-    Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 03/13] serial: don't use uninitialized value in
- uart_poll_init()
-In-Reply-To: <20240805102046.307511-4-jirislaby@kernel.org>
-Message-ID: <84af065c-b1a1-dc84-4c28-4596c3803fd2@linux.intel.com>
-References: <20240805102046.307511-1-jirislaby@kernel.org> <20240805102046.307511-4-jirislaby@kernel.org>
+	s=arc-20240116; t=1722868139; c=relaxed/simple;
+	bh=2MUO96snC0kehze5bCKp0JkvmV/H1MvGnp8mPHmGAiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HbAUkg1v30SlNCxJFKPTcOaeRlbZF3SMfpzW96A/TqDrmLok0zIqtMJF1QBSxgqMhFGNrd6gdzg6FSuguSfBXTQKSeM6K1/IrV2zQfJp+7Y6UsiLkiBjxsW9vvsW21e29T87/aYvNCm+Comm5WWDxNexI0EWCxu7+bOZxqQkTFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDFUOX5u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C29DC32782;
+	Mon,  5 Aug 2024 14:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722868138;
+	bh=2MUO96snC0kehze5bCKp0JkvmV/H1MvGnp8mPHmGAiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MDFUOX5ueN5MXxhCuXCSKKZN2EmVbjnuR4T/bPKzEDT8PuaM24GmAKtFyUAu1r7At
+	 hB0zwQE05FfKARiaBNJNOOkoZ+gjR/WmyXaJQN9OqKOriCWmKElyz2PYCrofdUtZqp
+	 ndK2lR1EefMAdGqAQKzqsxpaYh4tLG3pXqqUlhzzdA4OxD372mV+VWFIJvmukb+Fom
+	 WkHEAOy0MmcmFv0yx3nNEcRycM4cs2iKbO7pMgGLVRGTebDArVSf0jxtzRfMJKA1Q8
+	 ZPV23z8PYWXrDiHWyG4xD1vZx5R0Ig+6IVZE1vjQJprsM/EwTZlM0S4itG4RoSZ8dc
+	 vkltUEmEoVGtg==
+Date: Mon, 5 Aug 2024 16:28:55 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [RFC PATCH 12/20] kthread: Implement preferred affinity
+Message-ID: <ZrDhp3TLz6Kp93BJ@localhost.localdomain>
+References: <20240726215701.19459-1-frederic@kernel.org>
+ <20240726215701.19459-13-frederic@kernel.org>
+ <4e9d1f6d-9cd8-493c-9440-b46a99f1c8af@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-792570173-1722868085=:1238"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4e9d1f6d-9cd8-493c-9440-b46a99f1c8af@suse.cz>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Le Tue, Jul 30, 2024 at 05:49:51PM +0200, Vlastimil Babka a écrit :
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> 
+> Nit:
+> 
+> > +int kthread_affine_preferred(struct task_struct *p, const struct cpumask *mask)
+> > +{
+> > +	struct kthread *kthread = to_kthread(p);
+> > +	cpumask_var_t affinity;
+> > +	unsigned long flags;
+> > +	int ret;
+> > +
+> > +	if (!wait_task_inactive(p, TASK_UNINTERRUPTIBLE) || kthread->started) {
+> > +		WARN_ON(1);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> 
+> Should we also fail if kthread->preferred_affinity already exist? In
+> case somebody calls this twice.
 
---8323328-792570173-1722868085=:1238
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Good point!
 
-On Mon, 5 Aug 2024, Jiri Slaby (SUSE) wrote:
+> 
+> Also for some of the use cases (kswapd, kcompactd) it would make sense
+> to be able to add cpus of a node as they are onlined. Which seems we
+> didn't do, except some corner case handling in kcompactd, but maybe we
+> should? I wonder if the current implementation of onlining a completely
+> new node with cpus does the right thing as a result of the individual
+> onlining operations, or we end up with being affined to a single cpu (or
+> none).
+> 
+> But that would need some kind of kthread_affine_preferred_update()
+> implementation?
 
-> Coverity reports (as CID 1536978) that uart_poll_init() passes
-> uninitialized pm_state to uart_change_pm(). It is in case the first 'if'
-> takes the true branch (does "goto out;").
->=20
-> Fix this and simplify the function by simple guard(mutex). The code
-> needs no labels after this at all. And it is pretty clear that the code
-> has not fiddled with pm_state at that point.
->=20
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Fixes: 5e227ef2aa38 (serial: uart_poll_init() should power on the UART)
-> Cc: stable@vger.kernel.org
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/tty/serial/serial_core.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial=
-_core.c
-> index 3afe77f05abf..d63e9b636e02 100644
-> --- a/drivers/tty/serial/serial_core.c
-> +++ b/drivers/tty/serial/serial_core.c
-> @@ -2690,14 +2690,13 @@ static int uart_poll_init(struct tty_driver *driv=
-er, int line, char *options)
->  =09int ret =3D 0;
-> =20
->  =09tport =3D &state->port;
-> -=09mutex_lock(&tport->mutex);
-> +
-> +=09guard(mutex)(&tport->mutex);
-> =20
->  =09port =3D uart_port_check(state);
->  =09if (!port || port->type =3D=3D PORT_UNKNOWN ||
-> -=09    !(port->ops->poll_get_char && port->ops->poll_put_char)) {
-> -=09=09ret =3D -1;
-> -=09=09goto out;
-> -=09}
-> +=09    !(port->ops->poll_get_char && port->ops->poll_put_char))
-> +=09=09return -1;
-> =20
->  =09pm_state =3D state->pm_state;
->  =09uart_change_pm(state, UART_PM_STATE_ON);
-> @@ -2717,10 +2716,10 @@ static int uart_poll_init(struct tty_driver *driv=
-er, int line, char *options)
->  =09=09ret =3D uart_set_options(port, NULL, baud, parity, bits, flow);
->  =09=09console_list_unlock();
->  =09}
-> -out:
-> +
->  =09if (ret)
->  =09=09uart_change_pm(state, pm_state);
-> -=09mutex_unlock(&tport->mutex);
-> +
->  =09return ret;
->  }
+So you mean that the "for_each_node_state()" loop in kcompactd doesn't
+handle all possible nodes but only those online when it's called? Or
+am I confused?
 
-This too needs #include.
+If all users of preferred affinity were to use NUMA nodes, it could be
+a good idea to do a flavour of kernel/smpboot.c which would handle
+per-node kthreads instead of per-cpu kthreads. I initially thought
+about that. It would have handled all the lifecycle of those kthreads,
+including creation, against hotplug. Unfortunately RCU doesn't rely on
+per-NUMA nodes but rather use its own tree.
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+If there be more users of real per NUMA nodes kthreads than kswapd and
+kcompactd, of course that would be much worth considering.
 
---=20
- i.
-
---8323328-792570173-1722868085=:1238--
+Thanks.
 
