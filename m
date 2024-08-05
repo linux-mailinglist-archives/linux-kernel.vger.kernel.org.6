@@ -1,209 +1,83 @@
-Return-Path: <linux-kernel+bounces-274757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 665C8947C56
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 116B4947C69
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892B11C21D1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:00:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42BEB1C21C2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC8B80631;
-	Mon,  5 Aug 2024 14:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ejHInmu1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MHTfZ2V7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ejHInmu1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MHTfZ2V7"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C56770FE;
+	Mon,  5 Aug 2024 14:02:54 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB8517C64;
-	Mon,  5 Aug 2024 14:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3E350269
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722866427; cv=none; b=tFbsBt7qL9BwQpedK9B4Ws0FHa8DivBf2YsH0mPZC2fLHYV3SfQnf+Ep9E3B8YOH3LJxvn+jgSHv3Nj5sBWTQJFK1i2znFSkL1YiT3696vEKu4IK8TJF79Xn6VZbk2ZanPfUm1nqoeePmACOUS9jUgwDtrHQZpu59d1uT+Os7nE=
+	t=1722866573; cv=none; b=dgxxIcxH6qiv408gu1omWmAHzfpFZxqcaC9X8Gods9WfhZu7lnfA7eG2bXOqljef8bQ6MmmWGJMtnk8yI8FwLLT4T8kCZyqlngiqUSRXLKWSk/x1H5kg8NKl001d64IrH1YbB1s2oHZXi/64HYYYyCTDEV21AYWSy+3c2zlPwv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722866427; c=relaxed/simple;
-	bh=t3PEOAbhIPsH8J3f6gGvfoiv+1/cGRF5Imw0KG2Rxxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VbG+tZvjRqkLIMUEqkAV2KQgqwmFeef92ih1WZrAJnPdiTmRukk/whqEay5ZRCVgupd9y+5wPU471iqFIb6P5oAkaWM0fikQyWTqv7lydYMLpJWmuxhj3IyIyLSY4g0wkcazR2OZglP/6G2BXYNLvKoc0Lp0YiANJjJ7grk+JoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ejHInmu1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MHTfZ2V7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ejHInmu1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MHTfZ2V7; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id AC4201FD16;
-	Mon,  5 Aug 2024 14:00:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722866423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0DOqfM4HYBbo8TM+k6ygo2LmxvRgfr28tk9bmsq2J2g=;
-	b=ejHInmu10jiUOwUJHmcySGlHLNJg2H1hyaYGFGkwrJvz8pd8rGuehHoIpH5JIeUMjUI522
-	uM5u7YATxdF/tVzaOJQjmVN3mPP8b29LszS/hDCVy0KjdwRF+ErvNU+il9Eivzgyp95ukB
-	DUFAOJazmjQvnq4dhllzxwLV0JZTg8k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722866423;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0DOqfM4HYBbo8TM+k6ygo2LmxvRgfr28tk9bmsq2J2g=;
-	b=MHTfZ2V7xu5f8BgYmv+08IzoWiajzQF347w/ED1+1fXXb0soFqSRDMYTUSaj92pjpQ59f4
-	25Qxd0lfEBPFtuAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722866423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0DOqfM4HYBbo8TM+k6ygo2LmxvRgfr28tk9bmsq2J2g=;
-	b=ejHInmu10jiUOwUJHmcySGlHLNJg2H1hyaYGFGkwrJvz8pd8rGuehHoIpH5JIeUMjUI522
-	uM5u7YATxdF/tVzaOJQjmVN3mPP8b29LszS/hDCVy0KjdwRF+ErvNU+il9Eivzgyp95ukB
-	DUFAOJazmjQvnq4dhllzxwLV0JZTg8k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722866423;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0DOqfM4HYBbo8TM+k6ygo2LmxvRgfr28tk9bmsq2J2g=;
-	b=MHTfZ2V7xu5f8BgYmv+08IzoWiajzQF347w/ED1+1fXXb0soFqSRDMYTUSaj92pjpQ59f4
-	25Qxd0lfEBPFtuAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9E50113254;
-	Mon,  5 Aug 2024 14:00:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kDqgJvfasGZXRAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 05 Aug 2024 14:00:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 51EC4A0897; Mon,  5 Aug 2024 16:00:23 +0200 (CEST)
-Date: Mon, 5 Aug 2024 16:00:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	djwong@kernel.org, hch@infradead.org, brauner@kernel.org,
-	jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
- uptodate bits
-Message-ID: <20240805140023.inte2rxlhumkfvrh@quack3>
-References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
- <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
- <Zqwi48H74g2EX56c@dread.disaster.area>
- <b40a510d-37b3-da50-79db-d56ebd870bf0@huaweicloud.com>
- <Zqx824ty5yvwdvXO@dread.disaster.area>
- <1b99e874-e9df-0b06-c856-edb94eca16dc@huaweicloud.com>
- <20240805124252.nco2rblmgf6x7z4s@quack3>
+	s=arc-20240116; t=1722866573; c=relaxed/simple;
+	bh=NW8+WDKxJI60keZ8KxOJFp3I1F1t5gjxLAB1hoTq4D0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lpGKLrHa1y5pjKiCBU9Jil+zR4kqt8fLy4mjqyqVaOxL3aaaofvkNGlapvaTY3o18KXebQhQJnHctkIV/VwktOVTfg0iG8J4lX3e5MjpYgShXL1KWpBTF1vPYIMWPmsTmSfxk6SCLfocqvw3YSgeoGxmXkukeWUPGzuxSj5Cj8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WcynG2CWhzyPvk;
+	Mon,  5 Aug 2024 22:02:42 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 80A3E1402E0;
+	Mon,  5 Aug 2024 22:02:47 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 5 Aug
+ 2024 22:02:47 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <ardb@kernel.org>,
+	<msalter@redhat.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH -next] arm64: mm: Remove unused declaration early_io_map()
+Date: Mon, 5 Aug 2024 22:00:38 +0800
+Message-ID: <20240805140038.1366033-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805124252.nco2rblmgf6x7z4s@quack3>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-7.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.994];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -7.80
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-Actually add Matthew to CC ;)
+Commit bf4b558eba92 ("arm64: add early_ioremap support") removed the
+implementation but leave declaration.
 
-On Mon 05-08-24 14:42:52, Jan Kara wrote:
-> On Fri 02-08-24 19:13:11, Zhang Yi wrote:
-> > On 2024/8/2 14:29, Dave Chinner wrote:
-> > > On Fri, Aug 02, 2024 at 10:57:41AM +0800, Zhang Yi wrote:
-> > >> On 2024/8/2 8:05, Dave Chinner wrote:
-> > >>> On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
-> > >>> Making this change also misses the elephant in the room: the
-> > >>> buffered write path still needs the ifs->state_lock to update the
-> > >>> dirty bitmap. Hence we're effectively changing the serialisation
-> > >>> mechanism for only one of the two ifs state bitmaps that the
-> > >>> buffered write path has to update.
-> > >>>
-> > >>> Indeed, we can't get rid of the ifs->state_lock from the dirty range
-> > >>> updates because iomap_dirty_folio() can be called without the folio
-> > >>> being locked through folio_mark_dirty() calling the ->dirty_folio()
-> > >>> aop.
-> > >>>
-> > >>
-> > >> Sorry, I don't understand, why folio_mark_dirty() could be called without
-> > >> folio lock (isn't this supposed to be a bug)?  IIUC, all the file backed
-> > >> folios must be locked before marking dirty. Are there any exceptions or am
-> > >> I missing something?
-> > > 
-> > > Yes: reading the code I pointed you at.
-> > > 
-> > > /**
-> > >  * folio_mark_dirty - Mark a folio as being modified.
-> > >  * @folio: The folio.
-> > >  *
-> > >  * The folio may not be truncated while this function is running.
-> > >  * Holding the folio lock is sufficient to prevent truncation, but some
-> > >  * callers cannot acquire a sleeping lock.  These callers instead hold
-> > >  * the page table lock for a page table which contains at least one page
-> > >  * in this folio.  Truncation will block on the page table lock as it
-> > >  * unmaps pages before removing the folio from its mapping.
-> > >  *
-> > >  * Return: True if the folio was newly dirtied, false if it was already dirty.
-> > >  */
-> > > 
-> > > So, yes, ->dirty_folio() can indeed be called without the folio
-> > > being locked and it is not a bug.
-> > 
-> > Ha, right, I missed the comments of this function, it means that there are
-> > some special callers that hold table lock instead of folio lock, is it
-> > pte_alloc_map_lock?
-> > 
-> > I checked all the filesystem related callers and didn't find any real
-> > caller that mark folio dirty without holding folio lock and that could
-> > affect current filesystems which are using iomap framework, it's just
-> > a potential possibility in the future, am I right?
-> 
-> There used to be quite a few places doing that. Now that I've checked all
-> places I was aware of got actually converted to call folio_mark_dirty() under
-> a folio lock (in particular all the cases happening on IO completion, folio
-> unmap etc.). Matthew, are you aware of any place where folio_mark_dirty()
-> would be called for regular file page cache (block device page cache is in a
-> different situation obviously) without folio lock held?
-> 
-> 								Honza
-> 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-> 
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ arch/arm64/include/asm/mmu.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+index 65977c7783c5..fc414cfd337e 100644
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -63,7 +63,6 @@ static inline bool arm64_kernel_unmapped_at_el0(void)
+ extern void arm64_memblock_init(void);
+ extern void paging_init(void);
+ extern void bootmem_init(void);
+-extern void __iomem *early_io_map(phys_addr_t phys, unsigned long virt);
+ extern void create_mapping_noalloc(phys_addr_t phys, unsigned long virt,
+ 				   phys_addr_t size, pgprot_t prot);
+ extern void create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
