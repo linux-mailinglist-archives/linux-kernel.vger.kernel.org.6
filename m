@@ -1,156 +1,140 @@
-Return-Path: <linux-kernel+bounces-274405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995239477C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:59:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC0C9477C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B7B280FE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6022813D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60806153BE8;
-	Mon,  5 Aug 2024 08:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D333B15572E;
+	Mon,  5 Aug 2024 08:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Lv8666Vr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2/hJLDsq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GVoclNUp"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98E614D71A;
-	Mon,  5 Aug 2024 08:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130601552FD
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722848165; cv=none; b=qcx7UlTd6djhIvytWqWB+VZ94BCgLAT+IPD3/Gkct+iZ2jbzIgGdlSdKWzJbsXxMcx3GQUtoCmE1IhqTOpW+MkY7TGR3OQJHn4+b/zgbiM6tTRQMC4yftaG4eE55HgQ04InQWalnzJHs4HGa089QUM3S3tryxHrXbmXW7pCMeFQ=
+	t=1722848264; cv=none; b=acQdbpSgw03Wj2pqjxXGZaqrj+oFooX3kJorYqK7sN67hQjjJ1LIILWjHi3ILlfNdE0NSm2CSjBVZYLHn6SlKTFM6reY+UFzEHLi4LrAlWtKGTsGBqsVBO+WJSKSoewb7G9f1jbjACjI1WZi0eAA71bOFFBLJRwRMp39euOmHyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722848165; c=relaxed/simple;
-	bh=s1n91oB+uxsmRXvCFdhDBqrbPSA/dUPO6Se1kMtbbH8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=K1UscGnIMhBO8G/5mAXEWaUPobjga6QGMMiMYWqc6x1OcrHJ0m9Ia0PiqLf5P1TxgZ3eNJjH83rhSlY2wTOtiolsFpMN0wTi4HYyMEjxGkH9rOyh+vJGAP4Eam+OIFxo52RvPiJ2QESdaln4qV1xzwLtDB0kU0cl9nAF7J/Avpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Lv8666Vr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2/hJLDsq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722848162;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aYRnHbF7uXJvUBwRmwiJny8X7HtTaLwwFTRZxyG9X6Y=;
-	b=Lv8666Vr1mOH5nc/u/LKNi4o9/k6Y2bC6/+MdC4cNgMJjg0l5iNRJXQbpOpeKFfthhWV/I
-	YdYlVRVk2m3nB2BRXeU1qhtSBL6vpgssRJ7rOm2QVCKKNQhFgQnIpzrf7yAwac0BRRSlpw
-	aEwtMeuIEbPsHjKYdb92FgdaHEGzyeweDR9I9TTpSAwfA4+GmmxR9VMol/iahJ1SO/W29h
-	4KDy3nrSce/RUSsUGYmlFf/1KpyoeHwUQRzbYeaTFWXDRsjk6Ozi5XoxdNZxcAhnW92EUg
-	JxycSfDqoMV2Jn8v/HnFVIj4ml0FFdZryfWgY7Dp3xYOSWodLHCmKQBuHcVByA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722848162;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aYRnHbF7uXJvUBwRmwiJny8X7HtTaLwwFTRZxyG9X6Y=;
-	b=2/hJLDsqaWg3/AO8GEqw9fyyCk/zVcpC2TK5cUg+kac9wg4hviG8UorLCpwyOFgjBCxXE8
-	WcIpeKpGpwcgExBQ==
-To: Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org,
- pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, "Rafael J.
- Wysocki" <rafael.j.wysocki@intel.com>, Helge Deller <deller@gmx.de>,
- Parisc List <linux-parisc@vger.kernel.org>
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-In-Reply-To: <a8a81b3d-b005-4b6f-991b-c31cdb5513e5@roeck-us.net>
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <a8a81b3d-b005-4b6f-991b-c31cdb5513e5@roeck-us.net>
-Date: Mon, 05 Aug 2024 10:56:01 +0200
-Message-ID: <87ikwf5owu.ffs@tglx>
+	s=arc-20240116; t=1722848264; c=relaxed/simple;
+	bh=ZQ1dqPdC0EI5UKHt9zPT/jrOo7UBUKRw10Gyog+8f8k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=b6JD+SW4ecd+fvJPM8+FZG03Y6cNJxB3gGdfd0F3G6kbwMcVen1wp+OkLPHS1b7U9zWsNii0SZBfP+SxBGOw1QZOAzxiVYrSlGlK/bVSu4NymRX3XA+CAbcaMtJcK8Ix+ho/be670vM3XU/qaZOF/QpSn9NXrrWsVNHQv1LdnJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GVoclNUp; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f035ae0fe0so117985161fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:57:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722848260; x=1723453060; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2sl3xw4gPw2mQiXFe6Kp18Lv6i1hPP28LJ8YNkidH90=;
+        b=GVoclNUpuPfzy+gY9163Wjdh7YnjdEp2pSaDhz75gohpdprQLK3M2OFyy+hws5WXmp
+         FZCpMaeHF/KQ82tVjH1Hz4pwMMd0qH70ZgMDq7QMuszeagI5czEfC24nhUnRC1LarieB
+         m1+YPiC3i92dUk28tPjg7pZJxWYsmKl8JGdV/QW43El3HNrrSWijltY8NeI6fLO2xXYo
+         7wrMgxcmTug0V9SK3p78GOC95MOgzjWCseL0IZiU/nSmKQSG8C9SXtEg7LBSYA9mEH6l
+         Tg/r+DjRFRZOhsEpS7KyNE0+TOBdiofg+SP0ylu+q4o0jatT8Zt+GrVHjCk9ndFqx0UX
+         RClw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722848260; x=1723453060;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2sl3xw4gPw2mQiXFe6Kp18Lv6i1hPP28LJ8YNkidH90=;
+        b=FQMHFuPa7kBAeb5+jxCTGKRYLVdA40iwrC0OWMqyfkDiwRqLncUuNjPv6SoR3KZKrE
+         Fc6zjCbJXTVzqBwqTO+OWqTYp0T3M5eopWYsa/nnHE47e0pc1mhK6TBhOCqKouTvpE7O
+         z1fMQLa+fme+UAdhjrJmmUw0HDHwt1Xej2no3k9pXqrP2FJa/HjBN3pF9+tW7J45s3qF
+         6wt+5NTRZLjBAqLFbB6HgGsSwzGqk8XkuoL9ywrQoczgfbbtZbbZlGO4ZoKsPm2FQQj7
+         UZ1CWCdLCB8MpDJeGbZOXBVkKWzmDDmHQHGPK0kte1triSMTde1/RoOn5VQl7lP0Jg/l
+         prOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUI3laIlVemLSkoVcjgZ9sFdJl/A3bOXVvo09Wd5SLGWDIgONEUfI/Nb6alL5XGyHMpENyZ8rTxM0GwOiKd3egsIDjf3MAhvbAiqrzw
+X-Gm-Message-State: AOJu0YwyL6kNIP2gALxvOYaXuyj68x976Y08aLJtdljcSqyHRbAk5D6D
+	aMiF+GwIxKnFBHCa/mIgBXk1oIufJ3DOQCzQMtcNFQB0zgphAKZhMdx2BfyD/So=
+X-Google-Smtp-Source: AGHT+IFptNAZ/nhTVNdaMWwDbSV/Pf9rJ5myyH8/hxWVpjg2LkUW90NNXA+c+MUSqvdBG7jDrAB7kw==
+X-Received: by 2002:a2e:979a:0:b0:2ef:2b53:c785 with SMTP id 38308e7fff4ca-2f15ab35233mr69507871fa.41.1722848259768;
+        Mon, 05 Aug 2024 01:57:39 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:1068:b792:523c:3f73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb9d786sm190235665e9.44.2024.08.05.01.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 01:57:39 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 0/2] clk: implement a new managed helper and add first
+ user
+Date: Mon, 05 Aug 2024 10:57:30 +0200
+Message-Id: <20240805-clk-new-helper-v2-0-e5fdd1e1d729@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPqTsGYC/3XMQQ6CMBCF4auQWTumLQrVlfcwLAoMMJG0ZGqqh
+ nB3K3uX/0vet0IkYYpwLVYQShw5+BzmUEA3OT8Scp8bjDInZZXGbn6gpxdONC8kWNtzOVSV6Xq
+ nIZ8WoYHfO3hvck8cn0E+u5/0b/1LJY0KraZLWdq2bnV9m9k7CccgIzTbtn0BT+u3Sq0AAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-bluetooth@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1200;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=ZQ1dqPdC0EI5UKHt9zPT/jrOo7UBUKRw10Gyog+8f8k=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmsJP/i2P3GDWw+duGWWCWvHa6h/R4q7wDq0b2O
+ 8C0u5MbNxyJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZrCT/wAKCRARpy6gFHHX
+ cjgcD/9Eekk3HZInYesFffUtcrjjRmMv7AxaFRH4MSVTXUA/X+KANBQ/dwABGH+tl220k+VFbaO
+ 62Etpy5ULmFRc4JGkFwv631QEw7iUE6pZ1i9rkXa70X1h0ZDTTZmxdi06nPhB7Rn+Oep/2W96+S
+ YH39vBuD5iOBsOYRj49Bpi6DnQlgkg8E5DfkwWnDVVvNvCiN8m17KBmtwu8VmJVphCsEUm3fFf3
+ hWKAWRlU6sFVz4Vg85udWNqz2Mq6CNLtUk0RqStD/bTa8+AZO8/1tYgPnaKduNjKiHlKU8X7zJE
+ NgNFjY2aAz45+IwZnaz1q4VZ97kdtD+y8Swp6VXsjj5CpL9ie/n275cVstLhUH+HNdDl8skQSzP
+ aY5WJROt8xQ+hwaa8SO0DkhWsyu4L6H1qy3mzYO2Zpm5r1jIUsFKCV+AXSx6nYlEyO/FoBmp/ZM
+ RrP9xV6cD8do8hmzWMHJjT8no5IZzBq5sk9VWTC4+AxyxedP81gnBSpxoaLIfEuQsfjXV/efbwU
+ wXUuPVvtlSOKfYbMo8o/x5QDyVLA/KM/DCNF7814jp4UMuLCDPyJTdwKVELc7UcDH8XP65QqAU1
+ Wrkc8khtXAbo2iR/iYiKFU82eJbsG6yffeAJLI1bOIMaxg2oWrh+u2V3GqhZzTeg8H9fWppOCyK
+ t01l2FQgstQ/OLA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-On Sun, Aug 04 2024 at 20:28, Guenter Roeck wrote:
-> On 8/4/24 11:36, Guenter Roeck wrote:
->>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> =C2=A0=C2=A0=C2=A0=C2=A0 genirq: Set IRQF_COND_ONESHOT in request_irq()
->>>
->>=20
->> With this patch in v6.10.3, all my parisc64 qemu tests get stuck with re=
-peated error messages
->>=20
->> [=C2=A0=C2=A0=C2=A0 0.000000] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> [=C2=A0=C2=A0=C2=A0 0.000000] BUG kmem_cache_node (Not tainted): objects=
- 21 > max 16
->> [=C2=A0=C2=A0=C2=A0 0.000000] ------------------------------------------=
------------------------------------
+I'm posting this as RFC to see if there's any interest. I noticed that
+some drivers do: clk_get() -> clk_set_rate() -> clk_prepare_enable(). I
+was wondering if it's worth factoring this out into dedicated helpers.
 
-Do you have a full boot log? It's unclear to me at which point of the boot
-process this happens. Is this before or after the secondary CPUs have
-been brought up?
+This series adds a new such helper for the "optional-enabled" use-case
+and the first user. Let me know if this makes sense.
 
->> This never stops until the emulation aborts.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Changes in v2:
+- s/EXPORT_SYMBOL/EXPORT_SYMBOL_GPL/
+- add a stub for !COMMON_CLK
+- Link to v1: https://lore.kernel.org/r/20240801-clk-new-helper-v1-0-81e9338b7b17@linaro.org
 
-Do you have a recipe how to reproduce?
+---
+Bartosz Golaszewski (2):
+      clk: provide devm_clk_get_optional_enabled_with_rate()
+      Bluetooth: hci_qca: use devm_clk_get_optional_enabled_with_rate()
 
->> Reverting this patch fixes the problem for me.
->>=20
->> I noticed a similar problem in the mainline kernel but it is either spur=
-ious there
->> or the problem has been fixed.
->>=20
->
-> As a follow-up, the patch below (on top of v6.10.3) "fixes" the problem f=
-or me.
-> I guess that suggests some kind of race condition.
->
->
-> @@ -2156,6 +2157,8 @@ int request_threaded_irq(unsigned int irq, irq_hand=
-ler_t handler,
->          struct irq_desc *desc;
->          int retval;
->
-> +       udelay(1);
-> +
->          if (irq =3D=3D IRQ_NOTCONNECTED)
->                  return -ENOTCONN;
+ drivers/bluetooth/hci_qca.c | 24 ++----------------------
+ drivers/clk/clk-devres.c    | 28 ++++++++++++++++++++++++++++
+ include/linux/clk.h         | 33 +++++++++++++++++++++++++++++++++
+ 3 files changed, 63 insertions(+), 22 deletions(-)
+---
+base-commit: d6dbc9f56c3a70e915625b6f1887882c23dc5c91
+change-id: 20240801-clk-new-helper-7853f662cda1
 
-That all makes absolutely no sense to me.
-
-IRQF_COND_ONESHOT has only an effect on shared interrupts, when the
-interrupt was already requested with IRQF_ONESHOT.
-
-If this is really a race then the following must be true:
-
-1) no delay
-
-   CPU0                                 CPU1
-   request_irq(IRQF_ONESHOT)
-                                        request_irq(IRQF_COND_ONESHOT)
-
-2) delay
-
-   CPU0                                 CPU1
-                                        request_irq(IRQF_COND_ONESHOT)
-   request_irq(IRQF_ONESHOT)
-
-   In this case the request on CPU 0 fails with -EBUSY ...
-
-Confused
-
-        tglx
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
