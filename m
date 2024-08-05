@@ -1,105 +1,77 @@
-Return-Path: <linux-kernel+bounces-275166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7948948159
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:08:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CE794815A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729011F20CA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A3931F236F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFB0181B9A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6ADD181CE1;
 	Mon,  5 Aug 2024 17:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIMbU6Ok"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+9s073m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F7B17F391;
-	Mon,  5 Aug 2024 17:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1176117F4F5;
+	Mon,  5 Aug 2024 17:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722880773; cv=none; b=eaagK5TMdD0sYgsEKSNz+7k/f6VPARt1oQwzTP/MCTHpxfusVmHSmKaoRk0ugnVE87MRtOxkQ5UzKwNBCT2piuO5H49woglfS1/WqGt3XnEqUKc38hVOsqr3CtgMS6sV+j9X1E6OeYofBnvsRR9+xsE054FlW/eKe3P0tWopnqs=
+	t=1722880774; cv=none; b=c2RMdGno8FfqLpWn+1Xi0z/5vPrL0O+ljwBRi6cz9N3ZT2bqMjzHSNT/k7skCSjnT1fsaFaryjBWizEqMX7jNRD9G2BH4C5abyHmhyp+PxR1FI7hd7lgaEl4bTOJvSYJdNX2Au31FSYkthtnFGJ08PVuh94Jf+BEyegU1NW0v/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722880773; c=relaxed/simple;
-	bh=qxMkwj0LA/Ob+ps90+hcO/vZt3FuGMuZ12+fIXihcO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=l3t2tqfsiYjUZPezfQL+XHEhGtohJqtnNxfKuRlv17Br0OBUN57fxJGrDW05Fco4+FeoPf+oFt/7MxLHQxf5ASvDRaXBwmfbaeLzyf5c+dT8ly8pxLhug/hpZY3IU+fMU7ooTTLn6Ntp3qimZimH/1j2GHdiwRXjjM9Vyk6a5QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FIMbU6Ok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C8EC4AF0C;
-	Mon,  5 Aug 2024 17:59:31 +0000 (UTC)
+	s=arc-20240116; t=1722880774; c=relaxed/simple;
+	bh=s9KUap0e3/fEUWXQ+ELq1Mh+lDEEjV8bsf8t9hXJmIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=roRn+qo063czE9gC7yfyWxnRaSRiiXAMs9lZDxKSynoBfxgPvIt/Uxm0tbQJqIIcdWx0LhZFUoWzGnvDcjjBLjRucC+D5pnObhk0nzJD+MqLLMOyxpNUeuLu5/KPdc/MyTrbwLwglVO4Gr+cVHDVdpHA89sssCKbNNl1K3WUPIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+9s073m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD73CC4AF14;
+	Mon,  5 Aug 2024 17:59:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722880773;
-	bh=qxMkwj0LA/Ob+ps90+hcO/vZt3FuGMuZ12+fIXihcO0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FIMbU6OkUureyj3ekTF4F0gEb/wlGCOqxyA2dSvdYBOQyEJf7Juxbuq1YbfDpllcn
-	 0RZVM4suKpOmDn0JO1xBMY6qJcGa3wRLzQNT5F3zYPrJ42m+9WwvPkGh0nQ3EpaQX3
-	 Hp6w/RcVLy6V+8dQ98XR3MMk27mf2vcl272BhZQKsCx5nwsfYsShxVuKD7IHZvM3w3
-	 9o4I3SdEt5cTauM0k2QuYik03l60iyDhcn++jYylSNtdfcGr1GOPyT45LW9iDOk942
-	 4qs6mdqhd1SIa/EE7iUULur6lMFfpuIkuDfIzzY2ZgRw3S/CZGjLtHLYeyLQMvmJKc
-	 w46Nub4IONFNg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+0122fa359a69694395d5@syzkaller.appspotmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 2/2] Input: MT - limit max slots
-Date: Mon,  5 Aug 2024 13:59:27 -0400
-Message-ID: <20240805175928.3257720-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240805175928.3257720-1-sashal@kernel.org>
-References: <20240805175928.3257720-1-sashal@kernel.org>
+	bh=s9KUap0e3/fEUWXQ+ELq1Mh+lDEEjV8bsf8t9hXJmIA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D+9s073mDIRdwPeUFLIzVGpc4wErx8itwb18VsRnf/x8YMTHFdn4a4FXkDEPw9t1N
+	 Oum860VnYFbOVwcRwuAaJQfMPW/w7OLUGaMYgLCnsfWshGy4HD/dopz3njI8a9LUPZ
+	 zqdz0UqYI3Koaj/6fkf1wRxdZdeBQm7/19YzMqnatgOYlO7puEQwQh8hHqbnBpqbHj
+	 ByZJi/goFu8VfOZi0b/I9LX6ocFEBvJkFAZpF8qZ8yoyu7bt6JNI6Tzp1jU/CBwWZ5
+	 EqC+FmX1rhdtczRcBWDHg8lPEoSlelJaYWEnB7IKZWS/yOLSu3Brw40uXgrwIQHfTC
+	 zLk8ZGt+a0idQ==
+Date: Mon, 5 Aug 2024 10:59:32 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, kees@kernel.org,
+	gustavoars@kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] crypto: chacha20poly1305 - Annotate struct
+ chachapoly_ctx with __counted_by()
+Message-ID: <20240805175932.GB1564@sol.localdomain>
+References: <20240805175237.63098-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.281
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805175237.63098-2-thorsten.blum@toblux.com>
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+On Mon, Aug 05, 2024 at 07:52:38PM +0200, Thorsten Blum wrote:
+>  struct poly_req {
+> @@ -611,8 +611,8 @@ static int chachapoly_create(struct crypto_template *tmpl, struct rtattr **tb,
+>  				       poly->base.cra_priority) / 2;
+>  	inst->alg.base.cra_blocksize = 1;
+>  	inst->alg.base.cra_alignmask = chacha->base.cra_alignmask;
+> -	inst->alg.base.cra_ctxsize = sizeof(struct chachapoly_ctx) +
+> -				     ctx->saltlen;
+> +	inst->alg.base.cra_ctxsize = struct_size_t(struct chachapoly_ctx, salt,
+> +						   ctx->saltlen);
 
-[ Upstream commit 99d3bf5f7377d42f8be60a6b9cb60fb0be34dceb ]
+What was wrong with the more straightforward code it had before?
 
-syzbot is reporting too large allocation at input_mt_init_slots(), for
-num_slots is supplied from userspace using ioctl(UI_DEV_CREATE).
-
-Since nobody knows possible max slots, this patch chose 1024.
-
-Reported-by: syzbot <syzbot+0122fa359a69694395d5@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=0122fa359a69694395d5
-Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/input/input-mt.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
-index a81e141484077..dd457403a1a03 100644
---- a/drivers/input/input-mt.c
-+++ b/drivers/input/input-mt.c
-@@ -45,6 +45,9 @@ int input_mt_init_slots(struct input_dev *dev, unsigned int num_slots,
- 		return 0;
- 	if (mt)
- 		return mt->num_slots != num_slots ? -EINVAL : 0;
-+	/* Arbitrary limit for avoiding too large memory allocation. */
-+	if (num_slots > 1024)
-+		return -EINVAL;
- 
- 	mt = kzalloc(struct_size(mt, slots, num_slots), GFP_KERNEL);
- 	if (!mt)
--- 
-2.43.0
-
+- Eric
 
