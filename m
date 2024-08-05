@@ -1,124 +1,207 @@
-Return-Path: <linux-kernel+bounces-275439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D699485BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5035A9485C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30CC285CA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83C71F245D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A4C16EB63;
-	Mon,  5 Aug 2024 22:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1415E16C680;
+	Mon,  5 Aug 2024 23:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L9Ces9Ft"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M1Oh7drr"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E3316C6AB
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 22:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14F8142E70
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 23:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722898797; cv=none; b=ock7kgoM3DveYi83QEQKUqJvzbhZz0LrIPe6EgXzqAGKwamunuBh4nxe8uJ/SEP7KF8a5TyHYIh2NB9iDG5J6293jlk8AJm7bXN1Hjc/4kjgCsVBvyKVQ/uxKZzUCOi/MF6qPQSZ3NKhFOTFyvBppgRdeuRVgguK354DLFB3STw=
+	t=1722898944; cv=none; b=iGCPm1kdZNDQYeclfsljTgpm0RFK2Cmi/XBfbu94wknLDddinIIbgMDroWklMQaWeJIeghb0rRhhsyirAPvXBlvIqCQpiVXg1VvNFt4BuHfwv7lhNz4raz7TG5bXPUvG9ouVSrlcSUP9QDTXe9v6wT4FnZfi5Ap6/3alfbs8gmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722898797; c=relaxed/simple;
-	bh=hitg7TR4JzeNUAGw6TcQl5XXYE59m4RNjJcV7FyuNTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMRNwqdnNswZPKO1b/X1f31MY0sNeO33DfczLPjbC4MAEZICA2ZHeY+41bB2OU799MKy2GEO0e6rDaA6ZnCQB0r7q+OemZ9UPGQSW2kNrdv+H1mJCwm92i9Cuvh9Jfd2uBhg9tLmKSvaAebEoZUtGbtyw+ChOdHtJo/TMfx4VkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L9Ces9Ft; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1722898944; c=relaxed/simple;
+	bh=b/M23ple/0uWywkL6o3Uzu4J9Xa2wL24R0VMTNpFj8g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z/Ck06qfp5c8HWlxhb7goDMCeBEvoX6QLbgriL4xoZqjf+Jfe/XEs6PvxFsPtwi18vtA1LT646j27bYMuVYIWz7IJYBGffuYVwVD2Bef6sldJrweXHkY6CG9ORmVfRrfIA1p358oTf5TW3sOLHaK5Cj5PXJUyU3lXiq0qNWu9aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M1Oh7drr; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722898794;
+	s=mimecast20190719; t=1722898941;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KeKM9Izq3y/FBXidwLJnO4fZinQDYnhnSVbYAoKkSfc=;
-	b=L9Ces9Ft2VFzkq2tnAa2cZFkuE9wGphbmEOcIY7I7P1vl9ow/aZHBmk3LKJr6LhneCjy5m
-	3uAO5+7e/xe6Tb8r0zH7cJFKQGhtfBnH72mwOv3fmuH4TjYX6vs8StwKSiCjA5WV/NwiaW
-	3K/z8eeBvBApgTsBFaG9z4ZKNSB17fo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-604-SWVVVx7EMgyeSb4b4CeoeA-1; Mon,
- 05 Aug 2024 18:59:51 -0400
-X-MC-Unique: SWVVVx7EMgyeSb4b4CeoeA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0F331955D55;
-	Mon,  5 Aug 2024 22:59:43 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.21])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A5481955F40;
-	Mon,  5 Aug 2024 22:59:40 +0000 (UTC)
-Date: Tue, 6 Aug 2024 06:59:35 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Petr Tesarik <petr.tesarik@suse.com>
-Cc: Eric Biederman <ebiederm@xmission.com>,
-	Sourabh Jain <sourabhjain@linux.ibm.com>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Eric DeVolder <eric.devolder@oracle.com>,
-	"open list:KEXEC" <kexec@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Petr Tesarik <ptesarik@suse.com>, stable@kernel.org
-Subject: Re: [PATCH 1/1] kexec_file: fix elfcorehdr digest exclusion when
- CONFIG_CRASH_HOTPLUG=y
-Message-ID: <ZrFZM4W7S89VpfaG@MiWiFi-R3L-srv>
-References: <20240805150750.170739-1-petr.tesarik@suse.com>
+	bh=z5GnfLWKG7h6fFrgWxAUA2aZXk1eJ4qRRj94U3Krgmk=;
+	b=M1Oh7drryTzoud3V0w4Ysr0j6lqoOqT5rOFcX6x1kjlwnmIdgodigAlgqIV7pAeX0mPzy8
+	CQZrc92mCl/mm5mcE59lykv9bimBNGvspAfH4nOqc9zMu6GZ31FxPkigO6yewic7qKKWFL
+	XC5Mlr4Di2DD+rqaBKOFILoPRoe4/Y0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-132-OHCp21zMPvO9N1_lraJFVg-1; Mon, 05 Aug 2024 19:02:19 -0400
+X-MC-Unique: OHCp21zMPvO9N1_lraJFVg-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36863648335so5447449f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 16:02:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722898937; x=1723503737;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z5GnfLWKG7h6fFrgWxAUA2aZXk1eJ4qRRj94U3Krgmk=;
+        b=vt2yX2nWNwucnT2685MwKS0y+Lee65g6ROqOo1r7WU8EO4MD6GYCRghPHwRdpxryuY
+         XSIrm3RhuLpFQN3M0j5I1NL8bJc4w6361JgZVUSiOtI7c22VjcXomuoNDljLt2sjLoC7
+         OqcfZ3UEURNS4leKWUh/uzFngKO4BZAZqfv0VnCIyQagBfcVtUSUZDrmgzZxelRZzHqU
+         ifE7a7YU+crPVP1Kt4+CCIAZrDylSDeRoB2gfqN4G3o/uQ7hc6RAKppyWvhQyOIjEar1
+         rzwApNFa18hlOp/5elii16uLlf6zkOUd9N0E0+zhhvu2O4H/K9ltPa/T0BCz5NGQhKsa
+         fTIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCLP3xLeEjio3fy0sFOkeK/f+gkudIHDi9DSqRZe6q/bwcLWWGgIwp+8LvOGFtXfpo86fObQejffWZO0L2mJlFNoIoakHoKqPl2fJs
+X-Gm-Message-State: AOJu0YxuP8M87+AhwPVkk+s6F+T/iBSYCgQQXdNorQbNi3zsQxSvLmYq
+	CdWP/eqPaB0Q0pcDs08yhNKmK8EVWTcMPFtSph9LUYBC3iQwefSvW55RuJP5/BJxrkw1trzB66W
+	vMQfxAL81HiCK8aB+HLizhfk4Iu8ZorgvHL99iOZ5o/G5UXzdKmyfKlBu8kry0gfhWmtte5ODtm
+	bfLOEXaccsdYV4oJRT8MXDykVD+6XqKH+HXRmA
+X-Received: by 2002:a5d:6ac1:0:b0:368:3731:1614 with SMTP id ffacd0b85a97d-36bbc1011e9mr8248274f8f.32.1722898937575;
+        Mon, 05 Aug 2024 16:02:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH74ylnE/BhxmQevxRtapsNk/fxZfcG0Ea7DzoV2Gxnnnr62q1iTr69ZKhDX/wyxBSmYl4hRaASNNxrbTylqBs=
+X-Received: by 2002:a5d:6ac1:0:b0:368:3731:1614 with SMTP id
+ ffacd0b85a97d-36bbc1011e9mr8248258f8f.32.1722898937120; Mon, 05 Aug 2024
+ 16:02:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805150750.170739-1-petr.tesarik@suse.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240730155646.1687-1-will@kernel.org> <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co>
+ <Zql3vMnR86mMvX2w@google.com> <20240731133118.GA2946@willie-the-truck>
+ <3e5f7422-43ce-44d4-bff7-cc02165f08c0@rbox.co> <Zqpj8M3xhPwSVYHY@google.com>
+ <20240801124131.GA4730@willie-the-truck> <07987fc3-5c47-4e77-956c-dae4bdf4bc2b@rbox.co>
+ <ZrFYsSPaDWUHOl0N@google.com>
+In-Reply-To: <ZrFYsSPaDWUHOl0N@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 6 Aug 2024 01:02:02 +0200
+Message-ID: <CABgObfYK4Z6hpo5fh8U8QHtbx4-T32keSF+w=JXaYqsBmFfuMg@mail.gmail.com>
+Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
+ xa_store() failure
+To: Sean Christopherson <seanjc@google.com>
+Cc: Michal Luczaj <mhal@rbox.co>, Will Deacon <will@kernel.org>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>, 
+	Marc Zyngier <maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/05/24 at 05:07pm, Petr Tesarik wrote:
-> From: Petr Tesarik <ptesarik@suse.com>
-> 
-> Fix the condition to exclude the elfcorehdr segment from the SHA digest
-> calculation.
-> 
-> The j iterator is an index into the output sha_regions[] array, not into
-> the input image->segment[] array. Once it reaches image->elfcorehdr_index,
-> all subsequent segments are excluded. Besides, if the purgatory segment
-> precedes the elfcorehdr segment, the elfcorehdr may be wrongly included in
-> the calculation.
+On Tue, Aug 6, 2024 at 12:56=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+> +       if (unlikely(vcpu->vcpu_idx < atomic_read(&kvm->online_vcpus)))
+> +               return -EINVAL;
 
-Indeed, good catch.
++1 to having the test _somewhere_ for async ioctls, there's so much
+that can go wrong if a vcpu is not reachable by for_each_vcpu.
 
-Acked-by: Baoquan He <bhe@redhat.com>
+>         /*
+>          * Some architectures have vcpu ioctls that are asynchronous to v=
+cpu
+>          * execution; mutex_lock() would break them.
+>
+> The mutex approach, sans async ioctl support:
 
-> 
-> Fixes: f7cc804a9fd4 ("kexec: exclude elfcorehdr from the segment digest")
-> Cc: stable@kernel.org
-> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+Async ioctls can be handled as you suggested above by checking
+vcpu_idx against online_vcpus. This mutex approach also removes the
+funky lock/unlock to inform lockdep, which is a nice plus.
+
+Paolo
+
 > ---
->  kernel/kexec_file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 3d64290d24c9..3eedb8c226ad 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -752,7 +752,7 @@ static int kexec_calculate_store_digests(struct kimage *image)
->  
->  #ifdef CONFIG_CRASH_HOTPLUG
->  		/* Exclude elfcorehdr segment to allow future changes via hotplug */
-> -		if (j == image->elfcorehdr_index)
-> +		if (i == image->elfcorehdr_index)
->  			continue;
->  #endif
->  
-> -- 
-> 2.45.2
-> 
+>  virt/kvm/kvm_main.c | 28 +++++++++++++++++++---------
+>  1 file changed, 19 insertions(+), 9 deletions(-)
+>
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index d0788d0a72cc..0a9c390b18a3 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -4269,12 +4269,6 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kv=
+m, unsigned long id)
+>
+>         mutex_lock(&kvm->lock);
+>
+> -#ifdef CONFIG_LOCKDEP
+> -       /* Ensure that lockdep knows vcpu->mutex is taken *inside* kvm->l=
+ock */
+> -       mutex_lock(&vcpu->mutex);
+> -       mutex_unlock(&vcpu->mutex);
+> -#endif
+> -
+>         if (kvm_get_vcpu_by_id(kvm, id)) {
+>                 r =3D -EEXIST;
+>                 goto unlock_vcpu_destroy;
+> @@ -4285,15 +4279,29 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *k=
+vm, unsigned long id)
+>         if (r)
+>                 goto unlock_vcpu_destroy;
+>
+> -       /* Now it's all set up, let userspace reach it */
+> +       /*
+> +        * Now it's all set up, let userspace reach it.  Grab the vCPU's =
+mutex
+> +        * so that userspace can't invoke vCPU ioctl()s until the vCPU is=
+ fully
+> +        * visibile (per online_vcpus), e.g. so that KVM doesn't get tric=
+ked
+> +        * into a NULL-pointer dereference because KVM thinks the _curren=
+t_
+> +        * vCPU doesn't exist.  As a bonus, taking vcpu->mutex ensures lo=
+ckdep
+> +        * knows it's taken *inside* kvm->lock.
+> +        */
+> +       mutex_lock(&vcpu->mutex);
+>         kvm_get_kvm(kvm);
+>         r =3D create_vcpu_fd(vcpu);
+>         if (r < 0)
+>                 goto kvm_put_xa_release;
+>
+> +       /*
+> +        * xa_store() should never fail, see xa_reserve() above.  Leak th=
+e vCPU
+> +        * if the impossible happens, as userspace already has access to =
+the
+> +        * vCPU, i.e. freeing the vCPU before userspace puts its file ref=
+erence
+> +        * would trigger a use-after-free.
+> +        */
+>         if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0=
+), kvm)) {
+> -               r =3D -EINVAL;
+> -               goto kvm_put_xa_release;
+> +               mutex_unlock(&vcpu->mutex);
+> +               return -EINVAL;
+>         }
+>
+>         /*
+> @@ -4302,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm=
+, unsigned long id)
+>          */
+>         smp_wmb();
+>         atomic_inc(&kvm->online_vcpus);
+> +       mutex_unlock(&vcpu->mutex);
+>
+>         mutex_unlock(&kvm->lock);
+>         kvm_arch_vcpu_postcreate(vcpu);
+> @@ -4309,6 +4318,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm=
+, unsigned long id)
+>         return r;
+>
+>  kvm_put_xa_release:
+> +       mutex_unlock(&vcpu->mutex);
+>         kvm_put_kvm_no_destroy(kvm);
+>         xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
+>  unlock_vcpu_destroy:
+>
+> base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+> --
+>
 
 
