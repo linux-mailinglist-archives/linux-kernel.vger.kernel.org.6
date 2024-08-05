@@ -1,175 +1,231 @@
-Return-Path: <linux-kernel+bounces-275319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F3E94834F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:24:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D098C948359
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C98A1F22963
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C549280CBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A76814D6F7;
-	Mon,  5 Aug 2024 20:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511E415FA76;
+	Mon,  5 Aug 2024 20:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eig0VTwG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TxYJAT/u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FA113C809;
-	Mon,  5 Aug 2024 20:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722889435; cv=none; b=TIHk/h//TVzN0qISB1mrYsa+zo4AmtDGBQ2qW0PCqvtnATLbOs5lmmI097pkNHr7J7XV6UGWTUfh+ytB4ohrYTMxCf8POPJohOM4lbgfDEznpIal1ZqjU2759/DAXmY7fDxoFLX2n5y8XGoKLDTOoQIF44PvGst4Txikgo6VVok=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722889435; c=relaxed/simple;
-	bh=YGBqoJVLRNKAeRuh8/ZDuOC33tyZG9aXR6dvNwWI5D0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UjwNZ+rETEB7g533QyuZjtKtLdLGrIN8Ye+HJTvlVm/JywZ+Z89iIi1jJp+jj8x+E2V9NJkj+KZ0oAnW4Mlze7X2lFApKWekaMCR9g/jYfxUq4YebIpLmiT5bwxJQFlJz3+RW5eFeMRl/3vdCVaJ0J8jJAyHfRl9yAK8gXcN5ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eig0VTwG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E9FC32782;
-	Mon,  5 Aug 2024 20:23:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722889435;
-	bh=YGBqoJVLRNKAeRuh8/ZDuOC33tyZG9aXR6dvNwWI5D0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eig0VTwGzMuVclkh9CDCoVq63kCvSv9o6COAVNIyUF7XuKtpyUiTSuvRhxtTtiV0W
-	 OENVwKu1VcggtSOBMk/2rlhNoapA+Etaki8v6EYwyaazQG+efd9gBItYg1X7BfNQfr
-	 mQSVAQUs5JAR6csChpl2mlCcpMQUqYoZGl8xDfZGMg0eNtTkmL/oOKK8vrZAaZHshh
-	 91CXbd4XjPq8W9heMkhtPyj1J79/a6vkal8iL+sr92pUBY5aaMLCn0j23EqNifuQDZ
-	 MR+fHrXTaXIvI6aSrhBuUd8oOoDsGwIti6kkLNwjvG5fa3Kx1BJvcJ5jpLPgMKJh7J
-	 gVSzkwsjjqUFQ==
-Date: Mon, 5 Aug 2024 17:23:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 5/5] perf annotate: Add --skip-empty option
-Message-ID: <ZrE011BLww0LQQha@x1>
-References: <20240803211332.1107222-1-namhyung@kernel.org>
- <20240803211332.1107222-6-namhyung@kernel.org>
- <ZrEmZLV0vgU6GUcN@x1>
- <ZrEyo4CSm6nKU20s@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8290614AD20;
+	Mon,  5 Aug 2024 20:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722889503; cv=fail; b=sSsvHvP59ysuskXO6JKhroyGzYB/TPMTeDJpTtP2Vxb+vjmyjLiBE6/FIEFBjm3Hr37C4KYOpqyAnA0bqovpJtqpvNfcDnKAozRPItlyWR4Db1vrmRSKe/nFuaDxhzFJIDTM1fnQ6LuBjoH+JvGXzmlWoSsAuUMTw21Tk5Av/es=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722889503; c=relaxed/simple;
+	bh=Sp6UrQjHfKTIiV0OxajD9WUV9lTbrwyfJd9vqA0ZyB0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Z0P2oe9xmD8AZe80df5O2eSMMr5uVtk/sY+1odAq0Z23f8ZndcIQ+/Y6QhcqJFY7ApPBNTbm/hFHMDDxolZJATQs8ig7WFb7Sqimrf4cpyqkP7IMmaLsEisULg7TI5XcAEl1W2TGg4KWlJ3mJt22AYWLRt/tM5gmbic42lmLqKU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TxYJAT/u; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722889502; x=1754425502;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=Sp6UrQjHfKTIiV0OxajD9WUV9lTbrwyfJd9vqA0ZyB0=;
+  b=TxYJAT/u6dWnLXgvV0vKLBDG3VW2bJCQi9CbQ13hyZ/caNohufxmZ+1Q
+   nO45ql1VgLEh5HQ9WtYT5dnzkU5K3lhHjs99C4SL/FuRPJgHgcx/wE8oz
+   bm4UMw3vaM8zmgXWvkoShqWe3lxhprPvy1JO0Hf3LBZZMFWo52L5Xg70p
+   3YBbDfl0AH5UpSbLXKgTZX8bPmh2E7LoSZQISQkIrUGQx5Pis3+T7QnG/
+   +r/+01kcB3JXdepXpc4EeV4KQEEHPB+skoWVW8IcJ29AQhZkK7MBg0TAI
+   cuUbOXs4+G6bVcXWHE6DZyAA1f9Gd6oNLIVTwRkE7ME+76Ew2k7q7NfN8
+   w==;
+X-CSE-ConnectionGUID: /b60CmHaQGyCK35Cx70Rag==
+X-CSE-MsgGUID: lII95XH/Shm+mqbxRd9c6g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="24743205"
+X-IronPort-AV: E=Sophos;i="6.09,265,1716274800"; 
+   d="scan'208";a="24743205"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 13:25:01 -0700
+X-CSE-ConnectionGUID: 2zmwJoKtS/qutvqEWww30A==
+X-CSE-MsgGUID: 1iGc26FXT7yxnT94c8YbJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,265,1716274800"; 
+   d="scan'208";a="56220125"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Aug 2024 13:25:00 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 5 Aug 2024 13:24:59 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 5 Aug 2024 13:24:58 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 5 Aug 2024 13:24:58 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.169)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 5 Aug 2024 13:24:58 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=freLFleVfIQUSqD/VmeSO9VXbluQ9pp1IFvsYFxfCPHVtQPBgStevb6mZcvJvjKcdYiVRtOx/d4t18oDsJH1NF4Eb2vhtBy0sooPlhLWUdC/QjYj+FSKBYRyf8laO+/0PbX3epfIgodeynI52klH3DgjP9T6NWrHi5Z9nsnufUAScV/8H92m5eyABe923kMk0+qXCQlCjJbDL1DvaccqNyc2fkTy71SlJxntQMNzR+59dtGxORcvqWVDoSQP6kf0ZuknjeIKK08rTDToDv7NkC2iRGxgdTDo34Y8PUae5unL0rPBzODUK4dkRMeVNKNy/wR3A91hSygRNTk7AGxdBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=k2wN3ZvgUlYhiyuN4HPI6ZEAm+LjxfzvLNdV3iKwYEc=;
+ b=bjET+OAP+5FFwyOXxTiv8PCIUHkOgdHtLrn58dq62YTKCoVpKeiuNIccYh78ZZMaOI4VOP472xeDw43TeN2zMCN0Jwq384hPkeWPhe2vrW99p5prWgviXYOHAfXiyqDGjzgQOoVN3ckpu0CCh7sFT32R3od5l260hEteEpumN8o4MUNHS0Abgp0SubcxeenPdmBF6rFJ5LJ8OBOXVvD8Id8CvK9vjcI52MsTd+6jCjuUFZRyXoC/HKKg5s5Ihy0v8y1NUWvJUFkJcOJDhWZzkj9PoXtBl3V4GycZeS3v0TaTtbtD6PTizp9FX9HbfKD5zAYQ0+8AFnvcEttKEYP3Vg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by LV8PR11MB8772.namprd11.prod.outlook.com (2603:10b6:408:200::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Mon, 5 Aug
+ 2024 20:24:56 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.7828.021; Mon, 5 Aug 2024
+ 20:24:56 +0000
+Date: Mon, 5 Aug 2024 13:24:50 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Mike Rapoport <rppt@kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Alexander Gordeev <agordeev@linux.ibm.com>, Andreas Larsson
+	<andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, "Arnd
+ Bergmann" <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Catalin Marinas
+	<catalin.marinas@arm.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, David Hildenbrand <david@redhat.com>, "David
+ S. Miller" <davem@davemloft.net>, Davidlohr Bueso <dave@stgolabs.net>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko Carstens
+	<hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+	<mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul Adrian
+ Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Jonathan Corbet <corbet@lwn.net>, "Michael
+ Ellerman" <mpe@ellerman.id.au>, Mike Rapoport <rppt@kernel.org>, "Palmer
+ Dabbelt" <palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
+	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
+Subject: Re: [PATCH v3 25/26] mm: make range-to-target_node lookup facility a
+ part of numa_memblks
+Message-ID: <66b13512a0fd3_c144829488@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240801060826.559858-1-rppt@kernel.org>
+ <20240801060826.559858-26-rppt@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240801060826.559858-26-rppt@kernel.org>
+X-ClientProxiedBy: MW4PR04CA0145.namprd04.prod.outlook.com
+ (2603:10b6:303:84::30) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZrEyo4CSm6nKU20s@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|LV8PR11MB8772:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10d41d9e-5cf1-40be-f00f-08dcb58cabbb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?eBznTBjIHsKdJuh5TFO6oStZgwqawyp4tjN1H0ygNtkBv8os0RSGZA7FtpYQ?=
+ =?us-ascii?Q?JLqxvf+mrS1vTvJn6Ksz5RFsiCri+li4Mo4Q2kLKeVK8WO4T73gX+/di7f7h?=
+ =?us-ascii?Q?XRfVwK9kd8ntSmS28Cp1txpPE+FI154E/I6O/Iu7J2hWzW0RsX/bzOqzTUND?=
+ =?us-ascii?Q?ufe1SVNcfRzFp8wKAt8YxaJJ9Rud5806wJT9qXSfjY3MYMTb5u6crsQc/Vph?=
+ =?us-ascii?Q?qm+48fJQIxKbmnO/AnK2U/t19GELmVqQ2gndpDJU82Cy6rnLFhxLo+czMMsz?=
+ =?us-ascii?Q?OZoSkFq5OsaHo396Au82afRckkEilK0CevTgtpQk2MjYAIFe2FzMdSaU7i41?=
+ =?us-ascii?Q?m4r4MNNeMxf4V9ais7WgWHM1idl7/sJXs8WPSXncexFBLOsfjuF6pyZPlSVu?=
+ =?us-ascii?Q?+GbWPaWubdv2KnB9YLN6SrnHNNlQXj98QP9YCjdzEGSRi85ILqlQfUTtywrl?=
+ =?us-ascii?Q?J+pOFsI8cyghpJW/ud8FDQZ3QW2UsgzLRS1YlfU4z97VMbJq/P7nOtrJrHRz?=
+ =?us-ascii?Q?0WWE7pQrG1UmovEczYVNpCytz3B9QCb5J21p/IVab8XRaWBWEEI1LqbNanfU?=
+ =?us-ascii?Q?Fjsvns15HVbfXa54dXxb+OenVSnyBIL+labdUIfEv+dZmcPCB9Z8FgsHknmj?=
+ =?us-ascii?Q?FfQxh1/CWQBWWPjIbjfuNIqQ6D2CpPQJgMneZTMYCELrXKic0iYeVA5px+Li?=
+ =?us-ascii?Q?R/OzcCXKTtZ796UwFZr8Qb3L32e67vY4taaZcCNu2QWIdzEcUo4oaTUCiJwP?=
+ =?us-ascii?Q?Yv47BV+mArjtRuDk/xHuTxom+LwHRjYCdqQVGuEOukT5CIFNDTR+/suPOEmW?=
+ =?us-ascii?Q?Y9nviiRsnlCjpL2NTdA6IHJ46wnplZI9Ypg5whsFReI2DDDBwyThKnJzIVhn?=
+ =?us-ascii?Q?Lm9J/Ur7sTMphom+w3+WNfqH+2NfhXJsy6RdEJuTgdrT2kvCfEAEq0Er3iAD?=
+ =?us-ascii?Q?zP+vqcuKYSefFqt+jSvwqpJC+05XHkUiP4bhGiyvcZe7wqhN5z9UHsa+bPsH?=
+ =?us-ascii?Q?yql/CRYRwgHy6VCrK9kYRMZeaMhYd0uE+l96DgwhqHN4CfD839yaHy196YII?=
+ =?us-ascii?Q?dyPy0jNsMvnXNP7quFw8DbdOWBE4x7QITNLiDxoqigP7oWzLVb+F5gJoH100?=
+ =?us-ascii?Q?bSRmAIJOk+ftv3/uBvm+IRDS8CaugmbRk5ovMUY3+DjwpbstdsbhC5ZCSxes?=
+ =?us-ascii?Q?NRcvhZhIngmrT9V0wAGTY+mP/ZVwDGihJ55HCOj21XV3hRTpxDW48DNi3o9J?=
+ =?us-ascii?Q?/VRBlFOQTM9D8TCobsskkTdQIfc1CGnYnolXd6q2oi1lm08r5CjsvIEQOnZa?=
+ =?us-ascii?Q?E0ccOwUQ0sUM1EUUODyJ5nmdIHPO5uQSypBW6SQPZivv8Q=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?pGV1HyXyZq4XiBhT8Uabr/RqyYhCP7tqNTCr3wZzMRAHE0n2ndBVhmgf4tO4?=
+ =?us-ascii?Q?brtC7MwprEO21qgk8BS+8tfVTFk8ZRK0V9AFr/56UMF0B3GH0UaM9fgpbzSW?=
+ =?us-ascii?Q?geIHeC8JlrzE8uRhDKEeCpLzfqywPmWENu3riyAqfyelUqiR0/EfdoVqmwRY?=
+ =?us-ascii?Q?kdQEoP0/br/bw+pkOBuR1NgVP25AV7fWZTxLld6knLLvoNn0WpJK6v3sUPC1?=
+ =?us-ascii?Q?vWDrfhiHcWqQKmcA56v6jOdCiGY6Sa01xfpYRKfnsaloR4Blr1bcIm/Z+Yu3?=
+ =?us-ascii?Q?AcN3K1i+p0M4WHrMBdKuJLx3mEZ1fDy0gyVZSDC+LgrJxLUw0NdmDzKLuq0f?=
+ =?us-ascii?Q?6kUn/A72Vo++WyOUQCPBctpURHtOaIS0QaTNYC7eED/ePjc55hdtm97znZAF?=
+ =?us-ascii?Q?e+tvU7lC0B+K8jRg1dWjdkVGv5x4njEeGIz/A0iIaChqc+qLj0A2eLbrrUML?=
+ =?us-ascii?Q?kUqtZ1gERS7tWMIo9erqhlwtCLU6B+hvK189llkU3tMeDZNE/M0V/vJWIu5q?=
+ =?us-ascii?Q?KNHLkGNBquWkb/H8PP6kIsH8ZeOvKuFCQxs6Jou8UEjU8Mw4qr6cmIbzWy6Q?=
+ =?us-ascii?Q?R6EDm3TLJIa5zv4/V2higyW/p8bFABsMxyACBIbfcTZdPN847mReSoUJI1jD?=
+ =?us-ascii?Q?C5kkWl0gZ/teR4C6JjekUAEKNFPKdQ1YPbeuXuAzNPtXx9GjzRfEJOVh/B3v?=
+ =?us-ascii?Q?bUmsL4xGSNRLt2sVEDTjCH843MQcq5ps6R2tLvv4e1JnwL3JZemSD35rQ/D4?=
+ =?us-ascii?Q?8NowguRsnXADKAChG0FMEwqpi5m7XrCSp1AvvHoodwtLicUbM5eWympz3QWe?=
+ =?us-ascii?Q?Xa8eOkkyjqwR1AM2fmJTpHVXBY3vXyZXY0RXpA8mfz5kbnDlQJfLFlOu1QYA?=
+ =?us-ascii?Q?yt/8iC4k4Xdr31z4iJ591j2x8uDuBX8lKKKAC6ul8G1XgZMNCr9awj0xP2OI?=
+ =?us-ascii?Q?l4xeJ3EF2wkFZYmTyvXMEs+BZNW/PsbFqodB1s9tXoOg+S4qvo3lly+/9izU?=
+ =?us-ascii?Q?6VuDgLJ1NsjMgIETxJV0ndS2QDKk5LRcM8mqBzEpGxc564ausyTbpouYM2W4?=
+ =?us-ascii?Q?+TxePo5pZ8y9iM6ygEj6USYp5qLCmEqcWoRHXeh7KvKvXFHei81ypw4mzioV?=
+ =?us-ascii?Q?IpKmWcRvrJhp9USIanJVIKPx23+y105qz6pw3IC/mrI8nTGyIg83ikOlVC7K?=
+ =?us-ascii?Q?CmAElk65TlHX22jTYAfYIK2EAqM/wR0LdNOiAFnjYQfwl1GOkAuHEeTMwj71?=
+ =?us-ascii?Q?3q023e62T6/GWKSARHaZabXsE5LyD10ZFCJeSMh/7u9M0JLyyI44zxwluuVn?=
+ =?us-ascii?Q?SzVMMzhMSJWT0+AFwFhqFo2aKLf23NCpVgese0l5bhQRDwwGlcPy4ydXCfkN?=
+ =?us-ascii?Q?DNwCn76VV9rvhNPDWDqclzGwieOKHLncxZZsoP7KQB9gv+CxqmvJ3s5D2ZES?=
+ =?us-ascii?Q?02VhDHGycHk4AhlGK2lz/9BlHo9UvghGUJYP2qINJhG2AoWfrMwit0mGTT8g?=
+ =?us-ascii?Q?P+vCM75AFD4lVJuCk1IBHBOYsxjCxiBtv0WvaKJVj6Gb5M+rB87BUYbtfQR8?=
+ =?us-ascii?Q?wz+UCB7yIiPXF1o7cvdwgD74pLjH6SA3zy+c1YL3kXU7a7Ut4qIofCQqIUeO?=
+ =?us-ascii?Q?Ow=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10d41d9e-5cf1-40be-f00f-08dcb58cabbb
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 20:24:56.2113
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HwejzbO57+MkvcuTdKnMe/mEWX32gqlwOWtULyQjHrFHuNGY/VXmP/axItoYZRtEgA7CsNN82jDQBE7toI4CULXl8xfOB9i2l5mk/o8bhRw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8772
+X-OriginatorOrg: intel.com
 
-On Mon, Aug 05, 2024 at 01:14:27PM -0700, Namhyung Kim wrote:
-> On Mon, Aug 05, 2024 at 04:22:12PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Sat, Aug 03, 2024 at 02:13:32PM -0700, Namhyung Kim wrote:
-> > > Like in perf report, we want to hide empty events in the perf annotate
-> > > output.  This is consistent when the option is set in perf report.
-> > > 
-> > > For example, the following command would use 3 events including dummy.
-> > > 
-> > >   $ perf mem record -a -- perf test -w noploop
-> > > 
-> > >   $ perf evlist
-> > >   cpu/mem-loads,ldlat=30/P
-> > >   cpu/mem-stores/P
-> > >   dummy:u
-> > > 
-> > > Just using perf annotate with --group will show the all 3 events.
-> > 
-> > Seems unrelated, just before compiling with this patch:
-> > 
-> > root@x1:~# perf mem record -a -- perf test -w noploop
-> > Memory events are enabled on a subset of CPUs: 4-11
-> > [ perf record: Woken up 1 times to write data ]
-> > [ perf record: Captured and wrote 10.506 MB perf.data (2775 samples) ]
-> > root@x1:~#
-> > 
-> > root@x1:~# perf annotate --group --stdio2 sched_clock
-> > root@x1:~# perf annotate --stdio2 sched_clock
-> > Samples: 178  of event 'cpu_atom/mem-stores/P', 4000 Hz, Event count (approx.): 565268, [percent: local period]
-> > sched_clock() /usr/lib/debug/lib/modules/6.8.11-200.fc39.x86_64/vmlinux
-> > Percent      0xffffffff810511e0 <sched_clock>:
-> >                endbr64        
-> >    5.76        incl    pcpu_hot+0x8
-> >    5.47      → callq   sched_clock_noinstr
-> >   88.78        decl    pcpu_hot+0x8
-> >              ↓ je      1e     
-> >              → jmp     __x86_return_thunk
-> >          1e: → callq   __SCT__preempt_schedule_notrace
-> >              → jmp     __x86_return_thunk
-> > root@x1:~# perf annotate --group --stdio2 sched_clock
-> > root@x1:~# perf annotate --group --stdio sched_clock
-> > root@x1:~# perf annotate --group sched_clock
-> > root@x1:~#
-> > 
-> > root@x1:~# perf evlist
-> > cpu_atom/mem-loads,ldlat=30/P
-> > cpu_atom/mem-stores/P
-> > dummy:u
-> > root@x1:~#
-> > 
-> > root@x1:~# perf report --header-only | grep cmdline
-> > # cmdline : /home/acme/bin/perf mem record -a -- perf test -w noploop 
-> > root@x1:~#
-> > 
-> > I thought it would be some hybrid oddity but seems to be just --group
-> > related, seems like it stops if the first event has no samples? Because
-> > it works with another symbol:
+Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > 
-> Good catch.  Yeah I found it only checked the first event.  Something
-> like below should fix the issue.
+> The x86 implementation of range-to-target_node lookup (i.e.
+> phys_to_target_node() and memory_add_physaddr_to_nid()) relies on
+> numa_memblks.
+> 
+> Since numa_memblks are now part of the generic code, move these
+> functions from x86 to mm/numa_memblks.c and select
+> CONFIG_NUMA_KEEP_MEMINFO when CONFIG_NUMA_MEMBLKS=y for dax and cxl.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
 
-Nope, with the patch applied:
+Looks good to me:
 
-root@x1:~# perf annotate --group --stdio sched_clock
-root@x1:~# perf annotate --stdio sched_clock
- Percent |      Source code & Disassembly of vmlinux for cpu_atom/mem-stores/P (147 samples, percent: local period)
--------------------------------------------------------------------------------------------------------------------
-         : 0                0xffffffff810511e0 <sched_clock>:
-    0.00 :   ffffffff810511e0:       endbr64
-    5.11 :   ffffffff810511e4:       incl    %gs:0x7efe2d5d(%rip)       # 33f48 <pcpu_hot+0x8>
-    0.13 :   ffffffff810511eb:       callq   0xffffffff821350d0
-   94.76 :   ffffffff810511f0:       decl    %gs:0x7efe2d51(%rip)       # 33f48 <pcpu_hot+0x8>
-    0.00 :   ffffffff810511f7:       je      0xffffffff810511fe
-    0.00 :   ffffffff810511f9:       jmp     0xffffffff82153320
-    0.00 :   ffffffff810511fe:       callq   0xffffffff82153990
-    0.00 :   ffffffff81051203:       jmp     0xffffffff82153320
-root@x1:~# perf annotate --group --stdio sched_clock
-root@x1:~# perf annotate --group --stdio2 sched_clock
-root@x1:~# perf annotate --group sched_clock
-root@x1:~#
- 
-> Thanks,
-> Namhyung
-> 
-> 
-> diff --git a/tools/perf/builtin-annotate.c b/tools/perf/builtin-annotate.c
-> index efcadb7620b8..8d3ec439b783 100644
-> --- a/tools/perf/builtin-annotate.c
-> +++ b/tools/perf/builtin-annotate.c
-> @@ -632,11 +632,15 @@ static int __cmd_annotate(struct perf_annotate *ann)
->  	evlist__for_each_entry(session->evlist, pos) {
->  		struct hists *hists = evsel__hists(pos);
->  		u32 nr_samples = hists->stats.nr_samples;
-> +		struct evsel *evsel;
->  
-> -		if (nr_samples == 0)
-> +		if (!symbol_conf.event_group || !evsel__is_group_leader(pos))
->  			continue;
->  
-> -		if (!symbol_conf.event_group || !evsel__is_group_leader(pos))
-> +		for_each_group_member(evsel, pos)
-> +			nr_samples += evsel__hists(evsel)->stats.nr_samples;
-> +
-> +		if (nr_samples == 0)
->  			continue;
->  
->  		hists__find_annotations(hists, pos, ann);
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
