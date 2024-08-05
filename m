@@ -1,139 +1,200 @@
-Return-Path: <linux-kernel+bounces-274184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F0D947499
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B09EF94749F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E16281498
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BC31281479
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A548C1422D8;
-	Mon,  5 Aug 2024 05:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAC214373B;
+	Mon,  5 Aug 2024 05:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="gu6gyClf"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bk3/Pedx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8026631;
-	Mon,  5 Aug 2024 05:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2988C13D502;
+	Mon,  5 Aug 2024 05:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722835366; cv=none; b=ty/i0KVWfPqA5onSAJx++95xCHPdDdM0fFQ4xexVD74UklZf/GOJPDpE7vFUzXPEdnDF0S7OC6jIPi2LqadsND8jpybc4uuCJ73Vbmb8m86I+jytOHlJSCLNwW/w0dWhtBOI8GrMRW5ea2ZsB426QOccMYEYcxXnaZAFa3DitL4=
+	t=1722835631; cv=none; b=qtDDbw7nd1l2h8Je1lTHPi+Gb+90UnV+06h2Gt/3gbwyn1AGCVfwxRWqjthPeYPpUxmMW5/6ht6C40gC5ROcbAGiTLAHyFJVcBM9M29Y3QTsXWIlcjpm3T4H+J4LXoFJt6tgBTmxG4OmVUCRVgSFL6c9dHfouliW5B3TcPH2JQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722835366; c=relaxed/simple;
-	bh=TW26NEDM/mH7w4nfR2+VSs8WSBePmr7ut6r0x2J9gw8=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=pWyaPbwiQwUP5giYHLvNUUV3ZIwlLfvnxlbp++3/41RcY5OcgFtAgaeLbgf0teFx1Fa9+PFOJbiwomMTVWH/Sy0GBDG8GnrINvX0ztrCgBtHEgCEnlam6wfPzmM9M465wtLOO3sDhJQ62PpEQaOTQ5HdeIj/+QL3DzGXg4MaH3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=gu6gyClf; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1722835631; c=relaxed/simple;
+	bh=tI9tNRCltCR8jh940fZedSvpAcB+6XJTjA4IDLdrehU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=I8aiq3RLab6WAEWPSJXNZBXbSDIlWsXsKwIx/xceRS2X+pG35IA9IYBJRqyF1Okvcx4xVnpoA5lHNmhsEvtp/pDg+YjVA66xDSMY0Gp/GhWFdZAa1JcFa8pSxAyY00ZhiLUflmc1USIh5gRM33mwDcmxWr7iTwjcg95xJb16A1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bk3/Pedx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4752VZh6021397;
+	Mon, 5 Aug 2024 05:26:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4kpVqL53JluNsgI9QBDPgANuBJ8NOu5WL2jucXPZXNc=; b=Bk3/PedxATkXfZaK
+	lDWpzBI84zc/I/bZC7ku8oKSsFMSSNFa1IAtZkpcqvwFEUlDfbRwiSPJThL5p1nG
+	23G+ZQzUARILB/YHDdC7vsK2+iBm/Zv9iWDmAK3cf3MPdPDZiK7yYxNMzR7dABRk
+	BwpKY1MLVUVq1oAjtaDrBZZM+bOWpY6xURX1FuHmCn5ZchCqnKBGRuOH9jvY8uP/
+	bchulsmc0L5QmhhZN6M0h/zAJnxaGvx+4vqzexuArNXvZR50zgvlkpYuHTBk4Lp0
+	sM9PMPAJ1nhXDOYwFw0ybzIciRcSvKgtsJk/lnjNYhTzkLnrnlRdxKimqFbJQ+Q/
+	+LwLCA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scmttw0j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 05:26:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4755Qtxj007936
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 05:26:55 GMT
+Received: from [10.216.50.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 Aug 2024
+ 22:26:49 -0700
+Message-ID: <100e27d7-2714-89ca-4a98-fccaa5b07be3@quicinc.com>
+Date: Mon, 5 Aug 2024 10:56:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1722835360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+AOe1X1BK2T9Nhb61hULdxwB8+O9eooFF234E3lK5bc=;
-	b=gu6gyClfqFB4PQ+WxAd5h9p9n4YjVkd+J9VwMd9c2CwEAg18JJ547LmzTGDdhxeKXwKUwe
-	IHWdr43Kqif02h2PBhgyxI3bMsGEuv9PMOTvZLB4bBU8+ca59vRfuZht0b7iDZdEEsgGWk
-	Apy+y47XAEB/JuXSsxmH+9fTjPFYaU+iRO+66bYHqBV9EIjtnwdNDuGevmKuD5r+c3pPw7
-	LJHW23x+jMMn3rKEKswV6A69D2wOdvM4KvF85xQlXU7gJbGlbbzVFn2wta5Ddalv+IvoT+
-	m+eSIbi3oVo/u7+YIyYdHRV3Mk3BXtjsMinyzs7WBit9ZxUIUnqDDkMrLop2rw==
-Date: Mon, 05 Aug 2024 07:22:34 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Yao Zi <ziyao@disroot.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Chris
- Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>, Tim Lunn
- <tim@feathertop.org>, Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin
- <efectn@protonmail.com>, Jagan Teki <jagan@edgeble.ai>, Ondrej Jirman
- <megi@xff.cz>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
-In-Reply-To: <10256980.nnTZe4vzsl@diego>
-References: <20240803125510.4699-2-ziyao@disroot.org>
- <2408413.9XhxPE3A7Q@diego> <81147f0205c2a9555c9c64e4f7a69b6b@manjaro.org>
- <10256980.nnTZe4vzsl@diego>
-Message-ID: <1da29af645d98be85b422208136e8150@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, Jingoo Han <jingoohan1@gmail.com>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: <andersson@kernel.org>, <quic_vbadigan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
+ <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
+ <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
+ <58317fe2-fbea-400e-bd1d-8e64d1311010@kernel.org>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <58317fe2-fbea-400e-bd1d-8e64d1311010@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gq9ZwccU44MqHPYee9wBL3p23haw5WPg
+X-Proofpoint-GUID: gq9ZwccU44MqHPYee9wBL3p23haw5WPg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408050037
 
-On 2024-08-04 17:51, Heiko Stübner wrote:
-> Am Sonntag, 4. August 2024, 15:59:19 CEST schrieb Dragan Simic:
->> On 2024-08-04 15:44, Heiko Stübner wrote:
->> > Am Sonntag, 4. August 2024, 15:25:47 CEST schrieb Dragan Simic:
->> >> On 2024-08-04 15:20, Yao Zi wrote:
->> >> > On Sun, Aug 04, 2024 at 12:05:11PM +0200, Krzysztof Kozlowski wrote:
->> >> >> On 03/08/2024 14:55, Yao Zi wrote:
->> >> >> > +	xin24m: xin24m {
->> >> >>
->> >> >> Please use name for all fixed clocks which matches current format
->> >> >> recommendation: 'clock-([0-9]+|[a-z0-9-]+)+'
->> >> >
->> >> > Will be fixed in next revision.
->> >>
->> >> Hmm, why should we apply that rule to the xin24m clock, which is
->> >> named exactly like that everywhere else in Rockchip SoC dtsi files?
->> >> It's much better to remain consistent.
->> >
->> > bindings or how we write devicetrees evolve over time ... similarly the
->> > xin24m name comes from more than 10 years ago.
->> >
->> > We also name all those regulator nodes regulator-foo now, which in turn
->> > automatically does enforce a nice sorting rule to keep all the
->> > regulators
->> > around the same area ;-)
->> >
->> > So I don't see a problem of going with xin24m: clock-xin24m {}
->> 
->> I agree that using "clock-xin24m" makes more sense in general, but the
->> trouble is that we can't rename the already existing instances of
->> "xin24m",
->> because that has become part of the ABI.  Thus, I'm not sure that
->> breaking
->> away from the legacy brings benefits in this particular case.
-> 
-> In the regulator case, we have _new_ boards using the new _node_-names
-> but I don't see any renaming of old boards and also don't think we 
-> should.
-> 
-> But that still does not keep us from using the nicer naming convention 
-> in
-> new boards ;-) .
-> 
-> Same with xin24m. We're talking only about the node-name here. The
-> phandle stays the same and also the actual clock name stays the same 
-> and
-> really only the actual node name you need to look for in 
-> /proc/device-tree
-> changes ;-) .
-> 
-> So I don't see the need to go about changing all the old socs, but new
-> additions should use improved naming conventions.
-> 
-> xin24m: clock-xin24m {
-> 	compatible = "fixed-clock";
-> 	#clock-cells = <0>;
-> 	clock-frequency = <24000000>;
-> 	clock-output-names = "xin24m";
-> };
 
-Makes sense.  Though, updating the dtsi files for older SoCs to follow
-the new rules, if possible, still remains an itch to me. :)
+
+On 8/5/2024 10:44 AM, Krzysztof Kozlowski wrote:
+> On 05/08/2024 06:11, Krishna Chaitanya Chundru wrote:
+> 
+> 
+>>>> +
+>>>> +  qcom,nfts:
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint8
+>>>> +    description:
+>>>> +      Fast Training Sequence (FTS) is the mechanism that
+>>>> +      is used for bit and Symbol lock.
+>>>
+>>> What are the values? Why this is uint8?
+>>>
+>> These represents number of fast training sequence and doesn't have
+>> any units and the maximum value for this is 0xFF only so we used
+>> uint8.
+>>> You described the desired Linux feature or behavior, not the actual
+>>> hardware. The bindings are about the latter, so instead you need to
+>>> rephrase the property and its description to match actual hardware
+>>> capabilities/features/configuration etc.
+>> ack.
+>>>
+>>>> +
+>>>> +allOf:
+>>>> +  - $ref: /schemas/pci/pci-bus-common.yaml#
+>>>> +  - if:
+>>>> +      properties:
+>>>> +        compatible:
+>>>> +          contains:
+>>>> +            const: pci1179,0623
+>>>> +      required:
+>>>> +        - compatible
+>>>
+>>> Why do you have entire if? You do not have multiple variants, drop.
+>>>
+>> The child nodes also referencing the qcom,qps615.yaml# node, I tried
+>> to use this way to say "the below properties are for the required for
+>> parent and optional for child".
+> 
+> I don't understand how child device can be exactly the same as parent
+> device. How does it look in terms of hardware? Pins and supplies?
+> 
+>>>> +    then:
+>>>> +      required:
+>>>> +        - vdd18-supply
+>>>> +        - vdd09-supply
+>>>> +        - vddc-supply
+>>>> +        - vddio1-supply
+>>>> +        - vddio2-supply
+>>>> +        - vddio18-supply
+>>>> +        - qcom,qps615-controller
+>>>> +        - reset-gpios
+>>>> +
+>>>> +patternProperties:
+>>>> +  "@1?[0-9a-f](,[0-7])?$":
+>>>> +    type: object
+>>>> +    $ref: qcom,qps615.yaml#
+>>>> +    additionalProperties: true
+>>>
+>>> Nope, drop pattern Properties or explain what is this.
+>>>
+>> the child nodes represent the downstream ports of the PCIe
+>> switch which wants to use same properties that is why
+>> I tried to use this pattern properties.
+> 
+> Downstream port is not the same as device. Why downstream port has the
+> same supplies? To which pins are they connected?
+> 
+> 
+Hi Krzysztof,
+
+Downstream ports dosen't have pins or supplies to power on.
+
+But there are properties like qcom,l0s-entry-delay-ns,
+qcom,l1-entry-delay-ns,  qcom,tx-amplitude-millivolt etc which
+applicable for child nodes also. Instead of re-declaring the
+these properties again I tried to use pattern properties.
+
+- krishna Chaitanya.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
