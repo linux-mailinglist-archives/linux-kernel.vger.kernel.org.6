@@ -1,337 +1,146 @@
-Return-Path: <linux-kernel+bounces-275304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A5494830E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:14:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A4E94831B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D47D01C21C71
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:14:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 006531C20D37
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93B916C85F;
-	Mon,  5 Aug 2024 20:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E79214AD2C;
+	Mon,  5 Aug 2024 20:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HlhC0TfQ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="XRXBgJFE"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE27A16BE31;
-	Mon,  5 Aug 2024 20:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BF313CF86;
+	Mon,  5 Aug 2024 20:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722888859; cv=none; b=WTctSLKlzP60PDtmirFNgI1DfaW8Le7b4phtcN6NoFIosQQjdx9Vrxi/hoDN9XWH/UiRPFp/bLdSjiSmN3wwRMlIN1S1Y8VIJqJbYy4F+fCKXjxCLBTxabGgFYxjCl1PJFqiUw9eX7PTdp4ZGfv78Bhpp6y6GwIwxBfUTrxr3QM=
+	t=1722889090; cv=none; b=sfZYaP+LkpFb1iNm6glEDbrvFk2zazn45rEujxVxC6fcofoG9EHyI1+dX7ndDDuCnTIKqjYMZdor7pKCZcSXdeHnHde/yWsJtVRqtLNfeDgitijmUOJQgGUQISThS6mIF3D1PLmeeHuZGaCczPXzP78jgsZi/vh+CqwRTO8XpM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722888859; c=relaxed/simple;
-	bh=s3QTtugUD5bNK6uisPOgFIGSY7xh8ze4loCcgfW9MT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+4Aa2iaxcWw6SFSSvtZ1sBWfuQhTCXK4gyGQJ/41YkN+gF1ohC/E574a2eoHmEmwefyXzTwnsyk5AlQA1ZvtRGpQfBVfQlRyk2Z4q/4bzzBi66jTyfEgIAHgOLkzgjUZY5XxUStBjoX9Rlrs4/zqYb54zTfcUpvwuf5Sr7Unos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HlhC0TfQ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a728f74c23dso1404691366b.1;
-        Mon, 05 Aug 2024 13:14:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722888856; x=1723493656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4WviZuQsvNVo7JWzERxl8d3Y2S70JtnzKTZ1Bu4/KEY=;
-        b=HlhC0TfQ/ZUemcIAcWOl/y4pAoLYJbjS3eHOM/LH9KCvhb5puFeUrKQg9ZiqAsta+i
-         TIRb6MYSWhMTPxdgienGuGMxbIdlw4Ux/qYYGKpwAw3DgZdsWFR8kU698/9lYvZ9GIKa
-         kaZK+s2sGDPnufx28yrGQU+URO64re7TDG0A/K4VdFKOAwWS4IEXMsBNQcGBcVlNG0Z1
-         NFPWOeBWKCaQXS7e/tUMRJXSewvo7vK7m/B3I4+p2sT2b3D0SEOnxZN0dAOP4eYPrj3U
-         iHtc9vVh/gJDxXenz4KPSp9UqmdvjbMO4Zr4V/+VHjyKI09DU8HXaDlv0JjQ8FEP3RV7
-         XQlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722888856; x=1723493656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4WviZuQsvNVo7JWzERxl8d3Y2S70JtnzKTZ1Bu4/KEY=;
-        b=MJOWz8WTM4eO8eH2a6JLxVAxaVRxsB1JXt3joq3wBUPVG7xrXvjPWDTiFJXh0nBK1k
-         9VmX1HT+y/O1/dpCeiTv99l3xSamqB6RF6x5s4Rdeav1HrKXn+YQzPAhkpXSRGiN/Gtk
-         +tQ0XFi4+GWzegcfyM9UUCYWJs9KTBtGcSDDGxfrWGZ/FW2G67gOzFOp97imCElJ25tT
-         YTlVxVc3/Y4+/4lnOT3gXlQ0hD7HuXt1QANEgEqCQ3V7XFmAZp1pgoeAzfPK7vT4DaRJ
-         7PKt2EYHuTo8y7yce99iJZVnBurSPDHtYyAyXDyq1sktcuuFV6YehEkG4J0f76214vRL
-         VdJw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8NvQYC4M1uU+xPcjgMa2lWqw4baTJ55djbD8tJJ3lYC05OnhDiqoEfwLx24E6bJuYjTUwUT73wBZRa45lw6yQ7Igd9Pb15soayY/FxBoFrBJ3x789sqoEsUmcikOpdm2e9tuqjyKHYbPOfEbLpNii9gDzCUqOnYFv71x/0pCn9nVXPqc2N8vzjibvUJHxlAHn4eITeIxw6w6a4A==
-X-Gm-Message-State: AOJu0YxKm3LV+hQMpIwL11g1XeVbOqIm0QDwKCWO3jTnYmNys0caFRB7
-	UipB2+JRzEu5KvSTYRk3jM2yFqqLtnbpxAUXgVpjS0ou8tocUdST8JK337Qfsw/GTQDlfn6bh0n
-	gpiy3+0jyNiZLHzzn3X90WnGERm0=
-X-Google-Smtp-Source: AGHT+IG8L+hnxBlm6nuNrRGh8gTejr4GHsr9w05VOPVu0qqv3+yd4ladZ4MFFPo9eO+zcgGw0pzIuB6pVsbh080rWl4=
-X-Received: by 2002:a17:906:794e:b0:a77:d85c:86fa with SMTP id
- a640c23a62f3a-a7dc4d8fe0emr983248366b.13.1722888855752; Mon, 05 Aug 2024
- 13:14:15 -0700 (PDT)
+	s=arc-20240116; t=1722889090; c=relaxed/simple;
+	bh=SDA/8M+q9FbyrEYwKNsAdWuE7Tz5DAnogwofeMSSuwc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VJ0oJpJLFI5b9cU04jVM45CzmDao9ngQkXZgpMGc/jKSCH/KG8/fDZohmVKNEXgbBecCEymSlxrPkGEb9ghoWLbOkE1PLrI0jXWdEr6OOP/e80xyZDAfY4HAmSf5xxyKkjRSIJv3fEuWODwBrP10o9MWoHO1HAI/zqmRME/YNCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=XRXBgJFE; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Iizmzgk6nde+kNgm78UgLxyes+gJTtndfv7UsiQEdyk=; t=1722889086; x=1723493886; 
+	b=XRXBgJFE7yE+MFdqd4XG8hmd0xn7xzRK+zfkvJv34ClvSV5uLQXDCyDQ5lOD7VenaN/9kpgT/vp
+	Q4YPPGSnb9TZVIO1uvy5ZfzGcM5moxQ1kLXWQfmc2ORyy/0Wxij9l/D4oOxeaoW1H798xoV23Jid8
+	Gv5a+3immdT4Ocj08J8015sJplvxFhQHota5qT3YcUIUGRODdxKE6hrRk7GdiMcrvLMLdPz5tEOSJ
+	wzwDutBE8COaYF0bSv/hFUX4+usCHHnNJ+um7Ao4kmuHL5J6pYARyMxg4nXqW8hinTHWwjx8yARK6
+	nCFQJ6NSXZ6XO+venWKWGzPViwP/W9kXT2pw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sb45L-000000010l0-3XFZ; Mon, 05 Aug 2024 22:13:39 +0200
+Received: from p5b13a2bf.dip0.t-ipconnect.de ([91.19.162.191] helo=suse-laptop.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sb45L-00000000u2V-2Vas; Mon, 05 Aug 2024 22:13:39 +0200
+Message-ID: <d36d1c197bed83f91299e5cf211ecc4169d3b7a1.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH cmpxchg 3/3] sh: Emulate one-byte cmpxchg
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: "Paul E. McKenney" <paulmck@kernel.org>, linux-arch@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de, 
+	peterz@infradead.org, torvalds@linux-foundation.org, arnd@arndb.de, 
+	geert@linux-m68k.org, palmer@rivosinc.com, mhiramat@kernel.org, 
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org, Andi Shyti
+	 <andi.shyti@linux.intel.com>
+Date: Mon, 05 Aug 2024 22:13:38 +0200
+In-Reply-To: <20240805192119.56816-3-paulmck@kernel.org>
+References: <c1b7f3a2-da50-4dfb-af6f-a1898eaf2b79@paulmck-laptop>
+	 <20240805192119.56816-3-paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805101725.93947-1-herve.codina@bootlin.com> <20240805101725.93947-2-herve.codina@bootlin.com>
-In-Reply-To: <20240805101725.93947-2-herve.codina@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 5 Aug 2024 22:13:38 +0200
-Message-ID: <CAHp75VdtFET87R9DZbz27vEeyv4K5bn7mxDCnBVdpFVJ=j6qtg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/8] misc: Add support for LAN966x PCI device
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman <horms@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Mon, Aug 5, 2024 at 12:19=E2=80=AFPM Herve Codina <herve.codina@bootlin.=
-com> wrote:
->
-> Add a PCI driver that handles the LAN966x PCI device using a device-tree
-> overlay. This overlay is applied to the PCI device DT node and allows to
-> describe components that are present in the device.
->
-> The memory from the device-tree is remapped to the BAR memory thanks to
-> "ranges" properties computed at runtime by the PCI core during the PCI
-> enumeration.
->
-> The PCI device itself acts as an interrupt controller and is used as the
-> parent of the internal LAN966x interrupt controller to route the
-> interrupts to the assigned PCI INTx interrupt.
+On Mon, 2024-08-05 at 12:21 -0700, Paul E. McKenney wrote:
+> Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on sh.
+>=20
+> [ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
+> [ paulmck: Apply feedback from Naresh Kamboju. ]
+> [ Apply Geert Uytterhoeven feedback. ]
+>=20
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Andi Shyti <andi.shyti@linux.intel.com>
+> Cc: Palmer Dabbelt <palmer@rivosinc.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: <linux-sh@vger.kernel.org>
+> ---
+>  arch/sh/Kconfig               | 1 +
+>  arch/sh/include/asm/cmpxchg.h | 3 +++
+>  2 files changed, 4 insertions(+)
+>=20
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index 1aa3c4a0c5b27..e9103998cca91 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -14,6 +14,7 @@ config SUPERH
+>  	select ARCH_HIBERNATION_POSSIBLE if MMU
+>  	select ARCH_MIGHT_HAVE_PC_PARPORT
+>  	select ARCH_WANT_IPC_PARSE_VERSION
+> +	select ARCH_NEED_CMPXCHG_1_EMU
+>  	select CPU_NO_EFFICIENT_FFS
+>  	select DMA_DECLARE_COHERENT
+>  	select GENERIC_ATOMIC64
+> diff --git a/arch/sh/include/asm/cmpxchg.h b/arch/sh/include/asm/cmpxchg.=
+h
+> index 5d617b3ef78f7..1e5dc5ccf7bf5 100644
+> --- a/arch/sh/include/asm/cmpxchg.h
+> +++ b/arch/sh/include/asm/cmpxchg.h
+> @@ -9,6 +9,7 @@
+> =20
+>  #include <linux/compiler.h>
+>  #include <linux/types.h>
+> +#include <linux/cmpxchg-emu.h>
+> =20
+>  #if defined(CONFIG_GUSA_RB)
+>  #include <asm/cmpxchg-grb.h>
+> @@ -56,6 +57,8 @@ static inline unsigned long __cmpxchg(volatile void * p=
+tr, unsigned long old,
+>  		unsigned long new, int size)
+>  {
+>  	switch (size) {
+> +	case 1:
+> +		return cmpxchg_emu_u8(ptr, old, new);
+>  	case 4:
+>  		return __cmpxchg_u32(ptr, old, new);
+>  	}
 
-...
+Acked-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-+ device.h
-
-> +#include <linux/irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/module.h>
-> +#include <linux/of_platform.h>
-
-> +#include <linux/pci.h>
-
-> +#include <linux/pci_ids.h>
-
-AFAIU pci_ids..h is guaranteed to be included by pci.h, but having it
-here explicitly doesn't make it worse, so up to you.
-
-> +#include <linux/slab.h>
-
-...
-
-> +static irqreturn_t pci_dev_irq_handler(int irq, void *data)
-> +{
-> +       struct pci_dev_intr_ctrl *intr_ctrl =3D data;
-> +       int ret;
-> +
-> +       ret =3D generic_handle_domain_irq(intr_ctrl->irq_domain, 0);
-> +       return IRQ_RETVAL(!ret);
-
-Hmm... I dunno if it was me who suggested IRQ_RETVAL() here, but it
-usually makes sense for the cases where ret is not inverted.
-
-Perhaps
-
-  if (ret)
-    return NONE;
-  return HANDLED;
-
-is slightly better in this case?
-
-> +}
-
-...
-
-> +static struct pci_dev_intr_ctrl *pci_dev_create_intr_ctrl(struct pci_dev=
- *pdev)
-> +{
-> +       struct pci_dev_intr_ctrl *intr_ctrl;
-> +       struct fwnode_handle *fwnode;
-> +       int ret;
-
-> +       if (!pdev->irq)
-> +               return ERR_PTR(-EOPNOTSUPP);
-
-Before even trying to get it via APIs? (see below as well)
-Also, when is it possible to have 0 here?
-
-> +       fwnode =3D dev_fwnode(&pdev->dev);
-> +       if (!fwnode)
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       intr_ctrl =3D kmalloc(sizeof(*intr_ctrl), GFP_KERNEL);
-
-Hmm... Why not use __free()?
-
-> +       if (!intr_ctrl)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       intr_ctrl->pci_dev =3D pdev;
-> +
-> +       intr_ctrl->irq_domain =3D irq_domain_create_linear(fwnode, 1, &pc=
-i_dev_irq_domain_ops,
-> +                                                        intr_ctrl);
-> +       if (!intr_ctrl->irq_domain) {
-> +               pci_err(pdev, "Failed to create irqdomain\n");
-> +               ret =3D -ENOMEM;
-> +               goto err_free_intr_ctrl;
-> +       }
-
-> +       ret =3D pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_INTX);
-> +       if (ret < 0) {
-> +               pci_err(pdev, "Unable alloc irq vector (%d)\n", ret);
-> +               goto err_remove_domain;
-> +       }
-
-I am wondering if you even need this in case you want solely INTx.
-
-> +       intr_ctrl->irq =3D pci_irq_vector(pdev, 0);
-
-Don't remember documentation by heart for this, but the implementation
-suggests that it can be called without the above for retrieving INTx.
-
-> +       ret =3D request_irq(intr_ctrl->irq, pci_dev_irq_handler, IRQF_SHA=
-RED,
-> +                         dev_name(&pdev->dev), intr_ctrl);
-
-pci_name() ? (IIRC the macro name)
-
-> +       if (ret) {
-> +               pci_err(pdev, "Unable to request irq %d (%d)\n", intr_ctr=
-l->irq, ret);
-> +               goto err_free_irq_vector;
-> +       }
-> +
-> +       return intr_ctrl;
-> +
-> +err_free_irq_vector:
-> +       pci_free_irq_vectors(pdev);
-> +err_remove_domain:
-> +       irq_domain_remove(intr_ctrl->irq_domain);
-> +err_free_intr_ctrl:
-> +       kfree(intr_ctrl);
-> +       return ERR_PTR(ret);
-> +}
-
-...
-
-> +static void devm_pci_dev_remove_intr_ctrl(void *data)
-> +{
-
-> +       struct pci_dev_intr_ctrl *intr_ctrl =3D data;
-
-It can be eliminated
-
-static void devm_pci_...(void *intr_ctrl)
-
-> +       pci_dev_remove_intr_ctrl(intr_ctrl);
-> +}
-
-...
-
-> +static int lan966x_pci_load_overlay(struct lan966x_pci *data)
-> +{
-> +       u32 dtbo_size =3D __dtbo_lan966x_pci_end - __dtbo_lan966x_pci_beg=
-in;
-> +       void *dtbo_start =3D __dtbo_lan966x_pci_begin;
-> +       int ret;
-> +
-> +       ret =3D of_overlay_fdt_apply(dtbo_start, dtbo_size, &data->ovcs_i=
-d, dev_of_node(data->dev));
-> +       if (ret)
-> +               return ret;
-> +
-> +       return 0;
-
-return of_overlay_fdt_apply() ?
-
-> +}
-
-...
-
-> +static int lan966x_pci_probe(struct pci_dev *pdev, const struct pci_devi=
-ce_id *id)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct lan966x_pci *data;
-> +       int ret;
-> +
-> +       /*
-> +        * On ACPI system, fwnode can point to the ACPI node.
-> +        * This driver needs an of_node to be used as the device-tree ove=
-rlay
-> +        * target. This of_node should be set by the PCI core if it succe=
-eds in
-> +        * creating it (CONFIG_PCI_DYNAMIC_OF_NODES feature).
-> +        * Check here for the validity of this of_node.
-> +        */
-> +       if (!dev_of_node(dev)) {
-
-> +               dev_err(dev, "Missing of_node for device\n");
-> +               return -EINVAL;
-
-return dev_err_probe() ?
-
-> +       }
-> +
-> +       /* Need to be done before devm_pci_dev_create_intr_ctrl.
-> +        * It allocates an IRQ and so pdev->irq is updated.
-> +        */
-> +       ret =3D pcim_enable_device(pdev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D devm_pci_dev_create_intr_ctrl(pdev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +       if (!data)
-> +               return -ENOMEM;
-> +
-> +       pci_set_drvdata(pdev, data);
-> +       data->dev =3D dev;
-> +
-> +       ret =3D lan966x_pci_load_overlay(data);
-> +       if (ret)
-> +               return ret;
-> +
-> +       pci_set_master(pdev);
-> +
-> +       ret =3D of_platform_default_populate(dev_of_node(dev), NULL, dev)=
-;
-> +       if (ret)
-> +               goto err_unload_overlay;
-> +
-> +       return 0;
-> +
-> +err_unload_overlay:
-> +       lan966x_pci_unload_overlay(data);
-> +       return ret;
-> +}
-
-...
-
-> +#include <dt-bindings/clock/microchip,lan966x.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/mfd/atmel-flexcom.h>
-> +#include <dt-bindings/phy/phy-lan966x-serdes.h>
-
-> +#include <dt-bindings/gpio/gpio.h>
-
-Alphabetical order?
+Adrian
 
 --=20
-With Best Regards,
-Andy Shevchenko
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
