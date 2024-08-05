@@ -1,198 +1,133 @@
-Return-Path: <linux-kernel+bounces-274225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE24F94755D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:39:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B45947572
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E72471C20D8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:39:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57CB7B21497
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD226144D15;
-	Mon,  5 Aug 2024 06:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8CC1494D6;
+	Mon,  5 Aug 2024 06:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TS8qDyov"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QIeuNY1c"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8501E4B2;
-	Mon,  5 Aug 2024 06:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444C31422D8;
+	Mon,  5 Aug 2024 06:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722839967; cv=none; b=cMYNz+wOrfxEOi6GvPdkLIaG2XyVXkTHlokIT4NXkDDfOIlsq2pb5ljBc7BNE6wWNfka5oQ+xjdzbGQGQ8ipoH68AE9ourM8JEBS8FoNXvfXQvWdAW2s78YfemeeMu/oO5WTpImOpNMpwdiO90KaY8e6Pfy0UixsTCoX8Xmy+a0=
+	t=1722840038; cv=none; b=mFW6Usd2fMr1SBFZbQodeWnXdI3JQ2U8DJu/pUi6zSBSoH7oCpCkN6Weg92zWutStNiAz6l/C6dalI1+S4Dbzt45xb74jCCbEASvzRvQP4kwyZ6bGTxjKLrgwLyFF+8XCj4slxXpjB67tNtUaawGrbxpWD0wItNAEbIUQNQh/Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722839967; c=relaxed/simple;
-	bh=bn0AatgpkDgkHcuUtx+tw+p/9a2qNxd7D4R5b72zfzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QEA+VoDi1s8vsN5tVWvuL7eGqbGrzPtlOZqpW+dEL7yGhDUiBkpGGn6xf8zkydo/h9NdLsI/+78LWVHan6lLlHPDRu18O7P4o9xVJIPCs3ZnOafFSk5qkM/ZMtrw+jPbBz2UrVkRAmaEH7tvE5yZRZdhCuk9ytM+i9640EJr9C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TS8qDyov; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42816ca782dso68249145e9.2;
-        Sun, 04 Aug 2024 23:39:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722839964; x=1723444764; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4z+UOba0eJ/ZXfIeErXsQjYD7+Z5Me9jIMp/Hk00nSM=;
-        b=TS8qDyov+jhT8TnrHt0VH9wAUrDejwY2JRuDNFBA4oB7J7phbERta3oNGB+zzZKoK0
-         mjBgQmigdlltAtMkfIGOMgBzK283l9vn3StUQYMm//eOArP3R1JsrYtvyH/orBh1uK6c
-         2i5kyri9DlyJ1BMVHEOZFmy/zXB896psFrODAwXVqNQc6pr5xL+ZCs+2iCxvF0JcAl47
-         7bHFR3PMz7F0iYoNeci3lzi0D+gHG+iBxYrYNc/BcZlZR5ujN7BqAk2H78i1YjJ7zZkN
-         JZ/ehT1WMWZvbmwTyeVgzbKs4/qWya95DbT69G0E6brYkkkhuKfRrENkWZaR3kH9mm3G
-         uLpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722839964; x=1723444764;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4z+UOba0eJ/ZXfIeErXsQjYD7+Z5Me9jIMp/Hk00nSM=;
-        b=IleVAWK7kusFVK3PVh27wXnq14QAE11/e0ztdwjQjbCyZN+EqSPoumlUTJpJ4/vs6F
-         r1u+FIZEEQ+pPtG67Rn1tWyhF9pEsHVJ6ThORfq3Ja0c3SLmOe3qR94nbBv6BkDwFiKT
-         7QtXNtJPPw+7Xo2MVGWI0afzNbIk/yN/93fmtuBjROdHrMl69DQjYF/dMc+wtyK5rSOu
-         8K1mTonxOSBaZkh2qGg0RGPSb8lvAf30r7T8jLmd/34Rql51x2ozJUCc3bDBUpdW8Dgr
-         weZIuM6uFB2RUn0SwNEJJ4TyquU9LOYzs2N5vE6wi3cBvGxGocH5LAqnK4j5NF46dSAw
-         Cx0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnKaZ28THKH3nThXv2v0tAJ8rDHwvdyfmsFhjN3fxTS2PftSOVhxqNnDFoA/sQxBKusiEK6xYxIKGx5l+R0++6xXkG6+XfhKml2uu9FaJGzX8VrLgaz976PlycoBz26MAHkXueb1nozg==
-X-Gm-Message-State: AOJu0YwLHbk9F3/Ffdlf6tN+sxJt1XfBUt3VtOqdWX3QptpyQKsXxXid
-	x3GEtBrBJK1j43BbVJzPvMvA3VAHsbUgM1DEvXi9S8mILN7PEz3jf8lyfA==
-X-Google-Smtp-Source: AGHT+IG/ZujxIH2LNQw66CFBbrvHSl0lK/dRB9AccVwO9ui5EgFWDEWE1uVDMfINMD02ngQ4M6Lk3A==
-X-Received: by 2002:a05:600c:1c93:b0:426:5216:3247 with SMTP id 5b1f17b1804b1-428e6ae9f05mr71770275e9.6.1722839963358;
-        Sun, 04 Aug 2024 23:39:23 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e9cd4esm122844085e9.44.2024.08.04.23.39.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 23:39:22 -0700 (PDT)
-Date: Mon, 5 Aug 2024 08:39:21 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Baolin Wang <baolin.wang7@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: rtc: sprd,sc2731-rtc: convert to YAML
-Message-ID: <ZrBzmQI0IAL7LI3e@standask-GA-A55M-S2HP>
+	s=arc-20240116; t=1722840038; c=relaxed/simple;
+	bh=aJRfhiIbWQVLXrwG9zNRILhbCXs+DmTaWi88lr6wAaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gNcGCgd0U6P3mGunYVwPkEpU6qhsoIyhWIZb7vABxQ/os+CabIPlc4ixDJrYgO3Y35vTGpcfCtxn6Wu8II1kcDNukkUFa7lHIMNbRohKpVh0qGPG17c5SWcYTjyOPs0f0fegiJx/u3uWERiRNc55PoA3XEZ5ksO8e5z1sILK3lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QIeuNY1c; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4752VZL1011262;
+	Mon, 5 Aug 2024 06:40:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ymwEHek5Tsow+Rz0WJFFuCl9y9sAycjEONo9X1O1m9I=; b=QIeuNY1ccjxEwX0+
+	urHhVy0ZVEE8LC2BMmEqfTlru/ODir5CxUCrlfBUVIU+EZ5Q+zBEEHCldvULrIp+
+	8h3Ox+NVKDtrvy4CrFUeLQWcI2FgV72FS+zESABMS0XXMz0LxlI2pQ+8h7GvLW4z
+	IrP8j+T/7asRhVTeWcEkqIKZG+O+mqkZA/xzdbkUdg0tSbOaohtG9SwRry+KQ6Ip
+	JTdfIfJ+RMokBeP0EWQ5bNrM8tlYY2samGjRUEU4YBMGGn7NRksirI4h+ImCa/AO
+	POX+rFnZTNWo9Sqs08DC5ofAavfGmKfeVygG9hy0hiAAN4jk5UPd/kmc0uPtcdvQ
+	2RLsAA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbj6k4vr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 06:40:29 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4756eR4X024487
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 06:40:27 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 Aug 2024
+ 23:40:25 -0700
+Message-ID: <1d71f3b2-5964-fc31-3ca8-686b37dfc622@quicinc.com>
+Date: Mon, 5 Aug 2024 12:09:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: linux-next: build failure after merge of the qcom tree
+Content-Language: en-US
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andy Gross <agross@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+References: <20240802094820.29059653@canb.auug.org.au>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <20240802094820.29059653@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qR__dKNfst1LkxCZyW4hMxUK4iRNsOBo
+X-Proofpoint-GUID: qR__dKNfst1LkxCZyW4hMxUK4iRNsOBo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=814 clxscore=1011 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408050046
 
-Convert the Spreadtrum SC2731 RTC bindings to DT schema.
-Rename file to match compatible.
+Hi Stephen, Bjorn,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
----
-Changes in V2:
-  - add Krzystof's R-b
-  - rebase on next-20240805
 
-Link to V1: https://lore.kernel.org/lkml/ZolsyEC8eeJWNIb6@standask-GA-A55M-S2HP/
+Apologies for the error, I have posted a patch [1] to fix it.
 
- .../bindings/rtc/sprd,sc2731-rtc.yaml         | 49 +++++++++++++++++++
- .../bindings/rtc/sprd,sc27xx-rtc.txt          | 26 ----------
- 2 files changed, 49 insertions(+), 26 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
- delete mode 100644 Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
+[1] 
+https://lore.kernel.org/linux-arm-msm/20240805063049.446091-1-quic_skakitap@quicinc.com/
 
-diff --git a/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml b/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
-new file mode 100644
-index 000000000000..f3d20e976965
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/sprd,sc2731-rtc.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/rtc/sprd,sc2731-rtc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Spreadtrum SC2731 Real Time Clock
-+
-+maintainers:
-+  - Orson Zhai <orsonzhai@gmail.com>
-+  - Baolin Wang <baolin.wang7@gmail.com>
-+  - Chunyan Zhang <zhang.lyra@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: sprd,sc2731-rtc
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+allOf:
-+  - $ref: rtc.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    pmic {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      rtc@280 {
-+        compatible = "sprd,sc2731-rtc";
-+        reg = <0x280>;
-+        interrupt-parent = <&sc2731_pmic>;
-+        interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-+      };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt b/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
-deleted file mode 100644
-index 1f5754299d31..000000000000
---- a/Documentation/devicetree/bindings/rtc/sprd,sc27xx-rtc.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--Spreadtrum SC27xx Real Time Clock
--
--Required properties:
--- compatible: should be "sprd,sc2731-rtc".
--- reg: address offset of rtc register.
--- interrupts: rtc alarm interrupt.
--
--Example:
--
--	sc2731_pmic: pmic@0 {
--		compatible = "sprd,sc2731";
--		reg = <0>;
--		spi-max-frequency = <26000000>;
--		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		rtc@280 {
--			compatible = "sprd,sc2731-rtc";
--			reg = <0x280>;
--			interrupt-parent = <&sc2731_pmic>;
--			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
--		};
--	};
--- 
-2.34.1
 
+Thanks,
+
+Satya Priya
+
+On 8/2/2024 5:18 AM, Stephen Rothwell wrote:
+> Hi all,
+>
+> After merging the qcom tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/clk/qcom/camcc-sm8150.c: In function 'cam_cc_sm8150_probe':
+> drivers/clk/qcom/camcc-sm8150.c:2141:36: error: passing argument 1 of 'qcom_cc_really_probe' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   2141 |         ret = qcom_cc_really_probe(pdev, &cam_cc_sm8150_desc, regmap);
+>        |                                    ^~~~
+>        |                                    |
+>        |                                    struct platform_device *
+> In file included from drivers/clk/qcom/camcc-sm8150.c:21:
+> drivers/clk/qcom/common.h:72:48: note: expected 'struct device *' but argument is of type 'struct platform_device *'
+>     72 | extern int qcom_cc_really_probe(struct device *dev,
+>        |                                 ~~~~~~~~~~~~~~~^~~
+> cc1: all warnings being treated as errors
+>
+> Caused by commit
+>
+>    ea73b7aceff6 ("clk: qcom: Add camera clock controller driver for SM8150")
+>
+> I have used the qcom tree from next-20240801 for today.
+>
 
