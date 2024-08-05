@@ -1,105 +1,144 @@
-Return-Path: <linux-kernel+bounces-274474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E55A947892
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:40:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D2F9478AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550D31C2031E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB50281994
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FA915383D;
-	Mon,  5 Aug 2024 09:40:23 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D3B1547C0;
+	Mon,  5 Aug 2024 09:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="THZmTc+1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4472914A609;
-	Mon,  5 Aug 2024 09:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4763115746B;
+	Mon,  5 Aug 2024 09:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722850822; cv=none; b=IKwqn+3HjFqMDerVA62FAzstV5QJbY5tLUCqtwfiRjtGn1RFqxUnfcT9X0j4O6HP2iwg7y3qFd4b5II8PXnRr2eBPEodm4w3bumhNtkqBMBeWv5rzTfMA58bnd4LBsYgOryAJkvqRhoWoC+2AoxypRVqH/e3GvDoeOtreCtAklI=
+	t=1722850837; cv=none; b=MQdB8KCTz6nOQmkTZqWAJl9B+W5Xz7xEb3DmZpGpgCTu3MrYayQrthbzO+VSrBxIBY+8OIQ0oFaToEanQcw5uj3lqAPvIn8olZwUyGI5rkDABJ1TLmXpm4eQkzn4AYy2N1PAqGFJKZPRyND4J1sdUmWt0KazDPJ3uOayzCN2a48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722850822; c=relaxed/simple;
-	bh=hzNNHdL3lLQC+abWJW3QcqzEdC+eSQfbpqxItlkHD/Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t5SAreCbvDT4XFmzIOqWB9swgazN2sRQhMePiCvYK19hZVDfShqZivTIoZ/eTNR0sPTWO6m94W/fqzvad1Xig31gQjCKHOk3tiuPH9Qp6GFkeLakaRaelPvKHwaoS0Xg3JbS9L1FDr5TFh5zzUkbRTnDIo6VY0pSNQsrA4tT00k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bb8e62570fso846849a12.1;
-        Mon, 05 Aug 2024 02:40:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722850820; x=1723455620;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0WJ9j3KL2kMnE5EsefcskSGF25QM021WNq1anmIc+og=;
-        b=NuaIUb5Fl+/GmwFwAtAlPWVEV4kOclwtWJBkNa3A0AmHLRAqVk8+97HaSdPzulgH81
-         37S1x1hAmLaQm0qK4z1zhUa6Kbgi3l8HEabaHhUbEjXc+J8QRH/jwWa1VypzIB1b5bKt
-         8mqVibUnDzri5WK+h2QuDGjLy7bJRTDE8/9IwFsZMRfPph+VpRF2ml+lPlNzC//WzX8V
-         NPStvo1/6VcKuC9lprpqFrc7GoGJu4qXJIGXYL+eSedXnu7xuV3eCItN7BpfrsBhQPNA
-         BFSfYB+1I7qOYQziasobxxsedT5NVsIKGLyA5Wz/dahy0ZGDsj04/frMyaM0AT44Y7ac
-         H3+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUsp+YD+2igbeqBFMsAp0esEqFuYgbI78mXqR+TJGIKuY6S3lDMup5n0ouWDqgLwEQSKHcG/25tRn80nR2BvZV4Nsit8AwhnFAOUTT/0DwVNFs4Iz2JWK2d2fRRxeE6t0Frv7as
-X-Gm-Message-State: AOJu0YyXR71FnzaLrkhtC3/hu3WZX5CSbeOgJb22GoVzwIXMeKT4iMIF
-	em8vrAhIr9fL2Q8ISBBaoAF+irBVmeOyCH9U4c45lBiRZp31wp7O
-X-Google-Smtp-Source: AGHT+IFkCcSbmHH8IpgaG07PvlDbTXYvxEAf2cdUnbSji/iET2HGgRDyxtAFziKZ3T4/jm19KUsACQ==
-X-Received: by 2002:a50:bac6:0:b0:5b9:3846:8bb3 with SMTP id 4fb4d7f45d1cf-5b93846940emr5179356a12.12.1722850819256;
-        Mon, 05 Aug 2024 02:40:19 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5baff14989fsm2067084a12.55.2024.08.05.02.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 02:40:18 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: leit@meta.com,
-	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: veth: Disable netpoll support
-Date: Mon,  5 Aug 2024 02:40:11 -0700
-Message-ID: <20240805094012.1843247-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722850837; c=relaxed/simple;
+	bh=SfG+bs3jPLqxWBAd+Jhpti3avHcQZ0RNdFgOa5GJiV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TF5I8P2djImnZAFaUB7aS1Iq/ode9ZrpYH4QN3+pzosbcNCIM+HUbEqYI9Hp74OYPd4IVjQEM96478rkhSpBqYZ3lWErqqfUfCMfKdJ9NxXLv4RSwuqf2BpmYkpEMPMvuCkIAKG33eWgSajlZMpI2Ki6tzLOEhLUIu3N+SNa+Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=THZmTc+1; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722850835; x=1754386835;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=SfG+bs3jPLqxWBAd+Jhpti3avHcQZ0RNdFgOa5GJiV4=;
+  b=THZmTc+1LPapDBiUNb0v0vIXSbzIKskLTyANc6oFyK4sXAjr3xPx6rPF
+   DgpcviFBAWVdgqDA7XvnsGPRz314o7Rx4UK0na0Oiir3QTD+rM6nS2E7P
+   x6MMzHmTMCrRAuRvPTJjzhNe6519DNjWNZgm08O15MS0m5KNFRGpXqWRP
+   OAnTO0Ppr3E8IPToQ3z35bpue6rl5Q7seKUs7b3uHR0BUbDXeHFBaNCdM
+   VggKo0w/gM+fSDaMZ99H8d1G3Xevm6p01qsJOeL3dFHg+QVi5LwwUFItH
+   WYhLytCS6EWFYGRWq3EHXfzpfjMbjdcwM8+URHBXLskh/eb137UGVub/G
+   w==;
+X-CSE-ConnectionGUID: fwdZ5H2cRPm+FDTW6f4ilg==
+X-CSE-MsgGUID: zyGjfuH4Sd6fAABaywFo0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="20648323"
+X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
+   d="scan'208";a="20648323"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 02:40:32 -0700
+X-CSE-ConnectionGUID: 6xckBkAuS6GlS5cQzUIvyg==
+X-CSE-MsgGUID: uIAuXj0PRMi6P01ESDjRDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
+   d="scan'208";a="56667497"
+Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.245.98.108])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 02:40:29 -0700
+Date: Mon, 5 Aug 2024 11:40:24 +0200
+From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com
+Subject: Re: [PATCH -next] md: wake up mdmon after setting badblocks
+Message-ID: <20240805114024.00007877@linux.intel.com>
+In-Reply-To: <20240801125148.251986-1-yukuai1@huaweicloud.com>
+References: <20240801125148.251986-1-yukuai1@huaweicloud.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The current implementation of netpoll in veth devices leads to
-suboptimal behavior, as it triggers warnings due to the invocation of
-__netif_rx() within a softirq context. This is not compliant with
-expected practices, as __netif_rx() has the following statement:
+On Thu,  1 Aug 2024 20:51:48 +0800
+Yu Kuai <yukuai1@huaweicloud.com> wrote:
 
-	lockdep_assert_once(hardirq_count() | softirq_count());
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> For external super_block, mdmon rely on "mddev->sysfs_state" to update
+> super_block. However, rdev_set_badblocks() will set sb_flags without
+> waking up mdmon, which might cauing IO hang due to suepr_block can't be
+> updated.
+> 
+> This problem is found by code review.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/md.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 23cc77d51676..06d6ee8cd543 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -9831,10 +9831,12 @@ int rdev_set_badblocks(struct md_rdev *rdev, sector_t
+> s, int sectors, /* Make sure they get written out promptly */
+>  		if (test_bit(ExternalBbl, &rdev->flags))
+>  			sysfs_notify_dirent_safe(rdev->sysfs_unack_badblocks);
+> -		sysfs_notify_dirent_safe(rdev->sysfs_state);
+>  		set_mask_bits(&mddev->sb_flags, 0,
+>  			      BIT(MD_SB_CHANGE_CLEAN) |
+> BIT(MD_SB_CHANGE_PENDING)); md_wakeup_thread(rdev->mddev->thread);
+> +
+> +		sysfs_notify_dirent_safe(rdev->sysfs_state);
+> +		sysfs_notify_dirent_safe(mddev->sysfs_state);
+>  		return 1;
+>  	} else
+>  		return 0;
 
-Given that veth devices typically do not benefit from the
-functionalities provided by netpoll, Disable netpoll for veth
-interfaces.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/veth.c | 1 +
- 1 file changed, 1 insertion(+)
+Hey Kuai,
+Later, I realized that mdmon is attached to various fds:
 
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index 426e68a95067..34499b91a8bd 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -1696,6 +1696,7 @@ static void veth_setup(struct net_device *dev)
- 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
- 	dev->priv_flags |= IFF_NO_QUEUE;
- 	dev->priv_flags |= IFF_PHONY_HEADROOM;
-+	dev->priv_flags |= IFF_DISABLE_NETPOLL;
- 
- 	dev->netdev_ops = &veth_netdev_ops;
- 	dev->xdp_metadata_ops = &veth_xdp_metadata_ops;
--- 
-2.43.0
+Here a mdmon code:
 
+add_fd(&rfds, &maxfd, a->info.state_fd);	#mddev->sysfs_state
+add_fd(&rfds, &maxfd, a->action_fd);		#mddev->sysfs_action
+add_fd(&rfds, &maxfd, a->sync_completed_fd);	#mddev->resync_position
+
+
+for (mdi = a->info.devs ; mdi ; mdi = mdi->next) { #for each rdev
+	add_fd(&rfds, &maxfd, mdi->state_fd);		#rdev->sysfs_state
+	add_fd(&rfds, &maxfd, mdi->bb_fd);		#rdev->sysfs_badblocks
+	add_fd(&rfds, &maxfd, mdi->ubb_fd);
+#rdev->sysfs_unack_badblocks }
+
+Notification in rdev->sysfs_state is fine. The problem was somewhere else
+(mdmon blocked on "rdev remove"). And It will be fixed by moving rdev remove to
+managemon because it is blocking action now.
+
+https://github.com/md-raid-utilities/mdadm/pull/66
+
+I think it is fine to move this down after set_mask_bits, but we don't
+have to repeat notification to mddev->state.
+
+Thanks,
+Mariusz
 
