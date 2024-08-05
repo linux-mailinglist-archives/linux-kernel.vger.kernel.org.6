@@ -1,269 +1,137 @@
-Return-Path: <linux-kernel+bounces-275004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A306947F66
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:33:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9090947F70
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAD2FB20EB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EFA81F21E6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2D15C14B;
-	Mon,  5 Aug 2024 16:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B8415DBD5;
+	Mon,  5 Aug 2024 16:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CSPxNJac";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fDNWVS+H";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uU4sBfOn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7v/ihztv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ooMfse3W"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5EC131BDF;
-	Mon,  5 Aug 2024 16:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C915156F41
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722875607; cv=none; b=aQIqrqOkQgHRkQhEVM6oEZoIa/3mV45qUeX4sgR5L360oLArmV/EFUVFiEkO8fGqBohkq6ZsfWCP/Xe1f3tNGPdmRcyN7jybkzJ52rCiuXlst44nEcelaiU2tdMge25M81zl4/38vrIcCkhQqzx+qSlygI/zKVnx5RAvj4j3pE0=
+	t=1722875651; cv=none; b=BZx561Swsb5mH5sFtSViRjU1kbIxiemxhA+WwEv4kGyp8hhpVzDYwPMvSAvTIX3xKbq0szmB+C++TYuWD/kuwfh7ZZYqWow8Wp4AXJcPmjdlCA69XFR0vEnuV476PQwnqa7kLr7VrH06NNxjkN1Y3xOTKA7ApOfrLVDTuE/2QuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722875607; c=relaxed/simple;
-	bh=gSpxq6DZdkv/Kj+dslXwNSPNJhfrLEiCFzphSaO5oiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJNVtI7LQvinNk/TuEQi0DYa7MV/4DFIPpiPmHuiGv7tW3BcKM9t2K51YtkHeMwtLBPHG95XXkyF1viqgt97Dh8L+ZN3yq3AS2jqIIkxr7IztI77py+jrU8OsP2GFwmHZz6yPNMfDlblLbHsPhA+SEzGCgTLul+1YuYwPVkXN84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CSPxNJac; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fDNWVS+H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uU4sBfOn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7v/ihztv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EA6071F833;
-	Mon,  5 Aug 2024 16:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722875604;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Zl1NTrmpMIFxwdedcfxHAIG5hASLNsTtJcHwzhKIdY=;
-	b=CSPxNJacPdgRNLjqK21xFs088K5aQ8Tu/SXbUCUD1lLRncq6SAXlwT40NFnSPQ6LdtYrnI
-	AXz8KFFTR+EfGGr5Za9qSp6Sn+3uGd2lNwXc74f2ClZbqxqF4eFO8OoUcaqgbL1VwmkSca
-	4HF4IGyuHMEfHl6yyqEDn86sXpG2tys=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722875604;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Zl1NTrmpMIFxwdedcfxHAIG5hASLNsTtJcHwzhKIdY=;
-	b=fDNWVS+HzOp9iNmwgHyOzamYRpfUdfk0vUHPiTQ9DkYOeRM17CWFJpbP0mXSiWk2znmfnG
-	eD4/o/YIV32wM1CA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722875603;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Zl1NTrmpMIFxwdedcfxHAIG5hASLNsTtJcHwzhKIdY=;
-	b=uU4sBfOntghZ+vETm67M0hnmFRFHTjEbRFjILTgdHsBGVHx+JOMH8qzdqvg5FVOt8CRwJM
-	JZp/7EhXs4S2Ac2AA/KDiULmaB+gN/cOqDfyrE6avDB5jB1Zek1/pZPGdhCJqBjP2Hv7ia
-	cefROJU5tqSV84v9oSORTH9lZWz/Tz4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722875603;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1Zl1NTrmpMIFxwdedcfxHAIG5hASLNsTtJcHwzhKIdY=;
-	b=7v/ihztvpOfqrgZ7sqNR0uTi0LnOfBaQjSihvt0O/qUsvuX1+uUKxEoc3KFdrLL7c/cpoJ
-	4+t56HYc52DoKuAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B21D013254;
-	Mon,  5 Aug 2024 16:33:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IC7tKtP+sGblcgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 05 Aug 2024 16:33:23 +0000
-Date: Mon, 5 Aug 2024 18:33:22 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johannes Thumshirn <jthumshirn@wdc.com>,
-	Filipe Manana <fdmanana@suse.com>, Qu Wenruo <wqu@suse.com>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v3 4/5] btrfs: don't readahead the relocation inode on RST
-Message-ID: <20240805163322.GA17473@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240731-debug-v3-0-f9b7ed479b10@kernel.org>
- <20240731-debug-v3-4-f9b7ed479b10@kernel.org>
+	s=arc-20240116; t=1722875651; c=relaxed/simple;
+	bh=WShIfcyB1WIBp1LMFRNAOGPYq4so52JcsO4pudunr3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KiBLZz3edfXfrV1B9Wt12daM8g+IyuaGFDZ2joGTCbwSGp5UNBSnlhfeKkwWxiX3FUJ1WWIK28KDNCzW2x8a4QvvyYMQdXTyd4DplNISXWZZvIla/y/PKbIy3rLdoxbgs3HMXuMJf/i2HNRQr+J4FTy/Ifnm3MsMXiKnlA3COBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ooMfse3W; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6b7a4668f1fso65310846d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 09:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722875649; x=1723480449; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WShIfcyB1WIBp1LMFRNAOGPYq4so52JcsO4pudunr3k=;
+        b=ooMfse3WVKfuxOLSSKdlcT9aqFqVw/RtyRXpOBsgOCTn9wKceQcM71mSUyFUCGbjdh
+         26+ROdikowegVtjSUS4uWVUhtc95hLL23dlnWFj8cp65MVc4drKNIX9u43DWF2Bats8h
+         t0heAI4eFDoxqmiGWoYtMgQD56gP+7qgIFOqzvLbDpke6iJR6YapJ+kA8HjUL+DyHiKy
+         +7NkKP96kiTMdLcfY8EpRMfItKrh6siytmWkC/b0tGgiJkDeyeXjOqlFRgZJ9luyNyNG
+         6FpewpnZhlzpQ9biBgMEY7x44yXFsfP3XIyl2lb1fAFA0jwMYwVdtCGFuyqF5RwPlBAL
+         hg0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722875649; x=1723480449;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WShIfcyB1WIBp1LMFRNAOGPYq4so52JcsO4pudunr3k=;
+        b=lSKC3suYa0WVS9GC0yek+mSVd1lJUaqRsWHLY82KsurGP/yRbx6HXchIKRVIfZt2BI
+         K/1JZ3mOlegJRqb6koOYPMYVhWCZygjTNf0wi1COP5jBfWtvw2AlB7eeUi2601oQApWp
+         ml98uJn8IjSd2CaAgsEj6PElUMLXUpKYQ58zd/Byj7sdZ/LLxqPuZWsdMyolbXeErFWm
+         +UZf4xTfpxm1nzzMo2CexOOogAXTGS1r5ZyuZzmRkHpUwFGzJoWWL+qfRK86lzYzqQ/O
+         wROKfUOj7WgZLaLCYk4Sv/LHeEILqoMgJK3vhUH/YpHfQfOR50S/k69+sB/0U5kZqVZk
+         Gjvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzFfHLzlGAllN7jSlXmqJPj6w1uH09Pn+XslOGBKQZ3vnkD1x1Gd8NpgE0NS0VnZjjNkH/rPVT9KmSRtWHXIetJFwRWiOdSDbMs7Br
+X-Gm-Message-State: AOJu0Yzo155xxXKl3KtNHb3UTJ+H4qrJ19qrblk0YrVAo+U2hVCvJ+De
+	lsPCqIwWw5Qm4ScLI0Q/cj0jSOzBa669ZxrhU37giVb5NAv0aPZSMglPG7GQkHzt71076CsSZQk
+	nKIJoyc/zNWnbRe3DS97819pSCeIWrecZrvhe
+X-Google-Smtp-Source: AGHT+IE3X2dzKDTfvW579W1ONWZvzHmSuPdaFYmL6fjjzD5I45yXHVQPoF1XfHnvXWK/VzgEqMK+gXEJqks0i1Xyhdk=
+X-Received: by 2002:a05:6214:4412:b0:6b5:7e97:7151 with SMTP id
+ 6a1803df08f44-6bb98345fa9mr131458736d6.17.1722875648824; Mon, 05 Aug 2024
+ 09:34:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731-debug-v3-4-f9b7ed479b10@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[toxicpanda.com:email,suse.com:email,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,wdc.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
+References: <20240730022623.98909-4-almasrymina@google.com> <5d3c74da-7d44-4b88-8961-60f21f84f0ac@web.de>
+In-Reply-To: <5d3c74da-7d44-4b88-8961-60f21f84f0ac@web.de>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 5 Aug 2024 12:33:55 -0400
+Message-ID: <CAHS8izPxfCv1VMFBK1FahGTjVmUSSfrabgY5y6V+XtaszoHQ4w@mail.gmail.com>
+Subject: Re: [PATCH net-next v17 03/14] netdev: support binding dma-buf to netdevice
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Kaiyuan Zhang <kaiyuanz@google.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, 
+	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Christoph Hellwig <hch@infradead.org>, David Ahern <dsahern@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, David Wei <dw@davidwei.uk>, 
+	Donald Hunter <donald.hunter@gmail.com>, Eric Dumazet <edumazet@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Helge Deller <deller@gmx.de>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Jakub Kicinski <kuba@kernel.org>, 
+	"James E. J. Bottomley" <James.Bottomley@hansenpartnership.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Jeroen de Borst <jeroendb@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Matt Turner <mattst88@gmail.com>, Nikolay Aleksandrov <razor@blackwall.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Richard Henderson <richard.henderson@linaro.org>, Shailend Chand <shailend@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Shuah Khan <shuah@kernel.org>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Taehee Yoo <ap420073@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Yunsheng Lin <linyunsheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 10:43:06PM +0200, Johannes Thumshirn wrote:
-> From: Johannes Thumshirn <jthumshirn@wdc.com>
-> 
-> On relocation we're doing readahead on the relocation inode, but if the
-> filesystem is backed by a RAID stripe tree we can get ENOENT (e.g. due to
-> preallocated extents not being mapped in the RST) from the lookup.
-> 
-> But readahead doesn't handle the error and submits invalid reads to the
-> device, causing an assertion in the scatter-gather list code:
-> 
->   BTRFS info (device nvme1n1): balance: start -d -m -s
->   BTRFS info (device nvme1n1): relocating block group 6480920576 flags data|raid0
->   BTRFS error (device nvme1n1): cannot find raid-stripe for logical [6481928192, 6481969152] devid 2, profile raid0
->   ------------[ cut here ]------------
->   kernel BUG at include/linux/scatterlist.h:115!
->   Oops: invalid opcode: 0000 [#1] PREEMPT SMP PTI
->   CPU: 0 PID: 1012 Comm: btrfs Not tainted 6.10.0-rc7+ #567
->   RIP: 0010:__blk_rq_map_sg+0x339/0x4a0
->   RSP: 0018:ffffc90001a43820 EFLAGS: 00010202
->   RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffea00045d4802
->   RDX: 0000000117520000 RSI: 0000000000000000 RDI: ffff8881027d1000
->   RBP: 0000000000003000 R08: ffffea00045d4902 R09: 0000000000000000
->   R10: 0000000000000000 R11: 0000000000001000 R12: ffff8881003d10b8
->   R13: ffffc90001a438f0 R14: 0000000000000000 R15: 0000000000003000
->   FS:  00007fcc048a6900(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 000000002cd11000 CR3: 00000001109ea001 CR4: 0000000000370eb0
->   Call Trace:
->    <TASK>
->    ? __die_body.cold+0x14/0x25
->    ? die+0x2e/0x50
->    ? do_trap+0xca/0x110
->    ? do_error_trap+0x65/0x80
->    ? __blk_rq_map_sg+0x339/0x4a0
->    ? exc_invalid_op+0x50/0x70
->    ? __blk_rq_map_sg+0x339/0x4a0
->    ? asm_exc_invalid_op+0x1a/0x20
->    ? __blk_rq_map_sg+0x339/0x4a0
->    nvme_prep_rq.part.0+0x9d/0x770
->    nvme_queue_rq+0x7d/0x1e0
->    __blk_mq_issue_directly+0x2a/0x90
->    ? blk_mq_get_budget_and_tag+0x61/0x90
->    blk_mq_try_issue_list_directly+0x56/0xf0
->    blk_mq_flush_plug_list.part.0+0x52b/0x5d0
->    __blk_flush_plug+0xc6/0x110
->    blk_finish_plug+0x28/0x40
->    read_pages+0x160/0x1c0
->    page_cache_ra_unbounded+0x109/0x180
->    relocate_file_extent_cluster+0x611/0x6a0
->    ? btrfs_search_slot+0xba4/0xd20
->    ? balance_dirty_pages_ratelimited_flags+0x26/0xb00
->    relocate_data_extent.constprop.0+0x134/0x160
->    relocate_block_group+0x3f2/0x500
->    btrfs_relocate_block_group+0x250/0x430
->    btrfs_relocate_chunk+0x3f/0x130
->    btrfs_balance+0x71b/0xef0
->    ? kmalloc_trace_noprof+0x13b/0x280
->    btrfs_ioctl+0x2c2e/0x3030
->    ? kvfree_call_rcu+0x1e6/0x340
->    ? list_lru_add_obj+0x66/0x80
->    ? mntput_no_expire+0x3a/0x220
->    __x64_sys_ioctl+0x96/0xc0
->    do_syscall_64+0x54/0x110
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->   RIP: 0033:0x7fcc04514f9b
->   Code: Unable to access opcode bytes at 0x7fcc04514f71.
->   RSP: 002b:00007ffeba923370 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->   RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fcc04514f9b
->   RDX: 00007ffeba923460 RSI: 00000000c4009420 RDI: 0000000000000003
->   RBP: 0000000000000000 R08: 0000000000000013 R09: 0000000000000001
->   R10: 00007fcc043fbba8 R11: 0000000000000246 R12: 00007ffeba924fc5
->   R13: 00007ffeba923460 R14: 0000000000000002 R15: 00000000004d4bb0
->    </TASK>
->   Modules linked in:
->   ---[ end trace 0000000000000000 ]---
->   RIP: 0010:__blk_rq_map_sg+0x339/0x4a0
->   RSP: 0018:ffffc90001a43820 EFLAGS: 00010202
->   RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffea00045d4802
->   RDX: 0000000117520000 RSI: 0000000000000000 RDI: ffff8881027d1000
->   RBP: 0000000000003000 R08: ffffea00045d4902 R09: 0000000000000000
->   R10: 0000000000000000 R11: 0000000000001000 R12: ffff8881003d10b8
->   R13: ffffc90001a438f0 R14: 0000000000000000 R15: 0000000000003000
->   FS:  00007fcc048a6900(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 00007fcc04514f71 CR3: 00000001109ea001 CR4: 0000000000370eb0
->   Kernel panic - not syncing: Fatal exception
->   Kernel Offset: disabled
->   ---[ end Kernel panic - not syncing: Fatal exception ]---
-> 
-> So in case of a relocation on a RAID stripe-tree based file system, skip
-> the readahead.
-> 
-> Cc: Josef Bacik <josef@toxicpanda.com>
-> Cc: Filipe Manana <fdmanana@suse.com>
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> Reviewed-by: Qu Wenruo <wqu@suse.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/btrfs/relocation.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-> index 0533d0f82dc9..72fb43b4d27c 100644
-> --- a/fs/btrfs/relocation.c
-> +++ b/fs/btrfs/relocation.c
-> @@ -36,6 +36,7 @@
->  #include "relocation.h"
->  #include "super.h"
->  #include "tree-checker.h"
-> +#include "raid-stripe-tree.h"
->  
->  /*
->   * Relocation overview
-> @@ -2965,21 +2966,26 @@ static int relocate_one_folio(struct reloc_control *rc,
->  	u64 folio_end;
->  	u64 cur;
->  	int ret;
-> +	bool use_rst =
+On Tue, Jul 30, 2024 at 4:38=E2=80=AFAM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> =E2=80=A6
+> > +++ b/include/net/devmem.h
+> > @@ -0,0 +1,115 @@
+> =E2=80=A6
+> > +#ifndef _NET_DEVMEM_H
+> > +#define _NET_DEVMEM_H
+> =E2=80=A6
+>
+> I suggest to omit leading underscores from such identifiers.
+> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+=
+define+a+reserved+identifier
+>
 
-	const bool
+I was gonna apply this change, but I ack'd existing files and I find
+that all of them include leading underscores, including some very
+recently added files like net/core/page_pool_priv.h.
 
-> +		btrfs_need_stripe_tree_update(fs_info, rc->block_group->flags);
->  
->  	ASSERT(index <= last_index);
->  	folio = filemap_lock_folio(inode->i_mapping, index);
->  	if (IS_ERR(folio)) {
-> -		page_cache_sync_readahead(inode->i_mapping, ra, NULL,
-> -					  index, last_index + 1 - index);
-> +		if (!use_rst)
-> +			page_cache_sync_readahead(inode->i_mapping, ra, NULL,
+I would prefer to stick to existing conventions if that's OK, unless
+there is widespread agreement to the contrary.
 
-Please add a comment why readahead is skipped for RST (along the lines
-in the changelog).
+--=20
+Thanks,
+Mina
 
