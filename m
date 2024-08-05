@@ -1,183 +1,154 @@
-Return-Path: <linux-kernel+bounces-274320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1DC947684
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:02:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C909476FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AD971C20B66
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92164B22CCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7537214A639;
-	Mon,  5 Aug 2024 08:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="13uQIKv7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mvv4jGto";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="13uQIKv7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Mvv4jGto"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1505E14C5AF;
+	Mon,  5 Aug 2024 08:13:31 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4E25FBBA;
-	Mon,  5 Aug 2024 08:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A195A145FE2
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722844914; cv=none; b=iy/htWHSHP0k3SxJB5lGOi4iq10Osnj1apdqEWL5VLhudkssDN5+YwLCJwXIy4oE9h4G/YW3BU6Do/10e1OkuRk9nNt7CyFK9ZQucvq3rdiUFJjRJc/80f6LdbstcHxdeF7mYfOfz41VpaSMvUDNa+5GP9vf/lhLHB7YOLaz410=
+	t=1722845610; cv=none; b=GWYcBo3OVaX4+e5EbG+o534oyF4az7QyxIXTIUGS3xqCXmxqBTEZ2xxtyn8qFPFCooelWzn+LP/22X0ezRF55AVfLtQo/2neuDKulk1HbDIihjW97wpOkS3ZB0MPIjl1M8xm0Q+25AMaGWR0fZ6cLUxiELgsjDue77xe4In5nfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722844914; c=relaxed/simple;
-	bh=Pg+7SCzJv6OtadhTgZlGWpeTcW5bKG3kPl2otJbqWTE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BEzGj+iiYyrTQTl+tDFrCRwiaRXbpDVQh1aZtu2VskucmGKv8jXQf1c4jH0tpm/w/LUeFCV6h6RthSTQ4lLEIN8fAwu3+m9V8C/g38bmUi1CN2TsITqNtDuYYOSQFmtmZq4Z/IHAGyda978sZZylnNxeY8FvVViiObqOEIX0eMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=13uQIKv7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mvv4jGto; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=13uQIKv7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Mvv4jGto; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2820921B7A;
-	Mon,  5 Aug 2024 08:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722844911; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQBFVLgbh9yJT96vQAG+eO99zw3cCJbZ3algJD+xE/o=;
-	b=13uQIKv7d1dNkvZCmT5gr8jAnXEuMvmdAcaUIIpX/+awQCbkCdV6gMFEXkmMAcA5i3FKcj
-	4+8wyaVyNq5xPVcjfSc2XOH8I8bKha6+bvZq2bqh2yOvnvMan2A8T4si3ka25DRsAC6og4
-	gQiWtachLx88Hrb3IiaFE57qoUU2Txk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722844911;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQBFVLgbh9yJT96vQAG+eO99zw3cCJbZ3algJD+xE/o=;
-	b=Mvv4jGtoW+6+fZIl8xR45GIUtSZN01lix1fCLNr+IhWLBItdZFRDF6AkVTqxb9WfmVZvUv
-	rb6MENY80v0uChDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=13uQIKv7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Mvv4jGto
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722844911; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQBFVLgbh9yJT96vQAG+eO99zw3cCJbZ3algJD+xE/o=;
-	b=13uQIKv7d1dNkvZCmT5gr8jAnXEuMvmdAcaUIIpX/+awQCbkCdV6gMFEXkmMAcA5i3FKcj
-	4+8wyaVyNq5xPVcjfSc2XOH8I8bKha6+bvZq2bqh2yOvnvMan2A8T4si3ka25DRsAC6og4
-	gQiWtachLx88Hrb3IiaFE57qoUU2Txk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722844911;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WQBFVLgbh9yJT96vQAG+eO99zw3cCJbZ3algJD+xE/o=;
-	b=Mvv4jGtoW+6+fZIl8xR45GIUtSZN01lix1fCLNr+IhWLBItdZFRDF6AkVTqxb9WfmVZvUv
-	rb6MENY80v0uChDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D2D7F13254;
-	Mon,  5 Aug 2024 08:01:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3BVEMu6GsGZiVAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 05 Aug 2024 08:01:50 +0000
-Date: Mon, 05 Aug 2024 10:02:29 +0200
-Message-ID: <8734njl7my.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Mark Brown <broonie@kernel.org>,
-    Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
-    <tiwai@suse.com>,
-	<wsa+renesas@sang-engineering.com>,
-	<mika.westerberg@linux.intel.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-spi@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<patches@opensource.cirrus.com>
-Subject: Re: [PATCH v2 0/3] ALSA: Add support for new HP G12 laptops
-In-Reply-To: <20240802152215.20831-1-rf@opensource.cirrus.com>
-References: <20240802152215.20831-1-rf@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1722845610; c=relaxed/simple;
+	bh=DIqYBZOyLBdbL9WomYgL+UNRyuZtcxfqBW4nRrESqsQ=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XrPgeHRco4zoRzddfh54409+sG9ZjOw9hvxvrhoR193s2VjBn9moeAUQhbn2kor1bigIpyAOMBMGKN5HwE9bNiCu80tTZZj+AeIAnlBkiJBQMY2Xs8NohjGdgLvVg4m0jXiebS5gop58AueiAO4LrPM5BqhglW/XoXy2dI4UHNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:23c7:e51f:c68a:b0e5])
+	by baptiste.telenet-ops.be with bizsmtp
+	id w8DJ2C00E4yPHVg018DJN9; Mon, 05 Aug 2024 10:13:18 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sasqD-00502z-9D
+	for linux-kernel@vger.kernel.org;
+	Mon, 05 Aug 2024 10:13:18 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sasdY-0010I5-SJ
+	for linux-kernel@vger.kernel.org;
+	Mon, 05 Aug 2024 10:00:12 +0200
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-kernel@vger.kernel.org
+Subject: Build regressions/improvements in v6.11-rc2
+Date: Mon,  5 Aug 2024 10:00:12 +0200
+Message-Id: <20240805080012.239408-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAHk-=wh01xPAWUT_=J1TehFOu3SST12UTNuB=QQTeRw+1N4pDQ@mail.gmail.com>
+References: <CAHk-=wh01xPAWUT_=J1TehFOu3SST12UTNuB=QQTeRw+1N4pDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2820921B7A
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[renesas];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 02 Aug 2024 17:22:12 +0200,
-Richard Fitzgerald wrote:
-> 
-> Add support for HP G12 laptops that use CS35L54 or CS35L56 amplifiers
-> with Realtek HDA codecs. Some of these use the same SSID for models with
-> CS35L54 and models with CS35L56 so the ACPI entries are examined to
-> determine which amp is present.
-> 
-> To avoid having to #ifdef around this code we've fixed the definitions
-> of SPI and I2C functions that were not correctly supplying dummy functions
-> when the real functions are not in the build.
-> 
-> Changes since V1:
-> Added I2C and SPI patches to provide dummy functions.
-> 
-> Richard Fitzgerald (2):
->   spi: Add empty versions of ACPI functions
->   i2c: Fix conditional for substituting empty ACPI functions
-> 
-> Simon Trimmer (1):
->   ALSA: hda/realtek: Add support for new HP G12 laptops
+Below is the list of build error/warning regressions/improvements in
+v6.11-rc2[1] compared to v6.10[2].
 
-Hm, the 3rd patch requires both patch 1 and 2, and now those seem to
-have been applied to two different trees, which makes hard to apply
-the 3rd one.
+Summarized:
+  - build errors: +9/-20
+  - build warnings: +2/-19
 
-Mark, Wolfram, will you guys submit PR for 6.11-rc3 including the
-patch 1 and 2?  If so, I can apply the patch 3 later on top of
-6.11-rc3.
+JFYI, when comparing v6.11-rc2[1] to v6.11-rc1[3], the summaries are:
+  - build errors: +9/-4
+  - build warnings: +0/-2
 
-Or, I'd need to pull from both of you and apply the patch 3.
+Happy fixing! ;-)
+
+Thanks to the linux-next team for providing the build service.
+
+[1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed/ (all 132 configs)
+[2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/0c3836482481200ead7b416ca80c68a29cfdaabd/ (all 132 configs)
+[3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8400291e289ee6b2bf9779ff1c83a291501f017b/ (all 132 configs)
 
 
-thanks,
+*** ERRORS ***
 
-Takashi
+9 error regressions:
+  + /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: error: initialization of 'int (*)(struct device *, const struct device_driver *)' from incompatible pointer type 'int (*)(struct device *, struct device_driver *)' [-Werror=incompatible-pointer-types]:  => 384:14
+  + /kisskb/src/drivers/md/dm-integrity.c: error: logical not is only applied to the left hand side of comparison [-Werror=logical-not-parentheses]:  => 4718:45
+  + /kisskb/src/fs/bcachefs/data_update.c: error: the frame size of 1032 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]:  => 338:1
+  + /kisskb/src/include/linux/compiler_types.h: error: call to '__compiletime_assert_950' declared with attribute error: FIELD_GET: mask is not constant:  => 510:38
+  + /kisskb/src/include/linux/compiler_types.h: error: call to '__compiletime_assert_951' declared with attribute error: FIELD_GET: mask is not constant:  => 510:38
+  + /kisskb/src/kernel/fork.c: error: #warning clone3() entry point is missing, please fix [-Werror=cpp]:  => 3072:2
+  + {standard input}: Error: displacement to undefined symbol .L142 overflows 8-bit field :  => 1070
+  + {standard input}: Error: displacement to undefined symbol .L161 overflows 8-bit field :  => 1075
+  + {standard input}: Error: unknown pseudo-op: `.l18':  => 1111
+
+20 error improvements:
+  - /kisskb/src/arch/sparc/include/asm/floppy_64.h: error: no previous prototype for 'sparc_floppy_irq' [-Werror=missing-prototypes]: 200:13 => 
+  - /kisskb/src/arch/sparc/include/asm/floppy_64.h: error: no previous prototype for 'sun_pci_fd_dma_callback' [-Werror=missing-prototypes]: 437:6 => 
+  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'pfn_is_nosave' [-Werror=missing-prototypes]: 22:5 => 
+  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'restore_processor_state' [-Werror=missing-prototypes]: 35:6 => 
+  - /kisskb/src/arch/sparc/power/hibernate.c: error: no previous prototype for 'save_processor_state' [-Werror=missing-prototypes]: 30:6 => 
+  - /kisskb/src/arch/sparc/prom/misc_64.c: error: no previous prototype for 'prom_get_mmu_ihandle' [-Werror=missing-prototypes]: 165:5 => 
+  - /kisskb/src/arch/sparc/prom/p1275.c: error: no previous prototype for 'prom_cif_init' [-Werror=missing-prototypes]: 52:6 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c: error: unknown option after '#pragma GCC diagnostic' kind [-Werror=pragmas]: 16:9 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_0_0_snapshot.h: error: 'gen7_0_0_external_core_regs' defined but not used [-Werror=unused-variable]: 924:19 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_2_0_snapshot.h: error: 'gen7_2_0_external_core_regs' defined but not used [-Werror=unused-variable]: 748:19 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h: error: 'gen7_9_0_external_core_regs' defined but not used [-Werror=unused-variable]: 1438:19 => 
+  - /kisskb/src/drivers/gpu/drm/msm/adreno/adreno_gen7_9_0_snapshot.h: error: 'gen7_9_0_sptp_clusters' defined but not used [-Werror=unused-variable]: 1188:43 => 
+  - /kisskb/src/fs/bcachefs/data_update.c: error: the frame size of 1028 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]: 338:1 => 
+  - error: arch/sparc/kernel/process_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text': (.fixup+0x4), (.fixup+0xc) => 
+  - error: arch/sparc/kernel/signal_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.text': (.fixup+0x18), (.fixup+0x10), (.fixup+0x8), (.fixup+0x20), (.fixup+0x0) => 
+  - error: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text': (.head.text+0x5100), (.head.text+0x5040) => 
+  - error: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o: (.init.text+0xa4) => 
+  - {standard input}: Error: displacement to undefined symbol .L137 overflows 8-bit field : 1031, 1105 => 
+  - {standard input}: Error: displacement to undefined symbol .L158 overflows 8-bit field : 1110 => 
+  - {standard input}: Error: pcrel too far: 1074, 1020, 1126, 1254, 1021, 1095, 1022, 1096, 1255 => 1255, 1254, 1059, 1061, 1060
+
+
+*** WARNINGS ***
+
+2 warning regressions:
+  + /kisskb/src/fs/btrfs/fiemap.c: warning: 'last_extent_end' may be used uninitialized in this function [-Wmaybe-uninitialized]:  => 822:19
+  + /kisskb/src/kernel/fork.c: warning: #warning clone3() entry point is missing, please fix [-Wcpp]:  => 3072:2
+
+19 warning improvements:
+  - ./.config.32r1_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 93 => 
+  - ./.config.32r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 93 => 
+  - ./.config.32r6_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 95 => 
+  - ./.config.64r1_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 96 => 
+  - ./.config.64r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 96 => 
+  - ./.config.64r6_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 98 => 
+  - ./.config.micro32r2_defconfig: warning: override: CPU_BIG_ENDIAN changes choice state: 94 => 
+  - .config: warning: override: ARCH_RV32I changes choice state: 6414 => 
+  - .config: warning: override: CPU_BIG_ENDIAN changes choice state: 92, 94, 95, 97, 93 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-berr.c: warning: no previous prototype for 'ip22_be_init' [-Wmissing-prototypes]: 113:13 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-berr.c: warning: no previous prototype for 'ip22_be_interrupt' [-Wmissing-prototypes]: 89:6 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: warning: no previous prototype for 'ip22_gio_init' [-Wmissing-prototypes]: 398:12 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-gio.c: warning: no previous prototype for 'ip22_gio_set_64bit' [-Wmissing-prototypes]: 249:6 => 
+  - /kisskb/src/arch/mips/sgi-ip22/ip22-time.c: warning: no previous prototype for 'indy_8254timer_irq' [-Wmissing-prototypes]: 119:18 => 
+  - /kisskb/src/arch/sparc/prom/misc_64.c: warning: no previous prototype for 'prom_get_mmu_ihandle' [-Wmissing-prototypes]: 165:5 => 
+  - /kisskb/src/arch/sparc/prom/p1275.c: warning: no previous prototype for 'prom_cif_init' [-Wmissing-prototypes]: 52:6 => 
+  - /kisskb/src/drivers/base/regmap/regcache-maple.c: warning: 'lower_index' is used uninitialized [-Wuninitialized]: 113:23 => 
+  - /kisskb/src/drivers/base/regmap/regcache-maple.c: warning: 'lower_last' is used uninitialized [-Wuninitialized]: 113:36 => 
+  - /kisskb/src/fs/btrfs/extent_io.c: warning: 'last_extent_end' may be used uninitialized in this function [-Wmaybe-uninitialized]: 3285:19 => 
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
