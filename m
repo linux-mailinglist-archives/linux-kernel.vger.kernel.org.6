@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-275061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587BB948036
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055F2948038
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89BF31C22216
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:25:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33122829AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846E315ECD5;
-	Mon,  5 Aug 2024 17:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC8A15ECEE;
+	Mon,  5 Aug 2024 17:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSk2kxaU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="n5zHDR3W"
+Received: from relay.smtp-ext.broadcom.com (saphodev.broadcom.com [192.19.144.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69A2155749;
-	Mon,  5 Aug 2024 17:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0913C15ECC2;
+	Mon,  5 Aug 2024 17:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722878715; cv=none; b=msTONzoE7WoT0/9F3V4ZSADT9OduGClH7+hPpPnA7Y9209zcMx4Zq72OGjqO5xuDxbIjiH8ldrCRYSUPCupwWLChRRJ3sHmWMEwsC1b89f07yKYHGh6qgR0CsiEEK6iWLaQjg6Qk50O3wt1cIoxzNbdkkV726U60dQNwZpl9dN8=
+	t=1722878736; cv=none; b=CV73n1yRDT4Asw49SE8B05OBRIlZ36eT1nz+hR2Qpx9dTjyLUGOvVbR+uRE0TP5QbxbCjW+LuuBURySdA/2qWQVSw+clyHGKhE9iqb1IXpKJHRwCgGp4RLEdxYv1LHikqrDR4xgVy3r9FhIl42xXaAX+j8yxTJY+NFYt8HuqIfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722878715; c=relaxed/simple;
-	bh=6jiMp/tganddUy2GEXyAWzO93sNAySBn8h/eSzyTAFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nu9eilDjc+zs3miE+KZ5seXCYJeLIXHOF3yFtEYOE/c/r6AKFO93i7NiKLzyI746IEKxMxTJTaMLlKG+5pg0L4gBJCOcPPNVLoKfH+1LIHsKM+SJBxEDzOeE56EEKZkU65+9w0D3ISxykh96vqJw2JO4GwUCpkYJl3xyzD9q2k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSk2kxaU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D40AC32782;
-	Mon,  5 Aug 2024 17:25:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722878715;
-	bh=6jiMp/tganddUy2GEXyAWzO93sNAySBn8h/eSzyTAFk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VSk2kxaUdjpWZLwzL8CHxlLo8WAqHccxGNixNX4AclDxjXMM577Dmai0PDa+XhXu1
-	 HNvyvMpwZ83/ueUzR0Bj799BisF3MjXcDwREBb/kakHGMdGfGj5e7dujt2Dp8bRoKT
-	 0jvy0niCerAtzu9NPApz/cXFGyQYR0Ot91Y7+VopNjoeF5mLWxTuddhSCMtRGTfAmK
-	 Elu1hNDdq1pXoSzfl+wfuDrIJPLuikDGRRXf3cmtCTYg0Gs+1NhKpK9CobLu7nfX1E
-	 WD2JOXf4CGwfHXz7/XdUnQKFdvo9HCQajMfFzrT12fb8c+gp2NLd72Iw2eDnXODDDS
-	 9CVHS1bS3TMVg==
-Date: Mon, 5 Aug 2024 10:25:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: Brian Mak <makb@juniper.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
-Message-ID: <202408051018.F7BA4C0A6@keescook>
-References: <CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net>
- <877cd1ymy0.fsf@email.froward.int.ebiederm.org>
- <4B7D9FBE-2657-45DB-9702-F3E056CE6CFD@juniper.net>
+	s=arc-20240116; t=1722878736; c=relaxed/simple;
+	bh=DQVPx+SOwk2yMJ3OToQWa+B7sNes5WowJhkrFAOuTEQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HfaQ60NEsXzijTwAZv1hLT95GU1Qu88F9u9OidISL29310HrfgI6MkcxnZ2+ASmciH2tYlaZEgMm5UtnQd+NmhkumZu5ogFVt6+UCBwTKIcMN5zhut99yLnOkV2s33tL85iuExW5UHUK11qZtSCbZqGYwGOHoZY/bo6DGxLZaM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=n5zHDR3W; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 84C68C0000F1;
+	Mon,  5 Aug 2024 10:25:27 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 84C68C0000F1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1722878727;
+	bh=DQVPx+SOwk2yMJ3OToQWa+B7sNes5WowJhkrFAOuTEQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n5zHDR3WO2A3THxtXyHEn/C+604uyLR6W90U3OfBbVRS1xNdv8g+M5sRd3OAykYq3
+	 dQSEH89EVpAkULgqq6ZNh+y/OPzHXaj0j404l1WG3IkySYWlq8VUq56tZoU4E6toqR
+	 wfJU3tdvBfdzFVAYCOqtJCm+payyzylr2zVmte1Q=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id DADBF18041CAC4;
+	Mon,  5 Aug 2024 10:25:24 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: bcmgenet: Properly overlay PHY and MAC Wake-on-LAN capabilities
+Date: Mon,  5 Aug 2024 10:25:22 -0700
+Message-Id: <20240805172522.3114032-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4B7D9FBE-2657-45DB-9702-F3E056CE6CFD@juniper.net>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 01, 2024 at 05:58:06PM +0000, Brian Mak wrote:
-> On Jul 31, 2024, at 7:52 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
-> > One practical concern with this approach is that I think the ELF
-> > specification says that program headers should be written in memory
-> > order.  So a comment on your testing to see if gdb or rr or any of
-> > the other debuggers that read core dumps cares would be appreciated.
-> 
-> I've already tested readelf and gdb on core dumps (truncated and whole)
-> with this patch and it is able to read/use these core dumps in these
-> scenarios with a proper backtrace.
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-Can you compare the "rr" selftest before/after the patch? They have been
-the most sensitive to changes to ELF, ptrace, seccomp, etc, so I've
-tried to double-check "user visible" changes with their tree. :)
+Some Wake-on-LAN modes such as WAKE_FILTER may only be supported by the MAC,
+while others might be only supported by the PHY. Make sure that the .get_wol()
+returns the union of both rather than only that of the PHY if the PHY supports
+Wake-on-LAN.
 
-> > Since your concern is about stacks, and the kernel has information about
-> > stacks it might be worth using that information explicitly when sorting
-> > vmas, instead of just assuming stacks will be small.
-> 
-> This was originally the approach that we explored, but ultimately moved
-> away from. We need more than just stacks to form a proper backtrace. I
-> didn't narrow down exactly what it was that we needed because the sorting
-> solution seemed to be cleaner than trying to narrow down each of these
-> pieces that we'd need. At the very least, we need information about shared
-> libraries (.dynamic, etc.) and stacks, but my testing showed that we need a
-> third piece sitting in an anonymous R/W VMA, which is the point that I
-> stopped exploring this path. I was having a difficult time narrowing down
-> what this last piece was.
+Fixes: 7e400ff35cbe ("net: bcmgenet: Add support for PHY-based Wake-on-LAN")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-And those VMAs weren't thread stacks?
-
-> Please let me know your thoughts!
-
-I echo all of Eric's comments, especially the "let's make this the
-default if we can". My only bit of discomfort is with making this change
-is that it falls into the "it happens to work" case, and we don't really
-understand _why_ it works for you. :)
-
-It does also feel like part of the overall problem is that systemd
-doesn't have a way to know the process is crashing, and then creates the
-truncation problem. (i.e. we're trying to use the kernel to work around
-a visibility issue in userspace.)
-
-All this said, if it doesn't create problems for gdb and rr, I would be
-fine to give a shot.
-
--Kees
-
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c b/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
+index 1248792d7fd4..0715ea5bf13e 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
+@@ -42,19 +42,15 @@ void bcmgenet_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+ 	struct bcmgenet_priv *priv = netdev_priv(dev);
+ 	struct device *kdev = &priv->pdev->dev;
+ 
+-	if (dev->phydev) {
++	if (dev->phydev)
+ 		phy_ethtool_get_wol(dev->phydev, wol);
+-		if (wol->supported)
+-			return;
+-	}
+ 
+-	if (!device_can_wakeup(kdev)) {
+-		wol->supported = 0;
+-		wol->wolopts = 0;
++	/* MAC is not wake-up capable, return what the PHY does */
++	if (!device_can_wakeup(kdev))
+ 		return;
+-	}
+ 
+-	wol->supported = WAKE_MAGIC | WAKE_MAGICSECURE | WAKE_FILTER;
++	/* Overlay MAC capabilities with that of the PHY queried before */
++	wol->supported |= WAKE_MAGIC | WAKE_MAGICSECURE | WAKE_FILTER;
+ 	wol->wolopts = priv->wolopts;
+ 	memset(wol->sopass, 0, sizeof(wol->sopass));
+ 
 -- 
-Kees Cook
+2.34.1
+
 
