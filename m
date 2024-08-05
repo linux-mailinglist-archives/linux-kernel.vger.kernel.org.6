@@ -1,141 +1,111 @@
-Return-Path: <linux-kernel+bounces-274193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3B49474C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:45:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B74E9474C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1241B1F21963
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:45:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7802B1C20C1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBA4144D15;
-	Mon,  5 Aug 2024 05:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787F7143895;
+	Mon,  5 Aug 2024 05:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1DTEL2c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECFF13D601;
-	Mon,  5 Aug 2024 05:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="a/xoOzL/"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DBA13D601;
+	Mon,  5 Aug 2024 05:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722836720; cv=none; b=FoXZVJCe+B2zEcn3VUc47c52u4b7ZcmGjCSiueHHyPa77Dtq9WXmaTaKfLNI9XXN0SCWgZPLPl2qa9bAgk4ZXpmF95pUmUvBHPda/vm41MLcXcpz9k4HgsoPxPsfhXAY7RgnAP2F3/ZIGNsnp3y0oKJoR7n2xE07s9qm+ol3SLc=
+	t=1722836715; cv=none; b=q2CTYl1DafptkE+MqR3RUHaotybj6AsPNugXZq1S+JkKKzdFqZxwfFCY3/2OOED4+RcQdT03MMZMkTMWB3S1lewhBX96yNYewYAL6TouXWTN8LDdDHPCn4I/ZXyKXQQ5Fj5eQbD3p1c/qb5e3W+6YhC9WP3+8pdhugi7+CWnnoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722836720; c=relaxed/simple;
-	bh=c9ISY6CZqx2OzD7ZMw/Kti8Mv5SYlnFZUPf5cZqh5e4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AGu0qPgv3FmMnOVHudgpZYACsdOS5YAG5ohKz0i1YwChWITgJB+m7wlwb1bIIAMTflE5QXqn8v4Xmhzp6lxQPxR89WRCEWsgnexBZjVOaQuiijXG3Dazoloq49w3CeRp3iL0lQ0B7+yKlpEEkHih8jNku0iSVq7CBvKFLXfC6bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1DTEL2c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D07C32782;
-	Mon,  5 Aug 2024 05:45:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722836719;
-	bh=c9ISY6CZqx2OzD7ZMw/Kti8Mv5SYlnFZUPf5cZqh5e4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=o1DTEL2cBDdppmejf7TVItRg75avUrvN0z25URX4jyq3WRHT670yhR1mcCTudyUFy
-	 BPESjvaIMjQtLXmxSHINrjPQvIYSUUZQ4qo8YtKVXmFZUht3UVB5QaX5kuzMhwGJzO
-	 Cv32JhmN3jZ4NmiOop4mbY3TgqWMXRqlVzI4uNwukgG7i9gBNsKIXO67URk/HIDzyO
-	 M3nH8AU1CSzdhg9UnbDYjzl7yKcVmuUhBnKJuxtCANflcDqIrInPWRIs603Ef+BvOn
-	 BELNwHtmZIw4OB3eTjAnDMjJKF0mGRgk+CK5aYcjgk+We7VcwbDTZbOKCtud3XXZiL
-	 PUjP2CuJpbyeA==
-Message-ID: <229538e5-f9db-4f2f-a0ac-13ecb7d3f7ba@kernel.org>
-Date: Mon, 5 Aug 2024 07:45:09 +0200
+	s=arc-20240116; t=1722836715; c=relaxed/simple;
+	bh=xgAvTmM7O7bvPSR38dn8bXIRrhb9B5U9BWQYWUc2fig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGPgGIX+uk8fyfBJov5itVKbwgVsXvPQOeViCdP39cbmorMOhkTcamypBk9tDcgu6vYkqbQ2kXZ9J8UsJJuOTv1AszVGJ5PlwXRExeedpYqWLGIi1v69wAC0vCQx0/PW7V1DgptWwgU8kYERZZVbaxU3JFe5jSZvhfa3aDXfgVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=a/xoOzL/; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id D724C20B7123; Sun,  4 Aug 2024 22:45:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D724C20B7123
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722836713;
+	bh=i5i+KuQ6TGpWP8YXxONrIPb1JeA6n+teDHyNuesadOE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a/xoOzL/JCoYAk2vYHA/XAI5n+9WwnTr3GNx+lpOHeoMJxMlf+usRapO4O8YMs3iQ
+	 eJMH2uQSs3X1N/Z61BajbD/JZHAP3Ecb23Qp9v27qleWLyQmG7fEkmhdv5t2I/hepw
+	 KKYi8y5VlaBexIoVP6R3OZOGijYJNWs3Ra9SauL4=
+Date: Sun, 4 Aug 2024 22:45:13 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Wei Liu <wei.liu@kernel.org>
+Cc: Roman Kisel <romank@linux.microsoft.com>, arnd@arndb.de,
+	bhelgaas@google.com, bp@alien8.de, catalin.marinas@arm.com,
+	dave.hansen@linux.intel.com, decui@microsoft.com,
+	haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com,
+	kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
+	mingo@redhat.com, rafael@kernel.org, robh@kernel.org,
+	tglx@linutronix.de, will@kernel.org, linux-acpi@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
+	benhill@microsoft.com, ssengar@microsoft.com,
+	sunilmut@microsoft.com, vdso@hexbites.dev
+Subject: Re: [PATCH v3 3/7] Drivers: hv: Provide arch-neutral implementation
+ of get_vtl()
+Message-ID: <20240805054513.GA28829@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240726225910.1912537-1-romank@linux.microsoft.com>
+ <20240726225910.1912537-4-romank@linux.microsoft.com>
+ <Zq2GMNnRFqH4psLv@liuwe-devbox-debian-v2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/13] Add USB support to Exynos7885
-To: David Virag <virag.david003@gmail.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Sam Protsenko <semen.protsenko@linaro.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240804215458.404085-1-virag.david003@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240804215458.404085-1-virag.david003@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zq2GMNnRFqH4psLv@liuwe-devbox-debian-v2>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On 04/08/2024 23:53, David Virag wrote:
-> This set of patches adds support for USB on the Exynos7885 SoC.
+On Sat, Aug 03, 2024 at 01:21:52AM +0000, Wei Liu wrote:
+> On Fri, Jul 26, 2024 at 03:59:06PM -0700, Roman Kisel wrote:
+> > To run in the VTL mode, Hyper-V drivers have to know what
+> > VTL the system boots in, and the arm64/hyperv code does not
+> > have the means to compute that.
+> > 
+> > Refactor the code to hoist the function that detects VTL,
+> > make it arch-neutral to be able to employ it to get the VTL
+> > on arm64. Fix the hypercall output address in `get_vtl(void)`
+> > not to overlap with the hypercall input area to adhere to
+> > the Hyper-V TLFS.
 > 
-> The Exynos7885 has a DWC3 compatible USB controller and an Exynos USB
-> PHY that theoretically supports USB3 SuperSpeed, but is not implemented
-> in any known device. The vendor kernel also stubs out USB3 functions, so
-> we do not support it.
+> Can you split the fix out? That potentially can be backported.
 > 
-> While at it, since we need some new clocks implemented, also fix some
-> issues with the existing clock driver/bindings.
+> > 
+> > Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> > ---
+> > +
+> > +#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+> > +u8 __init get_vtl(void)
+> > +{
+> > +	u64 control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
+> > +	struct hv_get_vp_registers_input *input;
+> > +	struct hv_get_vp_registers_output *output;
+> > +	unsigned long flags;
+> > +	u64 ret;
+> > +
+> > +	local_irq_save(flags);
+> > +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> > +	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
 > 
-> p.s.: Not realizing the USB PLL has a MUX on it made me waste I don't
-> even want to know how much time on troubleshooting why it's not
-> working...
+> Hmm... I don't remember why the old code didn't use
+> hyperv_pcpu_output_arg but instead reused input+OFFSET as output.
+> 
+> Saurabh, can you comment on this?
 
-If there is going to be any new version, please split between subsystems
-into: clock+DTS, phy and usb.
-
-Best regards,
-Krzysztof
-
+This was done to optimize memory usage. Michael has provided more
+details on this in his review of the patch today.
 
