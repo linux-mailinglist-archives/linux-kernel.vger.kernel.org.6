@@ -1,88 +1,101 @@
-Return-Path: <linux-kernel+bounces-274057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783C99472C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E47259472E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE10280E11
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C8CE280D7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8554F2AEFE;
-	Mon,  5 Aug 2024 01:03:06 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFA35644E;
+	Mon,  5 Aug 2024 01:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwitmXeC"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8542423A6;
-	Mon,  5 Aug 2024 01:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5621C694;
+	Mon,  5 Aug 2024 01:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722819786; cv=none; b=Oaosc1vyopzwhM3BLg2vPUVbMv83UUaObs6t3yQXlJMfXLvELldFwkVxo5rfAhLyPPUYyEbK+cskcik2PBzZolxGDoQiA/mVRQLwoJj84sNbw6kEVfSAkn+7usJncyU0KiaKfHV0gICkq7XSy9isRq+2zGN7HqpEMBTMphEwW/k=
+	t=1722820322; cv=none; b=cmi2ze15WEvSEEXuvyaTd0WAqPSsof8lkiLNshUwknqdYVV9h6+PfSPViujVTW3WbxIJXyKMBCjPJSqvtbaj7aQJu6YPjnm6/An7oTV4mS5IGd3Zthzhf7RGvqRnHmhAN9iqzBD5+Tvssl19+zHYBtgV1IoSO9vyKPxMubtUbT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722819786; c=relaxed/simple;
-	bh=yE3Bod8OrrsmULofuJn+GpNjS3MMXItlyMwYRlDzc8s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MyE8dYmYJKuspfA3oIfZR81NUdJLkrkOTib2vbp/MdoZta7HsFxNfVUOkOk7kTbScCePSW0ZX/uSv56X0bRNw/mdzLu2obSoC2KMp/NMSpZxSnNwe3+uUF3ukeLPUPGyl18FWMhh/XVdlRroNEbCzr7U9zUBSPIYSqez8QJ7qVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4750hkXT020114;
-	Sun, 4 Aug 2024 18:02:36 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40sm2h10mx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sun, 04 Aug 2024 18:02:35 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 4 Aug 2024 18:02:35 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Sun, 4 Aug 2024 18:02:32 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <viro@zeniv.linux.org.uk>
-CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
-        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH V7] squashfs: Add symlink size check in squash_read_inode
-Date: Mon, 5 Aug 2024 09:02:31 +0800
-Message-ID: <20240805010231.1197391-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240804212034.GE5334@ZenIV>
-References: <20240804212034.GE5334@ZenIV>
+	s=arc-20240116; t=1722820322; c=relaxed/simple;
+	bh=auQYTtyH06aCKNFBLAQ0ggxxeW4FQdlnjs4LaBRbI7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ke74t+BquaAYnAcFXv3F5vusNG/e+BX1UschwHVRTd6YmeU/Qqm11RKBSQ65GFRw8QxoY7jq7qQ6n20YEaIjIBGVNwS89LCo7n00oFV4Z43oZwZjqpKaCyWaaTfI/BFz086y6QYllSFRo5CJ3yAbAVPWRCA3mZSVvEmDJ9aY44Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwitmXeC; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc65329979so88569115ad.0;
+        Sun, 04 Aug 2024 18:12:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722820320; x=1723425120; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nCeHrAfnGJ7SJi9Hmtm1f4gU4iMub9gPkMdPYbKHL9w=;
+        b=RwitmXeCGmDI0bg2N6SXgYqWZYlW7G7ZW1l2YNfnjXRJNTwaYXQxb3c9E7GijOMkjW
+         trVAx1XlShUUQ3bVWgMWDz1wh/b/1y3YVL2z1WqnXkNlkmERl2I/J4ojD2dleZ6RQZ8M
+         G7zjMvg+x6Ev6h4JLkliSIhB2xFL2HvWYlrP6V+FNU+rAK2Rcmp5S7hZksJ9xHtAx6XU
+         v7OF/v4RCB9ZlEWJ90d/BBppd7J8UgaPhf96xdpJXXQ9kpzjule33oFVclDD8pdZ/jrk
+         RccbQPDQEPBs+ST1hG3HoU5x8UMN1yYJW6N7SdCzXxDRTtevbKaLm2TaMgEUQJ9Uqpa5
+         V6lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722820320; x=1723425120;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nCeHrAfnGJ7SJi9Hmtm1f4gU4iMub9gPkMdPYbKHL9w=;
+        b=SQEijKKzPt875Wr/rTMqzaQ5Ji4Rc4GtDwqdBbsO5pwRyG3fay8KWzXl9w53IBOsll
+         nOR4m2W5Nv74BSHGWenVvKbtudr+jTFrn6My8UlOEiJSIGaad961RI3M88gw2roU0YFR
+         3fgihvCMrgAypuZNjtriGCInK2EJQqtnQsv8QSuMr0iIW1K0VV1poY+f5H9Dp+zpkMm+
+         Cbip5PDb6SKB43KO0JOuETGWAp35a1nV7YRLS/lkJTV8Vu2vpioPgxKMaptJ4n+u5pFP
+         pQMOB8Gk6frWVqT5+DZitDrfQJd52xtkg8hA6+VcJka3xYRRAN63CYOECHUdi3XdBrWh
+         TtLw==
+X-Gm-Message-State: AOJu0YzS5p8gSMnhF/IawqEj5D409qJgIFvB2jl/1y50SoOGAMDn9tMR
+	j07A174YpUcgOXsdJMgKQALjWvKBjdttYK8cyYuQHNxHxUnmXAdjl6laEw==
+X-Google-Smtp-Source: AGHT+IGXE7bknaKTSZ8KNveOaJVI6UL8n6RjnxHTE8DulFH9zXnB9+MqKnSBVPzImWNQppp5SVsB5w==
+X-Received: by 2002:a17:902:d4c5:b0:1ff:44db:7c4e with SMTP id d9443c01a7336-1ff57281a17mr149607305ad.24.1722820320018;
+        Sun, 04 Aug 2024 18:12:00 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:22e4:17a:28a:7497])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff590583d2sm55691785ad.171.2024.08.04.18.11.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Aug 2024 18:11:59 -0700 (PDT)
+Date: Sun, 4 Aug 2024 18:11:57 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org, Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] Input: tsc2004/5 - fix handling of VIO power supply
+Message-ID: <ZrAm3QHCvtmI9TPS@google.com>
+References: <20240711172719.1248373-1-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: iNvRO91Mbi9Nmy4v-K34L7Y8pHGTjoHw
-X-Proofpoint-GUID: iNvRO91Mbi9Nmy4v-K34L7Y8pHGTjoHw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=584
- priorityscore=1501 malwarescore=0 bulkscore=0 adultscore=0 spamscore=0
- impostorscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.21.0-2407110000 definitions=main-2408050006
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711172719.1248373-1-dmitry.torokhov@gmail.com>
 
-On Sun, 4 Aug 2024 22:20:34 +0100, Al Viro wrote:
-> Alternatively, just check ->i_size after assignment.  loff_t is
-> always a 64bit signed; le32_to_cpu() returns 32bit unsigned.
-> Conversion from u32 to s64 is always going to yield a non-negative
-> result; comparison with PAGE_SIZE is all you need there.
-It is int overflow, not others. 
-Please see my V7 patch,
-Link: https://lore.kernel.org/all/20240803074349.3599957-1-lizhi.xu@windriver.com/
+On Thu, Jul 11, 2024 at 10:27:12AM -0700, Dmitry Torokhov wrote:
+> The chip needs to be powered up before calling tsc200x_stop_scan() which
+> communicates with it; move the call to enable the regulator earlier in
+> tsc200x_probe().
+> 
+> At the same time switch to using devm_regulator_get_enable() to simplify
+> error handling. This also makes sure that regulator is not shut off too
+> early when unbinding the driver.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---
-Lizhi
+OK, since there were no objections I applied the series.
+
+Thanks.
+
+-- 
+Dmitry
 
