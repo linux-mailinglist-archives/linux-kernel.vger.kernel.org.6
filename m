@@ -1,122 +1,123 @@
-Return-Path: <linux-kernel+bounces-274991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8A9947F44
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:24:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD778947F47
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C002F281459
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF0B281F9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EFA1591F1;
-	Mon,  5 Aug 2024 16:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A7915D5D9;
+	Mon,  5 Aug 2024 16:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6cGXl8q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBeDqn5b"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0884A15C128;
-	Mon,  5 Aug 2024 16:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148F11547E7
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722875030; cv=none; b=HLKAeP9VAsAk/48cyhqp2y5xN9V+fVDpETW4RSRnh4r6OPZTpL1fAhv+RfApb/R1EJgbm2/TM1pbzso6IbBUyHKu+S6+ENl1yE1Q0n/yGcR2ikTmIJ74PL3JWaq8M1qBFBUp39xpZwBHq4y5C/g0zXoJc0QUd6kCKApTX410qvI=
+	t=1722875060; cv=none; b=ooBrrummmuOmvPIHAP27NCZH3uYcGTro7aU1is6jxteRh6j6Ikhzd7Pz3qXmylycNK1xxeu0wy51O0kJtZ0qec0QmgNyhxxvNl5yU1zH591UATewZ2zkiNbYaBvzb6y9Jr/QIIstJ3xZMp26Z+QqNkQnqTlY1/djx1rLQCWIBRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722875030; c=relaxed/simple;
-	bh=vQwii10q1YmYVa9isa85ZRO5B5Git5ym+CsLyg9wPCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6ENXg5lP/HJ1Sday+otJxdfWcF4XWE5Rvr5kV2i5T0eZiGANoXMMhaSUiBmfUvfohYWGNF1yb1pi6AXZm0oV2S7AcV+hGrY68iYsvTgIUMBLXabnZIPJQF7675jQ/wuwiWXlDbeUni+H+GH+spBEGiqXFgIZScozXXWejdG3F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6cGXl8q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01B73C32782;
-	Mon,  5 Aug 2024 16:23:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722875029;
-	bh=vQwii10q1YmYVa9isa85ZRO5B5Git5ym+CsLyg9wPCg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n6cGXl8qOQQhSq+jW2IBk/kplIW+fRTvFlWp6o+SBfIL2VJptogBiJ+XvRrpuKwT0
-	 GlbCJ+orj+Vb5bEHt/SsqajQScJEvGKTXECUILf7Oxi5mMtAabmC7FGm5bvxszQaiL
-	 HM7+xD7MYfMzTE+6/doHINDIXZ2pp+oPJPJVcdaT2enx5tyFnmCxfdQ9j7xtVqc4ko
-	 7pEcN2ZSBt6RTQiu6RC0pC9Ar78AXW5SMHPimiLxi52mAK7PUXT0Vbdn2a0zyqI3MO
-	 8nu1l7TyxVMpebsZvrg5+r59ITowKh5mEIo/Qk2ulq57sESO2iR3XWaVbrfCK8IucX
-	 h9TUGXXeVoOlw==
-Date: Mon, 5 Aug 2024 18:23:46 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [RFC PATCH 12/20] kthread: Implement preferred affinity
-Message-ID: <ZrD8kmRw73bS3Lj6@localhost.localdomain>
-References: <20240726215701.19459-1-frederic@kernel.org>
- <20240726215701.19459-13-frederic@kernel.org>
- <4e9d1f6d-9cd8-493c-9440-b46a99f1c8af@suse.cz>
- <ZrDhp3TLz6Kp93BJ@localhost.localdomain>
- <00914d25-f0ae-4b00-9608-2457821c071c@suse.cz>
+	s=arc-20240116; t=1722875060; c=relaxed/simple;
+	bh=a8C99+OTElpTmOTtUSQ4jS9OW9GVLl/7moJ7+wx1Mb4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LOVic030l42rugEXKn0jwtS6uLexl5zgLGwDRIBmgxLrxlc6ztJksyodVA+C/PmloGEB+l+VAVK9ymemk/KEXEKoUelHC9j99AL44GShD3WI/35uXBBizWuhjLAW1X/bR7j11Zzy/Fv3R6x0B4JrQ6NynmOQ0OnXmBDdiuTOJIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBeDqn5b; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a6117aso1669315a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 09:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722875057; x=1723479857; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a8C99+OTElpTmOTtUSQ4jS9OW9GVLl/7moJ7+wx1Mb4=;
+        b=WBeDqn5bdPmxyOt408D5RKpTv/LdDah/tYfjC9yVTg09Xi/cXRG2t6GRAPMVTJgT/R
+         ENjQxOCrNXbVut/4S40OHoMVX0WeA90GEjJGJ6x7wzh3mPMV2KqbsIOS42C+3tJd5f+T
+         dywTsF63i5EsesHxmU2lAjKjPOQvSFZMaMI5riBDX9ZStEjJtbET1tCFgiYQzIpkrtjR
+         smtXlemzNGsiphF/cotOp1wMPdNqHzl2yPDlGr3qxz59Ce1iP/xtaLHe/yNKV8uUc97M
+         w18Mlla1hrWuqvB3bFqk0HcvkDgmXa0BfI3Yt6yeteuc3ynfKpUScB7vux9qSKBWbiu/
+         F+iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722875057; x=1723479857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a8C99+OTElpTmOTtUSQ4jS9OW9GVLl/7moJ7+wx1Mb4=;
+        b=g1rTxlE79O0kmoqyRWfinJ7H8LOO6yVMx8X3nPQukVt8UknC0W8k3ZQS8eTSCKideg
+         +uLxzu06DXJG/aCDKuKsok5/bzrg5YlJROhA0hjyPFTxfCZKzmC7CJA60UIu0C9/YRxZ
+         ePszP8GHcBHMieH7dvnBh/tEbrSNXWIAPM5qNg8To14yGmxGbi0QiZxXcNopJtt80mVC
+         apn/GYz1PIgmcaLDl532rNx9SnBLRRG53TgaB+63v0TBbe0+//pbCSPXHtJamQNZoPfF
+         0qQsjA2FaZVjJ9L9MklIZ1ovBdSh0dhMrCe9rNoDJsCouy5iK1yGhJkj49NUAou7zTO3
+         8IdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4O7JJ5BL2QNmt9Z98bffVOPEnvOI+vV3V1fhebt4rmVj6rK1GB/YvBVHSCyfwjdkOfl5cJ7EihhS33PPURikyl96gELagSweobd+T
+X-Gm-Message-State: AOJu0Ywza4sHXjdIA2dlw3uRAtAQnJdPIDRVXrCUdUBEa0xduV29hiPD
+	kpljMHi7UMLoyM3ifjwpoDR8pyGnZwhRkAz78ytxs4tk75nvHn50lnjIEqYCikOwqeF4zM4A4vG
+	fFw8IYcwjWwzIssQSWtszCHu039M=
+X-Google-Smtp-Source: AGHT+IHvyHbFZJE4p8C4OL9f2eMAtF/7nSyBc86q0iTr2swDTqSonp+1rkVReAaAYjc0C810FGILIP+l2ZHt9zaqOEo=
+X-Received: by 2002:a50:e613:0:b0:5a1:a08a:e08 with SMTP id
+ 4fb4d7f45d1cf-5b7f39e07b7mr10209743a12.11.1722875057029; Mon, 05 Aug 2024
+ 09:24:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <00914d25-f0ae-4b00-9608-2457821c071c@suse.cz>
+References: <20240723114914.53677-1-slp@redhat.com> <942afa37-a24c-48ed-ae10-c811849165bf@collabora.com>
+In-Reply-To: <942afa37-a24c-48ed-ae10-c811849165bf@collabora.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Mon, 5 Aug 2024 09:24:04 -0700
+Message-ID: <CAF6AEGvwrYiN6nMSsRAdc3qq+qQGWEvdW_3+xJh6y2iAyW6rkw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] drm/virtio: introduce the HOST_PAGE_SIZE feature
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Sergio Lopez <slp@redhat.com>, gurchetansingh@chromium.org, tzimmermann@suse.de, 
+	mripard@kernel.org, olvaffe@gmail.com, kraxel@redhat.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, airlied@redhat.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Mon, Aug 05, 2024 at 04:53:51PM +0200, Vlastimil Babka a écrit :
-> If you mean the loop in kcompactd_init() then indeed, but we also have a
-> hook in online_pages() to start new threads on newly onlined nodes, so
-> that's not a problem.
-> 
-> The problem (I think) I see is cpumask_of_node(pgdat->node_id) is a snapshot
-> of cpus running on the NUMA node the time, and is never updated later as new
-> cpus might be brought up.
+On Wed, Jul 24, 2024 at 12:00=E2=80=AFPM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
+>
+> On 7/23/24 14:49, Sergio Lopez wrote:
+> > There's an incresing number of machines supporting multiple page sizes
+> > and on these machines the host and a guest can be running, each one,
+> > with a different page size.
+> >
+> > For what pertains to virtio-gpu, this is not a problem if the page size
+> > of the guest happens to be bigger or equal than the host, but will
+> > potentially lead to failures in memory allocations and/or mappings
+> > otherwise.
+>
+> Please describe concrete problem you're trying to solve. Guest memory
+> allocation consists of guest pages, I don't see how knowledge of host
+> page size helps anything in userspace.
+>
+> I suspect you want this for host blobs, but then it should be
+> virtio_gpu_vram_create() that should use max(host_page_sz,
+> guest_page_size), AFAICT. It's kernel who is responsible for memory
+> management, userspace can't be trusted for doing that.
 
-Oh I see now...
+fwiw virtgpu native context would require this as well, mesa would
+need to know the host page size to correctly align GPU VA allocations
+(which must be a multiple of the host page size).
 
-> 
-> kcompactd_cpu_online() does try to update that when cpus are onlined (in a
-> clumsy way), there was nothing like that for kswapd and after your series
-> this update is also removed for kcompactd.
+So a-b for adding this and exposing it to userspace.
 
-Ok...
+BR,
+-R
 
-> 
-> > If all users of preferred affinity were to use NUMA nodes, it could be
-> > a good idea to do a flavour of kernel/smpboot.c which would handle
-> > per-node kthreads instead of per-cpu kthreads. I initially thought
-> > about that. It would have handled all the lifecycle of those kthreads,
-> > including creation, against hotplug. Unfortunately RCU doesn't rely on
-> > per-NUMA nodes but rather use its own tree.
-> > 
-> > If there be more users of real per NUMA nodes kthreads than kswapd and
-> > kcompactd, of course that would be much worth considering.
-> 
-> Yeah it's not that compelling, but a way to update the preferred affine mask
-> in response to cpu hotplug events, that kswapd and kcompactd could use,
-> would be sufficient. And maybe more widely useful.
-> 
-> I guess there could be a callback defined for kthread to provide a new
-> preferred_affinity, that you'd call from kthreads_hotplug_update() ?
-> And kcompactd and kswapd could both use the same callback that interprets
-> kthread_data() as pgdat and fetches a new cpumask of it?
-
-It's too bad we don't have a way to have a cpumask_possible_of_node(). I've
-looked into the guts of numa but that doesn't look easy to do.
-
-Or there could be kthread_set_preferred_node()... ?
-
-Thanks.
-
-> 
-> > Thanks.
-> 
+> --
+> Best regards,
+> Dmitry
+>
 
