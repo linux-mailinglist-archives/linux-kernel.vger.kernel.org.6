@@ -1,103 +1,192 @@
-Return-Path: <linux-kernel+bounces-274157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF138947429
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:03:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7423494742D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E276B21721
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:03:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3A0281FED
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89531149E1E;
-	Mon,  5 Aug 2024 04:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADE613E8A5;
+	Mon,  5 Aug 2024 04:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="H44bPviR"
-Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fPXwDOPA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C581140397;
-	Mon,  5 Aug 2024 04:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F91914A85;
+	Mon,  5 Aug 2024 04:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722830509; cv=none; b=njyBWBGvLho9yjkriipjtCUDEY3Gnasp9BD6MC1uqUXsjfeyzZpV5T/bmTxOeSXJeMh44WRJln3NuhAVhBZTfdWPDRuNwKtHsUQX/fUODTRQjWIyqj1G1mLRghXvcrTBAJWc5W5+fnCT7y0cTiHD8Dljj63IxGBX8ga43vSaR2g=
+	t=1722830598; cv=none; b=YNre0p01JvBUFhg8dcQ2nbNYGExbsJP1X2yHmRv+dUsO7HbBQ+z93DAK/N2LTFW2qd+dz3SY+FAeT/KWfjC3Z+dtOSazpUtr8rdb/prrw57Ii7rR80RiP3rqp0LwEzEckL9AawlBX/5EukkfSfDAkXrBJNtw1PKsycU/XZ8Ufgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722830509; c=relaxed/simple;
-	bh=18HtVMEp/nF3kNlJjM+WZDtQoUGZb+1VQXJHdkEbHWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DKb9QjdxFkFLrPdFtAVkYxBoJ74Hm79763oKjJSChBceRKuSy4cCl0k40IOwCyEUPC8FzeZpV7ZcEDXLFiezlEAtJFgLYNtlaKNogscWO49bJs8m2PJ2IkDMxVaiVCbwFY2uKpUKhtnUgulsWJ4wIqYsDszw6gF4Xc7YQuNv5eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=H44bPviR; arc=none smtp.client-ip=54.39.219.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 14BABC0070;
-	Mon,  5 Aug 2024 00:02:07 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
-	t=1722830527; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=dVzuzpmdVrqMI5w9EIT5MwcsYd0C1S7U4DW6/blDxME=;
-	b=H44bPviR4QaV9HO5Fx49j54ui8s5ZJTEPgjklEJq6QlSBpYbbJN3YPEKCMEG4XkKp24z+n
-	aBAg68yuZsTpYugqOyTa+8cxyHpGpqCqENkgbwBhL9md7t4kqLx/R7GO2VufY+19nN5Bjj
-	3dWx9SXBdmWUBYFs2NtpXpixzF1m7vs=
-From: Felix Kaechele <felix@kaechele.ca>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
-	Rocky Liao <quic_rjliao@quicinc.com>
-Cc: linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath10k@lists.infradead.org,
-	linux-mmc@vger.kernel.org
-Subject: [PATCH 4/4] Bluetooth: hci_qca: add compatible for QCA9379
-Date: Mon,  5 Aug 2024 00:01:31 -0400
-Message-ID: <20240805040131.450412-5-felix@kaechele.ca>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240805040131.450412-1-felix@kaechele.ca>
-References: <20240805040131.450412-1-felix@kaechele.ca>
+	s=arc-20240116; t=1722830598; c=relaxed/simple;
+	bh=KTlsVyhr5w6HgAt61sEulsGD/UsfqKxfY2iA8TxKdN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oICGSV9j+9upavcxuJMIiEjGrzXK30irG+WfNxNtIx4u+KcphSEehII4suaIrNouS89haNUm+KeMvaB29XmKIn+8P45qOhUx8inYodKqp3j7ykDyN6gjLoproTJKO+ZZgja6rmSQdcyRXqef9szrXxoLUTL++BC87sBFldqNsH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fPXwDOPA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4752VUhA011325;
+	Mon, 5 Aug 2024 04:03:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wGD4h/C5Z6m4l+vaJ1P68Rr3p5wdr/j4c5H3AJU3JKc=; b=fPXwDOPAzZtZPKPj
+	QA7UXlcv/LdmIoqr165h6wiYqE1huLa9bcdgc3KOxKEiIcS+MKBhT/K7Dtd2CSNX
+	Hqd+j1AwcMXHmz+M8kGVE8TKVxA6sQGvDJF5SpLNKQpFzTYScjTxI2WvtBmCbNXF
+	IUZsEGIaJnA9yCMnfLKhixjzcYPTm99SZv5iqnlmnXmWHWnwg9F7oI90XcipTlf1
+	yHTqMm0VMCJ8fpbCGzu+upUlA7g+YZOkxCIcJVa866OkHZlGWozet4zcHzBD/Izc
+	hRjgL6nib2M239KBkNYkOCdohlhg4ZEL9Z2Qgh/NKxkDIEgA9GZ4gsqobjcMv8GD
+	+sYHXg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scx6jrn7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 04:03:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 475434Wi030649
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 04:03:04 GMT
+Received: from [10.216.50.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 Aug 2024
+ 21:02:58 -0700
+Message-ID: <027dc9f7-6e0d-e331-8f90-92a3d56350ab@quicinc.com>
+Date: Mon, 5 Aug 2024 09:32:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, Jingoo Han <jingoohan1@gmail.com>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: <andersson@kernel.org>, <quic_vbadigan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
+ <0cdaa0b2-ae50-40a1-abbb-7a6702d54ad5@kernel.org>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <0cdaa0b2-ae50-40a1-abbb-7a6702d54ad5@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Pojx3rFs7umX47MPNCGk9_ZUtzK1C8Qd
+X-Proofpoint-GUID: Pojx3rFs7umX47MPNCGk9_ZUtzK1C8Qd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 bulkscore=0 clxscore=1011 suspectscore=0 phishscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408050026
 
-The QCA9379 (Naples) is a WiFi and Bluetooth SoC in the QCA6174 (Rome)
-family. As such it is supported by this driver.
 
-According to the naming format defined in the code, the driver will
-request the following firmware files for a QCA9379-3:
-- nvm_00150100.bin
-- rampatch_00150100.bin
 
-Signed-off-by: Felix Kaechele <felix@kaechele.ca>
----
- drivers/bluetooth/hci_qca.c | 1 +
- 1 file changed, 1 insertion(+)
+On 8/4/2024 2:26 PM, Krzysztof Kozlowski wrote:
+> On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
+>> Add binding describing the Qualcomm PCIe switch, QPS615,
+>> which provides Ethernet MAC integrated to the 3rd downstream port
+>> and two downstream PCIe ports.
+>>
+>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>> ---
+>>   .../devicetree/bindings/pci/qcom,qps615.yaml       | 191 +++++++++++++++++++++
+>>   1 file changed, 191 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
+>> new file mode 100644
+>> index 000000000000..ea0c953ee56f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
+>> @@ -0,0 +1,191 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pci/qcom,qps615.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm QPS615 PCIe switch
+>> +
+>> +maintainers:
+>> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>> +
+>> +description: |
+>> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
+>> +  ports. The 3rd downstream port has integrated endpoint device of
+>> +  Ethernet MAC. Other two downstream ports are supposed to connect
+>> +  to external device.
+>> +
+>> +  The QPS615 PCIe switch can be configured through I2C interface before
+>> +  PCIe link is established to change FTS, ASPM related entry delays,
+>> +  tx amplitude etc for better power efficiency and functionality.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - pci1179,0623
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  qcom,qps615-controller:
+> 
+> and now I see that you totally ignored comments. Repeating the same over
+> and over is a waste of time.
+> 
+> <form letter>
+> This is a friendly reminder during the review process.
+> 
+> It seems my or other reviewer's previous comments were not fully
+> addressed. Maybe the feedback got lost between the quotes, maybe you
+> just forgot to apply it. Please go back to the previous discussion and
+> either implement all requested changes or keep discussing them.
+> 
+> Thank you.
+> </form letter>
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+Hi Krzysztof,
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index ca6466676902..06895bafd3b6 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -2690,6 +2690,7 @@ static const struct of_device_id qca_bluetooth_of_match[] = {
- 	{ .compatible = "qcom,qca6174-bt" },
- 	{ .compatible = "qcom,qca6390-bt", .data = &qca_soc_data_qca6390},
- 	{ .compatible = "qcom,qca9377-bt" },
-+	{ .compatible = "qcom,qca9379-bt" },
- 	{ .compatible = "qcom,wcn3988-bt", .data = &qca_soc_data_wcn3988},
- 	{ .compatible = "qcom,wcn3990-bt", .data = &qca_soc_data_wcn3990},
- 	{ .compatible = "qcom,wcn3991-bt", .data = &qca_soc_data_wcn3991},
--- 
-2.45.2
+In patch1 we are trying to add reference of i2c-adapter, you suggested
+to use i2c-bus for that. we got comments on the driver code not to use
+adapter and instead use i2c client reference. I felt i2c-bus is not
+ideal to represent i2c client device so used this name.
 
+I should have mentioned all these details in the change log for all
+these changes. Next time onwards I will give detailed change log for
+the changes between two versions.
+
+- Krishna Chaitanya.
 
