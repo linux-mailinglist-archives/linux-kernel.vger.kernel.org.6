@@ -1,109 +1,166 @@
-Return-Path: <linux-kernel+bounces-274756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D4D947C52
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:59:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E53C1947C5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71EF21C21B9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07FC01C21CFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3B27D3F8;
-	Mon,  5 Aug 2024 13:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78957D3F4;
+	Mon,  5 Aug 2024 14:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t998Gk2N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cj15Aucu"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1E02C684;
-	Mon,  5 Aug 2024 13:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288D533080;
+	Mon,  5 Aug 2024 14:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722866389; cv=none; b=SR4Ag92GhH/1Da94ExVzt+k+NbYk0jtGCMu0ms8Zs0UPBL6kqxVQOLu1eyzNaL96DwXbTgKUXik6E9GpejXTKYauVhGNw4LJhF1eXQUEVVoCGW8o+YuRMLSt/Wm1P7L3QIIKC735pegN9U1PrPUELUSocrJs3p32XyHDimg27F8=
+	t=1722866506; cv=none; b=U63XTn0zDCBxQ33diZKTU/gBry5qsDKLdKtGYOJza8KB/OjucZK78bs2xdKRnaX5Da5T+jrBq0JzV+QZxgjsfcplCMyMS6JuzdNPobkwbL/Yhb7DWSRojveMGM3z0RMCl/twVVoH3NRcNhiJBB039fawFZLEuYb+/zaYSrHgKaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722866389; c=relaxed/simple;
-	bh=EyTSiPAafa66YyrGSKzx20HNcdBnILGm5FLS3y8oypQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gwtk2DHZpRGZiT8o/S6g+IjU3NX4Ef4mYqKhuMStd9wExEdFfHFRhQaomnmkqLJPFqnvv02WdJbrRFQNu51Wi4VArYpQHUEyschzYYQIr5R6YideqoBJipZ1y0hKkw8oSgUBXh19E9eBgmO5Ba+SPEtIjD4eofRZNLJOaEFkKOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t998Gk2N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5FD6C32782;
-	Mon,  5 Aug 2024 13:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722866389;
-	bh=EyTSiPAafa66YyrGSKzx20HNcdBnILGm5FLS3y8oypQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t998Gk2NceJq97cj5UOfzb+BNyyqsd+QrO/qJtIHwHaTHZfGFYz/JwMmwj2B5rU2A
-	 Miotl4sWUylpJK0ztkIzPC7o/Q48bl7ddXrBkQ/F7AJ3Jrr3cj9oG/XnXmpPOCdcBi
-	 7HRg7VC6jB0TgldZ2hCMo0Yxyt8CmLVyeW1y1OJnpxSQa8FKAeLwOZpMEoUgmlXS4s
-	 ZEheMORGq04OHCqjK1c5Y0Iu4m2SeQJ+rKfFqf4nGHwxFRjfxE0Y+9eCwzitBGpwKQ
-	 4MXZL0C6NLmJn4kxpfadbii3WDDLsMei7h3YitRxXOMp/Iw9/T4BzKVDGQo3qeAP5j
-	 iPVhTasgeVZ4w==
-Date: Mon, 5 Aug 2024 14:59:42 +0100
-From: Will Deacon <will@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC V2 1/3] arm64/cpufeature: Add field details for
- ID_AA64DFR1_EL1 register
-Message-ID: <20240805135942.GA9866@willie-the-truck>
-References: <20240620092607.267132-1-anshuman.khandual@arm.com>
- <20240620092607.267132-2-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1722866506; c=relaxed/simple;
+	bh=7sUgatBDskJqUnx8+ur3ga8RFhAtS/mr25ctjJF+9fk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aThcW4qVI6R7Ugp59VQZyBcruvVz7Tgvsuq9825ZcfuQVyRt8WnScVLhZ6ROS4ykBEv8Xrn66UnR2JxJyihtUC+6O/UB5gG2cApF1wVrC+49gwut96yRzKVjeGu133X8V3XydKq5+nLNjdCIF5Axs9XlSOLcktVpJxy5R5V1gGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cj15Aucu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475CNFmc019897;
+	Mon, 5 Aug 2024 14:01:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	K4Tiis6dmOiCm866RJSL9aIC0QOcW+tOWM8V2CSXDrY=; b=Cj15AucuhSvhdyg2
+	QW8Fo2ccnLtecFzgE/blvI6u5D8V6KVvdxl2fRLPYne9Q3dqDfeJWOSm1iUnCauY
+	NXsj9FAzqAAR4P2qxs5TAHUskyZmuO7Zkx8fZnUFVVvyjRWFuq7YtJGWYDBt99Rq
+	GhUIr5tMFmnJQtpNyM2tK43A9IyCEXpRG9BN1+lHIztM8IWAeAtfQlC5ZMKywEb9
+	CdV0I5iDFmZnOy4S7au00onWOg6b/eM853qyA6T7kkdLGWiIYKb2en0lxEItPinf
+	4XLYPyz9npTsWTFprZ52WAwotiNymFtY7JmCrWm5iqzGeH5OUlos54doncKGCqcG
+	FTnEOQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scs2v4r8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 14:01:31 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 475E1Voq012941
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 14:01:31 GMT
+Received: from [10.217.219.66] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 5 Aug 2024
+ 07:01:27 -0700
+Message-ID: <6faa27be-54eb-ca00-f2a8-de3eb6fa7547@quicinc.com>
+Date: Mon, 5 Aug 2024 19:30:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620092607.267132-2-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 1/2] dmaengine: dw-edma: Fix unmasking STOP and ABORT
+ interrupts for HDMA
+Content-Language: en-US
+To: Serge Semin <fancer.lancer@gmail.com>
+CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
+        <quic_shazhuss@quicinc.com>, <quic_nitegupt@quicinc.com>,
+        <quic_ramkri@quicinc.com>, <quic_nayiluri@quicinc.com>,
+        <quic_krichai@quicinc.com>, <quic_vbadigan@quicinc.com>,
+        <stable@vger.kernel.org>, Cai Huoqing <cai.huoqing@linux.dev>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1721740773-23181-1-git-send-email-quic_msarkar@quicinc.com>
+ <1721740773-23181-2-git-send-email-quic_msarkar@quicinc.com>
+ <dnvoktjxx2m5oy2m5ocrgyd4veypnjbjnth364hl32ou4gm3t2@tjxrsowsabgr>
+From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+In-Reply-To: <dnvoktjxx2m5oy2m5ocrgyd4veypnjbjnth364hl32ou4gm3t2@tjxrsowsabgr>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Cbmd1yMSee1QOYIsrlaTexI_98MEIkG-
+X-Proofpoint-GUID: Cbmd1yMSee1QOYIsrlaTexI_98MEIkG-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-05_02,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=520 phishscore=0 malwarescore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408050100
 
-On Thu, Jun 20, 2024 at 02:56:05PM +0530, Anshuman Khandual wrote:
-> This adds required field details for ID_AA64DFR1_EL1, and also drops dummy
-> ftr_raz[] array which is now redundant. These register fields will be used
-> to enable increased breakpoint and watchpoint registers via FEAT_Debugv8p9
-> later.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> cc: Mark Brown <broonie@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  arch/arm64/kernel/cpufeature.c | 21 ++++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 48e7029f1054..12f0a5181bf2 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -527,6 +527,21 @@ static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
->  	ARM64_FTR_END,
->  };
->  
-> +static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
-> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
 
-I only got this far in the patch, but why is this FTR_STRICT +
-FTR_LOWER_SAFE? The behaviour of the cycle counter on an SPE management
-event sounds like it would be fine to differ between cores, no?
+On 8/2/2024 5:12 AM, Serge Semin wrote:
+> On Tue, Jul 23, 2024 at 06:49:31PM +0530, Mrinmay Sarkar wrote:
+>> The current logic is enabling both STOP_INT_MASK and ABORT_INT_MASK
+>> bit. This is apparently masking those particular interrupts rather than
+>> unmasking the same. If the interrupts are masked, they would never get
+>> triggered.
+>>
+>> So fix the issue by unmasking the STOP and ABORT interrupts properly.
+>>
+>> Fixes: e74c39573d35 ("dmaengine: dw-edma: Add support for native HDMA")
+>> cc: stable@vger.kernel.org
+>> Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+>> ---
+>>   drivers/dma/dw-edma/dw-hdma-v0-core.c | 9 +++++----
+>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+>> index 10e8f07..fa89b3a 100644
+>> --- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
+>> +++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+>> @@ -247,10 +247,11 @@ static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
+>>   	if (first) {
+>>   		/* Enable engine */
+>>   		SET_CH_32(dw, chan->dir, chan->id, ch_en, BIT(0));
+>> -		/* Interrupt enable&unmask - done, abort */
+>> -		tmp = GET_CH_32(dw, chan->dir, chan->id, int_setup) |
+>> -		      HDMA_V0_STOP_INT_MASK | HDMA_V0_ABORT_INT_MASK |
+>> -		      HDMA_V0_LOCAL_STOP_INT_EN | HDMA_V0_LOCAL_ABORT_INT_EN;
+> Just curious, if all the interrupts were actually masked, how has this
+> been even working?.. In other words if it affected both local and
+> remote interrupts, then the HDMA driver has never actually worked,
+> right?
 
-Please go through all the new fields, bearing in mind that most of the
-PMU stuff is per-CPU type rather than global.
+Agreed, it should not work as interrupts were masked.
 
-Will
+But as we are enabling LIE/RIE bits (LWIE/RWIE) that eventually enabling 
+watermark
+interrupt in HDMA case and somehow on device I could see interrupt was
+generating with watermark and stop bit set and it was working.
+Since we were not clearing watermark interrupt, it was also causing 
+storm of interrupt.
+
+>> +		/* Interrupt unmask - STOP, ABORT */
+>> +		tmp = GET_CH_32(dw, chan->dir, chan->id, int_setup) &
+>> +		      ~HDMA_V0_STOP_INT_MASK & ~HDMA_V0_ABORT_INT_MASK;
+> Please convert this to:
+> +		/* Interrupt unmask - stop, abort */
+> +		tmp = GET_CH_32(dw, chan->dir, chan->id, int_setup);
+> +		tmp &= ~(HDMA_V0_STOP_INT_MASK | HDMA_V0_ABORT_INT_MASK);
+>
+> -Serge(y)
+
+Sure. Will do
+
+Thanks,
+Mrinmay
+
+>> +		/* Interrupt enable - STOP, ABORT */
+>> +		tmp |= HDMA_V0_LOCAL_STOP_INT_EN | HDMA_V0_LOCAL_ABORT_INT_EN;
+>>   		if (!(dw->chip->flags & DW_EDMA_CHIP_LOCAL))
+>>   			tmp |= HDMA_V0_REMOTE_STOP_INT_EN | HDMA_V0_REMOTE_ABORT_INT_EN;
+>>   		SET_CH_32(dw, chan->dir, chan->id, int_setup, tmp);
+>> -- 
+>> 2.7.4
+>>
 
