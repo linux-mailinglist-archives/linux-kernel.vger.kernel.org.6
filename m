@@ -1,127 +1,218 @@
-Return-Path: <linux-kernel+bounces-275410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7F1A94853C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:02:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F4E9485B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D364D1C21E02
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:02:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE052823CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D8016EB5B;
-	Mon,  5 Aug 2024 22:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4942516F84A;
+	Mon,  5 Aug 2024 22:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U2LQTN8q"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ni.com header.i=@ni.com header.b="XUdSkxi0"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11010002.outbound.protection.outlook.com [52.101.51.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE60278C8D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 22:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722895318; cv=none; b=ev0QxHWKQDAUWZSmO0m2PT88Ns5rpnzR+eXYAmmryYTFv4SXHsE4LwQYHqK4yu1RQdGKb6LtemPMag8x33BUpxC+x41bz24NbVLdfOXYzbQBJiWsTzQ/R8mD8C+wpJyq3E60iLittrtlvTzHbKEp63LapDTXKe9PB3YwrgToaV0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722895318; c=relaxed/simple;
-	bh=0QTVvuFhkFu+eTehBCww96huZmKE7doBtfDRlhV9LAg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mDNdQolRYYAadV0GkHiANwe9dzpRkKjWMrdIKIiUevo9imKG3z50q08vZVP9vqeTwaxcP/tjEnDQ9FFszBZHfNPrvu4dYahLTeh880TmZFxTmYMXNAsqltFkofZFcxiHNrggzVXfRAUu4RDNa13oLMRvuchmkLSgtFaRmLvyY+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U2LQTN8q; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-690d5456d8aso2164357b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 15:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722895316; x=1723500116; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+tTcruptCIoj12cTqEoTGilRxDa1qYZ3l/I23+t2P0c=;
-        b=U2LQTN8qnVm1jR/Mo0N2lZnf+e7Dl9LbHDHxX1WYIzrR79FND2cVNuFa4iuW27BEj8
-         D7nZykz55dhfqf9Hv0DobuP/ViHu1JMMQNGGpZLiPQzblgGEQuetr9/mfUGIa1xWkl+E
-         QiV0QA5GlYPqy2uy6Cm571v6Gonkuh2oacuzhLH91f8S0A4QH8t7o7jzsc1gd34ML57N
-         6doMjs0E8E8Ya5O+odlvtkZh8S0zf5xXKUocO/rvDeiU/wt4jNawgXAZx/kfcVIj1LmL
-         z19VYY7IXuw+OljCpOxmbq3tWn3ZlJT0mvHcAQnjS0oNNFZ82GC/7hnkkQgddjddDWXP
-         HUvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722895316; x=1723500116;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+tTcruptCIoj12cTqEoTGilRxDa1qYZ3l/I23+t2P0c=;
-        b=crJfK3B6/khgz2/CyPU9lEkM7HS9ZN+Aqs6lIa5GuH4zSc9Obyr7gkiV8ZahHZ2Wai
-         qzj0m49e57K9m+UqiMDeAl1SpLV48JWFLBmIH0Yyy5oUi0k1fA2hHGxJw/gutJFjApGn
-         fb/DanH0S6fCLzYqSTPx6pR3BEht3n/opPIqDFuXpccVP7B4ZahSDiqkbNAvQ5B2wBQe
-         nq+JcorVmzARVdY8T2Nvut0Lki7mrmKoxY8EBd5CtOvkd5KvPrt55sg8DOnyOL9citzG
-         UwgCifwOx3FPIBiwrsHQfg7Ozvkl+P6iiNawsMJezuSFVYgRjEjMs95FO5RYavIGFlE5
-         y9jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdElBU+WIRQB+TCL6S78bo3fSKKdoV8arhrrvf/bYRArqLHg13W1r7y4dUhxyFrxAm/LzyHfq55zQ/1dW0bocrLovKv2Ojb7rMK9Xb
-X-Gm-Message-State: AOJu0YyCRt8Ywm5IlOE0jpETFbW56hP9n8iTOlraa1KwGG9o5nIqM8xB
-	bpRz0g5q6gFfPKHNFF3TgVdEtknGLxSC2B1Ja9k0f0mL/ArKFQLeZWD4Vn6uB+F4LFExnSW380s
-	U0g==
-X-Google-Smtp-Source: AGHT+IHaHOrIgxF/rksi2iQa0AIH+qkRju5aGm/FXjHUKWkBgUU5NmreeeOnPmN3fbb7f0PZ+ibNm2Guh4Q=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:d8d:b0:648:db87:13d8 with SMTP id
- 00721157ae682-6895f60e7c9mr5514987b3.2.1722895315787; Mon, 05 Aug 2024
- 15:01:55 -0700 (PDT)
-Date: Mon, 5 Aug 2024 15:01:54 -0700
-In-Reply-To: <ZrCQSXmbBK5XZqd8@linux.bj.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8506416DC0B;
+	Mon,  5 Aug 2024 22:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.51.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722898615; cv=fail; b=kYYrt7j/mDJXePYA5NKUP78PhWSJIyPMF2tJ2Bi1RU2fyOUAQtc6Hyo1EUfO2AejqRQyNtY79p0tMgtxtkPWrZVPfVJSX2Qu6eF+JoaxyksfcJoDXQdrML91CP/LM4VwL5hZumGwA4F14ksij2OrABPRtxflgStMvsjMA2W9X5U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722898615; c=relaxed/simple;
+	bh=Cu/4ywuK3faai2DokcViqbGZK4TzI4ossmEGSIKuaf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=t4uPVcmbembry3WhY1WTLGyrKi7uZj45CTlhoZFUUKaVnxYekd8DUdL9ee/PnPYF/FTZNjC7abwLno5xgX2QUtCQoOYTPtF3waSsCRyf4SnfuntV2FXWrZGFXq0nwZd61MgCbN2veEMDRzwcKxspyHDNNYK7BTRE9SO+3+CPCwM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (1024-bit key) header.d=ni.com header.i=@ni.com header.b=XUdSkxi0; arc=fail smtp.client-ip=52.101.51.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V1erAVaoT/iZS5FFfSseyyajCL4wRzDdhtNlPXosXpkyhphuyIsc3XI9ct375vbs8zdUPX3dC6s+G8+i920f2u13v89MpOBQYLE9XcNtI0mkrqkz1cUftlCD+iETyhpYx0CQBJ7uubTj5FjxpsOSMZMzqla0QIgcA5zydA0PrVXoct+q+T0ye294KylRLyK/TXp4MD8F6hdQZNjBMwEeT6RNyIc0OLucB1CfIBOSXd+iKxVTNfVeZOhI3Dn6eUMo6EDUT7/X2yihfjpG8jxLEqZYt7gTNS6LL1zKugadcrcZAQKM+x+Wb6KjkOlpC2FfvG+1NMi5Bq30znFrOrK/VA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AW/asmsxYEl3Dzy31/Le81eSRYkxFQx9pElrkh4TmyA=;
+ b=ClxRGqU6bj7bMOZjBznRRgB8dKJthx8BWTLxXPKZmDHBh7j55r3pLsFKLhtJ+oBThC4NBwmTxoc2oumJLWJlLW0ZfDibgGTJKq96WXgUsYX6y/abjRcrmVjSfYB4uyN+M5LQ8RIoIwY0F76onbgLdg73IPkS5xrbkP50a61Ykg4zY0w+1eyqEpiO0ZR0ujlJX5DHMVjJzoUUH2/2esej2S9maV4RSAkcHskNVss/PHe86OCi0LWqRXJtKek9eXUaXAyiAlE+/+1LmTAKr/Dtkwq2H8M+r4yakAOkoSN511XGPUkJ83J/BW+DbPY754GVCb/ucrwP0laBRQqBfrS+wQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ni.com; dmarc=pass action=none header.from=ni.com; dkim=pass
+ header.d=ni.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AW/asmsxYEl3Dzy31/Le81eSRYkxFQx9pElrkh4TmyA=;
+ b=XUdSkxi0Aq6FNAc9WIMinMlZ8hsFajExVkwLkpUNCgtEk2HUeJ3LbwD+9UVNEdwVU0s4LK8ZXgvmQc9cUxvFmDqNBn9QXwKY4l9v7V67uQM2Y1a4USozjO5txTNjFWO667VqeXYHpOiUfk4vWksfCE7vtLpo36xtFiSa3qcbenY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ni.com;
+Received: from SJ0PR04MB7536.namprd04.prod.outlook.com (2603:10b6:a03:32b::20)
+ by BL3PR04MB8153.namprd04.prod.outlook.com (2603:10b6:208:348::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Mon, 5 Aug
+ 2024 22:56:50 +0000
+Received: from SJ0PR04MB7536.namprd04.prod.outlook.com
+ ([fe80::50f6:5b8b:46a9:4228]) by SJ0PR04MB7536.namprd04.prod.outlook.com
+ ([fe80::50f6:5b8b:46a9:4228%7]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
+ 22:56:49 +0000
+User-agent: mu4e 1.8.14; emacs 29.3
+From: Gratian Crisan <gratian.crisan@ni.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Hans de Goede
+ <hdegoede@redhat.com>, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: mmc0: Got data interrupt 0x04000000 even though no data operation
+ was in progress.
+Date: Mon, 05 Aug 2024 16:33:57 -0500
+Message-ID: <87jzgur32p.fsf@ni.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SN7PR04CA0214.namprd04.prod.outlook.com
+ (2603:10b6:806:127::9) To SJ0PR04MB7536.namprd04.prod.outlook.com
+ (2603:10b6:a03:32b::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240802205003.353672-1-seanjc@google.com> <20240802205003.353672-3-seanjc@google.com>
- <ZrCQSXmbBK5XZqd8@linux.bj.intel.com>
-Message-ID: <ZrFL0g97IGDTDdWS@google.com>
-Subject: Re: [PATCH 2/6] KVM: Assert slots_lock is held in __kvm_set_memory_region()
-From: Sean Christopherson <seanjc@google.com>
-To: Tao Su <tao1.su@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR04MB7536:EE_|BL3PR04MB8153:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52ccab8c-8f2f-4175-454a-08dcb5a1e3b7
+x-ni-monitor: EOP Exclude NI Domains ETR True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?70y5d4Rm4w9U2BYHNFGYKzAufmP6QaOVZwHzGbyScDIrBTla5o4585BJXtjj?=
+ =?us-ascii?Q?gSHfEpASkRIa5ECYr2egQedBrzUyjw0+EqbmiIn43np3eENF9iBhPpXTY3D9?=
+ =?us-ascii?Q?FC9sZckXEpyOQ3jcidaoo1zrzVDMIClh3bqKuInKeWloxHCbPNlWqgGLjOVk?=
+ =?us-ascii?Q?Z/qbMW9+YSX37Bl13zD4n/rTMxgZuU2zZhjRZPvKMtbhC5OKqJHuDKJsVRVw?=
+ =?us-ascii?Q?3amRHjWRuB6HLwXjHkCXUI06WGa93/Rio2JxfKYTC5HaGMKhv+D9Ph+wEV1n?=
+ =?us-ascii?Q?q5V5jewvZmQjgrmDxfdsvlzZ97nuMTVYjuc44e57uwaRS5t8SXUHCsC8bZFr?=
+ =?us-ascii?Q?RjtHGBv/G3DjKtzehUIjjHLqrs9AoGfkIBJIc1YJApqAWTQpnbTDo7wjHrxN?=
+ =?us-ascii?Q?Fr+Eo9QqEO9+wYT+2FuaE3+BBemerYuT8LRBczcUAGpUIgn0ehvIKdkMzkDG?=
+ =?us-ascii?Q?sDtzXsBf+8Ds+ag4RpiaF5UYGQR1JDxRvSdfdCNFAdX1zPHUFSVhP9FUifIq?=
+ =?us-ascii?Q?0XhlbjhhdNBSgTa2b1Uz10GSYfHE6LTn7d5kxYqeBEwhXQ46UW/OrGYbySEW?=
+ =?us-ascii?Q?IUQRtF6FTUjx+VPTuPykavOtTWuG2V676tCTkxiSWpQ8fjwR9XfVFon3UGGn?=
+ =?us-ascii?Q?LstlmVIRcT834mIO0SJUZXHxvwx+wHr8yB0lUrKwDU0EQ70Bt7azxDWfN/nl?=
+ =?us-ascii?Q?8M5T1GoUOysUJqAFAMi/RtjzwD6P0RK/jkv6L6ItSMQ2osUX7fzvbMYqtrHv?=
+ =?us-ascii?Q?/N0P19LJVDuA1XBJGLs+MrRgLYeVmkanYwatgl9JHIhoM0dMclzMZoVmmnhY?=
+ =?us-ascii?Q?5bcHDlIkmOUVepxunMSwTQJp7BY7FPFA0tqTdsLLoU9TtVSUDVnM8sryf5Z3?=
+ =?us-ascii?Q?I5s00bISjHSipYH+gwYMRxyU5Od5vWdIdebkZq4lp3M1GMEfpkyn5LlkQQjv?=
+ =?us-ascii?Q?FZbHWNpntrdOxLxxn1PlTDjt+JqnFRjwVkf4p3eaQRGUGnqCA9NGd4Ch3XkP?=
+ =?us-ascii?Q?85G86p9SCMVgunFBqTDEgW6X7sKQMPBc6i8HQWKApidAScbnhkNbHsVutBV8?=
+ =?us-ascii?Q?foxXnMVvIBpY8Rwx91TG7nwmf8h2E7vnG1YqI8MpuhxmoXQHfEuYFzebeaV5?=
+ =?us-ascii?Q?p1vG4w2YvJb92JhybBrk4FDIeDelFHQ8Ri1usasVArd1HfgbeAxXiQVA7j/z?=
+ =?us-ascii?Q?s/hvoMQKRxKahsTokmuHWQ2YX6RF6/V4eUNy5vu16+OQ6Daug0/r9pimORGN?=
+ =?us-ascii?Q?kGq/1qpyYXLbj+59zIR+bbRnxysEghg8ysyRDlki2904rI+MBOHiu8uV0mvH?=
+ =?us-ascii?Q?3b0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR04MB7536.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?EfyyhhuPzEQwTEKeFTD/YWqYCgHVX65iDVJBNdOoPTHGISVvfTyFVHtr/30+?=
+ =?us-ascii?Q?aXl6BYxFBQUOD2cRPL4zCZYR8d+zcxQMPovxNUXm1Q+nZUBHuIuxgGrRViTt?=
+ =?us-ascii?Q?3udYe65LCJ7aubtHEvopBRf0rz2xs9Z3gVskkKr4F1Kw+7a2cbA99XdPHd6j?=
+ =?us-ascii?Q?5UYsxu4v+oB4R39dY6JakYdu5THmzuHctsIjIDKvoGDPk4Q68fXrYXLvf0hs?=
+ =?us-ascii?Q?y70BkEPFMUGlaWKdgcjC318qcMiH2xoE9hbhKZkDT21TvdfuDmi/Yf5qCQBb?=
+ =?us-ascii?Q?iJHQd63ro3kCmJ7pJarwQ4d95zw2syeAGZu/UQBUZ0CUHJ8LvWRxgsDQnMjd?=
+ =?us-ascii?Q?hvyK6rJNq39rphKii6ADB0BbFOluhFERtsgpNoaaa/J+HQZAnS2mzfBZ2+Z6?=
+ =?us-ascii?Q?sz/ZKnwZki1wbOfL058gnH8CsNiRjnwa56POG4cs0UDzNk+elOSX8wkxR9Ac?=
+ =?us-ascii?Q?+g0sctBVKuqA2saAKevYQCS/4vMCT3YbpziurGgcKwdkjbDlEEQurBbbDQlK?=
+ =?us-ascii?Q?4CKLPuVOu6CySD/H981rIbrmEbvUv9B0eBiq79pZH+T27x+4m2kdJgW+/FCz?=
+ =?us-ascii?Q?Weta0DgHCnndK9Iii44hpfpcZGSF39HQ3zRUSCiFkxufNVun5OgUbmf6Xfgg?=
+ =?us-ascii?Q?RVN0FZyu8n1K5RKx/q4J7mrrjTO3lK0sevOhj8B4POBQXGt+AmcM4WIqZJzM?=
+ =?us-ascii?Q?Lr1PxMA0SOxobI+ti6ubuU6M/r9KmEPMbkN8A12sG1k8HQR0ivT5m6+1lt2i?=
+ =?us-ascii?Q?Ewz9d/s5/C3MpUIQzTTm9zKncl6za0JaKkc5yVnQ1g5d3NkFcGPCyQiCaJ4b?=
+ =?us-ascii?Q?aWWYuHZep+l6VHZWWQdRVEGPRHeJlxn2gDiPV3ZOK6bdIg/DxZjf/6Olyug1?=
+ =?us-ascii?Q?98kcmp+Lz+YWsXbaQ8cPe3aDKqdZkwDM5NCFtruvnbLwZE/IXi4pK4vvC9cA?=
+ =?us-ascii?Q?ncYSIguR6/AB8g1spuSc58ipZJuoRU50ZGL816hdMDWySje+IT5FyOST+EL4?=
+ =?us-ascii?Q?ohpc8eihrgywCzTRhPEvVx1EBDy2ynFKllumGFuf0sJiqn0ZRCXdUnYR2fO1?=
+ =?us-ascii?Q?ww3IC45XKeSAps30wUVSAx67MWiGaQk//IC8JZSi6REx1X0+htA1mYc3/fCA?=
+ =?us-ascii?Q?8Ds5TN1AQA+t6D3mRjhILSo9ghsrl9NgYBy6ocvg4qxoN4emjRKrq6ithLY1?=
+ =?us-ascii?Q?1iyzqpiqpvWKmZuIROwpKEhQR1kZSN1N7AzJKh/TCr/BSWAL5rQjMu7gHzlT?=
+ =?us-ascii?Q?a8rI6Q1MJ3bNr2AybKeA5qcOgOGN4NfqZxvoiKs+K5ZzN95mEmClFcj7d+BR?=
+ =?us-ascii?Q?I7ritzF8neLOcRfaKg/gB7m0NAKnbRt3fp9vwZ5osboHNYM/O0wuIeGXCvFq?=
+ =?us-ascii?Q?h29O4ast9CQ2rcIgY4XoS2W6z/Q2ZQhafmGb3ErXu8SOmMwMq//fpr2IMu6C?=
+ =?us-ascii?Q?0IsZG+qGD1E1e1FC3hNGjYtOAo5kWMXdHbrZiTGwrFVsZ0VFudvvyYQsDWyV?=
+ =?us-ascii?Q?hciByluG4xl2Q4DhQaXLoBL7OXt2oZhzq70fzex3xm+i37UsNNhOXc3sw/mg?=
+ =?us-ascii?Q?dx615NdC53shLjYInJN8lUgvrdJkx8KTPNNqQkfEmh0E8t2/TtLpIYBFy/lE?=
+ =?us-ascii?Q?x+xzG496uuQmo42rbTzTq2AaxDAvHHQdRn+Df6sDKRHx9Pk0nWMQTOdUL8D7?=
+ =?us-ascii?Q?cZJM1g=3D=3D?=
+X-OriginatorOrg: ni.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52ccab8c-8f2f-4175-454a-08dcb5a1e3b7
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR04MB7536.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 22:56:49.5845
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 87ba1f9a-44cd-43a6-b008-6fdb45a5204e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: u6HcFqkI7eBT4rL59vTxPa5zU/Zgx05lQpQQUvDpaoGtRZ7tYzKLXwVA8s2uTkutSpIE7bOyuLFzjPcJbHaJJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR04MB8153
 
-On Mon, Aug 05, 2024, Tao Su wrote:
-> On Fri, Aug 02, 2024 at 01:49:59PM -0700, Sean Christopherson wrote:
-> > Add a proper lockdep assertion in __kvm_set_memory_region() instead of
-> > relying on a function comment.  Opportunistically delete the entire
-> > function comment as the API doesn't allocate memory or select a gfn,
-> > and the "mostly for framebuffers" comment hasn't been true for a very long
-> > time.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  virt/kvm/kvm_main.c | 10 ++--------
-> >  1 file changed, 2 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index 0557d663b69b..f202bdbfca9e 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -1973,14 +1973,6 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
-> >  	return false;
-> >  }
-> >  
-> > -/*
-> > - * Allocate some memory and give it an address in the guest physical address
-> > - * space.
-> > - *
-> > - * Discontiguous memory is allowed, mostly for framebuffers.
-> > - *
-> > - * Must be called holding kvm->slots_lock for write.
-> > - */
-> >  int __kvm_set_memory_region(struct kvm *kvm,
-> >  			    const struct kvm_userspace_memory_region2 *mem)
-> >  {
-> > @@ -1992,6 +1984,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> >  	int as_id, id;
-> >  	int r;
-> >  
-> > +	lockdep_assert_held(&kvm->slots_lock);
-> 
-> How about adding this lockdep assertion in __x86_set_memory_region() to replace
-> this comment "/* Called with kvm->slots_lock held.  */" as well?
+Hi all,
 
-Ya, will do, I didn't see that comment.
+We are getting the following splat on latest 6.11.0-rc2-00002-gc813111d19e6 (and
+older) kernel(s):
 
-Thanks!
+[    4.792991] mmc0: new ultra high speed DDR50 SDHC card at address 0001
+[    4.793550]   with environment:
+[    4.793786]     HOME=/
+[    4.793985]     TERM=linux
+[    4.794201]     BOOT_IMAGE=/runmode/bzImage
+[    4.794485]     sys_reset=false
+[    4.795791] mmcblk0: mmc0:0001 0016G 15.2 GiB
+[    5.333153] mmc0: Got data interrupt 0x04000000 even though no data operation was in progress.
+[    5.333676] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[    5.334069] mmc0: sdhci: Sys addr:  0x12454200 | Version:  0x0000b502
+[    5.334464] mmc0: sdhci: Blk size:  0x00007040 | Blk cnt:  0x00000001
+[    5.334860] mmc0: sdhci: Argument:  0x00010000 | Trn mode: 0x00000010
+[    5.335253] mmc0: sdhci: Present:   0x01ff0000 | Host ctl: 0x00000016
+[    5.335648] mmc0: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+[    5.336040] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00000107
+[    5.336432] mmc0: sdhci: Timeout:   0x0000000a | Int stat: 0x00000000
+[    5.336824] mmc0: sdhci: Int enab:  0x03ff008b | Sig enab: 0x03ff008b
+[    5.337214] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+[    5.337605] mmc0: sdhci: Caps:      0x076864b2 | Caps_1:   0x00000004
+[    5.337997] mmc0: sdhci: Cmd:       0x00000d1a | Max curr: 0x00000000
+[    5.338389] mmc0: sdhci: Resp[0]:   0x00400900 | Resp[1]:  0x00000000
+[    5.338780] mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+[    5.339170] mmc0: sdhci: Host ctl2: 0x0000000c
+[    5.339468] mmc0: sdhci: ADMA Err:  0x00000003 | ADMA Ptr: 0x12454200
+[    5.339859] mmc0: sdhci: ============================================
+[    5.340293] I/O error, dev mmcblk0, sector 0 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
+[    5.344663] Buffer I/O error on dev mmcblk0, logical block 0, async page read
+[    5.346127]  mmcblk0: p1 p2
+
+This is on an Intel Bay Trail based system: NI cRIO-9053 using an Atom E3805.
+
+The issue appears related to the one fixed by commit b3855668d98c ("mmc: sdhci:
+Add support for "Tuning Error" interrupts") and discussed here[1].
+
+After adding some debug prints it appears that in our case we get a tuning error
+interrupt during a MMC_SEND_STATUS (13) sdhci cmd which has no 'host->data'
+associated with it (leading to the splat):
+
+[    4.893298] mmc0: new ultra high speed DDR50 SDHC card at address 0001
+[    4.896489] mmcblk0: mmc0:0001 0016G 15.2 GiB
+[    4.906048] mmc0: tuning err irq, sdhci cmd: 18, host->cmd: 0000000003b39249, host->data: 00000000c0b4ad8a
+[    4.963027] mmc0: tuning err irq, sdhci cmd: 18, host->cmd: 0000000003b39249, host->data: 00000000c0b4ad8a
+[    5.384960] mmc0: tuning err irq, sdhci cmd: 17, host->cmd: 0000000003b39249, host->data: 00000000c0b4ad8a
+[    5.442877] mmc0: tuning err irq, sdhci cmd: 13, host->cmd: 00000000e1669bad, host->data: 0000000000000000
+[    5.443463] mmc0: Got data interrupt 0x04000000 even though no data operation was in progress.
+
+I am new to this area of the kernel so I would appreciate any suggestions on the
+direction to take here:
+
+  - Should the tuning error interrupts be handled in common code in sdhci_irq()
+    (or at least before the !host->data check in sdhci_data_irq())?
+
+  - Is this more of an issue with tuning not happening when is expected or
+    taking too long, since at first we do get the error during data transfer
+    commands? Suggestions on what I should debug/trace next appreciated.
+
+Thanks,
+    Gratian
+
+[1] https://lore.kernel.org/r/20240410191639.526324-3-hdegoede@redhat.com
 
