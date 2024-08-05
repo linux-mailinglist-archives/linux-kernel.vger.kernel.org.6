@@ -1,382 +1,182 @@
-Return-Path: <linux-kernel+bounces-274850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AD0947D8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:03:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0FDC947D8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC7C11C221BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:03:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5896C284216
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62730166F11;
-	Mon,  5 Aug 2024 15:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0312E13C9C4;
+	Mon,  5 Aug 2024 15:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEwcof3B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NL31Ux09"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072AF165F1B;
-	Mon,  5 Aug 2024 15:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57FB13A41F
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722870023; cv=none; b=OOPXtWL01olO8SXFBdPWvfJvf0sC4H2RN1e/jY9JM9t/yq4B0maGRikpfuzTZD1Dtcjs3GpSmDOAug4n3U2zyKUvYeWGB8FYcm4SPMJiZ3G+LfXLLnFt4RA+WfdgA6sNZExyfuYo1WkIfp0CKAuUpK2gUZMGKJn2HfefLzZjQcM=
+	t=1722870130; cv=none; b=tgKRpJQKZ6pXBjjfXFSMPgsdMP7oasgSApiDAYreZXrkQiskQiIWfVmTxBxMeoEAfFl2kl3maeJrr0/196Eu4i8sTO6c/cHwGTuqB+aqkoZ8xwMWtbnvncgbvnb+OybvqgMEdGgab1xHDpATAU0QEMKgjzVgWrD96B7kjLp5oCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722870023; c=relaxed/simple;
-	bh=7DHDGqSkQLgNddqVzs6AUi5YEfjN+4d6BibOfTi3Z14=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=H0K6mISix3hLNkm6XneLt+jH5gdMEjW24hlRumW31wC/m26RTxHuVK24DIj9DTR17y7HWNRK/kaBCYMzxlliTvJat2ZTitbbvfuvSClH5LvvhIoxVcVCkpSduFSfgFOnbU2HCE4mjtG2QkK9oADoakw3X8UV9kfEq4gu50b2wfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEwcof3B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C99C32782;
-	Mon,  5 Aug 2024 15:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722870022;
-	bh=7DHDGqSkQLgNddqVzs6AUi5YEfjN+4d6BibOfTi3Z14=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=LEwcof3BOOiK4lCOzsHJpUt6E5U7Y0fjve0oiSSXad3PrEr/Ze4a6BDx8ahQRbjb2
-	 kf4qL72jjhjURvOvJ9w0LLJ+aoWxwRl7i+wfqZudmiRk1B7lwkkKgQt4oi7QCw86yp
-	 iIaFRx8ZKkx22BnVuK1RGTiYhc4C+ast1A0R7YObrARoWJo2TFhH3mItU4gYrVWN/B
-	 ToPP20recwJV+j5HeKETNNsXS0lY5Ibj4/OgydBPNAwboPggEoY+BAWyA3dWsiQf3L
-	 hBHwc3Cks8nw8ux1vD7MUhac47g7zbY6WLRa4W7IarRkB6VQHnD96hxI0OIqoD58CE
-	 +z7ThG1KHe3hQ==
-Date: Mon, 05 Aug 2024 09:00:21 -0600
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1722870130; c=relaxed/simple;
+	bh=z8JvG8nuF87XFVVLgizgAv8MMiNvKb/zJ3nOwTrgzWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uQVSmKKthcAj1WUmZRhQet5qcEIhdK2ZMCSC5sa8zPkre2EpttH/WRBazOiXgSIO6HcY5qv7liC/R2G1LaOAGelRdeLBTQ45aRwlGEems1W/sStyckJdABk/KZCHB1BOfsk478FGipCG/ndn4wLJ9NkKRAct2QbpAHYe9jrpqLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NL31Ux09; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722870127;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gVftkobXaLyHU+HWkds+Pq/FWF3DEM7o9NiXvqfPDh0=;
+	b=NL31Ux097aB66LIFC32L4ONq5CuXaqzbIhkJbYh5CITvtjkjzUH94BI33s4DFa2Ku+vgPp
+	DkcVjY49N6BcvcEDoiRb/as8c5275JhYtJVoo2GlMV/QLYxcFDW2cj+wP2KKrtUKEzfoIq
+	en5KHnyKaaTGPP+Qhpv6MEigL4JKL2U=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-pALt7FbMPmGxBY8ANlxfpA-1; Mon, 05 Aug 2024 11:02:06 -0400
+X-MC-Unique: pALt7FbMPmGxBY8ANlxfpA-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a7abee2b4b0so937464366b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:02:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722870125; x=1723474925;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gVftkobXaLyHU+HWkds+Pq/FWF3DEM7o9NiXvqfPDh0=;
+        b=lcKZmQgr7balZx2q+7eTy5+PV/e1IA3Irec/tMxfofzM1H3WE62a5vhUkHOWX1p9l5
+         wIYfjYTilNUPhkLE++UoecYC5EEFtWR9Ic3a7RsZumstMuCGIiqnMvDN6tlIO63r4ZD3
+         nGFsV9slugl4vp2HsRQQEdsgPxMSkU2MEUF+BeJ1r3joAYjIHeG5GGJTxjhq1z6Kmdsk
+         bXUopNGSjzMP9+H/eY9DljSjMxnQ3o//RQP7mGF/GHZEMcviKa+43Fpe4ky+c7hTTwma
+         Wc4bE6svriMBYiFz02PWGCnxQKpEr4IPOJuRTh/jePYF4sr1SAk3xnaifb1hdUjjD5+k
+         pJWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVv30UYqUK8z7xPR4bK7SnKeZ0APMS41CL0TAOEitdG4P70kYdm71xRC0kXLOW5GQrB5/J6UVxCYOGsV3WtzVu0JcW23Oaz83Isq7d/
+X-Gm-Message-State: AOJu0YzamewZeKymhWDltHX3+MEboU6tJkTBqMKixOgymxkRqbfsGBK+
+	qNbOthGwS8zf719d1Xuff1Y4/Vh5IzyikSyhsN4l1hg4GGFawSa+NVu0M+mBLG88McztOYX0lcf
+	R45x6aOwngTJ/yo6DPG3v1yduIJS6vLB6tp5lbKagKaXqpYhXj0qEuNh9aMNQBn9/dPtISw==
+X-Received: by 2002:a17:907:970e:b0:a7d:2a62:40e9 with SMTP id a640c23a62f3a-a7dc509872dmr757182066b.50.1722870124831;
+        Mon, 05 Aug 2024 08:02:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHS5y0NwSXpQwE40oBuiILUXUDTsdwxT0wijEr+2csxmPmEcXPNs1ij3+VIEc7q5FrIYviGSw==
+X-Received: by 2002:a17:907:970e:b0:a7d:2a62:40e9 with SMTP id a640c23a62f3a-a7dc509872dmr757179066b.50.1722870124364;
+        Mon, 05 Aug 2024 08:02:04 -0700 (PDT)
+Received: from [192.168.211.203] ([109.38.139.91])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d437a5sm459079366b.101.2024.08.05.08.02.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 08:02:04 -0700 (PDT)
+Message-ID: <af477c9a-3241-4dbc-9b40-7986149e81f7@redhat.com>
+Date: Mon, 5 Aug 2024 17:02:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Marcus Glocker <marcus@nazgul.ch>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Johan Hovold <johan@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
-In-Reply-To: <o2ysrhejn2xlba6mh4wueh7mgb4l54zvh4tcep3g5wizpaidk6@33mqoj3246zv>
-References: <o2ysrhejn2xlba6mh4wueh7mgb4l54zvh4tcep3g5wizpaidk6@33mqoj3246zv>
-Message-Id: <172286967393.2711086.2608235829254170744.robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: qcom: Add X1E80100 Samsung Galaxy Book4
- Edge
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: int3472: make common part a separate module
+To: Arnd Bergmann <arnd@kernel.org>, Daniel Scally <djrscally@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240529095009.1895618-1-arnd@kernel.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240529095009.1895618-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
-On Sun, 04 Aug 2024 10:10:08 +0200, Marcus Glocker wrote:
-> Hi,
+On 5/29/24 11:49 AM, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> We recently added initial support in OpenBSD for the Samsung Galaxy
-> Book4 Edge by below DTS diff.
+> Linking an object file into multiple modules is not supported
+> and causes a W=1 warning:
 > 
-> - x1e80100-samsung-galaxy-book4-edge.dts:
->   Is a copy of x1e80100-crd.dts, and then modified to our needs.
+> scripts/Makefile.build:236: drivers/platform/x86/intel/int3472/Makefile: common.o is added to multiple modules: intel_skl_int3472_discrete intel_skl_int3472_tps68470
 > 
-> - x1e80100.dtsi:
->   Includes the UFSHCI peaces, which was basically pulled from
->   sc7180.dtsi.
+> Split out the common part here into a separate module to make it
+> more reliable.
 > 
-> Main stuff working:
+> Fixes: a2f9fbc247ee ("platform/x86: int3472: Split into 2 drivers")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+I've fixed the following checkpatch warning while applying this:
+
+WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/platform/x86/intel/int3472/Makefile | 9 ++++++---
+>  drivers/platform/x86/intel/int3472/common.c | 7 +++++++
+>  2 files changed, 13 insertions(+), 3 deletions(-)
 > 
-> - UFSHCI.
-> - Keyboard.
-> - Touch-pad.
-> - USB (as far tested).
-> 
-> Main stuff not working yet:
-> 
-> - Touch-screen:  Pin 51, which mostly works on the other X1E80100
->   models, is creating an interrupt storm on the Samsung Galaxy Book4
->   Edge.  Probing the other pins didn't showed success yet.  Not sure at
->   this point what the problem is.
-> 
-> Regards,
-> Marcus
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/x1e80100-samsung-galaxy-book4-edge.dtb' for o2ysrhejn2xlba6mh4wueh7mgb4l54zvh4tcep3g5wizpaidk6@33mqoj3246zv:
-
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: /: compatible: 'oneOf' conditional failed, one must be fixed:
-	['samsung,galaxy-book4-edge', 'qcom,x1e80100'] is too short
-	'samsung,galaxy-book4-edge' is not one of ['qcom,apq8016-sbc', 'schneider,apq8016-hmibsc']
-	'samsung,galaxy-book4-edge' is not one of ['asus,sparrow', 'huawei,sturgeon', 'lg,lenok', 'samsung,matisse-wifi', 'samsung,milletwifi']
-	'samsung,galaxy-book4-edge' is not one of ['asus,nexus7-flo', 'lg,nexus4-mako', 'sony,xperia-yuga', 'qcom,apq8064-cm-qs600', 'qcom,apq8064-ifc6410']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,apq8074-dragonboard']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,apq8060-dragonboard', 'qcom,msm8660-surf']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,apq8084-mtp', 'qcom,apq8084-sbc']
-	'samsung,galaxy-book4-edge' is not one of ['microsoft,dempsey', 'microsoft,makepeace', 'microsoft,moneypenny', 'motorola,falcon', 'samsung,ms013g', 'samsung,s3ve3g']
-	'samsung,galaxy-book4-edge' is not one of ['htc,memul', 'microsoft,superman-lte', 'microsoft,tesla', 'motorola,peregrine', 'samsung,matisselte']
-	'samsung,galaxy-book4-edge' is not one of ['huawei,kiwi', 'longcheer,l9100', 'samsung,a7', 'sony,kanuti-tulip', 'square,apq8039-t2']
-	'samsung,galaxy-book4-edge' is not one of ['sony,kugo-row', 'sony,suzu-row']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,msm8960-cdp', 'samsung,expressatt']
-	'samsung,galaxy-book4-edge' is not one of ['lge,hammerhead', 'samsung,hlte', 'sony,xperia-amami', 'sony,xperia-honami']
-	'samsung,galaxy-book4-edge' is not one of ['fairphone,fp2', 'htc,m8', 'oneplus,bacon', 'samsung,klte', 'sony,xperia-aries', 'sony,xperia-castor', 'sony,xperia-leo']
-	'samsung,galaxy-book4-edge' is not one of ['samsung,kltechn']
-	'samsung,galaxy-book4-edge' is not one of ['acer,a1-724', 'alcatel,idol347', 'asus,z00l', 'gplus,fl8005a', 'huawei,g7', 'lg,c50', 'lg,m216', 'longcheer,l8910', 'longcheer,l8150', 'motorola,harpia', 'motorola,osprey', 'motorola,surnia', 'qcom,msm8916-mtp', 'samsung,a3u-eur', 'samsung,a5u-eur', 'samsung,e5', 'samsung,e7', 'samsung,fortuna3g', 'samsung,gprimeltecan', 'samsung,grandmax', 'samsung,grandprimelte', 'samsung,gt510', 'samsung,gt58', 'samsung,j5', 'samsung,j5x', 'samsung,rossa', 'samsung,serranove', 'thwc,uf896', 'thwc,ufi001c', 'wingtech,wt88047', 'yiming,uz801-v3']
-	'samsung,galaxy-book4-edge' is not one of ['motorola,potter', 'xiaomi,daisy', 'xiaomi,mido', 'xiaomi,tissot', 'xiaomi,vince']
-	'samsung,galaxy-book4-edge' is not one of ['lg,bullhead', 'microsoft,talkman', 'xiaomi,libra']
-	'samsung,galaxy-book4-edge' is not one of ['sony,karin_windy']
-	'samsung,galaxy-book4-edge' is not one of ['huawei,angler', 'microsoft,cityman', 'sony,ivy-row', 'sony,karin-row', 'sony,satsuki-row', 'sony,sumire-row', 'sony,suzuran-row']
-	'samsung,galaxy-book4-edge' is not one of ['arrow,apq8096-db820c', 'inforce,ifc6640']
-	'samsung,galaxy-book4-edge' is not one of ['oneplus,oneplus3', 'oneplus,oneplus3t', 'qcom,msm8996-mtp', 'sony,dora-row', 'sony,kagura-row', 'sony,keyaki-row', 'xiaomi,gemini']
-	'samsung,galaxy-book4-edge' is not one of ['xiaomi,natrium', 'xiaomi,scorpio']
-	'samsung,galaxy-book4-edge' is not one of ['asus,novago-tp370ql', 'fxtec,pro1', 'hp,envy-x2', 'lenovo,miix-630', 'oneplus,cheeseburger', 'oneplus,dumpling', 'qcom,msm8998-mtp', 'sony,xperia-lilac', 'sony,xperia-maple', 'sony,xperia-poplar', 'xiaomi,sagit']
-	'samsung,galaxy-book4-edge' is not one of ['8dev,jalapeno', 'alfa-network,ap120c-ac']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,ipq4019-ap-dk01.1-c1', 'qcom,ipq4019-ap-dk04.1-c3', 'qcom,ipq4019-ap-dk07.1-c1', 'qcom,ipq4019-ap-dk07.1-c2', 'qcom,ipq4019-dk04.1-c1']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,ipq5018-rdp432-c2', 'tplink,archer-ax55-v1']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,ipq5332-ap-mi01.2', 'qcom,ipq5332-ap-mi01.3', 'qcom,ipq5332-ap-mi01.6', 'qcom,ipq5332-ap-mi01.9']
-	'samsung,galaxy-book4-edge' is not one of ['mikrotik,rb3011', 'qcom,ipq8064-ap148']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,ipq8074-hk01', 'qcom,ipq8074-hk10-c1', 'qcom,ipq8074-hk10-c2']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,ipq9574-ap-al02-c2', 'qcom,ipq9574-ap-al02-c6', 'qcom,ipq9574-ap-al02-c7', 'qcom,ipq9574-ap-al02-c8', 'qcom,ipq9574-ap-al02-c9']
-	'swir,mangoh-green-wp8548' was expected
-	'samsung,galaxy-book4-edge' is not one of ['qcom,qrb2210-rb1']
-	'samsung,galaxy-book4-edge' is not one of ['fairphone,fp5', 'qcom,qcm6490-idp', 'qcom,qcs6490-rb3gen2', 'shift,otter']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,qdu1000-idp', 'qcom,qdu1000-x100']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,qru1000-idp']
-	'samsung,galaxy-book4-edge' is not one of ['acer,aspire1', 'qcom,sc7180-idp']
-	'google,coachz-rev1' was expected
-	'google,coachz' was expected
-	'google,coachz-rev1-sku0' was expected
-	'google,coachz-sku0' was expected
-	'google,homestar-rev2' was expected
-	'google,homestar-rev3' was expected
-	'google,homestar' was expected
-	'google,kingoftown-rev0' was expected
-	'google,kingoftown' was expected
-	'google,lazor-rev0' was expected
-	'google,lazor-rev1' was expected
-	'google,lazor-rev3' was expected
-	'google,lazor-rev9' was expected
-	'google,lazor' was expected
-	'google,lazor-rev1-sku2' was expected
-	'google,lazor-rev3-sku2' was expected
-	'google,lazor-rev9-sku2' was expected
-	'google,lazor-sku2' was expected
-	'google,lazor-rev1-sku0' was expected
-	'google,lazor-rev3-sku0' was expected
-	'google,lazor-rev9-sku0' was expected
-	'google,lazor-sku0' was expected
-	'google,lazor-rev4-sku4' was expected
-	'google,lazor-rev9-sku4' was expected
-	'google,lazor-sku4' was expected
-	'google,lazor-rev4-sku5' was expected
-	'google,lazor-rev5-sku5' was expected
-	'google,lazor-rev9-sku6' was expected
-	'google,lazor-sku6' was expected
-	'google,mrbland-rev0-sku0' was expected
-	'google,mrbland-sku1536' was expected
-	'google,mrbland-rev0-sku16' was expected
-	'google,mrbland-sku1024' was expected
-	'google,pazquel-sku5' was expected
-	'google,pazquel-sku1' was expected
-	'google,pazquel-sku6' was expected
-	'google,pazquel-sku0' was expected
-	'google,pazquel-sku22' was expected
-	'google,pazquel-sku21' was expected
-	'google,pompom-rev1' was expected
-	'google,pompom-rev2' was expected
-	'google,pompom' was expected
-	'google,pompom-rev1-sku0' was expected
-	'google,pompom-rev2-sku0' was expected
-	'google,pompom-sku0' was expected
-	'google,quackingstick-sku1537' was expected
-	'google,quackingstick-sku1536' was expected
-	'google,trogdor' was expected
-	'google,trogdor-sku0' was expected
-	'google,wormdingler-rev0-sku16' was expected
-	'google,wormdingler-sku1024' was expected
-	'google,wormdingler-sku1025' was expected
-	'google,wormdingler-rev0-sku0' was expected
-	'google,wormdingler-sku0' was expected
-	'google,wormdingler-sku1' was expected
-	'qcom,sc7280-crd' was expected
-	'google,zoglin' was expected
-	'google,zoglin-sku1536' was expected
-	'qcom,sc7280-idp' was expected
-	'qcom,sc7280-idp2' was expected
-	'google,evoker' was expected
-	'google,evoker-sku512' was expected
-	'google,herobrine' was expected
-	'google,villager-rev0' was expected
-	'google,villager' was expected
-	'google,villager-sku512' was expected
-	'google,zombie' was expected
-	'google,zombie-sku512' was expected
-	'google,zombie-sku2' was expected
-	'google,zombie-sku514' was expected
-	'samsung,galaxy-book4-edge' is not one of ['lenovo,flex-5g', 'microsoft,surface-prox', 'qcom,sc8180x-primus']
-	'samsung,galaxy-book4-edge' is not one of ['lenovo,thinkpad-x13s', 'qcom,sc8280xp-crd', 'qcom,sc8280xp-qrd']
-	'samsung,galaxy-book4-edge' is not one of ['lenovo,tbx605f', 'motorola,ali']
-	'samsung,galaxy-book4-edge' is not one of ['sony,discovery-row', 'sony,kirin-row', 'sony,pioneer-row', 'sony,voyager-row']
-	'samsung,galaxy-book4-edge' is not one of ['inforce,ifc6560']
-	'samsung,galaxy-book4-edge' is not one of ['fairphone,fp3', 'motorola,ocean']
-	'samsung,galaxy-book4-edge' is not one of ['sony,mermaid-row']
-	'samsung,galaxy-book4-edge' is not one of ['xiaomi,lavender']
-	'samsung,galaxy-book4-edge' is not one of ['google,sargo']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sdx55-mtp', 'qcom,sdx55-telit-fn980-tlb', 'qcom,sdx55-t55']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sdx65-mtp']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sdx75-idp']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,ipq6018-cp01', 'qcom,ipq6018-cp01-c1']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,qcs404-evb-1000', 'qcom,qcs404-evb-4000']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sa8155p-adp']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sa8295p-adp', 'qcom,sa8540p-ride']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sa8775p-ride', 'qcom,sa8775p-ride-r3']
-	'samsung,galaxy-book4-edge' is not one of ['google,cheza', 'google,cheza-rev1', 'google,cheza-rev2', 'lenovo,yoga-c630', 'lg,judyln', 'lg,judyp', 'oneplus,enchilada', 'oneplus,fajita', 'qcom,sdm845-mtp', 'shift,axolotl', 'samsung,starqltechn', 'samsung,w737', 'sony,akari-row', 'sony,akatsuki-row', 'sony,apollo-row', 'thundercomm,db845c', 'xiaomi,beryllium', 'xiaomi,beryllium-ebbg', 'xiaomi,polaris']
-	'samsung,galaxy-book4-edge' is not one of ['oneplus,billie2']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,qrb4210-rb2']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sm4450-qrd']
-	'samsung,galaxy-book4-edge' is not one of ['fxtec,pro1x']
-	'samsung,galaxy-book4-edge' is not one of ['lenovo,j606f']
-	'samsung,galaxy-book4-edge' is not one of ['sony,pdx201', 'xiaomi,laurel-sprout']
-	'samsung,galaxy-book4-edge' is not one of ['sony,pdx213']
-	'samsung,galaxy-book4-edge' is not one of ['sony,pdx225']
-	'samsung,galaxy-book4-edge' is not one of ['xiaomi,curtana', 'xiaomi,joyeuse']
-	'samsung,galaxy-book4-edge' is not one of ['fairphone,fp4']
-	'samsung,galaxy-book4-edge' is not one of ['microsoft,surface-duo', 'qcom,sm8150-hdk', 'qcom,sm8150-mtp', 'sony,bahamut-generic', 'sony,griffin-generic']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,qrb5165-rb5', 'qcom,sm8250-hdk', 'qcom,sm8250-mtp', 'sony,pdx203-generic', 'sony,pdx206-generic', 'xiaomi,elish', 'xiaomi,pipa']
-	'samsung,galaxy-book4-edge' is not one of ['microsoft,surface-duo2', 'qcom,sm8350-hdk', 'qcom,sm8350-mtp', 'sony,pdx214-generic', 'sony,pdx215-generic']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sm8450-hdk', 'qcom,sm8450-qrd', 'sony,pdx223', 'sony,pdx224']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sm8550-hdk', 'qcom,sm8550-mtp', 'qcom,sm8550-qrd', 'samsung,q5q', 'sony,pdx234']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,qcs8550-aim300-aiot']
-	'samsung,galaxy-book4-edge' is not one of ['qcom,sm8650-hdk', 'qcom,sm8650-mtp', 'qcom,sm8650-qrd']
-	'samsung,galaxy-book4-edge' is not one of ['asus,vivobook-s15', 'lenovo,yoga-slim7x', 'qcom,x1e80100-crd', 'qcom,x1e80100-qcp']
-	'qcom,apq8016' was expected
-	'qcom,apq8026' was expected
-	'qcom,apq8064' was expected
-	'qcom,apq8074' was expected
-	'qcom,msm8660' was expected
-	'qcom,apq8084' was expected
-	'qcom,msm8226' was expected
-	'qcom,msm8926' was expected
-	'qcom,msm8939' was expected
-	'qcom,msm8956' was expected
-	'qcom,msm8960' was expected
-	'qcom,msm8974' was expected
-	'qcom,msm8974pro' was expected
-	'samsung,klte' was expected
-	'qcom,msm8916' was expected
-	'qcom,msm8953' was expected
-	'qcom,msm8992' was expected
-	'qcom,apq8094' was expected
-	'qcom,msm8994' was expected
-	'qcom,apq8096-sbc' was expected
-	'qcom,msm8996' was expected
-	'qcom,msm8996pro' was expected
-	'qcom,msm8998' was expected
-	'qcom,ipq4018' was expected
-	'qcom,ipq4019' was expected
-	'qcom,ipq5018' was expected
-	'qcom,ipq5332' was expected
-	'qcom,ipq8064' was expected
-	'qcom,ipq8074' was expected
-	'qcom,ipq9574' was expected
-	'swir,wp8548' was expected
-	'qcom,qrb2210' was expected
-	'qcom,qcm6490' was expected
-	'qcom,qdu1000' was expected
-	'qcom,qru1000' was expected
-	'qcom,sc7180' was expected
-	'google,coachz-rev2' was expected
-	'google,coachz-rev2-sku0' was expected
-	'google,homestar-rev23' was expected
-	'google,lazor-rev2' was expected
-	'google,lazor-rev4' was expected
-	'google,lazor-rev2-sku2' was expected
-	'google,lazor-rev4-sku2' was expected
-	'google,lazor-rev2-sku0' was expected
-	'google,lazor-rev4-sku0' was expected
-	'google,lazor-rev9-sku10' was expected
-	'google,lazor-sku10' was expected
-	'google,lazor-rev5-sku4' was expected
-	'google,lazor-rev9-sku15' was expected
-	'google,lazor-sku15' was expected
-	'google,lazor-rev5-sku6' was expected
-	'google,lazor-rev9-sku18' was expected
-	'google,lazor-sku18' was expected
-	'google,mrbland-sku768' was expected
-	'google,pazquel-sku4' was expected
-	'google,pazquel-sku2' was expected
-	'google,pazquel-sku20' was expected
-	'google,hoglin-rev3' was expected
-	'google,hoglin' was expected
-	'google,hoglin-sku1536' was expected
-	'google,senor' was expected
-	'google,piglin' was expected
-	'qcom,sc7280' was expected
-	'google,zombie-sku3' was expected
-	'qcom,sc8180x' was expected
-	'qcom,sc8280xp' was expected
-	'qcom,sdm450' was expected
-	'qcom,sdm630' was expected
-	'qcom,sda660' was expected
-	'qcom,sdm632' was expected
-	'qcom,sdm636' was expected
-	'qcom,sdm660' was expected
-	'qcom,sdm670' was expected
-	'qcom,sdx55' was expected
-	'qcom,sdx65' was expected
-	'qcom,sdx75' was expected
-	'qcom,ipq6018' was expected
-	'qcom,qcs404-evb' was expected
-	'qcom,sa8155p' was expected
-	'qcom,sa8540p' was expected
-	'qcom,sa8775p' was expected
-	'qcom,sdm845' was expected
-	'qcom,sm4250' was expected
-	'qcom,qrb4210' was expected
-	'qcom,sm4450' was expected
-	'qcom,sm6115' was expected
-	'qcom,sm6115p' was expected
-	'qcom,sm6125' was expected
-	'qcom,sm6350' was expected
-	'qcom,sm6375' was expected
-	'qcom,sm7125' was expected
-	'qcom,sm7225' was expected
-	'qcom,sm8150' was expected
-	'qcom,sm8250' was expected
-	'qcom,sm8350' was expected
-	'qcom,sm8450' was expected
-	'qcom,sm8550' was expected
-	'qcom,qcs8550-aim300' was expected
-	'qcom,sm8650' was expected
-	from schema $id: http://devicetree.org/schemas/arm/qcom.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: /: failed to match any schema with compatible: ['samsung,galaxy-book4-edge', 'qcom,x1e80100']
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: ufshc@1d84000: compatible:0: 'qcom,x1e80100-ufshc' is not one of ['qcom,msm8994-ufshc', 'qcom,msm8996-ufshc', 'qcom,msm8998-ufshc', 'qcom,sa8775p-ufshc', 'qcom,sc7180-ufshc', 'qcom,sc7280-ufshc', 'qcom,sc8180x-ufshc', 'qcom,sc8280xp-ufshc', 'qcom,sdm845-ufshc', 'qcom,sm6115-ufshc', 'qcom,sm6125-ufshc', 'qcom,sm6350-ufshc', 'qcom,sm8150-ufshc', 'qcom,sm8250-ufshc', 'qcom,sm8350-ufshc', 'qcom,sm8450-ufshc', 'qcom,sm8550-ufshc', 'qcom,sm8650-ufshc']
-	from schema $id: http://devicetree.org/schemas/ufs/qcom,ufs.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: ufshc@1d84000: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/ufs/qcom,ufs.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: /soc@0/ufshc@1d84000: failed to match any schema with compatible: ['qcom,x1e80100-ufshc', 'qcom,ufshc', 'jedec,ufs-2.0']
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: /soc@0/phy@1d87000: failed to match any schema with compatible: ['qcom,x1e80100-qmp-ufs-phy']
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: crypto@1d90000: compatible:0: 'qcom,x1e80100-inline-crypto-engine' is not one of ['qcom,sa8775p-inline-crypto-engine', 'qcom,sc7180-inline-crypto-engine', 'qcom,sc7280-inline-crypto-engine', 'qcom,sm8450-inline-crypto-engine', 'qcom,sm8550-inline-crypto-engine', 'qcom,sm8650-inline-crypto-engine']
-	from schema $id: http://devicetree.org/schemas/crypto/qcom,inline-crypto-engine.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: /soc@0/crypto@1d90000: failed to match any schema with compatible: ['qcom,x1e80100-inline-crypto-engine', 'qcom,inline-crypto-engine']
-arch/arm64/boot/dts/qcom/x1e80100-samsung-galaxy-book4-edge.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-
-
-
-
+> diff --git a/drivers/platform/x86/intel/int3472/Makefile b/drivers/platform/x86/intel/int3472/Makefile
+> index 9f16cb514397..a8aba07bf1dc 100644
+> --- a/drivers/platform/x86/intel/int3472/Makefile
+> +++ b/drivers/platform/x86/intel/int3472/Makefile
+> @@ -1,4 +1,7 @@
+>  obj-$(CONFIG_INTEL_SKL_INT3472)		+= intel_skl_int3472_discrete.o \
+> -					   intel_skl_int3472_tps68470.o
+> -intel_skl_int3472_discrete-y		:= discrete.o clk_and_regulator.o led.o common.o
+> -intel_skl_int3472_tps68470-y		:= tps68470.o tps68470_board_data.o common.o
+> +					   intel_skl_int3472_tps68470.o \
+> +					   intel_skl_int3472_common.o
+> +intel_skl_int3472_discrete-y		:= discrete.o clk_and_regulator.o led.o
+> +intel_skl_int3472_tps68470-y		:= tps68470.o tps68470_board_data.o
+> +
+> +intel_skl_int3472_common-y		+= common.o
+> diff --git a/drivers/platform/x86/intel/int3472/common.c b/drivers/platform/x86/intel/int3472/common.c
+> index 9db2bb0bbba4..8e4a782b2c35 100644
+> --- a/drivers/platform/x86/intel/int3472/common.c
+> +++ b/drivers/platform/x86/intel/int3472/common.c
+> @@ -29,6 +29,7 @@ union acpi_object *skl_int3472_get_acpi_buffer(struct acpi_device *adev, char *i
+>  
+>  	return obj;
+>  }
+> +EXPORT_SYMBOL_GPL(skl_int3472_get_acpi_buffer);
+>  
+>  int skl_int3472_fill_cldb(struct acpi_device *adev, struct int3472_cldb *cldb)
+>  {
+> @@ -52,6 +53,7 @@ int skl_int3472_fill_cldb(struct acpi_device *adev, struct int3472_cldb *cldb)
+>  	kfree(obj);
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(skl_int3472_fill_cldb);
+>  
+>  /* sensor_adev_ret may be NULL, name_ret must not be NULL */
+>  int skl_int3472_get_sensor_adev_and_name(struct device *dev,
+> @@ -80,3 +82,8 @@ int skl_int3472_get_sensor_adev_and_name(struct device *dev,
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(skl_int3472_get_sensor_adev_and_name);
+> +
+> +MODULE_DESCRIPTION("Intel SkyLake INT3472 ACPI Device Driver library");
+> +MODULE_AUTHOR("Daniel Scally <djrscally@gmail.com>");
+> +MODULE_LICENSE("GPL v2");
 
 
