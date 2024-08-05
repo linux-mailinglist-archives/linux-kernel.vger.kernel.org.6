@@ -1,296 +1,205 @@
-Return-Path: <linux-kernel+bounces-275211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B44F9481E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:45:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2057F9481E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62BE91C21EDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:45:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 966481F22F36
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545D816A95C;
-	Mon,  5 Aug 2024 18:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF14D166F3D;
+	Mon,  5 Aug 2024 18:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b="AhtvbkHC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=juniper.net header.i=@juniper.net header.b="I3AxHaeW"
-Received: from mx0b-00273201.pphosted.com (mx0b-00273201.pphosted.com [67.231.152.164])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZ5wGsLq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404B92AD13;
-	Mon,  5 Aug 2024 18:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.164
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722883501; cv=fail; b=SUdZRY7jlYCbD85TR4vbutojAttQ5t7EHV8mysnPmSnSAO+3yQl7eEHMSWk9Zz/F6GdybVuqSHronumEBID4KmAlnIoV2IJM4MaUgxKUcL5DS4wkfQg6AFfO6b1CAenMh2251HeGSR9YwGx+w7V9p/4bopn5TsKR+mRuKKZk0Dw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722883501; c=relaxed/simple;
-	bh=UYj/jbb1yjJgtOj9f6jfyf8jUiLJ+M7UJHvnb3FsdeM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WaqnRAzhEKoaBF/lT8OdHgg3qfl8n2nFd8CyOuDldcTPXGsCXxOLK10UfyjHCC/IL2znWXATvjfO9WB5d3/NT/nWsMigW5CcBwFCBAGjMIqcR1KeOggESWdmbQdi4YeVzr9zG7IZFS82T3juk3CVOjbFPxMdfdmtqaiHbt2oxIo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=juniper.net; spf=pass smtp.mailfrom=juniper.net; dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b=AhtvbkHC; dkim=fail (0-bit key) header.d=juniper.net header.i=@juniper.net header.b=I3AxHaeW reason="key not found in DNS"; arc=fail smtp.client-ip=67.231.152.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=juniper.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=juniper.net
-Received: from pps.filterd (m0108160.ppops.net [127.0.0.1])
-	by mx0b-00273201.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475BF5hp010502;
-	Mon, 5 Aug 2024 11:44:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net; h=
-	cc:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	PPS1017; bh=eT7d0LBhV/2Ax0nvCi4m49OTDb4UgSalDBwceAOsKW4=; b=Ahtv
-	bkHCsb/Sl68Ou5+I9m5en/MdhkUUo5yHzwx7jCiYTMenMbVrAJBLzRFedfz1Bikm
-	fW9FGrCzuVVRHIlKSvX3y3SLbAybNe6DTrmqEdEqs5LVe8Kr3SImp+sRTHgBKQsB
-	buqC16zDwCnBivzOFmFJl970vipFXqpQw22tyL6/YiqYJfChwqRSbkEtSXUOc9XP
-	Ti1LcL76uO/cpQjIhZucVCl9fo99V5dMMahVc+JxyBzwxz5svtyAkml7vbwThMas
-	NTtVNe6JRsi5ALbEvRPwGHMlRDr171IZMpbJYpB7cgaj3vbH+nAnwZ9055c5VeNq
-	1Uk0jaiIdMNOG6c+Ag==
-Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazlp17010002.outbound.protection.outlook.com [40.93.13.2])
-	by mx0b-00273201.pphosted.com (PPS) with ESMTPS id 40sjfe4as5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 11:44:47 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uZGN77dRUbNqBJVejMff19Bs1g4HqW4DyxngMP2mp9pNlVd3k2YWCpeMjZ1IXZ4OSEg9RbH5UcNLrlz9WUMLG8qX6rPFlxJrrPi0T6xmodKl6Z0i3l7P5Garwdu7y0KeXgiP5W2vsNRuHycElJvSQFar7efurpLEzJs+zAwdh83ZdtZ5II2yV+vgTlPz+K0gTraLM36ut/fBUofHR3eeAiOJy1ZGe0uFM4rN43bnFUjkRRAOJqGxa4Bs8f3zG69PSOQH7JTXuwwuPiWRbwNlPUQslq0bEgioZ6UWUAfVr/DU6uwjoit7bmZ6C3mK0SEpIrPP5wy3tAOYAapVPIhBvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eT7d0LBhV/2Ax0nvCi4m49OTDb4UgSalDBwceAOsKW4=;
- b=lmt1u8QhqBkqEduqLb+vfWR8TFZTVvAZNnDYKLcdJPad6tg6B2sq8j3PmLjHs0GGv16+J8DyUBtc05dGZpEQXZR8M9IXn3zaI5vbOEouOGi2sEtFFe3+u2NKluBvZZvPXM/9j/T94ATgDqQjZlVLx/Qsgy1VqK2Jr+mcGPkT+d/JfZqw/2JR/WP7GJY5tSZREi4Pto8tHeXSufLElYIDFBXaYJR/2QUN8kMiPuw4OgsYn0VlxcuBNkpJYDY/PlYfsSNdXKz6IFG1BSLpw+vvqEvlLS1ka6CuWz3u1qk7goNHPZz1WadhorjzMAaa7uu0prggyQ4aowgelg8/wypuJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=juniper.net; dmarc=pass action=none header.from=juniper.net;
- dkim=pass header.d=juniper.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eT7d0LBhV/2Ax0nvCi4m49OTDb4UgSalDBwceAOsKW4=;
- b=I3AxHaeWkYkNc77WgYi86mqQiD8wrzcjPVv7PAL9xwsr9BpLfCiP4QUQunZN0FEwA+ST6Dt0olz3fUZHASH83zsTn/OkigxytOIZWuj2Od2MITp9pQEYBpYaBRF5awdyaAvG4oftrMOFlH8aUCT5OcBy6BF0IdXDZaz0VSMMfy0=
-Received: from BYAPR05MB6743.namprd05.prod.outlook.com (2603:10b6:a03:78::26)
- by DS0PR05MB9568.namprd05.prod.outlook.com (2603:10b6:8:131::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Mon, 5 Aug
- 2024 18:44:44 +0000
-Received: from BYAPR05MB6743.namprd05.prod.outlook.com
- ([fe80::12f7:2690:537b:bacf]) by BYAPR05MB6743.namprd05.prod.outlook.com
- ([fe80::12f7:2690:537b:bacf%6]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
- 18:44:44 +0000
-From: Brian Mak <makb@juniper.net>
-To: Kees Cook <kees@kernel.org>
-CC: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov
-	<oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander
- Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
-Thread-Topic: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
-Thread-Index: AQHa45b60I7pFn286ESFEzPKiZWp67IRtKgWgAD81YCABkAyAIAAFioA
-Date: Mon, 5 Aug 2024 18:44:44 +0000
-Message-ID: <230E81B0-A0BD-44B5-B354-3902DB50D3D0@juniper.net>
-References: <CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net>
- <877cd1ymy0.fsf@email.froward.int.ebiederm.org>
- <4B7D9FBE-2657-45DB-9702-F3E056CE6CFD@juniper.net>
- <202408051018.F7BA4C0A6@keescook>
-In-Reply-To: <202408051018.F7BA4C0A6@keescook>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BYAPR05MB6743:EE_|DS0PR05MB9568:EE_
-x-ms-office365-filtering-correlation-id: 73657cf7-b7c5-4fe5-0ba7-08dcb57eaca4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?enDTPpRAP1as3WTJslZ8q/rKQWo8h6hrFTszn1L7vHTpf6E+3yPS5c+JPjlf?=
- =?us-ascii?Q?BZhiXRoLUiPPhkYnFD6OUX835NjCaLF1Y+ENLOqIjqQyJtQ0NzTMGgvxRLV2?=
- =?us-ascii?Q?e+L4KRmHX8GPZONaU2jJsW3jVzhhqnkJNJYL6Iy8vorEPFdYiUpbF2Befudu?=
- =?us-ascii?Q?X0M/9HqubaBU/NM/gnmpUZvy+qdjV+yJU/WUMbvdp81TuquWaXdauVsk1d5E?=
- =?us-ascii?Q?Q9Yp5YG6DYcKBeEO7OPEsbIITAwEK7aQLzB1+TqS0vC21n98bDcBEQbfHFsm?=
- =?us-ascii?Q?NrMiCExrh/xYbYUIIxH0ManqHQthpAy5upoARc6ZylGnW8jo2CEJOTU/r+8e?=
- =?us-ascii?Q?C5zGK9+K3emsjr9tkHdZD9qZRipy8AJV6I1xFrNbKDpElJHzIhWssVI2q8A6?=
- =?us-ascii?Q?3iFFJsJG7QBpLVW3jHZMKC8uX7daPE1QwbzG8fk5yxv+mVY9Pq2/KqSm4YZU?=
- =?us-ascii?Q?imaTkM1gdfE1KQtH9+WCod/Q2gQKjInl+23lCSHrVPTtSL97VMmmb6WsWDr9?=
- =?us-ascii?Q?gau70Kpts5W7NkhWIvpX/pTgcZ9TkRF/b7miwv5p4Eckzo1SL782kRI64cM8?=
- =?us-ascii?Q?XmGTOzn8HMqhelKZrTUR8L59nLZ4KTtRp5efcKfnf4y3/kkgkx1WRrGQEfzY?=
- =?us-ascii?Q?/m5uPMj9jVXZg3OZ+21aUhmt+z7bj2LZ96cp4we5pUGN3CHIyZPGbfW/RbJe?=
- =?us-ascii?Q?ShNi17wr8XIkMRHXMlKkcEfILx0MYuvFuEKumAd2cVSxA3JR73v3nIzKVndu?=
- =?us-ascii?Q?kU6lP3FW/MGOuVcBnG2gEte67vaPmNempgzq0QmwZ0KpVfFJHwrcIdbe7S05?=
- =?us-ascii?Q?i9WKvmsqLMKqOrXE0S3z9NaYwpfJZi+TQQdUk5HKvJKGmHabh5m7pp4zEv47?=
- =?us-ascii?Q?5bGu0aMr1w/4kVAcul87VS4vHSF8uT5WaY95++ss5CyFldRUHv77WHLtDZwL?=
- =?us-ascii?Q?rrBYMPIUNr1Pi5hw8ros4W2Xo04xd1uWw9q1oEqd3KicIXf3r47R7rxRWIm3?=
- =?us-ascii?Q?1FotUYy1gy0fg9IEQw1uFaR70PMSyDshc5I103Q63LOfc94Yq1OTdMbFYpX3?=
- =?us-ascii?Q?rkO43DKB0kLGoNyVuHR/KgLJqU/VnxAg2y3ViOEiZIWrCogMtEBG4dMJzPXY?=
- =?us-ascii?Q?6MOS+3TVpXUfE1uy1a/+rwt5WNFMJvOgy2f9vdEIsZMJMY3a8cXZZx9zv5Wv?=
- =?us-ascii?Q?zObIjwlajEOyykSnBaokvBWLgTJfY6YcVNA/lGqvzvsjN/f+erPS1kHn7IQi?=
- =?us-ascii?Q?K6SI40TXSBXOf486/lzut+reTFA0KzdlyqrSJZgouv/gppmrHeSVY4+Y5vGR?=
- =?us-ascii?Q?WEIWLOLcUywyZicWD6ggL1mwdRjBExQO4xkijWikduIOSHHgW4dhpFwlHdpI?=
- =?us-ascii?Q?g0FuCyBTuedtd39cJw7UM3mTcG0dyGKgQV2kJekTU/ByAqPX2A=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB6743.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?yQZ+NmtoLtUguI9YoWDczSR5UeKFyGhKHDGUFUl6q5RqIPoQBBHNO5VYs6OT?=
- =?us-ascii?Q?oA9RCqYgYBcSSjoKgxoPQ/QTkAbY/rWVWaO4vqIOTHYJ7qybDemV0Kt+Y6Fm?=
- =?us-ascii?Q?D91U0mSkLtWOsRTTnmvYP3zyrJNdF2DMfrtj04Wa74SCBRx99n8SghWJiXoH?=
- =?us-ascii?Q?ooJyP2dhN0rfQChnlQpUOKI/qXnKIiVY50HBD2evcdjbJWtu8fd3HhnoCuhW?=
- =?us-ascii?Q?PUaQoDiD81VSLXoqspaGDS8PmC4k/f9YcRbGzh6W4z0WyXp+55fmhkgcFDPh?=
- =?us-ascii?Q?iu9g1pu6FEeLQoLD2l6hzCl1hVJ/G6xxZi8D5i6X+H3cWqNfPZEeHqwFlEyh?=
- =?us-ascii?Q?QY5ohNnIBwabWx4Zk3ZdLQBYJKVmloRkIviv0m6TRqTZIvqvqnYfqtRqfOZV?=
- =?us-ascii?Q?DLqmELLonT49OjKsuQqZvixJACRFVb96k84xfmr2ywa9Eo9ypfULJoMeU8Cd?=
- =?us-ascii?Q?6ItUi/IWt+yy1mGYG4gWnjEWkcFI+rKXXYFY6qumkibLcwsaqktQSZWaj58l?=
- =?us-ascii?Q?fvUCrSpe4rgLKh+Ys31wdzvKTrBUcLvqDt9gqDVh5elqLZ3/BKyuF7K+Yk1d?=
- =?us-ascii?Q?X9W6UoI3l1697cw/r9cY8Jo9u3MqfdvYq21vKuOIsKAcy3WopNcUXiQI1KsT?=
- =?us-ascii?Q?XvjQ4oyWDT2oD9lsHlRTMfVC0DjHJfa+rQxM0Wfqzff1wfDVE9y/WN8KcMq8?=
- =?us-ascii?Q?tXUks099+Cr4m/ORs1RS3v54GqmXWkwaXDRSs4cAypiUe5sS6BHUrCoWbAzE?=
- =?us-ascii?Q?FVVv3Mb+VpmDlq9gNOfk3vFVwy41G0mvp7hd9iJlNAbSDMUtj+3XyNYko8ur?=
- =?us-ascii?Q?t8DLewL2u5ioI4CP053VopLz5UQk5ms/4psfO9LAwejMueY0EziE5v2MT1f7?=
- =?us-ascii?Q?y40g1xCiZernKzy96/gQ4nbwd8ea5HRo016ZKYjXWKxCVR8S6lTDYCBtxrms?=
- =?us-ascii?Q?j3x3F4t69xowgCD2ln8NmZCM7kgkQJXnF4loUUFfMP2IyYgFOLKS9zlxEHIw?=
- =?us-ascii?Q?WVIKxU0Ymkz9LyaDammIPxDzJPD7jUG2SnaqEmnqoLQ0XjhOAfuq//oDsukL?=
- =?us-ascii?Q?kOqX1/4vhwTjPTx942JVMmpmc0OCo0lZmPvtDmlkZSPBqK48rU2iRtcAKhX0?=
- =?us-ascii?Q?d5Qh852CY8nXWu170eAcnLyL6TD2GrMQExd/1TF547KuOgZVxcLmr42nGKj9?=
- =?us-ascii?Q?ys1/ESsPYboi6mT3aHCh9XpBpI1jc2bx1QR3tiVzh4aBuVqxn5GYBvYrHyDF?=
- =?us-ascii?Q?NFjUFwmGSdxxmYkU4o6LARpQJstvzhes2vnHxNt7Q8V275PT2jTGgd6k7m8e?=
- =?us-ascii?Q?FHR4pr1PTVHdcpXjS6e+A7csXpNNT3BQNWQQfG2Qtx3VXBC6xoClsMIe+si7?=
- =?us-ascii?Q?ybJ1uzUkXEjwEarCdyH5dKht6Ezre6gIGjIcCAyC4zFqcHYmhkOGfv/6y9Fd?=
- =?us-ascii?Q?DZwIk4uiYsUSOHIs+qrIzJhdqXxXksRrEdgLnr9rngslX+oChurji3cqDjtU?=
- =?us-ascii?Q?xsUBJRUxfyUARjKSbsPv+VSpl0LcCjCm40aMCf0/VLzuC+UlI0xvrZk4oqt2?=
- =?us-ascii?Q?3kvJasq2fJLz4KE0HkZ/TyPlS32+Z0xVj4YtI6aU?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D0D2F287DD4B7B4AAA4CE5BA52E2B91A@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1981D540;
+	Mon,  5 Aug 2024 18:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722883689; cv=none; b=E1FTxW0ulzwCph93+M2YylsOFl9nZ4L+an3ARr7jYbpXeXRjcS1DRDRDMzultmlvun+IFcQKQKarPDDA+bu/TYeILZ4vgLDYW37ybSHnPWPobcfJ0dTtMsYHcMzf6nBYz7i2Vbp0mDt7ZGaIvLHjm0tSYfaxZaZ5vj3185bxA/c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722883689; c=relaxed/simple;
+	bh=gCxE2ILZu/MZn8MJmOuCe1pY1ZdE8L6T6mNlTA3+9UU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UC4sSrwj5G8irdZw0mJL+rSJLqaEohZXbICmCBFi6nH3LYZFyZOa8ENRELv0dCx0V9oayRqibtdMFcP8vycz/foiZsFIZM7ng7ozdiUaL6ZuxcZJ1qLvd9d/W7/JyKAo4L1uV5suf2+TCqOsbn3BOB5gOtBAi58srf11ITE1cjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZ5wGsLq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F1ADC32782;
+	Mon,  5 Aug 2024 18:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722883688;
+	bh=gCxE2ILZu/MZn8MJmOuCe1pY1ZdE8L6T6mNlTA3+9UU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IZ5wGsLqwEnVtg1eyDn6NkY3kOF8/UGW6shwEqIg+jVUjkGSeU8hOlxSPwDe8kEX1
+	 JgKZzpv5XgfoYiJqfyNaiRdGydEbCx4uPIblho2bju39euWIt2TxdJlpVlsR/VrxEN
+	 ji4G6JBJvqKwo4bm/6r0I7ji6rTfvIpRC9K4CNr0ZYegQg8c1IRH274cZElSw5CXcD
+	 dwtdtNnZ0VhwOtf/9U1U8Zt1I2zhhfk0RVn3Va7Xfp1FG/xCWBQ0VE6zaovbJaWRFS
+	 XAnEnQjfMVMf7KG96hakM/e2jwj9i1kWVaIkpnU7CP0WLlKldCvF8UpHb1NvpMlZw1
+	 3DLvP3khdhyxg==
+Date: Mon, 5 Aug 2024 11:48:07 -0700
+From: Kees Cook <kees@kernel.org>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+	Dave Airlie <airlied@redhat.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	intel-gfx@lists.freedesktop.org, linux-hardening@vger.kernel.org
+Subject: Too large alloc in gem_exec_reloc test? (was Re: [linus:master]
+ [mm/slab] 2e8000b826: WARNING:at_mm/util.c:#__kvmalloc_node_noprof)
+Message-ID: <202408051141.7FB8D9C98@keescook>
+References: <202408041614.dbe4b7fd-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: juniper.net
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR05MB6743.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73657cf7-b7c5-4fe5-0ba7-08dcb57eaca4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2024 18:44:44.6511
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bea78b3c-4cdb-4130-854a-1d193232e5f4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t/MN+W98ln4hNIASsFvSTI1RpggOaXH0he32PouWjFDgDOP/KbXe4GFLXYEeLvFCy4NykzwajjZOqi5KMY5kOw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR05MB9568
-X-Proofpoint-GUID: 8iTSXFLpXCrtTbOYq2-bMmYK_-TMJLH-
-X-Proofpoint-ORIG-GUID: 8iTSXFLpXCrtTbOYq2-bMmYK_-TMJLH-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-05_07,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_notspam policy=outbound_spam score=0 phishscore=0
- spamscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0 suspectscore=0
- clxscore=1015 mlxscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408050134
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202408041614.dbe4b7fd-lkp@intel.com>
 
-On Aug 5, 2024, at 10:25 AM, Kees Cook <kees@kernel.org> wrote:
+This seems like some kind of pre-existing issue in the igt test, reachable
+via eb_copy_relocations(). The only warning in kvmalloc_node_noprof() is:
 
-> On Thu, Aug 01, 2024 at 05:58:06PM +0000, Brian Mak wrote:
->> On Jul 31, 2024, at 7:52 PM, Eric W. Biederman <ebiederm@xmission.com> w=
-rote:
->>> One practical concern with this approach is that I think the ELF
->>> specification says that program headers should be written in memory
->>> order.  So a comment on your testing to see if gdb or rr or any of
->>> the other debuggers that read core dumps cares would be appreciated.
->>=20
->> I've already tested readelf and gdb on core dumps (truncated and whole)
->> with this patch and it is able to read/use these core dumps in these
->> scenarios with a proper backtrace.
->=20
-> Can you compare the "rr" selftest before/after the patch? They have been
-> the most sensitive to changes to ELF, ptrace, seccomp, etc, so I've
-> tried to double-check "user visible" changes with their tree. :)
+        /* Don't even allow crazy sizes */
+        if (unlikely(size > INT_MAX)) {
+                WARN_ON_ONCE(!(flags & __GFP_NOWARN));
+                return NULL;
+        }
 
-Hi Kees,
+So, something is too big in the test?
 
-Thanks for your reply!
+-Kees
 
-Can you please give me some more information on these self tests?
-What/where are they? I'm not too familiar with rr.
+On Sun, Aug 04, 2024 at 04:56:40PM +0800, kernel test robot wrote:
+> 
+> hi, Kees Cook,
+> 
+> as we understand, this commit is not the root cause of WARNING. the WARNING just
+> changes the form from (2) to (1) due to this commit.
+> 
+> 67f2df3b82d091ed 2e8000b826fcd2716449d09753d
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :6          100%           6:6     dmesg.WARNING:at_mm/util.c:#__kvmalloc_node_noprof  <--- (1)
+>           6:6          -67%            :6     dmesg.WARNING:at_mm/util.c:#kvmalloc_node_noprof    <--- (2)
+> 
+> however, we failed to bisect (2). so below report is FYI what we observed in our
+> tests. not sure if it can give any hint to some real issues.
+> 
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "WARNING:at_mm/util.c:#__kvmalloc_node_noprof" on:
+> 
+> commit: 2e8000b826fcd2716449d09753d5ed843067881e ("mm/slab: Introduce kvmalloc_buckets_node() that can take kmem_buckets argument")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> 
+> [test failed on linus/master      786c8248dbd33a5a7a07f7c6e55a7bfc68d2ca48]
+> [test failed on linux-next/master 9ec6ec93f2c1e6cd2911e2a4acd5ac85e13bb3e2]
+> 
+> in testcase: igt
+> version: igt-x86_64-73e21b2bb-1_20240623
+> with following parameters:
+> 
+> 	group: gem_exec_reloc
+> 
+> 
+> 
+> compiler: gcc-13
+> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz (Kaby Lake) with 32G memory
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202408041614.dbe4b7fd-lkp@intel.com
+> 
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20240804/202408041614.dbe4b7fd-lkp@intel.com
+> 
+> 
+> [  928.741334][ T5136] ------------[ cut here ]------------
+> [  928.747005][ T5136] WARNING: CPU: 2 PID: 5136 at mm/util.c:650 __kvmalloc_node_noprof+0x142/0x190
+> [  928.755967][ T5136] Modules linked in: btrfs blake2b_generic xor zstd_compress raid6_pq libcrc32c intel_rapl_msr intel_rapl_common x86_pkg_temp_thermal ipmi_devintf ipmi_msghandler sd_mod intel_powerclamp t10_pi coretemp crc64_rocksoft_generic crc64_rocksoft crc64 kvm_intel sg i915 kvm crct10dif_pclmul crc32_pclmul crc32c_intel drm_buddy ghash_clmulni_intel intel_gtt sha512_ssse3 drm_display_helper mei_wdt ttm rapl drm_kms_helper ahci wmi_bmof libahci mei_me video intel_cstate intel_uncore idma64 libata mei i2c_designware_platform i2c_i801 i2c_designware_core i2c_smbus pinctrl_sunrisepoint wmi acpi_pad binfmt_misc loop drm fuse dm_mod ip_tables
+> [  928.812981][ T5136] CPU: 2 PID: 5136 Comm: gem_exec_reloc Tainted: G S                 6.10.0-rc1-00009-g2e8000b826fc #1
+> [  928.823924][ T5136] Hardware name: Dell Inc. OptiPlex 7050/062KRH, BIOS 1.2.0 12/22/2016
+> [  928.832080][ T5136] RIP: 0010:__kvmalloc_node_noprof+0x142/0x190
+> [  928.838186][ T5136] Code: c4 06 0e 00 48 83 c4 18 48 83 c4 08 5b 5d 41 5c 41 5d 41 5e c3 cc cc cc cc 49 be 00 00 00 00 00 20 00 00 eb 9f 80 e7 20 75 de <0f> 0b eb da 48 c7 c7 f0 fe cf 84 e8 5e 2c 19 00 e9 3f ff ff ff 48
+> [  928.857727][ T5136] RSP: 0018:ffffc9000e82f6f8 EFLAGS: 00010246
+> [  928.863744][ T5136] RAX: 0000000000000000 RBX: 00000000000000c0 RCX: 0000000000000013
+> [  928.871647][ T5136] RDX: 000000000007ffff RSI: ffffffff81a13806 RDI: 0000000000000000
+> [  928.879565][ T5136] RBP: 0000000080000000 R08: 0000000000000001 R09: 0000000000000000
+> [  928.887466][ T5136] R10: ffffc9000e82f6f8 R11: 0000000000000000 R12: 00000000ffffffff
+> [  928.895375][ T5136] R13: 0000000000000000 R14: 0000000004000000 R15: ffffc9000e82f9b0
+> [  928.903288][ T5136] FS:  00007f0ff830d8c0(0000) GS:ffff88879db00000(0000) knlGS:0000000000000000
+> [  928.912151][ T5136] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  928.918679][ T5136] CR2: 00007f0ff8100000 CR3: 00000008162e0004 CR4: 00000000003706f0
+> [  928.926595][ T5136] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [  928.934489][ T5136] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [  928.942382][ T5136] Call Trace:
+> [  928.945631][ T5136]  <TASK>
+> [  928.948499][ T5136]  ? __warn+0xcc/0x260
+> [  928.952503][ T5136]  ? __kvmalloc_node_noprof+0x142/0x190
+> [  928.957994][ T5136]  ? report_bug+0x261/0x2c0
+> [  928.962429][ T5136]  ? handle_bug+0x6d/0x90
+> [  928.966692][ T5136]  ? exc_invalid_op+0x17/0x40
+> [  928.971327][ T5136]  ? asm_exc_invalid_op+0x1a/0x20
+> [  928.976295][ T5136]  ? __kmalloc_node_noprof+0x3b6/0x4e0
+> [  928.981709][ T5136]  ? __kvmalloc_node_noprof+0x142/0x190
+> [  928.987199][ T5136]  ? __kvmalloc_node_noprof+0x53/0x190
+> [  928.992590][ T5136]  eb_copy_relocations+0x166/0x450 [i915]
+> [  928.998467][ T5136]  eb_relocate_parse_slow+0xd5/0x860 [i915]
+> [  929.004513][ T5136]  i915_gem_do_execbuffer+0xaa5/0x2420 [i915]
+> [  929.010657][ T5136]  ? unwind_get_return_address+0x5e/0xa0
+> [  929.016135][ T5136]  ? arch_stack_walk+0xac/0x100
+> [  929.020836][ T5136]  ? __pfx_i915_gem_do_execbuffer+0x10/0x10 [i915]
+> [  929.027424][ T5136]  ? kasan_save_track+0x14/0x30
+> [  929.032147][ T5136]  ? __kasan_kmalloc+0x8f/0xa0
+> [  929.036759][ T5136]  ? __pfx___might_resched+0x10/0x10
+> [  929.041892][ T5136]  ? check_heap_object+0x6f/0x4b0
+> [  929.046766][ T5136]  i915_gem_execbuffer2_ioctl+0x2b2/0x680 [i915]
+> [  929.053171][ T5136]  ? __pfx_i915_gem_execbuffer2_ioctl+0x10/0x10 [i915]
+> [  929.060100][ T5136]  drm_ioctl_kernel+0x16f/0x2e0 [drm]
+> [  929.065417][ T5136]  ? __pfx_drm_ioctl_kernel+0x10/0x10 [drm]
+> [  929.071239][ T5136]  drm_ioctl+0x4d0/0xad0 [drm]
+> [  929.075948][ T5136]  ? __pfx_i915_gem_execbuffer2_ioctl+0x10/0x10 [i915]
+> [  929.082882][ T5136]  ? __pfx_drm_ioctl+0x10/0x10 [drm]
+> [  929.088119][ T5136]  ? __fget_light+0x57/0x420
+> [  929.092587][ T5136]  __x64_sys_ioctl+0x137/0x1b0
+> [  929.097212][ T5136]  do_syscall_64+0x5f/0x170
+> [  929.101572][ T5136]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  929.107321][ T5136] RIP: 0033:0x7f0ffa6b7c5b
+> [  929.111603][ T5136] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+> [  929.131013][ T5136] RSP: 002b:00007ffda154ae00 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> [  929.139261][ T5136] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f0ffa6b7c5b
+> [  929.147077][ T5136] RDX: 00007ffda154af10 RSI: 0000000040406469 RDI: 0000000000000004
+> [  929.154890][ T5136] RBP: 00007ffda154af10 R08: 0000000000000004 R09: 0000000100000000
+> [  929.162704][ T5136] R10: 00007f0ffa7a8298 R11: 0000000000000246 R12: 0000000040406469
+> [  929.170515][ T5136] R13: 0000000000000004 R14: 00007f0f78200000 R15: 0000000000000002
+> [  929.178329][ T5136]  </TASK>
+> [  929.181207][ T5136] ---[ end trace 0000000000000000 ]---
+> 
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+> 
 
->>> Since your concern is about stacks, and the kernel has information abou=
-t
->>> stacks it might be worth using that information explicitly when sorting
->>> vmas, instead of just assuming stacks will be small.
->>=20
->> This was originally the approach that we explored, but ultimately moved
->> away from. We need more than just stacks to form a proper backtrace. I
->> didn't narrow down exactly what it was that we needed because the sortin=
-g
->> solution seemed to be cleaner than trying to narrow down each of these
->> pieces that we'd need. At the very least, we need information about shar=
-ed
->> libraries (.dynamic, etc.) and stacks, but my testing showed that we nee=
-d a
->> third piece sitting in an anonymous R/W VMA, which is the point that I
->> stopped exploring this path. I was having a difficult time narrowing dow=
-n
->> what this last piece was.
->=20
-> And those VMAs weren't thread stacks?
-
-Admittedly, I did do all of this exploration months ago, and only have
-my notes to go off of here, but no, they should not have been thread
-stacks since I had pulled all of them in during a "first pass".
-
->> Please let me know your thoughts!
->=20
-> I echo all of Eric's comments, especially the "let's make this the
-> default if we can". My only bit of discomfort is with making this change
-> is that it falls into the "it happens to work" case, and we don't really
-> understand _why_ it works for you. :)
-
-Yep, the "let's make this the default" change is already in v2. v3 will
-be out shortly with the change to sort in place rather than in a second
-copy of the VMA list.
-
-> It does also feel like part of the overall problem is that systemd
-> doesn't have a way to know the process is crashing, and then creates the
-> truncation problem. (i.e. we're trying to use the kernel to work around
-> a visibility issue in userspace.)
-
-Even if systemd had visibility into the fact that a crash is happening,
-there's not much systemd can do in some circumstances. In applications
-with strict time to recovery limits, the process needs to restart within
-a certain time limit. We run into a similar issue as the issue I raised
-in my last reply on this thread: to keep the core dump intact and
-recover, we either need to start up a new process while the old one is
-core dumping, or wait until core dumping is complete to restart.
-
-If we start up a new process while the old one is core dumping, we risk
-system stability in applications with a large memory footprint since we
-could run out of memory from the duplication of memory consumption. If
-we wait until core dumping is complete to restart, we're in the same
-scenario as before with the core being truncated or we miss recovery
-time objectives by waiting too long.
-
-For this reason, I wouldn't say we're using the kernel to work around a
-visibility issue or that systemd is creating the truncation problem, but
-rather that the issue exists due to limitations in how we're truncating
-cores. That being said, there might be some use in this type of
-visibility for others with less strict recovery time objectives or
-applications with a lower memory footprint.
-
-Best,
-Brian Mak
-
-> All this said, if it doesn't create problems for gdb and rr, I would be
-> fine to give a shot.
->=20
-> -Kees
->=20
-> --
-> Kees Cook
-
+-- 
+Kees Cook
 
