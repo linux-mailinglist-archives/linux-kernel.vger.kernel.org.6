@@ -1,105 +1,91 @@
-Return-Path: <linux-kernel+bounces-275156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AEFC948131
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:06:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC9D948129
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2521C20B7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A6E31F20EDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50A817BB00;
-	Mon,  5 Aug 2024 17:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE37D17B426;
+	Mon,  5 Aug 2024 17:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIaatEwH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLuqP5jp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305DA17B4ED;
-	Mon,  5 Aug 2024 17:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300EF17B410;
+	Mon,  5 Aug 2024 17:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722880732; cv=none; b=lyASWGvk/mESR6o8t8eyvRwCEkMu/3zuItGxL9B13PRv5QRJCBFrmXnogt45SbryO5IAP4SBT39fcJB61+nCsThFdvpW2Bygvst7QOyHJADjfdBDxBZjjNHCkHbsdNHUlfr7o5IsyqRggaR0YNuIZ32ANS6NFayqAxWNzg1TNlo=
+	t=1722880725; cv=none; b=uIhaICrQWnKdLZ1NxNBtM7f/lMGtcjWsOqjeW0NpvTzGjHZmTX0coyXK10d9BhH11aYRiAjGWcZWNOd+vxwVwgTKCrX1fECHTIsdolp79ErCTRliBq/w2ixvgYxJ8EqrTroFScZnSPAshBB+kR2QQYX+7/QMJ77AW8WX8iFHQZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722880732; c=relaxed/simple;
-	bh=QfPQ79UfnIJTGo1nlLJ6KcIGISQvLfhthjpThhd5tJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tcPuQqoSP9wnL+OqQq3VVraoFgBIS7cRjWVL0qu+eA7uvkvLuqSuxeaCO4AZj3rFO5JGIhBfsCxW3UiSB3omvnjbRvKgVb7JTtag8s41Uwp2dNZp45bIHjIaD0vU7h2liZ+NHEWUTUVYQXWII292HnR2LD0qRlcuwFPZMz0i6f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIaatEwH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5DFC4AF0C;
-	Mon,  5 Aug 2024 17:58:50 +0000 (UTC)
+	s=arc-20240116; t=1722880725; c=relaxed/simple;
+	bh=wNM5xS4jJV5PztpbZlRCZTDlDKXDNt8Werqs5lhFUu0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=vAxpxQgM7yL9aAdDf1IeC3xlcB5QCMCyfmXaHqo7oSEPu3EOovWxNTdzBCXz0I50jOW6ZNbpClUjBMJnx2L/2c40aTApkl4gkQuc2dUCJOMexCSfFO+EIRfQdHSkFsle/3Ng9tzWlZQaumGRWKQAKGcZGrr/Qa3/IUcWPJqXA68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLuqP5jp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5EBC32782;
+	Mon,  5 Aug 2024 17:58:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722880732;
-	bh=QfPQ79UfnIJTGo1nlLJ6KcIGISQvLfhthjpThhd5tJg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tIaatEwHTUjIo9yfpGeKFr2b3i2znTF++7fFyHSLxxrUhQfBgN5A6TG+HXSw1ZJSC
-	 pU9EFkpZQPfOxbDa6D26SJl2M/MNdH6cgLrLk72DKik/6ONhnfKWj+8ICqhIevf/1o
-	 mH5z+T7eyfcaO4F1kvu+eDn94i003uDyjQDef/vrGIIifUeK5eq1sm1yHgZmHKwjIT
-	 OOBJbM7Fz7pDjAaPieznAK3ZLXFIJFh93bMMl+wDZKRPOFL+pi0/UuoZSlnlVGLwnI
-	 mlkcmGT3WLNEkcBDkz3Tf7h/pn/mkoaBciJkq0TdRv1DdhRBUOti1cxi3UHajh2e99
-	 Cdw+chMKzRcZQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+0122fa359a69694395d5@syzkaller.appspotmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 5/5] Input: MT - limit max slots
-Date: Mon,  5 Aug 2024 13:58:28 -0400
-Message-ID: <20240805175835.3255397-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240805175835.3255397-1-sashal@kernel.org>
-References: <20240805175835.3255397-1-sashal@kernel.org>
+	s=k20201202; t=1722880724;
+	bh=wNM5xS4jJV5PztpbZlRCZTDlDKXDNt8Werqs5lhFUu0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=YLuqP5jpZelCN3Laz43uy9YuydC9DuVusXYO/bh2l1f8dLcU9TTwitBw8NNtPpsyI
+	 yjSWCug7SREIxVeUnAZ7D7ch3wNZnSvJT5uFeAwtGegXdS56QyRkDVxmZq27cuuB52
+	 rKibpC8QH05O1HrjloNdAWSsZDt9od6HpiV1ta7iCvKoci7uBGleFqmiwXvUe88rsK
+	 +OnShhuSM6mkfwI1RUzuahvDkPihXX/hiyPwvvHUXw27KZmkB7FCPE8QW2Eemz+hfv
+	 NNLHw7+heLrnaOqoewkxBKS+cQ9a4adXmoxRLEz3w+H8N8+qHMOZiwQNJx1kmRV1M1
+	 bJeXwZLz9zgmA==
+Message-ID: <de8f23c2558644d3698176b6dd9f7e91.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.103
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3cca4d67-e420-442d-bb38-4eb0649dcdf4@quicinc.com>
+References: <20240801110040.505860-1-quic_amansing@quicinc.com> <ff92343652a998b97981e63ea5dc301f.sboyd@kernel.org> <3cca4d67-e420-442d-bb38-4eb0649dcdf4@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: quic_devipriy@quicinc.com
+To: Amandeep Singh <quic_amansing@quicinc.com>, andersson@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com
+Date: Mon, 05 Aug 2024 10:58:42 -0700
+User-Agent: alot/0.10
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Quoting Amandeep Singh (2024-08-05 02:11:16)
+> On 8/3/2024 6:35 AM, Stephen Boyd wrote:
+> > Quoting Amandeep Singh (2024-08-01 04:00:40)
+> >> From: devi priya <quic_devipriy@quicinc.com>
+> >>
+> >> Update PLL offsets to DEFAULT_EVO to configure MDIO to 800MHz.
+> >=20
+> > Is this fixing a problem? I can't figure out how urgent this patch is
+> > from the one sentence commit text.
+>=20
+> The incorrect clock frequency leads to an incorrect MDIO clock. This,
+> in turn, affects the MDIO hardware configurations as the divider is=20
+> calculated from the MDIO clock frequency. If the clock frequency is
+> not as expected, the MDIO register fails due to the generation of an=20
+> incorrect MDIO frequency.
+>=20
+> This issue is critical as it results in incorrect MDIO configurations=20
+> and ultimately leads to the MDIO function not working. This results in
+> a complete feature failure affecting all Ethernet PHYs. Specifically,
+> Ethernet will not work on IPQ9574 due to this issue.
+>=20
+> Currently, the clock frequency is set to CLK_ALPHA_PLL_TYPE_DEFAULT.=20
+> However, this setting does not yield the expected clock frequency. To=20
+> rectify this, we need to change this to CLK_ALPHA_PLL_TYPE_DEFAULT_EVO.
+>=20
+> This modification ensures that the clock frequency aligns with our=20
+> expectations, thereby resolving the MDIO register failure and ensuring=20
+> the proper functioning of the Ethernet on IPQ9574.
 
-[ Upstream commit 99d3bf5f7377d42f8be60a6b9cb60fb0be34dceb ]
-
-syzbot is reporting too large allocation at input_mt_init_slots(), for
-num_slots is supplied from userspace using ioctl(UI_DEV_CREATE).
-
-Since nobody knows possible max slots, this patch chose 1024.
-
-Reported-by: syzbot <syzbot+0122fa359a69694395d5@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=0122fa359a69694395d5
-Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/input/input-mt.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
-index 14b53dac1253b..6b04a674f832a 100644
---- a/drivers/input/input-mt.c
-+++ b/drivers/input/input-mt.c
-@@ -46,6 +46,9 @@ int input_mt_init_slots(struct input_dev *dev, unsigned int num_slots,
- 		return 0;
- 	if (mt)
- 		return mt->num_slots != num_slots ? -EINVAL : 0;
-+	/* Arbitrary limit for avoiding too large memory allocation. */
-+	if (num_slots > 1024)
-+		return -EINVAL;
- 
- 	mt = kzalloc(struct_size(mt, slots, num_slots), GFP_KERNEL);
- 	if (!mt)
--- 
-2.43.0
-
+Wow! Please include these details in the commit text.
 
