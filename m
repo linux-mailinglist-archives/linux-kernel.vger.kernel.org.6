@@ -1,266 +1,225 @@
-Return-Path: <linux-kernel+bounces-275408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D52E94851A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:55:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E3F948538
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90C71B21267
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:55:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CAF9B222BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6FC16DEB6;
-	Mon,  5 Aug 2024 21:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0217316DC02;
+	Mon,  5 Aug 2024 22:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qqvFjCss"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698B114A099;
-	Mon,  5 Aug 2024 21:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z2383hP5"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC51578C8D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 22:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722894939; cv=none; b=CAB1r5dwq9lzq4SSpWiI15Wu6M9XOApx5LfySby05tRYS08pl+MzvEp033bafKWrQF+R1DPXwToi5RLFQL09cv10GSk77Go5ZROGV7AFkcVdHN0ECmzZJLnLxxDVonQSOfcbGutKefkakaDoP5H3JzT4qQAO/kVFNgREpbH0pAE=
+	t=1722895259; cv=none; b=VwH26FxRGvk6zeW6vTlcMFGZ/zdRbb+D0hy1SD4foTRHCo43i3JWIRi/OUiwlTRF+NPl9AB9lm5uOIoWbSyv9/PsdGI4biNhO2GJlJufVk6nCa6zJuOS92DGU7UXKV33GSSjEFeZVnBMKhc48NasTj2xgWpR7p7MFznW1hxDQ3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722894939; c=relaxed/simple;
-	bh=DXbYLfLgSrqqIHrQTmgZ6iU+iz4R0x9ItApuIWwVLE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3ZafQpi5AzsXVmeqR9wul90+Gb7qNwoozwJsEwSFoDCQAxoRpniPZp76J0YAWZ8F7cFt3/62011D69CiVc89wimAlO4amanyTwEEw3UU8RSCKvUm45cjF4bYZUK9ZN8Q0LJCGPQPmrfUsxcwULAaLkvZKO8OhBCEtNP5yn4FhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qqvFjCss; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A208C20B7165;
-	Mon,  5 Aug 2024 14:55:37 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A208C20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722894937;
-	bh=VJoVZsfYenFh8ZsF1uS3QBiSncBJfFtzA2OwFWvN3sU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qqvFjCss8XUUuxfv0siquASw69kkQua1uyVqTAPTAGMfj4JCkT0WIiqrwX4KQ3imm
-	 MPNfVEUGF6T6IEQZ1Ff2Dp5v2yuvTmXR+J777mfHV+/1LRyjz9VEMZVVMBDxMOo49w
-	 bx9DnR2Lw4Bm4T1/6EsAf5ij+dvHZARCNYNDvHIY=
-Message-ID: <3c10189e-4a04-4b67-9cdf-37e24e3086a5@linux.microsoft.com>
-Date: Mon, 5 Aug 2024 14:55:38 -0700
+	s=arc-20240116; t=1722895259; c=relaxed/simple;
+	bh=5xlLoWgZmxPyqhkhXV+nnKSPg7jlvWHbZj6XV6mqmHQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=HweuxEj9QJDrR8RnnTC2WqTZKBCBBP8plKtnbRx9SXPzX7OKpV7jPLyymP4BCV9kYZJMPkcBHSdJXE5sOHEIQa2Flzb8HKJgOBAgHK7Lau5LxGba9ktwXCf1mPV1bQCT6dGL15q52smsb4fttBNfncIxM6MqXfCvHTq11HDQ0mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z2383hP5; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70e910f309eso12443349b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 15:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722895257; x=1723500057; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=frZl7v/NXmkLyhBPtTem6pampc1hUciwUVTTgdKJJUg=;
+        b=z2383hP5O6Crp3Es4YCibSPYAZfcdMNJRwojbxS/lGHQtRUIqXK63d+6qgUWCR/OkH
+         ZjI2M3WKwEYJGzy6spIDjvxMdDtj365gzqmh6aoHcJ+MEUL4u7hg8J5J5uKRctfpzoGu
+         +afftNYfeIgWrkRdEixGJ5YHVRmuaSVnHptmmtXLQWyPC9m7fUDqMCciNaufjp5KZ31p
+         blnr21Av0q8pS7Y71/V9TyTnTtv52GbENwUNGmSOSXipMpBHUm9VEtU0tsq6HjDJ3EKO
+         2138bSRVmalnKHo+pKnjIKAHqPc8nu5eU5ir0Wt3wSBb9MrLwIQzuFnkHzFD3e2btSo2
+         ywnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722895257; x=1723500057;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=frZl7v/NXmkLyhBPtTem6pampc1hUciwUVTTgdKJJUg=;
+        b=NaS1YG32i+WQZseqvDV6wz3DiJA78W5xJj7THVSxakehQcSD1HoZBddzJ89dtO6DGO
+         mtCjIuT5nFhIpqU1g+S2nh/ZC6MqKEvRZwCCPB51utinv+n8ANkPw4/48jgcYUaNXXpF
+         V/cqkqZS1nXmz1j4oHTQL8hjHIgaIIS8y9YJGF/R5b1icF08TX+hZCkRo38Llj8Oe04H
+         sDFmLAqX0JD8M7S8tMt4NTHjLRCepH2msRa4Qxbes7wqENOzhHk/eiEVXO8Q2UW33jAU
+         VpxGE52SKhqLMUBFx1imrABOtLZ13MkhHHGnVe6kLfCDRxUJRiUM5nvfBwwJtAvx6HWB
+         Ap+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU9cdZ4Y+1JuSZXcBO23u9/1mOATJbOcoP0fke3F6U4HCw5D6UiMgqXIOHXG0LAKwj7f7ZpQhpzYCeFgBzxVQH19y+RhsLfWxCkubAH
+X-Gm-Message-State: AOJu0YwFeOYBcjMm14Va69Er5PBkl2/Ni07NPC2+YSPZKlDMv7qt8tgZ
+	i37Cr3vPi6ONkXPpniHjAXb9OZFL641piyYyD69PT3iDWTRSS82RXmBTzjKx875gmaBW+uBFyTC
+	VSQ==
+X-Google-Smtp-Source: AGHT+IEq2uEQ7m2oAnxpoUGgbDV8nJjTFwAlXZT8mynpkOSTGnW/28cQTtQ3EVCrKg+U04tve8R4dYDaYpQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:6f5b:b0:70d:352f:585b with SMTP id
+ d2e1a72fcca58-7106d0a8458mr260354b3a.6.1722895256844; Mon, 05 Aug 2024
+ 15:00:56 -0700 (PDT)
+Date: Mon, 5 Aug 2024 15:00:55 -0700
+In-Reply-To: <8f35b524cda53aff29a9389c79742fc14f77ec68.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] Drivers: hv: Provide arch-neutral implementation
- of get_vtl()
-To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
- "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
- <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
- <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
- <will@kernel.org>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "apais@microsoft.com" <apais@microsoft.com>,
- "benhill@microsoft.com" <benhill@microsoft.com>,
- "ssengar@microsoft.com" <ssengar@microsoft.com>,
- "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
- "vdso@hexbites.dev" <vdso@hexbites.dev>
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-4-romank@linux.microsoft.com>
- <SN6PR02MB415759676AEF931F030430FDD4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <8df77874-0852-4bc2-bf8d-aa7dca031736@linux.microsoft.com>
- <SN6PR02MB415780EB5A50A1AB769CA657D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB415780EB5A50A1AB769CA657D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-23-seanjc@google.com>
+ <43ef06aca700528d956c8f51101715df86f32a91.camel@redhat.com>
+ <ZoxVa55MIbAz-WnM@google.com> <3da2be9507058a15578b5f736bc179dc3b5e970f.camel@redhat.com>
+ <ZqKb_JJlUED5JUHP@google.com> <8f35b524cda53aff29a9389c79742fc14f77ec68.camel@redhat.com>
+Message-ID: <ZrFLlxvUs86nqDqG@google.com>
+Subject: Re: [PATCH v2 22/49] KVM: x86: Add a macro to precisely handle
+ aliased 0x1.EDX CPUID features
+From: Sean Christopherson <seanjc@google.com>
+To: mlevitsk@redhat.com
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 05, 2024, mlevitsk@redhat.com wrote:
+> =D0=A3 =D1=87=D1=82, 2024-07-25 =D1=83 11:39 -0700, Sean Christopherson =
+=D0=BF=D0=B8=D1=88=D0=B5:
+> > > On Wed, Jul 24, 2024, Maxim Levitsky wrote:
+> > > > > On Mon, 2024-07-08 at 14:08 -0700, Sean Christopherson wrote:
+> > > > > > > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> > > > > > > > > What if we defined the aliased features instead.
+> > > > > > > > > Something like this:
+> > > > > > > > >=20
+> > > > > > > > > #define __X86_FEATURE_8000_0001_ALIAS(feature) \
+> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0(feature =
++ (CPUID_8000_0001_EDX - CPUID_1_EDX) * 32)
+> > > > > > > > >=20
+> > > > > > > > > #define KVM_X86_FEATURE_FPU_ALIAS=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_FPU)
+> > > > > > > > > #define KVM_X86_FEATURE_VME_ALIAS=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_VME)
+> > > > > > > > >=20
+> > > > > > > > > And then just use for example the 'F(FPU_ALIAS)' in the C=
+PUID_8000_0001_EDX
+> > > > > > >=20
+> > > > > > > At first glance, I really liked this idea, but after working =
+through the
+> > > > > > > ramifications, I think I prefer "converting" the flag when pa=
+ssing it to
+> > > > > > > kvm_cpu_cap_init().=C2=A0 In-place conversion makes it all bu=
+t impossible for KVM to
+> > > > > > > check the alias, e.g. via guest_cpu_cap_has(), especially sin=
+ce the AF() macro
+> > > > > > > doesn't set the bits in kvm_known_cpu_caps (if/when a non-hac=
+ky validation of
+> > > > > > > usage becomes reality).
+> > > > >=20
+> > > > > Could you elaborate on this as well?
+> > > > >=20
+> > > > > My suggestion was that we can just treat aliases as completely in=
+dependent
+> > > > > and dummy features, say KVM_X86_FEATURE_FPU_ALIAS, and pass them =
+as is to the
+> > > > > guest, which means that if an alias is present in host cpuid, it =
+appears in
+> > > > > kvm caps, and thus qemu can then set it in guest cpuid.
+> > > > >=20
+> > > > > I don't think that we need any special treatment for them if you =
+look at it
+> > > > > this way.=C2=A0 If you don't agree, can you give me an example?
+> > >=20
+> > > KVM doesn't honor the aliases beyond telling userspace they can be se=
+t (see below
+> > > for all the aliased features that KVM _should_ be checking).=C2=A0 Th=
+e APM clearly
+> > > states that the features are the same as their CPUID.0x1 counterparts=
+, but Intel
+> > > CPUs don't support the aliases.=C2=A0 So, as you also note below, I t=
+hink we could
+> > > unequivocally say that enumerating the aliases but not the "real" fea=
+tures is a
+> > > bogus CPUID model, but we can't say the opposite, i.e. the real featu=
+res can
+> > > exists without the aliases.
+> > >=20
+> > > And that means that KVM must never query the aliases, e.g. should nev=
+er do
+> > > guest_cpu_cap_has(KVM_X86_FEATURE_FPU_ALIAS), because the result is e=
+ssentially
+> > > meaningless.=C2=A0 It's a small thing, but if KVM_X86_FEATURE_FPU_ALI=
+AS simply doesn't
+> > > exist, i.e. we do in-place conversion, then it's impossible to feed t=
+he aliases
+> > > into things like guest_cpu_cap_has().
+>=20
+> This only makes my case stronger - treating the aliases as just features =
+will
+> allow us to avoid adding more logic to code which is already too complex =
+IMHO.
+>=20
+> If your concern is that features could be queried by guest_cpu_cap_has()
+> that is easy to fix, we can (and should) put them into a separate file an=
+d
+> #include them only in cpuid.c.
+>=20
+> We can even #undef the __X86_FEATURE_8000_0001_ALIAS macro after the kvm_=
+set_cpu_caps,
+> then if I understand the macro pre-processor correctly, any use of featur=
+e alias
+> macros will not fully evaluate and cause a compile error.
 
+I don't see how that's less code.  Either way, KVM needs a macro to handle =
+aliases,
+e.g. either we end up with ALIAS_F() or __X86_FEATURE_8000_0001_ALIAS().  F=
+or the
+macros themselves, IMO they carry the same amount of complexity.
 
-On 8/5/2024 1:13 PM, Michael Kelley wrote:
-> From: Roman Kisel <romank@linux.microsoft.com> Sent: Monday, August 5, 2024 9:20 AM
->>
->> On 8/4/2024 8:02 PM, Michael Kelley wrote:
->>> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, July 26, 2024 3:59
->> PM
->>>>
->>>> To run in the VTL mode, Hyper-V drivers have to know what
->>>> VTL the system boots in, and the arm64/hyperv code does not
->>>> have the means to compute that.
->>>>
->>>> Refactor the code to hoist the function that detects VTL,
->>>> make it arch-neutral to be able to employ it to get the VTL
->>>> on arm64. Fix the hypercall output address in `get_vtl(void)`
->>>> not to overlap with the hypercall input area to adhere to
->>>> the Hyper-V TLFS.
->>>>
->>>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->>>> ---
->>>>    arch/x86/hyperv/hv_init.c          | 34 ---------------------
->>>>    arch/x86/include/asm/hyperv-tlfs.h |  7 -----
->>>>    drivers/hv/hv_common.c             | 47 ++++++++++++++++++++++++++++--
->>>>    include/asm-generic/hyperv-tlfs.h  |  7 +++++
->>>>    include/asm-generic/mshyperv.h     |  6 ++++
->>>>    5 files changed, 58 insertions(+), 43 deletions(-)
->>>>
->>>> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
->>>> index 17a71e92a343..c350fa05ee59 100644
->>>> --- a/arch/x86/hyperv/hv_init.c
->>>> +++ b/arch/x86/hyperv/hv_init.c
->>>> @@ -413,40 +413,6 @@ static void __init hv_get_partition_id(void)
->>>>    	local_irq_restore(flags);
->>>>    }
->>>>
->>>> -#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
->>>> -static u8 __init get_vtl(void)
->>>> -{
->>>> -	u64 control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
->>>> -	struct hv_get_vp_registers_input *input;
->>>> -	struct hv_get_vp_registers_output *output;
->>>> -	unsigned long flags;
->>>> -	u64 ret;
->>>> -
->>>> -	local_irq_save(flags);
->>>> -	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
->>>> -	output = (struct hv_get_vp_registers_output *)input;
->>>> -
->>>> -	memset(input, 0, struct_size(input, element, 1));
->>>> -	input->header.partitionid = HV_PARTITION_ID_SELF;
->>>> -	input->header.vpindex = HV_VP_INDEX_SELF;
->>>> -	input->header.inputvtl = 0;
->>>> -	input->element[0].name0 = HV_X64_REGISTER_VSM_VP_STATUS;
->>>> -
->>>> -	ret = hv_do_hypercall(control, input, output);
->>>> -	if (hv_result_success(ret)) {
->>>> -		ret = output->as64.low & HV_X64_VTL_MASK;
->>>> -	} else {
->>>> -		pr_err("Failed to get VTL(error: %lld) exiting...\n", ret);
->>>> -		BUG();
->>>> -	}
->>>> -
->>>> -	local_irq_restore(flags);
->>>> -	return ret;
->>>> -}
->>>> -#else
->>>> -static inline u8 get_vtl(void) { return 0; }
->>>> -#endif
->>>> -
->>>>    /*
->>>>     * This function is to be invoked early in the boot sequence after the
->>>>     * hypervisor has been detected.
->>>> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
->>>> index 3787d26810c1..9ee68eb8e6ff 100644
->>>> --- a/arch/x86/include/asm/hyperv-tlfs.h
->>>> +++ b/arch/x86/include/asm/hyperv-tlfs.h
->>>> @@ -309,13 +309,6 @@ enum hv_isolation_type {
->>>>    #define HV_MSR_STIMER0_CONFIG	(HV_X64_MSR_STIMER0_CONFIG)
->>>>    #define HV_MSR_STIMER0_COUNT	(HV_X64_MSR_STIMER0_COUNT)
->>>>
->>>> -/*
->>>> - * Registers are only accessible via HVCALL_GET_VP_REGISTERS hvcall and
->>>> - * there is not associated MSR address.
->>>> - */
->>>> -#define	HV_X64_REGISTER_VSM_VP_STATUS	0x000D0003
->>>> -#define	HV_X64_VTL_MASK			GENMASK(3, 0)
->>>> -
->>>>    /* Hyper-V memory host visibility */
->>>>    enum hv_mem_host_visibility {
->>>>    	VMBUS_PAGE_NOT_VISIBLE		= 0,
->>>> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
->>>> index 9c452bfbd571..7d6c1523b0b5 100644
->>>> --- a/drivers/hv/hv_common.c
->>>> +++ b/drivers/hv/hv_common.c
->>>> @@ -339,8 +339,8 @@ int __init hv_common_init(void)
->>>>    	hyperv_pcpu_input_arg = alloc_percpu(void  *);
->>>>    	BUG_ON(!hyperv_pcpu_input_arg);
->>>>
->>>> -	/* Allocate the per-CPU state for output arg for root */
->>>> -	if (hv_root_partition) {
->>>> +	/* Allocate the per-CPU state for output arg for root or a VTL */
->>>> +	if (hv_root_partition || IS_ENABLED(CONFIG_HYPERV_VTL_MODE)) {
->>>>    		hyperv_pcpu_output_arg = alloc_percpu(void *);
->>>>    		BUG_ON(!hyperv_pcpu_output_arg);
->>>>    	}
->>>> @@ -656,3 +656,46 @@ u64 __weak hv_tdx_hypercall(u64 control, u64 param1, u64 param2)
->>>>    	return HV_STATUS_INVALID_PARAMETER;
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(hv_tdx_hypercall);
->>>> +
->>>> +#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
->>>> +u8 __init get_vtl(void)
->>>> +{
->>>> +	u64 control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
->>>> +	struct hv_get_vp_registers_input *input;
->>>> +	struct hv_get_vp_registers_output *output;
->>>> +	unsigned long flags;
->>>> +	u64 ret;
->>>> +
->>>> +	local_irq_save(flags);
->>>> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
->>>> +	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
->>>
->>> Rather than use the hyperv_pcpu_output_arg here, it's OK to
->>> use a different area of the hyperv_pcpu_input_arg page.  For
->>> example,
->>>
->>> 	output = (void *)input + HV_HYP_PAGE_SIZE/2;
->>>
->>> The TLFS does not require that the input and output be in
->>> separate pages.
->>>
->>> While using the hyperv_pcpu_output_arg is conceptually a
->>> bit cleaner, doing so requires allocating a 4K page per CPU that
->>> is not otherwise used. The VTL 2 code wants to be frugal with
->>> memory, and this seems like a good step in that direction. :-)
->>>
->> I agree on the both counts: the code looks conceptually cleaner now and
->> VTL2 wants to be frugal with memory, esp that the output hypercall page
->> is per-CPU so we have O(n) as the CPU count increases. Still, the output
->> page will be needed for VTL2 (say to get/set registers just as done
->> here). That said, with this patch we can achieve both the conceptual
->> cleanliness and being ready to grow more on the primitives being built
->> out in the VTL support patches.
->>
-> 
-> Could you elaborate further on why the output page is needed for
-> VTL2? The get/set register hypercalls can operate with just the input
-> page (again, splitting it into two halves for input and output args) as
-> long as the number of registers acted on by a single hypercall isn't
-> more than a few dozen.
-> 
-> If you really *do* need the output page in VTL2 for other reasons
-> that I'm not aware of, then my suggestion isn't relevant and there's
-> no memory to be saved.
-VTL2 might potentially use any hypercalls being in some sense an exclave 
-of the hypervisor living inside the guest quite similarly to the 
-VBS/VTL1/SecureKernel.
+If we go with ALIASED_F() (or ALIASED_8000_0001_F()), then that macro is al=
+l that
+is needed, and it's bulletproof.  E.g. there is no KVM_X86_FEATURE_FPU_ALIA=
+S that
+can be queried, and thus no need to be ensure it's defined in cpuid.c and #=
+undef'd
+after its use.
 
-The tradeoff here would be to save a page per processor at the cost of 
-specializing the hypercall issuing code that would use a part of the 
-input page to save memory (quite likely limiting which hypercalls can be 
-used), or use the common implementation at the cost of spending one more 
-page per processor. Less code means less maintenance usually so seems 
-beneficial to choose the latter option although at the cost of using 
-more memory.
+Hmm, I supposed we could harden the aliased feature usage in the same way a=
+s the
+ALIASED_F(), e.g.
 
-> 
-> Michael
+  #define __X86_FEATURE_8000_0001_ALIAS(feature)				\
+  ({										\
+	BUILD_BUG_ON(__feature_leaf(X86_FEATURE_##name) !=3D CPUID_1_EDX);	\
+	BUILD_BUG_ON(kvm_cpu_cap_init_in_progress !=3D CPUID_8000_0001_EDX);	\
+	(feature + (CPUID_8000_0001_EDX - CPUID_1_EDX) * 32);			\
+  })
 
--- 
-Thank you,
-Roman
+If something tries to use an X86_FEATURE_*_ALIAS outside if kvm_cpu_cap_ini=
+t(),
+it would need to define and set kvm_cpu_cap_init_in_progress, i.e. would re=
+ally
+have to try to mess up.
 
+Effectively the only differences are that KVM would have ~10 or so more lin=
+es of
+code to define the X86_FEATURE_*_ALIAS macros, and that the usage would loo=
+k like:
+
+	VIRTUALIZED_F(FPU_ALIAS)
+
+versus
+
+	ALIASED_F(FPU)
+
+At that point, I'm ok with defining each alias, though I honestly still don=
+'t
+understand the motivation for defining single-use macros.
 
