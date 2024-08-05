@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-274379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC651947786
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:44:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FD09477C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68DCAB21D77
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:44:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF601C213FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC5B15350D;
-	Mon,  5 Aug 2024 08:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3241514C9;
+	Mon,  5 Aug 2024 08:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x3D8tgBF"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="IY6zwe1V"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AAC14E2FD
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D1614F13E;
+	Mon,  5 Aug 2024 08:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722847454; cv=none; b=on7GcgiUCepLUYIj/c1ZRrioSYXttEq58UXRMNC0nKavqrwYFDoZSImIh0yRCO146Pc0yklQKNIYm89QOqGGAUIyDOl9OOF572iLfJyQQ3Jewb4LUrBAmsMJacIZiLfOx2zP4RJjQOtLtaGkEtkABzTFvVtQYMkJchUvGfyzeXY=
+	t=1722848259; cv=none; b=CDlCwCCq1qyf7pvzCh2MzxTK36uV02Lmnj4yJx0Cm60OhHMe56w+UNhLE08J6tqorfbyRmfOdjQ11qds5uYzGjZj8qqXE3NbpszMSIqA8doQr6sfrmahUQ7qUWZZB5nzrVVnBuQkNm+idvhSZlFC3qf/XDFaXHUIXGwoPAxmJYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722847454; c=relaxed/simple;
-	bh=fm6iDdrrchB9TLaDEjrQrAmycPo24uRg4U4FYXtFY70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pg5VjGaxEHt7URrNomzrJ9QJL9LcKFdBvfZCgM+pJAW+XfJ4x2xk2+2/x8PEt/AJxczBQp3cYT3/txS8HtQ2Izia6eURqFxI0BQHJ7ALrOY4h4tnzXS0dMIYAdpiDo+1UARb973ar6MFaRPqIBCkgQPZkuPwmr4zsVvDpDF4a9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x3D8tgBF; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4280ee5f1e3so69753545e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722847451; x=1723452251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fm6iDdrrchB9TLaDEjrQrAmycPo24uRg4U4FYXtFY70=;
-        b=x3D8tgBFQgUHyC3dJJfgzgsk+HEf9os+Dr4zhjZQeDbLQAmhyWveiQGLOUhKJKjLSE
-         Yvhw0xxovCwCHOzMm3BfOtmcoCdH5BsYdrAleezGdvNRFDZSrq+NfLyyq8+CYgzbwwxp
-         8TNLbh/bXoiKr9p5bHjQyTLj/ZAlaimLtGYI6lgeUN42TvWbI4dFGFjWGxt6SqWQlyKK
-         ElL8hrsk9nN0Dpgobkm9Pz0Eu7FgJbJuVLnvYHRfY9I56X8+h4z5Gy0JihLebRTO91w5
-         SWZFLJQz7dXsBuqE2uBDqMP9QoGiSgPFIWBJIxBzMqoJAVxsP57xOkW8okdhAJ/Pqik4
-         knHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722847451; x=1723452251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fm6iDdrrchB9TLaDEjrQrAmycPo24uRg4U4FYXtFY70=;
-        b=Uxoe8nADWkSjGsp5Ypkxf9iV+hdKwA9tuPCBJ1ECbppt5C+C1iJ9O9bv13iFNpzoVU
-         Fc8H3kA7hwMJumuzRJmejIr5Sm4tUuECicHq0JdL2LRI0UewEVM3j1EbbNYYmTonldod
-         tHjTKdEb4/DXtJxMLDPDQEEOWDEmQA4/5xIYbfwHvDTD+flbHz0ddWHgdcPivhO0WRj/
-         hHzgtEkp3c43kdh114l496OQRpIZJFX30z4rZwxYtgDDVHmGEh73J0atUccqB4v4mNgC
-         Fs9SF24DyRShrm8cn06vQ22sS5uFKnd9K2yogwI06mATX/LBtj3rEkHn0cpREr5VXF2Z
-         NSJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfoeUs26IxbaGApFd+BqAZSec+vrUqO1a9jRx5l8FcRa8FyVXmFfi9vtYZMUxuniMKRUIV8DLkfgXSR7Ar67tRHukPTL/GehMRZfuo
-X-Gm-Message-State: AOJu0YzkZ3/RwFi24vtEBOz7yOuRmrx1yW6G+0bkm2cpOlQlYDD2QBdi
-	N9GbuFecoUKxvVGzvYaXOTDSTaHnRogcmWq0GtZ3AGaYFJUPnCaGv7GGArnVCW/qxJWgrj/BSW0
-	og2mXPy+26tetgep0M9ecpJVAoIL5vbWmJCk+
-X-Google-Smtp-Source: AGHT+IFQNNlLaN3e/vSKEN8qAWnUmVt+qaGbQE+xaDCrBD7/2Fspb+GbLuhT6mV28u0V7jNeDv4p8cFoq4FWkdW6LSE=
-X-Received: by 2002:a05:600c:3b0d:b0:428:387:79ac with SMTP id
- 5b1f17b1804b1-428e6aea8femr77816135e9.6.1722847450485; Mon, 05 Aug 2024
- 01:44:10 -0700 (PDT)
+	s=arc-20240116; t=1722848259; c=relaxed/simple;
+	bh=nXSKsJljPyQG2KjxP/RwqDOocnbp100QJWnOIcLrmDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FTaX3h0XfGRh+EkD6krtHMXQx3WQhqtX51Z8zpyAQCiv8cnjzI688rt5+9XxUOvdh79OAxZbX6ZJm7U3nrKhfo3ZvoPK8/u2/IF+hctLRVoMGEYRtTzavzSCSvEsQu5Rml7Zl/G/czZh/OUZGGeyIlN2O5OO6kf8ps3bfAd9vz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=IY6zwe1V; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fedor-21d0 (unknown [5.228.116.177])
+	by mail.ispras.ru (Postfix) with ESMTPSA id E493740737D6;
+	Mon,  5 Aug 2024 08:47:24 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru E493740737D6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1722847645;
+	bh=Z7DF68oI2SzqdSro69T/JCd/OeieWIA/rbRyTPztJUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IY6zwe1Vm+PWAzF+cfL6r8t2zDqQF+iHfcZiPwziJdL6iB5uJe1FJKQJvxRMmHysw
+	 wgby3H3g9l6ckD7yIwGd3sqlQvTXwXE+xvGQWA1bqRPaGSfVy6ighxBD/XPO72YedW
+	 J2KeSXG5eH6Y8Ldd9Zawn26lIchKq8nedMl3Kqqc=
+Date: Mon, 5 Aug 2024 11:47:12 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [lvc-project] [PATCH] nfc: pn533: Add poll mod list filling check
+Message-ID: <20240805-feadcc5dfd3905e1110a5068-pchelkin@ispras.ru>
+References: <20240702093924.12092-1-amishin@t-argos.ru>
+ <d146fb2c-50bb-4339-b330-155f22879446@kernel.org>
+ <4899faf4-14cc-4e68-86e5-8745b38e5ab1@t-argos.ru>
+ <ed68c600-aca8-4773-94e3-92347e79877c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240803141639.3237686-1-benno.lossin@proton.me> <2ddc08c1-ac38-4cc6-a102-2ad336d6b617@kernel.org>
-In-Reply-To: <2ddc08c1-ac38-4cc6-a102-2ad336d6b617@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 5 Aug 2024 10:43:57 +0200
-Message-ID: <CAH5fLgj2urZ6OD2ki6E=6EuPqW3Z8BGg8jd6Bgo4OOrNiptnDw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] rust: kernel: add `drop_contents` to `BoxExt`
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ed68c600-aca8-4773-94e3-92347e79877c@kernel.org>
 
-On Sun, Aug 4, 2024 at 1:22=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> On 8/3/24 4:16 PM, Benno Lossin wrote:
-> > Sometimes (see [1]) it is necessary to drop the value inside of a
-> > `Box<T>`, but retain the allocation. For example to reuse the allocatio=
-n
-> > in the future.
-> > Introduce a new function `drop_contents` that turns a `Box<T>` into
-> > `Box<MaybeUninit<T>>` by dropping the value.
->
-> Is this (and the stuff in patch 2) used somewhere? Otherwise, I think it
-> would probably make sense to base this work on top of my allocator work.
+On Thu, 04. Jul 14:07, Krzysztof Kozlowski wrote:
+> On 03/07/2024 09:26, Aleksandr Mishin wrote:
+> > 
+> > 
+> > On 03.07.2024 8:02, Krzysztof Kozlowski wrote:
+> >> On 02/07/2024 11:39, Aleksandr Mishin wrote:
+> >>> In case of im_protocols value is 1 and tm_protocols value is 0 this
+> >>
+> >> Which im protocol has value 1 in the mask?
+> >>
+> >> The pn533_poll_create_mod_list() handles all possible masks, so your
+> >> case is just not possible to happen.
+> > 
+> > Exactly. pn533_poll_create_mod_list() handles all possible specified 
+> > masks. No im protocol has value 1 in the mask. In case of 'im_protocol' 
+> 
+> Which cannot happen.
+> 
+> > parameter has value of 1, no mod will be added. So dev->poll_mod_count 
+> > will remain 0.
+> 
+> Which cannot happen.
+> 
+> > I assume 'im_protocol' parameter is "external" to this driver, it comes 
+> > from outside and can contain any value, so driver has to be able to 
+> > protect itself from incorrect values.
+> 
+> Did you read what I wrote? It cannot happen.
 
-Yes, please see the red/black tree.
-https://lore.kernel.org/rust-for-linux/20240727-b4-rbtree-v8-0-951600ada434=
-@google.com/
+An important thing which unfortunately wasn't mentioned in commit log is
+that these protocol values actually come from userspace via Netlink
+interface (NFC_CMD_START_POLL operation). So a broken or malicious program
+may pass a message containing a "bad" combination of protocol parameter
+values so that dev->poll_mod_count is not incremented inside
+pn533_poll_create_mod_list(), thus leading to division by zero.
 
-Alice
+nfc_genl_start_poll()
+  nfc_start_poll()
+    ->start_poll()
+    pn533_start_poll()
+
+Looking at pn533_poll_create_mod_list() source code, seems there may be a
+number of such "bad" combinations: e.g. when passed tm_protocols is 0 and
+im_protocols is 1.
+
+CAP_NET_ADMIN is currently required to perform device control operations
+but it's not a point for the situation to be neglected.
+
+Regarding the patch, maybe it'd be better to include the check inside
+pn533_poll_create_mod_list() itself and return an error? That'd be more
+convenient if someday this function would be called elsewhere in the code
+and dev->poll_mod_count must still be guaranteed to be incremented at
+least once.
 
