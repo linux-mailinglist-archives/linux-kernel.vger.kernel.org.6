@@ -1,144 +1,119 @@
-Return-Path: <linux-kernel+bounces-274482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D2F9478AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:42:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D659478B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB50281994
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:42:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62891C21296
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D3B1547C0;
-	Mon,  5 Aug 2024 09:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F7A15350D;
+	Mon,  5 Aug 2024 09:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="THZmTc+1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YKk/InJR"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4763115746B;
-	Mon,  5 Aug 2024 09:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A14E10953
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 09:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722850837; cv=none; b=MQdB8KCTz6nOQmkTZqWAJl9B+W5Xz7xEb3DmZpGpgCTu3MrYayQrthbzO+VSrBxIBY+8OIQ0oFaToEanQcw5uj3lqAPvIn8olZwUyGI5rkDABJ1TLmXpm4eQkzn4AYy2N1PAqGFJKZPRyND4J1sdUmWt0KazDPJ3uOayzCN2a48=
+	t=1722851476; cv=none; b=eA08ddtTGA/QNniVgII+XU8fSdOGwNlElaJjGlk76s4RdE3mnmK0QGXQtOREFi+cUB0um16oh3a7ELOX3UkslyeOWmNgt+9EwNhfZc7Iw6h5fhKAfM/roH9FnJhD6O7bt3VcWKRsSnqPhq00tlmo8Az97XgfGEZSfBHnddTiWUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722850837; c=relaxed/simple;
-	bh=SfG+bs3jPLqxWBAd+Jhpti3avHcQZ0RNdFgOa5GJiV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TF5I8P2djImnZAFaUB7aS1Iq/ode9ZrpYH4QN3+pzosbcNCIM+HUbEqYI9Hp74OYPd4IVjQEM96478rkhSpBqYZ3lWErqqfUfCMfKdJ9NxXLv4RSwuqf2BpmYkpEMPMvuCkIAKG33eWgSajlZMpI2Ki6tzLOEhLUIu3N+SNa+Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=THZmTc+1; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722850835; x=1754386835;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SfG+bs3jPLqxWBAd+Jhpti3avHcQZ0RNdFgOa5GJiV4=;
-  b=THZmTc+1LPapDBiUNb0v0vIXSbzIKskLTyANc6oFyK4sXAjr3xPx6rPF
-   DgpcviFBAWVdgqDA7XvnsGPRz314o7Rx4UK0na0Oiir3QTD+rM6nS2E7P
-   x6MMzHmTMCrRAuRvPTJjzhNe6519DNjWNZgm08O15MS0m5KNFRGpXqWRP
-   OAnTO0Ppr3E8IPToQ3z35bpue6rl5Q7seKUs7b3uHR0BUbDXeHFBaNCdM
-   VggKo0w/gM+fSDaMZ99H8d1G3Xevm6p01qsJOeL3dFHg+QVi5LwwUFItH
-   WYhLytCS6EWFYGRWq3EHXfzpfjMbjdcwM8+URHBXLskh/eb137UGVub/G
-   w==;
-X-CSE-ConnectionGUID: fwdZ5H2cRPm+FDTW6f4ilg==
-X-CSE-MsgGUID: zyGjfuH4Sd6fAABaywFo0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="20648323"
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="20648323"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 02:40:32 -0700
-X-CSE-ConnectionGUID: 6xckBkAuS6GlS5cQzUIvyg==
-X-CSE-MsgGUID: uIAuXj0PRMi6P01ESDjRDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="56667497"
-Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.245.98.108])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 02:40:29 -0700
-Date: Mon, 5 Aug 2024 11:40:24 +0200
-From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com
-Subject: Re: [PATCH -next] md: wake up mdmon after setting badblocks
-Message-ID: <20240805114024.00007877@linux.intel.com>
-In-Reply-To: <20240801125148.251986-1-yukuai1@huaweicloud.com>
-References: <20240801125148.251986-1-yukuai1@huaweicloud.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722851476; c=relaxed/simple;
+	bh=1DdmIDNX40oefqLZN7mwnrF5H1Qqr5MKStNDlGHSnFM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E4cdIEsGoCTgelUDamVLd3ljrBMUrRrZhj/64Tql3y/zq4YgKeRUwe2KbweAqHBZiFzZaVugBd7gnjfChGXKfPJiOGTsoaGoWwMKiejQpwrco3MN5CHnCW0GHmhlkIv4vpq965v8s9K2Wdi6/LGuSOA0Xxo4Bu3tQFvlTjB/gl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YKk/InJR; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42819654737so64107485e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 02:51:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722851473; x=1723456273; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QGEl9OcyFIEUiKWt6BYBFPfZdPeiHpKqScr5AJu2U+Q=;
+        b=YKk/InJRw0nGlveNd2D7ZlR4295+QO+5h/2dcagubHLVp0Boy8rkx9EddqyLm/pNoU
+         ywWnDYl+duIqNRFibu+8LcDjI/0bWCCGclIhR6jwQEigN5y70eFFSLvthpKMGV7nLjHX
+         MQ12uJrJxfoT7zKY0oCXIUmTRNF2OeeG3q84nUYDIb8YVH7bvMhAXEoDJpgBEsiV9C34
+         lQpuLER3xb+MN2zdHDGzDpkQ4Jd0NQlrO5GEnKEoH2hohDb3Cweqj3LQBMJDUkEOMLLz
+         Y/H4CLBNJml6NpgcHSFlwFPAdlad+mhJ0bnT2b842Wr1ldDhs0cxyr1Oh61p+nakwwwf
+         kP3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722851473; x=1723456273;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QGEl9OcyFIEUiKWt6BYBFPfZdPeiHpKqScr5AJu2U+Q=;
+        b=WHLmTgbmRUQIGjstb+KhN93SloJ0Ww1tCxskv674UomvT4GjYJSzACFMkZ255hnqBj
+         uEE6ChB3+IqIxfjsKAwmmkXoCnFird6JraKsvGyW++nQNF4E3MV/iF3vmSmabiSYGPjm
+         pk2O5kL/iXyt8RsHTnTkuM5n89ZYYbMuyGUU6QrENdU2xQ/nAaVEckfauCjtzol2hsWQ
+         iN2lNLlJj/poIXZC8JnX6lLgd5BkRzINrRdZxRb9w+ax8ylciomtosPtk24qAVV/cwgD
+         2A18bmVHignZs9wUWoUjqtfVSvZAC8b+SC9elhAhNIvtURtoFKrHzLOe9585MMJ0OWsS
+         H4oA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmhDMhKpv3xZr6+lK/YW+Lw0O3jG1v20Q0oFNurOrVsIqNQU4DdcyN16f3o6VvZlv9FWwIcly6V6UskrcdpCxwEAPexXSkH2vEGvrF
+X-Gm-Message-State: AOJu0YwyU2DVXwtyajl6iydwzDwWCf2iNVOFFLrrJOqE3Sh9JzOVPUvT
+	kowFF5mU4wwEQXi1RiilTsNu7Zxma7Gu+A4HO/ugZQx3EPVx8xrTM8g3IATKDcI=
+X-Google-Smtp-Source: AGHT+IF0/0e7Q5gjFEgw/SDz6NusS0BSYhN8JYkD3AR87M6IFblZNBUcltrTMziWayX52gKU2XuSMg==
+X-Received: by 2002:a05:600c:1548:b0:426:640b:73d9 with SMTP id 5b1f17b1804b1-428e6b07c59mr78756645e9.10.1722851473073;
+        Mon, 05 Aug 2024 02:51:13 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:1068:b792:523c:3f73])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb64006sm193582365e9.30.2024.08.05.02.51.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 02:51:12 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	haibo.chen@nxp.com
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	wahrenst@gmx.net,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v2 0/2] few small change for gpio-vf610
+Date: Mon,  5 Aug 2024 11:51:11 +0200
+Message-ID: <172285146797.64000.5150192348098375289.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801093028.732338-1-haibo.chen@nxp.com>
+References: <20240801093028.732338-1-haibo.chen@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu,  1 Aug 2024 20:51:48 +0800
-Yu Kuai <yukuai1@huaweicloud.com> wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> From: Yu Kuai <yukuai3@huawei.com>
+
+On Thu, 01 Aug 2024 17:30:26 +0800, haibo.chen@nxp.com wrote:
+> From: Haibo Chen <haibo.chen@nxp.com>
 > 
-> For external super_block, mdmon rely on "mddev->sysfs_state" to update
-> super_block. However, rdev_set_badblocks() will set sb_flags without
-> waking up mdmon, which might cauing IO hang due to suepr_block can't be
-> updated.
+> V2:
+> -add PATCH 1 to use u32 instead of unsigned long, to handle 32 pins
+> -only one difference from V1, use u32 mask instead unsigned long.
 > 
-> This problem is found by code review.
+> Haibo Chen (2):
+>   gpio: gpio-vf610: use u32 mask to handle 32 number gpios
+>   gpio: vf610: add get_direction() support
 > 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  drivers/md/md.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 23cc77d51676..06d6ee8cd543 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -9831,10 +9831,12 @@ int rdev_set_badblocks(struct md_rdev *rdev, sector_t
-> s, int sectors, /* Make sure they get written out promptly */
->  		if (test_bit(ExternalBbl, &rdev->flags))
->  			sysfs_notify_dirent_safe(rdev->sysfs_unack_badblocks);
-> -		sysfs_notify_dirent_safe(rdev->sysfs_state);
->  		set_mask_bits(&mddev->sb_flags, 0,
->  			      BIT(MD_SB_CHANGE_CLEAN) |
-> BIT(MD_SB_CHANGE_PENDING)); md_wakeup_thread(rdev->mddev->thread);
-> +
-> +		sysfs_notify_dirent_safe(rdev->sysfs_state);
-> +		sysfs_notify_dirent_safe(mddev->sysfs_state);
->  		return 1;
->  	} else
->  		return 0;
+> [...]
 
+Applied, thanks!
 
-Hey Kuai,
-Later, I realized that mdmon is attached to various fds:
+[1/2] gpio: gpio-vf610: use u32 mask to handle 32 number gpios
+      commit: 3e7ebf271f935a316e9593d63f495498cde22f80
+[2/2] gpio: vf610: add get_direction() support
+      commit: 26b95b7b588d70b5075b597ff808543503d36ac6
 
-Here a mdmon code:
-
-add_fd(&rfds, &maxfd, a->info.state_fd);	#mddev->sysfs_state
-add_fd(&rfds, &maxfd, a->action_fd);		#mddev->sysfs_action
-add_fd(&rfds, &maxfd, a->sync_completed_fd);	#mddev->resync_position
-
-
-for (mdi = a->info.devs ; mdi ; mdi = mdi->next) { #for each rdev
-	add_fd(&rfds, &maxfd, mdi->state_fd);		#rdev->sysfs_state
-	add_fd(&rfds, &maxfd, mdi->bb_fd);		#rdev->sysfs_badblocks
-	add_fd(&rfds, &maxfd, mdi->ubb_fd);
-#rdev->sysfs_unack_badblocks }
-
-Notification in rdev->sysfs_state is fine. The problem was somewhere else
-(mdmon blocked on "rdev remove"). And It will be fixed by moving rdev remove to
-managemon because it is blocking action now.
-
-https://github.com/md-raid-utilities/mdadm/pull/66
-
-I think it is fine to move this down after set_mask_bits, but we don't
-have to repeat notification to mddev->state.
-
-Thanks,
-Mariusz
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
