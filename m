@@ -1,90 +1,94 @@
-Return-Path: <linux-kernel+bounces-274384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5468E947796
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:54:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935F5947798
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3131F22423
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:54:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBCCA1C21403
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8343814C5A1;
-	Mon,  5 Aug 2024 08:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD2614F9EB;
+	Mon,  5 Aug 2024 08:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="D23uQAm7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NV+YLifk"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="Xw7nI+os";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RvmDsTtE"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F7413D503
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399A11474D7
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722848054; cv=none; b=oYxmBd/0TszyslHNLNDjVRhFshOu2xNZPoWITkl7AoWzKsiRSYEk7BpmHJ0GudmY+N0CSp30AkYyQ7cxgsbJaaY65mt4ZH//LHbHGQU8qniJDOLAxaKLSGKlIVgPCdWYQZnKc8W/P4I9Bwv/KJmF1ldi0LZRi0W2Ip+cYnb0czo=
+	t=1722848055; cv=none; b=FQMq2h3usrg1bItY9Y6sLeUC7iNPF4f0qQUIo4ovezQoEJwX4kZOGzaYLj0U+T8hRDz2CDTGRiTMQ8QR0zJjGPrxd7ler3Q7SvQKbSSHMDfEuegiAywH7kiObeIBlX0pBxJCOMaH66hT4MLCDVtUSD9A9qyak68/hfRMeP+yXz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722848054; c=relaxed/simple;
-	bh=qGGycTHPW6FQxSO6Zet7w4y4vqxpNW1K088kSBE6Wkw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WaPZN+hEnW0dDcT05XAB3DJMV9jQGWF3v0TiUG5tkcDCPd5lmhB2O/xHJj7YVpPC57jO3HpJMQvU6vsD0ni6SPviL0ZLxsv5pqrIfyggusFU54fv12PVKqTjUMhX9/w2thcEY8WQbFprxq2cUDw2gZvxZ6GgYOKIcnoU4h2AEbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=D23uQAm7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NV+YLifk; arc=none smtp.client-ip=103.168.172.150
+	s=arc-20240116; t=1722848055; c=relaxed/simple;
+	bh=LTZgk4Q7yEHgsYa/3BCj3o9FpVWAGqL0/melW16hM1A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dj51mPrw4N8ODmjYwWsRd7gXA9gD0BLP+DcB2MEVeRu85QdlQzcGQamzcROZEa2n/ssrN7jCdKe9tSZO63UB6UizBFtr+2wIq+k038hfOCZ1UpZXPabjlovLSM1ciwbNwK5LBVxpJ08Q9gFHhpv+L8y8XhjZ0sVMpZ7AnH8LqmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=Xw7nI+os; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RvmDsTtE; arc=none smtp.client-ip=103.168.172.155
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id F3AC9138FDDF;
-	Mon,  5 Aug 2024 04:54:11 -0400 (EDT)
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 502F31151C9B;
+	Mon,  5 Aug 2024 04:54:13 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Mon, 05 Aug 2024 04:54:11 -0400
+  by compute4.internal (MEProxy); Mon, 05 Aug 2024 04:54:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm3; t=1722848051; x=1722934451; bh=i+Ir2QJeVd
-	Es1CTqER7N3iE55rTpvUreoCyf0MkTYpY=; b=D23uQAm7Gbv3zbKOO8lRbv+pGT
-	gGQ6xvSnbrHOvSiG1KTLeGb7DqpsQBFp9KSKatziSelem+t89C69UzBzFH20QtZ7
-	+foZDEdeDpaGTglGqCVjqFPLzQQ4djGDimIcsjhoalHA/gFjMhoK12PfXQ+wJ8MD
-	TD1pGPM9bmMq4p3lYpJ9hQP2VKnMfP1mBDh2QOqmneYhVM35Uc2Za87tZDdxjIJ9
-	9FgjuITAw4yDQgkWDEpfvJjuweZ5+ZOp1BM7+rUb3QJF6ZK1/+HaVVSkZ2Xjan0+
-	hkqoFaIz32v4XY50F9CJxPiBnSRutzvwR+8pPo/vQTnAD6e9YQGSx1oaOBuw==
+	:from:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1722848053; x=
+	1722934453; bh=96B7qG2RXUCqvEU76ArBM5B2OlW27Ke00tHiDtOnSak=; b=X
+	w7nI+oseErLaEdC9C5UVw1plc2OMYvt8gD2mtUUdGw3z/zw6jbYYcGa8Hw2EFipd
+	fh/eYqbEdZ9NJWZql5GZQ10mroMgNquxChFOGrJfEW8BC5Ejm5+eYzj3ajcajxj0
+	33uhXTgEP8ETqFrYDD8qtIz1R21J4eFPe9WyzYlaNPWlHt8lNE7FyURKliGChIeE
+	SYc2QLx5JEvgPoetdHi4rqsVxETUHXdMUMKbz8vREedaj9FSXc/f4zT/hnRAIhU4
+	MXAKOMV/K21fcUYzOFO/rT/qx00hAyDshfbMbXTKLzt8KQ0rRHsMb8+8pZTkHqIy
+	Hq/nxEmpqXznXprR5jAKQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1722848051; x=1722934451; bh=i+Ir2QJeVdEs1CTqER7N3iE55rTp
-	vUreoCyf0MkTYpY=; b=NV+YLifkCajeOllmhIeuDqu5/SMX9qXf76V+O2A+MfrK
-	eyOnnQABck3KTZah3UI1VSyXNkvx/lvjTowbaJypiqf4Lo9rNxaZp7U4YSvC3DeJ
-	Gj7mcyEf3qFbSlY8Bc2h7zU7yPElSzIhR+W8WqZieCn6W/Yy75CK9NYpxpFEh8SJ
-	Od5AFwrWbKtIPwMnKe0k0bdcnuhglr3qXmKnrsoa434KG2b9UlSbIbYmgrVIhIXm
-	PJtqNhrUcXMShLmu9OdvFEMTCcVF6UYiQoZSX+ywPKXaC0/HOXzPTR3waF2v7oTr
-	Pyzqzs04JhKNS3iCvts5r2dFIteZUfOR8h0CsdNnYw==
-X-ME-Sender: <xms:M5OwZjUInO545kkjCYrLdqyLXXMDEh-yzLCZxY9ES1eqgB4eJc-KVw>
-    <xme:M5OwZrk4oZYpd_m30sP4YXxxjXtb_ivzIcchoOK4dxZyDeV4x5mNaJAqy_oDQ0eyV
-    H6mi4T1vAjAJzekKYM>
-X-ME-Received: <xmr:M5OwZva0h6tpotlik70eS4WhnkvI8ltzvzDhuCy_EBPlZ5qlxI_b69CoNi4IPIx1dFPgxVItJmlJXKAxFADXWH43uUGsVbMl9gDyCZXUXM0>
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722848053; x=
+	1722934453; bh=96B7qG2RXUCqvEU76ArBM5B2OlW27Ke00tHiDtOnSak=; b=R
+	vmDsTtEp62s22RsWxZ5jSNfUEf/uutbAtTgXeOG1g3ypoXUFW4OBZo3hZ/yDEHh/
+	5HzjcTfdr++j87U3Aw7fDm2DJ9l3MDoiOcvrA9O6KC3kMZSbqGiWTiC3Fvrv3FcA
+	A7L10NzQUrVBLujWzki+SSQ3OrcErMxwgXvUvArevRPCD8Kh2JvlXyeBZfcohq9E
+	2XZH8C28XbuBZfmtpSsGyZ5gyzHrkmN5TMQNw7Pdm4UUGERcFMB0i++DbZHQgvK0
+	mz49FREaOh/xJOPDa8mvvA2pvuxSKJa4F5bSeKVJgDiYFl7VS+y9bc8eeOurzJKY
+	Z9tqhwdAsJ2SumziwObAw==
+X-ME-Sender: <xms:NZOwZrsEgQCUW_JhRyKb46YQ2PisGMtudj8SiME-58TyrV1Wi_PZdA>
+    <xme:NZOwZschie_x7bp0DLZOrmr0tG6dAzu-pE8E4gFoPElxXa3P2-C2OJQLgbKjL3QUS
+    6sZsxJ0wOUm-UednqA>
+X-ME-Received: <xmr:NZOwZuyDkN7iZJY4UpS7QfkqndxXdO9-ibVQuXeOfsRRsZyq0ursh4K2JloeN9rzSpN3k48gl-h5QgOOC0clGzW6QPOIwtsTlJHHP3XeRDU>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeigddutdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtre
-    dttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
-    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepgefgheelheejie
-    elheevfeekhfdtfeeftdefgefhkeffteduveejgeekvefhvdeunecuffhomhgrihhnpehk
-    vghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgt
-    phhtthhopedt
-X-ME-Proxy: <xmx:M5OwZuV8CGGKHzXJktg2m65pe-vOB5h3UAgJTMwF9fP2E9tI9UIQ9g>
-    <xmx:M5OwZtmvMuYaNoMjZYGCgPJiT5UJ7Tz-y_5kmJsnRQ_dY9T85nqRRg>
-    <xmx:M5OwZrdxhFgixsfhZdataRju4jxB--DXJP6HddoOHSAS3f_7Pxs1xQ>
-    <xmx:M5OwZnFm4KcJSLlPmL1NGMIbiw5ZChd6QAuzuvRRT-MqnIPLGmtSRQ>
-    <xmx:M5OwZix_6BWh9t5Ggd5Q-BRmY6FhEZHP55F48h-S8xUqtC8i9-gjRvin>
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekre
+    dtredttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
+    shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejue
+    dvgfduudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
+    grkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:NZOwZqOfgSRopmfTlYJzjpy6zMpuHSOnjw7CaL5cccukYZBung2Qag>
+    <xmx:NZOwZr8uJcFiPM-lJMgdeO8zFtcd3HJg1KozFxyRoQcm8LGikv9NOQ>
+    <xmx:NZOwZqUdz99pXNLsWv5WxiW8p0XBUDh6P0VwmAQWVq9Y4PgI65uCnA>
+    <xmx:NZOwZsduizwb3N8AlF6N6qdecVAX2bswqI4wGFMTA1OB_Nzeh43ZWg>
+    <xmx:NZOwZtK0OR0aq3IG3I-wF5cdf1Bwn9YahBorIAFoHspQTzRmd6Ghh3zU>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 5 Aug 2024 04:54:10 -0400 (EDT)
+ 5 Aug 2024 04:54:12 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/17] firewire: core/ohci: use guard macro for any type of lock primitives
-Date: Mon,  5 Aug 2024 17:53:51 +0900
-Message-ID: <20240805085408.251763-1-o-takashi@sakamocchi.jp>
+Subject: [PATCH v2 01/17] firewire: core: use guard macro to maintain static packet data for phy configuration
+Date: Mon,  5 Aug 2024 17:53:52 +0900
+Message-ID: <20240805085408.251763-2-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240805085408.251763-1-o-takashi@sakamocchi.jp>
+References: <20240805085408.251763-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,60 +97,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+The core function provide a kernel API to send phy configuration packet.
+Current implementation of the feature uses packet object allocated
+statically. The concurrent access to the object is protected by static
+mutex.
 
-This patchset is a revised version of the previous one.
+This commit uses guard macro to maintain the mutex.
 
-https://lore.kernel.org/lkml/20240804130225.243496-1-o-takashi@sakamocchi.jp/
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-transaction.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-The guard macro was firstly introduced in v6.5 kernel, and already
-available for spin_lock, mutex, RCU, and R/W semaphore. It is useful to
-ensure releasing lock in block.
-
-This patchset includes changes to replace lock/release codes with the guard
-macro.
-
-* Changes in v2:
-  * use scoped_guard() instead of guard() just after label so that
-    statements are expanded there instead of declarations.
-
-Takashi Sakamoto (17):
-  firewire: core: use guard macro to maintain static packet data for phy
-    configuration
-  firewire: core: use guard macro to maintain the list of card
-  firewire: core: use guard macro to maintain the list of cdev clients
-  firewire: ohci: use guard macro to serialize accesses to phy registers
-  firewire: core: use guard macro to maintain RCU scope for transaction
-    address handler
-  firewire: core: use guard macro to access to IDR for fw_device
-  firewire: core: use guard macro to maintain the list of address
-    handler for transaction
-  firewire: core: use guard macro to disable local IRQ
-  firewire: core: use guard macro to maintain list of events for
-    userspace clients
-  firewire: core: use guard macro to maintain IDR of isochronous
-    resources for userspace clients
-  firewire: core: use guard macro to maintain isochronous context for
-    userspace client
-  firewire: core: use guard macro to maintain list of receivers for phy
-    configuration packets
-  firewire: core: use guard macro to maintain list of asynchronous
-    transaction
-  firewire: core: use guard macro to maintain properties of fw_card
-  firewire: ohci: use guard macro to maintain bus time
-  firewire: ohci: use guard macro to maintain image of configuration ROM
-  firewire: ohci: use guard macro to serialize operations for
-    isochronous contexts
-
- drivers/firewire/core-card.c        |  60 ++---
- drivers/firewire/core-cdev.c        | 252 ++++++++----------
- drivers/firewire/core-device.c      |  83 +++---
- drivers/firewire/core-iso.c         |   5 +-
- drivers/firewire/core-topology.c    |   5 +-
- drivers/firewire/core-transaction.c | 146 ++++------
- drivers/firewire/ohci.c             | 399 ++++++++++++----------------
- 7 files changed, 403 insertions(+), 547 deletions(-)
-
+diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/core-transaction.c
+index a89c841a7dbe..2a2cbd6e2f9b 100644
+--- a/drivers/firewire/core-transaction.c
++++ b/drivers/firewire/core-transaction.c
+@@ -494,7 +494,7 @@ void fw_send_phy_config(struct fw_card *card,
+ 	phy_packet_phy_config_set_gap_count(&data, gap_count);
+ 	phy_packet_phy_config_set_gap_count_optimization(&data, true);
+ 
+-	mutex_lock(&phy_config_mutex);
++	guard(mutex)(&phy_config_mutex);
+ 
+ 	async_header_set_tcode(phy_config_packet.header, TCODE_LINK_INTERNAL);
+ 	phy_config_packet.header[1] = data;
+@@ -508,8 +508,6 @@ void fw_send_phy_config(struct fw_card *card,
+ 
+ 	card->driver->send_request(card, &phy_config_packet);
+ 	wait_for_completion_timeout(&phy_config_done, timeout);
+-
+-	mutex_unlock(&phy_config_mutex);
+ }
+ 
+ static struct fw_address_handler *lookup_overlapping_address_handler(
 -- 
 2.43.0
 
