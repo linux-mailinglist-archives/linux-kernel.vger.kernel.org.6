@@ -1,861 +1,227 @@
-Return-Path: <linux-kernel+bounces-275437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A199485BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:59:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0DB89485BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 045141C21E3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30B01C21F4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347CF16D4EA;
-	Mon,  5 Aug 2024 22:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B97D16EBE2;
+	Mon,  5 Aug 2024 22:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RM6hCtJG"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AD1frPve"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4606A16C696;
-	Mon,  5 Aug 2024 22:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3269C16C696
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 22:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722898769; cv=none; b=qQZNXQlSVaDDtlICGXeuckBF8KOw7hTq3Uj4+Uh4rDNEQfd6WBrVrviEHp2TxgawCYywMctgJEACI4MdbCO2d80KC4da9jl5zM+agjpxHBQOO7Vg+M2eS3CJ9Zo7mozdYiMwhc+3mMLydl4jk6knCUe1yvGh+yHXVYgIhqzRKSE=
+	t=1722898785; cv=none; b=qmn1Ufw64C5LaoTqGnpKxagHfcYaAzyMuyNJxLvure45zya9TIgmcd872CJkKzMFq0+IWi064TnzVfxIXp7qveiBJjh4PZhrlsZeUu8kRMiJcOFYxYpJIAnVPVNI15Is+dVKp1LGwKGwjZ72XT2BFloIB4xi25j4EU04tclfvTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722898769; c=relaxed/simple;
-	bh=OX5iiAxL6xS2PcIxvxZ0bfuxGHSl2ldKoPhVbj5bVU4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=go51cJKg257IGrRPdfRkRkixcIQA+TNKmHSJ9dXDiDBT1881dvdScOWs6zWeVqtsmivRtMnDKC0fg6i1SOj9YvhnX08CGipgsSilV90OCQKdZtc9lOfo+fm9qswTcQJ7Az1bwdGYHTlMSEeAPpaCpmrfpziWrS27BnKz5q4mHY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RM6hCtJG; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b95b710e2cso18003996d6.2;
-        Mon, 05 Aug 2024 15:59:27 -0700 (PDT)
+	s=arc-20240116; t=1722898785; c=relaxed/simple;
+	bh=wDE2ZSOFrYCQh3xTvvw+mtJmqSs3hgf/JAk+Tmy33UI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o87VThXtEcgypQRr/3C6DsVZo5zWU0uRsVnakHHgxBwkT2wC530LSUjJdahv3ShtsY3V3CVezkHZrG877bVm7P1vw6u+zv4BpMUp6hEx3uSxenVkSNrQerqdthgTmt0/iDTzZFh+fwq4vN9t9JqiYL1R74daHTRqoPrHi5bOvGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AD1frPve; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb56c2c30eso4348656a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 15:59:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722898766; x=1723503566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CdceRPL+JZAw38j1t3So/nhZhqSx/VYKEdwE5zZp5gM=;
-        b=RM6hCtJG8887FTGtZmIPDWf8/TYgG04Cou6Y3hEGRjYnJCodQ3cHNjfUuXo5G1/HqP
-         Tb1EyCs5xeRx3p2a0Ul38fEIKrd+INlnTjs1SJZLfu+gjSwsykOLKiqYZ7A6zNFQAZkg
-         WvCaLcuOj0y/VN6329wV0VYMy9UCvO406MDvMfsVl35pJBj1s9wSZePGP8MCH27KOpV4
-         Gw8ER+wVFmk7OcgEs3ab2bs5gl+hKVply+vnXspEwXIqKYV5qtUiLAS2ph7XdxSUA/KV
-         9NnWS3ixRYK/cw3w+jDWstehJ0S8SYf4C7O6a1iRIkVtP6Hx8doYn+tA1qKyxt20t75Y
-         7ZSw==
+        d=linaro.org; s=google; t=1722898782; x=1723503582; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ychv8P+gHxsBF6x+Pa2M4R3iLEXkc9nKsE+hso/AZWE=;
+        b=AD1frPveAqCHq/wF3GwHGCLrcy/JKHwgolGOZLIyQT50g9Is++Q+LMC3a7kCCZ3vMe
+         Bkx9aLxP7SZ35Sb4pTal+tML0DHWX4nGWmKFHvT5SYC4acMjrqjNIEz5Irno7WwHTgP5
+         iWZ+olCKCchY0m5cvoiUlsaqMhQHE3XVsfQCiWXQygwMyqNZ9gAxMRIztkCNHzo9wxnb
+         9U1h4y2yAByf4+UB56vSgxjSNLhKLfVDB9etSjlUvhMO7z3jSWr4omxcoELGBLubhM1d
+         bIXeI4FpnEYDDsuEgzXkw4ZHGSDz7uwuj/VmUQ8vQGQDl//zCBo3dkGIirO6og4YsAUh
+         wdWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722898766; x=1723503566;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CdceRPL+JZAw38j1t3So/nhZhqSx/VYKEdwE5zZp5gM=;
-        b=BboOuchs0GuXbVv/0fVhGBNl9CQ46CxICJZpfPDM/cnyCYuTVzPH3sFz2kHYVcvG91
-         pm2cdfr2OrlRFvmkhtvvqdohVGBnsrKiZlemP4RDqAlamoxOvxFSS0HgPjfnnwMsUF8y
-         x0X/PGFz/YdlJ+8dftmC8+Ou+sewBATtkd/GhOwIQRtE+2cQdSsEme3R/DNPeQGhp7Tl
-         of/MNwLJTiRsMWVIOobmvmGE58eWzMYS4Rot6WoHSiTdkfjS7MeC3dknn+qWJFvgFC+W
-         kIqP5S+WxGM0bFcGF9X5gH5yZvVqyR/heNHOgPI6RV3MKF6+GpC3lE76u3I2cageqWMW
-         Q9rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqtrBXAhNEozkBpcMz78HKf0oaGt0+r471OGUOKwzSE4R4Ble+xRohJ43kUogSJjNV0W7+ibV+/T9O@vger.kernel.org, AJvYcCWuGoVM/xBE58DEwObVU0J/EMzC1aqEvIU3tlAwLVNFLpMXIhc4exslfje4tZKp7XysK9kEdOJP+ExwEBDF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPmaf+JdM3atPLC0ox8FiigKvwDCpqJXvddvmH1wGMOJVeGggS
-	vMy9dRTQA/yyntnrZCf2mRoNK+nT2aUOcjisGKwXbJSh3HG19DUM
-X-Google-Smtp-Source: AGHT+IEeJlsTkEIGCIBvyGa3EvftN9X7DJogVZQOaMu6mlESgs0CC0bQqMYMpoy0+qdohSz8QYR6kg==
-X-Received: by 2002:a0c:dc11:0:b0:6bb:9a55:5bd7 with SMTP id 6a1803df08f44-6bb9a555fe7mr140605356d6.47.1722898766027;
-        Mon, 05 Aug 2024 15:59:26 -0700 (PDT)
-Received: from localhost.localdomain (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78ad54sm40028016d6.31.2024.08.05.15.59.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 15:59:25 -0700 (PDT)
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: christophe.jaillet@wanadoo.fr,
-	Alex Lanzano <lanzano.alex@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mehdi Djait <mehdi.djait@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] drm/tiny: Add driver for Sharp Memory LCD
-Date: Mon,  5 Aug 2024 18:57:51 -0400
-Message-ID: <20240805225820.13798-4-lanzano.alex@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240805225820.13798-2-lanzano.alex@gmail.com>
-References: <20240805225820.13798-2-lanzano.alex@gmail.com>
+        d=1e100.net; s=20230601; t=1722898782; x=1723503582;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ychv8P+gHxsBF6x+Pa2M4R3iLEXkc9nKsE+hso/AZWE=;
+        b=MbF+tI3Ksy8ngU4qyMjCmF6WUo25lIYM9QjQwhLe0l1tVjDEHItBETkAmeNELDCd00
+         xjeWcCd22bTcaSSLvehaCoECdvnFhfI4Ifm65QHV9KxrJ3AZee49AjFYHgW8sXT5mDGp
+         KIPBwpDAHlWoHAulmDjdi8OVSUwm1JPycH3jk2XwGHsaZdHG/32hLV6l5ZjDT7+KqKAX
+         VaaJADQSTOweAb9RiC1W62Npm1vF2+OoXMuX3zc01EDKDd/yVba8X/FCM3flh5e1yCW/
+         9RIPJshfm+nmvVxBVjM/G9lbVWkkHLbVbpTWZ6xhmrn6H3a23zHecxb/4NsNXz3ID7Z4
+         utKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqGZCC40yngIwslT5IEIqXox6nBq5Z7aglkTJqfr5i4gsgKK5Dm/VaFjbHyyqyAOS8U+YXhjpYadhf0nJwT5igWIBdfZnltJN4QPv2
+X-Gm-Message-State: AOJu0Yx/u7cwTAAPoKuVVK1ApyEnEWPJcpfs6h6iD8c82q8aKAwE4+HT
+	QFeGj9snqmZnwlh8nGx3Tms1VgGi3odUBvmyWXWrOU5GljguwyJUx6Ys8kQrS/sw64vP7oJbjjx
+	8ZjPRbszZ6i3ZZa962uzGF3BCRa+8rm0fi0pU6w==
+X-Google-Smtp-Source: AGHT+IH8/fKH8YruVmhd08G2v0pY38l7ldBHESBue+KE50IqMJX0Fdkro8zj/EwtsiWmV4eJ2BDRm3nBlca77KkY6jM=
+X-Received: by 2002:a17:90a:9a4:b0:2ab:8324:1b47 with SMTP id
+ 98e67ed59e1d1-2cffa292697mr20899102a91.15.1722898782204; Mon, 05 Aug 2024
+ 15:59:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240729070029.407884-1-yu.c.chen@intel.com> <CAKfTPtD4Vg8rjWVAp=WnaCoMXkee6y2Vd7LT2FyMMtHGtORa5w@mail.gmail.com>
+ <20240805222515.wshfsl3x4khc6ytg@airbuntu>
+In-Reply-To: <20240805222515.wshfsl3x4khc6ytg@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 6 Aug 2024 00:59:31 +0200
+Message-ID: <CAKfTPtCZiD7+WxCvrOYoiT+xMRGj=emJEa+RJeOC88h6wu0pwg@mail.gmail.com>
+Subject: Re: [PATCH v3] sched/pelt: Use rq_clock_task() for hw_pressure
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Chen Yu <yu.c.chen@intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Hongyan Xia <hongyan.xia2@arm.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for the monochrome Sharp Memory LCDs.
+On Tue, 6 Aug 2024 at 00:25, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 08/05/24 12:56, Vincent Guittot wrote:
+> > Sorry for the late reply on this
+> >
+> > On Mon, 29 Jul 2024 at 09:05, Chen Yu <yu.c.chen@intel.com> wrote:
+> > >
+> > > commit 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
+> > > removed the decay_shift for hw_pressure. This commit uses the
+> > > sched_clock_task() in sched_tick() while it replaces the
+> > > sched_clock_task() with rq_clock_pelt() in __update_blocked_others().
+> >
+> > Good catch, it should be sched_clock_task() everywhere
+> >
+> > > This could bring inconsistence. One possible scenario I can think of
+> > > is in ___update_load_sum():
+> > >
+> > > u64 delta = now - sa->last_update_time
+> > >
+> > > 'now' could be calculated by rq_clock_pelt() from
+> > > __update_blocked_others(), and last_update_time was calculated by
+> > > rq_clock_task() previously from sched_tick(). Usually the former
+> > > chases after the latter, it cause a very large 'delta' and brings
+> > > unexpected behavior.
+> > >
+> > > Fix this by using rq_clock_task() inside update_hw_load_avg(),
+> > > because:
+> >
+> > No, don't call the rq_clock_task() inside update_hw_load_avg(), keep
+> > it outside. V2 was the correct solution
+>
+> Curious, why this is not correct?
 
-Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
-Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
-Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
----
- MAINTAINERS                         |   6 +
- drivers/gpu/drm/tiny/Kconfig        |  20 +
- drivers/gpu/drm/tiny/Makefile       |   1 +
- drivers/gpu/drm/tiny/sharp-memory.c | 682 ++++++++++++++++++++++++++++
- 4 files changed, 709 insertions(+)
- create mode 100644 drivers/gpu/drm/tiny/sharp-memory.c
+Not correct in the sense that don't embed the clock in the pelt
+function but keep it outside like others. The only one doing this is
+update_irq_load_avg() which  is one my todo list for a while to be
+aligned with others (just missing time)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1a802219e096..6d2a56c333bc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7124,6 +7124,12 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/display/panel/samsung,s6d7aa0.yaml
- F:	drivers/gpu/drm/panel/panel-samsung-s6d7aa0.c
- 
-+DRM DRIVER FOR SHARP MEMORY LCD
-+M:	Alex Lanzano <lanzano.alex@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
-+F:	drivers/gpu/drm/tiny/sharp-memory.c
-+
- DRM DRIVER FOR SITRONIX ST7586 PANELS
- M:	David Lechner <david@lechnology.com>
- S:	Maintained
-diff --git a/drivers/gpu/drm/tiny/Kconfig b/drivers/gpu/drm/tiny/Kconfig
-index f6889f649bc1..bc386954faa2 100644
---- a/drivers/gpu/drm/tiny/Kconfig
-+++ b/drivers/gpu/drm/tiny/Kconfig
-@@ -186,6 +186,26 @@ config TINYDRM_REPAPER
- 
- 	  If M is selected the module will be called repaper.
- 
-+config TINYDRM_SHARP_MEMORY
-+	tristate "DRM support for Sharp Memory LCD panels"
-+	depends on DRM && SPI
-+	select DRM_GEM_DMA_HELPER
-+	select DRM_KMS_HELPER
-+	help
-+	  DRM Driver for the following Sharp Memory Panels:
-+	  * 1.00" Sharp Memory LCD (LS010B7DH04)
-+	  * 1.10" Sharp Memory LCD (LS011B7DH03)
-+	  * 1.20" Sharp Memory LCD (LS012B7DD01)
-+	  * 1.28" Sharp Memory LCD (LS013B7DH03)
-+	  * 1.26" Sharp Memory LCD (LS013B7DH05)
-+	  * 1.80" Sharp Memory LCD (LS018B7DH02)
-+	  * 2.70" Sharp Memory LCD (LS027B7DH01)
-+	  * 2.70" Sharp Memory LCD (LS027B7DH01A)
-+	  * 3.20" Sharp Memory LCD (LS032B7DD02)
-+	  * 4.40" Sharp Memory LCD (LS044Q7DH01)
-+
-+	  If M is selected the module will be called sharp_memory.
-+
- config TINYDRM_ST7586
- 	tristate "DRM support for Sitronix ST7586 display panels"
- 	depends on DRM && SPI
-diff --git a/drivers/gpu/drm/tiny/Makefile b/drivers/gpu/drm/tiny/Makefile
-index 76dde89a044b..4aaf56f8707d 100644
---- a/drivers/gpu/drm/tiny/Makefile
-+++ b/drivers/gpu/drm/tiny/Makefile
-@@ -14,5 +14,6 @@ obj-$(CONFIG_TINYDRM_ILI9341)		+= ili9341.o
- obj-$(CONFIG_TINYDRM_ILI9486)		+= ili9486.o
- obj-$(CONFIG_TINYDRM_MI0283QT)		+= mi0283qt.o
- obj-$(CONFIG_TINYDRM_REPAPER)		+= repaper.o
-+obj-$(CONFIG_TINYDRM_SHARP_MEMORY)	+= sharp-memory.o
- obj-$(CONFIG_TINYDRM_ST7586)		+= st7586.o
- obj-$(CONFIG_TINYDRM_ST7735R)		+= st7735r.o
-diff --git a/drivers/gpu/drm/tiny/sharp-memory.c b/drivers/gpu/drm/tiny/sharp-memory.c
-new file mode 100644
-index 000000000000..70236d3588a3
---- /dev/null
-+++ b/drivers/gpu/drm/tiny/sharp-memory.c
-@@ -0,0 +1,682 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+
-+#include <drm/drm_atomic.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_connector.h>
-+#include <drm/drm_damage_helper.h>
-+#include <drm/drm_drv.h>
-+#include <drm/drm_fb_dma_helper.h>
-+#include <drm/drm_fbdev_dma.h>
-+#include <drm/drm_format_helper.h>
-+#include <drm/drm_framebuffer.h>
-+#include <drm/drm_gem_atomic_helper.h>
-+#include <drm/drm_gem_dma_helper.h>
-+#include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_managed.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_probe_helper.h>
-+#include <drm/drm_rect.h>
-+#include <linux/bitrev.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/kthread.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/pwm.h>
-+#include <linux/spi/spi.h>
-+
-+#define SHARP_MODE_PERIOD 8
-+#define SHARP_ADDR_PERIOD 8
-+#define SHARP_DUMMY_PERIOD 8
-+
-+#define SHARP_MEMORY_DISPLAY_MAINTAIN_MODE 0
-+#define SHARP_MEMORY_DISPLAY_UPDATE_MODE 1
-+#define SHARP_MEMORY_DISPLAY_CLEAR_MODE 4
-+
-+enum sharp_memory_model {
-+	LS010B7DH04,
-+	LS011B7DH03,
-+	LS012B7DD01,
-+	LS013B7DH03,
-+	LS013B7DH05,
-+	LS018B7DH02,
-+	LS027B7DH01,
-+	LS027B7DH01A,
-+	LS032B7DD02,
-+	LS044Q7DH01,
-+};
-+
-+enum sharp_memory_vcom_mode {
-+	SHARP_MEMORY_SOFTWARE_VCOM,
-+	SHARP_MEMORY_EXTERNAL_VCOM,
-+	SHARP_MEMORY_PWM_VCOM
-+};
-+
-+struct sharp_memory_device {
-+	struct drm_device drm;
-+	struct spi_device *spi;
-+
-+	const struct drm_display_mode *mode;
-+
-+	struct drm_crtc crtc;
-+	struct drm_plane plane;
-+	struct drm_encoder encoder;
-+	struct drm_connector connector;
-+
-+	struct gpio_desc *enable_gpio;
-+
-+	struct task_struct *sw_vcom_signal;
-+	struct pwm_device *pwm_vcom_signal;
-+
-+	enum sharp_memory_vcom_mode vcom_mode;
-+	u8 vcom;
-+
-+	u32 pitch;
-+	u32 tx_buffer_size;
-+	u8 *tx_buffer;
-+
-+	/* When vcom_mode == "software" a kthread is used to
-+	 * periodically send a 'maintain display' message over
-+	 * spi. This mutex ensures tx_buffer access and spi bus
-+	 * usage is synchronized in this case
-+	 */
-+	struct mutex tx_mutex;
-+};
-+
-+static inline int sharp_memory_spi_write(struct spi_device *spi, void *buf, size_t len)
-+{
-+	/* Reverse the bit order */
-+	for (u8 *b = buf; b < ((u8 *)buf) + len; ++b)
-+		*b = bitrev8(*b);
-+
-+	return spi_write(spi, buf, len);
-+}
-+
-+static inline struct sharp_memory_device *drm_to_sharp_memory_device(struct drm_device *drm)
-+{
-+	return container_of(drm, struct sharp_memory_device, drm);
-+}
-+
-+DEFINE_DRM_GEM_DMA_FOPS(sharp_memory_fops);
-+
-+static const struct drm_driver sharp_memory_drm_driver = {
-+	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
-+	.fops			= &sharp_memory_fops,
-+	DRM_GEM_DMA_DRIVER_OPS_VMAP,
-+	.name			= "sharp_memory_display",
-+	.desc			= "Sharp Display Memory LCD",
-+	.date			= "20231129",
-+	.major			= 1,
-+	.minor			= 0,
-+};
-+
-+static inline void sharp_memory_set_tx_buffer_mode(u8 *buffer, u8 mode, u8 vcom)
-+{
-+	*buffer = mode | (vcom << 1);
-+}
-+
-+static inline void sharp_memory_set_tx_buffer_addresses(u8 *buffer,
-+							struct drm_rect clip,
-+							u32 pitch)
-+{
-+	for (u32 line = 0; line < clip.y2; ++line)
-+		buffer[line * pitch] = line + 1;
-+}
-+
-+static void sharp_memory_set_tx_buffer_data(u8 *buffer,
-+					    struct drm_framebuffer *fb,
-+					    struct drm_rect clip,
-+					    u32 pitch,
-+					    struct drm_format_conv_state *fmtcnv_state)
-+{
-+	int ret;
-+	struct iosys_map dst, vmap;
-+	struct drm_gem_dma_object *dma_obj = drm_fb_dma_get_gem_obj(fb, 0);
-+
-+	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
-+	if (ret)
-+		return;
-+
-+	iosys_map_set_vaddr(&dst, buffer);
-+	iosys_map_set_vaddr(&vmap, dma_obj->vaddr);
-+
-+	drm_fb_xrgb8888_to_mono(&dst, &pitch, &vmap, fb, &clip, fmtcnv_state);
-+
-+	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
-+}
-+
-+static int sharp_memory_update_display(struct sharp_memory_device *smd,
-+				       struct drm_framebuffer *fb,
-+				       struct drm_rect clip,
-+				       struct drm_format_conv_state *fmtcnv_state)
-+{
-+	int ret;
-+	u32 pitch = smd->pitch;
-+	u8 vcom = smd->vcom;
-+	u8 *tx_buffer = smd->tx_buffer;
-+	u32 tx_buffer_size = smd->tx_buffer_size;
-+
-+	mutex_lock(&smd->tx_mutex);
-+
-+	/* Populate the transmit buffer with frame data */
-+	sharp_memory_set_tx_buffer_mode(&tx_buffer[0],
-+					SHARP_MEMORY_DISPLAY_UPDATE_MODE, vcom);
-+	sharp_memory_set_tx_buffer_addresses(&tx_buffer[1], clip, pitch);
-+	sharp_memory_set_tx_buffer_data(&tx_buffer[2], fb, clip, pitch, fmtcnv_state);
-+
-+	ret = sharp_memory_spi_write(smd->spi, tx_buffer, tx_buffer_size);
-+
-+	mutex_unlock(&smd->tx_mutex);
-+
-+	return ret;
-+}
-+
-+static int sharp_memory_maintain_display(struct sharp_memory_device *smd)
-+{
-+	int ret;
-+	u8 vcom = smd->vcom;
-+	u8 *tx_buffer = smd->tx_buffer;
-+
-+	mutex_lock(&smd->tx_mutex);
-+
-+	sharp_memory_set_tx_buffer_mode(&tx_buffer[0], SHARP_MEMORY_DISPLAY_MAINTAIN_MODE, vcom);
-+	tx_buffer[1] = 0; // Write dummy data
-+	ret = sharp_memory_spi_write(smd->spi, tx_buffer, 2);
-+
-+	mutex_unlock(&smd->tx_mutex);
-+
-+	return ret;
-+}
-+
-+static int sharp_memory_clear_display(struct sharp_memory_device *smd)
-+{
-+	int ret;
-+	u8 vcom = smd->vcom;
-+	u8 *tx_buffer = smd->tx_buffer;
-+
-+	mutex_lock(&smd->tx_mutex);
-+
-+	sharp_memory_set_tx_buffer_mode(&tx_buffer[0], SHARP_MEMORY_DISPLAY_CLEAR_MODE, vcom);
-+	tx_buffer[1] = 0; // write dummy data
-+	ret = sharp_memory_spi_write(smd->spi, tx_buffer, 2);
-+
-+	mutex_unlock(&smd->tx_mutex);
-+
-+	return ret;
-+}
-+
-+static void sharp_memory_fb_dirty(struct drm_framebuffer *fb, struct drm_rect *rect,
-+				  struct drm_format_conv_state *fmtconv_state)
-+{
-+	struct drm_rect clip;
-+	struct sharp_memory_device *smd = drm_to_sharp_memory_device(fb->dev);
-+
-+	/* Always update a full line regardless of what is dirty */
-+	clip.x1 = 0;
-+	clip.x2 = fb->width;
-+	clip.y1 = rect->y1;
-+	clip.y2 = rect->y2;
-+
-+	sharp_memory_update_display(smd, fb, clip, fmtconv_state);
-+}
-+
-+static int sharp_memory_plane_atomic_check(struct drm_plane *plane,
-+					   struct drm_atomic_state *state)
-+{
-+	struct drm_plane_state *plane_state = drm_atomic_get_new_plane_state(state, plane);
-+	struct sharp_memory_device *smd;
-+	struct drm_crtc_state *crtc_state;
-+
-+	smd = container_of(plane, struct sharp_memory_device, plane);
-+	crtc_state = drm_atomic_get_new_crtc_state(state, &smd->crtc);
-+
-+	return drm_atomic_helper_check_plane_state(plane_state, crtc_state,
-+						   DRM_PLANE_NO_SCALING,
-+						   DRM_PLANE_NO_SCALING,
-+						   false, false);
-+}
-+
-+static void sharp_memory_plane_atomic_update(struct drm_plane *plane,
-+					     struct drm_atomic_state *state)
-+{
-+	struct drm_plane_state *old_state = drm_atomic_get_old_plane_state(state, plane);
-+	struct drm_plane_state *plane_state = plane->state;
-+	struct drm_format_conv_state fmtcnv_state = DRM_FORMAT_CONV_STATE_INIT;
-+	struct sharp_memory_device *smd;
-+	struct drm_rect rect;
-+
-+	smd = container_of(plane, struct sharp_memory_device, plane);
-+	if (!smd->crtc.state->active)
-+		return;
-+
-+	if (drm_atomic_helper_damage_merged(old_state, plane_state, &rect))
-+		sharp_memory_fb_dirty(plane_state->fb, &rect, &fmtcnv_state);
-+
-+	drm_format_conv_state_release(&fmtcnv_state);
-+}
-+
-+static const struct drm_plane_helper_funcs sharp_memory_plane_helper_funcs = {
-+	.prepare_fb = drm_gem_plane_helper_prepare_fb,
-+	.atomic_check = sharp_memory_plane_atomic_check,
-+	.atomic_update = sharp_memory_plane_atomic_update,
-+};
-+
-+static bool sharp_memory_format_mod_supported(struct drm_plane *plane,
-+					      u32 format,
-+					      u64 modifier)
-+{
-+	return modifier == DRM_FORMAT_MOD_LINEAR;
-+}
-+
-+static const struct drm_plane_funcs sharp_memory_plane_funcs = {
-+	.update_plane = drm_atomic_helper_update_plane,
-+	.disable_plane = drm_atomic_helper_disable_plane,
-+	.destroy = drm_plane_cleanup,
-+	.reset = drm_atomic_helper_plane_reset,
-+	.atomic_duplicate_state	= drm_atomic_helper_plane_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
-+	.format_mod_supported = sharp_memory_format_mod_supported,
-+};
-+
-+static enum drm_mode_status sharp_memory_crtc_mode_valid(struct drm_crtc *crtc,
-+							 const struct drm_display_mode *mode)
-+{
-+	struct sharp_memory_device *smd = drm_to_sharp_memory_device(crtc->dev);
-+
-+	return drm_crtc_helper_mode_valid_fixed(crtc, mode, smd->mode);
-+}
-+
-+static int sharp_memory_crtc_check(struct drm_crtc *crtc,
-+				   struct drm_atomic_state *state)
-+{
-+	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state, crtc);
-+	int ret;
-+
-+	if (!crtc_state->enable)
-+		goto out;
-+
-+	ret = drm_atomic_helper_check_crtc_primary_plane(crtc_state);
-+	if (ret)
-+		return ret;
-+
-+out:
-+	return drm_atomic_add_affected_planes(state, crtc);
-+}
-+
-+static int sharp_memory_sw_vcom_signal_thread(void *data)
-+{
-+	struct sharp_memory_device *smd = data;
-+
-+	while (!kthread_should_stop()) {
-+		smd->vcom ^= 1; // Toggle vcom
-+		sharp_memory_maintain_display(smd);
-+		msleep(1000);
-+	}
-+
-+	return 0;
-+}
-+
-+static void sharp_memory_crtc_enable(struct drm_crtc *crtc,
-+				     struct drm_atomic_state *state)
-+{
-+	struct pwm_state pwm_state;
-+	struct sharp_memory_device *smd = drm_to_sharp_memory_device(crtc->dev);
-+
-+	sharp_memory_clear_display(smd);
-+
-+	if (smd->enable_gpio)
-+		gpiod_set_value(smd->enable_gpio, 1);
-+
-+	switch (smd->vcom_mode) {
-+	case SHARP_MEMORY_SOFTWARE_VCOM:
-+		smd->sw_vcom_signal = kthread_run(sharp_memory_sw_vcom_signal_thread,
-+						  smd, "sw_vcom_signal");
-+		break;
-+
-+	case SHARP_MEMORY_EXTERNAL_VCOM:
-+		break;
-+
-+	case SHARP_MEMORY_PWM_VCOM:
-+		pwm_get_state(smd->pwm_vcom_signal, &pwm_state);
-+		pwm_state.period =    1000000000;
-+		pwm_state.duty_cycle = 100000000;
-+		pwm_state.enabled = true;
-+		pwm_apply_state(smd->pwm_vcom_signal, &pwm_state);
-+		break;
-+	}
-+}
-+
-+static void sharp_memory_crtc_disable(struct drm_crtc *crtc,
-+				      struct drm_atomic_state *state)
-+{
-+	struct sharp_memory_device *smd = drm_to_sharp_memory_device(crtc->dev);
-+
-+	sharp_memory_clear_display(smd);
-+
-+	if (smd->enable_gpio)
-+		gpiod_set_value(smd->enable_gpio, 0);
-+
-+	switch (smd->vcom_mode) {
-+	case SHARP_MEMORY_SOFTWARE_VCOM:
-+		kthread_stop(smd->sw_vcom_signal);
-+		break;
-+
-+	case SHARP_MEMORY_EXTERNAL_VCOM:
-+		break;
-+
-+	case SHARP_MEMORY_PWM_VCOM:
-+		pwm_disable(smd->pwm_vcom_signal);
-+		break;
-+	}
-+}
-+
-+static const struct drm_crtc_helper_funcs sharp_memory_crtc_helper_funcs = {
-+	.mode_valid = sharp_memory_crtc_mode_valid,
-+	.atomic_check = sharp_memory_crtc_check,
-+	.atomic_enable = sharp_memory_crtc_enable,
-+	.atomic_disable = sharp_memory_crtc_disable,
-+};
-+
-+static const struct drm_crtc_funcs sharp_memory_crtc_funcs = {
-+	.reset = drm_atomic_helper_crtc_reset,
-+	.destroy = drm_crtc_cleanup,
-+	.set_config = drm_atomic_helper_set_config,
-+	.page_flip = drm_atomic_helper_page_flip,
-+	.atomic_duplicate_state = drm_atomic_helper_crtc_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
-+};
-+
-+static const struct drm_encoder_funcs sharp_memory_encoder_funcs = {
-+	.destroy = drm_encoder_cleanup,
-+};
-+
-+static int sharp_memory_connector_get_modes(struct drm_connector *connector)
-+{
-+	struct sharp_memory_device *smd = drm_to_sharp_memory_device(connector->dev);
-+
-+	return drm_connector_helper_get_modes_fixed(connector, smd->mode);
-+}
-+
-+static const struct drm_connector_helper_funcs sharp_memory_connector_hfuncs = {
-+	.get_modes = sharp_memory_connector_get_modes,
-+};
-+
-+static const struct drm_connector_funcs sharp_memory_connector_funcs = {
-+	.reset = drm_atomic_helper_connector_reset,
-+	.fill_modes = drm_helper_probe_single_connector_modes,
-+	.destroy = drm_connector_cleanup,
-+	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-+
-+};
-+
-+static const struct drm_mode_config_funcs sharp_memory_mode_config_funcs = {
-+	.fb_create = drm_gem_fb_create_with_dirty,
-+	.atomic_check = drm_atomic_helper_check,
-+	.atomic_commit = drm_atomic_helper_commit,
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls010b7dh04_mode = {
-+	DRM_SIMPLE_MODE(128, 128, 18, 18),
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls011b7dh03_mode = {
-+	DRM_SIMPLE_MODE(160, 68, 25, 10),
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls012b7dd01_mode = {
-+	DRM_SIMPLE_MODE(184, 38, 29, 6),
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls013b7dh03_mode = {
-+	DRM_SIMPLE_MODE(128, 128, 23, 23),
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls013b7dh05_mode = {
-+	DRM_SIMPLE_MODE(144, 168, 20, 24),
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls018b7dh02_mode = {
-+	DRM_SIMPLE_MODE(230, 303, 27, 36),
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls027b7dh01_mode = {
-+	DRM_SIMPLE_MODE(400, 240, 58, 35),
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls032b7dd02_mode = {
-+	DRM_SIMPLE_MODE(336, 536, 42, 68),
-+};
-+
-+static const struct drm_display_mode sharp_memory_ls044q7dh01_mode = {
-+	DRM_SIMPLE_MODE(320, 240, 89, 67),
-+};
-+
-+static const struct spi_device_id sharp_memory_ids[] = {
-+	{"ls010b7dh04", (kernel_ulong_t)&sharp_memory_ls010b7dh04_mode},
-+	{"ls011b7dh03", (kernel_ulong_t)&sharp_memory_ls011b7dh03_mode},
-+	{"ls012b7dd01", (kernel_ulong_t)&sharp_memory_ls012b7dd01_mode},
-+	{"ls013b7dh03", (kernel_ulong_t)&sharp_memory_ls013b7dh03_mode},
-+	{"ls013b7dh05", (kernel_ulong_t)&sharp_memory_ls013b7dh05_mode},
-+	{"ls018b7dh02", (kernel_ulong_t)&sharp_memory_ls018b7dh02_mode},
-+	{"ls027b7dh01", (kernel_ulong_t)&sharp_memory_ls027b7dh01_mode},
-+	{"ls027b7dh01a", (kernel_ulong_t)&sharp_memory_ls027b7dh01_mode},
-+	{"ls032b7dd02", (kernel_ulong_t)&sharp_memory_ls032b7dd02_mode},
-+	{"ls044q7dh01", (kernel_ulong_t)&sharp_memory_ls044q7dh01_mode},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(spi, sharp_memory_ids);
-+
-+static const struct of_device_id sharp_memory_of_match[] = {
-+	{.compatible = "sharp,ls010b7dh04", &sharp_memory_ls010b7dh04_mode},
-+	{.compatible = "sharp,ls011b7dh03", &sharp_memory_ls011b7dh03_mode},
-+	{.compatible = "sharp,ls012b7dd01", &sharp_memory_ls012b7dd01_mode},
-+	{.compatible = "sharp,ls013b7dh03", &sharp_memory_ls013b7dh03_mode},
-+	{.compatible = "sharp,ls013b7dh05", &sharp_memory_ls013b7dh05_mode},
-+	{.compatible = "sharp,ls018b7dh02", &sharp_memory_ls018b7dh02_mode},
-+	{.compatible = "sharp,ls027b7dh01", &sharp_memory_ls027b7dh01_mode},
-+	{.compatible = "sharp,ls027b7dh01a", &sharp_memory_ls027b7dh01_mode},
-+	{.compatible = "sharp,ls032b7dd02", &sharp_memory_ls032b7dd02_mode},
-+	{.compatible = "sharp,ls044q7dh01", &sharp_memory_ls044q7dh01_mode},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, sharp_memory_of_match);
-+
-+static const u32 sharp_memory_formats[] = {
-+	DRM_FORMAT_XRGB8888,
-+};
-+
-+static int sharp_memory_pipe_init(struct drm_device *dev,
-+				  struct sharp_memory_device *smd,
-+				  const u32 *formats, unsigned int format_count,
-+				  const u64 *format_modifiers)
-+{
-+	int ret;
-+	struct drm_encoder *encoder = &smd->encoder;
-+	struct drm_plane *plane = &smd->plane;
-+	struct drm_crtc *crtc = &smd->crtc;
-+	struct drm_connector *connector = &smd->connector;
-+
-+	drm_plane_helper_add(plane, &sharp_memory_plane_helper_funcs);
-+	ret = drm_universal_plane_init(dev, plane, 0,
-+				       &sharp_memory_plane_funcs,
-+				       formats, format_count,
-+				       format_modifiers,
-+				       DRM_PLANE_TYPE_PRIMARY, NULL);
-+	if (ret)
-+		return ret;
-+
-+	drm_crtc_helper_add(crtc, &sharp_memory_crtc_helper_funcs);
-+	ret = drm_crtc_init_with_planes(dev, crtc, plane, NULL,
-+					&sharp_memory_crtc_funcs, NULL);
-+	if (ret)
-+		return ret;
-+
-+	encoder->possible_crtcs = drm_crtc_mask(crtc);
-+	ret = drm_encoder_init(dev, encoder, &sharp_memory_encoder_funcs,
-+			       DRM_MODE_ENCODER_NONE, NULL);
-+	if (ret)
-+		return ret;
-+
-+	ret = drm_connector_init(&smd->drm, &smd->connector,
-+				 &sharp_memory_connector_funcs,
-+				 DRM_MODE_CONNECTOR_SPI);
-+	if (ret)
-+		return ret;
-+
-+	drm_connector_helper_add(&smd->connector,
-+				 &sharp_memory_connector_hfuncs);
-+
-+	return drm_connector_attach_encoder(connector, encoder);
-+}
-+
-+static int sharp_memory_init_pwm_vcom_signal(struct sharp_memory_device *smd)
-+{
-+	struct pwm_state state;
-+	struct device *dev = &smd->spi->dev;
-+
-+	smd->pwm_vcom_signal = devm_pwm_get(dev, NULL);
-+	if (IS_ERR(smd->pwm_vcom_signal))
-+		return dev_err_probe(dev, -EINVAL, "Could not get pwm device\n");
-+
-+	pwm_init_state(smd->pwm_vcom_signal, &state);
-+	state.enabled = false;
-+	pwm_apply_state(smd->pwm_vcom_signal, &state);
-+
-+	return 0;
-+}
-+
-+static int sharp_memory_probe(struct spi_device *spi)
-+{
-+	int ret;
-+	struct device *dev;
-+	struct sharp_memory_device *smd;
-+	struct drm_device *drm;
-+	const char *vcom_mode_str;
-+
-+	ret = spi_setup(spi);
-+	if (ret < 0)
-+		return dev_err_probe(&spi->dev, ret, "Failed to setup spi device\n");
-+
-+	dev = &spi->dev;
-+	if (!dev->coherent_dma_mask) {
-+		ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Failed to set dma mask\n");
-+	}
-+
-+	smd = devm_drm_dev_alloc(dev, &sharp_memory_drm_driver,
-+				 struct sharp_memory_device, drm);
-+	if (!smd)
-+		return -ENOMEM;
-+
-+	spi_set_drvdata(spi, smd);
-+
-+	smd->spi = spi;
-+	drm = &smd->drm;
-+	ret = drmm_mode_config_init(drm);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to initialize drm config\n");
-+
-+	smd->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
-+	if (!smd->enable_gpio)
-+		dev_warn(dev, "Enable gpio not defined\n");
-+
-+	/*
-+	 * VCOM is a signal that prevents DC bias from being built up in
-+	 * the panel resulting in pixels being forever stuck in one state.
-+	 *
-+	 * This driver supports three different methods to generate this
-+	 * signal depending on EXTMODE pin:
-+	 *
-+	 * software (EXTMODE = L) - This mode uses a kthread to
-+	 * periodically send a "maintain display" message to the display,
-+	 * toggling the vcom bit on and off with each message
-+	 *
-+	 * external (EXTMODE = H) - This mode relies on an external
-+	 * clock to generate the signal on the EXTCOMM pin
-+	 *
-+	 * pwm (EXTMODE = H) - This mode uses a pwm device to generate
-+	 * the signal on the EXTCOMM pin
-+	 *
-+	 */
-+	if (device_property_read_string(&spi->dev, "sharp,vcom-mode", &vcom_mode_str))
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Unable to find sharp,vcom-mode node in device tree\n");
-+
-+	if (!strcmp("software", vcom_mode_str)) {
-+		smd->vcom_mode = SHARP_MEMORY_SOFTWARE_VCOM;
-+
-+	} else if (!strcmp("external", vcom_mode_str)) {
-+		smd->vcom_mode = SHARP_MEMORY_EXTERNAL_VCOM;
-+
-+	} else if (!strcmp("pwm", vcom_mode_str)) {
-+		smd->vcom_mode = SHARP_MEMORY_PWM_VCOM;
-+		ret = sharp_memory_init_pwm_vcom_signal(smd);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to initialize external COM signal\n");
-+	} else {
-+		return dev_err_probe(dev, -EINVAL, "Invalid value set for vcom-mode\n");
-+	}
-+
-+	drm->mode_config.funcs = &sharp_memory_mode_config_funcs;
-+	smd->mode = spi_get_device_match_data(spi);
-+
-+	smd->pitch = (SHARP_ADDR_PERIOD + smd->mode->hdisplay + SHARP_DUMMY_PERIOD) / 8;
-+	smd->tx_buffer_size = (SHARP_MODE_PERIOD +
-+			       (SHARP_ADDR_PERIOD + (smd->mode->hdisplay) + SHARP_DUMMY_PERIOD) *
-+			       smd->mode->vdisplay) / 8;
-+
-+	smd->tx_buffer = devm_kzalloc(&spi->dev, smd->tx_buffer_size, GFP_KERNEL);
-+	if (!smd->tx_buffer)
-+		return -ENOMEM;
-+
-+	mutex_init(&smd->tx_mutex);
-+
-+	drm->mode_config.min_width = smd->mode->hdisplay;
-+	drm->mode_config.max_width = smd->mode->hdisplay;
-+	drm->mode_config.min_height = smd->mode->vdisplay;
-+	drm->mode_config.max_height = smd->mode->vdisplay;
-+
-+	ret = sharp_memory_pipe_init(drm, smd, sharp_memory_formats,
-+				     ARRAY_SIZE(sharp_memory_formats),
-+				     NULL);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to initialize display pipeline.\n");
-+
-+	drm_plane_enable_fb_damage_clips(&smd->plane);
-+	drm_mode_config_reset(drm);
-+
-+	ret = drm_dev_register(drm, 0);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to register drm device.\n");
-+
-+	drm_fbdev_dma_setup(drm, 0);
-+
-+	return 0;
-+}
-+
-+static void sharp_memory_remove(struct spi_device *spi)
-+{
-+	struct sharp_memory_device *smd = spi_get_drvdata(spi);
-+
-+	drm_dev_unplug(&smd->drm);
-+	drm_atomic_helper_shutdown(&smd->drm);
-+}
-+
-+static struct spi_driver sharp_memory_spi_driver = {
-+	.driver = {
-+		.name = "sharp_memory",
-+		.of_match_table = sharp_memory_of_match,
-+	},
-+	.probe = sharp_memory_probe,
-+	.remove = sharp_memory_remove,
-+	.id_table = sharp_memory_ids,
-+};
-+module_spi_driver(sharp_memory_spi_driver);
-+
-+MODULE_AUTHOR("Alex Lanzano <lanzano.alex@gmail.com>");
-+MODULE_DESCRIPTION("SPI Protocol driver for the sharp_memory display");
-+MODULE_LICENSE("GPL");
--- 
-2.45.2
-
+>
+> > Nack for this v3. Please come back on v2
+> >
+> > > 1. hw_pressure doesn't care about invariance.
+> > > 2. avoid any inconsistence in the future.
+> > >
+> > > Fixes: 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
+> > > Suggested-by: Qais Yousef <qyousef@layalina.io>
+> > > Reviewed-by: Hongyan Xia <hongyan.xia2@arm.com>
+> > > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> > > ---
+> > > v2>v3:
+> > >   call rq_clock_task() inside update_hw_load_avg() to avoid any
+> > >   inconsistence in the future. (Qais Yousef)
+> > >   Added comments around update_hw_load_avg(). (Qais Yousef)
+> > > v1->v2:
+> > >   Added Hongyan's Reviewed-by tag.
+> > >   Removed the Reported-by/Closes tags because they are not related
+> > >   to this fix.(Hongyan Xia)
+> > > ---
+> > >  kernel/sched/core.c | 2 +-
+> > >  kernel/sched/fair.c | 2 +-
+> > >  kernel/sched/pelt.c | 5 +++--
+> > >  kernel/sched/pelt.h | 6 +++---
+> > >  4 files changed, 8 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > > index a9f655025607..011d447e065f 100644
+> > > --- a/kernel/sched/core.c
+> > > +++ b/kernel/sched/core.c
+> > > @@ -5462,7 +5462,7 @@ void sched_tick(void)
+> > >
+> > >         update_rq_clock(rq);
+> > >         hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
+> > > -       update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure);
+> > > +       update_hw_load_avg(rq, hw_pressure);
+> > >         curr->sched_class->task_tick(rq, curr, 0);
+> > >         if (sched_feat(LATENCY_WARN))
+> > >                 resched_latency = cpu_resched_latency(rq);
+> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > index 9057584ec06d..193ac2c702d9 100644
+> > > --- a/kernel/sched/fair.c
+> > > +++ b/kernel/sched/fair.c
+> > > @@ -9362,7 +9362,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
+> > >
+> > >         decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+> > >                   update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
+> > > -                 update_hw_load_avg(now, rq, hw_pressure) |
+> > > +                 update_hw_load_avg(rq, hw_pressure) |
+> > >                   update_irq_load_avg(rq, 0);
+> > >
+> > >         if (others_have_blocked(rq))
+> > > diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+> > > index fa52906a4478..06a5fa85327c 100644
+> > > --- a/kernel/sched/pelt.c
+> > > +++ b/kernel/sched/pelt.c
+> > > @@ -400,9 +400,10 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+> > >   *                     capped capacity a cpu due to a HW event.
+> > >   */
+> > >
+> > > -int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+> > > +int update_hw_load_avg(struct rq *rq, u64 capacity)
+> > >  {
+> > > -       if (___update_load_sum(now, &rq->avg_hw,
+> > > +       /* hw_pressure doesn't care about invariance */
+> > > +       if (___update_load_sum(rq_clock_task(rq), &rq->avg_hw,
+> > >                                capacity,
+> > >                                capacity,
+> > >                                capacity)) {
+> > > diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+> > > index 2150062949d4..261172c29f8f 100644
+> > > --- a/kernel/sched/pelt.h
+> > > +++ b/kernel/sched/pelt.h
+> > > @@ -8,7 +8,7 @@ int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
+> > >  int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
+> > >
+> > >  #ifdef CONFIG_SCHED_HW_PRESSURE
+> > > -int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity);
+> > > +int update_hw_load_avg(struct rq *rq, u64 capacity);
+> > >
+> > >  static inline u64 hw_load_avg(struct rq *rq)
+> > >  {
+> > > @@ -16,7 +16,7 @@ static inline u64 hw_load_avg(struct rq *rq)
+> > >  }
+> > >  #else
+> > >  static inline int
+> > > -update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+> > > +update_hw_load_avg(struct rq *rq, u64 capacity)
+> > >  {
+> > >         return 0;
+> > >  }
+> > > @@ -202,7 +202,7 @@ update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+> > >  }
+> > >
+> > >  static inline int
+> > > -update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+> > > +update_hw_load_avg(struct rq *rq, u64 capacity)
+> > >  {
+> > >         return 0;
+> > >  }
+> > > --
+> > > 2.25.1
+> > >
 
