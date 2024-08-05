@@ -1,231 +1,182 @@
-Return-Path: <linux-kernel+bounces-274917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95F7947E35
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:35:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938EE947E37
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38452B2247D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:34:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E1881F2170A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B274D15AD9C;
-	Mon,  5 Aug 2024 15:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="DU1vCdcd"
-Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D620524D7;
-	Mon,  5 Aug 2024 15:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7848B159568;
+	Mon,  5 Aug 2024 15:35:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B911591F0;
+	Mon,  5 Aug 2024 15:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722872084; cv=none; b=aP/+/GbXCctKNk3kTo8rKSD5zg8eB3uWnz3g6kPaV0/ybUsIDDmEIp0zTzrK/TYu3NFvEF78hQRFsqbZMZQltNKAJebVZdvCek5dWk+50uRwJmcVMezAEEIvxNpkcgMGxVgBAiH8+Z0FK5M7HpqF1nAulYvmZdvQ+5/UNkt4NRU=
+	t=1722872114; cv=none; b=IO8KdlOYd6d4+t8eb3iAhXO/tUJAkKhxvDC/wUKkHr/eyBQJ0DmALJzx8gqo5muKnxbzeircT5obuZ8hkQ2QYQi0Viyd2lXWz8bkSY493gtJUvQxcQ5hg2kucrACvTt0jCZ0S66KavCWcbuFRopsIC33vxb7i59ZiFdUF32ZUKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722872084; c=relaxed/simple;
-	bh=az9IZNBf572XOHxYtYloLtOpMtowQ2MhfSY+bSjR3u0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UXyP5K77W7JpuiZr+pdCUm1Pqa8jDRVrl40T94ROkxmbtXDkJXJW2eEHN5sDJYr45C0yk/M3iuULt81x+gB716sQdMTUrRiTpOfvt+MSq4ZLnHWQe3mmWoCfG1fSHzU8Y6eBhSGItiueodl3Y/18eNgOLh8NETeqBZzs4O0AN44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=DU1vCdcd; arc=none smtp.client-ip=213.240.239.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
-	s=default; h=Content-Type:Date:To:From:Subject:Message-ID:
-	Content-Transfer-Encoding:Reply-To:Sender;
-	bh=+75xdacdFsxgXARR9Bk36Kwb9foV0OHSOEia2xj7zNY=; b=DU1vCdcd8zw9fBuCWcoIUbwd1N
-	2iT4Z2yvNfgooj+qsR6kbQdFMB9mEb7MPKt+VAoy6pAe7pdqbgGMWBQrTjm5IV6JpccyuRHsKWCg8
-	Rm17xbh2I4uvc8TnSgoWclni/8uEnZX1ZZNQZxYYW6vOydyZyCxT1dwypsgxPJWMzLLdQpNi9XOzZ
-	jBdxIDopSyhf0zizQWlafTUXsK7M8QxIKO6z3QFsgepxGo7bCk96cgSQoj9gHujAgmI29thBGKnyZ
-	JIHQo5ifmjbTVVxxKdXiAmT2JnJtfvBzgOSDGRnJiqWkna5Bz5E1b1neZS7ktgEtT2RHJNLn+ij+8
-	c0twlongBZLwZmjIhvx4IMPrzemy8q5T1L97b0sO72NJvGvnJWzyX0TlX2+R8Jw9DwsIohvt63eqW
-	MoEUb5Ss/pbmwKjWA50Ci8vF+YZggJfErFSVHV4vuZ648gk776yysPSbzOrwMy6FxkMY+MrEwAVF6
-	z5CW82XGZNsIuwlYe4uhvqrl67Yygm4I/UHkyfVvGCHb8guYqtSndoAm83uWZbVrjk+/oC6rDYviQ
-	RLzXAlFqmhITeb21xqpoxDmHR7V5nOxYNlXwzj1jjvUHlxOYl3meT+TU7c9TDxbWQmoUuqBsiXZNU
-	4nlHURCPdc4d2xHyDHQQ6UAtQuaw/qfcCTwy00QFM=;
-Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
-	by a1-bg02.venev.name with esmtps
-	id 1sazj7-00000000p6D-1noa
-	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	(envelope-from <hristo@venev.name>);
-	Mon, 05 Aug 2024 15:34:25 +0000
-Received: from plank.m.venev.name ([213.240.239.48])
-	by pmx1.venev.name with ESMTPSA
-	id CTunOf/wsGZK/wIAT9YxdQ
-	(envelope-from <hristo@venev.name>); Mon, 05 Aug 2024 15:34:25 +0000
-Message-ID: <c39524ab0e2b2045f21bc64f3742ac2b96abd2b9.camel@venev.name>
-Subject: Re: [PATCH] netfs: Set NETFS_RREQ_WRITE_TO_CACHE when caching is
- possible
-From: Hristo Venev <hristo@venev.name>
-To: Trond Myklebust <trondmy@hammerspace.com>, "max.kellermann@ionos.com"
-	 <max.kellermann@ionos.com>, "dhowells@redhat.com" <dhowells@redhat.com>
-Cc: "dan.aloni@vastdata.com" <dan.aloni@vastdata.com>, "xiubli@redhat.com"
- <xiubli@redhat.com>, "linux-fsdevel@vger.kernel.org"
- <linux-fsdevel@vger.kernel.org>, "ceph-devel@vger.kernel.org"
- <ceph-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "netfs@lists.linux.dev"
- <netfs@lists.linux.dev>,  "jlayton@kernel.org" <jlayton@kernel.org>,
- "idryomov@gmail.com" <idryomov@gmail.com>,  "willy@infradead.org"
- <willy@infradead.org>, "blokos@free.fr" <blokos@free.fr>, 
- "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Date: Mon, 05 Aug 2024 18:34:23 +0300
-In-Reply-To: <ba17aecba9615f85b7901ea96609abdad3c29db1.camel@hammerspace.com>
-References: <20240729091532.855688-1-max.kellermann@ionos.com>
-	 <3575457.1722355300@warthog.procyon.org.uk>
-	 <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
-	 <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com>
-	 <3717298.1722422465@warthog.procyon.org.uk>
-	 <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
-	 <845520c7e608c31751506f8162f994b48d235776.camel@venev.name>
-	 <ba17aecba9615f85b7901ea96609abdad3c29db1.camel@hammerspace.com>
-Autocrypt: addr=hristo@venev.name; prefer-encrypt=mutual;
- keydata=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
- AjQ6o01lu
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-m+Z7TPUh5Rd+PvHZw/pU"
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1722872114; c=relaxed/simple;
+	bh=4u7UjoQLgL+KeaHczuoIUQ3UHNCfCFA+336jz9B9PNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eDsX1JIsz62Vt7nJX1tS1DxGcLNkbZNEXjHAYJWuTJJHkRwMXi9tStubFosdPruatkjLGMKsxP+V4hpw/wpTTiF0OKonrwd2PZ/OuNHPaRAX6FQzkDvpAeK5IAVMjKbD78vkEYnx41SF5px5SVAkOQofAgJUf44lIoXGRqI9vD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72E24106F;
+	Mon,  5 Aug 2024 08:35:36 -0700 (PDT)
+Received: from [10.1.25.54] (e127648.arm.com [10.1.25.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A9BA3F6A8;
+	Mon,  5 Aug 2024 08:35:07 -0700 (PDT)
+Message-ID: <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
+Date: Mon, 5 Aug 2024 16:35:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, Hongyan Xia
+ <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240728184551.42133-1-qyousef@layalina.io>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240728184551.42133-1-qyousef@layalina.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 7/28/24 19:45, Qais Yousef wrote:
+> Improve the interaction with cpufreq governors by making the
+> cpufreq_update_util() calls more intentional.
+> 
+> At the moment we send them when load is updated for CFS, bandwidth for
+> DL and at enqueue/dequeue for RT. But this can lead to too many updates
+> sent in a short period of time and potentially be ignored at a critical
+> moment due to the rate_limit_us in schedutil.
+> 
+> For example, simultaneous task enqueue on the CPU where 2nd task is
+> bigger and requires higher freq. The trigger to cpufreq_update_util() by
+> the first task will lead to dropping the 2nd request until tick. Or
+> another CPU in the same policy triggers a freq update shortly after.
+> 
+> Updates at enqueue for RT are not strictly required. Though they do help
+> to reduce the delay for switching the frequency and the potential
+> observation of lower frequency during this delay. But current logic
+> doesn't intentionally (at least to my understanding) try to speed up the
+> request.
+> 
+> To help reduce the amount of cpufreq updates and make them more
+> purposeful, consolidate them into these locations:
+> 
+> 1. context_switch()
+> 2. task_tick_fair()
+> 3. sched_balance_update_blocked_averages()
+> 4. on sched_setscheduler() syscall that changes policy or uclamp values
+> 5. on check_preempt_wakeup_fair() if wakeup preemption failed
+> 6. on __add_running_bw() to guarantee DL bandwidth requirements.
+> 
+> The update at context switch should help guarantee that RT get the right
+> frequency straightaway when they're RUNNING. As mentioned though the
+> update will happen slightly after enqueue_task(); though in an ideal
+> world these tasks should be RUNNING ASAP and this additional delay
+> should be negligible. For fair tasks we need to make sure we send
+> a single update for every decay for the root cfs_rq. Any changes to the
+> rq will be deferred until the next task is ready to run, or we hit TICK.
+> But we are guaranteed the task is running at a level that meets its
+> requirements after enqueue.
+> 
+> To guarantee RT and DL tasks updates are never missed, we add a new
+> SCHED_CPUFREQ_FORCE_UPDATE to ignore the rate_limit_us. If we are
+> already running at the right freq, the governor will end up doing
+> nothing, but we eliminate the risk of the task ending up accidentally
+> running at the wrong freq due to rate_limit_us.
+> 
+> Similarly for iowait boost, we ignore rate limits. We also handle a case
+> of a boost reset prematurely by adding a guard in sugov_iowait_apply()
+> to reduce the boost after 1ms which seems iowait boost mechanism relied
+> on rate_limit_us and cfs_rq.decayed preventing any updates to happen
+> soon after iowait boost.
+> 
+> The new SCHED_CPUFREQ_FORCE_UPDATE should not impact the rate limit
+> time stamps otherwise we can end up delaying updates for normal
+> requests.
+
+Hi Qais,
+the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
+freq updates still bothered me so let me share my thoughts even though
+it might be niche enough for us not to care.
+
+1. On fast_switch systems, assuming they are fine with handling the
+actual updates, we have a bit more work on each context_switch() and
+some synchronisation, too. That should be fine, if anything there's
+some performance regression in a couple of niche cases.
+
+2. On !fast_switch systems this gets more interesting IMO. So we have
+a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
+update request. This task will preempt whatever and currently will
+pretty much always be running on the CPU it ran last on (so first CPU
+of the PD).
+
+The weirdest case I can think of right now is two FAIR iowait tasks on
+e.g. CPU1 keep waking up the DEADLINE task on CPU0 (same PD) regardless
+of what is running there.
+Potentially that means two fair tasks on one CPU CPU-starving an RT
+task on another CPU, because it keeps getting preempted by the DEADLINE
+sugov worker.
+For this to actually happen we need to ensure the tasks
+context-switching actually results in a different requested frequency
+every time, which is a bit unlikely without UCLAMP_MAX, let's say task
+A has 512, task B 1024, task C (RT on CPU1 should have uclamp_min<=512
+then too otherwise frequency may be dictated by the RT task anyway.)
+(Note the entire thing also works with Tasks A & B being lower-prio RT
+too, instead of FAIR and iowait.)
+
+Note that due to the nature of SCHED_DEADLINE and the sugov task having
+10s period and 1s runtime this behavior is limited to 1s every 10s.
+The remaining 9s (replenishment time) we won't see any cpufreq updates
+for that PD at all though.
+
+To reproduce, I have [4,5] being one PD:
+
+fio --minimal --time_based --name=cpu5_1024uclamp --filename=/dev/nullb0 --runtime=10 --rw=randread --bs=4k--direct=1 --cpus_allowed=5
+uclampset -M 512 fio --minimal --time_based --name=cpu5_512uclamp --filename=/dev/nullb0 --runtime=10 --rw=randread --bs=4k--direct=1 --cpus_allowed=5
+and then your RT task on CPU4.
+
+Something like this would mitigate that, I think it makes sense even
+without your patch to get a more predictable idle pattern, just maybe
+not exactly this patch of course.
+
+-->8--
+
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 64f614b3db20..c186f8f999fe 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -567,6 +567,8 @@ static void sugov_irq_work(struct irq_work *irq_work)
+ 
+        sg_policy = container_of(irq_work, struct sugov_policy, irq_work);
+ 
++       /* Try to wake the task here to not preempt or wake up another CPU. */
++       sg_policy->worker.task->wake_cpu = smp_processor_id();
+        kthread_queue_work(&sg_policy->worker, &sg_policy->work);
+ }
+ 
 
 
---=-m+Z7TPUh5Rd+PvHZw/pU
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2024-08-04 at 23:22 +0000, Trond Myklebust wrote:
-> On Sun, 2024-08-04 at 16:57 +0300, Hristo Venev wrote:
-> > In addition to Ceph, in NFS there are also some crashes related to
-> > the
-> > use of 0x356 as a pointer.
-> >=20
-> > `netfs_is_cache_enabled()` only returns true when the fscache
-> > cookie
-> > is
-> > fully initialized. This may happen after the request has been
-> > created,
-> > so check for the cookie's existence instead.
-> >=20
-> > Link:
-> > https://lore.kernel.org/linux-nfs/b78c88db-8b3a-4008-94cb-82ae08f0e37b@=
-free.fr/T/
-> > Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio-
-> > > private and marking dirty")
-> > Cc: linux-nfs@vger.kernel.org=C2=A0<linux-nfs@vger.kernel.org>
-> > Cc: blokos <blokos@free.fr>
-> > Cc: Trond Myklebust <trondmy@hammerspace.com>
-> > Cc: dan.aloni@vastdata.com=C2=A0<dan.aloni@vastdata.com>
-> > Signed-off-by: Hristo Venev <hristo@venev.name>
-> > ---
-> > =C2=A0fs/netfs/objects.c | 6 +++---
-> > =C2=A01 file changed, 3 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-> > index f4a6427274792..a74ca90c86c9b 100644
-> > --- a/fs/netfs/objects.c
-> > +++ b/fs/netfs/objects.c
-> > @@ -27,7 +27,6 @@ struct netfs_io_request
-> > *netfs_alloc_request(struct
-> > address_space *mapping,
-> > =C2=A0	bool is_unbuffered =3D (origin =3D=3D NETFS_UNBUFFERED_WRITE ||
-> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 origin =3D=3D NETFS_DIO_READ ||
-> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 origin =3D=3D NETFS_DIO_WRITE);
-> > -	bool cached =3D !is_unbuffered &&
-> > netfs_is_cache_enabled(ctx);
-> > =C2=A0	int ret;
-> > =C2=A0
-> > =C2=A0	for (;;) {
-> > @@ -56,8 +55,9 @@ struct netfs_io_request
-> > *netfs_alloc_request(struct
-> > address_space *mapping,
-> > =C2=A0	refcount_set(&rreq->ref, 1);
-> > =C2=A0
-> > =C2=A0	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
-> > -	if (cached) {
-> > -		__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq-
-> > >flags);
-> > +	if (!is_unbuffered &&
-> > fscache_cookie_valid(netfs_i_cookie(ctx))) {
-> > +		if(netfs_is_cache_enabled(ctx))
-> > +			__set_bit(NETFS_RREQ_WRITE_TO_CACHE,
-> > &rreq-
-> > > flags);
-> > =C2=A0		if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags))
-> > =C2=A0			/* Filesystem uses deprecated PG_private_2
-> > marking. */
-> > =C2=A0			__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq-
-> > > flags);
->=20
-> Does this mean that netfs could still end up setting a value for
-> folio-
-> > private in NFS given some other set of circumstances?
-
-Hopefully not? For NFS the cookie should be allocated in
-`nfs_fscache_init_inode`, and for Ceph I think `ceph_fill_inode` (which
-calls `ceph_fscache_register_inode_cookie`) should also be called early
-enough as well.
-
-> --=20
-> Trond Myklebust
-> Linux NFS client maintainer, Hammerspace
-> trond.myklebust@hammerspace.com
->=20
->=20
-
-
---=-m+Z7TPUh5Rd+PvHZw/pU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEb/2s7vGPWBH9BOGpSkmD6rj9B8sFAmaw8P8ACgkQSkmD6rj9
-B8uUow/+N0iSbLU5Dj4n4YCskaXe0oYauxtSCavu/FgTNgiGxMSAZAftYPNXznPt
-pD955SG00oNSAv3pJ899be31Pngurud6Ab7mhBJ+0JRNBsxJnD1NYAcDTAlKhLT/
-u6PDNmB82e0fnDSOx9PYQXuepfTwG3xuUJblbLU62O/D3XEEe9BgTfevf+4LHqZF
-z7ezu6qdGxeKyeVjWysFWdwjDybOYvdpiBgUML+0gnQq8A+RrB7dnVjfEJmxqksL
-0ciUxXg+uvQHNVtCoR+zuKRztS7dpgeYgggUGgHVXFdC3WzCxExJZemZmXJBmB+L
-8rWM4TGFCet6lNE1H5RUsBpvGQcYKqGpPDpeLQuI+dhmmTg3q29IM9ERTsD91FqA
-b+xzw0B84IPa2j6RWHjvh4C8kHRRKaDroCuzB8/9tl5XwqFYFjoF/9aO+Js6Cwf6
-5gukhuhgWFfxlqr8XJ7jQsS+KRMVGbvGxFezuquPGcINEfK+g5yPQDUBv334H/Jh
-W4yKbXZ4pHeXiZLSXqBuDZYK2oGRRJaTYJ+9875HCDEZC377I7DGT7EcpUj1afVb
-KsA9k5xMB/RRbP9n6VVBZ5e1osIwZfkCPG9+ZiqBbi658gHoTPsOJ0X4Z2R0p1I6
-2owPKsdeN2oUerNNVQ/5MBKqWzgwsjvMO0KreUMgl7b97fIDbSI=
-=67v8
------END PGP SIGNATURE-----
-
---=-m+Z7TPUh5Rd+PvHZw/pU--
 
