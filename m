@@ -1,245 +1,180 @@
-Return-Path: <linux-kernel+bounces-274664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE53A947B42
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:52:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A93947B44
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5A71C20E3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D46228148A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA54D158DDC;
-	Mon,  5 Aug 2024 12:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3D2159217;
+	Mon,  5 Aug 2024 12:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jSuRu8Qw"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEE6ebm2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3FC1553BD
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 12:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F6B1553BD;
+	Mon,  5 Aug 2024 12:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722862336; cv=none; b=tVkTjp6SXKpkFO331yKYFZhcpSAOox0ZD9++wHJyU6pjM0G2k/CGo5kDC0U6E5gT7hnWJhZRr4JDyWPCmaPdZlv+QWNzo58I784k4fzZDWfLezr9VB6kmHejbHC0nGW6HHSlxPKl0TvEsdcqeqfHVo68EvT9IHNEcjH+1zjs8TU=
+	t=1722862351; cv=none; b=YrupaOWgmTD0HAC1FynxxRsxDUc1qRmxhRBPmMWWI+Pc05rAtUkOIYPSpTXmZ8dFaDcVHJtUwoXNWiJWia4pOPx4LS4Y/5cD2hR7T7hyuASmp5nfxYwDJFmAXHQSiAUP9sAgct8Gv+shyse721ZnjC9igtz+uwQUshoS5vy3cVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722862336; c=relaxed/simple;
-	bh=MWjl5CHOtPJ+y+F3Ajk9ABVkQ1dUm6I4TJr96LZ3VDg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SlS+0XnTe3lx7UvOcJbx07lJE56q69yZQk/rb4TtXMD3DZemrw3kpJm35qg0cf13Mvz+c8HWOQDkXqCF9NNPtl92uEn6va1O+aFZWUOMQuNY+3gd9umwrmNx9RydaB5qVDWv+fiDsMZXQpyY3ZtkvCnsOCc1unrNRyb9R/cNW6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jSuRu8Qw; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so12840a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 05:52:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722862332; x=1723467132; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iFF3dav9yqLjo0TF+kMn3kLYM5TWdwyUTbXMx4bI3W4=;
-        b=jSuRu8QwZw626hwzoyL5pHeQJlOaKiwkzmAYHUp/yZMECuuExGd/iLIPtZi7WtJV7b
-         5kDbkE6wU9AL8Wsy5Gpe3QGQCAVE8iyxFvjABf7FmGnHABg1cSYr4nGeXP24rMm+FScB
-         //BVUoPrGlUGuINHfAAMLU6/p+FxpGVy/0CU8LPtpgz0mAGCG3/bxu+Nf0IgY3Oas9ob
-         Lz4Kl7CO8pcj9q+kJsnAoGPidbMMPGxAa3RU+kVUlqopgFhzgPSrJ3ahhpJJCXjA68T1
-         G3qiheVnWN6dFS7FXYFA2hce1DNWU58TH5HKmIed8VS4S3XT90YX4+n5OReB7tED0tXN
-         mMWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722862332; x=1723467132;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iFF3dav9yqLjo0TF+kMn3kLYM5TWdwyUTbXMx4bI3W4=;
-        b=rRQ8bPIxk3H1kztIiOqahhLuJ/V43uZvnMwEDsk4gZuhqIXCO0ZJrp3vg3lAghyVZg
-         /1IAc2AxarJT0/uVFcNImWDgalb9liOEj9uBfvLZ5iD6tbkeZ3+QXI1P00aQmYueBII3
-         Z9sYzUfrlu/1ULPf/vxjMVuToW35f8tDGRnD8FUzaxwaLdykxEha206heLuZs//WYPku
-         DW7wk4Hz7sIj+kpeTkzjhNzHKtPMh0GGZ84LxeAk+KXoCt+dCIri4kDqPfmC5MdsHrnS
-         vylVt4eX3fvNWOgMwt5n4ffkm/DElI0g6boSZWmi73Nv1Vycy5eReWviA0ROJIDCra2Z
-         3OEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXk05vd9ufpUdA8ExfBZ0z39bPdytspzzSovUXmCDIS5IXAQQxDGA0NzIFmeWwXs/Kbek3TEphF0mcIhd2BrQWEnMc+auDqmQOwCWjQ
-X-Gm-Message-State: AOJu0YzrbAhtslsOQAaKBeowmc+zOPTMx+tFhgGYqEoodZlwhEZu4Ml6
-	8tJOho9VP17EfysBvXmlhHrkhPIeX9yluaRHqNKXhaSytpVQ3nZgd7pJ0pvN+LbFY8ICs12bWTS
-	xzkT9
-X-Google-Smtp-Source: AGHT+IG4/26WzDopprFPE7meuJ2PeY5a6Pyu8HGXYYV2gD7rPHmYXMwsFQ95W3PHgu9F8FoWIi0JoA==
-X-Received: by 2002:a05:6402:2684:b0:5aa:19b1:ffc7 with SMTP id 4fb4d7f45d1cf-5b9c4a18619mr248206a12.2.1722862331691;
-        Mon, 05 Aug 2024 05:52:11 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:ca74:8a49:a6f6:b872])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd05b92esm9932069f8f.85.2024.08.05.05.52.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 05:52:11 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Mon, 05 Aug 2024 14:52:03 +0200
-Subject: [PATCH] mm: fix (harmless) type confusion in lock_vma_under_rcu()
+	s=arc-20240116; t=1722862351; c=relaxed/simple;
+	bh=YDaXqClJaDleQ0l9WH7NX/h/rexRQlDElxkSl9kFDi0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dsfuhBIUtg2+1seKxjWrk+D98OLB17uoSDd2u0DEDRZRrMvSAeLJrrKO94t3fbpPR+wBL4YbFF3Y6WYr32gXQiRtEz/BM7vw0mOLQOKj5VEmU1d7EZjaNWXc1FCZFgSqgQA9z5UK2yHSx8yXUvaAGtpopiPnwT7nXvoy6tHCepc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEE6ebm2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94074C32782;
+	Mon,  5 Aug 2024 12:52:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722862350;
+	bh=YDaXqClJaDleQ0l9WH7NX/h/rexRQlDElxkSl9kFDi0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=iEE6ebm25LZIT9oCOl4iGwfq4zFAwdhblELKP7fHD2G7rbvHaPk0vmi7JXqgReyNq
+	 Uo73jdEGPWO50SDTRQrfpW0Er3rM33tIeRbvkZAwmCrP77ouyoRQ9vO0bPz3LJpxBv
+	 Mdf5fOh9Q1dNRJUP8YUzwo4/LMi4acnU07nAVFq5SzxWODFM7+vH7PoefjW6huBqX5
+	 FToUD1KVDBsWhejN8IOggFGYgP4JrI9vJpVJsnAC79dSGvVNnt7GvUGGjqPmXR0RRu
+	 CAlxEV+M//oEV7FN0ko+jd3dfdUBtBQmNU6Nj/mkYUHllb9v+68A9JkDd2QtrSnhUD
+	 6084COL4SiYFg==
+Message-ID: <d011c2c46732cc0794e787196d71fb90477ff4b8.camel@kernel.org>
+Subject: Re: [PATCH RFC 3/4] lockref: rework CMPXCHG_LOOP to handle
+ contention better
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Jan Kara <jack@suse.cz>, Andrew Morton
+ <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 05 Aug 2024 08:52:28 -0400
+In-Reply-To: <20240805-unser-viren-4f1860143b6e@brauner>
+References: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
+	 <20240802-openfast-v1-3-a1cff2a33063@kernel.org>
+	 <r6gyrzb265f5w6sev6he3ctfjjh7wfhktzwxyylwwkeopkzkpj@fo3yp2lkgp7l>
+	 <CAGudoHHLcKoG6Y2Zzm34gLrtaXmtuMc=CPcVpVQUaJ1Ysz8EDQ@mail.gmail.com>
+	 <7ff040d4a0fb1634d3dc9282da014165a347dbb2.camel@kernel.org>
+	 <CAGudoHFn5Fu2JMJSnqrtEERQhbYmFLB7xR58iXeGJ9_n7oxw8Q@mail.gmail.com>
+	 <808181ffe87d83f8cb36ebb4afbf6cd90778c763.camel@kernel.org>
+	 <20240805-unser-viren-4f1860143b6e@brauner>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240805-fix-vma-lock-type-confusion-v1-1-9f25443a9a71@google.com>
-X-B4-Tracking: v=1; b=H4sIAPPKsGYC/x2MWw5AMBAAryL7bZN6BlcRH0272KCVFiHi7srnJ
- DNzgyfH5KGJbnB0sGdrAiRxBGqUZiBkHRhSkeaiEgX2fOKxSJytmnC7VkJlTb9/HQpZF6WudZZ
- IgnBYHQX9v7fd87wlDPD0bQAAAA==
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Suren Baghdasaryan <surenb@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722862327; l=5226;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=MWjl5CHOtPJ+y+F3Ajk9ABVkQ1dUm6I4TJr96LZ3VDg=;
- b=TWd/79YsLdDZZKgn1Jz6osa0+ZPcWmB2/fiJKUY5M99IObxmRNEi05oVj7U30iEKYVBXTtGQ4
- 8VjaRetHUt8BF5g0WHqWgJqczrOPR7vixIhO+L4L2ybGirAof1h1xNw
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-There is a (harmless) type confusion in lock_vma_under_rcu():
-After vma_start_read(), we have taken the VMA lock but don't know yet
-whether the VMA has already been detached and scheduled for RCU freeing.
-At this point, ->vm_start and ->vm_end are accessed.
+On Mon, 2024-08-05 at 13:44 +0200, Christian Brauner wrote:
+> > Audit not my favorite area of the kernel to work in either. I don't see
+> > a good way to make it rcu-friendly, but I haven't looked too hard yet
+> > either. It would be nice to be able to do some of the auditing under
+> > rcu or spinlock.
+>=20
+> For audit your main option is to dodge the problem and check whether
+> audit is active and only drop out of rcu if it is. That sidesteps the
+> problem. I'm somewhat certain that a lot of systems don't really have
+> audit active.
+>=20
 
-vm_area_struct contains a union such that ->vm_rcu uses the same memory as
-->vm_start and ->vm_end; so accessing ->vm_start and ->vm_end of a detached
-VMA is illegal and leads to type confusion between union members.
+I did have an earlier version of 4/4 that checked audit_context() and
+stayed in RCU mode if it comes back NULL. I can resurrect that if you
+think it's worthwhile.
 
-Fix it by reordering the vma->detached check above the address checks, and
-document the rules for RCU readers accessing VMAs.
+> From a brief look at audit it would be quite involved to make it work
+> just under rcu. Not just because it does various allocation but it also
+> reads fscaps from disk and so on. That's not going to work unless we add
+> a vfs based fscaps cache similar to what we do for acls. I find that
+> very unlikely.=20
 
-This will probably change the number of observed VMA_LOCK_MISS events
-(since previously, trying to access a detached VMA whose ->vm_rcu has been
-scheduled would bail out when checking the fault address against the
-rcu_head members reinterpreted as VMA bounds).
+Yeah. It wants to record a lot of (variable-length) information at very
+inconvenient times. I think we're sort of stuck with it though until
+someone has a vision on how to do this in a non-blocking way.
 
-Fixes: 50ee32537206 ("mm: introduce lock_vma_under_rcu to be used from arch-specific code")
-Signed-off-by: Jann Horn <jannh@google.com>
----
-sidenote: I'm not entirely sure why we handle detached VMAs and moved
-VMAs differently here (detached VMAs retry, moved VMAs bail out), but
-that's kinda out of scope of this patch.
----
- include/linux/mm_types.h | 15 +++++++++++++--
- mm/memory.c              | 14 ++++++++++----
- 2 files changed, 23 insertions(+), 6 deletions(-)
+Handwavy thought: there is some similarity to tracepoints in what
+audit_inode does, and tracepoints are able to be called in all sorts of
+contexts. I wonder if we could leverage the same infrastructure
+somehow? The catch here is that we can't just drop audit records if
+things go wrong.
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 485424979254..498cdf3121d0 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -657,58 +657,69 @@ struct vma_numab_state {
- 
- /*
-  * This struct describes a virtual memory area. There is one of these
-  * per VM-area/task. A VM area is any part of the process virtual memory
-  * space that has a special rule for the page-fault handlers (ie a shared
-  * library, the executable area etc).
-+ *
-+ * Only explicitly marked struct members may be accessed by RCU readers before
-+ * getting a stable reference.
-  */
- struct vm_area_struct {
- 	/* The first cache line has the info for VMA tree walking. */
- 
- 	union {
- 		struct {
- 			/* VMA covers [vm_start; vm_end) addresses within mm */
- 			unsigned long vm_start;
- 			unsigned long vm_end;
- 		};
- #ifdef CONFIG_PER_VMA_LOCK
- 		struct rcu_head vm_rcu;	/* Used for deferred freeing. */
- #endif
- 	};
- 
--	struct mm_struct *vm_mm;	/* The address space we belong to. */
-+	/*
-+	 * The address space we belong to.
-+	 * Unstable RCU readers are allowed to read this.
-+	 */
-+	struct mm_struct *vm_mm;
- 	pgprot_t vm_page_prot;          /* Access permissions of this VMA. */
- 
- 	/*
- 	 * Flags, see mm.h.
- 	 * To modify use vm_flags_{init|reset|set|clear|mod} functions.
- 	 */
- 	union {
- 		const vm_flags_t vm_flags;
- 		vm_flags_t __private __vm_flags;
- 	};
- 
- #ifdef CONFIG_PER_VMA_LOCK
--	/* Flag to indicate areas detached from the mm->mm_mt tree */
-+	/*
-+	 * Flag to indicate areas detached from the mm->mm_mt tree.
-+	 * Unstable RCU readers are allowed to read this.
-+	 */
- 	bool detached;
- 
- 	/*
- 	 * Can only be written (using WRITE_ONCE()) while holding both:
- 	 *  - mmap_lock (in write mode)
- 	 *  - vm_lock->lock (in write mode)
- 	 * Can be read reliably while holding one of:
- 	 *  - mmap_lock (in read or write mode)
- 	 *  - vm_lock->lock (in read or write mode)
- 	 * Can be read unreliably (using READ_ONCE()) for pessimistic bailout
- 	 * while holding nothing (except RCU to keep the VMA struct allocated).
- 	 *
- 	 * This sequence counter is explicitly allowed to overflow; sequence
- 	 * counter reuse can only lead to occasional unnecessary use of the
- 	 * slowpath.
- 	 */
- 	int vm_lock_seq;
-+	/* Unstable RCU readers are allowed to read this. */
- 	struct vma_lock *vm_lock;
- #endif
- 
- 	/*
- 	 * For areas with an address space and backing store,
- 	 * linkage into the address_space->i_mmap interval tree.
-diff --git a/mm/memory.c b/mm/memory.c
-index 34f8402d2046..3f4232b985a1 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5996,23 +5996,29 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
- 	if (!vma)
- 		goto inval;
- 
- 	if (!vma_start_read(vma))
- 		goto inval;
- 
--	/* Check since vm_start/vm_end might change before we lock the VMA */
--	if (unlikely(address < vma->vm_start || address >= vma->vm_end))
--		goto inval_end_read;
--
- 	/* Check if the VMA got isolated after we found it */
- 	if (vma->detached) {
- 		vma_end_read(vma);
- 		count_vm_vma_lock_event(VMA_LOCK_MISS);
- 		/* The area was replaced with another one */
- 		goto retry;
- 	}
-+	/*
-+	 * At this point, we have a stable reference to a VMA: The VMA is
-+	 * locked and we know it hasn't already been isolated.
-+	 * From here on, we can access the VMA without worrying about which
-+	 * fields are accessible for RCU readers.
-+	 */
-+
-+	/* Check since vm_start/vm_end might change before we lock the VMA */
-+	if (unlikely(address < vma->vm_start || address >= vma->vm_end))
-+		goto inval_end_read;
- 
- 	rcu_read_unlock();
- 	return vma;
- 
- inval_end_read:
- 	vma_end_read(vma);
-
----
-base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
-change-id: 20240805-fix-vma-lock-type-confusion-0a956d9d31ae
--- 
-Jann Horn <jannh@google.com>
-
+--=20
+Jeff Layton <jlayton@kernel.org>
 
