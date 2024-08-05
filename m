@@ -1,132 +1,169 @@
-Return-Path: <linux-kernel+bounces-275036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32612947FDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:03:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3DC947FDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E046C281FCD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E0C2840CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A10315E5BA;
-	Mon,  5 Aug 2024 17:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1fG+BHT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5352615ECF6;
+	Mon,  5 Aug 2024 17:03:36 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BE650269;
-	Mon,  5 Aug 2024 17:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2CE15ECCA
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722877390; cv=none; b=nFfITZ91qr+1K8TYMAwdh27q0g6UMxDyu7ks21IxL/LGqm+ic0JxCkgkAvhhzjrEcZ0N00EYhrCho+BqS+gtOhsH41zcwXdVJ/T1AuYPL8FjxCivRZCteDmQYgohNz2jfz4txT9Vuq2caATZSMO+/t3WaCLr0Z4v1j/EFzce2zA=
+	t=1722877415; cv=none; b=IFwJGokCPTjy19QJnyHsa8puWOmo3cq8FqOJmZkeh/R4gRG0LQ2zpVjI7eEMwbzSxlOWgB+staf7Q7dC75AFiFoCRWfzoPRcEd+h0YynrZk5ijyuPCIcipQqPLYrJpUY++ky0MumRCf4iKn3/j5OM03OLg36sDDasgnhOWEs3h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722877390; c=relaxed/simple;
-	bh=JQgT5W0midCkR1aIemlZjPWzMcVRr3/pTH65aQXdSEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H7FMdRkrqPJjd75jTKSL2si+QGqjwqZx8IOtOC9qyc0Lbzt/RVc5HK81w+slY+yeRDj2yJ+T8lvnu0304ekpUFR5zQTrhtVEICsfA1iMrkgeZcVbFgVeCJEKcfP/3ERe4LTbjeB8ppvcnXKbklojs1vFmJ3smntEuviOb2MyaH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1fG+BHT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DF7C32782;
-	Mon,  5 Aug 2024 17:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722877390;
-	bh=JQgT5W0midCkR1aIemlZjPWzMcVRr3/pTH65aQXdSEA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g1fG+BHTMJfvNujJ3LJwKymNpexXMHqz9RR7gy3KnR+fNki7hxcbNalbY9KNS3B12
-	 HBbJWWbYFXLFtKC3qiOIl/j4NVvdjz3WF32KZ4+h4zSNO2pmZVaXsb3BZMQcldCDfd
-	 z9CyfVlbQzHFfG9SF5BNDCzDci1KAZCcPFFXOWm/unkNjrAgFEI3IO4tJktaWRI2xU
-	 F3WrlPCSqYdj6so9s5uUoj9F4VJYP46G2m3KAKprHygSqBii6BtFiRM/WZk03zkc1R
-	 vl67fFWkSetTdi2sn3Ia0IBIJxIMAy43FtiB34VcVxLNFFXEoqi4B0Z/ZS2rBMYLZP
-	 Lgx/EkRUqcsRw==
-Message-ID: <c8d90471-4f79-4301-866c-62023c414709@kernel.org>
-Date: Mon, 5 Aug 2024 19:03:02 +0200
+	s=arc-20240116; t=1722877415; c=relaxed/simple;
+	bh=Dn2k5qh3qBvNIHK1xSaAQ0OAAUVlMKuU+Zr79+pBPFI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=adIVmXQoG8IdcCfBeXRqNhVLaxs4zdRj2MuhMSS26jTyqEXDxh8O5Wk/BRwkJM1UI/D2czCxG3LQohnxrXyHgDveIjxDlM5kKLA/1lD5R7R0Y/GD6jzwaaYuLKMKK7wZLx6lstiVbuKDGT8PE64cZPJuJYhjggzyciIlhDueULI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wd2lJ1Jw9z6K5Tg;
+	Tue,  6 Aug 2024 01:01:16 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0C3DE140A87;
+	Tue,  6 Aug 2024 01:03:30 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 5 Aug
+ 2024 18:03:29 +0100
+Date: Mon, 5 Aug 2024 18:03:28 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Igor
+ Mammedov <imammedo@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v5 6/7] acpi/ghes: add support for generic error
+ injection via QAPI
+Message-ID: <20240805180328.00003a82@Huawei.com>
+In-Reply-To: <20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] arm64: dts: layerscape: use short name about thermal
- zone
-To: Frank Li <Frank.Li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-References: <20240805-fsl_dts_warning-v1-0-055653dd5c96@nxp.com>
- <20240805-fsl_dts_warning-v1-1-055653dd5c96@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240805-fsl_dts_warning-v1-1-055653dd5c96@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 05/08/2024 17:49, Frank Li wrote:
-> Cut thermal node name shorter to fixed below warning:
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dtb:
->   thermal-zones: 'core-cluster-thermal' does not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\\-]{1,10}-thermal$', 'pinctrl-[0-9]+
+On Fri,  2 Aug 2024 23:44:01 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+
+> Provide a generic interface for error injection via GHESv2.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  2 +-
->  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |  2 +-
->  arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi |  2 +-
->  arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi |  2 +-
->  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 14 +++++++-------
->  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi |  2 +-
->  6 files changed, 12 insertions(+), 12 deletions(-)
+> This patch is co-authored:
+>     - original ghes logic to inject a simple ARM record by Shiju Jose;
+>     - generic logic to handle block addresses by Jonathan Cameron;
+>     - generic GHESv2 error inject by Mauro Carvalho Chehab;
+> 
+> Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Co-authored-by: Shiju Jose <shiju.jose@huawei.com>
+> Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Shiju Jose <shiju.jose@huawei.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Looks fine to me.
+Feel free to put in my SoB on the resulting co-auth
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+if appropriate?  Does this work same as kernel co-developed-by?
 
-I already sent patches for these.
+> +void ghes_record_cper_errors(AcpiGhesCper *cper, Error **errp,
+> +                             uint32_t notify)
+> +{
+> +    int read_ack = 0;
+> +    uint32_t i;
+> +    uint64_t read_ack_addr = 0;
+> +    uint64_t error_block_addr = 0;
+> +    uint32_t data_length;
+> +    GArray *block;
+> +
+> +    if (!ghes_get_addr(notify, &error_block_addr, &read_ack_addr)) {
+> +        error_setg(errp, "GHES: Invalid error block/ack address(es)");
+> +        return;
+> +    }
+> +
+> +    cpu_physical_memory_read(read_ack_addr,
+> +                             &read_ack, sizeof(uint64_t));
+> +
+> +    /* zero means OSPM does not acknowledge the error */
+> +    if (!read_ack) {
+> +        error_setg(errp,
+> +                   "Last CPER record was not acknowledged yet");
+> +        read_ack = 1;
+> +        cpu_physical_memory_write(read_ack_addr,
+> +                                  &read_ack, sizeof(uint64_t));
+> +        return;
+> +    }
+> +
+> +    read_ack = cpu_to_le64(0);
+> +    cpu_physical_memory_write(read_ack_addr,
+> +                              &read_ack, sizeof(uint64_t));
+> +
+> +    /* Build CPER record */
+> +
+> +    /*
+> +     * Invalid fru id: ACPI 4.0: 17.3.2.6.1 Generic Error Data,
+> +     * Table 17-13 Generic Error Data Entry
+> +     */
+> +    QemuUUID fru_id = {};
+> +
+> +    block = g_array_new(false, true /* clear */, 1);
+> +    data_length = ACPI_GHES_DATA_LENGTH + cper->data_len;
+> +
+> +    /*
 
-Best regards,
-Krzysztof
+Odd formatting.
+
+> +        * It should not run out of the preallocated memory if
+> +        * adding a new generic error data entry
+> +        */
+> +    assert((data_length + ACPI_GHES_GESB_SIZE) <=
+> +            ACPI_GHES_MAX_RAW_DATA_LENGTH);
+> +
+> +    /* Build the new generic error status block header */
+> +    acpi_ghes_generic_error_status(block, ACPI_GEBS_UNCORRECTABLE,
+> +                                    0, 0, data_length,
+> +                                    ACPI_CPER_SEV_RECOVERABLE);
+> +
+> +    /* Build this new generic error data entry header */
+> +    acpi_ghes_generic_error_data(block, cper->guid,
+> +                                ACPI_CPER_SEV_RECOVERABLE, 0, 0,
+> +                                cper->data_len, fru_id, 0);
+> +
+> +    /* Add CPER data */
+> +    for (i = 0; i < cper->data_len; i++) {
+> +        build_append_int_noprefix(block, cper->data[i], 1);
+> +    }
+> +
+> +    /* Write the generic error data entry into guest memory */
+> +    cpu_physical_memory_write(error_block_addr, block->data, block->len);
+> +
+> +    g_array_free(block, true);
+> +
+> +    notifier_list_notify(&generic_error_notifiers, NULL);
+> +}
+> +
+>  bool acpi_ghes_present(void)
+>  {
+>      AcpiGedState *acpi_ged_state;
+
 
 
