@@ -1,82 +1,56 @@
-Return-Path: <linux-kernel+bounces-274927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958AE947E51
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:38:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60055947E55
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51ADB2847B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:38:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDDFCB24D9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6BB15B10C;
-	Mon,  5 Aug 2024 15:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BE315A86A;
+	Mon,  5 Aug 2024 15:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HkqDyS5v"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHU9ruGw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D2F1514E1
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5529913AD29;
+	Mon,  5 Aug 2024 15:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722872246; cv=none; b=Euv70iz6ppy/cBg1pw4NZqRNZidoFD+NnFHf98BiUCvFmnYr3oYW+9kRrqCvzKGl2L44ogloyb0LO7LPoXR7Krcn/q9ECjgAhL+1/r4lT+QC5y5f/gqBltZAorqoRuObagexqjw9owCVC+Ve28Yolcf9X42l8HtoT5TPo6mkmHA=
+	t=1722872292; cv=none; b=PFUQ1OMdiOwm4tUb/edYl8HdAQxWztMmQNaQckIZd6LzfNFfkRSrkSgpPsvkUY9LVNJncwUnIZjjqORMEuRjDjC8Goo5SYEm2hqYHSCFuffmLQamiPiMaU2yEM7yAZys3L7OQ7KNzTkWRxWknANsfuhCL+My0CgXimrGXAlAkwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722872246; c=relaxed/simple;
-	bh=QLBKnKFGo1KQKDia/AdJ+vl3ZgO9VkyXpjqRJoPkZHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PSLS7Z1jKrCjVaCPiEBtdanrZL4+KQ1OSaOoWqRwvSSYbhU0bNZ8abAnHH5IXyjtHCwcHid4Uzzo7+CAiL6rPlKEBdjsTMcPydy4uN1HyshLDUQxJhu3qSG/0SXB/W9Q+8cx+PHDHT9IfS86EFF81mJ+LkFa+Cd8TpMiue1OiWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HkqDyS5v; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so981793266b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722872243; x=1723477043; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vrBwIGwG3+u5FlpRUxtjBR8VlO80V8brLm+1GYvIpgQ=;
-        b=HkqDyS5vh7YDRhCqq6eovSlZ3yqvMK6VrfAI+w+ACzYPYnj1/h8VsdXWdj6PErVefC
-         e+Uc/tamaF0rnc0AKVitnUKn15CxCe3XdSeCUO7d8xuWWq0Lpr23LU8IGt2ACjn/CQLQ
-         LZvdtCAFM+XxfUwwTCxCMabOcovc8eHEe+aFIEpk6cBBXfopx6HkxXGMAwGEEDentc/Y
-         B5iP+6NNr3I4M6VXIFq/XUjZFnthck+VLypv+Q+yUye26/kLBjE7daHLGEKgOLYbJ/6g
-         IR3UUyF8ikedGsGAe4NzVvvvIQWVIrPSvgPfwAo90rtIUhkTX8+pp4Xi6CG+modvSl6u
-         wZYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722872243; x=1723477043;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vrBwIGwG3+u5FlpRUxtjBR8VlO80V8brLm+1GYvIpgQ=;
-        b=tu4420uYYvrukyaxBmfuteeRyovlnMlIxIqTV1g7FkZ+UF4hRw0xV1fGuM/jW9sYml
-         2yR2rUc3UQmdPL4O9jyTLW14L4t3p82kCBbONPL3+vhQwpu3NuIS65JG/zrCbr5SNocT
-         a0Lzv+KpEtn2i6DLRZxiF0Bel4uyIVctvyXV/yYHmbkHNBqkUSFFuokKpFUHjgAKwY56
-         eDdh19rI1uDE+jTTcBoJIiZEHeIXPBL+JEzqqiHx2f1FKUA3Y0jIA3rmVKpWSLTXwIv1
-         QYDuEhoFFV/JL+Ap4S5C55Br5tEsFlizYLhL1TLdvPT0MW7IY+0nwGaRncWvgGaagwnv
-         nbBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUisezkSUvcmmLnTyOTQRd0iVw9ur3MPYxs4TkoSSd9CCqlEl7MbAzNXjxbIDbFl0OfdCgdlbq3+GPznVDIb0SQR77DtQt21ZYjJt0I
-X-Gm-Message-State: AOJu0YyIAcjwbS1i52aeWScmoOJuBU6p75Evp1dDOrLAOWqempzjVhiE
-	zIOcAQO+43PNoI7iolcWxAHrLBec0+cFVBGe4rXjgXqtv6HpREr5
-X-Google-Smtp-Source: AGHT+IFSwaBAMaiQnJ9beyzCMDN+8VuoJz0ozS1ktq4fNAlJRGsO05WZ0a5nCZBmueoxzL7cEC+Jog==
-X-Received: by 2002:a17:907:2d29:b0:a7a:b561:358e with SMTP id a640c23a62f3a-a7dc628d37bmr1080912566b.33.1722872242953;
-        Mon, 05 Aug 2024 08:37:22 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e7feecsm468897266b.176.2024.08.05.08.37.21
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Aug 2024 08:37:21 -0700 (PDT)
-Date: Mon, 5 Aug 2024 15:37:20 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 1/5] memblock test: fix implicit declaration of
- function 'virt_to_phys'
-Message-ID: <20240805153720.myjqd6ur65x5ucsu@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240802010923.15577-1-richard.weiyang@gmail.com>
- <ZrCjYqdmNfn3di-o@kernel.org>
+	s=arc-20240116; t=1722872292; c=relaxed/simple;
+	bh=CxlzantkCjc7k9CFe+DBFCgGOrJMhgPmZIgLFWhcvb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Vd2HnjGOqurFTCNEqbZYA4gtczeGtUZGMmE/6KGHRotpbVtPP6RbdnpBhpMMfda90Nt7PKb3M6Kk6p2LscPmNrXW8mFqIZ8VUkJdZ1yjmV7tdSbmU9IXDEH6Ys8rsm8MqRDDegBUAhwbSORJap6cyvqmqaMS1cGvbHNgjiv9f1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHU9ruGw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B3FC4AF0C;
+	Mon,  5 Aug 2024 15:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722872291;
+	bh=CxlzantkCjc7k9CFe+DBFCgGOrJMhgPmZIgLFWhcvb0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oHU9ruGwczETuOHYeIqEzP3smliV3E+lqiydAxRKk32qfmA8yz6LSSz+IEtSs0ruC
+	 qllSDuTHsJTmuGSVZq57BFyx6SvSKjdsKJ73RsNRhuyff4zt0jURdIj/AeW485whCL
+	 x7GYZwB5wKJO3HOJ6HVQDu3KNrw8eNvtMtQ9THFwq7TroD+6p+ZNqZzpqjhwxjSxU/
+	 AhWdQrATl/sU2x3Xqh1mcmZ3DEr3HtFzjnpB5AXXw+GFDmFyoJBzhnHGNM3EqFfl6h
+	 NKF/hL40DspZ7IHuv1+6RYpqcAZAazbISvCHmObg5vL7svJm88pBMCSZ9MH3Lbsd3B
+	 EE4jrfGNnIzDA==
+Date: Mon, 5 Aug 2024 09:38:08 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Potnuri Bharat Teja <bharat@chelsio.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] ethtool: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <ZrDx4Jii7XfuOPfC@cute>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,71 +59,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZrCjYqdmNfn3di-o@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Mon, Aug 05, 2024 at 01:03:14PM +0300, Mike Rapoport wrote:
->On Fri, Aug 02, 2024 at 01:09:19AM +0000, Wei Yang wrote:
->> Commit 94ff46de4a73 ("memblock: Move late alloc warning down to phys
->> alloc") introduce the usage of virt_to_phys(), which is not defined in
->> memblock tests.
->> 
->> Define it in mm.h to fix the build error.
->> 
->> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
->> 
->> ---
->> v3: use static inline as phys_to_virt
->> v2: move definition to mm.h
->> ---
->>  tools/include/linux/mm.h | 6 ++++++
->>  1 file changed, 6 insertions(+)
->> 
->> diff --git a/tools/include/linux/mm.h b/tools/include/linux/mm.h
->> index cad4f2927983..c9e915914add 100644
->> --- a/tools/include/linux/mm.h
->> +++ b/tools/include/linux/mm.h
->> @@ -25,6 +25,12 @@ static inline void *phys_to_virt(unsigned long address)
->>  	return __va(address);
->>  }
->>  
->> +#define virt_to_phys virt_to_phys
->> +static inline phys_addr_t virt_to_phys(volatile void *address)
->
->Why volatilte?
->
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-There are two definitions of virt_to_phys:
+Move the conflicting declaration to the end of the structure. Notice
+that `struct ethtool_dump` is a flexible structure --a structure that
+contains a flexible-array member.
 
-  include/asm-generic/io.h
-  arch/x86/include/asm/io.h
+Fix the following warning:
+./drivers/net/ethernet/chelsio/cxgb4/cxgb4.h:1215:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-both has volatile.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-I just copy from it. But I don't 100% understand it.
-
->> +{
->> +	return (unsigned long)address;
->
->This should be phys_addr_t, look at its definition in tools/include/linux/types.h
->
-
-You are right. Will fix it.
-
->> +}
->> +
->>  void reserve_bootmem_region(phys_addr_t start, phys_addr_t end, int nid);
->>  
->>  static inline void totalram_pages_inc(void)
->> -- 
->> 2.34.1
->> 
->
->-- 
->Sincerely yours,
->Mike.
-
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+index fca9533bc011..996769857a12 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+@@ -1211,9 +1211,6 @@ struct adapter {
+ 	struct timer_list flower_stats_timer;
+ 	struct work_struct flower_stats_work;
+ 
+-	/* Ethtool Dump */
+-	struct ethtool_dump eth_dump;
+-
+ 	/* HMA */
+ 	struct hma_data hma;
+ 
+@@ -1233,6 +1230,10 @@ struct adapter {
+ 
+ 	/* Ethtool n-tuple */
+ 	struct cxgb4_ethtool_filter *ethtool_filters;
++
++	/* Ethtool Dump */
++	/* Must be last - ends in a flex-array member. */
++	struct ethtool_dump eth_dump;
+ };
+ 
+ /* Support for "sched-class" command to allow a TX Scheduling Class to be
 -- 
-Wei Yang
-Help you, Help me
+2.34.1
+
 
