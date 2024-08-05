@@ -1,57 +1,85 @@
-Return-Path: <linux-kernel+bounces-274250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7449475A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:02:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F599475AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909551F216F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:02:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1931C20BA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FEF148FED;
-	Mon,  5 Aug 2024 07:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AC9145FE2;
+	Mon,  5 Aug 2024 07:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0buGd8nR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="boBhkPvD"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469C41109;
-	Mon,  5 Aug 2024 07:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A49C1109;
+	Mon,  5 Aug 2024 07:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722841316; cv=none; b=S3CWpcNjAxhUrFigi5ggl7FJX0p4+4EivEYyh/kIG3awlbDj8bkBKIzNHLjYbS8GotcFRHdeKceJec5S9PQTjGhG1dxsGsTj7Sd/6mlgNDmatnTUBPm6hkt3bpIXCTleAT6Rr7CZL0A3UPwxj4SrUEn/g8HpP0RDzR5o+38m36A=
+	t=1722841389; cv=none; b=IFC6P4MIgvLHFpXXQ7vwr3qU5LlnXymzXDty3P5IMjymIwLEA/vA3AIuYRr7YlcKD8AQqTUyolNs88RRO/CE4qGywkpEv8rMyKBDU9GLYW/eR+mw8Qme5JA3gw/TUwaunUrBDhmoecza9MoZH/3zivuEq7bh7AhdwcEtWYAHtgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722841316; c=relaxed/simple;
-	bh=4QoMugMLw5W2gcbxvuUgAl8QFQMNiCPWsKLkbOyrOLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3U5i5vL4jdvNYrcVsdACDTNO8tD8LAnlV98SrHzoAZrvJFwE2iKBnA1C+fvMNsh2OyfexjnmpEeutzke4QZjqPDyFHqCyL8p7ybpJgVoy3BtCrycSK6MbR8VHeehyVsyoqJ39as342xWmGM6Ku4TI5c3qhIAf+3cCCmO/b65eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0buGd8nR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C649C32782;
-	Mon,  5 Aug 2024 07:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722841315;
-	bh=4QoMugMLw5W2gcbxvuUgAl8QFQMNiCPWsKLkbOyrOLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0buGd8nRim4xJJhU+SHdKlM4+iHzqXu31nY2OG4VJIJzXv5bWLETiaXS0EjKKZXfr
-	 iyRHzEJq2x+xdkvQPTQrOe/mVGp4ctLU81iiBG28BaJ1Ygr8I+6WUlHB6xOSxrfug3
-	 0bbNGBVHxFZ/LY/vRh095nwXhtMyuK8/UYjQeW2U=
-Date: Mon, 5 Aug 2024 09:01:52 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: crwulff@gmail.com
-Cc: linux-usb@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Christian Brauner <brauner@kernel.org>,
-	Eric Farman <farman@linux.ibm.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Dmitry Antipov <dmantipov@yandex.ru>,
-	Jeff Layton <jlayton@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, David Sands <david.sands@biamp.com>
-Subject: Re: [PATCH v4] usb: gadget: f_fs: add capability for dfu run-time
- descriptor
-Message-ID: <2024080516-flatness-humorous-03ca@gregkh>
-References: <20240805000639.619232-2-crwulff@gmail.com>
+	s=arc-20240116; t=1722841389; c=relaxed/simple;
+	bh=c+y0fGE8IuUiI6wsh0DXIPXyyyZzXUepkln5jxYIO7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jbiDJs1OuYly+M/nfx8UgZSSzZGrWwgDaVrTopVGFxV0V/krKavvxjijTvNTTfMiWXo9nfAWJjzx4TCR78/+QGtAw06bw+jbIFkxcgkDP7ItVTkZhLl7s9gZQnYFxnrfw62vluo+Aaj3y47aUosbN8A5yq7O+6gQv+ioSrdJiwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=boBhkPvD; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso115656751fa.2;
+        Mon, 05 Aug 2024 00:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722841386; x=1723446186; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NXH+DPI3k2kYMy5m3D0/h7zELcFvntFbg6PLrvX3u7A=;
+        b=boBhkPvD3f/WNRzWoA3I4QlmEf2GbA4eVaLzCSd983AQ1L45ZSBHCEFPNP6Y8WMKWE
+         +bWvDwAU5OrzlUSEOj1Yk9MY/ks/vnZeDQFGM+u0SV2Q2nHqDbnAWZpFFQxGtH4VazGS
+         /FamhbINk/D0FguG09F2wtdV864/WbUvc93R5jeHpOyq/r2FEKQKTmTly+lMNXziPoOv
+         ur6MJaMXPg/4TtpvMrHi20HATJJNUaCxr3WaIfsbSIqFhjfWki7unrJ8keIxrdTccnet
+         lq14SLxZ8qEvBl7n7WdIKpD/66/kChiT2ktLabGdtB97JcR4iCNytjsZC/z1M5zOSlyI
+         tGTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722841386; x=1723446186;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NXH+DPI3k2kYMy5m3D0/h7zELcFvntFbg6PLrvX3u7A=;
+        b=hs9hSmCn+DLkdyeeT1TBduiIR6h20mV33SPJEAoFA7o4uGebDR0rlyCPF7dTR0Zf0w
+         Nxg9jpWXeo1JLS9Zq9oHfBYLz2GLu2HfnN+SN0rRNVSZ7FzuUMafmP8jiCKNnWc+etNV
+         fIGuhYDYPd2NUWKs6PQw4kW5gm+snhaIkRMTAulirmS4bl3C39EmxGvghHhNbUgIhTgk
+         gsX1uOXFU4iyiO8esxp7VDdDi/23nLpLnhRNRvPCq4aWltimkoQo4ooBgV8HZlrsZYGR
+         n7qlvTVxnLX/9pmn7i6w8PzuL+IXvS9lLY8Bu6jvDoLsSwIJReQD9EQIHm+GlJZf/usC
+         TH2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUIqFR5YKHxYSu+IEyyqRRyICabaqkKPtBGb9chHVFR1iVb2FwXoBALcFyiNzVb1tb8CYB+aTMnRnNEK6+uSJb/7PUm7QfUfDQ3Qg0x
+X-Gm-Message-State: AOJu0Yz4/cDkJMlERRAzXP9m0gcpg/IgiZ2TKKdu9VsfauScpE1sing+
+	/Bz6Bfxsdp9ieMj8GchBjfstP/SBnpZBfk2xzZmJT2BopxlhjRRu
+X-Google-Smtp-Source: AGHT+IForsKntQW2loiqNmH5NvpZ4XaKQdJDkrA0hoC8S8cyYXu3cqpzNSUxPo5SjzXara6eTuhZDg==
+X-Received: by 2002:a2e:3019:0:b0:2f0:1a95:7108 with SMTP id 38308e7fff4ca-2f15ab0647dmr69097241fa.32.1722841385064;
+        Mon, 05 Aug 2024 00:03:05 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e4073f7bsm147073255e9.18.2024.08.05.00.03.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 00:03:04 -0700 (PDT)
+Date: Mon, 5 Aug 2024 09:03:02 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Yanxin Huang <yanxin.huang@unisoc.com>,
+	huang yanxin <yanxin.huang07@gmail.com>,
+	Wenming Wu <wenming.wu@unisoc.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] dt-bindings: nvmem: sprd,sc2731-efuse: convert to YAML
+Message-ID: <c487bff193db7a06b846976a80c02c37509943ac.1722841057.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,224 +88,165 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240805000639.619232-2-crwulff@gmail.com>
 
-On Sun, Aug 04, 2024 at 08:06:40PM -0400, crwulff@gmail.com wrote:
-> From: David Sands <david.sands@biamp.com>
-> 
-> From: David Sands <david.sands@biamp.com>
+Convert the Spreadtrum SC27XX eFuse bindings to DT schema.
+Rename the file after the only in-tree user, SC2731.
 
-Twice?
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+Changes in V3:
+  - add Conor's R-b
+  - rebase on next-20240805
+  - add lore links to V1 and V2 to the changelog
 
-> Add the ability for FunctionFS driver to be able to create DFU Run-Time
-> descriptors.
+Changes in V2:
+  - don't merge both SPRD eFuse bindings into one
+    (ums312 now has separate bindings, see patch 2)
+  - drop now unused clocks, clock-names
 
-As others said, please spell out "DFU" and I do not think that
-"Run-Time" needs Capital letters, or a '-', right?
+Link to V2: https://lore.kernel.org/lkml/9fba73ce66f1f3b7b2a8f46e7c21f60cff5a85f0.1721199034.git.stano.jakubek@gmail.com/
+Link to V1: https://lore.kernel.org/lkml/ZpJvRePtbaiG94Te@standask-GA-A55M-S2HP/
 
-Also include here a lot more description of how this is to be used.
+ .../bindings/nvmem/sc27xx-efuse.txt           | 52 --------------
+ .../bindings/nvmem/sprd,sc2731-efuse.yaml     | 68 +++++++++++++++++++
+ 2 files changed, 68 insertions(+), 52 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/nvmem/sc27xx-efuse.txt
+ create mode 100644 Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
 
-> 
-> Signed-off-by: David Sands <david.sands@biamp.com>
-> Co-developed-by: Chris Wulff <crwulff@gmail.com>
-> Signed-off-by: Chris Wulff <crwulff@gmail.com>
-> ---
-> v4: Clean up unneeded change, switch to BIT macros, more documentation
-> v3: Documentation, additional constants and constant order fixed
-> https://lore.kernel.org/all/CO1PR17MB54197F118CBC8783D289B97DE1102@CO1PR17MB5419.namprd17.prod.outlook.com/
-> v2: https://lore.kernel.org/linux-usb/CO1PR17MB54198D086B61F7392FA9075FE10E2@CO1PR17MB5419.namprd17.prod.outlook.com/
-> v1: https://lore.kernel.org/linux-usb/CO1PR17MB5419AC3907C74E28D80C5021E1082@CO1PR17MB5419.namprd17.prod.outlook.com/
-> ---
->  Documentation/usb/functionfs-desc.rst | 22 ++++++++++++++++++++++
->  Documentation/usb/functionfs.rst      |  2 ++
->  Documentation/usb/index.rst           |  1 +
->  drivers/usb/gadget/function/f_fs.c    | 12 ++++++++++--
->  include/uapi/linux/usb/ch9.h          |  8 ++++++--
->  include/uapi/linux/usb/functionfs.h   | 25 +++++++++++++++++++++++++
->  6 files changed, 66 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/usb/functionfs-desc.rst
-> 
-> diff --git a/Documentation/usb/functionfs-desc.rst b/Documentation/usb/functionfs-desc.rst
-> new file mode 100644
-> index 000000000000..73d2b8a3f02c
-> --- /dev/null
-> +++ b/Documentation/usb/functionfs-desc.rst
-> @@ -0,0 +1,22 @@
-> +======================
-> +FunctionFS Descriptors
-> +======================
-> +
-> +Interface Descriptors
-> +---------------------
-> +
-> +Standard USB interface descriptors may be added. The class/subclass of the
-> +most recent interface descriptor determines what type of class-specific
-> +descriptors are accepted.
-> +
-> +Class-Specific Descriptors
-> +--------------------------
-> +
+diff --git a/Documentation/devicetree/bindings/nvmem/sc27xx-efuse.txt b/Documentation/devicetree/bindings/nvmem/sc27xx-efuse.txt
+deleted file mode 100644
+index 586c08286aa9..000000000000
+--- a/Documentation/devicetree/bindings/nvmem/sc27xx-efuse.txt
++++ /dev/null
+@@ -1,52 +0,0 @@
+-= Spreadtrum SC27XX PMIC eFuse device tree bindings =
+-
+-Required properties:
+-- compatible: Should be one of the following.
+-	"sprd,sc2720-efuse"
+-	"sprd,sc2721-efuse"
+-	"sprd,sc2723-efuse"
+-	"sprd,sc2730-efuse"
+-	"sprd,sc2731-efuse"
+-- reg: Specify the address offset of efuse controller.
+-- hwlocks: Reference to a phandle of a hwlock provider node.
+-
+-= Data cells =
+-Are child nodes of eFuse, bindings of which as described in
+-bindings/nvmem/nvmem.txt
+-
+-Example:
+-
+-	sc2731_pmic: pmic@0 {
+-		compatible = "sprd,sc2731";
+-		reg = <0>;
+-		spi-max-frequency = <26000000>;
+-		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		efuse@380 {
+-			compatible = "sprd,sc2731-efuse";
+-			reg = <0x380>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
+-			hwlocks = <&hwlock 12>;
+-
+-			/* Data cells */
+-			thermal_calib: calib@10 {
+-				reg = <0x10 0x2>;
+-			};
+-		};
+-	};
+-
+-= Data consumers =
+-Are device nodes which consume nvmem data cells.
+-
+-Example:
+-
+-	thermal {
+-		...
+-		nvmem-cells = <&thermal_calib>;
+-		nvmem-cell-names = "calibration";
+-	};
+diff --git a/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml b/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
+new file mode 100644
+index 000000000000..dc25fe3d1841
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/nvmem/sprd,sc2731-efuse.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum SC27XX PMIC eFuse
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    enum:
++      - sprd,sc2720-efuse
++      - sprd,sc2721-efuse
++      - sprd,sc2723-efuse
++      - sprd,sc2730-efuse
++      - sprd,sc2731-efuse
++
++  reg:
++    maxItems: 1
++
++  hwlocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - hwlocks
++
++allOf:
++  - $ref: nvmem.yaml#
++  - $ref: nvmem-deprecated-cells.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    pmic {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      efuse@380 {
++        compatible = "sprd,sc2731-efuse";
++        reg = <0x380>;
++        hwlocks = <&hwlock 12>;
++        #address-cells = <1>;
++        #size-cells = <1>;
++
++        /* Data cells */
++        fgu_calib: calib@6 {
++          reg = <0x6 0x2>;
++          bits = <0 9>;
++        };
++
++        adc_big_scale: calib@24 {
++          reg = <0x24 0x2>;
++        };
++
++        adc_small_scale: calib@26 {
++          reg = <0x26 0x2>;
++        };
++      };
++    };
++...
+-- 
+2.34.1
 
-Why an empty section?
-
-> +DFU Functional Descriptor
-> +~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +When the interface class is USB_CLASS_APP_SPEC and  the interface subclass
-
-Extra space?
-
-
-> +is USB_SUBCLASS_DFU, a DFU functional descriptor can be provided.
-
-Provided how?
-
-> +
-> +.. kernel-doc:: include/uapi/linux/usb/functionfs.h
-> +   :doc: usb_dfu_functional_descriptor
-> diff --git a/Documentation/usb/functionfs.rst b/Documentation/usb/functionfs.rst
-> index d05a775bc45b..4f96e4b93d7b 100644
-> --- a/Documentation/usb/functionfs.rst
-> +++ b/Documentation/usb/functionfs.rst
-> @@ -70,6 +70,8 @@ have been written to their ep0's.
->  Conversely, the gadget is unregistered after the first USB function
->  closes its endpoints.
->  
-> +For more information about FunctionFS descriptors see :doc:`functionfs-desc`
-> +
->  DMABUF interface
->  ================
->  
-> diff --git a/Documentation/usb/index.rst b/Documentation/usb/index.rst
-> index 27955dad95e1..826492c813ac 100644
-> --- a/Documentation/usb/index.rst
-> +++ b/Documentation/usb/index.rst
-> @@ -11,6 +11,7 @@ USB support
->      dwc3
->      ehci
->      functionfs
-> +    functionfs-desc
-
-That's an odd name for a DFU-specific file, right?
-
-Where are the Documentation/ABI/ entries?
-
->      gadget_configfs
->      gadget_hid
->      gadget_multi
-> diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-> index d8b096859337..ba5c6e4827ba 100644
-> --- a/drivers/usb/gadget/function/f_fs.c
-> +++ b/drivers/usb/gadget/function/f_fs.c
-> @@ -2478,7 +2478,7 @@ typedef int (*ffs_os_desc_callback)(enum ffs_os_desc_type entity,
->  
->  static int __must_check ffs_do_single_desc(char *data, unsigned len,
->  					   ffs_entity_callback entity,
-> -					   void *priv, int *current_class)
-> +					   void *priv, int *current_class, int *current_subclass)
->  {
->  	struct usb_descriptor_header *_ds = (void *)data;
->  	u8 length;
-> @@ -2535,6 +2535,7 @@ static int __must_check ffs_do_single_desc(char *data, unsigned len,
->  		if (ds->iInterface)
->  			__entity(STRING, ds->iInterface);
->  		*current_class = ds->bInterfaceClass;
-> +		*current_subclass = ds->bInterfaceSubClass;
->  	}
->  		break;
->  
-> @@ -2559,6 +2560,12 @@ static int __must_check ffs_do_single_desc(char *data, unsigned len,
->  			if (length != sizeof(struct ccid_descriptor))
->  				goto inv_length;
->  			break;
-> +		} else if (*current_class == USB_CLASS_APP_SPEC &&
-> +			   *current_subclass == USB_SUBCLASS_DFU) {
-> +			pr_vdebug("dfu functional descriptor\n");
-> +			if (length != sizeof(struct usb_dfu_functional_descriptor))
-> +				goto inv_length;
-> +			break;
->  		} else {
->  			pr_vdebug("unknown descriptor: %d for class %d\n",
->  			      _ds->bDescriptorType, *current_class);
-> @@ -2621,6 +2628,7 @@ static int __must_check ffs_do_descs(unsigned count, char *data, unsigned len,
->  	const unsigned _len = len;
->  	unsigned long num = 0;
->  	int current_class = -1;
-> +	int current_subclass = -1;
->  
->  	for (;;) {
->  		int ret;
-> @@ -2640,7 +2648,7 @@ static int __must_check ffs_do_descs(unsigned count, char *data, unsigned len,
->  			return _len - len;
->  
->  		ret = ffs_do_single_desc(data, len, entity, priv,
-> -			&current_class);
-> +			&current_class, &current_subclass);
->  		if (ret < 0) {
->  			pr_debug("%s returns %d\n", __func__, ret);
->  			return ret;
-> diff --git a/include/uapi/linux/usb/ch9.h b/include/uapi/linux/usb/ch9.h
-> index 44d73ba8788d..91f0f7e214a5 100644
-> --- a/include/uapi/linux/usb/ch9.h
-> +++ b/include/uapi/linux/usb/ch9.h
-> @@ -254,6 +254,9 @@ struct usb_ctrlrequest {
->  #define USB_DT_DEVICE_CAPABILITY	0x10
->  #define USB_DT_WIRELESS_ENDPOINT_COMP	0x11
->  #define USB_DT_WIRE_ADAPTER		0x21
-> +/* From USB Device Firmware Upgrade Specification, Revision 1.1 */
-> +#define USB_DT_DFU_FUNCTIONAL		0x21
-> +/* these are from the Wireless USB spec */
->  #define USB_DT_RPIPE			0x22
->  #define USB_DT_CS_RADIO_CONTROL		0x23
->  /* From the T10 UAS specification */
-> @@ -329,9 +332,10 @@ struct usb_device_descriptor {
->  #define USB_CLASS_USB_TYPE_C_BRIDGE	0x12
->  #define USB_CLASS_MISC			0xef
->  #define USB_CLASS_APP_SPEC		0xfe
-> -#define USB_CLASS_VENDOR_SPEC		0xff
-> +#define USB_SUBCLASS_DFU			0x01
->  
-> -#define USB_SUBCLASS_VENDOR_SPEC	0xff
-> +#define USB_CLASS_VENDOR_SPEC		0xff
-> +#define USB_SUBCLASS_VENDOR_SPEC		0xff
->  
->  /*-------------------------------------------------------------------------*/
->  
-> diff --git a/include/uapi/linux/usb/functionfs.h b/include/uapi/linux/usb/functionfs.h
-> index 9f88de9c3d66..40f87cbabf7a 100644
-> --- a/include/uapi/linux/usb/functionfs.h
-> +++ b/include/uapi/linux/usb/functionfs.h
-> @@ -37,6 +37,31 @@ struct usb_endpoint_descriptor_no_audio {
->  	__u8  bInterval;
->  } __attribute__((packed));
->  
-> +/**
-> + * struct usb_dfu_functional_descriptor - DFU Functional descriptor
-> + * @bLength:		Size of the descriptor (bytes)
-> + * @bDescriptorType:	USB_DT_DFU_FUNCTIONAL
-> + * @bmAttributes:	DFU attributes
-> + * @wDetachTimeOut:	Maximum time to wait after DFU_DETACH (ms, le16)
-> + * @wTransferSize:	Maximum number of bytes per control-write (le16)
-> + * @bcdDFUVersion:	DFU Spec version (BCD, le16)
-> + */
-> +struct usb_dfu_functional_descriptor {
-> +	__u8  bLength;
-> +	__u8  bDescriptorType;
-> +	__u8  bmAttributes;
-> +	__le16 wDetachTimeOut;
-> +	__le16 wTransferSize;
-> +	__le16 bcdDFUVersion;
-> +} __attribute__ ((packed));
-> +
-> +/* from DFU functional descriptor bmAttributes */
-> +#define DFU_FUNC_ATT_CAN_DOWNLOAD	BIT(0)
-> +#define DFU_FUNC_ATT_CAN_UPLOAD		BIT(1)
-> +#define DFU_FUNC_ATT_MANIFEST_TOLERANT	BIT(2)
-> +#define DFU_FUNC_ATT_WILL_DETACH	BIT(3)
-
-Wrong macro for bit fields for uapi .h files :(
-
-thanks,
-
-greg k-h
 
