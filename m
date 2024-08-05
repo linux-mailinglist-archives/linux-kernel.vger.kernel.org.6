@@ -1,139 +1,155 @@
-Return-Path: <linux-kernel+bounces-274903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2EF947E0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239F8947DCC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CD6281DEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:28:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55A871C21CFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A7915C12E;
-	Mon,  5 Aug 2024 15:24:16 +0000 (UTC)
-Received: from glittertind.blackshift.org (glittertind.blackshift.org [116.203.23.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329BC4D8BA
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.23.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5964313D276;
+	Mon,  5 Aug 2024 15:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NMScHm3m"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482102D7B8;
+	Mon,  5 Aug 2024 15:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722871455; cv=none; b=uO323gsjolYKYhmvQpo1+5jACT2wcZoyrHkb/vUrfIQ0sEVxWTqR5IIiZdfXPUtzNnPf61v6F+x7hPKiho7x/dSFpeOQKW5jG1siNVO7Knii5erT0+YEUM/XAj4Kss+wfL1Z5PhqOvHiyu34nCJDOPad7cmQ6Pylz4p7assvwPk=
+	t=1722871027; cv=none; b=otsEPMvdsHezhkVd5wNZW+FWrB2rxQFVLswhXRJUP6k2sSQD5Uo7/leuacDtDiouwHxnafIxNNATs4LzYpVAXTqZ78fDiLyEAXj2+fUpX3IwgiazbS5dMpgMFmWH5VH+1E3oKfN1paSaQIHGyLd3toKBnd2cNwGX69BEyoHf5EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722871455; c=relaxed/simple;
-	bh=kPdjs2s6gKRkknYIL8b561xalIcy0R+0OIhs7JfTB5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2iKGREQY+BkxZgLUuj2bs72SkOQkzXBIfkBq2oOLMblWAyYLjNODB5vJA7L0D9UbJaLYbE13iTC+tdm9xtDRD0c4W3TW9DgykFu3H4/Ry2FFwcyd/h2l/xi5x8gBuYqpY8R4TdxGvisfy0LqzY5ZXQ1BM81UUip2/s7umMubM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardanger.blackshift.org; spf=none smtp.mailfrom=hardanger.blackshift.org; arc=none smtp.client-ip=116.203.23.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardanger.blackshift.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hardanger.blackshift.org
-Received: from bjornoya.blackshift.org (unknown [IPv6:2003:e3:7f27:f000:3ddb:5b7b:31ab:901c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-384) server-signature ECDSA (P-384)
-	 client-signature RSA-PSS (4096 bits))
-	(Client CN "bjornoya.blackshift.org", Issuer "R10" (verified OK))
-	by glittertind.blackshift.org (Postfix) with ESMTPS id 654F85E3479
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:17:05 +0000 (UTC)
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id 2992531732D
-	for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 15:17:05 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id BFBE131731F;
-	Mon, 05 Aug 2024 15:17:01 +0000 (UTC)
-Received: from localhost (hardanger.blackshift.org [local])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTPA id 8588bc23;
-	Mon, 5 Aug 2024 15:17:01 +0000 (UTC)
-Date: Mon, 5 Aug 2024 17:17:01 +0200
-From: Marc Kleine-Budde <frogger@hardanger.blackshift.org>
-To: pierre-henry.moussay@microchip.com
-Cc: Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/17] dt-bindings: can: mpfs: add PIC64GX CAN
- compatibility
-Message-ID: <t5y22ttkimghgy5xdyit2ib4pif43zhxet7igyukfiahzwnkeh@u66ad7hogcw6>
-References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
- <20240725121609.13101-2-pierre-henry.moussay@microchip.com>
+	s=arc-20240116; t=1722871027; c=relaxed/simple;
+	bh=Uv0SnfhMSimpo6uq4lHS7sn822rUFtxig5peHPqYwkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dyMeumnaEuMZsUcxRsmHLVLnw+qP2TqOI0Yf66rsxPUdb9+esqWMLIoAlI9TJxUMzGsvb6Y+62pFgGnulh6gWs/cxNTCnXP7g+TJmVlA5JghNQNsCIGYDoVcPMO11HV6RFxzzQWt3P1cUwfrlS26qcVZmtnO6ImMr6tjXd8A3vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NMScHm3m; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 99C1F20B7165;
+	Mon,  5 Aug 2024 08:17:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 99C1F20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722871025;
+	bh=6GyeyjDuXwHvma2YRErxRNnhO7eoDqcJzPc+sTV9L0s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NMScHm3m1ft3fKhFfC97Fy5+DOwIdMfnd5Fo8itdR7iJGE5UTqk1/bsPfWeqQMWOj
+	 HbSZ8oWdCW3A9fUp8wFdiS4km8Pp8gEBZ31CAPGpCTxX3jol4QGvaNrcYYNHmhZ3Rp
+	 sPL2w7wxPYb2jxpxbTzDdILB8tUlbdbtLv1F6Pho=
+Message-ID: <ce9104e7-9b48-496e-a0af-3d8035b05047@linux.microsoft.com>
+Date: Mon, 5 Aug 2024 08:17:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b35o3dtbvyih3krm"
-Content-Disposition: inline
-In-Reply-To: <20240725121609.13101-2-pierre-henry.moussay@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] arm64: hyperv: Use SMC to detect hypervisor
+ presence
+To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+ catalin.marinas@arm.com, dave.hansen@linux.intel.com, decui@microsoft.com,
+ haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com, kys@microsoft.com,
+ lenb@kernel.org, lpieralisi@kernel.org, mingo@redhat.com, rafael@kernel.org,
+ robh@kernel.org, tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
+ linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
+ apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
+ sunilmut@microsoft.com, vdso@hexbites.dev
+References: <20240726225910.1912537-1-romank@linux.microsoft.com>
+ <20240726225910.1912537-2-romank@linux.microsoft.com>
+ <20240805035340.GA13276@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <20240805035340.GA13276@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---b35o3dtbvyih3krm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 25.07.2024 13:15:53, pierre-henry.moussay@microchip.com wrote:
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
->=20
-> PIC64GX CAN is compatible with the MPFS CAN driver, so we just update
-> bindings
+On 8/4/2024 8:53 PM, Saurabh Singh Sengar wrote:
+> On Fri, Jul 26, 2024 at 03:59:04PM -0700, Roman Kisel wrote:
+>> The arm64 Hyper-V startup path relies on ACPI to detect
+>> running under a Hyper-V compatible hypervisor. That
+>> doesn't work on non-ACPI systems.
+>>
+>> Hoist the ACPI detection logic into a separate function,
+>> use the new SMC added recently to Hyper-V to use in the
+>> non-ACPI case.
+>>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> ---
+>>   arch/arm64/hyperv/mshyperv.c      | 36 ++++++++++++++++++++++++++-----
+>>   arch/arm64/include/asm/mshyperv.h |  5 +++++
+>>   2 files changed, 36 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+>> index b1a4de4eee29..341f98312667 100644
+>> --- a/arch/arm64/hyperv/mshyperv.c
+>> +++ b/arch/arm64/hyperv/mshyperv.c
+>> @@ -27,6 +27,34 @@ int hv_get_hypervisor_version(union hv_hypervisor_version_info *info)
+>>   	return 0;
+>>   }
+>>   
+>> +static bool hyperv_detect_via_acpi(void)
+>> +{
+>> +	if (acpi_disabled)
+>> +		return false;
+>> +#if IS_ENABLED(CONFIG_ACPI)
+>> +	/* Hypervisor ID is only available in ACPI v6+. */
+>> +	if (acpi_gbl_FADT.header.revision < 6)
+>> +		return false;
+>> +	return strncmp((char *)&acpi_gbl_FADT.hypervisor_id, "MsHyperV", 8) == 0;
+>> +#else
+>> +	return false;
+>> +#endif
+>> +}
+>> +
+>> +static bool hyperv_detect_via_smc(void)
+>> +{
+>> +	struct arm_smccc_res res = {};
+>> +
+>> +	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
+>> +		return false;
+>> +	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
+>> +
+>> +	return res.a0 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0 &&
+>> +		res.a1 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_1 &&
+>> +		res.a2 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_2 &&
+>> +		res.a3 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_3;
+>> +}
+> 
+> As you mentioned in the cover letter this is supported in latest Hyper-V hypervisor,
+> can we add a comment about it, specifying the exact version in it would be great.
+> 
+I can add a comment about that, thought that would look as too much 
+detail to refer to a version of the Windows insiders build in the 
+comments in this code. Another option would be to entrench the logic in 
+if statements which felt gross as there is a fallback.
 
-As Conor already pointed out, you should point out that the CAN
-hardware/IP core on the pic64gx is compatible with the one on the mpfs.
+> If someone attempts to build non-ACPI kernel on older Hyper-V what is the
+> behaviour of this function, do we need to safeguard or handle that case ?
+The function won't panic if that's what you're asking about, i.e. safe 
+for runtime. That won't break the build either as it relies on the SMCCC 
+spec, and that uses the smc or hvc instructions (the code does expect 
+hvc to be the conduit and checks for that being the case). The 
+hypervisor doesn't inject the exception in the guest for the unknown 
+call, just returns SMCCC_RET_NOT_SUPPORTED in the first output register 
+(the hypervisor got a unit-test for that, too).
 
-regards,
-Marc
+That said, I think the logic is solid. Appreciate your question and your 
+help! Will be glad to discuss other concerns should you have any.
 
->=20
-> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> ---
->  .../devicetree/bindings/net/can/microchip,mpfs-can.yaml     | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can=
-=2Eyaml b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> index 01e4d4a54df6..1219c5cb601f 100644
-> --- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
-> @@ -15,7 +15,11 @@ allOf:
-> =20
->  properties:
->    compatible:
-> -    const: microchip,mpfs-can
-> +    oneOf:
-> +      - items:
-> +          - const: microchip,pic64gx-can
-> +          - const: microchip,mpfs-can
-> +      - const: microchip,mpfs-can
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.30.2
->=20
+> 
+> - Saurabh
 
---b35o3dtbvyih3krm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmaw7OoACgkQKDiiPnot
-vG8KWwf9EwEl+GJxZhqXSqMi+9A2lzBcW67k0Y+18ClUlOp89drW9X3spMvI7gym
-EmrFl3C+HwXtsUZh4JCFA0YL56LPYfvoRis5w+mccAxEW1RrTGefiAl98A/Y+sjH
-81U4tt5dhcZyZ8Zmj4aBG0u0G1xSb2mJTm2OaNZCMtscoFuUhA5bXQYFoM2GHL5W
-L9bRBIND+4/vWZZO3bAaAev062ur00po+tyvY5UZh+aaSGwcznYonOaln4ntyb2Y
-4DhwNyAqcIN8gqgaBCAa3UOeTet031dUlEIRhSf2nCARW3mCmzyZ3DOXYzD0fBio
-YUS5NzjEYD+ZxdwqFOEFcVevulPyFw==
-=kS9R
------END PGP SIGNATURE-----
-
---b35o3dtbvyih3krm--
+-- 
+Thank you,
+Roman
 
 
