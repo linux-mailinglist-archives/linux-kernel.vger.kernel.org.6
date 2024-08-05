@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-275194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6938C9481AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:34:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CADE9481AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF691F2108E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:34:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0EFFB23F57
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBF8165EEF;
-	Mon,  5 Aug 2024 18:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C22815ECC8;
+	Mon,  5 Aug 2024 18:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GkvWWGpU"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s15ayPDC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4A313A884;
-	Mon,  5 Aug 2024 18:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA001494DA;
+	Mon,  5 Aug 2024 18:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722882798; cv=none; b=j/jJz7iP+BX5cjRDEG48zP+aISVvCjhshN6ph0pEPtF46qqMVvdNRdTbi57c2D3gsXGzEHst6Ne+4aHLTIWSS+X8OPHOIMasJt0yPSI2qLAxfHNajd/Qx3pHDYP4gRRdDv+r1ui8ItGW98FMNB1CQBMCqWe7qAF9U+omy3McsiE=
+	t=1722882839; cv=none; b=Kxgo++Qme73ANSeKAWUdx7+QHlWeXdBBtL5odzg4WXjnDnNDx4V7nC+6HhWKL5lZeDw5KJlSplqXZ+WZV0p380XfoUDixRs1uLgC0WiP07yS8SO9bwUvQpC2LtQRyCiwxm27W+EttNAtnQMrMm4XKasdQ5btjK2DnE26HcySgsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722882798; c=relaxed/simple;
-	bh=hfnuvnnigu7GiBMzTH5MQC/YrBHLtcuKAlxu0YESuEA=;
+	s=arc-20240116; t=1722882839; c=relaxed/simple;
+	bh=DdWRiHzipkVrkpObHK9CyGrVfzm4MWuYbZ6TMtgqTOk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qXeyj3YnaEWlHDAmxVSFl7g0l6G8kj0g9Cja5bTgfCamBsb/9ubF38Q+f/i9gZJsDdl49mvapkBkhfAuOlNfIUNhcACSiDr//VPx7dOG/mK97Ri7iAw/6tv0tupFn5eKQo51Go3wQ68Gz7lr+9sWTk46Np9+ZIlxFBBE+v8Jn/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GkvWWGpU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C74C32782;
-	Mon,  5 Aug 2024 18:33:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=eFJVDU55W8pkuO5Cii1MLQnLkOvgcrQuGj+QK4E3hZi8b7JRwc1+2hkep9aYyejJ9fMOMmqizf48jiGLZiBY7YrjDJvTTyVq85qK89M4QtfjrVD2ZqyWqdrTAdMZ4Pl/xGFMhr72Qn7PaOWVeJuoF4XIAtd1BPscw0mFd8C09uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s15ayPDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FD40C32782;
+	Mon,  5 Aug 2024 18:33:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722882798;
-	bh=hfnuvnnigu7GiBMzTH5MQC/YrBHLtcuKAlxu0YESuEA=;
+	s=korg; t=1722882838;
+	bh=DdWRiHzipkVrkpObHK9CyGrVfzm4MWuYbZ6TMtgqTOk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GkvWWGpU2qINFWAdNFOGLg6oOluylwW9MsvU6LMidtTQDMAck05PIjla8yrfyO6Sy
-	 Qvq7aYHi1V+vgjPbnP67V8qlZXp4eVy2TEbAsM0vsKmuFnmBb7tiT3VYRL12kjKsz0
-	 bVQvsvSuTgop+ZkRrsU2ufsph66qEvYwaPdwWXhU=
-Date: Mon, 5 Aug 2024 20:33:15 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: LidongLI <wirelessdonghack@gmail.com>
-Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-	mark.esler@canonical.com, stf_xl@wp.pl
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
- Dereference&Use-After-Free Vulnerability
-Message-ID: <2024080507-unclog-spirited-e74b@gregkh>
-References: <2024080359-getaway-concave-623e@gregkh>
- <20240805083339.10356-1-wirelessdonghack@gmail.com>
+	b=s15ayPDCsnzx05XmrSpy5fG4SEHlyhps5yZSXdSkFfmwYJesV0g8ZdWUXZsWJYnum
+	 X989B7XAy4CcfrUqc1bInKkhuSwGi7IpSSvEi+jXqci4DVMrvnhjFjVdX6m+NDTD0Y
+	 DJMZCIGhFMyNRxGJtenqVZ/g8eE90MsjAHB5JHTc=
+Date: Mon, 5 Aug 2024 20:33:56 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: JaeJoon Jung <rgbi3307@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <levinsasha928@gmail.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, maple-tree@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] lib/htree: Add locking interface to new Hash Tree
+Message-ID: <2024080532-camera-desktop-92bf@gregkh>
+References: <20240805100109.14367-1-rgbi3307@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,77 +57,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240805083339.10356-1-wirelessdonghack@gmail.com>
+In-Reply-To: <20240805100109.14367-1-rgbi3307@gmail.com>
 
-On Mon, Aug 05, 2024 at 04:33:39PM +0800, LidongLI wrote:
+On Mon, Aug 05, 2024 at 07:01:09PM +0900, JaeJoon Jung wrote:
+> Implementation of new Hash Tree [PATCH v2]
+> ------------------------------------------
+> Add spinlock.h and rcupdate.h in the include/linux/htree.h
+> Add htree_root structue to interface locking.
+> htree_root.ht_lock is spinlock_t to run spin_lock.
+> htree_root.ht_first is __rcu type to access rcu API.
+> Access the kernel standard API using macros.
 > 
-> Dear Greg,
+> full source:
+> ------------
+> https://github.com/kernel-bz/htree.git
 > 
-> Thank you for your response and for considering the details I've provided so far. I would like to offer further clarification on the vulnerability and why it warrants assigning a CVE.
+> Manual(PDF):
+> ------------
+> https://github.com/kernel-bz/htree/blob/main/docs/htree-20240802.pdf
 > 
-> ### Detailed Description of Vulnerability
-> 
-> 1. **Root Cause and Exploitability**:
->     - The vulnerability in question can be triggered by sending specific data packets to a device driver, causing a Null Pointer Dereference in the kernel. This results in a complete system crash and reboot.
+> Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
+> ---
+>  include/linux/htree.h | 117 ++++++++++++++++++++++++++-
+>  lib/htree-test.c      | 182 ++++++++++++++++++++++--------------------
+>  lib/htree.c           |  29 ++++++-
+>  3 files changed, 238 insertions(+), 90 deletions(-)
 
-Are you sure it's the sending random data and not the reset that is
-causing this?  You also are attempting to send confused data while the
-driver is binding, so of course it is going to get confused, how could
-it not?
+Hi,
 
->     - While initially it appears to require root privileges, altering the Udev rules allows for exploiting this vulnerability from a non-root user space, significantly lowering the barrier for potential exploitation.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Exactly what udev rule changes are required?  And as that requires root
-permission, that is not really that big of an issue, right?
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-> 2. **Impact on Systems**:   
->     - The root cause is a race condition between the userspace resetting the device and the kernel driver initializing it. This is not an edge case but a common scenario that could occur in systems where devices are frequently reset or reinitialized.
->     - By manipulating Udev rules, an attacker can create a persistent and repeatable method to exploit the vulnerability, leading to Denial of Service (DoS) conditions. This can be particularly disruptive in production environments, impacting servers, IoT devices, and embedded systems relying on Ubuntu.
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
 
-If you can change udev rules, you own the machine, this is not a kernel
-issue.  Again, there is a reason why normal users can't do this.
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what a proper
+  Subject: line should look like.
 
-> 3. **Practical Implications**:
->     - The fact that this can be achieved through Udev rules modification is significant because it demonstrates a path to escalate privileges and attack vectors that can be exploited in real-world scenarios.
->     - Systems that are exposed to user-space applications needing device resets or control operations could be particularly vulnerable, especially in multi-user environments.
-> 
-> ### Experimental Evidence
-> ### Setting Up Udev Rules: Granting Permissions to Your USB Device Without Using sudo
-> 
-> To grant permissions to your USB device without using `sudo`, you need to create a udev rules file. Follow these steps:
-> 
-> #### Create the Udev Rules File:
-> 
-> 1. Open a terminal and create the udev rules file with the following command:
-> 
->  
->    sudo nano /etc/udev/rules.d/99-usb.rules
->    
-> 
-> 2. Add the rule: In the file, add the following content. Replace `YOUR_VENDOR_ID` and `YOUR_PRODUCT_ID` with your device's vendor ID and product ID.
-> 
->    
->    SUBSYSTEM=="usb", ATTR{idVendor}=="148f", ATTR{idProduct}=="3070", MODE="0666"
-
-So you are allowing any user to read/write to the device at the same
-time the driver is bound to it, but again, you had to be root to allow
-this to happen.
-
-So unless a normal user can do this, with the default permissions, this
-is just going to be a normal "fix up the usb driver to allow confused
-data to not confuse it" which is a normal thing.  USB drivers were never
-originally designed to allow for malicious devices.  We have slowly
-changed this over time to allow for semi-malicious USB configuration
-data to be handled properly, but we have not said "USB devices are not
-fully trusted" yet.  If we want to do that, we need to do a lot of work
-as that is not how Linux (or really any operating system) is designed at
-the moment.
-
-Again, we will be glad to fix up the individual bugs here as found, but
-it's not a major issue as it's just something that someone with root
-permissions can do to a machine, along with thousands of worse things :)
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
 thanks,
 
-greg k-h
+greg k-h's patch email bot
 
