@@ -1,141 +1,133 @@
-Return-Path: <linux-kernel+bounces-274731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B0F947C01
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:39:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733EB947C03
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852BE1F22F3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:39:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE683B20B7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339D02E851;
-	Mon,  5 Aug 2024 13:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89693381B9;
+	Mon,  5 Aug 2024 13:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="OFb1tukG"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTHUHlN4"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C50C3B784
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 13:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4910B28366;
+	Mon,  5 Aug 2024 13:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722865144; cv=none; b=IzwBm3lY63wLC58a1irjftv9eyASYWudgw4ocoor+wYPsWsNTAD6yFZ00k5pYAmJr7qCcEI0sIcn/x2mYdYiJiGc3IAexGGWmRsKKdjmStp68cHPAR0WueXSR1lE0c1P4vKGx7NVwSrKDcLYPaJeK4eLauYIkJgRSk1q9I8i/N4=
+	t=1722865211; cv=none; b=dYoO6lidYZyqyay0MifY4o0SUZLO3yEAr/Ha1hyllImPF/wCt3g/AAz8FKMBV8wYdShecNTNKaqTDd9PerbfBKJOppUCHzZxeW5rc4IGoCbUQJQ1Id8KIK+AGQb6fzH0E88AWvy8Oa7ZXxdjggJwNRZ0WX51hGEexJAZ6e9zhY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722865144; c=relaxed/simple;
-	bh=gbQ+jMJAD5sj8duWQJ3Kwg5JnBV26mTB9+LVTMbYGZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eK4Ty3gXNsP7u7BFqsaHOBrvUpvBCal3NxgaHUKt0IH1hMwlMhLjvzPgEu0cPqSfBFIfQlfUmVxT3lssQYLXnm/DOqJ6OkrpGOycgxf10oMJo5IilGuqK66JLLKA8uaYGJDJBv6xktTWElth+dGI7g+r/7ecSeyKsZtECn9htuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=OFb1tukG; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a1d024f775so658721385a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 06:39:01 -0700 (PDT)
+	s=arc-20240116; t=1722865211; c=relaxed/simple;
+	bh=ruk6mOOD/J6EGS1DmhBnxOfoM7b7J30uZ5JPOGJ6aDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UPBrEG4cxZV7ppKtbOJK2xghbKQy5E6feS0whx8vtLQRwzPovNMYbPIc2hRA4w4YzppsK5fySxUQQLri/w+7VAoLjuqbO4cfdQQnLfMm/LL7/Eak6jJIrFjtRUcQQQx01QVIglEffsL3AN6zMG34DlYp9WqHdACUiAx9cTz/QKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTHUHlN4; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f166ec1265so4467221fa.3;
+        Mon, 05 Aug 2024 06:40:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1722865140; x=1723469940; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=U8macHAiM5m9R0JEiyIq2Lz6WrfRpygRAxLQsH7F45I=;
-        b=OFb1tukGVJTBIQLI96v2SMEZOOSyPLYongMAdDfByC+lRCwUiCXUupdvpzpGATJh31
-         u2Raz7DohT9QidMpJukM8Ro0fnI+WRl1ygIBuf6oSJgOd6RC9Um++B4gl7XOVuS0fnLC
-         xgOTu1CWbCR15Um/KkAPXsX1bkDhTBTlwA9io6FBLmhjEt7laHvw4RvQfh1jr+LuREnf
-         kgq+gmLvBdcDEjhoruLrk7lwUDK2slQvQsd1Dwpc1A2Z9/OZatSb35MJetX4y9uE1UnM
-         g4aFIi2uRVj8xQwM/rczYkgmSjfxV/2Y6Vl4QZTH2PwW6/roHNMNVZY6XbgRE7+8Zl2e
-         I7ww==
+        d=gmail.com; s=20230601; t=1722865208; x=1723470008; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b46iJ32H/7QhFKQjeBDvVn66a9XBRt1jPCCUgibPNOY=;
+        b=PTHUHlN41y6QYqeaGmx6NOUIga+RIfO6JuVkiDUv1VH7Je+P990vZ/pAYD31zhYOg5
+         5rKym9aEVa5V/3CayTQ9NgnpNFfT5uaHH3va+AX9k5Xc1N1PWx9L4qvPt1ksimPAtEcY
+         PD9zAf9Mwlqxma00X9ay58tgbwKDxiyoprXgGfQNrpuz2UTfGqKmFyPBWED3B1WXrkwz
+         mgJk+6tsIZ2qI4vr0lpt4Rf+3UCAklVkHfjxsW2tdDVkfbkmEaZ9BnD3cCV5tlcBe+5W
+         Z+dSVsahykiZT/EwdT24mQEYI9S3jIFIOZMAdMmJxmDz594/3v0N5gfMpxZNNuguXigD
+         obLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722865140; x=1723469940;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U8macHAiM5m9R0JEiyIq2Lz6WrfRpygRAxLQsH7F45I=;
-        b=mWBCTK1XjzQtsRNZCZB3+tiAWqF3ZHn48s7mZlX32htLxNFGc6OHZJ8fiNHWyYszYp
-         +VXWr86/RdPUthyMfWXOWkhTloPYwt+P79+dy49QqI4/Q+Mwt/OKed7SxuZd+LCLNBQG
-         k1bszcXbOreptDUsB6KVYZEwiu95IVlkToh7H3+WhYpEtVCrjTubFLLiBWxqW9JQPIGs
-         whTSJFCq2dz3c0MEOgEScqOk/s60v+xMfZGrm6z69o6dVHL7mndH+Y5lwMTIPBUC40xY
-         QW2CkWC2DfYCFoY//3UE3g8FN29CLkX7Bb3LXCqn8FQzuUr/+ExEm4z2Q5S0OfVQB5t2
-         Sjew==
-X-Forwarded-Encrypted: i=1; AJvYcCXp72wf4xkUik6KVrk/tm4zEmk+ST1+XtKoXSbePX3i38j7N1wq4LZElFl/ikyCERmnN4BPYyV4CFurwfpsFFQnt24Y+FQD9KbKMo4i
-X-Gm-Message-State: AOJu0YykZDCh133sVxaGCagD5udJmN7lV+U2W5IM76zZCkNRt/SlvLFa
-	6edv5pDUapgRWDGjgFpDySAEI5AReFKyFU0XGLGhvIa3UEAQBWDY2oF5r38y8w==
-X-Google-Smtp-Source: AGHT+IGwcJnnVolHqIHl/PLBvGhdpuQKEabkjHVeMeMNQwnwyA+CGsL/UDaOAmH0C2fraA4jqEed1g==
-X-Received: by 2002:a05:620a:2682:b0:79f:498:2a67 with SMTP id af79cd13be357-7a34eed3c80mr1377167085a.21.1722865140407;
-        Mon, 05 Aug 2024 06:39:00 -0700 (PDT)
-Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a34f624219sm354231085a.0.2024.08.05.06.38.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 06:39:00 -0700 (PDT)
-Date: Mon, 5 Aug 2024 09:38:57 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Nicolas Boichat <drinkcat@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: core: hub_port_reset: Remove extra 40 ms reset
- recovery time
-Message-ID: <5b1d4bea-8d39-4f29-85e6-bd36c12510ce@rowland.harvard.edu>
-References: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
- <c7c299e7-605c-4bd6-afad-dfbfe266aa7e@rowland.harvard.edu>
- <f1e2e2b1-b83c-4105-b62c-a053d18c2985@molgen.mpg.de>
- <3d3416cd-167f-4c50-972b-0eb376a13fdf@rowland.harvard.edu>
- <cee9630e-781e-49b1-82c5-9066552f71b1@molgen.mpg.de>
- <8e300b0b-91f8-4003-a1b9-0f22869ae6e1@rowland.harvard.edu>
- <712dee24-e939-4b1b-b2ea-0c0c12891a62@molgen.mpg.de>
- <7eef194d-17df-4681-95aa-be6ec09b5929@molgen.mpg.de>
+        d=1e100.net; s=20230601; t=1722865208; x=1723470008;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b46iJ32H/7QhFKQjeBDvVn66a9XBRt1jPCCUgibPNOY=;
+        b=N+zNidqlgRgF80u42Do6UnBcj/e5+g67sTq3tm6XM2vzVDMOc1ETFdzW6/TbIJhnsB
+         851jfTemwvJ7zX7cLGTJG5dWmHBfgvug0tAi6kgij4/YnomAcfLHpuAp12soAkpffDEi
+         fPmy+lgEHs00n8XskfHZ5aN3kaOFWG7RMZve2JOGoA5CMMWhTKS//4/IRETckdyXPg8r
+         3iKttOqU/qbqHaoxKePoJPJAYODyLudZ9c0smlyqbYkzu8hKzZxUoKT6L+GFGgAJ/cwq
+         z6DPZqZC8rN7U3nC6NI6DoP68Fys1XNLy6FoPoN5Nf3X788MfHKvxPkigPWlWnfpurED
+         nJjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ4HK/le+Ne5gKTJT6NtHRQoTMlcFpnyYzQgZ2GU9K/uAWc+bmlC7JD+q/YtnuVlwQGKMSUHFTOMW3@vger.kernel.org, AJvYcCX/NpbDNZBKIE3ZgMfHllaczcKe8UDAWFKNGOEDjKrplIO6tiDFlcoHmhv4T9VqtiLJXRqRc+BDUTKasoJD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8E+WgiGg8vUqUbJZokc7tRQTaw/CtlvNkqZLe+GnBzp8HVkBr
+	xTSNLcgdAov00wfg616D6jEoEBz0fx3lbF2HJWzQ7L/jYoBSZenH3sApAsU6+EzeGjY6aYSH076
+	3wiRyizX3YfTpvC41KHbIihPkPio=
+X-Google-Smtp-Source: AGHT+IET0zibODSKGLqBpAyFlOzXNn5BGpAezMR6EMww3A49Me0AsCpIlHGcaMhKnEUXB8jG1dP1asr/bLudntWRt98=
+X-Received: by 2002:a05:6512:1307:b0:52e:ccf5:7c3e with SMTP id
+ 2adb3069b0e04-530bb3bd143mr4066577e87.7.1722865207262; Mon, 05 Aug 2024
+ 06:40:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7eef194d-17df-4681-95aa-be6ec09b5929@molgen.mpg.de>
+References: <20240805-imx8mp-tpm-v1-1-1e89f0268999@phytec.de>
+In-Reply-To: <20240805-imx8mp-tpm-v1-1-1e89f0268999@phytec.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Mon, 5 Aug 2024 10:39:56 -0300
+Message-ID: <CAOMZO5DzH1Ldfg1rr7ET+2Y138Sv+G9HV6iRiTPOaOUgJ+asHQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: freescale: imx8mp-phyboard-pollux: Add and
+ enable TPM
+To: Benjamin Hahn <B.Hahn@phytec.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Teresa Remmet <t.remmet@phytec.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 10:19:17AM +0200, Paul Menzel wrote:
-> > > > > > > A better approach would be to add a sysfs boolean
-> > > > > > > attribute to the hub
-> > > > > > > driver to enable the 40-ms reset-recovery delay, and
-> > > > > > > make it default to
-> > > > > > > True.  Then people who don't need the delay could disable it from
-> > > > > > > userspace, say by a udev rule.
-> > > > > > 
-> > > > > > How would you name it?
-> > > > > 
-> > > > > You could call it "long_reset_recovery".  Anything like that would be
-> > > > > okay.
-> > > > 
-> > > > Would it be useful to makes it an integer instead of a boolean,
-> > > > and allow to configure the delay:
-> > > > `extra_reset_recovery_delay_ms`?
-> > > 
-> > > Sure, why not?  Just so long as the default value matches the current
-> > > behavior.
-> > 
-> > I hope, I am going to find time to take a stab at it.
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 4b93c0bd1d4b..72dd16eaa73a 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -120,9 +120,16 @@ MODULE_PARM_DESC(use_both_schemes,
->                 "try the other device initialization scheme if the "
->                 "first one fails");
-> 
-> +static int extra_reset_recovery_delay_ms = 40;
-> +module_param(extra_reset_recovery_delay_ms, int, S_IRUGO | S_IWUSR);
-> +MODULE_PARM_DESC(extra_reset_recovery_delay_ms,
-> +               "extra recovery delay for USB devices after reset in
-> milliseconds "
-> +               "(default 40 ms");
+Hi Benjamin,
 
-This is a module parameter, not a sysfs attribute.  Module parameters 
-should be avoided if possible, because they are much less flexible than 
-sysfs attributes.
+On Mon, Aug 5, 2024 at 10:33=E2=80=AFAM Benjamin Hahn <B.Hahn@phytec.de> wr=
+ote:
 
-Alan Stern
+> +/* TPM */
+> +&ecspi1 {
+> +       #address-cells =3D <1>;
+> +       #size-cells =3D <0>;
+> +       cs-gpios =3D <&gpio5 9 GPIO_ACTIVE_LOW>;
+> +       num-cs =3D <1>;
+
+num-cs is not needed.
+
+The number of chip selects can be retrieved from cs-gpios.
+
+> +       pinctrl-names =3D "default";
+> +       pinctrl-0 =3D <&pinctrl_ecspi1 &pinctrl_ecspi1_cs>;
+> +       status =3D "okay";
+> +
+> +       tpm: tpm_tis@0 {
+
+Node names should be generic.
+
+Documentation/devicetree/bindings/tpm/tcg,tpm_tis-spi.yaml suggests 'tpm', =
+so:
+
+tpm: tmp@0 {
+
+>  &iomuxc {
+> +       pinctrl_ecspi1: ecspi1grp {
+> +               fsl,pins =3D <
+> +                       MX8MP_IOMUXC_ECSPI1_MISO__ECSPI1_MISO   0x80
+> +                       MX8MP_IOMUXC_ECSPI1_MOSI__ECSPI1_MOSI   0x80
+> +                       MX8MP_IOMUXC_ECSPI1_SCLK__ECSPI1_SCLK   0x80
+> +               >;
+> +       };
+> +
+> +       pinctrl_ecspi1_cs: ecspi1csgrp {
+> +               fsl,pins =3D <
+> +                       MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09     0x00
+
+Maybe simpler to put MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09 as part of
+pinctrl_ecspi1.
 
