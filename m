@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-274614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2069F947ABD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:56:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B82947ABF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD5F81F222DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74574280C0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0CB158A06;
-	Mon,  5 Aug 2024 11:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A458158D76;
+	Mon,  5 Aug 2024 11:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dJg6SCve";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p2cVpVhe"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tFdR2ioS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qFkEmu5L"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233E3156F37;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23398156F36;
 	Mon,  5 Aug 2024 11:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722858969; cv=none; b=SYkcfAa7+KgqdWJmhz0fwQfVxEuMen6CAao8RS3UO/0ln3GP70FZSte4Y276stTSakziC7TOm5h41HaGADBW+kS20wJgIg00yj/fV6DDYYkDXdrKrsTSrSWxAKK+H/FWwBzdssBM8O17u61i3xVgis6V3KU17YQX0qnPqVkJvT0=
+	t=1722858969; cv=none; b=CcIhTYtp8b8IO6xKY10lHSrdBywWBTqN8ggVquoiaGt7crrBQZd2vucKNHSf+pS/3MA+Fo2hMIDccccsq1qbVGJpWElvU7yEfcg9oqr5JE7mgJsdw4UkaDcQVVkgUxBVlsNeHwRcTWHHVXl0LR7a0B3Yp1o53bNDb3loR4ROM0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722858969; c=relaxed/simple;
-	bh=+wCtWnnP41+WxKExhzv4193W3JBWQuOG7vdmu/ZLYuo=;
+	bh=xjoFrpUlKVAE9wqZBNuDZBnZdA/MuH4mD9rf2nMuDc0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=YE7wnZgyLLcwRjN1HuSMRk8OMPbrZy8QYUZF7W6FXV8pqGNSquDSWQiyuTEj13X9Q81WGUFRMRaW/vL3qzvATtugbs+E2uSVwDsofxlXFUc+wF5BrIFonUC4IN0eeXuMkS0T2pl9eplO6Dy/M9dB3ihyyjflB77lQlYQiX95qJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dJg6SCve; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p2cVpVhe; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=DiM/LKDreyy5eEF9lkzBbXWJJUT6rKdDEJKkJvJfXXvk4g7k0RS8xT7A0IRHEfrrklaokYkY3RCGWWFGdrrJGpe917fILkxaWkVVwok81HUCO3ahA1yg0fvpyhXfrhlbDKvakHHreVmNyh3n96SUSWA5BYeXxiv/04AR6TSdpr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tFdR2ioS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qFkEmu5L; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 05 Aug 2024 11:56:04 -0000
+Date: Mon, 05 Aug 2024 11:56:05 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722858964;
+	s=2020; t=1722858965;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BWIdqzdgqQ+9ueDqpdFWYNod8pfMekem4DnLMusGl9c=;
-	b=dJg6SCveh3TwUxczpui4Q0bMdXYd/M5rsYCgjChkmPhsPYPIp4WwUOaGb6nW+Zz5HqIlVN
-	UKl7faObI7qx1DVHx1H90sKZSLTiXW0FUvU2V+OO1RKpnDFSMhE6BGVckQMCTxeLzMJ4qV
-	gCxkabNXdGnkvVNJ1pYIIZlylt8EbueUTpHRL7oHRDBxbA3mXa78nA02wRR5YLB4JUbFDP
-	tao9A7qrVDljdWMKLTHeEMQJXq6jeekbCx7Z8tUfr71iSo00H/RUbznh3hQF9eXKs+9kdM
-	NbaCMCApYVyKw7WYMi/wc61zBofErGybjgYTWk0547TzHqMqU2coe0G/reQ/zg==
+	bh=vG+PYDMKw/jCwnKzB5WZq+FWh+VZRPqVvhOsoJ5V0Q4=;
+	b=tFdR2ioSQtrkGATcf6TYNn+eMCIK1zUM1jshuRQN7P+m4NE3+qyRO2zcv2QNQtypATPfMz
+	bRC2EXXzhYwT9YpHG39hOiH0YA3w6z5IiL/84cJy1IK1XFCooaX0x66gOHEssyA7O8bqwO
+	6HtHFl7hZdU7zvkW0wB/cg/i9AaG8gUuvZIIuXVZ0Ph/pErn3NHYGy4KWyWOjwFmDb+ofs
+	8I+2/TYXPNAyTVIngANJVYBfeJQPcUEKBxmcuk02ESBxSLZ1o0SegB66+3tFEj3p9xRfCH
+	UrDlnh2pRvODma3eZYGEg8RHI00crbq487OOT3RhjPpcoROKyyqIXlR2JYgv/Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722858964;
+	s=2020e; t=1722858965;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BWIdqzdgqQ+9ueDqpdFWYNod8pfMekem4DnLMusGl9c=;
-	b=p2cVpVheSuTAYa7nQDl4MQy/Ktql3Py00sc7gC4NqFDzKQuDJd6kawZrqBpYJfbX06UEWK
-	FmAnCdf6xhOPkzBQ==
-From: "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
+	bh=vG+PYDMKw/jCwnKzB5WZq+FWh+VZRPqVvhOsoJ5V0Q4=;
+	b=qFkEmu5LA7o6Qe/0PlX1cgO2f2iyTEaX5tu9YIgmR7QZ+McrNuITz+t3btuPY/nW1DQHoF
+	LORuQy7LygEu5iCA==
+From: "tip-bot2 for Andrii Nakryiko" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] selftests/bpf: fix uprobe.path leak in bpf_testmod
-Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240801132724.GA8791@redhat.com>
-References: <20240801132724.GA8791@redhat.com>
+Subject: [tip: perf/core] uprobes: simplify error handling for alloc_uprobe()
+Cc: Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240801132719.GA8788@redhat.com>
+References: <20240801132719.GA8788@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172285896446.2215.15536082593678175743.tip-bot2@tip-bot2>
+Message-ID: <172285896501.2215.72648014861106086.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,35 +82,48 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     db61e6a4eee5a7884b2cafeaf407895f253bbaa7
-Gitweb:        https://git.kernel.org/tip/db61e6a4eee5a7884b2cafeaf407895f253bbaa7
-Author:        Jiri Olsa <olsajiri@gmail.com>
-AuthorDate:    Thu, 01 Aug 2024 15:27:24 +02:00
+Commit-ID:     7c2bae2d9c27a89280b63ff3567d2dac2d89db28
+Gitweb:        https://git.kernel.org/tip/7c2bae2d9c27a89280b63ff3567d2dac2d89db28
+Author:        Andrii Nakryiko <andrii@kernel.org>
+AuthorDate:    Thu, 01 Aug 2024 15:27:19 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Fri, 02 Aug 2024 11:30:31 +02:00
 
-selftests/bpf: fix uprobe.path leak in bpf_testmod
+uprobes: simplify error handling for alloc_uprobe()
 
-testmod_unregister_uprobe() forgets to path_put(&uprobe.path).
+Return -ENOMEM instead of NULL, which makes caller's error handling just
+a touch simpler.
 
-Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20240801132724.GA8791@redhat.com
+Reviewed-by: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Link: https://lore.kernel.org/r/20240801132719.GA8788@redhat.com
 ---
- tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c | 1 +
- 1 file changed, 1 insertion(+)
+ kernel/events/uprobes.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-index fd28c11..72f565a 100644
---- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-+++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-@@ -477,6 +477,7 @@ static void testmod_unregister_uprobe(void)
- 	if (uprobe.offset) {
- 		uprobe_unregister(d_real_inode(uprobe.path.dentry),
- 				  uprobe.offset, &uprobe.consumer);
-+		path_put(&uprobe.path);
- 		uprobe.offset = 0;
- 	}
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 698bb22..e9b092a 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -725,7 +725,7 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
+ 
+ 	uprobe = kzalloc(sizeof(struct uprobe), GFP_KERNEL);
+ 	if (!uprobe)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	uprobe->inode = inode;
+ 	uprobe->offset = offset;
+@@ -1167,8 +1167,6 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
+ 
+  retry:
+ 	uprobe = alloc_uprobe(inode, offset, ref_ctr_offset);
+-	if (!uprobe)
+-		return -ENOMEM;
+ 	if (IS_ERR(uprobe))
+ 		return PTR_ERR(uprobe);
  
 
