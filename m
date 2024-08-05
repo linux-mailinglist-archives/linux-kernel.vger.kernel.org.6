@@ -1,185 +1,180 @@
-Return-Path: <linux-kernel+bounces-275114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156889480BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:53:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146F19480C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E4D8B2175A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:53:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51A73B21EB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E299515F400;
-	Mon,  5 Aug 2024 17:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF32215F3FE;
+	Mon,  5 Aug 2024 17:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jZPoKI/a"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hSOwsd9I"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656C715ECD4
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92551547E7
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722880416; cv=none; b=Ujy1jA9sjGvN+uCFeB1MX8udwvxSfKu1/8eEb+sS7DhrMJ1nMFzAAbypEZjV8swbenaQYF83Eov5qRqcK4qiNdmPmCd1DQrdvX4htZmvKMBNhYRrsKJ+tAKrNIWCjSpj6ofga9V/RJWyZgvXFEeZWSsmDegElkJu67wtNbgVEBU=
+	t=1722880499; cv=none; b=hB8+VaAwzh6JrN1UF1Trq01yn/LUzSA6lvJ2y1UGWffdky9KXgI375PeeRVGN2Fy9BDEOiSP2+cgygVZMkoRUj40hRWGsmnb2M27RExn7RaU0jCP5+uv8CorKz/CCx4KWw4Ymlq6mO2hoF5kHHfT8AB8+Pf+o+/v1EAMTcBCADY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722880416; c=relaxed/simple;
-	bh=+r55UdWZ+cydP1+pWYoF8GZVJw2ikt7Bt3dHiqYNlj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AK2UmwxrCnd2lCfTA9FDMqJ3Vfvlu8ZWnEyqxcQBn4D3JzyNTJAlKeWBPs3LBL9E6OwTUQ5/vPyI+JUHAQ+TyXAXZNTY2+NMfF3zIFtvDBq1opnivE1QA4npipl9hXXLQCHHHQIQAyrIkT2ytHFVpV76EvgsbCSly+CHMIu2AcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=jZPoKI/a; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7a9be21648so1496066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:53:34 -0700 (PDT)
+	s=arc-20240116; t=1722880499; c=relaxed/simple;
+	bh=GQkjH4R2oNhKk0Gv7sFrDvmfpAjpYyo6PtB/FbwIiNs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tiB3i4rghNnNW1teTIQw5RO+AGUULKKIi2OzHZ0m0ZbkDD2PVFHVaVJJYbL0ieMNMrdHvYr1R6SYlbTaeTSPDZIWvJ4salIPHCnE31qRstp0I3fjZTkSE582h9qK/EJCjRZc4V0HXm4RT1xhVaIX5ZAB5mBoQgNo+2VSaeeAUxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hSOwsd9I; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-260f033fda3so6643050fac.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:54:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1722880413; x=1723485213; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cEa+YT/mVCcUD9GpjPevIJZLtJmVc6lmcDDNejfBO+w=;
-        b=jZPoKI/acK3ub4p3JcY9/RxpulJMknmEQpj+IA03yHirZvbNipbCXPJ7LN1YBuYYw9
-         T0UCMvf0XMTqeBWCAagnk2bSpjBjjYMbBtcXdW3AY3afQcFUfcAyl4g9LIntvJicYZmL
-         22tpKBLm5IJGxhaA5l5tWeGgCe4mKe/Gm+Wh8=
+        d=chromium.org; s=google; t=1722880496; x=1723485296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aI072rJ95IpNDgMCOsSYpX0fqCtQK3FmN4K3CCKoTUo=;
+        b=hSOwsd9IdBWukliXc38sQFv+gQV2xJA5Bf42V4+EpCic8KWSpIxWMiCs5ZNH4rhNLq
+         doOj1qtdgOOmLeHjoI/gY3p/+s5qPcE13KO2LXzIiEQnnJsyKx99gvL8RPksIZzZCmDL
+         spmPqZeCOkes9crMXB6WyWWyDpFDeI3Kb/3NU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722880413; x=1723485213;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cEa+YT/mVCcUD9GpjPevIJZLtJmVc6lmcDDNejfBO+w=;
-        b=JOWFQaWdmbamrJ53JyPgsM2Cs0nG1kJU6COVxurPeNs90nzQzbQgDvJUgh5l/Clk/o
-         vUcJHMRaZL/79uWoXSyTqVncUc6vCfL0UQTw5GaL//V19ZwnMbO9+yhS7UfI7sehd6uF
-         DjVmObmLVxGRKrNjTZGrzMa7FVUZcm7HvfB+8AenH0fXw4rmHiFChrWb9jvzdfmNjRiW
-         Z2zrSH4KPAIJpqUxKPtZTAXwrMEAL2t8qrMY2M2Oq6QtrS2ztaxF314Ui+Cm5UquIM8W
-         Px0z8deVfNqDTdP5ItTs/dNOfpp43AaEuYc77986DhKFgaWShdW3lXT9ndou8opsXfLW
-         DUAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxpB5MqqElsJ7ivVO8Ljqo6mYz9qHrq7AYTh6fm/aU1159AArqGmysOQexPmeiGb5b0MsVQVuIOmIJTZeKkKWrm1Bv0yyE27wcO5OD
-X-Gm-Message-State: AOJu0YwurC2lAC6yNwgJjQuFS4l9XjXX8K0b3xK4TevdRO8Ex2hxTaAL
-	BpAblifkqbGB+3CjCxUvsDCLR7/+A0qvIctxKt2+z/Kfg4U2f0n5KNHW1nSn2Zk=
-X-Google-Smtp-Source: AGHT+IGlF5DiKdBDow/gpp4uHOITP01+3OGMKycpIkbo2FerV/n9VK31oyha5PyJpYnERo4T2I9irQ==
-X-Received: by 2002:a17:907:3f29:b0:a72:499a:e5ba with SMTP id a640c23a62f3a-a7dc50f07d0mr706646266b.7.1722880412461;
-        Mon, 05 Aug 2024 10:53:32 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bcc86asm472899466b.28.2024.08.05.10.53.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:53:31 -0700 (PDT)
-Date: Mon, 5 Aug 2024 19:53:30 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Huan Yang <link@vivo.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v2 0/5] Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-Message-ID: <ZrERmndxBS5xUvuE@phenom.ffwll.local>
-Mail-Followup-To: Huan Yang <link@vivo.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-References: <20240730075755.10941-1-link@vivo.com>
- <Zqiqv7fomIp1IPS_@phenom.ffwll.local>
- <25cf34bd-b11f-4097-87b5-39e6b4a27d85@vivo.com>
- <37b07e69-df85-45fc-888d-54cb7c4be97a@vivo.com>
- <Zqqing7M2notp6Ou@phenom.ffwll.local>
- <4e83734a-d0cf-4f8a-9731-d370e1064d65@vivo.com>
+        d=1e100.net; s=20230601; t=1722880496; x=1723485296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aI072rJ95IpNDgMCOsSYpX0fqCtQK3FmN4K3CCKoTUo=;
+        b=BaF3SQW2uUX0KWrDZJARnJJLiuoFu0fjb1DNLa2WoIGIl3n2H1wCEZ5hN80S8U5yui
+         7sMtk8eS6p8Wz5DjD1KswvCl3UkQ9pq/LjKzLQltLWYkW2sjjW/40ZlrHEYZEbDELS8a
+         /TvXyq7BUt62zU2bFlsYNwm0Z2E9+SmxivQP9EuBL9XBy3cGobJvHTagGMzfAcpVuuHb
+         2FkNdk39YI2L3WfVY06BcOOsG7N27mjrnGjH5AQjvRQt86jcKTWdMS/G9Ov9DP/8+1pK
+         g3/biWn4uJvjY9ofSBU5zDpibunVWUeIG0r7OTLHwJ9uIFvzjHlDY47A5424PM9ddWc4
+         psSA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8UpbrQSi8eZCx7ZuoHITVB8tmLz1ftD53eEqMDgzEpLWN5sX9yiSwKlO9EeAcypuSvUhZXIKX+h0dVILfx3wmWSfGOpbxQvyKcO85
+X-Gm-Message-State: AOJu0Yy67qw6NZmiuYkk6Mdv8mzSkExA2FJtFzQ2ETgljV/I2Q2v43e8
+	CJNNEioyhgOKPvdXctlSsWWh4lqpSBsDFwi17MxSAzbCxMfVpmmaLVVXiPNrsrDqf6kSPLTIa+8
+	vwS2n50CQzrH7xwYJYOq1qI3fH/juQIfW7ljN
+X-Google-Smtp-Source: AGHT+IHEMfm5KZKzTuBuhbgn2BzM+Kkm0uGH+2NRDn+4bmV5rY5gAUDOiMxN7ccdXki/NJFJB+bUPiTfh36WFyShrO8=
+X-Received: by 2002:a05:6870:d152:b0:260:e2ed:1abe with SMTP id
+ 586e51a60fabf-26891e929d5mr15828098fac.39.1722880495977; Mon, 05 Aug 2024
+ 10:54:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4e83734a-d0cf-4f8a-9731-d370e1064d65@vivo.com>
-X-Operating-System: Linux phenom 6.9.10-amd64 
+References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+In-Reply-To: <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 5 Aug 2024 10:54:44 -0700
+Message-ID: <CABi2SkWkD0hbr_Bv1DiL-gzCgCtuJrWKvhGhh8GuU1vVMejzmw@mail.gmail.com>
+Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
+ -4.4% regression
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kees Cook <keescook@chromium.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Pedro Falcato <pedro.falcato@gmail.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 01, 2024 at 10:53:45AM +0800, Huan Yang wrote:
-> 
-> 在 2024/8/1 4:46, Daniel Vetter 写道:
-> > On Tue, Jul 30, 2024 at 08:04:04PM +0800, Huan Yang wrote:
-> > > 在 2024/7/30 17:05, Huan Yang 写道:
-> > > > 在 2024/7/30 16:56, Daniel Vetter 写道:
-> > > > > [????????? daniel.vetter@ffwll.ch ?????????
-> > > > > https://aka.ms/LearnAboutSenderIdentification?????????????]
-> > > > > 
-> > > > > On Tue, Jul 30, 2024 at 03:57:44PM +0800, Huan Yang wrote:
-> > > > > > UDMA-BUF step:
-> > > > > >     1. memfd_create
-> > > > > >     2. open file(buffer/direct)
-> > > > > >     3. udmabuf create
-> > > > > >     4. mmap memfd
-> > > > > >     5. read file into memfd vaddr
-> > > > > Yeah this is really slow and the worst way to do it. You absolutely want
-> > > > > to start _all_ the io before you start creating the dma-buf, ideally
-> > > > > with
-> > > > > everything running in parallel. But just starting the direct I/O with
-> > > > > async and then creating the umdabuf should be a lot faster and avoid
-> > > > That's greate,  Let me rephrase that, and please correct me if I'm wrong.
-> > > > 
-> > > > UDMA-BUF step:
-> > > >    1. memfd_create
-> > > >    2. mmap memfd
-> > > >    3. open file(buffer/direct)
-> > > >    4. start thread to async read
-> > > >    3. udmabuf create
-> > > > 
-> > > > With this, can improve
-> > > I just test with it. Step is:
-> > > 
-> > > UDMA-BUF step:
-> > >    1. memfd_create
-> > >    2. mmap memfd
-> > >    3. open file(buffer/direct)
-> > >    4. start thread to async read
-> > >    5. udmabuf create
-> > > 
-> > >    6 . join wait
-> > > 
-> > > 3G file read all step cost 1,527,103,431ns, it's greate.
-> > Ok that's almost the throughput of your patch set, which I think is close
-> > enough. The remaining difference is probably just the mmap overhead, not
-> > sure whether/how we can do direct i/o to an fd directly ... in principle
-> > it's possible for any file that uses the standard pagecache.
-> 
-> Yes, for mmap, IMO, now that we get all folios and pin it. That's mean all
-> pfn it's got when udmabuf created.
-> 
-> So, I think mmap with page fault is helpless for save memory but increase
-> the mmap access cost.(maybe can save a little page table's memory)
-> 
-> I want to offer a patchset to remove it and more suitable for folios
-> operate(And remove unpin list). And contains some fix patch.
-> 
-> I'll send it when I test it's good.
-> 
-> 
-> About fd operation for direct I/O, maybe use sendfile or copy_file_range?
-> 
-> sendfile base pipe buffer, it's low performance when I test is.
-> 
-> copy_file_range can't work due to it's not the same file system.
-> 
-> So, I can't find other way to do it. Can someone give some suggestions?
+On Sun, Aug 4, 2024 at 1:33=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, 4 Aug 2024 at 01:59, kernel test robot <oliver.sang@intel.com> wr=
+ote:
+> >
+> > kernel test robot noticed a -4.4% regression of stress-ng.pagemove.page=
+_remaps_per_sec on
+> > commit 8be7258aad44 ("mseal: add mseal syscall")
+>
+> Ok, it's basically just the vma walk in can_modify_mm():
+>
+> >       1.06            +0.1        1.18        perf-profile.self.cycles-=
+pp.mas_next_slot
+> >       1.50            +0.5        1.97        perf-profile.self.cycles-=
+pp.mas_find
+> >       0.00            +1.4        1.35        perf-profile.self.cycles-=
+pp.can_modify_mm
+> >       3.13            +2.0        5.13        perf-profile.self.cycles-=
+pp.mas_walk
+>
+> and looks like it's two different pathways. We have __do_sys_mremap ->
+> mremap_to -> do_munmap -> do_vmi_munmap -> can_modify_mm for the
+> destination mapping, but we also have mremap_to() calling
+> can_modify_mm() directly for the source mapping.
+>
 
-Yeah direct I/O to pagecache without an mmap might be too niche to be
-supported. Maybe io_uring has something, but I guess as unlikely as
-anything else.
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+There are two scenarios in mremap syscall.
+1> mremap_to (relocate vma)
+2> shrink/expand.
+Those two scenarios are handled by different code path:
+
+For case 1>
+mremap_to (relocate vma)
+-> can_modify_mm , check src for sealing.
+-> if MREMAP_FIXED
+->-> do_munmap (dst) // free dst
+->->-> do_vmi_munmap (dst)
+->->->-> can_modify_mm (dst) // check dst for sealing
+-> if dst size is smaller (shrink case)
+->-> do_munmap(dst, to remove extra size)
+->->-> do_vmi_munmap
+->->->-> can_modify_mm(dst) (potentially duplicate  with check for
+MREMAP_FIXED,  practically, the memory should be unmapped, so the cost
+ looking for a un-existed memory range in the maple tree )
+
+For case 2>
+Shrink/Expand.
+-> can_modify_mm, check addr is sealed
+-> if dst size is smaller (shrink case)
+->-> do_vmi_munmap(remove_extra_size)
+-> ->-> can_modify_mm(addr) (This is redundant because addr is already chec=
+ked)
+
+For case 2:, potentially we can improve it by passing a flag into
+do_vmi_munmap() to indicate the sealing is already checked by the
+caller. (however, this idea have to be tested to show actual gain)
+
+The reported regression is in mremap, I wonder why mprotect/munmap
+doesn't have similar impact, since they use the same pattern (one
+extra out-of-place check for memory range)
+
+During version 9, I tested munmap/mprotect/madvise for perf [1] .  The
+test shows mseal adds   20-40 ns or 50-100 CPU cycle pre call, this is
+much smaller (one tenth)  than change from 5.10 to 6.8. The test is
+using multiple VMAs with various types[2].  The next step for me is
+to run the stress-ng.pagemove.page_remaps_per_sec to understand why
+mremap shows a big regression number.
+
+[1] https://lore.kernel.org/all/20240214151130.616240-1-jeffxu@chromium.org=
+/
+[2] https://github.com/peaktocreek/mmperf
+
+Best regards,
+-Jeff
+
+
+> And then do_vmi_munmap() will do it's *own* vma_find() after having
+> done arch_unmap().
+>
+> And do_munmap() will obviously do its own vma lookup as part of
+> calling vma_to_resize().
+>
+> So it looks like a large portion of this regression is because the
+> mseal addition just ends up walking the vma list way too much.
+>
+>               Linus
 
