@@ -1,142 +1,149 @@
-Return-Path: <linux-kernel+bounces-274725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE05947BE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:34:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2D7947BE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73F621C21BC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:34:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB7BDB21377
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD772E62D;
-	Mon,  5 Aug 2024 13:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17A424B29;
+	Mon,  5 Aug 2024 13:36:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgZ+0pQI"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H2FT/um3"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0931F60A;
-	Mon,  5 Aug 2024 13:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17D617C64
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 13:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722864835; cv=none; b=YJ7vwvEAMrohDIHcsimkDupjgHE+4nkmdDl4BLkjc10r2N6W6vbjBHmwkII5P4bnI/f8fYnjgQF/I8yclksKylZUxnDjJG4RGT5012ERScjtx0ZwQm1vNsq2HL18Tp14HZsyLCxSX8R013WCXQftJmRfC8HYLO7G3kxkL8BoOLo=
+	t=1722864964; cv=none; b=Hdb9o2JggApSA6qPV4KbOqOf9jvtvfK83uYqLKSgr5Ay80pBVQWZJn2ntA6Xw1CgvHqupStjWjDFhRonBt9oWVCrlV3rkjG2rcaG2I47UJLIl4wHFHuhh3kjPWWAjRoUmcaQCJ+RK70hpBXsCAGEBfjPJYdITXZPnO1mGQKv1wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722864835; c=relaxed/simple;
-	bh=6UzLdIcsIQBjvvsljkRYWNG+zy1gpAPaUZQUZLQBsGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KJzqKWajT03ETvEv9LLm+IYGytn+ke57RViPmfeS8Lng8vTm6u7pWZP4epRW8JGTXF3MegNJRVzzyiOTbTg4qUuyrI8iuxzTKV5g9ZoiJzoaBZ9rwreKmT2nMk5nXVonATUASBRoFrbZmvxwoLp1Q7hact2olkONWdbTRiehbxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgZ+0pQI; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5d5c2ac3410so6023206eaf.2;
-        Mon, 05 Aug 2024 06:33:53 -0700 (PDT)
+	s=arc-20240116; t=1722864964; c=relaxed/simple;
+	bh=deqBr+T59Bcyml2IfglYf2okf7dmsoF1EIG+G5SirCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTDyBw3Ip1XCpA4yr9ajGxFcwXuqbeghU+FWV5tc5Yc0okLFAxqj7o4h66ruKWaDhmGxTDuX/0vXRq1BdAWG3f7lJ3t0pdN9vykcvxA02ezhVmNcItQn/bqA6Q7hXNOM8wF9VHeeyPgWjvucrd50mi92VnsGSuvTKyfipcg+PPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H2FT/um3; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70ea2f25bfaso7430202b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 06:36:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722864833; x=1723469633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9bpYeWBTb5rgkeqmPvmBnfbIMAAfYEMneQoA10rCaXA=;
-        b=lgZ+0pQIcD/2fiRBY/SKG4i2+upkzrGiuBOqL2jvILefvbtdSKhPmvf5sClabnttop
-         55+KJDVQUGT4cHSySPtBrCtV8IXUN1LxdZWPn523P+SSFXP3Z1Y/YvYJ0fAMRMrjj8hI
-         /jjhRIYAzGCzsnULG1fZh4Vhm1mjjBYqJ4OE4HtjBpz4L/ZLSGSchRb8cBuaNKr35pYq
-         okba9/oxrPMKbhcY/VlQteN+MQg8XaBQOTqlNfWpAoHr34JCrKTERivwvj1Of27kQAW/
-         zVHuF5bv8kz/LlbHWLS6Nj5ScbEIsVPbIIogsiMQTTQV/gvg/sce4tYAsjLXdi2cD6Lq
-         iFZA==
+        d=linaro.org; s=google; t=1722864962; x=1723469762; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rN6Gcul3E2bfV10FS1hTUxZlfG84cp2ypd628Rjblcs=;
+        b=H2FT/um3RzxjN9oDN29Q26es14d1R4HfkoRcwr3m97UwuBalfJYRHebm42ho5YqqFf
+         /QgmSIjqECgy17ykSImfIqovk9kS5B+Xxxn9prmyt63qKfgFAneBi+Guig32qdQB+adc
+         LNhP2WPtmHwinW6bt3CBK2adE54e1UOdewj8EFo79pr005eTxCx3Wq+/+zzIgLPQOOAW
+         txTn8BDX2swRadagdMLG94KaFia4gcpr/Gp85/zMDdZ39oe39E7EKd90SduwPw/0XyDo
+         55vubkLYFWtZoaUCJsfUnz9SDqfXRcgTrI8P9mQDwVk4XTGDJxgxzzuOUZo9jQUq+/Dy
+         3A8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722864833; x=1723469633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9bpYeWBTb5rgkeqmPvmBnfbIMAAfYEMneQoA10rCaXA=;
-        b=KjI4ftDENUuaT5QKtPPR1SY8YmsBmCeJPx68ZH2ENwxftr2pP3t9WSo2HqcuRVcnVV
-         yUBUp2TA2zlGZk9g7pmIBeMHFqd/TYoknj61nH5XcEZ6wCe5zeZL457LD/7hznFvjr/5
-         vIWsOyRMF2onE/WgjGwp5HucDkZdCAoczVe6vnts862j6EZ3b+XEt2gaWTgThxqKcU8J
-         XgFSatq5dDknLZcHYm6yPTlrSfcTcPIxmIuHdQWos4lSaKXj4bgoPh+3MOFl4Eslc/4C
-         Bfx4Bro5XXqhuJ5qgMm2joB1zL//cMQEo5nQLiNhlwJflQj8Jyd73outt/WX6EGmvK1s
-         ffkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWe+FfylyHhLoIsjCMzBkNnPP0onWaCyedAYqZAaJJbK7DUS+XicAzhm3hNnHzCX2R2NG4WBH2MBetRXAMFxRarkBHSuzyG7HZKcjeda/oym8Junvk7e9KsnRMX7a6UqY/koQtjnNdo
-X-Gm-Message-State: AOJu0YwXKtKCPLRbtMmuZzu/4IIK06E8dJkR0fHj90+e8q+nEhJKm3FK
-	LpDLaNM0Z4dXrpFQi/9FLQZl0QC5BZC3dVtKf2N3+KoeKI0/5x2OVHUTTXetwqyThbYDlgCCS8f
-	oxK1ejRQCFY490p9ncZhfNm91VZU=
-X-Google-Smtp-Source: AGHT+IHkU0BXuahEoyQX22QUsa04qtYpJiIPRQVXPHgYx4oh0LF1TIyS+xQ4LfVhA8LQQBA+IPKEb5wm1P/5s9AEo3A=
-X-Received: by 2002:a05:6358:5f1d:b0:1ac:f144:2b16 with SMTP id
- e5c5f4694b2df-1af3bababb6mr1497963255d.26.1722864833103; Mon, 05 Aug 2024
- 06:33:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722864962; x=1723469762;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rN6Gcul3E2bfV10FS1hTUxZlfG84cp2ypd628Rjblcs=;
+        b=jDPJzuxLYDoOW9O+KXAQqYyUuadvm5ER+TbhGUL8E7lRhtq4kqOlGKSinqckmGugxC
+         /DGw60aG+k0j3JSTpH6ZYKtxNuA/Smfw0RsV3C296Prl6PqwrApQN5CLHRrD7vZKNCHV
+         v+vmiz+bDm1RRzwAmzcY+fhZM/H2EBPlvlCq7/nqgXPpNd2Hg5lyG2SsH+8p2Lk+zAeU
+         kwnxB46famAGoHb781+lxa2kkTm2rPJLSVoWT1XNaaRAJIvFxI4T73ZOZxy3BNzveux5
+         QT1g1IpqQkyz3loD0WDh/oI4vPkkzwFokSa5j5H55C8VMCxcQJHAEl0mRRK8qfvvMlQQ
+         YRrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuRyzOBEsJle/ZmSxPL8r4CvaZmRa5VgNXGP06aN8rHSXkaAT5uPdbT6kh+oxN/XsVsth1h+NYlkXFjkhmp/vNHu2qtFXLVYSHs2Op
+X-Gm-Message-State: AOJu0YxTeTjEc/OnsJQ/l1kln56jWJu8Ip2z280fMwJWG5hfItEHIVgH
+	5Tl6mmYVW7gfvON5lAcKpkyxhOBPrfWvCf3Y6cwjVjcZ56OsDRPMNwYWhSnOnw==
+X-Google-Smtp-Source: AGHT+IFoNCsEZXQAHNUKIBafzI7fNNpxmNX2K2ix9w1zj91Ywjl+lHWsxvc5LDXihwNMbH/uk3cmqg==
+X-Received: by 2002:a05:6a00:9143:b0:706:375e:220d with SMTP id d2e1a72fcca58-7106d04747cmr8068000b3a.30.1722864961872;
+        Mon, 05 Aug 2024 06:36:01 -0700 (PDT)
+Received: from thinkpad ([120.56.197.55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed2d553sm5371438b3a.202.2024.08.05.06.35.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 06:36:00 -0700 (PDT)
+Date: Mon, 5 Aug 2024 19:05:55 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <20240805133555.GC7274@thinkpad>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
+ <ZqyxS8spZ-ohsP3R@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
-In-Reply-To: <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Mon, 5 Aug 2024 14:33:41 +0100
-Message-ID: <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
-Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
- -4.4% regression
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
-	feng.tang@intel.com, fengwei.yin@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZqyxS8spZ-ohsP3R@wunner.de>
 
-On Sun, Aug 4, 2024 at 9:33=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, 4 Aug 2024 at 01:59, kernel test robot <oliver.sang@intel.com> wr=
-ote:
-> >
-> > kernel test robot noticed a -4.4% regression of stress-ng.pagemove.page=
-_remaps_per_sec on
-> > commit 8be7258aad44 ("mseal: add mseal syscall")
->
-> Ok, it's basically just the vma walk in can_modify_mm():
->
-> >       1.06            +0.1        1.18        perf-profile.self.cycles-=
-pp.mas_next_slot
-> >       1.50            +0.5        1.97        perf-profile.self.cycles-=
-pp.mas_find
-> >       0.00            +1.4        1.35        perf-profile.self.cycles-=
-pp.can_modify_mm
-> >       3.13            +2.0        5.13        perf-profile.self.cycles-=
-pp.mas_walk
->
-> and looks like it's two different pathways. We have __do_sys_mremap ->
-> mremap_to -> do_munmap -> do_vmi_munmap -> can_modify_mm for the
-> destination mapping, but we also have mremap_to() calling
-> can_modify_mm() directly for the source mapping.
->
-> And then do_vmi_munmap() will do it's *own* vma_find() after having
-> done arch_unmap().
->
-> And do_munmap() will obviously do its own vma lookup as part of
-> calling vma_to_resize().
->
-> So it looks like a large portion of this regression is because the
-> mseal addition just ends up walking the vma list way too much.
+On Fri, Aug 02, 2024 at 12:13:31PM +0200, Lukas Wunner wrote:
+> On Fri, Aug 02, 2024 at 11:25:03AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > Unlike ACPI based platforms, there are no known issues with D3Hot for the
+> > PCI bridges in the Devicetree based platforms. So let's allow the PCI
+> > bridges to go to D3Hot during runtime. It should be noted that the bridges
+> > need to be defined in Devicetree for this to work.
+> [...]
+> > +		if (state == PCI_D3hot && dev_of_node(&bridge->dev))
+> > +			return true;
+> 
+> For such a simple change which several parties are interested in,
+> I think it would be better to move it to the front of the series.
+> 
+> Patch [1/4] looks like an optimization (using a cached value)
+> which this patch doesn't depend on.  Patch [2/4] looks like a
+> change of bikeshed color which isn't strictly necessary for
+> this fourth patch either.  If you want to propose those changes,
+> fine, but by making this fourth patch depend on them, you risk
+> delaying its acceptance.  As an upstreaming strategy it's usually
+> smarter to move potentially controversial or unnecessary material
+> to the back of the series, or submit it separately if it can be
+> applied standalone.
+> 
 
-Can we rollback the upfront checks "funny business" and just call
-can_modify_vma directly in relevant places? I still don't believe in
-the partial mprotect/munmap "security risks" that were stated in the
-mseal thread (and these operations can already fail for many other
-reasons than mseal) :)
+Agree with you! Even after doing upstreaming for this much time, I tend to
+ignore this...
 
-I don't mind taking a look myself, just want to make sure I'm not
-stepping on anyone's toes here.
+> 
+> > Currently, D3Cold is not allowed since Vcc supply which is required for
+> > transitioning the device to D3Cold is not exposed on all Devicetree based
+> > platforms.
+> 
+> The PCI core cannot put devices into D3cold without help from the
+> platform.  Checking whether D3cold is possible (or allowed or
+> whatever) thus requires asking platform support code via
+> platform_pci_power_manageable(), platform_pci_choose_state() etc.
+> 
+> I think patch [3/4] is a little confusing because it creates
+> infrastructure to decide whether D3cold is supported (allowed?)
+> but we already have that in the platform_pci_*() functions.
+> So I'm not sure if patch [3/4] adds value.  I think generally
+> speaking if D3hot isn't possible (allowed?), D3cold is assumed
+> to not be possible either.
+> 
 
---=20
-Pedro
+Why? D3Hot is useful for runtime PM and if the platform doesn't want to do
+runtime PM, it can always skip D3Hot (not ideal though). But D3Cold is a power
+off state, and the platform may choose to use it for the case of system suspend.
+
+So I still feel that decoupling D3Hot and D3Cold is necessary.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
