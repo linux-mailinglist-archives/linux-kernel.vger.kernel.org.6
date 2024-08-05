@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-274750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E40947C37
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:52:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A4A947C43
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B3D1C21BD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06B5FB217B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3A43A267;
-	Mon,  5 Aug 2024 13:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36B2762D0;
+	Mon,  5 Aug 2024 13:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Q4iKV2Zh"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="claQdTGS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF043381B9
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 13:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A59355E73;
+	Mon,  5 Aug 2024 13:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722865916; cv=none; b=A6GJ0uEFZFWKh39MiT0AiGGJWBots4TKB/DQhXeqSfAPaJ4sXBmXhN3WHhcy/QInsXg4c3htmzwc5LDIahU1S0djfuCHP3FCfVo9gwoXxNCETh3rFN2zFzYYnyWpboFoO95ZSIuz9S11Gs0S7ulP2SwKrJqhzmjRqFkV6HB/zlQ=
+	t=1722866071; cv=none; b=fe4slpVp067hiDpNM3BS05mYbA1hKL4LmNWF07P42n4EKbZ4/MegnYj3Bml6f9O7pZIOLKxIo3CWMC0xbi9XmlW/iwLS9pRJAaaWJ9bPQ7CR/ft2elfQeLXWwWiPuBplogZPPLLkxBpbCG3Hi6ZetKmPPenixq2/1XjH1/p1CWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722865916; c=relaxed/simple;
-	bh=/AQHrtR5h5O7jPYa96FCXxXdYahXu4b6b7nQxDZkFvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSREBDxtmksbqHrJy43stlHfElyGBwFA22kGz7AFKwCL4IVepyGxr69AvdYwyvkvbGMs+ay6pjT9vupGWF3JwvRUQO4IqgwwhdKaSdtX8DFDp1/e9BtSCAwaHR9ISwbjRxqNAq6IKWw7Uc0i9KSd5aQvbnVM+HMjshpKrnE9zIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Q4iKV2Zh; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7ad02501c3so402267866b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 06:51:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722865913; x=1723470713; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=24KhsaR7Lyt0pADalfMlyDC/kBHqcMJwqIFxV24o+xI=;
-        b=Q4iKV2ZhcuvMcFHmLjKWEZzpHC8j7pofGci6A/BeV1naAQDisioB9O9LCwadk3FsjG
-         LZDwFZrnTS3Xf4GYx0pTfuH1G3TyVPP4bEX7hfYHyM5BqDtZ4N3cfUSpyX09IJL/rcwW
-         V1X7rEyqMP64Ia0xW4GydB/35RiNExh5AX16OCIFrgto1PBv/EgeQD7a7E2HyXtWNpxq
-         gZFdVEohUMFg1eBFoURVVCfELN7oRbTXQveK9bMG311Tkr9XQoLAhue0gYbXXxKTpctL
-         5VMr+FV3pXMmcGTCRJxSTPO9zx14thsZM/bESVU/q3zKDZIJW8k9vPrtaVhaC3X4G51S
-         9Tvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722865913; x=1723470713;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=24KhsaR7Lyt0pADalfMlyDC/kBHqcMJwqIFxV24o+xI=;
-        b=Mn5fSnoJsbnb0jhM/uBJpcgdBA1Usjz4xHo/wUUKEhqAKAwY9K/lTWC7JrE3pix6Ix
-         olpVE27ZxNar52pKwS66VH+syaMmEn/+1pY0WP+oLr2r1NQczsUOAcsdIc01PdMtdD9P
-         EVZVAAy53arcVl7Ncay2Y3nXskxd8CV9qgSNVO1JsLRL02Opp+0zSx9Zwncwi/Yv0HRc
-         S4sBieXMAgBA93uvb+ucsw+bM9X+BIbKZgdMeqi0vIsD5Ss756gp/hZkH7RUFSbplT1r
-         VGQsbvl6v5bNa+8R2nXqaU1+lGOCJEdR6IqWJJwT8Dk3hlmoXX1mqnLTzmr3uvD+ocpV
-         C0GA==
-X-Forwarded-Encrypted: i=1; AJvYcCX05ei63XUYD2DYhpKfGU1V+KmnRm5SXmXUpcRnjHuMBbK5hWrsm4v9dl6B5gi3gnvtoxmiarVprO/DMMitRkVDPpPjBg9FGBHvji+g
-X-Gm-Message-State: AOJu0YzyS0Mf+RZiJjdeBKQtFHEtOnxLNCFIHzGxFvFnzbmrflIy6nqV
-	ja7ExeoFHxEGB+cULQhRxrzqVaUjhWaoEhfB94oWpVb2xTJ6R8Zp/2tCga3gMOI=
-X-Google-Smtp-Source: AGHT+IFFM/8blKXit81pVr2Mv0h8jRP3TcYzMugO9+xBcfDh4uEgqi7RuNIHOiT7MH3GWierzUp2Cw==
-X-Received: by 2002:a17:907:3f0b:b0:a7a:a2b7:93ff with SMTP id a640c23a62f3a-a7dc51bd262mr893412466b.57.1722865913037;
-        Mon, 05 Aug 2024 06:51:53 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3d2asm457320966b.45.2024.08.05.06.51.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 06:51:52 -0700 (PDT)
-Date: Mon, 5 Aug 2024 15:51:51 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: takakura@valinux.co.jp
-Cc: rostedt@goodmis.org, john.ogness@linutronix.de,
-	senozhatsky@chromium.org, akpm@linux-foundation.org, bhe@redhat.com,
-	lukas@wunner.de, wangkefeng.wang@huawei.com, ubizjak@gmail.com,
-	feng.tang@intel.com, j.granados@samsung.com,
-	stephen.s.brennan@oracle.com, linux-kernel@vger.kernel.org,
-	nishimura@valinux.co.jp, taka@valinux.co.jp
-Subject: Re: [PATCH v2 2/2] Allow cpu backtraces to be written into
- ringbuffer during panic
-Message-ID: <ZrDY90xLj50CJ-jG@pathway.suse.cz>
-References: <20240803080444.221427-1-takakura@valinux.co.jp>
- <20240803081649.224627-1-takakura@valinux.co.jp>
+	s=arc-20240116; t=1722866071; c=relaxed/simple;
+	bh=BncnyQonmJ5+HmLoE7oS88pIgg0LaOFqG5VcpwZrO4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q5uaIe7YOPE+8ldV/il6hBQBWGGaRJqjhUFlIZ7ou3RcDqTmQk2fY4wDJMCbxbbJPdPos20vglAZPZv7u9LsOpMM95T9tCqyHsr4G6wMaWzcgUgV04uV0NKBB51zNx/96fLRtpk8gIjyfaLgmOyCehUQ8F/7yx7Qx2JlrouSCUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=claQdTGS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA264C32782;
+	Mon,  5 Aug 2024 13:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722866071;
+	bh=BncnyQonmJ5+HmLoE7oS88pIgg0LaOFqG5VcpwZrO4E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=claQdTGSpGAqM40GuXdBs1yWHEy4DZz79ft29R6GbokVsZ8F4XOHs18Q3ipoTQW7e
+	 oKWS8tgz1jwbs4lZAPqGvd3ZdySBQ63wMCp0t1c5YsYDOTkflkDJ+FZ/zO3WOdSmi9
+	 fMXflvuwb9Y46/u7kLpn9wlXuOdHblrj1a+kf/fhz3jXC0r/BYRT8p9CBXr2aUGP1Q
+	 Fn9SL24zBYBQNJr2deVfGnkeM8YWBS0g0QeKRoHkkhkFx3+KWc4jIjNDfyaaVjW2uj
+	 6MKfhha5LUxY0Hcg0s7LRVlccttt25IYLNmQt/36D+I4ha+ykur8DGaIqYfJAnLaAa
+	 t9bB3is/N0FBg==
+Message-ID: <0a634553-023c-4a46-8743-28357021c689@kernel.org>
+Date: Mon, 5 Aug 2024 16:54:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240803081649.224627-1-takakura@valinux.co.jp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 07/12] usb: cdns3-ti: add J7200 support with
+ reset-on-resume behavior
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Chen <peter.chen@kernel.org>,
+ Pawel Laszczak <pawell@cadence.com>, Mathias Nyman
+ <mathias.nyman@intel.com>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@kernel.org>,
+ =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
+ <20240726-s2r-cdns-v5-7-8664bfb032ac@bootlin.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240726-s2r-cdns-v5-7-8664bfb032ac@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat 2024-08-03 17:16:49, takakura@valinux.co.jp wrote:
-> From: Ryo Takakura <takakura@valinux.co.jp>
-> 
-> commit 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing
-> to ringbuffer") disabled non-panic CPUs to further write messages to
-> ringbuffer after panicked.
-> 
-> Since the commit, non-panicked CPU's are not allowed to write to
-> ring buffer after panicked and CPU backtrace which is triggered
-> after panicked to sample non-panicked CPUs' backtrace no longer
-> serves its function as it has nothing to print.
-> 
-> Fix the issue by allowing non-panicked CPUs to write into ringbuffer
-> while CPU backtrace is in flight.
-> 
-> Fixes: 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing to ringbuffer")
-> Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Best Regards,
-Petr
+On 26/07/2024 21:17, Théo Lebrun wrote:
+> Add ti,j7200-usb compatible. Match data indicates the controller resets
+> on resume which tells that to the cdns3 core. This in turn silences a
+> xHCI warning visible in cases of unexpected resets.
+> 
+> We also inherit the errata quirk CDNS3_DRD_SUSPEND_RESIDENCY_ENABLE from
+> the default `cdns_ti_auxdata` configuration.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> ---
+>  drivers/usb/cdns3/cdns3-ti.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/usb/cdns3/cdns3-ti.c b/drivers/usb/cdns3/cdns3-ti.c
+> index 159814dfc856..65b8b6f4c654 100644
+> --- a/drivers/usb/cdns3/cdns3-ti.c
+> +++ b/drivers/usb/cdns3/cdns3-ti.c
+> @@ -258,7 +258,21 @@ static const struct of_dev_auxdata cdns_ti_auxdata[] = {
+>  	{},
+>  };
+>  
+> +static struct cdns3_platform_data cdns_ti_j7200_pdata = {
+> +	.quirks = CDNS3_RESET_ON_RESUME |
+
+But you mentioned that the behavior can be different based on which
+idle state the system went into.
+Setting this flag will means Reset is required on every resume.
+
+
+Instead, you just need to rely on the runtime check and set the xhci->lost_power flag at resume.
+
+
+> +		  CDNS3_DRD_SUSPEND_RESIDENCY_ENABLE,   /* Errata i2409 */
+> +};
+> +
+> +static const struct of_dev_auxdata cdns_ti_j7200_auxdata[] = {
+> +	{
+> +		.compatible = "cdns,usb3",
+> +		.platform_data = &cdns_ti_j7200_pdata,
+> +	},
+> +	{},
+> +};
+> +
+>  static const struct of_device_id cdns_ti_of_match[] = {
+> +	{ .compatible = "ti,j7200-usb", .data = cdns_ti_j7200_auxdata },
+>  	{ .compatible = "ti,j721e-usb", .data = cdns_ti_auxdata },
+>  	{ .compatible = "ti,am64-usb", .data = cdns_ti_auxdata },
+>  	{},
+> 
+
+-- 
+cheers,
+-roger
 
