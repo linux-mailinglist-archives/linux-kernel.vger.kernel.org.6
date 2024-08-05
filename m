@@ -1,261 +1,189 @@
-Return-Path: <linux-kernel+bounces-274271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15CC9475EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:22:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8317E9475F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AD461F21A5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A27A281293
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E18149000;
-	Mon,  5 Aug 2024 07:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CF5149C40;
+	Mon,  5 Aug 2024 07:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kFONTW3I"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F3qFdGWw"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC7A4D8B6
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 07:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722842554; cv=fail; b=IS4DaXovIYDPp7oGkhLhXqbkJAOGXLGuQ+SLwIsotmkZEhAMVShX04qLW7PNGJC5K16DPdIRD9/qVGCmZoWPFv029RQE2n3jO/Jdnt0p8TRfA2RPfgZeTMiao2vG8/74WkN3l9mKDVFYCBamtOAtAHBavRTJfg5kTwBBIhzNAog=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722842554; c=relaxed/simple;
-	bh=G8qYcpeD+aNpfQFBwA2m5dgoexT1MEHTVKUYTMTehx8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tUIdNnVdX8eHvc40FdQyy9BFfshhsAxicOAnO1EeaLmNRzOTjwjpjfcm81AqlCj7dMhsS8Hw8FLF78QfKHFjzyh/k26znr5kWTfU+TwXqXj4i3VGE5fuBpuG8OrVZANJPAALc3ndigsvCOqLknTDCXEdCZrucxsH82Y37PKIQKc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kFONTW3I; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722842552; x=1754378552;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=G8qYcpeD+aNpfQFBwA2m5dgoexT1MEHTVKUYTMTehx8=;
-  b=kFONTW3IyKGODDdatKOTlMz32tyvOJ1huk568nQ22YNUgsJpCAVyU1Ik
-   3saG64OI65NU9MS9f7KIIeylHu+klCq7uBxBVKHV8ZEn1XHx9YulULplB
-   fb87QPMdMRQBGGT0zXQMvV06DXYqUJIuJrs9s0yaO5pKCilCR6No4wnfF
-   HeKE+gLOcWTomgpoINANxPJIr3FZUuz7Ll27D/VEFXaor3rX1wpJJwO7f
-   fCto6usMQZojD5eqClfp/Mm3EqMuuarcoJZiAYYkn0+XEZzt5oRpKUWCj
-   boakDEwIB6IlOYshMWqULeGGUrax+E7R/aLCgFOZ5VyAASo/7XptDdmgr
-   w==;
-X-CSE-ConnectionGUID: NDN5Vr4nTfmyRJ+ADplCRQ==
-X-CSE-MsgGUID: 2zfG70uxSjCO8yUJg7R0Yw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="20929167"
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="20929167"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 00:22:31 -0700
-X-CSE-ConnectionGUID: 9aBC5Pp2Qa+JI3/bdSAb5w==
-X-CSE-MsgGUID: zDoZqwXoSAaCQOPVBTwW5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="55739878"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Aug 2024 00:22:31 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 5 Aug 2024 00:22:30 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 5 Aug 2024 00:22:30 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.42) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 00:22:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FFUYKN/hznNlHsrhUMXJpympjXnmeihT0NayO1IvjqQBbIyBlBY8By+R1D3sZuekbuEBbTEwoYgfsZAJ8+G2qAh1a22p7TFh4Sl7UI8BEtk0Vyml+caIupABOzUUd38yrnJKvNMwSqnmYMEc2i/npRqJnq70+agGS3byvV7LsCdDlvqWNAVV73y3wu6LiTV0b7wwiLWod5Tyn0/Npur4VxkuRvhF3CLfQQZsGxTGvJU7C8L8J31SN+LC6Yr8y08xxmewNtLzCC/5OAyejYeYY/sYImQLmdul6ZrMagBHg3YtVKx1+6LFKMrtCMRDvzdVWyM88+cwssq6dvSegRwC9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LHSJXy5yWTtA5mY/fbncfUG7g3PLDruqlVbpdQW74e4=;
- b=RRf/RXJWGZlHYIU7DXNecWWKhLam+QQ+L0Q50AzMEjcuXzFBsoS4/S1Fx12xxxWGqgERmBhFXzqCigtj99tLcas9RF+nR+Ga8Fix+kimUfWnphFPQouRqKvfds0NlslCwSzg155LBEMRylmn1kKs+Y/NgfdPRe0TT6cUX5JDmeknhEI8MkEUb5rEgYA+g2jLpvIhbQRGuwFK6XNlZVYJZ03WHGd+N0/2xac0i5iVv+UJI8D/vhaLeARU/XcvaYrkaFdVOvGjYDRFxco4wzSnQvWgmTSZQZ9s6qaXGmKxARuvPoDGl8L55jY5r21/mqWgAOdKY6FMclDi89ON4lUd/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- CH3PR11MB8362.namprd11.prod.outlook.com (2603:10b6:610:175::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.23; Mon, 5 Aug 2024 07:22:28 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%4]) with mapi id 15.20.7828.024; Mon, 5 Aug 2024
- 07:22:28 +0000
-Date: Mon, 5 Aug 2024 15:22:16 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Tim Chen <tim.c.chen@intel.com>, Yujie Liu
-	<yujie.liu@intel.com>, K Prateek Nayak <kprateek.nayak@amd.com>, "Gautham R .
- Shenoy" <gautham.shenoy@amd.com>, Chen Yu <yu.chen.surf@gmail.com>,
-	<linux-kernel@vger.kernel.org>, Mike Galbraith <efault@gmx.de>, "Madadi
- Vineeth Reddy" <vineethr@linux.ibm.com>
-Subject: Re: [PATCH 1/2] sched/fair: Record the average duration of a task
-Message-ID: <ZrB9qHrMKtVEF4Hs@chenyu5-mobl2>
-References: <cover.1719295669.git.yu.c.chen@intel.com>
- <338ec61022d4b5242e4af6d156beac53f20eacf2.1719295669.git.yu.c.chen@intel.com>
- <d922f7bf3965f4eaef5028177b886e2e1861742d.camel@gmx.de>
- <ZoFY/n2S7rMp6ypn@chenyu5-mobl2>
- <37d33316-8605-4076-a08c-02bce6ecef4a@linux.ibm.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <37d33316-8605-4076-a08c-02bce6ecef4a@linux.ibm.com>
-X-ClientProxiedBy: SI1PR02CA0051.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::6) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B944D8B6
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 07:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722842592; cv=none; b=YSH7nxmiz/qvkqljBdxdmDKC7l6qC5PAUx2o5xjth2ZHETg7qrp4mNjG4oHX9kCaU+WZmNjFi3PHptorNAlMM9xJ1ZJGjuWPJ+Zg3ut8jOeKRViebIR7k50GNs4UNAdh3g/f5EM3efyWgiDMozcKL7wY887mqaNomd3z8Ohdzr0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722842592; c=relaxed/simple;
+	bh=whviROFOksxKo0ATxUEhZYm+jGP5OEw5Ou1nGR5Chrw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gos0wC8JgNYFSFq5LiInHmY7QXw0v+3tBydxj1TAozrZ6xg/LjjwNMTAr5vhxDzff4wq1LlS7br7eoweV3e9Tlff8B6j04BK2VD8243vObrMBgDohpfxDnOc91So4VdAUQbDRDjVYvZLUaaFMM6Wf956p7zCJ5IPZMjda1SPnQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F3qFdGWw; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so8357a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 00:23:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722842588; x=1723447388; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DwtAi2JDzAVWKNytVgaFiG1iE0Nc4sSYXPYsvIjBKDU=;
+        b=F3qFdGWw+Y/IQTWYj4qv3v+EPp08fZT5hXyEHYd6qyG4rqWggSkTQmlXFR7YwCtyM7
+         GtYwIa8i1KaWvHpewTEs3rVeEosOGFHVM+Itn32KuscxPEop7oX9j/8a/x5lThqiP7KX
+         7yML8uzfe5BzC0x9fhMmONwuejwJEQeFSaekRITBQ+SwsTkP7/4ixQI6/4W1N6rIbisC
+         DxFXepKV/9fwjTsbA8vzPf3AOBAUSXu9774PnDgtY00yX4wEt4zeYf8IqgwJDK5hL4/1
+         WpVnGjkXLKN9mOmzNv98aROQ4jYG3xlBIUgxun4OwyOe8XScDghT0xf3IKrPKSiXI/A0
+         Qo3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722842588; x=1723447388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DwtAi2JDzAVWKNytVgaFiG1iE0Nc4sSYXPYsvIjBKDU=;
+        b=CL7N4vgyJn3viDrzWlEtUJE4c3n+m/i5LMs7wwM5P/D0XaahdPFVQs6wrYl8hRTlpm
+         jcrIuJpO0N7ynVWBMw87XIS8gQmqx1Fn2Nt1sZlA8tezwehbZvC4iIypvM/h+ZgFHmez
+         6JHAqUKvJQ2/3KYK5tJPQxYgfGCBDoMwdc8A4VqsZ5U2NPUgPVvYxckq+HQSOCjXc9t+
+         KH3RD44HNp2CjylmCENlqlnBhHR9dX9NAUjRU7bw6n70PHuE5qSVze7DFMfeyI6x+e83
+         wDP/zB4ExVLLYwp5DxzRnrrEz2SozEE5sWQjtmxJu9mXST4VGwiAxlLFrsoy/Q87ah6P
+         By+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVrcBuQzChKl6+3WbR4uYUP3ASOqCFlophiESqs9rMMdzpLUFQ0TaPBtLWodP8jTW8EmzsfhsK9Q+IHaFAw0zktPmGUbZY+F2kv07A0
+X-Gm-Message-State: AOJu0Yy76CpAvp4CAnU6lO6QplwPkWVhfrjT6YoNOU5CwV0dTQFJ1eyB
+	aipHlEAmfC3MvwhsTw6o7zztJzAnLupuw47W3jagXEXrGlIpzcbENFrWOo8ysow/fPSupm4VxLS
+	InzndEg6U4wtgjb3nn+6hh/PJT7cSIlStV7E/
+X-Google-Smtp-Source: AGHT+IEGUJM4hq/vsukiju3tD4QDurT9hpBRP4QGdwM3aICEZAEMueWtC90QZzuZKjFWZ9zdyjzgA/Cu+NVPKGJBXNc=
+X-Received: by 2002:a05:6402:270e:b0:5ac:4ce3:8f6a with SMTP id
+ 4fb4d7f45d1cf-5b9c68cf7f9mr209673a12.6.1722842587613; Mon, 05 Aug 2024
+ 00:23:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|CH3PR11MB8362:EE_
-X-MS-Office365-Filtering-Correlation-Id: 191e4b74-f52a-4985-187e-08dcb51f5c88
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?R19CKlFgNtgUvhSUkZxNoqDid271UB9y91va7YbuFvro0jzXwXBJiHRTw8?=
- =?iso-8859-1?Q?flw5sNPgzrjd+hrkFIBs7Q7G523VnbF08p9jN7I3pRULfzJ8nBRupCDcT1?=
- =?iso-8859-1?Q?w6OAeQhVvRKzKoF7kvCm+Qai6J+j3Q+sv2uQU+fo/l7YglvpRaOpuQHP5+?=
- =?iso-8859-1?Q?aufnDZt1F7xV8Ru041war4xABsxtSFPSzh4faTojziLsGwx1jljR1PKdRt?=
- =?iso-8859-1?Q?/Zyj80gFacGOPqWhA8E1PzuG+/d4AlSwAhrq+dJE87xZzalHgE1ckZ2bHs?=
- =?iso-8859-1?Q?5AFx0Lbt0s6T5YFbtyhKkh3xgxcMgm3D8puSJ7cNEfiQsrZS1UiUUhGI1F?=
- =?iso-8859-1?Q?0850MeeM1OpnQdlM+PcIIu/qCjAgcdukVAQxo5POs5Qm5wa18Tfa+cgccW?=
- =?iso-8859-1?Q?+R8sbvjHveU1mQwQn7QoFgQh9wvK81ZcdNRaRE5mNECy+Bh7/a2XH1OhNQ?=
- =?iso-8859-1?Q?v8BvRkhoO4MlQrIL4wmY23Ntapn42xzhhdiSAd7ZxmnJ9r4svYShb5L0is?=
- =?iso-8859-1?Q?u/wJjer1mqxwMr5qw3hW7znixl+PGOLsZ383XkdHmEE3OLn9egIdI6pdAm?=
- =?iso-8859-1?Q?l+5ukvC3ptVAkj55SPFyFdecMRD98Og8VnHNjvesSBiGWspnKHui9dG9f3?=
- =?iso-8859-1?Q?+RbBQSznnMNfott/0TctevDsumxZWlgyjpZCm5fAxElDo8jhQNOUtwpQBA?=
- =?iso-8859-1?Q?arXhcJK/+ffAWN6xZosR5nealJSxJHgjhmJ4KTiXQexasFSg1oX+egH9g4?=
- =?iso-8859-1?Q?zWZkmfdExt+mM61Jg3IXWamsk/XbT/SfURIuZsyqk+NDA7tDMRdLKkSSK0?=
- =?iso-8859-1?Q?dP+KTOKD1CigSWhdu8x9yvsnLj1Vq6JPIQ3WIBBbiOb28FVNKR6p071MBj?=
- =?iso-8859-1?Q?DQuJU7ucTl6dspl9ys4lwKGlaNK+WkVCdmMB6ksq0qvumuj+QVJdQO0zg4?=
- =?iso-8859-1?Q?sSLzislfpEDSm4Fw/jvMAk1zOtlJa+B5Mfuq558PvlTkLJLrRa6A6QYHnz?=
- =?iso-8859-1?Q?Fui6FQ7zmitRYlbtkc+XIEmIIZpiM14R5FSOkPW+vaT1hQFXNulPmwubhH?=
- =?iso-8859-1?Q?EWcHe/ZkEGu5xn3bulzsAmGPWqR42AH3Px804Np3Y+Ha13PHJRy0u+bFyE?=
- =?iso-8859-1?Q?RcLLuh8fD1avgMb5rnkuAqXHUVp+XryhPvqHCDRFTpDH5KryGonpOOj+Kn?=
- =?iso-8859-1?Q?dC/iZVtgTzDYZSQreBwKo66qBFho5polDbmGZwTSn8Y27cjZ3y13iDBV7G?=
- =?iso-8859-1?Q?TNbQ2bAFYBSzKHfCvDz2Fqnjy9E8Rl2cl9XamB8NQspkrETwOvJ3V3k9jQ?=
- =?iso-8859-1?Q?yzr+N5WM7mE/iU1IyP7MZkWezyLrJ1tlUMPprGZ1i/pfAnI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?G0js4lpcgGKZ5zDWFBx1n3+VPdV+IC2ikKvutySID3y9C6Be9Ewd/gF14+?=
- =?iso-8859-1?Q?zhv4SE6a5EZQ3EgzK7njo5r+rAe+Uq23MBqgaMWFQ4+LTj0qoa4Mik5Ijo?=
- =?iso-8859-1?Q?Q4TU1GJjzQUrBx9vjbqR6rQe2DpVgojAqMSiRo+WNMAY26zTscEHcuMAJO?=
- =?iso-8859-1?Q?ZUQzPBqlnplJQ2hF0+kKI4jCm9BqHJLt+/WBALANCpeqPnpAt8P0UmUIgf?=
- =?iso-8859-1?Q?73s6esNv5tr5wHzFbtwYQYBmQXOJqmUMbTdPpj4fjuzqikRV/h2ihAUbRD?=
- =?iso-8859-1?Q?uAiPrtdYGTvzdfluITLpiLjk9mZGa6pcazJKvYBv9QaaCrphCOJzE0oyhU?=
- =?iso-8859-1?Q?z952OwRT/cuOCdHiuBke9rswDWlNjuS0fityppmnvl0Z2jSYHLq5i6pwEB?=
- =?iso-8859-1?Q?Oi+o1mrmDGczHu80y0OpTlO3yaqzObKM6ngAPk6cilYd+asCtl+ba3gA2f?=
- =?iso-8859-1?Q?9g9VW+o80JpRYSYLoLpI86TbPlOFCUwsljnRRi69r7Z1HpukobFbtwvbtB?=
- =?iso-8859-1?Q?ADPyx0Jpx1uzcJ1HpjkV2sOmzt1VpD3o02eHwHRqnSWL2NeVekV/fZrQar?=
- =?iso-8859-1?Q?0W4J0PxMv30wyNJKWhyPQKvrPDgkts29cfFQZ1oFoArJx9ROE4jB/g1x+p?=
- =?iso-8859-1?Q?3I1eVLw1aYIbFxmrU3bY2kbWvoac/8Xu0zpwX3Y5fgQYqUXU7Skgs3hOMN?=
- =?iso-8859-1?Q?Hc3hf+eji20PKC/pwhus7e2NSFor3oNDTsYblaxnU6aRMRCqaKoifrEcjo?=
- =?iso-8859-1?Q?AjS3qJhz/RZK80ET/DoS87y6Gh9RfHqhI4Mp2dr9iJ5UuhVYYCq8OqN3EZ?=
- =?iso-8859-1?Q?WkPRXq7PM/uv5hDw8ExFCi2Fox6tI0ePHYd+mOZYUpRLU43P/mXcDJJEec?=
- =?iso-8859-1?Q?ObZ81WCHvZCKltDPzC7L5arI8rKJ1LCHfsASxfQVygbE5YsizEWlZDk6Ud?=
- =?iso-8859-1?Q?qs8WTW99wrARwoIodGSuAR7ix5pFbzP/aPzFbgRx6FkxznDUuM7s1qkbX+?=
- =?iso-8859-1?Q?rP//Z7cvet209VKqE/sCToUnWJthXECUaDYhXNsRDOeaku3wsxBIgGZcb2?=
- =?iso-8859-1?Q?50YLjyU/lQ1F5RmGK1JIyUW7nEoI72UCKK8YBnd33LECiQRqofHcamA1Eq?=
- =?iso-8859-1?Q?mVh6qTxtWys3GrJoiMwGNS3smExjekHo56SluKRCd3O7MO422SACHa3oiE?=
- =?iso-8859-1?Q?fzHRv7AiIaWeySHOM+u7E8AZzh5js0kzQGN6BPm/Vj51UoDhCnCpuCu/KF?=
- =?iso-8859-1?Q?zxWUs+LpPeR8/Ismu8myEuQrUSJqWd1vytak//9Ymiu5rvO06/R8RZMQs9?=
- =?iso-8859-1?Q?qzTDU2MwqOKtGGepyQyPUaTXTsismc7d7i4fnlZt4Ia0w2IhpH7jlKvrG/?=
- =?iso-8859-1?Q?zBFsG9AW4VwbGKCdutbln+0KXsCNDGLXR9YQNCvxKV4J9n4Hefj1bJa69+?=
- =?iso-8859-1?Q?Jodsh/xgSABUinuEssNH3EZkC+jQgvqGJ4lNQCmRGISK9WF3R3ULwXCoLu?=
- =?iso-8859-1?Q?wQP9HcD2m91Qm8ddoArlBbR7yNQNGlelz9umiA1J7oQcaqCD/1tpjs3ZRE?=
- =?iso-8859-1?Q?FDyy/niO8d77kiuIA3nRHK6FKTzxrnkZaK2kiaCW4SM1CrvCDaB0wFP+Zh?=
- =?iso-8859-1?Q?rpJ9Dyn2pPLyEwgC4yo2D/uFwIDYBZunne?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 191e4b74-f52a-4985-187e-08dcb51f5c88
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 07:22:28.2422
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OsYcgCChMrxul81jK8A0n4FRJGSE2Rs2KN5UtYnHBjszPnEIzwAdAKsW+gFFJuRp+6YylEAWzu5qwxRy3M+7tg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8362
-X-OriginatorOrg: intel.com
+References: <20240801111611.84743-1-kuro@kuroa.me> <CANn89iKp=Mxu+kyB3cSB2sKevMJa6A3octSCJZM=oz4q+DC=bA@mail.gmail.com>
+ <CAL+tcoAHBSDLTNobA1MJ2itLja1xnWwmejDioPBQJh83oma55Q@mail.gmail.com> <CAL+tcoDnFCWpFvkjs=7r2C2L_1Fb_8X2J9S0pDNV1KfJKsFo+Q@mail.gmail.com>
+In-Reply-To: <CAL+tcoDnFCWpFvkjs=7r2C2L_1Fb_8X2J9S0pDNV1KfJKsFo+Q@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 5 Aug 2024 09:22:53 +0200
+Message-ID: <CANn89iLNnXEnaAY8xMQR6zeJPTd6ZxnJWo3vHE4d7oe9uXRMUg@mail.gmail.com>
+Subject: Re: [PATCH net] tcp: fix forever orphan socket caused by tcp_abort
+To: Jason Xing <kerneljasonxing@gmail.com>
+Cc: Xueming Feng <kuro@kuroa.me>, Lorenzo Colitti <lorenzo@google.com>, 
+	"David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
+	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
+	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-08-05 at 10:08:35 +0530, Madadi Vineeth Reddy wrote:
-> Hi Chen Yu,
-> 
-> On 30/06/24 18:39, Chen Yu wrote:
-> > Hi Mike,
-> > 
-> > Thanks for your time and giving the insights.
-> > 
-> > On 2024-06-26 at 06:21:43 +0200, Mike Galbraith wrote:
-> >> On Tue, 2024-06-25 at 15:22 +0800, Chen Yu wrote:
-> >>>
-> >>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> >>> index 0935f9d4bb7b..7399c4143528 100644
-> >>> --- a/kernel/sched/core.c
-> >>> +++ b/kernel/sched/core.c
-> >>> @@ -4359,6 +4359,8 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
-> >>>         p->migration_pending = NULL;
-> >>>  #endif
-> >>>         init_sched_mm_cid(p);
-> >>> +       p->prev_sleep_sum_runtime = 0;
-> >>> +       p->duration_avg = 0;
-> >>>  }
-> >>
-> >> Beginning life biased toward stacking?
-> >>
-> > 
-> > OK, so I should change the short_task() to skip the 0 duration_avg, to avoid
-> > task stacking in the beginning.
-> >    
-> >>>  DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
-> >>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >>> index 41b58387023d..445877069fbf 100644
-> >>> --- a/kernel/sched/fair.c
-> >>> +++ b/kernel/sched/fair.c
-> >>>
-> >>> @@ -6905,6 +6914,9 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-> >>>  
-> >>>  dequeue_throttle:
-> >>>         util_est_update(&rq->cfs, p, task_sleep);
-> >>> +       if (task_sleep)
-> >>> +               dur_avg_update(p);
-> >>> +
-> >>>         hrtick_update(rq);
-> >>>  }
-> >>>
-> >>
-> >> That qualifier looks a bit dangerous.  Microbench components tend to
-> >> have only one behavior, but the real world goes through all kinds of
-> >> nutty gyrations, intentional and otherwise.
-> >>
-> > 
-> > Understand. Unfortunately I don't have access to production environment
-> > so I have to rely on microbenchmarks and a OLTP to check the result. I
-> > get feedback from Abel that the former version of this patch brought
-> > benefit to some short tasks like Redis in the production environment[1].
-> > https://lore.kernel.org/lkml/36ba3b68-5b73-9db0-2247-061627b0d95a@bytedance.com/
-> 
-> Since the discussion was about real-life workload performance, I ran the DayTrader
-> workload with three users and three instances. The results show no performance
-> regression, and a 1% performance gain was observed, which is within the standard
-> deviation.
+On Mon, Aug 5, 2024 at 6:52=E2=80=AFAM Jason Xing <kerneljasonxing@gmail.co=
+m> wrote:
 >
+> On Sat, Aug 3, 2024 at 11:48=E2=80=AFPM Jason Xing <kerneljasonxing@gmail=
+.com> wrote:
+> >
+> > Hello Eric,
+> >
+> > On Thu, Aug 1, 2024 at 9:17=E2=80=AFPM Eric Dumazet <edumazet@google.co=
+m> wrote:
+> > >
+> > > On Thu, Aug 1, 2024 at 1:17=E2=80=AFPM Xueming Feng <kuro@kuroa.me> w=
+rote:
+> > > >
+> > > > We have some problem closing zero-window fin-wait-1 tcp sockets in =
+our
+> > > > environment. This patch come from the investigation.
+> > > >
+> > > > Previously tcp_abort only sends out reset and calls tcp_done when t=
+he
+> > > > socket is not SOCK_DEAD aka. orphan. For orphan socket, it will onl=
+y
+> > > > purging the write queue, but not close the socket and left it to th=
+e
+> > > > timer.
+> > > >
+> > > > While purging the write queue, tp->packets_out and sk->sk_write_que=
+ue
+> > > > is cleared along the way. However tcp_retransmit_timer have early
+> > > > return based on !tp->packets_out and tcp_probe_timer have early
+> > > > return based on !sk->sk_write_queue.
+> > > >
+> > > > This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resche=
+d
+> > > > and socket not being killed by the timers. Converting a zero-window=
+ed
+> > > > orphan to a forever orphan.
+> > > >
+> > > > This patch removes the SOCK_DEAD check in tcp_abort, making it send
+> > > > reset to peer and close the socket accordingly. Preventing the
+> > > > timer-less orphan from happening.
+> > > >
+> > > > Fixes: e05836ac07c7 ("tcp: purge write queue upon aborting the conn=
+ection")
+> > > > Fixes: bffd168c3fc5 ("tcp: clear tp->packets_out when purging write=
+ queue")
+> > > > Signed-off-by: Xueming Feng <kuro@kuroa.me>
+> > >
+> > > This seems legit, but are you sure these two blamed commits added thi=
+s bug ?
+> > >
+> > > Even before them, we should have called tcp_done() right away, instea=
+d
+> > > of waiting for a (possibly long) timer to complete the job.
+> > >
+> > > This might be important when killing millions of sockets on a busy se=
+rver.
+> > >
+> > > CC Lorenzo
+> > >
+> > > Lorenzo, do you recall why your patch was testing the SOCK_DEAD flag =
+?
+> >
+> > I guess that one of possible reasons is to avoid double-free,
+> > something like this, happening in inet_csk_destroy_sock().
+> >
+> > Let me assume: if we call tcp_close() first under the memory pressure
+> > which means tcp_check_oom() returns true and then it will call
+> > inet_csk_destroy_sock() in __tcp_close(), later tcp_abort() will call
+> > tcp_done() to free the sk again in the inet_csk_destroy_sock() when
+> > not testing the SOCK_DEAD flag in tcp_abort.
+> >
+>
+> How about this one which can prevent double calling
+> inet_csk_destroy_sock() when we call destroy and close nearly at the
+> same time under that circumstance:
+>
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index e03a342c9162..d5d3b21cc824 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -4646,7 +4646,7 @@ int tcp_abort(struct sock *sk, int err)
+>         local_bh_disable();
+>         bh_lock_sock(sk);
+>
+> -       if (!sock_flag(sk, SOCK_DEAD)) {
+> +       if (sk->sk_state !=3D TCP_CLOSE) {
+>                 if (tcp_need_reset(sk->sk_state))
+>                         tcp_send_active_reset(sk, GFP_ATOMIC,
+>                                               SK_RST_REASON_NOT_SPECIFIED=
+);
+>
+> Each time we call inet_csk_destroy_sock(), we must make sure we've
+> already set the state to TCP_CLOSE. Based on this, I think we can use
+> this as an indicator to avoid calling twice to destroy the socket.
 
-Thank you Madadi for your test, let me respin this version and send it out with the
-fixes after talked with Mike.
+I do not think this will work.
 
-thanks,
-Chenyu 
+With this patch, a listener socket will not get an error notification.
+
+Ideally we need tests for this seldom used feature.
 
