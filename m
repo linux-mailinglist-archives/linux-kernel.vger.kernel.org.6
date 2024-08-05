@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-275076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79985948062
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:37:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED35948064
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2483B1F2393E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:37:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B83281BCB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60B315EFC6;
-	Mon,  5 Aug 2024 17:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A719515EFC6;
+	Mon,  5 Aug 2024 17:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hoNPu7KV"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yZkBFDLA"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D1315C14D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D6615C14D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722879419; cv=none; b=faV8rOLPb9RvfCX+0gU9sJGBzpkENMSxbH3RHwHRKKjbZsdQRnk6B3tUJ0HqkhCPxAx9kIQp/sWT+2Bmg5b/x7GjM1cH+79zHHbcP7VU6EkrmuzmAqAt2YmA/s4yRPgyhGWB8Y3d5xNJbBc1Go3Jyyeb3gOaXLqk9hmJHvnoxSs=
+	t=1722879456; cv=none; b=RkLYRnNLFVDxg36kVbQrszm/ob/7HHKa0p8D9haImSYjo4VJtz5VUsgZWGo/lod7UXVOs84Wes8ykfz29lwD5kzKAAo3urDKtvpz4THJxmBmI783odLlFI6vtyZmE002hpyJ0itf8lXu6Np5Rr8FBE1Ebe8k1qvU74veVIHjJY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722879419; c=relaxed/simple;
-	bh=DA4369ep4aRCQk372N75Nbh4WuAp1GA6UZSDUFqv2dw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W2V6ri+5WxBOOWzGMxmWCxcCtTayxvLYfDv7ZZx8JU5oVI7CyFN8xWLbwuSmW7ZmX9VxQsc0yPOIBv+Um/7UkQyuHbVSlbfszI+m0+g3z9/liwhzz9uX4NHyGBteosah1w3ZSdDtIZ3UdBynMoPjd53Uz8CqCTje5x4UsWeP0CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hoNPu7KV; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1722879456; c=relaxed/simple;
+	bh=dM8sp0husClYi+h0ZGKuVSqRa7NAM23OUR7RjW40VYI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kuEDq65Cc4ZrEaq6DsGD1Co5xJhXLDf/SvKv61mwE8XwdzD6Y0G8JRK7vxqvX0Xi9AHc5LlHMJINuWbMhDLYrJmmlO4/R8LoKk4e5c0OThqcFoQwjDMj8xEDifd3ZVaxF28JPtb1ShrCHRpecYMaYxunkE0TmnJ6iKcv4N/kZ6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yZkBFDLA; arc=none smtp.client-ip=209.85.160.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d19d768c2so8050323b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:36:57 -0700 (PDT)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-260f1664fdfso5341127fac.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:37:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722879416; x=1723484216; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=goLTI1Me9QFdEbbxVvS9O2vJ+EscEBdu5wB58pG03Vg=;
-        b=hoNPu7KVe16tyK3HBS81ej5DinAgGit+Kh8aCXz+Keu/Rhzg3R9cKFO2+78BTZfPm0
-         Ka82pTZOA89HEH8lXkEDlh3T0jn+YMXIvFfvYq7idyo8BXWwknaouZopTd0WNmSv+xEF
-         PJqQifvgnFSaKRz5R/+7qcQn2R5aDn0Rru7Rc6/jqKO3frQKSv9Q3moG6mdYy3fAqKEb
-         KSj6ynx3EnpqmRSgkGd7guqdknnjP9GdnvhJxyrNahdyWvNP+NV8ZrtOr/O85VtQ3N3C
-         zpXSqx+wR6kHSUkc2PfS00kmW/HRh/j0nqWUg8vgC/zSlythBW86GO7tp4ve6uv0bo96
-         Jbcw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722879453; x=1723484253; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7pHVbhEoVEMjlU46Y+rdQzQBJK3R4JaIn8qB/k8iiR0=;
+        b=yZkBFDLA0kwE4TFbrGdE4el5dCq5+I5XSfv6Yzo1PnJ3wa9AX8cPrJE/yf20rkLR5A
+         Qq20H32SeClGolOu5+EHNREcj8ao0XmfprlkCqyZyRyalsf+Xg6clg4pl3jboBDKI36b
+         G5aEGz49UaMWEcVCTr3H+cKgvf2a2/qxi0Auz0cIjmgv7gm0kY34ZA8cvVK9TXoYf3Tz
+         b4+jQ7TWvmxchjJK/jhwftUymM4Pkjn+ReUQ0SpvciOHiG7TGlLsjWYSHAMDbhBUDR/c
+         LQ7Mympyi0RGBpQHy0RE6/3JthtVLhhpyV7vT9CnDj39xlEfUWxGz7Ch4jmtASD7Xdpf
+         gxjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722879416; x=1723484216;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=goLTI1Me9QFdEbbxVvS9O2vJ+EscEBdu5wB58pG03Vg=;
-        b=wQa2knK16gObSf6oLV+x/aIm/0m0ScDnWpGp+mhzWe078xbN5fjI/eA7cIhDEhFedL
-         cd6py0Xk52kSneoLHtCVK60EYGVfjJqfjvc/6zye2aEYNLw4ZJhqJvQsRR0OmTHnddpE
-         6WW+FxvnChqPbkLh9DTC96Iviw/NdLR8ERcvi71VUsgeqL1adO21GZvoHf4CSebq02oR
-         IGQpRy4CuvBKGYjZvnT7qNaAAqxTbmtUW+/nLbn5yXR9U0hN6PkCWC9NL82P+rTdi4Uw
-         P7sp8qjTOSsJsyJR3lANgkg4t9K+ZXh1+t8Ullk+Lz5tO8lX5w5QYkpdDVC68j2Bt2pU
-         n2rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXq3cIifD/kounCP7QcmwHeDEjV5nrhmHbSeKUvMbygjtkhzMi768KGA2cFhufTd2okq4ZxSdaao7+q4Z00Lhoog/sDIa1zNwTFJgL6
-X-Gm-Message-State: AOJu0Ywtw/+02hR5ILxH61zR+sqLb5NjDBVTo2LZGw6MIxJ2fKKZ1+q3
-	5wi2OI0t4M/Fedrd3VV1XM8tEWVcRwuorOJqPBAEdiN2sddStRGHiJdvVo8uz1I=
-X-Google-Smtp-Source: AGHT+IEPsJOZd0kXjvfZc+Q2Cp9lgQmjHsAvWtcR1BuMvVvN70ionSp87ecT9lwzcXMvoxWe9CNzPA==
-X-Received: by 2002:a05:6a21:3383:b0:1c3:ff33:2472 with SMTP id adf61e73a8af0-1c6996a5f4emr11522868637.51.1722879416615;
-        Mon, 05 Aug 2024 10:36:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722879453; x=1723484253;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7pHVbhEoVEMjlU46Y+rdQzQBJK3R4JaIn8qB/k8iiR0=;
+        b=Dt1vYPrcyN4auQN61ynl8NPNhHbiYbBevgVQY18acPjIqIGRKzAi5F1OSUbvDTYNdI
+         kvYbNhFY43Jqfsha94xe8yxXF4vHghlczZ6GIKKURkWWU90hLyXwgYpHwUkq8d19o7AJ
+         WbhoXTV3ec0e9bud6ObcXlImgmssqgfZKAmL8B8zG/5BGe/VhQhTr/Egos7N30lqdFJG
+         OLSUvQsJcM/o70P3o2Tgyv9FQCT/A5dAU/FpCOo5ZR/9JUHYXhaFda3FgkTubfxIZWBd
+         r7we4Wdlc/974T+JLI685E4dVwd0QCn+k31dDLuBtFkNdqT3m5XuB5vU/RLmRGexgO+l
+         nbWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWxHoIhmgPPDiS0JFCAGaWVB/6RTQoqOX5BTHERSvjQvAVpP7qwtOHJ5qjhZwbMKTp0R3tJmgJKSR5SevoH9uqIb3iiwhNJ1Q1zOZa
+X-Gm-Message-State: AOJu0YyPXzvU6FRXVU3wciUMaQ1y3xucEmPCQHy/YrQZ9V6u2YnbGjyp
+	lCECjpFaq6mr2df2ON5JKIgWBFYeRRQ1FpPVMLW6yWUI4LxuY+FC2znBPxxI9Go=
+X-Google-Smtp-Source: AGHT+IHJRUtzcnsDnqI75o6X2Ap9E2ZssvYvQ/dHPTU1gm3UkNElVw+QddAP+HpNI1vqdUkkHvtRXw==
+X-Received: by 2002:a05:6870:1699:b0:264:9484:a292 with SMTP id 586e51a60fabf-26891e92feemr12640386fac.38.1722879453369;
+        Mon, 05 Aug 2024 10:37:33 -0700 (PDT)
 Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecfd196sm5665573b3a.161.2024.08.05.10.36.56
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9f5cdsm5708307a12.2.2024.08.05.10.37.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:36:56 -0700 (PDT)
+        Mon, 05 Aug 2024 10:37:33 -0700 (PDT)
 From: Kevin Hilman <khilman@baylibre.com>
-To: Roger Quadros <rogerq@kernel.org>, "Rob Herring (Arm)"
- <robh@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade
- <andreas@kemnade.info>, Tony Lindgren <tony@atomide.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
+ Tony Lindgren <tony@atomide.com>, "Rob Herring (Arm)" <robh@kernel.org>
 Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bus: ti-sysc: Use of_property_present()
-In-Reply-To: <2ff177ed-a5e8-46ad-9902-14f377033da2@kernel.org>
+In-Reply-To: <20240731191312.1710417-1-robh@kernel.org>
 References: <20240731191312.1710417-1-robh@kernel.org>
- <2ff177ed-a5e8-46ad-9902-14f377033da2@kernel.org>
-Date: Mon, 05 Aug 2024 10:36:55 -0700
-Message-ID: <7hy15a3m88.fsf@baylibre.com>
+Subject: Re: [PATCH] bus: ti-sysc: Use of_property_present()
+Message-Id: <172287945269.306491.8860968743342697729.b4-ty@baylibre.com>
+Date: Mon, 05 Aug 2024 10:37:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-Hi Roger,
 
-Roger Quadros <rogerq@kernel.org> writes:
+On Wed, 31 Jul 2024 13:12:39 -0600, Rob Herring (Arm) wrote:
+> Use of_property_present() to test for property presence rather than
+> of_get_property(). This is part of a larger effort to remove callers
+> of of_get_property() and similar functions. of_get_property() leaks
+> the DT property data pointer which is a problem for dynamically
+> allocated nodes which may be freed.
+> 
+> The code was also incorrectly assigning the return value to a 'struct
+> property' pointer. It didn't matter as "prop" was never dereferenced.
+> 
+> [...]
 
-> On 31/07/2024 22:12, Rob Herring (Arm) wrote:
->> Use of_property_present() to test for property presence rather than
->> of_get_property(). This is part of a larger effort to remove callers
->> of of_get_property() and similar functions. of_get_property() leaks
->> the DT property data pointer which is a problem for dynamically
->> allocated nodes which may be freed.
->> 
->> The code was also incorrectly assigning the return value to a 'struct
->> property' pointer. It didn't matter as "prop" was never dereferenced.
->> 
->> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->
-> Reviewed by: Roger Quadros <rogerq@kernel.org>
+Applied, thanks!
 
-just FYI, missing a '-' in your Reviewed-by, which means tools like b4
-will not spot it.  I added it manually this time cuz I happened to
-notice it was missing.
+[1/1] bus: ti-sysc: Use of_property_present()
+      commit: 0070dc29c85f0859a6071844b88fca6bce2974e4
 
-Kevin
-
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
 
 
