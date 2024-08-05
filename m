@@ -1,200 +1,127 @@
-Return-Path: <linux-kernel+bounces-275277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5883F9482A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:52:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 283539482A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162FA2836D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D957B1F21BED
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D840516BE1D;
-	Mon,  5 Aug 2024 19:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C315616BE27;
+	Mon,  5 Aug 2024 19:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A9jcgOuA"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="utXWB6RX"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9D714A85;
-	Mon,  5 Aug 2024 19:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69387149000;
+	Mon,  5 Aug 2024 19:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722887553; cv=none; b=OmE1I+b5lUBA55idkf55v5IpZus5B/ELOOqm+G2PKvnMW5jmV0sWKGUsECIsXxNiRhNwP6TMSQ0ObHoKvwQ0MdUZouUxbc+C3VppFPgzLMCFkhKgVa3Jnwc3nAwLipw8bVAirZf+TdmazlDc+L77u/tjEExzWyijUA6EsEg6Va4=
+	t=1722887621; cv=none; b=B0RsbNnplJZaBm2ri/ZsxlWs6yuOnfqmgkJl8J8EIjFKTgQnaNDS8CKIgDLLNnH78jt46c6GXvpr5GeBtDVrx9K/yYFgvCP5/pWGR40re5VkHzil1kA1yQRwjBADzxIgdtB/+Htwg+cj1OL9Uh4kv6r6TkqrX2akzWOJ+7r3Zdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722887553; c=relaxed/simple;
-	bh=9VSLOEaSeCQsM6p0uLK4UvCRpl1MQVbM/4gE04COamQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B3MuevrIwCtGBAgvjvzAeEYiQwAEjwr6RrUCeDNgrlndd4rl+U1XXnSR4M3SQ1hJ+Q8PbaMc+wP0zCkGtLL9a98a2L/GnYOJ+SDj7oPaThXc37gRK1mZKD7Rzf/8rJHfujq87mlBpp661v/C2OrcB0h5ILJJlNJClh/WFEJJR+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A9jcgOuA; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70cec4aa1e4so7400855b3a.1;
-        Mon, 05 Aug 2024 12:52:31 -0700 (PDT)
+	s=arc-20240116; t=1722887621; c=relaxed/simple;
+	bh=YS5ZQJ3DgdfPEIdZrvtluLYloT+1y1x+El0IGLTXA4o=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hPnp6f/QIV6as7Pni36BPZFsSoQepOTHwE9rOlR1+jSciAzo42NjFMobxwkP8RhwZKwSltDTl2/Zyf41iFHKv6GNfuLWC9e16FKmPoViOvHv9xsqVrBasyVfL+GI0z1+x4Ks+X9yUz1at7GEZUEo96oWzjd0cJtury+AqmFkmAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=utXWB6RX; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722887551; x=1723492351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0HlAePfdGUtDDXh2mo5MYu8Z88Te8t6lOKxNdEz/0mg=;
-        b=A9jcgOuAMtZdMTyzPKZg2Eq6A3UHdhCdDr3Y96kWvCeUfJfF1uABc4d4JxWl4tjq0D
-         QHmZyP6dcD8MilY6dDixX4fQh+1+gqPPKt8LJsynVDTYhGCuh1Inidrqzz1FGfaVNs03
-         zmjBalc7S6o6syBXcaU57OrplICzFpLgDRn9lQgmcCzSsyWN36htqgRnPjWzRhptsc/I
-         uJHh5FUBBUzSl+yNpIaZt/mfRjOcWsjdBQGGEcCVzf28KYr3YOzPBPY9j17+FUqk4L77
-         1bNwv5YAE5HcI4yXWprP+o+umrZDWGsT2NN5E6JQkNCs0mBGKGIXkDtY6jzS2npDmuUl
-         sqgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722887551; x=1723492351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0HlAePfdGUtDDXh2mo5MYu8Z88Te8t6lOKxNdEz/0mg=;
-        b=L7uLam8uwSMd/HyTjHq6BYLvrGSiDgz6odEkJlW6a8oDI/nSYy+8sk1cYZG3L/3WUM
-         +HtHrsktxqgp5rb8lBHAFNXSKgU4npLwoHZejc+CjhKJO3bgz06DAIR7wf/kkYcnn99X
-         KyEZ8myeEYXgm3aIACGeoIw7y3QCmhvLy5RKHfApzMC4O+CTShdOCbu7lQTObwhWLzmd
-         w2svNAp+BXr2vBqR46Pcu/WgdKDsTEbpSKzMO/xUTEoOF/T+jMABoMj3xlRcjFhbchUh
-         9Us+mmeQEObHKTF5FtMwvHyrGu7+QoRQJbTd4woT4TqYp/zFrSAiLnvqvjp67U/qBql/
-         Hoow==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ShcKINBQ0DlBUcwcDjeaHos4TVHxNOb/4P2N8ZjhCQnop5fOvyBBHH4iGsCWV+v21iVW7UVH5MmpCboevgPVVYpg7a+0cenWJI2p0lLt9BtFESlKWNBbGiAZsVfqhJHqvs5HiiOLlmGVRz8m
-X-Gm-Message-State: AOJu0YxEVaDvkPPw//Nf3YbftGftXkb/hXzxH3KSQ/OURzDDOB1kMSGK
-	7p8RchyylOLjymlY3FVajAkaBChOT9VrC7cmtGXldf+xEQCNqi5+QCmH3y0TUYDPNXqJmoJag6b
-	G7Jn32JmAw9buriPP8TypgBjyQZ0=
-X-Google-Smtp-Source: AGHT+IHD6mP8SxzNmBFzhhHmk0yrW6460OtmeCKxd9zkNwGyWG7aj7cAJ++vLvTXwtV9xxS0vkvdBsafUOrPg1LHZz4=
-X-Received: by 2002:a05:6a00:a93:b0:70b:a46:7db3 with SMTP id
- d2e1a72fcca58-7106d02ba17mr15666583b3a.19.1722887550766; Mon, 05 Aug 2024
- 12:52:30 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1722887620; x=1754423620;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=YS5ZQJ3DgdfPEIdZrvtluLYloT+1y1x+El0IGLTXA4o=;
+  b=utXWB6RXBNg0xrnmI5MHlw5stu0OWOsDrNEGXCbjDm3twbJjyVhLvaG0
+   R/+UHbQPn2yCGh4NfwzMMmS++y21XMEONL5slhtbP33nIspSoHeQ6KlqI
+   QoPm5t6GJCyk+gdR4wtxfNqG50zv49WwlO6ZAN89nm0BGT++y46zjsHqn
+   A=;
+X-IronPort-AV: E=Sophos;i="6.09,265,1716249600"; 
+   d="scan'208";a="415388985"
+Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
+Thread-Topic: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 19:53:36 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:17143]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.164:2525] with esmtp (Farcaster)
+ id 2e3e2e7a-910d-4c7b-b605-16b9b4b5b303; Mon, 5 Aug 2024 19:53:35 +0000 (UTC)
+X-Farcaster-Flow-ID: 2e3e2e7a-910d-4c7b-b605-16b9b4b5b303
+Received: from EX19D004EUC004.ant.amazon.com (10.252.51.191) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 5 Aug 2024 19:53:35 +0000
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19D004EUC004.ant.amazon.com (10.252.51.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 5 Aug 2024 19:53:35 +0000
+Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
+ EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
+ 15.02.1258.034; Mon, 5 Aug 2024 19:53:35 +0000
+From: "Gowans, James" <jgowans@amazon.com>
+To: "tytso@mit.edu" <tytso@mit.edu>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
+	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "Graf (AWS),
+ Alexander" <graf@amazon.de>, "anthony.yznaga@oracle.com"
+	<anthony.yznaga@oracle.com>, "steven.sistare@oracle.com"
+	<steven.sistare@oracle.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"nh-open-source@amazon.com" <nh-open-source@amazon.com>, "Saenz Julienne,
+ Nicolas" <nsaenz@amazon.es>, "Durrant, Paul" <pdurrant@amazon.co.uk>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz"
+	<jack@suse.cz>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>
+Thread-Index: AQHa5xp7YUfIGy2/kUGqgjccLElzprIYul2AgABZuAA=
+Date: Mon, 5 Aug 2024 19:53:34 +0000
+Message-ID: <cc168bf913aaf9bb11fb31d0f5a6c3d453a38942.camel@amazon.com>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+	 <20240805143223.GA1110778@mit.edu>
+In-Reply-To: <20240805143223.GA1110778@mit.edu>
+Accept-Language: en-ZA, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8BED7CC18831D0429E325D6E63775338@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802114252.449452-1-colin.i.king@gmail.com>
-In-Reply-To: <20240802114252.449452-1-colin.i.king@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 5 Aug 2024 15:52:18 -0400
-Message-ID: <CADnq5_Ouob7zaqF1uTwL70QnWegEpvi0kkJY42yULPfCoW5d_Q@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: remove extraneous ; after statements
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Chaitanya Dhere <chaitanya.dhere@amd.com>, Jun Lei <jun.lei@amd.com>, 
-	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui.Pan@amd.com, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Applied.  Thanks!
-
-On Fri, Aug 2, 2024 at 8:00=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
-om> wrote:
->
-> There are a several statements with two following semicolons, replace
-> these with just one semicolon.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  .../drm/amd/display/dc/dml2/dml21/dml21_translation_helper.c  | 2 +-
->  .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c        | 2 +-
->  .../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c    | 4 ++--
->  drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c              | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_=
-helper.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_help=
-er.c
-> index 65776602648d..9956974c4527 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_helper.=
-c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_translation_helper.=
-c
-> @@ -1040,7 +1040,7 @@ void dml21_copy_clocks_to_dc_state(struct dml2_cont=
-ext *in_ctx, struct dc_state
->  void dml21_extract_legacy_watermark_set(const struct dc *in_dc, struct d=
-cn_watermarks *watermark, enum dml2_dchub_watermark_reg_set_index reg_set_i=
-dx, struct dml2_context *in_ctx)
->  {
->         struct dml2_core_internal_display_mode_lib *mode_lib =3D &in_ctx-=
->v21.dml_init.dml2_instance->core_instance.clean_me_up.mode_lib;
-> -       double refclk_freq_in_mhz =3D (in_ctx->v21.display_config.overrid=
-es.hw.dlg_ref_clk_mhz > 0) ? (double)in_ctx->v21.display_config.overrides.h=
-w.dlg_ref_clk_mhz : mode_lib->soc.dchub_refclk_mhz;;
-> +       double refclk_freq_in_mhz =3D (in_ctx->v21.display_config.overrid=
-es.hw.dlg_ref_clk_mhz > 0) ? (double)in_ctx->v21.display_config.overrides.h=
-w.dlg_ref_clk_mhz : mode_lib->soc.dchub_refclk_mhz;
->
->         if (reg_set_idx >=3D DML2_DCHUB_WATERMARK_SET_NUM) {
->                 /* invalid register set index */
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
-_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_cor=
-e/dml2_core_dcn4_calcs.c
-> index 13f2c80bad4c..54197d18ab19 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
-cn4_calcs.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
-cn4_calcs.c
-> @@ -7218,7 +7218,7 @@ static bool dml_core_mode_support(struct dml2_core_=
-calcs_mode_support_ex *in_out
->  #if defined(DV_BUILD)
->                 // Assume a memory config setting of 3 in 420 mode or get=
- a new ip parameter that reflects the programming.
->                 if (mode_lib->ms.BytePerPixelC[k] !=3D 0.0 && display_cfg=
-->plane_descriptors[k].pixel_format !=3D dml2_rgbe_alpha) {
-> -                       lb_buffer_size_bits_luma =3D 34620 * 57;;
-> +                       lb_buffer_size_bits_luma =3D 34620 * 57;
->                         lb_buffer_size_bits_chroma =3D 13560 * 57;
->                 }
->  #endif
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
-_core_shared.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dm=
-l2_core_shared.c
-> index c54c29711a65..8f3c1c0b1cc1 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
-hared.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
-hared.c
-> @@ -6464,8 +6464,8 @@ static void CalculateSwathAndDETConfiguration(struc=
-t dml2_core_internal_scratch
->                         p->SwathHeightC[k] =3D l->MaximumSwathHeightC[k] =
-/ 2;
->                         l->RoundedUpSwathSizeBytesY[k] =3D p->full_swath_=
-bytes_l[k] / 2;
->                         l->RoundedUpSwathSizeBytesC[k] =3D p->full_swath_=
-bytes_c[k] / 2;
-> -                       p->request_size_bytes_luma[k] =3D ((p->BytePerPix=
-Y[k] =3D=3D 2) =3D=3D dml_is_vertical_rotation(p->display_cfg->plane_descri=
-ptors[k].composition.rotation_angle)) ? 128 : 64;;
-> -                       p->request_size_bytes_chroma[k] =3D ((p->BytePerP=
-ixC[k] =3D=3D 2) =3D=3D dml_is_vertical_rotation(p->display_cfg->plane_desc=
-riptors[k].composition.rotation_angle)) ? 128 : 64;;
-> +                       p->request_size_bytes_luma[k] =3D ((p->BytePerPix=
-Y[k] =3D=3D 2) =3D=3D dml_is_vertical_rotation(p->display_cfg->plane_descri=
-ptors[k].composition.rotation_angle)) ? 128 : 64;
-> +                       p->request_size_bytes_chroma[k] =3D ((p->BytePerP=
-ixC[k] =3D=3D 2) =3D=3D dml_is_vertical_rotation(p->display_cfg->plane_desc=
-riptors[k].composition.rotation_angle)) ? 128 : 64;
->                 }
->
->                 if (p->SwathHeightC[k] =3D=3D 0)
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c b/drivers/g=
-pu/drm/amd/display/dc/dml2/dml2_utils.c
-> index 7655501e75d4..9e8ff3a9718e 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
-> @@ -421,7 +421,7 @@ unsigned int dml2_calc_max_scaled_time(
->
->  void dml2_extract_writeback_wm(struct dc_state *context, struct display_=
-mode_lib_st *dml_core_ctx)
->  {
-> -       int i, j =3D 0;;
-> +       int i, j =3D 0;
->         struct mcif_arb_params *wb_arb_params =3D NULL;
->         struct dcn_bw_writeback *bw_writeback =3D NULL;
->         enum mmhubbub_wbif_mode wbif_mode =3D PACKED_444_FP16; /*for now*=
-/
-> --
-> 2.39.2
->
+T24gTW9uLCAyMDI0LTA4LTA1IGF0IDEwOjMyIC0wNDAwLCBUaGVvZG9yZSBUcydvIHdyb3RlOg0K
+PiBPbiBNb24sIEF1ZyAwNSwgMjAyNCBhdCAxMTozMjozNUFNICswMjAwLCBKYW1lcyBHb3dhbnMg
+d3JvdGU6DQo+ID4gR3Vlc3RtZW1mcyBpbXBsZW1lbnRzIHByZXNlcnZhdGlvbiBhY3Jvc3NzIGtl
+eGVjIGJ5IGNhcnZpbmcgb3V0IGENCj4gPiBsYXJnZSBjb250aWd1b3VzIGJsb2NrIG9mIGhvc3Qg
+c3lzdGVtIFJBTSBlYXJseSBpbiBib290IHdoaWNoIGlzDQo+ID4gdGhlbiB1c2VkIGFzIHRoZSBk
+YXRhIGZvciB0aGUgZ3Vlc3RtZW1mcyBmaWxlcy4NCj4gDQo+IFdoeSBkb2VzIHRoZSBtZW1vcnkg
+aGF2ZSB0byBiZSAoYSkgY29udGlndW91cywgYW5kIChiKSBjYXJ2ZWQgb3V0IG9mDQo+ICpob3N0
+KiBzeXN0ZW0gbWVtb3J5IGVhcmx5IGluIGJvb3Q/wqAgVGhpcyBzZWVtcyB0byBiZSB2ZXJ5IGlu
+ZmxleGlibGU7DQo+IGl0IG1lYW5zIHRoYXQgeW91IGhhdmUgdG8ga25vdyBob3cgbXVjaCBtZW1v
+cnkgd2lsbCBiZSBuZWVkZWQgZm9yDQo+IGd1ZXN0bWVtZnMgaW4gZWFybHkgYm9vdC4NCg0KVGhl
+IG1haW4gcmVhc29uIGZvciBib3RoIG9mIHRoZXNlIGlzIHRvIGd1YXJhbnRlZSB0aGF0IHRoZSBo
+dWdlICgyIE1pQg0KUE1EKSBhbmQgZ2lnYW50aWMgKDEgR2lCIFBVRCkgYWxsb2NhdGlvbnMgY2Fu
+IGhhcHBlbi4gV2hpbGUgdGhpcyBwYXRjaA0Kc2VyaWVzIG9ubHkgZG9lcyBodWdlIHBhZ2UgYWxs
+b2NhdGlvbnMgZm9yIHNpbXBsaWNpdHksIHRoZSBpbnRlbnRpb24gaXMNCnRvIGV4dGVuZCBpdCB0
+byBnaWdhbnRpYyBQVUQgbGV2ZWwgYWxsb2NhdGlvbnMgc29vbiAoSSdkIGxpa2UgdG8gZ2V0IHRo
+ZQ0Kc2ltcGxlIGZ1bmN0aW9uYWxpdHkgbWVyZ2VkIGJlZm9yZSBhZGRpbmcgbW9yZSBjb21wbGV4
+aXR5KS4NCk90aGVyIHRoYW4gZG9pbmcgYSBtZW1ibG9jayBhbGxvY2F0aW9uIGF0IGVhcmx5IGJv
+b3QgdGhlcmUgcmVhbGx5IGlzIG5vDQp3YXkgdGhhdCBJIGtub3cgb2YgdG8gZG8gR2lCLXNpemUg
+YWxsb2NhdGlvbnMgZHluYW1pY2FsbHkuDQoNCkluIHRlcm1zIG9mIHRoZSBuZWVkIGZvciBhIGNv
+bnRpZ3VvdXMgY2h1bmssIHRoYXQncyBhIGJpdCBvZiBhDQpzaW1wbGlmaWNhdGlvbiBmb3Igbm93
+LiBBcyBtZW50aW9uZWQgaW4gdGhlIGNvdmVyIGxldHRlciB0aGVyZSBjdXJyZW50bHkNCmlzbid0
+IGFueSBOVU1BIHN1cHBvcnQgaW4gdGhpcyBwYXRjaCBzZXJpZXMuIFdlJ2Qgd2FudCB0byBhZGQg
+dGhlDQphYmlsaXR5IHRvIGRvIE5VTUEgaGFuZGxpbmcgaW4gZm9sbG93aW5nIHBhdGNoIHNlcmll
+cy4gSW4gdGhhdCBjYXNlIGl0DQp3b3VsZCBiZSBtdWx0aXBsZSBjb250aWd1b3VzIGFsbG9jYXRp
+b25zLCBvbmUgZm9yIGVhY2ggTlVNQSBub2RlIHRoYXQNCnRoZSB1c2VyIHdhbnRzIHRvIHJ1biBW
+TXMgb24uDQoNCkpHDQo=
 
