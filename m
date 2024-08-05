@@ -1,162 +1,120 @@
-Return-Path: <linux-kernel+bounces-274582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D5D947A51
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:17:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C23947A56
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1062DB21F5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98BF91C21260
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E88915666C;
-	Mon,  5 Aug 2024 11:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7F7154BE8;
+	Mon,  5 Aug 2024 11:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LPlW1UD+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5n+JJdv"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278BA14F9F7
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 11:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247841311AC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 11:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722856612; cv=none; b=km/nM3tpZMaqGd+pjnhzHZHoP3cgVFHQXdM9armrHbGwsi9DNhH8E6ZOAiPfXE92GDnzpw1RYNb5bBlwG3a7xAkAeKywhM/YiNRvIn5giKvwDJ/LcnmLLlcYGF6X9ORRk+D73my+P5QvyZBGydHhobLSuvBSBMVH7BjENqOSliY=
+	t=1722857106; cv=none; b=qxchegE9622GNlPm/V2c0Fjk7+YUS5gAb/mEVvbWViZUiY/KrAYYMWLwypDZ2B9iNJxTFqm2fLuF2ay64AowkU6XAw7T7jYnxhRNeXCWWZSv9IUTijkI+p6p73nR5q6q3dmADyObEYLhZUDQsH6ibqz4hLqYA47enWfi9Fi3Wec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722856612; c=relaxed/simple;
-	bh=oTr2SjdGsujyoWN7R4XglVpcySYwa/ZBQP+kX/X7ddw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YdHIW5mXh1ydgmQF9pbuPp95ZuMyXJ9i0+oDhN+3VteaSRR4Y6a0s3yTn0wKON3PwKHWWMl2gnd+NnoQd8zZDXcT7iHB6Oi4lw2rcNbEW31TVO1SlOFnP/Hyb886UXHM9aTRNtz6sXOlle0c/T+85dGIbtudSB7yhpctLDMe7rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LPlW1UD+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722856609;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+x9m6YrOjrozlbNzpN4lv2HeQ5ydPGv5W1u14KLn3Oc=;
-	b=LPlW1UD+WujI5aG/FMgyI+5CxACt6eFmEB9qSI5U4Xy0iXVi0MyVs3aF+Fj50fkh7QU7ep
-	f74sWcdQHwv/yMinxKTN+NZHFDWpDxYfokudoLVsQegQHaHWGHIyz4Kel9NmlEnlVYLZk4
-	DxzwP2uqnqCU3JgAP/6n3Mrm4/V5f4o=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-629-yOxoEKwIMWKt1jr2h5tDew-1; Mon, 05 Aug 2024 07:16:47 -0400
-X-MC-Unique: yOxoEKwIMWKt1jr2h5tDew-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-427b7a2052bso102639565e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 04:16:47 -0700 (PDT)
+	s=arc-20240116; t=1722857106; c=relaxed/simple;
+	bh=BPBVFhvC1ssZoVdGCw5gKfHc/rn6kVLYepwvWVMpm2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NbPKaTNL0f/bf2b4GsBYthtILefWuyqzsRpiOed44UGs1USrNKBDiX1JNyybS2kTtPzaB0WqH4JO/6DiidjJGAlmIL+Kpm9j8d7DMnG4HgV6G3wDPrUUrRTS0AxyHoKYagwSNf90M1tzwO5zkkkuGt3btmZDCikACIwohfBzNoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5n+JJdv; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b3fff87e6bso8774764a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 04:25:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722857103; x=1723461903; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gFXMf3R67uSoKvDTRLMWNYmM8RYGM52hCNv8M1S6BK0=;
+        b=B5n+JJdvB6l2oF0Mkocotk46cf32laS6x0RYFfAL39DTFVG6F84Zn1Pkv1sEnJdVwU
+         G+Ml69cl0h8/IZVoW4RRYanaDfrdsQmsdP5m0jkt+Vc9cB6SempVDbGbMLPBvUg1nBsi
+         IFQeXYe8DeJ9wGSdUg1otHu+SCqGTUI95qT+8z82JNID5Z6jxfbwHulXEO75ZLD9mLO7
+         nLfZWIOL0y2kqOKy2Ke9MR3+pVnTAznFqcCS9Z8/i+SbjI0DlIFm7qqDEhIGgM6FwbGw
+         9kbFgIvQzb7xkYj+16VAhROhz55c2ohFiigw7yAZYMI1vvyCtkywC0UzA7KZbH6Fp03s
+         CyAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722856607; x=1723461407;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+x9m6YrOjrozlbNzpN4lv2HeQ5ydPGv5W1u14KLn3Oc=;
-        b=Z3gkOK4wm99Msp8wvcyPv1O/phHVTN0nocPvZqgH4flhpu46dFdylSTyrJmBoijnWh
-         BsE7+cGuKWpvnfSjdbWVIQjcyXbWC4xFfw+64ghGfH03zEVuZTYSuMyQFf9mTNJmrRDN
-         Gy2b91FQApuX4lYpM6gF6d8+3PPRfpzenOWCrRGOqWP9INKBYtyxfaOsNgDF5yf4Vh2Q
-         Yq4hsn8XLuZ4EmuJSndftPjdyf5fZ2W5yKkQteKOpWBLEobTBmMg5b8xfkhYAglem017
-         KAYop+2XYwBe9uJ6P58SGun/SvUsVYUTIaqpsrShNck9dEp0S1y9Sqo/0k9EMIBvCjYT
-         qnjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMnk3/deAScwkq//JJv7qz2EJIZlLRa9loHP//GhSFz4xNrNMhbz0iMz7tIk12G3n7b1+/h1CFLsf4fH8IKW1kah9t0uP/E1oXDu2Q
-X-Gm-Message-State: AOJu0YzqeGekPVKES+zBaJ/mdT1LkWSclXOg6dIKTAEliiipqyX+LKNr
-	uXxHn/ma/zlXAovzlr72T8ENXNH3aptbXUvfvo2hxkIHQ+THd8xUqlDz0uoW4VvuQieQju9vrKs
-	D+QXCt2NPdpv++G8YNwYf4La+iAoUFQrzdjhUOvjX5dSmJhxYenOttJ7IT252Ng==
-X-Received: by 2002:a05:600c:35ca:b0:426:545b:ec00 with SMTP id 5b1f17b1804b1-428e6b2f0c5mr103368305e9.19.1722856606647;
-        Mon, 05 Aug 2024 04:16:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRKiPjgHhD5wvF3Kx6rwG0AB9MiZixpH2Ek6z6clwUbTcyIXrs1+dITYkfWb4UHnSx5S2h3g==
-X-Received: by 2002:a05:600c:35ca:b0:426:545b:ec00 with SMTP id 5b1f17b1804b1-428e6b2f0c5mr103368055e9.19.1722856606239;
-        Mon, 05 Aug 2024 04:16:46 -0700 (PDT)
-Received: from intellaptop.lan ([2a06:c701:778d:5201:3e8a:4c9c:25dd:6ccc])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6d643a4sm135473615e9.2.2024.08.05.04.16.44
+        d=1e100.net; s=20230601; t=1722857103; x=1723461903;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gFXMf3R67uSoKvDTRLMWNYmM8RYGM52hCNv8M1S6BK0=;
+        b=aMNJlaCwZ4tkjUjvoH1G0uJeX1IivfAZ9iRF2MReBWrh5nMUJobCjfOJ14fwvT9SEA
+         PB0912tpYdE0waBFYVPeEAsZ/m3wpTvZ2D71ybE4bEc6TTWLJsK//CK03+WYg8pCMWDf
+         cKdc31FUIpy31bJfanBZxmNcoM1ESAwbl0KnJ4LF/ZVTfD8PFRtuGbXGCAJiAHZAZ1MC
+         9F8aVec8YztnKw521h7sLL868Vw65nvOjDakX6EdrwfeLQy9aQv7nqiJb35AhCO9FbE1
+         Oem32bkFJQzxHX2hYcdOZiugs8u6JJpK3XJUdV8PHEPNLsPFgB5v7d+x0kZQdNFfwSuk
+         uJbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdRFjkqH/b/l/dG2CUllx9qJY2k3fV/rROnjWXn9ST74/bhGztk02jTmVyrercaQgLldC37WvVV62ew21ZgSS9tsTzZW0/y7Ygr6v2
+X-Gm-Message-State: AOJu0YzuVp/B2u66Do/l/UIaWPIEVH1gs+Q30JcwWCHPg2eLiGVWR8iw
+	H+Q2bloAfLdu4fLrSyX1ndhY7jQZRsSz6c58AitaZki+OzQWJ+dR
+X-Google-Smtp-Source: AGHT+IGl8zJrqXM61TCZr9PNc5KrvF91rHZl3Bz/6P2UyX7/YL/NskRppOIpo9ppHmlXkpyGCOKB0A==
+X-Received: by 2002:a05:6402:a42:b0:5a2:cc1c:4cf0 with SMTP id 4fb4d7f45d1cf-5b7f36f59ffmr8021608a12.7.1722857103095;
+        Mon, 05 Aug 2024 04:25:03 -0700 (PDT)
+Received: from f (cst-prg-90-207.cust.vodafone.cz. [46.135.90.207])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83a14ea04sm4789153a12.49.2024.08.05.04.24.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 04:16:45 -0700 (PDT)
-Message-ID: <f358c9b92095e628dbccd7af2f084d7c07206962.camel@redhat.com>
-Subject: Re: [PATCH v2 40/49] KVM: x86: Initialize guest cpu_caps based on
- KVM support
-From: mlevitsk@redhat.com
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
- Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
- <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
- Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Mon, 05 Aug 2024 14:16:44 +0300
-In-Reply-To: <Zqe2n4e4HtdgUWgm@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-41-seanjc@google.com>
-	 <030c973172dcf3a24256ddc8ddc5e9ef57ecabcb.camel@redhat.com>
-	 <Zox_4OoDmGDHOaSA@google.com>
-	 <f9b2f9e949a982e07c9ea5ead316ab3809e40543.camel@redhat.com>
-	 <Zqe2n4e4HtdgUWgm@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+        Mon, 05 Aug 2024 04:25:02 -0700 (PDT)
+Date: Mon, 5 Aug 2024 13:24:49 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pedro Falcato <pedro.falcato@gmail.com>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slab: Error out on duplicate cache names when DEBUG_VM=y
+Message-ID: <zkiaatyjqk4p445wi5wz5oztzxvcanp5lbnmt54pa3cmvqibi6@4r4e7evtclwe>
+References: <20240804212839.685795-1-pedro.falcato@gmail.com>
+ <CAKbZUD0hBFeMm=Rwb1LX6MYEpLK_qAnr8jfczLzY8V-DKEDn4w@mail.gmail.com>
+ <cdc52bd0-dac8-4f3e-bd7b-aca7513a0464@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cdc52bd0-dac8-4f3e-bd7b-aca7513a0464@suse.cz>
 
-=D0=A3 =D0=BF=D0=BD, 2024-07-29 =D1=83 08:34 -0700, Sean Christopherson =D0=
-=BF=D0=B8=D1=88=D0=B5:
-> > On Wed, Jul 24, 2024, Maxim Levitsky wrote:
-> > > > On Mon, 2024-07-08 at 17:10 -0700, Sean Christopherson wrote:
-> > > > > > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> > > > > > index 0e64a6332052..dbc3f6ce9203 100644
-> > > > > > --- a/arch/x86/kvm/cpuid.c
-> > > > > > +++ b/arch/x86/kvm/cpuid.c
-> > > > > > @@ -448,7 +448,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vc=
-pu *vcpu)
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!entry)
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- continue;
-> > > > > > =C2=A0
-> > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 cpuid_func_emulated(&emulated, cpuid.function);
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 cpuid_func_emulated(&emulated, cpuid.function, fal=
-se);
-> > > > > > =C2=A0
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * A vCPU has a feature if it's supported =
-by KVM and is enabled
-> > > > > > @@ -1034,7 +1034,8 @@ static struct kvm_cpuid_entry2 *do_host_c=
-puid(struct kvm_cpuid_array *array,
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return entry;
-> > > > > > =C2=A0}
-> > > > > > =C2=A0
-> > > > > > -static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry,=
- u32 func)
-> > > > > > +static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry,=
- u32 func,
-> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool only_advertised)
-> > > >=20
-> > > > I'll say, lets call this boolean, 'include_partially_emulated',=20
-> > > > (basically features that kvm emulates but only partially,
-> > > > and thus doesn't advertise, aka mwait)
-> > > >=20
-> > > > and then it doesn't look that bad, assuming that comes with a comme=
-nt.
-> >=20
-> > Works for me.=C2=A0 I was trying to figure out a way to say "emulated_o=
-n_ud", but I
-> > can't get the polarity right, at least not without ridiculous verbosity=
-.=C2=A0 E.g.
-> > include_not_emulated_on_ud is awful.
-> >=20
+On Mon, Aug 05, 2024 at 12:38:29PM +0200, Vlastimil Babka wrote:
+> What about module unload/reload with a SLAB_TYPESAFE_BY_RCU cache that will
+> delay its freeing. Soon also if there are kfree_rcu()'s in flight. And the
+> zombie cache can stay also permamently around if it fails to be destroy
+> because some objects were not freed.
+> 
 
-Thanks,
-Best regards,
-	Maxim Levitsky
+It should be an invariant that the cache is fully whacked by the time
+kmem_cache_destroy returns, at worst with the exception of when leaked
+items are encountered (but even then it should be renamed to something
+indicating it is defunct).
 
+Suppose a cache could not have been destroyed and was left as is, then
+the offending module was loaded again -- now you got two with the same
+name, which is not that great either.
+
+I find myself quite surprised that kmem_cache_destroy can return even if
+cache destruction is still pending.
+
+This was added in 657dc2f97220 ("slab: remove synchronous rcu_barrier()
+call in memcg cache release path"), citing batching benefits for
+frequent kmem cache creation/destruction.
+
+I believe the very notion of doing that *frequently* is b0rked and any
+code doing it should be patched to stop regardless.
+
+Even so, if there are any benefits to the committed patch, it perhaps
+can be augmented so that the kmem_cache_destroy caller can wait for the
+entire thing to finish (e.g., with a completion).
 
