@@ -1,127 +1,153 @@
-Return-Path: <linux-kernel+bounces-274648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE5D947B10
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:37:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FECC947B0D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D16F11C20EB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:37:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2702281A0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D8E158DCF;
-	Mon,  5 Aug 2024 12:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70CB15531A;
+	Mon,  5 Aug 2024 12:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="AuA380N+"
-Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="GUfWye8C"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9FE18026;
-	Mon,  5 Aug 2024 12:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77561E884
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 12:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722861414; cv=none; b=DrJ35dcZhUWF8cCkTBWu8R4UFf2L5NHed9h1VIGHDWcMo2m/Yj2/MsedQBlHrRX+lzXfZNX2udKX9RnCytZWIkFfCXzpG02F5ag8Rmo2PBU2AEwqAr5XFdW9MLasNssAIREDladvmMSr29B5By3h3b2Uo3npHB+mwHUv38dV4UM=
+	t=1722861308; cv=none; b=Rzff025W/iSSiHXnJ1vdmyHZzlv0FqEXA/OGuLHy1Yqt7BVIOI6jS/e6PrAvM5KwNe6WQyhf6jF2Zl8FBBs0lEVp5KKfqO3YteqqC9IvjDVn1q3cqZ07cXVYjqvz9NiqPew5xoSI0LbULg3Z2YETJAMI1ghyLoZEndP9v0vP8j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722861414; c=relaxed/simple;
-	bh=H2gxC/+BsGYwCzylaUC6vm1fwAgk9U/dzWcrtrEPq38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIAfn364bfxZHGVg6r+nWcv01z+Xo2yLBlOY9KDgaRd3BJbfNnankiMJwc7M5HMCeSZT6raLMRjnq4ZoQaWrvoI1BGk/olyUnVfKXzyf8nPeo6Lc8kEvw+CcCOPKCn4LrkDRcEaEfYSh+iwBkYVg7e0FfgtICvvaelLbZGmwt5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=AuA380N+; arc=none smtp.client-ip=74.50.62.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
-Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
-	by mail5.25mail.st (Postfix) with ESMTPSA id 439E060434;
-	Mon,  5 Aug 2024 12:30:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
-	s=25mailst; t=1722861060;
-	bh=H2gxC/+BsGYwCzylaUC6vm1fwAgk9U/dzWcrtrEPq38=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AuA380N+uuIrzYd5SM3muac/ofHHbpm4jpko8fb8EXDdKExnzkfvcK6Yq1v7O3Zav
-	 pmyaZpMghdRMhHhI07baa4G5vulqPYS0vWUhUWeyIoDXerJWG1lzEkuprqDDhLptXj
-	 3WXVLNEJcopXPSxA6ZtN2Z2FZ0TZfRBLFry5PAhu6jnA1aXoE6ni4LSs/HINS+CHE5
-	 K4WoB6IdVqh7HvOSHAgT4fkWjGakLrLyy4827PwIt4K24laZQ9+URVeJw7O+G3rPHQ
-	 V+iMsaR6mVV9IUMrYAjS6m9hPPhyk4r9w3YA+0Jl8k80quvw7dV15E9AAZ1shGUS/q
-	 vLw3oLpbMGJsA==
-Date: Mon, 5 Aug 2024 15:30:03 +0300
-From: Tony Lindgren <tony@atomide.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Richard Earnshaw <richard.earnshaw@arm.com>,
-	Richard Sandiford <richard.sandiford@arm.com>,
-	Ramana Radhakrishnan <ramanara@nvidia.com>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Linux-OMAP <linux-omap@vger.kernel.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
-	debian-arm@lists.debian.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Message-ID: <20240805123003.GA5123@atomide.com>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <20240731191332.GB47080@darkstar.musicnaut.iki.fi>
- <ea475f27-af7c-4060-bff7-a78389174236@app.fastmail.com>
- <eb91d092-259c-4896-a06d-363c1a62712c@app.fastmail.com>
+	s=arc-20240116; t=1722861308; c=relaxed/simple;
+	bh=3bjKwXr3tNdbCNJIfn130LqguJ3TOGCoAoBNutiivBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I1MTvtl9d/7Hcqj7LoQFUDj4ZXmUzNIkPC2AdFUyNPvPaPdYuzvX9Xo99da8pVsss2BIONbI8oFdYY9dRPNWXDglddUd2+ZxMaFxxbXaj+2042Z5e6/RhBhpuZ8qd1az4pOoR4ADFyZHATODVxUNSrfq6UgMGul8w5QJtw7+vfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=GUfWye8C; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52efdf02d13so16945279e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 05:35:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1722861304; x=1723466104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WP3TDcwdS7rbvqo3h2WAW7LOD9LbYGzGSPJDJtBCZmo=;
+        b=GUfWye8CcqqgnWvYsMhamNcSC2rW0SY6xtd7ht+HcJDiVuufD/77dL7+itVmkBSL2B
+         v2+qE7viksklAm2bHIYnVmJJYKR99sPTaayfCkRzNwSXNKDyykVMBQGC9mdI/Y0Weg/u
+         ZxWqmozidhfPdnvn7XXNPSLv4B7Ad93mQ4AwCzZrfAhVlibls294FUtwGP2LzEjepo6z
+         0zU12CqvrV3VOdhBvLjoM5K8ZATSyw+rT5TTNzrZG2nJgk36wM6aD/qd8Iqm7NE958IO
+         9dzQwcbYvTZOMrjXCVZkIFtvlz/zU1bofDhJZy5GRn4CB0o2ueK7lFrAIJMDSZs8DTL/
+         8DzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722861304; x=1723466104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WP3TDcwdS7rbvqo3h2WAW7LOD9LbYGzGSPJDJtBCZmo=;
+        b=gD/xXXmgSFJHhzrDVo7YJoIm+vZHLfbfJB/DjfwtqFL4NSLA2vP0AREL5iuh6vcFNg
+         C91VFfoHhmynGEYNSBzHKGNl3jP7CB3dTp3d4yPqw5soZXbBS0F3VJfhLMImu7haQL2B
+         dhNkB4BhqP7jbDvavyTuDIhEwGNYuA3wqR+gyL86htUKcR2D+PWnbcrLbNcZ+j7KqiPk
+         +1SJZ9k0zhLGNs956s4gWBWO89HuCpl3/dZhJFLjiv24T+gPKWqW14U7E/p5TwrsbAj4
+         Q0obfD3E/9kC4Y1YmxrHMSxUQdD3nDXQXJXh83UdqHv4eWApYWW0N3sEqI9sL7xf5COF
+         z+3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUyaRQS7zp0NXEXve5YM9ixhAGkop2bbytWw7mWIHS7ZvaRQPai6XatRERGFeCGIwr9xVzvX63DhnCC4NgrUv2DR5TLgSmNRTZAoZGp
+X-Gm-Message-State: AOJu0YzSkS30zCRFiz4ZB276NeMxc476cDaQvu87no6Pp5hewsWG93H+
+	r7BQ4PtiB2x/VzKFK587WhwfcU8p9ziwg5wXEQDSLjvvc5qBBWAiGNlmxyM2ZYWppLATIuQt4cY
+	CmvY2aNJz25D6c+k2O9C+thL6vHFeqbVNPtf8zQ==
+X-Google-Smtp-Source: AGHT+IFVNCkB9/DRJmdbf+zjkqWnFvmw1u/jKcw2DCF48IFpN0m3e/Vm61IsAgiljPY96jI7b3ZaxGtjzl88VXrcwOg=
+X-Received: by 2002:a05:6512:12d3:b0:530:ac41:4cb with SMTP id
+ 2adb3069b0e04-530bb373747mr10726937e87.3.1722861303930; Mon, 05 Aug 2024
+ 05:35:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb91d092-259c-4896-a06d-363c1a62712c@app.fastmail.com>
+References: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
+ <CAJuCfpGa55gpKHBE_0mwRPsf0f1Wp5UK7+w6N7yZi-7v31vNzw@mail.gmail.com>
+In-Reply-To: <CAJuCfpGa55gpKHBE_0mwRPsf0f1Wp5UK7+w6N7yZi-7v31vNzw@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 5 Aug 2024 14:34:52 +0200
+Message-ID: <CAKPOu+-DdwTCFDjW+ykKM5Da5wmLW3gSx5=x+fsSdaMEwUuvJw@mail.gmail.com>
+Subject: Re: Bad psi_group_cpu.tasks[NR_MEMSTALL] counter
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Peter Zijlstra <peterz@infradead.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Arnd Bergmann <arnd@arndb.de> [240805 07:58]:
-> Thinking about this some more, I wonder if we should just
-> change the Kconfig dependencies now (for 6.12, possibly backported)
-> and forbid ARM1136r0, i.e. OMAP2 and i.MX31, from being enabled
-> in combination with SMP.
-> 
-> This would immediately prevent the bug you are seeing and
-> allow the cleanups we've been wanting to do for a while,
-> and it would avoid the larger-scale rework that I had
-> planned (moving armv6 into an armv5 kernel).
-> 
-> The main reason we didn't do this in the past was that it broke
-> Tony's workflow of testing omap2plus_defconfig across all
-> platforms, but I assume this all changed with the new group
-> maintainership anyway.
+On Wed, Jun 12, 2024 at 7:01=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+> I think you can check if this theory pans out by adding a WARN_ON() ar
+> the end of psi_task_switch():
+>
+> void psi_task_switch(struct task_struct *prev, struct task_struct
+> *next, bool sleep)
+> {
+> ...
+>         if ((prev->psi_flags ^ next->psi_flags) & ~TSK_ONCPU) {
+>                 clear &=3D ~TSK_ONCPU;
+>                 for (; group; group =3D group->parent)
+>                         psi_group_change(group, cpu, clear, set, now,
+> wake_clock);
+>         }
+> +        WARN_ON(prev->__state & TASK_DEAD && prev->psi_flags & TSK_MEMST=
+ALL);
+> }
 
-Yes please go ahead, no objection from me.
+Our servers have been running with this experimental WARN_ON line you
+suggested, and today I found one of them had produced more than 300
+warnings since it was rebooted yesterday:
 
-Also related, the 2430 support could be dropped as AFAIK there
-are no active users for it. It's similar to the 2420 support
-that n8x0 use, and only 2420 support should be kept.
+ ------------[ cut here ]------------
+ WARNING: CPU: 38 PID: 448145 at kernel/sched/psi.c:992
+psi_task_switch+0x114/0x218
+ Modules linked in:
+ CPU: 38 PID: 448145 Comm: php-cgi8.1 Not tainted 6.9.12-cm4all1-ampere+ #1=
+78
+ Hardware name: Supermicro ARS-110M-NR/R12SPD-A, BIOS 1.1b 10/17/2023
+ pstate: 404000c9 (nZcv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+ pc : psi_task_switch+0x114/0x218
+ lr : psi_task_switch+0x98/0x218
+ sp : ffff8000c5493c80
+ x29: ffff8000c5493c80 x28: ffff0837ccd18640 x27: ffff07ff81ee3300
+ x26: ffff0837ccd18000 x25: 0000000000000000 x24: 0000000000000001
+ x23: 000000000000001c x22: 0000000000000026 x21: 00003010d610f448
+ x20: 0000000000000000 x19: 0000000000000000 x18: 0000000000000000
+ x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+ x14: 0000000000000004 x13: ffff08072ca62000 x12: ffffc22f32e1a000
+ x11: 0000000000000001 x10: 0000000000000026 x9 : ffffc22f3129b150
+ x8 : ffffc22f32e1aa88 x7 : 000000000000000c x6 : 0000d7ed3b360390
+ x5 : ffff08faff6fb88c x4 : 0000000000000000 x3 : 0000000000e9de78
+ x2 : 000000008ff70300 x1 : 000000008ff8d518 x0 : 0000000000000002
+ Call trace:
+  psi_task_switch+0x114/0x218
+  __schedule+0x390/0xbc8
+  do_task_dead+0x64/0xa0
+  do_exit+0x5ac/0x9c0
+  __arm64_sys_exit+0x1c/0x28
+  invoke_syscall.constprop.0+0x54/0xf0
+  do_el0_svc+0xa4/0xc8
+  el0_svc+0x18/0x58
+  el0t_64_sync_handler+0xf8/0x128
+  el0t_64_sync+0x14c/0x150
+ ---[ end trace 0000000000000000 ]---
 
-> The effect here would be that imx_v6_v7_defconfig would
-> only inlucde imx35 but not imx31, and that omap2plus_defconfig
-> would turn into effectively omap3plus.
+And indeed, it has a constant (and bogus) memory pressure value:
 
-Yes that makes sense for the active devices. Note that
-multi_v7_defconfig is too bloated to boot many of these devices..
+ # cat /proc/pressure/memory
+ some avg10=3D99.99 avg60=3D98.65 avg300=3D98.70 total=3D176280880996
+ full avg10=3D98.16 avg60=3D96.70 avg300=3D96.82 total=3D173950123267
 
-> I would still tentatively schedule both for removal in early
-> 2026, but if we add the !SMP dependency it's not a big deal to
-> keep them around after that either. We can make that decision
-> next year.
+It's taken nearly two months. and none of the other servers had
+produced this; this seems to be a bug that's really rare.
 
-Makes sense and the SMP related change can be done now.
-
-Regards,
-
-Tony
+Max
 
