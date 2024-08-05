@@ -1,161 +1,132 @@
-Return-Path: <linux-kernel+bounces-275193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8FD9481A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6938C9481AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C8FA1F219BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:33:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF691F2108E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1265816D4D1;
-	Mon,  5 Aug 2024 18:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBF8165EEF;
+	Mon,  5 Aug 2024 18:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MGgdwHrj"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GkvWWGpU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13BE16C87B
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4A313A884;
+	Mon,  5 Aug 2024 18:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722882694; cv=none; b=oGZVZXUgTHdLFZPjzfFgNHz2maozBFK4I/kseM0Q7yo31h2e4XwdMIae8G8gw5PETXA8u/7K2V7NEQhPxG92UeARRxMmW29NcrkRZaoX9FFJvTurYd8jUeb+G5Ycp9kp0HbZRENTdMrlUwx4wQMZRmaQA4ozxcleybz6BY8syRc=
+	t=1722882798; cv=none; b=j/jJz7iP+BX5cjRDEG48zP+aISVvCjhshN6ph0pEPtF46qqMVvdNRdTbi57c2D3gsXGzEHst6Ne+4aHLTIWSS+X8OPHOIMasJt0yPSI2qLAxfHNajd/Qx3pHDYP4gRRdDv+r1ui8ItGW98FMNB1CQBMCqWe7qAF9U+omy3McsiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722882694; c=relaxed/simple;
-	bh=ChE2g8Bo15dbwXQCCELmyUPyayPuAqr/37EK4Q7ZpbM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rsANCbsond47/mz//pB63FNvcoEeXqYvMF1fCAt1vkPsordvs1kAmkMraXquCgpv8/wb3L+ZO6sSXN8MHX/wk6YtZGj0pxQmuuvhJ90yQO74MkU0Blk94tvgrnGr3ulDFqRG1ZRDd/3MSwfNl/8KGqZLOx+4jx6JrzC6V+8urcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MGgdwHrj; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39b3754468eso8011725ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:31:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722882692; x=1723487492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jt7QmiC+1K2MGxeb2j6VpzaOIs10RnCuQP9HHad9ocQ=;
-        b=MGgdwHrjvjGji3glD5U++0SrVoXTlB2Dl3dc3MSCu1tPObTpuhxJXWBlElVZ4/XKEf
-         7ICWR+SsD+cEICW00mUpVCqbgmoyRjPoMki2KGO4j3SqB5VUJVhE7u/bBEfvZVEoIF70
-         hFQukWnI9b8wRevPfKaSb9RnFjtMevXNVrdjKe4M13oWL77lyfbnOKlr33P97taeE3w9
-         5omJ194jLesJBiKQoiGCHek7NCVZIuLvK5tGQPUM9X5jUEC8C33NjHoR02hgBCQrtGQz
-         9yDtqxY78L2IAZRrSo1reXF0KPpSTJjNkXC/drQYr+94XK9368y0e3h9QP5JjrGU8A2T
-         pMUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722882692; x=1723487492;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jt7QmiC+1K2MGxeb2j6VpzaOIs10RnCuQP9HHad9ocQ=;
-        b=dCw0zjQAjIAM4lzWhUpzlknjgDwJ6njKjOuTeAQJdWT1H8jZuFCwbL5UA1NRyzxnTV
-         2jzW9oDSqbk+zcQBWdZvoPftY5+j5UYuxQmcIqMYuokkC4oXblHwwHqYhOuB4hnGDfIl
-         y2OsDA+GVAoKDyxCj/NiUk0esP/sbhpkZl5pJIIr3eDSpYWPbwo1crOJsBPOy3TqawTf
-         8hc2w8tC0CjW//FW4ZgimGCJC6N2L778uxQicTfqgYcuZzVNghpVsAva7g1zxP340kJv
-         bkQ9AJQWBsr7qKeeiGqVQiAPHWsJK6XrOYDKd00f0pdxMUkVjei7ztKwNrK+6yQLGEBZ
-         xB0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVqMA1BE4OEq6+Ymy8CW3CE4jVtavcabOL1psEcvEWnC1SKuSyIM2TXpgEST6sJOvOICyBth9oJMkIHMfdyffHb11e5lOQmEpKpbQSm
-X-Gm-Message-State: AOJu0YxqPi6f2NCOPv6jlPzuaibAvzfPAw3mIgYgY4uh8dXK8y7q9QP1
-	WSwPECiSCGlT+BXtU/gXiri/fLt67unxSAFVYmOBliUyv9pr/qxYCZKKsmqW9Wg=
-X-Google-Smtp-Source: AGHT+IFsYDvT/ScJTO38P4uPEY7MfcyBrpm0xyFckk7S5UPZJYPzTYR+VYnkh8TLJZtvjqPo5U1Jew==
-X-Received: by 2002:a05:6e02:214b:b0:39b:32f6:5e90 with SMTP id e9e14a558f8ab-39b32f65ed5mr87967485ab.15.1722882692118;
-        Mon, 05 Aug 2024 11:31:32 -0700 (PDT)
-Received: from blmsp.fritz.box ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b20a9af29sm30867925ab.13.2024.08.05.11.31.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 11:31:31 -0700 (PDT)
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	Judith Mendez <jm@ti.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Simon Horman <horms@kernel.org>
-Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Linux regression tracking <regressions@leemhuis.info>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] can: m_can: Limit coalescing to peripheral instances
-Date: Mon,  5 Aug 2024 20:30:47 +0200
-Message-ID: <20240805183047.305630-8-msp@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240805183047.305630-1-msp@baylibre.com>
-References: <20240805183047.305630-1-msp@baylibre.com>
+	s=arc-20240116; t=1722882798; c=relaxed/simple;
+	bh=hfnuvnnigu7GiBMzTH5MQC/YrBHLtcuKAlxu0YESuEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXeyj3YnaEWlHDAmxVSFl7g0l6G8kj0g9Cja5bTgfCamBsb/9ubF38Q+f/i9gZJsDdl49mvapkBkhfAuOlNfIUNhcACSiDr//VPx7dOG/mK97Ri7iAw/6tv0tupFn5eKQo51Go3wQ68Gz7lr+9sWTk46Np9+ZIlxFBBE+v8Jn/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GkvWWGpU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C74C32782;
+	Mon,  5 Aug 2024 18:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722882798;
+	bh=hfnuvnnigu7GiBMzTH5MQC/YrBHLtcuKAlxu0YESuEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GkvWWGpU2qINFWAdNFOGLg6oOluylwW9MsvU6LMidtTQDMAck05PIjla8yrfyO6Sy
+	 Qvq7aYHi1V+vgjPbnP67V8qlZXp4eVy2TEbAsM0vsKmuFnmBb7tiT3VYRL12kjKsz0
+	 bVQvsvSuTgop+ZkRrsU2ufsph66qEvYwaPdwWXhU=
+Date: Mon, 5 Aug 2024 20:33:15 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: LidongLI <wirelessdonghack@gmail.com>
+Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+	mark.esler@canonical.com, stf_xl@wp.pl
+Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer
+ Dereference&Use-After-Free Vulnerability
+Message-ID: <2024080507-unclog-spirited-e74b@gregkh>
+References: <2024080359-getaway-concave-623e@gregkh>
+ <20240805083339.10356-1-wirelessdonghack@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805083339.10356-1-wirelessdonghack@gmail.com>
 
-The use of coalescing for non-peripheral chips in the current
-implementation is limited to non-existing. Disable the possibility to
-set coalescing through ethtool.
+On Mon, Aug 05, 2024 at 04:33:39PM +0800, LidongLI wrote:
+> 
+> Dear Greg,
+> 
+> Thank you for your response and for considering the details I've provided so far. I would like to offer further clarification on the vulnerability and why it warrants assigning a CVE.
+> 
+> ### Detailed Description of Vulnerability
+> 
+> 1. **Root Cause and Exploitability**:
+>     - The vulnerability in question can be triggered by sending specific data packets to a device driver, causing a Null Pointer Dereference in the kernel. This results in a complete system crash and reboot.
 
-Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
----
- drivers/net/can/m_can/m_can.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Are you sure it's the sending random data and not the reset that is
+causing this?  You also are attempting to send confused data while the
+driver is binding, so of course it is going to get confused, how could
+it not?
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 69a7cbce19b4..5fd1af75682c 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -2181,7 +2181,7 @@ static int m_can_set_coalesce(struct net_device *dev,
- 	return 0;
- }
- 
--static const struct ethtool_ops m_can_ethtool_ops = {
-+static const struct ethtool_ops m_can_ethtool_ops_coalescing = {
- 	.supported_coalesce_params = ETHTOOL_COALESCE_RX_USECS_IRQ |
- 		ETHTOOL_COALESCE_RX_MAX_FRAMES_IRQ |
- 		ETHTOOL_COALESCE_TX_USECS_IRQ |
-@@ -2192,18 +2192,20 @@ static const struct ethtool_ops m_can_ethtool_ops = {
- 	.set_coalesce = m_can_set_coalesce,
- };
- 
--static const struct ethtool_ops m_can_ethtool_ops_polling = {
-+static const struct ethtool_ops m_can_ethtool_ops = {
- 	.get_ts_info = ethtool_op_get_ts_info,
- };
- 
--static int register_m_can_dev(struct net_device *dev)
-+static int register_m_can_dev(struct m_can_classdev *cdev)
- {
-+	struct net_device *dev = cdev->net;
-+
- 	dev->flags |= IFF_ECHO;	/* we support local echo */
- 	dev->netdev_ops = &m_can_netdev_ops;
--	if (dev->irq)
--		dev->ethtool_ops = &m_can_ethtool_ops;
-+	if (dev->irq && cdev->is_peripheral)
-+		dev->ethtool_ops = &m_can_ethtool_ops_coalescing;
- 	else
--		dev->ethtool_ops = &m_can_ethtool_ops_polling;
-+		dev->ethtool_ops = &m_can_ethtool_ops;
- 
- 	return register_candev(dev);
- }
-@@ -2389,7 +2391,7 @@ int m_can_class_register(struct m_can_classdev *cdev)
- 	if (ret)
- 		goto rx_offload_del;
- 
--	ret = register_m_can_dev(cdev->net);
-+	ret = register_m_can_dev(cdev);
- 	if (ret) {
- 		dev_err(cdev->dev, "registering %s failed (err=%d)\n",
- 			cdev->net->name, ret);
--- 
-2.45.2
+>     - While initially it appears to require root privileges, altering the Udev rules allows for exploiting this vulnerability from a non-root user space, significantly lowering the barrier for potential exploitation.
 
+Exactly what udev rule changes are required?  And as that requires root
+permission, that is not really that big of an issue, right?
+
+> 2. **Impact on Systems**:   
+>     - The root cause is a race condition between the userspace resetting the device and the kernel driver initializing it. This is not an edge case but a common scenario that could occur in systems where devices are frequently reset or reinitialized.
+>     - By manipulating Udev rules, an attacker can create a persistent and repeatable method to exploit the vulnerability, leading to Denial of Service (DoS) conditions. This can be particularly disruptive in production environments, impacting servers, IoT devices, and embedded systems relying on Ubuntu.
+
+If you can change udev rules, you own the machine, this is not a kernel
+issue.  Again, there is a reason why normal users can't do this.
+
+> 3. **Practical Implications**:
+>     - The fact that this can be achieved through Udev rules modification is significant because it demonstrates a path to escalate privileges and attack vectors that can be exploited in real-world scenarios.
+>     - Systems that are exposed to user-space applications needing device resets or control operations could be particularly vulnerable, especially in multi-user environments.
+> 
+> ### Experimental Evidence
+> ### Setting Up Udev Rules: Granting Permissions to Your USB Device Without Using sudo
+> 
+> To grant permissions to your USB device without using `sudo`, you need to create a udev rules file. Follow these steps:
+> 
+> #### Create the Udev Rules File:
+> 
+> 1. Open a terminal and create the udev rules file with the following command:
+> 
+>  
+>    sudo nano /etc/udev/rules.d/99-usb.rules
+>    
+> 
+> 2. Add the rule: In the file, add the following content. Replace `YOUR_VENDOR_ID` and `YOUR_PRODUCT_ID` with your device's vendor ID and product ID.
+> 
+>    
+>    SUBSYSTEM=="usb", ATTR{idVendor}=="148f", ATTR{idProduct}=="3070", MODE="0666"
+
+So you are allowing any user to read/write to the device at the same
+time the driver is bound to it, but again, you had to be root to allow
+this to happen.
+
+So unless a normal user can do this, with the default permissions, this
+is just going to be a normal "fix up the usb driver to allow confused
+data to not confuse it" which is a normal thing.  USB drivers were never
+originally designed to allow for malicious devices.  We have slowly
+changed this over time to allow for semi-malicious USB configuration
+data to be handled properly, but we have not said "USB devices are not
+fully trusted" yet.  If we want to do that, we need to do a lot of work
+as that is not how Linux (or really any operating system) is designed at
+the moment.
+
+Again, we will be glad to fix up the individual bugs here as found, but
+it's not a major issue as it's just something that someone with root
+permissions can do to a machine, along with thousands of worse things :)
+
+thanks,
+
+greg k-h
 
