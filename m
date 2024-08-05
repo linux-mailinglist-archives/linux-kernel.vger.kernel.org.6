@@ -1,149 +1,791 @@
-Return-Path: <linux-kernel+bounces-274220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C64947532
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98572947539
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39925B20DA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFEF28183F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319BA145327;
-	Mon,  5 Aug 2024 06:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2CF143880;
+	Mon,  5 Aug 2024 06:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="WNr3s5s2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m1l8IFN2"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nLmm8uOR"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8C013C9D3;
-	Mon,  5 Aug 2024 06:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B059E1DFF7;
+	Mon,  5 Aug 2024 06:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722839155; cv=none; b=VXG6kkGtWjfufM9vhOEguhCtlIcl7hsEfmGdSEfCTII6h4zWEAY2MMwYVUtgHc6MwDvxOZWrjiREN+BAdT6GQ/wx8MzlCOgz709UHYVMpsC2QIUAu607v+FgPH3CgqkeZCY9qH9CCCDT3ImJg7hjLJ1rOwNd94KHnJRP1oAiyYc=
+	t=1722839240; cv=none; b=U24kNdkBU3HduC0bxArrDlGcsHzxvCHTsBr0J75l+vBcPnYOa+kuQy23L5hhUJA19o3hqlCCzU0f2QCT60VKH0YxfXryUleZ4Qz2nIl3TjMhyG34XnIdCzVW7RZ7aF8bSsThdNtifqHiWf2ibwZQoRPuqUB0JRVyNDinqDfcJUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722839155; c=relaxed/simple;
-	bh=NFKvwhMYxv6H12ucH+V7Tz+LDXlTONBEHssLV55FCFw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=MWUrAC5ecueuQNGLpvZ3n0Ubtz0pMZ8FGHmpFEO1aTbxrnwqG/O+Lgo/uZFedtYuya5jOXgbiGPY8vI92EwSckQ1pY1gGO+dytwenazeBF9bCR0LTbwr/vYRudOIlftClEVW3KWrwD32ZsIN5uCTNuL8Wa8uvnO70H0RVm0PtEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=WNr3s5s2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m1l8IFN2; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 87F711151E4E;
-	Mon,  5 Aug 2024 02:25:52 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by compute6.internal (MEProxy); Mon, 05 Aug 2024 02:25:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722839152;
-	 x=1722925552; bh=NFKvwhMYxv6H12ucH+V7Tz+LDXlTONBEHssLV55FCFw=; b=
-	WNr3s5s2DNlO/DPFFhXdkIG/dxcIAVuFMJM2l+SFj35fqOei+irmzgAaaT8PwI/H
-	QU89IPh/mdURGwcdrlR7ptwFmnfci0wnMpLLJL4uPkS1+rtkoaqFgWqTrdktb7X+
-	K7zYdGFb1/KAzvuPexDtbaxKNYFPYryV78Jy4yO/dQOlA+OCb3O+7JLWipETbihg
-	bWPjYkva17cWZvsQrOaMKvv06jYPRsocM8rm1exz6xQYyiosHD1reYMUSldm1gp6
-	fcg11Ss6Ahzn4gmxosxGVnIq/qFYuO06xuh9VDTWgN65FpZKlzqxQETqx10cmFYJ
-	V6qYFYCifMQGPZST1UTXWA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722839152; x=
-	1722925552; bh=NFKvwhMYxv6H12ucH+V7Tz+LDXlTONBEHssLV55FCFw=; b=m
-	1l8IFN2VirG95gejjfEhwu3WzNrPE/oHDFzcl5YwkBEZJwM6oH9kAe2XNTV6/Cp2
-	bfj6RRZHv+20UyW+pR9Vw2vWDnaMF5z1FbfqlfuhPmYFVX6i3A2H2yri4LWMHaFi
-	vbhUnwV+tJ2B2mEaFcigv00ACnBmbqjLu0JMKh6391DYb+EvDTrxG7/aSDCn4Ynl
-	IulAwdekeyVeKR0i8zhzTjMEp+dX6IjxmY2nT8vZT4uHRGmNR99xvK9F6aI+ZGSw
-	36uLZ6AmoYBdSWkTKws97d0j53DBk1HbolD4pH4pAQUS1jPhxn9Z9UD2zO/KrTgc
-	GnnRVjgE5X8+tsO6iQJ/g==
-X-ME-Sender: <xms:b3CwZqKf3CXFc9I-9TyQ-S9ZsJiNVEvRDOdu2mT9PQBTPV3WA62fbA>
-    <xme:b3CwZiKgqUPz6Ef9zdUsMIrpAZkA4ScCAD3byTolg7k1edVnERPq0oAVy6mB6Rvey
-    IhiUx_preVx-jONlvA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeehgdduuddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedflfgr
-    nhhnvgcuifhruhhnrghufdcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvg
-    hrnhephfeguddvheevvedtueelkefgfeeijeetgffffedtleetgfeuueetudelleffgeel
-    necuffhomhgrihhnpehprghsthgvsghinhdrtghomhdpfidurdhfihdpihhnfhhrrgguvg
-    grugdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:cHCwZqsS0EfwtTYHvBVuM8mf2Z1QLY7HB-cKdpjyAmv3olJMW8ECIw>
-    <xmx:cHCwZvYA5UjO9dbEP04yPZBETxI17CV11Y2OD5zTnjyR1vVymocnKw>
-    <xmx:cHCwZhYxajsE4Ut6xBLI1jh7axP13Hl3keLKyASnlCTPj57U8EKHnA>
-    <xmx:cHCwZrBGf4mYCwfqAu1YUvvf-ipNZNJMwJwxyJn3vaZfXNLwOsCU4Q>
-    <xmx:cHCwZnBlNC4tjCll2sg_DyeRp_MY81asWItW3wqX1F70uRLfZg-mxL6R>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id E06E219C0069; Mon,  5 Aug 2024 02:25:51 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722839240; c=relaxed/simple;
+	bh=phAjkwxzfjWFY7kb4po9RnM1uK5l2wO6dO7MNiCBSow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oAweqLDpGFmNehCMuTBbZmTV82VV0ADvm9rl6iiRNcAMW+F+BefZnuNBo55YCpQNdnmrr2K5vMvXclZ6QvhRCUKX5+ByqK85GExuJPeAWQVFrA7zU4PG0eZ7AI2k8tIvfNkqn35HfEgh28PFlo8WJB9yYrSSE2C4SsqYTzpFMYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nLmm8uOR; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-39b37637977so441305ab.1;
+        Sun, 04 Aug 2024 23:27:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722839238; x=1723444038; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p5QNauZ8OXZTmR6EO/9TDDTdZRCnTWuwnvRVR7xTElo=;
+        b=nLmm8uORiDzh34nteq1wamt2SL846y1EpioGG+ga+Eh8pl4wPjRxbu+qW+hzc/Q/In
+         e/EFl5d0dIWFx1NdjSzG0uzawHv3b3s5Uav+OYBC6/0Z3QqPv7Y/H/0GFw1BTrnLUUW0
+         tTQXZi6OJW7ZHyuvMq1XGBp3KkHSApX7xjtrp4DRasarKwUChezQ8vN6POBpRdw382Ui
+         LRzePdnyYV46fITA1SzWMQ80gjeuvyGXyBN9BGI5VX7KHfyIdnAE8DLyPhhvHU7UqJ5M
+         NkZps73XKPo7m3xqmlAQLynzrYjpgFNafbmbiwruAucYUXCk8P2l4kwwYQd7e9fCkv4o
+         Zblg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722839238; x=1723444038;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p5QNauZ8OXZTmR6EO/9TDDTdZRCnTWuwnvRVR7xTElo=;
+        b=IYG6hsy/gWDDf2u6+IhUJXGkeLfJWh6hos3iGUIEQ+nvE1fk8JdITqfGBSGZj4a8M4
+         sQ562w+kJzR56HZgdHioanXwgHOBvn36MHR9ZA+J6pS4IFsSb0xm7F2STFl5FMc5oB14
+         ukr0oj8WJdyGq1wRRCtycy4eQ6+Jny234yzG/sQZiAge4QVI0dEsQ6By0hGxDbU4o6GT
+         myyaZ1t3kVLHBcKdysL9GkgPfTkY7U9W1wlujCuNs3X/EgtllpF656FnHyLORC97cvG8
+         a99xi61qfOiy2PszQwTmmLnK9bb0SOYZjBvn05CQoT68IZjgcLTp6hzqdbd/CCm1gXq0
+         VNiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwtb6irsYThIgIBVHhyiKWeCDvnbxFYeP5c269/tnPnu2Eoj5tOJ8uyb2t1BW1WQHcUxrxFkhKXROp@vger.kernel.org, AJvYcCXztj0y6DnEPTQGilR1vRb5yEabmJj+f3AtLu6pMquy9EAOT3h8zcKrM2t9DjV5rXqIrR4kOyOu2GGhr+rm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/hzfb+ZCSqtQf3GGbfQa5I4v0Kd64d2vYQpNRqsQOyh34I6FT
+	x1yYSGF3+1WqnZdcmYSEmeoBFSM2E5v1HP+jmzGNFoOufm3LvpYDGzvWTGf7cEEqVHMaubY27rg
+	rVE2GH2t5weNnP5HHqB/SanK8PD8=
+X-Google-Smtp-Source: AGHT+IHBQ2iV8+hSCNWBfZJ9EiYTpddpBCAi4eoNeQzLCjoFs8LJ9YZ/cxk/cZu/MyOux436/ZO5npc7ZhXiAGnkNFQ=
+X-Received: by 2002:a05:6e02:12e8:b0:39a:ef62:4e96 with SMTP id
+ e9e14a558f8ab-39b1fc3eca2mr68992815ab.4.1722839237654; Sun, 04 Aug 2024
+ 23:27:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 05 Aug 2024 08:25:31 +0200
-From: "Janne Grunau" <j@jannau.net>
-To: "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
- "Aditya Garg" <gargaditya08@live.com>,
- "devnull+j.jannau.net@kernel.org" <devnull+j.jannau.net@kernel.org>
-Cc: asahi@lists.linux.dev,
- "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
- "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
- "kvalo@kernel.org" <kvalo@kernel.org>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "Hector Martin" <marcan@marcan.st>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Message-Id: <9ed78539-35ca-4643-9a38-ac2c0379f395@app.fastmail.com>
-In-Reply-To: <ac9f0cb4-ba12-44f1-b32f-d17e24fe426a@app.fastmail.com>
-References: 
- <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <306c3010-a6ac-4f8a-a986-88c1a137ed84@app.fastmail.com>
- <MA0P287MB021725DE596EF4E5294FA5DDB8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <1911d0fdea8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <ac9f0cb4-ba12-44f1-b32f-d17e24fe426a@app.fastmail.com>
-Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240801071946.43266-1-yschu@nuvoton.com> <20240801071946.43266-3-yschu@nuvoton.com>
+ <e0b6ba00-f0bb-405b-b299-487e73a0c999@kernel.org>
+In-Reply-To: <e0b6ba00-f0bb-405b-b299-487e73a0c999@kernel.org>
+From: Stanley Chu <stanley.chuys@gmail.com>
+Date: Mon, 5 Aug 2024 14:27:04 +0800
+Message-ID: <CAPwEoQPcW_jNZkVSLjOf9M8ydKphnzR3D-m+gLhD0xygxGaZcw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] i3c: master: Add Nuvoton npcm845 i3c master driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org, 
+	linux-i3c@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org, 
+	tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com, 
+	cpchiang1@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hej,
-
-On Sun, Aug 4, 2024, at 13:37, Janne Grunau wrote:
-> On Sun, Aug 4, 2024, at 13:04, Arend Van Spriel wrote:
->> On August 4, 2024 8:27:04 AM Aditya Garg <gargaditya08@live.com> wrote:
->>>
->>> WPA3 is broken on T2 Macs (atleast on 4364) for a long time. I was
->>> under the impression brcmfmac doesn't support it.
->>>
->>> Anyways, I've asked a fedora user to compile a kernel with
->>> CONFIG_BRCMDBG.
->>>
->>> If you want logs without it, look over here:
->>> https://pastebin.com/fnhH30JA
->>
->> Not sure what to make of this. The interface comes up without any
->> obvious error and then another interface is created by another
->> driver:
+On Thu, Aug 1, 2024 at 11:02=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
-> I've bisected the authentication timeouts for WPA2-PSK and WPA3-SAE
-> (and probably every other authentication method) down to
+> On 01/08/2024 09:19, Stanley Chu wrote:
+> > Add support for the Nuvoton npcm845 i3c controller which
+> > implements I3C master functionality as defined in the MIPI
+> > Alliance Specification for I3C, Version 1.0.
+> >
+> > The master role is supported in SDR mode only. IBI and Hot-join
+> > requsts are supported.
+> >
+> > Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+> > Signed-off-by: James Chiang <cpchiang1@nuvoton.com>
+> > ---
+> >  MAINTAINERS                             |    7 +
+> >  drivers/i3c/master/Kconfig              |   14 +
+> >  drivers/i3c/master/Makefile             |    1 +
+> >  drivers/i3c/master/npcm845-i3c-master.c | 2364 +++++++++++++++++++++++
+> >  4 files changed, 2386 insertions(+)
+> >  create mode 100644 drivers/i3c/master/npcm845-i3c-master.c
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 42decde38320..2d30b6e418d8 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -2670,6 +2670,13 @@ F:     Documentation/userspace-api/media/drivers=
+/npcm-video.rst
+> >  F:   drivers/media/platform/nuvoton/
+> >  F:   include/uapi/linux/npcm-video.h
+> >
+> > +ARM/NUVOTON NPCM845 I3C MASTER DRIVER
 >
-> https://w1.fi/cgit/hostap/commit/?id=41638606054a09867fe3f9a2b5523aa4678cbfa5
+> Use proper terminology. Master is gone since 2021, right?
+>
+> This applies everywhere.
+>
 
-this is reported upstream in
-http://lists.infradead.org/pipermail/hostap/2024-August/042893.html
+Thanks for the review.
+I will fix it in v2.
 
-Disabling offloading in brcmfmac with "brcmfmac.feature_disable=0x82000"
-on the kernel command line works around both the kernel and
-wpa_supplicant issue.
+> > +M:   Stanley Chu <yschu@nuvoton.com>
+> > +M:   James Chiang <cpchiang1@nuvoton.com>
+> > +S:   Maintained
+> > +F:   Documentation/devicetree/bindings/i3c/nuvoton,i3c-master.yaml
+> > +F:   drivers/i3c/master/npcm845-i3c-master.c
+> > +
+> >  ARM/NUVOTON WPCM450 ARCHITECTURE
+> >  M:   Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> >  L:   openbmc@lists.ozlabs.org (moderated for non-subscribers)
+> > diff --git a/drivers/i3c/master/Kconfig b/drivers/i3c/master/Kconfig
+> > index 90dee3ec5520..a71d504d4744 100644
+> > --- a/drivers/i3c/master/Kconfig
+> > +++ b/drivers/i3c/master/Kconfig
+> > @@ -44,6 +44,20 @@ config SVC_I3C_MASTER
+> >       help
+> >         Support for Silvaco I3C Dual-Role Master Controller.
+> >
+> > +config NPCM845_I3C_MASTER
+> > +     tristate "Nuvoton NPCM845 I3C master driver"
+> > +     depends on I3C
+> > +     depends on HAS_IOMEM
+> > +     depends on ARCH_NPCM || COMPILE_TEST
+> > +     help
+> > +       Support for Nuvoton NPCM845 I3C Master Controller.
+> > +
+> > +       This hardware is an instance of the SVC I3C controller; this
+> > +       driver adds platform specific support for NPCM845 hardware.
+> > +
+> > +       This driver can also be built as a module.  If so, the module
+> > +       will be called npcm845-i3c-master.
+> > +
+> >  config MIPI_I3C_HCI
+> >       tristate "MIPI I3C Host Controller Interface driver (EXPERIMENTAL=
+)"
+> >       depends on I3C
+> > diff --git a/drivers/i3c/master/Makefile b/drivers/i3c/master/Makefile
+> > index 3e97960160bc..3ed55113190a 100644
+> > --- a/drivers/i3c/master/Makefile
+> > +++ b/drivers/i3c/master/Makefile
+> > @@ -3,4 +3,5 @@ obj-$(CONFIG_CDNS_I3C_MASTER)         +=3D i3c-master-c=
+dns.o
+> >  obj-$(CONFIG_DW_I3C_MASTER)          +=3D dw-i3c-master.o
+> >  obj-$(CONFIG_AST2600_I3C_MASTER)     +=3D ast2600-i3c-master.o
+> >  obj-$(CONFIG_SVC_I3C_MASTER)         +=3D svc-i3c-master.o
+> > +obj-$(CONFIG_NPCM845_I3C_MASTER)     +=3D npcm845-i3c-master.o
+> >  obj-$(CONFIG_MIPI_I3C_HCI)           +=3D mipi-i3c-hci/
+> > diff --git a/drivers/i3c/master/npcm845-i3c-master.c b/drivers/i3c/mast=
+er/npcm845-i3c-master.c
+> > new file mode 100644
+> > index 000000000000..19672fdbe2b8
+> > --- /dev/null
+> > +++ b/drivers/i3c/master/npcm845-i3c-master.c
+> > @@ -0,0 +1,2364 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Nuvoton NPCM845 I3C master driver
+> > + *
+> > + * Copyright (C) 2024 Nuvoton Technology Corp.
+> > + * Based on the work from svc i3c master driver and add platform
+> > + * specific support for the NPCM845 hardware.
+> > + */
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/completion.h>
+> > +#include <linux/debugfs.h>
+> > +#include <linux/dma-mapping.h>
+> > +#include <linux/errno.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/list.h>
+> > +#include <linux/module.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/of.h>
+> > +#include <linux/reset.h>
+> > +#include <linux/i3c/master.h>
+> > +#include <linux/pinctrl/consumer.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +/* Master Mode Registers */
+> > +#define NPCM_I3C_MCONFIG      0x000
+> > +#define   NPCM_I3C_MCONFIG_MASTER_EN BIT(0)
+> > +#define   NPCM_I3C_MCONFIG_DISTO(x) FIELD_PREP(BIT(3), (x))
+> > +#define   NPCM_I3C_MCONFIG_HKEEP(x) FIELD_PREP(GENMASK(5, 4), (x))
+> > +#define   NPCM_I3C_MCONFIG_ODSTOP(x) FIELD_PREP(BIT(6), (x))
+> > +#define   NPCM_I3C_MCONFIG_PPBAUD(x) FIELD_PREP(GENMASK(11, 8), (x))
+> > +#define   NPCM_I3C_MCONFIG_PPLOW(x) FIELD_PREP(GENMASK(15, 12), (x))
+> > +#define   NPCM_I3C_MCONFIG_ODBAUD(x) FIELD_PREP(GENMASK(23, 16), (x))
+> > +#define   NPCM_I3C_MCONFIG_ODHPP(x) FIELD_PREP(BIT(24), (x))
+> > +#define   NPCM_I3C_MCONFIG_SKEW(x) FIELD_PREP(GENMASK(27, 25), (x))
+> > +#define   NPCM_I3C_MCONFIG_SKEW_MASK GENMASK(27, 25)
+> > +#define   NPCM_I3C_MCONFIG_I2CBAUD(x) FIELD_PREP(GENMASK(31, 28), (x))
+> > +
+> > +#define NPCM_I3C_MCTRL        0x084
+> > +#define   NPCM_I3C_MCTRL_REQUEST_MASK GENMASK(2, 0)
+> > +#define   NPCM_I3C_MCTRL_REQUEST(x) FIELD_GET(GENMASK(2, 0), (x))
+> > +#define   NPCM_I3C_MCTRL_REQUEST_NONE 0
+> > +#define   NPCM_I3C_MCTRL_REQUEST_START_ADDR 1
+> > +#define   NPCM_I3C_MCTRL_REQUEST_STOP 2
+> > +#define   NPCM_I3C_MCTRL_REQUEST_IBI_ACKNACK 3
+> > +#define   NPCM_I3C_MCTRL_REQUEST_PROC_DAA 4
+> > +#define   NPCM_I3C_MCTRL_REQUEST_FORCE_EXIT 6
+> > +#define   NPCM_I3C_MCTRL_REQUEST_AUTO_IBI 7
+> > +#define   NPCM_I3C_MCTRL_TYPE_I3C 0
+> > +#define   NPCM_I3C_MCTRL_TYPE_I2C BIT(4)
+> > +#define   NPCM_I3C_MCTRL_IBIRESP_AUTO 0
+> > +#define   NPCM_I3C_MCTRL_IBIRESP_ACK_WITHOUT_BYTE 0
+> > +#define   NPCM_I3C_MCTRL_IBIRESP_ACK_WITH_BYTE BIT(7)
+> > +#define   NPCM_I3C_MCTRL_IBIRESP_NACK BIT(6)
+> > +#define   NPCM_I3C_MCTRL_IBIRESP_MANUAL GENMASK(7, 6)
+> > +#define   NPCM_I3C_MCTRL_DIR(x) FIELD_PREP(BIT(8), (x))
+> > +#define   NPCM_I3C_MCTRL_DIR_WRITE 0
+> > +#define   NPCM_I3C_MCTRL_DIR_READ 1
+> > +#define   NPCM_I3C_MCTRL_ADDR(x) FIELD_PREP(GENMASK(15, 9), (x))
+> > +#define   NPCM_I3C_MCTRL_RDTERM(x) FIELD_PREP(GENMASK(23, 16), (x))
+> > +
+> > +#define NPCM_I3C_MSTATUS      0x088
+> > +#define   NPCM_I3C_MSTATUS_STATE(x) FIELD_GET(GENMASK(2, 0), (x))
+> > +#define   NPCM_I3C_MSTATUS_STATE_DAA(x) (NPCM_I3C_MSTATUS_STATE(x) =3D=
+=3D 5)
+> > +#define   NPCM_I3C_MSTATUS_STATE_IDLE(x) (NPCM_I3C_MSTATUS_STATE(x) =
+=3D=3D 0)
+> > +#define   NPCM_I3C_MSTATUS_STATE_SLVREQ(x) (NPCM_I3C_MSTATUS_STATE(x) =
+=3D=3D 1)
+> > +#define   NPCM_I3C_MSTATUS_STATE_IBIACK(x) (NPCM_I3C_MSTATUS_STATE(x) =
+=3D=3D 6)
+> > +#define   NPCM_I3C_MSTATUS_BETWEEN(x) FIELD_GET(BIT(4), (x))
+> > +#define   NPCM_I3C_MSTATUS_NACKED(x) FIELD_GET(BIT(5), (x))
+> > +#define   NPCM_I3C_MSTATUS_IBITYPE(x) FIELD_GET(GENMASK(7, 6), (x))
+> > +#define   NPCM_I3C_MSTATUS_IBITYPE_IBI 1
+> > +#define   NPCM_I3C_MSTATUS_IBITYPE_MASTER_REQUEST 2
+> > +#define   NPCM_I3C_MSTATUS_IBITYPE_HOT_JOIN 3
+> > +#define   NPCM_I3C_MINT_SLVSTART BIT(8)
+> > +#define   NPCM_I3C_MINT_MCTRLDONE BIT(9)
+> > +#define   NPCM_I3C_MINT_COMPLETE BIT(10)
+> > +#define   NPCM_I3C_MINT_RXPEND BIT(11)
+> > +#define   NPCM_I3C_MINT_TXNOTFULL BIT(12)
+> > +#define   NPCM_I3C_MINT_IBIWON BIT(13)
+> > +#define   NPCM_I3C_MINT_ERRWARN BIT(15)
+> > +#define   NPCM_I3C_MSTATUS_SLVSTART(x) FIELD_GET(NPCM_I3C_MINT_SLVSTAR=
+T, (x))
+> > +#define   NPCM_I3C_MSTATUS_MCTRLDONE(x) FIELD_GET(NPCM_I3C_MINT_MCTRLD=
+ONE, (x))
+> > +#define   NPCM_I3C_MSTATUS_COMPLETE(x) FIELD_GET(NPCM_I3C_MINT_COMPLET=
+E, (x))
+> > +#define   NPCM_I3C_MSTATUS_RXPEND(x) FIELD_GET(NPCM_I3C_MINT_RXPEND, (=
+x))
+> > +#define   NPCM_I3C_MSTATUS_TXNOTFULL(x) FIELD_GET(NPCM_I3C_MINT_TXNOTF=
+ULL, (x))
+> > +#define   NPCM_I3C_MSTATUS_IBIWON(x) FIELD_GET(NPCM_I3C_MINT_IBIWON, (=
+x))
+> > +#define   NPCM_I3C_MSTATUS_ERRWARN(x) FIELD_GET(NPCM_I3C_MINT_ERRWARN,=
+ (x))
+> > +#define   NPCM_I3C_MSTATUS_IBIADDR(x) FIELD_GET(GENMASK(30, 24), (x))
+> > +
+> > +#define NPCM_I3C_IBIRULES     0x08C
+> > +#define   NPCM_I3C_IBIRULES_ADDR(slot, addr) FIELD_PREP(GENMASK(29, 0)=
+, \
+> > +                                                    ((addr) & 0x3F) <<=
+ ((slot) * 6))
+> > +#define   NPCM_I3C_IBIRULES_ADDRS 5
+> > +#define   NPCM_I3C_IBIRULES_MSB0 BIT(30)
+> > +#define   NPCM_I3C_IBIRULES_NOBYTE BIT(31)
+> > +#define   NPCM_I3C_IBIRULES_MANDBYTE 0
+> > +#define NPCM_I3C_MINTSET      0x090
+> > +#define NPCM_I3C_MINTCLR      0x094
+> > +#define NPCM_I3C_MINTMASKED   0x098
+> > +#define NPCM_I3C_MERRWARN     0x09C
+> > +#define   NPCM_I3C_MERRWARN_NACK(x) FIELD_GET(BIT(2), (x))
+> > +#define   NPCM_I3C_MERRWARN_TIMEOUT BIT(20)
+> > +#define   NPCM_I3C_MERRWARN_HCRC(x) FIELD_GET(BIT(10), (x))
+> > +#define NPCM_I3C_MDMACTRL     0x0A0
+> > +#define   NPCM_I3C_MDMACTRL_DMAFB(x) FIELD_PREP(GENMASK(1, 0), (x))
+> > +#define   NPCM_I3C_MDMACTRL_DMATB(x) FIELD_PREP(GENMASK(3, 2), (x))
+> > +#define   NPCM_I3C_MDMACTRL_DMAWIDTH(x) FIELD_PREP(GENMASK(5, 4), (x))
+> > +#define NPCM_I3C_MDATACTRL    0x0AC
+> > +#define   NPCM_I3C_MDATACTRL_FLUSHTB BIT(0)
+> > +#define   NPCM_I3C_MDATACTRL_FLUSHRB BIT(1)
+> > +#define   NPCM_I3C_MDATACTRL_UNLOCK_TRIG BIT(3)
+> > +#define   NPCM_I3C_MDATACTRL_TXTRIG_FIFO_NOT_FULL GENMASK(5, 4)
+> > +#define   NPCM_I3C_MDATACTRL_RXTRIG_FIFO_NOT_EMPTY 0
+> > +#define   NPCM_I3C_MDATACTRL_RXCOUNT(x) FIELD_GET(GENMASK(28, 24), (x)=
+)
+> > +#define   NPCM_I3C_MDATACTRL_TXCOUNT(x) FIELD_GET(GENMASK(20, 16), (x)=
+)
+> > +#define   NPCM_I3C_MDATACTRL_TXFULL BIT(30)
+> > +#define   NPCM_I3C_MDATACTRL_RXEMPTY BIT(31)
+> > +
+> > +#define NPCM_I3C_MWDATAB      0x0B0
+> > +#define   NPCM_I3C_MWDATAB_END BIT(8)
+> > +
+> > +#define NPCM_I3C_MWDATABE     0x0B4
+> > +#define NPCM_I3C_MWDATAH      0x0B8
+> > +#define NPCM_I3C_MWDATAHE     0x0BC
+> > +#define NPCM_I3C_MRDATAB      0x0C0
+> > +#define NPCM_I3C_MRDATAH      0x0C8
+> > +
+> > +#define NPCM_I3C_MDYNADDR     0x0E4
+> > +#define   NPCM_MDYNADDR_VALID BIT(0)
+> > +#define   NPCM_MDYNADDR_ADDR(x) FIELD_PREP(GENMASK(7, 1), (x))
+> > +
+> > +#define NPCM_I3C_PARTNO       0x06C
+> > +#define NPCM_I3C_VENDORID     0x074
+> > +#define   NPCM_I3C_VENDORID_VID(x) FIELD_GET(GENMASK(14, 0), (x))
+> > +
+> > +#define NPCM_I3C_MAX_DEVS 32
+> > +#define NPCM_I3C_PM_TIMEOUT_MS 1000
+> > +
+> > +/* This parameter depends on the implementation and may be tuned */
+> > +#define NPCM_I3C_FIFO_SIZE 16
+> > +#define NPCM_I3C_MAX_IBI_PAYLOAD_SIZE 8
+> > +#define NPCM_I3C_MAX_RDTERM 255
+> > +#define NPCM_I3C_MAX_PPBAUD 15
+> > +#define NPCM_I3C_MAX_PPLOW 15
+> > +#define NPCM_I3C_MAX_ODBAUD 255
+> > +#define NPCM_I3C_MAX_I2CBAUD 15
+> > +#define I3C_SCL_PP_PERIOD_NS_MIN 40
+> > +#define I3C_SCL_OD_LOW_PERIOD_NS_MIN 200
+> > +
+> > +/* DMA definitions */
+> > +#define MAX_DMA_COUNT                1024
+> > +#define DMA_CH_TX            0
+> > +#define DMA_CH_RX            1
+> > +#define NPCM_GDMA_CTL(n)     (n * 0x20 + 0x00)
+> > +#define   NPCM_GDMA_CTL_GDMAMS(x) FIELD_PREP(GENMASK(3, 2), (x))
+> > +#define   NPCM_GDMA_CTL_TWS(x) FIELD_PREP(GENMASK(13, 12), (x))
+> > +#define   NPCM_GDMA_CTL_GDMAEN       BIT(0)
+> > +#define   NPCM_GDMA_CTL_DAFIX        BIT(6)
+> > +#define   NPCM_GDMA_CTL_SAFIX        BIT(7)
+> > +#define   NPCM_GDMA_CTL_SIEN BIT(8)
+> > +#define   NPCM_GDMA_CTL_DM   BIT(15)
+> > +#define   NPCM_GDMA_CTL_TC   BIT(18)
+> > +#define NPCM_GDMA_SRCB(n)    (n * 0x20 + 0x04)
+> > +#define NPCM_GDMA_DSTB(n)    (n * 0x20 + 0x08)
+> > +#define NPCM_GDMA_TCNT(n)    (n * 0x20 + 0x0C)
+> > +#define NPCM_GDMA_CSRC(n)    (n * 0x20 + 0x10)
+> > +#define NPCM_GDMA_CDST(n)    (n * 0x20 + 0x14)
+> > +#define NPCM_GDMA_CTCNT(n)   (n * 0x20 + 0x18)
+> > +#define NPCM_GDMA_MUX(n)     (((n & 0xFFFF) >> 12) * 2 + 6)
+> > +#define GDMA_CH0_EN          GENMASK(6, 5)
+> > +#define GDMA_CH1_EN          GENMASK(22, 21)
+> > +
+> > +struct npcm_i3c_cmd {
+> > +     u8 addr;
+> > +     bool rnw;
+> > +     u8 *in;
+> > +     const void *out;
+> > +     unsigned int len;
+> > +     unsigned int read_len;
+> > +     bool continued;
+> > +     bool use_dma;
+> > +};
+> > +
+> > +struct npcm_i3c_xfer {
+> > +     struct list_head node;
+> > +     struct completion comp;
+> > +     int ret;
+> > +     unsigned int type;
+> > +     unsigned int ncmds;
+> > +     struct npcm_i3c_cmd cmds[];
+> > +};
+> > +
+> > +struct npcm_i3c_regs_save {
+> > +     u32 mconfig;
+> > +     u32 mdynaddr;
+> > +};
+> > +
+> > +struct npcm_dma_xfer_desc {
+> > +     const u8 *out;
+> > +     u8 *in;
+> > +     u32 len;
+> > +     bool rnw;
+> > +     bool end;
+> > +};
+> > +/**
+> > + * struct npcm_i3c_master - npcm845 I3C Master structure
+> > + * @base: I3C master controller
+> > + * @dev: Corresponding device
+> > + * @regs: Memory mapping
+> > + * @saved_regs: Volatile values for PM operations
+> > + * @free_slots: Bit array of available slots
+> > + * @addrs: Array containing the dynamic addresses of each attached dev=
+ice
+> > + * @descs: Array of descriptors, one per attached device
+> > + * @hj_work: Hot-join work
+> > + * @irq: Main interrupt
+> > + * @pclk: System clock
+> > + * @fclk: Fast clock (bus)
+> > + * @sclk: Slow clock (other events)
+> > + * @xferqueue: Transfer queue structure
+> > + * @xferqueue.list: List member
+> > + * @xferqueue.cur: Current ongoing transfer
+> > + * @xferqueue.lock: Queue lock
+> > + * @ibi: IBI structure
+> > + * @ibi.num_slots: Number of slots available in @ibi.slots
+> > + * @ibi.slots: Available IBI slots
+> > + * @ibi.tbq_slot: To be queued IBI slot
+> > + * @ibi.lock: IBI lock
+> > + * @lock: Transfer lock, prevent concurrent daa/priv_xfer/ccc
+> > + * @req_lock: protect between IBI isr and bus operation request
+> > + */
+> > +struct npcm_i3c_master {
+> > +     struct i3c_master_controller base;
+> > +     struct device *dev;
+> > +     void __iomem *regs;
+> > +     struct npcm_i3c_regs_save saved_regs;
+> > +     u32 free_slots;
+> > +     u8 addrs[NPCM_I3C_MAX_DEVS];
+> > +     struct i3c_dev_desc *descs[NPCM_I3C_MAX_DEVS];
+> > +     struct work_struct hj_work;
+> > +     int irq;
+> > +     struct clk *pclk;
+> > +     struct clk *fclk;
+> > +     struct {
+> > +             u32 i3c_pp_hi;
+> > +             u32 i3c_pp_lo;
+> > +             u32 i3c_pp_sda_rd_skew;
+> > +             u32 i3c_pp_sda_wr_skew;
+> > +             u32 i3c_od_hi;
+> > +             u32 i3c_od_lo;
+> > +     } scl_timing;
+> > +     struct {
+> > +             struct list_head list;
+> > +             struct npcm_i3c_xfer *cur;
+> > +     } xferqueue;
+> > +     struct {
+> > +             unsigned int num_slots;
+> > +             struct i3c_dev_desc **slots;
+> > +             struct i3c_ibi_slot *tbq_slot;
+> > +             /* Prevent races within IBI handlers */
+> > +             spinlock_t lock;
+> > +     } ibi;
+> > +     spinlock_t req_lock;
+> > +     struct mutex lock;
+> > +     struct dentry *debugfs;
+> > +
+> > +     /* For DMA */
+> > +     void __iomem *dma_regs;
+> > +     void __iomem *dma_ctl_regs;
+> > +     bool use_dma;
+> > +     struct completion xfer_comp;
+> > +     char *dma_tx_buf;
+> > +     char *dma_rx_buf;
+> > +     dma_addr_t dma_tx_addr;
+> > +     dma_addr_t dma_rx_addr;
+> > +     struct npcm_dma_xfer_desc dma_xfer;
+> > +
+> > +     bool en_hj;
+> > +};
+> > +
+> > +/**
+> > + * struct npcm_i3c_i2c_dev_data - Device specific data
+> > + * @index: Index in the master tables corresponding to this device
+> > + * @ibi: IBI slot index in the master structure
+> > + * @ibi_pool: IBI pool associated to this device
+> > + */
+> > +struct npcm_i3c_i2c_dev_data {
+> > +     u8 index;
+> > +     int ibi;
+> > +     struct i3c_generic_ibi_pool *ibi_pool;
+> > +};
+> > +
+> > +static DEFINE_MUTEX(npcm_i3c_dma_lock);
+>
+> Why this is outside driver private data - npcm_i3c_master?
+>
+> > +
+> > +static int npcm_i3c_master_wait_for_complete(struct npcm_i3c_master *m=
+aster);
+> > +static void npcm_i3c_master_stop_dma(struct npcm_i3c_master *master);
+> > +
+> > +static void npcm_i3c_master_dma_lock(void)
+> > +{
+> > +     mutex_lock(&npcm_i3c_dma_lock);
+> > +}
+> > +
+> > +static void npcm_i3c_master_dma_unlock(void)
+> > +{
+> > +     mutex_unlock(&npcm_i3c_dma_lock);
+> > +}
+>
+>
+> ...
+>
+>
+> > +
+> > +static void npcm_i3c_init_debugfs(struct platform_device *pdev,
+> > +                              struct npcm_i3c_master *master)
+> > +{
+> > +     if (!npcm_i3c_debugfs_dir) {
+> > +             npcm_i3c_debugfs_dir =3D debugfs_create_dir("npcm_i3c", N=
+ULL);
+> > +             if (!npcm_i3c_debugfs_dir)
+> > +                     return;
+> > +     }
+> > +
+> > +     master->debugfs =3D debugfs_create_dir(dev_name(&pdev->dev),
+> > +                                          npcm_i3c_debugfs_dir);
+> > +     if (!master->debugfs)
+> > +             return;
+> > +
+> > +     debugfs_create_file("debug", 0444, master->debugfs, master, &debu=
+g_fops);
+> > +}
+> > +
+> > +static int npcm_i3c_setup_dma(struct platform_device *pdev, struct npc=
+m_i3c_master *master)
+> > +{
+> > +     struct device *dev =3D &pdev->dev;
+> > +     u32 dma_conn, dma_ctl, reg_base;
+> > +
+> > +     if (!of_property_read_bool(dev->of_node, "use-dma"))
+> > +             return 0;
+> > +
+> > +     master->dma_regs =3D devm_platform_ioremap_resource_byname(pdev, =
+"dma");
+> > +     if (IS_ERR(master->dma_regs))
+> > +             return 0;
+> > +
+> > +     master->dma_ctl_regs =3D devm_platform_ioremap_resource_byname(pd=
+ev, "dma_ctl");
+> > +     if (IS_ERR(master->dma_ctl_regs))
+>
+>
+> Hm? Why this is not a separate DMA controller?
+>
 
-HTH,
-Janne
+I will implement a separate dma driver later, the dma configuration
+and lock will be removed from i3c driver.
+
+> > +             return 0;
+> > +
+> > +     /* DMA TX transfer width is 32 bits(MWDATAB width) for each byte =
+sent to I3C bus */
+> > +     master->dma_tx_buf =3D dma_alloc_coherent(dev, MAX_DMA_COUNT * 4,
+> > +                                             &master->dma_tx_addr, GFP=
+_KERNEL);
+> > +     if (!master->dma_tx_buf)
+> > +             return -ENOMEM;
+> > +
+> > +     master->dma_rx_buf =3D dma_alloc_coherent(dev, MAX_DMA_COUNT,
+> > +                                             &master->dma_rx_addr, GFP=
+_KERNEL);
+> > +     if (!master->dma_rx_buf) {
+> > +             dma_free_coherent(master->dev, MAX_DMA_COUNT * 4, master-=
+>dma_tx_buf,
+> > +                               master->dma_tx_addr);
+> > +             return -ENOMEM;
+> > +     }
+> > +
+> > +     /*
+> > +      * Set DMA channel connectivity
+> > +      * channel 0: I3C TX, channel 1: I3C RX
+> > +      */
+> > +     of_property_read_u32_index(dev->of_node, "reg", 0, &reg_base);
+> > +     dma_conn =3D NPCM_GDMA_MUX(reg_base);
+> > +     dma_ctl =3D GDMA_CH0_EN | GDMA_CH1_EN | (dma_conn + 1) << 16 | dm=
+a_conn;
+> > +     writel(dma_ctl, master->dma_ctl_regs);
+> > +     master->use_dma =3D true;
+> > +     dev_info(dev, "Using DMA (req_sel %d)\n", dma_conn);
+> > +
+> > +     /*
+> > +      * Setup GDMA Channel for TX (Memory to I3C FIFO)
+> > +      */
+> > +     writel(master->dma_tx_addr, master->dma_regs + NPCM_GDMA_SRCB(DMA=
+_CH_TX));
+> > +     writel(reg_base + NPCM_I3C_MWDATAB, master->dma_regs +
+> > +            NPCM_GDMA_DSTB(DMA_CH_TX));
+> > +     /*
+> > +      * Setup GDMA Channel for RX (I3C FIFO to Memory)
+> > +      */
+> > +     writel(reg_base + NPCM_I3C_MRDATAB, master->dma_regs +
+> > +            NPCM_GDMA_SRCB(DMA_CH_RX));
+> > +     writel(master->dma_rx_addr, master->dma_regs + NPCM_GDMA_DSTB(DMA=
+_CH_RX));
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int npcm_i3c_master_probe(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev =3D &pdev->dev;
+> > +     struct npcm_i3c_master *master;
+> > +     struct reset_control *reset;
+> > +     u32 val;
+> > +     int ret;
+> > +
+> > +     master =3D devm_kzalloc(dev, sizeof(*master), GFP_KERNEL);
+> > +     if (!master)
+> > +             return -ENOMEM;
+> > +
+> > +     master->regs =3D devm_platform_ioremap_resource(pdev, 0);
+> > +     if (IS_ERR(master->regs))
+> > +             return PTR_ERR(master->regs);
+> > +
+> > +     master->pclk =3D devm_clk_get(dev, "pclk");
+> > +     if (IS_ERR(master->pclk))
+> > +             return PTR_ERR(master->pclk);
+> > +
+> > +     master->fclk =3D devm_clk_get(dev, "fast_clk");
+> > +     if (IS_ERR(master->fclk))
+> > +             return PTR_ERR(master->fclk);
+> > +
+> > +     master->irq =3D platform_get_irq(pdev, 0);
+> > +     if (master->irq < 0)
+> > +             return master->irq;
+> > +
+> > +     master->dev =3D dev;
+> > +
+> > +     ret =3D npcm_i3c_master_prepare_clks(master);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     reset =3D devm_reset_control_get(&pdev->dev, NULL);
+>
+> Use dev consistently.
+>
+> > +     if (!IS_ERR(reset)) {
+> > +             reset_control_assert(reset);
+> > +             udelay(5);
+> > +             reset_control_deassert(reset);
+> > +     }
+> > +     INIT_WORK(&master->hj_work, npcm_i3c_master_hj_work);
+> > +     ret =3D devm_request_irq(dev, master->irq, npcm_i3c_master_irq_ha=
+ndler,
+> > +                            IRQF_NO_SUSPEND, "npcm-i3c-irq", master);
+> > +     if (ret)
+> > +             goto err_disable_clks;
+> > +
+> > +     master->free_slots =3D GENMASK(NPCM_I3C_MAX_DEVS - 1, 0);
+> > +
+> > +     mutex_init(&master->lock);
+> > +     INIT_LIST_HEAD(&master->xferqueue.list);
+> > +
+> > +     spin_lock_init(&master->req_lock);
+> > +     spin_lock_init(&master->ibi.lock);
+> > +     master->ibi.num_slots =3D NPCM_I3C_MAX_DEVS;
+> > +     master->ibi.slots =3D devm_kcalloc(&pdev->dev, master->ibi.num_sl=
+ots,
+>
+> Once allocation with dev, other with pdev->dev...
+>
+> > +                                      sizeof(*master->ibi.slots),
+> > +                                      GFP_KERNEL);
+> > +     if (!master->ibi.slots) {
+> > +             ret =3D -ENOMEM;
+> > +             goto err_disable_clks;
+> > +     }
+> > +
+> > +     platform_set_drvdata(pdev, master);
+> > +
+> > +     npcm_i3c_master_reset(master);
+> > +
+> > +     if (of_property_read_bool(dev->of_node, "enable-hj"))
+>
+>
+> > +             master->en_hj =3D true;
+> > +     if (!of_property_read_u32(dev->of_node, "i3c-pp-scl-hi-period-ns"=
+, &val))
+> > +             master->scl_timing.i3c_pp_hi =3D val;
+> > +
+> > +     if (!of_property_read_u32(dev->of_node, "i3c-pp-scl-lo-period-ns"=
+, &val))
+> > +             master->scl_timing.i3c_pp_lo =3D val;
+> > +
+> > +     if (!of_property_read_u32(dev->of_node, "i3c-pp-sda-rd-skew", &va=
+l))
+> > +             master->scl_timing.i3c_pp_sda_rd_skew =3D val;
+> > +
+> > +     if (!of_property_read_u32(dev->of_node, "i3c-pp-sda-wr-skew", &va=
+l))
+> > +             master->scl_timing.i3c_pp_sda_wr_skew =3D val;
+> > +
+> > +     if (!of_property_read_u32(dev->of_node, "i3c-od-scl-hi-period-ns"=
+, &val))
+> > +             master->scl_timing.i3c_od_hi =3D val;
+> > +
+> > +     if (!of_property_read_u32(dev->of_node, "i3c-od-scl-lo-period-ns"=
+, &val))
+> > +             master->scl_timing.i3c_od_lo =3D val;
+> > +
+> > +     npcm_i3c_master_clear_merrwarn(master);
+> > +     npcm_i3c_master_flush_fifo(master);
+> > +
+> > +     ret =3D npcm_i3c_setup_dma(pdev, master);
+> > +     if (ret)
+> > +             goto err_disable_clks;
+> > +
+> > +     npcm_i3c_init_debugfs(pdev, master);
+> > +
+> > +     /* Register the master */
+> > +     ret =3D i3c_master_register(&master->base, &pdev->dev,
+> > +                               &npcm_i3c_master_ops, false);
+> > +     if (ret)
+> > +             goto err_disable_clks;
+> > +
+> > +     if (master->en_hj) {
+> > +             dev_info(master->dev, "enable hot-join\n");
+>
+> Drop, not useful.
+>
+>
+> > +             npcm_i3c_master_enable_interrupts(master, NPCM_I3C_MINT_S=
+LVSTART);
+> > +     }
+> > +     return 0;
+> > +
+> > +     debugfs_remove_recursive(master->debugfs);
+> > +
+> > +err_disable_clks:
+> > +     npcm_i3c_master_unprepare_clks(master);
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static int npcm_i3c_master_remove(struct platform_device *pdev)
+> > +{
+> > +     struct npcm_i3c_master *master =3D platform_get_drvdata(pdev);
+> > +
+> > +     /* Avoid ibi events during driver unbinding */
+> > +     writel(NPCM_I3C_MINT_SLVSTART, master->regs + NPCM_I3C_MINTCLR);
+> > +
+> > +     debugfs_remove_recursive(master->debugfs);
+> > +
+> > +     i3c_master_unregister(&master->base);
+> > +
+> > +     if (master->use_dma) {
+> > +             dma_free_coherent(master->dev, MAX_DMA_COUNT * 4, master-=
+>dma_tx_buf,
+> > +                               master->dma_tx_addr);
+> > +             dma_free_coherent(master->dev, MAX_DMA_COUNT, master->dma=
+_rx_buf,
+> > +                               master->dma_rx_addr);
+> > +     }
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct of_device_id npcm_i3c_master_of_match_tbl[] =3D {
+> > +     { .compatible =3D "nuvoton,npcm845-i3c" },
+> > +     { /* sentinel */ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, npcm_i3c_master_of_match_tbl);
+> > +
+> > +static struct platform_driver npcm_i3c_master =3D {
+> > +     .probe =3D npcm_i3c_master_probe,
+> > +     .remove =3D npcm_i3c_master_remove,
+> > +     .driver =3D {
+> > +             .name =3D "npcm845-i3c-master",
+> > +             .of_match_table =3D npcm_i3c_master_of_match_tbl,
+> > +     },
+> > +};
+> > +module_platform_driver(npcm_i3c_master);
+> > +
+> > +MODULE_AUTHOR("Stanley Chu <yschu@nuvoton.com>");
+> > +MODULE_AUTHOR("James Chiang <cpchiang1@nuvoton.com>");
+> > +MODULE_DESCRIPTION("Nuvoton NPCM845 I3C master driver");
+> > +MODULE_LICENSE("GPL");
+>
+> Best regards,
+> Krzysztof
+>
 
