@@ -1,168 +1,113 @@
-Return-Path: <linux-kernel+bounces-274902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8B1947E0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:28:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1615947E12
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCAEE28453C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24DC1C21F93
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72FA15B559;
-	Mon,  5 Aug 2024 15:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9B21494DA;
+	Mon,  5 Aug 2024 15:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kqMkzBxA"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B653B4D8BA;
-	Mon,  5 Aug 2024 15:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XeS4Fbxh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C297613AD29
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722871450; cv=none; b=mZ52+T6SIfiIhs7W5tZ3rlNY68W85WOSjvKi36KSnSG1uEnw+MCMGJrLGUGj9ilrFyWhyNdJGyKvNV0QKBI3CnT7ead+4aAI3zxqzMM5030WlfqVNx5CHn27QJVOGikJPyRdpTlU9rkd+RukV43W1LaVv0o74gioRtagsAwv6tU=
+	t=1722871661; cv=none; b=fsNiU5974tGcK8B6Tj77zBiL04IH/w6CNybfehFbplTQPc4o7/8tXs4CBANSqJOaF5sKHXYPjccYEzsKV0D7tFkLl1bJNoz8Y2BaGfQ149jxcqw8bPYu3qWpHvo2EgfF5a0JSsW3iY1/B5lbULKt0hH/62zTsMcd9n6MS55X97s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722871450; c=relaxed/simple;
-	bh=yfp+KBeumGc23QyM92iFE44G1mhcxNzjY770EDwX1xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CabxsKf3aYrwxFKtVkCvuWe6+u/iB/2wBg2hMilAI5EJY1Cff5KKP63UG4/3sw+bapJ+t4w5h+hHR02XhXzt1AIlwqx+UZmsvnKWrl/+OjFa/9cXELWOoQ/0TVqKf/ge2iywG37tEfdvK4pOiWNlSQw4aPkc2n2ey3mTYar7z8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kqMkzBxA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 11CE620B7165;
-	Mon,  5 Aug 2024 08:24:08 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 11CE620B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722871448;
-	bh=QuEJrK0D5kQCcWKVWtCoRbpp6/KKUx8WzOZV7/m9JlU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kqMkzBxA0guj+0Nluky99E7furHm8m6bJYlAyDxh83soIbFBudqjQ2ZS4p85y5daU
-	 4kCyCMprtbfEls3EJKzShUkMyDn/syu1KJgyJRd9GcU2LTdB5tSKtZU3pzUq96G5wA
-	 sn1Xb8uFpM4zE9eHUxY04fXR282757A+4LO9qHB0=
-Message-ID: <ebac7069-0396-4b33-88b8-60d5e2594c88@linux.microsoft.com>
-Date: Mon, 5 Aug 2024 08:24:08 -0700
+	s=arc-20240116; t=1722871661; c=relaxed/simple;
+	bh=hxRY3ugPzahtlJ8uky/sfXgV1yIeyy/QzuvDtaq8kEY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=HHwZ5OCdDcDf8kA32eqRhFBgKUq0+UwLRTmjzZnNrtjNaORIK25QfqZhWsDJAosxpbS40XpNcGigvfHFKuWYtanYXgdmdlpNT9Bqs+XzBvLSZS0dTn3asqqH8AKJtVA7iMTClbeLZrfzJPubG9ee7HDOb76q2MuYObuPMZimOgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XeS4Fbxh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722871658;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=vNZpfi1ggYr8TiK+jucofPwRIqJVZNg4BEDMG6gzA30=;
+	b=XeS4Fbxh6Qd3tC3lGbMSZFmS8HV8ynI95EcuwmeLH/jBE1nmqDMv6A1aUfqO/sX1gs1QYf
+	ft6XIf7q0G95yc21xOiSfaGHHOl+PFavr4oKO/1do52fRLKP3Nw8C2EjimhnzJ47ruQWZ/
+	kEQSdalAIyypu/LwIOBZA98UdZBAU5w=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-502-m1vkRD4HNpO_A6RebKAxUA-1; Mon,
+ 05 Aug 2024 11:27:36 -0400
+X-MC-Unique: m1vkRD4HNpO_A6RebKAxUA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B3A01955BEF;
+	Mon,  5 Aug 2024 15:27:35 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1258919560AA;
+	Mon,  5 Aug 2024 15:27:35 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id 04C4D30F3625; Mon,  5 Aug 2024 15:27:34 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 020FE45586;
+	Mon,  5 Aug 2024 17:27:34 +0200 (CEST)
+Date: Mon, 5 Aug 2024 17:27:33 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+    Khazhismel Kumykov <khazhy@google.com>, 
+    Zdenek Kabelac <zdenek.kabelac@gmail.com>
+Subject: [PATCH 1/2] dm suspend: return -ERESTARTSYS instead of -EINTR
+Message-ID: <ef2ae856-54dc-4428-a8e-47efedc52e1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/7] Drivers: hv: Enable VTL mode for arm64
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>,
- Michael Kelley <mhklinux@outlook.com>
-Cc: "arnd@arndb.de" <arnd@arndb.de>, "bhelgaas@google.com"
- <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
- "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
- <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
- <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
- <will@kernel.org>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>, "apais@microsoft.com"
- <apais@microsoft.com>, "benhill@microsoft.com" <benhill@microsoft.com>,
- "ssengar@microsoft.com" <ssengar@microsoft.com>,
- "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
- "vdso@hexbites.dev" <vdso@hexbites.dev>
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-3-romank@linux.microsoft.com>
- <SN6PR02MB4157824AC8ECA000559F5160D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20240805040503.GA14919@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <20240805040503.GA14919@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+This commit changes device mapper, so that it returns -ERESTARTSYS
+instead of -EINTR when it is interrupted by a signal (so that the syscal
+will restart the ioctl).
 
+The manpage signal(7) says that the ioctl function should be restarted if
+the signal was handled with SA_RESTART.
 
-On 8/4/2024 9:05 PM, Saurabh Singh Sengar wrote:
-> On Mon, Aug 05, 2024 at 03:01:58AM +0000, Michael Kelley wrote:
->> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, July 26, 2024 3:59 PM
->>>
->>> Kconfig dependencies for arm64 guests on Hyper-V require that be ACPI enabled,
->>> and limit VTL mode to x86/x64. To enable VTL mode on arm64 as well, update the
->>> dependencies. Since VTL mode requires DeviceTree instead of ACPI, don't require
->>> arm64 guests on Hyper-V to have ACPI.
->>>
->>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->>> ---
->>>   drivers/hv/Kconfig | 6 +++---
->>>   1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
->>> index 862c47b191af..a5cd1365e248 100644
->>> --- a/drivers/hv/Kconfig
->>> +++ b/drivers/hv/Kconfig
->>> @@ -5,7 +5,7 @@ menu "Microsoft Hyper-V guest support"
->>>   config HYPERV
->>>   	tristate "Microsoft Hyper-V client drivers"
->>>   	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
->>> -		|| (ACPI && ARM64 && !CPU_BIG_ENDIAN)
->>> +		|| (ARM64 && !CPU_BIG_ENDIAN)
->>>   	select PARAVIRT
->>>   	select X86_HV_CALLBACK_VECTOR if X86
->>>   	select OF_EARLY_FLATTREE if OF
->>> @@ -15,7 +15,7 @@ config HYPERV
->>>
->>>   config HYPERV_VTL_MODE
->>>   	bool "Enable Linux to boot in VTL context"
->>> -	depends on X86_64 && HYPERV
->>> +	depends on HYPERV
->>>   	depends on SMP
->>>   	default n
->>>   	help
->>> @@ -31,7 +31,7 @@ config HYPERV_VTL_MODE
->>>
->>>   	  Select this option to build a Linux kernel to run at a VTL other than
->>>   	  the normal VTL0, which currently is only VTL2.  This option
->>> -	  initializes the x86 platform for VTL2, and adds the ability to boot
->>> +	  initializes the kernel to run in VTL2, and adds the ability to boot
->>>   	  secondary CPUs directly into 64-bit context as required for VTLs other
->>>   	  than 0.  A kernel built with this option must run at VTL2, and will
->>>   	  not run as a normal guest.
->>> --
->>> 2.34.1
->>>
->>
->> In v2 of this patch, I suggested [1] making a couple additional minor changes
->> so that kernels built *without* HYPER_VTL_MODE would still require
->> ACPI.  Did that suggestion not work out?  If that's the case, I'm curious
->> about what goes wrong.
-> 
-> Hi Michael/Roman,
-> I was considering making HYPERV_VTL_MODE depend on CONFIG_OF. That should address
-> above concern as well. Do you see any potential issue with it.
-> 
-Michael,
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 
-I ran into a pretty gnarly recursive dependencies which in all fairness 
-might stem from not being fluent enough in the Kconfig language. Any 
-help of how to approach implementing your idea would be greatly appreciated!
+---
+ drivers/md/dm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Saurabh,
-
-I could try out the idea you're offering if you folks are fine with 
-that. Or, we could let this be for the time being and grapple with that 
-in a separate patch series :)
-
-> - Saurabh
-
--- 
-Thank you,
-Roman
+Index: linux-2.6/drivers/md/dm.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm.c	2024-07-30 14:06:55.000000000 +0200
++++ linux-2.6/drivers/md/dm.c	2024-07-31 18:10:21.000000000 +0200
+@@ -2737,7 +2737,7 @@ static int dm_wait_for_bios_completion(s
+ 			break;
+ 
+ 		if (signal_pending_state(task_state, current)) {
+-			r = -EINTR;
++			r = -ERESTARTSYS;
+ 			break;
+ 		}
+ 
+@@ -2762,7 +2762,7 @@ static int dm_wait_for_completion(struct
+ 			break;
+ 
+ 		if (signal_pending_state(task_state, current)) {
+-			r = -EINTR;
++			r = -ERESTARTSYS;
+ 			break;
+ 		}
+ 
 
 
