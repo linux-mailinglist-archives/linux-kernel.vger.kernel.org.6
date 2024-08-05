@@ -1,341 +1,267 @@
-Return-Path: <linux-kernel+bounces-275002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7552F947F60
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:31:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E75947F63
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2171F21D5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB58B1F22B05
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F19015CD60;
-	Mon,  5 Aug 2024 16:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F9015C128;
+	Mon,  5 Aug 2024 16:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nGWIptCO"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC8E2D7B8;
-	Mon,  5 Aug 2024 16:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0/kUfl4"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAB313AD29;
+	Mon,  5 Aug 2024 16:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722875455; cv=none; b=MMQbfDLqp+9f41qFoYscZ73odgJsUssI9n1HghJMHrJ818PyvsG4McwTCMya5AyyXe2V3fUORXP30pxoNFGMQUoOXHYDPywPK6jKoGnSuodgQEjWQ2xen4P4JHUgVCWL+YDD6WjLAyRbNLE0F/8RlVxQoOQbo+Fhcnzv3w7kyYA=
+	t=1722875506; cv=none; b=H+zI5aeneMhEc9A4yClpcRdELUGAQgfUGJaao/8/w9E6d7sZp1jlIHEraBqhluXYyLYI/SFA/1mHeOb2VU7tqTVSFgSmkaLC0UYk+xBT707UCG03HZKk7vW2K8cfyj9L95BR1xEHMcK8KckzeKW1lVOQGqrGwlB5/tnFvFWOgdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722875455; c=relaxed/simple;
-	bh=Iva8b8kTU8b/cjbIgVQupXCjkBRFLveCYsjechSqTsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SpE4UAAGsxGq/hVqpiAl6d8xF7IP49VZeAokGH1hwUJOnDaxJSny25S3Lp6N9pYlNMMuSNp/BJ6sCK7Q/uEe7MsCkDQ5VRUaQNdvFHWCAtrFJP+YQxkL9Y+n2J5STeEcfvnBunHJ5WJMN3ju0xntBiS05UOFdI1NTfL92XUZUP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nGWIptCO; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B79D420B7165;
-	Mon,  5 Aug 2024 09:30:52 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B79D420B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722875453;
-	bh=OdRa7JogdAe4OsRKdZDtCLOwSHuOnd3sa5a9IhaNzD0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nGWIptCOU3Hw/uCeSLbzwgPrYaldsRGyYFPpHR2hegELwsFlZ+ae6voF1g+6F46qh
-	 rLV3C6fJ7vfGmqLm8yEsWhgqmZeHoGGh1fOSe7tlh6WI1yM0nKfTxILmVKLNDaHYAs
-	 DpNY6G432ORc9dXW36yO7m93gg9zCJka7njvFSgw=
-Message-ID: <a8e4cd69-9920-458e-b405-a9a72ecd0b4b@linux.microsoft.com>
-Date: Mon, 5 Aug 2024 09:30:53 -0700
+	s=arc-20240116; t=1722875506; c=relaxed/simple;
+	bh=CGjC+WBcE98DaN0rYYpCWu7ZVHKvKIvRrZykINZmEQQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=nn58TMmZrluzYm3PV6WUAeLv2+kfhLe5JIjFjJ2A3rm3SA0FIdgSObgEaVmuW4rRWvFQycOyiNAi/kfqNz7EGt1J0oEIQ+7QTHUS3GzGpRwGfhnOUxO3OPu7sAbXYG3uE0q+T8fhhgZ8jUAbnBOY2HbgVHcbA+9kDLRyZAZe6Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0/kUfl4; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so23096187e87.0;
+        Mon, 05 Aug 2024 09:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722875503; x=1723480303; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=621xkAoDI4+8AtZyzmI5ne9j+EyrefU8aEvGSj0OzNs=;
+        b=e0/kUfl4noteTPITMTk+fDeDvjpaxyDfSHx27swego9JTPyujyDvbMzQ9MteYUJwXg
+         ETUdhz6nNuNpp0tNsUELP3JlUohTc70goldZChvZa4zOcX8GDOCG4L8ELHRnjSEmn0og
+         6zwSychpDcBmIdli/CunPEbZk9D8RxaEmmVmgCSNPXl4/awD5AQAQ9NKp0APKfXyEeSO
+         r/RnXjoLDK0FHCGbi2vxiZnG5F9bAqEul1+nCFOLnjFV2AnEY9BPCyu7d7Y1USsvQ18J
+         VB5LQoyQbqCPj2X/5cXVLQqJ0rUEUSjsG8h8spziJPc17RY/jDtbE95VpmHJKYE/kpss
+         TKyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722875503; x=1723480303;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=621xkAoDI4+8AtZyzmI5ne9j+EyrefU8aEvGSj0OzNs=;
+        b=hg8ZDtlUUnwZ9zweiMRT3IVn/HbCs7+wZJCXZdZCrgzjidu/u0Swq3WUR/ceQRWjGf
+         74sRS9jv8hn3copzniTb/HHnYIRYTTw03jT3hE4GXxKOs4emNN4bh+a+yRKzq+d7SaR9
+         oMIw1WHcpOVuJtP/3gKcdVJ02ovzRu7Yu5e2x6xQhB+A7rppDKUCSnOvYRoE4yLoMJeO
+         qZxbV7asM2r/QmzO0QWsKN2pTJhdMVPcVW1IfnHhxKQjpKYtPKsKQXenZp9Rc+z20nGZ
+         9bqTOL4QOnSfcu3aRw00TzkOjq8+mNzRF2dszAVVe+R4L9ZEvBDFeNpaZkHPCXbU09kQ
+         IBFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzCIpvAxpF9DtI+JsNFr+pzdsxtA7DyUaBAuX1IFKx6VjWAuwjDxdQSdo1F9vi9NCIsjr1S5LBKvRG3vXUIchU0gSYjiT0KrMc+xTotusMYCIf8qvmyRMoZjtCeJlVe18gwFC6J9mAig==
+X-Gm-Message-State: AOJu0YwhYdhgNozBQ8kuqPION7TP0GJFVD1X53dMyAQLkAhRQZbpWXc2
+	JzOPYMn0u0iwwdSakJ4obKSfvgA2aBFWywfQ3zd+m45GoAj+QY8w
+X-Google-Smtp-Source: AGHT+IEYeJQFHMlgEBC1z/7yaKc6FQUSGQKUjy5BVK+bmjwpTIsHWavy//z1nw11/GNeOkDWpg0JeA==
+X-Received: by 2002:a05:6512:3b89:b0:52c:cd77:fe03 with SMTP id 2adb3069b0e04-530bb380dabmr10072630e87.14.1722875502321;
+        Mon, 05 Aug 2024 09:31:42 -0700 (PDT)
+Received: from smtpclient.apple (84-10-100-139.static.chello.pl. [84.10.100.139])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba08ee0sm1194849e87.57.2024.08.05.09.31.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2024 09:31:42 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] PCI: hv: Get vPCI MSI IRQ domain from DT
-To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
- "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
- <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
- <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
- <will@kernel.org>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "apais@microsoft.com" <apais@microsoft.com>,
- "benhill@microsoft.com" <benhill@microsoft.com>,
- "ssengar@microsoft.com" <ssengar@microsoft.com>,
- "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
- "vdso@hexbites.dev" <vdso@hexbites.dev>
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-8-romank@linux.microsoft.com>
- <SN6PR02MB4157D5A2DA10658D506EA1B1D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157D5A2DA10658D506EA1B1D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH v2 0/3] Add initial support for the Rockchip RK3588 HDMI
+ TX Controller
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+In-Reply-To: <66b0fbcc.050a0220.30fac7.71ce@mx.google.com>
+Date: Mon, 5 Aug 2024 18:31:28 +0200
+Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ devicetree@vger.kernel.org,
+ kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>,
+ Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B669ED19-28D8-4C4E-B89C-F7E7A6E3AA65@gmail.com>
+References: <20240801-b4-rk3588-bridge-upstream-v2-0-9fa657a4e15b@collabora.com>
+ <45B07EAF-4CBA-4DE4-A03B-109767D52B29@gmail.com>
+ <66b0fbcc.050a0220.30fac7.71ce@mx.google.com>
+To: Chris Morgan <macroalpha82@gmail.com>
+X-Mailer: Apple Mail (2.3774.600.62)
 
 
 
-On 8/4/2024 8:03 PM, Michael Kelley wrote:
-> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, July 26, 2024 3:59 PM
->>
->> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
->> arm64. It won't be able to do that in the VTL mode where only DeviceTree
->> can be used.
->>
->> Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
->> case, too.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> 
-> Overall, this makes sense to me, and I think it works. As you noted in the cover
-> letter for the patch series, it's a bit messy.  But see my two comments below.
-> 
->> ---
->>   drivers/hv/vmbus_drv.c              | 23 +++++++-----
->>   drivers/pci/controller/pci-hyperv.c | 55 +++++++++++++++++++++++++++--
->>   include/linux/hyperv.h              |  2 ++
->>   3 files changed, 69 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
->> index 7eee7caff5f6..038bd9be64b7 100644
->> --- a/drivers/hv/vmbus_drv.c
->> +++ b/drivers/hv/vmbus_drv.c
->> @@ -45,7 +45,8 @@ struct vmbus_dynid {
->>   	struct hv_vmbus_device_id id;
->>   };
->>
->> -static struct device  *hv_dev;
->> +/* VMBus Root Device */
->> +static struct device  *vmbus_root_device;
->>
->>   static int hyperv_cpuhp_online;
->>
->> @@ -80,9 +81,15 @@ static struct resource *fb_mmio;
->>   static struct resource *hyperv_mmio;
->>   static DEFINE_MUTEX(hyperv_mmio_lock);
->>
->> +struct device *get_vmbus_root_device(void)
->> +{
->> +	return vmbus_root_device;
->> +}
->> +EXPORT_SYMBOL_GPL(get_vmbus_root_device);
->> +
->>   static int vmbus_exists(void)
->>   {
->> -	if (hv_dev == NULL)
->> +	if (vmbus_root_device == NULL)
->>   		return -ENODEV;
->>
->>   	return 0;
->> @@ -861,7 +868,7 @@ static int vmbus_dma_configure(struct device *child_device)
->>   	 * On x86/x64 coherence is assumed and these calls have no effect.
->>   	 */
->>   	hv_setup_dma_ops(child_device,
->> -		device_get_dma_attr(hv_dev) == DEV_DMA_COHERENT);
->> +		device_get_dma_attr(vmbus_root_device) == DEV_DMA_COHERENT);
->>   	return 0;
->>   }
->>
->> @@ -1892,7 +1899,7 @@ int vmbus_device_register(struct hv_device *child_device_obj)
->>   		     &child_device_obj->channel->offermsg.offer.if_instance);
->>
->>   	child_device_obj->device.bus = &hv_bus;
->> -	child_device_obj->device.parent = hv_dev;
->> +	child_device_obj->device.parent = vmbus_root_device;
->>   	child_device_obj->device.release = vmbus_device_release;
->>
->>   	child_device_obj->device.dma_parms = &child_device_obj->dma_parms;
->> @@ -2253,7 +2260,7 @@ static int vmbus_acpi_add(struct platform_device *pdev)
->>   	struct acpi_device *ancestor;
->>   	struct acpi_device *device = ACPI_COMPANION(&pdev->dev);
->>
->> -	hv_dev = &device->dev;
->> +	vmbus_root_device = &device->dev;
->>
->>   	/*
->>   	 * Older versions of Hyper-V for ARM64 fail to include the _CCA
->> @@ -2342,7 +2349,7 @@ static int vmbus_device_add(struct platform_device *pdev)
->>   	struct device_node *np = pdev->dev.of_node;
->>   	int ret;
->>
->> -	hv_dev = &pdev->dev;
->> +	vmbus_root_device = &pdev->dev;
->>
->>   	ret = of_range_parser_init(&parser, np);
->>   	if (ret)
->> @@ -2675,7 +2682,7 @@ static int __init hv_acpi_init(void)
->>   	if (ret)
->>   		return ret;
->>
->> -	if (!hv_dev) {
->> +	if (!vmbus_root_device) {
->>   		ret = -ENODEV;
->>   		goto cleanup;
->>   	}
->> @@ -2706,7 +2713,7 @@ static int __init hv_acpi_init(void)
->>
->>   cleanup:
->>   	platform_driver_unregister(&vmbus_platform_driver);
->> -	hv_dev = NULL;
->> +	vmbus_root_device = NULL;
->>   	return ret;
->>   }
->>
->> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
->> index 5992280e8110..cdecefd1f9bd 100644
->> --- a/drivers/pci/controller/pci-hyperv.c
->> +++ b/drivers/pci/controller/pci-hyperv.c
->> @@ -50,6 +50,7 @@
->>   #include <linux/irqdomain.h>
->>   #include <linux/acpi.h>
->>   #include <linux/sizes.h>
->> +#include <linux/of_irq.h>
->>   #include <asm/mshyperv.h>
->>
->>   /*
->> @@ -887,6 +888,35 @@ static const struct irq_domain_ops hv_pci_domain_ops = {
->>   	.activate = hv_pci_vec_irq_domain_activate,
->>   };
->>
->> +#ifdef CONFIG_OF
->> +
->> +static struct irq_domain *hv_pci_of_irq_domain_parent(void)
->> +{
->> +	struct device_node *parent;
->> +	struct irq_domain *domain;
->> +
->> +	parent = of_irq_find_parent(to_platform_device(get_vmbus_root_device())->dev.of_node);
-> 
-> I think the above can be simplified to:
-> 
-> 	parent = of_irq_find_parent(get_vmbus_root_device()->of_node);
-> 
-> Converting the vmbus_root_device to the platform device, and then accessing
-> the "dev" field of the platform device puts you back where you started with
-> the vmbus_root_device.  See the code in vmbus_device_add() where the
-> vmbus_root_device is set to the dev field of the platform device.
-> 
-Appreciate your help with making this code looks better! Will try your 
-suggestion out!
+> Wiadomo=C5=9B=C4=87 napisana przez Chris Morgan =
+<macroalpha82@gmail.com> w dniu 05.08.2024, o godz. 18:20:
+>=20
+> On Sat, Aug 03, 2024 at 03:24:06PM +0200, Piotr Oniszczuk wrote:
+>> Hi Cristian,
+>>=20
+>> Will you find some time and motivation to add CEC support to =
+Quad-Pixel (QP) TX controller ?
+>>=20
+>> Probably you recall - I added initial CEC support to yours v1 series =
+and i=E2=80=99m stuck with timing issue (cec pulses are 3x too long).
+>> For me it looks like clock issue.
+>> I=E2=80=99m out of ideas how to move forward with this timming =
+issue=E2=80=A6.
+>=20
+> I wonder if using the cec-gpio on "GPIO4 RK_PC1" for the CEC gpio and
+> "GPIO1 RK_PA5" for the HPD gpio is a possibility? Just a thought.
+>=20
+> Chris
 
->> +	domain = NULL;
->> +	if (parent) {
->> +		domain = irq_find_host(parent);
->> +		of_node_put(parent);
->> +	}
->> +
->> +	/*
->> +	 * `domain == NULL` shouldn't happen.
->> +	 *
->> +	 * If somehow the code does end up in that state, treat this as a configuration
->> +	 * issue rather than a hard error, emit a warning, and let the code proceed.
->> +	 * The NULL parent domain is an acceptable option for the `irq_domain_create_hierarchy`
->> +	 * function called later.
->> +	 */
->> +	if (!domain)
->> +		WARN_ONCE(1, "No interrupt-parent found, check the DeviceTree data.\n");
->> +	return domain;
->> +}
-> 
-> Here's a thought, which may or may not be a good one:  Push some or all
-> the functionality of hv_pci_of_irq_domain_parent() into vmbus_device_add().
-> In the simplest case, have vmbus_device_add() store the of_node (which is
-> already the "np" local variable) in a global static variable, and provide
-> hv_get_vmbus_of_node() instead of get_vmbus_root_device().
-> 
-> The next step to consider would be to compute the parent in
-> vmbus_device_add(), and provide hv_get_vmbus_parent_of_node() instead
-> of hv_get_vmbus_of_node(). One difference is that vmbus_device_add()
-> runs for both x86 and arm64, while hv_pci_of_irq_domain_parent() is for
-> arm64 only.  The parent node may not exist on x86, but maybe that isn't
-> really a problem.
-> 
-> Pushing everything into vmbus_device_add() would entail doing the
-> irq_find_host(parent) as well, and the accessor function would just
-> return the IRQ domain. In that case, hv_pci_of_irq_domain_parent()
-> can go away. The domain might be NULL on x86, but that's OK
-> because the accessor function won't be called on x86.
-> 
-> Maybe there's a snag that prevents this idea from working well,
-> particularly on x86 where the domain will be NULL. But if it works,
-> it seems slightly less messy to me, though that is a judgment call.
-> I'll leave it to you to decide, and I'm OK either way. :-)
-> 
-I'll explore your great idea, thanks for sharing! Since v1 this code has 
-improved quite a bit thanks to your suggestions :)
-
-> Michael
-> 
->> +
->> +#endif
->> +
->>   static int hv_pci_irqchip_init(void)
->>   {
->>   	static struct hv_pci_chip_data *chip_data;
->> @@ -906,10 +936,29 @@ static int hv_pci_irqchip_init(void)
->>   	 * IRQ domain once enabled, should not be removed since there is no
->>   	 * way to ensure that all the corresponding devices are also gone and
->>   	 * no interrupts will be generated.
->> +	 *
->> +	 * In the ACPI case, the parent IRQ domain is supplied by the ACPI
->> +	 * subsystem, and it is the default GSI domain pointing to the GIC.
->> +	 * Neither is available outside of the ACPI subsystem, cannot avoid
->> +	 * the messy ifdef below.
->> +	 * There is apparently no such default in the OF subsystem, and
->> +	 * `hv_pci_of_irq_domain_parent` finds the parent IRQ domain that
->> +	 * points to the GIC as well.
->> +	 * None of these two cases reaches for the MSI parent domain.
->>   	 */
->> -	hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
->> -							  fn, &hv_pci_domain_ops,
->> -							  chip_data);
->> +#ifdef CONFIG_ACPI
->> +	if (!acpi_disabled)
->> +		hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
->> +			fn, &hv_pci_domain_ops,
->> +			chip_data);
->> +#endif
->> +#if defined(CONFIG_OF)
->> +	if (!hv_msi_gic_irq_domain)
->> +		hv_msi_gic_irq_domain = irq_domain_create_hierarchy(
->> +			hv_pci_of_irq_domain_parent(), 0, HV_PCI_MSI_SPI_NR,
->> +			fn, &hv_pci_domain_ops,
->> +			chip_data);
->> +#endif
->>
->>   	if (!hv_msi_gic_irq_domain) {
->>   		pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
->> diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
->> index 5e39baa7f6cb..b4aa1f579a97 100644
->> --- a/include/linux/hyperv.h
->> +++ b/include/linux/hyperv.h
->> @@ -1346,6 +1346,8 @@ static inline void *hv_get_drvdata(struct hv_device *dev)
->>   	return dev_get_drvdata(&dev->device);
->>   }
->>
->> +struct device *get_vmbus_root_device(void);
->> +
->>   struct hv_ring_buffer_debug_info {
->>   	u32 current_interrupt_mask;
->>   	u32 current_read_index;
->> --
->> 2.34.1
->>
-
--- 
-Thank you,
-Roman
+Chris,
+Oscilloscope shows pulses on cec line - issue is that cec pulses =
+observed on oscilloscope have timings 2,9 times longer that should be =
+(start bit is 10,7mS instead of 3.6; zero is 4.4 instead 1.5 while one =
+is 1,7 instead of 0.6).
+Pulses durations seems to be =E2=80=9Eproportional" (start; zero; one) - =
+all are almost exact 2.9x too long.=20
+For me this sounds like wrong clock issue.
+I can try switch to gpio outs - but I think better is to first make sure =
+that cec clock is set ok.
+Im not sure what is best way to do such cec clock check...  =20
+=20
+>=20
+>>=20
+>>=20
+>>=20
+>>> Wiadomo=C5=9B=C4=87 napisana przez Cristian Ciocaltea =
+<cristian.ciocaltea@collabora.com> w dniu 01.08.2024, o godz. 04:25:
+>>>=20
+>>> The Rockchip RK3588 SoC family integrates the Synopsys DesignWare =
+HDMI
+>>> 2.1 Quad-Pixel (QP) TX controller [4], which is a new IP block, =
+quite
+>>> different from those used in the previous generations of Rockchip =
+SoCs.
+>>>=20
+>>> This is the last component that needs to be supported in order to =
+enable
+>>> the HDMI output functionality on the RK3588 based SBCs, such as the
+>>> RADXA Rock 5B. The other components are the Video Output Processor
+>>> (VOP2) and the Samsung IP based HDMI/eDP TX Combo PHY, for which =
+basic
+>>> support has been already made available via [1] and [2], =
+respectively.
+>>>=20
+>>> Please note this is a reworked version of the original series, which
+>>> relied on a commonized dw-hdmi approach.  Since the general =
+consensus
+>>> was to handle it as an entirely new IP, I dropped all patches =
+related to
+>>> the old dw-hdmi and Rockchip glue code - a few of them might still =
+make
+>>> sense as general improvements and will be submitted separately.
+>>>=20
+>>> Additionally, as suggested by Neil, I've sent the reworked bridge =
+driver
+>>> as a separate patchset [4], hence this series handles now just the =
+new
+>>> Rockchip QP platform driver.
+>>>=20
+>>> It's worth mentioning the HDMI output support is currently limited =
+to
+>>> RGB output up to 4K@60Hz, without audio, CEC or any of the HDMI 2.1
+>>> specific features.  Moreover, the VOP2 driver is not able to =
+properly
+>>> handle all display modes supported by the connected screens, e.g. it
+>>> doesn't cope with non-integer refresh rates.
+>>>=20
+>>> A possible workaround consists of enabling the display controller to
+>>> make use of the clock provided by the HDMI PHY PLL. This is still =
+work
+>>> in progress and will be submitted later, as well as the required DTS
+>>> updates.
+>>>=20
+>>> To facilitate testing and experimentation, all HDMI output related
+>>> patches, including those part of this series, as well as the bridge
+>>> driver, are available at [3].
+>>>=20
+>>> So far I could only verify this on the RADXA Rock 5B board.
+>>>=20
+>>> Thanks,
+>>> Cristian
+>>>=20
+>>> [1]: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
+>>> [2]: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY =
+driver")
+>>> [3]: =
+https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/com=
+mits/rk3588-hdmi-bridge-v6.11-rc1
+>>> [4]: =
+https://lore.kernel.org/lkml/20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@coll=
+abora.com/
+>>>=20
+>>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>>> ---
+>>> Changes in v2:
+>>> - Reworked the glue code for RK3588 into a new Rockchip platform =
+driver
+>>> - Moved bridge driver patches to a separate series [4]
+>>> - Dropped all the patches touching to the old dw-hdmi and RK =
+platform
+>>> drivers
+>>> - Added connector creation to ensure the HDMI QP bridge driver does =
+only
+>>> support DRM_BRIDGE_ATTACH_NO_CONNECTOR
+>>> - Link to v1: =
+https://lore.kernel.org/r/20240601-b4-rk3588-bridge-upstream-v1-0-f6203753=
+232b@collabora.com
+>>>=20
+>>> ---
+>>> Cristian Ciocaltea (3):
+>>>     dt-bindings: display: rockchip: Add schema for RK3588 HDMI TX =
+Controller
+>>>     drm/rockchip: Explicitly include bits header
+>>>     drm/rockchip: Add basic RK3588 HDMI output support
+>>>=20
+>>> .../display/rockchip/rockchip,dw-hdmi-qp.yaml      | 188 +++++++++
+>>> drivers/gpu/drm/rockchip/Kconfig                   |   8 +
+>>> drivers/gpu/drm/rockchip/Makefile                  |   1 +
+>>> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c     | 430 =
++++++++++++++++++++++
+>>> drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |   2 +
+>>> drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   4 +-
+>>> 6 files changed, 632 insertions(+), 1 deletion(-)
+>>> ---
+>>> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+>>> change-id: 20240601-b4-rk3588-bridge-upstream-a27baff1b8fc
+>>>=20
+>>>=20
+>>> _______________________________________________
+>>> Linux-rockchip mailing list
+>>> Linux-rockchip@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>>=20
+>>=20
 
 
