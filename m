@@ -1,304 +1,198 @@
-Return-Path: <linux-kernel+bounces-274131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6249473C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:18:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FEFC947347
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533BE1C20E21
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:18:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9386B20B54
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 02:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B689013D521;
-	Mon,  5 Aug 2024 03:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA8744C6C;
+	Mon,  5 Aug 2024 02:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="jGNXpm4e"
-Received: from mail-m102.netease.com (mail-m102.netease.com [154.81.10.2])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JgX8q69b"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2040.outbound.protection.outlook.com [40.107.247.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0555589B;
-	Mon,  5 Aug 2024 03:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722827867; cv=none; b=aWxH2pkCEDGyGUhW8Y20KzPCMW6BuO+nVmnoWZafrQBoQL4Xq+VMUXqw996DYr/U6xP/8wC3WhwPkQPB4e4/ZDQvtBLKIgBeQQiMx6LbZZStjLcm2ASLmD9fJ9nHRkrKeTQWxyiM12cixqXG4ZqnL5LtBoXUzfZxm7RE99SMXe0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722827867; c=relaxed/simple;
-	bh=JB9cEamainRQayuIIKP8QoE3Q7NeLpHSyt4ffX47KTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AhDYqL+EYhOHHhH71dF+bbjQtIws7RPlp8dLhkDDk5O9U/QqCdmAj+z9JRuYFVTzDRjI+LOLxJm1WMT6MyIb6iVnwm5NplK43YYJX/tSnGooBOuHG5u4HFW9RsOnHKiuhf8a510KhvFiY76n5pYro3/CL76HkZF1/8Icl58SK70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=jGNXpm4e; arc=none smtp.client-ip=154.81.10.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=jGNXpm4eEJnnDQ6HDu8pM04d2juDsBkM7XBWIfZtoUkA+mR8OtRL3PRtX0meVGgHyblQVEmD3codt64UuOc/UcdNLbcWZeP9PeqEc9bs1ug6QJsHk5zXGfieUq94KbYEf10XOFW1BFCYuvF/dtvtFdRY7mcoFP2H20jEFj0VOLk=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=Y0/hH3uagaxEC6Xi8wQOFeGwbmyZcR2iigSZoutT6D8=;
-	h=date:mime-version:subject:message-id:from;
-Received: from [172.16.12.49] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 1FC2FA028F;
-	Mon,  5 Aug 2024 09:22:13 +0800 (CST)
-Message-ID: <7b0d3bc3-4f23-4139-ac6b-10b6b9f85092@rock-chips.com>
-Date: Mon, 5 Aug 2024 09:22:12 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4A2EDC;
+	Mon,  5 Aug 2024 02:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722823711; cv=fail; b=NJe0FwWmyu+oQyyMbkZ/qTNOoglsya69LAK/PdIqphxKEukhtnStA1e23iqp3tMgV+wYOYqU9ZwbMtVeJQvEUjFTX0BHJb209nSFhICXc6IPRVBD+uzCLgICqILR7Kt14rVQ/dLzjT2OFOcYaPw8PbtUHQLKws2aJ7DCwEptpjs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722823711; c=relaxed/simple;
+	bh=2YbvaC5h+j02yEOTZdeYjg4lgq0tZMe65qYKmMu4qmQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZCoGm+1FQRGTe784AXhIzousdbtEyKqWgZe9Ll8vQ33fpCiR3Bihpa585f4W8+S48bEvmaosB6P9y9Kp46GBtUEhHB0KUQ3aCf5feKlAdrZiYv3D0Jj9LldYyreG6wZTFdTfMKeKTWd852impUZNy4I4u09UTIDbbIW/eE7WUYc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JgX8q69b; arc=fail smtp.client-ip=40.107.247.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bgvnbrpqhy8FWWfG9BVOtggWIy/T6bDWv6yX6GefOeGu64yy8xSLCrmoTJXEWz1Zo8BWBFcpC1lqJ+yvxxxczqOiH0+3BrYgHoJYXL3Pd/5otkZeZd4bw66HukQ00SDR0AXx56ainwjMse5Ig9Y4n8uAKF8Wv0j8J2j7p7U+mrLuGt8QKe2Vq1XmRcqJk04Zx5dHb9OvX70VlnYL4987wZsCEn36BBPyjnBdQkKsnEjmdyRyJt7MwSnPd71audVtHIXKPYzRQnXKqdwsBziY34CuN8aCk55mi8ezlF2PDqx052t0Ni/lbQINe43LLDzYf06U6Bx3a74P62eFnM+hbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2YbvaC5h+j02yEOTZdeYjg4lgq0tZMe65qYKmMu4qmQ=;
+ b=PnD+R7wRbzpoPkcyWEjQN5LL2WJoSvAb5NgRWoyQ6mgAS+Dr41YOK2vcofSB4FMddClQDy1x0Vq2YiJHFLT00CiM3uM07zvI/6VykKJznBaY6zPn45qZNN+8JKzV0Ph2X5iGLVueJFdppJj5a7GdkwebaMcAbCostfhIIucV+VP6Mt6CIDqWrYE1+3aOIwCsbzmNlYAQSOuVPUN/hs4pGOmt5DTCsILBMJnjwK67EsIW+BtyTJdaXnjEvi68RTQy4xr9VR+2GTK6aS7IWouhD9Mz/9MwC8dt9ywjZZTR/3SM8blxkgBhwCJ08YMkS5k02xzHG7i4pS2SRbRmd2gfeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2YbvaC5h+j02yEOTZdeYjg4lgq0tZMe65qYKmMu4qmQ=;
+ b=JgX8q69bNfjpOxvK4/48oUtrrL3EZh/5t9+xES2AQhxHip3zVVY3qnA6BTOHeEKQcVorl7qs+WOwsnNXVUS6+NHPFH/49MFNUQVr5Emi68Fr//bF/9Oy3PiOLYFM8y39410anIdVO3Gbvjm+aNHvswlEWQJInuh/mJf610j4XsiqenKba/lYtcLj6k7ILUd4kYOSfnVFoWZ2e14okjYQvMG/bJ+jOhDIWWVrbzlWEoaBnkzBqKzDSZ7kx4dbu6wy5tu4GJ5ULPedF7JnytExbMarmnMk/rPkLtWbRHjd0Tr6NYzNQ8TyQ4aLl5Ypxx2XYYWv5iOoJab1JanS7MpoOA==
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by GVXPR04MB10900.eurprd04.prod.outlook.com (2603:10a6:150:21c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.24; Mon, 5 Aug
+ 2024 02:08:26 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%4]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
+ 02:08:26 +0000
+From: Bough Chen <haibo.chen@nxp.com>
+To: Stefan Wahren <wahrenst@gmx.net>, "linus.walleij@linaro.org"
+	<linus.walleij@linaro.org>, "brgl@bgdev.pl" <brgl@bgdev.pl>
+CC: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH v2 2/2] gpio: vf610: add get_direction() support
+Thread-Topic: [PATCH v2 2/2] gpio: vf610: add get_direction() support
+Thread-Index: AQHa4/V1L25YqFOP0UC/QKipx5gaSbIT9gKAgAP58yA=
+Date: Mon, 5 Aug 2024 02:08:26 +0000
+Message-ID:
+ <DU0PR04MB949645FC8DDB14D7976D594E90BE2@DU0PR04MB9496.eurprd04.prod.outlook.com>
+References: <20240801093028.732338-1-haibo.chen@nxp.com>
+ <20240801093028.732338-3-haibo.chen@nxp.com>
+ <50b97539-cef2-4a75-a750-96adc2467f67@gmx.net>
+In-Reply-To: <50b97539-cef2-4a75-a750-96adc2467f67@gmx.net>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9496:EE_|GVXPR04MB10900:EE_
+x-ms-office365-filtering-correlation-id: 2b550491-127e-47c5-97ea-08dcb4f37dde
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?L1BtUWxLNURULy94STJ1QWdaTy9MOVlEeFlmWXp2SUxDb2diVWVzRTJxWk9H?=
+ =?utf-8?B?UTJSOVR5aXU1TXNmcjNxSG5VbjdadHJjOFBtYmpCdDh4U3lmVkNJRnlCT1B0?=
+ =?utf-8?B?SnZTamo4RVlsajZ3QVBTNHI1VWVXQ3ltY29uZHRCUXpzakN2U0s3MmIyMkpR?=
+ =?utf-8?B?ZCtNYjhDZ3ludEhlRDh4UlZDME9UU09LSzFEbHh5RHRaNVplRnZWNURzcmhp?=
+ =?utf-8?B?RXh4WStPNnZoVVV0RG52KzBjR0FVZlJ0T005cjVRNlFpa01uNWo2SDM2TzhH?=
+ =?utf-8?B?QnNWc2o2QkRTSVpndXNhZSs4aEpDYWlyaEpMUk9vbFdzM1M1bFJhQXpZaEhI?=
+ =?utf-8?B?UFFNYlg1N3VxdE5FYUx0aDBBaXNjME5DdC85bEI0eFMzZFgwQTUvRy9qM1Fv?=
+ =?utf-8?B?UVRMc3k4S0hQZ2dFZVRFZVpJUmVjdGNIdjZpejVCV1RZTHZ2aE1CT1dOVDZk?=
+ =?utf-8?B?MlBKamluTjZPL2dLenVNWXpIUTE2R3lLQ2wwWmR3c2l2aXpPWU1sRnZta1BT?=
+ =?utf-8?B?RjNXRlBqbndrZktCckl2aC9ZanUwMDFJSUtybGlqUXBncFVJTUNCZzJtNzFi?=
+ =?utf-8?B?aEt0aVh5OWdMbHErcmxGeDlWUnJFaVZMYzVSbkVUUXlhbStJb1QyelNxSzhz?=
+ =?utf-8?B?UnFzVXBTUkhDTHdQV25Gc3UrV000Zm11aHA3d2tPTlJnQzlYSWs1dGl2bDly?=
+ =?utf-8?B?YlhBTzNudzJ2bGVjZXVHRjJETnZJVWxsR2ViR1hEWXJXbnN5UllaZTRXNWdT?=
+ =?utf-8?B?OXJEQU9oL2hMS1NiWjQxNWZteFJaU3hNakFqbE56NjNhc1FYcW1rNmQ1bFV4?=
+ =?utf-8?B?eGFPTk5zNGxvQXdtcU1nblZkK0xlOG0rcHpjakNlR21PSFlSTzZzK3ZOQW9l?=
+ =?utf-8?B?K2dHcVdrRVc0dUlQSy9tclRlRll1Z1hKdW52MDUyRzdKelllZWZoMEljdk1N?=
+ =?utf-8?B?NDhEeWJVNGVrRys1cmtEQzg3T3J5cXIzZ3BHdzRCa2dpUjcwUlhrT0dKQ054?=
+ =?utf-8?B?NzI2Q2JLenJqc0ZEZnNXN2k1Z3EwbkhTeTg1Tmx1dEVZTEdwdk1GSUNOWTMw?=
+ =?utf-8?B?V3h4eVRqM2p3UEt1ZE9SRXovLzhFWlRkVDZVcHpGL21ROWFxeDlaQ3pnaEhH?=
+ =?utf-8?B?S09nYlNYSFJPT2NnR1VxRDUzQ29RRlBveGJxZjB6WlczdnNKdmVNZHd1U2lX?=
+ =?utf-8?B?Ky9PWVVKR2NGbzNSNTBHMVc0SXowK1E5alA4WHJZR0JjeDYxakYyTWpGeXI5?=
+ =?utf-8?B?cUJIdGwyajViUFEyM3owQXpwRzhOOEh4WE1PdmFGa1pzemdzSGlpc0o2ZmJJ?=
+ =?utf-8?B?b1NSVTVCWUR6REVCZDJncytUZUMzTGowclVHUFQyelZXRE01ZVArNGNiZW8r?=
+ =?utf-8?B?L3VCZHlZNU95VVVTcjc4SCs1dktKQVdKVXJBRWwyS25uNXYzUkRUcUdLQXhL?=
+ =?utf-8?B?cit1UitHUXhsdXhPZktZc0ZwcktwQTZLeTJiQ1BMS0gwVGVTQk9mUkswUDVZ?=
+ =?utf-8?B?UXNnd0Y1MjMwa2ZZK2FETzFVeGFuNFRmejFScURhZnRnVko0blFYRmVCZnY5?=
+ =?utf-8?B?N01uZmNXb0VkNWhFU1ZwWjY3Uk52azQraHZ5Q0VWbmlZOVFDK0hiWXdhUk9l?=
+ =?utf-8?B?Rmp4ZGIyaFNjUXdhUjNWY2wyM203MzA4Y1lBZ3BMdEVQN2xVaE1UVkNlMFpS?=
+ =?utf-8?B?KzZWRTlvUFp1aVJmdnZLRllOSGpvMkRXMmFaY1EvLzBRdEl6NnRER29qN21h?=
+ =?utf-8?B?KzgzdVNGWm8xdVpObzg1eVJ4UGpaTVhMc3ZvSXAwSmdUcFJxV1F4dDB6TnFh?=
+ =?utf-8?B?S0lwS1d1TkZGWVBqR05WYW5oRHJhZVBDUHVpaDJUMkE1emN5bzFWWFNENnhZ?=
+ =?utf-8?B?OTdOcTRTem5qRWZaQmpteGREVXpNT3NNSE0zQmNLM20xdEE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?cERuSkJ5ZHFKQU85cS9pSy9HYVc2bGlGSnBGTGtENjV3VG1mMDhYK1ZKd1dB?=
+ =?utf-8?B?TnJ4Wi9KdlVaSVFiTjhOdTFla1hhSWFHQWVpVFlMbklmcC8rdnVlVm52aXNS?=
+ =?utf-8?B?ZGo3Y1kyMlhUZDYvdWFibnJKTDZpSFBhQ29tKzZBVm9POFg4eHUxWHBUZmRN?=
+ =?utf-8?B?RUJQVjY1ZUlubVlNTUJhNlIwQnYxUEdFZzlodUJhV0UyMkNzVTVMTHQvOWI3?=
+ =?utf-8?B?K2ZVQWZQQUVwMnh0eEV2Uk9FYWdTWVRabWRGUGhrRU0xNUtVYXJwOGhNc3BQ?=
+ =?utf-8?B?M2tka0N1UXpYQUlwSEkza3NQSnhHMjZ2NVRkUFpmQWZjQ0l2allWVUt6d09u?=
+ =?utf-8?B?enZqckJDSXZHSVFHR2Jja1YrL0hyc1cyNkdIblljQWR6YmRES00wZzYrR1I1?=
+ =?utf-8?B?Sm8remlnUXJtNFFpb0N2UEcyRE9zNHZIU0N4TW52WUFUT0l4c3VzVUhLWXNT?=
+ =?utf-8?B?MUVQRFZ0T1Y3NXhCUmF0ekhqdW1odkppalJodjZWajhGM0JpQU9jbGV5bGVz?=
+ =?utf-8?B?Nm1LWm9OSTgyazZLL3duNGJseTJlRFNreUZaMmlKaHBLQ0Rkc3U0MFNNNEJh?=
+ =?utf-8?B?T0E2ckdYMkhuM0FRQnR6bFNCb3JZTDhxc0NQeEdSTjFyZ1lNRm1QL0xyYTMv?=
+ =?utf-8?B?dk5XN1VUNGZLQy9mUWc2NXF6ZVRNNTRGNVdvVkpMb2VldW42QWFvaGRkR0la?=
+ =?utf-8?B?NlNvYTBHSVA2Ym9ZMVlKeUhQUkt6U2NDWnNXc3kvUXh4RUlhc1JRcVNJQWEx?=
+ =?utf-8?B?U1AzVW43dStiZGszdm9NT2VDSnNFMm0vendOQW1qMkRnamswMXUxcWo5NVdL?=
+ =?utf-8?B?SUpKUFA1VG5ZUGZTU1pCNFplMXFvSUVsa1h3cU00SWlPcDBYUTJXNEhGRWFx?=
+ =?utf-8?B?dE16ZllWQzNEU0R4RUJ1RG5FS2hnVTVUa0Y4Ly9FOFc4cVovdURlckRsTTU0?=
+ =?utf-8?B?RlQ5eTNtbTlCam9LNFNvRXgxWFF6VTZHeFBpblBJL293UHRXM1ovNjFERVkx?=
+ =?utf-8?B?bGRKdThvQmhIKzI5SktqaTV2L2R0QW1KZHZrYnZ4Mkc5VjljVTRBaHRPRmpS?=
+ =?utf-8?B?TEEvYWJGekVLYVBmN3RUR2ZIVDg0MFdQMVBaeFI1K0FiVlk4NjJkRUxid003?=
+ =?utf-8?B?U2tGeTVENldIT1dpeVJCc1R0RXptQTNjcHdkcEQ4QUNtK29lbzVtRVR2Z29I?=
+ =?utf-8?B?eFBqSFRvWDE2c0lxSmc4Y0xDZTB5U1JELzAvSHJ3N2ZQbUlzODJxRXU5Wjhu?=
+ =?utf-8?B?bnZlSlNUWmxGZlpvS2NLWk04OE1QUkYyTzN0MTl0MVhGbGdyYmlHbm8xVUZI?=
+ =?utf-8?B?b3dONGk2bVFFTThVSzZyK1JLZVlGR1o1N255TCtTc0MrWXVBZ2ZHc2thTmph?=
+ =?utf-8?B?MmdWNi9uZHgxMkxmSElxdnJ1TmxjNDFDeFMrZ2pvUXkvaHdPL3BOVjJ5THBP?=
+ =?utf-8?B?V29pK3hoRzZjcHN6NzdkN1VJQnZZZGp3Kzc3akp1c0h1OHgzQzJpdUFkVXRZ?=
+ =?utf-8?B?MHA5SllRY2p4c3FqZ2pBL2Frbi9BLzQyaU1RcWNraWM4V3BMSTJGTjRzUG9t?=
+ =?utf-8?B?NGFqZFN0WVRicTloU2FBWWl4MDJWNVExcjZSaVlwcmM4VXNOTzdwNXVSdU1v?=
+ =?utf-8?B?TFp3SFRMeTVtUEpCRlFXR1dOMTFCOG51TnJHaDZDazZiUnNSc0JRK0EwaCtx?=
+ =?utf-8?B?VVYxY01aK0pSdWxhaHJ3SHNGUEtPRm1aUmdDVU9zYVhEL3lmWkpDN1VLdlB5?=
+ =?utf-8?B?dm52cVRYVHpSdXlBdG4xL05qNGxheWx2OENXdWwvd3QxaVZDWTZwcTEraUdZ?=
+ =?utf-8?B?c2tReVZIbWc0a0taalNxeTg1TkcrYWxHOGlSb0ZIaE91c1Z2bkd1a0JjN29z?=
+ =?utf-8?B?S2pGM25HTS9DblVGUHhqOU5HWmlwd1d0YS9VKzhZemsxWHNvMDBkYnZsYXhm?=
+ =?utf-8?B?YjdFdUNUYU1FVkpNZW9mZVBCUm16SnJ2YTI0Ujl5Y0tTSGdPckVyMFNMc2Nt?=
+ =?utf-8?B?dmJqdDlvd2JWd01zeEhzVVZ5aU5RS0FwMDI5SGxIa1UxZ2VNNUFMZVV2Nkxp?=
+ =?utf-8?B?YkVYQ1g4V3orcHBHclo1bmRXVjFxek1BQU93M3FPT3R6ZVFvbWxDR0dBMlly?=
+ =?utf-8?Q?pCAw=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] soc: rockchip: power-domain: Add power domain support
- for rk3576
-To: Detlev Casanova <detlev.casanova@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org
-References: <20240802151647.294307-1-detlev.casanova@collabora.com>
- <20240802151647.294307-4-detlev.casanova@collabora.com>
-From: zhangqing <zhangqing@rock-chips.com>
-In-Reply-To: <20240802151647.294307-4-detlev.casanova@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkxOQ1ZMThofSBgYHRhKTk1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9120213eb903a8kunm1fc2fa028f
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mkk6MAw5FzI9MR8zOjAuTlY8
-	UUkKCStVSlVKTElJQ0lLQkhOQkhPVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpITktINwY+
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b550491-127e-47c5-97ea-08dcb4f37dde
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2024 02:08:26.1537
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +pOmKy44zV1DYnbnlOhWssMm76sYqCuIIARsUwnPoWdR8gz4gPDVGXNgaa0WtD8ib5FQ2l6+2XvQ/UgqmDi+cg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10900
 
-hi,
-
-This submission is also required for the pd of rk3576.
-
-commit feb16e5db3c5e6ff7f18bc3c850c3758fad87caa
-Author: Finley Xiao <finley.xiao@rock-chips.com>
-Date:   Tue May 14 17:40:24 2024 +0800
-
-     soc: rockchip: power-domain: Add memory reset support for rk3576
-
-     This fixes panic when pd power on.
-     rockchip-pm-domain 27380000.power-management:power-controller: 
-failed to set domain 'nputop', target_on= 1, val=0
-     Kernel panic - not syncing: panic_on_set_domain set ...
-     Call trace:
-     dump_backtrace+0xf4/0x114
-     show_stack+0x18/0x24
-     dump_stack_lvl+0x6c/0x90
-     dump_stack+0x18/0x38
-     panic+0x14c/0x338
-     rockchip_do_pmu_set_power_domain+0x640/0x644
-     rockchip_pd_power+0x154/0x350
-     rockchip_pd_power_on+0x24/0x30
-     genpd_power_on+0x1d4/0x2ec
-     genpd_power_on+0x7c/0x2ec
-     genpd_runtime_resume+0xb0/0x384
-     __rpm_callback+0x7c/0x3c4
-     rpm_resume+0x43c/0x678
-     __pm_runtime_resume+0x4c/0x90
-     rknpu_power_on+0xa0/0x2d8
-     __rknpu_action_ioctl+0x54/0x230
-     drm_ioctl_kernel+0x80/0xf8
-     drm_ioctl+0x2d4/0x554
-     __arm64_sys_ioctl+0x90/0xc8
-     invoke_syscall+0x40/0x104
-     el0_svc_common+0xbc/0x168
-     do_el0_svc+0x1c/0x28
-     el0_svc+0x1c/0x68
-     el0t_64_sync_handler+0x68/0xb4
-     el0t_64_sync+0x164/0x168
-
-     Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-     Change-Id: Ic73413d48335ef6bc57f3793ba6e3b39d4ecd100
-
-diff --git a/drivers/soc/rockchip/pm_domains.c 
-b/drivers/soc/rockchip/pm_domains.c
-index 1bd9b8280667..8bb2a5904f83 100644
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -341,6 +341,7 @@ static void rockchip_pmu_unlock(struct 
-rockchip_pm_domain *pd)
-         .pwr_w_mask = (pwr) << 16,                      \
-         .pwr_mask = (pwr),                              \
-         .status_mask = (status),                        \
-+       .mem_status_mask = (r_status),                  \
-         .repair_status_mask = (r_status),               \
-         .req_offset = r_offset,                         \
-         .req_w_mask = (req) << 16,                      \
-@@ -2287,6 +2288,9 @@ static const struct rockchip_pmu_info rk3568_pmu = {
-  static const struct rockchip_pmu_info rk3576_pmu = {
-         .pwr_offset = 0x210,
-         .status_offset = 0x230,
-+       .chain_status_offset = 0x248,
-+       .mem_status_offset = 0x250,
-+       .mem_pwr_offset = 0x300,
-         .req_offset = 0x110,
-         .idle_offset = 0x128,
-         .ack_offset = 0x120,
-
-在 2024/8/2 23:15, Detlev Casanova 写道:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
->
-> This driver is modified to support RK3576 SoCs and lists the power domains.
->
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->   drivers/pmdomain/rockchip/pm-domains.c | 69 ++++++++++++++++++++++++--
->   1 file changed, 66 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
-> index 9b76b62869d0d..f0330bb51685f 100644
-> --- a/drivers/pmdomain/rockchip/pm-domains.c
-> +++ b/drivers/pmdomain/rockchip/pm-domains.c
-> @@ -33,6 +33,7 @@
->   #include <dt-bindings/power/rk3368-power.h>
->   #include <dt-bindings/power/rk3399-power.h>
->   #include <dt-bindings/power/rk3568-power.h>
-> +#include <dt-bindings/power/rk3576-power.h>
->   #include <dt-bindings/power/rk3588-power.h>
->   
->   struct rockchip_domain_info {
-> @@ -50,6 +51,7 @@ struct rockchip_domain_info {
->   	u32 pwr_offset;
->   	u32 mem_offset;
->   	u32 req_offset;
-> +	u32 delay_us;
->   };
->   
->   struct rockchip_pmu_info {
-> @@ -144,9 +146,26 @@ struct rockchip_pmu {
->   	.active_wakeup = wakeup,			\
->   }
->   
-> -#define DOMAIN_RK3036(_name, req, ack, idle, wakeup)		\
-> +#define DOMAIN_M_O_R_G(_name, p_offset, pwr, status, r_status, r_offset, req, idle, ack, g_mask, delay, wakeup)	\
->   {							\
-> -	.name = _name,				\
-> +	.name = _name,					\
-> +	.pwr_offset = p_offset,				\
-> +	.pwr_w_mask = (pwr) << 16,			\
-> +	.pwr_mask = (pwr),				\
-> +	.status_mask = (status),			\
-> +	.repair_status_mask = (r_status),		\
-> +	.req_offset = r_offset,				\
-> +	.req_w_mask = (req) << 16,			\
-> +	.req_mask = (req),				\
-> +	.idle_mask = (idle),				\
-> +	.ack_mask = (ack),				\
-> +	.delay_us = delay,				\
-> +	.active_wakeup = wakeup,			\
-> +}
-> +
-> +#define DOMAIN_RK3036(_name, req, ack, idle, wakeup)	\
-> +{							\
-> +	.name = _name,					\
->   	.req_mask = (req),				\
->   	.req_w_mask = (req) << 16,			\
->   	.ack_mask = (ack),				\
-> @@ -175,6 +194,9 @@ struct rockchip_pmu {
->   #define DOMAIN_RK3568(name, pwr, req, wakeup)		\
->   	DOMAIN_M(name, pwr, pwr, req, req, req, wakeup)
->   
-> +#define DOMAIN_RK3576(name, p_offset, pwr, status, r_status, r_offset, req, idle, g_mask, delay, wakeup)	\
-> +	DOMAIN_M_O_R_G(name, p_offset, pwr, status, r_status, r_offset, req, idle, idle, g_mask, delay, wakeup)
-> +
->   /*
->    * Dynamic Memory Controller may need to coordinate with us -- see
->    * rockchip_pmu_block().
-> @@ -552,7 +574,10 @@ static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool power_on)
->   			/* if powering up, leave idle mode */
->   			rockchip_pmu_set_idle_request(pd, false);
->   
-> -			rockchip_pmu_restore_qos(pd);
-> +			if (pd->info->delay_us)
-> +				udelay(pd->info->delay_us);
-> +			else
-> +				rockchip_pmu_restore_qos(pd);
->   		}
->   
->   		clk_bulk_disable(pd->num_clks, pd->clks);
-> @@ -1106,6 +1131,28 @@ static const struct rockchip_domain_info rk3568_pm_domains[] = {
->   	[RK3568_PD_PIPE]	= DOMAIN_RK3568("pipe", BIT(8), BIT(11), false),
->   };
->   
-> +static const struct rockchip_domain_info rk3576_pm_domains[] = {
-> +	[RK3576_PD_NPU]		= DOMAIN_RK3576("npu",    0x0, BIT(0),  BIT(0), 0,       0x0, 0,       0,       0,       0,    false),
-> +	[RK3576_PD_NVM]		= DOMAIN_RK3576("nvm",    0x0, BIT(6),  0,      BIT(6),  0x4, BIT(2),  BIT(18), BIT(2),  0,    false),
-> +	[RK3576_PD_SDGMAC]	= DOMAIN_RK3576("sdgmac", 0x0, BIT(7),  0,      BIT(7),  0x4, BIT(1),  BIT(17), 0x6,     0,    false),
-> +	[RK3576_PD_AUDIO]	= DOMAIN_RK3576("audio",  0x0, BIT(8),  0,      BIT(8),  0x4, BIT(0),  BIT(16), BIT(0),  0,    false),
-> +	[RK3576_PD_PHP]		= DOMAIN_RK3576("php",    0x0, BIT(9),  0,      BIT(9),  0x0, BIT(15), BIT(15), BIT(15), 0,    false),
-> +	[RK3576_PD_SUBPHP]	= DOMAIN_RK3576("subphp", 0x0, BIT(10), 0,      BIT(10), 0x0, 0,       0,       0,       0,    false),
-> +	[RK3576_PD_VOP]		= DOMAIN_RK3576("vop",    0x0, BIT(11), 0,      BIT(11), 0x0, 0x6000,  0x6000,  0x6000,  15,   false),
-> +	[RK3576_PD_VO1]		= DOMAIN_RK3576("vo1",    0x0, BIT(14), 0,      BIT(14), 0x0, BIT(12), BIT(12), 0x7000,  0,    false),
-> +	[RK3576_PD_VO0]		= DOMAIN_RK3576("vo0",    0x0, BIT(15), 0,      BIT(15), 0x0, BIT(11), BIT(11), 0x6800,  0,    false),
-> +	[RK3576_PD_USB]		= DOMAIN_RK3576("usb",    0x4, BIT(0),  0,      BIT(16), 0x0, BIT(10), BIT(10), 0x6400,  0,    true),
-> +	[RK3576_PD_VI]		= DOMAIN_RK3576("vi",     0x4, BIT(1),  0,      BIT(17), 0x0, BIT(9),  BIT(9),  BIT(9),  0,    false),
-> +	[RK3576_PD_VEPU0]	= DOMAIN_RK3576("vepu0",  0x4, BIT(2),  0,      BIT(18), 0x0, BIT(7),  BIT(7),  0x280,   0,    false),
-> +	[RK3576_PD_VEPU1]	= DOMAIN_RK3576("vepu1",  0x4, BIT(3),  0,      BIT(19), 0x0, BIT(8),  BIT(8),  BIT(8),  0,    false),
-> +	[RK3576_PD_VDEC]	= DOMAIN_RK3576("vdec",   0x4, BIT(4),  0,      BIT(20), 0x0, BIT(6),  BIT(6),  BIT(6),  0,    false),
-> +	[RK3576_PD_VPU]		= DOMAIN_RK3576("vpu",    0x4, BIT(5),  0,      BIT(21), 0x0, BIT(5),  BIT(5),  BIT(5),  0,    false),
-> +	[RK3576_PD_NPUTOP]	= DOMAIN_RK3576("nputop", 0x4, BIT(6),  0,      BIT(22), 0x0, 0x18,    0x18,    0x18,    15,   false),
-> +	[RK3576_PD_NPU0]	= DOMAIN_RK3576("npu0",   0x4, BIT(7),  0,      BIT(23), 0x0, BIT(1),  BIT(1),  0x1a,    0,    false),
-> +	[RK3576_PD_NPU1]	= DOMAIN_RK3576("npu1",   0x4, BIT(8),  0,      BIT(24), 0x0, BIT(2),  BIT(2),  0x1c,    0,    false),
-> +	[RK3576_PD_GPU]		= DOMAIN_RK3576("gpu",    0x4, BIT(9),  0,      BIT(25), 0x0, BIT(0),  BIT(0),  BIT(0),  0,    false),
-> +};
-> +
->   static const struct rockchip_domain_info rk3588_pm_domains[] = {
->   	[RK3588_PD_GPU]		= DOMAIN_RK3588("gpu",     0x0, BIT(0),  0,       0x0, 0,       BIT(1),  0x0, BIT(0),  BIT(0),  false),
->   	[RK3588_PD_NPU]		= DOMAIN_RK3588("npu",     0x0, BIT(1),  BIT(1),  0x0, 0,       0,       0x0, 0,       0,       false),
-> @@ -1284,6 +1331,18 @@ static const struct rockchip_pmu_info rk3568_pmu = {
->   	.domain_info = rk3568_pm_domains,
->   };
->   
-> +static const struct rockchip_pmu_info rk3576_pmu = {
-> +	.pwr_offset = 0x210,
-> +	.status_offset = 0x230,
-> +	.req_offset = 0x110,
-> +	.idle_offset = 0x128,
-> +	.ack_offset = 0x120,
-> +	.repair_status_offset = 0x570,
-> +
-> +	.num_domains = ARRAY_SIZE(rk3576_pm_domains),
-> +	.domain_info = rk3576_pm_domains,
-> +};
-> +
->   static const struct rockchip_pmu_info rk3588_pmu = {
->   	.pwr_offset = 0x14c,
->   	.status_offset = 0x180,
-> @@ -1359,6 +1418,10 @@ static const struct of_device_id rockchip_pm_domain_dt_match[] = {
->   		.compatible = "rockchip,rk3568-power-controller",
->   		.data = (void *)&rk3568_pmu,
->   	},
-> +	{
-> +		.compatible = "rockchip,rk3576-power-controller",
-> +		.data = (void *)&rk3576_pmu,
-> +	},
->   	{
->   		.compatible = "rockchip,rk3588-power-controller",
->   		.data = (void *)&rk3588_pmu,
-
--- 
-张晴
-瑞芯微电子股份有限公司
-Rockchip Electronics Co.,Ltd
-地址：福建省福州市铜盘路软件大道89号软件园A区21号楼
-Add:No.21 Building, A District, No.89 Software Boulevard Fuzhou, Fujian 350003, P.R.China
-Tel:+86-0591-83991906-8601
-邮编：350003
-E-mail:elaine.zhang@rock-chips.com
-****************************************************************************
-保密提示：本邮件及其附件含有机密信息，仅发送给本邮件所指特定收件人。若非该特定收件人，请勿复制、使用或披露本邮件的任何内容。若误收本邮件，请从系统中永久性删除本邮件及所有附件，并以回复邮件或其他方式即刻告知发件人。福州瑞芯微电子有限公司拥有本邮件信息的著作权及解释权，禁止任何未经授权许可的侵权行为。
-
-IMPORTANT NOTICE: This email is from Fuzhou Rockchip Electronics Co., Ltd .The contents of this email and any attachments may contain information that is privileged, confidential and/or exempt from disclosure under applicable law and relevant NDA. If you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution, or use of the information is STRICTLY PROHIBITED. Please immediately contact the sender as soon as possible and destroy the material in its entirety in any format. Thank you.
-
-****************************************************************************
-
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZWZhbiBXYWhyZW4gPHdh
+aHJlbnN0QGdteC5uZXQ+DQo+IFNlbnQ6IDIwMjTlubQ45pyIMuaXpSAyMToyMg0KPiBUbzogQm91
+Z2ggQ2hlbiA8aGFpYm8uY2hlbkBueHAuY29tPjsgbGludXMud2FsbGVpakBsaW5hcm8ub3JnOw0K
+PiBicmdsQGJnZGV2LnBsDQo+IENjOiBsaW51eC1ncGlvQHZnZXIua2VybmVsLm9yZzsgbGludXgt
+a2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gaW14QGxpc3RzLmxpbnV4LmRldg0KPiBTdWJqZWN0
+OiBSZTogW1BBVENIIHYyIDIvMl0gZ3BpbzogdmY2MTA6IGFkZCBnZXRfZGlyZWN0aW9uKCkgc3Vw
+cG9ydA0KPiANCj4gSGkgSGFpYm8sDQo+IA0KPiBBbSAwMS4wOC4yNCB1bSAxMTozMCBzY2hyaWVi
+IGhhaWJvLmNoZW5AbnhwLmNvbToNCj4gPiBGcm9tOiBIYWlibyBDaGVuIDxoYWliby5jaGVuQG54
+cC5jb20+DQo+ID4NCj4gPiBGb3IgSVAgd2hpY2ggZG8gbm90IGNvbnRhaW4gUEREUiwgY3VycmVu
+dGx5IHVzZSB0aGUgcGlubXV4IEFQSQ0KPiA+IHBpbmN0cmxfZ3Bpb19kaXJlY3Rpb25faW5wdXQo
+KSB0byBjb25maWcgdGhlIG91dHB1dC9pbnB1dCwgcGlubXV4DQo+ID4gY3VycmVudGx5IGRvIG5v
+dCBzdXBwb3J0IGdldF9kaXJlY3Rpb24oKS4gU28gaGVyZSBhZGQgdGhlIEdQSU8NCj4gPiBnZXRf
+ZGlyZWN0aW9uKCkgc3VwcG9ydCBvbmx5IGZvciB0aGUgSVAgd2hpY2ggaGFzIFBvcnQgRGF0YSBE
+aXJlY3Rpb24NCj4gPiBSZWdpc3RlciAoUEREUikuDQo+IGp1c3QgYSBxdWVzdGlvbiBhYm91dCBo
+b3cgdGhpbmdzIHdvcms6DQo+IA0KPiBmc2wsaW14N3VscC1ncGlvIGFuZCBpLk1YOTMgaGF2ZSBQ
+RERSLCBzbyBHUElPIGdldF9kaXJlY3Rpb24gaXMgaGFuZGxlZCBpbg0KPiBncGlvLXZmNjEwIGRy
+aXZlciBmc2wsdmY2MTAtZ3BpbyBkb2Vzbid0IGhhdmUgUEREUiwgc28gYWxsIEdQSU8gZGlyZWN0
+aW9uIHN0dWZmIGlzDQo+IGhhbmRsZWQgaW4gcGluY3RybC12ZjYxMCBkcml2ZXINCj4gDQo+IElz
+IHRoaXMgY29ycmVjdD8NCg0KWWVzLCBjb3JyZWN0LiB2ZjYxMF9wbXhfZ3Bpb19zZXRfZGlyZWN0
+aW9uKCkgZGlkIHRoYXQuDQoNCkJlc3QgUmVnYXJkcw0KSGFpYm8gQ2hlbg0KDQo+IA0KPiBCZXN0
+IHJlZ2FyZHMNCg==
 
