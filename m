@@ -1,212 +1,261 @@
-Return-Path: <linux-kernel+bounces-274357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A46E947746
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:26:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D933947748
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28FDE1C210C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:26:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF1A281BC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9D314D433;
-	Mon,  5 Aug 2024 08:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1097514D280;
+	Mon,  5 Aug 2024 08:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E1jJV19q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y/QHR+Hx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7A1B/NeN";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y/QHR+Hx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7A1B/NeN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B9E149E05
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B06149C45
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722846364; cv=none; b=MmupsjeRbe5WQAIINAxIcXVkvxF+re/OnxbPiV3v/coMq6Lm2bpgSQUab6F7hR6oinmLQbfSgo3Ggsx6SL4RKEGrO20JU9d1sNgiC5OiDNMzNhp/txOBHxwWyvGrml6ocom0ZDdtT0Lm9qMyH4Ug1TfV9/J5NTq0Khgs9sRm5RI=
+	t=1722846413; cv=none; b=sbQJQJpVEwKvDKKbCe3FHDR9cdBCjt5jHBm21+F133oHJhLTFlnjYJ2UFLsTdZKJI7widr6yydzCRBKo27pztld8lbzU4C665m5nR0i77hsTiaeAMTu4EADJY57kmu3iD99GmA6HHHb+mBkY5y/3wm4Cir9iuaiFc/TYq2u3kS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722846364; c=relaxed/simple;
-	bh=6dwbUCoI5S7wePU7otIi5xZ534cvsIdQTEVDfXae6E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGBamqeL6Vc/dkP6BSfTS0ZFoV6H+4mGSMT6FMIlZz+F+10CHByyCPY65asPuk3N6fBYOJ8MzCBOPNXwl4LGIAbenqtvNq4r/W75rC0tVsmSFh3nZqQBDJCzqpNspHvZLkMCa38nMnwoAxXAm/58XBtONG8azyywy224O8LNVk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E1jJV19q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722846362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1722846413; c=relaxed/simple;
+	bh=oQgG04f+MJ4CuJL1Eh3OfNzZfly3OHT33uICk614q4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sRndviap/9adatJuqZMxuVATfSMOlfOV57Flr5BhgkRXFoXJjlueK+aREdN1RGhM2yb+J/NpsSb0I81QkKWBlKa4Xp7zDUcchNJqHIuPmDlphMS07x8d7L2YKldvllFGaqzzDdWFtqveGl+ULA8zEyz6Rk+eVyejRmApgkHVHeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y/QHR+Hx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7A1B/NeN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y/QHR+Hx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7A1B/NeN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 855591F7DB;
+	Mon,  5 Aug 2024 08:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722846409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IdnDLnsXWEQ6RVAumOXnOOh7mrwkaymI4Jc/Y5qxz/8=;
-	b=E1jJV19qmw/uMkaW74mv5nQdHxqczShZA+aW5t+YWmGzplOivW+SNaeBftUitS8DZvuBIH
-	pQibY8V62nE+1pQatyGPKuP+m8gokrfog20YKEnH89ctT2ZHkvly9852BGYY0iFE4MnXaa
-	1cglb3v03RxZBjl0jbUEkwOFHhIXtD0=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-620-zt63iU0eNmCvm2YUEGW2Mw-1; Mon, 05 Aug 2024 04:25:59 -0400
-X-MC-Unique: zt63iU0eNmCvm2YUEGW2Mw-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ef1ba2a5e6so104534941fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:25:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722846357; x=1723451157;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IdnDLnsXWEQ6RVAumOXnOOh7mrwkaymI4Jc/Y5qxz/8=;
-        b=Sk11xOMXiX+/vPq33nebug6S2IUt+B4rRNb0tV7zuCBOyuX2YZIg2pEDI2ylL8Ouok
-         SshuF9402sMZi1GwhFiikPiZ0Q2YLg9uoXyHwVbIUu3MNskJWX2AiYPRs6jGdG3GOTry
-         F63Xqx16tPa/hubnNn6pdsBCoDYqG1Gkjy2Iqnb/RBhY5/OsfaaSTsw0SaklnWNHno0l
-         7VJh16wNwF27/o0FC8k4kWnsBPx7EmNPzcIfQFB5XuxXOerIPAYPK528oUDtw2XDtfws
-         ImxTHFm5zcDYhv0oomnIQsOWCzj2Imu93pr3Uf+LYxe6Hxoyl7VW5PpG3X/SO+8veM3r
-         CBNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUm9S80ysEfLUuw7x5v8/6I+FQifvydh7PZNPEuearsNnyokDqWKp/ZNPY9tamCUcXCTl+sM4z0UL9UnSlEUpHD+RqMLCrfg4S7Zm/e
-X-Gm-Message-State: AOJu0YzP3hs9fAVer5ijP0Se1PkNz+/3n6DteVMpwkp99L/eDcWaCHGN
-	zhI8cO14BObKwgEOavmpEzNCAzGSp1PPcyoreaK3eqQlDiZZVXN3ZxJrc6t0XC/mxh9EXGLHUrG
-	L9V/+ohevGSfcakb1AslJcPxIibvF9DUUASlu1IZBFCWwNcX5kYSs+CirjKH382bNRTy5ag==
-X-Received: by 2002:a2e:9ecb:0:b0:2ee:87b9:91a7 with SMTP id 38308e7fff4ca-2f15aa87cedmr67675991fa.18.1722846357416;
-        Mon, 05 Aug 2024 01:25:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsXonxhnbF7y/SEo+8UNCkXh1OH8gxWMWHsntkfxFG8gi9ahQmlsboo+pmk8i2fc4VpWKqgw==
-X-Received: by 2002:a2e:9ecb:0:b0:2ee:87b9:91a7 with SMTP id 38308e7fff4ca-2f15aa87cedmr67675681fa.18.1722846356422;
-        Mon, 05 Aug 2024 01:25:56 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:17d:dd95:f049:da1a:7ecb:6d9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb9d54esm188671405e9.43.2024.08.05.01.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 01:25:55 -0700 (PDT)
-Date: Mon, 5 Aug 2024 04:25:52 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	maxime.coquelin@redhat.com, xieyongji@bytedance.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	21cnbao@gmail.com, penguin-kernel@i-love.sakura.ne.jp,
-	linux-mm@kvack.org, akpm@linux-foundation.org
-Subject: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
-Message-ID: <20240805042421-mutt-send-email-mst@kernel.org>
-References: <20240805082106.65847-1-jasowang@redhat.com>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XngiWkeZHwMWBjYpZ7hK4nOZ2LMnPUOIWVb5vuenUgw=;
+	b=y/QHR+HxjGxD37J14rGQdE/mOj0HqDbfTgrqx6C4Y+Me22cjI/2KdJXYIBoW9qhqw6GCgy
+	FI5cczf0qQ67ex0a4wbfmHfti7KxFgs0biY0Uc1rAcnBNho56hZvU0Cw5meHi8bcuvsEyJ
+	gZqv0j2VRx27VI+yTqDo9+VVR1E1vYo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722846409;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XngiWkeZHwMWBjYpZ7hK4nOZ2LMnPUOIWVb5vuenUgw=;
+	b=7A1B/NeNf+JH3BBKwwgfEGYS+CyRTviKm+0HSeIcq7o4GL5nHuhXiaeP08fKiGvu6p1uJD
+	jGB1bJlwNkcz5UCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="y/QHR+Hx";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="7A1B/NeN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722846409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XngiWkeZHwMWBjYpZ7hK4nOZ2LMnPUOIWVb5vuenUgw=;
+	b=y/QHR+HxjGxD37J14rGQdE/mOj0HqDbfTgrqx6C4Y+Me22cjI/2KdJXYIBoW9qhqw6GCgy
+	FI5cczf0qQ67ex0a4wbfmHfti7KxFgs0biY0Uc1rAcnBNho56hZvU0Cw5meHi8bcuvsEyJ
+	gZqv0j2VRx27VI+yTqDo9+VVR1E1vYo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722846409;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XngiWkeZHwMWBjYpZ7hK4nOZ2LMnPUOIWVb5vuenUgw=;
+	b=7A1B/NeNf+JH3BBKwwgfEGYS+CyRTviKm+0HSeIcq7o4GL5nHuhXiaeP08fKiGvu6p1uJD
+	jGB1bJlwNkcz5UCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4798113254;
+	Mon,  5 Aug 2024 08:26:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id U1pBEMmMsGbQWwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 05 Aug 2024 08:26:49 +0000
+Message-ID: <da27771e-fa16-4356-bb0f-69245cc98098@suse.de>
+Date: Mon, 5 Aug 2024 10:26:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240805082106.65847-1-jasowang@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] drm/fb-helper: Don't schedule_work() to flush
+ frame buffer during panic()
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Luck, Tony" <tony.luck@intel.com>, "Wang, Yudong" <yudong.wang@intel.com>
+References: <20240703141737.75378-1-qiuxu.zhuo@intel.com>
+ <20240805071355.42636-1-qiuxu.zhuo@intel.com>
+ <c349e2c6-027e-4e65-800e-f30ac0a0a785@suse.de>
+ <CY8PR11MB7134F297DE1D5F61A9FEA41689BE2@CY8PR11MB7134.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <CY8PR11MB7134F297DE1D5F61A9FEA41689BE2@CY8PR11MB7134.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.50 / 50.00];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[intel.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -3.50
+X-Rspamd-Queue-Id: 855591F7DB
 
-On Mon, Aug 05, 2024 at 04:21:06PM +0800, Jason Wang wrote:
-> Barry said [1]:
-> 
-> """
-> mm doesn't support non-blockable __GFP_NOFAIL allocation. Because
-> __GFP_NOFAIL without direct reclamation may just result in a busy
-> loop within non-sleepable contexts.
-> ""“
-> 
-> Unfortuantely, we do that under read lock. A possible way to fix that
-> is to move the pages allocation out of the lock into the caller, but
-> having to allocate a huge number of pages and auxiliary page array
-> seems to be problematic as well per Tetsuon [2]:
-> 
-> """
-> You should implement proper error handling instead of using
-> __GFP_NOFAIL if count can become large.
-> """
-> 
-> So I choose another way, which does not release kernel bounce pages
-> when user tries to register usersapce bounce pages. Then we don't need
+Hi
 
-userspace
+Am 05.08.24 um 10:10 schrieb Zhuo, Qiuxu:
+> Hi Thomas,
+>
+>> From: Thomas Zimmermann <tzimmermann@suse.de>
+>> Sent: Monday, August 5, 2024 3:31 PM
+>> [...]
+>>> Hi Maarten and maintainers,
+>>>
+>>> A gentle ping :-).
+>>>
+>>> Could you please help push this v2 fix upstream?
+>>> If you have any concerns, please let me know.
+>> I already acked this patch, but I still have a question: during a panic, will fbcon
+> Thanks for your kind review of this patch and ACK.
+>
+>> still print a panic message? I think that would likely require scheduling that
+>> worker.
+> During the error injection testing:
+>
+> 1) Without this v2 fix:
+>
+>     1.1) If panic() is not blocked on [1] (~99 times in 100 cycles),
+>          then the console/fbcon can print normal panic-related messages like [2],
+>          and the system can reboot successfully.
+>
+>     1.2) If panic() is blocked on [1] (~1 time in 100 cycles),
+>          then the console/fbcon is silent and the system gets hung without reboot.
+>           This is not the expected behavior. The system is expected to reboot.
+>
+> 2) With this v2 fix:
+>
+>     2.1) The console/fbcon can always print normal panic related messages like[2],
+>          and the system can reboot successfully. Same behavior to 1.1).
+>          [ we tested it ~1500 cycles. ]
+>
+> [1] panic() -> ... drm_fb_helper_damage() -> schedule_work().
+>      For details, pls see the v2 commit message.
+>
+> [2] Panic messages:
+>      [  133.900042] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 4: ba00000000000e0b
+>      [  133.900046] mce: [Hardware Error]: RIP !INEXACT! 10:<ffffffff8229ebec> {intel_idle_xstate+0x6c/0xc0}
+>      [  133.900055] mce: [Hardware Error]: TSC 9701dd289b MISC 29100000 PPIN 9000d7561bb0e340
+>      [  133.900057] mce: [Hardware Error]: PROCESSOR 0:a06d1 TIME 1715827713 SOCKET 0 APIC 0 microcode 810001d0
+>      [  133.900060] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+>      [  134.053858] mce: [Hardware Error]: Machine check: Processor context corrupt
+>      [  134.053866] Kernel panic - not syncing: Fatal machine check
+>      [  134.075183] Kernel Offset: disabled
+>      [  134.111372] pstore: backend (erst) writing error (-28)
 
-> to do allocation in the path which is not expected to be fail (e.g in
-> the release). We pay this for more memory usage but further
+Thanks for the detailed reply.
 
-what does "we pay this for more memory usage" mean?
-Do you mean "we pay for this by using more memory"?
-How much more?
+I've found that your patch has already been merged and should now be in 
+v6.11-rc2. It'll probably be backported to older kernels as well.
 
-> optimizations could be done on top.
-> 
-> [1] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8ZQ2saLnUdfOGOLg@mail.gmail.com/T/#m3caef86a66ea6318ef94f9976ddb3a0ccfe6fcf8
-> [2] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8ZQ2saLnUdfOGOLg@mail.gmail.com/T/#m7ad10eaba48ade5abf2d572f24e185d9fb146480
-> 
-> Fixes: 6c77ed22880d ("vduse: Support using userspace pages as bounce buffer")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/vdpa/vdpa_user/iova_domain.c | 18 ++++++++++--------
->  drivers/vdpa/vdpa_user/iova_domain.h |  1 +
->  2 files changed, 11 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
-> index 791d38d6284c..933d2f7cd49a 100644
-> --- a/drivers/vdpa/vdpa_user/iova_domain.c
-> +++ b/drivers/vdpa/vdpa_user/iova_domain.c
-> @@ -162,6 +162,7 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
->  				enum dma_data_direction dir)
->  {
->  	struct vduse_bounce_map *map;
-> +	struct page *page;
->  	unsigned int offset;
->  	void *addr;
->  	size_t sz;
-> @@ -178,7 +179,10 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
->  			    map->orig_phys == INVALID_PHYS_ADDR))
->  			return;
->  
-> -		addr = kmap_local_page(map->bounce_page);
-> +		page = domain->user_bounce_pages ?
-> +		       map->user_bounce_page : map->bounce_page;
-> +
-> +		addr = kmap_local_page(page);
->  		do_bounce(map->orig_phys + offset, addr + offset, sz, dir);
->  		kunmap_local(addr);
->  		size -= sz;
-> @@ -270,9 +274,8 @@ int vduse_domain_add_user_bounce_pages(struct vduse_iova_domain *domain,
->  				memcpy_to_page(pages[i], 0,
->  					       page_address(map->bounce_page),
->  					       PAGE_SIZE);
-> -			__free_page(map->bounce_page);
->  		}
-> -		map->bounce_page = pages[i];
-> +		map->user_bounce_page = pages[i];
->  		get_page(pages[i]);
->  	}
->  	domain->user_bounce_pages = true;
-> @@ -297,17 +300,16 @@ void vduse_domain_remove_user_bounce_pages(struct vduse_iova_domain *domain)
->  		struct page *page = NULL;
->  
->  		map = &domain->bounce_maps[i];
-> -		if (WARN_ON(!map->bounce_page))
-> +		if (WARN_ON(!map->user_bounce_page))
->  			continue;
->  
->  		/* Copy user page to kernel page if it's in use */
->  		if (map->orig_phys != INVALID_PHYS_ADDR) {
-> -			page = alloc_page(GFP_ATOMIC | __GFP_NOFAIL);
-> +			page = map->bounce_page;
->  			memcpy_from_page(page_address(page),
-> -					 map->bounce_page, 0, PAGE_SIZE);
-> +					 map->user_bounce_page, 0, PAGE_SIZE);
->  		}
-> -		put_page(map->bounce_page);
-> -		map->bounce_page = page;
-> +		put_page(map->user_bounce_page);
->  	}
->  	domain->user_bounce_pages = false;
->  out:
-> diff --git a/drivers/vdpa/vdpa_user/iova_domain.h b/drivers/vdpa/vdpa_user/iova_domain.h
-> index f92f22a7267d..7f3f0928ec78 100644
-> --- a/drivers/vdpa/vdpa_user/iova_domain.h
-> +++ b/drivers/vdpa/vdpa_user/iova_domain.h
-> @@ -21,6 +21,7 @@
->  
->  struct vduse_bounce_map {
->  	struct page *bounce_page;
-> +	struct page *user_bounce_page;
->  	u64 orig_phys;
->  };
->  
-> -- 
-> 2.31.1
+ > dim cite 833cd3e9ad8360785b6c23c82dd3856df00732d9
+833cd3e9ad83 ("drm/fb-helper: Don't schedule_work() to flush frame 
+buffer during panic()")
+ > git tag --contains 833cd3e9ad8360785b6c23c82dd3856df00732d9
+drm-fixes-2024-08-02
+drm-misc-fixes-2024-08-01
+v6.11-rc2
+
+Best regards
+Thomas
+
+>
+> Thanks!
+> -Qiuxu
+>   
+>
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
