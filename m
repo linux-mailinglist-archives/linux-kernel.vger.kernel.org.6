@@ -1,128 +1,210 @@
-Return-Path: <linux-kernel+bounces-274807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5C5947CFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:41:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C176F947D00
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6BD1F23682
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:41:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70F8E284FD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E69313C827;
-	Mon,  5 Aug 2024 14:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7714D13C80A;
+	Mon,  5 Aug 2024 14:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jw+LRdkR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hnt+gHDo"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6A413B585
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E122213B2AC;
+	Mon,  5 Aug 2024 14:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868903; cv=none; b=LN7T4Bh8iqF3gq9xJ2Wb30hHlJlSVv99seql/CEIB7Hp+x5pWNHNKopckHP/DD69aX/GC4WtGn7HBxTbuPM5etV52kwzoS52b8LvCQUSx7LuyavLBaADwN4pLB2I3YaBQf8rhOlFGJ/zHAszI2z/A6qwcTOKQxK3jnRJlUcsccg=
+	t=1722868917; cv=none; b=V6h+zil7p6VUDhnITQ24cTdyPxf/gFbfDB0AWhXkdSLjHhgnviwBXUagb+Q/l5J8eX/zEhc0ZCF6DoOLSAg/664KcABN8jsVk1K+XUFAjO6WxEBq8utDTj5N4pm0TP5fyt7M8CXPxaO2l5WPJtmcKKkgzZEDjqNPI/mP7mIA23U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868903; c=relaxed/simple;
-	bh=ecjp0Hf0iQhOloLg+5THly2RViSs1xyysVIbS5xlfqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RSAEXhOS7vBHvhf6lByPkQHa1Rq66Apw+MRnRqHYnf55RnmzZ4s+FmSUqkNaCWuyaeNAE7330rcIPTHaEPUw2zl5VnFEujhNem/T08AVSE8MNHungfulejDlUECElhSuO7ajScVKRliVzyXEtFHfrNm03BzR4c4NVb2tZBpg70I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jw+LRdkR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722868901;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=is1WM++VT4Ceny6+rACPKsaEum5ihnLIwJEdmx2bnoE=;
-	b=Jw+LRdkR5kLiYXAY8cYNYhvCLlfOw6JHIU1244UY40QgUlGaPeDACx056vOBC4nZJmgjtl
-	mjZqnxBB+WHJtHipzdrZjvny0lGPSM12wva4yayDPnJkNJ2ciy5rsO32/uNcuXj+VJcAKi
-	ZmglmtUa07/ibo/6cf3L8mCAVAvB1A0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-178-TyzLD987MNeFNFxAEuY51g-1; Mon, 05 Aug 2024 10:41:38 -0400
-X-MC-Unique: TyzLD987MNeFNFxAEuY51g-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36871eb0a8eso5508550f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 07:41:38 -0700 (PDT)
+	s=arc-20240116; t=1722868917; c=relaxed/simple;
+	bh=v4H5uLIq2UkFTtOGGd2Ghye0fNjVdn+3tAv7CuH7r7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TCrSmQaOpcJQsqH23TxTumMoD52i8Z0pekwDgZ7ljeEkE1o6LoO6y8J3YShawyZ7FZLBHMPsMUI3fYZxZ5cjhQHdDmbpilwXcEmUu4BaHMbbpXHoAmUbUrH7KW5dPt53+TNkIYvWHM2nb4LwTw3tJ27iJXRsy0Ol0pjT0fdqvZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hnt+gHDo; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5b391c8abd7so10538449a12.2;
+        Mon, 05 Aug 2024 07:41:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722868914; x=1723473714; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0wPOnax04MCjlH7sAiV0x5iI2FlYXD+nlARfq5eueQs=;
+        b=Hnt+gHDo/OofBxxoH3WSg/E2LCXYTo/nvgGE/LQbbfFOZ/4/yIomCq2l4Tjpz9vAEL
+         avo8lOKtXV8yUCWAVYD9L3SG5M7r29U441aMAX7vfw3v2kd3K8qXicWKjb3NMX+H1Rof
+         zWVek/PBJnmJ2q9xqb+D8knKIHd1j0f72b4HHZJXcuN2cigzQEErWcB+Vn0HaulCXrJF
+         oy9nRyoLiT6z1G/istuh4Ab4SPJx83jPyOKMIAFi2Q58X7dHa/+z67ZjKKwGIXnbPiXC
+         fcEjvapdca4+RFslh/6i7+7ex1qhRzID3sKvj/6xPPnHu27Dh3PCLuPX0VyzSBWpkkO7
+         deWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722868897; x=1723473697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=is1WM++VT4Ceny6+rACPKsaEum5ihnLIwJEdmx2bnoE=;
-        b=nxPP+vrPr8iUJNHVOGdqDZk6rMwGEv88zi+s+oGgsL/5NdtA/ONeN+NMWAnzLkckCr
-         JTWVBBSxcQUrvWjCOHQtWUVdhLsJ+kb9m1onumDHS4E1FNrO/bWufjLZI+vhWeXOoYQY
-         pKU4S2Oh5E6PijcJyZbxq786K4QpaN5CnWegEq2GgpH8Av9gioLS3sZS+wUbDoCCXIP4
-         U1HNsHxTPS+Gpyb3R6puVYWsq9jBcrWrS3SP5mfxGQeRVfTRT1RJykBJKyni5ftiMbO+
-         u2b+YwG1K6ZhryT3H+HP3gTkKeOLXuwceK3azMNv7gfi8OJ6d51zAu44F4OSiFgp5OtM
-         gcSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjGsiizAoiW4r4WtqTNUU96fh7+EJLSbw6fySrdOsFR6HvGbLqeyb8nDwf6ZvTN7MZJ8F0zSwk2bzArSmS8P6fH7+/HZOBd4Ibgiu1
-X-Gm-Message-State: AOJu0YwCt/fhRNXkIBxht7gX7yRVoYuf9M8m39gr6hiS1KF437UJq2gA
-	EpyJ+CXd01MbQsSE5BhdfK4vkBsQgWxrrktfr0hV2++e0a3CLQ3bjlvPQHLvZc90xy7dYRqPe7H
-	6p+COLpmZDLlDuHCXkwYdYrP04SACq1+pW2pR7aCf0peTLU07g+ftGlxbrSQbbQ9H6TPBxDkcOQ
-	h5ybBJ0/xiUwj6PLd12XaHWxI0ignZWsWjpIwI
-X-Received: by 2002:a05:6000:dd0:b0:368:3079:427f with SMTP id ffacd0b85a97d-36bbc12c503mr6358671f8f.30.1722868896956;
-        Mon, 05 Aug 2024 07:41:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGORe404OR8+lZHyt0xrqRf0852CVHZ5agUPquA97aY6bZLBMVWP/j7MHMW1GPe6Vlxbu6hfVrrT5hYjROrP3g=
-X-Received: by 2002:a05:6000:dd0:b0:368:3079:427f with SMTP id
- ffacd0b85a97d-36bbc12c503mr6358656f8f.30.1722868896526; Mon, 05 Aug 2024
- 07:41:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722868914; x=1723473714;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0wPOnax04MCjlH7sAiV0x5iI2FlYXD+nlARfq5eueQs=;
+        b=a6R5uzfGeBBfJfGIh9/804bKGWt90q7vWxuSYtVN/w/AfRlo8NnuGxLrRFNtFMRX/x
+         Q2PjAdaf6Vd8ela4US4p+hwzp49EFQEbV8V3FI4Zhaqw+LADeJFz4oFteuEPkoBKZy+B
+         qTU3B17vMWhoJ0ppk1EMuZp1xfzJcfC5JEyFQNkGCdn1M1ruH0O++jwudwaMEtFIWIVa
+         q/4mLsV8Pges/XJle/bEscONdgI+9BIajKbJyRWcJHdt95CHgUvxv0O9TS06B9Zv9IUT
+         rrmmK0x6XXohX+ciYWuhcfd4deqv/jJ4kQ1wLyJBtyKtFvXgEsSpahSnhDy5oqzVL7CH
+         lz1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUwRQcShhhx2rzucBrlxe0/2wMFKiOvZ9LGC5pkEIINL5hPxk8QWJYPEmBZfLBEfDo20HJ7rdWDnpZtV96T2jj6DkUpCtem66axvambzoUQG4Ff0AAdPW8XH+9i8TQyCtWsYzhUvWYegYwm7yPmqCV/4RY2FXI3qAdGkDGtTEs2uutKp/kMrFLoNDb7tBs8Ubaf+fwXGx2Iol7w4Z/V8q5QinrqVanVzu3W+RtaBERUThGPfHlRCbDnIg==
+X-Gm-Message-State: AOJu0Ywgl0UT8ieNscEF3sEKahSJJxCDJs/niMWiCO6CLTOcxrR8IuFT
+	7ztA2nLRpqI4ZqaIR1uiMMHpbpSRi4/nPMMdpI3btD8bBzInr5xX
+X-Google-Smtp-Source: AGHT+IFzqAB6G4v/aHSsuVrzNy99AsjgLgbTXWCfUA7rRiWqkAa0Svb/TdBppdhK8zgF81Uq/cISTA==
+X-Received: by 2002:a50:ff0e:0:b0:5a1:b9c0:7758 with SMTP id 4fb4d7f45d1cf-5b7f58eb6f7mr8897936a12.33.1722868913838;
+        Mon, 05 Aug 2024 07:41:53 -0700 (PDT)
+Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83bf3a37bsm5058411a12.88.2024.08.05.07.41.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 07:41:53 -0700 (PDT)
+Message-ID: <e7625068-c26f-4a3b-972e-eff266c8facf@gmail.com>
+Date: Mon, 5 Aug 2024 16:41:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805093245.889357-1-jgowans@amazon.com> <20240805143223.GA1110778@mit.edu>
-In-Reply-To: <20240805143223.GA1110778@mit.edu>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 5 Aug 2024 16:41:25 +0200
-Message-ID: <CABgObfYhg6uoR7cQN4wf3bNLZbHfXv6fr35aKsKbqMvuv20Xrg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: James Gowans <jgowans@amazon.com>, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Steve Sistare <steven.sistare@oracle.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Anthony Yznaga <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org, 
-	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org, 
-	Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, 
-	Paul Durrant <pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH v2 0/6] use device_for_each_child_node() to
+ access device child nodes
+To: Lee Jones <lee@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jean Delvare
+ <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Pavel Machek <pavel@ucw.cz>, Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andreas Kemnade <andreas@kemnade.info>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-leds@vger.kernel.org, netdev@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20240721-device_for_each_child_node-available-v2-0-f33748fd8b2d@gmail.com>
+ <172192488125.1053789.17350723750885690064.b4-ty@kernel.org>
+ <094c7d7f-749f-4d8f-9254-f661090e4350@gmail.com>
+ <20240801123901.GC6756@google.com>
+ <9083938c-c2df-4429-904d-700e5021331c@gmail.com>
+ <20240805143207.GE1019230@google.com> <20240805143352.GF1019230@google.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20240805143352.GF1019230@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 4:35=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wrote:
-> On Mon, Aug 05, 2024 at 11:32:35AM +0200, James Gowans wrote:
-> > Guestmemfs implements preservation acrosss kexec by carving out a
-> > large contiguous block of host system RAM early in boot which is
-> > then used as the data for the guestmemfs files.
->
-> Also, the VMM update process is not a common case thing, so we don't
-> need to optimize for performance.  If we need to temporarily use
-> swap/zswap to allocate memory at VMM update time, and if the pages
-> aren't contiguous when they are copied out before doing the VMM
-> update
+On 05/08/2024 16:33, Lee Jones wrote:
+> On Mon, 05 Aug 2024, Lee Jones wrote:
+> 
+>> On Fri, 02 Aug 2024, Javier Carrasco wrote:
+>>
+>>> On 01/08/2024 14:39, Lee Jones wrote:
+>>>> On Mon, 29 Jul 2024, Javier Carrasco wrote:
+>>>>
+>>>>> On 25/07/2024 18:28, Lee Jones wrote:
+>>>>>> On Sun, 21 Jul 2024 17:19:00 +0200, Javier Carrasco wrote:
+>>>>>>> This series aims to clarify the use cases of:
+>>>>>>>
+>>>>>>> - device_for_each_child_node[_scoped]()
+>>>>>>> - fwnode_for_each_available_child_node[_scoped]()
+>>>>>>>
+>>>>>>> to access firmware nodes.
+>>>>>>>
+>>>>>>> [...]
+>>>>>>
+>>>>>> Applied, thanks!
+>>>>>>
+>>>>>> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+>>>>>>       commit: 75d2a77327c4917bb66163eea0374bb749428e9c
+>>>>>> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
+>>>>>>       commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
+>>>>>> [5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
+>>>>>>       (no commit info)
+>>>>>>
+>>>>>> --
+>>>>>> Lee Jones [李琼斯]
+>>>>>>
+>>>>>
+>>>>> Hi Lee,
+>>>>>
+>>>>> could you please tell me where you applied them? I rebased onto
+>>>>> linux-next to prepare for v3, and these patches are still added on top
+>>>>> of it. Can I find them in some leds/ branch? Thank you.
+>>>>
+>>>> Sorry, I was side-tracked before pushing.
+>>>>
+>>>> Pushed now.  They should be in -next tomorrow.
+>>>>
+>>>
+>>> Thanks, I see
+>>>
+>>> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+>>>
+>>> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to
+>>> access child nodes
+>>>
+>>> applied to -next, but
+>>>
+>>> [5/6] leds: pca995x: use device_for_each_child_node() to access device
+>>> child nodes
+>>>
+>>> has not been applied yet.
+>>
+>> Yep, looks like b4 didn't like that one:
+>>
+>> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+>>       commit: 75d2a77327c4917bb66163eea0374bb749428e9c
+>> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
+>>       commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
+>> [5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
+>>       (no commit info)
+>>
+>> I'll try again and see if it can be pulled in.
+>>
+>> If not you'll have to resubmit it.
+> 
+> Now results in conflict:
+> 
+>     Applying patch(es)
+>     Applying: leds: pca995x: use device_for_each_child_node() to access device child nodes
+>     Using index info to reconstruct a base tree...
+>     M	drivers/leds/leds-pca995x.c
+>     Checking patch drivers/leds/leds-pca995x.c...
+>     Applied patch drivers/leds/leds-pca995x.c cleanly.
+>     Falling back to patching base and 3-way merge...
+>     error: Your local changes to the following files would be overwritten by merge:
+>     	drivers/leds/leds-pca995x.c
+>     Please commit your changes or stash them before you merge.
+>     Aborting
+>     error: Failed to merge in the changes.
+>     Patch failed at 0001 leds: pca995x: use device_for_each_child_node() to access device child nodes
+>     hint: Use 'git am --show-current-patch=diff' to see the failed patch
+>     hint: When you have resolved this problem, run "git am --continue".
+>     hint: If you prefer to skip this patch, run "git am --skip" instead.
+>     hint: To restore the original branch and stop patching, run "git am --abort".
+>     hint: Disable this message with "git config advice.mergeConflict false"
+>     
+>     Failed to apply patches (fix and either hit return to continue or Ctrl+c to exit)
+> 
+> Please rebase and resubmit.
+> 
 
-I'm not sure I understand, where would this temporary allocation happen?
+Thank you for making the effort anyway, I will resubmit the patch.
 
-> that might be very well worth the vast of of memory needed to
-> pay for reserving memory on the host for the VMM update that only
-> might happen once every few days/weeks/months (depending on whether
-> you are doing update just for high severity security fixes, or for
-> random VMM updates).
->
-> Even if you are updating the VMM every few days, it still doesn't seem
-> that permanently reserving contiguous memory on the host can be
-> justified from a TCO perspective.
-
-As far as I understand, this is intended for use in systems that do
-not do anything except hosting VMs, where anyway you'd devote 90%+ of
-host memory to hugetlbfs gigapages.
-
-Paolo
+Best regards,
+Javier Carrasco
 
 
