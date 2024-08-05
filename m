@@ -1,103 +1,104 @@
-Return-Path: <linux-kernel+bounces-274087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F7E94733D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:58:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B362D947340
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BABB2811F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:58:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F6FCB20D83
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 02:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3277762EB;
-	Mon,  5 Aug 2024 01:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GHVjes+c"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D8548CE0;
+	Mon,  5 Aug 2024 02:00:10 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C2220B0F;
-	Mon,  5 Aug 2024 01:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374E63FB3B;
+	Mon,  5 Aug 2024 02:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722823113; cv=none; b=PYOhZNTskQV/+OXqBAdNWFfIXU2SgKm/iTqEpMYCOwOLC5S+9xUoiZeR4eG3RbMrSj9Pdatz22Ymrc5b7NqZU0SIlKdamLnLFwu50fEaFuFozYK0xCPQIBbAcp3gMjkG7X/RP591EEml4wuK8IaH43fmGssuoD9q+08te311YGM=
+	t=1722823210; cv=none; b=j8a2/Agf3cypVOpAoeCnStF3m4kholbA2Wd+v0chPLMrGJeuQXeYvpYZrQcR3elAoJIEKaSFYeMcxAUV5McPSJuqvoOgTKAyfGQfhU6t8NMlu7FPBEsbF1lFu8hhDoySUcMDuHP8PKi2Pnow/ECdgIqYdhzsWFKGFCPC1bEqWAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722823113; c=relaxed/simple;
-	bh=1d5czxmfJcJMHxsZfqnkokWa7a1ENj6r5wILMkAQ218=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=onW0ztAFTd2UrKjYO2KU+KxexGi/h9ckYsmh5prygFrJdIP1dRksFxyGQmCoucHuFIffpg1zIJWPjoq7FXD2Kkg/dG3RhpFZiGoFg8p94GDPd0CQkDmvLiLJP+xPSFxVNr+cJxlN7W2pkW4GNG1rrygXo/EPoHIJeMOFdtYMzlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GHVjes+c; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722823105;
-	bh=XVc/WnEVk23tlrO45DVVKSJRhYtpa7tAYGsRAtDnkHE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GHVjes+cVGqG+hd+bQMzq4AxPoU1fw6+sBLonOJZ6jNNycKqTVf8T5upu/IXyUXeJ
-	 Xd6zDQHpSHFsdyphuoSsKCBuoCdDqsepYa+qSSRwozyAXlTWNOqKl6V/LwS4XbomYZ
-	 3wqg9dBcvDQuydSZnfJ1z31XClj2VJ2Q3+5rBkkzd01o2PfbRY/MWn6s86/iHpRD7+
-	 jZvajc8i8UNUnWqBuSOxTiVOrGAX/XeLbVioPr7AClqURsx7QzXSTXYh1/9Q9geVGV
-	 EwPqcBYO9N9GAToI3XJHkKQMmnbMHMzbWGuKAKWhEqVGNLWdAhcrLTEvWY9Nita6bm
-	 styZMVNLfubjw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WcfjX75MRz4wbR;
-	Mon,  5 Aug 2024 11:58:24 +1000 (AEST)
-Date: Mon, 5 Aug 2024 11:58:22 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the pm tree
-Message-ID: <20240805115822.037798df@canb.auug.org.au>
+	s=arc-20240116; t=1722823210; c=relaxed/simple;
+	bh=M3bZcxNiNQCHYqz1OHviPnFK1tXOj0PicXpRsQjfmzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MLQnmv7uxMtE8e6mZmTmH+e0XAhHCYaV3gGZ2iPMmjDJ/9jdLPQTjQbdnG81l8qp6QG89i8DsK4wCBPCw3t8+GT9Jq7TxbEVDeDXtEySPBsXE2lXWrMOU1Fu/M7Mdz8cL0GWSGj/SGHmnQ+N2e7Z0GBV34yokJUb9TXGT1d8yq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wcff33DS2z2Clll;
+	Mon,  5 Aug 2024 09:55:23 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5E9971400D7;
+	Mon,  5 Aug 2024 10:00:03 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 5 Aug 2024 10:00:02 +0800
+Message-ID: <dbb9955b-b12f-6b4b-d380-1f95d3d9fed6@huawei.com>
+Date: Mon, 5 Aug 2024 10:00:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UfL.NUMOVX1E_hITqf9dm66";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] ARM: support PREEMPT_DYNAMIC
+Content-Language: en-US
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: <arnd@arndb.de>, <afd@ti.com>, <akpm@linux-foundation.org>,
+	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>, <robh@kernel.org>,
+	<vincent.whitchurch@axis.com>, <bhe@redhat.com>, <nico@fluxnic.net>,
+	<ardb@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>
+References: <20240620090028.729373-1-ruanjinjie@huawei.com>
+ <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
+ <ZqzGp14u/XTST8v1@shell.armlinux.org.uk>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZqzGp14u/XTST8v1@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
---Sig_/UfL.NUMOVX1E_hITqf9dm66
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-The following commit is also in the mm tree as a different commit (but
-the same patch):
+On 2024/8/2 19:44, Russell King (Oracle) wrote:
+> On Wed, Jul 31, 2024 at 10:07:53AM +0800, Jinjie Ruan wrote:
+>> On 2024/6/20 17:00, Jinjie Ruan wrote:
+>>> Enable support for PREEMPT_DYNAMIC on arm32, allowing the preemption model
+>>> to be chosen at boot time.
+>>>
+>>> Similar to arm64, arm32 does not yet use the generic entry code, we must
+>>> define our own `sk_dynamic_irqentry_exit_cond_resched`, which will be
+>>> enabled/disabled by the common code in kernel/sched/core.c.
+>>>
+>>> And arm32 use generic preempt.h, so declare
+>>> `sk_dynamic_irqentry_exit_cond_resched` if the arch do not use generic
+>>> entry. Other architectures which use generic preempt.h but not use generic
+>>> entry can benefit from it.
+>>>
+>>> Test ok with the below cmdline parameters on Qemu versatilepb board:
+>>> 	`preempt=none`
+>>> 	`preempt=voluntary`
+>>> 	`preempt=full`
+>>>
+>>> Update preempt mode with debugfs interface on above Qemu board is also
+>>> tested ok:
+>>> 	# cd /sys/kernel/debug/sched
+>>> 	# echo none > preempt
+>>> 	# echo voluntary > preempt
+>>> 	# echo full > preempt
+> 
+> Do you have a use case for this feature?
 
-  0f127178892e ("cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros")
+Yes, many of our ARM32 products use different preemption models, and it
+would be much more convenient if we could configure it at startup.
 
-This is commit
-
-  93bc6ba3e8c7 ("cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros")
-
-from the mm-nonmm-unstable branch of the mm tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/UfL.NUMOVX1E_hITqf9dm66
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmawMb4ACgkQAVBC80lX
-0Gyi2Qf7BOhHYzh7bYRWKm3roo9xBOQe5SIF092PvvwJYfS6hb73acOg7hcUA/48
-W08+cib62M5aZ/x6KBe+S3d+CJ0LSX99Y4ClMvfrpylLWWRbDzf0xIell4O73YKr
-iYOKZZLSRaqJeGB0MVV1w9nncsZfiUPUJ5DPs+eQ2XAVVv/ucr/X4fIUu4Arx43A
-X9ZQ0ZtC2ZpsBRTdirFRdqFTkTtDeuurYrUJYBy296OJzbifn60KeRhr84NwUUUz
-GqsUJpu+YuuWP7tJV2V348Dar3CeQ1jfdStb3sBgkjz2ArvbT4Xf00/KJhFg8r0e
-j/LMjb4lboSR9ZsnSW0XLQt3m4OG2w==
-=IMgN
------END PGP SIGNATURE-----
-
---Sig_/UfL.NUMOVX1E_hITqf9dm66--
+> 
 
