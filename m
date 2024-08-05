@@ -1,85 +1,55 @@
-Return-Path: <linux-kernel+bounces-275040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52E6947FE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:04:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C81947FE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AD7D1C21B9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72BA28556C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A4015DBBA;
-	Mon,  5 Aug 2024 17:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C065715C15C;
+	Mon,  5 Aug 2024 17:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="pKdeVlY3"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNdj7pQZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA7F13A3F7
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9215C15A
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722877487; cv=none; b=qGsNA2e+EdioWEbdTFlgNr7H7SkLTIFG1HASuGqQAfzTSI51nnvnwzffg7bJyhB+WTPxdmQCDWle16OCwf38W1GJGDup+XwYoadcDhkL4zf3dTdJRqrD8915bkbsrd3nI8l887G3qHOg/bwR5JUEuIe+XbfJYJfG8Fwy9uj3zy8=
+	t=1722877678; cv=none; b=HLTPelC9tUGeFTyJdYuW6R/0wdzW8DS6wG6cQut3JeICeyJqiM/1FFyHqqwC0KA29qipaW2bJInF0/ipzOXyxb2+xmVhYHsDjvZQSO6lUeqReakYA9U/vuQHNhm6Xr47tXkVc+Ps8ZzLFm+4YfnnWt+62VB9SwRrxWu5XKAC2Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722877487; c=relaxed/simple;
-	bh=eXrzg6SBh5dOLe6d3BKaM9o3uJoyT/iNO0wCQCbtP+I=;
+	s=arc-20240116; t=1722877678; c=relaxed/simple;
+	bh=8oDLsrYMWaJslusr/zMMcppEbGxigROfZnvgJbcs1kQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujU1u38pvZE2FsHOSJ3A+WOB1/qUtIltoljKBaBMahwHGLKBRdWvWxlbqhqAXBpvq4c1orP3+VLGvac/HeBxRWhSp3J9iLB3/g3euMMpgjeusWKjHIB5LABeYdscdJF30H+8EX0R3oJuGByavEHuuYIraO4kcHsOXIcJ9NyKwvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=pKdeVlY3; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a1dcc7bc05so663598185a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1722877484; x=1723482284; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyylVLBLPTwfV/sKaNTlMYx4e/swb+vLff1PWQeZAN8=;
-        b=pKdeVlY3nmoIDq5biPFqRP2QBk7taDPh7dXy2ddswjbxhcsg4oXhlvddL9F1282Xb4
-         sBbTYGG9uuxw+4EAncUHWshnFPzAcs0v/X4z9ElfkjsqQUnq64byX9lSd6dXMy6luI81
-         yscB/n5hkKqCtWM58HBH5E5d6ckyu4TzkFPF63FsF6aqY0tdb2UW/1Et3Q8/Umdstvv9
-         EbQ2Hli8eM6iTob/XevVV8NOtf+QliBE+Rp6CtD3DeISkIhtDadI+4f9gjXtSs3VyLq9
-         L5jp+/vD5EqAb5x0fHzbUnXA8BwtySscHD3nzzetROY8NE4PWU7SrZivjMlAYQpuY5OI
-         99nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722877484; x=1723482284;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AyylVLBLPTwfV/sKaNTlMYx4e/swb+vLff1PWQeZAN8=;
-        b=jympawZpkpyw16pb4xMvRZtxN0Gznr/jpD3tLdiQc8Qo3vTJyooliq9VJZEODxXwiH
-         uJ8LPBOIcN8gXaWLSRC0qZYG6ntSUSzCfiPPl7SUr5g9FAzcNOvxnUx0LgfpNqJtBSeZ
-         Eqyru2ztjoRRcMxWDB1f4X76SLDBlkZS2YAWD7KbAOLh27kW57OnTVNwfgcz2R2UeRtv
-         dVRDV6R8CUPb8lYxa6rsEzJDV/Mp+GO9TeAU0B7BAlOmews+VZ8hCSXA0SLxsxQBNZhN
-         +WG10+LQNopRPCenA7T/DFA+l2xXLqEVf5r9hE9fUR0OVTxB/LTWFC7NrceG3vBlmimd
-         HDtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiU0HW6KgErp5vVQJnPuUFBcPlpNU76CFcwUY8J3tiimtieMCswQuG0U4RKkKv1xDHygop178l+kzPI+uzSlEmj/d4qctA+yf6BdUx
-X-Gm-Message-State: AOJu0Yx0o4jp22ImRd6Hb+LRFQUkDsG7old44fvkr6tERdoIApjiiJnC
-	9W3NQBessbGtbLPQx5qtoZLgMkJPUVRD2A2xWZIcKmG0ARn4cXHpaQ1fQCCkt+s=
-X-Google-Smtp-Source: AGHT+IHAqSRxshXEgEXLY/ZrxLeh74qBnkfjs61TliUkpZgC+uXpeSPuQCeo+zpK43I+L+H9IMOnGQ==
-X-Received: by 2002:a05:620a:3913:b0:79f:17cb:7052 with SMTP id af79cd13be357-7a34ef40387mr1605716185a.30.1722877483878;
-        Mon, 05 Aug 2024 10:04:43 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a34f79843fsm366032485a.128.2024.08.05.10.04.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:04:43 -0700 (PDT)
-Date: Mon, 5 Aug 2024 13:04:42 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/8] mm: Introduce promo_wmark_pages()
-Message-ID: <20240805170442.GB322282@cmpxchg.org>
-References: <20240805145940.2911011-1-kirill.shutemov@linux.intel.com>
- <20240805145940.2911011-8-kirill.shutemov@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LXXk4awA51B2I9HYDndEPIFY6Q2vM4yznTIR/ZUcRNA+D0pnOuJiI5PAocoeFh3U+53HoNg4zKik+CHTAui1XjS4e6ICu+aEnkJ0vi7ZrpoVCZyrU4ws1tbIFrh9H8H99Q3bnpGb7y9Rxof0WBE8MiGGB0LftDYp+aCwTHc/dgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNdj7pQZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C020C4AF0C;
+	Mon,  5 Aug 2024 17:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722877677;
+	bh=8oDLsrYMWaJslusr/zMMcppEbGxigROfZnvgJbcs1kQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VNdj7pQZ2QpTGcBfZko56BcFj9SNEjepo2DM89QXZZPk8LeY+e3Lu6chB4DgunfJs
+	 LfdIJCtGaExWxr4SyQga+c5JqikMuVVVU5+Ig3e7WMN6WuAOxXdEKMQnAoxtpMV0NS
+	 lIL3wuCiLzjbJQz0EVdr/YlJPdfxmyRdgr/Ofg7883YYqAbgaGCCYNjvBvWcOYm/Fq
+	 +/9J4R695vVsaa7923qaSKdfiqvdYd4iHTRNO4/rNMa4rNpWRWs9QFkLwcqxGd0o1Q
+	 X4dy7c/oPVmBJoO+KOjufTnnjQsQr++PBjikSlJcj4jvuKLcwlZYwasTyXi1jqk0eC
+	 R+3h4XlUh7kXQ==
+Date: Mon, 5 Aug 2024 20:05:51 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/5] memblock test: fix implicit declaration of
+ function 'virt_to_phys'
+Message-ID: <ZrEGb6JlKoA93Ebu@kernel.org>
+References: <20240802010923.15577-1-richard.weiyang@gmail.com>
+ <ZrCjYqdmNfn3di-o@kernel.org>
+ <20240805153720.myjqd6ur65x5ucsu@master>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,17 +58,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240805145940.2911011-8-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20240805153720.myjqd6ur65x5ucsu@master>
 
-Hello Kirill,
-
-On Mon, Aug 05, 2024 at 05:59:39PM +0300, Kirill A. Shutemov wrote:
-> Add promo_wmark_pages() helper to complement other zone watermark
-> accessors.
+On Mon, Aug 05, 2024 at 03:37:20PM +0000, Wei Yang wrote:
+> On Mon, Aug 05, 2024 at 01:03:14PM +0300, Mike Rapoport wrote:
+> >On Fri, Aug 02, 2024 at 01:09:19AM +0000, Wei Yang wrote:
+> >> Commit 94ff46de4a73 ("memblock: Move late alloc warning down to phys
+> >> alloc") introduce the usage of virt_to_phys(), which is not defined in
+> >> memblock tests.
+> >> 
+> >> Define it in mm.h to fix the build error.
+> >> 
+> >> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+> >> 
+> >> ---
+> >> v3: use static inline as phys_to_virt
+> >> v2: move definition to mm.h
+> >> ---
+> >>  tools/include/linux/mm.h | 6 ++++++
+> >>  1 file changed, 6 insertions(+)
+> >> 
+> >> diff --git a/tools/include/linux/mm.h b/tools/include/linux/mm.h
+> >> index cad4f2927983..c9e915914add 100644
+> >> --- a/tools/include/linux/mm.h
+> >> +++ b/tools/include/linux/mm.h
+> >> @@ -25,6 +25,12 @@ static inline void *phys_to_virt(unsigned long address)
+> >>  	return __va(address);
+> >>  }
+> >>  
+> >> +#define virt_to_phys virt_to_phys
+> >> +static inline phys_addr_t virt_to_phys(volatile void *address)
+> >
+> >Why volatilte?
+> >
 > 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> There are two definitions of virt_to_phys:
+> 
+>   include/asm-generic/io.h
+>   arch/x86/include/asm/io.h
+> 
+> both has volatile.
+> 
+> I just copy from it. But I don't 100% understand it.
 
-Andrew picked up a change that does this a few days ago:
+Let's keep it inline with the kernel definitions
+ 
+> >> +{
+> >> +	return (unsigned long)address;
+> >
+> >This should be phys_addr_t, look at its definition in tools/include/linux/types.h
+> >
+> 
+> You are right. Will fix it.
+> 
+> >> +}
+> >> +
+> >>  void reserve_bootmem_region(phys_addr_t start, phys_addr_t end, int nid);
+> >>  
+> >>  static inline void totalram_pages_inc(void)
+> >> -- 
+> >> 2.34.1
+> >> 
+> >
+> >-- 
+> >Sincerely yours,
+> >Mike.
+> 
+> -- 
+> Wei Yang
+> Help you, Help me
 
-https://lore.kernel.org/all/20240801232548.36604-2-kaiyang2@cs.cmu.edu/T/#u
+-- 
+Sincerely yours,
+Mike.
 
