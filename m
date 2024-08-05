@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-274180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A959E947489
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28A694748E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650E21F2126C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D4FC281379
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60291422D8;
-	Mon,  5 Aug 2024 05:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B251428FA;
+	Mon,  5 Aug 2024 05:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRWQQTMe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARC0SswW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F193E1109;
-	Mon,  5 Aug 2024 05:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812F813AA2A;
+	Mon,  5 Aug 2024 05:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722834632; cv=none; b=b6yc+T7MMnuPsYQ/NPtQ7fLDZN4Wj497aK+BkN5J1t7e5pLdKIwMFXWLBkjftDFXCYNRCkYFFI0XR7HRkwzGXFfg8k0ZpOSBbTEA7k2pB9i1Jt0+R8SbH5c0R0Tf6H9ajHMFRMbHisipmFw8u7Jl4qf0+oetfm1+22s+wU6Z15I=
+	t=1722834761; cv=none; b=bYWEi4L3EDI7rgvWrQsdGIMnQBPaq9omgJKySWIHlsTA8zSfTMNhqOhZRp3vyjiCMaTWNfp2T4OITTtr2HFkF7qQ+pDCycO65zYjZSucezBZzrzvdutVu/cskAGoyMMru7mmS+XcZJ88uWOit5hE6i6OewY++VoSbwvr6AetrFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722834632; c=relaxed/simple;
-	bh=7zgXt2WMmg+2O9a5xT3eBtiqzYB7pTVWt9TpDFgbNUE=;
+	s=arc-20240116; t=1722834761; c=relaxed/simple;
+	bh=IhH5nuPyDwoZsaaFTPa3BZyc0epnKqTW7vxZAe5GUh8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CVjiyv5tZIMndeYLuvp73KD7fk+RU7tBeUn7buuK7w8XLEN+jX/8MONVzYkeOwPwH8nfLvH4F4yZdtvUuSPxOB5LtErPH6AcLnc9LHn7ZtdCILgKUHhb3feoeZ65zaujoa0+rMX6asp9OZ5bTh3VaxywmNoNA1H+ESdz3Rk1Pn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRWQQTMe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6753FC32782;
-	Mon,  5 Aug 2024 05:10:29 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ZG+kPUihvPXeKLxNSG97zOViEqCBUtiMXXHKY4/eBZyAxTtKEEDo+KqA5fMQpsT4JFQaHgfZLEKSwTvs4xfiz2b2ywD/w2dcroroIqgjkTi7bfTcUYWbeifhbwkHfIJXpCywsDvLqto1CsFOBrUNU9Z90z3hSSfUVmIFPVCoTSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARC0SswW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE20AC32782;
+	Mon,  5 Aug 2024 05:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722834631;
-	bh=7zgXt2WMmg+2O9a5xT3eBtiqzYB7pTVWt9TpDFgbNUE=;
+	s=k20201202; t=1722834761;
+	bh=IhH5nuPyDwoZsaaFTPa3BZyc0epnKqTW7vxZAe5GUh8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vRWQQTMeIHvOHWUUr1jd+MojgmdEssuIRWCOQwxUw7USn6u2goYI0100YiiFp12rh
-	 tD/wQrYHKKIchZpEDlUDFN5m6o6d9JLWJ/D4oyL72bqtHBA2Xr2QJPlda0cZXb/OQA
-	 VPO68cZ14dRHnxXy8K+k4fbFPm73opn56Rxub7ojEqUBPN9g+ygZu+TR2Zy8/9ypAn
-	 C2Dvr2b6e7Pgrj4cI4GTeCRYeTDJ5smwnScxxxLPG80F13fGge0C2rE2rfkzGaZhNz
-	 HR2AKgD3/dbVTa/o+N2i3gVCAzfywc77IhMesSkkc/csWuFvqP5fGz2OBGPxx579k5
-	 HprrBKuGRtmnQ==
-Message-ID: <059e0b5e-7893-4c67-89d6-77c7cc87eccc@kernel.org>
-Date: Mon, 5 Aug 2024 07:10:26 +0200
+	b=ARC0SswWMQU4M69RDdXtZ0i8+aMEukE9b5zZ+tTdf6T3QVBd+72SuPGDJepiR+cl+
+	 fJlT7PJ7wuMwIxbEjCG6TtRQnSjHXYUER9a3shXRIdKKYbyS78U4I/b/f2Gepvkq3/
+	 YJiyz2ap1RwmdMKbVzCI5IFhoDec8Pz/ysA97GYJI2JPYAgX6qdWZsIqhyBD2LsyxK
+	 v80sywhvFT3fstmn6qlNe31SN8pnQn9zabQfjer3q8wzD37eECxEK1yrPhLc6ZQEmE
+	 lUFp1FLkrxj5Limuk8NzIH3lbg0NWlVN6AereeThYRLgHhBBYFxrFHaGku1wycZCuK
+	 MdRmLG042myjw==
+Message-ID: <132a0367-596b-4ff2-b35c-e81e77f14340@kernel.org>
+Date: Mon, 5 Aug 2024 07:12:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] dt-bindings: net: Add DT bindings for DWMAC on NXP
- S32G/R
-To: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: dl-S32 <S32@nxp.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-stm32@st-md-mailman.stormreply.com"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- Claudiu Manoil <claudiu.manoil@nxp.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-References: <AM9PR04MB85066A2A4D7A2419C1CFC24CE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Jingoo Han <jingoohan1@gmail.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: andersson@kernel.org, quic_vbadigan@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
+ <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
+ <0cdaa0b2-ae50-40a1-abbb-7a6702d54ad5@kernel.org>
+ <027dc9f7-6e0d-e331-8f90-92a3d56350ab@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,35 +112,92 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <AM9PR04MB85066A2A4D7A2419C1CFC24CE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
+In-Reply-To: <027dc9f7-6e0d-e331-8f90-92a3d56350ab@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/08/2024 22:49, Jan Petrous (OSS) wrote:
-> Add basic description for DWMAC ethernet IP on NXP S32G2xx, S32G3xx
-> and S32R45 automotive series SoCs.
+On 05/08/2024 06:02, Krishna Chaitanya Chundru wrote:
 > 
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> 
+> On 8/4/2024 2:26 PM, Krzysztof Kozlowski wrote:
+>> On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
+>>> Add binding describing the Qualcomm PCIe switch, QPS615,
+>>> which provides Ethernet MAC integrated to the 3rd downstream port
+>>> and two downstream PCIe ports.
+>>>
+>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>>> ---
+>>>   .../devicetree/bindings/pci/qcom,qps615.yaml       | 191 +++++++++++++++++++++
+>>>   1 file changed, 191 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
+>>> new file mode 100644
+>>> index 000000000000..ea0c953ee56f
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
+>>> @@ -0,0 +1,191 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/pci/qcom,qps615.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm QPS615 PCIe switch
+>>> +
+>>> +maintainers:
+>>> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>>> +
+>>> +description: |
+>>> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
+>>> +  ports. The 3rd downstream port has integrated endpoint device of
+>>> +  Ethernet MAC. Other two downstream ports are supposed to connect
+>>> +  to external device.
+>>> +
+>>> +  The QPS615 PCIe switch can be configured through I2C interface before
+>>> +  PCIe link is established to change FTS, ASPM related entry delays,
+>>> +  tx amplitude etc for better power efficiency and functionality.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - pci1179,0623
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  qcom,qps615-controller:
+>>
+>> and now I see that you totally ignored comments. Repeating the same over
+>> and over is a waste of time.
+>>
+>> <form letter>
+>> This is a friendly reminder during the review process.
+>>
+>> It seems my or other reviewer's previous comments were not fully
+>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>> just forgot to apply it. Please go back to the previous discussion and
+>> either implement all requested changes or keep discussing them.
+>>
+>> Thank you.
+>> </form letter>
+>>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> Hi Krzysztof,
+> 
+> In patch1 we are trying to add reference of i2c-adapter, you suggested
+> to use i2c-bus for that. we got comments on the driver code not to use
+> adapter and instead use i2c client reference. I felt i2c-bus is not
+> ideal to represent i2c client device so used this name.
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
+You did not respond to comment of using i2c-bus, just silently decided
+to implement other property.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
+Anyway, why i2c-bus is not suitable here? I am quite surprised...
 
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
 
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
 
 Best regards,
 Krzysztof
