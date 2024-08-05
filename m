@@ -1,322 +1,213 @@
-Return-Path: <linux-kernel+bounces-274982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63264947F1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:19:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 541A6947F1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19EA4280DB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:19:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52011F22EF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4B115C12F;
-	Mon,  5 Aug 2024 16:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9AF15B98E;
+	Mon,  5 Aug 2024 16:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="r6FDircP"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7EC2E3E5;
-	Mon,  5 Aug 2024 16:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFYP4S9P"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D18D15B13B;
+	Mon,  5 Aug 2024 16:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722874783; cv=none; b=HxlrxdzbKoCZ8TociS44LF6lfzbTJVN0lcNjfD1NhGmf5XqYsn+36DajX87CRFM3yC321OJIOnPR7Yj4bdrgHELmptftjPd+F9tXAh2I3JHUAnDIos2pQ4j7A6oAGe7uBEnojMxEzR2nBTj4aB4zAcM8HeXRspxayfXHRzYYSEg=
+	t=1722874831; cv=none; b=piQ/U+vmp1P9nwYgH9MkXRLeckd+EEGfp7gAK/pv08UxavL1uyW9dDZXVEQgcAn2zqdeK62Itob7FqoRjGLyQoJGTSFmOyR4qrPSkVVOzbGTDR5lnkEqLKWKL97g3z4Yc2fOllSSu4R55UELoc/uxzGKGlyC9MnvAcuIKPuzLxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722874783; c=relaxed/simple;
-	bh=jE/ecRrzy84Gg1F8WWB3dmUjR5kbfyfULWcT3x+8Iso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQRYk1SfTcMYNIZbC0p2AkwqBeOZ/DFyI2oJtDl0UA6JsMh8AhEdiXJf/uEGFQ1eJ1jgBT5cZPbYQoGkMcvxBidy8NXmtVdtVdhSf4+6Obht3D2xYczighKPYCSjSg+9gv0WVn69LkYFzjs91vAkS16dnsw0phwsngkmHa0jmOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=r6FDircP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 67E8820B7165;
-	Mon,  5 Aug 2024 09:19:41 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 67E8820B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722874781;
-	bh=PnJhRU/o7zKptlxn1JF9R9grOV/DPueLnz5JS4Vzy4o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r6FDircPBBVCNGFeE+ojO03xhCdFnEeHq4tpakkmZQbuU8eJtxxNHCRnxQydUJ0Sx
-	 g/oPY85jaPGNkgE+UK86epvicFcnoCLk4AwUS6KjueNKRxGyl5G1P7KUK/ai11n05Z
-	 rXhkRDDlIN79paGXxwjOWLyetp74Tz5nZuZgS1wg=
-Message-ID: <8df77874-0852-4bc2-bf8d-aa7dca031736@linux.microsoft.com>
-Date: Mon, 5 Aug 2024 09:19:41 -0700
+	s=arc-20240116; t=1722874831; c=relaxed/simple;
+	bh=t+q3WbU7wIAsybWvWN5h0cBn7cQzNFnLNEyrabNbg2Q=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jXQxr35bbVY0T+EsUgyji9tcSca44uTZhelSeyFPbgB0nuJFrMgVDwHuphBFq9UuECprnV/wal6nyuWlG2MFvdIME3SMFfaHl30qKk1JBDMdbfINRXKB4GbSOgh/0+qKwi9wta9Giu21T8DN12GIbWuRQMxMfirP5ZKcKmpWQVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFYP4S9P; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3db19caec60so7512986b6e.1;
+        Mon, 05 Aug 2024 09:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722874829; x=1723479629; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=o/2gcRJhRF+q0oumC+8pyXKRI+ru5NZw7+q3z+G4VQE=;
+        b=gFYP4S9P2Y/tBFBvV3qyWjyhbAIth6Xha8QIZUVz4ZzONqtzRReORiqwJAAbHyvHZn
+         NCi8pGrd+vRiZrSSQRtECYIxBkZUetbVJj9SCOtFc1bwVgmxq+HnyxBc3b7eKPiymBS+
+         EtK/W9xlnUdRZc2dxxt4EXBN107iqFklOw1mwfQA21oF2D2kbOaxNgNTeTA1YWWpgDnW
+         fSadApa+flykft0q+5GwXjvx9/UaFPvCYkJkEp1zqmWsMVRDt0Ng9B+vjRa+x6clWO3g
+         RQIKYQCTrorGSJqFl8jB+3Wb0zqWCIFcaHXqvw0SrK0DMeeC4vHNlXSyk8aPQT9lK7Qy
+         XRiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722874829; x=1723479629;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/2gcRJhRF+q0oumC+8pyXKRI+ru5NZw7+q3z+G4VQE=;
+        b=fVnKXqSPWdLORTob5w02TZEc3pwtA/FHanH0TRaFytT/p0z5mV4q1dBpemGjTaFO47
+         DW+fDQM9L7OoOelVr95iFmTrhPNkBDqDgD6WjZrKEadp+K9GTr/J/mnY35N10hw/c86J
+         cJ0GBZA1J4CsTJ6pindbO6xWlGLqlJYPrBtgx6NqQ6Ifn/SuAmqA+HudP9kT+Ex02XoT
+         wEZ0/T8q8TBgOa7IMDxJz2spO7qcp19VADvDorP8AlNpfodsnJKN/yGCChHElNENbtEV
+         xfMWR6hiy0+0HwcLjIRh2kFzQyG4wWstmIISiBh1nKB2cFoe4mJup55wzbKoKrIkGQp1
+         0Iwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVEKSo6vcCCssHw514T4x7dtziigACtLn4vjIrduUyXpAwjYCOf67uD44gmgzG8W6iLPaAj191ALvvNVm6CEMZ5cR9MCCRL5pWoMnU0DJDZd5vMdCH/ls6fzc/7d9JOSdQ25Sr+IN0Xw==
+X-Gm-Message-State: AOJu0YwghfdTm6p3BW3D1orO2pux9K7WDWGK09OKHFB9dFY89uAYevrj
+	ycQ/CHbFHEW6S8R97APBzyfV2w3IuU6CyKHWvtNl3jFnC8WR1PAX
+X-Google-Smtp-Source: AGHT+IGhrdCiVzHF4+sgL6JEIeJjR99KHrosaGVM3KVKN0FUNCYWFamuinYDjmTd4Ylqq3yvu2brxQ==
+X-Received: by 2002:a05:6808:1b2b:b0:3db:22aa:f565 with SMTP id 5614622812f47-3db558095ccmr16759128b6e.11.1722874829090;
+        Mon, 05 Aug 2024 09:20:29 -0700 (PDT)
+Received: from neuromancer. ([2600:1700:fb0:1bcf::54])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3db5637b487sm2728598b6e.29.2024.08.05.09.20.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 09:20:28 -0700 (PDT)
+Message-ID: <66b0fbcc.050a0220.30fac7.71ce@mx.google.com>
+X-Google-Original-Message-ID: <ZrD7y/cmGjV3Kpax@neuromancer.>
+Date: Mon, 5 Aug 2024 11:20:27 -0500
+From: Chris Morgan <macroalpha82@gmail.com>
+To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mark Yao <markyao0591@gmail.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+	devicetree@vger.kernel.org, kernel@collabora.com,
+	Alexandre ARNOUD <aarnoud@me.com>,
+	Luis de Arquer <ldearquer@gmail.com>,
+	Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v2 0/3] Add initial support for the Rockchip RK3588 HDMI
+ TX Controller
+References: <20240801-b4-rk3588-bridge-upstream-v2-0-9fa657a4e15b@collabora.com>
+ <45B07EAF-4CBA-4DE4-A03B-109767D52B29@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] Drivers: hv: Provide arch-neutral implementation
- of get_vtl()
-To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
- "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
- <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
- <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
- <will@kernel.org>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "apais@microsoft.com" <apais@microsoft.com>,
- "benhill@microsoft.com" <benhill@microsoft.com>,
- "ssengar@microsoft.com" <ssengar@microsoft.com>,
- "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
- "vdso@hexbites.dev" <vdso@hexbites.dev>
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-4-romank@linux.microsoft.com>
- <SN6PR02MB415759676AEF931F030430FDD4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB415759676AEF931F030430FDD4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <45B07EAF-4CBA-4DE4-A03B-109767D52B29@gmail.com>
 
+On Sat, Aug 03, 2024 at 03:24:06PM +0200, Piotr Oniszczuk wrote:
+> Hi Cristian,
+> 
+> Will you find some time and motivation to add CEC support to Quad-Pixel (QP) TX controller ?
+> 
+> Probably you recall - I added initial CEC support to yours v1 series and i’m stuck with timing issue (cec pulses are 3x too long).
+> For me it looks like clock issue.
+> I’m out of ideas how to move forward with this timming issue….
 
+I wonder if using the cec-gpio on "GPIO4 RK_PC1" for the CEC gpio and
+"GPIO1 RK_PA5" for the HPD gpio is a possibility? Just a thought.
 
-On 8/4/2024 8:02 PM, Michael Kelley wrote:
-> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, July 26, 2024 3:59 PM
->>
->> To run in the VTL mode, Hyper-V drivers have to know what
->> VTL the system boots in, and the arm64/hyperv code does not
->> have the means to compute that.
->>
->> Refactor the code to hoist the function that detects VTL,
->> make it arch-neutral to be able to employ it to get the VTL
->> on arm64. Fix the hypercall output address in `get_vtl(void)`
->> not to overlap with the hypercall input area to adhere to
->> the Hyper-V TLFS.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   arch/x86/hyperv/hv_init.c          | 34 ---------------------
->>   arch/x86/include/asm/hyperv-tlfs.h |  7 -----
->>   drivers/hv/hv_common.c             | 47 ++++++++++++++++++++++++++++--
->>   include/asm-generic/hyperv-tlfs.h  |  7 +++++
->>   include/asm-generic/mshyperv.h     |  6 ++++
->>   5 files changed, 58 insertions(+), 43 deletions(-)
->>
->> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
->> index 17a71e92a343..c350fa05ee59 100644
->> --- a/arch/x86/hyperv/hv_init.c
->> +++ b/arch/x86/hyperv/hv_init.c
->> @@ -413,40 +413,6 @@ static void __init hv_get_partition_id(void)
->>   	local_irq_restore(flags);
->>   }
->>
->> -#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
->> -static u8 __init get_vtl(void)
->> -{
->> -	u64 control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
->> -	struct hv_get_vp_registers_input *input;
->> -	struct hv_get_vp_registers_output *output;
->> -	unsigned long flags;
->> -	u64 ret;
->> -
->> -	local_irq_save(flags);
->> -	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
->> -	output = (struct hv_get_vp_registers_output *)input;
->> -
->> -	memset(input, 0, struct_size(input, element, 1));
->> -	input->header.partitionid = HV_PARTITION_ID_SELF;
->> -	input->header.vpindex = HV_VP_INDEX_SELF;
->> -	input->header.inputvtl = 0;
->> -	input->element[0].name0 = HV_X64_REGISTER_VSM_VP_STATUS;
->> -
->> -	ret = hv_do_hypercall(control, input, output);
->> -	if (hv_result_success(ret)) {
->> -		ret = output->as64.low & HV_X64_VTL_MASK;
->> -	} else {
->> -		pr_err("Failed to get VTL(error: %lld) exiting...\n", ret);
->> -		BUG();
->> -	}
->> -
->> -	local_irq_restore(flags);
->> -	return ret;
->> -}
->> -#else
->> -static inline u8 get_vtl(void) { return 0; }
->> -#endif
->> -
->>   /*
->>    * This function is to be invoked early in the boot sequence after the
->>    * hypervisor has been detected.
->> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
->> index 3787d26810c1..9ee68eb8e6ff 100644
->> --- a/arch/x86/include/asm/hyperv-tlfs.h
->> +++ b/arch/x86/include/asm/hyperv-tlfs.h
->> @@ -309,13 +309,6 @@ enum hv_isolation_type {
->>   #define HV_MSR_STIMER0_CONFIG	(HV_X64_MSR_STIMER0_CONFIG)
->>   #define HV_MSR_STIMER0_COUNT	(HV_X64_MSR_STIMER0_COUNT)
->>
->> -/*
->> - * Registers are only accessible via HVCALL_GET_VP_REGISTERS hvcall and
->> - * there is not associated MSR address.
->> - */
->> -#define	HV_X64_REGISTER_VSM_VP_STATUS	0x000D0003
->> -#define	HV_X64_VTL_MASK			GENMASK(3, 0)
->> -
->>   /* Hyper-V memory host visibility */
->>   enum hv_mem_host_visibility {
->>   	VMBUS_PAGE_NOT_VISIBLE		= 0,
->> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
->> index 9c452bfbd571..7d6c1523b0b5 100644
->> --- a/drivers/hv/hv_common.c
->> +++ b/drivers/hv/hv_common.c
->> @@ -339,8 +339,8 @@ int __init hv_common_init(void)
->>   	hyperv_pcpu_input_arg = alloc_percpu(void  *);
->>   	BUG_ON(!hyperv_pcpu_input_arg);
->>
->> -	/* Allocate the per-CPU state for output arg for root */
->> -	if (hv_root_partition) {
->> +	/* Allocate the per-CPU state for output arg for root or a VTL */
->> +	if (hv_root_partition || IS_ENABLED(CONFIG_HYPERV_VTL_MODE)) {
->>   		hyperv_pcpu_output_arg = alloc_percpu(void *);
->>   		BUG_ON(!hyperv_pcpu_output_arg);
->>   	}
->> @@ -656,3 +656,46 @@ u64 __weak hv_tdx_hypercall(u64 control, u64 param1, u64
->> param2)
->>   	return HV_STATUS_INVALID_PARAMETER;
->>   }
->>   EXPORT_SYMBOL_GPL(hv_tdx_hypercall);
->> +
->> +#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
->> +u8 __init get_vtl(void)
->> +{
->> +	u64 control = HV_HYPERCALL_REP_COMP_1 | HVCALL_GET_VP_REGISTERS;
->> +	struct hv_get_vp_registers_input *input;
->> +	struct hv_get_vp_registers_output *output;
->> +	unsigned long flags;
->> +	u64 ret;
->> +
->> +	local_irq_save(flags);
->> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
->> +	output = *this_cpu_ptr(hyperv_pcpu_output_arg);
-> 
-> Rather than use the hyperv_pcpu_output_arg here, it's OK to
-> use a different area of the hyperv_pcpu_input_arg page.  For
-> example,
-> 
-> 	output = (void *)input + HV_HYP_PAGE_SIZE/2;
-> 
-> The TLFS does not require that the input and output be in
-> separate pages.
-> 
-> While using the hyperv_pcpu_output_arg is conceptually a
-> bit cleaner, doing so requires allocating a 4K page per CPU that
-> is not otherwise used. The VTL 2 code wants to be frugal with
-> memory, and this seems like a good step in that direction. :-)
-> 
-I agree on the both counts: the code looks conceptually cleaner now and 
-VTL2 wants to be frugal with memory, esp that the output hypercall page 
-is per-CPU so we have O(n) as the CPU count increases. Still, the output 
-page will be needed for VTL2 (say to get/set registers just as done 
-here). That said, with this patch we can achieve both the conceptual 
-cleanliness and being ready to grow more on the primitives being built 
-out in the VTL support patches.
+Chris
 
-> The hyperv_pcpu_output_arg was added for the cases where up
-> to a full page is needed for input and output on the same hypercall.
-> So far, the only case of that is when running in the root partition.
+>  
 > 
->> +
->> +	memset(input, 0, struct_size(input, element, 1));
->> +	input->header.partitionid = HV_PARTITION_ID_SELF;
->> +	input->header.vpindex = HV_VP_INDEX_SELF;
->> +	input->header.inputvtl = 0;
->> +	input->element[0].name0 = HV_REGISTER_VSM_VP_STATUS;
->> +
->> +	ret = hv_do_hypercall(control, input, output);
->> +	if (hv_result_success(ret)) {
->> +		ret = output->as64.low & HV_VTL_MASK;
->> +	} else {
->> +		pr_err("Failed to get VTL(error: %lld) exiting...\n", ret);
->> +
->> +		/*
->> +		 * This is a dead end, something fundamental is broken.
->> +		 *
->> +		 * There is no sensible way of continuing as the Hyper-V drivers
->> +		 * transitively depend via the vmbus driver on knowing which VTL
->> +		 * they run in to establish communication with the host. The kernel
->> +		 * is going to be worse off if continued booting than a panicked one,
->> +		 * just hung and stuck, producing second-order failures, with neither
->> +		 * a way to recover nor to provide expected services.
->> +		 */
->> +		BUG();
->> +	}
->> +
->> +	local_irq_restore(flags);
->> +	return ret;
->> +}
->> +#endif
->> diff --git a/include/asm-generic/hyperv-tlfs.h b/include/asm-generic/hyperv-tlfs.h
->> index 814207e7c37f..271c365973d6 100644
->> --- a/include/asm-generic/hyperv-tlfs.h
->> +++ b/include/asm-generic/hyperv-tlfs.h
->> @@ -75,6 +75,13 @@
->>   /* AccessTscInvariantControls privilege */
->>   #define HV_ACCESS_TSC_INVARIANT			BIT(15)
->>
->> +/*
->> + * This synthetic register is only accessible via the HVCALL_GET_VP_REGISTERS
->> + * hvcall, and there is no an associated MSR on x86.
 > 
-> s/there is no an associated/there is no associated/
+> > Wiadomość napisana przez Cristian Ciocaltea <cristian.ciocaltea@collabora.com> w dniu 01.08.2024, o godz. 04:25:
+> > 
+> > The Rockchip RK3588 SoC family integrates the Synopsys DesignWare HDMI
+> > 2.1 Quad-Pixel (QP) TX controller [4], which is a new IP block, quite
+> > different from those used in the previous generations of Rockchip SoCs.
+> > 
+> > This is the last component that needs to be supported in order to enable
+> > the HDMI output functionality on the RK3588 based SBCs, such as the
+> > RADXA Rock 5B. The other components are the Video Output Processor
+> > (VOP2) and the Samsung IP based HDMI/eDP TX Combo PHY, for which basic
+> > support has been already made available via [1] and [2], respectively.
+> > 
+> > Please note this is a reworked version of the original series, which
+> > relied on a commonized dw-hdmi approach.  Since the general consensus
+> > was to handle it as an entirely new IP, I dropped all patches related to
+> > the old dw-hdmi and Rockchip glue code - a few of them might still make
+> > sense as general improvements and will be submitted separately.
+> > 
+> > Additionally, as suggested by Neil, I've sent the reworked bridge driver
+> > as a separate patchset [4], hence this series handles now just the new
+> > Rockchip QP platform driver.
+> > 
+> > It's worth mentioning the HDMI output support is currently limited to
+> > RGB output up to 4K@60Hz, without audio, CEC or any of the HDMI 2.1
+> > specific features.  Moreover, the VOP2 driver is not able to properly
+> > handle all display modes supported by the connected screens, e.g. it
+> > doesn't cope with non-integer refresh rates.
+> > 
+> > A possible workaround consists of enabling the display controller to
+> > make use of the clock provided by the HDMI PHY PLL. This is still work
+> > in progress and will be submitted later, as well as the required DTS
+> > updates.
+> > 
+> > To facilitate testing and experimentation, all HDMI output related
+> > patches, including those part of this series, as well as the bridge
+> > driver, are available at [3].
+> > 
+> > So far I could only verify this on the RADXA Rock 5B board.
+> > 
+> > Thanks,
+> > Cristian
+> > 
+> > [1]: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
+> > [2]: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
+> > [3]: https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/commits/rk3588-hdmi-bridge-v6.11-rc1
+> > [4]: https://lore.kernel.org/lkml/20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@collabora.com/
+> > 
+> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> > ---
+> > Changes in v2:
+> > - Reworked the glue code for RK3588 into a new Rockchip platform driver
+> > - Moved bridge driver patches to a separate series [4]
+> > - Dropped all the patches touching to the old dw-hdmi and RK platform
+> >  drivers
+> > - Added connector creation to ensure the HDMI QP bridge driver does only
+> >  support DRM_BRIDGE_ATTACH_NO_CONNECTOR
+> > - Link to v1: https://lore.kernel.org/r/20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com
+> > 
+> > ---
+> > Cristian Ciocaltea (3):
+> >      dt-bindings: display: rockchip: Add schema for RK3588 HDMI TX Controller
+> >      drm/rockchip: Explicitly include bits header
+> >      drm/rockchip: Add basic RK3588 HDMI output support
+> > 
+> > .../display/rockchip/rockchip,dw-hdmi-qp.yaml      | 188 +++++++++
+> > drivers/gpu/drm/rockchip/Kconfig                   |   8 +
+> > drivers/gpu/drm/rockchip/Makefile                  |   1 +
+> > drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c     | 430 +++++++++++++++++++++
+> > drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |   2 +
+> > drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   4 +-
+> > 6 files changed, 632 insertions(+), 1 deletion(-)
+> > ---
+> > base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> > change-id: 20240601-b4-rk3588-bridge-upstream-a27baff1b8fc
+> > 
+> > 
+> > _______________________________________________
+> > Linux-rockchip mailing list
+> > Linux-rockchip@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-rockchip
 > 
-Much appreciated, will fix this!
-
->> + */
->> +#define	HV_REGISTER_VSM_VP_STATUS	0x000D0003
->> +#define	HV_VTL_MASK			GENMASK(3, 0)
 > 
-> Further down in hyperv-tlfs.h is a section devoted to register
-> definitions. It seems like this definition should go there in
-> numeric order, which is after HV_REGISTER_STIMER0_COUNT.
-> 
-Agreed, will fix, thanks!
-
-> Michael
-> 
->> +
->>   /*
->>    * Group B features.
->>    */
->> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
->> index 8fe7aaab2599..85a5b8cb1702 100644
->> --- a/include/asm-generic/mshyperv.h
->> +++ b/include/asm-generic/mshyperv.h
->> @@ -315,4 +315,10 @@ static inline enum hv_isolation_type
->> hv_get_isolation_type(void)
->>   }
->>   #endif /* CONFIG_HYPERV */
->>
->> +#if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
->> +u8 __init get_vtl(void);
->> +#else
->> +static inline u8 get_vtl(void) { return 0; }
->> +#endif
->> +
->>   #endif
->> --
->> 2.34.1
->>
-
--- 
-Thank you,
-Roman
-
 
