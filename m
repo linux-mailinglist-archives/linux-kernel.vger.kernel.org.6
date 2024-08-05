@@ -1,118 +1,199 @@
-Return-Path: <linux-kernel+bounces-274651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F6E947B1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AEBC947B22
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933C6B218D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:42:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 066FC281568
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CE115ADA7;
-	Mon,  5 Aug 2024 12:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0762C1591E8;
+	Mon,  5 Aug 2024 12:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="SvVeTsqg"
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gn2qZT7r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/F1BLqOn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gn2qZT7r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/F1BLqOn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2451598F4
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 12:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F1618026;
+	Mon,  5 Aug 2024 12:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722861722; cv=none; b=Iyb914g2p5Tuq9oIMDRaUvW4BOlGJ1kO6bLRxWHEaYcQKD7X4ozB7gmzY2v6Lg8aEOKXir4K4gmSZAfQLZMvP4m2Gq6brevzm8rUHNrsinbHgsnmldbY72SwTvBD1aGNc4NOqLeWP9TtkDykTxHj33x8klAp0D/nNVdScMRf9II=
+	t=1722861776; cv=none; b=HJ+NcvHynJoQMSY15VIM7jDPw06kUBimPpc7GDidxzVajIwoayRl+w9LhBpgx/6FD73VmOipPWHntv21Xe6VR5NF85eTBogD80BuVLbsv2NAoLUETFbS+yv+KurbKqYB35HIB31j47tCb6/ig4ZE6cZNv/XXbIsTOYkcVcToHAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722861722; c=relaxed/simple;
-	bh=2oeDCd43gj3tEVG9acz79y7We8C38uo5aN+ARIR8P5k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=l9860e5mfrpKwq1HdPtX5sanOc6M0mHo3ENec1ppAfBZWcU0yDBFPqbZnG8ABekhzgXZe9b8K4H+Yq9xKRGRJlvDrToR/8iE1D7YAJSvDW4EL+529gEsrcgL/aM3BBPO010EMYv3v8irjfBseCIUSk9TtroNCDp+95tAenDfWSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=SvVeTsqg; arc=none smtp.client-ip=185.136.64.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 202408051241522dfffbfceef6f47042
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 05 Aug 2024 14:41:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=sS9nfVqlSth+qJIirvho6CZ3s4rCPhOH4Nl/w1oH1ms=;
- b=SvVeTsqgVS6d8YDOBWAVZD2yAZdKEZeXb78g4MnbhGBBl2pDGFbGZlt0iZ1TFQsczUxLQN
- qe1R4T9Q3ax6gJ0U2O3JyRjeudPavxH7B84CnQtWEtbFbJbRtly5yZoDrcVU4bQ5S1xcA8VU
- Rd0bybvZhs5KpyLL03CR11Jp+/vFk0Yz1aa0UFdfDWmNHKjdt6V0mfcnRL2veQZ+9+dJkNMA
- lCYYX2m4e95OScjG21PflqgrhJl6u25AdmNddoSrlBsbHEhBDdUMSEda8Q0JTIeDTz5lPPiv
- y42VhNgkbwPT4HsLV6kvjlyMOqjA3a8h4ftl2TXC86bg5ZViQ4ga0qow==;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	jan.kiszka@siemens.com,
-	Felix Moessbauer <felix.moessbauer@siemens.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] hrtimer: Ignore slack time for RT tasks in hrtimer_start_range_ns()
-Date: Mon,  5 Aug 2024 14:41:16 +0200
-Message-Id: <20240805124116.21394-3-felix.moessbauer@siemens.com>
-In-Reply-To: <20240805124116.21394-1-felix.moessbauer@siemens.com>
-References: <20240805124116.21394-1-felix.moessbauer@siemens.com>
+	s=arc-20240116; t=1722861776; c=relaxed/simple;
+	bh=kjmeKz/OfVogGP+6vAYsMaB/wg0M5wnmxNsUhLfS/TM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FOVAdoYc50/wnsMsbS2vnEKnS98WwC9yZz9IIBmAAezXUBtMyGA0TDLGRUVWmLlMMIjhWhZAhZAPVUVyEozOBAh7ItbWs/Gw6jgLSAVw0YuH3i3T8PJ+tgb71x3BaRcoDP1MfyTnU/4lRk4oasD7a/s/4ROpD4gcjTcQ32pkKIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gn2qZT7r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/F1BLqOn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gn2qZT7r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/F1BLqOn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9741621B8A;
+	Mon,  5 Aug 2024 12:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722861772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPG1VezWkgtCgPL3X6l78ZFt5UmbLU4dQV3QwNEO/s0=;
+	b=gn2qZT7r2UUCgYBm6VUb7AAppbAEV2IQk3E6HBPSIgbr74ajkl7fu08RnP3bjEsBZ5LTsn
+	ivUQTgDeuFz+fHHzo5HF+BXelb1KVzFKrlMRbKXJFTb0jUSAfKy7VQwvIA2VQPrIHcQdXG
+	UjXulExW/0UAo7R8w7ZotXetkVTygGA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722861772;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPG1VezWkgtCgPL3X6l78ZFt5UmbLU4dQV3QwNEO/s0=;
+	b=/F1BLqOnsuLww9qbwUEx6bPd84zeCyflS6Z0IRx248qMkbdkONqDor2XrVJ+PCKjDOHDRD
+	0O90eSnsfdHTYhDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722861772; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPG1VezWkgtCgPL3X6l78ZFt5UmbLU4dQV3QwNEO/s0=;
+	b=gn2qZT7r2UUCgYBm6VUb7AAppbAEV2IQk3E6HBPSIgbr74ajkl7fu08RnP3bjEsBZ5LTsn
+	ivUQTgDeuFz+fHHzo5HF+BXelb1KVzFKrlMRbKXJFTb0jUSAfKy7VQwvIA2VQPrIHcQdXG
+	UjXulExW/0UAo7R8w7ZotXetkVTygGA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722861772;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPG1VezWkgtCgPL3X6l78ZFt5UmbLU4dQV3QwNEO/s0=;
+	b=/F1BLqOnsuLww9qbwUEx6bPd84zeCyflS6Z0IRx248qMkbdkONqDor2XrVJ+PCKjDOHDRD
+	0O90eSnsfdHTYhDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8A06413ACF;
+	Mon,  5 Aug 2024 12:42:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id luivIczIsGYBKwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 05 Aug 2024 12:42:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4895DA0897; Mon,  5 Aug 2024 14:42:52 +0200 (CEST)
+Date: Mon, 5 Aug 2024 14:42:52 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Dave Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	djwong@kernel.org, hch@infradead.org, brauner@kernel.org,
+	jack@suse.cz, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
+ uptodate bits
+Message-ID: <20240805124252.nco2rblmgf6x7z4s@quack3>
+References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
+ <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+ <Zqwi48H74g2EX56c@dread.disaster.area>
+ <b40a510d-37b3-da50-79db-d56ebd870bf0@huaweicloud.com>
+ <Zqx824ty5yvwdvXO@dread.disaster.area>
+ <1b99e874-e9df-0b06-c856-edb94eca16dc@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1b99e874-e9df-0b06-c856-edb94eca16dc@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.80 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.80
 
-RT tasks do not have any timerslack, as this induces jitter. By
-that, the timer slack is already ignored in the nanosleep family and
-schedule_hrtimeout_range() (fixed in 0c52310f2600).
+On Fri 02-08-24 19:13:11, Zhang Yi wrote:
+> On 2024/8/2 14:29, Dave Chinner wrote:
+> > On Fri, Aug 02, 2024 at 10:57:41AM +0800, Zhang Yi wrote:
+> >> On 2024/8/2 8:05, Dave Chinner wrote:
+> >>> On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
+> >>> Making this change also misses the elephant in the room: the
+> >>> buffered write path still needs the ifs->state_lock to update the
+> >>> dirty bitmap. Hence we're effectively changing the serialisation
+> >>> mechanism for only one of the two ifs state bitmaps that the
+> >>> buffered write path has to update.
+> >>>
+> >>> Indeed, we can't get rid of the ifs->state_lock from the dirty range
+> >>> updates because iomap_dirty_folio() can be called without the folio
+> >>> being locked through folio_mark_dirty() calling the ->dirty_folio()
+> >>> aop.
+> >>>
+> >>
+> >> Sorry, I don't understand, why folio_mark_dirty() could be called without
+> >> folio lock (isn't this supposed to be a bug)?  IIUC, all the file backed
+> >> folios must be locked before marking dirty. Are there any exceptions or am
+> >> I missing something?
+> > 
+> > Yes: reading the code I pointed you at.
+> > 
+> > /**
+> >  * folio_mark_dirty - Mark a folio as being modified.
+> >  * @folio: The folio.
+> >  *
+> >  * The folio may not be truncated while this function is running.
+> >  * Holding the folio lock is sufficient to prevent truncation, but some
+> >  * callers cannot acquire a sleeping lock.  These callers instead hold
+> >  * the page table lock for a page table which contains at least one page
+> >  * in this folio.  Truncation will block on the page table lock as it
+> >  * unmaps pages before removing the folio from its mapping.
+> >  *
+> >  * Return: True if the folio was newly dirtied, false if it was already dirty.
+> >  */
+> > 
+> > So, yes, ->dirty_folio() can indeed be called without the folio
+> > being locked and it is not a bug.
+> 
+> Ha, right, I missed the comments of this function, it means that there are
+> some special callers that hold table lock instead of folio lock, is it
+> pte_alloc_map_lock?
+> 
+> I checked all the filesystem related callers and didn't find any real
+> caller that mark folio dirty without holding folio lock and that could
+> affect current filesystems which are using iomap framework, it's just
+> a potential possibility in the future, am I right?
 
-The hrtimer_start_range_ns function is indirectly used by glibc-2.33+
-for timed waits on condition variables. These are sometimes used in
-RT applications for realtime queue processing. At least on the
-combination of kernel 5.10 and glibc-2.31, the timed wait on condition
-variables in rt tasks was precise (no slack), however glibc-2.33
-changed the internal wait implementation, exposing the kernel bug.
+There used to be quite a few places doing that. Now that I've checked all I
+places was aware of got actually converted to call folio_mark_dirty() under
+a folio lock (in particular all the cases happening on IO completion, folio
+unmap etc.). Matthew, are you aware of any place where folio_mark_dirty()
+would be called for regular file page cache (block device page cache is in a
+different situation obviously) without folio lock held?
 
-This patch makes the timer slack consistent across all hrtimer
-programming code, by ignoring the timerslack for rt tasks also in the
-last remaining location in hrtimer_start_range_ns().
+								Honza
 
-Similar to 0c52310f2600, this fix should be backported as well.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
----
- kernel/time/hrtimer.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 2b1469f61d9c..1b26e095114d 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1274,7 +1274,7 @@ static int __hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
-  * hrtimer_start_range_ns - (re)start an hrtimer
-  * @timer:	the timer to be added
-  * @tim:	expiry time
-- * @delta_ns:	"slack" range for the timer
-+ * @delta_ns:	"slack" range for the timer for SCHED_OTHER tasks
-  * @mode:	timer mode: absolute (HRTIMER_MODE_ABS) or
-  *		relative (HRTIMER_MODE_REL), and pinned (HRTIMER_MODE_PINNED);
-  *		softirq based mode is considered for debug purpose only!
-@@ -1299,6 +1299,10 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
- 
- 	base = lock_hrtimer_base(timer, &flags);
- 
-+	/* rt-tasks do not have a timer slack for obvious reasons */
-+	if (rt_task(current))
-+		delta_ns = 0;
-+
- 	if (__hrtimer_start_range_ns(timer, tim, delta_ns, mode, base))
- 		hrtimer_reprogram(timer, true);
- 
 -- 
-2.39.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
