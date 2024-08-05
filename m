@@ -1,179 +1,165 @@
-Return-Path: <linux-kernel+bounces-275055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1EE948019
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:13:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B15794801B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6AA284611
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06E25284A4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306E515ECC2;
-	Mon,  5 Aug 2024 17:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3B415EFC2;
+	Mon,  5 Aug 2024 17:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AkzqaI0o"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9+YjFax"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22D7155351
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20BC155351;
+	Mon,  5 Aug 2024 17:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722878023; cv=none; b=oTcf2PKcJPLTE6GNMth5rHJRR83YQQ/d+HT9sqwCRb4D/Q1fxsvyvc2qfTTUL/lzvFDh93JDdbkm1SE9B7E9Tw00bUqipqfh1kJ3nA9qhMvazkFtYyeyk5prWcZIUpR1elkPfK02J5yHYz1drJugjbaONYxkIwsspIBTWy9t5XQ=
+	t=1722878028; cv=none; b=TdEki/RGWoSV0M6hZWn+ZGQvJH09f10mRRqUkvTMGdgN6em2IgYRSNPsur6DL1YAYK687fVYLwtYfxDYlNmuLPNKdwxqvJqiY9/tF2YOkn1ojEhBw0azYklQ+5HMiPaV/e6sL/N/yi/shShMeUAGrpBSEwuAE3cck+eniSSz79w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722878023; c=relaxed/simple;
-	bh=yfWYEXxdeJwgAdLFY31FsjB5SlxcoS41niHTgjnNpUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cXq+e6hlqOZgnMdyFlYMAsAuZiCnreHt2s7XvDC4+fk+0i5aGo68TARghVTG0xJO0NbZElx1h5H9VBgaOAIr2qFQLrY6KJtOoHNNKjf0tJOmR0BF2MOZgrDvdTHe38DXXb9wrEzHk/bMHYKrN+xfrYTHcORhu2rq9enqZEbrESA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AkzqaI0o; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7a20b8fa6dcso341716285a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:13:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722878020; x=1723482820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oxGPkBBIU/UYFLm9bnOMyrs15Eqxvamgnzbs4RGwsYk=;
-        b=AkzqaI0oAjB4vocbylCI4/4Ym2XSgWzLX27ruGXlqkU4E3g39mhUkrh8+RBQ6OleCb
-         bd3vnX/irWznkxyhkobssKUuFvfrHWvJUdrzDWj0aSdX0+zrtdxBTwgbsfhj507PbNqD
-         r0MJ+HLXQLpR4Yrlf4k/dPF5L4rKSjfCGvK9o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722878020; x=1723482820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oxGPkBBIU/UYFLm9bnOMyrs15Eqxvamgnzbs4RGwsYk=;
-        b=EVZPh0NggLIZyrmrG57yEbO/WVhSU2g1mIGMBcs3ilfomwxU4F5Qp+ReNky1TCtTAR
-         IACuOfSFyh4vb7grAnqUssP2izhRY02YjmKm1/8WyWVpC2mnRUqpyASvBfwrxPy2ASvK
-         lk612lb58ACWEDwqS04YXJ0GtGR/Gef3eoTctakSiqcFn6YRuiWIOSB+M8mgni+T6tqL
-         DZr94MzSU+yLCsU7cHYIVMfaevhdlbPgL5UmCVQf6sEiQudn0lxQFGwOLGi+wThCFlRN
-         0m+rQN0FcvD41V6nvxo77K/VE+IBezIrbZozEiRt2N+d4C9eNh+VMn5EtrX7CnhNmvH5
-         JYDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhoPhNEF9qWDadWZ4PmTuMMjTuqnS3vI1yFRl0Vhoq1+HAHSt9GZADLkdaE5R1wQnfZwnh7NL2seHuf9xpAmm6drzBJuxNXZ3oTyCQ
-X-Gm-Message-State: AOJu0YzH/d36hhc4bcvLL4SXOHCdb+NtrQkSNbChAxYgfyjabY203m9M
-	a/HV9ITXM9GXoh0gcsKHkyI4givw9FPGtTqZUhkvUoOTG0lqgYQt02ifkgsxRYcSmnAXespMNFE
-	=
-X-Google-Smtp-Source: AGHT+IEbpZySP3CSZP4SkMHFeW+eVBHY96N5iViHqn3WJVEBC2PyQLac04Rl3oWDP96+Yg9Sp0TuPQ==
-X-Received: by 2002:a05:6214:3bc5:b0:6b4:4470:81a5 with SMTP id 6a1803df08f44-6bb983102famr152270256d6.2.1722878020310;
-        Mon, 05 Aug 2024 10:13:40 -0700 (PDT)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c76f8ccsm37434726d6.4.2024.08.05.10.13.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 10:13:39 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44fdc70e695so30371cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:13:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/xzfgD0VkLari02aKFSK3KftmyDBwHNu+MaRn839QtA+m+erXUviqg0qWePVLnQFxyFIunUe3hSJpAumV0bXY8P07YkcV1JWeQLvW
-X-Received: by 2002:a05:622a:301:b0:44f:cb30:8b71 with SMTP id
- d75a77b69052e-4519b663469mr5297181cf.25.1722878007233; Mon, 05 Aug 2024
- 10:13:27 -0700 (PDT)
+	s=arc-20240116; t=1722878028; c=relaxed/simple;
+	bh=cbBt27hkdYHhswR7zddV7pmhvdwW7EAG8ILuZV1nH1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BwmOunUi9Hw/yMFG6e+oMYHKlSWiiZa2WTUiY0mLZfrXaKPwjwLvp4f/LCZkYUNy3JoocQwk1GmoLyp7Y08ZpmzBL/c2zl070ReW4t3qReHe11rbVXNoTZ5+F4fgyYFlUaUdwmaU5z0tHfgmOr3QN0JM3bQ1FyOEICjW8zWRqOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9+YjFax; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BABC32782;
+	Mon,  5 Aug 2024 17:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722878028;
+	bh=cbBt27hkdYHhswR7zddV7pmhvdwW7EAG8ILuZV1nH1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j9+YjFaxZSYW0ZixSlvUm/Ty/OMkCZIU9jpLjS3AJqB3q3k9IBl/Vn77b+5COySEc
+	 WsMh6JRodj08EwWvXcBxQS3R/dh6B6AaDG0MNl+UTqAK0baehklkdJtzUQS8ywnenk
+	 H2c67m5GCoD5F4q8VBcEZeqnD9D/2x3OYrjDNhDBlhYdcjeNp6fiCkGU9LbukqCx7e
+	 f2ziKSZuPb6Hbr5meHSPVWKFiUjSxRizg6k2z8nmhAxuX9Uwj8TdqAPwncHY1gKVcO
+	 jJXBMBy5bQ2LC/M8Zh4aq91FxSXKi8RsnGAt+jrEfbYYAKzGXqCww7OwQW3IGEwHLp
+	 LXUfO/iOmsNfQ==
+Date: Mon, 5 Aug 2024 18:13:40 +0100
+From: Will Deacon <will@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Conor Dooley <conor@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v4 2/2] rust: support for shadow call stack sanitizer
+Message-ID: <20240805171340.GC10196@willie-the-truck>
+References: <20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com>
+ <20240729-shadow-call-stack-v4-2-2a664b082ea4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625160718.v2.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
- <20240805165336.GA10196@willie-the-truck>
-In-Reply-To: <20240805165336.GA10196@willie-the-truck>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 5 Aug 2024 10:13:11 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WGfQeJr2CuA7J5XgytAVpVxZPpH4EY8e8y63wMOaHRwA@mail.gmail.com>
-Message-ID: <CAD=FV=WGfQeJr2CuA7J5XgytAVpVxZPpH4EY8e8y63wMOaHRwA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: smp: smp_send_stop() and crash_smp_send_stop()
- should try non-NMI first
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Sumit Garg <sumit.garg@linaro.org>, Yu Zhao <yuzhao@google.com>, 
-	Misono Tomohiro <misono.tomohiro@fujitsu.com>, Stephen Boyd <swboyd@chromium.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Marc Zyngier <maz@kernel.org>, 
-	Daniel Thompson <daniel.thompson@linaro.org>, 
-	D Scott Phillips <scott@os.amperecomputing.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, James Morse <james.morse@arm.com>, Kees Cook <kees@kernel.org>, 
-	Tony Luck <tony.luck@intel.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729-shadow-call-stack-v4-2-2a664b082ea4@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi,
+Hi Alice,
 
-On Mon, Aug 5, 2024 at 9:53=E2=80=AFAM Will Deacon <will@kernel.org> wrote:
->
-> Hi Doug,
->
-> On Tue, Jun 25, 2024 at 04:07:22PM -0700, Douglas Anderson wrote:
-> > @@ -1084,79 +1088,87 @@ static inline unsigned int num_other_online_cpu=
-s(void)
-> >
-> >  void smp_send_stop(void)
-> >  {
-> > +     static unsigned long stop_in_progress;
-> > +     cpumask_t mask;
-> >       unsigned long timeout;
-> >
-> > -     if (num_other_online_cpus()) {
-> > -             cpumask_t mask;
-> > +     /*
-> > +      * If this cpu is the only one alive at this point in time, onlin=
-e or
-> > +      * not, there are no stop messages to be sent around, so just bac=
-k out.
-> > +      */
-> > +     if (num_other_online_cpus() =3D=3D 0)
-> > +             goto skip_ipi;
-> >
-> > -             cpumask_copy(&mask, cpu_online_mask);
-> > -             cpumask_clear_cpu(smp_processor_id(), &mask);
-> > +     /* Only proceed if this is the first CPU to reach this code */
-> > +     if (test_and_set_bit(0, &stop_in_progress))
-> > +             return;
-> >
-> > -             if (system_state <=3D SYSTEM_RUNNING)
-> > -                     pr_crit("SMP: stopping secondary CPUs\n");
-> > -             smp_cross_call(&mask, IPI_CPU_STOP);
-> > -     }
-> > +     cpumask_copy(&mask, cpu_online_mask);
-> > +     cpumask_clear_cpu(smp_processor_id(), &mask);
-> >
-> > -     /* Wait up to one second for other CPUs to stop */
-> > +     if (system_state <=3D SYSTEM_RUNNING)
-> > +             pr_crit("SMP: stopping secondary CPUs\n");
-> > +
-> > +     /*
-> > +      * Start with a normal IPI and wait up to one second for other CP=
-Us to
-> > +      * stop. We do this first because it gives other processors a cha=
-nce
-> > +      * to exit critical sections / drop locks and makes the rest of t=
-he
-> > +      * stop process (especially console flush) more robust.
-> > +      */
-> > +     smp_cross_call(&mask, IPI_CPU_STOP);
->
-> I realise you've moved this out of crash_smp_send_stop() and it looks
-> like we inherited the code from x86, but do you know how this serialise
-> against CPU hotplug operations? I've spent the last 20m looking at the
-> code and I can't see what prevents other CPUs from coming and going
-> while we're trying to IPI a non-atomic copy of 'cpu_online_mask'.
+Just some minor comments on this:
 
-I don't think there is anything. ...and it's not just this code
-either. It sure looks like nmi_trigger_cpumask_backtrace() has the
-same problem.
+On Mon, Jul 29, 2024 at 02:22:50PM +0000, Alice Ryhl wrote:
+> To use the shadow call stack sanitizer, you must pass special flags:
+> 
+> * On arm64, you must pass -ffixed-x18 to your compiler.
+> * On riscv, you must pass --no-relax-gp to your linker.
 
-I guess maybe in the case of nmi_trigger_cpumask_backtrace() it's not
-such a big deal because:
-1. If a CPU goes away then we'll just time out
-2. If a CPU shows up then we'll skip backtracing it, but we were
-sending backtraces at an instant in time anyway.
+Since this patch doesn't touch riscv, I think you can just talk about
+arm64 in the commit message.
 
-In the case of smp_send_stop() it's probably fine if a CPU goes away
-because, again, we'll just timeout. ...but if a CPU shows up then
-that's not super ideal. Maybe it doesn't cause problems in practice
-but it does feel like it should be fixed.
+> These requirements also apply to Rust code. When using Rust on arm64,
+> you must pass the -Zfixed-x18 flag to rustc, which has the same effect
+> as the -ffixed-x18 flag does for C code. The -Zfixed-x18 flag requires
+> rustc version 1.80.0 or greater.
+> 
+> There is no need to pass any flags to rustc on riscv as only the linker
+> requires additional flags on this platform.
+> 
+> On older versions of Rust, it is still possible to use shadow call stack
+> by passing -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18.
+> However, this flag emits a warning during the build, so this patch does
+> not add support for using it.
+> 
+> Currently, the compiler thinks that the aarch64-unknown-none target
 
--Doug
+"Currently" will probably age badly -- can you talk about a compiler
+version instead (e.g. "prior to version nnn, the compiler thinks...").
+
+> doesn't support -Zsanitizer=shadow-call-stack, so the build will fail if
+> you enable shadow call stack in non-dynamic mode. See [1] for the
+> relevant feature request. To avoid this compilation failure, Kconfig is
+> set up to reject such configurations.
+> 
+> The `depends on` clause is placed on `config RUST` to avoid a situation
+> where enabling Rust silently turns off the sanitizer. Instead, turning
+> on the sanitizer results in Rust being disabled. We generally do not
+> want changes to CONFIG_RUST to result in any mitigations being changed
+> or turned off.
+> 
+> Link: https://github.com/rust-lang/rust/issues/121972 [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  Makefile            | 1 +
+>  arch/arm64/Makefile | 3 +++
+>  init/Kconfig        | 2 +-
+>  3 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 2b5f9f098b6f..66daca7a9b57 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -928,6 +928,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
+>  ifndef CONFIG_DYNAMIC_SCS
+>  CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
+>  KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
+> +KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
+>  endif
+>  export CC_FLAGS_SCS
+>  endif
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index f6bc3da1ef11..b058c4803efb 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -57,9 +57,11 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
+>  ifneq ($(CONFIG_UNWIND_TABLES),y)
+>  KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
+>  KBUILD_AFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
+> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
+>  else
+>  KBUILD_CFLAGS	+= -fasynchronous-unwind-tables
+>  KBUILD_AFLAGS	+= -fasynchronous-unwind-tables
+> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
+
+These unwind entries aren't mentioned at all in the commit message.
+Please can you explain what you're doing here? I guess it's something to
+do with the PAC patching? Maybe this hunk would be better as a separate
+patch?
+
+Will
 
