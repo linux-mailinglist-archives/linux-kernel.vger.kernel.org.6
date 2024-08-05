@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-274404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFE69477BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:59:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED7A9477E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF831F21052
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:59:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8892A1F22080
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF4D158D8D;
-	Mon,  5 Aug 2024 08:55:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9545B154423;
-	Mon,  5 Aug 2024 08:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BFB14A609;
+	Mon,  5 Aug 2024 09:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="UuVhgd82"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861E87172F;
+	Mon,  5 Aug 2024 09:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722848112; cv=none; b=lU/9XNdG1ybS0q17wuqhuQMKFOxXS604Yp0Tne4grKksgA7c8LTvs+faRznoi47lCj0ZERAGgmjXMfJMvQUmxPyJf4jrBZmgkCB5/s6JUGDYzgwFxeRDg50Anj5i7jj8z2CJ4PGLyM9gIz8+OuK+1u1UEFRoqhcP23rYrGmyDL0=
+	t=1722848672; cv=none; b=q8UAOL9+W+1TozJzmzEBiwiLPMyAuBnM2/DPwRtSsOT+ovSjjkJnS9U2GtRlVUIospL9p5MMEo7ywtLh9YdNiOMvIBQl6VWIQpyb1vb4uQmlnzH/DIl3coQN8TzjyiGrXkDb5EGaOwlTQkWz3q7bmN/jH8LjNNRpNAdQwoi3OKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722848112; c=relaxed/simple;
-	bh=iE0WgrZXiCseCeAWYQWO1j+Lqy7AAD14NI4QNIiOuzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GvEM1WwY7+6/Mk2pETR3tSjpOeLOYcuH9ltpXndflLQYo0iw6LnV0N6jZtjQgj7jY0823LBtl0QxlsNDQdJJjqtBVpX8W6UWnNUgsetwS8ohYfORt05Y5ZEn2MGxY9yl+NseZwiEFsr7SBBxHTjr2Xkaon+mZfY5yNNjud0wwec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B074A16F2;
-	Mon,  5 Aug 2024 01:55:35 -0700 (PDT)
-Received: from e126817.cambridge.arm.com (e126817.cambridge.arm.com [10.2.3.8])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F11623F6A8;
-	Mon,  5 Aug 2024 01:55:07 -0700 (PDT)
-From: Ben Gainey <ben.gainey@arm.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org
-Cc: james.clark@arm.com,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ben Gainey <ben.gainey@arm.com>
-Subject: [PATCH v11 2/2] tools/perf: Allow inherit + PERF_SAMPLE_READ when opening events
-Date: Mon,  5 Aug 2024 09:54:58 +0100
-Message-ID: <20240805085458.134195-3-ben.gainey@arm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240805085458.134195-1-ben.gainey@arm.com>
-References: <20240805085458.134195-1-ben.gainey@arm.com>
+	s=arc-20240116; t=1722848672; c=relaxed/simple;
+	bh=w7ZHvS4p6u6IKx7Xwz/+vUcwktGexEc8pi672wxzw8Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=spGPFuapIuXOQslGDj+FLYgRGCJakiqnciAxR0BdONWYnyDEPIzMxGqI882iddiMGPWjK4zTAcR8s2ydSB7skXzonJt+gAUA+E7FNOzMsBRsWOlY2YVfaYSHRhVM0O418Ss0dbu2Bbfh/d/ayQ0smt46ZQvoF3WyM052KdsvwYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=UuVhgd82; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 54A6F2116D;
+	Mon,  5 Aug 2024 10:55:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1722848135;
+	bh=Q+o2Pu1MMLmQgwhuE2m9BRsFdFXuj/mOweDtXEz5VLI=; h=From:To:Subject;
+	b=UuVhgd82nniAL9wAbo/mt2LZSpDgwZe0cOeYjuHUH/ySG3jauxB72+MZFeJJsrIaw
+	 WKQNFlefm8JLcXuYNWAwZrhKCnMR9hvLHjgP40NvwTAPjhX0xHxSJI3gclQgyRbpW0
+	 oFl269SyC+0bC6dXvJeZE765+je1FOXUd1kp+yzTC6LC41Dw9/hwtLjPwWdpFP8Qu9
+	 hXI2X4N2nY6vcJQnVsKuWAOZ7mwwCEtEWK1gxm7BqVoW1Iy3oSoDcVYRVf7FB/8wEI
+	 unPNaPA7xcVnYCXcLdwY5SrMVcQIVOeGawicsW+c85XdhHc2FSL/KMNtezoymXe/GC
+	 VfOftIIfIb/Cg==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] Input: ilitek_ts_i2c - Fix spurious input events
+Date: Mon,  5 Aug 2024 10:55:09 +0200
+Message-Id: <20240805085511.43955-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,333 +58,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The "perf record" tool will now default to this new mode if the user
-specifies a sampling group when not in system-wide mode, and when
-"--no-inherit" is not specified.
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-This change updates evsel to allow the combination of inherit
-and PERF_SAMPLE_READ.
+A couple of fixes to prevent spurious events when the data buffer is not the
+expected one.
 
-A fallback is implemented for kernel versions where this feature is not
-supported.
+v4:
+ - remove err_sync_frame label, return directly instead
+ - removed reviewed-by
+v3:
+ - added reviewed-by and take over series from emanuele
+v2:
+ - initial series, sent by mistake as v2 instead of v1
 
-Signed-off-by: Ben Gainey <ben.gainey@arm.com>
----
- tools/perf/tests/attr/README                  |  2 +
- tools/perf/tests/attr/test-record-C0          |  2 +
- tools/perf/tests/attr/test-record-dummy-C0    |  2 +-
- .../tests/attr/test-record-group-sampling     |  3 +-
- .../tests/attr/test-record-group-sampling1    | 51 ++++++++++++++++
- .../tests/attr/test-record-group-sampling2    | 61 +++++++++++++++++++
- tools/perf/tests/attr/test-record-group2      |  1 +
- ...{test-record-group2 => test-record-group3} | 10 +--
- tools/perf/util/evsel.c                       | 21 ++++++-
- tools/perf/util/evsel.h                       |  1 +
- 10 files changed, 145 insertions(+), 9 deletions(-)
- create mode 100644 tools/perf/tests/attr/test-record-group-sampling1
- create mode 100644 tools/perf/tests/attr/test-record-group-sampling2
- copy tools/perf/tests/attr/{test-record-group2 => test-record-group3} (81%)
+Emanuele Ghidoli (2):
+  Input: ilitek_ts_i2c - avoid wrong input subsystem sync
+  Input: ilitek_ts_i2c - add report id message validation
 
-diff --git a/tools/perf/tests/attr/README b/tools/perf/tests/attr/README
-index 4066fec7180a..67c4ca76b85d 100644
---- a/tools/perf/tests/attr/README
-+++ b/tools/perf/tests/attr/README
-@@ -51,6 +51,8 @@ Following tests are defined (with perf commands):
-   perf record --call-graph fp kill              (test-record-graph-fp-aarch64)
-   perf record -e '{cycles,instructions}' kill   (test-record-group1)
-   perf record -e '{cycles/period=1/,instructions/period=2/}:S' kill (test-record-group2)
-+  perf record -e '{cycles,cache-misses}:S' kill (test-record-group-sampling1)
-+  perf record -c 10000 -e '{cycles,cache-misses}:S' kill (test-record-group-sampling2)
-   perf record -D kill                           (test-record-no-delay)
-   perf record -i kill                           (test-record-no-inherit)
-   perf record -n kill                           (test-record-no-samples)
-diff --git a/tools/perf/tests/attr/test-record-C0 b/tools/perf/tests/attr/test-record-C0
-index 198e8429a1bf..1049ac8b52f2 100644
---- a/tools/perf/tests/attr/test-record-C0
-+++ b/tools/perf/tests/attr/test-record-C0
-@@ -18,5 +18,7 @@ sample_type=65927
- mmap=0
- comm=0
- task=0
-+inherit=0
- 
- [event:system-wide-dummy]
-+inherit=0
-diff --git a/tools/perf/tests/attr/test-record-dummy-C0 b/tools/perf/tests/attr/test-record-dummy-C0
-index 576ec48b3aaf..3050298bd614 100644
---- a/tools/perf/tests/attr/test-record-dummy-C0
-+++ b/tools/perf/tests/attr/test-record-dummy-C0
-@@ -19,7 +19,7 @@ sample_period=4000
- sample_type=391
- read_format=4|20
- disabled=0
--inherit=1
-+inherit=0
- pinned=0
- exclusive=0
- exclude_user=0
-diff --git a/tools/perf/tests/attr/test-record-group-sampling b/tools/perf/tests/attr/test-record-group-sampling
-index 97e7e64a38f0..86a940d7895d 100644
---- a/tools/perf/tests/attr/test-record-group-sampling
-+++ b/tools/perf/tests/attr/test-record-group-sampling
-@@ -2,6 +2,7 @@
- command = record
- args    = --no-bpf-event -e '{cycles,cache-misses}:S' kill >/dev/null 2>&1
- ret     = 1
-+kernel_until = 6.12
- 
- [event-1:base-record]
- fd=1
-@@ -18,7 +19,7 @@ group_fd=1
- type=0
- config=3
- 
--# default | PERF_SAMPLE_READ
-+# default | PERF_SAMPLE_READ | PERF_SAMPLE_PERIOD
- sample_type=343
- 
- # PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST
-diff --git a/tools/perf/tests/attr/test-record-group-sampling1 b/tools/perf/tests/attr/test-record-group-sampling1
-new file mode 100644
-index 000000000000..e96a10627a46
---- /dev/null
-+++ b/tools/perf/tests/attr/test-record-group-sampling1
-@@ -0,0 +1,51 @@
-+[config]
-+command = record
-+args    = --no-bpf-event -e '{cycles,cache-misses}:S' kill >/dev/null 2>&1
-+ret     = 1
-+kernel_since = 6.12
-+
-+[event-1:base-record]
-+fd=1
-+group_fd=-1
-+
-+# cycles
-+type=0
-+config=0
-+
-+# default | PERF_SAMPLE_READ | PERF_SAMPLE_PERIOD
-+sample_type=343
-+
-+# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-+read_format=28|31
-+task=1
-+mmap=1
-+comm=1
-+enable_on_exec=1
-+disabled=1
-+
-+# inherit is enabled for group sampling
-+inherit=1
-+
-+[event-2:base-record]
-+fd=2
-+group_fd=1
-+
-+# cache-misses
-+type=0
-+config=3
-+
-+# default | PERF_SAMPLE_READ | PERF_SAMPLE_PERIOD
-+sample_type=343
-+
-+# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-+read_format=28|31
-+task=0
-+mmap=0
-+comm=0
-+enable_on_exec=0
-+disabled=0
-+freq=0
-+
-+# inherit is enabled for group sampling
-+inherit=1
-+
-diff --git a/tools/perf/tests/attr/test-record-group-sampling2 b/tools/perf/tests/attr/test-record-group-sampling2
-new file mode 100644
-index 000000000000..e0432244a0eb
---- /dev/null
-+++ b/tools/perf/tests/attr/test-record-group-sampling2
-@@ -0,0 +1,61 @@
-+[config]
-+command = record
-+args    = --no-bpf-event -c 10000 -e '{cycles,cache-misses}:S' kill >/dev/null 2>&1
-+ret     = 1
-+kernel_since = 6.12
-+
-+[event-1:base-record]
-+fd=1
-+group_fd=-1
-+
-+# cycles
-+type=0
-+config=0
-+
-+# default | PERF_SAMPLE_READ
-+sample_type=87
-+
-+# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-+read_format=28|31
-+task=1
-+mmap=1
-+comm=1
-+enable_on_exec=1
-+disabled=1
-+
-+# inherit is enabled for group sampling
-+inherit=1
-+
-+# sampling disabled
-+sample_freq=0
-+sample_period=10000
-+freq=0
-+write_backward=0
-+
-+[event-2:base-record]
-+fd=2
-+group_fd=1
-+
-+# cache-misses
-+type=0
-+config=3
-+
-+# default | PERF_SAMPLE_READ
-+sample_type=87
-+
-+# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-+read_format=28|31
-+task=0
-+mmap=0
-+comm=0
-+enable_on_exec=0
-+disabled=0
-+
-+# inherit is enabled for group sampling
-+inherit=1
-+
-+# sampling disabled
-+sample_freq=0
-+sample_period=0
-+freq=0
-+write_backward=0
-diff --git a/tools/perf/tests/attr/test-record-group2 b/tools/perf/tests/attr/test-record-group2
-index cebdaa8e64e4..891d41a7bddf 100644
---- a/tools/perf/tests/attr/test-record-group2
-+++ b/tools/perf/tests/attr/test-record-group2
-@@ -2,6 +2,7 @@
- command = record
- args    = --no-bpf-event -e '{cycles/period=1234000/,instructions/period=6789000/}:S' kill >/dev/null 2>&1
- ret     = 1
-+kernel_until = 6.12
- 
- [event-1:base-record]
- fd=1
-diff --git a/tools/perf/tests/attr/test-record-group2 b/tools/perf/tests/attr/test-record-group3
-similarity index 81%
-copy from tools/perf/tests/attr/test-record-group2
-copy to tools/perf/tests/attr/test-record-group3
-index cebdaa8e64e4..249be884959e 100644
---- a/tools/perf/tests/attr/test-record-group2
-+++ b/tools/perf/tests/attr/test-record-group3
-@@ -2,6 +2,7 @@
- command = record
- args    = --no-bpf-event -e '{cycles/period=1234000/,instructions/period=6789000/}:S' kill >/dev/null 2>&1
- ret     = 1
-+kernel_since = 6.12
- 
- [event-1:base-record]
- fd=1
-@@ -9,8 +10,9 @@ group_fd=-1
- config=0|1
- sample_period=1234000
- sample_type=87
--read_format=12|28
--inherit=0
-+read_format=28|31
-+disabled=1
-+inherit=1
- freq=0
- 
- [event-2:base-record]
-@@ -19,9 +21,9 @@ group_fd=1
- config=0|1
- sample_period=6789000
- sample_type=87
--read_format=12|28
-+read_format=28|31
- disabled=0
--inherit=0
-+inherit=1
- mmap=0
- comm=0
- freq=0
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index bc603193c477..d12e1b16313d 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1149,7 +1149,7 @@ void evsel__config(struct evsel *evsel, struct record_opts *opts,
- 	bool per_cpu = opts->target.default_per_cpu && !opts->target.per_thread;
- 
- 	attr->sample_id_all = perf_missing_features.sample_id_all ? 0 : 1;
--	attr->inherit	    = !opts->no_inherit;
-+	attr->inherit	    = target__has_cpu(&opts->target) ? 0 : !opts->no_inherit;
- 	attr->write_backward = opts->overwrite ? 1 : 0;
- 	attr->read_format   = PERF_FORMAT_LOST;
- 
-@@ -1171,7 +1171,15 @@ void evsel__config(struct evsel *evsel, struct record_opts *opts,
- 		 */
- 		if (leader->core.nr_members > 1) {
- 			attr->read_format |= PERF_FORMAT_GROUP;
--			attr->inherit = 0;
-+		}
-+
-+		/*
-+		 * Inherit + SAMPLE_READ requires SAMPLE_TID in the read_format
-+		 */
-+		if (attr->inherit) {
-+			evsel__set_sample_bit(evsel, TID);
-+			evsel->core.attr.read_format |=
-+				PERF_FORMAT_ID;
- 		}
- 	}
- 
-@@ -2020,6 +2028,8 @@ static int __evsel__prepare_open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 
- static void evsel__disable_missing_features(struct evsel *evsel)
- {
-+	if (perf_missing_features.inherit_sample_read)
-+		evsel->core.attr.inherit = 0;
- 	if (perf_missing_features.branch_counters)
- 		evsel->core.attr.branch_sample_type &= ~PERF_SAMPLE_BRANCH_COUNTERS;
- 	if (perf_missing_features.read_lost)
-@@ -2075,7 +2085,12 @@ bool evsel__detect_missing_features(struct evsel *evsel)
- 	 * Must probe features in the order they were added to the
- 	 * perf_event_attr interface.
- 	 */
--	if (!perf_missing_features.branch_counters &&
-+	if (!perf_missing_features.inherit_sample_read &&
-+	    evsel->core.attr.inherit && (evsel->core.attr.sample_type & PERF_SAMPLE_READ)) {
-+		perf_missing_features.inherit_sample_read = true;
-+		pr_debug2("Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.\n");
-+		return true;
-+	} else if (!perf_missing_features.branch_counters &&
- 	    (evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS)) {
- 		perf_missing_features.branch_counters = true;
- 		pr_debug2("switching off branch counters support\n");
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 80b5f6dd868e..bb0c91c23679 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -206,6 +206,7 @@ struct perf_missing_features {
- 	bool weight_struct;
- 	bool read_lost;
- 	bool branch_counters;
-+	bool inherit_sample_read;
- };
- 
- extern struct perf_missing_features perf_missing_features;
+ drivers/input/touchscreen/ilitek_ts_i2c.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
 -- 
-2.45.2
+2.39.2
 
 
