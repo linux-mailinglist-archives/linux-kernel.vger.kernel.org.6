@@ -1,113 +1,130 @@
-Return-Path: <linux-kernel+bounces-274660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E26A947B3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F57947B3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF407B217CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:50:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7E2D1F21B42
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35541591F0;
-	Mon,  5 Aug 2024 12:50:27 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50AF15ADB4;
+	Mon,  5 Aug 2024 12:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U02RhgKH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C4D1E49F;
-	Mon,  5 Aug 2024 12:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307CE1E49F;
+	Mon,  5 Aug 2024 12:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722862227; cv=none; b=JTm1gmpwnBxu9Vn8gPtp4yCkQ8/8Mvg+TFSX3VanQTBiii913zoDe4I2knErmibOKGMADpSBxS51yjeH6HicORNMI3i/Su8AoNmKol0udyxgTOVJWalKZs40jgnSW1Ay0hp0Ak0ncTYADTgLKN5zBpLy/F5AngTlwUHoawyvo34=
+	t=1722862232; cv=none; b=T3chT2XZvZxaEIJN64PG6ogKzQkCcBJigq5Q2sc2lvDOe85boLbipdRa13nEgyJKN1fEzyalUwm3X0dtSuIuTX8ACTBQboUrrn9BiMxNst4ADi6uaghCVejujzsmbr8vD/TsFECNdEEAEEmu3xazmPcdslfhjG+3fy2aYiO4nGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722862227; c=relaxed/simple;
-	bh=WcZYtR0vQGiiG2E/rclHtMpg+6mjPk1BE2+xYZ8hRQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QwfVYWnHlDId+sssvUkkyDvX3L58VRk1VmtvhK5o/IQUEKQWg/GD/8F+/m7uZvSCGEMWUPwF5mW6Pj7aO+6RjDgoeKobi6hsdlZx/gD+g9s8zJrQk8PDGVzJWz4mAIkvlFR1enbIcK2mqcB9QEl+dTgJ2Ufi+fN5kG5hMUZzlKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wcx9S5J2Yz1L9s9;
-	Mon,  5 Aug 2024 20:50:04 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id B7A7E14037B;
-	Mon,  5 Aug 2024 20:50:22 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 5 Aug 2024 20:50:22 +0800
-Message-ID: <8d4b6398-1b7d-4c14-b390-0456a6158681@huawei.com>
-Date: Mon, 5 Aug 2024 20:50:22 +0800
+	s=arc-20240116; t=1722862232; c=relaxed/simple;
+	bh=uni8GbJ90dEK4yPCsHOXZFDmkXftX7h9gqgR4VgoZg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQRzAzIFptIy8ABT2NvyI0JkwJG9w4Usp9T7DZQqL6Ri7Rrhe+W8OmnC9+6klSoJO7GW3ck5+BzoSLCWKwPO+01aL9OCVAb17Ae0jGwF5aXCV6twPYLccZMaKKtMME5CPprFGyYcf8SHQczB2EAV9O5ZSbOQN02Dol5yVeCmcx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U02RhgKH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388B6C4AF13;
+	Mon,  5 Aug 2024 12:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722862231;
+	bh=uni8GbJ90dEK4yPCsHOXZFDmkXftX7h9gqgR4VgoZg4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U02RhgKHLpjgNWvzjTEry7OkszkU6xZOSk+3F6LzLAIIFH8Nz2dGUXzXXGQM9o9Ad
+	 gGfCWm9+bdCjU9+Bz3p+fCiEW/EeeV5EqhhFvXTbwh2ZeTzv25CVrOoklMOLyjkbzL
+	 ronqafd7s2XTOP6ZSzp5itKoSmoALU1FRf+bDoHMMD1EkNDHgmDQwqm6XMjk97B1ao
+	 LqnlgpXx/p4j6gNNl5KJx7rCcmUsj4iaieAMHjqy4AypSEuQ/LFD6YZbO4ljyzeuJI
+	 orrfy4Z0EBuoYOUGrcqmy2bCht1kyAY3D0bVaSJgNNmxksyBGFJutMvdoGtLKjcKt7
+	 MN/rns3EgH5+w==
+Date: Mon, 5 Aug 2024 14:50:24 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yuan Yao <yuan.yao@intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>,
+	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
+	cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com
+Subject: Re: [PATCH v1 2/4] x86/tdx: Add validation of userspace MMIO
+ instructions
+Message-ID: <ZrDKkD4M4AKOFqb8@example.org>
+References: <cover.1722356794.git.legion@kernel.org>
+ <855a5d97f0e76373e76c5124f415d3abd7ae3699.1722356794.git.legion@kernel.org>
+ <mnncaxyk6jsbtlxk6xo5jvs7mzirp3ituyf7anequxy6xjjijm@ogkxlksd4gi6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at
- iommu_get_dma_domain+0xc/0x20
-To: Alexander Duyck <alexander.duyck@gmail.com>, Yonglong Liu
-	<liuyonglong@huawei.com>
-CC: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	<pabeni@redhat.com>, <hawk@kernel.org>, <ilias.apalodimas@linaro.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexei Starovoitov
-	<ast@kernel.org>, "shenjian (K)" <shenjian15@huawei.com>, Salil Mehta
-	<salil.mehta@huawei.com>, <iommu@lists.linux.dev>
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
- <8743264a-9700-4227-a556-5f931c720211@huawei.com>
- <CAKgT0Uf4xBJDLMxa3awSnzgZvbb-LN82APkPi7uVpWw+j7wqRA@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <CAKgT0Uf4xBJDLMxa3awSnzgZvbb-LN82APkPi7uVpWw+j7wqRA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mnncaxyk6jsbtlxk6xo5jvs7mzirp3ituyf7anequxy6xjjijm@ogkxlksd4gi6>
 
-On 2024/8/3 0:38, Alexander Duyck wrote:
-
-...
-
+On Fri, Aug 02, 2024 at 10:41:17AM +0300, Kirill A. Shutemov wrote:
+> On Tue, Jul 30, 2024 at 07:35:57PM +0200, Alexey Gladkov (Intel) wrote:
+> > +static int valid_vaddr(struct ve_info *ve, enum insn_mmio_type mmio, int size,
+> > +			unsigned long vaddr)
+> > +{
+> > +	phys_addr_t phys_addr;
+> > +	bool writable = false;
+> > +
+> > +	/* It's not fatal. This can happen due to swap out or page migration. */
+> > +	if (get_phys_addr(vaddr, &phys_addr, &writable) || (ve->gpa != cc_mkdec(phys_addr)))
+> > +		return -EAGAIN;
 > 
-> The issue as I see it is that we aren't unmapping the pages when we
-> call page_pool_destroy. There need to be no pages remaining with a DMA
-> unmapping needed *after* that is called. Otherwise we will see this
-> issue regularly.
+> I think we need big fat comment here why these checks are needed.
 > 
-> What we probably need to look at doing is beefing up page_pool_release
-> to add a step that will take an additional reference on the inflight
-> pages, then call __page_pool_put_page to switch them to a reference
-> counted page.
-
-I am not sure if I understand what you meant about, did you mean making
-page_pool_destroy() synchronously wait for the all in-flight pages to
-come back before returning to driver?
-
+> We have ve->gpa and it was valid at the time we got ve_info. But after we
+> get ve_info, we enable interrupts allowing tlb shootdown and therefore
+> munmap() in parallel thread of the process.
 > 
-> Seems like the worst case scenario is that we are talking about having
-> to walk the page table to do the above for any inflight pages but it
-
-Which page table are we talking about here?
-
-> would certainly be a much more deterministic amount of time needed to
-> do that versus waiting on a page that may or may not return.
+> So by the time we've got here ve->gpa might be unmapped from the process,
+> the device it belongs to removed from system and something else could be
+> plugged in its place.
 > 
-> Alternatively a quick hack that would probably also address this would
-> be to clear poll->dma_map in page_pool_destroy or maybe in
+> That's why we need to re-check if the GPA is still mapped and writable if
+> we are going to write to it.
 
-It seems we may need to clear pool->dma_sync too, and there may be some
-time window between clearing and checking/dma_unmap?
+Make sense. I will add bigger comment here.
 
-> page_pool_unreg_netdev so that any of those residual mappings would
-> essentially get leaked, but we wouldn't have to worry about trying to
-> unmap while the device doesn't exist.
+> > +
+> > +	/* Check whether #VE info matches the instruction that was decoded. */
+> > +	switch (mmio) {
+> > +	case INSN_MMIO_WRITE:
+> > +	case INSN_MMIO_WRITE_IMM:
+> > +		if (!writable || !(ve->exit_qual & EPT_VIOLATION_ACC_WRITE))
+> > +			return -EFAULT;
+> > +		break;
+> > +	case INSN_MMIO_READ:
+> > +	case INSN_MMIO_READ_ZERO_EXTEND:
+> > +	case INSN_MMIO_READ_SIGN_EXTEND:
+> > +		if (!(ve->exit_qual & EPT_VIOLATION_ACC_READ))
+> > +			return -EFAULT;
+> > +		break;
+> > +	default:
+> > +		WARN_ONCE(1, "Unsupported mmio instruction: %d", mmio);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> -- 
+>   Kiryl Shutsemau / Kirill A. Shutemov
+> 
 
-But how does the page_pool know if it is just the normal unloading processing
-without VF disabling where the device still exists or it is the abnormal one
-caused by the VF disabling where the device will disappear? If it is the first
-one, does it cause resource leaking problem for iommu if some calling for iommu
-is skipped?
+-- 
+Rgrds, legion
+
 
