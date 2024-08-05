@@ -1,97 +1,169 @@
-Return-Path: <linux-kernel+bounces-274417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D6D9477E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:03:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168979477E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 903AF1F22716
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B677E1F2247D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C143015574D;
-	Mon,  5 Aug 2024 09:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69F3155733;
+	Mon,  5 Aug 2024 09:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pofpxnz2"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8AMAtkm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F3F1474D7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E6C15382F;
 	Mon,  5 Aug 2024 09:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722848493; cv=none; b=tkJBoxUSC+aFHvYFoY4QthXzy260Uevgfw9aybfn1rYBOM6gROfhljNbcpl2a526quvWB7z1Y4Rgr+2e4vtomTzdV8IMBwknWfm3lkmhdXJO4tF0rglgtiBNBzz0Ha0W/cHzJvZOXwmLAx3py7RDuL3yfcRc1R8eR7AuCfYEltk=
+	t=1722848492; cv=none; b=MJmRkSezzV32SV2IVTAj/+NxuzFZV638oeW09XkQA6ypDXLCokQGUPIRNINSFWawaurH0W9RettT8vmYN5+kVGuW0yPrZ4GfEnhdZ5Z94Zo6xLSrEdwYkeWQ6EPzZsv866ah81JrgoktwItydqKqeFrg4VMEeA1UEyjN9XAfj1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722848493; c=relaxed/simple;
-	bh=Q8cRiGdW/G37KQUA7mUq7lbhNpPWJj4xD/Ko0fT93TE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pnz+8lLKH6Gj3L9TxpnPaBYhf6TpQtRNJqIHmxcjTzAWhSWnbPYVABhilAnWMcAad7iVQFnEUuEK9TUTAKHvtqVmk/Il1nLDj9gAV8XeVjJI9hWborU1mHRj8GvdN2c6OM7nOcwY3V3+vbJiGLYYElfazXgMfGkRwmK57TeR6T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pofpxnz2; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kP2eEK55ZvFw4950+W9tiFY6USmBFEODBUznCrkG1Po=; b=pofpxnz2SF5o8WrgCS2bpYec/E
-	/AqemK00vx1zl6vjLV/y1jcndpIdTzP/Pq/81XQOfDpvPYkNJfLe3v8NEhZb8n3xrh68cr3gpQN/O
-	FtrLk2GniZOAecF8ZyuxS9uDWk8c2J55anT9zWSk6vXW7FNvL6e0CQpdVR8LwGwkmIqbdFP7eziSl
-	gbHDxV6T1dGKztL0Isqf3ZsoqWVPOhDVFamsMkB0xmvn5A84c+AtUEkCNAUjhw+hGyb8SnQXxwTci
-	4gGSsvrnpYdecdlHkeyOhVka2BqhG7VLP55B3yutdEJpGgENmvma1h+Tzs/1H3cl5+Cs7y4OJ0TLf
-	r9J2mJbg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1satal-000000044mb-3vMu;
-	Mon, 05 Aug 2024 09:01:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9317430049D; Mon,  5 Aug 2024 11:01:22 +0200 (CEST)
-Date: Mon, 5 Aug 2024 11:01:22 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: RCU-Task[-Trace] VS EQS (was Re: [PATCH v3 13/25]
- context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*())
-Message-ID: <20240805090122.GH37996@noisy.programming.kicks-ass.net>
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240724144325.3307148-14-vschneid@redhat.com>
- <ZqJiDlKtD4wvsv1j@localhost.localdomain>
- <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
- <ZqlmjVyWXIneklCm@pavilion.home>
- <30c6d4aa-7598-4dc1-8592-7533d64714c2@paulmck-laptop>
- <Zqot4NpepOORtNzv@localhost.localdomain>
- <6c915a8d-983a-4cbb-8d89-01e326a16876@paulmck-laptop>
+	s=arc-20240116; t=1722848492; c=relaxed/simple;
+	bh=upkncduFkC4Euzkb9y5BNQGpiwxYwB8eqenSGFYkhRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=twhYj2EGhAw3xG/uyXcYsmRSgm+srBLWeLlgf6ueh+BhJGrWsU4k1+XFezIVHub2cMUCcb3Mh1zq29KMhsNRHe7/3gywwKJG4qFLWnQBbPp3VuwouDc1jfarWfMHxOm6HY3H7Ro+yCMnOCEZ2KVNF6WpYSuceVvwNjTCPqc2GNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8AMAtkm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB91C32782;
+	Mon,  5 Aug 2024 09:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722848491;
+	bh=upkncduFkC4Euzkb9y5BNQGpiwxYwB8eqenSGFYkhRo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t8AMAtkmDiPVQpU0eV7GqIGNEr9CSliYdcNBBMKVqZ1qa4YB1mC4XV59KOMMMDe3Y
+	 98ptqE3UytN+oo122I5VKKwZ+bNLLKFyI1Guhj5I1aJN3F8CfbPgg+zWzUbKZ22A3r
+	 T8TXZOv1VLcCMNhIqilbDKwUL8SpjiG2gpHUIdFUAJM9nl1GBHESXndkgdmc7bSsnz
+	 32zwgtiOemvi71EAX4/Tn05cLb7jrPsne9fyPh9+Mm+Jm7IUNffBgCsRqSUQsCiDgu
+	 n77tLxp3+cKkAKWn3z9e3inNL8cqdxpDXY0pHW5wSDuvVrUM4E5iLJdGkDgOss+WeS
+	 1AoeSPDR9mHvg==
+Date: Mon, 5 Aug 2024 11:01:26 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: siano: Simplify smscore_load_firmware_from_file
+Message-ID: <20240805110116.177686b0@foz.lan>
+In-Reply-To: <20240805-siano-v1-1-6da2bc740267@chromium.org>
+References: <20240805-siano-v1-1-6da2bc740267@chromium.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c915a8d-983a-4cbb-8d89-01e326a16876@paulmck-laptop>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 02, 2024 at 09:32:08PM -0700, Paul E. McKenney wrote:
+Em Mon, 05 Aug 2024 07:59:43 +0000
+Ricardo Ribalda <ribalda@chromium.org> escreveu:
 
-> Huh.  One reason for the current smp_call_function_single() in
-> cpuhp_report_idle_dead() was some ARM32 CPUs that shut down caching on
-> their way out.  this made it impossible to use shared-variable-based
-> CPU-dead notification.  I wonder if Arnd's deprecation schedule
-> for ARM32-based platforms will allow us to go back to shared-memory
-> notification, which might make this sort of thing easier.
+> The function is never called with a loadfirmware_handler, so we can
+> remove some dead code.
+> 
+> We can also use this as a excuse to remove some unused type definitions.
+> 
+> This fixes the following smatch warning:
+> drivers/media/common/siano/smscoreapi.c:1172 smscore_load_firmware_from_file() error: we previously assumed 'loadfirmware_handler' could be null (see line 1150)
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+LGTM.
 
-All those idle paths should be doing ct_cpuidle_enter(), which includes
-telling RCU the CPU is going idle, no?
 
-I cleaned all that up a while back.
+
+> ---
+> Originally reported by Hans.
+
+Please add a reported-by field.
+
+> ---
+>  drivers/media/common/siano/smscoreapi.c | 15 +++++----------
+>  drivers/media/common/siano/smscoreapi.h |  4 ----
+>  2 files changed, 5 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
+> index b6f1eb5dbbdf..3732367e0c62 100644
+> --- a/drivers/media/common/siano/smscoreapi.c
+> +++ b/drivers/media/common/siano/smscoreapi.c
+> @@ -1132,8 +1132,7 @@ static char *smscore_get_fw_filename(struct smscore_device_t *coredev,
+>   * return: 0 on success, <0 on error.
+>   */
+>  static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
+> -					   int mode,
+> -					   loadfirmware_t loadfirmware_handler)
+> +					   int mode)
+>  {
+>  	int rc = -ENOENT;
+>  	u8 *fw_buf;
+> @@ -1147,8 +1146,7 @@ static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
+>  	}
+>  	pr_debug("Firmware name: %s\n", fw_filename);
+>  
+> -	if (!loadfirmware_handler &&
+> -	    !(coredev->device_flags & SMS_DEVICE_FAMILY2))
+> +	if (!(coredev->device_flags & SMS_DEVICE_FAMILY2))
+>  		return -EINVAL;
+>  
+>  	rc = request_firmware(&fw, fw_filename, coredev->device);
+> @@ -1166,10 +1164,8 @@ static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
+>  		memcpy(fw_buf, fw->data, fw->size);
+>  		fw_buf_size = fw->size;
+>  
+> -		rc = (coredev->device_flags & SMS_DEVICE_FAMILY2) ?
+> -			smscore_load_firmware_family2(coredev, fw_buf, fw_buf_size)
+> -			: loadfirmware_handler(coredev->context, fw_buf,
+> -			fw_buf_size);
+> +		rc = smscore_load_firmware_family2(coredev, fw_buf,
+> +						   fw_buf_size);
+>  	}
+>  
+>  	kfree(fw_buf);
+> @@ -1353,8 +1349,7 @@ int smscore_set_device_mode(struct smscore_device_t *coredev, int mode)
+>  		}
+>  
+>  		if (!(coredev->modes_supported & (1 << mode))) {
+> -			rc = smscore_load_firmware_from_file(coredev,
+> -							     mode, NULL);
+> +			rc = smscore_load_firmware_from_file(coredev, mode);
+>  			if (rc >= 0)
+>  				pr_debug("firmware download success\n");
+>  		} else {
+> diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
+> index 82d9f8a64d99..3c15082ce0e3 100644
+> --- a/drivers/media/common/siano/smscoreapi.h
+> +++ b/drivers/media/common/siano/smscoreapi.h
+> @@ -97,7 +97,6 @@ typedef int (*hotplug_t)(struct smscore_device_t *coredev,
+>  typedef int (*setmode_t)(void *context, int mode);
+>  typedef void (*detectmode_t)(void *context, int *mode);
+>  typedef int (*sendrequest_t)(void *context, void *buffer, size_t size);
+> -typedef int (*loadfirmware_t)(void *context, void *buffer, size_t size);
+>  typedef int (*preload_t)(void *context);
+>  typedef int (*postload_t)(void *context);
+>  
+> @@ -1102,9 +1101,6 @@ extern int smscore_register_device(struct smsdevice_params_t *params,
+>  extern void smscore_unregister_device(struct smscore_device_t *coredev);
+>  
+>  extern int smscore_start_device(struct smscore_device_t *coredev);
+> -extern int smscore_load_firmware(struct smscore_device_t *coredev,
+> -				 char *filename,
+> -				 loadfirmware_t loadfirmware_handler);
+>  
+>  extern int smscore_set_device_mode(struct smscore_device_t *coredev, int mode);
+>  extern int smscore_get_device_mode(struct smscore_device_t *coredev);
+> 
+> ---
+> base-commit: 2c25dcc2361949bc7da730d22de36c019c6bf1e3
+> change-id: 20240805-siano-c4c6a1106a39
+> 
+> Best regards,
+
+
+
+Thanks,
+Mauro
 
