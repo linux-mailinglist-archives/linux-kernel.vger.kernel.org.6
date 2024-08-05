@@ -1,197 +1,118 @@
-Return-Path: <linux-kernel+bounces-275330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7E1948381
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:32:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23723948383
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CFC0B21D2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:32:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D365D284403
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E1316D9A3;
-	Mon,  5 Aug 2024 20:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D76514A09C;
+	Mon,  5 Aug 2024 20:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="cnaAnsJQ"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Rc27k3lf"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D817145FE2;
-	Mon,  5 Aug 2024 20:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE9116B399
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 20:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722889921; cv=none; b=cZ64Pdyx27+dVcr8rjRbtA4O9SwvA6bt3gC78Z7u3MW/+ndnZ6XnlKYwsDFlQ5IVoQW5g0djKWR0cN040sDl2FAKXGbZdQqZ59hO+a6cHtV3qYMpkc1lcJiefldBWWXssFG6hO5e+Qd3/igfs6jmFNK/EcEwRZD0HWXhK/6DVwM=
+	t=1722889961; cv=none; b=BK70MGNEVOKSw8G9o2+G2UI+6T9p4YxdgqeaHnbNu6EJ0Cyyv+SGDCkijF7X4IX8JQBB1bD2cr/anTlxIJZ1fnWXeTJnVvwNNAkWckEKZSJUgg/xFmHpTq56MmdNaDU8W1IURze3/9GBuYETGmSke2Q2E1vazA4b5+spY5fGMC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722889921; c=relaxed/simple;
-	bh=iKlmqjTTVUIVzdWep4q0Un0kla+81/3zrI9ztK0YyNg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=K2qOi1i7QewsQXNMNAC59SXj1IiTdgDLHvS9VKzQgcwWxrUX9FEgwKeYRGaiDl/EEViINJC9ifal3RG9QQxOo8XLcweV+P7EFo6DKkSSexjTvvB5VZ0aH04rPPR+TQhyCE6S7NkXK76POM3ORqXAprphSL437nRX+//86kKyfPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=cnaAnsJQ; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.1.90] (86FF4CFD.dsl.pool.telekom.hu [134.255.76.253])
-	by mail.mainlining.org (Postfix) with ESMTPSA id A7779E4519;
-	Mon,  5 Aug 2024 20:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1722889911;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z0q+GusqWBUe2EzSPu3nKa1GVJny5raM0Sw0sxXHXa0=;
-	b=cnaAnsJQ1TdwY9RxdVsyYj/TiAdQuv7z2UD3v+sDGlc/RporTHlfD0zCIR3JtYN3UNeMhM
-	iMs4qUZoShyRCqlPrqg/6PvohVgVzj8fe2JgVr2VhroYRabhfmthbG3lHApRiXiCsyIDSJ
-	gy/L/1Yx54wLf1bADw6n7HqBs5jq4Vqk6kHKwHcuLFHBUWy8Xu1iNiFjiN2iYtDBRj7Rum
-	+J7ePjYZqc83aWxlm9socggnrQJBHJPZj25Hd5580CBfQuRWHklelfwqidcrzCALdf96mG
-	nfEFVFTvK4CWDz2q+Gh0Q1Ic16yH8GnOi6a5kZ/qPSZUX0t+OOb7PQjtfIGGpg==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Mon, 05 Aug 2024 22:31:44 +0200
-Subject: [PATCH 3/3] iio: magnetometer: ak8975: Add AK09118 support
+	s=arc-20240116; t=1722889961; c=relaxed/simple;
+	bh=QUw3QeI7OYZ1AwcqILIHnl5Wyq/fgKZKE4y6WwkXezA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pMx7PoPX9l4bGrQ2XiuaamtzbN7QLcq6HyZBZYKm6s0ryZYM80XzZ0r31DQjzbhUIvZqO3VqsomHNNQ6gOE6UnNpMsfofRsx6pjKP7kyNW0fgfdUD0S2q1XO2/OtliMyv3phDuojGu/VK+uts0EbUa+VUZvwhqCjiOUs9fp0cBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Rc27k3lf; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428243f928fso73272625e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 13:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722889959; x=1723494759; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vn6Rnyxr4niEdIXil13oe5CZlyeVE53UOlfup/AAfYs=;
+        b=Rc27k3lfr9eyi8SjbJcNRO/iwiEzwWl6zn+iCj+T+Hb+FzLSEHmN9WKSLekogpBZqA
+         eC8/Wmp3mZI9WbXv69yFrnpm96YRm6pLvpQcCmozdXrPqAX9lXvRCGbVpXNy7NJG0N6E
+         AqSSg/csyjDw0j/Rmn83oJe6Jdj5BMFeu2ESSebyh1uViAPCj/3CBn8DTaPYOE8UBTD7
+         E9MMIGyFcBoWf/YCAIwSx7GQNbAZCseKFZC6ZDdCXaIoZnumAeZh5d4CeTd7OZl0izjf
+         UfEUnuVs+iD7AqsDPE525KNQP6q8OZ8VVCuD895vYnWNimvm4G5DQQy0YB16D/Q9WW9i
+         BcuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722889959; x=1723494759;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vn6Rnyxr4niEdIXil13oe5CZlyeVE53UOlfup/AAfYs=;
+        b=a4o93nskxwi1kTK3OgjnHbEbNwJR1TPFr3JgeeJTuNUwIDHqDLQPfiieSjoaHfBWl+
+         Jx41R57JCq5ZEc1H3bI737RHU6gJDbQJYNLudqESqJO9CD//2PR87Bh/e1VX62xPoDoT
+         QGoREjGaYJZ6HxbyQm1W/2NWXgsi4jUfkoIEre9ATpfV9L6VTDOz8qQuaVBoHbd7463+
+         SoL6nq4PDEV7s5xqmV/Ism95G/15Hm4Jr+ZdJsmLc+VnpjvkVQ55yVT4V+WlS1NE1E+f
+         u3e9yxZw74ep59Lm1c020cFkJ6qk9Cr1QCgewa2nxc2U13Pt11pXNrMT+Et7b8SqlIcs
+         3NgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrrikmB8oZoABwxnVfekhAmy9uF6YhF0eJN/8/rrrld0WW8ATefXdFPk+Ag7YlzGGHDtVO5m1oY2KkM4ZEIY9DKTnk1/ZbokPSKLJz
+X-Gm-Message-State: AOJu0Yx7krOVwJr+Abd2gEXKBxKBcO35HaroX+6ErptYxsbzlCbK4L4u
+	f47YAeFGSxzuj58V54fwaYHfhZQdn/E5mRKCTjIuyJKEG9jOs568vOAAgpEh7t4=
+X-Google-Smtp-Source: AGHT+IFEVQJwp3vZXhCpDGiKBNDcqVcaDTiD72/DHGQk9xC8MVyvZWQq5QLSREYXMf2KASU8Tj4CmQ==
+X-Received: by 2002:a05:600c:4588:b0:428:15b0:c8dd with SMTP id 5b1f17b1804b1-428e6b2f14emr118747665e9.20.1722889958397;
+        Mon, 05 Aug 2024 13:32:38 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:10b5:fc01:ad5e:c962:d96f:7752])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b89aa7bsm216173985e9.5.2024.08.05.13.32.37
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Aug 2024 13:32:38 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240805-ak09918-v1-3-70837eebd7d8@mainlining.org>
-References: <20240805-ak09918-v1-0-70837eebd7d8@mainlining.org>
-In-Reply-To: <20240805-ak09918-v1-0-70837eebd7d8@mainlining.org>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jonathan Albrieux <jonathan.albrieux@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux@mainlining.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Danila Tikhonov <danila@jiaxyga.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722889909; l=3804;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=IIAIm5BL+K1epLT5q5KDQJEdRvERDnrX+8Qw+YI7cVI=;
- b=gvsA+k6VoD7c5Q3V/+/+yNXQk4CrZ3JPV62gc9qAySktINTuRVicgjsijcEyyzSmgnHLBEbEe
- ybSLTMF1XcxB4B5wAl5NIObVxOb8s+BegqL4U6+U898cqqWzz2E0U97
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] crypto: chacha20poly1305 - Annotate struct chachapoly_ctx
+ with __counted_by()
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <20240805175932.GB1564@sol.localdomain>
+Date: Mon, 5 Aug 2024 22:32:26 +0200
+Cc: herbert@gondor.apana.org.au,
+ davem@davemloft.net,
+ kees@kernel.org,
+ gustavoars@kernel.org,
+ linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <DA00621C-305F-4126-8D04-9F6D86E959D1@toblux.com>
+References: <20240805175237.63098-2-thorsten.blum@toblux.com>
+ <20240805175932.GB1564@sol.localdomain>
+To: Eric Biggers <ebiggers@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-From: Danila Tikhonov <danila@jiaxyga.com>
+On 5. Aug 2024, at 19:59, Eric Biggers <ebiggers@kernel.org> wrote:
+> On Mon, Aug 05, 2024 at 07:52:38PM +0200, Thorsten Blum wrote:
+>> struct poly_req {
+>> @@ -611,8 +611,8 @@ static int chachapoly_create(struct =
+crypto_template *tmpl, struct rtattr **tb,
+>>       poly->base.cra_priority) / 2;
+>> inst->alg.base.cra_blocksize =3D 1;
+>> inst->alg.base.cra_alignmask =3D chacha->base.cra_alignmask;
+>> - inst->alg.base.cra_ctxsize =3D sizeof(struct chachapoly_ctx) +
+>> -     ctx->saltlen;
+>> + inst->alg.base.cra_ctxsize =3D struct_size_t(struct chachapoly_ctx, =
+salt,
+>> +   ctx->saltlen);
+>=20
+> What was wrong with the more straightforward code it had before?
 
-Add additional AK09118 to the magnetometer driver which has the same
-register mapping and scaling as the AK09112 device.
+There's nothing wrong with it, but I find using the helper macro
+struct_size_t() more straightforward. It's just a refactoring; happy to
+take it out if there's a preference for the open coded version.
 
-Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/iio/magnetometer/Kconfig  |  2 +-
- drivers/iio/magnetometer/ak8975.c | 35 +++++++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
-index cd2917d71904..8eb718f5e50f 100644
---- a/drivers/iio/magnetometer/Kconfig
-+++ b/drivers/iio/magnetometer/Kconfig
-@@ -39,7 +39,7 @@ config AK8975
- 	select IIO_TRIGGERED_BUFFER
- 	help
- 	  Say yes here to build support for Asahi Kasei AK8975, AK8963,
--	  AK09911, AK09912 or AK09916 3-Axis Magnetometer.
-+	  AK09911, AK09912, AK09916 or AK09918 3-Axis Magnetometer.
- 
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called ak8975.
-diff --git a/drivers/iio/magnetometer/ak8975.c b/drivers/iio/magnetometer/ak8975.c
-index 925d76062b3e..de1ba7f48b4b 100644
---- a/drivers/iio/magnetometer/ak8975.c
-+++ b/drivers/iio/magnetometer/ak8975.c
-@@ -78,6 +78,7 @@
-  */
- #define AK09912_REG_WIA1		0x00
- #define AK09912_REG_WIA2		0x01
-+#define AK09918_DEVICE_ID		0x0C
- #define AK09916_DEVICE_ID		0x09
- #define AK09912_DEVICE_ID		0x04
- #define AK09911_DEVICE_ID		0x05
-@@ -209,6 +210,7 @@ enum asahi_compass_chipset {
- 	AK09911,
- 	AK09912,
- 	AK09916,
-+	AK09918,
- };
- 
- enum ak_ctrl_reg_addr {
-@@ -371,6 +373,31 @@ static const struct ak_def ak_def_array[] = {
- 			AK09912_REG_HXL,
- 			AK09912_REG_HYL,
- 			AK09912_REG_HZL},
-+	},
-+	[AK09918] = {
-+		.type = AK09918,
-+		.raw_to_gauss = ak09912_raw_to_gauss,
-+		.range = 32752,
-+		.ctrl_regs = {
-+			AK09912_REG_ST1,
-+			AK09912_REG_ST2,
-+			AK09912_REG_CNTL2,
-+			AK09912_REG_ASAX,
-+			AK09912_MAX_REGS},
-+		.ctrl_masks = {
-+			AK09912_REG_ST1_DRDY_MASK,
-+			AK09912_REG_ST2_HOFL_MASK,
-+			0,
-+			AK09912_REG_CNTL2_MODE_MASK},
-+		.ctrl_modes = {
-+			AK09912_REG_CNTL_MODE_POWER_DOWN,
-+			AK09912_REG_CNTL_MODE_ONCE,
-+			AK09912_REG_CNTL_MODE_SELF_TEST,
-+			AK09912_REG_CNTL_MODE_FUSE_ROM},
-+		.data_regs = {
-+			AK09912_REG_HXL,
-+			AK09912_REG_HYL,
-+			AK09912_REG_HZL},
- 	}
- };
- 
-@@ -452,6 +479,7 @@ static int ak8975_who_i_am(struct i2c_client *client,
- 	/*
- 	 * Signature for each device:
- 	 * Device   |  WIA1      |  WIA2
-+	 * AK09918  |  DEVICE_ID_|  AK09918_DEVICE_ID
- 	 * AK09916  |  DEVICE_ID_|  AK09916_DEVICE_ID
- 	 * AK09912  |  DEVICE_ID |  AK09912_DEVICE_ID
- 	 * AK09911  |  DEVICE_ID |  AK09911_DEVICE_ID
-@@ -484,6 +512,10 @@ static int ak8975_who_i_am(struct i2c_client *client,
- 		if (wia_val[1] == AK09916_DEVICE_ID)
- 			return 0;
- 		break;
-+	case AK09918:
-+		if (wia_val[1] == AK09918_DEVICE_ID)
-+			return 0;
-+		break;
- 	default:
- 		dev_err(&client->dev, "Type %d unknown\n", type);
- 	}
-@@ -1066,6 +1098,7 @@ static const struct i2c_device_id ak8975_id[] = {
- 	{"ak09911", (kernel_ulong_t)&ak_def_array[AK09911] },
- 	{"ak09912", (kernel_ulong_t)&ak_def_array[AK09912] },
- 	{"ak09916", (kernel_ulong_t)&ak_def_array[AK09916] },
-+	{"ak09918", (kernel_ulong_t)&ak_def_array[AK09918] },
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, ak8975_id);
-@@ -1081,6 +1114,8 @@ static const struct of_device_id ak8975_of_match[] = {
- 	{ .compatible = "ak09912", .data = &ak_def_array[AK09912] },
- 	{ .compatible = "asahi-kasei,ak09916", .data = &ak_def_array[AK09916] },
- 	{ .compatible = "ak09916", .data = &ak_def_array[AK09916] },
-+	{ .compatible = "asahi-kasei,ak09918", .data = &ak_def_array[AK09918] },
-+	{ .compatible = "ak09918", .data = &ak_def_array[AK09918] },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, ak8975_of_match);
-
--- 
-2.46.0
-
+Thanks,
+Thorsten=
 
