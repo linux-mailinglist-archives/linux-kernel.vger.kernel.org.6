@@ -1,126 +1,165 @@
-Return-Path: <linux-kernel+bounces-274779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB542947C9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:13:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C309947CA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84A241F217D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F6C41C21C78
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1C71386B4;
-	Mon,  5 Aug 2024 14:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA0813A884;
+	Mon,  5 Aug 2024 14:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pKxl4P2T"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Gc7vNs+Y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0xFIM+wb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C01D17C64
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7434F12EBCA;
+	Mon,  5 Aug 2024 14:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722867216; cv=none; b=iWSVXNDw5jHZy+fGuY8bCR8HJXVMGEGsIxOf9PBq4lE9mQN5NaeVV1096P/Xroos+4nu8Wwy2WdC8kCHF/mEi4H/j8rNABklJIBgUbK//aX/fS8koMSHL+0YAHbZPqHQcW1rhrI9BqQPF/rtKu2R1QLxbfv622aWu/zj3RuGUpk=
+	t=1722867234; cv=none; b=McO687JPPgK8u0EN+jgoNXQM//egW15o7SyWVLQIvmPaW4gukwda6FUrIv35IQh3E4N6pYCt0VUoUyVumSOcVtH3GRx6hSi5sKYCXm2GJFZkNgRJHSYaJHUUx0bXLseZIaIJmwbDXCpcrC30m/+ycci3FqevSa3gLNsZkCFqAxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722867216; c=relaxed/simple;
-	bh=zcH3B70sJYhkWoWzRDU6zHvLSw7+b2U4xM6ZoHqlSK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrBZRPKTK33+m+4xljG3+9DSnEodavjwtWls9DFvCnYsSLU7plIcCe2fNBjxZB0xBr2POhhlqRHPiRmaE7kmqE227snAO/HDseoUxKysGF387zfLKPZ+4snY0Qyt2yjzzv8nWwWRpaAHrw7Sc0g2hd21NvvyQKPtchP+bmzvWPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pKxl4P2T; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=wyEUiyrPaJXQSDHIV3L8hLC8OQnIcWhPzCoxxJJef8Q=; b=pKxl4P2TqEJNKhy4Byf5TJVDi+
-	WLQ4v+P1p0WKP/wbRNm4w9Gof71kVhDU7equMrwZIQ0NjUqpoF/W0a1D8yZ5WbYphWRruG4HBNuxG
-	URVn4Zp01byf952V8e/03fC712myxM/rj0BOmBZHRwWMKXdPtlGUr+mqIXYcFVwzA2S4d2ikNBDki
-	RXkiP71Jb4CTFU7sV0b6h50dkObL06tJ7b1RA0axfBUDJP/gal76/CRKUODCdwBBENsFSdpoAaArV
-	uzQC4n2LBK+DTeAGb5AYmc4aaeSaVJZoLl9FbkY31KlKyz+LpV9r25G74DBPyw9rvM0/c7k/4IOX/
-	OmbLn/dw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1saySo-00000001iGd-3Hsm;
-	Mon, 05 Aug 2024 14:13:30 +0000
-Date: Mon, 5 Aug 2024 15:13:30 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Chunjie Zhu <chunjie.zhu@cloud.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] CA-392151: fix nfs gup uninitialized iov_offset defect
-Message-ID: <20240805141330.GG5334@ZenIV>
-References: <20240805075814.10103-1-chunjie.zhu@cloud.com>
+	s=arc-20240116; t=1722867234; c=relaxed/simple;
+	bh=aoA+4Es0w7B+mB/wEEX5x1oEgFQOrty8kg2uAcCVqjw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=iuGSdB6enOX+WWcbNVMuUAt+FvaEVLfXqxC/q3LvafpqrJon+nL33wKgg4B5zf9/26XkTUrSmUjqAj14TbbGgb5cSTd05ZRvMQkiNJ8WaUojyH/nQxnRYM97YlOu+8bwys3hlDjow8oSvAQoQfLGw23UGPBEp5AdMpmYHYde710=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Gc7vNs+Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0xFIM+wb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 05 Aug 2024 14:13:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722867230;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=unVmUiTk7/pBC9oIkFGPQpSzmYPX/OfnxCi75WHip1M=;
+	b=Gc7vNs+YqNQpMAWEikToHbFm5L666kz8Q3e66/VvtSuv31FwNsCaLuVL54s2ErigRZfvpF
+	PUxyPmU88QjaRJq9JOn5gv9h+zbUrMiq8EN3d4DpJ12Tt8c/6m1QRgVzdNCuSSa/sHIDTg
+	YXHe9kfWUrTUAtK17yYkk8LwOT3lBlyrKcBVLj+K+Y5mxAcIiZvbBeB9tQbPlyGlRp8Nzr
+	ACUDGJxO0eU/VANCwUow+0+SZQ/MF5igJTwscH1s8IHXcRdq0qcNjXZpv5nqQKHKdk33H9
+	K6KoDDL3Elaz3QuVWOUy2UQGF+52b9iGrhtcd91JnURCECxGbHq7/oUr5Og3yw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722867230;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=unVmUiTk7/pBC9oIkFGPQpSzmYPX/OfnxCi75WHip1M=;
+	b=0xFIM+wbv44VT3GX9GsIXL2GhUIoRvNwi1U2t56R/69NelEDgtq0Sw7kxhMMcIbaw4iSV3
+	syulcINpI8OvLeDA==
+From: "tip-bot2 for Steve Wahl" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/mm] x86/mm/ident_map: Use gbpages only where full GB page
+ should be mapped.
+Cc: Steve Wahl <steve.wahl@hpe.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Pavin Joseph <me@pavinjoseph.com>, Sarah Brofeldt <srhb@dbc.dk>,
+ Eric Hagberg <ehagberg@gmail.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240717213121.3064030-3-steve.wahl@hpe.com>
+References: <20240717213121.3064030-3-steve.wahl@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240805075814.10103-1-chunjie.zhu@cloud.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Message-ID: <172286723019.2215.3511705011179177500.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 05, 2024 at 07:58:14AM +0000, Chunjie Zhu wrote:
->   nfs aio code path, iov_offset is not initialized before used
-> 
->   nfs aio function call graph,
->     io_submit
->     aio_read
->     aio_setup_rw
->     import_single_range
->     iov_iter_ubuf           # do not initialize iov_offset
+The following commit has been merged into the x86/mm branch of tip:
 
-Which compiler it is?  Compound literals initialize *ALL* struct
-members.
+Commit-ID:     cc31744a294584a36bf764a0ffa3255a8e69f036
+Gitweb:        https://git.kernel.org/tip/cc31744a294584a36bf764a0ffa3255a8e69f036
+Author:        Steve Wahl <steve.wahl@hpe.com>
+AuthorDate:    Wed, 17 Jul 2024 16:31:21 -05:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 05 Aug 2024 16:09:31 +02:00
 
-> diff --git a/include/linux/uio.h b/include/linux/uio.h
-> index 42bce38a8e87..2121424204c2 100644
-> --- a/include/linux/uio.h
-> +++ b/include/linux/uio.h
-> @@ -386,6 +386,7 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
->  		.user_backed = true,
->  		.data_source = direction,
->  		.ubuf = buf,
-> +		.iov_offset = 0,
->  		.count = count,
->  		.nr_segs = 1
->  	};
+x86/mm/ident_map: Use gbpages only where full GB page should be mapped.
 
-NAK.  If you really get an uninitialized value, report it to compiler
-authors - it's a bug.  Relevant parts of C99, if you need to quote
-it at them:
+When ident_pud_init() uses only GB pages to create identity maps, large
+ranges of addresses not actually requested can be included in the resulting
+table; a 4K request will map a full GB.  This can include a lot of extra
+address space past that requested, including areas marked reserved by the
+BIOS.  That allows processor speculation into reserved regions, that on UV
+systems can cause system halts.
 
-6.5.2.6[6] The value of the compound literal is that of an unnamed
-object initialized by the initializer list. If the compound literal
-occurs outside the body of a function, the object has static storage
-duration; otherwise, it has automatic storage duration associated with
-the enclosing block.
+Only use GB pages when map creation requests include the full GB page of
+space.  Fall back to using smaller 2M pages when only portions of a GB page
+are included in the request.
 
-6.5.2.6[7] All the semantic rules and constraints for initializer lists
-in 6.7.8 are applicable to compound literals.
+No attempt is made to coalesce mapping requests. If a request requires a
+map entry at the 2M (pmd) level, subsequent mapping requests within the
+same 1G region will also be at the pmd level, even if adjacent or
+overlapping such requests could have been combined to map a full GB page.
+Existing usage starts with larger regions and then adds smaller regions, so
+this should not have any great consequence.
 
-6.7.8[21] If there are fewer initializers in a brace-enclosed list than
-there are elements or members of an aggregate, or fewer characters in a
-string literal used to initialize an array of known size than there are
-elements in the array, the remainder of the aggregate shall be initialized
-implicitly the same as objects that have static storage duration.
+Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Pavin Joseph <me@pavinjoseph.com>
+Tested-by: Sarah Brofeldt <srhb@dbc.dk>
+Tested-by: Eric Hagberg <ehagberg@gmail.com>
+Link: https://lore.kernel.org/all/20240717213121.3064030-3-steve.wahl@hpe.com
 
-6.7.8[10] If an object that has automatic storage duration is not initialized
-explicitly, its value is indeterminate. If an object that has static storage
-duration is not initialized explicitly, then:
-— if it has pointer type, it is initialized to a null pointer;
-— if it has arithmetic type, it is initialized to (positive or unsigned) zero;
-— if it is an aggregate, every member is initialized (recursively) according
-to these rules;
-— if it is a union, the first named member is initialized (recursively) according
-to these rules.
+---
+ arch/x86/mm/ident_map.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-
-Now, it might or might not make sense to spell the initializer for that
-member out explicitly on the stylistic grounds, but it is not uninitialized.
-Compound literals initialize all (named) members; the only thing left
-uninitialized is padding.  If something in your toolchain assumes otherwise,
-it needs to be fixed.
+diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
+index c451272..437e96f 100644
+--- a/arch/x86/mm/ident_map.c
++++ b/arch/x86/mm/ident_map.c
+@@ -99,18 +99,31 @@ static int ident_pud_init(struct x86_mapping_info *info, pud_t *pud_page,
+ 	for (; addr < end; addr = next) {
+ 		pud_t *pud = pud_page + pud_index(addr);
+ 		pmd_t *pmd;
++		bool use_gbpage;
+ 
+ 		next = (addr & PUD_MASK) + PUD_SIZE;
+ 		if (next > end)
+ 			next = end;
+ 
+-		if (info->direct_gbpages) {
+-			pud_t pudval;
++		/* if this is already a gbpage, this portion is already mapped */
++		if (pud_leaf(*pud))
++			continue;
++
++		/* Is using a gbpage allowed? */
++		use_gbpage = info->direct_gbpages;
+ 
+-			if (pud_present(*pud))
+-				continue;
++		/* Don't use gbpage if it maps more than the requested region. */
++		/* at the begining: */
++		use_gbpage &= ((addr & ~PUD_MASK) == 0);
++		/* ... or at the end: */
++		use_gbpage &= ((next & ~PUD_MASK) == 0);
++
++		/* Never overwrite existing mappings */
++		use_gbpage &= !pud_present(*pud);
++
++		if (use_gbpage) {
++			pud_t pudval;
+ 
+-			addr &= PUD_MASK;
+ 			pudval = __pud((addr - info->offset) | info->page_flag);
+ 			set_pud(pud, pudval);
+ 			continue;
 
