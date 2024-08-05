@@ -1,101 +1,135 @@
-Return-Path: <linux-kernel+bounces-274548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7049C9479DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:31:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581869479E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7091F21BD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ADB31C20DCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D7D158859;
-	Mon,  5 Aug 2024 10:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F45D13CFAB;
+	Mon,  5 Aug 2024 10:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="kriIqqh2"
-Received: from msa.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LzscwnAe"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC3815748D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2B618040
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722853807; cv=none; b=HPZ2NczJqvdL28/tI7dPsUgaIUuwkYe9kfYZlnRbUIaHYcjYsFWI6qVvl0vnMV8iRKMlIfCzEGZ8WZb4E6qLgw/loN2m7c1wM1zS9QiGMZU9rGvP/X5cQJj4ftJLAQ32pixE/3/6iYDfGLuopqRz2vIRQ/JKghBalwCFsa2YEnE=
+	t=1722853994; cv=none; b=SW9J9R1lmtucTrzdYxzPUrAluTNxaWC7XZ7/C+U/YQ3vsJyDCeBxicj73BdesGeaoXEGNR4kry3XnIVTez5vVxOQcsV3icNsqxx+2H3pW4dRQheCZRyrTXAofXQBG3vnbIy82rEY1BXpUyi5pC/YxBR2TUf+Y/T67WHGh/YETH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722853807; c=relaxed/simple;
-	bh=WM4jDsNl88icLtOhSZc2z02eEcUwms+W5Nt3XUgfBA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e8TC44DcRFWBJhMmwO+xrjDsYfr5NeZ7Txa3FloHI7P//60A0pgPp4tY7wZBLv2oE4c3X5YKqb8HiYSz/TH+N2JX3Cv5TDx9/lRKXtivrPRvrMEJ4L7MxWTAh7G2pDJ98Ql5QazJsIrxYMV5L51fbBMMbgxPdnqProzGWk75RhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=kriIqqh2; arc=none smtp.client-ip=193.252.22.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id auyPsh8Id6NRTauybsps9S; Mon, 05 Aug 2024 12:30:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722853805;
-	bh=SUPvmmO6LqCQ5AJ+3l+Xza8HDESgMwZoQBA6LVUiG6Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=kriIqqh2bjejAkv2YmddnEc0Y4ilI3Oz9+o896mHu/UmgG34i37XlCUGmgJBCJKY+
-	 7Nx1UNUqr3mKPSgDFgAzj0KALd2FGAv9NWF16moXTKyZ24nytpJD1ZZ2yv5rieCf20
-	 BSyRL5QCZ5i1BDZ1wwBc6XITuqwkPKziCioYcsxpHfXffY+cObAvFgYrlche/TVshv
-	 kKkgnTILIeJlvPEKTJkuDvXXovt90EOd9WLtU1qAvjgLUCRFfWK5NyPCPJIBdGnk74
-	 d8NYE2cKJhkVFYmDemegMJnJ+AuVEzjhZnFx8m6xs4jgUZ5y2NnPJfJOcRTDTaZrVY
-	 owXjzL7fktMkA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 05 Aug 2024 12:30:05 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: willy@infradead.org,
-	srinivas.kandagatla@linaro.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2 3/3] nvmem: Update a comment related to struct nvmem_config
-Date: Mon,  5 Aug 2024 12:29:49 +0200
-Message-ID: <10fd5b4afb1a43f4c4665fe4f362e671a729b37f.1722853349.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1722853994; c=relaxed/simple;
+	bh=aCg8Y7NDdsxbBmImd9uRerZmF7tRLZUEY04gUZ817ow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fnTiKcAR3uRPOQii4xOTCwO5WR9KYxet9CoVFiOTWW/MD8dcuAveBRkMKcQzmrvAMDprByhmMnn3/dYelw+ajgAKEiWctaPEgckVdiQFOwAzwg/oiRLGTekG361cCuBhcvaYUrKD+13j9zxBE+Hl2lCcfa1PydJsPyXXsayB6hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LzscwnAe; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dfef5980a69so9367560276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 03:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722853991; x=1723458791; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCg8Y7NDdsxbBmImd9uRerZmF7tRLZUEY04gUZ817ow=;
+        b=LzscwnAeCjD4FYkC5yo3LvvbRDw+wo9vP077qbgTn6BJHnl/wGemPeZbcXWul3tdgb
+         Zi+cwUTLpe3StbSpVbBOa5cYXi+xqy8+eSFZZS7LOSIJo/jbBNyA/P8wMeU262S5uZc+
+         25uxquCylRTBEmhn+PSL9HIcGbiYTtXTq7tFSLaHBQe0g9GFR1O3mLDv90aKyWG9d8xX
+         ycV0fr1+CU8ArmionVbWTxjPKAMigIasC9eIov63Imjn0+dC1pAqA4mhcRfHpQhCRunu
+         CePEvUpOBQSXyWKCjtCzjl4lGJ5SrSuTKhrtmAZUvJPLssGA8EhPQJ/nV2aeIbJ4unVt
+         Xrcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722853991; x=1723458791;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aCg8Y7NDdsxbBmImd9uRerZmF7tRLZUEY04gUZ817ow=;
+        b=GhBag6HqWZ0T+KQ03qZ8UAjaZ/+aqGr4azC2YepzgDlorPxEjMDiKhmghfs9Yn58RA
+         WjeiYgOzpXQTEkfFb6YfvdTRG0M2Kx1CEHUjZSRaR/uPza1Er8ZQ0q8Wh8RBVw51hWV/
+         gLHfcR6QUkPlZO66lpq34lnl72l1z2bGRQWoUbG/Zd6CGRxSDIwv3ca22EmGON8+Kvw4
+         nQo3zS/lQxeJUMgYLErLPbdL/S3NU1Q0wDcUoto+c+DNAKRFzQj2IPDs07beufsfgthw
+         8dwHgKSHR78UsWUZgPDKD5NfjBt9dzDivSbXYnE+0SM+mp6AFaxUDFy8EI4f6nzMF8+0
+         EByw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAumUpALk+Ctph+OjJEsFoHKwhYGNZ/ec1g3uIEBygzkqhzMvc4bpzH3epFOuXqUbqyowQtXDs2t/2QFfJ2WMqaT1KLZLaRyQ/DAAv
+X-Gm-Message-State: AOJu0Yx/McCqTyXmvV011FylQAUPv8fQz+kfyhwLOt42CtGc1sBw7f7D
+	FWsURX9O0unJo4IGPNL+eJlzr3N7ofmiQ81goDweAy9PWSmYvuM39v4yC/0/w5zAOpMIAZZSi5/
+	e7RyW23MlJjcZS1TYilKVzbS3e98Dxvln59FYlg==
+X-Google-Smtp-Source: AGHT+IGGEv61lZA9mh+6DUS9SFPSvDLpedgHfe82sAKsqEu8+0Y0OH2Uh3V5PtPQFVyIyuu+NY/A4IbZiEUJ+kCoNoQ=
+X-Received: by 2002:a05:6902:1441:b0:e0b:4e20:b592 with SMTP id
+ 3f1490d57ef6-e0bde21a393mr13367382276.6.1722853991091; Mon, 05 Aug 2024
+ 03:33:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240710061102.1323550-1-quic_varada@quicinc.com>
+ <20240710061102.1323550-6-quic_varada@quicinc.com> <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
+ <ZpeLYG6vegJYZ5Rs@hu-varada-blr.qualcomm.com> <ZqCD3xtkLHbw9BHN@hu-varada-blr.qualcomm.com>
+ <iy3l3ybmvllqxtyqq7fifiokxaaedrs22davveel4ikjoqivdm@dinswoc52qpz>
+In-Reply-To: <iy3l3ybmvllqxtyqq7fifiokxaaedrs22davveel4ikjoqivdm@dinswoc52qpz>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 5 Aug 2024 12:32:34 +0200
+Message-ID: <CAPDyKFoSK4_gRtOY2_pZhT7AytZ4qpZpRTzg5cOrqJj7A22b6A@mail.gmail.com>
+Subject: Re: [PATCH v6 5/9] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org, 
+	rafael@kernel.org, viresh.kumar@linaro.org, quic_sibis@quicinc.com, 
+	quic_rjendra@quicinc.com, danila@jiaxyga.com, neil.armstrong@linaro.org, 
+	otto.pflueger@abscue.de, abel.vesa@linaro.org, luca@z3ntu.xyz, 
+	geert+renesas@glider.be, stephan.gerhold@kernkonzept.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Praveenkumar I <quic_ipkumar@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Update a comment to match the function used in nvmem_register().
-ida_simple_get() was replaced by ida_alloc() in commit 1eb51d6a4fce
-("nvmem: switch to simpler IDA interface")
+On Wed, 24 Jul 2024 at 19:26, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Wed, Jul 24, 2024 at 10:02:31AM GMT, Varadarajan Narayanan wrote:
+> > On Wed, Jul 17, 2024 at 02:44:08PM +0530, Varadarajan Narayanan wrote:
+> > > On Tue, Jul 16, 2024 at 02:15:12PM +0200, Konrad Dybcio wrote:
+> > > > On 10.07.2024 8:10 AM, Varadarajan Narayanan wrote:
+> > > > > From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > > > >
+> > > > > Add the APC power domain definitions used in IPQ9574.
+> > > > >
+> > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > > ---
+> > > >
+> > > > Could you please confirm [1]?
+> > > >
+> > > > Konrad
+> > > >
+> > > > [1] https://lore.kernel.org/linux-arm-msm/57dadb35-5dde-4127-87aa-962613730336@linaro.org/
+> > >
+> > > The author is off for a few days. Will get back to you once he is in.
+> >
+> > Have responded to that query. Please see https://lore.kernel.org/linux-arm-msm/ZqCCpf1FwLWulSgr@hu-varada-blr.qualcomm.com/
+>
+> If it responds to voltage values, please model it as a regulator rather
+> than a power domain.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Changes in v2:
-  - No chnages
+Just wanted to give my brief opinion around this too.
 
-v1: https://lore.kernel.org/all/032b8035bd1f2dcc13ffc781c8348d9fbdf9e3b2.1713606957.git.christophe.jaillet@wanadoo.fr/
----
- include/linux/nvmem-provider.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I agree that it seems to make sense to model it as a regulator, but
+that doesn't necessarily mean that we shouldn't model it as a
+power-domain too.
 
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index 3ebeaa0ded00..9a5f262d20f5 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -103,7 +103,7 @@ struct nvmem_cell_info {
-  *
-  * Note: A default "nvmem<id>" name will be assigned to the device if
-  * no name is specified in its configuration. In such case "<id>" is
-- * generated with ida_simple_get() and provided id field is ignored.
-+ * generated with ida_alloc() and provided id field is ignored.
-  *
-  * Note: Specifying name and setting id to -1 implies a unique device
-  * whose name is provided as-is (kept unaltered).
--- 
-2.45.2
+If it is a power-domain it should be modelled like that - and then the
+power-domain provider should be assigned as the consumer of that
+regulator.
 
+Kind regards
+Uffe
 
