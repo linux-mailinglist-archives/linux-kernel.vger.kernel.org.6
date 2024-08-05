@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-274942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283B3947E8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:48:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1626947E8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D9028543C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CF601F23454
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0077915B102;
-	Mon,  5 Aug 2024 15:48:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3944615B102;
+	Mon,  5 Aug 2024 15:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="JOD4+NZ4"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E193CF5E;
-	Mon,  5 Aug 2024 15:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YLaS7P/J"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDAA3CF5E;
+	Mon,  5 Aug 2024 15:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722872887; cv=none; b=IcY959RGXNM7OjU8NDHo5DBsLeO7flCUz5SXS40+vhLKTCobngzVDj3aCJQxB2fQwNFLuWi2RfydhQ88ogVSMD6Q/pkCFlVp9+Sy0pOaBqdF2j8wgB0Qgi7LHWm/y8iQv4Vm+zHMiPlTQTKplKPMlIKT+6xrx5m4e1S6FUfhWe4=
+	t=1722872915; cv=none; b=RHkS9gX2etRvu7fBXW+hJrN//q/A1gHcRj/BhQCB35tcMEj4JM+vW9AF6EJANrjXyRHBgVzrKttquzpn/57P4pmzFU/KF+9LMRS2QcDJZUboZaorkWLbE2RPL8zbkin5AssfQiyBUn8MVIcSMY7LATY+1aRVK+OzDMo+Ely2uiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722872887; c=relaxed/simple;
-	bh=OZGy98UbIDkyd6Hk0oZW394mZWyvd9YWf6zMYB/arwc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xo1FRjhuXiHnYxqApFQ1AcjpT2lfLT0sJDRSZ1jyaRp+EuBYRLnbMP+JQGpvmmBxkgyGK1tdzcvdMkLTti042ETskn3vty/bhdrK/jjOPmwQJ8CucuplzfyO/RU/oJwe24OD/cf69IaxC5Itqmbxl97HLrG9IaJFLHxxAsnGyAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=JOD4+NZ4; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4D13F20B7165;
-	Mon,  5 Aug 2024 08:48:05 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4D13F20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722872885;
-	bh=p7toEQ4WVgn+rpngX9Asp3BsE6OVAl2aKHQzLgHYJdg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JOD4+NZ4u6Qof2mU1JFWoNIuhg3QLEMcsDFI+aKaqp2IxjepJd5DjWdlpYqvgGef8
-	 q5Syu63/Cb3JwqIPVQTMsUIQ8l3zwEYir7g+4ArDTf5RVaMwbBKPPFkdV5SO0Z0ooN
-	 ux+ezoY2PtRNJW/iy7ijXvnOyzfxGLos4Y3fph58=
-Message-ID: <97749cb2-35cb-4b54-a5c9-6cf3147c0cdd@linux.microsoft.com>
-Date: Mon, 5 Aug 2024 08:48:05 -0700
+	s=arc-20240116; t=1722872915; c=relaxed/simple;
+	bh=Uv9QzwIMt6yW4nBXXpqHFK2rlCMOe0OowQLqaBc/9Rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WA418EHyg2ZTho8ZjAbvBIteIxONSTxDfQ/brpfd2Dosphcu/X757S9O7PnK/vgEtApMthOu1iNtgNMqma+fynQMzCd8SXklUbEseVGz9jjpXNmWEx2iXQ2+3RnY8lFiZkwfcOdH5E6GCr2XoVHBLUQ1HdouXTIV754Lc5ZUaLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YLaS7P/J; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jop/9x9H74hNHpnKVy1TkUC3RQJ767iFMVyahJvX3D0=; b=YLaS7P/JiJPZGL7DnXiOXovLrF
+	c4PXj28tW3SRC0RGKXU7Gx2sXhLo6II75/dA186L6QAwk32nuuUUsxPcUV9mnaFpqPityaNyDaj5C
+	YAV45bR8vTOEvQEJnp06l1qPChJlg6h8bE5KEfdTY1lLZ9Kx3Q+Sn6lVa3JWU5Xr8Tiz0A0HKRWzT
+	S6GGekWPJPtnUM1w3q8JvfrGgsix8CPTjkahkD68w+q8MPe2EVbrDRDm48v7HJXodbnfJA7ffJkIG
+	LfXSlDkyjQ5YIqsiXzCgxlAhj3djfOA6I4IqrJ7vOEEuB+euTJsXdm38gRktdlevDkLxhyzQ7FQAt
+	9iUkkvJw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sazwi-00000004PrX-43q3;
+	Mon, 05 Aug 2024 15:48:29 +0000
+Date: Mon, 5 Aug 2024 16:48:28 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, Dave Chinner <david@fromorbit.com>,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+	brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
+ uptodate bits
+Message-ID: <ZrD0TKDHWhwiEoz_@casper.infradead.org>
+References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
+ <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+ <Zqwi48H74g2EX56c@dread.disaster.area>
+ <b40a510d-37b3-da50-79db-d56ebd870bf0@huaweicloud.com>
+ <Zqx824ty5yvwdvXO@dread.disaster.area>
+ <1b99e874-e9df-0b06-c856-edb94eca16dc@huaweicloud.com>
+ <20240805124252.nco2rblmgf6x7z4s@quack3>
+ <20240805140023.inte2rxlhumkfvrh@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/7] arm64: hyperv: Boot in a Virtual Trust Level
-To: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, dave.hansen@linux.intel.com, decui@microsoft.com,
- haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com, kys@microsoft.com,
- lenb@kernel.org, lpieralisi@kernel.org, mingo@redhat.com, rafael@kernel.org,
- robh@kernel.org, tglx@linutronix.de, wei.liu@kernel.org, will@kernel.org,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
- sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-5-romank@linux.microsoft.com>
- <20240805062821.GA31897@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <20240805062821.GA31897@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805140023.inte2rxlhumkfvrh@quack3>
 
+On Mon, Aug 05, 2024 at 04:00:23PM +0200, Jan Kara wrote:
+> Actually add Matthew to CC ;)
 
+It's OK, I was reading.
 
-On 8/4/2024 11:28 PM, Saurabh Singh Sengar wrote:
-> On Fri, Jul 26, 2024 at 03:59:07PM -0700, Roman Kisel wrote:
->> To run in the VTL mode, Hyper-V drivers have to know what
->> VTL the system boots in, and the arm64/hyperv code does not
->> update the variable that stores the value.
->>
->> Update the variable to enable the Hyper-V drivers to boot
->> in the VTL mode and print the VTL the code runs in.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   arch/arm64/hyperv/Makefile        |  1 +
->>   arch/arm64/hyperv/hv_vtl.c        | 13 +++++++++++++
->>   arch/arm64/hyperv/mshyperv.c      |  4 ++++
->>   arch/arm64/include/asm/mshyperv.h |  7 +++++++
->>   4 files changed, 25 insertions(+)
->>   create mode 100644 arch/arm64/hyperv/hv_vtl.c
->>
->> diff --git a/arch/arm64/hyperv/Makefile b/arch/arm64/hyperv/Makefile
->> index 87c31c001da9..9701a837a6e1 100644
->> --- a/arch/arm64/hyperv/Makefile
->> +++ b/arch/arm64/hyperv/Makefile
->> @@ -1,2 +1,3 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   obj-y		:= hv_core.o mshyperv.o
->> +obj-$(CONFIG_HYPERV_VTL_MODE)	+= hv_vtl.o
->> diff --git a/arch/arm64/hyperv/hv_vtl.c b/arch/arm64/hyperv/hv_vtl.c
->> new file mode 100644
->> index 000000000000..38642b7b6be0
->> --- /dev/null
->> +++ b/arch/arm64/hyperv/hv_vtl.c
->> @@ -0,0 +1,13 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2024, Microsoft, Inc.
->> + *
->> + * Author : Roman Kisel <romank@linux.microsoft.com>
->> + */
->> +
->> +#include <asm/mshyperv.h>
->> +
->> +void __init hv_vtl_init_platform(void)
->> +{
->> +	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
->> +}
->> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
->> index 341f98312667..8fd04d6e4800 100644
->> --- a/arch/arm64/hyperv/mshyperv.c
->> +++ b/arch/arm64/hyperv/mshyperv.c
->> @@ -98,6 +98,10 @@ static int __init hyperv_init(void)
->>   		return ret;
->>   	}
->>   
->> +	/* Find the VTL */
->> +	ms_hyperv.vtl = get_vtl();
->> +	hv_vtl_init_platform();
->> +
->>   	ms_hyperv_late_init();
->>   
->>   	hyperv_initialized = true;
->> diff --git a/arch/arm64/include/asm/mshyperv.h b/arch/arm64/include/asm/mshyperv.h
->> index a7a3586f7cb1..63d6bb6998fc 100644
->> --- a/arch/arm64/include/asm/mshyperv.h
->> +++ b/arch/arm64/include/asm/mshyperv.h
->> @@ -49,6 +49,13 @@ static inline u64 hv_get_msr(unsigned int reg)
->>   				ARM_SMCCC_OWNER_VENDOR_HYP,	\
->>   				HV_SMCCC_FUNC_NUMBER)
->>   
->> +#ifdef CONFIG_HYPERV_VTL_MODE
->> +void __init hv_vtl_init_platform(void);
->> +int __init hv_vtl_early_init(void);
->> +#else
->> +static inline void __init hv_vtl_init_platform(void) {}
->> +#endif
->> +
-> 
-> These functions are defined in x86 header as well. We can move it to generic header.
-> 
-Will do, thanks!
+FWIW, I agree with Dave; the locking complexity in this patch was
+horrendous.  I was going to get to the same critique he had, but I first
+wanted to understand what the thought process was.
 
-> - Saurabh
+> > > Ha, right, I missed the comments of this function, it means that there are
+> > > some special callers that hold table lock instead of folio lock, is it
+> > > pte_alloc_map_lock?
+> > > 
+> > > I checked all the filesystem related callers and didn't find any real
+> > > caller that mark folio dirty without holding folio lock and that could
+> > > affect current filesystems which are using iomap framework, it's just
+> > > a potential possibility in the future, am I right?
 
--- 
-Thank you,
-Roman
+Filesystems are normally quite capable of taking the folio lock to
+prevent truncation.  It's the MM code that needs the "or holding the
+page table lock" get-out clause.  I forget exactly which callers it
+is; I worked through them a few times.  It's not hard to put a
+WARN_ON_RATELIMIT() into folio_mark_dirty() and get a good sampling.
 
+There's also a "or holding a buffer_head locked" get-out clause that
+I'm not sure is documented anywhere, but obviously that doesn't apply
+to the iomap code.
+
+> > There used to be quite a few places doing that. Now that I've checked all
+> > places I was aware of got actually converted to call folio_mark_dirty() under
+> > a folio lock (in particular all the cases happening on IO completion, folio
+> > unmap etc.). Matthew, are you aware of any place where folio_mark_dirty()
+> > would be called for regular file page cache (block device page cache is in a
+> > different situation obviously) without folio lock held?
+
+Yes, the MM code definitely applies to regular files as well as block
+devices.
 
