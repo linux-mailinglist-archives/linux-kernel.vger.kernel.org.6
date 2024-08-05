@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-274308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296CC947659
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6F4947657
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D881A28150E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:52:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8559B280FF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8211494C4;
-	Mon,  5 Aug 2024 07:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E9C149C6E;
+	Mon,  5 Aug 2024 07:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="PXfTzEXU"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TJW926b6"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B63149C60;
-	Mon,  5 Aug 2024 07:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F621428E4
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 07:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722844335; cv=none; b=XH9cngjuUUnN8uRizoj+91vpn/7pmSpn0eF89OrhSpKgkOjis2Lb5OhlkxuGCZ7YN4zpFq84hVCDTzWkWSDZ8oVMzCi8Gt2boE3/3cPu7fKKcVDokdQr03TH7HqQ1stGAlh82GS9ms265t/Pqmf5vLEumis4rGZ6a9UpZfSvrp4=
+	t=1722844331; cv=none; b=guTA2E3+Q9iKrz9DrY7xdNhSrXSErKb/8PShRGxf9IVBs2QUtebqxWYiGF4APw5I9OpOe9QYcgQL3REGzB4xBBNyoxVyFD0nD0KV9YRGwVmkAif4x6QB1gSEXBJ5r/YBKZyvxIPykHGy52nDGHQnaU/9QVPFl7z3c9irhu3iPww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722844335; c=relaxed/simple;
-	bh=3aW4nH3vgZoUQRm15WC8tjx3YwoliExaUBNNXskj8Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PDDOoAwaEJji0IIrIlICYHPrYg6QJ60ZSNnxLC3s8go9rRPaeT1n6aqYmof9PeZ3Gzfk8bofLrjXTNDM7UemMpHS1eff5+JHd0IlLgfj7RSWAZbkH56Wr3JAYeAWOmPFYBtyErrLmYaqLJhJ91khNkjgkRy3oCJ3h7s1Xk+6Ev0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=PXfTzEXU; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1722844304;
-	bh=dX/LpPoHut8lETBwmF/IEv0TvOdoORDmfrs936mQZ+Q=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=PXfTzEXUlvaaubI0B6c+I7CsCssmJNKB5JGvsy9dOESFxEKqHxWazJUYMjE1Ig4Py
-	 jx5z0O+/qhz2MmAzr1iCxuvF3R6jr8MqoUgRQbS063Z2ZY4tiru226lo3cK/X7GQdf
-	 3ZVedaQQLYbZhOnCsdjJ+h/nBI/Z6kCG16RvnZ9o=
-X-QQ-mid: bizesmtpsz8t1722844302tm82f4s
-X-QQ-Originating-IP: 4ukN1MC4aqboCviRCrmkyr4OHY5tnDpuhOgKA2gu7vQ=
-Received: from john-PC ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 05 Aug 2024 15:51:40 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5759599161836929121
-Date: Mon, 5 Aug 2024 15:51:36 +0800
-From: Qiang Ma <maqianga@uniontech.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: hdegoede@redhat.com, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: atkbd - fix LED state at suspend/resume
-Message-ID: <64DEA81E07C8F88E+20240805155136.6212f08d@john-PC>
-In-Reply-To: <ZqQbr8aZnaYi20Dp@google.com>
-References: <20240726102730.24836-1-maqianga@uniontech.com>
-	<ZqQbr8aZnaYi20Dp@google.com>
-Organization: UOS
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722844331; c=relaxed/simple;
+	bh=IXve6+F8Yq7AVXT7NfIkYMoHQ43AoL/EhFkEMA7/OYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nk6/lRZ57aBxuYkXqD6EbKFlJR6QNpW9paGHJMj7zNWFhN5Hj9BbRPOVPVG7CP6b883a09glo21kx/upL/7LOMF6rscgQJNl6Y589YnWF9ujFmca9RaepLxB3e4JwW3diQs08qIYDFINsKDLGwnvQTg2vUn0gEzFC1S8u2oQwi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TJW926b6; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so150441101fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 00:52:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722844328; x=1723449128; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6YA9Y9VMAPxbylebRC1XdIIi/H9qoWvJWVxmB4cwGQA=;
+        b=TJW926b6WOJh+jj0Og4/Ra8S9Gs6CM77fYQoVy9Cr+M22n+/NUV2xBt/477iCXht6Y
+         YK4hOTpQBoxL+LyN8HS2SHvbsPtWNs6v2sshG/UFhnteEYTRg54qKJ2xzfLfkhS6QBJP
+         cbhyivpN6OsOpMPYDpKEMawxu6TJsvVMmzmd66eSlsHbV24ZS7vGgKPdNQAQfPyiKlVk
+         5L61YgQht0yNlr4OM9mhrvvPXo2sQdFqnkvFsDff3OGIdwv7RL3IaxLVL9DRA1QGzcdm
+         rD0DuVJ6Zl024GYc+SSP2bY+ptF9XndgYNo3xeRU6a7fRTXEuJfNbEGj49HKNsQva3tV
+         fs0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722844328; x=1723449128;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6YA9Y9VMAPxbylebRC1XdIIi/H9qoWvJWVxmB4cwGQA=;
+        b=r7OujaKs61aD4cvuJYDYr4rkXEuJBPOk151QyUItDqHn+Tk22szgdrb/487IcBxZmG
+         n7pOZInBbygPDUYYtti3+Ht5ZX/JEQZCoe5aN00Z8fsoxrdjPIpKN1kqW8LOTXb1xP6v
+         xxIDodvUz81UYhPw6xRzlaHzuBZ8Bn136c/QBcPFo3JedL9YnqdSvWvNVeFza7WxV+ra
+         d0sRrxsuQ6uzdDH7JdN5U0N+2iqggGLHmDWxO6QyWPBBhiLfGVH0zTh2O2XDYueUfDu6
+         oo2Nq8/FaHReXfJx+iZ25K5k6b+tWUZBUhIjf8egoYQpImfVoQ4UCDYCqyYVK4TbFnsA
+         OEzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZlhmhStWZ9nJO5p61+5pYSwSGZSNUg/Fx3pjkOpN108g3TjG43/uUR/xQavpjarHBv8T61v+YmDQsc6v60Mbxdz3TqI56sPebO7iS
+X-Gm-Message-State: AOJu0YzMwnZYjomHfbSVO6jgu2yvLyN1smoY6WngZXf9dAAxWqIqEmM2
+	nSx/vTaM9xsFc720ltR1Z3uT91XnoILGZPt55zI5HLs8rElS9Pfa2RI3pV7NOYJNgrpaKClgdwL
+	TkM4vGllPcz/yX2bJ9IfvhvYn/3DvMUo0AeNkdw==
+X-Google-Smtp-Source: AGHT+IFjTMi5LTeJhpKw69H6ErUCnOJMAzJqM2E7B1tEBffKUkVO1xM1ianZH9WzkF88CksIdFWX3NbjhNpLgGIAIQM=
+X-Received: by 2002:a2e:a1c7:0:b0:2ec:56d1:f28 with SMTP id
+ 38308e7fff4ca-2f15aac3954mr70149661fa.26.1722844327469; Mon, 05 Aug 2024
+ 00:52:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+References: <20240718035444.2977105-1-ruanjinjie@huawei.com> <20240718035444.2977105-4-ruanjinjie@huawei.com>
+In-Reply-To: <20240718035444.2977105-4-ruanjinjie@huawei.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 5 Aug 2024 09:51:56 +0200
+Message-ID: <CACRpkdaJLBt8-c_f4Q3_nLdB_7hZE9Pv5LiX0ObiycXZcj9j0g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] ARM: Use generic interface to simplify crashkernel reservation
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: linux@armlinux.org.uk, catalin.marinas@arm.com, will@kernel.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, bhe@redhat.com, vgoyal@redhat.com, 
+	dyoung@redhat.com, arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org, 
+	eric.devolder@oracle.com, gregkh@linuxfoundation.org, javierm@redhat.com, 
+	deller@gmx.de, robh@kernel.org, hbathini@linux.ibm.com, 
+	thunder.leizhen@huawei.com, chenjiahao16@huawei.com, 
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 26 Jul 2024 14:57:03 -0700
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+On Thu, Jul 18, 2024 at 5:51=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
+ wrote:
 
-> On Fri, Jul 26, 2024 at 02:57:03PM -0700, Dmitry Torokhov wrote:
-> > Hi Qiang,
-> > 
-> > On Fri, Jul 26, 2024 at 06:27:30PM +0800, Qiang Ma wrote:
-> > > After we turn on the keyboard CAPSL LED and let the system
-> > > suspend, the keyboard LED is not off, and the kernel log is as
-> > > follows:
-> > > 
-> > > [  185.987574] i8042: [44060] ed -> i8042 (kbd-data)
-> > > [  185.988057] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
-> > > [  185.988067] i8042: [44061] 04 -> i8042 (kbd-data)
-> > > [  185.988248] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
-> > > 
-> > > The log shows that after the command 0xed is sent, the data
-> > > sent is 0x04 instead of 0x00.
-> > > 
-> > > Solution:
-> > > Add a bitmap variable ledon in the atkbd structure, and then set
-> > > ledon according to code-value in the event, in the atkbd_set_leds
-> > > function, first look at the value of lenon, if it is 0, there is
-> > > no need to look at the value of dev->led, otherwise, Need to look
-> > > at dev->led to determine the keyboard LED on/off.
-> > 
-> > I am not sure why duplicating input_dev->led which is supposed to
-> > record which LEDs are currently active on an input device would
-> > solve the issue. Could you please explain?
-> 
-> Ah, OK, I see it now. We do not actually toggle input_dev->led when
-> suspending, so atkbd uses wrong data to determine the LED state.
-> 
+> Currently, x86, arm64, riscv and loongarch has been switched to generic
+> crashkernel reservation, which is also ready for 32bit system.
+> So with the help of function parse_crashkernel() and generic
+> reserve_crashkernel_generic(), arm32 crashkernel reservation can also
+> be simplified by steps:
+>
+> 1) Add a new header file <asm/crash_reserve.h>, and define CRASH_ALIGN,
+>    CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX in it;
+>
+> 2) Add arch_reserve_crashkernel() to call parse_crashkernel() and
+>    reserve_crashkernel_generic();
+>
+> 3) Add ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION Kconfig in
+>    arch/arm/Kconfig.
+>
+> The old reserve_crashkernel() can be removed.
+>
+> Following test cases have been performed as expected on QEMU vexpress-a9
+> (1GB system memory):
+>
+> 1) crashkernel=3D4G,high                          // invalid
+> 2) crashkernel=3D1G,high                          // invalid
+> 3) crashkernel=3D1G,high crashkernel=3D0M,low       // invalid
+> 4) crashkernel=3D256M,high                        // invalid
+> 5) crashkernel=3D256M,low                         // invalid
+> 6) crashkernel=3D256M crashkernel=3D256M,high       // high is ignored, o=
+k
+> 7) crashkernel=3D256M crashkernel=3D256M,low        // low is ignored, ok
+> 8) crashkernel=3D256M,high crashkernel=3D256M,low   // invalid
+> 9) crashkernel=3D256M,high crashkernel=3D4G,low     // invalid
+> 10) crashkernel=3D256M                            // ok
+> 11) crashkernel=3D512M                            // ok
+> 12) crashkernel=3D256M@0x88000000                 // ok
+> 13) crashkernel=3D256M@0x78000000                 // ok
+> 14) crashkernel=3D512M@0x78000000                 // ok
+>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Tested-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+> v3:
+> - Update the commit message.
 
-Yes, that's true.
+I haven't used crash much but it looks right to my untrained eye.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> > 
-> > The input core is supposed to turn off all LEDs on suspend. This
-> > happens in input_dev_toggle() which is called from
-> > input_dev_suspend(). It iterates over all LEDs on a device and
-> > turns off active ones one by one.
-> > 
-> > I think what happens here is we are running afoul of the throttling
-> > done in atkbd (see atkbd_schedule_event_work), and it does not
-> > actually turn off all LEDs in time. But on the other hand
-> > atkbd_cleanup() (which is called to suspend the keyboard) calls
-> > 
-> >     ps2_command(&atkbd->ps2dev, NULL, ATKBD_CMD_RESET_DEF);
-> > 
-> > which should turn off everything anyways.
-> 
-> But still, why ATKBD_CMD_RESET_DEF does not shut off the LEDs for you?
-> 
-Looking at a ps/2 keyboard
-document(http://www-ug.eecg.toronto.edu/msl/nios_devices/datasheets/PS2%20Keyboard%20Protocol.htm),
-the F6 command does not seem to affect the state of the LED.
-
-> Thanks.
-> 
-> -- 
-> Dmitry
-
---
-Qiang
+Yours,
+Linus Walleij
 
