@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-274227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF76A947562
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:40:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA1D947565
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56601F21850
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:40:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4E1282728
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2EF149C58;
-	Mon,  5 Aug 2024 06:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqQEtJmF"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C4A149E01;
+	Mon,  5 Aug 2024 06:39:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C64F1422D8;
-	Mon,  5 Aug 2024 06:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A152B14386C
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 06:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722839976; cv=none; b=bw7uMAletTFU2TkasBPDH5svjsYLG9YravhSbfoUzqOh1Lae2LueMDlEvnxKVpgKxpM/hOzyRKxWPJZnFZu2ybXdO9nApu1sxUFf3y5hZndoVHPJeY4s8C6+rxXIHsXTt7nwkm0SH1enx9s5s3+WhaCcWyjKAeE6+Sah6oiMqoo=
+	t=1722839977; cv=none; b=smZjG020rV/lldsxD9iUZchwNb5TdToGrgLVhFBWLFIKfy9C6UNGJFj2h8XgAQV7Mt0yuAcyzmAFCdSNTM9AK84NsyPIG4z2PsOS8SFaYd6e4awios6DpUvWRURq2ou/6NQ/z19lDgG5ngJ89Z0Cl/a6aaFYJktU1L8coGQhcKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722839976; c=relaxed/simple;
-	bh=Hp+akOIA5r7pKUvBUtgBx9Zv5qT2Ir2O//4P0GbFEq0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IF0XD8VcVR22PjkgN7PL/ZsB/1zlkmAx1YJ9ISpYk1f9jUJAFHaGjhmYgrqyzsVFJApBm6r3q5xi+zY5d3vExp2/UZqcBjen4AV0G2QM7lUksH+kZmCRZbvSVwB0B0mZ1VRypp18UIck8+OsI5sjL3pKnGk8yQFE4E0lOTmyOAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqQEtJmF; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a81bd549eso913771866b.3;
-        Sun, 04 Aug 2024 23:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722839971; x=1723444771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hp+akOIA5r7pKUvBUtgBx9Zv5qT2Ir2O//4P0GbFEq0=;
-        b=cqQEtJmFSRm5LnPbsKT/AIjlDm4j7R8prPb+u9N2nPYpgq9FAl3dHinXrjP/HPxj08
-         LuZn20WHDCzyzNXSB4apJAhnvE9K9pNZIRvCflVEKSU5Dl13eW7ageQ1grX/Y0G4RmMc
-         CAT/H1oywg8LYgW5h1T714Rj6s14N3/e2QakpGou1iG4mBf/mQRxEloEJvmXT18yx80h
-         fZlXA2Yiu8UViqzbyNIGu9DUiCgxy0OcsHruBUeC7eylo1ZC3T3rq1ywgZskF9eHWZgV
-         D+lP9auQov1yB3zdU1Zn4Hx2HQwwgon83Va9gwNb9fOwg9hmLJIgqiBBeThtvIHEIuil
-         vEEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722839971; x=1723444771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hp+akOIA5r7pKUvBUtgBx9Zv5qT2Ir2O//4P0GbFEq0=;
-        b=fVZP6PTcKuRsASgkAgwIC8vnpQrUnxIhz4Wbk8A/YJlz9R6R/23Bq6QOF5jzYiEUR6
-         +MVryJd4nqiDc1HlzLCXVkw2SCUa9275yl2/Nr4Fm3lLz9cfmNbj+3He48nQgdNHEfJT
-         CcoGf3qwu9Yq3E4pBi2QafeKYlLvYCUGkMgwZn7/2UvsC5hChdyc8/fm6YdJM+dO75Y3
-         9UohP12f7c99Dv+C85u3w/qfOZJ/wqq0//MM7S/Ha94apD8Yv/cjpvFfHVIiKOdDWrhq
-         j97H2F/TVrWzPggRkPv+9j6T///nnbP2SV/FUp6YPlKnl5PCUSLKfcUyYLZnz0whOxwu
-         wWFA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7N1K3P4E4quQ5LfR82addNMjchGpEYTLdEedkWoEw2HcNSwGRuhC0tvjx8bSldYo5wko6iS2tQKvqdJ8=@vger.kernel.org, AJvYcCWbODC2TUw0TE/3ilzxOvkThc1PNulgDq9wUo3/vHl1qGPq+wFoapbnmEMcdCGfZuMBaEDHWyFC@vger.kernel.org, AJvYcCXZutLzy3lRh5XXszuDWTri81OPqoaKuVghGyR/fsAvcy9YXaSG/X7qYdxnJANyZWSWEoD+SlTv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzUmdPaBKAEIUOgw6jA7VTs5jsNJ4wpWSK/2Q0jnjyQq6hDsii
-	tO2DiT18i+IPVxx9AT5Ei+afgUUJb8H2qNVcfF0ko4KeLr8mKYb4GM/cUr+qAVWYtf5GoJ3ehcY
-	XipI0uxwpd2sp89JU5qH7jYhiySw=
-X-Google-Smtp-Source: AGHT+IHZKPc6hfq2+btXaQ5oS/nApElkaZfbe6yjBvGYeX2+PIMlwiIHY20xhepwtJAtoPF5hDV6P/eLwPk4IsLmXpU=
-X-Received: by 2002:a17:907:60cd:b0:a7d:c46b:2241 with SMTP id
- a640c23a62f3a-a7dc4fae424mr899245066b.29.1722839970855; Sun, 04 Aug 2024
- 23:39:30 -0700 (PDT)
+	s=arc-20240116; t=1722839977; c=relaxed/simple;
+	bh=Bc3+PFwcmWptmNKT5tJ+mNecn5ENAVBJsZGeMUTWOWo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l0IRIK5ceY7YdGbn6UpHdJqXPRuvcx5Y7WHOBHVGiJCrfi0q6EP0TF122Uax1S2wQ8hQwdzwHNynfymJYm6kimPQqAbdip2gYvWmdQblERByV8EuWxBxwQ/WJZk4X2qiDFFO8EnEAqTsb1pbKSE/8Nq8LzKYdyNzZophryPHqNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sarNI-00039C-Rg; Mon, 05 Aug 2024 08:39:20 +0200
+Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sarNH-004e47-LR; Mon, 05 Aug 2024 08:39:19 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1sarNH-000M8i-1t;
+	Mon, 05 Aug 2024 08:39:19 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH v4 0/3] mwifiex: add support for WPA-PSK-SHA256
+Date: Mon, 05 Aug 2024 08:39:12 +0200
+Message-Id: <20240805-mwifiex-wpa-psk-sha256-v4-0-e1eee80508e6@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGRfhukVR4V9GFmdV71QfM2OLW3G=BQoOM1U1cK0ENFZvLTLyw@mail.gmail.com>
- <CACGkMEvpB0zP+okrst-_mAxKq2eVwpdxQ5WTA07FBzRrs3uGaA@mail.gmail.com>
-In-Reply-To: <CACGkMEvpB0zP+okrst-_mAxKq2eVwpdxQ5WTA07FBzRrs3uGaA@mail.gmail.com>
-From: Blake Sperling <breakingspell@gmail.com>
-Date: Mon, 5 Aug 2024 01:38:54 -0500
-Message-ID: <CAGRfhukK6CWpyViK-O67OCXu9=7SGnOwSg=Lv91jum8dF-RKKg@mail.gmail.com>
-Subject: Re: [REGRESSION] [PATCH v2] net: missing check virtio
-To: Jason Wang <jasowang@redhat.com>
-Cc: arefev@swemel.ru, edumazet@google.com, eperezma@redhat.com, 
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, mst@redhat.com, 
-	netdev@vger.kernel.org, virtualization@lists.linux.dev, 
-	xuanzhuo@linux.alibaba.com, stable@vger.kernel.org, 
-	regressions@lists.linux.dev, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJBzsGYC/4XOwQ6CMAyA4VchOzuzdWyIJ9/DeNhckcYIZEPAE
+ N7d4clEjce/Sb92ZhEDYWT7bGYBB4rUNinyTcbOtW0uyMmnZiAgF4U0/DZSRTjxsbO8i1ceawv
+ acPBgy+qsnDCOpeUuYEXTCz6eUtcU+zY8XncGuU7/koPkggttsRCVKpxThw6by70PbUPT1iNb3
+ QHereKnBclCp5XXYgfOwFdLvVmgflpq/Qu0NDtbSm/lh7UsyxPNCcpSWQEAAA==
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>
+Cc: David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722839959; l=1265;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=Bc3+PFwcmWptmNKT5tJ+mNecn5ENAVBJsZGeMUTWOWo=;
+ b=3R1ZvcJ2SKfLWJVunNi+9XjTgYofH71m2KyxCp3AHAkL71pCm1frZYffSwowxL+HIJooyduHe
+ kzrkFw+uh0iD5W+ZQtozhhcwU+cnIstivT4xGEpok2z92zz/QelARWB
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello Jason,
+This series adds support for the WPA-PSK AKM suite with SHA256 as hashing
+method (WPA-PSK-SHA256)
 
-Willem's patch works, right on the mark. Confirmed the guest
-performance is back to normal.
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+Changes in v4:
+- rebase on wireless-next
+- fix typo in commit message (safe->save)
+- Link to v3: https://lore.kernel.org/r/20240723-mwifiex-wpa-psk-sha256-v3-0-025168a91da1@pengutronix.de
 
-Thanks, and sorry for the noise!
+Changes in v3:
+- add patch to replace '=' with '|=' in the key_mgmt setting
+- Link to v2: https://lore.kernel.org/r/20240717-mwifiex-wpa-psk-sha256-v2-0-eb53d5082b62@pengutronix.de
 
-On Mon, Aug 5, 2024 at 1:17=E2=80=AFAM Jason Wang <jasowang@redhat.com> wro=
-te:
->
-> On Mon, Aug 5, 2024 at 2:10=E2=80=AFPM Blake Sperling <breakingspell@gmai=
-l.com> wrote:
-> >
-> > Hello, I noticed a regression from v.6.6.43 to v6.6.44 caused by this c=
-ommit.
-> >
-> > When using virtio NIC with a QEMU/KVM Windows guest, network traffic fr=
-om the VM stalls in the outbound (upload) direction.This affects remote acc=
-ess and file shares most noticeably, and the inbound (download) direction d=
-oes not have the issue.
-> >
-> > iperf3 will show consistent results, 0 bytes/sec when initiating a test=
- within the guest to a server on LAN, and reverse will be full speed. Nothi=
-ng out of the ordinary in host dmesg or guest Event Viewer while the behavi=
-or is being displayed.
-> >
-> > Crucially, this only seems to affect Windows guests, Ubuntu guest with =
-the same NIC configuration tests fine both directions.
-> > I wonder if NetKVM guest drivers may be related, the current latest ver=
-sion of the drivers (v248) did not make a difference, but it is several mon=
-ths old.
-> >
-> > Let me know if there are any further tests or info I can provide, thank=
-s!
->
-> Does Willem's patch fix the issue?
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=
-=3D89add40066f9ed9abe5f7f886fe5789ff7e0c50e
->
-> Thanks
->
+Changes in v2:
+- set bss_config->protocol to zero to make the code clearer
+- Link to v1: https://lore.kernel.org/r/20240716-mwifiex-wpa-psk-sha256-v1-0-05ae70f37bb3@pengutronix.de
 
+---
+Sascha Hauer (3):
+      wifi: mwifiex: simplify WPA flags setting
+      wifi: mwifiex: fix key_mgmt setting
+      wifi: mwifiex: add support for WPA-PSK-SHA256
 
---=20
+ drivers/net/wireless/marvell/mwifiex/fw.h      |  1 +
+ drivers/net/wireless/marvell/mwifiex/uap_cmd.c | 35 ++++++++++----------------
+ 2 files changed, 14 insertions(+), 22 deletions(-)
+---
+base-commit: 420a549395c24bf9e4755f9fb220ce72b2f4f8bd
+change-id: 20240716-mwifiex-wpa-psk-sha256-2d2a9fc3b06b
 
--Blake Sperling
+Best regards,
+-- 
+Sascha Hauer <s.hauer@pengutronix.de>
+
 
