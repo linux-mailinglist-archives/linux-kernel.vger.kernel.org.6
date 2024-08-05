@@ -1,116 +1,195 @@
-Return-Path: <linux-kernel+bounces-274337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32D499476EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:11:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0785A947778
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 639691C20E82
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:11:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F4DCB22093
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7584014B966;
-	Mon,  5 Aug 2024 08:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4D714EC46;
+	Mon,  5 Aug 2024 08:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZXXjgvqI"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="J1n7bIyf"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08C013C906
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE1913D628;
+	Mon,  5 Aug 2024 08:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722845485; cv=none; b=WUpWyp5O/pRlwmMc03MnY9/vowaIcr58KzcF+QJ4eCClXzJWWZX41ZZlQrjy5GLa34h+z/ZoddEoU7E0Vm7Za1n5YEC24klgbQFm84OQ0SqdvCS9mTvfDAsZQw/QRDeTlMKnN1nUWueJE/fKoNX4RnQ0+d0dJz8nKwKBxATzICo=
+	t=1722847200; cv=none; b=QZyBmHpomPxtdTuvJ5CvmmKbi5kuHw20kk9Am+wyETF+Fj7D9XbWUHuAxskvPEldcrXIhCtwyXThVzI/B/XDLJu/JSjfGruOmtXjOfmPTnMDHLltVvq6HoKP7NfRssmfSfN00b8IUt4nmRJTvDsXRrm6L3hAKqzGRVrn5dSnDs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722845485; c=relaxed/simple;
-	bh=OGaVx+qMhZ0b7otpK3O02Kw7IL7OQu7ghb0iUPKBQPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zl7CzcSkS0CoW7SgLA9b4sCTxQtnOl6mzRnkQkcedBFSPJVv6WKyzSQuPtNbiQYpoe1iXweeMZkDqMgtS26q/cQ9s26tCYcbWOo/ywOk5lVr8UosEFaKfMu02AEMpIiskRAmnpK9Lquyv7QJHQy4WRanoefKnhx+lt0r2zNhgRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZXXjgvqI; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f01993090so14147038e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722845481; x=1723450281; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OGaVx+qMhZ0b7otpK3O02Kw7IL7OQu7ghb0iUPKBQPk=;
-        b=ZXXjgvqIc5ePHCwNR8+DkTdAWjGsWOTN2rGFbNRBQbEZEExu2gDdX2Hj+sKMNZdHuo
-         oJvb0U4F+aEo7QvSAale5n1Ixh2eeTUAhoqNu1DQ8kPIVCXE+Tc6NInk9GJ1TIEgqchS
-         efs7VeT8zgMAaA4zKbn27VXl2e+rFIkZoPHxr/jRbcNss+cRx8Vg0iAdz1ryTKBfcoss
-         txQdAQKbQK9UOTScsYSPqHY40TaeKVo+ActZy8DzdVO6E2+UhfJUlx0XDhIkuy2m1w7V
-         qeXoCvKApuSqAIE0+sPWsNxDNIri15pJi1oyZ21aSBNyk/NOic5tsjwJT12A40JUG2ft
-         TT+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722845481; x=1723450281;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OGaVx+qMhZ0b7otpK3O02Kw7IL7OQu7ghb0iUPKBQPk=;
-        b=m5GWeinPfpx27Z4hoIDjidhASPLj1mwbLCLSiI42lsXYgbn5P0dp7OZd+rNJH+6W0m
-         MNIENYU7WKDyCbx2yqvdZoc2o7lY0cnKP9uBI9E72BmKomopXrmIo7vOnezVocQZVpe+
-         iXsXVOY4SRqtO9snvjw2z1oqeCQH6J0NFfdcru3yqh0wQhAF66h4pMzvmQyiCk3IXjQH
-         4HL2SfCNTb/xDHZ24ttnbDmoJbmP+T2U5dwxrhUfkMFacdGR8wgEHX0xh1y2LWtbYZCv
-         mz0B17/IXqTi8FmvU6Vg/3RkA8VDhWsgm32BqeARn8167a1gSf9x9fhT8/dNKGUKIUOI
-         B+TA==
-X-Gm-Message-State: AOJu0YyTKYlHqlwrKV08dVJtGsi6VH0dfPHSgJrGAaEWkAsEF9wdpGFQ
-	SpZa14B0vSwsAx96thOfPjKW5L5LgmuWB6aAGQg/YUTV7294g+zEdyvxjLiIDCxxdBgeuz0rohu
-	9jrsDG9cTxaQZXKpGPIOnSksalg94VLXSuiLezQ==
-X-Google-Smtp-Source: AGHT+IEexVYi+TyR4tI+GJL56PCbzdQ1IM0K1XkXHiZ4BaBgjJiBD9SkZedwISuAdeYS+5aa+vlh1tFok3PdTds2jiQ=
-X-Received: by 2002:a05:6512:32c5:b0:52e:95dd:a8ed with SMTP id
- 2adb3069b0e04-530bb385320mr8050795e87.35.1722845480886; Mon, 05 Aug 2024
- 01:11:20 -0700 (PDT)
+	s=arc-20240116; t=1722847200; c=relaxed/simple;
+	bh=AkAzzbrcb/m3hxXb3vpTYpWqfppvXm0Abz7cFdk1vMk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=OIIDd/MFld7JfaPwEoG89udZUmAQlb01TedYXqpJugSuepf2q6cRI9TzstHZ4bo2VCoksNDs3g5YutnOUV4WlQ51a5r89NRY+mXprrgNUoRj+6V3rM9AnO9DGk1oiU6fkK+eO1fY65zb88y1NH/shNIGtaZ0VPycHIjR1AuI710=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=J1n7bIyf; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay1-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::221])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id 21254C67FF;
+	Mon,  5 Aug 2024 08:12:20 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 01A4824000B;
+	Mon,  5 Aug 2024 08:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722845531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HY6OU3chSqD3rf/2ebEU6wUI9+o+/0b7R7NY5T40ViI=;
+	b=J1n7bIyfeChYNvKosoaYVVNqh/Xrlh9CwfwnUk2KlwTa8Gt7wTYcggcx54dbvDxCcV2gu4
+	4/PiLPXFkawDwWhDhKNmdQD73u3s+UowIG6vpWnrMo5KkTjUyk+qNTeaQEs91vR2lJYfTt
+	SRLjPV0sMvtjVfDmq71R1rwnupkDwxP0GHJuPidIqxw3H9aVaxE5SJGCWGJNhmYEp7sE+6
+	25izkLi+iLJOCuEWBA8cDSOIx9v+TzfpjrRC2POuTaBqYzIdjcPvqLi2BORrIl3URuweWn
+	3ikOxZiIE1avnfe5Qc1ASLSZdia1a08d7xXVNTNd13W9/VTashZODD251NEdHQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy> <20240723-handoff-race-33160609553f@wendy>
-In-Reply-To: <20240723-handoff-race-33160609553f@wendy>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 5 Aug 2024 10:11:09 +0200
-Message-ID: <CACRpkdYdxdLG8=_Xd7HLwQ5+pxwGw6Xte7=UNbknB8HR474bcQ@mail.gmail.com>
-Subject: Re: [RFC v7 5/6] gpio: mpfs: pass gpio line number as irq data
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: linux-kernel@vger.kernel.org, conor@kernel.org, 
-	Marc Zyngier <maz@kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 05 Aug 2024 10:12:10 +0200
+Message-Id: <D37TRQF5HP6J.ODHONYD6DF59@bootlin.com>
+Subject: Re: [PATCH] scripts: run-clang-tools: add file filtering option
+Cc: "Masahiro Yamada" <masahiroy@kernel.org>, "Nicolas Schier"
+ <nicolas@fjasle.eu>, "Nick Desaulniers" <ndesaulniers@google.com>, "Bill
+ Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
+ <llvm@lists.linux.dev>, <linux-kbuild@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>
+To: "Nathan Chancellor" <nathan@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.18.1-0-gaa8319bc591f
+References: <20240704-clang-tidy-filter-v1-1-8d4556a35b65@bootlin.com>
+ <20240802223509.GA781199@thelio-3990X>
+In-Reply-To: <20240802223509.GA781199@thelio-3990X>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Hi Conor,
+Hello Nathan,
 
-thanks for your patch!
+On Sat Aug 3, 2024 at 12:35 AM CEST, Nathan Chancellor wrote:
+> First of all, apologies that it has taken me so long to review this!
 
-On Tue, Jul 23, 2024 at 1:28=E2=80=AFPM Conor Dooley <conor.dooley@microchi=
-p.com> wrote:
+No worries, there is no rush!
 
-> Since the interrupt mux is going to provide us a 1:1 mapping for
-> interrupts, and it is no longer correct to hit all of the set bits in
-> the interrupt handler, store the GPIO that "owns" an interrupt in its
-> data pointer, so that we can determine which bit to clear.
+> On Thu, Jul 04, 2024 at 11:28:21AM +0200, Th=C3=A9o Lebrun wrote:
+> > Add file filtering feature. We take zero or more filters at the end as
+> > positional arguments. If none are given, the default behavior is kept
+> > and we run the tool on all files in the datastore. Else, files must
+> > match one or more filter to be analysed.
+> >=20
+> > The below command runs clang-tidy on drivers/clk/clk.c and all C files
+> > inside drivers/reset/.
+> >=20
+> >     ./scripts/clang-tools/run-clang-tools.py clang-tidy \
+> >         compile_commands.json \
+> >         'drivers/clk/clk.c' 'drivers/reset/*'
+> >=20
+> > The Python fnmatch builtin module is used. Matching is case-insensitive=
+.
+> > See its documentation for allowed syntax:
+> > https://docs.python.org/3/library/fnmatch.html
+> >=20
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > ---
+> > Currently, all files in the datastore are analysed. This is not
+> > practical for grabbing errors in a subsystem, or relative to a patch
+> > series. Add a file filtering feature with wildcard support.
 >
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Sure, I think this is totally reasonable. In fact, I think some of this
+> could be added to the commit message as further existence for this
+> feature.
 
-I don't quite get this, the irqchip of the GPIO is clearly hard-coded
-hierarchical, then why don't you:
+Indeed, it can be added to the commit message directly.
 
-select IRQ_DOMAIN_HIERARCHY
+> The change itself looks good to me for the most part, I have some
+> questions below just for my own understanding.
+>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+>
+> One further question/comment now: Have you considered a way to
+> integrate this into Kbuild with the clang-tidy and clang-analyzer
+> commands? I don't think it is strictly necessary for the acceptance of
+> this patch but it might be nice to have some variable that users could
+> provide to do this with their regular make command + the clang-tidy
+> target? Not sure if Masahiro has further thoughts on that.
 
-And use e.g. girq->child_to_parent_hwirq() to handle the
-hierarchy?
+I have not as I am using this script by calling it directly.
+It will either way be a separate patch.
 
-See drivers/gpio/gpio-ixp4xx.c for a simple example of a hierarchical
-GPIO interrupt controller.
+>
+> > Have a nice day,
+> > Th=C3=A9o
+> > ---
+> >  scripts/clang-tools/run-clang-tools.py | 20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> >=20
+> > diff --git a/scripts/clang-tools/run-clang-tools.py b/scripts/clang-too=
+ls/run-clang-tools.py
+> > index f31ffd09e1ea..b0b3a9c8cdec 100755
+> > --- a/scripts/clang-tools/run-clang-tools.py
+> > +++ b/scripts/clang-tools/run-clang-tools.py
+> > @@ -10,6 +10,7 @@ compile_commands.json.
+> >  """
+> > =20
+> >  import argparse
+> > +import fnmatch
+> >  import json
+> >  import multiprocessing
+> >  import subprocess
+> > @@ -32,6 +33,8 @@ def parse_arguments():
+> >                          help=3Dtype_help)
+> >      path_help =3D "Path to the compilation database to parse"
+> >      parser.add_argument("path", type=3Dstr, help=3Dpath_help)
+> > +    file_filter_help =3D "Optional Unix shell-style wildcard file filt=
+ers"
+> > +    parser.add_argument("file_filter", type=3Dstr, nargs=3D"*", help=
+=3Dfile_filter_help)
+> > =20
+> >      checks_help =3D "Checks to pass to the analysis"
+> >      parser.add_argument("-checks", type=3Dstr, default=3DNone, help=3D=
+checks_help)
+> > @@ -48,6 +51,22 @@ def init(l, a):
+> >      args =3D a
+> > =20
+> > =20
+> > +def filter_entries(datastore, filters):
+> > +    for entry in datastore:
+> > +        if filters =3D=3D []:
+> > +            yield entry
+> > +            continue
+> > +
+> > +        assert entry['file'].startswith(entry['directory'])
+>
+> What is the purpose of this assertion? Will it cause AssertionError
+> under normal circumstances?
 
-Yours,
-Linus Walleij
+Just below we extract `filepath` from entry["file"] by removing at its
+start the length of entry["directory"]. We expect entry["file"] to
+start with entry["directory"], so we document that with an assertion.
+
+If this assertion triggers, it means the line below would do something
+weird and would silently break the program. Silently because `filepath`
+is used for pattern matching and is never displayed.
+
+>
+> > +        # filepath is relative to the directory, to avoid matching on =
+the absolute path
+> > +        filepath =3D entry['file'][len(entry['directory']):].lstrip('/=
+')
+
+Regards,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
