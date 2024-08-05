@@ -1,173 +1,183 @@
-Return-Path: <linux-kernel+bounces-275397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6AD99484E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:35:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1763D9484EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15394B22D5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45A281C21F17
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571C116D4EA;
-	Mon,  5 Aug 2024 21:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33E916DC1E;
+	Mon,  5 Aug 2024 21:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="e9FbeDpt"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BMdgQDWy"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08FD14830D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684C816D9AC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893641; cv=none; b=Ql6vhikW5t/oc+cns0xuqOq+kEv117aOllj0hpEyVmrQ0CYJvZmwugut3zK88o46DkikIWW16emjBAGNDFSyjb08rAafDLLixsHpZQu+ds9yZb28razqaCdUEWv+6xglI1p8OQQrEGxWR5H9pMvWdJXqDNhMhOOZMhbxbVbtk9E=
+	t=1722893652; cv=none; b=lAmJeBTJ8nvA23nfZmyRuQJQMbTC+izbTT4qLIbjlRU5kfvVrn5HypA+Xuq5rlb+8/eb9Bf5cuJ6UFHr4VYW3O1Lf/L8i8Vmt7zaoM+NeB9sXVjlQ3oYtB+0UT2xqqwtLjKHTwRZS2L1fli9Ww10KfIuLl5P4+mjFc1Q5uaO0zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893641; c=relaxed/simple;
-	bh=+OihDy2QMh9owS7QvFjKcmh9vJtkO7Nd5o90hj1oHxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mgmewDtSNcAWsPKXWZULksxPF33v5qQOWT8j0lX3A+DT8+PYIEgV0vfi/8DkyGPzDVcQ5rQ99aWnLk3D+aOLh8W/FxymOC376qrZTt2eQ7WvifrIqv4EZNv2cBtckwcit+P1tN0bJUDDzU7+sYA3+sos7TgUzVkB5e2mg1oLj2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=e9FbeDpt; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb6b247db0so57466a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:33:59 -0700 (PDT)
+	s=arc-20240116; t=1722893652; c=relaxed/simple;
+	bh=zqLuGEFdi+P0yo/VokfbNgwJV9KfQByh7n2g/iDAKvI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T3rxBiq9jN6tuOVPJTgIgBnNhkxewC6A0UMH2ZrkhXhOsOzLGyDYyt9r5B0xEHg9qj9+rj7yxrd4JrA9TBAzdhd1SVJqACXwAWjtWN+hmEMbT/KJ3KQEAFMkDlVfp7lB709Ze1q0Au9LSWo8cpQ2NFcZhJwxau5Cq3BYFG5jj/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BMdgQDWy; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5d5b986a806so2863852eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1722893639; x=1723498439; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ip6TO0IhAcQmNoYEQtR7Rnuy+pRKC2MihtReYP0wVTE=;
-        b=e9FbeDptYoar834wp3jdgLySoFFxbGZoFnz9m+4MwHzsLqF9w+OnGFc/n1v4y4P3vw
-         WUW/2jaB8FqjWg62D0BVGvCdhHPp9D5GBypnpFCqPGOjLUKcTS3qpGIYkGdxQwOCQ4yh
-         OO9jIhlU9CLd0rk7DyUFdiRAePunPAM+aRJp3KrgIeS68Yx8UlIUJVE8R/nNnS7etpr2
-         Jk5oUvYEfH0zxVvvOLFhGjZ4kpa668gvXkHtdX4MfuBGO7gBGh+HOylpG+BYdmsfTB/L
-         Puo6J+UnJx0ewH01DRvfMjCbRSQYFYJ7tB88p7Sgi3FZTTPS6A2shapX3d04REbE7Z8l
-         51iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893639; x=1723498439;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1722893649; x=1723498449; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ip6TO0IhAcQmNoYEQtR7Rnuy+pRKC2MihtReYP0wVTE=;
-        b=hMchMkxVLDfA9hWZbT6IrTWroCF6THj+9SCKnPP1GCyQ71F0b2KGgUoOUrA25kJSSv
-         drShsjkJIZUUrQX7NeMsjSf03fgPZDXZzcbpAlF5NPWXETKz0auG9NmW/wj7L+z8cCZ8
-         PWzxarP7DXL6r3D2bmXgMUoEQuh0MoZmljgFset8gfEx0iXDObhPGeW0VZ0Q2W1S/vUn
-         +rDJ9XN7kR2tpmbMLWAGQjlIscrKrqZuLyUBpupqEO53Iuf1SCPBWDVRUgx1Bd4H0UOe
-         0jwpToCo7qzWo9X+v4QgrqO/ytCQPN2J26A+lxsvrrbz9siCxfuuqQ+/6DqcjekDoSrP
-         im/A==
-X-Gm-Message-State: AOJu0YwqVWNzvYKwNGdjfYr9EwyDoEe0E2Wa5Z+x0cd6AayZaHlSqoGg
-	JpWEw7cWl93y8fTF89mZeZ67eMXrNvER2zVnwwz0VvdOK3ijrhgfAV3U+umvQOQ=
-X-Google-Smtp-Source: AGHT+IHcQ1qaQjhwAyTjvY4/wiu+fGdi0PeJaAkST4Q8rbXHKOIO0itktmif+/lamlf2mZsiFQDVZQ==
-X-Received: by 2002:a17:903:2352:b0:200:69e9:5c87 with SMTP id d9443c01a7336-20069e96549mr28197185ad.1.1722893638899;
-        Mon, 05 Aug 2024 14:33:58 -0700 (PDT)
-Received: from mozart.vkv.me ([2001:5a8:4687:7900:2bc9:7663:1e71:adfe])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905b52bsm73633755ad.176.2024.08.05.14.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 14:33:58 -0700 (PDT)
-Date: Mon, 5 Aug 2024 14:33:55 -0700
-From: Calvin Owens <calvin@wbinvd.org>
-To: Brian Norris <briannorris@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH] wifi: mwifiex: Fix two buggy list traversals
-Message-ID: <ZrFFQ-dOmgL99CfF@mozart.vkv.me>
-References: <ff796ca4b4f5610bc2d4a479b8cafbb595c7b3a1.1722362534.git.calvin@wbinvd.org>
- <ZqqaFR4lssIfyQwV@google.com>
+        bh=kJj/weLh4AnZstbA8m8zHpr8XkLqzL/0qgZoHSEQ9Eo=;
+        b=BMdgQDWyrNyS0XrNSK6L5kKZoTkwRQsFyYHH+DKnyP88a/0fbGjw5atAEa5SaWsIbL
+         LpO2VmvbRiRfwR7svPQdWAPsFUrr0vkzh6zNzx0EF814f3R/FuyUm4m4vVpzYULS9HjC
+         xqMRZDNAdZFvyvdI+L4V/UjZ1odwuUDsnSnXw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722893649; x=1723498449;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kJj/weLh4AnZstbA8m8zHpr8XkLqzL/0qgZoHSEQ9Eo=;
+        b=NByEcM3N4zihLxGgU0zCaaCVFlPgMT2yhoSZEgbgsmTRxRGUJUoEECBGujU/wh5ozm
+         Hhh0Hu6OwLSbQJDvm3dVvRwoJ7NUjLQWFRojGfttF3HCW4Hu+fDNpRX/+KFDuWuPk233
+         QJlBlQhRhBuEobvdhC48yH85Egwkv506/72wTr9KZt7Q38w5KzN2xx2RSB+YenDUT9v7
+         CoXyi8ZMDqzkOuT6/Nm/G8OOwr6Fp7VPvP6z878ua7dVyRQ+NT5uRg9ppUrcjk9iIr8E
+         f8oP9jFJ82iog73fU9YqgaQDwkSiyAfNsH5UYS5OLIaebLLMQjt1TytunJg4tVFdrb1K
+         TLaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0EALcHRF69iX+ip3eHR4LLW4My9EmX1T4LlI/VD2/9CIg2bb7JKk5y+8t3aMplKYDJWEQQ8EMMabLGJb6zyDeV2WHcCJmlB6PQWH4
+X-Gm-Message-State: AOJu0YwiG7BcnYq5HAnk2nzJeuq4pxf9OrD5RycV95cfZLHf8aam03wR
+	3Cir1pZVw6IYwWhJmX6xGRa3Y1MwcqoeD2RvQAlLMknbdi4Rxz7kvt04er1Phtzu4TkpWKlOObn
+	tGzgtqlLh4fAiW1Ha/0YcBV4WAcQwKpN4YrMT
+X-Google-Smtp-Source: AGHT+IE8TLudz2YreomFPKewuIm8hKAgVVHp3aBUWpNonauvOFyC4N7BUufAoKQLSGYePiH0K984kKpEDPpFSCQi7Sc=
+X-Received: by 2002:a05:6870:1485:b0:267:dfce:95ec with SMTP id
+ 586e51a60fabf-26892644934mr6054136fac.14.1722893649241; Mon, 05 Aug 2024
+ 14:34:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZqqaFR4lssIfyQwV@google.com>
+References: <20240801170838.356177-1-jeffxu@google.com> <20240801170838.356177-2-jeffxu@google.com>
+ <202408051402.9C0FA18A12@keescook>
+In-Reply-To: <202408051402.9C0FA18A12@keescook>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 5 Aug 2024 14:33:57 -0700
+Message-ID: <CABi2SkU_TW1+NE6ofFSwiS+XV89d8T-NZy7X+OQi-2dG06O25w@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/1] binfmt_elf: mseal address zero
+To: Kees Cook <kees@kernel.org>
+Cc: akpm@linux-foundation.org, jannh@google.com, sroettger@google.com, 
+	adhemerval.zanella@linaro.org, ojeda@kernel.org, adobriyan@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wednesday 07/31 at 13:09 -0700, Brian Norris wrote:
-> On Tue, Jul 30, 2024 at 11:05:30AM -0700, Calvin Owens wrote:
-> > Both of these list traversals use list_for_each_entry_safe(), yet drop
-> > the lock protecting the list during the traversal.
-> > 
-> > Because the _safe() iterator stores a pointer to the next list node
-> > locally so the current node can be deleted, dropping the lock this way
-> > means the next "cached" list_head might be freed by another caller,
-> > leading the iterator to dereference pointers in freed memory after
-> > reacquiring the lock.
-> 
-> There are lots of unclear and/or unsound locking patterns in this
-> driver. You've probably identified one, although I don't think you've
-> solved 100% of it.
-> 
-> Here's another: is it valid for mwifiex_11n_rx_reorder_pkt() ->
-> mwifiex_11n_get_rx_reorder_tbl() to retrieve a 'tbl' pointer (without
-> removing it from the list), and then continue to operate on that without
-> holding any locks? (I think the answer is "no".)
-> 
-> Side note: you might also refer to this old thread:
-> https://lore.kernel.org/all/CAD=FV=VuxFtDdcMndLNzVYDoid8N3jP46j0sOFXG1D4CzX0=Zw@mail.gmail.com/
-> I don't think Marvell ever fully resolved all the issues there.
-
-That's all helpful, thank you.
-
-> > Fix by moving to-be-deleted objects to an on-stack list before actually
-> > deleting them, so the lock can be held for the entire traversal.
-> > 
-> > This is a bit ugly, because mwifiex_del_rx_reorder_entry() will still
-> > take the rx_reorder_tbl_lock to delete the item from the two on-stack
-> > lists introduced in this patch. But that is just ugly, not wrong, and
-> > the function has other callers... making the locking conditional seems
-> > strictly uglier.
-> 
-> I noticed this "ugliness", but I agree with your reasoning -- it's as
-> good as we can do here for now.
-> 
-> > I discovered this bug while studying the new "nxpwifi" driver, which was
-> > sent to the mailing list about a month ago:
-> > 
-> > https://lore.kernel.org/lkml/20240621075208.513497-1-yu-hao.lin@nxp.com/
-> > 
-> > ...but it turns out the new 11n_rxreorder.c in nxpwifi is essentially
-> > exactly identical to mwifiex, save for s/mwifiex/nxpwifi/, so I wanted
-> > to pass along a bugfix for the original driver as well.
-> 
-> That's another can of worms. mwifiex is horrible, and so if you were
-> asking me, I'd reject any attempt at copy/paste/modify that doesn't make
-> significant efforts to refactor and improve -- for instance, better
-> documentation about what all the locks mean, and clarity such that
-> readers can be confident that the code is doing the right thing. For
-> example, I think this mwifiex comment is a lie:
-> 
-> 	/* spin lock for rx_reorder_tbl_ptr queue */
-> 	spinlock_t rx_reorder_tbl_lock;
-> 
-> I believe it's supposed to protect the elements within the list too --
-> but it doesn't do a good job of that.
-> 
-> But that's a side track...
-> 
-> > I only have an IW612, so this patch was only tested on "nxpwifi".
-> 
-> I don't think we can accept an untested patch here. If you're lucky,
-> maybe I or someone else on CC can test for you though.
+On Mon, Aug 5, 2024 at 2:05=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
 >
-> > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> On Thu, Aug 01, 2024 at 05:08:33PM +0000, jeffxu@chromium.org wrote:
+> > From: Jeff Xu <jeffxu@chromium.org>
+> >
+> > Some legacy SVr4 apps might depend on page on address zero
+> > to be readable, however I can't find a reason that the page
+> > ever becomes writeable, so seal it.
+> >
+> > If there is a compain, we can make this configurable.
+> >
+> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
 > > ---
-> >  .../wireless/marvell/mwifiex/11n_rxreorder.c  | 26 +++++++++----------
-> >  1 file changed, 12 insertions(+), 14 deletions(-)
-> 
-> I think the patch looks good enough, but I won't ack it without testing.
-> And while you're at it, I'd recommend some further auditing, per the
-> above.
+> >  fs/binfmt_elf.c    | 4 ++++
+> >  include/linux/mm.h | 4 ++++
+> >  mm/mseal.c         | 2 +-
+> >  3 files changed, 9 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index 19fa49cd9907..e4d35d6f5d65 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -1314,6 +1314,10 @@ static int load_elf_binary(struct linux_binprm *=
+bprm)
+> >                  emulate the SVr4 behavior. Sigh. */
+> >               error =3D vm_mmap(NULL, 0, PAGE_SIZE, PROT_READ | PROT_EX=
+EC,
+> >                               MAP_FIXED | MAP_PRIVATE, 0);
+> > +
+> > +#ifdef CONFIG_64BIT
+> > +             do_mseal(0, PAGE_SIZE, 0);
+> > +#endif
+>
+> Instead of wrapping this in #ifdefs, does it make more sense to adjust
+> the mm.h declaration instead, like this below...
+>
+Sure.
 
-Understood. I was honestly a bit hesitant to send this in the first
-place without some sort of reproducer, I'll sit on the patch until I'm
-able to find one.
+> >       }
+> >
+> >       regs =3D current_pt_regs();
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index c4b238a20b76..b5fed60ddcd9 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -4201,4 +4201,8 @@ void vma_pgtable_walk_end(struct vm_area_struct *=
+vma);
+> >
+> >  int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phy=
+s_addr_t *size);
+> >
+> > +#ifdef CONFIG_64BIT
+> > +int do_mseal(unsigned long start, size_t len_in, unsigned long flags);
+>
+> #else
+> static inline int do_mseal(unsigned long start, size_t len_in, unsigned l=
+ong flags)
+> {
+>         return -ENOTSUPP;
+> }
+>
+OK.
 
-Thanks,
-Calvin
+> > +#endif
+> > +
+> >  #endif /* _LINUX_MM_H */
+> > diff --git a/mm/mseal.c b/mm/mseal.c
+> > index bf783bba8ed0..7a40a84569c8 100644
+> > --- a/mm/mseal.c
+> > +++ b/mm/mseal.c
+> > @@ -248,7 +248,7 @@ static int apply_mm_seal(unsigned long start, unsig=
+ned long end)
+> >   *
+> >   *  unseal() is not supported.
+> >   */
+> > -static int do_mseal(unsigned long start, size_t len_in, unsigned long =
+flags)
+> > +int do_mseal(unsigned long start, size_t len_in, unsigned long flags)
+> >  {
+> >       size_t len;
+> >       int ret =3D 0;
+> > --
+> > 2.46.0.rc1.232.g9752f9e123-goog
+> >
+>
+> And if it returns an error code, should we check it when used in
+> load_elf_binary()? (And if so, should the mm.h return 0 for non-64bit?)
+>
+It shouldn't fail. I can add pr_warning to handle the error case:
+pr_warning("pid=3D%d, couldn't seal the page on address 0.\n",
+task_pid_nr(current));
 
-> Brian
+Thanks!
+Best regards,
+-Jeff
+
+
+> --
+> Kees Cook
 
