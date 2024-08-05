@@ -1,161 +1,190 @@
-Return-Path: <linux-kernel+bounces-274762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4F6947C64
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94263947C68
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DBCE1C21D86
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC3C1C218A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DAD13AD26;
-	Mon,  5 Aug 2024 14:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD2A80631;
+	Mon,  5 Aug 2024 14:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Xguii6Mv"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gcQgztMj"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33A2381D4;
-	Mon,  5 Aug 2024 14:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5218255894
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722866509; cv=none; b=EeJBlfi2nXeAV3lcdIE3ApJKW8OOl1B2ONpG0EWHauXCwP8szNyjAXAf9w/5YeNfJihNmLNc9ry8fTo8/u7fkrYG5SkZ2eZeX0CP6eiD1FOUuMLacLApBkrOSewaVyIzvcAIQ9tNDTctvrEBdPm2aSFUQO38eAHiaO9XPasfJuI=
+	t=1722866560; cv=none; b=r9RpGbR1ZBFjtC8SfpmH1pcBhB2cj4gEgoy2bS5K2qohpmlSN4Dv5WLopz4i7qB9Et9uact5/+jBVCjdBMwRK0cBKZWpJYif4svrtC4G3/Jg3YMkuRTo0fCkZh6pxC25wKGegSO2W1BjT9RqtHpmbHb+F8n/6JYBEu8aNFmuuHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722866509; c=relaxed/simple;
-	bh=aHSrvx4Jeri1JfHkmGjMJCo9xwx0M5IOtiHv+g09qLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=phq4r281iJj58FKHx2dUsRzo3fE8jttJH8OSYVjGIa9pHilfDo62oSk5A7BZtjKgmKm33Vc2ZMpRGPFfqQFIRJ87cL4IAbAmTz9FYJimfEMcHmuQlL1EMMfa4V8hD6gF4qL7lExhUXIYnp+9Bnt5f9SHDFOe8gMDDH1ivWVYiqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Xguii6Mv; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1722866504;
-	bh=aHSrvx4Jeri1JfHkmGjMJCo9xwx0M5IOtiHv+g09qLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xguii6Mvc9SQXgLoxWm1En8dVk50ouciwDzko4tG6KIBZPT3ddYn5lSdakkqE2g//
-	 49sIdAYQEw5U8sInZO4Ze3uCX2/uC75CBmVjXB+ycDesfR2U/UeHJe1yBapFuvFFiR
-	 gu3eqoq9E66zLMh80e+HGVLBa9bM7BeODSU3kmNc=
-Date: Mon, 5 Aug 2024 16:01:44 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Jose Fernandez <jose.fernandez@linux.dev>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: control extra pacman packages with
- PACMAN_EXTRAPACKAGES
-Message-ID: <c41e3856-29f4-438f-a796-43aa957215d1@t-8ch.de>
-References: <20240804000130.841636-1-jose.fernandez@linux.dev>
+	s=arc-20240116; t=1722866560; c=relaxed/simple;
+	bh=t6Zn8RtLcAqzJ9PYGhOYoM76mP8FCPiSpumbICwEiLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZoQUP5/vNaArDVHzG2LFdAFXT8+ZQsQAjhwdtUIQMoORvUzmn5ntS3G3NyAUbQ69J4cX96Dk0CLBxWgadrbzdmieW5rwh34OrYAOUpAxHHXfZdiBblKmhgpMewtXEoLn6dAmXRC/Fy+Lkv9INCFI5FBtNHrU27j0zByPfQL34t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gcQgztMj; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso81719a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 07:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722866556; x=1723471356; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6y01yWkEDbZfw9f+QWJOKA+Cd/TeN/xK4SHxLNZG3RU=;
+        b=gcQgztMjQxewk8U1n1UVbbekHI3a9fUOqEzbTn9jeq3lW8jZmgr5IPvPx5KwVS8WKg
+         ZN15VGFngPg8sXWF0fApwGYGQJJyXBwCLX607OpxVjIQLHLQu9o1FymKhteeZRvYkgkG
+         UHfxYpaBL5D0NpnpSDb6p08/wJ3IjbDBMBENuD5CW91XKbKulOoBBTeVoAkL3zpey0bZ
+         Vha+GL8r4+NztwNI+EswzhBdwgETmtUIKgldCY9nZxBlkpUT/LWuUpnCPy/0B2+51kQ4
+         MlIIOXuor17uwcUpaKEhGdSOkQCAzOlZKU3eXEio/bOsbBay9dbHbVU39zRPe7npZnKZ
+         SdaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722866556; x=1723471356;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6y01yWkEDbZfw9f+QWJOKA+Cd/TeN/xK4SHxLNZG3RU=;
+        b=QD43g7CoQS0GjatLSj6IjeeR1bW0yp8Xg2qdfyhgFuFtsmI8ETki2VA1iJxQDRlOeF
+         xcM0IZbVJgPAfEtaT8j8u1Va6THkV7t5yW4xzvrfnhqylvyRvupo4iLbZhnQplQAdpOK
+         OUTcVERHFajxV9hhhaOIXMbciEkwlxH5mIDn3gqh6LaF1H7k32itW5LYAGWOn99k+3Xb
+         pap4WNWjNwyjMryLHagIsDDoSbhlOZLgUBBcCDcy6Maao4uKn24UqTLIHgDs3YZ5L3Yy
+         e4p6vEH4YfAwm2hWxnnIagHyxDstWejZZV+SynQCltBgrA6abfwE1DBZYVq1goGupHA3
+         nWiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgAdJueO5Hd8FLc7vjFAJRcey3TqF4rJj/Ur4cGyYpWWCueBagoA+fy8Ccwqo7pBV22T9IpkiUw6sXkApWHSk/NO3y7T2IXALIrSGR
+X-Gm-Message-State: AOJu0Yw1gHA/22MkQxEkS6MHb+aJ1bmDNgqP8z7D0FZMpUI9JWD1ge1m
+	lsr6bvaBu0Ikdq7dUAG2nF52xu03iUGQp+I+lI1SXFKDBoxnlI+sJmoMBTWZvhk6kM8H6BD73Fx
+	SDmlXz1mABxSXXCTk5uJYwVpCRQ8/QRNwBfm/
+X-Google-Smtp-Source: AGHT+IFkEMjaj60hhY6B/rb+geUkIpPhFCX/6hd3cDvLNye5/nfj2De9A1x6RnwQ7iGwXRYuX4KFjezpt6TlzML7lAM=
+X-Received: by 2002:a05:6402:26cb:b0:57d:436b:68d6 with SMTP id
+ 4fb4d7f45d1cf-5b9caf072d4mr227844a12.7.1722866556221; Mon, 05 Aug 2024
+ 07:02:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240804000130.841636-1-jose.fernandez@linux.dev>
+References: <BLAPR16MB392407EDC7DFA3089CC42E3CF0BE2@BLAPR16MB3924.namprd16.prod.outlook.com>
+In-Reply-To: <BLAPR16MB392407EDC7DFA3089CC42E3CF0BE2@BLAPR16MB3924.namprd16.prod.outlook.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 5 Aug 2024 16:02:22 +0200
+Message-ID: <CANn89iL_p_pQaS=yjA2yZd2_o4Xp0U=J-ww4Ztp0V3DY=AufcA@mail.gmail.com>
+Subject: Re: BUG: UDP Packet Corruption Issue with stmmac Driver on Linux 5.15.21-rt30
+To: "Oleksandr Makarov [GL]" <Oleksandr.Makarov@qsc.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jose,
+On Mon, Aug 5, 2024 at 1:40=E2=80=AFPM Oleksandr Makarov [GL]
+<Oleksandr.Makarov@qsc.com> wrote:
+>
+> Hello all,
+>
+> On my MSC SM2S-EL [1] there is an Ethernet device driven by the stmmac dr=
+iver, running on Linux version 5.15.21-rt30. I've encountered an issue wher=
+e UDP packets with multiple fragments are being corrupted.
+>
+> The problem appears to be that the stmmac driver is truncating UDP packet=
+s with payloads larger than 1470 bytes down to 256 bytes. UDP payloads of 1=
+470 bytes or less, which do not set the "More fragments" IP field, are tran=
+smitted correctly.
+>
+> This issue can be reproduced by sending large test data over UDP to my El=
+khart Lake machine and observing the data corruption. Attached are two pack=
+et captures: sender.pcap, showing the result of `nc -u [EHL machine IP] 232=
+3 < pattern.txt` from my workstation, where the outgoing UDP fragments have=
+ the correct content, and receiver.pcap, showing packets captured on the EH=
+L machine with corrupted UDP fragments. The contents are trimmed at 256 byt=
+es.
+>
+> I tracked the issue down to drivers/net/ethernet/stmicro/stmmac/stmmac_ma=
+in.c:5553, where the data corruption occurs:
+>
+> ```
+>                 if (!skb) {
+>                         unsigned int pre_len, sync_len;
+>
+>                         dma_sync_single_for_cpu(priv->device, buf->addr,
+>                                                 buf1_len, dma_dir);
+>
+>                         xdp_init_buff(&ctx.xdp, buf_sz, &rx_q->xdp_rxq);
+>
+> ```
 
-On 2024-08-03 18:01:25+0000, Jose Fernandez wrote:
-> Introduce a new variable, PACMAN_EXTRAPACKAGES, in the Makefile.package
-> to control the creation of additional packages by the pacman-pkg target.
-> 
-> This changes the behavior of the pacman-pkg target to only create the
-> main kernel package by default. The rest of the packages will be opt-in
-> going forward.
+Hi Olek
 
-I had the impression that by default all extrapackages should be
-built. The variable can then be used by expert users where needed.
-Other Opinions?
+Do you have an active XDP program ?
 
-> In a previous patch, there was concern that adding a new debug package
-> would increase the package time. To address this concern and provide
-> more flexibility, this change has been added to allow users to decide
-> which extra packages to include before introducing an optional debug
-> package [1].
+If yes, what happens if you do not enable XDP ?
 
-This paragraph seems like it shouldn't be part of the final commit.
-If you put it after a line with "---" it will be dropped from the
-commit, like so:
 
----
-
-In a previous patch, ...
-
-> 
-> [1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
-> 
-> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
-> ---
->  scripts/Makefile.package |  5 +++++
->  scripts/package/PKGBUILD | 11 ++++++++---
->  2 files changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> index 4a80584ec771..146e828cb4f1 100644
-> --- a/scripts/Makefile.package
-> +++ b/scripts/Makefile.package
-> @@ -144,6 +144,10 @@ snap-pkg:
->  # pacman-pkg
->  # ---------------------------------------------------------------------------
->  
-> +# Space-separated list of extra packages to build
-> +# The available extra packages are: headers api-headers
-> +PACMAN_EXTRAPACKAGES ?=
-
-The assignment doesn't do anything.
-Do we need the documentation if the default enables all subpackages?
-
-> +
->  PHONY += pacman-pkg
->  pacman-pkg:
->  	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-> @@ -152,6 +156,7 @@ pacman-pkg:
->  		CARCH="$(UTS_MACHINE)" \
->  		KBUILD_MAKEFLAGS="$(MAKEFLAGS)" \
->  		KBUILD_REVISION="$(shell $(srctree)/scripts/build-version)" \
-> +		PACMAN_EXTRAPACKAGES="$(PACMAN_EXTRAPACKAGES)" \
-
-This line is superfluous.
-
->  		makepkg $(MAKEPKGOPTS)
->  
->  # dir-pkg tar*-pkg - tarball targets
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> index 663ce300dd06..41bd0d387f0a 100644
-> --- a/scripts/package/PKGBUILD
-> +++ b/scripts/package/PKGBUILD
-> @@ -3,10 +3,15 @@
->  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
->  
->  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
-> -pkgname=("${pkgbase}" "${pkgbase}-api-headers")
-> -if grep -q CONFIG_MODULES=y include/config/auto.conf; then
-> -	pkgname+=("${pkgbase}-headers")
-> +pkgname=("${pkgbase}")
-> +
-> +_extrapackages=${PACMAN_EXTRAPACKAGES:-}
-> +if [ -n "$_extrapackages" ]; then
-
-No need for this check. The loop over an empty variable work fine.
-
-> +	for pkg in $_extrapackages; do
-> +		pkgname+=("${pkgbase}-$pkg")
-
-Use consistent variable references: "${pkgbase}-${pkg}"
-
-> +	done
->  fi
-> +
->  pkgver="${KERNELRELEASE//-/_}"
->  # The PKGBUILD is evaluated multiple times.
->  # Running scripts/build-version from here would introduce inconsistencies.
-> -- 
-> 2.46.0
-> 
+>
+> After the driver finishes synchronizing the DMA-mapped memory for consump=
+tion by calling dma_sync_single_for_cpu, the content of buf->page is incomp=
+lete. A diagnostic message using print_hex_bytes shows that buf->page conta=
+ins nothing (or sometimes garbage bytes) past the 0xff mark:
+>
+> ```
+> [  606.090539] dma: 00000000: 3000 29d6 c48d bf08 30b8 6280 0008 0045  .0=
+.).....0.b..E.
+> [  606.090545] dma: 00000010: dc05 b373 0020 1140 25af a8c0 6d58 a8c0  ..=
+s. .@..%..Xm..
+> [  606.090547] dma: 00000020: 7a58 13c2 1309 ca05 4e6c 3030 3130 203a  Xz=
+......lN0001:
+> [  606.090549] dma: 00000030: 6f59 7275 7320 7274 6e69 2067 6568 6572  Yo=
+ur string here
+> [  606.090551] dma: 00000040: 300a 3030 3a32 5920 756f 2072 7473 6972  .0=
+002: Your stri
+> [  606.090553] dma: 00000050: 676e 6820 7265 0a65 3030 3330 203a 6f59  ng=
+ here.0003: Yo
+> [  606.090555] dma: 00000060: 7275 7320 7274 6e69 2067 6568 6572 300a  ur=
+ string here.0
+> [  606.090556] dma: 00000070: 3030 3a34 5920 756f 2072 7473 6972 676e  00=
+4: Your string
+> [  606.090558] dma: 00000080: 6820 7265 0a65 3030 3530 203a 6f59 7275   h=
+ere.0005: Your
+> [  606.090560] dma: 00000090: 7320 7274 6e69 2067 6568 6572 300a 3030   s=
+tring here.000
+> [  606.090562] dma: 000000a0: 3a36 5920 756f 2072 7473 6972 676e 6820  6:=
+ Your string h
+> [  606.090564] dma: 000000b0: 7265 0a65 3030 3730 203a 6f59 7275 7320  er=
+e.0007: Your s
+> [  606.090566] dma: 000000c0: 7274 6e69 2067 6568 6572 300a 3030 3a38  tr=
+ing here.0008:
+> [  606.090567] dma: 000000d0: 5920 756f 2072 7473 6972 676e 6820 7265   Y=
+our string her
+> [  606.090569] dma: 000000e0: 0a65 3030 3930 203a 6f59 7275 7320 7274  e.=
+0009: Your str
+> [  606.090571] dma: 000000f0: 6e69 2067 6568 6572 300a 3130 3a30 5920  in=
+g here.0010: Y
+> [  606.090573] dma: 00000100: 0000 0000 0000 0000 0000 0000 0000 0000  ..=
+..............
+> [  606.090575] dma: 00000110: 0000 0000 0000 0000 0000 0000 0000 0000  ..=
+..............
+> [  606.090577] dma: 00000120: 0000 0000 0000 0000 0000 0000 0000 0000  ..=
+..............
+> [  606.090578] dma: 00000130: 0000 0000 0000 0000 0000 0000 0000 0000  ..=
+..............
+> ```
+>
+> I would appreciate any insights or suggestions on how to resolve this iss=
+ue.
+>
+> Best regards,
+>
+> Aleksandr
+>
+> 1 - https://embedded.avnet.com/product/msc-sm2s-el/
 
