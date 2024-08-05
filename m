@@ -1,262 +1,236 @@
-Return-Path: <linux-kernel+bounces-274122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E6D9473AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA93947398
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C253281205
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50300280C70
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E610A1448EB;
-	Mon,  5 Aug 2024 03:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481241D540;
+	Mon,  5 Aug 2024 03:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e7F7yImr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="fVcS/XV+"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazolkn19010003.outbound.protection.outlook.com [52.103.13.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BF013C820
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 03:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722827004; cv=none; b=pGgxMT3xSBpkb4RLI49XqDD0LkqBtgYpY8f5BqVXVV7oidq+cjSuaH10sTBPdJ7yHvU5fHAODyTCpXVjIRIuOpz1EhjBxx4fApFZteaj5Lcw3AYvD37tL+DuP/hnIZF+iaAlpvE7nUc8ze+Jc7LtMcPViWtpNiBLHLHSdk4vD7M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722827004; c=relaxed/simple;
-	bh=K89hFkYoOiNcoJg+0ZYyGQvCv65GHgkuzItUGHZzixg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fGr/uDzWXoOPOxVKg51K8u2CxzOZqU4uIM/yY8245ty9bKxtBjwb4FAlgYjp7pbw9ezXj5jaqi6QiHZOa/KAaUXLSXzT1A83zX4B3n6OSkiTCcpGlut82arOj55AdSXbBe5olZDjLntrTXryow0++6YyxJpwHJHDmk9/iqyGyt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e7F7yImr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722827001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FAkB5VNbMImzIR2291b/Iqbq49RjZTh1/9HBDSMLYYw=;
-	b=e7F7yImrgAAiSBTYKGB5NCE67ajUmCQyOsX4NvcB1ThG7wtGAkXD/EWMUEoNmLV4CPFyVp
-	K9HsC/5aRIBvdNtDpOCgDdaDYsUj1orWKefk8muYx0CDuBJo//87/kK/EarLoKLfrGqOeB
-	Z0Le7oPJipHik5eVK/YU+XljZDrNuNU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-344-t4qlpP78MH-G_Z9YkJaJAw-1; Sun,
- 04 Aug 2024 23:03:18 -0400
-X-MC-Unique: t4qlpP78MH-G_Z9YkJaJAw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D51861956088;
-	Mon,  5 Aug 2024 03:03:16 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.218])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7A43A1955F40;
-	Mon,  5 Aug 2024 03:03:08 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
-	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-Subject: [PATCH V5 net-next 3/3] virtio-net: synchronize operstate with admin state on up/down
-Date: Mon,  5 Aug 2024 11:02:42 +0800
-Message-ID: <20240805030242.62390-4-jasowang@redhat.com>
-In-Reply-To: <20240805030242.62390-1-jasowang@redhat.com>
-References: <20240805030242.62390-1-jasowang@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE865FEE4;
+	Mon,  5 Aug 2024 03:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.13.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722826970; cv=fail; b=Ktxh8gGr35mu5d3L5NU0UzAaCgmWxCQV5bRJFpjoTk3LG6lNnf/+bsV3+DEj5080It8pBxr+osyMf77PbrSCd/F3GkrX3O6rQkbt3Zpx8vvF9/W+IMS0M0fT/xxrfT9mrb1Qbx9mrO7MLmUO56DdtCrRFivVKwpiv4MdEUiIDaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722826970; c=relaxed/simple;
+	bh=HgSyqOYXSEGrq3SNCUN7N4R5lrYzG1TgCKn6/5vJroM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FTNX8z36AYk3VSbrlVehSQLtGQaivrfOQB8zSl2P1fQ+eEZvT+IlyI7DuKFAz1toT2xTECkE/T/kM5/WBNKJlK4xb1QQra287wznQGnnAK2hL+GIOOikZvvq6Uht38xdde/nztW2ChECbOvUNuyeywxFND75wnrgP7iMASXPlFI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=fVcS/XV+; arc=fail smtp.client-ip=52.103.13.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FKR00z2sQOwGy8TDLK7HS+oxImIvYZzA7QtbqxEEkbPh9kua/bpXUVUYL3IlYettvmHt7owCvG4h4qtztnadv0Cm+/FWSW2/nS8du2ZlXsLcNp+WmKPj+GW3PkLMyyyr/Blcz7rTZFdPOSC3WRWNSdDF+Jfc9ngW0wI7iynvvHcJex8KiKe+aPlncm9xNgrvJNNNJZxWEEffBTdygiD7GZ9hZ9mwvbzz3XKbs6Kadcn8uLiH/I28UygptiofM6iMKOUT3kN3hHjdzrSGy/dPI4i6CKqywDt2KRZbsydJzUK19AHA7FC5qsTHBk1A4J7u7jh0ZddY//aSpEzXB6JqBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t+wLRi8ZnFJfZhjT2dCYJE5mWnLtPDjYxe3eJ6mKNrg=;
+ b=s4To0Vc/mnBOGaAyyMNKyQ/sB6x5P7dRivoCUUB47YbuGuG/VHs3ifGRmUrraA/CLjHM0zQgwOLuj4figQtU8fJBHPlbOIMbPu9lilvW8Io7ytLTFXltNgZuvWK+gqL4t1OFLbXHHxaLx2PorNwbzmFCnP2GxFBrzSh7tXP9qGmpxccpG7pl/Vk3IU0Jj9UYX618ljfbj9UMOOPAehBEyuKo2R5Mh4ZaTz2SdUYuTNT8v1jblC1YiGeYEaqqs9cGPSzc3sFZ/0SzXTkerTiyfSSuujEzJw4tYiwK4XaDC+0IQm9Ky32T3/YOtJzXARBTVSkNd6ptV2kKp76xQHnNzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t+wLRi8ZnFJfZhjT2dCYJE5mWnLtPDjYxe3eJ6mKNrg=;
+ b=fVcS/XV+d9h3hoWrJSkZlhJdHjSf9jEQEL1gAqa2KejGqQlQ7iYUJkFvKHX4Zrs9YVJ5rfdYEHr5xOonm7eR2vptbL+jjPlRmN+bdgYrfjWUtaq6QdY3eEz2CjOPBCsn31ohqU6HcHo3Zudd2lsK30NRs+7nQMPNUcylwBdZwrLwbcNLYKAEw8e4M6ExOo7JJyXJkPdwwXeHHhENFLqFXRleWyJK0C0ds85z15I65aWNwLdxYxz/ppH4zQiA0QkWRqI7GcKqIqlO6z9lg85wQLDM9U7450fgVSj0+BKwsI4kWQYxb00SlzczuGC39NeEKPh4JmcVUj3K90djzjU6+w==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by LV3PR02MB10738.namprd02.prod.outlook.com (2603:10b6:408:28b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.25; Mon, 5 Aug
+ 2024 03:02:44 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.7807.026; Mon, 5 Aug 2024
+ 03:02:44 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Roman Kisel <romank@linux.microsoft.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"decui@microsoft.com" <decui@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com"
+	<kw@linux.com>, "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
+	<lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "wei.liu@kernel.org"
+	<wei.liu@kernel.org>, "will@kernel.org" <will@kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+CC: "apais@microsoft.com" <apais@microsoft.com>, "benhill@microsoft.com"
+	<benhill@microsoft.com>, "ssengar@microsoft.com" <ssengar@microsoft.com>,
+	"sunilmut@microsoft.com" <sunilmut@microsoft.com>, "vdso@hexbites.dev"
+	<vdso@hexbites.dev>
+Subject: RE: [PATCH v3 4/7] arm64: hyperv: Boot in a Virtual Trust Level
+Thread-Topic: [PATCH v3 4/7] arm64: hyperv: Boot in a Virtual Trust Level
+Thread-Index: AQHa36+nznmt0HyBTkiU+27mz+o6srIXU6GQ
+Date: Mon, 5 Aug 2024 03:02:43 +0000
+Message-ID:
+ <SN6PR02MB41575867724F85CB7A1551E6D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240726225910.1912537-1-romank@linux.microsoft.com>
+ <20240726225910.1912537-5-romank@linux.microsoft.com>
+In-Reply-To: <20240726225910.1912537-5-romank@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [ZotqbaooZkRSVly2xofnbCIovLlhhZvd]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|LV3PR02MB10738:EE_
+x-ms-office365-filtering-correlation-id: 33a33826-e071-4381-7006-08dcb4fb13c2
+x-ms-exchange-slblob-mailprops:
+ EgT5Wr3QDKySeO45n6y2Duvfl28/PrK72DJaZbh73zWFEuZOnzQhdp26JTjUiANpCqN0VuutU4E04kGkwwCum/AJDLTN8oJG3iRMA7n/8MuanOEglaP9kDxn6sTKjI6PbnGBCqOaQ1TEsjah2yNmvJYGbG/lDEkbq68rPtW2XGX8BsBxkOaFs5nrB82yrhpnIRsAu/ZjKLnP57vcvnK/z08Y8DHOeO1Q1URKofiYQs4ItCdG9+sdnEfmH4mcpruAJPm278tf6XGJ8Sc/E70qDsdCfWuTzheVd33tjfudDfuBmmFBnDA6HCGFWYZioB6OxgsVPLDxLphz+ZpuRkVxga6g6ue6lawMM8Yp4by8Cyq4lii/rWp/KpijswAFxzZN7TBPxhZBz6sDDZf0GFrPz9LJU3SkcY/NkAejSYkx1pJQScomurLeYFBfDY+GvnF+pcLxLp1X+XAJL7t9dCFRiwChChb5VqreZR/Paz/oD3z9kR34r1oHq/7krNB5gthJvYTKqKpp2cWNWxeo/FZGiGilkFqnVMhk39xX0fSban5m1FAIJmrycB1WEUqlVVEXsnUgLNlKWTcilBX0Vb0qdPkcd4AYaywH8VpBT4FDHafLE88TD+dIsUfdXGpOQQwEcGq1VzhZrd2mmRxBP+sKtCC0sAfPG4PneYw1pWfmwduE9xC8f/kAFxDwtLTJnEo/TfWQjZnq2vQI8ChUg1Gn0bjkJ0AUjlWGZoWsZBo1cg4=
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799003|8060799006|461199028|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ Wfs8i5xoVwPvzBqKJzx1sabMbDEfso4NCALWB+FvpSk85PCvXY4QWZ3Tv4AKQPQjPEe9rV/4DeSkkLfl9zgr6YPFginsF5B+qSzhXzuNAr93qPL8SveujOugPCQzLA/4wsBoW7DVgKIm1jIapKnIhTzfBZlROfBSCCszbIYXlHYgynEEJQ2ncETCKPK07FTkeGsAJiVo97i075aOcKYUpgSSkWzoU7iXDJc/6YdSC8eoCAzPaGVxrXiDlfSkdwWoaBpin+KuRePx0yKFx3x7Nup9BJ1fsLrJ+IN2nGct1UIHGWWkufB9SNPvJ8udW6Qsc48vWiaHUa1xK9OscPEBY1aVc6pkx2JzEoivkRDAijwyO2Vv3RpDiFK+NBxH5aUkFCLd6xJcq9UUmAFCVlw/kFZFljhAvrLQfljOyus/U5Ovn76skmo40LyrbASZkwZY/MiOb0S8VaUjg4uqkMBn836qdKuqXYGZv3CZo1W9Y0BN/TRb0o+VohIkHDva/WOw9+f9SuYTbpdckFttsLjT7P5OUAE+8dggGyX4preaDN7dubr54sU2RvdI2r7LN6GeZCaTBDWvmVN0qkv1DsBYXNk6Brk6rOqm9bGwspIvIlAYvDS11PvbLQc9+oNxZI0RkOw2c1H7PsISIJBZf0Gh2Q==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?BMQeN3wnucTciacp/VzVTYK3VqjamcTjTH/V+UrcUvV7joQ5rTtFpsrGdFBg?=
+ =?us-ascii?Q?b0T6yhmboyjLN2LgUFU06DOLWaZmvfIW4LRd3w85I5KyvhmSd2FXB4XxycOM?=
+ =?us-ascii?Q?CcxtiaPnF+95Op9BDSpl+80BgYgi0kn4gMFw3/hyV1lvU9MdUiJCvG294Qs2?=
+ =?us-ascii?Q?FjdKSOPBjM6y63BpICoPrEFjj3sU8e9HdKdgwrfBuQqK1LL5y0AQWZF4Ckw/?=
+ =?us-ascii?Q?qcTriMa7jVz2Adksu3gnPPrZNGnhUhGElptdapKdIo9eHC7z/Rmzf9Bj7sNz?=
+ =?us-ascii?Q?+5LrmrJ+aJDjGlX4/oxXpGxPc/DwIIVtRWDcB0ZSbpVR3zVARnkfOJoc1U6h?=
+ =?us-ascii?Q?50hXzKGOHt+emFqh8Qay9pW39BsLB4O8alcLFNwJl30YwqKnsimWZ0W+fHte?=
+ =?us-ascii?Q?udTYpxuGcsprTRDGV/HRQp0J+HlMTn/tsrdoCn2JavHgipUoAKnvfZ/zjyoQ?=
+ =?us-ascii?Q?+TyHsu2NK83Wegzcp6ajLh8Hl9x5O+N0i1Xu2iAxEcgD7YkCssG9g12MgTAQ?=
+ =?us-ascii?Q?jm0eA3Ccfw7YdbNEss2a1YsqBKaffeVgQpdddPR0rWLLQkzbhhJDJI20yREh?=
+ =?us-ascii?Q?p5R2GmPumWX62EM/ZdPFEkNsGQP6FnT6rvcu/1Us5GCRcl3oF/Pr8ypngAX4?=
+ =?us-ascii?Q?Iqd052ogFBjm31bPwCiFyFNQXDpwUOc2/unU5NQIavXlS5gSUDIdYYFW9hdI?=
+ =?us-ascii?Q?K0k6ui5zMbRZifXInHz9bLfkeFJJV/cKDJ8hqSPH89xNY7iluIlc04CX1eQA?=
+ =?us-ascii?Q?vQU8+5OJrZ70s3OimlLxE9jigWf44Rg4/h/n3rRh7xvwfOd/yFZOO9yNmytC?=
+ =?us-ascii?Q?D2Fl/IBfjop8gY8cf+TC2CJgy8uSYPwyeISdADb3KlMlNMuMR7FVvMcfAv9C?=
+ =?us-ascii?Q?UHwklSLG00hWVt8LWR+9Fc0gRUHOUG20igei7AKJc1nvb7X4MAs94dGBe0XO?=
+ =?us-ascii?Q?YdEwkc2nHcXZ4vzsLz1sLNLweDfgpdfHsP/Z7dGoXzeyWhlnv4l2kydfjNP6?=
+ =?us-ascii?Q?4MWNlenNKxbzKNegZbWfGVLwmRFG4e1suqqIXJIx0xfYdEtPnM27QJbnKaXV?=
+ =?us-ascii?Q?tFZmso9h+KOfmEDSPaq9tAKdlwRfc/yw/hXIdIyPNJJFju/R0Xbc1YJGifDU?=
+ =?us-ascii?Q?BVdorraEHDup0ytE5qoTLDq23qytPKXGEWHF9SKRCS9TM+lPe6nRoUno9IQg?=
+ =?us-ascii?Q?RKlv+FVRsO8UFJyJFkxZlTP3ffe6STnm1ODk1yDq/3wC0ktyurVSI6WIhLA?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33a33826-e071-4381-7006-08dcb4fb13c2
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2024 03:02:44.0516
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR02MB10738
 
-This patch synchronize operstate with admin state per RFC2863.
+From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, July 26, 2024 =
+3:59 PM
+>=20
+> To run in the VTL mode, Hyper-V drivers have to know what
+> VTL the system boots in, and the arm64/hyperv code does not
+> update the variable that stores the value.
+>=20
+> Update the variable to enable the Hyper-V drivers to boot
+> in the VTL mode and print the VTL the code runs in.
+>=20
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> ---
+>  arch/arm64/hyperv/Makefile        |  1 +
+>  arch/arm64/hyperv/hv_vtl.c        | 13 +++++++++++++
+>  arch/arm64/hyperv/mshyperv.c      |  4 ++++
+>  arch/arm64/include/asm/mshyperv.h |  7 +++++++
+>  4 files changed, 25 insertions(+)
+>  create mode 100644 arch/arm64/hyperv/hv_vtl.c
+>=20
+> diff --git a/arch/arm64/hyperv/Makefile b/arch/arm64/hyperv/Makefile
+> index 87c31c001da9..9701a837a6e1 100644
+> --- a/arch/arm64/hyperv/Makefile
+> +++ b/arch/arm64/hyperv/Makefile
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-y		:=3D hv_core.o mshyperv.o
+> +obj-$(CONFIG_HYPERV_VTL_MODE)	+=3D hv_vtl.o
+> diff --git a/arch/arm64/hyperv/hv_vtl.c b/arch/arm64/hyperv/hv_vtl.c
+> new file mode 100644
+> index 000000000000..38642b7b6be0
+> --- /dev/null
+> +++ b/arch/arm64/hyperv/hv_vtl.c
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024, Microsoft, Inc.
+> + *
+> + * Author : Roman Kisel <romank@linux.microsoft.com>
+> + */
+> +
+> +#include <asm/mshyperv.h>
+> +
+> +void __init hv_vtl_init_platform(void)
+> +{
+> +	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
+> +}
+> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+> index 341f98312667..8fd04d6e4800 100644
+> --- a/arch/arm64/hyperv/mshyperv.c
+> +++ b/arch/arm64/hyperv/mshyperv.c
+> @@ -98,6 +98,10 @@ static int __init hyperv_init(void)
+>  		return ret;
+>  	}
+>=20
+> +	/* Find the VTL */
+> +	ms_hyperv.vtl =3D get_vtl();
+> +	hv_vtl_init_platform();
+> +
+>  	ms_hyperv_late_init();
+>=20
+>  	hyperv_initialized =3D true;
+> diff --git a/arch/arm64/include/asm/mshyperv.h
+> b/arch/arm64/include/asm/mshyperv.h
+> index a7a3586f7cb1..63d6bb6998fc 100644
+> --- a/arch/arm64/include/asm/mshyperv.h
+> +++ b/arch/arm64/include/asm/mshyperv.h
+> @@ -49,6 +49,13 @@ static inline u64 hv_get_msr(unsigned int reg)
+>  				ARM_SMCCC_OWNER_VENDOR_HYP,	\
+>  				HV_SMCCC_FUNC_NUMBER)
+>=20
+> +#ifdef CONFIG_HYPERV_VTL_MODE
+> +void __init hv_vtl_init_platform(void);
+> +int __init hv_vtl_early_init(void);
 
-This is done by trying to toggle the carrier upon open/close and
-synchronize with the config change work. This allows propagate status
-correctly to stacked devices like:
+This declaration is spurious since you removed the function.
 
-ip link add link enp0s3 macvlan0 type macvlan
-ip link set link enp0s3 down
-ip link show
+Michael
 
-Before this patch:
-
-3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
-    link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-......
-5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
-    link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-
-After this patch:
-
-3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
-    link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-...
-5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> mtu 1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen 1000
-    link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-
-Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
-Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/virtio_net.c | 78 +++++++++++++++++++++++++---------------
- 1 file changed, 50 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 0383a3e136d6..fc5196ca8d51 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2885,6 +2885,25 @@ static void virtnet_cancel_dim(struct virtnet_info *vi, struct dim *dim)
- 	net_dim_work_cancel(dim);
- }
- 
-+static void virtnet_update_settings(struct virtnet_info *vi)
-+{
-+	u32 speed;
-+	u8 duplex;
-+
-+	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
-+		return;
-+
-+	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
-+
-+	if (ethtool_validate_speed(speed))
-+		vi->speed = speed;
-+
-+	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
-+
-+	if (ethtool_validate_duplex(duplex))
-+		vi->duplex = duplex;
-+}
-+
- static int virtnet_open(struct net_device *dev)
- {
- 	struct virtnet_info *vi = netdev_priv(dev);
-@@ -2903,6 +2922,15 @@ static int virtnet_open(struct net_device *dev)
- 			goto err_enable_qp;
- 	}
- 
-+	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
-+		if (vi->status & VIRTIO_NET_S_LINK_UP)
-+			netif_carrier_on(vi->dev);
-+		virtio_config_driver_enable(vi->vdev);
-+	} else {
-+		vi->status = VIRTIO_NET_S_LINK_UP;
-+		netif_carrier_on(dev);
-+	}
-+
- 	return 0;
- 
- err_enable_qp:
-@@ -3381,12 +3409,22 @@ static int virtnet_close(struct net_device *dev)
- 	disable_delayed_refill(vi);
- 	/* Make sure refill_work doesn't re-enable napi! */
- 	cancel_delayed_work_sync(&vi->refill);
-+	/* Prevent the config change callback from changing carrier
-+	 * after close
-+	 */
-+	virtio_config_driver_disable(vi->vdev);
-+	/* Stop getting status/speed updates: we don't care until next
-+	 * open
-+	 */
-+	cancel_work_sync(&vi->config_work);
- 
- 	for (i = 0; i < vi->max_queue_pairs; i++) {
- 		virtnet_disable_queue_pair(vi, i);
- 		virtnet_cancel_dim(vi, &vi->rq[i].dim);
- 	}
- 
-+	netif_carrier_off(dev);
-+
- 	return 0;
- }
- 
-@@ -5085,25 +5123,6 @@ static void virtnet_init_settings(struct net_device *dev)
- 	vi->duplex = DUPLEX_UNKNOWN;
- }
- 
--static void virtnet_update_settings(struct virtnet_info *vi)
--{
--	u32 speed;
--	u8 duplex;
--
--	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
--		return;
--
--	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
--
--	if (ethtool_validate_speed(speed))
--		vi->speed = speed;
--
--	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
--
--	if (ethtool_validate_duplex(duplex))
--		vi->duplex = duplex;
--}
--
- static u32 virtnet_get_rxfh_key_size(struct net_device *dev)
- {
- 	return ((struct virtnet_info *)netdev_priv(dev))->rss_key_size;
-@@ -6514,6 +6533,9 @@ static int virtnet_probe(struct virtio_device *vdev)
- 		goto free_failover;
- 	}
- 
-+	/* Disable config change notification until ndo_open. */
-+	virtio_config_driver_disable(vi->vdev);
-+
- 	virtio_device_ready(vdev);
- 
- 	virtnet_set_queues(vi, vi->curr_queue_pairs);
-@@ -6563,25 +6585,25 @@ static int virtnet_probe(struct virtio_device *vdev)
- 		vi->device_stats_cap = le64_to_cpu(v);
- 	}
- 
--	rtnl_unlock();
--
--	err = virtnet_cpu_notif_add(vi);
--	if (err) {
--		pr_debug("virtio_net: registering cpu notifier failed\n");
--		goto free_unregister_netdev;
--	}
--
- 	/* Assume link up if device can't report link status,
- 	   otherwise get link status from config. */
- 	netif_carrier_off(dev);
- 	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
--		schedule_work(&vi->config_work);
-+		virtnet_config_changed_work(&vi->config_work);
- 	} else {
- 		vi->status = VIRTIO_NET_S_LINK_UP;
- 		virtnet_update_settings(vi);
- 		netif_carrier_on(dev);
- 	}
- 
-+	rtnl_unlock();
-+
-+	err = virtnet_cpu_notif_add(vi);
-+	if (err) {
-+		pr_debug("virtio_net: registering cpu notifier failed\n");
-+		goto free_unregister_netdev;
-+	}
-+
- 	for (i = 0; i < ARRAY_SIZE(guest_offloads); i++)
- 		if (virtio_has_feature(vi->vdev, guest_offloads[i]))
- 			set_bit(guest_offloads[i], &vi->guest_offloads);
--- 
-2.31.1
+> +#else
+> +static inline void __init hv_vtl_init_platform(void) {}
+> +#endif
+> +
+>  #include <asm-generic/mshyperv.h>
+>=20
+>  #define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0	0x7948734d
+> --
+> 2.34.1
+>=20
 
 
