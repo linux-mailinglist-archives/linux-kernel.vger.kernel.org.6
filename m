@@ -1,152 +1,125 @@
-Return-Path: <linux-kernel+bounces-274799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD05947CDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:32:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC43947CE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC23D1C21E57
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:32:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16B40B22343
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B3913B5BD;
-	Mon,  5 Aug 2024 14:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAB413BC26;
+	Mon,  5 Aug 2024 14:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzlXgWfD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gIRVjweW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F15039FE5;
-	Mon,  5 Aug 2024 14:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C2413AD29
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868336; cv=none; b=CjkfFdxA5s6RKY/kKjgZ16MPW5TUHRpgHXRoyhChLxL8B9Lt225HC5Q0KqpypUEgwpNc9jhOl+uBDUVmNc+/VzQrwv1sP8ziI77ZsmDjiKuYMxwazMyGgfCL/zhIUmr+cRy3gutgZdHX+n++AwWDA2NKbXayf8V316R4fl94p90=
+	t=1722868361; cv=none; b=LAublyomExJfhAoMG8Bl0Iwx+opz+SsIQ+ruGhLnpzDgj0BZSleeIQfyi2RUbI1VS/rfFuggRoj+onCsfZNBnfivnk+yJX85w07/xeaZ4ty1H/K16MMWdi1GjhNzblSwyZWt6Tf57kew1v1Ac3eR1Yzpcl8gSVwxX0VfDoP+IME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868336; c=relaxed/simple;
-	bh=A5ue+yCilPqmpcUkXKUIlSXfp1UDbKq7c6OJAyt/IxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ac87dc36jDT1eVbllNlP+XM2UxHueiAZ5KwY+7lH/28ks2Oo2PKeE1gurUheONVMCae6IYv1kvB16sXDmtchl3kKdbXSZ4a2HvXpQ5p32hwet1ftVcWLivIpnxQAfbIc/aD0PVmMixPeOkCiFkAf0Dqkx/7sh5dHe6GCrE+Sg6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzlXgWfD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66DCC4AF0B;
-	Mon,  5 Aug 2024 14:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722868336;
-	bh=A5ue+yCilPqmpcUkXKUIlSXfp1UDbKq7c6OJAyt/IxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AzlXgWfDA40/focwBNArbzP+1EcISYM/b5inPWkExxg1BtCqNEahAw1N/4d6oFelR
-	 k6Nr1GNjWBto+DeDtDx9ZFtKR1Cy2LEU5bZ2lWUk323HIVukNv4LylC2wImndA5Izc
-	 Yq1QHmRQG71X7N4DiDq6ME7H/80cQdkPmWiGlueR6pNx/UJ69QMlv25wo0pVNyMkYb
-	 hZBSdQk3K6GkKYOQhUMalWaDjRkq9uU0GnfkOWENzNGlS9OOFhA6cmbdLEq+kxt3or
-	 gEzxH0I54PwrVyzBsMrf6l1hp2WN3H7rBnrZa9vKTBcA7aSFGdERgkV1cX7V9mwnlO
-	 BFCXfF2wErArw==
-Date: Mon, 5 Aug 2024 15:32:07 +0100
-From: Lee Jones <lee@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: (subset) [PATCH v2 0/6] use device_for_each_child_node() to
- access device child nodes
-Message-ID: <20240805143207.GE1019230@google.com>
-References: <20240721-device_for_each_child_node-available-v2-0-f33748fd8b2d@gmail.com>
- <172192488125.1053789.17350723750885690064.b4-ty@kernel.org>
- <094c7d7f-749f-4d8f-9254-f661090e4350@gmail.com>
- <20240801123901.GC6756@google.com>
- <9083938c-c2df-4429-904d-700e5021331c@gmail.com>
+	s=arc-20240116; t=1722868361; c=relaxed/simple;
+	bh=sRV3gNGKH7pTjZDg3VbBocrQvihX8mBkN6lBnuSXmCw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K0w8OXmnFsMz4v2E0/LMOogTWc4GYlFzvTEyelKhwkBqawIfHKqqZ8LpcI9q5nqULByIjfu8Ou3tkIVbmSLc3Fc8wh8BN3GNlxckttkbfR+aRs525Zwqj/seyK8AEiBUmMqMXQ3it1dzPX8GJwgi10KGx4AFwtSQgh0bqA89Bx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gIRVjweW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722868358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JdhTzHGWfeUcTZeTuwS9gAaX+TnljxG1Ua0SsTOdngA=;
+	b=gIRVjweWdvpVZtAmVOuv3F622g7YAZLczKf6YLginut7i0yKeAMX0noPnOdaGdxDSv6vYP
+	IpM1HUfKOgYMWIPybbPOa+0mpKYPH5sri+SRlgd1hagnO9Tk9/J9nqziV01TQ5hk6omX7O
+	qOYV+idqrjCwkmt37baCZrVXTwzkzGM=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-57-Rkl6z7ItPKSmr9uSQg-XjQ-1; Mon, 05 Aug 2024 10:32:35 -0400
+X-MC-Unique: Rkl6z7ItPKSmr9uSQg-XjQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3684ea1537fso5398196f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 07:32:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722868349; x=1723473149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JdhTzHGWfeUcTZeTuwS9gAaX+TnljxG1Ua0SsTOdngA=;
+        b=L4wERZm06uSpiQoX3yViv65ohuCu/ERL86lgF8OO0CV2OzuxYCUZDjgBVlE1KBPnuF
+         rpeRbAVNbFxmdmN8LAHgEuZAqpt6AGsQEXVWoZAHvIPtpHeC4OqbKWv4K8hJ68AKasGE
+         V7hvm6HgbD0RmILuIh7GvXgHlTqO/Hi5EFPU8bjZjH0MknGOkunyMAUIdsiQNQ5aDUNL
+         NrpPOo5V/nZUPHOjzwpoUOId+tRVwSJg+ueddcx1IaagRfUYohep2w9wyXVLb6A7DOGa
+         k2WwpDew8b0eHdu2g6S6kPuU2e1XTYuz+028CuE7PVoQR6ZghHZCrLEVfeqv5grAeHoG
+         h9bg==
+X-Gm-Message-State: AOJu0YxjwpNklqCAEJGsTNsIbCcyvjb6UwAhG5CkibZH7lCQspo501+N
+	+5qLnUgDC81/sgrHHzwslOEqvRpsgvMDCDK/dfpPkxEJSR5DQVS05mb0skSXF9hcr2MutwUE/LE
+	5L95o23t71bExvRVv3+u9Yu9tNNNmOp1w/meoxh+JhOpUJ37F6WDfFxNmUKDSgDyHD4ZBClYwFu
+	U6PXzXjypaku9jYu1S5E/n3Od9OVCeJmWTbAT2hpDDpTT29tQ=
+X-Received: by 2002:adf:e411:0:b0:364:3ba5:c5af with SMTP id ffacd0b85a97d-36bbc1c34e2mr8371251f8f.61.1722868348829;
+        Mon, 05 Aug 2024 07:32:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFC4uxjlocGuHRe7VMvIPg04UbSdKvFjwtiJuSX5OhGJwtx+TNuYq7IjhpmnKZKsaje3hiJN6zXGMH2DXCKuGM=
+X-Received: by 2002:adf:e411:0:b0:364:3ba5:c5af with SMTP id
+ ffacd0b85a97d-36bbc1c34e2mr8371232f8f.61.1722868348409; Mon, 05 Aug 2024
+ 07:32:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9083938c-c2df-4429-904d-700e5021331c@gmail.com>
+References: <20240801235333.357075-1-pbonzini@redhat.com> <20240802203608.3sds2wauu37cgebw@amd.com>
+In-Reply-To: <20240802203608.3sds2wauu37cgebw@amd.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 5 Aug 2024 16:32:16 +0200
+Message-ID: <CABgObfbhB9AaoEONr+zPuG4YBZr2nd-BDA4Sqou-NKe-Y2Ch+Q@mail.gmail.com>
+Subject: Re: [PATCH] KVM: SEV: allow KVM_SEV_GET_ATTESTATION_REPORT for SNP guests
+To: Michael Roth <michael.roth@amd.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 02 Aug 2024, Javier Carrasco wrote:
+On Fri, Aug 2, 2024 at 10:41=E2=80=AFPM Michael Roth <michael.roth@amd.com>=
+ wrote:
+> On Fri, Aug 02, 2024 at 01:53:33AM +0200, Paolo Bonzini wrote:
+> > Even though KVM_SEV_GET_ATTESTATION_REPORT is not one of the commands
+> > that were added for SEV-SNP guests, it can be applied to them.  Filteri=
+ng
+>
+> Is the command actually succeeding for an SNP-enabled guest? When I
+> test this, I get a fw_err code of 1 (INVALID_PLATFORM_STATE), and
+> after speaking with some firmware folks that seems to be the expected
+> behavior.
 
-> On 01/08/2024 14:39, Lee Jones wrote:
-> > On Mon, 29 Jul 2024, Javier Carrasco wrote:
-> > 
-> >> On 25/07/2024 18:28, Lee Jones wrote:
-> >>> On Sun, 21 Jul 2024 17:19:00 +0200, Javier Carrasco wrote:
-> >>>> This series aims to clarify the use cases of:
-> >>>>
-> >>>> - device_for_each_child_node[_scoped]()
-> >>>> - fwnode_for_each_available_child_node[_scoped]()
-> >>>>
-> >>>> to access firmware nodes.
-> >>>>
-> >>>> [...]
-> >>>
-> >>> Applied, thanks!
-> >>>
-> >>> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
-> >>>       commit: 75d2a77327c4917bb66163eea0374bb749428e9c
-> >>> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
-> >>>       commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
-> >>> [5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
-> >>>       (no commit info)
-> >>>
-> >>> --
-> >>> Lee Jones [李琼斯]
-> >>>
-> >>
-> >> Hi Lee,
-> >>
-> >> could you please tell me where you applied them? I rebased onto
-> >> linux-next to prepare for v3, and these patches are still added on top
-> >> of it. Can I find them in some leds/ branch? Thank you.
-> > 
-> > Sorry, I was side-tracked before pushing.
-> > 
-> > Pushed now.  They should be in -next tomorrow.
-> > 
-> 
-> Thanks, I see
-> 
-> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
-> 
-> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to
-> access child nodes
-> 
-> applied to -next, but
-> 
-> [5/6] leds: pca995x: use device_for_each_child_node() to access device
-> child nodes
-> 
-> has not been applied yet.
+So is there no equivalent of QEMU's query-sev-attestation-report for
+SEV-SNP? (And is there any user of query-sev-attestation-report for
+non-SNP?)
 
-Yep, looks like b4 didn't like that one:
+Paolo
 
-[3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
-      commit: 75d2a77327c4917bb66163eea0374bb749428e9c
-[4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
-      commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
-[5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
-      (no commit info)
+> There's also some other things that aren't going to work as expected,
+> e.g. KVM uses sev->handle as the handle for the guest it wants to fetch
+> the attestation report for, but in the case of SNP, sev->handle will be
+> uninitialized since that only happens via KVM_SEV_LAUNCH_UPDATE_DATA,
+> which isn't usable for SNP guests.
+>
+> As I understand it, the only firmware commands allowed for SNP guests are
+> those listed in the SNP firmware ABI, section "Command Reference", and
+> in any instance where a legacy command from the legacy SEV/SEV-ES firmwar=
+e
+> ABI is also applicable for SNP, the legacy command will be defined again
+> in the "Command Reference" section of the SNP spec.  E.g., GET_ID is
+> specifically documented in both the SEV/SEV-ES firmware ABI, as well as
+> the SNP firmware ABI spec. But ATTESTATION (and the similar LAUNCH_MEASUR=
+E)
+> are only mentioned in the SEV/SEV-ES Firmware ABI, so I think it makes
+> sense that KVM also only allows them for SEV/SEV-ES.
 
-I'll try again and see if it can be pulled in.
-
-If not you'll have to resubmit it.
-
--- 
-Lee Jones [李琼斯]
 
