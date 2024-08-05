@@ -1,161 +1,105 @@
-Return-Path: <linux-kernel+bounces-274457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 745D694784B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:26:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C2C947852
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93F981C20FD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003F51C210D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D401537A4;
-	Mon,  5 Aug 2024 09:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F312E152E12;
+	Mon,  5 Aug 2024 09:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s79evrl8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="embq8jYu"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE8949650;
-	Mon,  5 Aug 2024 09:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3472E78C8D;
+	Mon,  5 Aug 2024 09:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722849987; cv=none; b=gR/rT9r5n+CzA2RBjlhluIMHipO95wG/ib3rQkqK5vaLPiR3JtSZndyS++PMcxc/yXhYNizBNpNNmgR48yWSBQcGvCkh6SMZYTaPPjRrOIDm7G7/yQ2tQA2IQXuqI97JzwZHhb+1ADyVc60CPQkoBYjNDr6LFUQ7BRGEzo7DwWU=
+	t=1722850306; cv=none; b=Apgu0Rj72N4xfnz7o9no/mYi5vUJV/FbAeshmxZAzgmvjDW/7BB5nsW38WUktHLQRKZW6CuvKScQ7Mqb8P2XQ78Zv9i5Ipk7l99t4PnfeYSD5A02Rs+p8mCN2Vj35/oYtDI4V7DculgtFLZhABr+tuwgfFLYVZtyiD9aLxTFBms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722849987; c=relaxed/simple;
-	bh=tnpHQw8Llr6uw/Dtux0kJMHq9kupSIzxaNiemENDgwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1ZzMWJqbg5AmdwUONgjwn2zTcaBU0sPqqlUyT7fPNxG247haFIVVXMbm0KSQ4gnhNM1f0zNxF0oL5zs/L2Xidgcp5b5lqA7trdV1QMJMjubVKt+Nuep0xn+sI2I4jueFMpjZ6wT2k1NWoXGS/Upf4byGwvJmZAJmm2fNHgJk6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s79evrl8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DAFC32782;
-	Mon,  5 Aug 2024 09:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722849985;
-	bh=tnpHQw8Llr6uw/Dtux0kJMHq9kupSIzxaNiemENDgwc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s79evrl8kjfRthVCTcvK2m6/eoaxZ3CL3WB1nA6SKpuaXA2SZe49xN+cEVdb/LhYV
-	 ywwjgixEK8xZD/nWp7nKZW+DPY0HQ9xEpRETk8xXzSqby4pqV7WB6QAeKhfHin5h8B
-	 BSKkgwk/IBXBy/YeqZfWfXyYkfDSoVodUKH3k+z0szZBIovusHt6fMP1a7YdrHDBlQ
-	 BYoTGXAje+pgKvryrp+yLe7qONn5IleGDqdeoOub7T/oo3rcfXN1Wi8FwePbLYe0ce
-	 qDe4brVkymcfcX3toKnMw8rl/buz2sZfpWdTow6J/7C7cet4HyktvZYUS8E3KZzt2Q
-	 0vPBBVm8mQeug==
-Date: Mon, 5 Aug 2024 11:26:19 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, 
-	Wojciech =?utf-8?Q?G=C5=82adysz?= <wojciech.gladysz@infogain.com>, viro@zeniv.linux.org.uk, jack@suse.cz, ebiederm@xmission.com, 
-	kees@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/fs: last check for exec credentials on NOEXEC
- mount
-Message-ID: <20240805-fehlbesetzung-nilpferd-1ed58783ad4d@brauner>
-References: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
- <20240801140739.GA4186762@perftesting>
- <mtnfw62q32omz5z4ptiivmzi472vd3zgt7bpwx6bmql5jaozgr@5whxmhm7lf3t>
- <20240802155859.GB6306@perftesting>
- <CAGudoHFOwOaDyLg3Nh=gPvhG6cO+NXf_xqCjqjz9OxP9DLP3kw@mail.gmail.com>
+	s=arc-20240116; t=1722850306; c=relaxed/simple;
+	bh=ViMlkbBmo+7tcYzwIwPmqnXP4I4BJO9NmfXvpG2LM4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q1glLAyscT5/FrhxNHlOrVePCEd0HsY2fTr+vLzYe+VPZkCztlSSmdF+zUt0BEMsmuR6EMSHPp0rrukFi9QOy8JAvLWnUmZdQFrJzio2Z/dChDq2vJgmorTGuQoXB2KmIoi5gntBOEhzfsXrR3gbjqNWOonVhasSsdHEX7MwYpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=embq8jYu; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1722850295; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=NBzq6oBAHcsHmslfkpNOLi2FmYuc3exFGZXrcXvviH0=;
+	b=embq8jYuFNaMayWcZ91qnYSU51wmoeTbvQlm3mldlPvpr9FoIIMa5UkrHeZsKkput/9uy3TF7Z3To67UB74A35o6hQZ98WbstJpIux5ormE6i2/LkA1BFEE6M/0Hh2D242lMmquCwUjdbOANdgwrrtQbir2WFqVN/1v39YRuj3A=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R921e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WC7j0KH_1722850293;
+Received: from 30.221.129.243(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WC7j0KH_1722850293)
+          by smtp.aliyun-inc.com;
+          Mon, 05 Aug 2024 17:31:34 +0800
+Message-ID: <b55a530a-4b22-453e-84dc-0bd5583aced6@linux.alibaba.com>
+Date: Mon, 5 Aug 2024 17:31:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net/smc: delete buf_desc from buffer list under lock
+ protection
+To: Wenjia Zhang <wenjia@linux.ibm.com>,
+ shaozhengchao <shaozhengchao@huawei.com>, jaka@linux.ibm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240731093102.130154-1-guwen@linux.alibaba.com>
+ <ef374ef8-a19e-7b9b-67a1-5b89fb505545@huawei.com>
+ <dedb6046-83a6-4bda-bf1d-ae77a8cda972@linux.alibaba.com>
+ <800b1186-2d87-4b20-9d38-b4fecde161f0@linux.ibm.com>
+From: Wen Gu <guwen@linux.alibaba.com>
+In-Reply-To: <800b1186-2d87-4b20-9d38-b4fecde161f0@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHFOwOaDyLg3Nh=gPvhG6cO+NXf_xqCjqjz9OxP9DLP3kw@mail.gmail.com>
 
-On Sat, Aug 03, 2024 at 08:29:17AM GMT, Mateusz Guzik wrote:
-> On Fri, Aug 2, 2024 at 5:59 PM Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > On Thu, Aug 01, 2024 at 05:15:06PM +0200, Mateusz Guzik wrote:
-> > > I'm not confident this is particularly valuable, but if it is, it
-> > > probably should hide behind some debug flags.
-> >
-> > I'm still going to disagree here, putting it behind a debug flag means it'll
-> > never get caught, and it obviously proved valuable because we're discussing this
-> > particular case.
-> >
-> > Is it racy? Yup sure.  I think that your solution is the right way to fix it,
-> > and then we can have a
-> >
-> > WARN_ON(!(file->f_mode & FMODE_NO_EXEC_CHECKED));
-> >
-> > or however we choose to flag the file, that way we are no longer racing with the
-> > mount flags and only validating that a check that should have already occurred
-> > has in fact occurred.  Thanks,
-> >
+
+
+On 2024/8/5 16:23, Wenjia Zhang wrote:
 > 
-> To my understanding the submitter ran into the thing tripping over the
-> racy check, so this check did not find a real bug elsewhere in this
-> instance.
+> 
+> On 02.08.24 03:55, Wen Gu wrote:
+>>
+>>
+>> On 2024/7/31 18:32, shaozhengchao wrote:
+>>> Hi Wen Gu:
+>>>    "The operations to link group buffer list should be protected by
+>>> sndbufs_lock or rmbs_lock" It seems that the logic is smooth. But will
+>>> this really happen? Because no process is in use with the link group,
+>>> does this mean that there is no concurrent scenario?
+>>>
+>>
+>> Hi Zhengchao,
+>>
+>> Yes, I am also very conflicted about whether to add lock protection.
+>>  From the code, it appears that when __smc_lgr_free_bufs is called, the
+>> link group has already been removed from the lgr_list, so theoretically
+>> there should be no contention (e.g. add to buf_list). However, in order
+>> to maintain consistency with other lgr buf_list operations and to guard
+>> against unforeseen or future changes, I have added lock protection here
+>> as well.
+>>
+>> Thanks!
+>>
+> 
+> I'm indeed in two minds about if I give you my reviewed-by especially on the reason of unforeseen bugs. However, previously the most bugs on locking we met in our code are almost because of deadlocks caused by too much different locks introduced. Thus, I don't think this patch is necessary at lease 
+> for now.
+> 
 
-Mateusz is right. That check is mostly nonsensical. Nothing will protect
-against mount properties being changed if the caller isn't claiming
-write access to the mount. Which this code doesn't do (And can't do (or
-anything like it) because it would cause spurious remount failures just
-because someone execs something.).
+OK, let's handle it when it causes actual problems. Thanks!
 
-So 0fd338b2d2cd ("exec: move path_noexec() check earlier") introduced
-WARN_ON_ONCE(). I suspect that it simply wasn't clear that mount
-properties can change while a is file held open if no write access was
-claimed.
-
-Stuff like noexec, nodev or whatever can change anytime if e.g., just
-read access was requested. In other words, successful permission
-checking during path lookup doesn't mean that permission checking
-wouldn't fail if one redid the checks immediately after.
-
-I think it probably never triggered because noexec -> exec remounts are
-rarely done and the timing would have to be rather precise.
-
-I think the immediate solution is to limit the scope of the
-WARN_ON_ONCE() to the ->i_mode check.
-
-diff --git a/fs/exec.c b/fs/exec.c
-index a126e3d1cacb..12914e14132d 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -145,13 +145,14 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
-                goto out;
-
-        /*
--        * may_open() has already checked for this, so it should be
--        * impossible to trip now. But we need to be extra cautious
--        * and check again at the very end too.
-+        * Safety paranoia: Redo the check whether the mount isn't
-+        * noexec so it's as close the the actual open() as possible.
-+        * may_open() has already check this but the mount properties
-+        * may have already changed since then.
-         */
--       error = -EACCES;
--       if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
--                        path_noexec(&file->f_path)))
-+       err = -EACCES;
-+       if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)) ||
-+           path_noexec(&file->f_path))
-                goto exit;
-
-        error = -ENOEXEC;
-@@ -974,13 +975,14 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
-                goto out;
-
-        /*
--        * may_open() has already checked for this, so it should be
--        * impossible to trip now. But we need to be extra cautious
--        * and check again at the very end too.
-+        * Safety paranoia: Redo the check whether the mount isn't
-+        * noexec so it's as close the the actual open() as possible.
-+        * may_open() has already check this but the mount properties
-+        * may have already changed since then.
-         */
-        err = -EACCES;
--       if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
--                        path_noexec(&file->f_path)))
-+       if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)) ||
-+           path_noexec(&file->f_path))
-                goto exit;
-
- out:
+> Thanks,
+> Wenjia
 
