@@ -1,136 +1,89 @@
-Return-Path: <linux-kernel+bounces-274541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556249479D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:29:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7AE09479D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1006B281A2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:29:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 196FEB22825
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5FD1547D8;
-	Mon,  5 Aug 2024 10:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6B5155743;
+	Mon,  5 Aug 2024 10:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwVnUpdr"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lgfonySh"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAF51E505;
-	Mon,  5 Aug 2024 10:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDBA13C90B
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722853729; cv=none; b=griOaZ5GwTYsqEDuNB3TYAvzKXsh76Y25sjxXbEf8DlbfbqPdmqIy5BspGzUkHbqHnC60Uq0/+PNkLBS2DvTRjWfiRuIgIWSrgS1Fd86OO/4X/hXj9C9JlJW3OBtE1qAMCUCil+VG4q68quZBdk6NjAZj6bHdbKuKD/3Hz+d5No=
+	t=1722853800; cv=none; b=CJw/ayfuECQjpgouHVEse8duBoi470knhG0P1si1sVJmorcjbUBkn6t+iqCo18oDuCHyd+5yUIceQRn1GNy5zYSgV9QmZ2gzzX4gVW+bPllQAyNXE9KL6pIWfxYSTMxmRdBFMs42Eh8dgpBFkvyuq0+GbmYeGiErh3mrlqQj48Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722853729; c=relaxed/simple;
-	bh=we3oxTn6hETz8INVEye2nJuMXpHgH2R91W0fDhDvYSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rPAtAWx9B0MkM5BdWp0dplqruQszP7QH7OUyvlpLpOgik/aFWv0UH9S0xhVVeeVz8gmZ97cys14rsEPONkD4vleyklobr5a680RAV5tUX9ShgGR6ftTZ0hX+Y99GuV1xsounDola82mrEqArJY4UuTmTt46dTHEqTa4nk1uk0UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PwVnUpdr; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so115299561fa.0;
-        Mon, 05 Aug 2024 03:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722853726; x=1723458526; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T6AaE1bRufEKsPZbCdARUjQJfzT+p05vZdiBhOYyzZg=;
-        b=PwVnUpdrjuGM6v1CQZH9ZtT4BSoRKyDurgJi0hMgGBWFTSsgfV/Hco/0vG7p9baSrl
-         y+ZAT+W4znwgq2LO7W4D3WyxwSEQVNELMWTEQl1wKMagfQtTQM6Z1ufnXxIdDfpH4ayR
-         guQ1ppV/sy/H4EEyGI6fLSxwjFtdSkeiWi6YhOIzSxLW6dZpanEJrW9uJuXXi/LN9gB5
-         NyRlWe3J/CidBAljIx/dpwUdLNUutgYCWd4iWp7Ag6UTOGt88daAW9o3nfgNnKvRGOwL
-         Bg2R1RR8rCbfovkzjUZ/nhSilcb6coPpjz3lzRU7svgsJBTpeKqxAKDEs6QQRxcJjKgm
-         i0pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722853726; x=1723458526;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T6AaE1bRufEKsPZbCdARUjQJfzT+p05vZdiBhOYyzZg=;
-        b=BlzPiKGsiMKEGOBanmtRpkTrKe+QDIbuX1i2ft9JelmGp/UiqBSWPjIAkxwZi3hIAg
-         0SOxqCnn3z+O5T5z69xTWF1Tg8L9lqUfUCGT3L+BvsJc2Sgq88BcOn52haaLxY+Ceb1+
-         qmvHUToSylvYPx4xtd/Dq/y2FWg6hw5EZ4QFOlBzu+XAqbn8RkV+wzIKTh76RUvrCIyM
-         jvvZo7OOB9tLObW+SYu1TJ+3FZD/AxRmMKPYhXJgy08uN0BJsYeDUhhjkccXqT1Kx/G4
-         mi2SSnXm7PeFb5n3iZRkpef3vKyhwfaOH01LNj1xvu4Ty9KFs5gcwZ9gyko6HQB5UWI1
-         /Diw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWRUnqnUJLFParnXhHaKk1k1J6imahYtj6CRM+n32oMcG5i+suACMUF+wnkhBslso9Q4AM1OzS752/FQxVphS5tVoqBksyzK3by3HBfZtvIXG/T6y5k+DoXeInLttthQflvS7CHA==
-X-Gm-Message-State: AOJu0YypRJFXdbgXa/vy1itbZfhBS4xyRQAFfOQDieWtQWdJoF3VIEZM
-	5beTkd7y3o6wAHWG5yWLIo4ycf090pj1dX5zzFSZagIXm5lT3HJhNSveOw==
-X-Google-Smtp-Source: AGHT+IEa6os5riobehR69li/EKLxp5m3BW1qc3/CoEYByRbHrHmIH06hpdZc7+HPrJf3bUqkGDudeg==
-X-Received: by 2002:a05:6512:3051:b0:52c:8206:b986 with SMTP id 2adb3069b0e04-530bb4d5720mr7508716e87.56.1722853724751;
-        Mon, 05 Aug 2024 03:28:44 -0700 (PDT)
-Received: from [172.16.183.82] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba10fe4sm1094022e87.114.2024.08.05.03.28.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 03:28:44 -0700 (PDT)
-Message-ID: <5622f011-222a-459e-9086-138adf0796aa@gmail.com>
-Date: Mon, 5 Aug 2024 13:28:43 +0300
+	s=arc-20240116; t=1722853800; c=relaxed/simple;
+	bh=O2djrrekEMcBpJ8Uq8DwT92ZLKhfQ6p7aCZTrhhfM0U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m6qTfu28ZeoaFB02xbZL7ObLv7Hzi2upx8tmrAxib+cMTiUTOUP16zP6x/yuUeOM18+fSPBp8/Pr4pntGLQYJyVhMLQ6YoThAFaOuct8+JREHbEunbhuJvqQu2Ozw9vBtIysZr0H3NIY112XYp9klYnUGJo9DPc6fZpM/t1dxkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lgfonySh; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id auyPsh8Id6NRTauyQsprzR; Mon, 05 Aug 2024 12:29:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722853795;
+	bh=IPDMSYiJB4iN0nD73gIhr+VwzoVNFs4/Aaat5q255/w=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lgfonyShjQB2kO7Js8N5oGHIs7MaACaYIyKYlYwuf0VELB2GxLZZBGeC6Z9/7g0Mr
+	 L1vnjfNqH9XRJs1mG2TrqfHQRfBWLRhKEI4lml3+NVUq5xnzcZfEkuW/Q8nTMPb3Zk
+	 MX5VB3NuQy+ynVnc6ixeyrFiCdHEY06Ezt6N2DZbjFa2XnNEJDA94SvegpQ2XXTLkA
+	 neOLzWe/XSUsEhU0wKY9hbtWKaPFtdWYwp8grAzKDgymIkdFXqHbb2rnJovSZfaLmC
+	 krrLp2l+53btaaq4xkyB4BG2D0mcPzuAmbXP8yF3YnSTdEkuiUrlhn5xJx9084IdDI
+	 bAuZyp6SMO/Gw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 05 Aug 2024 12:29:55 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: willy@infradead.org,
+	srinivas.kandagatla@linaro.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v2 0/3] ida: Remove the ida_simple_xxx() API
+Date: Mon,  5 Aug 2024 12:29:46 +0200
+Message-ID: <cover.1722853349.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/2] iio: light: ROHM BH1745 colour sensor
-To: Mudit Sharma <muditsharma.info@gmail.com>, jic23@kernel.org,
- lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, Ivan Orlov <ivan.orlov0322@gmail.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-References: <20240718220208.331942-1-muditsharma.info@gmail.com>
- <20240718220208.331942-2-muditsharma.info@gmail.com>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240718220208.331942-2-muditsharma.info@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/19/24 01:02, Mudit Sharma wrote:
-> Add support for BH1745, which is an I2C colour sensor with red, green,
-> blue and clear channels. It has a programmable active low interrupt
-> pin. Interrupt occurs when the signal from the selected interrupt
-> source channel crosses set interrupt threshold high or low level.
-> 
-> Interrupt source for the device can be configured by enabling the
-> corresponding event. Interrupt latch is always enabled when setting
-> up interrupt.
-> 
-> Add myself as the maintainer for this driver in MAINTAINERS.
-> 
-> Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
-> Reviewed-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+This is the final steps to remove the ida_simple_xxx() API.
 
-Hi Mudit & All :)
+Patch 1 updates the test suite. This is the last users of the API.
 
-I know I am late. The series has already been applied (thanks 
-Jonathan!). I've mostly been offline for the last 1.5 months or so - 
-"all work and no play makes Jack a dull boy", you know ;)
+Patch 2 removes the old API.
 
-Anyways, as Jonathan asked me to take a look at the GTS stuff (at v7), I 
-tried to quickly glance at this. It looks good to me!
+Patch 3 is just a minor clean-up that still speak about the old API.
 
-Well, the real test will be the users of the sensor driver - so please 
-let us know if GTS stuff brings problems to users. I am mostly 
-interested in knowing if gain changes caused by integration time changes 
-are handled gracefully by the users. :) Well, seeing there is no 
-per-channel gain or integration time setting, you should be safe from 
-the worst side-effects :)
+Christophe JAILLET (3):
+  idr test suite: Remove usage of the deprecated ida_simple_xx() API
+  ida: Remove the ida_simple_xxx() API
+  nvmem: Update a comment related to struct nvmem_config
 
-Nice driver!
-
-Yours,
-	-- Matti
+ include/linux/idr.h                 |  8 --------
+ include/linux/nvmem-provider.h      |  2 +-
+ tools/testing/radix-tree/idr-test.c | 16 +++++++---------
+ 3 files changed, 8 insertions(+), 18 deletions(-)
 
 -- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+2.45.2
 
 
