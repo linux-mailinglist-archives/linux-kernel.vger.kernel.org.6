@@ -1,96 +1,91 @@
-Return-Path: <linux-kernel+bounces-274885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21469947DEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:24:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19191947DF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04601F259D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD55128275A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32599165EFD;
-	Mon,  5 Aug 2024 15:21:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9BF16BE0B;
+	Mon,  5 Aug 2024 15:22:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDE115C12C
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB9615DBAE
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722871299; cv=none; b=XeZAGY9gvksVIsecNuqU4mNDzbgMNbMjTsUwEPJ2DTYOPlSdw/xx8dmVnSpaP+xVoF5gLMM/dcu4hc9bOgNZpjac5tMdpRzjM71lCuwNvn0Ak/ToRhC0qBuPuEV1Ji+bJaxrHdK9H9YYV4FSp+9iIuZNMfuYjwP6SlbqDUUu9Dc=
+	t=1722871325; cv=none; b=LjJfw17MFFc/WuYXqymL+bO/mNS5iFE5b/EZV/y54v+24HSyJOpZHo8rVo50u/AWaZe19Y95XQKx/rF/FKlMs7hndzbuIIkqlE0Z8dKXSDdu1D61fCgpmAdo7VVlH7wPGDoWsN4tPEVLNXYFDX7wZZ3rcrqyAuam8ct1QzJ+tis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722871299; c=relaxed/simple;
-	bh=A/vqyXp/hKQN+7A1d03rM+V+SeUwjGDuw/srEI979pg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s2ypZoLB7hzXcrS1ynrSwLOpJA36+MRcNPGGPYseXzFuw0951MJ/JtPFQQRi7IGMXAhGyes7MrjgmdVp7+Y06NkM9y6042NmDS6bkgruOUlF6gyfH+swe5nBNAH1y3/Ay5BYtR2qmkahBKNoAYMjM3RSM54B128xlYu5e/mmWtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C30C4AF0B;
-	Mon,  5 Aug 2024 15:21:36 +0000 (UTC)
-Date: Mon, 5 Aug 2024 16:21:34 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Haibo Xu <haibo1.xu@intel.com>
-Cc: ajones@ventanamicro.com, sunilvl@ventanamicro.com, xiaobo55x@gmail.com,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	James Morse <james.morse@arm.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] arm64: ACPI: NUMA: initialize all values of
- acpi_early_node_map to NUMA_NO_NODE
-Message-ID: <ZrDt_isszRHkFuLu@arm.com>
-References: <0d362a8ae50558b95685da4c821b2ae9e8cf78be.1722828421.git.haibo1.xu@intel.com>
- <853d7f74aa243f6f5999e203246f0d1ae92d2b61.1722828421.git.haibo1.xu@intel.com>
+	s=arc-20240116; t=1722871325; c=relaxed/simple;
+	bh=py4U0a4P6WFhADIVqpEy/7j4JcuX1EsWHjwU8fblFvs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ONOmtqsf+Q40RuCAZpad1KXC3H0qElXvKL7C1s8L7eJ7Jgn2TEHiXBy/mBnsedU185u1buMvZHPv37DpEpJHb8hr0MCgVbr0hw5qwTs3sqRKY7fnjXM/eZtb4UUUmlYx+msUBkWfn66ce1f/Vy0K2V+oOW/KHPmQjAfYUxGDBug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f6218c0d68so1658769839f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:22:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722871323; x=1723476123;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fqYQ1rnc25cZh5MXJtV/NcibaXRvGQIgXbkVXCpo9Vg=;
+        b=iDgqIjnosix8vgRQViB1Mhlw1EaotGjuSltPhcnAAPdUhqZ67iN3UM9IcWa0/OFc41
+         Qewz07tkFkwSJoqg6oWzdUqE3RYsJKdzmdRKWAL5Wb/5T2EZGf6VgZzEVNYSYhckH8r7
+         LYtCyVscmG22aVnLW+tsVDCFuTuKNTcFzJfzQX+AXYucyML7Mbf4M2WEp/iO91t0fXsB
+         rdr3Y2rrJhtRUsBg3EPtZA1asWI+JtEKEGzLwtEHT5RCYLKzQidToXdwCoOqmkkFbpcE
+         ff1LA/Aw0Vh5MfWMthlmCteNNLpMp9pQCuQvC4hAx34PhoPRFS+y+9B5B72qvdu5hwC4
+         DSBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUF1kk5mEAkfxgK2xM7NemegTrlBaB9060piPtWk2W8i5ascnop46Z7gIjVjqKTBJCEEfHcKUzq/Icze30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze5cVuwWte9qW26YOAOojBxUHg0eTOW6QahBmjzuOoL6HQWf3x
+	XidvNWJ4uUmQpObPYhpYhPCF6i3diIN/ZR93Uq8gTwnePETqG6odUA0lTVuR9OdbcJo/ttPC6hy
+	PE25XiyN0z4fT22qLK5T+ZkJlX2D0ks9WRRa/B481rFJgCCk/wFFXLrs=
+X-Google-Smtp-Source: AGHT+IHIVNrWhdKuYXvlWP06vdiuw1dl3ZRddzqrJ/HvcfeJ2tl/ButFA0z7NeffmCSpRGbYFawwBfu5eYDV1ordM3AX4Z51JLo3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <853d7f74aa243f6f5999e203246f0d1ae92d2b61.1722828421.git.haibo1.xu@intel.com>
+X-Received: by 2002:a05:6638:410b:b0:4be:d44b:de24 with SMTP id
+ 8926c6da1cb9f-4c8d560df7amr526272173.2.1722871323340; Mon, 05 Aug 2024
+ 08:22:03 -0700 (PDT)
+Date: Mon, 05 Aug 2024 08:22:03 -0700
+In-Reply-To: <0000000000004d2e4d061a401e51@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000038c729061ef13d67@google.com>
+Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_vm_page_mkwrite
+From: syzbot <syzbot+f195123a45ad487ca66c@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 05, 2024 at 11:30:24AM +0800, Haibo Xu wrote:
-> Currently, only acpi_early_node_map[0] was initialized to NUMA_NO_NODE.
-> To ensure all the values were properly initialized, switch to initialize
-> all of them to NUMA_NO_NODE.
-> 
-> Fixes: e18962491696 ("arm64: numa: rework ACPI NUMA initialization")
-> Reported-by: Andrew Jones <ajones@ventanamicro.com>
-> Suggested-by: Andrew Jones <ajones@ventanamicro.com>
-> Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->  arch/arm64/kernel/acpi_numa.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kernel/acpi_numa.c b/arch/arm64/kernel/acpi_numa.c
-> index 0c036a9a3c33..2465f291c7e1 100644
-> --- a/arch/arm64/kernel/acpi_numa.c
-> +++ b/arch/arm64/kernel/acpi_numa.c
-> @@ -27,7 +27,7 @@
->  
->  #include <asm/numa.h>
->  
-> -static int acpi_early_node_map[NR_CPUS] __initdata = { NUMA_NO_NODE };
-> +static int acpi_early_node_map[NR_CPUS] __initdata = { [0 ... NR_CPUS - 1] = NUMA_NO_NODE };
+syzbot suspects this issue was fixed by commit:
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+commit a8eb3de28e7a365690c61161e7a07a4fc7c60bbf
+Author: Chao Yu <chao@kernel.org>
+Date:   Mon Jun 3 01:07:45 2024 +0000
 
-The patch makes sense but is there any issue currently without it?
-Trying to assess whether it needs a stable backport.
+    f2fs: fix return value of f2fs_convert_inline_inode()
 
--- 
-Catalin
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1055414b980000
+start commit:   83814698cf48 Merge tag 'powerpc-6.10-2' of git://git.kerne..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=238430243a58f702
+dashboard link: https://syzkaller.appspot.com/bug?extid=f195123a45ad487ca66c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1129d362980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d4ce06980000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: f2fs: fix return value of f2fs_convert_inline_inode()
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
