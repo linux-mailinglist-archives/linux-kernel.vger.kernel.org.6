@@ -1,203 +1,123 @@
-Return-Path: <linux-kernel+bounces-275232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558D3948227
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C007948224
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874661C21A10
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:17:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C25B1C21C46
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B113015B147;
-	Mon,  5 Aug 2024 19:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514D216B392;
+	Mon,  5 Aug 2024 19:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e6Ga4rQa"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1XOg7lq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214B4143879
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C55364AB;
+	Mon,  5 Aug 2024 19:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722885462; cv=none; b=EKRbVWDA3eC1exLSGoU6U9K9imJvlc0FqDDJKetYiWyu3V0VFTupmOsaLmGBmQDzi4E4GSD/bNQVSnVCX0f9JgsxoX2jHySmRXj1SdKT0htgV4sGaLSKnryqr49IZpmOfLb5iew3snp7Nor+xTeTFm6azg0PzWdFw5M39Y0kjus=
+	t=1722885445; cv=none; b=Dr1dUIlnG4txUwE+LdzBdFZu/p/OxrMcv682MIndDOafalEjaCy2EwuTOzRLz+MvtNhn8YYaAFuYd3G/HUqQ9K44RBzIBapKq72Je2HLRwBIu+7tuhOm9HGhUQhzfyDsixiwdeF2nxFp70b6EKDbWWg7hPjq1uxjjuW6Jcc9A7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722885462; c=relaxed/simple;
-	bh=DuMPoQQhTgSet1wyrZE4Tve2P6L8Uoai3Cdd7DwYklc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sG0J3QVcgFlyYhyO88x6/JaMxFotwjMjwm5VLjeH+DXo5H51uEbuE2jr8EWr2X9lBl6ZDz40KlIpWgYxWnWuey6uLzyv+y0uNspgmcmKnMIcF/LYMQrgAdM3w03lZ4A8XayrZnBwA4zStCOII9ISXVOwX0qRRxh+As/SXHh/ayY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e6Ga4rQa; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so8534a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722885459; x=1723490259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dgSlqVJ+K4htwcqBeKJpdBmMqNKEpg/r1M8ow/yx2IA=;
-        b=e6Ga4rQazRGHv2Rxx54xoE5AaQZgY17lS2ZXpz16DU+hWLxrZXJYkIt6wWFyK/7Z0q
-         ExbWl2fvmtzqOC6vvAAPVZgMrst3c/M1g/yHXs9ZVGb1+AuazAckByOjx4esrgGe7C4H
-         G1o4Xz4tLkxaO+P+8fcJXPQZv7AXs1oIIoN2I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722885459; x=1723490259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dgSlqVJ+K4htwcqBeKJpdBmMqNKEpg/r1M8ow/yx2IA=;
-        b=pAR2Dgz42cMRzwSoht0PTSjnkPwIrc58cvOfz2CyXDpvL5PfUqZW+YyUvJxTjNrDYB
-         lCSEQ7EtR/Mhfr1p3jclUgi5a7khUCraRZS7EzX9mwCCIxA366TE24hX4Y+8QoRzu2+k
-         0Myhae3KjIXNHg3XRwlQsl+89IRidJAqlACfpJugaZ+M41IWYRIIc5SQ3YWUYnBc/3xV
-         D5UL7gZpCfsxVjjjV1St4Ie5/zZK147+dw9Bmtc3+z/j6IT9MYbkp63jVX2EuNA/4rk+
-         ZoyfwvHCPS/To3r4NlVodWJ0FWWhj9DDhtL4K0iWlUuh8BBUx4nvAUaFvajnfqgNGB37
-         2YDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBTbrBai3TnISVrss8ec8huxjdqYIV+hBKdFgd5WLx3uuTEzs+CNUh988DZdCO7sB6FLMWvaKJaUjSyI8woNHVrsy0CfNUuwW56zxZ
-X-Gm-Message-State: AOJu0Yxha4KLaifYfYSGI5O69msmg3B+aE1HnSi/ft6AGCtmFxojNXDZ
-	DeYk1/6E0n95rvHaYCY0aWAJ+X8GBZ3vQFDSRPLaG5y4VKhjvAt2pYai/+85COPMWj/d5B7ZIYM
-	ksjGe9NwtL46Xa1QdYsn3/Nzisn5vc6XVMvZp
-X-Google-Smtp-Source: AGHT+IFb17PIMNnbbY7zObqbVYZSDIE2BWi2Tb73439/mBG3ZRAwprsjxmoyJNei5QkAkIgYPyhfVesTtntLFYGaSUQ=
-X-Received: by 2002:aa7:cad6:0:b0:57c:7471:a0dd with SMTP id
- 4fb4d7f45d1cf-5b7f3bcfb2fmr9164411a12.12.1722885459333; Mon, 05 Aug 2024
- 12:17:39 -0700 (PDT)
+	s=arc-20240116; t=1722885445; c=relaxed/simple;
+	bh=yIzYBRhu3FkCRao5W4ixWWwmAsOLTrfWSG9/9Ucrdsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kwc5j0iuUINwxUE7IfVx15u03yv0ie0pSMVgnRUWfdi7l3pP2LPOiOOiKrcYYwLQo0J2APARzGim8D7NtPar3fxVTtD9zZH/PJJL2i5BaIxqcYUdXjdzAUaDo5gB5o/R9af2Oh/YMDR3l3JS/LYr+93JnSj278rAgDc3myyvyHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1XOg7lq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA4DAC32782;
+	Mon,  5 Aug 2024 19:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722885445;
+	bh=yIzYBRhu3FkCRao5W4ixWWwmAsOLTrfWSG9/9Ucrdsg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u1XOg7lq5Gb+Iyutvrb8Ggq1n89ppsPewkZrwb13K7CWOXV1ARdNO+yQznlR51CJv
+	 x9DjQkQdymtnwglT35Zr3AzKShlloIi9pbSBHhQ2EU+RLp0dmJCQ66l9NgegZpPZbx
+	 S6QVW7Q46UxRi9amYrn3ZRfZGrXJhA1TeNTeXK3MCaIm6KiOVSgtIPPViJ783BI2A8
+	 ue5GOs/Uyl1OXFptfdXDApl1bygdQuBO2dH64KCQBaI+qRFJnTycQlHXQnh88c93Uq
+	 VD2po/oxeg5ZwuWR8jHjjzIzBSo6y1R5jMi6xF2A3CYcnDHnP1IVDk97wQl53JhHjK
+	 36UJfSxOdj/Og==
+Date: Mon, 5 Aug 2024 13:17:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: lee@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+	dmitry.torokhov@gmail.com, pavel@ucw.cz, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ukleinek@debian.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-hwmon@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 1/7] dt-bindings: mfd: add binding for qnap,ts433-mcu
+ devices
+Message-ID: <20240805191723.GA2636745-robh@kernel.org>
+References: <20240731212430.2677900-1-heiko@sntech.de>
+ <20240731212430.2677900-2-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240326-pci-bridge-d3-v4-0-f1dce1d1f648@linaro.org>
- <20240326-pci-bridge-d3-v4-3-f1dce1d1f648@linaro.org> <CAJMQK-hu+FrVtYaUiwfp=uuYLT_xBRcHb0JOfMBz5TYaktV6Ow@mail.gmail.com>
- <20240802053302.GB4206@thinkpad> <CAJMQK-gtPo4CVEXFDfRU9o+UXgZrsxZvroVsGorvLAdkzfjYmg@mail.gmail.com>
- <20240805153546.GE7274@thinkpad>
-In-Reply-To: <20240805153546.GE7274@thinkpad>
-From: Hsin-Yi Wang <hsinyi@chromium.org>
-Date: Mon, 5 Aug 2024 12:17:13 -0700
-Message-ID: <CAJMQK-iZ6s0UmsT91TCRe6E9RMZ-3BndDFtXqCUxdWGcyxPSTA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] PCI: Decouple D3Hot and D3Cold handling for bridges
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, lukas@wunner.de, mika.westerberg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731212430.2677900-2-heiko@sntech.de>
 
-On Mon, Aug 5, 2024 at 8:35=E2=80=AFAM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Fri, Aug 02, 2024 at 12:53:42PM -0700, Hsin-Yi Wang wrote:
->
-> [...]
->
-> > > > [   42.202016] mt7921e 0000:01:00.0: PM: calling
-> > > > pci_pm_suspend_noirq+0x0/0x300 @ 77, parent: 0000:00:00.0
-> > > > [   42.231681] mt7921e 0000:01:00.0: PCI PM: Suspend power state: D=
-3hot
-> > >
-> > > Here I can see that the port entered D3hot
-> > >
-> > This one is the wifi device connected to the port.
-> >
->
-> Ah, okay. You could've just shared the logs for the bridge/rootport.
->
-> > > > [   42.238048] mt7921e 0000:01:00.0: PM:
-> > > > pci_pm_suspend_noirq+0x0/0x300 returned 0 after 26583 usecs
-> > > > [   42.247083] pcieport 0000:00:00.0: PM: calling
-> > > > pci_pm_suspend_noirq+0x0/0x300 @ 3196, parent: pci0000:00
-> > > > [   42.296325] pcieport 0000:00:00.0: PCI PM: Suspend power state: =
-D0
-> > >
-> > This is the port suspended with D0. If we hack power_manageable to
-> > only consider D3hot, the state here for pcieport will become D3hot
-> > (compared in below).
-> >
-> > If it's D0 (and s2idle), in resume it won't restore config:
-> > https://elixir.bootlin.com/linux/v6.10/source/drivers/pci/pci-driver.c#=
-L959,
-> > and in resume it would be an issue.
-> >
-> > Comparison:
-> > 1. pcieport can go to D3:
-> > (suspend)
-> > [   61.645809] mt7921e 0000:01:00.0: PM: calling
-> > pci_pm_suspend_noirq+0x0/0x2f8 @ 1139, parent: 0000:00:00.0
-> > [   61.675562] mt7921e 0000:01:00.0: PCI PM: Suspend power state: D3hot
-> > [   61.681931] mt7921e 0000:01:00.0: PM:
-> > pci_pm_suspend_noirq+0x0/0x2f8 returned 0 after 26502 usecs
-> > [   61.690959] pcieport 0000:00:00.0: PM: calling
-> > pci_pm_suspend_noirq+0x0/0x2f8 @ 3248, parent: pci0000:00
-> > [   61.755359] pcieport 0000:00:00.0: PCI PM: Suspend power state: D3ho=
-t
-> > [   61.761832] pcieport 0000:00:00.0: PM:
-> > pci_pm_suspend_noirq+0x0/0x2f8 returned 0 after 61345 usecs
-> >
->
-> Why the device state is not saved? Did you skip those logs?
->
-Right, I only showed the power state of pcieport and the device here
-to show the difference of 1 and 2.
+On Wed, Jul 31, 2024 at 11:24:24PM +0200, Heiko Stuebner wrote:
+> These MCUs can be found in network attached storage devices made by QNAP.
+> They are connected to a serial port of the host device and provide
+> functionality like LEDs, power-control and temperature monitoring.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  .../bindings/mfd/qnap,ts433-mcu.yaml          | 43 +++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml b/Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
+> new file mode 100644
+> index 0000000000000..5ae19d8faedbd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml
+> @@ -0,0 +1,43 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/qnap,ts433-mcu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: QNAP NAS on-board Microcontroller
+> +
+> +maintainers:
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +description:
+> +  QNAP embeds a microcontroller on their NAS devices adding system feature
+> +  as PWM Fan control, additional LEDs, power button status and more.
 
-> > (resume)
-> > [   65.243981] pcieport 0000:00:00.0: PM: calling
-> > pci_pm_resume_noirq+0x0/0x190 @ 3258, parent: pci0000:00
-> > [   65.253122] mtk-pcie-phy 16930000.phy: CKM_38=3D0x13040500,
-> > GLB_20=3D0x0, GLB_30=3D0x0, GLB_38=3D0x30453fc, GLB_F4=3D0x1453b000
-> > [   65.262725] pcieport 0000:00:00.0: PM:
-> > pci_pm_resume_noirq+0x0/0x190 returned 0 after 175 usecs
-> > [   65.273159] mtk-pcie-phy 16930000.phy: No calibration info
-> > [   65.281903] mt7921e 0000:01:00.0: PM: calling
-> > pci_pm_resume_noirq+0x0/0x190 @ 3259, parent: 0000:00:00.0
-> > [   65.297108] mt7921e 0000:01:00.0: PM: pci_pm_resume_noirq+0x0/0x190
-> > returned 0 after 329 usecs
-> >
-> >
-> > 2. pcieport stays at D0 due to power_manageable returns false:
-> > (suspend)
-> > [   52.435375] mt7921e 0000:01:00.0: PM: calling
-> > pci_pm_suspend_noirq+0x0/0x300 @ 2040, parent: 0000:00:00.0
-> > [   52.465235] mt7921e 0000:01:00.0: PCI PM: Suspend power state: D3hot
-> > [   52.471610] mt7921e 0000:01:00.0: PM:
-> > pci_pm_suspend_noirq+0x0/0x300 returned 0 after 26602 usecs
-> > [   52.480674] pcieport 0000:00:00.0: PM: calling
-> > pci_pm_suspend_noirq+0x0/0x300 @ 143, parent: pci0000:00
-> > [   52.529876] pcieport 0000:00:00.0: PCI PM: Suspend power state: D0
-> >                 <-- port is still D0
-> > [   52.536056] pcieport 0000:00:00.0: PCI PM: Skipped
-> >
-> > (resume)
-> > [   56.026298] pcieport 0000:00:00.0: PM: calling
-> > pci_pm_resume_noirq+0x0/0x190 @ 3243, parent: pci0000:00
-> > [   56.035379] mtk-pcie-phy 16930000.phy: CKM_38=3D0x13040500,
-> > GLB_20=3D0x0, GLB_30=3D0x0, GLB_38=3D0x30453fc, GLB_F4=3D0x1453b000
-> > [   56.044776] pcieport 0000:00:00.0: PM:
-> > pci_pm_resume_noirq+0x0/0x190 returned 0 after 13 usecs
-> > [   56.055409] mtk-pcie-phy 16930000.phy: No calibration info
-> > [   56.064098] mt7921e 0000:01:00.0: PM: calling
-> > pci_pm_resume_noirq+0x0/0x190 @ 3244, parent: 0000:00:00.0
-> > [   56.078962] mt7921e 0000:01:00.0: Unable to change power state from
-> > D3hot to D0, device inaccessible                    <-- resume failed.
->
-> This means the port entered D3Cold? This is not expected during s2idle. D=
-uring
-> s2idle, devices should be put into low power state and their power should=
- be
-> preserved.
->
-> Who is pulling the plug here?
+Doesn't really look like the binding is complete.
 
-In our system's use case, after the kernel enters s2idle then ATF (arm
-trusted firmware) will turn off the power (similar to suspend to ram).
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qnap,ts433-mcu
+> +
+> +  "#cooling-cells":
+> +    const: 2
+> +
+> +  cooling-levels:
+> +    description: PWM duty cycle values corresponding to thermal cooling states.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    items:
+> +      maximum: 255
 
-The issue can previously be handled by setting pcie_port_pm=3Dforce, or
-using v3 of the series that sets a flag in DT.
+These are fan properties and should be in a "fan" node referencing 
+hwmon/fan-common.yaml.
 
->
-> - Mani
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+Rob
 
