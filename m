@@ -1,143 +1,213 @@
-Return-Path: <linux-kernel+bounces-275412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B4494854A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:09:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B993C94854C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FBE4283BD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:09:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36DC51F23610
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5D616DC13;
-	Mon,  5 Aug 2024 22:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB8016C69C;
+	Mon,  5 Aug 2024 22:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n2S1Pfro"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nx56sXX0"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B2316C696
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 22:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32D01662FA
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 22:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722895765; cv=none; b=G1oLN/FoSM/w2WK7Dw6htr98nYyaIj7zx9shB4MeddRwzmWf49fQP5GEzHk6F4K8InxHvqQI6wbOT8o1B6+faA3/AlU1+z/xwUO4gqDGc+I+/5C5bgL6pqbtkORq2P1ZMk6zU7PwcwC/uuqtdflJdChU5vmCjWOlTULByK5+H8k=
+	t=1722895789; cv=none; b=WdXGIjsU9PtKjVq/m4o9zqWH3H67TOSkWpE/zW+WFrY5rMjt46Cm+D77R6vf+JuFW2z4ptH5rJCWFa8LkZ/1hsXzJA0kxcDVVAcZAnt8cehrkibP4Jnlypt9sRKCb/9TJqgNcdz10561Pnm3YrtC4E0xdT8P+SArgxtDJk2BX0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722895765; c=relaxed/simple;
-	bh=dmDvoV7DR66fW1rp/kKa2yAHHnKdcTd2T9VoWrRsnCs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tbAKN6W1UyfHSrRaUJ/M+55Tl/LQcij+9uqU365H7K0FmoI8Of4pkZXHb4x3yKesJdydzCG9z6GjFtgcmUkn928UaG9C7b15dQLDbIW8xECWjV9Pk8ekRyrN8tD0AwvLPNcV1sN4tS3TaOw90qJZW2hISSnfml2nUQA2XDpeBSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n2S1Pfro; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70d1c8d98baso10003217b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 15:09:23 -0700 (PDT)
+	s=arc-20240116; t=1722895789; c=relaxed/simple;
+	bh=4WEV2hKzCT+qK5apstnmKizyDHd3pFbPSau5tN81KpE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hdyl3itZ1vyhaJIOIktysApRkbwH+mDrJIFVe2bt4qUtUuK/WXbfB6Ptix9pI6ORNEs4jego46ggMhEwTncE4diG7nxBu1oUPMheqQz0LYyzBIEu9XYd3f/dXuISqNSMZlgqfaNzF8O/K05f4pKJ7adp3FnwFHT94QgPNjf/WvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nx56sXX0; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4928989e272so49653137.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 15:09:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722895763; x=1723500563; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C2PiU8MTrEuvmn4oJRZEcNoPreaY/lLc5L+V0JuLroE=;
-        b=n2S1Pfroj5GXc+AKmy97SqSqzhAatmtf6hSTbALfmWnl9FxJKmiV1UCBwSGSfwf8oN
-         Zi9T6k66nDLL4H6wo9mFdf57vAhKbwYdnNHWTuMWYQz21ys2LETaeQ0wnqzAPVU7HXGk
-         oGCOEcmJjmjnLRDJKSQF6RuoaOt5VvLien3b4rVqpBmK0hnKXY9XBzeN/7q8f6RYAf9L
-         JKIzyUcKEZ5OJMcnhpRplUpEaJNMON8BUmhP126Sqr2k9Asmac+7h0ZA+vLQSDy8U9R2
-         meRUTX0uq/MK/7IxffkTHph07HsMKzoEgpQ1FpV3OB8yL2kT5AzL67wlxHwLdPXoG8Qy
-         cujQ==
+        d=gmail.com; s=20230601; t=1722895786; x=1723500586; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0GlmlfKjXwfR6h2DshfQ/bYYzP2vko50q3Xok1sEZvw=;
+        b=Nx56sXX0pOITmq9oDbjRMxtVIgeoMaRovXeAraWV5IZBVZRVKh5ETkK1FHc8AKoOAW
+         9mL7+0lRs0NLB7xvE0ldC+bT9tOrL0+7sys9eQkxPzxcRsCt1QlyMJZuAjNW9KavLrOm
+         OSRNn5LcvMUreKRvjMq7OMFPPEXckWsxleo4x9z015pqv8R8jA41bqNzjf3jeDYcfS4h
+         It0EOgRfrXV5ykoZh0sC/J7yjFdyv7MMnfmpCVF9k1ckXbya38nsDlq1Sar87x1Fde1U
+         ZSRq6MM8wI0hUSzhPQprnLeL2+RDN14RNPGbRWgYY0YOVvYmb9Bn51fo5WsXZFETd9tx
+         aTkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722895763; x=1723500563;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C2PiU8MTrEuvmn4oJRZEcNoPreaY/lLc5L+V0JuLroE=;
-        b=rUK3StADgWidZO9vupBQ0yrdnEA8C3xD5O5bbZy4Iry17GCAXTQKUdUBpuA+stmQgt
-         l+5xdd8ub/RQ6098v//bnuuKr+rNWZdTf7CjSp2EeDC4shP55f+uUTPDynShIC8cOiLK
-         xlHSsekehTW131k325S+mGYWh/h4XMypt+ziz/3dGX1xfHNsJpsgUMb8kvMZjguc2ffv
-         00QjxvRuJnrchCYABqIrycaT0El5FyoqSPlB7wpJ9GyNP6Z6pks6voTLkBbgjNK/rydX
-         yOTB8EGYxtw/FYMMJKRG0xk36wYWzTLPxXnbu81U3b6H0qFezez49FMd/k+/PmSIux52
-         w7lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEeMJKAAOPYC+Q2RQ08mYOl6kBb5l8WfXiv35X9nsVC7jkTwPAygX3ReC+0MNvkaytSw+1Yj1Ra9xOfGEk2WLPnFQFyQV5oC7A2XCQ
-X-Gm-Message-State: AOJu0Yy07X87cR+IkJ87qr6NhTjEVnU0YQVHQb2KVnoNLZqOgvcCjsLY
-	AjFVWQcHQnsjwZHqAhcE+YkOpCikg9s6wj0SksTpVq4MR+YtYTnLfylaSbFSZB7nQMfRnaIHQhD
-	IWQ==
-X-Google-Smtp-Source: AGHT+IFHGqnQ2aZELEsNF/YUFUu/OdaSqANvJ2o5+KNT08fnEczrxRkzi5g08NacDnyiiIzp3YSr6oxKzK4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:6f0e:b0:710:4d08:e41f with SMTP id
- d2e1a72fcca58-7106d08296emr87588b3a.4.1722895762937; Mon, 05 Aug 2024
- 15:09:22 -0700 (PDT)
-Date: Mon, 5 Aug 2024 15:09:21 -0700
-In-Reply-To: <yq5a5xsftna9.fsf@kernel.org>
+        d=1e100.net; s=20230601; t=1722895786; x=1723500586;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0GlmlfKjXwfR6h2DshfQ/bYYzP2vko50q3Xok1sEZvw=;
+        b=WBoDESA/Bs1vWmDzdhMbZ+XrZVofUqog540AkFrCAfiGwO+hN8cVnVqr4l2vS/Crzn
+         C0U30PTORwuGAmArqEidK+jJG3NUn06BhmcfFzkdBNIs+ckjZaKwULx9anmFlhx/Bjf8
+         RB/B/tDdVw27ztWxOeXrK4+xK78rr2yMhM9YY5t7fsM2fXvxp6KQLlNbtYmfKzjMs3pl
+         Cyw9681JlKV1gtCtpUFzrw4NqvRh6cyP2y7kUSH99m7UDFLHCkL5jldjDsWzhvtEaAuG
+         9rWypluW6PaRkHxOAYGN/jWy5gOSyFW5XT2QdsmFX0yeApCMNw/0CRCWuWSyE1hqKwbF
+         VFug==
+X-Forwarded-Encrypted: i=1; AJvYcCWMzb5GZTYSj0ruyPq/FvxJtjW8roFeCW1Bm8JsblcYNy678sbZ1bYyeXqF8AaBnnFnOobvAMYQBGvvHHCQ0hP53Jma2j8tohALtOcW
+X-Gm-Message-State: AOJu0YxCHOsI6xXuokMiGuG4kZHHtGjTv67OaI7aapHCCGS0WUvetWFq
+	v4s+r2BOOw3UKePIEDZorrlegLLFsCA3QB1a5LKLvU5PUrEc0b+oX+K/anIU/RLEXctx0RrFq7B
+	WAjhkR2WGkJAV6VyiRuEE+S8r0AU=
+X-Google-Smtp-Source: AGHT+IHIYR2VNeV0CMUYrwAssvNkO0tVtLB8DEASlbj+pqDLr1t588ZSLuDD8V4HNCwTzJuXO/biUv1YPhBj0gUyLO8=
+X-Received: by 2002:a05:6102:512c:b0:493:2177:9811 with SMTP id
+ ada2fe7eead31-4945be08629mr15836873137.14.1722895786397; Mon, 05 Aug 2024
+ 15:09:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-3-seanjc@google.com>
- <yq5aikwku25o.fsf@kernel.org> <ZqvNekQAjs-SN-se@google.com> <yq5a5xsftna9.fsf@kernel.org>
-Message-ID: <ZrFNkSU4-0Hli7JC@google.com>
-Subject: Re: [PATCH v12 02/84] KVM: arm64: Disallow copying MTE to guest
- memory while KVM is dirty logging
-From: Sean Christopherson <seanjc@google.com>
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240805160754.1081-1-justinjiang@vivo.com>
+In-Reply-To: <20240805160754.1081-1-justinjiang@vivo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 6 Aug 2024 10:09:35 +1200
+Message-ID: <CAGsJ_4wqENiGf4FoEKA2yO5pmu3SfJD9qsjHD0E7eHPZG1+PuA@mail.gmail.com>
+Subject: Re: [PATCH] mm: swap: mTHP frees entries as a whole
+To: Zhiguo Jiang <justinjiang@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Chris Li <chrisl@kernel.org>, 
+	opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024, Aneesh Kumar K.V wrote:
-> Sean Christopherson <seanjc@google.com> writes:
-> 
-> > On Thu, Aug 01, 2024, Aneesh Kumar K.V wrote:
-> >> Sean Christopherson <seanjc@google.com> writes:
-> >> 
-> >> > Disallow copying MTE tags to guest memory while KVM is dirty logging, as
-> >> > writing guest memory without marking the gfn as dirty in the memslot could
-> >> > result in userspace failing to migrate the updated page.  Ideally (maybe?),
-> >> > KVM would simply mark the gfn as dirty, but there is no vCPU to work with,
-> >> > and presumably the only use case for copy MTE tags _to_ the guest is when
-> >> > restoring state on the target.
-> >> >
-> >> > Fixes: f0376edb1ddc ("KVM: arm64: Add ioctl to fetch/store tags in a guest")
-> >> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> >> > ---
-> >> >  arch/arm64/kvm/guest.c | 5 +++++
-> >> >  1 file changed, 5 insertions(+)
-> >> >
-> >> > diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> >> > index e1f0ff08836a..962f985977c2 100644
-> >> > --- a/arch/arm64/kvm/guest.c
-> >> > +++ b/arch/arm64/kvm/guest.c
-> >> > @@ -1045,6 +1045,11 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
-> >> >  
-> >> >  	mutex_lock(&kvm->slots_lock);
-> >> >  
-> >> > +	if (write && atomic_read(&kvm->nr_memslots_dirty_logging)) {
-> >> > +		ret = -EBUSY;
-> >> > +		goto out;
-> >> > +	}
-> >> > +
-> >> >
-> >> 
-> >> is this equivalent to kvm_follow_pfn() with kfp->pin = 1 ?
-> >
-> > No, gfn_to_pfn_prot() == FOLL_GET, kfp->pin == FOLL_PIN.  But that's not really
-> > relevant.
-> 
-> What I meant was, should we consider mte_copy_tags_from_user() as one
-> that update the page contents (even though it is updating tags) and
-> use kvm_follow_pfn() with kfp->pin = 1 instead?
+On Tue, Aug 6, 2024 at 4:08=E2=80=AFAM Zhiguo Jiang <justinjiang@vivo.com> =
+wrote:
+>
+> Support mTHP's attempt to free swap entries as a whole, which can avoid
+> frequent swap_info locking for every individual entry in
+> swapcache_free_entries(). When the swap_map count values corresponding
+> to all contiguous entries are all zero excluding SWAP_HAS_CACHE, the
+> entries will be freed directly by skippping percpu swp_slots caches.
+>
 
-Yes, that's my understanding as well.  However, this series is already ludicruosly
-long, and I don't have the ability to test the affected code, so rather than blindly
-churn more arch code, I opted to add a FIXME in patch 76 instead.
+No, this isn't quite good. Please review the work done by Chris and Kairui[=
+1];
+they have handled it better. On a different note, I have a patch that can
+handle zap_pte_range() for swap entries in batches[2][3].
 
-https://lore.kernel.org/all/20240726235234.228822-76-seanjc@google.com
+[1] https://lore.kernel.org/linux-mm/20240730-swap-allocator-v5-5-cb9c148b9=
+297@kernel.org/
+[2] https://lore.kernel.org/linux-mm/20240803091118.84274-1-21cnbao@gmail.c=
+om/
+[3] https://lore.kernel.org/linux-mm/CAGsJ_4wPnQqKOHx6iQcwO8bQzoBXKr2qY2AgS=
+xMwTQCj3-8YWw@mail.gmail.com/
+
+> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
+> ---
+>  mm/swapfile.c | 61 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index ea023fc25d08..829fb4cfb6ec
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1493,6 +1493,58 @@ static void swap_entry_range_free(struct swap_info=
+_struct *p, swp_entry_t entry,
+>         swap_range_free(p, offset, nr_pages);
+>  }
+>
+> +/*
+> + * Free the contiguous swap entries as a whole, caller have to
+> + * ensure all entries belong to the same folio.
+> + */
+> +static void swap_entry_range_check_and_free(struct swap_info_struct *p,
+> +                                 swp_entry_t entry, int nr, bool *any_on=
+ly_cache)
+> +{
+> +       const unsigned long start_offset =3D swp_offset(entry);
+> +       const unsigned long end_offset =3D start_offset + nr;
+> +       unsigned long offset;
+> +       DECLARE_BITMAP(to_free, SWAPFILE_CLUSTER) =3D { 0 };
+> +       struct swap_cluster_info *ci;
+> +       int i =3D 0, nr_setbits =3D 0;
+> +       unsigned char count;
+> +
+> +       /*
+> +        * Free and check swap_map count values corresponding to all cont=
+iguous
+> +        * entries in the whole folio range.
+> +        */
+> +       WARN_ON_ONCE(nr > SWAPFILE_CLUSTER);
+> +       ci =3D lock_cluster_or_swap_info(p, start_offset);
+> +       for (offset =3D start_offset; offset < end_offset; offset++, i++)=
+ {
+> +               if (data_race(p->swap_map[offset])) {
+> +                       count =3D __swap_entry_free_locked(p, offset, 1);
+> +                       if (!count) {
+> +                               bitmap_set(to_free, i, 1);
+> +                               nr_setbits++;
+> +                       } else if (count =3D=3D SWAP_HAS_CACHE) {
+> +                               *any_only_cache =3D true;
+> +                       }
+> +               } else {
+> +                       WARN_ON_ONCE(1);
+> +               }
+> +       }
+> +       unlock_cluster_or_swap_info(p, ci);
+> +
+> +       /*
+> +        * If the swap_map count values corresponding to all contiguous e=
+ntries are
+> +        * all zero excluding SWAP_HAS_CACHE, the entries will be freed d=
+irectly by
+> +        * skippping percpu swp_slots caches, which can avoid frequent sw=
+ap_info
+> +        * locking for every individual entry.
+> +        */
+> +       if (nr > 1 && nr_setbits =3D=3D nr) {
+> +               spin_lock(&p->lock);
+> +               swap_entry_range_free(p, entry, nr);
+> +               spin_unlock(&p->lock);
+> +       } else {
+> +               for_each_set_bit(i, to_free, SWAPFILE_CLUSTER)
+> +                       free_swap_slot(swp_entry(p->type, start_offset + =
+i));
+> +       }
+> +}
+> +
+>  static void cluster_swap_free_nr(struct swap_info_struct *sis,
+>                 unsigned long offset, int nr_pages,
+>                 unsigned char usage)
+> @@ -1808,6 +1860,14 @@ void free_swap_and_cache_nr(swp_entry_t entry, int=
+ nr)
+>         if (WARN_ON(end_offset > si->max))
+>                 goto out;
+>
+> +       /*
+> +        * Try to free all contiguous entries about mTHP as a whole.
+> +        */
+> +       if (IS_ENABLED(CONFIG_THP_SWAP) && nr > 1) {
+> +               swap_entry_range_check_and_free(si, entry, nr, &any_only_=
+cache);
+> +               goto free_cache;
+> +       }
+> +
+>         /*
+>          * First free all entries in the range.
+>          */
+> @@ -1821,6 +1881,7 @@ void free_swap_and_cache_nr(swp_entry_t entry, int =
+nr)
+>                 }
+>         }
+>
+> +free_cache:
+>         /*
+>          * Short-circuit the below loop if none of the entries had their
+>          * reference drop to zero.
+> --
+> 2.39.0
+>
 
