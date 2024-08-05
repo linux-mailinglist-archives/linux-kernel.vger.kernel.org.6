@@ -1,55 +1,82 @@
-Return-Path: <linux-kernel+bounces-275043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C81947FE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:08:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B11947FE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72BA28556C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4711F284D8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C065715C15C;
-	Mon,  5 Aug 2024 17:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B51D15DBBA;
+	Mon,  5 Aug 2024 17:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNdj7pQZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="d2jHGYtj"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9215C15A
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90013A3F7
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722877678; cv=none; b=HLTPelC9tUGeFTyJdYuW6R/0wdzW8DS6wG6cQut3JeICeyJqiM/1FFyHqqwC0KA29qipaW2bJInF0/ipzOXyxb2+xmVhYHsDjvZQSO6lUeqReakYA9U/vuQHNhm6Xr47tXkVc+Ps8ZzLFm+4YfnnWt+62VB9SwRrxWu5XKAC2Zw=
+	t=1722877588; cv=none; b=gnctlkefE5n1wcY5T/YVlnncLhqdXD/ZYWCVCfvm2ykp7CRbWscf+2uLEBNptz7eBeunVGLdRQGXCoJrJpJmysA2MCTTrMhuAJszXSqDXQSpuA4E0t0LCtLb9958pgj2XgrdxsJKPDvkfxeJDgmXczNDr5mfODTRQLMs74xkZ1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722877678; c=relaxed/simple;
-	bh=8oDLsrYMWaJslusr/zMMcppEbGxigROfZnvgJbcs1kQ=;
+	s=arc-20240116; t=1722877588; c=relaxed/simple;
+	bh=iQtbsDPgR9sKg4X4Eh+laDiLDhT9Z9+F9uTfohkxk0o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LXXk4awA51B2I9HYDndEPIFY6Q2vM4yznTIR/ZUcRNA+D0pnOuJiI5PAocoeFh3U+53HoNg4zKik+CHTAui1XjS4e6ICu+aEnkJ0vi7ZrpoVCZyrU4ws1tbIFrh9H8H99Q3bnpGb7y9Rxof0WBE8MiGGB0LftDYp+aCwTHc/dgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNdj7pQZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C020C4AF0C;
-	Mon,  5 Aug 2024 17:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722877677;
-	bh=8oDLsrYMWaJslusr/zMMcppEbGxigROfZnvgJbcs1kQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VNdj7pQZ2QpTGcBfZko56BcFj9SNEjepo2DM89QXZZPk8LeY+e3Lu6chB4DgunfJs
-	 LfdIJCtGaExWxr4SyQga+c5JqikMuVVVU5+Ig3e7WMN6WuAOxXdEKMQnAoxtpMV0NS
-	 lIL3wuCiLzjbJQz0EVdr/YlJPdfxmyRdgr/Ofg7883YYqAbgaGCCYNjvBvWcOYm/Fq
-	 +/9J4R695vVsaa7923qaSKdfiqvdYd4iHTRNO4/rNMa4rNpWRWs9QFkLwcqxGd0o1Q
-	 X4dy7c/oPVmBJoO+KOjufTnnjQsQr++PBjikSlJcj4jvuKLcwlZYwasTyXi1jqk0eC
-	 R+3h4XlUh7kXQ==
-Date: Mon, 5 Aug 2024 20:05:51 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 1/5] memblock test: fix implicit declaration of
- function 'virt_to_phys'
-Message-ID: <ZrEGb6JlKoA93Ebu@kernel.org>
-References: <20240802010923.15577-1-richard.weiyang@gmail.com>
- <ZrCjYqdmNfn3di-o@kernel.org>
- <20240805153720.myjqd6ur65x5ucsu@master>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IkqA8U1msS8n5emv2ewoyCkLkOKKb4NBymQzj/u2TNkxhFriapuNhtH4lC/B0C9iJuI/7DGg3sbHzHEAJACDY5RRBqIPSl3uZybYRjjvn0jC4QLUtS7fIOUHoA9/59Ic56jXt7oRSiA2pzBDGOrT+LLTb+NjjtBg7S2a7RXdf7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=d2jHGYtj; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-44ff132ff9cso62007021cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:06:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1722877585; x=1723482385; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aVdnmiDlJ6/XqpvsgoCw3lC20iW8UH/7vdY3FPonF88=;
+        b=d2jHGYtjWFA8J7+6UaudFEFxFla3NT+0ZQTNGI9UgXB6InqQPwFVdHap17INPWBD0r
+         e/+FCGrI7VVDBODbHopIB0zVE+pXcwORjqfatSRWmVWBTnhJzmOlC4j4OsQP201z1m/R
+         x7aoOCgKZLVmfijMnjuqUAIL2znkSgodgeaF2M5hlV4li2tDGR/J7+ym6Xa/gdBtSLOW
+         pEmXN7T0SKu5dHjizNS1GYyVZav4SYFPQpu9fME1/ig/wIQRJ22EnZ9ktZihbx7t29kZ
+         q3oROLs5N+pSgB6Snrnl6ZzFnhqpScn1oPXJY3XLHMud5AiDiPZR2ktM5he3L+Sem2uc
+         2V6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722877585; x=1723482385;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aVdnmiDlJ6/XqpvsgoCw3lC20iW8UH/7vdY3FPonF88=;
+        b=CCX+Q3m7mNtATx2SbtnbFrCPz+fGVo9Ub10XxaBNuLUw3+9NPSilBk4fop5t5DMEo1
+         WKfJOBfvF/SD2WyO6M8/rOHP/JVRL/T00UA2/QWB/132ijivtpZJWPyG/KajRmrwDWhK
+         vF7herag1a2r7CtnK6rmvvraNrPeRh93joPvlYaZdgP3TocQWhGlSuH8WmLtFKSNhEHd
+         GucRMOpDfSMB2GeTCjuq0cERqB5uHlbN3Iig3DnwC0f9EiemxnrFFIlPKKl8FPVtZxdU
+         ZkkKU7CFzCK5teGnQXLYByiMCMh4IHRWRzBjqLDFnyPDrED92MWm/Qz9vlrgm+wDVOpD
+         sckw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuuwzV/xisJ3usaHbWpky2x4wRjd9PZZMpcWO8oYWvOcuUepde6CwMtmpTKXQWaqI7Zu2sepTxAOoKYEA/WIFGmxm0jjb9mou3t2KJ
+X-Gm-Message-State: AOJu0Yw8ARIRceDbcuHXhOega3vtgI4OtMSQy+45OPF0/W9jQ5Yjz6C0
+	lm0vHvZwzOUGQxdSK5KbMezWGOlaHUa3Y5cxS4WWXnYkZsJfzQYaXbhHoKLeJz8=
+X-Google-Smtp-Source: AGHT+IHD+XnKjNCAF8dzli3R/mIEHTrgOWVGf53JNuRafUP3Rfz9QB7P9TlGbdcWMqYdzpV1ApOe/w==
+X-Received: by 2002:ac8:5fd2:0:b0:44f:ee96:cc80 with SMTP id d75a77b69052e-4518923dd26mr163577601cf.28.1722877585155;
+        Mon, 05 Aug 2024 10:06:25 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4518a75be2dsm30774971cf.61.2024.08.05.10.06.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 10:06:24 -0700 (PDT)
+Date: Mon, 5 Aug 2024 13:06:23 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Takero Funaki <flintglass@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: zswap: make the lock critical section obvious in
+ shrink_worker()
+Message-ID: <20240805170623.GC322282@cmpxchg.org>
+References: <20240803053306.2685541-1-yosryahmed@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,77 +85,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240805153720.myjqd6ur65x5ucsu@master>
+In-Reply-To: <20240803053306.2685541-1-yosryahmed@google.com>
 
-On Mon, Aug 05, 2024 at 03:37:20PM +0000, Wei Yang wrote:
-> On Mon, Aug 05, 2024 at 01:03:14PM +0300, Mike Rapoport wrote:
-> >On Fri, Aug 02, 2024 at 01:09:19AM +0000, Wei Yang wrote:
-> >> Commit 94ff46de4a73 ("memblock: Move late alloc warning down to phys
-> >> alloc") introduce the usage of virt_to_phys(), which is not defined in
-> >> memblock tests.
-> >> 
-> >> Define it in mm.h to fix the build error.
-> >> 
-> >> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> >> 
-> >> ---
-> >> v3: use static inline as phys_to_virt
-> >> v2: move definition to mm.h
-> >> ---
-> >>  tools/include/linux/mm.h | 6 ++++++
-> >>  1 file changed, 6 insertions(+)
-> >> 
-> >> diff --git a/tools/include/linux/mm.h b/tools/include/linux/mm.h
-> >> index cad4f2927983..c9e915914add 100644
-> >> --- a/tools/include/linux/mm.h
-> >> +++ b/tools/include/linux/mm.h
-> >> @@ -25,6 +25,12 @@ static inline void *phys_to_virt(unsigned long address)
-> >>  	return __va(address);
-> >>  }
-> >>  
-> >> +#define virt_to_phys virt_to_phys
-> >> +static inline phys_addr_t virt_to_phys(volatile void *address)
-> >
-> >Why volatilte?
-> >
+On Sat, Aug 03, 2024 at 05:33:06AM +0000, Yosry Ahmed wrote:
+> Move the comments and spin_{lock/unlock}() calls around in
+> shrink_worker() to make it obvious the lock is protecting the loop
+> updating zswap_next_shrink.
 > 
-> There are two definitions of virt_to_phys:
-> 
->   include/asm-generic/io.h
->   arch/x86/include/asm/io.h
-> 
-> both has volatile.
-> 
-> I just copy from it. But I don't 100% understand it.
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-Let's keep it inline with the kernel definitions
- 
-> >> +{
-> >> +	return (unsigned long)address;
-> >
-> >This should be phys_addr_t, look at its definition in tools/include/linux/types.h
-> >
-> 
-> You are right. Will fix it.
-> 
-> >> +}
-> >> +
-> >>  void reserve_bootmem_region(phys_addr_t start, phys_addr_t end, int nid);
-> >>  
-> >>  static inline void totalram_pages_inc(void)
-> >> -- 
-> >> 2.34.1
-> >> 
-> >
-> >-- 
-> >Sincerely yours,
-> >Mike.
-> 
-> -- 
-> Wei Yang
-> Help you, Help me
-
--- 
-Sincerely yours,
-Mike.
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
