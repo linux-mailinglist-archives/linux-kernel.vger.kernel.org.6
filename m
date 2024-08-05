@@ -1,204 +1,142 @@
-Return-Path: <linux-kernel+bounces-275270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA942948295
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8539948299
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02C3282D14
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DA61F210B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3717E16C69D;
-	Mon,  5 Aug 2024 19:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6AF16B396;
+	Mon,  5 Aug 2024 19:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nv5r0B+l"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuudZ2iy"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B3416A397
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4229315F3FE
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722887318; cv=none; b=CxG0Y7AZnACCV4USRx1CcWkWeRiKubF21LeXbl4jZD5xEJlhmRaWLAeb5oCRIAL+/POABykYoglTPzOLVXRAGm2E+8jBbYhCi5LT9w0nNZUwvoPIO8LPo5cjCMg7R+FUR/2Ho8LX1WSIR4cErfj4cA4OBW3lCGGC4QexuJl48fk=
+	t=1722887367; cv=none; b=CdhVRoNQC/29v/7n1bXN/wiGPsZkXNOAZDqavMCDscbEsEVePiMtV17jXhBZzJl+30AzwMGrmlUmYdspVYkSW3pTHgB1vcOqCpYCa2UrN2VTKGefij4xx1B9ITQQBVqCzJNO0plcKcJjMrB2ZtmPiQtYtpcGQL0eXEnRz4Ab+VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722887318; c=relaxed/simple;
-	bh=Dr57dJtQ38Gbe8CPMfmBqTXW8AJCnClRmVh6ulllSQI=;
+	s=arc-20240116; t=1722887367; c=relaxed/simple;
+	bh=xS+MCZY02wPXOez+ODZmtOzMq+XafaJXJZwsCdN7OWo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jp3iGKtMjnPOIF4LKx0B8gZn+i6PNLAsKRGAE7zif6BM5qvy6jyqh7G5nG6QHPfV8wySuFNGQmUX1d+3/pL0mSw6cCUb5Gt6lzGOI61xZssytm8by8oleLoHchKKuC9yDxZ8vKGtQy/JTKytHRRZip0S+kbwh0TZjZKXGWUJtN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nv5r0B+l; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39b33a68ec5so6475ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:48:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=EWxZA0IAN2rMZuoUoQy1fxcFhKBZ3x7e3h0/HBMN18B5QppB3sbqQ/51xsZ2LUZ++ti3xGKJCVv6jBkcU6W3rKjB4DIQXLsqEBYVbL7j1L6a6mSnYDioFHEhpZzlBi9DVWhWZFXWR1PL81IWXVeO1kw9DH6OkxceS0nu8YksNfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuudZ2iy; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d316f0060so3935161b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:49:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722887316; x=1723492116; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722887364; x=1723492164; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7hvhgLue4AXt3dLDPL8T2PtC1iyTJfy9ADyuT3yI42s=;
-        b=nv5r0B+lIn66In6KvS1s/xks991mWvHTS1gdhHl0unEGW+i+cV3/NsJnjpdZ106THl
-         q/OywDeq2PpXzIrhzJuq1O2mu0PBGth+AC6bub6ipTB5Fs2+TkxgpIw/NKFUaqjZyeVM
-         fYRfQ5e3qK5w+a3vEw5LpY64QLQ0vK1kXZMHhRujUgYZg/Qa9zCuJgoO3to4zs/gKO/3
-         rYfu+uX5iL5J8p1hq+aCJLgjuEIEHDQl7XH1uxhlNdN4t4PQyzUU1dgEjZEYLuklDqXk
-         hTrJVsCZXX9/YgXqkmw7m+c/CK68W/VjVbdGxtV2bIVTNCaU+NCO+n3n8SlomwaEzE8e
-         1JMA==
+        bh=CE2bwtyEjXybcXwF8rQD5aS3KMAUj8eFnmuCDhVGIGk=;
+        b=RuudZ2iy59hYxARd71mnOULudon+DPVhvtCD9q3AaaW44ErXRs4pVBXyeucTv7tL8d
+         sZQ1aiFlSV22Si8KN9XhxbVTpX4BKHCX4n2ObM7FZgJiOzRXqn+SxroeWeVFZb/pPq5Z
+         NDD3xBh/5waCwLbcDBKjaEmN92LgraAMK1B/nOGjq+y9LfsrEkaqhBcVQkxZAekQm5sv
+         u2WcEECGP5y1Cccc6t50AXw0SHhJT8V79V965urVA7s1qbpDTF+UnoZr45ijpc1Z3WZQ
+         Vw546yo40638gt4PydFolnFuXYfow+Ua82QR8Oo3i132iWxFlG8rHZA2xQjfvX5Pouie
+         UnAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722887316; x=1723492116;
+        d=1e100.net; s=20230601; t=1722887364; x=1723492164;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7hvhgLue4AXt3dLDPL8T2PtC1iyTJfy9ADyuT3yI42s=;
-        b=cy0hFxlNpGB5RyIgIpZYzn2v6ShMsobNUWT635odIzt6xzF6XPG1P9DdCMf+c1hlIB
-         gNqT19Rgw2Cur/e5ACjnkWtbczwj54INojXM1/rxrDEtTmZPTfsNJcvsLGAu/83A7pex
-         Rq/n5cwovVRUGYGI36t/BNHuvWbQbqm/FTLuAdBT30uuAFG5PcL3LhxRnpBWPRR6ER6h
-         SQLh+QUl8SC00j8DrrZM9o/qhwzmD8RVPIbzClDW6ydmOMxUqrSV2P9C1jsOE3SZNA8B
-         fQumSm8Her4UgmcBZioSFJdzrVztKW1PExbQ/HALZv3SPDH8nU/JSdR/SIpThBoZQpCR
-         xPiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAS8X4EDmwf26Wlv0NMVm7xY4G5wbq0H5ngnxNGQQ3O50ZfUL6T8cmt+S4RP5TGM8QDkYnBCjgov2tLM9FL53B54BbU+6lkqT9j+I+
-X-Gm-Message-State: AOJu0YzTImPEpazR/rEjXNpxZ1O5BcxgQWswxPScxy6bSZ4KbS5LGvpB
-	ecLutfA3yy6KyMLYWo98mydoF2X5KKCe2bfpb3xcWX0KgGc4gwLvKhzf1+E2vNQeK7TNSEzpAfO
-	7h0tncnUVQEKpfOA7R/jZzmRyRQGhTegRk6GN
-X-Google-Smtp-Source: AGHT+IFn5+kKCxI/nl9AkTKa63lL7L4m2qmQ/sMNbcWxnI5E+FUJZwcXcZyyOHTL0R7C+tAVQk3Ac2006YgtQuZNbuI=
-X-Received: by 2002:a92:ab12:0:b0:381:24d7:7cc6 with SMTP id
- e9e14a558f8ab-39b487a3dfamr429695ab.3.1722887315679; Mon, 05 Aug 2024
- 12:48:35 -0700 (PDT)
+        bh=CE2bwtyEjXybcXwF8rQD5aS3KMAUj8eFnmuCDhVGIGk=;
+        b=GUXi4DqJ4JL5OV+w+U42Uakxhpy6VVgWn8dJCZ+IbsMwvpd5ZsHFpYucdRZK+peQxB
+         7MThGD/hUSSYbR3ol8eyzGXxgNtHXh1qZiPu43ph4jAHnB6mMAFAjgTdnkJLG8tmp3Rs
+         M+1QFWkjuxmDLm5+rby1UF/3+4se2EvtZYXfXjAYcN4YO55fl7ddMlLjZAf+m3/551gi
+         csgeeGePmTqalUwJLTKpDLXPLOWRQiJacX4Cs87JRtMcHyI9MfisxfowumX2TX29XHAB
+         T8pYBjI/y2vjfRotYyTGPn4NVIXdpJ2tyux3GGpq1tA6BEODxl1mmAPu68Erf3zEnz5l
+         FzWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUR/QwYc+AuFwqjVxmS7wzD7R6a5a+6hdeo7xQKQSSLA7uS9+nehZqfiPBlNeh1B89KqOr20OIxqKOV3wRRIUDKDDq77G11QZWTJq0o
+X-Gm-Message-State: AOJu0YxqvVldIdD4dxYqWTO83Vs7l9mWb3o5wiiOE0AQ0x4vgmFgC6b+
+	rVafyFqBqEyU4pAEqz4fEiZJ+Q3VzNNOcLk4WOt+hfWimxTU+iDi9PENVtxpJ9yiqhH/UHKoxpy
+	X8lPp93fLhw/P1DnpxtCQbwEb5Nk=
+X-Google-Smtp-Source: AGHT+IFYHMkxo2L55S9sDjZLk5hMOxIhiqax4iPzcIPQzELIWlKHEMxXECKWbfLjM3gtzZEs3dyEShRFa2jO7ph4tnU=
+X-Received: by 2002:a05:6a21:460c:b0:1c2:a29b:efb4 with SMTP id
+ adf61e73a8af0-1c69a6db8bcmr18695039637.24.1722887364448; Mon, 05 Aug 2024
+ 12:49:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719081651.24853-1-eric.lin@sifive.com> <2C7FF61F-2165-47D4-83A4-B0230D50844D@linux.vnet.ibm.com>
- <CAPqJEFrkurD9B9smy908Y-z-f6ckv+ZFJzo6ptwXmxD0ru5=CA@mail.gmail.com>
- <CAPqJEFqCXd1FWCgB0919r+J0XW7KVX_OWZNdocva-bxcscjTrw@mail.gmail.com>
- <BB8E0B26-4E5F-416F-B8D1-AC745F141383@linux.vnet.ibm.com> <CAP-5=fVttTnWV7KpiaxNjyiDXt9Uf5zZEm4v5V4mGXMyRr6nSg@mail.gmail.com>
-In-Reply-To: <CAP-5=fVttTnWV7KpiaxNjyiDXt9Uf5zZEm4v5V4mGXMyRr6nSg@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 5 Aug 2024 12:48:23 -0700
-Message-ID: <CAP-5=fU13UYkXZVOcJP+xiRLhDDRycJn=P1wnJi4KnB9KGdpkQ@mail.gmail.com>
-Subject: Re: [PATCH] perf pmus: Fix duplicate events caused segfault
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Eric Lin <eric.lin@sifive.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@arm.com>, linux-perf-users <linux-perf-users@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, vincent.chen@sifive.com, 
-	greentime.hu@sifive.com, Samuel Holland <samuel.holland@sifive.com>
+References: <3BC6F04B763EF430+20240731041040.43863-1-wangyuli@uniontech.com>
+In-Reply-To: <3BC6F04B763EF430+20240731041040.43863-1-wangyuli@uniontech.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 5 Aug 2024 15:49:12 -0400
+Message-ID: <CADnq5_O3RtXU9pYb3ZJkzhNn1GoVUU9J=APkbxEMk07b7s9mCQ@mail.gmail.com>
+Subject: Re: [PATCH v3] drm/amd/amdgpu: Properly tune the size of struct
+To: WangYuli <wangyuli@uniontech.com>
+Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, daniel@ffwll.ch, Jingwen.Chen2@amd.com, suhui@nfschina.com, 
+	dan.carpenter@linaro.org, bokun.zhang@amd.com, chongli2@amd.com, 
+	Luqmaan.Irshad@amd.com, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	guanwentao@uniontech.com, shaoyang@uniontech.com, hongao@uniontech.com, 
+	wenlunpeng <wenlunpeng@uniontech.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 5, 2024 at 10:02=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Mon, Aug 5, 2024 at 7:24=E2=80=AFAM Athira Rajeev
-> <atrajeev@linux.vnet.ibm.com> wrote:
-> >
-> >
-> >
-> > > On 4 Aug 2024, at 8:36=E2=80=AFPM, Eric Lin <eric.lin@sifive.com> wro=
-te:
-> > >
-> > > Hi,
-> > >
-> > > On Sun, Jul 21, 2024 at 11:44=E2=80=AFPM Eric Lin <eric.lin@sifive.co=
-m> wrote:
-> > >>
-> > >> Hi Athira,
-> > >>
-> > >> On Sat, Jul 20, 2024 at 4:35=E2=80=AFPM Athira Rajeev
-> > >> <atrajeev@linux.vnet.ibm.com> wrote:
-> > >>>
-> > >>>
-> > >>>
-> > >>>> On 19 Jul 2024, at 1:46=E2=80=AFPM, Eric Lin <eric.lin@sifive.com>=
- wrote:
-> > >>>>
-> > >>>> Currently, if vendor JSON files have two duplicate event names,
-> > >>>> the "perf list" command will trigger a segfault.
-> > >>>>
-> > >>>> In commit e6ff1eed3584 ("perf pmu: Lazily add JSON events"),
-> > >>>> pmu_events_table__num_events() gets the number of JSON events
-> > >>>> from table_pmu->num_entries, which includes duplicate events
-> > >>>> if there are duplicate event names in the JSON files.
-> > >>>
-> > >>> Hi Eric,
-> > >>>
-> > >>> Let us consider there are duplicate event names in the JSON files, =
-say :
-> > >>>
-> > >>> metric.json with: EventName as pmu_cache_miss, EventCode as 0x1
-> > >>> cache.json with:  EventName as pmu_cache_miss, EventCode as 0x2
-> > >>>
-> > >>> If we fix the segfault and proceed, still =E2=80=9Cperf list=E2=80=
-=9D will list only one entry for pmu_cache_miss with may be 0x1/0x2 as even=
-t code ?
-> > >>> Can you check the result to confirm what =E2=80=9Cperf list=E2=80=
-=9D will list in this case ? If it=E2=80=99s going to have only one entry i=
-n perf list, does it mean there are two event codes for pmu_cache_miss and =
-it can work with either of the event code ?
-> > >>>
-> > >>
-> > >> Sorry for the late reply.
-> > >> Yes, I've checked if there are duplicate pmu_cache_miss events in th=
-e
-> > >> JSON files, the perf list will have only one entry in perf list.
-> > >>
-> > >>> If it happens to be a mistake in json file to have duplicate entry =
-with different event code (ex: with some broken commit), I am thinking if t=
-he better fix is to keep only the valid entry in json file ?
-> > >>>
-> > >>
-> > >> Yes, I agree we should fix the duplicate events in vendor JSON files=
-.
-> > >>
-> > >> According to this code snippet [1], it seems the perf tool originall=
-y
-> > >> allowed duplicate events to exist and it will skip the duplicate
-> > >> events not shown on the perf list.
-> > >> However, after this commit e6ff1eed3584 ("perf pmu: Lazily add JSON
-> > >> events"),  if there are two duplicate events, it causes a segfault.
-> > >>
-> > >> Can I ask, do you have any suggestions? Thanks.
-> > >>
-> > >> [1] https://github.com/torvalds/linux/blob/master/tools/perf/util/pm=
-us.c#L491
-> > >>
-> > >
-> > > Kindly ping.
-> > >
-> > > Can I ask, are there any more comments about this patch? Thanks.
-> > >
-> > Hi Eric,
-> >
-> > The functions there says alias and to skip duplicate alias. I am not su=
-re if that is for events
->
-> Fwiw, I'm trying to get rid of the term alias it should mean event.
-> For some reason the code always referred to events as aliases as
-> exemplified by:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
-tree/tools/perf/util/pmu.c?h=3Dtmp.perf-tools-next#n55
-> But it is possible to have an "alias" (different) name for a PMU and
-> I'm sure for other things too. So the term alias is ambiguous and
-> these things are events, so let's just call them events to be most
-> intention revealing.
->
-> > Namhyung, Ian, Arnaldo
-> > Any comments here ?
->
-> I'll take a look.
+Applied.  Thanks!
 
-The problematic events all come from copy pasting ArchStdEvent. It
-feels better to have an invariant that events appear once so I sent
-out a series to clean this up:
-https://lore.kernel.org/linux-perf-users/20240805194424.597244-1-irogers@go=
-ogle.com/
-If you could test and add a tested-by tag that'd be great!
-
-Thanks,
-Ian
+On Wed, Jul 31, 2024 at 6:25=E2=80=AFAM WangYuli <wangyuli@uniontech.com> w=
+rote:
+>
+> The struct assertion is failed because sparse cannot parse
+> `#pragma pack(push, 1)` and `#pragma pack(pop)` correctly.
+> GCC's output is still 1-byte-aligned. No harm to memory layout.
+>
+> The error can be filtered out by sparse-diff, but sometimes
+> multiple lines queezed into one, making the sparse-diff thinks
+> its a new error. I'm trying to aviod this by fixing errors.
+>
+> Link: https://lore.kernel.org/all/20230620045919.492128-1-suhui@nfschina.=
+com/
+> Link: https://lore.kernel.org/all/93d10611-9fbb-4242-87b8-5860b2606042@su=
+swa.mountain/
+> Fixes: 1721bc1b2afa ("drm/amdgpu: Update VF2PF interface")
+> Cc: Dan Carpenter <dan.carpenter@linaro.org>
+> Cc: wenlunpeng <wenlunpeng@uniontech.com>
+> Reported-by: Su Hui <suhui@nfschina.com>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h b/drivers/gpu/dr=
+m/amd/amdgpu/amdgv_sriovmsg.h
+> index fb2b394bb9c5..6e9eeaeb3de1 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgv_sriovmsg.h
+> @@ -213,7 +213,7 @@ struct amd_sriov_msg_pf2vf_info {
+>         uint32_t gpu_capacity;
+>         /* reserved */
+>         uint32_t reserved[256 - AMD_SRIOV_MSG_PF2VF_INFO_FILLED_SIZE];
+> -};
+> +} __packed;
+>
+>  struct amd_sriov_msg_vf2pf_info_header {
+>         /* the total structure size in byte */
+> @@ -273,7 +273,7 @@ struct amd_sriov_msg_vf2pf_info {
+>         uint32_t mes_info_size;
+>         /* reserved */
+>         uint32_t reserved[256 - AMD_SRIOV_MSG_VF2PF_INFO_FILLED_SIZE];
+> -};
+> +} __packed;
+>
+>  /* mailbox message send from guest to host  */
+>  enum amd_sriov_mailbox_request_message {
+> --
+> 2.43.4
+>
 
