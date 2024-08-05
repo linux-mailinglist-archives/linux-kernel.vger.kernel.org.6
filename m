@@ -1,254 +1,148 @@
-Return-Path: <linux-kernel+bounces-275480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86B7948652
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:46:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA765948653
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF552835CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:46:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9B1E2845C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2F716EB7C;
-	Mon,  5 Aug 2024 23:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8376616CD11;
+	Mon,  5 Aug 2024 23:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZPmqoDZo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="rWdltSbw";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MhakXm17"
+Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F9A14F9F1;
-	Mon,  5 Aug 2024 23:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722901556; cv=fail; b=bPew64ubtCCWunNUdrP37j6dkWd3gUDgWBcc1xjbj9OPJXK+bZq5SY+KLXGhi1yIZbhEUdlnIF+8ABsg0F+WWomNycQDMd5YC2l5flgu5xk66oeqDbqJigFB8+jAL3SjFNbSw5NvT+MPIeb7YCDOTFEOlCDTIFCZSB9xBWTum3I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722901556; c=relaxed/simple;
-	bh=EydnIt+HG3eQ8pLeXvQA9jvtl3AwnTHevybwaQDqLZM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NS3o2gV6JpKhELVMACu6ruD+EeWKdZ6MrvWt+SHggZGz+iQp6GdDctPXd7shkKgDMzSGkVg2syY2QgZy42yfgzlGcvBQwdAE2Ijjbp1JSTLGww5nNwZknw8C74xFoNdkA57PpqEjfXxPtBFdX/BblHf7e+ubTunlPdXtvF8xZJE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZPmqoDZo; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722901555; x=1754437555;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=EydnIt+HG3eQ8pLeXvQA9jvtl3AwnTHevybwaQDqLZM=;
-  b=ZPmqoDZokefm56zpRKycXJTHF7rHZaR11EySahXTsLTSynw0VL25Fkb1
-   UrJSiS4X7opVd6wcJI/90Xmgs5ov+yhyUAA9/XmDHQ3Miajl1g+PgPT8P
-   Czp2pGmPCxnkUdx+jcnBrm4ZPL1YdTPtrQdPDfcxYOGmAiR+DKk68o8oQ
-   Pz9fhW1TchNC0rAs/55Zpw5zR0jjxmqGjV+ySXIz1MJLZ10iuN1fTCAEu
-   hXLOMOHy4mLd2+1viWSeYNwl/ZfDv//k6d1SsqER4HjAmNlFU76ahxUSu
-   mI//CRaGp7etJQb5mfVemrF7xL9/hLkgStTOAPz1GFwH+Z+nSxHD3hOFb
-   Q==;
-X-CSE-ConnectionGUID: Lpn9Zm10RquslQvpsRrhvg==
-X-CSE-MsgGUID: fQjaM65eQUm2gz3Vb6boOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="24657980"
-X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
-   d="scan'208";a="24657980"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 16:45:54 -0700
-X-CSE-ConnectionGUID: EE7uycpzQym+a7M9N3DvmA==
-X-CSE-MsgGUID: +cEpuycrSde/pKefzyU+EA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
-   d="scan'208";a="56248030"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Aug 2024 16:45:53 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 5 Aug 2024 16:45:53 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 5 Aug 2024 16:45:52 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 5 Aug 2024 16:45:52 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.40) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 16:45:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JNAgDgcnoiTkhHhAPdnqgMsuCFMvVyeo1HCINoYM8M3KTfjvHVnMoAxPLi7AqLlW4XKuc8BcbZ0yFgWFsJ/ESgy1mlm09uKJ3QgO+CNByB07P3vaCCn56bzOgTriu7XD15PuR9BqROKZfZsHgvTjv4LOtc/0JdJz6vnW0mqtQaTpdlg/mQUkBvXF/NY4LL3B43LvJvKXA6TeZFn+Ynrr4bsqv2r4py22iK8CjsQlcxBNkkFRs5ELzicth7mumEAyZ/DCmkXRRwZoEA57FoVBnsVIpGPbbYIwHL/ZHnYGCx3A/8eWym7SuzkK2XdHUPeXe1heOjYY19fSOLgJm/qzvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AeKshAcqALGh9F19fV4srKkrP5rne2qVbl7lmFwgJ5M=;
- b=bhZC0eub5eXUY0oRU0+rv4+mCopo+5GMcR07dhsqNgsLCDMvOwQGtNGkvl2VCG453T8Hmh3GaezwtpOaCZf19j+vUn6D+Mw0YWY72Kf7cCR3GkBjSqIXX8SRAIOSHC/MvrHEZQII9AkjpiV0Wxwxsq1cUrHEvVnaiXrlqwVygsGvCRk+fsaA3ic4CQKh+wgsLYShwBfUOhsYFpgDD1ywnuuj67K80BUHAYPit2orHPVufD8VAF2BvoycFsFuFg2dOOVnbAZbQEl9MEqrS2obXgA30Gt3tAtbq6yoyso6r1nEtEYzSgt+866r7EmnKYkyrL+LESnRSNzozeeIry3f7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by PH7PR11MB7549.namprd11.prod.outlook.com (2603:10b6:510:27b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.33; Mon, 5 Aug
- 2024 23:45:50 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.7828.021; Mon, 5 Aug 2024
- 23:45:50 +0000
-Date: Mon, 5 Aug 2024 16:45:46 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Kai Huang <kai.huang@intel.com>, <dave.hansen@intel.com>,
-	<kirill.shutemov@linux.intel.com>, <bp@alien8.de>, <tglx@linutronix.de>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <hpa@zytor.com>,
-	<seanjc@google.com>, <pbonzini@redhat.com>, <dan.j.williams@intel.com>
-CC: <x86@kernel.org>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<rick.p.edgecombe@intel.com>, <isaku.yamahata@intel.com>,
-	<chao.gao@intel.com>, <binbin.wu@linux.intel.com>, <kai.huang@intel.com>
-Subject: Re: [PATCH v2 03/10] x86/virt/tdx: Support global metadata read for
- all element sizes
-Message-ID: <66b1642a825e7_4fc729449@dwillia2-xfh.jf.intel.com.notmuch>
-References: <cover.1721186590.git.kai.huang@intel.com>
- <442637364b55c8a721f72a201e838eb5c271e0eb.1721186590.git.kai.huang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <442637364b55c8a721f72a201e838eb5c271e0eb.1721186590.git.kai.huang@intel.com>
-X-ClientProxiedBy: MW4PR04CA0191.namprd04.prod.outlook.com
- (2603:10b6:303:86::16) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D70E14F9F1;
+	Mon,  5 Aug 2024 23:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722901575; cv=none; b=stpa5fruC9BeNXn2UcZxznU2n7WqDyr4o+ey6a3TamB6MtfTyM0MvoUX2kqQw6yZYYlgy8KKu+7i064PzaMddWZwu3J4zuUH4rIhmXIdkYo8gnMtjW6TbBBPPV6nMNI5VTEMAA4chb567PXup6aWLgIYUrGabFke/GYqWuRonqc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722901575; c=relaxed/simple;
+	bh=7GogOe5n9F2zHkC/WirTp89rqrdd3akHu64WR1KTE1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FbhHZ8w23H0f2adAGVOMpkCRZ6m4rCW2kcbCCHm9znwuVAoMUu1LEbFxlBQDuCaBpFqzJ7M+pWoqRrg1Z/4g2Kyh1h4d8oS/OjA4Vq6z5WI1R159oPZIV6KaN+JoPCqdD28HMS2Ob8La3xBUPGZUNtl35NQ78rhhhRlRG5pMozI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=rWdltSbw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MhakXm17; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 51123138DD0D;
+	Mon,  5 Aug 2024 19:46:12 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 05 Aug 2024 19:46:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm1; t=1722901572; x=1722987972; bh=gIvWdDLxWY22hhOBPE6JY
+	Foqhl5WH6m9QN6kQjoDgMY=; b=rWdltSbw651QVVznuH6ziMaxUGCHYY2+tbCTw
+	mVi7J00RuotjdYX4//SK7FZCunfkNm3b8cgyScTJ4t1ZAzXG3g6M4LKCJDUOPYOo
+	bmk5UTaJsv9Fel0gVAFeB+fmdAzR7cvBjvo/MHXB9UQea2sD+hNP2lf136KwS4dQ
+	V1vSXL5NM9Pw6QSR6rDCrZYMv88E5xaIdJQhlyh8x0708BPAsD/88pX55EjRgWUe
+	OzkTI4wFx9DpdUM2SbH+rA8ClXHMSFRMOpAziTGl9VeRIhMr/k2m/t+d1UlpjA9Z
+	QB4J0O924me8OtvLmfq6DksxflXPCWl7SxK7xAe9wRWz8J0YQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1722901572; x=1722987972; bh=gIvWdDLxWY22hhOBPE6JYFoqhl5W
+	H6m9QN6kQjoDgMY=; b=MhakXm17+uOomLrF8G3Nl+GisPyFjo4E7A7yu8Uy3bKv
+	crapWM5p6CgifwKyMB2/OJV7HoXfkdtwvfU0WR1gq4j6DzSaFRdzZCcSPaS2mdUS
+	MKuYTDtdpYVlX3IozZfhBFLD434fIF3cXOzZfmKLx/pfTdzB9n7+32f1L1cPgS5R
+	tq9ntmXUFDM+BDRnusZtsukB3jyJ5y0SC1hggt17Ax/RvF05pFCdkueNgwiIhtHh
+	OolRloPFAP6ccHASqA8EJuVaiu1etFyGLkhs4Ftw6+a2NOqwSlejy4uq/5SwJ6M1
+	T08zokWxAOqBvLV/dCP+S8hqJx/0tA7t/2u04rkcyw==
+X-ME-Sender: <xms:Q2SxZhFoeFYqOEykw2xxWFtJem87lZAP_xVeVknBBUA5RHaH1o_CfQ>
+    <xme:Q2SxZmWxZfTPnb_uzCjfnv3hM1EQM07JzyrsAk2PljDrr5fV_wIgtlaWMxEbqYMG8
+    9Bon7cR5ueVC70XSUo>
+X-ME-Received: <xmr:Q2SxZjKeKYMmBiOAI5rdq7AWnXysZfRqxgNpavrTpWEzQdW-tc9toJBMh8Hh>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeejgddvjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtre
+    dttdenucfhrhhomhepfdfnuhhkvgcuffdrucflohhnvghsfdcuoehluhhkvgeslhhjohhn
+    vghsrdguvghvqeenucggtffrrghtthgvrhhnpefgudejtdfhuddukefffeekiefftddtvd
+    fhgeduudeuffeuhfefgfegfeetvedvgeenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtph
+    htthhopedt
+X-ME-Proxy: <xmx:Q2SxZnGz1LOoMdqDKT_OyAJB8nKadG38x3NrTWbcum8-8oRbWXIn6g>
+    <xmx:Q2SxZnWxN1GOjJIoInE24K6BQv3I2JfxzGCmZzY_9aLuVisj_VGr5Q>
+    <xmx:Q2SxZiNJ6CyYt3l7rwtk1vR_GFj65CyMpWMdvjvUS-1_U4e3R1uRIw>
+    <xmx:Q2SxZm0nfgl83WfFiDfC443LQHjSefc3aistL_mWIDtKverAqQtITw>
+    <xmx:RGSxZteZ0S8Aiiv6TUolNSKYSyViNCrG1M5Ax8YjIa-9veBAlnZFFcLI>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 5 Aug 2024 19:46:08 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	corentin.chary@gmail.com,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH v2] platform/x86: asus-wmi: Add quirk for ROG Ally X
+Date: Tue,  6 Aug 2024 11:46:03 +1200
+Message-ID: <20240805234603.38736-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|PH7PR11MB7549:EE_
-X-MS-Office365-Filtering-Correlation-Id: 33747b9c-46ef-4bad-e383-08dcb5a8bc6d
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qOaEPCyG8Me4YbzXUtb2mX+az7JOVPzNEk8lFpPeKnSQ9nVFCTSzfNkNUOpL?=
- =?us-ascii?Q?9obGSyZqEp6nxL+h2MAL/9TnQ4dAgH5SIunPL+U79/0XdsMBMtKbH7OGjjfb?=
- =?us-ascii?Q?ULz/6HdN9X7FBa4+e1K0ypUFrVrQlUKx9PtRUxuunp+2dYoOBCHM9MR7A026?=
- =?us-ascii?Q?b1nDJNgFKhgGt9PRGnpq13sDU7Cwmkz2hA2iIXkbSKR7aA2emsnc3NDgS7Bm?=
- =?us-ascii?Q?rrz0i1xd7w0dGzulsjGt5QAJt+zKUC/3l9Sm8uoA1c13100UzszHkiRdC/T6?=
- =?us-ascii?Q?xkan81ot1b93dX4H7QSnmk2hGTUM2luZQa5klMuO8j0zACo9UgH6LEDngmGi?=
- =?us-ascii?Q?ifuMWPf4ya7r/zzR6yv6Rey3j0q44DCyqdiSrA0R8GMvAA5oJR8os8XjGXAZ?=
- =?us-ascii?Q?8EcxdPl8JKN4UOCmxHt13HYXCkyz/kIpvNAFBxQ9YeE+LRMORo7pgpAMt7zT?=
- =?us-ascii?Q?dTAiiPglLDPJu5Y3lUvWDRXeA69KIMrKTUP6NlwVVmglVjFcf8hVTn7v+FH5?=
- =?us-ascii?Q?OZSQcTu3fTfcYyqDX4y1uPLbX/RTykGXfdPC3SRlTeFEIH/4VosJPw72B+Ao?=
- =?us-ascii?Q?M2SmuVoMSCOHolNTOesqDbEjZjNZqbNOyWoAgtLVSsFiboAYlqeV/ronfhF1?=
- =?us-ascii?Q?Kgd3ZxeGjc/WHNHbG/eJOFURD0RhxhXjJLz8wYy2KFH1RWP9qMSqSbyL9OKJ?=
- =?us-ascii?Q?dg6zxNghs1b1dl0xUq26FMkjRcIojRN0FQtNI0BfkpXIU2RCEtTqVREpnKP1?=
- =?us-ascii?Q?JFrY52LFHVswKHsAeKTHOucR8ioNlqHYanNl9tbz+gmoAZ3VZuMl5+LfpyG/?=
- =?us-ascii?Q?PavoxwyZGEKUsscfQgJyY6tLCPisAEpG37YwAlWeAX139f0eADoClTpALVHX?=
- =?us-ascii?Q?WGn6CXnbKP9Pf8tanm2URUE/tpmUTiIjFJFDtS9EDqgswp2Q74XArDeIdnyl?=
- =?us-ascii?Q?NlN4RXqCSRM79zQ9JrsTDLFiqaR0GhvjYN2zZ0W5oAC2D1sHJlP7XlEqkO7B?=
- =?us-ascii?Q?/UU62mw9aH0jE5HOTl5YhTwpK+lRLyi8htINj8fDBN9Lq5aFkDh5786HadKr?=
- =?us-ascii?Q?ZYubHTdWo1nRf93Fd48zH5vVuMpY2ELtRK1yWJ4jtdmKXdpU5zJQW7ubkXst?=
- =?us-ascii?Q?EAmj0gObwVDeqo4ssDQL/SIKFd4ekYOoHBzD3THgO7XRv4tWnWS0HZiMo37S?=
- =?us-ascii?Q?pSPaTEcRnmp2t8SQdnWyJTYylKUhBKgEQc4wEDhm4AL9OI/EKi2mZlI3HbUJ?=
- =?us-ascii?Q?USy+RAU1oorXdGn0asV6et5MpH9mS/bq+SzoK2lmnljKssCjfCY4sBvHlo9z?=
- =?us-ascii?Q?Lmrxn6N8MHnHutePPRFLH2Omh7ORJsqdmXJ3uGPRG4xjS9cTj2yWFolvFL7u?=
- =?us-ascii?Q?Gkf25/k7MI/myC6G+aLnj8aTdqG5?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?t9zJuE7soS9YxaKZilBPGGkr9hvk/G8K42Y7HnVPA25s3Vd55gDYj9kcMJ1n?=
- =?us-ascii?Q?Xz2vFWdh4XU/qC6gpG5tArrjQJv6wVo6uX0P13JHr9grEOZ10rOnJlYakl0N?=
- =?us-ascii?Q?qqQRvMEbyHs/J0l1Gcq4rbqtN1/YnOnMTGm236XRyWl/MPIkVeUwCM8R5hhR?=
- =?us-ascii?Q?Jp7WkonpJ9M/rYKNBG1JHLS/A/brwiorII/bxJdPMrmdgOJAF33YOgkS0Yhi?=
- =?us-ascii?Q?sijjTEeT8IlmV9kWXE5gD+MYv8ZCgxwZdjgknl22KoDHV6IGy/NxTXANdnFK?=
- =?us-ascii?Q?vQgthmelOmr34wdxdzRItPo3T4wY6NLG0TKtFvxxmSC+dbPNyOhGckmFdGmY?=
- =?us-ascii?Q?xTIlF3P7OeUXbm3405Cmw93LHx2M9wWHN6U15bf98d7zp58KxUcoCG25eNmR?=
- =?us-ascii?Q?DplC9UQHrOa6wF9gOgVXfho8oHSHHteThhI36XXnj4eGYQX5VYC2QTzuErTH?=
- =?us-ascii?Q?KvqxxUosCVDobHlyNvnRnXExqMh4rIVKxvv8kMtwWwr0uOxuYMkbSmyyJ7P9?=
- =?us-ascii?Q?3eEHA5a/3uSmb9iB+Kxi8JDIcQrH5PKpCHSEByMeCMtELsxFOF/NyrGOhOyL?=
- =?us-ascii?Q?LqYk3VgUvuxkq1wf6KbJ/DUWdNDZcYIdsLEMpt7PJ8KzwJr6qbGbZafNX3yd?=
- =?us-ascii?Q?KXVOwIl5zyWy13T5q9w1AlTdmXkDkrDm1ZoJfFQdWxBNe2ih7DY9SoatZbl9?=
- =?us-ascii?Q?Qow59DjfUyjFah9AH+v3kodTMK1Aoshq1vZLKpKsdtUHKKPYaE4JaBJSHryE?=
- =?us-ascii?Q?YN5D9xdUP3vo8Mg8wnTcAdUeRKUQEgD8E06Qpr/Te7szLFNwM7aMbtQjDxBf?=
- =?us-ascii?Q?czXz+9LnMAuqSN+t9tWlJUJodG5L6rRjxal3hERu517f/UEH0La/MoZ+/9QI?=
- =?us-ascii?Q?XZ7yHKjJYzEBlqRqojonmx/zdNDw/mjc2KJ0CwiFW3jcWG0iF3PvyZSD5Fyj?=
- =?us-ascii?Q?iBtO7XZEdp+iThqArje4rRgUD2LY6rzwCjWZexk8HlLJJVBmWzjJEKMk+8ap?=
- =?us-ascii?Q?MCZiC+ivNgs553w3XKl4gXqX+HYV1D9sXb0RvqrFSVworMmMC7fsBrcyDZao?=
- =?us-ascii?Q?BxchJVvvPnMS5Yy39K+1YRnB0Jfqlws9Eebf3rcbq5t5LiVBjOaI89vnYIDS?=
- =?us-ascii?Q?fqIdtRpwE8DnqdDqIKC/1kk5JsCUxDDpIJ83qIvajKTBpjtt8elZFfgYAFil?=
- =?us-ascii?Q?ziodh5Uh1XAoepr/pPfyl7txQc6z7gY6Sa8pllDPP5IPzIHCEzt9Fv/O+b5T?=
- =?us-ascii?Q?DB3nioOFASDLEIPBvCNKJmABKO3wjZvL57lmdIjztkVJ65DaHVz7Pl+BR1x+?=
- =?us-ascii?Q?oQbbEwwklsjcazwsWmshs6TUptc/UMIr87Cq5sXx4Z8SR9+vajSo1nyFNRw7?=
- =?us-ascii?Q?UXKL2EP2Gj5oYEsTOznziUHHBvhQ28JEtS1R/Q4EPDGHxT5h15a5TWQcdd5I?=
- =?us-ascii?Q?CCaAOxHfqtUA2rtY8AopnkMm58ieN7thSPwyvkECbECuHDPfPBOEkutHs4Ax?=
- =?us-ascii?Q?eXE08csLPKVQxngBq9PR68SuzW/0rvN1Ti+AClVimJIGa2Uk6dHniO4XhWAd?=
- =?us-ascii?Q?Ms76dsDWVdythDuOLaPkGIuXu2Im6DFdXiaSRlXqvw4kTnAKpoWynK6m6ipp?=
- =?us-ascii?Q?qA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33747b9c-46ef-4bad-e383-08dcb5a8bc6d
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 23:45:50.1156
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3VWxtJlrm5gJ0DAVLq7hz45O01PWsmkx22qaCPVBQdOmlGjbtn16iEM4IuBkTzAsfjpdhwfOcBa4yEI+cZ/0FhAmg/H22YKPnsVd/B7azv8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7549
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Kai Huang wrote:
-> The TDX module provides "global metadata fields" for software to query.
-> Each metadata field is accessible by a unique "metadata field ID".  TDX
-> supports 8/16/32/64 bits metadata element sizes.  The size of each
-> metadata field is encoded in its associated metadata field ID.
-> 
-> For now the kernel only reads "TD Memory Region" (TDMR) related global
-> metadata fields for module initialization.  All these metadata fields
-> are 16-bit, and the kernel only supports reading 16-bit fields.
-> 
-> Future changes will need to read more metadata fields with other element
-> sizes.  To resolve this once for all, extend the existing metadata
-> reading code to support reading all element sizes.
-> 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
-> 
-> v1 -> v2 (Nikolay):
->  - MD_FIELD_BYTES() -> MD_FIELD_ELE_SIZE().
->  - 'bytes' -> 'size' in stbuf_read_sysmd_field().
-> 
-> ---
->  arch/x86/virt/vmx/tdx/tdx.c | 29 ++++++++++++++++-------------
->  arch/x86/virt/vmx/tdx/tdx.h |  3 ++-
->  2 files changed, 18 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index 2ce03c3ea017..4644b324ff86 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -270,23 +270,25 @@ static int read_sys_metadata_field(u64 field_id, u64 *data)
->  	return 0;
->  }
->  
-> -static int read_sys_metadata_field16(u64 field_id,
-> -				     int offset,
-> -				     void *stbuf)
-> +/*
-> + * Read one global metadata field and store the data to a location of a
-> + * given buffer specified by the offset and size (in bytes).
-> + */
-> +static int stbuf_read_sysmd_field(u64 field_id, void *stbuf, int offset,
-> +				  int size)
->  {
-> -	u16 *member = stbuf + offset;
-> +	void *member = stbuf + offset;
->  	u64 tmp;
->  	int ret;
->  
-> -	if (WARN_ON_ONCE(MD_FIELD_ID_ELE_SIZE_CODE(field_id) !=
-> -			MD_FIELD_ID_ELE_SIZE_16BIT))
-> +	if (WARN_ON_ONCE(MD_FIELD_ELE_SIZE(field_id) != size))
->  		return -EINVAL;
+The new ROG Ally X functions the same as the previus model so we can use
+the same method to ensure the MCU USB devices wake and reconnect
+correctly.
 
-Per the last patch, re: unrolling @fields, it's unfortunate to have a
-runtime warning for something that could have been verified at compile
-time.
+Given that two devices marks the start of a trend, this patch also adds
+a quirk table to make future additions easier if the MCU is the same.
+
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+---
+ drivers/platform/x86/asus-wmi.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index f15fcb45e1aa..0c80c6b0399b 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -152,6 +152,20 @@ static const char * const ashs_ids[] = { "ATK4001", "ATK4002", NULL };
+ 
+ static int throttle_thermal_policy_write(struct asus_wmi *);
+ 
++static const struct dmi_system_id asus_ally_mcu_quirk[] = {
++	{
++		.matches = {
++			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
++		},
++	},
++	{
++		.matches = {
++			DMI_MATCH(DMI_BOARD_NAME, "RC72L"),
++		},
++	},
++	{ },
++};
++
+ static bool ashs_present(void)
+ {
+ 	int i = 0;
+@@ -4751,7 +4765,7 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 	asus->dgpu_disable_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_DGPU);
+ 	asus->kbd_rgb_state_available = asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_STATE);
+ 	asus->ally_mcu_usb_switch = acpi_has_method(NULL, ASUS_USB0_PWR_EC0_CSEE)
+-						&& dmi_match(DMI_BOARD_NAME, "RC71L");
++						&& dmi_check_system(asus_ally_mcu_quirk);
+ 
+ 	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_MINI_LED_MODE))
+ 		asus->mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
+-- 
+2.45.2
+
 
