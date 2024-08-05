@@ -1,278 +1,124 @@
-Return-Path: <linux-kernel+bounces-275239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091EC94823B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:22:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F6D948247
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB152846BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFC2AB214AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0214116B388;
-	Mon,  5 Aug 2024 19:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FED016B396;
+	Mon,  5 Aug 2024 19:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="djxVG3BU"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cq1BQfoh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47336364AB;
-	Mon,  5 Aug 2024 19:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B054364AB;
+	Mon,  5 Aug 2024 19:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722885753; cv=none; b=kKjLYey3kqgCk9MPn9R5ZJzFIsPfC8n3q6tMIv/W9AU5BvvWcd5KP6antmmwm5WyA6XQBQ5aqKWmlGxFQ0XE2q2MReSNX8NN7N7eGduEOy9DQUiQU/ioHD2UDjEOjXyiI/Omk74rSnqs+YCiCRHH08BeV1QHZISP/8pRLYTL8kE=
+	t=1722885961; cv=none; b=d7+RK72GGSpRvi81VyNicCGv+LOxvo5ql8sGDr9arttAjimzO674QWqz48txywuW5zqHYNixCpn+1N51YSypUw/nqh/zyTMwKDqKUeMybmjAiJIkWc5piRKfBLeZb0hfspgz9GO0RMN70TyNq9vKvHNf6ur9ZKa9UYdApkXSf18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722885753; c=relaxed/simple;
-	bh=WoHIKQqI7dEeVySmjuIeYOtKXAI/eOZgBGvS3Kb5Bew=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kq85+iN6UTjPEkh68kHqnF8xpyD0E1F9DKGLMbz//q4V4STicgzvpIU8mT3rjUg/mKh476fROP+xoUIEEumH+iseea7x7k342ouWkyEb9yek7CnklgcqRgfT/sdnVN62T8ejLDfrihkhtgU3Pv+ESUPSNM4u1LJotzjtwmkLYb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=djxVG3BU; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722885748; x=1723144948;
-	bh=tG9zTHc54W7MrHg+PmjTsQxfF7AJWcvfwu19734+u4Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=djxVG3BUAQiXq9fOoH2L8y38TRMx+w4gwZ3bQFjYsHH3H+k6HihHUJWex1kP0AVyW
-	 jfHmFj4JKWEStqdCpMyK2LmsUuOcDw38XRY3m8epC/5//q47r/tZsOvRlmpUJGRUI8
-	 HKfLHUf8PjAlJximinUuejkmZiMlaYVCwbxwFlsPYo3YzFHhWTzodU/f1Ia4WQIhNM
-	 EmI9h6E8arM3wYG83de+qMn7Ybq4+U5Lz6mXabqyTIiv7ycrdq4WEfE0DgaN6vxa1v
-	 71LkEo8ogiArKJ6slnF80LC30ADNRLQgxIBvsM0I/OCx1HQ5HLXPZk3Z7vcPVTps4j
-	 bn/QrSrtApjmA==
-Date: Mon, 05 Aug 2024 19:22:23 +0000
-To: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 4/6] rust: rbtree: add mutable iterator
-Message-ID: <27f724ba-4f04-407b-9f5d-81a472f8ba14@proton.me>
-In-Reply-To: <20240727-b4-rbtree-v8-4-951600ada434@google.com>
-References: <20240727-b4-rbtree-v8-0-951600ada434@google.com> <20240727-b4-rbtree-v8-4-951600ada434@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: faa97aef71a75896ed3a9838451f19d039164229
+	s=arc-20240116; t=1722885961; c=relaxed/simple;
+	bh=/HWSY8O7UkcxsXWoYzC2sSwQp9YK0mgh95Vv6HMt6sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CG+4xwESEJxhom9F3R142bO+AYuTV/yDcLQjcbDE8JOTLYBh7bMSAsyqPXb+nN2ZciVu4hGxwu7Pwbx855ScLAy1FL3WATmJQ82oCaRxG9F9Y2KcO18GmQWAZmJVTPdLXmymRpNaQ3sb2zL4Ahh9C0M0ZQv0ClUFLfuW+8wNkGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cq1BQfoh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475BUvKZ021368;
+	Mon, 5 Aug 2024 19:25:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	05pYew0QZsnoHD2ifGyMy+1KXhPPBHZKe3O6r2x8sQI=; b=cq1BQfohNIBhAIxs
+	Xci6Wlwk8v6ggm0uufQgSxCij98ckOyPRoWD4Mk2Dw7m3R1lF0yN5GgEq4t1Cnv6
+	FFytrxr1lupa5IR/VZ7eQ86BtrOy+e2T0Ae+37/acy8lU0umQlQvRpxSMhWhI+cx
+	L52WRforCrJTP8gq+ovg6gyj0KMKkPK0pIA1N8CYsmD+M38uVHJry4i0Cw4fwzye
+	ZIXuDQn6Nrofnz1gNm6hvAH4ah938zlFqDs5rpRi4WxLsQn9zXuIz24rmj0zdErO
+	7timoqBXZ33wpD/n1N57qUZtpsMWPP/FKj7r3fGVNbihF7gDm0On/xcC0QnNanxd
+	u8lVPA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scmtw3hs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 19:25:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 475JPRJ9012819
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 19:25:27 GMT
+Received: from [10.71.110.34] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 5 Aug 2024
+ 12:25:23 -0700
+Message-ID: <531b68a0-e2e5-4f39-a586-5aaf73bb376c@quicinc.com>
+Date: Mon, 5 Aug 2024 12:25:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] drm/msm/dpu: don't play tricks with debug macros
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Jeykumar
+ Sankaran <jsanka@codeaurora.org>
+References: <20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org>
+ <20240802-dpu-fix-wb-v2-2-7eac9eb8e895@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240802-dpu-fix-wb-v2-2-7eac9eb8e895@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 7Whn8VW-plGTcVijgWVdvo-KfbWe-Exz
+X-Proofpoint-GUID: 7Whn8VW-plGTcVijgWVdvo-KfbWe-Exz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-05_08,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408050137
 
-On 27.07.24 22:30, Matt Gilbride wrote:
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
->=20
-> Add mutable Iterator implementation for `RBTree`,
-> allowing iteration over (key, value) pairs in key order. Only values are
-> mutable, as mutating keys implies modifying a node's position in the tree=
-.
->=20
-> Mutable iteration is used by the binder driver during shutdown to
-> clean up the tree maintained by the "range allocator" [1].
->=20
-> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-6-08=
-ba9197f637@google.com/ [1]
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Matt Gilbride <mattgilbride@google.com>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Tested-by: Alice Ryhl <aliceryhl@google.com>
+
+
+On 8/2/2024 12:47 PM, Dmitry Baryshkov wrote:
+> DPU debugging macros need to be converted to a proper drm_debug_*
+> macros, however this is a going an intrusive patch, not suitable for a
+> fix. Wire DPU_DEBUG and DPU_DEBUG_DRIVER to always use DRM_DEBUG_DRIVER
+> to make sure that DPU debugging messages always end up in the drm debug
+> messages and are controlled via the usual drm.debug mask.
+> 
+> I don't think that it is a good idea for a generic DPU_DEBUG macro to be
+> tied to DRM_UT_KMS. It is used to report a debug message from driver, so by
+> default it should go to the DRM_UT_DRIVER channel. While refactoring
+> debug macros later on we might end up with particular messages going to
+> ATOMIC or KMS, but DRIVER should be the default.
+> 
+> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  rust/kernel/rbtree.rs | 98 ++++++++++++++++++++++++++++++++++++++++++++-=
-------
->  1 file changed, 86 insertions(+), 12 deletions(-)
->=20
-> diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-> index d10074e4ac58..d7514ebadfa8 100644
-> --- a/rust/kernel/rbtree.rs
-> +++ b/rust/kernel/rbtree.rs
-> @@ -197,8 +197,26 @@ pub fn iter(&self) -> Iter<'_, K, V> {
->          // INVARIANT: `bindings::rb_first` returns a valid pointer to a =
-tree node given a valid pointer to a tree root.
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 14 ++------------
+>   1 file changed, 2 insertions(+), 12 deletions(-)
+> 
 
-This INVARIANT is out of place, `Iter` doesn't have any INVARIANT any
-more.
-
->          Iter {
->              _tree: PhantomData,
-> -            // SAFETY: `self.root` is a valid pointer to the tree root.
-> -            next: unsafe { bindings::rb_first(&self.root) },
-> +            iter_raw: IterRaw {
-
-This `IterRaw` construction is missing an INVARIANT comment. I think you
-can copy paste from below.
-
-> +                // SAFETY: by the invariants, all pointers are valid.
-> +                next: unsafe { bindings::rb_first(&self.root) },
-> +                _phantom: PhantomData,
-> +            },
-> +        }
-> +    }
-> +
-> +    /// Returns a mutable iterator over the tree nodes, sorted by key.
-> +    pub fn iter_mut(&mut self) -> IterMut<'_, K, V> {
-> +        IterMut {
-> +            _tree: PhantomData,
-> +            // INVARIANT:
-> +            //   - `self.root` is a valid pointer to a tree root.
-> +            //   - `bindings::rb_first` produces a valid pointer to a no=
-de given `root` is valid.
-> +            iter_raw: IterRaw {
-> +                // SAFETY: by the invariants, all pointers are valid.
-> +                next: unsafe { bindings::rb_first(&self.root) },
-
-Does this really derive a mutable reference? Ie shouldn't this be:?
-
-    next: unsafe { bindings::rb_first(&mut self.root) },
-
-> +                _phantom: PhantomData,
-> +            },
->          }
->      }
->=20
-> @@ -211,6 +229,11 @@ pub fn keys(&self) -> impl Iterator<Item =3D &'_ K> =
-{
->      pub fn values(&self) -> impl Iterator<Item =3D &'_ V> {
->          self.iter().map(|(_, v)| v)
->      }
-> +
-> +    /// Returns a mutable iterator over the values of the nodes in the t=
-ree, sorted by key.
-> +    pub fn values_mut(&mut self) -> impl Iterator<Item =3D &'_ mut V> {
-> +        self.iter_mut().map(|(_, v)| v)
-> +    }
->  }
->=20
->  impl<K, V> RBTree<K, V>
-> @@ -414,13 +437,9 @@ fn into_iter(self) -> Self::IntoIter {
->  /// An iterator over the nodes of a [`RBTree`].
->  ///
->  /// Instances are created by calling [`RBTree::iter`].
-> -///
-> -/// # Invariants
-> -/// - `self.next` is a valid pointer.
-> -/// - `self.next` points to a node stored inside of a valid `RBTree`.
->  pub struct Iter<'a, K, V> {
->      _tree: PhantomData<&'a RBTree<K, V>>,
-> -    next: *mut bindings::rb_node,
-> +    iter_raw: IterRaw<K, V>,
->  }
->=20
->  // SAFETY: The [`Iter`] gives out immutable references to K and V, so it=
- has the same
-> @@ -434,21 +453,76 @@ unsafe impl<'a, K: Sync, V: Sync> Sync for Iter<'a,=
- K, V> {}
->  impl<'a, K, V> Iterator for Iter<'a, K, V> {
->      type Item =3D (&'a K, &'a V);
->=20
-> +    fn next(&mut self) -> Option<Self::Item> {
-> +        self.iter_raw.next().map(|(k, v)|
-> +            // SAFETY: Due to `self._tree`, `k` and `v` are valid for th=
-e lifetime of `'a`.
-> +            unsafe { (&*k, &*v) })
-
-I don't really like the formatting here, can you move the SAFETY one
-line upwards? It should format nicely then.
-
-> +    }
-> +}
-> +
-> +impl<'a, K, V> IntoIterator for &'a mut RBTree<K, V> {
-> +    type Item =3D (&'a K, &'a mut V);
-> +    type IntoIter =3D IterMut<'a, K, V>;
-> +
-> +    fn into_iter(self) -> Self::IntoIter {
-> +        self.iter_mut()
-> +    }
-> +}
-> +
-> +/// A mutable iterator over the nodes of a [`RBTree`].
-> +///
-> +/// Instances are created by calling [`RBTree::iter_mut`].
-> +pub struct IterMut<'a, K, V> {
-> +    _tree: PhantomData<&'a mut RBTree<K, V>>,
-> +    iter_raw: IterRaw<K, V>,
-> +}
-> +
-> +// SAFETY: The [`IterMut`] gives out immutable references to K and mutab=
-le references to V, so it has the same
-> +// thread safety requirements as mutable references.
-> +unsafe impl<'a, K: Send, V: Send> Send for IterMut<'a, K, V> {}
-
-Since we only borrow `K` immutably, would it make sense to have `K:
-Sync`?
-
----
-Cheers,
-Benno
-
-> +
-> +// SAFETY: The [`IterMut`] gives out immutable references to K and mutab=
-le references to V, so it has the same
-> +// thread safety requirements as mutable references.
-> +unsafe impl<'a, K: Sync, V: Sync> Sync for IterMut<'a, K, V> {}
-> +
-> +impl<'a, K, V> Iterator for IterMut<'a, K, V> {
-> +    type Item =3D (&'a K, &'a mut V);
-> +
-> +    fn next(&mut self) -> Option<Self::Item> {
-> +        self.iter_raw.next().map(|(k, v)|
-> +            // SAFETY: Due to `&mut self`, we have exclusive access to `=
-k` and `v`, for the lifetime of `'a`.
-> +            unsafe { (&*k, &mut *v) })
-> +    }
-> +}
-> +
-> +/// A raw iterator over the nodes of a [`RBTree`].
-> +///
-> +/// # Invariants
-> +/// - `self.next` is a valid pointer.
-> +/// - `self.next` points to a node stored inside of a valid `RBTree`.
-> +struct IterRaw<K, V> {
-> +    next: *mut bindings::rb_node,
-> +    _phantom: PhantomData<fn() -> (K, V)>,
-> +}
-> +
-> +impl<K, V> Iterator for IterRaw<K, V> {
-> +    type Item =3D (*mut K, *mut V);
-> +
->      fn next(&mut self) -> Option<Self::Item> {
->          if self.next.is_null() {
->              return None;
->          }
->=20
-> -        // SAFETY: By the type invariant of `Iter`, `self.next` is a val=
-id node in an `RBTree`,
-> +        // SAFETY: By the type invariant of `IterRaw`, `self.next` is a =
-valid node in an `RBTree`,
->          // and by the type invariant of `RBTree`, all nodes point to the=
- links field of `Node<K, V>` objects.
-> -        let cur =3D unsafe { container_of!(self.next, Node<K, V>, links)=
- };
-> +        let cur: *mut Node<K, V> =3D
-> +            unsafe { container_of!(self.next, Node<K, V>, links) }.cast_=
-mut();
->=20
->          // SAFETY: `self.next` is a valid tree node by the type invarian=
-ts.
->          self.next =3D unsafe { bindings::rb_next(self.next) };
->=20
-> -        // SAFETY: By the same reasoning above, it is safe to dereferenc=
-e the node. Additionally,
-> -        // it is ok to return a reference to members because the iterato=
-r must outlive it.
-> -        Some(unsafe { (&(*cur).key, &(*cur).value) })
-> +        // SAFETY: By the same reasoning above, it is safe to dereferenc=
-e the node.
-> +        Some(unsafe { (addr_of_mut!((*cur).key), addr_of_mut!((*cur).val=
-ue)) })
->      }
->  }
->=20
->=20
-> --
-> 2.46.0.rc1.232.g9752f9e123-goog
->=20
-
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
