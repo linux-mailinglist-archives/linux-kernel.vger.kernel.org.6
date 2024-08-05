@@ -1,261 +1,319 @@
-Return-Path: <linux-kernel+bounces-274358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D933947748
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:27:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5513294774A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DF1A281BC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA971F21B5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1097514D280;
-	Mon,  5 Aug 2024 08:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5EC14D433;
+	Mon,  5 Aug 2024 08:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y/QHR+Hx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7A1B/NeN";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y/QHR+Hx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7A1B/NeN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="2O40tvta"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B06149C45
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B603149C45;
+	Mon,  5 Aug 2024 08:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722846413; cv=none; b=sbQJQJpVEwKvDKKbCe3FHDR9cdBCjt5jHBm21+F133oHJhLTFlnjYJ2UFLsTdZKJI7widr6yydzCRBKo27pztld8lbzU4C665m5nR0i77hsTiaeAMTu4EADJY57kmu3iD99GmA6HHHb+mBkY5y/3wm4Cir9iuaiFc/TYq2u3kS0=
+	t=1722846450; cv=none; b=jqtxQvIoXh4ZgZbbLyV2PK9ABcgG82PFF7x8QcQcxgGzDF9oDyJ+A6X39Jfg7GGOXrfGuIFfk+9CBWer1ZyfIqjs9097rDMJeV9JywMWiyIHLnuYzRg6GVbobwlRmRR3/fBaloNzwRy6KQzWe7rOVWBT/830Mo/HdxF+pUhVkkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722846413; c=relaxed/simple;
-	bh=oQgG04f+MJ4CuJL1Eh3OfNzZfly3OHT33uICk614q4U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sRndviap/9adatJuqZMxuVATfSMOlfOV57Flr5BhgkRXFoXJjlueK+aREdN1RGhM2yb+J/NpsSb0I81QkKWBlKa4Xp7zDUcchNJqHIuPmDlphMS07x8d7L2YKldvllFGaqzzDdWFtqveGl+ULA8zEyz6Rk+eVyejRmApgkHVHeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y/QHR+Hx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7A1B/NeN; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y/QHR+Hx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7A1B/NeN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 855591F7DB;
-	Mon,  5 Aug 2024 08:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722846409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XngiWkeZHwMWBjYpZ7hK4nOZ2LMnPUOIWVb5vuenUgw=;
-	b=y/QHR+HxjGxD37J14rGQdE/mOj0HqDbfTgrqx6C4Y+Me22cjI/2KdJXYIBoW9qhqw6GCgy
-	FI5cczf0qQ67ex0a4wbfmHfti7KxFgs0biY0Uc1rAcnBNho56hZvU0Cw5meHi8bcuvsEyJ
-	gZqv0j2VRx27VI+yTqDo9+VVR1E1vYo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722846409;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XngiWkeZHwMWBjYpZ7hK4nOZ2LMnPUOIWVb5vuenUgw=;
-	b=7A1B/NeNf+JH3BBKwwgfEGYS+CyRTviKm+0HSeIcq7o4GL5nHuhXiaeP08fKiGvu6p1uJD
-	jGB1bJlwNkcz5UCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="y/QHR+Hx";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="7A1B/NeN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722846409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XngiWkeZHwMWBjYpZ7hK4nOZ2LMnPUOIWVb5vuenUgw=;
-	b=y/QHR+HxjGxD37J14rGQdE/mOj0HqDbfTgrqx6C4Y+Me22cjI/2KdJXYIBoW9qhqw6GCgy
-	FI5cczf0qQ67ex0a4wbfmHfti7KxFgs0biY0Uc1rAcnBNho56hZvU0Cw5meHi8bcuvsEyJ
-	gZqv0j2VRx27VI+yTqDo9+VVR1E1vYo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722846409;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XngiWkeZHwMWBjYpZ7hK4nOZ2LMnPUOIWVb5vuenUgw=;
-	b=7A1B/NeNf+JH3BBKwwgfEGYS+CyRTviKm+0HSeIcq7o4GL5nHuhXiaeP08fKiGvu6p1uJD
-	jGB1bJlwNkcz5UCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4798113254;
-	Mon,  5 Aug 2024 08:26:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id U1pBEMmMsGbQWwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 05 Aug 2024 08:26:49 +0000
-Message-ID: <da27771e-fa16-4356-bb0f-69245cc98098@suse.de>
-Date: Mon, 5 Aug 2024 10:26:48 +0200
+	s=arc-20240116; t=1722846450; c=relaxed/simple;
+	bh=XQduA1yrJcEmZ0MOj0pc8jiP7CVFLf9SEAEfyYpUppY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ekmlqs/E46cYyoWpKQqQouUILZbu1yP/OjuS4v8jRtjspsKUnnxfUTcMe1WyWtLd7HEOcTVqx2rgf/xySmrspS+fuWTMhKOi8mLqOVdirtvHq89f+Ijp+AT0HZHQu9eLFx+0tLKs4Y3HKHtMciBG5TgzTGz9HS9U10Hy41xoKsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=2O40tvta; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=11StMB/CHBVgYxZV+/tIFDr6XxButiIMJq6QA32Y3As=; t=1722846448; x=1723278448;
+	 b=2O40tvtaeiCKO5kgmm0g2/hDsrPwvLAPViJp5TyoIhFhV3YV3CwN2LiVf/q14NVV1QA7jD10/x
+	a6nOm5PMbcyQh4n2SEabbNzFH2PkkSDMcgsOU2Q5DAHECtt7q5qODKlW9QGqoh3O7Jbq3rp/10umX
+	fKUbVyMW3sF5Lr2rbiOIdHzUxCGwmAs8gYDWYK/bApRisfFntHAUrvNNkYKkt4ZT9JxqbNJ2wjcXJ
+	tjWbwczO98X563lClKmuYX7iU31EqkPDIyRh7fgWv5GYWn4jVkx3DEfmMkFV1TeT+OTLWz4jz/sI7
+	D2Z5Zy90BfPolCEjTGqae0steC1gTWliM471A==;
+Received: from ip4d148da6.dynamic.kabel-deutschland.de ([77.20.141.166] helo=truhe.fritz.box); authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	id 1sat3k-00030P-GN; Mon, 05 Aug 2024 10:27:16 +0200
+From: Thorsten Leemhuis <linux@leemhuis.info>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: regressions@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	=?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <petr@tesarici.cz>
+Subject: [PATCH v1] docs: bug-bisect: rewrite to better match the other bisecting text
+Date: Mon,  5 Aug 2024 10:27:15 +0200
+Message-ID: <10a565e4ebca5e03a2e7abb7ffe1893136471bf9.1722846343.git.linux@leemhuis.info>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] drm/fb-helper: Don't schedule_work() to flush
- frame buffer during panic()
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Luck, Tony" <tony.luck@intel.com>, "Wang, Yudong" <yudong.wang@intel.com>
-References: <20240703141737.75378-1-qiuxu.zhuo@intel.com>
- <20240805071355.42636-1-qiuxu.zhuo@intel.com>
- <c349e2c6-027e-4e65-800e-f30ac0a0a785@suse.de>
- <CY8PR11MB7134F297DE1D5F61A9FEA41689BE2@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <CY8PR11MB7134F297DE1D5F61A9FEA41689BE2@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[intel.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.50
-X-Rspamd-Queue-Id: 855591F7DB
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1722846448;2e1dcc07;
+X-HE-SMSGID: 1sat3k-00030P-GN
 
-Hi
+Rewrite the short document on bisecting kernel bugs. The new text
+improves .config handling, brings a mention of 'git skip', and explains
+what to do after the bisection finished -- including trying a revert to
+verify the result. The rewrite at the same time removes the unrelated
+and outdated section on 'Devices not appearing' and replaces some
+sentences about bug reporting with a pointer to the document covering
+that topic in detail.
 
-Am 05.08.24 um 10:10 schrieb Zhuo, Qiuxu:
-> Hi Thomas,
->
->> From: Thomas Zimmermann <tzimmermann@suse.de>
->> Sent: Monday, August 5, 2024 3:31 PM
->> [...]
->>> Hi Maarten and maintainers,
->>>
->>> A gentle ping :-).
->>>
->>> Could you please help push this v2 fix upstream?
->>> If you have any concerns, please let me know.
->> I already acked this patch, but I still have a question: during a panic, will fbcon
-> Thanks for your kind review of this patch and ACK.
->
->> still print a panic message? I think that would likely require scheduling that
->> worker.
-> During the error injection testing:
->
-> 1) Without this v2 fix:
->
->     1.1) If panic() is not blocked on [1] (~99 times in 100 cycles),
->          then the console/fbcon can print normal panic-related messages like [2],
->          and the system can reboot successfully.
->
->     1.2) If panic() is blocked on [1] (~1 time in 100 cycles),
->          then the console/fbcon is silent and the system gets hung without reboot.
->           This is not the expected behavior. The system is expected to reboot.
->
-> 2) With this v2 fix:
->
->     2.1) The console/fbcon can always print normal panic related messages like[2],
->          and the system can reboot successfully. Same behavior to 1.1).
->          [ we tested it ~1500 cycles. ]
->
-> [1] panic() -> ... drm_fb_helper_damage() -> schedule_work().
->      For details, pls see the v2 commit message.
->
-> [2] Panic messages:
->      [  133.900042] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 4: ba00000000000e0b
->      [  133.900046] mce: [Hardware Error]: RIP !INEXACT! 10:<ffffffff8229ebec> {intel_idle_xstate+0x6c/0xc0}
->      [  133.900055] mce: [Hardware Error]: TSC 9701dd289b MISC 29100000 PPIN 9000d7561bb0e340
->      [  133.900057] mce: [Hardware Error]: PROCESSOR 0:a06d1 TIME 1715827713 SOCKET 0 APIC 0 microcode 810001d0
->      [  133.900060] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
->      [  134.053858] mce: [Hardware Error]: Machine check: Processor context corrupt
->      [  134.053866] Kernel panic - not syncing: Fatal machine check
->      [  134.075183] Kernel Offset: disabled
->      [  134.111372] pstore: backend (erst) writing error (-28)
+This overall brings the approach close to the one in the recently added
+text Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst.
+As those two texts serve a similar purpose for different audiences,
+mention that document in the head of this one and outline when the
+other might be the better one to follow.
 
-Thanks for the detailed reply.
+Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+---
+ Documentation/admin-guide/bug-bisect.rst | 205 +++++++++++++++--------
+ MAINTAINERS                              |   1 +
+ 2 files changed, 135 insertions(+), 71 deletions(-)
 
-I've found that your patch has already been merged and should now be in 
-v6.11-rc2. It'll probably be backported to older kernels as well.
+diff --git a/Documentation/admin-guide/bug-bisect.rst b/Documentation/admin-guide/bug-bisect.rst
+index 325c5d0ed34a0a..f4a9acab65d0f5 100644
+--- a/Documentation/admin-guide/bug-bisect.rst
++++ b/Documentation/admin-guide/bug-bisect.rst
+@@ -1,76 +1,139 @@
+-Bisecting a bug
+-+++++++++++++++
+-
+-Last updated: 28 October 2016
+-
+-Introduction
+-============
+-
+-Always try the latest kernel from kernel.org and build from source. If you are
+-not confident in doing that please report the bug to your distribution vendor
+-instead of to a kernel developer.
+-
+-Finding bugs is not always easy. Have a go though. If you can't find it don't
+-give up. Report as much as you have found to the relevant maintainer. See
+-MAINTAINERS for who that is for the subsystem you have worked on.
+-
+-Before you submit a bug report read
+-'Documentation/admin-guide/reporting-issues.rst'.
+-
+-Devices not appearing
+-=====================
+-
+-Often this is caused by udev/systemd. Check that first before blaming it
+-on the kernel.
+-
+-Finding patch that caused a bug
+-===============================
+-
+-Using the provided tools with ``git`` makes finding bugs easy provided the bug
+-is reproducible.
+-
+-Steps to do it:
+-
+-- build the Kernel from its git source
+-- start bisect with [#f1]_::
++.. SPDX-License-Identifier: (GPL-2.0+ OR CC-BY-4.0)
++.. [see the bottom of this file for redistribution information]
+ 
+-	$ git bisect start
+-
+-- mark the broken changeset with::
+-
+-	$ git bisect bad [commit]
+-
+-- mark a changeset where the code is known to work with::
+-
+-	$ git bisect good [commit]
+-
+-- rebuild the Kernel and test
+-- interact with git bisect by using either::
+-
+-	$ git bisect good
+-
+-  or::
+-
+-	$ git bisect bad
+-
+-  depending if the bug happened on the changeset you're testing
+-- After some interactions, git bisect will give you the changeset that
+-  likely caused the bug.
+-
+-- For example, if you know that the current version is bad, and version
+-  4.8 is good, you could do::
+-
+-           $ git bisect start
+-           $ git bisect bad                 # Current version is bad
+-           $ git bisect good v4.8
++===============
++Bisecting a bug
++===============
+ 
++This document describes how to find a change causing a kernel regression using
++``git bisect``.
+ 
+-.. [#f1] You can, optionally, provide both good and bad arguments at git
+-	 start with ``git bisect start [BAD] [GOOD]``
++The text focuses on the gist of the process. If you are new to bisecting the
++kernel, better follow Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst
++instead: it depicts everything from start to finish while covering multiple
++aspects even kernel developers occasionally forget. This includes:
+ 
+-For further references, please read:
++- Detecting situations where a bisections would be a waste of time, as nobody
++  would care about the result -- for example, because the problem is triggered
++  by a .config change, was already fixed, is caused by something your Linux
++  distributor changed, occurs in an abandoned version, or happens after the
++  kernel marked itself as 'tainted'.
++- Preparing the .config file using an appropriate kernel while enabling or
++  disabling debug symbols depending on the situation's needs -- while optionally
++  trimming the .config to tremendously reduce the build time per bisection step.
++- For regressions in stable or longterm kernels: checking mainline as well, as
++  the result determines to whom the regression must be reported to.
+ 
+-- The man page for ``git-bisect``
+-- `Fighting regressions with git bisect <https://www.kernel.org/pub/software/scm/git/docs/git-bisect-lk2009.html>`_
+-- `Fully automated bisecting with "git bisect run" <https://lwn.net/Articles/317154>`_
+-- `Using Git bisect to figure out when brokenness was introduced <http://webchick.net/node/99>`_
++Neither document describes how to report a regression, as that is covered by
++Documentation/admin-guide/reporting-issues.rst.
++
++Finding the change causing a kernel issue using a bisection
++===========================================================
++
++*Note: the following process assumes you prepared everything for a bisection;
++this includes having a Git clone with the appropriate sources, installing the
++software required to build and install kernels, as well as a .config file stored
++in a safe place (the following example assumes '~/prepared_kernel_.config') to
++use as pristine base at each bisection step.*
++
++* Preparation: start the bisection and tell Git about the points in the history
++  you consider to be working and broken, which Git calls 'good' and 'bad'::
++
++    git bisect start
++    git bisect good v6.0
++    git bisect bad v6.1
++
++  Instead of Git tags like 'v6.0' and 'v6.1' you can specify commit-ids, too.
++
++1. Copy your prepared .config into the build directory and adjust it to the
++   needs of the codebase Git checked out for testing::
++
++     cp ~/prepared_kernel_.config .config
++     make olddefconfig
++
++2. Now build, install, and boot a kernel; if any of this fails for unrelated
++   reasons, run ``git bisect skip`` and go back to step 1.
++
++3. Check if the feature that regressed works in the kernel you just built.
++
++   If it does, execute::
++
++     git bisect good
++
++   If it does not, run::
++
++     git bisect bad
++
++   Be sure what you tell Git is correct, as getting this wrong just once will
++   send the rest of the bisection totally off course.
++
++   Go back to back to step 1, if Git after issuing one of those commands checks
++   out another bisection point while printing something like 'Bisecting:
++   675 revisions left to test after this (roughly 10 steps)'.
++
++   You finished the bisection and move to the next point below, if Git instead
++   prints something like 'cafecaca0c0dacafecaca0c0dacafecaca0c0da is the first
++   bad commit'; right afterwards it will show some details about the culprit
++   including its patch description. The latter can easily fill your terminal,
++   so you might need to scroll up to see the message mentioning the culprit's
++   commit-id; alternatively, run ``git bisect log`` to show the result.
++
++* Recommended complementary task: put the bisection log and the current
++  .config file aside for the bug report; furthermore tell Git to reset the
++  sources to the state before the bisection::
++
++     git bisect log > ~/bisection-log
++     cp .config ~/bisection-config-culprit
++     git bisect reset
++
++* Recommended optional task: try reverting the culprit on top of the latest
++  codebase; if successful, this will validate your bisection and enable
++  developers to resolve the regression through a revert.
++
++  To try this, update your clone and check out latest mainline. Then tell Git to
++  revert the change::
++
++     git revert --no-edit cafec0cacaca0
++
++  This might be impossible, for example when the bisection landed on a merge
++  commit. In that case, abandon the attempt. Do the same, if Git fails to revert
++  the culprit because later changes depend on it -- unless you bisected using a
++  stable or longterm kernel series, in which case you want to retry using the
++  latest code from that series.
++
++  If a revert succeeds, build and test another kernel to validate the result of
++  the bisection. Mention the outcome in your bug report.
++
++Additional reading material
++---------------------------
++
++* The `man page for 'git bisect' <https://git-scm.com/docs/git-bisect>`_ and
++  `fighting regressions with 'git bisect' <https://git-scm.com/docs/git-bisect-lk2009.html>`_
++  in the Git documentation.
++* `Working with git bisect <https://nathanchance.dev/posts/working-with-git-bisect/>`_
++  from kernel developer Nathan Chancellor.
++* `Using Git bisect to figure out when brokenness was introduced <http://webchick.net/node/99>`_.
++* `Fully automated bisecting with 'git bisect run' <https://lwn.net/Articles/317154>`_.
++
++..
++   end-of-content
++..
++   This document is maintained by Thorsten Leemhuis <linux@leemhuis.info>. If
++   you spot a typo or small mistake, feel free to let him know directly and
++   he'll fix it. You are free to do the same in a mostly informal way if you
++   want to contribute changes to the text -- but for copyright reasons please CC
++   linux-doc@vger.kernel.org and 'sign-off' your contribution as
++   Documentation/process/submitting-patches.rst explains in the section 'Sign
++   your work - the Developer's Certificate of Origin'.
++..
++   This text is available under GPL-2.0+ or CC-BY-4.0, as stated at the top
++   of the file. If you want to distribute this text under CC-BY-4.0 only,
++   please use 'The Linux kernel development community' for author attribution
++   and link this as source:
++   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/admin-guide/bug-bisect.rst
++
++..
++   Note: Only the content of this RST file as found in the Linux kernel sources
++   is available under CC-BY-4.0, as versions of this text that were processed
++   (for example by the kernel's build system) might contain content taken from
++   files which use a more restrictive license.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b34385f2e46d92..90c8681d4d311c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6719,6 +6719,7 @@ DOCUMENTATION REPORTING ISSUES
+ M:	Thorsten Leemhuis <linux@leemhuis.info>
+ L:	linux-doc@vger.kernel.org
+ S:	Maintained
++F:	Documentation/admin-guide/bug-bisect.rst
+ F:	Documentation/admin-guide/quickly-build-trimmed-linux.rst
+ F:	Documentation/admin-guide/reporting-issues.rst
+ F:	Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst
 
- > dim cite 833cd3e9ad8360785b6c23c82dd3856df00732d9
-833cd3e9ad83 ("drm/fb-helper: Don't schedule_work() to flush frame 
-buffer during panic()")
- > git tag --contains 833cd3e9ad8360785b6c23c82dd3856df00732d9
-drm-fixes-2024-08-02
-drm-misc-fixes-2024-08-01
-v6.11-rc2
-
-Best regards
-Thomas
-
->
-> Thanks!
-> -Qiuxu
->   
->
->
-
+base-commit: 8663dd38a7ba5b2bfd2c7b4271e6e63bc0ef1e42
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.45.0
 
 
