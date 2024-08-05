@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-275208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898439481D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:41:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BF89481D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBAEAB21D42
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:41:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DA011F21CB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B677A165F19;
-	Mon,  5 Aug 2024 18:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A93166F0B;
+	Mon,  5 Aug 2024 18:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXVrJQHv"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOEPiif0"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B937165EE7
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98310165F08
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722883239; cv=none; b=ifHbJiBPuRtwVPd7JcthfJq6ku4ANhJhFRrSOj+H6yKwTQIBnDy065qkpw66xaOr4GpX8by+xOuL/7RgDPAcJkAcCJtbgQjpAlzk5f3erSqidqqjqZLy6ZIuNYxkt4Iohknlh1OS/M13K1MVQe8hTsRtWqVkoVRQtDiPQxIsK28=
+	t=1722883241; cv=none; b=Ib7YwdA1abGExTt6pnZ5ZbPTzh3ByB6DfJF52UoGgMpHJs2yrMXB1Er2Uz+md746g4ZImWPyMQl3cHXGjQCMZP4byvLeAmiDfVFziX+BbuWrNJAJAkh8LVqW8yhF8jxVJsgYf3qe5FrmRTj0JHvuhiis4zqI715KelXR6Oe5bgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722883239; c=relaxed/simple;
-	bh=/CUHva9R4qh40v4PXGdZpG7qraQNBpsnib80AoLfVts=;
+	s=arc-20240116; t=1722883241; c=relaxed/simple;
+	bh=24P15Bx9ElCDUMAi4OqJDf1LJ44qOrvW6LopdQr9Ts0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mkIUFM4YroCsW9+TI7AEH0hvYax+ooe4dK62AQxI+u+E/wbX+RmOY/WoQxf/D884dvgp6zqtdmvTpwdWtGGquGIi3xbmTYjbwbTL3VJJTXMjwjHlkzOGIfIg5C7iGgqFklQv6lJ2Y0B76mhAxRjLA/irBDEOvQ4ReoN01UYb8jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXVrJQHv; arc=none smtp.client-ip=209.85.208.44
+	 MIME-Version; b=kfT45csCZSnUlXJHMzNoaOydzG31HkJkJCyXvaWuF4SMwcIz7aDBpSuSQbhHwfY4sybMJJvPhcRHjtJJKQLu/QuhpqpuRWKma4FaCvyqognk94gRcuNDWR7Q4PVi0KbI56xuuqGGC9t5Ls5ymKQ5pkfN5mrZm0w+mKy5MbLwno0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOEPiif0; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a61386so4129567a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:40:37 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a8e73b29cso904813066b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:40:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722883236; x=1723488036; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722883238; x=1723488038; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NvmD+ez0KqmrlVq3MNB02uXxyKID9fWAsFipmCLltBQ=;
-        b=UXVrJQHvrX7hy1gtSIHY46Ew8K0GXT3ov5aXtQ/7Rgdq6CkBUxilQBNR4PkEP53t54
-         I5joXxfmAO56DWsUXuA6C6T+NA85Nin53I63kKteY/Aw0gWolnIWzX/FlS5sUHEi8SMj
-         gD1+9ziBsfVI0VJG02B72Fey8bUZTh9SjSOjMygrJaYo+lBLmYhFKOUd/h7cbvatO/hn
-         +Es/PpwVTPHh9veAIW8hHFhqoqkziKafuk+NRnWTc3SGVvXXHDxSFggb6Tyg4UmorwJS
-         BYltEZ6iOoRj/MnR0dIVY+tw0IpBKxTgISOOd7o3o9pad0s9WJ/bur2PddVgpgIS2S+b
-         TtTQ==
+        bh=zriScYxEubY60jokktbaWFHqZ5TIRBloyPdl3CM/JiM=;
+        b=LOEPiif06VbgwIxjUtFDlnaswSvT9s+J+gkoUurUqyR6vKbZEwaFKkLsM2PjUqXaN5
+         lyL/csz47YE38ml2abONr/354u0gu+j7jPMjYCaJWvnqC9gx8Aynye89IlXgUL7UAADz
+         kFmG6PPbHVwsSPqrZ0SYDfJ+gS+4xPdTorR4PhoZeX+Yr0/Zd265AHtZB6bEjxgojdtR
+         /aMjo3UjqCoA8EqPQiHR6rBUDcuaUViLN8TeQT6VPiWIJoJsnOfS/dzJs2NiW/OgXWDV
+         rh1jev2Eqyako5o3CUaxXXM0WVjMTmd3+QcCLq6M7in42nsOMqechpvUsMx+koGC5Erb
+         YVcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722883236; x=1723488036;
+        d=1e100.net; s=20230601; t=1722883238; x=1723488038;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NvmD+ez0KqmrlVq3MNB02uXxyKID9fWAsFipmCLltBQ=;
-        b=igVKgaAaJeAYjZ+jb3A4uPYXx6Fv2EAhqBDkXhMnBNpHsjRrWsI3zQjqauRknwWDfl
-         5mtIP0qWhTIrIC+EbxCCl+7r1V/KTiU3fAz9aUa2ceIayWXC0mKWacP3pW8aB878XEQf
-         JrckFhRDueOR5ujBSomZMJkYOEZvgmnsCnlQy+oA2CnbegoeYuNjTD0p8oe7idd1IXpL
-         NlfLZsJJXyAgcnUg38QCFUxxW0bv1yEZncAXNFgA7dirJds3/9Q6o6KuI4lt2CviqDQc
-         2izUcqBkziNZX4Gb0JAL7VvM5/STwV25e+PB30zhfRKJXe3Dz1fn7mDymdc8osU3VW/o
-         NLNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCWgSWrZxqUuEMjj84wT2f8/j8lBPrrPkpZ8sueYo5Tcnbv8ah0LELvG06dyZa8R0yawW9r89kGL/W3XMOQblmfrbA/WvlpTjuC1vC
-X-Gm-Message-State: AOJu0YyaaXFZQXV9aaftBJUoTxY5vCf2nokq+wcMGbnVKfDNytsAZKdm
-	XE5zqHmxJW12lGyW4DffHRnhKs7DeXHP7wsXRXi3YTnnjP7z8tPM
-X-Google-Smtp-Source: AGHT+IGT8P8MH8PUrIhAbGQwOI91FhpuTTEeBpD91PRfdIvScb2atdeUvkPb95VBGym8haoLNMyXMg==
-X-Received: by 2002:a17:907:c00f:b0:a7d:e956:ad51 with SMTP id a640c23a62f3a-a7de956af6dmr465965066b.21.1722883236392;
-        Mon, 05 Aug 2024 11:40:36 -0700 (PDT)
+        bh=zriScYxEubY60jokktbaWFHqZ5TIRBloyPdl3CM/JiM=;
+        b=TtkNNuuEiAnqQAPw9YSId5ae5TbUbcGsWfPvALnFTv2crX9Y786qrt368cwaVcEPSH
+         27JLMKJy9H9kKt9TwGNa/0Ly6JrhjGppUql/esaOIczLrVePcrpxK0HnaRJys0EZDQkR
+         FIz1eOK4n1uv/iTRKbPtbJKGOUUcgDLpkcHGgAybcfJ+sGRdYrO3eA6KShRRSQnTDdSJ
+         ph5498ZwOE+SHT1l1T+afHi25QCV2L3jDTbRgbmG/c1CNa8gCQ9w0HAZT/MqZiP3Z3si
+         1ODWU4LId/IUl51++1JQhKV1lcIyhTlzIrJSLzrZdlVhcGR9hzm9CYH/VGqtgQA+IfzA
+         go9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVWy3N0U317L5fKTBzSlPJwYozY2o5dcFa1FcjyGj28V6ommfiWpeph7pqety2E8OKE+a+A4X1GF7fr020P7OBnmsErMkw09cKzaeBV
+X-Gm-Message-State: AOJu0YxLquNifikDb8U+6b7/iz5pCo6Jf/OcNErgQS/s2pZ/kAl+A64U
+	rDI161yEgwayChRd796S3XEDD1e5NRf18GSVpuTV8VPY0nzuGdTH
+X-Google-Smtp-Source: AGHT+IEGo7Vm5zvJp9nEVud6phcEtTDIKhjtj5nfoLZd1H8ajHYipyEgr8snqKHgp24J3b5WtV8biQ==
+X-Received: by 2002:a17:907:868e:b0:a7d:a29e:5c33 with SMTP id a640c23a62f3a-a7dc4fc9544mr744489266b.28.1722883237795;
+        Mon, 05 Aug 2024 11:40:37 -0700 (PDT)
 Received: from localhost.localdomain (93-103-32-68.dynamic.t-2.net. [93.103.32.68])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c12ad3sm478517266b.88.2024.08.05.11.40.35
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c12ad3sm478517266b.88.2024.08.05.11.40.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 11:40:35 -0700 (PDT)
+        Mon, 05 Aug 2024 11:40:37 -0700 (PDT)
 From: Uros Bizjak <ubizjak@gmail.com>
 To: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
@@ -84,9 +84,9 @@ Cc: Uros Bizjak <ubizjak@gmail.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Borislav Petkov <bp@alien8.de>,
 	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [RFC PATCH 2/3] percpu: Assorted fixes found by strict percpu address space checks
-Date: Mon,  5 Aug 2024 20:39:00 +0200
-Message-ID: <20240805184012.358023-3-ubizjak@gmail.com>
+Subject: [RFC PATCH 3/3] percpu/x86: [RFH] Enable strict percpu checks via named AS qualifiers
+Date: Mon,  5 Aug 2024 20:39:01 +0200
+Message-ID: <20240805184012.358023-4-ubizjak@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240805184012.358023-1-ubizjak@gmail.com>
 References: <20240805184012.358023-1-ubizjak@gmail.com>
@@ -98,10 +98,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Assorted fixes to prevent defconfig build failures when
-strict percpu address space checks will be enabled.
+This patch declares percpu variables in __seg_gs/__seg_fs named AS
+and keeps them named AS qualified until they are dereferenced with
+percpu accessor. This approach enables various compiler check
+for corss-namespace variable assignments.
 
-These show effeciveness of strict percpu address space checks.
+RFH: The patch hijacks __percpu tag and repurposes it as a named
+address space qualifier. While this works surprisingly well in
+this RFC patchset, I would really appreciate some help on how
+to rewrite this hack into some "production ready" code.
 
 Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
 Cc: Dennis Zhou <dennis@kernel.org>
@@ -119,153 +124,49 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- arch/x86/kernel/head64.c      | 3 ++-
- drivers/base/devres.c         | 2 +-
- fs/aio.c                      | 2 +-
- include/linux/cleanup.h       | 4 ++--
- include/linux/prandom.h       | 1 +
- kernel/events/hw_breakpoint.c | 4 ++--
- kernel/workqueue.c            | 2 +-
- lib/percpu_counter.c          | 2 +-
- net/core/dev.c                | 2 +-
- 9 files changed, 12 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/percpu.h  | 15 ++++++++++++---
+ include/linux/compiler_types.h |  2 +-
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index a817ed0724d1..f5d6ad351cc4 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -560,9 +560,10 @@ void early_setup_idt(void)
- void __head startup_64_setup_gdt_idt(void)
- {
- 	void *handler = NULL;
-+	struct desc_struct *gdt = (struct desc_struct *)(uintptr_t)init_per_cpu_var(gdt_page.gdt);
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index 4d31203eb0d2..40916bbd2f11 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -95,9 +95,18 @@
  
- 	struct desc_ptr startup_gdt_descr = {
--		.address = (unsigned long)&RIP_REL_REF(init_per_cpu_var(gdt_page.gdt)),
-+		.address = (unsigned long)&RIP_REL_REF(*gdt),
- 		.size    = GDT_SIZE - 1,
- 	};
+ #endif /* CONFIG_SMP */
  
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index a2ce0ead06a6..894f5a1e6d18 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -1231,6 +1231,6 @@ void devm_free_percpu(struct device *dev, void __percpu *pdata)
- 	 * devm_free_pages() does.
- 	 */
- 	WARN_ON(devres_release(dev, devm_percpu_release, devm_percpu_match,
--			       (__force void *)pdata));
-+			       (__force void *)(uintptr_t)pdata));
- }
- EXPORT_SYMBOL_GPL(devm_free_percpu);
-diff --git a/fs/aio.c b/fs/aio.c
-index 6066f64967b3..e8920178b50f 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -100,7 +100,7 @@ struct kioctx {
+-#define __my_cpu_type(var)	typeof(var) __percpu_seg_override
+-#define __my_cpu_ptr(ptr)	(__my_cpu_type(*(ptr))*)(__force uintptr_t)(ptr)
+-#define __my_cpu_var(var)	(*__my_cpu_ptr(&(var)))
++#if defined(CONFIG_USE_X86_SEG_SUPPORT) && defined(CONFIG_CC_HAS_TYPEOF_UNQUAL)
++# define __my_cpu_type(var)	typeof(var)
++# define __my_cpu_ptr(ptr)	(ptr)
++# define __my_cpu_var(var)	(var)
++# define __percpu_qual		__percpu_seg_override
++#else
++# define __my_cpu_type(var)	typeof(var) __percpu_seg_override
++# define __my_cpu_ptr(ptr)	(__my_cpu_type(*(ptr))*)(__force uintptr_t)(ptr)
++# define __my_cpu_var(var)	(*__my_cpu_ptr(&(var)))
++# define __percpu_qual
++#endif
++
+ #define __percpu_arg(x)		__percpu_prefix "%" #x
+ #define __force_percpu_arg(x)	__force_percpu_prefix "%" #x
  
- 	unsigned long		user_id;
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index f14c275950b5..47c95a06a0ec 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -57,7 +57,7 @@ static inline void __chk_io_ptr(const volatile void __iomem *ptr) { }
+ #  define __user	BTF_TYPE_TAG(user)
+ # endif
+ # define __iomem
+-# define __percpu	BTF_TYPE_TAG(percpu)
++# define __percpu	__percpu_qual BTF_TYPE_TAG(percpu)
+ # define __rcu		BTF_TYPE_TAG(rcu)
  
--	struct __percpu kioctx_cpu *cpu;
-+	struct kioctx_cpu __percpu *cpu;
- 
- 	/*
- 	 * For percpu reqs_available, number of slots we move to/from global
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index d9e613803df1..f7e1158cbacf 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -154,7 +154,7 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
- #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
- 	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
- 	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
--	{ return *_T; }
-+	{ return (void *)(uintptr_t)*_T; }
- 
- #define DEFINE_GUARD_COND(_name, _ext, _condlock) \
- 	EXTEND_CLASS(_name, _ext, \
-@@ -211,7 +211,7 @@ static inline void class_##_name##_destructor(class_##_name##_t *_T)	\
- 									\
- static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T)	\
- {									\
--	return _T->lock;						\
-+	return (void *)(uintptr_t)_T->lock;				\
- }
- 
- 
-diff --git a/include/linux/prandom.h b/include/linux/prandom.h
-index f7f1e5251c67..f2ed5b72b3d6 100644
---- a/include/linux/prandom.h
-+++ b/include/linux/prandom.h
-@@ -10,6 +10,7 @@
- 
- #include <linux/types.h>
- #include <linux/once.h>
-+#include <linux/percpu.h>
- #include <linux/random.h>
- 
- struct rnd_state {
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index 6c2cb4e4f48d..d82fe78f0658 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -849,7 +849,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *attr,
- 
- 	cpu_events = alloc_percpu(typeof(*cpu_events));
- 	if (!cpu_events)
--		return (void __percpu __force *)ERR_PTR(-ENOMEM);
-+		return (void __percpu __force *)(uintptr_t)ERR_PTR(-ENOMEM);
- 
- 	cpus_read_lock();
- 	for_each_online_cpu(cpu) {
-@@ -868,7 +868,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *attr,
- 		return cpu_events;
- 
- 	unregister_wide_hw_breakpoint(cpu_events);
--	return (void __percpu __force *)ERR_PTR(err);
-+	return (void __percpu __force *)(uintptr_t)ERR_PTR(err);
- }
- EXPORT_SYMBOL_GPL(register_wide_hw_breakpoint);
- 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 1745ca788ede..32729a2e93af 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -377,7 +377,7 @@ struct workqueue_struct {
- 
- 	/* hot fields used during command issue, aligned to cacheline */
- 	unsigned int		flags ____cacheline_aligned; /* WQ: WQ_* flags */
--	struct pool_workqueue __percpu __rcu **cpu_pwq; /* I: per-cpu pwqs */
-+	struct pool_workqueue __rcu * __percpu *cpu_pwq; /* I: per-cpu pwqs */
- 	struct wq_node_nr_active *node_nr_active[]; /* I: per-node nr_active */
- };
- 
-diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
-index 51bc5246986d..3d0613ac7e73 100644
---- a/lib/percpu_counter.c
-+++ b/lib/percpu_counter.c
-@@ -209,7 +209,7 @@ int __percpu_counter_init_many(struct percpu_counter *fbc, s64 amount,
- 		INIT_LIST_HEAD(&fbc[i].list);
- #endif
- 		fbc[i].count = amount;
--		fbc[i].counters = (void *)counters + (i * counter_size);
-+		fbc[i].counters = (void __percpu *)counters + (i * counter_size);
- 
- 		debug_percpu_counter_activate(&fbc[i]);
- 	}
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 751d9b70e6ad..5cad88cf029c 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -10860,7 +10860,7 @@ noinline void netdev_core_stats_inc(struct net_device *dev, u32 offset)
- 			return;
- 	}
- 
--	field = (__force unsigned long __percpu *)((__force void *)p + offset);
-+	field = (unsigned long __percpu *)(void __percpu *)(p + offset);
- 	this_cpu_inc(*field);
- }
- EXPORT_SYMBOL_GPL(netdev_core_stats_inc);
+ # define __chk_user_ptr(x)	(void)0
 -- 
 2.45.2
 
