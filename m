@@ -1,194 +1,129 @@
-Return-Path: <linux-kernel+bounces-274932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EBA947E66
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:43:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253EC947E68
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FCA1C21D45
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:43:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A19281B76
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28966158DDF;
-	Mon,  5 Aug 2024 15:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8556E1591ED;
+	Mon,  5 Aug 2024 15:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fs6pPLf0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="og23Hsjg"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C14B5464B;
-	Mon,  5 Aug 2024 15:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5FB5464B
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722872587; cv=none; b=j+8yu3TgFwGFhBZQ2RV7NyM0Lnc8jZu/wKaOPi4c8krhl3pP+k9dbD2iNBiW50kQHxwf0amsuaLU2cVvUNU0gyM+i9g5MAbU1aL3ilYzb4Y7vUFYXyaeF9wxBRZENp8pyj6mTgfGh79OmnanFr1dIeOpjFGrxcQ/o+oE7Q1D8ig=
+	t=1722872644; cv=none; b=rkPCnoWcYzFiwLGfq6TA7UNVgOjqVKSYp5nMAQA4MdywxtVp8D0hppuNFkMweSP0aCgLlWdlIhIXuPbTJ+uQ52dcxYtrJwbVb7lcXGyc8s0BPhcCsTAEJSt//phT0TzsaP1AL/LRw+hLKIh82iy5pGx0c0l5Fbx1wdvl+I+LyQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722872587; c=relaxed/simple;
-	bh=dplMNOpfl+Qd3uRNVqpbWdB9r/3JPgRLkheeqWwikyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkZGO6Uvdi/GZHSednr7C9mYFlA1kzMXhRu2oCu012FsDquJLIj9pFgbs1EAVBE7mjZYZ81V1uvLpOu+A4pVOsUfJzm8R02LhTr+0PpzlMm9Cm+HKqRol9Pt/8rb2LmuJTGXYpNF3kRMg4vy0UEER6FSiE3RV7NXF6tR9DFStrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fs6pPLf0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00F7FC4AF0C;
-	Mon,  5 Aug 2024 15:43:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722872586;
-	bh=dplMNOpfl+Qd3uRNVqpbWdB9r/3JPgRLkheeqWwikyk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fs6pPLf0Sh0x80jh3k7ZSZ3Pq0FDLptPhOy9Oh3sbEvilA5FnMxwec/sKOR4NalaW
-	 RVpGW/fhd+WS0/u/Rpk4Q/G2LVc2bhn9CBEMIXoUFYrdhcxtT0xuwWxPWIHj4S4rCk
-	 /x3XG1hs76OeSZypC8egSBpZ8mONnlLZMS4fYuASxU/SgFcNNZP4rL2WGSyBigohZO
-	 nwPiubioXbFO6weZcNxSNX5GtaT55NKRQ1Yb+6EYXmx05C41t7Fsn8syNvWQ5eeXBD
-	 275df7+Wm4CDPxZqTZv7cgSqzFVt08MimKKmkRUiDjBj7HENV8ePVS4gbm1mKYjPRt
-	 y+AL4+pi4qScA==
-Date: Mon, 5 Aug 2024 12:43:02 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Eric Lin <eric.lin@sifive.com>, Ian Rogers <irogers@google.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@arm.com>,
-	linux-perf-users <linux-perf-users@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, vincent.chen@sifive.com,
-	greentime.hu@sifive.com, Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH] perf pmus: Fix duplicate events caused segfault
-Message-ID: <ZrDzBrrBPBkSKLRC@x1>
-References: <20240719081651.24853-1-eric.lin@sifive.com>
- <2C7FF61F-2165-47D4-83A4-B0230D50844D@linux.vnet.ibm.com>
- <CAPqJEFrkurD9B9smy908Y-z-f6ckv+ZFJzo6ptwXmxD0ru5=CA@mail.gmail.com>
- <CAPqJEFqCXd1FWCgB0919r+J0XW7KVX_OWZNdocva-bxcscjTrw@mail.gmail.com>
- <BB8E0B26-4E5F-416F-B8D1-AC745F141383@linux.vnet.ibm.com>
+	s=arc-20240116; t=1722872644; c=relaxed/simple;
+	bh=WJQF1e1lGe1DHP8xXL81uq1JAQ4RrIakU9ICRRYsaow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NU95I+Vq+6JmsnSbcvnSbN8i9e3cHKRcREyV/qauLPSQ8iSlzJUdICGCIaTg83/n7eJdJ3Huw9/4UXpqzpKE0DNZyJ3hQS7u/Tpp2YIuL095lshXnyBi6XPoVmPTiFOcJ9pEjXdcLEHH7ZkSOwIAEFX7S/Fr+DWOfnZtOl6hBFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=og23Hsjg; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6bb96ef0e96so23265006d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722872641; x=1723477441; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=chvXENSfxaRr9pj6GM068Pc8pK4QQqniclzsqJg41Ag=;
+        b=og23HsjgcEU8+Gw4PGnAUjmUSuzeceuk/AtVeyQ9EfrchF99wN6bCXSI5BDbIdRYZ+
+         p8xZazfZjOdPqkzPuHkcS+5BxZ4WSHttr3Rkw84/I1AMNTixDpbuu3ToGMWRyh5xYm3k
+         LTD+fZOkLhuV0CA3UmIVXixRJEf6qW6irnPtg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722872641; x=1723477441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=chvXENSfxaRr9pj6GM068Pc8pK4QQqniclzsqJg41Ag=;
+        b=Tmn34r5dCBxcUgP9KGFH4mCjFC5UIeC5A0W7+UTJMsASbOeC997kYmz87HsxzZXlZh
+         88rBCnbWi/WJE8LU/gq4L3QY1C+pxFgB4qGKjDjULNsggTnCWksiHPhXLxyKbtxw7AOv
+         BYTZnuK5wTCs6v6761araB7XtPtXaJVTlbahNHo7Erf6iqhw41kHsp0pP6BAUU9iEjfN
+         dz7k2eveAkvI/QIiJahYFcbRtNGwjPlm1annKsOCt2dxYdS8YkftsFQjna4tw4LkjMn4
+         BytGs23W6Keg+gX355x244zNAlNoD1SSI7RbCZ/RnRdoVVSF4r/mwaPe0oixNYB57k+K
+         H1Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUh8+cYZ6imuORqRP1ZHxafLLZ4SczmucI2sO0qEue27cQ+Qq21fZe1mnb3D1IeLTW9ORob7i/hoSaKFCgbJ8CHN0guw0ubIvBinNN7
+X-Gm-Message-State: AOJu0YxvyhhzVFBEIsPPIMzGunYMe3vfXnzyuWU/IX1ShjYVoZf9pRoy
+	FBfnsukuLmxk55S+mms7oDPt+7TjRKNRe+QgcgduAQJ8xxMaurnVZNI7JJUeRUCU+djvwqm/zfw
+	=
+X-Google-Smtp-Source: AGHT+IEpW8fbfcwehdeSOFKleu0cdWUBpPnW/Z9bJzHXjTAua7XMY5m1HCELnDngXl1Fbk3JwwF12g==
+X-Received: by 2002:a05:6214:5a07:b0:6b5:12c:b345 with SMTP id 6a1803df08f44-6bb98361eaamr136412976d6.16.1722872641554;
+        Mon, 05 Aug 2024 08:44:01 -0700 (PDT)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c79c84esm36667706d6.50.2024.08.05.08.44.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 08:44:00 -0700 (PDT)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44fee2bfd28so462891cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:44:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWC/nqwHHhkpgw55ZUDF8wfv+VPvq/7PAaLHjMQE6tJrbFdy6cyh1EhW57Wzt+MZWx15SDafMKxzsJaxnC3SS1TvsZ/1vsM8QXR8DAn
+X-Received: by 2002:a05:622a:591:b0:44f:ea7a:2119 with SMTP id
+ d75a77b69052e-4519ae21848mr5655501cf.18.1722872639887; Mon, 05 Aug 2024
+ 08:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BB8E0B26-4E5F-416F-B8D1-AC745F141383@linux.vnet.ibm.com>
+References: <20240805102046.307511-1-jirislaby@kernel.org> <20240805102046.307511-4-jirislaby@kernel.org>
+In-Reply-To: <20240805102046.307511-4-jirislaby@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 5 Aug 2024 08:43:48 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=X1a1a=kkJ9bWXWOmu0hz6HqRuK=Vo=bhvFfSzeAWSWyw@mail.gmail.com>
+Message-ID: <CAD=FV=X1a1a=kkJ9bWXWOmu0hz6HqRuK=Vo=bhvFfSzeAWSWyw@mail.gmail.com>
+Subject: Re: [PATCH 03/13] serial: don't use uninitialized value in uart_poll_init()
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 07:54:33PM +0530, Athira Rajeev wrote:
-> 
-> 
-> > On 4 Aug 2024, at 8:36 PM, Eric Lin <eric.lin@sifive.com> wrote:
-> > 
-> > Hi,
-> > 
-> > On Sun, Jul 21, 2024 at 11:44 PM Eric Lin <eric.lin@sifive.com> wrote:
-> >> 
-> >> Hi Athira,
-> >> 
-> >> On Sat, Jul 20, 2024 at 4:35 PM Athira Rajeev
-> >> <atrajeev@linux.vnet.ibm.com> wrote:
-> >>> 
-> >>> 
-> >>> 
-> >>>> On 19 Jul 2024, at 1:46 PM, Eric Lin <eric.lin@sifive.com> wrote:
-> >>>> 
-> >>>> Currently, if vendor JSON files have two duplicate event names,
-> >>>> the "perf list" command will trigger a segfault.
-> >>>> 
-> >>>> In commit e6ff1eed3584 ("perf pmu: Lazily add JSON events"),
-> >>>> pmu_events_table__num_events() gets the number of JSON events
-> >>>> from table_pmu->num_entries, which includes duplicate events
-> >>>> if there are duplicate event names in the JSON files.
-> >>> 
-> >>> Hi Eric,
-> >>> 
-> >>> Let us consider there are duplicate event names in the JSON files, say :
-> >>> 
-> >>> metric.json with: EventName as pmu_cache_miss, EventCode as 0x1
-> >>> cache.json with:  EventName as pmu_cache_miss, EventCode as 0x2
-> >>> 
-> >>> If we fix the segfault and proceed, still “perf list” will list only one entry for pmu_cache_miss with may be 0x1/0x2 as event code ?
-> >>> Can you check the result to confirm what “perf list” will list in this case ? If it’s going to have only one entry in perf list, does it mean there are two event codes for pmu_cache_miss and it can work with either of the event code ?
-> >>> 
-> >> 
-> >> Sorry for the late reply.
-> >> Yes, I've checked if there are duplicate pmu_cache_miss events in the
-> >> JSON files, the perf list will have only one entry in perf list.
-> >> 
-> >>> If it happens to be a mistake in json file to have duplicate entry with different event code (ex: with some broken commit), I am thinking if the better fix is to keep only the valid entry in json file ?
-> >>> 
-> >> 
-> >> Yes, I agree we should fix the duplicate events in vendor JSON files.
-> >> 
-> >> According to this code snippet [1], it seems the perf tool originally
-> >> allowed duplicate events to exist and it will skip the duplicate
-> >> events not shown on the perf list.
-> >> However, after this commit e6ff1eed3584 ("perf pmu: Lazily add JSON
-> >> events"),  if there are two duplicate events, it causes a segfault.
-> >> 
-> >> Can I ask, do you have any suggestions? Thanks.
-> >> 
-> >> [1] https://github.com/torvalds/linux/blob/master/tools/perf/util/pmus.c#L491
-> >> 
-> > 
-> > Kindly ping.
-> > 
-> > Can I ask, are there any more comments about this patch? Thanks.
-> > 
-> Hi Eric,
-> 
-> The functions there says alias and to skip duplicate alias. I am not sure if that is for events
-> 
-> Namhyung, Ian, Arnaldo
-> Any comments here ?
+Hi,
 
-So I was trying to reproduce the problem here before looking at the
-patch, tried a simple:
+On Mon, Aug 5, 2024 at 3:21=E2=80=AFAM Jiri Slaby (SUSE) <jirislaby@kernel.=
+org> wrote:
+>
+> Coverity reports (as CID 1536978) that uart_poll_init() passes
+> uninitialized pm_state to uart_change_pm(). It is in case the first 'if'
+> takes the true branch (does "goto out;").
+>
+> Fix this and simplify the function by simple guard(mutex). The code
+> needs no labels after this at all. And it is pretty clear that the code
+> has not fiddled with pm_state at that point.
+>
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Fixes: 5e227ef2aa38 (serial: uart_poll_init() should power on the UART)
+> Cc: stable@vger.kernel.org
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/tty/serial/serial_core.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 
-⬢[acme@toolbox perf-tools-next]$ git diff
-diff --git a/tools/perf/pmu-events/arch/x86/rocketlake/cache.json b/tools/perf/pmu-events/arch/x86/rocketlake/cache.json
-index 2e93b7835b41442b..167a41b0309b7cfc 100644
---- a/tools/perf/pmu-events/arch/x86/rocketlake/cache.json
-+++ b/tools/perf/pmu-events/arch/x86/rocketlake/cache.json
-@@ -1,4 +1,13 @@
- [
-+    {
-+        "BriefDescription": "Counts the number of cache lines replaced in L1 data cache.",
-+        "Counter": "0,1,2,3",
-+        "EventCode": "0x51",
-+        "EventName": "L1D.REPLACEMENT",
-+        "PublicDescription": "Counts L1D data line replacements including opportunistic replacements, and replacements that require stall-for-replace or block-for-replace.",
-+        "SampleAfterValue": "100003",
-+        "UMask": "0x1"
-+    },
-     {
-         "BriefDescription": "Counts the number of cache lines replaced in L1 data cache.",
-         "Counter": "0,1,2,3",
-⬢[acme@toolbox perf-tools-next]$ grep L1D.REPLACEMENT tools/perf/pmu-events/arch/x86/rocketlake/cache.json
-        "EventName": "L1D.REPLACEMENT",
-        "EventName": "L1D.REPLACEMENT",
-⬢[acme@toolbox perf-tools-next]$
+Thanks for the fix! Looks good.
 
-I.e. duplicated that whole event definition:
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Did a make clean and a rebuild and:
+NOTE: I'm happy to defer to others, but personally I'd consider
+breaking this into two changes: one that fixes the problem without
+using guard() (which should be pretty simple) and one that switches to
+guard(). The issue is that at the time the bug was introduced the
+guard() syntax didn't exist and that means backporting will be a bit
+of a pain.
 
-root@x1:/home/acme/git/pahole# perf list l1d.replacement
-
-List of pre-defined events (to be used in -e or -M):
-
-
-cache:
-  l1d.replacement
-       [Counts the number of cache lines replaced in L1 data cache. Unit: cpu_core]
-root@x1:/home/acme/git/pahole# perf list > /dev/null
-root@x1:/home/acme/git/pahole#
-
-No crash, can you provide instructions on how to reproduce the problem?
-
-I would like to use the experience to add a 'perf test' to show this
-failing and then after the patch it passing that new test.
-
-- Arnaldo
-
-
+Oh, though I guess maybe it doesn't matter since the bug was
+introduced in 6.4 and that's not an LTS kernel so nobody cares? ...and
+guard() is in 6.6, so maybe things are fine the way you have it.
 
