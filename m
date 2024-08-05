@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-274986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD3E947F34
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:22:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1805947F3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD5A281F72
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:22:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782C81F221EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC8315C128;
-	Mon,  5 Aug 2024 16:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgS5W+Jg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE3815CD7D;
+	Mon,  5 Aug 2024 16:23:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C1F1547DC
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E7015C13E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722874962; cv=none; b=KgV152TWTGbQ0HOj/syH2EyVhu7BheTQ7BZWP5aT789fJjRyoOvXNZayFiPYpJ+CPkBnpWin/J+Tb7OC4Xo/LOdJ6JBXZ4rj7wklw24mYdcSro8plYU71TKGMESTTJgopVPkkkknvVfmdHxvT0sbr4QTtPa6OMY7L4wcXG16/uU=
+	t=1722875018; cv=none; b=iuuoQZUax0W6mnPAi3OJSFfNc5ooL00vzmpRqFvi9YV3lygTo54PvXgX3PHEgyE1l67luJzEgwPQ4i84J6b0Ef4ng/XRuwioxkD5cdIEwqC9+MR2fGlqDrFwczjS58NSg7aS4JdNf8f6wZSweSwTLsG+3uHWLGNBBsyT6rsUcho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722874962; c=relaxed/simple;
-	bh=kJb9Nzn4L3q5iErkH+R1wHzptQi551rfi29AY5g9hFo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Ict3MCwjVNJplue4w8I8eXiiyvT5QmaP28Utrlde4C2Xggs2Q8E0vQduKGY4m51bseUn6fYPFtQYOwYHVLBFdBYWfxTwHKg1P4odB2FGKDs7kFGNzz0ptEUZMj2rXWeU9FvDhOPauJbOv9ammKtK9LZHR3upcVnmCIct+WTa1yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgS5W+Jg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32207C32782;
-	Mon,  5 Aug 2024 16:22:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722874962;
-	bh=kJb9Nzn4L3q5iErkH+R1wHzptQi551rfi29AY5g9hFo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bgS5W+JgYgSLChirLf/lB4w6vLA0M8TDiLMUksd6MFNPvpOyWySiVXrJgwAwx+F64
-	 FAra/5OWjPyClmRAYo0rx0w/DVMadMYWisUTqxO0Igv0aN4nV1CDOolB2IgoNHK6YL
-	 znnpNa3gEd8R5kZrXza/YiVAmK7rHA6Ui+V7f+DGzZBYV39BhVg9MzbpPpRB4JEc4Z
-	 VcGqwP/wxqpb4qoMF4SjMTcelSH/qMHwVEZYKO6AkEFtS13ohjM2+gqtUPSpYCxHy7
-	 Y6kRopIz1SANjwFQm8APUx7VzGIF9lolOcllgwmAyIyhZt+wARaAo7bMC3/QFrJWQN
-	 mmMWIuzB1K0iQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: laurent.pinchart@ideasonboard.com, kishon@kernel.org, 
- michal.simek@amd.com, Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, git@amd.com
-In-Reply-To: <1722837547-2578381-1-git-send-email-radhey.shyam.pandey@amd.com>
-References: <1722837547-2578381-1-git-send-email-radhey.shyam.pandey@amd.com>
-Subject: Re: [PATCH v2] phy: xilinx: phy-zynqmp: Fix SGMII linkup failure
- on resume
-Message-Id: <172287495984.454961.1953933716423263529.b4-ty@kernel.org>
-Date: Mon, 05 Aug 2024 21:52:39 +0530
+	s=arc-20240116; t=1722875018; c=relaxed/simple;
+	bh=t5VweJvAiI1Atb+P8Qzue+nMuwsy9UiQ90FuUMWC6OI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bWUG6p6iIzEg+Xmg1ftAN5+qJ1cwsFo5i1Co3ZFwbpTCT3MozE5jYQ/JA+JF2wl0CGTWycqEnCd9/xC4HMrIb9CmsclV34EV8ArIU38yfi1prCz5cn46cf2cA/gopFWyw1n9hYLZG2T98Ba5KgODOy5Mukjunbni7+gkNV9iUxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sb0Uh-00075L-5X
+	for linux-kernel@vger.kernel.org; Mon, 05 Aug 2024 18:23:35 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sb0Ug-004klK-JU
+	for linux-kernel@vger.kernel.org; Mon, 05 Aug 2024 18:23:34 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 4555E3173DD
+	for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 16:23:34 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id C01D83173BF;
+	Mon, 05 Aug 2024 16:23:31 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 652f6045;
+	Mon, 5 Aug 2024 16:23:31 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 0/2] can: mcp251xfd: fix ring/coalescing configuration
+Date: Mon, 05 Aug 2024 18:23:19 +0200
+Message-Id: <20240805-mcp251xfd-fix-ringconfig-v1-0-72086f0ca5ee@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,28 +63,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-B4-Tracking: v=1; b=H4sIAHf8sGYC/x2MQQqAMAzAviI9W5hlTvEr4kFmO3twygYiDP/u8
+ BhIUiBzUs4wNQUS35r1jBW6tgG/rzEw6lYZyJA1g7F4+Iv67pENRR9MGoM/o2hAJ465FzeSJaj
+ 5lbga/3pe3vcDoDHquWoAAAA=
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Thomas Kopp <thomas.kopp@microchip.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=831; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=t5VweJvAiI1Atb+P8Qzue+nMuwsy9UiQ90FuUMWC6OI=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBmsPx4vmESfWiSKGEf6XKF/xYiy2Av0eGdDkqeN
+ RPDavu0fJuJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZrD8eAAKCRAoOKI+ei28
+ b7U7B/0cnTYoiZ40DuJXWlKinwspYMxli2se56VYzwAL6K0M3HtNY1R0tSCt4og5LMgc2wP7ArJ
+ BwcOZc3AWRlCOmF3wpzQ+x6uBgm2+HQDsPHulU4pPZ3HITtOx1++oi3gZmJR81DozUIeP8gnkd0
+ WUrrOl4+TA8ItL+o2R2j46yruVd636uOf1k1X7T4T1BbN/I8RfOoOVeul7QpWcTxSEY2fh8qI7V
+ CUbe/BLJctXeKNF82aB43T3OcQkvzwx8omfiwWYin9JiXSD2KsqN7KF8NLjxzf9KbDy0RcFXhSf
+ enGx60zpUga4A5zHyOmtA6wi2OHdVLcpfjlLKETl2gdFH2uJ
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+When changing from CAN-CC to CAN-FD mode the ring and/or coalescing
+parameters might be too big.
 
-On Mon, 05 Aug 2024 11:29:07 +0530, Radhey Shyam Pandey wrote:
-> On a few Kria KR260 Robotics Starter Kit the PS-GEM SGMII linkup is not
-> happening after the resume. This is because serdes registers are reset
-> when FPD is off (in suspend state) and needs to be reprogrammed in the
-> resume path with the same default initialization as done in the first
-> stage bootloader psu_init routine.
-> 
-> To address the failure introduce a set of serdes registers to be saved in
-> the suspend path and then restore it on resume.
-> 
-> [...]
+This series fixes the problem and adds a safeguard to detect broken
+coalescing configuration.
 
-Applied, thanks!
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+Marc Kleine-Budde (2):
+      can: mcp251xfd: fix ring configuration when switching from CAN-CC to CAN-FD mode
+      can: mcp251xfd: mcp251xfd_ring_init(): check TX-coalescing configuration
 
-[1/1] phy: xilinx: phy-zynqmp: Fix SGMII linkup failure on resume
-      commit: 5af9b304bc6010723c02f74de0bfd24ff19b1a10
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-ram.c  | 11 ++++++++-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c | 34 +++++++++++++++++++++-----
+ 2 files changed, 38 insertions(+), 7 deletions(-)
+---
+base-commit: 14ab4792ee120c022f276a7e4768f4dcb08f0cdd
+change-id: 20240704-mcp251xfd-fix-ringconfig-6f6ee5f68242
 
 Best regards,
 -- 
-Vinod Koul <vkoul@kernel.org>
+Marc Kleine-Budde <mkl@pengutronix.de>
+
 
 
