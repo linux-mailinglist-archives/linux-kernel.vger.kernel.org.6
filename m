@@ -1,93 +1,124 @@
-Return-Path: <linux-kernel+bounces-275225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D6E948212
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:09:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B1A948215
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 919961F235F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE15A1F236B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047BB16B39C;
-	Mon,  5 Aug 2024 19:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3E816B389;
+	Mon,  5 Aug 2024 19:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VZd0akI+"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JUBg4ITy"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7055E15FA67
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8740A165F1B
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722884956; cv=none; b=ZZ2waYeS4UHNNdEvECRkJtKs5PyrBfcwiMjQx5k7nbXVlRIuSe4vGP6uDdV94OvmEhXIdqQvseErgoIm1fHn/NSd17i/LcM6qrKEOYTuOsrXlzTqlae4x2NoG/eST+/DK38OQQqK2zlCT1us3koxa8GhBpm2PI91oOOp1sgFTXA=
+	t=1722885062; cv=none; b=iuxXtYxooXocW3fqRi18x0mQrhVh6TrraVMXthHKq+ip8aceoRm+bNKgtx7WTVeUB2F3ZmNI399OZD51Z47coK/ANgnpd8kVlrh9h/y217g6DN9rlEp4r7PgYJDVLBy2thdSCStLGjHWEIN29QojZ9a06ctKC5SgU++h84L9FlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722884956; c=relaxed/simple;
-	bh=M5JRShJqbgmvXTkDlI8gf8oSvuSeekCQVjuvxjJdMog=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BwBOtAXV5y7XW+hfCGyRgEnuPZJ/fucd2yyh8EoW35dW0+YEIHVPB/czduY4M10eIazPggV1Qw7dRfMo/MxJ1WdUz5p3SkK5qtnn6MlMM4fE2CCtNOjbm5dRocY3PlCCZgHYnnMhhCGhm0K+NWxQYWDzwvXokwNC1Nahd6DuuI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VZd0akI+; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722884945; x=1723144145;
-	bh=/Els57fcd1c+yYHp4eDlQ/rjaPw7DrFzNZpvnboyUs4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=VZd0akI+XxCM2CmdaEOjn1z1m9Ra5xe007WtyDeRSDHwGx53JpJ6vlZUzlTBumAsW
-	 lBS8Ofb996YsVqYBf5XoXRjEY7CwjoxobnvQ48cbJ4nypmfglHsY1PkjoaAxM28gPR
-	 9a4wh+rxXHAc3QtjIX5FzvPNrTudffRURKaXPUyKPds4v9q89r0B/AvTFFd2i5/T/G
-	 UXnWtDSOsDHsTB+QH3jnfVyiUfBQWGeXnP5FjAXus9vkA1O2fXwpXA8Ds+n6CsJSvB
-	 dzr3E3wAVZtgQsnYpEP1Bcu6pe0A5P4YIzErF4MBHAowALfXn0pgXCnSbYEtbVyZ63
-	 3pAFaQALl2Uhw==
-Date: Mon, 05 Aug 2024 19:08:58 +0000
-To: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 3/6] rust: rbtree: add iterator
-Message-ID: <8a0f94dc-ccf3-4387-8dd3-9a3d39fb1959@proton.me>
-In-Reply-To: <20240727-b4-rbtree-v8-3-951600ada434@google.com>
-References: <20240727-b4-rbtree-v8-0-951600ada434@google.com> <20240727-b4-rbtree-v8-3-951600ada434@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 8be4d92471b7c20941bcceeb879d8ff6bc908c6b
+	s=arc-20240116; t=1722885062; c=relaxed/simple;
+	bh=CoU8z7rPwlIktTSPXSLvGcHELQDE66WJAH2fIR5MIEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JiTW73X9c6pqhaj317tx+MUU37KO1odpaAUabSXR1NN70/wX55DFDp5D4rtG1uYX8/NFttB9Y1Y89/ttNgimi4UpYWvrOJpqZ6kQr6dcjlt0RfUT/a2qQdBnXap7Z5LVjOPdDA/4akTEuap1VsvubsAiKT5TW3whwM6WBHgdRNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JUBg4ITy; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so10171727a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:11:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722885059; x=1723489859; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UA5U+6t/BL3dNn6z4KME0ljFM05r+burKxZg1qrP5MU=;
+        b=JUBg4ITy5C1yzU5XHdro3c+3qA+QQhKnEy31EADf12/xvJqeCp0/UBM/R6m0RQFN5f
+         WshOKPZYNQrC2jpWOzw3u6ljrTy1wqEy4eymx6Fe/UpR5vJEnixHWa5OJ/4nG30ixIwO
+         6C8lQX3UjWgZH22B29xRTA48H4VjCOybAQUtg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722885059; x=1723489859;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UA5U+6t/BL3dNn6z4KME0ljFM05r+burKxZg1qrP5MU=;
+        b=lxaPZAAu2ezQx9r/tTdXPbinkyczVvI3GbEWdF6/Hk+IBEjQmJ57RThk7gH9xMqQze
+         LOwPOeVbKn7YvTzOYLJ/tCmPUf+Fi+OhRyeVvFufRAgrDsVqFPulLfYlAEb708ydE6CI
+         h7oAFCicLFS+hJYqJgTYr5ChT5QrAJ4AnL2BKzOvn4xr96MEvKo/526vTFGzyhfHvdiP
+         V2I5D+RZnCHq41BI1+Bd1dksxe5ElCjCxfp/7Dc7Dp+b0oqc0q9a9xobaFH8IG117qr2
+         1fNjMNRE1JYSOFpKJPFXKYshpcJUp22rV23mvh44rwYAEswHXYdl7yl1km8IVmdrIDhY
+         cXsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMmAIyLpbea+jqQk/1HVvMaGIBXpJ763fm1y+LfKxos3Sh8vlRuiRuBAmehXS8axqtg8gVHgyhDuh4Cav0aKZTTiZ33vpV2YrFghj0
+X-Gm-Message-State: AOJu0Yy/ZFuQzHG6YLwhUxRUumDFhPO8my40OLeY6kqBUF0MebnUtByI
+	kPHsRbToA6LHdeV/QBRRwhcmS/gT+hkFaGsFFKxYxAhWVFNq45lBvMxR9T18ZxoII6d5ZfQ1hq5
+	Jy8xLsQ==
+X-Google-Smtp-Source: AGHT+IFaoENymcRGKc1ZDCdi/4Wjzd0v0RoDv6wGZ+zJ9MUYQPQafS9RS2TESTbC0LJghSGcF6JpPg==
+X-Received: by 2002:a17:906:cae5:b0:a77:ce4c:8c9c with SMTP id a640c23a62f3a-a7dbcbd4ecamr1191871566b.8.1722885028714;
+        Mon, 05 Aug 2024 12:10:28 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b839708c56sm5241518a12.2.2024.08.05.12.10.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 12:10:28 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so10171039a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:10:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVAQCvl1pkpToT87eZYH71Q52xoPcdOavwM9Sq2hwuRu44YkXPNpAi+VrJ3JbF4VDixxbDogA8OCfOYfR20pFy7tXhlNGY4SvjJVcZA
+X-Received: by 2002:a17:906:cae5:b0:a77:ce4c:8c9c with SMTP id
+ a640c23a62f3a-a7dbcbd4ecamr1191867766b.8.1722885027737; Mon, 05 Aug 2024
+ 12:10:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net>
+ <20240804152327.GA27866@redhat.com> <CAHk-=whg0d5rxiEcPFApm+4FC2xq12sjynDkGHyTFNLr=tPmiw@mail.gmail.com>
+ <E3873B59-D80F-42E7-B571-DBE3A63A0C77@juniper.net>
+In-Reply-To: <E3873B59-D80F-42E7-B571-DBE3A63A0C77@juniper.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 5 Aug 2024 12:10:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whGBPFydX8au65jT=HHnjOCCN0Veqy5=yio6YuOiQmJdw@mail.gmail.com>
+Message-ID: <CAHk-=whGBPFydX8au65jT=HHnjOCCN0Veqy5=yio6YuOiQmJdw@mail.gmail.com>
+Subject: Re: [RFC PATCH] piped/ptraced coredump (was: Dump smaller VMAs first
+ in ELF cores)
+To: Brian Mak <makb@juniper.net>
+Cc: Oleg Nesterov <oleg@redhat.com>, "Eric W. Biederman" <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 27.07.24 22:30, Matt Gilbride wrote:
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
->=20
-> - Add Iterator implementation for `RBTree`, allowing
->   iteration over (key, value) pairs in key order.
-> - Add individual `keys()` and `values()` functions to iterate over keys
->   or values alone.
-> - Update doctests to use iteration instead of explicitly getting items.
->=20
-> Iteration is needed by the binder driver to enumerate all values in a
-> tree for oneway spam detection [1].
->=20
-> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-17-0=
-8ba9197f637@google.com/ [1]
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Tested-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Matt Gilbride <mattgilbride@google.com>
-> ---
->  rust/kernel/rbtree.rs | 130 +++++++++++++++++++++++++++++++++++++++++++-=
-------
->  1 file changed, 112 insertions(+), 18 deletions(-)
+On Mon, 5 Aug 2024 at 10:56, Brian Mak <makb@juniper.net> wrote:
+>
+> Do you mean support truncating VMAs in addition to sorting or as a
+> replacement to sorting? If you mean in addition, then I agree, there may
+> be some VMAs that are known to not contain information critical to
+> debugging, but may aid, and therefore have less priority.
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+I'd consider it a completely separate issue, so it would be
+independent of the sorting.
 
----
-Cheers,
-Benno
+We have "ulimit -c" to limit core sizes, but I think it might be
+interesting to have a separate "limit individual mapping sizes" logic.
 
+We already have that as a concept: vma_dump_size() could easily limit
+the vma dump size, but currently only picks "all or nothing", except
+for executable mappings that contain actual ELF headers (then it will
+dump the first page only).
+
+And honestly, *particularly* if you have a limit on the core size, I
+suspect you'd be better off dumping some of all vma's rather than
+dumping all of some vma's.
+
+Now, your sorting approach obviously means that large vma's no longer
+stop smaller ones from dumping, so it does take care of that part of
+it. But I do wonder if we should just in general not dump crazy big
+vmas if the dump size has been limited.
+
+             Linus
 
