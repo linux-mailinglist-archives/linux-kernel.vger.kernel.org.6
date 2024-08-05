@@ -1,164 +1,174 @@
-Return-Path: <linux-kernel+bounces-275404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2709484FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:43:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96F6948500
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028151F23A0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:43:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27FBBB230BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C2616C84B;
-	Mon,  5 Aug 2024 21:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72CB16D33D;
+	Mon,  5 Aug 2024 21:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgKRMl0A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1E414B07C;
-	Mon,  5 Aug 2024 21:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BqLnGLWX"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A665114B07C;
+	Mon,  5 Aug 2024 21:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722894227; cv=none; b=QWdFHEdI0euAPZv8OdhbEUM2ax/Dzk+a7a+v3tdVshFu1+M3FVKlkkbrvEBTK7kmFS5KA+5b3zRvz9qS+e6qcg05EuqtY8wMRnrtUwsFQlhQidnKHXqVmuS7BbPhvABVDXzU2I1ZlDHwMWizPYm78G+jzuLkxDOu5JAQIyuefNA=
+	t=1722894259; cv=none; b=NdJ1Rm3BcNeRZNJr7AhJToTUvDLl7btTb+md0wOZvPmauHCvr7aDHGgX24VXNkVLW+Ldc8GJ2ZIVGaM8DZ7VDKC9lTysXwzfHQkNF6vSaj6ChdtJ+xawvs0RPzlT/Gsu9VaVyvqza4vqQznNy1YykDgHf+wIV2EpIk/5rQ7ttZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722894227; c=relaxed/simple;
-	bh=w1rNgVpubpxu7t9ez1M4o93NDC4Vb5FXEZkY9AcCwr4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VxyIn9Vpu/uoSLJjDjN3hAZEgeyLseVtv3JcmWxB1TobnFNk4lMhVmFY1T6ZqIUVXVH9fyBvzuUJMFXZSVKoz5q1cOLc+3soPAV/3xPYjhLxqUbRH7ZXJpk0rfGzP/MgQUwlBzjd9Eok0wLvM3JPey5VEzf8ks7kIQNIrvcKHqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgKRMl0A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430E2C32782;
-	Mon,  5 Aug 2024 21:43:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722894227;
-	bh=w1rNgVpubpxu7t9ez1M4o93NDC4Vb5FXEZkY9AcCwr4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bgKRMl0A7EBdqXh9+cwyQX19aes9QeRTUqvB9IQaj8IvvqQAXqDIQG1NpAkoYDNh0
-	 5+5istaOAUfremykm+EC67/aSJajUMdHsZl5qpGV9nXpKkZLmmxYZk2tzRvUyrHSWX
-	 6upX2xKrrac1GpaYhe4179fRcOSxUFWfBzJiyhr5pM3cSWWiG+RzLBlMzovr1Ywx8A
-	 YtzfE1jlAuM2Ez54ibQ/JKFxdgnezr0/Lgvuq3WNtLGy4oEhpsLtZIvWYJJVm4ovZ+
-	 OZFljMwKpCy203uqooHoYT+MRWAb+TCK7ebpOnEvqEspS+Ha09aXUP78rrM07sVUXO
-	 gvPeV7YL3xeZQ==
-From: Kees Cook <kees@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Hao Luo <haoluo@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-sparse@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Bill Wendling <morbo@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] string: Check for "nonstring" attribute on strscpy() arguments
-Date: Mon,  5 Aug 2024 14:43:44 -0700
-Message-Id: <20240805214340.work.339-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722894259; c=relaxed/simple;
+	bh=x26vedxZaBNEMW7p7sbkcxlmhtU53pXThFDWuZoJnjc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aRyUrPJ1F1W18eyruSH4Qz0e7dQbGyMDpm8yyCW+3rjVRq4ukULInji+is6ojH4qVD7S43Qp50oA/Oya3H6Jmwze2fozXA6D9lYp3oGW0vQm69RdKGcQH6NrU+H3Cc7XO430n7TQDaRCR7XVPIKJwvkJazvdXs/vgKe0REpdSKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BqLnGLWX; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.186.190] (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id DF6AF20B7165;
+	Mon,  5 Aug 2024 14:44:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DF6AF20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722894257;
+	bh=Jv7fd/dhJMwXj8aizbSd9o1qD71YjlRNPh+UMAm7ULs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BqLnGLWXKd6WP99927/ANF6rhqkA2su4hWgKM9qyW+Tc8KwvhyaN5hbqm7QOcn0gI
+	 5eZqwpX14YfvqR0giQ9ut6H+pCeTYVAP/APHCmrkf6XM7dTZeyz3WQdv+hNnvnrIxQ
+	 yF14o40moTl13uhQP4gnrZwTR5br75wlq+L3akRo=
+Message-ID: <2ad7731a-b56b-415d-acb1-907fa7224671@linux.microsoft.com>
+Date: Mon, 5 Aug 2024 14:44:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3626; i=kees@kernel.org; h=from:subject:message-id; bh=w1rNgVpubpxu7t9ez1M4o93NDC4Vb5FXEZkY9AcCwr4=; b=owGbwMvMwCVmps19z/KJym7G02pJDGkb3SeUnlr5f67g7V+5X8wEpZ59nnT3rK//1rayiGsck zRynhXzdZSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAExkIwvD/6gvKxMLfwhM/Le3 T92bj9OYRcVhSo5h84KtCuus6mUnP2Zk+LJgzupi1qLrN4rPucVHzG7kK1MT5ZNIvfNimtqDe8v PsgAA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/7] arm64: hyperv: Use SMC to detect hypervisor
+ presence
+To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
+ "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
+ <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
+ <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
+ <will@kernel.org>, "linux-acpi@vger.kernel.org"
+ <linux-acpi@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>
+Cc: "apais@microsoft.com" <apais@microsoft.com>,
+ "benhill@microsoft.com" <benhill@microsoft.com>,
+ "ssengar@microsoft.com" <ssengar@microsoft.com>,
+ "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
+ "vdso@hexbites.dev" <vdso@hexbites.dev>
+References: <20240726225910.1912537-1-romank@linux.microsoft.com>
+ <20240726225910.1912537-2-romank@linux.microsoft.com>
+ <SN6PR02MB41573831866B7FC9E267D72DD4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <3398a7cb-b366-49e1-ae19-155490b4e42e@linux.microsoft.com>
+ <SN6PR02MB41571669ED254773D05E2721D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB41571669ED254773D05E2721D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-GCC already checks for arguments that are marked with the "nonstring"[1]
-attribute when used on standard C String API functions (e.g. strcpy). Gain
-this compile-time checking also for the kernel's primary string copying
-function, strscpy().
 
-Note that Clang has neither "nonstring" nor __builtin_has_attribute().
 
-Link: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-nonstring-variable-attribute [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Andy Shevchenko <andy@kernel.org>
-Cc: Justin Stitt <justinstitt@google.com>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>
-Cc: Marco Elver <elver@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Hao Luo <haoluo@google.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: linux-sparse@vger.kernel.org
-Cc: linux-hardening@vger.kernel.org
----
- include/linux/compiler.h       |  3 +++
- include/linux/compiler_types.h |  7 +++++++
- include/linux/string.h         | 12 ++++++++----
- 3 files changed, 18 insertions(+), 4 deletions(-)
+On 8/5/2024 1:30 PM, Michael Kelley wrote:
+> From: Roman Kisel <romank@linux.microsoft.com> Sent: Monday, August 5, 2024 9:51 AM
+> 
+> [snip]
+> 
+>>>> diff --git a/arch/arm64/include/asm/mshyperv.h
+>>>> b/arch/arm64/include/asm/mshyperv.h
+>>>> index a975e1a689dd..a7a3586f7cb1 100644
+>>>> --- a/arch/arm64/include/asm/mshyperv.h
+>>>> +++ b/arch/arm64/include/asm/mshyperv.h
+>>>> @@ -51,4 +51,9 @@ static inline u64 hv_get_msr(unsigned int reg)
+>>>>
+>>>>    #include <asm-generic/mshyperv.h>
+>>>>
+>>>> +#define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0	0x7948734d
+>>>> +#define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_1	0x56726570
+>>>> +#define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_2	0
+>>>> +#define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_3	0
+>>>> +
+>>>
+>>> Section 6.2 of the SMCCC specification says that the "Call UID Query"
+>>> returns a UUID. The above #defines look like an ASCII string is being
+>>> returned. Arguably the ASCII string can be treated as a set of 128 bits
+>>> just like a UUID, but it doesn't meet the spirit of the spec. Can Hyper-V
+>>> be changed to return a real UUID? While the distinction probably
+>>> won't make a material difference here, we've had problems in the past
+>>> with Hyper-V doing slightly weird things that later caused unexpected
+>>> trouble. Please just get it right. :-)
+>>>
+>> The above values don't violate anything in the spec, and I think it
+>> would be hard to give an example of what can be broken in the world by
+>> using the above values.
+> 
+> Agreed.  However, note that UUIDs *do* have some internal structure.
+> See https://www.uuidtools.com/decode, for example. The UUID above
+> is:
+> 
+> 4d734879-7065-7256-0000-000000000000
+> 
+> It has a version digit of "7", which is "unknown".  I'm no expert on UUIDs,
+> but apparently the "7" isn't necessarily invalid, though perhaps a bit unexpected.
+> 
+Understood! I made an assumption that's just an array of random bytes.
+Thank you very much for explaining that to me :)
 
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 2df665fa2964..ec55bcce4146 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -242,6 +242,9 @@ static inline void *offset_to_ptr(const int *off)
- /* &a[0] degrades to a pointer: a different type from an array */
- #define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
- 
-+/* Require C Strings (i.e. NUL-terminated) lack the "nonstring" attribute. */
-+#define __must_be_cstr(p)	BUILD_BUG_ON_ZERO(__annotated(p, nonstring))
-+
- /*
-  * This returns a constant expression while determining if an argument is
-  * a constant expression, most importantly without evaluating the argument.
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index f14c275950b5..1a957ea2f4fe 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -421,6 +421,13 @@ struct ftrace_likely_data {
- #define __member_size(p)	__builtin_object_size(p, 1)
- #endif
- 
-+/* Determine if an attribute has been applied to a variable. */
-+#if __has_builtin(__builtin_has_attribute)
-+#define __annotated(var, attr)	__builtin_has_attribute(var, attr)
-+#else
-+#define __annotated(var, attr)	(false)
-+#endif
-+
- /*
-  * Some versions of gcc do not mark 'asm goto' volatile:
-  *
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 9edace076ddb..95b3fc308f4f 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -76,12 +76,16 @@ ssize_t sized_strscpy(char *, const char *, size_t);
-  * known size.
-  */
- #define __strscpy0(dst, src, ...)	\
--	sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst))
--#define __strscpy1(dst, src, size)	sized_strscpy(dst, src, size)
-+	sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +	\
-+				__must_be_cstr(dst) + __must_be_cstr(src))
-+#define __strscpy1(dst, src, size)	\
-+	sized_strscpy(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
- 
- #define __strscpy_pad0(dst, src, ...)	\
--	sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst))
--#define __strscpy_pad1(dst, src, size)	sized_strscpy_pad(dst, src, size)
-+	sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +	\
-+				    __must_be_cstr(dst) + __must_be_cstr(src))
-+#define __strscpy_pad1(dst, src, size)	\
-+	sized_strscpy_pad(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
- 
- /**
-  * strscpy - Copy a C-string into a sized buffer
+>> I do understand what you're saying when you
+>> mention the UIDs & the spirit of the spec. Put on the quantitative
+>> footing, the Shannon entropy of these values is much lower than that of
+>> an UID. A cursory search in the kernel tree does turn up other UIDs that
+>> don't look too random.
+>>
+>> As that is implemented only in the non-release versions, hardly someone
+>> has taken a dependency on the specific values in their production code.
+>> I guess that can be changed without causing any disturbance to the
+>> customers, will report of any concerns though.
+> 
+> My last thought is that when dealing with the open source world, and
+> with published standards, it's usually best to do what's normal and
+> expected, rather than trying to make the case that something unexpected
+> is allowed by the spec. Doing the latter can come back to bite you in
+> completely unexpected ways. :-)
+> 
+Agreed, thanks for the discussion! I've discussed changing the values,
+and a pull request to the hypervisor has been put up for that. So far, 
+going well.
+
+> With that, I won't make any further comments on the topic. You do
+> whatever you can do in working with Hyper-V. Either way, it won't be
+> a blocker to my giving "Reviewed-by" on the next version of the
+> patch.
+> 
+Will be a badge of honor to me! Again, appreciate your words of advise 
+and caution, and helping in bringing these patches into the best shape 
+possible!
+
+> Michael
+
 -- 
-2.34.1
+Thank you,
+Roman
 
 
