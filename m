@@ -1,155 +1,171 @@
-Return-Path: <linux-kernel+bounces-274502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03C79478F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:03:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7F4947A2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408EC1F222CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:03:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11ADBB21B93
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5148715351B;
-	Mon,  5 Aug 2024 10:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C57155759;
+	Mon,  5 Aug 2024 11:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OKvpQNn0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewMw5G2h"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4F4558BC;
-	Mon,  5 Aug 2024 10:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A5F13AD11;
+	Mon,  5 Aug 2024 11:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722852228; cv=none; b=MhL3Ank8khGkXI+0JKDB3dhjGK9T62dBA0IJKRS+SPSKtQLglbcRbPIQJcsRQxwxC8ePdXuOb8FOCk/ggMvHYN7jqWNEIOpbVI82fGBhxLPU0qzIgHo+WZi5ZprUGvjbiNPU9EGNTvGvMJDh4evhmtOuqk834JD06IJwsAkGxtU=
+	t=1722855693; cv=none; b=eT9LhlD8ZslM6eUb/r9K/h/I8ebUR1/WKI4BOhLh7FwYqyrs47pg1xIzyIeIuAQl/zIFXOAmi7ZDjNNNVl7htF3XkHg6VbbLm1HSD47TqcvEzdcgkOi4QpSDDvR4XFqdi2wPrK12O2JncVtzg+NSmWw5JMPy5Y8WReUbCb1HsOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722852228; c=relaxed/simple;
-	bh=3JzwBnYSD+Hb1vRDh4StW026ZZ8e9bKSpdTeeDfvxjQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lu6rdVj7C6cGDh9HbO/b8RreQrrRTRgnUHqt0N9OUW7CMRe+Ov0jZe/YxYUezVaIdX7wuRZlK/r1+fK7dupnwsiztlb+CSgUT3/z2R5Dnwt7S1k9upu6mzliHZQ01Moe+u6sp9IQ7ZtsQeHuPp1ivBsmcUZvzqpa/6g2G6jEgVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OKvpQNn0; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722852227; x=1754388227;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3JzwBnYSD+Hb1vRDh4StW026ZZ8e9bKSpdTeeDfvxjQ=;
-  b=OKvpQNn0jL4bcRLwm9nAyyXRckaxNCDzUOiPmyVFcmJx2+8IJRuOq3bA
-   OBLInpEMYmQvRNCwq1JpZdTXFe8S2A8Mr6aSbi8hNaJ/+FF9Eeatxmjot
-   PrEx1GDsIZb5dpDr8MhB9f5pMwAZX+UaMreogiMO2AwIV6l7K9FyFpH3+
-   1hA8OGdZzUnDqFJa9rWe5XXzqsrIywVIVDfStgBBUFrpD2LraP+ZyyoxO
-   718UFa/agatL123db3/PkUG8QAIGlhs5lLiFdXsz4RVFYRbMMFkDDa1LY
-   nqe1QHgg68XrCa916zQQbe5c9SwLrzgX5jOpKK8G1WFOpsAOir/uiRQ9O
-   Q==;
-X-CSE-ConnectionGUID: A3GlJiiyS6m8XkfFyL28BA==
-X-CSE-MsgGUID: Hb7WVD/4QOG4XljMu6BG8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="38308021"
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="38308021"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 03:03:46 -0700
-X-CSE-ConnectionGUID: KP7c6d6XR5m7u9g1Ggp78Q==
-X-CSE-MsgGUID: U25pGm0IQVm5dwXx5S0jyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="56058533"
-Received: from zhiquan-linux-dev.bj.intel.com ([10.238.156.102])
-  by fmviesa009.fm.intel.com with ESMTP; 05 Aug 2024 03:03:43 -0700
-From: Zhiquan Li <zhiquan1.li@intel.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	kirill.shutemov@linux.intel.com,
-	x86@kernel.org
-Cc: rafael@kernel.org,
-	hpa@zytor.com,
-	kai.huang@intel.com,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhiquan1.li@intel.com
-Subject: [PATCH RESEND v4] x86/acpi: fix panic while AP online later with kernel parameter maxcpus=1
-Date: Mon,  5 Aug 2024 18:35:31 +0800
-Message-Id: <20240805103531.1230635-1-zhiquan1.li@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722855693; c=relaxed/simple;
+	bh=562EsOMsTxNo/513EjVttaLWSasgWOtYFHwi01GnFiQ=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eyzrsijaPlx3p2CrzBwwfzOmWb/1BXV4tD335fKmxDttOz0+tpKTQxHzO1OX3eXcqit+MK+kFkKNoQncV25Ka0pTdziPHKtNMFC29wLr7Wl0alPti5FotFFL9RLQKt99mMq1f0ChRsS0fCbJ1ybZFGaLiKfO4u5FOE63U7772SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ewMw5G2h; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a20de39cfbso13213507a12.1;
+        Mon, 05 Aug 2024 04:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722855690; x=1723460490; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=w92A5DSLMtWgFu3PG5e7V2aasOF9qr2/85zMzlFL76I=;
+        b=ewMw5G2hfb5N7gcErad1/HzRLHk+6Jr6aVl4ox2PAuBYkrSNcj5Xw8CaVPJAWIhhzS
+         AK0uN4uKvJsCYiXvwtvab24PO7AOgBV9zLpRWopIcpFYQJegG9VSV6f5oye9NRQdpU+y
+         /SzB+P3i0QwWbDNv9wLdhC533iw74mH0QC1HR813zaAsGyXcQio2NuK0yUZUsCaUOHtY
+         1PZL3OrbkVG+4KIvKdlB3IpVS8l0Okmug/s9DTElemjXQhO0+FHy16BKO7Iwf+BSASml
+         5aHMmpJiOtoJ9PKLJ2FULhrw73Qs3t4Ovj0DNW6c8gPWWW6etgrfFSRi81lgiAFFdp05
+         x02g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722855690; x=1723460490;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w92A5DSLMtWgFu3PG5e7V2aasOF9qr2/85zMzlFL76I=;
+        b=NkthOx9SKwsIlAguOLXOTJt/QLwE1GclegdzbdiDiVG5a3ji169Bju3aSAwcuU5I52
+         ngW3aldodTEBjCh/lgG9r0GKnKnFJQTrraQ11v9aDUEduB0WIKVM72odF/j8n9CFdybg
+         Uwp98SWyHBAojwyHT/gLiiNLL8TA67kSQ97nNiQT3uII3d4z7NL6NFu/08/3k6A1KIyo
+         +Db49CiOsG7ePQ5mRvww49Ck7QoyLtgQZHezxtqJjrjk2/FFf8ygCjIm7mKLDAxRvohJ
+         y5cBAfyA+JzWXJ8PlsYe2dB7z7GR7L8LaXAqBKZH47G7xXv1VgntEWRxBdM5XnoE9Kol
+         H3sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjqkZSUhz6U4feZnDpwtOdXTBnnk0CtGqnxb/oKT19ngsb1CchETAwpo+wf4hBIgdIjKauPA+5hz44DVODZg34an9qxvUoWQY2HpkL/HLLEr6UuvJx2cTNKkP7jWAEuT0nJ3ii57MIwsNJEQyCXDFYnyIoVv2gZ4CrTV8nLJ72CnyHiQ==
+X-Gm-Message-State: AOJu0YxTKKHRTvFn4VybY1aevTHaydfPxoOQ3MhmpLOOWuxSp15mz4o4
+	J7TLaQdSEtisVtPS5MErbDjw9LGNcImFYgfqLajk35WYo5aUaAhv
+X-Google-Smtp-Source: AGHT+IG3bgoM32LacSe8Aeid35LCdMXycqCOoZj2eJ0y9sS0Tr1FkiYG5HntASlHWcu+NtMPW2GNSg==
+X-Received: by 2002:aa7:c50e:0:b0:57d:456:e838 with SMTP id 4fb4d7f45d1cf-5b7f57f6c52mr8123532a12.31.1722855689903;
+        Mon, 05 Aug 2024 04:01:29 -0700 (PDT)
+Received: from Ansuel-XPS. (host-95-255-112-66.business.telecomitalia.it. [95.255.112.66])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83a153f34sm4805088a12.56.2024.08.05.04.01.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 04:01:29 -0700 (PDT)
+Message-ID: <66b0b109.050a0220.93681.d015@mx.google.com>
+X-Google-Original-Message-ID: <ZrA-9btkfLnpPip-@Ansuel-XPS.>
+Date: Mon, 5 Aug 2024 04:54:45 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Joern Engel <joern@lazybastard.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Wolfram Sang <wsa-dev@sang-engineering.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-nvme@lists.infradead.org, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 6/6] mtd: parser: add support for Airoha parser
+References: <20240804174414.18171-7-ansuelsmth@gmail.com>
+ <202408050612.Ya1m6REu-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202408050612.Ya1m6REu-lkp@intel.com>
 
-The issue was found on the platform that using "Multiprocessor Wakeup
-Structure"[1] to startup secondary CPU, which is usually used by
-encrypted guest.  Before waking up the APs, BSP should memremap() the
-physical address of the MP Wakeup Structure mailbox to the variable
-acpi_mp_wake_mailbox, which holds the virtual address of mailbox.  When
-BSP needs to wake up the APs, it writes the APIC ID of APs, wakeup
-vector, and the ACPI_MP_WAKE_COMMAND_WAKEUP command into the mailbox.
+On Mon, Aug 05, 2024 at 06:52:04AM +0800, kernel test robot wrote:
+> Hi Christian,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on robh/for-next]
+> [also build test ERROR on linus/master v6.11-rc1 next-20240802]
+> [cannot apply to mtd/mtd/next mtd/mtd/fixes]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvme-Document-nvme-card-compatible/20240805-014740
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+> patch link:    https://lore.kernel.org/r/20240804174414.18171-7-ansuelsmth%40gmail.com
+> patch subject: [PATCH v2 6/6] mtd: parser: add support for Airoha parser
+> config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20240805/202408050612.Ya1m6REu-lkp@intel.com/config)
+> compiler: xtensa-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408050612.Ya1m6REu-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408050612.Ya1m6REu-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/mtd/parsers/ofpart_airoha.c: In function 'airoha_partitions_post_parse':
+>    drivers/mtd/parsers/ofpart_airoha.c:33:16: error: implicit declaration of function 'kzalloc' [-Wimplicit-function-declaration]
+>       33 |         prop = kzalloc(sizeof(*prop), GFP_KERNEL);
+>          |                ^~~~~~~
+> >> drivers/mtd/parsers/ofpart_airoha.c:33:14: error: assignment to 'struct property *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+>       33 |         prop = kzalloc(sizeof(*prop), GFP_KERNEL);
+>          |              ^
+> 
+> 
+> vim +33 drivers/mtd/parsers/ofpart_airoha.c
+> 
+>     10	
+>     11	int airoha_partitions_post_parse(struct mtd_info *mtd,
+>     12					 struct mtd_partition *parts,
+>     13					 int nr_parts)
+>     14	{
+>     15		struct mtd_partition *part;
+>     16		int len, a_cells, s_cells;
+>     17		struct device_node *pp;
+>     18		struct property *prop;
+>     19		const __be32 *reg;
+>     20		__be32 *new_reg;
+>     21	
+>     22		part = &parts[nr_parts - 1];
+>     23		pp = part->of_node;
+>     24	
+>     25		/* Skip if ART partition have a valid offset instead of a dynamic one */
+>     26		if (!of_device_is_compatible(pp, "airoha,dynamic-art"))
+>     27			return 0;
+>     28	
+>     29		/* ART partition is set at the end of flash - size */
+>     30		part->offset = mtd->size - part->size;
+>     31	
+>     32		/* Update the offset with the new calculate value in DT */
+>   > 33		prop = kzalloc(sizeof(*prop), GFP_KERNEL);
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
-Current implementation doesn't consider the case that restricts boot
-time CPU to 1 with the kernel parameter "maxcpus=1" and brings other
-CPUs online later, the variable acpi_mp_wake_mailbox will be set as
-read-only after init.  So when the first AP gets online after init, the
-attempt to update the variable results in panic.
-
-The memremap() call that initializes the variable cannot be moved into
-acpi_parse_mp_wake() because memremap() is not functional at that point
-in the boot process.  Moreover, the APs might never be brought up, keep
-the memremap() call in acpi_wakeup_cpu() so that the operation only
-takes place on demand.
-
-[1] Details about the MP Wakeup structure can be found in ACPI v6.4, in
-    the "Multiprocessor Wakeup Structure" section.
-
-Fixes: 24dd05da8c79 ("x86/apic: Mark acpi_mp_wake_* variables as __ro_after_init")
-Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
----
-
-V4 RESEND note:
-- No changes on this, just rebasing as v6.11-rc1 is out.
-
-V3: https://lore.kernel.org/all/20240702005800.622910-1-zhiquan1.li@intel.com/
-
-Changes since V3:
-- Add Fixes tag for the commit found by Kai.
-- Extend the commit message for the root cause and solution.
-
-V2: https://lore.kernel.org/all/20240628082119.357735-1-zhiquan1.li@intel.com/
-
-Changes since V2:
-- Modify the commit log as suggested by Kirill.
-- Add Kirill's Reviewed-by tag.
-
-V1: https://lore.kernel.org/all/20240626073920.176471-1-zhiquan1.li@intel.com/
-
-Changes since V1:
-- Amend the commit message as per Kirill's comments.
-- Remove the oops message.
----
- arch/x86/kernel/acpi/madt_wakeup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/madt_wakeup.c
-index 6cfe762be28b..d5ef6215583b 100644
---- a/arch/x86/kernel/acpi/madt_wakeup.c
-+++ b/arch/x86/kernel/acpi/madt_wakeup.c
-@@ -19,7 +19,7 @@
- static u64 acpi_mp_wake_mailbox_paddr __ro_after_init;
- 
- /* Virtual address of the Multiprocessor Wakeup Structure mailbox */
--static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox __ro_after_init;
-+static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox;
- 
- static u64 acpi_mp_pgd __ro_after_init;
- static u64 acpi_mp_reset_vector_paddr __ro_after_init;
-
-base-commit: 435dfff07e5b71ceecc35954645740ab91090fbb
+Mhhh somehow I can't repro this with instructions?
 -- 
-2.25.1
-
+	Ansuel
 
