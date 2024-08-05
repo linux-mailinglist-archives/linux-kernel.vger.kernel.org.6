@@ -1,148 +1,162 @@
-Return-Path: <linux-kernel+bounces-275472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AD4948636
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:38:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049D994863B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2FAD1C221D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:38:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B728B227D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F96B16F29F;
-	Mon,  5 Aug 2024 23:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42D416EBE2;
+	Mon,  5 Aug 2024 23:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="f+wx+VRe"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163F416D9A4;
-	Mon,  5 Aug 2024 23:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qUtbvVKb"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF4C15ECF8
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 23:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722901120; cv=none; b=lCSJtUz9rXVARj2tZZF/Fl3xXmsf8BW3HjtJbCRxyW6ds2BySnpXO17fbF2aUQp/1Yw1jGZjiu5SCYSMPaONe0fHbdABwYVvKhizDPxbWIEKa/FRgfKqyVkbIrEy7mwlsBgdLqBLWgkqpYncOKOHDOuZ3ZMXsMIx87Qaqe9WrLk=
+	t=1722901157; cv=none; b=W08ETa26qvAhdTRrmAOaGn67e7f1jdcixOWj7GNV9Evija5DWKmzld3k67+dNNJzU2pTI5lCDwqz1x86U4ly7ch3EDjEdEvX1RsR57xT0m37fcRlwO3e4u7U9JsQvzEwh2+i/jh0Er+e0EKhhX2SexUgc/z32+6mS+nwWl8wfYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722901120; c=relaxed/simple;
-	bh=BE2yy+dxZDCTdQqAauR/rYcRVaXPWIrQibEZm5Noy8k=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=lAlNXxeW2Vagr6N/+POeMGQo1VFgbUW8POUVW7bICvhEMF0P3DcZcYfMO3y1fEpC5Bt5rSl0yAls+df42Ge9DHqYk3MOW0mUnyYZfGuB7CL58B1q2V1HLeCH5ZHYVjnlfNqnOX7DvPniMomyipptuA2hCqmvwHoz4J83cAY861c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=f+wx+VRe; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1202)
-	id A3FEE20B7165; Mon,  5 Aug 2024 16:38:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A3FEE20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
-	s=default; t=1722901118;
-	bh=cvB29WQ8UvgjPvJddUfE9WdFQ1bn5OV46Q0AJIFbC0I=;
-	h=From:To:Cc:Subject:Date:Reply-To:From;
-	b=f+wx+VRelYsh1uVuFycK2IcwF7KrKTsqoxQ80BnnqMyBqdItwxUsU8zjnXp6gJfKw
-	 lYEKUtP3A4zwWINnuD2S8yuH4tTSyjjf0ISw7g12IgROKeMvzh13LvOVtjUwU/FI2D
-	 V//IHuY8KK5HoDI5tVfZuHsB7VlIoInv/nSuC4Ak=
-From: longli@linuxonhyperv.com
-To: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Cc: Long Li <longli@microsoft.com>,
-	stable@vger.kernel.org
-Subject: [PATCH net] net: mana: Fix doorbell out of order violation and avoid unnecessary doorbell rings
-Date: Mon,  5 Aug 2024 16:38:08 -0700
-Message-Id: <1722901088-12115-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
-Reply-To: longli@microsoft.com
+	s=arc-20240116; t=1722901157; c=relaxed/simple;
+	bh=oDWvqZLlTRsTm3mtLU+N+8ckvjki4RAgkVzc7cx3B5E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CJbfRKR6iVFQBDWi/xkiYzRXOWkp6GdgzNQjjIHdfApDFXF0/oYpjVu8x23bOJcq2VIQFvXH3yZ1MPfimzC6i3yoEUNFwVb/n/VR6W6w2YkxbyMTSZfA+phfQb1VfxBxbZVgSG8n+KIAadFA9k1/x13gwtMgGoTtQRhwfCzfd/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qUtbvVKb; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d150e8153so189162b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 16:39:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722901154; x=1723505954; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YlfLagP5nVyPXkAB8M//TTqvQzW08KpKDm8mw3Y40H8=;
+        b=qUtbvVKbapmgLJ6EmVhY2es7Ye5yBB2GMZRjd65rHiVaYgFYqie08lO5G1lYyn1o/z
+         pShl8r/xAEcox5hrWeXex3meqUsfEDsFDZkYtORV945gfH8FCVkvPmssaIfbc4mZDt5O
+         VXE+IsPxzLcrVRiCgUMu/U7BxnICk1dXYDQ58zuCxqr8aBqTkVDDCjTNcYY+svn70sej
+         pzRAHa+LHuDIec9Zy6th5BsI4Tvi+l2cncnk7qcnWPJgpRR6Z3B9B/tdLmOcbGgTPSjx
+         3430gGa7FQn/u9AnzdHpIGHkko/TonB+uZf7RDcJK4cac/fDK4C8dks72MUWGZ20srJu
+         6I3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722901154; x=1723505954;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YlfLagP5nVyPXkAB8M//TTqvQzW08KpKDm8mw3Y40H8=;
+        b=Jc1atrtvC9rLeric+Bix86VsLJRLNiteWJQIv2YT8ffiPgSkFyozwX2QYCohy8yCxe
+         qIMRfzZWqpSFn7Da4zVB92Qmp7G/kDIFnRy4qWY8c3mnaJhuZVinDk4tyP+2eHEFKIBR
+         3jd01qGizxm6H60ckDjJlYd4V+4ujmqIZfyh548fxuszlq5yBzWoffEGr5PAHm7LMtx0
+         9C5yi7mgk/nAjHiqeRZ0zWZiWbGENd0vOq/jut89DWf6xwaCpKlFGIXSwlRh9OQpAYJ+
+         ByyezLWdK1OjKgsX/BnAMnG7a+Nt4QarTauzxE9tc40lD6fk4oswENoXCU81Ew5I2YRo
+         v/8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW9HN+vCpmuFODw3y7sBqHLp8sW3o+TYTT2TNSSmBS3LS2Jh9YAQ0QwzyRVrHG1gNfWxkZc19uEzdO2fle5Bw6P3nblmonc1Lexry12
+X-Gm-Message-State: AOJu0Ywi2fq9wNUj7j/TBtu38aL0cN014uIZ/pJwSJgt8YoJUnmNNsiW
+	8M8AedzCt1XQ61eLZKzX0VY+qKlC2e7gdkQzBFdZdRT6W3OFTPpU4Zvs1O0DP8s=
+X-Google-Smtp-Source: AGHT+IEP1xZK03sfTEAqQ2BUVMV56gxYOQHRak/cqDgve2B4q6pMILP9E+OfwxIYMys2eRW9iow3uQ==
+X-Received: by 2002:a05:6a00:85a3:b0:70d:2a1b:422c with SMTP id d2e1a72fcca58-7106da29926mr19788781b3a.7.1722901153596;
+        Mon, 05 Aug 2024 16:39:13 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec40f5asm5950089b3a.51.2024.08.05.16.39.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 16:39:12 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH 0/3] pmdomain: ti_sci: collect and send low-power mode
+ constraints
+Date: Mon, 05 Aug 2024 16:38:38 -0700
+Message-Id: <20240805-lpm-v6-10-constraints-pmdomain-v1-0-d186b68ded4c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAINisWYC/y2OQQ6CMBBFr0K6dggtBYUY4z0MiwKDNqGldirRE
+ O5uBXfzJvnv/4UReo3E6mRhHmdNerIR+CFh3UPZO4LuIzORCZmdMgGjMzCXwDPoJkvBK20DgTP
+ 9ZOIJQ573Q6FwkLJiUeI8Dvq9FdyanT0+X7En7E/WKsLoMkaHOpnLlHPwHf9lDRKpbUGdnP8DO
+ K8KKUQqRFXm8ggcDLlrqz6jbj2m0XNhzbp+AYGENjvYAAAA
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Nishanth Menon <nm@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
+ Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+ Sebin Francis <sebin.francis@ti.com>, 
+ Markus Schneider-Pargmann <msp@baylibre.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 20240801195422.2296347-1-msp@baylibre.com
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2540; i=khilman@baylibre.com;
+ h=from:subject:message-id; bh=oDWvqZLlTRsTm3mtLU+N+8ckvjki4RAgkVzc7cx3B5E=;
+ b=owEBbQKS/ZANAwAKAVk3GJrT+8ZlAcsmYgBmsWKfWekKui7NB6vltDXLdz/o4GHPuLverfABI
+ 5myx6HZISuJAjMEAAEKAB0WIQR7h0YOFpJ/qfW/8QxZNxia0/vGZQUCZrFinwAKCRBZNxia0/vG
+ ZYbmEACY/u4s2BZHwhegEN64lzxLQuWazliVpqqKWOw53rJM1FrYZYvYmFtUx35wOXVFg896rzb
+ 8h6QYSKuyqoMt5XONQ+mbitOPpa8KRgaYlcKVH+PAVnk7QHuMIhu0THt0U2aWlHrKYai3dtPQnV
+ 66/R7dGnnvSylfsGu+E7dsLMpiYJDKm4ElkrZdnhGsQKkScGlIHMgQoMKK5N4jYLbGLNYgLUK9X
+ IAWtNF/o9CPhQ6Ivp8rPlHMQWV43U7cU+b6wi9tAvqwFnG2zB0Pljr4sTMmF6RpS6U3DKA++9eV
+ GjGM9Ib5Q01x759VyBq8XedPcQIocQ+HgA2SvLGy5hBDPn0U1aB6/+9eKn/RCK1V+y+gVnU6RmM
+ s3AC1GP27GiA8pLlIQrOmGBLoZkLdndlujR/TRRsYKf3Sk4wnJNlzpxZ1Uxkvd8hzsVZyNn6nfk
+ RKOeH/IeCdckU+wkRe3ba8HQ75BFv7F6+bPXP8Wdf4NmzDzXSFnQ4CACaW35fCdgwn3Sm2hJQ8K
+ TpfzmrkDAEl/iG0lEW6L6GQlrlfJZ/xU0FyrpLucJgomm7czYymq/kxIHoISDPe4cUIwitUf/AZ
+ ohHp4+qxWGaUgSIBG24J0vrTHnzOCwAJxS0r6Y1bLZSqAMbLjzw8qaaSCSPrrvWBftWSpbiZzPJ
+ NgQ6/y9FDfiDnPw==
+X-Developer-Key: i=khilman@baylibre.com; a=openpgp;
+ fpr=7B87460E16927FA9F5BFF10C5937189AD3FBC665
 
-From: Long Li <longli@microsoft.com>
+The latest (10.x) version of the firmware for the PM co-processor (aka
+device manager, or DM) adds support for a "managed" mode, where the DM
+firmware will select the specific low power state which is entered
+when Linux requests a system-wide suspend.
 
-After napi_complete_done() is called, another NAPI may be running on
-another CPU and ring the doorbell before the current CPU does. When
-combined with unnecessary rings when there is no need to ARM the CQ, this
-triggers error paths in the hardware.
+In this mode, the DM will always attempt the deepest low-power state
+available for the SoC.
 
-Fix this by always ring the doorbell in sequence and avoid unnecessary
-rings.
+However, Linux (or OSes running on other cores) may want to constrain
+the DM for certain use cases.  For example, the deepest state may have
+a wakeup/resume latency that is too long for certain use cases.  Or,
+some wakeup-capable devices may potentially be powered off in deep
+low-power states, but if one of those devices is enabled as a wakeup
+source, it should not be powered off.
 
-Cc: stable@vger.kernel.org
-Fixes: e1b5683ff62e ("net: mana: Move NAPI from EQ to CQ")
-Signed-off-by: Long Li <longli@microsoft.com>
+These kinds of constraints are are already known in Linux by the use
+of existing APIs such as per-device PM QoS and device wakeup APIs, but
+now we need to communicate these constraints to the DM.
+
+For TI SoCs with TI SCI support, all DM-managed devices will be
+connected to a TI SCI PM domain.  So the goal of this series is to use
+the PM domain driver for TI SCI devices to collect constraints, and
+communicate them to the DM via the new TI SCI APIs.
+
+This is all managed by TI SCI PM domain code.  No new APIs are needed
+by Linux drivers.  Any device that is managed by TI SCI will be
+checked for QoS constraints or wakeup capability and the constraints
+will be collected and sent to the DM.
+
+This series depends on the support for the new TI SCI APIs here:
+https://lore.kernel.org/r/20240801195422.2296347-1-msp@baylibre.com
+
+Signed-off-by: Kevin Hilman <khilman@baylibre.com>
 ---
- drivers/net/ethernet/microsoft/mana/mana_en.c | 24 ++++++++++++-------
- include/net/mana/mana.h                       |  1 +
- 2 files changed, 16 insertions(+), 9 deletions(-)
+Kevin Hilman (3):
+      pmdomain: ti_sci: add per-device latency constraint management
+      pmdomain: ti_sci: add wakeup constraint management
+      pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index d2f07e179e86..7d08e23c6749 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -1788,7 +1788,6 @@ static void mana_poll_rx_cq(struct mana_cq *cq)
- static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
- {
- 	struct mana_cq *cq = context;
--	u8 arm_bit;
- 	int w;
- 
- 	WARN_ON_ONCE(cq->gdma_cq != gdma_queue);
-@@ -1799,16 +1798,23 @@ static int mana_cq_handler(void *context, struct gdma_queue *gdma_queue)
- 		mana_poll_tx_cq(cq);
- 
- 	w = cq->work_done;
--
--	if (w < cq->budget &&
--	    napi_complete_done(&cq->napi, w)) {
--		arm_bit = SET_ARM_BIT;
--	} else {
--		arm_bit = 0;
-+	cq->work_done_since_doorbell += w;
-+
-+	if (w < cq->budget) {
-+		mana_gd_ring_cq(gdma_queue, SET_ARM_BIT);
-+		cq->work_done_since_doorbell = 0;
-+		napi_complete_done(&cq->napi, w);
-+	} else if (cq->work_done_since_doorbell >
-+		   cq->gdma_cq->queue_size / COMP_ENTRY_SIZE * 4) {
-+		/* MANA hardware requires at least one doorbell ring every 8
-+		 * wraparounds of CQ even there is no need to ARM. This driver
-+		 * rings the doorbell as soon as we have execceded 4
-+		 * wraparounds.
-+		 */
-+		mana_gd_ring_cq(gdma_queue, 0);
-+		cq->work_done_since_doorbell = 0;
- 	}
- 
--	mana_gd_ring_cq(gdma_queue, arm_bit);
--
- 	return w;
- }
- 
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index 6439fd8b437b..7caa334f4888 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -275,6 +275,7 @@ struct mana_cq {
- 	/* NAPI data */
- 	struct napi_struct napi;
- 	int work_done;
-+	int work_done_since_doorbell;
- 	int budget;
- };
- 
+ drivers/pmdomain/ti/ti_sci_pm_domains.c | 124 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 123 insertions(+), 1 deletion(-)
+---
+base-commit: ad7eb1b6b92ee0c959a0a6ae846ddadd7a79ea64
+change-id: 20240802-lpm-v6-10-constraints-pmdomain-f33df5aef449
+prerequisite-message-id: <20240801195422.2296347-1-msp@baylibre.com>
+prerequisite-patch-id: 57f574b3f686c62cc0e255f52b2b8b96cd8b1661
+prerequisite-patch-id: 0dc60150f10bbd6e0d7ae19001075b859d7af2f1
+prerequisite-patch-id: f4b971122cc54df199c0d95a6c4ed47db1dae027
+
+Best regards,
 -- 
-2.17.1
+Kevin Hilman <khilman@baylibre.com>
 
 
