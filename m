@@ -1,206 +1,109 @@
-Return-Path: <linux-kernel+bounces-274439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C309C947818
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:15:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A26E947819
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31536B22AC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:15:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DBDB1F22872
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880E8153BD7;
-	Mon,  5 Aug 2024 09:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E58C1509B6;
+	Mon,  5 Aug 2024 09:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFZ++Xdw"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nVA1FpuX"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9F33BB48;
-	Mon,  5 Aug 2024 09:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DC33BB48
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 09:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722849329; cv=none; b=Gz0+8JomoMybdWYJoY789iwjfXKE6bqt9THTCmAm53tiCVmg/hMXg755xhHHzVLbbsfo+bC8auK48T6Ev4YPuCsgitvfPLJGKrVIWlXiSBplfm18lRkx9r1kz41E965XMb1+gVIEjKzxUhwKgSA8FRSpCbfMfXeDEYLwurzgVF4=
+	t=1722849344; cv=none; b=u/G+EdmoA6cB/vUydjrI11mPhKneyBd/r8QqJV9D3mw0DeP+feLHlOfPP3MSB49SGaZt4BtQdmUYjIONy0ucvqoT+8QSSCDWwBq6JgeFocOCqhHwcbiq77Pg/I1fam8v5Bgw6cMuwsiUK9xZGRigCZlVfGMTkZRtqBbaG6qXkSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722849329; c=relaxed/simple;
-	bh=q3WBhJXNnWW89LoRGboHkm88GaFomhoK+0qXcAOXq0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q8K/uZZrlrz8fX8NelQqsfMkoeEkIU5PeMa0dQF0Uz6LA0H7IWePCAIfl6qSsQzuuNtfhwVPOQPAWK0zOWG/HuqgKLVBvLRs8P3N7nnBNvvLo1IaIQdn30wNHDjB07kSlti8+aDHGdc8NQaRrOruWv6lmjDIM54e6f6AFuEMsps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFZ++Xdw; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7093abb12edso7678507a34.3;
-        Mon, 05 Aug 2024 02:15:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722849327; x=1723454127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/3+rIztQE6WRU9ZBeY+g9kfmjd9A7zQwu+i8aRi8HSU=;
-        b=cFZ++Xdw6LEz/7keAGkvpv7uhX8g8PgMB7Xo92KVYDcn/Bpbse6UHCwCdlGVpE6R09
-         hH6tKKTfoPT7s9jpBDu6LdOS90duOKvcYzz6YSZ6S2X5ZUBhEAVOjcowvHSvZt15U+3t
-         OdFJlfFQYJiPzzgNfkg49B1W+yivOZOmaE6MeGK7CG0I1HKcWbORWSJgB8FCdERHMSXc
-         tgCuXUnLq6lvjtuu5bQ1+CtMFooEkMOml4NHc+mskLOANuRPd1j0exhaMxPq9IEKT+o+
-         n6x4uWmXXA+4SxywFMHYvxD789XA4v025p50pHlfx949LYkpx9tnSt2Gt84CJYz1lJ0B
-         S7Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722849327; x=1723454127;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/3+rIztQE6WRU9ZBeY+g9kfmjd9A7zQwu+i8aRi8HSU=;
-        b=S8Xsq8j2OdLIarAHMFH1Mmyy21AKUmh4qM2qPzQU+nSmIHIQJEzA63fGf5SD2OuK2/
-         RIJpQf9znsESOOkvbVRVh2U5XNTZ2boPSZ1cgMrRJhohue/nRSCfR2sSJuC8G+I6MVsA
-         rMCDNxB/s7a0z/nxChKrfHpWGM9eNFhlX06/7/igT10fWnhzrqOUDX6PJflKIexEmfQg
-         kj9lzCn9c/TT2R8lwy9zfAt3zFDoxztG3LOmGi0x28LKOjIprUBeeNYI9pBTdesiwMq9
-         PePRwJFR1p5Djrs4kfQeOXE1pELyTcns+XaL435qRD3zkdbi9pjULhjXpBKirIWo1BZW
-         R95A==
-X-Forwarded-Encrypted: i=1; AJvYcCX68XMKXKaxk/ITjxcQrG1ILltBoTwe9Y4+IYu02w9CFJPHV3NSnEgaCothWjC08aVmbDKYeTZdDBAeWk/Fqa+8uW3ibjSS7jyXdwczBDnmjnkhuA4+DI80w6QQBsh/G7naZ6CTqyAt3Jdw5aIDmnxuuWI4mExCfAC7d2UXzx0MuzJW/Q==
-X-Gm-Message-State: AOJu0YwJCnux6N7bRJGpv0v0vDLbxOy0+44eLNwApZ6+hu+W4ErnVqZZ
-	XiLl58LNlCVcNiF9VgFP+N8APUAsMk6xz3keLcS3QTSgr01tpYzj
-X-Google-Smtp-Source: AGHT+IEhCrVhi6RjKsMaNG35hoJ2syJpEEnWGuaWja14l87nxPCwfBClsO+7Fw8Kz2q8MRArLRT/mw==
-X-Received: by 2002:a05:6830:3509:b0:70a:9876:b76b with SMTP id 46e09a7af769-70a9876b930mr11856521a34.2.1722849327046;
-        Mon, 05 Aug 2024 02:15:27 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70a3a76ef7fsm2899595a34.74.2024.08.05.02.15.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 02:15:26 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: adrian.hunter@intel.com,
-	aou@eecs.berkeley.edu,
-	conor+dt@kernel.org,
-	guoren@kernel.org,
-	inochiama@outlook.com,
-	jszhang@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	ulf.hansson@linaro.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v6 0/8] mmc: sdhci-of-dwcmshc: Add Sophgo SG2042 support
-Date: Mon,  5 Aug 2024 17:15:18 +0800
-Message-Id: <cover.1722847198.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722849344; c=relaxed/simple;
+	bh=6tLNsPqRPfQQnNIGHohMzXJbUdiVp+3CXoFbYrO67tc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKyLHniAhnJTrslAnE5hlAwDqh7GsdLXyvrRdTkMKyo37QRVIAqzIGsYSGPAaMgIo9dZVZb+dTwBhab/CJsR3Dy51U1VP0QBjcOjuzuHZdgdzx7RMtrBfFxy+y/whwfE4LyuP8RKM3eACq8hqSb4rV/yUiolZWeKSkuiG2ANwR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nVA1FpuX; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=NCu8y4Lo09ahmjQF/OJlLXMp2GfKKpTVq/Oxvzptb6Y=; b=nVA1FpuXKsM+ALKK7h7AScNZ0E
+	ySp8qk0tvixYCPQgF01dJ6ieE6ff0v32TSpfk7rBSggT52FT5WSXahvn5XtHy08AwEf0CsoQy7NXX
+	WelPxmKj3J707bWOXOTEtjFu6eqQdlGIKguwoXY4zfN1YTbxU0BhQKfAKK7MKPISwRHbida2dFgKn
+	HvEXsv9zRTQRv8cCHkgtirW8KDWBrL3Xfv7B9xfTcbke3OLSfn1uC5acgjJYvzCw1AdKKUezP+S+U
+	r5fbohHHBTMqZh7abnKq+I18avN+mc9gOyvJJxfm0mdu1xRlUBaWyM+2coK6v+MN5mO21Ur5o5qik
+	1BkEO8tA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1satoW-00000006DSA-2OjZ;
+	Mon, 05 Aug 2024 09:15:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2F76330049D; Mon,  5 Aug 2024 11:15:36 +0200 (CEST)
+Date: Mon, 5 Aug 2024 11:15:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Stephane Eranian <eranian@google.com>,
+	Ian Rogers <irogers@google.com>, Mingwei Zhang <mizhang@google.com>
+Subject: Re: [PATCH v2] perf/core: Optimize event reschedule for a PMU
+Message-ID: <20240805091536.GJ37996@noisy.programming.kicks-ass.net>
+References: <20240731000607.543783-1-namhyung@kernel.org>
+ <476e7cea-f987-432a-995b-f7d52a123c9d@linux.intel.com>
+ <20240802183841.GG37996@noisy.programming.kicks-ass.net>
+ <20240802184350.GA12673@noisy.programming.kicks-ass.net>
+ <20240802185023.GB12673@noisy.programming.kicks-ass.net>
+ <20240802191123.GC12673@noisy.programming.kicks-ass.net>
+ <20240803103202.GD12673@noisy.programming.kicks-ass.net>
+ <CAM9d7cgNZQrJk7-TnMgqvCMpkYkcpBT78Ts_5oTsAzNB9gp+_w@mail.gmail.com>
+ <CAM9d7ch=-cp-wxLUXf1=EizAeHMG_zneSqp0owdbKp__K0ZeCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAM9d7ch=-cp-wxLUXf1=EizAeHMG_zneSqp0owdbKp__K0ZeCw@mail.gmail.com>
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On Sun, Aug 04, 2024 at 11:39:18PM -0700, Namhyung Kim wrote:
+> On Sat, Aug 3, 2024 at 10:08 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Sat, Aug 3, 2024 at 3:32 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > On Fri, Aug 02, 2024 at 09:11:23PM +0200, Peter Zijlstra wrote:
+> > >
+> > > > But I'll have to continue staring at this later.
+> > >
+> > > OK, I have the below, which boots and seems able to do:
+> > >
+> > >   perf stat -ae power/energy-pkg/ -- sleep 1
+> > >
+> > > and
+> > >
+> > >   perf top
+> > >
+> > > also still works, so it must be perfect, right, right?
+> >
+> > I really hope so. :)  I'll test it over the weekend.
+> 
+> I found a failing test about the context time - it complained about
+> difference in enabled vs running time of a software event.
 
-This patchset is composed of two parts:
-- one is the improvement of the sdhci-of-dwcmshc framework,
-- the other is the support for sg2042 based on the improvement of the
-  framework.
-The reason for merging the two parts into one patchset is mainly to
-facilitate review, especially to facilitate viewing why we need to
-improve the framework and what benefits it will bring to us.
+Yeah, it's that ctx_scheD_out(EVENT_TIME) thing, that's really needed.
 
-When I tried to add a new soc(SG2042) to sdhci-of-dwcmshc, I found
-that the existing driver code could be optimized to facilitate expansion
-for the new soc. Patch 1 ~ Patch 5 is for this.
-
-Patch 6 ~ 7 are adding support for the mmc controller for Sophgo SG2042.
-Adding corresponding new compatible strings, and implement
-custom callbacks for SG2042 based on new framework.
-
-Patch 8 is the change for DTS.
-
-By the way, although I believe this patch only optimizes the framework
-of the code and does not change the specific logic, simple verification
-is certainly better. Since I don't have rk35xx/th1520 related hardware,
-it would be greatly appreciated if someone could help verify it.
-
----
-
-Changes in v6:
-
-  The patch series is based on latest 'next' branch of [mmc-git].
-
-  - Some minor improvements based on Adrian's review suggestions.
-  - Added Reviewed-by and Tested-by signatures from Conor/Drew/Inochi.
-
-Changes in v5:
-
-  The patch series is based on latest 'next' branch of [mmc-git]. You can simply
-  review or test the patches at the link [5].
-
-  - Based on Adrian's suggestion, split the first part of the patch into 5.
-  - Updated bindings and DTS as per suggestion from Krzysztof, Jisheng and Conor.
-
-Changes in v4:
-
-  The patch series is based on latest 'next' branch of [mmc-git]. You can simply
-  review or test the patches at the link [4].
-
-  Improved the dirvier code as per comments from Adrian Hunter, drop moving
-  position and renaming for some helper functions.
-
-  Put the sg2042 support as part of this series, improve the bindings and code
-  as per comments from last review.
-
-Changes in v3:
-  
-  The patch series is based on latest 'next' branch of [mmc-git]. You can simply
-  review or test the patches at the link [3].
-
-  Improved the dirvier code as per comments from Adrian Hunter.
-  Define new structure for dwcmshc platform data/ops. In addition, I organized
-  the code and classified the helper functions.
-
-  Since the file changes were relatively large (though the functional logic did
-  not change much), I split the original patch into four for the convenience of
-  review.
-
-Changes in v2:
-
-  Rebased on latest 'next' branch of [mmc-git]. You can simply review or test the
-  patches at the link [2].
-
-Changes in v1:
-
-  The patch series is based on v6.9-rc1. You can simply review or test the
-  patches at the link [1].
-
-Link: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git [mmc-git]
-Link: https://lore.kernel.org/linux-mmc/cover.1713257181.git.unicorn_wang@outlook.com/ [1]
-Link: https://lore.kernel.org/linux-mmc/cover.1714270290.git.unicorn_wang@outlook.com/ [2]
-Link: https://lore.kernel.org/linux-mmc/cover.1718241495.git.unicorn_wang@outlook.com/ [3]
-Link: https://lore.kernel.org/linux-mmc/cover.1718697954.git.unicorn_wang@outlook.com/ [4]
-Link: https://lore.kernel.org/linux-mmc/cover.1721377374.git.unicorn_wang@outlook.com/ [5]
-
----
-
-Chen Wang (8):
-  mmc: sdhci-of-dwcmshc: add common bulk optional clocks support
-  mmc: sdhci-of-dwcmshc: move two rk35xx functions
-  mmc: sdhci-of-dwcmshc: factor out code for th1520_init()
-  mmc: sdhci-of-dwcmshc: factor out code into dwcmshc_rk35xx_init
-  mmc: sdhci-of-dwcmshc: add dwcmshc_pltfm_data
-  dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo SG2042 support
-  mmc: sdhci-of-dwcmshc: Add support for Sophgo SG2042
-  riscv: sophgo: dts: add mmc controllers for SG2042 SoC
-
- .../bindings/mmc/snps,dwcmshc-sdhci.yaml      |  60 ++-
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |  17 +
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        |  28 ++
- drivers/mmc/host/sdhci-of-dwcmshc.c           | 451 ++++++++++++------
- 4 files changed, 383 insertions(+), 173 deletions(-)
-
-
-base-commit: 538076ce6b8dfe5e8e8d9d250298030f165d8457
--- 
-2.34.1
-
+I'll make those changes go away when I split it all up.
 
