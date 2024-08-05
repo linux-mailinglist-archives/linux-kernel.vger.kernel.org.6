@@ -1,185 +1,157 @@
-Return-Path: <linux-kernel+bounces-275023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2D3947FB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:54:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940FF947FBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395181F21762
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:54:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5C701C20F1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB14315D5BE;
-	Mon,  5 Aug 2024 16:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OL/o+I2O"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE5E15C15D;
+	Mon,  5 Aug 2024 16:56:24 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEB315B984
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22552C684
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722876890; cv=none; b=l7g9A9gw8rNxCUMEIJg+X69uOT/0pFT/KiCc7ZuVC9D5PSIqCX0aw0B/4TxSLRbFnjrdmHQsDnoXQRDRHkemXYtJ8Y+rxhjz+gjtj23ZTxczp6cM0bTEkqGYb9aigdjA7mfnbw8vpYT1uHcZDav4yVtqdf2zV1YIjYpEwGzTuWE=
+	t=1722876983; cv=none; b=AksNcU8fJNizKvFf/c8axzM2q8GWtLgKYWuE16wk6IXUKPUw4Cga8sMJBXk3CVM0kYjFQIdAjP8jxPRwnFHC4TuCuPHD5yGNU4DEg1d7YRcVlLNWNfBhO6Fsy87YSf6ZLGGVOsKY270xL/SvC5YRsS4Fpw+NDaPwpfbQmefBNCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722876890; c=relaxed/simple;
-	bh=DZR96w7+yR+8QAvUxt2vUtynjYuzg6oCFxeOrTtAAY4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SZk3IrEh/ICjejlqPgmbHBD8lfZWfPH3nWC58zx1c+L1awmDM6GqnDajnTcdRQ9tNxGy3yQfkQQRKnLtcrnfmPsmq7gZYDJcWPrNXiyENd6gydEAHPvGDeRHdYFIvdrD81Nxcy/qcI7LLineR01YsiQTIyRK/T7tMb+gpUyXGXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OL/o+I2O; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fdc70e695so12121cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 09:54:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722876888; x=1723481688; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w+EjPosfkeXziba69Qb6GXWNK9P7pF1IIw+Hux9jBR8=;
-        b=OL/o+I2OJv5NrNX8P93jLzNgoTeqBFWl+sYc0SkHAXpPCqiJSvuEbRDnG2XE3rC2Tz
-         uLe3vTMU/GU6vSY3bmjqUEX/SIcFNIvvUMCPGEL9Cj9n0uRBarkx0+9VK5nAEqHfuxLc
-         wzhIoUhRMm/8E+vcetbZGbM4u5QT/KVyywQY4bjNgKgAaIdzcZtEUay+BvX28yZjj1Zs
-         1cNhEAVOzM9eJOf222WoEWkZkzBvOKigJfq7r34MbEG4T1RS17SPM6g+5SBid5Aw7X/Y
-         kY4hsrpOgdtmVZq17AmZSI/Sp9eRUv49bgjYu9jFvfxaaintaPkmpymNTbAovwat7CNx
-         UJbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722876888; x=1723481688;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w+EjPosfkeXziba69Qb6GXWNK9P7pF1IIw+Hux9jBR8=;
-        b=VrHAx5sLxRzr1z7MPg0/zUXIyFdHi/TjYLAOu5invACsQjma0U5iRkkIVUj3GUR94G
-         t3hR/UBCqWvOwtDdaFUsMdv6ymq/gHHQrXmT1xldQxO+9+yUKP6HM+USgKQLZuPbpZrL
-         xdMspjvm2qDsS/Nd4DCC3cZNFzdJ2V1+G1kDSQeLnUPHKPrB1unC0Klfecs7lWDcFNkf
-         a1dftH6DYZmOfVckFP2sC6nR6LYzLtd9sn3MT+3zBmeItnkzh1zDkG+UuQ22wcXEW0mJ
-         8juIAmzKCZfIL3i6vU0EI8tn1lZepB5qfTI/OID1whPO64EFO2w7kg3qk1doLnODjhLA
-         Ls4A==
-X-Forwarded-Encrypted: i=1; AJvYcCU0CwNRP/id8/rYUNjUOYEdOJCwqJHK5+STf2/7CbT4c9c35QYPLwY18u88KH5xSabEf8YvEJypyna48O7UtQd9lZAvZwFp9/oLMWjU
-X-Gm-Message-State: AOJu0Yzro7BYy7ZwHD7DEA5cYMkOyYq82gFI6E/9DYF02Y2tZZpJZpRz
-	e4bodu0UvJOkyTJRdN/2fqjT6O+npcbmiS4Zb/Xy0VEaUdIRVnywj2LvK5w/CDQOBZl+V9/IYA8
-	rxB6YHggLmKAZAdHbTdh1qchvIwtlfw91CdjY
-X-Google-Smtp-Source: AGHT+IEew9O40a1eagPinVnKq66XRqxq93dCPlTyT+sju/BWCkpRZjCn//Ri9HlnLHZeIehCzQD5j6qeXg1tqDmASbI=
-X-Received: by 2002:a05:622a:301:b0:44f:cb30:8b71 with SMTP id
- d75a77b69052e-4519b663469mr5193091cf.25.1722876887583; Mon, 05 Aug 2024
- 09:54:47 -0700 (PDT)
+	s=arc-20240116; t=1722876983; c=relaxed/simple;
+	bh=QlQ43cztZZoXQl9umIBhJNhLEu87pSmicGcAv1TCkdk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BBjgbYqauHhQ5GBpdnoFU7oR4x3JKtQZH1lrZIMLwigpKaLdbEEzvIsaxKOZkXLbw2xDMWfe+X2jHsSwI6BU4z6zQCpqqvMOdWwQ6Wi8tFI7Xo3UMyGPN5A6fWvdYqc24hVGDL3uGzlYBkPbKvV+ESwmYiZJFrUH1w75aJP4EvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Wd2ZT09H4z6K9j5;
+	Tue,  6 Aug 2024 00:53:37 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 174F31400F4;
+	Tue,  6 Aug 2024 00:56:19 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 5 Aug
+ 2024 17:56:18 +0100
+Date: Mon, 5 Aug 2024 17:56:17 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Igor
+ Mammedov <imammedo@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v5 4/7] acpi/ghes: Support GPIO error source
+Message-ID: <20240805175617.000036ce@Huawei.com>
+In-Reply-To: <5d53042ebc5bc73bbc71f600e1ec1dea41f346b9.1722634602.git.mchehab+huawei@kernel.org>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<5d53042ebc5bc73bbc71f600e1ec1dea41f346b9.1722634602.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-6-jthoughton@google.com> <37ae59f2-777a-4a58-ae58-4a20066364dd@redhat.com>
- <CADrL8HUmQWDc-75p=Z2KZzHkyWCCh8xnX=+ZXm5MZ-drALjKTA@mail.gmail.com> <1ea7a0d2-e640-4549-ac0e-8ae0df8d8e6a@redhat.com>
-In-Reply-To: <1ea7a0d2-e640-4549-ac0e-8ae0df8d8e6a@redhat.com>
-From: James Houghton <jthoughton@google.com>
-Date: Mon, 5 Aug 2024 09:54:10 -0700
-Message-ID: <CADrL8HVfnA2OmqqUWSsiPkCXhCX7RXdqUDvzwF-m3uccBa6ndA@mail.gmail.com>
-Subject: Re: [PATCH v6 05/11] mm: Add fast_only bool to test_young and
- clear_young MMU notifiers
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Sean Christopherson <seanjc@google.com>, 
-	Shaoqin Huang <shahuang@redhat.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Wei Xu <weixugc@google.com>, Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, Aug 2, 2024 at 8:57=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 02.08.24 01:13, James Houghton wrote:
-> > On Thu, Aug 1, 2024 at 2:36=E2=80=AFAM David Hildenbrand <david@redhat.=
-com> wrote:
-> >>
-> >> On 24.07.24 03:10, James Houghton wrote:
-> >>> For implementers, the fast_only bool indicates that the age informati=
-on
-> >>> needs to be harvested such that we do not slow down other MMU operati=
-ons,
-> >>> and ideally that we are not ourselves slowed down by other MMU
-> >>> operations.  Usually this means that the implementation should be
-> >>> lockless.
-> >>
-> >> But what are the semantics if "fast_only" cannot be achieved by the
-> >> implementer?
-> >>
-> >> Can we add some documentation to the new functions that explain what
-> >> this mysterious "fast_only" is and what the expected semantics are?
-> >> Please? :)
-> >
-> > Thanks for pointing out the missing documentation. How's this?
-> >
-> > diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.=
-h
-> > index 45c5995ebd84..c21992036dd3 100644
-> > --- a/include/linux/mmu_notifier.h
-> > +++ b/include/linux/mmu_notifier.h
-> > @@ -106,6 +106,18 @@ struct mmu_notifier_ops {
-> >           * clear_young is a lightweight version of clear_flush_young. =
-Like the
-> >           * latter, it is supposed to test-and-clear the young/accessed=
- bitflag
-> >           * in the secondary pte, but it may omit flushing the secondar=
-y tlb.
-> > +        *
->
-> Probably makes sense to highlight the parameters like @fast_only
+On Fri,  2 Aug 2024 23:43:59 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Will do.
+> From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
+> Add error notification to GHES v2 using the GPIO source.
 
->
-> > +        * The fast_only parameter indicates that this call should not =
-block,
-> > +        * and this function should not cause other MMU notifier calls =
-to
-> > +        * block. Usually this means that the implementation should be
-> > +        * lockless.
-> > +        *
-> > +        * When called with fast_only, this notifier will be a no-op un=
-less
-> > +        * has_fast_aging is set on the struct mmu_notifier.
->
-> "... and will return 0 (NOT young)." ?
+The gpio / external interrupt follows through.
 
-Thanks, I'll add this.
+> 
+> [mchehab: do some cleanups at ACPI_HEST_SRC_ID_* checks]
+> 
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/ghes.c         | 16 ++++++++++------
+>  include/hw/acpi/ghes.h |  3 ++-
+>  2 files changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index 8d0262e6c1aa..a745dcc7be5e 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -34,8 +34,8 @@
+>  /* The max size in bytes for one error block */
+>  #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
+>  
+> -/* Now only support ARMv8 SEA notification type error source */
+> -#define ACPI_GHES_ERROR_SOURCE_COUNT        1
+> +/* Support ARMv8 SEA notification type error source and GPIO interrupt. */
+> +#define ACPI_GHES_ERROR_SOURCE_COUNT        2
+>  
+>  /* Generic Hardware Error Source version 2 */
+>  #define ACPI_GHES_SOURCE_GENERIC_ERROR_V2   10
+> @@ -290,6 +290,9 @@ void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+>  static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
+>  {
+>      uint64_t address_offset;
+> +
+> +    assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
+> +
+>      /*
+>       * Type:
+>       * Generic Hardware Error Source version 2(GHESv2 - Type 10)
+> @@ -327,6 +330,9 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
+>           */
+>          build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_SEA);
+>          break;
+> +    case ACPI_HEST_SRC_ID_GPIO:
+> +        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_GPIO);
+> +        break;
+>      default:
+>          error_report("Not support this error source");
+>          abort();
+> @@ -370,6 +376,7 @@ void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
+>      /* Error Source Count */
+>      build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
+>      build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
+> +    build_ghes_v2(table_data, ACPI_HEST_SRC_ID_GPIO, linker);
+>  
+>      acpi_table_end(linker, &table);
+>  }
+> @@ -406,10 +413,7 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
+>      start_addr = le64_to_cpu(ags->ghes_addr_le);
+>  
+>      if (physical_address) {
+> -
+> -        if (source_id < ACPI_HEST_SRC_ID_RESERVED) {
+> -            start_addr += source_id * sizeof(uint64_t);
+> -        }
+> +        start_addr += source_id * sizeof(uint64_t);
+>  
+>          cpu_physical_memory_read(start_addr, &error_block_addr,
+>                                   sizeof(error_block_addr));
+> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+> index 6891eafff5ab..33be1eb5acf4 100644
+> --- a/include/hw/acpi/ghes.h
+> +++ b/include/hw/acpi/ghes.h
+> @@ -59,9 +59,10 @@ enum AcpiGhesNotifyType {
+>      ACPI_GHES_NOTIFY_RESERVED = 12
+>  };
+>  
+> +/* Those are used as table indexes when building GHES tables */
+>  enum {
+>      ACPI_HEST_SRC_ID_SEA = 0,
+> -    /* future ids go here */
+> +    ACPI_HEST_SRC_ID_GPIO,
+>      ACPI_HEST_SRC_ID_RESERVED,
+>  };
+>  
 
->
-> > +        *
-> > +        * When fast_only is true, if the implementer cannot determine =
-that a
-> > +        * range is young without blocking, it should return 0 (i.e.,
-> > +        * that the range is NOT young).
-> >           */
-> >          int (*clear_young)(struct mmu_notifier *subscription,
-> >                             struct mm_struct *mm,
-> > @@ -118,6 +130,8 @@ struct mmu_notifier_ops {
-> >           * the secondary pte. This is used to know if the page is
-> >           * frequently used without actually clearing the flag or teari=
-ng
-> >           * down the secondary mapping on the page.
-> > +        *
-> > +        * The fast_only parameter has the same meaning as with clear_y=
-oung.
-> >           */
-> >          int (*test_young)(struct mmu_notifier *subscription,
-> >                            struct mm_struct *mm,
-> >
-> > I've also moved the commit that follows this one (the one that adds
-> > has_fast_aging) to be before this one so that the comment makes sense.
->
->
-> Makes sense, thanks!
-
-Thanks David!
 
