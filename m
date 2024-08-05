@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-274726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C8A947BE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:34:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE05947BE1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87131F21DE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:34:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73F621C21BC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881FA38FA1;
-	Mon,  5 Aug 2024 13:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD772E62D;
+	Mon,  5 Aug 2024 13:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="tbmyJwvJ"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lgZ+0pQI"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAAE36D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 13:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0931F60A;
+	Mon,  5 Aug 2024 13:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722864839; cv=none; b=ABtW/LwtTW67Pi55UnvwjRlFoipwlY/vl52AyW62Nw/WPBDrRDglo6qUDJtQ/pPz8uG3YsNcQeOzq978OZDf6dDbgOL3aTeM/HcbhO4VH3MZHavu7CprbvHYIQmsVySXl/3r7rbjIYPU2pOwfKhkdvQ4fvo/hj/MKMMv/bLUojI=
+	t=1722864835; cv=none; b=YJ7vwvEAMrohDIHcsimkDupjgHE+4nkmdDl4BLkjc10r2N6W6vbjBHmwkII5P4bnI/f8fYnjgQF/I8yclksKylZUxnDjJG4RGT5012ERScjtx0ZwQm1vNsq2HL18Tp14HZsyLCxSX8R013WCXQftJmRfC8HYLO7G3kxkL8BoOLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722864839; c=relaxed/simple;
-	bh=ubu0CotWYKRX8DT3AZEDNKu6rkYv7NNafpkf0mpAy/E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GQW+oyUyai3JZKEY46lgH/QNop7xMK29DpE0GLetqBXFzNzzZX0vDsgCkeo0I3A5rRQfc4F+8NRL2CCAfg1LBfMFSSGQKseIXRxsOpsRKCtlhBGtglydvJVXZfLS5AEBxQ+k/BZQInY6VlroTFO7FwuprMZhi6r8maD2Zko6API=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=tbmyJwvJ; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1722864824; x=1725456824;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ubu0CotWYKRX8DT3AZEDNKu6rkYv7NNafpkf0mpAy/E=;
-	b=tbmyJwvJQulExd7anS5EKng+ZOvEf6G0+Ruwy9ZyZl5P4tGgtsu2rZR84HMvDLIQ
-	SfpL9eP+0ckBeRKKgwAPxu9875Re7jryA2LPEbHFYyQ8bz25BWU9acwBZYCYmQFQ
-	3kYIeIrb4Y7ToyOZLHSZNcsauWmsHZj5n2ygqoFOybI=;
-X-AuditID: ac14000a-03251700000021bc-3e-66b0d4b81012
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id D2.1A.08636.8B4D0B66; Mon,  5 Aug 2024 15:33:44 +0200 (CEST)
-Received: from llp-hahn.phytec.de (172.25.0.11) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 5 Aug 2024
- 15:33:43 +0200
-From: Benjamin Hahn <B.Hahn@phytec.de>
-Date: Mon, 5 Aug 2024 15:33:27 +0200
-Subject: [PATCH] arm64: dts: freescale: imx8mp-phyboard-pollux: Add and
- enable TPM
+	s=arc-20240116; t=1722864835; c=relaxed/simple;
+	bh=6UzLdIcsIQBjvvsljkRYWNG+zy1gpAPaUZQUZLQBsGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KJzqKWajT03ETvEv9LLm+IYGytn+ke57RViPmfeS8Lng8vTm6u7pWZP4epRW8JGTXF3MegNJRVzzyiOTbTg4qUuyrI8iuxzTKV5g9ZoiJzoaBZ9rwreKmT2nMk5nXVonATUASBRoFrbZmvxwoLp1Q7hact2olkONWdbTRiehbxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lgZ+0pQI; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5d5c2ac3410so6023206eaf.2;
+        Mon, 05 Aug 2024 06:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722864833; x=1723469633; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9bpYeWBTb5rgkeqmPvmBnfbIMAAfYEMneQoA10rCaXA=;
+        b=lgZ+0pQIcD/2fiRBY/SKG4i2+upkzrGiuBOqL2jvILefvbtdSKhPmvf5sClabnttop
+         55+KJDVQUGT4cHSySPtBrCtV8IXUN1LxdZWPn523P+SSFXP3Z1Y/YvYJ0fAMRMrjj8hI
+         /jjhRIYAzGCzsnULG1fZh4Vhm1mjjBYqJ4OE4HtjBpz4L/ZLSGSchRb8cBuaNKr35pYq
+         okba9/oxrPMKbhcY/VlQteN+MQg8XaBQOTqlNfWpAoHr34JCrKTERivwvj1Of27kQAW/
+         zVHuF5bv8kz/LlbHWLS6Nj5ScbEIsVPbIIogsiMQTTQV/gvg/sce4tYAsjLXdi2cD6Lq
+         iFZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722864833; x=1723469633;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9bpYeWBTb5rgkeqmPvmBnfbIMAAfYEMneQoA10rCaXA=;
+        b=KjI4ftDENUuaT5QKtPPR1SY8YmsBmCeJPx68ZH2ENwxftr2pP3t9WSo2HqcuRVcnVV
+         yUBUp2TA2zlGZk9g7pmIBeMHFqd/TYoknj61nH5XcEZ6wCe5zeZL457LD/7hznFvjr/5
+         vIWsOyRMF2onE/WgjGwp5HucDkZdCAoczVe6vnts862j6EZ3b+XEt2gaWTgThxqKcU8J
+         XgFSatq5dDknLZcHYm6yPTlrSfcTcPIxmIuHdQWos4lSaKXj4bgoPh+3MOFl4Eslc/4C
+         Bfx4Bro5XXqhuJ5qgMm2joB1zL//cMQEo5nQLiNhlwJflQj8Jyd73outt/WX6EGmvK1s
+         ffkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe+FfylyHhLoIsjCMzBkNnPP0onWaCyedAYqZAaJJbK7DUS+XicAzhm3hNnHzCX2R2NG4WBH2MBetRXAMFxRarkBHSuzyG7HZKcjeda/oym8Junvk7e9KsnRMX7a6UqY/koQtjnNdo
+X-Gm-Message-State: AOJu0YwXKtKCPLRbtMmuZzu/4IIK06E8dJkR0fHj90+e8q+nEhJKm3FK
+	LpDLaNM0Z4dXrpFQi/9FLQZl0QC5BZC3dVtKf2N3+KoeKI0/5x2OVHUTTXetwqyThbYDlgCCS8f
+	oxK1ejRQCFY490p9ncZhfNm91VZU=
+X-Google-Smtp-Source: AGHT+IHkU0BXuahEoyQX22QUsa04qtYpJiIPRQVXPHgYx4oh0LF1TIyS+xQ4LfVhA8LQQBA+IPKEb5wm1P/5s9AEo3A=
+X-Received: by 2002:a05:6358:5f1d:b0:1ac:f144:2b16 with SMTP id
+ e5c5f4694b2df-1af3bababb6mr1497963255d.26.1722864833103; Mon, 05 Aug 2024
+ 06:33:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240805-imx8mp-tpm-v1-1-1e89f0268999@phytec.de>
-X-B4-Tracking: v=1; b=H4sIAKbUsGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCwNT3czcCovcAt2Sglxd45Q0MwPzJMM00zRDJaCGgqLUtMwKsGHRsbW
- 1AA79p5ZcAAAA
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Teresa Remmet
-	<t.remmet@phytec.de>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Benjamin Hahn <B.Hahn@phytec.de>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722864823; l=1714;
- i=B.Hahn@phytec.de; s=20240126; h=from:subject:message-id;
- bh=ubu0CotWYKRX8DT3AZEDNKu6rkYv7NNafpkf0mpAy/E=;
- b=/+OhWp+qpzilt03iSsVgktAI/pCzxvAIrC2wrZ0MDAcaLZsMwDj9w05ydEhzVCyddyS0VdGyb
- V64DxnZisjhDVh4fiuy9FiKP0eLDaChrrgcg6jLX00DZAspjECRTQ7N
-X-Developer-Key: i=B.Hahn@phytec.de; a=ed25519;
- pk=r04clMulHz6S6js6elPBA+U+zVdDAqJyEyoNd8I3pSw=
-X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42JZI8nAo7vjyoY0g51LuS3W7D3HZDH/yDlW
-	i4dX/S1m3mtls1g1dSeLxctZ99gsNj2+xmpxedccNov/e3awW/zdvonF4sUWcQduj52z7rJ7
-	bFrVyeaxeUm9x4vNMxk9+v8aeHzeJBfAFsVlk5Kak1mWWqRvl8CVsX7eR5aCLbwVl/7vYWpg
-	bOHuYuTkkBAwkZi18AdbFyMXh5DAEiaJj0ueMEE4DxgllvZOZgapYhNQk9j15jUriM0ioCLR
-	v7MZLC4sECKxtuspG4jNKyAocXLmE5YuRg4OZgFNifW79EHCzALyEtvfzmGGKLGV+PxoNTPI
-	fAmBFYwSL28uBkuICOxgknjcbwiSYBZYyihxZ/o3VojzhCU+717DBtGxm0mitb+ZDWSDhECi
-	xM7XciA1QgKyEjfPb2GDqJeXmHbuNTOEHSqx9ct2pgmMwrOQ3DcL4b5ZSO5bwMi8ilEoNzM5
-	O7UoM1uvIKOyJDVZLyV1EyMopkQYuHYw9s3xOMTIxMF4iFGCg1lJhLerdEOaEG9KYmVValF+
-	fFFpTmrxIUZpDhYlcd7VHcGpQgLpiSWp2ampBalFMFkmDk6pBsYZOoKqO2f72D1T0c+5cDMi
-	dbqp+/oCT9eetW8+22/vrYl95HHTaVrLogqFF/sdKubrH0gu7drS0pe8uMnq7bTdYWE+T6wM
-	mytede3cJp3bJyL+JDXimOuRtUt5NT31re+l7+dW7b9/X8qZo/vk9eq5wtzBG6wmumpsZY3s
-	9Xj/dX7R515+PiWW4oxEQy3mouJEAMSAtheXAgAA
+References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+In-Reply-To: <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Mon, 5 Aug 2024 14:33:41 +0100
+Message-ID: <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
+Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
+ -4.4% regression
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for TPM for phyBOARD Pollux.
+On Sun, Aug 4, 2024 at 9:33=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, 4 Aug 2024 at 01:59, kernel test robot <oliver.sang@intel.com> wr=
+ote:
+> >
+> > kernel test robot noticed a -4.4% regression of stress-ng.pagemove.page=
+_remaps_per_sec on
+> > commit 8be7258aad44 ("mseal: add mseal syscall")
+>
+> Ok, it's basically just the vma walk in can_modify_mm():
+>
+> >       1.06            +0.1        1.18        perf-profile.self.cycles-=
+pp.mas_next_slot
+> >       1.50            +0.5        1.97        perf-profile.self.cycles-=
+pp.mas_find
+> >       0.00            +1.4        1.35        perf-profile.self.cycles-=
+pp.can_modify_mm
+> >       3.13            +2.0        5.13        perf-profile.self.cycles-=
+pp.mas_walk
+>
+> and looks like it's two different pathways. We have __do_sys_mremap ->
+> mremap_to -> do_munmap -> do_vmi_munmap -> can_modify_mm for the
+> destination mapping, but we also have mremap_to() calling
+> can_modify_mm() directly for the source mapping.
+>
+> And then do_vmi_munmap() will do it's *own* vma_find() after having
+> done arch_unmap().
+>
+> And do_munmap() will obviously do its own vma lookup as part of
+> calling vma_to_resize().
+>
+> So it looks like a large portion of this regression is because the
+> mseal addition just ends up walking the vma list way too much.
 
-Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
----
- .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Can we rollback the upfront checks "funny business" and just call
+can_modify_vma directly in relevant places? I still don't believe in
+the partial mprotect/munmap "security risks" that were stated in the
+mseal thread (and these operations can already fail for many other
+reasons than mseal) :)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-index 00a240484c25..b5ee4e265d90 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-@@ -103,6 +103,24 @@ reg_vcc_3v3_sw: regulator-vcc-3v3-sw {
- 	};
- };
- 
-+/* TPM */
-+&ecspi1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	cs-gpios = <&gpio5 9 GPIO_ACTIVE_LOW>;
-+	num-cs = <1>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi1 &pinctrl_ecspi1_cs>;
-+	status = "okay";
-+
-+	tpm: tpm_tis@0 {
-+		compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
-+		reg = <0>;
-+		spi-max-frequency = <38000000>;
-+		status = "okay";
-+	};
-+};
-+
- &eqos {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_eqos>;
-@@ -300,6 +318,20 @@ &gpio4 {
- };
- 
- &iomuxc {
-+	pinctrl_ecspi1: ecspi1grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_ECSPI1_MISO__ECSPI1_MISO   0x80
-+			MX8MP_IOMUXC_ECSPI1_MOSI__ECSPI1_MOSI   0x80
-+			MX8MP_IOMUXC_ECSPI1_SCLK__ECSPI1_SCLK   0x80
-+		>;
-+	};
-+
-+	pinctrl_ecspi1_cs: ecspi1csgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_ECSPI1_SS0__GPIO5_IO09     0x00
-+		>;
-+	};
-+
- 	pinctrl_eqos: eqosgrp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_ENET_MDC__ENET_QOS_MDC			0x2
+I don't mind taking a look myself, just want to make sure I'm not
+stepping on anyone's toes here.
 
----
-base-commit: 17712b7ea0756799635ba159cc773082230ed028
-change-id: 20240805-imx8mp-tpm-3df607b1f5f1
-
-Best regards,
--- 
-Benjamin Hahn <B.Hahn@phytec.de>
-
+--=20
+Pedro
 
