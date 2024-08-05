@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-274797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A7B947CD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:29:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63C0947CD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F771C21E5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85AB41F23469
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC7113AA38;
-	Mon,  5 Aug 2024 14:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17ED212EBCA;
+	Mon,  5 Aug 2024 14:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDFUOX5u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEorueC7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7613EA64;
-	Mon,  5 Aug 2024 14:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5972739FE5
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868139; cv=none; b=QtHhtrvz6+lGNb0vQ5AlavOv04/HbVSy7xnG00YH11lGnKO4o15fkerYPjHc178Ek4DWTAm3SKYMDUPRcKMFH74tHmELfNOw1x+IvQlUPwnXZP3vgQNsKR5vDCbZXiG8QZ6Xn1kChN9Jd1tbHEFVWZuOvGlqR0xZoSI27peCvtg=
+	t=1722868258; cv=none; b=OODJO4k9ynCN7/qi03KLOnTqP4SRI0/TU6JautJa0Q/Rr3Chmvo6lUJs+KNa2KedGNj8XwU6S/E19ntsZDFlHxF4z/kSv3bwQ4fPlwu8UELeUNDt870FhZj1ltJq88SsGS5oEL15gkRbeP+AQIp0msA/LxUa99J+A/fMGkKDE6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868139; c=relaxed/simple;
-	bh=2MUO96snC0kehze5bCKp0JkvmV/H1MvGnp8mPHmGAiM=;
+	s=arc-20240116; t=1722868258; c=relaxed/simple;
+	bh=C/7sQovbNSh3gKEW2EqyFjkIz9Q38h2okXnr6MrPQ5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HbAUkg1v30SlNCxJFKPTcOaeRlbZF3SMfpzW96A/TqDrmLok0zIqtMJF1QBSxgqMhFGNrd6gdzg6FSuguSfBXTQKSeM6K1/IrV2zQfJp+7Y6UsiLkiBjxsW9vvsW21e29T87/aYvNCm+Comm5WWDxNexI0EWCxu7+bOZxqQkTFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDFUOX5u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C29DC32782;
-	Mon,  5 Aug 2024 14:28:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8xndv0UFfdKP2UnUxwwALEuTOJCdug5I+A9q3ztK+4avCrmLAmXDSxZJOtk6klxoqbFcHFP3u89B2ROSbhkFtNP5EPxhni9tnI6H71SDprs32NWIrrKYtd/k3uzTXfkzhqop0JxjQNTu4SNvwG12/+CSpa2WVHnq53+l0bpC2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEorueC7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBD3C32782;
+	Mon,  5 Aug 2024 14:30:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722868138;
-	bh=2MUO96snC0kehze5bCKp0JkvmV/H1MvGnp8mPHmGAiM=;
+	s=k20201202; t=1722868257;
+	bh=C/7sQovbNSh3gKEW2EqyFjkIz9Q38h2okXnr6MrPQ5E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MDFUOX5ueN5MXxhCuXCSKKZN2EmVbjnuR4T/bPKzEDT8PuaM24GmAKtFyUAu1r7At
-	 hB0zwQE05FfKARiaBNJNOOkoZ+gjR/WmyXaJQN9OqKOriCWmKElyz2PYCrofdUtZqp
-	 ndK2lR1EefMAdGqAQKzqsxpaYh4tLG3pXqqUlhzzdA4OxD372mV+VWFIJvmukb+Fom
-	 WkHEAOy0MmcmFv0yx3nNEcRycM4cs2iKbO7pMgGLVRGTebDArVSf0jxtzRfMJKA1Q8
-	 ZPV23z8PYWXrDiHWyG4xD1vZx5R0Ig+6IVZE1vjQJprsM/EwTZlM0S4itG4RoSZ8dc
-	 vkltUEmEoVGtg==
-Date: Mon, 5 Aug 2024 16:28:55 +0200
+	b=rEorueC7Iu8prd31Skyhb0S97r97VpIUiFQTysHATPk4lnlMleJnoLppPAWJShSJA
+	 ihkKUdANndZrC8LtZ9ZIY/4RoF/01q8hUgb/8ZqXMLpq4N9y6sNc11RJjks0g5NSN5
+	 7gj1rM1poWv6LJflnmuddXwsukI/2Hd0TqBlDAizCdd/FUJe75IB4b1g8gGmvgABdX
+	 9CnSxLWbNoyfv/5e5+YKcLLkqoipAyTqrieE5xCH/HJ4j5FsotIYpmCPE9lUYF5gE9
+	 YDJ+6xYAiRRhdAxQLA23Wy8RB0sJ5+GJCYo7rSfEwySddDhWcPJ5TTejdFaJngeYbo
+	 rl13JrR5gI8Xw==
+Date: Mon, 5 Aug 2024 16:30:55 +0200
 From: Frederic Weisbecker <frederic@kernel.org>
 To: Vlastimil Babka <vbabka@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [RFC PATCH 12/20] kthread: Implement preferred affinity
-Message-ID: <ZrDhp3TLz6Kp93BJ@localhost.localdomain>
+Cc: LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 14/20] mm: Allocate kcompactd on its node
+Message-ID: <ZrDiH3bLxCKsVQkc@localhost.localdomain>
 References: <20240726215701.19459-1-frederic@kernel.org>
- <20240726215701.19459-13-frederic@kernel.org>
- <4e9d1f6d-9cd8-493c-9440-b46a99f1c8af@suse.cz>
+ <20240726215701.19459-15-frederic@kernel.org>
+ <a3693b53-8c5b-4c8c-a02a-8873771bdfd2@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,56 +61,22 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4e9d1f6d-9cd8-493c-9440-b46a99f1c8af@suse.cz>
+In-Reply-To: <a3693b53-8c5b-4c8c-a02a-8873771bdfd2@suse.cz>
 
-Le Tue, Jul 30, 2024 at 05:49:51PM +0200, Vlastimil Babka a écrit :
+Le Wed, Jul 31, 2024 at 05:07:48PM +0200, Vlastimil Babka a écrit :
+> On 7/26/24 11:56 PM, Frederic Weisbecker wrote:
+> > kcompactd runs preferrably on a specific node. Allocate its task
+> > structure accordingly for better memory locality.
+> > 
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> 
 > Acked-by: Vlastimil Babka <vbabka@suse.cz>
 > 
-> Nit:
-> 
-> > +int kthread_affine_preferred(struct task_struct *p, const struct cpumask *mask)
-> > +{
-> > +	struct kthread *kthread = to_kthread(p);
-> > +	cpumask_var_t affinity;
-> > +	unsigned long flags;
-> > +	int ret;
-> > +
-> > +	if (!wait_task_inactive(p, TASK_UNINTERRUPTIBLE) || kthread->started) {
-> > +		WARN_ON(1);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> 
-> Should we also fail if kthread->preferred_affinity already exist? In
-> case somebody calls this twice.
+> could even squash it to previous patch since you touch that line anyway and
+> it should be a no-brainer
 
-Good point!
-
-> 
-> Also for some of the use cases (kswapd, kcompactd) it would make sense
-> to be able to add cpus of a node as they are onlined. Which seems we
-> didn't do, except some corner case handling in kcompactd, but maybe we
-> should? I wonder if the current implementation of onlining a completely
-> new node with cpus does the right thing as a result of the individual
-> onlining operations, or we end up with being affined to a single cpu (or
-> none).
-> 
-> But that would need some kind of kthread_affine_preferred_update()
-> implementation?
-
-So you mean that the "for_each_node_state()" loop in kcompactd doesn't
-handle all possible nodes but only those online when it's called? Or
-am I confused?
-
-If all users of preferred affinity were to use NUMA nodes, it could be
-a good idea to do a flavour of kernel/smpboot.c which would handle
-per-node kthreads instead of per-cpu kthreads. I initially thought
-about that. It would have handled all the lifecycle of those kthreads,
-including creation, against hotplug. Unfortunately RCU doesn't rely on
-per-NUMA nodes but rather use its own tree.
-
-If there be more users of real per NUMA nodes kthreads than kswapd and
-kcompactd, of course that would be much worth considering.
+It looks like a no brainer indeed but I'm very careful about introducing subtle
+logical changes ;-)
 
 Thanks.
 
