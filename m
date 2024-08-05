@@ -1,119 +1,112 @@
-Return-Path: <linux-kernel+bounces-274563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9E0947A1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:59:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE33947A24
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24E7AB21955
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:59:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0E15B21B2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA571553B1;
-	Mon,  5 Aug 2024 10:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36D3154C12;
+	Mon,  5 Aug 2024 11:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=radojevic.rs header.i=@radojevic.rs header.b="T7/eKliz"
-Received: from mail.radojevic.rs (radojevic.rs [139.162.187.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="FDgChoiu"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CA41311AC;
-	Mon,  5 Aug 2024 10:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.162.187.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA55413AD11;
+	Mon,  5 Aug 2024 11:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722855534; cv=none; b=q3A2Yq4/8TsyLdYU3WKzWGqAl4b8LhVQYPqB5kOWJ5sXqXvdRGtxx036Rh4V3xq70E/fp5/+6GFD5CbEwy3axm4/Aflq9zpJvuVXvmqGeUqsManUKnaYWaB8tHze+DqJ8/s54n5ywynSGLMs3HL1cUtyMvZGwEY5G/4WwgFECF4=
+	t=1722855632; cv=none; b=HiwOpAluhkE06AnFd8wAxx8ViKLCKXFIiwdjDIdb1I/J8MFMk83q9KVFHuxhEn1fjwhPefw7LrVnwXW53mtrohhpr22zjUPLxDJ2P9tVqIxiFAN3YBW9TTQNGouG+W+EqkUDoL5gkPCn+8mb08x/u5mUnX/QPEjdRrOZO7b0ZmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722855534; c=relaxed/simple;
-	bh=FsKABYar5tCCmqGtOJLbGI3S+bt2cKoGgq3u7smejfU=;
+	s=arc-20240116; t=1722855632; c=relaxed/simple;
+	bh=yWG1ffncRBE4pRq4s7S+wiFWhJWlpLs09+f9rKud/VE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4B3P2C+murJkn5WwTeO+/2cibB3SQ8a338q6sxeC+QFa0FU/AHeFc9ouvK6hm9IwuFsZA6erTnRs9/JEaCFyG8/Z3UW8zWmUnLYiNYH8OAoTitjzPHxK2/4QfqLQSnVPdcAibz0UHWK0QHtYalcoc4kktizcSOETrNtnQR/eh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=radojevic.rs; spf=pass smtp.mailfrom=radojevic.rs; dkim=pass (2048-bit key) header.d=radojevic.rs header.i=@radojevic.rs header.b=T7/eKliz; arc=none smtp.client-ip=139.162.187.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=radojevic.rs
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radojevic.rs
-Received: from localhost (unknown [91.143.223.193])
-	by mail.radojevic.rs (Postfix) with ESMTPSA id 587A52FC6D;
-	Mon,  5 Aug 2024 12:58:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=radojevic.rs; s=mail;
-	t=1722855530; bh=FsKABYar5tCCmqGtOJLbGI3S+bt2cKoGgq3u7smejfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T7/eKlizt7sdBNlSEix9YYz9TnlL5rIMAc2bi8FiZVnjgXQ6W3cIbuX3WM3cHra1l
-	 WzF3iMB30c+NtbhxFeiJiHtRFdahyRMi8hO9anLs39LOIuNZYSSt7DjuV8DqfOvJAU
-	 sq+mCtg+yUU1qg8brul9grOd9JBVtRi1MJd/lDpZsGd22OPY5dTC5egbEbzxoWw2jm
-	 Uu6nk4ZnQkPm60M6jhoJirs47BJSDuqcl8YoTMMNyf3/eovCI59Kv3VSstph0ruGQY
-	 OpRoZ99cFEk6TvfxkZrA5vgykJRkratRwqXvLluNFYLYfiDA3fFo8Z9tDR03aEEnzx
-	 JrERVef+hHZfQ==
-Date: Mon, 5 Aug 2024 12:58:45 +0200
-From: Nikola Radojevic <nikola@radojevic.rs>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Raise Pinebook Pro's panel
- backlight PWM frequency
-Message-ID: <xzzqimycxuwu7yg55pxfgb7sgtmxkjhsltpcst7y7toiwspjeg@jsahtppev3kg>
-References: <2a23b6cfd8c0513e5b233b4006ee3d3ed09b824f.1722805655.git.dsimic@manjaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LUclJEq5CULce7yw9V4UhUxhtU9b8C6D+071XaiD9frkTDf2cIlit2leejjh+9OT3rfgSn+FmeSc/pitXZ28cXQegHGms0IfB/3wfGTlPGouHlX4KfaQkzezO+Lu5HhY8nngqj3b6m28R//8IGkzejMFNJWod1IKaeDhOpd73Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=FDgChoiu; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 5C3FD418FA;
+	Mon,  5 Aug 2024 13:00:26 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id cSj5y5vJ8qJe; Mon,  5 Aug 2024 13:00:24 +0200 (CEST)
+Date: Mon, 5 Aug 2024 18:59:57 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1722855624; bh=yWG1ffncRBE4pRq4s7S+wiFWhJWlpLs09+f9rKud/VE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=FDgChoiuUO85kHJM0IZ4qjGqc85KQmq6H4+JkylVQiZBK+gVlyoh5x0atGlxizFVf
+	 cTypiefgmtxEIxI91rSTNShf6kv33ApVhNDamIEGsqHw/7PCnlu6dVxj01j4GWCfbY
+	 kK7f47u61jJIMLxI4mP+aMLQHyv0eYe0qirOjJvE2I1OK31i9W5mMYszkHtrxDuiux
+	 2OgjUnLMKOr6/yQ/UsatIXNFvbBTL7hArMhRZ1ClcP+hLmshhn+D8vZkS6ZysBcpwn
+	 ZTpNJ7Xg/U0EHlkK+4JirorUqto4ryCfmsZ9ihdNMzE1EBKqxcfTIWHgioTLrHUz8a
+	 nt0k4zASa4gWA==
+From: Yao Zi <ziyao@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+	Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+	Ondrej Jirman <megi@xff.cz>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+Message-ID: <ZrCwrWjRgvE0RS98@ziyaolaptop.my.domain>
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <20240803125510.4699-5-ziyao@disroot.org>
+ <56bd1478-ce8c-4c1d-ab16-afe4ad462bf5@kernel.org>
+ <Zq-AFWYaqu7zGuz-@ziyaolaptop.my.domain>
+ <b967ab05-dd0e-4fc5-bee6-ad7639e47bfb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a23b6cfd8c0513e5b233b4006ee3d3ed09b824f.1722805655.git.dsimic@manjaro.org>
+In-Reply-To: <b967ab05-dd0e-4fc5-bee6-ad7639e47bfb@kernel.org>
 
-Hello,
-I have tested this on my Pinebook Pro and I can confirm that
-everything seems to work alright.
+On Sun, Aug 04, 2024 at 04:05:24PM +0200, Krzysztof Kozlowski wrote:
+> On 04/08/2024 15:20, Yao Zi wrote:
+> >>
+> >>> +		compatible = "fixed-clock";
+> >>> +		#clock-cells = <0>;
+> >>> +		clock-frequency = <24000000>;
+> >>> +		clock-output-names = "xin24m";
+> >>> +	};
+> >>> +
+> >>> +	gic: interrupt-controller@fed01000 {
+> >>
+> >> Why this all is outside of SoC?
+> > 
+> > Just as Heiko says, device tree for all other Rockchip SoCs don't have
+> > a "soc" node. I didn't know why before but just follow the style.
+> > 
+> > If you prefer add a soc node, I am willing to.
+> 
+> Surprising as usually we expect MMIO nodes being part of SoC to be under
+> soc@, but if that's Rockchip preference then fine.
+> 
 
-Tested-by: Nikola Radojević <nikola@radojevic.rs>
+Okay, then I would leave it as is.
 
-On 24/08/04 11:10PM, Dragan Simic wrote:
-> Increase the frequency of the PWM signal that drives the LED backlight of
-> the Pinebook Pro's panel, from about 1.35 KHz (which equals to the PWM
-> period of 740,740 ns), to exactly 8 kHz (which equals to the PWM period of
-> 125,000 ns).  Using a higher PWM frequency for the panel backlight, which
-> reduces the flicker, can only be beneficial to the end users' eyes.
-> 
-> On top of that, increasing the backlight PWM signal frequency reportedly
-> eliminates the buzzing emitted from the Pinebook Pro's built-in speakers
-> when certain backlight levels are set, which cause some weird interference
-> with some of the components of the Pinebook Pro's audio chain.
-> 
-> The old value for the backlight PWM period, i.e. 740,740 ns, is pretty much
-> an arbitrary value that was selected during the very early bring-up of the
-> Pinebook Pro, only because that value seemed to minimize horizontal line
-> distortion on the display, which resulted from the old X.org drivers causing
-> screen tearing when dragging windows around.  That's no longer an issue, so
-> there are no reasons to stick with the old PWM period value.
-> 
-> The lower and the upper backlight PWM frequency limits for the Pinebook Pro's
-> panel, according to its datasheet, are 200 Hz and 10 kHz, respectively. [1]
-> These changes still leave some headroom, which may have some positive effects
-> on the lifetime expectancy of the panel's backlight LEDs.
-> 
-> [1] https://files.pine64.org/doc/datasheet/PinebookPro/NV140FHM-N49_Rev.P0_20160804_201710235838.pdf
-> 
-> Fixes: 5a65505a6988 ("arm64: dts: rockchip: Add initial support for Pinebook Pro")
-> Cc: stable@vger.kernel.org
-> Reported-by: Nikola Radojevic <nikola@radojevic.rs>
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
-> index 294eb2de263d..b3f76cc2d6e1 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
-> @@ -32,7 +32,7 @@ chosen {
->  	backlight: edp-backlight {
->  		compatible = "pwm-backlight";
->  		power-supply = <&vcc_12v>;
-> -		pwms = <&pwm0 0 740740 0>;
-> +		pwms = <&pwm0 0 125000 0>;
->  	};
->  
->  	bat: battery {
+For the fixed-clock node, I think "xin24m: clock-24m { }" is okay and
+follows the new rule?
+
+Best regards,
+Yao Zi
 
