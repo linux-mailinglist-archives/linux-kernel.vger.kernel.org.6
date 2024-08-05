@@ -1,106 +1,176 @@
-Return-Path: <linux-kernel+bounces-275009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E9D947F80
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5160D947F8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861062845D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F9B11C2217B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF6015D5B6;
-	Mon,  5 Aug 2024 16:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EE515C15D;
+	Mon,  5 Aug 2024 16:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SChB3d5J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="txN3Oxwq"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5833C3E479;
-	Mon,  5 Aug 2024 16:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EE015D5D9
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722876013; cv=none; b=cxPCkVGf0xFA/Nkq+kAYBmLmC31O0WweeftCLML4pUWoSO6oCBnjgoCe+N7buNDozdgXIYxBPPQVGuQ1eKfw6JUPpnsIAWEg6bCNia4WrvClEBcJvGvVWzzIzSU/KaZSXRobLF9el1Nm5C8BwGtsJ5U6DVVpdfPsrQNozwDQT1s=
+	t=1722876334; cv=none; b=Mn+OLahu78Y4K2YhE37d6MwCfiEAyxVyxhxD6DLUd90QzNbuD5a0plobQximuXk3TXgM3BaaFNi3W6Ab9XUDYkogyPO1OPBo/IPG9Uv2ygS3h+dErreTru7lSUAWzJHP8CuJtBEdDMY9Hf1d+2TqNn/9AW6+FipAIOcItETLfpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722876013; c=relaxed/simple;
-	bh=iOLUluY5An/v5NUsmhvgSEoNjYlEKm9MqBVeCIp+V5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kufm0ctr3XTbzrF19WLCkACOfJ8/XznIdLwvqSE3ImjY05403IuWv75FX0ThT0OMBgO5DA8wu3dtVdQBKcDTWBLcIKb+5fJl0C/tHhjN0lqb/MTsDnHg29M2HbGgcM6Y2s0uFPIgSITyjjFPZIgEZt3CVEF8xA70fLmCT7LHq2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SChB3d5J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3050AC32782;
-	Mon,  5 Aug 2024 16:40:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722876013;
-	bh=iOLUluY5An/v5NUsmhvgSEoNjYlEKm9MqBVeCIp+V5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SChB3d5J9h4l8uw17ZrW5gk7a9QaS3yzKU0RZ9RfahroRTz7qfv9HGwLK+b5mD0Sc
-	 Ox6+wFqtDhtUvS+JO6JNL2vw/TBUXrH8g8hqqFzJBFRBNq40ih1hpRmo7j739yaZ3e
-	 o6Bln0tIoJ6iGQMrTuqkIOMdvM0hNiamlNivhHnjZ7ewg6k0X64XFPAArADbReXC6C
-	 TZZThGp1y+mJ/6iNzAkimRC06/PqcbfOMlCaHbJ0mFZ1oOkK9lWLd2pButThIG9w9b
-	 8nckuSMcUXw8LLSc/GSBAWbgMuV/BAH4nKOEDIwPeWVCf0Z+np74xWfYbUrmKNPjw6
-	 EvbZjRSDiZh9A==
-Date: Mon, 5 Aug 2024 22:10:08 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, oe-kbuild-all@lists.linux.dev,
-	linux-mips@vger.kernel.org, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH v11 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA
- driver
-Message-ID: <ZrEAaB_I1S2vM2EE@matsya>
-References: <20240802-loongson1-dma-v11-2-85392357d4e0@gmail.com>
- <202408051242.8kGK28W7-lkp@intel.com>
+	s=arc-20240116; t=1722876334; c=relaxed/simple;
+	bh=sJWzkvl/aR7f5GrnGGB8vkEg31mGwtIkJRIwBBb5O3M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=czzrJdlxp+EbXkQBoKisqNKXusfQAdnAE2IAkW2X9RKtGP1hVOGT+3MiYr3k1sOu4bcuZAw+0UtXZ0nPowBvmCG0+SPUjyKuXbzq98GSyEMnO3klEoJDDX07/GCBNv6V/1//e5RoKukb8i/6riQNc43/5y9/c9BhCoosMtSLAOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=txN3Oxwq; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-368526b1333so3458151f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 09:45:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722876331; x=1723481131; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ik8emwpg7EbHvzstVNP3zM7OlW0rWhbBN/nKCI4WHsQ=;
+        b=txN3OxwqeHLOSluoni/joNTPfNAR7THbDtC6HaHY2n1wmEHK8xs1RxbfFn6TLzdB25
+         RQBaoajDRXzt5WFDkzBUtzEGToBXA0o54eKP1iM9cyjb9uS1C20q58IT7x12+ejO7GYz
+         HurKI6f9lD9xGlpKS8DBOXCAjjGVySVwa0zmBM5bubJjaVJGsxi8QbmMQfuN55baVcMR
+         5LJkGoq0R5FKVeE9RZMChrxicmNcNzm6ys2g0cRywxEP6YRLmjDXH+jfT0+yoLWNtDvi
+         XfQibwJVyFpWjdAqhhSyYdoVVJY/ASwC4o2XxGVbqf5KTzISb4AugPUMNVDXVrH4xQ2X
+         5pqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722876331; x=1723481131;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ik8emwpg7EbHvzstVNP3zM7OlW0rWhbBN/nKCI4WHsQ=;
+        b=jZ3vhVFJy+cXcF63DoaCajESF7IX7AU9iOEiE1AhTtSDBhYvj/Pho9RWI6PuEL3bAt
+         jyvSefD/w+K6/AKndCGF68AUyRg4YmNK9la7tf9hRePno8DxnXW1DymOwFqp0r6rZPR9
+         D+jPGoDSkTnh0Wdjve8BiOJSx2BlyCMeoqGBPEis6dgrEFeImjuIFRyfqRKoaSAiorQA
+         3uOK3/ovyOztzZ8k7/AXC+V9Neb1cTSB1PLFFTN17+fFDnojkckjF7WRRMSEMLIL4dcc
+         nU/DO8QbwxoUrSrTcRTxjZI/gvWX4htrXnNooLy1sQN6NnyA6ys+QKNvhDBxdnplqsug
+         H/oA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNSGfAQ55jJ6IQPNpwoP9hlGXnqU1vBb1zFhLIioKqaKXVa87dBv1x7wNcyvw48NcD3vvV9ZNyLwNAp17j1W8hrli2l6046UtdfJm9
+X-Gm-Message-State: AOJu0YzYEt1BHlsGK8IcTeooVuofaRs2WCpUIZkybFdEc4nbYduH7kkx
+	mFYoShrPFic55R3fEtD6slonGTyagKylgS5hsMusbI9Oz6uCb/I9GemxJ0pOCv0=
+X-Google-Smtp-Source: AGHT+IHl+gYovfR74z6A+TtvK671+5vsMnn3duvbGqXdHqVfmO9kGsU0MyOwnZ+cfRHTSHRNsS20LA==
+X-Received: by 2002:adf:f60b:0:b0:36b:aa96:d1e5 with SMTP id ffacd0b85a97d-36bbbe5b841mr10555387f8f.18.1722876331267;
+        Mon, 05 Aug 2024 09:45:31 -0700 (PDT)
+Received: from [127.0.1.1] ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd022ce0sm10391679f8f.55.2024.08.05.09.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 09:45:30 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Mon, 05 Aug 2024 19:45:18 +0300
+Subject: [PATCH v3] phy: qcom: qmp-pcie: Configure all tables on port B PHY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202408051242.8kGK28W7-lkp@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240805-phy-qcom-qmp-pcie-write-all-tbls-second-port-v3-1-6967c6bf61d1@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAJ0BsWYC/5XNSw6CMBSF4a2Yjr2mLY9WR+7DOIBykZsgLS1BC
+ WHvFhJjHDI8Z/B/MwvoCQO7HGbmcaRAtosjOR6YaYrugUBV3ExymXIlM3DNBL2xT+ifDpwhhJe
+ nAaFoWxjKNkBAY7sKnPUDaKzRYKVVXtYsJp3Hmt4bd7vH3VAYrJ82fRTr+4XyfdAoQIDKRHlG5
+ ELo9NpSV3h7sv7BVmmUv7rmYmddxnqOWWIUF6gV/tWXZfkAJ68lT0cBAAA=
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2688; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=Pd8xi9GZtKKuLhG/bVw3bPRSLWuEht5PPded4uGZ9o0=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmsQGkZGYeBcrws5JCeBcYC3IX2no9Y3tVI/U4a
+ GybVRCD9rKJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZrEBpAAKCRAbX0TJAJUV
+ VqZdD/9/leWIILuTtcGIaBTHfLTtI0/fiTycKaPgdUgUOOfn9s+D2lpp+iYpo8Emup80azNIu46
+ 0fkFWCUb6eYfjsybaMYrmJYgzKsdEyVSgQwBZka7rvZqSzBRWzwXeZRX/4GYMmCg4O9w9bpSJpT
+ KFj7rIn3RvT6IZRe/h7CYtTbzJ01kThmViGubrLg7DXOiCAFIwzlt0uWCLTyvfPsl6Eih0JZIIv
+ 0gmMUfNRIDUYIHTOIusBrvMLA3e9t4xij+OZmke8YM5zADK+sjoHXKPXuZeIkdxjdaEb0qQxxhs
+ ycYZQix/ho+YeOd/Ur3J1TUyodszTjjHYeJ5QTj8UqkB2IChBSHXfQOF1NW8kDn+NeUZkHFQl1D
+ B6ZAQhul+/zGVWffu+9kp0Fz/uB5BfgsmMHlJWPTqckgsQoJtB90t68EgfcGI4w+zsk57vhe+DN
+ Uv43ma/YWi7KmMW+mqsEIWMrWCOwiJomXU8K7qM8fIeXMnH1eZ3ixTN+4y49bo8VwQOzg0DBKgx
+ J9kjraINQx34O4Of2y40fLxqVHwFCXYze+OWtONnfOkzC87iEdXyli7TZcTIWt2H+lbUWLJU3Df
+ TdXm7H/yNi7lpUZ8M7dGx+yxCADyGipb+p1exL1LPQ/aVbKWYJ71hv7W1PXa9z6em/xnvPJhJIG
+ wNcxtSZVuigOUbg==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On 05-08-24, 12:58, kernel test robot wrote:
-> Hi Keguang,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on 048d8cb65cde9fe7534eb4440bcfddcf406bb49c]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Keguang-Zhang-via-B4-Relay/dt-bindings-dma-Add-Loongson-1-APB-DMA/20240803-111220
-> base:   048d8cb65cde9fe7534eb4440bcfddcf406bb49c
-> patch link:    https://lore.kernel.org/r/20240802-loongson1-dma-v11-2-85392357d4e0%40gmail.com
-> patch subject: [PATCH v11 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
-> config: sparc64-randconfig-r063-20240804 (https://download.01.org/0day-ci/archive/20240805/202408051242.8kGK28W7-lkp@intel.com/config)
-> compiler: sparc64-linux-gcc (GCC) 14.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408051242.8kGK28W7-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202408051242.8kGK28W7-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers/dma/loongson1-apb-dma.c: In function 'ls1x_dma_chan_probe':
-> >> drivers/dma/loongson1-apb-dma.c:520:34: warning: '%u' directive writing between 1 and 10 bytes into a region of size 2 [-Wformat-overflow=]
->      520 |         sprintf(pdev_irqname, "ch%u", chan_id);
->          |                                  ^~
->    drivers/dma/loongson1-apb-dma.c:520:31: note: directive argument in the range [0, 2147483646]
->      520 |         sprintf(pdev_irqname, "ch%u", chan_id);
->          |                               ^~~~~~
->    drivers/dma/loongson1-apb-dma.c:520:9: note: 'sprintf' output between 4 and 13 bytes into a destination of size 4
->      520 |         sprintf(pdev_irqname, "ch%u", chan_id);
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+From: Qiang Yu <quic_qianyu@quicinc.com>
 
-Pls fix these warnings!
+Currently, only the RX and TX tables are written to the second PHY
+(port B) when the 4-lanes mode is configured, but according to Qualcomm
+internal documentation, the pcs, pcs_misc, serdes and ln_shrd tables need
+to be written as well.
 
+Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Changes in v3:
+- Rebased on phy/next
+- Fetched Dmitry's R-b tag
+- Link to v2: https://lore.kernel.org/r/20240801-phy-qcom-qmp-pcie-write-all-tbls-second-port-v2-1-6e53c701e87e@linaro.org
+
+Changes in v2:
+- Reordered tables as Johan has suggested
+- Link to v1: https://lore.kernel.org/r/20240726-phy-qcom-qmp-pcie-write-all-tbls-second-port-v1-1-751b9ee01184@linaro.org
+---
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+index 4b4a10f7f6d6..a7e2ce0c500d 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+@@ -3669,18 +3669,30 @@ static void qmp_pcie_init_port_b(struct qmp_pcie *qmp, const struct qmp_phy_cfg_
+ {
+ 	const struct qmp_phy_cfg *cfg = qmp->cfg;
+ 	const struct qmp_pcie_offsets *offs = cfg->offsets;
+-	void __iomem *tx3, *rx3, *tx4, *rx4;
++	void __iomem *serdes, *tx3, *rx3, *tx4, *rx4, *pcs, *pcs_misc, *ln_shrd;
+ 
++	serdes = qmp->port_b + offs->serdes;
+ 	tx3 = qmp->port_b + offs->tx;
+ 	rx3 = qmp->port_b + offs->rx;
+ 	tx4 = qmp->port_b + offs->tx2;
+ 	rx4 = qmp->port_b + offs->rx2;
++	pcs = qmp->port_b + offs->pcs;
++	pcs_misc = qmp->port_b + offs->pcs_misc;
++	ln_shrd = qmp->port_b + offs->ln_shrd;
++
++	qmp_configure(qmp->dev, serdes, tbls->serdes, tbls->serdes_num);
++	qmp_configure(qmp->dev, serdes, cfg->serdes_4ln_tbl, cfg->serdes_4ln_num);
+ 
+ 	qmp_configure_lane(qmp->dev, tx3, tbls->tx, tbls->tx_num, 1);
+ 	qmp_configure_lane(qmp->dev, rx3, tbls->rx, tbls->rx_num, 1);
+ 
+ 	qmp_configure_lane(qmp->dev, tx4, tbls->tx, tbls->tx_num, 2);
+ 	qmp_configure_lane(qmp->dev, rx4, tbls->rx, tbls->rx_num, 2);
++
++	qmp_configure(qmp->dev, pcs, tbls->pcs, tbls->pcs_num);
++	qmp_configure(qmp->dev, pcs_misc, tbls->pcs_misc, tbls->pcs_misc_num);
++
++	qmp_configure(qmp->dev, ln_shrd, tbls->ln_shrd, tbls->ln_shrd_num);
+ }
+ 
+ static void qmp_pcie_init_registers(struct qmp_pcie *qmp, const struct qmp_phy_cfg_tbls *tbls)
+
+---
+base-commit: d6dbc9f56c3a70e915625b6f1887882c23dc5c91
+change-id: 20240725-phy-qcom-qmp-pcie-write-all-tbls-second-port-8efeced876bf
+
+Best regards,
 -- 
-~Vinod
+Abel Vesa <abel.vesa@linaro.org>
+
 
