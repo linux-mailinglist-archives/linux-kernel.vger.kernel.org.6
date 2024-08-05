@@ -1,110 +1,108 @@
-Return-Path: <linux-kernel+bounces-275352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA67A9483CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:59:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E239483CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9663C1F21EFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:59:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3196C1C21EA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BC416C436;
-	Mon,  5 Aug 2024 20:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2919F15FA75;
+	Mon,  5 Aug 2024 21:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OZhzTRRY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldT2fBId"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3344514AD30;
-	Mon,  5 Aug 2024 20:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1C9149E0A
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722891539; cv=none; b=dgYzxSBX5FuzieSlY2NtIT0yx0IYZbQUuzV+IezXXPsZa/Yvn6Uc5CnLX1zQq8orsb3GE7QixmV9O8303nQj7CwVjhiBOsutyZLsWkffMyI9h8RKRIiOkIA9gz7yWGqPo0fdcHZ0CNep2bAegZ5UC+jhrn6fiMKC/HsPwtRKASw=
+	t=1722891705; cv=none; b=tGE6WxnzTTjRzs6iNiM3TZK+d58WmrO7v10xwhGOA+TjPlpPb/O+PHJccBJSQPGQwll5eiwWeqjGKCkamTvzSxnRuEwNzqGAq/ThlNf3E/Jz7HmzQRvhLThrH/GFguef5lqzqaEVMB2m1LC49ttuvvfrHDjfzyfepvFEiViPaAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722891539; c=relaxed/simple;
-	bh=gjFRACIVY4CZs0fF0gBdmou29vCbYimp5bxsEMOmmUU=;
+	s=arc-20240116; t=1722891705; c=relaxed/simple;
+	bh=eBrA28q49foh0wgACAxBdLtft9vJsjYqIE2PmIgv7xw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ElRSATfyFYgxeySDj2zghhIhg80/D9w1ajKFqjV5VXREy6qvgUpeAaezF7Jlw7qjfOrFomVA5jZT+G1mCL848BKomtOHTDbLIODwa9OmVNu14A7P3e6cLQhh041RA1kfMicOaVA0k8INX40JuwwJ7RcCtYUhmXocsqps0claLLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OZhzTRRY; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722891538; x=1754427538;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gjFRACIVY4CZs0fF0gBdmou29vCbYimp5bxsEMOmmUU=;
-  b=OZhzTRRYm8UK5KY/c9S+qE+wM3/jLnYIZNWhIFYX2BfClPxiByo1bHkH
-   ZofFGrYwNAUOiOHh55qc/Clzdpc8vLTrCMrw74lzxdPYKRuilrdJr0PTF
-   rLYnvEFvgvYw284SLWTfBVyfEmOnCc2R6Y6aGHp8N1mGKuVTxxL1VOqSm
-   cwW9u+zlWiUTo+FQY9d18SQpBqeUEUIQky33dA/Lfk0gLMJoLj7JLk/lh
-   8h8pE50I8bnThEMfn2gpE/UATGw5d+kogfNuRP/Fds67lvZm6kgbxB7Al
-   ssizdAqlP+QYoo65DjiRyq6PTviycOldEEgPsHZ5zVeGvVO9ramZNuowG
-   Q==;
-X-CSE-ConnectionGUID: mOpC6PxBTs+a2JLCqOLcbA==
-X-CSE-MsgGUID: Ql88UsKqTVu3JALm7pVJDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="20458765"
-X-IronPort-AV: E=Sophos;i="6.09,265,1716274800"; 
-   d="scan'208";a="20458765"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 13:58:57 -0700
-X-CSE-ConnectionGUID: Hj3XyW2lRdOhBw/BJAV74Q==
-X-CSE-MsgGUID: Zt7l1uQRQwi5QRrZTwNguA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,265,1716274800"; 
-   d="scan'208";a="56198727"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 13:58:51 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 9C17411F965;
-	Mon,  5 Aug 2024 23:58:48 +0300 (EEST)
-Date: Mon, 5 Aug 2024 20:58:48 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-	Michal Simek <michal.simek@amd.com>, Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH 4/4] leds: as3645a: use device_* to iterate over device
- child nodes
-Message-ID: <ZrE9CF_WlJsS_Ome@kekkonen.localdomain>
-References: <20240801-device_child_node_access-v1-0-ddfa21bef6f2@gmail.com>
- <20240801-device_child_node_access-v1-4-ddfa21bef6f2@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ULoTjGckkVMJCcZW40a8wJ/GCiSqAk3x31iOmtI+Fcf8SeK4KznLHFNud6hNx5WNd/XqJIeXE/9bKQATCiLDCLtSaN53cBw+88oz64zqVZh7+wKjTZY3sfIb8syvppkorZyFZlzEkVppg7wqLyZrwzKIabdrP1B9VNcOaIka9Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldT2fBId; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE4B2C4AF0E;
+	Mon,  5 Aug 2024 21:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722891704;
+	bh=eBrA28q49foh0wgACAxBdLtft9vJsjYqIE2PmIgv7xw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ldT2fBIdEbA7+rP4EImb8EALvzcTKvyS2kmpqufAYYtd6QErBw5HqziIWa75GvDYM
+	 tzXq9g2eHSukoyDlOthprUu8gphlsZLWQjhTmsAwNYQdu6FIkLSZAzt1/S12+mRQck
+	 NJgXNuY1P18ZKNXNnH0rkXDO0ayTMhZgRT/D9KirNJZTfLkwNmyO4UF0p7gI7h7irI
+	 d4Vdl5OsL7OzA2JZBfWUHVlkuGWrDXTKfGrN6Xj7eXtq1IcKsWdunEPQbb2sMJUgBQ
+	 TrqfChhBYCuNRP3CcxS0WDMdvg21pY3AAvxsMQu4rNV2pjvnMOAHiMLV1nZSqbl08G
+	 Ax9u2flpMZybQ==
+Date: Mon, 5 Aug 2024 14:01:44 -0700
+From: Kees Cook <kees@kernel.org>
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, jannh@google.com, sroettger@google.com,
+	adhemerval.zanella@linaro.org, ojeda@kernel.org,
+	adobriyan@gmail.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, jorgelo@chromium.org
+Subject: Re: [RFC PATCH v1 0/1] binfmt_elf: seal address zero
+Message-ID: <202408051400.C402BE97E@keescook>
+References: <20240801170838.356177-1-jeffxu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240801-device_child_node_access-v1-4-ddfa21bef6f2@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240801170838.356177-1-jeffxu@google.com>
 
-On Thu, Aug 01, 2024 at 08:13:53AM +0200, Javier Carrasco wrote:
-> Drop the manual access to the fwnode of the device to iterate over its
-> child nodes. `device_for_each_child_node` macro provides direct access
-> to the child nodes, and given that the `child` variable is only required
-> within the loop, the scoped variant of the macro can be used.
+On Thu, Aug 01, 2024 at 05:08:32PM +0000, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@chromium.org>
 > 
-> Use the `device_for_each_child_node_scoped` macro to iterate over the
-> direct child nodes of the device.
+> In load_elf_binary as part of the execve(),  when the current
+> task’s personality has MMAP_PAGE_ZERO set, the kernel allocates
+> one page at address 0. According to the comment:
 > 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> /* Why this, you ask???  Well SVr4 maps page 0 as read-only,
+>     and some applications "depend" upon this behavior.
+>     Since we do not have the power to recompile these, we
+>      emulate the SVr4 behavior. Sigh. */
+> 
+> At one point, Linus suggested removing this [1].
 
-Thanks!
+For users, I didn't find much in a Debian Code Search:
+https://codesearch.debian.net/search?q=MMAP_PAGE_ZERO&literal=1&perpkg=1
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+I see rr uses it in testing, and some utils have it as an option, so I
+think maybe just leave it supported.
+
+> 
+> Sealing this is probably safe, the comment doesn’t say 
+> the app ever wanting to change the mapping to rwx. Sealing
+> also ensures that never happens.
+
+Yeah, this seems fine to me.
+
+> 
+> [1] https://lore.kernel.org/lkml/CAHk-=whVa=nm_GW=NVfPHqcxDbWt4JjjK1YWb0cLjO4ZSGyiDA@mail.gmail.com/
+> 
+> Jeff Xu (1):
+>   binfmt_elf: mseal address zero
+> 
+>  fs/binfmt_elf.c    | 4 ++++
+>  include/linux/mm.h | 4 ++++
+>  mm/mseal.c         | 2 +-
+>  3 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> -- 
+> 2.46.0.rc1.232.g9752f9e123-goog
+> 
 
 -- 
-Sakari Ailus
+Kees Cook
 
