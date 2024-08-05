@@ -1,242 +1,173 @@
-Return-Path: <linux-kernel+bounces-275396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941CC9484E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:35:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AD99484E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3212812A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:35:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15394B22D5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F51C1741DC;
-	Mon,  5 Aug 2024 21:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571C116D4EA;
+	Mon,  5 Aug 2024 21:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IR0gQkiL"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="e9FbeDpt"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D14173355
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08FD14830D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893391; cv=none; b=PAnxU6hR+yLKPvxpYhCvwgZ8uXfEq0sHmx0QJVxGTcpkB1BweSfQpo/YvbIfL3L7lEOPdpfWyYqR23pxOlNyCTl/PLzBuUG2GuDjq5fBHtMxe9P19ik4vMwuLYFEvkkwcQDhvOIcVbLTB6wLDj2hMf0t7hyi8h8AgAyZYWVdGAM=
+	t=1722893641; cv=none; b=Ql6vhikW5t/oc+cns0xuqOq+kEv117aOllj0hpEyVmrQ0CYJvZmwugut3zK88o46DkikIWW16emjBAGNDFSyjb08rAafDLLixsHpZQu+ds9yZb28razqaCdUEWv+6xglI1p8OQQrEGxWR5H9pMvWdJXqDNhMhOOZMhbxbVbtk9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893391; c=relaxed/simple;
-	bh=f4gATws6BsDpnv+whFd/nT2RtFoVIT7P8QJCgccSmgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FIOaaBY+ve9fAzILEYs4nsGatqLbaGVJkHjRRqB26N+jQG+pFEpQJSFF0J56rIgcYUI3XRiMetDYAza0i4ZNyfK/W3TpH6G0Z7qur4eJeQMiaHNYlmV2tavT2pFTo80xc52T7zJVmM5DIw5tFUclfhnDvBeMCT59cLBDzeYqYE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IR0gQkiL; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39b37b63810so196695ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:29:48 -0700 (PDT)
+	s=arc-20240116; t=1722893641; c=relaxed/simple;
+	bh=+OihDy2QMh9owS7QvFjKcmh9vJtkO7Nd5o90hj1oHxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgmewDtSNcAWsPKXWZULksxPF33v5qQOWT8j0lX3A+DT8+PYIEgV0vfi/8DkyGPzDVcQ5rQ99aWnLk3D+aOLh8W/FxymOC376qrZTt2eQ7WvifrIqv4EZNv2cBtckwcit+P1tN0bJUDDzU7+sYA3+sos7TgUzVkB5e2mg1oLj2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=e9FbeDpt; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb6b247db0so57466a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:33:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722893388; x=1723498188; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=77vUSIhEXolQ7LP/swg34WCGlFiT86L+fvCS5JakSjE=;
-        b=IR0gQkiLIwzJeXxqZpk8+ykB5oDvFy9axQnXufnJUqqks8bPwfoqZoCElb+tRtONUM
-         N3fsAyRu3bHTTjYSHOyICnpmJXEctI2PBZUnSj8MzkV+O9yxC2yA6uhX3Ut/kq6m1xBl
-         N1ASuKdrrjXHiPvDf9URhJ6jfnXq7v7p/TzH4=
+        d=wbinvd.org; s=wbinvd; t=1722893639; x=1723498439; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ip6TO0IhAcQmNoYEQtR7Rnuy+pRKC2MihtReYP0wVTE=;
+        b=e9FbeDptYoar834wp3jdgLySoFFxbGZoFnz9m+4MwHzsLqF9w+OnGFc/n1v4y4P3vw
+         WUW/2jaB8FqjWg62D0BVGvCdhHPp9D5GBypnpFCqPGOjLUKcTS3qpGIYkGdxQwOCQ4yh
+         OO9jIhlU9CLd0rk7DyUFdiRAePunPAM+aRJp3KrgIeS68Yx8UlIUJVE8R/nNnS7etpr2
+         Jk5oUvYEfH0zxVvvOLFhGjZ4kpa668gvXkHtdX4MfuBGO7gBGh+HOylpG+BYdmsfTB/L
+         Puo6J+UnJx0ewH01DRvfMjCbRSQYFYJ7tB88p7Sgi3FZTTPS6A2shapX3d04REbE7Z8l
+         51iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893388; x=1723498188;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=77vUSIhEXolQ7LP/swg34WCGlFiT86L+fvCS5JakSjE=;
-        b=ufHGdSAKVnVK+GlVTqy83Vu+RWzZ5LTwYpJ+vLBBxQFUH3LEqdRm/jIpGgaxy/quL5
-         qkRwSqALOLE2DQkT10DxFyIiT1eqH0qFhmHDbt4qcdZgAkoH4/0g8Llzyuk/jGagc71n
-         jrTNyBNVIR0MDsVMq4nyjb+rC3hKNB+qzfmM0HeseAMvEYyHLNe4g3++Fj95hem3HwdQ
-         3vRfcUkLCJFuWX4t3S92M2dU5glogOLjGzqwHxmGB62VaBdlGNhky4qAIxjoN4oy9ZdG
-         3DfkhVRA/mE1Y//CsrSgy0R24Y7LJ8pFNSnEA3B5yPpWvESldj7eCaxl2Hjq7C11l5ys
-         7YNA==
-X-Gm-Message-State: AOJu0YwECLyREaspOldBc12coQVq05heznHh8uDT/KZeKA9H6RGlEnRz
-	ngxwA5B1JHOQvOiHypyFFwGWJEWwXQMhA2RHHxyL6yAWoZEYK5MPfz00HB2r/Kg=
-X-Google-Smtp-Source: AGHT+IHaD5F3UB86KedRRHTA+tJQV3ceKsNfMpZP7mnoDYE8YjQUmsCzQ3zy37i0Pc0NnOXGdSO4eA==
-X-Received: by 2002:a92:ca47:0:b0:376:3918:c50 with SMTP id e9e14a558f8ab-39b1f780a14mr81387545ab.0.1722893387639;
-        Mon, 05 Aug 2024 14:29:47 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6987eaesm1925178173.20.2024.08.05.14.29.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 14:29:47 -0700 (PDT)
-Message-ID: <f7ffadc4-16ed-4d11-8baf-ea2887305d18@linuxfoundation.org>
-Date: Mon, 5 Aug 2024 15:29:45 -0600
+        d=1e100.net; s=20230601; t=1722893639; x=1723498439;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ip6TO0IhAcQmNoYEQtR7Rnuy+pRKC2MihtReYP0wVTE=;
+        b=hMchMkxVLDfA9hWZbT6IrTWroCF6THj+9SCKnPP1GCyQ71F0b2KGgUoOUrA25kJSSv
+         drShsjkJIZUUrQX7NeMsjSf03fgPZDXZzcbpAlF5NPWXETKz0auG9NmW/wj7L+z8cCZ8
+         PWzxarP7DXL6r3D2bmXgMUoEQuh0MoZmljgFset8gfEx0iXDObhPGeW0VZ0Q2W1S/vUn
+         +rDJ9XN7kR2tpmbMLWAGQjlIscrKrqZuLyUBpupqEO53Iuf1SCPBWDVRUgx1Bd4H0UOe
+         0jwpToCo7qzWo9X+v4QgrqO/ytCQPN2J26A+lxsvrrbz9siCxfuuqQ+/6DqcjekDoSrP
+         im/A==
+X-Gm-Message-State: AOJu0YwqVWNzvYKwNGdjfYr9EwyDoEe0E2Wa5Z+x0cd6AayZaHlSqoGg
+	JpWEw7cWl93y8fTF89mZeZ67eMXrNvER2zVnwwz0VvdOK3ijrhgfAV3U+umvQOQ=
+X-Google-Smtp-Source: AGHT+IHcQ1qaQjhwAyTjvY4/wiu+fGdi0PeJaAkST4Q8rbXHKOIO0itktmif+/lamlf2mZsiFQDVZQ==
+X-Received: by 2002:a17:903:2352:b0:200:69e9:5c87 with SMTP id d9443c01a7336-20069e96549mr28197185ad.1.1722893638899;
+        Mon, 05 Aug 2024 14:33:58 -0700 (PDT)
+Received: from mozart.vkv.me ([2001:5a8:4687:7900:2bc9:7663:1e71:adfe])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905b52bsm73633755ad.176.2024.08.05.14.33.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 14:33:58 -0700 (PDT)
+Date: Mon, 5 Aug 2024 14:33:55 -0700
+From: Calvin Owens <calvin@wbinvd.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Kalle Valo <kvalo@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	David Lin <yu-hao.lin@nxp.com>
+Subject: Re: [PATCH] wifi: mwifiex: Fix two buggy list traversals
+Message-ID: <ZrFFQ-dOmgL99CfF@mozart.vkv.me>
+References: <ff796ca4b4f5610bc2d4a479b8cafbb595c7b3a1.1722362534.git.calvin@wbinvd.org>
+ <ZqqaFR4lssIfyQwV@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFT v7 0/9] fork: Support shadow stacks in clone3()
-To: Mark Brown <broonie@kernel.org>,
- "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
- Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
- "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
- Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, jannh@google.com,
- linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
- Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZqqaFR4lssIfyQwV@google.com>
 
-On 7/31/24 06:14, Mark Brown wrote:
-> The kernel has recently added support for shadow stacks, currently
-> x86 only using their CET feature but both arm64 and RISC-V have
-> equivalent features (GCS and Zicfiss respectively), I am actively
-> working on GCS[1].  With shadow stacks the hardware maintains an
-> additional stack containing only the return addresses for branch
-> instructions which is not generally writeable by userspace and ensures
-> that any returns are to the recorded addresses.  This provides some
-> protection against ROP attacks and making it easier to collect call
-> stacks.  These shadow stacks are allocated in the address space of the
-> userspace process.
+On Wednesday 07/31 at 13:09 -0700, Brian Norris wrote:
+> On Tue, Jul 30, 2024 at 11:05:30AM -0700, Calvin Owens wrote:
+> > Both of these list traversals use list_for_each_entry_safe(), yet drop
+> > the lock protecting the list during the traversal.
+> > 
+> > Because the _safe() iterator stores a pointer to the next list node
+> > locally so the current node can be deleted, dropping the lock this way
+> > means the next "cached" list_head might be freed by another caller,
+> > leading the iterator to dereference pointers in freed memory after
+> > reacquiring the lock.
 > 
-> Our API for shadow stacks does not currently offer userspace any
-> flexiblity for managing the allocation of shadow stacks for newly
-> created threads, instead the kernel allocates a new shadow stack with
-> the same size as the normal stack whenever a thread is created with the
-> feature enabled.  The stacks allocated in this way are freed by the
-> kernel when the thread exits or shadow stacks are disabled for the
-> thread.  This lack of flexibility and control isn't ideal, in the vast
-> majority of cases the shadow stack will be over allocated and the
-> implicit allocation and deallocation is not consistent with other
-> interfaces.  As far as I can tell the interface is done in this manner
-> mainly because the shadow stack patches were in development since before
-> clone3() was implemented.
+> There are lots of unclear and/or unsound locking patterns in this
+> driver. You've probably identified one, although I don't think you've
+> solved 100% of it.
 > 
-> Since clone3() is readily extensible let's add support for specifying a
-> shadow stack when creating a new thread or process in a similar manner
-> to how the normal stack is specified, keeping the current implicit
-> allocation behaviour if one is not specified either with clone3() or
-> through the use of clone().  The user must provide a shadow stack
-> address and size, this must point to memory mapped for use as a shadow
-> stackby map_shadow_stack() with a shadow stack token at the top of the
-> stack.
+> Here's another: is it valid for mwifiex_11n_rx_reorder_pkt() ->
+> mwifiex_11n_get_rx_reorder_tbl() to retrieve a 'tbl' pointer (without
+> removing it from the list), and then continue to operate on that without
+> holding any locks? (I think the answer is "no".)
 > 
-> Please note that the x86 portions of this code are build tested only, I
-> don't appear to have a system that can run CET avaible to me, I have
-> done testing with an integration into my pending work for GCS.  There is
-> some possibility that the arm64 implementation may require the use of
-> clone3() and explicit userspace allocation of shadow stacks, this is
-> still under discussion.
-> 
-> Please further note that the token consumption done by clone3() is not
-> currently implemented in an atomic fashion, Rick indicated that he would
-> look into fixing this if people are OK with the implementation.
-> 
-> A new architecture feature Kconfig option for shadow stacks is added as
-> here, this was suggested as part of the review comments for the arm64
-> GCS series and since we need to detect if shadow stacks are supported it
-> seemed sensible to roll it in here.
-> 
-> [1] https://lore.kernel.org/r/20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org/
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
-> Changes in v7:
-> - Rebase onto v6.11-rc1.
-> - Typo fixes.
-> - Link to v6: https://lore.kernel.org/r/20240623-clone3-shadow-stack-v6-0-9ee7783b1fb9@kernel.org
-> 
-> Changes in v6:
-> - Rebase onto v6.10-rc3.
-> - Ensure we don't try to free the parent shadow stack in error paths of
->    x86 arch code.
-> - Spelling fixes in userspace API document.
-> - Additional cleanups and improvements to the clone3() tests to support
->    the shadow stack tests.
-> - Link to v5: https://lore.kernel.org/r/20240203-clone3-shadow-stack-v5-0-322c69598e4b@kernel.org
-> 
-> Changes in v5:
-> - Rebase onto v6.8-rc2.
-> - Rework ABI to have the user allocate the shadow stack memory with
->    map_shadow_stack() and a token.
-> - Force inlining of the x86 shadow stack enablement.
-> - Move shadow stack enablement out into a shared header for reuse by
->    other tests.
-> - Link to v4: https://lore.kernel.org/r/20231128-clone3-shadow-stack-v4-0-8b28ffe4f676@kernel.org
-> 
-> Changes in v4:
-> - Formatting changes.
-> - Use a define for minimum shadow stack size and move some basic
->    validation to fork.c.
-> - Link to v3: https://lore.kernel.org/r/20231120-clone3-shadow-stack-v3-0-a7b8ed3e2acc@kernel.org
-> 
-> Changes in v3:
-> - Rebase onto v6.7-rc2.
-> - Remove stale shadow_stack in internal kargs.
-> - If a shadow stack is specified unconditionally use it regardless of
->    CLONE_ parameters.
-> - Force enable shadow stacks in the selftest.
-> - Update changelogs for RISC-V feature rename.
-> - Link to v2: https://lore.kernel.org/r/20231114-clone3-shadow-stack-v2-0-b613f8681155@kernel.org
-> 
-> Changes in v2:
-> - Rebase onto v6.7-rc1.
-> - Remove ability to provide preallocated shadow stack, just specify the
->    desired size.
-> - Link to v1: https://lore.kernel.org/r/20231023-clone3-shadow-stack-v1-0-d867d0b5d4d0@kernel.org
-> 
-> ---
-> Mark Brown (9):
->        Documentation: userspace-api: Add shadow stack API documentation
->        selftests: Provide helper header for shadow stack testing
->        mm: Introduce ARCH_HAS_USER_SHADOW_STACK
->        fork: Add shadow stack support to clone3()
->        selftests/clone3: Remove redundant flushes of output streams
->        selftests/clone3: Factor more of main loop into test_clone3()
->        selftests/clone3: Explicitly handle child exits due to signals
->        selftests/clone3: Allow tests to flag if -E2BIG is a valid error code
->        selftests/clone3: Test shadow stack support
-> 
->   Documentation/userspace-api/index.rst             |   1 +
->   Documentation/userspace-api/shadow_stack.rst      |  41 ++++
->   arch/x86/Kconfig                                  |   1 +
->   arch/x86/include/asm/shstk.h                      |  11 +-
->   arch/x86/kernel/process.c                         |   2 +-
->   arch/x86/kernel/shstk.c                           | 104 +++++++---
->   fs/proc/task_mmu.c                                |   2 +-
->   include/linux/mm.h                                |   2 +-
->   include/linux/sched/task.h                        |  13 ++
->   include/uapi/linux/sched.h                        |  13 +-
->   kernel/fork.c                                     |  76 ++++++--
->   mm/Kconfig                                        |   6 +
->   tools/testing/selftests/clone3/clone3.c           | 224 ++++++++++++++++++----
->   tools/testing/selftests/clone3/clone3_selftests.h |  40 +++-
->   tools/testing/selftests/ksft_shstk.h              |  63 ++++++
->   15 files changed, 511 insertions(+), 88 deletions(-)
-> ---
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> change-id: 20231019-clone3-shadow-stack-15d40d2bf536
-> 
-> Best regards,
+> Side note: you might also refer to this old thread:
+> https://lore.kernel.org/all/CAD=FV=VuxFtDdcMndLNzVYDoid8N3jP46j0sOFXG1D4CzX0=Zw@mail.gmail.com/
+> I don't think Marvell ever fully resolved all the issues there.
 
+That's all helpful, thank you.
 
-For selftests:
+> > Fix by moving to-be-deleted objects to an on-stack list before actually
+> > deleting them, so the lock can be held for the entire traversal.
+> > 
+> > This is a bit ugly, because mwifiex_del_rx_reorder_entry() will still
+> > take the rx_reorder_tbl_lock to delete the item from the two on-stack
+> > lists introduced in this patch. But that is just ugly, not wrong, and
+> > the function has other callers... making the locking conditional seems
+> > strictly uglier.
+> 
+> I noticed this "ugliness", but I agree with your reasoning -- it's as
+> good as we can do here for now.
+> 
+> > I discovered this bug while studying the new "nxpwifi" driver, which was
+> > sent to the mailing list about a month ago:
+> > 
+> > https://lore.kernel.org/lkml/20240621075208.513497-1-yu-hao.lin@nxp.com/
+> > 
+> > ...but it turns out the new 11n_rxreorder.c in nxpwifi is essentially
+> > exactly identical to mwifiex, save for s/mwifiex/nxpwifi/, so I wanted
+> > to pass along a bugfix for the original driver as well.
+> 
+> That's another can of worms. mwifiex is horrible, and so if you were
+> asking me, I'd reject any attempt at copy/paste/modify that doesn't make
+> significant efforts to refactor and improve -- for instance, better
+> documentation about what all the locks mean, and clarity such that
+> readers can be confident that the code is doing the right thing. For
+> example, I think this mwifiex comment is a lie:
+> 
+> 	/* spin lock for rx_reorder_tbl_ptr queue */
+> 	spinlock_t rx_reorder_tbl_lock;
+> 
+> I believe it's supposed to protect the elements within the list too --
+> but it doesn't do a good job of that.
+> 
+> But that's a side track...
+> 
+> > I only have an IW612, so this patch was only tested on "nxpwifi".
+> 
+> I don't think we can accept an untested patch here. If you're lucky,
+> maybe I or someone else on CC can test for you though.
+>
+> > Signed-off-by: Calvin Owens <calvin@wbinvd.org>
+> > ---
+> >  .../wireless/marvell/mwifiex/11n_rxreorder.c  | 26 +++++++++----------
+> >  1 file changed, 12 insertions(+), 14 deletions(-)
+> 
+> I think the patch looks good enough, but I won't ack it without testing.
+> And while you're at it, I'd recommend some further auditing, per the
+> above.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Understood. I was honestly a bit hesitant to send this in the first
+place without some sort of reproducer, I'll sit on the patch until I'm
+able to find one.
 
-thanks,
--- Shuah
+Thanks,
+Calvin
 
-
+> Brian
 
