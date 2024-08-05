@@ -1,149 +1,128 @@
-Return-Path: <linux-kernel+bounces-274076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51952947323
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:47:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999B3947325
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEDE3B20D2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:47:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 553E928113F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124A47E101;
-	Mon,  5 Aug 2024 01:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419FB13D504;
+	Mon,  5 Aug 2024 01:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HtgFENTc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lj8CLBwR"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880A53C0D;
-	Mon,  5 Aug 2024 01:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315123C0D;
+	Mon,  5 Aug 2024 01:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722822437; cv=none; b=rYsMparhcC4tuTYzMYOQ1DyEITnbZzdIhYLoUkFK8Cbm9issedVssQ80RJWGGZ05LwenzMxlFk0qsLAxI0Kg5IMeD6q2gS+jZy+rVU8VWIvukpE4jKV3itCzFFPJ7lSiG/Nxm0JVQTA6JHLOAqG+sUpOQOMZnsqHFOsFP8zIDu8=
+	t=1722822443; cv=none; b=rFTwjn/W3Bizx5Ye7bw/0hMjE6xIdVuHYjcxnRBmteUu5bsCFtt0+/USK5s2/6mGa4DDn4lP/GtmQvvMLFCU+x/ABiTVvfenwdCRQ6iHK1aUyfI6oa/b3PdZ1vspDWjMub+POYZ9u5escVGBIiPLpKVog6zbeldt5pExoQLzbUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722822437; c=relaxed/simple;
-	bh=0aE5QFV/70fF80Ssj9SM1HSGsExdjEmyZ+2ITjo5sK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NNu7PiR0Kxs0iih/R3q/eX1LQoZl7MOGc4whnaRh8lDTPt3+DR9brCLHg2WQqE1ujYuZFTdrMKuLvVtM1+qgJZ5042FuW3VlffoiCvMHAM2maxsbu/7Yu74KJVdaPGPVC4Jq2YSjmd2NlcPG2nA5YT3tbNJJIpTtsXQxEAhtTWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HtgFENTc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 474NTDvr019702;
-	Mon, 5 Aug 2024 01:46:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/7wSTRpSF2Elnm6YhKK3UHNYY4yz250NxKUWtwt149k=; b=HtgFENTcTMIwh40R
-	ibGO/oBxXtGIlIADY919hb5w805YboJZkAIPzwvVQ43yGGv2dmB2m9+F3/po36fP
-	O80OgBIlLzPgk5EufThU8Zrg2ntKOcokPWsHZRhS/1nBQoVk/29ArObkPsx/GYj1
-	lY7M0vt5YbnjSat80p5CcVogduExFZr3x9tW+wFeE/DaD8MFHzwetti0HwW53anr
-	p+hadlVPIHZPi9bIYwKNpbLXuBvtUvu0hOtz46T7Q6WAbLb5iibks9wwAZXOezpQ
-	KKwwg3aUNSwJk3JMUkHxNaYQICY0y4ciw1WraZ88COiv/2tqiT4YpZS7nZ7AiUUB
-	OGKYhw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbgrtjs2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 01:46:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4751krHR021433
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Aug 2024 01:46:53 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 Aug 2024
- 18:46:47 -0700
-Message-ID: <ef34cf5b-37b5-4450-a05d-fdbbb1ca2567@quicinc.com>
-Date: Mon, 5 Aug 2024 09:46:38 +0800
+	s=arc-20240116; t=1722822443; c=relaxed/simple;
+	bh=A2vJrFO89qv3Vl5mtbLE3v4cFAQkHEqQpYgODZSNMUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IzA1ovmeBjAJinw64El+gFGGwkEoFBEuxc5TjtwITo1AE6DxC5wGz4DvWrmjiTc5+UT+bqBZ8GB/niZbzoCscHN+gSyT7m6jlxEOEyP74UWA8SiziMggZHGg727k4cXiCxAZ394DuB/qGgvi/DO34UdLCVB0NEDZA0Ku+eYvAbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lj8CLBwR; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fd70ba6a15so73932955ad.0;
+        Sun, 04 Aug 2024 18:47:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722822441; x=1723427241; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=go9+jMuiKPxIzbSCtVn3aSgkl1rGhZtdM8/wBVYPVDE=;
+        b=Lj8CLBwR2DuRMJodsWnS8yeFBirdqLnP8eeilJuWjzNf9vcYde68k+hRjB44XPu4H2
+         CGZlA6Jj5phsfozuCq9sDbaqmiCi+chx9OdN4Zfhu9+T2JNC4bX9kiiBUBV+ARewbIVa
+         u+aX4psgqITBSzaLJMmfAFiETPtsjFgjoAGx7Hb0xYGQoDgP6ZOGSGq+DxnpwDDJDrZX
+         G0ou9CC+iC5dSjA3SWPAZELsphp6c+0QP6wtSP+p99fcPiUnk1tw9RIILRn5nHELHJWX
+         sc4rzEEWmhyw/xw/i9MLGYnmjvfF+Ds0J4iegjJMnP1DwrfQQjRgloiRpIokWgeU00hL
+         L5qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722822441; x=1723427241;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=go9+jMuiKPxIzbSCtVn3aSgkl1rGhZtdM8/wBVYPVDE=;
+        b=E3tvlz9LjZY7WrgEmMvyIBiaONBOoYBwg8IXt56G7P7GReaW5GPxZG1eTJAmz/CbPn
+         gzAN8r8eDHkekOoJqRQdrvDqoBui2pVyrqNjvdoxwE7sh97fjLX5KztrFkD6ziBmxfHa
+         23uNiSpExdJM5e1bswSvrB0JMhC5iRI5Ksc8zTycFB7YBL69d1GBb+YkLJFTaWDks5rG
+         ab6vQlHYeMbqgtExfSbvlg9+BJocsFuyNaCvqE94Xuj3TseCVyaNXkTAuSGMZPVjVt2M
+         rvmqQ3Kqt+aeKLRhvCqpVDcfxpY0oiCQ50XPOr3yLw4djfVnysjPvzA+0gwM0/l8h7QZ
+         2jqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnizHnTvgK8dUFe6G3EHG9r86r49n1iToz1pb8VfisMaZqMSS9IOt9g0fjns8OClP5eS78JhtAJYLwFFzULLuylXaHYYYntJAqjWfXlMxUKniB9r9E7OHI4EzN9vcL8b4WwfEtymk8ajA=
+X-Gm-Message-State: AOJu0YxxRe/pT0TK3PNmm7txHXOSfK0s8hbxX9lFik2qVT1L7i1zCJ91
+	2po+/IgtD2S68qIeqekofIC1h8C6jaWObPbfgHhmXics9rMJrU0b
+X-Google-Smtp-Source: AGHT+IGrBD7d3KKyvGObAGd8ellCDk7nxxYgIs1u6U2R16dB2zAH+MXNhey9YIhZnLs1wqSsiIarUw==
+X-Received: by 2002:a17:903:22c1:b0:1fc:5b41:baff with SMTP id d9443c01a7336-1ff5722e988mr106617235ad.3.1722822441341;
+        Sun, 04 Aug 2024 18:47:21 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:22e4:17a:28a:7497])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59295790sm55836015ad.261.2024.08.04.18.47.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Aug 2024 18:47:21 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	soc@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org
+Subject: [PATCH 0/5] Remove support for platform data from matrix keypad driver
+Date: Sun,  4 Aug 2024 18:47:03 -0700
+Message-ID: <20240805014710.1961677-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: interconnect: Add Qualcomm SM4450
-To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240801-sm4450_interconnect-v3-0-8e364d0faa99@quicinc.com>
- <20240801-sm4450_interconnect-v3-1-8e364d0faa99@quicinc.com>
- <20f5fa43-280d-4fde-a36f-c66b1f474f7e@kernel.org>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <20f5fa43-280d-4fde-a36f-c66b1f474f7e@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KxpGsuxELf4Lcv7sBg4LhUqli6iK_kK1
-X-Proofpoint-GUID: KxpGsuxELf4Lcv7sBg4LhUqli6iK_kK1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 malwarescore=0 suspectscore=0 phishscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408050011
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
+This series attempts to remove support for platform data from
+matrix_keypad driver, and have it use generic device properties only
+for the keypad configuration. Spitz is the only board [left] that
+uses platform data.
 
-On 8/2/2024 3:22 PM, Krzysztof Kozlowski wrote:
-> On 01/08/2024 10:54, Tengfei Fan wrote:
->> The Qualcomm SM4450 SoC has several bus fabrics that could be controlled
->> and tuned dynamically according to the bandwidth demand.
->>
->> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->> ---
->>   .../bindings/interconnect/qcom,sm4450-rpmh.yaml    | 133 +++++++++++++++++
->>   include/dt-bindings/interconnect/qcom,sm4450.h     | 163 +++++++++++++++++++++
->>   2 files changed, 296 insertions(+)
->>
-> 
-> If there were no changes, why skipping my tag?
-> 
-> <form letter>
-> This is a friendly reminder during the review process.
-> 
-> It looks like you received a tag and forgot to add it.
-> 
-> If you do not know the process, here is a short explanation:
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> versions, under or above your Signed-off-by tag. Tag is "received", when
-> provided in a message replied to you on the mailing list. Tools like b4
-> can help here. However, there's no need to repost patches *only* to add
-> the tags. The upstream maintainer will do that for tags received on the
-> version they apply.
-> 
-> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> </form letter>
-> 
-> Best regards,
-> Krzysztof
-> 
+As part of the migration I am also dropping support for "clustered"
+interrupt mode, as it was only available through platform data and there
+are no users of it in the mainline kernel.
 
-The V3 patch series is based on the V2 patch series. Your tage also was 
-not added to the V2 binding patch because some modifications were made 
-to the binding patch and dt_binding_check was redone, and not comments 
-were received about your tag, so your tag was not added in the V3 patch 
-series either.
+Additionally gpio-keys device used by Spitz converted to use device
+properties instead of platform data.  
 
-I will add your tag to the next version binding patch.
+I would prefer not to have the song and dance of merging first 2 patches
+through the input tree, waiting, merging the spitz patches through SoC
+tree, waiting, and finally merging the last patch to matrix keypad
+through input again, so maybe we could merge it all through SoC?
+Alternatively, I could merge everything through input. What do you
+think?
 
--- 
-Thx and BRs,
-Tengfei Fan
+Dmitry Torokhov (5):
+  Input: matrix_keypad - remove support for clustered interrupt
+  Input: matrix_keypad - switch to gpiod API and generic device
+    properties
+  ARM: spitz: Use software nodes/properties for the GPIO-driven buttons
+  ARM: spitz: Use software nodes/properties for the matrix keypad
+  Input: matrix_keypad - remove support for platform data
+
+ arch/arm/mach-pxa/spitz.c              | 163 ++++++++----
+ drivers/input/keyboard/matrix_keypad.c | 334 ++++++++++---------------
+ include/linux/input/matrix_keypad.h    |  48 ----
+ 3 files changed, 248 insertions(+), 297 deletions(-)
+
+Thanks.
+
+--
+Dmitry
+
 
