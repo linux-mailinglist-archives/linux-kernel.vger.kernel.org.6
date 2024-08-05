@@ -1,367 +1,340 @@
-Return-Path: <linux-kernel+bounces-274560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF0C947A0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:47:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF70947A12
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C233C1C21188
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9853A281F4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C5D154BFC;
-	Mon,  5 Aug 2024 10:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1BF154C04;
+	Mon,  5 Aug 2024 10:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="If1q5DOn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b="TTxeSwXJ"
+Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDCB1311AC
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AAD1311AC;
+	Mon,  5 Aug 2024 10:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722854818; cv=none; b=dAfAzaNHHVf+3k/N/LK515pl3GgelDv5wohZm4D8DWvpF7VORPHq0IPNq3/d4L0b4Mly79gNZs0lZZ4eaOcUzdBndANrhxnLeI7ti5B4NpCsijL9Jrdr5fhWPavSQXymyJheRKVJEIxlrMEBN6ZlfeRW56DO3uLwTu9AqtYYkeQ=
+	t=1722855348; cv=none; b=HP2Ym8I3HgYnP461BAck7rXbI3z0AAbiRTBjgWAyoE9DybhAqZpbY+xm8XsMSmrmLKgMX0Zp+7DtyIHArzHo+Ln1Uqc11RYv6mIVa0SVOy5ss5WYoZhcsbNovBVPRtNTrejm169JSrLlZZlcTfz9e9+ZVYy6D+eNCp/Cg+d1brw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722854818; c=relaxed/simple;
-	bh=t8ZYKonNXmeLKJG/HtbaEe99E0zHKq2bdb1CivF7e3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hn3P/rzHQCa+QoVSucO9dA5ezovf74Ql4pa/oMeLLSJHZzRvtotI/YbBiIvtlfBGSbamPEu1oHQ6QzRJCwhbb5qY+/VOIhdKmM9zHYULtpih+QGDRUr/zmF2chEdXZFAuqhayjqAPtS5xr2VF8TDVsvT8XBsPk7j72dNDXWulT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=If1q5DOn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722854815;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RYGJ2Cl2YdNrvH50S8EXtFaCaXkcCWcHEEbaWCxwuHc=;
-	b=If1q5DOnUZwfCIifhW8+r5OPsC6qjwqbKlq3ODRkddrjZjPxMAcx+YNPUc8fDcRE9Iotf0
-	Re9ZpJ9WSUjw5fTEkHwkePzyoq60vXr+XHaS2YWhhoLoLUXvAiPCyF9noludUgz0oI8pBi
-	sp1MmyqdDnZ6Sc8sXYR7b/KQ/7kVgZw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-70-yAgrWq-WNv66UTOb0S3R3g-1; Mon, 05 Aug 2024 06:46:52 -0400
-X-MC-Unique: yAgrWq-WNv66UTOb0S3R3g-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4281d0d1c57so25790005e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 03:46:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722854812; x=1723459612;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RYGJ2Cl2YdNrvH50S8EXtFaCaXkcCWcHEEbaWCxwuHc=;
-        b=guSAnBXgBt5EpRxBJAol4obnfKR3LA0D72goAlZtWZp2W8VKb9QmHwFICaJlixl/RC
-         8B7IJXgg9L1uejD11dIV9ylHVMjmcOAL0LczDaeAbA82cwvKMetuORbRBoZ8Pu2dgwCG
-         4546307rmMiRobAc6DmxaDjWFKVJkOGF9BUPf9xS+5JpPVC6QiK14Y3C+SAgPOAc07bq
-         5eixjT3TBzgnlquJC95iE3DHyrsRuqpDiKEQNLJhB7mv97KN2bhQFud0fHCpWFQ+Ew2j
-         uHDA7PU9PlYT0ZNL1x8Df9MBdsAhLI9H3UrioGn1zbfyRNp3llm5Iggar7THZ6MXdll7
-         4upw==
-X-Forwarded-Encrypted: i=1; AJvYcCVa/m0HiYV0OU921erZlOe/YoijknO7Uva9+YNl0V5D2eHJSePV8KZBo17NTnP6g89DEsKnIUP1crkbepCVJkU7Z3JxuNfGbG5Ogujm
-X-Gm-Message-State: AOJu0YyCTHLZBG3OZylP7YypANvc5kZGKDWBc4rO3Ps7sHn6T8AVCBj1
-	HMVnPEJLrG3ej/cqz7rSxw9vC/iaSehDiDQA3jFSn8UnkDu2UZS3Omk84hFw3JpW2IE9R0OQ8nq
-	tPAegttt+qDrJVqFy74Qz4z9UyTHZJLTe8d5j8I3eixmP32Q/84zh3M+5DQsRBA==
-X-Received: by 2002:a05:600c:3b88:b0:426:62a2:34fc with SMTP id 5b1f17b1804b1-428e69e3db7mr92758925e9.11.1722854811538;
-        Mon, 05 Aug 2024 03:46:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG52wWe4Kb+h/dOBYLzGYS49SAVUNgfQ7Z2G9kcHXg7wOjEXRrEo78FGdm9+pgHb7C5i1Tqpw==
-X-Received: by 2002:a05:600c:3b88:b0:426:62a2:34fc with SMTP id 5b1f17b1804b1-428e69e3db7mr92758615e9.11.1722854810937;
-        Mon, 05 Aug 2024 03:46:50 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42824af6e8csm126805155e9.1.2024.08.05.03.46.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 03:46:50 -0700 (PDT)
-Message-ID: <418e818a-f385-459e-a84d-e3880ac08ad5@redhat.com>
-Date: Mon, 5 Aug 2024 12:46:49 +0200
+	s=arc-20240116; t=1722855348; c=relaxed/simple;
+	bh=SMqWOmgw/UDQXI2Viucl1TGtgCXgecBTRV2zcND0Ov8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o81jkDP0WqdxEqgvezbwUbDA0z266YExvTNpNPZ11sQu+tLhjumg45ma+VQss1+zqYllyKMUjpmMH9gq5RWBtW4dOl5pI/HPNlyNmJBLlH6SogFuNj8L9fRx5klAqnb7Tu0jIuY04wJ0d3sDa6ks5Rrs0iTNirLW+tEvvDb/ufQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk; spf=pass smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b=TTxeSwXJ; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metaspace.dk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=metaspace.dk;
+	s=protonmail; t=1722855334; x=1723114534;
+	bh=OTPTbzBzU9Sc0BiNhZFoNYMGQYF2LvoMfWD2omsoqAg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=TTxeSwXJRvVzr4Y7TaLQD7Nltz7GhDPQJ880OD+5JdUj9HImzZPe8S8Vz2mYnbWdo
+	 6vS2LibQfVfaK5hQ33WPZXu8n/yWtWWwEXQogSH8cKGME1kEDHH8mrzwkEBcsYGRbw
+	 0iE/emOgj/FmaFsvMQo6St71KdFYWFlBmaPtUtLa/zlJMhTeF+IEs5MPwDVSnRHOL6
+	 z+e+UpliZPsY5pqZhvI3v5sTmZTzPT3RFjvHticaiEwN81v6aUbtq5CX6y5ar4svyl
+	 pWXp6EFrp7QrHNVtJexVBVQqCff/6rLHpknTfeV6qhqqHRZ6T6bhJ65HzRMQ4KdBqe
+	 p6FtoWBioujtQ==
+Date: Mon, 05 Aug 2024 10:55:27 +0000
+To: Benno Lossin <benno.lossin@proton.me>
+From: Andreas Hindborg <nmi@metaspace.dk>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
+Subject: Re: [PATCH] rust: add `module_params` macro
+Message-ID: <87v80fme7g.fsf@metaspace.dk>
+In-Reply-To: <a98ddf54-3e27-4587-8e49-f19dd1ac65a6@proton.me>
+References: <20240705111455.142790-1-nmi@metaspace.dk> <2838cf2e-936c-45de-bb19-af9da66fbe00@proton.me> <87plqso50o.fsf@metaspace.dk> <49cad242-7a7c-4e9e-beb7-4f9c493ce794@proton.me> <878qxgnyzd.fsf@metaspace.dk> <ed2f7416-2631-411d-bb49-5a580dbf51b8@proton.me> <874j84nurn.fsf@metaspace.dk> <f84e9189-b64a-4761-86f5-ccd50fb62f36@proton.me> <87zfpvmd8y.fsf@metaspace.dk> <a98ddf54-3e27-4587-8e49-f19dd1ac65a6@proton.me>
+Feedback-ID: 113830118:user:proton
+X-Pm-Message-ID: 080071366be32d61e8165c71df79521035cb1d27
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Race condition observed between page migration and page fault
- handling on arm64 machines
-To: Dev Jain <dev.jain@arm.com>, Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, willy@infradead.org, ryan.roberts@arm.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, osalvador@suse.de,
- baolin.wang@linux.alibaba.com, dave.hansen@linux.intel.com,
- baohua@kernel.org, ioworker0@gmail.com, gshan@redhat.com,
- mark.rutland@arm.com, kirill.shutemov@linux.intel.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240801081657.1386743-1-dev.jain@arm.com>
- <3b82e195-5871-4880-9ce5-d01bb751f471@redhat.com>
- <bbe411f2-4c68-4f92-af8c-da184669dca8@arm.com>
- <a6a38ad5-c754-44ad-a64b-f9ea5b764291@redhat.com>
- <92df0ee1-d3c9-41e2-834c-284127ae2c4c@arm.com>
- <19902a48-c59b-4e3b-afc5-e792506c2fd6@redhat.com>
- <6486a2b1-45ef-44b6-bd84-d402fc121373@redhat.com>
- <20240801134358.GB4794@willie-the-truck>
- <9359caf7-81a8-45d9-9787-9009b3b2eed3@redhat.com>
- <f8d21caa-7a82-4761-8a78-d928ae8d0f24@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f8d21caa-7a82-4761-8a78-d928ae8d0f24@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 05.08.24 11:51, Dev Jain wrote:
-> 
-> On 8/1/24 19:18, David Hildenbrand wrote:
->> On 01.08.24 15:43, Will Deacon wrote:
->>> On Thu, Aug 01, 2024 at 03:26:57PM +0200, David Hildenbrand wrote:
->>>> On 01.08.24 15:13, David Hildenbrand wrote:
->>>>>>>> To dampen the tradeoff, we could do this in shmem_fault()
->>>>>>>> instead? But
->>>>>>>> then, this would mean that we do this in all
+"Benno Lossin" <benno.lossin@proton.me> writes:
+
+> On 02.08.24 12:27, Andreas Hindborg wrote:
+>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>> On 01.08.24 17:11, Andreas Hindborg wrote:
+>>>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>>>> On 01.08.24 15:40, Andreas Hindborg wrote:
+>>>>>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>>>>>> On 01.08.24 13:29, Andreas Hindborg wrote:
+>>>>>>>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>>>>>>>> On 05.07.24 13:15, Andreas Hindborg wrote:
+>>>>>>>>>> +
+>>>>>>>>>> +/// Types that can be used for module parameters.
+>>>>>>>>>> +///
+>>>>>>>>>> +/// Note that displaying the type in `sysfs` will fail if
+>>>>>>>>>> +/// [`core::str::from_utf8`] (as implemented through the [`core=
+::fmt::Display`]
+>>>>>>>>>> +/// trait) writes more than [`PAGE_SIZE`] bytes (including an a=
+dditional null
+>>>>>>>>>> +/// terminator).
+>>>>>>>>>> +///
+>>>>>>>>>> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
+>>>>>>>>>> +pub trait ModuleParam: core::fmt::Display + core::marker::Sized=
+ {
+>>>>>>>>>> +    /// The `ModuleParam` will be used by the kernel module thr=
+ough this type.
+>>>>>>>>>> +    ///
+>>>>>>>>>> +    /// This may differ from `Self` if, for example, `Self` nee=
+ds to track
+>>>>>>>>>> +    /// ownership without exposing it or allocate extra space f=
+or other possible
+>>>>>>>>>> +    /// parameter values. This is required to support string pa=
+rameters in the
+>>>>>>>>>> +    /// future.
+>>>>>>>>>> +    type Value: ?Sized;
+>>>>>>>>>> +
+>>>>>>>>>> +    /// Whether the parameter is allowed to be set without an a=
+rgument.
+>>>>>>>>>> +    ///
+>>>>>>>>>> +    /// Setting this to `true` allows the parameter to be passe=
+d without an
+>>>>>>>>>> +    /// argument (e.g. just `module.param` instead of `module.p=
+aram=3Dfoo`).
+>>>>>>>>>> +    const NOARG_ALLOWED: bool;
+>>>>>>>>>
+>>>>>>>>> I think, there is a better way of doing this. Instead of this boo=
+l, we
+>>>>>>>>> do the following:
+>>>>>>>>> 1. have a `const DEFAULT: Option<Self>`
+>>>>>>>>> 2. change the type of the argument of `try_from_param_arg` to
+>>>>>>>>>    `&'static [u8]`
+>>>>>>>>>
+>>>>>>>>> That way we don't have the weird behavior of `try_from_param_arg`=
+ that
+>>>>>>>>> for params that don't have a default value.
 >>>>>>>>
->>>>>>>> kinds of vma->vm_ops->fault, only when we discover another
->>>>>>>> reference
->>>>>>>> count race condition :) Doing this in do_fault()
->>>>>>>>
->>>>>>>> should solve this once and for all. In fact, do_pte_missing()
->>>>>>>> may call
->>>>>>>> do_anonymous_page() or do_fault(), and I just
->>>>>>>>
->>>>>>>> noticed that the former already checks this using
->>>>>>>> vmf_pte_changed().
+>>>>>>>> Since we have no parameter types for which `NOARG_ALLOWED` is true=
+ in
+>>>>>>>> this patch set, it is effectively dead code. I will remove it.
 >>>>>>>
->>>>>>> What I am still missing is why this is (a) arm64 only; and (b) if
->>>>>>> this
->>>>>>> is something we should really worry about. There are other reasons
->>>>>>> (e.g., speculative references) why migration could temporarily fail,
->>>>>>> does it happen that often that it is really something we have to
->>>>>>> worry
->>>>>>> about?
+>>>>>>> Hmm what parameters actually are optional? I looked at the old rust
+>>>>>>> branch and only `bool` is marked as optional. Are there others?
+>>>>>>>
+>>>>>>> If it is used commonly for custom parameters (I could imagine that =
+Rust
+>>>>>>> modules have enums as parameters and specifying nothing could mean =
+the
+>>>>>>> default value), then it might be a good idea to just include it now=
+.
+>>>>>>> (otherwise we might forget the design later)
 >>>>>>
+>>>>>> As far as I can tell from the C code, all parameters are able to hav=
+e
+>>>>>> the `NOARG` flag set. We get a null pointer in the callback in that
+>>>>>> case.
 >>>>>>
->>>>>> (a) See discussion at [1]; I guess it passes on x86, which is quite
->>>>>> strange since the race is clearly arch-independent.
+>>>>>> If we want to handle this now, we could drop the `default` field
+>>>>>> in the Rust module macro. There is no equivalent in the C macros.
+>>>>>> And then use an `Option<Option<_>>` to represent the value. `None` w=
+ould
+>>>>>> be an unset parameter. `Some(None)` would be a parameter without a
+>>>>>> value. `Some(Some(_))` would be a set parameter with a value. We cou=
+ld
+>>>>>> probably fix the types so that only parameters with the `NOARG` flag=
+ use
+>>>>>> the double option, others use a single option.
 >>>>>
->>>>> Yes, I think this is what we have to understand. Is the race simply
->>>>> less
->>>>> likely to trigger on x86?
->>>>>
->>>>> I would assume that it would trigger on any arch.
->>>>>
->>>>> I just ran it on a x86 VM with 2 NUMA nodes and it also seems to
->>>>> work here.
->>>>>
->>>>> Is this maybe related to deferred flushing? Such that the other CPU
->>>>> will
->>>>> by accident just observe the !pte_none a little less likely?
->>>>>
->>>>> But arm64 also usually defers flushes, right? At least unless
->>>>> ARM64_WORKAROUND_REPEAT_TLBI is around. With that we never do deferred
->>>>> flushes.
+>>>>> What did you think of my approach that I detailed above? I would like=
+ to
+>>>>> avoid `Option<Option<_>>` if we can.
 >>>>
->>>> Bingo!
->>>>
->>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>> index e51ed44f8b53..ce94b810586b 100644
->>>> --- a/mm/rmap.c
->>>> +++ b/mm/rmap.c
->>>> @@ -718,10 +718,7 @@ static void set_tlb_ubc_flush_pending(struct
->>>> mm_struct
->>>> *mm, pte_t pteval,
->>>>     */
->>>>    static bool should_defer_flush(struct mm_struct *mm, enum
->>>> ttu_flags flags)
->>>>    {
->>>> -       if (!(flags & TTU_BATCH_FLUSH))
->>>> -               return false;
->>>> -
->>>> -       return arch_tlbbatch_should_defer(mm);
->>>> +       return false;
->>>>    }
->>>>
->>>>
->>>> On x86:
->>>>
->>>> # ./migration
->>>> TAP version 13
->>>> 1..1
->>>> # Starting 1 tests from 1 test cases.
->>>> #  RUN           migration.shared_anon ...
->>>> Didn't migrate 1 pages
->>>> # migration.c:170:shared_anon:Expected migrate(ptr, self->n1,
->>>> self->n2) (-2)
->>>> == 0 (0)
->>>> # shared_anon: Test terminated by assertion
->>>> #          FAIL  migration.shared_anon
->>>> not ok 1 migration.shared_anon
->>>>
->>>>
->>>> It fails all of the time!
+>>>> How would you represent the case when the parameter is passed without =
+a
+>>>> value and a default is given in `module!`?
 >>>
->>> Nice work! I suppose that makes sense as, with the eager TLB
->>> invalidation, the window between the other CPU faulting and the
->>> migration entry being written is fairly wide.
+>>> I am a bit confused, there are two default values here:
+>>> (1) the value returned by `try_from_param_arg(None)`.
+>>> (2) the value given by the user to the `module!` macro.
 >>>
->>> Not sure about a fix though :/ It feels a bit overkill to add a new
->>> invalid pte encoding just for this.
->>
->> Something like that might make the test happy in most cases:
->>
->> diff --git a/tools/testing/selftests/mm/migration.c
->> b/tools/testing/selftests/mm/migration.c
->> index 6908569ef406..4c18bfc13b94 100644
->> --- a/tools/testing/selftests/mm/migration.c
->> +++ b/tools/testing/selftests/mm/migration.c
->> @@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
->>          int ret, tmp;
->>          int status = 0;
->>          struct timespec ts1, ts2;
->> +       int errors = 0;
->>
->>          if (clock_gettime(CLOCK_MONOTONIC, &ts1))
->>                  return -1;
->> @@ -79,12 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
->>                  ret = move_pages(0, 1, (void **) &ptr, &n2, &status,
->>                                  MPOL_MF_MOVE_ALL);
->>                  if (ret) {
->> -                       if (ret > 0)
->> +                       if (ret > 0) {
->> +                               if (++errors < 100)
->> +                                       continue;
->>                                  printf("Didn't migrate %d pages\n", ret);
->> -                       else
->> +                       } else {
->>                                  perror("Couldn't migrate pages");
->> +                       }
->>                          return -2;
->>                  }
->> +               /* Progress! */
->> +               errors = 0;
->>
->>                  tmp = n2;
->>                  n2 = n1;
->>
->>
->> [root@localhost mm]# ./migration
->> TAP version 13
->> 1..1
->> # Starting 1 tests from 1 test cases.
->> #  RUN           migration.shared_anon ...
->> #            OK  migration.shared_anon
->> ok 1 migration.shared_anon
->> # PASSED: 1 / 1 tests passed.
->> # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-> 
-> 
-> This does make the test pass, to my surprise, since what you are doing
-> from userspace
-> 
-> should have been done by the kernel, because it retries folio unmapping
-> and moving
-> 
-> NR_MAX_MIGRATE_(A)SYNC_RETRY times; I had already tested pumping up these
-> 
-> macros and the original test was still failing. Now, I digged in more,
-> and, if the
-> 
-> following assertion is correct:
-> 
-> 
-> Any thread having a reference on a folio will end up calling folio_lock()
-> 
+>>> I am talking about changing the definition of ModuleParam, so (1). I ge=
+t
+>>> the feeling that you are talking about (2), is that correct?
+>>=20
+>> I confused myself as well I think. I am talking about (1). Let me try
+>> again.
+>>=20
+>> If we support `NOARG_ALLOWED` (`KERNEL_PARAM_OPS_FL_NOARG` in C. I
+>> should change the flag name in Rust), modules can optionally support
+>> some parameters where users can pass parameters either as
+>> `my_module.param=3Dvalue` or `my_module.param`. Thus, at the level of
+>> `try_from_param_arg`, we need to represent two cases: parameter passed
+>> without value, and parameter passed with value. A third case, parameter
+>> not passed at all, is equivalent to `try_from_param_arg` never being
+>> called. In C this is undetectable for the predefined parameter types. I
+>> wanted the double option to detect this. But I guess it does not make
+>> sense.
+>
+> My idea was to have an `const DEFAULT: Option<Self>` to represent the
+> following:
+> (1) if `DEFAULT =3D=3D None`, then `KERNEL_PARAM_OPS_FL_NOARG` is not set
+>     and thus either the `module!` user-specified default value is used,
+>     or it is specified via `my_module.param=3Dvalue` and
+>     `try_from_param_arg` is called.
+> (2) if `DEFAULT =3D=3D Some(d)`, then `KERNEL_PARAM_OPS_FL_NOARG` is set =
+and
+>     when `NULL` is given to `kernel_param_ops.set`, the parameter value
+>     is set to `d`, otherwise `try_from_param_arg` is called.
+>
+> But I think I agree with you removing `NOARG_ALLOWED`, see below.
 
-Good point. I suspect concurrent things like read/write would also be 
-able to trigger this (did not check, though).
+Great!
 
-> 
-> then it seems to me that the retry for loop wrapped around
-> migrate_folio_move(), inside
-> 
-> migrate_pages_batch(), is useless; if migrate_folio_move() fails on the
-> first iteration, it is
-> 
-> going to fail for all iterations since, if I am reading the code path
-> correctly, the only way it
-> 
-> fails is when the actual refcount is not equal to expected refcount (in
-> folio_migrate_mapping()),
-> 
-> and there is no way that the extra refcount is going to get released
-> since the migration path
-> 
-> has the folio lock.
-> 
-> And therefore, this begs the question: isn't it logical to assert the
-> actual refcount against the
-> 
-> expected refcount, just after we have changed the PTEs, so that if this
-> assertion fails, we can
-> 
-> go to the next iteration of the for loop for migrate_folio_unmap()
-> inside migrate_pages_batch()
-> 
-> by calling migrate_folio_undo_src()/dst() to restore the old state? I am
-> trying to implement
-> 
-> this but is not as straightforward as it seemed to me this morning.
+>
+>> At a higher level where the bindings supply the parsing functions, we
+>> can decide that passing an argument without a value yields a default
+>> parameter value. C does this for the predefined `bool` type. The
+>> predefined integer types does not support omitting the value.
+>>
+>> This patch only supports the higher level predefined parameter types,
+>> and does not allow modules to supply their own parameter parsing
+>> functions. None of the types we implement in this patch support passing
+>> the argument without a value. This is intentional to mirror the C
+>> implementation.
+>>=20
+>> To that end, I removed `NOARG_ALLOWED`, and changed the parsing function
+>> trait to:
+>>=20
+>>     fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
+>>=20
+>> If/when we start supporting types like `bool` or custom parsing
+>> functions provided by the module, we will have to update the signature
+>> to take an `Option` to represent the case where the user passed an
+>> argument without a value. However, to mimic C, the function must always
+>> return a value if successful, even if the user did not supply a value to
+>> the argument.
+>>=20
+>> Two different default values are in flight here. 1) the value that the
+>> parameter will have before the kernel calls `try_from_param_arg` via
+>> `set_param` and 2) the value to return from `try_from_param_arg` if the
+>> user did not pass a value with the argument.
+>>=20
+>> For a `bool` 1) would usually be `false` and 2) would always be `true`.
+>>=20
+>> For predefined types the module would not customize 2), but 1) is useful
+>> to customize. For custom types where the module supplies the parsing
+>> function, 2) would be implicitly given by the module in the parsing
+>> function.
+>>=20
+>> In this patch set, we only have 1 default value, namely 1). We do not
+>> need 2) because we do not support parameters without values.
+>
+> I am not sure that putting the default value of `my_module.param` into
+> the `ModuleParam` trait is a good idea. It feels more correct to me to
+> add an optional field to the part in `module!` that can be set to denote
+> this default value -- we might also want to change the name of
+> `default`, what do you think of `default_inactive` and `default_active`?
 
-I agree with your assessment that migration code currently doesn't 
-handle the case well when some other thread does an unconditional 
-folio_lock(). folio_trylock() users would be handled, but that's not 
-what we want with FGP_LOCK I assume.
+For all the predefined parameter types, the module code would never set
+the `default_active` value. It should be part of the data parsing
+specification for the predefined argument types.
 
-So IIUC, your idea would be to unlock the folio in migration code and 
-try again their. Sounds reasonable, without looking into the details :)
+For custom parsing functions implemented in the module, it makes sense
+specifying this value in the trait.
 
--- 
-Cheers,
+> Since one might want an option by default be `true` and when one writes
+> `my_module.param`, it should be `false`.
 
-David / dhildenb
+I think this would be confusing, since the default C parameter types do
+not have this semantic. Specifying a default true boolean as an argument
+does not make it false in C land. TBH this also feels like the most sane
+thing to do.
+
+> Also as the C side shows, having default values for integer types is not
+> really a good idea, since you might want a non-zero default value.
+> If one does not specify the `default_active` value, then the
+> `KERNEL_PARAM_OPS_FL_NOARG` is not set.
+
+I would rather predefine `KERNEL_PARAM_OPS_FL_NOARG` in the trait
+implementation like C does. We would set the flag for `bool` but not for
+integer types. For custom implementations of the trait, the developer
+can do whatever they want.
+
+> If you don't want to implement this (which I can fully understand, since
+> we might get `syn` before anyone needs params with default values), then
+> we should write this idea down (maybe in an issue?). But regardless, I
+> would like to know your opinion on this topic.
+
+We can create he issue if this series is accepted without the feature.
+
+>
+>>>> I think we need to drop the default value if we adopt the arg without
+>>>> value scheme.
+>>>
+>>> Yes definitely. I don't see anything in the code doing this currently,
+>>> right?
+>>=20
+>> The current patch uses the default value given in the `module!` macro to
+>> initialize the parameter value.
+>
+> But what drops the default value, when an actual value is specified via
+> `my_module.param=3Dvalue`? (or is the default value only assigned when
+> nothing is specified?)
+
+Some more confusion maybe. When I wrote "drop the default value", I
+meant remove it from the code, not specify it. I take it back though. We
+would use the value given in the `module!` macro `default` field as
+`default_inactive`. `default_active` is not required for integer types,
+since they always require a value for the argument.
+
+But the drop would happen in `set_param` when the return value of
+`core::ptr::replace` is dropped.
+
+>
+>>> We could also only allow `Copy` values to be used as Parameters (but
+>>> then `str` cannot be used as a parameter...), since they can't implemen=
+t
+>>> `Drop`.
+>>=20
+>> We should plan on eventually supporting `String`.
+>
+> Yes.
+>
+>>>>>> Or we could just not adopt this feature in the Rust abstractions.
+>>>>>
+>>>>> Depends on how common this is and if people need to use it. I think t=
+hat
+>>>>> what I proposed above isn't that complex, so it should be easy to
+>>>>> implement.
+>>>>
+>>>> Rust modules would just force people to add "my_module.param=3D1" inst=
+ead
+>>>> of just "my_module.param". I think that is reasonable.
+>>>
+>>> Eh, why do we want to give that up? I don't think it's difficult to do.
+>>=20
+>> I just don't see the point. Just have the user pass `my_module.param=3D1=
+`
+>> instead of omitting the value. Having multiple ways of specifying for
+>> instance a true boolean just leads to confusion. Some boolean parameters
+>> have a default value of `true`, for instance `nvme.use_cmb_sqes`. In
+>> this case specifying `nvme.use_cmb_sqes` has no effect, even though one
+>> might think it has.
+>
+> This just shows to me that a "global" default in `ModuleParam` is wrong,
+> since for `use_cmb_sqes` one could either have a negated flag, or no
+> default value, forcing the user to write `nvme.use_cmb_sqes=3Dfalse`.
+
+I do not think it is a good idea to be able to override the value
+assigned to a parameter when it is given without a value. The more
+predictable a user interface is, the better.
+
+
+Best regards,
+Andreas
+
 
 
