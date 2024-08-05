@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-274616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880DE947AC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:57:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60F1947AC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5992818F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:57:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504DF1F21A64
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3314D158D7E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD89158DC5;
 	Mon,  5 Aug 2024 11:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ac5GJ4uX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N/LTD61I"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PKj7phok";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U3OnUsAN"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E92157478;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EEA15747F;
 	Mon,  5 Aug 2024 11:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722858970; cv=none; b=FVdv5hiSPglH+p9z7S0Wety+2HgK1fjtRnCsu/ln6HzMNn84widsxOjzBN1MnmzS8fqP35HPY2JNM6hikgy51izBkU8na3tOuk7SjdOxqFkaGBXmIaaBO09H8HY2qM0WvNLRMQelwb3Qys3cWIkY7SKV6ItvnsyrSVRyta5YOk4=
+	t=1722858970; cv=none; b=cy11AyXMCtHb/QgLeQTmk58ZJrOWvwd9J88SrCrndFSSw+YSgWOCZoIIyCxfJC2G5NL2Fb7/Pg563ZCdTbk5G3w5+TOzRrl8Ls04AqpQ2u3wW+jRTOktTtvcCaECqM8EYRScFHQHObL9R1NN/Y6BVOtvTAlnwA4N+eKyXPCZsuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722858970; c=relaxed/simple;
-	bh=Evqb92VpEKVsW0Ssc87YnUf+f6EfOJblvHdoz4WDqXA=;
+	bh=CrS5r/+RIx79gQQFVV9SWgI/jzB8/TkDTLF1UR/JkVg=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=SdTzdvQG9USYFEscb7K1PMtYJXkH8LET79y3SRaCC5lIT9br/Og1THoK8FKPETfIeBuHrixJu3y3jAmvxoFk/dG8oZ2nw59ML7Q9J1m3t1dH6PRG7eS6TWHE1Esaur3+fOEkSTqSjiygKBmPOP1m8tc5M932lNYxZ8N8VZ7e07A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ac5GJ4uX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N/LTD61I; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=Z+hmVCxWw+x5z2WdvlFw59ZiNB1LNjXo/gldGcnQCecSxQ3NtvrnDiYS44q9IZO35NFDyMLXABBpuEaGpUMdmOAApnnDRHw8pgXuMQSvx0KJTbMpKurjtx77zVKcCw6Th4fzhjlHWb1WHBA1AssgTYT3NOA2c7CvVFAWG5T2ZhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PKj7phok; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U3OnUsAN; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Mon, 05 Aug 2024 11:56:05 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722858965;
+	s=2020; t=1722858966;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q5ixQYr395hUO4HjYkbS4tyMUBlqmBqzO5p2zmH8bTo=;
-	b=ac5GJ4uXs9Q7ic8Kw+7VEEP3c/89SY7JNCA6aMCucVjtlLRb2fZnoCjVkjcTSdKRoaHbT+
-	+Q2yunTaFsJ0Mp4uP8e4zAHXZk73LWB4+yNOmm8SN3ETYELY8RpIIjZr102uAujdiZM20t
-	whZPMRQ5y9C1lZKib/6lO+H3mpV7+csxuroN7wH3jrBh8ymCm4iNUjfeFrGugSRQ/F4Int
-	7ww86zoBptoEybGYF/WbXKB/BDkH/6dbrszZz1F218sZAX8wFQeNPzawRQKEx3okmaZOGo
-	pZsXx2yezdBKMtfa1aKp6nvySzES7YRTDFju1BalHtUp4nphUxDK6/o1Xa0vmQ==
+	bh=UAB8V7nbXueW1dVFAdAnXlgNWFZbiKfAKU6uYIkEHCI=;
+	b=PKj7phokCWFoau2RNTA74ccf6fcXweg0GoMc2x59QavOG28tPUwbMn9dJlF6KFtH/Qn+Ea
+	ZD+LFsgudaDTkZOnWLPlGa7cMp7bMvLcBuKqe66nc7WN9dokOnjc3HW3yAjWT+69R0MRWF
+	+MAodON2bbhqr9QeQofWgF1aPcdaJboBjULZjzrzJglvwSaiMQZwXKVSnHPcYuLaE3Zfzo
+	hA1kFb/CxDaW/B+r7gsbyoF+sRHmJOMRIGhXbBR2Aca+tTUG0EYq8Jx0tuwx7TYhaEfxdW
+	V6KJIe5WTgp/lZ5Vn50lzvIxhRatMjvuknlvQILeyWAPS3Ex6YLIF3ZdV6IoHw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722858965;
+	s=2020e; t=1722858966;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q5ixQYr395hUO4HjYkbS4tyMUBlqmBqzO5p2zmH8bTo=;
-	b=N/LTD61IlzMeU1/ySKUCmXhia7NfFifYGDIbz3osn1qBM+aYA90ArQHCiedbXLPwloEs5p
-	VovD425c2nBcP8BA==
+	bh=UAB8V7nbXueW1dVFAdAnXlgNWFZbiKfAKU6uYIkEHCI=;
+	b=U3OnUsANXRX/glyVRrSkMkj+/NCPp3K5Sx83Wp+YfiNQZvuevh29Opfo7c/rRBFmPYhz5e
+	Lb/QUyvbGal9VKBA==
 From: "tip-bot2 for Oleg Nesterov" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] uprobes: is_trap_at_addr: don't use get_user_pages_remote()
+Subject: [tip: perf/core] uprobes: document the usage of mm->mmap_lock
 Cc: Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240801132714.GA8783@redhat.com>
-References: <20240801132714.GA8783@redhat.com>
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240801132709.GA8780@redhat.com>
+References: <20240801132709.GA8780@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172285896546.2215.10122357135816753782.tip-bot2@tip-bot2>
+Message-ID: <172285896599.2215.2455695217344541134.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,48 +82,72 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     300b05621a3f85621130e356ca6ae90f6a4eec0e
-Gitweb:        https://git.kernel.org/tip/300b05621a3f85621130e356ca6ae90f6a4eec0e
+Commit-ID:     84455e6923c79a37812930787aaa141e82afe315
+Gitweb:        https://git.kernel.org/tip/84455e6923c79a37812930787aaa141e82afe315
 Author:        Oleg Nesterov <oleg@redhat.com>
-AuthorDate:    Thu, 01 Aug 2024 15:27:14 +02:00
+AuthorDate:    Thu, 01 Aug 2024 15:27:09 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Fri, 02 Aug 2024 11:30:30 +02:00
 
-uprobes: is_trap_at_addr: don't use get_user_pages_remote()
+uprobes: document the usage of mm->mmap_lock
 
-get_user_pages_remote() and the comment above it make no sense.
+The comment above uprobe_write_opcode() is wrong, unapply_uprobe() calls
+it under mmap_read_lock() and this is correct.
 
-There is no task_struct passed into get_user_pages_remote() anymore, and
-nowadays mm_account_fault() increments the current->min/maj_flt counters
-regardless of FAULT_FLAG_REMOTE.
+And it is completely unclear why register_for_each_vma() takes mmap_lock
+for writing, add a comment to explain that mmap_write_lock() is needed to
+avoid the following race:
+
+	- A task T hits the bp installed by uprobe and calls
+	  find_active_uprobe()
+
+	- uprobe_unregister() removes this uprobe/bp
+
+	- T calls find_uprobe() which returns NULL
+
+	- another uprobe_register() installs the bp at the same address
+
+	- T calls is_trap_at_addr() which returns true
+
+	- T returns to handle_swbp() and gets SIGTRAP.
 
 Reported-by: Andrii Nakryiko <andrii@kernel.org>
 Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Link: https://lore.kernel.org/r/20240801132714.GA8783@redhat.com
+Acked-by: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Link: https://lore.kernel.org/r/20240801132709.GA8780@redhat.com
 ---
- kernel/events/uprobes.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ kernel/events/uprobes.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 2d1457e..698bb22 100644
+index f69ecd3..2d1457e 100644
 --- a/kernel/events/uprobes.c
 +++ b/kernel/events/uprobes.c
-@@ -2035,13 +2035,7 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
- 	if (likely(result == 0))
- 		goto out;
+@@ -453,7 +453,7 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
+  * @vaddr: the virtual address to store the opcode.
+  * @opcode: opcode to be written at @vaddr.
+  *
+- * Called with mm->mmap_lock held for write.
++ * Called with mm->mmap_lock held for read or write.
+  * Return 0 (success) or a negative errno.
+  */
+ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+@@ -1046,7 +1046,13 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
  
--	/*
--	 * The NULL 'tsk' here ensures that any faults that occur here
--	 * will not be accounted to the task.  'mm' *is* current->mm,
--	 * but we treat this as a 'remote' access since it is
--	 * essentially a kernel access to the memory.
--	 */
--	result = get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &page, NULL);
-+	result = get_user_pages(vaddr, 1, FOLL_FORCE, &page);
- 	if (result < 0)
- 		return result;
- 
+ 		if (err && is_register)
+ 			goto free;
+-
++		/*
++		 * We take mmap_lock for writing to avoid the race with
++		 * find_active_uprobe() which takes mmap_lock for reading.
++		 * Thus this install_breakpoint() can not make
++		 * is_trap_at_addr() true right after find_uprobe()
++		 * returns NULL in find_active_uprobe().
++		 */
+ 		mmap_write_lock(mm);
+ 		vma = find_vma(mm, info->vaddr);
+ 		if (!vma || !valid_vma(vma, is_register) ||
 
