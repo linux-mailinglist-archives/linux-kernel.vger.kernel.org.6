@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-275103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4699480A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45DA9480A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 933E91C22048
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E87D28196A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69A115EFA6;
-	Mon,  5 Aug 2024 17:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1549515ECF2;
+	Mon,  5 Aug 2024 17:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B67lwN0l"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SzF1IOR4"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D995815EFC4;
-	Mon,  5 Aug 2024 17:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A34253E22
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722879818; cv=none; b=t6+xhRwQ0Ug1si6hLHg0vvfrWF4fdBy/2+PBaq8zAMbD8EJuB7qJ/DQpjggTFW+4YLbVf9XfcFyC4W6gTCY3iTedM59YJ0p5+5L71MIqcEUk4NIuF2T7mpftK/9MVl7r4yqRef286NVUd84JuA8z1AaWZuqlix4wgJQwqywcsJU=
+	t=1722879928; cv=none; b=Ues5JloxAPTFl38zEUQ3a4MWVaNxIZvVqhh85mu1LRXgn1D9F/5J471wmRbDYM5Hhzw+p1/tZe2Dt+R6IJmbmVS+rIoIKOthZPphC1dGZseVS2edFT6/roDPqyRhx2+HO7xea+zgCCbR3K+RTT9e24Z9We5PYv9DqNiattiGe3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722879818; c=relaxed/simple;
-	bh=7iEvSy8XdJU+7hG+oLTLojMm0JoDRp0VXX9Jh2e8Ryk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYStYGmltrC29t/ii7grcgf8tblunc/taDPZqgPOkOV4YU7+hcyEjmC3PH9ekg6VeGlaUUibpDmHDMqm3v2Pa1q/4bNl8YpowxOd4r/YcsLF+6z9Ur90YHQGu/Tz2ksXd2ocvC05KNpYkxfonThMyVBXneHrEsgylXvyjFjmfHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B67lwN0l; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d18112b60so4499280b3a.1;
-        Mon, 05 Aug 2024 10:43:36 -0700 (PDT)
+	s=arc-20240116; t=1722879928; c=relaxed/simple;
+	bh=Uaxu0Fd3qGZpGrDLqe+EQaH1BhuffTJKALpVCVhB7gM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MQlG61ckQUFHAjqFT/9w/U3XcPRcoJis74TMtcQORQFJxR244q1+0WbZbwby9CAGJnTTQUw8sixNJ5533ozkK1khhnD34xjYfqNaz1wBwIMxmQwPNj54vE6KnEp7tlXK5bAzJrLMYgT4DuJRRKG9bNoocxpBA7Mep7zNveTOweE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SzF1IOR4; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2cd48ad7f0dso8262051a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:45:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722879816; x=1723484616; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H7Qb26YQiKVCF2nelzkRKW8oh/lfGZj2sRLW9AxbmkE=;
-        b=B67lwN0lg8U9/bGuX0rsSpUe5+MyMXLLc1+iZpO2OQK6fKR+HqeHRuCesgpdAutkY0
-         rRKZOStx/KTRRBpSOkNRxnOSD9p6bLz5MxMRrzZ91GTQWHOt8N9WGtjbUoZa6y4QNAn+
-         AzOgtw/T1dIUx8BM/h7ZWU5AlOjJnji+E0vKuN5xyw9wpOjPxjccN45dix3JdogPs5he
-         YiBkZPefCGP3kvjPwmUSXeSbQKK0RMzfa36IzmtE1yTG4wK4WjTDydico83W1OjS2CcL
-         LYo9h7Vf4Xp6PgvgP5a9aWVzJ5aw1uGlVoK+C1S69mM6TEhcRHbIVBynwSmuLX7exazW
-         sGsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722879816; x=1723484616;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722879926; x=1723484726; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H7Qb26YQiKVCF2nelzkRKW8oh/lfGZj2sRLW9AxbmkE=;
-        b=lbyhos6vHxFTkgbvTaLbZxNNZ3Hq++huQ3Hcgzj6H0N4RxBuaRkEZc/hfUTGltaPa3
-         9ry2A4F+ChUM+E0ZJ4GQ2Ld7xLq08tTHlascq5duH+2gw8m9CE5WI3/pLFMZVZSYwMSq
-         g6XfWXdFwqUQc6YdGU2wnlV+TdQOxH+H4A/3chCD4Lz0zRrLUebWh97zDPSkzGlqXEri
-         ZiTkazSQaZksQbDVjXq16YIfBji63IbYsz7Hry3l9rte8/9/ELL1R8ybzidUl6EQcFvu
-         rNr2lDbazzdO9AV/CCRGm1wxWD83aglENFQDxUd6BYJ6e5wjkkojpkLjER1s3gU8Osge
-         in7A==
-X-Forwarded-Encrypted: i=1; AJvYcCV1IKcBR9zXrjppMXzM5RRqU6tnxXz4uVsq187l06/Or8Ex5Qm9F9MKB9f2vhQlFebbybH9eLCbUHbBhlnlxI0EesqlfRTLVVcC8AgHtSyxnWk45ReN25w9as8Csm7tnbXTFmn0EgnViac=
-X-Gm-Message-State: AOJu0Yx7bOzsz6NFOlAJEV0knFdhuB25r26KC4jqgTd6LySUN7gJyGFq
-	n/cIlTfTOe66u+TQtctKTH8yOjsgWBZ9B7CaK9aC7bMYxy+P/ly0dWjZVQ==
-X-Google-Smtp-Source: AGHT+IFDYClWiT+zvczcHNTpm2EDfLIol4zOVM0VQ1yRGAj3RMkCqwiVkNFYsk7lT4/UwfFXapDdow==
-X-Received: by 2002:a05:6a00:6f5b:b0:70e:98e2:c76e with SMTP id d2e1a72fcca58-7106d9f5bb3mr19098035b3a.6.1722879815998;
-        Mon, 05 Aug 2024 10:43:35 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:b116:76da:13a7:247b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec42759sm5671059b3a.69.2024.08.05.10.43.35
+        bh=x5RzMw3ZUuWLDwmLaXVM1ORpqGRrPuwXY8qwQ1cAdMA=;
+        b=SzF1IOR4nZGObNA2HtShXo672GU2KvDLmR41zuDJW+ZHApAW3VlLzZqwTkeDxyWp6n
+         XVgpMyCK3BqTrjk/3hLvFM0tsLOOxR5c1nsrroV1TR4uCWW9raH5wZghc9hWBoYsYalf
+         9j5K5ZpWXr7uiXCb/RdKn0SdkENsUgUOcJA6HgD4Q5/Dp40YknFVK5vbILLH9NsUu9UY
+         vXK2jl7nva0cbhGp01EeH64RxitYnZyDy28UadWFg7gUe3mzc8kRs7f8+j8S0Y87VyVv
+         +JuWYzv8PAYW4Vb2G3Xb2LiAQ7hekw/YPUwP1oG8qWBriecdxNLgHsl1d/bZkWzeV6Y0
+         TT6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722879926; x=1723484726;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x5RzMw3ZUuWLDwmLaXVM1ORpqGRrPuwXY8qwQ1cAdMA=;
+        b=UK0M7+bXlwRAu8tc+0wcB6SEiybNBzRf9Rk5yuezgTzpIMkUMoTrYQGmz+9CFAeaxi
+         wnvBTL0lp4HEheennp6JNWwg+7CNgaCQUIsTe/sVb4r1a7TJTBNglRfzASyHEgiQ89j2
+         /TxrwwVL/PnI+GwmB/EdEaZfOeAFscpxCqhPCjdgSqJgBbhfnnKCH7iykBXuYIv8mrS2
+         2WvtEiDCU6t9dCOqZIYp8iIsQCkW806isjPCaZqcauFIYLCfXkA0L5AmRNrzF1Ch2TW+
+         4ktjyl4qPa0j2j341b7WHa+S74D9M0kaAgXel+PailT2s+on0V8SFqv8tnD8Work+Imm
+         mr2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWcEP7eXopE9jWKEtFy6eO6sbkGGVfRUioPkX5/eS0UrNwRytYeJzQ/CtgKPBK5FFLBvySjs+BGdSdjrKXk1z/E+ySEoxY92kjH+CM4
+X-Gm-Message-State: AOJu0Ywy7PQ2IboNQw+K3RI6Nbdvin9VYhws0ZvVN4YM4NyRrrxNjFh8
+	tYdKnTqwNPo36KXbGazhCNU7+CANJduIx98RWY0PZ9Eo9NXaHDZeewEGNQA4w1A=
+X-Google-Smtp-Source: AGHT+IHTM1/ezbIZBE2uR35RCwAwDmp5iDZNt+OTvJsP/ECyALo6612uOaNAwDpBtjvT0Rz57eu4YA==
+X-Received: by 2002:a17:90a:bf14:b0:2c9:758b:a278 with SMTP id 98e67ed59e1d1-2cff957d120mr15400044a91.35.1722879925901;
+        Mon, 05 Aug 2024 10:45:25 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc45b3f0sm10836812a91.26.2024.08.05.10.45.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:43:35 -0700 (PDT)
-Date: Mon, 5 Aug 2024 10:43:33 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] Input: ilitek_ts_i2c - Fix spurious input events
-Message-ID: <ZrEPRW7Yu7kcgOu6@google.com>
-References: <20240805085511.43955-1-francesco@dolcini.it>
+        Mon, 05 Aug 2024 10:45:25 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
+ Dhruva Gole <d-gole@ti.com>
+Cc: vigneshr@ti.com, linux-omap@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240805101118.427133-1-d-gole@ti.com>
+References: <20240805101118.427133-1-d-gole@ti.com>
+Subject: Re: [PATCH] bus: ti-sysc: Remove excess struct member
+ 'disable_on_idle' description
+Message-Id: <172287992528.309299.6174838584531179104.b4-ty@baylibre.com>
+Date: Mon, 05 Aug 2024 10:45:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805085511.43955-1-francesco@dolcini.it>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Mon, Aug 05, 2024 at 10:55:09AM +0200, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> 
-> A couple of fixes to prevent spurious events when the data buffer is not the
-> expected one.
-> 
-> v4:
->  - remove err_sync_frame label, return directly instead
->  - removed reviewed-by
-> v3:
->  - added reviewed-by and take over series from emanuele
-> v2:
->  - initial series, sent by mistake as v2 instead of v1
-> 
-> Emanuele Ghidoli (2):
->   Input: ilitek_ts_i2c - avoid wrong input subsystem sync
->   Input: ilitek_ts_i2c - add report id message validation
-> 
->  drivers/input/touchscreen/ilitek_ts_i2c.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
 
-Applied the lot, thank you.
+On Mon, 05 Aug 2024 15:41:18 +0530, Dhruva Gole wrote:
+> When built with W=1, the driver throws the following warning:
+> 
+> ../drivers/bus/ti-sysc.c:169: warning: Excess struct member
+> 'disable_on_idle' description in 'sysc'
+> 
+> Fix it by removing the excess description.
+> 
+> [...]
 
+Applied, thanks!
+
+[1/1] bus: ti-sysc: Remove excess struct member 'disable_on_idle' description
+      commit: a80a3d92dc600fed760edb8a633ea80712faaf98
+
+Best regards,
 -- 
-Dmitry
+Kevin Hilman <khilman@baylibre.com>
+
 
