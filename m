@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-274800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC43947CE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:32:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24514947CED
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16B40B22343
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B371F23710
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAB413BC26;
-	Mon,  5 Aug 2024 14:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A56413C8F9;
+	Mon,  5 Aug 2024 14:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gIRVjweW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="RNpaM8+L"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C2413AD29
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EB939FE5
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868361; cv=none; b=LAublyomExJfhAoMG8Bl0Iwx+opz+SsIQ+ruGhLnpzDgj0BZSleeIQfyi2RUbI1VS/rfFuggRoj+onCsfZNBnfivnk+yJX85w07/xeaZ4ty1H/K16MMWdi1GjhNzblSwyZWt6Tf57kew1v1Ac3eR1Yzpcl8gSVwxX0VfDoP+IME=
+	t=1722868525; cv=none; b=Cg8LcCMLKqc8VE6cnMSG1/gPUgGRhJHkgoVWdkxliQ2FeHlo+jORWljQE+NWNXciAG3JkEgI2uEqHQxpdbkfJGHfj+g3SLmkDvClyb5GWA3che8ZS8xJmCIqCsSNZGs0j7bXhWIAhcFnUmHpDZKqUn6cFBgRaJ01YApd+5IsFMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868361; c=relaxed/simple;
-	bh=sRV3gNGKH7pTjZDg3VbBocrQvihX8mBkN6lBnuSXmCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K0w8OXmnFsMz4v2E0/LMOogTWc4GYlFzvTEyelKhwkBqawIfHKqqZ8LpcI9q5nqULByIjfu8Ou3tkIVbmSLc3Fc8wh8BN3GNlxckttkbfR+aRs525Zwqj/seyK8AEiBUmMqMXQ3it1dzPX8GJwgi10KGx4AFwtSQgh0bqA89Bx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gIRVjweW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722868358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JdhTzHGWfeUcTZeTuwS9gAaX+TnljxG1Ua0SsTOdngA=;
-	b=gIRVjweWdvpVZtAmVOuv3F622g7YAZLczKf6YLginut7i0yKeAMX0noPnOdaGdxDSv6vYP
-	IpM1HUfKOgYMWIPybbPOa+0mpKYPH5sri+SRlgd1hagnO9Tk9/J9nqziV01TQ5hk6omX7O
-	qOYV+idqrjCwkmt37baCZrVXTwzkzGM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-Rkl6z7ItPKSmr9uSQg-XjQ-1; Mon, 05 Aug 2024 10:32:35 -0400
-X-MC-Unique: Rkl6z7ItPKSmr9uSQg-XjQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3684ea1537fso5398196f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 07:32:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722868349; x=1723473149;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JdhTzHGWfeUcTZeTuwS9gAaX+TnljxG1Ua0SsTOdngA=;
-        b=L4wERZm06uSpiQoX3yViv65ohuCu/ERL86lgF8OO0CV2OzuxYCUZDjgBVlE1KBPnuF
-         rpeRbAVNbFxmdmN8LAHgEuZAqpt6AGsQEXVWoZAHvIPtpHeC4OqbKWv4K8hJ68AKasGE
-         V7hvm6HgbD0RmILuIh7GvXgHlTqO/Hi5EFPU8bjZjH0MknGOkunyMAUIdsiQNQ5aDUNL
-         NrpPOo5V/nZUPHOjzwpoUOId+tRVwSJg+ueddcx1IaagRfUYohep2w9wyXVLb6A7DOGa
-         k2WwpDew8b0eHdu2g6S6kPuU2e1XTYuz+028CuE7PVoQR6ZghHZCrLEVfeqv5grAeHoG
-         h9bg==
-X-Gm-Message-State: AOJu0YxjwpNklqCAEJGsTNsIbCcyvjb6UwAhG5CkibZH7lCQspo501+N
-	+5qLnUgDC81/sgrHHzwslOEqvRpsgvMDCDK/dfpPkxEJSR5DQVS05mb0skSXF9hcr2MutwUE/LE
-	5L95o23t71bExvRVv3+u9Yu9tNNNmOp1w/meoxh+JhOpUJ37F6WDfFxNmUKDSgDyHD4ZBClYwFu
-	U6PXzXjypaku9jYu1S5E/n3Od9OVCeJmWTbAT2hpDDpTT29tQ=
-X-Received: by 2002:adf:e411:0:b0:364:3ba5:c5af with SMTP id ffacd0b85a97d-36bbc1c34e2mr8371251f8f.61.1722868348829;
-        Mon, 05 Aug 2024 07:32:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFC4uxjlocGuHRe7VMvIPg04UbSdKvFjwtiJuSX5OhGJwtx+TNuYq7IjhpmnKZKsaje3hiJN6zXGMH2DXCKuGM=
-X-Received: by 2002:adf:e411:0:b0:364:3ba5:c5af with SMTP id
- ffacd0b85a97d-36bbc1c34e2mr8371232f8f.61.1722868348409; Mon, 05 Aug 2024
- 07:32:28 -0700 (PDT)
+	s=arc-20240116; t=1722868525; c=relaxed/simple;
+	bh=vXe8Xkug6TZxY5RcgrU7GWSnbNradf9MTr3q34K6reY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyPaS6VqjOfwgdiczO5s/CqF2BXwFISREEhCJlUHlKg2soJ6vNDrJAzQgs2b7DuZSTMS06MTPqZcpeGr1OpxKSKQbBobYsRgbAuBvq3bUDtRND2a1nqMTiTlQsuuppyscQ26WVjHebrPJcP3HWcrZDLab7yaXD9OsYgn5xlDVoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=RNpaM8+L; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-111-165.bstnma.fios.verizon.net [173.48.111.165])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 475EWNxu014397
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 10:32:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1722868348; bh=HNqj/+/nTZPBR7gnswUv8CXGIulX1uayMeFA8elCAro=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=RNpaM8+LReWAzjQ9Dm7QmvAErWmf25f4v7g1cHyC0ximCdwvaie3O1uw/L0UC/Ha3
+	 3EZixtlAk0i0FkX0gO9E/fOy59kc9S4xYIc5B7lHIylAPZnpWkqQ7UhF/EvXW6t0Nd
+	 d0oHLXMqgdZ1lVjI03Xzyow23CxcE4PhM6u6KAQBoRpZNMM+r7NMUxf0zwW8gk17sP
+	 mW9/fhfVMNlsO7Oih2lhCFVWvG6KNwLUPEwHF+TqIQDppb2sRw9QoHVhyL8cRdpltH
+	 ob2SPahJ+IQEGaJk/zIphkoekpCPZ1qtf+VDFjPYNGveodbl4IEW2Gi2rsQyALqmPw
+	 Aha9MK/CoTiiQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id AA0F515C0330; Mon, 05 Aug 2024 10:32:23 -0400 (EDT)
+Date: Mon, 5 Aug 2024 10:32:23 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: James Gowans <jgowans@amazon.com>
+Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Steve Sistare <steven.sistare@oracle.com>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org,
+        Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org,
+        Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>,
+        Paul Durrant <pdurrant@amazon.co.uk>,
+        Nicolas Saenz Julienne <nsaenz@amazon.es>
+Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory
+ filesystem
+Message-ID: <20240805143223.GA1110778@mit.edu>
+References: <20240805093245.889357-1-jgowans@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801235333.357075-1-pbonzini@redhat.com> <20240802203608.3sds2wauu37cgebw@amd.com>
-In-Reply-To: <20240802203608.3sds2wauu37cgebw@amd.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 5 Aug 2024 16:32:16 +0200
-Message-ID: <CABgObfbhB9AaoEONr+zPuG4YBZr2nd-BDA4Sqou-NKe-Y2Ch+Q@mail.gmail.com>
-Subject: Re: [PATCH] KVM: SEV: allow KVM_SEV_GET_ATTESTATION_REPORT for SNP guests
-To: Michael Roth <michael.roth@amd.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
 
-On Fri, Aug 2, 2024 at 10:41=E2=80=AFPM Michael Roth <michael.roth@amd.com>=
- wrote:
-> On Fri, Aug 02, 2024 at 01:53:33AM +0200, Paolo Bonzini wrote:
-> > Even though KVM_SEV_GET_ATTESTATION_REPORT is not one of the commands
-> > that were added for SEV-SNP guests, it can be applied to them.  Filteri=
-ng
->
-> Is the command actually succeeding for an SNP-enabled guest? When I
-> test this, I get a fw_err code of 1 (INVALID_PLATFORM_STATE), and
-> after speaking with some firmware folks that seems to be the expected
-> behavior.
+On Mon, Aug 05, 2024 at 11:32:35AM +0200, James Gowans wrote:
+> Guestmemfs implements preservation acrosss kexec by carving out a
+> large contiguous block of host system RAM early in boot which is
+> then used as the data for the guestmemfs files.
 
-So is there no equivalent of QEMU's query-sev-attestation-report for
-SEV-SNP? (And is there any user of query-sev-attestation-report for
-non-SNP?)
+Why does the memory have to be (a) contiguous, and (b) carved out of
+*host* system memory early in boot?  This seems to be very inflexible;
+it means that you have to know how much memory will be needed for
+guestmemfs in early boot.
 
-Paolo
+Also, the VMM update process is not a common case thing, so we don't
+need to optimize for performance.  If we need to temporarily use
+swap/zswap to allocate memory at VMM update time, and if the pages
+aren't contiguous when they are copied out before doing the VMM
+update, that might be very well worth the vast of of memory needed to
+pay for reserving memory on the host for the VMM update that only
+might happen once every few days/weeks/months (depending on whether
+you are doing update just for high severity security fixes, or for
+random VMM updates).
 
-> There's also some other things that aren't going to work as expected,
-> e.g. KVM uses sev->handle as the handle for the guest it wants to fetch
-> the attestation report for, but in the case of SNP, sev->handle will be
-> uninitialized since that only happens via KVM_SEV_LAUNCH_UPDATE_DATA,
-> which isn't usable for SNP guests.
->
-> As I understand it, the only firmware commands allowed for SNP guests are
-> those listed in the SNP firmware ABI, section "Command Reference", and
-> in any instance where a legacy command from the legacy SEV/SEV-ES firmwar=
-e
-> ABI is also applicable for SNP, the legacy command will be defined again
-> in the "Command Reference" section of the SNP spec.  E.g., GET_ID is
-> specifically documented in both the SEV/SEV-ES firmware ABI, as well as
-> the SNP firmware ABI spec. But ATTESTATION (and the similar LAUNCH_MEASUR=
-E)
-> are only mentioned in the SEV/SEV-ES Firmware ABI, so I think it makes
-> sense that KVM also only allows them for SEV/SEV-ES.
+Even if you are updating the VMM every few days, it still doesn't seem
+that permanently reserving contiguous memory on the host can be
+justified from a TCO perspective.
 
+Cheers,
+
+						- Ted
 
