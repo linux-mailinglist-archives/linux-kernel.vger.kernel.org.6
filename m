@@ -1,179 +1,116 @@
-Return-Path: <linux-kernel+bounces-274600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB86A947A92
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:48:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99550947A8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4511C210FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:48:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500211F219E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A21155C88;
-	Mon,  5 Aug 2024 11:48:18 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC4C155C88;
+	Mon,  5 Aug 2024 11:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=angelogioacchino.delregno@collabora.com header.b="XDfhqTdl"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDBE6A01E
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 11:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722858497; cv=none; b=BC9Z1Mqeyyzp9RcAUDlbnv5dA7qg3VeKmCUEF754omu/+ni0rA7QOS/JwF7VO09wWaImsfafBPhx152ulq2Slq0OxV2vLk2jpRSo35d1kt8mTLT+SAFgoplMS9F0TGiPEUOgk02PBJhhdAgso8d0rJEEwBcTJE2HZR8Xeq98CaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722858497; c=relaxed/simple;
-	bh=yHcOcJpTJCXcm2Yyz5sSIefo0DzbP+DGGdlPpfbgeEE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nCSr6uFgC51S9oo9Q/xHy1MfOVhc4bj/jniaSOTG4DhcXBTOAXlwQ3XruWJpMW4iMK9i6+wAxWkx7j4fQfApsUXvm9RDlLeDFrRoeLdYK1er1colw4FnjCHVo6I702NPtMeN1nQOakifsSfBkslojz+LMo51sTY2CHR0sYGlho4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wcvnb0b1wz1L9sm;
-	Mon,  5 Aug 2024 19:47:47 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id F2133140109;
-	Mon,  5 Aug 2024 19:48:04 +0800 (CST)
-Received: from huawei.com (10.67.174.55) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 5 Aug
- 2024 19:48:04 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <dennis@kernel.org>, <tj@kernel.org>, <cl@linux.com>,
-	<mpe@ellerman.id.au>, <benh@kernel.crashing.org>, <paulus@samba.org>,
-	<christophe.leroy@csgroup.eu>, <mahesh@linux.ibm.com>,
-	<gregkh@linuxfoundation.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v5.10] powerpc: Avoid nmi_enter/nmi_exit in real mode interrupt.
-Date: Mon, 5 Aug 2024 11:45:44 +0000
-Message-ID: <20240805114544.1552341-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1D66A01E;
+	Mon,  5 Aug 2024 11:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722858399; cv=pass; b=VxtmjkKcnmv/OAlpdFYTx5ASzxVFzgDDiM3ZEiS50UEFBNqR+lZz9mQwOiTBPOQ0ltVG8w3tcT8ST/ZI+dFnGNT/tNRQDUlearAFNiwWHvxU46vD7ZPmPvaPUUwx+wA6Of1TZUp1dTF/h8ipTmL8Y08WD5NOj3zO4GulWp1YtUM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722858399; c=relaxed/simple;
+	bh=n2RIdq0IhbLmXmjAwSSrkKNPZZqVEDlZIcgiYy6XeRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jvwkPP54wEhY6OgWN/cJBGMI/3HUal057H9I61ga7sxql3G2+MxUgeeRF+v+77/fbIdF2p8oGMqu50NQRfU2WgmuvBkc7C7gSzaafUIO9wHJP08Lv2X16Ohy9lVarwiIn9B92ZuS3gbzyNI6IyhliIyLCB9gJJTYPM2N0Kyiqbo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=angelogioacchino.delregno@collabora.com header.b=XDfhqTdl; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1722858388; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=htvigfJC5EE5OUW4sYp3r5WBLqdNXcFAmIPRyp1SE9DlZ1c7gxDV62g1HfApsKF63nP9eboL/Mz/sgheTr/5nq8VLOeOm9HPJCcgIxM0XzDcOuCSU9RD52xh8iQOaOgZ/8wCd2KKxh3o4qdr3+fdqeKepz3LKgNkW2sqleCoiqI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1722858388; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=X4Ff1KkmwJm2DOFKLyyKLVFzHm+3uoyXpl1wKGlTGBM=; 
+	b=QAdToZY6fesMjZctA4OtfUOm1ouu1PXwuNaoXg4MLQPOFLnoRBKfhl7d6id8l3c564BB2uuOPRICzppaEiURh/cdVCvGUtdQ4Nr8JHFYCsXilYZAIptM0NPPquLod7OoyeL3H7h4ttlocrQ2vSopRGohDYGfqeJzujW1z9ZTkf0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=angelogioacchino.delregno@collabora.com;
+	dmarc=pass header.from=<angelogioacchino.delregno@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722858388;
+	s=zohomail; d=collabora.com;
+	i=angelogioacchino.delregno@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=X4Ff1KkmwJm2DOFKLyyKLVFzHm+3uoyXpl1wKGlTGBM=;
+	b=XDfhqTdlISYLqA4ixKVW7Y7gbbMAkBx7gr27w681BTZeNhM6zNNj6bSwthcEYVce
+	rzCVttxHDVF1KPO5f1OftyGFth25N46u/sqzo85aRIthpIw/gZbxXLaMKXV0rKJoHoN
+	XKbDlwNQHLhh+a40VEjF43hiTlMNho9HcFI1MZTQ=
+Received: by mx.zohomail.com with SMTPS id 1722858386516862.2880586091179;
+	Mon, 5 Aug 2024 04:46:26 -0700 (PDT)
+Message-ID: <8e089dc0-9342-480f-ac8a-93b5bfe1241e@collabora.com>
+Date: Mon, 5 Aug 2024 13:46:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8183: Remove clock from mfg_async
+ power domain
+To: Pin-yen Lin <treapking@chromium.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>,
+ Kiwi Liu <kiwi.liu@mediatek.corp-partner.google.com>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Enric Balletbo i Serra <eballetbo@kernel.org>,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Hsin-Te Yuan <yuanhsinte@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>
+References: <20240805065051.3129354-1-treapking@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240805065051.3129354-1-treapking@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-From: Mahesh Salgaonkar <mahesh@linux.ibm.com>
+Il 05/08/24 08:50, Pin-yen Lin ha scritto:
+> This clock dependency introduced a mutual dependency between mfg_async
+> power domain and mt8183-mfgcfg clock, and Mediatek has confirmed that
+> this dependency is not needed. Remove this to avoid potential deadlock.
+> 
 
-nmi_enter()/nmi_exit() touches per cpu variables which can lead to kernel
-crash when invoked during real mode interrupt handling (e.g. early HMI/MCE
-interrupt handler) if percpu allocation comes from vmalloc area.
+Uhm, have you tested this upstream with Panfrost, or only downstream with the
+proprietary Mali stack?
 
-Early HMI/MCE handlers are called through DEFINE_INTERRUPT_HANDLER_NMI()
-wrapper which invokes nmi_enter/nmi_exit calls. We don't see any issue when
-percpu allocation is from the embedded first chunk. However with
-CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there are chances where percpu
-allocation can come from the vmalloc area.
+Regards,
+Angelo
 
-With kernel command line "percpu_alloc=page" we can force percpu allocation
-to come from vmalloc area and can see kernel crash in machine_check_early:
-
-[    1.215714] NIP [c000000000e49eb4] rcu_nmi_enter+0x24/0x110
-[    1.215717] LR [c0000000000461a0] machine_check_early+0xf0/0x2c0
-[    1.215719] --- interrupt: 200
-[    1.215720] [c000000fffd73180] [0000000000000000] 0x0 (unreliable)
-[    1.215722] [c000000fffd731b0] [0000000000000000] 0x0
-[    1.215724] [c000000fffd73210] [c000000000008364] machine_check_early_common+0x134/0x1f8
-
-Fix this by avoiding use of nmi_enter()/nmi_exit() in real mode if percpu
-first chunk is not embedded.
-
-CVE-2024-42126
-Cc: stable@vger.kernel.org
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Tested-by: Shirisha Ganta <shirisha@linux.ibm.com>
-Signed-off-by: Mahesh Salgaonkar <mahesh@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://msgid.link/20240410043006.81577-1-mahesh@linux.ibm.com
-[ Conflicts in arch/powerpc/include/asm/interrupt.h
-  because machine_check_early() has been refactored. ]
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- arch/powerpc/include/asm/percpu.h | 10 ++++++++++
- arch/powerpc/kernel/mce.c         | 14 +++++++++++---
- arch/powerpc/kernel/setup_64.c    |  2 ++
- 3 files changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/percpu.h b/arch/powerpc/include/asm/percpu.h
-index 8e5b7d0b851c..634970ce13c6 100644
---- a/arch/powerpc/include/asm/percpu.h
-+++ b/arch/powerpc/include/asm/percpu.h
-@@ -15,6 +15,16 @@
- #endif /* CONFIG_SMP */
- #endif /* __powerpc64__ */
- 
-+#if defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK) && defined(CONFIG_SMP)
-+#include <linux/jump_label.h>
-+DECLARE_STATIC_KEY_FALSE(__percpu_first_chunk_is_paged);
-+
-+#define percpu_first_chunk_is_paged	\
-+		(static_key_enabled(&__percpu_first_chunk_is_paged.key))
-+#else
-+#define percpu_first_chunk_is_paged	false
-+#endif /* CONFIG_PPC64 && CONFIG_SMP */
-+
- #include <asm-generic/percpu.h>
- 
- #include <asm/paca.h>
-diff --git a/arch/powerpc/kernel/mce.c b/arch/powerpc/kernel/mce.c
-index 63702c0badb9..259343040e1b 100644
---- a/arch/powerpc/kernel/mce.c
-+++ b/arch/powerpc/kernel/mce.c
-@@ -594,8 +594,15 @@ long notrace machine_check_early(struct pt_regs *regs)
- 	u8 ftrace_enabled = this_cpu_get_ftrace_enabled();
- 
- 	this_cpu_set_ftrace_enabled(0);
--	/* Do not use nmi_enter/exit for pseries hpte guest */
--	if (radix_enabled() || !firmware_has_feature(FW_FEATURE_LPAR))
-+	/*
-+	 * Do not use nmi_enter/exit for pseries hpte guest
-+	 *
-+	 * Likewise, do not use it in real mode if percpu first chunk is not
-+	 * embedded. With CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there
-+	 * are chances where percpu allocation can come from vmalloc area.
-+	 */
-+	if ((radix_enabled() || !firmware_has_feature(FW_FEATURE_LPAR)) &&
-+	    !percpu_first_chunk_is_paged)
- 		nmi_enter();
- 
- 	hv_nmi_check_nonrecoverable(regs);
-@@ -606,7 +613,8 @@ long notrace machine_check_early(struct pt_regs *regs)
- 	if (ppc_md.machine_check_early)
- 		handled = ppc_md.machine_check_early(regs);
- 
--	if (radix_enabled() || !firmware_has_feature(FW_FEATURE_LPAR))
-+	if ((radix_enabled() || !firmware_has_feature(FW_FEATURE_LPAR)) &&
-+	    !percpu_first_chunk_is_paged)
- 		nmi_exit();
- 
- 	this_cpu_set_ftrace_enabled(ftrace_enabled);
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index 3f8426bccd16..899d87de0165 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -824,6 +824,7 @@ static int pcpu_cpu_distance(unsigned int from, unsigned int to)
- 
- unsigned long __per_cpu_offset[NR_CPUS] __read_mostly;
- EXPORT_SYMBOL(__per_cpu_offset);
-+DEFINE_STATIC_KEY_FALSE(__percpu_first_chunk_is_paged);
- 
- static void __init pcpu_populate_pte(unsigned long addr)
- {
-@@ -903,6 +904,7 @@ void __init setup_per_cpu_areas(void)
- 	if (rc < 0)
- 		panic("cannot initialize percpu area (err=%d)", rc);
- 
-+	static_key_enable(&__percpu_first_chunk_is_paged.key);
- 	delta = (unsigned long)pcpu_base_addr - (unsigned long)__per_cpu_start;
- 	for_each_possible_cpu(cpu) {
-                 __per_cpu_offset[cpu] = delta + pcpu_unit_offsets[cpu];
--- 
-2.34.1
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> Fixes: 37fb78b9aeb7 ("arm64: dts: mediatek: Add mt8183 power domains controller")
+> 
+> ---
+> 
+>   arch/arm64/boot/dts/mediatek/mt8183.dtsi | 2 --
+>   1 file changed, 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> index fbf145639b8c..267378fa46c0 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> @@ -872,8 +872,6 @@ power-domain@MT8183_POWER_DOMAIN_CONN {
+>   
+>   				mfg_async: power-domain@MT8183_POWER_DOMAIN_MFG_ASYNC {
+>   					reg = <MT8183_POWER_DOMAIN_MFG_ASYNC>;
+> -					clocks = <&topckgen CLK_TOP_MUX_MFG>;
+> -					clock-names = "mfg";
+>   					#address-cells = <1>;
+>   					#size-cells = <0>;
+>   					#power-domain-cells = <1>;
 
 
