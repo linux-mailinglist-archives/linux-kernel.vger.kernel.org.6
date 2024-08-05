@@ -1,200 +1,78 @@
-Return-Path: <linux-kernel+bounces-275418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57751948561
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FD4948565
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2CC1F235F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:16:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59411F237C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E47216E877;
-	Mon,  5 Aug 2024 22:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B7F16E892;
+	Mon,  5 Aug 2024 22:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ExG996eQ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67905149C6A;
-	Mon,  5 Aug 2024 22:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMlOMPrB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A6914264C;
+	Mon,  5 Aug 2024 22:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722896139; cv=none; b=BSMiJybkVXdju52biWapT2xqQeLTuX0hj4XehrbTuuGvvgpDkh/lLgyGcnTELO3YXDRYLfEt/sBIIO877dvIxwsbj4iUeQKgEfNKOhqLZHDo44H+yI/Z4QC5/LqJL6nRc3ZRYtZJbbB8Qh15sgezjGqjOanrvMQTb0rIlfIERiE=
+	t=1722896190; cv=none; b=jmfniepwXZ7VSvTRb0Nv8Y0RnUyU112QaH6/ci66WcFTE298kJR7pVkaOr3v+0DiB0fYY85lmw6YNTOBCOBXe6+Y4Nn7h3WEBzaRfRMvKsPSnc5SHjZj87PNYZaCqJkwERSWqYHmA7Jrr+o6Y3hRvvqdqU/FzIOv068WSWkmAh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722896139; c=relaxed/simple;
-	bh=Qd9QtJL78qy4DZtivGdD9JK7nN9GwbtazNpwHPFdXFA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VP2UIjvOnme68PvzPBnV2EFH4u+iP8h4d/n4TGyYHf8MbaGeVZGj+nAkiCmNSOKLVe4bFwgzd/E2xJvuFHJThLxFgn9q0uhHMcUACS40i7wLweCQvJsQLCOzra80odSG0BmztmzdhMf0Ez2k+xjx+eWNvJZVrD3SEDN3yE+wmOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ExG996eQ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A133720B7165;
-	Mon,  5 Aug 2024 15:15:37 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A133720B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722896137;
-	bh=G3dgLn42s1ul+udyzzDEMMSWft6zAfZ2rlnkvyFt+OI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ExG996eQVxnp55uEL3uhRAoHERbEJIYfxjRemCmsgZGiUBoZxjRCPZpKL5WD9jWyQ
-	 TSCGCpbSaUQLk3irbv0+SlRckxO/veFeFezDOCoQjrlAllSgRy5KT9xycRWAvauccK
-	 ibdf2bXQpbmQCqGbWC6LteHxJDIvJ+KUW+qKSSXk=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: mhklinux@outlook.com
-Cc: apais@microsoft.com,
-	arnd@arndb.de,
-	benhill@microsoft.com,
-	bhelgaas@google.com,
-	bp@alien8.de,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	kw@linux.com,
-	kys@microsoft.com,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org,
-	mingo@redhat.com,
-	rafael@kernel.org,
-	robh@kernel.org,
-	romank@linux.microsoft.com,
-	ssengar@linux.microsoft.com,
-	ssengar@microsoft.com,
-	sunilmut@microsoft.com,
-	tglx@linutronix.de,
-	vdso@hexbites.dev,
-	wei.liu@kernel.org,
-	will@kernel.org,
-	x86@kernel.org
-Subject: RE: [PATCH v3 2/7] Drivers: hv: Enable VTL mode for arm64
-Date: Mon,  5 Aug 2024 15:15:37 -0700
-Message-Id: <20240805221537.383265-1-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <SN6PR02MB4157B22BD56677EFBD215D87D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <SN6PR02MB4157B22BD56677EFBD215D87D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1722896190; c=relaxed/simple;
+	bh=6W6iYCEn001pXoQzwdzr3s8i/AVPGVwvB6XwOInfOqk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hMbKu3R71DS1W4iXvdI0Dcs46JpPHUNP8IxgEm0zuYP7HYHnKVPexP04ZgXFUm0pE5pZrj+ZNkypyUMD0MGZcRCnWrC4E8BWdwUVDqGM6xzR8GH247adDfbXDUJg9z1djlxfwmq5G4226a6DA+3jpXHQrYaUjhHpQGqrDHz95h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMlOMPrB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DAFEFC4AF0E;
+	Mon,  5 Aug 2024 22:16:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722896183;
+	bh=6W6iYCEn001pXoQzwdzr3s8i/AVPGVwvB6XwOInfOqk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=RMlOMPrB7YZnrhZK92gCqbTHooFgHZocAn0xPur6xjvIBMXOMVr5lpIO1H+DEZL5b
+	 rIy8h9rCOjR643FguV8Zx97EdfRPqby3jVOApPsMqt5sD2lvE1NRpBitOyyBwMZKv/
+	 OSJd/7g5B/D2AfyJ4TQJT2tq8gwSfD3T5i8WC+L5sJsUFIAzfh3suvJ0QAX8pNfbkB
+	 +nlEgugwwlIvyKWp1s/Gk/Tt6z31lLoOpBHXikrj8KxqO1FXlogsZN39gLvQMD84Gz
+	 EtEykpXAOcwJvj/Ecv5M4BdOH7Bocqr+KOtDcuSq4zu63tk/58EFac+PdMxaWjPKhd
+	 lAUmZxTrr/lOA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B8231C43140;
+	Mon,  5 Aug 2024 22:16:23 +0000 (UTC)
+Subject: Re: [GIT PULL] Kselftest fixes update for Linux 6.11-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <732e15a1-f219-45b1-8836-ebd5ca3101cf@linuxfoundation.org>
+References: <732e15a1-f219-45b1-8836-ebd5ca3101cf@linuxfoundation.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <732e15a1-f219-45b1-8836-ebd5ca3101cf@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.11-rc3
+X-PR-Tracked-Commit-Id: 170c966cbe274e664288cfc12ee919d5e706dc50
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b446a2dae984fa5bd56dd7c3a02a426f87e05813
+Message-Id: <172289618350.26583.12972666452074726362.pr-tracker-bot@kernel.org>
+Date: Mon, 05 Aug 2024 22:16:23 +0000
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-> > 
-> > On 8/4/2024 9:05 PM, Saurabh Singh Sengar wrote:
-> > > On Mon, Aug 05, 2024 at 03:01:58AM +0000, Michael Kelley wrote:
-> > >> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, July 26, 2024 3:59
-> > PM
-> > >>>
-> > >>> Kconfig dependencies for arm64 guests on Hyper-V require that be ACPI enabled,
-> > >>> and limit VTL mode to x86/x64. To enable VTL mode on arm64 as well, update the
-> > >>> dependencies. Since VTL mode requires DeviceTree instead of ACPI, don't require
-> > >>> arm64 guests on Hyper-V to have ACPI.
-> > >>>
-> > >>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> > >>> ---
-> > >>>   drivers/hv/Kconfig | 6 +++---
-> > >>>   1 file changed, 3 insertions(+), 3 deletions(-)
-> > >>>
-> > >>> diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-> > >>> index 862c47b191af..a5cd1365e248 100644
-> > >>> --- a/drivers/hv/Kconfig
-> > >>> +++ b/drivers/hv/Kconfig
-> > >>> @@ -5,7 +5,7 @@ menu "Microsoft Hyper-V guest support"
-> > >>>   config HYPERV
-> > >>>   	tristate "Microsoft Hyper-V client drivers"
-> > >>>   	depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
-> > >>> -		|| (ACPI && ARM64 && !CPU_BIG_ENDIAN)
-> > >>> +		|| (ARM64 && !CPU_BIG_ENDIAN)
-> > >>>   	select PARAVIRT
-> > >>>   	select X86_HV_CALLBACK_VECTOR if X86
-> > >>>   	select OF_EARLY_FLATTREE if OF
-> > >>> @@ -15,7 +15,7 @@ config HYPERV
-> > >>>
-> > >>>   config HYPERV_VTL_MODE
-> > >>>   	bool "Enable Linux to boot in VTL context"
-> > >>> -	depends on X86_64 && HYPERV
-> > >>> +	depends on HYPERV
-> > >>>   	depends on SMP
-> > >>>   	default n
-> > >>>   	help
-> > >>> @@ -31,7 +31,7 @@ config HYPERV_VTL_MODE
-> > >>>
-> > >>>   	  Select this option to build a Linux kernel to run at a VTL other than
-> > >>>   	  the normal VTL0, which currently is only VTL2.  This option
-> > >>> -	  initializes the x86 platform for VTL2, and adds the ability to boot
-> > >>> +	  initializes the kernel to run in VTL2, and adds the ability to boot
-> > >>>   	  secondary CPUs directly into 64-bit context as required for VTLs other
-> > >>>   	  than 0.  A kernel built with this option must run at VTL2, and will
-> > >>>   	  not run as a normal guest.
-> > >>> --
-> > >>> 2.34.1
-> > >>>
-> > >>
-> > >> In v2 of this patch, I suggested [1] making a couple additional minor changes
-> > >> so that kernels built *without* HYPER_VTL_MODE would still require
-> > >> ACPI.  Did that suggestion not work out?  If that's the case, I'm curious
-> > >> about what goes wrong.
-> > >
-> > > Hi Michael/Roman,
-> > > I was considering making HYPERV_VTL_MODE depend on CONFIG_OF. That should
-> > address
-> > > above concern as well. Do you see any potential issue with it.
-> > >
-> > Michael,
-> > 
-> > I ran into a pretty gnarly recursive dependencies which in all fairness
-> > might stem from not being fluent enough in the Kconfig language. Any
-> > help of how to approach implementing your idea would be greatly appreciated!
-> > 
-> 
-> This is what I had in mind:
-> 
-> --- a/drivers/hv/Kconfig
-> +++ b/drivers/hv/Kconfig
-> @@ -5,7 +5,8 @@ menu "Microsoft Hyper-V guest support"
- > config HYPERV
-        > tristate "Microsoft Hyper-V client drivers"
-        > depends on (X86 && X86_LOCAL_APIC && HYPERVISOR_GUEST) \
-> -               || (ACPI && ARM64 && !CPU_BIG_ENDIAN)
-> +               || (ARM64 && !CPU_BIG_ENDIAN)
-> +       depends on (ACPI || HYPERV_VTL_MODE)
-        > select PARAVIRT
-        > select X86_HV_CALLBACK_VECTOR if X86
-        > select OF_EARLY_FLATTREE if OF
-> @@ -15,7 +16,7 @@ config HYPERV
-> 
- > config HYPERV_VTL_MODE
-        > bool "Enable Linux to boot in VTL context"
-> -       depends on X86_64 && HYPERV
-> +       depends on X86_64
-        > depends on SMP
-        > default n
-        > help
-> 
-> HYPERV_VTL_MODE can now be selected independently of HYPERV.
-> The existing code should be such that even if someone is building a
-> random config and gets HYPERV_VTL_MODE without HYPERV, the
-> kernel will build and run in a non-Hyper-V environment and isn't
-> broken somehow.
-> 
-> For HYPERV to be selected, either ACPI must already be selected, or
-> HYPERV_VTL_MODE must already be selected. So "normal" kernels are
-> still enforced to require ACPI. But if building with HYPERV_VTL_MODE,
-> then ACPI is optional.
-> 
-Thanks a ton! Let me try this out for the (arch; VTL) build matrix :)
+The pull request you sent on Mon, 5 Aug 2024 15:08:10 -0600:
 
-> Saurabh's idea of adding "depends on OF" to HYPERV_VTL_MODE
-> should also work with these changes.
-> 
-> I haven't fully tested the above with all the relevant combinations
-> on both x86 and arm64, but I think the logic makes sense.
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-fixes-6.11-rc3
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b446a2dae984fa5bd56dd7c3a02a426f87e05813
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
