@@ -1,179 +1,145 @@
-Return-Path: <linux-kernel+bounces-274364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE7A94775C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:34:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1C1947760
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0967D1C20434
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90A11F21B58
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AA514F102;
-	Mon,  5 Aug 2024 08:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582DC1494D6;
+	Mon,  5 Aug 2024 08:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3/frPr4"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="c1xn301e";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SeD4BYcx"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748876BFB5;
-	Mon,  5 Aug 2024 08:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23EC14F9D7
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722846828; cv=none; b=jXAiJQFaSOk+fVdYOhYemBKLy68rfPHHcBr5gWlHUpmSpR7CWHdF30YilUN5/J+egQCgViXwEcpJSFIdnVOJzoZDc3fWTRgn4tBBf0qLhUuVIEOugvqSFCfwWf0rCf/RCFCkl0tegXhcO5dNiBIDlO7FDpZtlZ4gNtvZEhA5PqU=
+	t=1722846833; cv=none; b=R376nb2kyb0D0roIXdm+Dzn1/BeHsIniUn6UKflPxGOQNgz5GFdeG/A2bJLWNhgh4KRLnB6J/HpsoSdUV71SWPAETDb+A2NoNO2T/LXiTO7DSB1Lc49ULIyCuSWq1obu/062K7zggcpuCqZqLByWktm3hLxdQPjDKWPvEVW7uxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722846828; c=relaxed/simple;
-	bh=2KhrN4SytIKXvlaVk8LBlBn0K8PEha4uO2c0hSvYAGM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a6fYKfplWaKiEVZNURZWTJtcbXDBiKR7FIpDQpTgINASv5Lk4H6BPg0xEQu275EDtzlD6WnBNCSy3JSF8qqZZ6Z3Ucu0uFTSEx5vSyNDb4d1ucoIMaHJmbEHdJ6YkBlxas4yPWgiFskFy/0wiZspvlwS4PPGc2tgEQZEp6kOlNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3/frPr4; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fd640a6454so76705625ad.3;
-        Mon, 05 Aug 2024 01:33:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722846826; x=1723451626; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vhfwIyCfWpcFW86qWaVqqtr9F82JOKP2kKmTKQ98Y2c=;
-        b=N3/frPr4rj36I6e6DUtHepo5y/F4yHG49/9AmooJcH50KEUkJv5bi4K1zNRw8fjm5D
-         Odgl8Sm7Hm+3ihWcUM4SDshhZMzveKJFajNEcgglAiRHwJkBp2fITl/l+DzA0qwTAOer
-         1qqIwByOrorWKmmTO9xEkEp2fPtabhRh/ZAoDJz+hdgqFJ0fWYJrtUTIM44NOtaAP5gO
-         9SOeIz7wWc3uJ4o1/0GCMfcAwrGMk+Nqnx1FPkLssobRN65zyZdPEm+GwquI//zOJvEC
-         cRCyhpMVN3f9lph260wiixS2OV2Gh9373ZILvoYOWUfH3scn+8gtzE3S718KTwMPaZKx
-         KYQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722846826; x=1723451626;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vhfwIyCfWpcFW86qWaVqqtr9F82JOKP2kKmTKQ98Y2c=;
-        b=IYeZhtLwlhWBA6d789MsBJhlowIn6GPe0eABRikDr7kWQlptZXC4LqDsmcUvtg8vof
-         Fso5F3NpQi08+UV1/lL8B4KgXVoXzcrKTSsjF9a4BHSscJICe+8K3iSghcMC21b4gP2T
-         03Fr7hcTBsjNmyIfvGoMEvmUhZToo32nj3tqJ7o8lFHlonaBcMwNXHjv3TsSIlVPCBOl
-         1Rh/6nzACafrFhPr3PIw11kvP/W8lCqxz6EkPyuoTZT/lQDwZz91SKq5HFOZKzekDqXJ
-         syQBNs4X9YVbWAFyQPT7ik6zDkoACOSMvBbwH54MXBC269zuwy0ImbrKERXlOzlrYoqF
-         RM1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUKZ95rW87hllMegbcGuhHRqDvLw0H6dS5F41ZNYA1vzxMBeF8sj50K5Jjia2l3rBKqUPUeYc70SSvpqxKdST4Ao0hWmWa8CJBejixBEu05dfaFVoUg9tOs0L/rNHx/AW0kMpuG7dvA0wInyh0pwZSDA5UC+ZZkrUzhjFjLMJ+WkKSNOVWggM0=
-X-Gm-Message-State: AOJu0YwIWq4xmD4owZK9iPt+gPfvMCWsdUnLnDQBSgZjSdTHasOLAr4f
-	+wve/khOh7/S9yHicsWKiSjNk05OVYLPlIUoJgN/awCJ8vEAmgQ=
-X-Google-Smtp-Source: AGHT+IE7S2iQXgJH0jMC6FFzwGdLvo08Xkd2KAkMGFussXMJti3r1vfLCnAn3uuiPQj+KUTnjNGUTA==
-X-Received: by 2002:a17:902:ce86:b0:1fb:bd7:f232 with SMTP id d9443c01a7336-1ff572bc46fmr117540665ad.23.1722846825436;
-        Mon, 05 Aug 2024 01:33:45 -0700 (PDT)
-Received: from swift.. ([221.222.21.87])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592b8a38sm61583245ad.307.2024.08.05.01.33.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 01:33:45 -0700 (PDT)
-From: LidongLI <wirelessdonghack@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	mark.esler@canonical.com,
-	stf_xl@wp.pl,
-	wirelessdonghack@gmail.com
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer Dereference&Use-After-Free Vulnerability
-Date: Mon,  5 Aug 2024 16:33:39 +0800
-Message-Id: <20240805083339.10356-1-wirelessdonghack@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2024080359-getaway-concave-623e@gregkh>
-References: <2024080359-getaway-concave-623e@gregkh>
+	s=arc-20240116; t=1722846833; c=relaxed/simple;
+	bh=E91a+VTwhceaSODgrHkbHHr5BYlJ7t1Ysj7YhU/h+bY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMDZyukyeTEc1xqML2LNLussoLwtsc9YEhR+/fIcyQsojfVI2KvB18Q9EiaDEvtp9eqEEWQ7PdD1rM0l+fSyeicD/q4cm9cvMMwbd+toH1diV7rbQeiQNjBj9sg9SKWRjYlwvpsxGPznLo48R5U7FbiEErq+lK6yT6atJ2XSbC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=c1xn301e; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SeD4BYcx; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id DC4C51151DC2;
+	Mon,  5 Aug 2024 04:33:49 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 05 Aug 2024 04:33:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1722846829; x=
+	1722933229; bh=zJ9UFW3JNgRiKo3q812jCKGIld512jGf9/66Tll64Ls=; b=c
+	1xn301eGytn+wVO1yDQK7keAg51KkyefkwH7umZ/HpnpT34xYA1IkNaB3yMOGUNj
+	WYuV9aAKj91S4rnDu9sVYy3ZVDtt9T7bafSwW5nWmzFt7oaOqz8NDuEAAhTmi3/B
+	I4nRCrY1hWoutdn559YzWyIsVuTbMDPNrX8aqHNN6oOlkTQUs/TedrJy5elpzTKG
+	wkzMhwrX0xF+zN0ZOSQBGx/ooRnNdD8CZbyL/J97uOD95fs9RkRbGn/6vN90SnD5
+	DJDn2BMWHXG/CyFDOGqtT2b4K0y2dT/3b3NUeKNu3/CKzzm4kucfQ7BklXWfWk3k
+	jHDixHmoqugSeSi0OthRQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1722846829; x=1722933229; bh=zJ9UFW3JNgRiKo3q812jCKGIld51
+	2jGf9/66Tll64Ls=; b=SeD4BYcxOLcdEs4eGIo4ctBaMjlGxDgRPHyUERRUd2sy
+	2m6bAtjpv86yMUcbFy0zf4MAIQKYNS72ZyzfBA2XmFxKMQfOOT4kCAg8c457e6nf
+	/5kRdmgoJYoShFN9G2pRSuYkxMbCW9YsIPJz6VdPf11r5Cn2ss9JEy+m6iHk8Wji
+	paJViiJhGtMkatlEJXZtgfVc+OBEh/vpldpQ2OA5AV4c6bwqMj7qhUZzM9NLSYsO
+	ZRuPQgdwZkGkvj1i417xhyD6pIWMhavNvuv3wmN+yvopMjQgjLbVZTP3AIDFIOkf
+	4otq5ieKzMTspcd4BbfLGCJGdtoZBEBKAIokjqw8JA==
+X-ME-Sender: <xms:bY6wZuW6MrqXscaKw96EOb09DPNSNZ2F8-PY1mNQwNgwoDO3Q1Mddw>
+    <xme:bY6wZqltlQSjtmcKH2AFgoIrat0L7puMtpAKLR_joOHXCDD9RvrjVBN35OZO9DU2w
+    wjkLG3KeXu2wzOFtms>
+X-ME-Received: <xmr:bY6wZibfUdEzWvs66yiMn9QTiRa8ulogjtgIW6Tr_pP0Kvcz9hrcgO86gEcc-dMKDKzl_3IuE0tGaS6h8icJFUjoUM7BOH-t>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeigddthecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtre
+    dttddtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
+    shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepuedvffegge
+    egfeevheehlefhgfevfedtgfffgeelhefghffhvdetheefhffggfefnecuffhomhgrihhn
+    pehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgpddtuddrohhrghenucevlhhush
+    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhi
+    sehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:bY6wZlWTQ547DS4fWmLXjwiIoby65VXO52Z_LbjYyeuBx_lEI86DnA>
+    <xmx:bY6wZondw92IWsNK9FMn2WQsO__X_1HBICUvAtUNUgH8CRNrkdupUw>
+    <xmx:bY6wZqcFoe6J9m34l78kpaT5HnuJq_Mo4W49YUG00w3jc2BZ4wqxPQ>
+    <xmx:bY6wZqEDNcC63EOcAdKDflUcaZag9oIzUe4IdJ1vXdkfHueQCMVFDg>
+    <xmx:bY6wZnu00_6EF5ZhaP14cmFuDlIzVPv_d-ML7vLJiXjeYKmo2yysEHzO>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 5 Aug 2024 04:33:48 -0400 (EDT)
+Date: Mon, 5 Aug 2024 17:33:45 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: kernel test robot <lkp@intel.com>
+Cc: linux1394-devel@lists.sourceforge.net, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/17] firewire: ohci: use guard macro to serialize
+ operations for isochronous contexts
+Message-ID: <20240805083345.GA248096@workstation.local>
+Mail-Followup-To: kernel test robot <lkp@intel.com>,
+	linux1394-devel@lists.sourceforge.net, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240804130225.243496-18-o-takashi@sakamocchi.jp>
+ <202408050730.y1eyRcTv-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202408050730.y1eyRcTv-lkp@intel.com>
+
+On Mon, Aug 05, 2024 at 07:33:01AM +0800, kernel test robot wrote:
+> url:    https://github.com/intel-lab-lkp/linux/commits/Takashi-Sakamoto/firewire-core-use-guard-macro-to-maintain-static-packet-data-for-phy-configuration/20240804-210645
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git for-next
+> patch link:    https://lore.kernel.org/r/20240804130225.243496-18-o-takashi%40sakamocchi.jp
+> patch subject: [PATCH 17/17] firewire: ohci: use guard macro to serialize operations for isochronous contexts
+> config: arm64-randconfig-003-20240805 (https://download.01.org/0day-ci/archive/20240805/202408050730.y1eyRcTv-lkp@intel.com/config)
+> compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408050730.y1eyRcTv-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408050730.y1eyRcTv-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> drivers/firewire/ohci.c:3138:2: error: expected expression
+>     3138 |         guard(spinlock_irq)(&ohci->lock);
+>          |         ^
+>    include/linux/cleanup.h:167:2: note: expanded from macro 'guard'
+>      167 |         CLASS(_name, __UNIQUE_ID(guard))
+>          |         ^
+>    include/linux/cleanup.h:122:2: note: expanded from macro 'CLASS'
+>      122 |         class_##_name##_t var __cleanup(class_##_name##_destructor) =   \
+>          |         ^
+>    <scratch space>:133:1: note: expanded from here
+>      133 | class_spinlock_irq_t
+>          | ^
+>    1 error generated.
+
+The macro expands a declaration, while the line just after the label
+should be still any statement in C11.
+
+I'll post take 2 patchset.
 
 
-Dear Greg,
+Thanks
 
-Thank you for your response and for considering the details I've provided so far. I would like to offer further clarification on the vulnerability and why it warrants assigning a CVE.
-
-### Detailed Description of Vulnerability
-
-1. **Root Cause and Exploitability**:
-    - The vulnerability in question can be triggered by sending specific data packets to a device driver, causing a Null Pointer Dereference in the kernel. This results in a complete system crash and reboot.
-    - While initially it appears to require root privileges, altering the Udev rules allows for exploiting this vulnerability from a non-root user space, significantly lowering the barrier for potential exploitation.
-
-2. **Impact on Systems**:   
-    - The root cause is a race condition between the userspace resetting the device and the kernel driver initializing it. This is not an edge case but a common scenario that could occur in systems where devices are frequently reset or reinitialized.
-    - By manipulating Udev rules, an attacker can create a persistent and repeatable method to exploit the vulnerability, leading to Denial of Service (DoS) conditions. This can be particularly disruptive in production environments, impacting servers, IoT devices, and embedded systems relying on Ubuntu.
-
-3. **Practical Implications**:
-    - The fact that this can be achieved through Udev rules modification is significant because it demonstrates a path to escalate privileges and attack vectors that can be exploited in real-world scenarios.
-    - Systems that are exposed to user-space applications needing device resets or control operations could be particularly vulnerable, especially in multi-user environments.
-
-### Experimental Evidence
-### Setting Up Udev Rules: Granting Permissions to Your USB Device Without Using sudo
-
-To grant permissions to your USB device without using `sudo`, you need to create a udev rules file. Follow these steps:
-
-#### Create the Udev Rules File:
-
-1. Open a terminal and create the udev rules file with the following command:
-
- 
-   sudo nano /etc/udev/rules.d/99-usb.rules
-   
-
-2. Add the rule: In the file, add the following content. Replace `YOUR_VENDOR_ID` and `YOUR_PRODUCT_ID` with your device's vendor ID and product ID.
-
-   
-   SUBSYSTEM=="usb", ATTR{idVendor}=="148f", ATTR{idProduct}=="3070", MODE="0666"
-  
-
-#### Restart the udev Service:
-
-3. To apply the new rule, restart the udev service with these commands:
-
- 
-   sudo udevadm control --reload-rules
-   sudo udevadm trigger
-  
-Regarding the discussion on permission issues, I would like to further illustrate that it is very common and reasonable to configure similar udev rules to allow non-root users direct access to USB devices in many practical scenarios. Below are some specific examples:
-
-Educational and Experimental Environments:
-In university courses on computer networking or wireless networking experiments, students frequently need access to various USB wireless devices to complete their experiments. To simplify permission management and improve experimental efficiency, teachers or lab administrators often add udev rules allowing all students to conveniently access and operate these devices without using sudo privileges.
-
-Development Environments:
-In software development companies, developers often need to debug and develop network-related applications, such as network monitoring tools and WiFi management tools. Frequent use of sudo privileges reduces development efficiency, so development environments commonly configure udev rules to simplify permission management, enabling developers to directly access these USB devices.
-
-Automated Testing Environments:
-In automated testing labs, test scripts need frequent access to and configuration of USB wireless devices for performance testing or connection testing. To ensure test scripts can run unobstructed, testing engineers would add udev rules so that test scripts can run without sudo privileges.
-
-Custom Devices for Specific Purposes:
-In home automation or custom devices for specific purposes (e.g., homemade NAS or IoT devices), administrators want to ensure that certain USB devices (such as wireless adapters) are plug-and-play, and the system can automatically recognize and configure these devices. In such cases, configuring udev rules to open device usage permissions is very common.
-
-Embedded Systems:
-In embedded systems (such as routers or VPN devices), it may be necessary to configure USB wireless adapters to expand connectivity. These devices often have a set of default permission configurations to ensure that wireless adapters can be automatically recognized and used, avoiding manual permission settings each time.
-
-Based on these various practical application scenarios, even though the system's default configuration might require sudo privileges, these real-world configuration needs are entirely reasonable and common. When devices use udev rules, non-root users can bypass the default permission restrictions, making race conditions a significant security vulnerability worth attention. To ensure system security and stability,
-
-
-### Request for CVE Assignment
-
-Given the above details, I believe this vulnerability has the following implications:
-- **Denial of Service**: Potential for attackers to cause persistent reboots and disruptions in a variety of environments.
-- **Privilege Escalation**: Demonstrates a pathway for non-root users to exploit kernel weaknesses by leveraging standard system configurations (such as Udev rules).
-
-Assigning a CVE to this issue would help track and mitigate the impact across affected systems and emphasize the critical need for a patch or workaround.
-
-Thank you for your consideration. I look forward to any further questions or clarifications needed.
-
-Best regards,
-
-
-### Tips for Strengthening Your Argument
-
-1. **Provide Evidence**: Include logs, stack traces, or any crash reports that underscore the vulnerability's impact.
-2. **Highlight Real-World Scenarios**: Describe how the vulnerability can be exploited in practical, real-world situations.
-3. **Be Precise and Clear**: Use technical terminology appropriately and explain any assumptions or configurations required to trigger the vulnerability.
-4. **Emphasize Risk**: Stress how easy it is for an attacker to achieve their goals once the Udev rule is modified, even if it's a non-default configuration.
-
-Remember, the goal is to present the vulnerability convincingly as a security risk that needs to be tracked and addressed with a CVE assignment.
+Takashi Sakamoto
 
