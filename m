@@ -1,81 +1,59 @@
-Return-Path: <linux-kernel+bounces-275077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED35948064
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:37:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C70948068
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B83281BCB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:37:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40A621F23993
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A719515EFC6;
-	Mon,  5 Aug 2024 17:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178E015FA92;
+	Mon,  5 Aug 2024 17:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yZkBFDLA"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/y3KsG8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D6615C14D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535A215C14D;
+	Mon,  5 Aug 2024 17:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722879456; cv=none; b=RkLYRnNLFVDxg36kVbQrszm/ob/7HHKa0p8D9haImSYjo4VJtz5VUsgZWGo/lod7UXVOs84Wes8ykfz29lwD5kzKAAo3urDKtvpz4THJxmBmI783odLlFI6vtyZmE002hpyJ0itf8lXu6Np5Rr8FBE1Ebe8k1qvU74veVIHjJY4=
+	t=1722879460; cv=none; b=MaXuTMVnZqUlELZiGf/hmCH/EFR1EPuRuXq/vIs2PrCsjS6So9Ru5BzVvySZkX9cagoWf3S3haJZH3qK6SzJSkHAogsMV8UJvqXGgjZKAdUXJkADWPaOvhAzXAR+zrG4wKn/hJmsLZNE3hyU9hUoGeUDGZimMrkHexxsJo9ICTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722879456; c=relaxed/simple;
-	bh=dM8sp0husClYi+h0ZGKuVSqRa7NAM23OUR7RjW40VYI=;
+	s=arc-20240116; t=1722879460; c=relaxed/simple;
+	bh=aAT3ToTfxN4rnDt8ZcG/lgetUAeevb0J77TFliPQzz4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kuEDq65Cc4ZrEaq6DsGD1Co5xJhXLDf/SvKv61mwE8XwdzD6Y0G8JRK7vxqvX0Xi9AHc5LlHMJINuWbMhDLYrJmmlO4/R8LoKk4e5c0OThqcFoQwjDMj8xEDifd3ZVaxF28JPtb1ShrCHRpecYMaYxunkE0TmnJ6iKcv4N/kZ6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yZkBFDLA; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-260f1664fdfso5341127fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722879453; x=1723484253; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7pHVbhEoVEMjlU46Y+rdQzQBJK3R4JaIn8qB/k8iiR0=;
-        b=yZkBFDLA0kwE4TFbrGdE4el5dCq5+I5XSfv6Yzo1PnJ3wa9AX8cPrJE/yf20rkLR5A
-         Qq20H32SeClGolOu5+EHNREcj8ao0XmfprlkCqyZyRyalsf+Xg6clg4pl3jboBDKI36b
-         G5aEGz49UaMWEcVCTr3H+cKgvf2a2/qxi0Auz0cIjmgv7gm0kY34ZA8cvVK9TXoYf3Tz
-         b4+jQ7TWvmxchjJK/jhwftUymM4Pkjn+ReUQ0SpvciOHiG7TGlLsjWYSHAMDbhBUDR/c
-         LQ7Mympyi0RGBpQHy0RE6/3JthtVLhhpyV7vT9CnDj39xlEfUWxGz7Ch4jmtASD7Xdpf
-         gxjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722879453; x=1723484253;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7pHVbhEoVEMjlU46Y+rdQzQBJK3R4JaIn8qB/k8iiR0=;
-        b=Dt1vYPrcyN4auQN61ynl8NPNhHbiYbBevgVQY18acPjIqIGRKzAi5F1OSUbvDTYNdI
-         kvYbNhFY43Jqfsha94xe8yxXF4vHghlczZ6GIKKURkWWU90hLyXwgYpHwUkq8d19o7AJ
-         WbhoXTV3ec0e9bud6ObcXlImgmssqgfZKAmL8B8zG/5BGe/VhQhTr/Egos7N30lqdFJG
-         OLSUvQsJcM/o70P3o2Tgyv9FQCT/A5dAU/FpCOo5ZR/9JUHYXhaFda3FgkTubfxIZWBd
-         r7we4Wdlc/974T+JLI685E4dVwd0QCn+k31dDLuBtFkNdqT3m5XuB5vU/RLmRGexgO+l
-         nbWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWxHoIhmgPPDiS0JFCAGaWVB/6RTQoqOX5BTHERSvjQvAVpP7qwtOHJ5qjhZwbMKTp0R3tJmgJKSR5SevoH9uqIb3iiwhNJ1Q1zOZa
-X-Gm-Message-State: AOJu0YyPXzvU6FRXVU3wciUMaQ1y3xucEmPCQHy/YrQZ9V6u2YnbGjyp
-	lCECjpFaq6mr2df2ON5JKIgWBFYeRRQ1FpPVMLW6yWUI4LxuY+FC2znBPxxI9Go=
-X-Google-Smtp-Source: AGHT+IHJRUtzcnsDnqI75o6X2Ap9E2ZssvYvQ/dHPTU1gm3UkNElVw+QddAP+HpNI1vqdUkkHvtRXw==
-X-Received: by 2002:a05:6870:1699:b0:264:9484:a292 with SMTP id 586e51a60fabf-26891e92feemr12640386fac.38.1722879453369;
-        Mon, 05 Aug 2024 10:37:33 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9f5cdsm5708307a12.2.2024.08.05.10.37.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:37:33 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
- Tony Lindgren <tony@atomide.com>, "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240731191312.1710417-1-robh@kernel.org>
-References: <20240731191312.1710417-1-robh@kernel.org>
-Subject: Re: [PATCH] bus: ti-sysc: Use of_property_present()
-Message-Id: <172287945269.306491.8860968743342697729.b4-ty@baylibre.com>
-Date: Mon, 05 Aug 2024 10:37:32 -0700
+	 MIME-Version:Content-Type; b=jsvzGuo3N/Xb8D3Tgbz06YyqkdSTGN6u1S0EkDSCDA2Hy7cvesWWnpxXYqe4FrFNp5/BSCygB2DNGiII656hDMdUIMfEtyFn2w/i/3AkO+2HxHLKvnzqzr1noxsZ5GcrDburENoz5dcC2pXEofzSTfblBzCGD1yyy90Z9YogsH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/y3KsG8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2742DC4AF0E;
+	Mon,  5 Aug 2024 17:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722879459;
+	bh=aAT3ToTfxN4rnDt8ZcG/lgetUAeevb0J77TFliPQzz4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=S/y3KsG8Tw/MOKSzrV8ymDNJN0LP/9sahwibeJh4VW+Hym9EkhuaRsXDQPzf0Sk7z
+	 fQnVLA+yiG+jOa0WDfSlY9uIh1CiyFG0JfyBjB8jPrlRuQeZjC5DjFV2Fn0Z8ysu4B
+	 dYkSXpwdH8lFMY+PTq62CQqUF2u/YL9+zqPV688+fb7NR2298vZSuazMfpptirbSQj
+	 Q+gRL/vrLzrUZolhWPxA0dYyylM7bIaWvmEYnTRAJnqd8TAGdUi40GKLFm+cJizOd2
+	 YN8vHAI/wHIjyVxmqiwRGhhOwoR8c2HwI/Y3buy6Udjy9tGAjtXRV4GAPuNcxREWRu
+	 cZrPMmkcTm0pg==
+From: Vinod Koul <vkoul@kernel.org>
+To: Viresh Kumar <vireshk@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Andy Shevchenko <andy@kernel.org>, Serge Semin <fancer.lancer@gmail.com>
+Cc: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org, 
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240802075100.6475-1-fancer.lancer@gmail.com>
+References: <20240802075100.6475-1-fancer.lancer@gmail.com>
+Subject: Re: [PATCH RESEND v4 0/6] dmaengine: dw: Fix src/dst addr width
+ misconfig
+Message-Id: <172287945675.489034.12734066497571580143.b4-ty@kernel.org>
+Date: Mon, 05 Aug 2024 23:07:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,28 +62,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+X-Mailer: b4 0.13.0
 
 
-On Wed, 31 Jul 2024 13:12:39 -0600, Rob Herring (Arm) wrote:
-> Use of_property_present() to test for property presence rather than
-> of_get_property(). This is part of a larger effort to remove callers
-> of of_get_property() and similar functions. of_get_property() leaks
-> the DT property data pointer which is a problem for dynamically
-> allocated nodes which may be freed.
-> 
-> The code was also incorrectly assigning the return value to a 'struct
-> property' pointer. It didn't matter as "prop" was never dereferenced.
+On Fri, 02 Aug 2024 10:50:45 +0300, Serge Semin wrote:
+> The main goal of this series is to fix the data disappearance in case of
+> the DW UART handled by the DW AHB DMA engine. The problem happens on a
+> portion of the data received when the pre-initialized DEV_TO_MEM
+> DMA-transfer is paused and then disabled. The data just hangs up in the
+> DMA-engine FIFO and isn't flushed out to the memory on the DMA-channel
+> suspension (see the second commit log for details). On a way to find the
+> denoted problem fix it was discovered that the driver doesn't verify the
+> peripheral device address width specified by a client driver, which in its
+> turn if unsupported or undefined value passed may cause DMA-transfer being
+> misconfigured. It's fixed in the first patch of the series.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] bus: ti-sysc: Use of_property_present()
-      commit: 0070dc29c85f0859a6071844b88fca6bce2974e4
+[1/6] dmaengine: dw: Add peripheral bus width verification
+      commit: b336268dde75cb09bd795cb24893d52152a9191f
+[2/6] dmaengine: dw: Add memory bus width verification
+      commit: d04b21bfa1c50a2ade4816cab6fdc91827b346b1
+[3/6] dmaengine: dw: Simplify prepare CTL_LO methods
+      commit: 1fd6fe89055e6dbb4be8f16b8dcab8602e3603d6
+[4/6] dmaengine: dw: Define encode_maxburst() above prepare_ctllo() callbacks
+      commit: 3acb301d33749a8974e61ecda16a5f5441fc9628
+[5/6] dmaengine: dw: Simplify max-burst calculation procedure
+      commit: d8fa0802f63502c0409d02c6b701d51841a6f1bd
+[6/6] dmaengine: dw: Unify ret-val local variables naming
+      commit: 2ebc36b9581df31eed271e5de61fc8a8b66dbc56
 
 Best regards,
 -- 
-Kevin Hilman <khilman@baylibre.com>
+Vinod Koul <vkoul@kernel.org>
 
 
