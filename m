@@ -1,139 +1,103 @@
-Return-Path: <linux-kernel+bounces-274086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0921194733B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:53:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99F7E94733D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8068B1F213C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BABB2811F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D6A3FB83;
-	Mon,  5 Aug 2024 01:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3277762EB;
+	Mon,  5 Aug 2024 01:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSruemL4"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GHVjes+c"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5373BBCB
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 01:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C2220B0F;
+	Mon,  5 Aug 2024 01:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722822825; cv=none; b=fOk8KZ4FajuRsqsaMmdTX8mFuIusYVMKzn5ZaQotWc0+yE7l6pNgI2aDckiw0y78VNoVaI2UoBNq97bndRPlthBJxLGTwUuaVuZ5rfNhAlVBu+Fx58c7IfJUmK+Odmqof66lgFsVbUqU1JFTE872L292PFhl15ou3xUKM4khJv4=
+	t=1722823113; cv=none; b=PYOhZNTskQV/+OXqBAdNWFfIXU2SgKm/iTqEpMYCOwOLC5S+9xUoiZeR4eG3RbMrSj9Pdatz22Ymrc5b7NqZU0SIlKdamLnLFwu50fEaFuFozYK0xCPQIBbAcp3gMjkG7X/RP591EEml4wuK8IaH43fmGssuoD9q+08te311YGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722822825; c=relaxed/simple;
-	bh=JLb0hQ5bGIc2b3XGYDKCU3UdkjN/KNNRfzKK9znTFAU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=irLKMZGwOqdDqhjKQq6F9qT0OzLML8l76Zzls9IeQ81YNvZT/jjIA//44Z05EVqgnvJJBX/1LRIGNcZRrw1AOitoevXcR3FntshXVIWC5eWAKLL7WshTbX/kPQcgQcb7C3aodvfCylQEpQzbJDoZ8tVLcsQXGmSkXhlzVEVTqjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSruemL4; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-261e543ef35so5745369fac.3
-        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 18:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722822823; x=1723427623; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gGamAjYrrdAEeItzP4qz2BRS5pecyfrdaiZ5lvnoTEE=;
-        b=GSruemL4Pdj4iOjEc+xPK27Rkm790mMLSZiNTG0RgbIZLMx9dDWIGt93FP16h45ujx
-         Fw1lO/SFlMGHtBNMScqBClYaH7l88IeqoWPejplSCgNpH3BqcWJwKTPJ4pag8JsBWL5K
-         50AFP0YinsLkpAR2hmnRrUtUQkst9CKhpoimwv2PvTmBRnlc89GyrvAofe6l2kIse/4c
-         NObGL6xwh2rkkRqo/WtPOfYeaq430C88r5CTpe/Z/19nmavOecobC2eocXsLqMLcWV0B
-         vZ63RTvtsNCRO+1b3Uk2rrCG4HLw5EW7hGiOKxY89jUuNoysiEhMEJJDbgrIYKOWsQoJ
-         AZjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722822823; x=1723427623;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gGamAjYrrdAEeItzP4qz2BRS5pecyfrdaiZ5lvnoTEE=;
-        b=CslL/uO05vZrsCTexK+wdtzgX3MUJIKX8abY5FJOMxdrZXRBrQBU4Lx0cxn61duhCT
-         pvDc+BzoqIKMBC3La+XhdkNeCBq5vcTV2iHyeeWyRc9XdTfzeRwjZcS/G7uaUGvcdZ8e
-         nAlJXfQqRPzl4Km4vMFJKG8U8pjhHrz0YUgVLDY/ceSY7gPPOYRsVMk923dom+FyCiOM
-         sz0N+poAdpFoLguPDWkgpNpm3XPdNSyWd/UYFGBy4Qdlq1JI4s5Hv65+7/egStmLDHEb
-         EnFeanXQUagGEu55QXrhLgMOQkEue5AIsjCfx9G2vNWx+LAzpw0UY6Tux2xZ08O7VrEc
-         KyoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ/2hEfRpgi3GecCCTqP67uGOa3GcID1WJHDuJofY3+FMDum+8twtDhhWtKZl9Vqn+nKlFuhtyJee0pB5yiW+Q+MBs4P1plnBWCXO+
-X-Gm-Message-State: AOJu0Yx9dJhrEwFQHZ60hw/EPitkR9lFgTmsNag3dA3T/2Fgo7FpRI5B
-	vBETZW4LYoik3S/cyp45uYBfwLS7ABtSRSTTnrYXvjo8/Ue4zCbNmWxolQ==
-X-Google-Smtp-Source: AGHT+IG9woPy8kOXY/EJAb0+8U2sGMNdAM/SNhh5aqT1feM8mWbNKoXnsgHxbcVBpRcy7bL+Ua1FiA==
-X-Received: by 2002:a05:6871:79d:b0:260:ffaf:811b with SMTP id 586e51a60fabf-26891b27a2fmr12643856fac.11.1722822822639;
-        Sun, 04 Aug 2024 18:53:42 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9c6fesm4456632a12.11.2024.08.04.18.53.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Aug 2024 18:53:42 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: chrisl@kernel.org
-Cc: akpm@linux-foundation.org,
-	baohua@kernel.org,
-	hughd@google.com,
-	kaleshsingh@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryan.roberts@arm.com,
-	ryncsn@gmail.com,
-	ying.huang@intel.com
-Subject: Re: [PATCH v5 6/9] mm: swap: allow cache reclaim to skip slot cache
-Date: Mon,  5 Aug 2024 13:53:24 +1200
-Message-Id: <20240805015324.45134-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CACePvbXkM1E56exMYKC5VsBFd+3+V60yPXx-qnq8ZNgOG1yVrg@mail.gmail.com>
-References: <CACePvbXkM1E56exMYKC5VsBFd+3+V60yPXx-qnq8ZNgOG1yVrg@mail.gmail.com>
+	s=arc-20240116; t=1722823113; c=relaxed/simple;
+	bh=1d5czxmfJcJMHxsZfqnkokWa7a1ENj6r5wILMkAQ218=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=onW0ztAFTd2UrKjYO2KU+KxexGi/h9ckYsmh5prygFrJdIP1dRksFxyGQmCoucHuFIffpg1zIJWPjoq7FXD2Kkg/dG3RhpFZiGoFg8p94GDPd0CQkDmvLiLJP+xPSFxVNr+cJxlN7W2pkW4GNG1rrygXo/EPoHIJeMOFdtYMzlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GHVjes+c; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722823105;
+	bh=XVc/WnEVk23tlrO45DVVKSJRhYtpa7tAYGsRAtDnkHE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GHVjes+cVGqG+hd+bQMzq4AxPoU1fw6+sBLonOJZ6jNNycKqTVf8T5upu/IXyUXeJ
+	 Xd6zDQHpSHFsdyphuoSsKCBuoCdDqsepYa+qSSRwozyAXlTWNOqKl6V/LwS4XbomYZ
+	 3wqg9dBcvDQuydSZnfJ1z31XClj2VJ2Q3+5rBkkzd01o2PfbRY/MWn6s86/iHpRD7+
+	 jZvajc8i8UNUnWqBuSOxTiVOrGAX/XeLbVioPr7AClqURsx7QzXSTXYh1/9Q9geVGV
+	 EwPqcBYO9N9GAToI3XJHkKQMmnbMHMzbWGuKAKWhEqVGNLWdAhcrLTEvWY9Nita6bm
+	 styZMVNLfubjw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WcfjX75MRz4wbR;
+	Mon,  5 Aug 2024 11:58:24 +1000 (AEST)
+Date: Mon, 5 Aug 2024 11:58:22 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the pm tree
+Message-ID: <20240805115822.037798df@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/UfL.NUMOVX1E_hITqf9dm66";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Aug 5, 2024 at 6:07 AM Chris Li <chrisl@kernel.org> wrote:
+--Sig_/UfL.NUMOVX1E_hITqf9dm66
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > > > +
-> > > > +       spin_lock(&si->lock);
-> > > > +       /* Only sinple page folio can be backed by zswap */
-> > > > +       if (!nr_pages)
-> > > > +               zswap_invalidate(entry);
-> > >
-> > > I am trying to figure out if I am mad :-)  Does nr_pages == 0 means single
-> > > page folio?
-> > >
-> >
-> > Hi Barry
-> >
-> > I'm sorry, this should be nr_pages == 1, I messed up order and nr, as
-> > zswap only works for single page folios.
-> Ack. Should be  nr_pages == 1.
->
+Hi all,
 
-Yes. Andrew, can you please help squash the below fix,
+The following commit is also in the mm tree as a different commit (but
+the same patch):
 
-small folios should have nr_pages == 1 but not nr_page == 0
+  0f127178892e ("cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros")
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index ea023fc25d08..6de12d712c7e 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -224,7 +224,7 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
- 
- 	spin_lock(&si->lock);
- 	/* Only sinple page folio can be backed by zswap */
--	if (!nr_pages)
-+	if (nr_pages == 1)
- 		zswap_invalidate(entry);
- 	swap_entry_range_free(si, entry, nr_pages);
- 	spin_unlock(&si->lock);
+This is commit
 
-> Barry, thanks for catching that.
->
-> Chris
+  93bc6ba3e8c7 ("cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros")
 
-Thanks
-Barry
+from the mm-nonmm-unstable branch of the mm tree.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/UfL.NUMOVX1E_hITqf9dm66
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmawMb4ACgkQAVBC80lX
+0Gyi2Qf7BOhHYzh7bYRWKm3roo9xBOQe5SIF092PvvwJYfS6hb73acOg7hcUA/48
+W08+cib62M5aZ/x6KBe+S3d+CJ0LSX99Y4ClMvfrpylLWWRbDzf0xIell4O73YKr
+iYOKZZLSRaqJeGB0MVV1w9nncsZfiUPUJ5DPs+eQ2XAVVv/ucr/X4fIUu4Arx43A
+X9ZQ0ZtC2ZpsBRTdirFRdqFTkTtDeuurYrUJYBy296OJzbifn60KeRhr84NwUUUz
+GqsUJpu+YuuWP7tJV2V348Dar3CeQ1jfdStb3sBgkjz2ArvbT4Xf00/KJhFg8r0e
+j/LMjb4lboSR9ZsnSW0XLQt3m4OG2w==
+=IMgN
+-----END PGP SIGNATURE-----
+
+--Sig_/UfL.NUMOVX1E_hITqf9dm66--
 
