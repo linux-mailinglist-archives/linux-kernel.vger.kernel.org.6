@@ -1,200 +1,153 @@
-Return-Path: <linux-kernel+bounces-274332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C14C9476DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:07:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BF39476E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCD91B21574
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:07:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85498B21EA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FC714C5A1;
-	Mon,  5 Aug 2024 08:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E521509B6;
+	Mon,  5 Aug 2024 08:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5ZSFCbn"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zShhkMLm"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF0E14A639;
-	Mon,  5 Aug 2024 08:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB4D14B968
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722845089; cv=none; b=inAoUyuXZVdOx8yA6dMkl7wJGZXla5KgbO4b2zOqsrg/D7qORrN2/J3OmMwQ3fdl0X3YsReY2aMI4O90vbzm4sY13UpB9GE6FgxDUjwHRWKBg4bap92kk/YBAjiZ/W/CUChBeHwVbuUbQkjl/jBPhuSBzCzhOeKw/KDN/46LptU=
+	t=1722845107; cv=none; b=dencK/Pc+HEmgToIzE13rA2g//Y0DTD3IrR1SV+97krZFyL5oPRJiRb/yTzL2hRyAOzdSa7IOMZcHZa/k/cPP6RmTYOLMEpk0sbmYcSMWlqThtghN96gZxKsBlPbtPuOk942VaSfk+EprvvBPmDVg6SC/2UdkBKDK4qQ4bMZKgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722845089; c=relaxed/simple;
-	bh=OH9eMFxXkTz3nZUDCbKgTQLCvQ/Ah5RpkU7tEaQnWIk=;
+	s=arc-20240116; t=1722845107; c=relaxed/simple;
+	bh=6sXJ3WO3dFim8GApcSIrk/tXyaVvkV0bTNmi+2+R1Zw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bA7/U1w/ILGfs7wrk1kIelZBzm69hsBIWKAvgariwtUKUyaoFqXFzpGztBP8OcKinlQ0Q2Xf0EH37wqoCxJtOr0MgFHZUEA4+jGwHdHv6wpDmCTKfqOoYoIuXjLNoZi3DP907iY7RKvgutmWFlsyf2+tCtBhuxVOmFfA9VFNz1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5ZSFCbn; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39b3c36d247so4393635ab.3;
-        Mon, 05 Aug 2024 01:04:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=HYNRh9w54wFF2LKKvC00h43cH0u0Yg0Mua9x3TEesja5n4pRIZV4vNFlXOKQjV/Itow1FC/OIU1jmSVah63UrntQDovjQonC3PyQQBWmMY+fdvhXnGJ0gyBgT3dW6oRUeyrztzrBODcMQ2VqaGbW/8+7z73rNjwvOHLiNk25ESU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zShhkMLm; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f01993090so14140535e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:05:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722845087; x=1723449887; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722845104; x=1723449904; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vV2EB2MiXTNRu5sSGmUBTQgjztxQtI0naxCItk5VCMw=;
-        b=j5ZSFCbn3lQL585lXmG41GYwGQC2tUll+LQds8l7ofcJNnTS4c19s3CwWDtGD+B5cD
-         6Telq1HHT+85tk+d0smfKGblwMYorB5stqJPPFooDYrRl98ywHUaN4swXRJ0ieFy0f6o
-         Ha+8NZMLIyUhBmozgO2iZw21pLT/BV7UgXF5f166ssC0PFXEYRphTwWH1PQ1OzSjIM/D
-         bmZ0eG4PUe+FeJHD1jzWpL3Qj7feOhi+ML6f1l87AQMY5YilhEXH2e5IK0fWKe9g8psT
-         VGObsTh/oPKIF5g707MDczMSiO0ylufeskhU3icVcM8bESf7wVTjYQpbMOLLoXrx2xPM
-         HXNw==
+        bh=+vUo6X2UB32z9znfy1Y49G04XlyGtFJELqgfmxMvQuo=;
+        b=zShhkMLmDtgbewDtCSCDCufn0hLfxDpfNlIUzrcvy74+QktlzYbNaMds5V57gz5Fpg
+         WogQdSnR9Bw1+AlB9pHhj7XQmSQkMBH8h1aLjgY0VDRe5XmOlC/chNqEKTPicItYAvDn
+         kvhDyZbHnhi7AdTVUZoFw5xRZQMt3MGyhc/ZE8oFSjdun0kK3O2indQTwUPHs9dILJIp
+         O5f9GNjxo+ve7vG6n+zHdduFi1t4r8lDblZuwTW4pg0VYCOdjSm7uVyxCBsL39YlpYM5
+         4wVsrHnDR/P6+RsNdTZ+L6xXg5AcbZe5LOLSqSE8nbavjmTOGdfU4Q5GQ9NhAxo2hOLa
+         7UKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722845087; x=1723449887;
+        d=1e100.net; s=20230601; t=1722845104; x=1723449904;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vV2EB2MiXTNRu5sSGmUBTQgjztxQtI0naxCItk5VCMw=;
-        b=KUxyrOeHIxRUdOiuXk5274lNV7Q1N1fBJyBZN6Hm5leueanHZAfJPuiQlZPdno8mab
-         6FWEXBOHoM8bdMq/E9VQk1NU+kv+p2SdnSIu5cRDbZGydzdwlcm7/FOpLqDz7s2g2t+m
-         5uZyT9H31Ow1wr18Ft5TYlp94lsc/QWtdkRV+K9zzsU4uCymjlUSvlqSphHCHkDZJolS
-         oZp+ypGoWs9yLFEZqzHfEqI4t1Xo0+c1TI7n3voK2FMvUeq/oJ0M6/dqR5uh1/lPIMvQ
-         f7LZFZkcdpTaGGz9vIkJs0Tkwn0UtsT+d/hug2n8Jq8RpxQftua1KNZm6t/spAO/cnwl
-         uBAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUaTWrhpexUKROZX3BVsNzLdL+CPIEUf3c59zhJJEzy78QbXOYogM2wMxBv310hNLWmPIuJWX/HW8jF/rU=@vger.kernel.org, AJvYcCXd1PfO953vK7Vueeqwi68gQ2BUFZUhFUK2HouhfRWcYNwOW/I7x4kYCJcVVMlGilitIX8MnYIM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUPecak1x0PgPh6/pA/5RTXnxaIDIlzNXVPdO+XCtQdKOMeyf+
-	t/KyhHiKMlFRB+/DEdBmHALIdTp0fYoERvLndfYUE/VDTpG5jjygejcx2laZ8f0ItZO2m91rIKU
-	QK61Ii3LG9PK8m8DcX822fg2TFog=
-X-Google-Smtp-Source: AGHT+IFeJY5Nm8n1uDPCqlH+FYmRO8SXNlBC2mlab/7R7Rz2br2uDNHs1mCUAIkxvIr+ha3f5H+37kP4wUNJxSZjqVc=
-X-Received: by 2002:a92:d604:0:b0:382:f728:6ce5 with SMTP id
- e9e14a558f8ab-39b1fc3834amr110689185ab.27.1722845087396; Mon, 05 Aug 2024
- 01:04:47 -0700 (PDT)
+        bh=+vUo6X2UB32z9znfy1Y49G04XlyGtFJELqgfmxMvQuo=;
+        b=JrKd8T9f78mT1atblM5Yubm+j0WtWwszUgAqp/6QYWnL6t78MZLFT3NaebfkV40Sgk
+         lIjRSCZm0tSJwZFN47beOYJG46fCIvmjXMC1DOcu6mWK+Xtfr+mZRIMOIRGW4fTB2Eab
+         R9ljUSSAh/tbVuJYDu6gJDWmNZUa27ykn44ue+OrWTxn2CDwNL9uDz9a6KlRvRkHXa2a
+         D3SaHRza3+3pZeP5fiSlIwC5dyEk5itHNBJqp6KD8k+3DIPLiJGnUumJF32ep76AAGcB
+         b7NPb9Q3K8LD4i9Iijvnd/6zXZRs3FVIhVuVXyd6vwAaGqec2aGXyCzlSFPZDGpObFEb
+         7h2w==
+X-Gm-Message-State: AOJu0YySBKy2+yT+JIHwBNub++65b5Cz87uLh6pgAFhKSuDiATccyv8Y
+	/qKRshrHZfAyXmtzGhy/Qje0WY2dShHxXuTQUgeRzffsrwpCgCuZwPNHFEEaCZj1xPC7Cel/+BQ
+	PebgXMLkWpUPVOk12g5SRaRmOhSopG03lRWkskg==
+X-Google-Smtp-Source: AGHT+IFGNovjX087F1QurhU0HQ7nruW2cdo46FHweA0PGGBWHf1HSVejhpZypq7DgKQTcYz6PkOVXwzgpSu/BA7Ep7U=
+X-Received: by 2002:a05:6512:ba7:b0:52c:9e82:a971 with SMTP id
+ 2adb3069b0e04-530bb36640fmr7518778e87.7.1722845103835; Mon, 05 Aug 2024
+ 01:05:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801111611.84743-1-kuro@kuroa.me> <CANn89iKp=Mxu+kyB3cSB2sKevMJa6A3octSCJZM=oz4q+DC=bA@mail.gmail.com>
- <CAL+tcoAHBSDLTNobA1MJ2itLja1xnWwmejDioPBQJh83oma55Q@mail.gmail.com>
- <CAL+tcoDnFCWpFvkjs=7r2C2L_1Fb_8X2J9S0pDNV1KfJKsFo+Q@mail.gmail.com> <CANn89iLNnXEnaAY8xMQR6zeJPTd6ZxnJWo3vHE4d7oe9uXRMUg@mail.gmail.com>
-In-Reply-To: <CANn89iLNnXEnaAY8xMQR6zeJPTd6ZxnJWo3vHE4d7oe9uXRMUg@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Mon, 5 Aug 2024 16:04:10 +0800
-Message-ID: <CAL+tcoADT8EnQdFctCHab0B6cf9WyhFoAzNMxOA+JraRuTfUug@mail.gmail.com>
-Subject: Re: [PATCH net] tcp: fix forever orphan socket caused by tcp_abort
-To: Eric Dumazet <edumazet@google.com>
-Cc: Xueming Feng <kuro@kuroa.me>, Lorenzo Colitti <lorenzo@google.com>, 
-	"David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
-	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org
+References: <20240723-supervise-drown-d5d3b303e7fd@wendy> <20240723-underage-wheat-7dd65c2158e7@wendy>
+In-Reply-To: <20240723-underage-wheat-7dd65c2158e7@wendy>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 5 Aug 2024 10:04:53 +0200
+Message-ID: <CACRpkdbRE695f-+do1HYpOZ6e4qxgUBWJzEPO2hTCuZ3xxYHQg@mail.gmail.com>
+Subject: Re: [RFC v7 4/6] gpio: mpfs: add polarfire soc gpio support
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: linux-kernel@vger.kernel.org, conor@kernel.org, 
+	Marc Zyngier <maz@kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, Lewis Hanly <lewis.hanly@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 5, 2024 at 3:23=E2=80=AFPM Eric Dumazet <edumazet@google.com> w=
-rote:
->
-> On Mon, Aug 5, 2024 at 6:52=E2=80=AFAM Jason Xing <kerneljasonxing@gmail.=
-com> wrote:
-> >
-> > On Sat, Aug 3, 2024 at 11:48=E2=80=AFPM Jason Xing <kerneljasonxing@gma=
-il.com> wrote:
-> > >
-> > > Hello Eric,
-> > >
-> > > On Thu, Aug 1, 2024 at 9:17=E2=80=AFPM Eric Dumazet <edumazet@google.=
-com> wrote:
-> > > >
-> > > > On Thu, Aug 1, 2024 at 1:17=E2=80=AFPM Xueming Feng <kuro@kuroa.me>=
- wrote:
-> > > > >
-> > > > > We have some problem closing zero-window fin-wait-1 tcp sockets i=
-n our
-> > > > > environment. This patch come from the investigation.
-> > > > >
-> > > > > Previously tcp_abort only sends out reset and calls tcp_done when=
- the
-> > > > > socket is not SOCK_DEAD aka. orphan. For orphan socket, it will o=
-nly
-> > > > > purging the write queue, but not close the socket and left it to =
-the
-> > > > > timer.
-> > > > >
-> > > > > While purging the write queue, tp->packets_out and sk->sk_write_q=
-ueue
-> > > > > is cleared along the way. However tcp_retransmit_timer have early
-> > > > > return based on !tp->packets_out and tcp_probe_timer have early
-> > > > > return based on !sk->sk_write_queue.
-> > > > >
-> > > > > This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resc=
-hed
-> > > > > and socket not being killed by the timers. Converting a zero-wind=
-owed
-> > > > > orphan to a forever orphan.
-> > > > >
-> > > > > This patch removes the SOCK_DEAD check in tcp_abort, making it se=
-nd
-> > > > > reset to peer and close the socket accordingly. Preventing the
-> > > > > timer-less orphan from happening.
-> > > > >
-> > > > > Fixes: e05836ac07c7 ("tcp: purge write queue upon aborting the co=
-nnection")
-> > > > > Fixes: bffd168c3fc5 ("tcp: clear tp->packets_out when purging wri=
-te queue")
-> > > > > Signed-off-by: Xueming Feng <kuro@kuroa.me>
-> > > >
-> > > > This seems legit, but are you sure these two blamed commits added t=
-his bug ?
-> > > >
-> > > > Even before them, we should have called tcp_done() right away, inst=
-ead
-> > > > of waiting for a (possibly long) timer to complete the job.
-> > > >
-> > > > This might be important when killing millions of sockets on a busy =
-server.
-> > > >
-> > > > CC Lorenzo
-> > > >
-> > > > Lorenzo, do you recall why your patch was testing the SOCK_DEAD fla=
-g ?
-> > >
-> > > I guess that one of possible reasons is to avoid double-free,
-> > > something like this, happening in inet_csk_destroy_sock().
-> > >
-> > > Let me assume: if we call tcp_close() first under the memory pressure
-> > > which means tcp_check_oom() returns true and then it will call
-> > > inet_csk_destroy_sock() in __tcp_close(), later tcp_abort() will call
-> > > tcp_done() to free the sk again in the inet_csk_destroy_sock() when
-> > > not testing the SOCK_DEAD flag in tcp_abort.
-> > >
-> >
-> > How about this one which can prevent double calling
-> > inet_csk_destroy_sock() when we call destroy and close nearly at the
-> > same time under that circumstance:
-> >
-> > diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> > index e03a342c9162..d5d3b21cc824 100644
-> > --- a/net/ipv4/tcp.c
-> > +++ b/net/ipv4/tcp.c
-> > @@ -4646,7 +4646,7 @@ int tcp_abort(struct sock *sk, int err)
-> >         local_bh_disable();
-> >         bh_lock_sock(sk);
-> >
-> > -       if (!sock_flag(sk, SOCK_DEAD)) {
-> > +       if (sk->sk_state !=3D TCP_CLOSE) {
-> >                 if (tcp_need_reset(sk->sk_state))
-> >                         tcp_send_active_reset(sk, GFP_ATOMIC,
-> >                                               SK_RST_REASON_NOT_SPECIFI=
-ED);
-> >
-> > Each time we call inet_csk_destroy_sock(), we must make sure we've
-> > already set the state to TCP_CLOSE. Based on this, I think we can use
-> > this as an indicator to avoid calling twice to destroy the socket.
->
-> I do not think this will work.
->
-> With this patch, a listener socket will not get an error notification.
+On Tue, Jul 23, 2024 at 1:28=E2=80=AFPM Conor Dooley <conor.dooley@microchi=
+p.com> wrote:
 
-Oh, you're right.
 
-I think we can add this particular case in the if or if-else statement
-to handle.
+> From: Lewis Hanly <lewis.hanly@microchip.com>
+>
+> Add a driver to support the Polarfire SoC gpio controller
+>
+> Signed-off-by: Lewis Hanly <lewis.hanly@microchip.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks,
-Jason
+Just a comment on second thought:
+
+> +config GPIO_POLARFIRE_SOC
+> +       bool "Microchip FPGA GPIO support"
+> +       depends on OF_GPIO
+> +       select GPIOLIB_IRQCHIP
+
+select GPIO_GENERIC?
+
+> +static int mpfs_gpio_direction_input(struct gpio_chip *gc, unsigned int =
+gpio_index)
+> +{
+> +       struct mpfs_gpio_chip *mpfs_gpio =3D gpiochip_get_data(gc);
+> +       u32 gpio_cfg;
+> +       unsigned long flags;
+> +
+> +       raw_spin_lock_irqsave(&mpfs_gpio->lock, flags);
+> +
+> +       gpio_cfg =3D readl(mpfs_gpio->base + MPFS_GPIO_CTRL(gpio_index));
+> +       gpio_cfg |=3D MPFS_GPIO_EN_IN;
+> +       gpio_cfg &=3D ~(MPFS_GPIO_EN_OUT | MPFS_GPIO_EN_OUT_BUF);
+
+OK this part is unique...
+
+> +static int mpfs_gpio_direction_output(struct gpio_chip *gc, unsigned int=
+ gpio_index, int value)
+> +{
+> +       struct mpfs_gpio_chip *mpfs_gpio =3D gpiochip_get_data(gc);
+> +       u32 gpio_cfg;
+> +       unsigned long flags;
+> +
+> +       raw_spin_lock_irqsave(&mpfs_gpio->lock, flags);
+> +
+> +       gpio_cfg =3D readl(mpfs_gpio->base + MPFS_GPIO_CTRL(gpio_index));
+> +       gpio_cfg |=3D MPFS_GPIO_EN_OUT | MPFS_GPIO_EN_OUT_BUF;
+
+Also here
+
+> +static int mpfs_gpio_get_direction(struct gpio_chip *gc,
+> +                                  unsigned int gpio_index)
+> +static int mpfs_gpio_get(struct gpio_chip *gc,
+> +                        unsigned int gpio_index)
+> +static void mpfs_gpio_set(struct gpio_chip *gc, unsigned int gpio_index,=
+ int value)
+
+But these are just MMIO functions.
+
+Is it possible to use augmented generic MMIO, i.e just override these
+two functions that
+need special handling?
+
+Yours,
+Linus Walleij
 
