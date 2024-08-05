@@ -1,125 +1,151 @@
-Return-Path: <linux-kernel+bounces-275205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E2C9481D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:39:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265F69481D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3352886CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A97351F21906
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9291163AA7;
-	Mon,  5 Aug 2024 18:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2042B160873;
+	Mon,  5 Aug 2024 18:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="bXnClPrm"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfXiRepb"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B26415A874
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC2315A874
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722883143; cv=none; b=RFjx2+inMoTI6NfaY5JCJkCFgwLzWqyBdEpRfmoZ1k/EWjnjn6wi9zjZnsiUnyaC0752AwMnXTx5F50k26lyOm21mFOTlzaR9z6tZYgDgng6FmQ2i1Jd0fNfn4PHujjnMj4kPh/pvl0zG1/5D/RnZ1hoMZZ3TFlriVIeEVK5BDw=
+	t=1722883236; cv=none; b=TwDBk600paHH9JonE4XJDsG7toAsq2wOvJmsY/Vktg30zN9810E+iF177LOkfc6oYZ9Fu5K8dCMf2c4DvjXP65Uy0SoBjoBLqqtqb61NQTu/zTj9g1ixlNlibm6dwlU6gJtBru3t1LYD+v0ewZZxAI7AOoZweB2FFyRwnJaDMf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722883143; c=relaxed/simple;
-	bh=Z0fHi9KsdL/dhg3Iq7FZic1Ag2yGSv3KBsY4wPIKoXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hyvudz1qKQFWyjfsjSc3EerVbAcyuQJId8y4SVhvtS6xXiW+dz6BJjVFxnyP1+UDM6UIPFfTrkTfDRScGT4vB5LPEQr8TH6YfuVt2u3ifaUulDILyWkzsSlWdSUOofZUuhIh1p1XDsRUXhGeFrFAA9B3Jf20GdirCCDmMNCzfAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=bXnClPrm; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a2a90243c9so12474249a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:39:01 -0700 (PDT)
+	s=arc-20240116; t=1722883236; c=relaxed/simple;
+	bh=qELrm6xWR+vSdfeL651B7iDC32fvpN0UnYZ/nenXXRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sApvW2g/BI4utww2xYXmEYmtdxbA44Q5nWOk0bDKxVp1918E70x7uJjrzhmTvYLYGcKKYe7rXlveq3jkEToGjLRG/2w/DGWijXu+S6ruSWVhrk1H7CyUJtxD2UwaY0HbErXuFx5o4zAkn3r0UjCzUI5tbyOtKVbNfEYmyHVM9r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfXiRepb; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a94aa5080so473480566b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722883140; x=1723487940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z0fHi9KsdL/dhg3Iq7FZic1Ag2yGSv3KBsY4wPIKoXc=;
-        b=bXnClPrm5Vo+8wowLG5mnLFsfE0X3DO6Xn06uYQT4fsbQAlsGbcgfNO+q/WFPYEPZK
-         WYwFbNRw/Q0nN/93zpi4xdFi6hZXeMrPVQjPYE6fuBMidBjdEmm5pVbEZhipf3OYSPNl
-         FC5kIXBbzlvAtuAuOSUy/zC20f5EQ9e9Xa+oZVhBQ/2QtbbUwaLsFoAEqASeMUsj5Uz5
-         u+enWYgzgPIuIilTZLeKpyHe88ejmPzIfI6s3Xvky8PNow5JcJ+G6MGQhtrHbNyEW2DA
-         n+R0fTar9ML/DeqYabZgDbczjMqjcVY21PFgRXdmpO6UTZ4fHb8YVXbohC1xk5/gEb2I
-         Gpyw==
+        d=gmail.com; s=20230601; t=1722883233; x=1723488033; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=awSiegGC/aiLfudQJZdzAXeSh+lcoFYzPuFVEvS4a0Y=;
+        b=FfXiRepbTqKF9l8pP6FvxODIdwgfjx4DTy0LVMtHJT5KSZqO8k+v8DV7QXipIBYx4C
+         csDlhi78DFZ6Lz+od6i7m5anohitgUiWiG6w7Sa07iQayxcgPfiewm05zEa7DAn3ugWm
+         YNspaZaNSc8whmPHdlLoYRxqsgx4KudC5aBcLYhvpbiW9Ddw+zepM1OFQrAmDrZyy8e9
+         IWAuxJuDLpzi/5hV/9jEFQ4/ZymqMAMii2dZYOcejLvyVG5a7+Fjj+YpmBX8OZF/ne++
+         D0ni2KNYh562AURx5iVGc5UrVbimRPBMSxOZRiyPu4ywA+0rSqneZIrbrUiHXCiv7ntR
+         5MVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722883140; x=1723487940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z0fHi9KsdL/dhg3Iq7FZic1Ag2yGSv3KBsY4wPIKoXc=;
-        b=gWZdVP66lxeFVz8Ii2+Qlicw3L9C2DZJtdoRgkGCMgreiem3+/5gGKf8faCE4zu80r
-         KxU/CBuzGNYBtWPZJZGWy3I3muyjY82VKboXGLXWlrNw9I3fGsd2lwAsv99nJat/PRB9
-         m6GTQbAlgUeO9FQke6xheOoamtUcLiOCKh316kOGfm7u3GGJtkm9piI6OkU9pTWI4R5k
-         I3bmS76UpeMDN98MOWGjmFEkbRdEVt9EN20FkPa/RtkYcW3ii/X96HgFo+hsGfyZBK1B
-         F0V4SGYilBhhHdKQdXIJVIfa+IPgOFnlQYqhcf4BreQa6B89N6iHzMBOXXb4LhsbOZDs
-         sw7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnaA9iAqka2wXz+jx8aJZhfQi4Gv+GWsFy72SvmP3gwrOR5BIEw649a9G5+K/t8E7vtEitco7QOifQyfYfT+nUY6YaMnF/hJqJ+Flu
-X-Gm-Message-State: AOJu0Yx0Tk/O/Fv4q9WG4xCrO0Ay5y7P8riOgSlHwkrepB6ZWhHDZRLH
-	0heGPGGDqXiUz4oYM8JoRZAcgPr9dEV1XQhAsdNF/U7zi67sy+tZcwGvUKAvMe1pd6ckFFa5+Gf
-	MC9zMvba8SG/VNb5I+VmBSaPrOs/c9SGtiKjonw==
-X-Google-Smtp-Source: AGHT+IHGDWiYA4gxxfNGX16WDAPwnIZq8VLG/7+YcSFFrHFbrxAB9lU1euM5kVqthhxJ26B5ZI3RZy5fWZ0Q/yhpQmQ=
-X-Received: by 2002:a17:907:7204:b0:a7a:b070:92d1 with SMTP id
- a640c23a62f3a-a7dc517b48dmr937619966b.46.1722883139711; Mon, 05 Aug 2024
- 11:38:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722883233; x=1723488033;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=awSiegGC/aiLfudQJZdzAXeSh+lcoFYzPuFVEvS4a0Y=;
+        b=W3JwsYoMM2q7VziOUSd9GWK3ptd1kwj5Cg4G9kHJiKpgVFHHjZrSDQ5KZirYh5zhH2
+         DgglmLynhItwy+X0QbytOPAAvOdqPzd2Lov73sYDo4JmISys46WXAYhtu+hnnjy3VkMG
+         s7SeIyMqbtOjX+ATWYyGYajKE4pQO+Dw0n4kdCnA2RVjd5u5qBCYgcB4dImBREbsWWVf
+         xWUx7g3bjDiyCh68nuYqE5MAANujvYv5rJsdWppHq8ibEGtqXIB2gRcjJtalV5EZadhp
+         2Wg8moM77/9+8K7GssinLI/4tvJQC2F1Q/Qz7os8ybTqeDRSW74D5cWKjMgUNAyp8jEp
+         u4Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4OK4p2fhlO1vmChNffE9m7ckIz5MTjE6qQSbQgKtX6pDG8wKNINT+5SDfjckw/6ivgcqjk/KegLOrZkaHJWjlQ9h5VNN5EG6KdTlV
+X-Gm-Message-State: AOJu0Yz9/+ztuxxSnXq5n9IPpmm7u5lCiRGLA7y7JobiULyum27OWZ2d
+	bnWyWkwYVN9muSOMfjjhUi7vEN5FHlWEObpTDCF3uE5OQZ7Fufy6
+X-Google-Smtp-Source: AGHT+IG3IJucHUtbQegGWUcxHDuD0ZT7B2y4b+n1mdQUt41gzRRMP1VfFAaDF+0h2xfcpfg5bxqTgg==
+X-Received: by 2002:a17:907:724b:b0:a7a:c083:8575 with SMTP id a640c23a62f3a-a7dc4ae31afmr1010343066b.0.1722883232611;
+        Mon, 05 Aug 2024 11:40:32 -0700 (PDT)
+Received: from localhost.localdomain (93-103-32-68.dynamic.t-2.net. [93.103.32.68])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c12ad3sm478517266b.88.2024.08.05.11.40.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 11:40:32 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Nadav Amit <nadav.amit@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: [RFC PATCH 0/3] Enable strict percpu address space checks 
+Date: Mon,  5 Aug 2024 20:38:58 +0200
+Message-ID: <20240805184012.358023-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805173816.3722002-1-jesse@rivosinc.com>
-In-Reply-To: <20240805173816.3722002-1-jesse@rivosinc.com>
-From: Evan Green <evan@rivosinc.com>
-Date: Mon, 5 Aug 2024 11:38:23 -0700
-Message-ID: <CALs-HstYwwgPAOP22V1A6iTX85eRqRp4b4039pewsDHus_dLgQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] RISC-V: Add parameter to unaligned access speed
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>, 
-	Eric Biggers <ebiggers@google.com>, Greentime Hu <greentime.hu@sifive.com>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Costa Shulyupin <costa.shul@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Ben Dooks <ben.dooks@codethink.co.uk>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Erick Archer <erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 10:38=E2=80=AFAM Jesse Taube <jesse@rivosinc.com> wr=
-ote:
->
-> Add a kernel parameter to the unaligned access speed. This allows
-> skiping of the speed tests for unaligned accesses, which often is very
-> slow.
->
-> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+This patchset enables strict percpu address space checks via x86 named 
+address space qualifiers. Percpu variables are declared in
+__seg_gs/__seg_fs named AS and kept named AS qualified until they
+are dereferenced via percpu accessor. This approach enables various
+compiler checks for cross-namespace variable assignments.
 
-How come this is a command line parameter rather than a Kconfig
-option? I could be wrong, so I'll lay out my rationale and people can
-pick it apart if I've got a bad assumption.
+Please note that sparse doesn't know anything about __typeof_unqual__()
+operator, so the usage of __typeof_unqual__() breaks sparse checking.
 
-I think of commandline parameters as (mostly) something end users
-twiddle with, versus kconfig options as something system builders set
-up. I'd largely expect end users not to notice two ticks at boot time.
-I'd expect its system builders and fleet managers, who know their
-hardware and build their kernels optimized for it, are the ones who
-would want to shave off this time and go straight to the known answer.
-Anecdotally, at ChromeOS we had a strong preference for Kconfig
-options, as they were easier to compose and maintain than a loose pile
-of commandline arguments.
+Also, the last patch hijacks __percpu tag and repurposes it as a named
+address space qualifier. While this works surprisingly well in this RFC
+patchset, I would really appreciate some help on how to rewrite this
+hack into some "production ready" code.
 
-The commit text doesn't go into the rationale, intended audience, or
-expected usage, so maybe my guesses miss the mark on what you're
-thinking.
--Evan
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+
+Uros Bizjak (3):
+  percpu: Define __pcpu_typeof()
+  percpu: Assorted fixes found by strict percpu address space checks
+  percpu/x86: [RFH] Enable strict percpu checks via named AS qualifiers
+
+ arch/x86/include/asm/percpu.h  | 53 ++++++++++++++++++++++++----------
+ arch/x86/kernel/head64.c       |  3 +-
+ drivers/base/devres.c          |  2 +-
+ fs/aio.c                       |  2 +-
+ include/linux/cleanup.h        |  4 +--
+ include/linux/compiler_types.h |  2 +-
+ include/linux/part_stat.h      |  2 +-
+ include/linux/percpu-defs.h    | 39 ++++++++++++++++++++-----
+ include/linux/prandom.h        |  1 +
+ init/Kconfig                   |  3 ++
+ kernel/events/hw_breakpoint.c  |  4 +--
+ kernel/locking/percpu-rwsem.c  |  2 +-
+ kernel/workqueue.c             |  2 +-
+ lib/percpu_counter.c           |  2 +-
+ net/core/dev.c                 |  2 +-
+ 15 files changed, 87 insertions(+), 36 deletions(-)
+
+-- 
+2.45.2
+
 
