@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-274985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69063947F24
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:21:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BA8947F37
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:23:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5E01C20FE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:21:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E552CB21B66
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9430515B97A;
-	Mon,  5 Aug 2024 16:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A31815C13D;
+	Mon,  5 Aug 2024 16:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dx23vZWP"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UelkwFNf"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82AC15B13B
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A961547DC;
+	Mon,  5 Aug 2024 16:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722874882; cv=none; b=P4atbnmvCs2CdEmIit54/gyBi4O2RxEQqrBsb24OGhvpERY6bADEJKY2gWRIxWma/GoBytF/9ZgDayQ0/urHDP0oRiuAjclsTzXN++5AyAgQsexlEPS4jKuWO2HHRRxasEeMXDD2UrSLdJ0iJ+tk8yQouvF95Tu2PZGUQ0KtzrQ=
+	t=1722874988; cv=none; b=XGHbewDfrZTrPpJE6xZNANwwz/4Rj3jclzFkBWzJdR+Kt38TIIb2oRzKi19F+VEPe+SV8FS8GArPy8nKy4YLK5V7ZaWXYcmlxARDeq2kLVSwfTYmttHICvNR0FxR95wP1JX2Ih3zv6j1KCcKP0/bzCHCFaW6SacSUgxtM/7lnYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722874882; c=relaxed/simple;
-	bh=B32shkeZCG6mFD6P+kT6Z4Ez/QMYwXjeiQfZrygg6fc=;
+	s=arc-20240116; t=1722874988; c=relaxed/simple;
+	bh=6qIlI/ZA8suC3l92XJ5goqxx350QpUDQOkwCZyfLITo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZodQbv4wyLAOY58NHZbS8/Ymm1JjP2KGgJBnQl/R8JnzwtRaU6pMi5vPDHvX3gQXY57yQ9zYyhKNiJxXw0arMAUuVVk+TqTyG4bxD+wUT6J3roF/HEjElgUHuJC0XPbCyHCPN67v/h3AUPYaAdr7malmF/QXWFi0ggK8X+QeLqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dx23vZWP; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2cf213128a1so6863053a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 09:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722874881; x=1723479681; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+CoAJMCsHveIpfHZDH1fwzV0mbxd5KQw/DdBCUG0TjU=;
-        b=Dx23vZWPG3wtcoVWB43FsaH5SQgCI+JgrsJWLd5KgCwwk/TOIvgQ5NbDHeNv/m9GPi
-         AkMWY+XZ3moRq4KZq5lveDSXP/J/SwKoO9rQkGnpV9Gir08HkeLfjYUqrYr6Y7QaBtf7
-         g5iuzeVLY/ZxSCpX93euy0F2woGERUwDa7NRyrwoarpUgxt13EKOGOU/iUUBYWKMp/+v
-         DL2p3mP4I1xaJzd76iJCUwe9WgubXVTKg4r+giRBTs2ofjqE7ufBFyDlNg0yRBS+DcOC
-         B0IUPjs1JumXqC0azsjLPtA3SpkDAcq58LYagDzJihcRHVyAGMcw+6qXqhaArb7AA0sK
-         rwDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722874881; x=1723479681;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+CoAJMCsHveIpfHZDH1fwzV0mbxd5KQw/DdBCUG0TjU=;
-        b=T74DkY1eET4Drr5bMh7VF9u+lh7M/RlZ1zFdcQwYXmfEBFctMYKiVeMCiCXxajy/vM
-         l40gAHTo6W/POMDii8eNrw83jXSeWTEyB3Qj7jmLWr0vLdjH1npjxXhyVpNxbaroz3TN
-         j66LN7MrjeuIsXhstwOlH2GSZRcm6lsclmHkmrHGWBvLATme63mmYPetoisfJKdym82R
-         P6xLGlGz2yI+zLUYKpRRMeZoj7CxKvuibbM3L97GcSSC+eLqXvhzu75aiENS3AjUqEfq
-         m96lKzRmoWNFCIYsnVh1Nqafct6ri/MPQtjGZdq2TEs/rTqKCyNlz4+tVIfgbl3uozSF
-         DA9g==
-X-Gm-Message-State: AOJu0YygZadelzQcZwiAGrcDj8/qpzwweCDj2KL1dEACXO3Ao1kCzx65
-	91CzutSa1yjKuIeG5L+UgF3IawQ2KUMty4mF4O3pN1e1+Q1m/VK5zp21fBEb
-X-Google-Smtp-Source: AGHT+IER1nzmXQbHXY25s9XyYcK3iVQQiOk1bc0rC0MuWprSR7WQH1o+I7NBvFCKSnMhZyskYIrqqg==
-X-Received: by 2002:a17:90a:ea11:b0:2cd:27be:8218 with SMTP id 98e67ed59e1d1-2cff93d5aa4mr11210908a91.8.1722874880743;
-        Mon, 05 Aug 2024 09:21:20 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffb36bd48sm7239981a91.46.2024.08.05.09.21.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 09:21:20 -0700 (PDT)
-Date: Mon, 5 Aug 2024 09:21:17 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
-	l@yury-thinkpad.smtp.subspace.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] uapi: enforce non-asm rule for 128-bit bitmasks macros
-Message-ID: <ZrD7_TZrh0N4Fkx3@yury-ThinkPad>
-References: <20240803133753.1598137-1-yury.norov@gmail.com>
- <c834a806-215b-4375-a5e6-89954fbe7519@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SR6clozPMZm++qyy8txbsUaZiBXMMv0tMx70OWi0pOFdzTnX2MDiXKSkBYYFALf9YyVO7dPLoUSEHlOcSeoPV4iwBj9ttshIor/StqUgoCZ5OX9srOQY2LjRazSNpe3Y5SMw13edoVmxVFUfawSboSA4kbGKZDLvqipmvF2z0WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UelkwFNf; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 9CCCD40C91;
+	Mon,  5 Aug 2024 18:22:57 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qDXlvlnU29eC; Mon,  5 Aug 2024 18:22:56 +0200 (CEST)
+Date: Tue, 6 Aug 2024 00:22:15 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1722874976; bh=6qIlI/ZA8suC3l92XJ5goqxx350QpUDQOkwCZyfLITo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=UelkwFNfMZ5qaYl1Ax+fpc0ktTmc1h+H2/PvIEsUSB33ul2dVsoBrgWw2kfifxk+a
+	 ZNapY89XNiZFMyDuB/iJ/gOr53fmVm9WUJHtok7zl6dq8rSaDkqXgUYv4W0OcXfL2J
+	 L+gEybNbuYS0834qzBjTRxbXwSJdh8gSYVCcvfPSF2lHxU/Cl0fployJ+Ij2CXfzz/
+	 AUryQu2DN3o+Rq72zca20Fb2wP9QH1ZnPpCRME8Srt0maxdrvD3/uEDhIR5knSprg8
+	 WAwyvBfOIME16f7syGH7kCclq/Qb4xNSYQ1hIfjq33TEOzZWnhQcoWCT+2g0GZ/Gta
+	 Odf00auRkCe/g==
+From: Yao Zi <ziyao@disroot.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Dragan Simic <dsimic@manjaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+	Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>, Ondrej Jirman <megi@xff.cz>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+Message-ID: <ZrD8N7_tYAiKCg-C@ziyaolaptop.my.domain>
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <ZrCwrWjRgvE0RS98@ziyaolaptop.my.domain>
+ <82e7e3a78f784b3ad63094c8a0ab1932@manjaro.org>
+ <7941737.iedYuu7f5S@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <c834a806-215b-4375-a5e6-89954fbe7519@arm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7941737.iedYuu7f5S@diego>
 
-On Mon, Aug 05, 2024 at 04:58:25AM +0530, Anshuman Khandual wrote:
-> On 8/3/24 19:07, Yury Norov wrote:
-> > The macros wouldn't work in all assembler flavors for reasons described
-> > in the comments on top of declarations. Enforce it for more by adding
-> > !__ASSEMBLY__ guard.
-> 
-> Right, this makes sense, should have added in the original patch itself.
-> 
+On Mon, Aug 05, 2024 at 01:47:45PM +0200, Heiko Stübner wrote:
+> Am Montag, 5. August 2024, 13:37:11 CEST schrieb Dragan Simic:
+> > On 2024-08-05 12:59, Yao Zi wrote:
+> > > On Sun, Aug 04, 2024 at 04:05:24PM +0200, Krzysztof Kozlowski wrote:
+> > >> On 04/08/2024 15:20, Yao Zi wrote:
+> > >> >>
+> > >> >>> +		compatible = "fixed-clock";
+> > >> >>> +		#clock-cells = <0>;
+> > >> >>> +		clock-frequency = <24000000>;
+> > >> >>> +		clock-output-names = "xin24m";
+> > >> >>> +	};
+> > >> >>> +
+> > >> >>> +	gic: interrupt-controller@fed01000 {
+> > >> >>
+> > >> >> Why this all is outside of SoC?
+> > >> >
+> > >> > Just as Heiko says, device tree for all other Rockchip SoCs don't have
+> > >> > a "soc" node. I didn't know why before but just follow the style.
+> > >> >
+> > >> > If you prefer add a soc node, I am willing to.
+> > >> 
+> > >> Surprising as usually we expect MMIO nodes being part of SoC to be 
+> > >> under
+> > >> soc@, but if that's Rockchip preference then fine.
+> > >> 
+> > > 
+> > > Okay, then I would leave it as is.
+> > > 
+> > > For the fixed-clock node, I think "xin24m: clock-24m { }" is okay and
+> > > follows the new rule?
 > > 
-> > Signed-off-by: Yury Norov <yury.norov@gmail.com>
+> > I find "xin24m: clock-xin24m { }" better, because keeping the "xin24m"
+> > part in /sys listing(s), for example, can only be helpful.
 > 
-> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> I would second that :-) . Like on a number of boards we have for example
+> 125MHz gmac clock generators ... with 2 gmacs, there are 2 of them.
+> 
+> I'm not sure the preferred name accounts for that?
+> 
+> Similarly we also keep the naming in the regulator node,
+> it's regulator-vcc3v3-somename {} instead of just regulator-3v3 {}.
+> 
 
-Thanks, adding in bitmap-for-next.
+"clock-xin24m" wouldn't be more descriptive than "clock-24m" and there
+are usually only a few fixed clocks in dt, thus finding corresponding
+definition isn't a problem I think.
 
-Thanks,
-Yury
+For the gmac case, Krzysztof, do you think something like
+"clock-125m-gmac1" is acceptable, just like what has been done for
+regulators?
+
+Best regards,
+Yao Zi
 
