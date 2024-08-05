@@ -1,192 +1,188 @@
-Return-Path: <linux-kernel+bounces-274350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FFA947712
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:20:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3EFA947717
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FDBA1F218BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B494281B93
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1750F14F9F7;
-	Mon,  5 Aug 2024 08:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6AA14E2DF;
+	Mon,  5 Aug 2024 08:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OKHGrOTJ"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eaBwdpb8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E3714EC79
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C022413E881
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722846023; cv=none; b=h0JbXG9JRN/6Se/I7bofNhHxbgAtJ4oaMUl4YVMdDd3YlcA1TgvxUNRMIUMdx0Aj/MrS13wul/ncM5lpJVsAnJZndSV5m20Rp4290o9aYmwb3CRswekfqN2q7Qs3TxJ34ZnvT39iNw2lMd0rXjvpp9bDXSNYgoJ9LXwrvQTvz1M=
+	t=1722846087; cv=none; b=gOJjwuyBXTk2Kta9DpxkQN4t6cZ/7N0/DJSwDaLgBwqbkDcKLaTckMzaFKv+4gyKKVkQMGYv7M0TaEZfECjwo1RykqYCt3irxTnbMt/+zAlwFgjR0Muwk+FmjoUdufSatMjpITyJu2vjdT0xlNE6dD1RGckUoTm1RArDYlBonSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722846023; c=relaxed/simple;
-	bh=BSB/iX2X5QHoKHPFacoNatwOo33uqLX7EADf+rBHQM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r/R9hquihkyB0IxBat17GGrB1biB4bq23yMom+gzz/FHV367lwbLHmPoxf9oXQKOJozQvu6ZYpMJAdldVt5zlYdbh7xIQDlLK91RfeflCNekDgvKsNku3MyC4GxNuPS3OT8PInrIDAXVWV79HQaUx+IFggc6Ep9Tr5DQ1eaLbdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OKHGrOTJ; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39834949f27so46971635ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722846021; x=1723450821; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+fi+vj00+JjvH+mj3sa9KgQtZBR2qBmi2SsAqsNdYE0=;
-        b=OKHGrOTJpQosGt4ZOOm+XvOzpYF3BnT3S/Vp7ZYIlk4cJgTFd2YCIW32zrv5jNG1MZ
-         xIkVcyP3OMM8BrOYLTfNQHZOE0zlW08ZFb8bqc80droLFUpvBfEfAF2adGi5sxq7gV8R
-         SZBoUBKydjqMwjmW9RdJzHbYl0yBnc42s1oraPIBbHcdhSZP6oU7zFb0HQN/XmIPZTAb
-         y8JTXp37VEGxrUu5tFZBSbcuqK+gftSaXjwQefpOzgQkyWZR2D1D0Qe3elS1e3nDn17G
-         B9GdDh6Zp64SdfN7NYAEem1cpedieUpSA9tVbQxo2IhS58sUMJP4vSpA6pv2Khp165ZZ
-         GZrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722846021; x=1723450821;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+fi+vj00+JjvH+mj3sa9KgQtZBR2qBmi2SsAqsNdYE0=;
-        b=DYO2lWcL/9zOq2NMX9CrerE7jliTEQdi3P3QFIccQMwtDwCwgP7TEuhDf6A/qAbFN5
-         +dT4o2l0Vyt1A0CtDeCQ7p5aLBpgzUhZY0KxDd2btoP7zWOt/cqVuboMd5LiX6a+PekD
-         IYLPqg/qdRdDKkM56RFghz6KKr4AaBlgxOBgi1eHyS4Yg8MXc+XEeD5rKNbo/8QPhXOV
-         KMfP1IzORmDRJmSrJzdUipBI7BeD0UEdtSQBCGtCmkHKV2NC0dOXzJnIzH30OS2ZDLj/
-         COjUAazJOZ+kFE/Jx4qsrT4VJ3o2FJN5QqtxxluKbuZdrx7mEQq/6Y2MBwp6CAXXh5Iu
-         /Vbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBsubgueaT8OaSGYRek5ugz4MZMnuUVxaR0P9dlYLhGtYUlxQUbmLke+n/0hVcmX8N3CBKfgT1F9wBBRJjdfjeVPYdgWGfwxyn4PqN
-X-Gm-Message-State: AOJu0Yz66NLn3u1CbIRSKx3TLQbDUUO4iOmi9Pb7HRpfn2wONxAE1lVX
-	oRXyRA6OlcDp6Yvg+svHgFfNc4YCM7e+jxwAIsNxMB50eomrfLmq
-X-Google-Smtp-Source: AGHT+IEvzlGQG1DU5sAenS+ngpsQ68verMtVLUc4c+qzKZTmgYmforjQMlP9JolotZUa0h+Xjc0uvg==
-X-Received: by 2002:a92:c64d:0:b0:381:fa54:fb33 with SMTP id e9e14a558f8ab-39b1fc1e182mr129162445ab.17.1722846020730;
-        Mon, 05 Aug 2024 01:20:20 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b7653b4c74sm4978190a12.82.2024.08.05.01.20.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 01:20:20 -0700 (PDT)
-Message-ID: <a3cc7157-6ea0-4493-8baf-c988b9fa4dcb@gmail.com>
-Date: Mon, 5 Aug 2024 16:20:15 +0800
+	s=arc-20240116; t=1722846087; c=relaxed/simple;
+	bh=JFF1Gkhd1Ahm+S+sAfcuLs7MekS43Qwvuj1bs3rNd3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LX+36SzT7u4OWL8qo6GOccWojnc0JmmqBZ9wdnmTYW9CKAnOxm9jywgSFNy74gmBn+JwjZJANHg5CyE1gde9vNphUFu8O/wR/qx0jtPMtkHtR0oDLpLk56AoJcP9w9UpusCJmBt4Ux7zYshtWucHwZydrnssfYmuag9aFKRC0UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eaBwdpb8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722846083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=E+p/W2q7vNtsCSk1hop06eQcM6R9eKnUBXTd9dXAayE=;
+	b=eaBwdpb86gf19WNykzS+gt4GYmeswCITsGST3UzZa9UKUSYYaNHtFbg+FBQk0JyrrbpwV/
+	/pMO9Yq8SxDTVofBSIBLC+7MnHaLkFnZcrXMQW9bRVfpjNStXNCHfFVcXl2tD2Sx/lxyJB
+	Zpfl2WC3c+KMoaVezTtPuWLytzPwGxQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-rSsPaaEGPBG5G-FpSH6Fow-1; Mon,
+ 05 Aug 2024 04:21:19 -0400
+X-MC-Unique: rSsPaaEGPBG5G-FpSH6Fow-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD8F41955BED;
+	Mon,  5 Aug 2024 08:21:17 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.148])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5D44519560AE;
+	Mon,  5 Aug 2024 08:21:09 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com
+Cc: maxime.coquelin@redhat.com,
+	xieyongji@bytedance.com,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	21cnbao@gmail.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org
+Subject: [PATCH] vduse: avoid using __GFP_NOFAIL
+Date: Mon,  5 Aug 2024 16:21:06 +0800
+Message-ID: <20240805082106.65847-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/22] mm/zsmalloc: convert create_page_chain() and its
- users to use zpdesc
-To: Vishal Moola <vishal.moola@gmail.com>, alexs@kernel.org
-Cc: Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin
- <linmiaohe@huawei.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org,
- willy@infradead.org, senozhatsky@chromium.org, david@redhat.com,
- 42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
-References: <20240729112534.3416707-1-alexs@kernel.org>
- <20240729112534.3416707-7-alexs@kernel.org>
- <66ad2ef0.170a0220.8fae7.6e38@mx.google.com>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <66ad2ef0.170a0220.8fae7.6e38@mx.google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Barry said [1]:
 
+"""
+mm doesn't support non-blockable __GFP_NOFAIL allocation. Because
+__GFP_NOFAIL without direct reclamation may just result in a busy
+loop within non-sleepable contexts.
+""“
 
-On 8/3/24 3:09 AM, Vishal Moola wrote:
-> On Mon, Jul 29, 2024 at 07:25:18PM +0800, alexs@kernel.org wrote:
->> From: Alex Shi <alexs@kernel.org>
->>
->> Introduce a few helper functions for conversion to convert create_page_chain()
->> to use zpdesc, then use zpdesc in replace_sub_page() too.
-> 
-> As a general note, I've been having trouble keeping track of your helper
-> functions throughout your patchset. Things get confusing when helper
-> functions are "add-ons" to patches and are then replaced/rewritten
-> in various subsequent patches - might just be me though.
+Unfortuantely, we do that under read lock. A possible way to fix that
+is to move the pages allocation out of the lock into the caller, but
+having to allocate a huge number of pages and auxiliary page array
+seems to be problematic as well per Tetsuon [2]:
 
-Right, maybe too much helper doesn't give necessary help.
+"""
+You should implement proper error handling instead of using
+__GFP_NOFAIL if count can become large.
+"""
 
-> 
->> Originally-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
->> Signed-off-by: Alex Shi <alexs@kernel.org>
->> ---
->>  mm/zpdesc.h   |   6 +++
->>  mm/zsmalloc.c | 115 +++++++++++++++++++++++++++++++++-----------------
->>  2 files changed, 82 insertions(+), 39 deletions(-)
->>
->> diff --git a/mm/zpdesc.h b/mm/zpdesc.h
->> index 79ec40b03956..2293453f5d57 100644
->> --- a/mm/zpdesc.h
->> +++ b/mm/zpdesc.h
->> @@ -102,4 +102,10 @@ static inline struct zpdesc *pfn_zpdesc(unsigned long pfn)
->>  {
->>  	return page_zpdesc(pfn_to_page(pfn));
->>  }
->> +
->> +static inline void __zpdesc_set_movable(struct zpdesc *zpdesc,
->> +					const struct movable_operations *mops)
->> +{
->> +	__SetPageMovable(zpdesc_page(zpdesc), mops);
->> +}
->>  #endif
->> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
->> index bbc165cb587d..a8f390beeab8 100644
->> --- a/mm/zsmalloc.c
->> +++ b/mm/zsmalloc.c
->> @@ -248,6 +248,41 @@ static inline void *zpdesc_kmap_atomic(struct zpdesc *zpdesc)
->>  	return kmap_atomic(zpdesc_page(zpdesc));
->>  }
->>  
->> +static inline void zpdesc_set_zspage(struct zpdesc *zpdesc,
->> +				     struct zspage *zspage)
->> +{
->> +	zpdesc->zspage = zspage;
->> +}
->> +
->> +static inline void zpdesc_set_first(struct zpdesc *zpdesc)
->> +{
->> +	SetPagePrivate(zpdesc_page(zpdesc));
->> +}
->> +
-> 
-> I'm not a fan of the names above. IMO, naming should follow some
-> semblance of consistency regarding their purpose (or have comments
-> that describe their purpose instead).
-> 
-> At a glance zpdesc_set_zspage() and zpdesc_set_first() sound like they
-> are doing similar things, but I don't think they serve similar purposes?
+So I choose another way, which does not release kernel bounce pages
+when user tries to register usersapce bounce pages. Then we don't need
+to do allocation in the path which is not expected to be fail (e.g in
+the release). We pay this for more memory usage but further
+optimizations could be done on top.
 
-zpdesc_set_zspage() only used in one place, a helper maynot needed. Let me remove it.
-Same thing for the alloc_zpdesc() and free_zpdesc(), they could be merge into using place.
+[1] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8ZQ2saLnUdfOGOLg@mail.gmail.com/T/#m3caef86a66ea6318ef94f9976ddb3a0ccfe6fcf8
+[2] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq8ZQ2saLnUdfOGOLg@mail.gmail.com/T/#m7ad10eaba48ade5abf2d572f24e185d9fb146480
 
-Thanks
-Alex
-> 
->> +static inline void zpdesc_inc_zone_page_state(struct zpdesc *zpdesc)
->> +{
->> +	inc_zone_page_state(zpdesc_page(zpdesc), NR_ZSPAGES);
->> +}
->> +
->> +static inline void zpdesc_dec_zone_page_state(struct zpdesc *zpdesc)
->> +{
->> +	dec_zone_page_state(zpdesc_page(zpdesc), NR_ZSPAGES);
->> +}
->> +
->> +static inline struct zpdesc *alloc_zpdesc(gfp_t gfp)
->> +{
->> +	struct page *page = alloc_page(gfp);
->> +
->> +	return page_zpdesc(page);
->> +}
->> +
->> +static inline void free_zpdesc(struct zpdesc *zpdesc)
->> +{
->> +	struct page *page = zpdesc_page(zpdesc);
->> +
->> +	__free_page(page);
->> +}
->> +
->  
+Fixes: 6c77ed22880d ("vduse: Support using userspace pages as bounce buffer")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/vdpa/vdpa_user/iova_domain.c | 18 ++++++++++--------
+ drivers/vdpa/vdpa_user/iova_domain.h |  1 +
+ 2 files changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
+index 791d38d6284c..933d2f7cd49a 100644
+--- a/drivers/vdpa/vdpa_user/iova_domain.c
++++ b/drivers/vdpa/vdpa_user/iova_domain.c
+@@ -162,6 +162,7 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
+ 				enum dma_data_direction dir)
+ {
+ 	struct vduse_bounce_map *map;
++	struct page *page;
+ 	unsigned int offset;
+ 	void *addr;
+ 	size_t sz;
+@@ -178,7 +179,10 @@ static void vduse_domain_bounce(struct vduse_iova_domain *domain,
+ 			    map->orig_phys == INVALID_PHYS_ADDR))
+ 			return;
+ 
+-		addr = kmap_local_page(map->bounce_page);
++		page = domain->user_bounce_pages ?
++		       map->user_bounce_page : map->bounce_page;
++
++		addr = kmap_local_page(page);
+ 		do_bounce(map->orig_phys + offset, addr + offset, sz, dir);
+ 		kunmap_local(addr);
+ 		size -= sz;
+@@ -270,9 +274,8 @@ int vduse_domain_add_user_bounce_pages(struct vduse_iova_domain *domain,
+ 				memcpy_to_page(pages[i], 0,
+ 					       page_address(map->bounce_page),
+ 					       PAGE_SIZE);
+-			__free_page(map->bounce_page);
+ 		}
+-		map->bounce_page = pages[i];
++		map->user_bounce_page = pages[i];
+ 		get_page(pages[i]);
+ 	}
+ 	domain->user_bounce_pages = true;
+@@ -297,17 +300,16 @@ void vduse_domain_remove_user_bounce_pages(struct vduse_iova_domain *domain)
+ 		struct page *page = NULL;
+ 
+ 		map = &domain->bounce_maps[i];
+-		if (WARN_ON(!map->bounce_page))
++		if (WARN_ON(!map->user_bounce_page))
+ 			continue;
+ 
+ 		/* Copy user page to kernel page if it's in use */
+ 		if (map->orig_phys != INVALID_PHYS_ADDR) {
+-			page = alloc_page(GFP_ATOMIC | __GFP_NOFAIL);
++			page = map->bounce_page;
+ 			memcpy_from_page(page_address(page),
+-					 map->bounce_page, 0, PAGE_SIZE);
++					 map->user_bounce_page, 0, PAGE_SIZE);
+ 		}
+-		put_page(map->bounce_page);
+-		map->bounce_page = page;
++		put_page(map->user_bounce_page);
+ 	}
+ 	domain->user_bounce_pages = false;
+ out:
+diff --git a/drivers/vdpa/vdpa_user/iova_domain.h b/drivers/vdpa/vdpa_user/iova_domain.h
+index f92f22a7267d..7f3f0928ec78 100644
+--- a/drivers/vdpa/vdpa_user/iova_domain.h
++++ b/drivers/vdpa/vdpa_user/iova_domain.h
+@@ -21,6 +21,7 @@
+ 
+ struct vduse_bounce_map {
+ 	struct page *bounce_page;
++	struct page *user_bounce_page;
+ 	u64 orig_phys;
+ };
+ 
+-- 
+2.31.1
+
 
