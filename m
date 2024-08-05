@@ -1,125 +1,94 @@
-Return-Path: <linux-kernel+bounces-274111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA0F947382
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:59:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12818947383
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BE57280FC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 02:59:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0777B20BC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52DE13CA93;
-	Mon,  5 Aug 2024 02:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8027B13C820;
+	Mon,  5 Aug 2024 03:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fIVNCdaX"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VG5JVEME"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9CA2BCF7;
-	Mon,  5 Aug 2024 02:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9ADE1FA1;
+	Mon,  5 Aug 2024 03:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722826747; cv=none; b=htxch7lDJnPYpMowykWbYRRFXZOhTNNYvWX0xGxudn7VH7kRrevBsF++O1IAfe4wVzJqkVN9TEWmiFvZg08NHY+ja8A+rQRcigfjGI7n0JRY9z2ue3DHkoknUrCEvOdOOt9a81vrmdZVxEfKBp9neXYLC+rJhZA1Cln2IgiVnGc=
+	t=1722826845; cv=none; b=Pe5HEu5rDFj9USGl79wa4u1IYNvsW/Ai3SA4W91EWlHMdU1Df92wZUHLURCLDjD0xfwL+JFdNa/eGdDdBNWXxzDuzqUlEu8jlq6oZpDUHugSWwtwT96eTKHXnS0SBQu06FZ+w3Ky8PRvN5lbTTsKCC45XjUEqlk5i7eUJirPSpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722826747; c=relaxed/simple;
-	bh=V8wh6d6ZtqImE6AX90LtdmD9AzPtO3ZLthBz+nRGAa8=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=oRrIra3jqnEotbdOZMpFo47gJk+cqxDbbdNH0rn8Rz3fmbmqf1wcmjljS+i/5mMMSqzfaF6HbghcawGvNFVXavoldnziYmruJB+jI2+ZBQ2XwCrX+IHLxAHQM/leePFlxqWP1Gf5El9xkNUqGvG+iZ+Jv3D38E+jRiMsEwLoeEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fIVNCdaX; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722826742;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V8wh6d6ZtqImE6AX90LtdmD9AzPtO3ZLthBz+nRGAa8=;
-	b=fIVNCdaXXUpDe4+FzNILBIyzwEArX9OQvgfH+bkYslOyM6GDm7l8cR85XTISn4vG0d2yEi
-	kHxFWfENnLBK1J53XV8AVKizpJJv2b6SuvUjF/Zl6wTLmEj+uZkD9Y9enyrjduMJU0UHkQ
-	I3It5yLN0w2xExgM83mnMqgrVGQoj0U=
+	s=arc-20240116; t=1722826845; c=relaxed/simple;
+	bh=5WOwwX41bg9jUkw5aLZTaElQmfmRJJ1nHSdt7Fih1t8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uW4dusYbmEfam3MXM99iKkwvSheAp6Jm1LKKb6pDKywAvRIjHIaOIdSvWKDxBiWcX5ii+iwsXM/NUbcXupWniiVXn/CTBf5zcJ+1Y+3i9MnUn10Rm8UD5B/QXzkJnYVA79exScWvjLooLA9OgQNW2tOYBYf6sgONIAjew9ASfME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VG5JVEME; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C0DC32786;
+	Mon,  5 Aug 2024 03:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722826845;
+	bh=5WOwwX41bg9jUkw5aLZTaElQmfmRJJ1nHSdt7Fih1t8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VG5JVEMEhpbFp9IzTJAGC3a4brcKHXUrZehXzrWK76ry1PadAU3HsbPc0AdSsoVW2
+	 Hm7ErmVB12JoQRHm/uex4Jep+F7IGUDxr2qAmOyYJx4QNY2QHiqPrs7YbqCwkbnUqV
+	 nTNtlJujikH7p59/D9jU4ERTjQNBsTCAUHJoENuj7hscxaCQEy2C2pQAh2GnoUWUto
+	 MJ7Xl5Ff1w724pdydZr3JS9m4vifG3ZzjgxO7ZCMOygy9zax0qZA5buljT9Fx3eNj6
+	 klPVftONJs7rff4AtPP0iY/aKZYJVYWCKoyOE0H+5pmVN0R5EdebEpvgazy6a4BMP0
+	 bfexZQX58RKMw==
+Date: Sun, 4 Aug 2024 20:00:43 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	David Gow <davidgow@google.com>
+Subject: Re: ERROR: modpost: "__popcountdi2"
+ [lib/kunit/kunit-example-test.ko] undefined!
+Message-ID: <20240805030043.GA3417507@thelio-3990X>
+References: <202408041932.EzITeEV4-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH] memcg: protect concurrent access to mem_cgroup_idr
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20240802235822.1830976-1-shakeel.butt@linux.dev>
-Date: Mon, 5 Aug 2024 10:58:22 +0800
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Linux Memory Management List <linux-mm@kvack.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Meta kernel team <kernel-team@meta.com>,
- cgroups@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <39C19964-C74E-4479-AB21-74B7C603CAC8@linux.dev>
-References: <20240802235822.1830976-1-shakeel.butt@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202408041932.EzITeEV4-lkp@intel.com>
 
+On Sun, Aug 04, 2024 at 07:13:11PM +0800, kernel test robot wrote:
+> Hi Michal,
+> 
+> First bad commit (maybe != root cause):
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   17712b7ea0756799635ba159cc773082230ed028
+> commit: ee5f8cc2770b2f0f7cfefb5bf7534e2859e39485 kunit: Reset test status on each param iteration
+> date:   11 months ago
+> config: riscv-randconfig-001-20240804 (https://download.01.org/0day-ci/archive/20240804/202408041932.EzITeEV4-lkp@intel.com/config)
+> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240804/202408041932.EzITeEV4-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408041932.EzITeEV4-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>, old ones prefixed by <<):
+...
+> >> ERROR: modpost: "__popcountdi2" [lib/kunit/kunit-example-test.ko] undefined!
+> ERROR: modpost: "__popcountdi2" [lib/test_hexdump.ko] undefined!
 
+Sorry for the noise, this appears to be a regression with tip of tree
+LLVM:
 
-> On Aug 3, 2024, at 07:58, Shakeel Butt <shakeel.butt@linux.dev> wrote:
->=20
-> The commit 73f576c04b94 ("mm: memcontrol: fix cgroup creation failure
-> after many small jobs") decoupled the memcg IDs from the CSS ID space =
-to
-> fix the cgroup creation failures. It introduced IDR to maintain the
-> memcg ID space. The IDR depends on external synchronization mechanisms
-> for modifications. For the mem_cgroup_idr, the idr_alloc() and
-> idr_replace() happen within css callback and thus are protected =
-through
-> cgroup_mutex from concurrent modifications. However idr_remove() for
-> mem_cgroup_idr was not protected against concurrency and can be run
-> concurrently for different memcgs when they hit their refcnt to zero.
-> Fix that.
->=20
-> We have been seeing list_lru based kernel crashes at a low frequency =
-in
-> our fleet for a long time. These crashes were in different part of
-> list_lru code including list_lru_add(), list_lru_del() and reparenting
-> code. Upon further inspection, it looked like for a given object =
-(dentry
-> and inode), the super_block's list_lru didn't have list_lru_one for =
-the
-> memcg of that object. The initial suspicions were either the object is
-> not allocated through kmem_cache_alloc_lru() or somehow
-> memcg_list_lru_alloc() failed to allocate list_lru_one() for a memcg =
-but
-> returned success. No evidence were found for these cases.
->=20
-> Looking more deeper, we started seeing situations where valid memcg's =
-id
-> is not present in mem_cgroup_idr and in some cases multiple valid =
-memcgs
-> have same id and mem_cgroup_idr is pointing to one of them. So, the =
-most
-> reasonable explanation is that these situations can happen due to race
-> between multiple idr_remove() calls or race between
-> idr_alloc()/idr_replace() and idr_remove(). These races are causing
-> multiple memcgs to acquire the same ID and then offlining of one of =
-them
-> would cleanup list_lrus on the system for all of them. Later access =
-from
-> other memcgs to the list_lru cause crashes due to missing =
-list_lru_one.
->=20
-> Fixes: 73f576c04b94 ("mm: memcontrol: fix cgroup creation failure =
-after many small jobs")
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+https://github.com/llvm/llvm-project/pull/101786#issuecomment-2268077506
 
-Acked-by: Muchun Song <muchun.song@linux.dev>
-
-Thanks.
-
+Cheers,
+Nathan
 
