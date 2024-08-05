@@ -1,234 +1,278 @@
-Return-Path: <linux-kernel+bounces-274201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F49F9474ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:58:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC429474EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23AC1C20D46
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDA621C20C6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB101448E2;
-	Mon,  5 Aug 2024 05:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B22143C6E;
+	Mon,  5 Aug 2024 05:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ob7Z19Gm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1pJGpv3A"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2089.outbound.protection.outlook.com [40.107.93.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E97143C4B;
-	Mon,  5 Aug 2024 05:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722837476; cv=none; b=eBewUZqf906AyS1X5LM5bKkFhl6KeknMWv0MehAIzFhpvG8UOTgJwWHAL44qOZbrbHztdDRjLEPZhzfJNS/jPliwXAfqo+inRMARsLUoHYdqY3AiOjIoU5emWsa9k+MkxaaozmROESgu5he6QrOARWsX5+4pKWCmypMe7/oYvL8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722837476; c=relaxed/simple;
-	bh=qu+yzfCh32NsS+pabuQNKzqmRPtfgtTFOkbIoXQ5gzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gvI6V/2b7mAjGS134LN7uQ0Nh785o1NUfH0i+lchJJThi6uNkpS47COmDJUFYd7Dx2I9HUkiyo/8MgPUwiTSStntY4SQ4mgkJhPb2SqkitVKBpsl7mnB6pSr1c5Es4CjxDOFMT6slyiOMpl2uGKxqTjJQ7ToYHjitDBqONKqj9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ob7Z19Gm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4752Vexx023857;
-	Mon, 5 Aug 2024 05:57:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	c0m0GUgmMGH4VcXYWgBHUtXWyVZrk/+pijv15cQ1x+w=; b=Ob7Z19GmpYNVu+kN
-	C1c2fA8cYhZPx+syl7/RzXiaU2SiUupz0jtn/Admq86zPSNKaCjsh6tLXxTy26pW
-	SHiJW0JzgGlbUl3HsPzVcq5eaSvW9UEPikPICENhKiScXgs9fU35nPcxI2+15Kx6
-	DPUlLHEM5ir1b4P2xZfSOScDGdREbbEb+mZAp3apXQeDdVyzg7F/0cHvamvq5v9P
-	NHjTyB/nwk2Vp+u+afRkQgVllTjzqlD062GRSUxiOC5RZXz+vIfR7WnlBj+6T1PJ
-	FQrMQNMDfy7G7oDoLrJufDkb/SpMMS/VQ1pgTQaNpPB//uZoic84fxlj75n+TLBP
-	gMvkUQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbgru10w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 05:57:45 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4755virR000531
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Aug 2024 05:57:44 GMT
-Received: from [10.216.50.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 Aug 2024
- 22:57:38 -0700
-Message-ID: <7f48f71c-7f57-492c-47df-6aac1d3b794b@quicinc.com>
-Date: Mon, 5 Aug 2024 11:27:35 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D02E1109
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 05:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722837554; cv=fail; b=k9fyYjRmVI8/thE4C0YtQ6jc3HoNyhGLpMQ3RBg0VsiTxPCbxWpJXgERBCSJkimS3tqWcOAzLD4o1Fl8Dw4IazZwLblHNNcSTkHds4Si68VviAwWdnXtSGxD+7TVezqTQ1EbLYN1n+27Zi4klrXozEnfj2rzYFJCQ1TehSlnw7A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722837554; c=relaxed/simple;
+	bh=Xf1eteLqDzsd/v8XqAqukGomKAosxqem1s6dIX+lt3w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KEcs5iYV/hvPMbHsOmL7n5qKAvBZ9aaKJ7RAGsJn8Otfo9FyAmgBLzK9VFX8J7EfNwmcI9AYgC2BAenAAKpEYMUwaOVP/GymHOvIqctdqdKW81VEsuJUbIw3yyPCKrizijgRyIziIXo9n9/lXeEcabcTlwatEmoeAe+z/KkeQ+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1pJGpv3A; arc=fail smtp.client-ip=40.107.93.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JIREiqyT2l8phfbdVXZBJsuOcn+K+HnMsqZRKqolrUdw0PXvpcVoO9Nr/GY7nP3Kq96zQefJd92Sh/jPcmXW7R2V9VoRHCmCGAGo0YsTfTan7RI+S34cJwU62aSeVehKerl6ZAhuWzS2+mfeMX61K7g4sIjXP9+kA+G30pc9pzZi2jk9wh14WPS+iWxb9c1mTnrWbqtf5bx1e5BNTm0BsMtX0PbgzJ37p33obPm5mhA+Xyxb2WcnhvCVzeTNRrfYN2jH5skZtga57QMaX7q5j0PpmycL7Spoy58IT5FlthW2XwhEHSn/4cU/xRWMi10iZAUOFjyNDDrS2iY4ismWeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i/710h/M6giJ2S2rBeBx3w4kvkZLcUQTsY5lPIiPGbE=;
+ b=PnzYlkOpuIag2ual8tGkDDF6C/u5diHOOsJGQ7Fu5J1C4mx5UwPQLyIinkdYSe1iNVGrIUC+/9GBT3WSWBQeMbFp1LBLg1w0tU0t+UgAAttO1VpmMEunovDNr4Y/uCl75pKMbkJq3zdon0WsyFNLbF5V/7i2SQKbk25X33iLAr0KYEBN2OlfMFcRU2GcBPPc6lq4go9io2a89yzJ4uO5nixiltbupDK67/MyVj7Z7p+8CSk+/Z7hKrkjj28t5MnG9W8PTavtd2cu/onLiFLcvvkipMwJ2cN4VByHvmvPpPL3weWZNIrcwtk7G3HzoLjBNKBqQhvUreHOxnvcFjLlng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=ideasonboard.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i/710h/M6giJ2S2rBeBx3w4kvkZLcUQTsY5lPIiPGbE=;
+ b=1pJGpv3AmI4oG3SYXOlACN2robpKveHYtuPUl55w6r9RLcZFX0rAYymlmCISLWMW+jx7hZbH/VY1EwfQ5DJ2ddb+bhI5FPl8l4T7LQ7BTez5XP7auNvqH6sl2hhztfm89ZUlzhe9/OgXJEkgiFTxcSyrs2XM2KANc3wHADZKICU=
+Received: from CH2PR14CA0022.namprd14.prod.outlook.com (2603:10b6:610:60::32)
+ by DM4PR12MB6445.namprd12.prod.outlook.com (2603:10b6:8:bd::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Mon, 5 Aug
+ 2024 05:59:08 +0000
+Received: from CH2PEPF0000013B.namprd02.prod.outlook.com
+ (2603:10b6:610:60:cafe::67) by CH2PR14CA0022.outlook.office365.com
+ (2603:10b6:610:60::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27 via Frontend
+ Transport; Mon, 5 Aug 2024 05:59:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF0000013B.mail.protection.outlook.com (10.167.244.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Mon, 5 Aug 2024 05:59:08 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 5 Aug
+ 2024 00:59:07 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 5 Aug
+ 2024 00:59:07 -0500
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 5 Aug 2024 00:59:05 -0500
+From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+To: <laurent.pinchart@ideasonboard.com>, <vkoul@kernel.org>,
+	<kishon@kernel.org>, <michal.simek@amd.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <git@amd.com>
+Subject: [PATCH v2] phy: xilinx: phy-zynqmp: Fix SGMII linkup failure on resume
+Date: Mon, 5 Aug 2024 11:29:07 +0530
+Message-ID: <1722837547-2578381-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-Mailer: git-send-email 2.1.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <andersson@kernel.org>, <quic_vbadigan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
- <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
- <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
- <58317fe2-fbea-400e-bd1d-8e64d1311010@kernel.org>
- <100e27d7-2714-89ca-4a98-fccaa5b07be3@quicinc.com>
- <c80ae784-c1f3-4046-9d86-d7e57bd93669@kernel.org>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <c80ae784-c1f3-4046-9d86-d7e57bd93669@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OAR1W457MC8YipMhCR3X__uupBlBKkR9
-X-Proofpoint-GUID: OAR1W457MC8YipMhCR3X__uupBlBKkR9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 malwarescore=0 suspectscore=0 phishscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408050041
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013B:EE_|DM4PR12MB6445:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2bc3fd65-184c-4d5b-9e1c-08dcb513b886
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uqBquG/TN3F8Y/gHGkPTTphSwLhiMl1lSnfUDgpsjfpAeF9QrCctvxo5F/Xd?=
+ =?us-ascii?Q?NL0+Uip8h/zWES4z1as54cjZ7n0E5E3GWe3DrR8ZwONnjnFaZlWN6c7fxn7a?=
+ =?us-ascii?Q?wFoJy78TXQoupYrHtdQwUQLbEW3/d9tIP91CPz7574Wfoq6CmIC+KV5zWUJm?=
+ =?us-ascii?Q?9Ggn5FSABqOeikb+VV1zK0gve5WwqVp5fjwT7j0h+3NkGq5t+PE8BoXLM5wM?=
+ =?us-ascii?Q?qRcDRqNhitYXAGaF7u61CBr2emmMKsLIJ3XTjtWqjqNxm8kXei79LlKPLx0Z?=
+ =?us-ascii?Q?Q6Rdkhmt6wlQvY2bPO22q4NVVVZD9dyZE5I51FrIPf52fTnBaEgmw7SvCScp?=
+ =?us-ascii?Q?3we1rLunBM3LN/oh+tD2CXc9d3lcuO2CjwJj5jNExbIAHiFGkH1/J/qRzVov?=
+ =?us-ascii?Q?jUlNwhEBVOMEE+Jp/aNhlI9+tiD5M+LKVjkvB/fdRwkwtM6hbnfruB2HHuyX?=
+ =?us-ascii?Q?K9DuGyo0wliLN8HYS4UfXbe7olxEV+eku93GBssbsVK4lCbWkrizLpofIyUb?=
+ =?us-ascii?Q?2JlRp2GiqmOt6Ifx1O4afx54dJpJbXS5Jdosf+H4MrAWWN4QV0SKQN3rTbI4?=
+ =?us-ascii?Q?cqAdBFqtNasnKnvI2EVwxixxlcr3KwsGQcXyZrygPMi7PLJWxQAnAq0KlGfr?=
+ =?us-ascii?Q?ZOWFtApMFscottUssv4y2KRZAGLocWuOVqhgHwvnuHh34OLZUkKXGaTAArOg?=
+ =?us-ascii?Q?I2AS92a+fqjVOM/ZBVYsVUBwxpM9kxSLk0nVWdMDNuaY60omHs+aAiGdohg1?=
+ =?us-ascii?Q?1QJCYJciLCrU7RQrkBqOrYc3W2x2C5MTza2Gi+PU9FI40s5z6p//ENoQ9IvF?=
+ =?us-ascii?Q?b1MnXa6eoTqj78w2K60I9IptSlQKAlM5VffH1dNbt5jeISUATA9fXR15bc/M?=
+ =?us-ascii?Q?XuteDHVt/M6QYp28jXtk5SitaeiE8FjfjTG8WWVwvagRqPGVyghF9GErQVfc?=
+ =?us-ascii?Q?cfEvqjgBUMGAbPLbSnSKGIbKY93r0PYc0u5gebCgxYGXauwdKcyJTmcLQUyv?=
+ =?us-ascii?Q?F5VMkv0CogDC7rSCq3r9h6tWfIF+tYNEsPv0ENvWd8KUWJcWH4WFLGjKsWip?=
+ =?us-ascii?Q?0o0tDeSBUvKF+WnxBbT63Cf4RMTK/jmzjJ7P9Ji7gE0NOvpC8eR14p3LnJlG?=
+ =?us-ascii?Q?RhOZyDVyfm6tiemxhi89wt7j5PJ+fn+hfUOM2ms5A57eaz8iX5pAT7V5QZDZ?=
+ =?us-ascii?Q?FjhfIfuF9B3MXX6HtRlUGl9/Zh0ryzRxVZWnReLcSFlSRZd6NbjBbiJPuap3?=
+ =?us-ascii?Q?X9COSvWsghuelxN49MzCGfU/b7anFiAZfT3BLGE1W6v66xEAOFsdR5FeFPHq?=
+ =?us-ascii?Q?vP7P4uVWtpsBXTUDvzuofBd5/8k4tZVoNhJy1komOM4X64GbpfYo4WxsOiD6?=
+ =?us-ascii?Q?QgU/uv+mhwlLPDBrXR/p+fn/O2S7WMAF5wf3IoMyDJRNAvwJqfGMEZnzwm+K?=
+ =?us-ascii?Q?8kZnhm2ykt3mgPsCJU6GiLFJS+u+zo2S?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 05:59:08.3822
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bc3fd65-184c-4d5b-9e1c-08dcb513b886
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000013B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6445
 
+From: Piyush Mehta <piyush.mehta@amd.com>
 
+On a few Kria KR260 Robotics Starter Kit the PS-GEM SGMII linkup is not
+happening after the resume. This is because serdes registers are reset
+when FPD is off (in suspend state) and needs to be reprogrammed in the
+resume path with the same default initialization as done in the first
+stage bootloader psu_init routine.
 
-On 8/5/2024 10:58 AM, Krzysztof Kozlowski wrote:
-> On 05/08/2024 07:26, Krishna Chaitanya Chundru wrote:
->>
->>
->> On 8/5/2024 10:44 AM, Krzysztof Kozlowski wrote:
->>> On 05/08/2024 06:11, Krishna Chaitanya Chundru wrote:
->>>
->>>
->>>>>> +
->>>>>> +  qcom,nfts:
->>>>>> +    $ref: /schemas/types.yaml#/definitions/uint8
->>>>>> +    description:
->>>>>> +      Fast Training Sequence (FTS) is the mechanism that
->>>>>> +      is used for bit and Symbol lock.
->>>>>
->>>>> What are the values? Why this is uint8?
->>>>>
->>>> These represents number of fast training sequence and doesn't have
->>>> any units and the maximum value for this is 0xFF only so we used
->>>> uint8.
->>>>> You described the desired Linux feature or behavior, not the actual
->>>>> hardware. The bindings are about the latter, so instead you need to
->>>>> rephrase the property and its description to match actual hardware
->>>>> capabilities/features/configuration etc.
->>>> ack.
->>>>>
->>>>>> +
->>>>>> +allOf:
->>>>>> +  - $ref: /schemas/pci/pci-bus-common.yaml#
->>>>>> +  - if:
->>>>>> +      properties:
->>>>>> +        compatible:
->>>>>> +          contains:
->>>>>> +            const: pci1179,0623
->>>>>> +      required:
->>>>>> +        - compatible
->>>>>
->>>>> Why do you have entire if? You do not have multiple variants, drop.
->>>>>
->>>> The child nodes also referencing the qcom,qps615.yaml# node, I tried
->>>> to use this way to say "the below properties are for the required for
->>>> parent and optional for child".
->>>
->>> I don't understand how child device can be exactly the same as parent
->>> device. How does it look in terms of hardware? Pins and supplies?
->>>
->>>>>> +    then:
->>>>>> +      required:
->>>>>> +        - vdd18-supply
->>>>>> +        - vdd09-supply
->>>>>> +        - vddc-supply
->>>>>> +        - vddio1-supply
->>>>>> +        - vddio2-supply
->>>>>> +        - vddio18-supply
->>>>>> +        - qcom,qps615-controller
->>>>>> +        - reset-gpios
->>>>>> +
->>>>>> +patternProperties:
->>>>>> +  "@1?[0-9a-f](,[0-7])?$":
->>>>>> +    type: object
->>>>>> +    $ref: qcom,qps615.yaml#
->>>>>> +    additionalProperties: true
->>>>>
->>>>> Nope, drop pattern Properties or explain what is this.
->>>>>
->>>> the child nodes represent the downstream ports of the PCIe
->>>> switch which wants to use same properties that is why
->>>> I tried to use this pattern properties.
->>>
->>> Downstream port is not the same as device. Why downstream port has the
->>> same supplies? To which pins are they connected?
->>>
->>>
->> Hi Krzysztof,
->>
->> Downstream ports dosen't have pins or supplies to power on.
->>
->> But there are properties like qcom,l0s-entry-delay-ns,
->> qcom,l1-entry-delay-ns,  qcom,tx-amplitude-millivolt etc which
->> applicable for child nodes also. Instead of re-declaring the
->> these properties again I tried to use pattern properties.
-> 
-> You could use $defs for them, but I don't understand how does these
-> properties apply for both main device and ports. It seems you are
-> writing binding to match some driver behavior. Let's start from basics -
-> describe the hardware.
-> 
-Hi Krzysztof,
+To address the failure introduce a set of serdes registers to be saved in
+the suspend path and then restore it on resume.
 
-QPS615 has a 3 downstream ports and 1 upstream port as described below
-diagram.
-For this entire switch there are some supplies which we described in the
-dt-binding (vdd18-supply, vdd09-supply etc) and one GPIO which controls
-reset of the switch (reset-gpio). The switch hardware can configure the
-individual ports DSP0, DSP1, DSP2, upstream port and also one integrated
-ethernet endpoint which is connected to DSP2(I didn't mentioned in the
-diagram) through I2C.
+Fixes: 4a33bea00314 ("phy: zynqmp: Add PHY driver for the Xilinx ZynqMP Gigabit Transceiver")
+Signed-off-by: Piyush Mehta <piyush.mehta@amd.com>
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+---
+Changes for v2:
+- Use lower case for hex values.
+- Add Fixes tag.
+---
+ drivers/phy/xilinx/phy-zynqmp.c | 56 +++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-The properties other than supplies,i2c client, reset gpio which
-are added will be applicable for all the ports.
-_______________________________________________________________
-|   |i2c|                   QPS615       |Supplies||Resx gpio |
-|   |___|              _________________ |________||__________|
-|      ________________| Upstream port |_____________         |
-|      |               |_______________|            |         |
-|      |                       |                    |         |
-|      |                       |                    |         |
-|  ____|_____              ____|_____            ___|____     |
-|  |DSP 0   |              | DSP 1  |            | DSP 2|     |
-|  |________|              |________|            |______|     |
-|_____________________________________________________________|
+diff --git a/drivers/phy/xilinx/phy-zynqmp.c b/drivers/phy/xilinx/phy-zynqmp.c
+index cb15041371c9..e6579002f114 100644
+--- a/drivers/phy/xilinx/phy-zynqmp.c
++++ b/drivers/phy/xilinx/phy-zynqmp.c
+@@ -160,6 +160,24 @@ static const char *const xpsgtr_icm_str[] = {
+ /* Timeout values */
+ #define TIMEOUT_US			1000
+ 
++/* Lane 0/1/2/3 offset */
++#define DIG_8(n)		((0x4000 * (n)) + 0x1074)
++#define ILL13(n)		((0x4000 * (n)) + 0x1994)
++#define DIG_10(n)		((0x4000 * (n)) + 0x107c)
++#define RST_DLY(n)		((0x4000 * (n)) + 0x19a4)
++#define BYP_15(n)		((0x4000 * (n)) + 0x1038)
++#define BYP_12(n)		((0x4000 * (n)) + 0x102c)
++#define MISC3(n)		((0x4000 * (n)) + 0x19ac)
++#define EQ11(n)			((0x4000 * (n)) + 0x1978)
++
++static u32 save_reg_address[] = {
++	/* Lane 0/1/2/3 Register */
++	DIG_8(0), ILL13(0), DIG_10(0), RST_DLY(0), BYP_15(0), BYP_12(0), MISC3(0), EQ11(0),
++	DIG_8(1), ILL13(1), DIG_10(1), RST_DLY(1), BYP_15(1), BYP_12(1), MISC3(1), EQ11(1),
++	DIG_8(2), ILL13(2), DIG_10(2), RST_DLY(2), BYP_15(2), BYP_12(2), MISC3(2), EQ11(2),
++	DIG_8(3), ILL13(3), DIG_10(3), RST_DLY(3), BYP_15(3), BYP_12(3), MISC3(3), EQ11(3),
++};
++
+ struct xpsgtr_dev;
+ 
+ /**
+@@ -209,6 +227,7 @@ struct xpsgtr_phy {
+  * @tx_term_fix: fix for GT issue
+  * @saved_icm_cfg0: stored value of ICM CFG0 register
+  * @saved_icm_cfg1: stored value of ICM CFG1 register
++ * @saved_regs: registers to be saved/restored during suspend/resume
+  */
+ struct xpsgtr_dev {
+ 	struct device *dev;
+@@ -221,6 +240,7 @@ struct xpsgtr_dev {
+ 	bool tx_term_fix;
+ 	unsigned int saved_icm_cfg0;
+ 	unsigned int saved_icm_cfg1;
++	u32 *saved_regs;
+ };
+ 
+ /*
+@@ -294,6 +314,32 @@ static inline void xpsgtr_clr_set_phy(struct xpsgtr_phy *gtr_phy,
+ 	writel((readl(addr) & ~clr) | set, addr);
+ }
+ 
++/**
++ * xpsgtr_save_lane_regs - Saves registers on suspend
++ * @gtr_dev: pointer to phy controller context structure
++ */
++static void xpsgtr_save_lane_regs(struct xpsgtr_dev *gtr_dev)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(save_reg_address); i++)
++		gtr_dev->saved_regs[i] = xpsgtr_read(gtr_dev,
++						     save_reg_address[i]);
++}
++
++/**
++ * xpsgtr_restore_lane_regs - Restores registers on resume
++ * @gtr_dev: pointer to phy controller context structure
++ */
++static void xpsgtr_restore_lane_regs(struct xpsgtr_dev *gtr_dev)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(save_reg_address); i++)
++		xpsgtr_write(gtr_dev, save_reg_address[i],
++			     gtr_dev->saved_regs[i]);
++}
++
+ /*
+  * Hardware Configuration
+  */
+@@ -837,6 +883,8 @@ static int xpsgtr_runtime_suspend(struct device *dev)
+ 	gtr_dev->saved_icm_cfg0 = xpsgtr_read(gtr_dev, ICM_CFG0);
+ 	gtr_dev->saved_icm_cfg1 = xpsgtr_read(gtr_dev, ICM_CFG1);
+ 
++	xpsgtr_save_lane_regs(gtr_dev);
++
+ 	return 0;
+ }
+ 
+@@ -847,6 +895,8 @@ static int xpsgtr_runtime_resume(struct device *dev)
+ 	unsigned int i;
+ 	bool skip_phy_init;
+ 
++	xpsgtr_restore_lane_regs(gtr_dev);
++
+ 	icm_cfg0 = xpsgtr_read(gtr_dev, ICM_CFG0);
+ 	icm_cfg1 = xpsgtr_read(gtr_dev, ICM_CFG1);
+ 
+@@ -994,6 +1044,12 @@ static int xpsgtr_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	gtr_dev->saved_regs = devm_kmalloc(gtr_dev->dev,
++					   sizeof(save_reg_address),
++					   GFP_KERNEL);
++	if (!gtr_dev->saved_regs)
++		return -ENOMEM;
++
+ 	return 0;
+ }
+ 
 
-- Krishna Chaitanya.
-> Best regards,
-> Krzysztof
-> 
+base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+-- 
+2.34.1
+
 
