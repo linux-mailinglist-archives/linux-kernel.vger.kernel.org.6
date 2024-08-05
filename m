@@ -1,181 +1,122 @@
-Return-Path: <linux-kernel+bounces-275314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01A994833C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:21:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9E1948332
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0F61C20FE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EAEA2839AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E123A15F3F6;
-	Mon,  5 Aug 2024 20:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4603914B97A;
+	Mon,  5 Aug 2024 20:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OSnRosY/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOWpkFDq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868B014AD20;
-	Mon,  5 Aug 2024 20:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC2913C809;
+	Mon,  5 Aug 2024 20:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722889268; cv=none; b=a6HTx2B9rW/DPKwQXebFu2Jt8fnBPL0qljfmxClC3L76D3MNh3z/vESqV+1/aeLIQ/UHM44wvkG5uBDtLvUNP3Um8nksB2P29c+pc5RPWfeoWWK68LjnLxJN2rIMvoR2egWKXVW2pYK+6sSwaK+fsZSUs3+VF96I2B53JDXrAXw=
+	t=1722889231; cv=none; b=ByuD3CTyNynrPSzCllBIVZg0dPP6FX9bVnL/6WBimbp93I9OPs6Gzjui+3AicrJYvc1husV/ADCg04bmoOpU87cBYz11Vq6Ev834nQVkB+6qAGRjmKt9pZYqxRopchknw+NLSTZR0QPpI4oIdVL9YYZgU2FjOsTs31cfVdj2B44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722889268; c=relaxed/simple;
-	bh=W/vR+PQRmt0Z1mLPNPDSv+8wyLx4X5vstVzNBWZLLY4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AVaXPsipfzNG25A2Ardgl+suZVNSyN7UdCRhym/Q+/ksjxg0n8LJglU/r5O5LnMJueUUuReAQIXvE/om3LXDgimwss+zp6BVsa/lofng8xWeplj//dM9UrC1mI7pKXu9nzzh6/PUAaSeowmBwi1c/3BolQosp1k1YQ4wXarZ6bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OSnRosY/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475B9Bxo014256;
-	Mon, 5 Aug 2024 20:20:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=egZuFsuZto1SqcIaxNFXzN
-	5CTbrwJyyfmgxzlobuFsM=; b=OSnRosY/Ow4cKWaocUuBFyMN0H9jByHdqdXOJK
-	HeP4x/k2kTWbTCcTtQCgXy7WpDXYIzD0c3YaXqs2IyBpVd2c5wdLVWfTyR0pCJwY
-	omzSZAvVyWB6IV3zCyjKwKyyLyZYhmC2gqdbrU8riJUSIprG0ekv/meTf9db6pxJ
-	zQOiAn/s9thh9ny/4yZACfVnQqy9mYeK+/JdUOZ03Q9zBrDTdNreT86L57axJo3f
-	y9izVwqxbp8YeLTWeL+JDgID3kGhcQuX6KeNntBue/oysFYlZ4ngDuVxqUvVe7nc
-	BtersA5h1kM0wFKRO+h6MAuMPwve3FkkfqiA7jt9WZuz59tQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sdu9520g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 20:20:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 475KKQGM002188
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Aug 2024 20:20:26 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 5 Aug 2024 13:20:26 -0700
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Tanmay
- Shah <tanmay@codeaurora.org>,
-        Guenter Roeck <groeck@chromium.org>
-CC: <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
-        <swboyd@chromium.org>, <dianders@chromium.org>,
-        <neil.armstrong@linaro.org>, <andersson@kernel.org>,
-        Chandan Uddaraju <chandanu@codeaurora.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] drm/msm/dp: fix the max supported bpp logic
-Date: Mon, 5 Aug 2024 13:20:08 -0700
-Message-ID: <20240805202009.1120981-1-quic_abhinavk@quicinc.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1722889231; c=relaxed/simple;
+	bh=YnHqiwHC0r0CQROotklnma9dFaOYTX3qZk3p8KPeEUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKyyVwDbquA/UGpWNY0Td8jJ9sgCVfThH8YyMxBxlM5ubl2Z46qVM5XOWe3zlttsod4LfYq66F9vZB6e1o/QE14vP85pGeGIAgrKDNAwd3ijo67YPRfTgzUzK5ZWjqT6XqgeMBQbyreJLYySpwU4s1s3jDxxVv/77TjrzrZI6Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOWpkFDq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DBB2C32782;
+	Mon,  5 Aug 2024 20:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722889231;
+	bh=YnHqiwHC0r0CQROotklnma9dFaOYTX3qZk3p8KPeEUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aOWpkFDq1ESmckUPhObVsdcn8ZTW6rO291B/x8AWOqq4gcB6C8uMy2xonawJjR2GF
+	 RZu7WLymWxYbztmeJInDWK7dPLVWz7Os6wnSY4Dyr1GMcxXMF3RzLG+RgAItVoBpmd
+	 3Y4L5C/MfFw1gBf1sVtvhpt7Ops3txemW84BChx0/W9awu0gowYJV2Pf+J0LPFFPdL
+	 D1GIIHGGyyZMeUlNUmI9f6tx4MjkB2koruxZ4vpyxfMfa+eZE9QoKHZ4QJUSTQc5IM
+	 w6auXU9SypWg6jlxQtdk5T5XlW1vflDsq+AtTQuMPJi0nTWMLKKJuxfx3Zmgqz6hKl
+	 Uc0M2sjNctmfw==
+Date: Mon, 5 Aug 2024 17:20:26 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: weilin.wang@intel.com
+Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Perry Taylor <perry.taylor@intel.com>,
+	Samantha Alt <samantha.alt@intel.com>,
+	Caleb Biggers <caleb.biggers@intel.com>
+Subject: Re: [RFC PATCH v18 3/8] perf stat: Fork and launch perf record when
+ perf stat needs to get retire latency value for a metric.
+Message-ID: <ZrE0CtHsDOS7vUw9@x1>
+References: <20240720062102.444578-1-weilin.wang@intel.com>
+ <20240720062102.444578-4-weilin.wang@intel.com>
+ <ZrEqr36sukDW66uV@x1>
+ <ZrErSvqHMvzw3dm2@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: RFa42TrQE1efk3rUkDfVjwSDV3l3V7s1
-X-Proofpoint-GUID: RFa42TrQE1efk3rUkDfVjwSDV3l3V7s1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-05_08,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0
- clxscore=1015 phishscore=0 spamscore=0 bulkscore=0 mlxscore=0
- impostorscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408050144
+In-Reply-To: <ZrErSvqHMvzw3dm2@x1>
 
-Fix the dp_panel_get_supported_bpp() API to return the minimum
-supported bpp correctly for relevant cases and use this API
-to correct the behavior of DP driver which hard-codes the max supported
-bpp to 30.
+On Mon, Aug 05, 2024 at 04:43:06PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Mon, Aug 05, 2024 at 04:40:37PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Sat, Jul 20, 2024 at 02:20:56AM -0400, weilin.wang@intel.com wrote:
+> > > From: Weilin Wang <weilin.wang@intel.com>
+> > > 
+> > > When retire_latency value is used in a metric formula, evsel would fork a perf
+> > > record process with "-e" and "-W" options. Perf record will collect required
+> > > retire_latency values in parallel while perf stat is collecting counting values.
+> > > 
+> > > At the point of time that perf stat stops counting, evsel would stop perf record
+> > > by sending sigterm signal to perf record process. Sampled data will be process
+> > > to get retire latency value. Another thread is required to synchronize between
+> > > perf stat and perf record when we pass data through pipe.
+> > > 
+> > > Retire_latency evsel is not opened for perf stat so that there is no counter
+> > > wasted on it. This commit includes code suggested by Namhyung to adjust reading
+> > > size for groups that include retire_latency evsels.
+> > 
+> > Failing at this point:
+> > 
+> > ⬢[acme@toolbox perf-tools-next]$ git log --oneline -5
+> > 13430131acc4f88b (HEAD) perf stat: Fork and launch perf record when perf stat needs to get retire latency value for a metric.
+> > b7b9adefb5d57aaf perf data: Allow to use given fd in data->file.fd
+> > 3a442bf266d1f3c7 perf parse-events: Add a retirement latency modifier
+> > ce533c9bc6deb125 (perf-tools-next.korg/tmp.perf-tools-next, acme.korg/tmp.perf-tools-next) perf annotate: Add --skip-empty option
+> > bb588e38290fb723 perf annotate: Set al->data_nr using the notes->src->nr_events
+> > ⬢[acme@toolbox perf-tools-next]$
+> > 
+> > I'll see if when a followup patch gets applied this gets solved, if so
+> > will try to fixup things or ask for help, since this seems to be
+> > breaking 'git bisect' for this codebase.
+> 
+> Indeed, when the next patch gets applied it builds without problems.
+> I.e. patch  4/8 fixes problems in patch 3/8, maybe just combine them
+> into one single patch?
 
-This is incorrect because the number of lanes and max data rate
-supported by the lanes need to be taken into account.
+I have everything in the tmp.perf-tools-next branch at:
 
-Replace the hardcoded limit with the appropriate math which accounts
-for the accurate number of lanes and max data rate.
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
 
-changes in v2:
-	- Fix the dp_panel_get_supported_bpp() and use it
-	- Drop the max_t usage as dp_panel_get_supported_bpp() already
-	  returns the min_bpp correctly now
+I'll check later or tomorrow if I can fixup the bisection breakage
+described above or if just sqashing together 3/8 with 4/8 is better,
+please advise.
 
-changes in v3:
-	- replace min_t with just min as all params are u32
+Then I'll move it to the perf-tools-next branch.
 
-Fixes: c943b4948b58 ("drm/msm/dp: add displayPort driver support")
-Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/43
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # SM8350-HDK
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/gpu/drm/msm/dp/dp_panel.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
-index a916b5f3b317..6ff6c9ef351f 100644
---- a/drivers/gpu/drm/msm/dp/dp_panel.c
-+++ b/drivers/gpu/drm/msm/dp/dp_panel.c
-@@ -90,22 +90,22 @@ static int dp_panel_read_dpcd(struct dp_panel *dp_panel)
- static u32 dp_panel_get_supported_bpp(struct dp_panel *dp_panel,
- 		u32 mode_edid_bpp, u32 mode_pclk_khz)
- {
--	struct dp_link_info *link_info;
-+	const struct dp_link_info *link_info;
- 	const u32 max_supported_bpp = 30, min_supported_bpp = 18;
--	u32 bpp = 0, data_rate_khz = 0;
-+	u32 bpp, data_rate_khz;
- 
--	bpp = min_t(u32, mode_edid_bpp, max_supported_bpp);
-+	bpp = min(mode_edid_bpp, max_supported_bpp);
- 
- 	link_info = &dp_panel->link_info;
- 	data_rate_khz = link_info->num_lanes * link_info->rate * 8;
- 
--	while (bpp > min_supported_bpp) {
-+	do {
- 		if (mode_pclk_khz * bpp <= data_rate_khz)
--			break;
-+			return bpp;
- 		bpp -= 6;
--	}
-+	} while (bpp > min_supported_bpp);
- 
--	return bpp;
-+	return min_supported_bpp;
- }
- 
- int dp_panel_read_sink_caps(struct dp_panel *dp_panel,
-@@ -423,8 +423,9 @@ int dp_panel_init_panel_info(struct dp_panel *dp_panel)
- 				drm_mode->clock);
- 	drm_dbg_dp(panel->drm_dev, "bpp = %d\n", dp_panel->dp_mode.bpp);
- 
--	dp_panel->dp_mode.bpp = max_t(u32, 18,
--				min_t(u32, dp_panel->dp_mode.bpp, 30));
-+	dp_panel->dp_mode.bpp = dp_panel_get_mode_bpp(dp_panel, dp_panel->dp_mode.bpp,
-+						      dp_panel->dp_mode.drm_mode.clock);
-+
- 	drm_dbg_dp(panel->drm_dev, "updated bpp = %d\n",
- 				dp_panel->dp_mode.bpp);
- 
--- 
-2.44.0
-
+- Arnaldo
 
