@@ -1,201 +1,152 @@
-Return-Path: <linux-kernel+bounces-275259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E89294827F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:43:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E20C948283
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 612321C21D6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:43:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8754DB21A13
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17F016BE22;
-	Mon,  5 Aug 2024 19:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E67F16BE23;
+	Mon,  5 Aug 2024 19:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOj0Rhse"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HmzuzdBZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E9174059;
-	Mon,  5 Aug 2024 19:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4199874059;
+	Mon,  5 Aug 2024 19:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722886991; cv=none; b=tsNtUTxL4X3TfD6vHpHJQ3gOR7faAZUAqswWVJtK8waNzrvUWZCViQp3yV4gbHjmr8rhkNQVzric8hZBX9Axe4ufUa4A9D2MOUNO0CoOVp48DtrS9pcNWn/Cd6o3pIhJmIyaJN2MxP+Hvtl+tGxcEwDayvrdZnKxnyN315/4yME=
+	t=1722887033; cv=none; b=eMIFnXhykOjMAz4DB8tnla8VGyWPx1Rb3+/cYm2XAxcjmO8Gynjj6DWNs+RqmONqPHGhC1NHFVP8t6BIAX3zFLofhjjha1dmxaSko6CiXU/BwzF183DpLCTsSj6Vtx8QOJvLLIfr7Kzwjx+WMqdvzqGFdZFZvOYi6Gb+O+uCbmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722886991; c=relaxed/simple;
-	bh=9kxu45W4NOMjXjizwz1ossXYabH0ZBPsANwum5jibNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8BnnjtMKYDhLmlE8kETNZzUFYQlXsqV3uBb6BSbQ5xLSz/tPttmrpcFZ9hHZMGxYKTc1lNUDo9DgCq6eUfqtjA/5kFOq6Tvo9fiv57sePdrCnFrdCzXyzEK40tKKA2SK2N4R1pp6pVujD3e+lqGog3km8G3Qfu3TPvgUmVKW/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOj0Rhse; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F1DC32782;
-	Mon,  5 Aug 2024 19:43:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722886990;
-	bh=9kxu45W4NOMjXjizwz1ossXYabH0ZBPsANwum5jibNQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aOj0RhseAlJg879ekB1W8/q4mInH7Jw1lJfeyN4jIhw0dOK2z4TnN9of1BpixeWIZ
-	 SSqR9IwxpXfBY4qOQJrxZvJmu0bzLbOUibyvbp5ETMz4SQhNxDocSTgSAQHlOWNjxn
-	 +VttlLH0VmLYcKxtsAA86Mc7mucpEQtHglAaILgPujSqv1iHUWYUK48cvKivjPObUn
-	 9n6b1ggthB9OQSB6Xi8qOMj3VOEIBw6ut4VQzUcyk3PLu/c7pCBgfH3v9RMRqEJ66f
-	 G5ELlYTUogvgCwgQ5BfzQ+ibiouNRkUpEHFEg/ZBEyXrSJY10cgZP9wzuFyl49ngBG
-	 bbyoiU3UlvJCg==
-Date: Mon, 5 Aug 2024 16:43:06 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: weilin.wang@intel.com
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Perry Taylor <perry.taylor@intel.com>,
-	Samantha Alt <samantha.alt@intel.com>,
-	Caleb Biggers <caleb.biggers@intel.com>
-Subject: Re: [RFC PATCH v18 3/8] perf stat: Fork and launch perf record when
- perf stat needs to get retire latency value for a metric.
-Message-ID: <ZrErSvqHMvzw3dm2@x1>
-References: <20240720062102.444578-1-weilin.wang@intel.com>
- <20240720062102.444578-4-weilin.wang@intel.com>
- <ZrEqr36sukDW66uV@x1>
+	s=arc-20240116; t=1722887033; c=relaxed/simple;
+	bh=FBX7cvRy2NBEKca6Ei668CuTsMnEU6AS/5Lr7MjJStQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xy+NVzGSIJPpnLrh649tpnacS/tdiBDjEPGI/3IsDLXAS5/jZveiUP43rTcmf0dwQgkmTa+qca9IDOlcNNl5dFEpAi1axau7x+Ze68pSst09wjIXanMYL7DE2WTNZDqYSF4lVm8y6aMH2/1qnaewl06ERFUMmKbem0kY2acFYJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HmzuzdBZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475BNYII020526;
+	Mon, 5 Aug 2024 19:43:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	attQVIBIxzTwHkSz76LnAFli44sQxnHrM0v7u7wBFOo=; b=HmzuzdBZGW+nCeUK
+	618w3fbMPJZmvtLHikvNooC1DgJI0c8dD1B/nePRtDc7FPNWG8zLY26UfpfSTK+X
+	s4fh93lUv/5wrqjxuWkADxiDBuEW93GJWV2+/qMyvF7UuDFoUMxm+qx5vezqda8H
+	kY3u8GyrnhJZLmirfOe8QEyVSJKnQC44+ptRTqFpOZ/faUaIWP8/a9B7Pi+g8oVL
+	g8qsQyny6Jh4/6ycCgRa2G/72J5d0Zmds1QsuPISwY7IHoKkPZQRLe9vpZqTC6u+
+	tN/znkUCyljSvIWPA+t6RqgDQmckMrh2NIar6eLzXDtjtpT1z08QEu9VMfGdnw5I
+	ygxZFw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scs2w0r3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 19:43:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 475JhhrS008940
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 19:43:43 GMT
+Received: from [10.71.110.34] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 5 Aug 2024
+ 12:43:40 -0700
+Message-ID: <2fee3ea7-31e4-48ea-980d-a4e6bc78834d@quicinc.com>
+Date: Mon, 5 Aug 2024 12:43:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZrEqr36sukDW66uV@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/12] drm/msm/dpu: relax YUV requirements
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn
+ Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240627-dpu-virtual-wide-v5-0-5efb90cbb8be@linaro.org>
+ <20240627-dpu-virtual-wide-v5-2-5efb90cbb8be@linaro.org>
+ <b2cceeb8-fe81-4212-9b07-b70cad8d3b9b@quicinc.com>
+ <CAA8EJpp2pg1FyrE8ftxGduHUnX=nsu=Zg_mwCrkcdqJqMJZjDw@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJpp2pg1FyrE8ftxGduHUnX=nsu=Zg_mwCrkcdqJqMJZjDw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ra3EWBx3y-z1k3jrPiXPPOl-N0VPqR_W
+X-Proofpoint-GUID: ra3EWBx3y-z1k3jrPiXPPOl-N0VPqR_W
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-05_08,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408050139
 
-On Mon, Aug 05, 2024 at 04:40:37PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Sat, Jul 20, 2024 at 02:20:56AM -0400, weilin.wang@intel.com wrote:
-> > From: Weilin Wang <weilin.wang@intel.com>
-> > 
-> > When retire_latency value is used in a metric formula, evsel would fork a perf
-> > record process with "-e" and "-W" options. Perf record will collect required
-> > retire_latency values in parallel while perf stat is collecting counting values.
-> > 
-> > At the point of time that perf stat stops counting, evsel would stop perf record
-> > by sending sigterm signal to perf record process. Sampled data will be process
-> > to get retire latency value. Another thread is required to synchronize between
-> > perf stat and perf record when we pass data through pipe.
-> > 
-> > Retire_latency evsel is not opened for perf stat so that there is no counter
-> > wasted on it. This commit includes code suggested by Namhyung to adjust reading
-> > size for groups that include retire_latency evsels.
-> 
-> Failing at this point:
-> 
-> ⬢[acme@toolbox perf-tools-next]$ git log --oneline -5
-> 13430131acc4f88b (HEAD) perf stat: Fork and launch perf record when perf stat needs to get retire latency value for a metric.
-> b7b9adefb5d57aaf perf data: Allow to use given fd in data->file.fd
-> 3a442bf266d1f3c7 perf parse-events: Add a retirement latency modifier
-> ce533c9bc6deb125 (perf-tools-next.korg/tmp.perf-tools-next, acme.korg/tmp.perf-tools-next) perf annotate: Add --skip-empty option
-> bb588e38290fb723 perf annotate: Set al->data_nr using the notes->src->nr_events
-> ⬢[acme@toolbox perf-tools-next]$
-> 
-> I'll see if when a followup patch gets applied this gets solved, if so
-> will try to fixup things or ask for help, since this seems to be
-> breaking 'git bisect' for this codebase.
 
-Indeed, when the next patch gets applied it builds without problems.
-I.e. patch  4/8 fixes problems in patch 3/8, maybe just combine them
-into one single patch?
 
-- Arnaldo
- 
-> ⬢[acme@toolbox perf-tools-next]$ m
-> rm: cannot remove '/home/acme/libexec/perf-core/scripts/python/Perf-Trace-Util/lib/Perf/Trace/__pycache__/Core.cpython-312.pyc': Permission denied
-> make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
->   BUILD:   Doing 'make -j2' parallel build
-> Warning: Kernel ABI header differences:
->   diff -u tools/include/uapi/drm/i915_drm.h include/uapi/drm/i915_drm.h
->   diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
->   diff -u tools/include/uapi/linux/in.h include/uapi/linux/in.h
->   diff -u tools/include/uapi/linux/perf_event.h include/uapi/linux/perf_event.h
->   diff -u tools/include/uapi/linux/stat.h include/uapi/linux/stat.h
->   diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
->   diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr-index.h
->   diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
->   diff -u tools/arch/x86/include/uapi/asm/svm.h arch/x86/include/uapi/asm/svm.h
->   diff -u tools/arch/powerpc/include/uapi/asm/kvm.h arch/powerpc/include/uapi/asm/kvm.h
->   diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/uapi/asm/unistd.h
->   diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
->   diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
->   diff -u tools/lib/list_sort.c lib/list_sort.c
->   diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entry/syscalls/syscall_64.tbl
->   diff -u tools/perf/arch/powerpc/entry/syscalls/syscall.tbl arch/powerpc/kernel/syscalls/syscall.tbl
->   diff -u tools/perf/arch/s390/entry/syscalls/syscall.tbl arch/s390/kernel/syscalls/syscall.tbl
->   diff -u tools/perf/trace/beauty/include/linux/socket.h include/linux/socket.h
->   diff -u tools/perf/trace/beauty/include/uapi/linux/fs.h include/uapi/linux/fs.h
->   diff -u tools/perf/trace/beauty/include/uapi/linux/mount.h include/uapi/linux/mount.h
->   diff -u tools/perf/trace/beauty/include/uapi/linux/stat.h include/uapi/linux/stat.h
->   diff -u tools/perf/trace/beauty/include/uapi/sound/asound.h include/uapi/sound/asound.h
-> git showMakefile.config:1223: libtracefs is missing. Please install libtracefs-dev/libtracefs-devel
+On 7/31/2024 5:34 PM, Dmitry Baryshkov wrote:
+> On Wed, 31 Jul 2024 at 22:36, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 6/26/2024 2:45 PM, Dmitry Baryshkov wrote:
+>>> YUV formats require only CSC to be enabled. Even decimated formats
+>>> should not require scaler. Relax the requirement and don't check for the
+>>> scaler block while checking if YUV format can be enabled.
+>>>
+>>> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 5 ++---
+>>>    1 file changed, 2 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>> index 1c3a2657450c..148bd79bdcef 100644
+>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>> @@ -743,10 +743,9 @@ static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
+>>>        min_src_size = MSM_FORMAT_IS_YUV(fmt) ? 2 : 1;
+>>>
+>>>        if (MSM_FORMAT_IS_YUV(fmt) &&
+>>> -         (!pipe->sspp->cap->sblk->scaler_blk.len ||
+>>> -          !pipe->sspp->cap->sblk->csc_blk.len)) {
+>>> +         !pipe->sspp->cap->sblk->csc_blk.len) {
+>>>                DPU_DEBUG_PLANE(pdpu,
+>>> -                             "plane doesn't have scaler/csc for yuv\n");
+>>> +                             "plane doesn't have csc for yuv\n");
+>>>                return -EINVAL;
+>>>        }
+>>>
+>>
+>> Change seems fine, but one question, is there a chipset in the catalog
+>> with a Vig SSPP which has only csc but not scaler? Even qcm2290 has
+>> neither scaler nor csc
+>>
+>> So was this just a code-walkthrough fix or was there any issue hit due
+>> to this?
 > 
-> Auto-detecting system features:
-> ...                                   dwarf: [ on  ]
-> ...                      dwarf_getlocations: [ on  ]
-> ...                                   glibc: [ on  ]
-> ...                                  libbfd: [ on  ]
-> ...                          libbfd-buildid: [ on  ]
-> ...                                  libcap: [ on  ]
-> ...                                  libelf: [ on  ]
-> ...                                 libnuma: [ on  ]
-> ...                  numa_num_possible_cpus: [ on  ]
-> ...                                 libperl: [ on  ]
-> ...                               libpython: [ on  ]
-> ...                               libcrypto: [ on  ]
-> ...                               libunwind: [ on  ]
-> ...                      libdw-dwarf-unwind: [ on  ]
-> ...                             libcapstone: [ on  ]
-> ...                                    zlib: [ on  ]
-> ...                                    lzma: [ on  ]
-> ...                               get_cpuid: [ on  ]
-> ...                                     bpf: [ on  ]
-> ...                                  libaio: [ on  ]
-> ...                                 libzstd: [ on  ]
+> Just a code walkthrough.
 > 
->   INSTALL libperf_headers
->   INSTALL libapi_headers
->   INSTALL libsubcmd_headers
->   INSTALL libsymbol_headers
->   PERF_VERSION = 6.11.rc1.g13430131acc4
->   CC      /tmp/build/perf-tools-next/perf-read-vdso32
->   INSTALL libbpf_headers
->   GEN     perf-archive
->   GEN     perf-iostat
->   CC      /tmp/build/perf-tools-next/util/evlist.o
->   CC      /tmp/build/perf-tools-next/builtin-stat.o
->   CC      /tmp/build/perf-tools-next/util/evsel.o
->   LD      /tmp/build/perf-tools-next/perf-in.o
->   LINK    /tmp/build/perf-tools-next/libperf-jvmti.so
->   CC      /tmp/build/perf-tools-next/util/header.o
-> util/evsel.c: In function ‘evsel__group_has_tpebs’:
-> util/evsel.c:1562:21: error: implicit declaration of function ‘evsel__is_retire_lat’ [-Werror=implicit-function-declaration]
->  1562 |                 if (evsel__is_retire_lat(evsel))
->       |                     ^~~~~~~~~~~~~~~~~~~~
-> util/evsel.c: In function ‘evsel__open_cpu’:
-> util/evsel.c:2258:24: error: implicit declaration of function ‘tpebs_start’ [-Werror=implicit-function-declaration]
->  2258 |                 return tpebs_start(evsel->evlist);
->       |                        ^~~~~~~~~~~
-> util/evsel.c: In function ‘evsel__close’:
-> util/evsel.c:2453:17: error: implicit declaration of function ‘tpebs_delete’; did you mean ‘timer_delete’? [-Werror=implicit-function-declaration]
->  2453 |                 tpebs_delete();
->       |                 ^~~~~~~~~~~~
->       |                 timer_delete
-> cc1: all warnings being treated as errors
-> make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: /tmp/build/perf-tools-next/util/evsel.o] Error 1
-> make[4]: *** Waiting for unfinished jobs....
-> make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:158: util] Error 2
-> make[2]: *** [Makefile.perf:787: /tmp/build/perf-tools-next/perf-util-in.o] Error 2
-> make[1]: *** [Makefile.perf:290: sub-make] Error 2
-> make: *** [Makefile:119: install-bin] Error 2
-> make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-> ⬢[acme@toolbox perf-tools-next]$
+
+Alright,
+
+
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+
+> 
 > 
 
