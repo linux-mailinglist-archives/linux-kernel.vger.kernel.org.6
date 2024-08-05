@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-274273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596159475F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:23:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D589475F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E76B2B214EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972DD1F21B5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10791494CD;
-	Mon,  5 Aug 2024 07:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF90149DE2;
+	Mon,  5 Aug 2024 07:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dg2kHs7v"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qVIMX+Fk"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA4E6A01E;
-	Mon,  5 Aug 2024 07:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1361494BC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 07:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722842611; cv=none; b=hdB1VNdTLIQETSZOC3z6DUhavnfTaPM91YPEifvA+TO2rkokrQVXc4p9DFSO+6bUe/55cybEugGp+7urgje5IdABzNDUE0Mpnr3Gc1QNRT58pLGQN6qnWAOZ0y2aLXjPrznrqJynE/y6ba9NiiU6jAOiO3zUygygWvkn/N06eSg=
+	t=1722842623; cv=none; b=DkM3vBPxBP2hTZhaVKFyn2lBhLUdNzX4GlyO6CmmQFdE9SYCq2IvYItiNz2qWZZKjPHKWZQ3pISZKuM3laTnsBrj88oWZRgWLDWOgYCPbZ8odRTHtrbR+lmtSCz8EnZJlWDtBlDS629PvaKfkgfzG5OLjLQB3hcI++Si/H7bQ/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722842611; c=relaxed/simple;
-	bh=bE6vT1oz47RyP1ZKna/Yjqooigkh/AXkqnqjBHKb1S8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Os2vWnE+gMZoEkvSyKURBKJQRX9zLjzwOiTLLDUjD1h4J0XruaaLEwr4iEjJK220dy5oyaVXgbOfnJilH0Y8Wk5zqH3Gn8twecnroGN1pzTM2bhTU6UfJkB7jD44tw+n2y6BB/+zyadH61MUfLyfm+Nzs7372Hb69E+oYlV9590=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dg2kHs7v; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a8e73b29cso833957866b.3;
-        Mon, 05 Aug 2024 00:23:29 -0700 (PDT)
+	s=arc-20240116; t=1722842623; c=relaxed/simple;
+	bh=umFpxCUn+au3HF2NxksXKJAeihuMffW9VkiyHlVMD4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GgRKXU6fsnp769C5nC8VPCUjh07/7hPqBI9M9yAIQwWNAcJ+iZm7hSB+bSOkyXkuMuGixqMZbDMgJIM0OkDYnONhXGxQcwk5MiluL3d1tJjtPC4E4CGWYlHoF95ken/lQ0+SB5xrRXOANMhjoyJVF0orZStTOZXDU4YHrdOZV20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qVIMX+Fk; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52fc4388a64so16083017e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 00:23:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722842608; x=1723447408; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VL4qgfbSXzVItgj0R+x3HYc3wNe2y/gTIFslMYwu46I=;
-        b=Dg2kHs7v5Jv/XhJKEMilJwmPv5BsI2C6JXLp0OfS6LXrqN2E+ypE7sCyWbK9okcxxp
-         AC2i1lEhorDVxqqfq2h89e4mBahCo8JlC8mtiGNVQfuzZYZig2QoRYAmqdJQcvsknnmr
-         vbEfLQ78p6YUtfNGxScIouk+QoNzgEiV1js7PdgyOjabKzqPGkUskHroMr1Fkb++wfIU
-         jo2w71EznNq6k3gCSxaZ9bVUVJF9C4JtXK97/aN9QIz6ZI/+3udMSBzeAWKhQZ0YwVRA
-         iZ4hHf05uyvJQFlBPss0ti+YKs4Ei7zksjCGq5K3T/qNN6IajKDSFbGIT3ZZOugLA0Uk
-         j3Hw==
+        d=linaro.org; s=google; t=1722842620; x=1723447420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sodQ83Zi4tI79ZwD9QYiXR5Km+yKuCSvXk/CIGbleQQ=;
+        b=qVIMX+FkpbZYvB6jCVBNdEUBQEIbK/X9wSg+XrJq5sTIAc+fqFP5jFEFTBYI5Lo5fl
+         /9uuQvd2wIoOe8kFrOhBAjPTRoQdWk4a85H4hQ3fjVrxDPeEasEBWx/9D0N5n3qPu4Cy
+         6U5JGsAmWru0Ia0D2X1xrgbB6Y99vdjX3poeLLMNoospA8IJbsE1UMfaxrt+4fET+hfK
+         NMWvVPs13mJd9w6v7VX8vdWqJReErnYcgw3E6qJkuigZdMiY1h4lOFerCoQxD1hsb3Sn
+         o9wVZsDRetagQcNrnhmq2ArTPXYvKUJiGQTZpqfkiHAATPZUp3x6gmdqnfJW/BXHCdJT
+         vLwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722842608; x=1723447408;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VL4qgfbSXzVItgj0R+x3HYc3wNe2y/gTIFslMYwu46I=;
-        b=NumZ8+JjfHYroGVdWpFeuKznfGTiyh23dOR2RvRsjd/tkN0VUbhNdKPCRDZ759MIKZ
-         cA8lMsaWxtfPIht2oGi8lljhj1CYLioFldPNKf6ei4BEExErJWF+pQwGIbDlT6XG4gZ+
-         04pxGpd+BjDJ/bxfaUj1WbyggdLxALMoltaOtH8nSMqvPR0OaKnTqQg6DXVsSA5GWtIv
-         HCbYxTg1jXOHXuhobHRHNgw1zebnhjJDJ+XDM7IBDI+4u5Q8cVbBexCekDDiFw0WypPT
-         bWaal9P5cnP5EOQjVQR5pC3jSty8LEtZLIVfK9TwzxOb0Nv01djJq/Eh1ogi4QK/JhS5
-         dsvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn9xHcLU4dkZu18JJSWI2wMkDlN+VSrFeyh5yaRL9IEVd4UeedheBqn/o3lna0ElqacNPua/pOxH49Ondos7upQDooGCz8cai8eaWY
-X-Gm-Message-State: AOJu0YzcVt3apGkgHHEP6DPFzV+HcW+xHxWMcHYzdbJEr5Zw1FhBLR71
-	O4p6OoHo62l5JgDcKiBglhN3CRMl9fU3qBNLkIO+/KRsBkXTkfmc
-X-Google-Smtp-Source: AGHT+IGxJTB4JXUUeXI44cYYcr/O1U0o6tduXjCfmkAS6HYqaXjObCqNXM+DDrBzgd7UeQHP4eiNQA==
-X-Received: by 2002:a17:906:6a13:b0:a77:c30c:341 with SMTP id a640c23a62f3a-a7dc4b3a665mr707202866b.0.1722842607639;
-        Mon, 05 Aug 2024 00:23:27 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3bccsm420199466b.16.2024.08.05.00.23.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 00:23:27 -0700 (PDT)
-Date: Mon, 5 Aug 2024 09:23:25 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Baolin Wang <baolin.wang7@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/4] Cleanup Spreadtum/Unisoc ARM64 DT
-Message-ID: <cover.1722842066.git.stano.jakubek@gmail.com>
+        d=1e100.net; s=20230601; t=1722842620; x=1723447420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sodQ83Zi4tI79ZwD9QYiXR5Km+yKuCSvXk/CIGbleQQ=;
+        b=kJXJVoH4NWnzMMdj7zerFl5mxETsCg4lZwG3qk32+28ze5RCSXHni3hMXl+1cAZam4
+         VOF6hL6rTUcAZh8VjRXZtdZ94SaYlps+ANKUz0xPD/La+pwIktwjr1gd3c6QqxyWrMee
+         kdO/WOnjHj2FsEfkvh1rp7TwWGctCT4mh8msrSoFjIpfKJWYXikPSk07Kr8Da6Z+ox+h
+         lfmHWRhW+9K+1MP720QFxOffuXqmZKJNz9B6S7X0UmvNds46DNK/SP1LMZpvgff7VsBm
+         wAAvWf5+BV638ZGwPD6n6qQf88+5MA6xVn49/w1JIMX+1XhXYpsysfaDBj2oKwZaQ+Yy
+         cxlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrt7j7GOi5mVM/zKfLqws5ivjzfviXNoQG0YxBve91HcUj4VwK0Og7QTqDS2N+1dBADtiFamcZlIPGF4oZZXfPgWvx42b2dVy1E3BQ
+X-Gm-Message-State: AOJu0Yw/612d48ZPDNGUrJwMEz1td1dqRstMcyNRmG/yZl0r91jfXzBI
+	7sQVhi8kftvhuGj5D9Wu9to0oUwT7tcZOFg+cq9EVZrMlEMB1OUS8UBQo7NNmp5M28lRwUoODEI
+	mtdCrjKEXqYJREGF7Tc/2cLNOy4DLUt6Rs1stpw==
+X-Google-Smtp-Source: AGHT+IHMEDV/XB6PuAMs/y2jmCQDs4ViBP5jan/yA0s8errZ3yGWl59Dy3YOXALgdmE/wb9d85ASLLh4iw4wGNH8EhY=
+X-Received: by 2002:a05:6512:ac6:b0:52f:159:2dc5 with SMTP id
+ 2adb3069b0e04-530bb39b813mr8199730e87.42.1722842619801; Mon, 05 Aug 2024
+ 00:23:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1720556038.git.christophe.jaillet@wanadoo.fr>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 5 Aug 2024 09:23:28 +0200
+Message-ID: <CACRpkdbp4HhXNutMgA-tBbQSzzO0zq9Tia3WS_fXNtgJ6Xr8ag@mail.gmail.com>
+Subject: Re: [PATCH 0/3] pinctrl: ti: ti-iodelay: Fix some error handling
+ paths + 2 unrelated clean-ups
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lokeshvutla@ti.com, nm@ti.com, robh@kernel.org, tony@atomide.com, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This series contains various minor cleanups for Spreadtum/Unisoc ARM64
-DeviceTrees. Also contains the 2nd patch from the SC2731 MFD cleanup series
-to reduce unnecessary noise and make these easier to apply.
+On Tue, Jul 9, 2024 at 10:37=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 
-Changes in V2:
-  - add 2nd patch from the SC2731 MFD cleanup series (1st patch was dropped
-    due to not being correct, dt-bindings will have to get fixed up instead)
-  - add Baolin's R-b
-  - rebase on next-20240805
+> The first patch is completly speculative. It is based on static analysis
+> when a function is called in the remove() function, but not in the
+> error handling path of the probe.
+> When looking deeper at it, it seems that part of
+> ti_iodelay_pinconf_init_dev() also needed to be fixed.
+>
+> /!\ This is completly speculative. So review with care /!\
+>
+>
+> Patch 2 and 3 are just constification patches spoted while looking at
+> the code.
+>
+> Christophe JAILLET (3):
+>   pinctrl: ti: ti-iodelay: Fix some error handling paths
+>   pinctrl: ti: ti-iodelay: Constify struct ti_iodelay_reg_data
+>   pinctrl: ti: ti-iodelay: Constify struct regmap_config
 
-Link to original V1: https://lore.kernel.org/lkml/cover.1720112081.git.stano.jakubek@gmail.com/
-Link to SC2731 MFD cleanup V1: https://lore.kernel.org/lkml/cover.1720957783.git.stano.jakubek@gmail.com/
+Patches 1 & 2 applied, patch 3 was already contributed by
+another developer.
 
-Stanislav Jakubek (4):
-  arm64: dts: sprd: rename SDHCI nodes to mmc
-  arm64: dts: sprd: reorder clock-names after clocks
-  arm64: dts: sprd: move/add SPDX license to top of the file
-  arm64: dts: sprd: sc2731: rename fuel gauge node to be generic
-
- arch/arm64/boot/dts/sprd/sc2731.dtsi          |  5 +--
- arch/arm64/boot/dts/sprd/sc9836-openphone.dts |  3 +-
- arch/arm64/boot/dts/sprd/sc9836.dtsi          |  3 +-
- arch/arm64/boot/dts/sprd/sc9860.dtsi          |  3 +-
- arch/arm64/boot/dts/sprd/sc9863a.dtsi         |  8 ++--
- arch/arm64/boot/dts/sprd/sharkl64.dtsi        |  3 +-
- arch/arm64/boot/dts/sprd/sp9860g-1h10.dts     |  3 +-
- arch/arm64/boot/dts/sprd/ums512.dtsi          |  4 +-
- arch/arm64/boot/dts/sprd/whale2.dtsi          | 43 ++++++++++---------
- 9 files changed, 36 insertions(+), 39 deletions(-)
-
--- 
-2.34.1
-
+Yours,
+Linus Walleij
 
