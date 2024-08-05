@@ -1,362 +1,829 @@
-Return-Path: <linux-kernel+bounces-275376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21BEB94841B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:24:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE5E94844A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4510B1C22005
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:24:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFEA1F2332A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2717616CD12;
-	Mon,  5 Aug 2024 21:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA576170A1F;
+	Mon,  5 Aug 2024 21:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mbg4Q8Zo"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N/I3wt9b"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F67216ABF3;
-	Mon,  5 Aug 2024 21:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E0616C84B
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893070; cv=none; b=HCXrA2NUw5SPLxpoVXnpwY9Kv11VuCYSboZdkbkuIQmN8ffIs0HaEhxaUeqYGFtODpkLjMOOGr0RiOKrxNcZpKBtUsVN57uFD0k7r/NFhWKwY9TQxl0NxRZHn/X3slKhf4yhtGfMwf9ytmZA8BhtecNpKYl1QklH6l6jFhCOx7Q=
+	t=1722893144; cv=none; b=Eq32SFx3ljGxZCmq8KNZbbU77fTF8Hz0gMS4d7kdxOrbTXT/9hS3z51MbL+ZtKtRPp5SpGTw++m1BTl3p/pjjiX77tCi+fjyh18mVIrpJ0I8p7IglPnybCn6vEMRLcWrOQzvnmB61ffdjhE4NSnBawIYkS4cwgxgkP1+So1B/Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893070; c=relaxed/simple;
-	bh=WtLSg18x6ha0RSr8J2DREK42uYOUOHCGkAIR9iJTsMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GdFLaMKth2qX3TF4nHJ0L41ZYk+MReaBEAe3Aq1SkR5a/1/OC18YCXp46rf1na4SAbYVfr/mwUH50lY/ZCaOeHqAGCesxGf8vrz3OHvmJPQERgO/2IjRRrSDi0wkVnVe8wTPm+eYu8F/J0aliQ9qUrrZ5kwAhVvxLOJEf/TwIRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mbg4Q8Zo; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7d26c2297eso5541266b.2;
-        Mon, 05 Aug 2024 14:24:27 -0700 (PDT)
+	s=arc-20240116; t=1722893144; c=relaxed/simple;
+	bh=B+UVP4NYbGQPW4XMjTnYad8gZY1QLSWVu6MYbrmPk90=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JOvq+8X5MTUIQLdCLMzbdeyjVSGPGozeYxpOGrBAnv+X9R3jao31ox/QtW+AsDibjWlb7MBPG71oN62FPfDyCoKxNxdi9K/58GMBdGUnYFeGhNKqnBAg2jdJyyQ1k/pebNQwXPXpK1BY7FnUfI1cFN4E1Xu8xYcmh75c/3VXYK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N/I3wt9b; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-68d1d966c06so62962227b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:25:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722893066; x=1723497866; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x8/kZWq8UAWXE07EOv+W3BwbqxC1RibcaCo1Y6U9Jvo=;
-        b=Mbg4Q8ZokEPvwuWn/12/fn8wamGVM0S62tKvXeIKTtlLDULJ1mzqyW5/qWvJFMAA92
-         ELdiSqyT1ge83ltzzR1KTEXS2UViWJCXXUnDyY7dkAUFIwM3P2eY4R/Djika3az09tW+
-         sf6I5L19zVpcZ2TNE3cJgiZqlbcb8fullfxyK7MIcJnAVbDC0+/5eCRpwbwEQ9qL83hZ
-         9l3Avgrz6PdMVpmOK0PajiNOcUjo0+SOBeiMxdlxlo62W08eS7sxSojPLIp7NBXsEWlp
-         uef8BeYfIEcPYnoytYtOr5I/ntezijf3DsdcFkVDKKCfJTyqpfy6Mv4hgCDtvENU1gps
-         S4jg==
+        d=google.com; s=20230601; t=1722893138; x=1723497938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2opWGza/qiDGAvO1ssjV6mQWTaHbOivXHyUZGb1Pfv4=;
+        b=N/I3wt9bxAHdC4WkI1BGxh1YdeU5OAtivKI0DP8FmDw4vAIGlvt+h8KYOTwOFJ+xRu
+         4YtOaWzleaoptz2PHm0IS+l67KJ4caB2/HvOfqtW0TIDsjrfve9amVlQJz+KsMr4fAoy
+         OG6wcxL2dpEXlDKyCwd3FANadS3zwa+I+hTLr5COC93dy2LVhHmH3bplTUdM42wW8Z2A
+         CzHCikM5w3Fd0wPOu/EUGT1UyqKMqRc3Z81TmUskRmMM425w30RX1uDLUwy8Xi/0oUdq
+         spewlmEp9bAy3hwadFDQFG7vIXuzSlK4H/uZNzxRpkrDMZMR5oA06DkWOQgbbHiRVslk
+         pCmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893066; x=1723497866;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x8/kZWq8UAWXE07EOv+W3BwbqxC1RibcaCo1Y6U9Jvo=;
-        b=sjN+7+a0votUmGqJ5xdbUwMODseEv154dh1gHP0cjpD0IM0z5EHl6EyGWCk0KLCzEK
-         NJkO859d7yvjQJzuaFw4rmj3neyAi4BBhroXGEqjLGzUD+0RRgYlcyWZrcgyMUTIh9NH
-         86Zw+jkBlPU0v1th50FYjsQeIkGxFljlyoumvlCvIQjtLknbMJ+JMm44HS6q0iCvB2C7
-         l0zg56Pi+KX4exwMeKvEOfWUHsFEQpwq7LSwJsEwAGgpRyvQB2B/yY/vFsD/pFN59FLg
-         QcHdi8VDriePFB/qvMoIAbe5Ulj5hC3RVZ394yjMB5dCL2b1dPhJimuQrkf5+5iqnKKJ
-         zUdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXm61wdDbp/19ZQ1KsGDMLYbp1WffvmTXWLYxd5e4awoU7AoLcjLicACFA9VSu2kcTSlnwzNPbXQZonFbbsuF4Bznb+jij3/3O08i8F+yc=
-X-Gm-Message-State: AOJu0YxOcVpB2dYzcobgQnVOFAvIzYfOUDrZjTsBrKzV+ae8Gu7PHDhg
-	XtkecI77TBz7S4XrOCctyHLqKm/ADcBX05zg0HQ1fYGuVA46EvdUoOOkXw==
-X-Google-Smtp-Source: AGHT+IG4RYF8McPc4HKKHVYQKxQjAqCBZEhENp4/CQ5Sq2EDam/fI5HAkFlcVloF1egqOTvFaVvkYw==
-X-Received: by 2002:a17:907:8692:b0:a7a:a33e:47b7 with SMTP id a640c23a62f3a-a7dc512ca02mr822444566b.69.1722893065808;
-        Mon, 05 Aug 2024 14:24:25 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-41-17.xnet.hr. [88.207.41.17])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c61575sm489792666b.92.2024.08.05.14.24.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 14:24:25 -0700 (PDT)
-Message-ID: <38de6ac2-a7d8-41dc-a065-68ce60d5b662@gmail.com>
-Date: Mon, 5 Aug 2024 23:24:06 +0200
+        d=1e100.net; s=20230601; t=1722893138; x=1723497938;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2opWGza/qiDGAvO1ssjV6mQWTaHbOivXHyUZGb1Pfv4=;
+        b=ACeDc1Q23VJUvWGXOwZtIHMb5E4NhUOjf6XMvi1TruGsl+O79WutkfP3Vf6+7rqLI2
+         oLisIG9OkQmQ+Z78xRbfk2M5EVahVO3Ylhx31tnMjmbifI3GWhpW11p6F8vedFenJSgi
+         iUxpB29WSh88JgAq9dklvCqrZ4Wz/fH+8HgGTEMCAx9NRZUiBl47kBDtXmlvG4oYGC7G
+         IginISKyUGqnbUuCVQh7nomPNTe408clE6IK1Ag9tGf5O6ky3m3LfWnmVbvgFsEu3Y6C
+         h34HZCd4R6MpAhTt7KaIlABd4uqQozpKTXKmnE5L/2ygktAqeE0ypql1ew1NmTWG4ADN
+         MY/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWHp2Tnz7Vr1jkpUS5ej2XUzg8H7vWiYIMvWm8Us1D/k5BQ61Y7pbQDivo3LbpjlvZ9GpCwPwwcWuAru11vtZpJ5/vcZSXBWUPPoZPb
+X-Gm-Message-State: AOJu0YyIOGvDyq/dRwNb0HHrT3zaG4UITC2DNdTKDfaRaODPWjdpv2Jw
+	Fyx4qoH96boAbMWRFGVDVlYL+ZTi33fCTIFO/WZlKiBTnRScdWjWPM7FInOl60OgnpuafiXeVkP
+	fcKhnsFLneA72qy6Z7caN4A==
+X-Google-Smtp-Source: AGHT+IHGecrcGuo805V7SldkiRcVGZZflR/TY64RIETfJwaq/ktyrX/bLY9275v0DUzBue+UgKw/+V9Js3YrhvFe9Q==
+X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
+ (user=almasrymina job=sendgmr) by 2002:a05:6902:1205:b0:e0b:fa71:c371 with
+ SMTP id 3f1490d57ef6-e0bfa71c58fmr108211276.12.1722893138496; Mon, 05 Aug
+ 2024 14:25:38 -0700 (PDT)
+Date: Mon,  5 Aug 2024 21:25:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM_linux-next=5D_fs/reiserfs/do=5Fbalan=2Ec?=
- =?UTF-8?B?OjExNDc6MTM6IGVycm9yOiB2YXJpYWJsZSDigJhsZWFmX21p4oCZIHNldCBidXQg?=
- =?UTF-8?Q?not_used_=5B-Werror=3Dunused-but-set-variable=5D?=
-To: Jan Kara <jack@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>,
- Christian Brauner <brauner@kernel.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
- reiserfs-devel@vger.kernel.org
-References: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
- <20240715172826.wbmlg52ckdxze7sg@quack3>
- <9aec9df8-ca82-4b2f-b227-5e318c66b97e@gmail.com>
- <20240717154434.jba66jupaf566tes@quack3>
- <83c22d71-8706-4779-8d20-6b18a75c95a5@gmail.com>
- <20240718093943.qtyc2bdt4oerjuek@quack3>
- <25a65d69-5f04-433b-a5a3-5fd8dbe787aa@gmail.com>
- <20240805130415.ws3t7sgvcg7cj5ev@quack3>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <20240805130415.ws3t7sgvcg7cj5ev@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240805212536.2172174-1-almasrymina@google.com>
+Subject: [PATCH net-next v18 00/14] Device Memory TCP
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
+Cc: Mina Almasry <almasrymina@google.com>, Donald Hunter <donald.hunter@gmail.com>, 
+	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/5/24 15:04, Jan Kara wrote:
-> On Fri 02-08-24 18:31:46, Mirsad Todorovac wrote:
->> On 7/18/24 11:39, Jan Kara wrote:
->>> On Thu 18-07-24 00:14:24, Mirsad Todorovac wrote:
->>>>
->>>>
->>>> On 7/17/24 17:44, Jan Kara wrote:
->>>>> On Tue 16-07-24 19:17:05, Mirsad Todorovac wrote:
->>>>>> On 7/15/24 19:28, Jan Kara wrote:
->>>>>>> Hello Mirsad!
->>>>>>>
->>>>>>> On Wed 10-07-24 20:09:27, Mirsad Todorovac wrote:
->>>>>>>> On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
->>>>>>>> which was known from before to trigger various errors in compile and build process.
->>>>>>>>
->>>>>>>> Though this might seem as contributing to channel noise, Linux refuses to build this config,
->>>>>>>> treating warnings as errors, using this build line:
->>>>>>>>
->>>>>>>> $ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
->>>>>>>>
->>>>>>>> As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
->>>>>>>> left, there seems to be more tedious work ahead to make the compilers happy.
->>>>>>>>
->>>>>>>> The compiler output is:
->>>>>>>>
->>>>>>>> ---------------------------------------------------------------------------------------------------------
->>>>>>>> fs/reiserfs/do_balan.c: In function ‘balance_leaf_new_nodes_paste_whole’:
->>>>>>>> fs/reiserfs/do_balan.c:1147:13: error: variable ‘leaf_mi’ set but not used [-Werror=unused-but-set-variable]
->>>>>>>>  1147 |         int leaf_mi;
->>>>>>>>       |             ^~~~~~~
->>>>>>>
->>>>>>> Frankly, I wouldn't bother with reiserfs. The warning is there for ages,
->>>>>>> the code is going to get removed in two releases, so I guess we can live
->>>>>>> with these warnings for a few more months...
->>>>>>
->>>>>> In essence I agree with you, but for sentimental reasons I would like to
->>>>>> keep it because it is my first journaling Linux system on Knoppix 🙂
->>>>>
->>>>> As much as I understand your sentiment (I have a bit of history with that
->>>>> fs as well) the maintenance cost isn't really worth it and most fs folks
->>>>> will celebrate when it's removed. We have already announced the removal
->>>>> year and half ago and I'm fully for executing that plan at the end of this
->>>>> year.
->>>>>
->>>>>> Patch is also simple and a no-brainer, as proposed by Mr. Cook:
->>>>>>
->>>>>> -------------------------------><------------------------------------------
->>>>>> diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
->>>>>> index 5129efc6f2e6..fbe73f267853 100644
->>>>>> --- a/fs/reiserfs/do_balan.c
->>>>>> +++ b/fs/reiserfs/do_balan.c
->>>>>> @@ -1144,7 +1144,9 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
->>>>>>  {
->>>>>>  	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
->>>>>>  	int n = B_NR_ITEMS(tbS0);
->>>>>> +#ifdef CONFIG_REISERFS_CHECK
->>>>>>  	int leaf_mi;
->>>>>> +#endif
->>>>>
->>>>> Well, I would not like this even for actively maintained code ;) If you
->>>>> want to silence these warnings in this dead code, then I could live with
->>>>> something like:
->>>>>
->>>>> #if defined( CONFIG_REISERFS_CHECK )
->>>>> #define RFALSE(cond, format, args...) __RASSERT(!(cond), ....)
->>>>> #else
->>>>> - #define RFALSE( cond, format, args... ) do {;} while( 0 )
->>>>> + #define RFALSE( cond, format, args... ) do { (void)cond; } while( 0 )
->>>>> #endif
->>>>
->>>> Yes, one line change is much smarter than 107 line patch of mine :-)
->>>>
->>>> Verified, and this line solved all the warnings:
->>>>
->>>>   CC      fs/reiserfs/bitmap.o
->>>>   CC      fs/reiserfs/do_balan.o
->>>>   CC      fs/reiserfs/namei.o
->>>>   CC      fs/reiserfs/inode.o
->>>>   CC      fs/reiserfs/file.o
->>>>   CC      fs/reiserfs/dir.o
->>>>   CC      fs/reiserfs/fix_node.o
->>>>   CC      fs/reiserfs/super.o
->>>>   CC      fs/reiserfs/prints.o
->>>>   CC      fs/reiserfs/objectid.o
->>>>   CC      fs/reiserfs/lbalance.o
->>>>   CC      fs/reiserfs/ibalance.o
->>>>   CC      fs/reiserfs/stree.o
->>>>   CC      fs/reiserfs/hashes.o
->>>>   CC      fs/reiserfs/tail_conversion.o
->>>>   CC      fs/reiserfs/journal.o
->>>>   CC      fs/reiserfs/resize.o
->>>>   CC      fs/reiserfs/item_ops.o
->>>>   CC      fs/reiserfs/ioctl.o
->>>>   CC      fs/reiserfs/xattr.o
->>>>   CC      fs/reiserfs/lock.o
->>>>   CC      fs/reiserfs/procfs.o
->>>>   AR      fs/reiserfs/built-in.a
->>>>
->>>> Just FWIW, back then in year 2000/2001 a journaling file system on my
->>>> Knoppix box was a quantum leap - it would simply replay the journal if
->>>> there was a power loss before shutdown. No several minutes of fsck.
->>>
->>> Well, there was also ext3 at that time already :-) That's where I became
->>> familiar with the idea of journalling. Reiserfs was interesting to me
->>> because of completely different approach to on-disk format (b-tree with
->>> formatted items), packing of small files / file tails (interesting in 2000,
->>> not so much 20 years later) and reasonable scalability for large
->>> directories.
->>>
->>>> I think your idea is great and if you wish a patch could be submitted
->>>> after the merge window.
->>>
->>> I'll leave it up to you. If the warnings annoy you, send the patch along
->>> the lines I've proposed (BTW (void)cond should better be (void)(cond) for
->>> macro safety) and I'll push it to Linus.
->>>
->>> 								Honza
->>
->> Hi, Jan,
->>
->> After a short break, I just tried a full build with this hack against the vanilla
->> linux-next tree:
->>
->> #define RFALSE( cond, format, args... ) do { (void)(cond); } while( 0 )
->>
->> and it breaks at least here:
->>
->> In file included from fs/reiserfs/do_balan.c:15:
->> fs/reiserfs/do_balan.c: In function ‘balance_leaf_when_delete_del’:
->> fs/reiserfs/do_balan.c:86:28: error: ‘ih’ undeclared (first use in this function)
->>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
->>       |                            ^~
->> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
->>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
->>       |                                                      ^~~~
->> ./include/linux/byteorder/generic.h:91:21: note: in expansion of macro ‘__le16_to_cpu’
->>    91 | #define le16_to_cpu __le16_to_cpu
->>       |                     ^~~~~~~~~~~~~
->> fs/reiserfs/do_balan.c:86:16: note: in expansion of macro ‘ih_item_len’
->>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
->>       |                ^~~~~~~~~~~
->> fs/reiserfs/do_balan.c:86:28: note: each undeclared identifier is reported only once for each function it appears in
->>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
->>       |                            ^~
->> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
->>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
->>       |                                                      ^~~~
->> ./include/linux/byteorder/generic.h:91:21: note: in expansion of macro ‘__le16_to_cpu’
->>    91 | #define le16_to_cpu __le16_to_cpu
->>       |                     ^~~~~~~~~~~~~
->> fs/reiserfs/do_balan.c:86:16: note: in expansion of macro ‘ih_item_len’
->>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
->>       |                ^~~~~~~~~~~
->> fs/reiserfs/do_balan.c: In function ‘do_balance_starts’:
->> fs/reiserfs/do_balan.c:1800:16: error: implicit declaration of function ‘check_before_balancing’ [-Werror=implicit-function-declaration]
->>  1800 |         RFALSE(check_before_balancing(tb), "PAP-12340: locked buffers in TB");
->>       |                ^~~~~~~~~~~~~~~~~~~~~~
->> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
->>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
->>       |                                                      ^~~~
->> cc1: some warnings being treated as errors
->> make[7]: *** [scripts/Makefile.build:244: fs/reiserfs/do_balan.o] Error 1
->>   CC [M]  fs/reiserfs/stree.o
->> In file included from fs/reiserfs/stree.c:15:
->> fs/reiserfs/stree.c: In function ‘reiserfs_delete_item’:
->> fs/reiserfs/stree.c:1283:24: error: ‘mode’ undeclared (first use in this function)
->>  1283 |                 RFALSE(mode != M_DELETE, "PAP-5320: mode must be M_DELETE");
->>       |                        ^~~~
->> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
->>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
->>       |                                                      ^~~~
->> fs/reiserfs/stree.c:1283:24: note: each undeclared identifier is reported only once for each function it appears in
->>  1283 |                 RFALSE(mode != M_DELETE, "PAP-5320: mode must be M_DELETE");
->>       |                        ^~~~
->> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
->>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
->>       |                                                      ^~~~
->>
->> Last time it compiled, but now it expects variables in (void)(cond) expressions to be defined.
->>
->> I have try to fix those warnings, submitting the patch for review:
-> 
-> Yeah, this looks ok to me.
-> 
-> 								Honza
+v18: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D874848&s=
+tate=3D*
+=3D=3D=3D=3D
 
-Hi, Jan,
+v17 got minor feedback: (a) to beef up the description on patch 1 and (b)
+to remove the leading underscores in the header definition.
 
-As I understood from the previous experiences, and the Code of Conduct, and explicit Reviwed-by:
-or Acked-by: is required ...
+I applied (a). (b) seems to be against current conventions so I did not
+apply before further discussion.
 
-Or otherwise, the Suggested-by: is used?
+Full devmem TCP changes including the full GVE driver implementation is
+here:
 
-Thank you very much.
+https://github.com/mina/linux/commits/tcpdevmem-v17/
 
-Best regards,
-Mirsad Todorovac
+v17: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D869900&s=
+tate=3D*
+=3D=3D=3D=3D
 
->> -------------------><---------------------------------------
->> diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
->> index 5129efc6f2e6..c8fa3d71ef63 100644
->> --- a/fs/reiserfs/do_balan.c
->> +++ b/fs/reiserfs/do_balan.c
->> @@ -81,11 +81,11 @@ static void balance_leaf_when_delete_del(struct tree_balance *tb)
->>         struct buffer_info bi;
->>  #ifdef CONFIG_REISERFS_CHECK
->>         struct item_head *ih = item_head(tbS0, item_pos);
->> -#endif
->>  
->>         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
->>                "vs-12013: mode Delete, insert size %d, ih to be deleted %h",
->>                -tb->insert_size[0], ih);
->> +#endif
->>  
->>         buffer_info_init_tbS0(tb, &bi);
->>         leaf_delete_items(&bi, 0, item_pos, 1, -1);
->> @@ -1797,8 +1797,8 @@ static inline void do_balance_starts(struct tree_balance *tb)
->>         print_tb(flag, PATH_LAST_POSITION(tb->tb_path),
->>                  tb->tb_path->pos_in_item, tb, "check");
->>         */
->> -       RFALSE(check_before_balancing(tb), "PAP-12340: locked buffers in TB");
->>  #ifdef CONFIG_REISERFS_CHECK
->> +       RFALSE(check_before_balancing(tb), "PAP-12340: locked buffers in TB");
->>         REISERFS_SB(tb->tb_sb)->cur_tb = tb;
->>  #endif
->>  }
->> diff --git a/fs/reiserfs/reiserfs.h b/fs/reiserfs/reiserfs.h
->> index f0e1f29f20ee..027e64853710 100644
->> --- a/fs/reiserfs/reiserfs.h
->> +++ b/fs/reiserfs/reiserfs.h
->> @@ -916,7 +916,7 @@ do {                                                                        \
->>  #if defined( CONFIG_REISERFS_CHECK )
->>  #define RFALSE(cond, format, args...) __RASSERT(!(cond), "!(" #cond ")", format, ##args)
->>  #else
->> -#define RFALSE( cond, format, args... ) do {;} while( 0 )
->> +#define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
->>  #endif
->>  
->>  #define CONSTF __attribute_const__
->> diff --git a/fs/reiserfs/stree.c b/fs/reiserfs/stree.c
->> index 5faf702f8d15..eed1a461169e 100644
->> --- a/fs/reiserfs/stree.c
->> +++ b/fs/reiserfs/stree.c
->> @@ -1280,7 +1280,9 @@ int reiserfs_delete_item(struct reiserfs_transaction_handle *th,
->>                                               &del_size,
->>                                               max_reiserfs_offset(inode));
->>  
->> +#ifdef CONFIG_REISERFS_CHECK
->>                 RFALSE(mode != M_DELETE, "PAP-5320: mode must be M_DELETE");
->> +#endif
->>  
->>                 copy_item_head(&s_ih, tp_item_head(path));
->>                 s_del_balance.insert_size[0] = del_size;
->> --
->>
->> Thanks.
->>
->> Best regards,
->> Mirsad Todorovac
->>
+v16 also got a very thorough review and some testing (thanks again!).
+Thes version addresses all the concerns reported on v15, in terms of
+feedback and issues reported.
+
+Major changes:
+- Use ASSERT_RTNL.
+- Moved around some of the page_pool helpers definitions so I can hide
+  some netmem helpers in private files as Jakub suggested.
+- Don't make every net_iov hold a ref on the binding as Jakub suggested.
+- Fix issue reported by Taehee where we access queues after they have
+  been freed.
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v17/
+
+v16: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D866353&s=
+tate=3D*
+=3D=3D=3D=3D
+
+v15 got a thorough review and some testing, and this version addresses almo=
+st
+all the feedback. Some more minor comments where the authors said it
+could be done later, I left out.
+
+Major changes:
+- Addition of dma-buf introspection to page-pool-get and queue-get.
+- Fixes to selftests suggested by Taehee.
+- Fixes to documentation suggested by Donald.
+- A couple of suggestions and fixes to TCP patches by Eric and David.
+- Fixes to number assignements suggested by Arnd.
+- Use rtnl_lock()ing to guard against queue reconfiguration while the
+  page_pool initialization is happening. (Jakub).
+- Fixes to a few warnings reproduced by Taehee.
+- Fixes to dma-buf binding suggested by Taehee and Jakub.
+- Fixes to netlink UAPI suggested by Jakub
+- Applied a number of Reviewed-bys and Acked-bys (including ones I lost
+  from v13+).
+
+Full devmem TCP changes including the full GVE driver implementation is
+here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v16/
+
+One caveat: Taehee reproduced a KASAN warning and reported it here:
+
+https://lore.kernel.org/netdev/CAMArcTUdCxOBYGF3vpbq=3DeBvqZfnc44KBaQTN7H-w=
+qdUxZdziw@mail.gmail.com/
+
+I estimate the issue to be minor and easily fixable:
+
+https://lore.kernel.org/netdev/CAHS8izNgaqC--GGE2xd85QB=3DutUnOHmioCsDd1TNx=
+JWKemaD_g@mail.gmail.com/
+
+I hope to be able to follow up with a fix to net tree as net-next closes
+imminently, but if this iteration doesn't make it in, I will repost with
+a fix squashed after net-next reopens, no problem.
+
+v15: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D865481&s=
+tate=3D*
+=3D=3D=3D=3D
+
+No material changes in this version, only a fix to linking against
+libynl.a from the last version. Per Jakub's instructions I've pulled one
+of his patches into this series, and now use the new libynl.a correctly,
+I hope.
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v15/
+
+v14: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D865135&a=
+rchive=3Dboth&state=3D*
+=3D=3D=3D=3D
+
+No material changes in this version. Only rebase and re-verification on
+top of net-next. v13, I think, raced with commit ebad6d0334793
+("net/ipv4: Use nested-BH locking for ipv4_tcp_sk.") being merged to
+net-next that caused a patchwork failure to apply. This series should
+apply cleanly on commit c4532232fa2a4 ("selftests: net: remove unneeded
+IP_GRE config").
+
+I did not wait the customary 24hr as Jakub said it's OK to repost as soon
+as I build test the rebased version:
+
+https://lore.kernel.org/netdev/20240625075926.146d769d@kernel.org/
+
+v13: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D861406&a=
+rchive=3Dboth&state=3D*
+=3D=3D=3D=3D
+
+Major changes:
+--------------
+
+This iteration addresses Pavel's review comments, applies his
+reviewed-by's, and seeks to fix the patchwork build error (sorry!).
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v13/
+
+v12: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D859747&s=
+tate=3D*
+=3D=3D=3D=3D
+
+Major changes:
+--------------
+
+This iteration only addresses one minor comment from Pavel with regards
+to the trace printing of netmem, and the patchwork build error
+introduced in v11 because I missed doing an allmodconfig build, sorry.
+
+Other than that v11, AFAICT, received no feedback. There is one
+discussion about how the specifics of  plugging io uring memory through
+the page pool, but not relevant to content in this particular patchset,
+AFAICT.
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v12/
+
+v11: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D857457&s=
+tate=3D*
+=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+v11 addresses feedback received in v10. The major change is the removal
+of the memory provider ops as requested by Christoph. We still
+accomplish the same thing, but utilizing direct function calls with if
+statements rather than generic ops.
+
+Additionally address sparse warnings, bugs and review comments from
+folks that reviewed.
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v11/
+
+Detailed changelog:
+-------------------
+
+- Fixes in netdev_rx_queue_restart() from Pavel & David.
+- Remove commit e650e8c3a36f5 ("net: page_pool: create hooks for
+custom page providers") from the series to address Christoph's
+feedback and rebased other patches on the series on this change.
+- Fixed build errors with CONFIG_DMA_SHARED_BUFFER &&
+  !CONFIG_GENERIC_ALLOCATOR build.
+- Fixed sparse warnings pointed out by Paolo.
+- Drop unnecessary gro_pull_from_frag0 checks.
+- Added Bagas reviewed-by to docs.
+
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Nikolay Aleksandrov <razor@blackwall.org>
+Cc: Taehee Yoo <ap420073@gmail.com>
+Cc: Donald Hunter <donald.hunter@gmail.com>
+
+v10: https://patchwork.kernel.org/project/netdevbpf/list/?series=3D852422&s=
+tate=3D*
+=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+v9 was sent right before the merge window closed (sorry!). v10 is almost
+a re-send of the series now that the merge window re-opened. Only
+rebased to latest net-next and addressed some minor iterative comments
+received on v9.
+
+As usual, the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v10/
+
+Detailed changelog:
+-------------------
+
+- Fixed tokens leaking in DONTNEED setsockopt (Nikolay).
+- Moved net_iov_dma_addr() to devmem.c and made it a devmem specific
+  helpers (David).
+- Rename hook alloc_pages to alloc_netmems as alloc_pages is now
+  preprocessor macro defined and causes a build error.
+
+v9:
+=3D=3D=3D
+
+Major Changes:
+--------------
+
+GVE queue API has been merged. Submitting this version as non-RFC after
+rebasing on top of the merged API, and dropped the out of tree queue API
+I was carrying on github. Addressed the little feedback v8 has received.
+
+Detailed changelog:
+------------------
+- Added new patch from David Wei to this series for
+  netdev_rx_queue_restart()
+  - Fixed sparse error.
+  - Removed CONFIG_ checks in netmem_is_net_iov()
+  - Flipped skb->readable to skb->unreadable
+  - Minor fixes to selftests & docs.
+
+RFC v8:
+=3D=3D=3D=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+- Fixed build error generated by patch-by-patch build.
+- Applied docs suggestions from Randy.
+
+RFC v7:
+=3D=3D=3D=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+This revision largely rebases on top of net-next and addresses the feedback
+RFCv6 received from folks, namely Jakub, Yunsheng, Arnd, David, & Pavel.
+
+The series remains in RFC because the queue-API ndos defined in this
+series are not yet implemented. I have a GVE implementation I carry out
+of tree for my testing. A upstreamable GVE implementation is in the
+works. Aside from that, in my estimation all the patches are ready for
+review/merge. Please do take a look.
+
+As usual the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v7/
+
+Detailed changelog:
+
+- Use admin-perm in netlink API.
+- Addressed feedback from Jakub with regards to netlink API
+  implementation.
+- Renamed devmem.c functions to something more appropriate for that
+  file.
+- Improve the performance seen through the page_pool benchmark.
+- Fix the value definition of all the SO_DEVMEM_* uapi.
+- Various fixes to documentation.
+
+Perf - page-pool benchmark:
+---------------------------
+
+Improved performance of bench_page_pool_simple.ko tests compared to v6:
+
+https://pastebin.com/raw/v5dYRg8L
+
+      net-next base: 8 cycle fast path.
+      RFC v6: 10 cycle fast path.
+      RFC v7: 9 cycle fast path.
+      RFC v7 with CONFIG_DMA_SHARED_BUFFER disabled: 8 cycle fast path,
+                                                     same as baseline.
+
+Perf - Devmem TCP benchmark:
+---------------------
+
+Perf is about the same regardless of the changes in v7, namely the
+removal of the static_branch_unlikely to improve the page_pool benchmark
+performance:
+
+189/200gbps bi-directional throughput with RX devmem TCP and regular TCP
+TX i.e. ~95% line rate.
+
+RFC v6:
+=3D=3D=3D=3D=3D=3D=3D
+
+Major Changes:
+--------------
+
+This revision largely rebases on top of net-next and addresses the little
+feedback RFCv5 received.
+
+The series remains in RFC because the queue-API ndos defined in this
+series are not yet implemented. I have a GVE implementation I carry out
+of tree for my testing. A upstreamable GVE implementation is in the
+works. Aside from that, in my estimation all the patches are ready for
+review/merge. Please do take a look.
+
+As usual the full devmem TCP changes including the full GVE driver
+implementation is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-v6/
+
+This version also comes with some performance data recorded in the cover
+letter (see below changelog).
+
+Detailed changelog:
+
+- Rebased on top of the merged netmem_ref changes.
+
+- Converted skb->dmabuf to skb->readable (Pavel). Pavel's original
+  suggestion was to remove the skb->dmabuf flag entirely, but when I
+  looked into it closely, I found the issue that if we remove the flag
+  we have to dereference the shinfo(skb) pointer to obtain the first
+  frag to tell whether an skb is readable or not. This can cause a
+  performance regression if it dirties the cache line when the
+  shinfo(skb) was not really needed. Instead, I converted the skb->dmabuf
+  flag into a generic skb->readable flag which can be re-used by io_uring
+  0-copy RX.
+
+- Squashed a few locking optimizations from Eric Dumazet in the RX path
+  and the DEVMEM_DONTNEED setsockopt.
+
+- Expanded the tests a bit. Added validation for invalid scenarios and
+  added some more coverage.
+
+Perf - page-pool benchmark:
+---------------------------
+
+bench_page_pool_simple.ko tests with and without these changes:
+https://pastebin.com/raw/ncHDwAbn
+
+AFAIK the number that really matters in the perf tests is the
+'tasklet_page_pool01_fast_path Per elem'. This one measures at about 8
+cycles without the changes but there is some 1 cycle noise in some
+results.
+
+With the patches this regresses to 9 cycles with the changes but there
+is 1 cycle noise occasionally running this test repeatedly.
+
+Lastly I tried disable the static_branch_unlikely() in
+netmem_is_net_iov() check. To my surprise disabling the
+static_branch_unlikely() check reduces the fast path back to 8 cycles,
+but the 1 cycle noise remains.
+
+Perf - Devmem TCP benchmark:
+---------------------
+
+189/200gbps bi-directional throughput with RX devmem TCP and regular TCP
+TX i.e. ~95% line rate.
+
+Major changes in RFC v5:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+1. Rebased on top of 'Abstract page from net stack' series and used the
+   new netmem type to refer to LSB set pointers instead of re-using
+   struct page.
+
+2. Downgraded this series back to RFC and called it RFC v5. This is
+   because this series is now dependent on 'Abstract page from net
+   stack'[1] and the queue API. Both are removed from the series to
+   reduce the patch # and those bits are fairly independent or
+   pre-requisite work.
+
+3. Reworked the page_pool devmem support to use netmem and for some
+   more unified handling.
+
+4. Reworked the reference counting of net_iov (renamed from
+   page_pool_iov) to use pp_ref_count for refcounting.
+
+The full changes including the dependent series and GVE page pool
+support is here:
+
+https://github.com/mina/linux/commits/tcpdevmem-rfcv5/
+
+[1] https://patchwork.kernel.org/project/netdevbpf/list/?series=3D810774
+
+Major changes in v1:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+1. Implemented MVP queue API ndos to remove the userspace-visible
+   driver reset.
+
+2. Fixed issues in the napi_pp_put_page() devmem frag unref path.
+
+3. Removed RFC tag.
+
+Many smaller addressed comments across all the patches (patches have
+individual change log).
+
+Full tree including the rest of the GVE driver changes:
+https://github.com/mina/linux/commits/tcpdevmem-v1
+
+Changes in RFC v3:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+1. Pulled in the memory-provider dependency from Jakub's RFC[1] to make the
+   series reviewable and mergeable.
+
+2. Implemented multi-rx-queue binding which was a todo in v2.
+
+3. Fix to cmsg handling.
+
+The sticking point in RFC v2[2] was the device reset required to refill
+the device rx-queues after the dmabuf bind/unbind. The solution
+suggested as I understand is a subset of the per-queue management ops
+Jakub suggested or similar:
+
+https://lore.kernel.org/netdev/20230815171638.4c057dcd@kernel.org/
+
+This is not addressed in this revision, because:
+
+1. This point was discussed at netconf & netdev and there is openness to
+   using the current approach of requiring a device reset.
+
+2. Implementing individual queue resetting seems to be difficult for my
+   test bed with GVE. My prototype to test this ran into issues with the
+   rx-queues not coming back up properly if reset individually. At the
+   moment I'm unsure if it's a mistake in the POC or a genuine issue in
+   the virtualization stack behind GVE, which currently doesn't test
+   individual rx-queue restart.
+
+3. Our usecases are not bothered by requiring a device reset to refill
+   the buffer queues, and we'd like to support NICs that run into this
+   limitation with resetting individual queues.
+
+My thought is that drivers that have trouble with per-queue configs can
+use the support in this series, while drivers that support new netdev
+ops to reset individual queues can automatically reset the queue as
+part of the dma-buf bind/unbind.
+
+The same approach with device resets is presented again for consideration
+with other sticking points addressed.
+
+This proposal includes the rx devmem path only proposed for merge. For a
+snapshot of my entire tree which includes the GVE POC page pool support &
+device memory support:
+
+https://github.com/torvalds/linux/compare/master...mina:linux:tcpdevmem-v3
+
+[1] https://lore.kernel.org/netdev/f8270765-a27b-6ccf-33ea-cda097168d79@red=
+hat.com/T/
+[2] https://lore.kernel.org/netdev/CAHS8izOVJGJH5WF68OsRWFKJid1_huzzUK+hpKb=
+LcL4pSOD1Jw@mail.gmail.com/T/
+
+Changes in RFC v2:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+The sticking point in RFC v1[1] was the dma-buf pages approach we used to
+deliver the device memory to the TCP stack. RFC v2 is a proof-of-concept
+that attempts to resolve this by implementing scatterlist support in the
+networking stack, such that we can import the dma-buf scatterlist
+directly. This is the approach proposed at a high level here[2].
+
+Detailed changes:
+1. Replaced dma-buf pages approach with importing scatterlist into the
+   page pool.
+2. Replace the dma-buf pages centric API with a netlink API.
+3. Removed the TX path implementation - there is no issue with
+   implementing the TX path with scatterlist approach, but leaving
+   out the TX path makes it easier to review.
+4. Functionality is tested with this proposal, but I have not conducted
+   perf testing yet. I'm not sure there are regressions, but I removed
+   perf claims from the cover letter until they can be re-confirmed.
+5. Added Signed-off-by: contributors to the implementation.
+6. Fixed some bugs with the RX path since RFC v1.
+
+Any feedback welcome, but specifically the biggest pending questions
+needing feedback IMO are:
+
+1. Feedback on the scatterlist-based approach in general.
+2. Netlink API (Patch 1 & 2).
+3. Approach to handle all the drivers that expect to receive pages from
+   the page pool (Patch 6).
+
+[1] https://lore.kernel.org/netdev/dfe4bae7-13a0-3c5d-d671-f61b375cb0b4@gma=
+il.com/T/
+[2] https://lore.kernel.org/netdev/CAHS8izPm6XRS54LdCDZVd0C75tA1zHSu6jLVO8n=
+zTLXCc=3DH7Nw@mail.gmail.com/
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+* TL;DR:
+
+Device memory TCP (devmem TCP) is a proposal for transferring data to and/o=
+r
+from device memory efficiently, without bouncing the data to a host memory
+buffer.
+
+* Problem:
+
+A large amount of data transfers have device memory as the source and/or
+destination. Accelerators drastically increased the volume of such transfer=
+s.
+Some examples include:
+- ML accelerators transferring large amounts of training data from storage =
+into
+  GPU/TPU memory. In some cases ML training setup time can be as long as 50=
+% of
+  TPU compute time, improving data transfer throughput & efficiency can hel=
+p
+  improving GPU/TPU utilization.
+
+- Distributed training, where ML accelerators, such as GPUs on different ho=
+sts,
+  exchange data among them.
+
+- Distributed raw block storage applications transfer large amounts of data=
+ with
+  remote SSDs, much of this data does not require host processing.
+
+Today, the majority of the Device-to-Device data transfers the network are
+implemented as the following low level operations: Device-to-Host copy,
+Host-to-Host network transfer, and Host-to-Device copy.
+
+The implementation is suboptimal, especially for bulk data transfers, and c=
+an
+put significant strains on system resources, such as host memory bandwidth,
+PCIe bandwidth, etc. One important reason behind the current state is the
+kernel=E2=80=99s lack of semantics to express device to network transfers.
+
+* Proposal:
+
+In this patch series we attempt to optimize this use case by implementing
+socket APIs that enable the user to:
+
+1. send device memory across the network directly, and
+2. receive incoming network packets directly into device memory.
+
+Packet _payloads_ go directly from the NIC to device memory for receive and=
+ from
+device memory to NIC for transmit.
+Packet _headers_ go to/from host memory and are processed by the TCP/IP sta=
+ck
+normally. The NIC _must_ support header split to achieve this.
+
+Advantages:
+
+- Alleviate host memory bandwidth pressure, compared to existing
+ network-transfer + device-copy semantics.
+
+- Alleviate PCIe BW pressure, by limiting data transfer to the lowest level
+  of the PCIe tree, compared to traditional path which sends data through t=
+he
+  root complex.
+
+* Patch overview:
+
+** Part 1: netlink API
+
+Gives user ability to bind dma-buf to an RX queue.
+
+** Part 2: scatterlist support
+
+Currently the standard for device memory sharing is DMABUF, which doesn't
+generate struct pages. On the other hand, networking stack (skbs, drivers, =
+and
+page pool) operate on pages. We have 2 options:
+
+1. Generate struct pages for dmabuf device memory, or,
+2. Modify the networking stack to process scatterlist.
+
+Approach #1 was attempted in RFC v1. RFC v2 implements approach #2.
+
+** part 3: page pool support
+
+We piggy back on page pool memory providers proposal:
+https://github.com/kuba-moo/linux/tree/pp-providers
+
+It allows the page pool to define a memory provider that provides the
+page allocation and freeing. It helps abstract most of the device memory
+TCP changes from the driver.
+
+** part 4: support for unreadable skb frags
+
+Page pool iovs are not accessible by the host; we implement changes
+throughput the networking stack to correctly handle skbs with unreadable
+frags.
+
+** Part 5: recvmsg() APIs
+
+We define user APIs for the user to send and receive device memory.
+
+Not included with this series is the GVE devmem TCP support, just to
+simplify the review. Code available here if desired:
+https://github.com/mina/linux/tree/tcpdevmem
+
+This series is built on top of net-next with Jakub's pp-providers changes
+cherry-picked.
+
+* NIC dependencies:
+
+1. (strict) Devmem TCP require the NIC to support header split, i.e. the
+   capability to split incoming packets into a header + payload and to put
+   each into a separate buffer. Devmem TCP works by using device memory
+   for the packet payload, and host memory for the packet headers.
+
+2. (optional) Devmem TCP works better with flow steering support & RSS supp=
+ort,
+   i.e. the NIC's ability to steer flows into certain rx queues. This allow=
+s the
+   sysadmin to enable devmem TCP on a subset of the rx queues, and steer
+   devmem TCP traffic onto these queues and non devmem TCP elsewhere.
+
+The NIC I have access to with these properties is the GVE with DQO support
+running in Google Cloud, but any NIC that supports these features would suf=
+fice.
+I may be able to help reviewers bring up devmem TCP on their NICs.
+
+* Testing:
+
+The series includes a udmabuf kselftest that show a simple use case of
+devmem TCP and validates the entire data path end to end without
+a dependency on a specific dmabuf provider.
+
+** Test Setup
+
+Kernel: net-next with this series and memory provider API cherry-picked
+locally.
+
+Hardware: Google Cloud A3 VMs.
+
+NIC: GVE with header split & RSS & flow steering support.
+
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: David Wei <dw@davidwei.uk>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Shailend Chand <shailend@google.com>
+Cc: Harshitha Ramamurthy <hramamurthy@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Jeroen de Borst <jeroendb@google.com>
+Cc: Praveen Kaligineedi <pkaligineedi@google.com>
+
+
+
+Mina Almasry (14):
+  netdev: add netdev_rx_queue_restart()
+  net: netdev netlink api to bind dma-buf to a net device
+  netdev: support binding dma-buf to netdevice
+  netdev: netdevice devmem allocator
+  page_pool: move dmaddr helpers to .c file
+  page_pool: devmem support
+  memory-provider: dmabuf devmem memory provider
+  net: support non paged skb frags
+  net: add support for skbs with unreadable frags
+  tcp: RX path for devmem TCP
+  net: add SO_DEVMEM_DONTNEED setsockopt to release RX frags
+  net: add devmem TCP documentation
+  selftests: add ncdevmem, netcat for devmem TCP
+  netdev: add dmabuf introspection
+
+ Documentation/netlink/specs/netdev.yaml |  61 +++
+ Documentation/networking/devmem.rst     | 269 ++++++++++++
+ Documentation/networking/index.rst      |   1 +
+ arch/alpha/include/uapi/asm/socket.h    |   6 +
+ arch/mips/include/uapi/asm/socket.h     |   6 +
+ arch/parisc/include/uapi/asm/socket.h   |   6 +
+ arch/sparc/include/uapi/asm/socket.h    |   6 +
+ include/linux/skbuff.h                  |  61 ++-
+ include/linux/skbuff_ref.h              |   9 +-
+ include/linux/socket.h                  |   1 +
+ include/net/devmem.h                    | 128 ++++++
+ include/net/mp_dmabuf_devmem.h          |  44 ++
+ include/net/netdev_rx_queue.h           |   5 +
+ include/net/netmem.h                    | 164 +++++++-
+ include/net/page_pool/helpers.h         |  42 +-
+ include/net/page_pool/types.h           |   8 +
+ include/net/sock.h                      |   2 +
+ include/net/tcp.h                       |   5 +-
+ include/trace/events/page_pool.h        |  12 +-
+ include/uapi/asm-generic/socket.h       |   6 +
+ include/uapi/linux/netdev.h             |  13 +
+ include/uapi/linux/uio.h                |  17 +
+ net/core/Makefile                       |   3 +-
+ net/core/datagram.c                     |   6 +
+ net/core/dev.c                          |   7 +-
+ net/core/devmem.c                       | 378 +++++++++++++++++
+ net/core/gro.c                          |   3 +-
+ net/core/netdev-genl-gen.c              |  23 +
+ net/core/netdev-genl-gen.h              |   6 +
+ net/core/netdev-genl.c                  | 111 +++++
+ net/core/netdev_rx_queue.c              |  74 ++++
+ net/core/netmem_priv.h                  |  36 ++
+ net/core/page_pool.c                    | 147 +++++--
+ net/core/page_pool_priv.h               |   3 +
+ net/core/page_pool_user.c               |   4 +
+ net/core/skbuff.c                       |  77 +++-
+ net/core/sock.c                         |  68 +++
+ net/ipv4/esp4.c                         |   3 +-
+ net/ipv4/tcp.c                          | 261 +++++++++++-
+ net/ipv4/tcp_input.c                    |  13 +-
+ net/ipv4/tcp_ipv4.c                     |  16 +
+ net/ipv4/tcp_minisocks.c                |   2 +
+ net/ipv4/tcp_output.c                   |   5 +-
+ net/ipv6/esp6.c                         |   3 +-
+ net/packet/af_packet.c                  |   4 +-
+ tools/include/uapi/linux/netdev.h       |  13 +
+ tools/testing/selftests/net/.gitignore  |   1 +
+ tools/testing/selftests/net/Makefile    |   9 +
+ tools/testing/selftests/net/ncdevmem.c  | 536 ++++++++++++++++++++++++
+ 49 files changed, 2563 insertions(+), 121 deletions(-)
+ create mode 100644 Documentation/networking/devmem.rst
+ create mode 100644 include/net/devmem.h
+ create mode 100644 include/net/mp_dmabuf_devmem.h
+ create mode 100644 net/core/devmem.c
+ create mode 100644 net/core/netdev_rx_queue.c
+ create mode 100644 net/core/netmem_priv.h
+ create mode 100644 tools/testing/selftests/net/ncdevmem.c
+
+--=20
+2.46.0.rc2.264.g509ed76dc8-goog
+
 
