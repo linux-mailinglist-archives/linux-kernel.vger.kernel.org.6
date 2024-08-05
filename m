@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-274775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CB5947C8B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:10:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42DE0947C8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85A70B2169D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:10:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7563F1C21CFD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167F7139CFF;
-	Mon,  5 Aug 2024 14:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4461139CE3;
+	Mon,  5 Aug 2024 14:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="J4qaqR0D"
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IaOjWVR4"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44F780631
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CD0811E2
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722866992; cv=none; b=QeAI02OBBFOf9tUAG1KZKU4M4Db/i+SufPA8SdEF5tlcWSEo2bxabyrGocRNkS/kQcmYOihmta7a8VefmaHrfkRHPXzWpfj1DDg935wLbKBAKSi3mHfQcp8eR3IOU6Xscb69sJrw/mnzzHwGi1InaGEPmw0fgkEeMVWvMBVq8ok=
+	t=1722867021; cv=none; b=IVB3CsH1iyle77crnMQVO10f+KIq78VG2Sf/33RhpIv6+8wEBJsOvl/HHhlYuKOZL/8Jgz9TfEr0eEF7WoDFMhmUwLI/aqDLaQ9FZCDvcUZOjPh42KxYYSFDbtw4C8uiq4qXcXh35hn8kt/rh1IESPCF0d25+9t6yOUoyjbhyWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722866992; c=relaxed/simple;
-	bh=X2A35lPHw0nMF+vJCFZrhHC1hh8zXDG7UPxBKAS5+Uc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oVZ7IgUJg9ZpsfV8KaQru3GOLjGxa/R8WePxeo2DTtt3jIbC3yyujK393Ppm/HDNQ6/YWxkHaYvXZnKxJp/lOlYXmcZIMiuN+gTC9NZFTjjpikAXyngun6P5Y+q7pomZe8Zv29x54gUFmv7b87LiOdkosCxFT+qtkUffKDXmuq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=J4qaqR0D; arc=none smtp.client-ip=185.136.65.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20240805140940ac95eb8b929fed6eae
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 05 Aug 2024 16:09:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=efEiMeR14DlOUKlOcoXz29JjldjKUG7RWy7Rwu0IWnY=;
- b=J4qaqR0D2ZdTDBlRvNc+91DYOWwScI8riUXJdp5OdU4jXriTg7RMcRtO14X5dwJ3XleaP0
- 75Y2vp2r/+CbFtQzZZfyNL4dJIkIxPgch3OT6WEBLw0Mab+iH5JVZIFz2Pn0lqt5kJzMjS0i
- hUGvl8s9ef4om54xXQRcHG1l/8C5YSD31cax/r1EJnSFKN/eSkQsrXPVYetTsMZ2iBnwi4Ur
- b2xieU/KcSfWj6prSvjLAg+CtAL95vaSFTdj0cFajZWYVVTM0rmnlm5S13v2DBUTqsxu0rPP
- v5F+V5zbNMe5l81bXczvQjVrnRXGqebgffNhOJGuXv5csi+9YgP5oGUw==;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	jan.kiszka@siemens.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	qyousef@layalina.io,
-	Felix Moessbauer <felix.moessbauer@siemens.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 1/1] hrtimer: Ignore slack time for RT tasks in hrtimer_start_range_ns()
-Date: Mon,  5 Aug 2024 16:09:30 +0200
-Message-Id: <20240805140930.29462-2-felix.moessbauer@siemens.com>
-In-Reply-To: <20240805140930.29462-1-felix.moessbauer@siemens.com>
-References: <20240805140930.29462-1-felix.moessbauer@siemens.com>
+	s=arc-20240116; t=1722867021; c=relaxed/simple;
+	bh=CRk+WSvg+8ew6Axl9UsveI8a1vmiJxVs2T0r9Dd2K6o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzpNS6jIYYFWIBO29FvauosFKMKA/kJCmFs9B/oixe4Qs8y2irSTRkxUl1TBjRGdv4P0w+NaDJVXpAPQ5bB33pQp12Et3gsZddlxQjK5dBtd6oXrNiRn+cxClve97oObifhSZEThKfjgdFL2SVuOze7E3ebGmgqUkfchPvx3OV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IaOjWVR4; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=VC7W
+	KpuwekykfBr8ihdjN8Kp943rQ0vp+Rxzc1f6dM4=; b=IaOjWVR4dCjLxNxJihk4
+	8UG0Q0HrzC69VPZNP0QdivZuHbUesoL1qKJj7otmMAMZovNP0FDhWci5noO5veaV
+	gRNh5BfTw8ClwNA2mrE/ditz7Ji1c+qgrzn8ra+HgAaoFIbdcws4iWqUhNxa/wuE
+	8uzPeAIHELZtA5wbas4yJee2xmaEM2ZAb+bubV6Wg5mrr90yWH5RoK5VLjgOcXWE
+	gJAf0tRV80nfD2HeHQBEVC4bE8iAVks0x+jeTHGC0sd1RFoflm+57a6/OvXXetub
+	gqR4mVLuUD4sp/NOHu8cwURS+tEjbzpyLSTa0LoD4+h33yroQ1fr0cfQ0eqb5v78
+	+w==
+Received: (qmail 2002488 invoked from network); 5 Aug 2024 16:10:14 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Aug 2024 16:10:14 +0200
+X-UD-Smtp-Session: l3s3148p1@vMFdPPAeYskgAwDPXxLGAIH3oZkcU6AS
+Date: Mon, 5 Aug 2024 16:10:13 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v5 3/3] mmc: renesas_sdhi: Add RZ/V2H(P) compatible string
+Message-ID: <ZrDdRZOdXv4c6-P8@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240724182119.652080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240724182119.652080-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="06jFUOUZfUFs2FzP"
+Content-Disposition: inline
+In-Reply-To: <20240724182119.652080-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-RT tasks do not have any timerslack, as this induces jitter. By
-that, the timer slack is already ignored in the nanosleep family and
-schedule_hrtimeout_range() (fixed in 0c52310f2600).
 
-The hrtimer_start_range_ns function is indirectly used by glibc-2.33+
-for timed waits on condition variables. These are sometimes used in
-RT applications for realtime queue processing. At least on the
-combination of kernel 5.10 and glibc-2.31, the timed wait on condition
-variables in rt tasks was precise (no slack), however glibc-2.33
-changed the internal wait implementation, exposing this oversight.
+--06jFUOUZfUFs2FzP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Make the timer slack consistent across all hrtimer programming code,
-by ignoring the timerslack for tasks with rt policies also in the last
-remaining location in hrtimer_start_range_ns().
+On Wed, Jul 24, 2024 at 07:21:19PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that
+> of the R-Car Gen3, but it has some differences:
+> - HS400 is not supported.
+> - It has additional SD_STATUS register to control voltage,
+>   power enable and reset.
+> - It supports fixed address mode.
+>=20
+> To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g057'
+> compatible string is added.
+>=20
+> Note for RZ/V2H(P), we are using the `of_rzg2l_compatible` OF data as it
+> already handles no HS400 and fixed address mode support. Since the SDxIOVS
+> and SDxPWEN pins can always be used as GPIO pins on the RZ/V2H(P) SoC, no
+> driver changes are done to control the SD_STATUS register.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
----
- kernel/time/hrtimer.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Okay, so you mux the pins as GPIOs and leave SD_STATUS alone. Smart
+move.
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index b8ee320208d4..e8b44e7c281f 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1274,7 +1274,7 @@ static int __hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
-  * hrtimer_start_range_ns - (re)start an hrtimer
-  * @timer:	the timer to be added
-  * @tim:	expiry time
-- * @delta_ns:	"slack" range for the timer
-+ * @delta_ns:	"slack" range for the timer for SCHED_OTHER tasks
-  * @mode:	timer mode: absolute (HRTIMER_MODE_ABS) or
-  *		relative (HRTIMER_MODE_REL), and pinned (HRTIMER_MODE_PINNED);
-  *		softirq based mode is considered for debug purpose only!
-@@ -1299,6 +1299,10 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
- 
- 	base = lock_hrtimer_base(timer, &flags);
- 
-+	/* rt-tasks do not have a timer slack for obvious reasons */
-+	if (task_is_realtime(current))
-+		delta_ns = 0;
-+
- 	if (__hrtimer_start_range_ns(timer, tim, delta_ns, mode, base))
- 		hrtimer_reprogram(timer, true);
- 
--- 
-2.39.2
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+For the record:
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--06jFUOUZfUFs2FzP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaw3UEACgkQFA3kzBSg
+KbajIQ//cfYfi1vC75daca5woTDJICrAM8gVdOmFDa8hFFc0LKwgUQFYiWu6CjOE
+VPyCunnEM0YxAHOgc4pmBfysESH/qPnd78wLKDmFxabr8FUGGbRPxsM9nvNC/mlp
+Of5A2RSMayNAz+s15fcMwhZJT2V3U4rCDHVK+iZPjJ3Opfx5CzNta7aRVlvWBJC/
+dmX7Sh4g1RDsJ+52VVX4hPXOFjEoZSwFeRv68kBvXkXhGu8He8Z+kE3oe1N/uBwb
+mcML9RQQgH+pNHirTZPpMvyPtnQizCt6qEbWcQ5cIDkV1uGiZ/lIaztNIayB6zIu
+izS7YDVNWRsjvHERsGQz14XgphDFhDlHTnxcDThGtd4brt3GB1twsf5wuD6fnQO7
+vnQJnFHrgb7LoJqdg9v01NkoJ+7WSryPez2puxPGhWEQzGWBsThjsTQnsmnAXzcr
+Iy8tE66/sJUYWDjsZEMHKgaPnRlrUl6BYGIDSWRO7jCqGfi7bCc6iLh2/m1wN7Wi
+iqgd0grWq75DCxz2UVEZX/Zk2mhv7430QB34q1iRDErRu07UsM/+T3SoRafQtgFw
+CEOog9Hn4IIlNubE93JlJ7O4DBDb5ugc4Ogs8LSa7NURXix9vC4XcUGZmPLTetVA
+Ngtyhv7vfRplIR4Pu5HN08vLgz9QiS5cXx3rUW3g5hhHruOYI1o=
+=pRex
+-----END PGP SIGNATURE-----
+
+--06jFUOUZfUFs2FzP--
 
