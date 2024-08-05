@@ -1,111 +1,144 @@
-Return-Path: <linux-kernel+bounces-275105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45DA9480A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D2919480AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E87D28196A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C24C628110D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1549515ECF2;
-	Mon,  5 Aug 2024 17:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467A115ECF2;
+	Mon,  5 Aug 2024 17:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SzF1IOR4"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aU0Hxp7W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A34253E22
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B22481A7;
+	Mon,  5 Aug 2024 17:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722879928; cv=none; b=Ues5JloxAPTFl38zEUQ3a4MWVaNxIZvVqhh85mu1LRXgn1D9F/5J471wmRbDYM5Hhzw+p1/tZe2Dt+R6IJmbmVS+rIoIKOthZPphC1dGZseVS2edFT6/roDPqyRhx2+HO7xea+zgCCbR3K+RTT9e24Z9We5PYv9DqNiattiGe3s=
+	t=1722879995; cv=none; b=dAjShRN0BIp8aV6uxpHCKJHXdLIeVQCejGwI3LpMSEQZR4O1S9QP0jxEzjbH061XF84I+FPOOBJVy4wTD9aSTnY341R7eFGYE4uYkGzVd7a8KOISXWJ5et7gUOrkYxi9ltGZo2S0fDEZgmcwuI1ghB89DRDIJgfzYfC6EOt1eec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722879928; c=relaxed/simple;
-	bh=Uaxu0Fd3qGZpGrDLqe+EQaH1BhuffTJKALpVCVhB7gM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=MQlG61ckQUFHAjqFT/9w/U3XcPRcoJis74TMtcQORQFJxR244q1+0WbZbwby9CAGJnTTQUw8sixNJ5533ozkK1khhnD34xjYfqNaz1wBwIMxmQwPNj54vE6KnEp7tlXK5bAzJrLMYgT4DuJRRKG9bNoocxpBA7Mep7zNveTOweE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SzF1IOR4; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2cd48ad7f0dso8262051a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722879926; x=1723484726; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x5RzMw3ZUuWLDwmLaXVM1ORpqGRrPuwXY8qwQ1cAdMA=;
-        b=SzF1IOR4nZGObNA2HtShXo672GU2KvDLmR41zuDJW+ZHApAW3VlLzZqwTkeDxyWp6n
-         XVgpMyCK3BqTrjk/3hLvFM0tsLOOxR5c1nsrroV1TR4uCWW9raH5wZghc9hWBoYsYalf
-         9j5K5ZpWXr7uiXCb/RdKn0SdkENsUgUOcJA6HgD4Q5/Dp40YknFVK5vbILLH9NsUu9UY
-         vXK2jl7nva0cbhGp01EeH64RxitYnZyDy28UadWFg7gUe3mzc8kRs7f8+j8S0Y87VyVv
-         +JuWYzv8PAYW4Vb2G3Xb2LiAQ7hekw/YPUwP1oG8qWBriecdxNLgHsl1d/bZkWzeV6Y0
-         TT6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722879926; x=1723484726;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x5RzMw3ZUuWLDwmLaXVM1ORpqGRrPuwXY8qwQ1cAdMA=;
-        b=UK0M7+bXlwRAu8tc+0wcB6SEiybNBzRf9Rk5yuezgTzpIMkUMoTrYQGmz+9CFAeaxi
-         wnvBTL0lp4HEheennp6JNWwg+7CNgaCQUIsTe/sVb4r1a7TJTBNglRfzASyHEgiQ89j2
-         /TxrwwVL/PnI+GwmB/EdEaZfOeAFscpxCqhPCjdgSqJgBbhfnnKCH7iykBXuYIv8mrS2
-         2WvtEiDCU6t9dCOqZIYp8iIsQCkW806isjPCaZqcauFIYLCfXkA0L5AmRNrzF1Ch2TW+
-         4ktjyl4qPa0j2j341b7WHa+S74D9M0kaAgXel+PailT2s+on0V8SFqv8tnD8Work+Imm
-         mr2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWcEP7eXopE9jWKEtFy6eO6sbkGGVfRUioPkX5/eS0UrNwRytYeJzQ/CtgKPBK5FFLBvySjs+BGdSdjrKXk1z/E+ySEoxY92kjH+CM4
-X-Gm-Message-State: AOJu0Ywy7PQ2IboNQw+K3RI6Nbdvin9VYhws0ZvVN4YM4NyRrrxNjFh8
-	tYdKnTqwNPo36KXbGazhCNU7+CANJduIx98RWY0PZ9Eo9NXaHDZeewEGNQA4w1A=
-X-Google-Smtp-Source: AGHT+IHTM1/ezbIZBE2uR35RCwAwDmp5iDZNt+OTvJsP/ECyALo6612uOaNAwDpBtjvT0Rz57eu4YA==
-X-Received: by 2002:a17:90a:bf14:b0:2c9:758b:a278 with SMTP id 98e67ed59e1d1-2cff957d120mr15400044a91.35.1722879925901;
-        Mon, 05 Aug 2024 10:45:25 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc45b3f0sm10836812a91.26.2024.08.05.10.45.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:45:25 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
- Dhruva Gole <d-gole@ti.com>
-Cc: vigneshr@ti.com, linux-omap@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240805101118.427133-1-d-gole@ti.com>
-References: <20240805101118.427133-1-d-gole@ti.com>
-Subject: Re: [PATCH] bus: ti-sysc: Remove excess struct member
- 'disable_on_idle' description
-Message-Id: <172287992528.309299.6174838584531179104.b4-ty@baylibre.com>
-Date: Mon, 05 Aug 2024 10:45:25 -0700
+	s=arc-20240116; t=1722879995; c=relaxed/simple;
+	bh=Gx+4NhliD1/MYKaWvRPgeKiC8Ozr9TsuLJGZf7Sl7gk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ttn4FVBwawrBUHzzUYHXHKgL1OQZXVO4VNPSD1Tmq6YT3kFIJXsuaf/tSTwZpA8tR8D0E6LIg+Pf25w1e6kj/KgkEnkgGPkfpQMJjEVaeFDMXuN7RErb9jgynj4/NC+PDkNQwSq+BKpMTsSty3pZ+IinUGDpbak4NBM6qLnSDFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aU0Hxp7W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F26D3C4AF12;
+	Mon,  5 Aug 2024 17:46:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722879995;
+	bh=Gx+4NhliD1/MYKaWvRPgeKiC8Ozr9TsuLJGZf7Sl7gk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aU0Hxp7WYGPBt79fq/G1zNMFeWp4pEOTSLgWTye4U4GLssF1IkI8HcaFDQrZU6cMb
+	 Nfx69UwUFStApMMVK+1tICy6JbHpYkKuK9czhsq3P3+6xFWOhkhqrl+cEraBWYRScq
+	 vrA9p08uvFPoUn/Enct6x9loVbTcGGBV9T+ogf0hDSNqIjNz+GtMFk7bWAExlqAzat
+	 kckiXQN2JWW41RwmmptnZPwiLajRWFHmI+HWifKHe+XYvglptrw7t/M1SIMoLBxLAI
+	 6/G1LmNTfoWtE7+Ga4JYJ/73LJVSrm/jSYTrzmeyFA9WkbbvmalgNsY7Ek+3kEv9QB
+	 960/8cC0kQt1g==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso11517546e87.3;
+        Mon, 05 Aug 2024 10:46:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhOUscwc6zo8Nf4p+0/Xc691GdshHYbR4PwSRXA6Z76bsMZY6d3kTeuywfPVCfJxMsmzQcn+8h1dc+FveaT/WEjBp+DVwCvhKcRdh2PZUMf2LR+rjFyneGLXv04la1x3aFQ5cNwRKXjQCQ4xTD/BpG
+X-Gm-Message-State: AOJu0YzKAjDdLEIqaejAVkymGPDQyRmR+l8wixBgONb4v6tpxCTRrsR1
+	zWPBeSyFUaQ5Kd50IIksWlu0lxpKaSKKCw0RSkCmmcx9IO9dOSDGtYLvK0Rtl4IQ1Lta36QQc9V
+	iKM+wiHjkFtm3+exf7AWfP0hxEZU=
+X-Google-Smtp-Source: AGHT+IG3yL9p3oXntJjAV6RufVVHtCDR8RPr8Pey/VmQyx+q/WuBdDKFYhg2gH+XnhoFAiL0xDOEsCTDYsBcMMEMijg=
+X-Received: by 2002:a05:6512:1593:b0:52d:582e:4111 with SMTP id
+ 2adb3069b0e04-530bb3810c5mr11445282e87.18.1722879993290; Mon, 05 Aug 2024
+ 10:46:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+References: <20240802210836.2210140-1-song@kernel.org> <20240802210836.2210140-3-song@kernel.org>
+ <20240805224544.e0a4277dff4ac41d867c6bc1@kernel.org>
+In-Reply-To: <20240805224544.e0a4277dff4ac41d867c6bc1@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Mon, 5 Aug 2024 10:46:20 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6Axj1LaK3D09KuevQo2Otg7U0toDEPjop1dEnrUFtzAA@mail.gmail.com>
+Message-ID: <CAPhsuW6Axj1LaK3D09KuevQo2Otg7U0toDEPjop1dEnrUFtzAA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] kallsyms: Add APIs to match symbol without .XXXX suffix.
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, jpoimboe@kernel.org, jikos@kernel.org, 
+	mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com, nathan@kernel.org, 
+	morbo@google.com, justinstitt@google.com, mcgrof@kernel.org, 
+	thunder.leizhen@huawei.com, kees@kernel.org, kernel-team@meta.com, 
+	mmaurer@google.com, samitolvanen@google.com, rostedt@goodmis.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Masami,
 
-On Mon, 05 Aug 2024 15:41:18 +0530, Dhruva Gole wrote:
-> When built with W=1, the driver throws the following warning:
-> 
-> ../drivers/bus/ti-sysc.c:169: warning: Excess struct member
-> 'disable_on_idle' description in 'sysc'
-> 
-> Fix it by removing the excess description.
-> 
-> [...]
+On Mon, Aug 5, 2024 at 6:45=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.or=
+g> wrote:
+>
+> On Fri,  2 Aug 2024 14:08:34 -0700
+> Song Liu <song@kernel.org> wrote:
+>
+> > With CONFIG_LTO_CLANG=3Dy, the compiler may add suffix to function name=
+s
+> > to avoid duplication. This causes confusion with users of kallsyms.
+> > On one hand, users like livepatch are required to match the symbols
+> > exactly. On the other hand, users like kprobe would like to match to
+> > original function names.
+> >
+> > Solve this by splitting kallsyms APIs. Specifically, existing APIs now
+> > should match the symbols exactly. Add two APIs that match only the part
+> > without .XXXX suffix. Specifically, the following two APIs are added.
+> >
+> > 1. kallsyms_lookup_name_without_suffix()
+> > 2. kallsyms_on_each_match_symbol_without_suffix()
+> >
+> > These APIs will be used by kprobe.
+> >
+> > Also cleanup some code and update kallsyms_selftests accordingly.
+> >
+> > Signed-off-by: Song Liu <song@kernel.org>
+>
+> Looks good to me, but I have a nitpick.
+>
+>
+> > --- a/kernel/kallsyms.c
+> > +++ b/kernel/kallsyms.c
+> > @@ -164,30 +164,27 @@ static void cleanup_symbol_name(char *s)
+> >  {
+> >       char *res;
+> >
+> > -     if (!IS_ENABLED(CONFIG_LTO_CLANG))
+> > -             return;
+> > -
+> >       /*
+> >        * LLVM appends various suffixes for local functions and variable=
+s that
+> >        * must be promoted to global scope as part of LTO.  This can bre=
+ak
+> >        * hooking of static functions with kprobes. '.' is not a valid
+> > -      * character in an identifier in C. Suffixes only in LLVM LTO obs=
+erved:
+> > -      * - foo.llvm.[0-9a-f]+
+> > +      * character in an identifier in C, so we can just remove the
+> > +      * suffix.
+> >        */
+> > -     res =3D strstr(s, ".llvm.");
+> > +     res =3D strstr(s, ".");
+>
+> nit: "strchr(s, '.')" ?
+>
+> Anyway,
+>
+> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Applied, thanks!
+Thanks for your kind review!
 
-[1/1] bus: ti-sysc: Remove excess struct member 'disable_on_idle' description
-      commit: a80a3d92dc600fed760edb8a633ea80712faaf98
+If we have another version, I will fold this change (and the one in
+kallsyms_selftest.c) in.
 
-Best regards,
--- 
-Kevin Hilman <khilman@baylibre.com>
-
+Song
 
