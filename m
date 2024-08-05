@@ -1,168 +1,286 @@
-Return-Path: <linux-kernel+bounces-274471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8111947884
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5497694788D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 246DE1C20C24
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:37:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B8A1C21360
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB7E153BD9;
-	Mon,  5 Aug 2024 09:36:50 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B84153BD9;
+	Mon,  5 Aug 2024 09:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pehdjkfk"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08A91514C8;
-	Mon,  5 Aug 2024 09:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E1278C8D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 09:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722850609; cv=none; b=u7d4uwxbNhoa1IcsT3796LSLAwuvELOK00HFTCqfLu1hnGqiNmrmLhnp85stg3UuVsMSo+RcEghYnP7UHiLjQvqzJPsVz0jvXaRsHpnb86SRcAeckceAX5Y6zS4II0bAcxq94XI5al03DdTr4alcs9Iqn6sQCSmFhfQVI8xDAyE=
+	t=1722850717; cv=none; b=Hd2THrbWQDKZtgFtxB6qkf3ufXsX/SdIT6tj2cGdPZI8w5tGDUntEcVvGJSt0xeJPuQQcJg+61tY+FK19VsoHzyk6RyEJ5w2vDhSZ4eL5/knzeucciMEmlVW2u80we9AyiA3noP6dbSsassuQQKFLYmqEnOJFMTz9sOf9GLcFiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722850609; c=relaxed/simple;
-	bh=sRj3LcW1LrR22d1Leo5coVakuobFAymAE4TAVqch6lk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NW2qI6YXrXR/la7CWU+WK6CXDK/8M3zPXoZLorcRZBAM3J38/UkB25Rq7yVSteIFa/NEfGbnR0f85uEQdPLt7EyWLAcvq14SWqQeqzPuZxy1n+IdD0iaCWvhMwxIMUnm3GMZ96q1ZV4cjuT4UkCs6nSe/uZo29/um239Bj9ENss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D9AC4AF0E;
-	Mon,  5 Aug 2024 09:36:48 +0000 (UTC)
-Message-ID: <612908be-64ca-4fea-9044-5029164c65f3@xs4all.nl>
-Date: Mon, 5 Aug 2024 11:36:46 +0200
+	s=arc-20240116; t=1722850717; c=relaxed/simple;
+	bh=VanrcmjgxaYXK5ChUWK6OquabXhDphNQ4MS4dg5YVWU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=n6ywLTXyOxvgwSDn7l1ix0/n+mRoUiEievW7UzOUV66HkNuEP79FhYSObShqWVbsL1ARJSl6uqwA0gnEUv2R3bIMmvc4YK1tDgLY78YD4KK298OD4ZoHT9yp1s0dGka7QdFlIqVjx9KT7KL92IEJeYbf0QEu2hF6neqsD3ecuQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pehdjkfk; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f0271b0ae9so119085391fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 02:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722850713; x=1723455513; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xc2/V1ma9Q8M3b2xyCs1uMw1iLPbi+N6eUPIeXJxkoI=;
+        b=pehdjkfkxxd41vxMdttk95LRZtLHN634V4nO0QNa4Utejdu6hNVnx3VXQnA/UrvHHO
+         LL4N5kw/csnlrwnMf+WJ8wG1k7ESOgHcIb7/EzUw5QHMElQak1jAj+ua79UYspq4jeHQ
+         NgFQH1T6eQ921hw7FqC+o6hEf0tefuLJeqb4swa4VFtnSokeC3VYtjMPLW7jpSJ5CwIt
+         Cs1ww9nWeMbFhBRK9wx4tLQMbXawMg3kVLkg2FQzaHAHj00dv1KBYlFP0/bTqqqPUbqr
+         ZOhcoshPdHU35TnBlOHxq79/6+Dld1bRrwnQquynyuHIe9HqWrZhowBHe0R1eaMYJDlR
+         tYzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722850713; x=1723455513;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Xc2/V1ma9Q8M3b2xyCs1uMw1iLPbi+N6eUPIeXJxkoI=;
+        b=hRdSDzDrGVx1ef7xNjhaqcTQk6g8MF7g3Egm+1HleB+i9b4gPBRhX+w3u7yCgSWIBD
+         9aptFmwVqMoil7r2NyFzJzOv64Bzz2i6pCT2PeBYR5m9BiZIYylote8DRKE4sEqwRBYP
+         s8/I7ELVvAlDbJVaHv0G+iQIV/dNFC9V/LtNrpWW2MVfWNO4S/7lt2SlJif8X+Jdp7Rx
+         sSmSyO0DzuWOc8aPh3+i33L91pUwveYev4gkpRBEOquzWwdW5lkEFtY8b+yh9/pavXcH
+         40EonlUVCEDGqZfbcOteakSFCt0zJf07Qh5WUS7B4LisNK3KlH3aNw8mmx8EZBhahQM3
+         4TZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhGQBfpyF2XT3oADoe5NtrDPV/TXtRI5Q8HjQPfZ7aaNVW6HNyKiJlB2wH65jz8Jkjkp7KGW7UVNMRHugVEtJY0YXy8wTtsPyLFuq/
+X-Gm-Message-State: AOJu0YzgVFrHHga75fOKGWi9TKq60KQEVuOURboE0cXMGXb339UBwftZ
+	07vat/gpbzdPOuKkvWrjeG3tRLxjOlkfFXRtIE4OEVJlyX7bcuW9GDLQ1KpZNkI=
+X-Google-Smtp-Source: AGHT+IGgAa9dEEJ0rCBoImt6/gWqBzl7Rg5FAH2HrVxCHVBDYyTXw0l20bNko4rVGrRjg9Exe7MhgA==
+X-Received: by 2002:a2e:8096:0:b0:2ef:3250:d0d4 with SMTP id 38308e7fff4ca-2f15ab5c7c8mr71161751fa.48.1722850712934;
+        Mon, 05 Aug 2024 02:38:32 -0700 (PDT)
+Received: from localhost ([2a01:e0a:448:76e0:ee2f:f911:fa95:ed58])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e7cce6sm130173755e9.31.2024.08.05.02.38.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 02:38:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: siano: Simplify smscore_load_firmware_from_file
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240805-siano-v1-1-6da2bc740267@chromium.org>
- <20240805110116.177686b0@foz.lan>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240805110116.177686b0@foz.lan>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Mon, 05 Aug 2024 11:38:31 +0200
+Message-Id: <D37VLUMXTL0C.2ZECY6X14LUNU@baylibre.com>
+From: "Esteban Blanc" <eblanc@baylibre.com>
+To: "Jonathan Cameron" <jic23@kernel.org>, =?utf-8?q?Nuno_S=C3=A1?=
+ <noname.nuno@gmail.com>
+Cc: <baylibre-upstreaming@groups.io>, "Lars-Peter Clausen"
+ <lars@metafoo.de>, "Michael Hennerich" <Michael.Hennerich@analog.com>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Nuno Sa" <nuno.sa@analog.com>,
+ <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "David Lechner" <dlechner@baylibre.com>
+Subject: Re: [PATCH RFC 2/5] iio: adc: ad4030: add driver for ad4030-24
+X-Mailer: aerc 0.17.0
+References: <20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com>
+ <20240627-eblanc-ad4630_v1-v1-2-fdc0610c23b0@baylibre.com>
+ <0036d44542f8cf45c91c867f0ddd7b45d1904d6b.camel@gmail.com>
+ <D2ZIG2NK223D.J9VK1MWOICE3@baylibre.com>
+ <ae7287257d6611ee27846643f48303c7e0dbb7ac.camel@gmail.com>
+ <20240803105107.43233ae1@jic23-huawei>
+In-Reply-To: <20240803105107.43233ae1@jic23-huawei>
 
-On 05/08/2024 11:01, Mauro Carvalho Chehab wrote:
-> Em Mon, 05 Aug 2024 07:59:43 +0000
-> Ricardo Ribalda <ribalda@chromium.org> escreveu:
-> 
->> The function is never called with a loadfirmware_handler, so we can
->> remove some dead code.
->>
->> We can also use this as a excuse to remove some unused type definitions.
->>
->> This fixes the following smatch warning:
->> drivers/media/common/siano/smscoreapi.c:1172 smscore_load_firmware_from_file() error: we previously assumed 'loadfirmware_handler' could be null (see line 1150)
->>
->> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> LGTM.
-> 
-> 
-> 
->> ---
->> Originally reported by Hans.
-> 
-> Please add a reported-by field.
+On Sat Aug 3, 2024 at 11:51 AM CEST, Jonathan Cameron wrote:
+> On Wed, 31 Jul 2024 10:56:22 +0200
+> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+>
+> > On Fri, 2024-07-26 at 15:38 +0200, Esteban Blanc wrote:
+> > > Hi Nuno,
+> > >  =20
+> > > > > +			struct {
+> > > > > +				s32 val[AD4030_MAX_DIFF_CHANNEL_NB];
+> > > > > +				u8 common[AD4030_MAX_COMMON_CHANNEL_NB]; =20
+> > > >=20
+> > > > Not sure common makes sense as it comes aggregated with the sample.=
+ Maybe
+> > > > this
+> > > > could as simple as:
+> > > >=20
+> > > > struct {
+> > > > 	s32 val;
+> > > > 	u64 timestamp __aligned(8);
+> > > > } rx_data ... =20
+> > >=20
+> > > See below my answer on channels order and storagebits.
+> > >  =20
+> > > > So, from the datasheet, figure 39 we have something like a multiple=
+xer where
+> > > > we
+> > > > can have:
+> > > >=20
+> > > > - averaged data;
+> > > > - normal differential;
+> > > > - test pattern (btw, useful to have it in debugfs - but can come la=
+ter);
+> > > > - 8 common mode bits;
+> > > >=20
+> > > > While the average, normal and test pattern are really mutual exclus=
+ive, the
+> > > > common mode voltage is different in the way that it's appended to
+> > > > differential
+> > > > sample. Making it kind of an aggregated thingy. Thus I guess it can=
+ make
+> > > > sense
+> > > > for us to see them as different channels from a SW perspective (eve=
+n more
+> > > > since
+> > > > gain and offset only apply to the differential data). But there are=
+ a couple
+> > > > of
+> > > > things I don't like (have concerns):
+> > > >=20
+> > > > * You're pushing the CM channels into the end. So when we a 2 chann=
+el device
+> > > > we'll have:
+> > > >=20
+> > > > =C2=A0in_voltage0 - diff
+> > > > =C2=A0in_voltage1 - diff
+> > > > =C2=A0in_voltage2 - CM associated with chan0
+> > > > =C2=A0in_voltage0 - CM associated with chan1
+> > > >=20
+> > > > I think we could make it so the CM channel comes right after the ch=
+annel
+> > > > where
+> > > > it's data belongs too. So for example, odd channels would be CM cha=
+nnels
+> > > > (and
+> > > > labels could also make sense). =20
+> > >=20
+> > > I must agree with you it would make more sense.
+> > >  =20
+> > > > Other thing that came to mind is if we could somehow use differenti=
+al =3D true
+> > > > here. Having something like:
+> > > >=20
+> > > > in_voltage1_in_voltage0_raw - diff data
+> > > > ...
+> > > > And the only thing for CM would be:
+> > > >=20
+> > > > in_voltage1_raw
+> > > > in_voltage1_scale
+> > > >=20
+> > > > (not sure if the above is doable with ext_info - maybe only with
+> > > > device_attrs)
+> > > >=20
+> > > > The downside of the above is that we don't have a way to separate t=
+he scan
+> > > > elements. Meaning that we don't have a way to specify the scan_type=
+ for both
+> > > > the
+> > > > common mode and differential voltage. That said, I wonder if it is =
+that
+> > > > useful
+> > > > to buffer the common mode stuff? Alternatively, we could just have =
+the
+> > > > scan_type
+> > > > for the diff data and apps really wanting the CM voltage could stil=
+l access
+> > > > the
+> > > > raw data. Not pretty, I know... =20
+> > >=20
+> > > At the moment the way I "separate" them is by looking at the
+> > > `active_scan_mask`. If the user asked for differential channel only, =
+I put the
+> > > chip in differential only mode. If all the channels are asked, I put
+> > > the chip in differential + common mode. This way there is no need to
+> > > separate anything in differential mode. See below for an example wher=
+e
+> > > this started.
+> > >  =20
+> > > > However, even if we go with the two separate channels there's one t=
+hing that
+> > > > concerns me. Right now we have diff data with 32 for storage bits a=
+nd CM
+> > > > data
+> > > > with 8 storage bits which means the sample will be 40 bits and in r=
+eality we
+> > > > just have 32. Sure, now we have SW buffering so we can make it work=
+ but the
+> > > > ultimate goal is to support HW buffering where we won't be able to =
+touch the
+> > > > sample and thus we can't lie about the sample size. Could you run a=
+ny test
+> > > > with
+> > > > this approach on a HW buffer setup?  =20
+> > >=20
+> > > Let's take AD4630-24 in diff+cm mode as an example. We would have 4 c=
+hannels:
+> > > - Ch0 diff with 24 bits of realbits and 24 bits of storagebits
+> > > - Ch0 cm with 8 bits of realbits and 8 bits of storagebits
+> > > - Ch1 diff with 24 bits of realbits and 24 bits of storagebits
+> > > - Ch1 cm with 8 bits of realbits and 8 bits of storagebits
+> > > ChX diff realbits + ChX cm realbits =3D 32 bits which is one sample a=
+s sent
+> > > by the chip.
+> > >=20
+> > > The problem I faced when trying to do this in this series is that IIO=
+ doesn't
+> > > seem to like 24 storagebits and the data would get garbled. In diff o=
+nly
+> > > mode with the same channel setup (selecting only Ch0 diff and Ch1 dif=
+f)
+> > > the data is also garbled. I used iio-oscilloscope software to test th=
+is setup.
+> > > Here is the output with iio_readdev:
+> > > ```
+> > > # iio_readdev -s 1 ad4630-24 voltage0
+> > > WARNING: High-speed mode not enabled
+> > > Unable to refill buffer: Invalid argument (22)
+> > > ```
+> > >=20
+> > > I think this is happening when computing the padding to align ch1 dif=
+f.
+> > > In `iio_compute_scan_bytes` this line `bytes =3D ALIGN(bytes, length)=
+;`
+> > > will be invoked with bytes =3D 3 and length =3D 3 when selecting ch0 =
+diff
+> > > and ch1 diff (AD4630-24 in differential mode). The output is 5. As
+> > > specified in linux/align.h: =20
+> > > > @a is a power of 2 =20
+> > > In our case `a` is `length`, and 3 is not a power of 2.
+> > >=20
+> > > It works fine with Ch0/1 diff with 24 realbits and 32 storagebits wit=
+h 8
+> > > bits shift. =20
+> >=20
+> > Yes, I do understand that and that we need a power of 2 for storage bit=
+s. My
+> > concern, as stated, is that if we have HW buffering (High speed enabled=
+) CHO
+> > will have a sample size of (with diff + cm) of 40 which is not really w=
+hat comes
+> > from HW. I wonder if it will work in that case. Maybe we can (as this o=
+ften
+> > happens on an FGPA) have the HW guys doing some data shuffling so thing=
+s work in
+> > the high speed mode as well.
+>
+> If it's possible to unscramble the data in an fpga, that would make our l=
+ife easier
+> though things may get messy if we get multiple versions of that and some
+> unscramble, others don't.
 
-I'll add that and merge this patch once it passed the gitlab CI.
+At the moment the HDL I could test for this chip is unscrambling the
+data, so there is nothing to do on the software side on that front.
 
-Regards,
+Best regards,
 
-	Hans
-
-> 
->> ---
->>  drivers/media/common/siano/smscoreapi.c | 15 +++++----------
->>  drivers/media/common/siano/smscoreapi.h |  4 ----
->>  2 files changed, 5 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/media/common/siano/smscoreapi.c b/drivers/media/common/siano/smscoreapi.c
->> index b6f1eb5dbbdf..3732367e0c62 100644
->> --- a/drivers/media/common/siano/smscoreapi.c
->> +++ b/drivers/media/common/siano/smscoreapi.c
->> @@ -1132,8 +1132,7 @@ static char *smscore_get_fw_filename(struct smscore_device_t *coredev,
->>   * return: 0 on success, <0 on error.
->>   */
->>  static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
->> -					   int mode,
->> -					   loadfirmware_t loadfirmware_handler)
->> +					   int mode)
->>  {
->>  	int rc = -ENOENT;
->>  	u8 *fw_buf;
->> @@ -1147,8 +1146,7 @@ static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
->>  	}
->>  	pr_debug("Firmware name: %s\n", fw_filename);
->>  
->> -	if (!loadfirmware_handler &&
->> -	    !(coredev->device_flags & SMS_DEVICE_FAMILY2))
->> +	if (!(coredev->device_flags & SMS_DEVICE_FAMILY2))
->>  		return -EINVAL;
->>  
->>  	rc = request_firmware(&fw, fw_filename, coredev->device);
->> @@ -1166,10 +1164,8 @@ static int smscore_load_firmware_from_file(struct smscore_device_t *coredev,
->>  		memcpy(fw_buf, fw->data, fw->size);
->>  		fw_buf_size = fw->size;
->>  
->> -		rc = (coredev->device_flags & SMS_DEVICE_FAMILY2) ?
->> -			smscore_load_firmware_family2(coredev, fw_buf, fw_buf_size)
->> -			: loadfirmware_handler(coredev->context, fw_buf,
->> -			fw_buf_size);
->> +		rc = smscore_load_firmware_family2(coredev, fw_buf,
->> +						   fw_buf_size);
->>  	}
->>  
->>  	kfree(fw_buf);
->> @@ -1353,8 +1349,7 @@ int smscore_set_device_mode(struct smscore_device_t *coredev, int mode)
->>  		}
->>  
->>  		if (!(coredev->modes_supported & (1 << mode))) {
->> -			rc = smscore_load_firmware_from_file(coredev,
->> -							     mode, NULL);
->> +			rc = smscore_load_firmware_from_file(coredev, mode);
->>  			if (rc >= 0)
->>  				pr_debug("firmware download success\n");
->>  		} else {
->> diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
->> index 82d9f8a64d99..3c15082ce0e3 100644
->> --- a/drivers/media/common/siano/smscoreapi.h
->> +++ b/drivers/media/common/siano/smscoreapi.h
->> @@ -97,7 +97,6 @@ typedef int (*hotplug_t)(struct smscore_device_t *coredev,
->>  typedef int (*setmode_t)(void *context, int mode);
->>  typedef void (*detectmode_t)(void *context, int *mode);
->>  typedef int (*sendrequest_t)(void *context, void *buffer, size_t size);
->> -typedef int (*loadfirmware_t)(void *context, void *buffer, size_t size);
->>  typedef int (*preload_t)(void *context);
->>  typedef int (*postload_t)(void *context);
->>  
->> @@ -1102,9 +1101,6 @@ extern int smscore_register_device(struct smsdevice_params_t *params,
->>  extern void smscore_unregister_device(struct smscore_device_t *coredev);
->>  
->>  extern int smscore_start_device(struct smscore_device_t *coredev);
->> -extern int smscore_load_firmware(struct smscore_device_t *coredev,
->> -				 char *filename,
->> -				 loadfirmware_t loadfirmware_handler);
->>  
->>  extern int smscore_set_device_mode(struct smscore_device_t *coredev, int mode);
->>  extern int smscore_get_device_mode(struct smscore_device_t *coredev);
->>
->> ---
->> base-commit: 2c25dcc2361949bc7da730d22de36c019c6bf1e3
->> change-id: 20240805-siano-c4c6a1106a39
->>
->> Best regards,
-> 
-> 
-> 
-> Thanks,
-> Mauro
-
+--=20
+Esteban "Skallwar" Blanc
+BayLibre
 
