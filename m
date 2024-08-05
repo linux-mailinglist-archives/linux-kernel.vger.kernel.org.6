@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-275461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933BF94860A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4428948601
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB6B283BE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A436D2835D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2733717622D;
-	Mon,  5 Aug 2024 23:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41D916F91D;
+	Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sk1EJWeX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O4YTc9sW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C33816CD0E;
-	Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E47815383D
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722900652; cv=none; b=Ec4tu8lobHdNBVGYeCHsHcwl7gBTvHq43/IqqZdC9GeqDL4iC2eGLExTwO8Ja0nbxlmcd42/kbHi5/u6dTBqbjf+UNiW2exw7XlYd2XcwZ2RO8iKtATsjElGTUp5prbvqlGq+4oOSgEvRFQ/TGu7pmBleOl+2YsyC292Ycjg/yY=
+	t=1722900652; cv=none; b=HE4bxkei3obtlliakLfv2cA7UQ1MbrFYf0fDrC3IXBAZ/v2fIBfrXHFxQ1JwA5xIiaxyJS1Oj6u9cZfdlwNe96aI5fkBlkChH958hzAslFKfLeleTaW1M13YtfNdxL79dcDkWk6pBLGcZwRrjeBkE93gGdWY9mLefbOiRy4XOw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722900652; c=relaxed/simple;
-	bh=J7HlvM9ebl2LhQNjxB74nmObesaFPxmrkJCZVoV4R2A=;
+	bh=X7ausYPDDFnL539kbYS2qwmsnC8TcaLxcrV/4ugzBLU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Csu8fbnuI4+QQQVHqmUotY8mhFAYm+IAJtJsO0EOqJ5z6VU0wV7l4RlDyVLiczgaGh5/lBwySjNyafoQhvCjvznNGenkia1H+xgJYitkbKGmwtdG8+6ewuIK/jA/PjHhfZ8l6gZ9u4rR76zWhwMcSezTwt9zUGb8hMpOzJbRumw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sk1EJWeX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F036FC4AF17;
+	 In-Reply-To:To:Cc; b=GcGrXsxe/oxUy267qwS2d5Ah4Pw51jAgi7zGY2+RWW62HJr3Ab/yG72SA1HY42L95sN9kT2oIXlGELwRLY3mETxHjz5tDjSwkJE4kNagt4R+IGHfIWhE5qi/GZ0kgeHU6RCcGUABco/VKVZm7u+ecnskX+G5YzTa4Zw9BjCv4aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O4YTc9sW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DAE35C4AF0F;
 	Mon,  5 Aug 2024 23:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722900652;
-	bh=J7HlvM9ebl2LhQNjxB74nmObesaFPxmrkJCZVoV4R2A=;
+	s=k20201202; t=1722900651;
+	bh=X7ausYPDDFnL539kbYS2qwmsnC8TcaLxcrV/4ugzBLU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Sk1EJWeXRNZlVvwBXBskZ+EXiatDYRtVUsxFyKu/e6egYDHg6PIZ2JE8wkMW55GWq
-	 tSaFMWuqLz6ynzKZc8eKQ48PIcgGDr6S6sdftHhhKDqlTFdKU1KeqcUbG5D3AyUKez
-	 XPOwV6Ja4T0VryfMuzKfsma5cO3kfH9M4HLdU8QCcmY/kYel0P4RDFFQqeSlaY5G9v
-	 WMf7gC1Qk6Zynqv0Ru8teQJ/GFpeh7GrqSEIXIJP1EyLRdbsWeM5WZ336rAtSQ7n2Z
-	 tu55kE09kCxxz8OLY4ttQVdDAArZOqnj3FfzArIRD0FelmUCQzCRO3LWgxnjd64MpT
-	 igP/e6BCYfG3A==
+	b=O4YTc9sWjimtkICsL+mDWcgVSigSYVDD1C5Pn0COjmh7EraFGynstCs8goqdosuop
+	 AJ8xLiCvrZTEanpO/C4oen2UDpGR/b8TqbXS3SdzIKqBo+iQ4+I/5RbGoZEZs9W0/5
+	 oUkLntNV3CEUMzrUpw9IUe9X1WajbQD6TeDzEac2JoQrjg4u0wOT9NQ8X8qS8GjiRg
+	 OYS7HZK0TGzDmzhPZjP8NjxDjyDNAEw8cTLo/3yckqSQwzHCbX3NGECfBcVyC/oUuN
+	 PkWpd4eAV+2+9rZnK/2mb9bzsYLjB7mRi9BY7FMF5plRZKbszLFuhmBSqeDkOCVhhV
+	 drXi3ojhRmfeg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E7CB6C43140;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CF486D20AA6;
 	Mon,  5 Aug 2024 23:30:51 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,38 +51,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix several potential integer overflows in
- file offsets
+Subject: Re: [f2fs-dev] [PATCH 1/4] f2fs: atomic: fix to avoid racing w/ GC
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <172290065194.2803.2752541342354642319.git-patchwork-notify@kernel.org>
+ <172290065184.2803.16077457643424916047.git-patchwork-notify@kernel.org>
 Date: Mon, 05 Aug 2024 23:30:51 +0000
-References: <20240724172838.11614-1-n.zhandarovich@fintech.ru>
-In-Reply-To: <20240724172838.11614-1-n.zhandarovich@fintech.ru>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: jaegeuk@kernel.org, chao@kernel.org, lvc-project@linuxtesting.org,
- stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+References: <20240625031351.3586955-1-chao@kernel.org>
+In-Reply-To: <20240625031351.3586955-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, daehojeong@google.com, linux-kernel@vger.kernel.org,
  linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
-This patch was applied to jaegeuk/f2fs.git (dev)
+This series was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 24 Jul 2024 10:28:38 -0700 you wrote:
-> When dealing with large extents and calculating file offsets by
-> summing up according extent offsets and lengths of unsigned int type,
-> one may encounter possible integer overflow if the values are
-> big enough.
+On Tue, 25 Jun 2024 11:13:48 +0800 you wrote:
+> Case #1:
+> SQLite App		GC Thread		Kworker		Shrinker
+> - f2fs_ioc_start_atomic_write
 > 
-> Prevent this from happening by expanding one of the addends to
-> (pgoff_t) type.
+> - f2fs_ioc_commit_atomic_write
+>  - f2fs_commit_atomic_write
+>   - filemap_write_and_wait_range
+>   : write atomic_file's data to cow_inode
+> 								echo 3 > drop_caches
+> 								to drop atomic_file's
+> 								cache.
+> 			- f2fs_gc
+> 			 - gc_data_segment
+> 			  - move_data_page
+> 			   - set_page_dirty
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix several potential integer overflows in file offsets
-    https://git.kernel.org/jaegeuk/f2fs/c/1cade98cf641
+  - [f2fs-dev,1/4] f2fs: atomic: fix to avoid racing w/ GC
+    https://git.kernel.org/jaegeuk/f2fs/c/1a0bd289a5db
+  - [f2fs-dev,2/4] f2fs: atomic: fix to not allow GC to pollute atomic_file
+    https://git.kernel.org/jaegeuk/f2fs/c/7566a155c666
+  - [f2fs-dev,3/4] f2fs: atomic: fix to truncate pagecache before on-disk metadata truncation
+    (no matching commit)
+  - [f2fs-dev,4/4] f2fs: atomic: fix to forbid dio in atomic_file
+    https://git.kernel.org/jaegeuk/f2fs/c/374a8881ce4c
 
 You are awesome, thank you!
 -- 
