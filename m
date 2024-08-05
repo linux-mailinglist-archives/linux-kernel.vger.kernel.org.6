@@ -1,84 +1,246 @@
-Return-Path: <linux-kernel+bounces-274252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCB29475AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:03:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E119475B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E378B20D66
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:03:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C05C280EFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54531420B6;
-	Mon,  5 Aug 2024 07:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APKpYw24"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3CE143C65;
-	Mon,  5 Aug 2024 07:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A0E149002;
+	Mon,  5 Aug 2024 07:04:27 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEE31109
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 07:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722841411; cv=none; b=ULYnI2JxE8zZDYvktzZ6A7o1q8RsgtelNJs11rq7wqJXKClEOjiJZ0JXHI3iYS6cQfolrn0TLqWnrE7LKvL1pWL/q7MtvsXIh2kk2kCSsMj+j8HC1XjXd9cFeOyvl6fsZ7WiA6SmjwTV0Jdxa1Br8pGJepyygwbRiCwzE1N06R4=
+	t=1722841467; cv=none; b=KL8yuxelR5bTOShvuMwl3wGR4+0V11WkPZsacevgyRunChuIBWIq3mHOMPYrL4inMgCF/gA5Ub+n2jAW/yq7IH0lMc7yZ6+Xbmkk/yANQ0pqA4Q2289iEsXt5aQwu0JfJOdup0KeVRViCokaWqu/2LD7VjmiM2Jq+IhiLh72pOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722841411; c=relaxed/simple;
-	bh=em2dolYwo2yRhPj5MXAay46dNSGUTi8YztcvYCsfNb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCuSlnRK+Eu7meNPV/vYbj0pVbQ6kRLI5+qeSYsOS+9REtVSNABJl67N9y6Ebz7bjcWYVo0kTFXWVLXsP10dJ3Etqt86moLSj+RKa1PDc1cvZ4aidHPeGDwLpyMuCtHK9k9Vbv+YCAcjni1nlPIC1hU0OvCu77naz8nzLG1OZ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APKpYw24; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36860C32782;
-	Mon,  5 Aug 2024 07:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722841410;
-	bh=em2dolYwo2yRhPj5MXAay46dNSGUTi8YztcvYCsfNb0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=APKpYw24VYJUrc3UTPBTUXuXl8qDtLP0r9PP0rXvJMQIYZ1Wm/aVUkiPEKJ/teiyx
-	 Ny55SO1VnSepmJXLmiEEq+qjFYf2RAo95jg/o742OLHz+xAVyNvpj8UwIdoMxyd3X+
-	 QOcppOi8qoq3qp8XhVRpn8XsdHYrr5QLOgEtZfb/PYj7UL98tgfb2qen5B+aPmXgO8
-	 7c3B83UNtDO5vZdrCs2UbjHo8ltHVoEtK8yzfzjOddBdYXOIs+8UbOjR2FtA6wdfoN
-	 J58vpk0UXt+lr7wXPHfT9YmkAlc35WMUD8RxOq4l4ETqyU9OqxwnKjojUZnp8mIYJD
-	 7LQs+aJsXhCvQ==
-Date: Mon, 5 Aug 2024 09:03:25 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Lizhi Xu <lizhi.xu@windriver.com>, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	squashfs-devel@lists.sourceforge.net, syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V7] squashfs: Add symlink size check in squash_read_inode
-Message-ID: <20240805-abringen-kurzarbeit-6b8aea5e30b4@brauner>
-References: <20240803040729.1677477-1-lizhi.xu@windriver.com>
- <20240803074349.3599957-1-lizhi.xu@windriver.com>
- <ee839d00-fd42-4b69-951d-8571140c077b@squashfs.org.uk>
- <20240804212034.GE5334@ZenIV>
- <023b6204-ad41-42e8-ad24-6d704ef3cd6c@squashfs.org.uk>
+	s=arc-20240116; t=1722841467; c=relaxed/simple;
+	bh=2mNWrBMK3046AA0XIucMZqgzSwWAIoN1FJargcgfnfI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nsFPnv0CeGCswigjSSS9/MuCqBzuPfM48jPtZC2VK/H+DhOVorB14q4BzHQ+Lbv5qS/yFgmDrAkmSoOD9dVuWLMJndkv6I8kBV85EyABlET5fn+EgKhqwFykPJJRDXUE0dAQmlzTaAmx3zMeZMBVcsbW+y7ceo69W8wVw0Lr7RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8DxSup2ebBmx+EHAA--.26978S3;
+	Mon, 05 Aug 2024 15:04:22 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMCxwuF1ebBmfhwEAA--.21706S2;
+	Mon, 05 Aug 2024 15:04:21 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH v2] LoongArch: Revert qspinlock to test-and-set simple lock on VM
+Date: Mon,  5 Aug 2024 15:04:21 +0800
+Message-Id: <20240805070421.574500-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <023b6204-ad41-42e8-ad24-6d704ef3cd6c@squashfs.org.uk>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxwuF1ebBmfhwEAA--.21706S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On Sun, Aug 04, 2024 at 11:31:51PM GMT, Phillip Lougher wrote:
-> On 04/08/2024 22:20, Al Viro wrote:
-> > On Sun, Aug 04, 2024 at 10:16:05PM +0100, Phillip Lougher wrote:
-> > 
-> > > NACK. I see no reason to introduce an intermediate variable here.
-> > > 
-> > > Please do what Al Viro suggested.
-> > 
-> > Alternatively, just check ->i_size after assignment.  loff_t is
-> > always a 64bit signed; le32_to_cpu() returns 32bit unsigned.
-> > Conversion from u32 to s64 is always going to yield a non-negative
-> > result; comparison with PAGE_SIZE is all you need there.
-> 
-> I'm happy with that as well.
+Similar with x86, when VM is detected, revert to a simple test-and-set
+lock to avoid the horrors of queue preemption.
 
-Fwiw, I think a good way to end this v7+ patch streak is to just tweak
-the last version when applying.
+Tested on 3C5000 Dual-way machine with 32 cores and 2 numa nodes,
+test case is kcbench on kernel mainline 6.10, the detailed command is
+"kcbench --src /root/src/linux"
+
+Performance on host machine
+                      kernel compile time       performance impact
+   Original           150.29 seconds
+   With patch         150.19 seconds            almost no impact
+
+Performance on virtual machine:
+1. 1 VM with 32 vCPUs and 2 numa node, numa node pinned
+                      kernel compile time       performance impact
+   Original           170.87 seconds
+   With patch         171.73 seconds            almost no impact
+
+2. 2 VMs, each VM with 32 vCPUs and 2 numa node, numa node pinned
+                      kernel compile time       performance impact
+   Original           2362.04 seconds
+   With patch         354.73  seconds            +565%
+
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+v1 ... v2:
+  1. Define static key virt_spin_lock_key as false by default
+  2. Add prefix __init with function smp_prepare_boot_cpu(), since there
+is prefix __init with called function pv_spinlock_init().
+---
+ arch/loongarch/include/asm/Kbuild      |  1 -
+ arch/loongarch/include/asm/paravirt.h  |  3 ++
+ arch/loongarch/include/asm/qspinlock.h | 40 ++++++++++++++++++++++++++
+ arch/loongarch/kernel/paravirt.c       |  9 ++++++
+ arch/loongarch/kernel/setup.c          |  5 ++++
+ arch/loongarch/kernel/smp.c            |  4 ++-
+ 6 files changed, 60 insertions(+), 2 deletions(-)
+ create mode 100644 arch/loongarch/include/asm/qspinlock.h
+
+diff --git a/arch/loongarch/include/asm/Kbuild b/arch/loongarch/include/asm/Kbuild
+index 2bb3676429c0..4635b755b2b4 100644
+--- a/arch/loongarch/include/asm/Kbuild
++++ b/arch/loongarch/include/asm/Kbuild
+@@ -6,7 +6,6 @@ generic-y += mcs_spinlock.h
+ generic-y += parport.h
+ generic-y += early_ioremap.h
+ generic-y += qrwlock.h
+-generic-y += qspinlock.h
+ generic-y += user.h
+ generic-y += ioctl.h
+ generic-y += statfs.h
+diff --git a/arch/loongarch/include/asm/paravirt.h b/arch/loongarch/include/asm/paravirt.h
+index dddec49671ae..dcc2b46d31fe 100644
+--- a/arch/loongarch/include/asm/paravirt.h
++++ b/arch/loongarch/include/asm/paravirt.h
+@@ -19,6 +19,7 @@ static inline u64 paravirt_steal_clock(int cpu)
+ 
+ int __init pv_ipi_init(void);
+ int __init pv_time_init(void);
++void __init pv_spinlock_init(void);
+ 
+ #else
+ 
+@@ -31,5 +32,7 @@ static inline int pv_time_init(void)
+ {
+ 	return 0;
+ }
++
++static inline void pv_spinlock_init(void) { }
+ #endif // CONFIG_PARAVIRT
+ #endif
+diff --git a/arch/loongarch/include/asm/qspinlock.h b/arch/loongarch/include/asm/qspinlock.h
+new file mode 100644
+index 000000000000..7dd6d961dc79
+--- /dev/null
++++ b/arch/loongarch/include/asm/qspinlock.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_LOONGARCH_QSPINLOCK_H
++#define _ASM_LOONGARCH_QSPINLOCK_H
++
++#include <linux/jump_label.h>
++
++#ifdef CONFIG_PARAVIRT
++
++DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
++
++#define virt_spin_lock virt_spin_lock
++static inline bool virt_spin_lock(struct qspinlock *lock)
++{
++	int val;
++
++	if (!static_branch_unlikely(&virt_spin_lock_key))
++		return false;
++
++	/*
++	 * On hypervisors without PARAVIRT_SPINLOCKS support we fall
++	 * back to a Test-and-Set spinlock, because fair locks have
++	 * horrible lock 'holder' preemption issues.
++	 */
++
++__retry:
++	val = atomic_read(&lock->val);
++
++	if (val || !atomic_try_cmpxchg(&lock->val, &val, _Q_LOCKED_VAL)) {
++		cpu_relax();
++		goto __retry;
++	}
++
++	return true;
++}
++
++#endif /* CONFIG_PARAVIRT */
++
++#include <asm-generic/qspinlock.h>
++
++#endif // _ASM_LOONGARCH_QSPINLOCK_H
+diff --git a/arch/loongarch/kernel/paravirt.c b/arch/loongarch/kernel/paravirt.c
+index 9c9b75b76f62..78b551f375ef 100644
+--- a/arch/loongarch/kernel/paravirt.c
++++ b/arch/loongarch/kernel/paravirt.c
+@@ -9,6 +9,7 @@
+ #include <linux/static_call.h>
+ #include <asm/paravirt.h>
+ 
++DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
+ static int has_steal_clock;
+ struct static_key paravirt_steal_enabled;
+ struct static_key paravirt_steal_rq_enabled;
+@@ -300,3 +301,11 @@ int __init pv_time_init(void)
+ 
+ 	return 0;
+ }
++
++void __init pv_spinlock_init(void)
++{
++	if (!cpu_has_hypervisor)
++		return;
++
++	static_branch_enable(&virt_spin_lock_key);
++}
+diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+index 0f0740f0be27..70a670efe3cf 100644
+--- a/arch/loongarch/kernel/setup.c
++++ b/arch/loongarch/kernel/setup.c
+@@ -599,6 +599,11 @@ void __init setup_arch(char **cmdline_p)
+ 	parse_early_param();
+ 	reserve_initrd_mem();
+ 
++	/*
++	 * Initialise the static keys early as they may be enabled by the
++	 * cpufeature code and early parameters.
++	 */
++	jump_label_init();
+ 	platform_init();
+ 	arch_mem_init(cmdline_p);
+ 
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index ca405ab86aae..482b3c7e3042 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -476,7 +476,7 @@ core_initcall(ipi_pm_init);
+ #endif
+ 
+ /* Preload SMP state for boot cpu */
+-void smp_prepare_boot_cpu(void)
++void __init smp_prepare_boot_cpu(void)
+ {
+ 	unsigned int cpu, node, rr_node;
+ 
+@@ -509,6 +509,8 @@ void smp_prepare_boot_cpu(void)
+ 			rr_node = next_node_in(rr_node, node_online_map);
+ 		}
+ 	}
++
++	pv_spinlock_init();
+ }
+ 
+ /* called from main before smp_init() */
+
+base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+-- 
+2.39.3
+
 
