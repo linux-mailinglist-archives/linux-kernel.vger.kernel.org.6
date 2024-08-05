@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-274470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7889947882
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6316947888
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FC90B24644
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:37:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 813B7280D68
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081D6155743;
-	Mon,  5 Aug 2024 09:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="j04t36xV"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E0D155C93;
+	Mon,  5 Aug 2024 09:36:56 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23CF154BF8;
-	Mon,  5 Aug 2024 09:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8197714C5AF;
+	Mon,  5 Aug 2024 09:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722850583; cv=none; b=opYu9kZjLtrTqJV5eEnuzKVD9VDpnPoiKwFfvdf12CPFmZWiyE35uFkTcfS6R8NSPnpgA9ivnBkQBU0rJoF6nYU4cYHfvDByEj9xgIft8lVB7AnSCqLbwG5QAeZm9alTDAVceFqgAkNAVTm0OW2jTPSfTLfBwmn8aDdamYkGAVc=
+	t=1722850615; cv=none; b=gFbyYoyevAa4x0KMlFIzHtroHb8ekyirJu8pouodDpYhMcjO7bQ33kcYNwL4sy9iM4FnaiCF1Fo7N1RDrUHdo7ItJY/9SLgw2PtYbxROdFiNxLr/0kqfC332CYrdRyHfOvQKnoTOXDL9je0J8X60W3mTufm3c1xVbqaZnpmPIjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722850583; c=relaxed/simple;
-	bh=aId4i3+f2oT9WZCHDhoMCMyZw/EFhFEq6i9DKsHg5xU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c3+1yDjDZm6sy1z60bQxs1OS+3gwOkOSrCsKY9DbySs44IypaDjRIA7nSTS4iomdHjgDnmTDYHNrLhjeyhDgVsF4B5zPFZlx21iKsL5iLGOCME+YoMkoDejCbd2tipp+xJwRhnP37eLusVP2lLxXQ2PQIuk5PY2kPcVp9wZvdN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=j04t36xV; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722850582; x=1754386582;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=xIwlsPdKypNAzAdQV72OSHi8d6jH55QygowoOsRKvhI=;
-  b=j04t36xVSDhserkIsv3/6bC9mLu2kZXjJh5IGXYB8c1/5CTHKz3Yom3B
-   KRRa6lV4W8Hgzj5Da4J7mP9VHx5j/sOh2GpSA9jMPoF14J6NhfdqgVlAL
-   DjVjgv3OGcp/jaCi5qIaq4xUOt2FXq3wt8z2pEkX1yJ7VMpfRqSOQngfu
-   A=;
-X-IronPort-AV: E=Sophos;i="6.09,264,1716249600"; 
-   d="scan'208";a="672011613"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 09:36:20 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.17.79:42749]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.22.69:2525] with esmtp (Farcaster)
- id 9c651255-34c7-4aea-a776-f6d2f5be7b32; Mon, 5 Aug 2024 09:36:18 +0000 (UTC)
-X-Farcaster-Flow-ID: 9c651255-34c7-4aea-a776-f6d2f5be7b32
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 09:36:17 +0000
-Received: from u5d18b891348c5b.ant.amazon.com (10.146.13.113) by
- EX19D014EUC004.ant.amazon.com (10.252.51.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 09:36:08 +0000
-From: James Gowans <jgowans@amazon.com>
-To: <linux-kernel@vger.kernel.org>
-CC: James Gowans <jgowans@amazon.com>, Sean Christopherson
-	<seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Steve Sistare <steven.sistare@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, "Anthony
- Yznaga" <anthony.yznaga@oracle.com>, Mike Rapoport <rppt@kernel.org>, "Andrew
- Morton" <akpm@linux-foundation.org>, <linux-mm@kvack.org>, Jason Gunthorpe
-	<jgg@ziepe.ca>, <linux-fsdevel@vger.kernel.org>, Usama Arif
-	<usama.arif@bytedance.com>, <kvm@vger.kernel.org>, Alexander Graf
-	<graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>, Paul Durrant
-	<pdurrant@amazon.co.uk>, Nicolas Saenz Julienne <nsaenz@amazon.es>
-Subject: [PATCH 10/10] MAINTAINERS: Add maintainers for guestmemfs
-Date: Mon, 5 Aug 2024 11:32:45 +0200
-Message-ID: <20240805093245.889357-11-jgowans@amazon.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
-References: <20240805093245.889357-1-jgowans@amazon.com>
+	s=arc-20240116; t=1722850615; c=relaxed/simple;
+	bh=gECcuOqnDC7px2rdOd0P3fnei3HB2ODtLOJFm1LB/ig=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c8rj15DVRs1ekoNf9QEnO7S1DjPG9mhMLDLoY6HO/0ksglq8gnhhLNzthcSgOfTV5U8XMZV8esnDiWtUjw8yNBGyu09R69oubaZzx9ItnCpRkPL4xNJCQNPm5UT+EpfoNhytHQ1aV5oe/V4Ru5KKHqvQOYiviYmcFFL5mouRooE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sau8v-0000TX-UA; Mon, 05 Aug 2024 11:36:41 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Elaine Zhang <zhangqing@rock-chips.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Finley Xiao <finley.xiao@rock-chips.com>, Jagan Teki <jagan@edgeble.ai>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-pm@vger.kernel.org
+Subject:
+ Re: [PATCH 3/3] soc: rockchip: power-domain: Add power domain support for
+ rk3576
+Date: Mon, 05 Aug 2024 11:36:40 +0200
+Message-ID: <12859392.hYdu0Ggh8K@diego>
+In-Reply-To: <20240802151647.294307-4-detlev.casanova@collabora.com>
+References:
+ <20240802151647.294307-1-detlev.casanova@collabora.com>
+ <20240802151647.294307-4-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
- EX19D014EUC004.ant.amazon.com (10.252.51.182)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Signed-off-by: James Gowans <jgowans@amazon.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Hi Detlev,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1028eceb59ca..e9c841bb18ba 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9412,6 +9412,14 @@ S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/pablo/gtp.git
- F:	drivers/net/gtp.c
- 
-+GUESTMEMFS
-+M:	James Gowans <jgowans@amazon.com>
-+M:	Alex Graf <graf@amazon.de>
-+L:	linux-fsdevel@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/filesystems/guestmemfs.rst
-+F:	fs/guestmemfs/
-+
- GUID PARTITION TABLE (GPT)
- M:	Davidlohr Bueso <dave@stgolabs.net>
- L:	linux-efi@vger.kernel.org
--- 
-2.34.1
+Am Freitag, 2. August 2024, 17:15:00 CEST schrieb Detlev Casanova:
+> From: Finley Xiao <finley.xiao@rock-chips.com>
+
+with the power-domains now living somewhere else, the patch will need
+a different subject I think.
+
+> 
+> This driver is modified to support RK3576 SoCs and lists the power domains.
+> 
+> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+
+
+
+> @@ -552,7 +574,10 @@ static int rockchip_pd_power(struct rockchip_pm_domain *pd, bool power_on)
+>  			/* if powering up, leave idle mode */
+>  			rockchip_pmu_set_idle_request(pd, false);
+>  
+> -			rockchip_pmu_restore_qos(pd);
+> +			if (pd->info->delay_us)
+> +				udelay(pd->info->delay_us);
+> +			else
+> +				rockchip_pmu_restore_qos(pd);
+
+the whole delay thing needs its own patch please. I.e. you're changing
+the inner workings of the driver here by not handling the qos settings
+and just waiting for a specific time.
+
+So I expect a lot more explanation on why that is the case and needed
+instead of it just happening when adding the soc-specific pieces.
+
+Does the rk3576 not have those qos settings and if so, why is there a delay
+necessary.
+
+
+This is not meant to disallow it, just that it needs its own commit with its
+own descriptive commit message :-)
+
+
+Heiko
+
 
 
