@@ -1,193 +1,124 @@
-Return-Path: <linux-kernel+bounces-274435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBB994780B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:13:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B9E947811
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ACC5B219AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:13:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1C51282750
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338FB15383B;
-	Mon,  5 Aug 2024 09:12:53 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8D914E2D8;
+	Mon,  5 Aug 2024 09:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WXFw5BtV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCB41509AF;
-	Mon,  5 Aug 2024 09:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EEB13DDC2
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 09:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722849172; cv=none; b=LxY8Wtk/3xNFMydg5fEnRYDe/RpD8qf51rAtgVY0/mbeomCn/4iy1YKc2n268NCN/QfzQIsnjhjmo1qpYpHGuutVFqQOZXSBgw5Jth+AxyZL/wrCMwelmmTDsHNUfIFvzTcI8UycV3LMeYdtMDNsHrO/1FucDDj0Ti16xjo95Vw=
+	t=1722849255; cv=none; b=NkcUodM1KxVGNLfzQ8YXfonTCGK7E8jKWi49LW9RZGgK//67O5UZ3ka2i3ek9Sc4khK7Xr0fgqUtaYSYqTewYEy4PJwPX+QTg4vxsD8ofBBzQGhVr3tt/SX7RVZvXF1gcDaI0+aPaKnG2jnW3BNwfRVWYFS5iLjQiZYDLe8zZyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722849172; c=relaxed/simple;
-	bh=ROYNhy1O+Y4xwzQZ3K2SkbPsu+gsRmnLP1wl4OVq9ks=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ezA/olVnkiDRvzg7MSu+BBR1i8VrnqiCrMrNdzjYqqAs0DYMql7Pst3UKZJKhzJ0idbsagtr9ww+Bv4IFDiRt4s+7N9riWpOQl++OK42J5NoA01u4rvny+nM5I2r23wmfYcZXmqTLSSLwgOzV5NEeMMVtzpzebJCH7iAX62OtPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WcrHX5MTQz6K6K1;
-	Mon,  5 Aug 2024 17:10:00 +0800 (CST)
-Received: from lhrpeml100001.china.huawei.com (unknown [7.191.160.183])
-	by mail.maildlp.com (Postfix) with ESMTPS id B4D83140D5A;
-	Mon,  5 Aug 2024 17:12:47 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- lhrpeml100001.china.huawei.com (7.191.160.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 10:12:47 +0100
-Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
- lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.039;
- Mon, 5 Aug 2024 10:12:47 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v7 2/4] hisi_acc_vfio_pci: create subfunction for data
- reading
-Thread-Topic: [PATCH v7 2/4] hisi_acc_vfio_pci: create subfunction for data
- reading
-Thread-Index: AQHa4nsMt15UL+wOykqqUOzAbViVF7IYagOw
-Date: Mon, 5 Aug 2024 09:12:47 +0000
-Message-ID: <f096a1cd4f3b4f3681b4eebd9e61fbdb@huawei.com>
-References: <20240730121438.58455-1-liulongfang@huawei.com>
- <20240730121438.58455-3-liulongfang@huawei.com>
-In-Reply-To: <20240730121438.58455-3-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1722849255; c=relaxed/simple;
+	bh=cYEr12ESNSjKojO6NUh+zO4URzAONDoFGizHlfeb6CM=;
+	h=From:In-Reply-To:References:MIME-Version:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LwRRZcHUYUdgnkKun8FgAUNWGBkOSldIWXk51NSPfm515XInvmZ7YjAYrd2xMAslRP5ETh1coxY0hqXV4b7gkPoNkO/NCJK2I4cAi4Tz6ItrXcFDHIuZoTbWQXhtkJf0JxgS4Mj5m+LZOjK07JMD9mQZQ7fOb/k6GPPxLkVPHHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WXFw5BtV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722849253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cYEr12ESNSjKojO6NUh+zO4URzAONDoFGizHlfeb6CM=;
+	b=WXFw5BtViZwUqbc0+CS1qP5qd5eOmmRILvUR4BD7GPx2HfGt4QKyUL9i9KYpueYP4waX8H
+	5aRt0udzZSnHmkIguWYS6STVzlhxzWqkx5EyIdNPzjOjffdkjuISDwnpvNvudT+yKBNOVH
+	EEsTwi7SDW8PxDqFchSAzCiHcUJiZXs=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-208-LJmGJ4MdO5KGI4OcQ2klYw-1; Mon, 05 Aug 2024 05:14:11 -0400
+X-MC-Unique: LJmGJ4MdO5KGI4OcQ2klYw-1
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-7a1914d0936so8089530a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 02:14:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722849250; x=1723454050;
+        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cYEr12ESNSjKojO6NUh+zO4URzAONDoFGizHlfeb6CM=;
+        b=b9/+1e1bXF9y/R246KJiRmZzLSMwVUaNcm56UUJCR6vpc1nxO16zFDzL5U6OFGuXA3
+         ygPowJdUDmZIXkPWjhSFFH3A305rGzu44eIUN3kaFJyJvfl9m8E7G3tM3wfy5FJLXiAx
+         dPq1nPCOQsrp9f61siJIp8Xm/q93TQFzYXVaMBFgaJrSVJ4d+rJYL8ETGYruHVLZd8BA
+         8EfLFqCdwUIoDK+zTRtuTrh/rPkSC0ln7pxTgOQ8kIdMZYopIKGudVQmTTt1GkX1Wro2
+         I1cO6Okuz3snQmWYGBkU0SGbd1p8gOhXqlVUOUpMmTqBcbXquYM3uGUkYbDoOVdvCVNP
+         1Icg==
+X-Gm-Message-State: AOJu0YzNfzuXT6Nw1SDNtzfinwqmn0rhqvFQg6vhKxbkw0MHme2T6CzW
+	D8cw1XQbjmH/A1K2Gs/iGOfXgHcp641BI+XnciL/zvoXE3Gp5x5YfnvROQirIKuyAMix0qBZoi/
+	lM5E/k3vSI1Y/6zlyviAM4tegM1hJp80aiuy0XnBRxy1jJuetl7g2b66MGiaCK+fpVAtzPUbt+/
+	/Rr2BrrWrJpq1gRKKkNNt5fzqvljC3NrCZ3ocQ
+X-Received: by 2002:a05:6a20:d80d:b0:1c0:f5ea:d447 with SMTP id adf61e73a8af0-1c69959d1ecmr11272138637.31.1722849250577;
+        Mon, 05 Aug 2024 02:14:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHHx+ra0bxEhW+9FV7kXYO0559BlpJINXNAHMKtXsFbYfAG4Tt3wh9BjFp2TlNFgdjgQOeIaX1M39gbMSBHCUQ=
+X-Received: by 2002:a05:6a20:d80d:b0:1c0:f5ea:d447 with SMTP id
+ adf61e73a8af0-1c69959d1ecmr11272112637.31.1722849250168; Mon, 05 Aug 2024
+ 02:14:10 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 5 Aug 2024 04:14:09 -0500
+From: Sergio Lopez Pascual <slp@redhat.com>
+In-Reply-To: <942afa37-a24c-48ed-ae10-c811849165bf@collabora.com>
+References: <20240723114914.53677-1-slp@redhat.com> <942afa37-a24c-48ed-ae10-c811849165bf@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Mon, 5 Aug 2024 04:14:09 -0500
+Message-ID: <CAAiTLFV6mAgrMj=itcxoBCibvYRyrAk02wYp-gYJ8kxhF0EPmw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] drm/virtio: introduce the HOST_PAGE_SIZE feature
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>, gurchetansingh@chromium.org, 
+	tzimmermann@suse.de, mripard@kernel.org, olvaffe@gmail.com, kraxel@redhat.com, 
+	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, airlied@redhat.com
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 
+Dmitry Osipenko <dmitry.osipenko@collabora.com> writes:
 
+> On 7/23/24 14:49, Sergio Lopez wrote:
+>> There's an incresing number of machines supporting multiple page sizes
+>> and on these machines the host and a guest can be running, each one,
+>> with a different page size.
+>>
+>> For what pertains to virtio-gpu, this is not a problem if the page size
+>> of the guest happens to be bigger or equal than the host, but will
+>> potentially lead to failures in memory allocations and/or mappings
+>> otherwise.
+>
+> Please describe concrete problem you're trying to solve. Guest memory
+> allocation consists of guest pages, I don't see how knowledge of host
+> page size helps anything in userspace.
+>
+> I suspect you want this for host blobs, but then it should be
+> virtio_gpu_vram_create() that should use max(host_page_sz,
+> guest_page_size), AFAICT. It's kernel who is responsible for memory
+> management, userspace can't be trusted for doing that.
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Tuesday, July 30, 2024 1:15 PM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v7 2/4] hisi_acc_vfio_pci: create subfunction for data
-> reading
->=20
-> This patch generates the code for the operation of reading data from
-> the device into a sub-function.
-> Then, it can be called during the device status data saving phase of
-> the live migration process and the device status data reading function
-> in debugfs.
-> Thereby reducing the redundant code of the driver.
->=20
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> ---
+Mesa's Vulkan/Venus uses CREATE_BLOB to request the host the creation
+and mapping into the guest of device-backed memory and shmem regions.
+The CREATE_BLOB ioctl doesn't update drm_virtgpu_resource_create->size,
+so the guest kernel (and, as a consequence, the host kernel) can't
+override the user's request.
 
-
-LGTM,
-
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+I'd like Mesa's Vulkan/Venus in the guest to be able to obtain the host
+page size to align the size of the CREATE_BLOB requests as required.
 
 Thanks,
-Shameer
-
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 54 +++++++++++--------
->  1 file changed, 33 insertions(+), 21 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index 45351be8e270..a8c53952d82e 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -486,31 +486,11 @@ static int vf_qm_load_data(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  	return 0;
->  }
->=20
-> -static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vde=
-v,
-> -			    struct hisi_acc_vf_migration_file *migf)
-> +static int vf_qm_read_data(struct hisi_qm *vf_qm, struct acc_vf_data
-> *vf_data)
->  {
-> -	struct acc_vf_data *vf_data =3D &migf->vf_data;
-> -	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
->  	struct device *dev =3D &vf_qm->pdev->dev;
->  	int ret;
->=20
-> -	if (unlikely(qm_wait_dev_not_ready(vf_qm))) {
-> -		/* Update state and return with match data */
-> -		vf_data->vf_qm_state =3D QM_NOT_READY;
-> -		hisi_acc_vdev->vf_qm_state =3D vf_data->vf_qm_state;
-> -		migf->total_length =3D QM_MATCH_SIZE;
-> -		return 0;
-> -	}
-> -
-> -	vf_data->vf_qm_state =3D QM_READY;
-> -	hisi_acc_vdev->vf_qm_state =3D vf_data->vf_qm_state;
-> -
-> -	ret =3D vf_qm_cache_wb(vf_qm);
-> -	if (ret) {
-> -		dev_err(dev, "failed to writeback QM Cache!\n");
-> -		return ret;
-> -	}
-> -
->  	ret =3D qm_get_regs(vf_qm, vf_data);
->  	if (ret)
->  		return -EINVAL;
-> @@ -536,6 +516,38 @@ static int vf_qm_state_save(struct
-> hisi_acc_vf_core_device *hisi_acc_vdev,
->  		return -EINVAL;
->  	}
->=20
-> +	return 0;
-> +}
-> +
-> +static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vde=
-v,
-> +			    struct hisi_acc_vf_migration_file *migf)
-> +{
-> +	struct acc_vf_data *vf_data =3D &migf->vf_data;
-> +	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
-> +	struct device *dev =3D &vf_qm->pdev->dev;
-> +	int ret;
-> +
-> +	if (unlikely(qm_wait_dev_not_ready(vf_qm))) {
-> +		/* Update state and return with match data */
-> +		vf_data->vf_qm_state =3D QM_NOT_READY;
-> +		hisi_acc_vdev->vf_qm_state =3D vf_data->vf_qm_state;
-> +		migf->total_length =3D QM_MATCH_SIZE;
-> +		return 0;
-> +	}
-> +
-> +	vf_data->vf_qm_state =3D QM_READY;
-> +	hisi_acc_vdev->vf_qm_state =3D vf_data->vf_qm_state;
-> +
-> +	ret =3D vf_qm_cache_wb(vf_qm);
-> +	if (ret) {
-> +		dev_err(dev, "failed to writeback QM Cache!\n");
-> +		return ret;
-> +	}
-> +
-> +	ret =3D vf_qm_read_data(vf_qm, vf_data);
-> +	if (ret)
-> +		return -EINVAL;
-> +
->  	migf->total_length =3D sizeof(struct acc_vf_data);
->  	return 0;
->  }
-> --
-> 2.24.0
+Sergio.
 
 
