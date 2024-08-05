@@ -1,136 +1,86 @@
-Return-Path: <linux-kernel+bounces-274987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BA8947F37
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:23:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD3E947F34
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E552CB21B66
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:23:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD5A281F72
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A31815C13D;
-	Mon,  5 Aug 2024 16:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC8315C128;
+	Mon,  5 Aug 2024 16:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="UelkwFNf"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgS5W+Jg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A961547DC;
-	Mon,  5 Aug 2024 16:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C1F1547DC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722874988; cv=none; b=XGHbewDfrZTrPpJE6xZNANwwz/4Rj3jclzFkBWzJdR+Kt38TIIb2oRzKi19F+VEPe+SV8FS8GArPy8nKy4YLK5V7ZaWXYcmlxARDeq2kLVSwfTYmttHICvNR0FxR95wP1JX2Ih3zv6j1KCcKP0/bzCHCFaW6SacSUgxtM/7lnYw=
+	t=1722874962; cv=none; b=KgV152TWTGbQ0HOj/syH2EyVhu7BheTQ7BZWP5aT789fJjRyoOvXNZayFiPYpJ+CPkBnpWin/J+Tb7OC4Xo/LOdJ6JBXZ4rj7wklw24mYdcSro8plYU71TKGMESTTJgopVPkkkknvVfmdHxvT0sbr4QTtPa6OMY7L4wcXG16/uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722874988; c=relaxed/simple;
-	bh=6qIlI/ZA8suC3l92XJ5goqxx350QpUDQOkwCZyfLITo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SR6clozPMZm++qyy8txbsUaZiBXMMv0tMx70OWi0pOFdzTnX2MDiXKSkBYYFALf9YyVO7dPLoUSEHlOcSeoPV4iwBj9ttshIor/StqUgoCZ5OX9srOQY2LjRazSNpe3Y5SMw13edoVmxVFUfawSboSA4kbGKZDLvqipmvF2z0WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=UelkwFNf; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from localhost (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 9CCCD40C91;
-	Mon,  5 Aug 2024 18:22:57 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
-	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id qDXlvlnU29eC; Mon,  5 Aug 2024 18:22:56 +0200 (CEST)
-Date: Tue, 6 Aug 2024 00:22:15 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1722874976; bh=6qIlI/ZA8suC3l92XJ5goqxx350QpUDQOkwCZyfLITo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=UelkwFNfMZ5qaYl1Ax+fpc0ktTmc1h+H2/PvIEsUSB33ul2dVsoBrgWw2kfifxk+a
-	 ZNapY89XNiZFMyDuB/iJ/gOr53fmVm9WUJHtok7zl6dq8rSaDkqXgUYv4W0OcXfL2J
-	 L+gEybNbuYS0834qzBjTRxbXwSJdh8gSYVCcvfPSF2lHxU/Cl0fployJ+Ij2CXfzz/
-	 AUryQu2DN3o+Rq72zca20Fb2wP9QH1ZnPpCRME8Srt0maxdrvD3/uEDhIR5knSprg8
-	 WAwyvBfOIME16f7syGH7kCclq/Qb4xNSYQ1hIfjq33TEOzZWnhQcoWCT+2g0GZ/Gta
-	 Odf00auRkCe/g==
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Dragan Simic <dsimic@manjaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
-	Andy Yan <andyshrk@163.com>,
-	Muhammed Efe Cetin <efectn@protonmail.com>,
-	Jagan Teki <jagan@edgeble.ai>, Ondrej Jirman <megi@xff.cz>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
-Message-ID: <ZrD8N7_tYAiKCg-C@ziyaolaptop.my.domain>
-References: <20240803125510.4699-2-ziyao@disroot.org>
- <ZrCwrWjRgvE0RS98@ziyaolaptop.my.domain>
- <82e7e3a78f784b3ad63094c8a0ab1932@manjaro.org>
- <7941737.iedYuu7f5S@diego>
+	s=arc-20240116; t=1722874962; c=relaxed/simple;
+	bh=kJb9Nzn4L3q5iErkH+R1wHzptQi551rfi29AY5g9hFo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Ict3MCwjVNJplue4w8I8eXiiyvT5QmaP28Utrlde4C2Xggs2Q8E0vQduKGY4m51bseUn6fYPFtQYOwYHVLBFdBYWfxTwHKg1P4odB2FGKDs7kFGNzz0ptEUZMj2rXWeU9FvDhOPauJbOv9ammKtK9LZHR3upcVnmCIct+WTa1yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgS5W+Jg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32207C32782;
+	Mon,  5 Aug 2024 16:22:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722874962;
+	bh=kJb9Nzn4L3q5iErkH+R1wHzptQi551rfi29AY5g9hFo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=bgS5W+JgYgSLChirLf/lB4w6vLA0M8TDiLMUksd6MFNPvpOyWySiVXrJgwAwx+F64
+	 FAra/5OWjPyClmRAYo0rx0w/DVMadMYWisUTqxO0Igv0aN4nV1CDOolB2IgoNHK6YL
+	 znnpNa3gEd8R5kZrXza/YiVAmK7rHA6Ui+V7f+DGzZBYV39BhVg9MzbpPpRB4JEc4Z
+	 VcGqwP/wxqpb4qoMF4SjMTcelSH/qMHwVEZYKO6AkEFtS13ohjM2+gqtUPSpYCxHy7
+	 Y6kRopIz1SANjwFQm8APUx7VzGIF9lolOcllgwmAyIyhZt+wARaAo7bMC3/QFrJWQN
+	 mmMWIuzB1K0iQ==
+From: Vinod Koul <vkoul@kernel.org>
+To: laurent.pinchart@ideasonboard.com, kishon@kernel.org, 
+ michal.simek@amd.com, Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, git@amd.com
+In-Reply-To: <1722837547-2578381-1-git-send-email-radhey.shyam.pandey@amd.com>
+References: <1722837547-2578381-1-git-send-email-radhey.shyam.pandey@amd.com>
+Subject: Re: [PATCH v2] phy: xilinx: phy-zynqmp: Fix SGMII linkup failure
+ on resume
+Message-Id: <172287495984.454961.1953933716423263529.b4-ty@kernel.org>
+Date: Mon, 05 Aug 2024 21:52:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7941737.iedYuu7f5S@diego>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Mon, Aug 05, 2024 at 01:47:45PM +0200, Heiko Stübner wrote:
-> Am Montag, 5. August 2024, 13:37:11 CEST schrieb Dragan Simic:
-> > On 2024-08-05 12:59, Yao Zi wrote:
-> > > On Sun, Aug 04, 2024 at 04:05:24PM +0200, Krzysztof Kozlowski wrote:
-> > >> On 04/08/2024 15:20, Yao Zi wrote:
-> > >> >>
-> > >> >>> +		compatible = "fixed-clock";
-> > >> >>> +		#clock-cells = <0>;
-> > >> >>> +		clock-frequency = <24000000>;
-> > >> >>> +		clock-output-names = "xin24m";
-> > >> >>> +	};
-> > >> >>> +
-> > >> >>> +	gic: interrupt-controller@fed01000 {
-> > >> >>
-> > >> >> Why this all is outside of SoC?
-> > >> >
-> > >> > Just as Heiko says, device tree for all other Rockchip SoCs don't have
-> > >> > a "soc" node. I didn't know why before but just follow the style.
-> > >> >
-> > >> > If you prefer add a soc node, I am willing to.
-> > >> 
-> > >> Surprising as usually we expect MMIO nodes being part of SoC to be 
-> > >> under
-> > >> soc@, but if that's Rockchip preference then fine.
-> > >> 
-> > > 
-> > > Okay, then I would leave it as is.
-> > > 
-> > > For the fixed-clock node, I think "xin24m: clock-24m { }" is okay and
-> > > follows the new rule?
-> > 
-> > I find "xin24m: clock-xin24m { }" better, because keeping the "xin24m"
-> > part in /sys listing(s), for example, can only be helpful.
-> 
-> I would second that :-) . Like on a number of boards we have for example
-> 125MHz gmac clock generators ... with 2 gmacs, there are 2 of them.
-> 
-> I'm not sure the preferred name accounts for that?
-> 
-> Similarly we also keep the naming in the regulator node,
-> it's regulator-vcc3v3-somename {} instead of just regulator-3v3 {}.
-> 
 
-"clock-xin24m" wouldn't be more descriptive than "clock-24m" and there
-are usually only a few fixed clocks in dt, thus finding corresponding
-definition isn't a problem I think.
+On Mon, 05 Aug 2024 11:29:07 +0530, Radhey Shyam Pandey wrote:
+> On a few Kria KR260 Robotics Starter Kit the PS-GEM SGMII linkup is not
+> happening after the resume. This is because serdes registers are reset
+> when FPD is off (in suspend state) and needs to be reprogrammed in the
+> resume path with the same default initialization as done in the first
+> stage bootloader psu_init routine.
+> 
+> To address the failure introduce a set of serdes registers to be saved in
+> the suspend path and then restore it on resume.
+> 
+> [...]
 
-For the gmac case, Krzysztof, do you think something like
-"clock-125m-gmac1" is acceptable, just like what has been done for
-regulators?
+Applied, thanks!
+
+[1/1] phy: xilinx: phy-zynqmp: Fix SGMII linkup failure on resume
+      commit: 5af9b304bc6010723c02f74de0bfd24ff19b1a10
 
 Best regards,
-Yao Zi
+-- 
+Vinod Koul <vkoul@kernel.org>
+
 
