@@ -1,149 +1,156 @@
-Return-Path: <linux-kernel+bounces-275111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A47F9480B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810AA9480B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C9FA1C2123A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:51:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D358282ABF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1153E15ECEF;
-	Mon,  5 Aug 2024 17:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAE815F3E8;
+	Mon,  5 Aug 2024 17:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mejZILgA"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XK0NxcvA"
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68AB2AE95
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D454115ECD4
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722880292; cv=none; b=ZJSJcVjcW8EKPCJqSJwXgOy4uNrG4WYNrKzzGw0U5WHReIwqJvsvLQBMYLh6dfXttUn3ax+hqak7WBl9NrkpVLexh1pfbO8mRYE+mP+orQU57jhCcxbmlULss3ErQZiJMc/sSxhbURq+WRIMV/1hORBcwyNxBpr1P5B3Abw7mck=
+	t=1722880313; cv=none; b=OOV4mkwx44P2inv38aXUQ4J5IN5CnHxaXgOLcvjUhXpqUADtSQUlWS7I1xrxNxnTPZzRrFjC1lKq0o7wXK4LKPLwS24ZUE0r08n24a+dTCoIlSt7SoFwCbFcQD9vfcLaJDqnDEUvOsgccGgqEmf1JZUj1llihpFzEeYXARWI/lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722880292; c=relaxed/simple;
-	bh=jQg7iXv8NtRmFFX32sMAC00Ru8VzrLsWVWyEMEZxKhI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eFo05Kt+IcN1wmmEzfTcF/MOtg/BY8htS/m6SkpU1yzuD5Cgv1xmTgnxF9n1PBLczlCIinlUbxzbHaMGd2qINInFMJD2BxnGl7DGzBpxse8YB4meWfIcsuPUH5tJzbZsqcLGOY9ktFZnOM7HzHt9JmnT9pQ1ZcAAD09RvMJ299I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mejZILgA; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso14263088a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:51:30 -0700 (PDT)
+	s=arc-20240116; t=1722880313; c=relaxed/simple;
+	bh=YVccmBciA80CmnKPcW5V2A+OyOPhY5DRWGANxRvBnPU=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C2uxOOyKYiDJlUThccNUsYMpEfE3yKKM7sBEm4/ft033KNssCExozmd6CslF1b6aDCiaUKF0BTxbKeSduuESJza6At4yu+s5/OS7bQl1R0DFPAe15WYlvD5kGv8sOUjdTElKmZFZcVc1Fs9CvI1dRqovhoIUgkRGB0p3LkdmKjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XK0NxcvA; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-83120879efcso2515553241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:51:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722880289; x=1723485089; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tkVJE+4Fx6/uTP+LZJrDSqoUHx3l2UcP7rIRvO3yBOk=;
-        b=mejZILgA2JcCnJY+FkOWSuTGjTV4MwLXlfiFGuRjZs+TMo3q9UYkQe5dj9YTeS6fgO
-         5vyAVVJwQTPfYjtyjxKvf3YTABjhuIFQMZ5BgCF3EFXU56CS1xMArBOT6Effw1sQd8VS
-         RTYT90P3o4bTvtwo4WY5c4mL7FrFZRKvqe4+Z/JcEhQeVYHCEuwuTA8acoOk6vcg5iNh
-         R0qFW6C/qSi4YmLD6dIo3lQqgLDJyTD0urwdEy70xngkYEn2ZlRzffhV7xQYcM7yQ0eY
-         Muu9CV4Zag6yleGtAd8YPpB+BTVLBjl9GuPos1tDKtvFZFzRt00uAZqo2XvEwOCHnUFA
-         XxrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722880289; x=1723485089;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=chromium.org; s=google; t=1722880311; x=1723485111; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tkVJE+4Fx6/uTP+LZJrDSqoUHx3l2UcP7rIRvO3yBOk=;
-        b=pjv0XJ3EzrYe1JC6YFm5fjI5nBziuT20aj5ELIY3B61rKsarxb17Lx/JqGQckEfWUI
-         0NyWftTAy+48EGScb6c9Ysc8EmaKVL6XP3DFFF1PXEDEoJjMQ101/sbzm3igLB6CgTmU
-         7o7KtPnSDwwh5AbPE5SzTOUvx5kD9p27XnGn/vcxCjnrB/qBu+tuWIx4xsNtc+7inI/f
-         68aHOJ2fB/N3yqeRMSZQnUhui5PjFbQLfrJP6z7gz3GFboplBIoB2LIjCSDhBwGKT/h9
-         wwH3AuZX7o8SsLWHWMzzkgpH6f62AFOJ2z71jCLPRYbwd6Rhgg7b0ms+mXuvM+0vP3C5
-         1sXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNvCYZVjK7f6HWy5bc/rSzQxMfJ/vqijpWwSryserBgFbjqar+4cONcCE8SBg0LBgzg/eYv5bK0f4797pR+Z+TqC74UeRmpngKsBj2
-X-Gm-Message-State: AOJu0Yw+R78O7Bp3hvxdip+klTYZfHfEa83S3hMLiXxVx8S42zbz3BqD
-	IYdkZqwSoefoUkIFS9uRGr7e9AJWL7+QkrzWhN5a0bMT/d4XFwbTU6kwPQ==
-X-Google-Smtp-Source: AGHT+IHjO4GgAgcN5k7pxECHz/NsgP0x2hgZBtlquP4Xx433OfXJFukMMot6pi70owBA+ZhTUVZ8dg==
-X-Received: by 2002:a50:ec8d:0:b0:5a2:2b56:e090 with SMTP id 4fb4d7f45d1cf-5b7f3bcf9aemr9258970a12.13.1722880288807;
-        Mon, 05 Aug 2024 10:51:28 -0700 (PDT)
-Received: from fedora.. (cpe-188-129-46-109.dynamic.amis.hr. [188.129.46.109])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5b83bf3b21dsm5148453a12.89.2024.08.05.10.51.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:51:27 -0700 (PDT)
-From: Robert Marko <robimarko@gmail.com>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Robert Marko <robimarko@gmail.com>
-Subject: [PATCH] mtd: spinand: winbond: add support for W25N01KV
-Date: Mon,  5 Aug 2024 19:51:02 +0200
-Message-ID: <20240805175125.6658-1-robimarko@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        bh=6nbW348xf8GM2iQnl+TbCKX6Ev0PICegcIqwB4d0fQU=;
+        b=XK0NxcvAn1OSB+YuA3Sw01VEKLjeV5kqvSQ3Pk95+elX/hpRJS8Tp/0r6GpqnicN+/
+         gkOq6+eHMy7/lra+v6rt7Etl8skkXlBIq6VD8pXtrVWfs6rNj0JehNUiASQ3Lr4Y5oVq
+         I0SmUdpBhI0CirNd8cOvhmsvAzOrcuEfRZSUA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722880311; x=1723485111;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6nbW348xf8GM2iQnl+TbCKX6Ev0PICegcIqwB4d0fQU=;
+        b=je/xAe55MzmJxm0DvOs3AcIPbn8Adf+/rUl6D29XpVtAAdHHvlyBG//0ni5BH5RCEZ
+         nFdnqNz412zI0PWHritTo354zDAQFMAwK7yO/B6Owe4A6J5OFkyRF1jAY/I4HHUT3kL1
+         YJDCWgGGDjpUlF0WoLYFfMETNZfq+DAoVygrl7QNzM+84dQ9suFxxuKmU6+Gv5g1Mivb
+         TH8pilO0d3XAmWAepjVsvLM5CAxXC68esVYQNSNHPZI+B0JRZyIg9p7hH5dBNMwU8C96
+         6Ob8Bhv6TTCVhN5IKCDBwMgkw/wFZ88ALJiOPCaoHL7MSTHmT/uOOwfJTQTp+HiM6L4/
+         gp1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUaQIcSaj+srUtQohWR3kYrS8mN/ucPlAexDECzo8jkPt5rp8wQyaSAOOOQeW3/TQTVfBmxCFdWMh+eWVwvvTefK6xwSFZUb2i2X93b
+X-Gm-Message-State: AOJu0YxunwXeyB6vo7X/TXeCyxVk3ZyyWrgPRj4a2ObnpZl8VKYpJ1ts
+	/6jUWbDxzzCoYUuStKsVUMpADl+ZSTobH3v4fwp+CFqyAIa7nNEP/dScCtcZK0PN1Sf2Xzf7mVb
+	ArLOrE2oF9AukDsRp2X+30QjqBHpy1XMpmLIE
+X-Google-Smtp-Source: AGHT+IHtSv7JoCebCjJD4wZkVA0SCLR4fN1TlmZof6Lk/RoveBtf7mPpjJXL0Ok2+pD7uFaqEK6RArc9McfQGRl5hOg=
+X-Received: by 2002:a05:6122:915:b0:4f5:2c0c:8528 with SMTP id
+ 71dfb90a1353d-4f8a0018979mr10177984e0c.11.1722880310637; Mon, 05 Aug 2024
+ 10:51:50 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 5 Aug 2024 10:51:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240730175541.2549592-1-quic_abhinavk@quicinc.com>
+References: <20240730175541.2549592-1-quic_abhinavk@quicinc.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Mon, 5 Aug 2024 10:51:49 -0700
+Message-ID: <CAE-0n50jN+XivRX8D7cHff26P-kM8hNsQEpj=VBf=bEs9vESGw@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/msm/dp: fix the max supported bpp logic
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Chandan Uddaraju <chandanu@codeaurora.org>, 
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Guenter Roeck <groeck@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Tanmay Shah <tanmay@codeaurora.org>, freedreno@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, quic_jesszhan@quicinc.com, 
+	dianders@chromium.org, neil.armstrong@linaro.org, andersson@kernel.org, 
+	abel.vesa@linaro.org, Vara Reddy <quic_varar@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for Winbond W25N01KV 1Gbit SPI-NAND.
+Quoting Abhinav Kumar (2024-07-30 10:55:40)
+> Fix the dp_panel_get_supported_bpp() API to return the minimum
+> supported bpp correctly for relevant cases and use this API
+> to correct the behavior of DP driver which hard-codes the max supported
+> bpp to 30.
+>
+> This is incorrect because the number of lanes and max data rate
+> supported by the lanes need to be taken into account.
+>
+> Replace the hardcoded limit with the appropriate math which accounts
+> for the accurate number of lanes and max data rate.
+>
+> changes in v2:
+>         - Fix the dp_panel_get_supported_bpp() and use it
+>         - Drop the max_t usage as dp_panel_get_supported_bpp() already
+>           returns the min_bpp correctly now
+>
+> Fixes: c943b4948b58 ("drm/msm/dp: add displayPort driver support")
+> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/43
+> Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # SM8350-HDK
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
 
-It has 4-bit on-die ECC.
+One note below,
 
-Signed-off-by: Robert Marko <robimarko@gmail.com>
----
- drivers/mtd/nand/spi/winbond.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
-index ba7c813b9542..f3bb81d7e460 100644
---- a/drivers/mtd/nand/spi/winbond.c
-+++ b/drivers/mtd/nand/spi/winbond.c
-@@ -76,6 +76,18 @@ static int w25m02gv_select_target(struct spinand_device *spinand,
- 	return spi_mem_exec_op(spinand->spimem, &op);
- }
- 
-+static int w25n01kv_ooblayout_ecc(struct mtd_info *mtd, int section,
-+				  struct mtd_oob_region *region)
-+{
-+	if (section > 3)
-+		return -ERANGE;
-+
-+	region->offset = 64 + (8 * section);
-+	region->length = 7;
-+
-+	return 0;
-+}
-+
- static int w25n02kv_ooblayout_ecc(struct mtd_info *mtd, int section,
- 				  struct mtd_oob_region *region)
- {
-@@ -100,6 +112,11 @@ static int w25n02kv_ooblayout_free(struct mtd_info *mtd, int section,
- 	return 0;
- }
- 
-+static const struct mtd_ooblayout_ops w25n01kv_ooblayout = {
-+	.ecc = w25n01kv_ooblayout_ecc,
-+	.free = w25n02kv_ooblayout_free,
-+};
-+
- static const struct mtd_ooblayout_ops w25n02kv_ooblayout = {
- 	.ecc = w25n02kv_ooblayout_ecc,
- 	.free = w25n02kv_ooblayout_free,
-@@ -163,6 +180,15 @@ static const struct spinand_info winbond_spinand_table[] = {
- 					      &update_cache_variants),
- 		     0,
- 		     SPINAND_ECCINFO(&w25m02gv_ooblayout, NULL)),
-+	SPINAND_INFO("W25N01KV",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xae, 0x21),
-+		     NAND_MEMORG(1, 2048, 96, 64, 1024, 20, 1, 1, 1),
-+		     NAND_ECCREQ(4, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     0,
-+		     SPINAND_ECCINFO(&w25n01kv_ooblayout, w25n02kv_ecc_get_status)),
- 	SPINAND_INFO("W25N02KV",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xaa, 0x22),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
--- 
-2.45.2
+> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.c b/drivers/gpu/drm/msm/dp/dp_panel.c
+> index a916b5f3b317..3777b1abacad 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_panel.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_panel.c
+> @@ -90,22 +90,22 @@ static int dp_panel_read_dpcd(struct dp_panel *dp_panel)
+>  static u32 dp_panel_get_supported_bpp(struct dp_panel *dp_panel,
+>                 u32 mode_edid_bpp, u32 mode_pclk_khz)
+>  {
+> -       struct dp_link_info *link_info;
+> +       const struct dp_link_info *link_info;
+>         const u32 max_supported_bpp = 30, min_supported_bpp = 18;
+> -       u32 bpp = 0, data_rate_khz = 0;
+> +       u32 bpp, data_rate_khz;
+>
+>         bpp = min_t(u32, mode_edid_bpp, max_supported_bpp);
 
+This can be min() because all types are u32.
+
+>
+>         link_info = &dp_panel->link_info;
+>         data_rate_khz = link_info->num_lanes * link_info->rate * 8;
+>
+> -       while (bpp > min_supported_bpp) {
+> +       do {
+>                 if (mode_pclk_khz * bpp <= data_rate_khz)
+> -                       break;
+> +                       return bpp;
+>                 bpp -= 6;
+> -       }
+> +       } while (bpp > min_supported_bpp);
+>
+> -       return bpp;
+> +       return min_supported_bpp;
+>  }
+>
+>  int dp_panel_read_sink_caps(struct dp_panel *dp_panel,
 
