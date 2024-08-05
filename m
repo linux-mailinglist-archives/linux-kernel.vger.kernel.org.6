@@ -1,131 +1,111 @@
-Return-Path: <linux-kernel+bounces-275486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C7E94865F
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D72C994866B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FAAA1F23CC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E4DF1F23CFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972CA16F84A;
-	Mon,  5 Aug 2024 23:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7F81741DA;
+	Mon,  5 Aug 2024 23:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pJ69nggg"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCDYhmwz"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8005314F9F1
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 23:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3129416F850;
+	Mon,  5 Aug 2024 23:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722901988; cv=none; b=hJATYnl0evssLVtbQH9gYZHGUhW/R8PHfsqiAxd9Qeup3jcA1KDijGdYFY2WevHzdqKTrBY1piJkVDbOAQEVJKlzse23YlM2miUndsdHwKE4J9w0mQzt/gL4WL0D4bTLAf64RIgAM3DQgyF/pwJNcrB8TMY70rRhQXI8qK69PZI=
+	t=1722902062; cv=none; b=j+9vEwFzy+si0yZQgI5oQQjLShTpQm8+eMYei897B2F7ZPXCibWtWuuzSM52QSSFFPTniNZ+ecgkKbUs8qd6Cq2BQvSZpvOMuhPGcSzx9Pk1Df5RumLtGmvuEds2Sa2WaX7Ea5onqXGlyGJcLToSLMAL0XofdmZIlJNfYA/t5EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722901988; c=relaxed/simple;
-	bh=XE64EO9QsKUjNS+RxiZtVEDU63XJXco52ktIOyCusQg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=okwY8Eyy6SKdo/ugSrTC0ToSpaPY/zEdmt695uPZpho7xiDs/jg+qchjCIE4MOTp8cdOEVNeauTslhIN1H7yo37neoo2UfWoVuRGTVbaVOD1/+ouFpTA9lr91n9dFKkm1ZJkGIkLMLr7kfdXcmxKDwCzMEO5l1C9BhCk1RtZaEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pJ69nggg; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-666010fb35cso5219047b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 16:53:07 -0700 (PDT)
+	s=arc-20240116; t=1722902062; c=relaxed/simple;
+	bh=CN5YyONF5oxc/Hb/WMwxJ5h5JLKd/ev5Wby6OiPK5xQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BVGeWb+wxwSXNSac/zOeUc2z9g/5tj616b8WNEW/kDWOcPAT/0JZEH7WSEz0WkL/q/Oll/Yrv0ZrmAxYymu4CIfN2VaL1maTxr0Cw11QY2ZH5EKV5pZ7xT8o35ssoiHW04SGO6fLD0Z/yj/K6gXMnpojJDYT4NkENh+LvM4cTQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCDYhmwz; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a1d81dc0beso656385a.2;
+        Mon, 05 Aug 2024 16:54:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722901986; x=1723506786; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tNxfozveIy4KhK+t6BTSFuKqZ3CnwWBfLDeoqvVNkU=;
-        b=pJ69ngggREAaIjL/T0BgH+kvr7l2vkZzXthW8dW73SUfJNWiQcVpFsdHdGiZVGL52w
-         i5RNeLJcwpNL9GJeyxl094vXzSGFL4DM4F1Q5bUFv2eXSoTEWi/AfrtHWzUk0GQxYeJc
-         LoaVhO/a6O/DEwbtV3RjjrFN9vcAE5VSBUtiVfsi9D3SVFxrXV7geqnZIJIaxP/gZNGE
-         OeKRX94EoFqMyoWZb+PBIcMMuNVTtPzYRKrIjRDpIO1UUkSPJaJ9MsB/ZLXSZuN7ESCa
-         4qcNrlUURKURzxl+/dWuuwkQ2h7I7+iVl8GtIj3OBnieVpUr5/Le/CV2j2/XN4pEWMal
-         39dA==
+        d=gmail.com; s=20230601; t=1722902060; x=1723506860; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YWc14kDySKSh3sWURkdqCJobA5WfeILUoFE6tZ15XEA=;
+        b=WCDYhmwzABz614P0Qosmh3ONC6pys18xp2ycw6Md5jP7P3zxhIgRPt1tN1TpxsnvXX
+         74/yfwm7m3YxBS6IT6wJeKu1xTicifTS9zSasLX+i7Ce+kERI42jV7zGybWU5sn3KaKW
+         vESA59FmQ51s6tP2XNIluk5iYKzmbhouQrsBt/70EUfHerYQvoNGh+ZSL8y958o6WD5D
+         GDy2KLI8UubXxEzvDfzLtgfK6p6C+JwJ/+YhkhI7ZxrDgUzUUjOZAbdJtiyJ+2upv+8Q
+         7TY50s/nFCXkUpMhB3pbXgfCrdgvXWVATYVKxjSNaMBvrkysv8iPPalJZBMxMQbyIPm8
+         guCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722901986; x=1723506786;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tNxfozveIy4KhK+t6BTSFuKqZ3CnwWBfLDeoqvVNkU=;
-        b=NgRzRvvbWfLjk1DuEYYYFcZ7bwhd39EP3Hme7VZlEi8AM/9l8txyNdlt8P2eSzJS9S
-         VAZbzqu7rz7bzk4fgSm0TOGbrZ0Cp8Kc1wD38gIBJ/da3vPVtU4X0YiNNnp33OKOfFkZ
-         AhSH+0otz4Y4KS1QdVZxKV6WQw7WwBmzUnC/MrYtmSd8uUaAjokFMkRH8ICOXs6LcJ1Q
-         bNUqi2Sf5JH2w6cfS4kl+R5DSIlSRCaEiLYnaVFnlbXagzL7nzev0C0YWPgI3BpxqbMy
-         tYB2+p2tXArza8kfCn4PHM9IoiJEy+x0s6CyXFuHTLXzIrVDAKaE3ynIK+kzBKvaWrAV
-         qKiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxEvt63eb2pGoOUst8orKracM6C87NjR+M13Hqkmb6WwORfIfGnqM+ZwIzApRiIYPp/BEBrUi+LM8D8pSWS8m5Qa4kKgIlxa3frG3G
-X-Gm-Message-State: AOJu0Yx9TeoxpvI+JHqaEkGobOEojJSNsYTunH0ZgQjszPejg/ahECT2
-	ZylsTE4D5gVZO5I/sOKDdoWoSaq+OsdEKEl3l+FsCC+nvHla0XUmQuz6HT1Rhad20afK7WHBT6v
-	Ihw==
-X-Google-Smtp-Source: AGHT+IHjgF0Ca8ethUSfrozdkFUFp0o0AUPtEhLPgrNZWa8lbUZ7qZQp3Z7lR+cNHb6EVM2g/AygpE/k1/Q=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:f16:b0:691:a38c:a61d with SMTP id
- 00721157ae682-691a39bf26cmr3721507b3.3.1722901982364; Mon, 05 Aug 2024
- 16:53:02 -0700 (PDT)
-Date: Mon, 5 Aug 2024 16:53:01 -0700
-In-Reply-To: <ZrFfvjy_-Tyx4xUV@linux.dev>
+        d=1e100.net; s=20230601; t=1722902060; x=1723506860;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YWc14kDySKSh3sWURkdqCJobA5WfeILUoFE6tZ15XEA=;
+        b=iXBihcYHKJg/LnEDOwX5hofA38s6Boo/FoUjHlZciO7WLSsgiIt1M1sWuIHVa/lq1j
+         WlEls0wvUn29JHqWVOuxXrrqaZQ2mrCam9pB66z5L4Dp6TuUQylgdUKZKBQ7Wpm62wYz
+         cVype5pvoyhvMvdQydCM4onQStlKpNjJm5Ze0DijX36bQqIEfksNLUHs3e98VzdgfU6z
+         PqbEGPnDlB7Adg+MC0TI0STIgD0MIsB3btrpwLQ36LlOiFfKIJslmYngIppJLeCEM8Gu
+         Sv3WTO3ln1+tqq3k9ddCyB1wu5Oj/gZZOTIyTyDoVasfKgu6JZ8FBaL95mUw/IUtEpvh
+         Orvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXc9pCbjk3M7k+FiiU6hHpYMyksXITQ1XzDMJG2CYB6XN2TZYKowMuLnYsGGCZMrQlgtdACbflEtF9fpd42SOXGEpmtBWdig7vDG4tebl60MAig4KPB4LI+TbzevWSdxQxat3E5
+X-Gm-Message-State: AOJu0Ywv/NzrFxyBgsEMKA5e+Hra2U7x5qOpifGsqm9SrSbrQE4VKLym
+	1x23QKVjeWBvskgCzXcXcePK2+Qv60wVuZc1v9FUfkVooZr59LHo
+X-Google-Smtp-Source: AGHT+IHKkWH1gJGXMhBpgClsAu3LULO2nfx28Yb5L5lMQtQQZncx/n5DKnhJ5pPu3TC7uyyrVuYadQ==
+X-Received: by 2002:a05:620a:28d5:b0:7a2:c6f:fa4b with SMTP id af79cd13be357-7a34ef0aae2mr1714810585a.21.1722902060058;
+        Mon, 05 Aug 2024 16:54:20 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7a34f78adadsm395310085a.123.2024.08.05.16.54.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 16:54:18 -0700 (PDT)
+Message-ID: <5446a293-b5cb-4d1d-b82e-6a63aed03b2a@gmail.com>
+Date: Mon, 5 Aug 2024 16:54:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-55-seanjc@google.com>
- <ZrFfgzRbiqT-Zi2O@linux.dev> <ZrFfvjy_-Tyx4xUV@linux.dev>
-Message-ID: <ZrFl3faiGHQ5oLjf@google.com>
-Subject: Re: [PATCH v12 54/84] KVM: arm64: Mark "struct page" pfns
- accessed/dirty before dropping mmu_lock
-From: Sean Christopherson <seanjc@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>, 
-	Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] net: dsa: microchip: Fix Wake-on-LAN check to not
+ return an error
+To: Tristram.Ha@microchip.com, Woojung Huh <woojung.huh@microchip.com>,
+ Andrew Lunn <andrew@lunn.ch>, Vivien Didelot <vivien.didelot@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ UNGLinuxDriver@microchip.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240805235200.24982-1-Tristram.Ha@microchip.com>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240805235200.24982-1-Tristram.Ha@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 05, 2024, Oliver Upton wrote:
-> > > ---
-> > >  arch/arm64/kvm/mmu.c | 10 ++++++----
-> > >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> > > index 22ee37360c4e..ce13c3d884d5 100644
-> > > --- a/arch/arm64/kvm/mmu.c
-> > > +++ b/arch/arm64/kvm/mmu.c
-> > > @@ -1685,15 +1685,17 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-> > >  	}
-> > >  
-> > >  out_unlock:
-> > > +	if (writable && !ret)
-> > > +		kvm_set_pfn_dirty(pfn);
-> > 
-> > I'm guessing you meant kvm_release_pfn_dirty() here, because this leaks
-> > a reference.
+On 8/5/24 16:52, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
+> 
+> The wol variable in ksz_port_set_mac_address() is declared with random
+> data, but the code in ksz_get_wol call may not be executed so the
+> WAKE_MAGIC check may be invalid resulting in an error message when
+> setting a MAC address after starting the DSA driver.
+> 
+> Fixes: 3b454b6390c3 ("net: dsa: microchip: ksz9477: Add Wake on Magic Packet support")
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Doh, I did indeed.  Alternatively, this could be:
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-	if (writable && !ret)
-		kvm_set_pfn_dirty(pfn);
-
-	kvm_release_pfn_clean(pfn);
-
-It won't matter in the end, because this just becomes:
-
-	kvm_release_faultin_page(kvm, page, !!ret, writable);
-
-So I guess the question is if you prefer to make the switch to an if-else in this
-path, or more implicitly in the conversion to kvm_release_faultin_page().
-
-I made the same goof for RISC-V, perhaps to prove that I too can copy+paste arm64's
-MMU code ;-)
 
