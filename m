@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-274672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4209D947B59
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:54:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254D3947B66
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15C3281F63
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:54:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ADDDB21EA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5B515B122;
-	Mon,  5 Aug 2024 12:54:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31831158DDC;
-	Mon,  5 Aug 2024 12:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3772615ECD5;
+	Mon,  5 Aug 2024 12:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cR3J62n3"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01EB15ADA7
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 12:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722862446; cv=none; b=Sb7C5pbmrRM/NLVgaBkWFPm44coYdaxv1EgCxvwCTbg5S7ynGNRAIYB65g3SkNmXnWzW/KnCH3E6urWDvHOqPWIJtB5IKVOqNzyvs3FuyjvcRx8e8gJumsh/kDqLofcT6grn7pvBt9EoONG9uEtangwZYnoK4WFWDvigwS8HWTE=
+	t=1722862465; cv=none; b=M6gxKWg57M/aPHcaanaOH4vFPHLv1QUvAzQr3YKfRnwPfXblKOL50Uk9kEk+jhpBCKddBBQ33SLj92zrkZk0kow7OGWUgkdsmVKGJgtTJ8PBed8pgj3jje+CAEJk7iobPo1bX1d9uLjYwlo5hcPXvWQHbWxzPEFoefFMUuXUnFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722862446; c=relaxed/simple;
-	bh=B9eCEAPPmf7hUoQFzUOAQPgCN7JCyf6R8EFxIMMn/O8=;
+	s=arc-20240116; t=1722862465; c=relaxed/simple;
+	bh=Irqmbji+U6RQFolPVK8/Q39uNcQmhWu6p5xT27SRLbg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aX7L3q5IC1DosEQ5zwKY6HxPHBU2h4L03AzAM38++rfuDLiX1rGCA0uJfYi1DhaDzwu52DHYQD5qA2LLnR9UAFSUE08S6OQqxZihd630R5xH7Cn7KO5j4IIvELR8CIHXkBqOQqq8WaNtvXFPma8tlWh6WeYj0NJr/usnTbVaRCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ED9E143D;
-	Mon,  5 Aug 2024 05:54:29 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D7633F5A1;
-	Mon,  5 Aug 2024 05:54:01 -0700 (PDT)
-Message-ID: <190d5a15-d6bf-47d6-be86-991853b7b51d@arm.com>
-Date: Mon, 5 Aug 2024 13:53:58 +0100
+	 In-Reply-To:Content-Type; b=LKkIgbn/bl5MmdG80daIFaEg9yY+CYo1UVn+8X5iU0/pTWRZlxdAJpBBF53Z7d2lW4bUJCzs+60O2TL9PTovQOIFvBzKUKKVkaV68Ay7MJvmVWf+eicEw7T6uTmYWe7UVmBXfHrNsXh40stzHU4xDJ4SLQyrRkfw8gRGPHaVTtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cR3J62n3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BF9F3581;
+	Mon,  5 Aug 2024 14:53:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722862404;
+	bh=Irqmbji+U6RQFolPVK8/Q39uNcQmhWu6p5xT27SRLbg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cR3J62n3JOkWF71BC7/tnuG+ZOkDE0Dq4ZYwlvWO1/+CCRZrQogbFxE4PSRY8IYqb
+	 62Y9MqUfv4E3bte5VdK3DjFTS2E5GD6Q/NoMtgeRlFQOZVF6c7u3ejxRA76yQKRlvy
+	 08hOMyVWqiPKeCFDwTQf9cbCcdW8sGCyou8tLtrQ=
+Message-ID: <5098c86a-2838-45c5-9590-ede0d1189bdd@ideasonboard.com>
+Date: Mon, 5 Aug 2024 15:54:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,137 +49,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at
- iommu_get_dma_domain+0xc/0x20
-To: Yunsheng Lin <linyunsheng@huawei.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Yonglong Liu <liuyonglong@huawei.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- pabeni@redhat.com, ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alexander Duyck <alexander.duyck@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, "shenjian (K)" <shenjian15@huawei.com>,
- Salil Mehta <salil.mehta@huawei.com>, joro@8bytes.org, will@kernel.org,
- iommu@lists.linux.dev
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
- <8743264a-9700-4227-a556-5f931c720211@huawei.com>
- <e980d20f-ea8a-43e3-8d3f-179a269b5956@kernel.org>
- <CAOBf=musxZcjYNHjdD+MGp0y6epnNO5ryC6JgeAJbP6YQ+sVUA@mail.gmail.com>
- <ad84acd2-36ba-433c-bdf7-c16c0d992e1c@huawei.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <ad84acd2-36ba-433c-bdf7-c16c0d992e1c@huawei.com>
+Subject: Re: [PATCH] drm/omap: add CONFIG_MMU dependency
+To: Arnd Bergmann <arnd@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>,
+ Helge Deller <deller@gmx.de>, Tony Lindgren <tony@atomide.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240719095942.3841009-1-arnd@kernel.org>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240719095942.3841009-1-arnd@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 05/08/2024 1:19 pm, Yunsheng Lin wrote:
-> On 2024/7/31 16:42, Somnath Kotur wrote:
->> On Tue, Jul 30, 2024 at 10:51 PM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
->>>
-> 
-> +cc iommu maintainers and list
-> 
->>>
->>> On 30/07/2024 15.08, Yonglong Liu wrote:
->>>> I found a bug when running hns3 driver with page pool enabled, the log
->>>> as below:
->>>>
->>>> [ 4406.956606] Unable to handle kernel NULL pointer dereference at
->>>> virtual address 00000000000000a8
->>>
->>> struct iommu_domain *iommu_get_dma_domain(struct device *dev)
->>> {
->>>          return dev->iommu_group->default_domain;
->>> }
->>>
->>> $ pahole -C iommu_group --hex | grep default_domain
->>>          struct iommu_domain *      default_domain;   /*  0xa8   0x8 */
->>>
->>> Looks like iommu_group is a NULL pointer (that when deref member
->>> 'default_domain' cause this fault).
->>>
->>>
->>>> [ 4406.965379] Mem abort info:
->>>> [ 4406.968160]   ESR = 0x0000000096000004
->>>> [ 4406.971906]   EC = 0x25: DABT (current EL), IL = 32 bits
->>>> [ 4406.977218]   SET = 0, FnV = 0
->>>> [ 4406.980258]   EA = 0, S1PTW = 0
->>>> [ 4406.983404]   FSC = 0x04: level 0 translation fault
->>>> [ 4406.988273] Data abort info:
->>>> [ 4406.991154]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>>> [ 4406.996632]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>>> [ 4407.001681]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>>> [ 4407.006985] user pgtable: 4k pages, 48-bit VAs, pgdp=0000202828326000
->>>> [ 4407.013430] [00000000000000a8] pgd=0000000000000000,
->>>> p4d=0000000000000000
->>>> [ 4407.020212] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->>>> [ 4407.026454] Modules linked in: hclgevf xt_CHECKSUM ipt_REJECT
->>>> nf_reject_ipv4 ip6table_mangle ip6table_nat iptable_mangle
->>>> ip6table_filter ip6_tables hns_roce_hw_v2 hns3 hclge hnae3 xt_addrtype
->>>> iptable_filter xt_conntrack overlay arm_spe_pmu arm_smmuv3_pmu
->>>> hisi_uncore_hha_pmu hisi_uncore_ddrc_pmu hisi_uncore_l3c_pmu
->>>> hisi_uncore_pmu fuse rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi
->>>> scsi_transport_iscsi crct10dif_ce hisi_sec2 hisi_hpre hisi_zip
->>>> hisi_sas_v3_hw xhci_pci sbsa_gwdt hisi_qm hisi_sas_main hisi_dma
->>>> xhci_pci_renesas uacce libsas [last unloaded: hnae3]
->>>> [ 4407.076027] CPU: 48 PID: 610 Comm: kworker/48:1
->>>> [ 4407.093343] Workqueue: events page_pool_release_retry
->>>> [ 4407.098384] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
->>>> BTYPE=--)
->>>> [ 4407.105316] pc : iommu_get_dma_domain+0xc/0x20
->>>> [ 4407.109744] lr : iommu_dma_unmap_page+0x38/0xe8
->>>> [ 4407.114255] sp : ffff80008bacbc80
->>>> [ 4407.117554] x29: ffff80008bacbc80 x28: 0000000000000000 x27:
->>>> ffffc31806be7000
->>>> [ 4407.124659] x26: ffff2020002b6ac0 x25: 0000000000000000 x24:
->>>> 0000000000000002
->>>> [ 4407.131762] x23: 0000000000000022 x22: 0000000000001000 x21:
->>>> 00000000fcd7c000
->>>> [ 4407.138865] x20: ffff0020c9882800 x19: ffff0020856f60c8 x18:
->>>> ffff8000d3503c58
->>>> [ 4407.145968] x17: 0000000000000000 x16: 1fffe00419521061 x15:
->>>> 0000000000000001
->>>> [ 4407.153073] x14: 0000000000000003 x13: 00000401850ae012 x12:
->>>> 000006b10004e7fb
->>>> [ 4407.160177] x11: 0000000000000067 x10: 0000000000000c70 x9 :
->>>> ffffc3180405cd20
->>>> [ 4407.167280] x8 : fefefefefefefeff x7 : 0000000000000001 x6 :
->>>> 0000000000000010
->>>> [ 4407.174382] x5 : ffffc3180405cce8 x4 : 0000000000000022 x3 :
->>>> 0000000000000002
->>>> [ 4407.181485] x2 : 0000000000001000 x1 : 00000000fcd7c000 x0 :
->>>> 0000000000000000
->>>> [ 4407.188589] Call trace:
->>>> [ 4407.191027]  iommu_get_dma_domain+0xc/0x20
->>>> [ 4407.195105]  dma_unmap_page_attrs+0x38/0x1d0
->>>> [ 4407.199361]  page_pool_return_page+0x48/0x180
->>>> [ 4407.203699]  page_pool_release+0xd4/0x1f0
->>>> [ 4407.207692]  page_pool_release_retry+0x28/0xe8
->>>
->>> I suspect that the DMA IOMMU part was deallocated and freed by the
->>> driver even-though page_pool still have inflight packets.
->> When you say driver, which 'driver' do you mean?
->> I suspect this could be because of the VF instance going away with
->> this cmd - disable the vf: echo 0 >
->> /sys/class/net/eno1/device/sriov_numvfs, what do you think?
->>>
->>> The page_pool bumps refcnt via get_device() + put_device() on the DMA
->>> 'struct device', to avoid it going away, but I guess there is also some
->>> IOMMU code that we need to make sure doesn't go away (until all inflight
->>> pages are returned) ???
-> 
-> I guess the above is why thing went wrong here, the question is which
-> IOMMU code need to be called here to stop them from going away.
+Hi,
 
-This looks like the wrong device is being passed to dma_unmap_page() - 
-if a device had an IOMMU DMA domain at the point when the DMA mapping 
-was create, then neither that domain nor its group can legitimately have 
-disappeared while that device still had a driver bound. Or if it *was* 
-the right device, but it's already had device_del() called on it, then 
-you have a fundamental lifecycle problem - a device with no driver bound 
-should not be passed to the DMA API, much less a dead device that's 
-already been removed from its parent bus.
+On 19/07/2024 12:59, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Compile-testing with CONFIG_MMU disabled causes a link error in omapdrm:
+> 
+> arm-linux-gnueabi-ld: drivers/gpu/drm/omapdrm/omap_gem.o: in function `omap_gem_fault_2d':
+> omap_gem.c:(.text+0x36e): undefined reference to `vmf_insert_mixed'
+> arm-linux-gnueabi-ld: drivers/gpu/drm/omapdrm/omap_gem.o: in function `omap_gem_fault':
+> omap_gem.c:(.text+0x74a): undefined reference to `vmf_insert_mixed'
+> 
+> Avoid this by adding a Kconfig dependency.
+> 
+> Fixes: dc6fcaaba5a5 ("drm/omap: Allow build with COMPILE_TEST=y")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks,
-Robin.
+Thanks, applying to drm-misc-fixes.
+
+  Tomi
+
+> ---
+>   drivers/gpu/drm/omapdrm/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
+> index 3f7139e211d2..64e440a2649b 100644
+> --- a/drivers/gpu/drm/omapdrm/Kconfig
+> +++ b/drivers/gpu/drm/omapdrm/Kconfig
+> @@ -1,6 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0-only
+>   config DRM_OMAP
+>   	tristate "OMAP DRM"
+> +	depends on MMU
+>   	depends on DRM && OF
+>   	depends on ARCH_OMAP2PLUS || (COMPILE_TEST && PAGE_SIZE_LESS_THAN_64KB)
+>   	select DRM_KMS_HELPER
+
 
