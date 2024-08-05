@@ -1,313 +1,242 @@
-Return-Path: <linux-kernel+bounces-275392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6821C9484D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:32:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1B89484CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7A31C22077
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:32:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09A891F23394
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F3217D34D;
-	Mon,  5 Aug 2024 21:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70CF17C7A2;
+	Mon,  5 Aug 2024 21:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AHHJcXQc"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kmmxcZk4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cEN9eR4b";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kmmxcZk4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cEN9eR4b"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A9717A5A3
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8D3175562;
+	Mon,  5 Aug 2024 21:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893172; cv=none; b=XkYcV2kefrmGG/cfyRGNJQWdpZsLqMtogihNgrcUsOHW8dgr8jCKnyOUinwuXY1wbXgTJqAvUYVDS9qggXGt9rvCki7OYnZBhaZBp+VyCIC3wbkrV2/5UdbiPddJDW20vwevNqlsmp9Q/5uTgHq3LnHgQE02wNc0rd3FSWkFUpI=
+	t=1722893168; cv=none; b=hUoOeerOy+ARylMn68/87FrCND1C2CCF8mwswH04G1NfSAII3iL1QDVfFiziF9RitPk+TMmK832LLqwAu6sN2+OQcobHmnRGk7ZGuDLs3DKA4Zv3PBi4QhtPEnKKnXWV4+uTbpazIvFPaO3VCBEn3sXfvMplKOK3zfY5wr4tTO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893172; c=relaxed/simple;
-	bh=wF0fKAubblsstfScosCTiCqfX0FmE1CGehpsgu/r8P4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kzQuYvp+jfhUUJDYtq54vUTihZQxCRyAEo9Z/HvQLyoVmQZNyb1rM1OZKOPH8ZxAu+YLuKSQPE+WEkAvNPRupv505wkhLQ+gU1CE0a/QlhLezQaWKllz50hOQHJn1djC5PvScPeSPPgQNTh5wN6Afth0U0KRFY3xmaXCNtI46nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AHHJcXQc; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0bebbbebeaso6150646276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722893165; x=1723497965; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cxnbg2gRYn4LeOU4CWxMJeU8Zw6y6eLxEpOcLvaAmUQ=;
-        b=AHHJcXQcfzYRr84xfpL23YyO8y0aBq9VOM6rpm7OC60LGpAK5ojftsG7fJe//dTGIk
-         1NPtd8MLF0lrf74DFM8M9xIBX/v74C+7bOcYWjsNdNhd9VFvpAHex+oL+02WhBBx9mZl
-         K3/3Gw7rQoENakVqn2wIMct34acL6EtCAdK9ZgtaEne6jhltkHpiT/vAc4WHVxRPn14p
-         2t//0xtNyUlSjN/cBkDaA7NRA1x+4mZU3QTQK6aTq1zB4XMT1gboV/O29A5CRhly0CUi
-         VtjNdrHi4dh8vUAnVgOkGtlxaDE7DFWVt4BYreM5Atml6n4tBLWkWGZPHESUmNBuEHw6
-         kbhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893165; x=1723497965;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cxnbg2gRYn4LeOU4CWxMJeU8Zw6y6eLxEpOcLvaAmUQ=;
-        b=ent4Qv8ZPlfiboqcgnu17FUnBcPfaev5QjDa+hKNQ3ZLl86GN3djluGI3V5NeEK4LN
-         lIJp6CiKb4Q7k0JZva6iARQE6tBIKFCz/r/Yz71mm2m3bxdI9NM7ux9SHkJKH+WCcF28
-         ISj7BDD6R1FYaMYvxP0kigaqAgAFesMi1ulMBw/X5dWZR53sD9wOaLzWuDl7BXsbPvJu
-         VBul9c5e/u3vTnjPUifzf6n8eN5znn+uEQlqmoEExDRls4jliFc5O2So89FyvwDPQnM+
-         ANRfo1HC3r49kMbQ9iB0D/tdHouqu031EGKcYd9dBHb/lCtSekw2NPF0HGj8uSvUs7G5
-         5/Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmP5GpgBhAR8MWZyq1LBlRdoffvK0SsJtLJh4alalCdR6OvEZXk9oT9nlxcv5tEUf4dhZdbfHaGHX+08vHSizwzjt5IW3FdnwgB59p
-X-Gm-Message-State: AOJu0YxfyJWntpVa9UHoUCAGG03BbrxVInAu1KLIbVbvR7aI1rRIQULc
-	Hma/vfYLsaDbITii6aKP8gzwctmjZPYnnJOSJOYeRdg8e3FOD8P93gwBDCZZA1LTNRvNvbD1zfR
-	cYzWXeEauN0e3b+sHCaIjPw==
-X-Google-Smtp-Source: AGHT+IEkV1ijZAyYSziEgd67bBu7N/m6t8dv5aDI4jnUJKJrhZLw43w9JbplBfPvmPwI4UYOjtdz9TFDbsSiP2Xw0w==
-X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
- (user=almasrymina job=sendgmr) by 2002:a05:6902:2483:b0:e03:a0b2:f73 with
- SMTP id 3f1490d57ef6-e0bde2f3cdbmr108795276.6.1722893164768; Mon, 05 Aug 2024
- 14:26:04 -0700 (PDT)
-Date: Mon,  5 Aug 2024 21:25:27 +0000
-In-Reply-To: <20240805212536.2172174-1-almasrymina@google.com>
+	s=arc-20240116; t=1722893168; c=relaxed/simple;
+	bh=1BVytNCZk+Dg70e1EBW/TZLKz4MQfi0OMZ69kb4u5F0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a4uPDcdHIePFvMXr+t3yGutfbKyAV2driOoQtKqImmIK5aiepLQQJ+smcCq9hGAo5AoMPWjdGBjBbacQBd1tKLC+rzPuDCTPLPnN/tSCx0uYsjlSuA84M+q6wP8RVOMCbT2O+TkXNbYbXICFuOQeTuOY4mhfLwOvG2c5YbGmU9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kmmxcZk4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cEN9eR4b; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kmmxcZk4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cEN9eR4b; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 94E3F21CCA;
+	Mon,  5 Aug 2024 21:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722893159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RzwYQufTrgFxwHNNxE5vv5xdFdhhOTlJ+F/YlPwej+E=;
+	b=kmmxcZk4kbXnKrhFPujPnfsVm5FXl7tldcsbHMwylY98QV8839p/xpDIFyPNX5hllntmDb
+	nz86fdSXyPIozJcmrN1/Cd3vYuO5vPfVD5+qwHnAJpzaJUGfFv/Nay5fWp1Vdfin71SxqZ
+	vkHCerCJMYl6ny88iRSWXgdKeZzgf5U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722893159;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RzwYQufTrgFxwHNNxE5vv5xdFdhhOTlJ+F/YlPwej+E=;
+	b=cEN9eR4b69bFKW9fHR1oKXQNRRwOiTaqpHLr6e21FzftgOF/tUUaI//w4KLDxZBWIP6kAQ
+	jGw9v6oeoTEBIpCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722893159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RzwYQufTrgFxwHNNxE5vv5xdFdhhOTlJ+F/YlPwej+E=;
+	b=kmmxcZk4kbXnKrhFPujPnfsVm5FXl7tldcsbHMwylY98QV8839p/xpDIFyPNX5hllntmDb
+	nz86fdSXyPIozJcmrN1/Cd3vYuO5vPfVD5+qwHnAJpzaJUGfFv/Nay5fWp1Vdfin71SxqZ
+	vkHCerCJMYl6ny88iRSWXgdKeZzgf5U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722893159;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=RzwYQufTrgFxwHNNxE5vv5xdFdhhOTlJ+F/YlPwej+E=;
+	b=cEN9eR4b69bFKW9fHR1oKXQNRRwOiTaqpHLr6e21FzftgOF/tUUaI//w4KLDxZBWIP6kAQ
+	jGw9v6oeoTEBIpCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 67D1113946;
+	Mon,  5 Aug 2024 21:25:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AiSzGGdDsWYHRQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 05 Aug 2024 21:25:59 +0000
+Message-ID: <b358e42e-e8aa-40e9-9fca-90ae28cfdfaa@suse.cz>
+Date: Mon, 5 Aug 2024 23:25:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240805212536.2172174-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240805212536.2172174-15-almasrymina@google.com>
-Subject: [PATCH net-next v18 14/14] netdev: add dmabuf introspection
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Cc: Mina Almasry <almasrymina@google.com>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, 
-	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 12/20] kthread: Implement preferred affinity
+Content-Language: en-US
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
+References: <20240726215701.19459-1-frederic@kernel.org>
+ <20240726215701.19459-13-frederic@kernel.org>
+ <4e9d1f6d-9cd8-493c-9440-b46a99f1c8af@suse.cz>
+ <ZrDhp3TLz6Kp93BJ@localhost.localdomain>
+ <00914d25-f0ae-4b00-9608-2457821c071c@suse.cz>
+ <ZrD8kmRw73bS3Lj6@localhost.localdomain>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <ZrD8kmRw73bS3Lj6@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [0.21 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[vger.kernel.org,linux-foundation.org,kernel.org,infradead.org,linutronix.de,kvack.org,joelfernandes.org,gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: 0.21
 
-Add dmabuf information to page_pool stats:
+On 8/5/24 18:23, Frederic Weisbecker wrote:
+> Le Mon, Aug 05, 2024 at 04:53:51PM +0200, Vlastimil Babka a écrit :
+>> If you mean the loop in kcompactd_init() then indeed, but we also have a
+>> hook in online_pages() to start new threads on newly onlined nodes, so
+>> that's not a problem.
+>> 
+>> The problem (I think) I see is cpumask_of_node(pgdat->node_id) is a snapshot
+>> of cpus running on the NUMA node the time, and is never updated later as new
+>> cpus might be brought up.
+> 
+> Oh I see now...
+> 
+>> 
+>> kcompactd_cpu_online() does try to update that when cpus are onlined (in a
+>> clumsy way), there was nothing like that for kswapd and after your series
+>> this update is also removed for kcompactd.
+> 
+> Ok...
+> 
+>> 
+>> > If all users of preferred affinity were to use NUMA nodes, it could be
+>> > a good idea to do a flavour of kernel/smpboot.c which would handle
+>> > per-node kthreads instead of per-cpu kthreads. I initially thought
+>> > about that. It would have handled all the lifecycle of those kthreads,
+>> > including creation, against hotplug. Unfortunately RCU doesn't rely on
+>> > per-NUMA nodes but rather use its own tree.
+>> > 
+>> > If there be more users of real per NUMA nodes kthreads than kswapd and
+>> > kcompactd, of course that would be much worth considering.
+>> 
+>> Yeah it's not that compelling, but a way to update the preferred affine mask
+>> in response to cpu hotplug events, that kswapd and kcompactd could use,
+>> would be sufficient. And maybe more widely useful.
+>> 
+>> I guess there could be a callback defined for kthread to provide a new
+>> preferred_affinity, that you'd call from kthreads_hotplug_update() ?
+>> And kcompactd and kswapd could both use the same callback that interprets
+>> kthread_data() as pgdat and fetches a new cpumask of it?
+> 
+> It's too bad we don't have a way to have a cpumask_possible_of_node(). I've
+> looked into the guts of numa but that doesn't look easy to do.
 
-$ ./cli.py --spec ../netlink/specs/netdev.yaml --dump page-pool-get
-...
- {'dmabuf': 10,
-  'id': 456,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 455,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 454,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 453,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 452,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 451,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 450,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 449,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
+That was my impression as well. Maybe not even possible because exact cpu
+ids might not be pre-determined like this?
 
-And queue stats:
+> Or there could be kthread_set_preferred_node()... ?
 
-$ ./cli.py --spec ../netlink/specs/netdev.yaml --dump queue-get
-...
-{'dmabuf': 10, 'id': 8, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 9, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 10, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 11, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 12, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 13, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 14, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 15, 'ifindex': 3, 'type': 'rx'},
+Possible instead of the callback idea suggested above?
+kthreads_hotplug_update() could check if this is set and construct the mask
+accordingly.
 
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
-
----
- Documentation/netlink/specs/netdev.yaml | 10 ++++++++++
- include/uapi/linux/netdev.h             |  2 ++
- net/core/netdev-genl.c                  | 10 ++++++++++
- net/core/page_pool_user.c               |  4 ++++
- tools/include/uapi/linux/netdev.h       |  2 ++
- 5 files changed, 28 insertions(+)
-
-diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
-index 0c747530c275e..08412c279297b 100644
---- a/Documentation/netlink/specs/netdev.yaml
-+++ b/Documentation/netlink/specs/netdev.yaml
-@@ -167,6 +167,10 @@ attribute-sets:
-           "re-attached", they are just waiting to disappear.
-           Attribute is absent if Page Pool has not been detached, and
-           can still be used to allocate new memory.
-+      -
-+        name: dmabuf
-+        doc: ID of the dmabuf this page-pool is attached to.
-+        type: u32
-   -
-     name: page-pool-info
-     subset-of: page-pool
-@@ -268,6 +272,10 @@ attribute-sets:
-         name: napi-id
-         doc: ID of the NAPI instance which services this queue.
-         type: u32
-+      -
-+        name: dmabuf
-+        doc: ID of the dmabuf attached to this queue, if any.
-+        type: u32
- 
-   -
-     name: qstats
-@@ -543,6 +551,7 @@ operations:
-             - inflight
-             - inflight-mem
-             - detach-time
-+            - dmabuf
-       dump:
-         reply: *pp-reply
-       config-cond: page-pool
-@@ -607,6 +616,7 @@ operations:
-             - type
-             - napi-id
-             - ifindex
-+            - dmabuf
-       dump:
-         request:
-           attributes:
-diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
-index 91bf3ecc5f1d9..7c308f04e7a06 100644
---- a/include/uapi/linux/netdev.h
-+++ b/include/uapi/linux/netdev.h
-@@ -93,6 +93,7 @@ enum {
- 	NETDEV_A_PAGE_POOL_INFLIGHT,
- 	NETDEV_A_PAGE_POOL_INFLIGHT_MEM,
- 	NETDEV_A_PAGE_POOL_DETACH_TIME,
-+	NETDEV_A_PAGE_POOL_DMABUF,
- 
- 	__NETDEV_A_PAGE_POOL_MAX,
- 	NETDEV_A_PAGE_POOL_MAX = (__NETDEV_A_PAGE_POOL_MAX - 1)
-@@ -131,6 +132,7 @@ enum {
- 	NETDEV_A_QUEUE_IFINDEX,
- 	NETDEV_A_QUEUE_TYPE,
- 	NETDEV_A_QUEUE_NAPI_ID,
-+	NETDEV_A_QUEUE_DMABUF,
- 
- 	__NETDEV_A_QUEUE_MAX,
- 	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index bd54cf50b658a..e944fd56c6b8e 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -293,6 +293,7 @@ static int
- netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 			 u32 q_idx, u32 q_type, const struct genl_info *info)
- {
-+	struct net_devmem_dmabuf_binding *binding;
- 	struct netdev_rx_queue *rxq;
- 	struct netdev_queue *txq;
- 	void *hdr;
-@@ -312,6 +313,15 @@ netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 		if (rxq->napi && nla_put_u32(rsp, NETDEV_A_QUEUE_NAPI_ID,
- 					     rxq->napi->napi_id))
- 			goto nla_put_failure;
-+
-+		binding = (struct net_devmem_dmabuf_binding *)
-+				  rxq->mp_params.mp_priv;
-+		if (binding) {
-+			if (nla_put_u32(rsp, NETDEV_A_QUEUE_DMABUF,
-+					binding->id))
-+				goto nla_put_failure;
-+		}
-+
- 		break;
- 	case NETDEV_QUEUE_TYPE_TX:
- 		txq = netdev_get_tx_queue(netdev, q_idx);
-diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
-index 3a3277ba167b1..ca13363aea343 100644
---- a/net/core/page_pool_user.c
-+++ b/net/core/page_pool_user.c
-@@ -212,6 +212,7 @@ static int
- page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
- 		  const struct genl_info *info)
- {
-+	struct net_devmem_dmabuf_binding *binding = pool->mp_priv;
- 	size_t inflight, refsz;
- 	void *hdr;
- 
-@@ -241,6 +242,9 @@ page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
- 			 pool->user.detach_time))
- 		goto err_cancel;
- 
-+	if (binding && nla_put_u32(rsp, NETDEV_A_PAGE_POOL_DMABUF, binding->id))
-+		goto err_cancel;
-+
- 	genlmsg_end(rsp, hdr);
- 
- 	return 0;
-diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
-index 91bf3ecc5f1d9..7c308f04e7a06 100644
---- a/tools/include/uapi/linux/netdev.h
-+++ b/tools/include/uapi/linux/netdev.h
-@@ -93,6 +93,7 @@ enum {
- 	NETDEV_A_PAGE_POOL_INFLIGHT,
- 	NETDEV_A_PAGE_POOL_INFLIGHT_MEM,
- 	NETDEV_A_PAGE_POOL_DETACH_TIME,
-+	NETDEV_A_PAGE_POOL_DMABUF,
- 
- 	__NETDEV_A_PAGE_POOL_MAX,
- 	NETDEV_A_PAGE_POOL_MAX = (__NETDEV_A_PAGE_POOL_MAX - 1)
-@@ -131,6 +132,7 @@ enum {
- 	NETDEV_A_QUEUE_IFINDEX,
- 	NETDEV_A_QUEUE_TYPE,
- 	NETDEV_A_QUEUE_NAPI_ID,
-+	NETDEV_A_QUEUE_DMABUF,
- 
- 	__NETDEV_A_QUEUE_MAX,
- 	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
+> Thanks.
+> 
+>> 
+>> > Thanks.
+>> 
 
 
