@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-274745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699D1947C23
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:45:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B72947C25
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 167771F20FD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3C42858FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6A642AAA;
-	Mon,  5 Aug 2024 13:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29BD3B1AC;
+	Mon,  5 Aug 2024 13:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Aeqahg64"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekGjk3mS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E3F36AEC
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 13:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24697175A5;
+	Mon,  5 Aug 2024 13:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722865476; cv=none; b=lnNYAaF5pluzES2B5SgJPflGUlqrgCExNq8Z7PA8cZm1KZAUgbqoedgCEkBSByEf/sP+A70+9wwyCEfU1q0MflIqk5ntP7a10LlahQsJlOBEa/s3agopdMTf5vRUDkzXKUpdVXmzCvfZnusRgP0gFo6Q7F6Nhz0ZT9D3KIAf8Ig=
+	t=1722865552; cv=none; b=AigGFl70P2iaLIe5WlvR5KAs6nDAvPtzkHwbmB1E0IB25BQEKo35DMoL8eUkDMnOlDnsS8/oQ3d9LRv966JS1Q0Ptn0YgIsHhXhfMaAf3+lfcODyrdFDsD8ynIwdVkXTpCE/XnKd2odgfol+6UkQTMV8Eg1I0/mXyV2KZ2jVcDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722865476; c=relaxed/simple;
-	bh=PI66hrhlN5T6OU7VevTwzxYp0S1w1b9mYvo63Sk6qDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxW27+bKhSivmW2uvZtMw+4Q2DYBXEMUurMaYMiU4skbTJ8LtwgAHh0Num5z9r7QgM3WbH2MZ+g7/wXrBczLDs6oKCG1h/yMEgGiZIc8cWtMf+yK/ccvzyKapxC1iFxjzQ968lIs1LBerjME+MtX5ZhZyCYdwslQZu6P9ECXVA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Aeqahg64; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722865473;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=slMM8m9qTpPlMHtZj0YMq5nEN8sovoUKAlpfjXtwiuk=;
-	b=Aeqahg64tm8cuuDGlhEkoy3vsjcaoA1g/q2gcwFcyxybiJt536VqjKPLMnEYWaIBs3JBTy
-	wuFZVf37qKqjtrBtt+UUhlJsDK3tT8T70o107O1SxTpjYEVkUxkkfGekMpLac5Jg6FVfyb
-	LvAqIrlg0uuFS3HJWFpfNsvoXJBOktE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-179-3hlHpkU-NV-uulNCy4HPeA-1; Mon,
- 05 Aug 2024 09:44:27 -0400
-X-MC-Unique: 3hlHpkU-NV-uulNCy4HPeA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 172DF1955BF7;
-	Mon,  5 Aug 2024 13:44:25 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.34])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5CB0130001A6;
-	Mon,  5 Aug 2024 13:44:21 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  5 Aug 2024 15:44:23 +0200 (CEST)
-Date: Mon, 5 Aug 2024 15:44:18 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org
-Subject: Re: [PATCH 2/8] uprobes: revamp uprobe refcounting and lifetime
- management
-Message-ID: <20240805134418.GA11049@redhat.com>
-References: <20240731214256.3588718-1-andrii@kernel.org>
- <20240731214256.3588718-3-andrii@kernel.org>
+	s=arc-20240116; t=1722865552; c=relaxed/simple;
+	bh=keSREImhSQR78gJomMJZgGaRF0sCwHZLVIDuIOHWJ/Q=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=H4aA6WDTT7OSaagUXv9K/a80WnEH0btV8Cu/DkB6cpdzJumhgrNEzFg2xfyh+Hc5bvrDl4oy97KGTVY82dVpW+khIl7O2pRY+2Onhj2EvvlPCvSALOoWMk9Fw8JaC9JS1t6KD4VDa1RtfaKje6g2E50nBkmzQZ4Eyg7lld3WyMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekGjk3mS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F28C32782;
+	Mon,  5 Aug 2024 13:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722865551;
+	bh=keSREImhSQR78gJomMJZgGaRF0sCwHZLVIDuIOHWJ/Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ekGjk3mS5nseP6C7INEC3zE49Ivk0nWL6Ie9lCsDuqvOvphwfxKy2KWoSEk9QcPyt
+	 sXmeS3B+sBWpbXmmkj64TcFMggj3sfB5UcfsGwMKxZEqv+CkGb42o0sIt6IhOYaDoK
+	 uv2ULb/4WRc7VlQdJ5Xzs+d32wAabDe+FhkmnC8V4G1XJ0IfwFeFXZulGOfK5ROPF9
+	 Aq5KGzfymgjSPDuZFxoFiDBsXHomgTOt19pR1sNYHjdnkzwBrRLVUtYxuqBasoOHpD
+	 4bSCxB1Q3iMSkP+BP7TV9Ihjf3qkUSlCXsAWvFcw/9pYYDeu8BwbPOlTeigmXRL9vx
+	 2sAQ/K2Y1CKKg==
+Date: Mon, 5 Aug 2024 22:45:44 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, jpoimboe@kernel.org, jikos@kernel.org,
+ mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com,
+ nathan@kernel.org, morbo@google.com, justinstitt@google.com,
+ mcgrof@kernel.org, thunder.leizhen@huawei.com, kees@kernel.org,
+ kernel-team@meta.com, mmaurer@google.com, samitolvanen@google.com,
+ mhiramat@kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH v2 2/3] kallsyms: Add APIs to match symbol without .XXXX
+ suffix.
+Message-Id: <20240805224544.e0a4277dff4ac41d867c6bc1@kernel.org>
+In-Reply-To: <20240802210836.2210140-3-song@kernel.org>
+References: <20240802210836.2210140-1-song@kernel.org>
+	<20240802210836.2210140-3-song@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731214256.3588718-3-andrii@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 07/31, Andrii Nakryiko wrote:
->
-> @@ -732,11 +776,13 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
->  	uprobe->ref_ctr_offset = ref_ctr_offset;
->  	init_rwsem(&uprobe->register_rwsem);
->  	init_rwsem(&uprobe->consumer_rwsem);
-> +	RB_CLEAR_NODE(&uprobe->rb_node);
+On Fri,  2 Aug 2024 14:08:34 -0700
+Song Liu <song@kernel.org> wrote:
 
-I guess RB_CLEAR_NODE() is not necessary?
+> With CONFIG_LTO_CLANG=y, the compiler may add suffix to function names
+> to avoid duplication. This causes confusion with users of kallsyms.
+> On one hand, users like livepatch are required to match the symbols
+> exactly. On the other hand, users like kprobe would like to match to
+> original function names.
+> 
+> Solve this by splitting kallsyms APIs. Specifically, existing APIs now
+> should match the symbols exactly. Add two APIs that match only the part
+> without .XXXX suffix. Specifically, the following two APIs are added.
+> 
+> 1. kallsyms_lookup_name_without_suffix()
+> 2. kallsyms_on_each_match_symbol_without_suffix()
+> 
+> These APIs will be used by kprobe.
+> 
+> Also cleanup some code and update kallsyms_selftests accordingly.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
 
-> @@ -1286,15 +1296,19 @@ static void build_probe_list(struct inode *inode,
->  			u = rb_entry(t, struct uprobe, rb_node);
->  			if (u->inode != inode || u->offset < min)
->  				break;
-> +			u = try_get_uprobe(u);
-> +			if (!u) /* uprobe already went away, safe to ignore */
-> +				continue;
->  			list_add(&u->pending_list, head);
+Looks good to me, but I have a nitpick. 
 
-cosmetic nit, feel to ignore, but to me
 
-			if (try_get_uprobe(u))
-				list_add(&u->pending_list, head);
+> --- a/kernel/kallsyms.c
+> +++ b/kernel/kallsyms.c
+> @@ -164,30 +164,27 @@ static void cleanup_symbol_name(char *s)
+>  {
+>  	char *res;
+>  
+> -	if (!IS_ENABLED(CONFIG_LTO_CLANG))
+> -		return;
+> -
+>  	/*
+>  	 * LLVM appends various suffixes for local functions and variables that
+>  	 * must be promoted to global scope as part of LTO.  This can break
+>  	 * hooking of static functions with kprobes. '.' is not a valid
+> -	 * character in an identifier in C. Suffixes only in LLVM LTO observed:
+> -	 * - foo.llvm.[0-9a-f]+
+> +	 * character in an identifier in C, so we can just remove the
+> +	 * suffix.
+>  	 */
+> -	res = strstr(s, ".llvm.");
+> +	res = strstr(s, ".");
 
-looks more readable.
+nit: "strchr(s, '.')" ?
 
-Other than the lack of kfree() in put_uprobe() and WARN() in _unregister()
-the patch looks good to me.
+Anyway,
 
-Oleg.
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
+Thank you,
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
