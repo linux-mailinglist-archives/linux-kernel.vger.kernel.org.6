@@ -1,102 +1,136 @@
-Return-Path: <linux-kernel+bounces-275168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DBDD94815E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:09:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6305594815F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9948B25496
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E5202857A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54BE1849D9;
-	Mon,  5 Aug 2024 17:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7503E15F3F2;
+	Mon,  5 Aug 2024 18:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAynaGJP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="aQq2BD20"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E947E18453B;
-	Mon,  5 Aug 2024 17:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36681620
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722880777; cv=none; b=CFOw1QJnYS430U5Yow4NbY3/2yLpqZptLpjPrs9rye9D1ycTR0U22A2ZCI9tyaTOKDEtL9IRtIJ1wSsc59x94yi9chI86+0OvReQgDM1sHqdliCWQuPlKkTgCqSAABUYv28v2EKswdz160OCaQzFq8dFM36C37e8z9mKPUfjW20=
+	t=1722881004; cv=none; b=du+LVmxB2qPfZu81S817K8J0pdfSbifRTXVIZT9m/Xh8O7S/UcJZqcAlyOHtIHDWa+nayb3rS7Oz7GF11oaVttH7nXIVGHSJIDa9rAkNQmoTskvk9TQJsLtKDzje0wJY/FaDPGEET4PnfWhsTQlnuhrSTVpnirJ0bXznA0Babck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722880777; c=relaxed/simple;
-	bh=O9Iyc49rPuU+RjCe9qJiRt4yfIA/RXxWPaivUdrXFHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MSd9FeKufbs30XlX6Xzt+gbkQ/pRbolPMNbTOtBykPRo5Tc1V8sqWG91eL9NNU1gNgbd4bSvDsJpnu48qnFUU0kvXMf9uUvOQYsjYHd7dbw+tmd7jhtnuKsIRLwOD96NN+fSuNqwjF9GcKfMwPVPBhcSBHFe2xOPlYGm1igNh5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAynaGJP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77E38C32782;
-	Mon,  5 Aug 2024 17:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722880776;
-	bh=O9Iyc49rPuU+RjCe9qJiRt4yfIA/RXxWPaivUdrXFHM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VAynaGJPHW6NR/xJWaFqqnNwulTBJOW8bkGUZx2usXR5CE8CmNiztPbnM9VsEriBJ
-	 cnrBebtZF3swgtA8EyqRg7yckIWViepFO1D/YbQ7J7oLaQ+n3MjtjRm49uFIvx04hC
-	 M+LoUtv7zj5Xi9xu3JKwiJ4fELkEgM3kHtxziwnRWdprc//z2u0LEqV62v2W3xm9wD
-	 Cef3QFVVSkAlc7V4PMepJhbqHSXfqXSO8HLdEZWiZzZBZaJwU7Omd3OY/IUbUwMSsz
-	 XoZJtEjS+GwqwTLu9qjmkDd55ej+nUYv9h6RBgqeB1ejNj/V/fnTFAVSLohArWJ4GP
-	 BDFjkuig9Bu5g==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+0122fa359a69694395d5@syzkaller.appspotmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19] Input: MT - limit max slots
-Date: Mon,  5 Aug 2024 13:59:33 -0400
-Message-ID: <20240805175934.3257938-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722881004; c=relaxed/simple;
+	bh=zQJfkVz+yaJ1725VvmNt2k/gjCOzdGbyVW1dMa6XVg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QE3wbnap3mf3p5tKCEru13bpKNkCUk8x1ZEcaNckGU0Nge1m/hnA2bvwRF5y48vLsXqO5KoQsVJUGftFVEmFOyJn63XMT36c97E3XympqitHNJa9rdECHYDfvhAXusCmvqjJ8nx6R8c2Iikzt5PLz+bTVhaskaWgAoqqu8Ja9z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=aQq2BD20; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a7b7229b8aso4132a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1722881001; x=1723485801; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=88BvRd35V/OzPhdKOSQqndCPusN42hnrznZaISah2qc=;
+        b=aQq2BD20ybIp5rPjRKf90yPtWuGAihoBlTr2Ba2Ta7Ro98+nqEghsiaRdVwP0G/+ho
+         Sg8WkD9TDG/qa2plTH1HRsVJGUvByicXbsKPp3RB25UgUyRPnOJ/cLXckUp6rng2F+UU
+         sD1vcYnavfmzty3l260i5oMvLSy9g2kf7PAdo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722881001; x=1723485801;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=88BvRd35V/OzPhdKOSQqndCPusN42hnrznZaISah2qc=;
+        b=u8q7M77CKsRqZmfaq7g0JMIVZIhyHeODkOdFINKHUaq9RqGEUbaAK2FlsAfItV5EyQ
+         dPR0zWHUCmNznc+vySyohWBhX0VO2Qiw3mz/G3O7D/RV5ra9q8qJJ2tr/LmLGGLKIrfN
+         GfNlIPls6dlUlleSbhE5ed7VJgldRjgy2Q1KUtBUR7FAd4cead+2p5+me40Zf7FtAKjU
+         5jVFf1ByTtci0AxPrzna0H88zWrjBffn0EenTNBVJlzoYSa1rnBBBsi8oam4pVFgaaNb
+         DjUv37rvmHg4t3xM8LHvF+eeg0YsKTd1dsH++pEuhIhD3SJ5yK6YDEHHJloX3ktvODUs
+         hDxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOFzr9IdysLow5v1NwjhltNm+jAGxa9IWO6bDtAkfR1zk4QLQz3RU5Jn53qCbwymoSkpiboV087IXj0RCUdq4CP7e6JdwjRWxVLCNz
+X-Gm-Message-State: AOJu0Yx74Lgnyh2RPV5pIWifawsG7acRj6kjVdunql8M4+T6TnWjbggC
+	g+kMmSbarORA7xoOp+DFpPM+ZOL+BUilsqtgJwTg5kebUxTLd17xstNz/ZX2hDc=
+X-Google-Smtp-Source: AGHT+IGdpz/yYrmGFTQMOGtgTZn3Z402QM4zK/U6N+5QV3x/wA63dYI2Qhmr9ppi70K8/k0WlBcuaA==
+X-Received: by 2002:a50:9308:0:b0:5af:c82a:7f64 with SMTP id 4fb4d7f45d1cf-5b7f61a9c92mr5442785a12.5.1722881001130;
+        Mon, 05 Aug 2024 11:03:21 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ba51da9c41sm3305453a12.36.2024.08.05.11.03.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 11:03:20 -0700 (PDT)
+Date: Mon, 5 Aug 2024 20:03:18 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/connector: Document destroy hook in drmm init
+ functions
+Message-ID: <ZrET5jlPptivP6T2@phenom.ffwll.local>
+Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240804170551.33971-2-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.319
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240804170551.33971-2-jose.exposito89@gmail.com>
+X-Operating-System: Linux phenom 6.9.10-amd64 
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+On Sun, Aug 04, 2024 at 07:05:52PM +0200, José Expósito wrote:
+> Document that the drm_connector_funcs.destroy hook must be NULL in
+> drmm_connector_init() and drmm_connector_hdmi_init().
+> 
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 
-[ Upstream commit 99d3bf5f7377d42f8be60a6b9cb60fb0be34dceb ]
+Applied to drm-misc-next, thanks for your patch.
+-Sima
 
-syzbot is reporting too large allocation at input_mt_init_slots(), for
-num_slots is supplied from userspace using ioctl(UI_DEV_CREATE).
+> ---
+>  drivers/gpu/drm/drm_connector.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+> index 7c44e3a1d8e0..292aaffb6aab 100644
+> --- a/drivers/gpu/drm/drm_connector.c
+> +++ b/drivers/gpu/drm/drm_connector.c
+> @@ -426,6 +426,8 @@ static void drm_connector_cleanup_action(struct drm_device *dev,
+>   *
+>   * The connector structure should be allocated with drmm_kzalloc().
+>   *
+> + * The @drm_connector_funcs.destroy hook must be NULL.
+> + *
+>   * Returns:
+>   * Zero on success, error code on failure.
+>   */
+> @@ -474,6 +476,8 @@ EXPORT_SYMBOL(drmm_connector_init);
+>   *
+>   * The connector structure should be allocated with drmm_kzalloc().
+>   *
+> + * The @drm_connector_funcs.destroy hook must be NULL.
+> + *
+>   * Returns:
+>   * Zero on success, error code on failure.
+>   */
+> -- 
+> 2.45.2
+> 
 
-Since nobody knows possible max slots, this patch chose 1024.
-
-Reported-by: syzbot <syzbot+0122fa359a69694395d5@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=0122fa359a69694395d5
-Suggested-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/input/input-mt.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/input/input-mt.c b/drivers/input/input-mt.c
-index 6c7326c93721c..fd01c9306e66c 100644
---- a/drivers/input/input-mt.c
-+++ b/drivers/input/input-mt.c
-@@ -48,6 +48,9 @@ int input_mt_init_slots(struct input_dev *dev, unsigned int num_slots,
- 		return 0;
- 	if (mt)
- 		return mt->num_slots != num_slots ? -EINVAL : 0;
-+	/* Arbitrary limit for avoiding too large memory allocation. */
-+	if (num_slots > 1024)
-+		return -EINVAL;
- 
- 	mt = kzalloc(struct_size(mt, slots, num_slots), GFP_KERNEL);
- 	if (!mt)
 -- 
-2.43.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
