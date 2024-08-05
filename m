@@ -1,227 +1,169 @@
-Return-Path: <linux-kernel+bounces-274366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C960E947765
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:36:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1979C947768
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 349601F21B10
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:36:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76765B21586
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6B814E2D8;
-	Mon,  5 Aug 2024 08:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC7D1509BD;
+	Mon,  5 Aug 2024 08:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tw.synaptics.com header.i=@tw.synaptics.com header.b="vGBn2w4b"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022127.outbound.protection.outlook.com [52.101.43.127])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P1Y3RjiD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pqV+9Hl0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D830F13D882;
-	Mon,  5 Aug 2024 08:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.127
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722847005; cv=fail; b=ShjbL/i6+Lvw7tC/i/ig3Us5+fAp+ocmr469HIt+i/FvI+UWMUOfiiM3lS9lNzwTrkunJQNXdFWicxQYl2o2vRjSBEcdJz998If0K+PCWY9TFJVCAvPDpZIk+uVRwdeuEVJ6YFFo6pbdREkKBnugtI4TtxUS+wPSIz2Df6YfxM4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722847005; c=relaxed/simple;
-	bh=/x5sSpbHyabmiUSq/9zRWOv5e7rEY0SzHJpO2p4AE8A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eCGVmf4QIpHewCnI0GoNiMJ6DDhE089rfNtXvkql8kf9z2De6DE/5HEf94Oq0H8sSYTe/l/UgJShrtE1S0AYEsONDSE2zpShhxt5/ScGYIHuZcshOY3mpvR5XMQclDQCVPuTNF4CP6bqqc0j6/sRLZiztmWyFJHvr8BJ1fM0hj0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tw.synaptics.com; spf=pass smtp.mailfrom=tw.synaptics.com; dkim=pass (1024-bit key) header.d=tw.synaptics.com header.i=@tw.synaptics.com header.b=vGBn2w4b; arc=fail smtp.client-ip=52.101.43.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tw.synaptics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tw.synaptics.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=upYlTtCqsOxqfFlxrvsdp6caaY9fB7kTihRrWxu8Fxv4WLZKYfLKqK5V+B8lGCU7WN9q2MxKP3EvwBO98gZLaSvqwZE6exmkGmbIJkb0LtRT5pTZ+0jA57i3UWzUM2y6pyz2YDW7T2KE71ZuqGbeJP+3/Byr7PjN6HZWlJ6cpZOT0O8C41fwQVMjlf2hGK7Tc42wE7Xq84MU65YwqfgAXFtSVR/UHb5hhmJpTnSVe4/kHyQn0UI6np98Gs0qgYS4FYASqC7RVbGURUdxZ6ko+B157/fetM1BUwd/rfI/kwFnXErWPDXyqC9l6Nhfl8rh5qhHi9s765uggr7cqhhHBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ngds/rDSRumAgmfS8R32L8V3QTdD2dLnSJ6Yq5Iilf8=;
- b=q5CyOflRED/+b8psg08TnxZ8PQ9xvs6ftgO6UxVnMhNquVsA5+SUGCc4w2v6WVxtsltfG7rkaJPvaCdHlo/JdW6kgF0t2/eSsrjEyHaWf4r/xsgLiggFtxBjtj2peQnjAvaXwuFVMeXq6La5pDUuvqgiNsXg9VxQ0f/gEkGSRWLppWFou2Zg3fGhyaKIyF5CqxuXTJYWaT5DbrKQjCfYIRXu58Dpk9UiZ7dL/LMFIHntCdvkFTK3X9rvVHUGK+jKhIxS8wRfuvnFXUvWcK7DkPyvQvqorJqePI2IZHezu+4OAV5tnNzex2bnZiSSJHBAxuJlszIAZwU5J0wPB9gYXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.147.44.87) smtp.rcpttodomain=gmail.com smtp.mailfrom=tw.synaptics.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=tw.synaptics.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tw.synaptics.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ngds/rDSRumAgmfS8R32L8V3QTdD2dLnSJ6Yq5Iilf8=;
- b=vGBn2w4bsQufnrYTcbyc6KxOLEXM7y+aL7Cz56df9cC7knq2NeM7L1SGVVdLqspr7/aSeWCWmRyKIw/bhM8FM8FtRZO6OadQNdpqYdSxjVyQOEP/KB+JF66M0JMKpzXQdocG6bFXcN/vZy8kWrrI+k+RmRN05szdV9sRgzPPWlM=
-Received: from DM5PR08CA0048.namprd08.prod.outlook.com (2603:10b6:4:60::37) by
- PH7PR03MB7105.namprd03.prod.outlook.com (2603:10b6:510:2b8::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.22; Mon, 5 Aug 2024 08:36:41 +0000
-Received: from DS3PEPF000099D6.namprd04.prod.outlook.com
- (2603:10b6:4:60:cafe::e9) by DM5PR08CA0048.outlook.office365.com
- (2603:10b6:4:60::37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.24 via Frontend
- Transport; Mon, 5 Aug 2024 08:36:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.147.44.87)
- smtp.mailfrom=tw.synaptics.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=tw.synaptics.com;
-Received-SPF: Pass (protection.outlook.com: domain of tw.synaptics.com
- designates 192.147.44.87 as permitted sender)
- receiver=protection.outlook.com; client-ip=192.147.44.87;
- helo=sjc1uvd-bld04.synaptics.com; pr=C
-Received: from sjc1uvd-bld04.synaptics.com (192.147.44.87) by
- DS3PEPF000099D6.mail.protection.outlook.com (10.167.17.7) with Microsoft SMTP
- Server id 15.20.7849.8 via Frontend Transport; Mon, 5 Aug 2024 08:36:40 +0000
-From: Marge Yang <marge.yang@tw.synaptics.com>
-To: dmitry.torokhov@gmail.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vincent.huang@tw.synaptics.com,
-	marge.yang@tw.synaptics.com
-Cc: david.chiu@tw.synaptics.com,
-	derek.cheng@tw.synaptics.com,
-	sam.tsai@synaptics.com,
-	Vincent Huang <Vincent.Huang@tw.synaptics.com>
-Subject: [PATCH V2] Input: synaptics-rmi4 - Supports to query DPM value.
-Date: Mon,  5 Aug 2024 08:36:36 +0000
-Message-Id: <20240805083636.1381205-1-marge.yang@tw.synaptics.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7B713D882;
+	Mon,  5 Aug 2024 08:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722847014; cv=none; b=Xpz9XMoJgbHyuXQKO0wdVARyMv02LTbWJhd1TJ09hQdFVmuLanIgyvKUOZ6NcYFkpDH7gqmQHkD/CZ8zoE7xUx7ITRttrRERBke8iIT7ACVuCYhfqr3HUHeK68xfH6qSkYHjN6yl8otP7+H2CErhqocM2mT0En7WTbsfmyeWn9Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722847014; c=relaxed/simple;
+	bh=PjtUfg2dBkrxwoYebMLa4QJFsaKgxx/xvAKUDYqI72k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mqP/FdU7St4irOn5uCrEFCz2iVWVGYhZXFksaEzhEpU3s4IE3orT1gd3KP2b6Dt+RsBJBX59Rs3K4ziCeTZGQoflHx6AsbsZqlhFc/p0T/rgNq0mO+0bIKVXlhTZhRQpjqNzlgy2BZvmk4cnDHuCm9K3yV3Ei6bcx+p2BqJ2G9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P1Y3RjiD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pqV+9Hl0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722847010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RCsHJr1SeKMqzqkT0AejdrkUq3Lrh5QDrzPRJxr0exw=;
+	b=P1Y3RjiDmTGcQmSQQSM0W4znmGk/TCQCPnBQ2rnJqCyEd9NJYv6YQVAq1nZh5m8kru3laR
+	PNw4QQnbpuI2iI6MLvuDKCiAyBy8uSMcM//UM5D8wXXXQ/vZc3B1mJhqsZzSLe6saI7sZz
+	8oAuYEPtwizF+X3zGCW+nLJjExy+fmBoPTfUhbG+UL7yFLNPeClaIh3Ia7zwaic2DAAuWP
+	U8v0SWrugVSerc1SDFOGzTCK8SIdWgYAdhbKJex1enhxiV8r+2+Ufn1zXyLF+3ZqlVPUBP
+	AN25nlXKUC5QfZrlk7OKPeJoVAucipy4TXR35vAVKhbNvIRh6d2vKpbYO12O3g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722847010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RCsHJr1SeKMqzqkT0AejdrkUq3Lrh5QDrzPRJxr0exw=;
+	b=pqV+9Hl0F6DWyoS2cDiBSEc2UWx8wdnbmtCzvRPcBe/wtKMCg8KJf5Dvywkt94TF+1U5Tf
+	P4Nyg+Tm/2f4e5Cw==
+To: syzbot <syzbot+41e4341f493f1155aa3d@syzkaller.appspotmail.com>,
+ anna-maria@linutronix.de, frederic@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+Cc: Johannes Berg <johannes@sipsolutions.net>, Kalle Valo
+ <kvalo@kernel.org>, linux-wireless@vger.kernel.org
+Subject: Re: [syzbot] [kernel?] WARNING in hrtimer_forward (3)
+In-Reply-To: <000000000000331d30061eeaf927@google.com>
+References: <000000000000331d30061eeaf927@google.com>
+Date: Mon, 05 Aug 2024 10:36:49 +0200
+Message-ID: <87plqn5psu.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099D6:EE_|PH7PR03MB7105:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 5fa1b471-cf47-416a-4c73-08dcb529bacd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jULVj4kjxTAnOnrnhx8Ua2Su0vE4OSOq3sj2xmeSAFGzO9EVI9/ROhRutwi9?=
- =?us-ascii?Q?E4pVZiLGlYu3/Uj0Zos97GI5et4xl4ylbUx7Mr70K9m0tqcI52OI5QU6nHjF?=
- =?us-ascii?Q?z/sILdDrPEptY17i+2OJHS+eNBNPTK27c5bcVEVDBKDqzKTc8C+70OqHC23n?=
- =?us-ascii?Q?nydF5Cfa86fkq8DkrBOdzejEf19SGC2X2wCiT1Um3S3vnUn6QXEjn0BDi1pI?=
- =?us-ascii?Q?1kjvUboCDj7jac7QeNbYKkeh9amMinKOvyXDRUviRONcfaIIVWt1Zrk60i/P?=
- =?us-ascii?Q?W9dW7th2vl8Te4U1QKqmE3017dIs3p61+txK+d2dhJDmX2D2rwG4PQw/h8J+?=
- =?us-ascii?Q?amSOOasXXf1IdRROGzUchwAr7GgGJRSM3gq459ULF+IMZYQMfpZmpkE4H4OA?=
- =?us-ascii?Q?t+Vqu56C5f0zxpGSP1kUNn59rV5eIbzwZKF052PMIKk7GmjAgtnoerZ1R5hL?=
- =?us-ascii?Q?njg07jg5l5YuryeCLcvnroPjKAnbeJhjgOEXmcXs79T/RJH4emuNM7R18QoQ?=
- =?us-ascii?Q?/Nqn3GnI3LC6koPT0qJKbGBRdcuCf2kRRw4U4ZGyW/QLov5Wjv58r2LUwyBT?=
- =?us-ascii?Q?LE6gyLBQ8BzhjAnL3zzz5PeLKiD6V1w1LQCc3KT3O85LXB99H5J2x+QHNwSm?=
- =?us-ascii?Q?sOoQtwjXMDmj0cDQQ6vwlQ//jnJgRpI0L8SJH1V0nqM5vdyG0CUZd/u6GOLc?=
- =?us-ascii?Q?fQZAEIwkQgTmxF9bjfMGrnVg0O/eoIR2X9xcynFAQbndBLYQLHFyZ7HxhdKk?=
- =?us-ascii?Q?BWeXNW6bJfra9xKcoh5FGVHUUpFnCev7fbArNz5ISeh+8kQ7a7v9Bnv5j4/V?=
- =?us-ascii?Q?IJu3pomn1tIQthMxeW9YRZobSPjQ9CFx32Dno2P78GmZ2TfezlqRsfzUOK3e?=
- =?us-ascii?Q?1e677klMrHvxEWegzJZ8B1lUp+CkXC5S5muAU8Yo/fomwlKHYZ+hPcNsCeFa?=
- =?us-ascii?Q?OM9n5ZJn9PE6OYcfbMTlJxfTNpu6F2QltIjdzm/+oVBTWuMdm+obH7j4AEmc?=
- =?us-ascii?Q?XbHyJxq3Vhh/tOaL1NfJ2//XXcjQjzaMxGiCpkUbDx9upNIrIv4oJQSYzrZ7?=
- =?us-ascii?Q?jkpyhrMORVTKZQmOA7QpNb5k2y/aoU0yoxtIj6SlbUfhWWY3wNtinodSSjHz?=
- =?us-ascii?Q?Q9Gu4pjuem74R+pvL8IaXUv/8s4kSVbyX4Go5fZ0Md+50hdbiEXqgWHVd9V6?=
- =?us-ascii?Q?UfePEl6gzkx6lLxuIbe00cHBqhsWY+BS1iGT6H2rRB8GMqyqcVT4yikqB4nb?=
- =?us-ascii?Q?ANkT2Yz6oKEGvfQUQJXTiv2x+nM8ZsNmF/svNloRLOucSpukidMbvnRxh0YX?=
- =?us-ascii?Q?r3qwa39JvyRqX7sYhRG+L8HJnQAYR8yivCDKV2KrggcXko0NzaaqtVfGRTxl?=
- =?us-ascii?Q?HMEIe7iBbwrR7ydf6ErQ6KPpf9GkWeYPgs4bP75TPLxTfrduWzWOQtEXWnvc?=
- =?us-ascii?Q?qoqrCJtU2iBWi8LyVGaHBiM1fZuJB3Lx?=
-X-Forefront-Antispam-Report:
-	CIP:192.147.44.87;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:sjc1uvd-bld04.synaptics.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: tw.synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 08:36:40.4102
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5fa1b471-cf47-416a-4c73-08dcb529bacd
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=335d1fbc-2124-4173-9863-17e7051a2a0e;Ip=[192.147.44.87];Helo=[sjc1uvd-bld04.synaptics.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099D6.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR03MB7105
 
-Newer firmware allows to query touchpad resolution
-information by reading from resolution register.
-Presence of resolution register is signalled via bit
-29 of the "register presence" register.
-On devices that lack this resolution register
-we fall back to using pitch and number of receivers
-data to calculate size of the sensor.
+On Mon, Aug 05 2024 at 00:53, syzbot wrote:
 
-RMI4 F12 will support to query DPM value on Touchpad.
-When TP firmware doesn't support to report logical and
-physical value within the Touchpad's HID report.
-We can directly query the DPM value through RMI.
+Cc+ wireless folks.
 
-Signed-off-by: Marge Yang <marge.yang@tw.synaptics.com>
-Signed-off-by: Vincent Huang <Vincent.Huang@tw.synaptics.com>
----
- drivers/input/rmi4/rmi_f12.c | 41 +++++++++++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 10 deletions(-)
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    3d650ab5e7d9 selftests/bpf: Fix a btf_dump selftest failure
+> git tree:       bpf-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17e154d3980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5efb917b1462a973
+> dashboard link: https://syzkaller.appspot.com/bug?extid=41e4341f493f1155aa3d
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/630e210de8d9/disk-3d650ab5.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/3576ca35748a/vmlinux-3d650ab5.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/5b33f099abfa/bzImage-3d650ab5.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+41e4341f493f1155aa3d@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 11474 at kernel/time/hrtimer.c:1048 hrtimer_forward+0x210/0x2d0 kernel/time/hrtimer.c:1048
 
-diff --git a/drivers/input/rmi4/rmi_f12.c b/drivers/input/rmi4/rmi_f12.c
-index 7e97944f7616..b8dfb9ffdbf5 100644
---- a/drivers/input/rmi4/rmi_f12.c
-+++ b/drivers/input/rmi4/rmi_f12.c
-@@ -24,6 +24,7 @@ enum rmi_f12_object_type {
- };
- 
- #define F12_DATA1_BYTES_PER_OBJ			8
-+#define RMI_F12_QUERY_RESOLUTION		29
- 
- struct f12_data {
- 	struct rmi_2d_sensor sensor;
-@@ -73,6 +74,8 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
- 	int pitch_y = 0;
- 	int rx_receivers = 0;
- 	int tx_receivers = 0;
-+	u16 query_dpm_addr = 0;
-+	int dpm_resolution = 0;
- 
- 	item = rmi_get_register_desc_item(&f12->control_reg_desc, 8);
- 	if (!item) {
-@@ -122,18 +125,36 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
- 		offset += 4;
- 	}
- 
--	if (rmi_register_desc_has_subpacket(item, 3)) {
--		rx_receivers = buf[offset];
--		tx_receivers = buf[offset + 1];
--		offset += 2;
--	}
-+	/* Use the Query DPM feature when the query register exists for resolution. */
-+	item = rmi_get_register_desc_item(&f12->query_reg_desc, RMI_F12_QUERY_RESOLUTION);
-+	if (item) {
-+		offset = rmi_register_desc_calc_reg_offset(&f12->query_reg_desc,
-+			RMI_F12_QUERY_RESOLUTION);
-+		query_dpm_addr = fn->fd.query_base_addr	+ offset;
-+		ret = rmi_read(fn->rmi_dev, query_dpm_addr, buf);
-+		if (ret < 0) {
-+			dev_err(&fn->dev, "Failed to read DPM value: %d\n", ret);
-+			return -ENODEV;
-+		}
-+		dpm_resolution = buf[0];
-+
-+		sensor->x_mm = sensor->max_x / dpm_resolution;
-+		sensor->y_mm = sensor->max_y / dpm_resolution;
-+	} else {
-+		if (rmi_register_desc_has_subpacket(item, 3)) {
-+			rx_receivers = buf[offset];
-+			tx_receivers = buf[offset + 1];
-+			offset += 2;
-+		}
- 
--	/* Skip over sensor flags */
--	if (rmi_register_desc_has_subpacket(item, 4))
--		offset += 1;
-+		/* Skip over sensor flags */
-+		if (rmi_register_desc_has_subpacket(item, 4))
-+			offset += 1;
-+
-+		sensor->x_mm = (pitch_x * rx_receivers) >> 12;
-+		sensor->y_mm = (pitch_y * tx_receivers) >> 12;
-+	}
- 
--	sensor->x_mm = (pitch_x * rx_receivers) >> 12;
--	sensor->y_mm = (pitch_y * tx_receivers) >> 12;
- 
- 	rmi_dbg(RMI_DEBUG_FN, &fn->dev, "%s: x_mm: %d y_mm: %d\n", __func__,
- 		sensor->x_mm, sensor->y_mm);
--- 
-2.25.1
+That tries to forward a hrtimer which is currently enqueued.
 
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 11474 Comm: syz.2.2194 Not tainted 6.10.0-syzkaller-12666-g3d650ab5e7d9 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+> RIP: 0010:hrtimer_forward+0x210/0x2d0 kernel/time/hrtimer.c:1048
+> Code: 00 49 89 1e 48 8b 04 24 eb 07 e8 bb e7 12 00 31 c0 48 83 c4 30 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 a1 e7 12 00 90 <0f> 0b 90 eb e0 4c 89 f0 31 d2 49 f7 f4 48 89 04 24 49 89 c6 4d 0f
+> RSP: 0018:ffffc90000007bf8 EFLAGS: 00010246
+> RAX: ffffffff81809d7f RBX: 0000000000000001 RCX: ffff888026059e00
+> RDX: 0000000000000101 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: 00000042facd7bc5 R08: ffffffff81809c13 R09: 1ffffffff26e4d1f
+> R10: dffffc0000000000 R11: ffffffff81358260 R12: 00000000061a8000
+> R13: ffff88807db07080 R14: 000000000044e132 R15: 1ffff1100fb60e0c
+> FS:  00007fa65d4636c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f478b2356c0 CR3: 000000005beac000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
+> Call Trace:
+>  <IRQ>
+>  hrtimer_forward_now include/linux/hrtimer.h:355 [inline]
+>  mac80211_hwsim_beacon+0x192/0x1f0 drivers/net/wireless/virtual/mac80211_hwsim.c:2354
+
+This is the timer callback. So something has re-started the timer before
+the soft interrupt was able to run ....
+
+>  __run_hrtimer kernel/time/hrtimer.c:1689 [inline]
+>  __hrtimer_run_queues+0x59b/0xd50 kernel/time/hrtimer.c:1753
+>  hrtimer_run_softirq+0x19a/0x2c0 kernel/time/hrtimer.c:1770
+>  handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+>  __do_softirq kernel/softirq.c:588 [inline]
+>  invoke_softirq kernel/softirq.c:428 [inline]
+>  __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+>  sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+
+mac80211_hwsim_link_info_changed() and mac80211_hwsim_config() can
+re-start the timer concurrently to a running softirq callback. I can't
+see any serialization there.
+
+The check for hrtimer_queued() is not cutting it as that's a lockless
+check and becomes true when the timer is dequeued for expiry.
+
+So the following can happen:
+
+CPU0                            CPU1
+
+hrtimer_softirq()
+    lock_base();
+    dequeue_timer(t);
+    base->running = t;
+    unlock_base(t);
+                                if (!hrtimer_queued(t))
+    t->fn(t)				hrtimer_start(t);
+      ....
+      hrtimer_forward(t);       <- FAIL
+
+Replacing hrtimer_queued() with hrtimer_active() should solve the
+hrtimer race, but I wonder whether the concurrency between the soft
+interrupt and the config/info changes has other side effects.
+
+Thanks,
+
+        tglx
 
