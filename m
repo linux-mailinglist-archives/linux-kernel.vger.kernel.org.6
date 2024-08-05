@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-274182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61748947492
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:15:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A1C9947495
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 917791C20CDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:15:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F68E28143A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0157E142904;
-	Mon,  5 Aug 2024 05:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF83D1422AB;
+	Mon,  5 Aug 2024 05:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQrSf6XB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZSj1jTc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C0213AA2A;
-	Mon,  5 Aug 2024 05:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3086631;
+	Mon,  5 Aug 2024 05:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722834889; cv=none; b=uLlmpG6jfI6VqA5XkPS1ics/h7sOzK1qlkaFm+V/1R3cVUvB2rCu2sXyaz3gQAJkofWbWLTUdFCtq8exTAdX3wuIHBHiVSwpFeuyjWAyIj4/Y74XqdnefX2F5qbMivFGTjZoNmJQQ4Cr4XAWUYV36GTVaV0BvE1Bt2UVV/ahSf8=
+	t=1722835002; cv=none; b=cUtiNYYdeWykfYru4kqBN6/Oyi1QhcllV0UrIoDbwwUllvPLIJmW+AlAILSAHo45GqmcTfr3iWB7sUaq1nW7an6lb9kd1zxHhBgJIU7dspCLEkBGHLfP5ASR2VJmFJcMYfwY937iMoTTO3ilYex00dpNQi+sPAA2vWDejfQW+kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722834889; c=relaxed/simple;
-	bh=0G4aoTe1JXhYoa0T34uGuP6CCWlSlEjLdv6MWJ0CY8E=;
+	s=arc-20240116; t=1722835002; c=relaxed/simple;
+	bh=m3gU1OlTZ8095LDUuHrD0vdOwEUtiIdxYNOczF0Rm1g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGil/7o5GrkteWPu3g1mAItGI2xEA7UGOQVRIA0EMtt6SQlo4YxZSnIwZWkwC8pSgyTR28lDMjaaAE2CczmUF5Gugn7V1c6Djq8XEJ9kK55/ZSDfNpCbDhUc+ZVy/YpqDCwRVcxYFzisKFdSlHBKqPKk7BJwxzHclQhKw4iYCns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQrSf6XB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB05C32782;
-	Mon,  5 Aug 2024 05:14:42 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ECy35LquP2JZaivb81E8FaMpkaENT2gFPjMp5Iy0c97pmpuUK1O/I+DsXGYK7sVv19GMPgCij5Fbn+Hae0eUXWPhZs1n6Oi8/qt+RF7AlWahVL9RiezWJWIdTMe3kitXlnHzStiwoo1GsQTCt0BaxdALy6rJpMujllXQ0+zOdMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZSj1jTc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51298C32782;
+	Mon,  5 Aug 2024 05:16:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722834888;
-	bh=0G4aoTe1JXhYoa0T34uGuP6CCWlSlEjLdv6MWJ0CY8E=;
+	s=k20201202; t=1722835002;
+	bh=m3gU1OlTZ8095LDUuHrD0vdOwEUtiIdxYNOczF0Rm1g=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FQrSf6XBmf5f1hJDuLLdOIXyxNCjRttKZfAHDZoaXFTsTIS1fLQE8ZTgKanJvFVTc
-	 UF1AmioM8qRHn6rx7Tvr6s3at1rX34W7ciqQ1NbLEuLP68ChbNnDkQSCpqP89nPqL/
-	 Z2iPYv9m1WrOTNS82jaOu84sYneV1YJXUv3Gfk533/FLH+tQYvrDBQM9w0o8OQxEDY
-	 1zAS9XjzN+T1MfUiTp0IaGNFTfALkKiMsmMuGrUl84BBEnEBAM+KrADVs8RaX6b6RD
-	 bAdwSQHfdhJzzRIr1r1sDt+yKiCZ7HmT5k6AMDUuWHjZxV+UAam5PbldGMp/wn36kx
-	 5dvWULeXF9UTA==
-Message-ID: <58317fe2-fbea-400e-bd1d-8e64d1311010@kernel.org>
-Date: Mon, 5 Aug 2024 07:14:41 +0200
+	b=iZSj1jTcCpX4fW/UukuFfXOZRKhombezWVZMsrA6BVpUEemHRdUGAFRJRhjpRZMT8
+	 PC0i352AXbG0C+2rtvmcwuuMrUq0YwvRH/0UDCodzxSFx4bEvBXDnHpxiFEhZWa4av
+	 OBW5dFugr27f7s9kuBCVQ8jKs9Kvs56rywrgVCXAq8MR2GBZfvlgN1SqLhuZ8gPGG6
+	 sS0CPZZvOak27w2kCT2/Pl4fZAYOts3zY3WcYL9ojKQGsgLcEiMRMElODGW5Hs6FKk
+	 IYl8VP3Q7QuNUEWO8eDhR2bAWRH8K7px+C0XGOCBYqa224jgFMkmUjN/B6hBCNHEXA
+	 dFUtVuMDmUaVQ==
+Message-ID: <6fe0d3de-3885-43dd-97f3-b181ef1386d5@kernel.org>
+Date: Mon, 5 Aug 2024 07:16:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Dragan Simic <dsimic@manjaro.org>
+Cc: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>,
- Jingoo Han <jingoohan1@gmail.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: andersson@kernel.org, quic_vbadigan@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
- <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
- <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
+ Jagan Teki <jagan@edgeble.ai>, Ondrej Jirman <megi@xff.cz>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <2408413.9XhxPE3A7Q@diego> <81147f0205c2a9555c9c64e4f7a69b6b@manjaro.org>
+ <10256980.nnTZe4vzsl@diego>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,79 +110,175 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
+In-Reply-To: <10256980.nnTZe4vzsl@diego>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 05/08/2024 06:11, Krishna Chaitanya Chundru wrote:
-
-
->>> +
->>> +  qcom,nfts:
->>> +    $ref: /schemas/types.yaml#/definitions/uint8
->>> +    description:
->>> +      Fast Training Sequence (FTS) is the mechanism that
->>> +      is used for bit and Symbol lock.
+On 04/08/2024 17:51, Heiko Stübner wrote:
+> Am Sonntag, 4. August 2024, 15:59:19 CEST schrieb Dragan Simic:
+>> On 2024-08-04 15:44, Heiko Stübner wrote:
+>>> Am Sonntag, 4. August 2024, 15:25:47 CEST schrieb Dragan Simic:
+>>>> On 2024-08-04 15:20, Yao Zi wrote:
+>>>>> On Sun, Aug 04, 2024 at 12:05:11PM +0200, Krzysztof Kozlowski wrote:
+>>>>>> On 03/08/2024 14:55, Yao Zi wrote:
+>>>>>>> This initial device tree describes CPU, interrupts and UART on the chip
+>>>>>>> and is able to boot into basic kernel with only UART. Cache information
+>>>>>>> is omitted for now as there is no precise documentation. Support for
+>>>>>>> other features will be added later.
+>>>>>>>
+>>>>>>> Signed-off-by: Yao Zi <ziyao@disroot.org>
+>>>>>>> ---
+>>>>>>>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 182 +++++++++++++++++++++++
+>>>>>>>  1 file changed, 182 insertions(+)
+>>>>>>>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>>>>>>
+>>>>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>>>>>> new file mode 100644
+>>>>>>> index 000000000000..77687d9e7e80
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>>>>>> @@ -0,0 +1,182 @@
+>>>>>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>>>>>>> +/*
+>>>>>>> + * Copyright (c) 2022 Rockchip Electronics Co., Ltd.
+>>>>>>> + * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+>>>>>>> + */
+>>>>>>> +
+>>>>>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>>>>> +#include <dt-bindings/interrupt-controller/irq.h>
+>>>>>>> +
+>>>>>>> +/ {
+>>>>>>> +	compatible = "rockchip,rk3528";
+>>>>>>> +
+>>>>>>> +	interrupt-parent = <&gic>;
+>>>>>>> +	#address-cells = <2>;
+>>>>>>> +	#size-cells = <2>;
+>>>>>>> +
+>>>>>>> +	aliases {
+>>>>>>> +		serial0 = &uart0;
+>>>>>>> +		serial1 = &uart1;
+>>>>>>> +		serial2 = &uart2;
+>>>>>>> +		serial3 = &uart3;
+>>>>>>> +		serial4 = &uart4;
+>>>>>>> +		serial5 = &uart5;
+>>>>>>> +		serial6 = &uart6;
+>>>>>>> +		serial7 = &uart7;
+>>>>>>> +	};
+>>>>>>> +
+>>>>>>> +	cpus {
+>>>>>>> +		#address-cells = <1>;
+>>>>>>> +		#size-cells = <0>;
+>>>>>>> +
+>>>>>>> +		cpu-map {
+>>>>>>> +			cluster0 {
+>>>>>>> +				core0 {
+>>>>>>> +					cpu = <&cpu0>;
+>>>>>>> +				};
+>>>>>>> +				core1 {
+>>>>>>> +					cpu = <&cpu1>;
+>>>>>>> +				};
+>>>>>>> +				core2 {
+>>>>>>> +					cpu = <&cpu2>;
+>>>>>>> +				};
+>>>>>>> +				core3 {
+>>>>>>> +					cpu = <&cpu3>;
+>>>>>>> +				};
+>>>>>>> +			};
+>>>>>>> +		};
+>>>>>>> +
+>>>>>>> +		cpu0: cpu@0 {
+>>>>>>> +			device_type = "cpu";
+>>>>>>> +			compatible = "arm,cortex-a53";
+>>>>>>> +			reg = <0x0>;
+>>>>>>> +			enable-method = "psci";
+>>>>>>> +		};
+>>>>>>> +
+>>>>>>> +		cpu1: cpu@1 {
+>>>>>>> +			device_type = "cpu";
+>>>>>>> +			compatible = "arm,cortex-a53";
+>>>>>>> +			reg = <0x1>;
+>>>>>>> +			enable-method = "psci";
+>>>>>>> +		};
+>>>>>>> +
+>>>>>>> +		cpu2: cpu@2 {
+>>>>>>> +			device_type = "cpu";
+>>>>>>> +			compatible = "arm,cortex-a53";
+>>>>>>> +			reg = <0x2>;
+>>>>>>> +			enable-method = "psci";
+>>>>>>> +		};
+>>>>>>> +
+>>>>>>> +		cpu3: cpu@3 {
+>>>>>>> +			device_type = "cpu";
+>>>>>>> +			compatible = "arm,cortex-a53";
+>>>>>>> +			reg = <0x3>;
+>>>>>>> +			enable-method = "psci";
+>>>>>>> +		};
+>>>>>>> +	};
+>>>>>>> +
+>>>>>>> +	psci {
+>>>>>>> +		compatible = "arm,psci-1.0", "arm,psci-0.2";
+>>>>>>> +		method = "smc";
+>>>>>>> +	};
+>>>>>>> +
+>>>>>>> +	timer {
+>>>>>>> +		compatible = "arm,armv8-timer";
+>>>>>>> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>>>>>>> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>>>>>>> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+>>>>>>> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+>>>>>>> +	};
+>>>>>>> +
+>>>>>>> +	xin24m: xin24m {
+>>>>>>
+>>>>>> Please use name for all fixed clocks which matches current format
+>>>>>> recommendation: 'clock-([0-9]+|[a-z0-9-]+)+'
+>>>>>
+>>>>> Will be fixed in next revision.
+>>>>
+>>>> Hmm, why should we apply that rule to the xin24m clock, which is
+>>>> named exactly like that everywhere else in Rockchip SoC dtsi files?
+>>>> It's much better to remain consistent.
+>>>
+>>> bindings or how we write devicetrees evolve over time ... similarly the
+>>> xin24m name comes from more than 10 years ago.
+>>>
+>>> We also name all those regulator nodes regulator-foo now, which in turn
+>>> automatically does enforce a nice sorting rule to keep all the 
+>>> regulators
+>>> around the same area ;-)
+>>>
+>>> So I don't see a problem of going with xin24m: clock-xin24m {}
 >>
->> What are the values? Why this is uint8?
->>
-> These represents number of fast training sequence and doesn't have
-> any units and the maximum value for this is 0xFF only so we used
-> uint8.
->> You described the desired Linux feature or behavior, not the actual
->> hardware. The bindings are about the latter, so instead you need to
->> rephrase the property and its description to match actual hardware
->> capabilities/features/configuration etc.
-> ack.
->>
->>> +
->>> +allOf:
->>> +  - $ref: /schemas/pci/pci-bus-common.yaml#
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: pci1179,0623
->>> +      required:
->>> +        - compatible
->>
->> Why do you have entire if? You do not have multiple variants, drop.
->>
-> The child nodes also referencing the qcom,qps615.yaml# node, I tried
-> to use this way to say "the below properties are for the required for
-> parent and optional for child".
+>> I agree that using "clock-xin24m" makes more sense in general, but the
+>> trouble is that we can't rename the already existing instances of 
+>> "xin24m",
+>> because that has become part of the ABI.  Thus, I'm not sure that 
+>> breaking
+>> away from the legacy brings benefits in this particular case.
+> 
+> In the regulator case, we have _new_ boards using the new _node_-names
+> but I don't see any renaming of old boards and also don't think we should.
+> 
+> But that still does not keep us from using the nicer naming convention in
+> new boards ;-) .
+> 
+> 
+> Same with xin24m. We're talking only about the node-name here. The
+> phandle stays the same and also the actual clock name stays the same and
+> really only the actual node name you need to look for in /proc/device-tree
+> changes ;-) .
+> 
+> So I don't see the need to go about changing all the old socs, but new
+> additions should use improved naming conventions.
+> 
+> xin24m: clock-xin24m {
+> 	compatible = "fixed-clock";
+> 	#clock-cells = <0>;
+> 	clock-frequency = <24000000>;
+> 	clock-output-names = "xin24m";
 
-I don't understand how child device can be exactly the same as parent
-device. How does it look in terms of hardware? Pins and supplies?
-
->>> +    then:
->>> +      required:
->>> +        - vdd18-supply
->>> +        - vdd09-supply
->>> +        - vddc-supply
->>> +        - vddio1-supply
->>> +        - vddio2-supply
->>> +        - vddio18-supply
->>> +        - qcom,qps615-controller
->>> +        - reset-gpios
->>> +
->>> +patternProperties:
->>> +  "@1?[0-9a-f](,[0-7])?$":
->>> +    type: object
->>> +    $ref: qcom,qps615.yaml#
->>> +    additionalProperties: true
->>
->> Nope, drop pattern Properties or explain what is this.
->>
-> the child nodes represent the downstream ports of the PCIe
-> switch which wants to use same properties that is why
-> I tried to use this pattern properties.
-
-Downstream port is not the same as device. Why downstream port has the
-same supplies? To which pins are they connected?
-
-
-
+Just to make it clear - doc clearly says the preferred name is:
+"clock-frequency".
 
 Best regards,
 Krzysztof
