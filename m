@@ -1,248 +1,82 @@
-Return-Path: <linux-kernel+bounces-274809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB076947D09
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:42:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5E7947CF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AEAB1C21586
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B321C20FDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F99C159568;
-	Mon,  5 Aug 2024 14:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC8B13BC11;
+	Mon,  5 Aug 2024 14:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QeZVbyPB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHA+dfAI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A21013B2AC;
-	Mon,  5 Aug 2024 14:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FA2139CFF;
+	Mon,  5 Aug 2024 14:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868922; cv=none; b=Y9Hx8eMeKvW8DzIKFOJTpwOVXSKFXDPKMQ/aTksRKVULFaPvit0u/j2ecguhHj8G0MZbc+CkOjJDu5c2EqDa7gaJnOF16XxGYZzta+MyGYYY4pB/91H2DCwSYOk8L0ftd7uWk2bDY021/GkgUOV28p/z7KFwYrmWuC9qt5QX2SU=
+	t=1722868814; cv=none; b=LW5LYDJ6l/WP43Z3b6RYwBnx5viSWWkZIn9CpJqfhLoeZyvkeVSFnoMVSpqwq9DNM58tevI2u0p2BKS/Cz4lN9g7sLcp0Te6N1IlcdBxsoc1LRmKmcfMaqr9zZMd9mFVxFoGVRcssw9o1piHouPGSKFZNKQ+OORSugpYfPKQNO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868922; c=relaxed/simple;
-	bh=KAAzyiSgI5VUznoplq6rpjnO/fNKSFt30uf+NxUGEms=;
+	s=arc-20240116; t=1722868814; c=relaxed/simple;
+	bh=I0HFxd1bsijwWSloHgrp1xwwDQmR0UsPmJGs57EAz5o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ukgz8u41uaXi621pagvIzDmkDZmkWHv0MtOm5SZ8EpS1folz/kbAOjr2B4mf1/X201HVAVoN4fzTIvmZBPUyIvuWMYkn5Jv5eBdSV3pt+aGR2gP2ytRqCPS1K7MYPusfQzyp+QAKIdxNqyZgGrmyh9gK4w7PTBBUzmTbxtErWAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QeZVbyPB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F5ADC4AF0C;
-	Mon,  5 Aug 2024 14:41:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLNP1twPzqnR7D4OSLr6wRkAf7WsZDi7l/CLgQwm2b7gXC3S24Y4a1cre0y66BkyEItCZIa7thCK2Q6oLV+basZPpFdm4RQpr+p3kp4RjoQXBc+6rz3Dego4wqQmLved8l+NsXHtcFHpJUYJ60aavrRVffpGeFv67ltuFS4tt50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHA+dfAI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24594C32782;
+	Mon,  5 Aug 2024 14:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722868921;
-	bh=KAAzyiSgI5VUznoplq6rpjnO/fNKSFt30uf+NxUGEms=;
+	s=k20201202; t=1722868813;
+	bh=I0HFxd1bsijwWSloHgrp1xwwDQmR0UsPmJGs57EAz5o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QeZVbyPBXcN5TPefvaZdSJjjdX4y6Cq/DxczfJ+Znju3yHvNTlO4aXvamUiVWCNfm
-	 dJFw3BUgSadYOQ78s/G2NFZdYqOSMyUBf2zL4pLaMFZ2EewzmNmJ9Rhn37EaPRg84N
-	 9/e8uP7RFruygWPGM1gHiLdkGIBlGPcbSW51E1iNan8BRdokqw6NeOBGxu0KFh/Qks
-	 mRAvGlnoK48IZtmY+61J7iNsk0pg1002E708O3v+oVXriGyhI/7ytWZoPV2JtIBVsT
-	 FjMUFjm01xX837WqtfHRuVUblGy21ffay5yDOackY6gR8nnfP4nTbw6GxA72f9QZSb
-	 FucTO3UZRmE+A==
-Date: Mon, 5 Aug 2024 17:39:41 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
-	Zi Yan <ziy@nvidia.com>, devicetree@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	nvdimm@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v3 07/26] mm: drop CONFIG_HAVE_ARCH_NODEDATA_EXTENSION
-Message-ID: <ZrDkLeLxQAVvZcBn@kernel.org>
-References: <20240801060826.559858-1-rppt@kernel.org>
- <20240801060826.559858-8-rppt@kernel.org>
- <20240802104922.000051a0@Huawei.com>
- <20240803115813.809f808f1afbe9f9feaae129@linux-foundation.org>
- <Zq8sn5iD1iOmYrss@kernel.org>
- <20240804161119.00003a02@Huawei.com>
+	b=fHA+dfAIYyMaVzOt786aDrV0ZRl22NoDQzGPIMJdd1d88IHLYJYIaa2slTMFTCIAw
+	 KaWBQaViFB6+UMkXgfl9FhmCG5MBgLQUmRoTPm/4Yx7Q1hEg/vCuHsRIRv4oX2CuIj
+	 CVc02HpzqBaX3v8MxXxFA4lhqTafX1HvwwUXk2i4b3Szp1BrVsPChGqbAcvm1OZ7d5
+	 4kaW9hF6waqh1TBUNdpiMS8T0q0kTZQZ76JX3sZaOcv4tkR38eI2saT3qzwsste4l/
+	 qTntcovzg0FBnNclTvQjSScvyvKFvN2586WmbyL2bh28RkMSGpQYOrbcpciM8J7eO7
+	 SM3zLCieZuW+A==
+Date: Mon, 5 Aug 2024 11:40:10 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: Re: [PATCH] perf mem: Update documentation for new options
+Message-ID: <ZrDkSqTpNCitJ-1K@x1>
+References: <20240802180913.1023886-1-namhyung@kernel.org>
+ <CAP-5=fU2HNnJKzRQUaM51ht7evxO30gSR0H5sQ9mSOE+xqkLjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240804161119.00003a02@Huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fU2HNnJKzRQUaM51ht7evxO30gSR0H5sQ9mSOE+xqkLjA@mail.gmail.com>
 
-On Sun, Aug 04, 2024 at 04:11:19PM +0100, Jonathan Cameron wrote:
-> On Sun, 4 Aug 2024 10:24:15 +0300
-> Mike Rapoport <rppt@kernel.org> wrote:
+On Fri, Aug 02, 2024 at 12:00:27PM -0700, Ian Rogers wrote:
+> On Fri, Aug 2, 2024 at 11:09 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Add a common options section and move some items to the section.  Also
+> > add description of new options to report options.
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 > 
-> > On Sat, Aug 03, 2024 at 11:58:13AM -0700, Andrew Morton wrote:
-> > > On Fri, 2 Aug 2024 10:49:22 +0100 Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> > >   
-> > > > > --- a/mm/mm_init.c
-> > > > > +++ b/mm/mm_init.c
-> > > > > @@ -1838,11 +1838,10 @@ void __init free_area_init(unsigned long *max_zone_pfn)
-> > > > >  
-> > > > >  		if (!node_online(nid)) {
-> > > > >  			/* Allocator not initialized yet */
-> > > > > -			pgdat = arch_alloc_nodedata(nid);
-> > > > > +			pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
-> > > > >  			if (!pgdat)
-> > > > >  				panic("Cannot allocate %zuB for node %d.\n",
-> > > > >  				       sizeof(*pgdat), nid);
-> > > > > -			arch_refresh_nodedata(nid, pgdat);  
-> > > > 
-> > > > This allocates pgdat but never sets node_data[nid] to it
-> > > > and promptly leaks it on the line below. 
-> > > > 
-> > > > Just to sanity check this I spun up a qemu machine with no memory
-> > > > initially present on some nodes and it went boom as you'd expect.
-> > > > 
-> > > > I tested with addition of
-> > > > 			NODE_DATA(nid) = pgdat;
-> > > > and it all seems to work as expected.  
-> > > 
-> > > Thanks, I added that.  It blew up on x86_64 allnoconfig because
-> > > node_data[] (and hence NODE_DATA()) isn't an lvalue when CONFIG_NUMA=n.
-> > > 
-> > > I'll put some #ifdef CONFIG_NUMAs in there for now but
-> > > 
-> > > a) NODE_DATA() is upper-case. Implies "constant".  Shouldn't be assigned to.
-> > > 
-> > > b) NODE_DATA() should be non-lvalue when CONFIG_NUMA=y also.  But no,
-> > >    we insist on implementing things in cpp instead of in C.  
-> > 
-> > This looks like a candidate for a separate tree-wide cleanup.
-> >  
-> > > c) In fact assigning to anything which ends in "()" is nuts.  Please
-> > >    clean up my tempfix.
-> > > 
-> > > c) Mike, generally I'm wondering if there's a bunch of code here
-> > >    which isn't needed on CONFIG_NUMA=n.  Please check all of this for
-> > >    unneeded bloatiness.  
-> > 
-> > I believe the patch addresses your concerns, just with this the commit log
-> > needs update. Instead of 
-> > 
-> >     Replace the call to arch_alloc_nodedata() in free_area_init() with
-> >     memblock_alloc(), remove arch_refresh_nodedata() and cleanup
-> >     include/linux/memory_hotplug.h from the associated ifdefery.
-> > 
-> > it should be
-> > 
-> >     Replace the call to arch_alloc_nodedata() in free_area_init() with a
-> >     new helper alloc_offline_node_data(), remove arch_refresh_nodedata()
-> >     and cleanup include/linux/memory_hotplug.h from the associated
-> >     ifdefery.
-> > 
-> > I can send an updated patch if you prefer.
-> This solution looks good to me - except for a Freudian typo that means it won't
-> compile :)
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-Right :)
+Thanks, applied to tmp.perf-tools-next,
 
-I'll post v4 after kbuild confirms it compiles :)
- 
-> Jonathan
-> 
-> > 
-> > diff --git a/include/linux/numa.h b/include/linux/numa.h
-> > index 3b12d8ca0afd..5a749fd67f39 100644
-> > --- a/include/linux/numa.h
-> > +++ b/include/linux/numa.h
-> > @@ -34,6 +34,7 @@ extern struct pglist_data *node_data[];
-> >  #define NODE_DATA(nid)	(node_data[nid])
-> >  
-> >  void __init alloc_node_data(int nid);
-> > +void __init alloc_offline_node_data(int nit);
-> >  
-> >  /* Generic implementation available */
-> >  int numa_nearest_node(int node, unsigned int state);
-> > @@ -62,6 +63,8 @@ static inline int phys_to_target_node(u64 start)
-> >  {
-> >  	return 0;
-> >  }
-> > +
-> > +static inline void alloc_offline_node_data(int nit) {}
-> nid
-> >  #endif
-> >  
-> >  #define numa_map_to_online_node(node) numa_nearest_node(node, N_ONLINE)
-> > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> > index bcc2f2dd8021..2785be04e7bb 100644
-> > --- a/mm/mm_init.c
-> > +++ b/mm/mm_init.c
-> > @@ -1836,13 +1836,8 @@ void __init free_area_init(unsigned long *max_zone_pfn)
-> >  	for_each_node(nid) {
-> >  		pg_data_t *pgdat;
-> >  
-> > -		if (!node_online(nid)) {
-> > -			/* Allocator not initialized yet */
-> > -			pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
-> > -			if (!pgdat)
-> > -				panic("Cannot allocate %zuB for node %d.\n",
-> > -				       sizeof(*pgdat), nid);
-> > -		}
-> > +		if (!node_online(nid))
-> > +			alloc_offline_node_data(nid);
-> >  
-> >  		pgdat = NODE_DATA(nid);
-> >  		free_area_init_node(nid);
-> > diff --git a/mm/numa.c b/mm/numa.c
-> > index da27eb151dc5..07e486a977c7 100644
-> > --- a/mm/numa.c
-> > +++ b/mm/numa.c
-> > @@ -34,6 +34,18 @@ void __init alloc_node_data(int nid)
-> >  	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
-> >  }
-> >  
-> > +void __init alloc_offline_node_data(int nit)
-> 
-> nid
-> 
-> > +{
-> > +	pg_data_t *pgdat;
-> > +
-> > +	pgdat = memblock_alloc(sizeof(*pgdat), SMP_CACHE_BYTES);
-> > +	if (!pgdat)
-> > +		panic("Cannot allocate %zuB for node %d.\n",
-> > +		      sizeof(*pgdat), nid);
-> > +
-> > +	node_data[nid] = pgdat;
-> > +}
-> > +
-> >  /* Stub functions: */
-> >  
-> >  #ifndef memory_add_physaddr_to_nid
-> > 
-> >  
-> > 
-> 
-> 
-
--- 
-Sincerely yours,
-Mike.
+- Arnaldo
 
