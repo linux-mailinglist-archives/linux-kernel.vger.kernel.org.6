@@ -1,87 +1,71 @@
-Return-Path: <linux-kernel+bounces-274248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61B79475A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:57:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A799475A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7784A280E39
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:57:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F052281269
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64D8148847;
-	Mon,  5 Aug 2024 06:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ByUt0/cs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F712143C6C;
+	Mon,  5 Aug 2024 07:01:21 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32502144D15;
-	Mon,  5 Aug 2024 06:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3301109;
+	Mon,  5 Aug 2024 07:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722841026; cv=none; b=NO28x7Nr/0f8GI2YRBeZay2eW33ETomRnuiO+7cbRdpKby/AcnGpSSnNlBEyK1G4jt9rSbgylklt2uSppEkwGtJ1iIFe2DxpR4Zzs3esC0PbsM40pdQtregUH5NUxLk+/f27TPH7wqzfmNmfcbGMZOe31f7HXZII2WvmETJWHbE=
+	t=1722841281; cv=none; b=KBez5ehVOQxq0HVbPZ7hUdvAzR5xE9OBInX03Rr7G/RfobHMpXz7GGT0mVNFDAzBI5hHprjWpjBM/Ii0Qj783CjdCxek+pYEQgqOMlJk+Pzq+pkg5fwjpVoN5rwIwfOeLAMxXR3ekw3IICLDsoZ1L8YNNOeT7zh0i4YHMl+NRhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722841026; c=relaxed/simple;
-	bh=rOFTIkNN0o0R2ottCkYE3AdffTi0xhhtd2GB2gRd3ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iGTmkcgyu3fuV8WNI98lXX23sCLf+YAII5rWIUPXMID7jmKZTCeJxqcjkBuhXXmHiPLjWQLbnYK7xDPeDKyg0TM7QwAma2NMkIzJIF4YOeFpJ7QKu7R85riDv4W6NBQ+AIYUDJxaNw5kzOUPvD/cuv9rRTQ4CFU3pk4eNIlERAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ByUt0/cs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB82C32782;
-	Mon,  5 Aug 2024 06:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722841025;
-	bh=rOFTIkNN0o0R2ottCkYE3AdffTi0xhhtd2GB2gRd3ms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ByUt0/csvVG7Q4dKGLxBNObCKPqJGZXimkv/9wN22sNh/yLzCF2bw881sAoUiNPz+
-	 txMbiUjpV4no31mfhJUHm31XUZKazKkeki859jIviyEopdSJWSp00+O4nEMGOLxRNj
-	 648VLXAo8byZ8MMgOxTuuKdBLVjoWCFfNC/Kxo5L88kqO/vewG5Z2bcFALpoLoLFhv
-	 HV553jnzI7gm3zg2xfor+MSeDiYMaNCYDLXzzMSS+AxLTr59D3Pel6dNyKN1yeax5r
-	 Iil3lNiHZJp9iZQADjr8+jFEjRUgVvM8sBZZ9dT6L45nHqdhMWrBn0rDw0nS6YH9b5
-	 F1WeFmv8XosyQ==
-Date: Mon, 5 Aug 2024 08:56:59 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: jack@suse.cz, mjguzik@gmail.com, edumazet@google.com, 
-	Yu Ma <yu.ma@intel.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v5 0/3] fs/file.c: optimize the critical section of
- file_lock in
-Message-ID: <20240805-gesaugt-crashtest-705884058a28@brauner>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240717145018.3972922-1-yu.ma@intel.com>
- <20240722-geliebt-feiern-9b2ab7126d85@brauner>
- <20240801191304.GR5334@ZenIV>
- <20240802-bewachsen-einpacken-343b843869f9@brauner>
- <20240802142248.GV5334@ZenIV>
+	s=arc-20240116; t=1722841281; c=relaxed/simple;
+	bh=lLpNY2gvKncPHrzY9sUabSQ0nRzvIjqpZU+/Z1TWLL8=;
+	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
+	 In-Reply-To:Content-Type; b=vA9R5XLwTm/iGwHtdVTl3XPS3ArXn9qmUihW9wyWxP968Y9NQviSf7UNFFJQLYs4OBFyJ39J6wUDVAC7dtpmmaxQpickp5/FuUTKCIHs744MoEHQzn11IxaRt84Ntfs8jvLqi3z2cMeN2NlrBC26RJmjKlcPiG1rUUdQz55Cm3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WcnPh1dVYznVZy;
+	Mon,  5 Aug 2024 15:00:08 +0800 (CST)
+Received: from dggpeml500011.china.huawei.com (unknown [7.185.36.84])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0862C180100;
+	Mon,  5 Aug 2024 15:01:15 +0800 (CST)
+Received: from [10.174.179.13] (10.174.179.13) by
+ dggpeml500011.china.huawei.com (7.185.36.84) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 5 Aug 2024 15:01:14 +0800
+Message-ID: <d5691b1b-c7e6-ddea-bd58-10855fd36d40@huawei.com>
+Date: Mon, 5 Aug 2024 15:01:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240802142248.GV5334@ZenIV>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+To: <gregkh@linuxfoundation.org>
+CC: <cve@kernel.org>, <linux-cve-announce@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <2024073038-CVE-2024-42226-fa39@gregkh>
+Subject: Re: CVE-2024-42226: usb: xhci: prevent potential failure in
+ handle_tx_event() for Transfer events without TRB
+From: Jinjiang Tu <tujinjiang@huawei.com>
+In-Reply-To: <2024073038-CVE-2024-42226-fa39@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500011.china.huawei.com (7.185.36.84)
 
-On Fri, Aug 02, 2024 at 03:22:48PM GMT, Al Viro wrote:
-> On Fri, Aug 02, 2024 at 01:04:44PM +0200, Christian Brauner wrote:
-> > > Hmm...   Something fishy's going on - those are not reachable by any branches.
-> > 
-> > Hm, they probably got dropped when rebasing to v6.11-rc1 and I did have
-> > to play around with --onto.
-> > 
-> > > I'm putting together (in viro/vfs.git) a branch for that area (#work.fdtable)
-> > > and I'm going to apply those 3 unless anyone objects.
-> > 
-> > Fine since they aren't in that branch. Otherwise I generally prefer to
-> > just merge a common branch.
-> 
-> If it's going to be rebased anyway, I don't see much difference from cherry-pick,
-> TBH...
+Hi，
 
-Yeah, but I generally don't rebase after -rc1 anymore unles there's
-really annoying conflicts.
+I noticed the fix commit is reverted in 6.1.99 and 6.6.39 due to 
+performance regression. Does it
+means this CVE should be rejected？
+
+Thanks！
 
