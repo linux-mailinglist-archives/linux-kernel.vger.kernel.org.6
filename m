@@ -1,111 +1,173 @@
-Return-Path: <linux-kernel+bounces-274371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80532947772
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04411947774
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C724B21D2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:39:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEEB2281C3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312A714EC46;
-	Mon,  5 Aug 2024 08:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6B014B973;
+	Mon,  5 Aug 2024 08:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVtSiWzN"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BGh2kCUe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA1D13D628
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E453149DF0
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722847142; cv=none; b=UYO0NHu/PbD13qYNu1YOgDr8vxniug8jox1nEqNQX5cjs7CjdAvqECibb/s+lLwekr5Y9y3SEHNw9I6R+N8Y0WI2fUbtl+VhP4wRlpyqeOLR+obt3upJGTS9haLXyNZebqSqTGlb1sQM226O7QxCu7S/hWnT758ikLC/a1xCeNs=
+	t=1722847173; cv=none; b=jCjbE79FLgw8V4TpumctyC6U70d0YhIXTuJcTk9x80vODJug9Jg19TyxHDr+9M37gTgzo90vOUtVSr8i/mRTxZ0osiNOxmLv9W/jxZooqtcKbBo0eC0OxF18ffDPN3JAI2d2xB2PgrCnDwtIXq0icXK/AML4KqvvRgKBG7vBhMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722847142; c=relaxed/simple;
-	bh=wOhxfz1JNmSt/eZ/1sbWUyu5lgXOjSHbRL//jMuHCBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n6svfQxNAKU/l/sCAWpdF/gzV9TeYX+KcFGZy5aLJtUSZUp33+Xq6Y/glJzL9LDsm9sSD53bGhF2P/fxhmRFeaYmusWFj8KZ4IxEqsbw92uzuKIdVjGAmiKqtRsu35fZtg3sHCWEyJ9yHPW7oc7fJ1oGGVe+F0UobLUy3OOsX70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVtSiWzN; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70eb73a9f14so7707183b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:39:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722847140; x=1723451940; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o0Y2ytu0XLQLfIUYDV++0ifJhskUaeinJE9VBipEVKc=;
-        b=IVtSiWzNU+NuYbPjBlDgNrQ1JKWZbt3mdSQZu/gOuHY2p5TIHYmtbJ5RKEj89fw6A2
-         OH7paJcN9Zu9Czppt+dtJ2x6a24jprGWMbQXxfmlHNtZnp9cERVz4VyboTv6VOAeyEfl
-         55daQ0fugFlEu9vCt7jkOpkPGwSRVJ0G8G+1U8MPZDFe420xO3lpWAWcSp33wvnqDZLZ
-         ZKaI7aUwyH1fMyY4/sbQd0ZSyJ88lwtbOnCot9IRdMudTZVn1py71nFypZGyIpELCY8D
-         w23SK5f6Io+R2wOZRJS9yJzjHhlnBN3tZw0wn9aFRRLkeSMlJXQfGj+OcsN6h0UDymK+
-         5zfg==
+	s=arc-20240116; t=1722847173; c=relaxed/simple;
+	bh=2VhGFoDqNEQQcvojz0IpiTyJYqSkpD3J7Qze2aHR3fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CyLZyu2lsf1AFp7L9cAo6yTdmfoW7JD/7v5x6dHNFj+SiffAbwG4TipG4ltSiadUb6ZLJZHQd8081i9jkdwFIfV0WtqFVngqbS3CWwBivfnR0dqNEKkV1MXkXOrYF0ZCNIrBErSDw/+3Dh61PPku8yrKmMnaTc4Mj1zMzSdjCWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BGh2kCUe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722847171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ea4hswH1u1nPlUlDCZA86v40saWII4j79Dw05H185hU=;
+	b=BGh2kCUeQUGI9s99rChz5f8X3y+v3PM/jy/kTewUcHYolq/VSsVtj7lGBHWsCSOy/961OZ
+	PnCPQ4BoGu4Cl2xQypM3KLE6L4R+et9TDpgoiYafiux0KLTIDjkW3ovgPpc6F40LurLnPL
+	b08fKXebUI4In18Ck1evKTATfgEnPTs=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-416-lW8qGXYIPSS6JdsSfgeBKA-1; Mon, 05 Aug 2024 04:39:29 -0400
+X-MC-Unique: lW8qGXYIPSS6JdsSfgeBKA-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42817980766so66276015e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:39:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722847140; x=1723451940;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o0Y2ytu0XLQLfIUYDV++0ifJhskUaeinJE9VBipEVKc=;
-        b=iu98KCNwORYFmwVYsCugHvtS8XwrT4yFakSDytD3M5e82dyC4zFqUMbxUlZtPPy7X+
-         AbQDSiqDCmYVki+QYVbH1D2TCOY406o0S2py795vuVDsMd3mu/JfcSXwtaEu2Bb5HP9E
-         3t0LnvfH5217fBjx8e10y5wtMeqOk/ORKCZHM0ZR1p9QDRCyVi41rkKenssg0m0aZ4ek
-         3DSv4GSEahFLvFXVT9lW2lNNSgO8JPUMxxdBkxD/EBXckp3fhyaEBvE0yfYsLQjvARuL
-         IRMEzMclTYAXTHe0cOQfb++zEhKQ1l/lqLZY8T4ePTHf6CF4C4doKxOuAeI5CfNWlu0n
-         k+8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXoqZymAUZPuRIpjN6KBSjGu2+XUG2dZSafyi+h4pMOBoRVqBGUhPJTTY7BKeBAS72ghMZub295t7BonpEy8bNviIuCTkjN2JYkBGBR
-X-Gm-Message-State: AOJu0YzFqxqoOdkr83ZnJapGYPLBtZK80P+Sc+Q0Sok3RtVObQhqUOvY
-	YakQkACq+1wcvtF96HwQStsN0/29DCxtOSwKoqFO0rq6EYK6uK39
-X-Google-Smtp-Source: AGHT+IGdZ3Yz9ZyYhRZst19AskkCxAwrghUJxWqpDQH4Z3L1XD7Aef8jmWtFlq05YhJi+1ZduMbjeQ==
-X-Received: by 2002:a05:6a20:7490:b0:1c4:88ce:c996 with SMTP id adf61e73a8af0-1c6996b933amr17598363637.46.1722847140518;
-        Mon, 05 Aug 2024 01:39:00 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.24])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed12b59sm5119369b3a.177.2024.08.05.01.38.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 01:39:00 -0700 (PDT)
-Message-ID: <65c81ca6-f4a9-4b2f-8e58-58bbf59c5793@gmail.com>
-Date: Mon, 5 Aug 2024 16:38:55 +0800
+        d=1e100.net; s=20230601; t=1722847168; x=1723451968;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ea4hswH1u1nPlUlDCZA86v40saWII4j79Dw05H185hU=;
+        b=RquG+e5WWpZIZsLVJkAm/OYhxml95fEqqW1IyG5erE88u0KwiBwwpfHUIq0xkwzsGg
+         ywCRyeTT9y4sUH+rskUGWWlDr8e1n5wX2Rme334blVjCLy+oMvX/QTERNNyejdPjZiXz
+         240xfTkgKrsZ+fadHnSTY9WbwZaaPQFDskuyGzQjBZqZrfGT8pB6hO2hq71pQCZKJdrS
+         R+tKSlwuP3YHGzkwTFZJQE05KFmI1ZL80WHCesAhEeuB+vPi8cxhFzGdR83FFKG4iAqu
+         sMUkR5PA2WcDELyKyNzUjlhsbejPBLAFDPdSSwRbqQcadMs88Qqreyr9GHL7DOhbN4WH
+         chzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSVxI3e6oiXbi8j4W/lSO2b4hQHFgiqHUlMjH47rtFmUarsoO2HGy53GPS81/4KI4MQ3hFRf3NNlBTlHR/Neo1ur568SOZXhsQHzdD
+X-Gm-Message-State: AOJu0Yz0WWrIjI2efwSSy3rsun59qJZKynXawS/C8TRYc3ii/oYKp3MX
+	TSf79YmL9IfaljHbVUnY3g3G1urPiyT/nSad532ptc7sEl/348U5wDXbBncoxw/TrKcrYTn0xrQ
+	HWZL3M1LIwLr7qqON7816WEiYTPKcJN8m7HudTr8JXhwX7QM8j2IjczghesMxCQ==
+X-Received: by 2002:adf:b196:0:b0:369:b849:61b0 with SMTP id ffacd0b85a97d-36bbc17132dmr7003641f8f.43.1722847168042;
+        Mon, 05 Aug 2024 01:39:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFM8/anathdf0+itad/SmXLJr8Ha3hpgUqxCdeZR+OeBw6j4Do78FnDxdF5vJm5uH7+QdreGg==
+X-Received: by 2002:adf:b196:0:b0:369:b849:61b0 with SMTP id ffacd0b85a97d-36bbc17132dmr7003601f8f.43.1722847167114;
+        Mon, 05 Aug 2024 01:39:27 -0700 (PDT)
+Received: from sgarzare-redhat (host-82-57-51-79.retail.telecomitalia.it. [82.57.51.79])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd169697sm9050176f8f.107.2024.08.05.01.39.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 01:39:26 -0700 (PDT)
+Date: Mon, 5 Aug 2024 10:39:23 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: luigi.leonardi@outlook.com, mst@redhat.com
+Cc: Stefan Hajnoczi <stefanha@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Marco Pinna <marco.pinn95@gmail.com>
+Subject: Re: [PATCH net-next v4 0/2] vsock: avoid queuing on intermediate
+ queue if possible
+Message-ID: <tblrar34qivcwsvai7z5fepxhi4irknbyne5xqqoqowwf3nwt5@kyd2nmqghews>
+References: <20240730-pinna-v4-0-5c9179164db5@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 21/22] mm/zsmalloc: fix build warning from lkp testing
-To: Vishal Moola <vishal.moola@gmail.com>, alexs@kernel.org
-Cc: Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin
- <linmiaohe@huawei.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org,
- willy@infradead.org, senozhatsky@chromium.org, david@redhat.com,
- 42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com,
- kernel test robot <lkp@intel.com>
-References: <20240729112534.3416707-1-alexs@kernel.org>
- <20240729112534.3416707-22-alexs@kernel.org>
- <66ad2fd3.a70a0220.226e03.5a9d@mx.google.com>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <66ad2fd3.a70a0220.226e03.5a9d@mx.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240730-pinna-v4-0-5c9179164db5@outlook.com>
 
+Hi Michael,
+this series is marked as "Not Applicable" for the net-next tree:
+https://patchwork.kernel.org/project/netdevbpf/patch/20240730-pinna-v4-2-5c9179164db5@outlook.com/
 
+Actually this is more about the virtio-vsock driver, so can you queue 
+this on your tree?
 
-On 8/3/24 3:13 AM, Vishal Moola wrote:
-> On Mon, Jul 29, 2024 at 07:25:33PM +0800, alexs@kernel.org wrote:
->> From: Alex Shi <alexs@kernel.org>
->>
->> LKP reported the following warning w/o CONFIG_DEBUG_VM:
->> 	mm/zsmalloc.c:471:12: warning: function 'is_first_zpdesc' is not
->> 	needed and will not be emitted [-Wunneeded-internal-declaration]
->> To remove this warning, better to incline the function is_first_zpdesc
-> 
-> In future iterations of the series, just fold this into the patch its
-> fixing. It makes reviewing easier.
-> 
+Thanks,
+Stefano
 
-Yes, thanks for comments!
+On Tue, Jul 30, 2024 at 09:47:30PM GMT, Luigi Leonardi via B4 Relay wrote:
+>This series introduces an optimization for vsock/virtio to reduce latency
+>and increase the throughput: When the guest sends a packet to the host,
+>and the intermediate queue (send_pkt_queue) is empty, if there is enough
+>space, the packet is put directly in the virtqueue.
+>
+>v3->v4
+>While running experiments on fio with 64B payload, I realized that there
+>was a mistake in my fio configuration, so I re-ran all the experiments
+>and now the latency numbers are indeed lower with the patch applied.
+>I also noticed that I was kicking the host without the lock.
+>
+>- Fixed a configuration mistake on fio and re-ran all experiments.
+>- Fio latency measurement using 64B payload.
+>- virtio_transport_send_skb_fast_path sends kick with the tx_lock acquired
+>- Addressed all minor style changes requested by maintainer.
+>- Rebased on latest net-next
+>- Link to v3: https://lore.kernel.org/r/20240711-pinna-v3-0-697d4164fe80@outlook.com
+>
+>v2->v3
+>- Performed more experiments using iperf3 using multiple streams
+>- Handling of reply packets removed from virtio_transport_send_skb,
+>  as is needed just by the worker.
+>- Removed atomic_inc/atomic_sub when queuing directly to the vq.
+>- Introduced virtio_transport_send_skb_fast_path that handles the
+>  steps for sending on the vq.
+>- Fixed a missing mutex_unlock in error path.
+>- Changed authorship of the second commit
+>- Rebased on latest net-next
+>
+>v1->v2
+>In this v2 I replaced a mutex_lock with a mutex_trylock because it was
+>insidea RCU critical section. I also added a check on tx_run, so if the
+>module is being removed the packet is not queued. I'd like to thank Stefano
+>for reporting the tx_run issue.
+>
+>Applied all Stefano's suggestions:
+>    - Minor code style changes
+>    - Minor commit text rewrite
+>Performed more experiments:
+>     - Check if all the packets go directly to the vq (Matias' suggestion)
+>     - Used iperf3 to see if there is any improvement in overall throughput
+>      from guest to host
+>     - Pinned the vhost process to a pCPU.
+>     - Run fio using 512B payload
+>Rebased on latest net-next
+>
+>---
+>Luigi Leonardi (1):
+>      vsock/virtio: avoid queuing packets when intermediate queue is empty
+>
+>Marco Pinna (1):
+>      vsock/virtio: refactor virtio_transport_send_pkt_work
+>
+> net/vmw_vsock/virtio_transport.c | 144 +++++++++++++++++++++++++--------------
+> 1 file changed, 94 insertions(+), 50 deletions(-)
+>---
+>base-commit: 1722389b0d863056d78287a120a1d6cadb8d4f7b
+>change-id: 20240730-pinna-db8cc1b8b037
+>
+>Best regards,
+>-- 
+>Luigi Leonardi <luigi.leonardi@outlook.com>
+>
+>
+>
+
 
