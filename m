@@ -1,199 +1,310 @@
-Return-Path: <linux-kernel+bounces-274782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52683947CA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:14:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66109947CA5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24051F20F95
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C8C1F223AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8044913AD33;
-	Mon,  5 Aug 2024 14:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bxm7eI/z";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EaFuG68l"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3150137750;
-	Mon,  5 Aug 2024 14:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B18F13A265;
+	Mon,  5 Aug 2024 14:15:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A653EA64
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722867234; cv=none; b=UU/hI4hdXADRwv38MjCYrGrgYML8rrcqVCRTod2Nye9QGtevi0mbhQ5poiVluawoIIoyX1bcOvHnnwaLKhrV5Hgakhp5lVst7LCxYPUBWoNt+/n95g4jA1odi6ThmcotuGV/4dmqSgF0Ed7xKlHAlz8zntISth5D6N6cfh3CtTI=
+	t=1722867311; cv=none; b=sUQcpzISiwj/kToG/+SlAkZmcDgmICAuf3trHPRQsuInM0UMdiK7Bo3DNEUFlR1RbBErOtJ5itDZNpvPr1tb42kmLylEzqf0/ynXR+7mgANb16PCZLt6FsuykeOffLvSLMTfuHjnpz6TZwyHtrw4LlhPGCl91y2J7ooTe0vCA9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722867234; c=relaxed/simple;
-	bh=rcDxQB4m8RGNPHnsunM2CoYgFsF3gyvcIb4BxctXQyk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=NYeyHCCdMR9DYA3NnRs7rOOz1zO2m6EBeGR1imiWqd8Ph8EakdmWq9EC2yLlya031PSx4zAjX+hPsAz0JvFPbrha9daXkU6tDFdNsT6dgDnZQGPHRzB83epDsyeB3W1dtuWAmNJa5mj/5fNP0D6bV7dzoYFck0GqX4aOMqV18lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bxm7eI/z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EaFuG68l; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 05 Aug 2024 14:13:50 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722867231;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rd/rgQfK0gPHw3MoFq+tHkAIrxdIJNLLihzqO6uhT4E=;
-	b=Bxm7eI/zt3CwX1qKre8fWXc1vkwRmCaqYUz2qCGWmX+ISTfPN5Q26uESpq+Gflr5CNmONz
-	typDKJ6AsXtMSFFUzfWd9sPiZvxcCd79S91mCSjL7hdsWuiA2k9YAxN/Fli/A1Nu9cq4XB
-	syOLF97zE47vaj/N6jCpHMTUmABbtXYex6XxERFA7jxaFgo1Dwzbzs5FOi9GWX72SaGLuz
-	pfYl6QUxPwVD+fbLsLQT0p7oOMe2esHXoPuBuIU4KNpuGZXw1cwuMJK5JDiCsKaoKKz6f+
-	717qADLOBvkWX8zAOE7cbyzjiCEsY7PWQxykN81rBaYsymAf0MAun6Ua8KIVxQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722867231;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rd/rgQfK0gPHw3MoFq+tHkAIrxdIJNLLihzqO6uhT4E=;
-	b=EaFuG68lu58jw6kLeOMg1B5hB4F/El9iiSdc4XVoDjpe+4E9te2c0liX6x4lHo1IILz0lx
-	7RQf87kp6OITNeDA==
-From: "tip-bot2 for Tao Liu" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/kexec: Add EFI config table identity mapping for
- kexec kernel
-Cc: Tao Liu <ltao@redhat.com>, Steve Wahl <steve.wahl@hpe.com>,
- Thomas Gleixner <tglx@linutronix.de>, Pavin Joseph <me@pavinjoseph.com>,
- Sarah Brofeldt <srhb@dbc.dk>, Eric Hagberg <ehagberg@gmail.com>,
- Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240717213121.3064030-2-steve.wahl@hpe.com>
-References: <20240717213121.3064030-2-steve.wahl@hpe.com>
+	s=arc-20240116; t=1722867311; c=relaxed/simple;
+	bh=GR49czBIzK9LqLdAMSHjjEooIfgMlDZx+3OV9K90HLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eQeFSUMovGZzuydPuyKtpqRqvSU3Rol2vsxOz10qAV43eCp4wKoiVO5fjgvszzxwhrPtJdcStFZSAowAb31//kHKmNlLpNYXqL81oQCfhwcA8HCbXk6N3GU/1R2Q8ltfUBo6hQz/hvlhBgjlQ1Ek7j/GlVHNJ3PBMuy3pvXytwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48746106F;
+	Mon,  5 Aug 2024 07:15:33 -0700 (PDT)
+Received: from [10.162.41.18] (e116581.arm.com [10.162.41.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E4083F5A1;
+	Mon,  5 Aug 2024 07:14:58 -0700 (PDT)
+Message-ID: <cf8dc1c6-948a-42e7-8aef-c6183ca6cac0@arm.com>
+Date: Mon, 5 Aug 2024 19:44:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172286723075.2215.6922141553022541297.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Race condition observed between page migration and page fault
+ handling on arm64 machines
+To: David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>
+Cc: akpm@linux-foundation.org, willy@infradead.org, ryan.roberts@arm.com,
+ anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
+ vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, osalvador@suse.de,
+ baolin.wang@linux.alibaba.com, dave.hansen@linux.intel.com,
+ baohua@kernel.org, ioworker0@gmail.com, gshan@redhat.com,
+ mark.rutland@arm.com, kirill.shutemov@linux.intel.com, hughd@google.com,
+ aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
+ broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, mgorman@techsingularity.net
+References: <20240801081657.1386743-1-dev.jain@arm.com>
+ <3b82e195-5871-4880-9ce5-d01bb751f471@redhat.com>
+ <bbe411f2-4c68-4f92-af8c-da184669dca8@arm.com>
+ <a6a38ad5-c754-44ad-a64b-f9ea5b764291@redhat.com>
+ <92df0ee1-d3c9-41e2-834c-284127ae2c4c@arm.com>
+ <19902a48-c59b-4e3b-afc5-e792506c2fd6@redhat.com>
+ <6486a2b1-45ef-44b6-bd84-d402fc121373@redhat.com>
+ <20240801134358.GB4794@willie-the-truck>
+ <9359caf7-81a8-45d9-9787-9009b3b2eed3@redhat.com>
+ <f8d21caa-7a82-4761-8a78-d928ae8d0f24@arm.com>
+ <418e818a-f385-459e-a84d-e3880ac08ad5@redhat.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <418e818a-f385-459e-a84d-e3880ac08ad5@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/mm branch of tip:
 
-Commit-ID:     5760929f6545c651682de3c2c6c6786816b17bb1
-Gitweb:        https://git.kernel.org/tip/5760929f6545c651682de3c2c6c6786816b17bb1
-Author:        Tao Liu <ltao@redhat.com>
-AuthorDate:    Wed, 17 Jul 2024 16:31:20 -05:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 05 Aug 2024 16:09:31 +02:00
+On 8/5/24 16:16, David Hildenbrand wrote:
+> On 05.08.24 11:51, Dev Jain wrote:
+>>
+>> On 8/1/24 19:18, David Hildenbrand wrote:
+>>> On 01.08.24 15:43, Will Deacon wrote:
+>>>> On Thu, Aug 01, 2024 at 03:26:57PM +0200, David Hildenbrand wrote:
+>>>>> On 01.08.24 15:13, David Hildenbrand wrote:
+>>>>>>>>> To dampen the tradeoff, we could do this in shmem_fault()
+>>>>>>>>> instead? But
+>>>>>>>>> then, this would mean that we do this in all
+>>>>>>>>>
+>>>>>>>>> kinds of vma->vm_ops->fault, only when we discover another
+>>>>>>>>> reference
+>>>>>>>>> count race condition :) Doing this in do_fault()
+>>>>>>>>>
+>>>>>>>>> should solve this once and for all. In fact, do_pte_missing()
+>>>>>>>>> may call
+>>>>>>>>> do_anonymous_page() or do_fault(), and I just
+>>>>>>>>>
+>>>>>>>>> noticed that the former already checks this using
+>>>>>>>>> vmf_pte_changed().
+>>>>>>>>
+>>>>>>>> What I am still missing is why this is (a) arm64 only; and (b) if
+>>>>>>>> this
+>>>>>>>> is something we should really worry about. There are other reasons
+>>>>>>>> (e.g., speculative references) why migration could temporarily 
+>>>>>>>> fail,
+>>>>>>>> does it happen that often that it is really something we have to
+>>>>>>>> worry
+>>>>>>>> about?
+>>>>>>>
+>>>>>>>
+>>>>>>> (a) See discussion at [1]; I guess it passes on x86, which is quite
+>>>>>>> strange since the race is clearly arch-independent.
+>>>>>>
+>>>>>> Yes, I think this is what we have to understand. Is the race simply
+>>>>>> less
+>>>>>> likely to trigger on x86?
+>>>>>>
+>>>>>> I would assume that it would trigger on any arch.
+>>>>>>
+>>>>>> I just ran it on a x86 VM with 2 NUMA nodes and it also seems to
+>>>>>> work here.
+>>>>>>
+>>>>>> Is this maybe related to deferred flushing? Such that the other CPU
+>>>>>> will
+>>>>>> by accident just observe the !pte_none a little less likely?
+>>>>>>
+>>>>>> But arm64 also usually defers flushes, right? At least unless
+>>>>>> ARM64_WORKAROUND_REPEAT_TLBI is around. With that we never do 
+>>>>>> deferred
+>>>>>> flushes.
+>>>>>
+>>>>> Bingo!
+>>>>>
+>>>>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>>>> index e51ed44f8b53..ce94b810586b 100644
+>>>>> --- a/mm/rmap.c
+>>>>> +++ b/mm/rmap.c
+>>>>> @@ -718,10 +718,7 @@ static void set_tlb_ubc_flush_pending(struct
+>>>>> mm_struct
+>>>>> *mm, pte_t pteval,
+>>>>>     */
+>>>>>    static bool should_defer_flush(struct mm_struct *mm, enum
+>>>>> ttu_flags flags)
+>>>>>    {
+>>>>> -       if (!(flags & TTU_BATCH_FLUSH))
+>>>>> -               return false;
+>>>>> -
+>>>>> -       return arch_tlbbatch_should_defer(mm);
+>>>>> +       return false;
+>>>>>    }
+>>>>>
+>>>>>
+>>>>> On x86:
+>>>>>
+>>>>> # ./migration
+>>>>> TAP version 13
+>>>>> 1..1
+>>>>> # Starting 1 tests from 1 test cases.
+>>>>> #  RUN           migration.shared_anon ...
+>>>>> Didn't migrate 1 pages
+>>>>> # migration.c:170:shared_anon:Expected migrate(ptr, self->n1,
+>>>>> self->n2) (-2)
+>>>>> == 0 (0)
+>>>>> # shared_anon: Test terminated by assertion
+>>>>> #          FAIL  migration.shared_anon
+>>>>> not ok 1 migration.shared_anon
+>>>>>
+>>>>>
+>>>>> It fails all of the time!
+>>>>
+>>>> Nice work! I suppose that makes sense as, with the eager TLB
+>>>> invalidation, the window between the other CPU faulting and the
+>>>> migration entry being written is fairly wide.
+>>>>
+>>>> Not sure about a fix though :/ It feels a bit overkill to add a new
+>>>> invalid pte encoding just for this.
+>>>
+>>> Something like that might make the test happy in most cases:
+>>>
+>>> diff --git a/tools/testing/selftests/mm/migration.c
+>>> b/tools/testing/selftests/mm/migration.c
+>>> index 6908569ef406..4c18bfc13b94 100644
+>>> --- a/tools/testing/selftests/mm/migration.c
+>>> +++ b/tools/testing/selftests/mm/migration.c
+>>> @@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
+>>>          int ret, tmp;
+>>>          int status = 0;
+>>>          struct timespec ts1, ts2;
+>>> +       int errors = 0;
+>>>
+>>>          if (clock_gettime(CLOCK_MONOTONIC, &ts1))
+>>>                  return -1;
+>>> @@ -79,12 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
+>>>                  ret = move_pages(0, 1, (void **) &ptr, &n2, &status,
+>>>                                  MPOL_MF_MOVE_ALL);
+>>>                  if (ret) {
+>>> -                       if (ret > 0)
+>>> +                       if (ret > 0) {
+>>> +                               if (++errors < 100)
+>>> +                                       continue;
+>>>                                  printf("Didn't migrate %d pages\n", 
+>>> ret);
+>>> -                       else
+>>> +                       } else {
+>>>                                  perror("Couldn't migrate pages");
+>>> +                       }
+>>>                          return -2;
+>>>                  }
+>>> +               /* Progress! */
+>>> +               errors = 0;
+>>>
+>>>                  tmp = n2;
+>>>                  n2 = n1;
+>>>
+>>>
+>>> [root@localhost mm]# ./migration
+>>> TAP version 13
+>>> 1..1
+>>> # Starting 1 tests from 1 test cases.
+>>> #  RUN           migration.shared_anon ...
+>>> #            OK  migration.shared_anon
+>>> ok 1 migration.shared_anon
+>>> # PASSED: 1 / 1 tests passed.
+>>> # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+>>
+>>
+>> This does make the test pass, to my surprise, since what you are doing
+>> from userspace
+>>
+>> should have been done by the kernel, because it retries folio unmapping
+>> and moving
+>>
+>> NR_MAX_MIGRATE_(A)SYNC_RETRY times; I had already tested pumping up 
+>> these
+>>
+>> macros and the original test was still failing. Now, I digged in more,
+>> and, if the
+>>
+>> following assertion is correct:
+>>
+>>
+>> Any thread having a reference on a folio will end up calling 
+>> folio_lock()
+>>
+>
+> Good point. I suspect concurrent things like read/write would also be 
+> able to trigger this (did not check, though).
+>
+>>
+>> then it seems to me that the retry for loop wrapped around
+>> migrate_folio_move(), inside
+>>
+>> migrate_pages_batch(), is useless; if migrate_folio_move() fails on the
+>> first iteration, it is
+>>
+>> going to fail for all iterations since, if I am reading the code path
+>> correctly, the only way it
+>>
+>> fails is when the actual refcount is not equal to expected refcount (in
+>> folio_migrate_mapping()),
+>>
+>> and there is no way that the extra refcount is going to get released
+>> since the migration path
+>>
+>> has the folio lock.
+>>
+>> And therefore, this begs the question: isn't it logical to assert the
+>> actual refcount against the
+>>
+>> expected refcount, just after we have changed the PTEs, so that if this
+>> assertion fails, we can
+>>
+>> go to the next iteration of the for loop for migrate_folio_unmap()
+>> inside migrate_pages_batch()
+>>
+>> by calling migrate_folio_undo_src()/dst() to restore the old state? I am
+>> trying to implement
+>>
+>> this but is not as straightforward as it seemed to me this morning.
+>
+> I agree with your assessment that migration code currently doesn't 
+> handle the case well when some other thread does an unconditional 
+> folio_lock(). folio_trylock() users would be handled, but that's not 
+> what we want with FGP_LOCK I assume.
+>
+> So IIUC, your idea would be to unlock the folio in migration code and 
+> try again their. Sounds reasonable, without looking into the details :)
 
-x86/kexec: Add EFI config table identity mapping for kexec kernel
 
-A kexec kernel boot failure is sometimes observed on AMD CPUs due to an
-unmapped EFI config table array.  This can be seen when "nogbpages" is on
-the kernel command line, and has been observed as a full BIOS reboot rather
-than a successful kexec.
+(Adding Mel if at all he has any comments for a compaction use-case)
 
-This was also the cause of reported regressions attributed to Commit
-7143c5f4cf20 ("x86/mm/ident_map: Use gbpages only where full GB page should
-be mapped.") which was subsequently reverted.
+What I was trying to say is this (forgive me for the hard-coded value):
 
-To avoid this page fault, explicitly include the EFI config table array in
-the kexec identity map.
+diff --git a/mm/migrate.c b/mm/migrate.c
+index a8c6f466e33a..404af46dd661 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1262,6 +1262,8 @@ static int migrate_folio_unmap(new_folio_t 
+get_new_folio,
+}
+if (!folio_mapped(src)) {
++ if (folio_ref_count(src) != 2)
++ goto out;
+__migrate_folio_record(dst, old_page_state, anon_vma);
+return MIGRATEPAGE_UNMAP;
+}
+This will give us more chances to win the race. On an average, now
+the test fails on 100 iterations of move_pages(). If you multiply
+the NR_MAX_PAGES_(A)SYNC_RETRY macros by 3, the average goes above
+to 2000.
+But if the consensus is that this is just pleasing the test without
+any real use-case (compaction?) then I guess I am alright with making
+the change in the test.
 
-Further explanation:
-
-The following 2 commits caused the EFI config table array to be
-accessed when enabling sev at kernel startup.
-
-    commit ec1c66af3a30 ("x86/compressed/64: Detect/setup SEV/SME features
-                          earlier during boot")
-    commit c01fce9cef84 ("x86/compressed: Add SEV-SNP feature
-                          detection/setup")
-
-This is in the code that examines whether SEV should be enabled or not, so
-it can even affect systems that are not SEV capable.
-
-This may result in a page fault if the EFI config table array's address is
-unmapped. Since the page fault occurs before the new kernel establishes its
-own identity map and page fault routines, it is unrecoverable and kexec
-fails.
-
-Most often, this problem is not seen because the EFI config table array
-gets included in the map by the luck of being placed at a memory address
-close enough to other memory areas that *are* included in the map created
-by kexec.
-
-Both the "nogbpages" command line option and the "use gpbages only where
-full GB page should be mapped" change greatly reduce the chance of being
-included in the map by luck, which is why the problem appears.
-
-Signed-off-by: Tao Liu <ltao@redhat.com>
-Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Pavin Joseph <me@pavinjoseph.com>
-Tested-by: Sarah Brofeldt <srhb@dbc.dk>
-Tested-by: Eric Hagberg <ehagberg@gmail.com>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-Link: https://lore.kernel.org/all/20240717213121.3064030-2-steve.wahl@hpe.com
----
- arch/x86/kernel/machine_kexec_64.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index cc0f7f7..9c9ac60 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -28,6 +28,7 @@
- #include <asm/setup.h>
- #include <asm/set_memory.h>
- #include <asm/cpu.h>
-+#include <asm/efi.h>
- 
- #ifdef CONFIG_ACPI
- /*
-@@ -87,6 +88,8 @@ map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
- {
- #ifdef CONFIG_EFI
- 	unsigned long mstart, mend;
-+	void *kaddr;
-+	int ret;
- 
- 	if (!efi_enabled(EFI_BOOT))
- 		return 0;
-@@ -102,6 +105,30 @@ map_efi_systab(struct x86_mapping_info *info, pgd_t *level4p)
- 	if (!mstart)
- 		return 0;
- 
-+	ret = kernel_ident_mapping_init(info, level4p, mstart, mend);
-+	if (ret)
-+		return ret;
-+
-+	kaddr = memremap(mstart, mend - mstart, MEMREMAP_WB);
-+	if (!kaddr) {
-+		pr_err("Could not map UEFI system table\n");
-+		return -ENOMEM;
-+	}
-+
-+	mstart = efi_config_table;
-+
-+	if (efi_enabled(EFI_64BIT)) {
-+		efi_system_table_64_t *stbl = (efi_system_table_64_t *)kaddr;
-+
-+		mend = mstart + sizeof(efi_config_table_64_t) * stbl->nr_tables;
-+	} else {
-+		efi_system_table_32_t *stbl = (efi_system_table_32_t *)kaddr;
-+
-+		mend = mstart + sizeof(efi_config_table_32_t) * stbl->nr_tables;
-+	}
-+
-+	memunmap(kaddr);
-+
- 	return kernel_ident_mapping_init(info, level4p, mstart, mend);
- #endif
- 	return 0;
 
