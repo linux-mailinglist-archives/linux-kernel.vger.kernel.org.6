@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-275149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A478794811F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:04:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AF29480F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A1C6B2307A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:04:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FCEAB23DEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA19417A587;
-	Mon,  5 Aug 2024 17:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTA1DBtM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB18161309;
+	Mon,  5 Aug 2024 17:57:39 +0000 (UTC)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137DA179958;
-	Mon,  5 Aug 2024 17:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B873D15FD12
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722880708; cv=none; b=WtNaKmjuMOcsqL+CkhP+dUIGOKpJzzAied8IWG8bTuDskKcXw2lMnxKoem680vC8CJP/+g5qH5cZ1OUYDCxeFoseJU3Jpjobci2Nga5W4B/Pz8u5nH+jTo3b4uS13SvRW7L5rIZfBI3xdtD/6ZaXPNSmKOoW5zDaWmcN9Wt8ZlQ=
+	t=1722880659; cv=none; b=Myt+ANrfpqvNZdPbFBvmPWFTjIJjdIh2A6O+LWC98jO8LRDPnIfUyBmZWBp7DHgO6KpLSg2FkJicsnNFBSTBgJwN1lFN2jOfiToV+KraqhdzmrjN+TOxVydBLmkz/RqIMHU7amCwU2SloUq2xkm/cG4tt8gJxz4gkkZlWXLHrmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722880708; c=relaxed/simple;
-	bh=mvjVhW69jJxI6YiksH+FTLTcA9Vyz0bmDcBXEarPZ+U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZjFK/HABDd3cgAmrBJBGl0GRcpTRxidSs/3Ti81Tllq0fxDtzzAWL9skiecelXhuO2NwRBlX+ELNBjtd64FGjW87WEdApJ/GQTgRLLybyVlK00yg1RT3BND5Z+R90bKv1JPyqgz/r1vF2slmj0RrFEVui0510ruVKLFduhY0qM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTA1DBtM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F6C1C32782;
-	Mon,  5 Aug 2024 17:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722880707;
-	bh=mvjVhW69jJxI6YiksH+FTLTcA9Vyz0bmDcBXEarPZ+U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lTA1DBtM1vDO1buwL53wVcsfO8kt6pVMkW4PflV3gbhjX82R6jf6P+FNSPHKTawhi
-	 peoF288vrO+72yW3DuTOZhcgx3zgsXzfJLX+oKA1MCVGQEXp9pmnLpYOzyDim57S3X
-	 PvWvhNsbcA7JMhcvUKPqLpl/HRFbH7N8d9sMawDRkiLuKY8Pz4jsoIdtTWTpVr77rt
-	 xtT8Od18/efeByPK3q+Q8Tz9QKmylAlEOPf7uxq0H2Dwn9q9XBWchWdoZuEJFK7tQq
-	 QGjO5G8MbkSs22ClDHOfxuIikhObUkOEIPVbDLMUXa8KZS/01sl9qjdABZCa6g3pKT
-	 NWVHUUyzObY/Q==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Paulo Alcantara <pc@manguebit.com>,
-	Sebastian Steinbeisser <Sebastian.Steinbeisser@lrz.de>,
-	Tom Talpey <tom@talpey.com>,
-	Steve French <stfrench@microsoft.com>,
-	Sasha Levin <sashal@kernel.org>,
-	sfrench@samba.org,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org
-Subject: [PATCH AUTOSEL 6.6 15/15] smb: client: fix FSCTL_GET_REPARSE_POINT against NetApp
-Date: Mon,  5 Aug 2024 13:57:12 -0400
-Message-ID: <20240805175736.3252615-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240805175736.3252615-1-sashal@kernel.org>
-References: <20240805175736.3252615-1-sashal@kernel.org>
+	s=arc-20240116; t=1722880659; c=relaxed/simple;
+	bh=jx8U9314XivC6hGV66g1QfXgCI96wqeH5Svwx52zkMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pY2DTNkVWBLwPCE1qysA6uxRg8KqC2oUpha2VRdnw46A7L/DsRsY7VmaMMaunB+mq+JzaWnjnDOP1AjuIfCKs9V0X3z9gNTHP8FhfBMOCrd915m34aJaoC/+BRIzbGuhJ6qZYegj8vePhsL0dGssutzhWeOza0dzRKbwTGCKJTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-45007373217so49190361cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:57:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722880656; x=1723485456;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jx8U9314XivC6hGV66g1QfXgCI96wqeH5Svwx52zkMI=;
+        b=rS7Jj+bGZEAAZnoD3mT6ePalMCWg7Cd4Aw1ACU2x5FdXXlYB6DVjeXZHc2asqBDAOl
+         G8pjoUk1c52fCgGS4LOOSQ7bTTqPeBTz9mHKtdfvdoo/ZIHo+xua8LfkoXLYOgJ43qhB
+         lbEWatneEBvtfjlngNfZUdFrW38B+shS8CgGyQI6owlpRhXkEy3ApMu2H1J/ch1Pq/hv
+         NNBbL8mFrFjybFLUIm4MTaGziHU17cIioaxn0JFIzAaRab8tWMotrA9ZUWs26icNuxb1
+         FcrDW1gMPMYyEZBUXS2NS+jj9H0h4hQxzHEbUc662dcaUDwrJHTsCq+2m4qmTjVcaEEb
+         VjvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxlpnr8Rvbe4y1k//HTl54thULwDFpopREBy3y950El4KaguhQQan+bojs/ckzg8oYjBEqj+AeTO+vX/IDlanx2E+t7AETWYppFXbx
+X-Gm-Message-State: AOJu0YyFpqwOv8RdcGgNILkH3AANoIV1aOmRG8Wba5v5ypKcnaKU8O6b
+	IXCJxYLL2VrE1sh490BcnkorAjHN9MZ6wsfEXouzFYxC1fgrvIj2
+X-Google-Smtp-Source: AGHT+IGBcBhAZbJF759LtBRWvajKtunWWI53M2KX4sqYjytt7tlLDpbymbOfapUqceRKZGonrSt1uw==
+X-Received: by 2002:a05:622a:19a5:b0:446:6824:166a with SMTP id d75a77b69052e-451893b79e6mr222914651cf.10.1722880656509;
+        Mon, 05 Aug 2024 10:57:36 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4518a6f1595sm31125481cf.50.2024.08.05.10.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 10:57:36 -0700 (PDT)
+Date: Mon, 5 Aug 2024 12:57:33 -0500
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, mingo@redhat.com
+Subject: Re: [PATCH 2/6] sched_ext: Add scx_enabled() test to @start_class
+ promotion in put_prev_task_balance()
+Message-ID: <20240805175733.GD42857@maniforge>
+References: <20240804024047.100355-1-tj@kernel.org>
+ <20240804024047.100355-3-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.44
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6r3oC7kV1xTrPh19"
+Content-Disposition: inline
+In-Reply-To: <20240804024047.100355-3-tj@kernel.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
 
-From: Paulo Alcantara <pc@manguebit.com>
 
-[ Upstream commit ddecea00f87f0c46e9c8339a7c89fb2ff891521a ]
+--6r3oC7kV1xTrPh19
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-NetApp server requires the file to be open with FILE_READ_EA access in
-order to support FSCTL_GET_REPARSE_POINT, otherwise it will return
-STATUS_INVALID_DEVICE_REQUEST.  It doesn't make any sense because
-there's no requirement for FILE_READ_EA bit to be set nor
-STATUS_INVALID_DEVICE_REQUEST being used for something other than
-"unsupported reparse points" in MS-FSA.
+On Sat, Aug 03, 2024 at 04:40:09PM -1000, Tejun Heo wrote:
+> SCX needs its balance() invoked even when waking up from a lower priority
+> sched class (idle) and put_prev_task_balance() thus has the logic to prom=
+ote
+> @start_class if it's lower than ext_sched_class. This is only needed when
+> SCX is enabled. Add scx_enabled() test to avoid unnecessary overhead when
+> SCX is disabled.
+>=20
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
 
-To fix it and improve compatibility, set FILE_READ_EA & SYNCHRONIZE
-bits to match what Windows client currently does.
+Acked-by: David Vernet <void@manifault.com>
 
-Tested-by: Sebastian Steinbeisser <Sebastian.Steinbeisser@lrz.de>
-Acked-by: Tom Talpey <tom@talpey.com>
-Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/smb/client/smb2inode.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+--6r3oC7kV1xTrPh19
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-index 86f8c81791374..cd7b8ab84e5ca 100644
---- a/fs/smb/client/smb2inode.c
-+++ b/fs/smb/client/smb2inode.c
-@@ -948,7 +948,8 @@ int smb2_query_path_info(const unsigned int xid,
- 			cmds[num_cmds++] = SMB2_OP_GET_REPARSE;
- 
- 		oparms = CIFS_OPARMS(cifs_sb, tcon, full_path,
--				     FILE_READ_ATTRIBUTES | FILE_READ_EA,
-+				     FILE_READ_ATTRIBUTES |
-+				     FILE_READ_EA | SYNCHRONIZE,
- 				     FILE_OPEN, create_options |
- 				     OPEN_REPARSE_POINT, ACL_NO_MODE);
- 		cifs_get_readable_path(tcon, full_path, &cfile);
-@@ -1256,7 +1257,8 @@ int smb2_query_reparse_point(const unsigned int xid,
- 	cifs_dbg(FYI, "%s: path: %s\n", __func__, full_path);
- 
- 	cifs_get_readable_path(tcon, full_path, &cfile);
--	oparms = CIFS_OPARMS(cifs_sb, tcon, full_path, FILE_READ_ATTRIBUTES,
-+	oparms = CIFS_OPARMS(cifs_sb, tcon, full_path,
-+			     FILE_READ_ATTRIBUTES | FILE_READ_EA | SYNCHRONIZE,
- 			     FILE_OPEN, OPEN_REPARSE_POINT, ACL_NO_MODE);
- 	rc = smb2_compound_op(xid, tcon, cifs_sb,
- 			      full_path, &oparms, &in_iov,
--- 
-2.43.0
+-----BEGIN PGP SIGNATURE-----
 
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZrESjQAKCRBZ5LhpZcTz
+ZJSlAP9optKO6sUh0jLkmSE7sCt3WW7DrG4ZZ052pu7LBROsQQEA1V5+slQiIz5r
+Yn+gkb1SYCAu3QVaMbDxYcUq8OH9/Aw=
+=npGb
+-----END PGP SIGNATURE-----
+
+--6r3oC7kV1xTrPh19--
 
