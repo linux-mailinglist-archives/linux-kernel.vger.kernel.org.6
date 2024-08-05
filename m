@@ -1,188 +1,139 @@
-Return-Path: <linux-kernel+bounces-274696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10DC8947B8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:07:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C01947B91
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6D7282632
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C494A1F2346B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90A315AD9C;
-	Mon,  5 Aug 2024 13:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XSyIoxhY"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D2515AD9C;
+	Mon,  5 Aug 2024 13:09:08 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C023158DC3
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 13:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670CB18026;
+	Mon,  5 Aug 2024 13:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722863270; cv=none; b=GwEdBqpFbQHtlNaHXdDzb3a4Fd47b4slAREV7lfAF954fh9xlYl8tb8wyarGjV0M5VSzTAppSfv8pnGpvBLVX2C0BACsUQDxMhj+q3qzi1JheeYZuXqFXXj4Scvj0MPGBAC7msOk8BvTWuMWFUp21SRIZxMaYql1jmoujlafwP4=
+	t=1722863348; cv=none; b=fv/6/9uH7QXoulG/GguEoqqstt9JzzYUM/8r9a8d8/lpe9HzlX8SKKk5zr8eOXAJFv/Il/Q3ROWmgWBpNQXqiwC+nP6lKVQNMhGIQ/20c+Yq/42vhLhDihbK8oLLRduZ+7k5v+kXByrCtRk/JG6lKHx9W7IeIGQSY71uOU60Ydg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722863270; c=relaxed/simple;
-	bh=wJkBeAzjeoNNrAC5UyDmHosLxmNzfztiYnZVihZRJFk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DkW59Ngswxlrfni8avjtbXb5YSI5h29LdXm78k6Z7QjE5196nQ6v0DAtUGaz3ilO9p0Ukz9eqij+N32db48EsJh7/NeOIifUpEZpT6oxVLKB4sCpndRaf9PWdI+Vjv8IWACqQ23eOw3zSrU2GvQEKpRjnanvvXWkghwEeMhZAD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XSyIoxhY; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475C0HHZ032185;
-	Mon, 5 Aug 2024 13:07:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=x5rCBDHnL29cOSsjoQMRo8sgH0
-	PEpnfxpN3R9CXqsXE=; b=XSyIoxhYrQ3wl+RdfSPbz4itCly9NgWj3Exl2pyL8Z
-	c5YcSbj7XYK1HAbSLZJQ4v1r/A9EyxUj6x9s1TT9ysLvMQWhWiy3/+PZtOSwIFa1
-	6o3KzvDi5Iup+orUgGs9lHU1N01g/k8Y1uN0NcFlUaQUxF07RqKjHSgCpRcx3/al
-	q/XLWh5Z/LcJOj9qvbXn43e33fDr7R7Q0mcJj0U9SoSvQTsAKTkt2HJfH0s7OD64
-	dNAVwKMfqeueWmQTDh/e90LBxTn3/WBcb4mxByktFFQEg+d1Rdq+Xeulw8HyhbW0
-	dHytSYjiCu4Z9xV/NN/6agLBKPIkoizvLe4yrVHApgBw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40txbjg541-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 13:07:37 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 475D7aWe021081;
-	Mon, 5 Aug 2024 13:07:36 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40txbjg53x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 13:07:36 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 475BjShv024136;
-	Mon, 5 Aug 2024 13:07:35 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40syvp6f6j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 13:07:35 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 475D7S4156754574
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 5 Aug 2024 13:07:30 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 19B512004B;
-	Mon,  5 Aug 2024 13:07:28 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D556D20040;
-	Mon,  5 Aug 2024 13:07:27 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  5 Aug 2024 13:07:27 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, hca@linux.ibm.com,
-        sumanthk@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH] s390/pai: Add node for s390 PAI counter support
-Date: Mon,  5 Aug 2024 15:07:11 +0200
-Message-ID: <20240805130711.2580740-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722863348; c=relaxed/simple;
+	bh=SalwmJQW37lEdHbkFWCA2XulYGIfArUBkh5e/AyHoGg=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OFh0pXcc6UczSy3SZMdyVdaOhqkqB/ATLEWczFTYBCjlM9DPbqjHfZj112RbvRe5SvOU2JVQwTCAUhZH3PtBS8CuoLnnDz1L2dD/TLLqGyJzN5uACgS/D2tkFlXLsRzThAsfQDaAoag7AXXfUM1nzdJLuVGmqr8huSzkjEdmqUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wcxb81F1wzyPnp;
+	Mon,  5 Aug 2024 21:08:52 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4FC0F18009F;
+	Mon,  5 Aug 2024 21:08:57 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 5 Aug 2024 21:08:56 +0800
+Message-ID: <27598a0e-f796-4f5d-8dce-bf7841d19182@huawei.com>
+Date: Mon, 5 Aug 2024 21:08:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
+	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <shenjian15@huawei.com>,
+	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH net-next 02/10] net: hibmcge: Add read/write registers
+ supported through the bar space
+To: Simon Horman <horms@kernel.org>
+References: <20240731094245.1967834-1-shaojijie@huawei.com>
+ <20240731094245.1967834-3-shaojijie@huawei.com>
+ <20240805125558.GA2633937@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20240805125558.GA2633937@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: QYBFWq7EJTknUaoYEfXz0nJRvjnLDaKa
-X-Proofpoint-ORIG-GUID: QP2FDEZ0DsGUiME_x0DcT5PlHqbwt2bn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-05_02,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxscore=0 bulkscore=0 mlxlogscore=758 lowpriorityscore=0
- malwarescore=0 adultscore=0 phishscore=0 spamscore=0 clxscore=1011
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408050092
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-Commits
 
-9f66572f2889 ("s390/pai_crypto: Enable per-task and system-wide sampling event")
-582cc1b28e8c ("s390/pai_ext: Enable per-task and system-wide sampling event")
+on 2024/8/5 20:55, Simon Horman wrote:
+> Hi,
+>
+> I may well be wrong but I think that FIELD_PREP can only be used with
+> a compile-time constant as the mask.
+>
+> In any case, with Clang-18 W=1 allmodconfig builds on x86_64 I see:
 
-introduced support for multiple concurrent system-wide counting
-and sampling events for s390 Processor Assist Information (PAI)
-counters. Multiple s390 PAI counter events active at the same time
-are chained by a list.  Add an s390 specific structure with number
-pai_node to chain these events using hw_perf_event::pai_node.
+Thanks， I'll fix this warning in V2.
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Acked-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-
----
- arch/s390/include/asm/pai.h        | 2 +-
- arch/s390/kernel/perf_pai_crypto.c | 2 +-
- arch/s390/kernel/perf_pai_ext.c    | 2 +-
- include/linux/perf_event.h         | 3 +++
- 4 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/arch/s390/include/asm/pai.h b/arch/s390/include/asm/pai.h
-index 25f2077ba3c9..e4fb8b522f56 100644
---- a/arch/s390/include/asm/pai.h
-+++ b/arch/s390/include/asm/pai.h
-@@ -77,6 +77,6 @@ static __always_inline void pai_kernel_exit(struct pt_regs *regs)
- 
- #define PAI_SAVE_AREA(x)	((x)->hw.event_base)
- #define PAI_CPU_MASK(x)		((x)->hw.addr_filters)
--#define PAI_SWLIST(x)		(&(x)->hw.tp_list)
-+#define PAI_SWLIST(x)		(&(x)->hw.pai_node)
- 
- #endif
-diff --git a/arch/s390/kernel/perf_pai_crypto.c b/arch/s390/kernel/perf_pai_crypto.c
-index 2f5a20e300f6..429eab978b68 100644
---- a/arch/s390/kernel/perf_pai_crypto.c
-+++ b/arch/s390/kernel/perf_pai_crypto.c
-@@ -511,7 +511,7 @@ static void paicrypt_have_samples(void)
- 	struct paicrypt_map *cpump = mp->mapptr;
- 	struct perf_event *event;
- 
--	list_for_each_entry(event, &cpump->syswide_list, hw.tp_list)
-+	list_for_each_entry(event, &cpump->syswide_list, hw.pai_node)
- 		paicrypt_have_sample(event, cpump);
- }
- 
-diff --git a/arch/s390/kernel/perf_pai_ext.c b/arch/s390/kernel/perf_pai_ext.c
-index 6295531b39a2..e9d2dd1b478f 100644
---- a/arch/s390/kernel/perf_pai_ext.c
-+++ b/arch/s390/kernel/perf_pai_ext.c
-@@ -535,7 +535,7 @@ static void paiext_have_samples(void)
- 	struct paiext_map *cpump = mp->mapptr;
- 	struct perf_event *event;
- 
--	list_for_each_entry(event, &cpump->syswide_list, hw.tp_list)
-+	list_for_each_entry(event, &cpump->syswide_list, hw.pai_node)
- 		paiext_have_sample(event, cpump);
- }
- 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1a8942277dda..d54e10c61d9e 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -179,6 +179,9 @@ struct hw_perf_event {
- 			u64	pwr_acc;
- 			u64	ptsc;
- 		};
-+		struct { /* s390 processor assist information counter */
-+			struct list_head	pai_node;
-+		};
- #ifdef CONFIG_HAVE_HW_BREAKPOINT
- 		struct { /* breakpoint */
- 			/*
--- 
-2.45.2
-
+>
+>    CC      drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.o
+>     CC      drivers/net/ethernet/hisilicon/hibmcge/hbg_main.o
+> In file included from drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:8:
+> drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h:31:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+>     31 |         reg_value |= FIELD_PREP(mask, val);
+>        |                      ^~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+>    115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+>        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+>     72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+>        |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+>     73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+>        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     74 |                                  _pfx "type of reg too small for mask"); \
+>        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+>     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>        |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+> ././include/linux/compiler_types.h:510:22: note: expanded from macro 'compiletime_assert'
+>    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>        |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ././include/linux/compiler_types.h:498:23: note: expanded from macro '_compiletime_assert'
+>    498 |         __compiletime_assert(condition, msg, prefix, suffix)
+>        |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ././include/linux/compiler_types.h:490:9: note: expanded from macro '__compiletime_assert'
+>    490 |                 if (!(condition))                                       \
+>        |                       ^~~~~~~~~
+> 1 warning generated.
+> In file included from drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:8:
+> drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h:31:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+>     31 |         reg_value |= FIELD_PREP(mask, val);
+>        |                      ^~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+>    115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+>        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+>     72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+>        |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+>     73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+>        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     74 |                                  _pfx "type of reg too small for mask"); \
+>        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ./include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+>     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>        |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+> ././include/linux/compiler_types.h:510:22: note: expanded from macro 'compiletime_assert'
+>    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>        |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ././include/linux/compiler_types.h:498:23: note: expanded from macro '_compiletime_assert'
+>    498 |         __compiletime_assert(condition, msg, prefix, suffix)
+>        |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ././include/linux/compiler_types.h:490:9: note: expanded from macro '__compiletime_assert'
+>    490 |                 if (!(condition))                                       \
+>        |                       ^~~~~~~~~
+> 1 warning generated.
+>
+> ...
 
