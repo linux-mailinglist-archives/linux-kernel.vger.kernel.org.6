@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-275280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6379482B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:54:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28ED9482B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478251F21712
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2A02817C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CAA15ECD1;
-	Mon,  5 Aug 2024 19:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="roFgdKG/"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F9816BE13;
+	Mon,  5 Aug 2024 19:55:48 +0000 (UTC)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE2715F3FE;
-	Mon,  5 Aug 2024 19:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BE2143C69
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722887667; cv=none; b=QZ6v0LBMO3A75bsGp5ULhMIhamUHT+w5ixGFV7AA/yS0++1uc+tp9r2a6iIHa9fb/oCUfcGg48T53y4rVc6+gQdAlUryDaQ31o9lxKleiNOjsTA5cUjSZyvrTzzCD1gwsYuiQqbXQHEKojsK95DjkpJTFXT70H/tCTwz6Rddkio=
+	t=1722887747; cv=none; b=Klb1E8KLAlFLQy2m4l5LTa3kK8dY0JR/BJSX+wxlExBf+sgyOQ/98b7R4SXirmBtmMsOUMleidW60S+tFx/hLhx+PMSwW4ny6GcGe5yF9M3gUYezcnI6fWxdsN7d8jSfJs+9HovwnP+XJfbZdP5ZUnCuLzvNK99DKh6ARM9pH70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722887667; c=relaxed/simple;
-	bh=HZb1KKtE8Me4IRUo9soQ3qk4AZtiCCWu2OpLhxAXO/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ln0O6vfuJ7pnr9ydFR6xWqbp+0U2lIfkPB1xcZmV37myH8XlADlIevaiEdQ3COxKJg5KOF3m9HrTREhEcgjptyh5JP4NqRxXqV5DFV4aS+GJQgEh6u9W0ytaq88T0lBY2WI4qw4qKGDpXJQaoU5UkoqpuVI48bhFjMPV3Vy1TZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=roFgdKG/; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1sb3mZ-00BN7h-D1; Mon, 05 Aug 2024 21:54:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=LETjiGOjSAe6wLQ9jWSXj9vxRADp2ZzD8f44Fu34bLY=; b=roFgdKG/qtlDmzuGLgzychYH3H
-	oT/cWG4BTuVkB55Zh3gBAJXy/qRZH3Luqmy7oHylSpVxPaIdnMIqXqejXSodBntInJWnOOqYXTpHU
-	j5SDR9SumIgcpPIL0deSD+WfYKaKzaQM9WoCF430haCnmogvM66qOL6KTsKsus8nMHjO9MsmjS2M/
-	EiQ+P25NSecj4eeq/xtqj/LnGylRMdmAbnLsZ/P+ZlCT/Wbve579B+VzgjztQ3G4x40X02KDLzDk+
-	oqXD3xCjcxFG8/NkJhT5veT9Z2bg3oIvaGSxSD3EjZhbDHHFaNMaZ9EnzE8DfyYGf/D2+cga32rVO
-	VzJFpVVQ==;
-Received: from [10.9.9.74] (helo=submission03.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1sb3mY-0002KF-N2; Mon, 05 Aug 2024 21:54:14 +0200
-Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1sb3mR-00GKZb-6j; Mon, 05 Aug 2024 21:54:07 +0200
-Message-ID: <39b9aa89-ac81-497d-8aa0-94e851044676@rbox.co>
-Date: Mon, 5 Aug 2024 21:54:05 +0200
+	s=arc-20240116; t=1722887747; c=relaxed/simple;
+	bh=hBkeK+BsjSPgdX841yRg4dEEAOfYIsyFGAlKB+8QUSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnLRIB3mbUFziUOPOf69gXLZ5vIGB6qDq//30tRLYbbC+l7WbbyOxz3x1InQfhJKTygf7BCIKO1vHvbfXl6+WKUpbijYFoqV3HwPfTHFEbEjFsOvA4EGjsOi4D9FPZ8ZLT72oZ0spTz5GJlJHLC0AI6Jto4Nc0+PANMZQc8kz6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a1d984ed52so613797385a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:55:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722887745; x=1723492545;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hBkeK+BsjSPgdX841yRg4dEEAOfYIsyFGAlKB+8QUSE=;
+        b=acJwnGXDNmX1+ggQi1ZoU//WLqZ6glqJGLaxnO84ZO0xEj0s9nf5Sl4uPXVDzcmYKm
+         ZUuF7AZnXBX7IlUTSEyy4a9MID4hkCnb34L484FPXeDOHF6oF4aHujPXBx5qwrJ/0MI3
+         5Z5qMGbCPTIsjo0VfOp9LZQHvv/L6HhferjeXk2la6POENjMmRDn3biKvfErxFMnGCa5
+         djuG4rgpl3mzlEg9yN42P2u2W8HlcXlX0b/Z4+x9+WDaTkIXaVKZdzN6aUk/u8AbMLbG
+         QtpWb8PljvrsFffGFsQReB08BDQcpvG1iL59+GrOd2y2ln6Oq75nt6e86YUZMIeL7ZHm
+         iM3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXHN8hbjMzh+X1y+oLjvQ6yFntJeMbAC4if/Z3jQk0RoNfL/PsT3q/4dWOW7h7toj+GVDYypAOUbIlUsp/pDzaJ75En5OPRIbM/SwJ3
+X-Gm-Message-State: AOJu0YxBW3RGPVIwD/JVCj8dfVSitcSHxHawf6ykIXDpPoZZTzxZRA1S
+	9NFJzmFyA37PmHFBxbvb3zcxMxjDSPnNiMoQ+UxTb5Yfz4gFaMPp
+X-Google-Smtp-Source: AGHT+IFlP8a2uoThjjlaJ3QIq0KzvT3+zkM16grMSAc8xwQYItFSmDV9tYnCILCzObyKdJ9AzPr1JQ==
+X-Received: by 2002:a05:620a:4553:b0:79f:fe8:5fce with SMTP id af79cd13be357-7a34eebf3b3mr1362640285a.3.1722887744856;
+        Mon, 05 Aug 2024 12:55:44 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a34f6dca50sm380844785a.16.2024.08.05.12.55.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 12:55:44 -0700 (PDT)
+Date: Mon, 5 Aug 2024 14:55:42 -0500
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, mingo@redhat.com
+Subject: Re: [PATCH 6/6] sched_ext: Make task_can_run_on_remote_rq() use
+ common task_allowed_on_cpu()
+Message-ID: <20240805195542.GH42857@maniforge>
+References: <20240804024047.100355-1-tj@kernel.org>
+ <20240804024047.100355-7-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 0/6] selftests/bpf: Various sockmap-related
- fixes
-To: Jakub Sitnicki <jakub@cloudflare.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
- <877ccvyoyb.fsf@cloudflare.com>
-From: Michal Luczaj <mhal@rbox.co>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <877ccvyoyb.fsf@cloudflare.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k8u/ER8A3WQ+nL2X"
+Content-Disposition: inline
+In-Reply-To: <20240804024047.100355-7-tj@kernel.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
 
-On 8/5/24 17:22, Jakub Sitnicki wrote:
-> On Wed, Jul 31, 2024 at 12:01 PM +02, Michal Luczaj wrote:
->> Series takes care of few bugs and missing features with the aim to improve
->> the test coverage of sockmap/sockhash.
->>
->> Last patch is a create_pair() rewrite making use of
->> __attribute__((cleanup)) to handle socket fd lifetime.
->>
->> Signed-off-by: Michal Luczaj <mhal@rbox.co>
->> ---
-> 
-> Sorry for the long turn-around time.
-> 
-> I have opened some kind of Pandora's box with a recent USO change and
-> been battling a regression even since. Also it was CfP deadline week.
-> 
-> I will run & review this today / tomorrow latest.
 
-Thanks for the update. But, really, as far as I'm concerned, no need for
-any rush.
+--k8u/ER8A3WQ+nL2X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Aug 03, 2024 at 04:40:13PM -1000, Tejun Heo wrote:
+> task_can_run_on_remote_rq() is similar to is_cpu_allowed() but there are
+> subtle differences. It currently open codes all the tests. This is
+> cumbersome to understand and error-prone in case the intersecting tests n=
+eed
+> to be updated.
+>=20
+> Factor out the common part - testing whether the task is allowed on the C=
+PU
+> at all regardless of the CPU state - into task_allowed_on_cpu() and make
+> both is_cpu_allowed() and SCX's task_can_run_on_remote_rq() use it. As the
+> code is now linked between the two and each contains only the extra tests
+> that differ between them, it's less error-prone when the conditions need =
+to
+> be updated. Also, improve the comment to explain why they are different.
+>=20
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+
+Acked-by: David Vernet <void@manifault.com>
+
+--k8u/ER8A3WQ+nL2X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZrEuPQAKCRBZ5LhpZcTz
+ZHNnAP98WJGXpmkgFLBrIpSdhKBtS0ltpruAdOKctj6wK21/ggD+NNIyQaqwsdfO
+u/VgY71fNtNzes6u3h3AU710l4TPuwg=
+=8rJE
+-----END PGP SIGNATURE-----
+
+--k8u/ER8A3WQ+nL2X--
 
