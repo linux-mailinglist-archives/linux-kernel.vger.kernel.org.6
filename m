@@ -1,168 +1,252 @@
-Return-Path: <linux-kernel+bounces-275229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8D494821B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:15:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C390094821E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 215EE1F236FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 463D21F2364D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4789116B3AC;
-	Mon,  5 Aug 2024 19:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD7116B392;
+	Mon,  5 Aug 2024 19:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJi0ByvH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nv/JSAII"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8119D165F1B;
-	Mon,  5 Aug 2024 19:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64D415B147;
+	Mon,  5 Aug 2024 19:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722885300; cv=none; b=u8dnpk3s8m3JMab1aFl3M/qxwwGpSXxVJrEL96JEVXR+XdzH73QQsp2Am88V3ti5hjt3f8mgpQki8fW6BxCof8i5ty71jU0x3a/MC9ZwUIiu7JHa6xtQtvQlUX0lyxRQ7r6Iq1kSbK0P9aKhNa3gstuSZSi34vLDBkrlMb1SGtA=
+	t=1722885314; cv=none; b=iSsEf0fdiyEaXB13KjkYC1sKvX0k54DjcEOHMFJzm3x4sdGJbHoEfO8JI4BtlY52rhXBISgMqLFkR98WI6OxaFQbqNEkNbLSHF49gPWlpJBE5HtjwSxJppfkoNUOpFXQCExzOB9hqIpiQr0+yQkwAkzJlyexw9yru3oyoHjSsl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722885300; c=relaxed/simple;
-	bh=lzmvPubrwoUTI9tfpxF4lmiuBZJxw0oA6YEya0VDcZ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S5v5IbXa9F/HUUxq4AefFqSB8QaZlsmfJgpUtQj5gwLgDA4azTIthhVcEB8YqLY2GJO19uD8ky9jZaKoJjan7LOJgH6yUUfMYN2FhYzd0acift/2uS/CxCPX+UYdKQU+jU2yKsO3cqaRYZb00oVbsEomj5DC9Apc36Lf4p89Xqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJi0ByvH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14BC9C4AF10;
-	Mon,  5 Aug 2024 19:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722885300;
-	bh=lzmvPubrwoUTI9tfpxF4lmiuBZJxw0oA6YEya0VDcZ4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JJi0ByvHgCL1rjHPJQZWr1OI9JOg2cL4Ttim/kOHVVm25zShP6iftoeitdpwcdZDe
-	 771ALemLSyk1e483j08zq7nsXT2C5EKLK55l1yy/DKs1FhtInvNXWulSV6l4RY0e1b
-	 iNfqcfYIgwtbsoScyV8HSP5RZFFgTNTZ8OwiWMLsVM1GQT/mhr7J0ppeIGqOT+J8O4
-	 nUwtq7ZMO6tp8j680AwxuCzgbrvNdXRGrj4V4PppjwcNy237W2HyPTCI4wWWqfNRVQ
-	 2c5Tytk3df1jH2XmuEIucWpSSAkAdOc7epclZKSjOTli2e8ed9qf/1cuh6rjiSBHBX
-	 cTSHrYEAmIvdQ==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52efbb55d24so16887241e87.1;
-        Mon, 05 Aug 2024 12:14:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUylCkA8FiMY9D+XjZpFW2O87GCWW5M2XvVotCRC8zKiCiZQRzPi7cR8t3l67aP3flw5dAwt2js8zRTh/Qrn1spkDxD8yxABLm8hL9tQI1voWJ29b8CW4ApYYXpCP2ynlNFSZu35KKwKAzwS/8xvw==
-X-Gm-Message-State: AOJu0YywqyFJRivrjbKHG3j9LAPbty0+J19uv3wDK+9uaXOnRO2NrJVB
-	sfOQmWRtvydy2M0E8iLk2n/EPhBu/zI/1x2+QEWkMDe+aHJgHXCWhPDDNXr/91uqyaPiCHFwYe3
-	mDU+V8FFw+qvB8mxMVrI9YOituXE=
-X-Google-Smtp-Source: AGHT+IGqi3LlNhl70feM/dQAQTw2uwycNXeyhS4UKt3zkjysFVGYhX4LxkR4ebusK9youYhs8qDR/wyf35aFFEbE6U0=
-X-Received: by 2002:a05:6512:31c1:b0:52e:716a:1898 with SMTP id
- 2adb3069b0e04-530bb3bcc80mr9882552e87.58.1722885298420; Mon, 05 Aug 2024
- 12:14:58 -0700 (PDT)
+	s=arc-20240116; t=1722885314; c=relaxed/simple;
+	bh=LigdDy+WNgSqFqmY/3ON/WJOpjhug0FRLTrvn+V2L+0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=d8PBfgkXx49QH4pg/kNarncZf0n9jUBOCIztve8canSdS2bSq0Q2uGabGnoXsNqj7dfS2o5P1Ud9BTcH1TSwLC81ILn5SR+Gi61YhT4aFtLMTgJxOzq+uCjA39vx65070wO5nBCA8BE20rkZPeJpwU+GMJpbhPdf3C2E8G/BaVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nv/JSAII; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475ITJ8i025756;
+	Mon, 5 Aug 2024 19:15:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	jtcRPjGaWBE/vq88vfB4zOSfraCS1RyOPkBse+pkCJg=; b=Nv/JSAIIS0r5/dJN
+	UZ8K11d8WyDAjkqUX8Q8JWZnI3SvbWJuuszYApsczMo6dGQicVKbB4L6dcMvRpEB
+	lJhCG+p8VF7CCRNQiIgjNJEV23p1grn9XJXOdEMGpOt9Dqo5nsQqQi3rSeyRvJh8
+	6ZubOjzpYg43yJdAbRJJy6RbFjY2LhvY4GSh1OM3isYI2RTS3c0gBYexx6GmQeKF
+	Sbq59XvkP4meIW0JUFyqicxI+lHLo+o/nW+Kt4E6Vyezj7lbdEM3i7NFKaS1LBBQ
+	ruA+j46cUA3jQUU1UdBCpGI9O7IoU4oxxsxNITe34ZnyuNR+ixROKhO5/CA2Dsqb
+	KoO84w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40u41wr2vv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 19:15:06 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 475JF6sR007379;
+	Mon, 5 Aug 2024 19:15:06 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40u41wr2vt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 19:15:06 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 475IMYlc024311;
+	Mon, 5 Aug 2024 19:15:05 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90g1x6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 19:15:05 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 475JF1vc22282798
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 Aug 2024 19:15:04 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9E94D58060;
+	Mon,  5 Aug 2024 19:15:01 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4769858058;
+	Mon,  5 Aug 2024 19:14:59 +0000 (GMT)
+Received: from [9.171.4.93] (unknown [9.171.4.93])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  5 Aug 2024 19:14:59 +0000 (GMT)
+Message-ID: <cfa7a4ba2e8b6e47c38cbf690192df0075874b20.camel@linux.ibm.com>
+Subject: Re: [PATCH] PCI: s390: Handle ARI on bus without associated struct
+ pci_dev
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Gerald Schaefer
+ <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Christian Borntraeger
+ <borntraeger@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Date: Mon, 05 Aug 2024 21:14:58 +0200
+In-Reply-To: <20240801165959.GA83976@bhelgaas>
+References: <20240801165959.GA83976@bhelgaas>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPhsuW4nem9XZP+b=sJJ7kqXG-cafz0djZf51HsgjCiwkGBA+A@mail.gmail.com>
- <26fb7054-f877-496f-b23a-9b6a3d752595@linux.intel.com> <CAPhsuW6+7ULMQFLbmOsBzYAdd8LMV54h_ynfkGDxd_oH6O8cww@mail.gmail.com>
- <CAP-5=fVNfGT+a1RG9-ugKWjQR-83vLdHo-6vCVz=N=CBF4_7ug@mail.gmail.com>
- <CO6PR11MB5635E5844F7C8CB1277C1DF4EEAB2@CO6PR11MB5635.namprd11.prod.outlook.com>
- <CAPhsuW6Hq4qno1=K9-q17TsNO7S4-dQMCfo_nAQZ7EMdcuP6NQ@mail.gmail.com> <CO6PR11MB563550B4AB0D89D6DAC39CBAEEBE2@CO6PR11MB5635.namprd11.prod.outlook.com>
-In-Reply-To: <CO6PR11MB563550B4AB0D89D6DAC39CBAEEBE2@CO6PR11MB5635.namprd11.prod.outlook.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 5 Aug 2024 12:14:45 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW76F2PkpSpB+V039_0orX9aRwj=++XzM7k1omGVZY-uEw@mail.gmail.com>
-Message-ID: <CAPhsuW76F2PkpSpB+V039_0orX9aRwj=++XzM7k1omGVZY-uEw@mail.gmail.com>
-Subject: Re: Some unc_cha_tor_* events appear to be "not supported"?
-To: "Wang, Weilin" <weilin.wang@intel.com>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	"Taylor, Perry" <perry.taylor@intel.com>, "Baker, Edward" <edward.baker@intel.com>, 
-	"Daneti, Venkata Naga Sai Dilip" <venkata.naga.sai.dilip.daneti@intel.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	"jonesz@meta.com" <jonesz@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: REcWl-vqz-nWuPEznplfsAhncTQ4nws_
+X-Proofpoint-ORIG-GUID: ChTbJEHMRxD0EOQsKlJ2XLjRL7ii3DNl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-05_07,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 malwarescore=0
+ mlxlogscore=879 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408050135
 
-Hi Weilin,
-
-On Mon, Aug 5, 2024 at 11:34=E2=80=AFAM Wang, Weilin <weilin.wang@intel.com=
-> wrote:
-[...]
-> > > > > >
-> > > > > > The value '4b433' is for the 'Filter1', according to the origin=
-al event
-> > > > > > list.
-> > > > > >
-> > > > > >
->
-> @Song Liu, do you see different output from some other unc_cha_tor_occupa=
-ncy
-> and unc_cha_tor_inserts events. Or, are all of them report the same warni=
-ng like this
-> example here?
->
-> Could you please try UNC_CHA_TOR_OCCUPANCY.IA_MISS and share the output?
-> Please also specify the platform you tested on. Thanks!
-
-This event is working, I guess. Though the output is zero on the host.
-
-[root@ ~]# perf stat -e  UNC_CHA_TOR_OCCUPANCY.IA_MISS -a -- sleep 1
-
- Performance counter stats for 'system wide':
-
-                 0      UNC_CHA_TOR_OCCUPANCY.IA_MISS
-
-       1.002497126 seconds time elapsed
-
-For this one, I am testing on Intel(R) Xeon(R) D-2191A CPU @ 1.60GHz.
-I think the issue happens on all skylake and copperlake CPUs.
-
->
-> > > >
-> > https://github.com/intel/perfmon/blob/main/SKX/events/skylakex_uncore.j=
+On Thu, 2024-08-01 at 11:59 -0500, Bjorn Helgaas wrote:
+> On Tue, Jul 30, 2024 at 09:59:13PM +0200, Niklas Schnelle wrote:
+> > On Tue, 2024-07-30 at 21:36 +0200, Niklas Schnelle wrote:
+> > > On s390 PCI busses are virtualized and the downstream ports are
+> > > invisible to the OS and struct pci_bus::self is NULL. This associated
+> > > struct pci_dev is however relied upon in pci_ari_enabled() to check
+> > > whether ARI is enabled for the bus. ARI is therefor always detected a=
 s
-> > > > on#L4634
-> > > > > >
-> > > > > >       "EventName": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > > > >       "BriefDescription":
-> > > > "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > > > >       "PublicDescription":
-> > > > "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
-> > > > > >       "Counter": "0",
-> > > > > >       "MSRValue": "0x00",
-> > > > > >       "ELLC": "0",
-> > > > > >       "Filter": "Filter1",
-> > > > > >       "ExtSel": "0",
-> > > > > >       "Deprecated": "0",
-> > > > > >       "FILTER_VALUE": "0x4b433"
-> > > > > >
-> > > > > > There are two filters for CHA on SKX. Each filter is 32 bits wi=
-de.
-> > > > > > So the Linux kernel driver uses config1 (64 bits wide) to repre=
-sent both
-> > > > > > of them. The low 32 bits are for filter0 and high 32 bits are f=
-or filter1.
-> > > > > >
-> > > > > > It should be an issue of the convert script, which set the filt=
-er1 value
-> > > > > > to the low 32 bits.
->
-> @Liang, Kan, the following is the converted "UNC_CHA_TOR_OCCUPANCY.IA_MIS=
-S_LlcPrefDRD"
-> in perf JSON. The "Filter" filed has value "config1=3D0x4b433", which loo=
-ks correct to
-> me according to your description above.
->
-> Please let me know your thoughts.
->
->     {
->         "BriefDescription": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
->         "Counter": "0",
->         "EventCode": "0x36",
->         "EventName": "UNC_CHA_TOR_OCCUPANCY.IA_MISS_LlcPrefDRD",
->         "Filter": "config1=3D0x4b433",
->         "PerPkg": "1",
->         "UMask": "0x21",
->         "Unit": "CHA"
->     },
+> > > disabled.
+> > >=20
+> > > At the same time firmware on s390 always enables and relies upon ARI
+> > > thus causing a mismatch. Moreover with per-PCI function pass-through
+> > > there may exist busses with no function with devfn 0. For example
+> > > a SR-IOV capable device with two PFs may have separate function
+> > > dependency link chains for each of the PFs and their child VFs. In th=
+is
+> > > case the OS may only see the second PF and its child VFs on a bus
+> > > without a devfn 0 function. A situation which is also not supported b=
+y
+> > > the common pci_configure_ari() code.
+> > >=20
+> > > Dispite simply being a mismatch this causes problems as some PCI devi=
+ces
+> > > present a different SR-IOV topology depending on PCI_SRIOV_CTRL_ARI.
+> > >=20
+> > > A similar mismatch may occur with SR-IOV when virtfn_add_bus() create=
+s new
+> > > busses with no associated struct pci_dev. Here too pci_ari_enabled()
+> > > on these busses would return false even if ARI is actually used.
+> > >=20
+> > > Prevent both mismatches by moving the ari_enabled flag from struct
+> > > pci_dev to struct pci_bus making it independent from struct pci_bus::
+> > > self. Let the bus inherit the ari_enabled state from its parent bus w=
+hen
+> > > there is no bridge device such that busses added by virtfn_add_bus()
+> > > match their parent. For s390 set ari_enabled when the device supports
+> > > ARI in the awareness that all PCIe ports on s390 systems are ARI
+> > > capable.
+> > >=20
+> > > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> > > ---
+---8<---
+> > @@ -3523,12 +3524,18 @@ void pci_configure_ari(struct pci_dev *dev)
+> >         u32 cap;
+> >         struct pci_dev *bridge;
+> >=20
+> > -       if (pcie_ari_disabled || !pci_is_pcie(dev) || dev->devfn)
+> > +       if (pcie_ari_disabled || !pci_is_pcie(dev))
+> > +               return;
+> > +
+> > +       if (dev->devfn && !hypervisor_isolated_pci_functions())
+> >                 return;
+> >=20
+> >         bridge =3D dev->bus->self;
+> > -       if (!bridge)
+> > +       if (!bridge) {
+> > +               if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ARI))
+> > +                       dev->bus->ari_enabled =3D 1;
+>=20
+> In the generic case here, how do we know whether the invisible bridge
+> leading here has ARI enabled?  If that's known to always be the case
+> for s390, I understand that, but I don't understand the other cases
+> (jailhouse, passthrough, etc).
 
-I think we need config1 to be 0x4b43300000000?
+Good point! Yes this is probably not correct if Jailhouse doesn't also
+guarantee ARI. I guess if we really want the generic solution, and I'm
+fine with an s390 specific one too, then we would need to add some
+indication that the invisible bridges support ARI. Honestly I'm not
+even entirely sure if the bridge is even NULL on jailhouse too. In
+QEMU/KVM for example I think everyone besides s390 emulates bridges.
 
-Thanks,
-Song
+>=20
+> >                 return;
+> > +       }
+> >=20
+> >         pcie_capability_read_dword(bridge, PCI_EXP_DEVCAP2, &cap);
+> >         if (!(cap & PCI_EXP_DEVCAP2_ARI))
+> >=20
+>=20
+
 
