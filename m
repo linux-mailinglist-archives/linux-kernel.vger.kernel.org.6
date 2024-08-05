@@ -1,141 +1,120 @@
-Return-Path: <linux-kernel+bounces-275328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B0894837D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:32:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB9C948375
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FF861C212CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:32:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A61A9283C54
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C688716C692;
-	Mon,  5 Aug 2024 20:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EA814A09C;
+	Mon,  5 Aug 2024 20:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="OwpboKYH"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ae5ktNio"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870B51428E4;
-	Mon,  5 Aug 2024 20:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610DF13E881
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 20:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722889920; cv=none; b=ZisBmz4PmuR7aWIFmUNwbQv4m+EZiBUalDaF14K9gcFkLHg5NkllDjh5I6a6F2EqNxZjhLXTe1gqpy2pYT6UnTeRQXYvf9p6wC53IyHI6CVREVY36163euDDf/pKyHXt16oP/PSSWUon+INra7ybV92ytGl/HMJdk7p+fTav49o=
+	t=1722889906; cv=none; b=YrwDFWK6mzwsKeb3Qk/n2nTIknMvw89ONEzYaK2BqOmPToWRIMzGb6MoU9RVr13CANEnc828sY1xsRg/0Rjdq/xSPk9/A1fSRVmzreK+b7dtw9h8mH/JBemOVmkchRDiPNA/xD4qEhmFbhPD8I+NnpyBLjb3SrUZ/N8QetmUI1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722889920; c=relaxed/simple;
-	bh=4rYFsMje+NZGfL9e7OyJNriJnWdptgF7A8GUj7+GTnY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PLYbijEHsY+ADYH01IUQ3oSU+sz9RtwLuJdtuaiRrW8AkKZEcmD0gHtNoAeDDloWxPt3yQQJTdxLqVLvxVcQsc0lkGKwBVupuJHBsQnfxaax7JIW55lFWWFY+CW6mivG6xH96K6guk8v6ntgHaYgAuD+N4yk1mkHbfa44JdCDMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=OwpboKYH; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.1.90] (86FF4CFD.dsl.pool.telekom.hu [134.255.76.253])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 368E0E450E;
-	Mon,  5 Aug 2024 20:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1722889910;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fwbnq+5yNmFaQ5aTCbNjKdWw69NnDfl+wFQPeG16EVo=;
-	b=OwpboKYHu++N0PHkffWv3Lg5HXqT7JXs9p4FYmEpRC3T237zJre+msJ63EqZcYttiwx7vS
-	4MHHMOomZiPXTM1AvJAn9toi9VwlzPMZMfeXeC7CarqwRciv/OtKu9x+vJVea2lg3gnHxv
-	VG2yRZVVBSqm7Pl922LQjRQVBKz6bd/V5suXkJprzt66zC2b0cIueZiyNqNfzq5HNl2G3b
-	g2a2jvWBpouy4+CdjFtktQEt5Nyci8SfCMQJ7nL9BgXxfo1rV5Xpoah+/LzLhsQjUhLffu
-	QOd8McWIdD4rrAM0MeLeL3MWudkt7m2sTZl2DD91wkSEg5mm1vC4hjOq+zSVFw==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Mon, 05 Aug 2024 22:31:42 +0200
-Subject: [PATCH 1/3] iio: magnetometer: ak8975: Fix reading for ak099xx
- sensors
+	s=arc-20240116; t=1722889906; c=relaxed/simple;
+	bh=M8KkOCDhEXJ/3vSgTeoL4V15q0H8qEYsaVvWdYaq6M8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T8KyrBa+aP/OVC1Hso0xgU8jjmPym2/rz7kIJGmnB/S8M69obaIsWtaM1E01aKjx8IE0XhwYqEH4cwhmRggSe7Kh6JEKXFPkZatqxBekMm7i1tiJJw+u1g8U0dmMfY4HLRwlT/XmMWJfE5yaaQurNhTszxJgfOIxQhx0kyUyZFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ae5ktNio; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-39ae90034bdso49358155ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 13:31:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722889904; x=1723494704; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bOlTqxLWLbKGjTBh2uxG+rbky8NYemJBFJn9NN40h0I=;
+        b=ae5ktNioXsT02I09zV0J/RxHxp3UPNi2VPJKA5EPdxSLGvnyHZHKcEzH4OUaR07/3c
+         EE8QG8hDq9hTK26Gxnpg4gzPz9aWSXJY9eMQAISCPJ1TrBQ65fIRRU/aN7hIzfTlOUHm
+         KqxxVdZ6ZxlQ7FbbZTAYX7cca5XE2mTBRwWU7hFXkUNrzDW9Mjl1ekDeN4z5iaPTJ7tL
+         auSg/Q1Do9XeaBdiW6p4HGMlVD9ofT5zEmog80x5ws+a/VPwuRTfhjAt1WKTUl5lVRHJ
+         oXN2GBWNZyVqtJPOebGffvbeC6DNgSXIInaigBd2gGll3VAVIf/gqcmCEw95kEz41YLC
+         kdCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722889904; x=1723494704;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bOlTqxLWLbKGjTBh2uxG+rbky8NYemJBFJn9NN40h0I=;
+        b=Klbztws3u6IsKjkSFCq439PnyhFfmRNWNFAGl9kAFeXoSMbBO2/ApNvM+tE7QJdNNe
+         LtOtC9TjXlumUCQhQyv3A2s9gESZM1yuKds8MM1aH0+JhGoj4FZmjWBHOOQ8hLoWIPXo
+         zcI8zTEOUg53ryN4NK5Zr7D43XoPob4+AHVP6ibouGC9T8gGmLFTsdbi46goisAtd3CC
+         yZesSRXffoPMylZCBPFf5RNuJXFN2Z7HC1NAEAKgB/zzd4O8rF/ZKnwpc+6pmTvBQhLu
+         Jnbsi4MTpli5va+vAQqGnfX7qtYO5e2dwldjCB4C/bu1fq9z9Om7oX69gpSQbGxOnpup
+         XgxQ==
+X-Gm-Message-State: AOJu0YwdGUUpPUtJ3Dj+YlZa4cg1L7BnCh2j08OfDRojRQVgnroy91OO
+	KkUHAga/Uz2zirS//Tjuuh7se3nZ7nAcvRXDKsSG6nDFe/yZvi25UbgefA==
+X-Google-Smtp-Source: AGHT+IG0FQ/2RG3rxtPUAWtX5KXrlp8XttiNR5GEjl5Lojj0YB4+A1Ql0y7aUJSR4bdfN2g15Lnkgg==
+X-Received: by 2002:a05:6e02:2193:b0:375:9e3f:5f6 with SMTP id e9e14a558f8ab-39b1fb53459mr172332865ab.6.1722889904180;
+        Mon, 05 Aug 2024 13:31:44 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b7655bad91sm5657332a12.92.2024.08.05.13.31.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 13:31:43 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 5 Aug 2024 10:31:42 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] workqueue: Correct declaration of cpu_pwq in struct
+ workqueue_struct
+Message-ID: <ZrE2rpXmGQ-P4kYE@slm.duckdns.org>
+References: <20240805073037.60238-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240805-ak09918-v1-1-70837eebd7d8@mainlining.org>
-References: <20240805-ak09918-v1-0-70837eebd7d8@mainlining.org>
-In-Reply-To: <20240805-ak09918-v1-0-70837eebd7d8@mainlining.org>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jonathan Albrieux <jonathan.albrieux@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux@mainlining.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722889909; l=1899;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=4rYFsMje+NZGfL9e7OyJNriJnWdptgF7A8GUj7+GTnY=;
- b=PtRYzzv6kAT2F/SR+1UUL/hc9cVnzyv/9yOnuHPadlHo8jr8W92wFt/5VSqp9hN50Dj+K0PRT
- 1CF3AcT0mNlARIWOvzrOoMaHvo7HGbLrxim+gE7lTH8DSgZ+6KUrprO
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805073037.60238-1-ubizjak@gmail.com>
 
-ST2 register read should be placed after read measurment data,
-because it will get correct values after it.
+On Mon, Aug 05, 2024 at 09:30:29AM +0200, Uros Bizjak wrote:
+> cpu_pwq is used in various percpu functions that expect variable in
+> __percpu address space. Correct the declaration of cpu_pwq to
+> 
+> struct pool_workqueue __rcu * __percpu *cpu_pwq
+> 
+> to declare the variable as __percpu pointer.
+> 
+> The patch also fixes following sparse errors:
+> 
+> workqueue.c:380:37: warning: duplicate [noderef]
+> workqueue.c:380:37: error: multiple address spaces given: __rcu & __percpu
+> workqueue.c:2271:15: error: incompatible types in comparison expression (different address spaces):
+> workqueue.c:2271:15:    struct pool_workqueue [noderef] __rcu *
+> workqueue.c:2271:15:    struct pool_workqueue [noderef] __percpu *
+> 
+> and uncovers a couple of exisiting "incorrect type in assignment"
+> warnings (from __rcu address space), which this patch does not address.
+> 
+> Found by GCC's named address space checks.
+> 
+> There were no changes in the resulting object files.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
 
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/iio/magnetometer/ak8975.c | 31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+Applied to wq/for-6.11-fixes.
 
-diff --git a/drivers/iio/magnetometer/ak8975.c b/drivers/iio/magnetometer/ak8975.c
-index dd466c5fa621..925d76062b3e 100644
---- a/drivers/iio/magnetometer/ak8975.c
-+++ b/drivers/iio/magnetometer/ak8975.c
-@@ -692,22 +692,7 @@ static int ak8975_start_read_axis(struct ak8975_data *data,
- 	if (ret < 0)
- 		return ret;
- 
--	/* This will be executed only for non-interrupt based waiting case */
--	if (ret & data->def->ctrl_masks[ST1_DRDY]) {
--		ret = i2c_smbus_read_byte_data(client,
--					       data->def->ctrl_regs[ST2]);
--		if (ret < 0) {
--			dev_err(&client->dev, "Error in reading ST2\n");
--			return ret;
--		}
--		if (ret & (data->def->ctrl_masks[ST2_DERR] |
--			   data->def->ctrl_masks[ST2_HOFL])) {
--			dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
--			return -EINVAL;
--		}
--	}
--
--	return 0;
-+	return !(ret & data->def->ctrl_masks[ST1_DRDY]);
- }
- 
- /* Retrieve raw flux value for one of the x, y, or z axis.  */
-@@ -731,6 +716,20 @@ static int ak8975_read_axis(struct iio_dev *indio_dev, int index, int *val)
- 	ret = i2c_smbus_read_i2c_block_data_or_emulated(
- 			client, def->data_regs[index],
- 			sizeof(rval), (u8*)&rval);
-+	ret = i2c_smbus_read_byte_data(client,
-+				       data->def->ctrl_regs[ST2]);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Error in reading ST2\n");
-+		goto exit;
-+	}
-+
-+	if (ret & (data->def->ctrl_masks[ST2_DERR] |
-+		   data->def->ctrl_masks[ST2_HOFL])) {
-+		dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
-+		ret = -EINVAL;
-+		goto exit;
-+	}
-+
- 	if (ret < 0)
- 		goto exit;
- 
+Thanks.
 
 -- 
-2.46.0
-
+tejun
 
