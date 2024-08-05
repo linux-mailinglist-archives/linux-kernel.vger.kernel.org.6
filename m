@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-275466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158EC94860D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:32:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B73F94860B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF56E1F21F80
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:32:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0DC6283D10
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B68176231;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3064317622F;
 	Mon,  5 Aug 2024 23:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YY8CiRt6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1eM5oh1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A95716EB40
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C37E16CD12;
+	Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722900652; cv=none; b=JZbrUdSjdsbBbPbfQr/clE1abJkbdbtkKA3er6su5w2SZYCM6D8kIKCYZkfwWHZ0Onh3eVptBr2L35+XO71os4bRXUHSM38txJckDzZ9ythhH+HAbg1Q81UVd7V6Y/GZwjoE8N0bSpikjl9QJzZTRYwxNx2pRn2sFpThPH+ad9w=
+	t=1722900652; cv=none; b=l7ymXXjWybpeTrftxYdD9xojwufmFlez0AW1/OT6yOA2Pe9drlCrat4qMoN0NG7W22GOkhyOr/YoabZ8rpq/8NburuRDsXEUOuQJVp+BXvE5t3S+Gq79DmLmPBt7LwYYQ5rlx8CizxuhLodnMRDg429E/pxEHzmgi7ozJm+3fQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722900652; c=relaxed/simple;
-	bh=FlTtLuEqcMWLyx/LMaFM9OOqSTon0XUUkMGVwH+Q/lM=;
+	bh=BmAKtpyETPm1YzZTlRU1TiFMVb0KZtHi8NofXiNghTg=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SlZJg/OI7PGTOXQUoOOfOMoN/I5yMyG4PRtszoM8h2mUBM12XCECiczQqV8GbQvQEkC5uzxpbYdm8yji1LrgydEC8jrYi1mCTvGRHe2Bh1nHtKCcbZAyDQv0LbkqHrc+mAFCoKEMqR5+DInUdLPSjMWwsBWgQKZG9hYz3xFQ+6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YY8CiRt6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 322F0C4AF60;
+	 In-Reply-To:To:Cc; b=jpmA9Vsmf2zUtjR9vx7ugbziG9KstRdbjDN4FauRZw7g4QYb/x6ntjsKwWGH335sklisjziHDwKRbtpjyC8uyZSZA7xPvho85ihkSGFhNN/XmMso/op2wpb9Ognx3mqv8GhRYQQI9e2HwWa5CcRk/4MOUQU2iYm27NPAGOk2b3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1eM5oh1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 17844C4AF50;
 	Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722900652;
-	bh=FlTtLuEqcMWLyx/LMaFM9OOqSTon0XUUkMGVwH+Q/lM=;
+	bh=BmAKtpyETPm1YzZTlRU1TiFMVb0KZtHi8NofXiNghTg=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=YY8CiRt60T0or/xWTL0sQIBIKm5DiH/imjeVEOsEnwbFWZmRcoKUgKvFfpWobONZK
-	 hYg4XKc5AAFNy/1j4UBF57vusTKD1UV9RguZgazUKJUcp8EA8RTMqVz7gUabchV17B
-	 CPzzOdGjLQ0DxqJYXaoh8Kb6aKWV8xvaVEOErCfUbfNZu5wENBzLYiEEVTiBEH5/Tj
-	 9Z8Rsxwgto57kqc1kZeWTDJl7UwUJo5742GgnihrP3aaOZ+aNisKkHgIeWapZh7p4p
-	 gYHC5BSU7p6tXrtm8I4UN/LdhQ7nstMi1goR3lTyDU4+TUsIpD1lBTYjjIEk9AZbMC
-	 kcBgj+ZGoIsYw==
+	b=Q1eM5oh1c2oVU0tBZorsUrcpABdyVOs6p5k/vQivhg8HOx3TA0KDLc+LhEj1HyNfy
+	 mnDzGNa0HarqXnRLjmqSJdCyAToMz/BVuzoc42SBOyxfCBy3x/3b4IgqQ++haZ+gjH
+	 cRrqCPfFEd2M5EXGbGFadJU3uzLL1iY5LWI/l/L5YZbnmPivFsLEQCI0y9FEmguygQ
+	 KKNm3V8xuPU1yjnINTPjExE1CqJYkdur5+aYEV8r+bRCZKuREJCRFRmDfFy6OZ/nyM
+	 bXu8YWpiKExwTZ6MVtNF4Kq/bWzsN2j4Cl5hmYtymPP9yuj1hBrbhxAGGbG30sm/Cj
+	 FFEVa3hzFWy/Q==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 29E3AC3274C;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0B476C3274D;
 	Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,39 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: use flush command instead of FUA
- for zoned device"
+Subject: Re: [f2fs-dev] [PATCH] f2fs: prevent possible int overflow in
+ dir_block_index()
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <172290065216.2803.2204816071029078570.git-patchwork-notify@kernel.org>
+ <172290065204.2803.10007931893613649587.git-patchwork-notify@kernel.org>
 Date: Mon, 05 Aug 2024 23:30:52 +0000
-References: <20240614004841.103114-1-cwjhust@gmail.com>
-In-Reply-To: <20240614004841.103114-1-cwjhust@gmail.com>
-To: Wenjie Cheng <cwjhust@gmail.com>
-Cc: jaegeuk@kernel.org, chao@kernel.org, qwjhust@gmail.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+References: <20240724170544.11372-1-n.zhandarovich@fintech.ru>
+In-Reply-To: <20240724170544.11372-1-n.zhandarovich@fintech.ru>
+To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Cc: jaegeuk@kernel.org, chao@kernel.org, lvc-project@linuxtesting.org,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 14 Jun 2024 00:48:41 +0000 you wrote:
-> This reverts commit c550e25bca660ed2554cbb48d32b82d0bb98e4b1.
+On Wed, 24 Jul 2024 10:05:44 -0700 you wrote:
+> The result of multiplication between values derived from functions
+> dir_buckets() and bucket_blocks() *could* technically reach
+> 2^30 * 2^2 = 2^32.
 > 
-> Commit c550e25bca660ed2554cbb48d32b82d0bb98e4b1 ("f2fs: use flush
-> command instead of FUA for zoned device") used additional flush
-> command to keep write order.
-> 
-> Since Commit dd291d77cc90eb6a86e9860ba8e6e38eebd57d12 ("block:
-> Introduce zone write plugging") has enabled the block layer to
-> handle this order issue, there is no need to use flush command.
+> While unlikely to happen, it is prudent to ensure that it will not
+> lead to integer overflow. Thus, use mul_u32_u32() as it's more
+> appropriate to mitigate the issue.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] Revert "f2fs: use flush command instead of FUA for zoned device"
-    https://git.kernel.org/jaegeuk/f2fs/c/2a331ab343ee
+  - [f2fs-dev] f2fs: prevent possible int overflow in dir_block_index()
+    https://git.kernel.org/jaegeuk/f2fs/c/47f268f33dff
 
 You are awesome, thank you!
 -- 
