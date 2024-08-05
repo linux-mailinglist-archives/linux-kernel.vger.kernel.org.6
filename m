@@ -1,127 +1,141 @@
-Return-Path: <linux-kernel+bounces-275278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283539482A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:53:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565C29482AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D957B1F21BED
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 118CE28345C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C315616BE27;
-	Mon,  5 Aug 2024 19:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73E216BE22;
+	Mon,  5 Aug 2024 19:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="utXWB6RX"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d3soiTJy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69387149000;
-	Mon,  5 Aug 2024 19:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E1216A397
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722887621; cv=none; b=B0RsbNnplJZaBm2ri/ZsxlWs6yuOnfqmgkJl8J8EIjFKTgQnaNDS8CKIgDLLNnH78jt46c6GXvpr5GeBtDVrx9K/yYFgvCP5/pWGR40re5VkHzil1kA1yQRwjBADzxIgdtB/+Htwg+cj1OL9Uh4kv6r6TkqrX2akzWOJ+7r3Zdk=
+	t=1722887644; cv=none; b=ij+MIBSL7k9X+ph1gbhGdM2Tlahq9Ll4GBR4anBQQSiasMsFhRbA1jX4ds3BDpIZ/h+7EkuVK+LdHWe5hARDAhVUOPwrQo6KTsXkR+7WolO8dsHWJIHH/f0l+9RvXIj1+qRUKBQHkl+lkD8xSXiQNjXlLQ3/Oa4/jroK6M1nMmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722887621; c=relaxed/simple;
-	bh=YS5ZQJ3DgdfPEIdZrvtluLYloT+1y1x+El0IGLTXA4o=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hPnp6f/QIV6as7Pni36BPZFsSoQepOTHwE9rOlR1+jSciAzo42NjFMobxwkP8RhwZKwSltDTl2/Zyf41iFHKv6GNfuLWC9e16FKmPoViOvHv9xsqVrBasyVfL+GI0z1+x4Ks+X9yUz1at7GEZUEo96oWzjd0cJtury+AqmFkmAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=utXWB6RX; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722887620; x=1754423620;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=YS5ZQJ3DgdfPEIdZrvtluLYloT+1y1x+El0IGLTXA4o=;
-  b=utXWB6RXBNg0xrnmI5MHlw5stu0OWOsDrNEGXCbjDm3twbJjyVhLvaG0
-   R/+UHbQPn2yCGh4NfwzMMmS++y21XMEONL5slhtbP33nIspSoHeQ6KlqI
-   QoPm5t6GJCyk+gdR4wtxfNqG50zv49WwlO6ZAN89nm0BGT++y46zjsHqn
-   A=;
-X-IronPort-AV: E=Sophos;i="6.09,265,1716249600"; 
-   d="scan'208";a="415388985"
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-Thread-Topic: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 19:53:36 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:17143]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.164:2525] with esmtp (Farcaster)
- id 2e3e2e7a-910d-4c7b-b605-16b9b4b5b303; Mon, 5 Aug 2024 19:53:35 +0000 (UTC)
-X-Farcaster-Flow-ID: 2e3e2e7a-910d-4c7b-b605-16b9b4b5b303
-Received: from EX19D004EUC004.ant.amazon.com (10.252.51.191) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 19:53:35 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D004EUC004.ant.amazon.com (10.252.51.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 19:53:35 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1258.034; Mon, 5 Aug 2024 19:53:35 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "tytso@mit.edu" <tytso@mit.edu>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
-	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "Graf (AWS),
- Alexander" <graf@amazon.de>, "anthony.yznaga@oracle.com"
-	<anthony.yznaga@oracle.com>, "steven.sistare@oracle.com"
-	<steven.sistare@oracle.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"nh-open-source@amazon.com" <nh-open-source@amazon.com>, "Saenz Julienne,
- Nicolas" <nsaenz@amazon.es>, "Durrant, Paul" <pdurrant@amazon.co.uk>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz"
-	<jack@suse.cz>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>
-Thread-Index: AQHa5xp7YUfIGy2/kUGqgjccLElzprIYul2AgABZuAA=
-Date: Mon, 5 Aug 2024 19:53:34 +0000
-Message-ID: <cc168bf913aaf9bb11fb31d0f5a6c3d453a38942.camel@amazon.com>
-References: <20240805093245.889357-1-jgowans@amazon.com>
-	 <20240805143223.GA1110778@mit.edu>
-In-Reply-To: <20240805143223.GA1110778@mit.edu>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8BED7CC18831D0429E325D6E63775338@amazon.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1722887644; c=relaxed/simple;
+	bh=o0KRaGzHCorXV7S0Y9guHcptlqEd7xwMn/1FdZD4bPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gm0h6Noa2jKR/TC0+fRvPGiWgzDzf2vvjMmteX/qM9ZxG33E3q2b9oolwRjp9ZZQpt4IDK1uUBSJ/3RwxZPoE2kXGi35x1iW3zD6c1lD9XuDOKfn2F5eXNLV/4cBcMGQe51c2gb9UAELR6XDFSGHiz0wbbhj8x9Xh0nLAPAniq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d3soiTJy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722887641;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:in-reply-to:in-reply-to:  references:references;
+	bh=QMcB7PhofnR3QJhm5j9PvLH/K7OQu77lKAt5++u+MFU=;
+	b=d3soiTJyg+M7NQzvnPWri21udRL9RLWVOpzABG0oYWCN2MEZ12iKfN2za76y2yEgDjUmHr
+	W7lHiNy9sOTzPHnKohb/mRZ+TVhIO7c6eKu/SMoJvfqpuW0obrWueZoQQYE9nYD5XPiURT
+	QGwM0gKn1IRAB5PddpfyDjohvf1udaQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-519-JDnuY8mBNhiOQheAGsfQPA-1; Mon,
+ 05 Aug 2024 15:53:57 -0400
+X-MC-Unique: JDnuY8mBNhiOQheAGsfQPA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA6701956080;
+	Mon,  5 Aug 2024 19:53:53 +0000 (UTC)
+Received: from tucnak.zalov.cz (unknown [10.45.224.25])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1C8CA1955D42;
+	Mon,  5 Aug 2024 19:53:51 +0000 (UTC)
+Received: from tucnak.zalov.cz (localhost [127.0.0.1])
+	by tucnak.zalov.cz (8.17.1/8.17.1) with ESMTPS id 475Jrm4I3885874
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 21:53:48 +0200
+Received: (from jakub@localhost)
+	by tucnak.zalov.cz (8.17.1/8.17.1/Submit) id 475JrjfI3885871;
+	Mon, 5 Aug 2024 21:53:45 +0200
+Date: Mon, 5 Aug 2024 21:53:44 +0200
+From: Jakub Jelinek <jakub@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Rudi Heitbaum <rudi@heitbaum.com>, Arnd Bergmann <arnd@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+        Andreas Schwab <schwab@suse.de>, Florian Weimer <fweimer@redhat.com>,
+        linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-api@vger.kernel.org, WANG Xuerui <kernel@xen0n.name>,
+        Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org,
+        loongarch@lists.linux.dev
+Subject: Re: [PATCH] syscalls: fix syscall macros for newfstat/newfstatat
+Message-ID: <ZrEtyJd2qydKcWxQ@tucnak>
+Reply-To: Jakub Jelinek <jakub@redhat.com>
+References: <20240801123305.2392874-1-arnd@kernel.org>
+ <Zq28wejX3U9J1_JV@faede8dcc269>
+ <Zq3jqeq6USL066k+@tucnak>
+ <c78916da-ee59-4ecb-9886-7bbc7f077fa5@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c78916da-ee59-4ecb-9886-7bbc7f077fa5@app.fastmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-T24gTW9uLCAyMDI0LTA4LTA1IGF0IDEwOjMyIC0wNDAwLCBUaGVvZG9yZSBUcydvIHdyb3RlOg0K
-PiBPbiBNb24sIEF1ZyAwNSwgMjAyNCBhdCAxMTozMjozNUFNICswMjAwLCBKYW1lcyBHb3dhbnMg
-d3JvdGU6DQo+ID4gR3Vlc3RtZW1mcyBpbXBsZW1lbnRzIHByZXNlcnZhdGlvbiBhY3Jvc3NzIGtl
-eGVjIGJ5IGNhcnZpbmcgb3V0IGENCj4gPiBsYXJnZSBjb250aWd1b3VzIGJsb2NrIG9mIGhvc3Qg
-c3lzdGVtIFJBTSBlYXJseSBpbiBib290IHdoaWNoIGlzDQo+ID4gdGhlbiB1c2VkIGFzIHRoZSBk
-YXRhIGZvciB0aGUgZ3Vlc3RtZW1mcyBmaWxlcy4NCj4gDQo+IFdoeSBkb2VzIHRoZSBtZW1vcnkg
-aGF2ZSB0byBiZSAoYSkgY29udGlndW91cywgYW5kIChiKSBjYXJ2ZWQgb3V0IG9mDQo+ICpob3N0
-KiBzeXN0ZW0gbWVtb3J5IGVhcmx5IGluIGJvb3Q/wqAgVGhpcyBzZWVtcyB0byBiZSB2ZXJ5IGlu
-ZmxleGlibGU7DQo+IGl0IG1lYW5zIHRoYXQgeW91IGhhdmUgdG8ga25vdyBob3cgbXVjaCBtZW1v
-cnkgd2lsbCBiZSBuZWVkZWQgZm9yDQo+IGd1ZXN0bWVtZnMgaW4gZWFybHkgYm9vdC4NCg0KVGhl
-IG1haW4gcmVhc29uIGZvciBib3RoIG9mIHRoZXNlIGlzIHRvIGd1YXJhbnRlZSB0aGF0IHRoZSBo
-dWdlICgyIE1pQg0KUE1EKSBhbmQgZ2lnYW50aWMgKDEgR2lCIFBVRCkgYWxsb2NhdGlvbnMgY2Fu
-IGhhcHBlbi4gV2hpbGUgdGhpcyBwYXRjaA0Kc2VyaWVzIG9ubHkgZG9lcyBodWdlIHBhZ2UgYWxs
-b2NhdGlvbnMgZm9yIHNpbXBsaWNpdHksIHRoZSBpbnRlbnRpb24gaXMNCnRvIGV4dGVuZCBpdCB0
-byBnaWdhbnRpYyBQVUQgbGV2ZWwgYWxsb2NhdGlvbnMgc29vbiAoSSdkIGxpa2UgdG8gZ2V0IHRo
-ZQ0Kc2ltcGxlIGZ1bmN0aW9uYWxpdHkgbWVyZ2VkIGJlZm9yZSBhZGRpbmcgbW9yZSBjb21wbGV4
-aXR5KS4NCk90aGVyIHRoYW4gZG9pbmcgYSBtZW1ibG9jayBhbGxvY2F0aW9uIGF0IGVhcmx5IGJv
-b3QgdGhlcmUgcmVhbGx5IGlzIG5vDQp3YXkgdGhhdCBJIGtub3cgb2YgdG8gZG8gR2lCLXNpemUg
-YWxsb2NhdGlvbnMgZHluYW1pY2FsbHkuDQoNCkluIHRlcm1zIG9mIHRoZSBuZWVkIGZvciBhIGNv
-bnRpZ3VvdXMgY2h1bmssIHRoYXQncyBhIGJpdCBvZiBhDQpzaW1wbGlmaWNhdGlvbiBmb3Igbm93
-LiBBcyBtZW50aW9uZWQgaW4gdGhlIGNvdmVyIGxldHRlciB0aGVyZSBjdXJyZW50bHkNCmlzbid0
-IGFueSBOVU1BIHN1cHBvcnQgaW4gdGhpcyBwYXRjaCBzZXJpZXMuIFdlJ2Qgd2FudCB0byBhZGQg
-dGhlDQphYmlsaXR5IHRvIGRvIE5VTUEgaGFuZGxpbmcgaW4gZm9sbG93aW5nIHBhdGNoIHNlcmll
-cy4gSW4gdGhhdCBjYXNlIGl0DQp3b3VsZCBiZSBtdWx0aXBsZSBjb250aWd1b3VzIGFsbG9jYXRp
-b25zLCBvbmUgZm9yIGVhY2ggTlVNQSBub2RlIHRoYXQNCnRoZSB1c2VyIHdhbnRzIHRvIHJ1biBW
-TXMgb24uDQoNCkpHDQo=
+On Sat, Aug 03, 2024 at 10:12:47AM +0200, Arnd Bergmann wrote:
+> > Probably it would be useful to check
+> > echo '#include <asm/unistd.h>' | gcc -E -dD -xc - | grep '#define __NR_' | sort
+> > for all arches between 6.10 and the latest git, diff them and resolve any
+> > unintended differences.
+> 
+> Right, I should have done that before the original series really:
+> I spent a lot of time validating the kernel's internal changes for
+> consistency (which found a dozen bugs that were unrelated to my
+> series) but missed the unintended changes to the external header
+> contents.
+> 
+> I'll do that now and send another fixup.
+
+I've done 6.10 to 6.11-rc2 <asm/unistd.h> comparison just for the Fedora
+arches (x86_64, aarch64, ppc64le, s390x, i686).  Full details in
+https://bugzilla.redhat.com/show_bug.cgi?id=2301919#c8
+On i686, ppc64le and s390x there are no changes.
+On x86_64
+#define __NR_uretprobe 335
+has been added, perhaps that is intentional, haven't checked.
+On aarch64 when going just after __NR_ defined macros and their values,
+I see:
+#define __NR_nfsservctl 42
+#define __NR_fstat 80
+#define __NR_arch_specific_syscall 244
+#define __NR_syscalls 463
+removal and
+#define __NR_newfstat 80
+and addition and then
+#define __NR3264_fcntl 25
+#define __NR3264_statfs 43
+#define __NR3264_fstatfs 44
+#define __NR3264_truncate 45
+#define __NR3264_ftruncate 46
+#define __NR3264_lseek 62
+#define __NR3264_sendfile 71
+#define __NR3264_fstatat 79
+#define __NR3264_fstat 80
+#define __NR3264_mmap 222
+#define __NR3264_fadvise64 223
+macros are removed as well (let's hope it is an implementation detail and
+nothing uses those macros, but some search would be helpful).
+
+	Jakub
+
 
