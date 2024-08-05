@@ -1,217 +1,222 @@
-Return-Path: <linux-kernel+bounces-275400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67ED9484F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:37:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CD89484F3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37DDA281D3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7BE1F22A5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678DE16C692;
-	Mon,  5 Aug 2024 21:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECFA16B720;
+	Mon,  5 Aug 2024 21:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QF3MugR0"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="haReA+r1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H71bNqvp"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB90F149C6E
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B7357323;
+	Mon,  5 Aug 2024 21:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893840; cv=none; b=YYVRFteXNlPa7qi5zzf+vAEqKY2PrY8G+jRKlg9I97/x9HzSiP/AvnQ+im02eRjoRWCA5s5opUg0Dz6zJW4GegZcRXFdmUU5Xu3AsjBLtLYX0DMtx3eYLahgkTw6I+4JUPZqAUcnUUNXeGaPQGfleodWIHQk9s2QIGRm9pCJ9js=
+	t=1722894104; cv=none; b=CjnTTx9Fofd+0/giqff3jyp61vAGYPryoahV0qMaZ1Z/xdC118rL6SaJvIlEXVSza3jw5FT0nQs/C9QnRalsUK0Oxze1Pg/qVxidUKkgpmUiETc7iJvJt8X/XXnIDBFJbp4NVhzulxS3/WAykRVVkTpwpVR40BLPr2pw6sA7RwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893840; c=relaxed/simple;
-	bh=Ed6Rl/7C5d57Fi1GZz8JB4mKEI66eDK+qFFUbTBXrMI=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hYGrBtlJNxS1Eh8C+hp6apTKmVmp2hJyIEaneyPQFiKllZrVUXuKnsFN/NdocCQsjd0hvWeri8qhVQ9HU0QzUayCX/GrmPi65fQ1dsp0OXCa7RAbdv3xlypV42jQZ7qvuEbzPAb8DIeL0KCVyst4tB9KAFYvuAD4Ect+JlMyGMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QF3MugR0; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a1d6f47112so688408585a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722893838; x=1723498638; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5TTQWoLTs/whgWYI5NXDcDj0/sry6PBheRizhrnqOcg=;
-        b=QF3MugR0M8fz9u7kKwdbEuEBewZqWhDHkhp94ciTeBgtsL8qoQL/WYHfQ2qkl10tDZ
-         pEyltFPRUQngwNMYCtgzKzfgUZwbf4hlPYdGXT4b0pp71gUy/gqstWsitBzAQA5PEEsH
-         PH9lRntCgYTZYcd187sBhX9syCpoGFNAn6sf8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893838; x=1723498638;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5TTQWoLTs/whgWYI5NXDcDj0/sry6PBheRizhrnqOcg=;
-        b=gxisl1oj6fHWlLJs5F3/npSdc5kW2SL2UYCmChgzVliGVJfDdts3oJtIFYZ7GTg4+9
-         RDSUwgSGlJBU6+I3YkN5IIcgiGtbuZBaOelBmSMyq68awf2eukJtQUq/eEVGzNX9aXo6
-         wZSFc/tU4CyVGbls9rLo8mKTi+B+FZCX9GJrfz/DFYaq515VroCUJNEZAiKagRSkokMF
-         WE30sFTfjRblSRaX6f9TVnGW/XZZffvbbZbKGpsPf74cA4j/Ew+YfQ7XPvlGxz2j6EWm
-         FMdeQ8cPYxoU+E64/2DlMum6Sh/1I7lzsEsCJJC1D2IiwlkqEQEhoW+EF1d6va/9Xt8c
-         5amQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhsGHnYGX98AucYr2hZnT23lS1HFGTJ/Nen4ZFPfpkfOQOrroqXnqVwL4zuK/43qei4MQvMgJjtXpuEP66iVtPSOlriQV/asgDOtOf
-X-Gm-Message-State: AOJu0Yxsca298ITKrOWgrr+f41O4IAIC1ZSe3WZjen/TfCNAZdD5Yfnv
-	nydGCvG2KSnayCiIg0CWHiXgZIOSunlu0VpHBC2GVd8tPC8myReg6OGwQxpGmr0XHHv/JNPTxXA
-	Vn7uGmBRbeOSDUS9PDBUHcIdqNAkRc0Bv9fCa
-X-Google-Smtp-Source: AGHT+IFS5Tg6/1f5zul0WlstKMG5hOJqpcrTEHbrOjqqZr3yr5nFPOGk40LTscDmB79uY8ZoZrzsbej+EEA5xeCCQ/c=
-X-Received: by 2002:a05:620a:240d:b0:7a2:d64:1bbf with SMTP id
- af79cd13be357-7a34eec99d9mr1971902185a.1.1722893837737; Mon, 05 Aug 2024
- 14:37:17 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 5 Aug 2024 14:37:16 -0700
+	s=arc-20240116; t=1722894104; c=relaxed/simple;
+	bh=LxqNl93oNDBVHrlq+WL9mX2KsBWdtglfzkx5RO5LGww=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=fgovIT0a+ljOcS1sWkeV5LvwHzdgjRTIuXn2Yu/XJfBoZ/8+k39HKymglgf+f4ZR2AA+KrAo4M7lwrCw1hjbIQjQeN+1qld97Gt19wamx14Iz+P9+2V6R9lbrl2EoRhhqIMWdXISz2ykqh0SCwgh0tbMQY7+tX5WC7nJshPoCkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=haReA+r1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H71bNqvp; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 5B39A114AB25;
+	Mon,  5 Aug 2024 17:41:40 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute3.internal (MEProxy); Mon, 05 Aug 2024 17:41:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1722894100;
+	 x=1722980500; bh=gY+Y0Y9pBsBrT+Hu1S5yds/9bTz/ceRETXNYGdVafCQ=; b=
+	haReA+r1/ylPhTMP6hvskrYAPxYiCgo1I1BnORe+hB0VUz8+8PtOwLLeehF8/Y3i
+	TVxgctr4sazr7jrRwd439hW3uQKmsMjhoLptjJIUbEK9SkbkUClsQyn49twQuHAu
+	gNetInDeAtlL/lK6KG66hmRGKujkJQnjNj6Uz+rgesBSxk9xLz6SbDywD4PUQFs3
+	3mlit0OSs1v/w9a6uSUYqWrvGKkrm6gFyYbJPNiLMtF3t1NvlLngm71OjN7Lpc/w
+	ilIfYJAOvIm+xoZFc4R0vkWD6iHOeIfiZG3rqJhD8n9IXzpA+gJcAG3hSDBZA7zJ
+	hkS4xGNwo7UDy8bOiTWbuw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722894100; x=
+	1722980500; bh=gY+Y0Y9pBsBrT+Hu1S5yds/9bTz/ceRETXNYGdVafCQ=; b=H
+	71bNqvpV2411g6vndo4HCVxJAqvNWKSGfGRkb6UIlyF3RqvarG8mIK/tJB75dlHi
+	ud4d87cE7O5xORRGdmTuXxem62rgwz42BAk5wWoALH+a2icMHAOmBoatPNvMskoU
+	AUcXReztR7JMM4rpksoyiIX8SPi18UQnYx/8vqs+rWi23OsyviFUeZWQUe0950hB
+	qUR+Dnomud0TkLEksk75a36IIy09vGLPtS4ndxwoIE20ZKjGNmUJHTD+pU7GKFnI
+	Sxn+eQUPUBQdnaFCVXHxG+XLMYan7CwHP7Up7qQ64Dzbm4vR4v6Njkdh9/4wCiom
+	ghF5+aYzCdlX55RzKaMVQ==
+X-ME-Sender: <xms:E0exZvpDP-2Oi1VhqKX4cnm8JFFzWFRS0C-Tmr8mloruu9Ymh6xefw>
+    <xme:E0exZpqpcJmlRGzlu_eL5Gpq6iyL-If5aZWwoznm-d3_2ANqTmytk-M2UoOtFrbIA
+    AMQf7rqU-ZIrjin5AQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeejgddtvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdfnuhhk
+    vgculfhonhgvshdfuceolhhukhgvsehljhhonhgvshdruggvvheqnecuggftrfgrthhtvg
+    hrnhepkeevvdejheeihfekffeuhfdtueelkefflefgieduvddtheektefhheelheegvedu
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggp
+    rhgtphhtthhopedt
+X-ME-Proxy: <xmx:E0exZsPqsGqRheq7crAldQ_wG6WZ5CqSchTBrCCh4r_LB1KkaR1ayQ>
+    <xmx:E0exZi6T5iqrY8xus4lAfpboFUv1R69QSfeTGi-4mwf37JoVUd8fLQ>
+    <xmx:E0exZu7CEzuG5mJM-pd56xRa60Ol4wZEJvmTRSpr8GW4wi5c71j4lA>
+    <xmx:E0exZqhv2oB3q5SyvTfI8iX3MyJQDON510Rn7BytlYex7lRwc2ZgUg>
+    <xmx:FEexZp3ORQXjbajfN64Kf7OPzAWQr_0IlGhsAQe4IETjAlvSPnpmdCV0>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id DAC5A2340080; Mon,  5 Aug 2024 17:41:39 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
-References: <20240502224703.103150-1-swboyd@chromium.org> <CAE-0n50VDgsg-4QnynvLOzykr3KP5JsnHqeFPA=uRT3EfgL19g@mail.gmail.com>
- <CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com>
- <CAE-0n53X1Gv9nnyDfeivYd7n5W6D1WFkO0tCvYc9drb0+4hQbw@mail.gmail.com> <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Mon, 5 Aug 2024 14:37:16 -0700
-Message-ID: <CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: Park shared RCGs upon registration
-To: Amit Pundir <amit.pundir@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	Laura Nao <laura.nao@collabora.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Douglas Anderson <dianders@chromium.org>, Taniya Das <quic_tdas@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 06 Aug 2024 09:41:19 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Hans de Goede" <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, corentin.chary@gmail.com,
+ "Mario Limonciello" <mario.limonciello@amd.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Message-Id: <a35c923e-be2c-4083-8c65-c83b49fe4350@app.fastmail.com>
+In-Reply-To: <517aa9f5-00cf-4a68-b1d7-a6dc9f942e7c@redhat.com>
+References: <20240716051612.64842-1-luke@ljones.dev>
+ <8273ed57-4c65-41da-ad7d-907acf168c07@redhat.com>
+ <e9f4fb37-5277-a7f0-2bec-8a6909b4e674@linux.intel.com>
+ <1e309d39-43d3-4054-88a9-0c1da3de26eb@app.fastmail.com>
+ <517aa9f5-00cf-4a68-b1d7-a6dc9f942e7c@redhat.com>
+Subject: Re: [PATCH 0/5] platform/x86: introduce asus-bioscfg
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Quoting Amit Pundir (2024-08-05 03:43:14)
-> On Sat, 3 Aug 2024 at 06:29, Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Also please send back the dmesg so we can see what clks are configured
-> > for at boot time. If they're using TCXO source at boot then they're not
-> > going to be broken. In which case those clks can keep using the old clk
-> > ops and we can focus on the ones that aren't sourcing from TCXO.
->
-> Thank your for this debug patch. I thought I narrowed down the
-> breakage to the clks in drivers/clk/qcom/gcc-sm8550.c, until I ran
-> into the following kernel panic in ucsi_glink driver in later test
-> runs.
+On Tue, 6 Aug 2024, at 3:18 AM, Hans de Goede wrote:
+> Hi Luke,
+>=20
+> On 7/17/24 4:34 AM, Luke Jones wrote:
+> > On Wed, 17 Jul 2024, at 3:11 AM, Ilpo J=C3=A4rvinen wrote:
+> >> On Tue, 16 Jul 2024, Hans de Goede wrote:
+> >>> On 7/16/24 7:16 AM, Luke D. Jones wrote:
+> >>>> This is the first major patch I've ever done with the intention of
+> >>>> introducing a new module, so it's highly likely I've made some mi=
+stakes
+> >>>> or misunderstood something.
+> >>>>
+> >>>> TL;DR:
+> >>>> 1. introduce new module to contain bios attributes, using fw_attr=
+ibutes_class
+> >>>> 2. deprecate all possible attributes from asus-wmi that were adde=
+d ad-hoc
+> >>>> 3. remove those in the next LTS cycle
+> >>>>
+> >>>> The idea for this originates from a conversation with Mario Limon=
+ciello
+> >>>> https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-80=
+2f-4ec27a945c99@amd.com/
+> >>>>
+> >>>> It is without a doubt much cleaner to use, easier to discover, an=
+d the
+> >>>> API is well defined as opposed to the random clutter of attribute=
+s I had
+> >>>> been placing in the platform sysfs.
+> >>>
+> >>> This is a bit of a novel use of the fw_attributes_class and I'm not
+> >>> entirely sure of what to think of this.
+> >>>
+> >>> The fw_attributes_class API was designed for (mostly enterprise)
+> >>> x86 machines where it is possible to change all BIOS settings dire=
+ctly
+> >>> from the OS without entering the BIOS.
+> >>>
+> >>> Here some ACPI or WMI function is present to actually enumerate all
+> >>> the BIOS options (which can be set this way) and get there type.
+> >>>
+> >>> IOW there is not a static list of options inside the driver, nor
+> >>> is there special handling in the driver other then handling differ=
+ences
+> >>> per type.
+> >>>
+> >>> And if a new BIOS version has new options or a different machine m=
+odel
+> >>> has different options then these are discovered automatically.
+> >>>
+> >>> This new use is quite different from this. Although I do see that
+> >>> at least for the attributes using WMI_STORE_INT() + WMI_SHOW_INT()
+> >>> that there is quite some commonality between some of the attribute=
+s.
+> >>>
+> >>> I see how using the existing firmware-attributes class API definit=
+ion
+> >>> for this, including allow tweaking this with some of the fwupd
+> >>> firmware-attributes class commandline util work Mario did is a use=
+ful
+> >>> thing to have.
+> >>>
+> >>> I guess using the firmware-attributes class for this is ok, but
+> >>> this _must_ not be named bioscfg, since the existing hp-bioscfg
+> >>> driver is a "classic" firmware-attributes drivers enumerating all
+> >>> the options through BIOS provided enumeration functions and I want
+> >>> the name to make it clear that this is not that. And the Dell
+> >>> implementation is called dell-wmi-sysman so lets also avoid sysman
+> >>> as name.
+> >>>
+> >>> Maybe call it "asus-bios-tunables" ?   And then if Asus actually
+> >>> implements some more classic firmware-attributes enumerable interf=
+ace
+> >>> we can use "asus-bioscfg" for that.
+> >>>
+> >>> Mario, Ilpo what is your opinion on this ?
+> >>
+> >> What you suggested sounds good to me.
+> >=20
+> > Thanks guys. I think there might be a few names that could be suitab=
+le
+> >=20
+> > 1. asus_bios_tuning/tunables
+> > 2. asus_fw_tuning/tunables
+> > 3. asus_fw_settings
+> > 4. asus_armoury
+> >=20
+> > I'm shying away from the "tuning/tunables" label since there are als=
+o a lot of settings which are just toggles for various features rather t=
+han actual tunable things. It makes sense in some contexts at least.
+> >=20
+> > Armoury Crate is the software collection that Asus uses for the gami=
+ng laptops, and they tend to lump these settings under that label.
+> >=20
+> > Personally I'm leaning towards "asus_fw_settings" as it more accurat=
+ely describes what the module does.
+>=20
+> "asus_fw_settings" sounds good to me. I'm looking forward to v2 of thi=
+s series.
 
-Thanks for the info. These are the clks that aren't sourcing from XO
-at registration time:
+I've actually done a poll on my discord, folks voted overwhelmingly for =
+`asus-armoury` and I went with this before your response. The reasoning =
+here is that many of these users are coming from windows where Armoury C=
+rate is an app that exposes all the same functions and so that's what th=
+ey look for on linux.
 
-  gcc_qupv3_wrap1_s7_clk_src with cfg 0x102601 -> parent is gpll0_out_even
-  gcc_ufs_phy_axi_clk_src with cfg 0x103 -> parent is gpll0_out_main
-  gcc_ufs_phy_ice_core_clk_src with cfg 0x503 -> parent is gpll4_out_main
-  gcc_ufs_phy_unipro_core_clk_src with cfg 0x103 -> parent is gpll0_out_main
-  gcc_usb30_prim_master_clk_src with cfg 0x105 -> parent is gpll0_out_main
+If you don't think this is suitable I'm happy to change.
 
-The original patch is going to inform the clk framework that the parent
-of these clks aren't XO but something like gpll0_out_even, whatever the
-hardware is configured for. That may cause these PLLs to be turned off
-earlier than before if, for example, gcc_ufs_phy_axi_clk_src is turned
-off by a consumer and gcc_usb30_prim_master_clk_src is left enabled at
-boot. That's why we force park clks at registration time, so that they
-can't have their parent clk get turned off by some other clk consumer
-enabling and then disabling a clk that's also parented to the same
-parent.
-
-This same problem exists for RCGs that aren't shared too, but it's
-particularly bad for shared RCGs because the parent PLLs aren't turned
-on automatically by the hardware when things like the GDSC do their
-housekeeping. At least when software is in control we can enable the
-parent PLL and unstick the RCG that was previously cut off.
-
-Can you narrow down the list above to the clk that matters? I guess if
-USB isn't working then gcc_usb30_prim_master_clk_src is the one that
-should be changed and nothing else. Although, I noticed that in the
-first dmesg log you sent the serial console had garbage, and that's
-likely because the rate changed while the clk was registered. I don't
-know why the gcc_qupv3_wrap1_s7_clk_src is marked with the shared clk
-ops. That's confusing to me as I don't expect that to need to be parked
-for any reasons. Maybe qcom folks can comment there but I'd expect plain
-rcg2_ops to be used for those clks. Anyway, if you can narrow down to
-which clk needs to be left untouched it would be helpful.
-
->
-> [    7.882923][    T1] init: Loading module /lib/modules/ucsi_glink.ko
-> with args ''
-> [    7.892929][   T92] Unable to handle kernel NULL pointer
-> dereference at virtual address 0000000000000010
-> [    7.894935][    T1] init: Loaded kernel module /lib/modules/ucsi_glink.ko
-> [    7.902670][   T92] user pgtable: 4k pages, 39-bit VAs, pgdp=0000000886218000
-> [    7.902674][   T92] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
-> [    7.993995][   T64] qcom_pmic_glink pmic-glink: Failed to create
-> device link (0x180) with a600000.usb
-> [    8.078673][   T92] CPU: 7 UID: 0 PID: 92 Comm: kworker/7:2
-> Tainted: G S          E      6.11.0-rc2-mainline-00001-g4153d980358d
-> #6
-> [    8.078676][   T92] Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
-> [    8.078677][   T92] Hardware name: Qualcomm Technologies, Inc.
-> SM8550 HDK (DT)
-> [    8.078679][   T92] Workqueue: events pmic_glink_ucsi_register [ucsi_glink]
-> [    8.078682][   T92] pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT
-> -SSBS BTYPE=--)
-> [    8.078684][   T92] pc : pmic_glink_send+0x10/0x2c [pmic_glink]
-> [    8.078685][   T92] lr : pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
-> [    8.078704][   T92] Call trace:
-> [    8.078705][   T92]  pmic_glink_send+0x10/0x2c [pmic_glink]
-> [    8.078706][   T92]  pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
-> [    8.078707][   T92]  pmic_glink_ucsi_read_version+0x20/0x30 [ucsi_glink]
-> [    8.078708][   T92]  ucsi_register+0x28/0x70
-> [    8.078717][   T92]  pmic_glink_ucsi_register+0x18/0x28 [ucsi_glink]
-> [    8.078718][   T92]  process_one_work+0x184/0x2e8
-> [    8.078723][   T92]  worker_thread+0x2f0/0x404
-> [    8.078725][   T92]  kthread+0x114/0x118
-> [    8.078728][   T92]  ret_from_fork+0x10/0x20
-> [    8.078732][   T92] ---[ end trace 0000000000000000 ]---
-> [    8.078734][   T92] Kernel panic - not syncing: Oops: Fatal exception
-> [    8.078735][   T92] SMP: stopping secondary CPUs
-> [    8.279136][   T92] Kernel Offset: 0x14d9480000 from 0xffffffc080000000
-> [    8.279141][   T92] PHYS_OFFSET: 0x80000000
-> [    8.279143][   T92] CPU features: 0x18,004e0003,80113128,564676af
-> [    8.279148][   T92] Memory Limit: none
-
-That looks like 'client' is NULL in pmic_glink_send(). The VA of 0x10 is
-the offset of 'pg' in struct pmic_glink_client. I don't know much about
-that driver but I'd guess that ucsi_glink has some race condition
-assigning the client pointer?
-
-Oh actually, I see the problem. devm_pmic_glink_register_client()
-returns a struct pmic_glink_client pointer that's assigned to
-'ucsi->client'. And pmic_glink_ucsi_read() uses 'ucsi->client' to call
-pmic_glink_send(). That pointer is NULL because the workqueue that runs
-pmic_glink_ucsi_register() must run before
-devm_pmic_glink_register_client() returns and assigns the client pointer
-to 'ucsi->client'. This is simply a race.
-
- CPU0                                        CPU1
- ----                                        ----
- ucsi->client = NULL;
- devm_pmic_glink_register_client()
-  client->pdr_notify(client->priv, pg->client_state)
-   pmic_glink_ucsi_pdr_notify()
-    schedule_work(&ucsi->register_work)
-    <schedule away>
-                                             pmic_glink_ucsi_register()
-                                              ucsi_register()
-                                               pmic_glink_ucsi_read_version()
-                                                pmic_glink_ucsi_read()
-                                                 pmic_glink_ucsi_read()
-                                                  pmic_glink_send(ucsi->client)
-                                                  <client is NULL BAD>
- ucsi->client = client // Too late!
-
->
-> I couldn't reproduce this kernel panic on vanilla v6.11-rc2 in 50+
-> test runs after that. So I'm assuming that this debug patch may have
-> triggered it.
-> Attaching the crashing and working dmesg logs with the debug patch applied.
->
-
-Sounds like you just need to reboot a bunch! Or add an msleep() in
-devm_pmic_glink_register_client() after the notify call to open the race
-window and let the workqueue run.
+> Regards,
+>=20
+> Hans
+>=20
+>=20
+>=20
 
