@@ -1,98 +1,53 @@
-Return-Path: <linux-kernel+bounces-274448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57876947833
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:19:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E46947839
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674411C21535
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC111C2163A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4D31527AF;
-	Mon,  5 Aug 2024 09:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A52152E12;
+	Mon,  5 Aug 2024 09:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SssipjaT"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DA114F9D4;
-	Mon,  5 Aug 2024 09:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kZSf0aeB"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959FE150990;
+	Mon,  5 Aug 2024 09:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722849593; cv=none; b=WeN7uRJYWKkVbuWnG62PIIpoG7GbF0rQLvIDZrtmGCdXq5vbr+w4TNO5Ez0sH0IbIGXqwCB9ZqR2T+Nufa05t2Y/c7Bbh79wtoMJRpd1/ESDQuTkh9n3axByYUrbA/z6cIZW+TL5CwKI6DtwRBSb0e2fTgPaQPmhWPCCKocOsFU=
+	t=1722849645; cv=none; b=VQfIMpG4vAbJFrRmJK/g5XjlETsjGW0XtS1fORRCos8+3TEwJY/Qj1zYYo4rYJt2KA9vCNbjkn3IqdjkoVpbPhInAeEt/EyKTztEqOfps4DCbCOckBA4A5sbh/R2cbpZ1/CGKZkQFfO+VIpmVw49N1g8jfDpceUbKgUueMxCXEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722849593; c=relaxed/simple;
-	bh=OcG6l4XKFmePQVwp6PRs5BvS9biFtJr4B9ey1kRGDJA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hkXhaaTC055lYDjbp4167NXRtEoeO+eXoXRZW9xmze1qui+n7dI29KuIWK+z5A59ERDOmfyhkLmHfOr352ZHr0oIqWDnkGVFONg3BRVaknO0ApKdITOJBSzBmNm/VUAQHEFD9nT8dSBdJ0iEqSuhMpvml8LMwrvvX3ZLGzq/2iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SssipjaT; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db23a6085aso2822304b6e.1;
-        Mon, 05 Aug 2024 02:19:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722849591; x=1723454391; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wTqIbxxugoDxIZS+wlCgd6QZms9qOuPLg9XDgZyFHpw=;
-        b=SssipjaTpZrFOUr+LFu4fKqMFowycrrS71523oY8hu721SgiLmO+lUPc3Bb1QngE4I
-         EQuAhX6zEHICvE1/T8X1IGBWO7cUSJlRq77xoICFcUV0yItFvZHW+eiEsgp9lVo5FnkU
-         23RKLWB6o1R/Zgge9KUQd8TkcB94QK7Tnk75nSntcYl3zopKmg4FCOLcE2PQ+2kGHL2Y
-         gPl9LKe0oBn6pS/t6/fXL0kOlvx9KOqSaLBZffs6Zf9KAxA1JsNgbeNNWGG6fhJIuGo+
-         azvc9RvsrQSnX0Ny8eRUr2iJD+n1vyni/bZnTaNv5RVJPHxNelMtumJYJOawAXJiIjVj
-         v7ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722849591; x=1723454391;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wTqIbxxugoDxIZS+wlCgd6QZms9qOuPLg9XDgZyFHpw=;
-        b=C6Tl3+0XZBT7k2zitxoxrop9k07KYTsmdATc4kCH1xJ2lvY/8jdwWcQ7YXmzKzj+9x
-         p2i8ftUcfEdzepC40rc44YLFeiwI8h05a9jdd/foVI34LwM01u8xUfjpatMwmAqIKhAi
-         LvMoygkDSQkIP7h5AkR9ZDhlO07oDN6WFMzI/nmfps6EwSsNtkrSL2WLn4Y1kvce9Ltu
-         ecJneDC2NWnnWvhRjnGYxkVBh/CXBF4DhXucsdaKFTN+FhuNq0ZGm34JtUgILRICoSGp
-         orRBROSEtOjRRp1UDIo+ZGfW69SCBgyKDZrQYnlAZXTc8CUyVdVJ2HtjRonGOu7K8EJV
-         vKxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAqgoLeT8y8sze8vH7U1uKr1aKBTkPSNTRpOP0dDHrJmjGezja5IZN9lvPEIIpc0CqmQaHGi3arEQHUDAe+8sE7qsud93J4t0oj470YM6ujytErd9U+zJqqBNvjo/Mjz7QBimm238M/hwQltHeJ4PaZVgJJ6Rpi/8IPGuQEhak22ct0w==
-X-Gm-Message-State: AOJu0YwicMTB6JDc8SR5EScVhWQuTTqZaedEZhGH9ArbkZAtitv4IjCO
-	rvZ0c5YblbvDED6wF/b0fz/8L9/v1DlS30Cr0UD6YZIKUwmiFz7C
-X-Google-Smtp-Source: AGHT+IGQn28apZPLjY/cEqCd5i6fKpWv0taDd9wpuFCfINNuy5KX2wH7As+1leEZiltafu5WJpLcAA==
-X-Received: by 2002:a05:6808:f0a:b0:3d2:95f:da8c with SMTP id 5614622812f47-3db5381638dmr5222260b6e.18.1722849590714;
-        Mon, 05 Aug 2024 02:19:50 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70a31d9dd1asm2875838a34.9.2024.08.05.02.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 02:19:50 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: adrian.hunter@intel.com,
-	aou@eecs.berkeley.edu,
-	conor+dt@kernel.org,
-	guoren@kernel.org,
-	inochiama@outlook.com,
-	jszhang@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	ulf.hansson@linaro.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1722849645; c=relaxed/simple;
+	bh=b5heeRdhZJFZMg01gdpFCW5JlPhDbxMw3iu/c81JK5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=drpn+OpPKfoKEeqsBqQfsk6I3osWDnmblZp/9eTZcYZ9MEaqwtNG8sneIi0WK1U5M7ZwZoVN3QZ8HwkfrcVTeiF+xTMu5KwxYIivBPNdz/IUBSR6zRNr3Trkj5px8uWXFFN3375HF6+bNX+ZzB9gbRhbnrf2GYM2pi3T/o0kSZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kZSf0aeB; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=VXcyq
+	M1GX+hSvyd+zy7tPfBS8sV00w4G3p2K/7gHXN4=; b=kZSf0aeB5rhEAmvuPBs0f
+	v0ieI7hVJHrNxp8lraLtgj8j5w+l4jQ6lnQSvXeGG45sIOWj1NpquhybqTDdDV/d
+	oXGrvUubAGT4ToP3K3e+HgBx2oB2XAr8zP4OXbRP3kjwLk8xzOqb9E4OwybAHYKF
+	8XNrz1nvTUcrT8QzXs/fQw=
+Received: from localhost.localdomain (unknown [111.48.58.13])
+	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wDn77lNmbBmQWuuAQ--.226S2;
+	Mon, 05 Aug 2024 17:20:13 +0800 (CST)
+From: 412574090@163.com
+To: corbet@lwn.net,
+	bhelgaas@google.com
+Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	tingzhu.wang@sophgo.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v6 8/8] riscv: sophgo: dts: add mmc controllers for SG2042 SoC
-Date: Mon,  5 Aug 2024 17:19:43 +0800
-Message-Id: <03ac9ec9c23bbe4c3b30271e76537bdbe5638665.1722847198.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1722847198.git.unicorn_wang@outlook.com>
-References: <cover.1722847198.git.unicorn_wang@outlook.com>
+	linux-pci@vger.kernel.org,
+	xiongxin@kylinos.cn,
+	weiyufeng <weiyufeng@kylinos.cn>
+Subject: [PATCH] PCI: limit pci bridge and subsystem speed to 2.5GT/s
+Date: Mon,  5 Aug 2024 17:20:10 +0800
+Message-Id: <20240805092010.82986-1-412574090@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,84 +55,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn77lNmbBmQWuuAQ--.226S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKw1fAryUtF1DAF48JFW7CFg_yoW7tw4kpF
+	WDAa4ayry8GF1UWr4DAa1DuFy3Z392v3ySkrW0k34S9FsIyas5tF4Sgr1avFnrWrWkuF13
+	Jr4aqry8CF4UtaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jI9a9UUUUU=
+X-CM-SenderInfo: yursklauqziqqrwthudrp/xtbBFQ8tAGXAmqDH+wACsW
 
-From: Chen Wang <unicorn_wang@outlook.com>
+From: weiyufeng <weiyufeng@kylinos.cn>
 
-SG2042 has two MMC controller, one for emmc, another for sd-card.
+Add a kernel command-line option 'speed2_5g' to limit pci bridge
+and subsystem devices speed to 2.5GT/s. As a debug method, this
+provide for developer to temporarily slow down PCIe devices for
+verification.
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
 ---
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  | 17 +++++++++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        | 28 +++++++++++++++++++
- 2 files changed, 45 insertions(+)
+ .../admin-guide/kernel-parameters.txt         |  8 ++++
+ drivers/pci/pci.c                             |  6 ++-
+ drivers/pci/pci.h                             |  1 +
+ drivers/pci/probe.c                           | 41 +++++++++++++++++++
+ include/linux/pci.h                           |  3 ++
+ 5 files changed, 58 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-index 80cb017974d8..da6596e9192e 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-@@ -26,6 +26,23 @@ &cgi_dpll1 {
- 	clock-frequency = <25000000>;
- };
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index e86a098e06a8..e9b62e259128 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4632,6 +4632,14 @@
+ 		nomio		[S390] Do not use MIO instructions.
+ 		norid		[S390] ignore the RID field and force use of
+ 				one PCI domain per PCI function
++		speed2_5g=
++				Format:
++				[<domain>:]<bus>:<dev>.<func>[/<dev>.<func>]*
++				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
++				Specify one or more PCI bridge devices (in the
++				format specified above) separated by semicolons.
++				Each bridge device specified will limit the bridge
++				and subsystem devices speed to 2.5GT/s.
  
-+&emmc {
-+	bus-width = <4>;
-+	no-sdio;
-+	no-sd;
-+	non-removable;
-+	wp-inverted;
-+	status = "okay";
-+};
+ 	pcie_aspm=	[PCIE] Forcibly enable or ignore PCIe Active State Power
+ 			Management.
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index ffaaca0978cb..0bda7321167c 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -159,6 +159,7 @@ static bool pcie_ats_disabled;
+ 
+ /* If set, the PCI config space of each device is printed during boot. */
+ bool pci_early_dump;
++const char *pci_speed_2_5g;
+ 
+ bool pci_ats_disabled(void)
+ {
+@@ -374,7 +375,7 @@ static int pci_dev_str_match_path(struct pci_dev *dev, const char *path,
+  * Returns 1 if the string matches the device, 0 if it does not and
+  * a negative error code if the string cannot be parsed.
+  */
+-static int pci_dev_str_match(struct pci_dev *dev, const char *p,
++int pci_dev_str_match(struct pci_dev *dev, const char *p,
+ 			     const char **endptr)
+ {
+ 	int ret;
+@@ -423,6 +424,7 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
+ 	*endptr = p;
+ 	return 1;
+ }
++EXPORT_SYMBOL_GPL(pci_dev_str_match);
+ 
+ static u8 __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+ 				  u8 pos, int cap, int *ttl)
+@@ -6905,6 +6907,8 @@ static int __init pci_setup(char *str)
+ 				disable_acs_redir_param = str + 18;
+ 			} else if (!strncmp(str, "config_acs=", 11)) {
+ 				config_acs_param = str + 11;
++			} else if (!strncmp(str, "speed2_5g=", 10)) {
++				pci_speed_2_5g = str + 10;
+ 			} else {
+ 				pr_err("PCI: Unknown option `%s'\n", str);
+ 			}
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 2fe6055a334d..615fa054e6b1 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -67,6 +67,7 @@
+ 
+ extern const unsigned char pcie_link_speed[];
+ extern bool pci_early_dump;
++extern const char *pci_speed_2_5g;
+ 
+ bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
+ bool pcie_cap_has_lnkctl2(const struct pci_dev *dev);
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b14b9876c030..d64f328987a0 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1846,6 +1846,45 @@ static void early_dump_pci_device(struct pci_dev *pdev)
+ 		       value, 256, false);
+ }
+ 
++static void pcie_retrain_downstream_2_5g(struct pci_dev *pdev)
++{
++	u16 lnkctl2;
++	const char *p;
++	int ret;
 +
-+&sd {
-+	bus-width = <4>;
-+	no-sdio;
-+	no-mmc;
-+	wp-inverted;
-+	status = "okay";
-+};
++	p = pci_speed_2_5g;
++	while (*p) {
++		ret = pci_dev_str_match(pdev, p, &p);
++		if (ret < 0) {
++			pr_info_once("PCI: Can't parse pci_speed_2_5g parameter: %s\n",
++				pci_speed_2_5g);
++			break;
++		} else if (ret == 1) {
++			/* Found a match */
++			break;
++		}
 +
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index 34c802bd3f9b..f0ccefecc9c3 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -399,5 +399,33 @@ uart0: serial@7040000000 {
- 			resets = <&rstgen RST_UART0>;
- 			status = "disabled";
- 		};
++		if (*p != ';' && *p != ',') {
++			/* End of param or invalid format */
++			break;
++		}
++		p++;
++	}
 +
-+		emmc: mmc@704002a000 {
-+			compatible = "sophgo,sg2042-dwcmshc";
-+			reg = <0x70 0x4002a000 0x0 0x1000>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <134 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkgen GATE_CLK_EMMC_100M>,
-+				 <&clkgen GATE_CLK_AXI_EMMC>,
-+				 <&clkgen GATE_CLK_100K_EMMC>;
-+			clock-names = "core",
-+				      "bus",
-+				      "timer";
-+			status = "disabled";
-+		};
++	if (ret != 1)
++		return;
 +
-+		sd: mmc@704002b000 {
-+			compatible = "sophgo,sg2042-dwcmshc";
-+			reg = <0x70 0x4002b000 0x0 0x1000>;
-+			interrupt-parent = <&intc>;
-+			interrupts = <136 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clkgen GATE_CLK_SD_100M>,
-+				 <&clkgen GATE_CLK_AXI_SD>,
-+				 <&clkgen GATE_CLK_100K_SD>;
-+			clock-names = "core",
-+				      "bus",
-+				      "timer";
-+			status = "disabled";
-+		};
- 	};
- };
++	pci_info(pdev, "set downstream link at 2.5GT/s\n");
++	pcie_capability_read_word(pdev, PCI_EXP_LNKCTL2, &lnkctl2);
++	lnkctl2 &= ~PCI_EXP_LNKCTL2_TLS;
++	lnkctl2 |= PCI_EXP_LNKCTL2_TLS_2_5GT;
++	pcie_capability_write_word(pdev, PCI_EXP_LNKCTL2, lnkctl2);
++
++	if (pcie_retrain_link(pdev, true)) {
++		pci_info(pdev, "retraining failed\n");
++	}
++}
++
+ static const char *pci_type_str(struct pci_dev *dev)
+ {
+ 	static const char * const str[] = {
+@@ -2041,6 +2080,8 @@ int pci_setup_device(struct pci_dev *dev)
+ 			pci_read_config_word(dev, pos + PCI_SSVID_VENDOR_ID, &dev->subsystem_vendor);
+ 			pci_read_config_word(dev, pos + PCI_SSVID_DEVICE_ID, &dev->subsystem_device);
+ 		}
++		if (pci_speed_2_5g)
++			pcie_retrain_downstream_2_5g(dev);
+ 		break;
+ 
+ 	case PCI_HEADER_TYPE_CARDBUS:		    /* CardBus bridge header */
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 4246cb790c7b..18198af09142 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1184,6 +1184,7 @@ void pci_sort_breadthfirst(void);
+ 
+ u8 pci_bus_find_capability(struct pci_bus *bus, unsigned int devfn, int cap);
+ u8 pci_find_capability(struct pci_dev *dev, int cap);
++int pci_dev_str_match(struct pci_dev *dev, const char *p, const char **endptr);
+ u8 pci_find_next_capability(struct pci_dev *dev, u8 pos, int cap);
+ u8 pci_find_ht_capability(struct pci_dev *dev, int ht_cap);
+ u8 pci_find_next_ht_capability(struct pci_dev *dev, u8 pos, int ht_cap);
+@@ -1984,6 +1985,8 @@ static inline int pci_register_driver(struct pci_driver *drv)
+ static inline void pci_unregister_driver(struct pci_driver *drv) { }
+ static inline u8 pci_find_capability(struct pci_dev *dev, int cap)
+ { return 0; }
++static inline int pci_dev_str_match(struct pci_dev *dev, const char *p, const char **endptr)
++{ return 0; }
+ static inline u8 pci_find_next_capability(struct pci_dev *dev, u8 post, int cap)
+ { return 0; }
+ static inline u16 pci_find_ext_capability(struct pci_dev *dev, int cap)
 -- 
-2.34.1
+2.25.1
 
 
