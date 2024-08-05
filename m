@@ -1,39 +1,75 @@
-Return-Path: <linux-kernel+bounces-274144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA17C9473E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:28:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5AF9473EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8527DB20B8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8DE31F21605
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC5313D52F;
-	Mon,  5 Aug 2024 03:27:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B05913D530
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 03:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6216F13D50E;
+	Mon,  5 Aug 2024 03:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KmKcr1h9"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F57EDC;
+	Mon,  5 Aug 2024 03:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722828461; cv=none; b=QLULtGCQaQjtQPAOEsICz0nHVb9zKEtPA5o6Vk9xStnDOk0UtGBsVVE5+UOpi6aGyymuz5vWBBku0b7FbMV7hhNYftKQ4LOlUiVrMmzf4+A5omRWuRAgpZMtjVUTfFRBHyvHeYdDiZabPufTPI1qX3ce8qKNzJfx+x8Yh3qzclg=
+	t=1722828535; cv=none; b=igo0kUDr5bXIjw/L7UaM7nIWFqxhBJri5o9csU8Bc+RzkmOCPls3jMrfpNrBg4/HMpW1ojG49ieH4E2tB3iN0ldD5GVeSo/AwcOGeKfEgg5GiLtGHmzJ07h5utkJxgGKlRQPWP36P0oprPKnCheB2D1R7cArLgUrtEXVMfFIuPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722828461; c=relaxed/simple;
-	bh=hMHYsXg/nspvbDtmdihyNeNJ8UPV1Kbx4N8e0Mab0FM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dl5qqxOARTyd6XnGowD4n0bX2rZFLEYiKUcZJ0h8vB1gQgFHiCxOMZ5tCtrQe2DgEEz58ZsHCGQmV0kOZ5HKE8hxraKIWWM8XLByHX/eCNcVZac+XRV7S3DG+cDJ12qyXfsiEWJescaDjrqT7AHZYjhPIkl0BQd8mmnpy6u4bfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14829143D;
-	Sun,  4 Aug 2024 20:28:04 -0700 (PDT)
-Received: from [10.162.41.10] (a077893.blr.arm.com [10.162.41.10])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3398C3F5A1;
-	Sun,  4 Aug 2024 20:27:35 -0700 (PDT)
-Message-ID: <8a25787d-6684-450b-bb1c-f6b5e84fbd4e@arm.com>
-Date: Mon, 5 Aug 2024 08:57:32 +0530
+	s=arc-20240116; t=1722828535; c=relaxed/simple;
+	bh=kts81rH1k8RtXz6FCafCNk3tonScZQfSdlrhwhCMsZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VIJy6X6ZYhkgM673PCTiHxNnk812wngUQSAbqfT+G/GhAEkFaAy52bCcFA4rC7fHIr31XKcX7xZ9ETzrDqftMFEn6yOxOBDef+zW9Qn3b0K4mbremj7YQx4B+K3sqbSOxzzUlBoMgrALrJAE9aaD+wA8x6MpzmoRbK/IGCkDxb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KmKcr1h9; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a337501630so257211885a.3;
+        Sun, 04 Aug 2024 20:28:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722828533; x=1723433333; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=ubgoVcGCg+qbw4dJAKrhDegiiKl08DrFXbdGG+4Wd2Q=;
+        b=KmKcr1h9mdUUPAcgyp3kuXf34OURu0JUrXVb3Y3qkJikjyWVpycG/Af+UArSs5OLpN
+         wNCqOuzpcXNs699jqCdCi7KQoIF53W6B+p6Id7pW6qLF5JgERQqbShmX/VWFXe8r2mdd
+         zk56MfNX/Kok2sl5E0FNOJwKrGzIV19Z2EZ6B6N/QzFPiXDbgoSqfL4C3V+lKDB4gFI5
+         +IKC19zkDCmBlcf3fAl/FtpHvbHnBxbmpF5VQY156/OanXzAHVpUwv3aMWDFNn2+M0f6
+         dkvPWwN8XKUqcpKKAfx1kL1SIPWbouwshbjBVGMU54bk916+bOcvjy517XfVMvEGLT48
+         MzJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722828533; x=1723433333;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ubgoVcGCg+qbw4dJAKrhDegiiKl08DrFXbdGG+4Wd2Q=;
+        b=UFWxVqDb1Xlt5Sit62N23Q+B83VlwSYqppppKcMylFSQzLZ47dGGH4s2i5Gh6KcmJ2
+         TJQz75rM8QIoXlIuLhfRo0y+erjIJ6tIfRsmQWvNHqUk2ljuec56awaT7Zpx7zsZJhee
+         xf8fH4flzrtHJNni6v60zGWSe8ucYuRMLlxlBvZGYWro/hDBLUAj3KaLcQghhceC4DAe
+         Q5UO1h+CPMsrw+7t8k4zxYoLdHuz36mDTyNk2U2i2rV5r3WW9yDA+wWD+24T9h11Nspf
+         SbuYgqQRqXGXf5+jQdvpIYe0TCx8Cyax6//rGrCCrFr1y+54H6HnlZjCUFUuRw/NsxVY
+         BWqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAVgEhGS7OAcssrEaTp+1livnS4yJwz3qFLdbPNaSkmOxii3N8pzbl68qFqBjNaHhtbnOnpFlyhXZTFf2cqq2SfSc/mQ1T8IKOMuBXUYyaOjexy8wH2qEJjO1rBdQINcsfCNYQNHKOAUxbns75dSao/Wuqi8eNC5iJ0pBqjdSzm17y
+X-Gm-Message-State: AOJu0YzjBDAH+aZFWs7U67geQAaEbhSwTWZRlxM+qzGHaheYWb6cxil7
+	GP0oceBsVhO/VxqWYDoFjwbljlAsqPaXdK4oDM/Bag0gUwfTBZQ4
+X-Google-Smtp-Source: AGHT+IH65vZ8s5Q2UC3ovyv39LXG4xjNR+pcI5Q9I5KU56YIdlaN4OVmeOgUNJPurldO3bZxh3coNA==
+X-Received: by 2002:a05:6214:5c05:b0:6b5:dcda:badf with SMTP id 6a1803df08f44-6bb9843e9bcmr155389146d6.42.1722828532703;
+        Sun, 04 Aug 2024 20:28:52 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78ecc7sm31518456d6.35.2024.08.04.20.28.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 20:28:51 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <a8a81b3d-b005-4b6f-991b-c31cdb5513e5@roeck-us.net>
+Date: Sun, 4 Aug 2024 20:28:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,54 +77,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] arm64/tools/sysreg: Add Sysreg128/SysregFields128
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-References: <20240801054436.612024-1-anshuman.khandual@arm.com>
- <20240801054436.612024-2-anshuman.khandual@arm.com>
- <Zq4QuLbGkXQvhbB0@J2N7QTR9R3>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+From: Guenter Roeck <linux@roeck-us.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
+References: <20240731095022.970699670@linuxfoundation.org>
+ <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <Zq4QuLbGkXQvhbB0@J2N7QTR9R3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 8/3/24 16:42, Mark Rutland wrote:
-> On Thu, Aug 01, 2024 at 11:14:36AM +0530, Anshuman Khandual wrote:
->> FEAT_SYSREG128 enables 128 bit wide system registers which also need to be
->> defined in (arch/arm64/toos/sysreg) for auto mask generation. This adds two
->> new field types i.e Sysreg128 and SysregFields128 for that same purpose. It
->> utilizes recently added macro GENMASK_U128() while also adding some helpers
->> such as define_field_128() and parse_bitdef_128().
+On 8/4/24 11:36, Guenter Roeck wrote:
+> Hi,
+> 
+> On 7/31/24 03:03, Greg Kroah-Hartman wrote:
+>> This is the start of the stable review cycle for the 6.10.3 release.
+>> There are 809 patches in this series, all will be posted as a response
+>> to this one.  If anyone has any issues with these being applied, please
+>> let me know.
 >>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Mark Brown <broonie@kernel.org>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  arch/arm64/tools/gen-sysreg.awk | 231 ++++++++++++++++++++++++++++++++
->>  1 file changed, 231 insertions(+)
-> Having Sysreg128 and SysregFields128 sounds reasonable, though I suspect
-> we can share more code with Sysreg and SysregFields (e.g. by always
-> using GENMASK128() even for regular SYsreg and SysregFIilds).
-
-GENMASK_U128() should deliver same bit masks that could be used instead
-of earlier GENMASK_ULL() bit masks. Sounds good.
-
+>> Responses should be made by Fri, 02 Aug 2024 09:47:47 +0000.
+>> Anything received after that time might be too late.
+>>
+> [ ... ]
 > 
-> Regardless of this patch in particular, I think we want to see some
-> end-to-end usage (i.e. some actual bit definitions, along with asm and C
-> code that uses these definitions) so that we're confident this is the
-> right way to capture these definitions.
+>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>      genirq: Set IRQF_COND_ONESHOT in request_irq()
+>>
 > 
-> Sending this piecemeal, separate to those elements and sepate to
-> GENMASK_U128() makes this very painful to review effectively. Please
-> combine those elements into a single series so that reviewers can see
-> the entire picture.
+> With this patch in v6.10.3, all my parisc64 qemu tests get stuck with repeated error messages
+> 
+> [    0.000000] =============================================================================
+> [    0.000000] BUG kmem_cache_node (Not tainted): objects 21 > max 16
+> [    0.000000] -----------------------------------------------------------------------------
+> 
+> This never stops until the emulation aborts.
+> 
+> Reverting this patch fixes the problem for me.
+> 
+> I noticed a similar problem in the mainline kernel but it is either spurious there
+> or the problem has been fixed.
+> 
 
-Sure, will try and combine the elements as as much possible.
+As a follow-up, the patch below (on top of v6.10.3) "fixes" the problem for me.
+I guess that suggests some kind of race condition.
+
+Added Helge and the parisc mailing list to Cc:. Sorry, I forgot that earlier.
+
+Guenter
+
+---
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index dd53298ef1a5..53a0f654ab56 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -8,6 +8,7 @@
+
+  #define pr_fmt(fmt) "genirq: " fmt
+
++#include <linux/delay.h>
+  #include <linux/irq.h>
+  #include <linux/kthread.h>
+  #include <linux/module.h>
+@@ -2156,6 +2157,8 @@ int request_threaded_irq(unsigned int irq, irq_handler_t handler,
+         struct irq_desc *desc;
+         int retval;
+
++       udelay(1);
++
+         if (irq == IRQ_NOTCONNECTED)
+                 return -ENOTCONN;
+
 
