@@ -1,211 +1,70 @@
-Return-Path: <linux-kernel+bounces-275406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD10948503
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:49:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9162948514
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A9C9B22219
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:49:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D86D281A81
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7433D16C862;
-	Mon,  5 Aug 2024 21:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CACC16CD0D;
+	Mon,  5 Aug 2024 21:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nFyuptt4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8y7PwI4i"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8v+e0Gg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA2514B078;
-	Mon,  5 Aug 2024 21:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FA014A099
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722894546; cv=none; b=NJFot+e2gJMGlqmzb6okAuk3pA48oTB9ZAJid0iCvKaQlKTAphhT8X1kTtxY6kYOZ+EtGPNvJpcU3JIAxvKskrq5z8CtO2cckpHyw0kjXYrvaY4cVH3MujqhAhmfP7A8I/dtZEhx+AnTj+fCfRDJOun8g7Lo5vVyHh+nrcJRs6Q=
+	t=1722894910; cv=none; b=nVV7C4Zu7fGSXlgBlKRTL/zCm2HmEzDXl15//F5O+rcqhnN0pWBVxm4akX08v+/O1RmBp23uQm+168zbnmd1o6udzIhH5BcGLEKlE0pebV8zZiL2oeoxTVuXvH6GFx498zm4fNaOJ3hhqoOktqt9hwpSdOeJrUwl+A5/7MBPnzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722894546; c=relaxed/simple;
-	bh=xcxzwdGW5hWsS/t+y+73kl2SCdcllt90pNWtXcSNnws=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BRMNiQnbe4Pi8GbTyj57t8TW98NlHsZiP/LVmuMO+9W+L18zlsVwjEppN/ho2r4VoQ/bQV4PpYz3zD/GsSuykbDjPo7ejKKnIu5gkMj/J3PqfLheyz2W7hICpiGl7Ks0SjtDueT3XA8LkGP4ZSrRhQFDT3wobFjQhjHOjPk7E7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nFyuptt4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8y7PwI4i; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722894542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4nUCiNvZjsfrPJmP/M2fcdGMiwDctJMbZkujjzDAnT8=;
-	b=nFyuptt44fmvmIprTFimEB1edQCV0ozC4gp9n6q/NtcFw5SbjHB8JGGF0GQlwMseMAX1gQ
-	8bhkXGeqRSuUCHIQP8XJEdd2UW5MwA7LS/tukt+1dv+UM3QtRGAQDX/l0q/XIoWKqgPAui
-	oazH1nSPLIOarxTAuNx4I0eOeCpj4axXlYVDEhdvjW2QSZHRr9K82MtTn8VQAOZKP/3f3q
-	exqY30MRNJKiHHikr8qvvuKXrPQNvVZ4Sqf1wORLcMsZSDWNs6VNQov6GUdgCECefMOAnb
-	L/QhuXAnuS6Ll0ksKTwddoSnG2He/SIQissibdnsE2aX486tQsWP+Bp1MphxXw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722894542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4nUCiNvZjsfrPJmP/M2fcdGMiwDctJMbZkujjzDAnT8=;
-	b=8y7PwI4iiZJM4fshA/HMLPzK+dlDs1poQ6jHY64n3TWBdsMX8ouSyZ0fmzNCjhZZzZU4oC
-	rO8C5sonUchWZsAQ==
-To: Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org,
- pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, "Rafael J.
- Wysocki" <rafael.j.wysocki@intel.com>, Helge Deller <deller@gmx.de>,
- Parisc List <linux-parisc@vger.kernel.org>
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-In-Reply-To: <8326f852-87fa-435a-9ca7-712bce534472@roeck-us.net>
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <a8a81b3d-b005-4b6f-991b-c31cdb5513e5@roeck-us.net> <87ikwf5owu.ffs@tglx>
- <87frrj5e0o.ffs@tglx> <8326f852-87fa-435a-9ca7-712bce534472@roeck-us.net>
-Date: Mon, 05 Aug 2024 23:49:02 +0200
-Message-ID: <87y15a4p4h.ffs@tglx>
+	s=arc-20240116; t=1722894910; c=relaxed/simple;
+	bh=xJfkjfNoHBgjh/kpG66XeHnHneaw6JzLNkWQnyfOKLs=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=qWvRel7OOMzBWBV7lp5xkk2Ep+BXxJ5GE1/jU++KfVpUbiowLCyx+Pk9LKV/sPEDAXHRtr/6kR6wZ7p602CXEm0JdL/ehd691cJcw5gl8WMLEVV77MUTMGF9ni+h4vJCCFy1KZV/8r2DGNZCoLTSXBseCeWIIbr4b2EoNqLaumE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8v+e0Gg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBCD2C32782;
+	Mon,  5 Aug 2024 21:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722894910;
+	bh=xJfkjfNoHBgjh/kpG66XeHnHneaw6JzLNkWQnyfOKLs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Z8v+e0GgR75Fb4yvM6YeXDnYhKXYF1jyLym5V/1s18b8MlFoI9f9ProeLFJpeCqKE
+	 idmrLZbgrym4uhj+7GZXemNrhyN0I3/b8pcVTrmxsXK06wdukkIJVScaNHC2mm5WTL
+	 sUKBMfXwNw/vY/KYAcgeWpnmdih/1CxJXSZlZ5GgfZkkTqc2lRfzYODgtPmugqgR54
+	 1MfERN0y9oJzIVp3bAMUi2uUu8DV2OdowLoVU+L66HgTRhXND7iETUiEWs9gkgmYOc
+	 gjjEEhJFeC5cUJ9lf8tc+gZ2WmOtdAaClmXJ2YQQSeejOMfjrPPjFpc08MVi3K/agl
+	 m6JzQ86aQYdZA==
+Message-ID: <17286822755c4420d3ec2e405ccab41a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240803065625.347933-1-cuigaosheng1@huawei.com>
+References: <20240803065625.347933-1-cuigaosheng1@huawei.com>
+Subject: Re: [PATCH -next] spmi: pmic-arb: Add check for return value of platform_get_resource_byname
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+To: cuigaosheng1@huawei.com
+Date: Mon, 05 Aug 2024 14:55:07 -0700
+User-Agent: alot/0.10
 
-On Mon, Aug 05 2024 at 08:02, Guenter Roeck wrote:
-> On 8/5/24 05:51, Thomas Gleixner wrote:
->> IRQF_COND_ONESHOT has only an effect when
->> 
->>      1) Interrupt is shared
->>      2) First interrupt request has IRQF_ONESHOT set
->> 
->> Neither #1 nor #2 are true, but maybe your current config enables some moar
->> devices than the one on your website.
->> 
->
-> No, it is pretty much the same, except for a more recent C compiler, and it
-> requires qemu v9.0. See http://server.roeck-us.net/qemu/parisc64-6.10.3/.
->
-> Debugging shows pretty much the same for me, and any log message added
-> to request_irq() makes the problem go away (or be different), and if the problem
-> is seen it doesn't even get to the third interrupt request. I copied a more complete
-> log to bad.log.gz in above page.
+Quoting Gaosheng Cui (2024-08-02 23:56:25)
+> Add check for the return value of platform_get_resource_byname() and
+> return the error if it fails to catch the error.
+>=20
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 
-At the point where the problem happens is way before the first interrupt
-is requested, so that definitely excludes any side effect of
-COND_ONESHOT.
+Is this the right fixes tag?
 
-It happens right after
-
-[    0.000000] Memory: 991812K/1048576K available (16752K kernel code, 5220K rwdata, 3044K rodata, 760K init, 1424K bss, 56764K reserved, 0K cma-reserved)
-               SNIP
-[    0.000000] ** This system shows unhashed kernel memory addresses   **
-               SNIP
-
-I.e. the big fat warning about unhashed kernel addresses)
-
-In the good case the first interrupt is requested here:
-
-[    0.000000] Memory: 992804K/1048576K available (16532K kernel code, 5096K rwdata, 2984K rodata, 744K init, 1412K bss, 55772K reserved, 0K cma-reserved)
-               SNIP
-[    0.000000] ** This system shows unhashed kernel memory addresses   **
-               SNIP
-[    0.000000] SLUB: HWalign=16, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
-[    0.000000] ODEBUG: selftest passed
-[    0.000000] rcu: Hierarchical RCU implementation.
-[    0.000000] rcu:     RCU event tracing is enabled.
-[    0.000000] rcu:     RCU callback double-/use-after-free debug is enabled.
-[    0.000000] rcu:     RCU debug extended QS entry/exit.
-[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
-
-[    0.000000] NR_IRQS: 128              <- This is where the interrupt
-                                            subsystem is initialized
-[    0.000000] genirq: 64: 00215600      <- This is probably the timer interrupt
-
-Looking at the backtrace the fail happens from within start_kernel(),
-i.e. mm_core_init():
-
-       slab_err+0x13c/0x190
-       check_slab+0xf4/0x140
-       alloc_debug_processing+0x58/0x248
-       ___slab_alloc+0x22c/0xa38
-       __slab_alloc.isra.0+0x60/0x88
-       kmem_cache_alloc_node_noprof+0x148/0x3c0
-       __kmem_cache_create+0x5d4/0x680
-       create_boot_cache+0xc4/0x128
-       new_kmalloc_cache+0x1ac/0x1d8
-       create_kmalloc_caches+0xac/0x108
-       kmem_cache_init+0x1cc/0x340
-       mm_core_init+0x458/0x560
-       start_kernel+0x9ac/0x11e0
-       start_parisc+0x188/0x1b0
-
-The interrupt subsystem is initialized way later and request_irq() only
-works after that point.
-
-I'm 100% sure by now that this commit has absolutely nothing to do with
-the underlying problem. All it does is changing the code size and
-placement of text, data and ....
-
-So I finally managed to reproduce with gcc-13.3.0 from the k.org cross
-tools (the debian 12.2.2 does not).
-
-If I add:
-
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1513,6 +1513,8 @@ static int
- 	unsigned long flags, thread_mask = 0;
- 	int ret, nested, shared = 0;
- 
-+	pr_info("%u: %08x\n", irq, new->flags);
-+
- 	if (!desc)
- 		return -EINVAL;
- 
-it still reproduces. If I change that to:
-
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1513,6 +1513,8 @@ static int
- 	unsigned long flags, thread_mask = 0;
- 	int ret, nested, shared = 0;
- 
-+	new->flags &= ~IRQF_COND_ONESHOT;
-+
- 	if (!desc)
- 		return -EINVAL;
- 
-that does neither cure it (unsurprisingly).
-
-Reverting the "offending" commit cures it. 
-
-So I tried your
-
-     +       pr_info_once("####### First timer interrupt\n");
-
-which cures it too.
-
-So now where is the difference between the printk() in __setup_irq(),
-the new->flag mangling, the revert and the printk() in timer interrupt?
-
-There is ZERO functional change. There is no race either because at that
-point everything is single threaded and interrupts are disabled.
-
-The only thing which changes is the code and data layout as I can
-observe when looking at System.map of the builds. I stared at the diffs
-for a bit, but nothing stood out.
-
-Maybe the PARISC people can shed some light on it.
-
-This reminds me of the x86 32-bit disaster we debugged a few days ago...
-
-Thanks,
-
-        tglx
+Fixes: b319b5922db2 ("spmi: pmic-arb: remove the read/write access checks")
 
