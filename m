@@ -1,186 +1,316 @@
-Return-Path: <linux-kernel+bounces-274963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6208947ED2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:58:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078DC947ED6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501E81F229BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:58:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0321C21D6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EE315B10A;
-	Mon,  5 Aug 2024 15:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F4815B963;
+	Mon,  5 Aug 2024 15:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="J4XfM9uQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="SdMOh3N5"
-Received: from fallback19.i.mail.ru (fallback19.i.mail.ru [79.137.243.70])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AYnUREM/"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2070.outbound.protection.outlook.com [40.107.95.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E2F14901F;
-	Mon,  5 Aug 2024 15:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.70
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722873522; cv=none; b=lnKkS+d6AxzTX9/9IpVO0baQQPhQaZ9lHKWm7gNLIGK8un6vJ9DaagjTR7QhIOa8s5nooEh3gKveSMewh0j/U4uO4txNzPMEJm8Z9aLi7tWAIChpfFMjV8ZtRz7paT3ErLvt9rCED6Xar3msEQj3JYN1gIhXI4IRNEwLQ1nEi24=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722873522; c=relaxed/simple;
-	bh=/o7fdUSpEevSFZXLEevGNG6xsZwU1m3FEfZ4L71LGHU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UStmoy3fvkWizH+srvkBMrrBbYy9PtAMi8ObxxvlxfIITBiv+o3Yl90wlKpZXIIB98Id7M/d79VRhO9sg1xHV6QHOpkHfRH8PtYq8GBhx+aZ6KC4W4q2s2cfpX/MF+iCi2bt15i7ko2OgpzmQ3frerQEA3vIobS0we4dLBReQc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=J4XfM9uQ; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=SdMOh3N5; arc=none smtp.client-ip=79.137.243.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
-	h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=VQL6/+jRmDq+RWYZaM4vmiHlLNSOGJQ/PBLzFpmF5z0=;
-	t=1722873517;x=1722963517; 
-	b=J4XfM9uQAfrmhx9TpG+x0DSe2ucbT9mSCXD0vfUgQySE6dDRZunxLQ9jF4a+m9cTjDWx4aeA0Nu2ohsrv2eenNcjo79HuI7NtiRQqDQ7QbPBoSiz2l5QQgmlGTQN5GFdo/Lqf3bNv2cWvawO8WTm7nnC6Mxq/c4ZQRKxQDx2YiE=;
-Received: from [10.12.4.32] (port=53154 helo=smtp57.i.mail.ru)
-	by fallback19.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
-	id 1sb06O-008q5X-9j; Mon, 05 Aug 2024 18:58:28 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
-	; s=mailru; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
-	List-Owner:List-Archive:X-Cloud-Ids:Disposition-Notification-To;
-	bh=VQL6/+jRmDq+RWYZaM4vmiHlLNSOGJQ/PBLzFpmF5z0=; t=1722873508; x=1722963508; 
-	b=SdMOh3N5QdBBWJL3qWJh0pINT76D7BP8EO7YOO8NBqcWTLHdvrfIc2FOEDUerycoZ0o8OtQXObT
-	7T/hFfZnQCub+Yw+3w7TSpkzs8emGX+fYiTCdp9EPh+ke002HsPtERT/ZBnanaISg9bDwctgB0WWF
-	VZytV9VxUxqZjUm4HVk=;
-Received: by exim-smtp-548c4c4b6c-jc9tn with esmtpa (envelope-from <danila@jiaxyga.com>)
-	id 1sb068-00000000BRk-0HW1; Mon, 05 Aug 2024 18:58:12 +0300
-From: Danila Tikhonov <danila@jiaxyga.com>
-To: hadess@hadess.net,
-	hdegoede@redhat.com,
-	dmitry.torokhov@gmail.com,
-	neil.armstrong@linaro.org,
-	jeff@labundy.com,
-	krzk@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@mainlining.org,
-	Danila Tikhonov <danila@jiaxyga.com>
-Subject: [PATCH] Input: goodix-berlin - Fix VDDIO regulator name according to dt-bindings
-Date: Mon,  5 Aug 2024 18:58:06 +0300
-Message-ID: <20240805155806.16203-1-danila@jiaxyga.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D73914901F;
+	Mon,  5 Aug 2024 15:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722873542; cv=fail; b=rQ3DUIjQasg6OacTB1oCH6jkf8jfny+hW6uqeT1Go8pnDmUhrITC3+Esj3CoBUhnwVR5wUwLmFSIQdIJwAt0zEdOUZNuQITqHY7nCQGjqCItD/IW1cNy/B91haKXFhXMh2aO3f1fYBzxpDNz3uLv2aULl/J9u023BfMr+12098Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722873542; c=relaxed/simple;
+	bh=GF5dRs/qrIIT8HD8HT5gf1nXZhfSUhZq1B7kvQFGuws=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qd/xuzmnSeIpXUd54Nyv+kHLUc6STqG6JOexuAN5HioIqKfxp8CqUnVFeykbNPMnv1rLYX2RWmGoY5o7YhyWecNGnp+4GjqV42vTJBu5m1Za8KuQMOQibmjEFUcCZnN7swROxnmtWIFyoNpAKuZcwJnq9S82nLdQC9/Z9JBvIIw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AYnUREM/; arc=fail smtp.client-ip=40.107.95.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qiZEPzh52g8jomLtbqxQe4NHG4KVt8b3s0eAyVZXvOWXDWFQQQzWNZJ+hSQLqvUjChWz7A9yF0ceAElP3+lHiXXsRkz7LcnVhWiF76VnBi58+AEShpx3S3ZZuVI/epDC2HecqetLIHZGPjmx9RjSNQMWPbtR/DI5bGVz8lRPstyHriXozOjXRFuppVjwuNfH2OfdBI3DpBpVlC9TgiW1w9lj1jn2PcmBs2DMBGJsXGPqypyxaPIJhB162Bc7J8OQTlLifA/lcG7w/lJTWlSalif6I+0/avM7hhAvQLo0sJU7K7IKdgT0E/o2dSjfjNRtNe7EqlaurANBd/swq1rTVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NdhNQTVxiXjEiB784v4IrWFcPeVV9s8m4MLZL6IOUEY=;
+ b=i05fwbU6hRKo+0u1xV5LgzfyV9aYBsgVD5hrheaRI+Gs2S/N9K5ziITyVXoXZfuxCQNrFhX33Ng5No4ZeTxx4PKMxCj8ap3gpFcEHHA9aee6Z/hqjtdgY/rHcgud7VV6FJP06s546JqNknd9G48is6dWmtcmTL6yJuGvmekIlI+enhd6affDW942cJTMMtY2AodogBgit585sYjfirjpHxmpMF888TZKe2V9HRCTna16VpmHn13UV93IvL6NLYyvwZEa1vY3g4l+Cv3/ZPNGa0mYkD4+YsLT3pQEOBK3fFJ0ntVdImmu0vkBhmJuIlNmovX1l2BxwrlJ17d+QR87+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NdhNQTVxiXjEiB784v4IrWFcPeVV9s8m4MLZL6IOUEY=;
+ b=AYnUREM/Yif254KQBZS3tXPOl4JsJIyMmHoKSoybX4QqaPCdspFcCcQ6tdvscqYJD86ZWAcch2hiJQjRG8vw00PojOlUXF6Xx08e6lHCP7fMliQZqmfbi09sVG1eJ+EovZfi2w8pXthwcrVz5sZnUMSmNFEZm600IKWLI33EdJ3u5jKgyuL2SouPrudYpGAkjNy0P8/iQ0uI62bsaLPhrDhjTCjfaENG4Tjp0VOEDEIkZE5ifBbvMC95VZZCMZgGm6htugYj1P8L5LIt8mMmlrK6Obfys9j+MN0iiMSyXPGdFlUYoVACF8HuWRebwjrZ6o5JjwSi+BaH3PvjPVoqtQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY8PR12MB8297.namprd12.prod.outlook.com (2603:10b6:930:79::18)
+ by CH2PR12MB4136.namprd12.prod.outlook.com (2603:10b6:610:a4::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Mon, 5 Aug
+ 2024 15:58:55 +0000
+Received: from CY8PR12MB8297.namprd12.prod.outlook.com
+ ([fe80::b313:73f4:6e6b:74a4]) by CY8PR12MB8297.namprd12.prod.outlook.com
+ ([fe80::b313:73f4:6e6b:74a4%7]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
+ 15:58:55 +0000
+Message-ID: <cc771916-62fe-4f6b-88d2-9c17dff65523@nvidia.com>
+Date: Mon, 5 Aug 2024 17:58:50 +0200
+User-Agent: Mozilla Thunderbird
+From: Dragos Tatulea <dtatulea@nvidia.com>
+Subject: Re: [RFC PATCH vhost] vhost-vdpa: Fix invalid irq bypass unregister
+To: Jason Wang <jasowang@redhat.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "mst@redhat.com" <mst@redhat.com>, "eperezma@redhat.com"
+ <eperezma@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240801153722.191797-2-dtatulea@nvidia.com>
+ <CACGkMEutqWK+N+yddiTsnVW+ZDwyM+EV-gYC8WHHPpjiDzY4_w@mail.gmail.com>
+ <51e9ed8f37a1b5fbee9603905b925aedec712131.camel@nvidia.com>
+ <CACGkMEuHECjNVEu=QhMDCc5xT_ajaETqAxNFPfb2-_wRwgvyrA@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CACGkMEuHECjNVEu=QhMDCc5xT_ajaETqAxNFPfb2-_wRwgvyrA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0322.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:eb::15) To CY8PR12MB8297.namprd12.prod.outlook.com
+ (2603:10b6:930:79::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailru-Src: smtp
-X-7564579A: 646B95376F6C166E
-X-77F55803: 4F1203BC0FB41BD96F0A89E6F10F8FD719FCADC6D1D921C94D8B570832F306F0182A05F5380850408364D05678341FFB3DE06ABAFEAF670596DAB18083300139D2EF3BFD98E86F6AA65EC38BD4A67DDF
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7F2919D563845004AEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637352A1F9739ED04D38638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8E408599121C697DD67FF1C9CD3E4420BB936B7125617A6A8CC7F00164DA146DAFE8445B8C89999728AA50765F79006370277CA7F994D7EF5389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC80839144E5BB460BAF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA73AA81AA40904B5D9A18204E546F3947CA6C7FFFE744CA7FB302FCEF25BFAB3454AD6D5ED66289B523666184CF4C3C14F6136E347CC761E07725E5C173C3A84C397F497EB49C4C592BA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CF17B107DEF921CE791DD303D21008E298D5E8D9A59859A8B6D082881546D9349175ECD9A6C639B01B78DA827A17800CE71D0063F52110EA4A731C566533BA786AA5CC5B56E945C8DA
-X-C1DE0DAB: 0D63561A33F958A597AA1658B01787685002B1117B3ED696391F3258CA911A4DF09842853758E9E5823CB91A9FED034534781492E4B8EEADF12279BA039A6965C79554A2A72441328621D336A7BC284946AD531847A6065A17B107DEF921CE79BDAD6C7F3747799A
-X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF9F7289DF140F6B8392DCDA45705B333A672C0630FA8A6DDC93C4F4660D9BF7969EC5AF04A575AA6C7E625F09773DF59AFF9AE61E034E90634BD43896EFA6A6CAC3E516E8FBC249A04759C7B6195DDAFE02C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojj+FfUYRjItrGJsgt1/XxtA==
-X-Mailru-Sender: A29E055712C5B697A0B4B50D4D88F0E8E879A87A7C2237C4B951B70A5BD4BD8E166B3F31B51BDFF5BC4EE72AB2E748C5210985D6C440852E55B4A2144138A88088F510C62CFD139357C462056C5AD9112068022A3E05D37EB4A721A3011E896F
-X-Mras: Ok
-X-7564579A: 646B95376F6C166E
-X-77F55803: 6242723A09DB00B4D18B7733AFD02D5BBCF79F375D8221874E275F66436248E2049FFFDB7839CE9E101C537ED636B3CB7058EA720B8ACD94E40E6747070BE0E82710AB88D75B52E2
-X-7FA49CB5: 0D63561A33F958A5462875E13BB7BF5F1F6A5C3928C7C37F6C014E797AE6F5D48941B15DA834481FA18204E546F3947CCBF6BC0891A06A85F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F790063782D336B02A64FFBC389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C33F08D42084047B3C35872C767BF85DA2F004C90652538430E4A6367B16DE6309
-X-87b9d050: 1
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojj+FfUYRjItpxl73lRWpnMg==
-X-Mailru-MI: 8000000000000800
-X-Mras: Ok
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR12MB8297:EE_|CH2PR12MB4136:EE_
+X-MS-Office365-Filtering-Correlation-Id: aee732df-05ad-4139-1a3d-08dcb5678226
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?alRld0VkeThlTDdzMExsSXRMSTA3UkwxSUd4aUcyWEcwTUhkYzd5aXR0QStC?=
+ =?utf-8?B?eGRBeWJDcjMzanFnSDIzZDdCSXE5NUVkb2I2RXhRTXBkZkloLzdGTHRBdDF5?=
+ =?utf-8?B?Vm5YbVhKaHBQNjZNRmhWa2ZER0tRL1h5cmNVeXlyZGp2dXUwVEVVMUoyK2d1?=
+ =?utf-8?B?VlNOQW1VL2c0N2dLMFZUS2Q5dkRHNHRGcDdoWEdYV2pmd0N5MzFEZ1Y5MEt5?=
+ =?utf-8?B?b2VEczQyVTJGcDRvWld2a3FRYXp3c2p0VlhKYUN4VnlXL3JCd3cvMFcvaEN3?=
+ =?utf-8?B?M2g0QzA3QkV0SHNmTExZY1h2REZKaDhHOUNQbFd5R3FYNnJKYVB1MlV3WCt4?=
+ =?utf-8?B?c2ViNmg2VHh3cEtWSXk4UURxcUtDQjRyc2x6M3NlTWdDUnhzeHJUeWdXUWN0?=
+ =?utf-8?B?Tklkdnc1U3BMOVd5a21OWXdwTlRya0l1QVpJSy9qT1U4dHdHTFFBbm5PMXFG?=
+ =?utf-8?B?Vk40Q1ZhQkpzN1ZRUDN0c2dCUllQOGQydCtZbzhSQjl1YU9pY0tFTDh2N282?=
+ =?utf-8?B?c254L1hZZWdKb2N3SWU2eXZLSk8xKzM5Q1d2dGJoVzF5YkVKcVlaUHFnU0k4?=
+ =?utf-8?B?MFh0VzBQRE5KZEJsTjRkL05ZL2hRTDMwMzZHRmZIZ3hhWHVPSWd0anphVEJ6?=
+ =?utf-8?B?MHdvZHVNVTZPb2h0bWYrUk5oRWFmYTAxSnRWT0UyWk9NNUdoZXdDN29KRmNE?=
+ =?utf-8?B?UExXZnV4ZHpvSTA2a2k4OC9jKzFubXJxbi9KK2JKMjV5TW13OXRCSUp5dUpu?=
+ =?utf-8?B?NS9qVWZrS2RxU3U0SGhXR0NjbHJ4aEZvZTdEcXBjKytIUXc2SmhmTW9neFJo?=
+ =?utf-8?B?UjhZbGdVYXk2bElFRm9qZDZvbS9XaTNPbURMYmtSUFBadmgrQTZMdEJMb2Rp?=
+ =?utf-8?B?TUFVbW5pUzdES1Z1S294V2hPUzVOQ1pGeG1GRlowWHcxMEExNWVWVkZ6R0pz?=
+ =?utf-8?B?Z1RuK0hLRGpLa3Q2QTgwNnJwSlllbHBMQndRbEo0MFQ3ZTQ4Q25teVZnUlk1?=
+ =?utf-8?B?dzdwck1yTy94YUlqSU1nMU9UdVlxcUJUbFFaL0FwVWg4WGtpRjFhbzYrMUhJ?=
+ =?utf-8?B?aXZrcnZDT1Q4bGMwVE9sSFJsVVpPYWhZOXh6WXNFV2RRZ3RtUlZvUS9BNFZl?=
+ =?utf-8?B?b3BMRFhYTUlrWmdWSWM3WjAyQ00rSExNQkJ6aWdRcEphdU5sa2ZNNGpVTmJE?=
+ =?utf-8?B?eXIzZDNTaTNDNjRURFp5d2VzRzdpSEgrZ0FDdDdmUXVPeklQMzZYOXIxWnU3?=
+ =?utf-8?B?TTNJTDdrMTdyQlVjRjltQU5QTStlR3ZIQW4rcEN6SzRPSHJ6L1ZSQXZJKzc2?=
+ =?utf-8?B?eFdHRHV0NEZ3MEk2WHl3VytxTFluaVF6bkJWbjNNdWZSU2o5bC9rWGFpcnJr?=
+ =?utf-8?B?M2kzaXk4Q0ljenZWVm9kSnhlY0pqaXpaZVlIeEVVMmZwTERTV1BXdkZBR0dX?=
+ =?utf-8?B?WURsODRTKzd0OVBmMjB3dlRKcDAvOWJsNStvTEF4UU14MlRWaU5ZV3k2S3ly?=
+ =?utf-8?B?Q042SXZvWTlzekFVZ3c0d1lKcW56ZVYxdHdYMGYwY2lxaHNPd3h4NWx3UHJ1?=
+ =?utf-8?B?NnBnMzl6SSs3bHBxaDVpTlNONjVlLzZoY2xtQm1EUlBaN21YeWlVOWFNYnNp?=
+ =?utf-8?B?N1p3OVdrRkxBdlYyTzFMZmRhQU1IamtKTHpyMVVKVHY2UUFtSks0REhBNHJL?=
+ =?utf-8?B?SldsOFNzMnF3cEpnZlFrbC9tMDVFRjN1YmJGVnBaOVhlaTRPb0c4T29PVzF6?=
+ =?utf-8?B?ZW16T0VaYWorZHREeWwzUmZpNlUxMUEzcFN2V0RpMHMrTTc5TEE3dmFma0Zu?=
+ =?utf-8?B?L2JDejFuTFpFYlNFcWROUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB8297.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZXJVemdQbEl6dGVOSGNlVUNFOElrVWthWEMyeW9EYzlQL1RCR0Y3Q3ZVZU41?=
+ =?utf-8?B?ak5HZ1dRMHRKK2wvYmY2ZXlvS01RZ2FuOHByeUpDYzU2aVFPOU5DRjhEUmt6?=
+ =?utf-8?B?aTVoeHYvUDZpVnRML2s2YkN3THhwS296MUhpMllPTm1DbTkwMnM2T3JCL3VT?=
+ =?utf-8?B?c2dqandTNG05RGl5Y0drdVpHVXE3ZnlxTm9uLzFyVElZbXkyRCtnNlNXcDA3?=
+ =?utf-8?B?eE82Z2hmdW1CUHlaNkRtdUlVYUFpTDFvK0hndldZRjBNYXRueFNBNytIaUla?=
+ =?utf-8?B?SEIvM0JNTU1DaHYyRG5wZzlaUWJVZUZBSzU4VXdVYlpFckhCSWVFY3BBSE1M?=
+ =?utf-8?B?eXlRSjAraHc2TnlyMUluYUNqcGFPdE9JWnR3VzdsK1ZYeGp4cEQyVXlKb1Z1?=
+ =?utf-8?B?VmRiOG5HMlNXSUJVYmw5eHlDUkVVaDQxT1NITktHb2dKMGhaWnlWdnBXK1ZQ?=
+ =?utf-8?B?RXZjZkFnNzA1V3RlVGRRdy9zOTN5MEo3TDU1U3RFNnFGTXJjUXFWV3NGRVBS?=
+ =?utf-8?B?dmxuUzlCUUVadUlIOUJlcXFqc0dFZHVkeHIvQUFzbVBOZ0JjWUhUMkk5bktq?=
+ =?utf-8?B?bHRLOUhnRnl0ME5wS2xjQzVmeUVLMXZneDgzRm5VRksyV0c4RHo5UU5wb3JE?=
+ =?utf-8?B?SFRscnpjeU1udzUwMVlnc3ZqZTNNR1dVakJlYkpQVjYvRlNSSy91YWJacE1Y?=
+ =?utf-8?B?d21EU1ZoS3pLUE9KWmxkU3NLaVhqTHNSNnl1NWhRZkF6bGJaUCtpLzIxMmVB?=
+ =?utf-8?B?SEt1aDlDb3ltUk9MUjhMbjNUSmJsaUlkTUZQTHNaOERoWWhSaG1TaGpVL20v?=
+ =?utf-8?B?TDJscXdPRG56dllPczltSXlsTW5JS0tOSXVhSDNwNVB2QmlWWkl3WW1acHht?=
+ =?utf-8?B?alZ4N3o5Q2tTbzM2M2NmUjRRZHVRS3IvQmdiUk5DNUJ1TGxiUFBGYkhBOHdR?=
+ =?utf-8?B?bDFKL2llc0NJcHhHTUxHY09jRi8vSVhDV2ZGcXhWd0JFY3A2VVRNOXpGT0Nh?=
+ =?utf-8?B?RkZaRjAzaVRNQWdrUHNFeTcrZzFCTmozUk9ncU5QVzVVRU1CWk43RkloS3Js?=
+ =?utf-8?B?ZU9KQ1Y4SVlNYTFKK2tQNlgzQXd4VVh4SGR3cTR5ckFNN1piMERIV05aMzNJ?=
+ =?utf-8?B?NVE1ZUlzUUt0SVJqUE05QWpxSjdId3NsT0pldkJrOEZxRTRFWTNDM1dDS3h4?=
+ =?utf-8?B?SkdZWFlPMUYxQUdxUXA5aDdlb0k4Vm5vTWl3dCt5Sm1Ldk1lSUVhdk5yWmZ0?=
+ =?utf-8?B?d2ZxTVFmR2FDcE9yZkVZclp2NEZmUDROQ1QyTW1Sczl3MkhJM0tWNUZCallR?=
+ =?utf-8?B?SWdYYU5oQmVIM1YwWmZma1pnMkNVaGZRY3FqYkVESE1EZlFLRFRyTUVaeHZ5?=
+ =?utf-8?B?a3hXYTVGVzl4R0xGbEdDNkR6Mnp5RnppaTdPR091QU91NFhzTWlEc2VGTDVa?=
+ =?utf-8?B?TFYyVTdVbzF4aWl6UGdTMWJENkdPRjV6L0E2VFN1QnhES1A1YjRUTVYyYWJJ?=
+ =?utf-8?B?REUyeUVvNituRkkvS1BKdEZwbWFjMXBOdkxIc2U1c0M0UG55UDhXM3pLZ2w5?=
+ =?utf-8?B?Mk4zRHJoazgzY0cvV29JbTR3Yy9aMGpUMjZ3bjRieE13YmRUZVhDdmludjYw?=
+ =?utf-8?B?aFNQKzhHY1gyVFJjdkxKd3lVRm04bCt4OXB0bkpiRVhaRFNJN3hTMERGcS9R?=
+ =?utf-8?B?ems0L2JvZ2xFTzJ1SkZGaUI0MFBYYWVCUUtId21HT3l2Wll6cnIrWERJRmFF?=
+ =?utf-8?B?K3FxUWlMR2ZHREk4elFTVU5Yd0R5cjdKcXFhNVhkdlRpdGx0cXU5N1picE5x?=
+ =?utf-8?B?YmVjaDE0akx1aEFqMTJILzJkRjljSVErQzlNRlBONlVWZWwzUTkzUUtZUmNx?=
+ =?utf-8?B?TWZ2VzIrVDNzbGIxbjhvQVNqd1o5ek8yZzdydlBScXVwOVQ0NCtSVjRPdEdq?=
+ =?utf-8?B?TXBiajBuRzFmWExyUStsYjM1NjNSOXc5T3dsSDFhMkFVT2ZUcWtaMEw3QXIz?=
+ =?utf-8?B?TlZDelNwWmV2UHNWVi9teXF5cDQ3dTBHeEgwdHhNQzBXTmpqVTlQenY4b0JJ?=
+ =?utf-8?B?amtzZFFCNG5FUXhRVVRqVjFGZXNDWHZkSGd6MDZCMnNNcjhLUlRLQ2FOWnZT?=
+ =?utf-8?Q?p18yq4vAl6FT7/9buDaMPhoXN?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aee732df-05ad-4139-1a3d-08dcb5678226
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB8297.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 15:58:55.1732
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +gyny5/qg6xKGCT5w9JyqMP9BgwRtduRh7Df2KQBILhCvYb96AJkHTW6OnEIYs6HAgJZKZ6xj45yhP2GFt2MFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4136
 
-The dt-bindings specify the regulator as "vddio" instead of "iovdd".
+On 05.08.24 05:17, Jason Wang wrote:
+> On Fri, Aug 2, 2024 at 2:51 PM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+>>
+>> On Fri, 2024-08-02 at 11:29 +0800, Jason Wang wrote:
+>>> On Thu, Aug 1, 2024 at 11:38 PM Dragos Tatulea <dtatulea@nvidia.com> wrote:
+>>>>
+>>>> The following workflow triggers the crash referenced below:
+>>>>
+>>>> 1) vhost_vdpa_unsetup_vq_irq() unregisters the irq bypass producer
+>>>>    but the producer->token is still valid.
+>>>> 2) vq context gets released and reassigned to another vq.
+>>>
+>>> Just to make sure I understand here, which structure is referred to as
+>>> "vq context" here? I guess it's not call_ctx as it is a part of the vq
+>>> itself.
+>>>
+>>>> 3) That other vq registers it's producer with the same vq context
+>>>>    pointer as token in vhost_vdpa_setup_vq_irq().
+>>>
+>>> Or did you mean when a single eventfd is shared among different vqs?
+>>>
+>> Yes, that's what I mean: vq->call_ctx.ctx which is a eventfd_ctx.
+>>
+>> But I don't think it's shared in this case, only that the old eventfd_ctx value
+>> is lingering in producer->token. And this old eventfd_ctx is assigned now to
+>> another vq.
+> 
+> Just to make sure I understand the issue. The eventfd_ctx should be
+> still valid until a new VHOST_SET_VRING_CALL().
+> 
+I think it's not about the validity of the eventfd_ctx. More about
+the lingering ctx value of the producer after vhost_vdpa_unsetup_vq_irq().
+That value is the eventfd ctx, but it could be anything else really...
 
-This patch fixes the regulator name from "iovdd" to "vddio" in the
-driver code to align with the dt-bindings. Fixing the dt-bindings
-would break ABI, hence the fix is made in the driver instead.
 
-There are no users of this regulator сurrently.
+> I may miss something but the only way to assign exactly the same
+> eventfd_ctx value to another vq is where the guest tries to share the
+> MSI-X vector among virtqueues, then qemu will use a single eventfd as
+> the callback for multiple virtqueues. If this is true:
+> 
+I don't think this is the case. I see the issue happening when running qemu vdpa
+live migration tests on the same host. From a vdpa device it's basically a device
+starting on a VM over and over.
 
-Fixes: 44362279bdd4 ("Input: add core support for Goodix Berlin Touchscreen IC")
-Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
----
- .../input/touchscreen/goodix_berlin_core.c    | 26 +++++++++----------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+> For bypass registering, only the first registering can succeed as the
+> following registering will fail because the irq bypass manager already
+> had exactly the same producer token.
+> For registering, all unregistering can succeed:
+> 
+> 1) the first unregistering will do the real job that unregister the token
+> 2) the following unregistering will do nothing by iterating the
+> producer token list without finding a match one
+> 
+> Maybe you can show me the userspace behaviour (ioctls) when you see this?
+> 
+Sure, what would you need? qemu traces?
 
-diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
-index 0bfca897ce5a..b5d6e6360fff 100644
---- a/drivers/input/touchscreen/goodix_berlin_core.c
-+++ b/drivers/input/touchscreen/goodix_berlin_core.c
-@@ -165,7 +165,7 @@ struct goodix_berlin_core {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	struct regulator *avdd;
--	struct regulator *iovdd;
-+	struct regulator *vddio;
- 	struct gpio_desc *reset_gpio;
- 	struct touchscreen_properties props;
- 	struct goodix_berlin_fw_version fw_version;
-@@ -248,22 +248,22 @@ static int goodix_berlin_power_on(struct goodix_berlin_core *cd)
- {
- 	int error;
- 
--	error = regulator_enable(cd->iovdd);
-+	error = regulator_enable(cd->vddio);
- 	if (error) {
--		dev_err(cd->dev, "Failed to enable iovdd: %d\n", error);
-+		dev_err(cd->dev, "Failed to enable vddio: %d\n", error);
- 		return error;
- 	}
- 
--	/* Vendor waits 3ms for IOVDD to settle */
-+	/* Vendor waits 3ms for VDDIO to settle */
- 	usleep_range(3000, 3100);
- 
- 	error = regulator_enable(cd->avdd);
- 	if (error) {
- 		dev_err(cd->dev, "Failed to enable avdd: %d\n", error);
--		goto err_iovdd_disable;
-+		goto err_vddio_disable;
- 	}
- 
--	/* Vendor waits 15ms for IOVDD to settle */
-+	/* Vendor waits 15ms for VDDIO to settle */
- 	usleep_range(15000, 15100);
- 
- 	gpiod_set_value_cansleep(cd->reset_gpio, 0);
-@@ -283,8 +283,8 @@ static int goodix_berlin_power_on(struct goodix_berlin_core *cd)
- err_dev_reset:
- 	gpiod_set_value_cansleep(cd->reset_gpio, 1);
- 	regulator_disable(cd->avdd);
--err_iovdd_disable:
--	regulator_disable(cd->iovdd);
-+err_vddio_disable:
-+	regulator_disable(cd->vddio);
- 	return error;
- }
- 
-@@ -292,7 +292,7 @@ static void goodix_berlin_power_off(struct goodix_berlin_core *cd)
- {
- 	gpiod_set_value_cansleep(cd->reset_gpio, 1);
- 	regulator_disable(cd->avdd);
--	regulator_disable(cd->iovdd);
-+	regulator_disable(cd->vddio);
- }
- 
- static int goodix_berlin_read_version(struct goodix_berlin_core *cd)
-@@ -744,10 +744,10 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
- 		return dev_err_probe(dev, PTR_ERR(cd->avdd),
- 				     "Failed to request avdd regulator\n");
- 
--	cd->iovdd = devm_regulator_get(dev, "iovdd");
--	if (IS_ERR(cd->iovdd))
--		return dev_err_probe(dev, PTR_ERR(cd->iovdd),
--				     "Failed to request iovdd regulator\n");
-+	cd->vddio = devm_regulator_get(dev, "vddio");
-+	if (IS_ERR(cd->vddio))
-+		return dev_err_probe(dev, PTR_ERR(cd->vddio),
-+				     "Failed to request vddio regulator\n");
- 
- 	error = goodix_berlin_power_on(cd);
- 	if (error) {
--- 
-2.45.2
+Thanks,
+Dragos
+
+> Thanks
+> 
+>>
+>>>> 4) The original vq tries to unregister it's producer which it has
+>>>>    already unlinked in step 1. irq_bypass_unregister_producer() will go
+>>>>    ahead and unlink the producer once again. That happens because:
+>>>>       a) The producer has a token.
+>>>>       b) An element with that token is found. But that element comes
+>>>>          from step 3.
+>>>>
+>>>> I see 3 ways to fix this:
+>>>> 1) Fix the vhost-vdpa part. What this patch does. vfio has a different
+>>>>    workflow.
+>>>> 2) Set the token to NULL directly in irq_bypass_unregister_producer()
+>>>>    after unlinking the producer. But that makes the API asymmetrical.
+>>>> 3) Make irq_bypass_unregister_producer() also compare the pointer
+>>>>    elements not just the tokens and do the unlink only on match.
+>>>>
+>>>> Any thoughts?
+>>>>
+>>>> Oops: general protection fault, probably for non-canonical address 0xdead000000000108: 0000 [#1] SMP
+>>>> CPU: 8 PID: 5190 Comm: qemu-system-x86 Not tainted 6.10.0-rc7+ #6
+>>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+>>>> RIP: 0010:irq_bypass_unregister_producer+0xa5/0xd0
+>>>> RSP: 0018:ffffc900034d7e50 EFLAGS: 00010246
+>>>> RAX: dead000000000122 RBX: ffff888353d12718 RCX: ffff88810336a000
+>>>> RDX: dead000000000100 RSI: ffffffff829243a0 RDI: 0000000000000000
+>>>> RBP: ffff888353c42000 R08: ffff888104882738 R09: ffff88810336a000
+>>>> R10: ffff888448ab2050 R11: 0000000000000000 R12: ffff888353d126a0
+>>>> R13: 0000000000000004 R14: 0000000000000055 R15: 0000000000000004
+>>>> FS:  00007f9df9403c80(0000) GS:ffff88852cc00000(0000) knlGS:0000000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 0000562dffc6b568 CR3: 000000012efbb006 CR4: 0000000000772ef0
+>>>> PKRU: 55555554
+>>>> Call Trace:
+>>>>  <TASK>
+>>>>  ? die_addr+0x36/0x90
+>>>>  ? exc_general_protection+0x1a8/0x390
+>>>>  ? asm_exc_general_protection+0x26/0x30
+>>>>  ? irq_bypass_unregister_producer+0xa5/0xd0
+>>>>  vhost_vdpa_setup_vq_irq+0x5a/0xc0 [vhost_vdpa]
+>>>>  vhost_vdpa_unlocked_ioctl+0xdcd/0xe00 [vhost_vdpa]
+>>>>  ? vhost_vdpa_config_cb+0x30/0x30 [vhost_vdpa]
+>>>>  __x64_sys_ioctl+0x90/0xc0
+>>>>  do_syscall_64+0x4f/0x110
+>>>>  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>>>> RIP: 0033:0x7f9df930774f
+>>>> RSP: 002b:00007ffc55013080 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>>>> RAX: ffffffffffffffda RBX: 0000562dfe134d20 RCX: 00007f9df930774f
+>>>> RDX: 00007ffc55013200 RSI: 000000004008af21 RDI: 0000000000000011
+>>>> RBP: 00007ffc55013200 R08: 0000000000000002 R09: 0000000000000000
+>>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000562dfe134360
+>>>> R13: 0000562dfe134d20 R14: 0000000000000000 R15: 00007f9df801e190
+>>>>
+>>>> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+>>>> ---
+>>>>  drivers/vhost/vdpa.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+>>>> index 478cd46a49ed..d4a7a3918d86 100644
+>>>> --- a/drivers/vhost/vdpa.c
+>>>> +++ b/drivers/vhost/vdpa.c
+>>>> @@ -226,6 +226,7 @@ static void vhost_vdpa_unsetup_vq_irq(struct vhost_vdpa *v, u16 qid)
+>>>>         struct vhost_virtqueue *vq = &v->vqs[qid];
+>>>>
+>>>>         irq_bypass_unregister_producer(&vq->call_ctx.producer);
+>>>> +       vq->call_ctx.producer.token = NULL;
+>>>>  }
+>>>>
+>>>>  static int _compat_vdpa_reset(struct vhost_vdpa *v)
+>>>> --
+>>>> 2.45.2
+>>>>
+>>>
+>> Thanks
+>>
+> 
 
 
