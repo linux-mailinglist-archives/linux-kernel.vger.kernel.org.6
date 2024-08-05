@@ -1,267 +1,269 @@
-Return-Path: <linux-kernel+bounces-275003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E75947F63
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:31:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A306947F66
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB58B1F22B05
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:31:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAD2FB20EB9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F9015C128;
-	Mon,  5 Aug 2024 16:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2D15C14B;
+	Mon,  5 Aug 2024 16:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0/kUfl4"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CSPxNJac";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="fDNWVS+H";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uU4sBfOn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7v/ihztv"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAB313AD29;
-	Mon,  5 Aug 2024 16:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5EC131BDF;
+	Mon,  5 Aug 2024 16:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722875506; cv=none; b=H+zI5aeneMhEc9A4yClpcRdELUGAQgfUGJaao/8/w9E6d7sZp1jlIHEraBqhluXYyLYI/SFA/1mHeOb2VU7tqTVSFgSmkaLC0UYk+xBT707UCG03HZKk7vW2K8cfyj9L95BR1xEHMcK8KckzeKW1lVOQGqrGwlB5/tnFvFWOgdA=
+	t=1722875607; cv=none; b=aQIqrqOkQgHRkQhEVM6oEZoIa/3mV45qUeX4sgR5L360oLArmV/EFUVFiEkO8fGqBohkq6ZsfWCP/Xe1f3tNGPdmRcyN7jybkzJ52rCiuXlst44nEcelaiU2tdMge25M81zl4/38vrIcCkhQqzx+qSlygI/zKVnx5RAvj4j3pE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722875506; c=relaxed/simple;
-	bh=CGjC+WBcE98DaN0rYYpCWu7ZVHKvKIvRrZykINZmEQQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=nn58TMmZrluzYm3PV6WUAeLv2+kfhLe5JIjFjJ2A3rm3SA0FIdgSObgEaVmuW4rRWvFQycOyiNAi/kfqNz7EGt1J0oEIQ+7QTHUS3GzGpRwGfhnOUxO3OPu7sAbXYG3uE0q+T8fhhgZ8jUAbnBOY2HbgVHcbA+9kDLRyZAZe6Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0/kUfl4; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so23096187e87.0;
-        Mon, 05 Aug 2024 09:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722875503; x=1723480303; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=621xkAoDI4+8AtZyzmI5ne9j+EyrefU8aEvGSj0OzNs=;
-        b=e0/kUfl4noteTPITMTk+fDeDvjpaxyDfSHx27swego9JTPyujyDvbMzQ9MteYUJwXg
-         ETUdhz6nNuNpp0tNsUELP3JlUohTc70goldZChvZa4zOcX8GDOCG4L8ELHRnjSEmn0og
-         6zwSychpDcBmIdli/CunPEbZk9D8RxaEmmVmgCSNPXl4/awD5AQAQ9NKp0APKfXyEeSO
-         r/RnXjoLDK0FHCGbi2vxiZnG5F9bAqEul1+nCFOLnjFV2AnEY9BPCyu7d7Y1USsvQ18J
-         VB5LQoyQbqCPj2X/5cXVLQqJ0rUEUSjsG8h8spziJPc17RY/jDtbE95VpmHJKYE/kpss
-         TKyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722875503; x=1723480303;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=621xkAoDI4+8AtZyzmI5ne9j+EyrefU8aEvGSj0OzNs=;
-        b=hg8ZDtlUUnwZ9zweiMRT3IVn/HbCs7+wZJCXZdZCrgzjidu/u0Swq3WUR/ceQRWjGf
-         74sRS9jv8hn3copzniTb/HHnYIRYTTw03jT3hE4GXxKOs4emNN4bh+a+yRKzq+d7SaR9
-         oMIw1WHcpOVuJtP/3gKcdVJ02ovzRu7Yu5e2x6xQhB+A7rppDKUCSnOvYRoE4yLoMJeO
-         qZxbV7asM2r/QmzO0QWsKN2pTJhdMVPcVW1IfnHhxKQjpKYtPKsKQXenZp9Rc+z20nGZ
-         9bqTOL4QOnSfcu3aRw00TzkOjq8+mNzRF2dszAVVe+R4L9ZEvBDFeNpaZkHPCXbU09kQ
-         IBFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzCIpvAxpF9DtI+JsNFr+pzdsxtA7DyUaBAuX1IFKx6VjWAuwjDxdQSdo1F9vi9NCIsjr1S5LBKvRG3vXUIchU0gSYjiT0KrMc+xTotusMYCIf8qvmyRMoZjtCeJlVe18gwFC6J9mAig==
-X-Gm-Message-State: AOJu0YwhYdhgNozBQ8kuqPION7TP0GJFVD1X53dMyAQLkAhRQZbpWXc2
-	JzOPYMn0u0iwwdSakJ4obKSfvgA2aBFWywfQ3zd+m45GoAj+QY8w
-X-Google-Smtp-Source: AGHT+IEYeJQFHMlgEBC1z/7yaKc6FQUSGQKUjy5BVK+bmjwpTIsHWavy//z1nw11/GNeOkDWpg0JeA==
-X-Received: by 2002:a05:6512:3b89:b0:52c:cd77:fe03 with SMTP id 2adb3069b0e04-530bb380dabmr10072630e87.14.1722875502321;
-        Mon, 05 Aug 2024 09:31:42 -0700 (PDT)
-Received: from smtpclient.apple (84-10-100-139.static.chello.pl. [84.10.100.139])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba08ee0sm1194849e87.57.2024.08.05.09.31.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Aug 2024 09:31:42 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1722875607; c=relaxed/simple;
+	bh=gSpxq6DZdkv/Kj+dslXwNSPNJhfrLEiCFzphSaO5oiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MJNVtI7LQvinNk/TuEQi0DYa7MV/4DFIPpiPmHuiGv7tW3BcKM9t2K51YtkHeMwtLBPHG95XXkyF1viqgt97Dh8L+ZN3yq3AS2jqIIkxr7IztI77py+jrU8OsP2GFwmHZz6yPNMfDlblLbHsPhA+SEzGCgTLul+1YuYwPVkXN84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CSPxNJac; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=fDNWVS+H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uU4sBfOn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7v/ihztv; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EA6071F833;
+	Mon,  5 Aug 2024 16:33:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722875604;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Zl1NTrmpMIFxwdedcfxHAIG5hASLNsTtJcHwzhKIdY=;
+	b=CSPxNJacPdgRNLjqK21xFs088K5aQ8Tu/SXbUCUD1lLRncq6SAXlwT40NFnSPQ6LdtYrnI
+	AXz8KFFTR+EfGGr5Za9qSp6Sn+3uGd2lNwXc74f2ClZbqxqF4eFO8OoUcaqgbL1VwmkSca
+	4HF4IGyuHMEfHl6yyqEDn86sXpG2tys=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722875604;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Zl1NTrmpMIFxwdedcfxHAIG5hASLNsTtJcHwzhKIdY=;
+	b=fDNWVS+HzOp9iNmwgHyOzamYRpfUdfk0vUHPiTQ9DkYOeRM17CWFJpbP0mXSiWk2znmfnG
+	eD4/o/YIV32wM1CA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722875603;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Zl1NTrmpMIFxwdedcfxHAIG5hASLNsTtJcHwzhKIdY=;
+	b=uU4sBfOntghZ+vETm67M0hnmFRFHTjEbRFjILTgdHsBGVHx+JOMH8qzdqvg5FVOt8CRwJM
+	JZp/7EhXs4S2Ac2AA/KDiULmaB+gN/cOqDfyrE6avDB5jB1Zek1/pZPGdhCJqBjP2Hv7ia
+	cefROJU5tqSV84v9oSORTH9lZWz/Tz4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722875603;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Zl1NTrmpMIFxwdedcfxHAIG5hASLNsTtJcHwzhKIdY=;
+	b=7v/ihztvpOfqrgZ7sqNR0uTi0LnOfBaQjSihvt0O/qUsvuX1+uUKxEoc3KFdrLL7c/cpoJ
+	4+t56HYc52DoKuAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B21D013254;
+	Mon,  5 Aug 2024 16:33:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IC7tKtP+sGblcgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 05 Aug 2024 16:33:23 +0000
+Date: Mon, 5 Aug 2024 18:33:22 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johannes Thumshirn <jthumshirn@wdc.com>,
+	Filipe Manana <fdmanana@suse.com>, Qu Wenruo <wqu@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v3 4/5] btrfs: don't readahead the relocation inode on RST
+Message-ID: <20240805163322.GA17473@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240731-debug-v3-0-f9b7ed479b10@kernel.org>
+ <20240731-debug-v3-4-f9b7ed479b10@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH v2 0/3] Add initial support for the Rockchip RK3588 HDMI
- TX Controller
-From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-In-Reply-To: <66b0fbcc.050a0220.30fac7.71ce@mx.google.com>
-Date: Mon, 5 Aug 2024 18:31:28 +0200
-Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>,
- Heiko Stuebner <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- devicetree@vger.kernel.org,
- kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B669ED19-28D8-4C4E-B89C-F7E7A6E3AA65@gmail.com>
-References: <20240801-b4-rk3588-bridge-upstream-v2-0-9fa657a4e15b@collabora.com>
- <45B07EAF-4CBA-4DE4-A03B-109767D52B29@gmail.com>
- <66b0fbcc.050a0220.30fac7.71ce@mx.google.com>
-To: Chris Morgan <macroalpha82@gmail.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731-debug-v3-4-f9b7ed479b10@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[toxicpanda.com:email,suse.com:email,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,wdc.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
+On Wed, Jul 31, 2024 at 10:43:06PM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <jthumshirn@wdc.com>
+> 
+> On relocation we're doing readahead on the relocation inode, but if the
+> filesystem is backed by a RAID stripe tree we can get ENOENT (e.g. due to
+> preallocated extents not being mapped in the RST) from the lookup.
+> 
+> But readahead doesn't handle the error and submits invalid reads to the
+> device, causing an assertion in the scatter-gather list code:
+> 
+>   BTRFS info (device nvme1n1): balance: start -d -m -s
+>   BTRFS info (device nvme1n1): relocating block group 6480920576 flags data|raid0
+>   BTRFS error (device nvme1n1): cannot find raid-stripe for logical [6481928192, 6481969152] devid 2, profile raid0
+>   ------------[ cut here ]------------
+>   kernel BUG at include/linux/scatterlist.h:115!
+>   Oops: invalid opcode: 0000 [#1] PREEMPT SMP PTI
+>   CPU: 0 PID: 1012 Comm: btrfs Not tainted 6.10.0-rc7+ #567
+>   RIP: 0010:__blk_rq_map_sg+0x339/0x4a0
+>   RSP: 0018:ffffc90001a43820 EFLAGS: 00010202
+>   RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffea00045d4802
+>   RDX: 0000000117520000 RSI: 0000000000000000 RDI: ffff8881027d1000
+>   RBP: 0000000000003000 R08: ffffea00045d4902 R09: 0000000000000000
+>   R10: 0000000000000000 R11: 0000000000001000 R12: ffff8881003d10b8
+>   R13: ffffc90001a438f0 R14: 0000000000000000 R15: 0000000000003000
+>   FS:  00007fcc048a6900(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
+>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   CR2: 000000002cd11000 CR3: 00000001109ea001 CR4: 0000000000370eb0
+>   Call Trace:
+>    <TASK>
+>    ? __die_body.cold+0x14/0x25
+>    ? die+0x2e/0x50
+>    ? do_trap+0xca/0x110
+>    ? do_error_trap+0x65/0x80
+>    ? __blk_rq_map_sg+0x339/0x4a0
+>    ? exc_invalid_op+0x50/0x70
+>    ? __blk_rq_map_sg+0x339/0x4a0
+>    ? asm_exc_invalid_op+0x1a/0x20
+>    ? __blk_rq_map_sg+0x339/0x4a0
+>    nvme_prep_rq.part.0+0x9d/0x770
+>    nvme_queue_rq+0x7d/0x1e0
+>    __blk_mq_issue_directly+0x2a/0x90
+>    ? blk_mq_get_budget_and_tag+0x61/0x90
+>    blk_mq_try_issue_list_directly+0x56/0xf0
+>    blk_mq_flush_plug_list.part.0+0x52b/0x5d0
+>    __blk_flush_plug+0xc6/0x110
+>    blk_finish_plug+0x28/0x40
+>    read_pages+0x160/0x1c0
+>    page_cache_ra_unbounded+0x109/0x180
+>    relocate_file_extent_cluster+0x611/0x6a0
+>    ? btrfs_search_slot+0xba4/0xd20
+>    ? balance_dirty_pages_ratelimited_flags+0x26/0xb00
+>    relocate_data_extent.constprop.0+0x134/0x160
+>    relocate_block_group+0x3f2/0x500
+>    btrfs_relocate_block_group+0x250/0x430
+>    btrfs_relocate_chunk+0x3f/0x130
+>    btrfs_balance+0x71b/0xef0
+>    ? kmalloc_trace_noprof+0x13b/0x280
+>    btrfs_ioctl+0x2c2e/0x3030
+>    ? kvfree_call_rcu+0x1e6/0x340
+>    ? list_lru_add_obj+0x66/0x80
+>    ? mntput_no_expire+0x3a/0x220
+>    __x64_sys_ioctl+0x96/0xc0
+>    do_syscall_64+0x54/0x110
+>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>   RIP: 0033:0x7fcc04514f9b
+>   Code: Unable to access opcode bytes at 0x7fcc04514f71.
+>   RSP: 002b:00007ffeba923370 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>   RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fcc04514f9b
+>   RDX: 00007ffeba923460 RSI: 00000000c4009420 RDI: 0000000000000003
+>   RBP: 0000000000000000 R08: 0000000000000013 R09: 0000000000000001
+>   R10: 00007fcc043fbba8 R11: 0000000000000246 R12: 00007ffeba924fc5
+>   R13: 00007ffeba923460 R14: 0000000000000002 R15: 00000000004d4bb0
+>    </TASK>
+>   Modules linked in:
+>   ---[ end trace 0000000000000000 ]---
+>   RIP: 0010:__blk_rq_map_sg+0x339/0x4a0
+>   RSP: 0018:ffffc90001a43820 EFLAGS: 00010202
+>   RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffea00045d4802
+>   RDX: 0000000117520000 RSI: 0000000000000000 RDI: ffff8881027d1000
+>   RBP: 0000000000003000 R08: ffffea00045d4902 R09: 0000000000000000
+>   R10: 0000000000000000 R11: 0000000000001000 R12: ffff8881003d10b8
+>   R13: ffffc90001a438f0 R14: 0000000000000000 R15: 0000000000003000
+>   FS:  00007fcc048a6900(0000) GS:ffff88813bc00000(0000) knlGS:0000000000000000
+>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   CR2: 00007fcc04514f71 CR3: 00000001109ea001 CR4: 0000000000370eb0
+>   Kernel panic - not syncing: Fatal exception
+>   Kernel Offset: disabled
+>   ---[ end Kernel panic - not syncing: Fatal exception ]---
+> 
+> So in case of a relocation on a RAID stripe-tree based file system, skip
+> the readahead.
+> 
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: Filipe Manana <fdmanana@suse.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Reviewed-by: Qu Wenruo <wqu@suse.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>  fs/btrfs/relocation.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
+> index 0533d0f82dc9..72fb43b4d27c 100644
+> --- a/fs/btrfs/relocation.c
+> +++ b/fs/btrfs/relocation.c
+> @@ -36,6 +36,7 @@
+>  #include "relocation.h"
+>  #include "super.h"
+>  #include "tree-checker.h"
+> +#include "raid-stripe-tree.h"
+>  
+>  /*
+>   * Relocation overview
+> @@ -2965,21 +2966,26 @@ static int relocate_one_folio(struct reloc_control *rc,
+>  	u64 folio_end;
+>  	u64 cur;
+>  	int ret;
+> +	bool use_rst =
 
+	const bool
 
-> Wiadomo=C5=9B=C4=87 napisana przez Chris Morgan =
-<macroalpha82@gmail.com> w dniu 05.08.2024, o godz. 18:20:
->=20
-> On Sat, Aug 03, 2024 at 03:24:06PM +0200, Piotr Oniszczuk wrote:
->> Hi Cristian,
->>=20
->> Will you find some time and motivation to add CEC support to =
-Quad-Pixel (QP) TX controller ?
->>=20
->> Probably you recall - I added initial CEC support to yours v1 series =
-and i=E2=80=99m stuck with timing issue (cec pulses are 3x too long).
->> For me it looks like clock issue.
->> I=E2=80=99m out of ideas how to move forward with this timming =
-issue=E2=80=A6.
->=20
-> I wonder if using the cec-gpio on "GPIO4 RK_PC1" for the CEC gpio and
-> "GPIO1 RK_PA5" for the HPD gpio is a possibility? Just a thought.
->=20
-> Chris
+> +		btrfs_need_stripe_tree_update(fs_info, rc->block_group->flags);
+>  
+>  	ASSERT(index <= last_index);
+>  	folio = filemap_lock_folio(inode->i_mapping, index);
+>  	if (IS_ERR(folio)) {
+> -		page_cache_sync_readahead(inode->i_mapping, ra, NULL,
+> -					  index, last_index + 1 - index);
+> +		if (!use_rst)
+> +			page_cache_sync_readahead(inode->i_mapping, ra, NULL,
 
-Chris,
-Oscilloscope shows pulses on cec line - issue is that cec pulses =
-observed on oscilloscope have timings 2,9 times longer that should be =
-(start bit is 10,7mS instead of 3.6; zero is 4.4 instead 1.5 while one =
-is 1,7 instead of 0.6).
-Pulses durations seems to be =E2=80=9Eproportional" (start; zero; one) - =
-all are almost exact 2.9x too long.=20
-For me this sounds like wrong clock issue.
-I can try switch to gpio outs - but I think better is to first make sure =
-that cec clock is set ok.
-Im not sure what is best way to do such cec clock check...  =20
-=20
->=20
->>=20
->>=20
->>=20
->>> Wiadomo=C5=9B=C4=87 napisana przez Cristian Ciocaltea =
-<cristian.ciocaltea@collabora.com> w dniu 01.08.2024, o godz. 04:25:
->>>=20
->>> The Rockchip RK3588 SoC family integrates the Synopsys DesignWare =
-HDMI
->>> 2.1 Quad-Pixel (QP) TX controller [4], which is a new IP block, =
-quite
->>> different from those used in the previous generations of Rockchip =
-SoCs.
->>>=20
->>> This is the last component that needs to be supported in order to =
-enable
->>> the HDMI output functionality on the RK3588 based SBCs, such as the
->>> RADXA Rock 5B. The other components are the Video Output Processor
->>> (VOP2) and the Samsung IP based HDMI/eDP TX Combo PHY, for which =
-basic
->>> support has been already made available via [1] and [2], =
-respectively.
->>>=20
->>> Please note this is a reworked version of the original series, which
->>> relied on a commonized dw-hdmi approach.  Since the general =
-consensus
->>> was to handle it as an entirely new IP, I dropped all patches =
-related to
->>> the old dw-hdmi and Rockchip glue code - a few of them might still =
-make
->>> sense as general improvements and will be submitted separately.
->>>=20
->>> Additionally, as suggested by Neil, I've sent the reworked bridge =
-driver
->>> as a separate patchset [4], hence this series handles now just the =
-new
->>> Rockchip QP platform driver.
->>>=20
->>> It's worth mentioning the HDMI output support is currently limited =
-to
->>> RGB output up to 4K@60Hz, without audio, CEC or any of the HDMI 2.1
->>> specific features.  Moreover, the VOP2 driver is not able to =
-properly
->>> handle all display modes supported by the connected screens, e.g. it
->>> doesn't cope with non-integer refresh rates.
->>>=20
->>> A possible workaround consists of enabling the display controller to
->>> make use of the clock provided by the HDMI PHY PLL. This is still =
-work
->>> in progress and will be submitted later, as well as the required DTS
->>> updates.
->>>=20
->>> To facilitate testing and experimentation, all HDMI output related
->>> patches, including those part of this series, as well as the bridge
->>> driver, are available at [3].
->>>=20
->>> So far I could only verify this on the RADXA Rock 5B board.
->>>=20
->>> Thanks,
->>> Cristian
->>>=20
->>> [1]: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
->>> [2]: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY =
-driver")
->>> [3]: =
-https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/com=
-mits/rk3588-hdmi-bridge-v6.11-rc1
->>> [4]: =
-https://lore.kernel.org/lkml/20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@coll=
-abora.com/
->>>=20
->>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->>> ---
->>> Changes in v2:
->>> - Reworked the glue code for RK3588 into a new Rockchip platform =
-driver
->>> - Moved bridge driver patches to a separate series [4]
->>> - Dropped all the patches touching to the old dw-hdmi and RK =
-platform
->>> drivers
->>> - Added connector creation to ensure the HDMI QP bridge driver does =
-only
->>> support DRM_BRIDGE_ATTACH_NO_CONNECTOR
->>> - Link to v1: =
-https://lore.kernel.org/r/20240601-b4-rk3588-bridge-upstream-v1-0-f6203753=
-232b@collabora.com
->>>=20
->>> ---
->>> Cristian Ciocaltea (3):
->>>     dt-bindings: display: rockchip: Add schema for RK3588 HDMI TX =
-Controller
->>>     drm/rockchip: Explicitly include bits header
->>>     drm/rockchip: Add basic RK3588 HDMI output support
->>>=20
->>> .../display/rockchip/rockchip,dw-hdmi-qp.yaml      | 188 +++++++++
->>> drivers/gpu/drm/rockchip/Kconfig                   |   8 +
->>> drivers/gpu/drm/rockchip/Makefile                  |   1 +
->>> drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c     | 430 =
-+++++++++++++++++++++
->>> drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |   2 +
->>> drivers/gpu/drm/rockchip/rockchip_drm_drv.h        |   4 +-
->>> 6 files changed, 632 insertions(+), 1 deletion(-)
->>> ---
->>> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
->>> change-id: 20240601-b4-rk3588-bridge-upstream-a27baff1b8fc
->>>=20
->>>=20
->>> _______________________________________________
->>> Linux-rockchip mailing list
->>> Linux-rockchip@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
->>=20
->>=20
-
+Please add a comment why readahead is skipped for RST (along the lines
+in the changelog).
 
