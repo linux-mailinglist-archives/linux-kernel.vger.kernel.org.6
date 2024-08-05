@@ -1,297 +1,221 @@
-Return-Path: <linux-kernel+bounces-275104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B599480A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:44:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C999480A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA4C280EF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:44:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43F91F239C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C86A15F330;
-	Mon,  5 Aug 2024 17:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8A2165EF4;
+	Mon,  5 Aug 2024 17:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QFzboOfc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKkygXz9"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AB1481B9
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716291607BD;
+	Mon,  5 Aug 2024 17:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722879877; cv=none; b=A2KiLELgBAMVnVHpuVt3JJGSifMzlkpW8/E18VHcjgcDLpXEtzzLOXrn8v52+VGJYM3sjlEWLVaeSzVB240osUbwze+y1AgrNVuW/UPbVMADzQmUiNKBAgZHNZQFK4ZqJx/0197oKQwAxtcUpMmklDFfEBvRKaPX0ldWZbvjn+8=
+	t=1722879779; cv=none; b=HW6XJnhHmTpwe9fJP1KoZ7WnsNkmtq3anPPDPi54MgPkMRiqv4sJuR1Jv9uMGz8Cv+yDYFBDlws7y/G++NBF0MNT9we7wZGF/KNJcMK0qX1n+b47R3BR5FSB+HyLEqZ2k1bpXv6AsJZ99zNt1p3kb8XGmXPXlFaZAtiTzLiKczY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722879877; c=relaxed/simple;
-	bh=aW7sdQAfUYelcSjYlOp/AM4kUFrnoILrNxfz7quBevo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=FWTpS7fIyRIXWUC1mslzgaokZdeHJrH0n8iYK9lIYtYn/EiIsLCPuI1Jwbtevtr9UBZmWFcmiM6cpEQ3zL+fSvefufIJSg9EdwMLMMMtI3aOlc7/en+/f5/OPeYIOn/L/6uT/3CI8UeN9SblFIjHf4qBgbNQzz2NpRBgvsC0yJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QFzboOfc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722879873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=in3v0c9+Ovml4ykztWb8OrUnybcqrtY0gPAUUXpjpCg=;
-	b=QFzboOfcrVNr0nnzuCwTbk6tEAlzlGGXN9xWOs4p9TheBlNW9WKvXWw5xtiYwLhIMHjiQP
-	UzJ/7tidu0rCgtT36FaaofPSXbBinn2bwntK7iAypC5+HkGC3vGSWOaASt/24XWXwm3pEA
-	Cu9Jw5eeLYuLU5BbYOeXyoxPcntwf1k=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-478-PNSpnUvzNyCEUVf0jCdvwQ-1; Mon, 05 Aug 2024 13:44:32 -0400
-X-MC-Unique: PNSpnUvzNyCEUVf0jCdvwQ-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7a1d4335cceso1167558985a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:44:32 -0700 (PDT)
+	s=arc-20240116; t=1722879779; c=relaxed/simple;
+	bh=dVcgk1Ne85Fv0mC3xhxmoZoZR7RbyGXDK5k4NffPkE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U6GG2kDTc6RnYbr8MXu8xtrdH+SGnCnFJTfHtRisosHfqtuzeh7IFHCL6tBO6Ze5C/ubIOKpBFWyfutPFeM0dmgwPUK8iT51r0blXNbkqPtxOQ2TnR6Pbu5ntl6saIloMbXWxs6MSLQPkBUlsyumuJ7IHY1/DoPHMU299PQgbG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKkygXz9; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc52394c92so98717355ad.1;
+        Mon, 05 Aug 2024 10:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722879777; x=1723484577; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=6VbQh8mSbRW3lubvyrbJti/A8j4Q7wUIF9hsHCo7CWQ=;
+        b=EKkygXz96COYV+R/Ey4ASM5ZZY0hDSioJpsTVLIHv78EVxzKZagxTP3BG/icgnxZw5
+         qEbH489DPA1zKcvTrZxfV49nccvElPZy2gHCUkurcVqkDQG4LaK2apQZajOAzzBaP3aJ
+         LnvdR2i//sQ4fZBLFM7Tm+yizpeseUhBsWr7YEtgEY84j2mlDNGp6FEevj65WfA6k8U0
+         fTHyV3koJJSuSmkvSH1N+3l428JbC8rahluHAcRFUVN/qTIr53+U3JyJ2hUy5trlCTWS
+         1a947zwzM4VJVGXgiWp7q/trSBR7TV5n8XkdZ0lnu6hq2D1/NM6OsW3jEzfdYVdmnAZU
+         kksg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722879872; x=1723484672;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=in3v0c9+Ovml4ykztWb8OrUnybcqrtY0gPAUUXpjpCg=;
-        b=wianKGYFILy8EB6j+2ctNyyzUMsKbFMWaxVKxSz+okxS+2XtLLTvojArADmWFHPhSY
-         zHaG3tzfgEk63VaFL4n0jIpOiI5lSV2yyPNsTfixKkegIrZL0DFWGLCR/D4LIZ1+SFvX
-         3f5WXPbxKLjsfEGE9N4Q3uoBEQYcAHPHBPJn5me1Ni+5cEHWa5LjVB00IsjJrEKC/52a
-         Sg1F4oOlo1Sl5Twa6nhyJL5Ghrheph2Nzg94EfAb2r+v66nTrvJixifLvuVwZDmnd6OQ
-         zBaqeYe09t9awHWsk34nrBP9XPotOyDxIxdciKJMzWpwzvPztTgWbJEKU8NHnYU3fZBw
-         GSVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3QgkR0lLEjXLLf87yUdwzfVqxUewAJipM7DFlLzJ4RUH8t8JNE71YuNUVJiMN4tXfIIfrDy1C6uxCDrQ8crwLuFGKK1ZXhzidL2Uf
-X-Gm-Message-State: AOJu0Yx0OQ8rZq1MFrRoaJxcMPQMnetHpDeR3zp6LbzPDUyGvdjg7NIv
-	siPRxgb8YkaVtdkv4wMj3xsBtswufTSs22DAJ6x3AF2p1Vdw7J33OZrdABU0R2/GCtpSn+N+T3t
-	6h5vrpXntpXIHGOnLF9tNJe0Zw9PEiAlDLapQKZG/82CQ46DUZ3ptKp5UCLn+bg==
-X-Received: by 2002:a05:620a:29d4:b0:79e:f932:7ca7 with SMTP id af79cd13be357-7a34f0001a0mr2056479885a.29.1722879871650;
-        Mon, 05 Aug 2024 10:44:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmcU76OAYHJ/RqLSfBF2eTd4UvIYfVkWbCUA8e7kym6xJ1NXMxJMBazTzvelP7eNmYWvFU3g==
-X-Received: by 2002:a05:620a:29d4:b0:79e:f932:7ca7 with SMTP id af79cd13be357-7a34f0001a0mr2056461885a.29.1722879869599;
-        Mon, 05 Aug 2024 10:44:29 -0700 (PDT)
-Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a34f773abdsm373597185a.72.2024.08.05.10.44.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 10:44:29 -0700 (PDT)
-From: Eric Chanudet <echanude@redhat.com>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Chanudet <echanude@redhat.com>,
-	Andrew Halaney <ahalaney@redhat.com>
-Subject: [PATCH] arm64: dts: ti: k3-j784s4-main: align watchdog clocks
-Date: Mon,  5 Aug 2024 13:42:51 -0400
-Message-ID: <20240805174330.2132717-2-echanude@redhat.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1722879777; x=1723484577;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6VbQh8mSbRW3lubvyrbJti/A8j4Q7wUIF9hsHCo7CWQ=;
+        b=fsLi+UxSyrcIxxBpuphjuOCc5grsAM9GmJTqOKHu6LUmUGO4JuyTUngqdfxCtYFN2g
+         UwlQT5XHcqPrOGG+dCMGr0bI0vZgZbUqZ6GZJIf+5p2sEzuNnt1up0NWUgctTVdD2KpT
+         DcYj+edVGUUtf1aWwG4aiDuS3KyW/l+maCHqOpIGW7VnCc9/9Ceqp3wH21ovQorhy9Xm
+         0ep1sFG3y6MvGRs2TwuGCkyxaRHqDuJUZ5p8NfCCRpARgetTWC2VjKagr10FNwxrRsRJ
+         F3GctX3o2Wc+afLuZGZqrAX62SydR2p4JELPZxrrHkAUQQqiVD4EJoaKANaVUAGctXiv
+         6new==
+X-Forwarded-Encrypted: i=1; AJvYcCUr2a4KT6bOaCBpqzuzKYbQfmxsLeOu9jiNrnN6nBHfwVadCKSZi96akY0r1KLwHY36i6JadTWgXuKGGUiSuhUxJWs2zj6naMrEo05uhaFgKhjqFs77FbcEi/QAaJVA248fYu3P2OHqkJp2+v2A9tr+sN+jraZe+24DdN6Xw6JTesgH
+X-Gm-Message-State: AOJu0YxuQngQSqtiyHjuarxrPDvTQFQYnxcNRgt2HPCPqOy7p8fp5NzY
+	WuooBiH91WG5afNaGPXj9nTnjlVw/0EuSZDoGFxFM3Z/+aOF2vNY
+X-Google-Smtp-Source: AGHT+IED9JAxC6zoQhCjbLEHyYvynj8Snu5jQmSjsxwwQvECvD8vrtT+XFCNoPoYaJjdcFXVzV94Ag==
+X-Received: by 2002:a17:903:120c:b0:1fd:a0b9:2be7 with SMTP id d9443c01a7336-1ff5722d9bamr198616075ad.13.1722879776576;
+        Mon, 05 Aug 2024 10:42:56 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59298f8asm71034115ad.266.2024.08.05.10.42.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 10:42:55 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <0ad9d0db-df2f-4e35-b53c-ed23cb2dc42d@roeck-us.net>
+Date: Mon, 5 Aug 2024 10:42:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Thomas Gleixner <tglx@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
+References: <20240731095022.970699670@linuxfoundation.org>
+ <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <a8a81b3d-b005-4b6f-991b-c31cdb5513e5@roeck-us.net> <87ikwf5owu.ffs@tglx>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <87ikwf5owu.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-assigned-clock sets DEV_RTIx_RTI_CLK(id:0) whereas clocks sets
-DEV_RTIx_RTI_CLK_PARENT_GLUELOGIC_HFOSC0_CLKOUT(id:1)[1]. This does not
-look right, the timers in the driver assume a max frequency of 32kHz for
-the heartbeat (HFOSC0 is 19.2MHz on j784s4-evm).
+On 8/5/24 01:56, Thomas Gleixner wrote:
+> On Sun, Aug 04 2024 at 20:28, Guenter Roeck wrote:
+>> On 8/4/24 11:36, Guenter Roeck wrote:
+>>>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>>       genirq: Set IRQF_COND_ONESHOT in request_irq()
+>>>>
+>>>
+>>> With this patch in v6.10.3, all my parisc64 qemu tests get stuck with repeated error messages
+>>>
+>>> [    0.000000] =============================================================================
+>>> [    0.000000] BUG kmem_cache_node (Not tainted): objects 21 > max 16
+>>> [    0.000000] -----------------------------------------------------------------------------
+> 
+> Do you have a full boot log? It's unclear to me at which point of the boot
+> process this happens. Is this before or after the secondary CPUs have
+> been brought up?
+> 
+>>> This never stops until the emulation aborts.
+> 
+> Do you have a recipe how to reproduce?
+> 
+>>> Reverting this patch fixes the problem for me.
+>>>
+>>> I noticed a similar problem in the mainline kernel but it is either spurious there
+>>> or the problem has been fixed.
+>>>
+>>
+>> As a follow-up, the patch below (on top of v6.10.3) "fixes" the problem for me.
+>> I guess that suggests some kind of race condition.
+>>
+>>
+>> @@ -2156,6 +2157,8 @@ int request_threaded_irq(unsigned int irq, irq_handler_t handler,
+>>           struct irq_desc *desc;
+>>           int retval;
+>>
+>> +       udelay(1);
+>> +
+>>           if (irq == IRQ_NOTCONNECTED)
+>>                   return -ENOTCONN;
+> 
+> That all makes absolutely no sense to me.
+> 
 
-With this change, WDIOC_GETTIMELEFT return coherent time left
-(DEFAULT_HEARTBEAT=60, reports 60s upon opening the cdev).
+Same here, really. I can reproduce the problem with v6.10.3, using my configuration,
+but whatever debugging I add makes the problem disappear. I had seen the same problem
+on mainline with v6.11-rc1-272-g17712b7ea075. Log is at
+https://kerneltests.org/builders/qemu-parisc64-master/builds/168/steps/qemubuildcommand/logs/stdio
+However, I can no longer reproduce it there. What makes it even more weird / odd
+is that I can bisect the problem between v6.10.2 and v6.10.3 and it points to this
+commit, but reproducing it outside that chain seems to be all but impossible.
 
-[1] http://downloads.ti.com/tisci/esd/latest/5_soc_doc/j784s4/clocks.html#clocks-for-rti0-device
+Guenter
 
-Fixes: caae599de8c6 ("arm64: dts: ti: k3-j784s4-main: Add the main domain watchdog instances")
-Suggested-by: Andrew Halaney <ahalaney@redhat.com>
-Signed-off-by: Eric Chanudet <echanude@redhat.com>
----
-I could not get the watchdog to do more than reporting 0x32 in
-RTIWDSTATUS. Setting RTIWWDRXCTRL[0:3] to generate a reset instead of an
-interrupt (0x5) didn't trigger a reset either when the window expired.
-
- arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 38 +++++++++++-----------
- 1 file changed, 19 insertions(+), 19 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-index f170f80f00c1..6c014d335f2c 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-@@ -2429,7 +2429,7 @@ main_esm: esm@700000 {
- 	watchdog0: watchdog@2200000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2200000 0x00 0x100>;
--		clocks = <&k3_clks 348 1>;
-+		clocks = <&k3_clks 348 0>;
- 		power-domains = <&k3_pds 348 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 348 0>;
- 		assigned-clock-parents = <&k3_clks 348 4>;
-@@ -2438,7 +2438,7 @@ watchdog0: watchdog@2200000 {
- 	watchdog1: watchdog@2210000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2210000 0x00 0x100>;
--		clocks = <&k3_clks 349 1>;
-+		clocks = <&k3_clks 349 0>;
- 		power-domains = <&k3_pds 349 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 349 0>;
- 		assigned-clock-parents = <&k3_clks 349 4>;
-@@ -2447,7 +2447,7 @@ watchdog1: watchdog@2210000 {
- 	watchdog2: watchdog@2220000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2220000 0x00 0x100>;
--		clocks = <&k3_clks 350 1>;
-+		clocks = <&k3_clks 350 0>;
- 		power-domains = <&k3_pds 350 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 350 0>;
- 		assigned-clock-parents = <&k3_clks 350 4>;
-@@ -2456,7 +2456,7 @@ watchdog2: watchdog@2220000 {
- 	watchdog3: watchdog@2230000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2230000 0x00 0x100>;
--		clocks = <&k3_clks 351 1>;
-+		clocks = <&k3_clks 351 0>;
- 		power-domains = <&k3_pds 351 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 351 0>;
- 		assigned-clock-parents = <&k3_clks 351 4>;
-@@ -2465,7 +2465,7 @@ watchdog3: watchdog@2230000 {
- 	watchdog4: watchdog@2240000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2240000 0x00 0x100>;
--		clocks = <&k3_clks 352 1>;
-+		clocks = <&k3_clks 352 0>;
- 		power-domains = <&k3_pds 352 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 352 0>;
- 		assigned-clock-parents = <&k3_clks 352 4>;
-@@ -2474,7 +2474,7 @@ watchdog4: watchdog@2240000 {
- 	watchdog5: watchdog@2250000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2250000 0x00 0x100>;
--		clocks = <&k3_clks 353 1>;
-+		clocks = <&k3_clks 353 0>;
- 		power-domains = <&k3_pds 353 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 353 0>;
- 		assigned-clock-parents = <&k3_clks 353 4>;
-@@ -2483,7 +2483,7 @@ watchdog5: watchdog@2250000 {
- 	watchdog6: watchdog@2260000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2260000 0x00 0x100>;
--		clocks = <&k3_clks 354 1>;
-+		clocks = <&k3_clks 354 0>;
- 		power-domains = <&k3_pds 354 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 354 0>;
- 		assigned-clock-parents = <&k3_clks 354 4>;
-@@ -2492,7 +2492,7 @@ watchdog6: watchdog@2260000 {
- 	watchdog7: watchdog@2270000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2270000 0x00 0x100>;
--		clocks = <&k3_clks 355 1>;
-+		clocks = <&k3_clks 355 0>;
- 		power-domains = <&k3_pds 355 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 355 0>;
- 		assigned-clock-parents = <&k3_clks 355 4>;
-@@ -2506,7 +2506,7 @@ watchdog7: watchdog@2270000 {
- 	watchdog8: watchdog@22f0000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x22f0000 0x00 0x100>;
--		clocks = <&k3_clks 360 1>;
-+		clocks = <&k3_clks 360 0>;
- 		power-domains = <&k3_pds 360 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 360 0>;
- 		assigned-clock-parents = <&k3_clks 360 4>;
-@@ -2517,7 +2517,7 @@ watchdog8: watchdog@22f0000 {
- 	watchdog9: watchdog@2300000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2300000 0x00 0x100>;
--		clocks = <&k3_clks 356 1>;
-+		clocks = <&k3_clks 356 0>;
- 		power-domains = <&k3_pds 356 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 356 0>;
- 		assigned-clock-parents = <&k3_clks 356 4>;
-@@ -2528,7 +2528,7 @@ watchdog9: watchdog@2300000 {
- 	watchdog10: watchdog@2310000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2310000 0x00 0x100>;
--		clocks = <&k3_clks 357 1>;
-+		clocks = <&k3_clks 357 0>;
- 		power-domains = <&k3_pds 357 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 357 0>;
- 		assigned-clock-parents = <&k3_clks 357 4>;
-@@ -2539,7 +2539,7 @@ watchdog10: watchdog@2310000 {
- 	watchdog11: watchdog@2320000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2320000 0x00 0x100>;
--		clocks = <&k3_clks 358 1>;
-+		clocks = <&k3_clks 358 0>;
- 		power-domains = <&k3_pds 358 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 358 0>;
- 		assigned-clock-parents = <&k3_clks 358 4>;
-@@ -2550,7 +2550,7 @@ watchdog11: watchdog@2320000 {
- 	watchdog12: watchdog@2330000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2330000 0x00 0x100>;
--		clocks = <&k3_clks 359 1>;
-+		clocks = <&k3_clks 359 0>;
- 		power-domains = <&k3_pds 359 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 359 0>;
- 		assigned-clock-parents = <&k3_clks 359 4>;
-@@ -2561,7 +2561,7 @@ watchdog12: watchdog@2330000 {
- 	watchdog13: watchdog@23c0000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x23c0000 0x00 0x100>;
--		clocks = <&k3_clks 361 1>;
-+		clocks = <&k3_clks 361 0>;
- 		power-domains = <&k3_pds 361 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 361 0>;
- 		assigned-clock-parents = <&k3_clks 361 4>;
-@@ -2572,7 +2572,7 @@ watchdog13: watchdog@23c0000 {
- 	watchdog14: watchdog@23d0000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x23d0000 0x00 0x100>;
--		clocks = <&k3_clks 362 1>;
-+		clocks = <&k3_clks 362 0>;
- 		power-domains = <&k3_pds 362 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 362 0>;
- 		assigned-clock-parents = <&k3_clks 362 4>;
-@@ -2583,7 +2583,7 @@ watchdog14: watchdog@23d0000 {
- 	watchdog15: watchdog@23e0000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x23e0000 0x00 0x100>;
--		clocks = <&k3_clks 363 1>;
-+		clocks = <&k3_clks 363 0>;
- 		power-domains = <&k3_pds 363 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 363 0>;
- 		assigned-clock-parents = <&k3_clks 363 4>;
-@@ -2594,7 +2594,7 @@ watchdog15: watchdog@23e0000 {
- 	watchdog16: watchdog@23f0000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x23f0000 0x00 0x100>;
--		clocks = <&k3_clks 364 1>;
-+		clocks = <&k3_clks 364 0>;
- 		power-domains = <&k3_pds 364 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 364 0>;
- 		assigned-clock-parents = <&k3_clks 364 4>;
-@@ -2605,7 +2605,7 @@ watchdog16: watchdog@23f0000 {
- 	watchdog17: watchdog@2540000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2540000 0x00 0x100>;
--		clocks = <&k3_clks 365 1>;
-+		clocks = <&k3_clks 365 0>;
- 		power-domains = <&k3_pds 365 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 365 0>;
- 		assigned-clock-parents = <&k3_clks 366 4>;
-@@ -2616,7 +2616,7 @@ watchdog17: watchdog@2540000 {
- 	watchdog18: watchdog@2550000 {
- 		compatible = "ti,j7-rti-wdt";
- 		reg = <0x00 0x2550000 0x00 0x100>;
--		clocks = <&k3_clks 366 1>;
-+		clocks = <&k3_clks 366 0>;
- 		power-domains = <&k3_pds 366 TI_SCI_PD_EXCLUSIVE>;
- 		assigned-clocks = <&k3_clks 366 0>;
- 		assigned-clock-parents = <&k3_clks 366 4>;
--- 
-2.45.2
+> IRQF_COND_ONESHOT has only an effect on shared interrupts, when the
+> interrupt was already requested with IRQF_ONESHOT.
+> 
+> If this is really a race then the following must be true:
+> 
+> 1) no delay
+> 
+>     CPU0                                 CPU1
+>     request_irq(IRQF_ONESHOT)
+>                                          request_irq(IRQF_COND_ONESHOT)
+> 
+> 2) delay
+> 
+>     CPU0                                 CPU1
+>                                          request_irq(IRQF_COND_ONESHOT)
+>     request_irq(IRQF_ONESHOT)
+> 
+>     In this case the request on CPU 0 fails with -EBUSY ...
+> 
+> Confused
+> 
+>          tglx
+> 
+> 
 
 
