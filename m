@@ -1,228 +1,137 @@
-Return-Path: <linux-kernel+bounces-274821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8F5947D3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:52:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 940D2947D3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0561F21DB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84B881C21C6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C889A1537D9;
-	Mon,  5 Aug 2024 14:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A443D158DCC;
+	Mon,  5 Aug 2024 14:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="X8ffdVm0"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0150813C684;
-	Mon,  5 Aug 2024 14:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DpaZorHH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F05A13B2A9
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722869481; cv=none; b=teCxQbrishUMDt6x4zyV4Fkc1XYI7VRkeo9oRA5fUfWh2XtSll1HaV57EM/GSWD0hulKI+jen5ExCt59RnXFA7zB39M6fkwe6DhrdDp/YTd/ww7FIGiKxiVES48oMPY6UR5c5o+tyOXlLaWBQYLPImCsxO4HjOiimTVG9VLtIdQ=
+	t=1722869533; cv=none; b=ibA/38ou7VfsTRm7m4gMA0QeTsNtutio3Ce5ZIxGJXqaUjN09Kjtb1jcdP4rvjNsinRh4o6mqgn4XhEJ8GuIxh19wxxV0zNpaTp2emQ5LjEUTEWoMU8ssU07B+fbhS8QEPQ/K6EM3rtah0obzVuzb4cwlLik25niGZqlHnCIGf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722869481; c=relaxed/simple;
-	bh=7ykty8/x0wz5UdqrPTbpaCVE/KB7yVy+KsHezueQZPs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JZfO4wqSAWHw8B4wapcrT5vC9yBpv6P9zDyvDhIV7zhHksQiFcSSus/A+220W8YFz8nDdgg+6C8BLWmSJLYz6OG21KSZuhMk/njrhrg54k9NbPYacwhLR4OBmSUj33a94fWBcShHLpKHF0z4ATUrVAN9kiNUqilBN/hs/SL2FmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=X8ffdVm0; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3F41B20B7165;
-	Mon,  5 Aug 2024 07:51:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3F41B20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722869478;
-	bh=pauF332H9RYtwbTh4jt8TXNF4EdtpJCWqYxBIdY4ptU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=X8ffdVm0EwvH9cISLR9ZZZRKprEo04Um0VqddaKwHaaG5FXXTy/B3AVHowWL2FIkF
-	 vn6mm0I6ZO0vdpHX+1dlYa6XsD2FOGm9nrXMQFEXjkEePfTn662n16Sr99C7sAz/Ii
-	 ACauUgAQ7XzRLcxcOjk8N8fMfsudY9DdAsBUfPJI=
-Message-ID: <2679199c-3f73-4326-85ee-622541d26153@linux.microsoft.com>
-Date: Mon, 5 Aug 2024 07:51:18 -0700
+	s=arc-20240116; t=1722869533; c=relaxed/simple;
+	bh=4OYN+uwqmllS1ifCVYqfqrP0wsuDr0tVy3A/D+B1b7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7OeCRyNZpkPqujZDCCRmi7ch8rMLDFDiatnzdtAcj4MTAsYBwUx6+7nGMuUNd+OvuK84jPq4h3SEbos2qCqHLMJZ8NB7/hQtVNagEHurJK1zIQNdxGB9CwQz+SZUMFvFhGiEkW92DdacCfHivZcLuiAimQMWShpFHL8N+mTBvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DpaZorHH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722869529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OHZfGYL5T6FMYKUtqsFLa7gkK/CdeKX+rspJ2D4JRhI=;
+	b=DpaZorHH99CG4YX8tuW2ndK+ctx03hopRUiOTxf97hoMaHkwArPjCsdYKtru7Uk2pdEhk0
+	gyG9eAlfVFwCA6Ys0ChDa2AhSk80aPwMJnolb3/IVVlsTfhKrR1cZf42F6x/cue3d93Qn1
+	l5I/g8399jaN5X/mTDind5kQYpENXqI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-177-2dl5GU_qO0elz3KG8l5Nsw-1; Mon,
+ 05 Aug 2024 10:52:04 -0400
+X-MC-Unique: 2dl5GU_qO0elz3KG8l5Nsw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A28211955D4A;
+	Mon,  5 Aug 2024 14:52:02 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.34])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1872D1955D42;
+	Mon,  5 Aug 2024 14:51:58 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon,  5 Aug 2024 16:52:00 +0200 (CEST)
+Date: Mon, 5 Aug 2024 16:51:56 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org
+Subject: Re: [PATCH 3/8] uprobes: protected uprobe lifetime with SRCU
+Message-ID: <20240805145156.GB11049@redhat.com>
+References: <20240731214256.3588718-1-andrii@kernel.org>
+ <20240731214256.3588718-4-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] PCI: hv: Get vPCI MSI IRQ domain from DT
-To: Wei Liu <wei.liu@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, dave.hansen@linux.intel.com, decui@microsoft.com,
- haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com, kys@microsoft.com,
- lenb@kernel.org, lpieralisi@kernel.org, mingo@redhat.com, rafael@kernel.org,
- robh@kernel.org, tglx@linutronix.de, will@kernel.org,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
- sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-8-romank@linux.microsoft.com>
- <Zq2F-l2FWIrQ2Jt1@liuwe-devbox-debian-v2>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <Zq2F-l2FWIrQ2Jt1@liuwe-devbox-debian-v2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731214256.3588718-4-andrii@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+LGTM, just a few notes...
 
+On 07/31, Andrii Nakryiko wrote:
+>
+> @@ -59,6 +61,7 @@ struct uprobe {
+>  	struct list_head	pending_list;
+>  	struct uprobe_consumer	*consumers;
+>  	struct inode		*inode;		/* Also hold a ref to inode */
+> +	struct rcu_head		rcu;
 
-On 8/2/2024 6:20 PM, Wei Liu wrote:
-> On Fri, Jul 26, 2024 at 03:59:10PM -0700, Roman Kisel wrote:
->> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
->> arm64. It won't be able to do that in the VTL mode where only DeviceTree
->> can be used.
->>
->> Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
->> case, too.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   drivers/hv/vmbus_drv.c              | 23 +++++++-----
->>   drivers/pci/controller/pci-hyperv.c | 55 +++++++++++++++++++++++++++--
->>   include/linux/hyperv.h              |  2 ++
->>   3 files changed, 69 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
->> index 7eee7caff5f6..038bd9be64b7 100644
->> --- a/drivers/hv/vmbus_drv.c
->> +++ b/drivers/hv/vmbus_drv.c
->> @@ -45,7 +45,8 @@ struct vmbus_dynid {
->>   	struct hv_vmbus_device_id id;
->>   };
->>   
->> -static struct device  *hv_dev;
->> +/* VMBus Root Device */
->> +static struct device  *vmbus_root_device;
-> 
-> You're changing the name of the variable. That should preferably be done
-> in a separate patch. That's going to make this patch shorter and easier
-> to review.
-> 
-Will fix in v4, thanks!
+you can probably put the new member into the union with, say, rb_node.
 
->>   
->>   static int hyperv_cpuhp_online;
->>   
->> @@ -80,9 +81,15 @@ static struct resource *fb_mmio;
->>   static struct resource *hyperv_mmio;
->>   static DEFINE_MUTEX(hyperv_mmio_lock);
->>   
->> +struct device *get_vmbus_root_device(void)
->> +{
->> +	return vmbus_root_device;
->> +}
->> +EXPORT_SYMBOL_GPL(get_vmbus_root_device);
-> 
-> I would like you to add "hv_" prefix to this exported symbol, or rename
-> it to "vmbus_get_root_device()".
-> 
->> +
->>   static int vmbus_exists(void)
->>   {
->> -	if (hv_dev == NULL)
->> +	if (vmbus_root_device == NULL)
->>   		return -ENODEV;
->>   
->>   	return 0;
->> @@ -861,7 +868,7 @@ static int vmbus_dma_configure(struct device *child_device)
->>   	 * On x86/x64 coherence is assumed and these calls have no effect.
->>   	 */
->>   	hv_setup_dma_ops(child_device,
->> -		device_get_dma_attr(hv_dev) == DEV_DMA_COHERENT);
->> +		device_get_dma_attr(vmbus_root_device) == DEV_DMA_COHERENT);
->>   	return 0;
->>   }
->>   
->> @@ -1892,7 +1899,7 @@ int vmbus_device_register(struct hv_device *child_device_obj)
->>   		     &child_device_obj->channel->offermsg.offer.if_instance);
->>   
->>   	child_device_obj->device.bus = &hv_bus;
->> -	child_device_obj->device.parent = hv_dev;
->> +	child_device_obj->device.parent = vmbus_root_device;
->>   	child_device_obj->device.release = vmbus_device_release;
->>   
->>   	child_device_obj->device.dma_parms = &child_device_obj->dma_parms;
->> @@ -2253,7 +2260,7 @@ static int vmbus_acpi_add(struct platform_device *pdev)
->>   	struct acpi_device *ancestor;
->>   	struct acpi_device *device = ACPI_COMPANION(&pdev->dev);
->>   
->> -	hv_dev = &device->dev;
->> +	vmbus_root_device = &device->dev;
->>   
->>   	/*
->>   	 * Older versions of Hyper-V for ARM64 fail to include the _CCA
->> @@ -2342,7 +2349,7 @@ static int vmbus_device_add(struct platform_device *pdev)
->>   	struct device_node *np = pdev->dev.of_node;
->>   	int ret;
->>   
->> -	hv_dev = &pdev->dev;
->> +	vmbus_root_device = &pdev->dev;
->>   
->>   	ret = of_range_parser_init(&parser, np);
->>   	if (ret)
->> @@ -2675,7 +2682,7 @@ static int __init hv_acpi_init(void)
->>   	if (ret)
->>   		return ret;
->>   
->> -	if (!hv_dev) {
->> +	if (!vmbus_root_device) {
->>   		ret = -ENODEV;
->>   		goto cleanup;
->>   	}
->> @@ -2706,7 +2713,7 @@ static int __init hv_acpi_init(void)
->>   
->>   cleanup:
->>   	platform_driver_unregister(&vmbus_platform_driver);
->> -	hv_dev = NULL;
->> +	vmbus_root_device = NULL;
->>   	return ret;
->>   }
->>   
->> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
->> index 5992280e8110..cdecefd1f9bd 100644
->> --- a/drivers/pci/controller/pci-hyperv.c
->> +++ b/drivers/pci/controller/pci-hyperv.c
->> @@ -50,6 +50,7 @@
->>   #include <linux/irqdomain.h>
->>   #include <linux/acpi.h>
->>   #include <linux/sizes.h>
->> +#include <linux/of_irq.h>
->>   #include <asm/mshyperv.h>
->>   
->>   /*
->> @@ -887,6 +888,35 @@ static const struct irq_domain_ops hv_pci_domain_ops = {
->>   	.activate = hv_pci_vec_irq_domain_activate,
->>   };
->>   
->> +#ifdef CONFIG_OF
->> +
->> +static struct irq_domain *hv_pci_of_irq_domain_parent(void)
->> +{
->> +	struct device_node *parent;
->> +	struct irq_domain *domain;
->> +
->> +	parent = of_irq_find_parent(to_platform_device(get_vmbus_root_device())->dev.of_node);
->> +	domain = NULL;
->> +	if (parent) {
->> +		domain = irq_find_host(parent);
->> +		of_node_put(parent);
->> +	}
->> +
-> 
-> I cannot really comment on the ARM side of things around how this system
-> is set up. I will leave that to someone who's more familiar with the
-> matter to review.
-> 
-> Thanks,
-> Wei.
+> @@ -1945,9 +1950,14 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+>  	if (!utask)
+>  		return -ENOMEM;
+>
+> +	if (!try_get_uprobe(uprobe))
+> +		return -EINVAL;
+> +
 
--- 
-Thank you,
-Roman
+a bit off-topic right now, but it seems that we can simply kill
+utask->active_uprobe. We can turn into into "bool has_active_uprobe"
+and copy uprobe->arch into uprobe_task. Lets discuss this later.
+
+> @@ -2201,13 +2215,15 @@ static void handle_swbp(struct pt_regs *regs)
+>  {
+>  	struct uprobe *uprobe;
+>  	unsigned long bp_vaddr;
+> -	int is_swbp;
+> +	int is_swbp, srcu_idx;
+>
+>  	bp_vaddr = uprobe_get_swbp_addr(regs);
+>  	if (bp_vaddr == uprobe_get_trampoline_vaddr())
+>  		return uprobe_handle_trampoline(regs);
+>
+> -	uprobe = find_active_uprobe(bp_vaddr, &is_swbp);
+> +	srcu_idx = srcu_read_lock(&uprobes_srcu);
+> +
+> +	uprobe = find_active_uprobe_rcu(bp_vaddr, &is_swbp);
+>  	if (!uprobe) {
+>  		if (is_swbp > 0) {
+>  			/* No matching uprobe; signal SIGTRAP. */
+> @@ -2223,6 +2239,7 @@ static void handle_swbp(struct pt_regs *regs)
+>  			 */
+>  			instruction_pointer_set(regs, bp_vaddr);
+>  		}
+> +		srcu_read_unlock(&uprobes_srcu, srcu_idx);
+>  		return;
+
+Why not
+		goto out;
+
+?
+
+Oleg.
 
 
