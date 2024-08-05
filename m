@@ -1,213 +1,192 @@
-Return-Path: <linux-kernel+bounces-274411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860F09477D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:01:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A7B9477D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052FA1F22810
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E214C282825
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE0C1547DA;
-	Mon,  5 Aug 2024 08:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ox3Yus4E"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2052.outbound.protection.outlook.com [40.107.237.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3497156C67;
+	Mon,  5 Aug 2024 08:59:01 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9F414830D;
-	Mon,  5 Aug 2024 08:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722848339; cv=fail; b=ILHTJRgjzHZtFWLdERRNAIra5fl/vpqEO9ffDzxdEI7AJEUeZU6ubawkdHoqvWabp3sWt+LhMOKynHAmeFiig0mOKA10+hC+gkd+rcoExGytVWz15RhKSaOQpALNbMKQHSyhZCkVfInf7u1cAr/luDBkKxZcRK0sv2ElSWWuJ4U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722848339; c=relaxed/simple;
-	bh=ztypBoPkIZAB7ZjWVKeWCvwxgb23I06QHzXEPvopzv0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=guTjrGqH8vS9EoWOMZc11MDbFyudOUxP5CY/lb32Yna051MuTAD7x8IsvbMvijVJmBnX9Iuw0vY1hKUufQjYwE+sCmV7q7mhSAXCkup9adeWRjW1CfmONVJMvCaKZSzvk67s+7fhL/JyJdILY8JJX5McZ5gYv1VCt9DqV/uL2Hw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ox3Yus4E; arc=fail smtp.client-ip=40.107.237.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jgeG8MHQOpp+3mFekUDxx3vmrSscpZEZZ9hQ79no0fAej/Cu/d8q4cybs63X7nBT+6a02xp4DBnDHC41rYepgNNAq9+G5dQpUZhRkqKX7kjVSefEBBKWGohGFpcOoWcEIi8m0bmSDblulnksnOAjktRTflGGutlVByvPOv0S6BVO7fWO3bei99WOwqy2LL6F5L4qhv2vfouiP2tyL9MMB71vKzghBXQt9M7RU8GCCVwWlaso1S6qNydlb70h7H+BQkOtSu68RFJQnj8IGhsNMvrOurGpP/NVx0W01Pd1JEgdeQEsP0UZjefbkRKDVYUQzIxGj5Hwxy2HKbkb/FmvDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ztypBoPkIZAB7ZjWVKeWCvwxgb23I06QHzXEPvopzv0=;
- b=Q/kpuhba1qWlqn4kMTVgTurcXffU9zkgbURK5pbI01Aq8w7IK/1aSIyuDSq5CsX1fXKwhMox1FMDbs9RVa4VoyjEznlEH4bjTwbCo6PF4Ax4skgfWIq2poc81NM2WRRdU8hDt1Hw6gQFE2K5jFlSPspn2EPNj+q6lLlIFFuLk9d/aeR0LaDd48Z67HxnPDHM0qP7U56J/MyotQLlIUyz0oGOHQGK/BgiNLdiz1hq2T33bYiwomOogabC9XIYFHHeqYTo2eiUB7OZEIER7kgXDNpaeuc3d9dxdwwZIp4x/BzoVL2qz+NTJ/0RjrRAoqB+1bZY682rO6hZzCyjulGnDA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ztypBoPkIZAB7ZjWVKeWCvwxgb23I06QHzXEPvopzv0=;
- b=Ox3Yus4EbiDhc9o5VK8QoTUETOyEPIPwu8tOlFJ3AVPefrSpX8ZFlSh11A0cvNX5tHBHNmA9HovT/zNJrr/HlbKDzQE8BlBk4plTsBrhSwFQTIqanhHPhFQDBDUsmTFbbjJbyfPHkDUeJyMlBTQdoFU9JX5ww/bTv9JyjFETVDc=
-Received: from CH2PR12MB4264.namprd12.prod.outlook.com (2603:10b6:610:a4::15)
- by CY8PR12MB7585.namprd12.prod.outlook.com (2603:10b6:930:98::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Mon, 5 Aug
- 2024 08:58:54 +0000
-Received: from CH2PR12MB4264.namprd12.prod.outlook.com
- ([fe80::934b:f664:a66b:d637]) by CH2PR12MB4264.namprd12.prod.outlook.com
- ([fe80::934b:f664:a66b:d637%4]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
- 08:58:53 +0000
-From: "Potthuri, Sai Krishna" <sai.krishna.potthuri@amd.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Linus Walleij
-	<linus.walleij@linaro.org>, "Simek, Michal" <michal.simek@amd.com>, Rob
- Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
-	"Buddhabhatti, Jay" <jay.buddhabhatti@amd.com>, "Kundanala, Praveen Teja"
-	<praveen.teja.kundanala@amd.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "saikrishna12468@gmail.com"
-	<saikrishna12468@gmail.com>, "git (AMD-Xilinx)" <git@amd.com>
-Subject: RE: [PATCH v3 0/3] pinctrl: pinctrl-zynqmp: Add Versal platform
- support
-Thread-Topic: [PATCH v3 0/3] pinctrl: pinctrl-zynqmp: Add Versal platform
- support
-Thread-Index: AQHa5Ap1fozp0WvlrkGM+mGt/pJ7rbIXMwKAgAEsiaA=
-Date: Mon, 5 Aug 2024 08:58:53 +0000
-Message-ID:
- <CH2PR12MB426446B0084EEE56C13DA6ECDBBE2@CH2PR12MB4264.namprd12.prod.outlook.com>
-References: <20240801120029.1807180-1-sai.krishna.potthuri@amd.com>
- <bf1faea5-bc1e-46df-bf68-c222570c09a2@linaro.org>
-In-Reply-To: <bf1faea5-bc1e-46df-bf68-c222570c09a2@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR12MB4264:EE_|CY8PR12MB7585:EE_
-x-ms-office365-filtering-correlation-id: c09e94ba-f890-40db-47e6-08dcb52cd4e2
-x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?OHlxVTYwVUJKR0VQME1aV2ZBM1cxOGdoS2QrVmdsMWRoMUQxeTkrc3lhL05v?=
- =?utf-8?B?U1A2T1hvWXVGUFJmWDMzL3owR2dGZXU1cldUeFB5ZzFhaWZuQU9GNXVUYzJr?=
- =?utf-8?B?TUsvQXlqVmJwL1lVcTdrMW1Wa0dHRWdvQU52LzBrMDN5UWgxVHYvRGI5NEkw?=
- =?utf-8?B?SUZsSFhvenozSWtwaVRiYWNON0NrVVI1cm90VTl0SkJWTU9EajFvQjAvR0E5?=
- =?utf-8?B?MUdZZ2h6cTgxdDJ5Nm1COWMxaXBSQ08wOG0xUncvYm9JV3NMVU9jbkd3UE54?=
- =?utf-8?B?VWhSektFTVJoRS85ZkZPcTZTRjJxMmtnWUpPNjE1WjgyTlJyNkY4MS81LzVl?=
- =?utf-8?B?Qk1HT2JqZU9GckFxNmRrVFZWbHRxOHhvQXlFNzFPVG55ZFQ3aFlYOUhBUnlh?=
- =?utf-8?B?ZGVOQjF0RnFSRFpwb2xrMjBLUW9uWDRRd0VzUEh5enlUU0hML3VudXJ0RkQw?=
- =?utf-8?B?N1ZWTEtGUVZvSlVpQk9qNHg3SklqWFYyaXM0b29wcmFNVU9GWmZiSWNIM2V4?=
- =?utf-8?B?bUM2YUFyRXNVSElqZFFiVUd3djlLM1BvcW9TdW11WkhkdnZrMGZ4SWVJejd1?=
- =?utf-8?B?R0JIdzZQOE9hd1NYOGhac0VmRTRkL0U1YnlQTU5VUDUxaHp6RnNWYUZCWjVG?=
- =?utf-8?B?aWxuQTRMYll2NlpFU1poQzRnaUVMbElUU0QwRmd3bTRRWHIwamF6QWYvQjFC?=
- =?utf-8?B?VXV0bFF1L05KWHRrdXBsc2haZ2YwZ0VBV3hZT2E0UVFEZE5sNXY5UnJ1Mjk5?=
- =?utf-8?B?VjZ4d2RBWFZmRVFxZlRoOHF5b09Dc1QrTmFIeWJPQ25ReXUvVEt6NlZhYzRz?=
- =?utf-8?B?MFFPUUFUL0F2bW5JWjhxUG5GZ0k2ZFF2dDI4YXAxcHEzS2prRFpmQUlXTERO?=
- =?utf-8?B?SVlGcGFNNWl6eDI4TEozYWxoMVBRS3JVRkFCZFEya2todHZoaTdweUkzRHNu?=
- =?utf-8?B?RXNCZEVnOWxLVzl3K0tSMmpmMVZZZ3JEejh1UDkwdCtNWEQzOEczeXJXNFpD?=
- =?utf-8?B?dW5ia1NQOHBzdWl6S29GbVc5ZDV4RUdWMmg5cm11Vm9FWVFIdXJ6ZTRVdXNV?=
- =?utf-8?B?ZE41ZHpVZUZENW0vaHE3eEUzQXBGUExSdDNPUnFWRDBIa2pKNDB0RjRSWmtv?=
- =?utf-8?B?YkxnYXMrcEp6VmVvWnM0WTRremRrM0ZKcUZRcS8rb1Q0dEErUVFaNEo0N2V0?=
- =?utf-8?B?NmNrMmJFVlJVYlJXN3laVWxtOGZLTi9ndHd2SnlSQ3FtT2VxTzFPYVdWb0c4?=
- =?utf-8?B?d2lhUkF1eWcvZ0RZQjI2Qk11ZHlrOGZndUZjT3k0a2tuT3dVZnBiZS9FWkxk?=
- =?utf-8?B?Zm1EWXh5bTZwQy93Q2lTRUM5b3VZSUFMRjFPY1FOMnMyVGRWUGd3U3NQdWxD?=
- =?utf-8?B?R3F3cFpWSXYwT1VycjBwMGpqNU5lTFhyK1E5clVLbTdwcm5vMkRqWDRFbEpU?=
- =?utf-8?B?WDJHY3ovaEpHRjU5SFBEeUtJRE9meUFVU3B1d3haK2pXMnBlUnpJQjE3dW9s?=
- =?utf-8?B?N3l0RGlIRndEQzlmc2Fub04zczloYU9QUnRvNHRLOFZWSyt3K0I3MHR3VVlM?=
- =?utf-8?B?VGk0N2lwREpOV1VHQTBWUnl5Y25QRnhSRWpHL2U1ZWhiUWZZc2xLUjhBRUlS?=
- =?utf-8?B?eW1sZ2MxRmVVRlN3a1JXODV5M004NXYwSy9kTEtiU29HUUJOdktIMXJDa1I4?=
- =?utf-8?B?blk4Ty83UEhMRGRKQ1FPZnBleWxnbmNQUWc3Ym96VnJ3NGZ6UU9jQnBYcENE?=
- =?utf-8?B?VEVIZU5qUkpnYVJjZkpDa0k5U3RTYVRsampSQndwY0M1SEFySGUyWXAvdktl?=
- =?utf-8?B?KzNTeStOTlA5YlBUSkpVdHBjU2E0RHFGQTVDUWlycExyaTVJQmZBeXFWVkVQ?=
- =?utf-8?B?MXIyMktCTmF3dDZHOEdDeFAzRDhXL0xzd1c0Tk5QRTByUUVHODJjQVBxSzA1?=
- =?utf-8?Q?98dJqoKJctU=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4264.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VjdDOW5PRUdhYlp4bE85RDYxM1JzSDVWZnBsSGNWNk83VzB1ZjUvOXRLbkhl?=
- =?utf-8?B?a0FBdTJ5VkkxS3Q4T3R6TlA2aisySkFhSFZoNnBMcURXRVUwNlBWcWdDT1Bm?=
- =?utf-8?B?NEJOWm1KK0ZZZUwyRVExYXVxZlVPRVNGd3E2NVFvNDluTE9XcjgvWDgrQ3hs?=
- =?utf-8?B?bnVENld3ZHUya0k5NC90YVJLbkxPNWFBMTFmVGpLVkVxeXFSNGRPYitWbStq?=
- =?utf-8?B?WG10cEpIUDcxbnVSZ2hZbUk2YU4vRGtkRGpFeCs1bXFyTEhHd243WUl2cXEr?=
- =?utf-8?B?L0VZOWY3MUd3WnRVQU5jdDBCbW40NkdCVFJaUlhwM3FMb1ZaR3BjdmZZbWpv?=
- =?utf-8?B?QnFaMkF6S09OMlQybWtHMXF0d1RjenM4RUhoODlBZGZSbnVaZkZXbUVLUFJW?=
- =?utf-8?B?T2RSd1liSHJvY0p5aHVqTUMySzZ0Z0JMcnBNZ1kwaXdqQnhtM0FyZ05RRHdm?=
- =?utf-8?B?NFpTT1M3RC9UVklTeXpmN0daaEcxNWtyWWw3RjNVRVM0SmY4a3hwNW9haXFP?=
- =?utf-8?B?bHJBSUE5Y3VxdDRGUVhxNzJEYllVMnVCOGFPeXZ5c1lleVFydG5uTEFPWEdY?=
- =?utf-8?B?QllNTStkelZEUFRhUVRJd1BTZmxBZnp0bkNFbC9jRWh6NWQvMCt5UTdjeDB2?=
- =?utf-8?B?d3IwMjNxYkg3T3dSbEI5emhFQUtQUGpzbGVLaHI3emRIR0ZRNHl1amY0T254?=
- =?utf-8?B?SXoyTlFrQ0xMaWxrVmNUMUNIS1dMVFlWMlVDcVNhUzZUamN5a0s3RDRpQ3du?=
- =?utf-8?B?aVAyUE1BVWVNdUxLbkxwVkp1MFVobnpuUlJhWWhrVzgzaUQwK2pUK1h2UWNJ?=
- =?utf-8?B?UWF0dFNKb2loOHFSMnNDUko1aEg4TjhCaVZ6QWtKSjlNUGp4OVhXWDRBcWJH?=
- =?utf-8?B?WFNaSERwZkN5RHJPNUxRVGFCU1RkK0NkVHY3dHJ1ZFluTTZPbDJ0UGx0ekFD?=
- =?utf-8?B?bWNwVkVkTXhqRGpqU3pLa0dyeW9DZHI4U0ZhL1RCN3FUQWxtU1Q5bmdCMk9M?=
- =?utf-8?B?eDNKMDl4ZTNNenc5a0pvaG5DMmluUm5zQWtWMFVHTFA1ZitkMCthcERoTmZp?=
- =?utf-8?B?eTRKZWMxMmJlMlV4b2dPQkNsTXBzVlI5K0RJRkZwNUZLU2lEc2Q5MFdmdmdJ?=
- =?utf-8?B?WnRxRkhwSXBNSnl5UDEvc1RiMEptZjltSnh0Z1I4MklLU01iMmd4Wngva1hO?=
- =?utf-8?B?T1A5WnJjajBtWGZwSnUwSGw5bXVWUlFRczRPSm1OMGxPMERvZjNiK3ltTVdS?=
- =?utf-8?B?WjhaZkVpblZtWTJLMWlCcC9pK0lyZU9vc1oyZ2piQ2p6RG0zNkY1RTZ1b1Fr?=
- =?utf-8?B?U1k2bFE0YWMvV29ocjUrZVBUbE9QUGp0SUk2UWtEQjRlNUh3RVNSeEllc3lK?=
- =?utf-8?B?Yjg5dlRFSkphVUV6ZlpkRTNuM1FibG1PTThjR2MyOWVabVJJUEwrMDZORFJP?=
- =?utf-8?B?bnVxay9EcVhVYmdUWTJJblo1OTZrMWQ0M0FEcWJyOXFGUFZvSi9XbWl1Q3Vz?=
- =?utf-8?B?WFVjcDAyV3RzejBMenNXQ1BTNHFFV2txWXl2dlNORnBiVVVzUVdIMVJzR0xn?=
- =?utf-8?B?ZXMxMTRndDVJclcxYVpWbUlNcW9hZ2xlL1kvTkFubmN5VE9HSXpLRTQ0RlZS?=
- =?utf-8?B?T24xTkxRZTlnMU1CZ2QzcDhWUXlKblpOVHo0WUQzMHN6ZGpmOENHTUw5aEdY?=
- =?utf-8?B?aWJONnBSZmFBYkIxdy83RXJXRGMxdytwL0xkS1NxWSs4NThpaEZwNUtHalZv?=
- =?utf-8?B?dmlBVTdFeWE2andCV2ZQK0VBZ2NPMTRVYXUwelhsRHAwTlNWNEhxamM4UzBT?=
- =?utf-8?B?TWwrV05XVjMvVThUNGRJSEw3RFhiSnFiVFo5cmp2TlRMNmlVR21QTWlMYzBU?=
- =?utf-8?B?R2lNREoxVEEwNmgrTG92dE5Kam9sSGJYZFhySCtXUU5zQjcwWlZiR1VFRGZu?=
- =?utf-8?B?cGVmM3huWlRzb1V4enI1VWU3Q1Ywc0hQOStJL1dadC9YaFhCNG1KZkJrM0hO?=
- =?utf-8?B?N21IbzVPRlE0RVQ0THBYcnFKK2tOdUZoczc5TTRoTmRtaFNWQWM1NDRaeFR6?=
- =?utf-8?B?dytIMVd6dCtZOHBaRlZ4YzFmbEJId0RkQVlad0laenJvYXJUTTI1ZjdaU1Ja?=
- =?utf-8?Q?2St8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DAC15381A
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722848341; cv=none; b=OzTfQdgG0IFv2V95Ecy/PJCKL3isr7NIL9H9PP2GsheFpANRh18WTDbm7xj8ZKYDL07t/OMLXrfeXvc0iu1zFg6i7zZei2fsXnr/B7JOaqN8h+R9OYxaBkDqPdsOwqtwzxuVL3qGRYsRInFbla9V7+LaO7iLJjvdS+TIg3tvcH0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722848341; c=relaxed/simple;
+	bh=cIOvKeaPrEn5XdtBdacLVMYKBgbFd1FUX9JM2Z5bdGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=vAQyhgzTeUC9xW5WiuUOqjMBN1TJXbz0Ju1rWhI8v72OvBWXCp77rGbFjKid3rqs+6OWMkotHRJE5qJQwjv29924fyM+hJG0xcV7s2RyCEJEpbWRm6CBC1yIw6nAcbKob3Qrnvqyay2mzRjC0uSLwIN0sLSlUhbsQunfmIB5BVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WcqxM1VYWz2Clq5;
+	Mon,  5 Aug 2024 16:54:15 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7F3801400F4;
+	Mon,  5 Aug 2024 16:58:55 +0800 (CST)
+Received: from [10.67.109.211] (10.67.109.211) by
+ kwepemg500010.china.huawei.com (7.202.181.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 5 Aug 2024 16:58:54 +0800
+Message-ID: <850f42c7-f7e6-4a35-bcf3-b3d1142f2fc8@huawei.com>
+Date: Mon, 5 Aug 2024 16:58:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4264.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c09e94ba-f890-40db-47e6-08dcb52cd4e2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2024 08:58:53.4156
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: o89yCYxab8WP4hyoVVOSLj8m0EVPrYGyMKXjbn6+ynEwXmGHm6kZ3Cv/F2vzfl9ZFWheUXXWuaFtxrM5Isz+Nw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7585
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] RISC-V: Dynamically allocate cpumasks and further
+ increase range and default value of NR_CPUS
+Content-Language: en-US
+To: Andrew Jones <ajones@ventanamicro.com>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>
+References: <20240614075306.357861-1-liuyuntao12@huawei.com>
+ <20240625-c1c3b9fcb6ee148294d4ceb4@orel>
+ <8841edbc-dd65-452c-a459-b5ce42e289d9@huawei.com>
+ <5693310f-8706-42e3-89e5-af512a24ff99@huawei.com>
+From: "liuyuntao (F)" <liuyuntao12@huawei.com>
+In-Reply-To: <5693310f-8706-42e3-89e5-af512a24ff99@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-SGkgS3J6eXN6dG9mLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEty
-enlzenRvZiBLb3psb3dza2kgPGtyenlzenRvZi5rb3psb3dza2lAbGluYXJvLm9yZz4NCj4gU2Vu
-dDogU3VuZGF5LCBBdWd1c3QgNCwgMjAyNCA4OjIwIFBNDQo+IFRvOiBQb3R0aHVyaSwgU2FpIEty
-aXNobmEgPHNhaS5rcmlzaG5hLnBvdHRodXJpQGFtZC5jb20+OyBMaW51cyBXYWxsZWlqDQo+IDxs
-aW51cy53YWxsZWlqQGxpbmFyby5vcmc+OyBTaW1laywgTWljaGFsIDxtaWNoYWwuc2ltZWtAYW1k
-LmNvbT47IFJvYg0KPiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBLcnp5c3p0b2YgS296
-bG93c2tpDQo+IDxrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFyby5vcmc+OyBDb25vciBEb29s
-ZXkgPGNvbm9yK2R0QGtlcm5lbC5vcmc+Ow0KPiBCdWRkaGFiaGF0dGksIEpheSA8amF5LmJ1ZGRo
-YWJoYXR0aUBhbWQuY29tPjsgS3VuZGFuYWxhLCBQcmF2ZWVuIFRlamENCj4gPHByYXZlZW4udGVq
-YS5rdW5kYW5hbGFAYW1kLmNvbT47IEdyZWcgS3JvYWgtSGFydG1hbg0KPiA8Z3JlZ2toQGxpbnV4
-Zm91bmRhdGlvbi5vcmc+DQo+IENjOiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
-cmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWdwaW9Admdlci5rZXJu
-ZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gc2Fpa3Jpc2huYTEyNDY4QGdt
-YWlsLmNvbTsgZ2l0IChBTUQtWGlsaW54KSA8Z2l0QGFtZC5jb20+DQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjMgMC8zXSBwaW5jdHJsOiBwaW5jdHJsLXp5bnFtcDogQWRkIFZlcnNhbCBwbGF0Zm9y
-bQ0KPiBzdXBwb3J0DQo+IA0KPiBPbiAwMS8wOC8yMDI0IDE0OjAwLCBTYWkgS3Jpc2huYSBQb3R0
-aHVyaSB3cm90ZToNCj4gPiBVcGRhdGUgdGhlIGJpbmRpbmcgYW5kIHBpbmN0cmwtenlucW1wIGRy
-aXZlciB0byBhZGQgVmVyc2FsIHBsYXRmb3JtDQo+ID4gc3VwcG9ydC4NCj4gPiBBZGQgR2V0IEF0
-dHJpYnV0ZSBJRCBpbiB0aGUgWGlsaW54IGZpcm13YXJlIGRyaXZlciB0byBnZXQgdGhlIHBpbg0K
-PiA+IGluZm9ybWF0aW9uIGZyb20gWGlsaW54IFBsYXRmb3JtIE1hbmFnZW1lbnQgRmlybXdhcmUu
-DQo+IA0KPiBBbnkgcGFydGljdWxhciByZWFzb24gd2h5IHlvdSBhcmUgZGV2ZWxvcGluZyBwYXRj
-aGVzIG9uIHNvbWUgcXVpdGUgb2xkDQo+IGtlcm5lbD8NCkkgY3JlYXRlZCB0aGlzIHBhdGNoIHNl
-cmllcyBvbiB0b3Agb2YgbGF0ZXN0IFBpbiBjb250cm9sIHN1YnN5c3RlbSB0cmVlKExpbnVzIFdh
-bGxlaWopLA0KJ2Zvci1uZXh0JyBicmFuY2guDQoNClJlZ2FyZHMNClNhaSBLcmlzaG5hDQo=
+Gentle ping
+
+On 2024/6/26 20:41, liuyuntao (F) wrote:
+> 
+> 
+> On 2024/6/25 19:44, liuyuntao (F) wrote:
+>>
+>>
+>> On 2024/6/25 19:11, Andrew Jones wrote:
+>>> On Fri, Jun 14, 2024 at 07:53:06AM GMT, Yuntao Liu wrote:
+>>>> Currently default NR_CPUS is 64 for riscv64, since the latest QEMU virt
+>>>> machine supports up to 512 CPUS, so set default NR_CPUS 512 for 
+>>>> riscv64.
+>>>>
+>>>> Under the promotion of RISC-V International and related chip
+>>>> manufacturers, RISC-V has also begun to enter the server market, which
+>>>> demands higher performance. Other major architectures (such as ARM64,
+>>>> x86_64, MIPS, etc) already have a higher range, so further increase
+>>>> this range up to 4096 for riscv64.
+>>>>
+>>>> Due to the fact that increasing NR_CPUS enlarges the size of cpumasks,
+>>>> there is a concern that this could significantly impact stack usage,
+>>>> especially for code that allocates cpumasks on the stack. To address
+>>>> this, we have the option to enable CPUMASK_OFFSTACK, which prevents
+>>>> cpumasks from being allocated on the stack. we choose to enable this
+>>>> feature only when NR_CPUS is greater than 512, why 512, since then
+>>>> the kernel size with offstack is smaller.
+>>>
+>>> This isn't the reason why Arm decided to start at 512, afaict. The 
+>>> reason
+>>> for Arm was because hackbench did better with onstack for 256. What are
+>>> the hackbench results for riscv?
+>>
+>> Okay, I will add the test results of hacktest soon.
+> 
+> Benchmark results using hackbench average over 5 runs of
+> ./hackbench -s 512 -l 20 -g 10 -f 50 -P
+> on Qemu.
+> 
+> NR_CPUS     64      128     256     512     1024    2048
+> onstack/s   6.9992  6.6112  6.7834  6.6578  6.6646  6.8692
+> offstack/s  6.5616  6.95    6.5698  6.91    6.663   6.8202
+> difference  -6.25%  +5.12%  -3.15%  +3.79%  -0.02%  -0.71%
+> 
+> When there are more cores, the fluctuation is minimal, leading to the 
+> speculation that the performance gap would be smaller with a higher 
+> number of NR_CPUS.
+> Since I don't have a RISCV single-board computer, these are the results 
+> I obtained from testing in QEMU, which may differ from the actual 
+> situation. Perhaps someone could help with the testing.
+> 
+> Thanks,
+> Yuntao
+> 
+>>
+>>>
+>>>>
+>>>> vmlinux size comparison(difference to vmlinux_onstack_NR_CPUS 
+>>>> baseline):
+>>>>
+>>>> NR_CPUS     256         512         1024        2048        4096
+>>>> onstack     19814536    19840760    19880584    19969672    20141704
+>>>> offstack    19819144    19840936    19880480    19968544    20135456
+>>>> difference  +0.023%     +0.001%     -0.001%     -0.001      -0.031%
+>>>> is_smaller  n           n           y           y           y
+>>>
+>>> Since the savings are almost nothing we must not have too many global
+>>> cpumasks. But I'm in favor of ensuring stack depths stay under control,
+>>> so turning on CPUMASK_OFFSTACK sounds good to me in general.
+>>>
+>>>>
+>>>> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+>>>> ---
+>>>>   arch/riscv/Kconfig | 5 +++--
+>>>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>>>> index 0525ee2d63c7..5960713b3bf9 100644
+>>>> --- a/arch/riscv/Kconfig
+>>>> +++ b/arch/riscv/Kconfig
+>>>> @@ -77,6 +77,7 @@ config RISCV
+>>>>       select CLINT_TIMER if RISCV_M_MODE
+>>>>       select CLONE_BACKWARDS
+>>>>       select COMMON_CLK
+>>>> +    select CPUMASK_OFFSTACK if NR_CPUS > 512
+>>>>       select CPU_PM if CPU_IDLE || HIBERNATION || SUSPEND
+>>>>       select EDAC_SUPPORT
+>>>>       select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && 
+>>>> !DYNAMIC_FTRACE)
+>>>> @@ -428,11 +429,11 @@ config SCHED_MC
+>>>>   config NR_CPUS
+>>>>       int "Maximum number of CPUs (2-512)"
+>>>>       depends on SMP
+>>>> -    range 2 512 if !RISCV_SBI_V01
+>>>> +    range 2 4096 if !RISCV_SBI_V01
+>>>>       range 2 32 if RISCV_SBI_V01 && 32BIT
+>>>>       range 2 64 if RISCV_SBI_V01 && 64BIT
+>>>>       default "32" if 32BIT
+>>>> -    default "64" if 64BIT
+>>>> +    default "512" if 64BIT
+>>>
+>>> This is somewhat reasonable, even if nothing is going to use this for
+>>> quite a while, since it'll help avoid bugs popping up when NR_CPUS gets
+>>> bumped later, but it feels excessive right now for riscv, so I'm a bit
+>>> on the fence about it. Maybe if hackbench doesn't show any issues we
+>>> could turn CPUMASK_OFFSTACK on for a smaller NR_CPUS and also select
+>>> a smaller default?
+>>>
+> 
+> It seems that when NR_CPUS is larger, hackbench performs better, and 
+> which NR_CPUS do you have a preference for?
+> 
+>>> Thanks,
+>>> drew
+>>>
+>>>>   config HOTPLUG_CPU
+>>>>       bool "Support for hot-pluggable CPUs"
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>>>
+>>>> _______________________________________________
+>>>> linux-riscv mailing list
+>>>> linux-riscv@lists.infradead.org
+>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
