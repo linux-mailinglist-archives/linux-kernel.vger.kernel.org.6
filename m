@@ -1,170 +1,146 @@
-Return-Path: <linux-kernel+bounces-274980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521FC947F11
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:17:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C26947F13
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7FCAB22147
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454FA2838C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32E615C124;
-	Mon,  5 Aug 2024 16:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dE9vq1Bu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31FC376F5;
-	Mon,  5 Aug 2024 16:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5791615B984;
+	Mon,  5 Aug 2024 16:17:15 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D9B149C69;
+	Mon,  5 Aug 2024 16:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722874610; cv=none; b=KiShkVMzy3riGBIWjU6WexpAhqQrLXPCcN67Ho7Ct/PUjhg686UGaa+GcQzcyv6e3hR/J3liKIQ9Rkd5xxvmI5NIYBO6XgDEKS3EAki1URQmyG5JQ5sQsyfv/hqR4mZ0oDz9xC1FQ9iSr60AMlovL/DaJESfc4Iu9cm4eVQFxyM=
+	t=1722874634; cv=none; b=rAUzAcgUtXolBYtwZrQZd9JYWcvywrfuluoqrVV1ENARsBCD7jMvTkVnvm6Uj1k80ZGT78u57O7HJADMXBG11lmpB5EVdAqazofgpu6NjBWot4Sj662JijTol06FMw0yW92BHHSDKiWdbUvvi9STQjUn6GAjsocw4OOQeGhFOjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722874610; c=relaxed/simple;
-	bh=y9ldZbTyfHtWmV56N6wsb2EpJn4YFyke+2byGlPJ2Ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqDlFTXSmSzJKkne3TIKWJ/9Q9iMA8m60W/+A0kE1L9pdsYSddQM2DvuZ1rEjhGFepTzjYeQU1UnZgt/qLIcyI1yDxeXpdP/C5JKZSDx9bu3KlTxob7C5XgQ7TaCYVi5B11f5rIUY+pFfoocNvnw7nl4Ud88D+SAFT8XKbZBtp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dE9vq1Bu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C69E9C4AF0C;
-	Mon,  5 Aug 2024 16:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722874609;
-	bh=y9ldZbTyfHtWmV56N6wsb2EpJn4YFyke+2byGlPJ2Ck=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dE9vq1BuB7DySNJ0jmsO8oDVdSmXiOtDPZZ+qMEI4JVqefYufKzfUqg36Y8Gtymsn
-	 yw8UXACxwiu7eOw2VaFkkLc9DKj+IcG8GYXfAQ7axO+sy+4Opse6dwr+CwW795gh8I
-	 Yy6XsxPaiwvT55c5+H2DphPa9LPRBo7WzA/TKvrZcGTy6LsO6m1iXKKZedZzwVB504
-	 QjmY78WVHFacbV9dV2pWObXlY4M94SsfzOB7Qh40ctDl74gMT+EI9RHeQlieTk7c+6
-	 CJ71uHEUxPNKvoJxM44gmoUiTq6g1QfZFJY3baXmSMWlbwiJAcTvBXyD+N4ly0eZ4k
-	 fI8UPtwF5DtqQ==
-Date: Mon, 5 Aug 2024 17:16:43 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] KVM: selftests: arm64: Use generated defines for
- named system registers
-Message-ID: <6c1beda4-7211-4f64-95c8-7a11c489b145@sirena.org.uk>
-References: <20240802-kvm-arm64-get-reg-list-v1-0-3a5bf8f80765@kernel.org>
- <20240802-kvm-arm64-get-reg-list-v1-2-3a5bf8f80765@kernel.org>
- <868qxe0wzp.wl-maz@kernel.org>
+	s=arc-20240116; t=1722874634; c=relaxed/simple;
+	bh=1AU3uHyHgBd+fNoGKpCyHDzwTORE5i8l+dO0lWvgOGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Tn5V2iRewAMjaDDy5TQbPfYpdYrs0O3PAZavbJ630T0JBMwcbaNQ76mDF9JXN/RVxn3TvXUoFSqatT9bpqimFQ4YqbT0ZgPHbU0ZdcYqkwLcdB4whuZfEqC/uOcyqn6nHegCqZNPnOwT0H8xG7ZCNi86130DE/Zk17RB3rr97Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id 6060872C8FB;
+	Mon,  5 Aug 2024 19:17:04 +0300 (MSK)
+Received: from pony.office.basealt.ru (unknown [193.43.10.9])
+	by imap.altlinux.org (Postfix) with ESMTPSA id 58FC636D0168;
+	Mon,  5 Aug 2024 19:17:04 +0300 (MSK)
+Received: by pony.office.basealt.ru (Postfix, from userid 500)
+	id A772E360BFC2; Mon,  5 Aug 2024 19:17:03 +0300 (MSK)
+Date: Mon, 5 Aug 2024 19:17:03 +0300
+From: Vitaly Chikunov <vt@altlinux.org>
+To: Sasha Levin <sashal@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, 
+	Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, 
+	=?utf-8?B?UMOpdGVy?= Ujfalusi <peter.ujfalusi@linux.intel.com>, Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com, 
+	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.9 17/40] ASoC: topology: Fix route memory
+ corruption
+Message-ID: <czx7na7qfoacihuxcalowdosncubkqatf7gkd3snrb63wvpsdb@mncryvo4iiep>
+X-In-Reply-To: <20240709162007.30160-17-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vBXB/GZWADW/Ncoh"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <868qxe0wzp.wl-maz@kernel.org>
-X-Cookie: Goodbye, cool world.
+Content-Transfer-Encoding: 8bit
+
+Sasha, Greg,
+
+On Tue, Jul 09, 2024 at 12:18:57PM GMT, Sasha Levin wrote:
+> From: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+> 
+> [ Upstream commit 0298f51652be47b79780833e0b63194e1231fa34 ]
+> 
+> It was reported that recent fix for memory corruption during topology
+> load, causes corruption in other cases. Instead of being overeager with
+> checking topology, assume that it is properly formatted and just
+> duplicate strings.
+
+Can this backport actually be applied to the 6.9/6.6/6.1 stable branches?
+
+I have multiple bug reports about sound not working and memory
+corruption on some laptops (for example ICL RAYbook Si1516). See for
+example bug reports[1][2], and the fix discussion [3].
+
+dmesg messages from Lenovo ThinkBook 13 gen 1:
 
 
---vBXB/GZWADW/Ncoh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  [ 3.555191] sof-audio-pci-intel-cnl 0000:00:1f.3: Firmware info: version 2:2:0-57864
+  [ 3.555206] sof-audio-pci-intel-cnl 0000:00:1f.3: Firmware: ABI 3:22:1 Kernel ABI 3:23:0
+  [ 3.574043] sof-audio-pci-intel-cnl 0000:00:1f.3: Topology: ABI 3:22:1 Kernel ABI 3:23:0
+  [ 3.575180] sof-audio-pci-intel-cnl 0000:00:1f.3: error: sink MIXER1.0> not found
+  [ 3.575772] sof-audio-pci-intel-cnl 0000:00:1f.3: error: tplg component load failed -22
+  [ 3.575793] sof-audio-pci-intel-cnl 0000:00:1f.3: error: failed to load DSP topology -22
+  [ 3.575801] sof-audio-pci-intel-cnl 0000:00:1f.3: ASoC: error at snd_soc_component_probe on 0000:00:1f.3: -22
 
-On Sat, Aug 03, 2024 at 10:35:54AM +0100, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
+Error messages from other boots showing memory corruption:
 
-> > This conversion was done with the sed command:
+  [ 3.904397] sof-audio-pci-intel-cnl 0000:00:1f.3: error: sink PCM0C03-std-def-alt0.p11@jh\x86Ŝ\xff\xff@\xc8\xff\x82Ŝ\xff\xff`P\x82\xbb\xff\xff\xff\xff\x94$A\xbc\xff\xff\xff\xff\x06 not found
+  [ 3.966777] sof-audio-pci-intel-cnl 0000:00:1f.3: error: sink PGA1.0\x01 not found
+  [ 3.899748] sof-audio-pci-intel-cnl 0000:00:1f.3: error: source BUF2.0 not found
+  [ 3.975359] sof-audio-pci-intel-cnl 0000:00:1f.3: error: source PCM0P\x01pcsc-lite.conf not found
+  [ 7.275851] sof-audio-pci-intel-tgl 0000:00:1f.3: error: source HDA1.IN/0123456789:;<=>? not found
 
-> >   sed -i -E 's-ARM64_SYS_REG.*/\* (.*) \*/-KVM_ARM64_SYS_REG(SYS_\1),-' tools/testing/selftests/kvm/aarch64/get-reg-list.c
+[1] https://github.com/thesofproject/sof/issues/9339
+[2] https://github.com/thesofproject/sof/issues/9341
+[3] https://lore.kernel.org/linux-sound/171812236450.201359.3019210915105428447.b4-ty@kernel.org/T/#m8c4bd5abf453960fde6f826c4b7f84881da63e9d
 
-> [Eyes rolling]
+Thanks,
 
-> What I asked about scripting the whole thing, it never occurred to me
-> that you would use the *comments* as a reliable source of information.
-> Do we have anything less reliable than comments in the kernel?
-
-I think we should ultimately be using both the comments and the
-encodings - the comments indicate what people thought was being tested
-and it's useful to make sure we have that coverage even if the
-implementation were to have been wrong.
-
-Doing this step is also going to have picked up registers which we don't
-yet have in the sysreg file, some of which are going to be painful to
-add there (things like ESR for example) so aren't likely to get done in
-a hurry due to complexity in their definitions.
-
-This was quick to do, represents progress, and offers a hint to anyone
-adding new registers that they should use the symbolic definitions.
-
-> The matching must be done from the arch/arm64/tools/sysreg file,
-> because that's the (admittedly dubious) source of truth. We actually
-> trust the encodings because they are reported by the kernel itself.
-> The comment is hand-written, and likely wrong.
-
-Sure, there's a reason I compared the resulting binaries rather than
-just trusting that the conversion gave the same result.
-
-> > -	ARM64_SYS_REG(3, 3, 14, 3, 1),	/* CNTV_CTL_EL0 */
-> > -	ARM64_SYS_REG(3, 3, 14, 3, 2),	/* CNTV_CVAL_EL0 */
-> > +	KVM_ARM64_SYS_REG(SYS_CNTV_CTL_EL0),
-> > +	KVM_ARM64_SYS_REG(SYS_CNTV_CVAL_EL0),
-> >  	ARM64_SYS_REG(3, 3, 14, 0, 2),
-
-> Great. So not only you fail convert a register, but you also ignore
-> the nugget described in arch/arm64/invlude/uapi/asm/kvm.h:267.
-
-That's that CNTV_CTL_EL0 and CNTV_CVAL_EL0 have their encodings
-reversed in the ABI.
-
-> Sure, having both described hides the crap, as we don't attach any
-> significance to the registers themselves. But that shows how
-> untrustworthy the comments are.
-
-I'm afraid that any automated conversion is likely to trip over an ABI
-issue like that - the obvious thing to do when looking up by encoding
-would be to just emit a KVM_ARM64_SYS_REG() if we find the encoding
-which would give the same end result.  I'll add a separate manual update
-of these registers.
-
-Are there any other similar issues?  I didn't spot anything in kvm.h.
-
-> >  	ARM64_SYS_REG(2, 0, 0, 0, 4),
-> >  	ARM64_SYS_REG(2, 0, 0, 0, 5),
-> >  	ARM64_SYS_REG(2, 0, 0, 0, 6),
-
-> As far as I can tell, these registers are not unallocated, and they
-> should be named.
-
-I agree that we should do all named registers eventually, the above are
-numbered debug registers (DBGBVR0_EL1, DBGBCR0_EL1 and DBGWVR0_EL1)
-which aren't in the sysreg file yet so wouldn't currently be covered by
-a conversion based on pulling encodings from there.  They could also be
-done immediately with a generator script as there are DBGBVRn_EL1 style
-macros there.
-
-Like I say this is a quick first step and does improve things, there's
-still more to do but I do think this moves us forward.  We can and
-should come back later and build on things as people have time.
-
---vBXB/GZWADW/Ncoh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaw+usACgkQJNaLcl1U
-h9A5QQf/eq0ZOdpYjJXRG4CZ3SHDFIZ/NM9H8ZnuG8wQ5BVfd1DI1hdEiZ9P+jT5
-IgxAmzyq0jBtYm+llNM9Bh/KmjK9rLDfqIDPmfgpIKithc/IVo56E5SYXakQG5Fl
-7pAT1nQt9Favk+dUlWY/4gShcfvJw12CpZn6hGI+6ZYr5tfYL7WbCrSlJ9XXlVPX
-NU3YDGHDj0x2jiQDLndhAEeg53i3KwXSsngtyXQejpaI5GB6EIdTUKQ0bOVBoDq2
-2PUjl74LLOZ/ELvCZsRGm7bPhZeMV5QBafI4H2Dl2fE02TM5ObCIjSW3sDdQXZTf
-v6kOGV2I6Y9d+DfFwOec3a308g10rQ==
-=TkJy
------END PGP SIGNATURE-----
-
---vBXB/GZWADW/Ncoh--
+> 
+> Reported-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> Closes: https://lore.kernel.org/linux-sound/171812236450.201359.3019210915105428447.b4-ty@kernel.org/T/#m8c4bd5abf453960fde6f826c4b7f84881da63e9d
+> Suggested-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
+> Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+> Link: https://lore.kernel.org/r/20240613090126.841189-1-amadeuszx.slawinski@linux.intel.com
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  sound/soc/soc-topology.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+> 
+> diff --git a/sound/soc/soc-topology.c b/sound/soc/soc-topology.c
+> index 52752e0a5dc27..27aba69894b17 100644
+> --- a/sound/soc/soc-topology.c
+> +++ b/sound/soc/soc-topology.c
+> @@ -1052,21 +1052,15 @@ static int soc_tplg_dapm_graph_elems_load(struct soc_tplg *tplg,
+>  			break;
+>  		}
+>  
+> -		route->source = devm_kmemdup(tplg->dev, elem->source,
+> -					     min(strlen(elem->source), maxlen),
+> -					     GFP_KERNEL);
+> -		route->sink = devm_kmemdup(tplg->dev, elem->sink,
+> -					   min(strlen(elem->sink), maxlen),
+> -					   GFP_KERNEL);
+> +		route->source = devm_kstrdup(tplg->dev, elem->source, GFP_KERNEL);
+> +		route->sink = devm_kstrdup(tplg->dev, elem->sink, GFP_KERNEL);
+>  		if (!route->source || !route->sink) {
+>  			ret = -ENOMEM;
+>  			break;
+>  		}
+>  
+>  		if (strnlen(elem->control, maxlen) != 0) {
+> -			route->control = devm_kmemdup(tplg->dev, elem->control,
+> -						      min(strlen(elem->control), maxlen),
+> -						      GFP_KERNEL);
+> +			route->control = devm_kstrdup(tplg->dev, elem->control, GFP_KERNEL);
+>  			if (!route->control) {
+>  				ret = -ENOMEM;
+>  				break;
+> -- 
+> 2.43.0
+> 
 
