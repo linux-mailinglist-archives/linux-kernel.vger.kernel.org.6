@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-274305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C53AC947654
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:49:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FDA947656
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31290B20D58
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F22281036
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FFA14A093;
-	Mon,  5 Aug 2024 07:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BC3149E0B;
+	Mon,  5 Aug 2024 07:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jpRXDzNE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d0d7JvI5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jpRXDzNE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="d0d7JvI5"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P9cK75WJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5u1MD5jp";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P9cK75WJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5u1MD5jp"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D3B13CABC;
-	Mon,  5 Aug 2024 07:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F0B149DE3;
+	Mon,  5 Aug 2024 07:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722844138; cv=none; b=iWicvjf7z9PFPJxoLsXBZbQo3AOBOlMBOZUjN2A7G01eMowzz2iOwPvoQV6nbBoR6jNy/pcPedEKscvK1B6wifKhTMN0uJcGuVO+90UqKZ7L6I94EiKQZtO60ywpJJl34TIXdXyOshZOlZzzi19IwO5+dM/xItfk1YgdbUV22Hg=
+	t=1722844158; cv=none; b=rmFyNqlWx8W4wNFG3sH9KuMtMDd2sbD6jIG1wKvAxeG6QMXLSivwpH5+SHk/9icHLU+8zisBlSEb3X8hU8H7N/9bxM5DOWBuP+tKnCmDjSutXw0ZqB8kVrwsHovdpApge1JhfWiZUmxmSJvG6wsVGoHZki15cevHrYrNJdCMQgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722844138; c=relaxed/simple;
-	bh=YyFSOnJHA91ZqKPYgMC8/ANKjdXFjr+RU5HyUGYKBNs=;
+	s=arc-20240116; t=1722844158; c=relaxed/simple;
+	bh=8ovik4tZwzi1xl97ga7M/9sRpiNXu3A2yAVl/ALhG40=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mo6F0tGSsIW1sHTYOLC1fcOtoBGIEuYqvK7ugdQoF9L3T2XaTJYZX2mkyljSeekfn7qReZa7oFLjJKL/N7SG8yco4XP9kfEM5z2AK0YV7rPkwu65psutDgOo7RXAJbWue6pK21vEWGhpOyt6lcU1IpolEjWSK/Z9ajizS4uIoHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jpRXDzNE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d0d7JvI5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jpRXDzNE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=d0d7JvI5; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version:Content-Type; b=ZMCjzAMYCkr1OReiSAu3RCy9tnMzpFec8CY0RERXPcDGJ/FOEHDL+yyUxIS+h0k72MRwpGKjmDCkjPdtaAw+s4H5LElwF9X5YsDwj9UhZN2fmRQilSUa2cFozQRaaAsdPfv7LKxgxKJc4IrQZHD57tZlVKkN7ME0vCfUxHmybc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=P9cK75WJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5u1MD5jp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=P9cK75WJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5u1MD5jp; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 73E8621B7A;
-	Mon,  5 Aug 2024 07:48:48 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1AF7321B7A;
+	Mon,  5 Aug 2024 07:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722844128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1722844155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnDcRKh7UoJoVfaHnMiOmNsuVBJYo6i3KK6M1Qku/zg=;
-	b=jpRXDzNETYctYtgPfd0Z1YSa6Zo02ZEuL1gYF4Y8bw6nLaupXi94gOusiMs+06RcqzJxgo
-	e1E41Jf5RGsOsfipIrwybWZVM4pOrw7j120FjDHJGf0k0bf8ZuwwHL+xfH/l3SrfKLbojg
-	vr9ZJDPyleXkcnFDRZtAGxR4FbWfa74=
+	bh=R/oIjTtOdQZC83coUM4LDj6b9/ldcdBlQly3TQ8twlU=;
+	b=P9cK75WJTVLY7jAaqJwg2JYjwN1+9HoYIQ3nNDhMZiRHQVAUxKYfpYbUe9WAGFR3waWWZ/
+	XciNlVa3zPjw0K+91q0TveO3o/Q2ysXGXV37Ba4Da/Jjm5+qP3ZF1NafJY4q4+tpZ34Lyu
+	c3v5AF4TcUYy5rwFqZU9udU9LaIAQy4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722844128;
+	s=susede2_ed25519; t=1722844155;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnDcRKh7UoJoVfaHnMiOmNsuVBJYo6i3KK6M1Qku/zg=;
-	b=d0d7JvI5MqEI8q4nQQv84OeJuEo4aF6zNvLTonNGlVUBcudX9cBSfM5Ab8WYEP/zG2doLu
-	Gdr9en/6kY3fq4Bw==
+	bh=R/oIjTtOdQZC83coUM4LDj6b9/ldcdBlQly3TQ8twlU=;
+	b=5u1MD5jpy2NQA/TjpU0Fh/cpYudF7dqSwf6MAl2a5IwrXl5L4S66yVnhxg/LeG9zO1oD0u
+	pAi2hkY0wjLyOgDw==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=jpRXDzNE;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=d0d7JvI5
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=P9cK75WJ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5u1MD5jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722844128; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1722844155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnDcRKh7UoJoVfaHnMiOmNsuVBJYo6i3KK6M1Qku/zg=;
-	b=jpRXDzNETYctYtgPfd0Z1YSa6Zo02ZEuL1gYF4Y8bw6nLaupXi94gOusiMs+06RcqzJxgo
-	e1E41Jf5RGsOsfipIrwybWZVM4pOrw7j120FjDHJGf0k0bf8ZuwwHL+xfH/l3SrfKLbojg
-	vr9ZJDPyleXkcnFDRZtAGxR4FbWfa74=
+	bh=R/oIjTtOdQZC83coUM4LDj6b9/ldcdBlQly3TQ8twlU=;
+	b=P9cK75WJTVLY7jAaqJwg2JYjwN1+9HoYIQ3nNDhMZiRHQVAUxKYfpYbUe9WAGFR3waWWZ/
+	XciNlVa3zPjw0K+91q0TveO3o/Q2ysXGXV37Ba4Da/Jjm5+qP3ZF1NafJY4q4+tpZ34Lyu
+	c3v5AF4TcUYy5rwFqZU9udU9LaIAQy4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722844128;
+	s=susede2_ed25519; t=1722844155;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnDcRKh7UoJoVfaHnMiOmNsuVBJYo6i3KK6M1Qku/zg=;
-	b=d0d7JvI5MqEI8q4nQQv84OeJuEo4aF6zNvLTonNGlVUBcudX9cBSfM5Ab8WYEP/zG2doLu
-	Gdr9en/6kY3fq4Bw==
+	bh=R/oIjTtOdQZC83coUM4LDj6b9/ldcdBlQly3TQ8twlU=;
+	b=5u1MD5jpy2NQA/TjpU0Fh/cpYudF7dqSwf6MAl2a5IwrXl5L4S66yVnhxg/LeG9zO1oD0u
+	pAi2hkY0wjLyOgDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3805B13254;
-	Mon,  5 Aug 2024 07:48:48 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DF3A113254;
+	Mon,  5 Aug 2024 07:49:14 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eZF1DOCDsGZnUAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 05 Aug 2024 07:48:48 +0000
-Date: Mon, 05 Aug 2024 09:49:26 +0200
-Message-ID: <878qxbl88p.wl-tiwai@suse.de>
+	id cztJNfqDsGZ9UAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 05 Aug 2024 07:49:14 +0000
+Date: Mon, 05 Aug 2024 09:49:53 +0200
+Message-ID: <877ccvl87y.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
-To: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: <tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
+To: Stefan Binding <sbinding@opensource.cirrus.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
 	<alsa-devel@alsa-project.org>,
+	<linux-sound@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>,
 	<patches@opensource.cirrus.com>
-Subject: Re: [PATCH v3] ALSA: hda: cs35l56: Stop creating ALSA controls for firmware coefficients
-In-Reply-To: <20240801143139.34549-1-simont@opensource.cirrus.com>
-References: <20240801143139.34549-1-simont@opensource.cirrus.com>
+Subject: Re: [PATCH v2] ALSA: hda: cs35l41: Stop creating ALSA Controls for firmware coefficients
+In-Reply-To: <20240801155047.456540-1-sbinding@opensource.cirrus.com>
+References: <20240801155047.456540-1-sbinding@opensource.cirrus.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -106,8 +107,7 @@ MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
 X-Spam-Level: 
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+X-Spamd-Result: default: False [-2.51 / 50.00];
 	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
@@ -115,49 +115,42 @@ X-Spamd-Result: default: False [-5.51 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TO_DN_SOME(0.00)[]
 X-Rspamd-Action: no action
 X-Spam-Flag: NO
-X-Spam-Score: -5.51
-X-Rspamd-Queue-Id: 73E8621B7A
+X-Spam-Score: -2.51
+X-Rspamd-Queue-Id: 1AF7321B7A
 
-On Thu, 01 Aug 2024 16:31:39 +0200,
-Simon Trimmer wrote:
+On Thu, 01 Aug 2024 17:50:44 +0200,
+Stefan Binding wrote:
 > 
-> A number of laptops have gone to market with old firmware versions that
-> export controls that have since been hidden, but we can't just install a
-> newer firmware because the firmware for each product is customized and
-> qualified by the OEM. The issue is that alsactl save and restore has no
-> idea what controls are good to persist which can lead to
-> misconfiguration.
+> When the CS35L41 loads its firmware, it has a number of controls to
+> affect its behaviour. Currently, these controls are exposed as ALSA
+> Controls.
 > 
-> There is no reason that the UCM or user should need to interact with any
-> of the ALSA controls for the firmware coefficients so they can be
-> removed entirely, this also simplifies the driver.
+> These controls were never intended to be exposed to users but the
+> firmware doesn't mark them hidden, so make the driver ignore them.
 > 
-> Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
-> ---
-> Changes in v3:
-> - Remove ability to add firmware coefficients as ALSA controls
->   entirely
+> Any changes in the coefficients handled by these controls needs to
+> be matched to the individual system by SSID, which is already handled
+> using the tuning file, when firmware is loaded, so UCM should not be
+> setting these controls anyway.
 > 
-> Changes in v2:
-> - v1 was accidentally the backport version for older kernels instead of
->   the one for v6.11
+> Signed-off-by: Stefan Binding <sbinding@opensource.cirrus.com>
 
-Applied now to for-linus branch.  Thanks.
+Applied to for-linus branch now.  Thanks.
 
 
 Takashi
