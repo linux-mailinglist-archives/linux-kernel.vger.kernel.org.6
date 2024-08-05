@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-274872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B199947DE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:21:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C635E947DE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C947A1F23FFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026231C21E54
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479F815B13B;
-	Mon,  5 Aug 2024 15:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C879715B57F;
+	Mon,  5 Aug 2024 15:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DAEFhR9a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMxxVbqZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8735A13CFAA;
-	Mon,  5 Aug 2024 15:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22ED15B54F;
+	Mon,  5 Aug 2024 15:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722871231; cv=none; b=TXhBDtl6NqO04+8A/L4hbF6QSt3hPBOI61TTBxqeV8TikOPqVTz6smzkMXxhckAzOkvKOi59296AkiMKOW4NOEp798gkYA/ZHfuruhYj+ACyIta6reIjmrDPEPdwIYWmxyowA8a1ArK+N7lxNfNouDt/KHyON0f+2DYJYAkQUac=
+	t=1722871236; cv=none; b=Si6M6gZPx+LKcPyifliRkZxOxFU57w1nhM5lzfa5Wy5sMnAEdxL1PnkgfY1TaQYo/87IdPWnx6tGvkORJrUtKw+4VvNS2NqDYJJJOlmrEHHZV1uRNmM+sDBT1JbxGBldKUeoz2RmjiztKhHx3ECMgJ+nqGLDXwy99jODxxCPR5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722871231; c=relaxed/simple;
-	bh=OtT50VkQ4IhBDfNNG3JPXaxsaB7mAc0R/AyuRkhis70=;
+	s=arc-20240116; t=1722871236; c=relaxed/simple;
+	bh=KUN3egAY7JyTXEWIOlIzv3zwwD5pg50NL+IK/lAWQ2g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GFghPahH0bfg846IIP0UUE0ZDTIQ6U2sApd4XFyAclQT2bqRfXFsQCW1wbShKzIQI4KxyAQDkLhXMELwH+04fcMngvGQw3mVSXknR0GIdH7n6P84A1X6Vvjl/NnhdBG4ljfFx9U4H4U5HB46axVX2suKkXHyX7Z77Dxle/vG+4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DAEFhR9a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8AE8C4AF10;
-	Mon,  5 Aug 2024 15:20:24 +0000 (UTC)
+	 MIME-Version; b=TOcUEyJ8JQOIw8/F1GviuZj5wBSc7GdzduN6PTBpu721HuVeUwZgcAC9bEDlRo5v/HhVYTHP1nOan5uHGDUka7hTVTw7h6zbDAYiJcxUNTMj0yfR2iWiuCnfp4rUpiuMlJw0Qgwmo/hqegpUumku6SlOHBYDmbL68wp7Wtpuw6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMxxVbqZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697CAC32782;
+	Mon,  5 Aug 2024 15:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722871229;
-	bh=OtT50VkQ4IhBDfNNG3JPXaxsaB7mAc0R/AyuRkhis70=;
+	s=k20201202; t=1722871235;
+	bh=KUN3egAY7JyTXEWIOlIzv3zwwD5pg50NL+IK/lAWQ2g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DAEFhR9aVevAgqQ6ElgV7Cw56P/HwNiDuiiitRoBj9UULByi45M7SLaTEVX68yLmV
-	 cjn4/P0ycimIRj27eLfZXkyB/YZuTg2IiwHFXQYw2pc02ImwN2/hwReybehcWo5NQm
-	 Nk1muDVH1Iey7GlX6fYVgMS55urQaTDSBArGzS5Xws58PEdKZFHHS4+7e88i2wfgU5
-	 vCGS0oDPXlR3Bzx/VKH7n16V/KuUiVLF+GS2ldj6mdojwW5fa5Wz/hhvYcyOHnlrw7
-	 q8jpo71RaebkuQPg8UrUT6y6eJEL+jwkelqbO27EsFg5UIXz5QZPEWviuJgkEctN5M
-	 RtGhnHltjm3Iw==
+	b=EMxxVbqZsYS6nje0qCRhq8ZjYYic641hDJRMsjp6Pa5Ba7wKckgxEzzaVkWT4c7E4
+	 tY9hyufAZRqbEWsqp+jP1c0nJdb4JIGFs6/3mKu6g0HwA3prX2eDxZWIHeieyQ7zkw
+	 msTYgDTMoxrHx9Kfdysi8sOAVZmA8GbTMIvk/Gatky1A38ZHuV4WLGPyEQIChmxeM/
+	 sdjY4dYgVjDkpONE5ArmejxyhKkv7F8zgYza4kcdEJpyQzUSNLaPCoiPAFpq2MqJK4
+	 s5qsHODvwWTrJn3dJcGxBsVJWuLDQ9HO9Ln6kp/S5ofY9gnIuFimqfJCsRSx9VFpSO
+	 V4zwpKrFBpwrA==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -67,9 +67,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v4 03/28] rust: alloc: rename `KernelAllocator` to `Kmalloc`
-Date: Mon,  5 Aug 2024 17:19:22 +0200
-Message-ID: <20240805152004.5039-4-dakr@kernel.org>
+Subject: [PATCH v4 04/28] rust: alloc: implement `Allocator` for `Kmalloc`
+Date: Mon,  5 Aug 2024 17:19:23 +0200
+Message-ID: <20240805152004.5039-5-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240805152004.5039-1-dakr@kernel.org>
 References: <20240805152004.5039-1-dakr@kernel.org>
@@ -81,46 +81,135 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Subsequent patches implement `Vmalloc` and `KVmalloc` allocators, hence
-align `KernelAllocator` to this naming scheme.
+Implement `Allocator` for `Kmalloc`, the kernel's default allocator,
+typically used for objects smaller than page size.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+All memory allocations made with `Kmalloc` end up in `krealloc()`.
+
+It serves as allocator for the subsequently introduced types `KBox` and
+`KVec`.
+
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/alloc/allocator.rs | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ rust/helpers.c                 |  3 +-
+ rust/kernel/alloc.rs           |  2 +-
+ rust/kernel/alloc/allocator.rs | 68 +++++++++++++++++++++++++++++++++-
+ 3 files changed, 69 insertions(+), 4 deletions(-)
 
+diff --git a/rust/helpers.c b/rust/helpers.c
+index 92d3c03ae1bd..9f7275493365 100644
+--- a/rust/helpers.c
++++ b/rust/helpers.c
+@@ -193,8 +193,7 @@ void rust_helper_init_work_with_key(struct work_struct *work, work_func_t func,
+ }
+ EXPORT_SYMBOL_GPL(rust_helper_init_work_with_key);
+ 
+-void * __must_check __realloc_size(2)
+-rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
++void *rust_helper_krealloc(const void *objp, size_t new_size, gfp_t flags)
+ {
+ 	return krealloc(objp, new_size, flags);
+ }
+diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+index 8a71a589469d..bc01a17df5e0 100644
+--- a/rust/kernel/alloc.rs
++++ b/rust/kernel/alloc.rs
+@@ -4,7 +4,7 @@
+ 
+ #[cfg(not(test))]
+ #[cfg(not(testlib))]
+-mod allocator;
++pub mod allocator;
+ pub mod box_ext;
+ pub mod vec_ext;
+ 
 diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index e7b7eba84acb..2c1eae25da84 100644
+index 2c1eae25da84..c6ad1dd59dd0 100644
 --- a/rust/kernel/alloc/allocator.rs
 +++ b/rust/kernel/alloc/allocator.rs
-@@ -6,7 +6,7 @@
+@@ -5,8 +5,16 @@
+ use super::{flags::*, Flags};
  use core::alloc::{GlobalAlloc, Layout};
  use core::ptr;
++use core::ptr::NonNull;
  
--struct KernelAllocator;
-+struct Kmalloc;
+-struct Kmalloc;
++use crate::alloc::{AllocError, Allocator};
++use crate::bindings;
++
++/// The contiguous kernel allocator.
++///
++/// The contiguous kernel allocator only ever allocates physically contiguous memory through
++/// `bindings::krealloc`.
++pub struct Kmalloc;
  
  /// Returns a proper size to alloc a new object aligned to `new_layout`'s alignment.
  fn aligned_size(new_layout: Layout) -> usize {
-@@ -40,7 +40,7 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: F
+@@ -40,6 +48,64 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: F
      }
  }
  
--unsafe impl GlobalAlloc for KernelAllocator {
-+unsafe impl GlobalAlloc for Kmalloc {
++/// # Invariants
++///
++/// One of the following `krealloc`, `vrealloc`, `kvrealloc`.
++struct ReallocFunc(
++    unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *mut core::ffi::c_void,
++);
++
++impl ReallocFunc {
++    // INVARIANT: `krealloc` satisfies the type invariants.
++    fn krealloc() -> Self {
++        Self(bindings::krealloc)
++    }
++
++    /// # Safety
++    ///
++    /// This method has the exact same safety requirements as `Allocator::realloc`.
++    unsafe fn call(
++        &self,
++        ptr: Option<NonNull<u8>>,
++        layout: Layout,
++        flags: Flags,
++    ) -> Result<NonNull<[u8]>, AllocError> {
++        let size = aligned_size(layout);
++        let ptr = match ptr {
++            Some(ptr) => ptr.as_ptr(),
++            None => ptr::null(),
++        };
++
++        // SAFETY: `ptr` is valid by the safety requirements of this function.
++        let raw_ptr = unsafe {
++            // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
++            self.0(ptr.cast(), size, flags.0).cast()
++        };
++
++        let ptr = if size == 0 {
++            NonNull::dangling()
++        } else {
++            NonNull::new(raw_ptr).ok_or(AllocError)?
++        };
++
++        Ok(NonNull::slice_from_raw_parts(ptr, size))
++    }
++}
++
++unsafe impl Allocator for Kmalloc {
++    unsafe fn realloc(
++        ptr: Option<NonNull<u8>>,
++        layout: Layout,
++        flags: Flags,
++    ) -> Result<NonNull<[u8]>, AllocError> {
++        let realloc = ReallocFunc::krealloc();
++
++        // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
++        // allocated with this `Allocator`.
++        unsafe { realloc.call(ptr, layout, flags) }
++    }
++}
++
+ unsafe impl GlobalAlloc for Kmalloc {
      unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
          // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
-         // requirement.
-@@ -76,7 +76,7 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
- }
- 
- #[global_allocator]
--static ALLOCATOR: KernelAllocator = KernelAllocator;
-+static ALLOCATOR: Kmalloc = Kmalloc;
- 
- // See <https://github.com/rust-lang/rust/pull/86844>.
- #[no_mangle]
 -- 
 2.45.2
 
