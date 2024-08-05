@@ -1,158 +1,168 @@
-Return-Path: <linux-kernel+bounces-274934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55698947E6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 017AC947E77
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D95B21130
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:45:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56464B20BD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363A0156F4A;
-	Mon,  5 Aug 2024 15:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71528158D87;
+	Mon,  5 Aug 2024 15:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cryptogams.org header.i=@cryptogams.org header.b="f2hew9p2"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UOxsqe3c"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988963CF5E
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374CB3CF5E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722872739; cv=none; b=m46TJ7RRu3ekdgtEKEGPoYG0euyCBqlkDFlqMRZeTLGjbFPOPQhZ5AwzKhVEppCimnT2eo+xP9dBFwoJJeO0kfbeGPzXp8cDGfOCNwcUiNkOiHQYvLDLoptH6yxvUEiIy8Q1B+BAyU77qbxrP/dBYzeGRH2FIHFPaU7w4EF24AY=
+	t=1722872781; cv=none; b=iDIShgvX7k/XSZGuQ2aCSA/Dga4IPifBhkoczEAf1bySx4WWknFDwvl1QIXRWXQC55cRk0tA9ZZ8yZR6+2JxRhrGm7ghERIJEMmyX615/ywFqHpa5xTIcxfloO5zOEsrlhjJYaU82Ls1FqwAvRKs97pIP2hSlp+J5QGuvODbhq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722872739; c=relaxed/simple;
-	bh=vEB+f0GhXn2Y1GL8VFX5EXsjwXKCJGMgjh2WoM2OcHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hTyrVAU2Wk9vF6aT3xZMFjeZk3ZMJTnzjVD5LnGOYJhVXnCni7TGlnjxZEeu6Ox2ZUei0MoZRvWUunTI3hCTQ+jzJ99gTcQ8Vnw6NO6XhQEuLl+pl/SRufSw4yymR3rsBga9mf3o5eTcNoY1a9UpIsEGK9o0WQrWnEITnJiQ0KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cryptogams.org; spf=pass smtp.mailfrom=cryptogams.org; dkim=pass (2048-bit key) header.d=cryptogams.org header.i=@cryptogams.org header.b=f2hew9p2; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cryptogams.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cryptogams.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f024f468bso14545444e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:45:37 -0700 (PDT)
+	s=arc-20240116; t=1722872781; c=relaxed/simple;
+	bh=5wjHU1wKHRRchFX2cqWEk5v6q0TdpGyDqI3gFeTqBiY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QkBs0N56iCptQ4IxOOc3GMq2bucB7XOTqeG8B32fAMeyNQz6eFVOvMUxxn66vrQjb+lOPKTPLpfPFbo7ySgMvg+hEatuuJAuJh4vTJrVMwqO8uPDCvNQSAv3N0tucwXcYAd06rpznZZEeqsc8sypA2+9AgRSUBZmRifV2qjJmAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UOxsqe3c; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093997dffdso3459912a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:46:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cryptogams.org; s=gmail; t=1722872736; x=1723477536; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lgwj/PCY5l3ttsTnYpQqhQu4YQpCRA34f5cZ+qu+J4w=;
-        b=f2hew9p2JEDUafLlH3+Q6AgCnQLjyrnO7Sg8PGlJXHt1sV1iRYm3eqaCpYsK3uu8rW
-         qrZZYJTfxQOQkaux74SB8hRw2cerKUdWqxsdv/bRYrFvBfArC/fJQKJi3dkJY6nwQXrz
-         761N1Nd3xIyxH33cE0FmgBi/EmNgiPzbveI9CTN1XCi/+nNKzlDvbdBjDuI5HFr9HxJO
-         h+rAM41zd743O/e4kTEZjCOLBb2OcEc0BBnlv2NTPe/37IOTjAuBaGc0xobBd7GciPdz
-         20eJRNo18VFmLqsyib/FLzqDIbDhYEaUEg0eHzSrtX/X7osM1PkSCsBYLjfKHMJF5hU0
-         54MA==
+        d=chromium.org; s=google; t=1722872779; x=1723477579; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FqOaptwxc12t3A/k1QIs7JMco9pX/hGJo5YaprxUknE=;
+        b=UOxsqe3cbqludNtOBbYkk/wjzak5Sst16gQvEGUWEK3sclUoWL+DeodBNdSEBlouZK
+         J1uEhdL01XbyWqbCSsZkMy850FTnvcS1oTC7rSFOML/hdXmFl2kkDxgZ1tZFaCMmWe7D
+         RATHh4qapcb4ZPs9bJD9ZKCNAj0a7vS8oHCWU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722872736; x=1723477536;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lgwj/PCY5l3ttsTnYpQqhQu4YQpCRA34f5cZ+qu+J4w=;
-        b=SbQciDorh3FxWX0MGkOIkY7LMnfApfh2YFZuBH4WHhtucJB9maJ1Y4fzXUvdqtDuDf
-         ElqXSVc3hDFUdVdKjONaaq3HR3hu3cAbZcRhbftyA6KR1Gg/4ZzJcoMmxBCoXuHF4014
-         tENADa3KOFrm4v5ShbQeuLN8ay8+EvRiVaUK2DE7d31CYLuQCWFd345geM2VCEZ8RVhs
-         Ba5X/HV/OnFi4xWJRSHf3LaxYLIWDbadlIP3HenFAmNM6nfYKkS0tKv8RJRWEvuaGM/k
-         dIHcZhj9gd0WM9ktwRWRgde0Lf4UlvWKFaByKDoRNcpoxn+PTQIb9KU4tYKO4AmRGfeT
-         aWmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEp1r7HLw1fMo4w2VpzGLNyOkfqyxnK2vFs3/GWtqd2tTjeuQXErczz9c+lLYJfy3TPdaLbzrIymRNmyYkf8x4mdcrqIBlu5kfCjdR
-X-Gm-Message-State: AOJu0YzvgoEPt9I1Puwo0Vy+fUkmHqIeCBoYS9+S8zrFD38faHUsuYnq
-	wqoeXdndg444A/1elGvD1VdaIJQ6KCMoy7cqWT4UwLCF8EqypJydgtxNqEJCGfo=
-X-Google-Smtp-Source: AGHT+IFhHFjmWGoDB9H51c2IPL5yCBn7vA265Ma7mTCoX6o1wOoZj6MQCb7OTojuBIUL5S9rjQKI9w==
-X-Received: by 2002:a05:6512:3b8c:b0:52d:b150:b9b3 with SMTP id 2adb3069b0e04-530bb3b6fb7mr7704753e87.32.1722872735336;
-        Mon, 05 Aug 2024 08:45:35 -0700 (PDT)
-Received: from [10.0.1.129] (c-a9fa205c.012-252-67626723.bbcust.telenor.se. [92.32.250.169])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba353c2sm1195003e87.212.2024.08.05.08.45.34
+        d=1e100.net; s=20230601; t=1722872779; x=1723477579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FqOaptwxc12t3A/k1QIs7JMco9pX/hGJo5YaprxUknE=;
+        b=Ww3scdpuUPQ4Z9INQeWcPrNjY/u9UFhquyAIkm/fcHHQqM77uX8LHm3rRp/NCpX4yH
+         z+9Pi3oZ2tgMDIZ+tCcEICTIPuPotGaooVaJzVPTVPuyNtSSBvzrv+xcw7G8W2G2nHaL
+         yzav+O1tChK95zFFhlnBSptI7xb/3F+rG3z4Iy0qnta9/i8LVN0buF9borS/mo57Y+IP
+         OnIj7A2HHQhVutUHUe02Rtafyy8zLYSfJi2y2hhbMXokc5RifjGvaCmTnuacyccahH/e
+         2f/bp1fdJDcOS00ucEXKqBWJWLwMiwVWK182639iEB4mWzEaqnAm0MvnU73LbxW5ITpz
+         p+5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUfKzwo5y/1MPl8MCiE7dYA8Ko/e4VMd3weg5g42X+IqrAhBDFfUyCG86BT6fJqfp1y/Xxiii693MgMug6P41Q/RFq7OzslHQdL0hx8
+X-Gm-Message-State: AOJu0Yz0oaZKXDYkTVHEEBTOyFDf/p87Ec3gvPnWDHSDSoOoEA+fncmL
+	7+b2PNI+zuoi4Dr6Ie+YIhslF94LuQLe6XGxXycYdrB4mlhakqq6rGWSxlH3pjQWuyEb8ww5tX8
+	=
+X-Google-Smtp-Source: AGHT+IFwAmdxVhmaAA4/ikGDdVqr7UveeUr8vwj51g6uHT1Qqbw/ABAhfdIW0GEbC3AdmMUEwI5MPQ==
+X-Received: by 2002:a05:6358:12a6:b0:1ac:f722:4d2 with SMTP id e5c5f4694b2df-1af3ba7c41fmr1235254755d.18.1722872778608;
+        Mon, 05 Aug 2024 08:46:18 -0700 (PDT)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78b17fsm36932976d6.34.2024.08.05.08.46.17
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 08:45:35 -0700 (PDT)
-Message-ID: <7a288592-4793-4743-b8ef-c76de1dcca5b@cryptogams.org>
-Date: Mon, 5 Aug 2024 17:45:33 +0200
+        Mon, 05 Aug 2024 08:46:18 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4518d9fa2f4so849151cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:46:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWD1fCvQoJHX4wUASJeXA71hzZ+6Vczpx2g2YbWJvk5+fhLoCfjaEqhPys2y7Lep9GNxPFCRz3OWpJfDKX4uL+z39Gerp6B5t22vyYL
+X-Received: by 2002:a05:622a:282:b0:447:e542:93a7 with SMTP id
+ d75a77b69052e-4519ad00ecbmr5909431cf.12.1722872777503; Mon, 05 Aug 2024
+ 08:46:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [herbertx/cryptodev] crypto: arm64/poly1305 - move data to rodata
- section (47d9625)
-To: Justin He <Justin.He@arm.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- herbertx/cryptodev
- <reply+AAIFISMST74UQEQBJUWW7J6EXDLZNEVBMPHARJBRSY@reply.github.com>
-Cc: herbertx/cryptodev <cryptodev@noreply.github.com>,
- Author <author@noreply.github.com>, "David S. Miller" <davem@davemloft.net>,
- Catalin Marinas <Catalin.Marinas@arm.com>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- Will Deacon <will@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>
-References: <herbertx/cryptodev/commit/47d96252099a7184b4bad852fcfa3c233c1d2f71@github.com>
- <herbertx/cryptodev/commit/47d96252099a7184b4bad852fcfa3c233c1d2f71/144978326@github.com>
- <Zq18V66ufraB_1-T@gondor.apana.org.au>
- <GV2PR08MB92062BC06FFCFD28B8707592F7BE2@GV2PR08MB9206.eurprd08.prod.outlook.com>
-Content-Language: en-US
-From: Andy Polyakov <appro@cryptogams.org>
-In-Reply-To: <GV2PR08MB92062BC06FFCFD28B8707592F7BE2@GV2PR08MB9206.eurprd08.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240805102046.307511-1-jirislaby@kernel.org> <20240805102046.307511-4-jirislaby@kernel.org>
+ <84af065c-b1a1-dc84-4c28-4596c3803fd2@linux.intel.com>
+In-Reply-To: <84af065c-b1a1-dc84-4c28-4596c3803fd2@linux.intel.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 5 Aug 2024 08:46:06 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WeekuQXzjk90K8jn=Evn8dMaT1RyctbT7gwEZYYgA9Aw@mail.gmail.com>
+Message-ID: <CAD=FV=WeekuQXzjk90K8jn=Evn8dMaT1RyctbT7gwEZYYgA9Aw@mail.gmail.com>
+Subject: Re: [PATCH 03/13] serial: don't use uninitialized value in uart_poll_init()
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-serial <linux-serial@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
->> -----Original Message-----
->> From: Herbert Xu <herbert@gondor.apana.org.au>
->> Sent: Saturday, August 3, 2024 8:40 AM
->> To: herbertx/cryptodev
->> <reply+AAIFISMST74UQEQBJUWW7J6EXDLZNEVBMPHARJBRSY@reply.github.c
->> om>
->> Cc: herbertx/cryptodev <cryptodev@noreply.github.com>; Author
->> <author@noreply.github.com>; Justin He <Justin.He@arm.com>; David S. Miller
->> <davem@davemloft.net>; Catalin Marinas <Catalin.Marinas@arm.com>;
->> linux-crypto@vger.kernel.org; Will Deacon <will@kernel.org>;
->> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Ard
->> Biesheuvel <ardb@kernel.org>; Andy Polyakov <appro@cryptogams.org>
->> Subject: Re: [herbertx/cryptodev] crypto: arm64/poly1305 - move data to
->> rodata section (47d9625)
->>
->> On Fri, Aug 02, 2024 at 08:09:10AM -0700, Andy Polyakov wrote:
->>> Formally speaking this is error prone, because there is no guarantee that linker
->> will be able to resolve it as argument to `adr` instruction above. I mean since the
->> address is resolved with `adr` instruction alone, there is a limit on how far the
->> label can be from the instruction in question. On a practical level, if/since it's
->> compiled as part of a kernel module, it won't be a problem, because the module
->> won't be large enough to break the limit, but it **is** a problem in general case.
-> Thanks,
-> Can this problem be resolved by changing "adr" to "adrp"?
+On Mon, Aug 5, 2024 at 7:28=E2=80=AFAM Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+>
+> On Mon, 5 Aug 2024, Jiri Slaby (SUSE) wrote:
+>
+> > Coverity reports (as CID 1536978) that uart_poll_init() passes
+> > uninitialized pm_state to uart_change_pm(). It is in case the first 'if=
+'
+> > takes the true branch (does "goto out;").
+> >
+> > Fix this and simplify the function by simple guard(mutex). The code
+> > needs no labels after this at all. And it is pretty clear that the code
+> > has not fiddled with pm_state at that point.
+> >
+> > Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> > Fixes: 5e227ef2aa38 (serial: uart_poll_init() should power on the UART)
+> > Cc: stable@vger.kernel.org
+> > Cc: Douglas Anderson <dianders@chromium.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >  drivers/tty/serial/serial_core.c | 13 ++++++-------
+> >  1 file changed, 6 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/seri=
+al_core.c
+> > index 3afe77f05abf..d63e9b636e02 100644
+> > --- a/drivers/tty/serial/serial_core.c
+> > +++ b/drivers/tty/serial/serial_core.c
+> > @@ -2690,14 +2690,13 @@ static int uart_poll_init(struct tty_driver *dr=
+iver, int line, char *options)
+> >       int ret =3D 0;
+> >
+> >       tport =3D &state->port;
+> > -     mutex_lock(&tport->mutex);
+> > +
+> > +     guard(mutex)(&tport->mutex);
+> >
+> >       port =3D uart_port_check(state);
+> >       if (!port || port->type =3D=3D PORT_UNKNOWN ||
+> > -         !(port->ops->poll_get_char && port->ops->poll_put_char)) {
+> > -             ret =3D -1;
+> > -             goto out;
+> > -     }
+> > +         !(port->ops->poll_get_char && port->ops->poll_put_char))
+> > +             return -1;
+> >
+> >       pm_state =3D state->pm_state;
+> >       uart_change_pm(state, UART_PM_STATE_ON);
+> > @@ -2717,10 +2716,10 @@ static int uart_poll_init(struct tty_driver *dr=
+iver, int line, char *options)
+> >               ret =3D uart_set_options(port, NULL, baud, parity, bits, =
+flow);
+> >               console_list_unlock();
+> >       }
+> > -out:
+> > +
+> >       if (ret)
+> >               uart_change_pm(state, pm_state);
+> > -     mutex_unlock(&tport->mutex);
+> > +
+> >       return ret;
+> >  }
+>
+> This too needs #include.
 
-Not by adrp alone, it has to be complemented with addition. I mean addrp 
-gives you the label's page address and you need to add the offset within 
-the page.
+Why? I see in "mutex.h" (which is already included by serial_core.c):
 
->>> But why would objtool attempt to disassemble it? Does it actually attempt to
->> disassemble unreferenced spaces between functions? Note that the .Lzeros label
->> doesn't make it into .o file, so there won't be anything in the symbol table to
->> discover as potential entry point..
-> There is a similar patch (1253cab8a352) for x86. I guess that objtool/stacktool can be improved in this regard.
+DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
 
-objtool is weird and arguably inconsistent. It does look at the symbol 
-table(*), and detects the return instructions(**), yet insists on 
-disassemble-ability of the whole .text segment... Oh well...
-
-Cheers.
-
-(*) For example it refuses to generated ORC metadata for the following 
-snippet
-
-.text
-foo: ret
-
-It insists on foo being complemented with '.type foo,@function' as well 
-as meaningful .size.
-
-(**) Since it does mark the region[s] past 'ret' as type:(und)
-
-
-
+...so we're using the mutex guard and including the header file that
+defines the mutex guard. Seems like it's all legit to me.
 
