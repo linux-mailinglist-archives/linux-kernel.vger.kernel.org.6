@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-275435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7169485B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:59:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6B39485B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52AA1F23B2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:59:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D822B2197E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0417016E877;
-	Mon,  5 Aug 2024 22:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7CD16EB40;
+	Mon,  5 Aug 2024 22:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UT7z54bu"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlgHOr9X"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E39140397;
-	Mon,  5 Aug 2024 22:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D0116B399;
+	Mon,  5 Aug 2024 22:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722898745; cv=none; b=V6yYhE7WounKtNOhMdFUD9e47AvEXkPB8QNhcWEm+EwvatndW5TLbxRSmWG7gXMaVYkSr0cxnyC1+GWIe0JrUIIXzftHuJbH/0TpVZb91mmotcG5VwQQNUR0/b8cq5cAcwgCjBmeEl9mGyRKtOl2eYIJcRPH0SSY+V96qJBXJ28=
+	t=1722898755; cv=none; b=rzREHiy9nPSuxew5Dhi56NP08+vTS1oUatkvJxa8QmOKl0r6xKc3O3MDm/Cf/F7fR4yYzcbuxi9PV31lo9C++BDiitvWBj/iLDT+OsvPg9QvgWV7pPK1fXmcx68PeC8ABO/K/wa/Z26hBo/fCERjUXy0plNRvAdRCFPziqp74wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722898745; c=relaxed/simple;
-	bh=bZe51ctSMyLqETSyvzJHmgTbhJ5SxwR0jBg4IuJMNHs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eZFOAtOygL+Lqqi2xq4U9tw8X3oLAW4Y8EjBcmEjogbTbxOFOuXliat0vJ6RCVqHx2SpraEo0z3BBTQTk+yrfBI/prOF4j7tV8fD9/Qamc4zht5ie8q9Ndn+aQhhnHgAIowYdXEqf4ShcUQdGTnGJiVvIUOGukfvO79808XUAU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UT7z54bu; arc=none smtp.client-ip=209.85.128.171
+	s=arc-20240116; t=1722898755; c=relaxed/simple;
+	bh=3drE736KAQSub0SEAAPM8+vK4C5D1YTJF/PXybo2ewQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FAJpdHASWZYat2yRpr1Cml7cMxlrwph7qzr0ZvVgukvaSSkSMnue5zEB3dPdLljsdq5h8Dd8zYQbrsz3/j1Ge+oIJ3QT+xnVSfzti8ELSGa0yELRtMWjGBPB+HGt3XX+DeP+AfgcotV0YQWo5NRYC98wMMStzYH7Qd9NcBC57xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlgHOr9X; arc=none smtp.client-ip=209.85.217.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6510c0c8e29so1388847b3.0;
-        Mon, 05 Aug 2024 15:59:03 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4929fa64542so2863596137.3;
+        Mon, 05 Aug 2024 15:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722898742; x=1723503542; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZsX0vPn3VODiXEEmMvN5E790VYxq/T9uwkFRTYpicVI=;
-        b=UT7z54buBdj2Zag5yGF8rQndFYRPa2/BYV/BHTE3O1s48eEDtFlTQThhyjDSCJPMbN
-         gRCvMfxZKX3sBiykGy4hwnnlBK5/53S/TEkgPotvquHneXD35YMCXh/Y15OUg822W74e
-         BOtNIpRzKv5BCe4iZ6atblTfcanKuZoN0J0wHReLLk9aea/PVFhl5SHJgoqmcCsllfHO
-         PDLW1P/FI22Ychj7k9g7aewoNJGbAlVGv4TVvEMEO+hqAYNeRcN4ypUdmGw9N2DgReHa
-         bN0E7Ngl5WxCivMoaJa0xACIHEAhcjGEWJXHkOHq8WNr7YQyrKJytu1twgWWamBqETMq
-         HuaA==
+        d=gmail.com; s=20230601; t=1722898752; x=1723503552; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6TlDE69PdaRI6NEvJJ9HZjIBwXM2vSCyzFfsf9EOO6M=;
+        b=mlgHOr9X4+NRaeyN6gtcdCDsDiajBFSg9yK8/Ptk6f4fB1pd5mSruDIyn8FQC7aK6/
+         hLp+gJ4Y4SGs67MPiQe2wITiv9wIxG7ouLoDHRlhZuwUvp+BiyvzMNDu0h8+tVe7QI6z
+         P4YzAIYjTQ/+wIyCMUPycfbmO2ZHg+Ozrw43a4chxeBctYub/PREJWrE63yteClvh+kj
+         h/C5By/jfmYk/sQR/ThBb4G6fGao0ept/vtnxVEj0AJ+rxqbFj2KsOqL4SvV+kKPFRFY
+         HAT5HD8tu02o1dwAnA2DIQ6x41P48Q/CyQrO+0BWA7fhPhnOwQoGNgbucMkT0YTmpUke
+         SG6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722898742; x=1723503542;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZsX0vPn3VODiXEEmMvN5E790VYxq/T9uwkFRTYpicVI=;
-        b=X+WkCIJZMycGXAiBlXk11DkcGj+3qOhBzzIX1mcA/tJ3XiYpfFhiZdxCoQ+O/0Vjbn
-         UrndyNt5VK52BnU7/6XNunjD9XKoOpgv6EnC9yhyKkd7tS77vSLC6pgNnzwaRUhKtmNS
-         N/rx0WWq25VNJBpZtA4I6TrH8VHFRSz/a1AZBbBq12u2yfoxWXN25UJncX6rcVEQNl3h
-         cdvuQCQ3r4bOyYX4qNdR5kZ7rNwQQJ4HgyzqVMcByhRApb8z3+w/4cPLsLrjwUhERyso
-         LqqzvkljJ5alceXwH9327XKhOrqL31+1J1yFVgmSmx+tXhp9zRI76X6dryyVu8S6jpl1
-         qfYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXMPA5AzK8hiFRcQ/D0Nc87/e2DBRTvD1xjX9chuPRU5J2/X4k64vO/r/nMpROlBot4101UBQftD01lw5dk+K/s0FplCU7sq7e3zzduYV2h3Cqw6ytxhTQWvOpOp13iT9Yd7aUTOopxSQ==
-X-Gm-Message-State: AOJu0Yx65jxXqO335QLVPvYrusYNFxcFko45uOy0NRE6WgthJcIU2k0B
-	8SZJDK9im5EMS61YjpMXK/3JtJmHDOPT1qqTXBCgEdoiFGF0izRqZH65Dc0U
-X-Google-Smtp-Source: AGHT+IGy/Om6ctOSzeiK84WCNRq/re9u8Dd9Ybzu5JIMD5CNiQ98Qwg8YKY2V+kt5KaTtEfnqq4gtw==
-X-Received: by 2002:a81:b407:0:b0:649:b0ca:2c9b with SMTP id 00721157ae682-68964584b14mr154483367b3.40.1722898742435;
-        Mon, 05 Aug 2024 15:59:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722898752; x=1723503552;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6TlDE69PdaRI6NEvJJ9HZjIBwXM2vSCyzFfsf9EOO6M=;
+        b=sMJTGhu7AjFD1R26mB+75k77cjx6IGgDby87ZSn47hjU+ouYZVqg3QiIxBfFQ05WOC
+         4AmZQIvn/+NDNoFb4Aba8H0PZH6L3HNghlwLdRPgz5OgUSrVt+XpOPpIngt+NUtDjaVT
+         rL0e3KEOOuDh6/m/e4Oc1TkHvRWBY9GdLlLJ2lk5lqip1bgJAhkowYHOWgzKPHrH7mYB
+         vRvR0KdmKWQ0J+pmweFJENBCEfnuHM9G9d3bmAtu6p26glHwA2QgEMufAVNPrflx0BOM
+         xMeRld4UALEoYs7Hm60zOfSGBHqSYqVUryubB7pvywKgJEY2s1deFf6bJwicJ+7/K0Oh
+         heTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBpz5ufvmaPvzJDB3CnxVIV6CSXmB3KbpnYpioRZgvW7Pt24uajcdfNahONV2MFrj7knv1Y9DOGKYwv/+MEEeQnet56DVgDQhMO/gPC0hC4hScmXM/cMjtNzsX60+XdYZ/CCZwwfWsxA==
+X-Gm-Message-State: AOJu0YzliynGHA8nN7/yS4dxWeJplg19jBnxKw+KhAz07A8vXNSEQW/2
+	FLQ0C7cTM0cE+9EsV7X5VvmLCCyN2RWPp0kGyEsZUlqnxKtjRUjq
+X-Google-Smtp-Source: AGHT+IHuERLfmRU7rMI8BL/GbgSv3C62jjEP5fbGFQYAwBahNGlVXSPsRdJeVCp6pp1tl9h+Bkso+Q==
+X-Received: by 2002:a05:6102:e0e:b0:492:9c32:5344 with SMTP id ada2fe7eead31-4945be19768mr17714227137.18.1722898752357;
+        Mon, 05 Aug 2024 15:59:12 -0700 (PDT)
 Received: from localhost.localdomain (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78ad54sm40028016d6.31.2024.08.05.15.59.01
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c78ad54sm40028016d6.31.2024.08.05.15.59.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 15:59:01 -0700 (PDT)
+        Mon, 05 Aug 2024 15:59:11 -0700 (PDT)
 From: Alex Lanzano <lanzano.alex@gmail.com>
 To: christophe.jaillet@wanadoo.fr,
 	Alex Lanzano <lanzano.alex@gmail.com>,
@@ -76,13 +78,16 @@ To: christophe.jaillet@wanadoo.fr,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Mehdi Djait <mehdi.djait@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org,
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/2] Add driver for Sharp Memory LCD
-Date: Mon,  5 Aug 2024 18:57:49 -0400
-Message-ID: <20240805225820.13798-2-lanzano.alex@gmail.com>
+Subject: [PATCH v4 1/2] dt-bindings: display: Add Sharp Memory LCD bindings
+Date: Mon,  5 Aug 2024 18:57:50 -0400
+Message-ID: <20240805225820.13798-3-lanzano.alex@gmail.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240805225820.13798-2-lanzano.alex@gmail.com>
+References: <20240805225820.13798-2-lanzano.alex@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,51 +96,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series add support for the monochrome Sharp Memory LCD
-panels. This series is based off of the work done by Mehdi Djait.
-
-References:
-https://lore.kernel.org/dri-devel/71a9dbf4609dbba46026a31f60261830163a0b99.1701267411.git.mehdi.djait@bootlin.com/
-https://www.sharpsde.com/fileadmin/products/Displays/2016_SDE_App_Note_for_Memory_LCD_programming_V1.3.pdf
+Add device tree bindings for the monochrome Sharp Memory LCD
 
 Co-developed-by: Mehdi Djait <mehdi.djait@bootlin.com>
 Signed-off-by: Mehdi Djait <mehdi.djait@bootlin.com>
 Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Changes in v4:
-- Remove redundant dev_err
-
-Changes in v3:
-- Fix file path in MAINTAINERS file
-- Address review comments
-- Simplify mode selection based on match data instead of model
-
-Changes in v2:
-- Credited Mehdi Djait in commit messages
-- Renamed sharp,sharp-memory.yaml to sharp,ls010b7dh04.yaml
-- Using strings instead of int for vcom-mode in dt-binding
-- Fixed indentation of binding example
-- Removed binding header
-- Removed extra whitespace in sharp-memory.c
-- Fixed error handling in sharp-memory.c
-- Added match data to of_device_id table to be in-sync with spi_device_id table
-- Replaced redundant function with spi_get_device_match_data
-- Sorted header files in sharp-memory.c
----
-
-Alex Lanzano (2):
-  dt-bindings: display: Add Sharp Memory LCD bindings
-  drm/tiny: Add driver for Sharp Memory LCD
-
- .../bindings/display/sharp,ls010b7dh04.yaml   |  92 +++
- MAINTAINERS                                   |   6 +
- drivers/gpu/drm/tiny/Kconfig                  |  20 +
- drivers/gpu/drm/tiny/Makefile                 |   1 +
- drivers/gpu/drm/tiny/sharp-memory.c           | 682 ++++++++++++++++++
- 5 files changed, 801 insertions(+)
+ .../bindings/display/sharp,ls010b7dh04.yaml   | 92 +++++++++++++++++++
+ 1 file changed, 92 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
- create mode 100644 drivers/gpu/drm/tiny/sharp-memory.c
 
+diff --git a/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml b/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+new file mode 100644
+index 000000000000..8097f091c2a5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/sharp,ls010b7dh04.yaml
+@@ -0,0 +1,92 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/sharp,ls010b7dh04.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sharp Memory LCD panels
++
++maintainers:
++  - Alex Lanzano <lanzano.alex@gmail.com>
++
++description:
++  Sharp Memory LCDs are a series of monochrome displays that operate over
++  a SPI bus. The displays require a signal (VCOM) to be generated to prevent
++  DC bias build up resulting in pixels being unable to change. Three modes
++  can be used to provide the VCOM signal ("software", "external", "pwm").
++
++properties:
++  compatible:
++    enum:
++      - sharp,ls010b7dh04
++      - sharp,ls011b7dh03
++      - sharp,ls012b7dd01
++      - sharp,ls013b7dh03
++      - sharp,ls013b7dh05
++      - sharp,ls018b7dh02
++      - sharp,ls027b7dh01
++      - sharp,ls027b7dh01a
++      - sharp,ls032b7dd02
++      - sharp,ls044q7dh01
++
++  reg:
++    maxItems: 1
++
++  spi-max-frequency:
++    maximum: 2000000
++
++  sharp,vcom-mode:
++    $ref: /schemas/types.yaml#/definitions/string
++    description: |
++      software - This mode relies on a software operation to send a
++      "maintain display" message to the display, toggling the vcom
++      bit on and off with each message
++
++      external - This mode relies on an external clock to generate
++      the signal on the EXTCOMM pin
++
++      pwm - This mode relies on a pwm device to generate the signal
++      on the EXTCOMM pin
++
++    enum: [software, external, pwm]
++
++  enable-gpios: true
++
++  pwms:
++    maxItems: 1
++    description: External VCOM signal
++
++required:
++  - compatible
++  - reg
++  - sharp,vcom-mode
++
++allOf:
++  - $ref: panel/panel-common.yaml#
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++  - if:
++      properties:
++        sharp,vcom-mode:
++          const: pwm
++    then:
++      required:
++        - pwms
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        display@0 {
++            compatible = "sharp,ls013b7dh03";
++            reg = <0>;
++            spi-cs-high;
++            spi-max-frequency = <1000000>;
++            sharp,vcom-mode = "software";
++        };
++    };
++...
 -- 
 2.45.2
 
