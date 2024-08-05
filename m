@@ -1,218 +1,149 @@
-Return-Path: <linux-kernel+bounces-274219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CEB94752C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:25:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C64947532
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC889281550
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:25:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39925B20DA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D8613D539;
-	Mon,  5 Aug 2024 06:25:25 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319BA145327;
+	Mon,  5 Aug 2024 06:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="WNr3s5s2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m1l8IFN2"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C590D1DFF7
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 06:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8C013C9D3;
+	Mon,  5 Aug 2024 06:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722839124; cv=none; b=r9B1jcmTygSLQkynN6C0T9P9sHcJjcaXzLUKAC9bDDUmtIoIbpYXPybA8GHh/XD/II+zSwhdgPOh9Em5CbP9do4rRncj5KXvrCDYPXRkA1bbvwJoN+kEAM9vaeo4fiDI3QdIsRYYy6hlPWVcNvd9xeYv4cxZXgVQUdX76REGfXQ=
+	t=1722839155; cv=none; b=VXG6kkGtWjfufM9vhOEguhCtlIcl7hsEfmGdSEfCTII6h4zWEAY2MMwYVUtgHc6MwDvxOZWrjiREN+BAdT6GQ/wx8MzlCOgz709UHYVMpsC2QIUAu607v+FgPH3CgqkeZCY9qH9CCCDT3ImJg7hjLJ1rOwNd94KHnJRP1oAiyYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722839124; c=relaxed/simple;
-	bh=YDghittTVl+AJyYN2LcKbeI8kB56RWne2ZVTQ286bC4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZpX3oPNIIYAFq9uay/SlNVLcmFXfXbcYRAQJgFRWDW3I1i3oVqbTwjaknnIvqbAXdYEbc9cYQ4krVHljaW3E/ujZdjpnX0sgJzr35F4FBxiSUY0VW7AAvHCHtvP95kgRLjoAQ3zW+yJBLvjStQC7k8obic4mqU98GPRA2TbsXxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WcmbG6hPszfZhn;
-	Mon,  5 Aug 2024 14:23:22 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id B9332180100;
-	Mon,  5 Aug 2024 14:25:15 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 5 Aug 2024 14:25:15 +0800
-Subject: Re: [PATCH] mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page))
- when unpoison memory
-To: David Hildenbrand <david@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>
-CC: <nao.horiguchi@gmail.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240712064249.3882707-1-linmiaohe@huawei.com>
- <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
- <8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
- <00e18339-d911-4332-8732-e31bcecbf823@redhat.com>
- <5f8107e2-2b37-d899-f7f2-5a6093d8b089@huawei.com>
- <de73f251-08a0-4122-acfd-1d7fce7540ea@redhat.com>
- <ec6ed1aa-0b6e-df66-1442-93786eabd1ef@huawei.com>
- <dded1b96-8ff3-489a-a92e-b206829feb85@redhat.com>
- <f3aa7133-5754-73f4-9ee1-bff1a8637c07@huawei.com>
- <a4078c71-acf2-4652-92cb-fb9356703dc6@redhat.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <0519bf4b-49aa-6b81-a041-362a171b2a5e@huawei.com>
-Date: Mon, 5 Aug 2024 14:25:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1722839155; c=relaxed/simple;
+	bh=NFKvwhMYxv6H12ucH+V7Tz+LDXlTONBEHssLV55FCFw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MWUrAC5ecueuQNGLpvZ3n0Ubtz0pMZ8FGHmpFEO1aTbxrnwqG/O+Lgo/uZFedtYuya5jOXgbiGPY8vI92EwSckQ1pY1gGO+dytwenazeBF9bCR0LTbwr/vYRudOIlftClEVW3KWrwD32ZsIN5uCTNuL8Wa8uvnO70H0RVm0PtEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=WNr3s5s2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m1l8IFN2; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 87F711151E4E;
+	Mon,  5 Aug 2024 02:25:52 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute6.internal (MEProxy); Mon, 05 Aug 2024 02:25:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1722839152;
+	 x=1722925552; bh=NFKvwhMYxv6H12ucH+V7Tz+LDXlTONBEHssLV55FCFw=; b=
+	WNr3s5s2DNlO/DPFFhXdkIG/dxcIAVuFMJM2l+SFj35fqOei+irmzgAaaT8PwI/H
+	QU89IPh/mdURGwcdrlR7ptwFmnfci0wnMpLLJL4uPkS1+rtkoaqFgWqTrdktb7X+
+	K7zYdGFb1/KAzvuPexDtbaxKNYFPYryV78Jy4yO/dQOlA+OCb3O+7JLWipETbihg
+	bWPjYkva17cWZvsQrOaMKvv06jYPRsocM8rm1exz6xQYyiosHD1reYMUSldm1gp6
+	fcg11Ss6Ahzn4gmxosxGVnIq/qFYuO06xuh9VDTWgN65FpZKlzqxQETqx10cmFYJ
+	V6qYFYCifMQGPZST1UTXWA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722839152; x=
+	1722925552; bh=NFKvwhMYxv6H12ucH+V7Tz+LDXlTONBEHssLV55FCFw=; b=m
+	1l8IFN2VirG95gejjfEhwu3WzNrPE/oHDFzcl5YwkBEZJwM6oH9kAe2XNTV6/Cp2
+	bfj6RRZHv+20UyW+pR9Vw2vWDnaMF5z1FbfqlfuhPmYFVX6i3A2H2yri4LWMHaFi
+	vbhUnwV+tJ2B2mEaFcigv00ACnBmbqjLu0JMKh6391DYb+EvDTrxG7/aSDCn4Ynl
+	IulAwdekeyVeKR0i8zhzTjMEp+dX6IjxmY2nT8vZT4uHRGmNR99xvK9F6aI+ZGSw
+	36uLZ6AmoYBdSWkTKws97d0j53DBk1HbolD4pH4pAQUS1jPhxn9Z9UD2zO/KrTgc
+	GnnRVjgE5X8+tsO6iQJ/g==
+X-ME-Sender: <xms:b3CwZqKf3CXFc9I-9TyQ-S9ZsJiNVEvRDOdu2mT9PQBTPV3WA62fbA>
+    <xme:b3CwZiKgqUPz6Ef9zdUsMIrpAZkA4ScCAD3byTolg7k1edVnERPq0oAVy6mB6Rvey
+    IhiUx_preVx-jONlvA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeehgdduuddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedflfgr
+    nhhnvgcuifhruhhnrghufdcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvg
+    hrnhephfeguddvheevvedtueelkefgfeeijeetgffffedtleetgfeuueetudelleffgeel
+    necuffhomhgrihhnpehprghsthgvsghinhdrtghomhdpfidurdhfihdpihhnfhhrrgguvg
+    grugdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:cHCwZqsS0EfwtTYHvBVuM8mf2Z1QLY7HB-cKdpjyAmv3olJMW8ECIw>
+    <xmx:cHCwZvYA5UjO9dbEP04yPZBETxI17CV11Y2OD5zTnjyR1vVymocnKw>
+    <xmx:cHCwZhYxajsE4Ut6xBLI1jh7axP13Hl3keLKyASnlCTPj57U8EKHnA>
+    <xmx:cHCwZrBGf4mYCwfqAu1YUvvf-ipNZNJMwJwxyJn3vaZfXNLwOsCU4Q>
+    <xmx:cHCwZnBlNC4tjCll2sg_DyeRp_MY81asWItW3wqX1F70uRLfZg-mxL6R>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E06E219C0069; Mon,  5 Aug 2024 02:25:51 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <a4078c71-acf2-4652-92cb-fb9356703dc6@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+Date: Mon, 05 Aug 2024 08:25:31 +0200
+From: "Janne Grunau" <j@jannau.net>
+To: "arend.vanspriel@broadcom.com" <arend.vanspriel@broadcom.com>,
+ "Aditya Garg" <gargaditya08@live.com>,
+ "devnull+j.jannau.net@kernel.org" <devnull+j.jannau.net@kernel.org>
+Cc: asahi@lists.linux.dev,
+ "brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
+ "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
+ "kvalo@kernel.org" <kvalo@kernel.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+ "Hector Martin" <marcan@marcan.st>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+Message-Id: <9ed78539-35ca-4643-9a38-ac2c0379f395@app.fastmail.com>
+In-Reply-To: <ac9f0cb4-ba12-44f1-b32f-d17e24fe426a@app.fastmail.com>
+References: 
+ <MA0P287MB021718EE92FC809CB2BB0F82B8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <306c3010-a6ac-4f8a-a986-88c1a137ed84@app.fastmail.com>
+ <MA0P287MB021725DE596EF4E5294FA5DDB8BD2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <1911d0fdea8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <ac9f0cb4-ba12-44f1-b32f-d17e24fe426a@app.fastmail.com>
+Subject: Re: [PATCH] wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 2024/8/2 4:24, David Hildenbrand wrote:
-> On 19.07.24 05:55, Miaohe Lin wrote:
->> On 2024/7/18 13:15, David Hildenbrand wrote:
->>> On 18.07.24 05:04, Miaohe Lin wrote:
->>>> On 2024/7/17 17:01, David Hildenbrand wrote:
->>>>> On 16.07.24 04:34, Miaohe Lin wrote:
->>>>>> On 2024/7/16 0:16, David Hildenbrand wrote:
->>>>>>> On 15.07.24 08:23, Miaohe Lin wrote:
->>>>>>>> On 2024/7/13 5:09, Andrew Morton wrote:
->>>>>>>>> On Fri, 12 Jul 2024 14:42:49 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
->>>>>>>>>
->>>>>>>>>> When I did memory failure tests recently, below panic occurs:
->>>>>>>>>>
->>>>>>>>>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
->>>>>>>>>> kernel BUG at include/linux/page-flags.h:616!
->>>>>>>>>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
->>>>>>>>>> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
->>>>>>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
->>>>>>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
->>>>>>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
->>>>>>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
->>>>>>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
->>>>>>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
->>>>>>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
->>>>>>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
->>>>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
->>>>>>>>>> Call Trace:
->>>>>>>>>>      <TASK>
->>>>>>>>>>      unpoison_memory+0x2f3/0x590
->>>>>>>>>>      simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
->>>>>>>>>>      debugfs_attr_write+0x42/0x60
->>>>>>>>>>      full_proxy_write+0x5b/0x80
->>>>>>>>>>      vfs_write+0xd5/0x540
->>>>>>>>>>      ksys_write+0x64/0xe0
->>>>>>>>>>      do_syscall_64+0xb9/0x1d0
->>>>>>>>>>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>>>>>>>>> RIP: 0033:0x7f08f0314887
->>>>>>>>>> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
->>>>>>>>>> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
->>>>>>>>>> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
->>>>>>>>>> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
->>>>>>>>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
->>>>>>>>>> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
->>>>>>>>>>      </TASK>
->>>>>>>>>> Modules linked in: hwpoison_inject
->>>>>>>>>> ---[ end trace 0000000000000000 ]---
->>>>>>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
->>>>>>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
->>>>>>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
->>>>>>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
->>>>>>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
->>>>>>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
->>>>>>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
->>>>>>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
->>>>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
->>>>>>>>>> Kernel panic - not syncing: Fatal exception
->>>>>>>>>> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
->>>>>>>>>> ---[ end Kernel panic - not syncing: Fatal exception ]---
->>>>>>>>>>
->>>>>>>>>> The root cause is that unpoison_memory() tries to check the PG_HWPoison
->>>>>>>>>> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
->>>>>>>>>> triggered.
->>>>>>>>>
->>>>>>>>> I'm not seeing the call path.  Is this BUG happening via
->>>>>>>>>
->>>>>>>>> static __always_inline void __ClearPage##uname(struct page *page)    \
->>>>>>>>> {                                    \
->>>>>>>>>        VM_BUG_ON_PAGE(!Page##uname(page), page);            \
->>>>>>>>>        page->page_type |= PG_##lname;                    \
->>>>>>>>> }
->>>>>>>>>
->>>>>>>>> ?
->>>>>>>>>
->>>>>>>>> If so, where's the callsite?
->>>>>>>>
->>>>>>>> It is BUG on PF_ANY():
->>>>>>>>
->>>>>>>> PAGEFLAG(HWPoison, hwpoison, PF_ANY)
->>>>>>>>
->>>>>>>> #define PF_ANY(page, enforce)    PF_POISONED_CHECK(page)
->>>>>>>>
->>>>>>>> #define PF_POISONED_CHECK(page) ({                    \
->>>>>>>>        VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);        \
->>>>>>>>        page; })
->>>>>>>>
->>>>>>>> #define    PAGE_POISON_PATTERN    -1l
->>>>>>>> static inline int PagePoisoned(const struct page *page)
->>>>>>>> {
->>>>>>>>        return READ_ONCE(page->flags) == PAGE_POISON_PATTERN;
->>>>>>>> }
->>>>>>>>
->>>>>>>> The offlined pages will have page->flags set to PAGE_POISON_PATTERN while pfn is still valid:
->>>>>>>>
->>>>>>>> offline_pages
->>>>>>>>       remove_pfn_range_from_zone
->>>>>>>>         page_init_poison
->>>>>>>>           memset(page, PAGE_POISON_PATTERN, size);
->>>>>>>
->>>>>>> Worth noting that this happens after __offline_isolated_pages() marked the covering sections as offline.
->>>>>>>
->>>>>>> Are we missing a pfn_to_online_page() check somewhere, or are we racing with offlining code that marks the section offline?
->>>>>>
->>>>>> I was thinking about to use pfn_to_online_page() instead of pfn_to_page() in unpoison_memory() so we can get rid of offlined pages.
->>>>>> But there're ZONE_DEVICE pages. They're not-onlined too. And unpoison_memory() should work for them. So we can't simply use
->>>>>> pfn_to_online_page() in that. Or am I miss something?
->>>>>
->>>>> Right, pfn_to_online_page() does not detect ZONE_DEVICE. That has to be handled separately if pfn_to_online_page() would fail.
->>>>>
->>>>> ... which is what we do in memory_failure():
->>>>>
->>>>> p = pfn_to_online_page(pfn);
->>>>> if (!p) {
->>>>>       if (pfn_valid(pfn)) {
->>>>>           pgmap = get_dev_pagemap(pfn, NULL);
->>>>>           put_ref_page(pfn, flags);
->>>>>           if (pgmap) {
->>>>>               ...
->>>>>           }
->>>>>       }
->>>>>       ...
->>>>> }
->>>>
->>>> Yup, this will be a good alternative. But will it be better to simply check PagePoisoned() instead?
+Hej,
+
+On Sun, Aug 4, 2024, at 13:37, Janne Grunau wrote:
+> On Sun, Aug 4, 2024, at 13:04, Arend Van Spriel wrote:
+>> On August 4, 2024 8:27:04 AM Aditya Garg <gargaditya08@live.com> wrote:
 >>>
->>> The memmap of offline memory sections shall not be touched, so .... don't touch it ;)
+>>> WPA3 is broken on T2 Macs (atleast on 4364) for a long time. I was
+>>> under the impression brcmfmac doesn't support it.
 >>>
->>> Especially because that PagePoisoned() check is non-sensical without poisoining-during-memmap-init. You would still work with memory in offline sections.
+>>> Anyways, I've asked a fedora user to compile a kernel with
+>>> CONFIG_BRCMDBG.
 >>>
->>> I think the code is even wrong in that regard: we allow for memory offlining to work with HWPoisoned pages, see __offline_isolated_pages(). Staring at unpoison_memory(), we might be putting these pages back to the buddy? Which is completely wrong.
+>>> If you want logs without it, look over here:
+>>> https://pastebin.com/fnhH30JA
 >>
->> I agree with you. Thanks for detailed explanation. :)
->> Thanks David.
-> 
-> So ... I assume there will be a new patch? :)
+>> Not sure what to make of this. The interface comes up without any
+>> obvious error and then another interface is created by another
+>> driver:
+>
+> I've bisected the authentication timeouts for WPA2-PSK and WPA3-SAE
+> (and probably every other authentication method) down to
+>
+> https://w1.fi/cgit/hostap/commit/?id=41638606054a09867fe3f9a2b5523aa4678cbfa5
 
-I was just back from my two-weeks holidays. ;) I will try to send a new version when possible.
+this is reported upstream in
+http://lists.infradead.org/pipermail/hostap/2024-August/042893.html
 
-Thanks.
-.
+Disabling offloading in brcmfmac with "brcmfmac.feature_disable=0x82000"
+on the kernel command line works around both the kernel and
+wpa_supplicant issue.
 
-
+HTH,
+Janne
 
