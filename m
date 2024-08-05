@@ -1,58 +1,66 @@
-Return-Path: <linux-kernel+bounces-275020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78CE947FA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:53:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF0D947FB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DDD61F21152
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B017281365
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E77015CD61;
-	Mon,  5 Aug 2024 16:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F252215D5D9;
+	Mon,  5 Aug 2024 16:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsVKimyh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDe5k57m"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944062C684;
-	Mon,  5 Aug 2024 16:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1A315B984;
+	Mon,  5 Aug 2024 16:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722876790; cv=none; b=K1APdFhdZ9Ki3whi1rtMYEmoi/b3BXXu4l7jWyZ06mMkC8XZtrbDdR7tOm+Rb2aDTwRDe0NGyFWxXUENZpNbU8vCByp38/EThbJ0rQ0MMsedAEZYnHZBbbpzcMOrAJfvQZVV13ew6wBiVggGex9gQiaOh0PfURw1e659EKNEWYc=
+	t=1722876824; cv=none; b=k1eDC0/9E0rfI6xHmfq4ySD6D1T1M70EVLAGQx6zDTvyRmReE2MgAWmkHi3+1BuYFHxJq6hwpXZifFCCGQTw4HVUnmMBkOCnyclFoFeMfiQR0DgcgM1/argVoIvDnLuuvzynSmtLwq12C2o46FRnZ9+T7CAqcERNWj7ZhECJXBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722876790; c=relaxed/simple;
-	bh=o9ugM3P0drPcA1zifw1SGACj0yG51DJhSlYgmmJa+2o=;
+	s=arc-20240116; t=1722876824; c=relaxed/simple;
+	bh=O/e1TO9XrHPCYZOvTdVyDlSsov3HzWpIAprXeJ2j0Ow=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P48f6SYFF/a0WK+lycHnlct6hVFaBTwCwaM9wKrUab/wZlDbRH8nDx/IWecwyFnjQTwBIqUkEYUzAK7bl8wtTvL6qEd7jO86qaIa8CGrVP64VqcNJOESjs3CDL3yGQ2AW+oRCwV8U09HEkMcEFElhF3wpNqQ3x1rWlEYMokGhps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DsVKimyh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5472DC32782;
-	Mon,  5 Aug 2024 16:53:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aZfGyV5GXeX+xFdSceGeXIJvffKsvs+PwzjBtLSFqB5KOwJQjC9QF+hse0VRHzdixNQc073r1w4zG+Q1egnRsjaRi3mXoob9kIi99y/OubgDoQmxk9pwBf30qTUvnHxrf1Rm6hmMp0YAAE4lq5YPIi7cJqdh0ptSZsk7mOoMBVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDe5k57m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77DEFC32782;
+	Mon,  5 Aug 2024 16:53:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722876790;
-	bh=o9ugM3P0drPcA1zifw1SGACj0yG51DJhSlYgmmJa+2o=;
+	s=k20201202; t=1722876823;
+	bh=O/e1TO9XrHPCYZOvTdVyDlSsov3HzWpIAprXeJ2j0Ow=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DsVKimyh3athBWR61d5V+zWcMbrGm0KNFU0aqiYQyyEChSGD97CArvLf6R/PCv1Kx
-	 QJbMA5a3gBih/V0ziYR6u3/0LfI7tQdM+ZAN5L1l67k88eQwBIcrxl3JTJlk1j3jfc
-	 qYHfEzhESzRY1WWY6AL3BXPVG/rPjEnpJVIdQxy3yZnu+rLa//MdmQdIQ7rb70lUzF
-	 av9frt1FOdyg/C06WJdaSoztX4s3PwZzMDsVQ0kwOoBZvX3aiz/AbeDpiVQzvyzaWE
-	 XQxafxShE42D7/4Fh489pgfX1Wc9ANJmfrdXE1ObX+7aJFKj7UaxVBTs90eAEmJ2ZH
-	 dU2Z49Prd6JAg==
-Date: Mon, 5 Aug 2024 22:23:05 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Abin Joseph <abin.joseph@amd.com>
-Cc: michal.simek@amd.com, robh@kernel.org, u.kleine-koenig@pengutronix.de,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	radhey.shyam.pandey@amd.com, harini.katakam@amd.com, git@amd.com,
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] dmaengine: zynqmp_dma: Add support for AMD Versal
- Gen 2 DMA IP
-Message-ID: <ZrEDcQLWCbKbCRaL@matsya>
-References: <20240726062639.2609974-1-abin.joseph@amd.com>
- <20240726062639.2609974-3-abin.joseph@amd.com>
+	b=QDe5k57mYXwvivh98dsZqK0NQsuluhJHYf1GuXqNoI1DtpOQIsFWq/K2xiQtwun+s
+	 TMpcB6NdrY6PSRbjutgMIttiQKOKbarh/d9Vp4PTJhZeZoFHBavELLTJBqDmmgQ34P
+	 eq09Hev3WMU5/wOW2aUF5jvzJtTDUcme5ZngnSfI+GOcpnXtCicyHkMWugQba5H0xX
+	 gUcIWNZx///3ZQ5HhdcpEjz6KEw/LKm5hRcIhJjxrdxafdF17E3Ulnz6ANQXo2BMlj
+	 Wl2MDEKOZQKRZVc6/iDNY1urzbqhvAV/cTxSpzObrZIagKJFVGEy9quHGEfVWC4j6d
+	 wxLC7yxbn41VQ==
+Date: Mon, 5 Aug 2024 17:53:37 +0100
+From: Will Deacon <will@kernel.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Sumit Garg <sumit.garg@linaro.org>, Yu Zhao <yuzhao@google.com>,
+	Misono Tomohiro <misono.tomohiro@fujitsu.com>,
+	Stephen Boyd <swboyd@chromium.org>, Chen-Yu Tsai <wens@csie.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	James Morse <james.morse@arm.com>, Kees Cook <kees@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: smp: smp_send_stop() and crash_smp_send_stop()
+ should try non-NMI first
+Message-ID: <20240805165336.GA10196@willie-the-truck>
+References: <20240625160718.v2.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,91 +69,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240726062639.2609974-3-abin.joseph@amd.com>
+In-Reply-To: <20240625160718.v2.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 26-07-24, 11:56, Abin Joseph wrote:
-> ZynqMp DMA IP and AMD Versal Gen 2 DMA IP are similar but have different
-> interrupt register offset. Create a dedicated compatible string to
-> support Versal Gen 2 DMA IP with Irq register offset for interrupt
-> Enable/Disable/Status/Mask functionality.
-> 
-> Signed-off-by: Abin Joseph <abin.joseph@amd.com>
-> ---
->  drivers/dma/xilinx/zynqmp_dma.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
-> index f31631bef961..a5d84d746929 100644
-> --- a/drivers/dma/xilinx/zynqmp_dma.c
-> +++ b/drivers/dma/xilinx/zynqmp_dma.c
-> @@ -22,10 +22,10 @@
->  #include "../dmaengine.h"
+Hi Doug,
+
+On Tue, Jun 25, 2024 at 04:07:22PM -0700, Douglas Anderson wrote:
+> @@ -1084,79 +1088,87 @@ static inline unsigned int num_other_online_cpus(void)
 >  
->  /* Register Offsets */
-> -#define ZYNQMP_DMA_ISR			0x100
-> -#define ZYNQMP_DMA_IMR			0x104
-> -#define ZYNQMP_DMA_IER			0x108
-> -#define ZYNQMP_DMA_IDS			0x10C
-> +#define ZYNQMP_DMA_ISR			(chan->irq_offset + 0x100)
-> +#define ZYNQMP_DMA_IMR			(chan->irq_offset + 0x104)
-> +#define ZYNQMP_DMA_IER			(chan->irq_offset + 0x108)
-> +#define ZYNQMP_DMA_IDS			(chan->irq_offset + 0x10C)
-
-Lower case please
-
->  #define ZYNQMP_DMA_CTRL0		0x110
->  #define ZYNQMP_DMA_CTRL1		0x114
->  #define ZYNQMP_DMA_DATA_ATTR		0x120
-> @@ -145,6 +145,9 @@
->  #define tx_to_desc(tx)		container_of(tx, struct zynqmp_dma_desc_sw, \
->  					     async_tx)
+>  void smp_send_stop(void)
+>  {
+> +	static unsigned long stop_in_progress;
+> +	cpumask_t mask;
+>  	unsigned long timeout;
 >  
-> +/* IRQ Register offset for VersalGen2 */
-> +#define IRQ_REG_OFFSET			0x308
+> -	if (num_other_online_cpus()) {
+> -		cpumask_t mask;
+> +	/*
+> +	 * If this cpu is the only one alive at this point in time, online or
+> +	 * not, there are no stop messages to be sent around, so just back out.
+> +	 */
+> +	if (num_other_online_cpus() == 0)
+> +		goto skip_ipi;
+>  
+> -		cpumask_copy(&mask, cpu_online_mask);
+> -		cpumask_clear_cpu(smp_processor_id(), &mask);
+> +	/* Only proceed if this is the first CPU to reach this code */
+> +	if (test_and_set_bit(0, &stop_in_progress))
+> +		return;
+>  
+> -		if (system_state <= SYSTEM_RUNNING)
+> -			pr_crit("SMP: stopping secondary CPUs\n");
+> -		smp_cross_call(&mask, IPI_CPU_STOP);
+> -	}
+> +	cpumask_copy(&mask, cpu_online_mask);
+> +	cpumask_clear_cpu(smp_processor_id(), &mask);
+>  
+> -	/* Wait up to one second for other CPUs to stop */
+> +	if (system_state <= SYSTEM_RUNNING)
+> +		pr_crit("SMP: stopping secondary CPUs\n");
 > +
->  /**
->   * struct zynqmp_dma_desc_ll - Hw linked list descriptor
->   * @addr: Buffer address
-> @@ -211,6 +214,7 @@ struct zynqmp_dma_desc_sw {
->   * @bus_width: Bus width
->   * @src_burst_len: Source burst length
->   * @dst_burst_len: Dest burst length
-> + * @irq_offset: Irq register offset
->   */
->  struct zynqmp_dma_chan {
->  	struct zynqmp_dma_device *zdev;
-> @@ -235,6 +239,7 @@ struct zynqmp_dma_chan {
->  	u32 bus_width;
->  	u32 src_burst_len;
->  	u32 dst_burst_len;
-> +	u32 irq_offset;
->  };
->  
->  /**
-> @@ -919,6 +924,9 @@ static int zynqmp_dma_chan_probe(struct zynqmp_dma_device *zdev,
->  		return -EINVAL;
->  	}
->  
-> +	if (of_device_is_compatible(node, "amd,versal2-dma-1.0"))
-> +		chan->irq_offset = IRQ_REG_OFFSET;
+> +	/*
+> +	 * Start with a normal IPI and wait up to one second for other CPUs to
+> +	 * stop. We do this first because it gives other processors a chance
+> +	 * to exit critical sections / drop locks and makes the rest of the
+> +	 * stop process (especially console flush) more robust.
+> +	 */
+> +	smp_cross_call(&mask, IPI_CPU_STOP);
 
-This should be added as driver_data
+I realise you've moved this out of crash_smp_send_stop() and it looks
+like we inherited the code from x86, but do you know how this serialise
+against CPU hotplug operations? I've spent the last 20m looking at the
+code and I can't see what prevents other CPUs from coming and going
+while we're trying to IPI a non-atomic copy of 'cpu_online_mask'.
 
-> +
->  	chan->is_dmacoherent =  of_property_read_bool(node, "dma-coherent");
->  	zdev->chan = chan;
->  	tasklet_setup(&chan->tasklet, zynqmp_dma_do_tasklet);
-> @@ -1162,6 +1170,7 @@ static void zynqmp_dma_remove(struct platform_device *pdev)
->  
->  static const struct of_device_id zynqmp_dma_of_match[] = {
->  	{ .compatible = "xlnx,zynqmp-dma-1.0", },
-> +	{ .compatible = "amd,versal2-dma-1.0", },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, zynqmp_dma_of_match);
-> -- 
-> 2.25.1
-
--- 
-~Vinod
+Will
 
