@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-274843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AFD947D71
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FD6947D6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA2CB22DEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:01:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C6728375C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE0415CD4E;
-	Mon,  5 Aug 2024 14:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37A115B977;
+	Mon,  5 Aug 2024 14:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZDikqa6l"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AEQO/VV3"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B1815B107
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE0E158DCC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722869996; cv=none; b=XNdrOn81/4wS9ryax1oTYn8mo1mCKL3TAUM+Nu2la5O8SJqaA0SFE2uM4LQTSn2gyWvmGDQ3bc9bc9YxmV9adC5mlfUxIFdq5Uk9E8EIQi1BVnToeNFMQz2q39Y0gOvbd0nW5jgkkP7G6nDbaKPPCVX2ToxHggM4geUrJ44yJVA=
+	t=1722869995; cv=none; b=DSC1EOvR0ekYIalwtjXek2pgWSJ5UQgk3mP0PUyZ45XOpFhiT5aQKnqDZyTCf6FJiYzrZIxfPXRZMJZdW5GT9eDxchCU6JodUxLxF2CX0PD2CZHZCO/FIgRX3Vrl/I+7rCXZ1Y4F8romnqnXZuQ37dZcKm4cROdQ1+6Os80maX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722869996; c=relaxed/simple;
-	bh=HZQzMMA1b4Met0TT3CuOG0tnltrjZmQkpNZYdJg4+Zg=;
+	s=arc-20240116; t=1722869995; c=relaxed/simple;
+	bh=l0KMEXpzdLDtoI2/tzFTr7rANQva0av+agV+dlIXFcU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TokVyIfZtR7NEhxvpsC97151gPtHToW3JJbxgILE9Nsp1zK0Q1WEH0yAj/9TBvWEep+mDXkioynpuaeVc9j8WhVfP5M2NKP2r0DqMXVaB0z6JYotQkDoacXdKXQI5aEv2mIY5l9O3em4Fl+iP+QFlWQ/i8JUxEkvdJcdvStn/Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZDikqa6l; arc=none smtp.client-ip=198.175.65.18
+	 MIME-Version; b=IVxP36ode2aoU9JLYm3vf29tqSgbP2WvBzrsBwSiTcBCJlaOzh2l+XLZ389wc4A5q+Za10YUKGVgttJK20GcRXFTB0gVqOaCM63pHwOmxoCFtTq7I8ag2bmRjTqw4IdYL6jGEprKP+TqpaiSsR6+G5kAjXpDJC5y8fxrsTSS6xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AEQO/VV3; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722869995; x=1754405995;
+  t=1722869994; x=1754405994;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=HZQzMMA1b4Met0TT3CuOG0tnltrjZmQkpNZYdJg4+Zg=;
-  b=ZDikqa6lIaHJhhGCFuKPtbzl4X7Nwn/Irnys3kmlIZhbtM7k6kYCVGNr
-   mtgReWJwzO+tkiz5WLCOGlOojunlzj/s4JxRG/YoFSnngKqiXONc9me+i
-   +lYGbE78d8YeRaFKfnPxgIuCokMNtEWcws4afbF86sOASC8FxnuxN3Jpz
-   Y9yFESMTREszf+clMIadOME9qGbxK/WQaAoknDmrwjJYixskvMQq7axlz
-   rDr3dU0dEQ+nRqTsUlmxGzYVfpvs1It3e43y+35IrhMZwk4/d6fwbSl0B
-   vZxIY+F5fyxHUmTWyyjd0eyfuU3aPE+qLs+Z7MY8hrU42ehaLJT/Ubxh6
+  bh=l0KMEXpzdLDtoI2/tzFTr7rANQva0av+agV+dlIXFcU=;
+  b=AEQO/VV3YhYAeTQOVd+jOawwIZd/OmVbWxEATAB074lL1mC7gWJGaBYU
+   hvAa2hVFh/C6hA1qPBbL49P4IFNYUeTGKJPN2oPYq4qIbEAwbYfhGlN47
+   WHTG2wobq6Y1okCm+7IlLkxXYts2Ww/0iYuCYqwnNint/VszYNc/Vd5A2
+   N2qJQwt0tib5Y+DMOnU2M+kK/8xpRGajaUX8/wIYHBdb9VSrwuVURQJg1
+   xvYeCsnDbrO72jpH84P1aPngXSWIhOv9LNTfS97nU7zTjfdflJtr3WlUa
+   ih9zfLdheZL/OdIQncyZOPvGli3EM2n3vEjXnHGl+e2wEakZ6I8nF1Y63
    g==;
-X-CSE-ConnectionGUID: KH5H5auKTomVydDNRjORRA==
-X-CSE-MsgGUID: JK9WA2ygTha/4iHNoILpbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="20980974"
+X-CSE-ConnectionGUID: puNrvoMuTYqcTKfeu9szOg==
+X-CSE-MsgGUID: XxFsv/AhQ1CsgEqAeVcSvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="20980963"
 X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="20980974"
+   d="scan'208";a="20980963"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
   by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 07:59:54 -0700
-X-CSE-ConnectionGUID: K0ky/TGeTRa3HniYOVe5rw==
-X-CSE-MsgGUID: e1DtwlPgSQqL5yDU6fySYw==
+X-CSE-ConnectionGUID: WIo67eKrSgGxalNdG6yvhg==
+X-CSE-MsgGUID: UGUbRBmzTOWsmfDpnnECFQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="61157259"
+   d="scan'208";a="61157258"
 Received: from black.fi.intel.com ([10.237.72.28])
   by orviesa004.jf.intel.com with ESMTP; 05 Aug 2024 07:59:51 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id B03458AC; Mon, 05 Aug 2024 17:59:45 +0300 (EEST)
+	id BA8168F3; Mon, 05 Aug 2024 17:59:45 +0300 (EEST)
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	"Borislav Petkov (AMD)" <bp@alien8.de>,
@@ -72,9 +72,9 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 7/8] mm: Introduce promo_wmark_pages()
-Date: Mon,  5 Aug 2024 17:59:39 +0300
-Message-ID: <20240805145940.2911011-8-kirill.shutemov@linux.intel.com>
+Subject: [PATCH 8/8] mm: Accept to promo watermark
+Date: Mon,  5 Aug 2024 17:59:40 +0300
+Message-ID: <20240805145940.2911011-9-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240805145940.2911011-1-kirill.shutemov@linux.intel.com>
 References: <20240805145940.2911011-1-kirill.shutemov@linux.intel.com>
@@ -86,54 +86,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add promo_wmark_pages() helper to complement other zone watermark
-accessors.
+Commit c574bbe91703 ("NUMA balancing: optimize page placement for memory
+tiering system") introduced a new watermark above "high" -- "promo".
+
+Accept memory memory to the highest watermark which is WMARK_PROMO now.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- include/linux/mmzone.h | 1 +
- kernel/sched/fair.c    | 2 +-
- mm/vmscan.c            | 2 +-
- 3 files changed, 3 insertions(+), 2 deletions(-)
+ mm/page_alloc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 41458892bc8a..eb4ec70f6d53 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -671,6 +671,7 @@ enum zone_watermarks {
- #define min_wmark_pages(z) (z->_watermark[WMARK_MIN] + z->watermark_boost)
- #define low_wmark_pages(z) (z->_watermark[WMARK_LOW] + z->watermark_boost)
- #define high_wmark_pages(z) (z->_watermark[WMARK_HIGH] + z->watermark_boost)
-+#define promo_wmark_pages(z) (z->_watermark[WMARK_PROMO] + z->watermark_boost)
- #define wmark_pages(z, i) (z->_watermark[i] + z->watermark_boost)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 5f33e92b0a55..fcb15d0e7549 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7019,8 +7019,8 @@ static bool cond_accept_memory(struct zone *zone, unsigned int order)
+ 	if (list_empty(&zone->unaccepted_pages))
+ 		return false;
  
- /*
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 9057584ec06d..6b2a032ba0c6 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1742,7 +1742,7 @@ static bool pgdat_free_space_enough(struct pglist_data *pgdat)
- 			continue;
- 
- 		if (zone_watermark_ok(zone, 0,
--				      wmark_pages(zone, WMARK_PROMO) + enough_wmark,
-+				      promo_wmark_pages(zone) + enough_wmark,
- 				      ZONE_MOVABLE, 0))
- 			return true;
- 	}
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index cfa839284b92..ad6473eaec28 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -6664,7 +6664,7 @@ static bool pgdat_balanced(pg_data_t *pgdat, int order, int highest_zoneidx)
- 			continue;
- 
- 		if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING)
--			mark = wmark_pages(zone, WMARK_PROMO);
-+			mark = promo_wmark_pages(zone);
- 		else
- 			mark = high_wmark_pages(zone);
- 		if (zone_watermark_ok_safe(zone, order, mark, highest_zoneidx))
+-	/* How much to accept to get to high watermark? */
+-	to_accept = high_wmark_pages(zone) -
++	/* How much to accept to get to promo watermark? */
++	to_accept = promo_wmark_pages(zone) -
+ 		    (zone_page_state(zone, NR_FREE_PAGES) -
+ 		    __zone_watermark_unusable_free(zone, order, 0) -
+ 		    zone_page_state(zone, NR_UNACCEPTED));
 -- 
 2.43.0
 
