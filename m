@@ -1,124 +1,211 @@
-Return-Path: <linux-kernel+bounces-274857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94959947DB3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:08:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D0B947DB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5087A2838DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:08:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E0EB243D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6D514885C;
-	Mon,  5 Aug 2024 15:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A0815350D;
+	Mon,  5 Aug 2024 15:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OrEmnaKr"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ViGl2BkL"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246B13F9D5
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837D013C81C;
+	Mon,  5 Aug 2024 15:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722870493; cv=none; b=AfqZilS1RbMZt42eSrPROwemwO9r5OeEthdYAzQHMFWUOyGlatrDQhLDZwODZ7pjsZCvgshTIdDcU7cjWhadA7uItLWdiVqRmfpuiYXGCyk0KQXGFCdS1acx+xqqcNkigeeHqWHVbjvwqWaKxgC2Q4SBrxMYkX5e9tsEYNow18s=
+	t=1722870527; cv=none; b=tkNuWDoG5VgVSC6zINq9qw7f6EhTxjNafFoIcixu5oS/Q7geCq9JnZGD6XOBY5WtIxuLhj+IU1T/6j5l4t++u/2xWQtyAoHLLFW26MoDV1YuJpsDZwlNB7kfksEkxU1K5gmkVnhIGh7Yxwqcga6q7VguWbAovqtn4ffWaudA3nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722870493; c=relaxed/simple;
-	bh=O9ctqr2OOwDyQgI+Tw9ka8os8+6XfU1CcgEDGKKGRNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PCTv0zq8j0UVk9w1onTbL1z0ptucDeOe9Zh+DEeaYP7wYFesoUzM8MwH2mTyxJBJa8kJB/4TxWH+THOsuD4TA9doVpQog3aCgtmkXrCw/LdYlmuGXD+uBk/DHF69zw8H87R0epnueSHksMqjgPeSfo1uhk6fZZak5TRcw11z+I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OrEmnaKr; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5b7b6a30454so5564087a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722870489; x=1723475289; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z12bTz3uc/6bWoxaYbSLkO/A8SqLo9rW3xC9vooatVQ=;
-        b=OrEmnaKrQ3sAGBya7/XtfuyQj+nJr99k5I0Fz5HrCZSAkCR+RMAqZPQxozgHKBCsCt
-         vzqDJN6H4xhomWk+YmK54fkq/rzuoD/c0gtSmbARJSEXo3L/jrPsCmJdSwJemJ0RFRyh
-         nAAfN989ynEjRjNaI10znsBNB4IIwcDjJQq2ehLI9ZghK7hxLaSSiSFVAMQFCGxpmvf7
-         HxwhY5Ax4+2KWezUerCetecAqm4ygDaTD/8lSNG5gbTJB8IhuOlLqautD38I1TYAS4Cw
-         2a05/z0vweua+dUZeRfi0zBOBRiT5nXaSixFWO8W1kJPK/1sQ3b4sKlfeiX+q/Wd2dF0
-         J59g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722870489; x=1723475289;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z12bTz3uc/6bWoxaYbSLkO/A8SqLo9rW3xC9vooatVQ=;
-        b=w0tDNkVHuzAPWPyrx65L0mK9X/M4fuILABd/foCxV2JnKllrEHKtmgWgwRg4M9fXen
-         QPuUHIuT7dtFxxjOfn+8XmyAP4vjz4K6sIEOtxgjX+7/BqFBti/sC4YHAKL9XxRvZitk
-         zGn7OMv8frqZm9KnRligmU3zbGguAsZpl1n7O+3Qnj5fCBcmpEdgPJrJzqhrTWRO8Y7N
-         OkTlMz7nsAG5V6wQ7v/0ELdQxOBr09IIZW6W8DG0k+qwaltY0dEIIk135hkoatS8V6sS
-         Sa4WFQcONfgKIoxKz83PYQnzbWGT7tTL6n0SOqqyEnQoI5/0WkYzYPQ0RLQv29VKr0OE
-         zf2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXxB/KAGcy3EoNvINpsjND07dT28ZsAGa7EDu2m3tXtwz5okVNhPOSXi0uJZoTpj9Uv5jNfGXnyP8dx9K4eIrUVnmxlDaBW0Ne5fDSy
-X-Gm-Message-State: AOJu0YxZj8Lab0oWvDas2vp5ZBMC3e3L9H+OnGdWdsRZOsdiQOZKGllo
-	K0oZ5c1StqPwZmTkPhm81z9gZ2uTAS3rxNFN6GN2bLqPBMQJIPo8SJSshZMMxjc=
-X-Google-Smtp-Source: AGHT+IEag2rNRk0j4QehJ+DMvtcP+G/n9mTpBKv6zvPEM0uKOUnzQ0IF6Ol2eIkgYDDb+d00iGANlw==
-X-Received: by 2002:a17:906:d554:b0:a72:6849:cb0f with SMTP id a640c23a62f3a-a7dc5100463mr806932766b.62.1722870489211;
-        Mon, 05 Aug 2024 08:08:09 -0700 (PDT)
-Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec7173sm459121666b.204.2024.08.05.08.08.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 08:08:08 -0700 (PDT)
-From: Petr Tesarik <petr.tesarik@suse.com>
-To: Eric Biederman <ebiederm@xmission.com>,
-	Sourabh Jain <sourabhjain@linux.ibm.com>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Baoquan He <bhe@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Eric DeVolder <eric.devolder@oracle.com>,
-	kexec@lists.infradead.org (open list:KEXEC),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Petr Tesarik <ptesarik@suse.com>,
-	stable@kernel.org
-Subject: [PATCH 1/1] kexec_file: fix elfcorehdr digest exclusion when CONFIG_CRASH_HOTPLUG=y
-Date: Mon,  5 Aug 2024 17:07:50 +0200
-Message-ID: <20240805150750.170739-1-petr.tesarik@suse.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722870527; c=relaxed/simple;
+	bh=wDFkb0BxIxOlQJsPJFBiPiCQWIb1ofqDpzdQDFiG/Ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QwmoJVKQqrC+goVJENfitrJVkrKY7bvFPKjpTV0Le/t37UQgyUX6xpzOkgu/Cfl0Ee/DiOMeU8iS9WEU4+wl0fL54YSISgkvzKrBl5fuRYeaAObSPFkAxYTIHtkE6iEgPrtLLJMXVPdh+hTI2QFNjISLgqQyAWQRFg4U4CpOOtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ViGl2BkL; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GKfjloD6oa4JOXSe00nlirkRPmxpIJuJ9zLXTqSQAPI=; b=ViGl2BkL5r4BIMOR6jnI4uLV52
+	VePlXnOarDVS1Nx3+Pes61PGKOmZNyyrQz4PxJrNzDyum7mAwZyrOEREG4J/zrFnA7BP4dDRBCI04
+	vVXWyHRvdlFKnPFIMZggeKkRwdxGKYYU++s25DqQb6jNFr7CJI7tMM/PlLO+zEBQmXZirY/8I/pEG
+	qB1SGx8OXmgLlX7G1i+9ubCGs1XS7Sg8bh5/k9bmHKEgaLn8OzqO04FCKMETecwKjB+zqSvgf8edQ
+	80dQZXD3t6uZSkyFrBnE3UF/GSXGvFSQMon3rakHzukhg3h0tJ7F45Iuwk1C9L+l440iOt5FQZsRO
+	2n6SCCcg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39576)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sazK3-0003Fw-2D;
+	Mon, 05 Aug 2024 16:08:31 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sazK6-0002S7-0D; Mon, 05 Aug 2024 16:08:34 +0100
+Date: Mon, 5 Aug 2024 16:08:33 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	dl-S32 <S32@nxp.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH 4/6] net: stmmac: dwmac-s32cc: add basic NXP S32G/S32R
+ glue
+Message-ID: <ZrDq8aZh4LY5Q0UY@shell.armlinux.org.uk>
+References: <AM9PR04MB85064D7EDF618DB5C34FB83BE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM9PR04MB85064D7EDF618DB5C34FB83BE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Petr Tesarik <ptesarik@suse.com>
+On Sun, Aug 04, 2024 at 08:50:10PM +0000, Jan Petrous (OSS) wrote:
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> index 05cc07b8f48c..31628c363d71 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> @@ -153,6 +153,17 @@ config DWMAC_RZN1
+>  	  This selects the Renesas RZ/N1 SoC glue layer support for
+>  	  the stmmac device driver. This support can make use of a custom MII
+>  	  converter PCS device.
 
-Fix the condition to exclude the elfcorehdr segment from the SHA digest
-calculation.
+There should be a blank line here.
 
-The j iterator is an index into the output sha_regions[] array, not into
-the input image->segment[] array. Once it reaches image->elfcorehdr_index,
-all subsequent segments are excluded. Besides, if the purgatory segment
-precedes the elfcorehdr segment, the elfcorehdr may be wrongly included in
-the calculation.
+> +config DWMAC_S32CC
+> +	tristate "NXP S32G/S32R GMAC support"
+> +	default ARCH_S32
+> +	depends on OF && (ARCH_S32 || COMPILE_TEST)
+...
 
-Fixes: f7cc804a9fd4 ("kexec: exclude elfcorehdr from the segment digest")
-Cc: stable@kernel.org
-Signed-off-by: Petr Tesarik <ptesarik@suse.com>
----
- kernel/kexec_file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +static void s32cc_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+> +{
+> +	struct s32cc_priv_data *gmac = priv;
+> +	int ret;
+> +
+> +	if (!gmac->rx_clk_enabled) {
+> +		ret = clk_prepare_enable(gmac->rx_clk);
+> +		if (ret) {
+> +			dev_err(gmac->dev, "Can't set rx clock\n");
+> +			return;
+> +		}
+> +		dev_dbg(gmac->dev, "rx clock enabled\n");
+> +		gmac->rx_clk_enabled = true;
+> +	}
+> +
+> +	switch (speed) {
+> +	case SPEED_1000:
+> +		dev_dbg(gmac->dev, "Set tx clock to 125M\n");
+> +		ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_125M);
+> +		break;
+> +	case SPEED_100:
+> +		dev_dbg(gmac->dev, "Set tx clock to 25M\n");
+> +		ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_25M);
+> +		break;
+> +	case SPEED_10:
+> +		dev_dbg(gmac->dev, "Set tx clock to 2.5M\n");
+> +		ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_2M5);
+> +		break;
+> +	default:
+> +		dev_err(gmac->dev, "Unsupported/Invalid speed: %d\n", speed);
+> +		return;
+> +	}
+> +
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 3d64290d24c9..3eedb8c226ad 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -752,7 +752,7 @@ static int kexec_calculate_store_digests(struct kimage *image)
- 
- #ifdef CONFIG_CRASH_HOTPLUG
- 		/* Exclude elfcorehdr segment to allow future changes via hotplug */
--		if (j == image->elfcorehdr_index)
-+		if (i == image->elfcorehdr_index)
- 			continue;
- #endif
- 
+We seem to have multiple cases of very similar logic in lots of stmmac
+platform drivers, and I think it's about time we said no more to this.
+So, what I think we should do is as follows:
+
+add the following helper - either in stmmac, or more generically
+(phylib? - in which case its name will need changing.)
+
+static long stmmac_get_rgmii_clock(int speed)
+{
+	switch (speed) {
+	case SPEED_10:
+		return 2500000;
+
+	case SPEED_100:
+		return 25000000;
+
+	case SPEED_1000:
+		return 125000000;
+
+	default:
+		return -ENVAL;
+	}
+}
+
+Then, this can become:
+
+	long tx_clk_rate;
+
+	...
+
+	tx_clk_rate = stmmac_get_rgmii_clock(speed);
+	if (tx_clk_rate < 0) {
+		dev_err(gmac->dev, "Unsupported/Invalid speed: %d\n", speed);
+		return;
+	}
+
+	ret = clk_set_rate(gmac->tx_clk, tx_clk_rate);
+
+> +	if (ret)
+> +		dev_err(gmac->dev, "Can't set tx clock\n");
+> +}
+> +
+> +static int s32cc_dwmac_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct plat_stmmacenet_data *plat;
+> +	struct s32cc_priv_data *gmac;
+> +	struct stmmac_resources res;
+> +	int ret;
+> +
+> +	gmac = devm_kzalloc(&pdev->dev, sizeof(*gmac), GFP_KERNEL);
+> +	if (!gmac)
+> +		return PTR_ERR(gmac);
+> +
+> +	gmac->dev = &pdev->dev;
+> +
+> +	ret = stmmac_get_platform_resources(pdev, &res);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Failed to get platform resources\n");
+> +
+> +	plat = devm_stmmac_probe_config_dt(pdev, res.mac);
+> +	if (IS_ERR(plat))
+> +		return dev_err_probe(dev, PTR_ERR(plat),
+> +				     "dt configuration failed\n");
+> +
+> +	/* PHY interface mode control reg */
+> +	gmac->ctrl_sts = devm_platform_get_and_ioremap_resource(pdev, 1, NULL);
+> +	if (IS_ERR_OR_NULL(gmac->ctrl_sts))
+> +		return dev_err_probe(dev, PTR_ERR(gmac->ctrl_sts),
+> +				     "S32CC config region is missing\n");
+
+Testing with IS_ERR() is all that's required here.
+
+Thanks.
+
 -- 
-2.45.2
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
