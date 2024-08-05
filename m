@@ -1,170 +1,102 @@
-Return-Path: <linux-kernel+bounces-274829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBF6947D54
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:56:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D723947D58
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDAEE1C217D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:56:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A052835DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB91415443F;
-	Mon,  5 Aug 2024 14:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7B8149C69;
+	Mon,  5 Aug 2024 14:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mf5l3Bha"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C406538F97;
-	Mon,  5 Aug 2024 14:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="DqdNJ6Qa"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8788713BC2F;
+	Mon,  5 Aug 2024 14:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722869761; cv=none; b=RX/tz1VIbjpLJ9LrkXspVSk42pVVwecK7zottag0ja8cfx+BgRsKD1/VM89tiMKoyGW/5lA24oRG8CGwtrrY5xJqr+tV5c2VhNYbhEGab0BzQs5cjNzX7rNQE1dc2uvQ0Y/TZdup7xvFNEshOsLwoT3pWomWvqjHsWX/MKapum0=
+	t=1722869865; cv=none; b=nEv6fjA80iSjN6kr5cpN2o0p7n4+0L82dUn7AJ2TqeDwop1CvttPgE7g00g7Dcoe3xojVHdxC5TqR2K0HQdomRS4kg+X06H9bJ5rkvYNgqFWGSA42ssTAKqTAzTXKNKQcG6FzDIgZXwb4NztlZlNvHHQqlQ3wgeMHlYTWIhhtNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722869761; c=relaxed/simple;
-	bh=tUEC8kwq4v7O+YnkMq2wWdWfUhXmYzgfRssA3X9OC5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=saPT4gT3QuBgaFgj7nWm39M+AB7J+Jtf+mXCjuwIhnEcfZ48gro23UgpLYZ5ltSxfDreD9eKVpOV9YcdU/Qyko+bV3tJ46W4/JTYDaeNXIjhTOhl1RInDbftf2efchlUGDEWpoDNS8hJiKOQeQffoqav7k8Q+OCYeJDnWaV7eZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=mf5l3Bha; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 25F1420B7165;
-	Mon,  5 Aug 2024 07:55:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 25F1420B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722869759;
-	bh=Y0KT8B5PCn6F8od6tqfxDCAzLuPu/RKwVWyWjc2Gssw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mf5l3BhaMO2QYZ65LW49/czN0ifOeTtP47h24c0C0W3pPrbZrcIzqA/alBHbE4X6J
-	 HPtAonjTYyMbb/DqSMh4B6GkJEbAKJWuvCAs5T1VCEs7jSPjcATsKLmbcUrbo7sV8w
-	 cosTxRvtEXxuyWIX4EPT/gsJdfHJdLoRFEIWcqzE=
-Message-ID: <cca36d1f-a1f3-4d5c-a7ea-6c434903b9ed@linux.microsoft.com>
-Date: Mon, 5 Aug 2024 07:55:59 -0700
+	s=arc-20240116; t=1722869865; c=relaxed/simple;
+	bh=xQxs5tA86O7NH6G9PP9yTirBnWcDZOoo7XIjpVLI+xY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P6J+wrcWfVMopBWtF2QFU0SMywLQQQUcbfIW/DF5SOMtXnB6nPviJotg9KcdVdIdHaKinISrj5Qk9YCItFxJ73CZXjAduHizrXZRAHn03waXCV1f+n7752crIkJtImRBn9yNiC1L+sqpASRmLn2wtjGzgABHYFA353gE+yg33jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=DqdNJ6Qa; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id CDA6AA1020;
+	Mon,  5 Aug 2024 16:57:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=rt0/DzSJHh0VO/aLzwYC4bGQHdS29kdGzx/bnV7v0b4=; b=
+	DqdNJ6QajXuCswon2Ki8MzHdHH1KWtMMPtFZSTDwStmjN2bytgjJnPb9PoMIp3HP
+	StVCZJhwc2Q1AtT1GYcEh1RcEBsDoQkYuPpU9kBq7cs3T7I//PTaJJ0ZVZG4OZI/
+	zC9nJMFTkFuVfqZK59zHS0s7xB7JAVN0y6t9hqos3RYTDjUrkNvyf618PhbJJTyy
+	QsasJz3Sp/m/vWGjagHWsquZlMC2nDPlCW1JL8uPsPPmvUl8e/HIGrTkGRuAdZx2
+	XJC1WAbKVEozZOa2GYcoNUT5CfVIcBYf6RjyqTHFNdcidVeIDWZQ+9AIL5aQYE4n
+	OWlQ5wi2p7PAp9xmqBvhCPwWOro9iPrGR2zESFpmr6vdL6K7crJNOuZjMkfDbPrY
+	IoVVUxc1L96fr/d8AYLD3cqv1CvCUEzvrjFoIl85melnItoExvFWXmIRHARAbK76
+	s79zQqfP2RrxaVnpcRbOMfbJpr/8YX6PbjW31PjeHkFfhVWngpDD5HbqHbWWr+hh
+	ztVuRwpbLqH/YGpUJPLWzlHyYMhF84l8ATXfNu2honf+A2aP4nTOl5QlVYojmq5i
+	tr930Hri0dH7xaXzRY/KDN3+2WpUHSOq7SSoNEUZhz3C43bZdC/AZMEsrLG8Mqlj
+	SN/Rjf517O+Khqr0eJvjerv/dX12a2HkhaR4jadwtiQ=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Wei Fang
+	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>
+Subject: [PATCH] net: fec: Stop PPS on driver remove
+Date: Mon, 5 Aug 2024 16:57:36 +0200
+Message-ID: <20240805145735.2385752-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/7] arm64: hyperv: Boot in a Virtual Trust Level
-To: Wei Liu <wei.liu@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, dave.hansen@linux.intel.com, decui@microsoft.com,
- haiyangz@microsoft.com, hpa@zytor.com, kw@linux.com, kys@microsoft.com,
- lenb@kernel.org, lpieralisi@kernel.org, mingo@redhat.com, rafael@kernel.org,
- robh@kernel.org, tglx@linutronix.de, will@kernel.org,
- linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org,
- apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
- sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-5-romank@linux.microsoft.com>
- <Zq2GOzYAC8WdaUTk@liuwe-devbox-debian-v2>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <Zq2GOzYAC8WdaUTk@liuwe-devbox-debian-v2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1722869861;VERSION=7975;MC=3706177826;ID=151856;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29ACD94854667C61
 
+PPS was not stopped in `fec_ptp_stop()`, called when
+the adapter was removed. Consequentially, you couldn't
+safely reload the driver with the PPS signal on.
 
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+---
+ drivers/net/ethernet/freescale/fec_ptp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-On 8/2/2024 6:22 PM, Wei Liu wrote:
-> On Fri, Jul 26, 2024 at 03:59:07PM -0700, Roman Kisel wrote:
->> To run in the VTL mode, Hyper-V drivers have to know what
->> VTL the system boots in, and the arm64/hyperv code does not
->> update the variable that stores the value.
->>
->> Update the variable to enable the Hyper-V drivers to boot
->> in the VTL mode and print the VTL the code runs in.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   arch/arm64/hyperv/Makefile        |  1 +
->>   arch/arm64/hyperv/hv_vtl.c        | 13 +++++++++++++
->>   arch/arm64/hyperv/mshyperv.c      |  4 ++++
->>   arch/arm64/include/asm/mshyperv.h |  7 +++++++
->>   4 files changed, 25 insertions(+)
->>   create mode 100644 arch/arm64/hyperv/hv_vtl.c
->>
->> diff --git a/arch/arm64/hyperv/Makefile b/arch/arm64/hyperv/Makefile
->> index 87c31c001da9..9701a837a6e1 100644
->> --- a/arch/arm64/hyperv/Makefile
->> +++ b/arch/arm64/hyperv/Makefile
->> @@ -1,2 +1,3 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   obj-y		:= hv_core.o mshyperv.o
->> +obj-$(CONFIG_HYPERV_VTL_MODE)	+= hv_vtl.o
->> diff --git a/arch/arm64/hyperv/hv_vtl.c b/arch/arm64/hyperv/hv_vtl.c
->> new file mode 100644
->> index 000000000000..38642b7b6be0
->> --- /dev/null
->> +++ b/arch/arm64/hyperv/hv_vtl.c
->> @@ -0,0 +1,13 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2024, Microsoft, Inc.
->> + *
->> + * Author : Roman Kisel <romank@linux.microsoft.com>
->> + */
->> +
->> +#include <asm/mshyperv.h>
->> +
->> +void __init hv_vtl_init_platform(void)
->> +{
->> +	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
->> +}
->> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
->> index 341f98312667..8fd04d6e4800 100644
->> --- a/arch/arm64/hyperv/mshyperv.c
->> +++ b/arch/arm64/hyperv/mshyperv.c
->> @@ -98,6 +98,10 @@ static int __init hyperv_init(void)
->>   		return ret;
->>   	}
->>   
->> +	/* Find the VTL */
->> +	ms_hyperv.vtl = get_vtl();
->> +	hv_vtl_init_platform();
-> 
-> It doesn't make sense to me because this function unconditionally prints
-> Linux runs in Hyper-V Virtual Trust Level.
-> 
-Thought to structure this as the similar parts of the VTL support are. 
-Will remove, thank you!
-
-> Thanks,
-> Wei.
-> 
->> +
->>   	ms_hyperv_late_init();
->>   
->>   	hyperv_initialized = true;
->> diff --git a/arch/arm64/include/asm/mshyperv.h b/arch/arm64/include/asm/mshyperv.h
->> index a7a3586f7cb1..63d6bb6998fc 100644
->> --- a/arch/arm64/include/asm/mshyperv.h
->> +++ b/arch/arm64/include/asm/mshyperv.h
->> @@ -49,6 +49,13 @@ static inline u64 hv_get_msr(unsigned int reg)
->>   				ARM_SMCCC_OWNER_VENDOR_HYP,	\
->>   				HV_SMCCC_FUNC_NUMBER)
->>   
->> +#ifdef CONFIG_HYPERV_VTL_MODE
->> +void __init hv_vtl_init_platform(void);
->> +int __init hv_vtl_early_init(void);
->> +#else
->> +static inline void __init hv_vtl_init_platform(void) {}
->> +#endif
->> +
->>   #include <asm-generic/mshyperv.h>
->>   
->>   #define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0	0x7948734d
->> -- 
->> 2.34.1
->>
-
+diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
+index c5b89352373a..93953d252d99 100644
+--- a/drivers/net/ethernet/freescale/fec_ptp.c
++++ b/drivers/net/ethernet/freescale/fec_ptp.c
+@@ -787,6 +787,9 @@ void fec_ptp_stop(struct platform_device *pdev)
+ 	struct net_device *ndev = platform_get_drvdata(pdev);
+ 	struct fec_enet_private *fep = netdev_priv(ndev);
+ 
++	if (fep->pps_enable)
++		fec_ptp_enable_pps(fep, 0);
++
+ 	cancel_delayed_work_sync(&fep->time_keep);
+ 	hrtimer_cancel(&fep->perout_timer);
+ 	if (fep->ptp_clock)
 -- 
-Thank you,
-Roman
+2.34.1
+
 
 
