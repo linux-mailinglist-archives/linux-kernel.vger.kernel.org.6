@@ -1,107 +1,120 @@
-Return-Path: <linux-kernel+bounces-274505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B40094790B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:05:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8A59478FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23E131F2236D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6B11F2228C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2135154434;
-	Mon,  5 Aug 2024 10:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F13B154BE3;
+	Mon,  5 Aug 2024 10:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWRDz09z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O3TTsa+D"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0156915250F
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C501547DC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722852322; cv=none; b=FqZBQemmum4/KZxlp/1Qt/YkauF4NzZnNIzjH+6GW+Us9dGsGkr8K1QEg8F85z+5mqzBmleTn0TU2cicXwhFkX6YKP7dGq0C7ksUK6VmWsdODKWKCtsrkRlB76qp4Ot5k4/4PqaqPRPkQJw9bTBz/5FGT1ceO4WIp4qNK+1m+Nw=
+	t=1722852286; cv=none; b=ooB0FD8OSAh86fKVHJywi1zG4WVn1d51J92/ehrKAYG1YwR4FfYoqrp/af5Ln4xb7q5B4E7wyf/jEAGKQgOTh+yNka5yjxxfRU4AwU3sSIcnkYryTaLpAAZfL9Aha/OZzSk3H9AdnFATvzj8IaR3yMOvhBIJioHmP3vxjsLt2iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722852322; c=relaxed/simple;
-	bh=/06IadH+EV4lkjqp7OH/dHVKNM+jHZzeTgU9JSf+Pi4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rl7yb2yHSvzzequlb5ltCbZviHSwDNxevUwFDrkjY6puKnpKBHsxU4zNJS38mfpxhZHBaniC1RjAoTkAklReM4vITElRtV9wbaXfr9ljt8Anwzi4FxJUcGWO0TFB5MpYMXIBg1YEV5hjszsE0ubAIoYx6Leoyxd8Ra24K7TWRmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWRDz09z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14751C32782;
-	Mon,  5 Aug 2024 10:05:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722852321;
-	bh=/06IadH+EV4lkjqp7OH/dHVKNM+jHZzeTgU9JSf+Pi4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SWRDz09zNVaVoJEyrZtuKh6/2w+lw6Y+tSkZHOCots2S1uDdq1MP5jEPd8zzxCLAn
-	 5r3DaqHtiSrx90zy6r6MtNt6OPZu6tjF94eB7Uy1TX9Nw5xZPCzueGt9yh5dCmavlh
-	 MIXc/2DKBfV9tCSqKi/n+xaKpcfIQoEp13qGeKVpOkNrC8OAPhAR+5FDYI9DiooxF9
-	 Hb5Li+SY3Q2+wEfjsY1ozrIKAVfmeIHUEMalMoj7gSV6MRpEXOxMY5maNLLnRPqrGG
-	 ZOkp56DWeYJyFl2mRGDkK98CIz+QYBV3iMeGSc6O9F7UrlxiUZA5Ed1G0gf/nmt6B9
-	 DY5Z0zbQiM1/Q==
-Date: Mon, 5 Aug 2024 13:03:14 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3 1/5] memblock test: fix implicit declaration of
- function 'virt_to_phys'
-Message-ID: <ZrCjYqdmNfn3di-o@kernel.org>
-References: <20240802010923.15577-1-richard.weiyang@gmail.com>
+	s=arc-20240116; t=1722852286; c=relaxed/simple;
+	bh=NrP89VFBY7rsx7EbXcSXKLeYzXolWV8BMUaTDdNiuIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hJtCXjVzduqNJCff8nHl3o0yAJlRbqvw4AjLKPvGJ/lIqZ3bmv85oI/v9XyVDPVF7CsFhUCQLNOfIiqvbcH4dSUKltJul3Z/mNMpRyFGr/yPncv0SFd8n1RS2E+yoR87aNrGyf8/evS1liXI7xnIJMyJfAVCO8P3nYm9UcD3PDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O3TTsa+D; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e03caab48a2so4353433276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 03:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722852284; x=1723457084; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hSYGTPrpLH+BuhVL/Q/2E8uLKhl1KfRAsEdIshJ8Sjg=;
+        b=O3TTsa+DOEhyRzwzJxdy1IBqByszFg6gCQwqgUQD/YS+eunwj3Okal63tnHQD3gFzS
+         mklCASjot+6W+j97Q9xgl+oMyXSXffRPE8CpBS1WTM+6tDBfIZtqdT/xazSIL7wGnYi1
+         z/lmgqcTj2hExLsPZ2dWUEHuNUmiVHEG1MlLjr0hxpxldcYNbiO+ACcjROcraZAdg8Av
+         yEItCOtmHBCJCIez6ao8zHGxGWnbKuWU0un2VLkYOIVqKmybvzwzrIW6SvPANNZvR1v0
+         Bn+AEWvutwS8jgZmVCDuKX0NDvqLA+PLLQDqsqk0KYPRn+J13KxhyrK/KuKNSL//s/tU
+         kMiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722852284; x=1723457084;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hSYGTPrpLH+BuhVL/Q/2E8uLKhl1KfRAsEdIshJ8Sjg=;
+        b=sAPdw5WFKzM3PvdwDdQguLV3/PuJeBicilOMmp3ln9a7x2Oi3zwQoOFOdevACAwLMX
+         ksrlUIi9rddtcDH3KlM+6GzF0CLhDVnNDh7J/JB5OI37d37oeA8BwMuliEj920SK8HZ5
+         7k+j1Sj0dvecngchwcjG9r55wWXL2BiYV2LwiBhqlQFnShj6NCpx0i9n1MAx2ql6AoZq
+         y8LufPmURtYv3Uqn1COK+k5uxYpGgHRkP3pxuplax9kLXwaOpQycKTOIXM+X9RYRq5lA
+         Lf0LWpcxtXT3beOfCodEkOXQrtoin3Lfx1jetu5G9zN5S3HdaddCkzuXHbBY1WJYcnzs
+         tmfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1JDHTjflLVtQsVl44SjUqXHhsS+Y6+g5Djx6sk+JgFaTjrxqI506C+/8QIVRYHZHAvm8uQ5pYGBCQVZL8qhMHx1T7F++sn342/bVP
+X-Gm-Message-State: AOJu0YwPRdxg1EsXg3zSljYaMRKd6RyaGaZIKrQEbIKzUd2J3BougLd8
+	zEsDEgGm7A5x3xlUURfllhdvFgZz4TzU3FJjYPkKkcQMfo8dOBHsXiHdOTlef1e4dxPi7tbYGk+
+	eXlT/Dt68UTScRXLQKNSgrSmcygmaqTQfSpjsww==
+X-Google-Smtp-Source: AGHT+IE28QvjYWO5xF3nlYl96xgvVqGoKpL4LpWlRu2pROebD4A3WQjuKfY14W5cvKLlfjChMzAEUCdDmxnejwKRHho=
+X-Received: by 2002:a05:6902:2b0d:b0:e0b:bf20:4fdd with SMTP id
+ 3f1490d57ef6-e0bde8ee6f3mr10631170276.1.1722852284031; Mon, 05 Aug 2024
+ 03:04:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802010923.15577-1-richard.weiyang@gmail.com>
+References: <20240805040131.450412-1-felix@kaechele.ca> <20240805040131.450412-2-felix@kaechele.ca>
+In-Reply-To: <20240805040131.450412-2-felix@kaechele.ca>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 5 Aug 2024 12:04:07 +0200
+Message-ID: <CAPDyKFqyRevbmPy6h8BsiTLBi6=J+9uRmSib43bzzZHFEmDSVg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mmc: sdio: add Qualcomm QCA9379-3 SDIO id
+To: Felix Kaechele <felix@kaechele.ca>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+	linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 02, 2024 at 01:09:19AM +0000, Wei Yang wrote:
-> Commit 94ff46de4a73 ("memblock: Move late alloc warning down to phys
-> alloc") introduce the usage of virt_to_phys(), which is not defined in
-> memblock tests.
-> 
-> Define it in mm.h to fix the build error.
-> 
-> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> 
+On Mon, 5 Aug 2024 at 06:01, Felix Kaechele <felix@kaechele.ca> wrote:
+>
+> Adds the id for Qualcomm QCA9379-3 SDIO based cards such as
+> the LITEON WCBN3510A and Silex SX-SDMAC2.
+>
+> Signed-off-by: Felix Kaechele <felix@kaechele.ca>
+
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
+
 > ---
-> v3: use static inline as phys_to_virt
-> v2: move definition to mm.h
-> ---
->  tools/include/linux/mm.h | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/tools/include/linux/mm.h b/tools/include/linux/mm.h
-> index cad4f2927983..c9e915914add 100644
-> --- a/tools/include/linux/mm.h
-> +++ b/tools/include/linux/mm.h
-> @@ -25,6 +25,12 @@ static inline void *phys_to_virt(unsigned long address)
->  	return __va(address);
->  }
->  
-> +#define virt_to_phys virt_to_phys
-> +static inline phys_addr_t virt_to_phys(volatile void *address)
-
-Why volatilte?
-
-> +{
-> +	return (unsigned long)address;
-
-This should be phys_addr_t, look at its definition in tools/include/linux/types.h
-
-> +}
-> +
->  void reserve_bootmem_region(phys_addr_t start, phys_addr_t end, int nid);
->  
->  static inline void totalram_pages_inc(void)
-> -- 
-> 2.34.1
-> 
-
--- 
-Sincerely yours,
-Mike.
+>  include/linux/mmc/sdio_ids.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/include/linux/mmc/sdio_ids.h b/include/linux/mmc/sdio_ids.h
+> index 7cddfdac2f57..63000a8f4b13 100644
+> --- a/include/linux/mmc/sdio_ids.h
+> +++ b/include/linux/mmc/sdio_ids.h
+> @@ -52,6 +52,7 @@
+>  #define SDIO_DEVICE_ID_ATHEROS_AR6004_19       0x0419
+>  #define SDIO_DEVICE_ID_ATHEROS_AR6005          0x050A
+>  #define SDIO_DEVICE_ID_ATHEROS_QCA9377         0x0701
+> +#define SDIO_DEVICE_ID_ATHEROS_QCA9379         0x0801
+>
+>  #define SDIO_VENDOR_ID_BROADCOM                        0x02d0
+>  #define SDIO_DEVICE_ID_BROADCOM_NINTENDO_WII   0x044b
+> --
+> 2.45.2
+>
 
