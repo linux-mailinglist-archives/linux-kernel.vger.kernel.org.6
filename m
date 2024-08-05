@@ -1,174 +1,134 @@
-Return-Path: <linux-kernel+bounces-274206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC63947506
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:02:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452B89474F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53742814AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:02:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E4B1C20DC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6185C82486;
-	Mon,  5 Aug 2024 06:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCD882486;
+	Mon,  5 Aug 2024 06:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PCJWrEZ+"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="suh/guR3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBFF6A01E;
-	Mon,  5 Aug 2024 06:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05481422AB;
+	Mon,  5 Aug 2024 06:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722837722; cv=none; b=Sgol3sFZ093x72wBS4cBSEHqkVzpApN5jjrJoc/j5JWn2aZpKN5rwey/vQGZPH5bwAhoHNAd9JPa8DgbIApYKATIqMzJtgvU4aKHSSuPk7r3xnHnnYxNEwazF1RRWLd8VJhPAtYdQwjAQvsTipJgcxVbrfArKozm2f+IBhBFr8M=
+	t=1722837608; cv=none; b=FPYLbrG5hwoL6zzAfLwwmvAh/JyFRSrNXOEGxkci4aiQ1HjbDhaSSyMpP4J2xh8ChI6D+K/pJeiEVKnaqQXnNdgR1epG4qO3SRZUecTjjLZiktmFjtKsvuZedLqFfx8zSmW+bQ67qBL9XLRX6whMrUQsomRsqPh3W2H3Hy2ORgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722837722; c=relaxed/simple;
-	bh=EQfTXamtOcyHVKS4XDp2V+TAeokrJwtmEV7u0lOIUXA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xle8uWli2f96swUzaWUeryojyjbv24BNlQi/Inr69vtL3WPnE57DfLrt62a99d+Gh09WLC40WvXa1DZ1lo6kWYPNipLNnqv82x2qGuQ4a3ObNGFpH9BJylouTs28SLwIJlfbV0AnNz87m+yahy6kQ5GBDYERQbRd2p7Clx0X9kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PCJWrEZ+; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 309fc41452f011ef9a4e6796c666300c-20240805
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=KCCE+7BB5PHXZJjrX/rPFtOvm22mgzZ/W4Yze4U9Lr4=;
-	b=PCJWrEZ+eirVfFlx/rQUoxdkZMYvYGaeGKBaWzTkw69yznHBzbQ05YXmUZzWoxyoW8hyA39h5s/ka+N25ohrm6B0sKvF4I2hk99edIsOiFXT7IGG20ZbN7PkX+mDPGTVWh6Zk6WCaDBv09mLzAAjKttE5hqNN8Wlq+6eksluj1A=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:ec16bdef-5aec-4104-9ba7-cfde7f3d7fc1,IP:0,U
-	RL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-20
-X-CID-META: VersionHash:6dc6a47,CLOUDID:999ab700-587b-483a-a965-b30738d68bc8,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 309fc41452f011ef9a4e6796c666300c-20240805
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <tze-nan.wu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 739743914; Mon, 05 Aug 2024 14:01:43 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sun, 4 Aug 2024 23:01:44 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 5 Aug 2024 14:01:44 +0800
-From: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
-	<mhiramat@kernel.org>
-CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <bobule.chang@mediatek.com>,
-	<eric-yc.wu@mediatek.com>, <wsd_upstream@mediatek.com>, Tze-nan Wu
-	<Tze-nan.Wu@mediatek.com>, Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-Subject: [PATCH RESEND] tracing: Fix overflow in get_free_elt()
-Date: Mon, 5 Aug 2024 13:59:22 +0800
-Message-ID: <20240805055922.6277-1-Tze-nan.Wu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1722837608; c=relaxed/simple;
+	bh=FEJF5Z2MyVBZjrdZZfW9XNluKyInOFfsVL8S4c55ThU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DuIiLagU0nuorxubbklD+TzMWwIUOdk+e3Da7hzyJlABZe4X8YDccduwH5gpEgZOLPadiullnL9qaPBw21RoKb0nIiLW7n6dDxx1t6LE2T8cjR2gs9uXvZH1lv4u1RHGUc/ncFuKV42evRYdh+pJsFEcyPdFJKM9rqj9LgiEy8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=suh/guR3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67247C32782;
+	Mon,  5 Aug 2024 05:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722837607;
+	bh=FEJF5Z2MyVBZjrdZZfW9XNluKyInOFfsVL8S4c55ThU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=suh/guR3rukB66LCk5ztj4b0+W/SOxDfK0jSjcigQDyhLwz7NQgU52h0/T1PLxtV+
+	 FSXxy+qbPIGA9eMHuu/jrBy5QZB8ddoqhzn3RA+RPiHpmRuv6tFcIjJJJjnNqIYffS
+	 KOgg9XeLACn0vtEMp8r8kHY+MFfV7BVXVq/HiIt9X+SdlrkKJ7cq8hiS3R3bxBdAzT
+	 Aup+/PtdURrBz+j9CwS5POzJH5GLsxQpCPg7i2jM788LmUOv4hcKE5MDhecxzefQpL
+	 WrL8C6gxbUU+0MIRqIBaYioBI9e38d6TKIVhvMwUjJ/WKMuHLHe3JDE9NZFzb5VVDp
+	 3sAPFWbaTMeJQ==
+Message-ID: <689b2c3f-b07a-43d4-9273-60339a1d6a23@kernel.org>
+Date: Mon, 5 Aug 2024 07:59:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/11] dt-bindings: interconnect: qcom,sm8350: drop DISP
+ nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jonathan Marek <jonathan@marek.ca>,
+ Robert Foss <rfoss@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Georgi Djakov <djakov@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mike Tipton <quic_mdtipton@quicinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
+ <20240804-sm8350-fixes-v1-6-1149dd8399fe@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240804-sm8350-fixes-v1-6-1149dd8399fe@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-"tracing_map->next_elt" in get_free_elt() is at risk of overflowing.
+On 04/08/2024 07:40, Dmitry Baryshkov wrote:
+> Vendor msm-5.x kernels declared duplicate indices for some of display
+> nodes to be used by separate display RSC and BCM voters. As it is not
+> clear how this separate BCM should be modelled upstream and the device
+> trees do not use these indices, drop them for now.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Once it overflows, new elements can still be inserted into the tracing_map
-even though the maximum number of elements (`max_elts`) has been reached.
-Continuing to insert elements after the overflow could result in the
-tracing_map containing "tracing_map->max_size" elements, leaving no empty
-entries.
-If any attempt is made to insert an element into a full tracing_map using
-`__tracing_map_insert()`, it will cause an infinite loop with preemption
-disabled, leading to a CPU hang problem.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Fix this by preventing any further increments to "tracing_map->next_elt"
-once it reaches "tracing_map->max_elt".
-
-Co-developed-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-Signed-off-by: Cheng-Jui Wang <cheng-jui.wang@mediatek.com>
-Signed-off-by: Tze-nan Wu <Tze-nan.Wu@mediatek.com>
----
-We have encountered this issue internally after enabling the
-throttle_rss_stat feature provided by Perfetto in background for more than
-two days, during which `rss_stat` tracepoint was invoked over 2^32 times.
-After tracing_map->next_elt overflow, new elements can continue to be 
-inserted to the tracing_map belong to `rss_stat`.
-Then the CPU could hang inside the while dead loop in function
-`__tracing_map_insert()` by calling it after the tracing_map left no empty
-entry.
-
-Call trace during hang:
-  __tracing_map_insert()
-  tracing_map_insert()
-  event_hist_trigger()
-  event_triggers_call()
-  __event_trigger_test_discard()
-  trace_event_buffer_commit()
-  trace_event_raw_event_rss_stat()
-  __traceiter_rss_stat()
-  trace_rss_stat()
-  mm_trace_rss_stat()
-  inc_mm_counter()
-  do_swap_page()
-
-throttle_rss_stat is literally a synthetic event triggered by `rss_stat`
-with condition:
- 1. $echo "rss_stat_throttled unsigned int mm_id unsigned int curr int
-    member long size" >> /sys/kernel/tracing/synthetic_events
- 2. $echo
-    'hist:keys=mm_id,member:bucket=size/0x80000:onchange($bucket).rss_stat_
-    throttled(mm_id,curr,member,size)' >
-    /sys/kernel/tracing/events/kmem/rss_stat/trigger
-
-The hang issue could also be reproduced easily by calling a customize
-trace event `myevent(u64 mycount)` for more than 2^32+(map_size-max_elts)
-times during its histogram enabled with the key set to variable "mycount".
-While we call `myevent` with different argument "mycount" everytime.
-
-BTW, I added Cheng-jui to Co-developed because we have a lot of discussions
-during debugging this.
----
- kernel/trace/tracing_map.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/trace/tracing_map.c b/kernel/trace/tracing_map.c
-index a4dcf0f24352..3a56e7c8aa4f 100644
---- a/kernel/trace/tracing_map.c
-+++ b/kernel/trace/tracing_map.c
-@@ -454,7 +454,7 @@ static struct tracing_map_elt *get_free_elt(struct tracing_map *map)
- 	struct tracing_map_elt *elt = NULL;
- 	int idx;
- 
--	idx = atomic_inc_return(&map->next_elt);
-+	idx = atomic_fetch_add_unless(&map->next_elt, 1, map->max_elts);
- 	if (idx < map->max_elts) {
- 		elt = *(TRACING_MAP_ELT(map->elts, idx));
- 		if (map->ops && map->ops->elt_init)
-@@ -699,7 +699,7 @@ void tracing_map_clear(struct tracing_map *map)
- {
- 	unsigned int i;
- 
--	atomic_set(&map->next_elt, -1);
-+	atomic_set(&map->next_elt, 0);
- 	atomic64_set(&map->hits, 0);
- 	atomic64_set(&map->drops, 0);
- 
-@@ -783,7 +783,7 @@ struct tracing_map *tracing_map_create(unsigned int map_bits,
- 
- 	map->map_bits = map_bits;
- 	map->max_elts = (1 << map_bits);
--	atomic_set(&map->next_elt, -1);
-+	atomic_set(&map->next_elt, 0);
- 
- 	map->map_size = (1 << (map_bits + 1));
- 	map->ops = ops;
--- 
-2.18.0
+Best regards,
+Krzysztof
 
 
