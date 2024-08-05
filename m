@@ -1,212 +1,160 @@
-Return-Path: <linux-kernel+bounces-274773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B0D947C88
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:09:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F845947C94
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48286B21B95
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:09:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357BD1C21441
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9597A13C66A;
-	Mon,  5 Aug 2024 14:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496FE13A26F;
+	Mon,  5 Aug 2024 14:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="EY1cPy+8"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Lo2Ip46l"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85A213AA36;
-	Mon,  5 Aug 2024 14:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A727517C64;
+	Mon,  5 Aug 2024 14:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722866928; cv=none; b=ZHzxHQL9qDqZKpuFFKFAzIHqSRKmldw8inZCt4y78OYp24RN5FeQiWr/LkIrCiPan2fpJb4gZ1kPp1Mgdt4AJ1spl0LPWXgikvgd16GJXA840jJG9T6eCx2ki/G960UhGANihe5VC30k1PZVBNawPJY6SeyLdMiLCFDuqUq7qQA=
+	t=1722867137; cv=none; b=oTh0NtzpuDRx0iuYyGfJCMFOTLxbjnfDWQxb4reuQcYmDcu1gKKUp31oYSWlYnaquGGeyFxszI3o1OFvIQAIxTR50UPsD8wp7brb+I8GIIeP4D+Oe9vWfBtfVcZj5Das1QmqE5TYZ0YYQv98YIpQU7lnIK8XGSwxN3aJ7Bv1pmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722866928; c=relaxed/simple;
-	bh=3XDOoBApCAGlDBSUQ/sssCkZjwHNUxmgYDcy/DjrxVw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uxUQJWJCS2YPwcyxgoQRs71qkdo2daemHoK7CJq5IhGiVPY0xxJ6BXa1v2kWTYofH7DhsImmZoj8mkd5cKmdWCLax19bHwsV2AWNSwWj/8e/CH9027pt4ePz0uKpn7OQmYK3DSgqTHD4rDtgi+K1HwjmY1x4P8YcRvBxmbIq/sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=EY1cPy+8; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4755WG4w021667;
-	Mon, 5 Aug 2024 09:08:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=0LiVHQUoQpbmKSVh
-	TQZjFLh3wJkOnEZu3YG/U0vC4YE=; b=EY1cPy+8jx/uP/2HjVekt6U4/pW+fTcp
-	MNdrMpF6diD+U6b1Sltk/IB6v8GUeHnSkM8xFL0741X2NDpBgRraLbk216zkqJKd
-	047YbGh8XfdGus1Dtq/MlW4Ny1+ze4cBklpBlcj2L42kry3Zd376Gcr0TUurfvBA
-	P78RAaenOLCRB4vMEheve81rHvdab/Ezw0Rso/5U7Pghp6qB9uuxOGl1JHk2wWhu
-	VliqwwET1tmh7E4yc/O4ksLkzanYHcEZwtya8SF+eU2aVWxtT4iNg+I3pjcOK127
-	Qj40VwExrvb2yHAqoODriu6RHgZzCCK7Tqv2FBQkZMJ0EpghiGxoIA==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40shxx1vcx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 09:08:43 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 5 Aug 2024
- 15:08:41 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 5 Aug 2024 15:08:41 +0100
-Received: from EDIN4L06LR3.ad.cirrus.com (EDIN4L06LR3.ad.cirrus.com [198.61.68.170])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 5DF45820244;
-	Mon,  5 Aug 2024 14:08:41 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <broonie@kernel.org>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Richard Fitzgerald
-	<rf@opensource.cirrus.com>
-Subject: [PATCH] ASoC: cs35l56: Handle OTP read latency over SoundWire
-Date: Mon, 5 Aug 2024 15:08:39 +0100
-Message-ID: <20240805140839.26042-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1722867137; c=relaxed/simple;
+	bh=9M4xpkoH3LimV0O0XQcpYnwFUNXxsSPpdOBU2ZuvMyY=;
+	h=Subject:MIME-Version:Content-Type:Date:Message-ID:CC:From:To:
+	 References:In-Reply-To; b=MfR2Uo70qspShBNPq0l2OxJaCH9rvj5Nl6YeiOv/wOWcoA5fi5qlUhEcFRoGH3zAaLS6Rb3MQnkN2XiS8jRjpNUihHrFOfcsum1VIpnCNddadXd+MY1cXbHkYH6FG1qVcmi35OOtSzFLrIDQ7+gP1I3RxKOid60PeSfAHak/yDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Lo2Ip46l; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1722867135; x=1754403135;
+  h=mime-version:content-transfer-encoding:date:message-id:
+   cc:from:to:references:in-reply-to:subject;
+  bh=MK25yrGsMeryEu/GddZa4lO4IjN5z+54ON7xDCNErE8=;
+  b=Lo2Ip46lrst1H5aB7j2LI1HD6MWx6P2XQcFLmajRQ4QXSczhFQRQEcKJ
+   9YjGWrwxdBeaWGWBYJgEI9sT2HCT+BH5PUousdxcNxhSDX6FLlkFc72KK
+   JvHMkPIJPYl1jMOrRB/60O2TJpkhsnmwS2Nn8iADSrfV+bBOnMczxgagP
+   s=;
+X-IronPort-AV: E=Sophos;i="6.09,264,1716249600"; 
+   d="scan'208";a="112496171"
+Subject: Re: [PATCH 01/18] KVM: x86: hyper-v: Introduce XMM output support
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 14:08:58 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:29010]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.0.23:2525] with esmtp (Farcaster)
+ id e194f651-d149-4251-920f-bb202d846005; Mon, 5 Aug 2024 14:08:57 +0000 (UTC)
+X-Farcaster-Flow-ID: e194f651-d149-4251-920f-bb202d846005
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 5 Aug 2024 14:08:56 +0000
+Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
+ (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Mon, 5 Aug 2024
+ 14:08:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: IM7KC8jdvoqxcKRwwqvSQO_YHmI_PQDd
-X-Proofpoint-ORIG-GUID: IM7KC8jdvoqxcKRwwqvSQO_YHmI_PQDd
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 5 Aug 2024 14:08:46 +0000
+Message-ID: <D381CRQ2XJL9.1NBVMKT4SR51P@amazon.com>
+CC: <pbonzini@redhat.com>, <seanjc@google.com>, <linux-doc@vger.kernel.org>,
+	<linux-hyperv@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <graf@amazon.de>,
+	<dwmw2@infradead.org>, <pdurrant@amazon.com>, <mlevitsk@redhat.com>,
+	<jgowans@amazon.com>, <corbet@lwn.net>, <decui@microsoft.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <amoorthy@google.com>
+From: Nicolas Saenz Julienne <nsaenz@amazon.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<kvm@vger.kernel.org>
+X-Mailer: aerc 0.17.0-152-g73bcb4661460-dirty
+References: <20240609154945.55332-1-nsaenz@amazon.com>
+ <20240609154945.55332-2-nsaenz@amazon.com> <87tth0rku3.fsf@redhat.com>
+ <D2RVJ6QCVNOU.XC0OC54QHI51@amazon.com> <878qxk5mox.fsf@redhat.com>
+In-Reply-To: <878qxk5mox.fsf@redhat.com>
+X-ClientProxiedBy: EX19D046UWA004.ant.amazon.com (10.13.139.76) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-Use the late-read buffer in the CS35L56 SoundWire interface to
-read OTP memory.
+On Mon Jul 29, 2024 at 1:53 PM UTC, Vitaly Kuznetsov wrote:
+> CAUTION: This email originated from outside of the organization. Do not c=
+lick links or open attachments unless you can confirm the sender and know t=
+he content is safe.
+> Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
+>
+> > Hi Vitaly,
+> > Thanks for having a look at this.
+> >
+> > On Mon Jul 8, 2024 at 2:59 PM UTC, Vitaly Kuznetsov wrote:
+> >> Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
+> >>
+> >> > Prepare infrastructure to be able to return data through the XMM
+> >> > registers when Hyper-V hypercalls are issues in fast mode. The XMM
+> >> > registers are exposed to user-space through KVM_EXIT_HYPERV_HCALL an=
+d
+> >> > restored on successful hypercall completion.
+> >> >
+> >> > Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+> >> >
+> >> > ---
+> >> >
+> >> > There was some discussion in the RFC about whether growing 'struct
+> >> > kvm_hyperv_exit' is ABI breakage. IMO it isn't:
+> >> > - There is padding in 'struct kvm_run' that ensures that a bigger
+> >> >   'struct kvm_hyperv_exit' doesn't alter the offsets within that str=
+uct.
+> >> > - Adding a new field at the bottom of the 'hcall' field within the
+> >> >   'struct kvm_hyperv_exit' should be fine as well, as it doesn't alt=
+er
+> >> >   the offsets within that struct either.
+> >> > - Ultimately, previous updates to 'struct kvm_hyperv_exit's hint tha=
+t
+> >> >   its size isn't part of the uABI. It already grew when syndbg was
+> >> >   introduced.
+> >>
+> >> Yes but SYNDBG exit comes with KVM_EXIT_HYPERV_SYNDBG. While I don't s=
+ee
+> >> any immediate issues with the current approach, we may want to introdu=
+ce
+> >> something like KVM_EXIT_HYPERV_HCALL_XMM: the userspace must be prepar=
+ed
+> >> to handle this new information anyway and it is better to make
+> >> unprepared userspace fail with 'unknown exit' then to mishandle a
+> >> hypercall by ignoring XMM portion of the data.
+> >
+> > OK, I'll go that way. Just wanted to get a better understanding of why
+> > you felt it was necessary.
+> >
+>
+> (sorry for delayed reply, I was on vacation)
+>
+> I don't think it's an absolute must but it appears as a cleaner approach
+> to me.
+>
+> Imagine there's some userspace which handles KVM_EXIT_HYPERV_HCALL today
+> and we want to add XMM handling there. How would we know if xmm portion
+> of the data is actually filled by KVM or not? With your patch, we can of
+> course check for HV_X64_HYPERCALL_XMM_OUTPUT_AVAILABLE in
+> KVM_GET_SUPPORTED_HV_CPUID but this is not really straightforward, is
+> it? Checking the size is not good either. E.g. think about downstream
+> versions of KVM which may or may not have certain backports. In case we
+> (theoretically) do several additions to 'struct kvm_hyperv_exit', it
+> will quickly become a nightmare.
+>
+> On the contrary, KVM_EXIT_HYPERV_HCALL_XMM (or just
+> KVM_EXIT_HYPERV_HCALL2) approach looks cleaner: once userspace sees it,
+> it knows that 'xmm' portion of the data can be relied upon.
 
-The OTP memory has a longer access latency than chip registers
-and cannot guarantee to return the data value in the SoundWire
-control response if the bus clock is >4.8 MHz. The Cirrus
-SoundWire peripheral IP exposes the bridge-to-bus read buffer
-and status bits. For a read from OTP the bridge status bits are
-polled to wait for the OTP data to be loaded into the read buffer
-and the data is then read from there.
+Makes sense, thanks for the explanation.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Fixes: e1830f66f6c6 ("ASoC: cs35l56: Add helper functions for amp calibration")
----
- include/sound/cs35l56.h        |  5 +++
- sound/soc/codecs/cs35l56-sdw.c | 77 ++++++++++++++++++++++++++++++++++
- 2 files changed, 82 insertions(+)
-
-diff --git a/include/sound/cs35l56.h b/include/sound/cs35l56.h
-index a6aa112e5741..a51acefa785f 100644
---- a/include/sound/cs35l56.h
-+++ b/include/sound/cs35l56.h
-@@ -277,6 +277,11 @@ static inline int cs35l56_force_sync_asp1_registers_from_cache(struct cs35l56_ba
- 	return 0;
- }
- 
-+static inline bool cs35l56_is_otp_register(unsigned int reg)
-+{
-+	return (reg >> 16) == 3;
-+}
-+
- extern struct regmap_config cs35l56_regmap_i2c;
- extern struct regmap_config cs35l56_regmap_spi;
- extern struct regmap_config cs35l56_regmap_sdw;
-diff --git a/sound/soc/codecs/cs35l56-sdw.c b/sound/soc/codecs/cs35l56-sdw.c
-index fc03bb7ecae1..7c9a17fe2195 100644
---- a/sound/soc/codecs/cs35l56-sdw.c
-+++ b/sound/soc/codecs/cs35l56-sdw.c
-@@ -23,6 +23,79 @@
- /* Register addresses are offset when sent over SoundWire */
- #define CS35L56_SDW_ADDR_OFFSET		0x8000
- 
-+/* Cirrus bus bridge registers */
-+#define CS35L56_SDW_MEM_ACCESS_STATUS	0xd0
-+#define CS35L56_SDW_MEM_READ_DATA	0xd8
-+
-+#define CS35L56_SDW_LAST_LATE		BIT(3)
-+#define CS35L56_SDW_CMD_IN_PROGRESS	BIT(2)
-+#define CS35L56_SDW_RDATA_RDY		BIT(0)
-+
-+#define CS35L56_LATE_READ_POLL_US	10
-+#define CS35L56_LATE_READ_TIMEOUT_US	1000
-+
-+static int cs35l56_sdw_poll_mem_status(struct sdw_slave *peripheral,
-+				       unsigned int mask,
-+				       unsigned int match)
-+{
-+	int ret, val;
-+
-+	ret = read_poll_timeout(sdw_read_no_pm, val,
-+				(val < 0) || ((val & mask) == match),
-+				CS35L56_LATE_READ_POLL_US, CS35L56_LATE_READ_TIMEOUT_US,
-+				false, peripheral, CS35L56_SDW_MEM_ACCESS_STATUS);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (val < 0)
-+		return val;
-+
-+	return 0;
-+}
-+
-+static int cs35l56_sdw_slow_read(struct sdw_slave *peripheral, unsigned int reg,
-+				 u8 *buf, size_t val_size)
-+{
-+	int ret, i;
-+
-+	reg += CS35L56_SDW_ADDR_OFFSET;
-+
-+	for (i = 0; i < val_size; i += sizeof(u32)) {
-+		/* Poll for bus bridge idle */
-+		ret = cs35l56_sdw_poll_mem_status(peripheral,
-+						  CS35L56_SDW_CMD_IN_PROGRESS,
-+						  0);
-+		if (ret < 0) {
-+			dev_err(&peripheral->dev, "!CMD_IN_PROGRESS fail: %d\n", ret);
-+			return ret;
-+		}
-+
-+		/* Reading LSByte triggers read of register to holding buffer */
-+		sdw_read_no_pm(peripheral, reg + i);
-+
-+		/* Wait for data available */
-+		ret = cs35l56_sdw_poll_mem_status(peripheral,
-+						  CS35L56_SDW_RDATA_RDY,
-+						  CS35L56_SDW_RDATA_RDY);
-+		if (ret < 0) {
-+			dev_err(&peripheral->dev, "RDATA_RDY fail: %d\n", ret);
-+			return ret;
-+		}
-+
-+		/* Read data from buffer */
-+		ret = sdw_nread_no_pm(peripheral, CS35L56_SDW_MEM_READ_DATA,
-+				      sizeof(u32), &buf[i]);
-+		if (ret) {
-+			dev_err(&peripheral->dev, "Late read @%#x failed: %d\n", reg + i, ret);
-+			return ret;
-+		}
-+
-+		swab32s((u32 *)&buf[i]);
-+	}
-+
-+	return 0;
-+}
-+
- static int cs35l56_sdw_read_one(struct sdw_slave *peripheral, unsigned int reg, void *buf)
- {
- 	int ret;
-@@ -48,6 +121,10 @@ static int cs35l56_sdw_read(void *context, const void *reg_buf,
- 	int ret;
- 
- 	reg = le32_to_cpu(*(const __le32 *)reg_buf);
-+
-+	if (cs35l56_is_otp_register(reg))
-+		return cs35l56_sdw_slow_read(peripheral, reg, buf8, val_size);
-+
- 	reg += CS35L56_SDW_ADDR_OFFSET;
- 
- 	if (val_size == 4)
--- 
-2.39.2
-
+Nicolas
 
