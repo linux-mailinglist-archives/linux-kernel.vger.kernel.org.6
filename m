@@ -1,75 +1,139 @@
-Return-Path: <linux-kernel+bounces-274862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F18947DC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:15:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2EF947E0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCBE8B2194E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CD6281DEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CEF3FB83;
-	Mon,  5 Aug 2024 15:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bTYNpAmF"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A7915C12E;
+	Mon,  5 Aug 2024 15:24:16 +0000 (UTC)
+Received: from glittertind.blackshift.org (glittertind.blackshift.org [116.203.23.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8142B2D7B8;
-	Mon,  5 Aug 2024 15:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329BC4D8BA
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.23.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722870909; cv=none; b=HK7/mnW6aH9pLhLx49nmjREL6atoCTDJcNgas9Qzcxkdtp0Swkl+O1U08TdSzkJtW4jepf1tI3JB3xpKBCGXj8WCOh9UIpq3dClqef/tTCbcq/Jz+TMyj+Uh1MQyCd8btHvnAviu4RM4jXfSSokLQ8PpACemmFHFLduvQTGnims=
+	t=1722871455; cv=none; b=uO323gsjolYKYhmvQpo1+5jACT2wcZoyrHkb/vUrfIQ0sEVxWTqR5IIiZdfXPUtzNnPf61v6F+x7hPKiho7x/dSFpeOQKW5jG1siNVO7Knii5erT0+YEUM/XAj4Kss+wfL1Z5PhqOvHiyu34nCJDOPad7cmQ6Pylz4p7assvwPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722870909; c=relaxed/simple;
-	bh=hEjI7G/mwo/RSGMWGSClW9gSqJ6PBG2hmPpL9j/Bz/s=;
+	s=arc-20240116; t=1722871455; c=relaxed/simple;
+	bh=kPdjs2s6gKRkknYIL8b561xalIcy0R+0OIhs7JfTB5k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVAPIPRXEfm4zonh3xlozDttVcLoiOZuOmVNntc2g62NxM9PxfqwhWCTcW241MZESIx9ZlfPeh0FjMd0P4uNg7AvaKNpmsnLfNzDL7Axpo5z+C7vgSqbA4ox4sR/0UST8wZxUAdj4X8l5SkpikfDdj3lThQ/QQQo02o1QnCVSHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bTYNpAmF; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=odYhL10aGT5OasfIueuuGPU6JgBCgXOLpbIAhkKv+Gc=; b=bTYNpAmFXj2qriAOV+gcbP3foS
-	j29RgYDtktjL39ONRllYd6zLpM+3ykUHscEQ1EAbnF+Sm1HOzPBK7p3vBpBVOVoKgL01pfgu0fjCR
-	/bVNIU08KPKpBeQk080/vOHWWEWjccfMA1QY+hb37Tq/pwLL89/QWFdb11duOofIspeUZpd8PMuSo
-	l5C2lOAzCVXQoc4AQk5DFqspLHiyWXsJrRzgRT78tfvthvuVzzTY+shzcnDPrrjqTUuYwpL1sv0Ra
-	UHnysdc4SuHwiyn4gfOeLKMEu7rpoCeu+b7SYWHGNxXrMbpY9XBoN5tOWVzaQBs9/V5tt1XkZWsfY
-	PqlyG72A==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sazQK-00000004O32-27sM;
-	Mon, 05 Aug 2024 15:15:00 +0000
-Date: Mon, 5 Aug 2024 16:15:00 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: 412574090@163.com
-Cc: corbet@lwn.net, bhelgaas@google.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	xiongxin@kylinos.cn, weiyufeng <weiyufeng@kylinos.cn>
-Subject: Re: [PATCH] PCI: limit pci bridge and subsystem speed to 2.5GT/s
-Message-ID: <ZrDsdA3-uUJV8VdK@casper.infradead.org>
-References: <20240805092010.82986-1-412574090@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2iKGREQY+BkxZgLUuj2bs72SkOQkzXBIfkBq2oOLMblWAyYLjNODB5vJA7L0D9UbJaLYbE13iTC+tdm9xtDRD0c4W3TW9DgykFu3H4/Ry2FFwcyd/h2l/xi5x8gBuYqpY8R4TdxGvisfy0LqzY5ZXQ1BM81UUip2/s7umMubM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardanger.blackshift.org; spf=none smtp.mailfrom=hardanger.blackshift.org; arc=none smtp.client-ip=116.203.23.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardanger.blackshift.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hardanger.blackshift.org
+Received: from bjornoya.blackshift.org (unknown [IPv6:2003:e3:7f27:f000:3ddb:5b7b:31ab:901c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-384) server-signature ECDSA (P-384)
+	 client-signature RSA-PSS (4096 bits))
+	(Client CN "bjornoya.blackshift.org", Issuer "R10" (verified OK))
+	by glittertind.blackshift.org (Postfix) with ESMTPS id 654F85E3479
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:17:05 +0000 (UTC)
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 2992531732D
+	for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 15:17:05 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id BFBE131731F;
+	Mon, 05 Aug 2024 15:17:01 +0000 (UTC)
+Received: from localhost (hardanger.blackshift.org [local])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTPA id 8588bc23;
+	Mon, 5 Aug 2024 15:17:01 +0000 (UTC)
+Date: Mon, 5 Aug 2024 17:17:01 +0200
+From: Marc Kleine-Budde <frogger@hardanger.blackshift.org>
+To: pierre-henry.moussay@microchip.com
+Cc: Conor Dooley <conor.dooley@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/17] dt-bindings: can: mpfs: add PIC64GX CAN
+ compatibility
+Message-ID: <t5y22ttkimghgy5xdyit2ib4pif43zhxet7igyukfiahzwnkeh@u66ad7hogcw6>
+References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
+ <20240725121609.13101-2-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b35o3dtbvyih3krm"
 Content-Disposition: inline
-In-Reply-To: <20240805092010.82986-1-412574090@163.com>
+In-Reply-To: <20240725121609.13101-2-pierre-henry.moussay@microchip.com>
 
-On Mon, Aug 05, 2024 at 05:20:10PM +0800, 412574090@163.com wrote:
-> From: weiyufeng <weiyufeng@kylinos.cn>
-> 
-> Add a kernel command-line option 'speed2_5g' to limit pci bridge
-> and subsystem devices speed to 2.5GT/s. As a debug method, this
-> provide for developer to temporarily slow down PCIe devices for
-> verification.
 
-I am opposed to this patch benig merged.  There's no harm to keep it for
-your own testing.
+--b35o3dtbvyih3krm
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 25.07.2024 13:15:53, pierre-henry.moussay@microchip.com wrote:
+> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+>=20
+> PIC64GX CAN is compatible with the MPFS CAN driver, so we just update
+> bindings
+
+As Conor already pointed out, you should point out that the CAN
+hardware/IP core on the pic64gx is compatible with the one on the mpfs.
+
+regards,
+Marc
+
+>=20
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> ---
+>  .../devicetree/bindings/net/can/microchip,mpfs-can.yaml     | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can=
+=2Eyaml b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
+> index 01e4d4a54df6..1219c5cb601f 100644
+> --- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
+> @@ -15,7 +15,11 @@ allOf:
+> =20
+>  properties:
+>    compatible:
+> -    const: microchip,mpfs-can
+> +    oneOf:
+> +      - items:
+> +          - const: microchip,pic64gx-can
+> +          - const: microchip,mpfs-can
+> +      - const: microchip,mpfs-can
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.30.2
+>=20
+
+--b35o3dtbvyih3krm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmaw7OoACgkQKDiiPnot
+vG8KWwf9EwEl+GJxZhqXSqMi+9A2lzBcW67k0Y+18ClUlOp89drW9X3spMvI7gym
+EmrFl3C+HwXtsUZh4JCFA0YL56LPYfvoRis5w+mccAxEW1RrTGefiAl98A/Y+sjH
+81U4tt5dhcZyZ8Zmj4aBG0u0G1xSb2mJTm2OaNZCMtscoFuUhA5bXQYFoM2GHL5W
+L9bRBIND+4/vWZZO3bAaAev062ur00po+tyvY5UZh+aaSGwcznYonOaln4ntyb2Y
+4DhwNyAqcIN8gqgaBCAa3UOeTet031dUlEIRhSf2nCARW3mCmzyZ3DOXYzD0fBio
+YUS5NzjEYD+ZxdwqFOEFcVevulPyFw==
+=kS9R
+-----END PGP SIGNATURE-----
+
+--b35o3dtbvyih3krm--
+
 
