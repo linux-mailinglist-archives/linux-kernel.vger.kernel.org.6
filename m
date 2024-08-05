@@ -1,84 +1,67 @@
-Return-Path: <linux-kernel+bounces-274645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B96A947B03
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC89A947B08
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075F61F21B0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A46281AF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A7C158D97;
-	Mon,  5 Aug 2024 12:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2191E884;
+	Mon,  5 Aug 2024 12:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Je+EWFEq"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu8Rh+mp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24D4158877;
-	Mon,  5 Aug 2024 12:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE50A15531A;
+	Mon,  5 Aug 2024 12:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722860743; cv=none; b=SRRIRuhGUZI8vZim7NGgkgSo0rCyGQ33qJGKdSdzgUP72H/oD78oYWFhAr40l8XU4WYWrxM3nkfoXR5DRanbSQUecrSSswnW4XQZVqXDGxtVKrtHrOHXPP2VdeECOEzMt51Efd4BfqPq387/bQSKobtlVUc6oeldqNTveoGKPDk=
+	t=1722861007; cv=none; b=XYu7eHLYSyzHmEFf486ugCiV/C0OMQSTz2CDkNb6B1NQwQ9zaUdmbyZkUiLkz/qFSo4esB0tNEXPafXwj2J3TdxM3y5dwzsElg4WU6um1W+tpgMzn5RUEozPsFJgC80Fa86IHJcwyAjxIezaPwA72QgSrnhM3EG8iCa3ClmaZMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722860743; c=relaxed/simple;
-	bh=Qdc/hZK/izOikXRxIcKspd4asGIzYcNYPJjK6mYBy2I=;
+	s=arc-20240116; t=1722861007; c=relaxed/simple;
+	bh=elZbngq80SUY1S3qBAQCd1SsC7QqkMJLPB2fKd2rP1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qtnrP7EfifGKXa4NnW6AJd8z87qHHXJKRec5tWVpCxc176MH02jgs7ryPEIqANOkw8JMOnYdPGQht/sFdUFXjv7KPf0/uQueA9gtQl5Lx7w3CDJt9Tc/TfRfA+J0d4gmaTnHSYd4TxRmf3Lme3Y3kCZOJ8a04IGBc+FSligqJWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Je+EWFEq; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f01b8738dso9952533e87.1;
-        Mon, 05 Aug 2024 05:25:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722860740; x=1723465540; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ODibAriCCYBMir2Y+K6rxvL6CWMqoMJ8J2HVzExd6tg=;
-        b=Je+EWFEqZ1MBRPgg9nvlTEy1IY20urHo7YNoerCLRqAmR4tjHFG0De1SLDYthXz9nh
-         EmcU3dmcw6C7MB9PhfrZIcpvttBoUoVlL1tuqjM2yzUQ1mWu8uJzDsvlajhB3TuxqnaI
-         kX6PKpghYUxzkM+DWkUrwcWd/aFxc5ak5tUDcNQcIr3cI4ki2KcXfWZgdwRDdDcS+FQH
-         63TYDJw6XVe3DwjLj1c0cIz2d1Hk69khAS6fU/2NgmgEZelaNfrvuqUrrL6hYwvc36xw
-         0Wx2YXzVXM7vT3yxImWEVwiI/qv4pL+5Sg/1MJEls5h4ts1HYaKOoZ/G6HB2aDlXPR5L
-         8iCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722860740; x=1723465540;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ODibAriCCYBMir2Y+K6rxvL6CWMqoMJ8J2HVzExd6tg=;
-        b=tpCkt5gwZ+CLdpAPV7ptnq1+e1FhzxSbJ2z78TwrnC/co7VbXWLWmSK7K81+W70MsC
-         zkpWM0k2itcJ+ERLJsvfuBNtSUrA7DIYiaWNW3xjkGmuwCCaCT22DH0B/1CxrjsDI7np
-         gkO0sQxz4XRnWFHlHFIzdphIAqLuz13Ed5e6oahXEn39nPQwl9ePmRgPcjyyRvJQ5Plt
-         LpRXeOc+HUP1fStp+aytDlY0Qba3fKU3TkJzbhy9j7a5Frl4lEwbva90s+wkWGt97xqT
-         6KOe22oJr36K+AOLgELNL+BIzQSzjlCG97v227rhbx+Fbc/fVxi6Fwopi8xUrp22Cbnd
-         QXsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFlY2feO8EIyxpm7vPd9c9SSk5WyddjWnrzWV0CDZBODC5uVRV9ZFYXHKcWFS7LLKLYHg4kKZM8myDrUNqKxddk4gydixCRLLorqs25mRzdrQ0p///48u7fyq9A0Kp7iJzKpfv4m6AQo7ZTaKktPkBkotVa+UvMNob6ig/8sRV+WVIz+kw
-X-Gm-Message-State: AOJu0Ywdxzu12Mi/xn9Yvh/ZNjy9iD3KuiuoT+xr3gv2jwwLII0taCgu
-	tAJ6wHPHK4vFdnjwwRbsm7/eSl0tdybD3TB6tWB0akalrAqyByJQm0upaw==
-X-Google-Smtp-Source: AGHT+IHKYTLyUlq5cKTn+hicB3zQJ94PwanCSK0swvjV1cQHCdeJJsfITovQjZT6HDu+i2BpIfU0MA==
-X-Received: by 2002:a05:6512:3ba9:b0:52e:6d71:e8f1 with SMTP id 2adb3069b0e04-530bb3b434bmr7985979e87.53.1722860739280;
-        Mon, 05 Aug 2024 05:25:39 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba10dedsm1115827e87.79.2024.08.05.05.25.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 05:25:38 -0700 (PDT)
-Date: Mon, 5 Aug 2024 15:25:35 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v4 0/6] dmaengine: dw: Fix src/dst addr width
- misconfig
-Message-ID: <rsy7z45nhl74nzvq5a2ij4eeqgzu3htje2xpparxgam7jowo6a@6l75wjh2dqll>
-References: <20240802075100.6475-1-fancer.lancer@gmail.com>
- <CAHp75VcnfrOOC610JxAdTwJv8j1i_Abo72E0h1aqRbrYOWRrZw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cN3Y73QT0wQ5oKRx4Fgyquip3ulwbA1XLTSAGIypZjSyO2bve7Gigd0g6/voEcXkj49LpNu7dVEX/dzTOcYXNvdHh9qhMNMMZ9vvfCk/xzz4xZ6iB0RfdwgMYM6XEZJZuh1Lg3AGuPJqQWKwWRgItQvvP5HFC7kvDeQ45L+zeXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu8Rh+mp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7913C32782;
+	Mon,  5 Aug 2024 12:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722861007;
+	bh=elZbngq80SUY1S3qBAQCd1SsC7QqkMJLPB2fKd2rP1U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hu8Rh+mpECotmzB+sQW7BeeL1BjpeXrPRn/N6K3D8QJz2EsW7U6pTY3co0HnjLMu6
+	 OmJaQtDms77FX8E3GL/OmwTVZsFNLRdEwNZnbjfzOt1cXf9BQ2zZ3H4zRVO5HjN923
+	 svkYMTmcPUGRg9EgAL19WbPBVYDW1nLE0WvCDKyo9gg6zNF80crQWntAue5y3sNJDU
+	 t3ztAfE/n9NK08I0cTiNhdojlrShYSwJzComVYW2KcYs1wdJaCx82VtQVL+RkeWV1a
+	 Xxa/HShUPwxgahAW0FkIxmd4ur9jnt4+1RBYYKc18ykR3NyFd3BL9Tx+pll00UItHe
+	 OFdJ+LxI0EeEg==
+Date: Mon, 5 Aug 2024 13:30:01 +0100
+From: Will Deacon <will@kernel.org>
+To: Kunkun Jiang <jiangkunkun@huawei.com>
+Cc: Pranjal Shrivastava <praan@google.com>,
+	Baolu Lu <baolu.lu@linux.intel.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>,
+	Michael Shavit <mshavit@google.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	wanghaibin.wang@huawei.com, yuzenghui@huawei.com,
+	tangnianyao@huawei.com
+Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+Message-ID: <20240805123001.GB9326@willie-the-truck>
+References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
+ <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
+ <20240724102417.GA27376@willie-the-truck>
+ <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
+ <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
+ <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,42 +71,87 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VcnfrOOC610JxAdTwJv8j1i_Abo72E0h1aqRbrYOWRrZw@mail.gmail.com>
+In-Reply-To: <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi Andy,
+On Mon, Aug 05, 2024 at 08:13:09PM +0800, Kunkun Jiang wrote:
+> On 2024/8/2 22:38, Pranjal Shrivastava wrote:
+> > Hey,
+> > On Mon, Jul 29, 2024 at 11:02 AM Baolu Lu <baolu.lu@linux.intel.com> wrote:
+> > > On 2024/7/24 18:24, Will Deacon wrote:
+> > > > On Wed, Jul 24, 2024 at 05:22:59PM +0800, Kunkun Jiang wrote:
+> > > > > On 2024/7/24 9:42, Kunkun Jiang wrote:
+> > > > > > drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > > > > > 1797                 while (!queue_remove_raw(q, evt)) {
+> > > > > > 1798                         u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
+> > > > > > 1799
+> > > > > > 1800                         ret = arm_smmu_handle_evt(smmu, evt);
+> > > > > > 1801                         if (!ret || !__ratelimit(&rs))
+> > > > > > 1802                                 continue;
+> > > > > > 1803
+> > > > > > 1804                         dev_info(smmu->dev, "event 0x%02x
+> > > > > > received:\n", id);
+> > > > > > 1805                         for (i = 0; i < ARRAY_SIZE(evt); ++i)
+> > > > > > 1806                                 dev_info(smmu->dev, "\t0x%016llx\n",
+> > > > > > 1807                                          (unsigned long
+> > > > > > long)evt[i]);
+> > > > > > 1808
+> > > > > > 1809                         cond_resched();
+> > > > > > 1810                 }
+> > > > > > 
+> > > > > > The smmu-v3 driver cannot print event information when "ret" is 0.
+> > > > > > Unfortunately due to commit 3dfa64aecbaf
+> > > > > > ("iommu: Make iommu_report_device_fault() return void"), the default
+> > > > > > return value in arm_smmu_handle_evt() is 0. Maybe a trace should
+> > > > > > be added here?
+> > > > > Additional explanation. Background introduction:
+> > > > > 1.A device(VF) is passthrough(VFIO-PCI) to a VM.
+> > > > > 2.The SMMU has the stall feature.
+> > > > > 3.Modified guest device driver to generate an event.
+> > > > > 
+> > > > > This event handling process is as follows:
+> > > > > arm_smmu_evtq_thread
+> > > > >       ret = arm_smmu_handle_evt
+> > > > >           iommu_report_device_fault
+> > > > >               iopf_param = iopf_get_dev_fault_param(dev);
+> > > > >               // iopf is not enabled.
+> > > > > // No RESUME will be sent!
+> > > > >               if (WARN_ON(!iopf_param))
+> > > > >                   return;
+> > > > >       if (!ret || !__ratelimit(&rs))
+> > > > >           continue;
+> > > > > 
+> > > > > In this scenario, the io page-fault capability is not enabled.
+> > > > > There are two problems here:
+> > > > > 1. The event information is not printed.
+> > > > > 2. The entire device(PF level) is stalled,not just the current
+> > > > > VF. This affects other normal VFs.
+> > > > Oh, so that stall is probably also due to b554e396e51c ("iommu: Make
+> > > > iopf_group_response() return void"). I agree that we need a way to
+> > > > propagate error handling back to the driver in the case that
+> > > > 'iopf_param' is NULL, otherwise we're making the unexpected fault
+> > > > considerably more problematic than it needs to be.
+> > > > 
+> > > > Lu -- can we add the -ENODEV return back in the case that
+> > > > iommu_report_device_fault() doesn't even find a 'iommu_fault_param' for
+> > > > the device?
+> > > Yes, of course. The commit b554e396e51c was added to consolidate the
+> > > drivers' auto response code in the core with the assumption that driver
+> > > only needs to call iommu_report_device_fault() for reporting an iopf.
+> > > 
+> > I had a go at taking Jason's diff and implementing the suggestions in
+> > this thread.
+> > Kunkun -- please can you see if this fixes the problem for you?
+> Okay, I'll test it as soon as I can.
 
-On Sat, Aug 03, 2024 at 09:29:54PM +0200, Andy Shevchenko wrote:
-> On Fri, Aug 2, 2024 at 9:51 AM Serge Semin <fancer.lancer@gmail.com> wrote:
-> >
-> > The main goal of this series is to fix the data disappearance in case of
-> > the DW UART handled by the DW AHB DMA engine. The problem happens on a
-> > portion of the data received when the pre-initialized DEV_TO_MEM
-> > DMA-transfer is paused and then disabled. The data just hangs up in the
-> > DMA-engine FIFO and isn't flushed out to the memory on the DMA-channel
-> > suspension (see the second commit log for details). On a way to find the
-> > denoted problem fix it was discovered that the driver doesn't verify the
-> > peripheral device address width specified by a client driver, which in its
-> > turn if unsupported or undefined value passed may cause DMA-transfer being
-> > misconfigured. It's fixed in the first patch of the series.
-> >
-> > In addition to that three cleanup patches follow the fixes described above
-> > in order to make the DWC-engine configuration procedure more coherent.
-> > First one simplifies the CTL_LO register setup methods. Second and third
-> > patches simplify the max-burst calculation procedure and unify it with the
-> > rest of the verification methods. Please see the patches log for more
-> > details.
-> >
-> > Final patch is another cleanup which unifies the status variables naming
-> > in the driver.
-> 
-> Acked-by: Andy Shevchenko <andy@kernel.org>
+It looks like the diff sent by Pranjal has whitespace mangling, so I
+don't think you'll be able to apply it.
 
-Awesome! Thanks.
+Pranjal -- please can you send an unmangled version? If you want to test
+out your mail setup, I'm happy to be a guinea pig so you don't spam the
+mailing lists!
 
--Serge(y)
+Cheers,
 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+Will
 
