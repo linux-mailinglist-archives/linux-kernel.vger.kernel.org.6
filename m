@@ -1,221 +1,174 @@
-Return-Path: <linux-kernel+bounces-275102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C999480A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6715694809D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43F91F239C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:43:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5BBE1F23AB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8A2165EF4;
-	Mon,  5 Aug 2024 17:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF03415FA7C;
+	Mon,  5 Aug 2024 17:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKkygXz9"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8YGOo2X"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716291607BD;
-	Mon,  5 Aug 2024 17:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B7515F330
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 17:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722879779; cv=none; b=HW6XJnhHmTpwe9fJP1KoZ7WnsNkmtq3anPPDPi54MgPkMRiqv4sJuR1Jv9uMGz8Cv+yDYFBDlws7y/G++NBF0MNT9we7wZGF/KNJcMK0qX1n+b47R3BR5FSB+HyLEqZ2k1bpXv6AsJZ99zNt1p3kb8XGmXPXlFaZAtiTzLiKczY=
+	t=1722879754; cv=none; b=HEoodax0iK+8rC0xR6Pk87MU+l2B4dbxA6NyHhKNarHrfQamFOBv8/5wRJ0a//RkI/pYyk0/RAuJ6eILjKUGJ1sOE7D9EYpLBZDVXZnNtKYQ+6Zx684GsyquTgGTWdWrhOh9YXQLr7ATnPRQpwM5NIREXecDS+NvcgCdFFd/tfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722879779; c=relaxed/simple;
-	bh=dVcgk1Ne85Fv0mC3xhxmoZoZR7RbyGXDK5k4NffPkE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U6GG2kDTc6RnYbr8MXu8xtrdH+SGnCnFJTfHtRisosHfqtuzeh7IFHCL6tBO6Ze5C/ubIOKpBFWyfutPFeM0dmgwPUK8iT51r0blXNbkqPtxOQ2TnR6Pbu5ntl6saIloMbXWxs6MSLQPkBUlsyumuJ7IHY1/DoPHMU299PQgbG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKkygXz9; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1722879754; c=relaxed/simple;
+	bh=TP2sz3n2hL7aRQLlMfeye1F2PXSaYt8rAk4SD0LCxNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EtSGGABuaFDV1tDW91vZ7+gBE9pTRbNt0al66EBw3s8KYl4ucIyDo57Zrh+qQ+c4OFbYd40oJZD+Q8TG/EGhZZczxkvsQZh300Q/liXMC02a5AxJvL9X6r16wYTahtytuGukJBy1uquWvwseAN7C/oZ/6A3yltamcvmnT4HQkP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8YGOo2X; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc52394c92so98717355ad.1;
-        Mon, 05 Aug 2024 10:42:57 -0700 (PDT)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b7b23793c1so63834036d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 10:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722879777; x=1723484577; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=6VbQh8mSbRW3lubvyrbJti/A8j4Q7wUIF9hsHCo7CWQ=;
-        b=EKkygXz96COYV+R/Ey4ASM5ZZY0hDSioJpsTVLIHv78EVxzKZagxTP3BG/icgnxZw5
-         qEbH489DPA1zKcvTrZxfV49nccvElPZy2gHCUkurcVqkDQG4LaK2apQZajOAzzBaP3aJ
-         LnvdR2i//sQ4fZBLFM7Tm+yizpeseUhBsWr7YEtgEY84j2mlDNGp6FEevj65WfA6k8U0
-         fTHyV3koJJSuSmkvSH1N+3l428JbC8rahluHAcRFUVN/qTIr53+U3JyJ2hUy5trlCTWS
-         1a947zwzM4VJVGXgiWp7q/trSBR7TV5n8XkdZ0lnu6hq2D1/NM6OsW3jEzfdYVdmnAZU
-         kksg==
+        d=gmail.com; s=20230601; t=1722879751; x=1723484551; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mATvMNUOky9Y4cvuczn+HMyJ4XpzZrnp9ceIhMRVC5I=;
+        b=G8YGOo2XPBqLk7IKUxckpXORyzNllwXisBc0qbb3NITjM/mODF4D/O2Mjz0eY6OJdV
+         /7msRqYGg+ng2W4YDLKO5v5niECprossuepg66lQCae3CgX3jJ5tCuF2TYtigfrV1yD8
+         piOGwikn0zcUEooP8MucQm79TwAzDezK4pnUJrAAb/8Q1CNfhVOyOGD6m4OJ8DH9KZ7p
+         qiC2lCROnxYGeC3rHRVTEGgHHUaSdVkUXub3yInuWgLuVOl4L9NGzHlzHQv+BvL/JgeW
+         6qII11GehRjggPL7SCMYZevRS7EDqIrfpgSozEbQ2y+8zC4uNMuIvf1NmBPvK9ikc3IO
+         30Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722879777; x=1723484577;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6VbQh8mSbRW3lubvyrbJti/A8j4Q7wUIF9hsHCo7CWQ=;
-        b=fsLi+UxSyrcIxxBpuphjuOCc5grsAM9GmJTqOKHu6LUmUGO4JuyTUngqdfxCtYFN2g
-         UwlQT5XHcqPrOGG+dCMGr0bI0vZgZbUqZ6GZJIf+5p2sEzuNnt1up0NWUgctTVdD2KpT
-         DcYj+edVGUUtf1aWwG4aiDuS3KyW/l+maCHqOpIGW7VnCc9/9Ceqp3wH21ovQorhy9Xm
-         0ep1sFG3y6MvGRs2TwuGCkyxaRHqDuJUZ5p8NfCCRpARgetTWC2VjKagr10FNwxrRsRJ
-         F3GctX3o2Wc+afLuZGZqrAX62SydR2p4JELPZxrrHkAUQQqiVD4EJoaKANaVUAGctXiv
-         6new==
-X-Forwarded-Encrypted: i=1; AJvYcCUr2a4KT6bOaCBpqzuzKYbQfmxsLeOu9jiNrnN6nBHfwVadCKSZi96akY0r1KLwHY36i6JadTWgXuKGGUiSuhUxJWs2zj6naMrEo05uhaFgKhjqFs77FbcEi/QAaJVA248fYu3P2OHqkJp2+v2A9tr+sN+jraZe+24DdN6Xw6JTesgH
-X-Gm-Message-State: AOJu0YxuQngQSqtiyHjuarxrPDvTQFQYnxcNRgt2HPCPqOy7p8fp5NzY
-	WuooBiH91WG5afNaGPXj9nTnjlVw/0EuSZDoGFxFM3Z/+aOF2vNY
-X-Google-Smtp-Source: AGHT+IED9JAxC6zoQhCjbLEHyYvynj8Snu5jQmSjsxwwQvECvD8vrtT+XFCNoPoYaJjdcFXVzV94Ag==
-X-Received: by 2002:a17:903:120c:b0:1fd:a0b9:2be7 with SMTP id d9443c01a7336-1ff5722d9bamr198616075ad.13.1722879776576;
-        Mon, 05 Aug 2024 10:42:56 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59298f8asm71034115ad.266.2024.08.05.10.42.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 10:42:55 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <0ad9d0db-df2f-4e35-b53c-ed23cb2dc42d@roeck-us.net>
-Date: Mon, 5 Aug 2024 10:42:53 -0700
+        d=1e100.net; s=20230601; t=1722879751; x=1723484551;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mATvMNUOky9Y4cvuczn+HMyJ4XpzZrnp9ceIhMRVC5I=;
+        b=EKQvSztIRPxGTrJ/ydWaXUDqPqatmQBkR1hEUCVJ3WGxLMHQmUZCKVKVHI7eNAY1+g
+         PA3FHafVLCgrHdBJRHLIW6xcKc6jVsW6RcP1g1z+EyzA4iJtbwUZHvzQQHQnFHT0dQER
+         oELSqom+sG8qhuZIrMMEIZMAICBASrh2Ji8JjtaTPs109q7mM9nxe7jG8v2hWso7LAB6
+         HY8hLMa/XFEw5wuHrEEoN4q/Zw07Hb5xvZvxxZoc+ck/rzRWcKgRcJZBitMAFktQioRL
+         BsRvw4K7SbfjnrLV05Gb+EIuLh/6lhkx+qlgp34ksHLYpFN9DCmw5w2n7fWXtdwV4HNk
+         pN2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUC9asVR5EVrhZI/jJJaREnvAY52Nhkg6ErWSWXel4SZc+vJNIY4DONAmmbOTCAQe/QtyUQqeah/rjiWxpmPMjhpPwQpXb1h0kMIOQf
+X-Gm-Message-State: AOJu0YzKiqDArpxMrXxcTVnaEtJYB2Ct5C+awNe/L51mnJePYOPQkKR1
+	feL5og7sByqx1yucIJA17VX3w2BBS9UJbwq8VSm6382NR3/lvQGk
+X-Google-Smtp-Source: AGHT+IGxGFxbCi0eHbOwwVp6CRe3Hxm/aR3j+7vNp8bwkWJIKAvzlNfdNfr5lTFWpmMKUksMSyBCAA==
+X-Received: by 2002:a05:6214:5889:b0:6b4:ff83:c02f with SMTP id 6a1803df08f44-6bb9845be52mr153499616d6.53.1722879751302;
+        Mon, 05 Aug 2024 10:42:31 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c79c147sm37537366d6.51.2024.08.05.10.42.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 10:42:30 -0700 (PDT)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 9E3371200043;
+	Mon,  5 Aug 2024 13:42:30 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Mon, 05 Aug 2024 13:42:30 -0400
+X-ME-Sender: <xms:Bg-xZlOG8KBFuZUOpldkeKa-OIx5g-HiNqfEBWbXaxB2kZ2zzYfOGg>
+    <xme:Bg-xZn_fkbX7D4lYHc3bZRTOMlyurD6DQEIqiY_FWb4IKMtv0gY5H6su_WsDyvrqt
+    Jdh0pdw6iqjeR-DGA>
+X-ME-Received: <xmr:Bg-xZkSbXIBx2v5SCx0lhKYnun2xnzJlAO8-AEaMXROhCq5qyoGftQBwrU_kl4y3aVflNgMYcOaKn0hlqyadUgpS3SJOp5Yh>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeeigdduudekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhepgffhudetvdejueetieeijeejtdduhfdvffdvjeehffdtheevtdeuhfeu
+    heehiefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
+    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
+    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghp
+    thhtoheptd
+X-ME-Proxy: <xmx:Bg-xZhuggDojonVQDPU2yuuGtSuKcCPsqDMZyNwHvb8xmYz6Nq62SA>
+    <xmx:Bg-xZtcxxLcQmaV_IY5YGOw_NXKQCuDn7gg8kAAiv0C6NzOTih00Wg>
+    <xmx:Bg-xZt3-amgRBr_933DbNNA_g02E6X9XAKcavc8b-OYNC6XWay0GOg>
+    <xmx:Bg-xZp-j4qKDbf51KeGHRPWpTqZPGfWaRvh6c2HJOhR1cd5AEwXiVw>
+    <xmx:Bg-xZo9Rxbo0tWAJUvwzeE8A5D7Ugj-oRKxEyHddNjzRqXhMnjz9Wq_l>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 5 Aug 2024 13:42:30 -0400 (EDT)
+Date: Mon, 5 Aug 2024 10:43:08 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] lockdep: suggest the fix for "lockdep bfs error:-1"
+ on print_bfs_bug
+Message-ID: <ZrEPLFDGSSS3Dh80@tardis>
+References: <Zqkmy0lS-9Sw0M9j@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-To: Thomas Gleixner <tglx@linutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
-References: <20240731095022.970699670@linuxfoundation.org>
- <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
- <a8a81b3d-b005-4b6f-991b-c31cdb5513e5@roeck-us.net> <87ikwf5owu.ffs@tglx>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <87ikwf5owu.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Zqkmy0lS-9Sw0M9j@uudg.org>
 
-On 8/5/24 01:56, Thomas Gleixner wrote:
-> On Sun, Aug 04 2024 at 20:28, Guenter Roeck wrote:
->> On 8/4/24 11:36, Guenter Roeck wrote:
->>>> Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>       genirq: Set IRQF_COND_ONESHOT in request_irq()
->>>>
->>>
->>> With this patch in v6.10.3, all my parisc64 qemu tests get stuck with repeated error messages
->>>
->>> [    0.000000] =============================================================================
->>> [    0.000000] BUG kmem_cache_node (Not tainted): objects 21 > max 16
->>> [    0.000000] -----------------------------------------------------------------------------
-> 
-> Do you have a full boot log? It's unclear to me at which point of the boot
-> process this happens. Is this before or after the secondary CPUs have
-> been brought up?
-> 
->>> This never stops until the emulation aborts.
-> 
-> Do you have a recipe how to reproduce?
-> 
->>> Reverting this patch fixes the problem for me.
->>>
->>> I noticed a similar problem in the mainline kernel but it is either spurious there
->>> or the problem has been fixed.
->>>
->>
->> As a follow-up, the patch below (on top of v6.10.3) "fixes" the problem for me.
->> I guess that suggests some kind of race condition.
->>
->>
->> @@ -2156,6 +2157,8 @@ int request_threaded_irq(unsigned int irq, irq_handler_t handler,
->>           struct irq_desc *desc;
->>           int retval;
->>
->> +       udelay(1);
->> +
->>           if (irq == IRQ_NOTCONNECTED)
->>                   return -ENOTCONN;
-> 
-> That all makes absolutely no sense to me.
-> 
+On Tue, Jul 30, 2024 at 02:45:47PM -0300, Luis Claudio R. Goncalves wrote:
+> When lockdep fails while performing the Breadth-first-search operation
+> due to lack of memory, hint that increasing the value of the config
+> switch LOCKDEP_CIRCULAR_QUEUE_BITS should fix the warning.
+>=20
+> Preface the scary backtrace with the suggestion:
+>=20
+>     [  163.849242] Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this war=
+ning:
+>     [  163.849248] ------------[ cut here ]------------
+>     [  163.849250] lockdep bfs error:-1
+>     [  163.849263] WARNING: CPU: 24 PID: 2454 at kernel/locking/lockdep.c=
+:2091 print_bfs_bug+0x27/0x40
+>     ...
+>=20
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Reviewed-by: Waiman Long <longman@redhat.com>
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
 
-Same here, really. I can reproduce the problem with v6.10.3, using my configuration,
-but whatever debugging I add makes the problem disappear. I had seen the same problem
-on mainline with v6.11-rc1-272-g17712b7ea075. Log is at
-https://kerneltests.org/builders/qemu-parisc64-master/builds/168/steps/qemubuildcommand/logs/stdio
-However, I can no longer reproduce it there. What makes it even more weird / odd
-is that I can bisect the problem between v6.10.2 and v6.10.3 and it points to this
-commit, but reproducing it outside that chain seems to be all but impossible.
+Queued at:
 
-Guenter
+	https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/
+	lockdep-for-tip
 
-> IRQF_COND_ONESHOT has only an effect on shared interrupts, when the
-> interrupt was already requested with IRQF_ONESHOT.
-> 
-> If this is really a race then the following must be true:
-> 
-> 1) no delay
-> 
->     CPU0                                 CPU1
->     request_irq(IRQF_ONESHOT)
->                                          request_irq(IRQF_COND_ONESHOT)
-> 
-> 2) delay
-> 
->     CPU0                                 CPU1
->                                          request_irq(IRQF_COND_ONESHOT)
->     request_irq(IRQF_ONESHOT)
-> 
->     In this case the request on CPU 0 fails with -EBUSY ...
-> 
-> Confused
-> 
->          tglx
-> 
-> 
+Thanks!
 
+Regards,
+Boqun
+
+> ---
+>=20
+> Changes in v2:
+>   - removed extra space from the if condition.
+>=20
+>  kernel/locking/lockdep.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> index 58c88220a478a..1cf6d9fdddc9c 100644
+> --- a/kernel/locking/lockdep.c
+> +++ b/kernel/locking/lockdep.c
+> @@ -2067,6 +2067,9 @@ static noinline void print_bfs_bug(int ret)
+>  	/*
+>  	 * Breadth-first-search failed, graph got corrupted?
+>  	 */
+> +	if (ret =3D=3D BFS_EQUEUEFULL)
+> +		pr_warn("Increase LOCKDEP_CIRCULAR_QUEUE_BITS to avoid this warning:\n=
+");
+> +
+>  	WARN(1, "lockdep bfs error:%d\n", ret);
+>  }
+> =20
+> --=20
+> 2.45.2
+>=20
 
