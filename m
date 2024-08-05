@@ -1,137 +1,200 @@
-Return-Path: <linux-kernel+bounces-274653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8DC947B27
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:43:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9E9947B34
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DFA5B218E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:43:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D0E281FD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4DF15ADA1;
-	Mon,  5 Aug 2024 12:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E672D1591ED;
+	Mon,  5 Aug 2024 12:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGoICLhP"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Q7XfymlX"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4F618026;
-	Mon,  5 Aug 2024 12:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39C01803A;
+	Mon,  5 Aug 2024 12:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722861783; cv=none; b=byIIb2Fgba6E5pI6wXV/oho2HmA0Jj+dyCyaSDUyIpjwvXP28KywqmFmN5yYTNLRYiI1qLnGAGL2fhATiCBcfDD3uNHGNdMir6gB00rohA4X9qrQNijApl5nGgceAd4pBsWlT77psqAbYj2pMZYSYEDQtGxISxpqzu8/G19nptI=
+	t=1722861988; cv=none; b=WedPEbAYycOQxNa0dg2kSW9haWWw2SqztgFmIwZoiU/HYImkghXyHry0DhklTBqvgHw2B+6r1ySyrLrhyY/PJj1nN/V5laRkjvDoq0ZBAuvqmcnyIYY6Ws2DeioZ2HUxhbOtAtYO1PhDpM/eysV9TeXn6T6/q61MnCbLEo3fHpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722861783; c=relaxed/simple;
-	bh=YW/qg94iZPhUR0tp0hVHRnEk+cNH6Dflx/IRgbrrdEg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=agVf64gKrH7TvG+noxxKa3hVFRRtEbb4s/yudJ0rbznLGxLGtwGsmuYe6K+vp6mtov4A17e5auaMr0kdiITcAQqT8bXrOfBb/G0zV/7m9l4DdW58xGGOQuqBxVRNmQyMSnT7tfhXVha0Y34SaZDv8+QLJ0v9RD8YkZjX4xRoRtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGoICLhP; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso10828713e87.3;
-        Mon, 05 Aug 2024 05:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722861780; x=1723466580; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YW/qg94iZPhUR0tp0hVHRnEk+cNH6Dflx/IRgbrrdEg=;
-        b=fGoICLhPyAVMHwnKk9iRx+P9eQ1vjUYwJxG/VMA+KWNuLFpjzxh9OQtPuM776EK7Cv
-         Lu1vS2ITPcAViLqRwo/llvfkjf0kJ3RWOvvbPTx/ppFbdNoxobq0zQiitE2wxh++6Qni
-         iTj79S4NLtwW8cZCfc2BS52r+FMxQXkY2RmgyzJb3sG93pS43Na/+QCUnAXxA3HEHuUU
-         ngeb59o3W3fY6vfuK+N4bg0/rYQJ1bYQ97yR4HVzzhyGVaMeP8l83GNFjcRtfXstMY+9
-         N4werS22uPi5m9P6X3NVXglIsCZ3uXpqk1WRapeQyA45lJWkay3zkNBganXN0tesxcWy
-         Yrlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722861780; x=1723466580;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YW/qg94iZPhUR0tp0hVHRnEk+cNH6Dflx/IRgbrrdEg=;
-        b=NokhRQYsBbMkjJEckYHbiEs3iGj0giPIateWtZdMxzO41KjvwxAil/CcnB1A97jf/e
-         vIgudV5DLKs5eVFDv2cJejhaCunoGO34eVmnBLcCBGM4RBQiLaI8kcgFJX+nh0mhfGBk
-         a7c98WlhGllNYQbx4p28unD817ErFetv8+EIU03KtLdj25YB9ERvkVMRc76yRbTqcJNx
-         MQYHHXv/Z4qGDptI15rB250z2wPrkYN+hn7IqmpTBN6eDFFhSZjDRRBCmOm157JZUSS5
-         8ZZpkpM3s52zufYxipZt+Q1xYJplEwg3ML+0D1baKHAfCtujLXpk4emOCz8DJujLOnBY
-         ypgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDKOtlymDJRrpcU4F/ABlMDWpabHjxJQ/uaUe3L+u73maK3E+bhmAyzFJkevZxhfbRdwgzcPEWnQJFjUWxCA3A9yijeY712uEFF4B2q7BXUgizcEFbbb9103E5FSAPhZ1t91mt20I10oPDvLpDLvG+V0JHpdvyE/PE57ieaShEWggFTBC/rX+mIFMWO3YxVNDcM3mJXGmv/CtXEKaqCEAo0rTdRPkcdQ1wvle/dwWDDwwiQS8gWQvz2XkBbQlfGMNe
-X-Gm-Message-State: AOJu0YwkBHO9UdV4CuMDfFu3ZfOoH1sVwS/IIqe4tw8pCoVFE80cH7ot
-	uHCgsXN5wqITKkHrvx9BWZ9OLc70PH+cyy++iG/UGWIcndMR9bC0
-X-Google-Smtp-Source: AGHT+IGrn/fiiMQfSHP2zwcfkB4NJ3UgsNTVBkuKqly9QoxA5DBgXyicWcuWmKSOBQoaeHciBly7ag==
-X-Received: by 2002:a05:6512:398a:b0:52c:df83:a740 with SMTP id 2adb3069b0e04-530bb38cfc7mr9005249e87.30.1722861779774;
-        Mon, 05 Aug 2024 05:42:59 -0700 (PDT)
-Received: from ?IPv6:2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78? ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3d14sm447805066b.22.2024.08.05.05.42.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 05:42:59 -0700 (PDT)
-Message-ID: <5af8048741215bdafa5d8f7bf6ab8dec3cd7aed0.camel@gmail.com>
-Subject: Re: [PATCH 06/13] clk: samsung: exynos7885: Update CLKS_NR_FSYS
- after bindings fix
-From: David Virag <virag.david003@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,  Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thinh
- Nguyen <Thinh.Nguyen@synopsys.com>, =?ISO-8859-1?Q?Andr=E9?= Draszik
- <andre.draszik@linaro.org>, Peter Griffin <peter.griffin@linaro.org>, Sam
- Protsenko <semen.protsenko@linaro.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Date: Mon, 05 Aug 2024 14:44:01 +0200
-In-Reply-To: <bd7c76a6-b7a5-4f8d-8081-95b6cdb39186@kernel.org>
-References: <20240804215458.404085-1-virag.david003@gmail.com>
-	 <20240804215458.404085-7-virag.david003@gmail.com>
-	 <bd7c76a6-b7a5-4f8d-8081-95b6cdb39186@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1722861988; c=relaxed/simple;
+	bh=qOsWAMDiq2Clu4LzrFVPMJFhiXipMC4Gs6gyCh7sW1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g5hAv/Hd8ehTfo0UWL+k/y5IEYxmoIoXo5W1DcyOhHMzGbXyLg3AiYxZa4QZ+UxOBsQOUnBUmv9Se5U06pz+NIQK7QFXY0vlEKakI3zMntwXf2EnTthCCioZTglkwUk9h3fD/XC+vVa5cf/Ww0pSz6G0n+nU4ZsHKkQfiKQ27Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Q7XfymlX; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Wcx542ZkKz9sSN;
+	Mon,  5 Aug 2024 14:46:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1722861976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MYO3adI1+xfD0J8UWHfGOa26AzQibf/gUQhzQh/b8sQ=;
+	b=Q7XfymlXp8KO8qxjyIcI+IOTYgNPSIa5BCD/ywTWJEjMSyKhhgGaQbsuCk7iW2WK3fijmr
+	Vk1DV21O6iSF8FocoFuh8oC+JHmEE+l0DDmIjwVf8gssU9QFMWK5B1BRcrmRrtj6617f9+
+	pgkk7L1AaVnZ9FSm9D9g/B7Y+e+nSSYUEnAJkg7Sh00ouYgrGe0BqHfUH7fwXswJzw2dna
+	uGLaDQf90r2+AqcOhx8Oeaypk6y+EFwCsdee8pOk82ZUeRbFtNjHsuVTgll3JtqdD9tRp3
+	mqNixRZXlJa4TmQRXcgiij8/JeWymUqPQSI0pGPjhB8KtfuCeqfUS8WkOaR79A==
+Date: Mon, 5 Aug 2024 12:46:08 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, ryan.roberts@arm.com, hch@lst.de,
+	Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v11 10/10] xfs: enable block size larger than page size
+ support
+Message-ID: <20240805124608.jxtumw47y4zhpie7@quentin>
+References: <20240726115956.643538-1-kernel@pankajraghav.com>
+ <20240726115956.643538-11-kernel@pankajraghav.com>
+ <20240729164159.GC6352@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729164159.GC6352@frogsfrogsfrogs>
+X-Rspamd-Queue-Id: 4Wcx542ZkKz9sSN
 
-Hi Krzysztof,
-
-On Mon, 2024-08-05 at 07:49 +0200, Krzysztof Kozlowski wrote:
-> On 04/08/2024 23:53, David Virag wrote:
-> > Update CLKS_NR_FSYS to the proper value after a fix in DT bindings.
-> > This should always be the last clock in a CMU + 1.
-> >=20
-> > Signed-off-by: David Virag <virag.david003@gmail.com>
+On Mon, Jul 29, 2024 at 09:41:59AM -0700, Darrick J. Wong wrote:
+> On Fri, Jul 26, 2024 at 01:59:56PM +0200, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
+> > 
+> > Page cache now has the ability to have a minimum order when allocating
+> > a folio which is a prerequisite to add support for block size > page
+> > size.
+> > 
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 > > ---
-> > =C2=A0drivers/clk/samsung/clk-exynos7885.c | 2 +-
->=20
-> This needs fixes and Cc-stable tag, same as the binding.
-
-Would it fix ef4923c8e052 ("clk: samsung: exynos7885: do not define number =
-of clocks in bindings")?
-Or would it fix cd268e309c29 ("dt-bindings: clock: Add bindings for Exynos7=
-885 CMU_FSYS")?
-
-I'm guessing the former, but technically the latter introduced
-the problem and the former transferred it to the clk driver.
-
-For kernel 6.1, this fix wouldn't work, as we'd need a fix in the
-dt-bindings instead (perhaps the dt-bindings fix should include
-this fix there).
-
-How would this work?
-
->=20
-> Best regards,
-> Krzysztof
->=20
-
-Best regards,
-David
+> >  fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
+> >  fs/xfs/libxfs/xfs_shared.h |  3 +++
+> >  fs/xfs/xfs_icache.c        |  6 ++++--
+> >  fs/xfs/xfs_mount.c         |  1 -
+> >  fs/xfs/xfs_super.c         | 28 ++++++++++++++++++++--------
+> >  include/linux/pagemap.h    | 13 +++++++++++++
+> >  6 files changed, 45 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
+> > index 0af5b7a33d055..1921b689888b8 100644
+> > --- a/fs/xfs/libxfs/xfs_ialloc.c
+> > +++ b/fs/xfs/libxfs/xfs_ialloc.c
+> > @@ -3033,6 +3033,11 @@ xfs_ialloc_setup_geometry(
+> >  		igeo->ialloc_align = mp->m_dalign;
+> >  	else
+> >  		igeo->ialloc_align = 0;
+> > +
+> > +	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
+> > +		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
+> > +	else
+> > +		igeo->min_folio_order = 0;
+> >  }
+> >  
+> >  /* Compute the location of the root directory inode that is laid out by mkfs. */
+> > diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
+> > index 2f7413afbf46c..33b84a3a83ff6 100644
+> > --- a/fs/xfs/libxfs/xfs_shared.h
+> > +++ b/fs/xfs/libxfs/xfs_shared.h
+> > @@ -224,6 +224,9 @@ struct xfs_ino_geometry {
+> >  	/* precomputed value for di_flags2 */
+> >  	uint64_t	new_diflags2;
+> >  
+> > +	/* minimum folio order of a page cache allocation */
+> > +	unsigned int	min_folio_order;
+> > +
+> >  };
+> >  
+> >  #endif /* __XFS_SHARED_H__ */
+> > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+> > index cf629302d48e7..0fcf235e50235 100644
+> > --- a/fs/xfs/xfs_icache.c
+> > +++ b/fs/xfs/xfs_icache.c
+> > @@ -88,7 +88,8 @@ xfs_inode_alloc(
+> >  
+> >  	/* VFS doesn't initialise i_mode! */
+> >  	VFS_I(ip)->i_mode = 0;
+> > -	mapping_set_large_folios(VFS_I(ip)->i_mapping);
+> > +	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
+> > +				    M_IGEO(mp)->min_folio_order);
+> >  
+> >  	XFS_STATS_INC(mp, vn_active);
+> >  	ASSERT(atomic_read(&ip->i_pincount) == 0);
+> > @@ -325,7 +326,8 @@ xfs_reinit_inode(
+> >  	inode->i_uid = uid;
+> >  	inode->i_gid = gid;
+> >  	inode->i_state = state;
+> > -	mapping_set_large_folios(inode->i_mapping);
+> > +	mapping_set_folio_min_order(inode->i_mapping,
+> > +				    M_IGEO(mp)->min_folio_order);
+> >  	return error;
+> >  }
+> >  
+> > diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+> > index 3949f720b5354..c6933440f8066 100644
+> > --- a/fs/xfs/xfs_mount.c
+> > +++ b/fs/xfs/xfs_mount.c
+> > @@ -134,7 +134,6 @@ xfs_sb_validate_fsb_count(
+> >  {
+> >  	uint64_t		max_bytes;
+> >  
+> > -	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
+> >  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
+> >  
+> >  	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
+> > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+> > index 27e9f749c4c7f..b2f5a1706c59d 100644
+> > --- a/fs/xfs/xfs_super.c
+> > +++ b/fs/xfs/xfs_super.c
+> > @@ -1638,16 +1638,28 @@ xfs_fs_fill_super(
+> >  		goto out_free_sb;
+> >  	}
+> >  
+> > -	/*
+> > -	 * Until this is fixed only page-sized or smaller data blocks work.
+> > -	 */
+> >  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
+> > -		xfs_warn(mp,
+> > -		"File system with blocksize %d bytes. "
+> > -		"Only pagesize (%ld) or less will currently work.",
+> > +		size_t max_folio_size = mapping_max_folio_size_supported();
+> > +
+> > +		if (!xfs_has_crc(mp)) {
+> > +			xfs_warn(mp,
+> > +"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
+> >  				mp->m_sb.sb_blocksize, PAGE_SIZE);
+> > -		error = -ENOSYS;
+> > -		goto out_free_sb;
+> > +			error = -ENOSYS;
+> > +			goto out_free_sb;
+> > +		}
+> > +
+> > +		if (mp->m_sb.sb_blocksize > max_folio_size) {
+> > +			xfs_warn(mp,
+> > +"block size (%u bytes) not supported; Only block size (%ld) or less is supported",
+> > +			mp->m_sb.sb_blocksize, max_folio_size);
+> 
+> Dumb nit: Please indent ^^^ this second line so that it doesn't start on
+> the same column as the separate statement below it.
+> 
+Done :)
 
