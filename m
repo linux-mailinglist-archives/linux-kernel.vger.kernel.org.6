@@ -1,240 +1,281 @@
-Return-Path: <linux-kernel+bounces-274514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18F3947931
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:17:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1975894793A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8D91F22109
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A941F21FD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A394513B599;
-	Mon,  5 Aug 2024 10:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21791547D2;
+	Mon,  5 Aug 2024 10:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnTmbyAJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SqPukR5k"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71E418040;
-	Mon,  5 Aug 2024 10:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8056A18040;
+	Mon,  5 Aug 2024 10:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722853037; cv=none; b=fsiYRa7TiZ4x3i5zhYDzjmsD8Vd6zvSZ0TJ7TCeJeMFl/Bkf/zv9QDksNllbVPJ4RJSKy447XIfxc/wd5rUO+7XIO7/8HaJSmuXgfr8SNvzPvLkB5DWDlm5tf65FpSr54CQmmxK2wv3zINcaaXlRQeEPJqCL5cMXaIPat4W5Wn4=
+	t=1722853187; cv=none; b=LI3UktKz8JZ7BUYI/5BdEm77ClRrgsSaVJ6LsZaA0Yd7l4migidfZiXtatkrS2TsgB7+WdU8x8ZXTZkeGAgDfnIj0wnouFwWq8uA39EROiw3v3J4nQKIQ5R5UwNNxYS8hi2CFUj8H0sqIHloFyZzyF9lG8rTbFUEXMGCoSmWiXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722853037; c=relaxed/simple;
-	bh=MHe9tTcbFgoOBRxEB6E0kr0JxBxZ7aKJJhgU6KNwnAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E2++06wcTZuclnE2GbXlCw2ar9dKf+TEnLkqpJkGi3m0/Pq9Ggie4IMDUrGWlVfc6oQG8rr6rzRctlaBf6lDo14lnJov7FXtp+UGbUCDSwSZSQ35jH0RWxjLiItQfo/iGlPx5I0gZAAbkmTL5K+jaqbmI3fYSTcc+LKzYwLCm+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnTmbyAJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8874AC4AF0D;
-	Mon,  5 Aug 2024 10:17:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722853037;
-	bh=MHe9tTcbFgoOBRxEB6E0kr0JxBxZ7aKJJhgU6KNwnAg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MnTmbyAJn13897HMv90r8yjwra5kgUzkXMT2HAjChMfDmU4TsSQRoyoPgH80dW01p
-	 T1zHWgzcPTd/u1wsWyvlik4Po2YBZcgTVRB87LisoxGz0Iewi0ST1FWgDzHtZB4km3
-	 j+284WcQ6LA61ntCkvteiP9lcScPbVtl2Hs+zFsIYtxFjIxpUmyfXNCySWid1/X0C+
-	 ehYvKI+EtQkMa+6RWU8ShKgtGAn4Wg2BlCEvjN9hTrjFR1D0auzJM25qiTEQOEipSN
-	 qiD2iUaVU03UpxU2HXjTDvhIMRMZ+07/TpbQ3CYtxrbvZS3aHjQ5WQ5GgTwrsLEL1k
-	 FuhkMuP6cwujQ==
-Message-ID: <8184a4fe-ddfb-4c38-be2f-e8d808ce777b@kernel.org>
-Date: Mon, 5 Aug 2024 12:17:14 +0200
+	s=arc-20240116; t=1722853187; c=relaxed/simple;
+	bh=KS1fj3okvNndPiRZTwj3NC0qVtclqS5u7nEvy6wyOgk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QeH0kvD+lDw+trLkNrMLWqZATnlDeMaOdyQGgcjKKUENtj5Q5xXXBEqpcodmlv12YyATd5RyCAVvnQupsrETjoL86k8WEK+Ns9fqJZ/DqEJgoOHZ0FdrPfr/LQZW44HGq4mvcfGirbSbaDeyYCtr5nAxWMayJ6cpb8RovZOikG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SqPukR5k; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id A957020004;
+	Mon,  5 Aug 2024 10:19:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722853177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=a7FpLhLwQbPwDHrWC4uG11zBWmLxtfgBdO6pflNVoqQ=;
+	b=SqPukR5kfyPrnybNnem43jpJchAC/1SH9x5BjEBwQmwHXbuPdEH9uSBYguyapqze/4U23l
+	TnHiS9/FQLI1yHvV7mRdbjgcbm2jdlu8ZIx3e7Q/D0RuPmkyI3PvSutXKh7lU3XarIk6Dt
+	MeotR0tTQ1835mCq85decJyOBoJ+mL9atJRHO9geAFh0KipdEpL65W/IobVPlMDytHtrfb
+	COI9zFhjlOFVoCMY+xnh4aSsDYYS5Z77Y5UdWOAkZmfvEdzv5iBnBodSL57SR8YdZsW2zq
+	34HNKLfNu1FhmSenU7mRneB3uNUsAW0GwTpcRg0yV8nIonOpydrbAxzs4SXVQg==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v4 0/8] Add support for the LAN966x PCI device using a DT overlay
+Date: Mon,  5 Aug 2024 12:17:16 +0200
+Message-ID: <20240805101725.93947-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [RESEND PATCH v2] checkpatch: skip warnings for symbol links
-Content-Language: en-GB
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Geliang Tang <geliang@kernel.org>, Geliang Tang <tanggeliang@kylinos.cn>,
- linux-kernel@vger.kernel.org, mptcp@lists.linux.dev
-References: <dc502b1b45cb27fda48d72d73e3267a32db023d8.1717722648.git.tanggeliang@kylinos.cn>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <dc502b1b45cb27fda48d72d73e3267a32db023d8.1717722648.git.tanggeliang@kylinos.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-Hi Andy, Joe, Dwaipayan, Lukas,
+Hi,
 
-I'm sorry to bother you about that, but it looks like the following
-patch from Geliang didn't get any review from your side. Do you mind
-having a look at this non-urgent patch when you have a bit of free time
-please?
+This series adds support for the LAN966x chip when used as a PCI
+device.
 
-Cheers,
-Matt
+For reference, the LAN996x chip is a System-on-chip that integrates an
+Ethernet switch and a number of other traditional hardware blocks such
+as a GPIO controller, I2C controllers, SPI controllers, etc. The
+LAN996x can be used in two different modes:
 
-On 07/06/2024 03:12, Geliang Tang wrote:
-> From: Geliang Tang <tanggeliang@kylinos.cn>
-> 
-> If there is a symbol link in the given patch, like the following one:
-> 
-> $ cat 0001-selftests-bpf-Add-mptcp-pm_nl_ctl-link.patch
-> 
->  '''
->  # diff --git a/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c \
->  #            b/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c
->  # new file mode 120000
->  # index 000000000000..5a08c255b278
->  # --- /dev/null
->  # +++ b/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c
->  # @@ -0,0 +1 @@
->  # +../net/mptcp/pm_nl_ctl.c
->  # \ No newline at end of file
->  '''
-> 
-> checkpatch.pl reports two inaccurate warnings:
-> 
->  '''
->  WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
->  #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
->  +../net/mptcp/pm_nl_ctl.c
-> 
->  WARNING: adding a line without newline at end of file
->  #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
->  +../net/mptcp/pm_nl_ctl.c
->  '''
-> 
-> And three checks if run it with strict option:
-> 
->  '''
->  CHECK: spaces preferred around that '/' (ctx:VxV)
->  #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
->  +../net/mptcp/pm_nl_ctl.c
->    ^
-> 
->  CHECK: spaces preferred around that '/' (ctx:VxV)
->  #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
->  +../net/mptcp/pm_nl_ctl.c
->        ^
-> 
->  CHECK: spaces preferred around that '/' (ctx:VxV)
->  #65: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
->  +../net/mptcp/pm_nl_ctl.c
->  '''
-> 
-> This patch fixes this by adding a new variable $symbol_link in checkpatch
-> script, set it if the new file mode is 120000. Skip "missing or malformed
-> SPDX-License-Identifier tag", "adding a line without newline at end of
-> file" and "spaces preferred around that '/'" checks if this variable is
-> set.
-> 
-> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-> ---
-> v2:
->  - fix warnings with strict option too.
-> ---
->  scripts/checkpatch.pl | 15 ++++++++++++---
->  1 file changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 2b812210b412..1f3ce5ffe914 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -2694,6 +2694,8 @@ sub process {
->  
->  	my $checklicenseline = 1;
->  
-> +	my $symbol_link = 0;
-> +
->  	sanitise_line_reset();
->  	my $line;
->  	foreach my $rawline (@rawlines) {
-> @@ -3564,6 +3566,11 @@ sub process {
->  # ignore non-hunk lines and lines being removed
->  		next if (!$hunk_line || $line =~ /^-/);
->  
-> +# Check for symbol links
-> +		if ($line =~ /^new file mode 120000$/) {
-> +			$symbol_link = 1;
-> +		}
-> +
->  #trailing whitespace
->  		if ($line =~ /^\+.*\015/) {
->  			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
-> @@ -3756,7 +3763,8 @@ sub process {
->  				}
->  
->  				if ($comment !~ /^$/ &&
-> -				    $rawline !~ m@^\+\Q$comment\E SPDX-License-Identifier: @) {
-> +				    $rawline !~ m@^\+\Q$comment\E SPDX-License-Identifier: @ &&
-> +				    $symbol_link =~ 1) {
->  					WARN("SPDX_LICENSE_TAG",
->  					     "Missing or malformed SPDX-License-Identifier tag in line $checklicenseline\n" . $herecurr);
->  				} elsif ($rawline =~ /(SPDX-License-Identifier: .*)/) {
-> @@ -3867,7 +3875,8 @@ sub process {
->  		}
->  
->  # check for adding lines without a newline.
-> -		if ($line =~ /^\+/ && defined $lines[$linenr] && $lines[$linenr] =~ /^\\ No newline at end of file/) {
-> +		if ($line =~ /^\+/ && defined $lines[$linenr] && $lines[$linenr] =~ /^\\ No newline at end of file/ &&
-> +		    $symbol_link =~ 1) {
->  			if (WARN("MISSING_EOF_NEWLINE",
->  			         "adding a line without newline at end of file\n" . $herecurr) &&
->  			    $fix) {
-> @@ -5293,7 +5302,7 @@ sub process {
->  					 $op eq '*' or $op eq '/' or
->  					 $op eq '%')
->  				{
-> -					if ($check) {
-> +					if ($check && $symbol_link =~ 1) {
->  						if (defined $fix_elements[$n + 2] && $ctx !~ /[EW]x[EW]/) {
->  							if (CHK("SPACING",
->  								"spaces preferred around that '$op' $at\n" . $hereptr)) {
+- With Linux running on its Linux built-in ARM cores.
+  This mode is already supported by the upstream Linux kernel, with the
+  LAN996x described as a standard ARM Device Tree in
+  arch/arm/boot/dts/microchip/lan966x.dtsi. Thanks to this support,
+  all hardware blocks in the LAN996x already have drivers in the
+  upstream Linux kernel.
+
+- As a PCI device, thanks to its built-in PCI endpoint controller.
+  In this case, the LAN996x ARM cores are not used, but all peripherals
+  of the LAN996x can be accessed by the PCI host using memory-mapped
+  I/O through the PCI BARs.
+
+This series aims at supporting this second use-case. As all peripherals
+of the LAN996x already have drivers in the Linux kernel, our goal is to
+re-use them as-is to support this second use-case.
+
+Therefore, this patch series introduces a PCI driver that binds on the
+LAN996x PCI VID/PID, and when probed, instantiates all devices that are
+accessible through the PCI BAR. As the list and characteristics of such
+devices are non-discoverable, this PCI driver loads a Device Tree
+overlay that allows to teach the kernel about which devices are
+available, and allows to probe the relevant drivers in kernel, re-using
+all existing drivers with no change.
+
+This patch series for now adds a Device Tree overlay that describes an
+initial subset of the devices available over PCI in the LAN996x, and
+follow-up patch series will add support for more once this initial
+support has landed.
+
+In order to add this PCI driver, a number of preparation changes are
+needed:
+ - Patches 1, 2 introduce the LAN996x PCI driver itself, together with
+   its DT overlay and the related MAINTAINTER entry.
+
+ - Patches 3 to 8 allow the reset driver used for the LAN996x to be
+   built as a module. Indeed, in the case where Linux runs on the ARM
+   cores, it is common to have the reset driver built-in. However, when
+   the LAN996x is used as a PCI device, it makes sense that all its
+   drivers can be loaded as modules.
+
+Compare to the previous iteration:
+  https://lore.kernel.org/lkml/20240627091137.370572-1-herve.codina@bootlin.com/
+this v4 series mainly:
+  - Add a dependency between the reset controller and the LAN966x PCI
+    driver. Reorder commits as the reset controller now depends on the
+    LAN666x PCI device.
+  - Move the LAN966x PCI driver from drivers/mfd to drivers/misc
+
+Best regards,
+Hervé
+
+Changes v3 -> v4
+  - Patch 1 and 2 (v3 patch 6 and 7)
+    Move the driver from drivers/mfd to drivers/misc
+
+  - Patch 4 and 5 (v3 patch 2)
+    Rework reset driver dependencies and module building support.
+    Split v3 patch into two distinct patches:
+      - patch 4, as suggested by Geert, add a dependency on the
+        LAN966x PCI device
+      - patch 5, allows to build the reset controller driver as a module
+
+  - Other patches
+    Except reordering, no changes
+
+Changes v2 -> v3
+  - Patches 1 and 5
+    No changes
+
+  - Patch 6 (v2 patch 18)
+    Add a blank line in the commit log to split paragraphs
+    Remove unneeded header file inclusion
+    Use IRQ_RETVAL()
+    Remove blank line
+    Use dev_of_node()
+    Use pci_{set,get}_drvdata()
+    Remove unneeded pci_clear_master() call
+    Move { 0, } to { }
+    Remove the unneeded pci_dev member from the lan966x_pci structure
+    Use PCI_VENDOR_ID_EFAR instead of the hardcoded 0x1055 PCI Vendor ID
+    Add a comment related to the of_node check.
+
+  - Patch 7 (v2 patch 19)
+    No changes
+
+  Patches removed in v3
+    - Patches 6 and 7
+      Extracted and sent separately
+      https://lore.kernel.org/lkml/20240620120126.412323-1-herve.codina@bootlin.com/
+
+    - Patches 9
+      Already applied
+
+    - Patches 8, 10 to 12
+      Extracted, reworked and sent separately
+      https://lore.kernel.org/lkml/20240614173232.1184015-1-herve.codina@bootlin.com/
+
+    - Patches 13 to 14
+      Already applied
+
+Changes v1 -> v2
+  - Patch 1
+    Fix a typo in syscon.h (s/intline/inline/)
+
+  - Patches 2..5
+    No changes
+
+  - Patch 6
+    Improve the reset property description
+
+  - Patch 7
+    Fix a wrong reverse x-mass tree declaration
+
+  - Patch 8 removed (sent alone to net)
+    https://lore.kernel.org/lkml/20240513111853.58668-1-herve.codina@bootlin.com/
+
+  - Patch 8 (v1 patch 9)
+    Add 'Reviewed-by: Rob Herring (Arm) <robh@kernel.org>'
+
+  - Patch 9 (v1 patch 10)
+    Rephrase and ident parameters descriptions
+
+  - Patch 10 (v1 patch 11)
+    No changes
+
+  - Patch 11 (v1 patch 12)
+    Fix a missing ret value assignment before a goto in .probe()
+    Limit lines to 80 columns
+    Use indices in register offset definitions
+
+  - Patch 13 and 14 (new patches in v2)
+    Add new test cases for existing of_changeset_add_prop_*()
+
+  - Patch 15 (v1 patch 14)
+    No changes
+
+  - Patch 16 (new patches in v2)
+    Add tests for of_changeset_add_prop_bool()
+
+  - Patch 17 (v1 patch 15)
+    Update commit subject
+    Rewrap a paragraph in commit log
+
+  - Patch 18 (v1 patch 16)
+    Use PCI_IRQ_INTX instead of PCI_IRQ_LEGACY
+
+  - Patch 19 (v1 patch 17)
+    No changes
+
+Clément Léger (5):
+  mfd: syscon: Add reference counting and device managed support
+  reset: mchp: sparx5: Allow building as a module
+  reset: mchp: sparx5: Release syscon when not use anymore
+  reset: core: add get_device()/put_device on rcdev
+  reset: mchp: sparx5: set the dev member of the reset controller
+
+Herve Codina (3):
+  misc: Add support for LAN966x PCI device
+  MAINTAINERS: Add the Microchip LAN966x PCI driver entry
+  reset: mchp: sparx5: Add MCHP_LAN966X_PCI dependency
+
+ MAINTAINERS                            |   6 +
+ drivers/mfd/syscon.c                   | 145 +++++++++++++++-
+ drivers/misc/Kconfig                   |  24 +++
+ drivers/misc/Makefile                  |   3 +
+ drivers/misc/lan966x_pci.c             | 229 +++++++++++++++++++++++++
+ drivers/misc/lan966x_pci.dtso          | 167 ++++++++++++++++++
+ drivers/pci/quirks.c                   |   1 +
+ drivers/reset/Kconfig                  |   4 +-
+ drivers/reset/core.c                   |   2 +
+ drivers/reset/reset-microchip-sparx5.c |  11 +-
+ include/linux/mfd/syscon.h             |  16 ++
+ 11 files changed, 591 insertions(+), 17 deletions(-)
+ create mode 100644 drivers/misc/lan966x_pci.c
+ create mode 100644 drivers/misc/lan966x_pci.dtso
 
 -- 
-Sponsored by the NGI0 Core fund.
+2.45.0
 
 
