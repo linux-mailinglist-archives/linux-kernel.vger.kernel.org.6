@@ -1,173 +1,130 @@
-Return-Path: <linux-kernel+bounces-274312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715DB947665
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B0E94766D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8771F21B16
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5A21F21C2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E39214AD0A;
-	Mon,  5 Aug 2024 07:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1487814B064;
+	Mon,  5 Aug 2024 07:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VMIhWpOi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KNWuVkLy";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="LiBbezmn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kd9p6EOu"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBQwR8Dv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AB314A090;
-	Mon,  5 Aug 2024 07:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4619D149C68;
+	Mon,  5 Aug 2024 07:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722844506; cv=none; b=gCSaMhYLQqXEUgpHBLTV9g/u8gyPsNEjerzpNitZlsTDyyXT/R7J1Sl5Es9+UqJsApkMCakcyi8jNuvZk6TKUG0a6l61qhzp+VWEmnTDuSJd09F6jmJZgKQ+KGmKsN77UXvfdIPaHdj3/xBUtRJSUd2udGgr2r8840VwMikZc/U=
+	t=1722844651; cv=none; b=qvigliiJ9beQjhqRpbYq9Qgp4ogpu9AuZjRKLBM9/kGhB172/WfQRVY1QCdw4cxUBai/DEpJ202nYqX+W3okxd41Oa6Mn1RWuUG9LUd4nhsmQBCGhP9iYyQfVD/UVS/4wPckXAnk6qnNEqo/p1H7DUWTTSZev9lcxDwB2LrN3NA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722844506; c=relaxed/simple;
-	bh=waWaEDx97MJ1tzf5OiYJXuyqvkcr7DutDcN6EPl3ijQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mzvk0qEyXlaraGldszgk+Stq1jOHT0o2Vrqp2sCNRMCFQKN0xi2urz3Cyu30NEWJwcFZzQM6+YmSneK3M/2eTG3NhaiEtnoGaaagIk6OSDDH+R5AdVUp53eOhO9YIv5hU8DVx7NbMjADUwvWvzf2dilaLZUcqRmwKH/VwScMiRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VMIhWpOi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KNWuVkLy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=LiBbezmn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kd9p6EOu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 827ED21B85;
-	Mon,  5 Aug 2024 07:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722844503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V2f6mIciRZDBbY53v9Z2vM6BKSKBswlBvsK+h6N+i9s=;
-	b=VMIhWpOiqPtJ63Nv0PF7PLLv8foPOFLLXiX1M+rcMfsJIDf31VDZqXVUU1x5eicV4QtfkQ
-	+Q6z+tWgv/VA003s+KfDSQdd05LIrVzogxySfK358Juc9/Zp6rkTgq+9uNI4Fd1Wn/RBNT
-	o1hCHXNXihPGIjPBXOgm6oWpuCA/0fw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722844503;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V2f6mIciRZDBbY53v9Z2vM6BKSKBswlBvsK+h6N+i9s=;
-	b=KNWuVkLyxi9S0cIh6wvUCQuWiop25TVpZA9pLn4v3oZ3V9+qK6CcsIc9FU+eTsfVqausc/
-	OeB9o9Wom0nkleDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=LiBbezmn;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=kd9p6EOu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722844502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V2f6mIciRZDBbY53v9Z2vM6BKSKBswlBvsK+h6N+i9s=;
-	b=LiBbezmnInvHFubDNLeqEOaCJDKAFAeZGNzg42iE9bH72yYhLliY1UMsYc5ZZWaFqns9KL
-	qrhmZJXArlLUUSmrKwuYuSco2QAEEzVcB9+syOSOmqgPZluEfhDGIIEUDuX2bq7ZnjlDxz
-	AqNO7C8phbXXMkHuqznOebC+IA1VFII=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722844502;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V2f6mIciRZDBbY53v9Z2vM6BKSKBswlBvsK+h6N+i9s=;
-	b=kd9p6EOufJZG3PyQsrGKOwU4WfwAvgHyROi/YvrfeTiuoJeVAAQaYj1k3OhpbzQdiYY+WW
-	0EyPRuGeumwyrYCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5BF7513254;
-	Mon,  5 Aug 2024 07:55:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WTs6FVaFsGYnUgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 05 Aug 2024 07:55:02 +0000
-Date: Mon, 05 Aug 2024 09:55:40 +0200
-Message-ID: <875xsfl7yb.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Steven 'Steve' Kendall <skend@chromium.org>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: Manally set pins to correct HP firmware settings
-In-Reply-To: <20240802-hdmi-audio-hp-wrongpins-v1-1-8d8ba10d77f8@chromium.org>
-References: <20240802-hdmi-audio-hp-wrongpins-v1-1-8d8ba10d77f8@chromium.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1722844651; c=relaxed/simple;
+	bh=Geket5xHj+rV/lTGgYhI+mobx7QxgrRmSJGYSEDRkpk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y54TeAirpMelSVU1oSi7HNK07/FqLHF4NUTPp4bVQqznk/EcKOsJIEik67eN55jdGyz6kxvKNFxSzkuiQnhTmHGx6GI43/YjcQroiVBrrH/PnKH+PaesdBpe/cH7hRt8zxGu+/iJQn9RTdZ4k3sbGxULkGODVvkg0UQmmwncCow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBQwR8Dv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59266C32782;
+	Mon,  5 Aug 2024 07:57:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722844650;
+	bh=Geket5xHj+rV/lTGgYhI+mobx7QxgrRmSJGYSEDRkpk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=UBQwR8Dv5k7JtkeG4laWC2Xs0oOnozRLy+3hVYnDYQn2Ed5eCrDNKiqSjdoXT4acx
+	 1hPdTL4JDstUhQJJ7lCM7YYqnV4Qh1m6C+CK460q8siGoQwJJKzkWsjMOX4qcfmelz
+	 A6Yt57Xlk92ABmDDhigDShW3vM0pnXKBZJdZWOrnwttmRyqlw3hP4oeUm/b5LanIcX
+	 fVlLRwpf9c9nuW6b7SobjiC6lu0VN8iuGUvVZHCooHxsAnFt7ePn4zwuEV1kg+BLX4
+	 tQQRPbEFjC/HMt7oQ6FPHcOxgz1D3ofgxyEIT69W/KjqEASCYIB1LwhYcesfg0NZf1
+	 asOwN60f4YLIQ==
+X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	David Matlack <dmatlack@google.com>,
+	David Stevens <stevensd@chromium.org>
+Subject: Re: [PATCH v12 02/84] KVM: arm64: Disallow copying MTE to guest
+ memory while KVM is dirty logging
+In-Reply-To: <ZqvNekQAjs-SN-se@google.com>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-3-seanjc@google.com> <yq5aikwku25o.fsf@kernel.org>
+ <ZqvNekQAjs-SN-se@google.com>
+Date: Mon, 05 Aug 2024 13:27:18 +0530
+Message-ID: <yq5a5xsftna9.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -5.51
-X-Rspamd-Queue-Id: 827ED21B85
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Sat, 03 Aug 2024 01:50:11 +0200,
-Steven 'Steve' Kendall wrote:
-> 
-> In recent HP UEFI firmware (likely v2.15 and above, tested on 2.27),
-> these pins are incorrectly set for HDMI/DP audio. Tested on
-> HP MP9 G4 Retail System AMS. Pins for the ports set to escalating values
-> (0x70, 80, 90) to have differing default associations, though in my
-> testing setting all pins to 0x70 also worked as suggested by the first
-> link below. Tested audio with two monitors connected via DisplayPort.
-> 
-> Link: https://forum.manjaro.org/t/intel-cannon-lake-pch-cavs-conexant-cx20632-no-sound-at-hdmi-or-displayport/133494
-> Link: https://bbs.archlinux.org/viewtopic.php?id=270523
-> Signed-off-by: Steven 'Steve' Kendall <skend@chromium.org>
+Sean Christopherson <seanjc@google.com> writes:
 
-I suppose it can be rather added to force_connect_list[] table like a
-few other HP models, instead?  Something like below.
-
-Or, maybe we can apply with vendor HP (103c) in the case of Kaybelake.
-I got another report indicating a same issue, but with the ID
-103c:83e2.
+> On Thu, Aug 01, 2024, Aneesh Kumar K.V wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> 
+>> > Disallow copying MTE tags to guest memory while KVM is dirty logging, as
+>> > writing guest memory without marking the gfn as dirty in the memslot could
+>> > result in userspace failing to migrate the updated page.  Ideally (maybe?),
+>> > KVM would simply mark the gfn as dirty, but there is no vCPU to work with,
+>> > and presumably the only use case for copy MTE tags _to_ the guest is when
+>> > restoring state on the target.
+>> >
+>> > Fixes: f0376edb1ddc ("KVM: arm64: Add ioctl to fetch/store tags in a guest")
+>> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+>> > ---
+>> >  arch/arm64/kvm/guest.c | 5 +++++
+>> >  1 file changed, 5 insertions(+)
+>> >
+>> > diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+>> > index e1f0ff08836a..962f985977c2 100644
+>> > --- a/arch/arm64/kvm/guest.c
+>> > +++ b/arch/arm64/kvm/guest.c
+>> > @@ -1045,6 +1045,11 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
+>> >  
+>> >  	mutex_lock(&kvm->slots_lock);
+>> >  
+>> > +	if (write && atomic_read(&kvm->nr_memslots_dirty_logging)) {
+>> > +		ret = -EBUSY;
+>> > +		goto out;
+>> > +	}
+>> > +
+>> >
+>> 
+>> is this equivalent to kvm_follow_pfn() with kfp->pin = 1 ?
+>
+> No, gfn_to_pfn_prot() == FOLL_GET, kfp->pin == FOLL_PIN.  But that's not really
+> relevant.
+>
 
 
-thanks,
+What I meant was, should we consider mte_copy_tags_from_user() as one
+that update the page contents (even though it is updating tags) and
+use kvm_follow_pfn() with kfp->pin = 1 instead?
 
-Takashi
+Is my understanding correct in that, if we want to look up a pfn/page
+from gfn with the intent of updating the page contents, we should use
+kfp->pin == 1? 
 
--- 8< --
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -1989,6 +1989,7 @@ static int hdmi_add_cvt(struct hda_codec *codec, hda_nid_t cvt_nid)
- }
- 
- static const struct snd_pci_quirk force_connect_list[] = {
-+	SND_PCI_QUIRK(0x103c, 0x83ef, "HP MP9 G4 Retail System AMS", 1),
- 	SND_PCI_QUIRK(0x103c, 0x870f, "HP", 1),
- 	SND_PCI_QUIRK(0x103c, 0x871a, "HP", 1),
- 	SND_PCI_QUIRK(0x103c, 0x8711, "HP", 1),
+-aneesh
 
