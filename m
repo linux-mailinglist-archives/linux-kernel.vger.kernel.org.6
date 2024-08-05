@@ -1,126 +1,93 @@
-Return-Path: <linux-kernel+bounces-274746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B72947C25
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:46:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A4E947C2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF3C42858FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:46:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84EA31C21C99
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29BD3B1AC;
-	Mon,  5 Aug 2024 13:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244763C08A;
+	Mon,  5 Aug 2024 13:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekGjk3mS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEV6Eidl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24697175A5;
-	Mon,  5 Aug 2024 13:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A65A2D057;
+	Mon,  5 Aug 2024 13:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722865552; cv=none; b=AigGFl70P2iaLIe5WlvR5KAs6nDAvPtzkHwbmB1E0IB25BQEKo35DMoL8eUkDMnOlDnsS8/oQ3d9LRv966JS1Q0Ptn0YgIsHhXhfMaAf3+lfcODyrdFDsD8ynIwdVkXTpCE/XnKd2odgfol+6UkQTMV8Eg1I0/mXyV2KZ2jVcDA=
+	t=1722865781; cv=none; b=EXd6Hhc8bJQSv4u2+i3ataRDUGs+ZZNx6veDKEPdrsqJZanzUoB+1NH5axlvecynNulYg6szzypjb/ggWRoNclwthKh94ymW743xZ2AocqedGy81iZTlSTDOa802m2ouDxeXAGmM5NNHFHo5gIdcqo3T7GdeyI0AVG8BfIi3TDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722865552; c=relaxed/simple;
-	bh=keSREImhSQR78gJomMJZgGaRF0sCwHZLVIDuIOHWJ/Q=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=H4aA6WDTT7OSaagUXv9K/a80WnEH0btV8Cu/DkB6cpdzJumhgrNEzFg2xfyh+Hc5bvrDl4oy97KGTVY82dVpW+khIl7O2pRY+2Onhj2EvvlPCvSALOoWMk9Fw8JaC9JS1t6KD4VDa1RtfaKje6g2E50nBkmzQZ4Eyg7lld3WyMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekGjk3mS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50F28C32782;
-	Mon,  5 Aug 2024 13:45:47 +0000 (UTC)
+	s=arc-20240116; t=1722865781; c=relaxed/simple;
+	bh=GXKEwYWx84eMo8y58a1IILiIiCxlB+z7rkUzUmIgCp8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qkRQ09c0P7p83rpehSYFIeMwEmuW4rVcDmiGUke9gHJ81er8UWqIQ8VUFfZYpEYfaRsPOk59nlMFeElnsgMfwtqrbVPLIE1n25ZNqyQcLEFCLObK8/b1o+cXkXYjqntQ3hLmTqF3R/DiGMtlKRpB3CdUHDQ4VpicdA4YYYEx4LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEV6Eidl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48960C32782;
+	Mon,  5 Aug 2024 13:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722865551;
-	bh=keSREImhSQR78gJomMJZgGaRF0sCwHZLVIDuIOHWJ/Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ekGjk3mS5nseP6C7INEC3zE49Ivk0nWL6Ie9lCsDuqvOvphwfxKy2KWoSEk9QcPyt
-	 sXmeS3B+sBWpbXmmkj64TcFMggj3sfB5UcfsGwMKxZEqv+CkGb42o0sIt6IhOYaDoK
-	 uv2ULb/4WRc7VlQdJ5Xzs+d32wAabDe+FhkmnC8V4G1XJ0IfwFeFXZulGOfK5ROPF9
-	 Aq5KGzfymgjSPDuZFxoFiDBsXHomgTOt19pR1sNYHjdnkzwBrRLVUtYxuqBasoOHpD
-	 4bSCxB1Q3iMSkP+BP7TV9Ihjf3qkUSlCXsAWvFcw/9pYYDeu8BwbPOlTeigmXRL9vx
-	 2sAQ/K2Y1CKKg==
-Date: Mon, 5 Aug 2024 22:45:44 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, jpoimboe@kernel.org, jikos@kernel.org,
- mbenes@suse.cz, pmladek@suse.com, joe.lawrence@redhat.com,
- nathan@kernel.org, morbo@google.com, justinstitt@google.com,
- mcgrof@kernel.org, thunder.leizhen@huawei.com, kees@kernel.org,
- kernel-team@meta.com, mmaurer@google.com, samitolvanen@google.com,
- mhiramat@kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH v2 2/3] kallsyms: Add APIs to match symbol without .XXXX
- suffix.
-Message-Id: <20240805224544.e0a4277dff4ac41d867c6bc1@kernel.org>
-In-Reply-To: <20240802210836.2210140-3-song@kernel.org>
-References: <20240802210836.2210140-1-song@kernel.org>
-	<20240802210836.2210140-3-song@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1722865781;
+	bh=GXKEwYWx84eMo8y58a1IILiIiCxlB+z7rkUzUmIgCp8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AEV6Eidlzou40/NKX/flL/igGX8O8VCwym6oEldlYVeha/igiR80uOuanUbXzDCLl
+	 MPFYp1wZRDtENC6OSjY78MGiCZbgRFVjTyIOVcZaRd8iYZt5CqZhTa0Yik79KQRpXO
+	 /2XGLwNcIy4EbpWP+hQSH5jC6kYrCsNhZqtB6W7PONfEmSqorRy19hEv+/1s1oThLQ
+	 wahPLo0llwDu9YC997D/J+mOQe1OOOWzE84zGIep7GQ/ha/DZj9O0ktGT1mKQF/LSw
+	 joyyr+yZjjyl3DhSxFOXmsfcdvjopWwHzSGbr0otfmbs9aJi1kw9zYCUQmGA54+eW8
+	 n4W5jiPbSRRvQ==
+Message-ID: <8b93b8e6-b9fd-4564-b17b-514fbab55a40@kernel.org>
+Date: Mon, 5 Aug 2024 16:49:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 05/12] usb: cdns3: add quirk to platform data for
+ reset-on-resume
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Chen <peter.chen@kernel.org>,
+ Pawel Laszczak <pawell@cadence.com>, Mathias Nyman
+ <mathias.nyman@intel.com>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@kernel.org>,
+ =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
+ <20240726-s2r-cdns-v5-5-8664bfb032ac@bootlin.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240726-s2r-cdns-v5-5-8664bfb032ac@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri,  2 Aug 2024 14:08:34 -0700
-Song Liu <song@kernel.org> wrote:
 
-> With CONFIG_LTO_CLANG=y, the compiler may add suffix to function names
-> to avoid duplication. This causes confusion with users of kallsyms.
-> On one hand, users like livepatch are required to match the symbols
-> exactly. On the other hand, users like kprobe would like to match to
-> original function names.
+
+On 26/07/2024 21:17, Théo Lebrun wrote:
+> The cdns3 host role does not care about reset-on-resume. xHCI however
+> reconfigures itself in silence rather than printing a warning about a
+> resume error. Related warning example:
 > 
-> Solve this by splitting kallsyms APIs. Specifically, existing APIs now
-> should match the symbols exactly. Add two APIs that match only the part
-> without .XXXX suffix. Specifically, the following two APIs are added.
+>   [   16.017462] xhci-hcd xhci-hcd.1.auto: xHC error in resume, USBSTS 0x401, Reinit
 > 
-> 1. kallsyms_lookup_name_without_suffix()
-> 2. kallsyms_on_each_match_symbol_without_suffix()
+> Allow passing a CDNS3_RESET_ON_RESUME quirk flag from cdns3 pdata down
+> to xHCI pdata. The goal is to allow signaling about reset-on-resume
+> behavior from platform wrapper drivers.
 > 
-> These APIs will be used by kprobe.
+> When used, remote wakeup is not expected to work.
 > 
-> Also cleanup some code and update kallsyms_selftests accordingly.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
+> Acked-by: Peter Chen <peter.chen@kernel.org>
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 
-Looks good to me, but I have a nitpick. 
-
-
-> --- a/kernel/kallsyms.c
-> +++ b/kernel/kallsyms.c
-> @@ -164,30 +164,27 @@ static void cleanup_symbol_name(char *s)
->  {
->  	char *res;
->  
-> -	if (!IS_ENABLED(CONFIG_LTO_CLANG))
-> -		return;
-> -
->  	/*
->  	 * LLVM appends various suffixes for local functions and variables that
->  	 * must be promoted to global scope as part of LTO.  This can break
->  	 * hooking of static functions with kprobes. '.' is not a valid
-> -	 * character in an identifier in C. Suffixes only in LLVM LTO observed:
-> -	 * - foo.llvm.[0-9a-f]+
-> +	 * character in an identifier in C, so we can just remove the
-> +	 * suffix.
->  	 */
-> -	res = strstr(s, ".llvm.");
-> +	res = strstr(s, ".");
-
-nit: "strchr(s, '.')" ?
-
-Anyway,
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
