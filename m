@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-275460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22B9948607
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:31:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC0A4948611
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:32:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32E31B225EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:31:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CAF2B22384
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00577170849;
-	Mon,  5 Aug 2024 23:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E75176233;
+	Mon,  5 Aug 2024 23:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNCsYQGd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPCDXwNQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2D115ECEE;
-	Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C4316F0CE
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722900652; cv=none; b=SIYvjEa4ZVeFKBXrZDbfzuRSoh0YD0iEj+gHlp8oSMAKR5JVa2U+RYT30dhRoClLhKWr5s9MBBtYDZ4bNIoGei8QB/RIBPXjPX5xXUukbfURzejxVfYaI+T6qefm3V9JKTjobuRtyF5H1mfeBUajMirv4fvs722jYMRxjAO7bn8=
+	t=1722900652; cv=none; b=jPOYrF07uZ9GT1SS6A4nHeo1xYtMYf4yc3qExhGBFFAwuslCjPjPxh0T0zhtlpspL8QI0FLHFQMHiJMoNU0ISoRdgSThRUM3CXfAge2yIVvn9zUOjjwhaI1OGnw5eLiCiGBlug7t5HXf/nFahvjfkFIvduNQs58AIWsidgzdklE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722900652; c=relaxed/simple;
-	bh=kGm5LA15IuGcTFdaGxlr/xX0h027GMbeDIqGZRv/szI=;
+	bh=7GzAc4yLKdaVMivmKdQlEXCBG8tMPkeo9h1szBEqHWc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hH8yPnxYPvg5Ns/a3BNLPb02Sb9cfUCx9lfxSDqm7LEoLMEctY5oAErxDx69r06FclHqooBsr9P3MerkoZ/rFgjSIL8XXH5d7HZauLbM5OKwR2DoYXEJVqh6BiIGrDSW2b7siNj42G9Kphjs5h27KJ9wZnctS4+OdlvWpX7Op7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNCsYQGd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F030AC4AF15;
-	Mon,  5 Aug 2024 23:30:51 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=uS1uP5akxqGfJWT7AFS/bqMrxNKz11EXb9PgJmvMOruewpqE0fVvRO7FnrjORf/c4i91uRN+obew4oJA7bsShu8UVp6pFl8+xsRwMt25zUluks1k3TPq6Ogjsztuj/aIOYs49Imj8raN9j6fTCMqfofMLtsakLkPtm/bVzTu4b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPCDXwNQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 059C2C4AF1A;
+	Mon,  5 Aug 2024 23:30:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722900652;
-	bh=kGm5LA15IuGcTFdaGxlr/xX0h027GMbeDIqGZRv/szI=;
+	bh=7GzAc4yLKdaVMivmKdQlEXCBG8tMPkeo9h1szBEqHWc=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pNCsYQGdTv20TztN7Ki6TaV9wrW4JDW20yNtwQ7eGyriZwmo1kOCI6tRETgYqm0Xk
-	 2uu61mVWp1ABXiGwWu9wMb3ex+r7A+RR7W28qW/I5Kzv9MYDH6ly53MJaiEGQj7uTM
-	 kAILh2L4EOhU3R6Yz7wRX7mFXcwTgMLnTeGoJzF8a+otiNJkbUiNlhMgUT6kBdCgIZ
-	 nI5zxOcRuixs/M1IN1WyHFArFPLWUIzki6z2xlVVs3KDr2SHaSS58rO+cEBJ3u2Dmo
-	 0MttebndKHJyTWsqSvRi0PwTlD6DIipiHVUM+j6cOfheogUO0alnUPQbndYz9e09WZ
-	 3giJcq+hGeJ8A==
+	b=BPCDXwNQxqFO1HhY3m5wos9DjHcQVnIzwUgAO1Vbx6Y5vqcSD/oYFVXAt4crYEHB3
+	 0iSFEXebaF3KH4K/Wr5MSJnqsO3Jon9lXEqYJ+lqZ3qCdKvJ4Ux5UlQmbRR9NV5Zio
+	 YJ9TjJMXhKlB1nlCI2tXGmMJsQUJ64ChmYoF47L32T/K6d6iwBT9Nue4OcKKhxGBm5
+	 2LIrLENKyt8HxdjTYoDk8/uLBuZpEPGt+e8PkpLLOkPMuppuc6Rny0KS4a3n1X5MPT
+	 HBAcg4LDvF41Gbg9VO/3+HVqfWsyscox+scLauJZ4mEuCSkIfIKD9ldb2FkI4xMUU9
+	 GbYTKtdCGUxug==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DF85EC43337;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EFA5DC433E9;
 	Mon,  5 Aug 2024 23:30:51 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,35 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to wait dio completion
+Subject: Re: [f2fs-dev] [PATCH] f2fs: use f2fs_get_node_page when write inline
+ data
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <172290065191.2803.3335621723887091762.git-patchwork-notify@kernel.org>
+ <172290065197.2803.6155410196213496459.git-patchwork-notify@kernel.org>
 Date: Mon, 05 Aug 2024 23:30:51 +0000
-References: <20240627071711.1563420-1-chao@kernel.org>
-In-Reply-To: <20240627071711.1563420-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+References: <2073e8995f5444aeaf7133b87ec07de8@honor.com>
+In-Reply-To: <2073e8995f5444aeaf7133b87ec07de8@honor.com>
+To: wangzijie <wangzijie1@honor.com>
+Cc: jaegeuk@kernel.org, chao@kernel.org, bintian.wang@honor.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 27 Jun 2024 15:17:11 +0800 you wrote:
-> It should wait all existing dio write IOs before block removal,
-> otherwise, previous direct write IO may overwrite data in the
-> block which may be reused by other inode.
+On Mon, 1 Apr 2024 13:48:20 +0000 you wrote:
+> From: Zijie Wang <wangzijie1@honor.com>
+> Date: Mon, 1 Apr 2024 21:24:08 +0800
+> Subject: [PATCH] [f2fs-dev] f2fs: use f2fs_get_node_page when write inline data
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Chao Yu <chao@kernel.org>
+> We just need inode page when write inline data, use
+> f2fs_get_node_page() to get it instead of using dnode_of_data,
+> which can eliminate unnecessary struct use.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: fix to wait dio completion
-    https://git.kernel.org/jaegeuk/f2fs/c/e60776860678
+  - [f2fs-dev] f2fs: use f2fs_get_node_page when write inline data
+    https://git.kernel.org/jaegeuk/f2fs/c/aac0828ab000
 
 You are awesome, thank you!
 -- 
