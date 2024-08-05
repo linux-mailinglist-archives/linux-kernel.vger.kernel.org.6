@@ -1,700 +1,258 @@
-Return-Path: <linux-kernel+bounces-275246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4BE948255
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:31:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AACC94825B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C175D1F23AD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:31:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DD791C21DFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A8A16BE04;
-	Mon,  5 Aug 2024 19:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84A216BE0E;
+	Mon,  5 Aug 2024 19:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMSmjqKU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PxVcdz0D"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3BC15E5D1;
-	Mon,  5 Aug 2024 19:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5957116BE00
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722886299; cv=none; b=drWnksVvLXWUP4wR/7h+aAN95MAgIS04L3f0xsAaKA3jYdL0TOCwjS7w8BCilCraktLo3ESnkOIO8rQdz0fdytdRUs7VSWlpf3FkKyMkebThOyTxc/Lj71yebwisM7Nn8mCKrNHJsCQdPfWMU9nKcTEYUoixvDh7/3PxzSKRDpA=
+	t=1722886459; cv=none; b=qnOqMNC4bxZXxa8rzhXEWdvJsMhXyPAjOjLTMvuIbmJGMT/IoM/VzPI8n0KVRhgdTuVHrPEZEmL7gWDq/4u6/w+/n0bD1jnry+sTFWLyWJi4f1IWml5uHgieEF0zT87qJxo/jC+JnAfVzm7p2y6SRZfFGmIEl9kHPhSnBxp9Zek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722886299; c=relaxed/simple;
-	bh=ol4d7qEJBuRzVnF2glfToABhLckh6Igmv5mpAgc0gME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfLLAvhj9qwxVu4zSeASm/kvzPQsePzR7Nz4uiaqZR5YwQBYOY2t8uTGbHZoA5ZumUNCbGsnXyQkL+IBUbzaVKtop09K8knu9ShKrnBLuQcPYjqz9xDl7hvebNjzZKRk+XioxZjPdj6bJZI4f1Teq0IJGyFBSiewI/M1U5urEzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMSmjqKU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D22FCC32782;
-	Mon,  5 Aug 2024 19:31:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722886298;
-	bh=ol4d7qEJBuRzVnF2glfToABhLckh6Igmv5mpAgc0gME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JMSmjqKUwj2FzbhNZaFjLPYKckLn0VJMQBnGLmxgfDPeDYL7e43iVWtcwk5CcEIW+
-	 C6yvxeVCSd+oLXAKHudvopgkZgn0AduRB4sZ3qDCpAd9B58Ju8tDCF9+eBcppLc/f9
-	 mmTBTukx5tThNeVAQ0WpwopI5DImfU0C3n4ujt8x6vSd3CgHO1OruvIvsR6bjWcke3
-	 4KboyvZ6/TWygJ0FbTePZzEkn7IV2SH5cApdkAYS2QSwYS6bkTgK91MTFZyoj6Q97D
-	 L1w0Tf1aatKozo0NLpUDCEIEz7a9U9vz+e17Aym6mr6PzBxOnVtA1IvmJnNhbP4gTN
-	 ISeAKkUuhLlgw==
-Date: Mon, 5 Aug 2024 16:31:34 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
-	Song Liu <song@kernel.org>, bpf@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH] perf bpf-filter: Support multiple events properly
-Message-ID: <ZrEolmUz_2I1fmdJ@x1>
-References: <20240802173752.1014527-1-namhyung@kernel.org>
- <ZrDpsnReuIClKFnk@x1>
- <ZrEgeLkZx6uor7fg@google.com>
+	s=arc-20240116; t=1722886459; c=relaxed/simple;
+	bh=WiV+lwMm5NzYt8US5CGvOxBobzJuEhvUWC03doxEWNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fMCXQ/cpIAZY6BQWr4yleBRxm6GO5IwcJLROTCgnCa7bc4fQ8Bl+ZMAYNGDgDTKJ2H/zksgfptvXxUqdxLV7Cd2TGKX39M9hknSnlXjUjLgYJLIxYOuASICVYtbfTu0BbMbmspoPf6H7vMyPTa4OgueGWCKb2uy1J9iabkkW/TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PxVcdz0D; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so1174976566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722886456; x=1723491256; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NzT2B9YvB0hJnKZw1ow69fHG8NCpJy8+4aiEYoSj3/o=;
+        b=PxVcdz0Dw4x8Ypbfnedbgb1ML7t9lLMtphGyl1MEWKf4P77bH7ZrfTQy6yEZnfdeli
+         RPdvD4MPM4QDLCvJydeNjPVbrFetRDAQFGZbfuuzbW+bEGITAruZmnQfpP3vGP1UAll+
+         xj7jnai5C5SVu1XgBQLwfoNIr4MhN+8FunEfY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722886456; x=1723491256;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NzT2B9YvB0hJnKZw1ow69fHG8NCpJy8+4aiEYoSj3/o=;
+        b=fVOtA68hTmXmy2YkkaeDmpQT0vUteIdM6xRVFefXygpxRDcD7jeTBhs60iI54X9zuk
+         FhgvcsfhZubJq/Ta24nE+z/CrS0oL1LvsbWpuGBo+Ml+aw/fHjV7Zz0SQgXaYeN/kajY
+         nVBh/mDqYX00fTcqbKQdghHap9tUFoUqnGQ8gz9QGaa3g9RNp78eUF0nos1pFyiPwoVO
+         UmiDGYdxVUpOtB7W6zj8oZ4z9Nd4U4JV9gu9SsqccQIb7J4SKfw4fDcvXbdFgu26BRDy
+         CS5FCCJOzpsccISVxL8ySM8E8TSMgjNh13R76CU4vLVLV6iH80Y0NyJf34lhLqPCrkPg
+         NaXw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3Hmvh1FfDg4b9iK5CkrDcY19XoRvR9HoCA/gjv7AcfN0ESTqhtqVupIFABEJHrBq0vMPpzwJ4zGFcWODU5hXb+q/bGnCJgb8sgg1f
+X-Gm-Message-State: AOJu0Yx9cswx0lwpY6ow5RMwb2WPaaEYV3HQWQuPsRBXzMf+t03SPAbZ
+	A1zIdsCacooF5aLPmkhgUCX4ph2ChggTmwQOWffpXe4m3E1t/LHUSQzVksFweW44WDPXTeBxCYY
+	GBDrdtA==
+X-Google-Smtp-Source: AGHT+IG7PQJYTKvgxe0akbqoXeODMGf6Fw0c23iHOflZhw0+v9DOz29J9l3Lpk8Ipk+PCeJuLc4/Mg==
+X-Received: by 2002:a17:907:7e9e:b0:a6f:e47d:a965 with SMTP id a640c23a62f3a-a7dc502e77amr821273066b.41.1722886455496;
+        Mon, 05 Aug 2024 12:34:15 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec4a8dsm480002766b.190.2024.08.05.12.34.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 12:34:15 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7de4364ca8so262137066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:34:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVt/uH9w5WM31M0+1PSEGDbvBoPNA+GgccU4BcujnXyHAT5+UT1w8/VGu1AzwwosvK4J9QEBjKuO5D7NktLhp/ptRt45PDUz1A3SkTo
+X-Received: by 2002:a17:906:f5a6:b0:a77:b726:4fc with SMTP id
+ a640c23a62f3a-a7dc4dc193fmr950383566b.1.1722886454780; Mon, 05 Aug 2024
+ 12:34:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrEgeLkZx6uor7fg@google.com>
+References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+ <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
+ <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com> <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
+In-Reply-To: <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 5 Aug 2024 12:33:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com>
+Message-ID: <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com>
+Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
+ -4.4% regression
+To: Jeff Xu <jeffxu@google.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Pedro Falcato <pedro.falcato@gmail.com>, kernel test robot <oliver.sang@intel.com>, 
+	Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kees Cook <keescook@chromium.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Dave Hansen <dave.hansen@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Guenter Roeck <groeck@chromium.org>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: multipart/mixed; boundary="000000000000205ca7061ef4c39c"
 
-On Mon, Aug 05, 2024 at 11:56:56AM -0700, Namhyung Kim wrote:
-> On Mon, Aug 05, 2024 at 12:03:14PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Fri, Aug 02, 2024 at 10:37:52AM -0700, Namhyung Kim wrote:
-> > > So far it used tgid as a key to get the filter expressions in the
-> > > pinned filters map for regular users but it won't work well if the has
-> > > more than one filters at the same time.  Let's add the event id to the
-> > > key of the filter hash map so that it can identify the right filter
-> > > expression in the BPF program.
-> > > 
-> > > As the event can be inherited to child tasks, it should use the primary
-> > > id which belongs to the parent (original) event.  Since evsel opens the
-> > > event for multiple CPUs and tasks, it needs to maintain a separate hash
-> > > map for the event id.
-> > 
-> > I'm trying to test it now, it would be nice to have the series of events
-> > needed to test that the feature is working.
-> 
-> Sure, I used the following command.
-> 
->   ./perf record -e cycles --filter 'ip < 0xffffffff00000000' -e instructions --filter 'period < 100000' -o- ./perf test -w noploop | ./perf script -i-
+--000000000000205ca7061ef4c39c
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks
- 
-> > 
-> > Some comments below.
-> >  
-> > > In the user space, it keeps a list for the multiple evsel and release
-> > > the entries in the both hash map when it closes the event.
-> > > 
-> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > > ---
-> > >  tools/perf/util/bpf-filter.c                 | 288 ++++++++++++++++---
-> > >  tools/perf/util/bpf_skel/sample-filter.h     |  11 +-
-> > >  tools/perf/util/bpf_skel/sample_filter.bpf.c |  42 ++-
-> > >  tools/perf/util/bpf_skel/vmlinux/vmlinux.h   |   5 +
-> > >  4 files changed, 304 insertions(+), 42 deletions(-)
-> > > 
-> > > diff --git a/tools/perf/util/bpf-filter.c b/tools/perf/util/bpf-filter.c
-> > > index c5eb0b7eec19..69b147cba969 100644
-> > > --- a/tools/perf/util/bpf-filter.c
-> > > +++ b/tools/perf/util/bpf-filter.c
-> > > @@ -1,4 +1,45 @@
-> > >  /* SPDX-License-Identifier: GPL-2.0 */
-> > > +/**
-> > > + * Generic event filter for sampling events in BPF.
-> > > + *
-> > > + * The BPF program is fixed and just to read filter expressions in the 'filters'
-> > > + * map and compare the sample data in order to reject samples that don't match.
-> > > + * Each filter expression contains a sample flag (term) to compare, an operation
-> > > + * (==, >=, and so on) and a value.
-> > > + *
-> > > + * Note that each entry has an array of filter repxressions and it only succeeds
-> > 
-> >                                                   expressions
-> 
-> Oops, thanks.
-> 
-> > 
-> > > + * when all of the expressions are satisfied.  But it supports the logical OR
-> > > + * using a GROUP operation which is satisfied when any of its member expression
-> > > + * is evaluated to true.  But it doesn't allow nested GROUP operations for now.
-> > > + *
-> > > + * To support non-root users, the filters map can be loaded and pinned in the BPF
-> > > + * filesystem by root (perf record --setup-filter pin).  Then each user will get
-> > > + * a new entry in the shared filters map to fill the filter expressions.  And the
-> > > + * BPF program will find the filter using (task-id, event-id) as a key.
-> > > + *
-> > > + * The pinned BPF object (shared for regular users) has:
-> > > + *
-> > > + *                  event_hash                   |
-> > > + *                  |        |                   |
-> > > + *   event->id ---> |   id   | ---+   idx_hash   |     filters
-> > > + *                  |        |    |   |      |   |    |       |
-> > > + *                  |  ....  |    +-> |  idx | --+--> | exprs | --->  perf_bpf_filter_entry[]
-> > > + *                                |   |      |   |    |       |               .op
-> > > + *   task id (tgid) --------------+   | .... |   |    |  ...  |               .term (+ part)
-> > > + *                                               |                            .value
-> > > + *                                               |
-> > > + *   ======= (root would skip this part) ========                     (compares it in a loop)
-> > > + *
-> > > + * This is used for per-task use cases while system-wide profiling (normally from
-> > > + * root user) uses a separate copy of the program and the maps for its own so that
-> > > + * it can proceed even if a lot of non-root users are using the filters at the
-> > > + * same time.  In this case the filters map has a single entry and no need to use
-> > > + * the hash maps to get the index (key) of the filters map (IOW it's always 0).
-> > > + *
-> > > + * The BPF program returns 1 to accept the sample or 0 to drop it.
-> > > + * The 'dropped' map is to keep how many samples it dropped by the filter and
-> > > + * it will be reported as lost samples.
-> > 
-> > I think there is value in reporting how many were filtered out, I'm just
-> > unsure about reporting it as "lost" samples, as lost has another
-> > semantic associated, i.e. ring buffer was full or couldn't process it
-> > for some other resource starvation issue, no?
-> 
-> Then we need a way to save the information.  It could be a new record
-> type (PERF_RECORD_DROPPED_SAMPLES), a new misc flag in the lost samples
+On Mon, 5 Aug 2024 at 11:55, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> So please consider this a "maybe something like this" patch, but that
+> 'arch_unmap()' really is pretty nasty
 
-I guess "PERF_RECORD_FILTERED_SAMPLES" would be better, more precise,
-wdyt?
+Actually, the whole powerpc vdso code confused me. It's not the vvar
+thing that wants this close thing, it's the other ones that have the
+remap thing.
 
-> record or a header field.  I prefer the misc flag.
+.. and there were two of those error cases that needed to reset the
+vdso pointer.
 
-I think we can have both filtered and lost samples, so I would prefer
-the new record type.
- 
-> Also there should be a separate PERF_RECORD_LOST record in the middle
-> when there's actual issue.  Without that we can say it's from the BPF.
+That all shows just how carefully I was reading this code.
 
-Right, disambiguating filtered from lost samples is indeed useful.
+New version - still untested, but now I've read through it one more
+time - attached.
 
-- Arnaldo
- 
-> Thanks,
-> Namhyung
-> 
-> > 
-> > > + */
-> > >  #include <stdlib.h>
-> > >  #include <fcntl.h>
-> > >  #include <sys/ioctl.h>
-> > > @@ -6,6 +47,7 @@
-> > >  
-> > >  #include <bpf/bpf.h>
-> > >  #include <linux/err.h>
-> > > +#include <linux/list.h>
-> > >  #include <api/fs/fs.h>
-> > >  #include <internal/xyarray.h>
-> > >  #include <perf/threadmap.h>
-> > > @@ -27,7 +69,14 @@
-> > >  #define PERF_SAMPLE_TYPE(_st, opt)	__PERF_SAMPLE_TYPE(PBF_TERM_##_st, PERF_SAMPLE_##_st, opt)
-> > >  
-> > >  /* Index in the pinned 'filters' map.  Should be released after use. */
-> > > -static int pinned_filter_idx = -1;
-> > > +struct pinned_filter_idx {
-> > > +	struct list_head list;
-> > > +	struct evsel *evsel;
-> > > +	u64 event_id;
-> > > +	int hash_idx;
-> > > +};
-> > > +
-> > > +static LIST_HEAD(pinned_filters);
-> > >  
-> > >  static const struct perf_sample_info {
-> > >  	enum perf_bpf_filter_term type;
-> > > @@ -175,24 +224,145 @@ static int convert_to_tgid(int tid)
-> > >  	return tgid;
-> > >  }
-> > >  
-> > > -static int update_pid_hash(struct evsel *evsel, struct perf_bpf_filter_entry *entry)
-> > > +/*
-> > > + * The event might be closed already so we cannot get the list of ids using FD
-> > > + * like in create_event_hash() below, let's iterate the event_hash map and
-> > > + * delete all entries that have the event id as a key.
-> > > + */
-> > > +static void destroy_event_hash(u64 event_id)
-> > > +{
-> > > +	int fd;
-> > > +	u64 key, *prev_key = NULL;
-> > > +	int num = 0, alloced = 32;
-> > > +	u64 *ids = calloc(alloced, sizeof(*ids));
-> > > +
-> > > +	if (ids == NULL)
-> > > +		return;
-> > > +
-> > > +	fd = get_pinned_fd("event_hash");
-> > > +	if (fd < 0) {
-> > > +		pr_debug("cannot get fd for 'event_hash' map\n");
-> > > +		free(ids);
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	/* Iterate the whole map to collect keys for the event id. */
-> > > +	while (!bpf_map_get_next_key(fd, prev_key, &key)) {
-> > > +		u64 id;
-> > > +
-> > > +		if (bpf_map_lookup_elem(fd, &key, &id) == 0 && id == event_id) {
-> > > +			if (num == alloced) {
-> > > +				void *tmp;
-> > > +
-> > > +				alloced *= 2;
-> > > +				tmp = realloc(ids, alloced * sizeof(*ids));
-> > > +				if (tmp == NULL)
-> > > +					break;
-> > > +
-> > > +				ids = tmp;
-> > > +			}
-> > > +			ids[num++] = key;
-> > > +		}
-> > > +
-> > > +		prev_key = &key;
-> > > +	}
-> > > +
-> > > +	for (int i = 0; i < num; i++)
-> > > +		bpf_map_delete_elem(fd, &ids[i]);
-> > > +
-> > > +	free(ids);
-> > > +	close(fd);
-> > > +}
-> > > +
-> > > +/*
-> > > + * Return a representative id if ok, or 0 for failures.
-> > > + *
-> > > + * The perf_event->id is good for this, but an evsel would have multiple
-> > > + * instances for CPUs and tasks.  So pick up the first id and setup a hash
-> > > + * from id of each instance to the representative id (the first one).
-> > > + */
-> > > +static u64 create_event_hash(struct evsel *evsel)
-> > > +{
-> > > +	int x, y, fd;
-> > > +	u64 the_id = 0, id;
-> > > +
-> > > +	fd = get_pinned_fd("event_hash");
-> > > +	if (fd < 0) {
-> > > +		pr_err("cannot get fd for 'event_hash' map\n");
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	for (x = 0; x < xyarray__max_x(evsel->core.fd); x++) {
-> > > +		for (y = 0; y < xyarray__max_y(evsel->core.fd); y++) {
-> > > +			int ret = ioctl(FD(evsel, x, y), PERF_EVENT_IOC_ID, &id);
-> > > +
-> > > +			if (ret < 0) {
-> > > +				pr_err("Failed to get the event id\n");
-> > > +				if (the_id)
-> > > +					destroy_event_hash(the_id);
-> > > +				return 0;
-> > > +			}
-> > > +
-> > > +			if (the_id == 0)
-> > > +				the_id = id;
-> > > +
-> > > +			bpf_map_update_elem(fd, &id, &the_id, BPF_ANY);
-> > > +		}
-> > > +	}
-> > > +
-> > > +	close(fd);
-> > > +	return the_id;
-> > > +}
-> > > +
-> > > +static void destroy_idx_hash(struct pinned_filter_idx *pfi)
-> > > +{
-> > > +	int fd, nr;
-> > > +	struct perf_thread_map *threads;
-> > > +
-> > > +	fd = get_pinned_fd("filters");
-> > > +	bpf_map_delete_elem(fd, &pfi->hash_idx);
-> > > +	close(fd);
-> > > +
-> > > +	if (pfi->event_id)
-> > > +		destroy_event_hash(pfi->event_id);
-> > > +
-> > > +	threads = perf_evsel__threads(&pfi->evsel->core);
-> > > +	if (threads == NULL)
-> > > +		return;
-> > > +
-> > > +	fd = get_pinned_fd("idx_hash");
-> > > +	nr = perf_thread_map__nr(threads);
-> > > +	for (int i = 0; i < nr; i++) {
-> > > +		/* The target task might be dead already, just try the pid */
-> > > +		struct idx_hash_key key = {
-> > > +			.evt_id = pfi->event_id,
-> > > +			.tgid = perf_thread_map__pid(threads, i),
-> > > +		};
-> > > +
-> > > +		bpf_map_delete_elem(fd, &key);
-> > > +	}
-> > > +	close(fd);
-> > > +}
-> > > +
-> > > +/* Maintain a hashmap from (tgid, event-id) to filter index */
-> > > +static int create_idx_hash(struct evsel *evsel, struct perf_bpf_filter_entry *entry)
-> > >  {
-> > >  	int filter_idx;
-> > >  	int fd, nr, last;
-> > > +	u64 event_id = 0;
-> > > +	struct pinned_filter_idx *pfi = NULL;
-> > >  	struct perf_thread_map *threads;
-> > >  
-> > >  	fd = get_pinned_fd("filters");
-> > >  	if (fd < 0) {
-> > > -		pr_debug("cannot get fd for 'filters' map\n");
-> > > +		pr_err("cannot get fd for 'filters' map\n");
-> > >  		return fd;
-> > >  	}
-> > >  
-> > >  	/* Find the first available entry in the filters map */
-> > >  	for (filter_idx = 0; filter_idx < MAX_FILTERS; filter_idx++) {
-> > > -		if (bpf_map_update_elem(fd, &filter_idx, entry, BPF_NOEXIST) == 0) {
-> > > -			pinned_filter_idx = filter_idx;
-> > > +		if (bpf_map_update_elem(fd, &filter_idx, entry, BPF_NOEXIST) == 0)
-> > >  			break;
-> > > -		}
-> > >  	}
-> > >  	close(fd);
-> > >  
-> > > @@ -201,22 +371,44 @@ static int update_pid_hash(struct evsel *evsel, struct perf_bpf_filter_entry *en
-> > >  		return -EBUSY;
-> > >  	}
-> > >  
-> > > +	pfi = zalloc(sizeof(*pfi));
-> > > +	if (pfi == NULL) {
-> > > +		pr_err("Cannot save pinned filter index\n");
-> > > +		goto err;
-> > > +	}
-> > > +
-> > > +	pfi->evsel = evsel;
-> > > +	pfi->hash_idx = filter_idx;
-> > > +
-> > > +	event_id = create_event_hash(evsel);
-> > > +	if (event_id == 0) {
-> > > +		pr_err("Cannot update the event hash\n");
-> > > +		goto err;
-> > > +	}
-> > > +
-> > > +	pfi->event_id = event_id;
-> > > +
-> > >  	threads = perf_evsel__threads(&evsel->core);
-> > >  	if (threads == NULL) {
-> > >  		pr_err("Cannot get the thread list of the event\n");
-> > > -		return -EINVAL;
-> > > +		goto err;
-> > >  	}
-> > >  
-> > >  	/* save the index to a hash map */
-> > > -	fd = get_pinned_fd("pid_hash");
-> > > -	if (fd < 0)
-> > > -		return fd;
-> > > +	fd = get_pinned_fd("idx_hash");
-> > > +	if (fd < 0) {
-> > > +		pr_err("cannot get fd for 'idx_hash' map\n");
-> > > +		goto err;
-> > > +	}
-> > >  
-> > >  	last = -1;
-> > >  	nr = perf_thread_map__nr(threads);
-> > >  	for (int i = 0; i < nr; i++) {
-> > >  		int pid = perf_thread_map__pid(threads, i);
-> > >  		int tgid;
-> > > +		struct idx_hash_key key = {
-> > > +			.evt_id = event_id,
-> > > +		};
-> > >  
-> > >  		/* it actually needs tgid, let's get tgid from /proc. */
-> > >  		tgid = convert_to_tgid(pid);
-> > > @@ -228,16 +420,25 @@ static int update_pid_hash(struct evsel *evsel, struct perf_bpf_filter_entry *en
-> > >  		if (tgid == last)
-> > >  			continue;
-> > >  		last = tgid;
-> > > +		key.tgid = tgid;
-> > >  
-> > > -		if (bpf_map_update_elem(fd, &tgid, &filter_idx, BPF_ANY) < 0) {
-> > > -			pr_err("Failed to update the pid hash\n");
-> > > +		if (bpf_map_update_elem(fd, &key, &filter_idx, BPF_ANY) < 0) {
-> > > +			pr_err("Failed to update the idx_hash\n");
-> > >  			close(fd);
-> > > -			return -1;
-> > > +			goto err;
-> > >  		}
-> > > -		pr_debug("pid hash: %d -> %d\n", tgid, filter_idx);
-> > > +		pr_debug("bpf-filter: idx_hash (task=%d,%s) -> %d\n",
-> > > +			 tgid, evsel__name(evsel), filter_idx);
-> > >  	}
-> > > +
-> > > +	list_add(&pfi->list, &pinned_filters);
-> > >  	close(fd);
-> > > -	return 0;
-> > > +	return filter_idx;
-> > > +
-> > > +err:
-> > > +	destroy_idx_hash(pfi);
-> > > +	free(pfi);
-> > > +	return -1;
-> > >  }
-> > >  
-> > >  int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
-> > > @@ -247,7 +448,7 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
-> > >  	struct bpf_program *prog;
-> > >  	struct bpf_link *link;
-> > >  	struct perf_bpf_filter_entry *entry;
-> > > -	bool needs_pid_hash = !target__has_cpu(target) && !target->uid_str;
-> > > +	bool needs_idx_hash = !target__has_cpu(target) && !target->uid_str;
-> > >  
-> > >  	entry = calloc(MAX_FILTERS, sizeof(*entry));
-> > >  	if (entry == NULL)
-> > > @@ -259,11 +460,11 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
-> > >  		goto err;
-> > >  	}
-> > >  
-> > > -	if (needs_pid_hash && geteuid() != 0) {
-> > > +	if (needs_idx_hash && geteuid() != 0) {
-> > >  		int zero = 0;
-> > >  
-> > >  		/* The filters map is shared among other processes */
-> > > -		ret = update_pid_hash(evsel, entry);
-> > > +		ret = create_idx_hash(evsel, entry);
-> > >  		if (ret < 0)
-> > >  			goto err;
-> > >  
-> > > @@ -274,7 +475,7 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
-> > >  		}
-> > >  
-> > >  		/* Reset the lost count */
-> > > -		bpf_map_update_elem(fd, &pinned_filter_idx, &zero, BPF_ANY);
-> > > +		bpf_map_update_elem(fd, &ret, &zero, BPF_ANY);
-> > >  		close(fd);
-> > >  
-> > >  		fd = get_pinned_fd("perf_sample_filter");
-> > > @@ -288,6 +489,7 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
-> > >  				ret = ioctl(FD(evsel, x, y), PERF_EVENT_IOC_SET_BPF, fd);
-> > >  				if (ret < 0) {
-> > >  					pr_err("Failed to attach perf sample-filter\n");
-> > > +					close(fd);
-> > >  					goto err;
-> > >  				}
-> > >  			}
-> > > @@ -332,6 +534,15 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
-> > >  
-> > >  err:
-> > >  	free(entry);
-> > > +	if (!list_empty(&pinned_filters)) {
-> > > +		struct pinned_filter_idx *pfi, *tmp;
-> > > +
-> > > +		list_for_each_entry_safe(pfi, tmp, &pinned_filters, list) {
-> > > +			destroy_idx_hash(pfi);
-> > > +			list_del(&pfi->list);
-> > 
-> > 		         list_del_init()? But I see you're not using it
-> > in other places,like in perf_bpf_filter__destroy().
-> > 
-> > > +			free(pfi);
-> > > +		}
-> > > +	}
-> > >  	sample_filter_bpf__destroy(skel);
-> > >  	return ret;
-> > >  }
-> > > @@ -339,6 +550,7 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
-> > >  int perf_bpf_filter__destroy(struct evsel *evsel)
-> > >  {
-> > >  	struct perf_bpf_filter_expr *expr, *tmp;
-> > > +	struct pinned_filter_idx *pfi, *pos;
-> > >  
-> > >  	list_for_each_entry_safe(expr, tmp, &evsel->bpf_filters, list) {
-> > >  		list_del(&expr->list);
-> > > @@ -346,14 +558,11 @@ int perf_bpf_filter__destroy(struct evsel *evsel)
-> > >  	}
-> > >  	sample_filter_bpf__destroy(evsel->bpf_skel);
-> > >  
-> > > -	if (pinned_filter_idx >= 0) {
-> > > -		int fd = get_pinned_fd("filters");
-> > > -
-> > > -		bpf_map_delete_elem(fd, &pinned_filter_idx);
-> > > -		pinned_filter_idx = -1;
-> > > -		close(fd);
-> > > +	list_for_each_entry_safe(pfi, pos, &pinned_filters, list) {
-> > > +		destroy_idx_hash(pfi);
-> > > +		list_del(&pfi->list);
-> > > +		free(pfi);
-> > >  	}
-> > > -
-> > >  	return 0;
-> > >  }
-> > >  
-> > > @@ -364,10 +573,20 @@ u64 perf_bpf_filter__lost_count(struct evsel *evsel)
-> > >  	if (list_empty(&evsel->bpf_filters))
-> > >  		return 0;
-> > >  
-> > > -	if (pinned_filter_idx >= 0) {
-> > > +	if (!list_empty(&pinned_filters)) {
-> > >  		int fd = get_pinned_fd("dropped");
-> > > +		struct pinned_filter_idx *pfi;
-> > > +
-> > > +		if (fd < 0)
-> > > +			return 0;
-> > >  
-> > > -		bpf_map_lookup_elem(fd, &pinned_filter_idx, &count);
-> > > +		list_for_each_entry(pfi, &pinned_filters, list) {
-> > > +			if (pfi->evsel != evsel)
-> > > +				continue;
-> > > +
-> > > +			bpf_map_lookup_elem(fd, &pfi->hash_idx, &count);
-> > > +			break;
-> > > +		}
-> > >  		close(fd);
-> > >  	} else if (evsel->bpf_skel) {
-> > >  		struct sample_filter_bpf *skel = evsel->bpf_skel;
-> > > @@ -429,9 +648,10 @@ int perf_bpf_filter__pin(void)
-> > >  
-> > >  	/* pinned program will use pid-hash */
-> > >  	bpf_map__set_max_entries(skel->maps.filters, MAX_FILTERS);
-> > > -	bpf_map__set_max_entries(skel->maps.pid_hash, MAX_PIDS);
-> > > +	bpf_map__set_max_entries(skel->maps.event_hash, MAX_EVT_HASH);
-> > > +	bpf_map__set_max_entries(skel->maps.idx_hash, MAX_IDX_HASH);
-> > >  	bpf_map__set_max_entries(skel->maps.dropped, MAX_FILTERS);
-> > > -	skel->rodata->use_pid_hash = 1;
-> > > +	skel->rodata->use_idx_hash = 1;
-> > >  
-> > >  	if (sample_filter_bpf__load(skel) < 0) {
-> > >  		ret = -errno;
-> > > @@ -484,8 +704,12 @@ int perf_bpf_filter__pin(void)
-> > >  		pr_debug("chmod for filters failed\n");
-> > >  		ret = -errno;
-> > >  	}
-> > > -	if (fchmodat(dir_fd, "pid_hash", 0666, 0) < 0) {
-> > > -		pr_debug("chmod for pid_hash failed\n");
-> > > +	if (fchmodat(dir_fd, "event_hash", 0666, 0) < 0) {
-> > > +		pr_debug("chmod for event_hash failed\n");
-> > > +		ret = -errno;
-> > > +	}
-> > > +	if (fchmodat(dir_fd, "idx_hash", 0666, 0) < 0) {
-> > > +		pr_debug("chmod for idx_hash failed\n");
-> > >  		ret = -errno;
-> > >  	}
-> > >  	if (fchmodat(dir_fd, "dropped", 0666, 0) < 0) {
-> > > diff --git a/tools/perf/util/bpf_skel/sample-filter.h b/tools/perf/util/bpf_skel/sample-filter.h
-> > > index e666bfd5fbdd..5f0c8e4e83d3 100644
-> > > --- a/tools/perf/util/bpf_skel/sample-filter.h
-> > > +++ b/tools/perf/util/bpf_skel/sample-filter.h
-> > > @@ -1,8 +1,9 @@
-> > >  #ifndef PERF_UTIL_BPF_SKEL_SAMPLE_FILTER_H
-> > >  #define PERF_UTIL_BPF_SKEL_SAMPLE_FILTER_H
-> > >  
-> > > -#define MAX_FILTERS  64
-> > > -#define MAX_PIDS     (16 * 1024)
-> > > +#define MAX_FILTERS   64
-> > > +#define MAX_IDX_HASH  (16 * 1024)
-> > > +#define MAX_EVT_HASH  (1024 * 1024)
-> > >  
-> > >  /* supported filter operations */
-> > >  enum perf_bpf_filter_op {
-> > > @@ -62,4 +63,10 @@ struct perf_bpf_filter_entry {
-> > >  	__u64 value;
-> > >  };
-> > >  
-> > > +struct idx_hash_key {
-> > > +	__u64 evt_id;
-> > > +	__u32 tgid;
-> > > +	__u32 reserved;
-> > > +};
-> > > +
-> > >  #endif /* PERF_UTIL_BPF_SKEL_SAMPLE_FILTER_H */
-> > > diff --git a/tools/perf/util/bpf_skel/sample_filter.bpf.c b/tools/perf/util/bpf_skel/sample_filter.bpf.c
-> > > index 4c75354b84fd..4872a16eedfd 100644
-> > > --- a/tools/perf/util/bpf_skel/sample_filter.bpf.c
-> > > +++ b/tools/perf/util/bpf_skel/sample_filter.bpf.c
-> > > @@ -15,13 +15,25 @@ struct filters {
-> > >  	__uint(max_entries, 1);
-> > >  } filters SEC(".maps");
-> > >  
-> > > -/* tgid to filter index */
-> > > -struct pid_hash {
-> > > +/*
-> > > + * An evsel has multiple instances for each CPU or task but we need a single
-> > > + * id to be used as a key for the idx_hash.  This hashmap would translate the
-> > > + * instance's ID to a representative ID.
-> > > + */
-> > > +struct event_hash {
-> > >  	__uint(type, BPF_MAP_TYPE_HASH);
-> > > -	__type(key, int);
-> > > +	__type(key, __u64);
-> > > +	__type(value, __u64);
-> > > +	__uint(max_entries, 1);
-> > > +} event_hash SEC(".maps");
-> > > +
-> > > +/* tgid/evtid to filter index */
-> > > +struct idx_hash {
-> > > +	__uint(type, BPF_MAP_TYPE_HASH);
-> > > +	__type(key, struct idx_hash_key);
-> > >  	__type(value, int);
-> > >  	__uint(max_entries, 1);
-> > > -} pid_hash SEC(".maps");
-> > > +} idx_hash SEC(".maps");
-> > >  
-> > >  /* tgid to filter index */
-> > >  struct lost_count {
-> > > @@ -31,7 +43,7 @@ struct lost_count {
-> > >  	__uint(max_entries, 1);
-> > >  } dropped SEC(".maps");
-> > >  
-> > > -volatile const int use_pid_hash;
-> > > +volatile const int use_idx_hash;
-> > >  
-> > >  void *bpf_cast_to_kern_ctx(void *) __ksym;
-> > >  
-> > > @@ -202,11 +214,25 @@ int perf_sample_filter(void *ctx)
-> > >  
-> > >  	k = 0;
-> > >  
-> > > -	if (use_pid_hash) {
-> > > -		int tgid = bpf_get_current_pid_tgid() >> 32;
-> > > +	if (use_idx_hash) {
-> > > +		struct idx_hash_key key = {
-> > > +			.tgid = bpf_get_current_pid_tgid() >> 32,
-> > > +		};
-> > > +		__u64 eid = kctx->event->id;
-> > > +		__u64 *key_id;
-> > >  		int *idx;
-> > >  
-> > > -		idx = bpf_map_lookup_elem(&pid_hash, &tgid);
-> > > +		/* get primary_event_id */
-> > > +		if (kctx->event->parent)
-> > > +			eid = kctx->event->parent->id;
-> > > +
-> > > +		key_id = bpf_map_lookup_elem(&event_hash, &eid);
-> > > +		if (key_id == NULL)
-> > > +			goto drop;
-> > > +
-> > > +		key.evt_id = *key_id;
-> > > +
-> > > +		idx = bpf_map_lookup_elem(&idx_hash, &key);
-> > >  		if (idx)
-> > >  			k = *idx;
-> > >  		else
-> > > diff --git a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
-> > > index e9028235d771..05edc7d28151 100644
-> > > --- a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
-> > > +++ b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
-> > > @@ -174,6 +174,11 @@ struct perf_sample_data {
-> > >  	u64			 code_page_size;
-> > >  } __attribute__((__aligned__(64))) __attribute__((preserve_access_index));
-> > >  
-> > > +struct perf_event {
-> > > +	struct perf_event	*parent;
-> > > +	u64			id;
-> > > +} __attribute__((preserve_access_index));
-> > > +
-> > >  struct bpf_perf_event_data_kern {
-> > >  	struct perf_sample_data *data;
-> > >  	struct perf_event	*event;
-> > > -- 
-> > > 2.46.0.rc2.264.g509ed76dc8-goog
+                Linus
+
+--000000000000205ca7061ef4c39c
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lzhe3lwz0>
+X-Attachment-Id: f_lzhe3lwz0
+
+IGFyY2gvcG93ZXJwYy9pbmNsdWRlL2FzbS9tbXVfY29udGV4dC5oIHwgIDkgLS0tLS0tLS0tCiBh
+cmNoL3Bvd2VycGMva2VybmVsL3Zkc28uYyAgICAgICAgICAgICB8IDE3ICsrKysrKysrKysrKysr
+Ky0tCiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9tbXVfY29udGV4dC5oICAgICB8ICA1IC0tLS0tCiBp
+bmNsdWRlL2FzbS1nZW5lcmljL21tX2hvb2tzLmggICAgICAgICB8IDExICsrKy0tLS0tLS0tCiBp
+bmNsdWRlL2xpbnV4L21tX3R5cGVzLmggICAgICAgICAgICAgICB8ICAyICsrCiBtbS9tbWFwLmMg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IDE1ICsrKysrKy0tLS0tLS0tLQogNiBmaWxl
+cyBjaGFuZ2VkLCAyNiBpbnNlcnRpb25zKCspLCAzMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
+YS9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vbW11X2NvbnRleHQuaCBiL2FyY2gvcG93ZXJwYy9p
+bmNsdWRlL2FzbS9tbXVfY29udGV4dC5oCmluZGV4IDM3YmZmYTBmNzkxOC4uYTMzNGExMzY4ODQ4
+IDEwMDY0NAotLS0gYS9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vbW11X2NvbnRleHQuaAorKysg
+Yi9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vbW11X2NvbnRleHQuaApAQCAtMjYwLDE1ICsyNjAs
+NiBAQCBzdGF0aWMgaW5saW5lIHZvaWQgZW50ZXJfbGF6eV90bGIoc3RydWN0IG1tX3N0cnVjdCAq
+bW0sCiAKIGV4dGVybiB2b2lkIGFyY2hfZXhpdF9tbWFwKHN0cnVjdCBtbV9zdHJ1Y3QgKm1tKTsK
+IAotc3RhdGljIGlubGluZSB2b2lkIGFyY2hfdW5tYXAoc3RydWN0IG1tX3N0cnVjdCAqbW0sCi0J
+CQkgICAgICB1bnNpZ25lZCBsb25nIHN0YXJ0LCB1bnNpZ25lZCBsb25nIGVuZCkKLXsKLQl1bnNp
+Z25lZCBsb25nIHZkc29fYmFzZSA9ICh1bnNpZ25lZCBsb25nKW1tLT5jb250ZXh0LnZkc287Ci0K
+LQlpZiAoc3RhcnQgPD0gdmRzb19iYXNlICYmIHZkc29fYmFzZSA8IGVuZCkKLQkJbW0tPmNvbnRl
+eHQudmRzbyA9IE5VTEw7Ci19Ci0KICNpZmRlZiBDT05GSUdfUFBDX01FTV9LRVlTCiBib29sIGFy
+Y2hfdm1hX2FjY2Vzc19wZXJtaXR0ZWQoc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEsIGJvb2wg
+d3JpdGUsCiAJCQkgICAgICAgYm9vbCBleGVjdXRlLCBib29sIGZvcmVpZ24pOwpkaWZmIC0tZ2l0
+IGEvYXJjaC9wb3dlcnBjL2tlcm5lbC92ZHNvLmMgYi9hcmNoL3Bvd2VycGMva2VybmVsL3Zkc28u
+YwppbmRleCA3YTJmZjkwMTBmMTcuLjZmYTA0MWE2NjkwYSAxMDA2NDQKLS0tIGEvYXJjaC9wb3dl
+cnBjL2tlcm5lbC92ZHNvLmMKKysrIGIvYXJjaC9wb3dlcnBjL2tlcm5lbC92ZHNvLmMKQEAgLTgx
+LDYgKzgxLDEzIEBAIHN0YXRpYyBpbnQgdmRzbzY0X21yZW1hcChjb25zdCBzdHJ1Y3Qgdm1fc3Bl
+Y2lhbF9tYXBwaW5nICpzbSwgc3RydWN0IHZtX2FyZWFfc3RyCiAJcmV0dXJuIHZkc29fbXJlbWFw
+KHNtLCBuZXdfdm1hLCAmdmRzbzY0X2VuZCAtICZ2ZHNvNjRfc3RhcnQpOwogfQogCitzdGF0aWMg
+aW50IHZ2YXJfY2xvc2UoY29uc3Qgc3RydWN0IHZtX3NwZWNpYWxfbWFwcGluZyAqc20sCisJCSAg
+ICAgIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQoreworCXN0cnVjdCBtbV9zdHJ1Y3QgKm1t
+ID0gdm1hLT52bV9tbTsKKwltbS0+Y29udGV4dC52ZHNvID0gTlVMTDsKK30KKwogc3RhdGljIHZt
+X2ZhdWx0X3QgdnZhcl9mYXVsdChjb25zdCBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBwaW5nICpzbSwK
+IAkJCSAgICAgc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEsIHN0cnVjdCB2bV9mYXVsdCAqdm1m
+KTsKIApAQCAtOTIsMTEgKzk5LDEzIEBAIHN0YXRpYyBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBwaW5n
+IHZ2YXJfc3BlYyBfX3JvX2FmdGVyX2luaXQgPSB7CiBzdGF0aWMgc3RydWN0IHZtX3NwZWNpYWxf
+bWFwcGluZyB2ZHNvMzJfc3BlYyBfX3JvX2FmdGVyX2luaXQgPSB7CiAJLm5hbWUgPSAiW3Zkc29d
+IiwKIAkubXJlbWFwID0gdmRzbzMyX21yZW1hcCwKKwkuY2xvc2UgPSB2dmFyX2Nsb3NlLAogfTsK
+IAogc3RhdGljIHN0cnVjdCB2bV9zcGVjaWFsX21hcHBpbmcgdmRzbzY0X3NwZWMgX19yb19hZnRl
+cl9pbml0ID0gewogCS5uYW1lID0gIlt2ZHNvXSIsCiAJLm1yZW1hcCA9IHZkc282NF9tcmVtYXAs
+CisJLmNsb3NlID0gdnZhcl9jbG9zZSwKIH07CiAKICNpZmRlZiBDT05GSUdfVElNRV9OUwpAQCAt
+MjA3LDggKzIxNiwxMCBAQCBzdGF0aWMgaW50IF9fYXJjaF9zZXR1cF9hZGRpdGlvbmFsX3BhZ2Vz
+KHN0cnVjdCBsaW51eF9iaW5wcm0gKmJwcm0sIGludCB1c2VzX2ludAogCXZtYSA9IF9pbnN0YWxs
+X3NwZWNpYWxfbWFwcGluZyhtbSwgdmRzb19iYXNlLCB2dmFyX3NpemUsCiAJCQkJICAgICAgIFZN
+X1JFQUQgfCBWTV9NQVlSRUFEIHwgVk1fSU8gfAogCQkJCSAgICAgICBWTV9ET05URFVNUCB8IFZN
+X1BGTk1BUCwgJnZ2YXJfc3BlYyk7Ci0JaWYgKElTX0VSUih2bWEpKQorCWlmIChJU19FUlIodm1h
+KSkgeworCQltbS0+Y29udGV4dC52ZHNvID0gTlVMTDsKIAkJcmV0dXJuIFBUUl9FUlIodm1hKTsK
+Kwl9CiAKIAkvKgogCSAqIG91ciB2bWEgZmxhZ3MgZG9uJ3QgaGF2ZSBWTV9XUklURSBzbyBieSBk
+ZWZhdWx0LCB0aGUgcHJvY2VzcyBpc24ndApAQCAtMjIzLDggKzIzNCwxMCBAQCBzdGF0aWMgaW50
+IF9fYXJjaF9zZXR1cF9hZGRpdGlvbmFsX3BhZ2VzKHN0cnVjdCBsaW51eF9iaW5wcm0gKmJwcm0s
+IGludCB1c2VzX2ludAogCXZtYSA9IF9pbnN0YWxsX3NwZWNpYWxfbWFwcGluZyhtbSwgdmRzb19i
+YXNlICsgdnZhcl9zaXplLCB2ZHNvX3NpemUsCiAJCQkJICAgICAgIFZNX1JFQUQgfCBWTV9FWEVD
+IHwgVk1fTUFZUkVBRCB8CiAJCQkJICAgICAgIFZNX01BWVdSSVRFIHwgVk1fTUFZRVhFQywgdmRz
+b19zcGVjKTsKLQlpZiAoSVNfRVJSKHZtYSkpCisJaWYgKElTX0VSUih2bWEpKSB7CisJCW1tLT5j
+b250ZXh0LnZkc28gPSBOVUxMOwogCQlkb19tdW5tYXAobW0sIHZkc29fYmFzZSwgdnZhcl9zaXpl
+LCBOVUxMKTsKKwl9CiAKIAlyZXR1cm4gUFRSX0VSUl9PUl9aRVJPKHZtYSk7CiB9CmRpZmYgLS1n
+aXQgYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9tbXVfY29udGV4dC5oIGIvYXJjaC94ODYvaW5jbHVk
+ZS9hc20vbW11X2NvbnRleHQuaAppbmRleCA4ZGFjNDVhMmM3ZmMuLjgwZjJhMzE4N2FhNiAxMDA2
+NDQKLS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vbW11X2NvbnRleHQuaAorKysgYi9hcmNoL3g4
+Ni9pbmNsdWRlL2FzbS9tbXVfY29udGV4dC5oCkBAIC0yMzIsMTEgKzIzMiw2IEBAIHN0YXRpYyBp
+bmxpbmUgYm9vbCBpc182NGJpdF9tbShzdHJ1Y3QgbW1fc3RydWN0ICptbSkKIH0KICNlbmRpZgog
+Ci1zdGF0aWMgaW5saW5lIHZvaWQgYXJjaF91bm1hcChzdHJ1Y3QgbW1fc3RydWN0ICptbSwgdW5z
+aWduZWQgbG9uZyBzdGFydCwKLQkJCSAgICAgIHVuc2lnbmVkIGxvbmcgZW5kKQotewotfQotCiAv
+KgogICogV2Ugb25seSB3YW50IHRvIGVuZm9yY2UgcHJvdGVjdGlvbiBrZXlzIG9uIHRoZSBjdXJy
+ZW50IHByb2Nlc3MKICAqIGJlY2F1c2Ugd2UgZWZmZWN0aXZlbHkgaGF2ZSBubyBhY2Nlc3MgdG8g
+UEtSVSBmb3Igb3RoZXIKZGlmZiAtLWdpdCBhL2luY2x1ZGUvYXNtLWdlbmVyaWMvbW1faG9va3Mu
+aCBiL2luY2x1ZGUvYXNtLWdlbmVyaWMvbW1faG9va3MuaAppbmRleCA0ZGJiMTc3ZDExNTAuLjZl
+ZWEzYjNjMWU2NSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9hc20tZ2VuZXJpYy9tbV9ob29rcy5oCisr
+KyBiL2luY2x1ZGUvYXNtLWdlbmVyaWMvbW1faG9va3MuaApAQCAtMSw4ICsxLDggQEAKIC8qIFNQ
+RFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wICovCiAvKgotICogRGVmaW5lIGdlbmVyaWMg
+bm8tb3AgaG9va3MgZm9yIGFyY2hfZHVwX21tYXAsIGFyY2hfZXhpdF9tbWFwCi0gKiBhbmQgYXJj
+aF91bm1hcCB0byBiZSBpbmNsdWRlZCBpbiBhc20tRk9PL21tdV9jb250ZXh0LmggZm9yIGFueQot
+ICogYXJjaCBGT08gd2hpY2ggZG9lc24ndCBuZWVkIHRvIGhvb2sgdGhlc2UuCisgKiBEZWZpbmUg
+Z2VuZXJpYyBuby1vcCBob29rcyBmb3IgYXJjaF9kdXBfbW1hcCBhbmQgYXJjaF9leGl0X21tYXAK
+KyAqIHRvIGJlIGluY2x1ZGVkIGluIGFzbS1GT08vbW11X2NvbnRleHQuaCBmb3IgYW55IGFyY2gg
+Rk9PIHdoaWNoCisgKiBkb2Vzbid0IG5lZWQgdG8gaG9vayB0aGVzZS4KICAqLwogI2lmbmRlZiBf
+QVNNX0dFTkVSSUNfTU1fSE9PS1NfSAogI2RlZmluZSBfQVNNX0dFTkVSSUNfTU1fSE9PS1NfSApA
+QCAtMTcsMTEgKzE3LDYgQEAgc3RhdGljIGlubGluZSB2b2lkIGFyY2hfZXhpdF9tbWFwKHN0cnVj
+dCBtbV9zdHJ1Y3QgKm1tKQogewogfQogCi1zdGF0aWMgaW5saW5lIHZvaWQgYXJjaF91bm1hcChz
+dHJ1Y3QgbW1fc3RydWN0ICptbSwKLQkJCXVuc2lnbmVkIGxvbmcgc3RhcnQsIHVuc2lnbmVkIGxv
+bmcgZW5kKQotewotfQotCiBzdGF0aWMgaW5saW5lIGJvb2wgYXJjaF92bWFfYWNjZXNzX3Blcm1p
+dHRlZChzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwKIAkJYm9vbCB3cml0ZSwgYm9vbCBleGVj
+dXRlLCBib29sIGZvcmVpZ24pCiB7CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L21tX3R5cGVz
+LmggYi9pbmNsdWRlL2xpbnV4L21tX3R5cGVzLmgKaW5kZXggNDg1NDI0OTc5MjU0Li5lZjMyZDg3
+YTNhZGMgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvbW1fdHlwZXMuaAorKysgYi9pbmNsdWRl
+L2xpbnV4L21tX3R5cGVzLmgKQEAgLTEzMTMsNiArMTMxMyw4IEBAIHN0cnVjdCB2bV9zcGVjaWFs
+X21hcHBpbmcgewogCiAJaW50ICgqbXJlbWFwKShjb25zdCBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBw
+aW5nICpzbSwKIAkJICAgICBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKm5ld192bWEpOworCXZvaWQg
+KCpjbG9zZSkoY29uc3Qgc3RydWN0IHZtX3NwZWNpYWxfbWFwcGluZyAqc20sCisJCSAgICAgIHN0
+cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKTsKIH07CiAKIGVudW0gdGxiX2ZsdXNoX3JlYXNvbiB7
+CmRpZmYgLS1naXQgYS9tbS9tbWFwLmMgYi9tbS9tbWFwLmMKaW5kZXggZDBkZmM4NWIyMDliLi5h
+ZGFhZjFlZjE5N2EgMTAwNjQ0Ci0tLSBhL21tL21tYXAuYworKysgYi9tbS9tbWFwLmMKQEAgLTI3
+ODksNyArMjc4OSw3IEBAIGRvX3ZtaV9hbGlnbl9tdW5tYXAoc3RydWN0IHZtYV9pdGVyYXRvciAq
+dm1pLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwKICAqCiAgKiBUaGlzIGZ1bmN0aW9uIHRh
+a2VzIGEgQG1hcyB0aGF0IGlzIGVpdGhlciBwb2ludGluZyB0byB0aGUgcHJldmlvdXMgVk1BIG9y
+IHNldAogICogdG8gTUFfU1RBUlQgYW5kIHNldHMgaXQgdXAgdG8gcmVtb3ZlIHRoZSBtYXBwaW5n
+KHMpLiAgVGhlIEBsZW4gd2lsbCBiZQotICogYWxpZ25lZCBhbmQgYW55IGFyY2hfdW5tYXAgd29y
+ayB3aWxsIGJlIHByZWZvcm1lZC4KKyAqIGFsaWduZWQuCiAgKgogICogUmV0dXJuOiAwIG9uIHN1
+Y2Nlc3MgYW5kIGRyb3BzIHRoZSBsb2NrIGlmIHNvIGRpcmVjdGVkLCBlcnJvciBhbmQgbGVhdmVz
+IHRoZQogICogbG9jayBoZWxkIG90aGVyd2lzZS4KQEAgLTI4MDksMTYgKzI4MDksMTIgQEAgaW50
+IGRvX3ZtaV9tdW5tYXAoc3RydWN0IHZtYV9pdGVyYXRvciAqdm1pLCBzdHJ1Y3QgbW1fc3RydWN0
+ICptbSwKIAkJcmV0dXJuIC1FSU5WQUw7CiAKIAkvKgotCSAqIENoZWNrIGlmIG1lbW9yeSBpcyBz
+ZWFsZWQgYmVmb3JlIGFyY2hfdW5tYXAuCi0JICogUHJldmVudCB1bm1hcHBpbmcgYSBzZWFsZWQg
+Vk1BLgorCSAqIENoZWNrIGlmIG1lbW9yeSBpcyBzZWFsZWQsIHByZXZlbnQgdW5tYXBwaW5nIGEg
+c2VhbGVkIFZNQS4KIAkgKiBjYW5fbW9kaWZ5X21tIGFzc3VtZXMgd2UgaGF2ZSBhY3F1aXJlZCB0
+aGUgbG9jayBvbiBNTS4KIAkgKi8KIAlpZiAodW5saWtlbHkoIWNhbl9tb2RpZnlfbW0obW0sIHN0
+YXJ0LCBlbmQpKSkKIAkJcmV0dXJuIC1FUEVSTTsKIAotCSAvKiBhcmNoX3VubWFwKCkgbWlnaHQg
+ZG8gdW5tYXBzIGl0c2VsZi4gICovCi0JYXJjaF91bm1hcChtbSwgc3RhcnQsIGVuZCk7Ci0KIAkv
+KiBGaW5kIHRoZSBmaXJzdCBvdmVybGFwcGluZyBWTUEgKi8KIAl2bWEgPSB2bWFfZmluZCh2bWks
+IGVuZCk7CiAJaWYgKCF2bWEpIHsKQEAgLTMyMzIsMTQgKzMyMjgsMTIgQEAgaW50IGRvX3ZtYV9t
+dW5tYXAoc3RydWN0IHZtYV9pdGVyYXRvciAqdm1pLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZt
+YSwKIAlzdHJ1Y3QgbW1fc3RydWN0ICptbSA9IHZtYS0+dm1fbW07CiAKIAkvKgotCSAqIENoZWNr
+IGlmIG1lbW9yeSBpcyBzZWFsZWQgYmVmb3JlIGFyY2hfdW5tYXAuCi0JICogUHJldmVudCB1bm1h
+cHBpbmcgYSBzZWFsZWQgVk1BLgorCSAqIENoZWNrIGlmIG1lbW9yeSBpcyBzZWFsZWQsIHByZXZl
+bnQgdW5tYXBwaW5nIGEgc2VhbGVkIFZNQS4KIAkgKiBjYW5fbW9kaWZ5X21tIGFzc3VtZXMgd2Ug
+aGF2ZSBhY3F1aXJlZCB0aGUgbG9jayBvbiBNTS4KIAkgKi8KIAlpZiAodW5saWtlbHkoIWNhbl9t
+b2RpZnlfbW0obW0sIHN0YXJ0LCBlbmQpKSkKIAkJcmV0dXJuIC1FUEVSTTsKIAotCWFyY2hfdW5t
+YXAobW0sIHN0YXJ0LCBlbmQpOwogCXJldHVybiBkb192bWlfYWxpZ25fbXVubWFwKHZtaSwgdm1h
+LCBtbSwgc3RhcnQsIGVuZCwgdWYsIHVubG9jayk7CiB9CiAKQEAgLTM2MjQsNiArMzYxOCw5IEBA
+IHN0YXRpYyB2bV9mYXVsdF90IHNwZWNpYWxfbWFwcGluZ19mYXVsdChzdHJ1Y3Qgdm1fZmF1bHQg
+KnZtZik7CiAgKi8KIHN0YXRpYyB2b2lkIHNwZWNpYWxfbWFwcGluZ19jbG9zZShzdHJ1Y3Qgdm1f
+YXJlYV9zdHJ1Y3QgKnZtYSkKIHsKKwljb25zdCBzdHJ1Y3Qgdm1fc3BlY2lhbF9tYXBwaW5nICpz
+bSA9IHZtYS0+dm1fcHJpdmF0ZV9kYXRhOworCWlmIChzbS0+Y2xvc2UpCisJCXNtLT5jbG9zZShz
+bSwgdm1hKTsKIH0KIAogc3RhdGljIGNvbnN0IGNoYXIgKnNwZWNpYWxfbWFwcGluZ19uYW1lKHN0
+cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQo=
+--000000000000205ca7061ef4c39c--
 
