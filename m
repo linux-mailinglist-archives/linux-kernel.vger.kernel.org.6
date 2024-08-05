@@ -1,100 +1,124 @@
-Return-Path: <linux-kernel+bounces-274856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37D2947DA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:04:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94959947DB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10A2D1C21C32
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5087A2838DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A9914901F;
-	Mon,  5 Aug 2024 15:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6D514885C;
+	Mon,  5 Aug 2024 15:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpWaIJAp"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OrEmnaKr"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206396F2F6;
-	Mon,  5 Aug 2024 15:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246B13F9D5
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722870290; cv=none; b=lkMahnCLSppImajjKWgn8naQ51Erf87Th6JL3A4kURAFgTmxNghOakfGLoam5M9Pni7wyMnZjAMYCdBQi+8Cx1jbo9En0MK6c3Km2/f9dJ0Pzl0zjgFSvBwiaT3n5nExA7ukqDmW8DSPA1aU5jfLeJBKUMFaSCxxsuWBYK20O50=
+	t=1722870493; cv=none; b=AfqZilS1RbMZt42eSrPROwemwO9r5OeEthdYAzQHMFWUOyGlatrDQhLDZwODZ7pjsZCvgshTIdDcU7cjWhadA7uItLWdiVqRmfpuiYXGCyk0KQXGFCdS1acx+xqqcNkigeeHqWHVbjvwqWaKxgC2Q4SBrxMYkX5e9tsEYNow18s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722870290; c=relaxed/simple;
-	bh=/Gqb82182GJ7ifqE0uk/Nla2L7+0JFR4zbzbtq/Xhqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZQoGtLJPRsCZfkDSI0JMVuHXMVswsGLca3w3RFN2Msu6ZQbiNY/Z6P5lyMwwPnYrCKArhWa/eWBQ45W6I7MPFodfJbc18/wToK1gqy2VbT7nszkEILFxrm/dTg4I3u6gZZhu/rwcSMWhO+7H8yWldVbmNrRdaF/gAlRLCzDHcKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpWaIJAp; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efa98b11eso1721336e87.2;
-        Mon, 05 Aug 2024 08:04:48 -0700 (PDT)
+	s=arc-20240116; t=1722870493; c=relaxed/simple;
+	bh=O9ctqr2OOwDyQgI+Tw9ka8os8+6XfU1CcgEDGKKGRNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PCTv0zq8j0UVk9w1onTbL1z0ptucDeOe9Zh+DEeaYP7wYFesoUzM8MwH2mTyxJBJa8kJB/4TxWH+THOsuD4TA9doVpQog3aCgtmkXrCw/LdYlmuGXD+uBk/DHF69zw8H87R0epnueSHksMqjgPeSfo1uhk6fZZak5TRcw11z+I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OrEmnaKr; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5b7b6a30454so5564087a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722870287; x=1723475087; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Gqb82182GJ7ifqE0uk/Nla2L7+0JFR4zbzbtq/Xhqs=;
-        b=lpWaIJAp16ZMjI+8rwHTpDmsJhEmuF1rk2fVVRqGM/4YqO/i4MImA1kqlBBd2U6B+g
-         XUYvDgPUtBjeIDVcbwFfqXSd8yg3Uy29IhcNH8GB0of/g9B0WnDOCs11mXb3J+y5Cst+
-         tV37Z7S8T6hPCB2YBr2ahO1JffLLS1Z4xeA7gNXHwJNXgyCSSVS1X08CdxdA2/SCD5QP
-         HNEZZKW4fuDK8UCYAZXLrC1pc+tz8hNhUHL9TkefYeZKATAJ+wgj1UQjV0W43VVtltYk
-         OlJmrBRMTrMg2uQMaZHcZPWmWR+HnxD+fghg1rwGTL/IZYyt9WDkp/i39AAgt6NjD4Ka
-         2GcA==
+        d=suse.com; s=google; t=1722870489; x=1723475289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z12bTz3uc/6bWoxaYbSLkO/A8SqLo9rW3xC9vooatVQ=;
+        b=OrEmnaKrQ3sAGBya7/XtfuyQj+nJr99k5I0Fz5HrCZSAkCR+RMAqZPQxozgHKBCsCt
+         vzqDJN6H4xhomWk+YmK54fkq/rzuoD/c0gtSmbARJSEXo3L/jrPsCmJdSwJemJ0RFRyh
+         nAAfN989ynEjRjNaI10znsBNB4IIwcDjJQq2ehLI9ZghK7hxLaSSiSFVAMQFCGxpmvf7
+         HxwhY5Ax4+2KWezUerCetecAqm4ygDaTD/8lSNG5gbTJB8IhuOlLqautD38I1TYAS4Cw
+         2a05/z0vweua+dUZeRfi0zBOBRiT5nXaSixFWO8W1kJPK/1sQ3b4sKlfeiX+q/Wd2dF0
+         J59g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722870287; x=1723475087;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Gqb82182GJ7ifqE0uk/Nla2L7+0JFR4zbzbtq/Xhqs=;
-        b=ADUtiH9P7BztbxBvNKXs1SIMSBR0PbyBaXrkKNxzstmfQn/QttN98xmbCQYF8j8Ptg
-         tcNlJfdBOt2TaPfpJqabp/OD9YaeNKxl2FsdsqXVYd0BUck+wB3gYtFt0WIPPAqVhZMX
-         VVcIB09FGOjV3eV2fGq86dpnDU/nJVoRJ0X39VH7Ng6oFAFwDx6p+I3IWs7YV/hVAh0E
-         w//F6z9bUd9wNhzdghqvg/t0hxUOFYmHsWKS8urKUm/1myp/cinv1+dgUCRjFJC+ayXv
-         kvNlsCq3BepzAlZZyWSs76IUtzK3q5t4SHATMCwxKsgBY83+3XzzQM9JWeMtqunBQXKP
-         kiKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuSySQw8o1UwAwi1sfSLde5J3XRUg6uSFCAuF1iis3fTY8vmcPkMonWDLEuKX8WtZ7PSBlTrpEQY/tqbRopVZanWFeF6eGyX1Bepykp7umIr3Z0FGSitP5HyUZ/KSDBPI2fZNu
-X-Gm-Message-State: AOJu0Yzes7TA+F7lEE2+yMKnskkMs+os60U/R9YN0YYFkd2Nw5icYKRR
-	6Fn1pXoQ1w/hbJTK7hQl1PqwdV5ow4LIfQExzc1fhwICLJjYiIwrZ6qTjl8Y8JyoaJoMlBXGxdT
-	lfslnxvesBX6wwLiuaT5nZvVjwRI=
-X-Google-Smtp-Source: AGHT+IHtXF/b+BdgRW8ydHE95gguroW5hoRvA3hMIjAViRuKfUcgtBZQtCBnMeKEeFvh1998hhv6k2Xrmz0ePllO4Kk=
-X-Received: by 2002:a05:6512:3ca4:b0:52e:ccf4:c222 with SMTP id
- 2adb3069b0e04-530bb3b7bdemr4459342e87.9.1722870286858; Mon, 05 Aug 2024
- 08:04:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722870489; x=1723475289;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z12bTz3uc/6bWoxaYbSLkO/A8SqLo9rW3xC9vooatVQ=;
+        b=w0tDNkVHuzAPWPyrx65L0mK9X/M4fuILABd/foCxV2JnKllrEHKtmgWgwRg4M9fXen
+         QPuUHIuT7dtFxxjOfn+8XmyAP4vjz4K6sIEOtxgjX+7/BqFBti/sC4YHAKL9XxRvZitk
+         zGn7OMv8frqZm9KnRligmU3zbGguAsZpl1n7O+3Qnj5fCBcmpEdgPJrJzqhrTWRO8Y7N
+         OkTlMz7nsAG5V6wQ7v/0ELdQxOBr09IIZW6W8DG0k+qwaltY0dEIIk135hkoatS8V6sS
+         Sa4WFQcONfgKIoxKz83PYQnzbWGT7tTL6n0SOqqyEnQoI5/0WkYzYPQ0RLQv29VKr0OE
+         zf2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXxB/KAGcy3EoNvINpsjND07dT28ZsAGa7EDu2m3tXtwz5okVNhPOSXi0uJZoTpj9Uv5jNfGXnyP8dx9K4eIrUVnmxlDaBW0Ne5fDSy
+X-Gm-Message-State: AOJu0YxZj8Lab0oWvDas2vp5ZBMC3e3L9H+OnGdWdsRZOsdiQOZKGllo
+	K0oZ5c1StqPwZmTkPhm81z9gZ2uTAS3rxNFN6GN2bLqPBMQJIPo8SJSshZMMxjc=
+X-Google-Smtp-Source: AGHT+IEag2rNRk0j4QehJ+DMvtcP+G/n9mTpBKv6zvPEM0uKOUnzQ0IF6Ol2eIkgYDDb+d00iGANlw==
+X-Received: by 2002:a17:906:d554:b0:a72:6849:cb0f with SMTP id a640c23a62f3a-a7dc5100463mr806932766b.62.1722870489211;
+        Mon, 05 Aug 2024 08:08:09 -0700 (PDT)
+Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec7173sm459121666b.204.2024.08.05.08.08.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 08:08:08 -0700 (PDT)
+From: Petr Tesarik <petr.tesarik@suse.com>
+To: Eric Biederman <ebiederm@xmission.com>,
+	Sourabh Jain <sourabhjain@linux.ibm.com>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Eric DeVolder <eric.devolder@oracle.com>,
+	kexec@lists.infradead.org (open list:KEXEC),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Petr Tesarik <ptesarik@suse.com>,
+	stable@kernel.org
+Subject: [PATCH 1/1] kexec_file: fix elfcorehdr digest exclusion when CONFIG_CRASH_HOTPLUG=y
+Date: Mon,  5 Aug 2024 17:07:50 +0200
+Message-ID: <20240805150750.170739-1-petr.tesarik@suse.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805145735.2385752-1-csokas.bence@prolan.hu>
-In-Reply-To: <20240805145735.2385752-1-csokas.bence@prolan.hu>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 5 Aug 2024 12:04:35 -0300
-Message-ID: <CAOMZO5BzcZR8PwKKwBssQq_wAGzVgf1ffwe_nhpQJjviTdxy-w@mail.gmail.com>
-Subject: Re: [PATCH] net: fec: Stop PPS on driver remove
-To: =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>
-Cc: imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Richard Cochran <richardcochran@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 5, 2024 at 11:59=E2=80=AFAM Cs=C3=B3k=C3=A1s, Bence <csokas.ben=
-ce@prolan.hu> wrote:
->
-> PPS was not stopped in `fec_ptp_stop()`, called when
-> the adapter was removed. Consequentially, you couldn't
-> safely reload the driver with the PPS signal on.
->
-> Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
+From: Petr Tesarik <ptesarik@suse.com>
 
-It seems this one deserves a Fixes tag.
+Fix the condition to exclude the elfcorehdr segment from the SHA digest
+calculation.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+The j iterator is an index into the output sha_regions[] array, not into
+the input image->segment[] array. Once it reaches image->elfcorehdr_index,
+all subsequent segments are excluded. Besides, if the purgatory segment
+precedes the elfcorehdr segment, the elfcorehdr may be wrongly included in
+the calculation.
+
+Fixes: f7cc804a9fd4 ("kexec: exclude elfcorehdr from the segment digest")
+Cc: stable@kernel.org
+Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+---
+ kernel/kexec_file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 3d64290d24c9..3eedb8c226ad 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -752,7 +752,7 @@ static int kexec_calculate_store_digests(struct kimage *image)
+ 
+ #ifdef CONFIG_CRASH_HOTPLUG
+ 		/* Exclude elfcorehdr segment to allow future changes via hotplug */
+-		if (j == image->elfcorehdr_index)
++		if (i == image->elfcorehdr_index)
+ 			continue;
+ #endif
+ 
+-- 
+2.45.2
+
 
