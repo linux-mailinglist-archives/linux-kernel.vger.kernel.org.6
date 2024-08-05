@@ -1,205 +1,159 @@
-Return-Path: <linux-kernel+bounces-274170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB17947462
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:35:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F82947464
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41C4D1F21222
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:35:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870861C20C3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3151411E6;
-	Mon,  5 Aug 2024 04:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FEC13D882;
+	Mon,  5 Aug 2024 04:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JRKS2ea6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmefFldx"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7ACA3B;
-	Mon,  5 Aug 2024 04:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CF2A3B
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 04:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722832516; cv=none; b=NB12bckpFcti4r2u1EAF8T7veh8Lo/9HvUSCS4T5oyxW4X13BTEZeEQfljnwzLEBCraEHsbGCqNMY9yxf5p0P1AIx6tM1fKXyOLSumWLwWu6ssXvO1NMDjs8pN5NWnYxd0L+JjZT2kN75oMZK29MsSKNF440Z85awmwn9dkLZDo=
+	t=1722832581; cv=none; b=oC1Gn+G/XNd7Zp4ORQl64zE8Bi6ZrKrHj/+SDEVE3y6rZ3lM0rSqSygjmA7MZsALbFR9XuA6wb6Td/rDQ3JvHacOuHghab14ZyCAjFkVfw36FRY3bWhatNZhYXSdiJlWpF8t7Ke799m6W9sEGX84yI3uqnvC7ESVzzJueDlhfcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722832516; c=relaxed/simple;
-	bh=2KPdzFQw1w/YiSbNcR5VKd6YpSJptdoc3OyRJH3k6+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=awTaWWLLe/ZSI/cAgMKm2w0RkTgrf9MwfDfesuDHxmnKeKBMFOsnDz2g+2mUphqsLWxosYU4s/MbRbQ/UP3GDL30x2Vxb9u6uTRMRPUy4keKYxvHdbskeDq1CPxOvon2/nmUBnXBwHaYqNtXjaHGUjavf30tIvDk4SB0Wcz86ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JRKS2ea6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4752Vh4h010422;
-	Mon, 5 Aug 2024 04:35:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aNl20ubvftUYbfrnFN1yNrsKAtubMNZnCXumrlEcBlA=; b=JRKS2ea63C2pGkKX
-	4Kvz7cH/RNVkBW7ezED5qmAOzAlELgrB5Ld+1nWcbNoBn78mWY7v3W509fCITM5k
-	Uk2l6KP3tr7HWKP0frRfefiCusNsViLnjFyrKaWOhYEOIFW5qhFc/OT7uDobJFFx
-	DQGHZXwq/ZgN83oab8w8s71c1BH2idLrYSXugbRfr+HxQlN3VwI31STWNHXG4XU9
-	xgMJCnsaVSxADvDOQQxODZ+SuXVJDARFjtvqwED4u2huqN96vdXq7pY90tiZeUOa
-	+yWH9pxU8VmDk5N7hEBoDTiZZLolXZf32t07sRRO+e7UIBujqi8Bhg+D/MMA1wVZ
-	zvNaPA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sc4y2tsm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 04:35:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4754Z3WH001944
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Aug 2024 04:35:03 GMT
-Received: from [10.216.50.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 Aug 2024
- 21:34:57 -0700
-Message-ID: <ae069a46-a1f4-e847-8b9b-81ca1329d2a3@quicinc.com>
-Date: Mon, 5 Aug 2024 10:04:54 +0530
+	s=arc-20240116; t=1722832581; c=relaxed/simple;
+	bh=YKf0uDYZkq/XliA/mL1A7/KFwft19KC0N1wMSVIpcls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jCt0KPK/GnZW9bncWQ6s2Kdd+XIo1W3e5Nn8C6K4Ao5u49gtYc4SB05tpWaL05GaObkPnKfyodny/LeTHlAlDDsOlSQfKF+SNL62UYgt0kziIr2MFvhVyLQsJzcyIkf23/GT+hhofIg+gXEMGorf9fh9/66v/soerX0CysXUU0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmefFldx; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fd9e6189d5so78496085ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 21:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722832579; x=1723437379; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kOxlQunikQ059i6w7JRrp9bCiv4VNbsqEC/n9/DP9YA=;
+        b=HmefFldx90rlqXvA8vZzTJWrxn/20Ga/3HG2o5QPgRfyNc2Zwl9VnkEgsPYsaitXYs
+         DplETEjH4kfRt3p41putsYuGxv5TRH78lC5vzE28xAADZsJnH05JPHBwg9BPop/RVhY5
+         lPmFXCPMR929njoP7o+yrLRlCp/6HXweZPyDcs65dX4OmZMl47Ztdiof+AazQ5600Ho0
+         oAfgEgFuX2kYXqtemk61Wq9hezzF8nykXYuZ1mEWWB+7sXgwdosE/lep64/zgRsGInPG
+         FRaKztalW9XlrvCUDLmJVgYjk5TANP9oQGeA3gABbBSm2oDcgDFKcJ8Xm6ya7xVx/OhW
+         q4cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722832579; x=1723437379;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kOxlQunikQ059i6w7JRrp9bCiv4VNbsqEC/n9/DP9YA=;
+        b=MXICygyVTN44UUyBlW21Jll2mWuDRg8yz7vR6qEbX6+Alh8FHJ9PB2wRmaeH3N3xtT
+         dbODGaRSYqYiScs7WCxIRGr0hG1afhtL36EuMZScm9M/nvlLEWPvsLOsbIVF5CEE0hgr
+         p6X3Sx38//f38W/4liTiZFg2G7arp8rTp5+YjtxTJii7SyJp0WBSYE/RjBkDQzmCp/0x
+         Tukxxb26Ckpa+wZ3Q6KDx/yhCzlmUIZshWCq3c8McjWnVf4Y1qBAYVvgP5bbsh0EIePP
+         nLCE/LDNlWX0PsQR2KMmZ2AExV7tLQlxmS96aB1WTbfRUMA8WSIpPUQ4Qsh1I2fBc47F
+         fgww==
+X-Forwarded-Encrypted: i=1; AJvYcCV0rTbkGzcC8aVcYKGdSKB52BAJSM8apjt7+/tEFKNuiifTnrEMUq1RSqRur95VyoDSKuxG4qocyVzz9NdZsR4LNNdcpl/tZar9Sh9C
+X-Gm-Message-State: AOJu0Yxmg+36W2UveoS0WPgt0Uu449OEecwB97QO9RQMCQHuoDoj90W1
+	cALKIwRIgp8Qel+Rb7lWvCL1V1oFM1MZ2OMCx7KtnkyCP9MEMNmR
+X-Google-Smtp-Source: AGHT+IGGT5intRMOfnhm0exeQaOKBEaPd5C4Gkjx72sEtjCD8hI7OoWXDfTnUevxm1yGazGfFWBk7g==
+X-Received: by 2002:a17:903:18e:b0:1fd:69d6:856d with SMTP id d9443c01a7336-1ff57281a30mr102618735ad.17.1722832578946;
+        Sun, 04 Aug 2024 21:36:18 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59058512sm57338255ad.135.2024.08.04.21.36.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Aug 2024 21:36:18 -0700 (PDT)
+Message-ID: <86e97328-a784-4320-b634-c582d5a10aff@gmail.com>
+Date: Mon, 5 Aug 2024 12:36:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 0/8] PCI: Enable Power and configure the QPS615 PCIe
- switch
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/22] mm/zsmalloc: add zpdesc memory descriptor for
+ zswap.zpool
+To: Matthew Wilcox <willy@infradead.org>, alexs@kernel.org
+Cc: Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin
+ <linmiaohe@huawei.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org,
+ senozhatsky@chromium.org, david@redhat.com, 42.hyeyoo@gmail.com,
+ Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+References: <20240729112534.3416707-1-alexs@kernel.org>
+ <20240729112534.3416707-2-alexs@kernel.org>
+ <Zq0zucMFsOwATsAC@casper.infradead.org>
 Content-Language: en-US
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Rob Herring
-	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        "Bartosz
- Golaszewski" <brgl@bgdev.pl>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        "Manivannan
- Sadhasivam" <manivannan.sadhasivam@linaro.org>
-CC: <andersson@kernel.org>, <quic_vbadigan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <Zq0zucMFsOwATsAC@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0aOEQlq-a79jQKZ86MXTaeKTN21OUzI_
-X-Proofpoint-GUID: 0aOEQlq-a79jQKZ86MXTaeKTN21OUzI_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408050030
 
 
 
-On 8/3/2024 8:52 AM, Krishna chaitanya chundru wrote:
-> QPS615 is the PCIe switch which has one upstream and three downstream
-> ports. One of the downstream ports is used as endpoint device of Ethernet
-> MAC. Other two downstream ports are supposed to connect to external
-> device. One Host can connect to QPS615 by upstream port.
+On 8/3/24 3:30 AM, Matthew Wilcox wrote:
+> On Mon, Jul 29, 2024 at 07:25:13PM +0800, alexs@kernel.org wrote:
+>> +/*
+>> + * struct zpdesc -	Memory descriptor for zpool memory, now is for zsmalloc
+>> + * @flags:		Page flags, PG_private: identifies the first component page
+>> + * @lru:		Indirectly used by page migration
+>> + * @mops:		Used by page migration
+>> + * @next:		Next zpdesc in a zspage in zsmalloc zpool
+>> + * @handle:		For huge zspage in zsmalloc zpool
+>> + * @zspage:		Pointer to zspage in zsmalloc
+>> + * @memcg_data:		Memory Control Group data.
+>> + *
+>> + * This struct overlays struct page for now. Do not modify without a good
+>> + * understanding of the issues.
+>> + */
+>> +struct zpdesc {
+>> +	unsigned long flags;
+>> +	struct list_head lru;
+>> +	struct movable_operations *mops;
+>> +	union {
+>> +		/* Next zpdescs in a zspage in zsmalloc zpool */
+>> +		struct zpdesc *next;
+>> +		/* For huge zspage in zsmalloc zpool */
+>> +		unsigned long handle;
+>> +	};
+>> +	struct zspage *zspage;
+>> +	unsigned long _zp_pad_1;
+>> +#ifdef CONFIG_MEMCG
+>> +	unsigned long memcg_data;
+>> +#endif
+>> +};
 > 
-> QPS615 switch power is controlled by the GPIO's. After powering on
-> the switch will immediately participate in the link training. if the
-> host is also ready by that time PCIe link will established.
+> Before we do a v5, what's the plan for a shrunk struct page?  It feels
+> like a lot of what's going on here is just "because we can".  But if you
+> actually had to allocate the memory, would you?
 > 
-> The QPS615 needs to configured certain parameters like de-emphasis,
-> disable unused port etc before link is established.
+> That is, if we get to
 > 
-> The device tree properties are parsed per node under pci-pci bridge in the
-> devicetree. Each node has unique bdf value in the reg property, driver
-> uses this bdf to differentiate ports, as there are certain i2c writes to
-> select particulat port.
->   
-> As the controller starts link training before the probe of pwrctl driver,
-> the PCIe link may come up before configuring the switch itself.
-> To avoid this introduce two functions in pci_ops to start_link() &
-> stop_link() which will disable the link training if the PCIe link is
-> not up yet.
+> struct page {
+> 	unsigned long memdesc;
+> };
 > 
-> Now PCI pwrctl device is the child of the pci-pcie bridge, if we want
-> to enable the suspend resume for pwrctl device there may be issues
-> since pci bridge will try to access some registers in the config which
-> may cause timeouts or Un clocked access as the power can be removed in
-> the suspend of pwrctl driver.
-> 
-> To solve this make PCIe controller as parent to the pci pwr ctrl driver
-> and create devlink between host bridge and pci pwrctl driver so that
-> pci pwrctl driver will go suspend only after all the PCIe devices went
-> to suspend.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
-> Changes in V1:
-> - Fix the code as per the comments given.
-changes in v1:
-- Instead of referencing whole i2c-bus add i2c-client node and reference 
-it (Dmitry)
-- Change the regulator's as per the schematics as per offline review
-(bjorn Andresson)
-- Remove additional host check in bus.c (Bart)
-- For stop_link op change return type from int to void (Bart)
-- Remove firmware based approach for configuring sequence as suggested
-by multiple reviewers.
-- Introduce new dt-properties for the switch to configure the switch
-as we are replacing the firmware based approach.
-- The downstream ports add properties in the child nodes which will
-represented in PCIe hierarchy format.
-- Removed D3cold D0 sequence in suspend resume for now as it needs
-separate discussion.
 
-- Krishna Chaitanya.
-> - Removed D3cold D0 sequence in suspend resume for now as it needs
->    seperate discussion.
-> - change to dt approach for configuring the switch instead of request_firmware() approach
-> - Link to v1: https://lore.kernel.org/linux-pci/20240626-qps615-v1-4-2ade7bd91e02@quicinc.com/T/
-> ---
+Yes, we still have a huge gap between this target. 
+
+> what do you put in the 60  bits of information?  Do you allocate a
+> per-page struct zpdesc, and have each one pointing to a zspage?  Or do
+> you extend the current contents of zspage to describe the pages allocated
+> to it, and make each struct page point to the zspage?
+
+I am not very clear the way to get there. The easy path for me, I guess, 
+would move struct zpdesc members out to zspage, like 2nd way of your suggestion.
+
+I believe you has much more idea of the ways to memdesc. 
+Is there some references or detailed info which I could learn from you?
+
+Many thanks!
+Alex
+ 
 > 
-> ---
-> Krishna chaitanya chundru (8):
->        dt-bindings: PCI: Add binding for qps615
->        dt-bindings: trivial-devices: Add qcom,qps615
->        arm64: dts: qcom: qcs6490-rb3gen2: Add node for qps615
->        PCI: Change the parent to correctly represent pcie hierarchy
->        PCI: Add new start_link() & stop_link function ops
->        PCI: dwc: Add support for new pci function op
->        PCI: qcom: Add support for host_stop_link() & host_start_link()
->        PCI: pwrctl: Add power control driver for qps615
-> 
->   .../devicetree/bindings/pci/qcom,qps615.yaml       | 191 ++++++
->   .../devicetree/bindings/trivial-devices.yaml       |   2 +
->   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       | 121 ++++
->   arch/arm64/boot/dts/qcom/sc7280.dtsi               |   2 +-
->   drivers/pci/bus.c                                  |   3 +-
->   drivers/pci/controller/dwc/pcie-designware-host.c  |  18 +
->   drivers/pci/controller/dwc/pcie-designware.h       |  16 +
->   drivers/pci/controller/dwc/pcie-qcom.c             |  39 ++
->   drivers/pci/pwrctl/Kconfig                         |   7 +
->   drivers/pci/pwrctl/Makefile                        |   1 +
->   drivers/pci/pwrctl/core.c                          |   9 +-
->   drivers/pci/pwrctl/pci-pwrctl-qps615.c             | 638 +++++++++++++++++++++
->   include/linux/pci.h                                |   2 +
->   13 files changed, 1046 insertions(+), 3 deletions(-)
-> ---
-> base-commit: 1722389b0d863056d78287a120a1d6cadb8d4f7b
-> change-id: 20240727-qps615-e2894a38d36f
-> 
-> Best regards,
+> I don't know your code, so I'm not trying to choose for you.  I'm just
+> trying to make sure we're walking in the right direction.
 
