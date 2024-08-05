@@ -1,262 +1,115 @@
-Return-Path: <linux-kernel+bounces-274484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D23C9478B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:52:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F929478C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D02411F22582
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBD381C20E82
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A27D14A636;
-	Mon,  5 Aug 2024 09:51:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C626010953
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 09:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3335B154C05;
+	Mon,  5 Aug 2024 09:54:10 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4958915443F
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 09:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722851514; cv=none; b=cIdT1T/vv5EALQG27tkbKik9T7D58rwvESIo9GCZrbXMlAEANfyvcG7vF0dzeij2wVyeh5ytV6VFyMcROuB1k4bJsjCopY8LMVP+YKyTC3tYy8X9ESZUZ0qh7GfwqnkAPfDV8WcBBoLu0Hb2KFvEsMWMq7ZDQLjbl0x+FgaSPFA=
+	t=1722851649; cv=none; b=E1riuMbs1/VUJk9ImqjB63w2hKSRw3gQajOYyXoNkA3y3l2DlTZVnHB6z75FBRnktAKZ46tOuxi3jWcTMQ+iY1UqvgFVR2GlyJ6SUc2PfndqVkHTZR8+MfrQmygrrB54iSCxefneUTKwUaVj8mlmGEl/FFYOOShNBfAKDECStpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722851514; c=relaxed/simple;
-	bh=sBzHWNx3zBUUEqdwrXyscTmRjG+V/2wEoDy/k+H//Yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cICoZb9/Zyxni7nJbc+w9vrCxr0ZLOj/6oviSFNyMIIeOHT+tifsSJgd6wa3V8PCS/5Btvv/K47xXRsrklVUkeejUogaA6N3UHQXFCYb0nsIaSe6X5lUCy9Tin43O9YYZUPZsKvOtwNWkYBofEajLL3w/mDLSVwusyIIZJtrxXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0EBE143D;
-	Mon,  5 Aug 2024 02:52:17 -0700 (PDT)
-Received: from [10.162.41.18] (e116581.arm.com [10.162.41.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A84093F5A1;
-	Mon,  5 Aug 2024 02:51:43 -0700 (PDT)
-Message-ID: <f8d21caa-7a82-4761-8a78-d928ae8d0f24@arm.com>
-Date: Mon, 5 Aug 2024 15:21:36 +0530
+	s=arc-20240116; t=1722851649; c=relaxed/simple;
+	bh=n9LPeiMAP7dOgElnC19e4SfBpNvUclBQvwWY7bS7A/k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SQg3zc97jlRAa30FM8dT3h5X6QHZ4R16qUViNEPgdCUvNwG5/Ew97ew7WDdBjD+3M2LHVQ7rhJD6zu8jHrwGobm+TKZP8X4UU+IhzKWSf3es0+G+wMZ4lwpDFZO6sfR563kSgWaSskia5PJlwgkq9UaOguGGyCr7/o+LcIJRyrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ubt.. (unknown [210.73.53.31])
+	by APP-03 (Coremail) with SMTP id rQCowACHjvoJobBmMT6cAw--.14790S2;
+	Mon, 05 Aug 2024 17:53:14 +0800 (CST)
+From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V3 0/3] riscv: mm: Add soft-dirty and uffd-wp support
+Date: Mon,  5 Aug 2024 17:52:40 +0800
+Message-Id: <20240805095243.44809-1-zhangchunyan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Race condition observed between page migration and page fault
- handling on arm64 machines
-To: David Hildenbrand <david@redhat.com>, Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, willy@infradead.org, ryan.roberts@arm.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, cl@gentwo.org,
- vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com, osalvador@suse.de,
- baolin.wang@linux.alibaba.com, dave.hansen@linux.intel.com,
- baohua@kernel.org, ioworker0@gmail.com, gshan@redhat.com,
- mark.rutland@arm.com, kirill.shutemov@linux.intel.com, hughd@google.com,
- aneesh.kumar@kernel.org, yang@os.amperecomputing.com, peterx@redhat.com,
- broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240801081657.1386743-1-dev.jain@arm.com>
- <3b82e195-5871-4880-9ce5-d01bb751f471@redhat.com>
- <bbe411f2-4c68-4f92-af8c-da184669dca8@arm.com>
- <a6a38ad5-c754-44ad-a64b-f9ea5b764291@redhat.com>
- <92df0ee1-d3c9-41e2-834c-284127ae2c4c@arm.com>
- <19902a48-c59b-4e3b-afc5-e792506c2fd6@redhat.com>
- <6486a2b1-45ef-44b6-bd84-d402fc121373@redhat.com>
- <20240801134358.GB4794@willie-the-truck>
- <9359caf7-81a8-45d9-9787-9009b3b2eed3@redhat.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <9359caf7-81a8-45d9-9787-9009b3b2eed3@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACHjvoJobBmMT6cAw--.14790S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw17trWrtr4xKryUZF4UXFb_yoW8XF15pa
+	ySkwn8try5CryIyr4fCr1qgr15X3Wft3s8Cryft34vyw4rWFWUZrnYk3WfJw18X3W29r9Y
+	93W5Gry5u3ykZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvSb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
+	C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_
+	Jw1lc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI
+	8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+	xVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI
+	8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280
+	aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43
+	ZEXa7IU8KFAPUUUUU==
+X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAgAB2awjLg3zAAAsa
 
+This patchset adds soft dirty and userfaultfd write protect tracking support
+for RISC-V.
 
-On 8/1/24 19:18, David Hildenbrand wrote:
-> On 01.08.24 15:43, Will Deacon wrote:
->> On Thu, Aug 01, 2024 at 03:26:57PM +0200, David Hildenbrand wrote:
->>> On 01.08.24 15:13, David Hildenbrand wrote:
->>>>>>> To dampen the tradeoff, we could do this in shmem_fault() 
->>>>>>> instead? But
->>>>>>> then, this would mean that we do this in all
->>>>>>>
->>>>>>> kinds of vma->vm_ops->fault, only when we discover another 
->>>>>>> reference
->>>>>>> count race condition :) Doing this in do_fault()
->>>>>>>
->>>>>>> should solve this once and for all. In fact, do_pte_missing() 
->>>>>>> may call
->>>>>>> do_anonymous_page() or do_fault(), and I just
->>>>>>>
->>>>>>> noticed that the former already checks this using 
->>>>>>> vmf_pte_changed().
->>>>>>
->>>>>> What I am still missing is why this is (a) arm64 only; and (b) if 
->>>>>> this
->>>>>> is something we should really worry about. There are other reasons
->>>>>> (e.g., speculative references) why migration could temporarily fail,
->>>>>> does it happen that often that it is really something we have to 
->>>>>> worry
->>>>>> about?
->>>>>
->>>>>
->>>>> (a) See discussion at [1]; I guess it passes on x86, which is quite
->>>>> strange since the race is clearly arch-independent.
->>>>
->>>> Yes, I think this is what we have to understand. Is the race simply 
->>>> less
->>>> likely to trigger on x86?
->>>>
->>>> I would assume that it would trigger on any arch.
->>>>
->>>> I just ran it on a x86 VM with 2 NUMA nodes and it also seems to 
->>>> work here.
->>>>
->>>> Is this maybe related to deferred flushing? Such that the other CPU 
->>>> will
->>>> by accident just observe the !pte_none a little less likely?
->>>>
->>>> But arm64 also usually defers flushes, right? At least unless
->>>> ARM64_WORKAROUND_REPEAT_TLBI is around. With that we never do deferred
->>>> flushes.
->>>
->>> Bingo!
->>>
->>> diff --git a/mm/rmap.c b/mm/rmap.c
->>> index e51ed44f8b53..ce94b810586b 100644
->>> --- a/mm/rmap.c
->>> +++ b/mm/rmap.c
->>> @@ -718,10 +718,7 @@ static void set_tlb_ubc_flush_pending(struct 
->>> mm_struct
->>> *mm, pte_t pteval,
->>>    */
->>>   static bool should_defer_flush(struct mm_struct *mm, enum 
->>> ttu_flags flags)
->>>   {
->>> -       if (!(flags & TTU_BATCH_FLUSH))
->>> -               return false;
->>> -
->>> -       return arch_tlbbatch_should_defer(mm);
->>> +       return false;
->>>   }
->>>
->>>
->>> On x86:
->>>
->>> # ./migration
->>> TAP version 13
->>> 1..1
->>> # Starting 1 tests from 1 test cases.
->>> #  RUN           migration.shared_anon ...
->>> Didn't migrate 1 pages
->>> # migration.c:170:shared_anon:Expected migrate(ptr, self->n1, 
->>> self->n2) (-2)
->>> == 0 (0)
->>> # shared_anon: Test terminated by assertion
->>> #          FAIL  migration.shared_anon
->>> not ok 1 migration.shared_anon
->>>
->>>
->>> It fails all of the time!
->>
->> Nice work! I suppose that makes sense as, with the eager TLB
->> invalidation, the window between the other CPU faulting and the
->> migration entry being written is fairly wide.
->>
->> Not sure about a fix though :/ It feels a bit overkill to add a new
->> invalid pte encoding just for this.
->
-> Something like that might make the test happy in most cases:
->
-> diff --git a/tools/testing/selftests/mm/migration.c 
-> b/tools/testing/selftests/mm/migration.c
-> index 6908569ef406..4c18bfc13b94 100644
-> --- a/tools/testing/selftests/mm/migration.c
-> +++ b/tools/testing/selftests/mm/migration.c
-> @@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
->         int ret, tmp;
->         int status = 0;
->         struct timespec ts1, ts2;
-> +       int errors = 0;
->
->         if (clock_gettime(CLOCK_MONOTONIC, &ts1))
->                 return -1;
-> @@ -79,12 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
->                 ret = move_pages(0, 1, (void **) &ptr, &n2, &status,
->                                 MPOL_MF_MOVE_ALL);
->                 if (ret) {
-> -                       if (ret > 0)
-> +                       if (ret > 0) {
-> +                               if (++errors < 100)
-> +                                       continue;
->                                 printf("Didn't migrate %d pages\n", ret);
-> -                       else
-> +                       } else {
->                                 perror("Couldn't migrate pages");
-> +                       }
->                         return -2;
->                 }
-> +               /* Progress! */
-> +               errors = 0;
->
->                 tmp = n2;
->                 n2 = n1;
->
->
-> [root@localhost mm]# ./migration
-> TAP version 13
-> 1..1
-> # Starting 1 tests from 1 test cases.
-> #  RUN           migration.shared_anon ...
-> #            OK  migration.shared_anon
-> ok 1 migration.shared_anon
-> # PASSED: 1 / 1 tests passed.
-> # Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+As described in the patches, we are trying to utilize only one free PTE
+bit(9) to support three kernel features (devmap, soft-dirty, uffd-wp).
+Users cannot have them supported at the same time (have to select
+one when building the kernel).
 
+This patchset has been tested with:
+1) The kselftest mm suite in which soft-dirty, madv_populate, test_unmerge_uffd_wp,
+and uffd-unit-tests run and pass, and no regressions are observed in any of the
+other tests.
 
-This does make the test pass, to my surprise, since what you are doing 
-from userspace
+2) CRIU:
+- 'criu check --feature mem_dirty_track' returns supported;
+- incremental_dumps[1] and simple_loop [2] dump and restores work fine;
+- zdtm test suite can run under host mode.
 
-should have been done by the kernel, because it retries folio unmapping 
-and moving
+V3:
+- Fixed the issue reported by kernel test irobot <lkp@intel.com>.
 
-NR_MAX_MIGRATE_(A)SYNC_RETRY times; I had already tested pumping up these
+V1 -> V2:
+- Add uffd-wp supported;
+- Make soft-dirty uffd-wp and devmap mutually exclusive which all use the same PTE bit;
+- Add test results of CRIU in the cover-letter.
 
-macros and the original test was still failing. Now, I digged in more, 
-and, if the
+[1] https://www.criu.org/Incremental_dumps
+[2] https://asciinema.org/a/232445
 
-following assertion is correct:
+Chunyan Zhang (3):
+  riscv: mm: Prepare for reuse PTE RSW bit(9)
+  riscv: mm: Add soft-dirty page tracking support
+  riscv: mm: Add uffd write-protect support
 
+ arch/riscv/Kconfig                    |  34 ++++++-
+ arch/riscv/include/asm/pgtable-64.h   |   2 +-
+ arch/riscv/include/asm/pgtable-bits.h |  31 ++++++
+ arch/riscv/include/asm/pgtable.h      | 132 +++++++++++++++++++++++++-
+ 4 files changed, 196 insertions(+), 3 deletions(-)
 
-Any thread having a reference on a folio will end up calling folio_lock()
-
-
-then it seems to me that the retry for loop wrapped around 
-migrate_folio_move(), inside
-
-migrate_pages_batch(), is useless; if migrate_folio_move() fails on the 
-first iteration, it is
-
-going to fail for all iterations since, if I am reading the code path 
-correctly, the only way it
-
-fails is when the actual refcount is not equal to expected refcount (in 
-folio_migrate_mapping()),
-
-and there is no way that the extra refcount is going to get released 
-since the migration path
-
-has the folio lock.
-
-And therefore, this begs the question: isn't it logical to assert the 
-actual refcount against the
-
-expected refcount, just after we have changed the PTEs, so that if this 
-assertion fails, we can
-
-go to the next iteration of the for loop for migrate_folio_unmap() 
-inside migrate_pages_batch()
-
-by calling migrate_folio_undo_src()/dst() to restore the old state? I am 
-trying to implement
-
-this but is not as straightforward as it seemed to me this morning.
+-- 
+2.34.1
 
 
