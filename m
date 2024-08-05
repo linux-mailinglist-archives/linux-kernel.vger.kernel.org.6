@@ -1,217 +1,151 @@
-Return-Path: <linux-kernel+bounces-274489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AC89478C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:54:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930E09478B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96FB91F21861
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:54:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A125B2170A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980B31547DB;
-	Mon,  5 Aug 2024 09:54:09 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CEB154434;
+	Mon,  5 Aug 2024 09:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnBIguov"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC321509AF
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 09:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E5B10953;
+	Mon,  5 Aug 2024 09:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722851649; cv=none; b=BGQcGPH66EFY6rX15bXaSRGibywn37RAPeeoNph0E0sajdstyC7dfFwby+RkPGKJnBCERYdSt3Gd0IiS+dUsbUUXr2dhltPikZR3BlXmGjGuIysPU1ok6XAjUp+Ob/UIiatI+dKSIBsDMEcicuWllJNX+6Q90848g7P2q3nSyMw=
+	t=1722851609; cv=none; b=fXN+We9cGg0/fOK7Sps/5v6SXSCUix6Ir7cVokWaVTsohT5un42vfdsFX0ua0mLvXx55AvUXcX4nc8cbB2qzNR8g4SSNpf5igI3nxL6AHp4zt4au3ZtHN7OXcg9zNm8B6oZV9nyO2rvSw/sNyll4B6xUnSuTkOcHIQc4Ichznmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722851649; c=relaxed/simple;
-	bh=d+ySGhhG5Ddcte/A/519MdJZ7TEshgACiIHb3/SYBnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LtL2de3po9OG/JcLVKT0paTVK464nBZMF7vBPDVbM+5awFdiSm7o4h7WyOLe75KIncS80+LhP/DwjI6eCJTU8LoCxRmkVTy/VHXtLm5fNiJOfWL7CN4AGXxPBBa7dphoeKXrRijys8b3fjPAjBMjhL7jpXSKOZ9ioMKWyUPDsDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.53.31])
-	by APP-03 (Coremail) with SMTP id rQCowACHjvoJobBmMT6cAw--.14790S5;
-	Mon, 05 Aug 2024 17:53:18 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH V3 3/3] riscv: mm: Add uffd write-protect support
-Date: Mon,  5 Aug 2024 17:52:43 +0800
-Message-Id: <20240805095243.44809-4-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240805095243.44809-1-zhangchunyan@iscas.ac.cn>
-References: <20240805095243.44809-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1722851609; c=relaxed/simple;
+	bh=SU0EHwZ6lgMt+LIxNwzJIdzR27SS/eEgLSHXuN8l1D8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nd8U0Ou0QvjU2PVW4us5veoxS4u8KzgP609T62HcxWKqx6xLRSmp8rmxdLj+RRaYwyIAEke/g2jFYAlIV2w/P1K/mLGPlsQzpFWgMNfCjeHZuLBv9T0lRjV3QpAwMLK0CD142gOZ5yrKUsFMnzmK0H4UOCcc5b7RMWTKJ+dJm3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnBIguov; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B544C32782;
+	Mon,  5 Aug 2024 09:53:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722851608;
+	bh=SU0EHwZ6lgMt+LIxNwzJIdzR27SS/eEgLSHXuN8l1D8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=EnBIguovbyUcwzkJOJXwWMzn0xNps4zAz9ocN1XAzXUfGjCporW5VfrykVaA1gLgx
+	 bhT1iAGo0LZ/AcDKCRFE4Htg4c58MVM8Eobw/2xtWwyYoKe7y2Pa4aTbDzzzR33M/6
+	 siW62CHDjROeJLrAp+uRRqXNTV/mbnOyst1/vM0Dj7HGpt1zOASKanhRBEg42hUszS
+	 jg0AWub7wvR0DmOuIKaPoJ4oGW7TbbHXVAAtPeXrWTCBsglHTyRXxecLLKFPbN4k1m
+	 UNjwlZyyxKbpRi4vj0mRFfuKoH5De0NWvXInNIJO98TXiJlNOjBh2UL/n4fSALtZyI
+	 u4RjKBtizXvug==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH bpf-next v4 0/2] selftests/bpf: new MPTCP subflow subtest
+Date: Mon, 05 Aug 2024 11:52:55 +0200
+Message-Id: <20240805-upstream-bpf-next-20240506-mptcp-subflow-test-v4-0-2b4ca6994993@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACHjvoJobBmMT6cAw--.14790S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw1xuFy3Cr47Aw4xGw4rZrb_yoWrWrWkpF
-	s5Ga1rurWDJFn7KayfGrW8Kr4rZw45Wa4DXr9xua1kJFWUKrWDXF95Kw1aqryrXFWvq34x
-	JrWrKr4rCr47AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPab7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUWwA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF
-	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv
-	6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4
-	CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvj
-	eVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUAVWUtwCY02
-	Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU
-	xwIDUUUUU
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiCQ4AB2awi9k5hwABs7
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPegsGYC/5XPyw7CIBAF0F8xrB2DlD5w5X8YF4UOLVFbArRqT
+ P9dbHzGVZeTm5x750Y8OoOebBY34nAw3nRtPPhyQVRTtjWCqeJNGGWcpjSD3vrgsDyBtBpavAR
+ 4RycblAXfS33szhDQB9Al6ixLudRlQqJpHWpzmfp25CWQfUwa40PnrtOQYT3lTzif2TmsgQIyq
+ WSluSjSfHtA1+Jx1bl6qhrYNy/m8izynPJCMcGL+Nwfn3z4nCZz+eSxXlaKVVzEGvHDj+N4B0b
+ rJjqzAQAA
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Nicolas Rybowski <nicolas.rybowski@tessares.net>, 
+ Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2772; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=SU0EHwZ6lgMt+LIxNwzJIdzR27SS/eEgLSHXuN8l1D8=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmsKEMQhEAHkTbJuBf+rR7NGABX2J2IuEMznpEX
+ SmGcNbNmJGJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZrChDAAKCRD2t4JPQmmg
+ c5rKEADBOjPgICkTVHdgLmnWT8LBxJSMepN/eWpObbvQMKGtVE9PKh9Q40MvD+uu7fnbUQ2xvED
+ ovy6uoTHOJzFO0gpxwCdq/TjwSyqOXj0cCFGT6rbkq5BWOX7BNb0OMdLYqx33RtE47LyWLBnlr3
+ p7csCM8eQU4WRYueuGbbqn4caQE/NMiRvHtJlSmvjhi+yuOtls2VJcy9K+ENw8sKKDCB4WpvKC7
+ bU4TWVXpfZsBgJWxpns1UGiMx1h1ZhFwTtLEVZ7r4ThxjMIL/0CXr4Bu1HQAG812P76tUhqOcIG
+ mUqCAB9xhcbQNBf6g7WXWhFKADaS0WtuCmXUtDX8fk2E2ihA3xE6MBmilgTDoWtmOTDk0aLCWzm
+ Lg9P357enp/N5FEzo6jGO3u6JkCtbKq0qg2pizhiE73MmDqvyx1ZriZiylTFii8C4OSpBuXlB+7
+ YvAAj2gsdzMV2K6J3pZrRCQ0o259yAvMmprceD87O+1gM+nqbYrfVbk2Jjd8hBpdumF7EZXiWXZ
+ qnqVrjx5JYGtDgBJPZI3dwUDPPJOfNciEPQN9fptVU03VhkrfAIW/0a4JCS9i1vyzEPbUcXA4Tr
+ Zvou6qLMnCHsLebhgPEdCJS3SypvVI6GDimNqg/G6cZ+JcdKAbYQM+vcr/8qoXF+Gyq/cNzzPAu
+ wv9ar4/GmRN5C5g==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Reuse PTE bit(9) to do uffd-wp tracking and make it mutually exclusive
-with soft-dirty and DEVMAP which all use this PTE bit.
+In this series from Geliang, modifying MPTCP BPF selftests, we have:
 
-Additionally for tracking the uffd-wp state as a PTE swap bit,
-we use swap entry pte bit(4) which is also used by swap
-soft-dirty tracking.
+- A new MPTCP subflow BPF program setting socket options per subflow: it
+  looks better to have this old test program in the BPF selftests to
+  track regressions and to serve as example.
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+  Note: Nicolas is no longer working for Tessares, but he did this work
+  while working for them, and his email address is no longer available.
+
+- A new MPTCP BPF subtest validating the new BPF program added in the
+  first patch.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
- arch/riscv/Kconfig                    |  7 +++
- arch/riscv/include/asm/pgtable-bits.h | 13 ++++++
- arch/riscv/include/asm/pgtable.h      | 64 +++++++++++++++++++++++++++
- 3 files changed, 84 insertions(+)
+Changes in v4:
+- Drop former patch 2/3: MPTCP's pm_nl_ctl requires a new header file:
+  - I will check later if it is possible to avoid having duplicated
+    header files in tools/include/uapi, but no need to block this series
+    for that. Patch 2/3 can be added later if needed.
+- Patch 2/2: skip the test if 'ip mptcp' is not available.
+- Link to v3: https://lore.kernel.org/r/20240703-upstream-bpf-next-20240506-mptcp-subflow-test-v3-0-ebdc2d494049@kernel.org
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index f1460fc01cd4..aa595a5ed4b8 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -971,6 +971,13 @@ config RISCV_HAS_SOFT_DIRTY
- 	help
- 	  The PTE bit(9) is used for soft-dirty tracking.
- 
-+config RISCV_HAS_USERFAULTFD_WP
-+	bool "userfaultfd write protection"
-+	select HAVE_ARCH_USERFAULTFD_WP
-+	depends on USERFAULTFD
-+	help
-+	  The PTE bit(9) is used for userfaultfd write-protected
-+	  tracking.
- endchoice
- 
- endmenu # "Kernel features"
-diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-index c6d51fe9fc6f..7de16141c049 100644
---- a/arch/riscv/include/asm/pgtable-bits.h
-+++ b/arch/riscv/include/asm/pgtable-bits.h
-@@ -38,6 +38,19 @@
- #define _PAGE_SWP_SOFT_DIRTY	0
- #endif /* CONFIG_MEM_SOFT_DIRTY */
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+/*
-+ * CONFIG_HAVE_ARCH_USERFAULTFD_WP is mutually exclusive with
-+ * HAVE_ARCH_SOFT_DIRTY so we can use the same bit for uffd-wp
-+ * and soft-dirty tracking.
-+ */
-+#define _PAGE_UFFD_WP		(1 << 9) /* RSW: 0x2 for uffd-wp tracking */
-+#define _PAGE_SWP_UFFD_WP	_PAGE_USER
-+#else
-+#define _PAGE_UFFD_WP		0
-+#define _PAGE_SWP_UFFD_WP	0
-+#endif
-+
- #define _PAGE_TABLE     _PAGE_PRESENT
- 
- /*
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index ddf6e4f44252..c6e790e75309 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -417,6 +417,38 @@ static inline pte_t pte_wrprotect(pte_t pte)
- 	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline int pte_uffd_wp(pte_t pte)
-+{
-+	return pte_val(pte) & _PAGE_UFFD_WP;
-+}
-+
-+static inline pte_t pte_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_UFFD_WP));
-+}
-+
-+static inline pte_t pte_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_UFFD_WP));
-+}
-+
-+static inline int pte_swp_uffd_wp(pte_t pte)
-+{
-+	return pte_val(pte) & _PAGE_SWP_UFFD_WP;
-+}
-+
-+static inline pte_t pte_swp_mkuffd_wp(pte_t pte)
-+{
-+	return pte_wrprotect(__pte(pte_val(pte) | _PAGE_SWP_UFFD_WP));
-+}
-+
-+static inline pte_t pte_swp_clear_uffd_wp(pte_t pte)
-+{
-+	return __pte(pte_val(pte) & ~(_PAGE_SWP_UFFD_WP));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- /* static inline pte_t pte_mkread(pte_t pte) */
- 
- static inline pte_t pte_mkwrite_novma(pte_t pte)
-@@ -783,6 +815,38 @@ static inline pmd_t pmd_mkdevmap(pmd_t pmd)
- 	return pte_pmd(pte_mkdevmap(pmd_pte(pmd)));
- }
- 
-+#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-+static inline int pmd_uffd_wp(pmd_t pmd)
-+{
-+	return pte_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline int pmd_swp_uffd_wp(pmd_t pmd)
-+{
-+	return pte_swp_uffd_wp(pmd_pte(pmd));
-+}
-+
-+static inline pmd_t pmd_swp_mkuffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_mkuffd_wp(pmd_pte(pmd)));
-+}
-+
-+static inline pmd_t pmd_swp_clear_uffd_wp(pmd_t pmd)
-+{
-+	return pte_pmd(pte_swp_clear_uffd_wp(pmd_pte(pmd)));
-+}
-+#endif /* CONFIG_HAVE_ARCH_USERFAULTFD_WP */
-+
- #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
- static inline int pmd_soft_dirty(pmd_t pmd)
- {
+Changes in v3:
+- Sorry for the delay between v2 and v3, this series was conflicting
+  with the "add netns helpers", but it looks like it is on hold:
+  https://lore.kernel.org/cover.1715821541.git.tanggeliang@kylinos.cn
+- Patch 1/3 includes "bpf_tracing_net.h", introduced in between.
+- New patch 2/3: "selftests/bpf: Add mptcp pm_nl_ctl link".
+- Patch 3/3: use the tool introduced in patch 2/3 + SYS_NOFAIL() helper.
+- Link to v2: https://lore.kernel.org/r/20240509-upstream-bpf-next-20240506-mptcp-subflow-test-v2-0-4048c2948665@kernel.org
+
+Changes in v2:
+- Previous patches 1/4 and 2/4 have been dropped from this series:
+  - 1/4: "selftests/bpf: Handle SIGINT when creating netns":
+    - A new version, more generic and no longer specific to MPTCP BPF
+      selftest will be sent later, as part of a new series. (Alexei)
+  - 2/4: "selftests/bpf: Add RUN_MPTCP_TEST macro":
+    - Removed, not to hide helper functions in macros. (Alexei)
+- The commit message of patch 1/2 has been clarified to avoid some
+  possible confusions spot by Alexei.
+- Link to v1: https://lore.kernel.org/r/20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org
+
+---
+Geliang Tang (1):
+      selftests/bpf: Add mptcp subflow subtest
+
+Nicolas Rybowski (1):
+      selftests/bpf: Add mptcp subflow example
+
+ tools/testing/selftests/bpf/prog_tests/mptcp.c    | 105 ++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/mptcp_subflow.c |  59 ++++++++++++
+ 2 files changed, 164 insertions(+)
+---
+base-commit: 3d650ab5e7d9c4d7306e4c116f8aa9980bf13295
+change-id: 20240506-upstream-bpf-next-20240506-mptcp-subflow-test-faef6654bfa3
+
+Best regards,
 -- 
-2.34.1
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
