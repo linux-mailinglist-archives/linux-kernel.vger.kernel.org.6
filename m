@@ -1,139 +1,96 @@
-Return-Path: <linux-kernel+bounces-274697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C01947B91
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:09:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E174947B97
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C494A1F2346B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:09:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD867283A67
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D2515AD9C;
-	Mon,  5 Aug 2024 13:09:08 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670CB18026;
-	Mon,  5 Aug 2024 13:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A1015AD99;
+	Mon,  5 Aug 2024 13:10:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5A81E49F;
+	Mon,  5 Aug 2024 13:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722863348; cv=none; b=fv/6/9uH7QXoulG/GguEoqqstt9JzzYUM/8r9a8d8/lpe9HzlX8SKKk5zr8eOXAJFv/Il/Q3ROWmgWBpNQXqiwC+nP6lKVQNMhGIQ/20c+Yq/42vhLhDihbK8oLLRduZ+7k5v+kXByrCtRk/JG6lKHx9W7IeIGQSY71uOU60Ydg=
+	t=1722863419; cv=none; b=Gi3BIZCptcsUwybip6SRS/wO8dRI0rCdRW1TpdkbkujMqwFI5CRw6kwXPmTcqoP4e4biTyKaWMDtYls0uGSiHxKENjJLz7CQS6rgSii5Yd0sPzIn/agKgEA67sVqrlUYWn7xRAng8zca52629dPD+x6n71g+vHlXKZBYEt65a24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722863348; c=relaxed/simple;
-	bh=SalwmJQW37lEdHbkFWCA2XulYGIfArUBkh5e/AyHoGg=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OFh0pXcc6UczSy3SZMdyVdaOhqkqB/ATLEWczFTYBCjlM9DPbqjHfZj112RbvRe5SvOU2JVQwTCAUhZH3PtBS8CuoLnnDz1L2dD/TLLqGyJzN5uACgS/D2tkFlXLsRzThAsfQDaAoag7AXXfUM1nzdJLuVGmqr8huSzkjEdmqUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wcxb81F1wzyPnp;
-	Mon,  5 Aug 2024 21:08:52 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4FC0F18009F;
-	Mon,  5 Aug 2024 21:08:57 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 21:08:56 +0800
-Message-ID: <27598a0e-f796-4f5d-8dce-bf7841d19182@huawei.com>
-Date: Mon, 5 Aug 2024 21:08:55 +0800
+	s=arc-20240116; t=1722863419; c=relaxed/simple;
+	bh=xOpP4EF0WtTkzHAfFcrDjtiqgFJJO8v+ZDLllKUQfDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NhECo39sEPM76/E0gqDofg4IBUmBvTxfz7e4gsj1aNavOOPGlFCxa3y4XC/9tEh36Sf4vJP4Nlm4Bp1C15uYpxlzI6UJ59vwUYt+mRHMzDzmoCc/7XSA3PwIyOXbWQyGH+Om83GC41oGrPIsD09FH/GL3qKkCqnAzvlAgv++kTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2567E143D;
+	Mon,  5 Aug 2024 06:10:43 -0700 (PDT)
+Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A6D643F5A1;
+	Mon,  5 Aug 2024 06:10:16 -0700 (PDT)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH v5 0/5] Add per-transport SCMI communication debug statistics
+Date: Mon,  5 Aug 2024 14:10:07 +0100
+Message-ID: <20240805131013.587016-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
-	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <shenjian15@huawei.com>,
-	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH net-next 02/10] net: hibmcge: Add read/write registers
- supported through the bar space
-To: Simon Horman <horms@kernel.org>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-3-shaojijie@huawei.com>
- <20240805125558.GA2633937@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20240805125558.GA2633937@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000007.china.huawei.com (7.193.23.189)
 
+This series adds support for SCMI communication debug metrict tracking.
+I am just sending on behalf of Luke with minor reworks in his absense.
 
-on 2024/8/5 20:55, Simon Horman wrote:
-> Hi,
->
-> I may well be wrong but I think that FIELD_PREP can only be used with
-> a compile-time constant as the mask.
->
-> In any case, with Clang-18 W=1 allmodconfig builds on x86_64 I see:
+Cristian,
 
-Thanks， I'll fix this warning in V2.
+I have retained your review tags, please shout if you disagree.
 
->
->    CC      drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.o
->     CC      drivers/net/ethernet/hisilicon/hibmcge/hbg_main.o
-> In file included from drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c:8:
-> drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h:31:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
->     31 |         reg_value |= FIELD_PREP(mask, val);
->        |                      ^~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
->    115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
->        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
->     72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
->        |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
->     73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
->        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     74 |                                  _pfx "type of reg too small for mask"); \
->        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
->     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->        |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
-> ././include/linux/compiler_types.h:510:22: note: expanded from macro 'compiletime_assert'
->    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->        |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ././include/linux/compiler_types.h:498:23: note: expanded from macro '_compiletime_assert'
->    498 |         __compiletime_assert(condition, msg, prefix, suffix)
->        |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ././include/linux/compiler_types.h:490:9: note: expanded from macro '__compiletime_assert'
->    490 |                 if (!(condition))                                       \
->        |                       ^~~~~~~~~
-> 1 warning generated.
-> In file included from drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c:8:
-> drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.h:31:15: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
->     31 |         reg_value |= FIELD_PREP(mask, val);
->        |                      ^~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
->    115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
->        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
->     72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
->        |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
->     73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
->        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     74 |                                  _pfx "type of reg too small for mask"); \
->        |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
->     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->        |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
-> ././include/linux/compiler_types.h:510:22: note: expanded from macro 'compiletime_assert'
->    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->        |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ././include/linux/compiler_types.h:498:23: note: expanded from macro '_compiletime_assert'
->    498 |         __compiletime_assert(condition, msg, prefix, suffix)
->        |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ././include/linux/compiler_types.h:490:9: note: expanded from macro '__compiletime_assert'
->    490 |                 if (!(condition))                                       \
->        |                       ^~~~~~~~~
-> 1 warning generated.
->
-> ...
+Regards,
+Sudeep
+
+V4->V5
+- Updated/improved some patch titles and commit messages
+- Moved all debugs strings to an array and changed the creations of the
+  same into a for loop
+- Minor changes to the debugfs file names itself to improve readability
+V3->V4
+- Rename to counters rather than statistics to reflect the scmi protocol better
+- Use basic writing rather than custom function on debugfs in patch 5
+V2->V3
+- Switch statistic counters to an array to store statistics.
+- Add more statistics
+- Add the ability to reset statistics, both individually and all
+V1->V2
+- Add a minor fix removing an unneeded call to handle_to_scmi_info
+- Use new scmi_log_stats op/no-op rather than if(IS_ENABLED)
+- Drop unneeded atomic_set's
+- Use a helper function for stats debugfs creation
+
+Luke Parkin (5):
+  firmware: arm_scmi: Remove superfluous handle_to_scmi_info
+  firmware: arm_scmi: Add support for debug metrics at the interface
+  firmware: arm_scmi: Track basic SCMI communication debug metrics
+  firmware: arm_scmi: Create debugfs files for SCMI communication debug
+    metrics
+  firmware: arm_scmi: Add support to reset the debug metrics
+
+ drivers/firmware/arm_scmi/Kconfig  | 14 +++++
+ drivers/firmware/arm_scmi/common.h | 24 +++++++++
+ drivers/firmware/arm_scmi/driver.c | 83 +++++++++++++++++++++++++++---
+ 3 files changed, 113 insertions(+), 8 deletions(-)
+
+-- 
+2.46.0
+
 
