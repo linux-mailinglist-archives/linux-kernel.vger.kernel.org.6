@@ -1,204 +1,113 @@
-Return-Path: <linux-kernel+bounces-275348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D259483BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:54:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDEC9483C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8461C21106
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:54:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC34E28497E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129F216BE32;
-	Mon,  5 Aug 2024 20:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A60716BE26;
+	Mon,  5 Aug 2024 20:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NFxZimmP"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FeZX66xb"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE71B14E2E8
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 20:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6628B14E2E8;
+	Mon,  5 Aug 2024 20:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722891255; cv=none; b=aWHgicgZVGFOKTJDYP5w4qmbqv/NZC/H+0HpZerAtGtpmnhpLRBearWS/6KV4zs0gkaJDcJ9JbHfZRNP3GKnoaWDAnuDvQRC4Q/Y0Vzf2aM0UGjyJ26/B9Yhp1hyROETSje7viDWRfQ1kC6BPEBcKgpmyESEAzGKWEm31R3EjjE=
+	t=1722891305; cv=none; b=EztCVpox+rZum3WM7tHScgl1yW5M476WQafrrWqHfG6wZUYsIOl6rrscnZjBBbQjk19MCcqqHCllvkX3H/KM0h55CXzIUD6rGbh3cu0KOYAkuPqcQsp4XqIJELwa5SeN97zTC3JyGVGMPhqhncTnaGe5qHDALRg0NQZlEX/wr9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722891255; c=relaxed/simple;
-	bh=4K6QTR6HvNRPQ7887+ZOCG9zsjAWM1Dl8u50rzFuCt8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UhPwcXplSZIKmjowYeKuhFKmE8DJ/XS3FXnNFWFHokEsJ88noAL3fjmzTb5GXKzm7oFbEdZm1VrRDhKg7b4SPrtBSXMWJkd3Wp3AZQiVqycdVMeNHsA9v6eWK3d4+pw2sfPkfWuEUUSYFiYCYNbJMaE7rumXfQkqSlaEUffpZ64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NFxZimmP; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0bb206570aso12125809276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 13:54:13 -0700 (PDT)
+	s=arc-20240116; t=1722891305; c=relaxed/simple;
+	bh=yfehb+/K7JEytgsTmreJNTCphiSiiDYakWsvM3kqs34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8T9z7QSNYotwDQ8swFId7sAWuyzG7tkcTH/u7lITq/qJQ6j/i3j7+PE/XsnTPgTKVCsbdQSUesgz+K52qa5yeJyjQ5MPNxU1BE8cvzskjeVWYF6E3KB/9/O+QOeB588Ooc7bdQFmdhTosbVH+Nh+RB1YgRElS/n8fW7aqfdRGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FeZX66xb; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7104f939aa7so5168593b3a.1;
+        Mon, 05 Aug 2024 13:55:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722891253; x=1723496053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1722891303; x=1723496103; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NMlpeHo+HyY4kal0mMvXGCf6/Wgtc0+eV5pFZe1YOkg=;
-        b=NFxZimmPaArlkQJfBHjNs3otTKq/FFuCaQD2vN8KvNSOfjT2d7wUDj8+pqK8uFnyYX
-         FuG95kFwa5bVumzinX6Qtt7+5Rof4HOfrndMdINh5WCzbclyxya7d286Oo5KhNnkDv0e
-         c2KOgi6NAMSgp097r4NwO3OxTq8ZvZl0GFXblAkHqyCZ8JXUifMJNFOw1erX58XHv+gO
-         MzWm8l2ATZUkb3Rt8KH/AmRc1PyIQT4x0OiVtjo2MAI2Pk/uSI6prkvyBqVXgV0NsKzO
-         uJGh7D9aexNcdwAz77ViO7Glcrf4R0uJvEkkGG0Cj+vPPDCL6hwKFK/yEQOprKX9w/a1
-         ZCIA==
+        bh=PzipGhysRj+IbI54DfvD3aENRSppo3XPVU7foYcloPs=;
+        b=FeZX66xbTKRoMpBREt5BqsF3qShEoras4Sq9E7q63KkbLEVNO4s0TKtAiJhCszfoE9
+         ZOOBLM4RyGP9oV1N8mm9HqutojVCSGmbVmrC4p41EQGoyJWaMnNh7gVd1sTGunqhJdSL
+         aQuDvQwCpNoKOtePOple43zOxRSHfObRoBwtGsszEcpAZTHaNRkTmuWwkLb947mN18s0
+         GbW2QUpzCGHeHa9rYe35l8NJTVWwQ7ZVGxWLTktc+/ouB8dLK0M3pEHbSsKHMQcwoUfv
+         18/d0ssxSV6s+TZZH5LruSVq2eaY646NfqLAHEfu1ca05G6uv3w+waZYp05OzroFEeEr
+         QcMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722891253; x=1723496053;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NMlpeHo+HyY4kal0mMvXGCf6/Wgtc0+eV5pFZe1YOkg=;
-        b=rtVozr+muhGgsx3hVt9oetlWjjbA1/qWZqgOIYwN66f4yl0qr8zvU3Js3LshX0OnqC
-         M2/NzPstKo95m8VeonGwVsAGVNVedqL1AET4MSLDDxinjXOFKW72ZhVsw+NA8j70WAyU
-         qfjITkHE6eOXWQFYVsDHAnyx9s7FYX/nYb1X9/qwGFcVe4OWQy+UkZgJUaorqYy4UVJH
-         MX5O95qLyqXzBHLQHx2lUuFj8D1jQGdTCye8VjPc+trknE9aVJ6V3qIH1Ku00i/01Rl7
-         TLI1Z28yP2IPNASBYbaWWbcwurH76IdrSaWytlQml9PK49h9TiiMX//nIammKZmk0GCV
-         wgcA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9GH6KbFM7sNtUGpAs7C6N9GpfP5CNyUs/6tyTnrPZJ8uaHn6l5XDNtrkNigZIxisr5L9zjH8vaqL64yxO85yJ+9tZjK/rwgW4ci9P
-X-Gm-Message-State: AOJu0YxXkE8QhZI/59vISNOSqegfVcaNMac9f6wBpIiKu4h0wcx8VP2C
-	h4rU0uTZHqynAslHh3jA/1RuCzWbX37KnQ2U6ZTJD7JCGbBnTdZzehCF6pNEIaFFBl5pfXINqxh
-	p0Q==
-X-Google-Smtp-Source: AGHT+IH5AyNFdYN4/Gz/qGAS0tjwBQNkFLZjkGowb/SR6Kr7Xn6v/UbkFeCWwxD/z7GlyKyujyrajh9pOz8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:c08:b0:e0b:bafe:a7f3 with SMTP id
- 3f1490d57ef6-e0bde428581mr567572276.11.1722891252816; Mon, 05 Aug 2024
- 13:54:12 -0700 (PDT)
-Date: Mon, 5 Aug 2024 13:54:11 -0700
-In-Reply-To: <b6569c6d40317e957cff9309dcfe943d72544b60.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1722891303; x=1723496103;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PzipGhysRj+IbI54DfvD3aENRSppo3XPVU7foYcloPs=;
+        b=RBOde3ISkOnDM1FVfmgGCPxyvYmDlWmkjtKuheJVC0+k7RXJ7GTkkirth7qvPzBQV3
+         0L0qFx8T5JBmdVqomtKOgy/Pfn/H4dnNig3T+WGUSzN4vNoGM4eCy/JB+LHlnvfPny0Z
+         VX6E5BOggjdlCknRfHGh08Etp10FpLPtdWWj5qPtsMyrD0ktkU/4Lcv1Clororgfma4o
+         tK+OsuMkXsHwus/I24sCgGvZKEoJlArOZwx7rigXPgbbkC5Z3o67zyg5To0VJZcF4VG0
+         h9Jn4ZHG9Ufl8TWhFX9QHCCH14jlpamRyvkgAvENTz2r/e9uxomGBTfz0atPYbyCIhLp
+         mbKA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1GIeGZhoP3rdOgCIV8lzXRdl/fN4H1em5qh721AwRxH2b6idOW7H1Dt1k2XecBaqb1bo4nM3biGz95UvMVbWD1f8lZSMAY4bm1vRJRKJTmqUvtKIG7B8ASZ9GFCvpDpFQSbBKbKMbrGI5+fTeVdQGJEZnrYpjGKsrZgiJJRW96X6XMB0rbw==
+X-Gm-Message-State: AOJu0Ywpk7eHk0xASS4opTuUOb77+MfOHK0bO/Yh+JlnhUKlHZxQ/4KE
+	qxwMOhfkGzS79xKD1g9mVNn3Zrd57KxgCeDnGhV5dRWlUKoPCJVGkXKz1A==
+X-Google-Smtp-Source: AGHT+IFHcN48KYT1kcKZeuVVSlXLMWD37eHdUQvwWWKcsVpoW9sz74Y6DG0lWyvB/2Hb7Amp7A8N+g==
+X-Received: by 2002:a05:6a00:1912:b0:707:ffa4:de3f with SMTP id d2e1a72fcca58-7106cfcfd8dmr18013680b3a.17.1722891303433;
+        Mon, 05 Aug 2024 13:55:03 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b76393ee22sm4874855a12.39.2024.08.05.13.55.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 13:55:03 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 5 Aug 2024 10:55:01 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Chen Ridong <chenridong@huawei.com>
+Subject: Re: [PATCH-cgroup 3/5] cgroup/cpuset: Eliminate unncessary sched
+ domains rebuilds in hotplug
+Message-ID: <ZrE8JW4Z34am2YU5@slm.duckdns.org>
+References: <20240805013019.724300-1-longman@redhat.com>
+ <20240805013019.724300-4-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240802151608.72896-1-mlevitsk@redhat.com> <20240802151608.72896-2-mlevitsk@redhat.com>
- <Zq0A9R5R_MAFrqTP@google.com> <cdb61fa7cc5cfe69b030493ea566cbf40f3ec2e1.camel@redhat.com>
- <ZrEAXVhH3w6Q0tIy@google.com> <b6569c6d40317e957cff9309dcfe943d72544b60.camel@redhat.com>
-Message-ID: <ZrE78zQYU95o6QCq@google.com>
-Subject: Re: [PATCH v2 1/2] KVM: x86: relax canonical check for some x86
- architectural msrs
-From: Sean Christopherson <seanjc@google.com>
-To: mlevitsk@redhat.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Chao Gao <chao.gao@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805013019.724300-4-longman@redhat.com>
 
-On Mon, Aug 05, 2024, mlevitsk@redhat.com wrote:
-> =D0=A3 =D0=BF=D0=BD, 2024-08-05 =D1=83 09:39 -0700, Sean Christopherson =
-=D0=BF=D0=B8=D1=88=D0=B5:
-> > On Mon, Aug 05, 2024, mlevitsk@redhat.com=C2=A0wrote:
-> > > =D0=A3 =D0=BF=D1=82, 2024-08-02 =D1=83 08:53 -0700, Sean Christophers=
-on =D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > > > Checking kvm_cpu_cap_has() is wrong.=C2=A0 What the _host_ su=
-pports is irrelevant,
-> > > > > > > what matters is what the guest CPU supports, i.e. this should=
- check guest CPUID.
-> > > > > > > Ah, but for safety, KVM also needs to check kvm_cpu_cap_has()=
- to prevent faulting
-> > > > > > > on a bad load into hardware.=C2=A0 Which means adding a "gove=
-rned" feature until my
-> > > > > > > CPUID rework lands.
-> > >=20
-> > > Well the problem is that we passthrough these MSRs, and that means th=
-at the guest
-> > > can modify them at will, and only ucode can prevent it from doing so.
-> > >=20
-> > > So even if the 5 level paging is disabled in the guest's CPUID, but h=
-ost supports it,
-> > > nothing will prevent the guest to write non canonical value to one of=
- those MSRs,=C2=A0
-> > > and later KVM during migration or just KVM_SET_SREGS will fail.
-> > =C2=A0
-> > Ahh, and now I recall the discussions around the virtualization holes w=
-ith LA57.
-> >=20
-> > > Thus I used kvm_cpu_cap_has on purpose to make KVM follow the actual =
-ucode
-> > > behavior.
-> >=20
-> > I'm leaning towards having KVM do the right thing when emulation happen=
-s to be
-> > triggered.=C2=A0 If KVM checks kvm_cpu_cap_has() instead of guest_cpu_c=
-ap_has() (looking
-> > at the future), then KVM will extend the virtualization hole to MSRs th=
-at are
-> > never passed through, and also to the nested VMX checks.=C2=A0 Or I sup=
-pose we could
-> > add separate helpers for passthrough MSRs vs. non-passthrough, but that=
- seems
-> > like it'd add very little value and a lot of maintenance burden.
-> >=20
-> > Practically speaking, outside of tests, I can't imagine the guest will =
-ever care
-> > if there is inconsistent behavior with respect to loading non-canonical=
- values
-> > into MSRs.
-> >=20
->=20
-> Hi,
->=20
-> If we weren't allowing the guest (and even nested guest assuming that L1
-> hypervisor allows it) to write these MSRs directly, I would have agreed w=
-ith
-> you, but we do allow this.
->=20
-> This means that for example a L2, even a malicious L2, can on purpose wri=
-te
-> non canonical value to one of these MSRs, and later on, KVM could kill th=
-e L0
-                                                                           =
-  L1?
-> due to canonical check.
+On Sun, Aug 04, 2024 at 09:30:17PM -0400, Waiman Long wrote:
+> It was found that some hotplug operations may cause multiple
+> rebuild_sched_domains_locked() calls. Some of those intermediate calls
+> may use cpuset states not in the final correct form leading to incorrect
+> sched domain setting.
+> 
+> Fix this problem by using the existing force_rebuild flag to inhibit
+> immediate rebuild_sched_domains_locked() calls if set and only doing
+> one final call at the end. Also renaming the force_rebuild flag to
+> force_sd_rebuild to make its meaning for clear.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-Ugh, right, if L1 manually saves/restores MSRs and happens to trigger emula=
-tion
-on WRMSR at the 'wrong" time.
+Applied to cgroup/for-6.11-fixes.
 
-Host userspace save/restore would suffer the same problem.  We could grant =
-host
-userspace accesses an exception, but that's rather pointless.
+Thanks.
 
-> Or L1 (not Linux, because it only lets canonical GS_BASE/FS_BASE), allow =
-the
-> untrusted userspace to write any value to say GS_BASE, thus allowing
-> malicious L1 userspace to crash L1 (also a security violation).
-
-FWIW, I don't think this is possible.  WR{FS,GS}BASE and other instructions=
- that
-load FS/GS.base honor CR4.LA57, it's only WRMSR that does not.
-
-> IMHO if we really want to do it right, we need to disable pass-though of
-> these MSRs if ucode check is more lax than our check, that is if L1 is
-> running without 5 level paging enabled but L0 does have it supported.
->
-> I don't know if this configuration is common, and thus how much this will
-> affect performance.
-
-MSR_FS_BASE and SR_KERNEL_GS_BASE are hot spots when WR{FS,GS}BASE are unsu=
-pported,
-or if the guest kernels doesn't utilize those instructions.
-
-All in all, I agree it's not worth trying to plug the virtualization hole f=
-or MSRs,
-especially since mimicking hardware yields much simpler code overall.  E.g.=
- add
-a dedicated MSR helper, and have that one check kvm_cpu_cap_has(), includin=
-g in
-VM-Entry flows, but keep the existing is_noncanonical_address() for all non=
--WRMSR
-path.
-
-Something like this?
-
-static inline bool is_noncanonical_msr_value(u64 la)
-{
-	u8 virt_addr_bits =3D kvm_cpu_cap_has(X86_FEATURE_LA57) ? 57 : 48;
-
-	return !__is_canonical_address(la, virt_addr_bits);
-}
+-- 
+tejun
 
