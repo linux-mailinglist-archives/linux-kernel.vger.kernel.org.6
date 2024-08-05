@@ -1,175 +1,154 @@
-Return-Path: <linux-kernel+bounces-274640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C855947AFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:19:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E071947AFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876FB281FE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230E9281F57
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7B8156F48;
-	Mon,  5 Aug 2024 12:19:37 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5D7156F4B;
+	Mon,  5 Aug 2024 12:20:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF8E155A5F;
-	Mon,  5 Aug 2024 12:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E13156C67
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 12:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722860377; cv=none; b=u9I0xPDfSsjiH//tlGrkCTUn6mGG+YbiSL8SSpPQ5X2r9mEU89G6tdcnjQ8DUlm1UnQToNKmWzc2RW3fqdpXpnzBeYhJPqdmNZoR9xmzXowoo9UJJ+Afs/pYrldgI5eYVuYIk/DqIhRPR5BVFq+8ufGYvdiTrTdWS1460/64pJE=
+	t=1722860405; cv=none; b=itC91voPwwL8m1xSetF6B5Gni5koiaUe3+YuIQ88nv/hkaYqcsl7auNGIcusRGtHWZ2r8nvPByNoTjzeFeUmdCRfRazjsC7BpWOCUo/kJ27KNYTviiAd8FseuXKrTPdSDDp+psBicmTKo32LrKJs24tDPnAk6WoW5CSp3vfCDOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722860377; c=relaxed/simple;
-	bh=9kKtwZPzto+3iu+ozE9odzsSQasOgtHx3JeB+HXuNTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jEx0YS6BdgUbdfrE4b9NJMmlneZSJR037okbUeYgIjHIMHs/DWadyvDQXaRgSeyaPageLKA9F4s1pwrjPNrBZZCgh2Z6UcYlsI28R1Cx/0pVk/YFBl1HOGea2w4yMDtf7EuY+9KNJkkzWYy4T7eAsTr5Hf7O3ZrWJiDpKt1Tlio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WcwTt2lxxz1L9qR;
-	Mon,  5 Aug 2024 20:19:14 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 594ED180105;
-	Mon,  5 Aug 2024 20:19:32 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 5 Aug 2024 20:19:32 +0800
-Message-ID: <ad84acd2-36ba-433c-bdf7-c16c0d992e1c@huawei.com>
-Date: Mon, 5 Aug 2024 20:19:24 +0800
+	s=arc-20240116; t=1722860405; c=relaxed/simple;
+	bh=JpfWE7rLFaXco8Q+uNOFBhFrFS7qAYeS5EPeu1xnvhE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DJgtI625ayN+Va5bapSOl0BUJnZQTXDt0yFXEuw3ZXrcR3rHxlhhNJ1EMvbYvsDO7WjcM4Bw1RYmXhBZhufDu+oIzX0K31UpdOlgc0ztJzaApRlB/xItIOGc7Sw1jn1njdH5bC32BixEa1HTtc+Bjd5phzbVkVM/dIGOjVrdesQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39ad7e6b4deso156409325ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 05:20:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722860403; x=1723465203;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ADBftjc8YiRzL1bynp2FMlY8eKZq7exZpuZkW2ZY8U=;
+        b=JaZzhyZRVI6HRlcxHAHtrqlYOsORMYuxFJNsnzF/kRv0g/8r8aqTkXEYKbB7cZIQik
+         Rjqnu3glC76zPMt9qdPvec0rrOxOvpzBAu3E6W7U3S2IBtcvw0fcj3rKQoWNBQTTbEPk
+         TiHArS83P8TrU9WLf+P5Ux75Efo11DqA2GkgkVeJwlOgSicfxIHregqMr0A1H2XYXCQF
+         n42G/q2hZnpn/hBC/DHhywXXJU5yt5P+ILTaZQUQG1Jy2EHMRV/7oApi6Xpz+uMQg9VQ
+         zRXC10vE9dCGMjzjTmzQSe0ehLGVDBmUPswfysIVfFM2bYwNe96ZOeDMBg+q53NQk7wn
+         Rasw==
+X-Forwarded-Encrypted: i=1; AJvYcCW00d3+VyNqgl2OZTNYPGSwFW4p0DgjE9SFuwexyuufCuvBfVuTgZAyWkarZdPd9tmdZHK/Gmvl8FmD0Gb5raoIYHkRdPm5gTiNMja5
+X-Gm-Message-State: AOJu0YxG5bXFnRmyJm5NTd7udW7RcXYmfPTGZ8643X/3Tsk5D7mO4bjq
+	pBtbyLmJGEx1LDN8iP2JwnAXZpqqo5M+GMY5OMnEY9SakPJc9jSv5ams3HJEDlZHNVvzHh3xMH8
+	6m8ImvNTuQ85Qo1BHJ/iw3k7/VlnTixo5hpRi3QVlf6hK3NdHpyXNUE0=
+X-Google-Smtp-Source: AGHT+IFhvx8xGqwcf9+OvOV2qxGAIYqI8RCYaoWDcEXIb+EzvJC3I6lkL0EQw8ldLOCBsur7wz+uce4ZsMKVydueDs8ma+6RgB57
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG REPORT]net: page_pool: kernel crash at
- iommu_get_dma_domain+0xc/0x20
-To: Somnath Kotur <somnath.kotur@broadcom.com>, Jesper Dangaard Brouer
-	<hawk@kernel.org>
-CC: Yonglong Liu <liuyonglong@huawei.com>, "David S. Miller"
-	<davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, <pabeni@redhat.com>,
-	<ilias.apalodimas@linaro.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Alexander Duyck <alexander.duyck@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>, "shenjian (K)" <shenjian15@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <iommu@lists.linux.dev>
-References: <0e54954b-0880-4ebc-8ef0-13b3ac0a6838@huawei.com>
- <8743264a-9700-4227-a556-5f931c720211@huawei.com>
- <e980d20f-ea8a-43e3-8d3f-179a269b5956@kernel.org>
- <CAOBf=musxZcjYNHjdD+MGp0y6epnNO5ryC6JgeAJbP6YQ+sVUA@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <CAOBf=musxZcjYNHjdD+MGp0y6epnNO5ryC6JgeAJbP6YQ+sVUA@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1a44:b0:396:ec3b:df69 with SMTP id
+ e9e14a558f8ab-39b1fc382damr8738255ab.3.1722860402935; Mon, 05 Aug 2024
+ 05:20:02 -0700 (PDT)
+Date: Mon, 05 Aug 2024 05:20:02 -0700
+In-Reply-To: <tencent_48AA749F76BD66F03C5F3724972036684A09@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000509a88061eeeb2cd@google.com>
+Subject: Re: [syzbot] [jfs?] INFO: task hung in txBegin
+From: syzbot <syzbot+eda89a33c5856f66f823@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 2024/7/31 16:42, Somnath Kotur wrote:
-> On Tue, Jul 30, 2024 at 10:51 PM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
->>
+Hello,
 
-+cc iommu maintainers and list
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+general protection fault in lmLogSync
 
->>
->> On 30/07/2024 15.08, Yonglong Liu wrote:
->>> I found a bug when running hns3 driver with page pool enabled, the log
->>> as below:
->>>
->>> [ 4406.956606] Unable to handle kernel NULL pointer dereference at
->>> virtual address 00000000000000a8
->>
->> struct iommu_domain *iommu_get_dma_domain(struct device *dev)
->> {
->>         return dev->iommu_group->default_domain;
->> }
->>
->> $ pahole -C iommu_group --hex | grep default_domain
->>         struct iommu_domain *      default_domain;   /*  0xa8   0x8 */
->>
->> Looks like iommu_group is a NULL pointer (that when deref member
->> 'default_domain' cause this fault).
->>
->>
->>> [ 4406.965379] Mem abort info:
->>> [ 4406.968160]   ESR = 0x0000000096000004
->>> [ 4406.971906]   EC = 0x25: DABT (current EL), IL = 32 bits
->>> [ 4406.977218]   SET = 0, FnV = 0
->>> [ 4406.980258]   EA = 0, S1PTW = 0
->>> [ 4406.983404]   FSC = 0x04: level 0 translation fault
->>> [ 4406.988273] Data abort info:
->>> [ 4406.991154]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>> [ 4406.996632]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>> [ 4407.001681]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>> [ 4407.006985] user pgtable: 4k pages, 48-bit VAs, pgdp=0000202828326000
->>> [ 4407.013430] [00000000000000a8] pgd=0000000000000000,
->>> p4d=0000000000000000
->>> [ 4407.020212] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->>> [ 4407.026454] Modules linked in: hclgevf xt_CHECKSUM ipt_REJECT
->>> nf_reject_ipv4 ip6table_mangle ip6table_nat iptable_mangle
->>> ip6table_filter ip6_tables hns_roce_hw_v2 hns3 hclge hnae3 xt_addrtype
->>> iptable_filter xt_conntrack overlay arm_spe_pmu arm_smmuv3_pmu
->>> hisi_uncore_hha_pmu hisi_uncore_ddrc_pmu hisi_uncore_l3c_pmu
->>> hisi_uncore_pmu fuse rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi
->>> scsi_transport_iscsi crct10dif_ce hisi_sec2 hisi_hpre hisi_zip
->>> hisi_sas_v3_hw xhci_pci sbsa_gwdt hisi_qm hisi_sas_main hisi_dma
->>> xhci_pci_renesas uacce libsas [last unloaded: hnae3]
->>> [ 4407.076027] CPU: 48 PID: 610 Comm: kworker/48:1
->>> [ 4407.093343] Workqueue: events page_pool_release_retry
->>> [ 4407.098384] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
->>> BTYPE=--)
->>> [ 4407.105316] pc : iommu_get_dma_domain+0xc/0x20
->>> [ 4407.109744] lr : iommu_dma_unmap_page+0x38/0xe8
->>> [ 4407.114255] sp : ffff80008bacbc80
->>> [ 4407.117554] x29: ffff80008bacbc80 x28: 0000000000000000 x27:
->>> ffffc31806be7000
->>> [ 4407.124659] x26: ffff2020002b6ac0 x25: 0000000000000000 x24:
->>> 0000000000000002
->>> [ 4407.131762] x23: 0000000000000022 x22: 0000000000001000 x21:
->>> 00000000fcd7c000
->>> [ 4407.138865] x20: ffff0020c9882800 x19: ffff0020856f60c8 x18:
->>> ffff8000d3503c58
->>> [ 4407.145968] x17: 0000000000000000 x16: 1fffe00419521061 x15:
->>> 0000000000000001
->>> [ 4407.153073] x14: 0000000000000003 x13: 00000401850ae012 x12:
->>> 000006b10004e7fb
->>> [ 4407.160177] x11: 0000000000000067 x10: 0000000000000c70 x9 :
->>> ffffc3180405cd20
->>> [ 4407.167280] x8 : fefefefefefefeff x7 : 0000000000000001 x6 :
->>> 0000000000000010
->>> [ 4407.174382] x5 : ffffc3180405cce8 x4 : 0000000000000022 x3 :
->>> 0000000000000002
->>> [ 4407.181485] x2 : 0000000000001000 x1 : 00000000fcd7c000 x0 :
->>> 0000000000000000
->>> [ 4407.188589] Call trace:
->>> [ 4407.191027]  iommu_get_dma_domain+0xc/0x20
->>> [ 4407.195105]  dma_unmap_page_attrs+0x38/0x1d0
->>> [ 4407.199361]  page_pool_return_page+0x48/0x180
->>> [ 4407.203699]  page_pool_release+0xd4/0x1f0
->>> [ 4407.207692]  page_pool_release_retry+0x28/0xe8
->>
->> I suspect that the DMA IOMMU part was deallocated and freed by the
->> driver even-though page_pool still have inflight packets.
-> When you say driver, which 'driver' do you mean?
-> I suspect this could be because of the VF instance going away with
-> this cmd - disable the vf: echo 0 >
-> /sys/class/net/eno1/device/sriov_numvfs, what do you think?
->>
->> The page_pool bumps refcnt via get_device() + put_device() on the DMA
->> 'struct device', to avoid it going away, but I guess there is also some
->> IOMMU code that we need to make sure doesn't go away (until all inflight
->> pages are returned) ???
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+CPU: 1 PID: 112 Comm: jfsCommit Not tainted 6.10.0-rc4-syzkaller-00148-g50736169ecc8-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:write_special_inodes fs/jfs/jfs_logmgr.c:208 [inline]
+RIP: 0010:lmLogSync+0x130/0xae0 fs/jfs/jfs_logmgr.c:935
+Code: a6 fe 49 8d 5f f0 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 fe 96 d3 fe 48 8b 1b 48 83 c3 30 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 e1 96 d3 fe 48 8b 3b e8 99 c5 a6
+RSP: 0018:ffffc90002c8fc00 EFLAGS: 00010206
+RAX: 0000000000000006 RBX: 0000000000000030 RCX: cec33d79cc59c000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002c8fd18 R08: ffffffff81cbb49a R09: 0000000000000000
+R10: ffffc90002c8f9e8 R11: fffff52000591f6b R12: ffff88807720a800
+R13: dffffc0000000000 R14: 0000000000000001 R15: ffff88807dc3f238
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c0017f8000 CR3: 000000002f11c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ jfs_syncpt+0x7d/0xa0 fs/jfs/jfs_logmgr.c:1041
+ txEnd+0x30f/0x560 fs/jfs/jfs_txnmgr.c:549
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2684 [inline]
+ jfs_lazycommit+0x634/0xb80 fs/jfs/jfs_txnmgr.c:2733
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:write_special_inodes fs/jfs/jfs_logmgr.c:208 [inline]
+RIP: 0010:lmLogSync+0x130/0xae0 fs/jfs/jfs_logmgr.c:935
+Code: a6 fe 49 8d 5f f0 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 fe 96 d3 fe 48 8b 1b 48 83 c3 30 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 e1 96 d3 fe 48 8b 3b e8 99 c5 a6
+RSP: 0018:ffffc90002c8fc00 EFLAGS: 00010206
+RAX: 0000000000000006 RBX: 0000000000000030 RCX: cec33d79cc59c000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002c8fd18 R08: ffffffff81cbb49a R09: 0000000000000000
+R10: ffffc90002c8f9e8 R11: fffff52000591f6b R12: ffff88807720a800
+R13: dffffc0000000000 R14: 0000000000000001 R15: ffff88807dc3f238
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f43bc3ff000 CR3: 000000002f11c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	a6                   	cmpsb  %es:(%rdi),%ds:(%rsi)
+   1:	fe 49 8d             	decb   -0x73(%rcx)
+   4:	5f                   	pop    %rdi
+   5:	f0 48 89 d8          	lock mov %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 fe 96 d3 fe       	call   0xfed3971a
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 30          	add    $0x30,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 e1 96 d3 fe       	call   0xfed3971a
+  39:	48 8b 3b             	mov    (%rbx),%rdi
+  3c:	e8                   	.byte 0xe8
+  3d:	99                   	cltd
+  3e:	c5                   	.byte 0xc5
+  3f:	a6                   	cmpsb  %es:(%rdi),%ds:(%rsi)
 
-I guess the above is why thing went wrong here, the question is which
-IOMMU code need to be called here to stop them from going away.
 
-What I am also curious is that there should be a pool of allocated iova in
-iommu that is corresponding to the in-flight page for page_pool, shouldn't
-iommu wait for the corresponding allocated iova to be freed similarly as
-page_pool does for it's in-flight pages?
+Tested on:
+
+commit:         50736169 Merge tag 'for-6.10-rc4-tag' of git://git.ker..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1500d4d3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12f98862a3c0c799
+dashboard link: https://syzkaller.appspot.com/bug?extid=eda89a33c5856f66f823
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13a018f3980000
+
 
