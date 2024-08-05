@@ -1,80 +1,85 @@
-Return-Path: <linux-kernel+bounces-274915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A30947E2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:33:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0246947E30
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49DEE1C21F67
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:33:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C6B7B23117
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7196F15B560;
-	Mon,  5 Aug 2024 15:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB664158DDF;
+	Mon,  5 Aug 2024 15:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XQD5dh/d";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/2TPugQf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7VXYxch"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D5D13C677;
-	Mon,  5 Aug 2024 15:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DCA1514E1;
+	Mon,  5 Aug 2024 15:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722871994; cv=none; b=Bab6mi7Jgz9RsYv7gpF0aMI0euyo85/9vJUJk+26+1h+DxzZS4kmtQUVCA9EFBQKW2B4BdYvuafDmP5m2A9Fu9zHJf1WhihWU+SSz0t/AP1xxn2cjBAIXSrbdwBR1GHWyaRzK/dPWJzwnT+V/mO/aOn6Mf42uftwvdLysNuG8Uc=
+	t=1722872047; cv=none; b=fZBgHspFk/vMptqZe6qJd2/Y3TTNHB/w7V+G+eEG0vZ8ch8TkyNVmUtE2pN8K73KfiTbzWGGm7bIrk/SNdLgBDKKCQGUl6Hq9t6my8pJebbtuoZW2rUMknnC1HFnBDPSpxHjFBeq9y5l/8pFCCpuzxJxDglkxoQyARVeHFsq8fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722871994; c=relaxed/simple;
-	bh=xz7pMosSnrQEU6GYh1jNebd60Tvu1ZpHTzssxOtrjUI=;
+	s=arc-20240116; t=1722872047; c=relaxed/simple;
+	bh=0yY3lEMgpKaC8kkxZ89YLUnkpiljb1XkrWiWAkcccvE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aJ3OpRLTyyVzEbNjqJ/KVT7jbQiM0cSPvQKSoFuAG1rkJyc5hN4/lPw7zPYf0h5NkQ7t0SdgaAu7+Ep600yBytWNtV1RTM6/ZaKjBNL+RzVbIo1yIsiUjzr59nh78Dch0YzSXs1y0KYAps5UE2j0q28bE0Fi1PpBdcX5ViWOt9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XQD5dh/d; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/2TPugQf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 5 Aug 2024 17:33:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722871990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZoVVPlB6sIY1d5GK5dwozDR3uFKevJmf+6ocl8483Eo=;
-	b=XQD5dh/dS9zvxT1sxq/wfab9IbwdBAT6s4IMbz3LWOZ7UQqXH1kfld+65EbWFaQ+IC9w3N
-	rdvShYi8dFrmIZgxKQNeSqof4R4DpD4WNkP6+4d19QmBQ2KBEMkryzOEVTcTshED3EaKxQ
-	rczurYtMnr/7nJ2C2shls6MVWdZfuCHZF5OiE3DBDRJ0MLoAKn+uuU+BunmXzkLqCguAYq
-	98/O3A/o1SxzPYYz2VmiW5VjLOONfd38CBEGlT9jXq4efUKF1xa+ohMUgIvT/VlqPfyCCD
-	hZswJVT8gPz06dTADE4rqcZ620gyeyFrILIiKmbC10Ir2+H4yy9rUtvzJguSag==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722871990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZoVVPlB6sIY1d5GK5dwozDR3uFKevJmf+6ocl8483Eo=;
-	b=/2TPugQf5xOZFfBEW6r5XFwR13BURvd9nXqxgUgsfnjYsOW99yVs36NxapFUE0d7aSy+3B
-	suo4AYuzhO8ljlAg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-rt-users@vger.kernel.org,
-	Arseniy Krasnov <avkrasnov@salutedevices.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@sberdevices.ru, oxffffaa@gmail.com,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v1] ASoC: meson: axg-fifo: set option to use raw spinlock
-Message-ID: <20240805153309.k_SfHw62@linutronix.de>
-References: <20240729131652.3012327-1-avkrasnov@salutedevices.com>
- <1ja5i0wags.fsf@starbuckisacylon.baylibre.com>
- <2b16b95e-196e-4d8a-98c3-3be568cdd18a@sirena.org.uk>
- <1j5xsow839.fsf@starbuckisacylon.baylibre.com>
- <7dfdade5-3a57-4883-bfac-067c50ec0ffb@sirena.org.uk>
- <1j1q3cw5ri.fsf@starbuckisacylon.baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RV4hqRPy4Fu02V2LLcnAgspLsFkB1lC1P5pdGM+iJi7gk+NR3RnN7odn5M2h5HbPn3i8xdsthRRi7LTRHEmf/aqREcEzTmdJacAcXT8X0xgG6suU5fEP2rR4Mr5U40PkOxOqmNCRvi5UKNBVE5IEa8qt0WgT7DSlSTBLjRdnKjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7VXYxch; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71080f4c006so1448922b3a.2;
+        Mon, 05 Aug 2024 08:34:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722872045; x=1723476845; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7sU4PGo8fy6Jt3l07W86KstlfJmCRvZ7xUO6ToPjlfo=;
+        b=V7VXYxch9E7hPQIfyKgmsU+f3eh/41QGocMONgbUg0vMI8rknD1vHkgMR/1NhYj5Io
+         IsdwsFFo2orr88RKNT7yPYUkoJ40g0Zb0zra68N6CWLGv54lcI8cglzvCYQY3npueQwZ
+         i5NKNBZN58PDPt7mEEpQXvCqf5LokKjMHkl759uGMAvJmD2pgZCPerVz8HoXZecOTrHH
+         FkRvp4hQgzxkIXx+vLLOKz1cCuzbDcqvGGGP8jn8Y4Zu6quZeOM8pTFRmmdWAdP+kA3J
+         LD3wip+K5YnJei0iD1mN3yxTRd5M+fiiwpKiVDhvdLFt5eD0Omp08iwhDVAS7rrD0ldx
+         Qk9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722872045; x=1723476845;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7sU4PGo8fy6Jt3l07W86KstlfJmCRvZ7xUO6ToPjlfo=;
+        b=atvMr/C9PWRzOqdfht1fX+UKTmkvHflmAIuzBmmp2mEHbGR2ITUuq1Z75AeafbOoTq
+         A/uMlEQvN127UKMDvDyQrupoc7inh4PZmgxTYJ0SOk4nOw8/8BbwA036+PYlnlq5lwpz
+         Waj2e8PKogkaJu2Px2fAfrHXrmm1miEo042L8dojSdoJ0gez+ngM7bpT4ruokgfKZgdH
+         D7dgd5XLE6gJJlqFGwo0CR9H13DXI2yRSXP3LendcRftaKik4iyhFvvM5+n2zGn+kDBp
+         K6lKvrcITi3m6KSIG5xhnM9EIkx6nr9Tczse7ABU3iQnMfBy/EuiNfLZO5p33GAH3XV1
+         xNmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUH2R0ps7H7077f8wSRmyZ0+8t+qlo0R3AVH7BDI6EEX5Lv1pgKj6t2IViJ6GJAOcfjq73eD5D/RMG0Ea8gy07uF+yZfs2L9D03v2yUqVTX6VdNNFf601UCcyw/wV50UzXRwauRfuMWHXS6xpCWdrp7Kln4NmE00LFqMUwHX1+D45El+YIRloeQ
+X-Gm-Message-State: AOJu0YwrxHnUrVWUANhaLe6p0VG/sE2sM3Q8FTDb56yYc1284G4zmsI6
+	qaUzt1IMzGA2bA4y/wHarXBNabDjLByOohzGtA5dnIQyxvMhBYuW
+X-Google-Smtp-Source: AGHT+IFuz3AKvHjT5Bd+0O9iMquWTF2q8Qgc1xKKQcVhx9U94bUyiLXSNL396Qym/b5UHvm5z2YYRw==
+X-Received: by 2002:a05:6a20:c401:b0:1be:bfa2:5ac3 with SMTP id adf61e73a8af0-1c699659713mr9832432637.35.1722872044999;
+        Mon, 05 Aug 2024 08:34:04 -0700 (PDT)
+Received: from five231003 ([2405:201:c006:3108:7aab:a809:87c8:7090])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed14bc4sm5722310b3a.171.2024.08.05.08.34.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 08:34:04 -0700 (PDT)
+Date: Mon, 5 Aug 2024 21:03:58 +0530
+From: Kousik Sanagavarapu <five231003@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] ti: davinci, keystone: txt to yaml
+Message-ID: <ZrDw5ui+Buki1Lgh@five231003>
+References: <20240727050736.4756-1-five231003@gmail.com>
+ <ZrB6Cbe6JBxFPRWn@five231003>
+ <20240805144410.GA2483419-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,139 +88,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j1q3cw5ri.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <20240805144410.GA2483419-robh@kernel.org>
 
-On 2024-07-29 17:57:05 [+0200], Jerome Brunet wrote:
-> On Mon 29 Jul 2024 at 16:28, Mark Brown <broonie@kernel.org> wrote:
->=20
-> > On Mon, Jul 29, 2024 at 05:06:50PM +0200, Jerome Brunet wrote:
-> >> On Mon 29 Jul 2024 at 15:44, Mark Brown <broonie@kernel.org> wrote:
-> >
-> >> > I don't recall this coming up much TBH.  It may be that people just =
-set
-> >> > raw spinlocks when they need it, or that there's not many people usi=
-ng
-> >> > relevant devices with RT kernels.
-> >
-> >> I have not been playing much with RT TBH, but AFAIK, with RT irq
-> >> handlers are threaded unless IRQF_NO_THREAD is set. In this case,
-> >> something preemptible in the handler should not be a problem.
-> >
-> >> The axg-fifo drivers do not have IRQF_NO_THREAD so something is a bit
-> >> unclear here.
-> >
-> > Yeah, it's definitely likely to happen all the time for people using RT
-> > with relevant devices.  I'm not sure I have a good sense of if it's
-> > likely to be a nasty surprise to switch raw spinlocks on by default when
-> > it's currently controllable, I'd expect it'll generally be fine but it's
-> > possibly a bit rude to any users that don't use interrupts...
->=20
-> Indeed it is bit radical.
->=20
-> My concern with this patch is that, IIUC, the handler should be
-> threaded under RT and there should be no problem with the spinlock API.
->=20
-> Adding the RT folks to try to get a better understanding, they should
-> have been CCed anyway.
+On Mon, Aug 05, 2024 at 08:44:10AM -0600, Rob Herring wrote:
+> Note that these 2 patches are independent and go to different 
+> maintainers, so there was no need to make a series. No need to resend 
+> for that though.
 
-I'm not sure if making the lock a raw_spinlock_t solves all the
-problems. The regmap is regmap_mmio so direct memory-access and looks
-simple enough to do so. In regmap_mmio_write() I see clk_enable() and
-and this uses a spinlock_t so we should be back at the same problem.
-There might be an additional problem if reg-caching is enabled.
+I'll keep that in mind from next time.
 
-Let me propose two alternatives:
-#1: Why two handlers if we have IRQF_ONESHOT and the primary does almost
-    nothing. Assuming the thread is always woken up and the "unexpected
-    irq" case does not happen. If so, why not:
-
-diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
-index 7e6090af720b9..60af05a3cad6b 100644
---- a/sound/soc/meson/axg-fifo.c
-+++ b/sound/soc/meson/axg-fifo.c
-@@ -220,9 +220,21 @@ static irqreturn_t axg_fifo_pcm_irq_block(int irq, voi=
-d *dev_id)
- static irqreturn_t axg_fifo_pcm_irq_block_thread(int irq, void *dev_id)
- {
- 	struct snd_pcm_substream *ss =3D dev_id;
-+	struct axg_fifo *fifo =3D axg_fifo_data(ss);
-+	unsigned int status;
-+
-+	regmap_read(fifo->map, FIFO_STATUS1, &status);
-+	status =3D FIELD_GET(STATUS1_INT_STS, status);
-+
-+	/* Use the thread to call period elapsed on nonatomic links */
-+	if (!(status & FIFO_INT_COUNT_REPEAT)) {
-+		dev_dbg(axg_fifo_dev(ss), "unexpected irq - STS 0x%02x\n",
-+			status);
-+		return IRQ_NONE;
-+	}
-+	axg_fifo_ack_irq(fifo, status);
-=20
- 	snd_pcm_period_elapsed(ss);
--
- 	return IRQ_HANDLED;
- }
-=20
-@@ -251,9 +263,9 @@ int axg_fifo_pcm_open(struct snd_soc_component *compone=
-nt,
- 	if (ret)
- 		return ret;
-=20
--	ret =3D request_threaded_irq(fifo->irq, axg_fifo_pcm_irq_block,
--				   axg_fifo_pcm_irq_block_thread,
--				   IRQF_ONESHOT, dev_name(dev), ss);
-+	ret =3D request_threaded_irq(fifo->irq, NULL,
-+				   axg_fifo_pcm_irq_block_thread, IRQF_ONESHOT,
-+				   dev_name(dev), ss);
- 	if (ret)
- 		return ret;
-=20
-
-#2: If two handers are required due to $REASON then primary should ACK/
-    disable the interrupt line while the secondary/ threaded handler is
-    running. In this is case then IRQF_ONESHOT is not needed because its
-    "tasks" is performed by the primary handler:
-
-diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
-index 7e6090af720b9..5b4c518eb4ccd 100644
---- a/sound/soc/meson/axg-fifo.c
-+++ b/sound/soc/meson/axg-fifo.c
-@@ -205,11 +205,16 @@ static irqreturn_t axg_fifo_pcm_irq_block(int irq, vo=
-id *dev_id)
-=20
- 	regmap_read(fifo->map, FIFO_STATUS1, &status);
- 	status =3D FIELD_GET(STATUS1_INT_STS, status);
--	axg_fifo_ack_irq(fifo, status);
-=20
- 	/* Use the thread to call period elapsed on nonatomic links */
--	if (status & FIFO_INT_COUNT_REPEAT)
-+	if (status & FIFO_INT_COUNT_REPEAT) {
-+		/*
-+		 * ACKs/ Disables the interrupt until re-enabled by
-+		 * axg_fifo_pcm_irq_block_thread()
-+		 */
-+		axg_fifo_ack_irq(fifo, status);
- 		return IRQ_WAKE_THREAD;
-+	}
-=20
- 	dev_dbg(axg_fifo_dev(ss), "unexpected irq - STS 0x%02x\n",
- 		status);
-@@ -253,7 +258,7 @@ int axg_fifo_pcm_open(struct snd_soc_component *compone=
-nt,
-=20
- 	ret =3D request_threaded_irq(fifo->irq, axg_fifo_pcm_irq_block,
- 				   axg_fifo_pcm_irq_block_thread,
--				   IRQF_ONESHOT, dev_name(dev), ss);
-+				   0, dev_name(dev), ss);
- 	if (ret)
- 		return ret;
-
-On the PREEMPT_RT both handler will be threaded.
-=20
-My favorite is #1. Also ACKing the interrupt only if it occurred for the
-device/ driver in charge. Otherwise don't care=E2=80=A6
-
-Sebastian
+Thanks
 
