@@ -1,192 +1,390 @@
-Return-Path: <linux-kernel+bounces-274158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7423494742D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:04:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FF894742E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3A0281FED
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:04:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0992B21C32
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADE613E8A5;
-	Mon,  5 Aug 2024 04:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72A2757F3;
+	Mon,  5 Aug 2024 04:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fPXwDOPA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="p1TJ3RsL"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2049.outbound.protection.outlook.com [40.107.243.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F91914A85;
-	Mon,  5 Aug 2024 04:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722830598; cv=none; b=YNre0p01JvBUFhg8dcQ2nbNYGExbsJP1X2yHmRv+dUsO7HbBQ+z93DAK/N2LTFW2qd+dz3SY+FAeT/KWfjC3Z+dtOSazpUtr8rdb/prrw57Ii7rR80RiP3rqp0LwEzEckL9AawlBX/5EukkfSfDAkXrBJNtw1PKsycU/XZ8Ufgs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722830598; c=relaxed/simple;
-	bh=KTlsVyhr5w6HgAt61sEulsGD/UsfqKxfY2iA8TxKdN8=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD6E1422C3
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 04:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722830638; cv=fail; b=WYp3u5Ddk+UaHemcM8G++MQPVxoRTC6bC9gg6DWAHtP8yk4vFJ32F3K2nyTLPGS2p4lC1oPzFAFwIq7hoZEVlC6K1k+/o6ZL6yEsw10cs5relKenTlXnpOYLqB765zMNvdINfObrrLpTI5zOf0uW758sxlMgWS0AvirOJgnxjcE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722830638; c=relaxed/simple;
+	bh=D8ntfMtEBBlujJFW/e72RfVuB3zdO//fu8MFs0TAj2E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oICGSV9j+9upavcxuJMIiEjGrzXK30irG+WfNxNtIx4u+KcphSEehII4suaIrNouS89haNUm+KeMvaB29XmKIn+8P45qOhUx8inYodKqp3j7ykDyN6gjLoproTJKO+ZZgja6rmSQdcyRXqef9szrXxoLUTL++BC87sBFldqNsH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fPXwDOPA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4752VUhA011325;
-	Mon, 5 Aug 2024 04:03:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wGD4h/C5Z6m4l+vaJ1P68Rr3p5wdr/j4c5H3AJU3JKc=; b=fPXwDOPAzZtZPKPj
-	QA7UXlcv/LdmIoqr165h6wiYqE1huLa9bcdgc3KOxKEiIcS+MKBhT/K7Dtd2CSNX
-	Hqd+j1AwcMXHmz+M8kGVE8TKVxA6sQGvDJF5SpLNKQpFzTYScjTxI2WvtBmCbNXF
-	IUZsEGIaJnA9yCMnfLKhixjzcYPTm99SZv5iqnlmnXmWHWnwg9F7oI90XcipTlf1
-	yHTqMm0VMCJ8fpbCGzu+upUlA7g+YZOkxCIcJVa866OkHZlGWozet4zcHzBD/Izc
-	hRjgL6nib2M239KBkNYkOCdohlhg4ZEL9Z2Qgh/NKxkDIEgA9GZ4gsqobjcMv8GD
-	+sYHXg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scx6jrn7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 04:03:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 475434Wi030649
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Aug 2024 04:03:04 GMT
-Received: from [10.216.50.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 Aug 2024
- 21:02:58 -0700
-Message-ID: <027dc9f7-6e0d-e331-8f90-92a3d56350ab@quicinc.com>
-Date: Mon, 5 Aug 2024 09:32:55 +0530
+	 In-Reply-To:Content-Type; b=AgWsdXvTyjrVO4jJpB3MFy7kDdlUH2w2J1DiG3PFRNxdLemG71lABtr5y6tyqkeRKgFsqpI/hvd5lcQbfOOLk2MmupB6vEY7d5ei6g8Eo3KruE+mnwTJ1/XvRlY51DJMCpGyQb8wPEJep2zUvs5xTWo/lWjMFCh5MhDdn+VijVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=p1TJ3RsL; arc=fail smtp.client-ip=40.107.243.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WMX64g7SQE7lUZL5tWLiSN9zstt7FwjZ+cpkaC6XchSb1R+pNTe/x6Q38QKDqJKk899/RiL2uKaZuFl/MB5zuOy2ftrYxacjqdvMuTlJZPEY6FOpwahAIu2UusD4Lc9hVwQQy999LzjUaNbySzZsSZ5C+8EdMQUrs8xhpSUeVLREBBIdYD5Td1doR3J2h2chQPYb+ZO/W0frnE5yq8+HcFqRwUwkzyuJgi3p05SWKh76wIWewznLMKCicOy7yMX8vQhjDHoEriStpyp3c8h4NJJogjv3dYfQS1QEbeSN2mJWiK+99STqcE9DMcHUGnX5AvKYhuE1RbbqkfpyKBxPvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=phI5BsIa+4Htli5CY/DeVB/wulYOKde1WoZ9ooI+B50=;
+ b=J0zfbkBiC7omwb2D8KvaaeW8Tlb1JEATOPyYk/ePQINcqvsSMSGjUFX0KJRBIbQWQGwBT2P2nyZ7V9L18YTLaoaPYvXeLuvAX4cgbtEJoqmFB8aTPtIJkbLG/BSURUa4Kc3SitREP4QZT6FhxvGZ88x9mEgLid9MYgojwdkpifba6Xb3q4ByRUKq7fpW9Ag1TKl3IWIgCslGTPcgImZzxhPY03ej9hSGaC3P0I4DOi5lNhav6ixXaK4bdNgpPp/Dgy4aP2biwAzNtbJbh7ViwEY0eGcNRhoQQ1otcrfrzpHL8j2bmJhbnQFesAotP7wN/voNFQYvqabI+EIKa0qEbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=phI5BsIa+4Htli5CY/DeVB/wulYOKde1WoZ9ooI+B50=;
+ b=p1TJ3RsLLkzQw1juGgcxcxkPg4Jmc8jIsozJktmg7ueh1JPUeOPjnEyDLw4CAygt4NE09Pdlkc4T4S3zDhnwnk/PJLDbDH0OAy2thbqOlfkj8rLWeWXBvEo8USt+ak0ezVoouEJXW6Yyq+AU+RjoPVJgMXExyTeXm9LeEKiQN4w=
+Received: from BY3PR05CA0017.namprd05.prod.outlook.com (2603:10b6:a03:254::22)
+ by DM6PR12MB4316.namprd12.prod.outlook.com (2603:10b6:5:21a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Mon, 5 Aug
+ 2024 04:03:53 +0000
+Received: from SJ5PEPF000001CE.namprd05.prod.outlook.com
+ (2603:10b6:a03:254:cafe::9f) by BY3PR05CA0017.outlook.office365.com
+ (2603:10b6:a03:254::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.10 via Frontend
+ Transport; Mon, 5 Aug 2024 04:03:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001CE.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Mon, 5 Aug 2024 04:03:53 +0000
+Received: from [10.136.40.92] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 4 Aug
+ 2024 23:03:47 -0500
+Message-ID: <8bcdee16-88d5-7ec5-7d88-1ac11566c28a@amd.com>
+Date: Mon, 5 Aug 2024 09:33:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH 2/3] sched/core: Introduce SM_IDLE and an idle re-entry
+ fast-path in __schedule()
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <andersson@kernel.org>, <quic_vbadigan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
- <0cdaa0b2-ae50-40a1-abbb-7a6702d54ad5@kernel.org>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <0cdaa0b2-ae50-40a1-abbb-7a6702d54ad5@kernel.org>
+To: Chen Yu <yu.c.chen@intel.com>
+CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, <linux-kernel@vger.kernel.org>, "Dietmar
+ Eggemann" <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, "Daniel
+ Bristot de Oliveira" <bristot@redhat.com>, Valentin Schneider
+	<vschneid@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>, Imran Khan
+	<imran.f.khan@oracle.com>, Leonardo Bras <leobras@redhat.com>, Guo Ren
+	<guoren@kernel.org>, Rik van Riel <riel@surriel.com>, Tejun Heo
+	<tj@kernel.org>, Cruz Zhao <CruzZhao@linux.alibaba.com>, Lai Jiangshan
+	<jiangshanlai@gmail.com>, Joel Fernandes <joel@joelfernandes.org>, Zqiang
+	<qiang.zhang1211@gmail.com>, Julia Lawall <julia.lawall@inria.fr>, "Gautham
+ R. Shenoy" <gautham.shenoy@amd.com>
+References: <20240710090210.41856-1-kprateek.nayak@amd.com>
+ <20240710090210.41856-3-kprateek.nayak@amd.com>
+ <ZqkRNGLEHIsgxtSt@chenyu5-mobl2> <Zq7+G1YmKG71WIQ5@chenyu5-mobl2>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <Zq7+G1YmKG71WIQ5@chenyu5-mobl2>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Pojx3rFs7umX47MPNCGk9_ZUtzK1C8Qd
-X-Proofpoint-GUID: Pojx3rFs7umX47MPNCGk9_ZUtzK1C8Qd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 bulkscore=0 clxscore=1011 suspectscore=0 phishscore=0
- spamscore=0 adultscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408050026
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CE:EE_|DM6PR12MB4316:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab0476c8-992e-406a-2b10-08dcb5039ef6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RWJlQXc1UzhMczY0amRJbGhLMy9TbUtVbUN0OXZISVNKc0NOK3JGY215Lyty?=
+ =?utf-8?B?WmRiWStCN0w0UWF6UjlxT3ZqbDFWNXRnbndkSjNXb3BFbUZJMTlmTEFGMCtn?=
+ =?utf-8?B?V05HY2NGOFE1cTl3T3dNZVVHbTd1dmx6MysrM2U2b0tBelNWS0NORE9nZis5?=
+ =?utf-8?B?Z2xaemMrR043Wm0waEN4UC9TUzA5dExXVDJYb0NnOWNzSGozZUVPNllxK1du?=
+ =?utf-8?B?bXpiVjNyZGR3TG1WQkZJTWtwbHlmc2pURHg5UVVidUl6cnRkVjFYN2lKNDEx?=
+ =?utf-8?B?emJGb3pnWlU3N1lHdWd2dHJsS0tER0RZeXdqWnA2U0JRSFdZcXpWR0lrN01u?=
+ =?utf-8?B?UzlOL3Bna2Y0clYzSk1ubmpjaDhOKzFSTGVNeTFxajJPelFzQTd5VkVYRXVq?=
+ =?utf-8?B?TlFuZ2pWNmN4T3Z2WUdGRDBPYy9QYTFpVm01WVUrS09aejRlQ1JzTnJoeFp0?=
+ =?utf-8?B?SGFiMmxybUVOWkppT2FLK1EzWGo3ZGdReE42TFlSbDBMbWZBM01LWm5adFRH?=
+ =?utf-8?B?WkRWSDJOd0dLWXU3WGlTWVRqNEhWL1dlZVg1UERnZEI1ZVN1M09GVHZkTG0x?=
+ =?utf-8?B?blZHYkhFdEY2YW1OWndMRFo5U2lnRTkyREtMbnZ5M0tuZElPczBiblRkdy9D?=
+ =?utf-8?B?bUVKb0NvZUF5MlVhcktVNEVnYU9jY0psY2NZOG5SaTRhdVFncGwxNCtBVU44?=
+ =?utf-8?B?Rm0wUGxSS0I4OUI0dGpqamZFcE1XdEwyU0M2R2svYXk1S2luUDgxQ0EyRzA3?=
+ =?utf-8?B?dWJ6RFNBTjNzVnY3KzFKcGY1QVpwbmZ4OE0wSDlKQXIyMGkwZWRTSEtxSkFW?=
+ =?utf-8?B?RzQya1ZjMjNQMXdnUDQvRXYyaWMxMm1JaEQyYmJMOEI4NUQ0d2JMVGhYQzlv?=
+ =?utf-8?B?bWs4bUlwQndOUG9jSXdCUDNuNTJoMnkxazlRbzRVcTl4M01FOVpaWE1YK1dO?=
+ =?utf-8?B?VE9SNk94UFVTb3JKUFdMZ1ZsTStGWUhPaDdrRTBoSThSK0doQkY1citHR1gx?=
+ =?utf-8?B?dmJOS1ZEODc2RHQ2WExXTnZ5V05KRWg0cXlNVHFEQ0RYTk0yZ3VGQnpiekcz?=
+ =?utf-8?B?cnFYbFBEelYxVXpkYW1yV3RNdUF3ZlEvbGRrNnV6ay9VQ2VqSjJHS1NaOHdu?=
+ =?utf-8?B?YSswRlNTK3gveSs2Z3ZqOFZVR2F3ZWsxeURRKytkZjg5VVljRmVlOFZCc29j?=
+ =?utf-8?B?NG1DN1dmbkF0bVJSWFVPVks2aGRnU21mMGNIbGRYUUJzKzBCMCtDTldFd0l4?=
+ =?utf-8?B?b2VuaUNvTWUzeFllRjZGVzB6c0VreWJOTi9FL0syZ0xDekZMWW1ydGdTS0VD?=
+ =?utf-8?B?M1U4Mm82TzU3amFPeVlQeFFMYXFGbUk3OWg4bzlXWUl4TDNkdGN0TzlkNE95?=
+ =?utf-8?B?eWIyUXVmZk1pZTBtTVdxWlE0eVNONFl5ZFZXb0ZyU2NkVEZDUmFIREZHejMw?=
+ =?utf-8?B?ZldxV09VUGQvSTQxN1hhcjFVMlFyNXY2VzI4SDVaaE9QYjhYamxpS3ZKMXR1?=
+ =?utf-8?B?VkZ3Ky9jMG9LVkNoMVhPUTdPTFQ4b3QxajBnSkltdEg4c1hxTDhLcFZXTEhu?=
+ =?utf-8?B?ZllDZEV3ZVM5clhQSXRIVldUWlRGZ1Y1aHR1MUROb3c4ZTlDejNCcTlJNnFj?=
+ =?utf-8?B?aEFsL0NvenArRXVoOTFaNWY0NzJjY2Nib0wrYnQwNk02UzJlQmMybzZncmls?=
+ =?utf-8?B?cFA3UHRhNWZQU0Fwdmh5RElLdFRaOHd1ZlBBNWpNYWpLaGJidkJmd3VnVm1y?=
+ =?utf-8?B?aGRDeU5iQUI4Y0xQbkVSSlRTMXJRQW4yOS81eVZPdVpIQkxHM3JOd04zVWVG?=
+ =?utf-8?B?Vk1zZVYvS3hrTWJUbjJuWW5Lam1rK0UrUVU3RFhDWTRGU1BaN1BxZDdpY1ZT?=
+ =?utf-8?B?Qlg5bW9PbXRwa01wNTJidDhjUE5XRTV5bFdDV1hNZEg5dEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 04:03:53.4823
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab0476c8-992e-406a-2b10-08dcb5039ef6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4316
 
+Hello Chenyu,
 
+Thank you for testing the series. I'll have a second version out soon.
 
-On 8/4/2024 2:26 PM, Krzysztof Kozlowski wrote:
-> On 03/08/2024 05:22, Krishna chaitanya chundru wrote:
->> Add binding describing the Qualcomm PCIe switch, QPS615,
->> which provides Ethernet MAC integrated to the 3rd downstream port
->> and two downstream PCIe ports.
+On 8/4/2024 9:35 AM, Chen Yu wrote:
+> On 2024-07-31 at 00:13:40 +0800, Chen Yu wrote:
+>> On 2024-07-10 at 09:02:09 +0000, K Prateek Nayak wrote:
+>>> From: Peter Zijlstra <peterz@infradead.org>
+>>>
+>>> Since commit b2a02fc43a1f ("smp: Optimize
+>>> send_call_function_single_ipi()") an idle CPU in TIF_POLLING_NRFLAG mode
+>>> can be pulled out of idle by setting TIF_NEED_RESCHED flag to service an
+>>> IPI without actually sending an interrupt. Even in cases where the IPI
+>>> handler does not queue a task on the idle CPU, do_idle() will call
+>>> __schedule() since need_resched() returns true in these cases.
+>>>
+>>> Introduce and use SM_IDLE to identify call to __schedule() from
+>>> schedule_idle() and shorten the idle re-entry time by skipping
+>>> pick_next_task() when nr_running is 0 and the previous task is the idle
+>>> task.
+>>>
+>>> With the SM_IDLE fast-path, the time taken to complete a fixed set of
+>>> IPIs using ipistorm improves significantly. Following are the numbers
+>>> from a dual socket 3rd Generation EPYC system (2 x 64C/128T) (boost on,
+>>> C2 disabled) running ipistorm between CPU8 and CPU16:
+>>>
+>>> cmdline: insmod ipistorm.ko numipi=100000 single=1 offset=8 cpulist=8 wait=1
+>>>
+>>>     ==================================================================
+>>>     Test          : ipistorm (modified)
+>>>     Units         : Normalized runtime
+>>>     Interpretation: Lower is better
+>>>     Statistic     : AMean
+>>>     ==================================================================
+>>>     kernel:				time [pct imp]
+>>>     tip:sched/core			1.00 [baseline]
+>>>     tip:sched/core + SM_IDLE		0.25 [75.11%]
+>>>
+>>> [ kprateek: Commit log and testing ]
+>>>
+>>> Link: https://lore.kernel.org/lkml/20240615012814.GP8774@noisy.programming.kicks-ass.net/
+>>> Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
+>>> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+>>>
 >>
->> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> ---
->>   .../devicetree/bindings/pci/qcom,qps615.yaml       | 191 +++++++++++++++++++++
->>   1 file changed, 191 insertions(+)
+>> Only with current patch applied on top of sched/core commit c793a62823d1,
+>> a significant throughput/run-to-run variance improvement is observed
+>> on an Intel 240 CPUs/ 2 Nodes server. C-states >= C1E are disabled,
+>> CPU frequency governor is set to performance and turbo-boost disabled.
 >>
->> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
->> new file mode 100644
->> index 000000000000..ea0c953ee56f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
->> @@ -0,0 +1,191 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pci/qcom,qps615.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm QPS615 PCIe switch
->> +
->> +maintainers:
->> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> +
->> +description: |
->> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
->> +  ports. The 3rd downstream port has integrated endpoint device of
->> +  Ethernet MAC. Other two downstream ports are supposed to connect
->> +  to external device.
->> +
->> +  The QPS615 PCIe switch can be configured through I2C interface before
->> +  PCIe link is established to change FTS, ASPM related entry delays,
->> +  tx amplitude etc for better power efficiency and functionality.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - pci1179,0623
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  qcom,qps615-controller:
+>> Without the patch(lower the better):
+>>
+>> 158490995
+>> 113086433
+>> 737869191
+>> 302454894
+>> 731262790
+>> 677283357
+>> 729767478
+>> 830949261
+>> 399824606
+>> 743681976
+>>
+>> (Amean): 542467098
+>> (Std):   257011706
+>>
+>>
+>> With the patch(lower the better):
+>> 128060992
+>> 115646768
+>> 132734621
+>> 150330954
+>> 113143538
+>> 169875051
+>> 145010400
+>> 151589193
+>> 162165800
+>> 159963320
+>>
+>> (Amean): 142852063
+>> (Std):    18646313
+>>
+>> I've launched full tests for schbench/hackbench/netperf/tbench
+>> to see if there is any difference.
+>>
 > 
-> and now I see that you totally ignored comments. Repeating the same over
-> and over is a waste of time.
-> 
-> <form letter>
-> This is a friendly reminder during the review process.
-> 
-> It seems my or other reviewer's previous comments were not fully
-> addressed. Maybe the feedback got lost between the quotes, maybe you
-> just forgot to apply it. Please go back to the previous discussion and
-> either implement all requested changes or keep discussing them.
-> 
-> Thank you.
-> </form letter>
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-Hi Krzysztof,
+> Tested without CONFIG_PREEMPT_RT, so issue for SM_RTLOCK_WAIT as mentioned
+> by Vincent might not bring any impact. There is no obvious difference
+> (regression) detected according to the test in the 0day environment. Overall
+> this patch looks good to me. Once you send a refresh version out I'll re-launch
+> the test.
 
-In patch1 we are trying to add reference of i2c-adapter, you suggested
-to use i2c-bus for that. we got comments on the driver code not to use
-adapter and instead use i2c client reference. I felt i2c-bus is not
-ideal to represent i2c client device so used this name.
+Since SM_RTLOCK_WAIT is only used by schedule_rtlock(), which is only
+defined for PREEMPT_RT kernels, non RT build should have no issue. I
+could spot at least one case in rtlock_slowlock_locked() where the
+pre->__state is set to "TASK_RTLOCK_WAIT" and schedule_rtlock() is
+called. With this patch, it would pass the "sched_mode > SM_NONE" check
+and call it an involuntary context-switch but on tip,
+(preempt & SM_MASK_PREEMPT) would return false and eventually it'll
+call deactivate_task() to dequeue the waiting task so this does need
+fixing.
 
-I should have mentioned all these details in the change log for all
-these changes. Next time onwards I will give detailed change log for
-the changes between two versions.
+ From a brief look, all calls to schedule with "SM_RTLOCK_WAIT" already
+set the task->__state to a non-zero value. I'll look into this further
+after the respin and see if there is some optimization possible there
+but for the time being, I'll respin this with the condition changed
+to:
 
-- Krishna Chaitanya.
+	...
+     } else if (preempt != SM_PREEMPT && prev_state) {
+	...
+
+just to keep it explicit.
+
+Thank you again for testing this version.
+-- 
+Thanks and Regards,
+Prateek
+
+> 
+> Tested on Xeon server with 128 CPUs, 4 Numa nodes, under different
+> 
+>        baseline                  with-SM_IDLE
+> 
+> hackbench
+> load level (25% ~ 100%)
+> 
+> hackbench-pipe-process.throughput
+> %25:
+>      846099            -0.3%     843217
+> %50:
+>      972015            +0.0%     972185
+> %100:
+>     1395650            -1.3%    1376963
+> 
+> hackbench-pipe-threads.throughput
+> %25:
+>      746629            -0.0%     746345
+> %50:
+>      885165            -0.4%     881602
+> %100:
+>     1227790            +1.3%    1243757
+> 
+> hackbench-socket-process.throughput
+> %25:
+>      395784            +1.2%     400717
+> %50:
+>      441312            +0.3%     442783
+> %100:
+>      324283 ±  2%      +6.0%     343826
+> 
+> hackbench-socket-threads.throughput
+> %25:
+>      379700            -0.8%     376642
+> %50:
+>      425315            -0.4%     423749
+> %100:
+>      311937 ±  2%      +0.9%     314892
+> 
+> 
+> 
+>        baseline                  with-SM_IDLE
+> 
+> schbench.request_latency_90%_us
+> 
+> 1-mthread-1-worker:
+>        4562            -0.0%       4560
+> 1-mthread-16-workers:
+>        4564            -0.0%       4563
+> 12.5%-mthread-1:
+>        4565            +0.0%       4567
+> 12.5%-mthread-16-workers:
+>       39204            +0.1%      39248
+> 25%-mthread-1-worker:
+>        4574            +0.0%       4574
+> 25%-mthread-16-workers:
+>      161944            +0.1%     162053
+> 50%-mthread-1-workers:
+>        4784 ±  5%      +0.1%       4789 ±  5%
+> 50%-mthread-16-workers:
+>      659156            +0.4%     661679
+> 100%-mthread-1-workers:
+>        9328            +0.0%       9329
+> 100%-mthread-16-workers:
+>     2489753            -0.7%    2472140
+> 
+> 
+>        baseline                  with-SM_IDLE
+> 
+> netperf.Throughput:
+> 
+> 25%-TCP_RR:
+>     2449875            +0.0%    2450622        netperf.Throughput_total_tps
+> 25%-UDP_RR:
+>     2746806            +0.1%    2748935        netperf.Throughput_total_tps
+> 25%-TCP_STREAM:
+>     1352061            +0.7%    1361497        netperf.Throughput_total_Mbps
+> 25%-UDP_STREAM:
+>     1815205            +0.1%    1816202        netperf.Throughput_total_Mbps
+> 50%-TCP_RR:
+>     3981514            -0.3%    3970327        netperf.Throughput_total_tps
+> 50%-UDP_RR:
+>     4496584            -1.3%    4438363        netperf.Throughput_total_tps
+> 50%-TCP_STREAM:
+>     1478872            +0.4%    1484196        netperf.Throughput_total_Mbps
+> 50%-UDP_STREAM:
+>     1739540            +0.3%    1744074        netperf.Throughput_total_Mbps
+> 75%-TCP_RR:
+>     3696607            -0.5%    3677044        netperf.Throughput_total_tps
+> 75%-UDP_RR:
+>     4161206            +1.3%    4217274 ±  2%  netperf.Throughput_total_tps
+> 75%-TCP_STREAM:
+>      895874            +5.7%     946546 ±  5%  netperf.Throughput_total_Mbps
+> 75%-UDP_STREAM:
+>     4100019            -0.3%    4088367        netperf.Throughput_total_Mbps
+> 100%-TCP_RR:
+>     6724456            -1.7%    6610976        netperf.Throughput_total_tps
+> 100%-UDP_RR:
+>     7329959            -0.5%    7294653        netperf.Throughput_total_tps
+> 100%-TCP_STREAM:
+>      808165            +0.3%     810360        netperf.Throughput_total_Mbps
+> 100%-UDP_STREAM:
+>     5562651            +0.0%    5564106        netperf.Throughput_total_Mbps
+> 
+> thanks,
+> Chenyu
+
 
