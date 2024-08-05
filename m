@@ -1,220 +1,123 @@
-Return-Path: <linux-kernel+bounces-275268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 132FD948292
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:48:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B65948294
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA62B2827B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:48:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 383F92835FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19A416C862;
-	Mon,  5 Aug 2024 19:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1104816BE1D;
+	Mon,  5 Aug 2024 19:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZImGATju"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eQ5DPgcZ"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA28166307;
-	Mon,  5 Aug 2024 19:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB8F16A397
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722887284; cv=none; b=Kieyz7hk55gsVZ0ATNKMUeFcmE6OyGz7Xhcpi/CALunyDDuL6d7Q8ll+HcYZiLhgDMzLzy1zFow5nEkxhqd088hNM0c+cfAJI9bera1DPUzoBbYcO8GMvXtc8AYuQU4Q/4kFDr99ufXcdPj56n2QtKuL3F8GiQZSG18Wia+OwZQ=
+	t=1722887305; cv=none; b=GOeO2yiWwQfYa9EfcANqCb4+xrRp0ezdBF28fZXyIahleURQFhsnZhfTHYxPekSjZ2wwGldrD8iI8a50OPpigaPZRTav1XLv6BVgI2vhIDgSAQRol9mAwJTV3Pvy2xSskGg9Q0zNP0f9tfq+rtur3ms34/ulpqnVCbEZa/Iym98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722887284; c=relaxed/simple;
-	bh=gkgIZP6fBWDwUAH0K0yuPdRvWvEbBVnAozZ+S1nGW/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jzp2Yq6zi+9YHOJlf8tp6wYADrb535jvfbvO12oSx2T3/9jppYqlg/Azbh4cT/FTv1ZrwHblx4Q5UJGLdLyfjA5f7KO5F0lxlUIRy2W1cu/emxueYMNH76703TJ12oSDP4tXE0uAzh1/KblbSAohgDzK/pdYN4tttg02ByuiHfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZImGATju; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fda7fa60a9so100642385ad.3;
-        Mon, 05 Aug 2024 12:48:02 -0700 (PDT)
+	s=arc-20240116; t=1722887305; c=relaxed/simple;
+	bh=mgZkO49kXrbYPJTqfPbU/zGoDP6KaGhqgEz+BOKxzbM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eaVIx5+VCPeVQ5b/SiY1ZTKdgh5n2zpdJJjYQ4nle5d/rZqLKoa2+BjNZXDvjdd2aWicaHCM82CZ7jjio5CTdSi18mPtzkX+HQEtnm+Uri27qgZk+UFegc1XplM3vj65uBi5tkPx/8ZGFfYuVX3ujKQcD5WGv8leR4u7nrn233o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eQ5DPgcZ; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so1344028266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:48:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722887282; x=1723492082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mtQZE0bROS8UEZPvM20hoqj5TusWjzQnd1NBq/PztJw=;
-        b=ZImGATjuMwxZY9DtTGHAD75IXtYnNjnGJ4uAhvnxuvjMFMqD2PcMg1opsA41cFUkbN
-         pnthTDmVy7tNch/zrWr63Cq97CN9BnfN0mc1v9Ec01wbcEtlU3bZKCFzu0S92iCA1Wkq
-         /muuTS9jJFvohfLoxVcjYEqJeaRJDrFb3d/w11YivcR4sI3QPrsUfK4IyXiRupG4xx3w
-         wfy9wbVuZ/vX2KI6wUPEEye/eHqyjo+WRqQhU4KzSTsgzwZkPSfVWYzT2sziofX8gnAQ
-         D1+ktz5vzO71E0gsSI7t3CdixCp02LniKhCq9+mnCQ594eIfqg/BqN0eatA/PluI3fLF
-         q9BQ==
+        d=linux-foundation.org; s=google; t=1722887301; x=1723492101; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlI56xvrJ7x2cg4LdNK/30BBgdmdk2xf+663DeBt1mg=;
+        b=eQ5DPgcZhUKABCv0ZH3XhZcG1qgJC/Xvq1psSOISkehVLv62xCdWdZ/vFvUTDI+Yed
+         mt9e1jZTmgjm4k57o2JY1E5V2rFQlBvgV7JvbDeYo0y9Z10RBdOLeXtKt2hR5W9qMkA8
+         +B2BVZ9E833akp04bSZ6lDYSJJlg4onxlFHos=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722887282; x=1723492082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mtQZE0bROS8UEZPvM20hoqj5TusWjzQnd1NBq/PztJw=;
-        b=EMVQFwsdXSqEqIXtnzMTnZTZlT6p1/6FJ72QLbhWJT5wZTW24OWgls4C4oC5EV4pE0
-         yh11MBdcgvQY2QCJDaaEMlGG8K/bhm/JRjQcnf6Lx1OIWG3AW/NC1XrnIZWGkCP4RJw6
-         5wD+RJCWCAhnvm+1nI6NxvQ9fl62ffKIOgXg2TsfXnEh8IF5nwKfp/YEmFIA/4onh/7N
-         uH+KhYZSEQK0ogg/IovtWhkybN7ukpbr3fa6HUM9CZhe74/K3KSzBdOAyK584+Z+lDfG
-         4ay/Y5HeNXqjG+2bizuLpijiQ+Byh97fAVxr1JgxHR7jNwvE48N2Nhqkj6kqnXWBQ06Y
-         8Zig==
-X-Forwarded-Encrypted: i=1; AJvYcCWw2WbLkU7Mo9W6upKqUfxEM5Gg/x77498ZJieY4WGVL3gVaS5W3/2U6vyjMfkJ/+Mhe08Bh6AXQQ==@vger.kernel.org, AJvYcCXRqnDHS3UElzbkjOeXLheKEiDSiavgWCQ6Lo4szjj9Ksye9c14POYLh6P2O6XzT6xGEN1y6zSFPVv7toYv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1KdQAfcj8r/CgB+C6BoAzZ4N93EX24vKoIXyfZcgs+Yj+WWBv
-	wsRkAE+G8FZlBgx9xbBAkk6WfFjjX/AHszDawSPWORx3lHDdEQAUEU3GLg==
-X-Google-Smtp-Source: AGHT+IGoJBly2rb0+/rWatMjqOlw2VEIqxv01Oa9uEYSjPWnocWXSaDJW+T69Lx3p0JzpyQ7/H8dtA==
-X-Received: by 2002:a17:902:f693:b0:1fd:82ac:7c2e with SMTP id d9443c01a7336-1ff57297afamr174902155ad.25.1722887282221;
-        Mon, 05 Aug 2024 12:48:02 -0700 (PDT)
-Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5917496fsm72278125ad.182.2024.08.05.12.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 12:48:01 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 5 Aug 2024 09:48:00 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+b3e4f2f51ed645fd5df2@syzkaller.appspotmail.com>,
-	asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH wq/for-6.11-fixes] workqueue: Fix spruious data race in
- __flush_work()
-Message-ID: <ZrEscJJjqAOpyWUY@slm.duckdns.org>
-References: <000000000000ae429e061eea2157@google.com>
- <8ada52ac-48e9-48cd-afa0-c738cf25fe4f@kernel.dk>
+        d=1e100.net; s=20230601; t=1722887301; x=1723492101;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wlI56xvrJ7x2cg4LdNK/30BBgdmdk2xf+663DeBt1mg=;
+        b=vxCoY87p7QLpgFefbQ7VDX5XCvXf/k08a3ufWujgaYsIgSMZtuhkPMlLbV2MSKVs1v
+         5Ii0UP0IVN2JepBNbBxWajGcCRA48tqiEZtjbIxgWYknWo8Wgt2ANlT4EaxNuV8svXHS
+         cbiggT11ln4xSt5qbft/SVu3S4H9yQsVO4f12IJtOF1RqGfG8P0hi/DfiOyb1li7kwQG
+         U9Toy2I1TJ75opB6acLSlzMJXuvmv2FFUqTDAd7h88UFPpMqs60GRwiFnlUupLioQCel
+         6EujtLW5qb/Bspuh8pap+8ECl0gXsMolVxbdqTJUEjZT9iAU+TQhFaAQmTVl9+An4gys
+         bY0g==
+X-Forwarded-Encrypted: i=1; AJvYcCW84JZOxgwadHmJF77BsLkx/octe794Gb06I8mb+3SqQXvG7Rz9t7h+W+Rx1zLW1prQ3esYfNjfZ4uXI8BPngFNgniYZmzyx9SYlCNX
+X-Gm-Message-State: AOJu0YyQGYpah65U8J7JoxXOa49m4F1kEaAlGjRibomeZcwfwYlfes1O
+	H7R9AaNaX3jUHVt/I23fxLKqI5iM7V3hceuei8uqK4qVRbtQLlo/oVCX6DMjp0QNCqmnzogawCZ
+	TowOWxg==
+X-Google-Smtp-Source: AGHT+IHILkw3fBeKwzRbvwkScuitBbAprKJASOykQun9zdM1MjJ4DSnAPxUn99zhOJfyCy0ztY041Q==
+X-Received: by 2002:a17:906:ee85:b0:a7d:2f42:db54 with SMTP id a640c23a62f3a-a7dc50ff238mr931759666b.65.1722887301535;
+        Mon, 05 Aug 2024 12:48:21 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d42615sm482734166b.99.2024.08.05.12.48.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 12:48:20 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5afa207b8bfso11493340a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 12:48:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWDUyCvHmcSBvZS+FpO8tEHyJiMLEbL4CiLpJmTsqif6NJurEEK5lxYVN3bjobzDmb8hXE3MyO/ZwkhoxKTBpIJRHv+iCtjP2axFAQY
+X-Received: by 2002:a17:907:3f8b:b0:a7a:9954:1fc1 with SMTP id
+ a640c23a62f3a-a7dc4ea981cmr878526366b.24.1722887300410; Mon, 05 Aug 2024
+ 12:48:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ada52ac-48e9-48cd-afa0-c738cf25fe4f@kernel.dk>
+References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+ <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
+ <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
+ <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com> <CALmYWFuCvphvLQOuQHBbFq0G8Ekyze=q45Tt4dATOt-GhO2RGg@mail.gmail.com>
+In-Reply-To: <CALmYWFuCvphvLQOuQHBbFq0G8Ekyze=q45Tt4dATOt-GhO2RGg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 5 Aug 2024 12:48:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgySgXXkZtx49Xq70X2CmSizM8siacYKncMmFWRzKjs5Q@mail.gmail.com>
+Message-ID: <CAHk-=wgySgXXkZtx49Xq70X2CmSizM8siacYKncMmFWRzKjs5Q@mail.gmail.com>
+Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
+ -4.4% regression
+To: Jeff Xu <jeffxu@google.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Pedro Falcato <pedro.falcato@gmail.com>, 
+	kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-From c5eac4d10384f1ddd728e143ede35eaa6081c61e Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Mon, 5 Aug 2024 09:37:25 -1000
+On Mon, 5 Aug 2024 at 12:38, Jeff Xu <jeffxu@google.com> wrote:
+>
+> I'm curious, why does ppc need to unmap vdso ? ( other archs don't
+> have unmap logic.)
 
-When flushing a work item for cancellation, __flush_work() knows that it
-exclusively owns the work item through its PENDING bit. 134874e2eee9
-("workqueue: Allow cancel_work_sync() and disable_work() from atomic
-contexts on BH work items") added a read of @work->data to determine whether
-to use busy wait for BH work items that are being canceled. While the read
-is safe when @from_cancel, @work->data was read before testing @from_cancel
-to simplify code structure:
+I have no idea. There are comments about 'perf' getting confused about
+mmap counts when 'context.vdso' isn't set up.
 
-	data = *work_data_bits(work);
-	if (from_cancel &&
-	    !WARN_ON_ONCE(data & WORK_STRUCT_PWQ) && (data & WORK_OFFQ_BH)) {
+But x86 has the same context.vdso logic, and does *not* set the
+pointer before installing the vma, for example. Also does not zero it
+out on munmap(), although it does have the mremap logic.
 
-While the read data was never used if !@from_cancel, this could trigger
-KCSAN data race detection spuriously:
+For all I know it may all be entirely unnecessary, and could be
+removed entirely.
 
-  ==================================================================
-  BUG: KCSAN: data-race in __flush_work / __flush_work
-
-  write to 0xffff8881223aa3e8 of 8 bytes by task 3998 on cpu 0:
-   instrument_write include/linux/instrumented.h:41 [inline]
-   ___set_bit include/asm-generic/bitops/instrumented-non-atomic.h:28 [inline]
-   insert_wq_barrier kernel/workqueue.c:3790 [inline]
-   start_flush_work kernel/workqueue.c:4142 [inline]
-   __flush_work+0x30b/0x570 kernel/workqueue.c:4178
-   flush_work kernel/workqueue.c:4229 [inline]
-   ...
-
-  read to 0xffff8881223aa3e8 of 8 bytes by task 50 on cpu 1:
-   __flush_work+0x42a/0x570 kernel/workqueue.c:4188
-   flush_work kernel/workqueue.c:4229 [inline]
-   flush_delayed_work+0x66/0x70 kernel/workqueue.c:4251
-   ...
-
-  value changed: 0x0000000000400000 -> 0xffff88810006c00d
-
-Reorganize the code so that @from_cancel is tested before @work->data is
-accessed. The only problem is triggering KCSAN detection spuriously. This
-shouldn't need READ_ONCE() or other access qualifiers.
-
-No functional changes.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: syzbot+b3e4f2f51ed645fd5df2@syzkaller.appspotmail.com
-Fixes: 134874e2eee9 ("workqueue: Allow cancel_work_sync() and disable_work() from atomic contexts on BH work items")
-Link: http://lkml.kernel.org/r/000000000000ae429e061eea2157@google.com
-Cc: Jens Axboe <axboe@kernel.dk>
----
-Applied to wq/for-6.11-fixes.
-
-Thanks.
-
- kernel/workqueue.c | 45 +++++++++++++++++++++++++--------------------
- 1 file changed, 25 insertions(+), 20 deletions(-)
-
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index d56bd2277e58..ef174d8c1f63 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -4166,7 +4166,6 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
- static bool __flush_work(struct work_struct *work, bool from_cancel)
- {
- 	struct wq_barrier barr;
--	unsigned long data;
- 
- 	if (WARN_ON(!wq_online))
- 		return false;
-@@ -4184,29 +4183,35 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
- 	 * was queued on a BH workqueue, we also know that it was running in the
- 	 * BH context and thus can be busy-waited.
- 	 */
--	data = *work_data_bits(work);
--	if (from_cancel &&
--	    !WARN_ON_ONCE(data & WORK_STRUCT_PWQ) && (data & WORK_OFFQ_BH)) {
--		/*
--		 * On RT, prevent a live lock when %current preempted soft
--		 * interrupt processing or prevents ksoftirqd from running by
--		 * keeping flipping BH. If the BH work item runs on a different
--		 * CPU then this has no effect other than doing the BH
--		 * disable/enable dance for nothing. This is copied from
--		 * kernel/softirq.c::tasklet_unlock_spin_wait().
--		 */
--		while (!try_wait_for_completion(&barr.done)) {
--			if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
--				local_bh_disable();
--				local_bh_enable();
--			} else {
--				cpu_relax();
-+	if (from_cancel) {
-+		unsigned long data = *work_data_bits(work);
-+
-+		if (!WARN_ON_ONCE(data & WORK_STRUCT_PWQ) &&
-+		    (data & WORK_OFFQ_BH)) {
-+			/*
-+			 * On RT, prevent a live lock when %current preempted
-+			 * soft interrupt processing or prevents ksoftirqd from
-+			 * running by keeping flipping BH. If the BH work item
-+			 * runs on a different CPU then this has no effect other
-+			 * than doing the BH disable/enable dance for nothing.
-+			 * This is copied from
-+			 * kernel/softirq.c::tasklet_unlock_spin_wait().
-+			 */
-+			while (!try_wait_for_completion(&barr.done)) {
-+				if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
-+					local_bh_disable();
-+					local_bh_enable();
-+				} else {
-+					cpu_relax();
-+				}
- 			}
-+			goto out_destroy;
- 		}
--	} else {
--		wait_for_completion(&barr.done);
- 	}
- 
-+	wait_for_completion(&barr.done);
-+
-+out_destroy:
- 	destroy_work_on_stack(&barr.work);
- 	return true;
- }
--- 
-2.46.0
-
+          Linus
 
