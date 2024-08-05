@@ -1,136 +1,106 @@
-Return-Path: <linux-kernel+bounces-275242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1311D948249
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:26:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A755F94824B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2036283462
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620CC281AFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E9516B399;
-	Mon,  5 Aug 2024 19:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EE2166F3B;
+	Mon,  5 Aug 2024 19:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNRak7mA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQ4xXIkX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF97166F3B;
-	Mon,  5 Aug 2024 19:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE26813D521;
+	Mon,  5 Aug 2024 19:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722886003; cv=none; b=jutlA/0yWtjXrHIN59h0tTEyZBDgAuk1k1EcsLYcFfkZa+x9yL1IzeGO4siVk4M556SDXU/pW9+yA8SL60hMKI6w4K/yo9O1ZF/7xIgYfZ5XF8w8/LjiKqhB2uvgiu62f7Jb6D827NCSNFuqezlKlAle+J9jZwjPrXoJdUaWV2I=
+	t=1722886031; cv=none; b=BOQAtA5GIaL2wxdRsS/ARBRHAJ9BfRHXcywbr/jXKPPj/s2JNsLMeCxCz255nxRFhImpFsBg7WbW+bBHOwyCse9C5Jm/Ggk9w8K8GDPzIMOHWG3oaqlG+2QGqZNFF+hWYQoKx/w8sSYhzWaAewRnJaY6oSUdYcyT0McmSozlH2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722886003; c=relaxed/simple;
-	bh=xc5xYC3391kLsTitKoNAcGxQDu731JrNLvNU6OAF4J8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbXp8sQGVBt933x/Z/J4GQBEOuMMLzRFJMQgeXe4dljPscndwAWxZ+2R1caWgDaFE6vIlYl8LxsXoe929kcJYdMHDslmTWM9I/Kb07gFywFk5O8RYCQ42RrzyfpYP9cwb114Q9lGin8qJShnXL3yygHUMZz/NQ9L4Ib1eaS9qNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNRak7mA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B931C32782;
-	Mon,  5 Aug 2024 19:26:42 +0000 (UTC)
+	s=arc-20240116; t=1722886031; c=relaxed/simple;
+	bh=90UvNn9K0mZ6VrUXGfzqNLue5sPsRmDgWkhqlksvKHY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=qpA38BFii1b+wgfbA6ui3NrrE5mm8LO5Bt2ea5T6F10Ni+pfpww+kcOraAKz21YQPOc6Uqc5DTLLeUmUevaC+0lJoxEfCeuVmlNTs/EXBGN6k79ZzVa4oAdH2Z2UdqRLzh0DPFdD2jKlWZwPf7DDqGCKAuvcVlLHapBEm+FBvyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQ4xXIkX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416FAC32782;
+	Mon,  5 Aug 2024 19:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722886003;
-	bh=xc5xYC3391kLsTitKoNAcGxQDu731JrNLvNU6OAF4J8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kNRak7mAOqaoHyvLxpI0ZJya9R970Ye089nBGHqr3eMlWsJ87LPjNQS4rYGYU3ue3
-	 sMV9f689HsX44zrBkMUry7NYY+nKA69DgRr7adJo32WgAtQ01ledbBh1veENxd0jTp
-	 vyiJfujvELR+vbENzNaG7qZfs7Yng2NLep/OrPMiDuKi0hd0H5sd4H/O7J66kZU8Nz
-	 OQeESG3QrFKet8DtmH33DhRJQ76eDqBxXhWxy6fbjCbdxsFcwvAHGzt9gOcAtnkHSX
-	 n6gzgi1l1HPmxL8ukD5AD3vG6++PrylaU5OJZoAJdPMRbVGqnZRdgqZOwG2uyZ/fP9
-	 zE8/9XRsbc2gw==
-Date: Mon, 5 Aug 2024 16:26:39 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCHSET 0/5] perf annotate: Add --skip-empty option (v1)
-Message-ID: <ZrEnbzIJaUUU-rDb@x1>
-References: <20240803211332.1107222-1-namhyung@kernel.org>
+	s=k20201202; t=1722886031;
+	bh=90UvNn9K0mZ6VrUXGfzqNLue5sPsRmDgWkhqlksvKHY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=pQ4xXIkXzdww4DSnoBtUXTP2AgYpid/Rv4LvFJEs1ZEUcUj92JsyVM8l8Zkxyamh7
+	 2K2iF3O3Al/2zB2gQdl5dDk+xKm928QHeqWIYfP8GQzBKTsVHbrb3CmuB5+7YTdqov
+	 UywWvzSaTcdldKe/xGKlr69a1yc8ZfL+PiTORqX6IEc3PdahXNz+rtD68aG5aHosC+
+	 /MclcdPlCuVGZ7v5YQ+E6/68n2lntkyghABGyXE17Was3kh0/lygbpLowac25Hbwk9
+	 pxf7kLQap9nHV7gDJoE6htfXy/cGQOQMFawLvZSyMU8TKS4RslBzhzuGsGZYcPZVXz
+	 FPA+zP0dCDZuQ==
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Johan Hovold <johan+linaro@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, alsa-devel@alsa-project.org, 
+ linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+In-Reply-To: <20240729131351.27886-1-johan+linaro@kernel.org>
+References: <20240729131351.27886-1-johan+linaro@kernel.org>
+Subject: Re: [PATCH] ASoC: codecs: lpass-macro: fix missing codec version
+Message-Id: <172288602778.71820.9069423638402649413.b4-ty@kernel.org>
+Date: Mon, 05 Aug 2024 20:27:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240803211332.1107222-1-namhyung@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Sat, Aug 03, 2024 at 02:13:27PM -0700, Namhyung Kim wrote:
-> Hello,
+On Mon, 29 Jul 2024 15:13:51 +0200, Johan Hovold wrote:
+> Recent changes that started checking the codec version broke audio on
+> the Lenovo ThinkPad X13s:
 > 
-> This is to make perf annotate has the same behavior as perf report.
-> Especially in the TUI browser, we want to maintain the same experience
-> when it comes to display dummy events from perf report.
+> 	wsa_macro 3240000.codec: Unsupported Codec version (0)
+> 	wsa_macro 3240000.codec: probe with driver wsa_macro failed with error -22
+> 	rx_macro 3200000.rxmacro: Unsupported Codec version (0)
+> 	rx_macro 3200000.rxmacro: probe with driver rx_macro failed with error -22
 > 
->   $ perf mem record -a -- perf test -w noploop
-> 
->   $ perf evlist
->   cpu/mem-loads,ldlat=30/P
->   cpu/mem-stores/P
->   dummy:u
+> [...]
 
-Thanks, tested and applied to tmp.perf-tools-next will go to
-perf-tools-next later.
+Applied to
 
-- Arnaldo
- 
-> Just using perf annotate with --group will show the all 3 events.
-> 
->   $ perf annotate --group --stdio | head
->    Percent                 |    Source code & Disassembly of ...
->   --------------------------------------------------------------
->                            : 0     0xe060 <_dl_relocate_object>:
->       0.00    0.00    0.00 :    e060:       pushq   %rbp
->       0.00    0.00    0.00 :    e061:       movq    %rsp, %rbp
->       0.00    0.00    0.00 :    e064:       pushq   %r15
->       0.00    0.00    0.00 :    e066:       movq    %rdi, %r15
->       0.00    0.00    0.00 :    e069:       pushq   %r14
->       0.00    0.00    0.00 :    e06b:       pushq   %r13
->       0.00    0.00    0.00 :    e06d:       movl    %edx, %r13d
-> 
-> Now with --skip-empty, it'll hide the last dummy event.
-> 
->   $ perf annotate --group --stdio --skip-empty | head
->    Percent         |    Source code & Disassembly of ...
->   ------------------------------------------------------
->                    : 0     0xe060 <_dl_relocate_object>:
->       0.00    0.00 :    e060:       pushq   %rbp
->       0.00    0.00 :    e061:       movq    %rsp, %rbp
->       0.00    0.00 :    e064:       pushq   %r15
->       0.00    0.00 :    e066:       movq    %rdi, %r15
->       0.00    0.00 :    e069:       pushq   %r14
->       0.00    0.00 :    e06b:       pushq   %r13
->       0.00    0.00 :    e06d:       movl    %edx, %r13d
-> 
-> The code is available in 'perf/annotate-skip-v1' branch at
-> git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
-> 
-> Thanks,
-> Namhyung
-> 
-> 
-> Namhyung Kim (5):
->   perf annotate: Use al->data_nr if possible
->   perf annotate: Set notes->src->nr_events early
->   perf annotate: Use annotation__pcnt_width() consistently
->   perf annotate: Set al->data_nr using the notes->src->nr_events
->   perf annotate: Add --skip-empty option
-> 
->  tools/perf/Documentation/perf-annotate.txt |  3 ++
->  tools/perf/builtin-annotate.c              |  2 +
->  tools/perf/util/annotate.c                 | 47 +++++++++++++---------
->  tools/perf/util/annotate.h                 |  2 +-
->  tools/perf/util/disasm.c                   |  6 +--
->  5 files changed, 35 insertions(+), 25 deletions(-)
-> 
-> -- 
-> 2.46.0.rc2.264.g509ed76dc8-goog
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codecs: lpass-macro: fix missing codec version
+      commit: 9a1af1e218779724ff29ca75f2b9397dc3ed11e7
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
