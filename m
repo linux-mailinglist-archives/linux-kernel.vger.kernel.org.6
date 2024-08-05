@@ -1,122 +1,95 @@
-Return-Path: <linux-kernel+bounces-275312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9E1948332
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:20:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350B294833A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EAEA2839AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFEA91F217F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4603914B97A;
-	Mon,  5 Aug 2024 20:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAE114BFB0;
+	Mon,  5 Aug 2024 20:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOWpkFDq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHfICOL/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC2913C809;
-	Mon,  5 Aug 2024 20:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEAF13C809;
+	Mon,  5 Aug 2024 20:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722889231; cv=none; b=ByuD3CTyNynrPSzCllBIVZg0dPP6FX9bVnL/6WBimbp93I9OPs6Gzjui+3AicrJYvc1husV/ADCg04bmoOpU87cBYz11Vq6Ev834nQVkB+6qAGRjmKt9pZYqxRopchknw+NLSTZR0QPpI4oIdVL9YYZgU2FjOsTs31cfVdj2B44=
+	t=1722889266; cv=none; b=X+EApLl+YKwRYlwpnO1yxJOBNwe1x7bPgnKh62VqK6q3lgN6FfdUujdOq/oey/7HuVplHFsj82AvUPRswpngSvkhm0C9dd/ltjcozxnt3s15mp8PXT/sri6VjuL4G121LK/o7+BVHLM/C23pUCsds0bOARrlaD/hAtVDOcwPDG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722889231; c=relaxed/simple;
-	bh=YnHqiwHC0r0CQROotklnma9dFaOYTX3qZk3p8KPeEUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKyyVwDbquA/UGpWNY0Td8jJ9sgCVfThH8YyMxBxlM5ubl2Z46qVM5XOWe3zlttsod4LfYq66F9vZB6e1o/QE14vP85pGeGIAgrKDNAwd3ijo67YPRfTgzUzK5ZWjqT6XqgeMBQbyreJLYySpwU4s1s3jDxxVv/77TjrzrZI6Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aOWpkFDq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DBB2C32782;
-	Mon,  5 Aug 2024 20:20:29 +0000 (UTC)
+	s=arc-20240116; t=1722889266; c=relaxed/simple;
+	bh=aSsOKcHWrL7OYpaiilqQDg8DY+BVww7YDCEqeu+txpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f0g8cmXylicOJ3jk4ZeO2Qd8DSKxQVQ08Ae8R6jiNKnzYheLG092LjZIYgyLDNTwkeTs0nm5TmeBzU6nGepCgAypJWz9ARBBYVwhY8NjhUefMOJ8urkuKH3PWPtQ9/KPU0j7lLhPnG2csuYIyu66bGVgncgelZ2XFfuA/V197Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHfICOL/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE1FC32782;
+	Mon,  5 Aug 2024 20:21:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722889231;
-	bh=YnHqiwHC0r0CQROotklnma9dFaOYTX3qZk3p8KPeEUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aOWpkFDq1ESmckUPhObVsdcn8ZTW6rO291B/x8AWOqq4gcB6C8uMy2xonawJjR2GF
-	 RZu7WLymWxYbztmeJInDWK7dPLVWz7Os6wnSY4Dyr1GMcxXMF3RzLG+RgAItVoBpmd
-	 3Y4L5C/MfFw1gBf1sVtvhpt7Ops3txemW84BChx0/W9awu0gowYJV2Pf+J0LPFFPdL
-	 D1GIIHGGyyZMeUlNUmI9f6tx4MjkB2koruxZ4vpyxfMfa+eZE9QoKHZ4QJUSTQc5IM
-	 w6auXU9SypWg6jlxQtdk5T5XlW1vflDsq+AtTQuMPJi0nTWMLKKJuxfx3Zmgqz6hKl
-	 Uc0M2sjNctmfw==
-Date: Mon, 5 Aug 2024 17:20:26 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: weilin.wang@intel.com
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Perry Taylor <perry.taylor@intel.com>,
-	Samantha Alt <samantha.alt@intel.com>,
-	Caleb Biggers <caleb.biggers@intel.com>
-Subject: Re: [RFC PATCH v18 3/8] perf stat: Fork and launch perf record when
- perf stat needs to get retire latency value for a metric.
-Message-ID: <ZrE0CtHsDOS7vUw9@x1>
-References: <20240720062102.444578-1-weilin.wang@intel.com>
- <20240720062102.444578-4-weilin.wang@intel.com>
- <ZrEqr36sukDW66uV@x1>
- <ZrErSvqHMvzw3dm2@x1>
+	s=k20201202; t=1722889265;
+	bh=aSsOKcHWrL7OYpaiilqQDg8DY+BVww7YDCEqeu+txpg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QHfICOL/l0EGSBKfixpcy5rxrg/laYgHcSiWfX9HaY0pYI3nxTTzgQpr6i/2vptjM
+	 f1F4XoLKA917AIWeB2tjmFKL2Qu8Di+3dmBE97A50OaEM+m2QVHxvaxl4qxia1nd4e
+	 EPWBNAFaXMG4ruJBzvDmyOgkzsRn5J7D/r3zDIuyee/x+9dfw67LpGaLcAiyRwRRhx
+	 oA2Up2yOYcN5/jIwpARakN971a8JgpiKv6/mG0/R8B2PsBZjt+F5VYGx2YVTuOFpgd
+	 jFjcuiWeo5lzEIqxcCwb0xVGx4U73Jt5jLFunWAoC2MhSVvEp5hOb8VMldk0D+UmQt
+	 y5wV+/Dv/RNTQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: kernel test robot <lkp@intel.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] cpufreq: spear: Fix uninitialized variable "i"
+Date: Mon,  5 Aug 2024 14:20:41 -0600
+Message-ID: <20240805202042.3229190-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZrErSvqHMvzw3dm2@x1>
 
-On Mon, Aug 05, 2024 at 04:43:06PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Aug 05, 2024 at 04:40:37PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Sat, Jul 20, 2024 at 02:20:56AM -0400, weilin.wang@intel.com wrote:
-> > > From: Weilin Wang <weilin.wang@intel.com>
-> > > 
-> > > When retire_latency value is used in a metric formula, evsel would fork a perf
-> > > record process with "-e" and "-W" options. Perf record will collect required
-> > > retire_latency values in parallel while perf stat is collecting counting values.
-> > > 
-> > > At the point of time that perf stat stops counting, evsel would stop perf record
-> > > by sending sigterm signal to perf record process. Sampled data will be process
-> > > to get retire latency value. Another thread is required to synchronize between
-> > > perf stat and perf record when we pass data through pipe.
-> > > 
-> > > Retire_latency evsel is not opened for perf stat so that there is no counter
-> > > wasted on it. This commit includes code suggested by Namhyung to adjust reading
-> > > size for groups that include retire_latency evsels.
-> > 
-> > Failing at this point:
-> > 
-> > ⬢[acme@toolbox perf-tools-next]$ git log --oneline -5
-> > 13430131acc4f88b (HEAD) perf stat: Fork and launch perf record when perf stat needs to get retire latency value for a metric.
-> > b7b9adefb5d57aaf perf data: Allow to use given fd in data->file.fd
-> > 3a442bf266d1f3c7 perf parse-events: Add a retirement latency modifier
-> > ce533c9bc6deb125 (perf-tools-next.korg/tmp.perf-tools-next, acme.korg/tmp.perf-tools-next) perf annotate: Add --skip-empty option
-> > bb588e38290fb723 perf annotate: Set al->data_nr using the notes->src->nr_events
-> > ⬢[acme@toolbox perf-tools-next]$
-> > 
-> > I'll see if when a followup patch gets applied this gets solved, if so
-> > will try to fixup things or ask for help, since this seems to be
-> > breaking 'git bisect' for this codebase.
-> 
-> Indeed, when the next patch gets applied it builds without problems.
-> I.e. patch  4/8 fixes problems in patch 3/8, maybe just combine them
-> into one single patch?
+The refactoring in commit dca2ef2b7d91 ("cpufreq: spear: Use
+of_property_for_each_u32() instead of open coding") left "i"
+uninitialized. Initialize it to 0.
 
-I have everything in the tmp.perf-tools-next branch at:
+Note that gcc doesn't detect this, only clang does.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
+Fixes: dca2ef2b7d91 ("cpufreq: spear: Use of_property_for_each_u32() instead of open coding")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202408030418.gnJDcCpm-lkp@intel.com/
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/cpufreq/spear-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll check later or tomorrow if I can fixup the bisection breakage
-described above or if just sqashing together 3/8 with 4/8 is better,
-please advise.
+diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
+index 4d28147c23f1..f8c16699a68d 100644
+--- a/drivers/cpufreq/spear-cpufreq.c
++++ b/drivers/cpufreq/spear-cpufreq.c
+@@ -173,7 +173,7 @@ static int spear_cpufreq_probe(struct platform_device *pdev)
+ 	struct device_node *np;
+ 	struct cpufreq_frequency_table *freq_tbl;
+ 	u32 val;
+-	int cnt, i, ret;
++	int cnt, i = 0, ret;
+ 
+ 	np = of_cpu_device_node_get(0);
+ 	if (!np) {
+-- 
+2.43.0
 
-Then I'll move it to the perf-tools-next branch.
-
-- Arnaldo
 
