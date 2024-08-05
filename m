@@ -1,74 +1,88 @@
-Return-Path: <linux-kernel+bounces-275056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B15794801B
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:14:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D38948028
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06E25284A4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:14:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18EBCB2267F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3B415EFC2;
-	Mon,  5 Aug 2024 17:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335A515EFA3;
+	Mon,  5 Aug 2024 17:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9+YjFax"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z7q/lW63"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20BC155351;
-	Mon,  5 Aug 2024 17:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD9D2C684;
+	Mon,  5 Aug 2024 17:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722878028; cv=none; b=TdEki/RGWoSV0M6hZWn+ZGQvJH09f10mRRqUkvTMGdgN6em2IgYRSNPsur6DL1YAYK687fVYLwtYfxDYlNmuLPNKdwxqvJqiY9/tF2YOkn1ojEhBw0azYklQ+5HMiPaV/e6sL/N/yi/shShMeUAGrpBSEwuAE3cck+eniSSz79w=
+	t=1722878260; cv=none; b=I5czU5lgfJeItm1sdUPEHk75g5NILwgvGeBs60LyJCZLdAADTti/MwXJ6+fWAAv3MT9gM3NfJ8i+p0ydzC4FNuQi45dZeoIFtSipbsXmFg5PVW75IW7QVywsUYJR5g7z7rhsoehrg6HrXaj7tM3gwEnipYWCz6OK5iYkhd3V2RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722878028; c=relaxed/simple;
-	bh=cbBt27hkdYHhswR7zddV7pmhvdwW7EAG8ILuZV1nH1w=;
+	s=arc-20240116; t=1722878260; c=relaxed/simple;
+	bh=xUiHKiiFB+eGRf4/0vdH6U+v/YkOQHoLKaT521lWFxI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BwmOunUi9Hw/yMFG6e+oMYHKlSWiiZa2WTUiY0mLZfrXaKPwjwLvp4f/LCZkYUNy3JoocQwk1GmoLyp7Y08ZpmzBL/c2zl070ReW4t3qReHe11rbVXNoTZ5+F4fgyYFlUaUdwmaU5z0tHfgmOr3QN0JM3bQ1FyOEICjW8zWRqOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9+YjFax; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BABC32782;
-	Mon,  5 Aug 2024 17:13:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=D6fonsPxPoEW1w3NbypP1JGml4NY44fBfEzA9w4WOi9HJwnHAx6jpjf1iA/8hXIiLeH7vDZv0y3LkVBAJqYIuCNFQQs9dxVfYEWfrpLJHCg0D1svymfbkT1DgVSsGqMwI8lSqP64kU4tcMbR3TZAe0+PNtJenJzLXSF3sEQT53A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z7q/lW63; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A951C32782;
+	Mon,  5 Aug 2024 17:17:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722878028;
-	bh=cbBt27hkdYHhswR7zddV7pmhvdwW7EAG8ILuZV1nH1w=;
+	s=k20201202; t=1722878259;
+	bh=xUiHKiiFB+eGRf4/0vdH6U+v/YkOQHoLKaT521lWFxI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j9+YjFaxZSYW0ZixSlvUm/Ty/OMkCZIU9jpLjS3AJqB3q3k9IBl/Vn77b+5COySEc
-	 WsMh6JRodj08EwWvXcBxQS3R/dh6B6AaDG0MNl+UTqAK0baehklkdJtzUQS8ywnenk
-	 H2c67m5GCoD5F4q8VBcEZeqnD9D/2x3OYrjDNhDBlhYdcjeNp6fiCkGU9LbukqCx7e
-	 f2ziKSZuPb6Hbr5meHSPVWKFiUjSxRizg6k2z8nmhAxuX9Uwj8TdqAPwncHY1gKVcO
-	 jJXBMBy5bQ2LC/M8Zh4aq91FxSXKi8RsnGAt+jrEfbYYAKzGXqCww7OwQW3IGEwHLp
-	 LXUfO/iOmsNfQ==
-Date: Mon, 5 Aug 2024 18:13:40 +0100
-From: Will Deacon <will@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v4 2/2] rust: support for shadow call stack sanitizer
-Message-ID: <20240805171340.GC10196@willie-the-truck>
-References: <20240729-shadow-call-stack-v4-0-2a664b082ea4@google.com>
- <20240729-shadow-call-stack-v4-2-2a664b082ea4@google.com>
+	b=Z7q/lW639aowtINXwVebTG+OLoxrXof+zBNSeR/8WY86B+624ZIuqcPJ12uz6WAq3
+	 TOktvjQuFO3Psh/zSZk6bupzno8UjNgzGdjWYsGzuDHPa53tI5UwJrFUIiEWAMkla2
+	 aZhopzXWwqHlnm+KETHsoZ8cxcOCV/ES/RMeaNClV0U/lI74zaSa7QLz8oGGmPM5b+
+	 WVRXAQQqToAOAcGGygHFeY2KPxgU/pB39IDAe0i7d4FyqehFfReXcy3JQ8TWWNvwl/
+	 YnEvZ6i15oUR+XxxozKV+u9zlrKVedpz+W1ReJtnBjYdPuNzzekfqSWqwV+cKpPHX5
+	 XzWc8YkjVKQSQ==
+Date: Mon, 5 Aug 2024 20:15:22 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	Zi Yan <ziy@nvidia.com>, devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	nvdimm@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 09/26] arch, mm: pull out allocation of NODE_DATA to
+ generic code
+Message-ID: <ZrEIqogZ4UJJY0c2@kernel.org>
+References: <20240801060826.559858-1-rppt@kernel.org>
+ <20240801060826.559858-10-rppt@kernel.org>
+ <20240802105527.00005240@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,89 +91,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240729-shadow-call-stack-v4-2-2a664b082ea4@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240802105527.00005240@Huawei.com>
 
-Hi Alice,
-
-Just some minor comments on this:
-
-On Mon, Jul 29, 2024 at 02:22:50PM +0000, Alice Ryhl wrote:
-> To use the shadow call stack sanitizer, you must pass special flags:
+On Fri, Aug 02, 2024 at 10:55:27AM +0100, Jonathan Cameron wrote:
+> On Thu,  1 Aug 2024 09:08:09 +0300
+> Mike Rapoport <rppt@kernel.org> wrote:
 > 
-> * On arm64, you must pass -ffixed-x18 to your compiler.
-> * On riscv, you must pass --no-relax-gp to your linker.
-
-Since this patch doesn't touch riscv, I think you can just talk about
-arm64 in the commit message.
-
-> These requirements also apply to Rust code. When using Rust on arm64,
-> you must pass the -Zfixed-x18 flag to rustc, which has the same effect
-> as the -ffixed-x18 flag does for C code. The -Zfixed-x18 flag requires
-> rustc version 1.80.0 or greater.
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > 
+> > Architectures that support NUMA duplicate the code that allocates
+> > NODE_DATA on the node-local memory with slight variations in reporting
+> > of the addresses where the memory was allocated.
+> > 
+> > Use x86 version as the basis for the generic alloc_node_data() function
+> > and call this function in architecture specific numa initialization.
+> > 
+> > Round up node data size to SMP_CACHE_BYTES rather than to PAGE_SIZE like
+> > x86 used to do since the bootmem era when allocation granularity was
+> > PAGE_SIZE anyway.
+> > 
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Acked-by: David Hildenbrand <david@redhat.com>
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
 > 
-> There is no need to pass any flags to rustc on riscv as only the linker
-> requires additional flags on this platform.
+> One comment unrelated to this patch set as such, just made
+> more obvious by it.
 > 
-> On older versions of Rust, it is still possible to use shadow call stack
-> by passing -Ctarget-feature=+reserve-x18 instead of -Zfixed-x18.
-> However, this flag emits a warning during the build, so this patch does
-> not add support for using it.
+> > diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+> > index 0744a9a2944b..3c1da08304d0 100644
+> > --- a/arch/powerpc/mm/numa.c
+> > +++ b/arch/powerpc/mm/numa.c
+> > @@ -1093,27 +1093,9 @@ void __init dump_numa_cpu_topology(void)
+> >  static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
+> >  {
+> >  	u64 spanned_pages = end_pfn - start_pfn;
 > 
-> Currently, the compiler thinks that the aarch64-unknown-none target
+> Trivial, but might as well squash this local variable into the
+> single place it's used.
+ 
 
-"Currently" will probably age badly -- can you talk about a compiler
-version instead (e.g. "prior to version nnn, the compiler thinks...").
+> > -	const size_t nd_size = roundup(sizeof(pg_data_t), SMP_CACHE_BYTES);
 
-> doesn't support -Zsanitizer=shadow-call-stack, so the build will fail if
-> you enable shadow call stack in non-dynamic mode. See [1] for the
-> relevant feature request. To avoid this compilation failure, Kconfig is
-> set up to reject such configurations.
-> 
-> The `depends on` clause is placed on `config RUST` to avoid a situation
-> where enabling Rust silently turns off the sanitizer. Instead, turning
-> on the sanitizer results in Rust being disabled. We generally do not
-> want changes to CONFIG_RUST to result in any mitigations being changed
-> or turned off.
-> 
-> Link: https://github.com/rust-lang/rust/issues/121972 [1]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  Makefile            | 1 +
->  arch/arm64/Makefile | 3 +++
->  init/Kconfig        | 2 +-
->  3 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 2b5f9f098b6f..66daca7a9b57 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -928,6 +928,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
->  ifndef CONFIG_DYNAMIC_SCS
->  CC_FLAGS_SCS	:= -fsanitize=shadow-call-stack
->  KBUILD_CFLAGS	+= $(CC_FLAGS_SCS)
-> +KBUILD_RUSTFLAGS += -Zsanitizer=shadow-call-stack
->  endif
->  export CC_FLAGS_SCS
->  endif
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index f6bc3da1ef11..b058c4803efb 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -57,9 +57,11 @@ KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
->  ifneq ($(CONFIG_UNWIND_TABLES),y)
->  KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
->  KBUILD_AFLAGS	+= -fno-asynchronous-unwind-tables -fno-unwind-tables
-> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=n
->  else
->  KBUILD_CFLAGS	+= -fasynchronous-unwind-tables
->  KBUILD_AFLAGS	+= -fasynchronous-unwind-tables
-> +KBUILD_RUSTFLAGS += -Cforce-unwind-tables=y -Zuse-sync-unwind=n
+...
 
-These unwind entries aren't mentioned at all in the commit message.
-Please can you explain what you're doing here? I guess it's something to
-do with the PAC patching? Maybe this hunk would be better as a separate
-patch?
+> > +
+> > +	alloc_node_data(nid);
+> > +
+> >  	NODE_DATA(nid)->node_id = nid;
+> >  	NODE_DATA(nid)->node_start_pfn = start_pfn;
+> >  	NODE_DATA(nid)->node_spanned_pages = spanned_pages;
 
-Will
+These are actually overridden later in free_area_init(), it would make
+sense to audit all arch-specific node setup functions and clean them up a
+bit.
+
+-- 
+Sincerely yours,
+Mike.
 
