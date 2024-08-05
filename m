@@ -1,106 +1,162 @@
-Return-Path: <linux-kernel+bounces-274510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D2D947926
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:12:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8F994791D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBBE0B21A59
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88ECA28335A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1221547C5;
-	Mon,  5 Aug 2024 10:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EBA1547CA;
+	Mon,  5 Aug 2024 10:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LjmrMcBk"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AMuU8+/o"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3424A14F122;
-	Mon,  5 Aug 2024 10:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A05254658;
+	Mon,  5 Aug 2024 10:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722852752; cv=none; b=EFtT/h2Ve/vBT3BvS6plW2OitOe42L2Dw1/ea6ILkVayi+Mi0j6PdhNl2bTOPDfyOaJoRyfdluiuLtcSJlhSVQ934oLfW8YGzaXREJkHy2JcG//RD52zVONUT1M7VpIk3xmKVwJusnAerGKshYnwKDuGFmrRI6CXdyjzAGD3fXg=
+	t=1722852712; cv=none; b=mT5BKPN3UfB9LQJWn1kCy0/VM/37WzglzZSq5I5HxCtxaRZ5N0X4sB5psrvCdmrw0tKzLazSo8igFpxLVUuoDapTxiqOIEQDzucyL0V469jGxmBTo7hQKmC+MGZ3vYX7Hea+8nZzrFEBLaljGRgXneMs87bdTek5Rxz9OIdg3Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722852752; c=relaxed/simple;
-	bh=ncIQxTDo8GyJlZQyaUhDdW/VdsRHE0l2yqoNLqRBlj8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K7P46ktmMELfye6XqlW0HJs34CXyWBujz6L90AHHNt4XoihB2H4bd1TA3KVDOW01TfZAeB1hO3HO/IHrA8SFkhp6BVE0VEeRzUB1qRHZ9G60lqaZevvVbpa+mrP61R2TTGHyvE9gyQc4SYhD8TvjPC8vRHBmtLZ1vLAI+bM949M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LjmrMcBk; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 475ABxFx052803;
-	Mon, 5 Aug 2024 05:11:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722852719;
-	bh=zXS0Wbmzl2MnWRxJChy7+js9aSs4+Hs+IORdBM5apWk=;
-	h=From:To:CC:Subject:Date;
-	b=LjmrMcBkFR3HTRmDBPxXConoXpEaEnS7Cdt3dP9ujOn5icd8UQyheJ7+jMm/h36oA
-	 D2lUpP4xu7ZCCTNsz6LAAlQCPR64ejbJq3vRoMvFQhUANyZSJci9AKjN/EPOb0IMwA
-	 hYqtPmnr0AvR6uZuojqv8fF8wePnvubm/qpqhGps=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 475ABxLc092174
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 5 Aug 2024 05:11:59 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 5
- Aug 2024 05:11:59 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 5 Aug 2024 05:11:59 -0500
-Received: from lcpd911.dhcp.ti.com (lcpd911.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 475ABuMD071854;
-	Mon, 5 Aug 2024 05:11:57 -0500
-From: Dhruva Gole <d-gole@ti.com>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>, Kevin Hilman <khilman@baylibre.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Roger Quadros <rogerq@kernel.org>
-CC: <vigneshr@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dhruva Gole <d-gole@ti.com>
-Subject: [PATCH] bus: ti-sysc: Remove excess struct member 'disable_on_idle' description
-Date: Mon, 5 Aug 2024 15:41:18 +0530
-Message-ID: <20240805101118.427133-1-d-gole@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722852712; c=relaxed/simple;
+	bh=uz3PDbQf/CwBdPu+FujzDuwVltGEBBlEGjdTm3NRYUk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pNNlwwcegOWfCffiH0RT6Un5+Piuyk1xM7dCU5nDdbCEtm4+fzm+qRHy02/GD2lIJSmQPHs9XDVvdEEBZ7DJX82uG23a4U4EHghxy3CQCYle49uNOEME0e/xXjxcnAATJ1m1g6Oe9A2cpmT/xLspfSJVhUg3lD0B1fmIBqGXPOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AMuU8+/o; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4f6abcf0567so4004548e0c.0;
+        Mon, 05 Aug 2024 03:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722852710; x=1723457510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wqFy68ctx8OCSrJN8siALtfuI02hTJzmjF8cLmFCihg=;
+        b=AMuU8+/o4hoMZCeooc4tnygU7WujjPGgc3o3YvsJ2PM7A/bKxG78gRD7l6OKZC31Rp
+         M+4KgAzQPU/9bIfJMHrhVftHYS/9KM6JiNX4PtCs54q4qH5/Bcy57mo6LcIdTq0UKERK
+         NOEEvq/Yv+aMzOYwqG3MzZidcZ12zb4h1htVsqfBx189ShSso5yqNz33rjAQuVftOMs/
+         +sQh0QGn/HRijkBWdHmS5hkiuYDgLMJ7yu29uVFauWbdxYBZ4mFiioLo73kxC08Uwese
+         vMCceK+Km9/5sHdrclS96Mky4tQzu/rOsp2NLxAcAhZZy+H8nSYwzWKTQqPb2PYgx1D2
+         0OOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722852710; x=1723457510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wqFy68ctx8OCSrJN8siALtfuI02hTJzmjF8cLmFCihg=;
+        b=JqR1nTkoHW6QwsSD3w+Aid2zrpgLvpYysBtXoZxZw2pa+piB4+tmMz1vGC4XwYvb1T
+         E4tW5U9ryIzecNnd1O137cfGwt9WlVHU019xF/PX+BWQjzPIsJYa1QYa4XVCl3hbC2qF
+         Ii7oHpb8VYe4JKwRfQ2nya6CepqPgCUCtAGcu/cu2dMyhejPcvP7WDCyeAGW0LvGMYxn
+         5mFOgK8le1PYdTBD/zRmNYzVafDoVKeLCH957AGrKCOIwmuvtVPZ/ksAgZ2GEbXK5yhE
+         Rh0d5YbJZS77aRQrCPrFRAKnev8Ll/qX7QbSamVy4YaFiZxdPHTlfApyI3rzNwgZujYQ
+         Yk0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWSVLOJexRN6bhLjiD6tfdiTN4XQ+Ak2Bfm4mn+M4uYJsGPrEZ8hRUgbZ0JNSawTs0J4DBEJaiBOXfCebxzHTAYxKwX2vLz01D4NY7TBLqG0eK9xQV1sDaFFHyVG8rewiMrV3khQo0HONtMpYvkjzMta93rNrXVKzBNdVWWMcEyQann95hB/lbdHRwqD4pDC/3A7rpvBAcRVrAPsv5obVJf3lyEmG7H
+X-Gm-Message-State: AOJu0YzSXo+TF8O84b9FTtgLJW6y2aNtkNJScX2dGOQf6gpcAOQz7IgR
+	dNywE6ej7O24kVTGvQ+KDfK+n3mzPFpMjYOzBT0VV5F7mXHMNyf0qdxHVlUR9fc1eCRBRv0h5fD
+	AUWkjz/7GMxJrnLS69WzctdVR4UE=
+X-Google-Smtp-Source: AGHT+IFg7GqQOIIN2kz6j2VWZtb0Tq4sECQzl2p977ZAZCgH3AQoNCnI8QcpGbtOt8/SiBP5RCfGJHndYciSyyiUG2w=
+X-Received: by 2002:a05:6122:2027:b0:4f6:b240:4af8 with SMTP id
+ 71dfb90a1353d-4f89ffc8d2cmr12151574e0c.11.1722852710137; Mon, 05 Aug 2024
+ 03:11:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240724182119.652080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240724182119.652080-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdXkPwfVT-iJp70pEi5ubpc5YBKt=a2C5NmL_tjbocXKRQ@mail.gmail.com>
+ <CA+V-a8ttfEHwXqUU2OqxhjJ3E2jt+xCBrbziHtOUs1g74tandA@mail.gmail.com> <CAPDyKFppZPadtEBocoVyQJkchKzQ4WgnLb0_CYgeHWk+noVbFg@mail.gmail.com>
+In-Reply-To: <CAPDyKFppZPadtEBocoVyQJkchKzQ4WgnLb0_CYgeHWk+noVbFg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 5 Aug 2024 11:11:24 +0100
+Message-ID: <CA+V-a8tjDjaGMBgdyuxUxjA=O4DqXdpMjAu5GN3i+ADOFZoGKQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When built with W=1, the driver throws the following warning:
+Hi Ulf,
 
-../drivers/bus/ti-sysc.c:169: warning: Excess struct member
-'disable_on_idle' description in 'sysc'
+On Mon, Aug 5, 2024 at 11:09=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> On Fri, 2 Aug 2024 at 11:32, Lad, Prabhakar <prabhakar.csengg@gmail.com> =
+wrote:
+> >
+> > Hi Geert,
+> >
+> > On Fri, Aug 2, 2024 at 10:11=E2=80=AFAM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > >
+> > > Hi Prabhakar,
+> > >
+> > > On Wed, Jul 24, 2024 at 8:22=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
+mail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to t=
+hat
+> > > > of the R-Car Gen3, but it has some differences:
+> > > > - HS400 is not supported.
+> > > > - It has additional SD_STATUS register to control voltage,
+> > > >   power enable and reset.
+> > > > - It supports fixed address mode.
+> > > >
+> > > > To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a0=
+9g057'
+> > > > compatible string is added.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > > v4->v5
+> > > > - Dropped regulator node.
+> > >
+> > > Thanks for your patch, which is now commit 32842af74abc8ff9
+> > > ("dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support") in
+> > > mmc/next.
+> > >
+> > > > --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > > +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > > @@ -18,6 +18,7 @@ properties:
+> > > >            - renesas,sdhi-r7s9210 # SH-Mobile AG5
+> > > >            - renesas,sdhi-r8a73a4 # R-Mobile APE6
+> > > >            - renesas,sdhi-r8a7740 # R-Mobile A1
+> > > > +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+> > > >            - renesas,sdhi-sh73a0  # R-Mobile APE6
+> > > >        - items:
+> > > >            - enum:
+> > > > @@ -66,6 +67,7 @@ properties:
+> > > >                - renesas,sdhi-r9a07g054 # RZ/V2L
+> > > >                - renesas,sdhi-r9a08g045 # RZ/G3S
+> > > >                - renesas,sdhi-r9a09g011 # RZ/V2M
+> > > > +              - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+> > >
+> > > This looks wrong to me.
+> > > Did you want to add it to the clocks constraint, like the third hunk
+> > > in v4[1], and was it mangled in a rebase?
+> > >
+> > Oouch, yes you are correct, this had to go in the clock constraint.
+>
+> I am happy to apply a fix on top for that.
+>
+Thanks, I'll send out a fix today.
 
-Fix it by removing the excess description.
-
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
- drivers/bus/ti-sysc.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 2b59ef61dda2..772de1d68f36 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -126,7 +126,6 @@ static const char * const clock_names[SYSC_MAX_CLOCKS] = {
-  * @enabled: sysc runtime enabled status
-  * @needs_resume: runtime resume needed on resume from suspend
-  * @child_needs_resume: runtime resume needed for child on resume from suspend
-- * @disable_on_idle: status flag used for disabling modules with resets
-  * @idle_work: work structure used to perform delayed idle on a module
-  * @pre_reset_quirk: module specific pre-reset quirk
-  * @post_reset_quirk: module specific post-reset quirk
-
-base-commit: d6dbc9f56c3a70e915625b6f1887882c23dc5c91
--- 
-2.34.1
-
+Cheers,
+Prabhakar
 
