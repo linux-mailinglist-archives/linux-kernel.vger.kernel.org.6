@@ -1,104 +1,130 @@
-Return-Path: <linux-kernel+bounces-274051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17F2947234
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 02:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7F79472A0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 02:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582671F23B86
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 00:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ECA61F222DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 00:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB931CD3D;
-	Mon,  5 Aug 2024 00:40:02 +0000 (UTC)
-Received: from cooldavid.org (125-229-167-49.hinet-ip.hinet.net [125.229.167.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD67B2AEFE;
+	Mon,  5 Aug 2024 00:52:28 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E7617721;
-	Mon,  5 Aug 2024 00:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=125.229.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BFAEDC;
+	Mon,  5 Aug 2024 00:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722818402; cv=none; b=UFQ6MZ/Iuc382SCf1+7/HM8eq7M3SJigG5O21+EFm2Ovz6hUT32kHmHhjhslQVlKWap1BD8QS3Dfv2cg2h9/WgJWOApq1caJ3XFiM/XPBl+17eeKUl8AAf0ei1MjCMk4Kk2zZNCgfcMyBY09Xn4iMcr+70uIxw4KfYc6YzgxHyo=
+	t=1722819148; cv=none; b=UsWu/typokbjK6bH1nqpWDOYPVPIDs7DprUdFZhXYxAcFUzI4YVbohDBNrJ2oaDkzdZWLQNB8qUqxVNqI9tFCsnBAzUnGnTTAGls/Ogx1XrYOBD5U3/kgKsae9ICGzomDx1elLxxtoESyHKPi9xvdMHONZ2+INld2FIOy9jOORc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722818402; c=relaxed/simple;
-	bh=tCr0E9F5GoCJIxAXzFtJs90hKzSNPF8lHoLfe/+JuuI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aDCmQn5MKLBYJcu+Tha1y15a6ltE2OxP0fFj+0lUTYc9KfxsjpwY9LvVwOjE+JzxDIDG8A6Hl/019KTKH/KxlyYoWIGRJHpNoRWNfh/3KF+v7ARe+jeaX8FFwlrflpA8st5ArfBt9n9QyYu2UVGUvZocwe8HgtgUEeUssxYFQi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cooldavid.org; spf=pass smtp.mailfrom=cooldavid.org; arc=none smtp.client-ip=125.229.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cooldavid.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cooldavid.org
-Received: by cooldavid.org (Postfix, from userid 999)
-	id 9BA6129A1025; Mon,  5 Aug 2024 08:32:23 +0800 (CST)
-X-Spam-Level: 
-Received: from cooldavid.org (localhost [127.0.0.1])
-	by cooldavid.org (Postfix) with ESMTP id 2197729A100C;
-	Mon,  5 Aug 2024 08:32:23 +0800 (CST)
-From: "Guo-Fu Tseng" <cooldavid@cooldavid.org>
-To: Simon Horman <horms@kernel.org>,Moon Yeounsu <yyyynoom@gmail.com>
-Cc: davem@davemloft.net,edumazet@google.com,kuba@kernel.org,pabeni@redhat.com,netdev@vger.kernel.org,linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: use ip_hdrlen() instead of bit shift
-Date: Mon, 5 Aug 2024 08:32:23 +0800
-Message-Id: <20240805003139.M94125@cooldavid.org>
-In-Reply-To: <20240804101858.GI2504122@kernel.org>
-References: <20240802054421.5428-1-yyyynoom@gmail.com> <20240802141534.GA2504122@kernel.org> <CAAjsZQwKbp-3QgBj9KEUoqLvaE5pLX8wsLq01TDC8HdVp=8pLg@mail.gmail.com> <20240804101858.GI2504122@kernel.org>
-X-Mailer: OpenWebMail 2.53 
-X-OriginatingIP: 111.243.142.21 (cooldavid)
+	s=arc-20240116; t=1722819148; c=relaxed/simple;
+	bh=ppJbhXo9jwJEL5d5V+c62H0Sud7V+ycncVTmWhodza8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p5cT1TPNsQAvhI8MLmaRvEPZ9ZCTMErRi4d2vuq4xKFp700epESV9BiNeGJ9gM1RFOObgbLWdsgGI2g9OLRiEg6kT369HpEoJFK5253PADuXPKcojRo7yeCnBgrNT1YuSXforO7PGgFKZaTTPEo3S7MGh/Jb9np77g6Sz31I5hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WcdDy1G7Cz4f3l1b;
+	Mon,  5 Aug 2024 08:52:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5ECB91A018D;
+	Mon,  5 Aug 2024 08:52:16 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.26])
+	by APP4 (Coremail) with SMTP id gCh0CgCnGoE_IrBmj98uAw--.61560S2;
+	Mon, 05 Aug 2024 08:52:16 +0800 (CST)
+From: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
+To: tj@kernel.org,
+	lizefan.x@bytedance.com,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiujianfeng@huawei.com
+Subject: [PATCH v2 -next] cgroup/pids: Remove unreachable paths of pids_{can,cancel}_fork
+Date: Mon,  5 Aug 2024 00:43:04 +0000
+Message-Id: <20240805004304.57314-1-xiujianfeng@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnGoE_IrBmj98uAw--.61560S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur1DXr18Xw1UAw17Aw15CFg_yoW8Ary5pF
+	nxG3s7KFW5Jas093W5XrZ7ZryfGan7W34UuF4kJ34Syw12yw13GF1qyw40vry5XrW2gw17
+	JF4Yka13Kw1jvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
 
-On Sun, 4 Aug 2024 11:18:58 +0100, Simon Horman wrote
-> On Sat, Aug 03, 2024 at 10:47:35AM +0900, Moon Yeounsu wrote:
-> > On Fri, Aug 2, 2024 at 11:15 PM Simon Horman <horms@kernel.org> wrote:
-> > >
-> > > On Fri, Aug 02, 2024 at 02:44:21PM +0900, Moon Yeounsu wrote:
-> > > > `ip_hdr(skb)->ihl << 2` are the same as `ip_hdrlen(skb)`
-> > > > Therefore, we should use a well-defined function not a bit shift
-> > > > to find the header length.
-> > > >
-> > > > It also compress two lines at a single line.
-> > > >
-> > > > Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
-> > >
-> > > Firstly, I think this clean-up is both correct and safe.  Safe because
-> > > ip_hdrlen() only relies on ip_hdr(), which is already used in the same code
-> > > path. And correct because ip_hdrlen multiplies ihl by 4, which is clearly
-> > > equivalent to a left shift of 2 bits.
-> > Firstly, Thank you for reviewing my patch!
-> > >
-> > > However, I do wonder about the value of clean-ups for what appears to be a
-> > > very old driver, which hasn't received a new feature for quite sometime
-> > Oh, I don't know that...
-> > >
-> > > And further, I wonder if we should update this driver from "Maintained" to
-> > > "Odd Fixes" as the maintainer, "Guo-Fu Tseng" <cooldavid@cooldavid.org>,
-> > > doesn't seem to have been seen by lore since early 2020.
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-The device has been EOLed for a lone time.
-Since there is no new related chip and no new updates from the chip maker, I do agreed to make the status as "Odd
-Fixes".
+According to the implementation of cgroup_css_set_fork(), it will fail
+if cset cannot be found and the can_fork/cancel_fork methods will not
+be called in this case, which means that the argument 'cset' for these
+methods must not be NULL, so remove the unrechable paths in them.
 
-> > >
-> > > https://lore.kernel.org/netdev/20200219034801.M31679@cooldavid.org/
-> > Then, how about deleting the file from the kernel if the driver isn't
-> > maintained?
-> 
-> That is a bit more severe than marking it as being unmaintained
-> in MAINTAINERS. But I do agree that it should be considered.
-> 
-> > Many people think like that (At least I think so)
-> > There are files, and if there are issues, then have to fix them.
-> > Who can think unmanaged files remain in the kernel?
-> 
-> And yet, they do exist. ☯
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+v2: reword the commit message
+---
+ kernel/cgroup/pids.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-
-Guo-Fu Tseng
+diff --git a/kernel/cgroup/pids.c b/kernel/cgroup/pids.c
+index 34aa63d7c9c6..8f61114c36dd 100644
+--- a/kernel/cgroup/pids.c
++++ b/kernel/cgroup/pids.c
+@@ -272,15 +272,10 @@ static void pids_event(struct pids_cgroup *pids_forking,
+  */
+ static int pids_can_fork(struct task_struct *task, struct css_set *cset)
+ {
+-	struct cgroup_subsys_state *css;
+ 	struct pids_cgroup *pids, *pids_over_limit;
+ 	int err;
+ 
+-	if (cset)
+-		css = cset->subsys[pids_cgrp_id];
+-	else
+-		css = task_css_check(current, pids_cgrp_id, true);
+-	pids = css_pids(css);
++	pids = css_pids(cset->subsys[pids_cgrp_id]);
+ 	err = pids_try_charge(pids, 1, &pids_over_limit);
+ 	if (err)
+ 		pids_event(pids, pids_over_limit);
+@@ -290,14 +285,9 @@ static int pids_can_fork(struct task_struct *task, struct css_set *cset)
+ 
+ static void pids_cancel_fork(struct task_struct *task, struct css_set *cset)
+ {
+-	struct cgroup_subsys_state *css;
+ 	struct pids_cgroup *pids;
+ 
+-	if (cset)
+-		css = cset->subsys[pids_cgrp_id];
+-	else
+-		css = task_css_check(current, pids_cgrp_id, true);
+-	pids = css_pids(css);
++	pids = css_pids(cset->subsys[pids_cgrp_id]);
+ 	pids_uncharge(pids, 1);
+ }
+ 
+-- 
+2.34.1
 
 
