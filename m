@@ -1,186 +1,213 @@
-Return-Path: <linux-kernel+bounces-274769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0561F947C72
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:04:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61699947C76
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A19D1F21747
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:04:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5DFDB2106B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0A37710C;
-	Mon,  5 Aug 2024 14:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC5380C09;
+	Mon,  5 Aug 2024 14:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DU07lIZr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Obax5ydv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56A117C64
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571507E111;
+	Mon,  5 Aug 2024 14:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722866691; cv=none; b=dbR4CQNWlhqn+xO6YNH6z+tU4nhS52+wtnKurxIOPgjPz9nKyQ9JEWrbPFwELKYNc+Qqxt3tMt5lkEmnY6HUg7NyIBFzPfZbWX2khKNWzGdpjtanR3qU8NeTpf2QTtMRyMtCcxLfANIM0/6bBI/NXiW3dfSKF7BJ9Ymg2pyytL0=
+	t=1722866709; cv=none; b=tcXXJkkcgQ6tT7oBzGFGRQS653BWD/12x9vzQr1aizK61bolsNnahH5axxOrfVnVj7S9xK7+cdaJhAcmTaYeuvO7UPabFQE0dzb3VM+77jl4cVJUYeS3b6EpPna1rD0Tt7Zq/kG2YNzmMdVSvnZpULzO0iy3I016niTNwClM958=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722866691; c=relaxed/simple;
-	bh=tQf3ZqrOfXNjtoysOKnt8hMz1BI520/ZU+KVrWZx4Mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iFfyfScbvwKDj0ty6X93BraEU3D8cAZO4IXv6fiOSM4LFR17zN1XZMuPm2sdCw2IMM3d7BdqPIPo6IkG8L3mJQqh/DXck2QEsox19jnmHL3lklrrGGU/zZ+RY782eqQuC5nSBUBxwpa+34yNe1sP0xlIWlcJ8sFH1MaHjPv+wdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DU07lIZr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722866687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R+AVzWWReouMoN7zruePSuW9jT4ReN30A6YfedCpgFI=;
-	b=DU07lIZrxgj07jiAJ2oOwK3dj1AuNQR66AtyfpVXAKZc2yCta0TE3FkUdMIjbNUHzNT6RM
-	73nc4eFD4ySNveoztccgJqpjZtSutNhJKU00vOrfta6rgrFfXmoolhGmkbempdCXCBid4/
-	zTANVohbPhJoLm4sJURqnSGdz6lIV24=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-438-t68oSQXMP9yC28beHzzCSg-1; Mon, 05 Aug 2024 10:04:45 -0400
-X-MC-Unique: t68oSQXMP9yC28beHzzCSg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-367990b4beeso5421119f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 07:04:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722866684; x=1723471484;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R+AVzWWReouMoN7zruePSuW9jT4ReN30A6YfedCpgFI=;
-        b=RRLPLHOiFZ3/BKyTFb7mSQvJNf3VAgos1JF+9YPISpYURcsKH0fPFioD7qP+eTDLkq
-         YZ/CeCZKY4VbOjxitWZi5gmdvJ/Ikt/Qpqo8HxRWa2HygzTQoVHr6jwzY87bJ2RQzH4s
-         30SK3es9swafiWPxI3gn51+akkqOwZAEzEo8BzEE3QRLi2NVfXZqZLZbQKPSPYBO9hjx
-         9UHU0ndwwO9hmheq+GN2of4tXcA1k+9wfncqWZac9dRguGlszXcS8myrih/j+RxzfuiT
-         7ILawbAwhAo3SwgFz2qzFHTbGvNhXL7GNTOL7nanNCECxPsQoIiDouPzo/TsvFCxJhNj
-         xaEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnZZacPy22iuwyvuloV1Osz/m+7a92/wi2WKqn9XcnbWvI2optPKH+5FAmrvXMr/VQ8shzdh/86+AyB8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO2be2GOfGhI2KmJ89aOodTv9j/orhBoGoxCaG1Cqswb2y7wNF
-	qPa4a6koB+9UkhOTTC+uwGG1tI5VKpHCrWGLolmm7m4VCBF5chwre4DO7aTqcxts9KaVFH50KPl
-	JhAcSDfYB4aR7L+fe0uNYKD3ZotGT+88HOrGuK1/9xDcbngrOnbH6RVyrqjqm5A==
-X-Received: by 2002:adf:e84b:0:b0:368:48b1:803 with SMTP id ffacd0b85a97d-36bbc0a7516mr7666474f8f.12.1722866683804;
-        Mon, 05 Aug 2024 07:04:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqMOWFKU9XiHMC7qZcwwpmZWNzT4B2DcK1et3m5b0MIWcN/Gs6j/xwsCEBWBB3P7GaUOmicw==
-X-Received: by 2002:adf:e84b:0:b0:368:48b1:803 with SMTP id ffacd0b85a97d-36bbc0a7516mr7666448f8f.12.1722866683267;
-        Mon, 05 Aug 2024 07:04:43 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd01b5c4sm9894503f8f.42.2024.08.05.07.04.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 07:04:42 -0700 (PDT)
-Date: Mon, 5 Aug 2024 16:04:39 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Peter Maydell <peter.maydell@linaro.org>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>, "Michael
- S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v3 1/7] arm/virt: place power button pin number on a
- define
-Message-ID: <20240805160439.0bafb58d@imammedo.users.ipa.redhat.com>
-In-Reply-To: <20240801151544.2f315598@foz.lan>
-References: <cover.1721630625.git.mchehab+huawei@kernel.org>
-	<bf8367bddfdc95e378b5725c732533c3ba20d388.1721630625.git.mchehab+huawei@kernel.org>
-	<20240730092549.6898ff3c@imammedo.users.ipa.redhat.com>
-	<CAFEAcA8VWc3eQZqfJP9k5LYF-9aLChHQ+uS9UBfGV6nvybDxqQ@mail.gmail.com>
-	<20240730132620.46cca4ce@imammedo.users.ipa.redhat.com>
-	<20240801151544.2f315598@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722866709; c=relaxed/simple;
+	bh=BjePA2AumzeQ2TLYhYHG4psY9v3MizraF/wucVMIA8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qV3EVl7Cz/xdA4TofPJLMuDWENujKIHDAa7XO+zzOocQ9k+be9Q2hFww1KTLrvur1DJo+RSnw84HYQ+rX0Ly+GpF5jq3UMJGMMoIOKmbyhqhJuf6f1wKSqsuZdCMc6vcb9w/dUJb6P/Fkwf5siBC7crWXqhWPuT+CDjnwexbeVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Obax5ydv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 475BnESh012547;
+	Mon, 5 Aug 2024 14:05:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	v+NbPHwCe66lLJYavIiC+igOHVE6p4ONkno/jcBSnAI=; b=Obax5ydv7rtK83kx
+	akuRF5/UsukpBdXNuAmuqX8DVpBJzMUs5N3FqtnEMuoHIHDx0QZTk7ti0PxIavxs
+	5vL3ZBBqYlQeaCcx0E4+J386IV+DZ1Oh5Gm7h3oTK6EX/CecOGOjy6B5pkCivNs2
+	9CDvPwr63zaGES/vYztqbpN1LDNyPtI5PWFBNiBJ4MF5rRMOM4OLKK1ENf5X1ckd
+	ZFhYZYWHa3/c+Mz2BImX16/1He4qrle0+rwP70xxchPzgxO3oWYHKEz/tPteaN0c
+	go/RsJ6oj4xBqXEk5zYbmiQ5Q/ahrrzrKgGw5zLx3l+c3e6X+N4zZ2c02dMbn2O/
+	D3NODA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbj6m82w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 14:04:59 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 475E4wo3013376
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 14:04:58 GMT
+Received: from [10.217.219.66] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 5 Aug 2024
+ 07:04:54 -0700
+Message-ID: <4f7dafa5-ba2a-f06f-0fff-8251969b283a@quicinc.com>
+Date: Mon, 5 Aug 2024 19:34:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 2/2] dmaengine: dw-edma: Do not enable watermark
+ interrupts for HDMA
+Content-Language: en-US
+To: Serge Semin <fancer.lancer@gmail.com>
+CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
+        <quic_shazhuss@quicinc.com>, <quic_nitegupt@quicinc.com>,
+        <quic_ramkri@quicinc.com>, <quic_nayiluri@quicinc.com>,
+        <quic_krichai@quicinc.com>, <quic_vbadigan@quicinc.com>,
+        <stable@vger.kernel.org>, Cai Huoqing <cai.huoqing@linux.dev>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1721740773-23181-1-git-send-email-quic_msarkar@quicinc.com>
+ <1721740773-23181-3-git-send-email-quic_msarkar@quicinc.com>
+ <mhfcw7yuv55me2d7kf6jh3eggzebq6riv5im4nbvx6qrzsg2mr@xpq3srpzemkb>
+From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+In-Reply-To: <mhfcw7yuv55me2d7kf6jh3eggzebq6riv5im4nbvx6qrzsg2mr@xpq3srpzemkb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: A8sJ_MWOcyKDLGf5Q8p9ZmlE_Ido2mbv
+X-Proofpoint-GUID: A8sJ_MWOcyKDLGf5Q8p9ZmlE_Ido2mbv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-05_02,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=764 clxscore=1015 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408050100
 
-On Thu, 1 Aug 2024 15:15:44 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> Em Tue, 30 Jul 2024 13:26:20 +0200
-> Igor Mammedov <imammedo@redhat.com> escreveu:
-> 
-> > On Tue, 30 Jul 2024 09:29:37 +0100
-> > Peter Maydell <peter.maydell@linaro.org> wrote:
-> >   
-> > > On Tue, 30 Jul 2024 at 08:26, Igor Mammedov <imammedo@redhat.com> wrote:    
-> > > >
-> > > > On Mon, 22 Jul 2024 08:45:53 +0200
-> > > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > > >      
-> > > > > Having magic numbers inside the code is not a good idea, as it
-> > > > > is error-prone. So, instead, create a macro with the number
-> > > > > definition.
-> > > > >
-> > > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>      
-> > >     
-> > > > > diff --git a/hw/arm/virt.c b/hw/arm/virt.c
-> > > > > index b0c68d66a345..c99c8b1713c6 100644
-> > > > > --- a/hw/arm/virt.c
-> > > > > +++ b/hw/arm/virt.c
-> > > > > @@ -1004,7 +1004,7 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
-> > > > >      if (s->acpi_dev) {
-> > > > >          acpi_send_event(s->acpi_dev, ACPI_POWER_DOWN_STATUS);
-> > > > >      } else {
-> > > > > -        /* use gpio Pin 3 for power button event */
-> > > > > +        /* use gpio Pin for power button event */
-> > > > >          qemu_set_irq(qdev_get_gpio_in(gpio_key_dev, 0), 1);      
-> > > >
-> > > > /me confused, it was saying Pin 3 but is passing 0 as argument where as elsewhere
-> > > > you are passing 3. Is this a bug?      
-> > > 
-> > > No. The gpio_key_dev is a gpio-key device which has one
-> > > input (which you assert to "press the key") and one output,
-> > > which goes high when the key is pressed and then falls
-> > > 100ms later. The virt board wires up the output of the
-> > > gpio-key device to input 3 on the PL061 GPIO controller.
-> > > (This happens in create_gpio_keys().) So the code is correct
-> > > to assert input 0 on the gpio-key device and the comment
-> > > isn't wrong that this results in GPIO pin 3 being asserted:
-> > > the link is just indirect.    
-> > 
-> > it's likely obvious to ARM folks, but maybe comment should
-> > clarify above for unaware.  
-> 
-> Not sure if a comment here with the pin number is a good idea.
-> After all, this patch was originated because we were using
-> Pin 6 for GPIO error, while the comment was outdated (stating
-> that it was pin 8 instead) :-)
-> 
-> After this series, there will be two GPIO pins used inside arm/virt,
-> both defined at arm/virt.h:
-> 
-> 	/* GPIO pins */
-> 	#define GPIO_PIN_POWER_BUTTON  3
-> 	#define GPIO_PIN_GENERIC_ERROR 6
-> 
-> Those macros are used when GPIOs are created:
-> 
-> 	static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
-> 	                             uint32_t phandle)
-> 	{
-> 	    gpio_key_dev = sysbus_create_simple("gpio-key", -1,
-> 	                                        qdev_get_gpio_in(pl061_dev,
->                                                          GPIO_PIN_POWER_BUTTON));
-> 	    gpio_error_dev = sysbus_create_simple("gpio-key", -1,
-> 	                                          qdev_get_gpio_in(pl061_dev,
-> 	                                                           GPIO_PIN_GENERIC_ERROR));
-> So, at least for me, it is clear that gpio_key_dev is using pin 3.
+On 8/2/2024 6:04 AM, Serge Semin wrote:
+> On Tue, Jul 23, 2024 at 06:49:32PM +0530, Mrinmay Sarkar wrote:
+>> DW_HDMA_V0_LIE and DW_HDMA_V0_RIE are initialized as BIT(3) and BIT(4)
+>> respectively in dw_hdma_control enum. But as per HDMA register these
+>> bits are corresponds to LWIE and RWIE bit i.e local watermark interrupt
+>> enable and remote watermarek interrupt enable. In linked list mode LWIE
+>> and RWIE bits only enable the local and remote watermark interrupt.
+>>
+>> Since the watermark interrupts are not used but enabled, this leads to
+>> spurious interrupts getting generated. So remove the code that enables
+>> them to avoid generating spurious watermark interrupts.
+>>
+>> And also rename DW_HDMA_V0_LIE to DW_HDMA_V0_LWIE and DW_HDMA_V0_RIE to
+>> DW_HDMA_V0_RWIE as there is no LIE and RIE bits in HDMA and those bits
+>> are corresponds to LWIE and RWIE bits.
+>>
+>> Fixes: e74c39573d35 ("dmaengine: dw-edma: Add support for native HDMA")
+>> cc: stable@vger.kernel.org
+>> Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
+>> ---
+>>   drivers/dma/dw-edma/dw-hdma-v0-core.c | 17 +++--------------
+>>   1 file changed, 3 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+>> index fa89b3a..9ad2e28 100644
+>> --- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
+>> +++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+>> @@ -17,8 +17,8 @@ enum dw_hdma_control {
+>>   	DW_HDMA_V0_CB					= BIT(0),
+>>   	DW_HDMA_V0_TCB					= BIT(1),
+>>   	DW_HDMA_V0_LLP					= BIT(2),
+>> -	DW_HDMA_V0_LIE					= BIT(3),
+>> -	DW_HDMA_V0_RIE					= BIT(4),
+>> +	DW_HDMA_V0_LWIE					= BIT(3),
+>> +	DW_HDMA_V0_RWIE					= BIT(4),
+>>   	DW_HDMA_V0_CCS					= BIT(8),
+>>   	DW_HDMA_V0_LLE					= BIT(9),
+>>   };
+>> @@ -195,25 +195,14 @@ static void dw_hdma_v0_write_ll_link(struct dw_edma_chunk *chunk,
+>>   static void dw_hdma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
+>>   {
+>>   	struct dw_edma_burst *child;
+>> -	struct dw_edma_chan *chan = chunk->chan;
+>>   	u32 control = 0, i = 0;
+>> -	int j;
+>>   
+>>   	if (chunk->cb)
+>>   		control = DW_HDMA_V0_CB;
+>>   
+>> -	j = chunk->bursts_alloc;
+>> -	list_for_each_entry(child, &chunk->burst->list, list) {
+>> -		j--;
+>> -		if (!j) {
+>> -			control |= DW_HDMA_V0_LIE;
+>> -			if (!(chan->dw->chip->flags & DW_EDMA_CHIP_LOCAL))
+>> -				control |= DW_HDMA_V0_RIE;
+>> -		}
+>> -
+>> +	list_for_each_entry(child, &chunk->burst->list, list)
+>>   		dw_hdma_v0_write_ll_data(chunk, i++, control, child->sz,
+>>   					 child->sar, child->dar);
+>> -	}
+> Hm, in case of DW EDMA the LIE/RIE flags of the LL entries gets to be
+> moved to the LIE/RIE flags of the channel context register by the
+> DMA-engine. In its turn the context register LIE/RIE flags determine
+> whether the Local and Remote Done/Abort IRQs being raised. So without
+> the LIE/RIE flags being set in the LL-entries the IRQs won't be raised
+> and the whole procedure won't work. I have doubts it works differently
+> in case of HDMA because changing the semantics would cause
+> implementing additional logic in the DW HDMA RTL-model. Seeing the DW
+> HDMA IP-core supports the eDMA compatibility mode it would needlessly
+> expand the controller size. What are the rest of the CONTROL1 register
+> fields? There must be LIE/RIE flags someplace there for the non-LL
+> transfers and to preserve the values retrieved from the LL-entries.
+>
+> Moreover the DW eDMA HW manual has a dedicated chapter called
+> "Interrupts and Error Handling" with a very demonstrative figures
+> describing the way the flags work. Does the DW HDMA databook have
+> something like that?
+>
+> Please also note, the DW _EDMA_ LIE and RIE flags can be also utilized
+> for the intermediate IRQ raising, to implement the runtime LL-entries
+> recycling pattern. The IRQ in that case is called as "watermark" IRQ
+> in the DW EDMA HW databook, but the flags are still called as just
+> LIE/RIE.
+>
+> -Serge(y)
+Yes, you are right LIE/RIE flags need to be set without that the IRQs
+won't be raised in case of DW EDMA.
+But in DW HDMA case there in no such LIE/RIE flags and these particular
+bits has been mapped to LWIE and RWIE flags and these are used to enable
+watermark interrupt only.
+There is no LIE/RIE fields in HDMA_CONTROL1_OFF_WRCH register fields
+the same is present in EDMA CONTROL1 register.
 
-if you switch to using already existing GED device,
-then this patch will go away since event will be delivered by GED
-instead of GPIO + _AEI.
+DW HDMA has INT_SETUP register and it has LSIE/RSIE, LAIE/RAIE fields
+those are enabling Local and Remote Stop/Abort IRQs in LL mode.
 
-> 
-> Thanks,
-> Mauro
-> 
+yes DW HDMA data book also have figures in "Interrupts and Error Handling"
+section and there is no LIE/RIE flags and it is replaced with LWIE/RWIE 
+flags
+as I mentioned above.
 
+Thanks,
+Mrinmay
+
+>>   
+>>   	control = DW_HDMA_V0_LLP | DW_HDMA_V0_TCB;
+>>   	if (!chunk->cb)
+>> -- 
+>> 2.7.4
+>>
 
