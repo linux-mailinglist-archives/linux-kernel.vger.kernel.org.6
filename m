@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-274717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED73947BD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:30:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8543D947BDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D25D51F235F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:30:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A8B4281948
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531A3433BD;
-	Mon,  5 Aug 2024 13:30:03 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D702A3839C;
+	Mon,  5 Aug 2024 13:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvsdwKyG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439DE155C8D;
-	Mon,  5 Aug 2024 13:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D8118026;
+	Mon,  5 Aug 2024 13:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722864602; cv=none; b=H/T9m4V3hxsY0prNglN5dc8qeNZH8a5ZI/h+QZZ4ugews33Vj5xbEQ4QaaIMr/1LNtK4SxxXR88dkH7/Psl9WfURiwy3Uk+NJ56CA9oltDL3C0avg7BjDU/TY6QEQe3Di4P+rn4+l2RwyFl8u0AEBWC2XaVAn0iEQFv0HOpUOyE=
+	t=1722864674; cv=none; b=AObLlv/9VzrkBCxztNIUEC1rLSAUVLMt9GrK/hUgYBkk8JuFbAGBnWkbBm09Sx0YxI/AT3auz6Fu2f2rH8GdeUGpH6NrrWKjn7SFnLwFKFvgozEeurkBbgI/2hmyM1CL64dUxf3RdvLeoZVhR5pOU0JhTtwuVvPtryp0a5Gz/6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722864602; c=relaxed/simple;
-	bh=YnpMyDaNkbOsHoUswBRJZQMkWcE/xomjVPw6Y0FEUMI=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pbLMxR8/t9a4cw00WPlpFmY2VPzSr4YvNpjnFFCLnbPpGlTumrPKhX3ilK6XXcUlBXKVjXxC+pct9EWZc5n/EGBou1C4mcz1Xb8Vr25tALkqa/0pHSZ5CxvV5RNLvkUAfTPj3EquN+KfTeaGi8uxEdYbTwVOEw/Lb/7s6k8u27g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wcy3K5Q99zyQ0M;
-	Mon,  5 Aug 2024 21:29:49 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id E231B140109;
-	Mon,  5 Aug 2024 21:29:54 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 21:29:54 +0800
-Message-ID: <e56e1fca-90f1-414a-9ed3-5bd7b61ea8b3@huawei.com>
-Date: Mon, 5 Aug 2024 21:29:53 +0800
+	s=arc-20240116; t=1722864674; c=relaxed/simple;
+	bh=WPi7tZ555JJqoSl8/DBWHMoKDFJ5bJLdM8FFlQmnfoQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EsAofxpKaZtOfRI+VS/HVa03Se1Wo1mdqO6sT+LXNebsjB83L+EsitXU4wc2Rcx/5DO1QmgzBwTNy7Jah857mLmA7IYOpXvKdxEEiQw7t5hNbZj7GtyCh4KJW9tpGBtPytSUiM1yi4nYgncC4Sknq+bx0GqXmCfa5mKAvOif8Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvsdwKyG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AADCC32782;
+	Mon,  5 Aug 2024 13:31:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722864673;
+	bh=WPi7tZ555JJqoSl8/DBWHMoKDFJ5bJLdM8FFlQmnfoQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XvsdwKyG4wEnvcwEhadorHEQCyCblUhzPYRnm6AzznysJAuMAiZyGS63TE+PirsCj
+	 JboQGyJL5jI1NPVEQDMqmG5MjOHx1kxwW897u7pGwOk0rrnJDfh+yVjrJPLL/FKryJ
+	 jYDiex0SY3ce9ug9UNvABnHFu810J0kGtACrHQWuC+lmRpgTuLXiuosStp+jywydNn
+	 x62QHx92TPatqfOBYfAlbrGZ3c04fd4/wtdEp9eCLbHMl7vi+ESEXenYa2VEiguKaI
+	 Wh1jsNSh3QeaEMNKlB7Jy6HXc1ap9xGBzH0spbycMdbXRyuGu6wQF5H+L+eMzvSDxp
+	 j0+X0JuTCh0Vg==
+Message-ID: <62652aba-fcbe-481e-8bfe-1eb0a22eba4b@kernel.org>
+Date: Mon, 5 Aug 2024 16:31:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,109 +49,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
-	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <shenjian15@huawei.com>,
-	<wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH net-next 04/10] net: hibmcge: Add interrupt supported
- in this module
-To: Simon Horman <horms@kernel.org>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-5-shaojijie@huawei.com>
- <20240805125743.GB2633937@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20240805125743.GB2633937@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Subject: Re: [PATCH v5 01/12] dt-bindings: usb: ti,j721e-usb: fix compatible
+ list
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Chen <peter.chen@kernel.org>,
+ Pawel Laszczak <pawell@cadence.com>, Mathias Nyman
+ <mathias.nyman@intel.com>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@kernel.org>,
+ =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20240726-s2r-cdns-v5-0-8664bfb032ac@bootlin.com>
+ <20240726-s2r-cdns-v5-1-8664bfb032ac@bootlin.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240726-s2r-cdns-v5-1-8664bfb032ac@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-on 2024/8/5 20:57, Simon Horman wrote:
-> On Wed, Jul 31, 2024 at 05:42:39PM +0800, Jijie Shao wrote:
->> The driver supports four interrupts: TX interrupt, RX interrupt,
->> mdio interrupt, and error interrupt.
->>
->> Actually, the driver does not use the mdio interrupt.
->> Therefore, the driver does not request the mdio interrupt.
->>
->> The error interrupt distinguishes different error information
->> by using different masks. To distinguish different errors,
->> the statistics count is added for each error.
->>
->> To ensure the consistency of the code process, masks are added for the
->> TX interrupt and RX interrupt.
->>
->> This patch implements interrupt request and free, and provides a
->> unified entry for the interrupt handler function. However,
->> the specific interrupt handler function of each interrupt
->> is not implemented currently.
->>
->> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> ...
->
->> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c
-> ...
->
->> +int hbg_irq_init(struct hbg_priv *priv)
->> +{
->> +	struct hbg_vector *vectors = &priv->vectors;
->> +	struct hbg_irq *irq;
->> +	int ret;
->> +	int i;
->> +
->> +	ret = pci_alloc_irq_vectors(priv->pdev, HBG_VECTOR_NUM, HBG_VECTOR_NUM,
->> +				    PCI_IRQ_MSI);
->> +	if (ret < 0) {
->> +		dev_err(&priv->pdev->dev,
->> +			"failed to allocate MSI vectors, vectors = %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	if (ret != HBG_VECTOR_NUM) {
->> +		dev_err(&priv->pdev->dev,
->> +			"requested %u MSI, but allocated %d MSI\n",
->> +			HBG_VECTOR_NUM, ret);
->> +		ret = -EINVAL;
->> +		goto free_vectors;
->> +	}
->> +
->> +	vectors->irqs = devm_kcalloc(&priv->pdev->dev, HBG_VECTOR_NUM,
->> +				     sizeof(struct hbg_irq), GFP_KERNEL);
->> +	if (!vectors->irqs) {
->> +		ret = -ENOMEM;
->> +		goto free_vectors;
->> +	}
->> +
->> +	/* mdio irq not request */
->> +	vectors->irq_count = HBG_VECTOR_NUM - 1;
->> +	for (i = 0; i < vectors->irq_count; i++) {
->> +		irq = &vectors->irqs[i];
->> +		snprintf(irq->name, sizeof(irq->name) - 1, "%s-%s-%s",
->> +			 HBG_DEV_NAME, pci_name(priv->pdev), irq_names_map[i]);
->> +
->> +		irq->id = pci_irq_vector(priv->pdev, i);
->> +		irq_set_status_flags(irq->id, IRQ_NOAUTOEN);
-> I think that you <linux/irq.h> needs to be included.
-> Else allmodconfig builds - on x86_64 but curiously not ARM64 - fail.
 
-Thank you, this is very confusing. I built successfully on both ARM and x86.
-I will rebuild it according to your Clang version to fix this error
+On 26/07/2024 21:17, Théo Lebrun wrote:
+> Compatible can be A or B+A, not A or B or A+B. B got added afterwards,
+> we want B+A not A+B. A=ti,j721e-usb and B=ti,am64-usb.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 
-Jijie Shao
-
->
->    CC      drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.o
-> drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c: In function 'hbg_irq_init':
-> drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c:150:17: error: implicit declaration of function 'irq_set_status_flags' [-Wimplicit-function-declaration]
->    150 |                 irq_set_status_flags(irq->id, IRQ_NOAUTOEN);
->        |                 ^~~~~~~~~~~~~~~~~~~~
-> drivers/net/ethernet/hisilicon/hibmcge/hbg_irq.c:150:47: error: 'IRQ_NOAUTOEN' undeclared (first use in this function); did you mean 'IRQF_NO_AUTOEN'?
->    150 |                 irq_set_status_flags(irq->id, IRQ_NOAUTOEN);
->        |                                               ^~~~~~~~~~~~
->        |                                               IRQF_NO_AUTOEN
->
-> ...
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
