@@ -1,179 +1,187 @@
-Return-Path: <linux-kernel+bounces-274500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC409478F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:02:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8139478F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73261C20F62
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:02:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 141C7B23319
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6887515382F;
-	Mon,  5 Aug 2024 10:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42ED1153803;
+	Mon,  5 Aug 2024 10:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5rIsN8h"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GLANCelV"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3AD13DDC2;
-	Mon,  5 Aug 2024 10:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA38A1369B1
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722852126; cv=none; b=cv8JomHa73mJdFImehx+ZkbsKIkrXFdjGZSnvhiDcCjGbTE3jSgXRolzQJDYTcXibqWfDgx/bfpCToS8lIZz3WpPLGT7lj0T/wgk2fGaxGktSvtxDj+q3wPD2yEPWng+frn8xuJHPdI8m2+WIiNgqIZLVF9MLUjJ1anF4xPKcg4=
+	t=1722852161; cv=none; b=tKqcIexMtlorkLwdRgfnbFnD0IagCq3I/EL+WrsXw8uTuDEjFGd4Ikq5lk6PzfOgTBEb5Uas+6YFJKvYbxhsqsJgkTJfXYs0QnOXGBG/JoHxBXGamq/Q5gxkb+nvdqV+tFO1xuxIZ+2PbUwtua5S6XyUW50E0MrUV0QzIQc+pp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722852126; c=relaxed/simple;
-	bh=7BD7JKUmtuZQkLNSY1h5BQNhA5b6G4AJu+qBFSYhCQY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=cyT2guwCv5J97BluCaNu9gXwHBWBVgWzRKmYVgoyqbpPJBQtNBXV4R2a2T3v4dXTrZoTHa+X/G5GRSkgSNJcWx9HPrj0R67xbaLhzANffV1PXvCy3gBLTh7ezys+4FhAb4lOAcRdLPhGWkT0giPKKXQvaE6yB+8x6AK+MSpjGQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J5rIsN8h; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc5296e214so85361665ad.0;
-        Mon, 05 Aug 2024 03:02:03 -0700 (PDT)
+	s=arc-20240116; t=1722852161; c=relaxed/simple;
+	bh=2l+wah5GBSKlwPnxiyWx1DLzVHRFO/SZopA2iDbRiP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IjpAh3+Bago5CtYnTm3EhFt+fU+3e/ZEMdTCYniPgzHuQBE3F/l2FKvI4RmCFCqk6T4XklJ8EJnCa7fy36BFpa9jVsJYAZXJtH2Sw2VOKCJDPuMpiqM3LygM3GJLmyFhJ4qfT+S8AlRZRrWLo6c6hhmSFp7bSzDvEpt3wy2ACRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GLANCelV; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3684bea9728so6118021f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 03:02:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722852123; x=1723456923; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mqYpSdE50pl9XzV3+DNmj/HrcKodDL4KzDAs90g9Vqg=;
-        b=J5rIsN8hsWNl0MCqfS3ETAi8kgjh8+mDIWxvSOjh50iT6AV0wYz+J6KjM/3PWnhInt
-         Zd4pHR9kblw8eMEITbOA8v1AeZ2kAGLsKvjtuBrDByPJcMbQm0rMVtYoP/HyIvaPUAnw
-         jA3h5MvUmgV/tf4cAZcwI+42FyLObXo/rk3EpMfsJH8A+Cvv6hn9aEgIKnbSzEcCC99t
-         2kIFQIUcIoYSdEG6c9YCHscHbKIUxOXT2zdOJNek19z0iajOW2zoLUKSHsSnUPG8us8l
-         UYl9DpKPez91OqMF2GepIj9RHVIEKmBWU9rfYkBLH9fbxvZ2Vu89RWkEHrNsgl/UppB8
-         nJgQ==
+        d=linaro.org; s=google; t=1722852158; x=1723456958; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mjioQ4H+uyrR3to9I+NOwzfyZ+1chgZBnC/PTL+4EbQ=;
+        b=GLANCelVKfZUum4u+brxDLreTXs75zghrJkm4Xmmyek8/KMf0vw/kOP5B1Bs22vKfQ
+         Dp+SQL8Fu51ER5Y4+RLdzN1J/v1uOG6QYBwuedVWxRCBq9cEsSxITaUS4hzX//4tbu6i
+         9ywWLt+wXAEKueM5dKizY5uCqgAPlLdV16eGrDoOL339gSpYnTn+bzcgIwqX4nLwa9AW
+         CTy64PWrBguVLNWTlwYXPVVSHsMCY8C+Nc1GQEPUUXmqFBT0rDVXqyeazf2X57b2uGuP
+         M1mjbNXmUAMmfV7W++oix9DBxpC2hJ6lHzWjhBDs5aB41N28ojpUw5WDmMk6aV7pHTs1
+         /g0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722852123; x=1723456923;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mqYpSdE50pl9XzV3+DNmj/HrcKodDL4KzDAs90g9Vqg=;
-        b=f2+AGbOJYZFQg1AaQ1dxf37jc8gVzi9rWmQT0njYoU+/njMgNNgimAfKwQiSvxA0k4
-         52kMygeNpzXGnuIqJRJ9jFmwGv8pETNt22okWWABhpk2YCDYovYozc/RIVBtZI98Sr7u
-         NDLJguhiQ6G+w22+DXh7xrG0uWAbV/5PrRb0hF7IvklxmuonUpY9A6NGp2RwA6nWVxih
-         Wp5JauzVJI+ZAhavqCxJGk2MCNzi7AEahbK2S+uP+ZSO9Vd7FtlCbhNzaRDA87/Sq78d
-         GyggaE7q7HzjkewdkifvjwBw96TPectUbAgMl+fSvRMcHz0yH1u6dn3EwHABZby+vtDi
-         9Z+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUUIQ2/wCXvrMQOS7hV39TY4jxEdOlmlp+SLiZwIiYzoKBG0W+Yo85GxC79ADLoTWdSUPEBGyfOg/hqGLhvcwGNINUdghAGwvo/fjj7xwHIcEsY34xHcpp2af2AVwZUxpwre5c8vqkgEDRE5w==
-X-Gm-Message-State: AOJu0YyuZS3b9D6iAt+30k3qNH/igZ9su2uspnuvRbQyJ2z4e5KzLAVZ
-	Q0bvNkneMZ+rQULxUsv2dNDGmxKHexyt2rZiHKBN3/64hee0u1So
-X-Google-Smtp-Source: AGHT+IElKztUQ6gzFBTWFrbmuzZnWW/UvqeHzlqMr1XZuSHhH+xjVYflrzhFDofbtAyKex86jRowaQ==
-X-Received: by 2002:a17:902:f213:b0:1fa:ff88:891a with SMTP id d9443c01a7336-1ff5744b232mr108679155ad.48.1722852123238;
-        Mon, 05 Aug 2024 03:02:03 -0700 (PDT)
-Received: from localhost.localdomain ([180.69.210.41])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ff592b7d3bsm63330525ad.302.2024.08.05.03.01.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 03:02:02 -0700 (PDT)
-From: JaeJoon Jung <rgbi3307@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <levinsasha928@gmail.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: JaeJoon Jung <rgbi3307@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	maple-tree@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 2/2] lib/htree: Modified Documentation/core-api/htree.rst
-Date: Mon,  5 Aug 2024 19:01:49 +0900
-Message-Id: <20240805100149.14445-1-rgbi3307@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        d=1e100.net; s=20230601; t=1722852158; x=1723456958;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mjioQ4H+uyrR3to9I+NOwzfyZ+1chgZBnC/PTL+4EbQ=;
+        b=c460AduKtYPS5Cns6TI+UtHjzHlmwKz51otZSVT5zOEmAiC3xXIv8wpwM5fhMt/kUt
+         pXNd87xsurH0WAZh5YugMQoCu1//LqZl44QD2wol18tw4c2CUv/X0oRWg5YB81kYM/+m
+         lZbMG/ivkCZS9mGAVZPfWDr1EHg4lUBF09to0iPkSiaSRbK6RqpdOomd4fjG+MP/cq4X
+         sQjUhL+OL6bBI2248isHEXuViRu4thxlEEQLpPuDnsCVQe/hOqvYG9u3TZpxCmamW2Ih
+         bWJGKfDQH3ACjRMOodsK1wnTMZ+lyCwXHYjqq8VcwlVhAVe59SUID0MBPJ8f+Uk5+Dij
+         RFpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEbAnAkUnsIM8c/CVW0/6AA3zW78m8rouu2SY0vCB2zE47UZVZbXKl1kNUr80OORDuz1FVBkIlJQg5aEr2ynWqBeUEmcnEvi8R+kQa
+X-Gm-Message-State: AOJu0Yw8Z+hGRUP1EW8rf8luYcAR3DT195kflqFZnlB7CnTk+8t5krjF
+	m+rSnMdnpv9TpeQIyHMWqjiuNfUKU6XxNFQ70HKewJdRWcN9G2uGAJysdqh1KA4=
+X-Google-Smtp-Source: AGHT+IEJu0nVrnPJypFiu0KWzikIUtZjc23B8O4pBdgupqKLI1fmeVQihOAI5koeJsAh94yqHIGvYA==
+X-Received: by 2002:a5d:6345:0:b0:367:96b9:760a with SMTP id ffacd0b85a97d-36bbc164214mr7487283f8f.41.1722852157945;
+        Mon, 05 Aug 2024 03:02:37 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06d007sm9316865f8f.90.2024.08.05.03.02.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 03:02:37 -0700 (PDT)
+Message-ID: <18a81793-9ed6-4b2f-b16a-b18738bb3526@linaro.org>
+Date: Mon, 5 Aug 2024 12:02:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] pinctrl: pinctrl-zynqmp: Add Versal platform
+ support
+To: "Potthuri, Sai Krishna" <sai.krishna.potthuri@amd.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ "Simek, Michal" <michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "Buddhabhatti, Jay" <jay.buddhabhatti@amd.com>,
+ "Kundanala, Praveen Teja" <praveen.teja.kundanala@amd.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "saikrishna12468@gmail.com" <saikrishna12468@gmail.com>,
+ "git (AMD-Xilinx)" <git@amd.com>
+References: <20240801120029.1807180-1-sai.krishna.potthuri@amd.com>
+ <bf1faea5-bc1e-46df-bf68-c222570c09a2@linaro.org>
+ <CH2PR12MB426446B0084EEE56C13DA6ECDBBE2@CH2PR12MB4264.namprd12.prod.outlook.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CH2PR12MB426446B0084EEE56C13DA6ECDBBE2@CH2PR12MB4264.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Implementation of new Hash Tree [PATCH v2]
-------------------------------------------
-Added description of locking interface
+On 05/08/2024 10:58, Potthuri, Sai Krishna wrote:
+> Hi Krzysztof,
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Sent: Sunday, August 4, 2024 8:20 PM
+>> To: Potthuri, Sai Krishna <sai.krishna.potthuri@amd.com>; Linus Walleij
+>> <linus.walleij@linaro.org>; Simek, Michal <michal.simek@amd.com>; Rob
+>> Herring <robh+dt@kernel.org>; Krzysztof Kozlowski
+>> <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley <conor+dt@kernel.org>;
+>> Buddhabhatti, Jay <jay.buddhabhatti@amd.com>; Kundanala, Praveen Teja
+>> <praveen.teja.kundanala@amd.com>; Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org>
+>> Cc: linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+>> linux-gpio@vger.kernel.org; devicetree@vger.kernel.org;
+>> saikrishna12468@gmail.com; git (AMD-Xilinx) <git@amd.com>
+>> Subject: Re: [PATCH v3 0/3] pinctrl: pinctrl-zynqmp: Add Versal platform
+>> support
+>>
+>> On 01/08/2024 14:00, Sai Krishna Potthuri wrote:
+>>> Update the binding and pinctrl-zynqmp driver to add Versal platform
+>>> support.
+>>> Add Get Attribute ID in the Xilinx firmware driver to get the pin
+>>> information from Xilinx Platform Management Firmware.
+>>
+>> Any particular reason why you are developing patches on some quite old
+>> kernel?
+> I created this patch series on top of latest Pin control subsystem tree(Linus Walleij),
+> 'for-next' branch.
 
-full source:
-------------
-https://github.com/kernel-bz/htree.git
+I have doubts... otherwise get_maintainers.pl would point different
+address. Assuming you indeed use for-next branch, then sending process
+is wrong - you use some unusual commands instead of expected
+get_maintainers.pl or b4.
 
-Manual(PDF):
-------------
-https://github.com/kernel-bz/htree/blob/main/docs/htree-20240802.pdf
-
-Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
----
- Documentation/core-api/htree.rst | 56 +++++++++++++++++++++++---------
- 1 file changed, 40 insertions(+), 16 deletions(-)
-
-diff --git a/Documentation/core-api/htree.rst b/Documentation/core-api/htree.rst
-index 78073b413779..186b4c29587f 100644
---- a/Documentation/core-api/htree.rst
-+++ b/Documentation/core-api/htree.rst
-@@ -85,27 +85,51 @@ Hash Tree Summary (include/linux/htree.h)
- Hash Tree API flow (lib/htree.c, lib/htree-test.c)
- -----------------------------------------------------------------------------
- 
--*hts = ht_hts_alloc()           /* alloc hts */
--ht_hts_clear_init(hts, ...)	/* max nr, type(32/64bits), sort(ASC, DES) */
--*htree = ht_table_alloc(hts)    /* alloc first(depth:0) htree */
-+DEFINE_HTREE_ROOT(ht_root);     /* define htree_root */
-+
-+*hts = ht_hts_alloc();          /* alloc hts */
-+
-+ht_hts_clear_init(hts, ...);    /* max nr, type(32/64bits), sort(ASC, DES) */
-+
-+htree_root_alloc(hts, &ht_root);/* alloc first(root) hash tree */
- 
- run_loop() {
--	*udata = _data_alloc(index)             /* alloc udata */
--	ht_insert(hts, htree, udata->hdata, ..)	/* working data with index */
--	ht_erase(hts, htree, index)
--	hdata = ht_find(hts, htree, index)
--	hdata = ht_most_index(hts, htree)	/* smallest, largest index */
--	ht_statis(hts, htree, ...)		/* statistic */
-+        *udata = _data_alloc(index);    /* alloc udata */
-+
-+        /* working data with index */
-+        ht_insert_lock(hts, &ht_root, udata->hdata, ..);
-+        ht_erase_lock(hts, &ht_root, index);
-+        hdata = ht_find(hts, ht_root.ht_first, index);
-+
-+        /* smallest, largest index */
-+        hdata = ht_most_index(hts, ht_root.ht_first);
-+
-+        /* statistic */
-+        ht_statis(hts, ht_root.ht_first, ...);
- }
- 
--htree_erase_all(hts, htree)     /* remove all udata */
--ht_destroy(hts, htree)          /* remove all htree */
--kfree(hts)                      /* remove hts */
-+htree_erase_all_lock(hts, &ht_root);    /* remove all udata */
-+ht_destroy_lock(hts, &ht_root);         /* remove all htree */
-+kfree(hts)                              /* remove hts */
- 
- -----------------------------------------------------------------------------
--Please refer to the attached PDF for more detailed information.
-+Build (Compile)
- -----------------------------------------------------------------------------
--documents(PDF):
--	https://github.com/kernel-bz/htree/tree/main/docs/htree=20240802.pdf
-+lib/Kconfig.debug
- 
--Thanks.
-++config HTREE_TEST
-++       tristate "Hash Tree test"
-++       depends on DEBUG_KERNEL
-++       help
-++         A performance testing of the hash tree library.
-++
-+
-+lib/Makefile
-+
-++	lib-y += htree.o
-++	obj-$(CONFIG_HTREE_TEST) += htree-test.o
-+
-+-----------------------------------------------------------------------------
-+Please refer to the attached PDF for more detailed information:
-+https://github.com/kernel-bz/htree/blob/main/docs/htree-20240802.pdf
-+-----------------------------------------------------------------------------
--- 
-2.17.1
+Best regards,
+Krzysztof
 
 
