@@ -1,119 +1,263 @@
-Return-Path: <linux-kernel+bounces-274573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0863947A3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEBC3947A3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AA48B20C6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E75A1C211DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0708155C83;
-	Mon,  5 Aug 2024 11:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817DE15575F;
+	Mon,  5 Aug 2024 11:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=radojevic.rs header.i=@radojevic.rs header.b="owarYTnu"
-Received: from mail.radojevic.rs (radojevic.rs [139.162.187.67])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W3ByuzID"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AB2154BE4;
-	Mon,  5 Aug 2024 11:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.162.187.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8667013AD11
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 11:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722856035; cv=none; b=OX2iGVFQoqo/pdPD92cLB/jNWqssPg1ZsdfxeAq3Y4lpOSdTCnla/K/DZcjpPYsYWxiQJgH1xZmIXrQkKd2VCAG28Rh/pJjcplYR1MAJtyehE4JCg/+BVSL5d7l7ZoJr/SaYF2o8i12aBbbUdgjrAT40S6zVOHfB7RgG7KectIg=
+	t=1722856087; cv=none; b=oigrfCfh52J4wZ9SFamCXbNKvOV9iB4Z0g8joNFXOu2K6Jiu1gGD2/HZDpe2nIhYjEtIVW4nIfh2wO8DpOXLAq0dvilCsT/KOor6O8Un0z6tsJxWdzXuyfVM4sFXawqesiMOhyLu4RfZGUHMyfCh2WuA9M8KcXujJ/QTo+60HMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722856035; c=relaxed/simple;
-	bh=FsKABYar5tCCmqGtOJLbGI3S+bt2cKoGgq3u7smejfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZpjkcV8gze+Xd7Q1mT0g+fcNnTLkpagQKkbgqWhtHdK2U/gtXwiPlIfWIq837KzIl/lcLw6XZtBHDws+YAFKWsGYgZIIrU+otYqIuhwUSBhveEbzDuAaEczhhBTseP0DtciwGLnAg57ZTLpLc60Af1UI/Cotkche6iZ6Z9sy08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=radojevic.rs; spf=pass smtp.mailfrom=radojevic.rs; dkim=pass (2048-bit key) header.d=radojevic.rs header.i=@radojevic.rs header.b=owarYTnu; arc=none smtp.client-ip=139.162.187.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=radojevic.rs
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radojevic.rs
-Received: from localhost (unknown [91.143.223.193])
-	by mail.radojevic.rs (Postfix) with ESMTPSA id 618D51E1DF;
-	Mon,  5 Aug 2024 13:07:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=radojevic.rs; s=mail;
-	t=1722856032; bh=FsKABYar5tCCmqGtOJLbGI3S+bt2cKoGgq3u7smejfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=owarYTnudqNQj3zzqpcAD1STQ5bEUj0ILZjbSJvK0hNiUpvR/Gyyr7fOKhAuPST7P
-	 50I9jyCORzNZQkrEHXd4qLRwe4wKHlUxj/pgpTMHJT+wNJnaRq8OOhY23W1Ngo1vJw
-	 mSOTWt9halv0WWjvcZGVoxo+x2E6twuW5NZSPcDgzZIcWoliVNWZWHg1vncDX0G5Q1
-	 zHjt7MfuOIS0P+rG+fETO9650G55ciXpUVEtQacydvaEfJcvPRuALMEGmu9M3OIESD
-	 c9gPjB8H3MbMj53XGqavnBdUn+Aaq1PDQBgQtokbDxHEw1mGYlsxNp7oQLlWlZ6SKy
-	 VGz+H3+7llQ+Q==
-Date: Mon, 5 Aug 2024 13:07:11 +0200
-From: Nikola Radojevic <nikola@radojevic.rs>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Raise Pinebook Pro's panel
- backlight PWM frequency
-Message-ID: <fkiauvfki7kvmhs3g4aqatqcdtf6cko7xpgg7zfhgojnhoxa36@ruz5ywsdgr4c>
-References: <2a23b6cfd8c0513e5b233b4006ee3d3ed09b824f.1722805655.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1722856087; c=relaxed/simple;
+	bh=z8CkucEoqwU9gZijNwPWRrWpwv6JKgdShR8y8XCEXMA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CwEwvCIJZYE3vZr/iwu2vto4/YG82vCf0B2FLjkfo9ux7JdPi/Nf3H51sictf2qwguAplpYZq+9EDjCxMGVZeyWRD473jFx957mvtQ3lJV3MGXCshu6Ar5HXwOm44h8svJachDg+otFEiz1euGFqiIReGmmlLXfVQBVoUjSzrMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W3ByuzID; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722856084;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z8CkucEoqwU9gZijNwPWRrWpwv6JKgdShR8y8XCEXMA=;
+	b=W3ByuzIDYcTyy6gac9LowAlzGNJLT62ZfrIj9fkZxRBbtEn7xj4aujwoB6w8BrMZp9CEc4
+	bHEnC7AqZx0Ml8KY/u9ylgyE3evC3EL9JQaOfMKteWUdYyNXnuIdoEGo/CpR8UXR+yYhKn
+	cwybyMY+4528cc9LHxX6YmdicuN8O24=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-580-TSwGcltpMnWWNbywIx833w-1; Mon, 05 Aug 2024 07:08:03 -0400
+X-MC-Unique: TSwGcltpMnWWNbywIx833w-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ef3133ca88so99799821fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 04:08:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722856081; x=1723460881;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z8CkucEoqwU9gZijNwPWRrWpwv6JKgdShR8y8XCEXMA=;
+        b=ADGkbYp9eksCDoY0ZCPl27+pVuub+rqFE3F+6lgOZ/KWWWBIsMasG9kSEX3oTt5paA
+         1ACReoW71JjO94vupxDlQ8Jw4ToKeyeiimD0B7HAdSWXJF1LKD3mrxAEqHcEr71tPxWT
+         vXAgEOpMsLyplsnXY4X5uExeok98YD39V2eX7aIcmTNPXNRe0YFCqRLeodrv012/RFF7
+         XyhyUCDSfbMNCeT/xOhyT/QIm9yCDN9u/XoxgAFpKeu4YTQ+XW5LfRw6UVein28N9zK2
+         te6nxukN0EWfzkde+yfVrBqRK3v/7kgs07aIhseXg+GUmzj0REzsSj5WaCLjhBOn+O34
+         7mvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxM1ArKbkXvtWu2mBh9I5o/CQPYA7raxcm3TUg/pmvuGugKW4ViBG2eYQFTMWqqPH2Rm03/vRbJ/BOtjBweq6n5AYt3b5Cv8HakVKP
+X-Gm-Message-State: AOJu0Yx6/vTZaq+ChkKLnbSEfF5zm3ydPtCgXe/RLvmGdUufJ5ie+xGT
+	IMJ1h7jkvlNDPSQb1amjtv13QzLXrZV3mcXqMZmw1Y3aURFDrjkk6EboPXS6vdfrkHNKbKkCxNu
+	9+kmnEoe5CWqR12rtLrzp5yPmCX3afqatQ6QsoGNGzrFpZDhhV2XIFK9rFtgqgA==
+X-Received: by 2002:a2e:9816:0:b0:2ef:1b64:531b with SMTP id 38308e7fff4ca-2f15ab38068mr75718951fa.42.1722856081321;
+        Mon, 05 Aug 2024 04:08:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHecdeA9RsoDxEt+Ti+btYi48J1TbVeZQSFHeFUwJlo2ij41uU7X5vy9IKVIS18twS5fYZOWA==
+X-Received: by 2002:a2e:9816:0:b0:2ef:1b64:531b with SMTP id 38308e7fff4ca-2f15ab38068mr75718651fa.42.1722856080687;
+        Mon, 05 Aug 2024 04:08:00 -0700 (PDT)
+Received: from intellaptop.lan ([2a06:c701:778d:5201:3e8a:4c9c:25dd:6ccc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf1dc90sm9389826f8f.25.2024.08.05.04.07.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 04:08:00 -0700 (PDT)
+Message-ID: <6d3dd38ae5860be5c578d3212aa94ace460950b6.camel@redhat.com>
+Subject: Re: [PATCH v2 23/49] KVM: x86: Handle kernel- and KVM-defined CPUID
+ words in a single helper
+From: mlevitsk@redhat.com
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
+ <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+Date: Mon, 05 Aug 2024 14:07:58 +0300
+In-Reply-To: <ZqKlDC11gItH1uj9@google.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+	 <20240517173926.965351-24-seanjc@google.com>
+	 <7bf9838f2df676398f7b22f793b3478addde6ff0.camel@redhat.com>
+	 <ZoxXur7da11tP3aO@google.com>
+	 <41bdc5a77013796fa8cb6e61c410af3e064e274b.camel@redhat.com>
+	 <ZqKlDC11gItH1uj9@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2a23b6cfd8c0513e5b233b4006ee3d3ed09b824f.1722805655.git.dsimic@manjaro.org>
 
-Hello,
-I have tested this on my Pinebook Pro and I can confirm that
-everything seems to work alright.
+0KMg0YfRgiwgMjAyNC0wNy0yNSDRgyAxMjoxOCAtMDcwMCwgU2VhbiBDaHJpc3RvcGhlcnNvbiDQ
+v9C40YjQtToKPiA+IE9uIFdlZCwgSnVsIDI0LCAyMDI0LCBNYXhpbSBMZXZpdHNreSB3cm90ZToK
+PiA+ID4gPiBPbiBNb24sIDIwMjQtMDctMDggYXQgMTQ6MTggLTA3MDAsIFNlYW4gQ2hyaXN0b3Bo
+ZXJzb24gd3JvdGU6Cj4gPiA+ID4gPiA+IMKgQW5kIGluIHRoZSB1bmxpa2VseSBjYXNlIHRoYXQg
+d2Ugcm95YWxseSBzY3JldyB1cCBhbmQgZmFpbAo+ID4gPiA+ID4gPiB0byBjYWxsIGt2bV9jcHVf
+Y2FwX2luaXQoKSBvbiBhIHdvcmQsIHN0YXJ0aW5nIHdpdGggMHhmZiB3b3VsZCByZXN1bHQgaW4g
+YWxsCj4gPiA+ID4gPiA+IGZlYXR1cmVzIGluIHRoZSB1bmluaXRpYWxpemVkIHdvcmQgYmVpbmcg
+dHJlYXRlZCBhcyBzdXBwb3J0ZWQuCj4gPiA+ID4gWWVzLCBidXQgSU1ITyB0aGUgY2hhbmNlcyBv
+ZiB0aGlzIGhhcHBlbmluZyBhcmUgdmVyeSBsb3cuCj4gPiA+ID4gCj4gPiA+ID4gSSB1bmRlcnN0
+YW5kIHlvdXIgY29uY2VybnMgdGhvdWdoLCBidXQgdGhlbiBJTUhPIGl0J3MgYmV0dGVyIHRvIGtl
+ZXAgdGhlCj4gPiA+ID4ga3ZtX2NwdV9jYXBfaW5pdF9rdm1fZGVmaW5lZCwgYmVjYXVzZSB0aGlz
+IHdheSBhdCBsZWFzdCB0aGUgZnVuY3Rpb24gbmFtZQo+ID4gPiA+IGNsZWFubHkgZGVzY3JpYmVz
+IHRoZSBkaWZmZXJlbmNlIGluc3RlYWQgb2YgdGhlIGRpZmZlcmVuY2UgYmVpbmcgYnVyaWVkIGlu
+IHRoZSBmdW5jdGlvbgo+ID4gPiA+IGl0c2VsZiAodGhlIGNvbW1lbnQgaGVscHMgYnV0IHN0aWxs
+IGl0IGlzIGxlc3Mgbm90aWNlYWJsZSB0aGFuIGEgZnVuY3Rpb24gbmFtZSkuIAo+ID4gPiA+IAo+
+ID4gPiA+IEkgZG9uJ3QgaGF2ZSBhIHZlcnkgc3Ryb25nIG9waW5pb24gb24gdGhpcyB0aG91Z2gs
+IAo+ID4gPiA+IGJlY2F1c2UgSU1ITyB0aGUga3ZtX2NwdV9jYXBfaW5pdF9rdm1fZGVmaW5lZCBp
+cyBhbHNvIG5vdCB2ZXJ5IHVzZXIgZnJpZW5kbHksIAo+ID4gPiA+IHNvIGlmIHlvdSByZWFsbHkg
+dGhpbmsgdGhhdCB0aGUgbmV3IGNvZGUgaXMgbW9yZSByZWFkYWJsZSwgbGV0IGl0IGJlLgo+ID4g
+Cj4gPiBIbW0sIHRoZSBtYWluIG1vdGl2aWF0aW9uIG9mIHRoaXMgcGF0Y2ggd2FzIHRvIGF2b2lk
+IGR1cGxpY2F0ZSBjb2RlIGluIGxhdGVyCj4gPiBwYXRjaGVzLCBidXQgbG9va2luZyBhdCB0aGUg
+ZW5kIHJlc3VsdCwgSSBkb24ndCB0aGluayB0aGF0IGVsaW1pbmF0aW5nIHRoZQo+ID4gS1ZNLWRl
+ZmluZWQgdmFyaWFudHMgaXMgbmVjZXNzYXJ5LCBlLmcuIGVuZGluZyB1cCB3aXRoIHRoaXMgc2hv
+dWxkIHdvcmssIHRvby4KPiA+IAo+ID4gI2RlZmluZSBfX2t2bV9jcHVfY2FwX2luaXQobGVhZinC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoFwKPiA+IGRvIHvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgXAo+
+ID4gwqDCoMKgwqDCoMKgwqDCoGNvbnN0IHN0cnVjdCBjcHVpZF9yZWcgY3B1aWQgPSB4ODZfZmVh
+dHVyZV9jcHVpZChsZWFmICogMzIpO8KgwqDCoMKgXAo+ID4gwqDCoMKgwqDCoMKgwqDCoGNvbnN0
+IHUzMiBfX21heWJlX3VudXNlZCBrdm1fY3B1X2NhcF9pbml0X2luX3Byb2dyZXNzID0gbGVhZjvC
+oMKgwqBcCj4gPiDCoMKgwqDCoMKgwqDCoMKgdTMyIGt2bV9jcHVfY2FwX2VtdWxhdGVkID0gMDvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgXAo+ID4gwqDCoMKgwqDCoMKgwqDCoHUzMiBrdm1fY3B1X2NhcF9zeW50aGVz
+aXplZCA9IDA7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoFwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFwKPiA+
+IMKgwqDCoMKgwqDCoMKgwqBrdm1fY3B1X2NhcHNbbGVhZl0gJj0gKHJhd19jcHVpZF9nZXQoY3B1
+aWQpIHzCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFwKPiA+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBrdm1f
+Y3B1X2NhcF9zeW50aGVzaXplZCk7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBcCj4g
+PiDCoMKgwqDCoMKgwqDCoMKga3ZtX2NwdV9jYXBzW2xlYWZdIHw9IGt2bV9jcHVfY2FwX2VtdWxh
+dGVkO8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFwKPiA+IH0gd2hp
+bGUgKDApCj4gPiAKPiA+IC8qIEZvciBrZXJuZWwtZGVmaW5lZCBsZWFmcywgbWFzayB0aGUgYm9v
+dCBDUFUncyBwcmUtcG9wdWxhdGVkIHZhbHVlLiAqLwo+ID4gI2RlZmluZSBrdm1fY3B1X2NhcF9p
+bml0KGxlYWYsIG1hc2spwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgXAo+ID4gZG8gewo+ID4gwqDCoMKgwqDCoMKg
+wqDCoEJVSUxEX0JVR19PTihsZWFmID49IE5DQVBJTlRTKTvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBcCj4gPiDCoMKgwqDC
+oMKgwqDCoMKga3ZtX2NwdV9jYXBzW2xlYWZdICY9IChtYXNrKTvCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgXAo+ID4g
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgXAo+ID4gwqDCoMKgwqDCoMKgwqDCoF9fa3Zt
+X2NwdV9jYXBfaW5pdChsZWFmKTvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBcCj4gPiB9IHdoaWxlICgw
+KQo+ID4gCj4gPiAvKiBGb3IgS1ZNLWRlZmluZWQgbGVhZnMsIGV4cGxpY2l0bHkgc2V0IHRoZSBs
+ZWFmLCBLVk0gaXMgdGhlIHNvbGUgYXV0aG9yaXR5LiAqLwo+ID4gI2RlZmluZSBrdm1fY3B1X2Nh
+cF9pbml0X2t2bV9kZWZpbmVkKGxlYWYsIG1hc2spwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgXAo+ID4gZG8ge8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBcCj4g
+PiDCoMKgwqDCoMKgwqDCoMKgQlVJTERfQlVHX09OKGxlYWYgPCBOQ0FQSU5UUyk7wqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqBcCj4gPiDCoMKgwqDCoMKgwqDCoMKga3ZtX2NwdV9jYXBzW2xlYWZdID0gKG1hc2spO8KgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoFwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoFwKPiA+IMKgwqDC
+oMKgwqDCoMKgwqBfX2t2bV9jcHVfY2FwX2luaXQobGVhZik7wqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+XAo+ID4gfSB3aGlsZSAoMCkKPiA+IAo+ID4gVGhhdCBzYWlkLCB1bmxlc3Mgc29tZW9uZSByZWFs
+bHkgbGlrZXMga3ZtX2NwdV9jYXBfaW5pdF9rdm1fZGVmaW5lZCgpLCBJIGFtCj4gPiBsZWFuaW5n
+IHRvd2FyZCBrZWVwaW5nIHRoaXMgcGF0Y2ggKGJ1dCByZXdyaXRpbmcgdGhlIGNoYW5nZWxvZyku
+wqAgSU1PLCB3aGV0aGVyIGEKPiA+IGxlYWYgaXMgS1ZNLW9ubHkgb3Iga25vd24gdG8gdGhlIGtl
+cm5lbCBpcyBhIHBsdW1iaW5nIGRldGFpbCB0aGF0IHJlYWxseSBzaG91bGRuJ3QKPiA+IGFmZmVj
+dCBhbnl0aGluZyBpbiBrdm1fc2V0X2NwdV9jYXBzKCkuwqAgTGl0ZXJhbGx5IHRoZSBvbmx5IGRp
+ZmZlcmVuY2UgaXMgd2hldGhlcgo+ID4gb3Igbm90IHRoZXJlIGFyZSBrZXJuZWwgY2FwYWJpbGl0
+aWVzIHRvIGFjY291bnQgZm9yLsKgIFRoZSAidHlwZXMiIG9mIGZlYXR1cmVzIGlzbid0Cj4gPiBy
+ZXN0cmljdGVkIGluIGFueSB3YXksIGUuZy4gQ1BVSURfMTJfRUFYIGlzIEtWTS1vbmx5IGFuZCBj
+b250YWlucyBvbmx5IHNjYXR0ZXJlZAo+ID4gZmVhdHVyZXMsIGJ1dCBDUFVJRF83XzFfRURYIGlz
+IEtWTS1vbmx5IGFuZCBjb250YWlucyBvbmx5ICJyZWd1bGFyIiBmZWF0dXJlcy4KPiA+IAo+ID4g
+QW5kIGlmIGEgZmVhdHVyZSBjaGFuZ2VzIGZyb20gS1ZNLW9ubHkgdG8ga2VybmVsLW1hbmFnZWQs
+IHdlJ2QgbmVlZCB0byB1cGRhdGUgdGhlCj4gPiBjYWxsZXIuwqAgVGhpcyBpcyB1bmxpa2VseSwg
+YnV0IGl0IHNlZW1zIGxpa2UgYW4gdW5uZWNlc3NhcnkgbWFpbnRlbmFuY2UgYnVyZGVuLgo+ID4g
+Cj4gPiBPb2gsIGFuZCB0aGlua2luZyBtb3JlIG9uIHRoYXQgYW5kIG9uIHRoZSBhcmd1bWVudCBh
+Z2FpbnN0IGluaXRpYWxpemluZyB0aGUgS1ZNLQo+ID4gb25seSBsZWFmcyB0byBhbGwgb25lcywg
+SSB0aGluayB3ZSBzaG91bGQgcmVtb3ZlIHRoaXM6Cj4gPiAKPiA+IMKgwqDCoMKgwqDCoMKgwqBt
+ZW1jcHkoJmt2bV9jcHVfY2FwcywgJmJvb3RfY3B1X2RhdGEueDg2X2NhcGFiaWxpdHksCj4gPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNpemVvZihrdm1fY3B1X2NhcHMpIC0gKE5LVk1D
+QVBJTlRTICogc2l6ZW9mKCprdm1fY3B1X2NhcHMpKSk7Cj4gPiAKPiA+IGFuZCBpbnN0ZWFkIGV4
+cGxpY2l0bHkgbWFzayB0aGUgYm9vdF9jcHVfZGF0YS54ODZfY2FwYWJpbGl0eVtsZWFmXS7CoCBJ
+dCdzIF93YXlfCj4gPiBtb3JlIGxpa2VseSB0aGF0IHRoZSBrZXJuZWwgYWRkcyBhIGxlYWYgd2l0
+aG91dCB1cGRhdGluZyBLVk0sIGluIHdoaWNoIGNhc2UKPiA+IGNvcHlpbmcgdGhlIGtlcm5lbCBj
+YXBhYmlsaXRpZXMgd2l0aG91dCBtYXNraW5nIHRoZW0gYWdhaW5zdCBLVk0ncyBjYXBhYmlsaXRp
+ZXMKPiA+IHdvdWxkIG92ZXItcmVwb3J0IHRoZSBzZXQgb2Ygc3VwcG9ydGVkIGZlYXR1cmVzLsKg
+IFRoZSBvZGRzIG9mIG92ZXItcmVwcm9yaW5nIGFyZQo+ID4gc3RpbGwgbG93LCBhcyBLVk0gbGlt
+aXQgdGhlIG1heCBsZWFmIGluIF9fZG9fY3B1aWRfZnVuYygpLCBidXQgdW5sZXNzIEknbSBtaXNz
+aW5nCj4gPiBzb21ldGhpbmcsIHRoZSBtZW1jcHkoKSB0cmljayBhZGRzIG5vIHZhbHVlIGluIHRo
+ZSBjdXJyZW50IGNvZGUgYmFzZS4KCk5vdGhpbmcgYWdhaW5zdCB0aGlzLgoKCj4gPiAKPiA+IEUu
+Zy4gCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rdm0vY3B1aWQuYyBiL2FyY2gveDg2
+L2t2bS9jcHVpZC5jCj4gPiBpbmRleCBkYmMzZjZjZTkyMDMuLjU5M2RlMmMxODExYiAxMDA2NDQK
+PiA+IC0tLSBhL2FyY2gveDg2L2t2bS9jcHVpZC5jCj4gPiArKysgYi9hcmNoL3g4Ni9rdm0vY3B1
+aWQuYwo+ID4gQEAgLTczMCwxOCArNzMwLDIwIEBAIGRvIHvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgXAo+ID4gwqB9IHdoaWxlICgwKQo+ID4gwqAKPiA+IMKgLyoKPiA+IC0gKiBGb3Iga2VybmVs
+LWRlZmluZWQgbGVhZnMsIG1hc2sgdGhlIGJvb3QgQ1BVJ3MgcHJlLXBvcHVsYXRlZCB2YWx1ZS7C
+oCBGb3IgS1ZNLQo+ID4gLSAqIGRlZmluZWQgbGVhZnMsIGV4cGxpY2l0bHkgc2V0IHRoZSBsZWFm
+LCBhcyBLVk0gaXMgdGhlIG9uZSBhbmQgb25seSBhdXRob3JpdHkuCj4gPiArICogRm9yIGxlYWZz
+IHRoYXQgYXJlIG1hbmFnZWQgYnkgdGhlIGtlcm5lbCwgbWFzayB0aGUgYm9vdCBDUFUncyBjYXBh
+YmlsaXRpZXMsCj4gPiArICogd2hpY2ggYXJlIHBvcHVsYXRlZCBieSB0aGUga2VybmVsLsKgIEZv
+ciBLVk0tb25seSBsZWFmcywgYXMgS1ZNIGlzIHRoZSBvbmUKPiA+ICsgKiBhbmQgb25seSBhdXRo
+b3JpdHkuCj4gPiDCoCAqLwo+ID4gwqAjZGVmaW5lIGt2bV9jcHVfY2FwX2luaXQobGVhZiwgbWFz
+aynCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBcCj4gPiDCoGRvIHvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAo+ID4gwqDCoMKg
+wqDCoMKgwqAgY29uc3Qgc3RydWN0IGNwdWlkX3JlZyBjcHVpZCA9IHg4Nl9mZWF0dXJlX2NwdWlk
+KGxlYWYgKiAzMik7wqDCoMKgIFwKPiA+IMKgwqDCoMKgwqDCoMKgIGNvbnN0IHUzMiBfX21heWJl
+X3VudXNlZCBrdm1fY3B1X2NhcF9pbml0X2luX3Byb2dyZXNzID0gbGVhZjvCoMKgIFwKPiA+ICvC
+oMKgwqDCoMKgwqAgY29uc3QgdTMyIGtlcm5lbF9jcHVfY2FwcyA9IGJvb3RfY3B1X2RhdGEueDg2
+X2NhcGFiaWxpdHlbbGVhZl07IFwKPiA+IMKgwqDCoMKgwqDCoMKgIHUzMiBrdm1fY3B1X2NhcF9l
+bXVsYXRlZCA9IDA7wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAo+ID4gwqDCoMKgwqDCoMKgwqAgdTMyIGt2bV9jcHVf
+Y2FwX3N5bnRoZXNpemVkID0gMDvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBcCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIFwKPiA+IMKgwqDCoMKgwqDCoMKgIGlmIChsZWFmIDwgTkNBUElOVFMpwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgXAo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAga3Zt
+X2NwdV9jYXBzW2xlYWZdICY9IChtYXNrKTvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIFwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IGt2bV9jcHVfY2Fwc1tsZWFmXSA9IGtlcm5lbF9jcHVfY2FwcyAmIChtYXNrKTvCoMKgwqDCoMKg
+wqDCoMKgwqAgXAo+ID4gwqDCoMKgwqDCoMKgwqAgZWxzZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAo+ID4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIGt2bV9jcHVfY2Fwc1tsZWFmXSA9IChtYXNrKTvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXAoKSSBhbSBub3Qg
+Z29pbmcgdG8gYXJndWUgbXVjaCBhYm91dCB0aGlzLCBJIHN0aWxsIHRoaW5rIHRoYXQgYXNzaWdu
+aW5nIGRpcmVjdGx5CnVzaW5nIGEgbWFzayBpcyBjb25mdXNpbmcuCgpVc2luZyBrZXJuZWxfY3B1
+X2NhcHMgaXMgaW5kZWVkIGJldHRlciByZWdhcmRsZXNzIG9mIG90aGVyIGlzc3Vlcy4KCkJlc3Qg
+cmVnYXJkcywKCU1heGltIExldml0c2t5CgoKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgXAo+ID4gQEAgLTc2Myw5ICs3NjUsNiBAQCB2b2lkIGt2bV9zZXRfY3B1X2NhcHModm9pZCkK
+PiA+IMKgwqDCoMKgwqDCoMKgIEJVSUxEX0JVR19PTihzaXplb2Yoa3ZtX2NwdV9jYXBzKSAtIChO
+S1ZNQ0FQSU5UUyAqIHNpemVvZigqa3ZtX2NwdV9jYXBzKSkgPgo+ID4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzaXplb2YoYm9vdF9jcHVfZGF0YS54ODZfY2FwYWJp
+bGl0eSkpOwo+ID4gwqAKPiA+IC3CoMKgwqDCoMKgwqAgbWVtY3B5KCZrdm1fY3B1X2NhcHMsICZi
+b290X2NwdV9kYXRhLng4Nl9jYXBhYmlsaXR5LAo+ID4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHNpemVvZihrdm1fY3B1X2NhcHMpIC0gKE5LVk1DQVBJTlRTICogc2l6ZW9mKCprdm1fY3B1
+X2NhcHMpKSk7Cj4gPiAtCj4gPiDCoMKgwqDCoMKgwqDCoCBrdm1fY3B1X2NhcF9pbml0KENQVUlE
+XzFfRUNYLAo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC8qCj4gPiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIE5PVEU6IE1PTklUT1IgKGFuZCBNV0FJVCkgYXJl
+IGVtdWxhdGVkIGFzIE5PUCwgYnV0ICpub3QqCj4gPiAKCg==
 
-Tested-by: Nikola Radojević <nikola@radojevic.rs>
-
-On 24/08/04 11:10PM, Dragan Simic wrote:
-> Increase the frequency of the PWM signal that drives the LED backlight of
-> the Pinebook Pro's panel, from about 1.35 KHz (which equals to the PWM
-> period of 740,740 ns), to exactly 8 kHz (which equals to the PWM period of
-> 125,000 ns).  Using a higher PWM frequency for the panel backlight, which
-> reduces the flicker, can only be beneficial to the end users' eyes.
-> 
-> On top of that, increasing the backlight PWM signal frequency reportedly
-> eliminates the buzzing emitted from the Pinebook Pro's built-in speakers
-> when certain backlight levels are set, which cause some weird interference
-> with some of the components of the Pinebook Pro's audio chain.
-> 
-> The old value for the backlight PWM period, i.e. 740,740 ns, is pretty much
-> an arbitrary value that was selected during the very early bring-up of the
-> Pinebook Pro, only because that value seemed to minimize horizontal line
-> distortion on the display, which resulted from the old X.org drivers causing
-> screen tearing when dragging windows around.  That's no longer an issue, so
-> there are no reasons to stick with the old PWM period value.
-> 
-> The lower and the upper backlight PWM frequency limits for the Pinebook Pro's
-> panel, according to its datasheet, are 200 Hz and 10 kHz, respectively. [1]
-> These changes still leave some headroom, which may have some positive effects
-> on the lifetime expectancy of the panel's backlight LEDs.
-> 
-> [1] https://files.pine64.org/doc/datasheet/PinebookPro/NV140FHM-N49_Rev.P0_20160804_201710235838.pdf
-> 
-> Fixes: 5a65505a6988 ("arm64: dts: rockchip: Add initial support for Pinebook Pro")
-> Cc: stable@vger.kernel.org
-> Reported-by: Nikola Radojevic <nikola@radojevic.rs>
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
-> index 294eb2de263d..b3f76cc2d6e1 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
-> @@ -32,7 +32,7 @@ chosen {
->  	backlight: edp-backlight {
->  		compatible = "pwm-backlight";
->  		power-supply = <&vcc_12v>;
-> -		pwms = <&pwm0 0 740740 0>;
-> +		pwms = <&pwm0 0 125000 0>;
->  	};
->  
->  	bat: battery {
 
