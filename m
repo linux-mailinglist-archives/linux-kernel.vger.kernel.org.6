@@ -1,155 +1,169 @@
-Return-Path: <linux-kernel+bounces-274791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5915947CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:22:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47DA4947CC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD18283A58
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BF9C1C21BD2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418C113C683;
-	Mon,  5 Aug 2024 14:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7D413A878;
+	Mon,  5 Aug 2024 14:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ux0esf55";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2hl9jvwp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZW/fpKhc"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061657D3F4;
-	Mon,  5 Aug 2024 14:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866E1558A5
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722867733; cv=none; b=munHSQSMGO/WvEXumVAbT1WaZh5/lGT/Nwh7AmgNwIri62IKlkK8Vl1gW/8BgG0zk8VCZS51lHIBWOxakVgVUZ46o9MCmZGMElaUHywWmN85zrjELeAAjIBC3ztsr4Qd6OoZWUiosCrNc+q7RAENRhHaYxXmREOnLxo9zb0kMTo=
+	t=1722867816; cv=none; b=dIXLn/mZ7fsG6RaAsLD22T4bxqMgG4qlbowQQeAn0FN6y3OIIMMc2d39VCOqagDTqWQAQ/0ED9ZJdtX5a8FlF8MZh53ePMzQH45Lyg3ibXHDf0/YQxJtDzaPPLyfTAHe1sTz5dyLI5feNo1p55pMo0rlPLGihM4uEw25qSBNqMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722867733; c=relaxed/simple;
-	bh=0qYVUGlTJ16jtPygVR0sEdGc13M7hyG3W9V2BqTX+yU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=G25hZE/EjlPyk3i8pmcPHlitmTcWrfnXuplDV2zAim9cPK+31ay2ifrDnc5SCiSOeekz+so1Vbfibu06MsijKpLEeT26SGiskgDwJyWeMHNdibpOwH/DdPXzNaXMehLtqyBsqfjrWr9WCrl33QqiScihUEUkQCXmQvSzpAc53kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ux0esf55; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2hl9jvwp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 05 Aug 2024 14:22:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722867730;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PAjYaEHGFd3zUYlHOqKZ9xwu5Pvhc2m+tk7cm5Fh1BI=;
-	b=ux0esf55Ld0eh3SUWsfG+Sjg2GMWJKi8D2UdPLKb2TFXujljikYr/UfUPik3z2f5GQpsh2
-	2jEFrk/2ceLoQHcMYKt0PwCQDbER9BFT55Wj6ZTfTwq6XvNY8YCCFKmiWABdzEsHHbgp1H
-	BLL3UZJ+sDRJ56WlVlLQNFd3K9IWXlw/OoRKlTIrTAWWdtsqhZ8H0n5ZPm/LSUoZEW//7e
-	pkVt1TXPLI8MS9BT/rRepAc7iP32bBUwbO2qomVwR2GnXG/qukgexde0Dhbe5SbURQXiNE
-	ynJX3+UDSDuUeV4/Xjv99wyljQ5ZGicphyvS83w238CIZwZkwlww7u9OIMKGBQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722867730;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PAjYaEHGFd3zUYlHOqKZ9xwu5Pvhc2m+tk7cm5Fh1BI=;
-	b=2hl9jvwphQw9G4kHqJzJ0Mf27sESHcKZhVE3ljtVVg14xhMILhVPjwX13inJIrvSRtE36d
-	VoGfWPKfiJhhhMCQ==
-From: "tip-bot2 for Justin Stitt" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/urgent] ntp: Clamp maxerror and esterror to operating range
-Cc: Justin Stitt <justinstitt@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Miroslav Lichvar <mlichvar@redhat.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240517-b4-sio-ntp-usec-v2-1-d539180f2b79@google.com>
-References: <20240517-b4-sio-ntp-usec-v2-1-d539180f2b79@google.com>
+	s=arc-20240116; t=1722867816; c=relaxed/simple;
+	bh=KdVhrG1yhzfFka0WAbYQdaoGgL7/HphbDVd6HaODjC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mVTgR0a15TUmxaGokuJVsp7GZ4LraKh5sulhHL6HjU0lvyXdzKgMYbZjjQDsS4NnH76k72vctiXx3P+pBUl5QJKSn26jbPLHau1YebYrLI1bXvsmYtr9xx7ACcVnU2JsWZ1yjHm5T3uQm6vbKd5gzIiWWx8GinCIhRNfwDlxva4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZW/fpKhc; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-39b26410e0cso1499155ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 07:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1722867810; x=1723472610; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=YxtbtashM6Y9E4aHS+7gfwHPz5pXOEDbseueiZ9oWYQ=;
+        b=ZW/fpKhczZZy3NFmK7ZxPVjQl3d+Ug8ITiUS9fqtvtW6jhJx5wXrnIkzws/mgIQDM1
+         ACx3Vu99JYBkgulx5XP4boSOsnybWBER04YUV83bCXcT36WNitBTWPX56JBo2x9HxZqf
+         ONYcjaoXjtDZQHLztJTgE8asLqW6UQ7zWF1/5RqwGvuT0p/mY/fNlQCC2/6e66TT71rW
+         Gd9d2bquDzUY7+ZhcrfnkkSAXWYmgqHHAVew6ibHs8p+Wn0SAMwagQkVKc331cce+I32
+         sWoF4zN6YkZ6dy+66nv1xOrAn2N6QZv/nAfECkyxOKagHY1Tb6XgyVN4yCd+h+jFh6K7
+         39vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722867810; x=1723472610;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YxtbtashM6Y9E4aHS+7gfwHPz5pXOEDbseueiZ9oWYQ=;
+        b=KQmOJL7CMtaucYfxIg+40te7wruDZx0PyUjrV27VMcVoRwRkbpqfdKWw/G1gdNUtxQ
+         S45+lGRUz5hVgNr7YGZ3xEqe1Skuc6MXE7jC8F9phev2qBCgIHdmPmS+hIKH7htl8QwY
+         oeaF3iu7VTPZDpeDhPJx1rZ897yQ9LSu/nlk05grTsdPnveCDDHerT5HhtFhLECo/jLs
+         4qbP/ORqQf/lOZ/0yg6HwOsP/jGVo3HX21a+vnrURU0jQ6fTIQm1QgEzI9nm2wqQau+U
+         FBSEqhsauJT5sajGaEgJPQ6Mfx33hMN6r8fq6/DU4cM62ERwPrnMfrNJHEkTYDCfRbHk
+         0a1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJboOyoiL5x437NpnqD6qHWxxFOJGjQTgT8qn4hmYIOCF0MivdMivPZgrKnmDmnlfAiYXrIkY6V2d/1Bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzocd2HXXBXxTOuX5OREQfRiICXalx+gLdDC8IfyYqEdO67y1AF
+	15iUTklcCJcBYjzLy6VpUD1RsCV8GLcG623iyOwMKYPZSD9bA0oeT62aOLs65BA=
+X-Google-Smtp-Source: AGHT+IFGBkf+TJMvM0hCvFP0uWIjg/KNCDC10P36fweGRPb9q98AOo2W8opglBDWuYzSSRuMHYEy2w==
+X-Received: by 2002:a05:6602:208c:b0:81f:ae26:690d with SMTP id ca18e2360f4ac-81fd42a77f2mr783547439f.0.1722867810226;
+        Mon, 05 Aug 2024 07:23:30 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a5c319sm1722356173.166.2024.08.05.07.23.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 07:23:29 -0700 (PDT)
+Message-ID: <8ada52ac-48e9-48cd-afa0-c738cf25fe4f@kernel.dk>
+Date: Mon, 5 Aug 2024 08:23:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172286772988.2215.12627503289545685175.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] KCSAN: data-race in __flush_work /
+ __flush_work (2)
+To: syzbot <syzbot+b3e4f2f51ed645fd5df2@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>
+References: <000000000000ae429e061eea2157@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <000000000000ae429e061eea2157@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the timers/urgent branch of tip:
+On 8/5/24 12:53 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a5dbd76a8942 Merge tag 'x86-urgent-2024-08-04' of git://gi..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13d5a373980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d16924117a4f7e9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b3e4f2f51ed645fd5df2
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/ba663ad5dbf5/disk-a5dbd76a.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/226a427d6581/vmlinux-a5dbd76a.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9f982777516a/bzImage-a5dbd76a.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+b3e4f2f51ed645fd5df2@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KCSAN: data-race in __flush_work / __flush_work
+> 
+> write to 0xffff8881223aa3e8 of 8 bytes by task 3998 on cpu 0:
+>  instrument_write include/linux/instrumented.h:41 [inline]
+>  ___set_bit include/asm-generic/bitops/instrumented-non-atomic.h:28 [inline]
+>  insert_wq_barrier kernel/workqueue.c:3790 [inline]
+>  start_flush_work kernel/workqueue.c:4142 [inline]
+>  __flush_work+0x30b/0x570 kernel/workqueue.c:4178
+>  flush_work kernel/workqueue.c:4229 [inline]
+>  flush_delayed_work+0x66/0x70 kernel/workqueue.c:4251
+>  io_fallback_tw+0x24b/0x320 io_uring/io_uring.c:1087
+>  tctx_task_work_run+0xd1/0x1b0 io_uring/io_uring.c:1099
+>  tctx_task_work+0x40/0x80 io_uring/io_uring.c:1124
+>  task_work_run+0x13a/0x1a0 kernel/task_work.c:228
+>  exit_task_work include/linux/task_work.h:40 [inline]
+>  do_exit+0x5dd/0x1720 kernel/exit.c:882
+>  do_group_exit+0x102/0x150 kernel/exit.c:1031
+>  get_signal+0xf2f/0x1080 kernel/signal.c:2917
+>  arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:310
+>  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
+>  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> read to 0xffff8881223aa3e8 of 8 bytes by task 50 on cpu 1:
+>  __flush_work+0x42a/0x570 kernel/workqueue.c:4188
+>  flush_work kernel/workqueue.c:4229 [inline]
+>  flush_delayed_work+0x66/0x70 kernel/workqueue.c:4251
+>  io_uring_try_cancel_requests+0x35b/0x370 io_uring/io_uring.c:3000
+>  io_ring_exit_work+0x148/0x500 io_uring/io_uring.c:2779
+>  process_one_work kernel/workqueue.c:3231 [inline]
+>  process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3312
+>  worker_thread+0x526/0x700 kernel/workqueue.c:3390
+>  kthread+0x1d1/0x210 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> value changed: 0x0000000000400000 -> 0xffff88810006c00d
+> 
+> Reported by Kernel Concurrency Sanitizer on:
+> CPU: 1 UID: 0 PID: 50 Comm: kworker/u8:3 Not tainted 6.11.0-rc1-syzkaller-00334-ga5dbd76a8942 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+> Workqueue: iou_exit io_ring_exit_work
+> ==================================================================
 
-Commit-ID:     87d571d6fb77ec342a985afa8744bb9bb75b3622
-Gitweb:        https://git.kernel.org/tip/87d571d6fb77ec342a985afa8744bb9bb75b3622
-Author:        Justin Stitt <justinstitt@google.com>
-AuthorDate:    Fri, 17 May 2024 20:22:44 
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 05 Aug 2024 16:14:14 +02:00
+This looks like workqueue, CC'ing maintainers. Unsure if this is benign
+or not.
 
-ntp: Clamp maxerror and esterror to operating range
+#syz set subsystems: kernel
 
-Using syzkaller alongside the newly reintroduced signed integer overflow
-sanitizer spits out this report:
+-- 
+Jens Axboe
 
-UBSAN: signed-integer-overflow in ../kernel/time/ntp.c:461:16
-9223372036854775807 + 500 cannot be represented in type 'long'
-Call Trace:
- handle_overflow+0x171/0x1b0
- second_overflow+0x2d6/0x500
- accumulate_nsecs_to_secs+0x60/0x160
- timekeeping_advance+0x1fe/0x890
- update_wall_time+0x10/0x30
-
-time_maxerror is unconditionally incremented and the result is checked
-against NTP_PHASE_LIMIT, but the increment itself can overflow, resulting
-in wrap-around to negative space.
-
-Before commit eea83d896e31 ("ntp: NTP4 user space bits update") the user
-supplied value was sanity checked to be in the operating range. That change
-removed the sanity check and relied on clamping in handle_overflow() which
-does not work correctly when the user supplied value is in the overflow
-zone of the '+ 500' operation.
-
-The operation requires CAP_SYS_TIME and the side effect of the overflow is
-NTP getting out of sync.
-
-Miroslav confirmed that the input value should be clamped to the operating
-range and the same applies to time_esterror. The latter is not used by the
-kernel, but the value still should be in the operating range as it was
-before the sanity check got removed.
-
-Clamp them to the operating range.
-
-[ tglx: Changed it to clamping and included time_esterror ] 
-
-Fixes: eea83d896e31 ("ntp: NTP4 user space bits update")
-Signed-off-by: Justin Stitt <justinstitt@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Miroslav Lichvar <mlichvar@redhat.com>
-Link: https://lore.kernel.org/all/20240517-b4-sio-ntp-usec-v2-1-d539180f2b79@google.com
-Closes: https://github.com/KSPP/linux/issues/354
----
- kernel/time/ntp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index 406dccb..502e1e5 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -727,10 +727,10 @@ static inline void process_adjtimex_modes(const struct __kernel_timex *txc,
- 	}
- 
- 	if (txc->modes & ADJ_MAXERROR)
--		time_maxerror = txc->maxerror;
-+		time_maxerror = clamp(txc->maxerror, 0, NTP_PHASE_LIMIT);
- 
- 	if (txc->modes & ADJ_ESTERROR)
--		time_esterror = txc->esterror;
-+		time_esterror = clamp(txc->esterror, 0, NTP_PHASE_LIMIT);
- 
- 	if (txc->modes & ADJ_TIMECONST) {
- 		time_constant = txc->constant;
 
