@@ -1,153 +1,232 @@
-Return-Path: <linux-kernel+bounces-275213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCBE9481EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:48:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C768E9481F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E531E1F22762
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:48:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56BB81F21C16
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1063F16ABC6;
-	Mon,  5 Aug 2024 18:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F9116B739;
+	Mon,  5 Aug 2024 18:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="uEF79wg6"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="toRI6xnh"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA85B15FD13
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A5C1D540
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722883698; cv=none; b=YRVxXkiQF9ZONb2XkqgiatWyuba3TEclNkg9PVO28EFMbQKk3aCMTq5TXWLClarFmC6vABMJPER4txWZ8ypoaeonz3rB6eSg4bGp6ZfgLd7HA2d3Rt2gXXZ9SMpZzJPYueOeb0MIT1S+h6VS7L+2sUlVDgMpP95XIuBm7SIM0tg=
+	t=1722883902; cv=none; b=pyVBgTpej0cwm/0bPKE1qc0Rt/E4KiDhfgjm7WZg2v/67qxHGkAKipqK87o22NlYjPaz5XpAKuzO71vSHpUWCMmz5/2SxVdG3Xkz8IGC3mUAUASqBUoWGvfJmdBbjySbDGGgyoVCgLXRH6rcY98OK6zTgFrOCtw76Rcazy0NcPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722883698; c=relaxed/simple;
-	bh=3NXXA8hukhtstN66FzQ0NmXrdGI3V97ghb3YIaG1hkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uWzoMNJi87V9xDEoyU9NeD416Ko9TD8WWzy422Q0euSKIW8JhF03KPlMH5QRm2zG0o+e0RTTE3/5KXvUuePdW1mFmQ5wQIHpkkczwgCzm6TO+ZFAjKT6n5Ua541AAlBZQX3X2rfarl3C/OoS9eyqBQE+/KpkY1lZpEf/goX/a70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=uEF79wg6; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fda7fa60a9so100113705ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:48:16 -0700 (PDT)
+	s=arc-20240116; t=1722883902; c=relaxed/simple;
+	bh=XUNBVdRu82qhkjmoWjq/FDLz55z9+9+gFi6fUvzxQLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WIMoK0uxX2EHoA26p0U9A35aStIgbt2ZRGzQyZwXlGl+nRHUxSLxw/LXqlKqgs+FRczz70lDC4HQW/NVc+crPFYoaEUZWRNdGzGRbdlrhiXmrVrTGGaw2DWBRcyb2t0gSUskaY64gcaV6HIXB3+xcKwmgX+zFvqTSVpv/pIDvT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=toRI6xnh; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52efdf02d13so17639465e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:51:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722883696; x=1723488496; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CWiE5Gt/81O/McaIBD85wwCe3mZnLm7BjL3ftw4B+HM=;
-        b=uEF79wg6Me2dZ6JQGWv/CHhng8lCxQGIBMXRwXEKd+di0EACxmls7am/ct/WojDWUP
-         F0pTowCDI3WjgBzySqqstAX0TgQuvkcBaJU8zdBuZ+PZSqgoAsHRmUBV9PSRVLmyp9Kw
-         C9y+BHPXzWYCb3j+L5N2HIgVoI05QjHELiJut2GMhDUnazn7smv2v4PkBUeyWmMq5WbZ
-         3e9hWxeY8kwFYvYNAQGT3bLgz0KZVyI4AMF7YiFOoQYj1denpD0mstT6/ZWGtIqFu9Sv
-         4EwVdSbit0DEzPr4zKAv6s8kD+8DPp9P0YwY08Sf1Zi9Lo4LD7bUfuXtiXZ6q6fxC3v7
-         y71g==
+        d=google.com; s=20230601; t=1722883898; x=1723488698; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zX73mTG4pcwMAjmlvY0/Y+DmA7ujKlG2GvsuKR4ZF4c=;
+        b=toRI6xnhXHQQx7IhZ3OF45AJSV27EjLOzcJHlD7IG3ipv9mleODFHGbdW7uepr4OeC
+         hDqodljvkEW8NKZpp5GcOgDIeWockS2CTMMq/fjee7+PqbwJOU/ppvUug82XOvYKgzEl
+         bUbHbakoCIM05anrFLivtssHp0jC4TxCj88+FFTduk85kCSOc+I42eNEMTVRLol3Brkx
+         EfgzAzeslAfmiJ96Sl1MB5taZi/+BcaFqrS44iL389JheZprSyHQn0N18XHJEqCg7drT
+         ZrReP94w5vdkWYxa/yPMsOw/xpDBqhE2CEXFgxjm+pMnXusrYVjD5om1+TWBjzMPVTYv
+         Injg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722883696; x=1723488496;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWiE5Gt/81O/McaIBD85wwCe3mZnLm7BjL3ftw4B+HM=;
-        b=p+g1WzyVNHa+jzzz8U7FsVvp8j55vE925JeNx5SEsV+Mct1CmbXWLGbS63HiZi1LY0
-         zoYvf88O7xnARFJGQVgSWp0rjuuXGxFJTPovAw1RSBhcDrBNyYmJwOyMp4G1Bok5L1d1
-         woqpqqBfZqvlAFK5FuaiAbzW4FqnVDO4tJwRHbt6xttyvocNH1YwjQhlj0N32CW2wN35
-         CDRoHH8ydVGd9msDaSFf9WNxki2klev6rf87OI/Ck5gEvFu07LDFIbZFHQYOo6d2rGvu
-         rFEB47LBebqaq0+OtUxWCAwMdTxLSJNlSwbMdamDkKkmCE/Mk+E/7coSZooHzcmqpwPj
-         ItcA==
-X-Forwarded-Encrypted: i=1; AJvYcCURHkjSy6N/SItuyjog5KF2ur+fZNGWOnTiMjNPEEMSNqRvbxjBaoIrG4i7Id8ZUz8YmfthddfcNQLEfWDS1o99d4bcRlNPdKO+XdYq
-X-Gm-Message-State: AOJu0Yy9z20ZR/L3ljoFst0VstOKVjYy0sTtwV27vL5rM8UM7XfDDBQ0
-	P2gfIy2bULvbOJUsdY+IqVN/8z/l8HbPmnoIvyHvuNL1XLqRnKzrdcC1ZRpeSx8=
-X-Google-Smtp-Source: AGHT+IFlG8VhZGgwoNGP9WjMsD0WO4HK22QdL7Ggcd2eSX0CNB+lJyh9+cv8ryXXl69OuOhZ/LNPNg==
-X-Received: by 2002:a17:902:c949:b0:1fd:6bfa:f59 with SMTP id d9443c01a7336-1ff572743b3mr140884975ad.19.1722883695945;
-        Mon, 05 Aug 2024 11:48:15 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592b3643sm71467005ad.290.2024.08.05.11.48.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 11:48:15 -0700 (PDT)
-Date: Mon, 5 Aug 2024 11:48:12 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Evan Green <evan@rivosinc.com>
-Cc: Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Anup Patel <apatel@ventanamicro.com>,
-	Zong Li <zong.li@sifive.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Erick Archer <erick.archer@gmx.com>,
-	Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/1] RISC-V: Add parameter to unaligned access speed
-Message-ID: <ZrEebH2wdjRgfYCB@ghost>
-References: <20240805173816.3722002-1-jesse@rivosinc.com>
- <CALs-HstYwwgPAOP22V1A6iTX85eRqRp4b4039pewsDHus_dLgQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1722883898; x=1723488698;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zX73mTG4pcwMAjmlvY0/Y+DmA7ujKlG2GvsuKR4ZF4c=;
+        b=gN0DvMWYccLD71Flm7kfTBcDLfI8dixRIWOU9uEydUc3siw3HuDXVsQmfWMvYY1qHN
+         Db/wDY6sqe36UAdytjixS/6lrfWG5zCPCyBiwJTJgINzoHhZ5/LW2mehUWSnSFuLGdDQ
+         yzdyheYYGS3tCMeQ6517MhjEfqrTe/Fs2uP1mD5oCK83b4zVstE/OZQNauccJcug7AGo
+         LUTTBCqMNwQEUmdV/SF5hHv06w0otXpssD0sDtaGeTwchQjGkjbTJigO2qKObOeG1k+N
+         EwaKqHmfJLWq5hck2WbHEY2OWfZg9jlGIph7b1abGMWJwJRu32ZI4qBzog0QdpmqUn8o
+         sypQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJxIYr9+E+mGLMn+q8MDlL7RpycZYyHT6kW2/ReCkXY1jOHpsqb/L1zzeQ/9lD+z2ZGsvnqdJp0K1idvwXwXqUR4nO7xy+DQ7g4/ed
+X-Gm-Message-State: AOJu0YyngisMQFq3Qd9l/pa2C4Ky2n6ow4my6fIxedP5DtG6kbXSsfwo
+	zmsSkcTBtEirSTVp0llk/IifAfA6aZ9mlauTZ5w6jSO9vkRZl6/09SjddZAfGCJqNyFoopUXM4e
+	Ig6zg03tTugKgjn1FBXNKdGoaFqYWXrXjjd72bcCkX4FrUMpV+A==
+X-Google-Smtp-Source: AGHT+IE/sthJa9woVQs/VxN/0k7SdSe1WSEegFQyAFsfnWxXYHSAr3iFGKf1qkAZH0DCQxNnjakEwf+pGoTSthFNq54=
+X-Received: by 2002:a05:6512:2399:b0:52c:9877:71b7 with SMTP id
+ 2adb3069b0e04-530bb3bd153mr11647817e87.59.1722883897453; Mon, 05 Aug 2024
+ 11:51:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALs-HstYwwgPAOP22V1A6iTX85eRqRp4b4039pewsDHus_dLgQ@mail.gmail.com>
+References: <172139415725.3084888.13770938453137383953.stgit@firesoul>
+ <CAJD7tkaVwpYWu_c+vgr7mJiWzFofq9jmx-hyOx1i5kkHWc62dg@mail.gmail.com>
+ <c55f852b-39b7-4bf9-a054-0e7933912730@kernel.org> <CAJD7tkaZuiSCj4RZ2v6jOCtwiv++YNQxA0x6MEp-HrHaYO6_9g@mail.gmail.com>
+ <ee0f7d29-1385-4799-ab4b-6080ca7fd74b@kernel.org> <CAJD7tkYL-az+bSXH-CYBLJS2FQ6WtNDOSsxnUZhkixHeBrBmbg@mail.gmail.com>
+ <ef58d81c-6266-4999-ac1e-04d330196f9a@kernel.org>
+In-Reply-To: <ef58d81c-6266-4999-ac1e-04d330196f9a@kernel.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 5 Aug 2024 11:50:59 -0700
+Message-ID: <CAJD7tkb6ug3JpPi6s1+xHf=1K6-vVOH-8wPTzWbG8v6CJ0MT6Q@mail.gmail.com>
+Subject: Re: [PATCH V8 1/2] cgroup/rstat: Avoid flushing if there is an
+ ongoing overlapping flush
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 05, 2024 at 11:38:23AM -0700, Evan Green wrote:
-> On Mon, Aug 5, 2024 at 10:38 AM Jesse Taube <jesse@rivosinc.com> wrote:
+On Mon, Aug 5, 2024 at 7:24=E2=80=AFAM Jesper Dangaard Brouer <hawk@kernel.=
+org> wrote:
+>
+>
+> On 02/08/2024 18.10, Yosry Ahmed wrote:
+> > On Fri, Aug 2, 2024 at 4:43=E2=80=AFAM Jesper Dangaard Brouer <hawk@ker=
+nel.org> wrote:
+> >>
+> >>
+> >> On 30/07/2024 20.54, Yosry Ahmed wrote:
+> >>> [..]
+> >>>>
+> >>>> Well... I'm still not convinced that it makes sense to have level >=
+=3D 2
+> >>>> be the ongoing flusher.
+> >>>>
+> >>>> E.g. if a level 2 cgroup becomes ongoing flusher, and kswapd starts =
+12
+> >>>> NUMA flushes at the same time, then the code will have these 12 kswa=
+pd
+> >>>> threads spin on the lock, until ongoing flusher finishes. That is li=
+kely
+> >>>> what happened above (for a level 1).  These 12 spinning (root) flush=
+ers
+> >>>> will not recheck ongoing_flusher and will all flush the root
+> >>>> (unnecessarily 11 times).
+> >>>
+> >>> Hmm regardless of whether or not the level-2 cgroup becomes the
+> >>> ongoing flusher, the kswapd threads will all spin on the lock anyway
+> >>> since none of them can be the ongoing flusher until the level-2 cgrou=
+p
+> >>> finishes. Right?
+> >>>
+> >>> Is the scenario you have in mind that the level-2 cgroup starts
+> >>> flushing at the same time as kswapd, so there is a race on who gets t=
+o
+> >>> be the ongoing flusher? In this case as well, whoever gets the lock
+> >>> will be the ongoing flusher anyway.
+> >>>
+> >>> Not allowing whoever is holding the lock to be the ongoing flusher
+> >>> based on level is only useful when we can have multiple ongoing
+> >>> flushers (with lock yielding). Right?
+> >>>
+> >>> Perhaps I am missing something here.
+> >>>
+> >>>>
+> >>>> So, I don't think it is a good idea to have anything else that the r=
+oot
+> >>>> as the ongoing flusher.
+> >>>>
+> >>>> Can you explain/convince me why having sub-cgroups as ongoing flushe=
+r is
+> >>>> an advantage?
+> >>>
+> >>> I just don't see the benefit of the special casing here as I mentione=
+d
+> >>> above. If I missed something please let me know.
+> >>>
+> >>
+> >> I do think you missed something. Let me try to explain this in another
+> >> way. (I hope my frustrations doesn't shine through).
+> >>
+> >> The main purpose of the patch is/was to stop the thundering herd of
+> >> kswapd thread flushing (root-cgrp) at exactly the same time, leading t=
+o
+> >> lock contention. This happens all-the-time/constantly in production.
+> >>
+> >> The first versions (where ongoing was limited to root/level=3D0) solve=
+d
+> >> this 100%.  The patches that generalized this to be all levels can
+> >> become ongoing flush, doesn't solve the problem any-longer!
+> >>
+> >> I hope it is clear what fails. E.g. When a level>0 becomes ongoing
+> >> flusher, and 12 kswapd simultaneously does a level=3D0/root-cgrp flush=
+,
+> >> then we have 12 CPU cores spinning on the rstat lock. (These 12 kswapd
+> >> threads will all go-through completing the flush, as they do not
+> >> discover/recheck that ongoing flush was previously became their own le=
+vel).
 > >
-> > Add a kernel parameter to the unaligned access speed. This allows
-> > skiping of the speed tests for unaligned accesses, which often is very
-> > slow.
+> > I think we may be speaking past one another, let me try to clarify :)
 > >
-> > Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-> 
-> How come this is a command line parameter rather than a Kconfig
-> option? I could be wrong, so I'll lay out my rationale and people can
-> pick it apart if I've got a bad assumption.
-> 
-> I think of commandline parameters as (mostly) something end users
-> twiddle with, versus kconfig options as something system builders set
-> up. I'd largely expect end users not to notice two ticks at boot time.
-> I'd expect its system builders and fleet managers, who know their
-> hardware and build their kernels optimized for it, are the ones who
-> would want to shave off this time and go straight to the known answer.
-> Anecdotally, at ChromeOS we had a strong preference for Kconfig
-> options, as they were easier to compose and maintain than a loose pile
-> of commandline arguments.
-> 
-> The commit text doesn't go into the rationale, intended audience, or
-> expected usage, so maybe my guesses miss the mark on what you're
-> thinking.
-> -Evan
+> > I agree with your assessment, all I am saying is that this restriction
+> > is only needed because of lock yielding, and can be removed after that
+> > IIUC.
+> >
+> > The problem when we allow non-root ongoing flushers now is that when
+> > the kswapd thread are woken up and the first one of them gets the lock
+> > and does the flush, it may be find that the ongoing_flusher is already
+> > set by another non-root flusher that yielded the lock. In this case,
+> > the following kswapd flushers will spin on the lock instead of waiting
+> > for the first kswapd to finish.
+> >
+> > If we remove lock yielding, then the above scenario cannot happen.
+>
+> I think, this is where we disagree/talk-past-each-other.  Looking at the
+> code, I do believe the the situation *also* occurs without any lock
+> yielding involved.  Yes, the situation if far-worse when we have lock
+> yielding, but it also happens in the default case.
+>
+> > When the lock/mutex is held by a flusher, it is guaranteed that
+> > ongoing_flusher is NULL and can be set by the flusher. In this case,
+> > we should allow any cgroup to be the ongoing_flusher because there can
+> > only be one anyway.
+> >
+>
+> With current patch proposal [V8 or V9].
+> Assuming we have no lock yielding.
+>
+> Do we agree that 12 kswapd threads will be waiting on the lock, when a
+> level>0 were ongoing flusher when they were started?
+> Then level>0 finishes being ongoing flushed.
+> Then kswapd0 gets lock, observe NULL as ongoing, and becomes ongoing.
+> Then kswapd1 gets lock, observe NULL as ongoing, and becomes ongoing.
+> Then kswapd2 gets lock, observe NULL as ongoing, and becomes ongoing.
+> Then kswapd3 gets lock, observe NULL as ongoing, and becomes ongoing.
+> Then kswapd4 gets lock, observe NULL as ongoing, and becomes ongoing.
+> Then kswapd5 gets lock, observe NULL as ongoing, and becomes ongoing.
+> Then kswapd6 gets lock, observe NULL as ongoing, and becomes ongoing.
+> [etc]
 
-There was a brief discussion about this on Jesse's series about vector
-unaligned support [1]. The original idea was to use Zicclsm to allow
-people to set the unaligned access speed on pre-compiled distro kernels.
-However Zicclsm isn't useful so the alternative route was to use a
-kernel arg. There is already support for a Kconfig, the kernel arg is
-just another option for users.
+How does preventing the level>0 cgroup from becoming the
+ongoing_flusher change the above scenario? kswapd threads will still
+observe NULL as ongoing and spin on the lock, right?
 
-Link:
-https://lore.kernel.org/lkml/af3152b6-adf7-40fa-b2a1-87e66eec45b0@rivosinc.com/
-[1]
+(Still assuming no lock yielding)
 
-- Charlie
-
+>
+> Please, let me know if I misunderstood my own code, and you believe this
+> scenario cannot happen.
+>
+> When above happens, then patch didn't solve the kswapd thundering herd
+> issue that we observe in production.
+>
+> The point/problem is that once kswapd is waiting on the lock, then code
+> doesn't re-check the ongoing flusher, and every kswapd thread will be
+> spinning and every kswapd thread will need to go through the flush.
+> When a kswapd thread gets the lock, then it will observe ongoing as
+> NULL, so it cannot detect that another level=3D0 just were the ongoing.
+>
+> --Jesper
 
