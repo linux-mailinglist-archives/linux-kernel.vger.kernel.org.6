@@ -1,135 +1,142 @@
-Return-Path: <linux-kernel+bounces-275451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9369485E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:25:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAEBD9485E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABAEFB224F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:25:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9FD71C2202E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E2B16DC0F;
-	Mon,  5 Aug 2024 23:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3772E16E881;
+	Mon,  5 Aug 2024 23:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fmGzrrh3"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nsqM4WvI"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB0F1547FB;
-	Mon,  5 Aug 2024 23:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD01B16D9A4
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 23:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722900314; cv=none; b=JCCxoerzUlcgkuRiYR2d2KlX6VZQ0chfnertjXoBZshzB1/ZoFcApOmu6vyqVu1Jeo9Mb8oB4dWAQiD4BJM/OnKfdoTI67iC4wbnvRTB7RpamcmkXTmuk3vd/9fE7AvYNu6/3ehFafFmmjsf0duqGjh1I1g1lkpcBYE7HLN4R0Q=
+	t=1722900368; cv=none; b=nJ8RtLRIhZrvjmMOgJFk4XErXx+WlPDAC0dkRk8PjuoVhOgJRFqXr1GCbJ/MGMUEbrUlUZYExYuAQIvpxhCd9J0u21GG8g+n3x4+A4eo8U7hoUjek0tAyYNElkIrJYQzSVu5jVL67mRhNwlHJPpJxNBPp/OIXvcbq9L9h1Xnyh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722900314; c=relaxed/simple;
-	bh=2zBIarod2HVl/CUnRXWVgnn0mxMrpjXcU7UzEEJJgco=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Hf1qP6FKpaI3hcygs++0cIT0u81kt9/e/v5AvSBppjYY5Zl92WrxU511AivMSotJhqiBME3tsknxuKws+KXqSTf9TNJ1L11fGQ7w5aLalcn2bI+ibkp/bFUEeVweJ7wREDThsZkOcyBREAxIcZWF6xVVB7mY+aAxeczR5BfFZfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fmGzrrh3; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2cfec641429so123377a91.0;
-        Mon, 05 Aug 2024 16:25:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722900312; x=1723505112; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2zBIarod2HVl/CUnRXWVgnn0mxMrpjXcU7UzEEJJgco=;
-        b=fmGzrrh3Ann027+ynGnbwJNhbtXgoDHYQg7wXeSsaimRg2+q+Pc/+qybBuPbR9/wpY
-         1S9TqDrdMyhB7T2ua9cHmKAY97q7+Xrs0NkGScWVj7YF9M5xg66Erj1REshVeDQN9HnP
-         RFnNWiQ8gE+MzWOIaNGyv1esxuPlCd9sU8FVU97XbUEClc8gKOeZEYGrs9sOZFiLBlyY
-         qdTpoeBCXx7c99fbwZW5UblrBGWZTd8hDMbdQel2uyobPvRK603zAwilarwc5cDj03Em
-         iKDm3Xm0j0NrRGeDYjMbJC6eMJBigTCeIzZHQw2pDt9ja9JV4aDaYoatxGuj7qo9hf2A
-         Fc9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722900312; x=1723505112;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2zBIarod2HVl/CUnRXWVgnn0mxMrpjXcU7UzEEJJgco=;
-        b=rN/YzPSuOTzs8HU+S6HZSsspdTpr1atlGTsjcoU2wa/ITdyBixBZkXOmHRx84nf4z+
-         Ov15O/bV4EjS7h+57HTLH2MN4ZFt/5nloIejfLU6iLKDvpa0w4mN7bHWHsWzChF8RV0h
-         2CQztaFeaAaM/CPjkyzXJGVkJx2+yZDEL+PSMJiqYHLpfljivYBFUskQKEtfNT0NNW7d
-         14Y9e0izzgogmd/FWy3tLIrvSTRi6Y8ZrpJadpDsEyPjRA8+b1mur7Gl6M6jO4w8G8FR
-         d5Vnwfqdn4X98nuG8cuJ6TIaJvpFD+whEFcuhix4lltWsW5fLCLbfgbZ/l6jJ2UPpf1C
-         v5VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuQr54MH6x3lplSkf4q3gkw3nhWnnGYaCpM8fttZVvtdhZv2FExqO6YipeMYVUOHnmF0Wa5/tcvp9LsUvffsXno4d4+fPWLLivrsYob6RhATch5C6oQuSHluwtbkaPmWZnhfcyKXnF
-X-Gm-Message-State: AOJu0YwcorpJniLcUGWX54TYvCLQ7IB2Q5YABUEkfCrcV0NveV1g/eeJ
-	pdfXO4PD69TgWQwdOzTX5slt8FNfWuD6s2w2+y+bEYvjPP88XZ5d
-X-Google-Smtp-Source: AGHT+IEKIal6yU7k7Lhrnqubd6yU4EmHWWHnqQEQk4+X/HJkwuuyTpiT6qDT5UZniCRaYxknZQYlKA==
-X-Received: by 2002:a17:90b:1c03:b0:2c9:9fdf:f72e with SMTP id 98e67ed59e1d1-2cff9547ea1mr12052804a91.26.1722900311942;
-        Mon, 05 Aug 2024 16:25:11 -0700 (PDT)
-Received: from localhost ([1.145.206.202])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdeef43bcsm10813103a91.39.2024.08.05.16.24.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 16:25:11 -0700 (PDT)
+	s=arc-20240116; t=1722900368; c=relaxed/simple;
+	bh=NZCRFKbIN8PF8TtGzo0TuabedSFqMXcg0tKfwiHnKPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L5vJZejMRJbKuDrW07fAmHwyjOhK7HoDALlW2H2kimIOr4oZbT05mEv2+s15p/t/W1tAJ5w98tOB/a/MP4oYAtYoRfGjbo8SDV/APQ6HcHOZ/K2Pehagt+ABOPXLcujvjlknzw9/m8EQJGBmIkmN5Y+Q2Tez1vmfuZlRNVp2GEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nsqM4WvI; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 5 Aug 2024 23:25:55 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722900362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+mfeo2RqmDWupNPy1ZQ9DQzaW41XBFzcKm+dZAjG39w=;
+	b=nsqM4WvIeqvYHal0R7bad4sl2RiCqdaEThtnF1PVGpbpIk6TP7/CSQ1lcdBlex5IzcKPCb
+	7g4CjFX6c6eUuhlGombjt0+/nOmNqPRG0qjhofrleHk8DYNXPAn7Q/OhxjYef93ialM8P+
+	YvQTTQKWBorXAs+vuLMxHvrpEon2vKo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	David Matlack <dmatlack@google.com>,
+	David Stevens <stevensd@chromium.org>
+Subject: Re: [PATCH v12 54/84] KVM: arm64: Mark "struct page" pfns
+ accessed/dirty before dropping mmu_lock
+Message-ID: <ZrFfgzRbiqT-Zi2O@linux.dev>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-55-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 06 Aug 2024 09:24:56 +1000
-Message-Id: <D38D6LJZOIQK.2GV58PGVL5K85@gmail.com>
-Cc: "Michael Ellerman" <mpe@ellerman.id.au>, "Christophe Leroy"
- <christophe.leroy@csgroup.eu>, "Pedro Falcato" <pedro.falcato@gmail.com>,
- "kernel test robot" <oliver.sang@intel.com>, "Jeff Xu"
- <jeffxu@chromium.org>, <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
- <linux-kernel@vger.kernel.org>, "Andrew Morton"
- <akpm@linux-foundation.org>, "Kees Cook" <keescook@chromium.org>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, "Dave Hansen" <dave.hansen@intel.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Guenter Roeck"
- <groeck@chromium.org>, "Jann Horn" <jannh@google.com>, "Jonathan Corbet"
- <corbet@lwn.net>, "Jorge Lucangeli Obes" <jorgelo@chromium.org>, "Matthew
- Wilcox" <willy@infradead.org>, "Muhammad Usama Anjum"
- <usama.anjum@collabora.com>, =?utf-8?q?Stephen_R=C3=B6ttger?=
- <sroettger@google.com>, "Suren Baghdasaryan" <surenb@google.com>, "Amer Al
- Shanawany" <amer.shanawany@gmail.com>, "Javier Carrasco"
- <javier.carrasco.cruz@gmail.com>, "Shuah Khan" <shuah@kernel.org>,
- <linux-api@vger.kernel.org>, <linux-mm@kvack.org>, <ying.huang@intel.com>,
- <feng.tang@intel.com>, <fengwei.yin@intel.com>
-Subject: Re: [linus:master] [mseal] 8be7258aad:
- stress-ng.pagemove.page_remaps_per_sec -4.4% regression
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>, "Jeff Xu"
- <jeffxu@google.com>
-X-Mailer: aerc 0.18.2
-References: <202408041602.caa0372-oliver.sang@intel.com>
- <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
- <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
- <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
- <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
- <CALmYWFuCvphvLQOuQHBbFq0G8Ekyze=q45Tt4dATOt-GhO2RGg@mail.gmail.com>
- <CAHk-=wgySgXXkZtx49Xq70X2CmSizM8siacYKncMmFWRzKjs5Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wgySgXXkZtx49Xq70X2CmSizM8siacYKncMmFWRzKjs5Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240726235234.228822-55-seanjc@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue Aug 6, 2024 at 5:48 AM AEST, Linus Torvalds wrote:
-> On Mon, 5 Aug 2024 at 12:38, Jeff Xu <jeffxu@google.com> wrote:
-> >
-> > I'm curious, why does ppc need to unmap vdso ? ( other archs don't
-> > have unmap logic.)
->
-> I have no idea. There are comments about 'perf' getting confused about
-> mmap counts when 'context.vdso' isn't set up.
->
-> But x86 has the same context.vdso logic, and does *not* set the
-> pointer before installing the vma, for example. Also does not zero it
-> out on munmap(), although it does have the mremap logic.
->
-> For all I know it may all be entirely unnecessary, and could be
-> removed entirely.
+[+cc Fuad]
 
-I don't know much about vdso code, it predated my involvedment in ppc.
-Commit 83d3f0e90c6c8 says CRIU (checkpoint restore in userspace) is
-moving it around. Why CRIU wants to do that, I don't know.
+Fuad, you mentioned in commit 9c30fc615daa ("KVM: arm64: Move setting
+the page as dirty out of the critical section") that restructuring
+around the MMU lock was helpful for reuse (presumably for pKVM), but I
+lack the context there.
 
-Can userspace on other archs not unmap their vdsos?
+On Fri, Jul 26, 2024 at 04:52:03PM -0700, Sean Christopherson wrote:
+> Mark pages/folios accessed+dirty prior to dropping mmu_lock, as marking a
+> page/folio dirty after it has been written back can make some filesystems
+> unhappy (backing KVM guests will such filesystem files is uncommon, and
 
+typo: s/will/with/
+
+> the race is minuscule, hence the lack of complaints).  See the link below
+> for details.
+> 
+> This will also allow converting arm64 to kvm_release_faultin_page(), which
+> requires that mmu_lock be held (for the aforementioned reason).
+> 
+> Link: https://lore.kernel.org/all/cover.1683044162.git.lstoakes@gmail.com
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/arm64/kvm/mmu.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index 22ee37360c4e..ce13c3d884d5 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -1685,15 +1685,17 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  	}
+>  
+>  out_unlock:
+> +	if (writable && !ret)
+> +		kvm_set_pfn_dirty(pfn);
+
+I'm guessing you meant kvm_release_pfn_dirty() here, because this leaks
+a reference.
+
+> +	else
+> +		kvm_release_pfn_clean(pfn);
+> +
+>  	read_unlock(&kvm->mmu_lock);
+>  
+>  	/* Mark the page dirty only if the fault is handled successfully */
+> -	if (writable && !ret) {
+> -		kvm_set_pfn_dirty(pfn);
+> +	if (writable && !ret)
+>  		mark_page_dirty_in_slot(kvm, memslot, gfn);
+> -	}
+>  
+> -	kvm_release_pfn_clean(pfn);
+>  	return ret != -EAGAIN ? ret : 0;
+>  }
+>  
+> -- 
+> 2.46.0.rc1.232.g9752f9e123-goog
+> 
+
+-- 
 Thanks,
-Nick
+Oliver
 
