@@ -1,63 +1,88 @@
-Return-Path: <linux-kernel+bounces-275335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99D994838E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:35:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE61E9483A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D401F21849
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A6FE28463B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0D416CD35;
-	Mon,  5 Aug 2024 20:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B19D16C699;
+	Mon,  5 Aug 2024 20:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sc9BqLhj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bF0xgt41"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90EC14A4E1;
-	Mon,  5 Aug 2024 20:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A79C149C60;
+	Mon,  5 Aug 2024 20:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722890087; cv=none; b=r0Myghn+7CdiTkMmnUvCe0YNqduUhP+1EvJpQYvNficZPd0dblvjE+ROFoPCzBeEBTeTE3X6Bm4IRJwVEnz147yhyA6UenjkGKrUxMWSEmI0tfYKFzernoscp5tK05Mbj7mL4sz2hGjYuwktG34ua6zpgd/oVliWBg6a9JVYxUI=
+	t=1722890261; cv=none; b=VyMGhhVCt9F5N+8ZsowL3bmWZaNNs1IUQN1p07TKxi0IEsOkPDp85rT2Eun7TSzwTN5Iiv8fa1LeveyEqJkpX56REfaQiQtIDeL3RJUP4FAsF0XVeQBH47jVcUFftc8XSa3h96K59jg0rE3ECNHbAnPM1f44obhjrpqp6AKVUvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722890087; c=relaxed/simple;
-	bh=WLTAncxHbb2bIwU5P7XV//UTrrUj8v2T3O3toZDJJr4=;
+	s=arc-20240116; t=1722890261; c=relaxed/simple;
+	bh=qdRuOti9XNlLltkR78ltAp8iub7ZiaEGkve5ZQKgRXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QW+lxsFQRboM8ULG7VxaLRPWbgMqo9nLzDoCPGhPFQonmb4duuz89xF3/byC48mgdsNH7RkKAqhn/CbbSaOXL+rKICD6xaugmYSAUG2JJjmczKoaXsU+cTfDqDW4qqJLtUovStzQII/leOtQeOfe4pMgqoAjoNCBG6cZErracCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sc9BqLhj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72EEBC4AF11;
-	Mon,  5 Aug 2024 20:34:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pc04VQjcCngW/HvjKCfRW2IYnMJQ0cmyqcTO1Wc44W+q4zd6W4B5OpnnYGmJpPnKFBmt8AvgBHa3lViJHzJOv2zndQgO9ogdHuZZ+lQ7RlTeOsR50ukTmMnOcU/FaAre5qJFobpaKML6hxJIt09pAoq3F/WxWdgnWzu1zydv5t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bF0xgt41; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087EBC4AF0E;
+	Mon,  5 Aug 2024 20:37:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722890087;
-	bh=WLTAncxHbb2bIwU5P7XV//UTrrUj8v2T3O3toZDJJr4=;
+	s=k20201202; t=1722890261;
+	bh=qdRuOti9XNlLltkR78ltAp8iub7ZiaEGkve5ZQKgRXs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sc9BqLhjeh2KS44wtEj+WsvujNNEvhStNwwxogs6REPzOwcyGI831+DgM0R9qw/bo
-	 4C3FuTDNs5h84XYJnsNLNQJSALmtq+Xtlhz/x6/rbj/PCqjSX4oSHeHAUNQEMJGVsT
-	 X0O6xcYsOSOwMNgV3+tuGwh6NomBRtwZneCWgLFRp9+EhOY7mR73S2+c4K1jSiEqbw
-	 jCQssanAT7SBIzXCJfsVhbeXQE41Krw76s8trgLsWqNDE7/AabkWyek2QoNNYpmQO3
-	 lTz64XYyYVkLA31qK0KKS1nr6DegMsX4qNIqg1U7i31VICG/ch9yzgFfel7XkSSpm9
-	 RkdEhGio3z4ZQ==
-Date: Mon, 5 Aug 2024 13:34:46 -0700
-From: Kees Cook <kees@kernel.org>
-To: Brian Mak <makb@juniper.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
-Message-ID: <202408051330.277A639@keescook>
-References: <CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net>
- <877cd1ymy0.fsf@email.froward.int.ebiederm.org>
- <4B7D9FBE-2657-45DB-9702-F3E056CE6CFD@juniper.net>
- <202408051018.F7BA4C0A6@keescook>
- <230E81B0-A0BD-44B5-B354-3902DB50D3D0@juniper.net>
+	b=bF0xgt419GbxyCGFRj0fNjByi1OtMInAxUy0fO7kuEExoo6r6jeZMXGjN5ikPGLYH
+	 /M1nzHizackmgautp/VnDSLRxQXCurMyrYVEwg5Yf+PdgGkwhSt7ZiA1a6tEsPe3+w
+	 oJPfE55fHB91q50vVv1vV9hAXYemhAyhr6OpNgWOOvXUx9/9Vw4S7evidbf87YcNj+
+	 pEPIiDW05PYUn8lRlujrJ1DKbY3WIHytjXuNelSTWpy7nXBiYR1lO2v9ZQh4g3aHrR
+	 PgFXkbijAdUJ0BywpuS1YJGB4AvPiLFgG1t0OrXdtLJEh5IFQJb88z75ZKH8cfv8oU
+	 ALk7ATW/rOneA==
+Date: Mon, 5 Aug 2024 23:35:22 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vasily Gorbik <gor@linux.ibm.com>, Will Deacon <will@kernel.org>,
+	Zi Yan <ziy@nvidia.com>, devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	nvdimm@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v3 11/26] x86/numa: use get_pfn_range_for_nid to verify
+ that node spans memory
+Message-ID: <ZrE3ijXA3efepKcH@kernel.org>
+References: <20240801060826.559858-1-rppt@kernel.org>
+ <20240801060826.559858-12-rppt@kernel.org>
+ <66b1302ce5fd3_c1448294d3@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,80 +91,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <230E81B0-A0BD-44B5-B354-3902DB50D3D0@juniper.net>
+In-Reply-To: <66b1302ce5fd3_c1448294d3@dwillia2-xfh.jf.intel.com.notmuch>
 
-On Mon, Aug 05, 2024 at 06:44:44PM +0000, Brian Mak wrote:
-> On Aug 5, 2024, at 10:25 AM, Kees Cook <kees@kernel.org> wrote:
-> 
-> > On Thu, Aug 01, 2024 at 05:58:06PM +0000, Brian Mak wrote:
-> >> On Jul 31, 2024, at 7:52 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >>> One practical concern with this approach is that I think the ELF
-> >>> specification says that program headers should be written in memory
-> >>> order.  So a comment on your testing to see if gdb or rr or any of
-> >>> the other debuggers that read core dumps cares would be appreciated.
-> >> 
-> >> I've already tested readelf and gdb on core dumps (truncated and whole)
-> >> with this patch and it is able to read/use these core dumps in these
-> >> scenarios with a proper backtrace.
+On Mon, Aug 05, 2024 at 01:03:56PM -0700, Dan Williams wrote:
+> Mike Rapoport wrote:
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 > > 
-> > Can you compare the "rr" selftest before/after the patch? They have been
-> > the most sensitive to changes to ELF, ptrace, seccomp, etc, so I've
-> > tried to double-check "user visible" changes with their tree. :)
+> > Instead of looping over numa_meminfo array to detect node's start and
+> > end addresses use get_pfn_range_for_init().
+> > 
+> > This is shorter and make it easier to lift numa_memblks to generic code.
+> > 
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
+> > ---
+> >  arch/x86/mm/numa.c | 13 +++----------
+> >  1 file changed, 3 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> > index edfc38803779..cfe7e5477cf8 100644
+> > --- a/arch/x86/mm/numa.c
+> > +++ b/arch/x86/mm/numa.c
+> > @@ -521,17 +521,10 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+> >  
+> >  	/* Finally register nodes. */
+> >  	for_each_node_mask(nid, node_possible_map) {
+> > -		u64 start = PFN_PHYS(max_pfn);
+> > -		u64 end = 0;
+> > +		unsigned long start_pfn, end_pfn;
+> >  
+> > -		for (i = 0; i < mi->nr_blks; i++) {
+> > -			if (nid != mi->blk[i].nid)
+> > -				continue;
+> > -			start = min(mi->blk[i].start, start);
+> > -			end = max(mi->blk[i].end, end);
+> > -		}
+> > -
+> > -		if (start >= end)
+> > +		get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
+> > +		if (start_pfn >= end_pfn)
 > 
-> Hi Kees,
+> Assuming I understand why this works, would it be worth a comment like:
 > 
-> Thanks for your reply!
+> "Note, get_pfn_range_for_nid() depends on memblock_set_node() having
+>  already happened"
+
+Will add a comment, sure.
+ 
+> ...at least that context was not part of the diff so took me second to
+> figure out how this works.
 > 
-> Can you please give me some more information on these self tests?
-> What/where are they? I'm not too familiar with rr.
-
-I start from where whenever I go through their tests:
-
-https://github.com/rr-debugger/rr/wiki/Building-And-Installing#tests
-
-
-> > And those VMAs weren't thread stacks?
-> 
-> Admittedly, I did do all of this exploration months ago, and only have
-> my notes to go off of here, but no, they should not have been thread
-> stacks since I had pulled all of them in during a "first pass".
-
-Okay, cool. I suspect you'd already explored that, but I wanted to be
-sure we didn't have an "easy to explain" solution. ;)
-
-> > It does also feel like part of the overall problem is that systemd
-> > doesn't have a way to know the process is crashing, and then creates the
-> > truncation problem. (i.e. we're trying to use the kernel to work around
-> > a visibility issue in userspace.)
-> 
-> Even if systemd had visibility into the fact that a crash is happening,
-> there's not much systemd can do in some circumstances. In applications
-> with strict time to recovery limits, the process needs to restart within
-> a certain time limit. We run into a similar issue as the issue I raised
-> in my last reply on this thread: to keep the core dump intact and
-> recover, we either need to start up a new process while the old one is
-> core dumping, or wait until core dumping is complete to restart.
-> 
-> If we start up a new process while the old one is core dumping, we risk
-> system stability in applications with a large memory footprint since we
-> could run out of memory from the duplication of memory consumption. If
-> we wait until core dumping is complete to restart, we're in the same
-> scenario as before with the core being truncated or we miss recovery
-> time objectives by waiting too long.
-> 
-> For this reason, I wouldn't say we're using the kernel to work around a
-> visibility issue or that systemd is creating the truncation problem, but
-> rather that the issue exists due to limitations in how we're truncating
-> cores. That being said, there might be some use in this type of
-> visibility for others with less strict recovery time objectives or
-> applications with a lower memory footprint.
-
-Yeah, this is interesting. This effectively makes the coredumping
-activity rather "critical path": the replacement process can't start
-until the dump has finished... hmm. It feels like there should be a way
-to move the dumping process aside, but with all the VMAs still live, I
-can see how this might go weird. I'll think some more about this...
 
 -- 
-Kees Cook
+Sincerely yours,
+Mike.
 
