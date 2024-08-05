@@ -1,178 +1,155 @@
-Return-Path: <linux-kernel+bounces-274100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49F0947363
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A9694735F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 04:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386B2281066
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 02:34:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04634280F6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 02:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BBE358A7;
-	Mon,  5 Aug 2024 02:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD242D7B8;
+	Mon,  5 Aug 2024 02:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b="K4lRPsur"
-Received: from devico.uberspace.de (devico.uberspace.de [185.26.156.185])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hD4kYVPi"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B16417C
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 02:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8B918E3F
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 02:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722825269; cv=none; b=ddNqYyheskmSowl/RzBEGVL2gF2MD7bb8fJTXWsERttJqJaIPrZU+QbV+vLcybfFr3dKQJItUeubbZIVGJN/MlbyU8rGsPW+kQMQFGP/58KQKF8HnnjyicuUp0YuBkP0YKJPdx2VSfLxgCwWOJc4Y6xSWc4dWXdpI8nvNha2XJY=
+	t=1722825125; cv=none; b=JwwweX6xrrraMDcjunN0NVCsj/vX/cGWrklxLJofuW1SIVNn5aF6PSiv71RuNRTR+cKxYNZiZk9nqajxI8sczjKF5D97QaPLV67uaIV4nGm1lI4r9QuJwOovzmFPlknUqtgzAbNzdX9altOmp/VTE5wZ+r5e0WxBol1riy7/F1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722825269; c=relaxed/simple;
-	bh=Ammk7pbwhZIn4b/qhjLJz6McLAm2U1Jsq9rfxEJ51Ik=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ky+FjYL8+6MxzncWMmMRCcDIkVo0hkFEaL5vnMC5tV5Z8mz+3Uk6jVRv8eT8ZSA9YUvytD5mNGgEDs4a2BYIbwv7LJjiW1UJYhef2QuqX40CjVSsGUD86RTHU5MVkVUy5xi+MpnMpo97M3gUS+CQm9/u/+kzMeS97006NVnK27w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl; spf=pass smtp.mailfrom=lausen.nl; dkim=fail (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b=K4lRPsur reason="key not found in DNS"; arc=none smtp.client-ip=185.26.156.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lausen.nl
-Received: (qmail 11250 invoked by uid 990); 5 Aug 2024 02:27:43 -0000
-Authentication-Results: devico.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by devico.uberspace.de (Haraka/3.0.1) with ESMTPSA; Mon, 05 Aug 2024 04:27:43 +0200
-Message-ID: <57cdac1a-1c4d-4299-8fde-92ae054fc6c0@lausen.nl>
-Date: Sun, 4 Aug 2024 22:27:39 -0400
+	s=arc-20240116; t=1722825125; c=relaxed/simple;
+	bh=PTu3LwCYlsk4mGZJjMmoDWN6+L5zqP4928z77r6TfGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=axro6NaNz4ForJAT73IkxtzZSGndIdDpYd5CaxZdFRM9RTycO7aucBdLOMu4FTg42DE7XJouHowaTg9glnDY2kkwcFOHBOxY2GREnkavdf+zscZu8iH8jehVJKYi5iNf99NMVK7vRKabUXBbV3Dyx0ScL+RL4XRpTzIijAhlAcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hD4kYVPi; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240805023155epoutp01b568335cc2fbc635ceccc6524502daf5~otFB4tH200814108141epoutp01Y
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 02:31:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240805023155epoutp01b568335cc2fbc635ceccc6524502daf5~otFB4tH200814108141epoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722825115;
+	bh=U3/EOKMmRg2b+wEZlxO7EXZpG5799dYUSP8FtuCvBQE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hD4kYVPi7S5DZKBwqWhacH1WeN9hcdKnPJmvMcQ7ktbueFc+wEWayej+OndKgYSXO
+	 LuuK+8gJL0f4NMzM8F5Rb6YMl/tzSvJ+HJbf8vsoLhoEZyO1ZTlOBb1haCne2hkZIu
+	 vrsVtDUIh25Fnp1D8v1qXvasPu0tJs+UPog2L9P0=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240805023154epcas1p27e682c15075ef5ffd6937f8b930cf0ac~otFBiXofG2874128741epcas1p2l;
+	Mon,  5 Aug 2024 02:31:54 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.36.222]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WcgSB59sSz4x9Pv; Mon,  5 Aug
+	2024 02:31:54 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	61.76.10258.A9930B66; Mon,  5 Aug 2024 11:31:54 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240805023154epcas1p47037b2487d0d2c3623b96eba0d87d714~otFBHAuRz2670326703epcas1p4U;
+	Mon,  5 Aug 2024 02:31:54 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240805023154epsmtrp1e56a30c3952b61124f2424572e9844ec~otFBGFAP41846318463epsmtrp1a;
+	Mon,  5 Aug 2024 02:31:54 +0000 (GMT)
+X-AuditID: b6c32a38-9ebb870000002812-7c-66b0399aa190
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8E.D1.08964.A9930B66; Mon,  5 Aug 2024 11:31:54 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.253.105.252]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240805023154epsmtip16a50dd5457ab787c8b7d6d0223988365~otFA5uD753076430764epsmtip1H;
+	Mon,  5 Aug 2024 02:31:54 +0000 (GMT)
+From: Sangmoon Kim <sangmoon.kim@samsung.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: jiangshanlai@gmail.com, jordan.lim@samsung.com,
+	linux-kernel@vger.kernel.org, myoungjae.kim@samsung.com,
+	sangmoon.kim@samsung.com, youngjae24.lim@samsung.com
+Subject: RE: [PATCH] workqueue: add cmdline parameter
+ workqueue.panic_on_watchdog/max_watchdog_to_panic
+Date: Mon,  5 Aug 2024 11:31:47 +0900
+Message-Id: <20240805023147.2984866-1-sangmoon.kim@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZqlemexVxV0LQVGR@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Leonard Lausen <leonard@lausen.nl>
-Subject: Re: [PATCH v2 1/2] drm/msm/dpu1: don't choke on disabling the
- writeback connector
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org
-References: <20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org>
- <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=leonard@lausen.nl; keydata=
- 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 Sw==
-In-Reply-To: <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Bar: ---
-X-Rspamd-Report: BAYES_HAM(-2.998928) XM_UA_NO_VERSION(0.01) MIME_GOOD(-0.1)
-X-Rspamd-Score: -3.088928
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=lausen.nl; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=Ammk7pbwhZIn4b/qhjLJz6McLAm2U1Jsq9rfxEJ51Ik=;
-	b=K4lRPsurzOf5+DH8VcDVwQDeFrIIBcwChtPl4rk+OHqwTio585FOtELtOp2zkhs3W9UAKqs/8I
-	sAdAn6cYd8Z9xVR1MhADRDTKYNEoxDfEbzS7LzWRJA+tM7tWG+BHpct6c1qqPtXZBmVLkv9d3k6w
-	Ox2LqMNFK5d8dO6k5UqfJC/UGEOI03zlffVaxaAp+nh0LKaREp9rcfT/3s8vNYxtKwV7bAM7kxvb
-	3v7xfvkbZMGT+OAo5eCxKH667rXdkAEaHYsi72Phjfo3VaWQ3YWa5JRUEIfka1+D17+eQQBuo0Vp
-	pDp0/YWYsto9R0FiIqRuiCpa7Ps+SKyLN+Uz8uoA9mXaozkZZAvGutnJQQaH1wUoB1H7aw5+f5bo
-	rEzkBz4upAsABSJfm+mjcna6zWg2vLeroEFf5/OMAL1phbOi+uQnU1eh5tnnWauUzsIpdR9qq5fq
-	yDMOsU4sMyzeQwYomscBb9NQx3WNrQTfu+4Aa1tWBXfaBvcBUb1AQllzVp+tqqi1SpYRQ+w79E6o
-	SfIOIJS7/hWVCU3jo9D9Fnqxn1ARAcB2rxHU+Nc320Y8OJRUOr6nUiIFI+piG3GnMpUrSR4dcoWm
-	B9NplId6tANUyF4Bc9IMsTSa8mEqB49dlSxdW0VusRxaI9fCjx/ymaJcBj6Xned8/dZriQm0hFV1
-	c=
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFKsWRmVeSWpSXmKPExsWy7bCmnu4syw1pBtMfq1tMXbubyeLGsjCL
+	y7vmsFlM/yhmcetBI4vFr+VHGS227X3K5MDusXPWXXaPTas62Tz6tqxi9Pi8SS6AJSrbJiM1
+	MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwdov5JCWWJOKVAo
+	ILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwKxArzgxt7g0L10vL7XEytDAwMgUqDAhO2PlrW9M
+	BU9ZK/q/XWdvYLzF0sXIySEhYCKx/PASpi5GLg4hgR2MEuuunWSHcD4xSrzeeZYFwvnGKPG8
+	/x0bTMuU/8tYIRJ7GSXu34NxvjBK7Pq3hxmkik1AV+LLvMuMILaIgKzElWkPGUGKmAWWMkos
+	XXYfqIiDQ1ggU+LCUyUQk0VAVeLLdCWQcl4Be4lNn34zQSyTl9h/8CzYSE4BfYlr7y8zQ9QI
+	Spyc+QTsB2agmuats5lBxksIPGKXaHi9iRGi2UVi4ew7UI8KS7w6voUdwpaSeNnfxg7R0M8o
+	caq7C6poCqPE3GuaELaxRG/PBbA7mQU0Jdbv0odYxifx7msPK0hYQoBXoqNNCKJaTeLxq7tQ
+	a2Uk+u/Mh5roIdF9aTs0FJsYJR7/us02gVF+FpIfZiH5YRbCtgWMzKsYxVILinPTU4sNC0zg
+	0Zqcn7uJEZwItSx2MM59+0HvECMTB+MhRgkOZiUR3md716YJ8aYkVlalFuXHF5XmpBYfYjQF
+	BvBEZinR5HxgKs4riTc0sTQwMTMysTC2NDZTEuc9c6UsVUggPbEkNTs1tSC1CKaPiYNTqoGp
+	yj7b8G5EfPPiTi+mrLX1bcu/hezJ3Zcw89+1RVdMbbc8TjTa/Ex/R4ht6vFDa4ytSm6bHHOv
+	9t4ouKRT+Ud56+4pgZ6JngofgwWtg48Ycb21YL61+Y7bH9/JUy/l1MV3VF8sXxI1Oc3l/w5N
+	LQNhMW+dvr3v5p63ODBPxOT95ppXnPaqy1olk7dNiI+bqpwzoWvH1tsbmudf+pZf0CG7kS32
+	wuIjD6O2L2B/6ypiekBs4rMjjRUL5i4/tuCWbHlf2Z9ai7V7noU5c+mL9+abJ86TKZdKjLh2
+	t7Uj4OeCTKH2o2HNk15ypZvFL7lv89NPdHLyxrVMOjcm1z/8JvVEfG9LT6PN6ozV8z60H45V
+	YinOSDTUYi4qTgQA+W5iCw0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsWy7bCSnO4syw1pBrf6BSymrt3NZHFjWZjF
+	5V1z2CymfxSzuPWgkcXi1/KjjBbb9j5lcmD32DnrLrvHplWdbB59W1YxenzeJBfAEsVlk5Ka
+	k1mWWqRvl8CVsfLWN6aCp6wV/d+uszcw3mLpYuTkkBAwkZjyfxlrFyMXh5DAbkaJlsb1rBAJ
+	GYmdFzczdTFyANnCEocPF4OEhQQ+MUrMXpwNYrMJ6Ep8mXeZEcQWEZCVuDLtISPIHGaB1YwS
+	fzeuBpsjLJAu8XDVEnaQOSwCqhJfpiuBhHkF7CU2ffrNBLFKXmL/wbPMIDangL7EtfeXmUHK
+	hQT0JCY8y4IoF5Q4OfMJ2MnMQOXNW2czT2AUmIUkNQtJagEj0ypGydSC4tz03GLDAsO81HK9
+	4sTc4tK8dL3k/NxNjOAQ1tLcwbh91Qe9Q4xMHIyHGCU4mJVEeJ/tXZsmxJuSWFmVWpQfX1Sa
+	k1p8iFGag0VJnFf8RW+KkEB6YklqdmpqQWoRTJaJg1OqgckqtX3ddz9l5vTCEx/5l2WHPLs5
+	uef5K+3bHq+2J8s9U55zOuiZQ5ecpnLI02qt93Pab93yesex3HX7y+bZXYEx3rnhh6+1LmrO
+	m61rb3N5qRGvWcauNxoFD/ZsdBeSzGU4+GhJ/KNWztb1rg6veqevzVjZHr5Tty499YpF0TnV
+	4F/bv7dpXjzaoPM8b574eakph/R8Dx61sXZ58Jz3T6/NksZ9kmYatsYKJt2VP7q6tLTqD4pc
+	mHo3ufy3prnLn6M3tx6p4Wgr9/98KPmsyKTKC4kevUJb1A3MGew7Z4fOC52+Xm/VB77DRc8f
+	z+bfWZ0yr3VvxLyJDw9UbSiKj/+WXvRJv/vz7cy3Qk175JVYijMSDbWYi4oTAR9empDQAgAA
+X-CMS-MailID: 20240805023154epcas1p47037b2487d0d2c3623b96eba0d87d714
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240805023154epcas1p47037b2487d0d2c3623b96eba0d87d714
+References: <ZqlemexVxV0LQVGR@slm.duckdns.org>
+	<CGME20240805023154epcas1p47037b2487d0d2c3623b96eba0d87d714@epcas1p4.samsung.com>
 
-Dear Dmitry,
 
-Thank you for the patch. Unfortunately, the patch triggers a regression with
-respect to DRM CRTC state handling. With the patch applied, suspending and
-resuming a lazor sc7180 with external display connected, looses CRTC state on
-resume and prevents applying a new CRTC state. Without the patch, CRTC state is
-preserved across suspend and resume and it remains possible to change CRTC
-settings after resume. This means the patch regresses the user experience,
-preventing "Night Light" mode to work as expected. I've validated this on
-v6.10.2 vs. v6.10.2 with this patch applied.
-
-While the cause for the bug uncovered by this change is likely separate, given
-it's impact, would it be prudent to delay the application of this patch until
-the related bug is identified and fixed? Otherwise we would be fixing a dmesg
-error message "[dpu error]connector not connected 3" that appears to do no harm
-but thereby break more critical user visible behavior.
-
-Best regards
-Leonard
-
-On 8/2/24 15:47, Dmitry Baryshkov wrote:
-> During suspend/resume process all connectors are explicitly disabled and
-> then reenabled. However resume fails because of the connector_status check:
+> -----Original Message-----
+> From: Tejun Heo <htejun@gmail.com> On Behalf Of Tejun Heo
+> Sent: Wednesday, July 31, 2024 6:44 AM
 > 
-> [ 1185.831970] [dpu error]connector not connected 3
+> Hello,
 > 
-> It doesn't make sense to check for the Writeback connected status (and
-> other drivers don't perform such check), so drop the check.
+> On Tue, Jul 30, 2024 at 05:04:28PM +0900, Sangmoon Kim wrote:
+> > +static bool wq_panic_on_watchdog;
+> > +module_param_named(panic_on_watchdog, wq_panic_on_watchdog, bool, 0644);
+> > +static unsigned int wq_max_watchdog_to_panic;
+> > +module_param_named(max_watchdog_to_panic, wq_max_watchdog_to_panic, uint, 0644);
 > 
-> Fixes: 71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to dpu_writeback.c")
-> Cc: stable@vger.kernel.org
-> Reported-by: Leonard Lausen <leonard@lausen.nl>
-> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/57
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c | 3 ---
->  1 file changed, 3 deletions(-)
+> Can you combine the two into a single parameter? Maybe name it
+> wq_panic_on_stall? 0 disables. >0 indicates the number of times before
+> triggering panic, maybe?
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-> index 16f144cbc0c9..8ff496082902 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-> @@ -42,9 +42,6 @@ static int dpu_wb_conn_atomic_check(struct drm_connector *connector,
->  	if (!conn_state || !conn_state->connector) {
->  		DPU_ERROR("invalid connector state\n");
->  		return -EINVAL;
-> -	} else if (conn_state->connector->status != connector_status_connected) {
-> -		DPU_ERROR("connector not connected %d\n", conn_state->connector->status);
-> -		return -EINVAL;
->  	}
->  
->  	crtc = conn_state->crtc;
+> Thanks.
 > 
+> --
+> tejun
 
+Okay. Let me do that.
+Thanks for the review.
+
+Sangmoon
 
