@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-274784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B2E947CA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B4A947CB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD47283A78
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA0441F2205D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B0E5FEE6;
-	Mon,  5 Aug 2024 14:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Opqjjt/E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4CB139CFF;
+	Mon,  5 Aug 2024 14:18:39 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422142A1CA;
-	Mon,  5 Aug 2024 14:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698D039FD8
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722867362; cv=none; b=vGFVbmzcCgavZE86Sv5K3RBiU98OJAhgUwjc3rHYuh0yLrf2mzGo2OrhfJ0k6wlhlPoDQgWKSBhWPVkRc+YeAdWCvBlx2wESc63fhYgchlzg1yXEKfkUvgm+dEp1Kr7P4HeRVZlQSWdYR47ANWhSbZFxR89b76E44fQkYv7CyhQ=
+	t=1722867519; cv=none; b=uHXBDAzEnT26k4kJjgFqZPBKRi0ciBoWBFv/UMtzGbu7mpOdzavNsfhek/O/NKdsSoY+wG2+00ocIDE/HDpN8W08B1bzmG/YCfeyr/Nhxyzhf7dmHzYPZIKCxVsbP9lUaS58E8XduWURk85DMUHbSDh6Wn2Y7DHJDZsowNlNMXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722867362; c=relaxed/simple;
-	bh=eYVose4rHjsszlhRfVJ9r98ZAX1PFn679ftInAZrD1o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NNrXa3aPi7hFv9A9DDVwttluzkNNWKgVybj6spCTYIuqjpS/FMorl43dRMwokSZgSnbAax7/RKJJvc3/vxI80vya4sUpM7giKVkrztkKbaKoTu9ly361RcLJjctGyMnGhchXFVkyGCPjE/ROX1IhiupCFwfLDZQ/pJrIEYt8fi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Opqjjt/E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D378C32782;
-	Mon,  5 Aug 2024 14:16:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722867361;
-	bh=eYVose4rHjsszlhRfVJ9r98ZAX1PFn679ftInAZrD1o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Opqjjt/ENJfWuCT3h2PC05FC3kIKhxMv9eT2TPlYzop1Yv76uYsvSjpi2EAxQLxHD
-	 gpzCL4njxzn8HrPsFRzO0Xsek949C8ynIFtVvqUdp0YHtAtgNZMakCGgFR9zppl9Gh
-	 cYfmyaohX4GT4jtdv56gCXNJHbZggDEQiAtCL1x7LjjppqxnJyPZCX20hu4/TT0R+T
-	 PMlwDifUDmc3Spqh/bL0tLtVETKzZu2/bwrhvAg1oN8rUhb/Yf2C1sRdWSXRkOfArw
-	 kZbTEPAWjiFxgYQDiC5dCuxXM0sBAej1qDuTEJzh0e2G5wZk3LAgrrc9XBejvsLfpi
-	 sy1+DPwvqSXbQ==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Jack Chen <zenghuchen@google.com>
-Cc: Mark Brown <broonie@kernel.org>, Vadim Pasternak <vadimp@nvidia.com>, 
- Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
- linux-leds@vger.kernel.org
-In-Reply-To: <20240801153048.3813581-1-zenghuchen@google.com>
-References: <20240801153048.3813581-1-zenghuchen@google.com>
-Subject: Re: (subset) [PATCH v2] leds: lm3601x: Reset led controller during
- init
-Message-Id: <172286735998.2344149.3683384497307166699.b4-ty@kernel.org>
-Date: Mon, 05 Aug 2024 15:15:59 +0100
+	s=arc-20240116; t=1722867519; c=relaxed/simple;
+	bh=JJ3xBdq9/0oY5u3TWmOjL7hB9km1VWBDCpcEzdocyT8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WA9riQ9h/Kcb3vgTO8+KCBo7hLvlgHrqGC2Td//d/uIHAvfQzUreOX9XP0uH5LLOHwwsAt45xd+610kDFhHTUi2Hzbx/Pmm4GumC30Ak3322qBZtMO+FCH+i2szkr1Qn0h2lR9oy4DOxmMP/rn2kXQnoShWWITOexKydmN3wUw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wcz6C0SfkzncWy;
+	Mon,  5 Aug 2024 22:17:23 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5BCC1180105;
+	Mon,  5 Aug 2024 22:18:30 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 5 Aug
+ 2024 22:18:29 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <bsingharora@gmail.com>, <yuehaibing@huawei.com>,
+	<akpm@linux-foundation.org>, <j.granados@samsung.com>
+CC: <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] delayacct: Remove unused declaration __delayacct_tsk_exit()
+Date: Mon, 5 Aug 2024 22:16:22 +0800
+Message-ID: <20240805141622.1788183-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Thu, 01 Aug 2024 11:30:48 -0400, Jack Chen wrote:
-> LED controller should be reset during initialization to avoid abnormal
-> behaviors. For example, when power to SoC is recycled but power to LED
-> controller is not, LED controller should not presume to be in original
-> state.
-> 
-> 
+Commit 35df17c57cec ("[PATCH] task delay accounting fixes") removed the
+implementation but leave declaration.
 
-Applied, thanks!
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ include/linux/delayacct.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-[1/1] leds: lm3601x: Reset led controller during init
-      commit: 70a4375e07fcbb771809f0af8b5f0df029ca660f
-
---
-Lee Jones [李琼斯]
+diff --git a/include/linux/delayacct.h b/include/linux/delayacct.h
+index 6639f48dac36..d359849356f4 100644
+--- a/include/linux/delayacct.h
++++ b/include/linux/delayacct.h
+@@ -69,7 +69,6 @@ extern struct kmem_cache *delayacct_cache;
+ extern void delayacct_init(void);
+ 
+ extern void __delayacct_tsk_init(struct task_struct *);
+-extern void __delayacct_tsk_exit(struct task_struct *);
+ extern void __delayacct_blkio_start(void);
+ extern void __delayacct_blkio_end(struct task_struct *);
+ extern int delayacct_add_tsk(struct taskstats *, struct task_struct *);
+-- 
+2.34.1
 
 
