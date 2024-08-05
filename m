@@ -1,183 +1,257 @@
-Return-Path: <linux-kernel+bounces-275398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1763D9484EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:36:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248129484ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45A281C21F17
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:36:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A1E1F212E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33E916DC1E;
-	Mon,  5 Aug 2024 21:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A4016D9A0;
+	Mon,  5 Aug 2024 21:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BMdgQDWy"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="foK7udw6"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684C816D9AC
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE46149C6E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893652; cv=none; b=lAmJeBTJ8nvA23nfZmyRuQJQMbTC+izbTT4qLIbjlRU5kfvVrn5HypA+Xuq5rlb+8/eb9Bf5cuJ6UFHr4VYW3O1Lf/L8i8Vmt7zaoM+NeB9sXVjlQ3oYtB+0UT2xqqwtLjKHTwRZS2L1fli9Ww10KfIuLl5P4+mjFc1Q5uaO0zw=
+	t=1722893756; cv=none; b=bqSPLsAauDas9CMZkZB2cBzKLzTVmjN8TCoI4AKFFF29JqKgPzLVArG+LEmm1vpzT3nBw1gKnqnYzM5y1tZS7PPe1GLudxsf3uzcCb2W3pFCQGc9RFn55ZACVglsUS8o7dNg3vhnubJvSGvtabdBtf/tx0m5QeX9B+kgQMfT3D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893652; c=relaxed/simple;
-	bh=zqLuGEFdi+P0yo/VokfbNgwJV9KfQByh7n2g/iDAKvI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T3rxBiq9jN6tuOVPJTgIgBnNhkxewC6A0UMH2ZrkhXhOsOzLGyDYyt9r5B0xEHg9qj9+rj7yxrd4JrA9TBAzdhd1SVJqACXwAWjtWN+hmEMbT/KJ3KQEAFMkDlVfp7lB709Ze1q0Au9LSWo8cpQ2NFcZhJwxau5Cq3BYFG5jj/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BMdgQDWy; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5d5b986a806so2863852eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:34:10 -0700 (PDT)
+	s=arc-20240116; t=1722893756; c=relaxed/simple;
+	bh=u4ywBlsRL0BxaT3cYq2Z2kIJTx4MW2c/ESHGD59dVq8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JUr1CFebKA9InMesGMMG2q2z3fMtH7HKGr1AI5fgEFZpdnD8Av8niFib+Fco5RAclfvwTPkVAGKAUNIW/1CElBVD4DdTOYHh8XPxTsZe/9ZUgJuN2gzbnJe2WIOwp59tdRz6FiPfrlfi0VHCncS13bq1iCCuVPZoI0/9CFc1BJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=foK7udw6; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a30753fe30so8506768a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:35:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722893649; x=1723498449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kJj/weLh4AnZstbA8m8zHpr8XkLqzL/0qgZoHSEQ9Eo=;
-        b=BMdgQDWyrNyS0XrNSK6L5kKZoTkwRQsFyYHH+DKnyP88a/0fbGjw5atAEa5SaWsIbL
-         LpO2VmvbRiRfwR7svPQdWAPsFUrr0vkzh6zNzx0EF814f3R/FuyUm4m4vVpzYULS9HjC
-         xqMRZDNAdZFvyvdI+L4V/UjZ1odwuUDsnSnXw=
+        d=google.com; s=20230601; t=1722893755; x=1723498555; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7zEougPEyu/XsP7BiNYzpW05XehPP1UwCYeavBIksYY=;
+        b=foK7udw6/eXCG0b3mNVvBvRdmlHZacwzmElavHqAKxFpVhuD63LWWL5LfF8mDpoLig
+         taGxtnetywrBDA5U3/j4m4ucuDENqt1GCUyUD3eWcgTPkXVoOCrXgSoNocmnP5biig8h
+         nEyS7AuPo9Fxqqy946F6m5cWpSOXQyeTMaQ4FPJZ0nWM5hAoz/VmuIR2lX0H0w8a0Zyo
+         3mHWUfpsX6SblLvZPCZYMmVveVA8dgpNxI25YunPbTfAWFRsjHzjGR0dURSFQjfMSiBW
+         dRJxScTppTQoKgTY882BHNUB8aNdYynJmHpRDdEtwgkExyp6d0izEyOitJlSOZKy4W/w
+         3mPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893649; x=1723498449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kJj/weLh4AnZstbA8m8zHpr8XkLqzL/0qgZoHSEQ9Eo=;
-        b=NByEcM3N4zihLxGgU0zCaaCVFlPgMT2yhoSZEgbgsmTRxRGUJUoEECBGujU/wh5ozm
-         Hhh0Hu6OwLSbQJDvm3dVvRwoJ7NUjLQWFRojGfttF3HCW4Hu+fDNpRX/+KFDuWuPk233
-         QJlBlQhRhBuEobvdhC48yH85Egwkv506/72wTr9KZt7Q38w5KzN2xx2RSB+YenDUT9v7
-         CoXyi8ZMDqzkOuT6/Nm/G8OOwr6Fp7VPvP6z878ua7dVyRQ+NT5uRg9ppUrcjk9iIr8E
-         f8oP9jFJ82iog73fU9YqgaQDwkSiyAfNsH5UYS5OLIaebLLMQjt1TytunJg4tVFdrb1K
-         TLaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0EALcHRF69iX+ip3eHR4LLW4My9EmX1T4LlI/VD2/9CIg2bb7JKk5y+8t3aMplKYDJWEQQ8EMMabLGJb6zyDeV2WHcCJmlB6PQWH4
-X-Gm-Message-State: AOJu0YwiG7BcnYq5HAnk2nzJeuq4pxf9OrD5RycV95cfZLHf8aam03wR
-	3Cir1pZVw6IYwWhJmX6xGRa3Y1MwcqoeD2RvQAlLMknbdi4Rxz7kvt04er1Phtzu4TkpWKlOObn
-	tGzgtqlLh4fAiW1Ha/0YcBV4WAcQwKpN4YrMT
-X-Google-Smtp-Source: AGHT+IE8TLudz2YreomFPKewuIm8hKAgVVHp3aBUWpNonauvOFyC4N7BUufAoKQLSGYePiH0K984kKpEDPpFSCQi7Sc=
-X-Received: by 2002:a05:6870:1485:b0:267:dfce:95ec with SMTP id
- 586e51a60fabf-26892644934mr6054136fac.14.1722893649241; Mon, 05 Aug 2024
- 14:34:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722893755; x=1723498555;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7zEougPEyu/XsP7BiNYzpW05XehPP1UwCYeavBIksYY=;
+        b=ZGd7eKfk/vsF4XHfpkeZmTAaTwqfJLTMdubxg6Hw8Y1q23mR7ojJOsB9Tj8p1AqZ5h
+         ydKSLdTqBX55GXSJbgB7CbSSrYJYQZnmVCRXGCntq56s19K2jWT7BcjQ2ZbR1HCnVx+p
+         HA261jsd4Sx4orMKWlUMGurF5nLuqnFOXhaou95hQPuTnNwZIYJdklQzCSSzg9Fbh63V
+         KKqQo80tZgO0G0Su23L0D68YV/pNcSI1Jtko345z0YNqUP8yYRsYKyuQlp21NoAsANyE
+         hGRIWEesprRk5hf7f7RadSpxO9qK03EEl/0Zl7HZhGMhn2FKbrc1GSa2nEbUpUJMzpgQ
+         VErw==
+X-Forwarded-Encrypted: i=1; AJvYcCUz6e+eXzk3sIArXhRVojNy5uZ53aotdC8u/4RjVr/WiKVhxZD4dz6Y42WkZf9nqdwXGZjLvhnn+Wlm1cdMfYSVhIIB8H0Az3ToThVc
+X-Gm-Message-State: AOJu0YxdPtjcswfl+oLE+h1msvAAJ62vLIoBymgE8HkGckO8LjtaLzzX
+	lAaeLvwWXToybb6kG9/FmiKqNMTvQJWvG4pajotQIoJDhjyQZq7yucv9rKhHEOTRfTReLg/xUc7
+	4IA==
+X-Google-Smtp-Source: AGHT+IHOyNGBl0lTxCv1pGrwQOW9eslx0DzywsCu/KV//UKtHQ2KhGiXtjHiSMZdzddUzk4dGaKgMyPOW3Q=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:bd4a:0:b0:785:e3e:38d3 with SMTP id
+ 41be03b00d2f7-7b74853d441mr28660a12.7.1722893754549; Mon, 05 Aug 2024
+ 14:35:54 -0700 (PDT)
+Date: Mon, 5 Aug 2024 14:35:53 -0700
+In-Reply-To: <ffa76b1b62c5cd2001f5f313009376e131bc2817.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240801170838.356177-1-jeffxu@google.com> <20240801170838.356177-2-jeffxu@google.com>
- <202408051402.9C0FA18A12@keescook>
-In-Reply-To: <202408051402.9C0FA18A12@keescook>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Mon, 5 Aug 2024 14:33:57 -0700
-Message-ID: <CABi2SkU_TW1+NE6ofFSwiS+XV89d8T-NZy7X+OQi-2dG06O25w@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/1] binfmt_elf: mseal address zero
-To: Kees Cook <kees@kernel.org>
-Cc: akpm@linux-foundation.org, jannh@google.com, sroettger@google.com, 
-	adhemerval.zanella@linaro.org, ojeda@kernel.org, adobriyan@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-25-seanjc@google.com>
+ <20d3017a8dd54b345104bf2e5cb888a22a1e0a53.camel@redhat.com>
+ <ZoxaOqvXzTH6O64D@google.com> <31cf77d34fc49735e6dff57344a0e532e028a975.camel@redhat.com>
+ <ZqQybtNkhSVZDOTu@google.com> <ffa76b1b62c5cd2001f5f313009376e131bc2817.camel@redhat.com>
+Message-ID: <ZrFFua_7kWKBESbe@google.com>
+Subject: Re: [PATCH v2 24/49] KVM: x86: #undef SPEC_CTRL_SSBD in cpuid.c to
+ avoid macro collisions
+From: Sean Christopherson <seanjc@google.com>
+To: mlevitsk@redhat.com
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 5, 2024 at 2:05=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
-> On Thu, Aug 01, 2024 at 05:08:33PM +0000, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Some legacy SVr4 apps might depend on page on address zero
-> > to be readable, however I can't find a reason that the page
-> > ever becomes writeable, so seal it.
-> >
-> > If there is a compain, we can make this configurable.
-> >
-> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > ---
-> >  fs/binfmt_elf.c    | 4 ++++
-> >  include/linux/mm.h | 4 ++++
-> >  mm/mseal.c         | 2 +-
-> >  3 files changed, 9 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> > index 19fa49cd9907..e4d35d6f5d65 100644
-> > --- a/fs/binfmt_elf.c
-> > +++ b/fs/binfmt_elf.c
-> > @@ -1314,6 +1314,10 @@ static int load_elf_binary(struct linux_binprm *=
-bprm)
-> >                  emulate the SVr4 behavior. Sigh. */
-> >               error =3D vm_mmap(NULL, 0, PAGE_SIZE, PROT_READ | PROT_EX=
-EC,
-> >                               MAP_FIXED | MAP_PRIVATE, 0);
-> > +
-> > +#ifdef CONFIG_64BIT
-> > +             do_mseal(0, PAGE_SIZE, 0);
-> > +#endif
->
-> Instead of wrapping this in #ifdefs, does it make more sense to adjust
-> the mm.h declaration instead, like this below...
->
-Sure.
++Boris
 
-> >       }
-> >
-> >       regs =3D current_pt_regs();
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index c4b238a20b76..b5fed60ddcd9 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -4201,4 +4201,8 @@ void vma_pgtable_walk_end(struct vm_area_struct *=
-vma);
-> >
-> >  int reserve_mem_find_by_name(const char *name, phys_addr_t *start, phy=
-s_addr_t *size);
-> >
-> > +#ifdef CONFIG_64BIT
-> > +int do_mseal(unsigned long start, size_t len_in, unsigned long flags);
->
-> #else
-> static inline int do_mseal(unsigned long start, size_t len_in, unsigned l=
-ong flags)
-> {
->         return -ENOTSUPP;
-> }
->
-OK.
+On Mon, Aug 05, 2024, mlevitsk@redhat.com wrote:
+> =D0=A3 =D0=BF=D1=82, 2024-07-26 =D1=83 16:34 -0700, Sean Christopherson =
+=D0=BF=D0=B8=D1=88=D0=B5:
+> > > On Wed, Jul 24, 2024, Maxim Levitsky wrote:
+> > > > > On Mon, 2024-07-08 at 14:29 -0700, Sean Christopherson wrote:
+> > > > > > > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> > > > > > > > > Maybe we should instead rename the SPEC_CTRL_SSBD to
+> > > > > > > > > 'MSR_IA32_SPEC_CTRL_SSBD' and together with it, other fie=
+lds of this msr.=C2=A0 It
+> > > > > > > > > seems that at least some msrs in this file do this.
+> > > > > > >=20
+> > > > > > > Yeah, the #undef hack is quite ugly.=C2=A0 But I didn't (and =
+still don't) want to
+> > > > > > > introduce all the renaming churn in the middle of this alread=
+y too-big series,
+> > > > > > > especially since it would require touching quite a bit of cod=
+e outside of KVM.
+> > > > >=20
+> > > > > > >=20
+> > > > > > > I'm also not sure that's the right thing to do; I kinda feel =
+like KVM is the one
+> > > > > > > that's being silly here.
+> > > > >=20
+> > > > > I don't think that KVM is silly here. I think that hardware defin=
+itions like
+> > > > > MSRs, register names, register bit fields, etc, *must* come with =
+a unique
+> > > > > prefix, it's not an issue of breaking some deeply nested macro, b=
+ut rather an
+> > > > > issue of readability.
+> > >=20
+> > > For the MSR names themselves, yes, I agree 100%.=C2=A0 But for the bi=
+ts and mask, I
+> > > disagree.=C2=A0 It's simply too verbose, especially given that in the=
+ vast majority
+> > > of cases simply looking at the surrounding code will provide enough c=
+ontext to
+> > > glean an understanding of what's going on.
+>=20
+> I am not that sure about this, especially if someone by mistake uses a fl=
+ag
+> that belong to one MSR, in some unrelated place. Verbose code is rarely a=
+ bad thing.
+>=20
+>=20
+> > > =C2=A0 E.g. even for SPEC_CTRL_SSBD, where
+> > > there's an absurd amount of magic and layering, looking at the #defin=
+e makes
+> > > it fairly obvious that it belongs to MSR_IA32_SPEC_CTRL.
+> > >=20
+> > > And for us x86 folks, who obviously look at this code far more often =
+than non-x86
+> > > folks, I find it valuable to know that a bit/mask is exactly that, an=
+d _not_ an
+> > > MSR index.=C2=A0 E.g. VMX_BASIC_TRUE_CTLS is a good example, where re=
+naming that to
+> > > MSR_VMX_BASIC_TRUE_CTLS would make it look too much like MSR_IA32_VMX=
+_TRUE_ENTRY_CTLS
+> > > and all the other "true" VMX MSRs.
+> > >=20
+> > > > > SPEC_CTRL_SSBD for example won't mean much to someone who only kn=
+ows ARM, while
+> > > > > MSR_SPEC_CTRL_SSBD, or even better IA32_MSR_SPEC_CTRL_SSBD, lets =
+you instantly know
+> > > > > that this is a MSR, and anyone with even a bit of x86 knowledge s=
+hould at least have
+> > > > > heard about what a MSR is.
+> > > > >=20
+> > > > > In regard to X86_FEATURE_INTEL_SSBD, I don't oppose this idea, be=
+cause we have
+> > > > > X86_FEATURE_AMD_SSBD, but in general I do oppose the idea of addi=
+ng 'INTEL' prefix,
+> > >=20
+> > > Ya, those are my feelings exactly.=C2=A0 And in this case, since we a=
+lready have an
+> > > AMD variant, I think it's actually a net positive to add an INTEL var=
+iant so that
+> > > it's clear that Intel and AMD ended up defining separate CPUID to enu=
+merate the
+> > > same basic info.
+> > >=20
+> > > > > because it sets a not that good precedent, because most of the fe=
+atures on x86
+> > > > > are first done by Intel, but then are also implemented by AMD, an=
+d thus an intel-only
+> > > > > feature name can stick after it becomes a general x86 feature.
+> > > > >=20
+> > > > > IN case of X86_FEATURE_INTEL_SSBD, we already have sadly differen=
+t CPUID bits for
+> > > > > each vendor (although I wonder if AMD also sets the X86_FEATURE_I=
+NTEL_SSBD).
+> > > > >=20
+> > > > > I vote to rename 'SPEC_CTRL_SSBD', it can be done as a standalone=
+ patch, and can
+> > > > > be accepted right now, even before this patch series is accepted.
+> > >=20
+> > > If we go that route, then we also need to rename nearly ever bit/mask=
+ definition
+> > > in msr-index.h, otherwise SPEC_CTRL_* will be the odd ones out.=C2=A0=
+ And as above, I
+> > > don't think this is the right direction.
+>=20
+> Honestly not really. If you look carefully at the file, many bits are alr=
+eady defined
+> in the way I suggest, for example:
+>=20
+> MSR_PLATFORM_INFO_CPUID_FAULT_BIT
+> MSR_IA32_POWER_CTL_BIT_EE
+> MSR_INTEGRITY_CAPS_ARRAY_BIST_BIT
+> MSR_AMD64_DE_CFG_LFENCE_SERIALIZE_BIT
 
-> > +#endif
-> > +
-> >  #endif /* _LINUX_MM_H */
-> > diff --git a/mm/mseal.c b/mm/mseal.c
-> > index bf783bba8ed0..7a40a84569c8 100644
-> > --- a/mm/mseal.c
-> > +++ b/mm/mseal.c
-> > @@ -248,7 +248,7 @@ static int apply_mm_seal(unsigned long start, unsig=
-ned long end)
-> >   *
-> >   *  unseal() is not supported.
-> >   */
-> > -static int do_mseal(unsigned long start, size_t len_in, unsigned long =
-flags)
-> > +int do_mseal(unsigned long start, size_t len_in, unsigned long flags)
-> >  {
-> >       size_t len;
-> >       int ret =3D 0;
-> > --
-> > 2.46.0.rc1.232.g9752f9e123-goog
-> >
->
-> And if it returns an error code, should we check it when used in
-> load_elf_binary()? (And if so, should the mm.h return 0 for non-64bit?)
->
-It shouldn't fail. I can add pr_warning to handle the error case:
-pr_warning("pid=3D%d, couldn't seal the page on address 0.\n",
-task_pid_nr(current));
+Heh, I know there are some bits that have an "MSR" prefix, hence "nearly ev=
+ery".
 
-Thanks!
-Best regards,
--Jeff
+> This file has all kind of names for both msrs and flags. There is not muc=
+h
+> order, so renaming the bit definitions of IA32_SPEC_CTRL won't increase t=
+he
+> level of disorder in this file IMHO.
 
+It depends on what direction msr-index.h is headed.  If the long-term prefe=
+rence
+is to have bits/masks namespaced with only their associated MSR name, i.e. =
+no
+explicit MSR_, then renaming the bits is counter-productive.
 
-> --
-> Kees Cook
+I added Boris, who I believe was the most opinionated about the MSR bit nam=
+es,
+i.e. who can most likely give us the closest thing to an authoritative answ=
+er as
+to the preferred style.
+
+Boris, we're debating about the best way to solve a weird collision between=
+:
+
+  #define SPEC_CTRL_SSBD
+
+and
+
+  #define X86_FEATURE_SPEC_CTRL_SSBD
+
+KVM wants to use its CPUID macros to essentially do:
+
+  #define F(name) (X86_FEATURE_##name)
+
+as a shorthand for X86_FEATURE_SPEC_CTRL_SSBD, but that can cause build fai=
+lures
+depending on how KVM's macros are layered.  E.g. SPEC_CTRL_SSBD can get res=
+olved
+to its value prior to token concatentation and result in KVM effectively ge=
+nerating
+X86_FEATURE_BIT(SPEC_CTRL_SSBD_SHIFT).
+
+One of the proposed solutions is to rename all of the SPEC_CTRL_* bit defin=
+itions
+to add a MSR_ prefix, e.g. to generate MSR_SPEC_CTRL_SSBD and avoid the con=
+flict.
+My recollection from the IA32_FEATURE_CONTROL rework a few years back is th=
+at you
+wanted to prioritize shorter names over having everything namespaced with M=
+SR_,
+i.e. that this approach is a non-starter.
 
