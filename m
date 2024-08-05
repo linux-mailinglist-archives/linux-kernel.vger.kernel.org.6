@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-274349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C44947711
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FFA947712
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61482281B0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FDBA1F218BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A79014AD10;
-	Mon,  5 Aug 2024 08:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1750F14F9F7;
+	Mon,  5 Aug 2024 08:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2JhqSMw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OKHGrOTJ"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EAA149C45;
-	Mon,  5 Aug 2024 08:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E3714EC79
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722846020; cv=none; b=aT31cBxX6Jks9eMyroFYY5tmCWbNXWqkPI90C/4sVIK/wCYPBRFHstO430Poydz5mHjXHEMooYozlc6CQDkYCQTzIReWQ6Wx+REbR7/+vfS/tXUq4OQzwabGuU6ruxq8gn/gkI9rhA7F36MTxcE7+0xnBMM+ynaZrZt2aKy8B48=
+	t=1722846023; cv=none; b=h0JbXG9JRN/6Se/I7bofNhHxbgAtJ4oaMUl4YVMdDd3YlcA1TgvxUNRMIUMdx0Aj/MrS13wul/ncM5lpJVsAnJZndSV5m20Rp4290o9aYmwb3CRswekfqN2q7Qs3TxJ34ZnvT39iNw2lMd0rXjvpp9bDXSNYgoJ9LXwrvQTvz1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722846020; c=relaxed/simple;
-	bh=wmW9uKSb/2SP16SrvbJjH83JY/E4lBeMVQe2z/6uRjA=;
+	s=arc-20240116; t=1722846023; c=relaxed/simple;
+	bh=BSB/iX2X5QHoKHPFacoNatwOo33uqLX7EADf+rBHQM8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OMVhoUixshh+iKXIGU2jSDHEkoAcVeXFsZ2/seJ9L5g3MwDFirATCOCY0eHtBjKxYwLT9/iFgDZB615FDzQvfbH4o72nnyzxmL7z28Xm2bFH1d/r+GWuOTk2U4H52soRUF7/YZN7g2U24V4mLIrtQBs5S4Mvp+bV6O5dztzxRzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2JhqSMw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C2FC32782;
-	Mon,  5 Aug 2024 08:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722846019;
-	bh=wmW9uKSb/2SP16SrvbJjH83JY/E4lBeMVQe2z/6uRjA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K2JhqSMwwZ8/QOqbW2z24A69QE2LKeq77pogtoozix5anJLdQzeonjm2LoPajQfIZ
-	 nqylIoAZzEh09TD54hvDIXt1C0v+ACyuPfec/M2c4o8RdA2g0w8SHwpIkjbYN9xMnB
-	 er+6CkbjyitB5FnDChNaVg+2wcRPoXlQUDkAib2plzLHjl4STJzIEcZ9D3zIKmRRfS
-	 /ztT+v6XTT/RUZsAICzX46uChxYO8yWjOxESCw5FfQ/z8AGVDJkyby36Nr9ZyR+884
-	 razxShdh6YS4V/Hq3hEquRjIFvfvGw944WXMlvpnjRIb0pEnCXlWNTu2VbBRVhzCs4
-	 nmcqHa9JxDULw==
-Message-ID: <d4d60cab-1872-4063-8b2f-a4ca0afd2718@kernel.org>
-Date: Mon, 5 Aug 2024 10:20:14 +0200
+	 In-Reply-To:Content-Type; b=r/R9hquihkyB0IxBat17GGrB1biB4bq23yMom+gzz/FHV367lwbLHmPoxf9oXQKOJozQvu6ZYpMJAdldVt5zlYdbh7xIQDlLK91RfeflCNekDgvKsNku3MyC4GxNuPS3OT8PInrIDAXVWV79HQaUx+IFggc6Ep9Tr5DQ1eaLbdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OKHGrOTJ; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-39834949f27so46971635ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:20:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722846021; x=1723450821; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+fi+vj00+JjvH+mj3sa9KgQtZBR2qBmi2SsAqsNdYE0=;
+        b=OKHGrOTJpQosGt4ZOOm+XvOzpYF3BnT3S/Vp7ZYIlk4cJgTFd2YCIW32zrv5jNG1MZ
+         xIkVcyP3OMM8BrOYLTfNQHZOE0zlW08ZFb8bqc80droLFUpvBfEfAF2adGi5sxq7gV8R
+         SZBoUBKydjqMwjmW9RdJzHbYl0yBnc42s1oraPIBbHcdhSZP6oU7zFb0HQN/XmIPZTAb
+         y8JTXp37VEGxrUu5tFZBSbcuqK+gftSaXjwQefpOzgQkyWZR2D1D0Qe3elS1e3nDn17G
+         B9GdDh6Zp64SdfN7NYAEem1cpedieUpSA9tVbQxo2IhS58sUMJP4vSpA6pv2Khp165ZZ
+         GZrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722846021; x=1723450821;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+fi+vj00+JjvH+mj3sa9KgQtZBR2qBmi2SsAqsNdYE0=;
+        b=DYO2lWcL/9zOq2NMX9CrerE7jliTEQdi3P3QFIccQMwtDwCwgP7TEuhDf6A/qAbFN5
+         +dT4o2l0Vyt1A0CtDeCQ7p5aLBpgzUhZY0KxDd2btoP7zWOt/cqVuboMd5LiX6a+PekD
+         IYLPqg/qdRdDKkM56RFghz6KKr4AaBlgxOBgi1eHyS4Yg8MXc+XEeD5rKNbo/8QPhXOV
+         KMfP1IzORmDRJmSrJzdUipBI7BeD0UEdtSQBCGtCmkHKV2NC0dOXzJnIzH30OS2ZDLj/
+         COjUAazJOZ+kFE/Jx4qsrT4VJ3o2FJN5QqtxxluKbuZdrx7mEQq/6Y2MBwp6CAXXh5Iu
+         /Vbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBsubgueaT8OaSGYRek5ugz4MZMnuUVxaR0P9dlYLhGtYUlxQUbmLke+n/0hVcmX8N3CBKfgT1F9wBBRJjdfjeVPYdgWGfwxyn4PqN
+X-Gm-Message-State: AOJu0Yz66NLn3u1CbIRSKx3TLQbDUUO4iOmi9Pb7HRpfn2wONxAE1lVX
+	oRXyRA6OlcDp6Yvg+svHgFfNc4YCM7e+jxwAIsNxMB50eomrfLmq
+X-Google-Smtp-Source: AGHT+IEvzlGQG1DU5sAenS+ngpsQ68verMtVLUc4c+qzKZTmgYmforjQMlP9JolotZUa0h+Xjc0uvg==
+X-Received: by 2002:a92:c64d:0:b0:381:fa54:fb33 with SMTP id e9e14a558f8ab-39b1fc1e182mr129162445ab.17.1722846020730;
+        Mon, 05 Aug 2024 01:20:20 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b7653b4c74sm4978190a12.82.2024.08.05.01.20.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 01:20:20 -0700 (PDT)
+Message-ID: <a3cc7157-6ea0-4493-8baf-c988b9fa4dcb@gmail.com>
+Date: Mon, 5 Aug 2024 16:20:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,109 +75,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nfc: nci: Fix uninit-value in nci_rx_work()
-To: Simon Horman <horms@kernel.org>, zhanghao <zhanghao1@kylinos.cn>
-Cc: bongsu.jeon@samsung.com,
- syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20240803121817.383567-1-zhanghao1@kylinos.cn>
- <20240804105716.GA2581863@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 06/22] mm/zsmalloc: convert create_page_chain() and its
+ users to use zpdesc
+To: Vishal Moola <vishal.moola@gmail.com>, alexs@kernel.org
+Cc: Vitaly Wool <vitaly.wool@konsulko.com>, Miaohe Lin
+ <linmiaohe@huawei.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org,
+ willy@infradead.org, senozhatsky@chromium.org, david@redhat.com,
+ 42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+References: <20240729112534.3416707-1-alexs@kernel.org>
+ <20240729112534.3416707-7-alexs@kernel.org>
+ <66ad2ef0.170a0220.8fae7.6e38@mx.google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240804105716.GA2581863@kernel.org>
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <66ad2ef0.170a0220.8fae7.6e38@mx.google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/08/2024 12:57, Simon Horman wrote:
-> On Sat, Aug 03, 2024 at 08:18:17PM +0800, zhanghao wrote:
->> Commit e624e6c3e777 ("nfc: Add a virtual nci device driver")
->> calls alloc_skb() with GFP_KERNEL as the argument flags.The
->> allocated heap memory was not initialized.This causes KMSAN
->> to detect an uninitialized value.
+
+
+On 8/3/24 3:09 AM, Vishal Moola wrote:
+> On Mon, Jul 29, 2024 at 07:25:18PM +0800, alexs@kernel.org wrote:
+>> From: Alex Shi <alexs@kernel.org>
 >>
->> Reported-by: syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=3da70a0abd7f5765b6ea
+>> Introduce a few helper functions for conversion to convert create_page_chain()
+>> to use zpdesc, then use zpdesc in replace_sub_page() too.
 > 
-> Hi,
+> As a general note, I've been having trouble keeping track of your helper
+> functions throughout your patchset. Things get confusing when helper
+> functions are "add-ons" to patches and are then replaced/rewritten
+> in various subsequent patches - might just be me though.
+
+Right, maybe too much helper doesn't give necessary help.
+
 > 
-> I wonder if the problem reported above is caused by accessing packet
-> data which is past the end of what is copied in virtual_ncidev_write().
-> I.e. count is unusually short and this is not being detected.
-> 
->> Fixes: e624e6c3e777 ("nfc: Add a virtual nci device driver")
->> Link: https://lore.kernel.org/all/000000000000747dd6061a974686@google.com/T/
->> Signed-off-by: zhanghao <zhanghao1@kylinos.cn>
+>> Originally-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+>> Signed-off-by: Alex Shi <alexs@kernel.org>
 >> ---
->>  drivers/nfc/virtual_ncidev.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>  mm/zpdesc.h   |   6 +++
+>>  mm/zsmalloc.c | 115 +++++++++++++++++++++++++++++++++-----------------
+>>  2 files changed, 82 insertions(+), 39 deletions(-)
 >>
->> diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
->> index 6b89d596ba9a..ae1592db131e 100644
->> --- a/drivers/nfc/virtual_ncidev.c
->> +++ b/drivers/nfc/virtual_ncidev.c
->> @@ -117,7 +117,7 @@ static ssize_t virtual_ncidev_write(struct file *file,
->>  	struct virtual_nci_dev *vdev = file->private_data;
->>  	struct sk_buff *skb;
+>> diff --git a/mm/zpdesc.h b/mm/zpdesc.h
+>> index 79ec40b03956..2293453f5d57 100644
+>> --- a/mm/zpdesc.h
+>> +++ b/mm/zpdesc.h
+>> @@ -102,4 +102,10 @@ static inline struct zpdesc *pfn_zpdesc(unsigned long pfn)
+>>  {
+>>  	return page_zpdesc(pfn_to_page(pfn));
+>>  }
+>> +
+>> +static inline void __zpdesc_set_movable(struct zpdesc *zpdesc,
+>> +					const struct movable_operations *mops)
+>> +{
+>> +	__SetPageMovable(zpdesc_page(zpdesc), mops);
+>> +}
+>>  #endif
+>> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+>> index bbc165cb587d..a8f390beeab8 100644
+>> --- a/mm/zsmalloc.c
+>> +++ b/mm/zsmalloc.c
+>> @@ -248,6 +248,41 @@ static inline void *zpdesc_kmap_atomic(struct zpdesc *zpdesc)
+>>  	return kmap_atomic(zpdesc_page(zpdesc));
+>>  }
 >>  
->> -	skb = alloc_skb(count, GFP_KERNEL);
->> +	skb = alloc_skb(count, GFP_KERNEL|__GFP_ZERO);
->>  	if (!skb)
->>  		return -ENOMEM;
+>> +static inline void zpdesc_set_zspage(struct zpdesc *zpdesc,
+>> +				     struct zspage *zspage)
+>> +{
+>> +	zpdesc->zspage = zspage;
+>> +}
+>> +
+>> +static inline void zpdesc_set_first(struct zpdesc *zpdesc)
+>> +{
+>> +	SetPagePrivate(zpdesc_page(zpdesc));
+>> +}
+>> +
 > 
-> I'm not sure this helps wrt initialising the memory as immediately below there
-> is;
+> I'm not a fan of the names above. IMO, naming should follow some
+> semblance of consistency regarding their purpose (or have comments
+> that describe their purpose instead).
 > 
-> 	if (copy_from_user(skb_put(skb, count), buf, count)) {
-> 		...
+> At a glance zpdesc_set_zspage() and zpdesc_set_first() sound like they
+> are doing similar things, but I don't think they serve similar purposes?
+
+zpdesc_set_zspage() only used in one place, a helper maynot needed. Let me remove it.
+Same thing for the alloc_zpdesc() and free_zpdesc(), they could be merge into using place.
+
+Thanks
+Alex
 > 
-> Which I assume will initialise count bytes of skb data.
-
-Yeah, this looks like hiding the real issue.
-
-Best regards,
-Krzysztof
-
+>> +static inline void zpdesc_inc_zone_page_state(struct zpdesc *zpdesc)
+>> +{
+>> +	inc_zone_page_state(zpdesc_page(zpdesc), NR_ZSPAGES);
+>> +}
+>> +
+>> +static inline void zpdesc_dec_zone_page_state(struct zpdesc *zpdesc)
+>> +{
+>> +	dec_zone_page_state(zpdesc_page(zpdesc), NR_ZSPAGES);
+>> +}
+>> +
+>> +static inline struct zpdesc *alloc_zpdesc(gfp_t gfp)
+>> +{
+>> +	struct page *page = alloc_page(gfp);
+>> +
+>> +	return page_zpdesc(page);
+>> +}
+>> +
+>> +static inline void free_zpdesc(struct zpdesc *zpdesc)
+>> +{
+>> +	struct page *page = zpdesc_page(zpdesc);
+>> +
+>> +	__free_page(page);
+>> +}
+>> +
+>  
 
