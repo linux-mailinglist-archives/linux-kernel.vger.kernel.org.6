@@ -1,137 +1,560 @@
-Return-Path: <linux-kernel+bounces-274822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940D2947D3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:52:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23462947D42
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84B881C21C6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A464D1F2205C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A443D158DCC;
-	Mon,  5 Aug 2024 14:52:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1105713C67E;
+	Mon,  5 Aug 2024 14:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DpaZorHH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TwhlmkhZ"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2075.outbound.protection.outlook.com [40.107.212.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F05A13B2A9
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722869533; cv=none; b=ibA/38ou7VfsTRm7m4gMA0QeTsNtutio3Ce5ZIxGJXqaUjN09Kjtb1jcdP4rvjNsinRh4o6mqgn4XhEJ8GuIxh19wxxV0zNpaTp2emQ5LjEUTEWoMU8ssU07B+fbhS8QEPQ/K6EM3rtah0obzVuzb4cwlLik25niGZqlHnCIGf0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722869533; c=relaxed/simple;
-	bh=4OYN+uwqmllS1ifCVYqfqrP0wsuDr0tVy3A/D+B1b7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7OeCRyNZpkPqujZDCCRmi7ch8rMLDFDiatnzdtAcj4MTAsYBwUx6+7nGMuUNd+OvuK84jPq4h3SEbos2qCqHLMJZ8NB7/hQtVNagEHurJK1zIQNdxGB9CwQz+SZUMFvFhGiEkW92DdacCfHivZcLuiAimQMWShpFHL8N+mTBvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DpaZorHH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722869529;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OHZfGYL5T6FMYKUtqsFLa7gkK/CdeKX+rspJ2D4JRhI=;
-	b=DpaZorHH99CG4YX8tuW2ndK+ctx03hopRUiOTxf97hoMaHkwArPjCsdYKtru7Uk2pdEhk0
-	gyG9eAlfVFwCA6Ys0ChDa2AhSk80aPwMJnolb3/IVVlsTfhKrR1cZf42F6x/cue3d93Qn1
-	l5I/g8399jaN5X/mTDind5kQYpENXqI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-177-2dl5GU_qO0elz3KG8l5Nsw-1; Mon,
- 05 Aug 2024 10:52:04 -0400
-X-MC-Unique: 2dl5GU_qO0elz3KG8l5Nsw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A28211955D4A;
-	Mon,  5 Aug 2024 14:52:02 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.34])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1872D1955D42;
-	Mon,  5 Aug 2024 14:51:58 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon,  5 Aug 2024 16:52:00 +0200 (CEST)
-Date: Mon, 5 Aug 2024 16:51:56 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org
-Subject: Re: [PATCH 3/8] uprobes: protected uprobe lifetime with SRCU
-Message-ID: <20240805145156.GB11049@redhat.com>
-References: <20240731214256.3588718-1-andrii@kernel.org>
- <20240731214256.3588718-4-andrii@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4152A27456;
+	Mon,  5 Aug 2024 14:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722869599; cv=fail; b=No2VaFAB/uMNtfkbZSj740tSSmGWVM3z1JNe5BPJL7HdmulZERDkBuF10jICMMEfF8O4iUaIM0jQPUKZb6bxFbIh6Kb+0Z8GSdoYilUB+qTPmC2y2sj2FFqhE7wg1TTG/Mw3iyLpgJiJl2PjfFZ/frO5qfkMctdLgXPBGRbM5HQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722869599; c=relaxed/simple;
+	bh=ukRjQCHfk3fhtk2Liz1cjXo6yGsT4iUSpE7sHCnEAfE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KQKI5wRp8Tm45jCWDHgXSId48OZ0eainRju5CCIEF2xx7x4pTfQnhxHiO90dJ8Da5yTsAe2rnDPLKp6CMKPhZSkpWCgGjV8y/X9fjqh/b+fGy/VlZA8r+kTUZQpVJhlDn6CD7/LzSi9Ucp8D9Sahk3zR8AxBZYK0slVDAUOuM3I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TwhlmkhZ; arc=fail smtp.client-ip=40.107.212.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LWUzX5bOib1HLH85KdEU6VzrhTk0Vd1n2nB4iBegOhfV4olk7P/fKBj7PEDZQjhx5cCCFVGbjfcDVXWby1+WPwUEFQLPDLbl5DkzXWKUvMCeys2QgMhA0mpXthWTzG+B0r6QRGCyPchG4x8r6rL205j6FG6VXE/I0wuuSL/NIG6UM93MtDaBEsBmwIV8IYAmsPbcLDFdAZ8LXw4EP7JPobeJpjw3hG5uaR60t/OMkfORDMNpD35z+phJTwkYDTuXz8I399zKdil1rg/FklPbslR3C1M+pCzkaUNprvxTBQ+gsqGzUhBUbnvvE5CjXkpwc1Vmgcmu5MCrj+0qXoE+kg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7k84rXDxULlXTFRNgiGQheUUSbMplieTIhKSaJm1csw=;
+ b=knJR4uaexmSYbIx7BGudLkM4HbFRNI/0VZPjlTtDR4t/g2UA+TYuPh6KpisfV4jUQnyuu3OHCC/VplTPP6pDJVbftaksHSCnuUGn51vs+pLZ4wRm3o6qe+vhp4Q/NEKxjY1hLr0mTI41ef9qXWH+SLhJm6HJ/hK1Nz9GBnr6qvUU8AcsKreKr5GG5R2j4ziXZRucBgZ32+XFgi/SnuoTREnFd1xbnozkLD2NLboLl4y6RyL2fIQl98Qbw+ifVfpS1CDUVzIszm/pDboDajDvOTXOojuxaGpZCYn/FGPySH9rHR6ILya7QCl7/7yObMuw7KHOfmx2q64So8dSHevNvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7k84rXDxULlXTFRNgiGQheUUSbMplieTIhKSaJm1csw=;
+ b=TwhlmkhZ19/4PY8KtSySnKYaLa74BMS7euA5FE9Scc93powOAlCK5+j5dpPUgqDDAR+MDpRnXy1bYep7Ja/P+Pjkew9veQ6qk1NCVLGUunymnFwCauV33XPkRxS3CDXwWg/FDm4vjF8WEK6RHQgsefdfqairmXqv7JJazk4ZXXE=
+Received: from BL1PR12MB5144.namprd12.prod.outlook.com (2603:10b6:208:316::6)
+ by MW3PR12MB4425.namprd12.prod.outlook.com (2603:10b6:303:5e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.24; Mon, 5 Aug
+ 2024 14:53:12 +0000
+Received: from BL1PR12MB5144.namprd12.prod.outlook.com
+ ([fe80::491a:cce3:e531:3c42]) by BL1PR12MB5144.namprd12.prod.outlook.com
+ ([fe80::491a:cce3:e531:3c42%4]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
+ 14:53:12 +0000
+From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
+To: Kevin Holm <kevin@holm.dev>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+CC: "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
+	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, ML dri-devel
+	<dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, "Lin,
+ Wayne" <Wayne.Lin@amd.com>, "Zuo, Jerry" <Jerry.Zuo@amd.com>, "Mohamed,
+ Zaeem" <Zaeem.Mohamed@amd.com>, "Wheeler, Daniel" <Daniel.Wheeler@amd.com>
+Subject: RE: [PATCH 6.10] drm/amd/display: Refactor function
+ dm_dp_mst_is_port_support_mode()
+Thread-Topic: [PATCH 6.10] drm/amd/display: Refactor function
+ dm_dp_mst_is_port_support_mode()
+Thread-Index: AQHa4rHW43j5fShMmkG6pSIm6JTBz7IYyLkw
+Date: Mon, 5 Aug 2024 14:53:12 +0000
+Message-ID:
+ <BL1PR12MB5144C6C4CA6661626CA81ADCF7BE2@BL1PR12MB5144.namprd12.prod.outlook.com>
+References: <20240730185339.543359-1-kevin@holm.dev>
+In-Reply-To: <20240730185339.543359-1-kevin@holm.dev>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ActionId=2975144f-c0b1-47f9-afcb-dc959d91d1fe;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=0;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=true;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
+ Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2024-08-05T14:52:32Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR12MB5144:EE_|MW3PR12MB4425:EE_
+x-ms-office365-filtering-correlation-id: 4bcb3db2-844e-4285-8dc4-08dcb55e541c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?kw1+AXRwtV9Fh80pqFr/TTMlx4DRPYg8iDaxC9g8Zk/EAdc21JVCotfnjKtI?=
+ =?us-ascii?Q?qaade2N+nbqVsVahj1IJecUJr8PUfYwnTNtbPXFb9r7xV1CjLw9ubTYPTDsb?=
+ =?us-ascii?Q?Pul/oUOk97CKHgqXWrpHsaZlI8F6Z/FyosoviVbOEgqOdaYTx7yQyluFmeyf?=
+ =?us-ascii?Q?XAfQSQZ/v2oDIjq1C6F5yVoaf6r16o+F4Iytrq7jVwYsAoWHDS37aDhFIKl7?=
+ =?us-ascii?Q?u7H0viuWQvWKUlb1sRdYL5V21zm0Z8sC1AeWWJPruPUr6ofSo8gE+Q/9JCfX?=
+ =?us-ascii?Q?5ONdqzfd5/sdONh2SUJ5Kg+6PZw8+CLdAHE1M1RtvObpI/3CmTANR6S75RWA?=
+ =?us-ascii?Q?FD6bf8hwExVaK89+Xv2Ce5X74xYZCgTIpYMJwqtn8MxSjTvwvN22dqcOFQu3?=
+ =?us-ascii?Q?nCuRf6YxHCn6hEs70Sf22BTc8f1XTsf79pbnjOpuq8GtYeuUKgzawwwnrGeI?=
+ =?us-ascii?Q?4lHsJR/CBKu6HqvcLRjlTfS4LPglm9VelhwqlUZrWnmyNc2XTZxtQyC5FLMl?=
+ =?us-ascii?Q?wU3hKElUs0fs7W6YirGrxrh7T9RqSXFgxlbdgLPds3mdixE7rKK3MFpv2BcS?=
+ =?us-ascii?Q?9Dwhhbj4Ms0I3K7Ipr2Ctb7pSXOLxsmzK9zPXqKCP3SRYUfLKNILhIwk+/vf?=
+ =?us-ascii?Q?XQw5/SfgNRYuSSwY0ZdUKNeqnCE2qS8hUTU6ZKwqGPCjMuJ/AqQG9Q5AkoKL?=
+ =?us-ascii?Q?oCn/LKrBChkAUhDWiiRqxUeS7czPe0+o8Kqdx542eb5v7wfFVK18WXPuGk1v?=
+ =?us-ascii?Q?Fjw/7KxHS5FNdgVzFVFiw8LFYDBR/zFA9oErHIuEz+E9GwtTvymqw6Zw4seM?=
+ =?us-ascii?Q?xgEN82QT1o3i6j/nulEiYOyr7mbbnfI8d73FhwhW+r34i2EglPQzoCJelyJt?=
+ =?us-ascii?Q?OqZF6lMLOWOQP+j7S/1kwKP+Tzi48t309H+04wSLMMeFDioyoi7BShQFw+cN?=
+ =?us-ascii?Q?dhsgOLJBp/wIRqhOXWzxH5hvgJe24VWsB1Wa1Fe0W1Uo/yfLHsyFXBpFbt1/?=
+ =?us-ascii?Q?q9JRk9cvm+XLpN44Ofzrt42bbLOUFYRyvGthgYXeMBs+0utwLm1gv2hLo2Hv?=
+ =?us-ascii?Q?rwldginDmjjHDSwyVcdQGyng+gl/DxWiINVy2s9TeOfLB5kb3OIEVEDQ6qOg?=
+ =?us-ascii?Q?HnuTh64Foh2qVAWIrI2VNueiQYbnb7hWBkpUU0tFjbGA/Hz6hCfi5MOe3/vV?=
+ =?us-ascii?Q?GN42VwpBLPTsjXomZalk0/HpXYmtH4i9hBWrIya8xLtvK2nUKMnHeMZS3RNW?=
+ =?us-ascii?Q?YRbm4PXYu/I/Rm+lyZbrsEMALaT5iMlMbexbINims+lFwA9PP+zWPozCXpbP?=
+ =?us-ascii?Q?X/GjTU0zJiq+t2DgKuks8plnnW0+qvJy3KiK8l9rUagd/Q=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5144.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?SjUyYoTnWAVBks7JKQ0jTccRq6zKkTM9HTiSQhpNhsoMGi5HCcKLUn+aMtIA?=
+ =?us-ascii?Q?qELhypGhKV3bE5Ch1LNilQi17OAUMs94Kmn9DwshHqgFKSO6Th3yfTkZxDLP?=
+ =?us-ascii?Q?giPkjVRA2XzeovTx66DnUwkLGiOkDe93DoxGM4Err4Og8DXzTHN6hTN8oZEY?=
+ =?us-ascii?Q?oTCawyloJvINF6cD7reSiwqFd6u6skctlgJKxHRjCxa7yx1NlenZ3IeHjiRC?=
+ =?us-ascii?Q?lbR4jbQAhC98kVTy/etlNK2MzXBiPvK4i+r5CZYLxeiWDwB4+N3sXo9G1dxf?=
+ =?us-ascii?Q?HStfwUkajat74FOtyKc9UeV05a37qLKUsHIgagEPRtrGIc1YZDLfDvpNsFjY?=
+ =?us-ascii?Q?48T92/lQUa+YIteUOtGU5ZCJQuPGttqufUK79klXGI3OK2nrwNJuVAMW0GW5?=
+ =?us-ascii?Q?qCWpNrNWl7jhJjvotgVoGmaJPXNjxPzi94G4Z3mgpAhl7m60JAdbTNVwj4Sb?=
+ =?us-ascii?Q?ELbEI+viGW+dNkRpDGu4pE/ko7Kei6q84x2KDyrolhLPjgsNInYTmJqBePee?=
+ =?us-ascii?Q?4+fnddUJXMefGAMmk70q5EwinZaQEKBBX7PxpzHsy9NjrCavQaPnDXJquM8g?=
+ =?us-ascii?Q?0hGra+e6TGBCogIPSjDJulu96dv5Y6NhBZOw3LK/WpKcqCv2Gs6YPxjMwuWU?=
+ =?us-ascii?Q?ePFmLNjrE2xDOwRGptgcgzQ7+kxwGaYet9PzfXh16//Yyw7UyQcPP1Nbo5vr?=
+ =?us-ascii?Q?aPMCKq1sJW8BYll9pv7QSdLRNyARkcR8JM8DYZieNBzTYtlqX7uoBsB8M0Pf?=
+ =?us-ascii?Q?5lsHI44nmQ2/NGSRJNfiOkF8faIevck0mshVSoQkM/WYzyF/WCU2362dRbx9?=
+ =?us-ascii?Q?x/KS74z/PuVtVs1f5EFW0OWlFGbhl2Wuo5XTZbuEZdO5Rm/MrtOxARaMRPM1?=
+ =?us-ascii?Q?Slza+lzxktjKZCh4RrHgOeo7xwOTHoK6cB3I1RVclc6dALO9lyOVlvuU2iAt?=
+ =?us-ascii?Q?mqijBAINtXW+jk4tCJYvpHw0MCji+kGn3DXlqpoRZ7ytkXlApv37f04aMCuS?=
+ =?us-ascii?Q?dhUlY6cxvNqeMbJVvIXQ9ozwH0r0xN4XYAJaodTmRupvjuXsFX3Vt4evyZ86?=
+ =?us-ascii?Q?IWu6kpKt6TbX33/Hyb37ydLCxKl4Ag5/og18nOsO8nDg0XbjbsMXlMwD134z?=
+ =?us-ascii?Q?CAfWwWdAvaXi/xFfiUubfw6J8sEFoXK0RKTLM3WHbRQVk6vyBQEhrWX8oZUv?=
+ =?us-ascii?Q?RhHbYo11QWo5/E6nn7OlPKiSeA4nAJpS5gEtMh2E7lT7DMjdx3ltfSQTw+wV?=
+ =?us-ascii?Q?HhKl0uggzNeLR7CMGyFV5kYbS5q7q3ue5qY1974FHGHpvnGEACRLsi0Qqwsi?=
+ =?us-ascii?Q?/RS688ktYNOCPHx6Gw2xPG/4JMt3XYIeZSiv1tEPZUde2XlIpwVS04Q9yFdI?=
+ =?us-ascii?Q?CyKQOFR8VU4EVUt+ncJv25y4weVrxN4ko2wvKetQcvz0oI35dUDStAyP0k84?=
+ =?us-ascii?Q?IjOH238HUho9XVRYEP01d3KY4bpc1UY+f/xeBq6fn2P+G3gRZCPeanpG9FtU?=
+ =?us-ascii?Q?cdi6a5pDF1G4EReBiEcqGi+NwTy0rVLpocmKOJZ747rLA/qk0JsZSexMBOHU?=
+ =?us-ascii?Q?vRRflLDYwBjHAmearWU=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731214256.3588718-4-andrii@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5144.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bcb3db2-844e-4285-8dc4-08dcb55e541c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2024 14:53:12.1969
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: m9LdonpT3IglWaqj0N5INZy37eoq91MK5wJ6xW9Q72nEkInG5ZXsmZeUJCY6IOBX7M7gxZaMX0/NrJxD8aKtWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4425
 
-LGTM, just a few notes...
+[Public]
 
-On 07/31, Andrii Nakryiko wrote:
+> -----Original Message-----
+> From: Kevin Holm <kevin@holm.dev>
+> Sent: Tuesday, July 30, 2024 2:54 PM
+> To: stable@vger.kernel.org
+> Cc: regressions@lists.linux.dev; amd-gfx@lists.freedesktop.org; ML dri-de=
+vel
+> <dri-devel@lists.freedesktop.org>; LKML <linux-kernel@vger.kernel.org>; L=
+in,
+> Wayne <Wayne.Lin@amd.com>; Zuo, Jerry <Jerry.Zuo@amd.com>;
+> Mohamed, Zaeem <Zaeem.Mohamed@amd.com>; Wheeler, Daniel
+> <Daniel.Wheeler@amd.com>; Deucher, Alexander
+> <Alexander.Deucher@amd.com>; Kevin Holm <kevin@holm.dev>
+> Subject: [PATCH 6.10] drm/amd/display: Refactor function
+> dm_dp_mst_is_port_support_mode()
 >
-> @@ -59,6 +61,7 @@ struct uprobe {
->  	struct list_head	pending_list;
->  	struct uprobe_consumer	*consumers;
->  	struct inode		*inode;		/* Also hold a ref to inode */
-> +	struct rcu_head		rcu;
-
-you can probably put the new member into the union with, say, rb_node.
-
-> @@ -1945,9 +1950,14 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
->  	if (!utask)
->  		return -ENOMEM;
+> From: Wayne Lin <wayne.lin@amd.com>
 >
-> +	if (!try_get_uprobe(uprobe))
-> +		return -EINVAL;
+> [ Upstream commit fa57924c76d995e87ca3533ec60d1d5e55769a27 ]
+>
+> [Why]
+> dm_dp_mst_is_port_support_mode() is a bit not following the original desi=
+gn
+> rule and cause light up issue with multiple 4k monitors after mst dsc hub=
+.
+>
+> [How]
+> Refactor function dm_dp_mst_is_port_support_mode() a bit to solve the lig=
+ht
+> up issue.
+>
+> Reviewed-by: Jerry Zuo <jerry.zuo@amd.com>
+> Acked-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
+> Signed-off-by: Wayne Lin <wayne.lin@amd.com>
+> Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+> Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+> [kevin@holm.dev: Resolved merge conflict in .../amdgpu_dm_mst_types.c]
+> Fixes: 4df96ba6676034 ("drm/amd/display: Add timing pixel encoding for
+> mst mode validation")
+> Link:
+> https://lore.kernel.org/stable/d74a7768e957e6ce88c27a5bece0c64dff132e
+> 24@holm.dev/T/#u
+> Signed-off-by: Kevin Holm <kevin@holm.dev>
+
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+
+> ---
+> I resolved the merge conflict so that, after this patch is applied to the=
+ linux-
+> 6.10.y branch of the stable git repository, the resulting function
+> dm_dp_mst_is_port_support_mode (and also the new function
+> dp_get_link_current_set_bw) is identical to the original commit.
+>
+> I've confirmed that it fixes the regression I reported for my use case.
+> ---
+>  .../display/amdgpu_dm/amdgpu_dm_mst_types.c   | 232 +++++++++++-----
+> --
+>  1 file changed, 147 insertions(+), 85 deletions(-)
+>
+> diff --git
+> a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> index a5e1a93ddaea..e90f9d697511 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> @@ -1595,109 +1595,171 @@ static bool
+> is_dsc_common_config_possible(struct dc_stream_state *stream,
+>       return bw_range->max_target_bpp_x16 && bw_range-
+> >min_target_bpp_x16;  }
+>
+> +#if defined(CONFIG_DRM_AMD_DC_FP)
+> +static bool dp_get_link_current_set_bw(struct drm_dp_aux *aux, uint32_t
+> +*cur_link_bw) {
+> +     uint32_t total_data_bw_efficiency_x10000 =3D 0;
+> +     uint32_t link_rate_per_lane_kbps =3D 0;
+> +     enum dc_link_rate link_rate;
+> +     union lane_count_set lane_count;
+> +     u8 dp_link_encoding;
+> +     u8 link_bw_set =3D 0;
 > +
-
-a bit off-topic right now, but it seems that we can simply kill
-utask->active_uprobe. We can turn into into "bool has_active_uprobe"
-and copy uprobe->arch into uprobe_task. Lets discuss this later.
-
-> @@ -2201,13 +2215,15 @@ static void handle_swbp(struct pt_regs *regs)
+> +     *cur_link_bw =3D 0;
+> +
+> +     if (drm_dp_dpcd_read(aux, DP_MAIN_LINK_CHANNEL_CODING_SET,
+> &dp_link_encoding, 1) !=3D 1 ||
+> +             drm_dp_dpcd_read(aux, DP_LANE_COUNT_SET,
+> &lane_count.raw, 1) !=3D 1 ||
+> +             drm_dp_dpcd_read(aux, DP_LINK_BW_SET, &link_bw_set, 1)
+> !=3D 1)
+> +             return false;
+> +
+> +     switch (dp_link_encoding) {
+> +     case DP_8b_10b_ENCODING:
+> +             link_rate =3D link_bw_set;
+> +             link_rate_per_lane_kbps =3D link_rate *
+> LINK_RATE_REF_FREQ_IN_KHZ * BITS_PER_DP_BYTE;
+> +             total_data_bw_efficiency_x10000 =3D
+> DATA_EFFICIENCY_8b_10b_x10000;
+> +             total_data_bw_efficiency_x10000 /=3D 100;
+> +             total_data_bw_efficiency_x10000 *=3D
+> DATA_EFFICIENCY_8b_10b_FEC_EFFICIENCY_x100;
+> +             break;
+> +     case DP_128b_132b_ENCODING:
+> +             switch (link_bw_set) {
+> +             case DP_LINK_BW_10:
+> +                     link_rate =3D LINK_RATE_UHBR10;
+> +                     break;
+> +             case DP_LINK_BW_13_5:
+> +                     link_rate =3D LINK_RATE_UHBR13_5;
+> +                     break;
+> +             case DP_LINK_BW_20:
+> +                     link_rate =3D LINK_RATE_UHBR20;
+> +                     break;
+> +             default:
+> +                     return false;
+> +             }
+> +
+> +             link_rate_per_lane_kbps =3D link_rate * 10000;
+> +             total_data_bw_efficiency_x10000 =3D
+> DATA_EFFICIENCY_128b_132b_x10000;
+> +             break;
+> +     default:
+> +             return false;
+> +     }
+> +
+> +     *cur_link_bw =3D link_rate_per_lane_kbps *
+> lane_count.bits.LANE_COUNT_SET / 10000 *
+> total_data_bw_efficiency_x10000;
+> +     return true;
+> +}
+> +#endif
+> +
+>  enum dc_status dm_dp_mst_is_port_support_mode(
+>       struct amdgpu_dm_connector *aconnector,
+>       struct dc_stream_state *stream)
 >  {
->  	struct uprobe *uprobe;
->  	unsigned long bp_vaddr;
-> -	int is_swbp;
-> +	int is_swbp, srcu_idx;
+> -     int pbn, branch_max_throughput_mps =3D 0;
+> +#if defined(CONFIG_DRM_AMD_DC_FP)
+> +     int branch_max_throughput_mps =3D 0;
+>       struct dc_link_settings cur_link_settings;
+> -     unsigned int end_to_end_bw_in_kbps =3D 0;
+> -     unsigned int upper_link_bw_in_kbps =3D 0, down_link_bw_in_kbps =3D =
+0;
+> +     uint32_t end_to_end_bw_in_kbps =3D 0;
+> +     uint32_t root_link_bw_in_kbps =3D 0;
+> +     uint32_t virtual_channel_bw_in_kbps =3D 0;
+>       struct dc_dsc_bw_range bw_range =3D {0};
+>       struct dc_dsc_config_options dsc_options =3D {0};
+> +     uint32_t stream_kbps;
 >
->  	bp_vaddr = uprobe_get_swbp_addr(regs);
->  	if (bp_vaddr == uprobe_get_trampoline_vaddr())
->  		return uprobe_handle_trampoline(regs);
->
-> -	uprobe = find_active_uprobe(bp_vaddr, &is_swbp);
-> +	srcu_idx = srcu_read_lock(&uprobes_srcu);
+> -     /*
+> -      * Consider the case with the depth of the mst topology tree is equ=
+al
+> or less than 2
+> -      * A. When dsc bitstream can be transmitted along the entire path
+> -      *    1. dsc is possible between source and branch/leaf device (com=
+mon
+> dsc params is possible), AND
+> -      *    2. dsc passthrough supported at MST branch, or
+> -      *    3. dsc decoding supported at leaf MST device
+> -      *    Use maximum dsc compression as bw constraint
+> -      * B. When dsc bitstream cannot be transmitted along the entire pat=
+h
+> -      *    Use native bw as bw constraint
+> +     /* DSC unnecessary case
+> +      * Check if timing could be supported within end-to-end BW
+>        */
+> -     if (is_dsc_common_config_possible(stream, &bw_range) &&
+> -        (aconnector->mst_output_port->passthrough_aux ||
+> -         aconnector->dsc_aux =3D=3D &aconnector->mst_output_port->aux)) =
+{
+> -             cur_link_settings =3D stream->link->verified_link_cap;
+> -             upper_link_bw_in_kbps =3D
+> dc_link_bandwidth_kbps(aconnector->dc_link, &cur_link_settings);
+> -             down_link_bw_in_kbps =3D kbps_from_pbn(aconnector-
+> >mst_output_port->full_pbn);
+> -
+> -             /* pick the end to end bw bottleneck */
+> -             end_to_end_bw_in_kbps =3D min(upper_link_bw_in_kbps,
+> down_link_bw_in_kbps);
+> -
+> -             if (end_to_end_bw_in_kbps < bw_range.min_kbps) {
+> -                     DRM_DEBUG_DRIVER("maximum dsc compression
+> cannot fit into end-to-end bandwidth\n");
+> +     stream_kbps =3D
+> +             dc_bandwidth_in_kbps_from_timing(&stream->timing,
+> +                     dc_link_get_highest_encoding_format(stream->link));
+> +     cur_link_settings =3D stream->link->verified_link_cap;
+> +     root_link_bw_in_kbps =3D dc_link_bandwidth_kbps(aconnector-
+> >dc_link, &cur_link_settings);
+> +     virtual_channel_bw_in_kbps =3D
+> +kbps_from_pbn(aconnector->mst_output_port->full_pbn);
 > +
-> +	uprobe = find_active_uprobe_rcu(bp_vaddr, &is_swbp);
->  	if (!uprobe) {
->  		if (is_swbp > 0) {
->  			/* No matching uprobe; signal SIGTRAP. */
-> @@ -2223,6 +2239,7 @@ static void handle_swbp(struct pt_regs *regs)
->  			 */
->  			instruction_pointer_set(regs, bp_vaddr);
->  		}
-> +		srcu_read_unlock(&uprobes_srcu, srcu_idx);
->  		return;
-
-Why not
-		goto out;
-
-?
-
-Oleg.
+> +     /* pick the end to end bw bottleneck */
+> +     end_to_end_bw_in_kbps =3D min(root_link_bw_in_kbps,
+> +virtual_channel_bw_in_kbps);
+> +
+> +     if (stream_kbps <=3D end_to_end_bw_in_kbps) {
+> +             DRM_DEBUG_DRIVER("No DSC needed. End-to-end bw
+> sufficient.");
+> +             return DC_OK;
+> +     }
+> +
+> +     /*DSC necessary case*/
+> +     if (!aconnector->dsc_aux)
+> +             return DC_FAIL_BANDWIDTH_VALIDATE;
+> +
+> +     if (is_dsc_common_config_possible(stream, &bw_range)) {
+> +
+> +             /*capable of dsc passthough. dsc bitstream along the entire
+> path*/
+> +             if (aconnector->mst_output_port->passthrough_aux) {
+> +                     if (bw_range.min_kbps > end_to_end_bw_in_kbps) {
+> +                             DRM_DEBUG_DRIVER("DSC passthrough.
+> Max dsc compression can't fit
+> +into end-to-end bw\n");
+>                       return DC_FAIL_BANDWIDTH_VALIDATE;
+> -             }
+> +                     }
+> +             } else {
+> +                     /*dsc bitstream decoded at the dp last link*/
+> +                     struct drm_dp_mst_port *immediate_upstream_port
+> =3D NULL;
+> +                     uint32_t end_link_bw =3D 0;
+> +
+> +                     /*Get last DP link BW capability*/
+> +                     if (dp_get_link_current_set_bw(&aconnector-
+> >mst_output_port->aux, &end_link_bw)) {
+> +                             if (stream_kbps > end_link_bw) {
+> +                                     DRM_DEBUG_DRIVER("DSC decode at
+> last link. Mode required bw can't fit into available bw\n");
+> +                                     return
+> DC_FAIL_BANDWIDTH_VALIDATE;
+> +                             }
+> +                     }
+>
+> -             if (end_to_end_bw_in_kbps < bw_range.stream_kbps) {
+> -                     dc_dsc_get_default_config_option(stream->link->dc,
+> &dsc_options);
+> -                     dsc_options.max_target_bpp_limit_override_x16 =3D
+> aconnector->base.display_info.max_dsc_bpp * 16;
+> -                     if (dc_dsc_compute_config(stream->sink->ctx->dc-
+> >res_pool->dscs[0],
+> -                                     &stream->sink-
+> >dsc_caps.dsc_dec_caps,
+> -                                     &dsc_options,
+> -                                     end_to_end_bw_in_kbps,
+> -                                     &stream->timing,
+> -
+>       dc_link_get_highest_encoding_format(stream->link),
+> -                                     &stream->timing.dsc_cfg)) {
+> -                             stream->timing.flags.DSC =3D 1;
+> -                             DRM_DEBUG_DRIVER("end-to-end
+> bandwidth require dsc and dsc config found\n");
+> -                     } else {
+> -                             DRM_DEBUG_DRIVER("end-to-end
+> bandwidth require dsc but dsc config not found\n");
+> -                             return DC_FAIL_BANDWIDTH_VALIDATE;
+> +                     /*Get virtual channel bandwidth between source and
+> the link before the last link*/
+> +                     if (aconnector->mst_output_port->parent-
+> >port_parent)
+> +                             immediate_upstream_port =3D
+> +aconnector->mst_output_port->parent->port_parent;
+> +
+> +                     if (immediate_upstream_port) {
+> +                             virtual_channel_bw_in_kbps =3D
+> kbps_from_pbn(immediate_upstream_port->full_pbn);
+> +                             virtual_channel_bw_in_kbps =3D
+> min(root_link_bw_in_kbps, virtual_channel_bw_in_kbps);
+> +                             if (bw_range.min_kbps >
+> virtual_channel_bw_in_kbps) {
+> +                                     DRM_DEBUG_DRIVER("DSC decode at
+> last link. Max dsc compression can't fit into MST available bw\n");
+> +                                     return
+> DC_FAIL_BANDWIDTH_VALIDATE;
+> +                             }
+>                       }
+>               }
+> -     } else {
+> -             /* Check if mode could be supported within max slot
+> -              * number of current mst link and full_pbn of mst links.
+> -              */
+> -             int pbn_div, slot_num, max_slot_num;
+> -             enum dc_link_encoding_format link_encoding;
+> -             uint32_t stream_kbps =3D
+> -                     dc_bandwidth_in_kbps_from_timing(&stream-
+> >timing,
+> -
+>       dc_link_get_highest_encoding_format(stream->link));
+> -
+> -             pbn =3D kbps_to_peak_pbn(stream_kbps);
+> -             pbn_div =3D dm_mst_get_pbn_divider(stream->link);
+> -             slot_num =3D DIV_ROUND_UP(pbn, pbn_div);
+> -
+> -             link_encoding =3D
+> dc_link_get_highest_encoding_format(stream->link);
+> -             if (link_encoding =3D=3D DC_LINK_ENCODING_DP_8b_10b)
+> -                     max_slot_num =3D 63;
+> -             else if (link_encoding =3D=3D
+> DC_LINK_ENCODING_DP_128b_132b)
+> -                     max_slot_num =3D 64;
+> -             else {
+> -                     DRM_DEBUG_DRIVER("Invalid link encoding
+> format\n");
+> -                     return DC_FAIL_BANDWIDTH_VALIDATE;
+> -             }
+>
+> -             if (slot_num > max_slot_num ||
+> -                     pbn > aconnector->mst_output_port->full_pbn) {
+> -                     DRM_DEBUG_DRIVER("Mode can not be supported
+> within mst links!");
+> +             /*Confirm if we can obtain dsc config*/
+> +             dc_dsc_get_default_config_option(stream->link->dc,
+> &dsc_options);
+> +             dsc_options.max_target_bpp_limit_override_x16 =3D
+> aconnector->base.display_info.max_dsc_bpp * 16;
+> +             if (dc_dsc_compute_config(stream->sink->ctx->dc->res_pool-
+> >dscs[0],
+> +                             &stream->sink->dsc_caps.dsc_dec_caps,
+> +                             &dsc_options,
+> +                             end_to_end_bw_in_kbps,
+> +                             &stream->timing,
+> +
+>       dc_link_get_highest_encoding_format(stream->link),
+> +                             &stream->timing.dsc_cfg)) {
+> +                     stream->timing.flags.DSC =3D 1;
+> +                     DRM_DEBUG_DRIVER("Require dsc and dsc config
+> found\n");
+> +             } else {
+> +                     DRM_DEBUG_DRIVER("Require dsc but can't find
+> appropriate dsc
+> +config\n");
+>                       return DC_FAIL_BANDWIDTH_VALIDATE;
+>               }
+> -     }
+>
+> -     /* check is mst dsc output bandwidth
+> branch_overall_throughput_0_mps */
+> -     switch (stream->timing.pixel_encoding) {
+> -     case PIXEL_ENCODING_RGB:
+> -     case PIXEL_ENCODING_YCBCR444:
+> -             branch_max_throughput_mps =3D
+> -                     aconnector->dc_sink-
+> >dsc_caps.dsc_dec_caps.branch_overall_throughput_0_mps;
+> -             break;
+> -     case PIXEL_ENCODING_YCBCR422:
+> -     case PIXEL_ENCODING_YCBCR420:
+> -             branch_max_throughput_mps =3D
+> -                     aconnector->dc_sink-
+> >dsc_caps.dsc_dec_caps.branch_overall_throughput_1_mps;
+> -             break;
+> -     default:
+> -             break;
+> -     }
+> +             /* check is mst dsc output bandwidth
+> branch_overall_throughput_0_mps */
+> +             switch (stream->timing.pixel_encoding) {
+> +             case PIXEL_ENCODING_RGB:
+> +             case PIXEL_ENCODING_YCBCR444:
+> +                     branch_max_throughput_mps =3D
+> +                             aconnector->dc_sink-
+> >dsc_caps.dsc_dec_caps.branch_overall_throughput_0_mps;
+> +                     break;
+> +             case PIXEL_ENCODING_YCBCR422:
+> +             case PIXEL_ENCODING_YCBCR420:
+> +                     branch_max_throughput_mps =3D
+> +                             aconnector->dc_sink-
+> >dsc_caps.dsc_dec_caps.branch_overall_throughput_1_mps;
+> +                     break;
+> +             default:
+> +                     break;
+> +             }
+>
+> -     if (branch_max_throughput_mps !=3D 0 &&
+> -             ((stream->timing.pix_clk_100hz / 10) >
+> branch_max_throughput_mps * 1000))
+> +             if (branch_max_throughput_mps !=3D 0 &&
+> +                     ((stream->timing.pix_clk_100hz / 10) >
+> branch_max_throughput_mps * 1000)) {
+> +                     DRM_DEBUG_DRIVER("DSC is required but max
+> throughput mps fails");
+>               return DC_FAIL_BANDWIDTH_VALIDATE;
+> -
+> +             }
+> +     } else {
+> +             DRM_DEBUG_DRIVER("DSC is required but can't find common
+> dsc config.");
+> +             return DC_FAIL_BANDWIDTH_VALIDATE;
+> +     }
+> +#endif
+>       return DC_OK;
+>  }
+> --
+> 2.45.2
 
 
