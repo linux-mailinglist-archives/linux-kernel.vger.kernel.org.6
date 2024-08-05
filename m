@@ -1,124 +1,88 @@
-Return-Path: <linux-kernel+bounces-274128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CDF9473BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:10:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2429473F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEA4DB20C55
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:10:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 862EAB20D8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F47813D53B;
-	Mon,  5 Aug 2024 03:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E9113D882;
+	Mon,  5 Aug 2024 03:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EUON4bCr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RvPHWVkY"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CFF812
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 03:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2122263A;
+	Mon,  5 Aug 2024 03:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722827439; cv=none; b=J4Lgoiywgs/JRmJ9pe0efZpiBIPf9TbYfVZ3YNENPVa+mT5ZfC6XFfb/kxl3TBfjSiYUNOZhNyc1HNkMs4CdtihJwOWU5Vb+AKonXdG7RvvY9vCZEWi49HlwQatrNFNPQf3imNxZ/wIjwv0vsNopkC98NkmQHz6KBTj9KewyL28=
+	t=1722829171; cv=none; b=dxXxnQyu2njODYSYENWzyz/9nsDVaJa9/PfR3TXUH6MoWGtaPdibB+qkXMPO477aVd9lW8RhS3bQo/0mK6rCV1sX7B2iOrbXYHLZorpGjNfhexrzOYVhh2sHrQk9kjktCbrmr5sPXly3FAHIM8cADfIuljPBAl1BdQz61mrD00Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722827439; c=relaxed/simple;
-	bh=qIx1iuVHdoJtgpswxLF4/++ux2wkjECjyNV1k7XLWV8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mQNGXPMLUyY2WxqzaiAHj1mow0ZYKVsCsqhPj68Bb0v/uqb4ow6KxXWv7Jm73ACgpPLknLbbWTdC5W0WhVLbnOp15g5MH08hCiPWMy9UX5+BT8+7/3e6M8k8lOhoUn/0elek+tXSqHSDSSUYLDuliKeAj/+hfEFLJWNuPjJXtsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EUON4bCr; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722827438; x=1754363438;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qIx1iuVHdoJtgpswxLF4/++ux2wkjECjyNV1k7XLWV8=;
-  b=EUON4bCrR3SzMFY8tErpGdqRi9pbEGd4w9q3DM/WsQ+zkMkt9NjDOsTx
-   orNnGkqFIb9RODOzhADWO+oUYW7k6n57poIhV03XQsZYoKBZl8yV6Q2LJ
-   hORel3WCEiEqlldwGbDCCWI/euDyRYjoG6h6/EFnurEI9WzxXnLVb0MVu
-   7D8b86fTjlh48GJtglnTlThAz1uzMVj+a+j656Y1Vbx2YD9+QKgLEj9n5
-   vkp1M3Kz/zXEj9aXKH5Ux7kW5yJ/lL/0poXzsW1t/UXDjOWrmuvNHDg96
-   pLqpRpL9KzpbRrlldHm5Os6tZkBiaOlihqS2XgfkZQgXiHqGm2bXUbsJ9
-   Q==;
-X-CSE-ConnectionGUID: BkmIcTfDSfCNBF6fkWGugA==
-X-CSE-MsgGUID: SFvVEYn6QEmzGgId72cN4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="20650853"
-X-IronPort-AV: E=Sophos;i="6.09,263,1716274800"; 
-   d="scan'208";a="20650853"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2024 20:10:37 -0700
-X-CSE-ConnectionGUID: 6qWHaDcHTeOGQGgVMqLL2g==
-X-CSE-MsgGUID: vY3YV1i0Q5u5gHgs3If29A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,263,1716274800"; 
-   d="scan'208";a="86587491"
-Received: from haibo-optiplex-7090.sh.intel.com ([10.239.153.94])
-  by orviesa002.jf.intel.com with ESMTP; 04 Aug 2024 20:10:33 -0700
-From: Haibo Xu <haibo1.xu@intel.com>
-To: ajones@ventanamicro.com,
-	sunilvl@ventanamicro.com
-Cc: xiaobo55x@gmail.com,
-	Haibo Xu <haibo1.xu@intel.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	James Morse <james.morse@arm.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v2 2/2] arm64: ACPI: NUMA: initialize all values of acpi_early_node_map to NUMA_NO_NODE
-Date: Mon,  5 Aug 2024 11:30:24 +0800
-Message-Id: <853d7f74aa243f6f5999e203246f0d1ae92d2b61.1722828421.git.haibo1.xu@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <0d362a8ae50558b95685da4c821b2ae9e8cf78be.1722828421.git.haibo1.xu@intel.com>
-References: <0d362a8ae50558b95685da4c821b2ae9e8cf78be.1722828421.git.haibo1.xu@intel.com>
+	s=arc-20240116; t=1722829171; c=relaxed/simple;
+	bh=W9OgSc8zRD0QqOtJlIQmXEXSGBgulR3Zniq5OCwAQBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X84Wf5uhK8JjDm7gfgt/9IzgqO+Qs4vEHNoNJQbHjmivKKEu2HYuYxV3/VWXsin9vful36bImwYivSVf2IAJS6FnBEQARlpA+k4eJgFzz568W0JjjEB97H2fW04x9zo1wqFMLasaasKLcPbob+wlrEeNR29OkoUxSFdeu+flmeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RvPHWVkY; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UWhQXaGJVQ5iefoGfd01HT6OELclsgGumxbhqvyIOP0=; b=RvPHWVkY9OMjCqupoV3iXsElLZ
+	4svu7dHCocBQKxPpPahVu2aFeNccwaqG9R4w1G0QqG7gUndalrUmbJCiJhsplFBm9wgDL+EpKcHEZ
+	smDx+X1Thri8UZSmBwJdjmuo+Einvp+DpH2sgVQQXVx4gWyIEFwaXlWwNDyu/gwy8kFjR1xij6OMr
+	8vUfndnRh6RzM6/bRn3AwAMCdbyVPVG8UOhbgmu7A9lNpuTIOTxaDtrMGDrGOhSQ/yxIyftjNsHCc
+	ldXyd8eKiVcpA2vIYXfd7mH3XYMCHuC3j9PweuvuvxuJCxqcTkIIho4p2o0por5U7LMqqy3caCEwA
+	QslwtWcA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1saoZ7-00000003oEK-3eu8;
+	Mon, 05 Aug 2024 03:39:21 +0000
+Date: Mon, 5 Aug 2024 04:39:21 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: crwulff@gmail.com
+Cc: linux-usb@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Farman <farman@linux.ibm.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	Jeff Layton <jlayton@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, David Sands <david.sands@biamp.com>
+Subject: Re: [PATCH v4] usb: gadget: f_fs: add capability for dfu run-time
+ descriptor
+Message-ID: <ZrBJaW_EwNf_T_WZ@casper.infradead.org>
+References: <20240805000639.619232-2-crwulff@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805000639.619232-2-crwulff@gmail.com>
 
-Currently, only acpi_early_node_map[0] was initialized to NUMA_NO_NODE.
-To ensure all the values were properly initialized, switch to initialize
-all of them to NUMA_NO_NODE.
+On Sun, Aug 04, 2024 at 08:06:40PM -0400, crwulff@gmail.com wrote:
+> diff --git a/include/uapi/linux/usb/ch9.h b/include/uapi/linux/usb/ch9.h
+> index 44d73ba8788d..91f0f7e214a5 100644
+> --- a/include/uapi/linux/usb/ch9.h
+> +++ b/include/uapi/linux/usb/ch9.h
+> @@ -254,6 +254,9 @@ struct usb_ctrlrequest {
+>  #define USB_DT_DEVICE_CAPABILITY	0x10
+>  #define USB_DT_WIRELESS_ENDPOINT_COMP	0x11
+>  #define USB_DT_WIRE_ADAPTER		0x21
+> +/* From USB Device Firmware Upgrade Specification, Revision 1.1 */
+> +#define USB_DT_DFU_FUNCTIONAL		0x21
 
-Fixes: e18962491696 ("arm64: numa: rework ACPI NUMA initialization")
-Reported-by: Andrew Jones <ajones@ventanamicro.com>
-Suggested-by: Andrew Jones <ajones@ventanamicro.com>
-Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
----
- arch/arm64/kernel/acpi_numa.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/kernel/acpi_numa.c b/arch/arm64/kernel/acpi_numa.c
-index 0c036a9a3c33..2465f291c7e1 100644
---- a/arch/arm64/kernel/acpi_numa.c
-+++ b/arch/arm64/kernel/acpi_numa.c
-@@ -27,7 +27,7 @@
- 
- #include <asm/numa.h>
- 
--static int acpi_early_node_map[NR_CPUS] __initdata = { NUMA_NO_NODE };
-+static int acpi_early_node_map[NR_CPUS] __initdata = { [0 ... NR_CPUS - 1] = NUMA_NO_NODE };
- 
- int __init acpi_numa_get_nid(unsigned int cpu)
- {
--- 
-2.34.1
-
+This is the only place in the entire patch where you explain what "DFU"
+means.  Is this really such a well-known acronym that it doesn't need to
+be in the documentation or the commit message?
 
