@@ -1,180 +1,106 @@
-Return-Path: <linux-kernel+bounces-275008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C238947F7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:40:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E9D947F80
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E503F283FD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 861062845D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3A115E5C2;
-	Mon,  5 Aug 2024 16:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF6015D5B6;
+	Mon,  5 Aug 2024 16:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eRmxFC6C"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SChB3d5J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398ED15C128
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5833C3E479;
+	Mon,  5 Aug 2024 16:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722876001; cv=none; b=krSOAcbzSz3NFAcvZeHiea/P2/Asrvva4FgSKL2IV/h4rXwnl9IjZnnYKMPjpZTIDRTF/nhlTgid2/Yi3AXDQAVhr0Og18ShjfOiCOW1vXOQVUv6+s6hy5qoxt9IvkbJFxZKqzLXDQs7e6ZbcjoYE29rTTDE8+XjOwfL80pKI6g=
+	t=1722876013; cv=none; b=cxPCkVGf0xFA/Nkq+kAYBmLmC31O0WweeftCLML4pUWoSO6oCBnjgoCe+N7buNDozdgXIYxBPPQVGuQ1eKfw6JUPpnsIAWEg6bCNia4WrvClEBcJvGvVWzzIzSU/KaZSXRobLF9el1Nm5C8BwGtsJ5U6DVVpdfPsrQNozwDQT1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722876001; c=relaxed/simple;
-	bh=HE21Lk/g+GMpOYIkhNOouGn5ag+Wle5EMn3XmDNoy7Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ilMFr2er1xh0dAVoiODY4MkpJlOiKxf4exiSoXmIn55quOayeuFTRR78tmrmP/+GB1MNWmlRMIRPlHDPT3pjtLYrZ9PMUILfKx+AzwUG5gFVuNefYCdLuTERHzKWGQ8ydk/Xt8JUVjlAOASoCi++3Xiqq8tBZ7aOB4wEczWOIFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eRmxFC6C; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fc4fcaa2e8so107806415ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 09:40:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722875999; x=1723480799; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ywc7mA19HQNew9CX+pCE+Mpdd424HVzC6RLmLNPXyBU=;
-        b=eRmxFC6CuBfa4q/kJ8JApqdnUG076bDEP3b8Zs+VOtQ89PSzbs81TNXKPVBcNXnpGN
-         7swrRSWE0vSD+CMQs9ciXM5fqguotQHAPGGPsbQPsE7qeQz4j6Lw4VdwNOMbLxHdU0+/
-         1irxjvbDdB/GxNpwcfjCLqiGgUU/9U9C5e2H3+VkFI1VCt09jCpNb/niDW+nIHVAFQlN
-         JNQOZn3wGYmxeDmqQEgyzmUEtE5wKKSBYdSlIh6iiNx6kejq2UlUKhqDwuFNHvsz2vbZ
-         rWwBZq7AoGRXUp+u0Yc4Gbs4zheiy9KVBUTx1Xg7Fb42JM04HKh39m86C3Z26YcCsX6p
-         xsBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722875999; x=1723480799;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ywc7mA19HQNew9CX+pCE+Mpdd424HVzC6RLmLNPXyBU=;
-        b=thuNRURsl8iQClbM9b8f3ks0nkw7r6HXb+jcPXn1hIBbITj3KiOMavS1uDppxmUAwU
-         HCQX7Bw4Up+27Wxu38A90+wJ0jqhqfs3aI39/GNdyxgak1N2f3lJq0JaAQH2fT53WZkK
-         oA7L/TdNpyBHxcgoQGXokcMtK+Hhwdd2astBZyPyWi45dzt9qz3XalxpLEojq0NibRat
-         Z6xOifraPMxo62ovvMAGQ3z4w5lg+T+9Ylu9ws6lAWNvh+kqfp8g4V1w39jnmRrDeBPY
-         Ktcd+bA/dG3o2tVSLJROYZ5ySy5pzqXOsRL+m9vw2iuLAWFfwP782IoyFaUCz3JgVT0G
-         BEJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBAdLsyY+MHMCfzjUfcRB6nQwqpQr3edT1exHBHg6MI+JzsRUQ31bkZUlMm6Y6jSfjzaeh2ySGDbFfnQBq/4CDuptilpB8KjdSbmKw
-X-Gm-Message-State: AOJu0YxUliIsojsQbPcBl2KY7pNioDl1DR8gS7ZeskcQVwYfbgta6HfV
-	he153qddmExqN6vz7SBnD+R0ncvjq7cUoTUqFw9V9GDaRWwQOGFuY2yK0I4xe1MyeDIYvSYxqQz
-	2PA==
-X-Google-Smtp-Source: AGHT+IGRko//56tXyMRSJ8j69mUWEOi2LMbbrj+Ftas3deyNzWD/2yj+xZuP7RgnRzRJ2BLaUzriDIev9Us=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:bb89:b0:1fc:52f7:a229 with SMTP id
- d9443c01a7336-1ff57274af1mr5475025ad.4.1722875999386; Mon, 05 Aug 2024
- 09:39:59 -0700 (PDT)
-Date: Mon, 5 Aug 2024 09:39:57 -0700
-In-Reply-To: <cdb61fa7cc5cfe69b030493ea566cbf40f3ec2e1.camel@redhat.com>
+	s=arc-20240116; t=1722876013; c=relaxed/simple;
+	bh=iOLUluY5An/v5NUsmhvgSEoNjYlEKm9MqBVeCIp+V5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kufm0ctr3XTbzrF19WLCkACOfJ8/XznIdLwvqSE3ImjY05403IuWv75FX0ThT0OMBgO5DA8wu3dtVdQBKcDTWBLcIKb+5fJl0C/tHhjN0lqb/MTsDnHg29M2HbGgcM6Y2s0uFPIgSITyjjFPZIgEZt3CVEF8xA70fLmCT7LHq2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SChB3d5J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3050AC32782;
+	Mon,  5 Aug 2024 16:40:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722876013;
+	bh=iOLUluY5An/v5NUsmhvgSEoNjYlEKm9MqBVeCIp+V5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SChB3d5J9h4l8uw17ZrW5gk7a9QaS3yzKU0RZ9RfahroRTz7qfv9HGwLK+b5mD0Sc
+	 Ox6+wFqtDhtUvS+JO6JNL2vw/TBUXrH8g8hqqFzJBFRBNq40ih1hpRmo7j739yaZ3e
+	 o6Bln0tIoJ6iGQMrTuqkIOMdvM0hNiamlNivhHnjZ7ewg6k0X64XFPAArADbReXC6C
+	 TZZThGp1y+mJ/6iNzAkimRC06/PqcbfOMlCaHbJ0mFZ1oOkK9lWLd2pButThIG9w9b
+	 8nckuSMcUXw8LLSc/GSBAWbgMuV/BAH4nKOEDIwPeWVCf0Z+np74xWfYbUrmKNPjw6
+	 EvbZjRSDiZh9A==
+Date: Mon, 5 Aug 2024 22:10:08 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>,
+	Keguang Zhang <keguang.zhang@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, oe-kbuild-all@lists.linux.dev,
+	linux-mips@vger.kernel.org, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH v11 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA
+ driver
+Message-ID: <ZrEAaB_I1S2vM2EE@matsya>
+References: <20240802-loongson1-dma-v11-2-85392357d4e0@gmail.com>
+ <202408051242.8kGK28W7-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240802151608.72896-1-mlevitsk@redhat.com> <20240802151608.72896-2-mlevitsk@redhat.com>
- <Zq0A9R5R_MAFrqTP@google.com> <cdb61fa7cc5cfe69b030493ea566cbf40f3ec2e1.camel@redhat.com>
-Message-ID: <ZrEAXVhH3w6Q0tIy@google.com>
-Subject: Re: [PATCH v2 1/2] KVM: x86: relax canonical check for some x86
- architectural msrs
-From: Sean Christopherson <seanjc@google.com>
-To: mlevitsk@redhat.com
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Chao Gao <chao.gao@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202408051242.8kGK28W7-lkp@intel.com>
 
-On Mon, Aug 05, 2024, mlevitsk@redhat.com wrote:
-> =D0=A3 =D0=BF=D1=82, 2024-08-02 =D1=83 08:53 -0700, Sean Christopherson =
-=D0=BF=D0=B8=D1=88=D0=B5:
-> > > > > > > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > > > > > > > index a6968eadd418..3582f0bb7644 100644
-> > > > > > > > > --- a/arch/x86/kvm/x86.c
-> > > > > > > > > +++ b/arch/x86/kvm/x86.c
-> > > > > > > > > @@ -1844,7 +1844,16 @@ static int __kvm_set_msr(struct kv=
-m_vcpu *vcpu, u32 index, u64 data,
-> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MSR_=
-KERNEL_GS_BASE:
-> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MSR_=
-CSTAR:
-> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MSR_=
-LSTAR:
-> > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (is_noncanonical_address(data, vcpu)=
-)
-> > > > > > > > > +
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Both AMD and Intel cpus allow values=
- which
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * are canonical in the 5 level paging =
-mode but are not
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * canonical in the 4 level paging mode=
- to be written
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * to the above MSRs, as long as the ho=
-st CPU supports
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * 5 level paging, regardless of the st=
-ate of the CR4.LA57.
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!__is_canonical_address(data,
-> > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0kvm_cpu_cap_has(X86_FEATURE_LA57) ? 57 : 48))
-> > > > >=20
-> > > > > Please align indentation.
-> > > > >=20
-> > > > > Checking kvm_cpu_cap_has() is wrong.=C2=A0 What the _host_ suppor=
-ts is irrelevant,
-> > > > > what matters is what the guest CPU supports, i.e. this should che=
-ck guest CPUID.
-> > > > > Ah, but for safety, KVM also needs to check kvm_cpu_cap_has() to =
-prevent faulting
-> > > > > on a bad load into hardware.=C2=A0 Which means adding a "governed=
-" feature until my
-> > > > > CPUID rework lands.
->=20
-> Well the problem is that we passthrough these MSRs, and that means that t=
-he guest
-> can modify them at will, and only ucode can prevent it from doing so.
->=20
-> So even if the 5 level paging is disabled in the guest's CPUID, but host =
-supports it,
-> nothing will prevent the guest to write non canonical value to one of tho=
-se MSRs,=C2=A0
-> and later KVM during migration or just KVM_SET_SREGS will fail.
-=20
-Ahh, and now I recall the discussions around the virtualization holes with =
-LA57.
+On 05-08-24, 12:58, kernel test robot wrote:
+> Hi Keguang,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on 048d8cb65cde9fe7534eb4440bcfddcf406bb49c]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Keguang-Zhang-via-B4-Relay/dt-bindings-dma-Add-Loongson-1-APB-DMA/20240803-111220
+> base:   048d8cb65cde9fe7534eb4440bcfddcf406bb49c
+> patch link:    https://lore.kernel.org/r/20240802-loongson1-dma-v11-2-85392357d4e0%40gmail.com
+> patch subject: [PATCH v11 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+> config: sparc64-randconfig-r063-20240804 (https://download.01.org/0day-ci/archive/20240805/202408051242.8kGK28W7-lkp@intel.com/config)
+> compiler: sparc64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408051242.8kGK28W7-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408051242.8kGK28W7-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    drivers/dma/loongson1-apb-dma.c: In function 'ls1x_dma_chan_probe':
+> >> drivers/dma/loongson1-apb-dma.c:520:34: warning: '%u' directive writing between 1 and 10 bytes into a region of size 2 [-Wformat-overflow=]
+>      520 |         sprintf(pdev_irqname, "ch%u", chan_id);
+>          |                                  ^~
+>    drivers/dma/loongson1-apb-dma.c:520:31: note: directive argument in the range [0, 2147483646]
+>      520 |         sprintf(pdev_irqname, "ch%u", chan_id);
+>          |                               ^~~~~~
+>    drivers/dma/loongson1-apb-dma.c:520:9: note: 'sprintf' output between 4 and 13 bytes into a destination of size 4
+>      520 |         sprintf(pdev_irqname, "ch%u", chan_id);
+>          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-> Thus I used kvm_cpu_cap_has on purpose to make KVM follow the actual ucod=
-e
-> behavior.
+Pls fix these warnings!
 
-I'm leaning towards having KVM do the right thing when emulation happens to=
- be
-triggered.  If KVM checks kvm_cpu_cap_has() instead of guest_cpu_cap_has() =
-(looking
-at the future), then KVM will extend the virtualization hole to MSRs that a=
-re
-never passed through, and also to the nested VMX checks.  Or I suppose we c=
-ould
-add separate helpers for passthrough MSRs vs. non-passthrough, but that see=
-ms
-like it'd add very little value and a lot of maintenance burden.
-
-Practically speaking, outside of tests, I can't imagine the guest will ever=
- care
-if there is inconsistent behavior with respect to loading non-canonical val=
-ues
-into MSRs.
+-- 
+~Vinod
 
