@@ -1,99 +1,105 @@
-Return-Path: <linux-kernel+bounces-274480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DFB19478A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E55A947892
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25C001C20E4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:42:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550D31C2031E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5E715748D;
-	Mon,  5 Aug 2024 09:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="s+iKzSiF"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FA915383D;
+	Mon,  5 Aug 2024 09:40:23 +0000 (UTC)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A13156222;
-	Mon,  5 Aug 2024 09:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4472914A609;
+	Mon,  5 Aug 2024 09:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722850834; cv=none; b=hgSexmKSRdm6bQhQ346VwYkyac5KVnFqxo43HtcXX1mOPAhkRTf1qy3WFt3qs72NSYUkmOE9jjn7V3vnev+LcfPokP2Yfc4m/CtfslHeHIaQbtDKgXgjsivFgtSsxmu8WKOUrC46YurinphcLlgypgfQFVX/oEHLfXptMQpDkjU=
+	t=1722850822; cv=none; b=IKwqn+3HjFqMDerVA62FAzstV5QJbY5tLUCqtwfiRjtGn1RFqxUnfcT9X0j4O6HP2iwg7y3qFd4b5II8PXnRr2eBPEodm4w3bumhNtkqBMBeWv5rzTfMA58bnd4LBsYgOryAJkvqRhoWoC+2AoxypRVqH/e3GvDoeOtreCtAklI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722850834; c=relaxed/simple;
-	bh=3loE47oz4+kHYtzjuSAEQuFtMdeOuD0nJOTPg/9sHL8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ft4FqcZj3lWoHFY71VTveHa54per421/rpIMWj8mwn4KmPsJnMAd2jyrZQ7edLIsUMnQIBybdAxuRF9wnZw5LuB7NxIWHr+PxX1NK0yU79WYeFhLqMGzko8BGGxUcATUNW9k7yU577JOnCChqSDTCuwZvN+Ct3KY47EYypd9/4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=s+iKzSiF; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1722850825;
-	bh=3loE47oz4+kHYtzjuSAEQuFtMdeOuD0nJOTPg/9sHL8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=s+iKzSiFTm68ElySCR+Nxg/GqwJIyYqFZs7dWTrt0pHV3QaydJRJNY6YP1jqB4hEO
-	 yghMOaGdy7b66wkgNtAUVQO4oVNXf4dBIXeqt0PN1/E2Yz5w+B1UEY+4lJUIfdf++b
-	 kXyTeuMsDniULPD3Rs6N3tXm8r5n4Ms7skiEZw7c=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 05 Aug 2024 11:39:40 +0200
-Subject: [PATCH v2 6/6] const_structs.checkpatch: add ctl_table
+	s=arc-20240116; t=1722850822; c=relaxed/simple;
+	bh=hzNNHdL3lLQC+abWJW3QcqzEdC+eSQfbpqxItlkHD/Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t5SAreCbvDT4XFmzIOqWB9swgazN2sRQhMePiCvYK19hZVDfShqZivTIoZ/eTNR0sPTWO6m94W/fqzvad1Xig31gQjCKHOk3tiuPH9Qp6GFkeLakaRaelPvKHwaoS0Xg3JbS9L1FDr5TFh5zzUkbRTnDIo6VY0pSNQsrA4tT00k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bb8e62570fso846849a12.1;
+        Mon, 05 Aug 2024 02:40:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722850820; x=1723455620;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0WJ9j3KL2kMnE5EsefcskSGF25QM021WNq1anmIc+og=;
+        b=NuaIUb5Fl+/GmwFwAtAlPWVEV4kOclwtWJBkNa3A0AmHLRAqVk8+97HaSdPzulgH81
+         37S1x1hAmLaQm0qK4z1zhUa6Kbgi3l8HEabaHhUbEjXc+J8QRH/jwWa1VypzIB1b5bKt
+         8mqVibUnDzri5WK+h2QuDGjLy7bJRTDE8/9IwFsZMRfPph+VpRF2ml+lPlNzC//WzX8V
+         NPStvo1/6VcKuC9lprpqFrc7GoGJu4qXJIGXYL+eSedXnu7xuV3eCItN7BpfrsBhQPNA
+         BFSfYB+1I7qOYQziasobxxsedT5NVsIKGLyA5Wz/dahy0ZGDsj04/frMyaM0AT44Y7ac
+         H3+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUsp+YD+2igbeqBFMsAp0esEqFuYgbI78mXqR+TJGIKuY6S3lDMup5n0ouWDqgLwEQSKHcG/25tRn80nR2BvZV4Nsit8AwhnFAOUTT/0DwVNFs4Iz2JWK2d2fRRxeE6t0Frv7as
+X-Gm-Message-State: AOJu0YyXR71FnzaLrkhtC3/hu3WZX5CSbeOgJb22GoVzwIXMeKT4iMIF
+	em8vrAhIr9fL2Q8ISBBaoAF+irBVmeOyCH9U4c45lBiRZp31wp7O
+X-Google-Smtp-Source: AGHT+IFkCcSbmHH8IpgaG07PvlDbTXYvxEAf2cdUnbSji/iET2HGgRDyxtAFziKZ3T4/jm19KUsACQ==
+X-Received: by 2002:a50:bac6:0:b0:5b9:3846:8bb3 with SMTP id 4fb4d7f45d1cf-5b93846940emr5179356a12.12.1722850819256;
+        Mon, 05 Aug 2024 02:40:19 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5baff14989fsm2067084a12.55.2024.08.05.02.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 02:40:18 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: leit@meta.com,
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: veth: Disable netpoll support
+Date: Mon,  5 Aug 2024 02:40:11 -0700
+Message-ID: <20240805094012.1843247-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240805-sysctl-const-api-v2-6-52c85f02ee5e@weissschuh.net>
-References: <20240805-sysctl-const-api-v2-0-52c85f02ee5e@weissschuh.net>
-In-Reply-To: <20240805-sysctl-const-api-v2-0-52c85f02ee5e@weissschuh.net>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
- Kees Cook <kees@kernel.org>, Joel Granados <j.granados@samsung.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722850824; l=622;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=3loE47oz4+kHYtzjuSAEQuFtMdeOuD0nJOTPg/9sHL8=;
- b=aGRIqu9xBoUoSsAjkjtyWeDJfliY8Cu/X/z0uURmidSGKzrfjzfQGlZKMEszU/MEwnvmBiSu1
- NqTTrNTQ5nSC4oX9aHScWgSifBT05yPDHq7Ghj2xz2FCZ6naE/FKNTt
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Now that the sysctl core can handle "const struct ctl_table", make
-sure that new usages of the struct already enter the tree as const.
+The current implementation of netpoll in veth devices leads to
+suboptimal behavior, as it triggers warnings due to the invocation of
+__netif_rx() within a softirq context. This is not compliant with
+expected practices, as __netif_rx() has the following statement:
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+	lockdep_assert_once(hardirq_count() | softirq_count());
+
+Given that veth devices typically do not benefit from the
+functionalities provided by netpoll, Disable netpoll for veth
+interfaces.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- scripts/const_structs.checkpatch | 1 +
+ drivers/net/veth.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/scripts/const_structs.checkpatch b/scripts/const_structs.checkpatch
-index 014b3bfe3237..e8609a03c3d8 100644
---- a/scripts/const_structs.checkpatch
-+++ b/scripts/const_structs.checkpatch
-@@ -6,6 +6,7 @@ bus_type
- clk_ops
- comedi_lrange
- component_ops
-+ctl_table
- dentry_operations
- dev_pm_ops
- device_type
-
+diff --git a/drivers/net/veth.c b/drivers/net/veth.c
+index 426e68a95067..34499b91a8bd 100644
+--- a/drivers/net/veth.c
++++ b/drivers/net/veth.c
+@@ -1696,6 +1696,7 @@ static void veth_setup(struct net_device *dev)
+ 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
+ 	dev->priv_flags |= IFF_NO_QUEUE;
+ 	dev->priv_flags |= IFF_PHONY_HEADROOM;
++	dev->priv_flags |= IFF_DISABLE_NETPOLL;
+ 
+ 	dev->netdev_ops = &veth_netdev_ops;
+ 	dev->xdp_metadata_ops = &veth_xdp_metadata_ops;
 -- 
-2.46.0
+2.43.0
 
 
