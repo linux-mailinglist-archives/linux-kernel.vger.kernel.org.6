@@ -1,211 +1,347 @@
-Return-Path: <linux-kernel+bounces-274858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D0B947DB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4FF6947DBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E0EB243D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:08:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30857B247AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A0815350D;
-	Mon,  5 Aug 2024 15:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1452B149DFC;
+	Mon,  5 Aug 2024 15:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ViGl2BkL"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l8uullYj"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837D013C81C;
-	Mon,  5 Aug 2024 15:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA7E3F9D5
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 15:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722870527; cv=none; b=tkNuWDoG5VgVSC6zINq9qw7f6EhTxjNafFoIcixu5oS/Q7geCq9JnZGD6XOBY5WtIxuLhj+IU1T/6j5l4t++u/2xWQtyAoHLLFW26MoDV1YuJpsDZwlNB7kfksEkxU1K5gmkVnhIGh7Yxwqcga6q7VguWbAovqtn4ffWaudA3nQ=
+	t=1722870628; cv=none; b=apVSBYHSIxW10f+RGkh2Di+HOfnTvLIl32+kGWoESKPdg1bjF510a3twq8TrIDkCIRM0m+W4vlLEj362eXjSidWdvdT8cDLGlcD0vhwPE2jnAaUEgUgytpzVRz4UbI+g9PzX4uqfa3yUNwOMzhqB1GS18hR5bQOBbU6epxVw9Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722870527; c=relaxed/simple;
-	bh=wDFkb0BxIxOlQJsPJFBiPiCQWIb1ofqDpzdQDFiG/Ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QwmoJVKQqrC+goVJENfitrJVkrKY7bvFPKjpTV0Le/t37UQgyUX6xpzOkgu/Cfl0Ee/DiOMeU8iS9WEU4+wl0fL54YSISgkvzKrBl5fuRYeaAObSPFkAxYTIHtkE6iEgPrtLLJMXVPdh+hTI2QFNjISLgqQyAWQRFg4U4CpOOtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ViGl2BkL; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=GKfjloD6oa4JOXSe00nlirkRPmxpIJuJ9zLXTqSQAPI=; b=ViGl2BkL5r4BIMOR6jnI4uLV52
-	VePlXnOarDVS1Nx3+Pes61PGKOmZNyyrQz4PxJrNzDyum7mAwZyrOEREG4J/zrFnA7BP4dDRBCI04
-	vVXWyHRvdlFKnPFIMZggeKkRwdxGKYYU++s25DqQb6jNFr7CJI7tMM/PlLO+zEBQmXZirY/8I/pEG
-	qB1SGx8OXmgLlX7G1i+9ubCGs1XS7Sg8bh5/k9bmHKEgaLn8OzqO04FCKMETecwKjB+zqSvgf8edQ
-	80dQZXD3t6uZSkyFrBnE3UF/GSXGvFSQMon3rakHzukhg3h0tJ7F45Iuwk1C9L+l440iOt5FQZsRO
-	2n6SCCcg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39576)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sazK3-0003Fw-2D;
-	Mon, 05 Aug 2024 16:08:31 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sazK6-0002S7-0D; Mon, 05 Aug 2024 16:08:34 +0100
-Date: Mon, 5 Aug 2024 16:08:33 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	dl-S32 <S32@nxp.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 4/6] net: stmmac: dwmac-s32cc: add basic NXP S32G/S32R
- glue
-Message-ID: <ZrDq8aZh4LY5Q0UY@shell.armlinux.org.uk>
-References: <AM9PR04MB85064D7EDF618DB5C34FB83BE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1722870628; c=relaxed/simple;
+	bh=KScPjohjbhyyE6Unt1xkdQUQ0WABmDePhEc4uGcahCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EFsjHUBXP7m1DvliTxlCKLn9bf2jweiOdKBNu48H6mRYetuyf+AH37s3nAW1iINzdHprR0L2rYDiLOoxnzz9KdGp6qZVWzKdiOee3/Drn8sOn2nAh2UvAgdWgzLrBXGHJFhnZIwOiLMoThmXbx+uNwDbqdGx2yOnVJEQH1J0tt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l8uullYj; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4518d9fa2f4so836631cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 08:10:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722870625; x=1723475425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cliPh0WiWvhjAhJbOyi+/6Y4aMCNN/jaTH5lyyuz2Ds=;
+        b=l8uullYjwmsiydD39Q2xbrFtgjz++9u7CDR70w/EvUMSiJaeVJQJSvf8O07R4h9BxD
+         tu4t61MfQ8RASBeTKVmT8QK3YBFrNCE0qfDR6+rWq/sqpAVrOEVm2/kNUAywCQVk2VXm
+         fLjc3+p8qFUBIzP/C0BNChCDBuvW3GrCNzkJX0wF3pHIiX9I1o6ufhxmADJ29NjVglsq
+         E8iZlcUOwFnJQ9rlUzxdeBF07DuenUB4uUcLhVeNnIiDJeU2jfM3KMSfL2LPb89odNEe
+         cizneooKeJ01nVNqmU3AbxBm6g43BbpFX0pzQ+j+RF9dMiX3BKfEWHPPPp2lvHS6MA1R
+         BxAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722870625; x=1723475425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cliPh0WiWvhjAhJbOyi+/6Y4aMCNN/jaTH5lyyuz2Ds=;
+        b=b78xD7lD1oGFIofGCo6IBQIuCbXOERnE+oC8Zdfo+eyDZbVIjpGG9ET4KnHP2gN6D5
+         Dq76E6WCZ0bd57ch6s0zhyvv3/Wbo2Yea35uXcikEocUy+DDzIP5mVV6A8ZEhE8gLevp
+         caF6rQ18jWFXxvzJl4lTX1ZYwhwXR8/krT9DaOg4VsIITTkNAF6yTRX0CYtTzxOEghXM
+         g7cNPvJcr8pOHH+3k6Ps5z/vla1z0bYUe286G6GHaTqlcsun9ZYpdwvr6pMNk2nH/gSy
+         1EZROFNCArC6h9bgqYePds/4a2zR71gdasFt6j6ZKUS919AuAGlOTedq/C/XzpIgOwhW
+         rcUg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2R1cXB6QS+c9GpyUb/l1HqoeR9ccOUwfRZ12oNJtQvAaeOophARr/17glw/CyjAqrlX45evEcZM9upr2R95aC2H2LbU5b8Krpte9w
+X-Gm-Message-State: AOJu0YybrPbayuKSynpsrbi9FpDlbjsNpyG27CVu9seXtbeRlHqGFeUr
+	1LdYPQ8ld9f0ukcgnup9mrFdbgTpldhBWBNxOdKeTeAEF6ML/qWNFvxcQLhPiShI6ozyGp7yl3L
+	kiJY8Vz0dB9LYxQH7NjKjx0JrAqE+l4By2sSr
+X-Google-Smtp-Source: AGHT+IFijdGhgOF6LxfiS+kMgCTkAqfv1SMmw6/Yu5tfWCrV1MznIh1MToqxUJv1IafptMwMQqU72ywvaj2j2EO21TU=
+X-Received: by 2002:ac8:7e8d:0:b0:447:d78d:773b with SMTP id
+ d75a77b69052e-4519ad01864mr4780151cf.6.1722870624911; Mon, 05 Aug 2024
+ 08:10:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB85064D7EDF618DB5C34FB83BE2BD2@AM9PR04MB8506.eurprd04.prod.outlook.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240720062102.444578-1-weilin.wang@intel.com> <CAM9d7cgoTyf3Zjt=+2yZi5Pat4UrxKxN=rkLHmyUWZqwZk8_Kw@mail.gmail.com>
+In-Reply-To: <CAM9d7cgoTyf3Zjt=+2yZi5Pat4UrxKxN=rkLHmyUWZqwZk8_Kw@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 5 Aug 2024 08:10:12 -0700
+Message-ID: <CAP-5=fWr2Qna9ikzUCFavo3OTUDSP3ztr=i6E=R962CXCdHckg@mail.gmail.com>
+Subject: Re: [RFC PATCH v18 0/8] TPEBS counting mode support
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: weilin.wang@intel.com, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 04, 2024 at 08:50:10PM +0000, Jan Petrous (OSS) wrote:
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> index 05cc07b8f48c..31628c363d71 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-> @@ -153,6 +153,17 @@ config DWMAC_RZN1
->  	  This selects the Renesas RZ/N1 SoC glue layer support for
->  	  the stmmac device driver. This support can make use of a custom MII
->  	  converter PCS device.
+On Mon, Jul 22, 2024 at 10:38=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hello Weilin,
+>
+> On Fri, Jul 19, 2024 at 11:21=E2=80=AFPM <weilin.wang@intel.com> wrote:
+> >
+> > From: Weilin Wang <weilin.wang@intel.com>
+> >
+> > Change in v18:
+> >  - Update to exit 2 in TPEBS shell test when not on Intel platform.
+> >  - Several updates to use EVLIST_CTL_CMD_ENABLE_TAG, EVLIST_CTL_CMD_ACK=
+_TAG, and
+> >  etc.
+> >
+> > Changes in v17:
+> >  - Add a poll on control fifo ack_fd to ensure program returns successf=
+ully when
+> >  perf record failed for any reason.
+> >  - Add a check in the tpebs test to only run on Intel platforms.
+> >
+> > Changes in v16:
+> >  - Update tpebs bash test code and variable name.
+> >  - Add a check to ensure only use "-C" option when cpumap is not "-1" w=
+hen
+> >  forking "perf record".
+> >
+> > Changes in v15:
+> >  - Revert changes added for python import test failure in v14 because t=
+he code
+> >  works correctly with the new python build code.
+> >  - Update the command line option to --record-tpebs.
+> >
+> > Changes in v14:
+> >  - Fix the python import test failure. We cannot support PYTHON_PERF be=
+cause it
+> >  will trigger a chain of dependency issues if we add intel-tpebs.c to i=
+t. So,
+> >  only enable tpebs functions in evsel and evlist when PYTHON_PERF is no=
+t
+> >  defined.
+> >  - Fix shellcheck warning for the tpebs test.
+> >
+> > Changes in v13:
+> >  - Add document for the command line option and fix build error in non-=
+x86_64.
+> >  - Update example with non-zero retire_latency value when tpebs recordi=
+ng is
+> >  enabled.
+> >  - Add tpebs_stop() back to tpebs_set_evsel() because in hybrid platfor=
+m, when
+> >  the forked perf record is not killed, the reader thread does not get a=
+ny
+> >  sampled data from the PIPE. As a result, tpebs_set_evesel() will alway=
+s return
+> >  zero on retire_latency values. This does not happen on my test GNR mac=
+hine.
+> >  Since -I is not supported yet, I think we should add tpebs_stop() to e=
+nsure
+> >  correctness for now. More investigation is required here when we work =
+on
+> >  supporting -I mode.
+> >  - Rebase code on top of perf-tools-next.
+> >
+> > Changes in v12:
+> >  - Update MTL metric JSON file to include E-Core TMA3.6 changes.
+> >  - Update comments and code for better code quality. Keep tpebs_start()=
+ and
+> >  tpebs_delete() at evsel level for now and add comments on these functi=
+ons with
+> >  more details about potential future changes. Remove tpebs_stop() call =
+from
+> >  tpebs_set_evsel(). Simplify the tpebs_start() and tpebs_stop()/tpebs_d=
+elete()
+> >  interfaces. Also fixed the bugs on not freed "new" pointer and the inc=
+orrect
+> >  variable value assignment to val instead of counter->val.
+> >
+> > Changes in v11:
+> >  - Make retire_latency evsels not opened for counting. This works corre=
+ctly now
+> >  with the code Namhyung suggested that adjusting group read size when
+> >  retire_latency evsels included in the group.
+> >  - Update retire_latency value assignment using rint() to reduce precis=
+ion loss
+> >  while keeping code generic.
+> >  - Fix the build error caused by not used variable in the test.
+> >
+> > Other changes in v10:
+> >  - Change perf record fork from perf stat to evsel. All the major opera=
+tions
+> >  like tpebs start, stop, read_evsel should directly work through evsel.
+> >  - Make intel-tpebs x86_64 only. This change is cross-compiled to arm64=
+.
+> >  - Put tpebs code to intel-tepbs and simplify intel-tpebs APIs to minim=
+um number
+> > of functions and variables. Update funtion name and variable names to u=
+se
+> > consistent prefix. Also improve error handling.
+> >  - Integrate code patch from Ian for the :R parser.
+> >  - Update MTL metrics to TMA 4.8.
+> >
+> > V9: https://lore.kernel.org/all/20240521173952.3397644-1-weilin.wang@in=
+tel.com/
+> >
+> > Changes in v9:
+> >  - Update the retire_latency result print and metric calculation method=
+. Plugin
+> > the value to evsel so that no special code is required.
+> >  - Update --control:fifo to use pipe instead of named pipe.
+> >  - Add test for TPEBS counting mode.
+> >  - Update Document with more details.
+> >
+> > Changes in v8:
+> >  - In this revision, the code is updated to base on Ian's patch on R mo=
+difier
+> > parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@go=
+ogle.com/
+> > After this change, there is no special code required for R modifier in
+> > metricgroup.c and metricgroup.h files.
+> >
+> > Caveat of this change:
+> >   Ideally, we will need to add special handling to skip counting events=
+ with R
+> > modifier in evsel. Currently, this is not implemented so the event with=
+ :R will
+> > be both counted and sampled. Usually, in a metric formula that uses ret=
+ire_latency,
+> > it would already require to count the event. As a result, we will endup=
+ count the
+> > same event twice. This should be able to be handled properly when we fi=
+nalize our
+> > design on evsel R modifier support.
+> >
+> >  - Move TPEBS specific code out from main perf stat code to separate fi=
+les in
+> > util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
+> >  - Use --control:fifo to ack perf stat from forked perf record instead =
+of sleep(2) [Namhyung]
+> >  - Add introductions about TPEBS and R modifier in Documents. [Namhyung=
+]
+> >
+> >
+> > Changes in v7:
+> >  - Update code and comments for better code quality [Namhyung]
+> >  - Add a separate commit for perf data [Namhyung]
+> >  - Update retire latency print function to improve alignment [Namhyung]
+> >
+> > Changes in v6:
+> >  - Update code and add comments for better code quality [Namhyung]
+> >  - Remove the added fd var and directly pass the opened fd to data.file=
+.fd [Namhyung]
+> >  - Add kill() to stop perf record when perf stat exists early [Namhyung=
+]
+> >  - Add command opt check to ensure only start perf record when -a/-C gi=
+ven [Namhyung]
+> >  - Squash commits [Namhyung]
+> >
+> > Changes in v5:
+> >  - Update code and add comments for better code quality [Ian]
+> >
+> > Changes in v4:
+> >  - Remove uncessary debug print and update code and comments for better
+> > readability and quality [Namhyung]
+> >  - Update mtl metric json file with consistent TmaL1 and TopdownL1 metr=
+icgroup
+> >
+> > Changes in v3:
+> >  - Remove ':' when event name has '@' [Ian]
+> >  - Use 'R' as the modifier instead of "retire_latency" [Ian]
+> >
+> > Changes in v2:
+> >  - Add MTL metric file
+> >  - Add more descriptions and example to the patch [Arnaldo]
+> >
+> > Here is an example of running perf stat to collect a metric that uses
+> > retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL=
+ system.
+> >
+> > In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES sa=
+mple.
+> > Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_late=
+ncy value
+> > are all 0.
+> >
+> > ./perf stat -M tma_dtlb_store -a -- sleep 1
+> >
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.000 MB - ]
+> >
+> >  Performance counter stats for 'system wide':
+> >
+> >        181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  =
+tma_dtlb_store
+> >          3,195,608      cpu_core/topdown-retiring/
+> >         40,156,649      cpu_core/topdown-mem-bound/
+> >          3,550,925      cpu_core/topdown-bad-spec/
+> >        117,571,818      cpu_core/topdown-fe-bound/
+> >         57,118,087      cpu_core/topdown-be-bound/
+> >             69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
+> >              4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
+> >         30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
+> >         30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
+> >            168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
+> >               0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
+> >
+> >        1.003105924 seconds time elapsed
+> >
+> > v1:
+> > TPEBS is one of the features provided by the next generation of Intel P=
+MU.
+> > Please refer to Section 8.4.1 of "Intel=C2=AE Architecture Instruction =
+Set Extensions
+> > Programming Reference" [1] for more details about this feature.
+> >
+> > This set of patches supports TPEBS in counting mode. The code works in =
+the
+> > following way: it forks a perf record process from perf stat when retir=
+e_latency
+> > of one or more events are used in a metric formula. Perf stat would sen=
+d a
+> > SIGTERM signal to perf record before it needs the retire latency value =
+for
+> > metric calculation. Perf stat will then process sample data to extract =
+the
+> > retire latency data for metric calculations. Currently, the code uses t=
+he
+> > arithmetic average of retire latency values.
+> >
+> > [1] https://www.intel.com/content/www/us/en/content-details/812218/inte=
+l-architecture-instruction-set-extensions-programming-reference.html?wapkw=
+=3Dfuture%20features
+> >
+> >
+> >
+> >
+> > Ian Rogers (1):
+> >   perf parse-events: Add a retirement latency modifier
+> >
+> > Weilin Wang (7):
+> >   perf data: Allow to use given fd in data->file.fd
+> >   perf stat: Fork and launch perf record when perf stat needs to get
+> >     retire latency value for a metric.
+> >   perf stat: Plugin retire_lat value from sampled data to evsel
+> >   perf vendor events intel: Add MTL metric json files
+> >   perf stat: Add command line option for enabling tpebs recording
+> >   perf Document: Add TPEBS to Documents
+> >   perf test: Add test for Intel TPEBS counting mode
+>
+> Thanks for your persistence!
+>
+> Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 
-There should be a blank line here.
+Ping.
 
-> +config DWMAC_S32CC
-> +	tristate "NXP S32G/S32R GMAC support"
-> +	default ARCH_S32
-> +	depends on OF && (ARCH_S32 || COMPILE_TEST)
-...
-
-> +static void s32cc_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
-> +{
-> +	struct s32cc_priv_data *gmac = priv;
-> +	int ret;
-> +
-> +	if (!gmac->rx_clk_enabled) {
-> +		ret = clk_prepare_enable(gmac->rx_clk);
-> +		if (ret) {
-> +			dev_err(gmac->dev, "Can't set rx clock\n");
-> +			return;
-> +		}
-> +		dev_dbg(gmac->dev, "rx clock enabled\n");
-> +		gmac->rx_clk_enabled = true;
-> +	}
-> +
-> +	switch (speed) {
-> +	case SPEED_1000:
-> +		dev_dbg(gmac->dev, "Set tx clock to 125M\n");
-> +		ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_125M);
-> +		break;
-> +	case SPEED_100:
-> +		dev_dbg(gmac->dev, "Set tx clock to 25M\n");
-> +		ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_25M);
-> +		break;
-> +	case SPEED_10:
-> +		dev_dbg(gmac->dev, "Set tx clock to 2.5M\n");
-> +		ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_2M5);
-> +		break;
-> +	default:
-> +		dev_err(gmac->dev, "Unsupported/Invalid speed: %d\n", speed);
-> +		return;
-> +	}
-> +
-
-We seem to have multiple cases of very similar logic in lots of stmmac
-platform drivers, and I think it's about time we said no more to this.
-So, what I think we should do is as follows:
-
-add the following helper - either in stmmac, or more generically
-(phylib? - in which case its name will need changing.)
-
-static long stmmac_get_rgmii_clock(int speed)
-{
-	switch (speed) {
-	case SPEED_10:
-		return 2500000;
-
-	case SPEED_100:
-		return 25000000;
-
-	case SPEED_1000:
-		return 125000000;
-
-	default:
-		return -ENVAL;
-	}
-}
-
-Then, this can become:
-
-	long tx_clk_rate;
-
-	...
-
-	tx_clk_rate = stmmac_get_rgmii_clock(speed);
-	if (tx_clk_rate < 0) {
-		dev_err(gmac->dev, "Unsupported/Invalid speed: %d\n", speed);
-		return;
-	}
-
-	ret = clk_set_rate(gmac->tx_clk, tx_clk_rate);
-
-> +	if (ret)
-> +		dev_err(gmac->dev, "Can't set tx clock\n");
-> +}
-> +
-> +static int s32cc_dwmac_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct plat_stmmacenet_data *plat;
-> +	struct s32cc_priv_data *gmac;
-> +	struct stmmac_resources res;
-> +	int ret;
-> +
-> +	gmac = devm_kzalloc(&pdev->dev, sizeof(*gmac), GFP_KERNEL);
-> +	if (!gmac)
-> +		return PTR_ERR(gmac);
-> +
-> +	gmac->dev = &pdev->dev;
-> +
-> +	ret = stmmac_get_platform_resources(pdev, &res);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "Failed to get platform resources\n");
-> +
-> +	plat = devm_stmmac_probe_config_dt(pdev, res.mac);
-> +	if (IS_ERR(plat))
-> +		return dev_err_probe(dev, PTR_ERR(plat),
-> +				     "dt configuration failed\n");
-> +
-> +	/* PHY interface mode control reg */
-> +	gmac->ctrl_sts = devm_platform_get_and_ioremap_resource(pdev, 1, NULL);
-> +	if (IS_ERR_OR_NULL(gmac->ctrl_sts))
-> +		return dev_err_probe(dev, PTR_ERR(gmac->ctrl_sts),
-> +				     "S32CC config region is missing\n");
-
-Testing with IS_ERR() is all that's required here.
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks,
+Ian
 
