@@ -1,91 +1,236 @@
-Return-Path: <linux-kernel+bounces-274254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224F79475B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:05:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4269475B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6FBC1F20010
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:05:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9431F21822
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA70148FE3;
-	Mon,  5 Aug 2024 07:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376EF149C59;
+	Mon,  5 Aug 2024 07:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCR4JOaM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5myd2to"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805871109;
-	Mon,  5 Aug 2024 07:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B597E1420B6;
+	Mon,  5 Aug 2024 07:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722841494; cv=none; b=oKGr85GKpQa9SCZfLDa3UtwkcqgRCBSqio9+Frt3QTFIEbYlpRJB31rq52xPP0DQnGcdT0WzmDY3rsmfE0mkMiS44JjLwa/lORuieJCCnNgMoFN1epi9BEMCdmbMUpbVU4PjdPJpdy+T4DRD2V4vpfxFybqHgf7JgEflCu03hr8=
+	t=1722841501; cv=none; b=aETN6sjytv3eLzXE+lodT+0BcbikLYTB+1SWvPOR8yXLE4V0JSJFImiTEIwISGHHA07MinO3RQ5Gfh2TEdVFkDJOkwuh+mx3kdiebKHuu+nQFHk8KVICdilJJtd8vtVRHgbVCp7bzAF8czjCoVVg//Ey1X8yoxm6t2VmWToxvGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722841494; c=relaxed/simple;
-	bh=mGNJli9yRK+L0NgOI1Yl4SoXIpHFd6nDFXIOFtXTris=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rld/udnqYysf2GtEipYX+FVFtyTXqVR5BWstmuk+62Osm8vOdXGytfoeqn7zW6cUKXJGgRjKuYBRw8dohHL4Hw0b3BPLYZfyGyWuOLE+JL00uw5Uz24/UYr0ia+3haq5gukGv7wGsHpTQgmOKkT/fMP2SGiYpKakvWA0XWrHFA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCR4JOaM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C5EC32782;
-	Mon,  5 Aug 2024 07:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722841494;
-	bh=mGNJli9yRK+L0NgOI1Yl4SoXIpHFd6nDFXIOFtXTris=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YCR4JOaMEUBntQWE9ae1fn6jNzLkv5ZT2hAe3HqNlhfBuEduN5QrsgZdcGGDhYqfx
-	 2AUq3NvvYAbholzqH7t4qt35mB7NqIbjkcm6n4V5p123jZCI9EfQeE1XAh5y54Dj84
-	 ElN+79IW24Wi559WRx4LJZY4pF3jM/WKdqhrYmPqRcw1AHRRMuFpz7OKDF2DvajHgt
-	 5uwM+B8WgXwkTWILKbdeclO6BpSEfI00dKqHNDRvrlV3eNAo4sEU86WV+M6jUkmPJS
-	 +z43d9t6Hbcfyncz3VCcbfC4tq5O+Ffr9GIKeChlS9Wd1ukw94N6CxPpsbbCiBaS+P
-	 GarBDy910r/oQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	mszeredi@redhat.com
-Subject: Re: [PATCH -next] fs: mounts: Remove unused declaration mnt_cursor_del()
-Date: Mon,  5 Aug 2024 09:04:37 +0200
-Message-ID: <20240805-abwarten-gewischt-9a931ea34343@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240803115000.589872-1-yuehaibing@huawei.com>
-References: <20240803115000.589872-1-yuehaibing@huawei.com>
+	s=arc-20240116; t=1722841501; c=relaxed/simple;
+	bh=Z93IupthTrqFn5V8ceCot+25OQXmjZHhMm3z56mtxBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnV+Jcijm0NCHVNpzjh2XpBSdkc9pdlVoWnSUgLpegJCA9eHE173IFgIZo4vPcXjTrWCQnI7KtfophTFK8bbk26Z59xVlVr/Te1ozyEp5DdA/kCrWX8pcKmjcR0DwUU+GvB6lW0AqkGhifTDXnCNc8Lpt6E2KP7ySrRk6KzcXO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X5myd2to; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3686b285969so5239952f8f.0;
+        Mon, 05 Aug 2024 00:04:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722841498; x=1723446298; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GvqGaTFVop2jOLifovYvjCOzgpHTLzWLXCFiNxbBn8w=;
+        b=X5myd2toCwEYRXNAy4BKrvoO23VWEZWww9j2wGuD2fA3VKF0qJyY9R/F9D5V1YhFX5
+         6yacH+K6Ryjxa67ZSuY/vhBquZLNUY5ooxsZaTV2qJPAQrC/kN3rNG5jhhnyxuNujuPE
+         DIyB8GNBhu0U2GWDJZzWWmEO3S3X9cA4OLSoVccs/Y36VfZL+pcNoDtKs0gq9uRcnGM/
+         ZDjxf3j69afz+4yQMxIBfXvQgqKZWTc0K83Jdex5ikYGL2XNd61gPUWgYmqh3USegHOY
+         kIamJe7RPeM+q+/65VnzkT/K7lVFBZqXz70jfcJUVTz4VReVcHGkhKNdWu3w8MCp7e0b
+         lr9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722841498; x=1723446298;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GvqGaTFVop2jOLifovYvjCOzgpHTLzWLXCFiNxbBn8w=;
+        b=DkvttGF0HA52bRIeTVtxtQbQ25kB4deNWWMimDfYitGFyob8SLCM9dtkaSd5L91le5
+         1YuIaZfOkiwKosmWvwwawtsM374sWcwqEaBDSepKWi5RDRToP0KYbTD9sd4/lqd2qhWY
+         zss2blqV+gsys7WHO8XvfCL/k++XGKRbbtPUuur9xgixJhJbQcErqwxUAYElx5NaBJPN
+         BwIAYFnve52Vx/15QZwydQRhDvZL7VbA08JaHlt/ayerZK9L1yZoF317auKGZGWNm2ME
+         CgNL00QBm7Wgc0Le6UIZEudk0UKMKsjFtElDfTo8/71fusmwcoMNO7ivEEOszqhgJQMd
+         Zr7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWKw8w/c7g9GJ8xebUuYiqXSVBjbpos4+ZJLs0dPVA6kNjvnSElaokqOT+A3oXPT76i4xYiwp0tEk0JM1Rwi7WgtL9aaosBCoOLe6Hi
+X-Gm-Message-State: AOJu0YysZqmlHBMLSuhoVNrTKWLq26B/zOYyKjM86asKS7ECqsP/Ug8d
+	dhG4BEqm9GvUfDos2IZ+1IQNOzTNvXcfT+kqn9Cv6/+xKSTRRCWv
+X-Google-Smtp-Source: AGHT+IEtizPWYpUTh9qVPUGhF7NSe9dJE7VPAOGYzjWkYLIBuObho8HMvoykd5AYBwVJpvbz65nZMA==
+X-Received: by 2002:adf:e008:0:b0:367:9d82:8370 with SMTP id ffacd0b85a97d-36bbc152c97mr5886538f8f.45.1722841497743;
+        Mon, 05 Aug 2024 00:04:57 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf1dc58sm8809924f8f.28.2024.08.05.00.04.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 00:04:57 -0700 (PDT)
+Date: Mon, 5 Aug 2024 09:04:55 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Yanxin Huang <yanxin.huang@unisoc.com>,
+	huang yanxin <yanxin.huang07@gmail.com>,
+	Wenming Wu <wenming.wu@unisoc.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/2] dt-bindings: nvmem: sprd,ums312-efuse: convert to YAML
+Message-ID: <edd56598a05184605f463146cdffbcc1457ed6da.1722841057.git.stano.jakubek@gmail.com>
+References: <c487bff193db7a06b846976a80c02c37509943ac.1722841057.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=951; i=brauner@kernel.org; h=from:subject:message-id; bh=mGNJli9yRK+L0NgOI1Yl4SoXIpHFd6nDFXIOFtXTris=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRtqOyZt60suvJ0irjEfh5Hb1Ppz/kBGXauNoqhN5r2b 5DaxKXTUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBFbb4b/sSc0FntI+kw6GcFZ oZZ4suT/pe8Kf+7bpJs9XG/I8ywzk+F/iuWBrWd2qZkvSb1mqjHp75WTGlsOWbzSc9VXiT96cU4 fLwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c487bff193db7a06b846976a80c02c37509943ac.1722841057.git.stano.jakubek@gmail.com>
 
-On Sat, 03 Aug 2024 19:50:00 +0800, Yue Haibing wrote:
-> Commit 2eea9ce4310d ("mounts: keep list of mounts in an rbtree")
-> removed the implementation but leave declaration.
-> 
-> 
+Convert the Spreadtrum UMS312 eFuse bindings to DT schema.
+Adjust filename to match compatible.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Note: the UMS312 clock bindings include doesn't seem to exist (yet?), so
+      the UMS512 one was used for the "CLK_EFUSE_EB" define.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+Changes in V3:
+  - add Conor's R-b
+  - rebase on next-20240805
+  - add lore links to V1 and V2 to the changelog
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Changes in V2:
+  - new patch, split from the merged bindings in V1
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Link to V2: https://lore.kernel.org/lkml/17ccb895a54d7754d3ddd6de633ad045a5271b4b.1721199034.git.stano.jakubek@gmail.com/
+Link to V1: https://lore.kernel.org/lkml/ZpJvRePtbaiG94Te@standask-GA-A55M-S2HP/
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
+ .../bindings/nvmem/sprd,ums312-efuse.yaml     | 61 +++++++++++++++++++
+ .../devicetree/bindings/nvmem/sprd-efuse.txt  | 39 ------------
+ 2 files changed, 61 insertions(+), 39 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/sprd,ums312-efuse.yaml
+ delete mode 100644 Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
 
-[1/1] fs: mounts: Remove unused declaration mnt_cursor_del()
-      https://git.kernel.org/vfs/vfs/c/de11c86d68ba
+diff --git a/Documentation/devicetree/bindings/nvmem/sprd,ums312-efuse.yaml b/Documentation/devicetree/bindings/nvmem/sprd,ums312-efuse.yaml
+new file mode 100644
+index 000000000000..00e0fd1353a3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nvmem/sprd,ums312-efuse.yaml
+@@ -0,0 +1,61 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/nvmem/sprd,ums312-efuse.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum UMS312 eFuse
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    const: sprd,ums312-efuse
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: enable
++
++  hwlocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - hwlocks
++
++allOf:
++  - $ref: nvmem.yaml#
++  - $ref: nvmem-deprecated-cells.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/sprd,ums512-clk.h>
++
++    efuse@32240000 {
++      compatible = "sprd,ums312-efuse";
++      reg = <0x32240000 0x10000>;
++      clocks = <&aonapb_gate CLK_EFUSE_EB>;
++      clock-names = "enable";
++      hwlocks = <&hwlock 8>;
++      #address-cells = <1>;
++      #size-cells = <1>;
++
++      /* Data cells */
++      thermal_calib: calib@10 {
++        reg = <0x10 0x2>;
++      };
++    };
++...
+diff --git a/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt b/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
+deleted file mode 100644
+index 96b6feec27f0..000000000000
+--- a/Documentation/devicetree/bindings/nvmem/sprd-efuse.txt
++++ /dev/null
+@@ -1,39 +0,0 @@
+-= Spreadtrum eFuse device tree bindings =
+-
+-Required properties:
+-- compatible: Should be "sprd,ums312-efuse".
+-- reg: Specify the address offset of efuse controller.
+-- clock-names: Should be "enable".
+-- clocks: The phandle and specifier referencing the controller's clock.
+-- hwlocks: Reference to a phandle of a hwlock provider node.
+-
+-= Data cells =
+-Are child nodes of eFuse, bindings of which as described in
+-bindings/nvmem/nvmem.txt
+-
+-Example:
+-
+-	ap_efuse: efuse@32240000 {
+-		compatible = "sprd,ums312-efuse";
+-		reg = <0 0x32240000 0 0x10000>;
+-		clock-names = "enable";
+-		hwlocks = <&hwlock 8>;
+-		clocks = <&aonapb_gate CLK_EFUSE_EB>;
+-
+-		/* Data cells */
+-		thermal_calib: calib@10 {
+-			reg = <0x10 0x2>;
+-		};
+-	};
+-
+-= Data consumers =
+-Are device nodes which consume nvmem data cells.
+-
+-Example:
+-
+-	thermal {
+-		...
+-
+-		nvmem-cells = <&thermal_calib>;
+-		nvmem-cell-names = "calibration";
+-	};
+-- 
+2.34.1
+
 
