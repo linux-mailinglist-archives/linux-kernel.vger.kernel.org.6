@@ -1,374 +1,119 @@
-Return-Path: <linux-kernel+bounces-274571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BCC947A38
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0863947A3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26A7BB21D7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:06:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AA48B20C6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8CE15575F;
-	Mon,  5 Aug 2024 11:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0708155C83;
+	Mon,  5 Aug 2024 11:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iDOc+MBi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=radojevic.rs header.i=@radojevic.rs header.b="owarYTnu"
+Received: from mail.radojevic.rs (radojevic.rs [139.162.187.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AD213AD11
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 11:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AB2154BE4;
+	Mon,  5 Aug 2024 11:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.162.187.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722856006; cv=none; b=g5t8XnODICWumj19Kdn2A2nPG8jf4RFELyoByrY78iS3IR48jiYLsRWEkAU2j4ptSSAVl9dXNNr8E6Q/Y3jKb1aVUquD7zURHdoaYX0p1d7ZiDonxLApGV16Iqj5pb+pQS1ur9Wtd+9s3nm+6wmQhJXoqc8b2NiHWwKe4WpilPk=
+	t=1722856035; cv=none; b=OX2iGVFQoqo/pdPD92cLB/jNWqssPg1ZsdfxeAq3Y4lpOSdTCnla/K/DZcjpPYsYWxiQJgH1xZmIXrQkKd2VCAG28Rh/pJjcplYR1MAJtyehE4JCg/+BVSL5d7l7ZoJr/SaYF2o8i12aBbbUdgjrAT40S6zVOHfB7RgG7KectIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722856006; c=relaxed/simple;
-	bh=ZROb3dB2VaVaGsnp5zkOSyH+sb3xDkLcZAhsWX2SuaU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lVp7njHQk7/iOiJ4ySp3cwc0DZOJR+EJG48YsytCya0EpZ7ax1EjjKNSjNRa1n0AecSB7UQr2yxba9SeiRHMwyCed075cnLiWLbgU5l4PGu38/ge3bsFU/of/gKxkwySc3zPT2cC8nwbaLUg3qktRlSr3wxFCJPihyZgr+vQKaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iDOc+MBi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722856002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0EuEhaqkma5nF/MDa1ex/CbEv6H+NURzLYv8ieItZpQ=;
-	b=iDOc+MBiiQvuTmsT/DPTESxV+ApZy9NgcilY05hm8MtkVeoH4F89sxAp/MmfqTmvWsVMb5
-	mwClmVb9guKbTKMAyK4ceYgrXiFWhuCOpIN4I6aU0auumA52w9vrLiLGurAvdDNv/tUqeI
-	lNbNjRDRAGMg1pmEvYDOycxdH9/b2m0=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-yPep0-6_PPmVSkU6_0fbtw-1; Mon, 05 Aug 2024 07:06:39 -0400
-X-MC-Unique: yPep0-6_PPmVSkU6_0fbtw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36878581685so5348515f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 04:06:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722855998; x=1723460798;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0EuEhaqkma5nF/MDa1ex/CbEv6H+NURzLYv8ieItZpQ=;
-        b=VHcGMZ2ZY4bd2n8n8HNHTULAiN/IQfmwS3WAWOs252ZROxDMZR1rztYDkAOLjZv73p
-         7R/FGSPNfaL0RFrRmQHwf9pajKQ3urWKIZmJVzeUzmjxFaHTfT3BgFhumbdwEXDXQQq8
-         atqVqxv9/wvZWVHowQrHoQLzihWhVG9D5JOmhSsPne3e803B9CPd/5YXJ/mkOHKbKhH5
-         1ibLYv5IfDMK745FbjPXmNpaWgzCQaYfMPCjdYSglsUGa755KPX6/vbqMe/AAQNrIHsE
-         l8u5eFtGnDEpJF1M5pX9U5YK9EzZMaoF7hds0+ymB0wkc20llHtJruDFUN+Uslx9vNFr
-         c/SA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwfPFyJ2EEMaCa7/tFEvdUbeY7SYkWd5ew+IMjuqy5g/7iEpWXrEi1NOS/QfTVLAmM4vuEySETssnzz7UFslKSVZWfJTxc6KuuVxuF
-X-Gm-Message-State: AOJu0Yy1zmhBOQWAFemQVInmE85qPFmCVi9tQa5Qyl8v7EofAOG8BRnw
-	pMKQIr+twKY/2mH1suU7VKYnCbrbTc7wg+5TZyco4rCyKZC8ngcCpQ6zkHvY+8QxDtyjui2/AP/
-	s1suxtcJfV/rknUl8xbeb3YGtWTVlhA4vRFYrK2NVGKibFZdzbovWYH4i3A4EBQ==
-X-Received: by 2002:a5d:518c:0:b0:366:e7aa:7fa5 with SMTP id ffacd0b85a97d-36bbc0f7f87mr7350780f8f.1.1722855997900;
-        Mon, 05 Aug 2024 04:06:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF6dg7LPJI84OZv+IpNHY8eZR1NrMnc4r04apwnaanq3LD1mnPJZ5UQZpkQV2fYA8faTO8Xtg==
-X-Received: by 2002:a5d:518c:0:b0:366:e7aa:7fa5 with SMTP id ffacd0b85a97d-36bbc0f7f87mr7350755f8f.1.1722855997347;
-        Mon, 05 Aug 2024 04:06:37 -0700 (PDT)
-Received: from intellaptop.lan ([2a06:c701:778d:5201:3e8a:4c9c:25dd:6ccc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0cc58sm9526157f8f.2.2024.08.05.04.06.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 04:06:36 -0700 (PDT)
-Message-ID: <8f35b524cda53aff29a9389c79742fc14f77ec68.camel@redhat.com>
-Subject: Re: [PATCH v2 22/49] KVM: x86: Add a macro to precisely handle
- aliased 0x1.EDX CPUID features
-From: mlevitsk@redhat.com
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
- Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
- <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
- Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Mon, 05 Aug 2024 14:06:35 +0300
-In-Reply-To: <ZqKb_JJlUED5JUHP@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-23-seanjc@google.com>
-	 <43ef06aca700528d956c8f51101715df86f32a91.camel@redhat.com>
-	 <ZoxVa55MIbAz-WnM@google.com>
-	 <3da2be9507058a15578b5f736bc179dc3b5e970f.camel@redhat.com>
-	 <ZqKb_JJlUED5JUHP@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+	s=arc-20240116; t=1722856035; c=relaxed/simple;
+	bh=FsKABYar5tCCmqGtOJLbGI3S+bt2cKoGgq3u7smejfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZpjkcV8gze+Xd7Q1mT0g+fcNnTLkpagQKkbgqWhtHdK2U/gtXwiPlIfWIq837KzIl/lcLw6XZtBHDws+YAFKWsGYgZIIrU+otYqIuhwUSBhveEbzDuAaEczhhBTseP0DtciwGLnAg57ZTLpLc60Af1UI/Cotkche6iZ6Z9sy08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=radojevic.rs; spf=pass smtp.mailfrom=radojevic.rs; dkim=pass (2048-bit key) header.d=radojevic.rs header.i=@radojevic.rs header.b=owarYTnu; arc=none smtp.client-ip=139.162.187.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=radojevic.rs
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radojevic.rs
+Received: from localhost (unknown [91.143.223.193])
+	by mail.radojevic.rs (Postfix) with ESMTPSA id 618D51E1DF;
+	Mon,  5 Aug 2024 13:07:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=radojevic.rs; s=mail;
+	t=1722856032; bh=FsKABYar5tCCmqGtOJLbGI3S+bt2cKoGgq3u7smejfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=owarYTnudqNQj3zzqpcAD1STQ5bEUj0ILZjbSJvK0hNiUpvR/Gyyr7fOKhAuPST7P
+	 50I9jyCORzNZQkrEHXd4qLRwe4wKHlUxj/pgpTMHJT+wNJnaRq8OOhY23W1Ngo1vJw
+	 mSOTWt9halv0WWjvcZGVoxo+x2E6twuW5NZSPcDgzZIcWoliVNWZWHg1vncDX0G5Q1
+	 zHjt7MfuOIS0P+rG+fETO9650G55ciXpUVEtQacydvaEfJcvPRuALMEGmu9M3OIESD
+	 c9gPjB8H3MbMj53XGqavnBdUn+Aaq1PDQBgQtokbDxHEw1mGYlsxNp7oQLlWlZ6SKy
+	 VGz+H3+7llQ+Q==
+Date: Mon, 5 Aug 2024 13:07:11 +0200
+From: Nikola Radojevic <nikola@radojevic.rs>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Raise Pinebook Pro's panel
+ backlight PWM frequency
+Message-ID: <fkiauvfki7kvmhs3g4aqatqcdtf6cko7xpgg7zfhgojnhoxa36@ruz5ywsdgr4c>
+References: <2a23b6cfd8c0513e5b233b4006ee3d3ed09b824f.1722805655.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2a23b6cfd8c0513e5b233b4006ee3d3ed09b824f.1722805655.git.dsimic@manjaro.org>
 
-=D0=A3 =D1=87=D1=82, 2024-07-25 =D1=83 11:39 -0700, Sean Christopherson =D0=
-=BF=D0=B8=D1=88=D0=B5:
-> > On Wed, Jul 24, 2024, Maxim Levitsky wrote:
-> > > > On Mon, 2024-07-08 at 14:08 -0700, Sean Christopherson wrote:
-> > > > > > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> > > > > > > > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrot=
-e:
-> > > > > > > > > > Add a macro to precisely handle CPUID features that AMD=
- duplicated from
-> > > > > > > > > > CPUID.0x1.EDX into CPUID.0x8000_0001.EDX.=C2=A0 This wi=
-ll allow adding an
-> > > > > > > > > > assert that all features passed to kvm_cpu_cap_init() m=
-atch the word being
-> > > > > > > > > > processed, e.g. to prevent passing a feature from CPUID=
- 0x7 to CPUID 0x1.
-> > > > > > > > > >=20
-> > > > > > > > > > Because the kernel simply reuses the X86_FEATURE_* defi=
-nitions from
-> > > > > > > > > > CPUID.0x1.EDX, KVM's use of the aliased features would =
-result in false
-> > > > > > > > > > positives from such an assert.
-> > > > > > > > > >=20
-> > > > > > > > > > No functional change intended.
-> > > > > > > > > >=20
-> > > > > > > > > > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > > > > > > > > > ---
-> > > > > > > > > > =C2=A0arch/x86/kvm/cpuid.c | 24 +++++++++++++++++------=
--
-> > > > > > > > > > =C2=A01 file changed, 17 insertions(+), 7 deletions(-)
-> > > > > > > > > >=20
-> > > > > > > > > > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.=
-c
-> > > > > > > > > > index 5e3b97d06374..f2bd2f5c4ea3 100644
-> > > > > > > > > > --- a/arch/x86/kvm/cpuid.c
-> > > > > > > > > > +++ b/arch/x86/kvm/cpuid.c
-> > > > > > > > > > @@ -88,6 +88,16 @@ u32 xstate_required_size(u64 xstate_=
-bv, bool compacted)
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(name)=
-;=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0\
-> > > > > > > > > > =C2=A0})
-> > > > > > > > > > =C2=A0
-> > > > > > > > > > +/*
-> > > > > > > > > > + * Aliased Features - For features in 0x8000_0001.EDX =
-that are duplicates of
-> > > > > > > > > > + * identical 0x1.EDX features, and thus are aliased fr=
-om 0x1 to 0x8000_0001.
-> > > > > > > > > > + */
-> > > > > > > > > > +#define AF(name)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0\
-> > > > > > > > > > +({=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0\
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BUILD_BUG_ON=
-(__feature_leaf(X86_FEATURE_##name) !=3D CPUID_1_EDX);=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0\
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0feature_bit(=
-name);=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0\
-> > > > > > > > > > +})
-> > > > > > > > > > +
-> > > > > > > > > > =C2=A0/*
-> > > > > > > > > > =C2=A0 * Magic value used by KVM when querying userspac=
-e-provided CPUID entries and
-> > > > > > > > > > =C2=A0 * doesn't care about the CPIUD index because the=
- index of the function in
-> > > > > > > > > > @@ -758,13 +768,13 @@ void kvm_set_cpu_caps(void)
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0);
-> > > > > > > > > > =C2=A0
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0kvm_cpu=
-_cap_init(CPUID_8000_0001_EDX,
-> > > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(FPU) | F(VME) | F(DE) | F(PSE) |
-> > > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(TSC) | F(MSR) | F(PAE) | F(MCE) |
-> > > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(CX8) | F(APIC) | 0 /* Reserved */ | F=
-(SYSCALL) |
-> > > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
-> > > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(PAT) | F(PSE36) | 0 /* Reserved */ |
-> > > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(NX) | 0 /* Reserved */ | F(MMXEXT) | =
-F(MMX) |
-> > > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGE=
-S) | F(RDTSCP) |
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0AF(FPU) | AF(VME) | AF(DE) | AF(PSE) |
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0AF(TSC) | AF(MSR) | AF(PAE) | AF(MCE) |
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0AF(CX8) | AF(APIC) | 0 /* Reserved */ |=
- F(SYSCALL) |
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0AF(MTRR) | AF(PGE) | AF(MCA) | AF(CMOV)=
- |
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0AF(PAT) | AF(PSE36) | 0 /* Reserved */ =
-|
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0F(NX) | 0 /* Reserved */ | F(MMXEXT) | =
-AF(MMX) |
-> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0AF(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAG=
-ES) | F(RDTSCP) |
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00 /* Reserved */ | X86_64_F(LM) |=
- F(3DNOWEXT) | F(3DNOW)
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0);
-> > > > > > > > > > =C2=A0
-> > > > > > > >=20
-> > > > > > > > Hi,
-> > > > > > > >=20
-> > > > > > > > What if we defined the aliased features instead.
-> > > > > > > > Something like this:
-> > > > > > > >=20
-> > > > > > > > #define __X86_FEATURE_8000_0001_ALIAS(feature) \
-> > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0(feature + =
-(CPUID_8000_0001_EDX - CPUID_1_EDX) * 32)
-> > > > > > > >=20
-> > > > > > > > #define KVM_X86_FEATURE_FPU_ALIAS=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_FPU)
-> > > > > > > > #define KVM_X86_FEATURE_VME_ALIAS=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_VME)
-> > > > > > > >=20
-> > > > > > > > And then just use for example the 'F(FPU_ALIAS)' in the CPU=
-ID_8000_0001_EDX
-> > > > > >=20
-> > > > > > At first glance, I really liked this idea, but after working th=
-rough the
-> > > > > > ramifications, I think I prefer "converting" the flag when pass=
-ing it to
-> > > > > > kvm_cpu_cap_init().=C2=A0 In-place conversion makes it all but =
-impossible for KVM to
-> > > > > > check the alias, e.g. via guest_cpu_cap_has(), especially since=
- the AF() macro
-> > > > > > doesn't set the bits in kvm_known_cpu_caps (if/when a non-hacky=
- validation of
-> > > > > > usage becomes reality).
-> > > >=20
-> > > > Could you elaborate on this as well?
-> > > >=20
-> > > > My suggestion was that we can just treat aliases as completely inde=
-pendent
-> > > > and dummy features, say KVM_X86_FEATURE_FPU_ALIAS, and pass them as=
- is to the
-> > > > guest, which means that if an alias is present in host cpuid, it ap=
-pears in
-> > > > kvm caps, and thus qemu can then set it in guest cpuid.
-> > > >=20
-> > > > I don't think that we need any special treatment for them if you lo=
-ok at it
-> > > > this way.=C2=A0 If you don't agree, can you give me an example?
-> >=20
-> > KVM doesn't honor the aliases beyond telling userspace they can be set =
-(see below
-> > for all the aliased features that KVM _should_ be checking).=C2=A0 The =
-APM clearly
-> > states that the features are the same as their CPUID.0x1 counterparts, =
-but Intel
-> > CPUs don't support the aliases.=C2=A0 So, as you also note below, I thi=
-nk we could
-> > unequivocally say that enumerating the aliases but not the "real" featu=
-res is a
-> > bogus CPUID model, but we can't say the opposite, i.e. the real feature=
-s can
-> > exists without the aliases.
-> >=20
-> > And that means that KVM must never query the aliases, e.g. should never=
- do
-> > guest_cpu_cap_has(KVM_X86_FEATURE_FPU_ALIAS), because the result is ess=
-entially
-> > meaningless.=C2=A0 It's a small thing, but if KVM_X86_FEATURE_FPU_ALIAS=
- simply doesn't
-> > exist, i.e. we do in-place conversion, then it's impossible to feed the=
- aliases
-> > into things like guest_cpu_cap_has().
+Hello,
+I have tested this on my Pinebook Pro and I can confirm that
+everything seems to work alright.
 
-This only makes my case stronger - treating the aliases as just features wi=
-ll
-allow us to avoid adding more logic to code which is already too complex IM=
-HO.
+Tested-by: Nikola Radojević <nikola@radojevic.rs>
 
-If your concern is that features could be queried by guest_cpu_cap_has()
-that is easy to fix, we can (and should) put them into a separate file and
-#include them only in cpuid.c.
-
-We can even #undef the __X86_FEATURE_8000_0001_ALIAS macro after the kvm_se=
-t_cpu_caps,
-then if I understand the macro pre-processor correctly, any use of feature =
-alias
-macros will not fully evaluate and cause a compile error.
-
-
-
-> >=20
-> > Heh, on a related topic, __cr4_reserved_bits() fails to account for any=
- of the
-> > aliased features.=C2=A0 Unless I'm missing something, VME, DE, TSC, PSE=
-, PAE, PGE and
-> > MCE, all need to be handled in __cr4_reserved_bits().=C2=A0
-> > =C2=A0Amusingly,=20
-> > nested_vmx_cr_fixed1_bits_update() handles the aliased legacy features.=
-=C2=A0 I don't
-> > see any reason for nested_vmx_cr_fixed1_bits_update() to manually query=
- guest
-> > CPUID, it should be able to use cr4_guest_rsvd_bits verbatim.
-
-Yep, this should be fixed - this patch series is about to grow even more I =
-guess,
-or rather let me suggest that you split it into several patch series, which
-can be merged and discussed separately.
-
-
-> >=20
-> > > > > > Side topic, if it's not already documented somewhere else, kvm/=
-x86/cpuid.rst
-> > > > > > should call out that KVM only honors the features in CPUID.0x1,=
- i.e. that setting
-> > > > > > aliased bits in CPUID.0x8000_0001 is supported if and only if t=
-he bit(s) is also
-> > > > > > set in CPUID.0x1.
-> > > >=20
-> > > > To be honest if KVM enforces this, such enforcement can be removed =
-IMHO:
-> >=20
-> > There's no enforcement, and as above I agree that this would be a bogus=
- CPUID
-> > model.=C2=A0 I was thinking that it could be helpful to document that K=
-VM never checks
-> > the aliases, but on second though, it's probably unnecessary because th=
-e APM does
-> > say
-> >=20
-> > =C2=A0 Same as CPUID Fn0000_0001_EDX[...]
-> >=20
-> > for all the bits, i.e. setting the aliases without the real bits is an
-> > architectural violation.
-
-Regardless if this is an architectural violation or not, KVM should allow t=
-his
-because it allows many architectural violations, like AVX3 with no XSAVE, a=
-nd such.
-
-IMHO being consistent is more important than being right in only some cases=
-,
-and I don't think we want to start enforcing all the CPUID dependencies
-(I actually won't object to this).
-
-Best regards,
-	Maxim Levitsky
-
-
-> >=20
-
+On 24/08/04 11:10PM, Dragan Simic wrote:
+> Increase the frequency of the PWM signal that drives the LED backlight of
+> the Pinebook Pro's panel, from about 1.35 KHz (which equals to the PWM
+> period of 740,740 ns), to exactly 8 kHz (which equals to the PWM period of
+> 125,000 ns).  Using a higher PWM frequency for the panel backlight, which
+> reduces the flicker, can only be beneficial to the end users' eyes.
+> 
+> On top of that, increasing the backlight PWM signal frequency reportedly
+> eliminates the buzzing emitted from the Pinebook Pro's built-in speakers
+> when certain backlight levels are set, which cause some weird interference
+> with some of the components of the Pinebook Pro's audio chain.
+> 
+> The old value for the backlight PWM period, i.e. 740,740 ns, is pretty much
+> an arbitrary value that was selected during the very early bring-up of the
+> Pinebook Pro, only because that value seemed to minimize horizontal line
+> distortion on the display, which resulted from the old X.org drivers causing
+> screen tearing when dragging windows around.  That's no longer an issue, so
+> there are no reasons to stick with the old PWM period value.
+> 
+> The lower and the upper backlight PWM frequency limits for the Pinebook Pro's
+> panel, according to its datasheet, are 200 Hz and 10 kHz, respectively. [1]
+> These changes still leave some headroom, which may have some positive effects
+> on the lifetime expectancy of the panel's backlight LEDs.
+> 
+> [1] https://files.pine64.org/doc/datasheet/PinebookPro/NV140FHM-N49_Rev.P0_20160804_201710235838.pdf
+> 
+> Fixes: 5a65505a6988 ("arm64: dts: rockchip: Add initial support for Pinebook Pro")
+> Cc: stable@vger.kernel.org
+> Reported-by: Nikola Radojevic <nikola@radojevic.rs>
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
+> index 294eb2de263d..b3f76cc2d6e1 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinebook-pro.dts
+> @@ -32,7 +32,7 @@ chosen {
+>  	backlight: edp-backlight {
+>  		compatible = "pwm-backlight";
+>  		power-supply = <&vcc_12v>;
+> -		pwms = <&pwm0 0 740740 0>;
+> +		pwms = <&pwm0 0 125000 0>;
+>  	};
+>  
+>  	bat: battery {
 
