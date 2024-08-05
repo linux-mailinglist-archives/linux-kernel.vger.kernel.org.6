@@ -1,256 +1,132 @@
-Return-Path: <linux-kernel+bounces-274824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E574F947D45
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:53:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A03A947D4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C4D8B22B6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:53:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 542BC281973
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7C4145327;
-	Mon,  5 Aug 2024 14:53:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB34F5381A;
-	Mon,  5 Aug 2024 14:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B204915AD95;
+	Mon,  5 Aug 2024 14:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="pTiPKTlO";
+	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="voJL2WTo"
+Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97D013C827
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722869623; cv=none; b=g3ORmvHFT8rn4RmWTHa+KsQpms2xTzt2RzwTus+oX4wO2XfzdsMl5zUxNyevawvgytdUJ5Ov8KWjst3DPbdfbGXGx5sDVD8Q8b7eYlTs1b1OTIFnr9kYixjUvKzocs/5eA3H8+W0A3PtM15d0hDodqHqbKsKBuSmyxqO7Qk5UyQ=
+	t=1722869635; cv=none; b=oa/rd7sijkP/kABPZymt7Be5cUK3GiicLAsp9rdkxjNK7IvG1f5NMHd31kFPZjbFv/bJp48Qnl5Peht8Yk102QcgNJenWysH3PHnDIXi9Bg1lJN2MRXPDDtW285jyHOaIK76SJJo1RfcxuutVGPtrgU0sPDlNtmPdH69MJvMkSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722869623; c=relaxed/simple;
-	bh=eREV0LKC5JVcgY8+dgImoYFZMUcqU5b2QqWhK7QnD9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RWPbfrpYz2Z/FLsBIoYrzkWJfynXs4yi1zqs1gSxBFgUhzVPEqXb5yfYYs5eIHPXIst2zICxgbeDYcWI9TBJVpXhW/AsxY9IuOvzcuPFANT0kWhBYAfnDTcIcKHE00eGA108A6wLmWPJeIW1vMvPgDptuzzHF9C4uaZoaQWARro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68615106F;
-	Mon,  5 Aug 2024 07:54:06 -0700 (PDT)
-Received: from [10.1.25.54] (e127648.arm.com [10.1.25.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D92C53F6A8;
-	Mon,  5 Aug 2024 07:53:37 -0700 (PDT)
-Message-ID: <9bbf6989-f41f-4533-a7c8-b274744663cd@arm.com>
-Date: Mon, 5 Aug 2024 15:53:35 +0100
+	s=arc-20240116; t=1722869635; c=relaxed/simple;
+	bh=3rOz7BDXwlQ9UnOvzDCF2tjuOpsdwHuqigAqPDEx2yU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=mSb3lfhIRnofdzNq+OZeHAPuUdtkUQoWte9AGKtruZpx19RwE6bNRYZSPAjdGtcm65I4LzZsypgRtxE2778BP8RVhS92UIlI2t9R7CJToqXyTqj0UXGaCVK8Gd5Q0w+QNtL5Vk3ANLPzy4UdEH4wCCpUrVnXrEp3dF5yKLtYOQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=pTiPKTlO; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=voJL2WTo; arc=none smtp.client-ip=64.147.108.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id 4DFDD23B3C;
+	Mon,  5 Aug 2024 10:53:47 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
+	:to:cc:subject:in-reply-to:message-id:references:mime-version
+	:content-type; s=sasl; bh=3rOz7BDXwlQ9UnOvzDCF2tjuOpsdwHuqigAqPD
+	Ex2yU=; b=pTiPKTlOj3boeCHQ4FiaFJwK0oJBnWmqCx+E9QvzRyMhImN3PfRB6p
+	l6On54P2/yE+yBXomeBXCc1Wa+zBJpOc3FtoFGfnPbKTI97QT2oVmWNzKErsunqP
+	rXNeFhmLmiC6p0wDSIj1wMqQO+CVuo1KMo6AhgzOJV9YNaZF8W9GA=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+	by pb-smtp2.pobox.com (Postfix) with ESMTP id 44E1923B3B;
+	Mon,  5 Aug 2024 10:53:47 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=3rOz7BDXwlQ9UnOvzDCF2tjuOpsdwHuqigAqPDEx2yU=; b=voJL2WTo3lXi5FOcLjqmnorpdT57k2WqQNzyyy80RSn0wrrzTldWRw5IqswTBCJxn/m/mKMBnPJxi0+xiQ1gjY9T7n+u55U1eb50kcUbY0WcYhycTuE16Bw93o1emKVCuupeWzE8tHwMHilYrFY/kwgbUIHHV2tTZA2gB4sol5M=
+Received: from yoda.fluxnic.net (unknown [184.162.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id BA6DF23B3A;
+	Mon,  5 Aug 2024 10:53:46 -0400 (EDT)
+	(envelope-from nico@fluxnic.net)
+Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
+	by yoda.fluxnic.net (Postfix) with ESMTPSA id 936F6D8AE83;
+	Mon,  5 Aug 2024 10:53:45 -0400 (EDT)
+Date: Mon, 5 Aug 2024 10:53:45 -0400 (EDT)
+From: Nicolas Pitre <nico@fluxnic.net>
+To: Dave Martin <Dave.Martin@arm.com>
+cc: Frederic Weisbecker <frederic@kernel.org>, 
+    LKML <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, 
+    linux-arm-kernel@lists.infradead.org, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 01/20] arm/bL_switcher: Use kthread_run_on_cpu()
+In-Reply-To: <ZrDlZYoafHFpW4TS@e133380.arm.com>
+Message-ID: <q8r18os4-8ss5-qq61-so7p-0np12o8q3prr@syhkavp.arg>
+References: <20240726215701.19459-1-frederic@kernel.org> <20240726215701.19459-2-frederic@kernel.org> <ZrDlZYoafHFpW4TS@e133380.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv3 0/3] cpuidle: teo: Fixing utilization and intercept
- logic
-To: "Rafael J. Wysocki" <rafael@kernel.org>, stable@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
- daniel.lezcano@linaro.org, ulf.hansson@linaro.org, anna-maria@linutronix.de,
- dsmythies@telus.net, kajetan.puchalski@arm.com, lukasz.luba@arm.com,
- dietmar.eggemann@arm.com
-References: <20240628095955.34096-1-christian.loehle@arm.com>
- <CAJZ5v0jPyy0HgtQcSt=7ZO-khSGex2uAxL1x6HZFkFbvpbxcmA@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAJZ5v0jPyy0HgtQcSt=7ZO-khSGex2uAxL1x6HZFkFbvpbxcmA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID:
+ 847DE1AC-533A-11EF-B06C-9B0F950A682E-78420484!pb-smtp2.pobox.com
 
-On 6/28/24 20:06, Rafael J. Wysocki wrote:
-> On Fri, Jun 28, 2024 at 12:02 PM Christian Loehle
-> <christian.loehle@arm.com> wrote:
->>
->> Hi all,
->> so my investigation into teo lead to the following fixes.
->>
->> 1/3:
->> As discussed the utilization threshold is too high while
->> there are benefits in certain workloads, there are quite a few
->> regressions, too. Revert the Util-awareness patch.
->> This in itself leads to regressions, but part of it can be offset
->> by the later patches.
->> See
->> https://lore.kernel.org/lkml/CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VXRT2b5bg@mail.gmail.com/
->> 2/3:
->> Remove the 'recent' intercept logic, see my findings in:
->> https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
->> I haven't found a way to salvage this properly, so I removed it.
->> The regular intercept seems to decay fast enough to not need this, but
->> we could change it if that turns out that we need this to be faster in
->> ramp-up and decaying.
->> 3/3:
->> The rest of the intercept logic had issues, too.
->> See the commit.
->>
->> Happy for anyone to take a look and test as well.
->>
->> Some numbers for context, comparing:
->> - IO workload (intercept heavy).
->> - Timer workload very low utilization (check for deepest state)
->> - hackbench (high utilization)
->> - Geekbench 5 on Pixel6 (high utilization)
->> Tests 1 to 3 are on RK3399 with CONFIG_HZ=100.
->> target_residencies: 1, 900, 2000
->>
->> 1. IO workload, 5 runs, results sorted, in read IOPS.
->> fio --minimal --time_based --name=fiotest --filename=/dev/nvme0n1 --runtime=30 --rw=randread --bs=4k --ioengine=psync --iodepth=1 --direct=1 | cut -d \; -f 8;
->>
->> teo fixed v2:
->> /dev/nvme0n1
->> [4599, 4658, 4692, 4694, 4720]
->> /dev/mmcblk2
->> [5700, 5730, 5735, 5747, 5977]
->> /dev/mmcblk1
->> [2052, 2054, 2066, 2067, 2073]
->>
->> teo mainline:
->> /dev/nvme0n1
->> [3793, 3825, 3846, 3865, 3964]
->> /dev/mmcblk2
->> [3831, 4110, 4154, 4203, 4228]
->> /dev/mmcblk1
->> [1559, 1564, 1596, 1611, 1618]
->>
->> menu:
->> /dev/nvme0n1
->> [2571, 2630, 2804, 2813, 2917]
->> /dev/mmcblk2
->> [4181, 4260, 5062, 5260, 5329]
->> /dev/mmcblk1
->> [1567, 1581, 1585, 1603, 1769]
->>
->>
->> 2. Timer workload (through IO for my convenience 😉 )
->> Results in read IOPS, fio same as above.
->> echo "0 2097152 zero" | dmsetup create dm-zeros
->> echo "0 2097152 delay /dev/mapper/dm-zeros 0 50" | dmsetup create dm-slow
->> (Each IO is delayed by timer of 50ms, should be mostly in state2, for 5s total)
->>
->> teo fixed v2:
->> idle_state time
->> 2.0     4.807025
->> -1.0    0.219766
->> 0.0     0.072007
->> 1.0     0.169570
->>
->> 3199 cpu_idle total
->> 38 cpu_idle_miss
->> 31 cpu_idle_miss above
->> 7 cpu_idle_miss below
->>
->> teo mainline:
->> idle_state time
->> 1.0     4.897942
->> -1.0    0.095375
->> 0.0     0.253581
->>
->> 3221 cpu_idle total
->> 1269 cpu_idle_miss
->> 22 cpu_idle_miss above
->> 1247 cpu_idle_miss below
->>
->> menu:
->> idle_state time
->> 2.0     4.295546
->> -1.0    0.234164
->> 1.0     0.356344
->> 0.0     0.401507
->>
->> 3421 cpu_idle total
->> 129 cpu_idle_miss
->> 52 cpu_idle_miss above
->> 77 cpu_idle_miss below
->>
->> Residencies:
->> teo mainline isn't in state2 at all, teo fixed is more in state2 than menu, but
->> both are in state2 the vast majority of the time as expected.
->>
->> tldr: overall teo fixed spends more time in state2 while having
->> fewer idle_miss than menu.
->> teo mainline was just way too aggressive at selecting shallow states.
->>
->> 3. Hackbench, 5 runs
->> for i in $(seq 0 4); do hackbench -l 100 -g 100 ; sleep 1; done
->>
->> teo fixed v2:
->> Time: 4.937
->> Time: 4.898
->> Time: 4.871
->> Time: 4.833
->> Time: 4.898
->>
->> teo mainline:
->> Time: 4.945
->> Time: 5.021
->> Time: 4.927
->> Time: 4.923
->> Time: 5.137
->>
->> menu:
->> Time: 4.964
->> Time: 4.847
->> Time: 4.914
->> Time: 4.841
->> Time: 4.800
->>
->> tldr: all comparable, teo mainline slightly worse
->>
->> 4. Geekbench 5 (multi-core) on Pixel6
->> (Device is cooled for each iteration separately)
->> teo mainline:
->> 3113, 3068, 3079
->> mean 3086.66
->>
->> teo revert util-awareness:
->> 2947, 2941, 2952
->> mean 2946.66 (-4.54%)
->>
->> teo fixed v2:
->> 3032, 3066, 3019
->> mean 3039 (-1.54%)
->>
->>
->> Changes since v2:
->> - Reworded commits according to Dietmar's comments
->> - Dropped the KTIME_MAX as hit part from 3/3 according to Dietmar's
->> remark.
->>
->> Changes since v1:
->> - Removed all non-fixes.
->> - Do a full revert of Util-awareness instead of increasing thresholds.
->> - Address Dietmar's comments.
->> https://lore.kernel.org/linux-kernel/20240606090050.327614-2-christian.loehle@arm.com/T/
->>
->> Kind Regards,
->> Christian
->>
->> Christian Loehle (3):
->>   Revert: "cpuidle: teo: Introduce util-awareness"
->>   cpuidle: teo: Remove recent intercepts metric
->>   cpuidle: teo: Don't count non-existent intercepts
->>
->>  drivers/cpuidle/governors/teo.c | 189 +++++---------------------------
->>  1 file changed, 27 insertions(+), 162 deletions(-)
->>
->> --
-> 
-> Patches [1-2/3] have been applied as 6.11 material.
-> 
-> Patch [3/3] looks like it may be improved slightly, see my reply to that patch.
-> 
-> Thanks!
+On Mon, 5 Aug 2024, Dave Martin wrote:
 
-Hi Rafael,
-are you fine with this being backported to stable?
-@stable
-4b20b07ce72f cpuidle: teo: Don't count non-existent intercepts
-449914398083 cpuidle: teo: Remove recent intercepts metric
-0a2998fa48f0 Revert: "cpuidle: teo: Introduce util-awareness"
-apply as-is to
-linux-6.10.y
-linux-6.6.y
-for linux-6.1.y only 449914398083 ("cpuidle: teo: Remove recent intercepts metric")
-is relevant, I'll reply with a backport.
+> Hi,
+> 
+> On Fri, Jul 26, 2024 at 11:56:37PM +0200, Frederic Weisbecker wrote:
+> > Use the proper API instead of open coding it.
+> > 
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > ---
+> >  arch/arm/common/bL_switcher.c | 10 ++++------
+> >  1 file changed, 4 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/arm/common/bL_switcher.c b/arch/arm/common/bL_switcher.c
+> > index 9a9aa53547a6..d1e82a318e3b 100644
+> > --- a/arch/arm/common/bL_switcher.c
+> > +++ b/arch/arm/common/bL_switcher.c
+> > @@ -307,13 +307,11 @@ static struct task_struct *bL_switcher_thread_create(int cpu, void *arg)
+> >  {
+> >  	struct task_struct *task;
+> >  
+> > -	task = kthread_create_on_node(bL_switcher_thread, arg,
+> > -				      cpu_to_node(cpu), "kswitcher_%d", cpu);
+> > -	if (!IS_ERR(task)) {
+> > -		kthread_bind(task, cpu);
+> > -		wake_up_process(task);
+> > -	} else
+> > +	task = kthread_run_on_cpu(bL_switcher_thread, arg,
+> > +				  cpu, "kswitcher_%d");
+> > +	if (IS_ERR(task))
+> >  		pr_err("%s failed for CPU %d\n", __func__, cpu);
+> > +
+> >  	return task;
+> >  }
+> 
+> It's ages since I worked on this, but it looks like this is pure
+> refactoring.  So far as I can see, it does the right thing, so, FWIW:
+> 
+> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+> 
+> I don't currently have hardware I can test this on, though.
+> 
+> Nico (Cc added) might just possibly have an opinion on it, though this
+> looks uncontroversial.
 
+No strong opinion.
+
+Acked-by: Nicolas Pitre <nico@fluxnic.net>
+
+
+Nicolas
 
