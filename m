@@ -1,234 +1,164 @@
-Return-Path: <linux-kernel+bounces-275403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC219484F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2709484FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09EEB1F23A8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:42:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028151F23A0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4D916CD12;
-	Mon,  5 Aug 2024 21:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C2616C84B;
+	Mon,  5 Aug 2024 21:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y/U5nC5M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgKRMl0A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9828816190C
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1E414B07C;
+	Mon,  5 Aug 2024 21:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722894167; cv=none; b=COUPWJe6q6bsa+4wNNZlfVufAsDel2nzIas8qdM+crGNyEHfywzT8a9RLQgga/IAR1c0YN+2DSSvKqmIvIXNeDlGUBQdkuy1pT7WkJruUoPiE3ERXFQB+lGjH8pGX62/Dr5xPpkq7M2ZcsBljgk4akfyCDWMi0AlCfKGDYBlBTQ=
+	t=1722894227; cv=none; b=QWdFHEdI0euAPZv8OdhbEUM2ax/Dzk+a7a+v3tdVshFu1+M3FVKlkkbrvEBTK7kmFS5KA+5b3zRvz9qS+e6qcg05EuqtY8wMRnrtUwsFQlhQidnKHXqVmuS7BbPhvABVDXzU2I1ZlDHwMWizPYm78G+jzuLkxDOu5JAQIyuefNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722894167; c=relaxed/simple;
-	bh=1CL9BOJ0mEhfnYReT/6WVWyy2T4vzzx17of5YWsvio4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=TSKh8mU4f7xzlfEg2SsqgOV4kEEhv92PccrOtiGVd8IS+h+saFqtbVNYOosyfGH8YuTiIfvGQHLOQNqTNhXbV5TaXvLmhLPO69uy+whOdGQBi++jqfGCnkAi5Lk4HSi1u9feyRLQa/UjYpE0MgTdRhsO4cLmyR/skWx8a3VQpus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y/U5nC5M; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722894164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lWLpmNOUmnPHJOdiA3JRIaCGYZSxWHXRf9U3OHgDsOo=;
-	b=Y/U5nC5Mnwp4ELrY7IQMCSo4JtYFN5OWW6YR3RlnjF/IpoWS3vzAWXvRQ7Iwi8zwgEfWCd
-	RYUupRWILsWPsBFNcc6e/uSWo4Ic3ZuwmE4FGDxPFqGV35/0HV257EzaJ56YPrOlj/MwQ7
-	woLzz1HVJ5vGPpQdEyGNMr4QyQu8CF0=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-rYxb6dyMOHCJk36-RPEGwQ-1; Mon, 05 Aug 2024 17:42:41 -0400
-X-MC-Unique: rYxb6dyMOHCJk36-RPEGwQ-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1ff24acb60dso2103315ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:42:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722894160; x=1723498960;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWLpmNOUmnPHJOdiA3JRIaCGYZSxWHXRf9U3OHgDsOo=;
-        b=jRbSRN9HozZbvnnWBOmRbYDlYx2dTfmoXQ1PhDca4VwsSujmHHrDn3RsT/+10N7Zk3
-         +0v4OfG7jXD8i/gsBGevFz1YwXuxpOLUqjIKMnRK6p602DyBsxlVx+4wai6nNZCHdr2A
-         qZyrLpfuTlbJRM6+lNzUD1VkEtMmITavvcvaNBqDMfxHc3dQKHiqs4+nm74CUcjMFBmw
-         /BiugY7ZGQBD6Z12nFqabWFOq9ur389vGlzBztp/09NBdLBayyxJeA4MG2GfGcGzoeq6
-         9Z0cvrRaMluqjhiVaY6QCp2i/rZxcYrpjIZgJPO9VRqJwNGvEKGGrRaeTzANsxRjHYNE
-         X+Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVw6/hDn0IkNCRT2JL7J2RycU8YbFMscL6MqyYWsSRHLj5O5/qaePT9QKXWycqk2hSFbri39zFNGAQAjHICHXxxkw1yQriZV9UJ8Eqg
-X-Gm-Message-State: AOJu0Yx0RqeEUcTPz3Yud4xSn1N2hxQtElKNZcF54fFEhlgOIwAxhpV1
-	VOnKOK4TJoPoesbWVJAJ+QMq6AXmmun8HHY6vHEXhtfvhPtuCqRJUMtRltS1S7ExTWsgv/ehPAU
-	yH9QNjLoxYhoxj7m6KPNvs4lZkuwclJzKYJ5+R9w+7AwzV0C0xdQHXWvkFK6c5A==
-X-Received: by 2002:a17:903:124e:b0:1fd:a412:5df2 with SMTP id d9443c01a7336-1ff524b3d24mr213616015ad.29.1722894160127;
-        Mon, 05 Aug 2024 14:42:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXZL3j0naT+k8M7hE/kMki+FAesMGDGQi+w+0bVCMhZwooc9jPvm5zCXmFA0/m5NNTdyxsjQ==
-X-Received: by 2002:a17:903:124e:b0:1fd:a412:5df2 with SMTP id d9443c01a7336-1ff524b3d24mr213615825ad.29.1722894159726;
-        Mon, 05 Aug 2024 14:42:39 -0700 (PDT)
-Received: from LeoBras.redhat.com ([2804:431:c7ed:9fa5:5bef:f08e:c5a8:9864])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59176c89sm73306285ad.192.2024.08.05.14.42.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 14:42:39 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	neeraj.upadhyay@kernel.org,
+	s=arc-20240116; t=1722894227; c=relaxed/simple;
+	bh=w1rNgVpubpxu7t9ez1M4o93NDC4Vb5FXEZkY9AcCwr4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VxyIn9Vpu/uoSLJjDjN3hAZEgeyLseVtv3JcmWxB1TobnFNk4lMhVmFY1T6ZqIUVXVH9fyBvzuUJMFXZSVKoz5q1cOLc+3soPAV/3xPYjhLxqUbRH7ZXJpk0rfGzP/MgQUwlBzjd9Eok0wLvM3JPey5VEzf8ks7kIQNIrvcKHqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgKRMl0A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430E2C32782;
+	Mon,  5 Aug 2024 21:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722894227;
+	bh=w1rNgVpubpxu7t9ez1M4o93NDC4Vb5FXEZkY9AcCwr4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bgKRMl0A7EBdqXh9+cwyQX19aes9QeRTUqvB9IQaj8IvvqQAXqDIQG1NpAkoYDNh0
+	 5+5istaOAUfremykm+EC67/aSJajUMdHsZl5qpGV9nXpKkZLmmxYZk2tzRvUyrHSWX
+	 6upX2xKrrac1GpaYhe4179fRcOSxUFWfBzJiyhr5pM3cSWWiG+RzLBlMzovr1Ywx8A
+	 YtzfE1jlAuM2Ez54ibQ/JKFxdgnezr0/Lgvuq3WNtLGy4oEhpsLtZIvWYJJVm4ovZ+
+	 OZFljMwKpCy203uqooHoYT+MRWAb+TCK7ebpOnEvqEspS+Ha09aXUP78rrM07sVUXO
+	 gvPeV7YL3xeZQ==
+From: Kees Cook <kees@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Hao Luo <haoluo@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-sparse@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Bill Wendling <morbo@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
 	linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	mingo@kernel.org,
-	peterz@infradead.org,
-	imran.f.khan@oracle.com,
-	riel@surriel.com,
-	tglx@linutronix.de
-Subject: Re: [PATCH v2 2/3] locking/csd_lock: Provide an indication of ongoing CSD-lock stall
-Date: Mon,  5 Aug 2024 18:42:25 -0300
-Message-ID: <ZrFHQbmkcGc6DLad@LeoBras>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <c95fd735-30b0-471b-bbcc-7c456acd6dc4@paulmck-laptop>
-References: <20240722133559.GA667117@neeraj.linux> <20240722133735.667161-2-neeraj.upadhyay@kernel.org> <ZqquJwsH1vqsZhD2@LeoBras> <c95fd735-30b0-471b-bbcc-7c456acd6dc4@paulmck-laptop>
+	llvm@lists.linux.dev
+Subject: [PATCH] string: Check for "nonstring" attribute on strscpy() arguments
+Date: Mon,  5 Aug 2024 14:43:44 -0700
+Message-Id: <20240805214340.work.339-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3626; i=kees@kernel.org; h=from:subject:message-id; bh=w1rNgVpubpxu7t9ez1M4o93NDC4Vb5FXEZkY9AcCwr4=; b=owGbwMvMwCVmps19z/KJym7G02pJDGkb3SeUnlr5f67g7V+5X8wEpZ59nnT3rK//1rayiGsck zRynhXzdZSyMIhxMciKKbIE2bnHuXi8bQ93n6sIM4eVCWQIAxenAExkIwvD/6gvKxMLfwhM/Le3 T92bj9OYRcVhSo5h84KtCuus6mUnP2Zk+LJgzupi1qLrN4rPucVHzG7kK1MT5ZNIvfNimtqDe8v PsgAA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 03:08:29PM -0700, Paul E. McKenney wrote:
-> On Wed, Jul 31, 2024 at 06:35:35PM -0300, Leonardo Bras wrote:
-> > On Mon, Jul 22, 2024 at 07:07:34PM +0530, neeraj.upadhyay@kernel.org wrote:
-> > > From: "Paul E. McKenney" <paulmck@kernel.org>
-> > > 
-> > > If a CSD-lock stall goes on long enough, it will cause an RCU CPU
-> > > stall warning.  This additional warning provides much additional
-> > > console-log traffic and little additional information.  Therefore,
-> > > provide a new csd_lock_is_stuck() function that returns true if there
-> > > is an ongoing CSD-lock stall.  This function will be used by the RCU
-> > > CPU stall warnings to provide a one-line indication of the stall when
-> > > this function returns true.
-> > 
-> > I think it would be nice to also add the RCU usage here, as for the 
-> > function being declared but not used.
-> 
+GCC already checks for arguments that are marked with the "nonstring"[1]
+attribute when used on standard C String API functions (e.g. strcpy). Gain
+this compile-time checking also for the kernel's primary string copying
+function, strscpy().
 
-Hi Paul,
+Note that Clang has neither "nonstring" nor __builtin_has_attribute().
 
-> These are external functions, and the commit that uses it is just a few
-> farther along in the stack.
+Link: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-nonstring-variable-attribute [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Hao Luo <haoluo@google.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-sparse@vger.kernel.org
+Cc: linux-hardening@vger.kernel.org
+---
+ include/linux/compiler.h       |  3 +++
+ include/linux/compiler_types.h |  7 +++++++
+ include/linux/string.h         | 12 ++++++++----
+ 3 files changed, 18 insertions(+), 4 deletions(-)
 
-Oh, I see. I may have received just part of this patchset.
-
-I found it weird a series of 3 to have a 4th patch, and did not think that 
-it could have more, so I did not check the ML. :)
-
->  Or do we now have some tool that complains
-> if an external function is not used anywhere?
-
-Not really, I was just interested in the patchset but it made no sense in 
-my head to add a function & not use it. On top of that, it did not occur to 
-me that it was getting included on a different patchset. 
-
-Thanks!
-Leo
-
-
-> 
-> > > [ neeraj.upadhyay: Apply Rik van Riel feedback. ]
-> > > 
-> > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > Cc: Imran Khan <imran.f.khan@oracle.com>
-> > > Cc: Ingo Molnar <mingo@kernel.org>
-> > > Cc: Leonardo Bras <leobras@redhat.com>
-> > > Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> > > Cc: Rik van Riel <riel@surriel.com>
-> > > Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-> > > ---
-> > >  include/linux/smp.h |  6 ++++++
-> > >  kernel/smp.c        | 16 ++++++++++++++++
-> > >  2 files changed, 22 insertions(+)
-> > > 
-> > > diff --git a/include/linux/smp.h b/include/linux/smp.h
-> > > index fcd61dfe2af3..3871bd32018f 100644
-> > > --- a/include/linux/smp.h
-> > > +++ b/include/linux/smp.h
-> > > @@ -294,4 +294,10 @@ int smpcfd_prepare_cpu(unsigned int cpu);
-> > >  int smpcfd_dead_cpu(unsigned int cpu);
-> > >  int smpcfd_dying_cpu(unsigned int cpu);
-> > >  
-> > > +#ifdef CONFIG_CSD_LOCK_WAIT_DEBUG
-> > > +bool csd_lock_is_stuck(void);
-> > > +#else
-> > > +static inline bool csd_lock_is_stuck(void) { return false; }
-> > > +#endif
-> > > +
-> > >  #endif /* __LINUX_SMP_H */
-> > > diff --git a/kernel/smp.c b/kernel/smp.c
-> > > index 81f7083a53e2..9385cc05de53 100644
-> > > --- a/kernel/smp.c
-> > > +++ b/kernel/smp.c
-> > > @@ -207,6 +207,19 @@ static int csd_lock_wait_getcpu(call_single_data_t *csd)
-> > >  	return -1;
-> > >  }
-> > >  
-> > > +static atomic_t n_csd_lock_stuck;
-> > > +
-> > > +/**
-> > > + * csd_lock_is_stuck - Has a CSD-lock acquisition been stuck too long?
-> > > + *
-> > > + * Returns @true if a CSD-lock acquisition is stuck and has been stuck
-> > > + * long enough for a "non-responsive CSD lock" message to be printed.
-> > > + */
-> > > +bool csd_lock_is_stuck(void)
-> > > +{
-> > > +	return !!atomic_read(&n_csd_lock_stuck);
-> > > +}
-> > > +
-> > >  /*
-> > >   * Complain if too much time spent waiting.  Note that only
-> > >   * the CSD_TYPE_SYNC/ASYNC types provide the destination CPU,
-> > > @@ -228,6 +241,7 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
-> > >  		cpu = csd_lock_wait_getcpu(csd);
-> > >  		pr_alert("csd: CSD lock (#%d) got unstuck on CPU#%02d, CPU#%02d released the lock.\n",
-> > >  			 *bug_id, raw_smp_processor_id(), cpu);
-> > > +		atomic_dec(&n_csd_lock_stuck);
-> > >  		return true;
-> > >  	}
-> > >  
-> > > @@ -251,6 +265,8 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
-> > >  	pr_alert("csd: %s non-responsive CSD lock (#%d) on CPU#%d, waiting %lld ns for CPU#%02d %pS(%ps).\n",
-> > >  		 firsttime ? "Detected" : "Continued", *bug_id, raw_smp_processor_id(), (s64)ts_delta,
-> > >  		 cpu, csd->func, csd->info);
-> > > +	if (firsttime)
-> > > +		atomic_inc(&n_csd_lock_stuck);
-> > >  	/*
-> > >  	 * If the CSD lock is still stuck after 5 minutes, it is unlikely
-> > >  	 * to become unstuck. Use a signed comparison to avoid triggering
-> > > -- 
-> > > 2.40.1
-> > > 
-> > 
-> > IIUC we have a single atomic counter for the whole system, which is 
-> > modified in csd_lock_wait_toolong() and read in RCU stall warning.
-> > 
-> > I think it should not be an issue regarding cache bouncing because in worst 
-> > case scenario we would have 2 modify / cpu each csd_lock_timeout (which is 
-> > 5 seconds by default).
-> 
-> If it does become a problem, there are ways of taking care of it.
-> Just a little added complexity.  ;-)
-> 
-> > Thanks!
-> 
-> And thank you for looking this over!
-> 
-> 							Thanx, Paul
-> 
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 2df665fa2964..ec55bcce4146 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -242,6 +242,9 @@ static inline void *offset_to_ptr(const int *off)
+ /* &a[0] degrades to a pointer: a different type from an array */
+ #define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+ 
++/* Require C Strings (i.e. NUL-terminated) lack the "nonstring" attribute. */
++#define __must_be_cstr(p)	BUILD_BUG_ON_ZERO(__annotated(p, nonstring))
++
+ /*
+  * This returns a constant expression while determining if an argument is
+  * a constant expression, most importantly without evaluating the argument.
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index f14c275950b5..1a957ea2f4fe 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -421,6 +421,13 @@ struct ftrace_likely_data {
+ #define __member_size(p)	__builtin_object_size(p, 1)
+ #endif
+ 
++/* Determine if an attribute has been applied to a variable. */
++#if __has_builtin(__builtin_has_attribute)
++#define __annotated(var, attr)	__builtin_has_attribute(var, attr)
++#else
++#define __annotated(var, attr)	(false)
++#endif
++
+ /*
+  * Some versions of gcc do not mark 'asm goto' volatile:
+  *
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 9edace076ddb..95b3fc308f4f 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -76,12 +76,16 @@ ssize_t sized_strscpy(char *, const char *, size_t);
+  * known size.
+  */
+ #define __strscpy0(dst, src, ...)	\
+-	sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst))
+-#define __strscpy1(dst, src, size)	sized_strscpy(dst, src, size)
++	sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +	\
++				__must_be_cstr(dst) + __must_be_cstr(src))
++#define __strscpy1(dst, src, size)	\
++	sized_strscpy(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
+ 
+ #define __strscpy_pad0(dst, src, ...)	\
+-	sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst))
+-#define __strscpy_pad1(dst, src, size)	sized_strscpy_pad(dst, src, size)
++	sized_strscpy_pad(dst, src, sizeof(dst) + __must_be_array(dst) +	\
++				    __must_be_cstr(dst) + __must_be_cstr(src))
++#define __strscpy_pad1(dst, src, size)	\
++	sized_strscpy_pad(dst, src, size + __must_be_cstr(dst) + __must_be_cstr(src))
+ 
+ /**
+  * strscpy - Copy a C-string into a sized buffer
+-- 
+2.34.1
 
 
