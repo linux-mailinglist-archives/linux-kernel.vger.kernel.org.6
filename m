@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-274147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BC29473F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:40:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94429473FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCC6F2814CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:40:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 206771C2102E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9945913D601;
-	Mon,  5 Aug 2024 03:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879F513D8B1;
+	Mon,  5 Aug 2024 03:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OYXBHuAe"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C6063A;
-	Mon,  5 Aug 2024 03:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NrDJ9Dof"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC3217C;
+	Mon,  5 Aug 2024 03:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722829199; cv=none; b=GN4jCyUz6a4S8S40MLHiH6RJvCzfrydDDVe4u3l77jP7KS57PYOdaTDXlOEC731CsRj+E0aZxwwaFASQfZRCo1cPrD06dzM1dzfYziuRh25xy8h+RIqE1SARo24A9743Mkk319iKtRfnsTtY2UTlbUhWX+pjtkbxsTLOtSi7jUM=
+	t=1722829707; cv=none; b=MMOsBGWXjj7ovcc0H7w3hJId70IMx33s5GdxyiXwD0sJQFwbE3Udfz+eP0mTnFrcPLxHQy0KhA4Es920RIznXPE+jYmRQqxHS4S6EYcebZh6Pa8L/uB/qLsaNVVR0hrEKo9IXQ8KdugD78YoLF6ECvxDYao0TLTDNhQbEk/TSGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722829199; c=relaxed/simple;
-	bh=jk5ETz4uCUZnp4JwqbsQF8IftxGpA9MDTUkPHd7iKT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=H1Ki1OWCIqGob4PtTtQubo6KKxvTvjUZ/K75xkSd0ZOxk8VcItcvu4aQo+hXnLIGoIqZ+MQJCA4iD/FgzQkyfm4hUqQhg2VDTUQRoWv/6CA+Blhn023ngNubeLXbQT6Fw/wggnFAJjDNLE6AmLy+SBVDjRGKruIXrExB9VdD0I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OYXBHuAe; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722829193;
-	bh=hGDmkhZj+EihSoHS8AgTK0lSgfUP9OPKGz21OeAzPFg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OYXBHuAeFzR22f/o2Fyv1Ynx/Svjbz/YUHUA23GliUBfqCcIGsP2FRcwe6K8KZsbV
-	 E4sNo6aXNbCagPl7Xd4ZQ3HM/rMYDw55OE8oYX+53ghvYyWpSs+mFp5z1eU8b1ms1J
-	 65JFT5+fNcsRRe6moRHKrkunu0Mdpdipodolu6qyFSsou2SG4gZI1l+ihHOJSU5RCk
-	 m4Xva1gQUi9hG8h5dLx80TnUCs6hDKPgoecYf/pQIjoTj5necv4gEsUy6nUYHWflsA
-	 nHoFH1GR468HBcy3tENcNuondD1IQIZYOXmw6XatgH4zknFAXbFVOUb3c/MU5OxEqQ
-	 CNIeXzcJDjTuQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wchyd0XL3z4wd0;
-	Mon,  5 Aug 2024 13:39:53 +1000 (AEST)
-Date: Mon, 5 Aug 2024 13:39:52 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Yury Norov <yury.norov@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the bitmap tree with the mm tree
-Message-ID: <20240805133952.478fca6b@canb.auug.org.au>
+	s=arc-20240116; t=1722829707; c=relaxed/simple;
+	bh=Kr8VkxqwdLJEc+8lOx1IkDrCAtqFKqHlW/+7miCSysE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nH24TebcwgE3Wzkh/WIF0giEtPLkSrwaSCqkR00Ev0/GmrPdO+voHAuRmXUA2PhpFnEPhJeJ2nteetyvSDi02KDC3cP78QbFwdETnEkcjoqG6ltOEYbu+pUDWTFv4ABIg7hdxQJAfr7DxKRjOhcjv91hclUe7NVe7G8r6187nTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NrDJ9Dof; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id E3DB920B7165; Sun,  4 Aug 2024 20:48:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E3DB920B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722829699;
+	bh=FPsbgCxMbUXjFs/OhpM8wOzYmZyMHdRgGS32F/SfBnc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NrDJ9DofGmKuoc8YEMfKljJv5hpwMUL1rMOloJcJ/RxcsgsqKcuTDvx5rjdbyKT/W
+	 FKEY/7l+sTWJaKTthE5gB+3qAfuAH0QOje3itL83xSSq+mTGJCqItnF/A+qjKRQ913
+	 5iBjhiD8A+/uz93Xk+LcwHId6lKrl99qZRvV2sjo=
+Date: Sun, 4 Aug 2024 20:48:19 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Zhu Yanjun <yanjun.zhu@linux.dev>, linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	Ajay Sharma <sharmaajay@microsoft.com>,
+	Simon Horman <horms@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>
+Subject: Re: [PATCH net-next v2] net: mana: Implement
+ get_ringparam/set_ringparam for mana
+Message-ID: <20240805034819.GA13225@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1722358895-13430-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <4c32b96f-d962-4427-87c2-4953c91c9e43@linux.dev>
+ <20240803113154.67a37efb@hermes.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_ZEb6uMhlAdT5SGK3ZmMKF0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240803113154.67a37efb@hermes.local>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
---Sig_/_ZEb6uMhlAdT5SGK3ZmMKF0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Aug 03, 2024 at 11:31:54AM -0700, Stephen Hemminger wrote:
+> On Sun, 4 Aug 2024 02:09:21 +0800
+> Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
+> 
+> > >   
+> > >   	/*  The minimum size of the WQE is 32 bytes, hence
+> > > -	 *  MAX_SEND_BUFFERS_PER_QUEUE represents the maximum number of WQEs
+> > > +	 *  apc->tx_queue_size represents the maximum number of WQEs
+> > >   	 *  the SQ can store. This value is then used to size other queues
+> > >   	 *  to prevent overflow.
+> > > +	 *  Also note that the txq_size is always going to be MANA_PAGE_ALIGNED,
+> > > +	 *  as tx_queue_size is always a power of 2.
+> > >   	 */
+> > > -	txq_size = MAX_SEND_BUFFERS_PER_QUEUE * 32;
+> > > -	BUILD_BUG_ON(!MANA_PAGE_ALIGNED(txq_size));
+> > > +	txq_size = apc->tx_queue_size * 32;  
+> > 
+> > Not sure if the following is needed or not.
+> > "
+> > WARN_ON(!MANA_PAGE_ALIGNED(txq_size));
+> > "
+> > 
+> > Zhu Yanjun
+> 
+> On many systems warn is set to panic the system.
+> Any constraint like this should be enforced where user input
+> is managed. In this patch, that would be earlier in mana_set_ringparam().
+> Looking there, the only requirement is that txq_size is between
+> the min/max buffers per queue and a power of 2.
 
-Hi all,
-
-Today's linux-next merge of the bitmap tree got a conflict in:
-
-  lib/test_bits.c
-
-between commit:
-
-  ec8f4b0906bb ("lib/test_bits.c: add tests for GENMASK_U128()")
-
-from the mm-nonmm-unstable branch of the mm tree and commit:
-
-  358e4153fa62 ("lib/test_bits.c: Add tests for GENMASK_U128()")
-
-from the bitmap tree.
-
-I fixed it up (I just used the latter) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_ZEb6uMhlAdT5SGK3ZmMKF0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmawSYgACgkQAVBC80lX
-0GxGRQf/Sb3w1ffEx4vORRDjTFhMufNLrauV6+SQsiT4lIyPJ4xXi7Yg1ModghuU
-97dtxiQjZ7dx9CeRXu0skxp7og30I/+x1Q5ulxQNfOsy6Y3Oj5R/zoUNQtFVKmTD
-BWFtajkGMlVTInZENUQleuxX6Dc0e7NwLHdCfNkfVMvnzzzACSCiuvMMylcyBBCw
-PMhjgLE34uVmCZDIJNAreMcW4Tdu3LAKMz/BNUs5706HDM2UYx0eOfaD9WLSELBc
-ralgQroGKXc9Cf6oFrwgp6Huq22MGhUemaNFXeYVIhHX0fq1cXLPu/9HHn3luXHB
-/trxumhS4l1h3vrarhyw9qFanUG1/w==
-=pJ5A
------END PGP SIGNATURE-----
-
---Sig_/_ZEb6uMhlAdT5SGK3ZmMKF0--
+Thanks Stephen, that's right.
 
