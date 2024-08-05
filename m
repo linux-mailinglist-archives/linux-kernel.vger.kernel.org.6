@@ -1,144 +1,119 @@
-Return-Path: <linux-kernel+bounces-275492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BB7948675
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:58:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0804948678
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:00:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C753328499F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:58:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 828D1B230ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CF916EC0B;
-	Mon,  5 Aug 2024 23:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7993171098;
+	Mon,  5 Aug 2024 23:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="BTB9+Y3z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pq5gODej"
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzVbKjsL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A153D14830D;
-	Mon,  5 Aug 2024 23:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02054170A33;
+	Mon,  5 Aug 2024 23:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722902299; cv=none; b=hvFJeANc4P/Iu6WfBAUh4l67b7SMeJxS0ewUqRH+c+5OIedn1tBmKfOPKqEvwaf0eudCfQIyINhLoxDMiM7aNUqvbDPQ/cIWoEtPqNR2tjb/nEu0wU6BnAgKdExgRxLPjDryuXglB/QBZVCqZJa3NPNitgeWaDdk7i7XIlH0Jpc=
+	t=1722902390; cv=none; b=bG7Hr/ktG9dQpebcFBxN5YR/VH8TSiaX77lc3sps0hpFuRnWPQKODP1AvKHOrX6FcrYMzT5OTAv9AxK2wM/SHJU2da/WZPdlQkK3u1sMcGtZhL2jtB870U0VR/oc6BzsonIn5oowldf8gERrHTlH0JW9JKhX3gsTO/poA68NOxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722902299; c=relaxed/simple;
-	bh=W9GtxTd9T+38Pj4tNG9Q1S18UlkoVJ2nfUbToI+tdr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UII2PHp3zxHcia+oJEhAHw26pikAf3fay3Gn3TbDRUvuPvpih5boCLZ1WSGDQZsx/sHBf4kCN0jGsZxNUI6nV0aR5yoxEiESM3DkIXu+Kj6UOBYgAqVPBNBe+GI/0hzuoB3C9Dm8oV5nz29LXnnvZAXf/kgwpYsRvUhePFPSumg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=BTB9+Y3z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pq5gODej; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id E84CD114E9D5;
-	Mon,  5 Aug 2024 19:58:16 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Mon, 05 Aug 2024 19:58:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm1; t=1722902296; x=1722988696; bh=Qs2ZX7Tx/MCvMucJo4+0l
-	WeQSNbdGfxg/N8nwlZzDgs=; b=BTB9+Y3zVCBLPck7TXMAcn7U4cUH/2KLQwwCG
-	kG8SVSkCFmRYuKQJOGKcVz7PcQ8WYZ8a3MA4nrIW6yMoj2aTpDLPWwrty5xI0sZw
-	C+iRbGxuWmczrOBIdr3575EhsxCzWDXNnUfFrezlyD2rgNmUjiRr4lwxwhxts9wA
-	xv6G3NbxLCnKr5g2zVI31M7YmblO0jY+F0L/Ks83YBzCjwJyYIZKf1I1XFUlzi6N
-	MEgkXZ8GuRpBKIb1sg5e/igV9AfVv8zi5I45s0Z8SY2rdjDfuPNjfJa7h1FdzIoj
-	iaOfLqqYa7Hovrf+8AE4oTsxg/IVDUw4Wo5x/FT3Juq+rHBCA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1722902296; x=1722988696; bh=Qs2ZX7Tx/MCvMucJo4+0lWeQSNbd
-	Gfxg/N8nwlZzDgs=; b=pq5gODejx7+uGLek1ku2m+rhISK/sTusGKx/kAVPmHjv
-	lORUMcDhZtvBveKXmTJvtZ3y4aD2NxogkfZHx9RgpYi5fm/E0BYgjfY9qyiBexee
-	7NLOES+YxXMJESNyzalvF9/y7hxzbcgBS8yxnKCgarD0Lmos4kS/lkQBTiV6twFW
-	7otpksuKBH2gy2xOr/Tngqt5/3intZ9EYqQchFdJ/W+GG3RYEQNuM2+uA/DbHMM/
-	VP22dxiq64LXsICLhQcthEG5vgsIFGgW4eJluYlv2C2bCsSj2wSnaQB+R/qwFDAX
-	zzC9n8cDAe5xm99ritpHO+I8BPPtBRyOeGOtsGvr8Q==
-X-ME-Sender: <xms:GGexZinuDgS5O9NSc5d7sEgNSEJeoeU1TmHgRRVDicf85T2f54PUXQ>
-    <xme:GGexZp1ZFogqZuPeCncVPB6d5Zr87_iHBipv_dY_rZ1p2CffozzY9__Ah20tox6_q
-    5ydnECcDuDw7cFhpwA>
-X-ME-Received: <xmr:GGexZgqOI8A2U-gOm4Ui6rBgHvdQ9WeRvLyC6thkcwgelo8eDhGDNHb0Sn-3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeejgddvlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtre
-    dttdenucfhrhhomhepfdfnuhhkvgcuffdrucflohhnvghsfdcuoehluhhkvgeslhhjohhn
-    vghsrdguvghvqeenucggtffrrghtthgvrhhnpefgudejtdfhuddukefffeekiefftddtvd
-    fhgeduudeuffeuhfefgfegfeetvedvgeenucevlhhushhtvghrufhiiigvpedtnecurfgr
-    rhgrmhepmhgrihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtph
-    htthhopedt
-X-ME-Proxy: <xmx:GGexZmni26LUBeC90wEwHDRhXIfEOVKFwLAmVUoDpGFJ-mOKTsiekQ>
-    <xmx:GGexZg2BGegyS7PpNEYFwAE8ySHMnjRFP7_fd4rSGFLC6rFbPPrJSg>
-    <xmx:GGexZts8sHuSL46ProKijybQso9blv649fHcJXNlUmS6D6FtKbNyPQ>
-    <xmx:GGexZsU8OHe4NRCPWESrRrWbePZ3mWkk-mQpdnLJ7C4mSnjDxabhlQ>
-    <xmx:GGexZk8Xm0wzhPD4nWZj9YvpZ149CIIbViC6wq3Wh8w9fjhYinEFg1RA>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 5 Aug 2024 19:58:13 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com,
-	corentin.chary@gmail.com,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH v2] platform/x86: asus-wmi: don't fail if platform_profile already registered
-Date: Tue,  6 Aug 2024 11:58:08 +1200
-Message-ID: <20240805235808.40944-1-luke@ljones.dev>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722902390; c=relaxed/simple;
+	bh=qPipzIqpOFeYTGpyUGvCyLbP2YXb2Z1WH0dgber+cC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RlpOKtZfAHRkRiU5j3q/m5TnQhbAyQaiH7zlcqUfTFZA+v/u+beiGdgTj/HVWeZo1uuBVDmeDxs+YgiioG+D6WrmSwOpLgu3bMt6y6qDWK9nFlf3z4k4CJYMYyxiuJvdL8edupZv3uLlFLop7a2MFbnYOmmRp7sTlnZDNq/luVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzVbKjsL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18476C32782;
+	Mon,  5 Aug 2024 23:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722902389;
+	bh=qPipzIqpOFeYTGpyUGvCyLbP2YXb2Z1WH0dgber+cC4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NzVbKjsLb08FPak/EQhMiOfmR6o9vTANUK5rqxkhBNJhzxpkEzV1Ht4LK7ubkyJa9
+	 pua2YfKNs5pXY74XcqQ3itgR2ZwwlCrheSmoPcnL4Po+FCOVr2hbKPGx3jM70xjLwR
+	 zYYxGXnuxSeGZ3MvOZSetPkRoTMZnFPfZ8zKGzPA3W7l6lIDQKLWYK2vyFVeXtDolZ
+	 e+kNoH2iDiTaQzcp+zVBQLyPpahu+SNI0fjlNeCySEYe/U1cuLJXo/8hKN1rjE/8QP
+	 gxHSM7iYffi5its8fgUBDw4/jN0COKBKLpXrDIvzC2LECNqr07kvCaTsmMZ7ZZcGvY
+	 HpfmvoHvx3tDw==
+Date: Tue, 6 Aug 2024 01:59:46 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
+Subject: Re: [RFC PATCH 12/20] kthread: Implement preferred affinity
+Message-ID: <ZrFncpgfJj9sWuDO@lothringen>
+References: <20240726215701.19459-1-frederic@kernel.org>
+ <20240726215701.19459-13-frederic@kernel.org>
+ <4e9d1f6d-9cd8-493c-9440-b46a99f1c8af@suse.cz>
+ <ZrDhp3TLz6Kp93BJ@localhost.localdomain>
+ <00914d25-f0ae-4b00-9608-2457821c071c@suse.cz>
+ <ZrD8kmRw73bS3Lj6@localhost.localdomain>
+ <b358e42e-e8aa-40e9-9fca-90ae28cfdfaa@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b358e42e-e8aa-40e9-9fca-90ae28cfdfaa@suse.cz>
 
-On some newer laptops it appears that an AMD driver can register a
-platform_profile handler. If this happens then the asus_wmi driver would
-error with -EEXIST when trying to register its own handler leaving the
-user with a possibly unusable system - this is especially true for
-laptops with an MCU that emit a stream of HID packets, some of which can
-be misinterpreted as shutdown signals.
+On Mon, Aug 05, 2024 at 11:25:59PM +0200, Vlastimil Babka wrote:
+> > It's too bad we don't have a way to have a cpumask_possible_of_node(). I've
+> > looked into the guts of numa but that doesn't look easy to do.
+> 
+> That was my impression as well. Maybe not even possible because exact cpu
+> ids might not be pre-determined like this?
 
-We can safely continue loading the driver instead of bombing out.
+Probably.
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- drivers/platform/x86/asus-wmi.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> > Or there could be kthread_set_preferred_node()... ?
+> 
+> Possible instead of the callback idea suggested above?
+> kthreads_hotplug_update() could check if this is set and construct the mask
+> accordingly.
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index cc5dc296fb2d..2fdfa84f7efb 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -3897,8 +3897,13 @@ static int platform_profile_setup(struct asus_wmi *asus)
- 		asus->platform_profile_handler.choices);
- 
- 	err = platform_profile_register(&asus->platform_profile_handler);
--	if (err)
-+	if (err == -EEXIST) {
-+		pr_warn("A platform_profile handler is already registered, this may be a driver conflict.\n");
-+		return 0;
-+	} else if (err) {
-+		pr_err("Failed to register platform_profile: %d\n", err);
- 		return err;
-+	}
- 
- 	asus->platform_profile_support = true;
- 	return 0;
-@@ -4773,7 +4778,7 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		goto fail_fan_boost_mode;
- 
- 	err = platform_profile_setup(asus);
--	if (err)
-+	if (err && err != -EEXIST)
- 		goto fail_platform_profile_setup;
- 
- 	err = asus_wmi_sysfs_init(asus->platform_device);
--- 
-2.45.2
+Or even better, callers of kthread_create_on_node() with actual node passed
+(!NUMA_NO_NODE) can be preferrably affined to the corresponding node by default
+unless told otherwise (that is unless kthread_bind() or
+kthread_set_preferred_affinity() has been called before the first wake up, and
+that includes kthread_create_on_cpu()).
 
+There are a few callers concerned: kswapd, kcompactd, some drivers:
+drivers/block/mtip32xx/mtip32xx.c, drivers/firmware/stratix10-svc.c,
+kernel/dma/map_benchmark.c, net/sunrpc/svc.c
+
+After all kthread_create_on_cpu() affines to the corresponding CPU. So
+it sounds natural that kthread_create_on_node() affines to the corresponding
+node.
+
+And then it's handled on hotplug just as a special case of preferred affinity.
+
+Or is there something that wouldn't make that work?
+
+Thanks.
+
+
+> 
+> > Thanks.
+> > 
+> >> 
+> >> > Thanks.
+> >> 
+> 
 
