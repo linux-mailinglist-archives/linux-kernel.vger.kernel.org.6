@@ -1,143 +1,189 @@
-Return-Path: <linux-kernel+bounces-274711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34236947BC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:25:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA88947BC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34F1281466
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B602C1F2341E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE59D15B0EB;
-	Mon,  5 Aug 2024 13:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B9F15B0FF;
+	Mon,  5 Aug 2024 13:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rt4iGDP1"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="PuXcxE1d"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEB0156C74
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 13:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1830F156C74;
+	Mon,  5 Aug 2024 13:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722864291; cv=none; b=jDs876MGOlpOMvVZb+iGIGb9Gch+DvcZZs9AgjVdc9HAbk2Ax/cX8G6lKF604vNBriODkuguh7WOpR3HodyBFlqkVFnT476JwSfPWzm7zYlygB/B2Smir890zevbxRvc3HqMsnQe1jlVtGS1HEgs22bSBEz4dH/Y3aycQSForO4=
+	t=1722864319; cv=none; b=n7lYyp444lVQ+CodF3DGFAODBOE7wbZKMAq73VOGn+xv2U7gRNAWj6z7yEI/6MnRlbp5fKKUNxwPaCD5cvAi6sC2SSmDdQSgG7VXhpgaqYPoPYb9F2UB8YXbE6xnY5hQ98wjYUabdDrS05aCsW1s6v8WVxspUCpi0zUJFrIOwXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722864291; c=relaxed/simple;
-	bh=TZATUwU6iDMhtqysoYgKMFJfhQgZNs4raEb2aAFBWXk=;
+	s=arc-20240116; t=1722864319; c=relaxed/simple;
+	bh=pXFTp+Ee7+WWm9m5TpcqGTAtumc11aH2jFAKLrErjRU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fFBKzLYcdWG2uCOruJmhp+M0vJzK5o00YD9w68wdh8KJI2PiG0Z2ummOeDvG5EYGcReLJSuNypvx3hqENL9Yt5jRSD5cUqoSNToHmEqP7qq94X78/DgCf3SudvxN27AyNg0waSLFB5LTzn9SPXp192+rxg6FXhnpLHnqRfBCZ8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rt4iGDP1; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-260e1b5576aso6781825fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 06:24:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722864288; x=1723469088; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zgWBpeW+c8UsIAW6t5xDuJojZNlu5tiBF3elgCc/hzE=;
-        b=rt4iGDP1sN/tjOQqqmwYRKT3FKNJF4TraTg+x223FyLajHZOmIVcprwJ/vMMb2Bv5n
-         w92ZA4D9oCSOdDrB4sMaCGn2DCXP/XUJ7FbrMIypgKTBGvjD2Xe9eki41UqKFl7b+ydF
-         5f3oITm7+A1WwSFXd0UWJLWT0MpDH1H82aM/J3raut6uyE+9QRnY9Vm6ONo7BNY5JAgW
-         6ucZpmtjM11fHmGNzuFO57mdgehBYntbs7TlEAg9wz7KZgtGCSauPvHbARIylfp7O2WM
-         I1rrCNYQ7B4DZaiWXjmLYBJ2oUVHW8uwyLviybsW5xZMUKIOgj6lRSJsb9ShrZUomOq/
-         sUhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722864288; x=1723469088;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zgWBpeW+c8UsIAW6t5xDuJojZNlu5tiBF3elgCc/hzE=;
-        b=SU5VVkAUsG63Np7xDEvqx0RmNX31CHMYpkrdJ+vXhdNHJ27sLYXWznTZRnq0UDWQzQ
-         zgjTrJ39EDfv35KNeKP8YO9hMBMBfPFm7TKJobmaj2PmBt+0SfAlEV+cjLTZFXjmTwgF
-         ix7gh5OYuJX9uTbrA4DaTfdWx4h/poVlg92fc5SUhWD1NfM5ErvGboeDAeqfNNwWhqRH
-         nwcUwlELhvm5rkMm2IXdzmmBKd96/18g3T+m8+GG898g4ZFg4QN8SnBJ4rgl7eyJurOf
-         3eS0/07ZImmegJQEmMLTrPpZHgrBE7Pi78Aq48aXZxq+ft6DjuwJmbAhm9L40IFDuBVz
-         iopA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjy2GBRN3MYjRgQEQqmhGA+N1frqbY6Iof169bSEaAZD8Ldc2bAu1R1efGhOMuO18poyHlpe9kexHbpGDw4qmMvJcz7S0eYDb0VTzm
-X-Gm-Message-State: AOJu0YwqGspllmpLpT+jLizaM+GYdHRncRIVMH8msfcCHStbwFXHdslz
-	1jKPXRalhWc5yH8USZzp+sNHpys+O6WMTRVHyk4RmF/+vPa2JRpxD1/X/Bbt8IVDwwgqw04xFvg
-	=
-X-Google-Smtp-Source: AGHT+IFT6HKcVwhCHdgf3H5pt/UkTYjavM3s6b+M2jbxZ4twj8oeHQB6x1XNEJm+43Oe93LNk7Ig1A==
-X-Received: by 2002:a05:6871:3a25:b0:268:880c:9e0a with SMTP id 586e51a60fabf-26891d40a1emr14029560fac.20.1722864288389;
-        Mon, 05 Aug 2024 06:24:48 -0700 (PDT)
-Received: from thinkpad ([120.56.197.55])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b763469e79sm5445269a12.26.2024.08.05.06.24.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 06:24:47 -0700 (PDT)
-Date: Mon, 5 Aug 2024 18:54:42 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, mika.westerberg@linux.intel.com,
-	Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v5 1/4] PCI/portdrv: Make use of pci_dev::bridge_d3 for
- checking the D3 possibility
-Message-ID: <20240805132442.GA7274@thinkpad>
-References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
- <20240802-pci-bridge-d3-v5-1-2426dd9e8e27@linaro.org>
- <Zqyro5mW-1kpFGQd@wunner.de>
- <CAJZ5v0hw7C2dHC3yXAwya-KAjzYxU+QgavO_MkR9Rscsm_YHvg@mail.gmail.com>
- <Zq08i2i_ETHsJiKW@wunner.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TKLWMykdJ/zIW1mRlGZe0VTA0tfbnvB7XQXmJ4CsKbdYUDoHeUeeUvynvC59/J6ze1x2ifqWwF4z04FzCD/tf4EWTxTK6Gl4cCYruZgh7zgfLWAFJYe6HF7HkQvQ5Mar+l+9l/D2IjhXeuFxogYcgRFEnLVAmAJ2EgCCVPQlYqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=PuXcxE1d; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Wcxxt44PXz9sWy;
+	Mon,  5 Aug 2024 15:25:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1722864306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c+Xw23u08D/qoRPrvrK6+9KGcUXgv/XFJgZyXn7SUuQ=;
+	b=PuXcxE1dPjN42JkFy2i6KyJEKozsovshl4jgV9XlY5Wpc1H7CMEL9M28kkmAMTimTW3zxn
+	yE/1xXBpOpVmZqxpGjl/udnHQnIMmKkb9JRz6V0tfYnbIsg6KH2IpAmTFRlERKmpselwAP
+	UnWn53EBJZEIm1rJPRDZ+KeDizjWhU5qC7UyqqtY7+yH5BC93IjRJISEF7QeAv4U/ZqNxv
+	bcwFJE+PUEHTpVKPRn36w7NstmW0l4q06NDM5HjNxC8XTnaI7DD+kDJ9RwOOyL0UGi6ZDJ
+	tTWgDhR1UVzTj7nGMVTYBhjKB5IAzRixhQxn+SFzPoY8HrHw3BLKS6hAKf59uw==
+Date: Mon, 5 Aug 2024 13:24:59 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: willy@infradead.org
+Cc: yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, ryan.roberts@arm.com, hch@lst.de,
+	Zi Yan <ziy@nvidia.com>, david@fromorbit.com,
+	chandan.babu@oracle.com, djwong@kernel.org, brauner@kernel.org,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH v11 00/10] enable bs > ps in XFS
+Message-ID: <20240805132459.ndyofuoyyojqctgt@quentin>
+References: <20240726115956.643538-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zq08i2i_ETHsJiKW@wunner.de>
+In-Reply-To: <20240726115956.643538-1-kernel@pankajraghav.com>
+X-Rspamd-Queue-Id: 4Wcxxt44PXz9sWy
 
-On Fri, Aug 02, 2024 at 10:07:39PM +0200, Lukas Wunner wrote:
-> On Fri, Aug 02, 2024 at 01:19:24PM +0200, Rafael J. Wysocki wrote:
-> > On Fri, Aug 2, 2024 at 11:49AM Lukas Wunner <lukas@wunner.de> wrote:
-> > >
-> > > On Fri, Aug 02, 2024 at 11:25:00AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > > > PCI core is already caching the value of pci_bridge_d3_possible() in
-> > > > pci_dev::bridge_d3 during pci_pm_init(). Since the value is not going to
-> > > > change,
-> > 
-> > Is that really the case?
-> > 
-> > Have you seen pci_bridge_d3_update()?
+@willy
+
+The following patches that relevant to you but are missing your RVB. 
+Do you think you can take a look when you have time?
+
+readahead: allocate folios with mapping_min_order in readahead
+mm: split a folio in minimum folio order chunks
+
+--
+Pankaj
+
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> Okay the value may change at runtime, e.g. due to user space
-> manipulating d3cold_allowed in sysfs.
+> This is the 11th version of the series that enables block size > page size
+> (Large Block Size) in XFS.
+> The context and motivation can be seen in cover letter of the RFC v1 [0].
+> We also recorded a talk about this effort at LPC [1], if someone would
+> like more context on this effort.
 > 
-
-The last part of the commit message is wrong, but pci_bridge_d3_update() is
-already updating pci_dev::bridge_d3. And pci_bridge_d3_possible() is not making
-use of any checks that could change dynamically IIUC. So what is wrong in using
-pci_dev::bridge_d3?
-
-Even more, if the client drivers have changed the state of pci_dev::bridge_d3
-during runtime, then pci_bridge_d3_possible() won't catch that. Or is there a
-reason to not do so purposefully?
-
-> > > I don't know if there was a reason to call pci_bridge_d3_possible()
-> > > (instead of using the cached value) on probe, remove and shutdown.
-> > >
-> > > The change is probably safe but it would still be good to get some
-> > > positive test results with Thunderbolt laptops etc to raise the
-> > > confidence.
-> > 
-> > If I'm not mistaken, the change is not correct.
+> A lot of emphasis has been put on testing using kdevops, starting with an XFS
+> baseline [3]. The testing has been split into regression and progression.
 > 
-> You're right.  Because the value may change, different code paths
-> may be chosen on probe, remove and shutdown.  Sorry for missing that.
+> Regression testing:
+> In regression testing, we ran the whole test suite to check for regressions on
+> existing profiles due to the page cache changes.
 > 
-
-Again, pci_bridge_d3_possible() is not making use of values that could change
-dynamically.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> I also ran split_huge_page_test selftest on XFS filesystem to check for
+> huge page splits in min order chunks is done correctly.
+> 
+> No regressions were found with these patches added on top.
+> 
+> Progression testing:
+> For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+> compare it with existing support, an ARM VM with 64k base page system (without
+> our patches) was used as a reference to check for actual failures due to LBS
+> support in a 4k base page size system.
+> 
+> There are some tests that assumes block size < page size that needs to be fixed.
+> We have a tree with fixes for xfstests [4], most of the changes have been posted
+> already, and only a few minor changes need to be posted. Already part of these
+> changes has been upstreamed to fstests, and new tests have also been written and
+> are out for review, namely for mmap zeroing-around corner cases, compaction
+> and fsstress races on mm, and stress testing folio truncation on file mapped
+> folios.
+> 
+> No new failures were found with the LBS support.
+> 
+> We've done some preliminary performance tests with fio on XFS on 4k block size
+> against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+> patches applied, and detected no regressions.
+> 
+> We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+> is aligned and at least filesystem block size in length.
+> 
+> For those who want this in a git tree we have this up on a kdevops
+> large-block-minorder-for-next-v11 tag [6].
+> 
+> [0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+> [1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+> [2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+> [3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+> 489 non-critical issues and 55 critical issues. We've determined and reported
+> that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+> tasks  and 2 memory management asserts.
+> [4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+> [5] https://github.com/iovisor/bcc/pull/4813
+> [6] https://github.com/linux-kdevops/linux/
+> [7] https://lore.kernel.org/linux-kernel/Zl20pc-YlIWCSy6Z@casper.infradead.org/#t
+> 
+> Changes since v10:
+> - Revert back to silent clamping in mapping_set_folio_range().
+> - Moved mapping_max_folio_size_supported() to patch 10.
+> - Collected RVB from Darrick.
+> 
+> Dave Chinner (1):
+>   xfs: use kvmalloc for xattr buffers
+> 
+> Luis Chamberlain (1):
+>   mm: split a folio in minimum folio order chunks
+> 
+> Matthew Wilcox (Oracle) (1):
+>   fs: Allow fine-grained control of folio sizes
+> 
+> Pankaj Raghav (7):
+>   filemap: allocate mapping_min_order folios in the page cache
+>   readahead: allocate folios with mapping_min_order in readahead
+>   filemap: cap PTE range to be created to allowed zero fill in
+>     folio_map_range()
+>   iomap: fix iomap_dio_zero() for fs bs > system page size
+>   xfs: expose block size in stat
+>   xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+>   xfs: enable block size larger than page size support
+> 
+>  fs/iomap/buffered-io.c        |   4 +-
+>  fs/iomap/direct-io.c          |  45 +++++++++++--
+>  fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+>  fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+>  fs/xfs/libxfs/xfs_shared.h    |   3 +
+>  fs/xfs/xfs_icache.c           |   6 +-
+>  fs/xfs/xfs_iops.c             |   2 +-
+>  fs/xfs/xfs_mount.c            |   8 ++-
+>  fs/xfs/xfs_super.c            |  28 +++++---
+>  include/linux/huge_mm.h       |  14 ++--
+>  include/linux/pagemap.h       | 122 ++++++++++++++++++++++++++++++----
+>  mm/filemap.c                  |  36 ++++++----
+>  mm/huge_memory.c              |  59 ++++++++++++++--
+>  mm/readahead.c                |  83 +++++++++++++++++------
+>  14 files changed, 345 insertions(+), 85 deletions(-)
+> 
+> 
+> base-commit: 2347b4c79f5e6cd3f4996e80c2d3c15f53006bf5
+> -- 
+> 2.44.1
+> 
 
