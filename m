@@ -1,334 +1,448 @@
-Return-Path: <linux-kernel+bounces-275288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7928B9482CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:02:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2000F9482CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA652840C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:02:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92F911F22131
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD3316CD00;
-	Mon,  5 Aug 2024 20:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460E116BE06;
+	Mon,  5 Aug 2024 20:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tMqHCmnc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ScPloEQ7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tMqHCmnc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ScPloEQ7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VmiqxcDq"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D54D15B56E;
-	Mon,  5 Aug 2024 20:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84FE1DFF7;
+	Mon,  5 Aug 2024 20:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722888120; cv=none; b=YebLJ/yrxauPIIIGvmXPauD9Jewa74NTJlRQVt7QfC4ZIsvjWNO+aQsDafcSxfBR/oAVNCIgPwkS+4DMash0aAVuiLUr3BF+SpHDMiAIBooA8wIshFWJkd/lUvqcmSefSo5YX7K0IJSaVvbBqhITiNH4N7JOR4TialjXtCmL7Is=
+	t=1722888192; cv=none; b=T6vunqB2RTKbpgGVCnWOKvOvAY52HwGtNbvrQVi+8RNxsWCaJDlTNy+bxYKEF5W0CvQZ/cEkzi3vbrt7WOUsvddU0sG0qpRWE5iwfd8IcpDdNjx0HaWKcnaXWALMVD0bege5VkvjC1uliDmUjUKk9/Ch6xOfLVY9tYKmop78g5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722888120; c=relaxed/simple;
-	bh=gxmLp/uNXBqOn3x/iW2dRhbCOZm9iruQv3aR2yaJInI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eqR8QTfGO9dfgo/6uVS4iNiyJD14QFsCVJOvwyZv9wEj8m5ApgPgvUUeESvZ0Eiv/9CJwX0vTOE1s103ABxoX4gDo2lr/sfvpzBfYJZFXtRja+8EVruqe6BmnM7jCwEHspmREjf1wlRodV2S2NcJbRPXioo0tP6XeXrFwjjGb2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tMqHCmnc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ScPloEQ7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tMqHCmnc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ScPloEQ7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5A8EA21C29;
-	Mon,  5 Aug 2024 20:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722888116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=64a1DXPlbrf25f/h5mLAdBWVSzHjNTzOUcAhNjirtAg=;
-	b=tMqHCmncotrXz/nzMuNgxDqbPnsK6ah+IdGUnbPhbZW9ZD28X2pouFJIh7cbfZKi1g1jzB
-	Bq4oMQ9M3k0mklHUKNaLCIM4yR25t86m/RWMqaPWQSRbFifwcZXNgfJhmHBso3CL8j3UPl
-	9dxeuEQTHJm8RcuHVKPQWZPNEmBAVGU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722888116;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=64a1DXPlbrf25f/h5mLAdBWVSzHjNTzOUcAhNjirtAg=;
-	b=ScPloEQ7MpQpFGh1w1ttbQE42oDdsub/cLdJCBQdwFrOBOLCCP+9a7MCwvleDG51TmbkQ7
-	5yGS5bnYWan5W5AQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722888116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=64a1DXPlbrf25f/h5mLAdBWVSzHjNTzOUcAhNjirtAg=;
-	b=tMqHCmncotrXz/nzMuNgxDqbPnsK6ah+IdGUnbPhbZW9ZD28X2pouFJIh7cbfZKi1g1jzB
-	Bq4oMQ9M3k0mklHUKNaLCIM4yR25t86m/RWMqaPWQSRbFifwcZXNgfJhmHBso3CL8j3UPl
-	9dxeuEQTHJm8RcuHVKPQWZPNEmBAVGU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722888116;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=64a1DXPlbrf25f/h5mLAdBWVSzHjNTzOUcAhNjirtAg=;
-	b=ScPloEQ7MpQpFGh1w1ttbQE42oDdsub/cLdJCBQdwFrOBOLCCP+9a7MCwvleDG51TmbkQ7
-	5yGS5bnYWan5W5AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3F4C113254;
-	Mon,  5 Aug 2024 20:01:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rtVsD7QvsWYxLwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 05 Aug 2024 20:01:56 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9B4F8A0663; Mon,  5 Aug 2024 22:01:51 +0200 (CEST)
-Date: Mon, 5 Aug 2024 22:01:51 +0200
-From: Jan Kara <jack@suse.cz>
-To: James Gowans <jgowans@amazon.com>
-Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Steve Sistare <steven.sistare@oracle.com>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org,
-	Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org,
-	Alexander Graf <graf@amazon.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Paul Durrant <pdurrant@amazon.co.uk>,
-	Nicolas Saenz Julienne <nsaenz@amazon.es>,
-	Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory
- filesystem
-Message-ID: <20240805200151.oja474ju4i32y5bj@quack3>
-References: <20240805093245.889357-1-jgowans@amazon.com>
+	s=arc-20240116; t=1722888192; c=relaxed/simple;
+	bh=5tFdp3ft7H3f+MK8zWHkeM9P13HgKQqEeMxBAsgyCGc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dHCgKLxviL/trhu8Oavwi/EY7AjGfbIKOdedV5pjRspvpyMrW2g6v+rruRgDISHRdFiSKe9HcHz0XxR59vPtfZUvYp//C2hDo1UprxTlI9f07h7nszIX6jMTeR4d2eA2+oGsIQpoBDtKdEV4Am1vEwiZEtJtLZVb+U/7DJFDeSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VmiqxcDq; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722888187; x=1723147387;
+	bh=Mx1iV7m9zmN2bzCNB5dxHVCrzFzdUTXtk1t2sNrOrUc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=VmiqxcDqImRJoKO9BvPfSwgj7Ec45UL5nOPgOkgCD5AsYfIxcEqkFUHa70wV3iJd7
+	 LFmKta/tB/kKt+Q9Xlt2O2DqgWjzmzbUWpCHztxGN5fDz9v+/NtUovCPhrR1T9R75/
+	 A8yvczoEPRx/9CuJDIbxElabWbNNwKnI+wgBQbnaBxpja0M/G8tn2fJE625b6gx9Zx
+	 mEIsLuMdN630QUFKAYNbaa1MSfY6Wz1X82V11aVJsloRqc06wRafkbFcNEX05rMxb7
+	 m30mhgnAW+/H9wATqMaThSX01neWuvoqDyHzDox7H7FpRJU9vp40tEQKuHNZP4hYk9
+	 8ZgrB2KVPZF7A==
+Date: Mon, 05 Aug 2024 20:02:57 +0000
+To: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 6/6] rust: rbtree: add `RBTree::entry`
+Message-ID: <cabdde17-5191-4ce6-8cf3-7e7e929e5671@proton.me>
+In-Reply-To: <20240727-b4-rbtree-v8-6-951600ada434@google.com>
+References: <20240727-b4-rbtree-v8-0-951600ada434@google.com> <20240727-b4-rbtree-v8-6-951600ada434@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 82189986bc081e96c60bfbd91cc2664227030a0d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.995];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 05-08-24 11:32:35, James Gowans wrote:
-> In this patch series a new in-memory filesystem designed specifically
-> for live update is implemented. Live update is a mechanism to support
-> updating a hypervisor in a way that has limited impact to running
-> virtual machines. This is done by pausing/serialising running VMs,
-> kexec-ing into a new kernel, starting new VMM processes and then
-> deserialising/resuming the VMs so that they continue running from where
-> they were. To support this, guest memory needs to be preserved.
-> 
-> Guestmemfs implements preservation acrosss kexec by carving out a large
-> contiguous block of host system RAM early in boot which is then used as
-> the data for the guestmemfs files. As well as preserving that large
-> block of data memory across kexec, the filesystem metadata is preserved
-> via the Kexec Hand Over (KHO) framework (still under review):
-> https://lore.kernel.org/all/20240117144704.602-1-graf@amazon.com/
-> 
-> Filesystem metadata is structured to make preservation across kexec
-> easy: inodes are one large contiguous array, and each inode has a
-> "mappings" block which defines which block from the filesystem data
-> memory corresponds to which offset in the file.
-> 
-> There are additional constraints/requirements which guestmemfs aims to
-> meet:
-> 
-> 1. Secret hiding: all filesystem data is removed from the kernel direct
-> map so immune from speculative access. read()/write() are not supported;
-> the only way to get at the data is via mmap.
-> 
-> 2. Struct page overhead elimination: the memory is not managed by the
-> buddy allocator and hence has no struct pages.
-> 
-> 3. PMD and PUD level allocations for TLB performance: guestmemfs
-> allocates PMD-sized pages to back files which improves TLB perf (caveat
-> below!). PUD size allocations are a next step.
-> 
-> 4. Device assignment: being able to use guestmemfs memory for
-> VFIO/iommufd mappings, and allow those mappings to survive and continue
-> to be used across kexec.
- 
-To me the basic functionality resembles a lot hugetlbfs. Now I know very
-little details about hugetlbfs so I've added relevant folks to CC. Have you
-considered to extend hugetlbfs with the functionality you need (such as
-preservation across kexec) instead of implementing completely new filesystem?
+On 27.07.24 22:30, Matt Gilbride wrote:
+> From: Alice Ryhl <aliceryhl@google.com>
+>=20
+> This mirrors the entry API [1] from the Rust standard library on
+> `RBTree`. This API can be used to access the entry at a specific key and
+> make modifications depending on whether the key is vacant or occupied.
+> This API is useful because it can often be used to avoid traversing the
+> tree multiple times.
+>=20
+> This is used by binder to look up and conditionally access or insert a
+> value, depending on whether it is there or not [2].
+>=20
+> Link: https://doc.rust-lang.org/stable/std/collections/btree_map/enum.Ent=
+ry.html [1]
+> Link: https://android-review.googlesource.com/c/kernel/common/+/2849906 [=
+2]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Tested-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+> ---
+>  rust/kernel/rbtree.rs | 302 +++++++++++++++++++++++++++++++++++++-------=
+------
+>  1 file changed, 227 insertions(+), 75 deletions(-)
+>=20
+> diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+> index 5d37aa373685..428f8be8f3a2 100644
+> --- a/rust/kernel/rbtree.rs
+> +++ b/rust/kernel/rbtree.rs
+> @@ -295,12 +295,19 @@ pub fn try_create_and_insert(
+>      /// key/value pair). Returns [`None`] if a node with the same key di=
+dn't already exist.
+>      ///
+>      /// This function always succeeds.
+> -    pub fn insert(&mut self, RBTreeNode { node }: RBTreeNode<K, V>) -> O=
+ption<RBTreeNode<K, V>> {
+> -        let node =3D Box::into_raw(node);
+> -        // SAFETY: `node` is valid at least until we call `Box::from_raw=
+`, which only happens when
+> -        // the node is removed or replaced.
+> -        let node_links =3D unsafe { addr_of_mut!((*node).links) };
+> +    pub fn insert(&mut self, node: RBTreeNode<K, V>) -> Option<RBTreeNod=
+e<K, V>> {
+> +        match self.raw_entry(&node.node.key) {
+> +            RawEntry::Occupied(entry) =3D> Some(entry.replace(node)),
+> +            RawEntry::Vacant(entry) =3D> {
+> +                entry.insert(node);
+> +                None
+> +            }
+> +        }
+> +    }
+>=20
+> +    fn raw_entry(&mut self, key: &K) -> RawEntry<'_, K, V> {
+> +        let raw_self: *mut RBTree<K, V> =3D self;
+> +        // The returned `RawEntry` is used to call either `rb_link_node`=
+ or `rb_replace_node`.
+>          // The parameters of `rb_link_node` are as follows:
+>          // - `node`: A pointer to an uninitialized node being inserted.
+>          // - `parent`: A pointer to an existing node in the tree. One of=
+ its child pointers must be
+> @@ -319,62 +326,56 @@ pub fn insert(&mut self, RBTreeNode { node }: RBTre=
+eNode<K, V>) -> Option<RBTree
+>          // in the subtree of `parent` that `child_field_of_parent` point=
+s at. Once
+>          // we find an empty subtree, we can insert the new node using `r=
+b_link_node`.
+>          let mut parent =3D core::ptr::null_mut();
+> -        let mut child_field_of_parent: &mut *mut bindings::rb_node =3D &=
+mut self.root.rb_node;
+> -        while !child_field_of_parent.is_null() {
+> -            parent =3D *child_field_of_parent;
+> +        let mut child_field_of_parent: &mut *mut bindings::rb_node =3D
+> +            // SAFETY: `raw_self` is a valid pointer to the `RBTree` (cr=
+eated from `self` above).
+> +            unsafe { &mut (*raw_self).root.rb_node };
+> +        while !(*child_field_of_parent).is_null() {
 
-								Honza
- 
-> Next steps
-> =========
-> 
-> The idea is that this patch series implements a minimal filesystem to
-> provide the foundations for in-memory persistent across kexec files.
-> One this foundation is in place it will be extended:
-> 
-> 1. Improve the filesystem to be more comprehensive - currently it's just
-> functional enough to demonstrate the main objective of reserved memory
-> and persistence via KHO.
-> 
-> 2. Build support for iommufd IOAS and HWPT persistence, and integrate
-> that with guestmemfs. The idea is that if VMs have DMA devices assigned
-> to them, DMA should continue running across kexec. A future patch series
-> will add support for this in iommufd and connect iommufd to guestmemfs
-> so that guestmemfs files can remain mapped into the IOMMU during kexec.
-> 
-> 3. Support a guest_memfd interface to files so that they can be used for
-> confidential computing without needing to mmap into userspace.
-> 
-> 3. Gigantic PUD level mappings for even better TLB perf.
-> 
-> Caveats
-> =======
-> 
-> There are a issues with the current implementation which should be
-> solved either in this patch series or soon in follow-on work:
-> 
-> 1. Although PMD-size allocations are done, PTE-level page tables are
-> still created. This is because guestmemfs uses remap_pfn_range() to set
-> up userspace pgtables. Currently remap_pfn_range() only creates
-> PTE-level mappings. I suggest enhancing remap_pfn_range() to support
-> creating higher level mappings where possible, by adding pmd_special
-> and pud_special flags.
-> 
-> 2. NUMA support is currently non-existent. To make this more generally
-> useful it's necessary to have NUMA-awareness. One thought on how to do
-> this is to be able to specify multiple allocations with wNUMA affinity
-> on the kernel cmdline and have multiple mount points, one per NUMA node.
-> Currently, for simplicity, only a single contiguous filesystem data
-> allocation and a single mount point is supported.
-> 
-> 3. MCEs are currently not handled - we need to add functionality for
-> this to be able to track block ownership and deliver an MCE correctly.
-> 
-> 4. Looking for reviews from filesystem experts to see if necessary
-> callbacks, refcounting, locking, etc, is done correctly.
-> 
-> Open questions
-> ==============
-> 
-> It is not too clear if or how guestmemfs should use DAX as a source of
-> memory. Seeing as guestmemfs has an in-memory design, it seems that it
-> is not necessary to use DAX as a source of memory, but I am keen for
-> guidance/input on whether DAX should be used here.
-> 
-> The filesystem data memory is removed from the direct map for secret
-> hiding, but it is still necessary to mmap it to be accessible to KVM.
-> For improving secret hiding even more a guest_memfd-style interface
-> could be used to remove the need to mmap. That introduces a new problem
-> of the memory being completely inaccessible to KVM for this like MMIO
-> instruction emulation. How can this be handled?
-> 
-> Related Work
-> ============
-> 
-> There are similarities to a few attempts at solving aspects of this
-> problem previously.
-> 
-> The original was probably PKRAM from Oracle; a tempfs filesystem with
-> persistence:
-> https://lore.kernel.org/kexec/1682554137-13938-1-git-send-email-anthony.yznaga@oracle.com/
-> guestmemfs will additionally provide secret hiding, PMD/PUD allocations
-> and a path to DMA persistence and NUMA support.
-> 
-> Dmemfs from Tencent aimed to remove the need for struct page overhead:
-> https://lore.kernel.org/kvm/cover.1602093760.git.yuleixzhang@tencent.com/
-> Guestmemfs provides this benefit too, along with persistence across
-> kexec and secret hiding. 
-> 
-> Pkernfs attempted to solve guest memory persistence and IOMMU
-> persistence all in one:
-> https://lore.kernel.org/all/20240205120203.60312-1-jgowans@amazon.com/
-> Guestmemfs is a re-work of that to only persist guest RAM in the
-> filesystem, and to use KHO for filesystem metadata. IOMMU persistence
-> will be implemented independently with persistent iommufd domains via
-> KHO.
-> 
-> Testing
-> =======
-> 
-> The testing for this can be seen in the Documentation file in this patch
-> series. Essentially it is using a guestmemfs file for a QEMU VM's RAM,
-> doing a kexec, restoring the QEMU VM and confirming that the VM picked
-> up from where it left off.
-> 
-> James Gowans (10):
->   guestmemfs: Introduce filesystem skeleton
->   guestmemfs: add inode store, files and dirs
->   guestmemfs: add persistent data block allocator
->   guestmemfs: support file truncation
->   guestmemfs: add file mmap callback
->   kexec/kho: Add addr flag to not initialise memory
->   guestmemfs: Persist filesystem metadata via KHO
->   guestmemfs: Block modifications when serialised
->   guestmemfs: Add documentation and usage instructions
->   MAINTAINERS: Add maintainers for guestmemfs
-> 
->  Documentation/filesystems/guestmemfs.rst |  87 +++++++
->  MAINTAINERS                              |   8 +
->  arch/x86/mm/init_64.c                    |   2 +
->  fs/Kconfig                               |   1 +
->  fs/Makefile                              |   1 +
->  fs/guestmemfs/Kconfig                    |  11 +
->  fs/guestmemfs/Makefile                   |   8 +
->  fs/guestmemfs/allocator.c                |  40 +++
->  fs/guestmemfs/dir.c                      |  43 ++++
->  fs/guestmemfs/file.c                     | 106 ++++++++
->  fs/guestmemfs/guestmemfs.c               | 160 ++++++++++++
->  fs/guestmemfs/guestmemfs.h               |  60 +++++
->  fs/guestmemfs/inode.c                    | 189 ++++++++++++++
->  fs/guestmemfs/serialise.c                | 302 +++++++++++++++++++++++
->  include/linux/guestmemfs.h               |  16 ++
->  include/uapi/linux/kexec.h               |   6 +
->  kernel/kexec_kho_in.c                    |  12 +-
->  kernel/kexec_kho_out.c                   |   4 +
->  18 files changed, 1055 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/filesystems/guestmemfs.rst
->  create mode 100644 fs/guestmemfs/Kconfig
->  create mode 100644 fs/guestmemfs/Makefile
->  create mode 100644 fs/guestmemfs/allocator.c
->  create mode 100644 fs/guestmemfs/dir.c
->  create mode 100644 fs/guestmemfs/file.c
->  create mode 100644 fs/guestmemfs/guestmemfs.c
->  create mode 100644 fs/guestmemfs/guestmemfs.h
->  create mode 100644 fs/guestmemfs/inode.c
->  create mode 100644 fs/guestmemfs/serialise.c
->  create mode 100644 include/linux/guestmemfs.h
-> 
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Why do you manually dereference `child_field_of_parent` here?
+
+> +            let curr =3D *child_field_of_parent;
+> +            // SAFETY: All links fields we create are in a `Node<K, V>`.
+
+I think the SAFETY comment from below that argues via the type invariant
+of `Self` is better.
+
+> +            let node =3D unsafe { container_of!(curr, Node<K, V>, links)=
+ };
+>=20
+> -            // We need to determine whether `node` should be the left or=
+ right child of `parent`,
+> -            // so we will compare with the `key` field of `parent` a.k.a=
+. `this` below.
+> -            //
+> -            // SAFETY: By the type invariant of `Self`, all non-null `rb=
+_node` pointers stored in `self`
+> -            // point to the links field of `Node<K, V>` objects.
+> -            let this =3D unsafe { container_of!(parent, Node<K, V>, link=
+s) };
+> -
+> -            // SAFETY: `this` is a non-null node so it is valid by the t=
+ype invariants. `node` is
+> -            // valid until the node is removed.
+> -            match unsafe { (*node).key.cmp(&(*this).key) } {
+> -                // We would like `node` to be the left child of `parent`=
+.  Move to this child to check
+> -                // whether we can use it, or continue searching, at the =
+next iteration.
+> -                //
+> -                // SAFETY: `parent` is a non-null node so it is valid by=
+ the type invariants.
+> -                Ordering::Less =3D> child_field_of_parent =3D unsafe { &=
+mut (*parent).rb_left },
+> -                // We would like `node` to be the right child of `parent=
+`.  Move to this child to check
+> -                // whether we can use it, or continue searching, at the =
+next iteration.
+> -                //
+> -                // SAFETY: `parent` is a non-null node so it is valid by=
+ the type invariants.
+> -                Ordering::Greater =3D> child_field_of_parent =3D unsafe =
+{ &mut (*parent).rb_right },
+> +            // SAFETY: `node` is a non-null node so it is valid by the t=
+ype invariants.
+> +            match key.cmp(unsafe { &(*node).key }) {
+> +                // SAFETY: `curr` is a non-null node so it is valid by t=
+he type invariants.
+> +                Ordering::Less =3D> child_field_of_parent =3D unsafe { &=
+mut (*curr).rb_left },
+> +                // SAFETY: `curr` is a non-null node so it is valid by t=
+he type invariants.
+> +                Ordering::Greater =3D> child_field_of_parent =3D unsafe =
+{ &mut (*curr).rb_right },
+>                  Ordering::Equal =3D> {
+> -                    // There is an existing node in the tree with this k=
+ey, and that node is
+> -                    // parent.  Thus, we are replacing parent with a new=
+ node.
+> -                    //
+> -                    // INVARIANT: We are replacing an existing node with=
+ a new one, which is valid.
+> -                    // It remains valid because we "forgot" it with `Box=
+::into_raw`.
+> -                    // SAFETY: All pointers are non-null and valid.
+> -                    unsafe { bindings::rb_replace_node(parent, node_link=
+s, &mut self.root) };
+> -
+> -                    // INVARIANT: The node is being returned and the cal=
+ler may free it, however,
+> -                    // it was removed from the tree. So the invariants s=
+till hold.
+> -                    return Some(RBTreeNode {
+> -                        // SAFETY: `this` was a node in the tree, so it =
+is valid.
+> -                        node: unsafe { Box::from_raw(this.cast_mut()) },
+> -                    });
+> +                    return RawEntry::Occupied(OccupiedEntry {
+> +                        rbtree: self,
+> +                        node_links: curr,
+> +                    })
+>                  }
+>              }
+> +            parent =3D curr;
+>          }
+>=20
+> -        // INVARIANT: We are linking in a new node, which is valid. It r=
+emains valid because we
+> -        // "forgot" it with `Box::into_raw`.
+> -        // SAFETY: All pointers are non-null and valid (`*child_field_of=
+_parent` is null, but `child_field_of_parent` is a
+> -        // mutable reference).
+> -        unsafe { bindings::rb_link_node(node_links, parent, child_field_=
+of_parent) };
+> +        RawEntry::Vacant(RawVacantEntry {
+
+RawVacantEntry has Invariants, so missing INVARIANT comment.
+
+> +            rbtree: raw_self,
+> +            parent,
+> +            child_field_of_parent,
+> +            _phantom: PhantomData,
+> +        })
+> +    }
+
+[...]
+
+> +/// A view into a vacant entry in a [`RBTree`]. It is part of the [`Entr=
+y`] enum.
+> +pub struct VacantEntry<'a, K, V> {
+> +    key: K,
+> +    raw: RawVacantEntry<'a, K, V>,
+> +}
+> +
+> +/// Like [`VacantEntry`], but doesn't hold on to the key.a
+
+Typo: trailing 'a'.
+
+> +///
+> +/// # Invariants
+> +/// - `parent` may be null if the new node becomes the root.
+> +/// - `child_field_of_parent` is a valid pointer to the left-child or ri=
+ght-child of `parent`. If `parent` is
+> +///     null, it is a pointer to the root of the [`RBTree`].
+> +struct RawVacantEntry<'a, K, V> {
+> +    rbtree: *mut RBTree<K, V>,
+> +    /// The node that will become the parent of the new node if we inser=
+t one.
+> +    parent: *mut bindings::rb_node,
+> +    /// This points to the left-child or right-child field of `parent`, =
+or `root` if `parent` is
+> +    /// null.
+> +    child_field_of_parent: *mut *mut bindings::rb_node,
+> +    _phantom: PhantomData<&'a mut RBTree<K, V>>,
+> +}
+> +
+> +impl<'a, K, V> RawVacantEntry<'a, K, V> {
+> +    /// Inserts the given node into the [`RBTree`] at this entry.
+> +    ///
+> +    /// The `node` must have a key such that inserting it here does not =
+break the ordering of this
+> +    /// [`RBTree`].
+> +    fn insert(self, node: RBTreeNode<K, V>) -> &'a mut V {
+> +        let node =3D Box::into_raw(node.node);
+> +
+> +        // SAFETY: `node` is valid at least until we call `Box::from_raw=
+`, which only happens when
+> +        // the node is removed or replaced.
+> +        let node_links =3D unsafe { addr_of_mut!((*node).links) };
+> +
+> +        // INVARIANT: We are linking in a new node, which is valid. It r=
+emains valid because we
+> +        // "forgot" it with `Box::into_raw`.
+> +        // SAFETY: The type invariants of `RawVacantEntry` are exactly t=
+he safety requirements of `rb_link_node`.
+> +        unsafe { bindings::rb_link_node(node_links, self.parent, self.ch=
+ild_field_of_parent) };
+> +
+> +        // SAFETY: All pointers are valid. `node` has just been inserted=
+ into the tree.
+> +        unsafe { bindings::rb_insert_color(node_links, addr_of_mut!((*se=
+lf.rbtree).root)) };
+> +
+> +        // SAFETY: The node is valid until we remove it from the tree.
+> +        unsafe { &mut (*node).value }
+> +    }
+> +}
+> +
+> +impl<'a, K, V> VacantEntry<'a, K, V> {
+> +    /// Inserts the given node into the [`RBTree`] at this entry.
+> +    pub fn insert(self, value: V, reservation: RBTreeNodeReservation<K, =
+V>) -> &'a mut V {
+> +        self.raw.insert(reservation.into_node(self.key, value))
+> +    }
+> +}
+> +
+> +/// A view into an occupied entry in a [`RBTree`]. It is part of the [`E=
+ntry`] enum.
+> +///
+> +/// # Invariants
+> +/// - `node_links` is a valid, non-null pointer to a tree node in `self.=
+rbtree`
+> +pub struct OccupiedEntry<'a, K, V> {
+> +    rbtree: &'a mut RBTree<K, V>,
+> +    /// The node that this entry corresponds to.
+> +    node_links: *mut bindings::rb_node,
+> +}
+> +
+> +impl<'a, K, V> OccupiedEntry<'a, K, V> {
+> +    fn node_ptr(&self) -> *mut Node<K, V> {
+> +        // SAFETY: By the type invariant of `Self`, all `node_links` poi=
+nters stored in `self`
+> +        // point to the links field of `Node<K, V>` objects.
+> +        unsafe { container_of!(self.node_links, Node<K, V>, links) }.cas=
+t_mut()
+
+You should not call `cast_mut` here, see below
+
+> +    }
+> +
+> +    /// Gets a reference to the value in the entry.
+> +    pub fn get(&self) -> &V {
+> +        // SAFETY: `self.node_ptr` produces a valid pointer to a node in=
+ the tree.
+
+Can you add a `# Guarantees` section to `node_ptr` that states exactly
+this?
+
+> +        unsafe { &(*self.node_ptr()).value }
+> +    }
+> +
+> +    /// Gets a mutable reference to the value in the entry.
+> +    pub fn get_mut(&mut self) -> &mut V {
+> +        // SAFETY: `self.node_ptr` produces a valid pointer to a node in=
+ the tree.
+> +        unsafe { &mut (*self.node_ptr()).value }
+
+This is sadly UB, you are creating a `&mut` reference from a pointer
+that was derived from a `&` reference:
+- `node_ptr` takes `&self`, thus it converts the `&mut self` to that.
+- `container_of!` inside of `node_ptr` is used to create a read-only
+  pointer to the `links` field (it is casted to `*mut`, but that doesn't
+  change the fact that you are only allowed to use it for reads)
+- `get_mut` turns it again into a `&mut` reference.
+
+One solution is to make `note_ptr` take a `*mut Self`/`*const Self`.
+
+> +    }
+> +
+> +    /// Converts the entry into a mutable reference to its value.
+> +    ///
+> +    /// If you need multiple references to the `OccupiedEntry`, see [`se=
+lf#get_mut`].
+> +    pub fn into_mut(self) -> &'a mut V {
+> +        // SAFETY: `self.node_ptr` produces a valid pointer to a node in=
+ the tree.
+> +        unsafe { &mut (*self.node_ptr()).value }
+> +    }
+> +
+> +    /// Remove this entry from the [`RBTree`].
+> +    pub fn remove_node(self) -> RBTreeNode<K, V> {
+> +        // SAFETY: The node is a node in the tree, so it is valid.
+> +        unsafe { bindings::rb_erase(self.node_links, &mut self.rbtree.ro=
+ot) };
+> +
+> +        // INVARIANT: The node is being returned and the caller may free=
+ it, however, it was
+> +        // removed from the tree. So the invariants still hold.
+> +        RBTreeNode {
+> +            // SAFETY: The node was a node in the tree, but we removed i=
+t, so we can convert it
+> +            // back into a box.
+> +            node: unsafe { Box::from_raw(self.node_ptr()) },
+> +        }
+> +    }
+> +
+> +    /// Takes the value of the entry out of the map, and returns it.
+> +    pub fn remove(self) -> V {
+> +        self.remove_node().node.value
+> +    }
+> +
+> +    /// Swap the current node for the provided node.
+> +    ///
+> +    /// The key of both nodes must be equal.
+
+Is this a safety requirement? Ie if it is violated, can memory bugs
+occur, or is it only going to lead to logic bugs?
+
+---
+Cheers,
+Benno
+
+> +    fn replace(self, node: RBTreeNode<K, V>) -> RBTreeNode<K, V> {
+> +        let node =3D Box::into_raw(node.node);
+> +
+> +        // SAFETY: `node` is valid at least until we call `Box::from_raw=
+`, which only happens when
+> +        // the node is removed or replaced.
+> +        let new_node_links =3D unsafe { addr_of_mut!((*node).links) };
+> +
+> +        // SAFETY: This updates the pointers so that `new_node_links` is=
+ in the tree where
+> +        // `self.node_links` used to be.
+> +        unsafe {
+> +            bindings::rb_replace_node(self.node_links, new_node_links, &=
+mut self.rbtree.root)
+> +        };
+> +
+> +        // SAFETY:
+> +        // - `self.node_ptr` produces a valid pointer to a node in the t=
+ree.
+> +        // - Now that we removed this entry from the tree, we can conver=
+t the node to a box.
+> +        let old_node =3D unsafe { Box::from_raw(self.node_ptr()) };
+> +
+> +        RBTreeNode { node: old_node }
+> +    }
+> +}
+> +
+>  struct Node<K, V> {
+>      links: bindings::rb_node,
+>      key: K,
+>=20
+> --
+> 2.46.0.rc1.232.g9752f9e123-goog
+>=20
+
 
