@@ -1,102 +1,119 @@
-Return-Path: <linux-kernel+bounces-274300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B8F947646
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:38:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47DE94764C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7378B282580
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 700EA1F212D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7790014A609;
-	Mon,  5 Aug 2024 07:37:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D04C149C7D
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 07:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74425149C69;
+	Mon,  5 Aug 2024 07:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="ADFvWmRo"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4C033CA
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 07:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722843424; cv=none; b=QBFCyIbF++9Hzss1ZjcGx+T1UBd3HsS8SQ8BO+Qji47j9Z3bPHV0c3mQCtpfNBcviZ17foNQJFjaYRpd/7Yi4rP2nWatuT9GsvTQ9FTe5pNTbZX/pKk75dxZEJK7qspHXIKbrth+3UhHz3mttPf/eU1AqdBvDjVo8cksIkYGMiE=
+	t=1722843721; cv=none; b=k7VhJd1EvbMfW4rbMUI3mDm6Boxk13VxgIPLLkhKVYdONUP86ckB2YqBcwqL3EdVmORdRiYSE/r9uhqSFX+1quA9oo1LubVW0K+osHKbvTwyE/8q0Rl8VdhDoO/5iH1L+TNHcr99Cc7Mtalid4hP6ZdDwt2VioV5xEHO/P4pVgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722843424; c=relaxed/simple;
-	bh=ZDCH0MsOIW5acnq6//DJ0jeEXhTquVaL3h+Uok16Er8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F7wOGbPq5P43AXF/ZCuxm+3V1VVFWkNDHFqMZoeZQUZQFgTxv+MVcYwqIaP1AtzWWS9nOevvPnjeCkDEs1yMWDDlXrDBxRmySpYuX7txAUFaXcv9t9GyaeIWMkFkwkid/rBL8s0y2gl1bGWi2YId7rngFOVV/V1xXsha9957GSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sasH3-0003dK-CG; Mon, 05 Aug 2024 09:36:57 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sasH2-004ekJ-Jl; Mon, 05 Aug 2024 09:36:56 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sasH2-002x7E-1c;
-	Mon, 05 Aug 2024 09:36:56 +0200
-Date: Mon, 5 Aug 2024 09:36:56 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v3 1/3] wifi: mwifiex: simplify WPA flags setting
-Message-ID: <ZrCBGA29KbqkTgJU@pengutronix.de>
-References: <20240723-mwifiex-wpa-psk-sha256-v3-1-025168a91da1@pengutronix.de>
- <172276187336.2804131.2752806886332298409.kvalo@kernel.org>
+	s=arc-20240116; t=1722843721; c=relaxed/simple;
+	bh=Mzd0J4aZS5KIFLjJQRHWEv0uEEBHVJ7AUNhTLbZ8ViA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=BEulJ0NAItW0J3q1q04iBUkGGKweAqQMcwA/sXt3nOfqd++Fk0ETF8xcin8WcOFaXJf7fYIV8TZEa7kQN7asFIoBzrEay0IqO6Nj/DoM5lpdQ71hMaaCVObO3QOuXwXjReC0mD50Jmz3q0btD8k27PKPhtUb1Rrhpqb4rsZkj8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=ADFvWmRo reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=+g9AFiexHerYjXboiQBgX3Ne42BKsVZFmAhEcS09dRE=; b=A
+	DFvWmRotkByd6jLsSXQ7eltYfT5do0bxmkTj751SdH3L9igm+i/xhOpOuOhVoUqm
+	bVOzdY+OnEgVmSXyljCVy21zwMyEXGUxlbCDZyRmMSfln9RaUROO73XVOCy90nId
+	7HiHeRW4NvfFheKCVCFk/kVRsRLRLlnivuUasi9bAU=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-131 (Coremail) ; Mon, 5 Aug 2024 15:40:43 +0800 (CST)
+Date: Mon, 5 Aug 2024 15:40:43 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Dragan Simic" <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re:[PATCH] drm/rockchip: cdn-dp: Clean up a few logged messages
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <92db74a313547c087cc71059428698c4ec37a9ae.1720048818.git.dsimic@manjaro.org>
+References: <92db74a313547c087cc71059428698c4ec37a9ae.1720048818.git.dsimic@manjaro.org>
+X-NTES-SC: AL_Qu2ZAPSfvE4v5SaRYOkZnEobh+Y5UcK2s/ki2YFXN5k0lyXIwAYYe1taPF//yf+tDQSFlDycThNq5P9+d4haZaLHlDfB3Yp85S1l1hmvfy5y
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172276187336.2804131.2752806886332298409.kvalo@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Message-ID: <714e5664.6e68.191217bbf3a.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3v6D7gbBmBxsEAA--.6814W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0ggyXmWXzf5hyAABsf
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Sun, Aug 04, 2024 at 08:57:54AM +0000, Kalle Valo wrote:
-> Sascha Hauer <s.hauer@pengutronix.de> wrote:
-> 
-> > The WPA flags setting only depends on the wpa_versions bitfield and not
-> > on the AKM suite, so move it out of the switch/case to simplify the code
-> > a bit. Also set bss_config->protocol to zero explicitly. This is done
-> > only to make the code clearer, bss_config has been zero alloced by the
-> > caller, so should be zero already. No functional change intended.
-> > 
-> > Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > Acked-by: Brian Norris <briannorris@chromium.org>
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> There were conflicts on wireless-next, please rebase.
-
-Thanks for noting. Just sent out a v4.
-
-I realized the host-mlme patches are merged in wireless-next. I had them
-in my tree anyway already, so the necessary changes looked all familiar.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+CkhlbGxvIERyYWdhbu+8jAoKQXQgMjAyNC0wNy0wNCAwNzozMjoyMCwgIkRyYWdhbiBTaW1pYyIg
+PGRzaW1pY0BtYW5qYXJvLm9yZz4gd3JvdGU6Cj5DbGVhbiB1cCBhIGZldyBsb2dnZWQgbWVzc2Fn
+ZXMsIHdoaWNoIHdlcmUgcHJldmlvdXNseSB3b3JkZWQgYXMgcmF0aGVyCj5pbmNvbXBsZXRlIHNl
+bnRlbmNlcyBzZXBhcmF0ZWQgYnkgcGVyaW9kcy4gIFRoaXMgd2FzIGJvdGggYSBiaXQgdW5yZWFk
+YWJsZQo+YW5kIGdyYW1tYXRpY2FsbHkgaW5jb3JyZWN0LCBzbyBjb252ZXJ0IHRoZW0gaW50byBw
+YXJ0aWFsIHNlbnRlbmNlcyBzZXBhcmF0ZWQKPihvciBjb25uZWN0ZWQpIGJ5IHNlbWljb2xvbnMs
+IHRvZ2V0aGVyIHdpdGggc29tZSB3b3JkaW5nIGltcHJvdmVtZW50cy4KPgo+U2lnbmVkLW9mZi1i
+eTogRHJhZ2FuIFNpbWljIDxkc2ltaWNAbWFuamFyby5vcmc+CgogUmV2aWV3ZWQtYnk6IEFuZHkg
+WWFuIDxhbmR5c2hya0AxNjMuY29tPgoKCj4tLS0KPiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
+Y2RuLWRwLWNvcmUuYyB8IDE2ICsrKysrKystLS0tLS0tLS0KPiAxIGZpbGUgY2hhbmdlZCwgNyBp
+bnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQo+Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL3JvY2tjaGlwL2Nkbi1kcC1jb3JlLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvY2Ru
+LWRwLWNvcmUuYwo+aW5kZXggYmQ3YWE4OTFiODM5Li5lZTlkZWYxOTcwOTUgMTAwNjQ0Cj4tLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvY2RuLWRwLWNvcmUuYwo+KysrIGIvZHJpdmVycy9n
+cHUvZHJtL3JvY2tjaGlwL2Nkbi1kcC1jb3JlLmMKPkBAIC05NjksNDYgKzk2OSw0NCBAQCBzdGF0
+aWMgdm9pZCBjZG5fZHBfcGRfZXZlbnRfd29yayhzdHJ1Y3Qgd29ya19zdHJ1Y3QgKndvcmspCj4g
+Cj4gCS8qIE5vdCBjb25uZWN0ZWQsIG5vdGlmeSB1c2Vyc3BhY2UgdG8gZGlzYWJsZSB0aGUgYmxv
+Y2sgKi8KPiAJaWYgKCFjZG5fZHBfY29ubmVjdGVkX3BvcnQoZHApKSB7Cj4tCQlEUk1fREVWX0lO
+Rk8oZHAtPmRldiwgIk5vdCBjb25uZWN0ZWQuIERpc2FibGluZyBjZG5cbiIpOwo+KwkJRFJNX0RF
+Vl9JTkZPKGRwLT5kZXYsICJOb3QgY29ubmVjdGVkOyBkaXNhYmxpbmcgY2RuXG4iKTsKPiAJCWRw
+LT5jb25uZWN0ZWQgPSBmYWxzZTsKPiAKPiAJLyogQ29ubmVjdGVkIGJ1dCBub3QgZW5hYmxlZCwg
+ZW5hYmxlIHRoZSBibG9jayAqLwo+IAl9IGVsc2UgaWYgKCFkcC0+YWN0aXZlKSB7Cj4tCQlEUk1f
+REVWX0lORk8oZHAtPmRldiwgIkNvbm5lY3RlZCwgbm90IGVuYWJsZWQuIEVuYWJsaW5nIGNkblxu
+Iik7Cj4rCQlEUk1fREVWX0lORk8oZHAtPmRldiwgIkNvbm5lY3RlZCwgbm90IGVuYWJsZWQ7IGVu
+YWJsaW5nIGNkblxuIik7Cj4gCQlyZXQgPSBjZG5fZHBfZW5hYmxlKGRwKTsKPiAJCWlmIChyZXQp
+IHsKPi0JCQlEUk1fREVWX0VSUk9SKGRwLT5kZXYsICJFbmFibGUgZHAgZmFpbGVkICVkXG4iLCBy
+ZXQpOwo+KwkJCURSTV9ERVZfRVJST1IoZHAtPmRldiwgIkVuYWJsaW5nIGRwIGZhaWxlZDogJWRc
+biIsIHJldCk7Cj4gCQkJZHAtPmNvbm5lY3RlZCA9IGZhbHNlOwo+IAkJfQo+IAo+IAkvKiBFbmFi
+bGVkIGFuZCBjb25uZWN0ZWQgdG8gYSBkb25nbGUgd2l0aG91dCBhIHNpbmssIG5vdGlmeSB1c2Vy
+c3BhY2UgKi8KPiAJfSBlbHNlIGlmICghY2RuX2RwX2NoZWNrX3NpbmtfY29ubmVjdGlvbihkcCkp
+IHsKPi0JCURSTV9ERVZfSU5GTyhkcC0+ZGV2LCAiQ29ubmVjdGVkIHdpdGhvdXQgc2luay4gQXNz
+ZXJ0IGhwZFxuIik7Cj4rCQlEUk1fREVWX0lORk8oZHAtPmRldiwgIkNvbm5lY3RlZCB3aXRob3V0
+IHNpbms7IGFzc2VydCBocGRcbiIpOwo+IAkJZHAtPmNvbm5lY3RlZCA9IGZhbHNlOwo+IAo+IAkv
+KiBFbmFibGVkIGFuZCBjb25uZWN0ZWQgd2l0aCBhIHNpbmssIHJlLXRyYWluIGlmIHJlcXVlc3Rl
+ZCAqLwo+IAl9IGVsc2UgaWYgKCFjZG5fZHBfY2hlY2tfbGlua19zdGF0dXMoZHApKSB7Cj4gCQl1
+bnNpZ25lZCBpbnQgcmF0ZSA9IGRwLT5tYXhfcmF0ZTsKPiAJCXVuc2lnbmVkIGludCBsYW5lcyA9
+IGRwLT5tYXhfbGFuZXM7Cj4gCQlzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSA9ICZkcC0+
+bW9kZTsKPiAKPi0JCURSTV9ERVZfSU5GTyhkcC0+ZGV2LCAiQ29ubmVjdGVkIHdpdGggc2luay4g
+UmUtdHJhaW4gbGlua1xuIik7Cj4rCQlEUk1fREVWX0lORk8oZHAtPmRldiwgIkNvbm5lY3RlZCB3
+aXRoIHNpbms7IHJlLXRyYWluIGxpbmtcbiIpOwo+IAkJcmV0ID0gY2RuX2RwX3RyYWluX2xpbmso
+ZHApOwo+IAkJaWYgKHJldCkgewo+IAkJCWRwLT5jb25uZWN0ZWQgPSBmYWxzZTsKPi0JCQlEUk1f
+REVWX0VSUk9SKGRwLT5kZXYsICJUcmFpbiBsaW5rIGZhaWxlZCAlZFxuIiwgcmV0KTsKPisJCQlE
+Uk1fREVWX0VSUk9SKGRwLT5kZXYsICJUcmFpbmluZyBsaW5rIGZhaWxlZDogJWRcbiIsIHJldCk7
+Cj4gCQkJZ290byBvdXQ7Cj4gCQl9Cj4gCj4gCQkvKiBJZiB0cmFpbmluZyByZXN1bHQgaXMgY2hh
+bmdlZCwgdXBkYXRlIHRoZSB2aWRlbyBjb25maWcgKi8KPiAJCWlmIChtb2RlLT5jbG9jayAmJgo+
+IAkJICAgIChyYXRlICE9IGRwLT5tYXhfcmF0ZSB8fCBsYW5lcyAhPSBkcC0+bWF4X2xhbmVzKSkg
+ewo+IAkJCXJldCA9IGNkbl9kcF9jb25maWdfdmlkZW8oZHApOwo+IAkJCWlmIChyZXQpIHsKPiAJ
+CQkJZHAtPmNvbm5lY3RlZCA9IGZhbHNlOwo+LQkJCQlEUk1fREVWX0VSUk9SKGRwLT5kZXYsCj4t
+CQkJCQkgICAgICAiRmFpbGVkIHRvIGNvbmZpZyB2aWRlbyAlZFxuIiwKPi0JCQkJCSAgICAgIHJl
+dCk7Cj4rCQkJCURSTV9ERVZfRVJST1IoZHAtPmRldiwgIkZhaWxlZCB0byBjb25maWd1cmUgdmlk
+ZW86ICVkXG4iLCByZXQpOwo+IAkJCX0KPiAJCX0KPiAJfQo=
 
