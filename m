@@ -1,257 +1,217 @@
-Return-Path: <linux-kernel+bounces-275399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248129484ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:36:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67ED9484F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 23:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A1E1F212E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:36:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37DDA281D3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A4016D9A0;
-	Mon,  5 Aug 2024 21:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678DE16C692;
+	Mon,  5 Aug 2024 21:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="foK7udw6"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QF3MugR0"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE46149C6E
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB90F149C6E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 21:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893756; cv=none; b=bqSPLsAauDas9CMZkZB2cBzKLzTVmjN8TCoI4AKFFF29JqKgPzLVArG+LEmm1vpzT3nBw1gKnqnYzM5y1tZS7PPe1GLudxsf3uzcCb2W3pFCQGc9RFn55ZACVglsUS8o7dNg3vhnubJvSGvtabdBtf/tx0m5QeX9B+kgQMfT3D0=
+	t=1722893840; cv=none; b=YYVRFteXNlPa7qi5zzf+vAEqKY2PrY8G+jRKlg9I97/x9HzSiP/AvnQ+im02eRjoRWCA5s5opUg0Dz6zJW4GegZcRXFdmUU5Xu3AsjBLtLYX0DMtx3eYLahgkTw6I+4JUPZqAUcnUUNXeGaPQGfleodWIHQk9s2QIGRm9pCJ9js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893756; c=relaxed/simple;
-	bh=u4ywBlsRL0BxaT3cYq2Z2kIJTx4MW2c/ESHGD59dVq8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JUr1CFebKA9InMesGMMG2q2z3fMtH7HKGr1AI5fgEFZpdnD8Av8niFib+Fco5RAclfvwTPkVAGKAUNIW/1CElBVD4DdTOYHh8XPxTsZe/9ZUgJuN2gzbnJe2WIOwp59tdRz6FiPfrlfi0VHCncS13bq1iCCuVPZoI0/9CFc1BJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=foK7udw6; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a30753fe30so8506768a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:35:55 -0700 (PDT)
+	s=arc-20240116; t=1722893840; c=relaxed/simple;
+	bh=Ed6Rl/7C5d57Fi1GZz8JB4mKEI66eDK+qFFUbTBXrMI=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hYGrBtlJNxS1Eh8C+hp6apTKmVmp2hJyIEaneyPQFiKllZrVUXuKnsFN/NdocCQsjd0hvWeri8qhVQ9HU0QzUayCX/GrmPi65fQ1dsp0OXCa7RAbdv3xlypV42jQZ7qvuEbzPAb8DIeL0KCVyst4tB9KAFYvuAD4Ect+JlMyGMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QF3MugR0; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a1d6f47112so688408585a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 14:37:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722893755; x=1723498555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+        d=chromium.org; s=google; t=1722893838; x=1723498638; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7zEougPEyu/XsP7BiNYzpW05XehPP1UwCYeavBIksYY=;
-        b=foK7udw6/eXCG0b3mNVvBvRdmlHZacwzmElavHqAKxFpVhuD63LWWL5LfF8mDpoLig
-         taGxtnetywrBDA5U3/j4m4ucuDENqt1GCUyUD3eWcgTPkXVoOCrXgSoNocmnP5biig8h
-         nEyS7AuPo9Fxqqy946F6m5cWpSOXQyeTMaQ4FPJZ0nWM5hAoz/VmuIR2lX0H0w8a0Zyo
-         3mHWUfpsX6SblLvZPCZYMmVveVA8dgpNxI25YunPbTfAWFRsjHzjGR0dURSFQjfMSiBW
-         dRJxScTppTQoKgTY882BHNUB8aNdYynJmHpRDdEtwgkExyp6d0izEyOitJlSOZKy4W/w
-         3mPw==
+        bh=5TTQWoLTs/whgWYI5NXDcDj0/sry6PBheRizhrnqOcg=;
+        b=QF3MugR0M8fz9u7kKwdbEuEBewZqWhDHkhp94ciTeBgtsL8qoQL/WYHfQ2qkl10tDZ
+         pEyltFPRUQngwNMYCtgzKzfgUZwbf4hlPYdGXT4b0pp71gUy/gqstWsitBzAQA5PEEsH
+         PH9lRntCgYTZYcd187sBhX9syCpoGFNAn6sf8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893755; x=1723498555;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7zEougPEyu/XsP7BiNYzpW05XehPP1UwCYeavBIksYY=;
-        b=ZGd7eKfk/vsF4XHfpkeZmTAaTwqfJLTMdubxg6Hw8Y1q23mR7ojJOsB9Tj8p1AqZ5h
-         ydKSLdTqBX55GXSJbgB7CbSSrYJYQZnmVCRXGCntq56s19K2jWT7BcjQ2ZbR1HCnVx+p
-         HA261jsd4Sx4orMKWlUMGurF5nLuqnFOXhaou95hQPuTnNwZIYJdklQzCSSzg9Fbh63V
-         KKqQo80tZgO0G0Su23L0D68YV/pNcSI1Jtko345z0YNqUP8yYRsYKyuQlp21NoAsANyE
-         hGRIWEesprRk5hf7f7RadSpxO9qK03EEl/0Zl7HZhGMhn2FKbrc1GSa2nEbUpUJMzpgQ
-         VErw==
-X-Forwarded-Encrypted: i=1; AJvYcCUz6e+eXzk3sIArXhRVojNy5uZ53aotdC8u/4RjVr/WiKVhxZD4dz6Y42WkZf9nqdwXGZjLvhnn+Wlm1cdMfYSVhIIB8H0Az3ToThVc
-X-Gm-Message-State: AOJu0YxdPtjcswfl+oLE+h1msvAAJ62vLIoBymgE8HkGckO8LjtaLzzX
-	lAaeLvwWXToybb6kG9/FmiKqNMTvQJWvG4pajotQIoJDhjyQZq7yucv9rKhHEOTRfTReLg/xUc7
-	4IA==
-X-Google-Smtp-Source: AGHT+IHOyNGBl0lTxCv1pGrwQOW9eslx0DzywsCu/KV//UKtHQ2KhGiXtjHiSMZdzddUzk4dGaKgMyPOW3Q=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:bd4a:0:b0:785:e3e:38d3 with SMTP id
- 41be03b00d2f7-7b74853d441mr28660a12.7.1722893754549; Mon, 05 Aug 2024
- 14:35:54 -0700 (PDT)
-Date: Mon, 5 Aug 2024 14:35:53 -0700
-In-Reply-To: <ffa76b1b62c5cd2001f5f313009376e131bc2817.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1722893838; x=1723498638;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5TTQWoLTs/whgWYI5NXDcDj0/sry6PBheRizhrnqOcg=;
+        b=gxisl1oj6fHWlLJs5F3/npSdc5kW2SL2UYCmChgzVliGVJfDdts3oJtIFYZ7GTg4+9
+         RDSUwgSGlJBU6+I3YkN5IIcgiGtbuZBaOelBmSMyq68awf2eukJtQUq/eEVGzNX9aXo6
+         wZSFc/tU4CyVGbls9rLo8mKTi+B+FZCX9GJrfz/DFYaq515VroCUJNEZAiKagRSkokMF
+         WE30sFTfjRblSRaX6f9TVnGW/XZZffvbbZbKGpsPf74cA4j/Ew+YfQ7XPvlGxz2j6EWm
+         FMdeQ8cPYxoU+E64/2DlMum6Sh/1I7lzsEsCJJC1D2IiwlkqEQEhoW+EF1d6va/9Xt8c
+         5amQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhsGHnYGX98AucYr2hZnT23lS1HFGTJ/Nen4ZFPfpkfOQOrroqXnqVwL4zuK/43qei4MQvMgJjtXpuEP66iVtPSOlriQV/asgDOtOf
+X-Gm-Message-State: AOJu0Yxsca298ITKrOWgrr+f41O4IAIC1ZSe3WZjen/TfCNAZdD5Yfnv
+	nydGCvG2KSnayCiIg0CWHiXgZIOSunlu0VpHBC2GVd8tPC8myReg6OGwQxpGmr0XHHv/JNPTxXA
+	Vn7uGmBRbeOSDUS9PDBUHcIdqNAkRc0Bv9fCa
+X-Google-Smtp-Source: AGHT+IFS5Tg6/1f5zul0WlstKMG5hOJqpcrTEHbrOjqqZr3yr5nFPOGk40LTscDmB79uY8ZoZrzsbej+EEA5xeCCQ/c=
+X-Received: by 2002:a05:620a:240d:b0:7a2:d64:1bbf with SMTP id
+ af79cd13be357-7a34eec99d9mr1971902185a.1.1722893837737; Mon, 05 Aug 2024
+ 14:37:17 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 5 Aug 2024 14:37:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-25-seanjc@google.com>
- <20d3017a8dd54b345104bf2e5cb888a22a1e0a53.camel@redhat.com>
- <ZoxaOqvXzTH6O64D@google.com> <31cf77d34fc49735e6dff57344a0e532e028a975.camel@redhat.com>
- <ZqQybtNkhSVZDOTu@google.com> <ffa76b1b62c5cd2001f5f313009376e131bc2817.camel@redhat.com>
-Message-ID: <ZrFFua_7kWKBESbe@google.com>
-Subject: Re: [PATCH v2 24/49] KVM: x86: #undef SPEC_CTRL_SSBD in cpuid.c to
- avoid macro collisions
-From: Sean Christopherson <seanjc@google.com>
-To: mlevitsk@redhat.com
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+In-Reply-To: <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
+References: <20240502224703.103150-1-swboyd@chromium.org> <CAE-0n50VDgsg-4QnynvLOzykr3KP5JsnHqeFPA=uRT3EfgL19g@mail.gmail.com>
+ <CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com>
+ <CAE-0n53X1Gv9nnyDfeivYd7n5W6D1WFkO0tCvYc9drb0+4hQbw@mail.gmail.com> <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Mon, 5 Aug 2024 14:37:16 -0700
+Message-ID: <CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: Park shared RCGs upon registration
+To: Amit Pundir <amit.pundir@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	Laura Nao <laura.nao@collabora.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Douglas Anderson <dianders@chromium.org>, Taniya Das <quic_tdas@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-+Boris
+Quoting Amit Pundir (2024-08-05 03:43:14)
+> On Sat, 3 Aug 2024 at 06:29, Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > Also please send back the dmesg so we can see what clks are configured
+> > for at boot time. If they're using TCXO source at boot then they're not
+> > going to be broken. In which case those clks can keep using the old clk
+> > ops and we can focus on the ones that aren't sourcing from TCXO.
+>
+> Thank your for this debug patch. I thought I narrowed down the
+> breakage to the clks in drivers/clk/qcom/gcc-sm8550.c, until I ran
+> into the following kernel panic in ucsi_glink driver in later test
+> runs.
 
-On Mon, Aug 05, 2024, mlevitsk@redhat.com wrote:
-> =D0=A3 =D0=BF=D1=82, 2024-07-26 =D1=83 16:34 -0700, Sean Christopherson =
-=D0=BF=D0=B8=D1=88=D0=B5:
-> > > On Wed, Jul 24, 2024, Maxim Levitsky wrote:
-> > > > > On Mon, 2024-07-08 at 14:29 -0700, Sean Christopherson wrote:
-> > > > > > > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> > > > > > > > > Maybe we should instead rename the SPEC_CTRL_SSBD to
-> > > > > > > > > 'MSR_IA32_SPEC_CTRL_SSBD' and together with it, other fie=
-lds of this msr.=C2=A0 It
-> > > > > > > > > seems that at least some msrs in this file do this.
-> > > > > > >=20
-> > > > > > > Yeah, the #undef hack is quite ugly.=C2=A0 But I didn't (and =
-still don't) want to
-> > > > > > > introduce all the renaming churn in the middle of this alread=
-y too-big series,
-> > > > > > > especially since it would require touching quite a bit of cod=
-e outside of KVM.
-> > > > >=20
-> > > > > > >=20
-> > > > > > > I'm also not sure that's the right thing to do; I kinda feel =
-like KVM is the one
-> > > > > > > that's being silly here.
-> > > > >=20
-> > > > > I don't think that KVM is silly here. I think that hardware defin=
-itions like
-> > > > > MSRs, register names, register bit fields, etc, *must* come with =
-a unique
-> > > > > prefix, it's not an issue of breaking some deeply nested macro, b=
-ut rather an
-> > > > > issue of readability.
-> > >=20
-> > > For the MSR names themselves, yes, I agree 100%.=C2=A0 But for the bi=
-ts and mask, I
-> > > disagree.=C2=A0 It's simply too verbose, especially given that in the=
- vast majority
-> > > of cases simply looking at the surrounding code will provide enough c=
-ontext to
-> > > glean an understanding of what's going on.
->=20
-> I am not that sure about this, especially if someone by mistake uses a fl=
-ag
-> that belong to one MSR, in some unrelated place. Verbose code is rarely a=
- bad thing.
->=20
->=20
-> > > =C2=A0 E.g. even for SPEC_CTRL_SSBD, where
-> > > there's an absurd amount of magic and layering, looking at the #defin=
-e makes
-> > > it fairly obvious that it belongs to MSR_IA32_SPEC_CTRL.
-> > >=20
-> > > And for us x86 folks, who obviously look at this code far more often =
-than non-x86
-> > > folks, I find it valuable to know that a bit/mask is exactly that, an=
-d _not_ an
-> > > MSR index.=C2=A0 E.g. VMX_BASIC_TRUE_CTLS is a good example, where re=
-naming that to
-> > > MSR_VMX_BASIC_TRUE_CTLS would make it look too much like MSR_IA32_VMX=
-_TRUE_ENTRY_CTLS
-> > > and all the other "true" VMX MSRs.
-> > >=20
-> > > > > SPEC_CTRL_SSBD for example won't mean much to someone who only kn=
-ows ARM, while
-> > > > > MSR_SPEC_CTRL_SSBD, or even better IA32_MSR_SPEC_CTRL_SSBD, lets =
-you instantly know
-> > > > > that this is a MSR, and anyone with even a bit of x86 knowledge s=
-hould at least have
-> > > > > heard about what a MSR is.
-> > > > >=20
-> > > > > In regard to X86_FEATURE_INTEL_SSBD, I don't oppose this idea, be=
-cause we have
-> > > > > X86_FEATURE_AMD_SSBD, but in general I do oppose the idea of addi=
-ng 'INTEL' prefix,
-> > >=20
-> > > Ya, those are my feelings exactly.=C2=A0 And in this case, since we a=
-lready have an
-> > > AMD variant, I think it's actually a net positive to add an INTEL var=
-iant so that
-> > > it's clear that Intel and AMD ended up defining separate CPUID to enu=
-merate the
-> > > same basic info.
-> > >=20
-> > > > > because it sets a not that good precedent, because most of the fe=
-atures on x86
-> > > > > are first done by Intel, but then are also implemented by AMD, an=
-d thus an intel-only
-> > > > > feature name can stick after it becomes a general x86 feature.
-> > > > >=20
-> > > > > IN case of X86_FEATURE_INTEL_SSBD, we already have sadly differen=
-t CPUID bits for
-> > > > > each vendor (although I wonder if AMD also sets the X86_FEATURE_I=
-NTEL_SSBD).
-> > > > >=20
-> > > > > I vote to rename 'SPEC_CTRL_SSBD', it can be done as a standalone=
- patch, and can
-> > > > > be accepted right now, even before this patch series is accepted.
-> > >=20
-> > > If we go that route, then we also need to rename nearly ever bit/mask=
- definition
-> > > in msr-index.h, otherwise SPEC_CTRL_* will be the odd ones out.=C2=A0=
- And as above, I
-> > > don't think this is the right direction.
->=20
-> Honestly not really. If you look carefully at the file, many bits are alr=
-eady defined
-> in the way I suggest, for example:
->=20
-> MSR_PLATFORM_INFO_CPUID_FAULT_BIT
-> MSR_IA32_POWER_CTL_BIT_EE
-> MSR_INTEGRITY_CAPS_ARRAY_BIST_BIT
-> MSR_AMD64_DE_CFG_LFENCE_SERIALIZE_BIT
+Thanks for the info. These are the clks that aren't sourcing from XO
+at registration time:
 
-Heh, I know there are some bits that have an "MSR" prefix, hence "nearly ev=
-ery".
+  gcc_qupv3_wrap1_s7_clk_src with cfg 0x102601 -> parent is gpll0_out_even
+  gcc_ufs_phy_axi_clk_src with cfg 0x103 -> parent is gpll0_out_main
+  gcc_ufs_phy_ice_core_clk_src with cfg 0x503 -> parent is gpll4_out_main
+  gcc_ufs_phy_unipro_core_clk_src with cfg 0x103 -> parent is gpll0_out_main
+  gcc_usb30_prim_master_clk_src with cfg 0x105 -> parent is gpll0_out_main
 
-> This file has all kind of names for both msrs and flags. There is not muc=
-h
-> order, so renaming the bit definitions of IA32_SPEC_CTRL won't increase t=
-he
-> level of disorder in this file IMHO.
+The original patch is going to inform the clk framework that the parent
+of these clks aren't XO but something like gpll0_out_even, whatever the
+hardware is configured for. That may cause these PLLs to be turned off
+earlier than before if, for example, gcc_ufs_phy_axi_clk_src is turned
+off by a consumer and gcc_usb30_prim_master_clk_src is left enabled at
+boot. That's why we force park clks at registration time, so that they
+can't have their parent clk get turned off by some other clk consumer
+enabling and then disabling a clk that's also parented to the same
+parent.
 
-It depends on what direction msr-index.h is headed.  If the long-term prefe=
-rence
-is to have bits/masks namespaced with only their associated MSR name, i.e. =
-no
-explicit MSR_, then renaming the bits is counter-productive.
+This same problem exists for RCGs that aren't shared too, but it's
+particularly bad for shared RCGs because the parent PLLs aren't turned
+on automatically by the hardware when things like the GDSC do their
+housekeeping. At least when software is in control we can enable the
+parent PLL and unstick the RCG that was previously cut off.
 
-I added Boris, who I believe was the most opinionated about the MSR bit nam=
-es,
-i.e. who can most likely give us the closest thing to an authoritative answ=
-er as
-to the preferred style.
+Can you narrow down the list above to the clk that matters? I guess if
+USB isn't working then gcc_usb30_prim_master_clk_src is the one that
+should be changed and nothing else. Although, I noticed that in the
+first dmesg log you sent the serial console had garbage, and that's
+likely because the rate changed while the clk was registered. I don't
+know why the gcc_qupv3_wrap1_s7_clk_src is marked with the shared clk
+ops. That's confusing to me as I don't expect that to need to be parked
+for any reasons. Maybe qcom folks can comment there but I'd expect plain
+rcg2_ops to be used for those clks. Anyway, if you can narrow down to
+which clk needs to be left untouched it would be helpful.
 
-Boris, we're debating about the best way to solve a weird collision between=
-:
+>
+> [    7.882923][    T1] init: Loading module /lib/modules/ucsi_glink.ko
+> with args ''
+> [    7.892929][   T92] Unable to handle kernel NULL pointer
+> dereference at virtual address 0000000000000010
+> [    7.894935][    T1] init: Loaded kernel module /lib/modules/ucsi_glink.ko
+> [    7.902670][   T92] user pgtable: 4k pages, 39-bit VAs, pgdp=0000000886218000
+> [    7.902674][   T92] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+> [    7.993995][   T64] qcom_pmic_glink pmic-glink: Failed to create
+> device link (0x180) with a600000.usb
+> [    8.078673][   T92] CPU: 7 UID: 0 PID: 92 Comm: kworker/7:2
+> Tainted: G S          E      6.11.0-rc2-mainline-00001-g4153d980358d
+> #6
+> [    8.078676][   T92] Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
+> [    8.078677][   T92] Hardware name: Qualcomm Technologies, Inc.
+> SM8550 HDK (DT)
+> [    8.078679][   T92] Workqueue: events pmic_glink_ucsi_register [ucsi_glink]
+> [    8.078682][   T92] pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT
+> -SSBS BTYPE=--)
+> [    8.078684][   T92] pc : pmic_glink_send+0x10/0x2c [pmic_glink]
+> [    8.078685][   T92] lr : pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
+> [    8.078704][   T92] Call trace:
+> [    8.078705][   T92]  pmic_glink_send+0x10/0x2c [pmic_glink]
+> [    8.078706][   T92]  pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
+> [    8.078707][   T92]  pmic_glink_ucsi_read_version+0x20/0x30 [ucsi_glink]
+> [    8.078708][   T92]  ucsi_register+0x28/0x70
+> [    8.078717][   T92]  pmic_glink_ucsi_register+0x18/0x28 [ucsi_glink]
+> [    8.078718][   T92]  process_one_work+0x184/0x2e8
+> [    8.078723][   T92]  worker_thread+0x2f0/0x404
+> [    8.078725][   T92]  kthread+0x114/0x118
+> [    8.078728][   T92]  ret_from_fork+0x10/0x20
+> [    8.078732][   T92] ---[ end trace 0000000000000000 ]---
+> [    8.078734][   T92] Kernel panic - not syncing: Oops: Fatal exception
+> [    8.078735][   T92] SMP: stopping secondary CPUs
+> [    8.279136][   T92] Kernel Offset: 0x14d9480000 from 0xffffffc080000000
+> [    8.279141][   T92] PHYS_OFFSET: 0x80000000
+> [    8.279143][   T92] CPU features: 0x18,004e0003,80113128,564676af
+> [    8.279148][   T92] Memory Limit: none
 
-  #define SPEC_CTRL_SSBD
+That looks like 'client' is NULL in pmic_glink_send(). The VA of 0x10 is
+the offset of 'pg' in struct pmic_glink_client. I don't know much about
+that driver but I'd guess that ucsi_glink has some race condition
+assigning the client pointer?
 
-and
+Oh actually, I see the problem. devm_pmic_glink_register_client()
+returns a struct pmic_glink_client pointer that's assigned to
+'ucsi->client'. And pmic_glink_ucsi_read() uses 'ucsi->client' to call
+pmic_glink_send(). That pointer is NULL because the workqueue that runs
+pmic_glink_ucsi_register() must run before
+devm_pmic_glink_register_client() returns and assigns the client pointer
+to 'ucsi->client'. This is simply a race.
 
-  #define X86_FEATURE_SPEC_CTRL_SSBD
+ CPU0                                        CPU1
+ ----                                        ----
+ ucsi->client = NULL;
+ devm_pmic_glink_register_client()
+  client->pdr_notify(client->priv, pg->client_state)
+   pmic_glink_ucsi_pdr_notify()
+    schedule_work(&ucsi->register_work)
+    <schedule away>
+                                             pmic_glink_ucsi_register()
+                                              ucsi_register()
+                                               pmic_glink_ucsi_read_version()
+                                                pmic_glink_ucsi_read()
+                                                 pmic_glink_ucsi_read()
+                                                  pmic_glink_send(ucsi->client)
+                                                  <client is NULL BAD>
+ ucsi->client = client // Too late!
 
-KVM wants to use its CPUID macros to essentially do:
+>
+> I couldn't reproduce this kernel panic on vanilla v6.11-rc2 in 50+
+> test runs after that. So I'm assuming that this debug patch may have
+> triggered it.
+> Attaching the crashing and working dmesg logs with the debug patch applied.
+>
 
-  #define F(name) (X86_FEATURE_##name)
-
-as a shorthand for X86_FEATURE_SPEC_CTRL_SSBD, but that can cause build fai=
-lures
-depending on how KVM's macros are layered.  E.g. SPEC_CTRL_SSBD can get res=
-olved
-to its value prior to token concatentation and result in KVM effectively ge=
-nerating
-X86_FEATURE_BIT(SPEC_CTRL_SSBD_SHIFT).
-
-One of the proposed solutions is to rename all of the SPEC_CTRL_* bit defin=
-itions
-to add a MSR_ prefix, e.g. to generate MSR_SPEC_CTRL_SSBD and avoid the con=
-flict.
-My recollection from the IA32_FEATURE_CONTROL rework a few years back is th=
-at you
-wanted to prioritize shorter names over having everything namespaced with M=
-SR_,
-i.e. that this approach is a non-starter.
+Sounds like you just need to reboot a bunch! Or add an msleep() in
+devm_pmic_glink_register_client() after the notify call to open the race
+window and let the workqueue run.
 
