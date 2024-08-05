@@ -1,138 +1,218 @@
-Return-Path: <linux-kernel+bounces-274218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AF594752A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:20:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40CEB94752C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8C371F216D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:20:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC889281550
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 06:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6CD13DDB9;
-	Mon,  5 Aug 2024 06:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrAqV/XN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D8613D539;
+	Mon,  5 Aug 2024 06:25:25 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEF712B6C;
-	Mon,  5 Aug 2024 06:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C590D1DFF7
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 06:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722838833; cv=none; b=ClJqANP4cJ5zeP1HGRQY3uFqXDFW/ohS/gv37BpjlLDMYki2ibnLTUMCu/vluN3NjJFm5jk+TmD8GLkLLnj7wyeGwBXev/MV+emrCWi8hAluqiMp5gfCcn/LWyAq2GhFsBBuOKh7Oq7KnWt6leq0Ktv4qIb/7g1IhJq/POvhBdA=
+	t=1722839124; cv=none; b=r9B1jcmTygSLQkynN6C0T9P9sHcJjcaXzLUKAC9bDDUmtIoIbpYXPybA8GHh/XD/II+zSwhdgPOh9Em5CbP9do4rRncj5KXvrCDYPXRkA1bbvwJoN+kEAM9vaeo4fiDI3QdIsRYYy6hlPWVcNvd9xeYv4cxZXgVQUdX76REGfXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722838833; c=relaxed/simple;
-	bh=NLQXuoTIOgBPBTB1o0UJlD/+CtpmcL+Z9C/EElt5I0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NPapIve8dzkl1R4BS1CpUZyZ7N+Y+mvt3L+B7p8pDe/EU57dJFjnxQ+nAbpB+HGwKO2a8fsG6zntf8QbZk2ftW4ha/aN8sABBzIBSvNvU2GZOT5wsiTaCCr3TsPxq5NYiNTi/bgPKUkjfzMMfWNCJ+iwAk+50FGp66kdXM1LqOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrAqV/XN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E82C4AF0E;
-	Mon,  5 Aug 2024 06:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722838832;
-	bh=NLQXuoTIOgBPBTB1o0UJlD/+CtpmcL+Z9C/EElt5I0A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZrAqV/XNE13sbvJsOTVzGCpymzc8nC2p2lPCCIK7se4m+O+QngJVdjiVkaepeURB3
-	 WiXrYXrG+CcDqFUzHdF0NJZmnqIze4uadkkDWU/PKD3Hqo2oU3GmR9Yc2tr6B5bG8b
-	 UnQs1CS1MBfW90MqI/RABZHenMPRcHIxDFWIPLCXm3CxS+KTXRe5kC6L3PFGgkGvtW
-	 10fSxN4JR5PO2u3Ck3Ot95Da+iSRSx6ErewRkq6dgAA2zdtWORRFJDwxoY8hao38T4
-	 nZnBSs2d5CMtP/t/6FbVk6g+i1ChVZG7SqU6Z/T5Uk7uuknGwgUbQgR+iV85wutJam
-	 OCzUxPkIoS2vg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso10093744e87.3;
-        Sun, 04 Aug 2024 23:20:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWItEBWexH07IOdP2go3YgE9PBzeM/1mXwI0FTTingdfL1P7Fk8JOB4YwjQdE8un2gY3LSq7a5cpZKkSYAmNgqRwYQimgWJIZIUU1DKvDuJnT/2b5VfgRUkCk6jCWHJCRpHoIAXchCSdsMD
-X-Gm-Message-State: AOJu0YxmoiAMPqYWzVgE/RRMweqdT4q+T4oOtK6xBg0xwgmal2Jh33zU
-	DNqx5mh1wYWCju6otwHliU4g2VyxS6LPjoOpw4vT0KMoaSQfqC3oyvRqijshVCxTjjUZhfs5y3o
-	pk5+JNSfuXm4WpbXga2suVejrJJ4=
-X-Google-Smtp-Source: AGHT+IGZKS9zFzDzUdZrC3M3I+4q9ALgEMI9icHZxftrBAvP+h6Qu+bP+WbdxH5Tw+TdphfZdzmX84nUC31gNPEIRVk=
-X-Received: by 2002:a05:6512:683:b0:52e:9f1b:517 with SMTP id
- 2adb3069b0e04-530bb38c9dfmr9153742e87.25.1722838831545; Sun, 04 Aug 2024
- 23:20:31 -0700 (PDT)
+	s=arc-20240116; t=1722839124; c=relaxed/simple;
+	bh=YDghittTVl+AJyYN2LcKbeI8kB56RWne2ZVTQ286bC4=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ZpX3oPNIIYAFq9uay/SlNVLcmFXfXbcYRAQJgFRWDW3I1i3oVqbTwjaknnIvqbAXdYEbc9cYQ4krVHljaW3E/ujZdjpnX0sgJzr35F4FBxiSUY0VW7AAvHCHtvP95kgRLjoAQ3zW+yJBLvjStQC7k8obic4mqU98GPRA2TbsXxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WcmbG6hPszfZhn;
+	Mon,  5 Aug 2024 14:23:22 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id B9332180100;
+	Mon,  5 Aug 2024 14:25:15 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 5 Aug 2024 14:25:15 +0800
+Subject: Re: [PATCH] mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page))
+ when unpoison memory
+To: David Hildenbrand <david@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: <nao.horiguchi@gmail.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240712064249.3882707-1-linmiaohe@huawei.com>
+ <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
+ <8fe349f9-d3d3-65ab-6045-da0bd19249ea@huawei.com>
+ <00e18339-d911-4332-8732-e31bcecbf823@redhat.com>
+ <5f8107e2-2b37-d899-f7f2-5a6093d8b089@huawei.com>
+ <de73f251-08a0-4122-acfd-1d7fce7540ea@redhat.com>
+ <ec6ed1aa-0b6e-df66-1442-93786eabd1ef@huawei.com>
+ <dded1b96-8ff3-489a-a92e-b206829feb85@redhat.com>
+ <f3aa7133-5754-73f4-9ee1-bff1a8637c07@huawei.com>
+ <a4078c71-acf2-4652-92cb-fb9356703dc6@redhat.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <0519bf4b-49aa-6b81-a041-362a171b2a5e@huawei.com>
+Date: Mon, 5 Aug 2024 14:25:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804055057.262682-1-gnurou@gmail.com>
-In-Reply-To: <20240804055057.262682-1-gnurou@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 5 Aug 2024 15:19:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARHRjP0E-5GLJCWqyQHRURrJBgZO174thdokb5taW+qiQ@mail.gmail.com>
-Message-ID: <CAK7LNARHRjP0E-5GLJCWqyQHRURrJBgZO174thdokb5taW+qiQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Makefile: add $(srctree) to dependency of
- compile_commands.json target
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a4078c71-acf2-4652-92cb-fb9356703dc6@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
-On Sun, Aug 4, 2024 at 2:51=E2=80=AFPM Alexandre Courbot <gnurou@gmail.com>=
- wrote:
->
-> When trying to build the compile_commands.json target from an external
-> module's directory, the following error is displayed:
+On 2024/8/2 4:24, David Hildenbrand wrote:
+> On 19.07.24 05:55, Miaohe Lin wrote:
+>> On 2024/7/18 13:15, David Hildenbrand wrote:
+>>> On 18.07.24 05:04, Miaohe Lin wrote:
+>>>> On 2024/7/17 17:01, David Hildenbrand wrote:
+>>>>> On 16.07.24 04:34, Miaohe Lin wrote:
+>>>>>> On 2024/7/16 0:16, David Hildenbrand wrote:
+>>>>>>> On 15.07.24 08:23, Miaohe Lin wrote:
+>>>>>>>> On 2024/7/13 5:09, Andrew Morton wrote:
+>>>>>>>>> On Fri, 12 Jul 2024 14:42:49 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
+>>>>>>>>>
+>>>>>>>>>> When I did memory failure tests recently, below panic occurs:
+>>>>>>>>>>
+>>>>>>>>>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
+>>>>>>>>>> kernel BUG at include/linux/page-flags.h:616!
+>>>>>>>>>> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+>>>>>>>>>> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
+>>>>>>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>>>>>>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>>>>>>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>>>>>>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>>>>>>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>>>>>>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>>>>>>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>>>>>>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>>>>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>>>>>>>>>> Call Trace:
+>>>>>>>>>>      <TASK>
+>>>>>>>>>>      unpoison_memory+0x2f3/0x590
+>>>>>>>>>>      simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
+>>>>>>>>>>      debugfs_attr_write+0x42/0x60
+>>>>>>>>>>      full_proxy_write+0x5b/0x80
+>>>>>>>>>>      vfs_write+0xd5/0x540
+>>>>>>>>>>      ksys_write+0x64/0xe0
+>>>>>>>>>>      do_syscall_64+0xb9/0x1d0
+>>>>>>>>>>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>>>>>>>> RIP: 0033:0x7f08f0314887
+>>>>>>>>>> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>>>>>>>>>> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
+>>>>>>>>>> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
+>>>>>>>>>> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
+>>>>>>>>>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
+>>>>>>>>>> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
+>>>>>>>>>>      </TASK>
+>>>>>>>>>> Modules linked in: hwpoison_inject
+>>>>>>>>>> ---[ end trace 0000000000000000 ]---
+>>>>>>>>>> RIP: 0010:unpoison_memory+0x2f3/0x590
+>>>>>>>>>> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
+>>>>>>>>>> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
+>>>>>>>>>> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
+>>>>>>>>>> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
+>>>>>>>>>> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
+>>>>>>>>>> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
+>>>>>>>>>> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
+>>>>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>>>>> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
+>>>>>>>>>> Kernel panic - not syncing: Fatal exception
+>>>>>>>>>> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>>>>>>>>>> ---[ end Kernel panic - not syncing: Fatal exception ]---
+>>>>>>>>>>
+>>>>>>>>>> The root cause is that unpoison_memory() tries to check the PG_HWPoison
+>>>>>>>>>> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
+>>>>>>>>>> triggered.
+>>>>>>>>>
+>>>>>>>>> I'm not seeing the call path.  Is this BUG happening via
+>>>>>>>>>
+>>>>>>>>> static __always_inline void __ClearPage##uname(struct page *page)    \
+>>>>>>>>> {                                    \
+>>>>>>>>>        VM_BUG_ON_PAGE(!Page##uname(page), page);            \
+>>>>>>>>>        page->page_type |= PG_##lname;                    \
+>>>>>>>>> }
+>>>>>>>>>
+>>>>>>>>> ?
+>>>>>>>>>
+>>>>>>>>> If so, where's the callsite?
+>>>>>>>>
+>>>>>>>> It is BUG on PF_ANY():
+>>>>>>>>
+>>>>>>>> PAGEFLAG(HWPoison, hwpoison, PF_ANY)
+>>>>>>>>
+>>>>>>>> #define PF_ANY(page, enforce)    PF_POISONED_CHECK(page)
+>>>>>>>>
+>>>>>>>> #define PF_POISONED_CHECK(page) ({                    \
+>>>>>>>>        VM_BUG_ON_PGFLAGS(PagePoisoned(page), page);        \
+>>>>>>>>        page; })
+>>>>>>>>
+>>>>>>>> #define    PAGE_POISON_PATTERN    -1l
+>>>>>>>> static inline int PagePoisoned(const struct page *page)
+>>>>>>>> {
+>>>>>>>>        return READ_ONCE(page->flags) == PAGE_POISON_PATTERN;
+>>>>>>>> }
+>>>>>>>>
+>>>>>>>> The offlined pages will have page->flags set to PAGE_POISON_PATTERN while pfn is still valid:
+>>>>>>>>
+>>>>>>>> offline_pages
+>>>>>>>>       remove_pfn_range_from_zone
+>>>>>>>>         page_init_poison
+>>>>>>>>           memset(page, PAGE_POISON_PATTERN, size);
+>>>>>>>
+>>>>>>> Worth noting that this happens after __offline_isolated_pages() marked the covering sections as offline.
+>>>>>>>
+>>>>>>> Are we missing a pfn_to_online_page() check somewhere, or are we racing with offlining code that marks the section offline?
+>>>>>>
+>>>>>> I was thinking about to use pfn_to_online_page() instead of pfn_to_page() in unpoison_memory() so we can get rid of offlined pages.
+>>>>>> But there're ZONE_DEVICE pages. They're not-onlined too. And unpoison_memory() should work for them. So we can't simply use
+>>>>>> pfn_to_online_page() in that. Or am I miss something?
+>>>>>
+>>>>> Right, pfn_to_online_page() does not detect ZONE_DEVICE. That has to be handled separately if pfn_to_online_page() would fail.
+>>>>>
+>>>>> ... which is what we do in memory_failure():
+>>>>>
+>>>>> p = pfn_to_online_page(pfn);
+>>>>> if (!p) {
+>>>>>       if (pfn_valid(pfn)) {
+>>>>>           pgmap = get_dev_pagemap(pfn, NULL);
+>>>>>           put_ref_page(pfn, flags);
+>>>>>           if (pgmap) {
+>>>>>               ...
+>>>>>           }
+>>>>>       }
+>>>>>       ...
+>>>>> }
+>>>>
+>>>> Yup, this will be a good alternative. But will it be better to simply check PagePoisoned() instead?
+>>>
+>>> The memmap of offline memory sections shall not be touched, so .... don't touch it ;)
+>>>
+>>> Especially because that PagePoisoned() check is non-sensical without poisoining-during-memmap-init. You would still work with memory in offline sections.
+>>>
+>>> I think the code is even wrong in that regard: we allow for memory offlining to work with HWPoisoned pages, see __offline_isolated_pages(). Staring at unpoison_memory(), we might be putting these pages back to the buddy? Which is completely wrong.
+>>
+>> I agree with you. Thanks for detailed explanation. :)
+>> Thanks David.
+> 
+> So ... I assume there will be a new patch? :)
+
+I was just back from my two-weeks holidays. ;) I will try to send a new version when possible.
+
+Thanks.
+.
 
 
-As I mentioned in v1, this issue only happens when using the kernel
-directory built in a separate output directory (O=3D).
-
-Unless you have a opposition, I will reword this sentence as follows:
-
-When trying to build compile_commands.json for an external module
-against the kernel built in a separate output directory, the following
-error is displayed:
-
-
-
-
-
-
->
->         make[1]: *** No rule to make target 'scripts/clang-tools/gen_comp=
-ile_commands.py',
->         needed by 'compile_commands.json'. Stop.
->
-> This is because gen_compile_commands.py was previously looked up using a
-> relative path to $(srctree), but commit b1992c3772e6 ("kbuild: use
-> $(src) instead of $(srctree)/$(src) for source directory") stopped
-> defining VPATH for external module builds.
->
-> Prefixing gen_compile_commands.py with $(srctree) fixes the problem.
->
-> Fixes: b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(src) for=
- source directory")
-> Signed-off-by: Alexandre Courbot <gnurou@gmail.com>
-> ---
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index 8ad55d6e7b60..52d7dfe4212a 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1980,7 +1980,7 @@ nsdeps: modules
->  quiet_cmd_gen_compile_commands =3D GEN     $@
->        cmd_gen_compile_commands =3D $(PYTHON3) $< -a $(AR) -o $@ $(filter=
--out $<, $(real-prereqs))
->
-> -$(extmod_prefix)compile_commands.json: scripts/clang-tools/gen_compile_c=
-ommands.py \
-> +$(extmod_prefix)compile_commands.json: $(srctree)/scripts/clang-tools/ge=
-n_compile_commands.py \
->         $(if $(KBUILD_EXTMOD),, vmlinux.a $(KBUILD_VMLINUX_LIBS)) \
->         $(if $(CONFIG_MODULES), $(MODORDER)) FORCE
->         $(call if_changed,gen_compile_commands)
-> --
-> 2.46.0
->
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
