@@ -1,194 +1,121 @@
-Return-Path: <linux-kernel+bounces-274431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3D7947801
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:11:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA35947806
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709331F22540
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4856E280D79
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9641509AF;
-	Mon,  5 Aug 2024 09:11:17 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A35F154429;
+	Mon,  5 Aug 2024 09:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HFBnp/wr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8028013DDC2;
-	Mon,  5 Aug 2024 09:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CD5149DF0;
+	Mon,  5 Aug 2024 09:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722849077; cv=none; b=e76qi0loHuIVmab5UwD0JY/pCOk0YJiDmThKiaEYeQYdOobSTZyMAcms+a67Pm6YO78CQUe05N5VWxzQ8QGzpF7djrkG6g7K4Lgi+aRYscBrdnCE30IukN9r8lL4Qc2cwE/jbu4vLbSDQUm0wjRw49s59Le+NNPRlTZmx5oYe4E=
+	t=1722849090; cv=none; b=pI6GLNHfT2v91l/oqFSohG1q8Qvl8Cd9oQIk1cKnF/iNTBAuWV1O7T99cujPaTXAMuZs/Z/xdbC7BaZU6gC7ed2U3AemmMdJRKgQL32VXyH6oUFtHMsFygB/N0XN6mXdrXYIZplTd0UKekl1xvmMQqomQrkD8vYZMAdowA9bqeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722849077; c=relaxed/simple;
-	bh=zzP+981JgxGaQFjBoXGMDLT4udKj63Kccc7PsEuUFyY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=s9vl7ISIeOj6S3i5Fmeb9BwSq+pOq3QL46B+EIMsuiSUd/wCaIy2JdcM1ooXdOotMMVJlzB49YZUF5s1wqT5Rg7BCp8hFXZ+dRRff3ihiu29+6HYByTxhRv6IdL9ScE1bAT0v+pCjw6wRKzxLwgDEmaA1hLcOm0VcJligYCgBh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WcrGL6BXRz6K5ps;
-	Mon,  5 Aug 2024 17:08:58 +0800 (CST)
-Received: from lhrpeml500006.china.huawei.com (unknown [7.191.161.198])
-	by mail.maildlp.com (Postfix) with ESMTPS id ACA49140D37;
-	Mon,  5 Aug 2024 17:11:11 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- lhrpeml500006.china.huawei.com (7.191.161.198) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 10:11:01 +0100
-Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
- lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.039;
- Mon, 5 Aug 2024 10:11:01 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v7 1/4] hisi_acc_vfio_pci: extract public functions for
- container_of
-Thread-Topic: [PATCH v7 1/4] hisi_acc_vfio_pci: extract public functions for
- container_of
-Thread-Index: AQHa4nr6lxq8E7VAXkGR9QxSpzP8NLIYaYnw
-Date: Mon, 5 Aug 2024 09:11:01 +0000
-Message-ID: <342ae840f5064d92b569b521b30ddae8@huawei.com>
-References: <20240730121438.58455-1-liulongfang@huawei.com>
- <20240730121438.58455-2-liulongfang@huawei.com>
-In-Reply-To: <20240730121438.58455-2-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1722849090; c=relaxed/simple;
+	bh=i5zIOm7S89BrZm3aW8t/P05emF53tX4XWiN++XwdZT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=InX6Ip1TUvAmHxnTqjE5HPiM9n8VBvFDMIH2cwd0G/3TN4cWFqS0YiR1BSQALKilfgEvlgKAv64WYGtlsyHs0b5WBV5fL+qkIEVnr5and2JiKm1ZwnMHVsrRWayopSrlert2Fp4ViNJK/cQX/wIVTj8itTPbKUi7+pKm9Vbv72w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HFBnp/wr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4752VdkF021461;
+	Mon, 5 Aug 2024 09:11:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qjtu41wYbJCXZ106LK7UBdo9ClnXQPbNMkOHM4EbM+8=; b=HFBnp/wrLDHRjwXA
+	X+znW/MywrCe3BPjxAm/5QP5S3Jgq/ZVSxjyr0bLr1/+0oxZDEquUgg8UPzb9ckn
+	70vc2IxEkHYv/IL4iH88P3VQ1QDvR0k9cEmXVFNGtYq58JrlW4c+VjbeFzYHhsG5
+	Bsdu6XRWiKpWRXB5W+lOGdcCk49bu1UpCcFl30kuBEXtiFudFSnPfkSNp0EiOmYy
+	wPUG1qPuog8z6MMcsUre3J3JxIKU7TdwPoa27RO1GrXijDIiRBaxpjdUTq0xihvz
+	Mk6bM+OKO50rooTD6RiTBXYCjkANzC9FXMwuCqRSqWn6elMDAS01tZ3GLyMzEciA
+	5EmC1A==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40scmtudfs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Aug 2024 09:11:24 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4759BNhY011605
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 5 Aug 2024 09:11:23 GMT
+Received: from [10.216.33.72] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 5 Aug 2024
+ 02:11:20 -0700
+Message-ID: <3cca4d67-e420-442d-bb38-4eb0649dcdf4@quicinc.com>
+Date: Mon, 5 Aug 2024 14:41:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
+To: Stephen Boyd <sboyd@kernel.org>, <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mturquette@baylibre.com>
+CC: <quic_devipriy@quicinc.com>
+References: <20240801110040.505860-1-quic_amansing@quicinc.com>
+ <ff92343652a998b97981e63ea5dc301f.sboyd@kernel.org>
+Content-Language: en-US
+From: Amandeep Singh <quic_amansing@quicinc.com>
+In-Reply-To: <ff92343652a998b97981e63ea5dc301f.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: IwwXAv1qCZwf_LX9lwZ2Ys0l47Jk1pIs
+X-Proofpoint-GUID: IwwXAv1qCZwf_LX9lwZ2Ys0l47Jk1pIs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408050065
 
+On 8/3/2024 6:35 AM, Stephen Boyd wrote:
+> Quoting Amandeep Singh (2024-08-01 04:00:40)
+>> From: devi priya <quic_devipriy@quicinc.com>
+>>
+>> Update PLL offsets to DEFAULT_EVO to configure MDIO to 800MHz.
+> 
+> Is this fixing a problem? I can't figure out how urgent this patch is
+> from the one sentence commit text.
 
+The incorrect clock frequency leads to an incorrect MDIO clock. This,
+in turn, affects the MDIO hardware configurations as the divider is 
+calculated from the MDIO clock frequency. If the clock frequency is
+not as expected, the MDIO register fails due to the generation of an 
+incorrect MDIO frequency.
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Tuesday, July 30, 2024 1:15 PM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v7 1/4] hisi_acc_vfio_pci: extract public functions for
-> container_of
->=20
-> In the current driver, vdev is obtained from struct
-> hisi_acc_vf_core_device through the container_of function.
-> This method is used in many places in the driver. In order to
-> reduce this repetitive operation, It was extracted into
-> a public function.
->=20
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> ---
+This issue is critical as it results in incorrect MDIO configurations 
+and ultimately leads to the MDIO function not working. This results in
+a complete feature failure affecting all Ethernet PHYs. Specifically,
+Ethernet will not work on IPQ9574 due to this issue.
 
-LGTM,
+Currently, the clock frequency is set to CLK_ALPHA_PLL_TYPE_DEFAULT. 
+However, this setting does not yield the expected clock frequency. To 
+rectify this, we need to change this to CLK_ALPHA_PLL_TYPE_DEFAULT_EVO.
 
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-
-Thanks,
-Shameer
-
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 21 ++++++++++---------
->  1 file changed, 11 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index 9a3e97108ace..45351be8e270 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -630,6 +630,12 @@ static void hisi_acc_vf_disable_fds(struct
-> hisi_acc_vf_core_device *hisi_acc_vde
->  	}
->  }
->=20
-> +static struct hisi_acc_vf_core_device *hisi_acc_get_vf_dev(struct
-> vfio_device *vdev)
-> +{
-> +	return container_of(vdev, struct hisi_acc_vf_core_device,
-> +			    core_device.vdev);
-> +}
-> +
->  static void hisi_acc_vf_reset(struct hisi_acc_vf_core_device *hisi_acc_v=
-dev)
->  {
->  	hisi_acc_vdev->vf_qm_state =3D QM_NOT_READY;
-> @@ -1033,8 +1039,7 @@ static struct file *
->  hisi_acc_vfio_pci_set_device_state(struct vfio_device *vdev,
->  				   enum vfio_device_mig_state new_state)
->  {
-> -	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D container_of(vdev,
-> -			struct hisi_acc_vf_core_device, core_device.vdev);
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(vdev);
->  	enum vfio_device_mig_state next_state;
->  	struct file *res =3D NULL;
->  	int ret;
-> @@ -1075,8 +1080,7 @@ static int
->  hisi_acc_vfio_pci_get_device_state(struct vfio_device *vdev,
->  				   enum vfio_device_mig_state *curr_state)
->  {
-> -	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D container_of(vdev,
-> -			struct hisi_acc_vf_core_device, core_device.vdev);
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(vdev);
->=20
->  	mutex_lock(&hisi_acc_vdev->state_mutex);
->  	*curr_state =3D hisi_acc_vdev->mig_state;
-> @@ -1280,8 +1284,7 @@ static long hisi_acc_vfio_pci_ioctl(struct vfio_dev=
-ice
-> *core_vdev, unsigned int
->=20
->  static int hisi_acc_vfio_pci_open_device(struct vfio_device *core_vdev)
->  {
-> -	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> container_of(core_vdev,
-> -			struct hisi_acc_vf_core_device, core_device.vdev);
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(core_vdev);
->  	struct vfio_pci_core_device *vdev =3D &hisi_acc_vdev->core_device;
->  	int ret;
->=20
-> @@ -1304,8 +1307,7 @@ static int hisi_acc_vfio_pci_open_device(struct
-> vfio_device *core_vdev)
->=20
->  static void hisi_acc_vfio_pci_close_device(struct vfio_device *core_vdev=
-)
->  {
-> -	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> container_of(core_vdev,
-> -			struct hisi_acc_vf_core_device, core_device.vdev);
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(core_vdev);
->  	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
->=20
->  	iounmap(vf_qm->io_base);
-> @@ -1320,8 +1322,7 @@ static const struct vfio_migration_ops
-> hisi_acc_vfio_pci_migrn_state_ops =3D {
->=20
->  static int hisi_acc_vfio_pci_migrn_init_dev(struct vfio_device *core_vde=
-v)
->  {
-> -	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> container_of(core_vdev,
-> -			struct hisi_acc_vf_core_device, core_device.vdev);
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(core_vdev);
->  	struct pci_dev *pdev =3D to_pci_dev(core_vdev->dev);
->  	struct hisi_qm *pf_qm =3D hisi_acc_get_pf_qm(pdev);
->=20
-> --
-> 2.24.0
-
+This modification ensures that the clock frequency aligns with our 
+expectations, thereby resolving the MDIO register failure and ensuring 
+the proper functioning of the Ethernet on IPQ9574.
 
