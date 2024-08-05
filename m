@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-274348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363F494770F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C44947711
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4116DB21A33
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61482281B0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B07E14D6ED;
-	Mon,  5 Aug 2024 08:19:51 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A79014AD10;
+	Mon,  5 Aug 2024 08:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K2JhqSMw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A39814AD10;
-	Mon,  5 Aug 2024 08:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EAA149C45;
+	Mon,  5 Aug 2024 08:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722845990; cv=none; b=XSxOaAS0O8+HnS+2avKg03/neCFxQs55OdcOFPCWlarr+bImz0T6JX204uIvCPlCtwalumUxtgPyZLFgRdtjZMawKH/4EpWinxO4sMCA2pLPXwardcYRPlDJxf7ir8VrW1msVFWaFF2aeMwuPT1ER/rzY8HT2dnkyy3Yl3ZTeaY=
+	t=1722846020; cv=none; b=aT31cBxX6Jks9eMyroFYY5tmCWbNXWqkPI90C/4sVIK/wCYPBRFHstO430Poydz5mHjXHEMooYozlc6CQDkYCQTzIReWQ6Wx+REbR7/+vfS/tXUq4OQzwabGuU6ruxq8gn/gkI9rhA7F36MTxcE7+0xnBMM+ynaZrZt2aKy8B48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722845990; c=relaxed/simple;
-	bh=IIfmNDKo2Co1Mn/8N5ntMyacDCWZYQAxUOR2ChZg02M=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KFzR2Wj4Chyod8aTToThW3qpKjXD2xYsHiCwgMkjPSHwYbvlUFpHTKDA+kVzdZbsBH6pLzLYplmEkhmDJPnZOYCOuLOO4+35yKehtv9PGKFJPumVW/eySM75T5tyxQ4HRCcNenT6oOopO6m3/eJhKL0PHVyNntRHxbsPeAadJ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.224] (ip5f5aeb3c.dynamic.kabel-deutschland.de [95.90.235.60])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5BB1461E5FE01;
-	Mon,  5 Aug 2024 10:19:18 +0200 (CEST)
-Message-ID: <7eef194d-17df-4681-95aa-be6ec09b5929@molgen.mpg.de>
-Date: Mon, 5 Aug 2024 10:19:17 +0200
+	s=arc-20240116; t=1722846020; c=relaxed/simple;
+	bh=wmW9uKSb/2SP16SrvbJjH83JY/E4lBeMVQe2z/6uRjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OMVhoUixshh+iKXIGU2jSDHEkoAcVeXFsZ2/seJ9L5g3MwDFirATCOCY0eHtBjKxYwLT9/iFgDZB615FDzQvfbH4o72nnyzxmL7z28Xm2bFH1d/r+GWuOTk2U4H52soRUF7/YZN7g2U24V4mLIrtQBs5S4Mvp+bV6O5dztzxRzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K2JhqSMw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C2FC32782;
+	Mon,  5 Aug 2024 08:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722846019;
+	bh=wmW9uKSb/2SP16SrvbJjH83JY/E4lBeMVQe2z/6uRjA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K2JhqSMwwZ8/QOqbW2z24A69QE2LKeq77pogtoozix5anJLdQzeonjm2LoPajQfIZ
+	 nqylIoAZzEh09TD54hvDIXt1C0v+ACyuPfec/M2c4o8RdA2g0w8SHwpIkjbYN9xMnB
+	 er+6CkbjyitB5FnDChNaVg+2wcRPoXlQUDkAib2plzLHjl4STJzIEcZ9D3zIKmRRfS
+	 /ztT+v6XTT/RUZsAICzX46uChxYO8yWjOxESCw5FfQ/z8AGVDJkyby36Nr9ZyR+884
+	 razxShdh6YS4V/Hq3hEquRjIFvfvGw944WXMlvpnjRIb0pEnCXlWNTu2VbBRVhzCs4
+	 nmcqHa9JxDULw==
+Message-ID: <d4d60cab-1872-4063-8b2f-a4ca0afd2718@kernel.org>
+Date: Mon, 5 Aug 2024 10:20:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,164 +49,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] USB: core: hub_port_reset: Remove extra 40 ms reset
- recovery time
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Alan Stern <stern@rowland.harvard.edu>,
- Nicolas Boichat <drinkcat@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Kai-Heng Feng <kai.heng.feng@canonical.com>,
- Hans de Goede <hdegoede@redhat.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
- <c7c299e7-605c-4bd6-afad-dfbfe266aa7e@rowland.harvard.edu>
- <f1e2e2b1-b83c-4105-b62c-a053d18c2985@molgen.mpg.de>
- <3d3416cd-167f-4c50-972b-0eb376a13fdf@rowland.harvard.edu>
- <cee9630e-781e-49b1-82c5-9066552f71b1@molgen.mpg.de>
- <8e300b0b-91f8-4003-a1b9-0f22869ae6e1@rowland.harvard.edu>
- <712dee24-e939-4b1b-b2ea-0c0c12891a62@molgen.mpg.de>
+Subject: Re: [PATCH] nfc: nci: Fix uninit-value in nci_rx_work()
+To: Simon Horman <horms@kernel.org>, zhanghao <zhanghao1@kylinos.cn>
+Cc: bongsu.jeon@samsung.com,
+ syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20240803121817.383567-1-zhanghao1@kylinos.cn>
+ <20240804105716.GA2581863@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <712dee24-e939-4b1b-b2ea-0c0c12891a62@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240804105716.GA2581863@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[To: +Nicolas, Cc: -Heikki]
-
-
-Dear Alan, dear Nicolas,
-
-
-Am 04.08.24 um 09:15 schrieb Paul Menzel:
-
-> Am 26.07.24 um 19:48 schrieb Alan Stern:
->> On Wed, Jul 24, 2024 at 11:00:42PM +0200, Paul Menzel wrote:
-> 
->>> Am 24.07.24 um 20:52 schrieb Alan Stern:
->>>> On Wed, Jul 24, 2024 at 08:14:34PM +0200, Paul Menzel wrote:
->>>
->>> […]
->>>
->>>>> Am 24.07.24 um 16:10 schrieb Alan Stern:
->>>>>> On Wed, Jul 24, 2024 at 01:15:23PM +0200, Paul Menzel wrote:
->>>>>>> This basically reverts commit b789696af8b4102b7cc26dec30c2c51ce51ee18b
->>>>>>> ("[PATCH] USB: relax usbcore reset timings") from 2005.
->>>>>>>
->>>>>>> This adds unneeded 40 ms during resume from suspend on a majority of
->>>>>>
->>>>>> Wrong.  It adds 40 ms to the recovery time from a port reset -- see the
->>>>>> commit's title.  Suspend and resume do not in general involve port
->>>>>> resets (although sometimes they do).
-
-[…]
-
->>>>>>> devices, where it’s not needed, like the Dell XPS 13 9360/0596KF, 
->>>>>>> BIOS 2.21.0 06/02/2022 with
->>>>>>
->>>>>>> The commit messages unfortunately does not list the devices 
->>>>>>> needing this.
->>>>>>> Should they surface again, these should be added to the quirk 
->>>>>>> list for
->>>>>>> USB_QUIRK_HUB_SLOW_RESET.
->>>>>>
->>>>>> This quirk applies to hubs that need extra time when one of their 
->>>>>> ports
->>>>>> gets reset.  However, it seems likely that the patch you are 
->>>>>> reverting
->>>>>> was meant to help the device attached to the port, not the hub 
->>>>>> itself.
->>>>>> Which would mean that the adding hubs to the quirk list won't help
->>>>>> unless every hub is added -- in which case there's no point reverting
->>>>>> the patch.
->>>>>>
->>>>>> Furthermore, should any of these bad hubs or devices still be in use,
->>>>>> your change would cause them to stop working reliably.  It would be a
->>>>>> regression.
->>>>>>
->>>>>> A better approach would be to add a sysfs boolean attribute to the 
->>>>>> hub
->>>>>> driver to enable the 40-ms reset-recovery delay, and make it 
->>>>>> default to
->>>>>> True.  Then people who don't need the delay could disable it from
->>>>>> userspace, say by a udev rule.
->>>>>
->>>>> How would you name it?
->>>>
->>>> You could call it "long_reset_recovery".  Anything like that would be
->>>> okay.
->>>
->>> Would it be useful to makes it an integer instead of a boolean, and 
->>> allow to configure the delay: `extra_reset_recovery_delay_ms`?
+On 04/08/2024 12:57, Simon Horman wrote:
+> On Sat, Aug 03, 2024 at 08:18:17PM +0800, zhanghao wrote:
+>> Commit e624e6c3e777 ("nfc: Add a virtual nci device driver")
+>> calls alloc_skb() with GFP_KERNEL as the argument flags.The
+>> allocated heap memory was not initialized.This causes KMSAN
+>> to detect an uninitialized value.
 >>
->> Sure, why not?  Just so long as the default value matches the current
->> behavior.
+>> Reported-by: syzbot+3da70a0abd7f5765b6ea@syzkaller.appspotmail.com
+>> Closes: https://syzkaller.appspot.com/bug?extid=3da70a0abd7f5765b6ea
 > 
-> I hope, I am going to find time to take a stab at it.
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 4b93c0bd1d4b..72dd16eaa73a 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -120,9 +120,16 @@ MODULE_PARM_DESC(use_both_schemes,
-                 "try the other device initialization scheme if the "
-                 "first one fails");
-
-+static int extra_reset_recovery_delay_ms = 40;
-+module_param(extra_reset_recovery_delay_ms, int, S_IRUGO | S_IWUSR);
-+MODULE_PARM_DESC(extra_reset_recovery_delay_ms,
-+               "extra recovery delay for USB devices after reset in 
-milliseconds "
-+               "(default 40 ms");
-+
-  /* Mutual exclusion for EHCI CF initialization.  This interferes with
-   * port reset on some companion controllers.
-   */
-+
-  DECLARE_RWSEM(ehci_cf_port_reset_rwsem);
-  EXPORT_SYMBOL_GPL(ehci_cf_port_reset_rwsem);
-
-@@ -3110,7 +3117,7 @@ static int hub_port_reset(struct usb_hub *hub, int 
-port1,
-                         usleep_range(10000, 12000);
-                 else {
-                         /* TRSTRCY = 10 ms; plus some extra */
--                       reset_recovery_time = 10 + 40;
-+                       reset_recovery_time = 10 + 
-extra_reset_recovery_delay_ms;
-
-                         /* Hub needs extra delay after resetting its 
-port. */
-                         if (hub->hdev->quirks & USB_QUIRK_HUB_SLOW_RESET)
-
-The if condition above
-
-		if (port_dev->quirks & USB_PORT_QUIRK_FAST_ENUM)
-			usleep_range(10000, 12000);
-
-is from Nicholas’ commit aa071a92bbf0 (usb: hub: Per-port setting to 
-reduce TRSTRCY to 10 ms) from 2018 [2] adding the port quirk 
-`USB_PORT_QUIRK_FAST_ENUM`.
-
-> urrently, the USB hub core waits for 50 ms after enumerating the
-> device. This was added to help "some high speed devices" to
-> enumerate (b789696af8 "[PATCH] USB: relax usbcore reset timings").
+> Hi,
 > 
-> On some devices, the time-to-active is important, so we provide
-> a per-port option to reduce the time to what the USB specification
-> requires: 10 ms.
+> I wonder if the problem reported above is caused by accessing packet
+> data which is past the end of what is copied in virtual_ncidev_write().
+> I.e. count is unusually short and this is not being detected.
+> 
+>> Fixes: e624e6c3e777 ("nfc: Add a virtual nci device driver")
+>> Link: https://lore.kernel.org/all/000000000000747dd6061a974686@google.com/T/
+>> Signed-off-by: zhanghao <zhanghao1@kylinos.cn>
+>> ---
+>>  drivers/nfc/virtual_ncidev.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
+>> index 6b89d596ba9a..ae1592db131e 100644
+>> --- a/drivers/nfc/virtual_ncidev.c
+>> +++ b/drivers/nfc/virtual_ncidev.c
+>> @@ -117,7 +117,7 @@ static ssize_t virtual_ncidev_write(struct file *file,
+>>  	struct virtual_nci_dev *vdev = file->private_data;
+>>  	struct sk_buff *skb;
+>>  
+>> -	skb = alloc_skb(count, GFP_KERNEL);
+>> +	skb = alloc_skb(count, GFP_KERNEL|__GFP_ZERO);
+>>  	if (!skb)
+>>  		return -ENOMEM;
+> 
+> I'm not sure this helps wrt initialising the memory as immediately below there
+> is;
+> 
+> 	if (copy_from_user(skb_put(skb, count), buf, count)) {
+> 		...
+> 
+> Which I assume will initialise count bytes of skb data.
 
-Nicholas, do you have field data from ChromeOS if the 40 ms delay is 
-needed, and do you apply the quirk to all ports?
+Yeah, this looks like hiding the real issue.
 
-Being ignorant about USB in general, does this quirk make my patch 
-obsolete, or should I just send a patch with the diff above?
+Best regards,
+Krzysztof
 
-
-Kind regards,
-
-Paul
-
-
-> [1]: https://lore.kernel.org/all/f1e2e2b1-b83c-4105-b62c-a053d18c2985@molgen.mpg.de/
-[2]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=aa071a92bbf09d993ff0dbf3b1f2b53ac93ad654
 
