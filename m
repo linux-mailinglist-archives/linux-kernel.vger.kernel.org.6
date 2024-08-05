@@ -1,339 +1,345 @@
-Return-Path: <linux-kernel+bounces-274295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B62947638
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:37:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D57947632
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1F81F21E2F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:37:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43911C21334
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A9F1547EC;
-	Mon,  5 Aug 2024 07:35:05 +0000 (UTC)
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2105.outbound.protection.outlook.com [40.107.215.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABDC1537C9;
+	Mon,  5 Aug 2024 07:35:00 +0000 (UTC)
+Received: from Edge12.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A715015383D;
-	Mon,  5 Aug 2024 07:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722843304; cv=fail; b=WYUSijFlvE2rDoyyM1PoOd02y/OEntdMMqbLOweu9C2pENTVWofKBfSP8efegjO5+QJcrydsbuB7FvgMUOftavHHW7mip4+wPryFp9GRYN1m1UX7hs9nr0SK2Q5TZloNF/8vyjJC1yUpYczSMPE6IAZPgiL+63SrFZFDVQpvk00=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722843304; c=relaxed/simple;
-	bh=z/JMI1ioorJsC5rpgzgpHUYttwWsJh+gThzg/mM6S6Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=d7tj6cvwI2zkmLcGfYo3qmlZjpASELebJUe8BPWars6V4Xu0dje/y/tNK0yHOqp6aHpdwDAoRhL93A/o9jKaQf+B1FyTCcevZB6dXmkotWStgQ7ph/bWdT1VOHGwTMHJXZsTYC4d7gdGkcgMxbBdUGVnK1tUWpdlMPj84jStJ2I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.215.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EsOi/Dd7SUc4tCyf+0rRJhpuvr+i6WWoLa4lF9XD8/EWLJsvJndbVHpJJM9UhTL/HxFDHJdkZS4JCAmEyqEHsc3/w06jh2M85ci6U8ii7JTAQsJ8qm37u2sLiEu+CA8LxKliH8FQ9xzORThaz5enR8/zkYOqDPArsLxHj2drbBvHD6PPIak4M8g+lJbWkf4lQZKYWqCqF1+lAjQdRNI4dS15ul6mDENo4r85jLDcdXqOjC7hO7hU0RJD5UtpeekZMlbPIAUxE9EqoHp5+nchA9COegilqNzcoiyw8GCIeUXOilnNIs087kKBcq6dAVYbO8cWJtgV4jnZkHoRN7f4dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZWqN2d2WV5H3rjNNY/SuBA/Is/G4XlfllfCP+MEOJRA=;
- b=XFzC0gNcMCnjGypfjcecaBtnTLldAKrBEdVYSeUNB0bPOdGZuc2NUu8rP81JelDyiWH+FZhBvROY+9PtVpUeTYFEWTU4skL4vzFrxDtQ+B9vw4GbAbcDZWh9hKrZ7Bj3v+F29CsC6+l8QY0l+Uq/62hAEAcblMbVUCsUZwba33Tj97dqISdBtc+YVGtv2ruOGrgRcNTWdwSNVJ1Rcgvavv6fLZD81mf8U1mNUinjM6K+Ekcl8TRSbZup0SaHIA/Js3Gzglrkul2smZA+hIBIRdYuj8+Wf7yags9ZPByXWOLlPVhSl9t7rzkDox1mAMr0iZw3oOanxMmgDoImTemnsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
- dkim=pass header.d=wesion.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wesion.com;
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
- by JH0PR03MB8052.apcprd03.prod.outlook.com (2603:1096:990:37::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.25; Mon, 5 Aug
- 2024 07:34:59 +0000
-Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
- ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7828.024; Mon, 5 Aug 2024
- 07:34:59 +0000
-From: Jacobe Zang <jacobe.zang@wesion.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	heiko@sntech.de,
-	kvalo@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	conor+dt@kernel.org,
-	arend.vanspriel@broadcom.com
-Cc: efectn@protonmail.com,
-	dsimic@manjaro.org,
-	jagan@edgeble.ai,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	arend@broadcom.com,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	megi@xff.cz,
-	duoming@zju.edu.cn,
-	bhelgaas@google.com,
-	minipli@grsecurity.net,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	nick@khadas.com,
-	Jacobe Zang <jacobe.zang@wesion.com>
-Subject: [PATCH v8 5/5] wifi: brcmfmac: add flag for random seed during firmware download
-Date: Mon,  5 Aug 2024 15:34:25 +0800
-Message-Id: <20240805073425.3492078-6-jacobe.zang@wesion.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240805073425.3492078-1-jacobe.zang@wesion.com>
-References: <20240805073425.3492078-1-jacobe.zang@wesion.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGXP274CA0010.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::22)
- To TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC6F149C6A;
+	Mon,  5 Aug 2024 07:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722843300; cv=none; b=qNIdnUnu9nS7tZPHsyJLjnTWhb07Pd7J/Y0XIM02VrzdrrgppHGCP/j4JbsvDzzDlL7n5oVpmpByJq7xKLkUAuqIbqioQAoAh5dykD0hVZZYTUH5+bt0zzPVxlfNJHGanpvxqdfpDwEUdRR8jCpDrmXMv3pdsXKN04GEYeSH71U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722843300; c=relaxed/simple;
+	bh=p5NAoUNzGR+pfuIscONVoEf0OHoJBTxtnl0mf7AVD3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OWYTyvvv2VXhhRyondl+B8gl9Cfn+SwZLtFdZbTQXl5OsSCGcBj5l4imNBr3pC2y1mdxn40KfQgGebNM4PB467OzwqaQmmAFtpZ6ZL1u4dD5JahLQi9YwcqY72YoooRbOSV4XLbxSCo+uCsOZ3RHtw/PCrfFUO6hWKoWnMoAdLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 5 Aug
+ 2024 10:34:45 +0300
+Received: from [192.168.211.130] (10.0.253.138) by Ex16-01.fintech.ru
+ (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 5 Aug 2024
+ 10:34:45 +0300
+Message-ID: <66f8503f-4c36-4ac7-b66c-f9526409a0eb@fintech.ru>
+Date: Mon, 5 Aug 2024 00:34:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB7001:EE_|JH0PR03MB8052:EE_
-X-MS-Office365-Filtering-Correlation-Id: d3a8ced0-665e-415f-a0fb-08dcb5211c39
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EXdolgxyHNPHKSU2Cy7zag3D3+4AVKB2GDJx7UUHW6noZ5EjUSnfMIkSHsWP?=
- =?us-ascii?Q?+9cfEUc9HlLmPMLXRrC48zwZ0spt/j1zZ3ZYBpFyY0uJOHJA0HfO/+aQfwnG?=
- =?us-ascii?Q?xWasPeBF0HXjp5WEKqLowOZgjAV4lZDqjacddEMkHmJDssLZyNDxkZSH5gl2?=
- =?us-ascii?Q?7BQxvcm2lCiL5BGa5AVmGVUclN34c0AlHkSzTxZUw67yQwa5lUWZmMjUPIXq?=
- =?us-ascii?Q?kh1n7v6VjkWwwrJNHt7JmYR3ke84RhhjAGQwe+uYcK3qMn3v/JUwuOd3eioq?=
- =?us-ascii?Q?UYN4XoHxPgoTwKPiHuYKbLHK3/SA0caeRLiHI9t9K1H+nT55mozNQckjbi83?=
- =?us-ascii?Q?M07Yt3qvDykDMxOG5kWr9TMfIi1Wl8hDKGDWo2ph168G5J9a5IgNBvuDTghR?=
- =?us-ascii?Q?mn25vyymfp38BeRuDop+6n9f4BaCyoqIBCrPcm5w2JL5Hy1bTR086VsDTztQ?=
- =?us-ascii?Q?1DK+CpqmQQiSEJj8+zRK+tRawTqcXpjZA237clPuKmr4V+ZhJRAxSNYmtQVK?=
- =?us-ascii?Q?5V4MAQdlkPSsOe32E+E1HVFW6mygKlXN3mDRYmUrAgy3TgqJcRi244ca/Tzo?=
- =?us-ascii?Q?8kjThWz3DiqSqjRWD+AMsULUxqK1UbzOJihHtpqzQSQbkVpDu/ua/VUun13z?=
- =?us-ascii?Q?qnSiLwwMdKwn3dLtprmkJxXIW1n3p9M3sG9v86wh3LsHcesbR9fQNpHEt7tV?=
- =?us-ascii?Q?GDyDUAfDGDQMz120pQ1XSpTSeEU+PJnPZPfnf2ZFivH+qh2HjgZTa0SumTBl?=
- =?us-ascii?Q?E6ULMglpxJXTV/2neDbLKxeZpWCjS4sEAkiKWF/l7E5O5rdzvjgvOJgrXSOx?=
- =?us-ascii?Q?JNf9HosvHmGzc/ahNA9vm0LLRP4ydWMX9YD0Nu+BegMbjjaU3nrSEZavvMrt?=
- =?us-ascii?Q?u++TeCYywqik9CF+cR2Bh+NlDhCxq2IU/k7gwBLOksClZZ4N5ZARybtCStML?=
- =?us-ascii?Q?TYZF+vIqn6ZV7Gpvq2liUlkoCfFNuL76z1bVrsnfIYGjFDw6Aaw+X0HmZeEW?=
- =?us-ascii?Q?QlLQqh6kgp1HK2q4tq57DkKoBE4Hi2sFdIwW7UFHIMrRnmFDxztPNk0lke0W?=
- =?us-ascii?Q?4a/ABgD8EyWvtqIUvZQYaiZb6LF5OPJEZPOATqkfsFSRyOcCubdJ5XgaF6cu?=
- =?us-ascii?Q?9n0Oto5qziA4TYhhIaIIoLdxBhrqx69aWbpny97hEGNnKCQp6G5qDxD59PAs?=
- =?us-ascii?Q?UN/pxx5Ur+1+oYvat3Nw0WgFYIs9FieXtCxGgEIOlXO6km9+xEjBBY24U9BF?=
- =?us-ascii?Q?iXvW3dJDv9sqiTKCdG0VAhY65y6FK2NyNNoZSd9LQzrVveshYg6Go1WDc3Zo?=
- =?us-ascii?Q?d+wfB6VoPMYoNNo9nDK/Kko9aRHWXoS3cOwj7sFGE6tnqVqZnW1I6uNg4tVH?=
- =?us-ascii?Q?pvxn0NQARM0HAXM5n80D8Xt+JvLpSLWtCIzqlHi8MqbJ7kgIZb0/L73cCiRT?=
- =?us-ascii?Q?AbfQHHVBReI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Eb7JHmxOY1/Zho0yKofC4KoNfiTrSgvItQnCEPxCWl+maoDC+CJJBbiOPi2k?=
- =?us-ascii?Q?M+IoT0wCj5UK3UnMYfX4+vHrWEMPDjZW7dPuJSHtXVBuRWkthW2sVQQ2a4/I?=
- =?us-ascii?Q?+ZMgeA5cPDfdP3+3q3gxQFUjLoqDgLHcPWYpr18HYaNBK3DSuRoiLzGL3cGw?=
- =?us-ascii?Q?n/yLO79pggH4eplG+mMqhXrAOs16xIVL/nuzwPTALI8DgDRsAGGaUPkrjHbv?=
- =?us-ascii?Q?xbC0MB+lbsHMcG/07hReUpT2MPkVD9oRzEB+5hd41bGxfCPwYdA9TaTT0MQ2?=
- =?us-ascii?Q?aO/nD5kgWVS0MMTYqbD06Sv9nDjIgFH2f47Fk1xvQ6WB1NyDwVF9WICQxhOZ?=
- =?us-ascii?Q?576eI4EgHEJ2d1FI5GNmgpzc6HKonaZ6KSplcYnq2MyVZNu6tKvJeI0s9F9w?=
- =?us-ascii?Q?hubkN0kU+6nDZiqCmV8AFV5nUHtlcrHYsTMPRjP6Pg8PA+RydvBrEItjDeKc?=
- =?us-ascii?Q?JRypnHWKbtPlveL41aGDF+a3AZ4b7L99DfvcICJcHIs59uMPdndC+96ewp5m?=
- =?us-ascii?Q?vQzniNn0Dl7+8vao/8QuPQ/3FN3fOANXx98Ajts5ByQkzVxBsTlGpiTpVfz3?=
- =?us-ascii?Q?C4pnECebLuY8cgad8yem4CyTuvBLH3RkdvqK4fscUtjsllQb1WJb5ofHDau7?=
- =?us-ascii?Q?tHnN5bZTLQM4c+mFaguA3JP2/obFBxF9zfUXk07p0LH2TIXPJwe/aC9V/lYF?=
- =?us-ascii?Q?KvJh9AehdulLZQbxVxfKkqUrD18DLn/0NkByZs0Eej8d+0somSjs8cacDcMf?=
- =?us-ascii?Q?7bQBwswkOY7nG92lAWKuM0Xzunrx6iyysmpTYV+aKKeRtWSESpAm4LzOBc0a?=
- =?us-ascii?Q?Wokb4iMkKm9RYdKnEDPM7GnBEEbYnIwXc3DYW9LSqajWHCKhEAUPaMS2Brhx?=
- =?us-ascii?Q?XRwkasZoWpEK1PLWxBFXVFSmtgRAKvVXi263/NefCayWX5fSFJGHIBFY5Xm0?=
- =?us-ascii?Q?vxuaP86mn7BxlROtWJgkMB4gMiXrffirvFT/lVnEryqRySmS6ohnSiSBKGUs?=
- =?us-ascii?Q?p8JMysl3+uB/m+mHlTSbLMgeQBPhMjt0PGUa4uYxIKUcL1afRHRYMxiku5yW?=
- =?us-ascii?Q?9WgmfGrtSime4Xm9w65ageYKnyRWAtmYCyYYHto5xNg6BOFyL2RhFXs5jXe0?=
- =?us-ascii?Q?X94yXax1bTInegv4btfs1P+V82sL4o1KtmDl67lRvZfxA62yIAPBUpo++pJO?=
- =?us-ascii?Q?cOt2EmZ9SXBREVO+ajKXJTFlQA9IChse8/mz5OUU9YZbs0dF6g+jq69leYe1?=
- =?us-ascii?Q?trBPlV3ZHxtN9sj7/W2uhLiNag9k7Ri+nwLGGzODaH3JSVsD2tG00jaBeJay?=
- =?us-ascii?Q?3tWjuUrQUHc2OY5+Q+bDmfZ2mHXv+g9ZtwA85br541Bm0nF1DS2fRxdPMSgF?=
- =?us-ascii?Q?9/EMOCFtV0qb63xAbKUgi2Xk73ffLwYJnziZJg0ZbxnVRsmv26uqGdq8kMGB?=
- =?us-ascii?Q?6B0U9csEr6iiRtdEVsyCBlLLeY9paSFHnzqG8Sn5TGB0V75s8q4/31BPTa3K?=
- =?us-ascii?Q?pSIF+ZBUiPblLSFjBPq2SyC2vy2FCf3QNfASSI83M5EObQJZi56/12Iq3AeR?=
- =?us-ascii?Q?3HlJWQNZH3Ow8dKz2KXKhSNHB2pMmwRwDLy2WdLw?=
-X-OriginatorOrg: wesion.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3a8ced0-665e-415f-a0fb-08dcb5211c39
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 07:34:59.3135
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +Rm1Wj/piI2O+G59wwlpRSaZi36kImTbscFsG72Fpz9Y5PXfF99sB37jiLnWVpsrK9tlS7qzPVubEMeWZ87L0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB8052
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/radeon/evergreen_cs: fix int overflow errors in cs
+ track offsets
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, Alex Deucher
+	<alexdeucher@gmail.com>
+CC: Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, "Jerome
+ Glisse" <jglisse@redhat.com>, Dave Airlie <airlied@redhat.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<stable@vger.kernel.org>
+References: <20240725180950.15820-1-n.zhandarovich@fintech.ru>
+ <e5199bf0-0861-4b79-8f32-d14a784b116f@amd.com>
+ <CADnq5_PuzU12x=M09HaGkG7Yqg8Lk1M1nWDAut7iP09TT33D6g@mail.gmail.com>
+ <fb530f45-df88-402a-9dc0-99298b88754c@amd.com>
+ <e497f5cb-a3cb-477b-8947-f96276e401b7@fintech.ru>
+ <1914cfcb-9700-4274-8120-9746e241cb54@amd.com>
+ <cb85a5c1-526b-4024-8e8f-23c2fe0d8381@amd.com>
+ <158d9e56-d8af-4d0f-980c-4355639f6ff8@fintech.ru>
+ <a80ec052-72a3-4630-8381-bc24ad3a6ab6@amd.com>
+Content-Language: en-US
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+In-Reply-To: <a80ec052-72a3-4630-8381-bc24ad3a6ab6@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-Providing the random seed to firmware was tied to the fact that the
-device has a valid OTP, which worked for some Apple chips. However,
-it turns out the BCM43752 device also needs the random seed in order
-to get firmware running. Suspect it is simply tied to the firmware
-branch used for the device. Introducing a mechanism to allow setting
-it for a device through the device table.
 
-Co-developed-by: Ondrej Jirman <megi@xff.cz>
-Signed-off-by: Ondrej Jirman <megi@xff.cz>
-Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
----
- .../broadcom/brcm80211/brcmfmac/pcie.c        | 52 ++++++++++++++++---
- .../broadcom/brcm80211/include/brcm_hw_ids.h  |  2 +
- 2 files changed, 46 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-index c34405a6d38b8..e88fa4cd62a1d 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/pcie.c
-@@ -66,6 +66,7 @@ BRCMF_FW_DEF(4365C, "brcmfmac4365c-pcie");
- BRCMF_FW_DEF(4366B, "brcmfmac4366b-pcie");
- BRCMF_FW_DEF(4366C, "brcmfmac4366c-pcie");
- BRCMF_FW_DEF(4371, "brcmfmac4371-pcie");
-+BRCMF_FW_CLM_DEF(43752, "brcmfmac43752-pcie");
- BRCMF_FW_CLM_DEF(4377B3, "brcmfmac4377b3-pcie");
- BRCMF_FW_CLM_DEF(4378B1, "brcmfmac4378b1-pcie");
- BRCMF_FW_CLM_DEF(4378B3, "brcmfmac4378b3-pcie");
-@@ -104,6 +105,7 @@ static const struct brcmf_firmware_mapping brcmf_pcie_fwnames[] = {
- 	BRCMF_FW_ENTRY(BRCM_CC_43664_CHIP_ID, 0xFFFFFFF0, 4366C),
- 	BRCMF_FW_ENTRY(BRCM_CC_43666_CHIP_ID, 0xFFFFFFF0, 4366C),
- 	BRCMF_FW_ENTRY(BRCM_CC_4371_CHIP_ID, 0xFFFFFFFF, 4371),
-+	BRCMF_FW_ENTRY(BRCM_CC_43752_CHIP_ID, 0xFFFFFFFF, 43752),
- 	BRCMF_FW_ENTRY(BRCM_CC_4377_CHIP_ID, 0xFFFFFFFF, 4377B3), /* revision ID 4 */
- 	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0x0000000F, 4378B1), /* revision ID 3 */
- 	BRCMF_FW_ENTRY(BRCM_CC_4378_CHIP_ID, 0xFFFFFFE0, 4378B3), /* revision ID 5 */
-@@ -358,6 +360,7 @@ struct brcmf_pciedev_info {
- 			  u16 value);
- 	struct brcmf_mp_device *settings;
- 	struct brcmf_otp_params otp;
-+	bool fwseed;
- #ifdef DEBUG
- 	u32 console_interval;
- 	bool console_active;
-@@ -1720,14 +1723,14 @@ static int brcmf_pcie_download_fw_nvram(struct brcmf_pciedev_info *devinfo,
- 		memcpy_toio(devinfo->tcm + address, nvram, nvram_len);
- 		brcmf_fw_nvram_free(nvram);
- 
--		if (devinfo->otp.valid) {
-+		if (devinfo->fwseed) {
- 			size_t rand_len = BRCMF_RANDOM_SEED_LENGTH;
- 			struct brcmf_random_seed_footer footer = {
- 				.length = cpu_to_le32(rand_len),
- 				.magic = cpu_to_le32(BRCMF_RANDOM_SEED_MAGIC),
- 			};
- 
--			/* Some Apple chips/firmwares expect a buffer of random
-+			/* Some chips/firmwares expect a buffer of random
- 			 * data to be present before NVRAM
- 			 */
- 			brcmf_dbg(PCIE, "Download random seed\n");
-@@ -2399,6 +2402,37 @@ static void brcmf_pcie_debugfs_create(struct device *dev)
- }
- #endif
- 
-+struct brcmf_pcie_drvdata {
-+	enum brcmf_fwvendor vendor;
-+	bool fw_seed;
-+};
-+
-+enum {
-+	BRCMF_DRVDATA_CYW,
-+	BRCMF_DRVDATA_BCA,
-+	BRCMF_DRVDATA_WCC,
-+	BRCMF_DRVDATA_WCC_SEED,
-+};
-+
-+static const struct brcmf_pcie_drvdata drvdata[] = {
-+	[BRCMF_DRVDATA_CYW] = {
-+		.vendor = BRCMF_FWVENDOR_CYW,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_BCA] = {
-+		.vendor = BRCMF_FWVENDOR_BCA,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_WCC] = {
-+		.vendor = BRCMF_FWVENDOR_WCC,
-+		.fw_seed = false,
-+	},
-+	[BRCMF_DRVDATA_WCC_SEED] = {
-+		.vendor = BRCMF_FWVENDOR_WCC,
-+		.fw_seed = true,
-+	},
-+};
-+
- /* Forward declaration for pci_match_id() call */
- static const struct pci_device_id brcmf_pcie_devid_table[];
- 
-@@ -2480,9 +2514,10 @@ brcmf_pcie_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	bus->bus_priv.pcie = pcie_bus_dev;
- 	bus->ops = &brcmf_pcie_bus_ops;
- 	bus->proto_type = BRCMF_PROTO_MSGBUF;
--	bus->fwvid = id->driver_data;
- 	bus->chip = devinfo->coreid;
- 	bus->wowl_supported = pci_pme_capable(pdev, PCI_D3hot);
-+	bus->fwvid = drvdata[id->driver_data].vendor;
-+	devinfo->fwseed = drvdata[id->driver_data].fw_seed;
- 	dev_set_drvdata(&pdev->dev, bus);
- 
- 	ret = brcmf_alloc(&devinfo->pdev->dev, devinfo->settings);
-@@ -2668,14 +2703,14 @@ static const struct dev_pm_ops brcmf_pciedrvr_pm = {
- 		BRCM_PCIE_VENDOR_ID_BROADCOM, (dev_id), \
- 		PCI_ANY_ID, PCI_ANY_ID, \
- 		PCI_CLASS_NETWORK_OTHER << 8, 0xffff00, \
--		BRCMF_FWVENDOR_ ## fw_vend \
-+		BRCMF_DRVDATA_ ## fw_vend \
- 	}
- #define BRCMF_PCIE_DEVICE_SUB(dev_id, subvend, subdev, fw_vend) \
- 	{ \
- 		BRCM_PCIE_VENDOR_ID_BROADCOM, (dev_id), \
- 		(subvend), (subdev), \
- 		PCI_CLASS_NETWORK_OTHER << 8, 0xffff00, \
--		BRCMF_FWVENDOR_ ## fw_vend \
-+		BRCMF_DRVDATA_ ## fw_vend \
- 	}
- 
- static const struct pci_device_id brcmf_pcie_devid_table[] = {
-@@ -2703,9 +2738,10 @@ static const struct pci_device_id brcmf_pcie_devid_table[] = {
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4366_5G_DEVICE_ID, BCA),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4371_DEVICE_ID, WCC),
- 	BRCMF_PCIE_DEVICE(BRCM_PCIE_43596_DEVICE_ID, CYW),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC),
--	BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4377_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4378_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_4387_DEVICE_ID, WCC_SEED),
-+	BRCMF_PCIE_DEVICE(BRCM_PCIE_43752_DEVICE_ID, WCC_SEED),
- 
- 	{ /* end: all zeroes */ }
- };
-diff --git a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-index 44684bf1b9acc..c1e22c589d85e 100644
---- a/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/include/brcm_hw_ids.h
-@@ -52,6 +52,7 @@
- #define BRCM_CC_43664_CHIP_ID		43664
- #define BRCM_CC_43666_CHIP_ID		43666
- #define BRCM_CC_4371_CHIP_ID		0x4371
-+#define BRCM_CC_43752_CHIP_ID		43752
- #define BRCM_CC_4377_CHIP_ID		0x4377
- #define BRCM_CC_4378_CHIP_ID		0x4378
- #define BRCM_CC_4387_CHIP_ID		0x4387
-@@ -94,6 +95,7 @@
- #define BRCM_PCIE_4366_5G_DEVICE_ID	0x43c5
- #define BRCM_PCIE_4371_DEVICE_ID	0x440d
- #define BRCM_PCIE_43596_DEVICE_ID	0x4415
-+#define BRCM_PCIE_43752_DEVICE_ID	0x449d
- #define BRCM_PCIE_4377_DEVICE_ID	0x4488
- #define BRCM_PCIE_4378_DEVICE_ID	0x4425
- #define BRCM_PCIE_4387_DEVICE_ID	0x4433
--- 
-2.34.1
+On 7/30/24 23:56, Christian König wrote:
+> Am 30.07.24 um 19:36 schrieb Nikita Zhandarovich:
+>> On 7/29/24 11:12, Christian König wrote:
+>>> Am 29.07.24 um 20:04 schrieb Christian König:
+>>>> Am 29.07.24 um 19:26 schrieb Nikita Zhandarovich:
+>>>>> Hi,
+>>>>>
+>>>>> On 7/29/24 02:23, Christian König wrote:
+>>>>>> Am 26.07.24 um 14:52 schrieb Alex Deucher:
+>>>>>>> On Fri, Jul 26, 2024 at 3:05 AM Christian König
+>>>>>>> <christian.koenig@amd.com> wrote:
+>>>>>>>> Am 25.07.24 um 20:09 schrieb Nikita Zhandarovich:
+>>>>>>>>> Several cs track offsets (such as 'track->db_s_read_offset')
+>>>>>>>>> either are initialized with or plainly take big enough values
+>>>>>>>>> that,
+>>>>>>>>> once shifted 8 bits left, may be hit with integer overflow if the
+>>>>>>>>> resulting values end up going over u32 limit.
+>>>>>>>>>
+>>>>>>>>> Some debug prints take this into account (see according
+>>>>>>>>> dev_warn() in
+>>>>>>>>> evergreen_cs_track_validate_stencil()), even if the actual
+>>>>>>>>> calculated value assigned to local 'offset' variable is missing
+>>>>>>>>> similar proper expansion.
+>>>>>>>>>
+>>>>>>>>> Mitigate the problem by casting the type of right operands to the
+>>>>>>>>> wider type of corresponding left ones in all such cases.
+>>>>>>>>>
+>>>>>>>>> Found by Linux Verification Center (linuxtesting.org) with static
+>>>>>>>>> analysis tool SVACE.
+>>>>>>>>>
+>>>>>>>>> Fixes: 285484e2d55e ("drm/radeon: add support for evergreen/ni
+>>>>>>>>> tiling informations v11")
+>>>>>>>>> Cc: stable@vger.kernel.org
+>>>>>>>> Well first of all the long cast doesn't makes the value 64bit, it
+>>>>>>>> depends on the architecture.
+>>>>>>>>
+>>>>>>>> Then IIRC the underlying hw can only handle a 32bit address
+>>>>>>>> space so
+>>>>>>>> having the offset as long is incorrect to begin with.
+>>>>>>> Evergreen chips support a 36 bit internal address space and NI and
+>>>>>>> newer support a 40 bit one, so this is applicable.
+>>>>>> In that case I strongly suggest that we replace the unsigned long
+>>>>>> with
+>>>>>> u64 or otherwise we get different behavior on 32 and 64bit machines.
+>>>>>>
+>>>>>> Regards,
+>>>>>> Christian.
+>>>>>>
+>>>>> To be clear, I'll prepare v2 patch that changes 'offset' to u64 as
+>>>>> well
+>>>>> as the cast of 'track->db_z_read_offset' (and the likes) to u64 too.
+>>>>>
+>>>>> On the other note, should I also include casting to wider type of the
+>>>>> expression surf.layer_size * mslice (example down below) in
+>>>>> evergreen_cs_track_validate_cb() and other similar functions? I can't
+>>>>> properly gauge if the result will definitively fit into u32, maybe it
+>>>>> makes sense to expand it as well?
+>>>> The integer overflows caused by shifts are irrelevant and doesn't need
+>>>> any fixing in the first place.
+>>> Wait a second.
+>>>
+>>> Thinking more about it the integer overflows are actually necessary
+>>> because that is exactly what happens in the hardware as well.
+>>>
+>>> If you don't overflow those shifts you actually create a security
+>>> problem because the HW the might access at a different offset then you
+>>> calculated here.
+>>>
+>>> We need to use something like a mask or use lower_32_bits() here.
+>> Christian,
+>>
+>> My apologies, I may be getting a bit confused here.
+>>
+>> If integer overflows caused by shifts are predictable and constitute
+>> normal behavior in this case, and there is no need to "fix" them, does
+>> it still make sense to use any mitigations at all, i.e. masks or macros?
+> 
+> Well you stumbled over that somehow, so some automated checker things
+> that this is a bad idea.
+> 
+>> Leaving these shifts to u32 variables as they are now will achieve the
+>> same result as, for example, doing something along the lines of:
+>>
+>> offset = lower_32_bits((u64)track->cb_color_bo_offset[id] << 8);
+>>
+>> which seems clunky and unnecessary, even if it suppresses some static
+>> analyzer triggers (and that seems overboard).
+>> Or am I missing something obvious here?
+> 
+> No, it's just about suppressing the static checker warnings.
+> 
+> I'm also not 100% sure how that old hw works. Alex mentioned that it is
+> using 36bits internally.
+> 
+> So it could be that we need to switch to using u64 here. I need to
+> double check that with Alex.
+> 
+> But using unsigned long is certainly incorrect cause we then get
+> different behavior based on the CPU architecture.
+> 
+> Thanks for pointing this out,
+> Christian.
+> 
 
+Hi,
+
+Christian, did you get a chance to go over hw specifics with Alex?
+I'd really like to get on with v2 patch but I can't really start
+properly if I don't know what (and how) exactly to fix.
+
+I am also hesitant to split the fix into parts and I'd rather do the
+whole int overflow mitigation in one set.
+
+Thanks,
+Nikita
+
+>>> Regards,
+>>> Christian.
+>>>
+>>>> The point is rather that we need to avoid multiplication overflows and
+>>>> the security problems which come with those.
+>>>>
+>>>>> 441         }
+>>>>> 442
+>>>>> 443         offset += surf.layer_size * mslice;
+>>>> In other words that here needs to be validated correctly.
+>>>>
+>> Agreed, I think either casting right operand to u64 (once 'offset' is
+>> also changed from unsigned long to u64) or using mul_u32_u32() here and
+>> in other places should suffice.
+>>
+>>>> Regards,
+>>>> Christian.
+>>>>
+>>>>> 444         if (offset > radeon_bo_size(track->cb_color_bo[id])) {
+>>>>> 445                 /* old ddx are broken they allocate bo with
+>>>>> w*h*bpp
+>>>>>
+>>>>> Regards,
+>>>>> Nikita
+>>>>>>> Alex
+>>>>>>>
+>>>>>>>> And finally that is absolutely not material for stable.
+>>>>>>>>
+>>>>>>>> Regards,
+>>>>>>>> Christian.
+>>>>>>>>
+>>>>>>>>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+>>>>>>>>> ---
+>>>>>>>>> P.S. While I am not certain that track->cb_color_bo_offset[id]
+>>>>>>>>> actually ends up taking values high enough to cause an overflow,
+>>>>>>>>> nonetheless I thought it prudent to cast it to ulong as well.
+>>>>>>>>>
+>>>>>>>>>      drivers/gpu/drm/radeon/evergreen_cs.c | 18 +++++++++---------
+>>>>>>>>>      1 file changed, 9 insertions(+), 9 deletions(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>>>> b/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>>>> index 1fe6e0d883c7..d734d221e2da 100644
+>>>>>>>>> --- a/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>>>> +++ b/drivers/gpu/drm/radeon/evergreen_cs.c
+>>>>>>>>> @@ -433,7 +433,7 @@ static int
+>>>>>>>>> evergreen_cs_track_validate_cb(struct
+>>>>>>>>> radeon_cs_parser *p, unsigned i
+>>>>>>>>>                  return r;
+>>>>>>>>>          }
+>>>>>>>>>
+>>>>>>>>> -     offset = track->cb_color_bo_offset[id] << 8;
+>>>>>>>>> +     offset = (unsigned long)track->cb_color_bo_offset[id] << 8;
+>>>>>>>>>          if (offset & (surf.base_align - 1)) {
+>>>>>>>>>                  dev_warn(p->dev, "%s:%d cb[%d] bo base %ld not
+>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>                           __func__, __LINE__, id, offset,
+>>>>>>>>> surf.base_align);
+>>>>>>>>> @@ -455,7 +455,7 @@ static int
+>>>>>>>>> evergreen_cs_track_validate_cb(struct
+>>>>>>>>> radeon_cs_parser *p, unsigned i
+>>>>>>>>>                                  min = surf.nby - 8;
+>>>>>>>>>                          }
+>>>>>>>>>                          bsize =
+>>>>>>>>> radeon_bo_size(track->cb_color_bo[id]);
+>>>>>>>>> -                     tmp = track->cb_color_bo_offset[id] << 8;
+>>>>>>>>> +                     tmp = (unsigned
+>>>>>>>>> long)track->cb_color_bo_offset[id] << 8;
+>>>>>>>>>                          for (nby = surf.nby; nby > min; nby--) {
+>>>>>>>>>                                  size = nby * surf.nbx *
+>>>>>>>>> surf.bpe *
+>>>>>>>>> surf.nsamples;
+>>>>>>>>>                                  if ((tmp + size * mslice) <=
+>>>>>>>>> bsize) {
+>>>>>>>>> @@ -476,10 +476,10 @@ static int
+>>>>>>>>> evergreen_cs_track_validate_cb(struct radeon_cs_parser *p,
+>>>>>>>>> unsigned i
+>>>>>>>>>                          }
+>>>>>>>>>                  }
+>>>>>>>>>                  dev_warn(p->dev, "%s:%d cb[%d] bo too small
+>>>>>>>>> (layer
+>>>>>>>>> size %d, "
+>>>>>>>>> -                      "offset %d, max layer %d, bo size %ld,
+>>>>>>>>> slice
+>>>>>>>>> %d)\n",
+>>>>>>>>> +                      "offset %ld, max layer %d, bo size %ld,
+>>>>>>>>> slice
+>>>>>>>>> %d)\n",
+>>>>>>>>>                           __func__, __LINE__, id, surf.layer_size,
+>>>>>>>>> -                     track->cb_color_bo_offset[id] << 8, mslice,
+>>>>>>>>> - radeon_bo_size(track->cb_color_bo[id]), slice);
+>>>>>>>>> +                     (unsigned long)track->cb_color_bo_offset[id]
+>>>>>>>>> << 8,
+>>>>>>>>> +                     mslice,
+>>>>>>>>> radeon_bo_size(track->cb_color_bo[id]), slice);
+>>>>>>>>>                  dev_warn(p->dev, "%s:%d problematic surf: (%d %d)
+>>>>>>>>> (%d
+>>>>>>>>> %d %d %d %d %d %d)\n",
+>>>>>>>>>                           __func__, __LINE__, surf.nbx, surf.nby,
+>>>>>>>>>                          surf.mode, surf.bpe, surf.nsamples,
+>>>>>>>>> @@ -608,7 +608,7 @@ static int
+>>>>>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+>>>>>>>>>                  return r;
+>>>>>>>>>          }
+>>>>>>>>>
+>>>>>>>>> -     offset = track->db_s_read_offset << 8;
+>>>>>>>>> +     offset = (unsigned long)track->db_s_read_offset << 8;
+>>>>>>>>>          if (offset & (surf.base_align - 1)) {
+>>>>>>>>>                  dev_warn(p->dev, "%s:%d stencil read bo base
+>>>>>>>>> %ld not
+>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>                           __func__, __LINE__, offset,
+>>>>>>>>> surf.base_align);
+>>>>>>>>> @@ -627,7 +627,7 @@ static int
+>>>>>>>>> evergreen_cs_track_validate_stencil(struct radeon_cs_parser *p)
+>>>>>>>>>                  return -EINVAL;
+>>>>>>>>>          }
+>>>>>>>>>
+>>>>>>>>> -     offset = track->db_s_write_offset << 8;
+>>>>>>>>> +     offset = (unsigned long)track->db_s_write_offset << 8;
+>>>>>>>>>          if (offset & (surf.base_align - 1)) {
+>>>>>>>>>                  dev_warn(p->dev, "%s:%d stencil write bo base %ld
+>>>>>>>>> not
+>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>                           __func__, __LINE__, offset,
+>>>>>>>>> surf.base_align);
+>>>>>>>>> @@ -706,7 +706,7 @@ static int
+>>>>>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+>>>>>>>>>                  return r;
+>>>>>>>>>          }
+>>>>>>>>>
+>>>>>>>>> -     offset = track->db_z_read_offset << 8;
+>>>>>>>>> +     offset = (unsigned long)track->db_z_read_offset << 8;
+>>>>>>>>>          if (offset & (surf.base_align - 1)) {
+>>>>>>>>>                  dev_warn(p->dev, "%s:%d stencil read bo base
+>>>>>>>>> %ld not
+>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>                           __func__, __LINE__, offset,
+>>>>>>>>> surf.base_align);
+>>>>>>>>> @@ -722,7 +722,7 @@ static int
+>>>>>>>>> evergreen_cs_track_validate_depth(struct radeon_cs_parser *p)
+>>>>>>>>>                  return -EINVAL;
+>>>>>>>>>          }
+>>>>>>>>>
+>>>>>>>>> -     offset = track->db_z_write_offset << 8;
+>>>>>>>>> +     offset = (unsigned long)track->db_z_write_offset << 8;
+>>>>>>>>>          if (offset & (surf.base_align - 1)) {
+>>>>>>>>>                  dev_warn(p->dev, "%s:%d stencil write bo base %ld
+>>>>>>>>> not
+>>>>>>>>> aligned with %ld\n",
+>>>>>>>>>                           __func__, __LINE__, offset,
+>>>>>>>>> surf.base_align);
+> 
 
