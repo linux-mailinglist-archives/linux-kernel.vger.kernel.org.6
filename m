@@ -1,82 +1,152 @@
-Return-Path: <linux-kernel+bounces-274798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63C0947CD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:31:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD05947CDF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85AB41F23469
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC23D1C21E57
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17ED212EBCA;
-	Mon,  5 Aug 2024 14:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B3913B5BD;
+	Mon,  5 Aug 2024 14:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEorueC7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzlXgWfD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5972739FE5
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F15039FE5;
+	Mon,  5 Aug 2024 14:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868258; cv=none; b=OODJO4k9ynCN7/qi03KLOnTqP4SRI0/TU6JautJa0Q/Rr3Chmvo6lUJs+KNa2KedGNj8XwU6S/E19ntsZDFlHxF4z/kSv3bwQ4fPlwu8UELeUNDt870FhZj1ltJq88SsGS5oEL15gkRbeP+AQIp0msA/LxUa99J+A/fMGkKDE6g=
+	t=1722868336; cv=none; b=CjkfFdxA5s6RKY/kKjgZ16MPW5TUHRpgHXRoyhChLxL8B9Lt225HC5Q0KqpypUEgwpNc9jhOl+uBDUVmNc+/VzQrwv1sP8ziI77ZsmDjiKuYMxwazMyGgfCL/zhIUmr+cRy3gutgZdHX+n++AwWDA2NKbXayf8V316R4fl94p90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868258; c=relaxed/simple;
-	bh=C/7sQovbNSh3gKEW2EqyFjkIz9Q38h2okXnr6MrPQ5E=;
+	s=arc-20240116; t=1722868336; c=relaxed/simple;
+	bh=A5ue+yCilPqmpcUkXKUIlSXfp1UDbKq7c6OJAyt/IxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c8xndv0UFfdKP2UnUxwwALEuTOJCdug5I+A9q3ztK+4avCrmLAmXDSxZJOtk6klxoqbFcHFP3u89B2ROSbhkFtNP5EPxhni9tnI6H71SDprs32NWIrrKYtd/k3uzTXfkzhqop0JxjQNTu4SNvwG12/+CSpa2WVHnq53+l0bpC2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEorueC7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBD3C32782;
-	Mon,  5 Aug 2024 14:30:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ac87dc36jDT1eVbllNlP+XM2UxHueiAZ5KwY+7lH/28ks2Oo2PKeE1gurUheONVMCae6IYv1kvB16sXDmtchl3kKdbXSZ4a2HvXpQ5p32hwet1ftVcWLivIpnxQAfbIc/aD0PVmMixPeOkCiFkAf0Dqkx/7sh5dHe6GCrE+Sg6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzlXgWfD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A66DCC4AF0B;
+	Mon,  5 Aug 2024 14:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722868257;
-	bh=C/7sQovbNSh3gKEW2EqyFjkIz9Q38h2okXnr6MrPQ5E=;
+	s=k20201202; t=1722868336;
+	bh=A5ue+yCilPqmpcUkXKUIlSXfp1UDbKq7c6OJAyt/IxU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rEorueC7Iu8prd31Skyhb0S97r97VpIUiFQTysHATPk4lnlMleJnoLppPAWJShSJA
-	 ihkKUdANndZrC8LtZ9ZIY/4RoF/01q8hUgb/8ZqXMLpq4N9y6sNc11RJjks0g5NSN5
-	 7gj1rM1poWv6LJflnmuddXwsukI/2Hd0TqBlDAizCdd/FUJe75IB4b1g8gGmvgABdX
-	 9CnSxLWbNoyfv/5e5+YKcLLkqoipAyTqrieE5xCH/HJ4j5FsotIYpmCPE9lUYF5gE9
-	 YDJ+6xYAiRRhdAxQLA23Wy8RB0sJ5+GJCYo7rSfEwySddDhWcPJ5TTejdFaJngeYbo
-	 rl13JrR5gI8Xw==
-Date: Mon, 5 Aug 2024 16:30:55 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>,
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 14/20] mm: Allocate kcompactd on its node
-Message-ID: <ZrDiH3bLxCKsVQkc@localhost.localdomain>
-References: <20240726215701.19459-1-frederic@kernel.org>
- <20240726215701.19459-15-frederic@kernel.org>
- <a3693b53-8c5b-4c8c-a02a-8873771bdfd2@suse.cz>
+	b=AzlXgWfDA40/focwBNArbzP+1EcISYM/b5inPWkExxg1BtCqNEahAw1N/4d6oFelR
+	 k6Nr1GNjWBto+DeDtDx9ZFtKR1Cy2LEU5bZ2lWUk323HIVukNv4LylC2wImndA5Izc
+	 Yq1QHmRQG71X7N4DiDq6ME7H/80cQdkPmWiGlueR6pNx/UJ69QMlv25wo0pVNyMkYb
+	 hZBSdQk3K6GkKYOQhUMalWaDjRkq9uU0GnfkOWENzNGlS9OOFhA6cmbdLEq+kxt3or
+	 gEzxH0I54PwrVyzBsMrf6l1hp2WN3H7rBnrZa9vKTBcA7aSFGdERgkV1cX7V9mwnlO
+	 BFCXfF2wErArw==
+Date: Mon, 5 Aug 2024 15:32:07 +0100
+From: Lee Jones <lee@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: (subset) [PATCH v2 0/6] use device_for_each_child_node() to
+ access device child nodes
+Message-ID: <20240805143207.GE1019230@google.com>
+References: <20240721-device_for_each_child_node-available-v2-0-f33748fd8b2d@gmail.com>
+ <172192488125.1053789.17350723750885690064.b4-ty@kernel.org>
+ <094c7d7f-749f-4d8f-9254-f661090e4350@gmail.com>
+ <20240801123901.GC6756@google.com>
+ <9083938c-c2df-4429-904d-700e5021331c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a3693b53-8c5b-4c8c-a02a-8873771bdfd2@suse.cz>
+In-Reply-To: <9083938c-c2df-4429-904d-700e5021331c@gmail.com>
 
-Le Wed, Jul 31, 2024 at 05:07:48PM +0200, Vlastimil Babka a �crit :
-> On 7/26/24 11:56 PM, Frederic Weisbecker wrote:
-> > kcompactd runs preferrably on a specific node. Allocate its task
-> > structure accordingly for better memory locality.
+On Fri, 02 Aug 2024, Javier Carrasco wrote:
+
+> On 01/08/2024 14:39, Lee Jones wrote:
+> > On Mon, 29 Jul 2024, Javier Carrasco wrote:
 > > 
-> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> >> On 25/07/2024 18:28, Lee Jones wrote:
+> >>> On Sun, 21 Jul 2024 17:19:00 +0200, Javier Carrasco wrote:
+> >>>> This series aims to clarify the use cases of:
+> >>>>
+> >>>> - device_for_each_child_node[_scoped]()
+> >>>> - fwnode_for_each_available_child_node[_scoped]()
+> >>>>
+> >>>> to access firmware nodes.
+> >>>>
+> >>>> [...]
+> >>>
+> >>> Applied, thanks!
+> >>>
+> >>> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+> >>>       commit: 75d2a77327c4917bb66163eea0374bb749428e9c
+> >>> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
+> >>>       commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
+> >>> [5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
+> >>>       (no commit info)
+> >>>
+> >>> --
+> >>> Lee Jones [李琼斯]
+> >>>
+> >>
+> >> Hi Lee,
+> >>
+> >> could you please tell me where you applied them? I rebased onto
+> >> linux-next to prepare for v3, and these patches are still added on top
+> >> of it. Can I find them in some leds/ branch? Thank you.
+> > 
+> > Sorry, I was side-tracked before pushing.
+> > 
+> > Pushed now.  They should be in -next tomorrow.
+> > 
 > 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Thanks, I see
 > 
-> could even squash it to previous patch since you touch that line anyway and
-> it should be a no-brainer
+> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+> 
+> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to
+> access child nodes
+> 
+> applied to -next, but
+> 
+> [5/6] leds: pca995x: use device_for_each_child_node() to access device
+> child nodes
+> 
+> has not been applied yet.
 
-It looks like a no brainer indeed but I'm very careful about introducing subtle
-logical changes ;-)
+Yep, looks like b4 didn't like that one:
 
-Thanks.
+[3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+      commit: 75d2a77327c4917bb66163eea0374bb749428e9c
+[4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
+      commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
+[5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
+      (no commit info)
+
+I'll try again and see if it can be pulled in.
+
+If not you'll have to resubmit it.
+
+-- 
+Lee Jones [李琼斯]
 
