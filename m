@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-274847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E16947D84
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:02:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8587947D87
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 17:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 744F9284D69
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:02:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E866F1C21FEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D4C15FD01;
-	Mon,  5 Aug 2024 15:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E35F15FA92;
+	Mon,  5 Aug 2024 15:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tPB+SZ7W"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eM5LpTVv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8920D15F3F3;
-	Mon,  5 Aug 2024 15:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4971A15F330;
+	Mon,  5 Aug 2024 15:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722870018; cv=none; b=ZZrhIsOBnRE6NY8Xx31fOrnEG13uyToXFEKbYuzls0WE0oj8kwgEQIUDPvaflxJiogwFdyFfF8wsPlH77pSO6bZVINKy8vW23Fwak49j67UWUOiPT18tI43VKAow94jUR720LmwV5M4+wscAU7QKg1MOsBFcxvefDNpdWuaV2MQ=
+	t=1722870020; cv=none; b=Ze/tkxpPJQ3XN9KNmrQlU7v7dj8nsneOGWhFhxrohaRbo7YRGBqncR2OxRzHio29gUm7JQ0TrHvKdoJR4OUylLP6oemjT9YBDhuEjb/5SxG+CID11SB78gQzN32NVUTmqqfyAmE2eX3YuwiDlH0p3ph8+kEdWw3vvcKEyWcj41k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722870018; c=relaxed/simple;
-	bh=QMaY66zonE2pj6F2rnx/k9di7OL7zdn/ZAOCrMtqjjk=;
+	s=arc-20240116; t=1722870020; c=relaxed/simple;
+	bh=tfgBwylZtYmd8rGUyotRtDhn3AR0oXSUI6WU08SNoFM=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Ew0AMwCovDm6A0v3AmXePSaOy/wzvQOa1L0VO76+/x6UXrVJ0ry++gNOpx5k776WcTD7K3/duSBjYarHEVw4x3NGyKrJaQOJzBVZo0/6pQn4+nwQZWj4OHUgIOYzUShxFJ2eduQZ5yY3ya/3PqqDpyoFCyi6hOH5IoTi4YuSFM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tPB+SZ7W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B1BC4AF0E;
-	Mon,  5 Aug 2024 15:00:18 +0000 (UTC)
+	 Message-Id:Subject; b=jQO3ZiB4KzRKK1hAEYOtl+un0XBvs2Yidm1T5fAsBt6dpPkcm+5qJ2FH0kvfjzxiPCI8Uw2z5ptR4QqzMc69wNIfdgv9RKdreqw/V/PtxdVp+d3qkPMUGoWG4yBA638MiktaSSv/KQkdQcXWtPjrmkacc6AQd+yzJeYgsYnw4+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eM5LpTVv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B7DC32782;
+	Mon,  5 Aug 2024 15:00:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722870018;
-	bh=QMaY66zonE2pj6F2rnx/k9di7OL7zdn/ZAOCrMtqjjk=;
+	s=k20201202; t=1722870019;
+	bh=tfgBwylZtYmd8rGUyotRtDhn3AR0oXSUI6WU08SNoFM=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=tPB+SZ7W49QWln/GkG5rDG+UhrTCZmiyGvjhSPPzgOqC6xA47ilxJgDesXzD5zs6K
-	 79c/ytuSGH50LhKSF9NI1p9Y8wWDEICdFq92jK2Zo7QOwqiGTPZNO27lM55sKd/9yl
-	 g8xZ5dIgSiqoQViUK8drs53/75TOtfp2hMbkkBNWT37jewIwwJlJBEi0NHvTAMLyFr
-	 CYlTl9dSdOiWv2oEvXYcNv0eAYQeA/1sl/pt3XpqP/kZbDMTRK5omvuRGEyZ6pLjP0
-	 hLld8RojhtWLc5FL4MfXVEnTqLzFCfo0Xr7uge1QF7t3H7iuxUkh8XrpoaglhskPDj
-	 MxnFcPedxoQUw==
-Date: Mon, 05 Aug 2024 09:00:17 -0600
+	b=eM5LpTVvX/fZXooVCAOwc4yavHLGQ1roRJNC0pbB26h1bCL8rShDYhUcpFGcOcFu8
+	 XdDlgX1pnhK130l2Ud3MYs5Gq27gZeWM5NDsV7V6rg8vJ8bYc11qpnbBTZdJbG+5X5
+	 LyxcEvBUg8nwW9i5EAaj8oiYWL1xQl2DiIXAfTnPJeOP7vaLQ/vhHUaa1tzNmW6oTP
+	 F56lEjF1edaKRL5Y9BE93WCuIwWY0XLfXq3ucQwvucPZ8bH5U1d4E2/XO7x2de5Thh
+	 ye0Y68n49cjBXkqxifFquTIISnoat1n0CW9LFWamehyLIyLg/sm0SP66PBoGSabqSE
+	 1u7BjC7EGJJIQ==
+Date: Mon, 05 Aug 2024 09:00:18 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,53 +50,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Lin, Meng-Bo" <linmengbo06890@proton.me>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
- Stephan Gerhold <stephan@gerhold.net>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
- phone-devel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-In-Reply-To: <20240804065854.42437-1-linmengbo06890@proton.me>
-References: <20240804065854.42437-1-linmengbo06890@proton.me>
-Message-Id: <172286967129.2710260.12547511216605996134.robh@kernel.org>
-Subject: Re: [PATCH v2 0/2] arm64: dts: qcom: msm8916-samsung-j3ltetw: Add
- initial device tree
+To: Benjamin Hahn <B.Hahn@phytec.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Sascha Hauer <s.hauer@pengutronix.de>, 
+ imx@lists.linux.dev, Shawn Guo <shawnguo@kernel.org>, 
+ Teresa Remmet <t.remmet@phytec.de>
+In-Reply-To: <20240805-imx8mp-tpm-v1-1-1e89f0268999@phytec.de>
+References: <20240805-imx8mp-tpm-v1-1-1e89f0268999@phytec.de>
+Message-Id: <172286967208.2710507.3691130639449006628.robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: freescale: imx8mp-phyboard-pollux: Add and
+ enable TPM
 
 
-On Sun, 04 Aug 2024 06:59:06 +0000, Lin, Meng-Bo wrote:
-> The dts and dtsi add support for msm8916 variant of Samsung Galaxy J3
-> SM-J320YZ smartphone released in 2016.
+On Mon, 05 Aug 2024 15:33:27 +0200, Benjamin Hahn wrote:
+> Add support for TPM for phyBOARD Pollux.
 > 
-> Add a device tree for SM-J320YZ with initial support for:
-> 
-> - GPIO keys
-> - SDHCI (internal and external storage)
-> - USB Device Mode
-> - UART (on USB connector via the SM5703 MUIC)
-> - WCNSS (WiFi/BT)
-> - Regulators
-> - QDSP6 audio
-> - Speaker/earpiece/headphones/microphones via digital/analog codec in
->   MSM8916/PM8916
-> - WWAN Internet via BAM-DMUX
-> - Touchscreen
-> - Accelerometer
-> 
-> There are different variants of J3, with some differences in MUIC, sensor,
-> NFC and touch key I2C buses.
-> 
-> The common parts are shared in msm8916-samsung-j3-common.dtsi to reduce
-> duplication.
-> 
+> Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
 > ---
-> v2: Add accelerometer
-> V1: Initial device tree
-> Link: https://lore.kernel.org/r/20240802080701.3643-1-linmengbo06890@proton.me
-> 
-> 
+>  .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   | 32 ++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 > 
 
 
@@ -114,12 +89,10 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/msm8916-samsung-j3ltetw.dtb' for 20240804065854.42437-1-linmengbo06890@proton.me:
+New warnings running 'make CHECK_DTBS=y freescale/imx8mp-phyboard-pollux-rdk.dtb' for 20240805-imx8mp-tpm-v1-1-1e89f0268999@phytec.de:
 
-arch/arm64/boot/dts/qcom/msm8916-samsung-j3ltetw.dtb: /soc@0/power-manager@b088000: failed to match any schema with compatible: ['qcom,msm8916-acc']
-arch/arm64/boot/dts/qcom/msm8916-samsung-j3ltetw.dtb: /soc@0/power-manager@b098000: failed to match any schema with compatible: ['qcom,msm8916-acc']
-arch/arm64/boot/dts/qcom/msm8916-samsung-j3ltetw.dtb: /soc@0/power-manager@b0a8000: failed to match any schema with compatible: ['qcom,msm8916-acc']
-arch/arm64/boot/dts/qcom/msm8916-samsung-j3ltetw.dtb: /soc@0/power-manager@b0b8000: failed to match any schema with compatible: ['qcom,msm8916-acc']
+arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dtb: tpm_tis@0: $nodename:0: 'tpm_tis@0' does not match '^tpm(@[0-9a-f]+)?$'
+	from schema $id: http://devicetree.org/schemas/tpm/tcg,tpm_tis-spi.yaml#
 
 
 
