@@ -1,160 +1,173 @@
-Return-Path: <linux-kernel+bounces-274575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FD5947A41
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:08:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC576947A47
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2EFE1F21B8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:08:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4160AB225B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023B415574F;
-	Mon,  5 Aug 2024 11:08:29 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0C613AD11;
+	Mon,  5 Aug 2024 11:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vvtOSBt8"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FE81537D9;
-	Mon,  5 Aug 2024 11:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8338155730
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 11:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722856108; cv=none; b=s/R2zYZVBz8EH+WBEf6nL6IrexYj/QS4Mwpp/ty4JCj7NVkAtJo5Ret8Onu75ZM4YEo4wg8FI6VMFXAYuh7bWvGpgUr+q5rRYqrfk8FfHJvJJqb2B9eoJP+F8+3zBrQlrzmGfCjbOrBvI3kHokDsEYAieXix6/BD+tkAL8kfs9o=
+	t=1722856170; cv=none; b=jkDeHWY+wm23hhmzGdL2LQqXyO9BLDBDjpGMjEO7kTuZ5loSUwioF6IzRwnzfYHK1M75sCAo0b+0VwxE5qZhMJTl+YUhl+9cn2Kng4xCWKpSLzYvsu4NR8gsmqmyq8rb/CXpPPy/FvLHmX2pzW7tEsqIym+QMmEU9z2SDhCRMhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722856108; c=relaxed/simple;
-	bh=rsaEinWivQAT49cPwyAR5/n900X1FxB5wL+t/2fsaI8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=H0E4XPKu3CqPR0PSaWfHmLuKd46OFpbgv6Gt+kvINoEypSoEWqwuzPnZT5pPpj+7rIB7y0dL8gJFvaggwVDIrlVNn5hJbzXZb4Jbok6xA/uoU14XIgoDRrms10HNcEezWTRK4woFRdo0bLCvTRJ9r5AlBLmN6ka4PsxHVJj4Nt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wctvq040kz4f3m7G;
-	Mon,  5 Aug 2024 19:08:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3B6D81A058E;
-	Mon,  5 Aug 2024 19:08:21 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgBXzIKjsrBmFRRXAw--.40356S3;
-	Mon, 05 Aug 2024 19:08:21 +0800 (CST)
-Subject: Re: [PATCH -next] md: wake up mdmon after setting badblocks
-To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240801125148.251986-1-yukuai1@huaweicloud.com>
- <20240805114024.00007877@linux.intel.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <5f306d9e-56f7-5e3b-625e-e740f528e130@huaweicloud.com>
-Date: Mon, 5 Aug 2024 19:08:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1722856170; c=relaxed/simple;
+	bh=CMrjytNlnDg8U2jHeWbZ90gwdBK8a42GFbXZHZPbHlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FUJ0DkJzTtPVY6ehR2DLWWU0QxScTkhl/ZQ9AgYhIq5M2/490fS2JkNMlh1JQkIJnhgrZ2+QSijOTdGnQiT0luyl72ZEOYVXhCIuLGJjTY0zw9rg2+A5UmfsGjGuBFCn0SV7jeZkR+YvS1mWbnjch7S4gSyhTdPbYDEc2dJ60Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vvtOSBt8; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so11343a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 04:09:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722856167; x=1723460967; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l4Lfr7cWJZWVAHEZdC4tIJBE0idMw63JeT0pm5BZ7xI=;
+        b=vvtOSBt8vIRCkdryWVTeez/1NAuo8vVgk6gYAcTKOvAdG5jy3ByBccPcfg5LdkyZqN
+         sbRMlghyYYsojBdYgr7/vmDFvxCgL/ILjb3bzYNie3kw7vFBRbaiJo1tOWJ8Z1at3kPy
+         STAIJGaHxc+oJTElTj9MTuv1OxnvxiwMQQzsdQ7BzakEqCiq8g6KDWCebQ4ZmTIO6y3Y
+         i72O1k0U2uR6XHDr317c8Y5i62QduCEPcni9GPJaixQl/GYAaJqb67GPbYbD07u8rgy+
+         XTgN/5LcnRLq/lxmxJwAmqINDWG8asK07YokYpWxebmrGA7CLx6oCxCSOIxLvbFl4faC
+         HhgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722856167; x=1723460967;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l4Lfr7cWJZWVAHEZdC4tIJBE0idMw63JeT0pm5BZ7xI=;
+        b=Bnffm1AVKKTuDqMM/Dx0/t+PoND5du6b/lbuRv6ZVW2KIrCJxPOK5LIw5ASGGmIrJ0
+         bo7JuBry5YcPDGRXseQXOgtaD7SrgZV2xBMMMqODjA8IAhV0hsgFdIcI5Sm9Ynxz7msh
+         ntRtEwEUKZrMHMCa5aYvefsg3zU3wuC+/OD2uY+sQXuoB4cffJjeEg0xYWxerP4kKve2
+         09iYIXKELDGJBS1LbOikt0pn9/gH1PhlXUAycTSKwo9mCMS9L7VgduOTrwqTSFdXSLwB
+         3cayP40hfXNy1IMe3icZNPfrl+yLyn0Y+b+jK0Gyj0q3JKe6P0JXfN6J9Pe1h4BbF0/n
+         TE2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVOq/H1Y7teCDznuMQUCzZX/pVYs1IhmqBxEHKZnmbLY/1AnX5oy/n5LWlzLaXro+u+gcS9s0m4U7u6yG/pXoUlXjfOzYnDPm8XpqxQ
+X-Gm-Message-State: AOJu0YwC2DKqzvyMptpHHXvZD7OFXYv9V0dQpy8ia8GYg54nyk7Rtapk
+	LyXg8YSLvnO3Vx4FkEcWDHIyvdepoaggx1zt84TajUIbpKKjjbMrRiMEmKWqdVlkp6NJahq32cK
+	XybD9mNl/O0HYOhUogaY8mndCpAwF6LpMf1ZQ
+X-Google-Smtp-Source: AGHT+IFp87Hdx6GUQ1S1AEPzYYlgjbHanaDmgkICP7MLibR3DnxI+KS0tbUjMlWb5jGpuxF3ieM4UF/2QwlapV8GnpQ=
+X-Received: by 2002:a05:6402:35d4:b0:5b4:df4a:48bb with SMTP id
+ 4fb4d7f45d1cf-5b9c1e5e74emr228803a12.0.1722856166424; Mon, 05 Aug 2024
+ 04:09:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240805114024.00007877@linux.intel.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXzIKjsrBmFRRXAw--.40356S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw47Aw4DWr4UXF4UXFyDGFg_yoW5Jw1Up3
-	95ua4Ygr1qkrn7Ww17XF15ur1Fgw1fKr4DKrWSgF18t3ZrKr1agr4vgFWDJrWkCrZxCFs2
-	gw4UJ3y5ua40gFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
-	73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20240802-kasan-tsbrcu-v6-0-60d86ea78416@google.com>
+ <20240802-kasan-tsbrcu-v6-2-60d86ea78416@google.com> <CANpmjNNadRtLijEZLgE3HpyCGW=gkhunsFZ9FmwFZrpyWGUrnA@mail.gmail.com>
+In-Reply-To: <CANpmjNNadRtLijEZLgE3HpyCGW=gkhunsFZ9FmwFZrpyWGUrnA@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 5 Aug 2024 13:08:50 +0200
+Message-ID: <CAG48ez2Jsc2V1NfN1YOnx0e3-3BaVSdac7p_y9gnYL=9VW6cOw@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG
+To: Marco Elver <elver@google.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzbot+263726e59eab6b442723@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Aug 5, 2024 at 11:02=E2=80=AFAM Marco Elver <elver@google.com> wrot=
+e:
+> On Fri, 2 Aug 2024 at 22:32, Jann Horn <jannh@google.com> wrote:
+> >
+> > Currently, KASAN is unable to catch use-after-free in SLAB_TYPESAFE_BY_=
+RCU
+> > slabs because use-after-free is allowed within the RCU grace period by
+> > design.
+> >
+> > Add a SLUB debugging feature which RCU-delays every individual
+> > kmem_cache_free() before either actually freeing the object or handing =
+it
+> > off to KASAN, and change KASAN to poison freed objects as normal when t=
+his
+> > option is enabled.
+> >
+> > For now I've configured Kconfig.debug to default-enable this feature in=
+ the
+> > KASAN GENERIC and SW_TAGS modes; I'm not enabling it by default in HW_T=
+AGS
+> > mode because I'm not sure if it might have unwanted performance degrada=
+tion
+> > effects there.
+> >
+> > Note that this is mostly useful with KASAN in the quarantine-based GENE=
+RIC
+> > mode; SLAB_TYPESAFE_BY_RCU slabs are basically always also slabs with a
+> > ->ctor, and KASAN's assign_tag() currently has to assign fixed tags for
+> > those, reducing the effectiveness of SW_TAGS/HW_TAGS mode.
+> > (A possible future extension of this work would be to also let SLUB cal=
+l
+> > the ->ctor() on every allocation instead of only when the slab page is
+> > allocated; then tag-based modes would be able to assign new tags on eve=
+ry
+> > reallocation.)
+> >
+> > Tested-by: syzbot+263726e59eab6b442723@syzkaller.appspotmail.com
+> > Signed-off-by: Jann Horn <jannh@google.com>
+>
+> Acked-by: Marco Elver <elver@google.com>
 
-ÔÚ 2024/08/05 17:40, Mariusz Tkaczyk Ð´µÀ:
-> On Thu,  1 Aug 2024 20:51:48 +0800
-> Yu Kuai <yukuai1@huaweicloud.com> wrote:
-> 
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> For external super_block, mdmon rely on "mddev->sysfs_state" to update
->> super_block. However, rdev_set_badblocks() will set sb_flags without
->> waking up mdmon, which might cauing IO hang due to suepr_block can't be
->> updated.
->>
->> This problem is found by code review.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   drivers/md/md.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/md/md.c b/drivers/md/md.c
->> index 23cc77d51676..06d6ee8cd543 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -9831,10 +9831,12 @@ int rdev_set_badblocks(struct md_rdev *rdev, sector_t
->> s, int sectors, /* Make sure they get written out promptly */
->>   		if (test_bit(ExternalBbl, &rdev->flags))
->>   			sysfs_notify_dirent_safe(rdev->sysfs_unack_badblocks);
->> -		sysfs_notify_dirent_safe(rdev->sysfs_state);
->>   		set_mask_bits(&mddev->sb_flags, 0,
->>   			      BIT(MD_SB_CHANGE_CLEAN) |
->> BIT(MD_SB_CHANGE_PENDING)); md_wakeup_thread(rdev->mddev->thread);
->> +
->> +		sysfs_notify_dirent_safe(rdev->sysfs_state);
->> +		sysfs_notify_dirent_safe(mddev->sysfs_state);
->>   		return 1;
->>   	} else
->>   		return 0;
-> 
-> 
-> Hey Kuai,
-> Later, I realized that mdmon is attached to various fds:
-> 
-> Here a mdmon code:
-> 
-> add_fd(&rfds, &maxfd, a->info.state_fd);	#mddev->sysfs_state
-> add_fd(&rfds, &maxfd, a->action_fd);		#mddev->sysfs_action
-> add_fd(&rfds, &maxfd, a->sync_completed_fd);	#mddev->resync_position
-> 
-> 
-> for (mdi = a->info.devs ; mdi ; mdi = mdi->next) { #for each rdev
-> 	add_fd(&rfds, &maxfd, mdi->state_fd);		#rdev->sysfs_state
-> 	add_fd(&rfds, &maxfd, mdi->bb_fd);		#rdev->sysfs_badblocks
-> 	add_fd(&rfds, &maxfd, mdi->ubb_fd);
-> #rdev->sysfs_unack_badblocks }
+Thanks!
 
-Ok, so I was wrong that mdmon rely on "mddev->sysfs_state".
-> 
-> Notification in rdev->sysfs_state is fine. The problem was somewhere else
-> (mdmon blocked on "rdev remove"). And It will be fixed by moving rdev remove to
-> managemon because it is blocking action now.
-> 
-> https://github.com/md-raid-utilities/mdadm/pull/66
-> 
-> I think it is fine to move this down after set_mask_bits, but we don't
-> have to repeat notification to mddev->state.
+> Looks good - let's see what the fuzzers will find with it. :-)
+>
+> Feel free to ignore the below comments if there isn't a v+1.
+[...]
+> > +config SLUB_RCU_DEBUG
+> > +       bool "Enable UAF detection in TYPESAFE_BY_RCU caches (for KASAN=
+)"
+> > +       depends on SLUB_DEBUG
+> > +       depends on KASAN # not a real dependency; currently useless wit=
+hout KASAN
+>
+> This comment is odd. If it's useless without KASAN then it definitely
+> depends on KASAN. I suppose the code compiles without KASAN, but I
+> think that's secondary.
 
-Yes, I'll send a v2 patch to move down "rdev->sysfs_state".
+In my mind, SLUB_RCU_DEBUG is a mechanism on top of which you could
+build several things - and currently only the KASAN integration is
+built on top of it, but more stuff could be added in the future, like
+some SLUB poisoning. So it's currently not useful unless you also
+enable KASAN, but SLUB_RCU_DEBUG doesn't really depend on KASAN - it's
+the other way around, KASAN has an optional dependency on
+SLUB_RCU_DEBUG.
 
-Thanks,
-Kuai
+[...]
+> > +#ifdef CONFIG_SLUB_RCU_DEBUG
+> > +static void slab_free_after_rcu_debug(struct rcu_head *rcu_head)
+> > +{
+> > +       struct rcu_delayed_free *delayed_free =3D
+> > +                       container_of(rcu_head, struct rcu_delayed_free,=
+ head);
+>
+> Minor: Some of these line breaks are unnecessary (kernel allows 100+
+> cols) - but up to you if you want to change it.
 
-> 
-> Thanks,
-> Mariusz
-> 
-> .
-> 
-
+https://www.kernel.org/doc/html/latest/process/coding-style.html#breaking-l=
+ong-lines-and-strings
+says 80 columns is still preferred unless that makes the code less
+readable, that's why I'm still usually breaking at 80 columns.
 
