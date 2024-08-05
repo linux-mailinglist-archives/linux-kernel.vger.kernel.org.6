@@ -1,493 +1,174 @@
-Return-Path: <linux-kernel+bounces-274340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E1E29476FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:13:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49EDF9476FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59E1DB229BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:13:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518E91C210C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 08:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890921514C8;
-	Mon,  5 Aug 2024 08:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8320F14D71A;
+	Mon,  5 Aug 2024 08:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="b2Kx8jfg"
-Received: from mail-lf1-f65.google.com (mail-lf1-f65.google.com [209.85.167.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="gGs8eCs0"
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6739214B975
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 08:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BED9148FED;
+	Mon,  5 Aug 2024 08:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722845580; cv=none; b=NGOpkMmwshvzMkLzTKSb9awyLKu5IJ2PRV4GlW4cHqohqzSLGi3zScJbakkUtMaJu3/j6QCQJYFA2dpuSEZ3bfcGe5p5WyczaFFJoREk9TLV8rt01s78NJ1u1UME+xjPa3MCd2NNRkyKsr0Z7WnaxzcKKVP6bPq1F0wanil+Szk=
+	t=1722845709; cv=none; b=HOBg+SicGOURRwAg5zYRAJO4dOXm1SmKeimIkRbyz/lwQsxUjTmOc0Fh3udxELXyRl0xmgMOUxtsfsy3REqbVAbO5iKS24pqSDR2CjAku3CWf0m7/KUzUPApUu4GRWIYG1sEmkgh4t4Cw0czFXrV69C4zPEi0IHUBA6xn7vj0SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722845580; c=relaxed/simple;
-	bh=1Khf1UDyTtXqMecMd/S+X2KpB0eMBbe3AtVxpeTXNtU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WiY602RO/H0owRfR0DUCWyI0pCRIGfafSQhzEqRthuhz5T1bBKQtcpTJs2Ip/k83/2iIRk1oh7ac4aqJ4iEw2QucC+eJYEfRN7ePwezUkrN6mTcz1yfqLP6LMoatNlFuzx0ki9Y0IYhjn+A8/F/rJN+zO0WjQkubnh/CcaiHQvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=b2Kx8jfg; arc=none smtp.client-ip=209.85.167.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-lf1-f65.google.com with SMTP id 2adb3069b0e04-52efa9500e0so11913443e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 01:12:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1722845577; x=1723450377; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v78hwJU/wG48aw0B9DVAOmxqpaYmoS/29vW4dzbedZc=;
-        b=b2Kx8jfgDkpiGtnP8dHTOWHZc4n2dky0UQABJSaEmXUTrDWENjOSrHgujX9cek2i5w
-         YE3c+EYAWlQjQq6yFmVLz/lFjyUXTyj95DGQ72toKvuNTsYgOLQWDPYjgRlQYDCr7vae
-         hm8s//0B3DiEkbWNLr5v453eprXyF3YUElmgsNfsadmYmS+PS8nU9260SFHE9D0eKXQV
-         xOW5mMYi4ezqCcHx7Z5q0xEIVlRnWNzLU0IIEEhFDCHGpXOoU8XUpVc4JlEATzhtL9Id
-         o0l2+Au2eM5x8tFX28/lnNbIofGK3UJXctZ5Ayf6pstEwwMBYuaTgcibAA0DHAFfX7wh
-         sb5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722845577; x=1723450377;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v78hwJU/wG48aw0B9DVAOmxqpaYmoS/29vW4dzbedZc=;
-        b=L/LX7AO7k5XXyNeK8T666FfySNfEBNn+ao/vqgcCb63ybyH+SonJHX7RnRNdeABJzP
-         KEVHTmLwWUuaaCPJIzNfbHn/thkdsqFu7XeZ6Jm0MLU0WeLIiA0b9QFMgd5M5ICaVlg0
-         Y5naaVWb7ewN70okFRvZT/kD/mhvbrElM7re70QCH4kk/3GJ3dGZ5cx0iYQv3AX302Qe
-         t3QMPDtskrV79YTOreuIb36EYgJDFSepDsnxnN6K4L18hA1T9feVVjD9tA5Qt12DTqKD
-         JbmJ4U1je+E5asbpWfuFXskIkXeAmB9sdtjpANJnpINlkvt/74qfWl8Vy5rSdd2EeeOi
-         Bb/w==
-X-Forwarded-Encrypted: i=1; AJvYcCV57abSj+aLJmNyYbpUXxPCWKTmc9wdjDPYybc1xZ7hKVvSrGF9rtaKuqJmW1O1+R4UtUGtnz6VpGgZvFp3sgyiJaZgq6dxjUuPLPVR
-X-Gm-Message-State: AOJu0YzebFHxi76n/Rj6PDamDaaSIJVpXWjaZbeLyyB3aO37TE27/8jD
-	IW+1a9F6zPSxeHkwcYVomgyQ4lyNOlspB+vDSVjQpOKnIszMOQQotEmNaB5cS28=
-X-Google-Smtp-Source: AGHT+IFzsUWEIKc4vSpNvJMhPzVZjxkOrm8Nem3Jp8LTg9dL+Wx0WJ5puE94crO+XIv3TqVP3iDetw==
-X-Received: by 2002:a05:6512:3dab:b0:52c:df9d:7cbe with SMTP id 2adb3069b0e04-530bb39d2dbmr7076160e87.39.1722845576265;
-        Mon, 05 Aug 2024 01:12:56 -0700 (PDT)
-Received: from carbon.local (catv-86-101-168-118.catv.fixed.vodafone.hu. [86.101.168.118])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bb88d1d9a3sm1231565a12.26.2024.08.05.01.12.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 01:12:55 -0700 (PDT)
-From: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
-Date: Mon, 05 Aug 2024 09:12:53 +0100
-Subject: [PATCH v6 2/2] iio: humidity: Add support for ENS210
+	s=arc-20240116; t=1722845709; c=relaxed/simple;
+	bh=xLwAL30HsUazONbAdeyL6SW7m8LuRtuI1JpFRvYHPkI=;
+	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
+	 In-Reply-To; b=JKZcZ/nv+H+7/cebN5Y3G47tLMNm5Yn51raAlQIVQiTQOhAAciqVN0eNp3s9U+D7MTiCLd9jl+Cwxfdtm+3YZALtXw9ublv4HghkF3k1YMWibDNOopi9cDWuF53wQFa07kfs5CnLm10yDWkCqZNUeboZpQg6dWsCqdUBur+C/EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=gGs8eCs0; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [213.135.10.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id B62FE112;
+	Mon,  5 Aug 2024 10:14:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1722845698;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
+	 references:references; bh=5BjVyMLlxUNN9B+c+TnMQJMAi/0kH47F+XpZ7pZB+aY=;
+	b=gGs8eCs06i5Bm0tao3zgmqnXZxRLfAVT9HCBeDdXP8vkxsjJE4j5FvUAbG369KAyjIHMT8
+	BYZmNMlnsOqH+DonAHT8TCoFTn+Ra08pncLMz1OTv1uLPM7iP8q58ioWfZS7UpuTGeQ3T3
+	dYTsDbzQzDlyjGGm4sqcAKDvGrsDWKnxE07Cje6GwTMwkYLQSieOKz9CWFpbT/+triyUps
+	rcIAWsgWxg2rUaNBaNq+9zJgga+ZnL/xnA9jBKiHW/EbNNCUl4MiK99L+TOkg1Xaf7KGlq
+	tm6wsSKL4cmLtNuXDq1VL+0txgqm/iXXj0O1yC1hOz5JTu7pYr9KsdAJli+GQg==
+Content-Type: multipart/signed;
+ boundary=7dd7e4000aaf39ea05868ee56141ae02e60c588dac0a5b0688b30f1b385e;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Mon, 05 Aug 2024 10:14:55 +0200
+Message-Id: <D37TTUBLTRVT.9J44JZ1DP06A@walle.cc>
+Cc: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
+ <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
+ <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
+ <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
+ "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, "Conor Dooley"
+ <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
+From: "Michael Walle" <michael@walle.cc>
+To: "Frager, Neal" <neal.frager@amd.com>, "Simek, Michal"
+ <michal.simek@amd.com>, "Mahapatra, Amit Kumar"
+ <amit.kumar-mahapatra@amd.com>, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ "broonie@kernel.org" <broonie@kernel.org>, "pratyush@kernel.org"
+ <pratyush@kernel.org>, "miquel.raynal@bootlin.com"
+ <miquel.raynal@bootlin.com>, "richard@nod.at" <richard@nod.at>,
+ "vigneshr@ti.com" <vigneshr@ti.com>, "sbinding@opensource.cirrus.com"
+ <sbinding@opensource.cirrus.com>, "lee@kernel.org" <lee@kernel.org>,
+ "james.schulman@cirrus.com" <james.schulman@cirrus.com>,
+ "david.rhodes@cirrus.com" <david.rhodes@cirrus.com>,
+ "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>, "perex@perex.cz"
+ <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>
+Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
+ spi-nor
+X-Mailer: aerc 0.16.0
+References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
+ <b3d3c457-a43b-478a-85b3-52558227d139@linaro.org>
+ <BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org> <BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org> <BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com> <c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org> <9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org> <BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com> <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com> <D2ZHJ765LUGP.2KTA46P1BL75X@walle.cc> <e1587f61-f765-4a22-b06e-71387cc49c4d@amd.com> <D33M26RLVLHF.3Q5YARPBNSBOY@walle.cc> <9fb60743-3e89-49fa-a399-3cf2607a7e41@amd.com> <D33S9T73M6ND.G7CCJ4PDVYQU@walle.cc> <c01d048f-ad8b-417e-8ff0-96f9252c87f2@amd.com> <CH2PR12MB50044242FE253D7B0E3425ABF0B22@CH2PR12MB5004.namprd12.prod.outlook.com>
+In-Reply-To: <
+ <CH2PR12MB50044242FE253D7B0E3425ABF0B22@CH2PR12MB5004.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240805-ens21x-v6-2-5bb576ef26a6@thegoodpenguin.co.uk>
-References: <20240805-ens21x-v6-0-5bb576ef26a6@thegoodpenguin.co.uk>
-In-Reply-To: <20240805-ens21x-v6-0-5bb576ef26a6@thegoodpenguin.co.uk>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722845573; l=11290;
- i=jfelmeden@thegoodpenguin.co.uk; s=20240709; h=from:subject:message-id;
- bh=1Khf1UDyTtXqMecMd/S+X2KpB0eMBbe3AtVxpeTXNtU=;
- b=8tl10uh9XTPHL2grhaw08Nu/s6Cq73Rk3uiMqZN4lxIRD2bOSGSPXufX7Tzek9FnlhwUil3pK
- jdjFcZYIYuiAyTVVq91MVuymm+22zjBQBn35FzykI2+oPmGF9WQC8Pk
-X-Developer-Key: i=jfelmeden@thegoodpenguin.co.uk; a=ed25519;
- pk=tePkZ5iJ3ejQ2O3vjhsj7GrLYcyJN1o1sMT3IEXvKo0=
 
-Add support for ENS210/ENS210A/ENS211/ENS212/ENS213A/ENS215.
+--7dd7e4000aaf39ea05868ee56141ae02e60c588dac0a5b0688b30f1b385e
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-The ENS21x is a family of temperature and relative humidity sensors with
-accuracies tailored to the needs of specific applications.
+Hi,
 
-Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
----
- drivers/iio/humidity/Kconfig  |  11 ++
- drivers/iio/humidity/Makefile |   1 +
- drivers/iio/humidity/ens210.c | 338 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 350 insertions(+)
+> > You get twice more capacity based on that configuration. I can't answer=
+ the=20
+> > second question because not working with field. But both of that config=
+urations=20
+> > are used by customers. Adding Neal if he wants to add something more to=
+ it.
+>
+> Just to add a comment as I work directly with our customers.  The main re=
+ason
+> this support is important is for our older SoCs, zynq and zynqmp.
+>
+> Most of our customers are using QSPI flash as the first boot memory to ge=
+t
+> from the boot ROM to u-boot.  They then typically use other memories, suc=
+h as
+> eMMC for the Linux kernel, OS and file system.
 
-diff --git a/drivers/iio/humidity/Kconfig b/drivers/iio/humidity/Kconfig
-index b15b7a3b66d5..54f11f000b6f 100644
---- a/drivers/iio/humidity/Kconfig
-+++ b/drivers/iio/humidity/Kconfig
-@@ -25,6 +25,17 @@ config DHT11
- 	  Other sensors should work as well as long as they speak the
- 	  same protocol.
- 
-+config ENS210
-+	tristate "ENS210 temperature and humidity sensor"
-+	depends on I2C
-+	select CRC7
-+	help
-+	  Say yes here to get support for the ScioSense ENS210 family of
-+	  humidity and temperature sensors.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called ens210.
-+
- config HDC100X
- 	tristate "TI HDC100x relative humidity and temperature sensor"
- 	depends on I2C
-diff --git a/drivers/iio/humidity/Makefile b/drivers/iio/humidity/Makefile
-index 5fbeef299f61..34b3dc749466 100644
---- a/drivers/iio/humidity/Makefile
-+++ b/drivers/iio/humidity/Makefile
-@@ -5,6 +5,7 @@
- 
- obj-$(CONFIG_AM2315) += am2315.o
- obj-$(CONFIG_DHT11) += dht11.o
-+obj-$(CONFIG_ENS210) += ens210.o
- obj-$(CONFIG_HDC100X) += hdc100x.o
- obj-$(CONFIG_HDC2010) += hdc2010.o
- obj-$(CONFIG_HDC3020) += hdc3020.o
-diff --git a/drivers/iio/humidity/ens210.c b/drivers/iio/humidity/ens210.c
-new file mode 100644
-index 000000000000..719fdac817cf
---- /dev/null
-+++ b/drivers/iio/humidity/ens210.c
-@@ -0,0 +1,338 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * ens210.c - Support for ScioSense ens210 temperature & humidity sensor family
-+ *
-+ * (7-bit I2C slave address 0x43 ENS210)
-+ * (7-bit I2C slave address 0x43 ENS210A)
-+ * (7-bit I2C slave address 0x44 ENS211)
-+ * (7-bit I2C slave address 0x45 ENS212)
-+ * (7-bit I2C slave address 0x46 ENS213A)
-+ * (7-bit I2C slave address 0x47 ENS215)
-+ *
-+ * Datasheet:
-+ *  https://www.sciosense.com/wp-content/uploads/2024/04/ENS21x-Datasheet.pdf
-+ *  https://www.sciosense.com/wp-content/uploads/2023/12/ENS210-Datasheet.pdf
-+ */
-+
-+#include <linux/crc7.h>
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/iio/iio.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/types.h>
-+
-+#include <asm/unaligned.h>
-+
-+/* register definitions */
-+#define ENS210_REG_PART_ID		0x00
-+#define ENS210_REG_DIE_REV		0x02
-+#define ENS210_REG_UID			0x04
-+#define ENS210_REG_SYS_CTRL		0x10
-+#define ENS210_REG_SYS_STAT		0x11
-+#define ENS210_REG_SENS_RUN		0x21
-+#define ENS210_REG_SENS_START		0x22
-+#define ENS210_REG_SENS_STOP		0x23
-+#define ENS210_REG_SENS_STAT		0x24
-+#define ENS210_REG_T_VAL		0x30
-+#define ENS210_REG_H_VAL		0x33
-+
-+/* value definitions */
-+#define ENS210_SENS_START_T_START		BIT(0)
-+#define ENS210_SENS_START_H_START		BIT(1)
-+
-+#define ENS210_SENS_STAT_T_ACTIVE		BIT(0)
-+#define ENS210_SENS_STAT_H_ACTIVE		BIT(1)
-+
-+#define ENS210_SYS_CTRL_LOW_POWER_ENABLE	BIT(0)
-+#define ENS210_SYS_CTRL_SYS_RESET		BIT(7)
-+
-+#define ENS210_SYS_STAT_SYS_ACTIVE		BIT(0)
-+
-+enum ens210_partnumber {
-+	ENS210	= 0x0210,
-+	ENS210A	= 0xa210,
-+	ENS211	= 0x0211,
-+	ENS212	= 0x0212,
-+	ENS213A	= 0xa213,
-+	ENS215	= 0x0215,
-+};
-+
-+/**
-+ * struct ens210_chip_info - Humidity/Temperature chip specific information
-+ * @name:		name of device
-+ * @part_id:		chip identifier
-+ * @conv_time_msec:	time for conversion calculation in m/s
-+ */
-+struct ens210_chip_info {
-+	const char *name;
-+	enum ens210_partnumber part_id;
-+	unsigned int conv_time_msec;
-+};
-+
-+/**
-+ * struct ens210_data - Humidity/Temperature sensor device structure
-+ * @client:	i2c client
-+ * @chip_info:	chip specific information
-+ * @lock:	lock protecting against simultaneous callers of get_measurement
-+ *		since multiple uninterrupted transactions are required
-+ */
-+struct ens210_data {
-+	struct i2c_client *client;
-+	const struct ens210_chip_info *chip_info;
-+	struct mutex lock;
-+};
-+
-+/* calculate 17-bit crc7 */
-+static u8 ens210_crc7(u32 val)
-+{
-+	unsigned int val_be = (val & 0x1ffff) >> 0x8;
-+
-+	return crc7_be(0xde, (u8 *)&val_be, 3) >> 1;
-+}
-+
-+static int ens210_get_measurement(struct iio_dev *indio_dev, bool temp, int *val)
-+{
-+	struct ens210_data *data = iio_priv(indio_dev);
-+	struct device *dev = &data->client->dev;
-+	u32 regval;
-+	u8 regval_le[3];
-+	int ret;
-+
-+	/* assert read */
-+	ret = i2c_smbus_write_byte_data(data->client, ENS210_REG_SENS_START,
-+					temp ? ENS210_SENS_START_T_START :
-+					       ENS210_SENS_START_H_START);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for conversion to be ready */
-+	msleep(data->chip_info->conv_time_msec);
-+
-+	ret = i2c_smbus_read_byte_data(data->client, ENS210_REG_SENS_STAT);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* perform read */
-+	ret = i2c_smbus_read_i2c_block_data(
-+		data->client, temp ? ENS210_REG_T_VAL : ENS210_REG_H_VAL, 3,
-+		regval_le);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to read register");
-+		return -EIO;
-+	}
-+	if (ret != 3) {
-+		dev_err(dev, "expected 3 bytes, received %d\n", ret);
-+		return -EIO;
-+	}
-+
-+	regval = get_unaligned_le24(regval_le);
-+	if (ens210_crc7(regval) != ((regval >> 17) & 0x7f)) {
-+		dev_err(dev, "invalid crc\n");
-+		return -EIO;
-+	}
-+
-+	if (!((regval >> 16) & 0x1)) {
-+		dev_err(dev, "data is not valid");
-+		return -EIO;
-+	}
-+
-+	*val = regval & GENMASK(15, 0);
-+	return IIO_VAL_INT;
-+}
-+
-+static int ens210_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *channel, int *val,
-+			   int *val2, long mask)
-+{
-+	struct ens210_data *data = iio_priv(indio_dev);
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		scoped_guard(mutex, &data->lock) {
-+			ret = ens210_get_measurement(
-+				indio_dev, channel->type == IIO_TEMP, val);
-+			if (ret)
-+				return ret;
-+			return IIO_VAL_INT;
-+		}
-+	case IIO_CHAN_INFO_SCALE:
-+		if (channel->type == IIO_TEMP) {
-+			*val = 15;
-+			*val2 = 625000;
-+		} else {
-+			*val = 1;
-+			*val2 = 953125;
-+		}
-+		return IIO_VAL_INT_PLUS_MICRO;
-+	case IIO_CHAN_INFO_OFFSET:
-+		*val = -17481;
-+		*val2 = 600000;
-+		return IIO_VAL_INT_PLUS_MICRO;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_chan_spec ens210_channels[] = {
-+	{
-+		.type = IIO_TEMP,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE) |
-+				      BIT(IIO_CHAN_INFO_OFFSET),
-+	},
-+	{
-+		.type = IIO_HUMIDITYRELATIVE,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE),
-+	}
-+};
-+
-+static const struct iio_info ens210_info = {
-+	.read_raw = ens210_read_raw,
-+};
-+
-+static int ens210_probe(struct i2c_client *client)
-+{
-+	struct ens210_data *data;
-+	struct iio_dev *indio_dev;
-+	uint16_t part_id;
-+	int ret;
-+
-+	if (!i2c_check_functionality(client->adapter,
-+				     I2C_FUNC_SMBUS_WRITE_BYTE_DATA |
-+					     I2C_FUNC_SMBUS_WRITE_BYTE |
-+					     I2C_FUNC_SMBUS_READ_I2C_BLOCK)) {
-+		return dev_err_probe(&client->dev, -EOPNOTSUPP,
-+			"adapter does not support some i2c transactions\n");
-+	}
-+
-+	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	data = iio_priv(indio_dev);
-+	data->client = client;
-+	mutex_init(&data->lock);
-+	data->chip_info = i2c_get_match_data(client);
-+
-+	ret = devm_regulator_get_enable(&client->dev, "vdd");
-+	if (ret)
-+		return ret;
-+
-+	/* reset device */
-+	ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL,
-+					ENS210_SYS_CTRL_SYS_RESET);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for device to become active */
-+	usleep_range(4000, 5000);
-+
-+	/* disable low power mode */
-+	ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL, 0x00);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for device to finish */
-+	usleep_range(4000, 5000);
-+
-+	/* get part_id */
-+	ret = i2c_smbus_read_word_data(client, ENS210_REG_PART_ID);
-+	if (ret < 0)
-+		return ret;
-+	part_id = ret;
-+
-+	if (part_id != data->chip_info->part_id) {
-+		dev_info(&client->dev,
-+			 "Part ID does not match (0x%04x != 0x%04x)\n", part_id,
-+			 data->chip_info->part_id);
-+	}
-+
-+	/* reenable low power */
-+	ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL,
-+					ENS210_SYS_CTRL_LOW_POWER_ENABLE);
-+	if (ret)
-+		return ret;
-+
-+	indio_dev->name = data->chip_info->name;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = ens210_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(ens210_channels);
-+	indio_dev->info = &ens210_info;
-+
-+	return devm_iio_device_register(&client->dev, indio_dev);
-+}
-+
-+static const struct ens210_chip_info ens210_chip_info_data = {
-+	.name = "ens210",
-+	.part_id = ENS210,
-+	.conv_time_msec = 130,
-+};
-+
-+static const struct ens210_chip_info ens210a_chip_info_data = {
-+	.name = "ens210a",
-+	.part_id = ENS210A,
-+	.conv_time_msec = 130,
-+};
-+
-+static const struct ens210_chip_info ens211_chip_info_data = {
-+	.name = "ens211",
-+	.part_id = ENS211,
-+	.conv_time_msec = 32,
-+};
-+
-+static const struct ens210_chip_info ens212_chip_info_data = {
-+	.name = "ens212",
-+	.part_id = ENS212,
-+	.conv_time_msec = 32,
-+};
-+
-+static const struct ens210_chip_info ens213a_chip_info_data = {
-+	.name = "ens213a",
-+	.part_id = ENS213A,
-+	.conv_time_msec = 130,
-+};
-+
-+static const struct ens210_chip_info ens215_chip_info_data = {
-+	.name = "ens215",
-+	.part_id = ENS215,
-+	.conv_time_msec = 130,
-+};
-+
-+static const struct of_device_id ens210_of_match[] = {
-+	{ .compatible = "sciosense,ens210", .data = &ens210_chip_info_data },
-+	{ .compatible = "sciosense,ens210a", .data = &ens210a_chip_info_data },
-+	{ .compatible = "sciosense,ens211", .data = &ens211_chip_info_data },
-+	{ .compatible = "sciosense,ens212", .data = &ens212_chip_info_data },
-+	{ .compatible = "sciosense,ens213a", .data = &ens213a_chip_info_data },
-+	{ .compatible = "sciosense,ens215", .data = &ens215_chip_info_data },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, ens210_of_match);
-+
-+static const struct i2c_device_id ens210_id_table[] = {
-+	{ "ens210", (kernel_ulong_t)&ens210_chip_info_data },
-+	{ "ens210a", (kernel_ulong_t)&ens210a_chip_info_data },
-+	{ "ens211", (kernel_ulong_t)&ens211_chip_info_data },
-+	{ "ens212", (kernel_ulong_t)&ens212_chip_info_data },
-+	{ "ens213a", (kernel_ulong_t)&ens213a_chip_info_data },
-+	{ "ens215", (kernel_ulong_t)&ens215_chip_info_data },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, ens210_id_table);
-+
-+static struct i2c_driver ens210_driver = {
-+	.probe = ens210_probe,
-+	.id_table = ens210_id_table,
-+	.driver = {
-+		.name = "ens210",
-+		.of_match_table = ens210_of_match,
-+	},
-+};
-+module_i2c_driver(ens210_driver);
-+
-+MODULE_DESCRIPTION("ScioSense ENS210 temperature and humidity sensor driver");
-+MODULE_AUTHOR("Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>");
-+MODULE_LICENSE("GPL");
+Agreed and that's probably the most prominent use case for NOR
+flashes anyway.
 
--- 
-2.39.2
+> The issue we have on the zynq and zynqmp SoCs is that the boot ROM (code =
+that
+> cannot be changed) will not boot from an OSPI flash.  It will only boot f=
+rom a
+> QSPI flash.  This is what is forcing many of our customers down the QSPI =
+path.
+> Since many of these customers are interested in additional speed and memo=
+ry
+> size, they then end up using a parallel or stacked configuration because =
+they
+> cannot use an OSPI with zynq or zynqmp.
 
+Above you've said, the bootloader is stored on the NOR flash and the
+bulk storage is eMMC. So why do you need bigger NOR flashes (where
+even the biggest NOR flash isn't enough)?
+
+I also don't understand "the boot ROM will just boot from QSPI".
+First, you cannot connect an octal flash anyway, because you only
+have an QSPI controller, right? Secondly, normally the bootrom will
+(at least) boot the first stage using normal (single line) SPI
+commands. Is that not the case for zynq and zynqmp?
+
+> All of our newer SoCs can boot from OSPI.  I agree with you that if someo=
+ne
+> could choose OSPI for performance, they would, so I do not expect paralle=
+l or
+> stacked configurations with our newer SoCs.
+
+Ok, but then the argument with bigger flashes are void, because you
+are back to be bound to one OSPI flash.
+
+> I get why you see this configuration as a niche, but for us, it is a very
+> large niche because zynq and zynqmp are two of our most successful SoC
+> families.
+
+Fair enough. But please find a way to support it without butchering
+the whole core.
+
+-michael
+
+--7dd7e4000aaf39ea05868ee56141ae02e60c588dac0a5b0688b30f1b385e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZrCKABEcbWljaGFlbEB3
+YWxsZS5jYwAKCRASJzzuPgIf+FYNAX9NIWR38ce9qJn6zNk09ma1XmS8x6pEwlyq
+B9zfpWmszaRp5K+VrBhJPhG/hsHdCEYBgJOO6eD7uzRx54DCJJvPk/PtcUpV9fHS
+uITq20JdXO5/9F2UNXphqdnMQ0F8FW7hjg==
+=jmIb
+-----END PGP SIGNATURE-----
+
+--7dd7e4000aaf39ea05868ee56141ae02e60c588dac0a5b0688b30f1b385e--
 
