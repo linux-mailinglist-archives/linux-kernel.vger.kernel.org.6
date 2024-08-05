@@ -1,292 +1,128 @@
-Return-Path: <linux-kernel+bounces-275299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2099482FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:11:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E06CC9482F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 22:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1761C20BE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:11:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF1321C210B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDFE16D33A;
-	Mon,  5 Aug 2024 20:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD3916C696;
+	Mon,  5 Aug 2024 20:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HOZKq5UW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lvzbsXD2"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E60016CD00
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 20:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722888684; cv=fail; b=AlY3OKL/4nWCaTDNKS6HhHF4zOD9Nwlv4dxlIeXLez1K0xj7vihD01WQZxo8anN26ikBpBLSYaoviHl4nW4ZpLQudy+UlPwuGrgziIDPZaKaQxyjf9jRQgE90PSHyt2lOkmNreQ0sEBYui9JHZGFbpXPauBj/SuzMnIUOi5Pz5w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722888684; c=relaxed/simple;
-	bh=O3BmMdo2wOKQaxhCLVTSozFG7KdAJiyOQeoD3PTz9lI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SdqnyhsZz2T4ShHCUOWnQRW/GwccEzJUGMW+kNZGf1hnBNzp+8gr9yGHQCCANOpBJjsQkfZEsY0s3n9uMd1MMmpCBj7if8LC1Z4w4hjJbOueXu4bfvcTwbHN+TglEf1Dir0rVp/LrhvVHSGn4fooC4pR6s5ujBUriKwF4ulU2bM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HOZKq5UW; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722888682; x=1754424682;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=O3BmMdo2wOKQaxhCLVTSozFG7KdAJiyOQeoD3PTz9lI=;
-  b=HOZKq5UWVqvWqkgxG5afvP95PPRgjrCGFXuc8VKhYN+7xvP7OllLhSIE
-   iPJNUd5k39OttH+rOF8tz53krgl0fXpHgOsQy8Fxfrwqw3ZDVikB6ikpw
-   Zr29MpvDxWngxAX/jthhxiLVIRDRtc4RMeLOdeALPUWYEwxFJpB6tK+yY
-   2E6ecbVml+nMDjNISX1UG+kk00vKigU4Y62Ks7nA8gvkX9x62RHhtkl3D
-   YclmIQfshiAHB9kuyRuLMWR7jvU6WVLwfulck9lMlCfgdcMUwMriiD6/B
-   JW1W++wX/597uDakJVOu/Qzd9Qsp/iVXEHyXkqE69/8qZifYWFpurmtOj
-   A==;
-X-CSE-ConnectionGUID: 7xWAf3qDTHiB9TigOiUoqA==
-X-CSE-MsgGUID: 7bJ69RyMTriiXCoaE+6jRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="31508850"
-X-IronPort-AV: E=Sophos;i="6.09,265,1716274800"; 
-   d="scan'208";a="31508850"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 13:11:22 -0700
-X-CSE-ConnectionGUID: escRvDcEQ7q9pXDMJtkhLA==
-X-CSE-MsgGUID: Nvo1jh7GT9iJLLmypx0pwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,265,1716274800"; 
-   d="scan'208";a="61127282"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Aug 2024 13:11:21 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 5 Aug 2024 13:11:21 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 5 Aug 2024 13:11:21 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 5 Aug 2024 13:11:21 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.48) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 5 Aug 2024 13:11:19 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bivJBbmyfBU46UWSvvzn4PruQRj5AWdnt8D6IULLj/gwwVKnPpeMGZ+I+oH0CLa6PoxIZSZOAT1pbmHGeZB6vw6eQPT1mIrElR58ki6a04IjGIhcjaQQYrwIzV9C899E58NC6dnskLmcBLp++h99BY65ia4be21UZSH7imcCQsJBBD1D26Asrx89nlsa9xRROo+GDgRGRyMijahft6Y0/ExQjfUz4iFZM6zc/tzKtGsCusvpd3A7mdVQaO8IewGu/70ZVmyzi5I3GzPksu4REdCPsUlqqysKGoRDTSjhdLBRGeGIvveX825TCIFzzgsTB5QuD4Dk3kTfibjGK+lJCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gTZOfRHALYStr3mUT5SVbUNJvBfuZhDphCluJngmlXg=;
- b=jLoZ4izsypDysvwUGrvN8fhRHJr1hZ3wYN5dsO+v5S8Zi1gDamsNQfSS8yuUOQtFrUYVTPtqqhexQnDNJw7XkuQvxrvkspP1gqdHezcko1Acuj0hqgEtGOAesRTTsW4UNJNdc+087g6HnksDDqHIT9JgZY5mumuTOjjm7/I1XMbM1Qn3+s2H/tfzYo1oLtvZSM8IGSLzlhiZPVc9LDou1HS+tteuV0DieMrXAGeENI8k5UYJ/4FWxAnGT+z1YoOL1XeF3ViPPbCPlZPCefQiLZ33fWtvs5MAaD0z19Aw7YaCistMJEUjlH0KsgnYlDsFyCkwqV5XAUXJT4mkHmJU5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CH0PR11MB5444.namprd11.prod.outlook.com (2603:10b6:610:d3::13)
- by CY5PR11MB6319.namprd11.prod.outlook.com (2603:10b6:930:3d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Mon, 5 Aug
- 2024 20:11:12 +0000
-Received: from CH0PR11MB5444.namprd11.prod.outlook.com
- ([fe80::5f89:ba81:ff70:bace]) by CH0PR11MB5444.namprd11.prod.outlook.com
- ([fe80::5f89:ba81:ff70:bace%6]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
- 20:11:11 +0000
-From: "Cavitt, Jonathan" <jonathan.cavitt@intel.com>
-To: David Gow <david@davidgow.net>, =?iso-8859-1?Q?Christian_K=F6nig?=
-	<ckoenig.leichtzumerken@gmail.com>, Somalapuram Amaranath
-	<Amaranath.Somalapuram@amd.com>, =?iso-8859-1?Q?Thomas_Hellstr=F6m?=
-	<thomas.hellstrom@linux.intel.com>, "De Marchi, Lucas"
-	<lucas.demarchi@intel.com>, Andi Shyti <andi.shyti@linux.intel.com>, "Thomas
- Zimmermann" <tzimmermann@suse.de>
-CC: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, =?iso-8859-1?Q?Ville_Syrj=E4l=E4?=
-	<ville.syrjala@linux.intel.com>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Cavitt, Jonathan"
-	<jonathan.cavitt@intel.com>
-Subject: RE: [PATCH 2/2] drm/i915: Attempt to get pages without eviction first
-Thread-Topic: [PATCH 2/2] drm/i915: Attempt to get pages without eviction
- first
-Thread-Index: AQHa5088adqKaO8meE+YWWKGspJ6prIZGElg
-Date: Mon, 5 Aug 2024 20:11:11 +0000
-Message-ID: <CH0PR11MB544412FB2B166632F4517535E5BE2@CH0PR11MB5444.namprd11.prod.outlook.com>
-References: <20240804091851.122186-1-david@davidgow.net>
- <20240804091851.122186-3-david@davidgow.net>
-In-Reply-To: <20240804091851.122186-3-david@davidgow.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH0PR11MB5444:EE_|CY5PR11MB6319:EE_
-x-ms-office365-filtering-correlation-id: 109bfef5-c4b2-4957-2d43-08dcb58ac062
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?hRyA0qOD6Y/kJwePqd+z2RgQruHebmIB7DIxHp9kRlkBH0fxRARbCEcvkk?=
- =?iso-8859-1?Q?jJ2aIm2W4d0bUl5MK9wTR7fNbxrLyPVjVM4mQSe5BQ28VPB2QW/o1T0Np8?=
- =?iso-8859-1?Q?Cyv6Q1vo5tihRveyXBha2LXm3LotTDfos9ZhlLXoAWN6UsRyyVBeFkLafC?=
- =?iso-8859-1?Q?fDYAClHCeDeyFaULrhmEzvbDJxR7/LR4naMrJGY11AjpxdfA3HNugVhkFt?=
- =?iso-8859-1?Q?U/OCJoWkzW2JBS8x0wlD9/dEPKp5Lt6FTH0+ZQl/7pFKIoyIeFNH8MKa0D?=
- =?iso-8859-1?Q?JO7Dl1LhzYsIjgm2IOO2AB/rlklTeUVvqFsaL9g5BBfhmmyRdDl4PhahfU?=
- =?iso-8859-1?Q?Xrl+eHxYO2kK1haxDW4vWvTSCbJn0ku3+RXuFSZua/xaxzGsupK+Kcq9iu?=
- =?iso-8859-1?Q?y8kPV2l0iAYMl1PdXClmrXg7bzEgpx82hHCo9lNMQl/IOCs04VEfhWIOYE?=
- =?iso-8859-1?Q?Xb509hvGLc/F54fefuVbo1DCxlBnjGg/hUS/EImxwi2YEJcCMRpd+A/jto?=
- =?iso-8859-1?Q?Esgk6RgOSyNvpZp5Vu7+KnDgAtWcIZ2/qZ00yCJcdS5B54T1nYUSntyC5o?=
- =?iso-8859-1?Q?i7pPhH2au74ZDOATmyiU/GxBUCtrarMDRZdYfN6vNCLwztSiX+bbwig+Uj?=
- =?iso-8859-1?Q?WQvKuKQOnetMOOgwmw9OCTViisfT78XUEyEOWQwklX14qI3TC1uJ9x5nBu?=
- =?iso-8859-1?Q?N58+4soqMTTsvcHef6KFsqi7biErFa/Oh8COI5chtQ8R/i6t4GSbECe602?=
- =?iso-8859-1?Q?i9MNS6G3Y9HtQ3AOcqpHtX50r6zO5n7ljxAcneDsT4nCBvk23m66d4Hvuv?=
- =?iso-8859-1?Q?8QQG3Zu865c1laEwEHWn0S17SMrhZREXqdvAK0li/rFTgBLgKw4witW7nb?=
- =?iso-8859-1?Q?gYLOV32jxQxIkxUL5tjDIrPcu6AGAq21E5S7RHlEBjo/53+P0shHpf+A9N?=
- =?iso-8859-1?Q?6TuywD2jlRYmcYL4vS7hhc2+ts9pRGp/UveCSdLJ9sToEfoTDwvHOfc+LE?=
- =?iso-8859-1?Q?0oe3JJkKr3H7aZ4L8A0C9HLFtl5mIBF++j+6netSVRs54NTu9zeqsXifF3?=
- =?iso-8859-1?Q?eD6xB9xr+5aFTdGC2hy8n9Vpk/lTIxtyEeLF3eow/ycsr/ET3VkKl824KT?=
- =?iso-8859-1?Q?sDz13+VHtA/Muxk9/UkYt4m0Yvku3wRYXrVKWVDwFI4vro4/lXmoSXGN0Z?=
- =?iso-8859-1?Q?uKYPrVhRbpON+mxFIgg53wjy5VcsGbbF0aeYFQM/k46GgxsAr6QwAdT+e7?=
- =?iso-8859-1?Q?CuJbaY3s4HZvRXzJwUr3Mylf3a++O4v6M4L+441xG+Ypzckf3cr1Vifq6e?=
- =?iso-8859-1?Q?PiKNidwYQf5VxQP/DIizZr6aQ9k65KELZC7HRqKJcpkVitF6a0oJ4e3tGq?=
- =?iso-8859-1?Q?CYxjLtOKWN6i3rt+xTj8ATApiAG4v/8K56C2cFJz2AjdMIBxATo7A=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR11MB5444.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?S5fQVq6k176eAeFFC7UTDNIHE8NsiqLsE8NtQqit75kmhKu2+J6CSqxuDg?=
- =?iso-8859-1?Q?Jp6otmutvV4Zl5WkBHPOAp+CHRMMSdhl9iztI1SdN0GoMUW0VyMk5TP8hL?=
- =?iso-8859-1?Q?Vyv4Jw72kQHPbJIsRqrd1Qw3+6/AVmdmZcXZJgg99+3uf+Gg9Uq0WhndX0?=
- =?iso-8859-1?Q?palGGBG4srKds4lXN45gwLWm+50V+l9YI+oys088yavprRtH89DCPndSJ9?=
- =?iso-8859-1?Q?NLm1HfFUi0T8bJzDcWESero6o551gBCQR4su0f3XdJQoi93EMp/bVo6zsi?=
- =?iso-8859-1?Q?XFSVIQxlhi4vA6ZgCdyhPYQpmO54eIH6raPTryUn87l6ictuDlhEaNntTm?=
- =?iso-8859-1?Q?5pGixkLISFx28cU8agH4auB2tmXbLsxnvWI46j6v7wza4sGj4kNpaHsybl?=
- =?iso-8859-1?Q?8oSNW9q246tZ+l5bLvB4ekoqN0Lvwk5uMr7FQOm9zEcZpPe465mRiqizpD?=
- =?iso-8859-1?Q?m3yOSz4jKUkkfErR3jR9/NcmfSKvNxAkHTZIh9VQxEQ8QKSBbgqw+fBddg?=
- =?iso-8859-1?Q?Ym+Sk/ZtjH70H0ZrWEohShF3vFEOPBRr6h8O3M2L8myKOa2TYLrbOAeNW2?=
- =?iso-8859-1?Q?zLDHJHpS6sB8IPiKWPalEGjeDGtOhC4KdL4tj5WYZ00pWQy5G+cQtpNp5V?=
- =?iso-8859-1?Q?anx4JAAWgbWwsgGSYoGZFPQy5GX13492qF7KPG27AGhaquC/9RnX12Im5K?=
- =?iso-8859-1?Q?pgoqQghdfzuoXZ9KKUUy/TQb51c3+9nhEV5OeQgau3mDeArcWCQP4qB4zG?=
- =?iso-8859-1?Q?f2+Pa9XyPT3fTY6xb1/pmNN4LKCNUmuB1MdxmNRK0mIEQsliYlLwiIvF5o?=
- =?iso-8859-1?Q?Hs7nmP/cKyghCbQ2xIAzu+qu7NDULe1U+xqppil4ZHL+Tm6e91Jsz2b+Rb?=
- =?iso-8859-1?Q?Oj1ulE7mLYAWV0P+SCGfTYmh3BrhBam9Cyx0H89zTGRBYZEBRPYgH/c/3e?=
- =?iso-8859-1?Q?dyu0iom8X2Ry2F4+CEjVg/0thbqi+TV4P9z9+1k+al9f2eWvxv9vaWocKX?=
- =?iso-8859-1?Q?akmZYe1mcBH1vY4Be5NiJDMJH2FhfGCn2hYLZrIPWlS+By9sQTdcQwM0jE?=
- =?iso-8859-1?Q?wVgKO7JYxPvY2wMh292A12e18dekFohGMaS1tEKYRhL0mUnJOax0BXM9+D?=
- =?iso-8859-1?Q?DAkZBtgGhc32k7kHgMbqBJfjARBeLuJdvpKWC/5whTEVnbzkstoI/97TfU?=
- =?iso-8859-1?Q?oGMM3nAl/YmAwRYrNTkoCcQV5fZxS95akllSWNHvHVVjdmdwYrO/ufhPjQ?=
- =?iso-8859-1?Q?Kj26Q8bYHA9U3XonimLKOBp2/4wRlcPnFhzVrke0aDyCAcc1s7tApk7ogh?=
- =?iso-8859-1?Q?PnPGn+CgHGRXwsWqp42bgqxsSBNBfoEuu9H15Wqv7uIB4VXQ0xahdK76ky?=
- =?iso-8859-1?Q?lEBVq7sHy1TQ5VbEaqGeSdDsUUI0A3MxcoluK01n/OEOmuH17740cfp1xF?=
- =?iso-8859-1?Q?9Dgw86vrASu3eZNlaGXTL45HxVYy058s7hNZyw41PUK+D5G9UNqChai+81?=
- =?iso-8859-1?Q?KwE66FFDPQEOfU7tSGfBXCv7vInu4t+kic/bvOf5VARq4nN5AyJk/KxmeR?=
- =?iso-8859-1?Q?NqLlZR3BSypFs0Y5q7wpTFyl5G4JbVAIkpSGFRidps3j6TGKgkaxUnod2L?=
- =?iso-8859-1?Q?5BtmO9LLF0D4yayPv3rLKlrh3wwk9rY92A?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C22116B388
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 20:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722888680; cv=none; b=Ql9LsECYTpTeRwUN6w0fFjQYMROFLByQh/IAdMUKd1sZ3cJIahI3jUX/bcJx7TaZMS+NdJuPgRbAFSXFQx6wS2nmyZDUwz3zlyJk+xBgWB7gXSEt0wTACCtaCV2QaW6etOY0HhZ4/wm49sEf2c3XpywNv6LX5WsmYI23XshzyEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722888680; c=relaxed/simple;
+	bh=Lgd+kUvL2TZX2jMRRUTnzapBvPtBzmUh9hoqjROxNIs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VMfImOVbcYOzYzXPPWmBB5i4HLrFWC7aTfRbuqfsUVUnGei9HNAgX7UIq5xXJQRidsR/WYoQxX3th5ShTuuoplggSb9eO+BfEnHs6QUWZXf9S//X1ujpuIE7l+bxdFjmkZPbbfn2yhkjZAPq9DEbyejuAWxVTYrwF1b4WwcrCzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lvzbsXD2; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0bbd1ca079so9892820276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 13:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722888677; x=1723493477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HZ3XYv8vbRbl6n2xhFfZGwAgnhZe+uZriKCMNILDzOw=;
+        b=lvzbsXD2juPpg6aRzAVz/i53hTWHB8oZyisYHUP+rMHnUY49lwy+DjoclHGJnpMhje
+         uOaE2zNc3EP1a+5BfA+ZCryC2BfpIKTDYG8SqDNoNPUxxGAkjjf8lKNod/pqKE1Tq0vH
+         EvysnYfd5omW7j55DuxoFu73Cn3qFyLKDmRIVfXvop9bX/d/FJC+Rm+DNLzjjgFEWlW2
+         3BOwE+yAQA0qcn29jwa7PaniKkfFO3ocF31MPiDV4/JihWkzdxMZafY3QURl7Qo/ePOk
+         tyc7e49EiN1HGSZ/e89bDOAMULDoA/vInbKzLZquX9GEZz8gFCCo6rDxQTktgPqc0nKA
+         Z2WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722888677; x=1723493477;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HZ3XYv8vbRbl6n2xhFfZGwAgnhZe+uZriKCMNILDzOw=;
+        b=fS2Dw8p316Z6z8BJBCpPCB28cVoW5UIAaW6AeAxjBM25t5iovR67tV72V2Qxp08qeZ
+         /GisJc9EooLCRjHACrKr5Vg7TtCl+kYcEuYBXFdPkGhZw7rvnx2mgaHefPlXhIHL57/A
+         4yTFlz3puejS3aHI4+H+QrVseaM9o8AgoIZ7C8ZOuzkUEKQmDSM29+ZayTrlGny7Q1ik
+         PcE+PB2TQm8eO9Xfk+VRIAD3mbQ+y9Fa1YrryEMHtS+SYfQEnuNAkRnylVAzgKoswvh0
+         bL94873dnzxKsM2hW+Y9ajr3Gbr16qCvygu51J8fig3MTpoIzaAuHUOoU7ZJiITLw+Qo
+         4cgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQFuqh8YmRAMGBV3cnVoOhmJXkkkaTUaKWp74epAuHpZH14tw3Q391bVy1I42fZvWOUhMpje1XtuMQA33vPxBAnU+BWqSmC6QZzXdS
+X-Gm-Message-State: AOJu0YyPCL8ZyomAxn1kDdS0qjn7/2I45fQILNNIInWXeRVd5ctAY5ho
+	21DbZ7gIc8AJ6p/4JnrKu99/OT1ZDh0z1Ds7plv3aE0FmrIHq5upwzplhLhsWIseCEO4r/DiYIJ
+	jLg==
+X-Google-Smtp-Source: AGHT+IEqU2AlArCCHC4fMays/2bcUfDHhzQBmI6OBNsXgcq9heLSZ2NfK8PClbmknew6WDJy9JdEoe9cp70=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2b12:b0:e03:6556:9fb5 with SMTP id
+ 3f1490d57ef6-e0bde481682mr268041276.11.1722888677198; Mon, 05 Aug 2024
+ 13:11:17 -0700 (PDT)
+Date: Mon, 5 Aug 2024 13:11:16 -0700
+In-Reply-To: <CALzav=few=dq5_9QC=ivRWxEtRvQR47BWh5j5-Sgg3Zy7_Rx0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR11MB5444.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 109bfef5-c4b2-4957-2d43-08dcb58ac062
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2024 20:11:11.6950
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: S6VOdSywLv0qwYJrNlT2SmkXnkNWjDZqSwXs/RPbzSomIJjYQqlG0BlJcJPogeOcupgH+hKrHYmOktAZM2bYoXNeSo9fKo8Ac3Q1fcd/cgo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6319
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+References: <20240801183453.57199-1-seanjc@google.com> <CALzav=few=dq5_9QC=ivRWxEtRvQR47BWh5j5-Sgg3Zy7_Rx0Q@mail.gmail.com>
+Message-ID: <ZrEx5HzBYVHH1piA@google.com>
+Subject: Re: [RFC PATCH 0/9] KVM: x86/mmu: Preserve Accessed bits on PROT changes
+From: Sean Christopherson <seanjc@google.com>
+To: David Matlack <dmatlack@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
------Original Message-----
-From: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org> On Behalf Of Davi=
-d Gow
-Sent: Sunday, August 4, 2024 2:19 AM
-To: Christian K=F6nig <ckoenig.leichtzumerken@gmail.com>; Somalapuram Amara=
-nath <Amaranath.Somalapuram@amd.com>; Thomas Hellstr=F6m <thomas.hellstrom@=
-linux.intel.com>; De Marchi, Lucas <lucas.demarchi@intel.com>; Andi Shyti <=
-andi.shyti@linux.intel.com>; Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Gow <david@davidgow.net>; Jani Nikula <jani.nikula@linux.intel.co=
-m>; Joonas Lahtinen <joonas.lahtinen@linux.intel.com>; Vivi, Rodrigo <rodri=
-go.vivi@intel.com>; Tvrtko Ursulin <tursulin@ursulin.net>; Ville Syrj=E4l=
-=E4 <ville.syrjala@linux.intel.com>; intel-gfx@lists.freedesktop.org; dri-d=
-evel@lists.freedesktop.org; linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/i915: Attempt to get pages without eviction first
+On Mon, Aug 05, 2024, David Matlack wrote:
+> On Thu, Aug 1, 2024 at 11:35=E2=80=AFAM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> >
+> > This applies on top of the massive "follow pfn" rework[*].  The gist is=
+ to
+> > avoid losing accessed information, e.g. because NUMA balancing mucks wi=
+th
+> > PTEs,
 >=20
-> In commit a78a8da51b36 ("drm/ttm: replace busy placement with flags v6"),
-> __i915_ttm_get_pages was updated to use flags instead of the separate
-> 'busy' placement list. However, the behaviour was subtly changed.
-> Originally, the function would attempt to use the preferred placement
-> without eviction, and give an opportunity to restart the operation
-> before falling back to allowing eviction.
->=20
-> This was unintentionally changed, as the preferred placement was not
-> given the TTM_PL_FLAG_DESIRED flag, and so eviction could be triggered
-> in that first pass. This caused thrashing, and a significant performance
-> regression on DG2 systems with small BAR. For example, Minecraft and
-> Team Fortress 2 would drop to single-digit framerates.
->=20
-> Restore the original behaviour by marking the initial placement as
-> desired on that first attempt. Also, rework this to use a separate
-> struct ttm_palcement, as the individual placements are marked 'const',
-> so hot-patching the flags is even more dodgy than before.
->=20
-> Thanks to Justin Brewer for bisecting this.
->=20
-> Fixes: a78a8da51b36 ("drm/ttm: replace busy placement with flags v6")
-> Link: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/11255
-> Signed-off-by: David Gow <david@davidgow.net>
+> What do you mean by "NUMA balancing mucks with PTEs"?
 
-Thank you for the thorough write-up of this issue.
-Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com>
--Jonathan Cavitt
+When NUMA auto-balancing is enabled, for VMAs the current task has been acc=
+essing,
+the kernel will periodically change PTEs (in the primary MMU) to PROT_NONE,=
+ i.e.
+make them !PRESENT.  That in turn results in mmu_notifier invalidations (us=
+ually
+for the entire VMA, eventually) that cause KVM to unmap SPTEs.  If KVM does=
+n't
+mark folios accessed when SPTEs are zapped, the NUMA-induced zapping effect=
+ively
+loses the accessed information.
 
-> ---
->  drivers/gpu/drm/i915/gem/i915_gem_ttm.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c b/drivers/gpu/drm/i9=
-15/gem/i915_gem_ttm.c
-> index fb848fd8ba15..5c72462d1f57 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
-> @@ -778,13 +778,16 @@ static int __i915_ttm_get_pages(struct drm_i915_gem=
-_object *obj,
->  		.interruptible =3D true,
->  		.no_wait_gpu =3D false,
->  	};
-> -	int real_num_busy;
-> +	struct ttm_placement initial_placement;
-> +	struct ttm_place initial_place;
->  	int ret;
-> =20
->  	/* First try only the requested placement. No eviction. */
-> -	real_num_busy =3D placement->num_placement;
-> -	placement->num_placement =3D 1;
-> -	ret =3D ttm_bo_validate(bo, placement, &ctx);
-> +	initial_placement.num_placement =3D 1;
-> +	memcpy(&initial_place, placement->placement, sizeof(struct ttm_place));
-> +	initial_place.flags |=3D TTM_PL_FLAG_DESIRED;
-> +	initial_placement.placement =3D &initial_place;
-> +	ret =3D ttm_bo_validate(bo, &initial_placement, &ctx);
->  	if (ret) {
->  		ret =3D i915_ttm_err_to_gem(ret);
->  		/*
-> @@ -799,7 +802,6 @@ static int __i915_ttm_get_pages(struct drm_i915_gem_o=
-bject *obj,
->  		 * If the initial attempt fails, allow all accepted placements,
->  		 * evicting if necessary.
->  		 */
-> -		placement->num_placement =3D real_num_busy;
->  		ret =3D ttm_bo_validate(bo, placement, &ctx);
->  		if (ret)
->  			return i915_ttm_err_to_gem(ret);
-> --=20
-> 2.46.0
->=20
->=20
+For non-KVM setups, NUMA balancing works quite well because the cost of the=
+ #PF
+to "fix" the NUMA-induced PROT_NONE is relatively cheap, especially compare=
+d to
+the long-term costs of accessing remote memory.
+
+For KVM, the cost vs. benefit is very different, as each mmu_notifier inval=
+idation
+forces KVM to emit a remote TLB flush, i.e. the cost is much higher.  And i=
+t's
+also much more feasible (in practice) to affine vCPUs to single NUMA nodes,=
+ even
+if vCPUs are pinned 1:1 with pCPUs, than it is to affine a random userspace=
+ task
+to a NUMA node.
+
+Which is why I'm not terribly concerned about optimizing NUMA auto-balancin=
+g; it's
+already sub-optimal for KVM.
 
