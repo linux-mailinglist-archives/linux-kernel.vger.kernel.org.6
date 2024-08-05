@@ -1,100 +1,155 @@
-Return-Path: <linux-kernel+bounces-274503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D883E9478FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:04:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03C79478F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F73E1C20CDC
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:04:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408EC1F222CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D6D153803;
-	Mon,  5 Aug 2024 10:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5148715351B;
+	Mon,  5 Aug 2024 10:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kds9TAYf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OKvpQNn0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DBB14D456
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4F4558BC;
+	Mon,  5 Aug 2024 10:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722852282; cv=none; b=c2Q5jYFFEctlP0GMmurB0GiDnR3BEp46zGfzzbYWaPPBBBYEXaAiWjkcr3PFz/KFuvdSyvndaR90J1LlIWdXObIUdkjh1gJbYmQ50H/aQAbNvldVkuQCrtDN3ymWLOAI4usUK0Cd+L0SiE6kccrNmrCKWbPQ+4PjijeadgNPrUw=
+	t=1722852228; cv=none; b=MhL3Ank8khGkXI+0JKDB3dhjGK9T62dBA0IJKRS+SPSKtQLglbcRbPIQJcsRQxwxC8ePdXuOb8FOCk/ggMvHYN7jqWNEIOpbVI82fGBhxLPU0qzIgHo+WZi5ZprUGvjbiNPU9EGNTvGvMJDh4evhmtOuqk834JD06IJwsAkGxtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722852282; c=relaxed/simple;
-	bh=DHCK5EzPFWfoSWC30hJdr2F05P1VmNla4Ud7dS/pMSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OU70Lvanl6rkSwIB6S3XBiEhicnOgl8DG/Efk7mOrBcxzfpRFfIxJ3BOQrs8Vk/7iZ4HBCglNfnGPISwRJdMtcIAhwn6ztMuN2sM+VYfsOHhHOrBBDl07fn1xgMSDmlChltGo4NBAh4v2A2QtaKfi6ByIwZuqBWQ6RIA3dFf1V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kds9TAYf; arc=none smtp.client-ip=192.198.163.9
+	s=arc-20240116; t=1722852228; c=relaxed/simple;
+	bh=3JzwBnYSD+Hb1vRDh4StW026ZZ8e9bKSpdTeeDfvxjQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lu6rdVj7C6cGDh9HbO/b8RreQrrRTRgnUHqt0N9OUW7CMRe+Ov0jZe/YxYUezVaIdX7wuRZlK/r1+fK7dupnwsiztlb+CSgUT3/z2R5Dnwt7S1k9upu6mzliHZQ01Moe+u6sp9IQ7ZtsQeHuPp1ivBsmcUZvzqpa/6g2G6jEgVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OKvpQNn0; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722852280; x=1754388280;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=DHCK5EzPFWfoSWC30hJdr2F05P1VmNla4Ud7dS/pMSM=;
-  b=kds9TAYfqpJ3BatKsPbZ7dtpA+7lobS6go3YuULt5fwNNBPgmc75+GWr
-   V3EHhIpo7BAMjYjCEeYyRaYLFkz+Z58ZlYj+ADvVi958SfSMI50XufIdK
-   mF/B3gV6LV/c97mr8DF0Hw2Je4TuauJizTRGDdbsWdy4xSaGd45E2OkNP
-   Ua5SHrCEUi0hE5fw8dugLY9IoJfWwmjriILZqrVtsPvlCs10YF9uySgCL
-   +QbhjgZjmSCMi+pEGAiFtu/OEzGbU+ijwPVuRXW3HGc1W5x+jPYazAKw4
-   602QPQ6StqcwKB5fe6bNn/nyxfmfQDwAh70rmCAIOOQVO7/WP3USvdH85
-   w==;
-X-CSE-ConnectionGUID: W/aA8ZIkS9yOXsRsTuurdw==
-X-CSE-MsgGUID: GVyTRNGwRMCmO60Jtf+qqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="31462834"
+  t=1722852227; x=1754388227;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3JzwBnYSD+Hb1vRDh4StW026ZZ8e9bKSpdTeeDfvxjQ=;
+  b=OKvpQNn0jL4bcRLwm9nAyyXRckaxNCDzUOiPmyVFcmJx2+8IJRuOq3bA
+   OBLInpEMYmQvRNCwq1JpZdTXFe8S2A8Mr6aSbi8hNaJ/+FF9Eeatxmjot
+   PrEx1GDsIZb5dpDr8MhB9f5pMwAZX+UaMreogiMO2AwIV6l7K9FyFpH3+
+   1hA8OGdZzUnDqFJa9rWe5XXzqsrIywVIVDfStgBBUFrpD2LraP+ZyyoxO
+   718UFa/agatL123db3/PkUG8QAIGlhs5lLiFdXsz4RVFYRbMMFkDDa1LY
+   nqe1QHgg68XrCa916zQQbe5c9SwLrzgX5jOpKK8G1WFOpsAOir/uiRQ9O
+   Q==;
+X-CSE-ConnectionGUID: A3GlJiiyS6m8XkfFyL28BA==
+X-CSE-MsgGUID: Hb7WVD/4QOG4XljMu6BG8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11154"; a="38308021"
 X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="31462834"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 03:04:40 -0700
-X-CSE-ConnectionGUID: S03/D9r5TiO7RRwUw4KP5w==
-X-CSE-MsgGUID: hg2Zc3pPTIavltbCboXIbQ==
+   d="scan'208";a="38308021"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 03:03:46 -0700
+X-CSE-ConnectionGUID: KP7c6d6XR5m7u9g1Ggp78Q==
+X-CSE-MsgGUID: U25pGm0IQVm5dwXx5S0jyw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="56036259"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 05 Aug 2024 03:04:39 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sauZw-00023k-12;
-	Mon, 05 Aug 2024 10:04:36 +0000
-Date: Mon, 5 Aug 2024 18:04:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: fs/xfs/scrub/common.o: warning: objtool: .text.unlikely: unexpected
- end of section
-Message-ID: <202408051834.jcuyCxWe-lkp@intel.com>
+   d="scan'208";a="56058533"
+Received: from zhiquan-linux-dev.bj.intel.com ([10.238.156.102])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Aug 2024 03:03:43 -0700
+From: Zhiquan Li <zhiquan1.li@intel.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	kirill.shutemov@linux.intel.com,
+	x86@kernel.org
+Cc: rafael@kernel.org,
+	hpa@zytor.com,
+	kai.huang@intel.com,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhiquan1.li@intel.com
+Subject: [PATCH RESEND v4] x86/acpi: fix panic while AP online later with kernel parameter maxcpus=1
+Date: Mon,  5 Aug 2024 18:35:31 +0800
+Message-Id: <20240805103531.1230635-1-zhiquan1.li@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
-commit: b27ce0da60a523fc32e3795f96b2de5490642235 xfs: use dontcache for grabbing inodes during scrub
-date:   3 months ago
-config: x86_64-buildonly-randconfig-r005-20221226 (https://download.01.org/0day-ci/archive/20240805/202408051834.jcuyCxWe-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240805/202408051834.jcuyCxWe-lkp@intel.com/reproduce)
+The issue was found on the platform that using "Multiprocessor Wakeup
+Structure"[1] to startup secondary CPU, which is usually used by
+encrypted guest.  Before waking up the APs, BSP should memremap() the
+physical address of the MP Wakeup Structure mailbox to the variable
+acpi_mp_wake_mailbox, which holds the virtual address of mailbox.  When
+BSP needs to wake up the APs, it writes the APIC ID of APs, wakeup
+vector, and the ACPI_MP_WAKE_COMMAND_WAKEUP command into the mailbox.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408051834.jcuyCxWe-lkp@intel.com/
+Current implementation doesn't consider the case that restricts boot
+time CPU to 1 with the kernel parameter "maxcpus=1" and brings other
+CPUs online later, the variable acpi_mp_wake_mailbox will be set as
+read-only after init.  So when the first AP gets online after init, the
+attempt to update the variable results in panic.
 
-All warnings (new ones prefixed by >>):
+The memremap() call that initializes the variable cannot be moved into
+acpi_parse_mp_wake() because memremap() is not functional at that point
+in the boot process.  Moreover, the APs might never be brought up, keep
+the memremap() call in acpi_wakeup_cpu() so that the operation only
+takes place on demand.
 
->> fs/xfs/scrub/common.o: warning: objtool: .text.unlikely: unexpected end of section
+[1] Details about the MP Wakeup structure can be found in ACPI v6.4, in
+    the "Multiprocessor Wakeup Structure" section.
 
+Fixes: 24dd05da8c79 ("x86/apic: Mark acpi_mp_wake_* variables as __ro_after_init")
+Signed-off-by: Zhiquan Li <zhiquan1.li@intel.com>
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+---
+
+V4 RESEND note:
+- No changes on this, just rebasing as v6.11-rc1 is out.
+
+V3: https://lore.kernel.org/all/20240702005800.622910-1-zhiquan1.li@intel.com/
+
+Changes since V3:
+- Add Fixes tag for the commit found by Kai.
+- Extend the commit message for the root cause and solution.
+
+V2: https://lore.kernel.org/all/20240628082119.357735-1-zhiquan1.li@intel.com/
+
+Changes since V2:
+- Modify the commit log as suggested by Kirill.
+- Add Kirill's Reviewed-by tag.
+
+V1: https://lore.kernel.org/all/20240626073920.176471-1-zhiquan1.li@intel.com/
+
+Changes since V1:
+- Amend the commit message as per Kirill's comments.
+- Remove the oops message.
+---
+ arch/x86/kernel/acpi/madt_wakeup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/kernel/acpi/madt_wakeup.c b/arch/x86/kernel/acpi/madt_wakeup.c
+index 6cfe762be28b..d5ef6215583b 100644
+--- a/arch/x86/kernel/acpi/madt_wakeup.c
++++ b/arch/x86/kernel/acpi/madt_wakeup.c
+@@ -19,7 +19,7 @@
+ static u64 acpi_mp_wake_mailbox_paddr __ro_after_init;
+ 
+ /* Virtual address of the Multiprocessor Wakeup Structure mailbox */
+-static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox __ro_after_init;
++static struct acpi_madt_multiproc_wakeup_mailbox *acpi_mp_wake_mailbox;
+ 
+ static u64 acpi_mp_pgd __ro_after_init;
+ static u64 acpi_mp_reset_vector_paddr __ro_after_init;
+
+base-commit: 435dfff07e5b71ceecc35954645740ab91090fbb
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
