@@ -1,85 +1,179 @@
-Return-Path: <linux-kernel+bounces-274597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99070947A8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:44:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB86A947A92
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA6361C20AC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:44:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4511C210FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 11:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B67155CAC;
-	Mon,  5 Aug 2024 11:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdY54jwi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A21155C88;
+	Mon,  5 Aug 2024 11:48:18 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BE31547E0;
-	Mon,  5 Aug 2024 11:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDBE6A01E
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 11:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722858286; cv=none; b=UR1t8rluGwRvFKUwlNUXZ2o4Ar+Kiwq0kXKhe5c8ZetDv9mzeZGmFDOyNZuBxn+bca4ZG/kpV9e/3O6A7E+Ozhffow55AS7BHFea5iB8lMUPSLrZIJLSmRBfg2HDeoH7+rJ57Ut1aMs8cjC1yXrShZTTxrwwkDqXEnWvLeHV/aA=
+	t=1722858497; cv=none; b=BC9Z1Mqeyyzp9RcAUDlbnv5dA7qg3VeKmCUEF754omu/+ni0rA7QOS/JwF7VO09wWaImsfafBPhx152ulq2Slq0OxV2vLk2jpRSo35d1kt8mTLT+SAFgoplMS9F0TGiPEUOgk02PBJhhdAgso8d0rJEEwBcTJE2HZR8Xeq98CaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722858286; c=relaxed/simple;
-	bh=psjqkvSz6om6QMnXQwEc9G30bmFNifSE/T8EH9Ag1xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E065YY16oFkoJCkH27QVWCi8ABBXWOEFVq6OmbhrS2/2+cxvGcmPPflTvudEnqFvy8NzVxIBt8pf1YBEhYgDkXfuhk7nIRoklu68+eraJ/miLzyH130+CuQDRSzowJZKVktBMIEHYFaFuLTFFDzNrrdlKlvfSI+q2RAzVd7bHhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdY54jwi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64F45C32782;
-	Mon,  5 Aug 2024 11:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722858285;
-	bh=psjqkvSz6om6QMnXQwEc9G30bmFNifSE/T8EH9Ag1xM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rdY54jwiesJ8buhej7fdZ6PHEznwgxSSQ9wTdYn9AxsFZAU1kyFnHxR9OiUodo+iO
-	 Fisc9Ies/PCFTFMHV/93WUBdiP02DXmZyI6OuwkAQxHiVQiSc/zhduwJrCbGo/MOaN
-	 9/F07jIPxEEnPNHd+97SjCxQUcqbBydwq7k3B7X8XC0bKbhqK7E9AxOHyXD4NQZ45Z
-	 E+/7YzQBIcQ7waV9VgDLCJfN27gupKHJKzvP3OTy8f2zN45biSmyZMKv0kMRf8i6ru
-	 43rEAWKJC7kbkmAnb8R9gVPNi1vy21+q3dWvSG3Bj7sOa4V9x6wJkKfmdegkvFa4XI
-	 XNzNVb16V8Qlg==
-Date: Mon, 5 Aug 2024 13:44:40 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 3/4] lockref: rework CMPXCHG_LOOP to handle
- contention better
-Message-ID: <20240805-unser-viren-4f1860143b6e@brauner>
-References: <20240802-openfast-v1-0-a1cff2a33063@kernel.org>
- <20240802-openfast-v1-3-a1cff2a33063@kernel.org>
- <r6gyrzb265f5w6sev6he3ctfjjh7wfhktzwxyylwwkeopkzkpj@fo3yp2lkgp7l>
- <CAGudoHHLcKoG6Y2Zzm34gLrtaXmtuMc=CPcVpVQUaJ1Ysz8EDQ@mail.gmail.com>
- <7ff040d4a0fb1634d3dc9282da014165a347dbb2.camel@kernel.org>
- <CAGudoHFn5Fu2JMJSnqrtEERQhbYmFLB7xR58iXeGJ9_n7oxw8Q@mail.gmail.com>
- <808181ffe87d83f8cb36ebb4afbf6cd90778c763.camel@kernel.org>
+	s=arc-20240116; t=1722858497; c=relaxed/simple;
+	bh=yHcOcJpTJCXcm2Yyz5sSIefo0DzbP+DGGdlPpfbgeEE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nCSr6uFgC51S9oo9Q/xHy1MfOVhc4bj/jniaSOTG4DhcXBTOAXlwQ3XruWJpMW4iMK9i6+wAxWkx7j4fQfApsUXvm9RDlLeDFrRoeLdYK1er1colw4FnjCHVo6I702NPtMeN1nQOakifsSfBkslojz+LMo51sTY2CHR0sYGlho4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Wcvnb0b1wz1L9sm;
+	Mon,  5 Aug 2024 19:47:47 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id F2133140109;
+	Mon,  5 Aug 2024 19:48:04 +0800 (CST)
+Received: from huawei.com (10.67.174.55) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 5 Aug
+ 2024 19:48:04 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <dennis@kernel.org>, <tj@kernel.org>, <cl@linux.com>,
+	<mpe@ellerman.id.au>, <benh@kernel.crashing.org>, <paulus@samba.org>,
+	<christophe.leroy@csgroup.eu>, <mahesh@linux.ibm.com>,
+	<gregkh@linuxfoundation.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH v5.10] powerpc: Avoid nmi_enter/nmi_exit in real mode interrupt.
+Date: Mon, 5 Aug 2024 11:45:44 +0000
+Message-ID: <20240805114544.1552341-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <808181ffe87d83f8cb36ebb4afbf6cd90778c763.camel@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-> Audit not my favorite area of the kernel to work in either. I don't see
-> a good way to make it rcu-friendly, but I haven't looked too hard yet
-> either. It would be nice to be able to do some of the auditing under
-> rcu or spinlock.
+From: Mahesh Salgaonkar <mahesh@linux.ibm.com>
 
-For audit your main option is to dodge the problem and check whether
-audit is active and only drop out of rcu if it is. That sidesteps the
-problem. I'm somewhat certain that a lot of systems don't really have
-audit active.
+nmi_enter()/nmi_exit() touches per cpu variables which can lead to kernel
+crash when invoked during real mode interrupt handling (e.g. early HMI/MCE
+interrupt handler) if percpu allocation comes from vmalloc area.
 
-From a brief look at audit it would be quite involved to make it work
-just under rcu. Not just because it does various allocation but it also
-reads fscaps from disk and so on. That's not going to work unless we add
-a vfs based fscaps cache similar to what we do for acls. I find that
-very unlikely. 
+Early HMI/MCE handlers are called through DEFINE_INTERRUPT_HANDLER_NMI()
+wrapper which invokes nmi_enter/nmi_exit calls. We don't see any issue when
+percpu allocation is from the embedded first chunk. However with
+CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there are chances where percpu
+allocation can come from the vmalloc area.
+
+With kernel command line "percpu_alloc=page" we can force percpu allocation
+to come from vmalloc area and can see kernel crash in machine_check_early:
+
+[    1.215714] NIP [c000000000e49eb4] rcu_nmi_enter+0x24/0x110
+[    1.215717] LR [c0000000000461a0] machine_check_early+0xf0/0x2c0
+[    1.215719] --- interrupt: 200
+[    1.215720] [c000000fffd73180] [0000000000000000] 0x0 (unreliable)
+[    1.215722] [c000000fffd731b0] [0000000000000000] 0x0
+[    1.215724] [c000000fffd73210] [c000000000008364] machine_check_early_common+0x134/0x1f8
+
+Fix this by avoiding use of nmi_enter()/nmi_exit() in real mode if percpu
+first chunk is not embedded.
+
+CVE-2024-42126
+Cc: stable@vger.kernel.org
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Tested-by: Shirisha Ganta <shirisha@linux.ibm.com>
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://msgid.link/20240410043006.81577-1-mahesh@linux.ibm.com
+[ Conflicts in arch/powerpc/include/asm/interrupt.h
+  because machine_check_early() has been refactored. ]
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ arch/powerpc/include/asm/percpu.h | 10 ++++++++++
+ arch/powerpc/kernel/mce.c         | 14 +++++++++++---
+ arch/powerpc/kernel/setup_64.c    |  2 ++
+ 3 files changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/percpu.h b/arch/powerpc/include/asm/percpu.h
+index 8e5b7d0b851c..634970ce13c6 100644
+--- a/arch/powerpc/include/asm/percpu.h
++++ b/arch/powerpc/include/asm/percpu.h
+@@ -15,6 +15,16 @@
+ #endif /* CONFIG_SMP */
+ #endif /* __powerpc64__ */
+ 
++#if defined(CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK) && defined(CONFIG_SMP)
++#include <linux/jump_label.h>
++DECLARE_STATIC_KEY_FALSE(__percpu_first_chunk_is_paged);
++
++#define percpu_first_chunk_is_paged	\
++		(static_key_enabled(&__percpu_first_chunk_is_paged.key))
++#else
++#define percpu_first_chunk_is_paged	false
++#endif /* CONFIG_PPC64 && CONFIG_SMP */
++
+ #include <asm-generic/percpu.h>
+ 
+ #include <asm/paca.h>
+diff --git a/arch/powerpc/kernel/mce.c b/arch/powerpc/kernel/mce.c
+index 63702c0badb9..259343040e1b 100644
+--- a/arch/powerpc/kernel/mce.c
++++ b/arch/powerpc/kernel/mce.c
+@@ -594,8 +594,15 @@ long notrace machine_check_early(struct pt_regs *regs)
+ 	u8 ftrace_enabled = this_cpu_get_ftrace_enabled();
+ 
+ 	this_cpu_set_ftrace_enabled(0);
+-	/* Do not use nmi_enter/exit for pseries hpte guest */
+-	if (radix_enabled() || !firmware_has_feature(FW_FEATURE_LPAR))
++	/*
++	 * Do not use nmi_enter/exit for pseries hpte guest
++	 *
++	 * Likewise, do not use it in real mode if percpu first chunk is not
++	 * embedded. With CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there
++	 * are chances where percpu allocation can come from vmalloc area.
++	 */
++	if ((radix_enabled() || !firmware_has_feature(FW_FEATURE_LPAR)) &&
++	    !percpu_first_chunk_is_paged)
+ 		nmi_enter();
+ 
+ 	hv_nmi_check_nonrecoverable(regs);
+@@ -606,7 +613,8 @@ long notrace machine_check_early(struct pt_regs *regs)
+ 	if (ppc_md.machine_check_early)
+ 		handled = ppc_md.machine_check_early(regs);
+ 
+-	if (radix_enabled() || !firmware_has_feature(FW_FEATURE_LPAR))
++	if ((radix_enabled() || !firmware_has_feature(FW_FEATURE_LPAR)) &&
++	    !percpu_first_chunk_is_paged)
+ 		nmi_exit();
+ 
+ 	this_cpu_set_ftrace_enabled(ftrace_enabled);
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index 3f8426bccd16..899d87de0165 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -824,6 +824,7 @@ static int pcpu_cpu_distance(unsigned int from, unsigned int to)
+ 
+ unsigned long __per_cpu_offset[NR_CPUS] __read_mostly;
+ EXPORT_SYMBOL(__per_cpu_offset);
++DEFINE_STATIC_KEY_FALSE(__percpu_first_chunk_is_paged);
+ 
+ static void __init pcpu_populate_pte(unsigned long addr)
+ {
+@@ -903,6 +904,7 @@ void __init setup_per_cpu_areas(void)
+ 	if (rc < 0)
+ 		panic("cannot initialize percpu area (err=%d)", rc);
+ 
++	static_key_enable(&__percpu_first_chunk_is_paged.key);
+ 	delta = (unsigned long)pcpu_base_addr - (unsigned long)__per_cpu_start;
+ 	for_each_possible_cpu(cpu) {
+                 __per_cpu_offset[cpu] = delta + pcpu_unit_offsets[cpu];
+-- 
+2.34.1
+
 
