@@ -1,107 +1,180 @@
-Return-Path: <linux-kernel+bounces-274803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24514947CED
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:35:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5478947CE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B371F23710
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295F11C21E54
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A56413C8F9;
-	Mon,  5 Aug 2024 14:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FC413BC2F;
+	Mon,  5 Aug 2024 14:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="RNpaM8+L"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuO4dldk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EB939FE5
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D766151016;
+	Mon,  5 Aug 2024 14:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868525; cv=none; b=Cg8LcCMLKqc8VE6cnMSG1/gPUgGRhJHkgoVWdkxliQ2FeHlo+jORWljQE+NWNXciAG3JkEgI2uEqHQxpdbkfJGHfj+g3SLmkDvClyb5GWA3che8ZS8xJmCIqCsSNZGs0j7bXhWIAhcFnUmHpDZKqUn6cFBgRaJ01YApd+5IsFMY=
+	t=1722868440; cv=none; b=E7nHFldFPycQ5MqMdeYynfZSx0iPZpNFonTsgrxryqTHPsKqitZfrYJa2N2IpKb8r2fahSLUrwo6xLhuAMSTCjytYSkrb7dwc5ITi29vs7UJIpiplp1r4NqyP0k8+wSvCn3eTbgJuCYk+QXQQkYqwKA40QW56E8LLYE1bCg3hsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868525; c=relaxed/simple;
-	bh=vXe8Xkug6TZxY5RcgrU7GWSnbNradf9MTr3q34K6reY=;
+	s=arc-20240116; t=1722868440; c=relaxed/simple;
+	bh=RQJnpbRs0eEEw4JTkZwMVrXstajtQEQUHgmNQAJOGPU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DyPaS6VqjOfwgdiczO5s/CqF2BXwFISREEhCJlUHlKg2soJ6vNDrJAzQgs2b7DuZSTMS06MTPqZcpeGr1OpxKSKQbBobYsRgbAuBvq3bUDtRND2a1nqMTiTlQsuuppyscQ26WVjHebrPJcP3HWcrZDLab7yaXD9OsYgn5xlDVoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=RNpaM8+L; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-111-165.bstnma.fios.verizon.net [173.48.111.165])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 475EWNxu014397
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Aug 2024 10:32:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1722868348; bh=HNqj/+/nTZPBR7gnswUv8CXGIulX1uayMeFA8elCAro=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=RNpaM8+LReWAzjQ9Dm7QmvAErWmf25f4v7g1cHyC0ximCdwvaie3O1uw/L0UC/Ha3
-	 3EZixtlAk0i0FkX0gO9E/fOy59kc9S4xYIc5B7lHIylAPZnpWkqQ7UhF/EvXW6t0Nd
-	 d0oHLXMqgdZ1lVjI03Xzyow23CxcE4PhM6u6KAQBoRpZNMM+r7NMUxf0zwW8gk17sP
-	 mW9/fhfVMNlsO7Oih2lhCFVWvG6KNwLUPEwHF+TqIQDppb2sRw9QoHVhyL8cRdpltH
-	 ob2SPahJ+IQEGaJk/zIphkoekpCPZ1qtf+VDFjPYNGveodbl4IEW2Gi2rsQyALqmPw
-	 Aha9MK/CoTiiQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id AA0F515C0330; Mon, 05 Aug 2024 10:32:23 -0400 (EDT)
-Date: Mon, 5 Aug 2024 10:32:23 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: James Gowans <jgowans@amazon.com>
-Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Steve Sistare <steven.sistare@oracle.com>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-fsdevel@vger.kernel.org,
-        Usama Arif <usama.arif@bytedance.com>, kvm@vger.kernel.org,
-        Alexander Graf <graf@amazon.com>, David Woodhouse <dwmw@amazon.co.uk>,
-        Paul Durrant <pdurrant@amazon.co.uk>,
-        Nicolas Saenz Julienne <nsaenz@amazon.es>
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory
- filesystem
-Message-ID: <20240805143223.GA1110778@mit.edu>
-References: <20240805093245.889357-1-jgowans@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rtkC9DFPAL44QYrIHeAIybs17M0GzEg7uoPHu3P+TcUvUaa444jdo/9y+K9+4duCtDMFzeUUnce3AVDv1KkV96y2Eqxs3mlB268TciZAydqKvtSIY9DXwf3c2C20EWoxn7xqOyJ2fBRiZHm8Yoluu993fDojpXNPRQEGZ83seQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuO4dldk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA038C32782;
+	Mon,  5 Aug 2024 14:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722868439;
+	bh=RQJnpbRs0eEEw4JTkZwMVrXstajtQEQUHgmNQAJOGPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cuO4dldkUm+Yxtqh9eFLtq5Ti3QRHRNrzmaus28juAfBESgtnDptdU7WiH5HFZEiG
+	 Jmq74z01Xiq0/BrGxXFQRVR1kVR+754iHhB2w/uCPCF5kOfxmD/ORE4Tl5wNefWDYL
+	 qXMOAiv1RItlZE9exPaqYN2V9GxfomP/hPLyiGm7JSaouHjnxsJ1WloHdrhipyia4z
+	 EpVncrSbu2lvl3USEdhgcmttUu55mwtSdlAzAKGPLrPQo/8kT/Lq70jn/5EBbKKE/w
+	 KtgvX2N0lc19qur2k6TBi9iii9xRRitQGB5/3AKQWlmeV4Jxwnrj85gsgHOFOc6qky
+	 wq0cIewF4f1Ig==
+Date: Mon, 5 Aug 2024 15:33:52 +0100
+From: Lee Jones <lee@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: (subset) [PATCH v2 0/6] use device_for_each_child_node() to
+ access device child nodes
+Message-ID: <20240805143352.GF1019230@google.com>
+References: <20240721-device_for_each_child_node-available-v2-0-f33748fd8b2d@gmail.com>
+ <172192488125.1053789.17350723750885690064.b4-ty@kernel.org>
+ <094c7d7f-749f-4d8f-9254-f661090e4350@gmail.com>
+ <20240801123901.GC6756@google.com>
+ <9083938c-c2df-4429-904d-700e5021331c@gmail.com>
+ <20240805143207.GE1019230@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240805093245.889357-1-jgowans@amazon.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240805143207.GE1019230@google.com>
 
-On Mon, Aug 05, 2024 at 11:32:35AM +0200, James Gowans wrote:
-> Guestmemfs implements preservation acrosss kexec by carving out a
-> large contiguous block of host system RAM early in boot which is
-> then used as the data for the guestmemfs files.
+On Mon, 05 Aug 2024, Lee Jones wrote:
 
-Why does the memory have to be (a) contiguous, and (b) carved out of
-*host* system memory early in boot?  This seems to be very inflexible;
-it means that you have to know how much memory will be needed for
-guestmemfs in early boot.
+> On Fri, 02 Aug 2024, Javier Carrasco wrote:
+> 
+> > On 01/08/2024 14:39, Lee Jones wrote:
+> > > On Mon, 29 Jul 2024, Javier Carrasco wrote:
+> > > 
+> > >> On 25/07/2024 18:28, Lee Jones wrote:
+> > >>> On Sun, 21 Jul 2024 17:19:00 +0200, Javier Carrasco wrote:
+> > >>>> This series aims to clarify the use cases of:
+> > >>>>
+> > >>>> - device_for_each_child_node[_scoped]()
+> > >>>> - fwnode_for_each_available_child_node[_scoped]()
+> > >>>>
+> > >>>> to access firmware nodes.
+> > >>>>
+> > >>>> [...]
+> > >>>
+> > >>> Applied, thanks!
+> > >>>
+> > >>> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+> > >>>       commit: 75d2a77327c4917bb66163eea0374bb749428e9c
+> > >>> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
+> > >>>       commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
+> > >>> [5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
+> > >>>       (no commit info)
+> > >>>
+> > >>> --
+> > >>> Lee Jones [李琼斯]
+> > >>>
+> > >>
+> > >> Hi Lee,
+> > >>
+> > >> could you please tell me where you applied them? I rebased onto
+> > >> linux-next to prepare for v3, and these patches are still added on top
+> > >> of it. Can I find them in some leds/ branch? Thank you.
+> > > 
+> > > Sorry, I was side-tracked before pushing.
+> > > 
+> > > Pushed now.  They should be in -next tomorrow.
+> > > 
+> > 
+> > Thanks, I see
+> > 
+> > [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+> > 
+> > [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to
+> > access child nodes
+> > 
+> > applied to -next, but
+> > 
+> > [5/6] leds: pca995x: use device_for_each_child_node() to access device
+> > child nodes
+> > 
+> > has not been applied yet.
+> 
+> Yep, looks like b4 didn't like that one:
+> 
+> [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+>       commit: 75d2a77327c4917bb66163eea0374bb749428e9c
+> [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
+>       commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
+> [5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
+>       (no commit info)
+> 
+> I'll try again and see if it can be pulled in.
+> 
+> If not you'll have to resubmit it.
 
-Also, the VMM update process is not a common case thing, so we don't
-need to optimize for performance.  If we need to temporarily use
-swap/zswap to allocate memory at VMM update time, and if the pages
-aren't contiguous when they are copied out before doing the VMM
-update, that might be very well worth the vast of of memory needed to
-pay for reserving memory on the host for the VMM update that only
-might happen once every few days/weeks/months (depending on whether
-you are doing update just for high severity security fixes, or for
-random VMM updates).
+Now results in conflict:
 
-Even if you are updating the VMM every few days, it still doesn't seem
-that permanently reserving contiguous memory on the host can be
-justified from a TCO perspective.
+    Applying patch(es)
+    Applying: leds: pca995x: use device_for_each_child_node() to access device child nodes
+    Using index info to reconstruct a base tree...
+    M	drivers/leds/leds-pca995x.c
+    Checking patch drivers/leds/leds-pca995x.c...
+    Applied patch drivers/leds/leds-pca995x.c cleanly.
+    Falling back to patching base and 3-way merge...
+    error: Your local changes to the following files would be overwritten by merge:
+    	drivers/leds/leds-pca995x.c
+    Please commit your changes or stash them before you merge.
+    Aborting
+    error: Failed to merge in the changes.
+    Patch failed at 0001 leds: pca995x: use device_for_each_child_node() to access device child nodes
+    hint: Use 'git am --show-current-patch=diff' to see the failed patch
+    hint: When you have resolved this problem, run "git am --continue".
+    hint: If you prefer to skip this patch, run "git am --skip" instead.
+    hint: To restore the original branch and stop patching, run "git am --abort".
+    hint: Disable this message with "git config advice.mergeConflict false"
+    
+    Failed to apply patches (fix and either hit return to continue or Ctrl+c to exit)
 
-Cheers,
+Please rebase and resubmit.
 
-						- Ted
+-- 
+Lee Jones [李琼斯]
 
