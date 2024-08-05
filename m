@@ -1,340 +1,214 @@
-Return-Path: <linux-kernel+bounces-274561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF70947A12
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:55:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 606B7947A14
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9853A281F4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:55:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2891F21F5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1BF154C04;
-	Mon,  5 Aug 2024 10:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5455153803;
+	Mon,  5 Aug 2024 10:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b="TTxeSwXJ"
-Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hysu3CgY"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AAD1311AC;
-	Mon,  5 Aug 2024 10:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8281311AC
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 10:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722855348; cv=none; b=HP2Ym8I3HgYnP461BAck7rXbI3z0AAbiRTBjgWAyoE9DybhAqZpbY+xm8XsMSmrmLKgMX0Zp+7DtyIHArzHo+Ln1Uqc11RYv6mIVa0SVOy5ss5WYoZhcsbNovBVPRtNTrejm169JSrLlZZlcTfz9e9+ZVYy6D+eNCp/Cg+d1brw=
+	t=1722855382; cv=none; b=YrVEYcQk18GWv9k1BrZwjKOFRewMwVceYmuz39ng12rowOccKgAoJkevYuyqgCe4PKcobn2yy1tFYjska7VZ18ocdITCv96uDtWVxRUEpsfI8zatEgv+XufGYUiw68Z3Z15/MfUd07FGWKFi4uN2ghlZeCuWM/y9nSBOHp4vXhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722855348; c=relaxed/simple;
-	bh=SMqWOmgw/UDQXI2Viucl1TGtgCXgecBTRV2zcND0Ov8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o81jkDP0WqdxEqgvezbwUbDA0z266YExvTNpNPZ11sQu+tLhjumg45ma+VQss1+zqYllyKMUjpmMH9gq5RWBtW4dOl5pI/HPNlyNmJBLlH6SogFuNj8L9fRx5klAqnb7Tu0jIuY04wJ0d3sDa6ks5Rrs0iTNirLW+tEvvDb/ufQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk; spf=pass smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b=TTxeSwXJ; arc=none smtp.client-ip=185.70.43.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metaspace.dk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=metaspace.dk;
-	s=protonmail; t=1722855334; x=1723114534;
-	bh=OTPTbzBzU9Sc0BiNhZFoNYMGQYF2LvoMfWD2omsoqAg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=TTxeSwXJRvVzr4Y7TaLQD7Nltz7GhDPQJ880OD+5JdUj9HImzZPe8S8Vz2mYnbWdo
-	 6vS2LibQfVfaK5hQ33WPZXu8n/yWtWWwEXQogSH8cKGME1kEDHH8mrzwkEBcsYGRbw
-	 0iE/emOgj/FmaFsvMQo6St71KdFYWFlBmaPtUtLa/zlJMhTeF+IEs5MPwDVSnRHOL6
-	 z+e+UpliZPsY5pqZhvI3v5sTmZTzPT3RFjvHticaiEwN81v6aUbtq5CX6y5ar4svyl
-	 pWXp6EFrp7QrHNVtJexVBVQqCff/6rLHpknTfeV6qhqqHRZ6T6bhJ65HzRMQ4KdBqe
-	 p6FtoWBioujtQ==
-Date: Mon, 05 Aug 2024 10:55:27 +0000
-To: Benno Lossin <benno.lossin@proton.me>
-From: Andreas Hindborg <nmi@metaspace.dk>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
-Subject: Re: [PATCH] rust: add `module_params` macro
-Message-ID: <87v80fme7g.fsf@metaspace.dk>
-In-Reply-To: <a98ddf54-3e27-4587-8e49-f19dd1ac65a6@proton.me>
-References: <20240705111455.142790-1-nmi@metaspace.dk> <2838cf2e-936c-45de-bb19-af9da66fbe00@proton.me> <87plqso50o.fsf@metaspace.dk> <49cad242-7a7c-4e9e-beb7-4f9c493ce794@proton.me> <878qxgnyzd.fsf@metaspace.dk> <ed2f7416-2631-411d-bb49-5a580dbf51b8@proton.me> <874j84nurn.fsf@metaspace.dk> <f84e9189-b64a-4761-86f5-ccd50fb62f36@proton.me> <87zfpvmd8y.fsf@metaspace.dk> <a98ddf54-3e27-4587-8e49-f19dd1ac65a6@proton.me>
-Feedback-ID: 113830118:user:proton
-X-Pm-Message-ID: 080071366be32d61e8165c71df79521035cb1d27
+	s=arc-20240116; t=1722855382; c=relaxed/simple;
+	bh=0ZnCX28o0VdHtiHIqixDMQC3VWmh/RlKQ6uygb37BTM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gf/lVX011zV+IDT6RMQWX+hVDmFunjO79AVw0c95WV9XJQaby/hbmhTkjgf1xsKme/UMtr2xQ0VXA7kxY1It5mFp9FsbLMtX2lUt4PsA1JUyyfhneR5TVXJ3Hg+zv3/RO+BOPQ42IGQs1kuonrERufRo/gxrXbF9wk+BHIhkCh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hysu3CgY; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d2b921c48so7970525b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 03:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722855380; x=1723460180; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DebKR2QCnIbO3IJufUx5D4RwN5BvbXHfrOG2LRYkfVY=;
+        b=Hysu3CgYMIbaR1Kn8nkmEyzrZaEWQXaocnoViKsCfyMuLqw94DgTjrMaKei1Txfgdg
+         K9GpoZIDNU6/0oU+XKI1HospXePm4wcXtuzsPLzqfZkoNtpUC8FvNLYDlDFKaA/+dvUR
+         pEd8ME8JleSvYNkF/0obefz1HsyR/mb9K39fHLJ9E4khqzzQSNxFr8S47SRWC74jcTOV
+         t7rVGzT1Ch9zVb+Mrby3UBultgTywnjo1vcVIfKOjhEu9eXo7Z8ukRFU+zQrZLtnxuVv
+         QrIl2BiTlezh5JE77uOAFqJtXAigKZFf5BiAI1x/9RCZjAND3nm/WXmV/TqrY/ywq/Gl
+         txMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722855380; x=1723460180;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DebKR2QCnIbO3IJufUx5D4RwN5BvbXHfrOG2LRYkfVY=;
+        b=NLmiSDCQ6ya010qJ1Dp7IHv0sGU+FbFzKM9dq1LGlrqd6Q4CpXyMbfR7C3980OzN28
+         MAh1xhP8UnWkPonnQQIRhGWOL/PyzFkZ8kZfpHXPh/6CCYULSxEK5yFqltbladKjU4mU
+         H2Kabp61r5JjI1unG8HJoahLQ0bPmxAeHQSNjuPSXQqBnk6SBbO8qMkDM9HlPoe7Gde+
+         vrmX0eI/wU4eM8Ag4uh53ghEfmrZ6NRVkURqL9SnPDS9BKnoU0e1j4vjmiQ/yoW2bb4Q
+         LNv5rGABM6aXBfRjR1XPrJgxiXBeeG1nErsvhbYhv/8k0RMqjHTp0RAAi8cT3/cVH8p4
+         CTOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWf4TNcGfTwBZWpvQ7bDOVDQgd38ckk14v6HGrDlndGZyyZonaCAPBjDs8f+cGHcNHWq6Nr4DXey4O8fwka2UnoONjjxby3JbBK4b9x
+X-Gm-Message-State: AOJu0Yw/uO8lG/eMENKk4RcjZqa7He7jZo2uR2n+818Lbz0J/omOYT6U
+	cPubygjGWLEKvuRdK2+vZjs2kQyjSMTxf4Yxb9ZYrW40NAmFVdw86qapaNFpdNOBrnsohdFbaa/
+	HZxWXESflHn+j4UAWoLlTW5QmMJ+Fs2O1nqQk+g==
+X-Google-Smtp-Source: AGHT+IFtDTfxHWzg1qKfoJTY+FRxzlTZ+Y41GXROnL0GzgZWfZnQobvquPcKCrUv3faH01hLW0EnJyagAn1+zpUjbPE=
+X-Received: by 2002:a05:6a21:609:b0:1c6:ac08:8dd2 with SMTP id
+ adf61e73a8af0-1c6ac088f1emr4301860637.15.1722855380354; Mon, 05 Aug 2024
+ 03:56:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240729070029.407884-1-yu.c.chen@intel.com>
+In-Reply-To: <20240729070029.407884-1-yu.c.chen@intel.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 5 Aug 2024 12:56:09 +0200
+Message-ID: <CAKfTPtD4Vg8rjWVAp=WnaCoMXkee6y2Vd7LT2FyMMtHGtORa5w@mail.gmail.com>
+Subject: Re: [PATCH v3] sched/pelt: Use rq_clock_task() for hw_pressure
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Hongyan Xia <hongyan.xia2@arm.com>, Qais Yousef <qyousef@layalina.io>, 
+	Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Sorry for the late reply on this
 
-> On 02.08.24 12:27, Andreas Hindborg wrote:
->> "Benno Lossin" <benno.lossin@proton.me> writes:
->>> On 01.08.24 17:11, Andreas Hindborg wrote:
->>>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>>> On 01.08.24 15:40, Andreas Hindborg wrote:
->>>>>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>>>>> On 01.08.24 13:29, Andreas Hindborg wrote:
->>>>>>>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>>>>>>> On 05.07.24 13:15, Andreas Hindborg wrote:
->>>>>>>>>> +
->>>>>>>>>> +/// Types that can be used for module parameters.
->>>>>>>>>> +///
->>>>>>>>>> +/// Note that displaying the type in `sysfs` will fail if
->>>>>>>>>> +/// [`core::str::from_utf8`] (as implemented through the [`core=
-::fmt::Display`]
->>>>>>>>>> +/// trait) writes more than [`PAGE_SIZE`] bytes (including an a=
-dditional null
->>>>>>>>>> +/// terminator).
->>>>>>>>>> +///
->>>>>>>>>> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
->>>>>>>>>> +pub trait ModuleParam: core::fmt::Display + core::marker::Sized=
- {
->>>>>>>>>> +    /// The `ModuleParam` will be used by the kernel module thr=
-ough this type.
->>>>>>>>>> +    ///
->>>>>>>>>> +    /// This may differ from `Self` if, for example, `Self` nee=
-ds to track
->>>>>>>>>> +    /// ownership without exposing it or allocate extra space f=
-or other possible
->>>>>>>>>> +    /// parameter values. This is required to support string pa=
-rameters in the
->>>>>>>>>> +    /// future.
->>>>>>>>>> +    type Value: ?Sized;
->>>>>>>>>> +
->>>>>>>>>> +    /// Whether the parameter is allowed to be set without an a=
-rgument.
->>>>>>>>>> +    ///
->>>>>>>>>> +    /// Setting this to `true` allows the parameter to be passe=
-d without an
->>>>>>>>>> +    /// argument (e.g. just `module.param` instead of `module.p=
-aram=3Dfoo`).
->>>>>>>>>> +    const NOARG_ALLOWED: bool;
->>>>>>>>>
->>>>>>>>> I think, there is a better way of doing this. Instead of this boo=
-l, we
->>>>>>>>> do the following:
->>>>>>>>> 1. have a `const DEFAULT: Option<Self>`
->>>>>>>>> 2. change the type of the argument of `try_from_param_arg` to
->>>>>>>>>    `&'static [u8]`
->>>>>>>>>
->>>>>>>>> That way we don't have the weird behavior of `try_from_param_arg`=
- that
->>>>>>>>> for params that don't have a default value.
->>>>>>>>
->>>>>>>> Since we have no parameter types for which `NOARG_ALLOWED` is true=
- in
->>>>>>>> this patch set, it is effectively dead code. I will remove it.
->>>>>>>
->>>>>>> Hmm what parameters actually are optional? I looked at the old rust
->>>>>>> branch and only `bool` is marked as optional. Are there others?
->>>>>>>
->>>>>>> If it is used commonly for custom parameters (I could imagine that =
-Rust
->>>>>>> modules have enums as parameters and specifying nothing could mean =
-the
->>>>>>> default value), then it might be a good idea to just include it now=
-.
->>>>>>> (otherwise we might forget the design later)
->>>>>>
->>>>>> As far as I can tell from the C code, all parameters are able to hav=
-e
->>>>>> the `NOARG` flag set. We get a null pointer in the callback in that
->>>>>> case.
->>>>>>
->>>>>> If we want to handle this now, we could drop the `default` field
->>>>>> in the Rust module macro. There is no equivalent in the C macros.
->>>>>> And then use an `Option<Option<_>>` to represent the value. `None` w=
-ould
->>>>>> be an unset parameter. `Some(None)` would be a parameter without a
->>>>>> value. `Some(Some(_))` would be a set parameter with a value. We cou=
-ld
->>>>>> probably fix the types so that only parameters with the `NOARG` flag=
- use
->>>>>> the double option, others use a single option.
->>>>>
->>>>> What did you think of my approach that I detailed above? I would like=
- to
->>>>> avoid `Option<Option<_>>` if we can.
->>>>
->>>> How would you represent the case when the parameter is passed without =
-a
->>>> value and a default is given in `module!`?
->>>
->>> I am a bit confused, there are two default values here:
->>> (1) the value returned by `try_from_param_arg(None)`.
->>> (2) the value given by the user to the `module!` macro.
->>>
->>> I am talking about changing the definition of ModuleParam, so (1). I ge=
-t
->>> the feeling that you are talking about (2), is that correct?
->>=20
->> I confused myself as well I think. I am talking about (1). Let me try
->> again.
->>=20
->> If we support `NOARG_ALLOWED` (`KERNEL_PARAM_OPS_FL_NOARG` in C. I
->> should change the flag name in Rust), modules can optionally support
->> some parameters where users can pass parameters either as
->> `my_module.param=3Dvalue` or `my_module.param`. Thus, at the level of
->> `try_from_param_arg`, we need to represent two cases: parameter passed
->> without value, and parameter passed with value. A third case, parameter
->> not passed at all, is equivalent to `try_from_param_arg` never being
->> called. In C this is undetectable for the predefined parameter types. I
->> wanted the double option to detect this. But I guess it does not make
->> sense.
+On Mon, 29 Jul 2024 at 09:05, Chen Yu <yu.c.chen@intel.com> wrote:
 >
-> My idea was to have an `const DEFAULT: Option<Self>` to represent the
-> following:
-> (1) if `DEFAULT =3D=3D None`, then `KERNEL_PARAM_OPS_FL_NOARG` is not set
->     and thus either the `module!` user-specified default value is used,
->     or it is specified via `my_module.param=3Dvalue` and
->     `try_from_param_arg` is called.
-> (2) if `DEFAULT =3D=3D Some(d)`, then `KERNEL_PARAM_OPS_FL_NOARG` is set =
-and
->     when `NULL` is given to `kernel_param_ops.set`, the parameter value
->     is set to `d`, otherwise `try_from_param_arg` is called.
+> commit 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
+> removed the decay_shift for hw_pressure. This commit uses the
+> sched_clock_task() in sched_tick() while it replaces the
+> sched_clock_task() with rq_clock_pelt() in __update_blocked_others().
+
+Good catch, it should be sched_clock_task() everywhere
+
+> This could bring inconsistence. One possible scenario I can think of
+> is in ___update_load_sum():
 >
-> But I think I agree with you removing `NOARG_ALLOWED`, see below.
-
-Great!
-
+> u64 delta = now - sa->last_update_time
 >
->> At a higher level where the bindings supply the parsing functions, we
->> can decide that passing an argument without a value yields a default
->> parameter value. C does this for the predefined `bool` type. The
->> predefined integer types does not support omitting the value.
->>
->> This patch only supports the higher level predefined parameter types,
->> and does not allow modules to supply their own parameter parsing
->> functions. None of the types we implement in this patch support passing
->> the argument without a value. This is intentional to mirror the C
->> implementation.
->>=20
->> To that end, I removed `NOARG_ALLOWED`, and changed the parsing function
->> trait to:
->>=20
->>     fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
->>=20
->> If/when we start supporting types like `bool` or custom parsing
->> functions provided by the module, we will have to update the signature
->> to take an `Option` to represent the case where the user passed an
->> argument without a value. However, to mimic C, the function must always
->> return a value if successful, even if the user did not supply a value to
->> the argument.
->>=20
->> Two different default values are in flight here. 1) the value that the
->> parameter will have before the kernel calls `try_from_param_arg` via
->> `set_param` and 2) the value to return from `try_from_param_arg` if the
->> user did not pass a value with the argument.
->>=20
->> For a `bool` 1) would usually be `false` and 2) would always be `true`.
->>=20
->> For predefined types the module would not customize 2), but 1) is useful
->> to customize. For custom types where the module supplies the parsing
->> function, 2) would be implicitly given by the module in the parsing
->> function.
->>=20
->> In this patch set, we only have 1 default value, namely 1). We do not
->> need 2) because we do not support parameters without values.
+> 'now' could be calculated by rq_clock_pelt() from
+> __update_blocked_others(), and last_update_time was calculated by
+> rq_clock_task() previously from sched_tick(). Usually the former
+> chases after the latter, it cause a very large 'delta' and brings
+> unexpected behavior.
 >
-> I am not sure that putting the default value of `my_module.param` into
-> the `ModuleParam` trait is a good idea. It feels more correct to me to
-> add an optional field to the part in `module!` that can be set to denote
-> this default value -- we might also want to change the name of
-> `default`, what do you think of `default_inactive` and `default_active`?
+> Fix this by using rq_clock_task() inside update_hw_load_avg(),
+> because:
 
-For all the predefined parameter types, the module code would never set
-the `default_active` value. It should be part of the data parsing
-specification for the predefined argument types.
+No, don't call the rq_clock_task() inside update_hw_load_avg(), keep
+it outside. V2 was the correct solution
+Nack for this v3. Please come back on v2
 
-For custom parsing functions implemented in the module, it makes sense
-specifying this value in the trait.
-
-> Since one might want an option by default be `true` and when one writes
-> `my_module.param`, it should be `false`.
-
-I think this would be confusing, since the default C parameter types do
-not have this semantic. Specifying a default true boolean as an argument
-does not make it false in C land. TBH this also feels like the most sane
-thing to do.
-
-> Also as the C side shows, having default values for integer types is not
-> really a good idea, since you might want a non-zero default value.
-> If one does not specify the `default_active` value, then the
-> `KERNEL_PARAM_OPS_FL_NOARG` is not set.
-
-I would rather predefine `KERNEL_PARAM_OPS_FL_NOARG` in the trait
-implementation like C does. We would set the flag for `bool` but not for
-integer types. For custom implementations of the trait, the developer
-can do whatever they want.
-
-> If you don't want to implement this (which I can fully understand, since
-> we might get `syn` before anyone needs params with default values), then
-> we should write this idea down (maybe in an issue?). But regardless, I
-> would like to know your opinion on this topic.
-
-We can create he issue if this series is accepted without the feature.
-
+> 1. hw_pressure doesn't care about invariance.
+> 2. avoid any inconsistence in the future.
 >
->>>> I think we need to drop the default value if we adopt the arg without
->>>> value scheme.
->>>
->>> Yes definitely. I don't see anything in the code doing this currently,
->>> right?
->>=20
->> The current patch uses the default value given in the `module!` macro to
->> initialize the parameter value.
+> Fixes: 97450eb90965 ("sched/pelt: Remove shift of thermal clock")
+> Suggested-by: Qais Yousef <qyousef@layalina.io>
+> Reviewed-by: Hongyan Xia <hongyan.xia2@arm.com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> ---
+> v2>v3:
+>   call rq_clock_task() inside update_hw_load_avg() to avoid any
+>   inconsistence in the future. (Qais Yousef)
+>   Added comments around update_hw_load_avg(). (Qais Yousef)
+> v1->v2:
+>   Added Hongyan's Reviewed-by tag.
+>   Removed the Reported-by/Closes tags because they are not related
+>   to this fix.(Hongyan Xia)
+> ---
+>  kernel/sched/core.c | 2 +-
+>  kernel/sched/fair.c | 2 +-
+>  kernel/sched/pelt.c | 5 +++--
+>  kernel/sched/pelt.h | 6 +++---
+>  4 files changed, 8 insertions(+), 7 deletions(-)
 >
-> But what drops the default value, when an actual value is specified via
-> `my_module.param=3Dvalue`? (or is the default value only assigned when
-> nothing is specified?)
-
-Some more confusion maybe. When I wrote "drop the default value", I
-meant remove it from the code, not specify it. I take it back though. We
-would use the value given in the `module!` macro `default` field as
-`default_inactive`. `default_active` is not required for integer types,
-since they always require a value for the argument.
-
-But the drop would happen in `set_param` when the return value of
-`core::ptr::replace` is dropped.
-
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index a9f655025607..011d447e065f 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -5462,7 +5462,7 @@ void sched_tick(void)
 >
->>> We could also only allow `Copy` values to be used as Parameters (but
->>> then `str` cannot be used as a parameter...), since they can't implemen=
-t
->>> `Drop`.
->>=20
->> We should plan on eventually supporting `String`.
+>         update_rq_clock(rq);
+>         hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
+> -       update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure);
+> +       update_hw_load_avg(rq, hw_pressure);
+>         curr->sched_class->task_tick(rq, curr, 0);
+>         if (sched_feat(LATENCY_WARN))
+>                 resched_latency = cpu_resched_latency(rq);
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 9057584ec06d..193ac2c702d9 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9362,7 +9362,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
 >
-> Yes.
+>         decayed = update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
+>                   update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
+> -                 update_hw_load_avg(now, rq, hw_pressure) |
+> +                 update_hw_load_avg(rq, hw_pressure) |
+>                   update_irq_load_avg(rq, 0);
 >
->>>>>> Or we could just not adopt this feature in the Rust abstractions.
->>>>>
->>>>> Depends on how common this is and if people need to use it. I think t=
-hat
->>>>> what I proposed above isn't that complex, so it should be easy to
->>>>> implement.
->>>>
->>>> Rust modules would just force people to add "my_module.param=3D1" inst=
-ead
->>>> of just "my_module.param". I think that is reasonable.
->>>
->>> Eh, why do we want to give that up? I don't think it's difficult to do.
->>=20
->> I just don't see the point. Just have the user pass `my_module.param=3D1=
-`
->> instead of omitting the value. Having multiple ways of specifying for
->> instance a true boolean just leads to confusion. Some boolean parameters
->> have a default value of `true`, for instance `nvme.use_cmb_sqes`. In
->> this case specifying `nvme.use_cmb_sqes` has no effect, even though one
->> might think it has.
+>         if (others_have_blocked(rq))
+> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+> index fa52906a4478..06a5fa85327c 100644
+> --- a/kernel/sched/pelt.c
+> +++ b/kernel/sched/pelt.c
+> @@ -400,9 +400,10 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+>   *                     capped capacity a cpu due to a HW event.
+>   */
 >
-> This just shows to me that a "global" default in `ModuleParam` is wrong,
-> since for `use_cmb_sqes` one could either have a negated flag, or no
-> default value, forcing the user to write `nvme.use_cmb_sqes=3Dfalse`.
-
-I do not think it is a good idea to be able to override the value
-assigned to a parameter when it is given without a value. The more
-predictable a user interface is, the better.
-
-
-Best regards,
-Andreas
-
-
+> -int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+> +int update_hw_load_avg(struct rq *rq, u64 capacity)
+>  {
+> -       if (___update_load_sum(now, &rq->avg_hw,
+> +       /* hw_pressure doesn't care about invariance */
+> +       if (___update_load_sum(rq_clock_task(rq), &rq->avg_hw,
+>                                capacity,
+>                                capacity,
+>                                capacity)) {
+> diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
+> index 2150062949d4..261172c29f8f 100644
+> --- a/kernel/sched/pelt.h
+> +++ b/kernel/sched/pelt.h
+> @@ -8,7 +8,7 @@ int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
+>  int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
+>
+>  #ifdef CONFIG_SCHED_HW_PRESSURE
+> -int update_hw_load_avg(u64 now, struct rq *rq, u64 capacity);
+> +int update_hw_load_avg(struct rq *rq, u64 capacity);
+>
+>  static inline u64 hw_load_avg(struct rq *rq)
+>  {
+> @@ -16,7 +16,7 @@ static inline u64 hw_load_avg(struct rq *rq)
+>  }
+>  #else
+>  static inline int
+> -update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+> +update_hw_load_avg(struct rq *rq, u64 capacity)
+>  {
+>         return 0;
+>  }
+> @@ -202,7 +202,7 @@ update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+>  }
+>
+>  static inline int
+> -update_hw_load_avg(u64 now, struct rq *rq, u64 capacity)
+> +update_hw_load_avg(struct rq *rq, u64 capacity)
+>  {
+>         return 0;
+>  }
+> --
+> 2.25.1
+>
 
