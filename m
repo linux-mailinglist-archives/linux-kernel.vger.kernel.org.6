@@ -1,130 +1,139 @@
-Return-Path: <linux-kernel+bounces-274085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C83947339
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0921194733B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 03:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ADDBB20EBF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:52:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8068B1F213C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 01:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13B513CFAA;
-	Mon,  5 Aug 2024 01:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D6A3FB83;
+	Mon,  5 Aug 2024 01:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FmPpht1E"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSruemL4"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C66A3EA76;
-	Mon,  5 Aug 2024 01:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5373BBCB
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 01:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722822726; cv=none; b=hIIWCgStfodJEqrUQ+jHAAt++Eh3SkVtFzc1fU98b0g2Kf3SGr0VHhuQagDMQk8N5A0yI5CdT0SCw33ySiK228yIqPq4lK1PKKFuxyng64lzdzCvA9AhRdX3EPVYLrazCJUEhXDzqpHFt074Ud3unWgOQR7FWrjN5RnN/XM9QHk=
+	t=1722822825; cv=none; b=fOk8KZ4FajuRsqsaMmdTX8mFuIusYVMKzn5ZaQotWc0+yE7l6pNgI2aDckiw0y78VNoVaI2UoBNq97bndRPlthBJxLGTwUuaVuZ5rfNhAlVBu+Fx58c7IfJUmK+Odmqof66lgFsVbUqU1JFTE872L292PFhl15ou3xUKM4khJv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722822726; c=relaxed/simple;
-	bh=lYp+khZivfJ7URiH5f/SRglEaW42kwy/c0jVmmhTyCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OR9vfVBHjDuRDKWXr8Gd2bGTeIDLrNl/eSPLg63aPCUZS9+zZGv3n9NXNho9yl+vhsWubKXiJRY/tgZqHR0CkNrzb/sRf1rdpksFOhVu3gQMMqXvwCWt1NYGLlHwO9SkevgufuTwQsN0fq9wDlPEoLTxw7oobiD/D7LoCuas9eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FmPpht1E; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4750E3wY014086;
-	Mon, 5 Aug 2024 01:51:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	C/J9ScKVBO4MCpNAz/Ecfgh99TR0qd4XT1EoEjGm+D0=; b=FmPpht1EgbtTn1eb
-	gnz0agywEjrC2hqWu5T9htOqsmruGyNYG/np8NJxlI8mXTRrJeTewnFW6QwTsmxL
-	oSva55UuC1laowmPDGyQ2ghRc+w2fMuoVCA1b9mYpfxeJpPy8Ri3y+uBGWwaO04o
-	Q5WtFYOadhHY0utaNzUddIMIyCxxqyEmQb8vFdZqzejb5MAm5PaNYroWEFa3//fc
-	YVtYG9Tf55iQvSVoPEHui3gZJzfC1wz9iXdhyTp4L9uxsxXVXi+jrGnXhzkz1D2H
-	16C92omwQNw8PQM5X5EyDZbYe2lodc20oOaVciry8kJhIgts8r05f5qIYnrTwEhR
-	Ul2WMg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sc4y2hs4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 05 Aug 2024 01:51:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4751puk9027167
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 5 Aug 2024 01:51:56 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 4 Aug 2024
- 18:51:51 -0700
-Message-ID: <114d13c1-0b1c-4e73-b969-d826ef80a307@quicinc.com>
-Date: Mon, 5 Aug 2024 09:51:49 +0800
+	s=arc-20240116; t=1722822825; c=relaxed/simple;
+	bh=JLb0hQ5bGIc2b3XGYDKCU3UdkjN/KNNRfzKK9znTFAU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=irLKMZGwOqdDqhjKQq6F9qT0OzLML8l76Zzls9IeQ81YNvZT/jjIA//44Z05EVqgnvJJBX/1LRIGNcZRrw1AOitoevXcR3FntshXVIWC5eWAKLL7WshTbX/kPQcgQcb7C3aodvfCylQEpQzbJDoZ8tVLcsQXGmSkXhlzVEVTqjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSruemL4; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-261e543ef35so5745369fac.3
+        for <linux-kernel@vger.kernel.org>; Sun, 04 Aug 2024 18:53:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722822823; x=1723427623; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gGamAjYrrdAEeItzP4qz2BRS5pecyfrdaiZ5lvnoTEE=;
+        b=GSruemL4Pdj4iOjEc+xPK27Rkm790mMLSZiNTG0RgbIZLMx9dDWIGt93FP16h45ujx
+         Fw1lO/SFlMGHtBNMScqBClYaH7l88IeqoWPejplSCgNpH3BqcWJwKTPJ4pag8JsBWL5K
+         50AFP0YinsLkpAR2hmnRrUtUQkst9CKhpoimwv2PvTmBRnlc89GyrvAofe6l2kIse/4c
+         NObGL6xwh2rkkRqo/WtPOfYeaq430C88r5CTpe/Z/19nmavOecobC2eocXsLqMLcWV0B
+         vZ63RTvtsNCRO+1b3Uk2rrCG4HLw5EW7hGiOKxY89jUuNoysiEhMEJJDbgrIYKOWsQoJ
+         AZjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722822823; x=1723427623;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gGamAjYrrdAEeItzP4qz2BRS5pecyfrdaiZ5lvnoTEE=;
+        b=CslL/uO05vZrsCTexK+wdtzgX3MUJIKX8abY5FJOMxdrZXRBrQBU4Lx0cxn61duhCT
+         pvDc+BzoqIKMBC3La+XhdkNeCBq5vcTV2iHyeeWyRc9XdTfzeRwjZcS/G7uaUGvcdZ8e
+         nAlJXfQqRPzl4Km4vMFJKG8U8pjhHrz0YUgVLDY/ceSY7gPPOYRsVMk923dom+FyCiOM
+         sz0N+poAdpFoLguPDWkgpNpm3XPdNSyWd/UYFGBy4Qdlq1JI4s5Hv65+7/egStmLDHEb
+         EnFeanXQUagGEu55QXrhLgMOQkEue5AIsjCfx9G2vNWx+LAzpw0UY6Tux2xZ08O7VrEc
+         KyoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ/2hEfRpgi3GecCCTqP67uGOa3GcID1WJHDuJofY3+FMDum+8twtDhhWtKZl9Vqn+nKlFuhtyJee0pB5yiW+Q+MBs4P1plnBWCXO+
+X-Gm-Message-State: AOJu0Yx9dJhrEwFQHZ60hw/EPitkR9lFgTmsNag3dA3T/2Fgo7FpRI5B
+	vBETZW4LYoik3S/cyp45uYBfwLS7ABtSRSTTnrYXvjo8/Ue4zCbNmWxolQ==
+X-Google-Smtp-Source: AGHT+IG9woPy8kOXY/EJAb0+8U2sGMNdAM/SNhh5aqT1feM8mWbNKoXnsgHxbcVBpRcy7bL+Ua1FiA==
+X-Received: by 2002:a05:6871:79d:b0:260:ffaf:811b with SMTP id 586e51a60fabf-26891b27a2fmr12643856fac.11.1722822822639;
+        Sun, 04 Aug 2024 18:53:42 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b762e9c6fesm4456632a12.11.2024.08.04.18.53.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 04 Aug 2024 18:53:42 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: chrisl@kernel.org
+Cc: akpm@linux-foundation.org,
+	baohua@kernel.org,
+	hughd@google.com,
+	kaleshsingh@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ryan.roberts@arm.com,
+	ryncsn@gmail.com,
+	ying.huang@intel.com
+Subject: Re: [PATCH v5 6/9] mm: swap: allow cache reclaim to skip slot cache
+Date: Mon,  5 Aug 2024 13:53:24 +1200
+Message-Id: <20240805015324.45134-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CACePvbXkM1E56exMYKC5VsBFd+3+V60yPXx-qnq8ZNgOG1yVrg@mail.gmail.com>
+References: <CACePvbXkM1E56exMYKC5VsBFd+3+V60yPXx-qnq8ZNgOG1yVrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] interconnect: qcom: Add SM4450 interconnect
-To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240801-sm4450_interconnect-v3-0-8e364d0faa99@quicinc.com>
- <e95c0938-3af3-4ec5-bf23-270ab8823e5e@kernel.org>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <e95c0938-3af3-4ec5-bf23-270ab8823e5e@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2Efnt8AdBz_p27JKBeWD19xbB-8FQOIf
-X-Proofpoint-GUID: 2Efnt8AdBz_p27JKBeWD19xbB-8FQOIf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-04_14,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
- suspectscore=0 mlxscore=0 malwarescore=0 mlxlogscore=797 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408050012
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Mon, Aug 5, 2024 at 6:07 AM Chris Li <chrisl@kernel.org> wrote:
 
+> > > > +
+> > > > +       spin_lock(&si->lock);
+> > > > +       /* Only sinple page folio can be backed by zswap */
+> > > > +       if (!nr_pages)
+> > > > +               zswap_invalidate(entry);
+> > >
+> > > I am trying to figure out if I am mad :-)  Does nr_pages == 0 means single
+> > > page folio?
+> > >
+> >
+> > Hi Barry
+> >
+> > I'm sorry, this should be nr_pages == 1, I messed up order and nr, as
+> > zswap only works for single page folios.
+> Ack. Should be  nr_pages == 1.
+>
 
-On 8/2/2024 3:22 PM, Krzysztof Kozlowski wrote:
-> On 01/08/2024 10:54, Tengfei Fan wrote:
->> Add SM4450 interconnect provider driver and enable it.
->>
->> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->> ---
->> Changes in v3:
->> - add enable CONFIG_INTERCONNECT_QCOM_SM4450 defconfig patch.
->> - remove all _disp related paths in sm4450.c
->> - fix patch check issue
->>
->> Changes in v2:
->> - remove DISP related paths
->> - make compatible and data of of_device_id in one line
->> - add clock patch series dependence
->> - redo dt_binding_check
-> 
-> ? Running make is not a change.
+Yes. Andrew, can you please help squash the below fix,
 
-ACK.
+small folios should have nr_pages == 1 but not nr_page == 0
 
-> 
-> Best regards,
-> Krzysztof
-> 
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index ea023fc25d08..6de12d712c7e 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -224,7 +224,7 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
+ 
+ 	spin_lock(&si->lock);
+ 	/* Only sinple page folio can be backed by zswap */
+-	if (!nr_pages)
++	if (nr_pages == 1)
+ 		zswap_invalidate(entry);
+ 	swap_entry_range_free(si, entry, nr_pages);
+ 	spin_unlock(&si->lock);
 
--- 
-Thx and BRs,
-Tengfei Fan
+> Barry, thanks for catching that.
+>
+> Chris
+
+Thanks
+Barry
+
 
