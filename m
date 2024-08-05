@@ -1,192 +1,222 @@
-Return-Path: <linux-kernel+bounces-275173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE2D948165
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:10:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6618948166
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 20:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD6C1F2247A
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A08528DBE0
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4BE16B385;
-	Mon,  5 Aug 2024 18:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED58E165F06;
+	Mon,  5 Aug 2024 18:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHpcEMfo"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QwHVKvTA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BE1165EF4
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F532165EF1
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 18:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722881168; cv=none; b=j/LPYnEiI2lqB7dgaTH7RXEciCTbLijyChDtLb23/1m66Ix6yhgyKWh+mzCqJBRdtZDfEDKFDKECXcwHD0fYhNe+axs2QihtfXWe12kYGHLwfX8W1/GcXMo3mFLGOMSdz4yQU5JiIrQ/cAQBw4A6bPNiN0MB26S25TMKSjtJ1XU=
+	t=1722881239; cv=none; b=SeIeuSb2J1+cBzfJa6GDQoO8Za+BVt5evdRr7ElBfA4z9Aiaprh8iOaBLGKL9gV546E7bQ5ASjosAuRHDalNajj+Zsc29ac/N8AkfxW5vaNUdMvXv/r+9uCyW/rKD9U4OIqm/hooQ49f51RegEHGL/wZ1rQ8sj8j1uV+6k5EX3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722881168; c=relaxed/simple;
-	bh=DA0IF92YfHjnqqJxGrNAM6BWKAVNT+Hl0w4R389/7P4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=A73fghyXo2+Bi+/UyPVtXL3uitMe20DLK73K7B3lzFJrSUnGSd51Ww3rIfVFJ6DGDuKvlsbIYwCKMnPbC6oDZu41tys2MhV2KbL0SxPpXS0LjEcvt5EuMOi9mPhfLlncQwQFzr4jl4M0lRrObLbClm5QcvIiUbTAiLyJo7XRYyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHpcEMfo; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6bb8a12e9e3so14726d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722881166; x=1723485966; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tuNc5ijq2sTTz1aoHY//bl29OA01mR9/Gm1Cm8jhEsw=;
-        b=nHpcEMfoYerRpopWH2CNoC9YvPH1n+Zov/P6V56LT3Ap4GCIOuh8wA30BtTIn+T7d0
-         j71MUanj72yMoUgku4OlJrXzhL3Np9GpSpU4swDDmKuzDc+vrBFi7xHp2y8lWHnAho23
-         A8ZdCGU+IMqKQYVwEQnIGCblLMvlxP9WmeC5Rqe3vzfSAvf7dqigDgthPPFDxwqbcD0W
-         WGpnviaZ5APNaaqGPHZjYJbTyfW5Xcg7YD8/HaLehwdFS4PJugbVysaebp7besIjvt9i
-         6u9eVl8goJX2VWogLSo5Taf9jp/Nn9NkTNfH8HMTEK3RlJb8y196gQNsLAY8dIqP20pl
-         AYHA==
+	s=arc-20240116; t=1722881239; c=relaxed/simple;
+	bh=XeOBDs5g9+DWZr0nMNt+q5yDm4Jet7kwvUmtNMeNbbw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WERxXZ2TEdSsJ56TaP9a3aeq/Y2U742+p8Yr7aN5YcmJ4/TECzuKxktAI1+RVJQ+5+rYc2ZQBmypDpI++Qav4sSFcvzdBtlEgo0CClWmBOjUw78f+nhk3twiHPIW9bq7ggDrzOfI05Z6Tsu3DTM2caUeq+uLqAMM7wsOGD6N2es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QwHVKvTA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722881236;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EV382HJ7V4LKcf7jIUzsTiCcxB+Fb1tK9cfeDpSD6y0=;
+	b=QwHVKvTAhT0tS/0ci32I4uExFoZrL/z2zy6t1AA4CRFIltUGbsqMNyEh/CRXD7UFdRk577
+	qmRRdAjVNI5o2+2cnTLSfaRNxNRKaEPeRBUHoTlh9eklQjiXj5d1pdNIzLquOeKpiPIfoL
+	gttlJr2o/3RDzy9Ywq8yZF5/kEg0tu0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-531-A-ygLtkoOD2xIHDCiBYoWA-1; Mon, 05 Aug 2024 14:07:14 -0400
+X-MC-Unique: A-ygLtkoOD2xIHDCiBYoWA-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36873a449dfso2881647f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 11:07:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722881166; x=1723485966;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1722881233; x=1723486033;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tuNc5ijq2sTTz1aoHY//bl29OA01mR9/Gm1Cm8jhEsw=;
-        b=Fk2sZhz0OsHaaZpRHvTcQyDH+b/+I2ZXE34BfFAyRBq/YwPbaboA832GxrKLQ9xM4Q
-         vyee8aH0hppCBDT6fTnDUo2l9Wvt2D9NYCWhUdVDFAZetzoL9BInDrEXpcBDZ4SWwVu3
-         Q7Zm01Kxs4CnExjjcPi8F45ostcEOJvaoAfDTxd0coe5hjtRDWLdn2ISpsoGy0P5lC3k
-         jF5N1JFMMTTcC5/rduoM4FsvWImCDSWD00uTbzNYhJEBENVQeWMatXOA0mRVf3OafcQc
-         6zmYqx1lVWDLWoKOsoTe6gI9nDfL+r2R/ZPpbS69DqkW/U87jg2k4UFoGG8j4xdGdRyo
-         OgYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJPpgvMjNrBeZH0sTKGlMkUzM2+fPWoTN3BZuigQbjVKSfdBAVm2hDS7v8HFGHm7TBhfMG14vJNeDEkWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFAqwcv6Pp/eJ+tjwJ9+3VCvn/MLe2enQ86SQtfvtlMwpS2xsR
-	oy07/+ZnSHUvK+F++xb9MhKB6fznWBaXMkw1C2qIVZ8bWGauSdkRzkbCCxdFkpOJU70ZhkDf+8o
-	Bt8fQhfbwgIEzzeN41YusVvCdPuze3t2EnyIi2oWz
-X-Google-Smtp-Source: AGHT+IGtKXbr3WIUYML88AgClVnUEVd5wqOjwXLwGek75xH0mlYxuRzER9nHua9J6rDEejJ+C1ibj9q/0xMMTRAjZOQ=
-X-Received: by 2002:a05:6214:e64:b0:6b0:8202:5c4e with SMTP id
- 6a1803df08f44-6bb983f0fa6mr98122976d6.5.1722881165875; Mon, 05 Aug 2024
- 11:06:05 -0700 (PDT)
+        bh=EV382HJ7V4LKcf7jIUzsTiCcxB+Fb1tK9cfeDpSD6y0=;
+        b=QBBELrrxR14lmz/ULNtlM8RdquulG7d+YBd0jYlO6lC9lgAnFbtKW6sKa2VNHWKj03
+         JTzEY/C5pDzvpoS3Jkd7HR7RZxlip1FSzVKLT1fkQ7rT0zkaEbBSaGrgbOM76HkO1tno
+         DqdyCwCmb7G8HeJ48fMre6Cgi/bFIOQc6GJSuJzvW1Hx2DrVNuJUVtHSLFsBZi4Q4/w1
+         3NcTBBAW71sz8Diblx4yLCT9pcxhSdX4H4ImPSp0RCRRda3r7LkNOKK1O3FZ9pWUrsNm
+         MeuczPcyCQuPCyQ+b4/Hc6fnVI1U+dDvluk/C2n4BZBpMFHzxgQayqHKI9UFqyd4es4L
+         +WJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJMzos5qqUqXqggdWCBOxbAnsOkwI/+QuCBZ7ZwvVXldjAqeQ2s/FAiHNPZ9TLPKPDfQwUwpE7s+DFj2QCXtE7GAlQ3xJCUqX8vNEB
+X-Gm-Message-State: AOJu0YxyAGz36W/17Vv1Q3IfXPz039+Wt0k+yTII1Mtv5A3PtCFG4HTO
+	/Ki8ZEp+NbQ+dCNJCEoHe7GSTdD8tKqU+qj/0SgoMSWPn8jyoRSUa9Nn6oE14m0MlKy+ZKd5weW
+	lZFj/4CTVBs6UGLCoFacv/Bqj2BlrHs5ht4RCxiZ7uS8TZvN03Odl/Lqo8CeZNQ==
+X-Received: by 2002:adf:ee41:0:b0:36b:bb99:d7f0 with SMTP id ffacd0b85a97d-36bbbe1a4bfmr8355551f8f.2.1722881233327;
+        Mon, 05 Aug 2024 11:07:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQTeOsWdSC6WQUfpcDIzGoAFVnMw1c1hQTEw/m+WMBul5UlRqgqCuosR9sXFjORB5Q1VcF7A==
+X-Received: by 2002:adf:ee41:0:b0:36b:bb99:d7f0 with SMTP id ffacd0b85a97d-36bbbe1a4bfmr8355531f8f.2.1722881232758;
+        Mon, 05 Aug 2024 11:07:12 -0700 (PDT)
+Received: from intellaptop.lan ([2a06:c701:778d:5201:3e8a:4c9c:25dd:6ccc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd26f913sm10630748f8f.111.2024.08.05.11.07.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 11:07:12 -0700 (PDT)
+Message-ID: <b6569c6d40317e957cff9309dcfe943d72544b60.camel@redhat.com>
+Subject: Re: [PATCH v2 1/2] KVM: x86: relax canonical check for some x86
+ architectural msrs
+From: mlevitsk@redhat.com
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov
+ <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Chao Gao <chao.gao@intel.com>
+Date: Mon, 05 Aug 2024 21:07:10 +0300
+In-Reply-To: <ZrEAXVhH3w6Q0tIy@google.com>
+References: <20240802151608.72896-1-mlevitsk@redhat.com>
+	 <20240802151608.72896-2-mlevitsk@redhat.com> <Zq0A9R5R_MAFrqTP@google.com>
+	 <cdb61fa7cc5cfe69b030493ea566cbf40f3ec2e1.camel@redhat.com>
+	 <ZrEAXVhH3w6Q0tIy@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Mon, 5 Aug 2024 23:05:54 +0500
-Message-ID: <CABXGCsNgx6gQCqBq-L2P15ydaN_66sM9CgGa9GQYNzQsaa6Dkg@mail.gmail.com>
-Subject: 6.11/regression/bisected - after commit 1b04dcca4fb1, launching some
- RenPy games causes computer hang
-To: Leo Li <sunpeng.li@amd.com>, Harry Wentland <harry.wentland@amd.com>, zaeem.mohamed@amd.com, 
-	pekka.paalanen@collabora.com, "Wheeler, Daniel" <daniel.wheeler@amd.com>, 
-	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+
+=D0=A3 =D0=BF=D0=BD, 2024-08-05 =D1=83 09:39 -0700, Sean Christopherson =D0=
+=BF=D0=B8=D1=88=D0=B5:
+> On Mon, Aug 05, 2024, mlevitsk@redhat.com=C2=A0wrote:
+> > =D0=A3 =D0=BF=D1=82, 2024-08-02 =D1=83 08:53 -0700, Sean Christopherson=
+ =D0=BF=D0=B8=D1=88=D0=B5:
+> > > > > > > > > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > > > > > > > > index a6968eadd418..3582f0bb7644 100644
+> > > > > > > > > > --- a/arch/x86/kvm/x86.c
+> > > > > > > > > > +++ b/arch/x86/kvm/x86.c
+> > > > > > > > > > @@ -1844,7 +1844,16 @@ static int __kvm_set_msr(struct =
+kvm_vcpu *vcpu, u32 index, u64 data,
+> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MS=
+R_KERNEL_GS_BASE:
+> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MS=
+R_CSTAR:
+> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0case MS=
+R_LSTAR:
+> > > > > > > > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (is_noncanonical_address(data, vcpu)=
+)
+> > > > > > > > > > +
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Both AMD and Intel cpus allow values=
+ which
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * are canonical in the 5 level paging =
+mode but are not
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * canonical in the 4 level paging mode=
+ to be written
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * to the above MSRs, as long as the ho=
+st CPU supports
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * 5 level paging, regardless of the st=
+ate of the CR4.LA57.
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!__is_canonical_address(data,
+> > > > > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0kvm_cpu_cap_has(X86_FEATURE_LA57) ? 57 : 48))
+> > > > > >=20
+> > > > > > Please align indentation.
+> > > > > >=20
+> > > > > > Checking kvm_cpu_cap_has() is wrong.=C2=A0 What the _host_ supp=
+orts is irrelevant,
+> > > > > > what matters is what the guest CPU supports, i.e. this should c=
+heck guest CPUID.
+> > > > > > Ah, but for safety, KVM also needs to check kvm_cpu_cap_has() t=
+o prevent faulting
+> > > > > > on a bad load into hardware.=C2=A0 Which means adding a "govern=
+ed" feature until my
+> > > > > > CPUID rework lands.
+> >=20
+> > Well the problem is that we passthrough these MSRs, and that means that=
+ the guest
+> > can modify them at will, and only ucode can prevent it from doing so.
+> >=20
+> > So even if the 5 level paging is disabled in the guest's CPUID, but hos=
+t supports it,
+> > nothing will prevent the guest to write non canonical value to one of t=
+hose MSRs,=C2=A0
+> > and later KVM during migration or just KVM_SET_SREGS will fail.
+> =C2=A0
+> Ahh, and now I recall the discussions around the virtualization holes wit=
+h LA57.
+>=20
+> > Thus I used kvm_cpu_cap_has on purpose to make KVM follow the actual uc=
+ode
+> > behavior.
+>=20
+> I'm leaning towards having KVM do the right thing when emulation happens =
+to be
+> triggered.=C2=A0 If KVM checks kvm_cpu_cap_has() instead of guest_cpu_cap=
+_has() (looking
+> at the future), then KVM will extend the virtualization hole to MSRs that=
+ are
+> never passed through, and also to the nested VMX checks.=C2=A0 Or I suppo=
+se we could
+> add separate helpers for passthrough MSRs vs. non-passthrough, but that s=
+eems
+> like it'd add very little value and a lot of maintenance burden.
+>=20
+> Practically speaking, outside of tests, I can't imagine the guest will ev=
+er care
+> if there is inconsistent behavior with respect to loading non-canonical v=
+alues
+> into MSRs.
+>=20
 
 Hi,
-After commit 1b04dcca4fb1, launching some RenPy games causes computer hang.
-After the hang, even Alt + sysrq + REISUB can't reboot the computer!
-And no trace in the kernel log!
-For demonstration, I'm going to use the game "Find the Orange Narwhal"
-because it is free and has 100% reproducivity for this issue.
-You can find it in the Steam Store:
-https://store.steampowered.com/app/2946010/Find_the_Orange_Narwhal/
-I uploaded demonstration video to youtube: https://youtu.be/yVW6rImRpXw
 
-Unfortunately, I can't check the revert commit 1541d63c5fe2 because of
-conflicts.
+If we weren't allowing the guest (and even nested guest assuming that L1 hy=
+pervisor allows it) to write
+these MSRs directly, I would have agreed with you, but we do allow this.
 
-mikhail@primary-ws ~/p/g/linux (master)> git reset v6.11-rc1 --hard
-HEAD is now at 8400291e289e Linux 6.11-rc1
+This means that for example a L2, even a malicious L2, can on purpose write=
+ non canonical value to one of these
+MSRs, and later on, KVM could kill the L0 due to canonical check.
 
-mikhail@primary-ws ~/p/g/linux (master)> git revert -n 1b04dcca4fb1
-Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-CONFLICT (content): Merge conflict in
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
-Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-CONFLICT (content): Merge conflict in
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-error: could not revert 1b04dcca4fb1... drm/amd/display: Introduce
-overlay cursor mode
-hint: after resolving the conflicts, mark the corrected paths
-hint: with 'git add <paths>' or 'git rm <paths>'
-hint: Disable this message with "git config advice.mergeConflict false"
+Or L1 (not Linux, because it only lets canonical GS_BASE/FS_BASE), allow th=
+e untrusted userspace to=C2=A0
+write any value to say GS_BASE, thus allowing
+malicious L1 userspace to crash L1 (also a security violation).
 
-commit 1b04dcca4fb10dd3834893a60de74edd99f2bfaf
-Author: Leo Li <sunpeng.li@amd.com>
-Date:   Thu Jan 18 16:29:49 2024 -0500
+IMHO if we really want to do it right, we need to disable pass-though of th=
+ese MSRs if ucode check is more lax than
+our check, that is if L1 is running without 5 level paging enabled but L0 d=
+oes have it supported.
 
-    drm/amd/display: Introduce overlay cursor mode
+I don't know if this configuration is common, and thus how much this will a=
+ffect performance.
 
-    [Why]
-
-    DCN is the display hardware for amdgpu. DRM planes are backed by DCN
-    hardware pipes, which carry pixel data from one end (memory), to the
-    other (output encoder).
-
-    Each DCN pipe has the ability to blend in a cursor early on in the
-    pipeline. In other words, there are no dedicated cursor planes in DCN,
-    which makes cursor behavior somewhat unintuitive for compositors.
-
-    For example, if the cursor is in RGB format, but the top-most DRM plane
-    is in YUV format, DCN will not be able to blend them. Because of this,
-    amdgpu_dm rejects all configurations where a cursor needs to be enabled
-    on top of a YUV formatted plane.
-
-    From a compositor's perspective, when computing an allocation for
-    hardware plane offloading, this cursor-on-yuv configuration result in an
-    atomic test failure. Since the failure reason is not obvious at all,
-    compositors will likely fall back to full rendering, which is not ideal.
-
-    Instead, amdgpu_dm can try to accommodate the cursor-on-yuv
-    configuration by opportunistically reserving a separate DCN pipe just
-    for the cursor. We can refer to this as "overlay cursor mode". It is
-    contrasted with "native cursor mode", where the native DCN per-pipe
-    cursor is used.
-
-    [How]
-
-    On each crtc, compute whether the cursor plane should be enabled in
-    overlay mode. If it is, mark the CRTC as requesting overlay cursor mode.
-
-    Overlay cursor should be enabled whenever there exists a underlying
-    plane that has YUV format, or is scaled differently than the cursor. It
-    should also be enabled if there is no underlying plane, or if underlying
-    planes do not cover the entire CRTC.
-
-    During DC validation, attempt to enable a separate DCN pipe for the
-    cursor if it's in overlay mode. If that fails, or if no overlay mode is
-    requested, then fallback to native mode.
-
-    v2:
-    * Update commit message for when overlay cursor should be enabled
-    * Also consider scale and no-underlying-plane case (cursor on crtc bg)
-    * Consider all underlying planes when determinig overlay/native, not
-      just the plane immediately beneath the cursor, as it may not cover the
-      entire CRTC.
-    * Fix typo s/decending/descending/
-    * Force native cursor on pre-DCN hardware
-
-    Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-    Acked-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
-    Signed-off-by: Leo Li <sunpeng.li@amd.com>
-    Acked-by: Harry Wentland <harry.wentland@amd.com>
-    Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
-    Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-    Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c       | 490
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h       |   7 +++
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c  |   1 +
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c |  13 ++++-
- 4 files changed, 389 insertions(+), 122 deletions(-)
+Best regards,
+	Maxim Levitsky
 
 
-My hardware specs are: https://linux-hardware.org/?probe=61bd7390a9
-
-Leo, can you look into it, please?
-
--- 
-Best Regards,
-Mike Gavrilov.
 
