@@ -1,102 +1,302 @@
-Return-Path: <linux-kernel+bounces-274831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D723947D58
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:57:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB592947D5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31A052835DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60FAA2840E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7B8149C69;
-	Mon,  5 Aug 2024 14:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="DqdNJ6Qa"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8788713BC2F;
-	Mon,  5 Aug 2024 14:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B21149DFC;
+	Mon,  5 Aug 2024 14:58:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430A213C67E;
+	Mon,  5 Aug 2024 14:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722869865; cv=none; b=nEv6fjA80iSjN6kr5cpN2o0p7n4+0L82dUn7AJ2TqeDwop1CvttPgE7g00g7Dcoe3xojVHdxC5TqR2K0HQdomRS4kg+X06H9bJ5rkvYNgqFWGSA42ssTAKqTAzTXKNKQcG6FzDIgZXwb4NztlZlNvHHQqlQ3wgeMHlYTWIhhtNo=
+	t=1722869897; cv=none; b=j7ueIIzzFMjco/AewjUUYOXSVBnCivK8qWGDyxMT8lopJvNHc2mFddUq1bBLvmwCXOHrw5reLAT0RR25hlSn9nwrJza6FFoFEn4h1tbxu/6FL3Q2GYKg7Yb7cSJF7s5VQGgmmxGmDGlG5ugbP5F2pRXjqucAYEh09n8Wp5HNUfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722869865; c=relaxed/simple;
-	bh=xQxs5tA86O7NH6G9PP9yTirBnWcDZOoo7XIjpVLI+xY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P6J+wrcWfVMopBWtF2QFU0SMywLQQQUcbfIW/DF5SOMtXnB6nPviJotg9KcdVdIdHaKinISrj5Qk9YCItFxJ73CZXjAduHizrXZRAHn03waXCV1f+n7752crIkJtImRBn9yNiC1L+sqpASRmLn2wtjGzgABHYFA353gE+yg33jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=DqdNJ6Qa; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id CDA6AA1020;
-	Mon,  5 Aug 2024 16:57:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=rt0/DzSJHh0VO/aLzwYC4bGQHdS29kdGzx/bnV7v0b4=; b=
-	DqdNJ6QajXuCswon2Ki8MzHdHH1KWtMMPtFZSTDwStmjN2bytgjJnPb9PoMIp3HP
-	StVCZJhwc2Q1AtT1GYcEh1RcEBsDoQkYuPpU9kBq7cs3T7I//PTaJJ0ZVZG4OZI/
-	zC9nJMFTkFuVfqZK59zHS0s7xB7JAVN0y6t9hqos3RYTDjUrkNvyf618PhbJJTyy
-	QsasJz3Sp/m/vWGjagHWsquZlMC2nDPlCW1JL8uPsPPmvUl8e/HIGrTkGRuAdZx2
-	XJC1WAbKVEozZOa2GYcoNUT5CfVIcBYf6RjyqTHFNdcidVeIDWZQ+9AIL5aQYE4n
-	OWlQ5wi2p7PAp9xmqBvhCPwWOro9iPrGR2zESFpmr6vdL6K7crJNOuZjMkfDbPrY
-	IoVVUxc1L96fr/d8AYLD3cqv1CvCUEzvrjFoIl85melnItoExvFWXmIRHARAbK76
-	s79zQqfP2RrxaVnpcRbOMfbJpr/8YX6PbjW31PjeHkFfhVWngpDD5HbqHbWWr+hh
-	ztVuRwpbLqH/YGpUJPLWzlHyYMhF84l8ATXfNu2honf+A2aP4nTOl5QlVYojmq5i
-	tr930Hri0dH7xaXzRY/KDN3+2WpUHSOq7SSoNEUZhz3C43bZdC/AZMEsrLG8Mqlj
-	SN/Rjf517O+Khqr0eJvjerv/dX12a2HkhaR4jadwtiQ=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Wei Fang
-	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>
-Subject: [PATCH] net: fec: Stop PPS on driver remove
-Date: Mon, 5 Aug 2024 16:57:36 +0200
-Message-ID: <20240805145735.2385752-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722869897; c=relaxed/simple;
+	bh=f6oj3279yYwJLfqBf7SnOcMGsAOqP80sDhzbCu3c6Aw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=u7dYrCEecQTuJoC5eU3+ttHUwABWvcj4ne56BRaoe8cgxX6/Tyhqi1W83ftan87ShFL8eNua4n88pLhc/mUO3vgkUNQU+ylrBpvo5uzjvsa39zmfjTY6Yqu1+zYWQOlGtQcQkVOgwbJrkiovrYkunJpCMDi72bUflNuOjTbcNHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66A8A106F;
+	Mon,  5 Aug 2024 07:58:40 -0700 (PDT)
+Received: from [10.1.25.54] (e127648.arm.com [10.1.25.54])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DEDBC3F6A8;
+	Mon,  5 Aug 2024 07:58:11 -0700 (PDT)
+Message-ID: <181bb5c2-5790-41bf-9ed8-3d3164b8697d@arm.com>
+Date: Mon, 5 Aug 2024 15:58:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1722869861;VERSION=7975;MC=3706177826;ID=151856;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29ACD94854667C61
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 6.1.y] cpuidle: teo: Remove recent intercepts metric
+From: Christian Loehle <christian.loehle@arm.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, stable@vger.kernel.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
+ daniel.lezcano@linaro.org, ulf.hansson@linaro.org, anna-maria@linutronix.de,
+ dsmythies@telus.net, kajetan.puchalski@arm.com, lukasz.luba@arm.com,
+ dietmar.eggemann@arm.com
+References: <20240628095955.34096-1-christian.loehle@arm.com>
+ <CAJZ5v0jPyy0HgtQcSt=7ZO-khSGex2uAxL1x6HZFkFbvpbxcmA@mail.gmail.com>
+ <9bbf6989-f41f-4533-a7c8-b274744663cd@arm.com>
+Content-Language: en-US
+In-Reply-To: <9bbf6989-f41f-4533-a7c8-b274744663cd@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-PPS was not stopped in `fec_ptp_stop()`, called when
-the adapter was removed. Consequentially, you couldn't
-safely reload the driver with the PPS signal on.
+commit 449914398083148f93d070a8aace04f9ec296ce3 upstream.
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+The logic for recent intercepts didn't work, there is an underflow
+of the 'recent' value that can be observed during boot already, which
+teo usually doesn't recover from, making the entire logic pointless.
+Furthermore the recent intercepts also were never reset, thus not
+actually being very 'recent'.
+
+Having underflowed 'recent' values lead to teo always acting as if
+we were in a scenario were expected sleep length based on timers is
+too high and it therefore unnecessarily selecting shallower states.
+
+Experiments show that the remaining 'intercept' logic is enough to
+quickly react to scenarios in which teo cannot rely on the timer
+expected sleep length.
+
+See also here:
+https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
+
+Fixes: 77577558f25d ("cpuidle: teo: Rework most recent idle duration values treatment")
+Link: https://patch.msgid.link/20240628095955.34096-3-christian.loehle@arm.com
+Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/net/ethernet/freescale/fec_ptp.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/cpuidle/governors/teo.c | 79 ++++++---------------------------
+ 1 file changed, 14 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index c5b89352373a..93953d252d99 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -787,6 +787,9 @@ void fec_ptp_stop(struct platform_device *pdev)
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct fec_enet_private *fep = netdev_priv(ndev);
+diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
+index d9262db79cae..65475526bb11 100644
+--- a/drivers/cpuidle/governors/teo.c
++++ b/drivers/cpuidle/governors/teo.c
+@@ -54,16 +54,12 @@
+  * shallower than the one whose bin is fallen into by the sleep length (these
+  * situations are referred to as "intercepts" below).
+  *
+- * In addition to the metrics described above, the governor counts recent
+- * intercepts (that is, intercepts that have occurred during the last
+- * %NR_RECENT invocations of it for the given CPU) for each bin.
+- *
+  * In order to select an idle state for a CPU, the governor takes the following
+  * steps (modulo the possible latency constraint that must be taken into account
+  * too):
+  *
+  * 1. Find the deepest CPU idle state whose target residency does not exceed
+- *    the current sleep length (the candidate idle state) and compute 3 sums as
++ *    the current sleep length (the candidate idle state) and compute 2 sums as
+  *    follows:
+  *
+  *    - The sum of the "hits" and "intercepts" metrics for the candidate state
+@@ -76,20 +72,15 @@
+  *      idle long enough to avoid being intercepted if the sleep length had been
+  *      equal to the current one).
+  *
+- *    - The sum of the numbers of recent intercepts for all of the idle states
+- *      shallower than the candidate one.
+- *
+- * 2. If the second sum is greater than the first one or the third sum is
+- *    greater than %NR_RECENT / 2, the CPU is likely to wake up early, so look
+- *    for an alternative idle state to select.
++ * 2. If the second sum is greater than the first one the CPU is likely to wake
++ *    up early, so look for an alternative idle state to select.
+  *
+  *    - Traverse the idle states shallower than the candidate one in the
+  *      descending order.
+  *
+- *    - For each of them compute the sum of the "intercepts" metrics and the sum
+- *      of the numbers of recent intercepts over all of the idle states between
+- *      it and the candidate one (including the former and excluding the
+- *      latter).
++ *    - For each of them compute the sum of the "intercepts" metrics over all
++ *      of the idle states between it and the candidate one (including the
++ *      former and excluding the latter).
+  *
+  *    - If each of these sums that needs to be taken into account (because the
+  *      check related to it has indicated that the CPU is likely to wake up
+@@ -114,22 +105,14 @@
+ #define PULSE		1024
+ #define DECAY_SHIFT	3
  
-+	if (fep->pps_enable)
-+		fec_ptp_enable_pps(fep, 0);
-+
- 	cancel_delayed_work_sync(&fep->time_keep);
- 	hrtimer_cancel(&fep->perout_timer);
- 	if (fep->ptp_clock)
+-/*
+- * Number of the most recent idle duration values to take into consideration for
+- * the detection of recent early wakeup patterns.
+- */
+-#define NR_RECENT	9
+-
+ /**
+  * struct teo_bin - Metrics used by the TEO cpuidle governor.
+  * @intercepts: The "intercepts" metric.
+  * @hits: The "hits" metric.
+- * @recent: The number of recent "intercepts".
+  */
+ struct teo_bin {
+ 	unsigned int intercepts;
+ 	unsigned int hits;
+-	unsigned int recent;
+ };
+ 
+ /**
+@@ -137,17 +120,13 @@ struct teo_bin {
+  * @time_span_ns: Time between idle state selection and post-wakeup update.
+  * @sleep_length_ns: Time till the closest timer event (at the selection time).
+  * @state_bins: Idle state data bins for this CPU.
+- * @total: Grand total of the "intercepts" and "hits" mertics for all bins.
+- * @next_recent_idx: Index of the next @recent_idx entry to update.
+- * @recent_idx: Indices of bins corresponding to recent "intercepts".
++ * @total: Grand total of the "intercepts" and "hits" metrics for all bins.
+  */
+ struct teo_cpu {
+ 	s64 time_span_ns;
+ 	s64 sleep_length_ns;
+ 	struct teo_bin state_bins[CPUIDLE_STATE_MAX];
+ 	unsigned int total;
+-	int next_recent_idx;
+-	int recent_idx[NR_RECENT];
+ };
+ 
+ static DEFINE_PER_CPU(struct teo_cpu, teo_cpus);
+@@ -216,27 +195,16 @@ static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
+ 		}
+ 	}
+ 
+-	i = cpu_data->next_recent_idx++;
+-	if (cpu_data->next_recent_idx >= NR_RECENT)
+-		cpu_data->next_recent_idx = 0;
+-
+-	if (cpu_data->recent_idx[i] >= 0)
+-		cpu_data->state_bins[cpu_data->recent_idx[i]].recent--;
+-
+ 	/*
+ 	 * If the measured idle duration falls into the same bin as the sleep
+ 	 * length, this is a "hit", so update the "hits" metric for that bin.
+ 	 * Otherwise, update the "intercepts" metric for the bin fallen into by
+ 	 * the measured idle duration.
+ 	 */
+-	if (idx_timer == idx_duration) {
++	if (idx_timer == idx_duration)
+ 		cpu_data->state_bins[idx_timer].hits += PULSE;
+-		cpu_data->recent_idx[i] = -1;
+-	} else {
++	else
+ 		cpu_data->state_bins[idx_duration].intercepts += PULSE;
+-		cpu_data->state_bins[idx_duration].recent++;
+-		cpu_data->recent_idx[i] = idx_duration;
+-	}
+ 
+ 	cpu_data->total += PULSE;
+ }
+@@ -289,13 +257,10 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 	s64 latency_req = cpuidle_governor_latency_req(dev->cpu);
+ 	unsigned int idx_intercept_sum = 0;
+ 	unsigned int intercept_sum = 0;
+-	unsigned int idx_recent_sum = 0;
+-	unsigned int recent_sum = 0;
+ 	unsigned int idx_hit_sum = 0;
+ 	unsigned int hit_sum = 0;
+ 	int constraint_idx = 0;
+ 	int idx0 = 0, idx = -1;
+-	bool alt_intercepts, alt_recent;
+ 	ktime_t delta_tick;
+ 	s64 duration_ns;
+ 	int i;
+@@ -338,7 +303,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 		 */
+ 		intercept_sum += prev_bin->intercepts;
+ 		hit_sum += prev_bin->hits;
+-		recent_sum += prev_bin->recent;
+ 
+ 		if (dev->states_usage[i].disable)
+ 			continue;
+@@ -358,7 +322,6 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 
+ 		idx_intercept_sum = intercept_sum;
+ 		idx_hit_sum = hit_sum;
+-		idx_recent_sum = recent_sum;
+ 	}
+ 
+ 	/* Avoid unnecessary overhead. */
+@@ -373,42 +336,32 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 	 * If the sum of the intercepts metric for all of the idle states
+ 	 * shallower than the current candidate one (idx) is greater than the
+ 	 * sum of the intercepts and hits metrics for the candidate state and
+-	 * all of the deeper states, or the sum of the numbers of recent
+-	 * intercepts over all of the states shallower than the candidate one
+-	 * is greater than a half of the number of recent events taken into
+-	 * account, the CPU is likely to wake up early, so find an alternative
+-	 * idle state to select.
++	 * all of the deeper states a shallower idle state is likely to be a
++	 * better choice.
+ 	 */
+-	alt_intercepts = 2 * idx_intercept_sum > cpu_data->total - idx_hit_sum;
+-	alt_recent = idx_recent_sum > NR_RECENT / 2;
+-	if (alt_recent || alt_intercepts) {
++	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
+ 		s64 first_suitable_span_ns = duration_ns;
+ 		int first_suitable_idx = idx;
+ 
+ 		/*
+ 		 * Look for the deepest idle state whose target residency had
+ 		 * not exceeded the idle duration in over a half of the relevant
+-		 * cases (both with respect to intercepts overall and with
+-		 * respect to the recent intercepts only) in the past.
++		 * cases in the past.
+ 		 *
+ 		 * Take the possible latency constraint and duration limitation
+ 		 * present if the tick has been stopped already into account.
+ 		 */
+ 		intercept_sum = 0;
+-		recent_sum = 0;
+ 
+ 		for (i = idx - 1; i >= 0; i--) {
+ 			struct teo_bin *bin = &cpu_data->state_bins[i];
+ 			s64 span_ns;
+ 
+ 			intercept_sum += bin->intercepts;
+-			recent_sum += bin->recent;
+ 
+ 			span_ns = teo_middle_of_bin(i, drv);
+ 
+-			if ((!alt_recent || 2 * recent_sum > idx_recent_sum) &&
+-			    (!alt_intercepts ||
+-			     2 * intercept_sum > idx_intercept_sum)) {
++			if (2 * intercept_sum > idx_intercept_sum) {
+ 				if (teo_time_ok(span_ns) &&
+ 				    !dev->states_usage[i].disable) {
+ 					idx = i;
+@@ -508,13 +461,9 @@ static int teo_enable_device(struct cpuidle_driver *drv,
+ 			     struct cpuidle_device *dev)
+ {
+ 	struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
+-	int i;
+ 
+ 	memset(cpu_data, 0, sizeof(*cpu_data));
+ 
+-	for (i = 0; i < NR_RECENT; i++)
+-		cpu_data->recent_idx[i] = -1;
+-
+ 	return 0;
+ }
+ 
 -- 
 2.34.1
-
 
 
