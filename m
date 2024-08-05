@@ -1,185 +1,79 @@
-Return-Path: <linux-kernel+bounces-274984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BCF947F23
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:20:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE243947F82
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 18:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75790B20E28
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:20:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AE4A1C210DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E733015C13E;
-	Mon,  5 Aug 2024 16:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Spc/40ko"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A2015B13B;
-	Mon,  5 Aug 2024 16:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D431615C14B;
+	Mon,  5 Aug 2024 16:41:10 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018EB3E479
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 16:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722874847; cv=none; b=OgBWPBTlVcL1cjpLemrhFYJOAODvzInlWMPeu1heVIwbzqIGn5W1UK5CltZ7IDqky0iLb+2g4KkbQ05jK0ydxveNQrOCZhjW8IplUnIXqbTzQa5nTFnYn9gGwmEZSy19NS0kOfwle3Hxvbh21yvTOg8l1ZUXQEQxiwj7A0gJXcU=
+	t=1722876070; cv=none; b=nwPWre9IQ2Ot0IcLoHNKm3fWvV/WXBdUZnQfbRghnfRowlz20fhF7cl0C3IjEoK3EmhAp1AlemdWBeBD66Q58ZHt96rH3LIwC6qJ31zH47xvQCpUVDyO0cCfpwbWqhWPVv1Ty5jKbxP1xnX2qJ518vBhbiMvp5tdF89UxHueo1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722874847; c=relaxed/simple;
-	bh=/L2ZmKVsnMnMzzDATRh01PFyiIKGURwsJUcC5trdz74=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G7s8Jz43MdHqRQ010Bun7/oBUg32zB3PwrdYSEOJyfZjmt7mIQq0kNalHPqBGdXns6fNH0Xv8TXQjC432O2EFZfp91dWejkO+gUpuch7iPFKa+vb6GFkY7y26ndGd1yBCVoc1FNAYIc4jemhUXXQNeZ2wO84/5sGUT7siaSGiFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Spc/40ko; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 4441820B7165;
-	Mon,  5 Aug 2024 09:20:45 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4441820B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1722874845;
-	bh=x7RmYwcl8Np2r9CgaT28u+v74Tee49QBXTpKkw+aDMA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Spc/40kowD2L/9j9rxEhbXM8jNL0yKIWWH3nPryKvtsxxcfqWkcOw1zNQytspaDf9
-	 ka/+E7NGxcSj+aJgyTJGArS23Gp704ZXooexFtXYIgNn4M29vMSEH0AfRwo2jjCzW0
-	 Tc0i9erquhfjLy2nTZu3FyLDYvVHvhwaSygalWN8=
-Message-ID: <40a0853f-52e1-4f44-a7bd-aa5b732c07a9@linux.microsoft.com>
-Date: Mon, 5 Aug 2024 09:20:45 -0700
+	s=arc-20240116; t=1722876070; c=relaxed/simple;
+	bh=0nLZarad/33XwHuKaOJpxEGT4Vu2bigaHRkIinHgmfU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h46oskwCo0R63Yy3uiKzQ6tnsNjBCldVvv2EpdtAFs6c8LkwRiKFQ+W8+FWMcqLV8P0C0MbQDeU25++9jBOwlFf5u8/k9SC9qeduDD6LAHxofQ/9FmaRhm9ANZD8PKjDWLDIdwvUxhMxW4wRy/XWbs8g/PoLJrEqYsuATD/OtTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875a9f.versanet.de ([83.135.90.159] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sb0S6-0003cC-HL; Mon, 05 Aug 2024 18:20:54 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: ukleinek@debian.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: actually enable pmu-io-domains on qnap-ts433
+Date: Mon,  5 Aug 2024 18:20:52 +0200
+Message-Id: <20240805162052.3345768-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/7] arm64: hyperv: Boot in a Virtual Trust Level
-To: Michael Kelley <mhklinux@outlook.com>, "arnd@arndb.de" <arnd@arndb.de>,
- "bhelgaas@google.com" <bhelgaas@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "kw@linux.com" <kw@linux.com>,
- "kys@microsoft.com" <kys@microsoft.com>, "lenb@kernel.org"
- <lenb@kernel.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "rafael@kernel.org"
- <rafael@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>, "will@kernel.org"
- <will@kernel.org>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "apais@microsoft.com" <apais@microsoft.com>,
- "benhill@microsoft.com" <benhill@microsoft.com>,
- "ssengar@microsoft.com" <ssengar@microsoft.com>,
- "sunilmut@microsoft.com" <sunilmut@microsoft.com>,
- "vdso@hexbites.dev" <vdso@hexbites.dev>
-References: <20240726225910.1912537-1-romank@linux.microsoft.com>
- <20240726225910.1912537-5-romank@linux.microsoft.com>
- <SN6PR02MB41575867724F85CB7A1551E6D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB41575867724F85CB7A1551E6D4BE2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Contrary to the vendor-kernel the pmu-io-domains are not enabled by
+default. This resulted in the value not being set according to the
+regulator, which in turn made the gmac0 interface that is connected
+to the vccio4 supply inoperable.
 
+Fixes: 64b7f16fb394 ("arm64: dts: rockchip: add 2 pmu_io_domain supplies for Qnap-TS433")
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 8/4/2024 8:02 PM, Michael Kelley wrote:
-> From: Roman Kisel <romank@linux.microsoft.com> Sent: Friday, July 26, 2024 3:59 PM
->>
->> To run in the VTL mode, Hyper-V drivers have to know what
->> VTL the system boots in, and the arm64/hyperv code does not
->> update the variable that stores the value.
->>
->> Update the variable to enable the Hyper-V drivers to boot
->> in the VTL mode and print the VTL the code runs in.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> ---
->>   arch/arm64/hyperv/Makefile        |  1 +
->>   arch/arm64/hyperv/hv_vtl.c        | 13 +++++++++++++
->>   arch/arm64/hyperv/mshyperv.c      |  4 ++++
->>   arch/arm64/include/asm/mshyperv.h |  7 +++++++
->>   4 files changed, 25 insertions(+)
->>   create mode 100644 arch/arm64/hyperv/hv_vtl.c
->>
->> diff --git a/arch/arm64/hyperv/Makefile b/arch/arm64/hyperv/Makefile
->> index 87c31c001da9..9701a837a6e1 100644
->> --- a/arch/arm64/hyperv/Makefile
->> +++ b/arch/arm64/hyperv/Makefile
->> @@ -1,2 +1,3 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   obj-y		:= hv_core.o mshyperv.o
->> +obj-$(CONFIG_HYPERV_VTL_MODE)	+= hv_vtl.o
->> diff --git a/arch/arm64/hyperv/hv_vtl.c b/arch/arm64/hyperv/hv_vtl.c
->> new file mode 100644
->> index 000000000000..38642b7b6be0
->> --- /dev/null
->> +++ b/arch/arm64/hyperv/hv_vtl.c
->> @@ -0,0 +1,13 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2024, Microsoft, Inc.
->> + *
->> + * Author : Roman Kisel <romank@linux.microsoft.com>
->> + */
->> +
->> +#include <asm/mshyperv.h>
->> +
->> +void __init hv_vtl_init_platform(void)
->> +{
->> +	pr_info("Linux runs in Hyper-V Virtual Trust Level\n");
->> +}
->> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
->> index 341f98312667..8fd04d6e4800 100644
->> --- a/arch/arm64/hyperv/mshyperv.c
->> +++ b/arch/arm64/hyperv/mshyperv.c
->> @@ -98,6 +98,10 @@ static int __init hyperv_init(void)
->>   		return ret;
->>   	}
->>
->> +	/* Find the VTL */
->> +	ms_hyperv.vtl = get_vtl();
->> +	hv_vtl_init_platform();
->> +
->>   	ms_hyperv_late_init();
->>
->>   	hyperv_initialized = true;
->> diff --git a/arch/arm64/include/asm/mshyperv.h
->> b/arch/arm64/include/asm/mshyperv.h
->> index a7a3586f7cb1..63d6bb6998fc 100644
->> --- a/arch/arm64/include/asm/mshyperv.h
->> +++ b/arch/arm64/include/asm/mshyperv.h
->> @@ -49,6 +49,13 @@ static inline u64 hv_get_msr(unsigned int reg)
->>   				ARM_SMCCC_OWNER_VENDOR_HYP,	\
->>   				HV_SMCCC_FUNC_NUMBER)
->>
->> +#ifdef CONFIG_HYPERV_VTL_MODE
->> +void __init hv_vtl_init_platform(void);
->> +int __init hv_vtl_early_init(void);
-> 
-> This declaration is spurious since you removed the function.
-> 
-Will clean this up, thanks!
-
-> Michael
-> 
->> +#else
->> +static inline void __init hv_vtl_init_platform(void) {}
->> +#endif
->> +
->>   #include <asm-generic/mshyperv.h>
->>
->>   #define ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0	0x7948734d
->> --
->> 2.34.1
->>
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+index 9ee8e954fd341..1417411d15ae8 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
+@@ -604,6 +604,7 @@ vcc5v0_otg_en: vcc5v0-otg-en {
+ &pmu_io_domains {
+ 	vccio4-supply = <&vcc_1v8>;
+ 	vccio6-supply = <&vcc_1v8>;
++	status = "okay";
+ };
+ 
+ &sata1 {
 -- 
-Thank you,
-Roman
+2.39.2
 
 
