@@ -1,123 +1,184 @@
-Return-Path: <linux-kernel+bounces-274524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A10947958
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:22:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4391A947933
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 12:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F180B21A09
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:22:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36E61F223A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 10:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F92D158DC3;
-	Mon,  5 Aug 2024 10:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vq5sBKqv"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF21158A2C;
-	Mon,  5 Aug 2024 10:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54BA1422D4;
+	Mon,  5 Aug 2024 10:18:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A6018040;
+	Mon,  5 Aug 2024 10:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722853199; cv=none; b=Nz3Qi3JWvufwUoI7LI4sewDrcaTwmMByip4wnVBk++GjbjlKVPkSCdNCPPJG/gcALP1U8cZnO7eMbPrnF50VqQ+/j3pWVGU4HkCaNwOojIKeY4KqNuA7ux9oV/xdH4OFBI4VjuE5icTO8UAopAPqwUzD3sAQPf7mm3WRjIx5Kz0=
+	t=1722853110; cv=none; b=AcoMlhb4nfD6LszRS+r1N9t6BL6nXLQQ7YXNEgrletViqcPNuYHA5kaaNIRrzH5qRNKL6wswKIt/TSVpAZ2DKW+4OdXRn2Bryr8/TanpHAIR/dt/wpWagL5GwUoZk8Tc6CylfgpKSyq79X71sxi9Q0j9E+f6JdBpumtPaMANy6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722853199; c=relaxed/simple;
-	bh=nhPkf7wgseJDhZAtkhb42G6JXubPm9Ki2AQx9/jbUDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pAQAjGUC6CBubCLdQNCkUn/OyoBBTjt9irqt1qIVjZUePPuqWnwuhjfJWX+HH3RWSVVlTOIPE0VsYAQviqk8VHahr3Aw1lAytUM8hyLPxCxgLXm2qkxpFTlcV9R6TJ6PRa5eYI9gfNSZ7Rv6NozMd3lPjRaQDu3iFVy2ovL6dIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vq5sBKqv; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 0E39920002;
-	Mon,  5 Aug 2024 10:19:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722853196;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9I+0v1qx7CVrOS1djilPmB0cdboViIJolbKDdwWOXOM=;
-	b=Vq5sBKqv72dKT3VLsh2EZwf5w7ki8vjpAFT5mc1/gcfoasDML1BzPtE+6lHZEc0+pBWyj4
-	H7WPwSGdm4ukMba04njQ5FLr/YxUf5hhBSNWdlL+3hsJIkGgAZnWd1JTxBJQJF7XTwAAmU
-	ZzqgYlPFXQPYNXjsaCyBSE9DWiHcsg61VxCdhyHJ36yRbEEQErouQF++78sqG47AvYj2oU
-	W6quZeXf9ccspH1dJJDnLHp0/XVCkz0LlDYhFYbDbUig47Y+XJQicK/ZBNc9SVBDFBx7O/
-	AK1RfdnlZAXKljZaPl5+3CtC/RNDftccha6cFE8qT+BG+cclvjCjVuHSOtlknQ==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-Subject: [PATCH v4 8/8] reset: mchp: sparx5: set the dev member of the reset controller
-Date: Mon,  5 Aug 2024 12:17:24 +0200
-Message-ID: <20240805101725.93947-9-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240805101725.93947-1-herve.codina@bootlin.com>
-References: <20240805101725.93947-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1722853110; c=relaxed/simple;
+	bh=EJldXRMJVn3095IzSNVAin6hrSMalMe/S3EmCvh6qvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=emHg0/Sx6IzZ9kbjzjX8yvCGJgWAFJtLQvGwTMxnKfGNdVhjvdP3SIHI0SD+CTXAyNxhz3cL07RYnnYorCsy/TQ/J0eUbCORzTmn0QxgrzIRRtz64Dg3qpOMwRMakdiGaCpmI2thfJyLy+ZQmpIrOvmEMZ9N39K6eQmdCIy+f/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D60B143D;
+	Mon,  5 Aug 2024 03:18:51 -0700 (PDT)
+Received: from [10.57.66.48] (unknown [10.57.66.48])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 785553F5A1;
+	Mon,  5 Aug 2024 03:18:21 -0700 (PDT)
+Message-ID: <e5f0349e-6c72-4847-bf0c-4afb57404907@arm.com>
+Date: Mon, 5 Aug 2024 11:18:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
+ capacities are different"
+To: Qais Yousef <qyousef@layalina.io>
+Cc: MANISH PANDEY <quic_mapa@quicinc.com>, axboe@kernel.dk, mingo@kernel.org,
+ peterz@infradead.org, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ linux-block@vger.kernel.org, sudeep.holla@arm.com,
+ Jaegeuk Kim <jaegeuk@kernel.org>, Bart Van Assche <bvanassche@acm.org>,
+ Christoph Hellwig <hch@infradead.org>, kailash@google.com, tkjos@google.com,
+ dhavale@google.com, bvanassche@google.com, quic_nitirawa@quicinc.com,
+ quic_cang@quicinc.com, quic_rampraka@quicinc.com, quic_narepall@quicinc.com,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
+ <3feb5226-7872-432b-9781-29903979d34a@arm.com>
+ <20240805020748.d2tvt7c757hi24na@airbuntu>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240805020748.d2tvt7c757hi24na@airbuntu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
 
-From: Clément Léger <clement.leger@bootlin.com>
+Sorry, I didn't include linux-kernel, so my and Qais' reply that is missing
+is quoted here in full. You can also find it here:
+https://lore.kernel.org/all/d2009fca-57db-49e6-a874-e8291c3e27f5@quicinc.com/T/#m2f5195487d2e3ad0c0b6fc68f9967704c7aa4a70
 
-In order to guarantee the device will not be deleted by the reset
-controller consumer, set the dev member of the reset controller.
+On 8/5/24 03:07, Qais Yousef wrote:
+> On 08/02/24 10:03, Christian Loehle wrote:
+>> On 7/31/24 14:46, MANISH PANDEY wrote:
+>>> Hi Qais Yousef,
+>>
+>> Qais already asked the important question, still some from my end.
+>>
+>>> Recently we observed below patch has been merged
+>>> https://lore.kernel.org/all/20240223155749.2958009-3-qyousef@layalina.io
+>>>
+>>> This patch is causing performance degradation ~20% in Random IO along with significant drop in Sequential IO performance. So we would like to revert this patch as it impacts MCQ UFS devices heavily. Though Non MCQ devices are also getting impacted due to this.
+>>
+>> I'm curious about the sequential IO part in particular, what's the blocksize and throughput?
+>> If blocksize is large enough the completion and submission parts are hopefully not as critical.
+>>
+>>>
+>>> We have several concerns with the patch
+>>> 1. This patch takes away the luxury of affining best possible cpus from   device drivers and limits driver to fall in same group of CPUs.
+>>>
+>>> 2. Why can't device driver use irq affinity to use desired CPUs to complete the IO request, instead of forcing it from block layer.
+>>>
+>>> 3. Already CPUs are grouped based on LLC, then if a new categorization is required ?
+>>
+>> As Qais hinted at, because of systems that share LLC on all CPUs but are HMP.
+>>
+>>>
+>>>> big performance impact if the IO request
+>>>> was done from a CPU with higher capacity but the interrupt is serviced
+>>>> on a lower capacity CPU.
+>>>
+>>> This patch doesn't considers the issue of contention in submission path and completion path. Also what if we want to complete the request of smaller capacity CPU to Higher capacity CPU?
+>>> Shouldn't a device driver take care of this and allow the vendors to use the best possible combination they want to use?
+>>> Does it considers MCQ devices and different SQ<->CQ mappings?
+>>
+>> So I'm assuming you're seeing something like the following:
+>> Some CPU(s) (call them S) are submitting IO, hardirq triggers on
+>> S.
+>> Before the patch the completion softirq could run on a !S CPU,
+>> now it runs on S. Am I then correct in assuming your workload
+>> is CPU-bound on S? Would you share some details about the
+>> workload, too?
+>>
+>> What's the capacity of CPU(s) S then?
+>> IOW does this help?
+>>
+>> -->8--
+>>
+>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>> index e3c3c0c21b55..a4a2500c4ef6 100644
+>> --- a/block/blk-mq.c
+>> +++ b/block/blk-mq.c
+>> @@ -1164,7 +1164,7 @@ static inline bool blk_mq_complete_need_ipi(struct request *rq)
+>>         if (cpu == rq->mq_ctx->cpu ||
+>>             (!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
+>>              cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
+>> -            cpus_equal_capacity(cpu, rq->mq_ctx->cpu)))
+>> +            arch_scale_cpu_capacity(cpu) >= arch_scale_cpu_capacity(rq->mq_ctx->cpu)))
+>>                 return false;
+>>  
+>>         /* don't try to IPI to an offline CPU */
+> 
+> FWIW, that's what I had in the first version of the patch, but moved away from
+> it. I think this will constitute a policy.
+> 
+> Keep in mind that driver setting affinity like Manish case is not something
+> represent a kernel driver as I don't anticipate in-kernel driver to hardcode
+> affinities otherwise they won't be portable. irqbalancers usually move the
+> interrupts, and I'm not sure we can make an assumption about the reason an
+> interrupt is triggering on different capacity CPU.
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/reset/reset-microchip-sparx5.c | 1 +
- 1 file changed, 1 insertion(+)
+FWIW that patch was mostly to narrow down the problem Manish is experiencing, I
+wasn't proposing it as a proper patch.
 
-diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-index c4fe65291a43..1ef2aa1602e3 100644
---- a/drivers/reset/reset-microchip-sparx5.c
-+++ b/drivers/reset/reset-microchip-sparx5.c
-@@ -117,6 +117,7 @@ static int mchp_sparx5_reset_probe(struct platform_device *pdev)
- 		return err;
- 
- 	ctx->rcdev.owner = THIS_MODULE;
-+	ctx->rcdev.dev = &pdev->dev;
- 	ctx->rcdev.nr_resets = 1;
- 	ctx->rcdev.ops = &sparx5_reset_ops;
- 	ctx->rcdev.of_node = dn;
--- 
-2.45.0
+> My understanding of rq_affinity=1 is to match the perf of requester. Given that
+> the characteristic of HMP system is that power has an equal importance to perf
+> (I think this now has become true for all systems by the way), saying that the
+> match in one direction is better than the other is sort of forcing a policy of
+> perf first which I don't think is a good thing to enforce. We don't have enough
+> info to decide at this level. And our users care about both.
+
+I would argue rq_affinity=1 matches the perf, so that flag should already bias
+perf in favor of power slightly?
+Although the actual effect on power probably isn't that significant, given
+that the (e.g. big) CPU has submitted the IO, is woken up soon, so you could
+almost ignore a potential idle wakeup and the actual CPU time spent in the block
+completion is pretty short of course.
+
+> If no matching is required, it makes sense to set rq_affinity to 0. When
+> matching is enabled, we need to rely on per-task iowait boost to help the
+> requester to run at a bigger CPU, and naturally the completion will follow when
+> rq_affinity=1. If the requester doesn't need the big perf, but the irq
+> triggered on a bigger core, I struggle to understand why it is good for
+> completion to run on bigger core without the requester also being on a similar
+> bigger core to truly maximize perf.
+
+So first of all, per-task iowait boosting has nothing to do with it IMO.
+Plenty of IO workloads build up utilization perfectly fine.
+I wouldn't consider the setup: requester little perf, irq+completion big perf
+invalid necessarily, it does decrease IO latency for the application.
+Consider the IO being page faults (maybe even of various applications running
+on little).
+
+> 
+> By the way, if we assume LLC wasn't the same, then assuming HMP system too, and
+> reverting my patch, then the behavior was to move the completion from bigger
+> core to little core.
+> 
+> So two things to observe:
+> 
+> 1. The patch keeps the behavior when LLC truly is not shared on such systems,
+>    which was in the past.
+> 2. LLC in this case is most likely L2, and the usual trend is that the bigger
+>    the core the bigger L2. So the LLC characteristic is different and could
+>    have impacted performance. No one seem to have cared in the past. I think
+>    capacity gives this notion now implicitly.
 
 
