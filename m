@@ -1,268 +1,232 @@
-Return-Path: <linux-kernel+bounces-275222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2FC6948208
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:02:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A226894820C
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5761F22A49
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:02:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F7C1F2348E
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F9C16A943;
-	Mon,  5 Aug 2024 19:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CC016B39C;
+	Mon,  5 Aug 2024 19:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="aDF7vEEY"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLd76+zy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D9C1537D4
-	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 19:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BCA2AD13;
+	Mon,  5 Aug 2024 19:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722884565; cv=none; b=Og7NGucb0uNA5HOVE3pZHnxSBnmySjvuoE+b3GVPrSP4UBgYvjpINhnKQSCBKjcDUCttQ1O2VPaTGyHkIdCt8QW91hNwzHdIMDDKi5o84Q3/M3Zg7R5vBPbIBBay+A9D2bAYSfHwKGFpbaXmznWbbN+VcJE9j4WoH4PpyK0zUL4=
+	t=1722884729; cv=none; b=gYQiL0Pj3RQOFcsA66PrR/SCufxJLVktIHLyNx/fq80bGunM5Au9FJ/Wq7RONqTgFELLEK/oVq8pjpZLT9Mmxmz+Fsrzm58aMTRz6ZXidMK4fr0RhTqyhiP1QcWdfkKOtebMzQZy6Qw825KWlHyiRkvneViF3iVK6lN3N9ZWbfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722884565; c=relaxed/simple;
-	bh=B9YP0SmlZmrl709lb0+tiYfGHYkYU+mdsIyn8q4+xxc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I9U1ttwWTPegKo1x1P3NgIxLlVWcmAj0WuwDEyEawxqLHaF6UBxZzXob+DFPy234EhnEz7eVv8b8YFpEuuW4OUl7pbB3CfAWCgmEP0FfFLtznA9/EoS1QYK/G767zK6W7QY0Um4gUShGZJwn/INoa3xeONfXGeiSdBDyxHPZVw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=aDF7vEEY; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722884555; x=1723143755;
-	bh=jb6ms6xd9vhXotlchGtOcFeNqtU4VEY61hgvRpRUbqA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=aDF7vEEY2Gmo9e2GyoEwT2v8jxIBncldQYMSy9u7ukb6sqTZeYUdlAoK5j/Le/eaR
-	 +VGl2sFY1vOAQcd4IHM1o2MC1T9l/k1ynQiRO2Iz3YSNCWX0AVFAFT6qqGibPeMYRm
-	 JHYf9f/HNU56oCw6U1s4ycREZ8zWTML2IBDEx51lo171XYBWbnlTDvJz9Cn08/so/5
-	 2mHHM9EtbQA1obB3ec+NfmpLAceNR1NmuxKNfW/aLK8VINeDWHSYm6D8sjWIXJEI3/
-	 uaUFcxxbFRZ8l0NlBxYHghC8v71EYGC8ePXQDdShKPuhoT+U1YvZtoen/0QTpBqOM6
-	 o0vf5ufP3DM8w==
-Date: Mon, 05 Aug 2024 19:02:28 +0000
-To: Matt Gilbride <mattgilbride@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/6] rust: rbtree: add red-black tree implementation backed by the C version
-Message-ID: <242d0107-8e2b-4856-8f4c-1d5351fdaad8@proton.me>
-In-Reply-To: <20240727-b4-rbtree-v8-2-951600ada434@google.com>
-References: <20240727-b4-rbtree-v8-0-951600ada434@google.com> <20240727-b4-rbtree-v8-2-951600ada434@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 97f1e6a14d126e5e30454a54fb1b44ce92ec5ec1
+	s=arc-20240116; t=1722884729; c=relaxed/simple;
+	bh=cPCmldVPRgFeIxgMTiKS36c+Aixa8bS03HsjdsooKlI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=US5yQHHPuvPUIFcYOCjxMp76pt/PrFY76qXoIGJkJqL0WUeVoUYQPTb4fRZpLHq6KuJadTS3Uz1/jWj/s4XGsvmt967U8A1TOEpAIakz2DqLLbsl8S+K9NVlMKc2vU2eKAFkrBHk/uC13vc6uDonTI9Yi5Y8+bsLhCjSoAaA/Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLd76+zy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C95C4AF10;
+	Mon,  5 Aug 2024 19:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722884728;
+	bh=cPCmldVPRgFeIxgMTiKS36c+Aixa8bS03HsjdsooKlI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TLd76+zy5670BgKGblI39Qmaa62vVzSVaTi7TCqB5Ax3sAX92bbAkhp8AQ3TDlVA5
+	 +8Q9VQAYWUD7tb1RcfX7sCz1zlkXmF9oIEK07gXHtwYAwUwrF2gNuOpPEjz72WHYS/
+	 Dm6zGgWYeVHyexsd8saVdodiowLf9o/X3XJs3nyLSq2WgZMPj85g32k2KMEe++QJUa
+	 i4SGIOKAQiW1l+K1QbQOIatLKX1I0I+vKOAOocwzLBqTM7X3FcPSHv4GhJOXA+lJTG
+	 7APO4yabS0CR97bbmAQhrDSuvCvFPNVjooUQlVx1CBbDnSga5VGSyFI740XVmFgaSh
+	 dqnF2nr5Pg1JQ==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so121101011fa.0;
+        Mon, 05 Aug 2024 12:05:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVDiVQOlIjje0VAA0tnyN1J4+TB9m/MkofZcfR61ZOfnUC1ge+3TgfYItk18VbM14HmP54rA9z/KBO3d8niwdZDYqeVmtkj+F7z/9bzipInPkLQCBWPKRX4kcQ38Ep1AtqdxBB6M2bJfEXXPcrvqdiUnIupMdlwzi8HLZDQKj3O
+X-Gm-Message-State: AOJu0YxclMCV9XCATkELmLkIWqKRd6gIp97MqPcSDmLcousUa1aOLDQS
+	qLxhqoPXMJuucLq0p2dwYdLR9Kj8aHO0m6RBsMYfEjOTlK4OajYoV2eBIZh+ppr3Ba72sIjQtib
+	5258bnUFm6+LwEe3d6ir12a3QDQ==
+X-Google-Smtp-Source: AGHT+IET6gczs3GfflEbuJJZODloldeME4HEE+ZdKsBacwO7Aftaf7g/qzwvp1wwGmaiDZFabuyXcVsRNwH0G49eiLE=
+X-Received: by 2002:a2e:be2c:0:b0:2f1:8622:dc6b with SMTP id
+ 38308e7fff4ca-2f18622eb9dmr20197831fa.1.1722884727060; Mon, 05 Aug 2024
+ 12:05:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240724065048.285838-1-s-vadapalli@ti.com> <20240724161916.GG3349@thinkpad>
+ <20240725042001.GC2317@thinkpad> <93e864fb-cf52-4cc0-84a0-d689dd829afb@ti.com>
+ <20240726115609.GF2628@thinkpad> <CAL_JsqJ-mfU88E_Ri=BzH6nAFg405gkPPJTtjdp7UR2n96QMkw@mail.gmail.com>
+ <20240805164519.GF7274@thinkpad>
+In-Reply-To: <20240805164519.GF7274@thinkpad>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 5 Aug 2024 13:05:14 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
+Message-ID: <CAL_JsqKxF6yYTWbmU8SRhxemNMwErNViHuk05sLyFjFzssh=Eg@mail.gmail.com>
+Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, bhelgaas@google.com, lpieralisi@kernel.org, 
+	kw@linux.com, vigneshr@ti.com, kishon@kernel.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	stable@vger.kernel.org, ahalaney@redhat.com, srk@ti.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 27.07.24 22:30, Matt Gilbride wrote:
-> diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-> new file mode 100644
-> index 000000000000..74c53e4d5c00
-> --- /dev/null
-> +++ b/rust/kernel/rbtree.rs
-> @@ -0,0 +1,432 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Red-black trees.
-> +//!
-> +//! C header: [`include/linux/rbtree.h`](srctree/include/linux/rbtree.h)
-> +//!
-> +//! Reference: <https://www.kernel.org/doc/html/latest/core-api/rbtree.h=
-tml>
-> +
-> +use crate::{alloc::Flags, bindings, container_of, error::Result, prelude=
-::*};
-> +use alloc::boxed::Box;
-> +use core::{
-> +    cmp::{Ord, Ordering},
-> +    marker::PhantomData,
-> +    mem::MaybeUninit,
-> +    ptr::{addr_of_mut, NonNull},
-> +};
-> +
-> +/// A red-black tree with owned nodes.
-> +///
-> +/// It is backed by the kernel C red-black trees.
-> +///
-> +/// # Invariants
-> +///
-> +/// Non-null parent/children pointers stored in instances of the `rb_nod=
-e` C struct are always
-> +/// valid, and pointing to a field of our internal representation of a n=
-ode.
+On Mon, Aug 5, 2024 at 10:45=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Mon, Aug 05, 2024 at 10:01:37AM -0600, Rob Herring wrote:
+> > On Fri, Jul 26, 2024 at 5:56=E2=80=AFAM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> > >
+> > > On Thu, Jul 25, 2024 at 01:50:16PM +0530, Siddharth Vadapalli wrote:
+> > > > On Thu, Jul 25, 2024 at 09:50:01AM +0530, Manivannan Sadhasivam wro=
+te:
+> > > > > On Wed, Jul 24, 2024 at 09:49:21PM +0530, Manivannan Sadhasivam w=
+rote:
+> > > > > > On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli w=
+rote:
+> > > > > > > Since the configuration of Legacy Interrupts (INTx) is not su=
+pported, set
+> > > > > > > the .map_irq and .swizzle_irq callbacks to NULL. This fixes t=
+he error:
+> > > > > > >   of_irq_parse_pci: failed with rc=3D-22
+> > > > > > > due to the absence of Legacy Interrupts in the device-tree.
+> > > > > > >
+> > > > > >
+> > > > > > Do you really need to set 'swizzle_irq' to NULL? pci_assign_irq=
+() will bail out
+> > > > > > if 'map_irq' is set to NULL.
+> > > > > >
+> > > > >
+> > > > > Hold on. The errono of of_irq_parse_pci() is not -ENOENT. So the =
+INTx interrupts
+> > > > > are described in DT? Then why are they not supported?
+> > > >
+> > > > No, the INTx interrupts are not described in the DT. It is the pcie=
+port
+> > > > driver that is attempting to setup INTx via "of_irq_parse_and_map_p=
+ci()"
+> > > > which is the .map_irq callback. The sequence of execution leading t=
+o the
+> > > > error is as follows:
+> > > >
+> > > > pcie_port_probe_service()
+> > > >   pci_device_probe()
+> > > >     pci_assign_irq()
+> > > >       hbrg->map_irq
+> > > >         of_pciof_irq_parse_and_map_pci()
+> > > >         of_irq_parse_pci()
+> > > >           of_irq_parse_raw()
+> > > >             rc =3D -EINVAL
+> > > >             ...
+> > > >             [DEBUG] OF: of_irq_parse_raw: ipar=3D/bus@100000/interr=
+upt-controller@1800000, size=3D3
+> > > >             if (out_irq->args_count !=3D intsize)
+> > > >               goto fail
+> > > >                 return rc
+> > > >
+> > > > The call to of_irq_parse_raw() results in the Interrupt-Parent for =
+the
+> > > > PCIe node in the device-tree being found via of_irq_find_parent(). =
+The
+> > > > Interrupt-Parent for the PCIe node for MSI happens to be GIC_ITS:
+> > > > msi-map =3D <0x0 &gic_its 0x0 0x10000>;
+> > > > and the parent of GIC_ITS is:
+> > > > gic500: interrupt-controller@1800000
+> > > > which has the following:
+> > > > #interrupt-cells =3D <3>;
+> > > >
+> > > > The "size=3D3" portion of the DEBUG print above corresponds to the
+> > > > #interrupt-cells property above. Now, "out_irq->args_count" is set =
+to 1
+> > > > as __assumed__ by of_irq_parse_pci() and mentioned as a comment in =
+that
+> > > > function:
+> > > >       /*
+> > > >        * Ok, we don't, time to have fun. Let's start by building up=
+ an
+> > > >        * interrupt spec.  we assume #interrupt-cells is 1, which is=
+ standard
+> > > >        * for PCI. If you do different, then don't use that routine.
+> > > >        */
+> > > >
+> > > > In of_irq_parse_pci(), since the PCIe-Port driver doesn't have a
+> > > > device-tree node, the following doesn't apply:
+> > > >   dn =3D pci_device_to_OF_node(pdev);
+> > > > and we skip to the __assumption__ above and proceed as explained in=
+ the
+> > > > execution sequence above.
+> > > >
+> > > > If the device-tree nodes for the INTx interrupts were present, the
+> > > > "ipar" sequence to find the interrupt parent would be skipped and w=
+e
+> > > > wouldn't end up with the -22 (-EINVAL) error code.
+> > > >
+> > > > I hope this clarifies the relation between the -22 error code and t=
+he
+> > > > missing device-tree nodes for INTx.
+> > > >
+> > >
+> > > Thanks for explaining the logic. Still I think the logic is flawed. B=
+ecause the
+> > > parent (host bridge) doesn't have 'interrupt-map', which means INTx i=
+s not
+> > > supported. But parsing one level up to the GIC node and not returning=
+ -ENOENT
+> > > doesn't make sense to me.
+> > >
+> > > Rob, what is your opinion on this behavior?
+> >
+> > Not sure I get the question. How should we handle/determine no INTx? I
+> > suppose that's either based on the platform (as this patch did) or by
+>
+> Platform !=3D driver. Here the driver is making the call, but the platfor=
+m
+> capability should come from DT, no? I don't like the idea of disabling IN=
+Tx in
+> the driver because, the driver may support multiple SoCs and these capabi=
+lity
+> may differ between them. So the driver will end up just hardcoding the in=
+fo
+> which is already present in DT :/
 
-I think we should standardize that `Invariants` and `Safety` sections
-are put last. This is because people reading the HTML version are
-probably not interested in the inner workings. This also makes it
-possible to have the invariants and the struct definition on the same
-screen.
+Let me rephrase it to "a decision made within the driver" (vs.
+globally decided). That could be hardcoded (for now) or as match data
+based on compatible.
 
-> +///
-> +/// # Examples
+> Moreover, the issue I'm seeing is, even if the platform doesn't support I=
+NTx (as
+> described by DT in this case), of_irq_parse_pci() doesn't report correct
+> error/log. So of_irq_parse_pci() definitely needs a fixup.
 
-[...]
+Possibly. What's correct here?
 
-> +/// ```
-> +pub struct RBTree<K, V> {
-> +    root: bindings::rb_root,
+There was some rework in 6.11 of the interrupt parsing. So it is
+possible something changed here. There's also this issue still
+pending:
 
-It has been a while, so I might have already asked this, but do we need
-`Opaque` here? We would need it, if C changes anything inside `root`
-while Rust holds a `&RBTree` or `&mut RBTree`.
-I don't think that this is the case (ie we don't need `Opaque`), but I
-am not sure.
+https://lore.kernel.org/all/2046da39e53a8bbca5166e04dfe56bd5.squirrel@_/
 
-> +    _p: PhantomData<Node<K, V>>,
-> +}
-> +
+> > or by
+> > failing to parse the interrupts. The interrupt parsing code is pretty
+> > tricky as it has to deal with some ancient DTs, so I'm a little
+> > hesitant to rely on that failing. Certainly I wouldn't rely on a
+> > specific errno value. The downside to doing that is also if someone
+> > wants interrupts, but has an error in their DT, then all we can do is
+> > print 'INTx not supported' or something. So we couldn't fail probe as
+> > the common code wouldn't be able to distinguish. I suppose we could
+> > just check for 'interrupt-map' present in the host bridge node or not.
+>
+> Yeah, as simple as that. But I don't know if that is globally applicable =
+to
+> all platforms.
 
-[...]
+There's a lot of history and the interrupt parsing is fragile due to
+all the "interesting" DT interrupt hierarchies. So while I think it
+would work, that's just a guess. I'm open to trying it and seeing.
 
-> +    /// Inserts a new node into the tree.
-> +    ///
-> +    /// It overwrites a node if one already exists with the same key and=
- returns it (containing the
-> +    /// key/value pair). Returns [`None`] if a node with the same key di=
-dn't already exist.
-> +    ///
-> +    /// This function always succeeds.
-> +    pub fn insert(&mut self, RBTreeNode { node }: RBTreeNode<K, V>) -> O=
-ption<RBTreeNode<K, V>> {
-> +        let node =3D Box::into_raw(node);
-> +        // SAFETY: `node` is valid at least until we call `Box::from_raw=
-`, which only happens when
-> +        // the node is removed or replaced.
-> +        let node_links =3D unsafe { addr_of_mut!((*node).links) };
-> +
-> +        // The parameters of `rb_link_node` are as follows:
-
-Can you write `bindings::rb_link_node`?
-
-> +        // - `node`: A pointer to an uninitialized node being inserted.
-> +        // - `parent`: A pointer to an existing node in the tree. One of=
- its child pointers must be
-> +        //          null, and `node` will become a child of `parent` by =
-replacing that child pointer
-> +        //          with a pointer to `node`.
-> +        // - `rb_link`: A pointer to either the left-child or right-chil=
-d field of `parent`. This
-> +        //          specifies which child of `parent` should hold `node`=
- after this call. The
-> +        //          value of `*rb_link` must be null before the call to =
-`rb_link_node`. If the
-> +        //          red/black tree is empty, then it=E2=80=99s also poss=
-ible for `parent` to be null. In
-> +        //          this case, `rb_link` is a pointer to the `root` fiel=
-d of the red/black tree.
-> +        //
-> +        // We will traverse the tree looking for a node that has a null =
-pointer as its child,
-> +        // representing an empty subtree where we can insert our new nod=
-e. We need to make sure
-> +        // that we preserve the ordering of the nodes in the tree. In ea=
-ch iteration of the loop
-> +        // we store `parent` and `child_field_of_parent`, and the new `n=
-ode` will go somewhere
-> +        // in the subtree of `parent` that `child_field_of_parent` point=
-s at. Once
-> +        // we find an empty subtree, we can insert the new node using `r=
-b_link_node`.
-> +        let mut parent =3D core::ptr::null_mut();
-> +        let mut child_field_of_parent: &mut *mut bindings::rb_node =3D &=
-mut self.root.rb_node;
-> +        while !child_field_of_parent.is_null() {
-> +            parent =3D *child_field_of_parent;
-> +
-> +            // We need to determine whether `node` should be the left or=
- right child of `parent`,
-> +            // so we will compare with the `key` field of `parent` a.k.a=
-. `this` below.
-> +            //
-> +            // SAFETY: By the type invariant of `Self`, all non-null `rb=
-_node` pointers stored in `self`
-> +            // point to the links field of `Node<K, V>` objects.
-> +            let this =3D unsafe { container_of!(parent, Node<K, V>, link=
-s) };
-> +
-> +            // SAFETY: `this` is a non-null node so it is valid by the t=
-ype invariants. `node` is
-> +            // valid until the node is removed.
-> +            match unsafe { (*node).key.cmp(&(*this).key) } {
-> +                // We would like `node` to be the left child of `parent`=
-.  Move to this child to check
-> +                // whether we can use it, or continue searching, at the =
-next iteration.
-> +                //
-> +                // SAFETY: `parent` is a non-null node so it is valid by=
- the type invariants.
-> +                Ordering::Less =3D> child_field_of_parent =3D unsafe { &=
-mut (*parent).rb_left },
-> +                // We would like `node` to be the right child of `parent=
-`.  Move to this child to check
-> +                // whether we can use it, or continue searching, at the =
-next iteration.
-> +                //
-> +                // SAFETY: `parent` is a non-null node so it is valid by=
- the type invariants.
-> +                Ordering::Greater =3D> child_field_of_parent =3D unsafe =
-{ &mut (*parent).rb_right },
-> +                Ordering::Equal =3D> {
-> +                    // There is an existing node in the tree with this k=
-ey, and that node is
-> +                    // parent.  Thus, we are replacing parent with a new=
- node.
-
-Missing `` around "parent", double space after '.'.
-
-> +                    //
-> +                    // INVARIANT: We are replacing an existing node with=
- a new one, which is valid.
-> +                    // It remains valid because we "forgot" it with `Box=
-::into_raw`.
-> +                    // SAFETY: All pointers are non-null and valid.
-> +                    unsafe { bindings::rb_replace_node(parent, node_link=
-s, &mut self.root) };
-> +
-> +                    // INVARIANT: The node is being returned and the cal=
-ler may free it, however,
-> +                    // it was removed from the tree. So the invariants s=
-till hold.
-> +                    return Some(RBTreeNode {
-> +                        // SAFETY: `this` was a node in the tree, so it =
-is valid.
-> +                        node: unsafe { Box::from_raw(this.cast_mut()) },
-> +                    });
-> +                }
-> +            }
-> +        }
-
-[...]
-
-> +struct Node<K, V> {
-> +    links: bindings::rb_node,
-
-Same question as with `rb_root`, do we need `Opaque`?
-
-
-Otherwise the patch looks good.
-
----
-Cheers,
-Benno
-
-> +    key: K,
-> +    value: V,
-> +}
->=20
-> --
-> 2.46.0.rc1.232.g9752f9e123-goog
->=20
-
+Rob
 
