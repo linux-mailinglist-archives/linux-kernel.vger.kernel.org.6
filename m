@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-275494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0804948678
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17624948695
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:18:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 828D1B230ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:00:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81755B23123
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 00:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7993171098;
-	Mon,  5 Aug 2024 23:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBF04A15;
+	Tue,  6 Aug 2024 00:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzVbKjsL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="To+la7S5"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02054170A33;
-	Mon,  5 Aug 2024 23:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078F210E5;
+	Tue,  6 Aug 2024 00:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722902390; cv=none; b=bG7Hr/ktG9dQpebcFBxN5YR/VH8TSiaX77lc3sps0hpFuRnWPQKODP1AvKHOrX6FcrYMzT5OTAv9AxK2wM/SHJU2da/WZPdlQkK3u1sMcGtZhL2jtB870U0VR/oc6BzsonIn5oowldf8gERrHTlH0JW9JKhX3gsTO/poA68NOxA=
+	t=1722903517; cv=none; b=qcW2XZcnBdmTLbKpFSDu1gClQaKrg+u2lFGPPCypooB1tlz+EHvoMuEAfyzaxZHb+LIL6Njq/9s2nqe++VH+VkZGy3jX8MY/CFCiZ/46IwY7LpgXAQ0BxonoVzM4mCOhErXRLGbMWXVqg5MrsMTkXQaYESkn9wQ5etDo5KsEBb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722902390; c=relaxed/simple;
-	bh=qPipzIqpOFeYTGpyUGvCyLbP2YXb2Z1WH0dgber+cC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RlpOKtZfAHRkRiU5j3q/m5TnQhbAyQaiH7zlcqUfTFZA+v/u+beiGdgTj/HVWeZo1uuBVDmeDxs+YgiioG+D6WrmSwOpLgu3bMt6y6qDWK9nFlf3z4k4CJYMYyxiuJvdL8edupZv3uLlFLop7a2MFbnYOmmRp7sTlnZDNq/luVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzVbKjsL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18476C32782;
-	Mon,  5 Aug 2024 23:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722902389;
-	bh=qPipzIqpOFeYTGpyUGvCyLbP2YXb2Z1WH0dgber+cC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NzVbKjsLb08FPak/EQhMiOfmR6o9vTANUK5rqxkhBNJhzxpkEzV1Ht4LK7ubkyJa9
-	 pua2YfKNs5pXY74XcqQ3itgR2ZwwlCrheSmoPcnL4Po+FCOVr2hbKPGx3jM70xjLwR
-	 zYYxGXnuxSeGZ3MvOZSetPkRoTMZnFPfZ8zKGzPA3W7l6lIDQKLWYK2vyFVeXtDolZ
-	 e+kNoH2iDiTaQzcp+zVBQLyPpahu+SNI0fjlNeCySEYe/U1cuLJXo/8hKN1rjE/8QP
-	 gxHSM7iYffi5its8fgUBDw4/jN0COKBKLpXrDIvzC2LECNqr07kvCaTsmMZ7ZZcGvY
-	 HpfmvoHvx3tDw==
-Date: Tue, 6 Aug 2024 01:59:46 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [RFC PATCH 12/20] kthread: Implement preferred affinity
-Message-ID: <ZrFncpgfJj9sWuDO@lothringen>
-References: <20240726215701.19459-1-frederic@kernel.org>
- <20240726215701.19459-13-frederic@kernel.org>
- <4e9d1f6d-9cd8-493c-9440-b46a99f1c8af@suse.cz>
- <ZrDhp3TLz6Kp93BJ@localhost.localdomain>
- <00914d25-f0ae-4b00-9608-2457821c071c@suse.cz>
- <ZrD8kmRw73bS3Lj6@localhost.localdomain>
- <b358e42e-e8aa-40e9-9fca-90ae28cfdfaa@suse.cz>
+	s=arc-20240116; t=1722903517; c=relaxed/simple;
+	bh=AIwVlVYhRNiZJnUeGonomBvXhSHWG/wfktvdWfWGQd4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qRjl7CVTJl8R8IdqOZBcWaZYhVixWMcwnaEQyMoQqqJ2N4LM5O+0kP/Pb0c/YQJ4A2cYbUcRc5uw7e7kQ64tw7fqud5/74RJg6bqwlM6S9dwjvtD1eqc/Hsp2JQjAL6k8zMwf7O5axVwS5f7IDAR3uee63TyPNRN8VqrX9+lDmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=To+la7S5; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1722899240;
+	bh=AIwVlVYhRNiZJnUeGonomBvXhSHWG/wfktvdWfWGQd4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=To+la7S5p3eu3qmBjPe5pgJ9FVxctQOu0NnZMHOmM2eDjMDtN8VMPuGKganesl+D/
+	 1MGkpzzXp7rtfuVSht+sKxomEGi3/whNNTcoXZlK1HxJBI1bagsB5bhD5ISXJJx8cu
+	 ct/oG6XWQBZNB4drdnS38OhUZoiD8PyEbKscMPt8=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 5284E4035B; Mon,  5 Aug 2024 16:07:20 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 50FD3401CA;
+	Mon,  5 Aug 2024 16:07:20 -0700 (PDT)
+Date: Mon, 5 Aug 2024 16:07:20 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+cc: linux-pm@vger.kernel.org, kvm@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+    catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de, 
+    mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+    x86@kernel.org, hpa@zytor.com, pbonzini@redhat.com, wanpengli@tencent.com, 
+    vkuznets@redhat.com, rafael@kernel.org, daniel.lezcano@linaro.org, 
+    peterz@infradead.org, arnd@arndb.de, lenb@kernel.org, mark.rutland@arm.com, 
+    harisokn@amazon.com, mtosatti@redhat.com, sudeep.holla@arm.com, 
+    misono.tomohiro@fujitsu.com, joao.m.martins@oracle.com, 
+    boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH v6 01/10] cpuidle/poll_state: poll via
+ smp_cond_load_relaxed()
+In-Reply-To: <20240726201332.626395-2-ankur.a.arora@oracle.com>
+Message-ID: <29534bd1-1628-e0fb-eb81-6b789133ff43@gentwo.org>
+References: <20240726201332.626395-1-ankur.a.arora@oracle.com> <20240726201332.626395-2-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b358e42e-e8aa-40e9-9fca-90ae28cfdfaa@suse.cz>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Mon, Aug 05, 2024 at 11:25:59PM +0200, Vlastimil Babka wrote:
-> > It's too bad we don't have a way to have a cpumask_possible_of_node(). I've
-> > looked into the guts of numa but that doesn't look easy to do.
-> 
-> That was my impression as well. Maybe not even possible because exact cpu
-> ids might not be pre-determined like this?
+On Fri, 26 Jul 2024, Ankur Arora wrote:
 
-Probably.
+> diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_state.c
+> index 9b6d90a72601..532e4ed19e0f 100644
+> --- a/drivers/cpuidle/poll_state.c
+> +++ b/drivers/cpuidle/poll_state.c
+> @@ -21,21 +21,21 @@ static int __cpuidle poll_idle(struct cpuidle_device *dev,
+>
+> 	raw_local_irq_enable();
+> 	if (!current_set_polling_and_test()) {
+> -		unsigned int loop_count = 0;
+> +		unsigned int loop_count;
+> 		u64 limit;
 
-> 
-> > Or there could be kthread_set_preferred_node()... ?
-> 
-> Possible instead of the callback idea suggested above?
-> kthreads_hotplug_update() could check if this is set and construct the mask
-> accordingly.
+loop_count is only used in the while loop below. So the declaration 
+could be placed below the while.
 
-Or even better, callers of kthread_create_on_node() with actual node passed
-(!NUMA_NO_NODE) can be preferrably affined to the corresponding node by default
-unless told otherwise (that is unless kthread_bind() or
-kthread_set_preferred_affinity() has been called before the first wake up, and
-that includes kthread_create_on_cpu()).
+>
+> 		limit = cpuidle_poll_time(drv, dev);
+>
+> 		while (!need_resched()) {
+> -			cpu_relax();
+> -			if (loop_count++ < POLL_IDLE_RELAX_COUNT)
+> -				continue;
+> -
+> 			loop_count = 0;
+> 			if (local_clock_noinstr() - time_start > limit) {
+> 				dev->poll_time_limit = true;
+> 				break;
+> 			}
 
-There are a few callers concerned: kswapd, kcompactd, some drivers:
-drivers/block/mtip32xx/mtip32xx.c, drivers/firmware/stratix10-svc.c,
-kernel/dma/map_benchmark.c, net/sunrpc/svc.c
+Looks ok otherwise
 
-After all kthread_create_on_cpu() affines to the corresponding CPU. So
-it sounds natural that kthread_create_on_node() affines to the corresponding
-node.
+Reviewed-by: Christoph Lameter <cl@linux.com>
 
-And then it's handled on hotplug just as a special case of preferred affinity.
-
-Or is there something that wouldn't make that work?
-
-Thanks.
-
-
-> 
-> > Thanks.
-> > 
-> >> 
-> >> > Thanks.
-> >> 
-> 
 
