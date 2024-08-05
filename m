@@ -1,149 +1,220 @@
-Return-Path: <linux-kernel+bounces-275267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AE3948290
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:48:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132FD948292
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 21:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85163B21946
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:48:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA62B2827B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 19:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEB716BE23;
-	Mon,  5 Aug 2024 19:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19A416C862;
+	Mon,  5 Aug 2024 19:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Zsl06BGj"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZImGATju"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CF414A85;
-	Mon,  5 Aug 2024 19:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA28166307;
+	Mon,  5 Aug 2024 19:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722887282; cv=none; b=YUKU5qQT33MTpJOubzUZqsFYYKGuIh38IhMREGteJ7/6fGdDdA3XjBQUMA/SI2SqUKAplPU3eNOePppITKm7NNHafDckC1GEW6b32uUAqpP9jRZ6m0aWVUILF0ySi5fZyuFUw7Wu8b3RLAjGIVT5ILsFcMTGetFpMRouqUCT/Vw=
+	t=1722887284; cv=none; b=Kieyz7hk55gsVZ0ATNKMUeFcmE6OyGz7Xhcpi/CALunyDDuL6d7Q8ll+HcYZiLhgDMzLzy1zFow5nEkxhqd088hNM0c+cfAJI9bera1DPUzoBbYcO8GMvXtc8AYuQU4Q/4kFDr99ufXcdPj56n2QtKuL3F8GiQZSG18Wia+OwZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722887282; c=relaxed/simple;
-	bh=hWFIHHWuFbJXkky+ht6BUwYWPc3b4HXDslWubfqa1x0=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=KueWE10Zg1DcygLs57Q834aPVjI2OOMNLUV3ZyDMIov2R1ZNvnr9SXzj+7a9cgMcTgQI+dKD9vUmNZ6iei/4ld0CwdWJWQdqCQeZH6Ki8o4wI8QL5jceCN4r4pBbUtq9pyZvzcXA4a/VbUeAZhbfGHCB18C8lV2JvOQhlmRNRZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Zsl06BGj; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1722887284; c=relaxed/simple;
+	bh=gkgIZP6fBWDwUAH0K0yuPdRvWvEbBVnAozZ+S1nGW/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jzp2Yq6zi+9YHOJlf8tp6wYADrb535jvfbvO12oSx2T3/9jppYqlg/Azbh4cT/FTv1ZrwHblx4Q5UJGLdLyfjA5f7KO5F0lxlUIRy2W1cu/emxueYMNH76703TJ12oSDP4tXE0uAzh1/KblbSAohgDzK/pdYN4tttg02ByuiHfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZImGATju; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fda7fa60a9so100642385ad.3;
+        Mon, 05 Aug 2024 12:48:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722887281; x=1754423281;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=hWFIHHWuFbJXkky+ht6BUwYWPc3b4HXDslWubfqa1x0=;
-  b=Zsl06BGjIel+Mt4OHv4cTzAme4/zA3IvOePTOcis91+QiiOf0Sdi9Jt8
-   9MmaL7ODp6gsM4FGmsOO49eE76Z0IT7IBilBtFqvvF5PAi4RUy/BZ5HER
-   gZwG6CCaXctzfS/TzFbXxpDGDCsILcp65yHczm01bVkkGgSzc3pJw+4ey
-   8=;
-X-IronPort-AV: E=Sophos;i="6.09,265,1716249600"; 
-   d="scan'208";a="112636161"
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-Thread-Topic: [PATCH 00/10] Introduce guestmemfs: persistent in-memory filesystem
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 19:47:58 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:45937]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.164:2525] with esmtp (Farcaster)
- id 76bd4af3-4e48-49dc-983a-668f865f6d2a; Mon, 5 Aug 2024 19:47:57 +0000 (UTC)
-X-Farcaster-Flow-ID: 76bd4af3-4e48-49dc-983a-668f865f6d2a
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 19:47:57 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D004EUC001.ant.amazon.com (10.252.51.190) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 19:47:56 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1258.034; Mon, 5 Aug 2024 19:47:56 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "pbonzini@redhat.com" <pbonzini@redhat.com>, "tytso@mit.edu"
-	<tytso@mit.edu>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rppt@kernel.org"
-	<rppt@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>, "Graf (AWS),
- Alexander" <graf@amazon.de>, "anthony.yznaga@oracle.com"
-	<anthony.yznaga@oracle.com>, "steven.sistare@oracle.com"
-	<steven.sistare@oracle.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "nh-open-source@amazon.com"
-	<nh-open-source@amazon.com>, "Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
-	"Durrant, Paul" <pdurrant@amazon.co.uk>, "viro@zeniv.linux.org.uk"
-	<viro@zeniv.linux.org.uk>, "jack@suse.cz" <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>, "usama.arif@bytedance.com"
-	<usama.arif@bytedance.com>
-Thread-Index: AQHa5xp7YUfIGy2/kUGqgjccLElzprIYul2AgAAChoCAAFWigA==
-Date: Mon, 5 Aug 2024 19:47:56 +0000
-Message-ID: <3f9064160b43df488d73302b3d736e23a9cd2b66.camel@amazon.com>
-References: <20240805093245.889357-1-jgowans@amazon.com>
-	 <20240805143223.GA1110778@mit.edu>
-	 <CABgObfYhg6uoR7cQN4wf3bNLZbHfXv6fr35aKsKbqMvuv20Xrg@mail.gmail.com>
-In-Reply-To: <CABgObfYhg6uoR7cQN4wf3bNLZbHfXv6fr35aKsKbqMvuv20Xrg@mail.gmail.com>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4C270A5EF62CAB4FACD59CA91FD35FD4@amazon.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1722887282; x=1723492082; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mtQZE0bROS8UEZPvM20hoqj5TusWjzQnd1NBq/PztJw=;
+        b=ZImGATjuMwxZY9DtTGHAD75IXtYnNjnGJ4uAhvnxuvjMFMqD2PcMg1opsA41cFUkbN
+         pnthTDmVy7tNch/zrWr63Cq97CN9BnfN0mc1v9Ec01wbcEtlU3bZKCFzu0S92iCA1Wkq
+         /muuTS9jJFvohfLoxVcjYEqJeaRJDrFb3d/w11YivcR4sI3QPrsUfK4IyXiRupG4xx3w
+         wfy9wbVuZ/vX2KI6wUPEEye/eHqyjo+WRqQhU4KzSTsgzwZkPSfVWYzT2sziofX8gnAQ
+         D1+ktz5vzO71E0gsSI7t3CdixCp02LniKhCq9+mnCQ594eIfqg/BqN0eatA/PluI3fLF
+         q9BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722887282; x=1723492082;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mtQZE0bROS8UEZPvM20hoqj5TusWjzQnd1NBq/PztJw=;
+        b=EMVQFwsdXSqEqIXtnzMTnZTZlT6p1/6FJ72QLbhWJT5wZTW24OWgls4C4oC5EV4pE0
+         yh11MBdcgvQY2QCJDaaEMlGG8K/bhm/JRjQcnf6Lx1OIWG3AW/NC1XrnIZWGkCP4RJw6
+         5wD+RJCWCAhnvm+1nI6NxvQ9fl62ffKIOgXg2TsfXnEh8IF5nwKfp/YEmFIA/4onh/7N
+         uH+KhYZSEQK0ogg/IovtWhkybN7ukpbr3fa6HUM9CZhe74/K3KSzBdOAyK584+Z+lDfG
+         4ay/Y5HeNXqjG+2bizuLpijiQ+Byh97fAVxr1JgxHR7jNwvE48N2Nhqkj6kqnXWBQ06Y
+         8Zig==
+X-Forwarded-Encrypted: i=1; AJvYcCWw2WbLkU7Mo9W6upKqUfxEM5Gg/x77498ZJieY4WGVL3gVaS5W3/2U6vyjMfkJ/+Mhe08Bh6AXQQ==@vger.kernel.org, AJvYcCXRqnDHS3UElzbkjOeXLheKEiDSiavgWCQ6Lo4szjj9Ksye9c14POYLh6P2O6XzT6xGEN1y6zSFPVv7toYv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1KdQAfcj8r/CgB+C6BoAzZ4N93EX24vKoIXyfZcgs+Yj+WWBv
+	wsRkAE+G8FZlBgx9xbBAkk6WfFjjX/AHszDawSPWORx3lHDdEQAUEU3GLg==
+X-Google-Smtp-Source: AGHT+IGoJBly2rb0+/rWatMjqOlw2VEIqxv01Oa9uEYSjPWnocWXSaDJW+T69Lx3p0JzpyQ7/H8dtA==
+X-Received: by 2002:a17:902:f693:b0:1fd:82ac:7c2e with SMTP id d9443c01a7336-1ff57297afamr174902155ad.25.1722887282221;
+        Mon, 05 Aug 2024 12:48:02 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5917496fsm72278125ad.182.2024.08.05.12.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 12:48:01 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 5 Aug 2024 09:48:00 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: syzbot <syzbot+b3e4f2f51ed645fd5df2@syzkaller.appspotmail.com>,
+	asml.silence@gmail.com, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH wq/for-6.11-fixes] workqueue: Fix spruious data race in
+ __flush_work()
+Message-ID: <ZrEscJJjqAOpyWUY@slm.duckdns.org>
+References: <000000000000ae429e061eea2157@google.com>
+ <8ada52ac-48e9-48cd-afa0-c738cf25fe4f@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ada52ac-48e9-48cd-afa0-c738cf25fe4f@kernel.dk>
 
-T24gTW9uLCAyMDI0LTA4LTA1IGF0IDE2OjQxICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
-PiBPbiBNb24sIEF1ZyA1LCAyMDI0IGF0IDQ6MzXigK9QTSBUaGVvZG9yZSBUcydvIDx0eXRzb0Bt
-aXQuZWR1PiB3cm90ZToNCj4gPiBPbiBNb24sIEF1ZyAwNSwgMjAyNCBhdCAxMTozMjozNUFNICsw
-MjAwLCBKYW1lcyBHb3dhbnMgd3JvdGU6DQo+ID4gPiBHdWVzdG1lbWZzIGltcGxlbWVudHMgcHJl
-c2VydmF0aW9uIGFjcm9zc3Mga2V4ZWMgYnkgY2FydmluZyBvdXQgYQ0KPiA+ID4gbGFyZ2UgY29u
-dGlndW91cyBibG9jayBvZiBob3N0IHN5c3RlbSBSQU0gZWFybHkgaW4gYm9vdCB3aGljaCBpcw0K
-PiA+ID4gdGhlbiB1c2VkIGFzIHRoZSBkYXRhIGZvciB0aGUgZ3Vlc3RtZW1mcyBmaWxlcy4NCj4g
-PiANCj4gPiBBbHNvLCB0aGUgVk1NIHVwZGF0ZSBwcm9jZXNzIGlzIG5vdCBhIGNvbW1vbiBjYXNl
-IHRoaW5nLCBzbyB3ZSBkb24ndA0KPiA+IG5lZWQgdG8gb3B0aW1pemUgZm9yIHBlcmZvcm1hbmNl
-LiAgSWYgd2UgbmVlZCB0byB0ZW1wb3JhcmlseSB1c2UNCj4gPiBzd2FwL3pzd2FwIHRvIGFsbG9j
-YXRlIG1lbW9yeSBhdCBWTU0gdXBkYXRlIHRpbWUsIGFuZCBpZiB0aGUgcGFnZXMNCj4gPiBhcmVu
-J3QgY29udGlndW91cyB3aGVuIHRoZXkgYXJlIGNvcGllZCBvdXQgYmVmb3JlIGRvaW5nIHRoZSBW
-TU0NCj4gPiB1cGRhdGUNCj4gDQo+IEknbSBub3Qgc3VyZSBJIHVuZGVyc3RhbmQsIHdoZXJlIHdv
-dWxkIHRoaXMgdGVtcG9yYXJ5IGFsbG9jYXRpb24gaGFwcGVuPw0KDQpUaGUgaW50ZW5kZWQgdXNl
-IGNhc2UgZm9yIGxpdmUgdXBkYXRlIGlzIHRvIHVwZGF0ZSB0aGUgZW50aXJlbHkgb2YgdGhlDQpo
-eXBlcnZpc29yOiBrZXhlY2luZyBpbnRvIGEgbmV3IGtlcm5lbCwgbGF1bmNoaW5nIG5ldyBWTU0g
-cHJvY2Vzc2VzLiBTbw0KYW55dGhpbmcgaW4ga2VybmVsIHN0YXRlIChwYWdlIHRhYmxlcywgVk1B
-cywgKHopc3dhcCBlbnRyaWVzLCBzdHJ1Y3QNCnBhZ2VzLCBldGMpIGlzIGFsbCBsb3N0IGFmdGVy
-IGtleGVjIGFuZCBuZWVkcyB0byBiZSByZS1jcmVhdGVkLiBUaGF0J3MNCnRoZSBqb2Igb2YgZ3Vl
-c3RtZW1mczogcHJvdmlkZSB0aGUgcGVyc2lzdGVuY2UgYWNyb3NzIGtleGVjIGFuZCBhYmlsaXR5
-DQp0byByZS1jcmVhdGUgdGhlIG1hcHBpbmcgYnkgcmUtb3BlbmluZyB0aGUgZmlsZXMuDQoNCkl0
-IHdvdWxkIGJlIGZhciB0b28gaW1wYWN0ZnVsIHRvIG5lZWQgdG8gd3JpdGUgb3V0IHRoZSB3aG9s
-ZSBWTSBtZW1vcnkNCnRvIGRpc2suIEFsc28gd2l0aCBDb0NvIFZNcyB0aGF0J3Mgbm90IHJlYWxs
-eSBwb3NzaWJsZS4gV2hlbiB2aXJ0dWFsDQptYWNoaW5lcyBhcmUgcnVubmluZywgZXZlcnkgbWls
-bGlzZWNvbmQgb2YgZG93biB0aW1lIGNvdW50cy4gSXQgd291bGQgYmUNCndhc3RlZnVsIHRvIG5l
-ZWQgdG8ga2VlcCB0ZXJhYnl0ZXMgb2YgU1NEcyBseWluZyBhcm91bmQganVzdCB0byBicmllZmx5
-DQp3cml0ZSBhbGwgdGhlIGd1ZXN0IFJBTSB0aGVyZSBhbmQgdGhlbiByZWFkIGl0IG91dCBhIG1v
-bWVudCBsYXRlci4gTXVjaA0KYmV0dGVyIHRvIGxlYXZlIGFsbCB0aGUgZ3Vlc3QgbWVtb3J5IHdo
-ZXJlIGl0IGlzOiBpbiBtZW1vcnkuDQoNCj4gDQo+ID4gdGhhdCBtaWdodCBiZSB2ZXJ5IHdlbGwg
-d29ydGggdGhlIHZhc3Qgb2Ygb2YgbWVtb3J5IG5lZWRlZCB0bw0KPiA+IHBheSBmb3IgcmVzZXJ2
-aW5nIG1lbW9yeSBvbiB0aGUgaG9zdCBmb3IgdGhlIFZNTSB1cGRhdGUgdGhhdCBvbmx5DQo+ID4g
-bWlnaHQgaGFwcGVuIG9uY2UgZXZlcnkgZmV3IGRheXMvd2Vla3MvbW9udGhzIChkZXBlbmRpbmcg
-b24gd2hldGhlcg0KPiA+IHlvdSBhcmUgZG9pbmcgdXBkYXRlIGp1c3QgZm9yIGhpZ2ggc2V2ZXJp
-dHkgc2VjdXJpdHkgZml4ZXMsIG9yIGZvcg0KPiA+IHJhbmRvbSBWTU0gdXBkYXRlcykuDQo+ID4g
-DQo+ID4gRXZlbiBpZiB5b3UgYXJlIHVwZGF0aW5nIHRoZSBWTU0gZXZlcnkgZmV3IGRheXMsIGl0
-IHN0aWxsIGRvZXNuJ3Qgc2VlbQ0KPiA+IHRoYXQgcGVybWFuZW50bHkgcmVzZXJ2aW5nIGNvbnRp
-Z3VvdXMgbWVtb3J5IG9uIHRoZSBob3N0IGNhbiBiZQ0KPiA+IGp1c3RpZmllZCBmcm9tIGEgVENP
-IHBlcnNwZWN0aXZlLg0KPiANCj4gQXMgZmFyIGFzIEkgdW5kZXJzdGFuZCwgdGhpcyBpcyBpbnRl
-bmRlZCBmb3IgdXNlIGluIHN5c3RlbXMgdGhhdCBkbw0KPiBub3QgZG8gYW55dGhpbmcgZXhjZXB0
-IGhvc3RpbmcgVk1zLCB3aGVyZSBhbnl3YXkgeW91J2QgZGV2b3RlIDkwJSsgb2YNCj4gaG9zdCBt
-ZW1vcnkgdG8gaHVnZXRsYmZzIGdpZ2FwYWdlcy4NCg0KRXhhY3RseSwgdGhlIHVzZSBjYXNlIGhl
-cmUgaXMgZm9yIG1hY2hpbmVzIHdob3NlIG9ubHkgam9iIGlzIHRvIGJlIGEgS1ZNDQpoeXBlcnZp
-c29yLiBUaGUgbWFqb3JpdHkgb2Ygc3lzdGVtIFJBTSBpcyBkb25hdGVkIHRvIGd1ZXN0bWVtZnM7
-DQphbnl0aGluZyBlbHNlIChob3N0IGtlcm5lbCBtZW1vcnkgYW5kIFZNTSBhbm9ueW1vdXMgbWVt
-b3J5KSBpcw0KZXNzZW50aWFsbHkgb3ZlcmhlYWQgYW5kIHNob3VsZCBiZSBtaW5pbWlzZWQuDQoN
-CkpHDQo=
+From c5eac4d10384f1ddd728e143ede35eaa6081c61e Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Mon, 5 Aug 2024 09:37:25 -1000
+
+When flushing a work item for cancellation, __flush_work() knows that it
+exclusively owns the work item through its PENDING bit. 134874e2eee9
+("workqueue: Allow cancel_work_sync() and disable_work() from atomic
+contexts on BH work items") added a read of @work->data to determine whether
+to use busy wait for BH work items that are being canceled. While the read
+is safe when @from_cancel, @work->data was read before testing @from_cancel
+to simplify code structure:
+
+	data = *work_data_bits(work);
+	if (from_cancel &&
+	    !WARN_ON_ONCE(data & WORK_STRUCT_PWQ) && (data & WORK_OFFQ_BH)) {
+
+While the read data was never used if !@from_cancel, this could trigger
+KCSAN data race detection spuriously:
+
+  ==================================================================
+  BUG: KCSAN: data-race in __flush_work / __flush_work
+
+  write to 0xffff8881223aa3e8 of 8 bytes by task 3998 on cpu 0:
+   instrument_write include/linux/instrumented.h:41 [inline]
+   ___set_bit include/asm-generic/bitops/instrumented-non-atomic.h:28 [inline]
+   insert_wq_barrier kernel/workqueue.c:3790 [inline]
+   start_flush_work kernel/workqueue.c:4142 [inline]
+   __flush_work+0x30b/0x570 kernel/workqueue.c:4178
+   flush_work kernel/workqueue.c:4229 [inline]
+   ...
+
+  read to 0xffff8881223aa3e8 of 8 bytes by task 50 on cpu 1:
+   __flush_work+0x42a/0x570 kernel/workqueue.c:4188
+   flush_work kernel/workqueue.c:4229 [inline]
+   flush_delayed_work+0x66/0x70 kernel/workqueue.c:4251
+   ...
+
+  value changed: 0x0000000000400000 -> 0xffff88810006c00d
+
+Reorganize the code so that @from_cancel is tested before @work->data is
+accessed. The only problem is triggering KCSAN detection spuriously. This
+shouldn't need READ_ONCE() or other access qualifiers.
+
+No functional changes.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: syzbot+b3e4f2f51ed645fd5df2@syzkaller.appspotmail.com
+Fixes: 134874e2eee9 ("workqueue: Allow cancel_work_sync() and disable_work() from atomic contexts on BH work items")
+Link: http://lkml.kernel.org/r/000000000000ae429e061eea2157@google.com
+Cc: Jens Axboe <axboe@kernel.dk>
+---
+Applied to wq/for-6.11-fixes.
+
+Thanks.
+
+ kernel/workqueue.c | 45 +++++++++++++++++++++++++--------------------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
+
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index d56bd2277e58..ef174d8c1f63 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -4166,7 +4166,6 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
+ static bool __flush_work(struct work_struct *work, bool from_cancel)
+ {
+ 	struct wq_barrier barr;
+-	unsigned long data;
+ 
+ 	if (WARN_ON(!wq_online))
+ 		return false;
+@@ -4184,29 +4183,35 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
+ 	 * was queued on a BH workqueue, we also know that it was running in the
+ 	 * BH context and thus can be busy-waited.
+ 	 */
+-	data = *work_data_bits(work);
+-	if (from_cancel &&
+-	    !WARN_ON_ONCE(data & WORK_STRUCT_PWQ) && (data & WORK_OFFQ_BH)) {
+-		/*
+-		 * On RT, prevent a live lock when %current preempted soft
+-		 * interrupt processing or prevents ksoftirqd from running by
+-		 * keeping flipping BH. If the BH work item runs on a different
+-		 * CPU then this has no effect other than doing the BH
+-		 * disable/enable dance for nothing. This is copied from
+-		 * kernel/softirq.c::tasklet_unlock_spin_wait().
+-		 */
+-		while (!try_wait_for_completion(&barr.done)) {
+-			if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
+-				local_bh_disable();
+-				local_bh_enable();
+-			} else {
+-				cpu_relax();
++	if (from_cancel) {
++		unsigned long data = *work_data_bits(work);
++
++		if (!WARN_ON_ONCE(data & WORK_STRUCT_PWQ) &&
++		    (data & WORK_OFFQ_BH)) {
++			/*
++			 * On RT, prevent a live lock when %current preempted
++			 * soft interrupt processing or prevents ksoftirqd from
++			 * running by keeping flipping BH. If the BH work item
++			 * runs on a different CPU then this has no effect other
++			 * than doing the BH disable/enable dance for nothing.
++			 * This is copied from
++			 * kernel/softirq.c::tasklet_unlock_spin_wait().
++			 */
++			while (!try_wait_for_completion(&barr.done)) {
++				if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
++					local_bh_disable();
++					local_bh_enable();
++				} else {
++					cpu_relax();
++				}
+ 			}
++			goto out_destroy;
+ 		}
+-	} else {
+-		wait_for_completion(&barr.done);
+ 	}
+ 
++	wait_for_completion(&barr.done);
++
++out_destroy:
+ 	destroy_work_on_stack(&barr.work);
+ 	return true;
+ }
+-- 
+2.46.0
+
 
