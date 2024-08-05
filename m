@@ -1,124 +1,116 @@
-Return-Path: <linux-kernel+bounces-274303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893F994764F
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:46:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D028947653
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 09:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4190D28109E
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:46:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC38A1F2110B
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546C0149C68;
-	Mon,  5 Aug 2024 07:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A891494C4;
+	Mon,  5 Aug 2024 07:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Al2b2Mgn"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mLieDjX+"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B28113CF86;
-	Mon,  5 Aug 2024 07:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065CE1428E4
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 07:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722844009; cv=none; b=XjB6J9niLh7NZA5KeuVjbb5HwALyJXBjF9jPdTFfpLuKP4mkpC15eckMJMCPUHMUx/Nod6kVd53L0HOkS4H5Y8GqiQ1ylntD2RfUM42P2eeVfAqRW6CUcnUS21htZ7L1wmmLwq/pXIDZU1/ZLvfh7WMszA/6fjWlJc0JZ6w42wQ=
+	t=1722844138; cv=none; b=WhOvz+cNiVESFfLkpOv8coPkjLpLSuo5h/pvarTWKBjdeL0AKYPgJUlxQwTDYKZqgNkxsqFtJiOwfeyKhdGRy57vi3U7tKVuDy4pTD0jf1teLrPnCI0DVQdw+YGgsnDRbC8pMWkND12C2msTTcxaKYyxxobGxO2xwvt00VzHfcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722844009; c=relaxed/simple;
-	bh=mXP4Qrow+JnKrJxvaPL5ChNdrMkMtMx8Imb7wNM9JLk=;
+	s=arc-20240116; t=1722844138; c=relaxed/simple;
+	bh=m9jMRwN7D/g9ylb+qVmMEn3jD7LEDE289u1oCoCvFi8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AOMijOrQ95ezZCfDJhYyxTHqhAPfO6fMQ7mTmilfc0orD3NOfAdgZojbw9nGRj+obxYOi7HzIrUbKVbefI5IAw/PRn7wDaensIC5uCEKWR7CWp9bE4gZGIv5vfBUJJoPaRc9dJpAUekTGzD3JvwSVxIdIif0D9GnlRisBy7jQj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Al2b2Mgn; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-39b3ffc570bso3418115ab.3;
-        Mon, 05 Aug 2024 00:46:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=a2Ti5x6ywu5lNmTiNh8VHeypRF5kEQIWnWWIrC4uquj/vO5YCpCadlBwX/QNGKdbMx9nKQk491QbOzvte7MaPQD4kfQsCAPLE0Pvjy9AeGMd4m17v4E0sRALfb99kWsDoTYDDGplsbkNLALrtVuqShG/pwtAaDXIMX8/SgylbJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mLieDjX+; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52efabf5d7bso11907845e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 00:48:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722844007; x=1723448807; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722844135; x=1723448935; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mXP4Qrow+JnKrJxvaPL5ChNdrMkMtMx8Imb7wNM9JLk=;
-        b=Al2b2Mgn9slINJJerYDIQQLKIbAV8EZ0YySvXTZTAhxq8HDBqHjq5T9x15qxwuEund
-         pjfIj9WUQU6wCtx6DbR7gtVeNy4E4LeaLCq6mGRdUd6Q9zeD4RpIHyZ8bgKMYJOiqPKF
-         1NYSQ8h16LHQqTMUzqf/M6ePvS65UYCLlmWPGEjEvI5cx0x3Cy6XfZiznwl4KUR/pX34
-         4ZO+tPCyndqTbaO7Dgn3vISkgZCpeqCy5NMt6DQOvHXOI9T9QoUfeTcKExa0hwlFQhtG
-         EWlrjK4NA+acBZbQgxswKvH6BLhp4yWBZ10q3ZnYkVvGV+EAItAzKHBpEBs5SPO9XgWu
-         zSrw==
+        bh=kKGwudayEl/s2GCBYHOT4CD2FeDk2bfVh99IyAaA7Kk=;
+        b=mLieDjX+ybcjyqDxAWUTrN6CMPi7egpoKP/n21k6SkBYqNWrg4A96qqqqkmYTwERQ7
+         tiaLtnNR/b67ulxpzEP6gWwfFhmge91vc9BQY2iC7nqIaL+ZpkGsX29k6PC13XHlpqIF
+         jnlU04P3zw2aUYgyCfPzrn1OoTk+xdj1AxzL0doToiuJR174MbB4EBH2UI4YMH99M2Is
+         TCjoPMk7h0TR3MNj0qyqAL4MjFcG33mQe5AAgKRw0hf4RCOyJjX99Qi6HfucJANzQCrJ
+         2MENfNueYAKUE0JH4Mn0Ann/P/ntgJ67I/hJV9vCM2uVxVTv3pd6I/NczL3Si9PF7oN1
+         94Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722844007; x=1723448807;
+        d=1e100.net; s=20230601; t=1722844135; x=1723448935;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mXP4Qrow+JnKrJxvaPL5ChNdrMkMtMx8Imb7wNM9JLk=;
-        b=oxqT4tNpkbO0QrXuehQsVc3Ee52+7uMXKkmGWZFz7d5qV6JnqjrxSHbMHHTwhIxr+I
-         +YUQHupCHuUJB3xJOxwNNn0g8LoUrHj39+EcOqa+n84Bn7jg3brnef8bW4WsUFiHJMKL
-         Tg1ynvhElogLB8rXhTOtOJd6bVBm4QjMSCGs9rcC0ta5rvp1l6tn/bEvT4DUH8MDneBf
-         H4tK8KISYAluiUnmMYwO8ODY9u/ajvhyNm86RcMtqhibJifqDCk7xLxLxR/N3NR94klm
-         FszfES4oghKkqxyzbk4kVbMiPB13i9EAJdfCI2ez1vJws31oyE3gLZQqxMj65g+fg7Id
-         jvKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXKeV/6itIqfJihFmP8n1jYtu7WckMlFEbTxFlv8Wbc7Eag8oknJVK9NWCUl4CC2Bf/tf4xhoS5K7yyyLy8ewuXqsIbHLIymGTTg8Cthf+ibPzYHAxgnce9gqXNaxbmqTTxM8+
-X-Gm-Message-State: AOJu0YxPYjHauPUpv3ciyssyL2KxT1rrU5vz7UD8s6Ekb0fLPs2hbnDh
-	H61pvVFpwQRXYjwjFA6vheBefyZmKA2mKxoH4c1jocqAGU75NTLuIU84IaMQ3VnC+LifRt/RzB4
-	NGIp78kikzuIGcP1en0FojJSjNz8=
-X-Google-Smtp-Source: AGHT+IFjOT0YCdtcO4pkbGFkWPwXuxxSeUA6zhYqlcieAoupl0andq+Hn2l2rOT3srAW9e21mBQ/vyoUAB6lQKLVwKw=
-X-Received: by 2002:a05:6e02:1a82:b0:396:bfa6:6f30 with SMTP id
- e9e14a558f8ab-39b1fb6bc91mr171796165ab.6.1722844007251; Mon, 05 Aug 2024
- 00:46:47 -0700 (PDT)
+        bh=kKGwudayEl/s2GCBYHOT4CD2FeDk2bfVh99IyAaA7Kk=;
+        b=ECAD/yyYjyWupjijYdQKIoi4z9M6II6TDQ+7usR2XpwbxkvFgAPT3Ln9/wXKjm2pal
+         12lLln1EdMbYkrqvUxcYvce/wmoTbsgcVHWXxjDjeHkkmKBMw5t7NkybJwJW90RIT9PK
+         rOtiDJfFtNebdXBHw9v3HqOsjXqcqJAUCSRo9ms2ZYIVt8QEtG5azDtwzxWSgD3gAvyZ
+         pokZmAWzGq/Y0w0z/bsZkflrSaHXGw25276sGGwTNBgQr/JYhwjjIT+0slcHQJ4fPQHH
+         EPJnNMlmkpMwhQbT9PhHf8G6hdOcAt8aImUuIijTeNnHRN3qcMgorNny+dUYRT+/x+iX
+         PijA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBtsLHWe1ndtSdVg6vqiKTmlhSIVDg9utD9FXtF93zUeeDU+P6dFxnk4KQzykZlJ6HtAARFpU2vxfwZsurOynn9J+n8D8LI9s2eVtp
+X-Gm-Message-State: AOJu0YyTCYd5UUx7+RFz5mLTN8Auqh1Xgmp/eMuJBriZyN2bikAZLLwF
+	u+P631UveUergEayCAl6f6BnVt72CsrqW2g6DgNWbMaTlBlAmJq37vkGkAPl4BHrtgVzDjWPB/u
+	mzW7tadSfOSmMgCBg6MjNrgGcNbY/lpr+iRLZk0LL22ThVIl0
+X-Google-Smtp-Source: AGHT+IEXIMB9nJG0TyIkPR9yKzdJtpYi5iceZ1E2YZ4ASFuMPTP6yq98iQjwWp8kP8YFpv+0ZSWlHsT8AQDqV2sKD8k=
+X-Received: by 2002:a05:6512:2804:b0:52e:fc01:ddfa with SMTP id
+ 2adb3069b0e04-530bb387c7cmr7077635e87.7.1722844135078; Mon, 05 Aug 2024
+ 00:48:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801111611.84743-1-kuro@kuroa.me> <CANn89iKp=Mxu+kyB3cSB2sKevMJa6A3octSCJZM=oz4q+DC=bA@mail.gmail.com>
- <CAKD1Yr1O+ZHg_oVYu39z=qKPC2CX7P56ewRLWOkvXqvekKk6uA@mail.gmail.com>
-In-Reply-To: <CAKD1Yr1O+ZHg_oVYu39z=qKPC2CX7P56ewRLWOkvXqvekKk6uA@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Mon, 5 Aug 2024 15:46:10 +0800
-Message-ID: <CAL+tcoCqGP9fkNVmZ5U0vLyCcFDgWS8s=QDate8BPyopKSn39A@mail.gmail.com>
-Subject: Re: [PATCH net] tcp: fix forever orphan socket caused by tcp_abort
-To: Lorenzo Colitti <lorenzo@google.com>
-Cc: Eric Dumazet <edumazet@google.com>, Xueming Feng <kuro@kuroa.me>, 
-	"David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
-	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org
+References: <20240716-adi-v1-0-79c0122986e7@nxp.com> <20240716-adi-v1-2-79c0122986e7@nxp.com>
+In-Reply-To: <20240716-adi-v1-2-79c0122986e7@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 5 Aug 2024 09:48:44 +0200
+Message-ID: <CACRpkdaiG+Gr+asDHsztR3A=iNNCUsCFXfrW2ZUidWYLn9RcVA@mail.gmail.com>
+Subject: Re: [PATCH 2/6] mfd: adp5585: add ADI adp5585 core support
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Haibo Chen <haibo.chen@nxp.com>, 
+	Jun Li <jun.li@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 5, 2024 at 2:43=E2=80=AFPM Lorenzo Colitti <lorenzo@google.com>=
- wrote:
->
-> On Thu, Aug 1, 2024 at 10:11=E2=80=AFPM Eric Dumazet <edumazet@google.com=
-> wrote:
-> > > This patch removes the SOCK_DEAD check in tcp_abort, making it send
-> > > reset to peer and close the socket accordingly. Preventing the
-> > > timer-less orphan from happening.
-> > > [...]
-> >
-> > This seems legit, but are you sure these two blamed commits added this =
-bug ?
-> >
-> > Even before them, we should have called tcp_done() right away, instead
-> > of waiting for a (possibly long) timer to complete the job.
-> >
-> > This might be important when killing millions of sockets on a busy serv=
-er.
-> >
-> > CC Lorenzo
-> >
-> > Lorenzo, do you recall why your patch was testing the SOCK_DEAD flag ?
->
-> I think I took it from the original tcp_nuke_addr implementation that
-> Android used before SOCK_DESTROY and tcp_abort were written. The
-> oldest reference I could find to that code is this commit that went
-> into 2.6.39 (!), which already had that check.
->
-> https://android.googlesource.com/kernel/common/+/06611218f86dc353d5dd0cb5=
-acac32a0863a2ae5
->
-> I expect the check was intended to prevent force-closing the same socket =
-twice.
->
+Hi Frank,
 
-Yes, I guess so.
+thanks for your patch!
+
+On Tue, Jul 16, 2024 at 9:29=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+
+> +struct adp5585_dev {
+> +       struct device *dev;
+> +       struct i2c_client *i2c_client;
+> +
+> +       int (*read_reg)(struct adp5585_dev *adp5585, u8 reg, u8 *val);
+> +       int (*write_reg)(struct adp5585_dev *adp5585, u8 reg, u8 val);
+> +};
+
+The read_reg() and write_reg() accessors looks like a reimplementation
+of regmap.
+
+Can you check if you can just let the subdrivers access a regmap
+for the parent MFD device and use that to read/write registers?
+
+There are many examples of this in recent MFD drivers.
+
+Yours,
+Linus Walleij
 
