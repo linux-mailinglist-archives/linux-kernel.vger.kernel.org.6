@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-274186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A499474A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:29:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0DC9474A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 07:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C05111F212D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C404A1F214C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 05:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9F7143744;
-	Mon,  5 Aug 2024 05:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC5914389F;
+	Mon,  5 Aug 2024 05:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PzirUKjg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TT1aq1u3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E2113D502;
-	Mon,  5 Aug 2024 05:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6AE63A;
+	Mon,  5 Aug 2024 05:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722835744; cv=none; b=UQfqtAlzMt3PTL27ltBUibAO6aH/vxmYbL/ptuzCVk9xEtpbmR9Vf6YN4fcYt0E9tY1gQdemUBPftLsTNqWQe5xT+GoBszSQyjYs/R0g9fOi3Lo+YA7qyn0vzLCNDTdCtJ944fkO12YqcxE+YpmTXh4r0ljhLib+J65qr62RLMU=
+	t=1722835882; cv=none; b=dovTvbNgC5FE8Sj3p0t/ZCLLSbuaCysiMs9VuVSmlzZJE8l4owZ7JsANTyh3Y5SuGwhSmhLHU/Vgvoz8uL9JOT9LDZYpnk1mh09MCZB5Ou+8AnR6m5b5pPkOBi2RwfEWRxNmHl2wGaS/X7Ah3iIkyvBJ1Cpau12J2MAbJetWPHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722835744; c=relaxed/simple;
-	bh=CR0qSaMZI+dpNhqEtf6Kz9vubWJsF8JGc7/NTJBnlBU=;
+	s=arc-20240116; t=1722835882; c=relaxed/simple;
+	bh=rvtbyErBZrQRF5idd5IgE6dAMI6AhdxFMYDfmhoMPXo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MdpYaLJFtk/Pq5aL2AVZ8l73wCqNkKiiI5ZQ3Zqu/ER/p34QNFqGWRHv/2bKW0xZAhHGgsGhWxFjF/HCKXwMJKC2c3b7Lykob6Gkltzult4vyjD49mgSfYY7rbDkrmRSrcq6SDG2xx1HohiAjtu980uvO+42+V7dHR+VW1lss04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PzirUKjg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64955C32782;
-	Mon,  5 Aug 2024 05:28:58 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=rlbBPuz+X/W2fbARY45fUv4tRt38WYc0Ciqn5nF70/9Y6TUPkfqG2FvcrW7xEKgnzQm5ekVYA38A+pMUksUgpDI1ISybt9YB32v5Xvo0hwg5ucxiQ1oHNmuQLPmud62rWOyrSO3Rh/pJOXcH7+eagd5FyjsmnVEywDpEXDd573U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TT1aq1u3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A329C32782;
+	Mon,  5 Aug 2024 05:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722835744;
-	bh=CR0qSaMZI+dpNhqEtf6Kz9vubWJsF8JGc7/NTJBnlBU=;
+	s=k20201202; t=1722835881;
+	bh=rvtbyErBZrQRF5idd5IgE6dAMI6AhdxFMYDfmhoMPXo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PzirUKjg/PNfRFrYQUUU1EiyR56k+3OH33GgUEPat8PhGLRaCZ8UvfmjqmCh7EJhA
-	 ZEHUFMnSzsG9G5OkLRxUZGEN3kQYPaTgFVsCLFIrBEOYMp9XMaaGer90q1FG9y4ffO
-	 MRWM/0X9MOp42YNByzMxsHA1zwf18yarllm8k1YrkRqPMHT7yy40P6lQf82iNGYl4j
-	 BTF9F2Un8OZKLY+J3chhUIvxXg28VHIQWd33WBwCf3HvyrvAHJYVWnotT3N3j+82og
-	 V2e6OFh5/OwLWtECL+E8aA45le3vFNAK/inB9OSEruRKuQKsiUPYrR7ljf+TFIJCh2
-	 lhEDtacbuklAA==
-Message-ID: <c80ae784-c1f3-4046-9d86-d7e57bd93669@kernel.org>
-Date: Mon, 5 Aug 2024 07:28:55 +0200
+	b=TT1aq1u3eU9oNWB5OqEeH7lZSnGkeIVGh7fv5r7eqXnxvVq68bJHEd0W6GClsWXzb
+	 qfA88u14RBiLVzUV3frWucUr/zLcX9gwsyocfE0UE+7T4xfoTYB7HAlcDxPuUSpPs1
+	 zXxzV55RSE+W2iXBxIiAtt/9jT5lBYDxBGejQN6+Zi9TR6/bE/lPZ6xi2RUfewoMd/
+	 JsjK5natveF6N+mksUEvr4N+nWIKZqlFFsgMLBFnecXHiwW2b8/ykGwfBi/YBK3Cd2
+	 Rsu80SrDohIq5K7a9F28FzUsZg/MjF2SYPyvwPnuvEV3zHhhfOJUHWjxClTJdvsAK1
+	 +qpYO4JJEWSVg==
+Message-ID: <645ae5c7-5421-4bf2-9aac-8151b7db4e0b@kernel.org>
+Date: Mon, 5 Aug 2024 07:31:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,26 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] dt-bindings: PCI: Add binding for qps615
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- cros-qcom-dts-watchers@chromium.org, Bartosz Golaszewski <brgl@bgdev.pl>,
- Jingoo Han <jingoohan1@gmail.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: andersson@kernel.org, quic_vbadigan@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+Subject: Re: [PATCH 3/4] dt-bindings: net: bluetooth: qualcomm: add QCA9379
+ compatible
+To: Felix Kaechele <felix@kaechele.ca>, Marcel Holtmann
+ <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+ Rocky Liao <quic_rjliao@quicinc.com>
+Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com>
- <20240803-qps615-v2-1-9560b7c71369@quicinc.com>
- <5f65905c-f1e4-4f52-ba7c-10c1a4892e30@kernel.org>
- <f8985c98-82a5-08c3-7095-c864516b66b9@quicinc.com>
- <58317fe2-fbea-400e-bd1d-8e64d1311010@kernel.org>
- <100e27d7-2714-89ca-4a98-fccaa5b07be3@quicinc.com>
+ linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+ linux-mmc@vger.kernel.org
+References: <20240805040131.450412-1-felix@kaechele.ca>
+ <20240805040131.450412-4-felix@kaechele.ca>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -114,95 +109,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <100e27d7-2714-89ca-4a98-fccaa5b07be3@quicinc.com>
+In-Reply-To: <20240805040131.450412-4-felix@kaechele.ca>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/08/2024 07:26, Krishna Chaitanya Chundru wrote:
+On 05/08/2024 06:01, Felix Kaechele wrote:
+> Document that the QCA9379, as a member of the QCA6174 family, is
+> supported by the existing driver.
 > 
+> Signed-off-by: Felix Kaechele <felix@kaechele.ca>
+> ---
+>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> On 8/5/2024 10:44 AM, Krzysztof Kozlowski wrote:
->> On 05/08/2024 06:11, Krishna Chaitanya Chundru wrote:
->>
->>
->>>>> +
->>>>> +  qcom,nfts:
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint8
->>>>> +    description:
->>>>> +      Fast Training Sequence (FTS) is the mechanism that
->>>>> +      is used for bit and Symbol lock.
->>>>
->>>> What are the values? Why this is uint8?
->>>>
->>> These represents number of fast training sequence and doesn't have
->>> any units and the maximum value for this is 0xFF only so we used
->>> uint8.
->>>> You described the desired Linux feature or behavior, not the actual
->>>> hardware. The bindings are about the latter, so instead you need to
->>>> rephrase the property and its description to match actual hardware
->>>> capabilities/features/configuration etc.
->>> ack.
->>>>
->>>>> +
->>>>> +allOf:
->>>>> +  - $ref: /schemas/pci/pci-bus-common.yaml#
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            const: pci1179,0623
->>>>> +      required:
->>>>> +        - compatible
->>>>
->>>> Why do you have entire if? You do not have multiple variants, drop.
->>>>
->>> The child nodes also referencing the qcom,qps615.yaml# node, I tried
->>> to use this way to say "the below properties are for the required for
->>> parent and optional for child".
->>
->> I don't understand how child device can be exactly the same as parent
->> device. How does it look in terms of hardware? Pins and supplies?
->>
->>>>> +    then:
->>>>> +      required:
->>>>> +        - vdd18-supply
->>>>> +        - vdd09-supply
->>>>> +        - vddc-supply
->>>>> +        - vddio1-supply
->>>>> +        - vddio2-supply
->>>>> +        - vddio18-supply
->>>>> +        - qcom,qps615-controller
->>>>> +        - reset-gpios
->>>>> +
->>>>> +patternProperties:
->>>>> +  "@1?[0-9a-f](,[0-7])?$":
->>>>> +    type: object
->>>>> +    $ref: qcom,qps615.yaml#
->>>>> +    additionalProperties: true
->>>>
->>>> Nope, drop pattern Properties or explain what is this.
->>>>
->>> the child nodes represent the downstream ports of the PCIe
->>> switch which wants to use same properties that is why
->>> I tried to use this pattern properties.
->>
->> Downstream port is not the same as device. Why downstream port has the
->> same supplies? To which pins are they connected?
->>
->>
-> Hi Krzysztof,
-> 
-> Downstream ports dosen't have pins or supplies to power on.
-> 
-> But there are properties like qcom,l0s-entry-delay-ns,
-> qcom,l1-entry-delay-ns,  qcom,tx-amplitude-millivolt etc which
-> applicable for child nodes also. Instead of re-declaring the
-> these properties again I tried to use pattern properties.
+> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> index 68c5ed111417..f968b0d236e0 100644
+> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> @@ -19,6 +19,7 @@ properties:
+>        - qcom,qca2066-bt
+>        - qcom,qca6174-bt
+>        - qcom,qca9377-bt
+> +      - qcom,qca9379-bt
 
-You could use $defs for them, but I don't understand how does these
-properties apply for both main device and ports. It seems you are
-writing binding to match some driver behavior. Let's start from basics -
-describe the hardware.
+Then use fallback of 9377 or any other device. I still wonder why you do
+not require any supplies.
 
 Best regards,
 Krzysztof
