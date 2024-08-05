@@ -1,160 +1,92 @@
-Return-Path: <linux-kernel+bounces-274777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F845947C94
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:12:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FE1947C8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 16:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357BD1C21441
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:12:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD071F21BEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 14:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496FE13A26F;
-	Mon,  5 Aug 2024 14:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7820139CE3;
+	Mon,  5 Aug 2024 14:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Lo2Ip46l"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b="JljZaVHb"
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A727517C64;
-	Mon,  5 Aug 2024 14:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44B978685
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 14:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722867137; cv=none; b=oTh0NtzpuDRx0iuYyGfJCMFOTLxbjnfDWQxb4reuQcYmDcu1gKKUp31oYSWlYnaquGGeyFxszI3o1OFvIQAIxTR50UPsD8wp7brb+I8GIIeP4D+Oe9vWfBtfVcZj5Das1QmqE5TYZ0YYQv98YIpQU7lnIK8XGSwxN3aJ7Bv1pmA=
+	t=1722866992; cv=none; b=b/PsTqvuV3r+7AsQRIv3oiPPE54yydiCRXpnYqfDSsNWCMU+43cMwh0znwtwTOSMqw1jPvuA6PvqTcp/w7vbSEYNZw1wOXN94Kvza4GPR5L+TsSSaSoMwUYoucxRdZal5MkNlpo44yJ6T5jXDqwvNQNAkU3Bm7Tg1zzTE1neOzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722867137; c=relaxed/simple;
-	bh=9M4xpkoH3LimV0O0XQcpYnwFUNXxsSPpdOBU2ZuvMyY=;
-	h=Subject:MIME-Version:Content-Type:Date:Message-ID:CC:From:To:
-	 References:In-Reply-To; b=MfR2Uo70qspShBNPq0l2OxJaCH9rvj5Nl6YeiOv/wOWcoA5fi5qlUhEcFRoGH3zAaLS6Rb3MQnkN2XiS8jRjpNUihHrFOfcsum1VIpnCNddadXd+MY1cXbHkYH6FG1qVcmi35OOtSzFLrIDQ7+gP1I3RxKOid60PeSfAHak/yDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Lo2Ip46l; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722867135; x=1754403135;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   cc:from:to:references:in-reply-to:subject;
-  bh=MK25yrGsMeryEu/GddZa4lO4IjN5z+54ON7xDCNErE8=;
-  b=Lo2Ip46lrst1H5aB7j2LI1HD6MWx6P2XQcFLmajRQ4QXSczhFQRQEcKJ
-   9YjGWrwxdBeaWGWBYJgEI9sT2HCT+BH5PUousdxcNxhSDX6FLlkFc72KK
-   JvHMkPIJPYl1jMOrRB/60O2TJpkhsnmwS2Nn8iADSrfV+bBOnMczxgagP
-   s=;
-X-IronPort-AV: E=Sophos;i="6.09,264,1716249600"; 
-   d="scan'208";a="112496171"
-Subject: Re: [PATCH 01/18] KVM: x86: hyper-v: Introduce XMM output support
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 14:08:58 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:29010]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.0.23:2525] with esmtp (Farcaster)
- id e194f651-d149-4251-920f-bb202d846005; Mon, 5 Aug 2024 14:08:57 +0000 (UTC)
-X-Farcaster-Flow-ID: e194f651-d149-4251-920f-bb202d846005
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 5 Aug 2024 14:08:56 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Mon, 5 Aug 2024
- 14:08:50 +0000
+	s=arc-20240116; t=1722866992; c=relaxed/simple;
+	bh=YGi0PBi3b+75DsB4jTrMWW8lhBwiPanD1pd9nOKoEZs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YA8XgXUuwTVT0MaapwhKuzdNRWPYO8pPNsEsi215QfBvt/IOGjiL3GlTiOT/Z8svSLfLe3jpeltAxVk7Bljk+BzhI2btBh8HJBofLwrSPxMSqbzMn1Sc8plQrD9GdJW/UgoHNcQvk1AkPV/nz6T+M76LbZ/15KxWqNx6T+33OEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=felix.moessbauer@siemens.com header.b=JljZaVHb; arc=none smtp.client-ip=185.136.65.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2024080514094085043606dcac68436e
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 05 Aug 2024 16:09:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=pTVgjQJ/WpC70xZIlMPIDO5jcR9Ox9kRcrJblGJ+xzY=;
+ b=JljZaVHbf5/7UFCjWfnox3kgtH8GkzsInM+4kFplZY5KjSHYHeU/ararFQEbH54YoYjytg
+ mKHnjNGsPyqY8tuCwCiSXlSVYwvuBFOW9psI1p/JNBwNw/K+AK4iHJN1pisKpaVjn3cFyQtS
+ 3UV9Jo3MnhyGEJ5GeZ7j+TCFgk4Z2vCRSJz9sYA06XrVLXmEdIIimpc91asybOTvwW4LK75x
+ f8bABJ3Jmpj7JRySkrJXTT/KANlZKVLadpZzghWaGukMUh96bQ/SqI3ilhOLmTkommKv02JV
+ xe0tlDmpUbtXsA0qZbOhzYXlguuTQNei1Zt5HYplVHhXDc1ke9+o4vig==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	jan.kiszka@siemens.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	qyousef@layalina.io,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [PATCH v2 0/1] hrtimer: More fixes for handling of timer slack of rt tasks
+Date: Mon,  5 Aug 2024 16:09:29 +0200
+Message-Id: <20240805140930.29462-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Mon, 5 Aug 2024 14:08:46 +0000
-Message-ID: <D381CRQ2XJL9.1NBVMKT4SR51P@amazon.com>
-CC: <pbonzini@redhat.com>, <seanjc@google.com>, <linux-doc@vger.kernel.org>,
-	<linux-hyperv@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <graf@amazon.de>,
-	<dwmw2@infradead.org>, <pdurrant@amazon.com>, <mlevitsk@redhat.com>,
-	<jgowans@amazon.com>, <corbet@lwn.net>, <decui@microsoft.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <amoorthy@google.com>
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>
-X-Mailer: aerc 0.17.0-152-g73bcb4661460-dirty
-References: <20240609154945.55332-1-nsaenz@amazon.com>
- <20240609154945.55332-2-nsaenz@amazon.com> <87tth0rku3.fsf@redhat.com>
- <D2RVJ6QCVNOU.XC0OC54QHI51@amazon.com> <878qxk5mox.fsf@redhat.com>
-In-Reply-To: <878qxk5mox.fsf@redhat.com>
-X-ClientProxiedBy: EX19D046UWA004.ant.amazon.com (10.13.139.76) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
 
-On Mon Jul 29, 2024 at 1:53 PM UTC, Vitaly Kuznetsov wrote:
-> CAUTION: This email originated from outside of the organization. Do not c=
-lick links or open attachments unless you can confirm the sender and know t=
-he content is safe.
-> Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
->
-> > Hi Vitaly,
-> > Thanks for having a look at this.
-> >
-> > On Mon Jul 8, 2024 at 2:59 PM UTC, Vitaly Kuznetsov wrote:
-> >> Nicolas Saenz Julienne <nsaenz@amazon.com> writes:
-> >>
-> >> > Prepare infrastructure to be able to return data through the XMM
-> >> > registers when Hyper-V hypercalls are issues in fast mode. The XMM
-> >> > registers are exposed to user-space through KVM_EXIT_HYPERV_HCALL an=
-d
-> >> > restored on successful hypercall completion.
-> >> >
-> >> > Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
-> >> >
-> >> > ---
-> >> >
-> >> > There was some discussion in the RFC about whether growing 'struct
-> >> > kvm_hyperv_exit' is ABI breakage. IMO it isn't:
-> >> > - There is padding in 'struct kvm_run' that ensures that a bigger
-> >> >   'struct kvm_hyperv_exit' doesn't alter the offsets within that str=
-uct.
-> >> > - Adding a new field at the bottom of the 'hcall' field within the
-> >> >   'struct kvm_hyperv_exit' should be fine as well, as it doesn't alt=
-er
-> >> >   the offsets within that struct either.
-> >> > - Ultimately, previous updates to 'struct kvm_hyperv_exit's hint tha=
-t
-> >> >   its size isn't part of the uABI. It already grew when syndbg was
-> >> >   introduced.
-> >>
-> >> Yes but SYNDBG exit comes with KVM_EXIT_HYPERV_SYNDBG. While I don't s=
-ee
-> >> any immediate issues with the current approach, we may want to introdu=
-ce
-> >> something like KVM_EXIT_HYPERV_HCALL_XMM: the userspace must be prepar=
-ed
-> >> to handle this new information anyway and it is better to make
-> >> unprepared userspace fail with 'unknown exit' then to mishandle a
-> >> hypercall by ignoring XMM portion of the data.
-> >
-> > OK, I'll go that way. Just wanted to get a better understanding of why
-> > you felt it was necessary.
-> >
->
-> (sorry for delayed reply, I was on vacation)
->
-> I don't think it's an absolute must but it appears as a cleaner approach
-> to me.
->
-> Imagine there's some userspace which handles KVM_EXIT_HYPERV_HCALL today
-> and we want to add XMM handling there. How would we know if xmm portion
-> of the data is actually filled by KVM or not? With your patch, we can of
-> course check for HV_X64_HYPERCALL_XMM_OUTPUT_AVAILABLE in
-> KVM_GET_SUPPORTED_HV_CPUID but this is not really straightforward, is
-> it? Checking the size is not good either. E.g. think about downstream
-> versions of KVM which may or may not have certain backports. In case we
-> (theoretically) do several additions to 'struct kvm_hyperv_exit', it
-> will quickly become a nightmare.
->
-> On the contrary, KVM_EXIT_HYPERV_HCALL_XMM (or just
-> KVM_EXIT_HYPERV_HCALL2) approach looks cleaner: once userspace sees it,
-> it knows that 'xmm' portion of the data can be relied upon.
+This series fixes the (hopefully) last location of an incorrectly
+handled timer slack on rt tasks in hrtimer_start_range_ns(), which was
+uncovered by a userland change in glibc 2.33.
 
-Makes sense, thanks for the explanation.
+Changes since v1:
 
-Nicolas
+- drop patch "hrtimer: Document, that PI boosted tasks have no timer slack", as
+  this behavior is incorrect and is already adressed in 20240610192018.1567075-1-qyousef@layalina.io
+- use task_is_realtime() instead of rt_task()
+- fix style of commit message
+
+v1 discussion: https://lore.kernel.org/lkml/20240805124116.21394-1-felix.moessbauer@siemens.com
+
+Best regards,
+Felix Moessbauer
+Siemens AG
+
+Felix Moessbauer (1):
+  hrtimer: Ignore slack time for RT tasks in hrtimer_start_range_ns()
+
+ kernel/time/hrtimer.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+2.39.2
+
 
