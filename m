@@ -1,258 +1,203 @@
-Return-Path: <linux-kernel+bounces-274713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-274714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8149947BC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:26:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E085947BCF
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 15:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596A81F23345
-	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C07D11C21B27
+	for <lists+linux-kernel@lfdr.de>; Mon,  5 Aug 2024 13:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9239815ADB4;
-	Mon,  5 Aug 2024 13:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823AC15AD95;
+	Mon,  5 Aug 2024 13:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGgeC62A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n7tthhch"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98825156C74;
-	Mon,  5 Aug 2024 13:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6023156C74
+	for <linux-kernel@vger.kernel.org>; Mon,  5 Aug 2024 13:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722864401; cv=none; b=bgLQNXTuSDy+NbhB2+W0ITc/7uL0UpdWPMeQgQ+okIl+oqG8xgkLAXPQ3zTZRoGuY5wrkCz37YL0rYWYqw2QGno1AgBzAnQr6jL3FPxdw030BofT4f0UA/pzLVC2HmYpSxJYE5UaiVxa2fJlZoPYr5SCZGrdyxwNMq893PJpv+0=
+	t=1722864422; cv=none; b=c3rXghsaH1J42uYON+b4Fn9MDKHVtMp6/uVhaiKF4Tq0fMEd2eMq9KYTQPTFKkec+BnX65eNy8yItdLkKLkZib/mvj6MeCTeTWrnrPJZwObeJ9JgF9eynXP/EDlMyNnjM9sBuxOC8qnYHWSU5AVINt2v8I2ObymXldD1IcnevUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722864401; c=relaxed/simple;
-	bh=RFC+gAPtivzYfLrzIVBNQC2POgbMfIS4GSE4tfHpLDI=;
+	s=arc-20240116; t=1722864422; c=relaxed/simple;
+	bh=IWUBYZKFodiMcv3oIFUFMpMXdjj6J3Hv+SilGiL2Ygg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMkjsSlOY9eqsQgZ/mZnX8yJp0IN2GWFQcdIltRBRUoOG4ZRgH115RnCvEhoODQojyr35BQl+7AcD5ZhrFPJPYCHfjZD8jfXgbD57nvoTEDph1n0fWvyEbFpXFdJO6Sv65HRZN+o4gR5oAkBF7aFMLjHSMQhWP6ZH7T8sDDJfUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGgeC62A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD3AC32782;
-	Mon,  5 Aug 2024 13:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722864401;
-	bh=RFC+gAPtivzYfLrzIVBNQC2POgbMfIS4GSE4tfHpLDI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WGgeC62Ag+Wsz644daWQpVeUZVGsG/2dUCnge4FsmZZB8T7Fa0SVONQgkVDDNZfQm
-	 /bo9HTeJ4wy3/pJnJbo08G/XVxbytOZATAu9ABnYhAGWZyh4SRU0gGgsna6sP1yVzT
-	 Xh7in5OomF8NjPJ5fj2YPWMGg/NEnS/fk95zcaJg2b09JMqCYD0uksXq0dX/eJhl3k
-	 JUots16tnylP/IEHW84K9C/MZaxT52H+O4REXQjmWPsC4z+V7WgyAyIVL1YrH4Xbyf
-	 zkP1e++JmZSuAzvrn8eLXvH8TjLd69QlVxbSHn4cc3AlEkVizvSZGgVT1dyE3BciAV
-	 0DFaoDNeXLwqQ==
-Date: Mon, 5 Aug 2024 15:26:38 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: RCU-Task[-Trace] VS EQS (was Re: [PATCH v3 13/25]
- context_tracking, rcu: Rename rcu_dynticks_task*() into rcu_task*())
-Message-ID: <ZrDTDkdq6iJvHDWX@localhost.localdomain>
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240724144325.3307148-14-vschneid@redhat.com>
- <ZqJiDlKtD4wvsv1j@localhost.localdomain>
- <31d78183-4526-41e8-90df-d03c95fdb9b2@paulmck-laptop>
- <ZqlmjVyWXIneklCm@pavilion.home>
- <30c6d4aa-7598-4dc1-8592-7533d64714c2@paulmck-laptop>
- <Zqot4NpepOORtNzv@localhost.localdomain>
- <6c915a8d-983a-4cbb-8d89-01e326a16876@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ucUIVUXsLZ5a0CTktPkGYvlEQLG4S7MdAk2gEtI050+EfHuUwVs6nPYldrFsAUQ9KkqS7DIzTaS/gbbSjtnWVfgNwpv5lReKqhEBEI/rb/ZltXTjOxLA9CEIwamC+bihF2HfnG6XIgUV5BHyTQMa5EIWY/v35/Bvbq4Htu7Gw+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n7tthhch; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d150e8153so3696449b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 06:27:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722864420; x=1723469220; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=boW2X/O80i4mmc0cFAkLsjKJVoJQSW+QaV7WBtj726I=;
+        b=n7tthhchVvUnUfrNlT5MWNvWD9a9Ed0nX5AtRD1c7uJjafJb82rb8I/YKTB4Zff9J5
+         O2HrCupK0e+6YKKnFQhING+s6Q6DlE75KfWHlNjfgnGHt5C6GVafLrG8p6N9roaXBDoo
+         FjWw6RgiXmrjwvkAQyCgidx+D7GnQzP+MeYCXjm+onTGLlqBf1GjnQmhiFeROWYFjE8W
+         vWqviQLlropDgxCw1Kejz/xnJC2DFCn6fNdZ4hLLXSBYxGq//3qtfwH3QYXpeFOuhAdo
+         6W/3GWcKqjFdqWlUdk9XE2/pEp9pIU3oUbkkIkac0+PGlBiPawU9RfKUAtmdohWLqOzC
+         HY9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722864420; x=1723469220;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=boW2X/O80i4mmc0cFAkLsjKJVoJQSW+QaV7WBtj726I=;
+        b=eQLt9i0TAmpkAnPGFy23sYZYz5D2w5Pi/o6iujoQq/x5shrqA1NtIEGg30M+5WgRe7
+         mq/JNJCZY00ad2rCujlRcqW66o2weWEmPIFABIZLo6myjuev9KrL7rOHXpUEww0eUqzy
+         Yiu5Ql8KPfVarxbpZz5qaUT/3zxFjZIzjCpLE45hFg3lKS9a8TAiqjzq6MFzN5mRTuKt
+         77wq3uHGgZZuaTcNFi5vnXvqUuBIloVrhWH49CClLmt26n3Sc543fqOVQnYiYzFM4z7o
+         Vz6Pq8NrwzQ7fIkZGcykPYLBmAwVQcRF8i2G7MAbt2V3RhBRLrF0m0ckHae87OYpeatK
+         Qnhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUf/PZFH7ycSTxm9daRzRz/yyPKDXh/ABHC2AoktqdToeKsHqDUbQTcjEbiXbIF+EXxvNsuuBlyYgxI1BeI+F5Gfwr093kloI1uKfWi
+X-Gm-Message-State: AOJu0YxQozt3GLpbY5YfVRZUK2mCn2aHkjXv+zUywQZV6nlnQ9mkkqTl
+	0ZttZJo/dZpUl3daCs9ikC6ATDo7OKKPD3VfahCnJlKQMREZIrwRozG4EPNy6A==
+X-Google-Smtp-Source: AGHT+IF+PX69tcKP5upbCedTEm1/JTcYHUpIqoPq+4Lwl4bMcAcMu6iXishN/DPxfJX6IolIzg8qFQ==
+X-Received: by 2002:a05:6a20:12d1:b0:1c4:b2d8:43ed with SMTP id adf61e73a8af0-1c69a5f2f94mr17206193637.14.1722864420117;
+        Mon, 05 Aug 2024 06:27:00 -0700 (PDT)
+Received: from thinkpad ([120.56.197.55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ed16cb3sm5576274b3a.179.2024.08.05.06.26.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 06:26:59 -0700 (PDT)
+Date: Mon, 5 Aug 2024 18:56:53 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, oe-kbuild-all@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, lukas@wunner.de,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 2/4] PCI: Rename pci_bridge_d3_possible() to
+ pci_bridge_d3_allowed()
+Message-ID: <20240805132653.GB7274@thinkpad>
+References: <20240802-pci-bridge-d3-v5-2-2426dd9e8e27@linaro.org>
+ <202408031855.TEPJlfzl-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6c915a8d-983a-4cbb-8d89-01e326a16876@paulmck-laptop>
+In-Reply-To: <202408031855.TEPJlfzl-lkp@intel.com>
 
-Le Fri, Aug 02, 2024 at 09:32:08PM -0700, Paul E. McKenney a �crit :
-> On Wed, Jul 31, 2024 at 02:28:16PM +0200, Frederic Weisbecker wrote:
-> > Le Tue, Jul 30, 2024 at 03:39:44PM -0700, Paul E. McKenney a �crit :
-> > > On Wed, Jul 31, 2024 at 12:17:49AM +0200, Frederic Weisbecker wrote:
-> > > > Le Tue, Jul 30, 2024 at 07:23:58AM -0700, Paul E. McKenney a �crit :
-> > > > > On Thu, Jul 25, 2024 at 04:32:46PM +0200, Frederic Weisbecker wrote:
-> > > > > > Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a �crit :
-> > > > > > > -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
-> > > > > > > -static __always_inline void rcu_dynticks_task_trace_enter(void)
-> > > > > > > +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
-> > > > > > > +static __always_inline void rcu_task_trace_exit(void)
-> > > > > > 
-> > > > > > Before I proceed on this last one, a few questions for Paul and others:
-> > > > > > 
-> > > > > > 1) Why is rcu_dynticks_task_exit() not called while entering in NMI?
-> > > > > >    Does that mean that NMIs aren't RCU-Task read side critical sections?
-> > > > > 
-> > > > > Because Tasks RCU Rude handles that case currently.  So good catch,
-> > > > > because this might need adjustment when we get rid of Tasks RCU Rude.
-> > > > > And both rcu_dynticks_task_enter() and rcu_dynticks_task_exit() look safe
-> > > > > to invoke from NMI handlers.  Memory ordering needs checking, of course.
-> > > > > 
-> > > > > Except that on architectures defining CONFIG_ARCH_WANTS_NO_INSTR, Tasks
-> > > > > RCU should instead check the ct_kernel_enter_state(RCU_DYNTICKS_IDX)
-> > > > > state, right?  And on those architectures, I believe that
-> > > > > rcu_dynticks_task_enter() and rcu_dynticks_task_exit() can just be no-ops.
-> > > > > Or am I missing something here?
-> > > > 
-> > > > I think rcu_dynticks_task_enter() and rcu_dynticks_task_exit() are
-> > > > still needed anyway because the target task can migrate. So unless the rq is locked,
-> > > > it's hard to match a stable task_cpu() with the corresponding RCU_DYNTICKS_IDX.
-> > > 
-> > > Can it really migrate while in entry/exit or deep idle code?  Or am I
-> > > missing a trick here?
-> > 
-> > No but it can migrate before or after EQS. So we need to handle situations like:
-> > 
-> >  == CPU 0 ==                      == CPU 1 ==
-> >                                   // TASK A is on rq
-> >                                   set_task_cpu(TASK A, 0)
-> > // TASK B runs
-> > ct_user_enter()
-> > ct_user_exit()
-> > 
-> > //TASK A runs
-> > 
-> > 
-> > It could be something like the following:
-> > 
-> > 
-> > int rcu_tasks_nohz_full_holdout(struct task_struct *t)
-> > {
-> > 	int cpu;
-> > 	int snap;
-> > 
-> > 	cpu = task_cpu(t);
-> > 
-> > 	/* Don't miss EQS exit if the task migrated out and in */
-> > 	smp_rmb()
-> > 
-> > 	snap = ct_dynticks_cpu(cpu);
-> > 	if (snap & RCU_DYNTICKS_IDX)
-> > 		return true;
-> > 
-> > 	/* Check if it's the actual task running */
-> > 	smp_rmb()
-> > 
-> > 	if (rcu_dereference_raw(cpu_curr(cpu)) != t)
-> > 		return true;
-> > 
-> > 	/* Make sure the task hasn't migrated in after the above EQS */
-> > 	smp_rmb()
-> > 
-> > 	
-> > 	return ct_dynticks_cpu(cpu) != snap;
-> > }
-> > 
-> > But there is still a risk that ct_dynticks wraps before the last test. So
-> > we would need task_call_func() if task_cpu() is in nohz_full mode.
+On Sat, Aug 03, 2024 at 07:03:56PM +0800, kernel test robot wrote:
+> Hi Manivannan,
 > 
-> Good point, migration just before or just after can look much the same
-> as migrating during..
+> kernel test robot noticed the following build errors:
 > 
-> > > > > > 2) Looking further into CONFIG_TASKS_TRACE_RCU_READ_MB=y, it seems to
-> > > > > >    allow for uses of rcu_read_[un]lock_trace() while RCU is not watching
-> > > > > >    (EQS). Is it really a good idea to support that? Are we aware of any
-> > > > > >    such potential usecase?
-> > > > > 
-> > > > > I hope that in the longer term, there will be no reason to support this.
-> > > > > Right now, architectures not defining CONFIG_ARCH_WANTS_NO_INSTR must
-> > > > > support this because tracers really can attach probes where RCU is
-> > > > > not watching.
-> > > > > 
-> > > > > And even now, in architectures defining CONFIG_ARCH_WANTS_NO_INSTR, I
-> > > > > am not convinced that the early incoming and late outgoing CPU-hotplug
-> > > > > paths are handled correctly.  RCU is not watching them, but I am not so
-> > > > > sure that they are all marked noinstr as needed.
-> > > > 
-> > > > Ok I see...
-> > > 
-> > > If need be, the outgoing-CPU transition to RCU-not-watching could be
-> > > delayed into arch-specific code.  We already allow this for the incoming
-> > > transition.
-> > 
-> > That's a lot of scary architectures code to handle :-)
-> > And how do we determine which place is finally safe to stop watching?
+> [auto build test ERROR on 705c1da8fa4816fb0159b5602fef1df5946a3ee2]
 > 
-> Huh.  One reason for the current smp_call_function_single() in
-> cpuhp_report_idle_dead() was some ARM32 CPUs that shut down caching on
-> their way out.  this made it impossible to use shared-variable-based
-> CPU-dead notification.  I wonder if Arnd's deprecation schedule
-> for ARM32-based platforms will allow us to go back to shared-memory
-> notification, which might make this sort of thing easier.
+> url:    https://github.com/intel-lab-lkp/linux/commits/Manivannan-Sadhasivam-via-B4-Relay/PCI-portdrv-Make-use-of-pci_dev-bridge_d3-for-checking-the-D3-possibility/20240803-074434
+> base:   705c1da8fa4816fb0159b5602fef1df5946a3ee2
+> patch link:    https://lore.kernel.org/r/20240802-pci-bridge-d3-v5-2-2426dd9e8e27%40linaro.org
+> patch subject: [PATCH v5 2/4] PCI: Rename pci_bridge_d3_possible() to pci_bridge_d3_allowed()
+> config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20240803/202408031855.TEPJlfzl-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240803/202408031855.TEPJlfzl-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202408031855.TEPJlfzl-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/gpu/drm/radeon/radeon_atpx_handler.c: In function 'radeon_atpx_detect':
+> >> drivers/gpu/drm/radeon/radeon_atpx_handler.c:568:59: error: 'struct pci_dev' has no member named 'bridge_d3'
+>      568 |                 d3_supported |= parent_pdev && parent_pdev->bridge_d3;
+>          |                                                           ^~
+>    drivers/gpu/drm/radeon/radeon_atpx_handler.c:578:59: error: 'struct pci_dev' has no member named 'bridge_d3'
+>      578 |                 d3_supported |= parent_pdev && parent_pdev->bridge_d3;
+>          |                                                           ^~
+> --
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c: In function 'amdgpu_atpx_detect':
+> >> drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c:628:59: error: 'struct pci_dev' has no member named 'bridge_d3'
+>      628 |                 d3_supported |= parent_pdev && parent_pdev->bridge_d3;
+>          |                                                           ^~
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c:638:59: error: 'struct pci_dev' has no member named 'bridge_d3'
+>      638 |                 d3_supported |= parent_pdev && parent_pdev->bridge_d3;
+>          |                                                           ^~
+> --
+>    drivers/gpu/drm/nouveau/nouveau_acpi.c: In function 'nouveau_dsm_pci_probe':
+> >> drivers/gpu/drm/nouveau/nouveau_acpi.c:229:32: error: 'struct pci_dev' has no member named 'bridge_d3'
+>      229 |                 if (parent_pdev->bridge_d3)
+>          |                                ^~
 
-git blame retrieved that:
+Ok, there seems to be a couple of drivers making use of pci_dev::bridge_d3 to
+check if D3Cold is supported or not. And this further strengthens the fact that
+PCI core should not rely on pci_bridge_d3_possible() as proposed in patch 1.
 
-71f87b2fc64c (cpu/hotplug: Plug death reporting race)
+- Mani
 
-For the reason why using smp_call_function_single():
+> 
+> 
+> vim +568 drivers/gpu/drm/radeon/radeon_atpx_handler.c
+> 
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  545  
+> 82e029357d4726 Alex Deucher 2012-08-16  546  /**
+> 82e029357d4726 Alex Deucher 2012-08-16  547   * radeon_atpx_detect - detect whether we have PX
+> 82e029357d4726 Alex Deucher 2012-08-16  548   *
+> 82e029357d4726 Alex Deucher 2012-08-16  549   * Check if we have a PX system (all asics).
+> 82e029357d4726 Alex Deucher 2012-08-16  550   * Returns true if we have a PX system, false if not.
+> 82e029357d4726 Alex Deucher 2012-08-16  551   */
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  552  static bool radeon_atpx_detect(void)
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  553  {
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  554  	char acpi_method_name[255] = { 0 };
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  555  	struct acpi_buffer buffer = {sizeof(acpi_method_name), acpi_method_name};
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  556  	struct pci_dev *pdev = NULL;
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  557  	bool has_atpx = false;
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  558  	int vga_count = 0;
+> bcfdd5d5105087 Alex Deucher 2016-11-28  559  	bool d3_supported = false;
+> bcfdd5d5105087 Alex Deucher 2016-11-28  560  	struct pci_dev *parent_pdev;
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  561  
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  562  	while ((pdev = pci_get_class(PCI_CLASS_DISPLAY_VGA << 8, pdev)) != NULL) {
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  563  		vga_count++;
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  564  
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  565  		has_atpx |= (radeon_atpx_pci_probe_handle(pdev) == true);
+> bcfdd5d5105087 Alex Deucher 2016-11-28  566  
+> bcfdd5d5105087 Alex Deucher 2016-11-28  567  		parent_pdev = pci_upstream_bridge(pdev);
+> bcfdd5d5105087 Alex Deucher 2016-11-28 @568  		d3_supported |= parent_pdev && parent_pdev->bridge_d3;
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  569  	}
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  570  
+> e9a4099a59cc59 Alex Deucher 2014-04-15  571  	/* some newer PX laptops mark the dGPU as a non-VGA display device */
+> e9a4099a59cc59 Alex Deucher 2014-04-15  572  	while ((pdev = pci_get_class(PCI_CLASS_DISPLAY_OTHER << 8, pdev)) != NULL) {
+> e9a4099a59cc59 Alex Deucher 2014-04-15  573  		vga_count++;
+> e9a4099a59cc59 Alex Deucher 2014-04-15  574  
+> e9a4099a59cc59 Alex Deucher 2014-04-15  575  		has_atpx |= (radeon_atpx_pci_probe_handle(pdev) == true);
+> bcfdd5d5105087 Alex Deucher 2016-11-28  576  
+> bcfdd5d5105087 Alex Deucher 2016-11-28  577  		parent_pdev = pci_upstream_bridge(pdev);
+> bcfdd5d5105087 Alex Deucher 2016-11-28  578  		d3_supported |= parent_pdev && parent_pdev->bridge_d3;
+> e9a4099a59cc59 Alex Deucher 2014-04-15  579  	}
+> e9a4099a59cc59 Alex Deucher 2014-04-15  580  
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  581  	if (has_atpx && vga_count == 2) {
+> 492b49a2f21a7c Alex Deucher 2012-08-16  582  		acpi_get_name(radeon_atpx_priv.atpx.handle, ACPI_FULL_PATHNAME, &buffer);
+> 7ca85295d8cc28 Joe Perches  2017-02-28  583  		pr_info("vga_switcheroo: detected switching method %s handle\n",
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  584  			acpi_method_name);
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  585  		radeon_atpx_priv.atpx_detected = true;
+> bcfdd5d5105087 Alex Deucher 2016-11-28  586  		radeon_atpx_priv.bridge_pm_usable = d3_supported;
+> 69ee9742f945cd Alex Deucher 2016-07-27  587  		radeon_atpx_init();
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  588  		return true;
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  589  	}
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  590  	return false;
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  591  }
+> 6a9ee8af344e3b Dave Airlie  2010-02-01  592  
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
-    """
-    We cant call complete after rcu_report_dead(), so instead of going back to
-    busy polling, simply issue a function call to do the completion.
-    """
-
-This doesn't state exactly why as I don't see obvious use of RCU there. But
-RCU-TASK-TRACE definetly doesn't want to stop watching while complete() is
-called.
-
-Another thing to consider is that rcutree_migrate_callbacks() may execute
-concurrently with rcutree_report_cpu_dead() otherwise. This might work ok,
-despite the WARN_ON_ONCE(rcu_rdp_cpu_online(rdp)) in
-rcutree_migrate_callbacks(). But that's doesn't make it more a good idea :-)
-
-As for the reason why calling complete() _after_ rcutree_report_cpu_dead():
-
-    """
-    Paul noticed that the conversion of the death reporting introduced a race
-    where the outgoing cpu might be delayed after waking the controll processor,
-    so it might not be able to call rcu_report_dead() before being physically
-    removed, leading to RCU stalls.
-    """
-
-I'm lacking details but perhaps the call to __cpu_die() by the control CPU on
-some archs may kill the CPU before it used to reach rcu_report_dead() ? No idea.
-But we need to know if __cpu_die() can kill the CPU before it reaches
-arch_cpu_idle_dead(). If it's not the case, then we can do something like this:
-
-diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-index 24b1e1143260..fb5b866c2fb3 100644
---- a/kernel/context_tracking.c
-+++ b/kernel/context_tracking.c
-@@ -31,7 +31,6 @@ DEFINE_PER_CPU(struct context_tracking, context_tracking) = {
- 	.dynticks_nesting = 1,
- 	.dynticks_nmi_nesting = DYNTICK_IRQ_NONIDLE,
- #endif
--	.state = ATOMIC_INIT(RCU_DYNTICKS_IDX),
- };
- EXPORT_SYMBOL_GPL(context_tracking);
- 
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index 6e78d071beb5..7ebaf04af37a 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -307,6 +307,7 @@ static void do_idle(void)
- 
- 		if (cpu_is_offline(cpu)) {
- 			cpuhp_report_idle_dead();
-+			ct_state_inc(RCU_DYNTICKS_IDX);
- 			arch_cpu_idle_dead();
- 		}
- 
-This mirrors rcutree_report_cpu_starting() -> rcu_dynticks_eqs_online()
-And then we can make RCU-TASKS not worry about rcu_cpu_online() anymore
-and only care about the context tracking.
-
-The CPU up path looks saner with rcutree_report_cpu_starting() called early
-enough on sane archs... Otherwise it's easy to fix case by case.
-
-Thoughts?
+-- 
+மணிவண்ணன் சதாசிவம்
 
