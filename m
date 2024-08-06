@@ -1,153 +1,297 @@
-Return-Path: <linux-kernel+bounces-276235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABCE49490AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:17:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B07CC948FD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EFD1F2607D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D196F1C235C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903241D6183;
-	Tue,  6 Aug 2024 13:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9341C57B3;
+	Tue,  6 Aug 2024 13:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkJG1DhJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hiepdJHM"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ED21D54F5;
-	Tue,  6 Aug 2024 13:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CC31BF311;
+	Tue,  6 Aug 2024 13:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950020; cv=none; b=ZtDSm8b7IHvnn7UnrsDQM6tI6/oluSyp/JHJEAMDK5OtQzXoS/xFETtEfAa9MDCSUonSU9ZdKMFoDEBksHIL2zbrbe9loDCIoPGS3eVGwKl8tBGTObWGtrfoaXw+aflxC7SMrrbRNBY0h98FlJqGv39usQJckLX0WmAA5kKg3aU=
+	t=1722949279; cv=none; b=uGnQcbBcB9l/8CqugnKXW1MFyFxUq3pvicDR2IvKA5p5QCi2doX2rZz+A7R2r7poFR0hbZkqr7Y9+7mZuWAUfzlxP7cv+t7sNGm1h5CxefXVnFA3+mIq4Tmbk9/qka3474XnamnAYrWtPju+/rEv+FKjZjYBRTAyjO4+Nejd/tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950020; c=relaxed/simple;
-	bh=8lhShelUKHDloCGPL9SSjLVR+sled6alu0kI64HG5j4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=su+OAE4e6kuYSQ4nZQ7hBTJ26olaQw4YkTbeIGyELL+AyKN6PfKCtXQrF6MbZ4WjhcsZ40e5D4I3/pjy2VX3MG4nqffS+Okl8kKmDPPHJ/DYbrYcpFCOy8EDmEhRcEJhlt7EXph7YPonZI5F9D6BxXP7dOH69mu9u+KEGAE/vFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkJG1DhJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EAECC4AF09;
-	Tue,  6 Aug 2024 13:13:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722950020;
-	bh=8lhShelUKHDloCGPL9SSjLVR+sled6alu0kI64HG5j4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HkJG1DhJCR0c6U/orjOk+rnykoBk3408dmECuRDDZpt1uqHyWgA+A+kg2/sEoUzjw
-	 RitNecxCGmNi0oEi7z/QnTpUXw1JCwtUPFj+HabFMh1/JuWrWQLzhq9Cg6NwfDp/dK
-	 ZtvFVjdK5JFRz2HazIC0y/yQ9k8p/X8wH6FL7hh7lSTvpJyiG6Xizq7ywUm17Xs+3M
-	 Wi/irJyR/yV/NaTEgm/jlB2QdOcAvHTlMyH0NSRHz1mx/w8QX/aNbbNaO6QPBkeifn
-	 DniLy+zpyTQFLf9ZcjYcdzVd4BWDPfrsOdNX+m0GJCs594Ee3ptX1SRuTz3GOBop1/
-	 /BmdfJJpS1cqg==
-Message-ID: <a1aa292d-6d61-4cb9-8343-6f38258c176f@kernel.org>
-Date: Tue, 6 Aug 2024 15:13:34 +0200
+	s=arc-20240116; t=1722949279; c=relaxed/simple;
+	bh=rkmgOQl8py7qDrXITLdHSVEmk/LLPYkUA7Pt/ny9N3g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lTvEzYmvniyfsbmL23l1anxdVcEo6t8ucbHuthGj22Sr9e0Be2nYNGwyRvJ6iTV1ANhDdDK1VhGHpZD/rQtnpr12n0ma6Hwzf2wPOmECB59gWMwb34uYfFrt87z5Njb2hAay7NVrH0jVLztdDZN5IoDsXewwcrE4VBymOsbSWK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hiepdJHM; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1722949275; x=1754485275;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rkmgOQl8py7qDrXITLdHSVEmk/LLPYkUA7Pt/ny9N3g=;
+  b=hiepdJHMH2ZaXhRA8CK1J6PbKNLQQpsM8gXfN8FwPLIYXIRxINo201b/
+   603NJGxAFc2dxQ+KGcCEdBGw/lH457lFNgTKM9sB5OlGNeW9Y+5pp0n5j
+   HujqA6/zJFGw7HxkALfVtHgy8hK7KZsaAOI5y91+NOB6lPcOwy7Eg2Mar
+   IBqwuIXm5NBPp2c850D/MABwMP9fUZfZ4VPxDeekIrkB4xLcSRss/vRW2
+   CrRdw30grN12UuMH0NPO+Lv9+2ILM9wbY1KYY+BlsBCttLOWMTYAb4Lz8
+   A4IUSn+neoqOU8oTFKWqo7B7Nid3Ap5IWmJ7aAQYukq48oIMeM6Le8P8C
+   Q==;
+X-CSE-ConnectionGUID: 35PzH48ZQt27K00Yyxlz1w==
+X-CSE-MsgGUID: k16G+AKURLKjaYeL/9QOog==
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="197573430"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Aug 2024 06:01:14 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 6 Aug 2024 06:01:01 -0700
+Received: from valentina.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 6 Aug 2024 06:01:00 -0700
+From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+To: <linux-usb@vger.kernel.org>
+CC: <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>,
+	<valentina.fernandezalanis@microchip.com>, <gregkh@linuxfoundation.org>,
+	<b-liu@ti.com>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1] usb: musb: poll ID pin status in dual-role mode in mpfs glue layer
+Date: Tue, 6 Aug 2024 14:14:07 +0100
+Message-ID: <20240806131407.1542306-1-valentina.fernandezalanis@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: amlogic: add some device nodes for C3
-To: xianwei.zhao@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
- <20240806-c3_add_node-v1-2-c0de41341632@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240806-c3_add_node-v1-2-c0de41341632@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 06/08/2024 12:27, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> 
-> Add some device nodes for SoC C3, including periphs clock controller
-> node, PLL clock controller node, SPICC node, regulator node, NAND
-> controller node, sdcard node, Ethernet MAC and PHY node.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  .../boot/dts/amlogic/amlogic-c3-c302x-aw409.dts    | 249 +++++++++++
->  arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        | 487 ++++++++++++++++++++-
->  2 files changed, 735 insertions(+), 1 deletion(-)
-> 
+Similar to other platforms using the MUSB driver, PolarFire SoC lacks
+an ID pin interrupt event, preventing several OTG-critical status
+change events from being exposed. We need to rely on polling to detect
+USB attach events for the dual-role port.
 
+The otg state machine implementation is based on Texas Instruments
+DA8xx/OMAP-L1x glue layer.
 
-...
+This has been tested on BeagleV-Fire with couple of devices in host mode
+and with the Ethernet gadget driver in peripheral mode, in a wide
+variety of plug orders.
 
+Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+---
+ drivers/usb/musb/mpfs.c | 160 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 136 insertions(+), 24 deletions(-)
 
-> +
-> +			sd: mmc@8a000 {
-> +				compatible = "amlogic,meson-axg-mmc";
-> +				reg = <0x0 0x8a000 0x0 0x800>;
-> +				interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
-> +				power-domains = <&pwrc PWRC_C3_SDCARD_ID>;
-> +				clocks = <&clkc_periphs CLKID_SYS_SD_EMMC_B>,
-> +					<&clkc_periphs CLKID_SD_EMMC_B>,
-> +					<&clkc_pll CLKID_FCLK_DIV2>;
-> +				clock-names = "core", "clkin0", "clkin1";
-> +				no-mmc;
-> +				no-sdio;
-
-Hm? Why are these blocks incomplete that they do not handle SDIO? Aren't
-you putting board properties into SoC?
-
-Best regards,
-Krzysztof
+diff --git a/drivers/usb/musb/mpfs.c b/drivers/usb/musb/mpfs.c
+index 29c7e5cdb230..00e13214aa76 100644
+--- a/drivers/usb/musb/mpfs.c
++++ b/drivers/usb/musb/mpfs.c
+@@ -49,30 +49,6 @@ static const struct musb_hdrc_config mpfs_musb_hdrc_config = {
+ 	.ram_bits = MPFS_MUSB_RAM_BITS,
+ };
+ 
+-static irqreturn_t mpfs_musb_interrupt(int irq, void *__hci)
+-{
+-	unsigned long flags;
+-	irqreturn_t ret = IRQ_NONE;
+-	struct musb *musb = __hci;
+-
+-	spin_lock_irqsave(&musb->lock, flags);
+-
+-	musb->int_usb = musb_readb(musb->mregs, MUSB_INTRUSB);
+-	musb->int_tx = musb_readw(musb->mregs, MUSB_INTRTX);
+-	musb->int_rx = musb_readw(musb->mregs, MUSB_INTRRX);
+-
+-	if (musb->int_usb || musb->int_tx || musb->int_rx) {
+-		musb_writeb(musb->mregs, MUSB_INTRUSB, musb->int_usb);
+-		musb_writew(musb->mregs, MUSB_INTRTX, musb->int_tx);
+-		musb_writew(musb->mregs, MUSB_INTRRX, musb->int_rx);
+-		ret = musb_interrupt(musb);
+-	}
+-
+-	spin_unlock_irqrestore(&musb->lock, flags);
+-
+-	return ret;
+-}
+-
+ static void mpfs_musb_set_vbus(struct musb *musb, int is_on)
+ {
+ 	u8 devctl;
+@@ -111,6 +87,129 @@ static void mpfs_musb_set_vbus(struct musb *musb, int is_on)
+ 		musb_readb(musb->mregs, MUSB_DEVCTL));
+ }
+ 
++#define	POLL_SECONDS	2
++
++static void otg_timer(struct timer_list *t)
++{
++	struct musb		*musb = from_timer(musb, t, dev_timer);
++	void __iomem		*mregs = musb->mregs;
++	u8			devctl;
++	unsigned long		flags;
++
++	/*
++	 * We poll because PolarFire SoC won't expose several OTG-critical
++	 * status change events (from the transceiver) otherwise.
++	 */
++	devctl = musb_readb(mregs, MUSB_DEVCTL);
++	dev_dbg(musb->controller, "Poll devctl %02x (%s)\n", devctl,
++		usb_otg_state_string(musb->xceiv->otg->state));
++
++	spin_lock_irqsave(&musb->lock, flags);
++	switch (musb->xceiv->otg->state) {
++	case OTG_STATE_A_WAIT_BCON:
++		devctl &= ~MUSB_DEVCTL_SESSION;
++		musb_writeb(musb->mregs, MUSB_DEVCTL, devctl);
++
++		devctl = musb_readb(musb->mregs, MUSB_DEVCTL);
++		if (devctl & MUSB_DEVCTL_BDEVICE) {
++			musb->xceiv->otg->state = OTG_STATE_B_IDLE;
++			MUSB_DEV_MODE(musb);
++			mod_timer(&musb->dev_timer, jiffies + POLL_SECONDS * HZ);
++		} else {
++			musb->xceiv->otg->state = OTG_STATE_A_IDLE;
++			MUSB_HST_MODE(musb);
++		}
++		break;
++	case OTG_STATE_A_WAIT_VFALL:
++		if (devctl & MUSB_DEVCTL_VBUS) {
++			mod_timer(&musb->dev_timer, jiffies + POLL_SECONDS * HZ);
++			break;
++		}
++		musb->xceiv->otg->state = OTG_STATE_A_WAIT_VRISE;
++		break;
++	case OTG_STATE_B_IDLE:
++		/*
++		 * There's no ID-changed IRQ, so we have no good way to tell
++		 * when to switch to the A-Default state machine (by setting
++		 * the DEVCTL.Session bit).
++		 *
++		 * Workaround:  whenever we're in B_IDLE, try setting the
++		 * session flag every few seconds.  If it works, ID was
++		 * grounded and we're now in the A-Default state machine.
++		 *
++		 * NOTE: setting the session flag is _supposed_ to trigger
++		 * SRP but clearly it doesn't.
++		 */
++		musb_writeb(mregs, MUSB_DEVCTL, devctl | MUSB_DEVCTL_SESSION);
++		devctl = musb_readb(mregs, MUSB_DEVCTL);
++		if (devctl & MUSB_DEVCTL_BDEVICE)
++			mod_timer(&musb->dev_timer, jiffies + POLL_SECONDS * HZ);
++		else
++			musb->xceiv->otg->state = OTG_STATE_A_IDLE;
++		break;
++	default:
++		break;
++	}
++	spin_unlock_irqrestore(&musb->lock, flags);
++}
++
++static void __maybe_unused mpfs_musb_try_idle(struct musb *musb, unsigned long timeout)
++{
++	static unsigned long last_timer;
++
++	if (timeout == 0)
++		timeout = jiffies + msecs_to_jiffies(3);
++
++	/* Never idle if active, or when VBUS timeout is not set as host */
++	if (musb->is_active || (musb->a_wait_bcon == 0 &&
++				musb->xceiv->otg->state == OTG_STATE_A_WAIT_BCON)) {
++		dev_dbg(musb->controller, "%s active, deleting timer\n",
++			usb_otg_state_string(musb->xceiv->otg->state));
++		del_timer(&musb->dev_timer);
++		last_timer = jiffies;
++		return;
++	}
++
++	if (time_after(last_timer, timeout) && timer_pending(&musb->dev_timer)) {
++		dev_dbg(musb->controller, "Longer idle timer already pending, ignoring...\n");
++		return;
++	}
++	last_timer = timeout;
++
++	dev_dbg(musb->controller, "%s inactive, starting idle timer for %u ms\n",
++		usb_otg_state_string(musb->xceiv->otg->state),
++		jiffies_to_msecs(timeout - jiffies));
++	mod_timer(&musb->dev_timer, timeout);
++}
++
++static irqreturn_t mpfs_musb_interrupt(int irq, void *__hci)
++{
++	unsigned long flags;
++	irqreturn_t ret = IRQ_NONE;
++	struct musb *musb = __hci;
++
++	spin_lock_irqsave(&musb->lock, flags);
++
++	musb->int_usb = musb_readb(musb->mregs, MUSB_INTRUSB);
++	musb->int_tx = musb_readw(musb->mregs, MUSB_INTRTX);
++	musb->int_rx = musb_readw(musb->mregs, MUSB_INTRRX);
++
++	if (musb->int_usb || musb->int_tx || musb->int_rx) {
++		musb_writeb(musb->mregs, MUSB_INTRUSB, musb->int_usb);
++		musb_writew(musb->mregs, MUSB_INTRTX, musb->int_tx);
++		musb_writew(musb->mregs, MUSB_INTRRX, musb->int_rx);
++		ret = musb_interrupt(musb);
++	}
++
++	/* Poll for ID change */
++	if (musb->xceiv->otg->state == OTG_STATE_B_IDLE)
++		mod_timer(&musb->dev_timer, jiffies + POLL_SECONDS * HZ);
++
++	spin_unlock_irqrestore(&musb->lock, flags);
++
++	return ret;
++}
++
+ static int mpfs_musb_init(struct musb *musb)
+ {
+ 	struct device *dev = musb->controller;
+@@ -121,6 +220,8 @@ static int mpfs_musb_init(struct musb *musb)
+ 		return PTR_ERR(musb->xceiv);
+ 	}
+ 
++	timer_setup(&musb->dev_timer, otg_timer, 0);
++
+ 	musb->dyn_fifo = true;
+ 	musb->isr = mpfs_musb_interrupt;
+ 
+@@ -129,13 +230,24 @@ static int mpfs_musb_init(struct musb *musb)
+ 	return 0;
+ }
+ 
++static int mpfs_musb_exit(struct musb *musb)
++{
++	del_timer_sync(&musb->dev_timer);
++
++	return 0;
++}
++
+ static const struct musb_platform_ops mpfs_ops = {
+ 	.quirks		= MUSB_DMA_INVENTRA,
+ 	.init		= mpfs_musb_init,
++	.exit		= mpfs_musb_exit,
+ 	.fifo_mode	= 2,
+ #ifdef CONFIG_USB_INVENTRA_DMA
+ 	.dma_init	= musbhs_dma_controller_create,
+ 	.dma_exit	= musbhs_dma_controller_destroy,
++#endif
++#ifndef CONFIG_USB_MUSB_HOST
++	.try_idle	= mpfs_musb_try_idle,
+ #endif
+ 	.set_vbus	= mpfs_musb_set_vbus
+ };
+-- 
+2.34.1
 
 
