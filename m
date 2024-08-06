@@ -1,142 +1,297 @@
-Return-Path: <linux-kernel+bounces-276806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8287F94989D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:50:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679C394989F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A33721C216DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:50:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D106A1F23037
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0750914EC50;
-	Tue,  6 Aug 2024 19:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ECC14B965;
+	Tue,  6 Aug 2024 19:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEwbl69g"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxQxQcHB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A449B770E8;
-	Tue,  6 Aug 2024 19:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629BE18D64E;
+	Tue,  6 Aug 2024 19:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722973799; cv=none; b=rtJX4v9ggZBnLemIgfHRIpdwIK3i/rk63LID3h1+T3KRGmCE6bJoH3SwElRe/wWybJ1rYZO8IifyRJY8ACwVulEJBC3tU4VwtcZ5WMSn+WUei+9TLKr1IuitF3BLoy0iqwVWWW9YYmlSP1zxfZ0zn+OyyGpypXayaNewLLB8uDA=
+	t=1722973903; cv=none; b=aqRdxaTtESttOQGkWj0WdXT/VKoCovcEpmsBOFDW/+ZKCwJ5kTiKWWykwon4jFh1I9C1dJ8BZN4F4kZoj7Pbtb5UgmhH5tNeJqApdxGwTc79jqkMh53PTbChyJ5SliemQZ24Q2lh3gLC2quqlFkg4XlHyskjuMSyGeQZzVdxdUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722973799; c=relaxed/simple;
-	bh=B/vP9wN2b0Lzujq46mPPrpNnbTESZoPBqKI5lHHsrEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hrXH1DDQb/Oe2Zt9b4khaawe0TWyk6Ud1TdcuvxQf4td+ff/H29tr1+Gf9k7/4k8aYvhMU3bUi/iGdSfKnZNB6C+klExJMjLJ/0WOi+TmiYDjUtxdZZPwvpH/Q5jrgAHQmJSTIyvm3RRWPuz+E0XzgEeZ9WzAzl3BahuAu/O0Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEwbl69g; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so1304422e87.2;
-        Tue, 06 Aug 2024 12:49:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722973796; x=1723578596; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3BIPnyjPKBcltoWwn+jJdksE5JCpEOSMNHCDp8ur6XA=;
-        b=MEwbl69gvKvhOkeYfhHFoaKp1fUEtiGpV6oAHGbViQmR5deGRA2VNTkVanSGyDSZBn
-         XsIHPRi07hkUQ+lYTbwXsFdutW4hBXwlX46kKB9rZJ+7iEAty2rq0KuyQgEtROsVA2Kw
-         2HgFp/ZCFz5YVChT6RFAnUTxIv+mydBicaDtwk3GM6pVYtzfJ/QOceJdzwXX7TLGjY6d
-         JovSylZb0xLLqLr4WKVTc8jRi+nxKX2M22xh8G3TmybCq3Y1MhRI6JGdrv1+GCVsXFxq
-         H6xxYQKlQTQMh8jXUVq0wISmLQDu/lxTQrk+ZJCpinwUi++PCJkQ6kalj3CKOFfz00pB
-         E96w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722973796; x=1723578596;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3BIPnyjPKBcltoWwn+jJdksE5JCpEOSMNHCDp8ur6XA=;
-        b=Bk3kOITlfkjMpwdeLz8VFNoFMsJdGfRs0jKj+22h795SdxfWDNLvZM/5WsdavKpEP0
-         O+A6Y/gMMO7LrDJvd7jgPAsJYVyS4fS99zvd83gREOs2c4qWK8vX/Fvbn0uXnNjyFeHJ
-         UhmKkynu9BZylS6S9eoAT3N90zJES4gNGPA8Lx16nJAojjbssXuY+DO7q80PoEMSNBil
-         Cx5qXh/ceo68fy6rO4BWy6DIM/BG6dQk/yj0IuwUokuVN2hCbkAqu4doq9Lau++VZu2n
-         t4zCUqSFdGm6qjC6xulQ+bYdZoO1HDOetuTlCQRbLFurKoY886AzrhrzLYfYmvBKv8oE
-         DfvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3dU3HwfY1/Bwwd+iS6KQynyuhp82EzujNTWWGppVi3mLcoA0quR3C8ak5YYuZlvrgtHqxlyai2MLIuXb5l8ohiUlHibbApKBofqGwtLioN1SRHY+6WE0kVVzWnwjAwwGLZRFs9tCf49HagUAxLED+eYW8CeGD3+mRtik1DvBtaXtQUp0=
-X-Gm-Message-State: AOJu0YwNULfhKyrCW0vWreuoT4sK7X/WpoPEY+jhf8JxznYb3ue6CL9G
-	QPFr3erh5a+fr3KeUZfuRkCFkdRNebcvTHyVtB8qeqTfOCyroMGC
-X-Google-Smtp-Source: AGHT+IGK2s8feMRbvkUaD4kViF7Q3kQxUMru3SGpK7yJIQ4CcspUgrPUj5ul3TWc//iGjdUBDK6Vuw==
-X-Received: by 2002:ac2:5bc5:0:b0:530:c239:6fad with SMTP id 2adb3069b0e04-530d07319e6mr4165367e87.0.1722973795304;
-        Tue, 06 Aug 2024 12:49:55 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba35aaasm1558385e87.230.2024.08.06.12.49.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 12:49:54 -0700 (PDT)
-Date: Tue, 6 Aug 2024 22:49:52 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Paul Burton <paulburton@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] MIPS: cm: Probe GCR address from devicetree
-Message-ID: <3wemwdkev7pafyfu3yxhpvvpqaplhlejbzxtmahcarrnoeelzr@747sgyl63kwj>
-References: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
+	s=arc-20240116; t=1722973903; c=relaxed/simple;
+	bh=oG07c9KX6QbomdUrRgyTsPU+1ShddmwxrrSiLeHEu6k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SkjCLfnqW7dERrmvo6PA6IpoG6HTBzNxo5inmg0dm1HFuWL48neW4FYp6Z6P+IjKI81DqswglpQHFYb9fHROErZ+PgAVbq3vjuvT8QGYy2iFPtq/zOisGlH8UbkZ6QJTyCnKQ2tWRX3AAD3bzSnCRIszdMNq6v+GQkCteuIo7lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxQxQcHB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD2B6C32786;
+	Tue,  6 Aug 2024 19:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722973902;
+	bh=oG07c9KX6QbomdUrRgyTsPU+1ShddmwxrrSiLeHEu6k=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=sxQxQcHBfUIJswLw4dtYboeD2hgx0UoPNNDq/poTSRp/leZtgUqM8BPlSqFZqgeGK
+	 iMaztn1ZbOExlh3MVdTYwPKFkkopqyP2xrPd/vsCKhuTw0PUdGT7UE0MoMl04q6foG
+	 6TrZEavlH25cIxXpB4YyzJn/T9GoQFuRdydeAW7mg7mcsfwhFlJ0NPRAi6fqk9e2Id
+	 40tEZIAK1aRqKlDMAkAin6YX5qGVDaDVJKzsWF0rw4EU+ZHOv7HgHhULAnybV2BPVq
+	 TB5h0BwCb6dlog+5RXyF7QOMZgPQgLYzJa0N6xHz+mKZmDnwyYg2DGbvnWvvx5AVoX
+	 lqPaRUVt8TEyQ==
+Message-ID: <6e5bfb627a91f308a8c10a343fe918d511a2a1c1.camel@kernel.org>
+Subject: Re: [PATCH v2] fs: try an opportunistic lookup for O_CREAT opens too
+From: Jeff Layton <jlayton@kernel.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+	 <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Andrew Morton
+	 <akpm@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 06 Aug 2024 15:51:35 -0400
+In-Reply-To: <20240806-openfast-v2-1-42da45981811@kernel.org>
+References: <20240806-openfast-v2-1-42da45981811@kernel.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIg
+ UCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1
+ oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOT
+ tmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+
+ 9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPc
+ og7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/
+ WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EB
+ ny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9
+ KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTi
+ CThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XR
+ MJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612-cm_probe-v2-0-a5b55440563c@flygoat.com>
 
-Hi Jiaxun
-
-On Wed, Jun 12, 2024 at 11:08:52AM +0100, Jiaxun Yang wrote:
-> Hi all,
-> 
-> This series enabled mips-cm code to probe GCR address from devicetree.
-> 
-> This feature has been implemented in MIPS's out-of-tree kernel for
-> a while, and MIPS's u-boot fork on boston will generate required
-> "mti,mips-cm" node as well.
-> 
-> Please review.
-> Thanks
-
-Got this tested on my P5600-based SoC implemented as non-generic
-platform. Alas the system hangs up on the early boot-up stage with no
-even a single char printed to the console. I'll be able to get back to
-the problem debugging on the next week.
-
--Serge(y)
-
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+On Tue, 2024-08-06 at 10:32 -0400, Jeff Layton wrote:
+> Today, when opening a file we'll typically do a fast lookup, but if
+> O_CREAT is set, the kernel always takes the exclusive inode lock. I
+> assume this was done with the expectation that O_CREAT means that we
+> always expect to do the create, but that's often not the case. Many
+> programs set O_CREAT even in scenarios where the file already exists.
+>=20
+> This patch rearranges the pathwalk-for-open code to also attempt a
+> fast_lookup in certain O_CREAT cases. If a positive dentry is found, the
+> inode_lock can be avoided altogether, and if auditing isn't enabled, it
+> can stay in rcuwalk mode for the last step_into.
+>=20
+> One notable exception that is hopefully temporary: if we're doing an
+> rcuwalk and auditing is enabled, skip the lookup_fast. Legitimizing the
+> dentry in that case is more expensive than taking the i_rwsem for now.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> Here's a revised patch that does a fast_lookup in the O_CREAT codepath
+> too. The main difference here is that if a positive dentry is found and
+> audit_dummy_context is true, then we keep the walk lazy for the last
+> component, which avoids having to take any locks on the parent (just
+> like with non-O_CREAT opens).
+>=20
+> The testcase below runs in about 18s on v6.10 (on an 80 CPU machine).
+> With this patch, it runs in about 1s:
+>=20
+> =C2=A0#define _GNU_SOURCE 1
+> =C2=A0#include <stdio.h>
+> =C2=A0#include <unistd.h>
+> =C2=A0#include <errno.h>
+> =C2=A0#include <fcntl.h>
+> =C2=A0#include <stdlib.h>
+> =C2=A0#include <sys/wait.h>
+>=20
+> =C2=A0#define PROCS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 70
+> =C2=A0#define LOOPS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 500000
+>=20
+> static int openloop(int tnum)
+> {
+> 	char *file;
+> 	int i, ret;
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0	ret =3D asprintf(&file, "./tes=
+tfile%d", tnum);
+> 	if (ret < 0) {
+> 		printf("asprintf failed for proc %d", tnum);
+> 		return 1;
+> 	}
+>=20
+> 	for (i =3D 0; i < LOOPS; ++i) {
+> 		int fd =3D open(file, O_RDWR|O_CREAT, 0644);
+>=20
+> 		if (fd < 0) {
+> 			perror("open");
+> 			return 1;
+> 		}
+> 		close(fd);
+> 	}
+> 	unlink(file);
+> 	free(file);
+> 	return 0;
+> }
+>=20
+> int main(int argc, char **argv) {
+> 	pid_t kids[PROCS];
+> 	int i, ret =3D 0;
+>=20
+> 	for (i =3D 0; i < PROCS; ++i) {
+> 		kids[i] =3D fork();
+> 		if (kids[i] > 0)
+> 			return openloop(i);
+> 		if (kids[i] < 0)
+> 			perror("fork");
+> 	}
+>=20
+> 	for (i =3D 0; i < PROCS; ++i) {
+> 		int ret2;
+>=20
+> 		if (kids[i] > 0) {
+> 			wait(&ret2);
+> 			if (ret2 !=3D 0)
+> 				ret =3D ret2;
+> 		}
+> 	}
+> 	return ret;
+> }
 > ---
 > Changes in v2:
-> - Fix probe order on malta (Serge)
-> - dt binding improvements (Conor)
-> - Build warning fix
-> - Link to v1: https://lore.kernel.org/r/20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.com
-> 
+> - drop the lockref patch since Mateusz is working on a better approach
+> - add trailing_slashes helper function
+> - add a lookup_fast_for_open helper function
+> - make lookup_fast_for_open skip the lookup if auditing is enabled
+> - if we find a positive dentry and auditing is disabled, don't unlazy
+> - Link to v1: https://lore.kernel.org/r/20240802-openfast-v1-0-a1cff2a330=
+63@kernel.org
 > ---
-> Jiaxun Yang (6):
->       MIPS: generic: Do __dt_setup_arch in prom_init
->       MIPS: malta: Move SMP initialisation to device_tree_init
->       MIPS: cm: Prefix probe functions with __init
->       MIPS: Move mips_cm_probe after prom_init
->       dt-bindings: mips: Document mti,mips-cm
->       MIPS: cm: Probe GCR address from DeviceTree
-> 
->  .../devicetree/bindings/mips/mti,mips-cm.yaml      | 38 ++++++++++++
->  arch/mips/generic/init.c                           |  9 ++-
->  arch/mips/include/asm/mips-cm.h                    |  4 +-
->  arch/mips/kernel/mips-cm.c                         | 69 ++++++++++++++++++----
->  arch/mips/kernel/setup.c                           |  2 +-
->  arch/mips/mti-malta/malta-init.c                   |  8 ++-
->  6 files changed, 111 insertions(+), 19 deletions(-)
+> =C2=A0fs/namei.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++=
+++---------
+> =C2=A01 file changed, 53 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 1e05a0f3f04d..2d716fb114c9 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3518,6 +3518,47 @@ static struct dentry *lookup_open(struct nameidata=
+ *nd, struct file *file,
+> =C2=A0	return ERR_PTR(error);
+> =C2=A0}
+> =C2=A0
+> +static inline bool trailing_slashes(struct nameidata *nd)
+> +{
+> +	return (bool)nd->last.name[nd->last.len];
+> +}
+> +
+> +static struct dentry *lookup_fast_for_open(struct nameidata *nd, int ope=
+n_flag)
+> +{
+> +	struct dentry *dentry;
+> +
+> +	if (open_flag & O_CREAT) {
+> +		/* Don't bother on an O_EXCL create */
+> +		if (open_flag & O_EXCL)
+> +			return NULL;
+> +
+> +		/*
+> +		 * FIXME: If auditing is enabled, then we'll have to unlazy to
+> +		 * use the dentry. For now, don't do this, since it shifts
+> +		 * contention from parent's i_rwsem to its d_lockref spinlock.
+> +		 * Reconsider this once dentry refcounting handles heavy
+> +		 * contention better.
+> +		 */
+> +		if ((nd->flags & LOOKUP_RCU) && !audit_dummy_context())
+> +			return NULL;
+> +	}
+> +
+> +	if (trailing_slashes(nd))
+> +		nd->flags |=3D LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+> +
+> +	dentry =3D lookup_fast(nd);
+
+Self-NAK on this patch. We have to test for IS_ERR on the returned
+dentry here. I'll send a v3 along after I've retested it.
+
+> +
+> +	if (open_flag & O_CREAT) {
+> +		/* Discard negative dentries. Need inode_lock to do the create */
+> +		if (dentry && !dentry->d_inode) {
+> +			if (!(nd->flags & LOOKUP_RCU))
+> +				dput(dentry);
+> +			dentry =3D NULL;
+> +		}
+> +	}
+> +	return dentry;
+> +}
+> +
+> =C2=A0static const char *open_last_lookups(struct nameidata *nd,
+> =C2=A0		=C2=A0=C2=A0 struct file *file, const struct open_flags *op)
+> =C2=A0{
+> @@ -3535,28 +3576,31 @@ static const char *open_last_lookups(struct namei=
+data *nd,
+> =C2=A0		return handle_dots(nd, nd->last_type);
+> =C2=A0	}
+> =C2=A0
+> +	/* We _can_ be in RCU mode here */
+> +	dentry =3D lookup_fast_for_open(nd, open_flag);
+> +	if (IS_ERR(dentry))
+> +		return ERR_CAST(dentry);
+> +
+> =C2=A0	if (!(open_flag & O_CREAT)) {
+> -		if (nd->last.name[nd->last.len])
+> -			nd->flags |=3D LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+> -		/* we _can_ be in RCU mode here */
+> -		dentry =3D lookup_fast(nd);
+> -		if (IS_ERR(dentry))
+> -			return ERR_CAST(dentry);
+> =C2=A0		if (likely(dentry))
+> =C2=A0			goto finish_lookup;
+> =C2=A0
+> =C2=A0		if (WARN_ON_ONCE(nd->flags & LOOKUP_RCU))
+> =C2=A0			return ERR_PTR(-ECHILD);
+> =C2=A0	} else {
+> -		/* create side of things */
+> =C2=A0		if (nd->flags & LOOKUP_RCU) {
+> +			/* can stay in rcuwalk if not auditing */
+> +			if (dentry && audit_dummy_context())
+> +				goto check_slashes;
+> =C2=A0			if (!try_to_unlazy(nd))
+> =C2=A0				return ERR_PTR(-ECHILD);
+> =C2=A0		}
+> =C2=A0		audit_inode(nd->name, dir, AUDIT_INODE_PARENT);
+> -		/* trailing slashes? */
+> -		if (unlikely(nd->last.name[nd->last.len]))
+> +check_slashes:
+> +		if (trailing_slashes(nd))
+> =C2=A0			return ERR_PTR(-EISDIR);
+> +		if (dentry)
+> +			goto finish_lookup;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
+>=20
 > ---
-> base-commit: 2b84edefcad14934796fad37b16512b6a2ca467e
-> change-id: 20240506-cm_probe-0c667c8b63bf
-> 
+> base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+> change-id: 20240723-openfast-ac49a7b6ade2
+>=20
 > Best regards,
-> -- 
-> Jiaxun Yang <jiaxun.yang@flygoat.com>
-> 
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
