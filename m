@@ -1,245 +1,526 @@
-Return-Path: <linux-kernel+bounces-276300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7949491DD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:44:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01BA9491E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2C121C22F43
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503431F215C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F1B1BD009;
-	Tue,  6 Aug 2024 13:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NzMIUFs4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC121D54C3;
+	Tue,  6 Aug 2024 13:43:45 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558601D2F65
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACA41D6186
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951816; cv=none; b=CyPdheTaQaR1UF+Olj7HAV+n/hXbv6wUw3nRNzkjpyEhzTGNFLn8qoraFxnntnGjhTqSRWAs38nGGDhiVBuDyUtd4Jh3q9SDxPXeoNQ+v1EsjAWfXgQHFgw8K3faTbg90LykfI1uR6+Hm9fGww9KKmKLdUDwO+yWfH18oE46Zt4=
+	t=1722951824; cv=none; b=OO7q/zYojus7qqclPpmnbw5I174vbmkikNEXHiCF5TZTmIN7xuL5oBUmZmi677I36oK3TyY6dwSIzVY/cN17+omc/+quKE+RSnLKKLNqg9mLIK9iY5aS4sX5Pfb3Wtab3GNaq/JyRrKrjG0mXr1CnGw+0pKgOdOTvWCVxxkhCNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951816; c=relaxed/simple;
-	bh=M8zXtgPGl3GmVlDT8c1//FMDG6JpU+brduXIeU/y23Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C1nV/8NM2tSXrs/XmAHc1zmdAdgUZlRw+8L8WHA6wNKZBWFGjAsanAyfwJtV/mx+t+BcwdS4aQplF5vgJIfKMdAzjdnM8A2xzsqRcDeQjDa4BsDED9r+PICshmJl8vtc3IkENdvkK1HKNdKfGKDXQXmROBA1sguIpNm6XZewDFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NzMIUFs4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722951813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i65iOJUqoj+kS1IUzfkGG2qrh7z3NVtE513m6YvoExI=;
-	b=NzMIUFs4nZ6HvGX1gnMiyZlsKmwQWAQfGQtVugxLhygZ2appnHygt7U8ibq16Qf9dDAoDk
-	RclJLgemuXPD1zW4mbh3K/FzNwhuTJPkD4BYATxSZBQ1E6sn++nCFYcCbzC6rBBn/08CzJ
-	5pEpm4MGgFnSp4qB9TsBD7/S/jTtM/w=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-462-WXnObMFKPmC0PmcgRFN43w-1; Tue, 06 Aug 2024 09:43:31 -0400
-X-MC-Unique: WXnObMFKPmC0PmcgRFN43w-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-426624f4ce3so3975465e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:43:31 -0700 (PDT)
+	s=arc-20240116; t=1722951824; c=relaxed/simple;
+	bh=FptSQKLn9G/7Ort0GuG1aDx1RzKzfhy5tgjb62fCUbA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=I35jda71VOtJBPmhi/lvONVoyc+98WF3H5hrkn2XA+fhZXWBmTjBNyvFmdmR/cq1mP4+J24aN4u0+8+UkCUuhT6gcIGJoUPXXeCRqw0QrDD2O8yHPhvKAHc8eDBzum2PHJ1ApsN0ppjL+Boqz/SoG0sK8OveNYOadtWnOWjMnvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39b3b3c74d9so10855285ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:43:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722951810; x=1723556610;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i65iOJUqoj+kS1IUzfkGG2qrh7z3NVtE513m6YvoExI=;
-        b=ris6ld4mI30Ci6Tii7PZ6uiqQgKEavi913dgZDhHoGqoklUg4LcyGsXMYiJJOFmmiC
-         q4A/mN8wOUnaVRBCQjTnJYD/DgVmDLfpl9EfZCDna1DjQ1hAdHvDQTmVytTzZTPijf5r
-         52HKpQjGtCWQ7Ib4c8qK1k8zm/nscT7ddozJUEW94VujaLoqv14hbaQN27PVheqwy77r
-         xxdGT/kfxrIZxMu8v0gNRT1h5mZBWu3Ts31Ddy6OzmMF/k3jxpivtAD+jwKuIIXDLHfX
-         IFLhqmr5Fp0RJI52tM7Fx/xPab3ZDH3iGkdoP5gt+hVhgjRxvqINOrqg5hAZj+xXUXz1
-         xJlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoTFipEDi6DTJ492crurcYafG65wtKe235tD5+LtCEHcoJ4/ixBJFkUS3eHec1L3Cx4uQ0+Q5EGL0A+KU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk03c191EwB5erR6BJCIRGw4x0xwhl6SpdPPrbn8FCe4YvZq8z
-	F/8RE3pk0eRZsdPDxl+Iwe6FMabyTYT2IzHpMM4UxHp9DCE3TqRgqng8c/4dFEGGh8Nosh5WC47
-	45qimkCRuQEieVUnClQZuwPizGLCUWxlmz1AdyiGRf4WK6YVWGk/zITGoBcw7Dw==
-X-Received: by 2002:a05:600c:3ba9:b0:426:554a:e0bf with SMTP id 5b1f17b1804b1-428e6b037fcmr98323445e9.16.1722951809897;
-        Tue, 06 Aug 2024 06:43:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/s1//lA1u4Wc1rgWG/YcdlvCfb4QgZvbrdHSXct6MeS9TCApHhXZa6xl1kW4kwHKMV90s1A==
-X-Received: by 2002:a05:600c:3ba9:b0:426:554a:e0bf with SMTP id 5b1f17b1804b1-428e6b037fcmr98323225e9.16.1722951809422;
-        Tue, 06 Aug 2024 06:43:29 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb6403bsm246406305e9.35.2024.08.06.06.43.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:43:29 -0700 (PDT)
-Message-ID: <883a0f0d-7342-479e-aa3c-13deb7e99338@redhat.com>
-Date: Tue, 6 Aug 2024 15:43:24 +0200
+        d=1e100.net; s=20230601; t=1722951821; x=1723556621;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yKJgkNpWV97brKM3BSs0GLOrPa2mdKasXrlPtgLZJqM=;
+        b=mNk1BCwk/0CfIMcmJx0Af1nem38bDt0j4qndrGTzRWWoZUKH0v04bHsyArJyeLe08P
+         /T7Jp9xV4Z3+RjkWGRUUiFGMPDRlGsPiT7lbQo9g0Oyc/EWzncJ+Ftf6BHwnTQE3vPXX
+         HhyUJiYttvBv5+zq4iDpU7yPbRJ5QXWAEFpYY2k3cvPKCZ0U558BhxEbygf8Gt7Qi8Uu
+         M4vQYQrawy9uUtW6iFVPEoKqW5Ey0neem2en+34AJiGlzEh1lIphf6hIJFpokKQhpaly
+         4gI72VquxcFXjPqJ/S9bAmwl1qQr3NurPNQCSI/0cCQklTR82+wqD0J9YOS1x5zRHkF9
+         BLwQ==
+X-Gm-Message-State: AOJu0YzvzZPnkaxmncTmEUh3XFVYYT8lQMa8WOeKbE5k5qJ8tmJ9fvhy
+	GiEvDnX4RSIum+U5V/7gaO1p86SJM4V83ionW2IaHmgNGs7wlIG7J7oUWV+qR/54W5Lzc9ZPG4v
+	SqMpA54FerHDyl9rL8C2Unzc/gJ0QjuPp4Eqx5OTCwEMm/DaIhWdQmcM=
+X-Google-Smtp-Source: AGHT+IHR+LxWagw55HVStkcHD59l/AQtmwDZ70x1QFh0qDSj0W/EAbgvFTWUuynEw34ZAIZeBvSJ3GaEi9xG/4jIH1roSu/MG5UL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] Introduce guestmemfs: persistent in-memory
- filesystem
-To: "Gowans, James" <jgowans@amazon.com>, "jack@suse.cz" <jack@suse.cz>,
- "muchun.song@linux.dev" <muchun.song@linux.dev>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "rppt@kernel.org" <rppt@kernel.org>, "brauner@kernel.org"
- <brauner@kernel.org>, "Graf (AWS), Alexander" <graf@amazon.de>,
- "anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
- "steven.sistare@oracle.com" <steven.sistare@oracle.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Durrant, Paul" <pdurrant@amazon.co.uk>,
- "seanjc@google.com" <seanjc@google.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "Woodhouse, David" <dwmw@amazon.co.uk>,
- "Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "nh-open-source@amazon.com" <nh-open-source@amazon.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "jgg@ziepe.ca" <jgg@ziepe.ca>
-References: <20240805093245.889357-1-jgowans@amazon.com>
- <20240805200151.oja474ju4i32y5bj@quack3>
- <9802ddc299c72b189487fd56668de65a84f7d94b.camel@amazon.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <9802ddc299c72b189487fd56668de65a84f7d94b.camel@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b4e:b0:381:24e:7a85 with SMTP id
+ e9e14a558f8ab-39b1fb6b9damr11517255ab.1.1722951821398; Tue, 06 Aug 2024
+ 06:43:41 -0700 (PDT)
+Date: Tue, 06 Aug 2024 06:43:41 -0700
+In-Reply-To: <000000000000fa6583061ccb8e3d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000047a4cf061f03fb20@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bluetooth?] WARNING in __hci_cmd_sync_sk
+From: syzbot <syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 1. Secret hiding: with guestmemfs all of the memory is out of the kernel
-> direct map as an additional defence mechanism. This means no
-> read()/write() syscalls to guestmemfs files, and no IO to it. The only
-> way to access it is to mmap the file.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-There are people interested into similar things for guest_memfd.
+***
 
-> 
-> 2. No struct page overhead: the intended use case is for systems whose
-> sole job is to be a hypervisor, typically for large (multi-GiB) VMs, so
-> the majority of system RAM would be donated to this fs. We definitely
-> don't want 4 KiB struct pages here as it would be a significant
-> overhead. That's why guestmemfs carves the memory out in early boot and
-> sets memblock flags to avoid struct page allocation. I don't know if
-> hugetlbfs does anything fancy to avoid allocating PTE-level struct pages
-> for its memory?
+Subject: Re: [syzbot] [bluetooth?] WARNING in __hci_cmd_sync_sk
+Author: djahchankoike@gmail.com
 
-Sure, it's called HVO and can optimize out a significant portion of the 
-vmemmap.
+#syz test
+hci_dev_cmd calls sync functions without holding the
+appropriate lock.
 
-> 
-> 3. guest_memfd interface: For confidential computing use-cases we need
-> to provide a guest_memfd style interface so that these FDs can be used
-> as a guest_memfd file in KVM memslots. Would there be interest in
-> extending hugetlbfs to also support a guest_memfd style interface?
-> 
+Signed-off-by: Diogo Jahchan Koike <djahchankoike@gmail.com>
+---
+ net/bluetooth/hci_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-"Extending hugetlbfs" sounds wrong; hugetlbfs is a blast from the past 
-and not something people are particularly keen to extend for such use 
-cases. :)
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index c644b30977bd..34096791364d 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -716,6 +716,8 @@ int hci_dev_cmd(unsigned int cmd, void __user *arg)
+  goto done;
+  }
 
-Instead, as Jason said, we're looking into letting guest_memfd own and 
-manage large chunks of contiguous memory.
++ hci_req_sync_lock(hdev);
++
+  switch (cmd) {
+  case HCISETAUTH:
+  err =3D __hci_cmd_sync_status(hdev, HCI_OP_WRITE_AUTH_ENABLE,
+@@ -791,6 +793,8 @@ int hci_dev_cmd(unsigned int cmd, void __user *arg)
+  break;
+  }
 
-> 4. Metadata designed for persistence: guestmemfs will need to keep
-> simple internal metadata data structures (limited allocations, limited
-> fragmentation) so that pages can easily and efficiently be marked as
-> persistent via KHO. Something like slab allocations would probably be a
-> no-go as then we'd need to persist and reconstruct the slab allocator. I
-> don't know how hugetlbfs structures its fs metadata but I'm guessing it
-> uses the slab and does lots of small allocations so trying to retrofit
-> persistence via KHO to it may be challenging.
-> 
-> 5. Integration with persistent IOMMU mappings: to keep DMA running
-> across kexec, iommufd needs to know that the backing memory for an IOAS
-> is persistent too. The idea is to do some DMA pinning of persistent
-> files, which would require iommufd/guestmemfs integration - would we
-> want to add this to hugetlbfs?
-> 
-> 6. Virtualisation-specific APIs: starting to get a bit esoteric here,
-> but use-cases like being able to carve out specific chunks of memory
-> from a running VM and turn it into memory for another side car VM, or
-> doing post-copy LM via DMA by mapping memory into the IOMMU but taking
-> page faults on the CPU. This may require virtualisation-specific ioctls
-> on the files which wouldn't be generally applicable to hugetlbfs.
-> 
-> 7. NUMA control: a requirement is to always have correct NUMA affinity.
-> While currently not implemented the idea is to extend the guestmemfs
-> allocation to support specifying allocation sizes from each NUMA node at
-> early boot, and then having multiple mount points, one per NUMA node (or
-> something like that...). Unclear if this is something hugetlbfs would
-> want.
-> 
-> There are probably more potential issues, but those are the ones that
-> come to mind... That being said, if hugetlbfs maintainers are interested
-> in going in this direction then we can definitely look at enhancing
-> hugetlbfs.
-> 
-> I think there are two types of problems: "Would hugetlbfs want this
-> functionality?" - that's the majority. An a few are "This would be hard
-> with hugetlbfs!" - persistence probably falls into this category.
++ hci_req_sync_unlock(hdev);
++
+ done:
+  hci_dev_put(hdev);
+  return err;
+--=20
+2.39.2
 
-I'm much rather asking myself if you should instead teach/extend the 
-guest_memfd concept by some of what you propose here.
+On Tue, Aug 6, 2024 at 12:45=E2=80=AFAM syzbot <
+syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com> wrote:
 
-At least "guest_memfd" sounds a lot like the "anonymous fd" based 
-variant of guestmemfs ;)
-
-Like we have hugetlbfs and memfd with hugetlb pages.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> Hello,
+>
+> syzbot tried to test the proposed patch but the build/boot failed:
+>
+> b 5f5f206220306136
+> ZMM26=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 5f5f206220303237 6433663439666666 66666666660a3032 2e79656b5f5f2062
+> ZMM27=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 382e79656b5f5f20 6220303637643366 3439666666666666 66660a372e79656b
+> ZMM28=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 3063613234663439 6666666666666666 0a302e79656b5f5f 2062203038613234
+> ZMM29=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 5f5f206220303062 3234663439666666 66666666660a312e 79656b5f5f206220
+> ZMM30=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 332e79656b5f5f20 6220303462323466 3439666666666666 66660a322e79656b
+> ZMM31=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 666666660a302e79 656b5f5f20622030 3862323466343966 666666666666660a
+> info registers vcpu 2
+>
+> CPU#2
+> RAX=3D0000000000000000 RBX=3Dffffc90003347740 RCX=3Dffffffff813cdd16
+> RDX=3Dffff88802352a440
+> RSI=3Dffffffff813cde49 RDI=3D0000000000000005 RBP=3Dffffc90003347ca0
+> RSP=3Dffffc90003347670
+> R8 =3D0000000000000005 R9 =3D0000000000000000 R10=3D0000000000000001
+> R11=3D0000000000000000
+> R12=3Dffffc90003347748 R13=3Dffffc90003347750 R14=3Dffffc90003340000
+> R15=3Dffffc90003348000
+> RIP=3Dffffffff818a7d60 RFL=3D00000287 [--S--PC] CPL=3D0 II=3D0 A20=3D1 SM=
+M=3D0 HLT=3D0
+> ES =3D0000 0000000000000000 ffffffff 00c00000
+> CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
+> SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+> DS =3D0000 0000000000000000 ffffffff 00c00000
+> FS =3D0000 0000000000000000 ffffffff 00c00000
+> GS =3D0000 ffff88806b200000 ffffffff 00c00000
+> LDT=3D0000 0000000000000000 ffffffff 00c00000
+> TR =3D0040 fffffe0000091000 00004087 00008b00 DPL=3D0 TSS64-busy
+> GDT=3D     fffffe000008f000 0000007f
+> IDT=3D     fffffe0000000000 00000fff
+> CR0=3D80050033 CR2=3D00007f7b448feda0 CR3=3D000000002560c000 CR4=3D00350e=
+f0
+> DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000
+> DR3=3D0000000000000000
+> DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
+> EFER=3D0000000000000d01
+> FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001fa0
+> FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
+> FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
+> FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
+> FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
+> Opmask00=3D0000000000000000 Opmask01=3D0000000000000000
+> Opmask02=3D0000000000000000 Opmask03=3D0000000000000000
+> Opmask04=3D0000000000000000 Opmask05=3D0000000000000000
+> Opmask06=3D0000000000000000 Opmask07=3D0000000000000000
+> ZMM00=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000100040801000 3fff040c01289606
+> ZMM01=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 100000040c012896 0010000108006410
+> ZMM02=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0010000108006410 000e100010808080
+> ZMM03=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0010004080100010 808080040c012896
+> ZMM04=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 2896001000010800 6410000010004080
+> ZMM05=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 6410000e10001080 8080100000040c01
+> ZMM06=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0010808080040c01 2896001000010800
+> ZMM07=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0100100001080064 1000001000408010
+> ZMM08=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000001 000000c001b047a0
+> ZMM09=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000001 0000000000000001
+> ZMM10=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000002 000000c00020eba0
+> ZMM11=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000001 000000c001b047b8
+> ZMM12=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000001 0000000000000001
+> ZMM13=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000003 000000c00020ebc0
+> ZMM14=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000001 000000c001b047e0
+> ZMM15=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM16=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM17=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM18=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM19=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM20=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM21=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM22=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM23=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM24=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM25=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM26=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM27=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM28=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM29=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM30=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM31=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> info registers vcpu 3
+>
+> CPU#3
+> RAX=3D0000000000000003 RBX=3D0000000000000000 RCX=3D1ffffffff1fced3f
+> RDX=3D0000000000000000
+> RSI=3D0000000000000000 RDI=3Dffff88807ffd77b0 RBP=3D0000000000000002
+> RSP=3Dffffc90003e27a68
+> R8 =3D0000000000001000 R9 =3D000000000007efdd R10=3Dffffffff8fe7391f
+> R11=3Ddffffc0000000000
+> R12=3D0000000000000000 R13=3D0000000000000004 R14=3Dffff88807ffd7740
+> R15=3D0000000000044d40
+> RIP=3Dffffffff81c84fd0 RFL=3D00000006 [-----P-] CPL=3D0 II=3D0 A20=3D1 SM=
+M=3D0 HLT=3D0
+> ES =3D0000 0000000000000000 ffffffff 00c00000
+> CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
+> SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
+> DS =3D0000 0000000000000000 ffffffff 00c00000
+> FS =3D0000 00007fc2ddb8e280 ffffffff 00c00000
+> GS =3D0000 ffff88806b300000 ffffffff 00c00000
+> LDT=3D0000 0000000000000000 ffffffff 00c00000
+> TR =3D0040 fffffe00000d8000 00004087 00008b00 DPL=3D0 TSS64-busy
+> GDT=3D     fffffe00000d6000 0000007f
+> IDT=3D     fffffe0000000000 00000fff
+> CR0=3D80050033 CR2=3D000056367fa7aa10 CR3=3D0000000022206000 CR4=3D00350e=
+f0
+> DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000
+> DR3=3D0000000000000000
+> DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
+> EFER=3D0000000000000d01
+> FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
+> FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
+> FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
+> FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
+> FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
+> Opmask00=3D00000000fe810000 Opmask01=3D0000000000410101
+> Opmask02=3D00000000ffffffef Opmask03=3D0000000000000000
+> Opmask04=3D00000000ffffffff Opmask05=3D00000000004007ff
+> Opmask06=3D0000000007ffe7ff Opmask07=3D0000000000000000
+> ZMM00=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 ffffffffffffffff ffffff0000000000
+> ZMM01=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f
+> ZMM02=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 7373737373737373 7373737373737373
+> ZMM03=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM04=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 ffffffffffffff00 ffffffffffffffff
+> ZMM05=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 ffffffffffffffff ffffff0000000000
+> ZMM06=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 ffffffffffffff00 ffffffffffffffff
+> ZMM07=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM08=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM09=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM10=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM11=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM12=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM13=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM14=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM15=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM16=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM17=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f 2f2f2f2f2f2f2f2f
+> ZMM18=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 2f646e756f732f00 682e6c6974752f64 65726168732f6372 732f2e2e2f2e2e00
+> ZMM19=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 616c730033706f6f 6c2f6b636f6c622f 6c6175747269762f 736563697665642f
+> ZMM20=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000061 00736576616c732f 33706f6f6c2f6b63 6f6c622f6c617574
+> ZMM21=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 00007fc2dd7f1b00 000056331cd7f560 0000000000000021 0000000000007374
+> ZMM22=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 69305f474f5b647c 6930382432273f39 7b27697a787c7a30 23333a3a38263342
+> ZMM23=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> ZMM24=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 3a3a263e383a3a26 39383a3a2638383a 3a263b383a3a263a 383a3a26493b3a3a
+> ZMM25=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 692054524f50202c 2064696c61696d20 0070253a20252054 524f504d49005452
+> ZMM26=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 692020520050202c 2025204f504d4900 0061253a20252000 2527204d49005452
+> ZMM27=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 282b2e2fdf37342d 280bbfbf23243324 26312033fc040f18 1317140d080b0412
+> ZMM28=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 343133bffc121104 1214041204110814 100411bffc040f18 1317140d080b0412
+> ZMM29=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 4141414141414141 4141414141414141 4141414141414141 4141414141414141
+> ZMM30=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a 1a1a1a1a1a1a1a1a
+> ZMM31=3D0000000000000000 0000000000000000 0000000000000000 00000000000000=
+00
+> 2020202020202020 2020202020202020 2020202020202020 2020202020202020
+>
+>
+> syzkaller build log:
+> go env (err=3D<nil>)
+> GO111MODULE=3D'auto'
+> GOARCH=3D'amd64'
+> GOBIN=3D''
+> GOCACHE=3D'/syzkaller/.cache/go-build'
+> GOENV=3D'/syzkaller/.config/go/env'
+> GOEXE=3D''
+> GOEXPERIMENT=3D''
+> GOFLAGS=3D''
+> GOHOSTARCH=3D'amd64'
+> GOHOSTOS=3D'linux'
+> GOINSECURE=3D''
+> GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+> GONOPROXY=3D''
+> GONOSUMDB=3D''
+> GOOS=3D'linux'
+> GOPATH=3D'/syzkaller/jobs/linux/gopath'
+> GOPRIVATE=3D''
+> GOPROXY=3D'https://proxy.golang.org,direct'
+> GOROOT=3D'/usr/local/go'
+> GOSUMDB=3D'sum.golang.org'
+> GOTMPDIR=3D''
+> GOTOOLCHAIN=3D'auto'
+> GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+> GOVCS=3D''
+> GOVERSION=3D'go1.21.4'
+> GCCGO=3D'gccgo'
+> GOAMD64=3D'v1'
+> AR=3D'ar'
+> CC=3D'gcc'
+> CXX=3D'g++'
+> CGO_ENABLED=3D'1'
+> GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.=
+mod
+> '
+> GOWORK=3D''
+> CGO_CFLAGS=3D'-O2 -g'
+> CGO_CPPFLAGS=3D''
+> CGO_CXXFLAGS=3D'-O2 -g'
+> CGO_FFLAGS=3D'-O2 -g'
+> CGO_LDFLAGS=3D'-O2 -g'
+> PKG_CONFIG=3D'pkg-config'
+> GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=
+=3D0
+> -ffile-prefix-map=3D/tmp/go-build414629084=3D/tmp/go-build
+> -gno-record-gcc-switches'
+>
+> git status (err=3D<nil>)
+> HEAD detached at 9e136b955
+> nothing to commit, working tree clean
+>
+>
+> tput: No value for $TERM and no -T specified
+> tput: No value for $TERM and no -T specified
+> Makefile:31: run command via tools/syz-env for best compatibility, see:
+> Makefile:32:
+> https://github.com/google/syzkaller/blob/master/docs/contributing.md#usin=
+g-syz-env
+> go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install
+> ./sys/syz-sysgen
+> make .descriptions
+> tput: No value for $TERM and no -T specified
+> tput: No value for $TERM and no -T specified
+> Makefile:31: run command via tools/syz-env for best compatibility, see:
+> Makefile:32:
+> https://github.com/google/syzkaller/blob/master/docs/contributing.md#usin=
+g-syz-env
+> bin/syz-sysgen
+> <https://github.com/google/syzkaller/blob/master/docs/contributing.md#usi=
+ng-syz-envbin/syz-sysgen>
+> go fmt ./sys/... >/dev/null
+> touch .descriptions
+> GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X
+> github.com/google/syzkaller/prog.GitRevision=3D9e136b95503a540d35e7bace3e=
+89b77f13a672b1
+> -X 'github.com/google/syzkaller/prog.gitRevisionDate=3D20240710-085916'"
+> "-tags=3Dsyz_target syz_os_linux syz_arch_amd64 " -o
+> ./bin/linux_amd64/syz-execprog
+> github.com/google/syzkaller/tools/syz-execprog
+> mkdir -p ./bin/linux_amd64
+> g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+>         -m64 -O2 -pthread -Wall -Werror -Wparentheses
+> -Wunused-const-variable -Wframe-larger-than=3D16384 -Wno-stringop-overflo=
+w
+> -Wno-array-bounds -Wno-format-overflow -Wno-unused-but-set-variable
+> -Wno-unused-command-line-argument -static-pie -std=3Dc++17 -I.
+> -Iexecutor/_include -fpermissive -w -DGOOS_linux=3D1 -DGOARCH_amd64=3D1 \
+>         -DHOSTGOOS_linux=3D1
+> -DGIT_REVISION=3D\"9e136b95503a540d35e7bace3e89b77f13a672b1\"
+> /usr/bin/ld: /tmp/ccGUtGqZ.o: in function `test_cover_filter()':
+> executor.cc:(.text+0x133bb): warning: the use of `tempnam' is dangerous,
+> better use `mkstemp'
+> /usr/bin/ld: /tmp/ccGUtGqZ.o: in function `Connection::Connect(char
+> const*, char const*)':
+> executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7Connect=
+EPKcS1_]+0x1a0):
+> warning: Using 'gethostbyname' in statically linked applications requires
+> at runtime the shared libraries from the glibc version used for linking
+>
+>
+> Error text is too large and was truncated, full error text is at:
+> https://syzkaller.appspot.com/x/error.txt?x=3D128b0bbd980000
+>
+>
+> Tested on:
+>
+> commit:         b446a2da Merge tag 'linux_kselftest-fixes-6.11-rc3' of..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D53ca389b28cf4=
+23
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3Df52b6db1fe57bfb08d49
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for
+> Debian) 2.40
+> patch:
+> https://syzkaller.appspot.com/x/patch.diff?x=3D116cbd73980000
+>
+>
 
