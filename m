@@ -1,283 +1,175 @@
-Return-Path: <linux-kernel+bounces-276708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E91E794974E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:11:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E19949761
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30C0284D51
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:11:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 626C9B2611B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C25770FD;
-	Tue,  6 Aug 2024 18:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F257346F;
+	Tue,  6 Aug 2024 18:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWZZqhb/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mooBXGFe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A70481D5;
-	Tue,  6 Aug 2024 18:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8F824211;
+	Tue,  6 Aug 2024 18:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722967865; cv=none; b=IELFzdLVdtE3zUEtF+6HsBHlhtx8Ug2xbv8qgAlo8i7byKwcfX9wvurvq4KIerzxGBbyjUoth2vdgmsq6ugAUMG8vBm/1iJlVkdImlBwiLORkH+xysAKK/dygn8BjGHeXGuwSWMFhW8Q6rs3oOsUfjeAesD8FesG3K5+pwPmNaQ=
+	t=1722967927; cv=none; b=p45nK+6iRAZEm9/cN1hxc/ivPJoApEFDQmql+/DZB9TVuh3lPaDj4lquZPQR+eD1HspfV3uOguFxkSY+8ntS3E+MGtZJsDs1bBxpanB/aASwjmAww/VAUyePfUEP4Fad2UDjYCFRkxp2EzPaz+Z25a96Ef48LmwPLphV6XCDcNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722967865; c=relaxed/simple;
-	bh=3di6R+nkCndRgrAqvkZqbc0TKP4ULxAxRH2e/8MBJCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0c+SgQwENn5Wp5I/ynNzbeSMnJ8H5kbFZcdqy/1aSKFjCShXMpD5MI6dUHQzi9SmluyPiP+l+IyR2v1HUwieTpleTSiE2UIbO0n4Jz3QIXGm4nbZxK9d+HTMGgTLI5sosYGIRY9lSyeNvEFgs5e02qz9zwtTeYSPOoGBDoaTJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWZZqhb/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C4A0C32786;
-	Tue,  6 Aug 2024 18:11:04 +0000 (UTC)
+	s=arc-20240116; t=1722967927; c=relaxed/simple;
+	bh=Xt+QcqAW74Niy6lI+W4HfqfYEpVdrM2k/3lt77RgsR4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=T565+wboCyMvGlt/ifQwdjErIqampFtqliPo3M+taea4FvAmgbFmhlekk1Ud0jVKtTleXRgv/mqu5n2UTAhAlyvGCiEYSCZ8OaDkqEQTLJ4NDoMzIs5Xs+Ybb83THOxMxwg5vFszcgI0Fgg2is/EmpkMUQhYg6St7r3p6mAY7CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mooBXGFe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA2D4C32786;
+	Tue,  6 Aug 2024 18:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722967864;
-	bh=3di6R+nkCndRgrAqvkZqbc0TKP4ULxAxRH2e/8MBJCg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=FWZZqhb//UQU1wHXRAjXaAsb+dT05/gACCIhSUpcMLDrhC6KmP+ixHxYgjnfn4Tpa
-	 NXd3X2/VapefKueUsoXM1AoPBBm4oCGVI2+d148Kl4YAdF/VC0anWVlZ778QBgwkri
-	 HOBMsTG4NCsC9jFhtjL8GOh3pgYjxvaltE9eZ16RtzQYTlwVoySvqsuYQas/u54TwK
-	 bEYkzBkAv0B3qZjeLHvOQk9LaZqhngbWJDLyc+L8eL0XIEz9IONQZbWKfwQTHYb0Dv
-	 G5duhkqehx/i6LZC5lv1VC7E43ykn+MEWcIupzkkx1OJ3WltnWYNfdBXbIWBjiJhBZ
-	 l33kkuahnEZUA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 33EABCE0A72; Tue,  6 Aug 2024 11:10:59 -0700 (PDT)
-Date: Tue, 6 Aug 2024 11:10:59 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [PATCH] refscale: Constify struct ref_scale_ops
-Message-ID: <86dbcaa7-db16-4a90-9022-eb7b6e736ed7@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <46cd762aeef493d8655e8a053bfd591f849d27ec.1722951006.git.christophe.jaillet@wanadoo.fr>
+	s=k20201202; t=1722967927;
+	bh=Xt+QcqAW74Niy6lI+W4HfqfYEpVdrM2k/3lt77RgsR4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=mooBXGFeyFOHFQT19FjyIWz+jUuarvcgZey2Z9Q/0+zpHhGDtw2S83aY1n0PyhCQh
+	 QRKE2rULM4HmtzhTjAOmE5rQa0fmmUFdk7atIOWMnvNxm4t1IkjxEb0obtXfZhgTZD
+	 haDQU6MOhBi8b8qy7tz5lOjGzIYuNHA2HyuweU1vEYO+pJsGSdnZDiKyNVT2B00ceL
+	 6IaeywpXEUQk57IWHZroBC9RzsiLTXAZ1vcsr3A2+g9rDfFf+zXncNeLfXigrq1VVY
+	 VU7meYVTvQx7D7KKS0lIt3ec/7/u1ZoYXIzu2O+5r5u/bsKfoFUayErRF86yOtCJ6b
+	 vrBjsemi+2Nlg==
+Message-ID: <b2f081444c0c70603af40942e0776fe1fb298577.camel@kernel.org>
+Subject: Re: [PATCH] vfs: dodge smp_mb in break_lease and break_deleg in the
+ common case
+From: Jeff Layton <jlayton@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk
+Cc: jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date: Tue, 06 Aug 2024 14:12:05 -0400
+In-Reply-To: <20240806172846.886570-1-mjguzik@gmail.com>
+References: <20240806172846.886570-1-mjguzik@gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIg
+ UCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1
+ oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOT
+ tmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+
+ 9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPc
+ og7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/
+ WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EB
+ ny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9
+ KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTi
+ CThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XR
+ MJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46cd762aeef493d8655e8a053bfd591f849d27ec.1722951006.git.christophe.jaillet@wanadoo.fr>
 
-On Tue, Aug 06, 2024 at 03:30:16PM +0200, Christophe JAILLET wrote:
-> 'struct ref_scale_ops' are not modified in these drivers.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   34231	   4167	    736	  39134	   98de	kernel/rcu/refscale.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->   35175	   3239	    736	  39150	   98ee	kernel/rcu/refscale.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Tue, 2024-08-06 at 19:28 +0200, Mateusz Guzik wrote:
+> These inlines show up in the fast path (e.g., in do_dentry_open()) and
+> induce said full barrier regarding i_flctx access when in most cases the
+> pointer is NULL.
+>=20
+> The pointer can be safely checked before issuing the barrier, dodging it
+> in most cases as a result.
+>=20
+> It is plausible the consume fence would be sufficient, but I don't want
+> to go audit all callers regarding what they before calling here.
+>=20
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 > ---
-> Compile tested-only.
+>=20
+> the header file has locks_inode_context and i even found users like
+> this (lease_get_mtime):
+>=20
+> ctx =3D locks_inode_context(inode);
+> if (ctx && !list_empty_careful(&ctx->flc_lease)) {
+>=20
+> however, without looking further at the code I'm not confident this
+> would be sufficient here -- for all I know one consumer needs all stores
+> to be visible before looking further after derefing the pointer
+>=20
+> keeping the full fence in place makes this reasonably easy to reason
+> about the change i think, but someone(tm) willing to sort this out is
+> most welcome to do so
+>=20
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+Nod. It would be nice to get rid of that barrier. I'm not sure how to
+do that in a provably correct way. I'll need to think about that.
 
-> ---
->  kernel/rcu/refscale.c | 42 +++++++++++++++++++++---------------------
->  1 file changed, 21 insertions(+), 21 deletions(-)
-> 
-> diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-> index cfec0648e141..0db9db73f57f 100644
-> --- a/kernel/rcu/refscale.c
-> +++ b/kernel/rcu/refscale.c
-> @@ -135,7 +135,7 @@ struct ref_scale_ops {
->  	const char *name;
->  };
->  
-> -static struct ref_scale_ops *cur_ops;
-> +static const struct ref_scale_ops *cur_ops;
->  
->  static void un_delay(const int udl, const int ndl)
->  {
-> @@ -171,7 +171,7 @@ static bool rcu_sync_scale_init(void)
->  	return true;
->  }
->  
-> -static struct ref_scale_ops rcu_ops = {
-> +static const struct ref_scale_ops rcu_ops = {
->  	.init		= rcu_sync_scale_init,
->  	.readsection	= ref_rcu_read_section,
->  	.delaysection	= ref_rcu_delay_section,
-> @@ -205,7 +205,7 @@ static void srcu_ref_scale_delay_section(const int nloops, const int udl, const
->  	}
->  }
->  
-> -static struct ref_scale_ops srcu_ops = {
-> +static const struct ref_scale_ops srcu_ops = {
->  	.init		= rcu_sync_scale_init,
->  	.readsection	= srcu_ref_scale_read_section,
->  	.delaysection	= srcu_ref_scale_delay_section,
-> @@ -232,7 +232,7 @@ static void rcu_tasks_ref_scale_delay_section(const int nloops, const int udl, c
->  		un_delay(udl, ndl);
->  }
->  
-> -static struct ref_scale_ops rcu_tasks_ops = {
-> +static const struct ref_scale_ops rcu_tasks_ops = {
->  	.init		= rcu_sync_scale_init,
->  	.readsection	= rcu_tasks_ref_scale_read_section,
->  	.delaysection	= rcu_tasks_ref_scale_delay_section,
-> @@ -271,7 +271,7 @@ static void rcu_trace_ref_scale_delay_section(const int nloops, const int udl, c
->  	}
->  }
->  
-> -static struct ref_scale_ops rcu_trace_ops = {
-> +static const struct ref_scale_ops rcu_trace_ops = {
->  	.init		= rcu_sync_scale_init,
->  	.readsection	= rcu_trace_ref_scale_read_section,
->  	.delaysection	= rcu_trace_ref_scale_delay_section,
-> @@ -310,7 +310,7 @@ static void ref_refcnt_delay_section(const int nloops, const int udl, const int
->  	}
->  }
->  
-> -static struct ref_scale_ops refcnt_ops = {
-> +static const struct ref_scale_ops refcnt_ops = {
->  	.init		= rcu_sync_scale_init,
->  	.readsection	= ref_refcnt_section,
->  	.delaysection	= ref_refcnt_delay_section,
-> @@ -347,7 +347,7 @@ static void ref_rwlock_delay_section(const int nloops, const int udl, const int
->  	}
->  }
->  
-> -static struct ref_scale_ops rwlock_ops = {
-> +static const struct ref_scale_ops rwlock_ops = {
->  	.init		= ref_rwlock_init,
->  	.readsection	= ref_rwlock_section,
->  	.delaysection	= ref_rwlock_delay_section,
-> @@ -384,7 +384,7 @@ static void ref_rwsem_delay_section(const int nloops, const int udl, const int n
->  	}
->  }
->  
-> -static struct ref_scale_ops rwsem_ops = {
-> +static const struct ref_scale_ops rwsem_ops = {
->  	.init		= ref_rwsem_init,
->  	.readsection	= ref_rwsem_section,
->  	.delaysection	= ref_rwsem_delay_section,
-> @@ -419,7 +419,7 @@ static void ref_lock_delay_section(const int nloops, const int udl, const int nd
->  	preempt_enable();
->  }
->  
-> -static struct ref_scale_ops lock_ops = {
-> +static const struct ref_scale_ops lock_ops = {
->  	.readsection	= ref_lock_section,
->  	.delaysection	= ref_lock_delay_section,
->  	.name		= "lock"
-> @@ -454,7 +454,7 @@ static void ref_lock_irq_delay_section(const int nloops, const int udl, const in
->  	preempt_enable();
->  }
->  
-> -static struct ref_scale_ops lock_irq_ops = {
-> +static const struct ref_scale_ops lock_irq_ops = {
->  	.readsection	= ref_lock_irq_section,
->  	.delaysection	= ref_lock_irq_delay_section,
->  	.name		= "lock-irq"
-> @@ -490,7 +490,7 @@ static void ref_acqrel_delay_section(const int nloops, const int udl, const int
->  	preempt_enable();
->  }
->  
-> -static struct ref_scale_ops acqrel_ops = {
-> +static const struct ref_scale_ops acqrel_ops = {
->  	.readsection	= ref_acqrel_section,
->  	.delaysection	= ref_acqrel_delay_section,
->  	.name		= "acqrel"
-> @@ -524,7 +524,7 @@ static void ref_clock_delay_section(const int nloops, const int udl, const int n
->  	stopopts = x;
->  }
->  
-> -static struct ref_scale_ops clock_ops = {
-> +static const struct ref_scale_ops clock_ops = {
->  	.readsection	= ref_clock_section,
->  	.delaysection	= ref_clock_delay_section,
->  	.name		= "clock"
-> @@ -556,7 +556,7 @@ static void ref_jiffies_delay_section(const int nloops, const int udl, const int
->  	stopopts = x;
->  }
->  
-> -static struct ref_scale_ops jiffies_ops = {
-> +static const struct ref_scale_ops jiffies_ops = {
->  	.readsection	= ref_jiffies_section,
->  	.delaysection	= ref_jiffies_delay_section,
->  	.name		= "jiffies"
-> @@ -706,9 +706,9 @@ static void refscale_typesafe_ctor(void *rtsp_in)
->  	preempt_enable();
->  }
->  
-> -static struct ref_scale_ops typesafe_ref_ops;
-> -static struct ref_scale_ops typesafe_lock_ops;
-> -static struct ref_scale_ops typesafe_seqlock_ops;
-> +static const struct ref_scale_ops typesafe_ref_ops;
-> +static const struct ref_scale_ops typesafe_lock_ops;
-> +static const struct ref_scale_ops typesafe_seqlock_ops;
->  
->  // Initialize for a typesafe test.
->  static bool typesafe_init(void)
-> @@ -769,7 +769,7 @@ static void typesafe_cleanup(void)
->  }
->  
->  // The typesafe_init() function distinguishes these structures by address.
-> -static struct ref_scale_ops typesafe_ref_ops = {
-> +static const struct ref_scale_ops typesafe_ref_ops = {
->  	.init		= typesafe_init,
->  	.cleanup	= typesafe_cleanup,
->  	.readsection	= typesafe_read_section,
-> @@ -777,7 +777,7 @@ static struct ref_scale_ops typesafe_ref_ops = {
->  	.name		= "typesafe_ref"
->  };
->  
-> -static struct ref_scale_ops typesafe_lock_ops = {
-> +static const struct ref_scale_ops typesafe_lock_ops = {
->  	.init		= typesafe_init,
->  	.cleanup	= typesafe_cleanup,
->  	.readsection	= typesafe_read_section,
-> @@ -785,7 +785,7 @@ static struct ref_scale_ops typesafe_lock_ops = {
->  	.name		= "typesafe_lock"
->  };
->  
-> -static struct ref_scale_ops typesafe_seqlock_ops = {
-> +static const struct ref_scale_ops typesafe_seqlock_ops = {
->  	.init		= typesafe_init,
->  	.cleanup	= typesafe_cleanup,
->  	.readsection	= typesafe_read_section,
-> @@ -1026,7 +1026,7 @@ static int main_func(void *arg)
->  }
->  
->  static void
-> -ref_scale_print_module_parms(struct ref_scale_ops *cur_ops, const char *tag)
-> +ref_scale_print_module_parms(const struct ref_scale_ops *cur_ops, const char *tag)
->  {
->  	pr_alert("%s" SCALE_FLAG
->  		 "--- %s:  verbose=%d verbose_batched=%d shutdown=%d holdoff=%d lookup_instances=%ld loops=%ld nreaders=%d nruns=%d readdelay=%d\n", scale_type, tag,
-> @@ -1081,7 +1081,7 @@ ref_scale_init(void)
->  {
->  	long i;
->  	int firsterr = 0;
-> -	static struct ref_scale_ops *scale_ops[] = {
-> +	static const struct ref_scale_ops *scale_ops[] = {
->  		&rcu_ops, &srcu_ops, RCU_TRACE_OPS RCU_TASKS_OPS &refcnt_ops, &rwlock_ops,
->  		&rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops, &clock_ops, &jiffies_ops,
->  		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
-> -- 
-> 2.45.2
-> 
+> =C2=A0include/linux/filelock.h | 14 ++++++++++++--
+> =C2=A01 file changed, 12 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+> index daee999d05f3..bb44224c6676 100644
+> --- a/include/linux/filelock.h
+> +++ b/include/linux/filelock.h
+> @@ -420,28 +420,38 @@ static inline int locks_lock_file_wait(struct file =
+*filp, struct file_lock *fl)
+> =C2=A0#ifdef CONFIG_FILE_LOCKING
+> =C2=A0static inline int break_lease(struct inode *inode, unsigned int mod=
+e)
+> =C2=A0{
+> +	struct file_lock_context *flctx;
+> +
+> =C2=A0	/*
+> =C2=A0	 * Since this check is lockless, we must ensure that any refcounts
+> =C2=A0	 * taken are done before checking i_flctx->flc_lease. Otherwise, w=
+e
+> =C2=A0	 * could end up racing with tasks trying to set a new lease on thi=
+s
+> =C2=A0	 * file.
+> =C2=A0	 */
+> +	flctx =3D READ_ONCE(inode->i_flctx);
+> +	if (!flctx)
+> +		return 0;
+> =C2=A0	smp_mb();
+> -	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
+> +	if (!list_empty_careful(&flctx->flc_lease))
+> =C2=A0		return __break_lease(inode, mode, FL_LEASE);
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static inline int break_deleg(struct inode *inode, unsigned int mod=
+e)
+> =C2=A0{
+> +	struct file_lock_context *flctx;
+> +
+> =C2=A0	/*
+> =C2=A0	 * Since this check is lockless, we must ensure that any refcounts
+> =C2=A0	 * taken are done before checking i_flctx->flc_lease. Otherwise, w=
+e
+> =C2=A0	 * could end up racing with tasks trying to set a new lease on thi=
+s
+> =C2=A0	 * file.
+> =C2=A0	 */
+> +	flctx =3D READ_ONCE(inode->i_flctx);
+> +	if (!flctx)
+> +		return 0;
+> =C2=A0	smp_mb();
+> -	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
+> +	if (!list_empty_careful(&flctx->flc_lease))
+> =C2=A0		return __break_lease(inode, mode, FL_DELEG);
+> =C2=A0	return 0;
+> =C2=A0}
+
+This change looks good to me:
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
