@@ -1,234 +1,825 @@
-Return-Path: <linux-kernel+bounces-276432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076D69493A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:48:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2E69493EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B6CBB22B34
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31046284130
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22081D27A3;
-	Tue,  6 Aug 2024 14:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E017E1D6DC4;
+	Tue,  6 Aug 2024 14:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="UAps6tzG"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2040.outbound.protection.outlook.com [40.107.22.40])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H/9U7Pwn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C57218D643;
-	Tue,  6 Aug 2024 14:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955654; cv=fail; b=iiLAq+HYjmYKzV5azManTJ+cDUMEiEsVCrGPXmrCsIfEyqEzpUJsAUKgDYlBUOlMsD9y5R2ztktvAdN24g4MhfqQiXGLUMI9rr9nNw7E9zZ1/uOXTqV1JnqAsut33k0B7cxT/VNlIzwhdcsK7/okECHOQk3j43Dl8AwEZQch+mI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955654; c=relaxed/simple;
-	bh=Yi5Q3IFSqS+7J45FO6SgqeVphuaxGeSDNvHgNsodcsY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=COCVeMEUyTHqiHGqS/JC8EqTXHb1B5oTp4ifj/mbRd4LHwVy1EelKbNZlDSyx1Vf4Roh8g9oKBtZ8uYGqbnDT+cedYURRZB1Y9ep8mWWsgoDxW5prw8xx3k38WjafQIkdUY+rXHWIgpr1aADIfwvwfSrRhf5qGjkFCsm3x+u4dc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=UAps6tzG; arc=fail smtp.client-ip=40.107.22.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F9Z6G98LDjCZYJd0cj0tchDQQz+BsT06E2tHwtYey5UqYbR722JXxZF5F31zKckUgA5sYwYMxc1eoF7xKgLP16nUQFZywDqAPaewoJ/IRnUB0niDjpoP11p2Dp7d0Uka2H0D8PbxZ0Iorjxj50MVMAWs0dQh2X5uPf+RDmDxT3/qeGfIIBVlUVI4QzyMlCXILHJis+DJl/fpRTTvSAugVqbkwWyiE9CgJ9dR726egjtAH1HzYYgaCYwiGSV8KxVkRpcYeofzozYg1eMo/w6z3a7tTTTUkVAOGaay9va4LQx6wgkUSpYao8Ept2ZftEY3yMSJejFRHX8eVdI731yVeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9LuUy0YluQDfn/rdRf34ltJQ3oLxXYRAHJf15gqLOj4=;
- b=WOLQ6TJ4+J4rtDsN2mDHrnZAVR2JA0boq5p5RnChLJxxP+SGzT1kNuZS5ZQdlOYYNvsSGAiddrGAK5XVsyWMrBW44MuW3m71Mej138a3TYKHY9QWEOVIMx2dZ4N0t3addtM8ud+40BL8O+r3se0t2J4KIhiVg5pw6GNeZrbAqnbP3/yqB7LQprgWdZILZnusmruhw0e/gA8ikRx1UbD52FwSWj65OCWXkPKtMCilzT0uuzMScRJxMT2CKIESWd3StKfjeXWNNj8E+CTTzAS3weaq2r3DU7qv5KJ6GzfUItoMdnnPtzSE58LW2IhBjGGVbuMzgUYW/YXrSgb7Rdy4bQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9LuUy0YluQDfn/rdRf34ltJQ3oLxXYRAHJf15gqLOj4=;
- b=UAps6tzGoiHhgqHq6zJp2MYo1vO9SeRquEdNfc4+Z4pH5QlWNdVr7Nz3Is/rkETw+up4Z3MQljeue1sfVTfTWCtcklGFLItB09jrGuhkc6NiDu0SJ4kT/kyqo5zcSO4EcPhMWWanSabnaprG8kTNhY8F8aEo+4XmecgkZy2ESxzsMwechBWbwWRwCUpHqptjuugKktq+wIKh1/3u3dffUI3gECRRDL7wEqfDhBs8yexgWM8064MK6rMoGUbdrfg67Cbm9IH4g0PQZgeBKngMZWW5sytFdrZuC1QGB9RjW5pKm/aY7nQlrukebs17z8Zgitz0eJVK4O2goL4i1QjtYQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM7PR04MB6886.eurprd04.prod.outlook.com (2603:10a6:20b:106::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.25; Tue, 6 Aug
- 2024 14:47:28 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7784.020; Tue, 6 Aug 2024
- 14:47:28 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org,
-	d-gole@ti.com,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V3] clk: scmi: add is_prepared hook
-Date: Tue,  6 Aug 2024 22:56:01 +0800
-Message-Id: <20240806145601.1184337-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0020.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::9) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C01318D655
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722956198; cv=none; b=KE5NmTc9DwuvStws+JRf/RPdzDmcWFXsj10S3MAbMzShi0h9+ErmlIApRTqvpLiTgmVTm5oz4F14E5ZpxPQ2oTF5ezBwuk6mA+UDd8bA9zct4Muo5KsaLcmm6g9AUXP5dKB3xMj0fpcoJ/DAHEpfWTkyi/EW4rmsLy8QaO5ZOVs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722956198; c=relaxed/simple;
+	bh=mJL/6dYW3ucJy/ttRnuaXdSTSLQK6FC5t70K7o97HiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rXiDa4C3B1KtlJzOW8qCUfh+ZO/seHX3a0DTTJxoMxxa2eNRJ9CItgujb2jDbzm84GWNSTaO93mZGaUp+FA0eytiZ3H5636zSTsOX8DyC88vK+cm/ua4t2XIIAlVfBjaOSmGwF+H61QYHuwYqyudnpE9pjG9X2K4iNje9wj4mUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H/9U7Pwn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722956195;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=in22lGiWvjvVa+QnCNaYBNzPdS4W23iInNoRspQ3yDo=;
+	b=H/9U7PwniH0wk6VsJCKRVXaRLiPDLuWa2mvbK7aMWx1/IIVXSqE8aBqJZuSv+rjQxzrOdG
+	hof1uA5VPHwfq9ppqtGJAWH4THcoYd6CmmMyQG2gC/NzTs8M75FUoKShE4h4GWqnhw1/T6
+	aiJDmoaxpFAVQaYuL/65WAnrtqYgUNo=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-186-FXlbXuj9Nai8dLYNTvA0Tw-1; Tue, 06 Aug 2024 10:56:32 -0400
+X-MC-Unique: FXlbXuj9Nai8dLYNTvA0Tw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280a39ecebso32981495e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:56:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722956191; x=1723560991;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=in22lGiWvjvVa+QnCNaYBNzPdS4W23iInNoRspQ3yDo=;
+        b=ir9FnwaKfw+d7/DjLaFUq8DmGpm2TEfh1zu31H9MacfideszsM4BAiYtACrayzYgsi
+         aApalpRmPHcKa+EVrVzywchuW6/xrFzJuOw0ak3P2u4MNdQ4lZ6YEZ5o8zFk/7R75zGf
+         N2QZG45ZPpFfb08Hsf2VguYsGdR/VuOHb8dAHqGjtrOs5KaqdrQWlt3SoqiQqhRWsAfG
+         +k9FO10IxF953JcOFLhKXQ+Ef5eno8j+oZeaJkdnVwR0SviT+dCLgWbmvks7X5mrbdXF
+         TWj5kpwqCB2+9U+5OrnN9QdtyMPuNCggRPDPsipQbnjzrtK7q7pMxl/DNgWYHYKGevCP
+         g88w==
+X-Forwarded-Encrypted: i=1; AJvYcCXDVVSbJHtpNFw6fZVY4bALFxWtLpe+5F0OP3B9CRLmBtLNkFvxCzGfObKkw5m/azY/8STKvFSDFDfKol6OkyZimpfgA36RQleTzlk1
+X-Gm-Message-State: AOJu0Yx3LE5xaFavWj1AbeZ4VpOAwRZms+XlYF7WitUovJV3D5KTicTf
+	fTgAftQpLVPFf0hC00a5E4nyT5sBAhbI1ptkzzUy71EmIqmjAWhP/dTTYkQmqy2q8epMhycSTuc
+	SSiTTB2zNJ0WpRZYqJlLmbXW/Bfvc9fFDqA8HpmvWrNZF6k/jENNIwVqAklEQoziiXq0K+w==
+X-Received: by 2002:adf:e406:0:b0:367:89b0:f584 with SMTP id ffacd0b85a97d-36bbbe41a5amr10941569f8f.11.1722956190541;
+        Tue, 06 Aug 2024 07:56:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHNDOkrESu3JIcTRCLpzIkfYFQ0PveSez4G5RsxMBCn5JrfRQ0E1ZJKxzo3960b/TvlD38l3A==
+X-Received: by 2002:adf:e406:0:b0:367:89b0:f584 with SMTP id ffacd0b85a97d-36bbbe41a5amr10941544f8f.11.1722956189943;
+        Tue, 06 Aug 2024 07:56:29 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd01ee25sm13114422f8f.53.2024.08.06.07.56.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 07:56:29 -0700 (PDT)
+Date: Tue, 6 Aug 2024 16:56:28 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, Cleber Rosa <crosa@redhat.com>, John Snow
+ <jsnow@redhat.com>, linux-kernel@vger.kernel.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 7/7] scripts/ghes_inject: add a script to generate
+ GHES error inject
+Message-ID: <20240806165628.7ceffbe8@imammedo.users.ipa.redhat.com>
+In-Reply-To: <0654a89fe24f4343016b9cecc0752594ad1cd49f.1722634602.git.mchehab+huawei@kernel.org>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<0654a89fe24f4343016b9cecc0752594ad1cd49f.1722634602.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM7PR04MB6886:EE_
-X-MS-Office365-Filtering-Correlation-Id: 533676ff-2992-4f7a-7157-08dcb626b11e
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/0hsMXPU1DL+QF0zzwA/FHq1hMdzdL02cN5hqUYkxNTZ9b5wCWm/Y99wpYj7?=
- =?us-ascii?Q?oT/OB11BoK06JG/1vQFqPjqICa0G9aZqtl9CGtEF5Kr4mMgh4yvsARWUvk6w?=
- =?us-ascii?Q?2JuRZbWpm6vGACz9wVMNIANb+7DadDkCHZJuZ+Xj7Eu5amkF1GZ4jGEK+DwV?=
- =?us-ascii?Q?5vIpWoAgXCzvpiqLL77AWuCn8HXdUzUmqJPJvHFTpzjqfOwg6CJ44mMwsc6p?=
- =?us-ascii?Q?ULQzQZYBKJCjMKa7F+e0AIsMYItGGfpWKBtM1XwrDNeZg3wAMtc18K3x9/l0?=
- =?us-ascii?Q?cifTVHptlTT/5Mtc549L2/AI5t379vjSr7LWkVvqTPTy9tOPGefQqF5nIVa4?=
- =?us-ascii?Q?Cban2wBeSFkidATODEK2aYznqevIGMySGI508rSnvLUqZvbN0OSJSpkBC/An?=
- =?us-ascii?Q?X/M25Qe7conZi8x+JnTyxJ0oDjVva/7wkDeZvR3QYkFPlMwuPvp4g66o/vCl?=
- =?us-ascii?Q?RZung5LExzIydU0O8TzVYpNc8Caa4hXPzsnne+tVyx2GfHaZhWfb90vEjybE?=
- =?us-ascii?Q?n1dFO1jm3HgCyyQkII9s0mXdAshh+YJ+EdNLmiqFpcZJO8AmjsfwKfLJ4R8B?=
- =?us-ascii?Q?fwUAg2PhB4/jSTrwlmmNaQnWdcg4IV0nB0XjMbGnpWMpqKD+jaaOXXgHtydF?=
- =?us-ascii?Q?dDbVBdIOPgUzaIJh7Ishua/7JJ3fJKfxcINTTVe48eB5JEy8cxE6LRLX1yUL?=
- =?us-ascii?Q?xXcu+G45iIorVBI6U6u3+trqn/Rrcnc48J/NblgNLKByPbafY6fsVDmvDkyo?=
- =?us-ascii?Q?Bn2Ku6IGfsSFvSUNTCNVqKEVSSTDkcIM4bLoB7Orf5j5x7q5cRD9p6pM0Sj+?=
- =?us-ascii?Q?WYCq67RTpgvUE2KAasVFcVai5ObGg2CAjOZtxfOX2EZcVubHVl08DAM9O7Qm?=
- =?us-ascii?Q?aRF3A0nbnRtzhtVUdFxFzkJ0MV41miPy0tig0s7ttqiwJHsZqbHmQuEv8PV/?=
- =?us-ascii?Q?LIaBrrY1vd8fx6YvWr4hiNa6DuD7ErdBhBOyQdyL1fGauFqeMP8ky3vWPOYw?=
- =?us-ascii?Q?1Qn96NEm9mSGTdcERu9RxWsdnJoVVGkWvZbnnPh11NvlJ71vo9gD4ys+HVAf?=
- =?us-ascii?Q?2gz8S8TZWJytnChYPf7pLXQ5XQ5OjTtZzHbOplvRYyTd3xuBMOh0O73F7cY+?=
- =?us-ascii?Q?VmkM0nJjsWBC7qmAdZu2TXATOUQvcKd898DyTlR+L7yX4e5kJzx6vNcMxNwO?=
- =?us-ascii?Q?k0JIzF3p6qGedOgYjc084ZFCG9nlaopYfy47gMjCI0sEFvfkGhcJjSgyF9gA?=
- =?us-ascii?Q?7czikeZcj8EDM55+vvtt4Bk4yf9yflqOUZm4RScN+J8vv8ZEs1oVSjxiMNvk?=
- =?us-ascii?Q?PK4dP0DH7H4uL4oVex0+ScxqCxK9sS3ifUylEs8005cp/ngszGmY7TEvVEdN?=
- =?us-ascii?Q?tFysl4Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pX7mKDdT1XvmzSJvr51y6tS8DzyKnSAIJXE+4ox2uNRPoW5Lilgi40OG2wNg?=
- =?us-ascii?Q?zHdP8iTGycg/3UYhweG2av9klZiZ2DO+L7bHpR3NxNU5Ym09OIZo2DO34Ksv?=
- =?us-ascii?Q?wwThHVRhZG8WiJnlktXybnwGP4phArG1gEyLtt2wtTUKvcg++CxlxPGlencC?=
- =?us-ascii?Q?dkv9jE15PdTnErPhVcWSyOvFV5b7MeepbbB48rHDrd8ARZT6VWYvkhgxlmWs?=
- =?us-ascii?Q?6UaWWcq4okMfced4V9YhxQ9tss4LqRW1utBp/k6HAGcUxiYFbZjTWpeTgKrV?=
- =?us-ascii?Q?z+p5rMQeQVGzsCGovFCJgV9ISb913IjTwJbk+IQ9p8mrPFiwsxATHp9Ud0fB?=
- =?us-ascii?Q?WiRDeoB4gqpd4w06cjMKtbbLkflXZSqpkJCQVsQ3wKpcMwA1UXjZA2/8B+ti?=
- =?us-ascii?Q?R0RTxLTqCzHpmfEw+H59Z4hL3dyQxmnLDTEa/J4mqgy3QyGA3HyiYjLk/An2?=
- =?us-ascii?Q?lhRsKmOsMKo27CR7DRSDuzKwJym4Y0yAAWkTa/GSp4wuPk867GR5ASCI14y+?=
- =?us-ascii?Q?SM2YGuGMxdIOp1W4mApEwO1zjdw00c++utZHsBSodIys3ZTP2JGPAhWxJwT0?=
- =?us-ascii?Q?WsqOCFTqmVurZvXsYEhmngIB0IrU5hfMXHPWhauywNvp8Fs/R6hI4Acv6Xsk?=
- =?us-ascii?Q?zAZ8JMzOIOAIYtPl+4QIqdtNx3aOo1n3+5rL5u9K5WhpIfCdp89j5chDN0BG?=
- =?us-ascii?Q?sgph37dzOtwkX3yYFls/FkvAjI1TBbjuRF36iq0jS/qTv9db1RV93aLdHwyl?=
- =?us-ascii?Q?iuY1F3VeDr7pWVh1r/koAoFUKuO1AbKY0kdiGvq7sBkvnangMGY6l2NFYSTf?=
- =?us-ascii?Q?zZkNzd7PgIoBI0taLVZa9aHJY1gAcuaf4fPCVoqdwLTpbMBnq+UY8LGOSPC9?=
- =?us-ascii?Q?Ypu6CZ2tjppmBo/NYdSQMw3E7+hbwTgoyFgVXl4NJ5bNiLZi0gonbs+YgM5C?=
- =?us-ascii?Q?a9Iyw5ivRVQU2qxThNcxmrNfVC20oX7QsmF+zcnLMMoklQri022ZGxY3ULz2?=
- =?us-ascii?Q?x+P801yQQshdt2QCh/cXRK1we4fQXJDyc5pVY50nxUam6zgRdrN55w49vAU5?=
- =?us-ascii?Q?lB8LBd/DAlRKkuy5yjBuq+kcOZNtzs9qtkMJlSm6u5il9XpLyu2lAJWCK5TN?=
- =?us-ascii?Q?Hvu0VxmT6c7ibVucvE/NAfkDOxqERCxqnAQobUv3/B9aMxa/HixGcRxRy/Lo?=
- =?us-ascii?Q?6EP9M9ndn0awuLoTBdPVRxP9sM3IEET7UriUJirnlt/lEQyZabyNF2Sv+Njw?=
- =?us-ascii?Q?OXIariJpNfVCQXUEPNga3yw9QSTJqKbDUm6nI/By9uwHFIq7CsTwf00kos0W?=
- =?us-ascii?Q?2L4JxZCVTTA9dUFjDumXalf4lXYWzu9Afl4bHxEMl+6O6QxHUe3BwmhmRapI?=
- =?us-ascii?Q?nn9lA6bDmEb/OFYCkNpIYOPs0/XFWd7tx6C7r7ZzNPFIU06PqJMYZB8rdCNf?=
- =?us-ascii?Q?P+caTRzpXFq1Jy0zDbqR7qzfeUUFfNmD4mVrWq8LC69hU835RFDs2uKvYnov?=
- =?us-ascii?Q?Pi8xtqEI1rWgBJVGcjLLXaSajMJLApVyXt/c5yojkVAja8la5pikCaF99uxL?=
- =?us-ascii?Q?90NxD3JWsu+ucT15+ojMXbsoT3IOljJFZQuaqG0B?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 533676ff-2992-4f7a-7157-08dcb626b11e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 14:47:28.0237
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Yz+x90DaBbpTocJSTQd85FKDNhkTBDOx2kFh/MsxD4V8aWEQtanCSte7TKHX4H/N/zdVDJ35qEi5Tsy4ezcltw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6886
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Peng Fan <peng.fan@nxp.com>
+On Fri,  2 Aug 2024 23:44:02 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Some clocks maybe default enabled by hardware. For clocks that don't
-have users, that will be left in hardware default state, because prepare
-count and enable count is zero,if there is no is_prepared hook to get
-the hardware state. So add is_prepared hook to detect the hardware
-state. Then when disabling the unused clocks, they can be simply
-turned OFF to save power during kernel boot.
+> Using the QMP GHESv2 API requires preparing a raw data array
+> containing a CPER record.
+> 
+> Add a helper script with subcommands to prepare such data.
+> 
+> Currently, only ARM Processor error CPER record is supported.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  MAINTAINERS                    |   3 +
+>  scripts/arm_processor_error.py | 352 +++++++++++++++++++++++++++++++++
+>  scripts/ghes_inject.py         |  59 ++++++
+>  scripts/qmp_helper.py          | 249 +++++++++++++++++++++++
+>  4 files changed, 663 insertions(+)
+>  create mode 100644 scripts/arm_processor_error.py
+>  create mode 100755 scripts/ghes_inject.py
+>  create mode 100644 scripts/qmp_helper.py
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 655edcb6688c..e490f69da1de 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2081,6 +2081,9 @@ S: Maintained
+>  F: hw/arm/ghes_cper.c
+>  F: hw/acpi/ghes_cper_stub.c
+>  F: qapi/ghes-cper.json
+> +F: scripts/ghes_inject.py
+> +F: scripts/arm_processor_error.py
+> +F: scripts/qmp_helper.py
+>  
+>  ppc4xx
+>  L: qemu-ppc@nongnu.org
+> diff --git a/scripts/arm_processor_error.py b/scripts/arm_processor_error.py
+> new file mode 100644
+> index 000000000000..df4efa508790
+> --- /dev/null
+> +++ b/scripts/arm_processor_error.py
+> @@ -0,0 +1,352 @@
+> +#!/usr/bin/env python3
+> +#
+> +# pylint: disable=C0301, C0114, R0912, R0913, R0914, R0915, W0511
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (C) 2024 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> +
+> +# TODO: current implementation has dummy defaults.
+> +#
+> +# For a better implementation, a QMP addition/call is needed to
+> +# retrieve some data for ARM Processor Error injection:
+> +#
+> +#   - machine emulation architecture, as ARM current default is
+> +#     for AArch64;
+> +#   - ARM registers: power_state, midr, mpidr.
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
+I'm not really reviewing the script but here some pointers how to fetch properties
 
-V3:
- Update the commit log. See discussion:
- https://lore.kernel.org/all/20240802061234.njlviydzmjbsyteb@lcpd911/
-V2:
- Provider helper __scmi_clk_is_enabled for atomic and non-atomic usage
- Move is_prepared hook out of SCMI_CLK_STATE_CTRL_SUPPORTED
- https://lore.kernel.org/all/20240802061234.njlviydzmjbsyteb@lcpd911/
+start qemu with QMP connection
+  ./qemu-system-aarch64 -M virt -qmp unix:/tmp/s,server,nowait
+use script
+  ./scripts/qmp/qom-get --socket /tmp/s /machine/unattached/device[0].midr
 
- drivers/clk/clk-scmi.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+you can use ./scripts/qmp/qom-tree to explore what's there
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index d86a02563f6c..15510c2ff21c 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -156,13 +156,13 @@ static void scmi_clk_atomic_disable(struct clk_hw *hw)
- 	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);
- }
- 
--static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
-+static int __scmi_clk_is_enabled(struct clk_hw *hw, bool atomic)
- {
- 	int ret;
- 	bool enabled = false;
- 	struct scmi_clk *clk = to_scmi_clk(hw);
- 
--	ret = scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled, ATOMIC);
-+	ret = scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled, atomic);
- 	if (ret)
- 		dev_warn(clk->dev,
- 			 "Failed to get state for clock ID %d\n", clk->id);
-@@ -170,6 +170,16 @@ static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
- 	return !!enabled;
- }
- 
-+static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
-+{
-+	return __scmi_clk_is_enabled(hw, ATOMIC);
-+}
-+
-+static int scmi_clk_is_enabled(struct clk_hw *hw)
-+{
-+	return __scmi_clk_is_enabled(hw, NOT_ATOMIC);
-+}
-+
- static int scmi_clk_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
- {
- 	int ret;
-@@ -285,6 +295,8 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
- 
- 	if (feats_key & BIT(SCMI_CLK_ATOMIC_SUPPORTED))
- 		ops->is_enabled = scmi_clk_atomic_is_enabled;
-+	else
-+		ops->is_prepared = scmi_clk_is_enabled;
- 
- 	/* Rate ops */
- 	ops->recalc_rate = scmi_clk_recalc_rate;
--- 
-2.37.1
+see commit e61cc6b5c69 how to add property (DEFINE_PROP_UINT32 part mainly),
+as long as it's prefixed with "x-" (meaning internal/unstable) likelihood is
+that no one would object adding extra ones
+
+> +
+> +import argparse
+> +import json
+> +
+> +from qmp_helper import (qmp_command, get_choice, get_mult_array,
+> +                        get_mult_choices, get_mult_int, bit,
+> +                        data_add, to_guid)
+> +
+> +# Arm processor EINJ logic
+> +#
+> +ACPI_GHES_ARM_CPER_LENGTH = 40
+> +ACPI_GHES_ARM_CPER_PEI_LENGTH = 32
+> +
+> +# TODO: query it from emulation. Current default valid only for Aarch64
+> +CONTEXT_AARCH64_EL1 = 5
+> +
+> +class ArmProcessorEinj:
+> +    """
+> +    Implements ARM Processor Error injection via GHES
+> +    """
+> +
+> +    def __init__(self):
+> +        """Initialize the error injection class"""
+> +
+> +        # Valid choice values
+> +        self.arm_valid_bits = {
+> +            "mpidr":    bit(0),
+> +            "affinity": bit(1),
+> +            "running":  bit(2),
+> +            "vendor":   bit(3),
+> +        }
+> +
+> +        self.pei_flags = {
+> +            "first":        bit(0),
+> +            "last":         bit(1),
+> +            "propagated":   bit(2),
+> +            "overflow":     bit(3),
+> +        }
+> +
+> +        self.pei_error_types = {
+> +            "cache":        bit(1),
+> +            "tlb":          bit(2),
+> +            "bus":          bit(3),
+> +            "micro-arch":   bit(4),
+> +        }
+> +
+> +        self.pei_valid_bits = {
+> +            "multiple-error":   bit(0),
+> +            "flags":            bit(1),
+> +            "error-info":       bit(2),
+> +            "virt-addr":        bit(3),
+> +            "phy-addr":         bit(4),
+> +        }
+> +
+> +        self.data = bytearray()
+> +
+> +    def create_subparser(self, subparsers):
+> +        """Add a subparser to handle for the error fields"""
+> +
+> +        parser = subparsers.add_parser("arm",
+> +                                       help="Generate an ARM processor CPER")
+> +
+> +        arm_valid_bits = ",".join(self.arm_valid_bits.keys())
+> +        flags = ",".join(self.pei_flags.keys())
+> +        error_types = ",".join(self.pei_error_types.keys())
+> +        pei_valid_bits = ",".join(self.arm_valid_bits.keys())
+> +
+> +        # UEFI N.16 ARM Validation bits
+> +        g_arm = parser.add_argument_group("ARM processor")
+> +        g_arm.add_argument("--arm", "--arm-valid",
+> +                           help=f"ARM valid bits: {arm_valid_bits}")
+> +        g_arm.add_argument("-a", "--affinity",  "--level", "--affinity-level",
+> +                           type=lambda x: int(x, 0),
+> +                           help="Affinity level (when multiple levels apply)")
+> +        g_arm.add_argument("-l", "--mpidr", type=lambda x: int(x, 0),
+> +                           help="Multiprocessor Affinity Register")
+> +        g_arm.add_argument("-i", "--midr", type=lambda x: int(x, 0),
+> +                           help="Main ID Register")
+> +        g_arm.add_argument("-r", "--running",
+> +                           action=argparse.BooleanOptionalAction,
+> +                           default=None,
+> +                           help="Indicates if the processor is running or not")
+> +        g_arm.add_argument("--psci", "--psci-state",
+> +                           type=lambda x: int(x, 0),
+> +                           help="Power State Coordination Interface - PSCI state")
+> +
+> +        # TODO: Add vendor-specific support
+> +
+> +        # UEFI N.17 bitmaps (type and flags)
+> +        g_pei = parser.add_argument_group("ARM Processor Error Info (PEI)")
+> +        g_pei.add_argument("-t", "--type", nargs="+",
+> +                        help=f"one or more error types: {error_types}")
+> +        g_pei.add_argument("-f", "--flags", nargs="*",
+> +                        help=f"zero or more error flags: {flags}")
+> +        g_pei.add_argument("-V", "--pei-valid", "--error-valid", nargs="*",
+> +                        help=f"zero or more PEI valid bits: {pei_valid_bits}")
+> +
+> +        # UEFI N.17 Integer values
+> +        g_pei.add_argument("-m", "--multiple-error", nargs="+",
+> +                        help="Number of errors: 0: Single error, 1: Multiple errors, 2-65535: Error count if known")
+> +        g_pei.add_argument("-e", "--error-info", nargs="+",
+> +                        help="Error information (UEFI 2.10 tables N.18 to N.20)")
+> +        g_pei.add_argument("-p", "--physical-address",  nargs="+",
+> +                        help="Physical address")
+> +        g_pei.add_argument("-v", "--virtual-address",  nargs="+",
+> +                        help="Virtual address")
+> +
+> +        # UEFI N.21 Context
+> +        g_ctx = parser.add_argument_group("Processor Context")
+> +        g_ctx.add_argument("--ctx-type", "--context-type", nargs="*",
+> +                        help="Type of the context (0=ARM32 GPR, 5=ARM64 EL1, other values supported)")
+> +        g_ctx.add_argument("--ctx-size", "--context-size", nargs="*",
+> +                        help="Minimal size of the context")
+> +        g_ctx.add_argument("--ctx-array", "--context-array", nargs="*",
+> +                        help="Comma-separated arrays for each context")
+> +
+> +        # Vendor-specific data
+> +        g_vendor = parser.add_argument_group("Vendor-specific data")
+> +        g_vendor.add_argument("--vendor", "--vendor-specific", nargs="+",
+> +                        help="Vendor-specific byte arrays of data")
+> +
+> +    def parse_args(self, args):
+> +        """Parse subcommand arguments"""
+> +
+> +        cper = {}
+> +        pei = {}
+> +        ctx = {}
+> +        vendor = {}
+> +
+> +        arg = vars(args)
+> +
+> +        # Handle global parameters
+> +        if args.arm:
+> +            arm_valid_init = False
+> +            cper["valid"] = get_choice(name="valid",
+> +                                       value=args.arm,
+> +                                       choices=self.arm_valid_bits,
+> +                                       suffixes=["-error", "-err"])
+> +        else:
+> +            cper["valid"] = 0
+> +            arm_valid_init = True
+> +
+> +        if "running" in arg:
+> +            if args.running:
+> +                cper["running-state"] = bit(0)
+> +            else:
+> +                cper["running-state"] = 0
+> +        else:
+> +            cper["running-state"] = 0
+> +
+> +        if arm_valid_init:
+> +            if args.affinity:
+> +                cper["valid"] |= self.arm_valid_bits["affinity"]
+> +
+> +            if args.mpidr:
+> +                cper["valid"] |= self.arm_valid_bits["mpidr"]
+> +
+> +            if "running-state" in cper:
+> +                cper["valid"] |= self.arm_valid_bits["running"]
+> +
+> +            if args.psci:
+> +                cper["valid"] |= self.arm_valid_bits["running"]
+> +
+> +        # Handle PEI
+> +        if not args.type:
+> +            args.type = ["cache-error"]
+> +
+> +        get_mult_choices(
+> +            pei,
+> +            name="valid",
+> +            values=args.pei_valid,
+> +            choices=self.pei_valid_bits,
+> +            suffixes=["-valid", "-info", "--information", "--addr"],
+> +        )
+> +        get_mult_choices(
+> +            pei,
+> +            name="type",
+> +            values=args.type,
+> +            choices=self.pei_error_types,
+> +            suffixes=["-error", "-err"],
+> +        )
+> +        get_mult_choices(
+> +            pei,
+> +            name="flags",
+> +            values=args.flags,
+> +            choices=self.pei_flags,
+> +            suffixes=["-error", "-cap"],
+> +        )
+> +        get_mult_int(pei, "error-info", args.error_info)
+> +        get_mult_int(pei, "multiple-error", args.multiple_error)
+> +        get_mult_int(pei, "phy-addr", args.physical_address)
+> +        get_mult_int(pei, "virt-addr", args.virtual_address)
+> +
+> +        # Handle context
+> +        get_mult_int(ctx, "type", args.ctx_type, allow_zero=True)
+> +        get_mult_int(ctx, "minimal-size", args.ctx_size, allow_zero=True)
+> +        get_mult_array(ctx, "register", args.ctx_array, allow_zero=True)
+> +
+> +        get_mult_array(vendor, "bytes", args.vendor, max_val=255)
+> +
+> +        # Store PEI
+> +        pei_data = bytearray()
+> +        default_flags  = self.pei_flags["first"]
+> +        default_flags |= self.pei_flags["last"]
+> +
+> +        error_info_num = 0
+> +
+> +        for i, p in pei.items():        # pylint: disable=W0612
+> +            error_info_num += 1
+> +
+> +            # UEFI 2.10 doesn't define how to encode error information
+> +            # when multiple types are raised. So, provide a default only
+> +            # if a single type is there
+> +            if "error-info" not in p:
+> +                if p["type"] == bit(1):
+> +                    p["error-info"] = 0x0091000F
+> +                if p["type"] == bit(2):
+> +                    p["error-info"] = 0x0054007F
+> +                if p["type"] == bit(3):
+> +                    p["error-info"] = 0x80D6460FFF
+> +                if p["type"] == bit(4):
+> +                    p["error-info"] = 0x78DA03FF
+> +
+> +            if "valid" not in p:
+> +                p["valid"] = 0
+> +                if "multiple-error" in p:
+> +                    p["valid"] |= self.pei_valid_bits["multiple-error"]
+> +
+> +                if "flags" in p:
+> +                    p["valid"] |= self.pei_valid_bits["flags"]
+> +
+> +                if "error-info" in p:
+> +                    p["valid"] |= self.pei_valid_bits["error-info"]
+> +
+> +                if "phy-addr" in p:
+> +                    p["valid"] |= self.pei_valid_bits["phy-addr"]
+> +
+> +                if "virt-addr" in p:
+> +                    p["valid"] |= self.pei_valid_bits["virt-addr"]
+> +
+> +            # Version
+> +            data_add(pei_data, 0, 1)
+> +
+> +            data_add(pei_data, ACPI_GHES_ARM_CPER_PEI_LENGTH, 1)
+> +
+> +            data_add(pei_data, p["valid"], 2)
+> +            data_add(pei_data, p["type"], 1)
+> +            data_add(pei_data, p.get("multiple-error", 1), 2)
+> +            data_add(pei_data, p.get("flags", default_flags), 1)
+> +            data_add(pei_data, p.get("error-info", 0), 8)
+> +            data_add(pei_data, p.get("virt-addr", 0xDEADBEEF), 8)
+> +            data_add(pei_data, p.get("phy-addr", 0xABBA0BAD), 8)
+> +
+> +        # Store Context
+> +        ctx_data = bytearray()
+> +        context_info_num = 0
+> +
+> +        if ctx:
+> +            for k in sorted(ctx.keys()):
+> +                context_info_num += 1
+> +
+> +                if "type" not in ctx:
+> +                    ctx[k]["type"] = CONTEXT_AARCH64_EL1
+> +
+> +                if "register" not in ctx:
+> +                    ctx[k]["register"] = []
+> +
+> +                reg_size = len(ctx[k]["register"])
+> +                size = 0
+> +
+> +                if "minimal-size" in ctx:
+> +                    size = ctx[k]["minimal-size"]
+> +
+> +                size = max(size, reg_size)
+> +
+> +                size = (size + 1) % 0xFFFE
+> +
+> +                # Version
+> +                data_add(ctx_data, 0, 2)
+> +
+> +                data_add(ctx_data, ctx[k]["type"], 2)
+> +
+> +                data_add(ctx_data, 8 * size, 4)
+> +
+> +                for r in ctx[k]["register"]:
+> +                    data_add(ctx_data, r, 8)
+> +
+> +                for i in range(reg_size, size):   # pylint: disable=W0612
+> +                    data_add(ctx_data, 0, 8)
+> +
+> +        # Vendor-specific bytes are not grouped
+> +        vendor_data = bytearray()
+> +        if vendor:
+> +            for k in sorted(vendor.keys()):
+> +                for b in vendor[k]["bytes"]:
+> +                    data_add(vendor_data, b, 1)
+> +
+> +        # Encode ARM Processor Error
+> +        data = bytearray()
+> +
+> +        data_add(data, cper["valid"], 4)
+> +
+> +        data_add(data, error_info_num, 2)
+> +        data_add(data, context_info_num, 2)
+> +
+> +        # Calculate the length of the CPER data
+> +        cper_length = ACPI_GHES_ARM_CPER_LENGTH
+> +        cper_length += len(pei_data)
+> +        cper_length += len(vendor_data)
+> +        cper_length += len(ctx_data)
+> +        data_add(data, cper_length, 4)
+> +
+> +        data_add(data, arg.get("affinity-level", 0), 1)
+> +
+> +        # Reserved
+> +        data_add(data, 0, 3)
+> +
+> +        data_add(data, arg.get("mpidr-el1", 0), 8)
+> +        data_add(data, arg.get("midr-el1", 0), 8)
+> +        data_add(data, cper["running-state"], 4)
+> +        data_add(data, arg.get("psci-state", 0), 4)
+> +
+> +        # Add PEI
+> +        data.extend(pei_data)
+> +        data.extend(ctx_data)
+> +        data.extend(vendor_data)
+> +
+> +        self.data = data
+> +
+> +    def run(self, host, port):
+> +        """Execute QMP commands"""
+> +
+> +        guid = to_guid(0xE19E3D16, 0xBC11, 0x11E4,
+> +                       [0x9C, 0xAA, 0xC2, 0x05,
+> +                        0x1D, 0x5D, 0x46, 0xB0])
+> +
+> +        qmp_command(host, port, guid, self.data)
+> diff --git a/scripts/ghes_inject.py b/scripts/ghes_inject.py
+> new file mode 100755
+> index 000000000000..8415ccbbc53d
+> --- /dev/null
+> +++ b/scripts/ghes_inject.py
+> @@ -0,0 +1,59 @@
+> +#!/usr/bin/env python3
+> +#
+> +# pylint: disable=C0301, C0114
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (C) 2024 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> +
+> +import argparse
+> +
+> +from arm_processor_error import ArmProcessorEinj
+> +
+> +EINJ_DESCRIPTION = """
+> +Handle ACPI GHESv2 error injection logic QEMU QMP interface.\n
+> +
+> +It allows using UEFI BIOS EINJ features to generate GHES records.
+> +
+> +It helps testing Linux CPER and GHES drivers and to test rasdaemon
+> +error handling logic.
+> +
+> +Currently, it support ARM processor error injection for ARM processor
+> +events, being compatible with UEFI 2.9A Errata.
+> +
+> +This small utility works together with those QEMU additions:
+> +- https://gitlab.com/mchehab_kernel/qemu/-/tree/arm-error-inject-v2
+> +"""
+> +
+> +def main():
+> +    """Main program"""
+> +
+> +    # Main parser - handle generic args like QEMU QMP TCP socket options
+> +    parser = argparse.ArgumentParser(prog="einj.py",
+> +                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+> +                                     usage="%(prog)s [options]",
+> +                                     description=EINJ_DESCRIPTION,
+> +                                     epilog="If a field is not defined, a default value will be applied by QEMU.")
+> +
+> +    g_options = parser.add_argument_group("QEMU QMP socket options")
+> +    g_options.add_argument("-H", "--host", default="localhost", type=str,
+> +                           help="host name")
+> +    g_options.add_argument("-P", "--port", default=4445, type=int,
+> +                           help="TCP port number")
+> +
+> +    arm_einj = ArmProcessorEinj()
+> +
+> +    # Call subparsers
+> +    subparsers = parser.add_subparsers(dest='command')
+> +
+> +    arm_einj.create_subparser(subparsers)
+> +
+> +    args = parser.parse_args()
+> +
+> +    # Handle subparser commands
+> +    if args.command == "arm":
+> +        arm_einj.parse_args(args)
+> +        arm_einj.run(args.host, args.port)
+> +
+> +
+> +if __name__ == "__main__":
+> +    main()
+> diff --git a/scripts/qmp_helper.py b/scripts/qmp_helper.py
+> new file mode 100644
+> index 000000000000..13fae7a7af0e
+> --- /dev/null
+> +++ b/scripts/qmp_helper.py
+> @@ -0,0 +1,249 @@
+> +#!/usr/bin/env python3
+> +#
+> +# pylint: disable=C0301, C0114, R0912, R0913, R0915, W0511
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (C) 2024 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> +
+> +import json
+> +import socket
+> +import sys
+> +
+> +from base64 import b64encode
+> +
+> +#
+> +# Socket QMP send command
+> +#
+> +def qmp_command(host, port, guid, data):
+> +    """Send commands to QEMU though QMP TCP socket"""
+> +
+> +    # Fill the commands to be sent
+> +    commands = []
+> +
+> +    # Needed to negotiate QMP and for QEMU to accept the command
+> +    commands.append('{ "execute": "qmp_capabilities" } ')
+> +
+> +    base64_data = b64encode(bytes(data)).decode('ascii')
+> +
+> +    cmd_arg = {
+> +        'cper': {
+> +            'notification-type': guid,
+> +            "raw-data": base64_data
+> +        }
+> +    }
+> +
+> +    command = '{ "execute": "ghes-cper", '
+> +    command += '"arguments": ' + json.dumps(cmd_arg) + " }"
+> +
+> +    commands.append(command)
+> +
+> +    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+> +    try:
+> +        s.connect((host, port))
+> +    except ConnectionRefusedError:
+> +        sys.exit(f"Can't connect to QMP host {host}:{port}")
+> +
+> +    data = s.recv(1024)
+> +    try:
+> +        obj = json.loads(data.decode("utf-8"))
+> +    except json.JSONDecodeError as e:
+> +        print(f"Invalid QMP answer: {e}")
+> +        s.close()
+> +        return
+> +
+> +    if "QMP" not in obj:
+> +        print(f"Invalid QMP answer: {data.decode("utf-8")}")
+> +        s.close()
+> +        return
+> +
+> +    for i, command in enumerate(commands):
+> +        s.sendall(command.encode("utf-8"))
+> +        data = s.recv(1024)
+> +        try:
+> +            obj = json.loads(data.decode("utf-8"))
+> +        except json.JSONDecodeError as e:
+> +            print(f"Invalid QMP answer: {e}")
+> +            s.close()
+> +            return
+> +
+> +        if isinstance(obj.get("return"), dict):
+> +            if obj["return"]:
+> +                print(json.dumps(obj["return"]))
+> +            elif i > 0:
+> +                print("Error injected.")
+> +        elif isinstance(obj.get("error"), dict):
+> +            error = obj["error"]
+> +            print(f'{error["class"]}: {error["desc"]}')
+> +        else:
+> +            print(json.dumps(obj))
+> +
+> +    s.shutdown(socket.SHUT_WR)
+> +    while 1:
+> +        data = s.recv(1024)
+> +        if data == b"":
+> +            break
+> +        try:
+> +            obj = json.loads(data.decode("utf-8"))
+> +        except json.JSONDecodeError as e:
+> +            print(f"Invalid QMP answer: {e}")
+> +            s.close()
+> +            return
+> +
+> +        if isinstance(obj.get("return"), dict):
+> +            print(json.dumps(obj["return"]))
+> +        if isinstance(obj.get("error"), dict):
+> +            error = obj["error"]
+> +            print(f'{error["class"]}: {error["desc"]}')
+> +        else:
+> +            print(json.dumps(obj))
+> +
+> +    s.close()
+> +
+> +
+> +#
+> +# Helper routines to handle multiple choice arguments
+> +#
+> +def get_choice(name, value, choices, suffixes=None):
+> +    """Produce a list from multiple choice argument"""
+> +
+> +    new_values = 0
+> +
+> +    if not value:
+> +        return new_values
+> +
+> +    for val in value.split(","):
+> +        val = val.lower()
+> +
+> +        if suffixes:
+> +            for suffix in suffixes:
+> +                val = val.removesuffix(suffix)
+> +
+> +        if val not in choices.keys():
+> +            sys.exit(f"Error on '{name}': choice {val} is invalid.")
+> +
+> +        val = choices[val]
+> +
+> +        new_values |= val
+> +
+> +    return new_values
+> +
+> +
+> +def get_mult_array(mult, name, values, allow_zero=False, max_val=None):
+> +    """Add numbered hashes from integer lists"""
+> +
+> +    if not allow_zero:
+> +        if not values:
+> +            return
+> +    else:
+> +        if values is None:
+> +            return
+> +
+> +        if not values:
+> +            i = 0
+> +            if i not in mult:
+> +                mult[i] = {}
+> +
+> +            mult[i][name] = []
+> +            return
+> +
+> +    i = 0
+> +    for value in values:
+> +        for val in value.split(","):
+> +            try:
+> +                val = int(val, 0)
+> +            except ValueError:
+> +                sys.exit(f"Error on '{name}': {val} is not an integer")
+> +
+> +            if val < 0:
+> +                sys.exit(f"Error on '{name}': {val} is not unsigned")
+> +
+> +            if max_val and val > max_val:
+> +                sys.exit(f"Error on '{name}': {val} is too little")
+> +
+> +            if i not in mult:
+> +                mult[i] = {}
+> +
+> +            if name not in mult[i]:
+> +                mult[i][name] = []
+> +
+> +            mult[i][name].append(val)
+> +
+> +        i += 1
+> +
+> +
+> +def get_mult_choices(mult, name, values, choices,
+> +                     suffixes=None, allow_zero=False):
+> +    """Add numbered hashes from multiple choice arguments"""
+> +
+> +    if not allow_zero:
+> +        if not values:
+> +            return
+> +    else:
+> +        if values is None:
+> +            return
+> +
+> +    i = 0
+> +    for val in values:
+> +        new_values = get_choice(name, val, choices, suffixes)
+> +
+> +        if i not in mult:
+> +            mult[i] = {}
+> +
+> +        mult[i][name] = new_values
+> +        i += 1
+> +
+> +
+> +def get_mult_int(mult, name, values, allow_zero=False):
+> +    """Add numbered hashes from integer arguments"""
+> +    if not allow_zero:
+> +        if not values:
+> +            return
+> +    else:
+> +        if values is None:
+> +            return
+> +
+> +    i = 0
+> +    for val in values:
+> +        try:
+> +            val = int(val, 0)
+> +        except ValueError:
+> +            sys.exit(f"Error on '{name}': {val} is not an integer")
+> +
+> +        if val < 0:
+> +            sys.exit(f"Error on '{name}': {val} is not unsigned")
+> +
+> +        if i not in mult:
+> +            mult[i] = {}
+> +
+> +        mult[i][name] = val
+> +        i += 1
+> +
+> +
+> +#
+> +# Data encode helper functions
+> +#
+> +def bit(b):
+> +    """Simple macro to define a bit on a bitmask"""
+> +    return 1 << b
+> +
+> +
+> +def data_add(data, value, num_bytes):
+> +    """Adds bytes from value inside a bitarray"""
+> +
+> +    data.extend(value.to_bytes(num_bytes, byteorder="little"))
+> +
+> +def to_guid(time_low, time_mid, time_high, nodes):
+> +    """Create an GUID string"""
+> +
+> +    assert(len(nodes) == 8)
+> +
+> +    clock = nodes[0] << 8 | nodes[1]
+> +
+> +    node = 0
+> +    for i in range(2, len(nodes)):
+> +        node = node << 8 | nodes[i]
+> +
+> +    s = f"{time_low:08x}-{time_mid:04x}-"
+> +    s += f"{time_high:04x}-{clock:04x}-{node:012x}"
+> +
+> +    return s
 
 
