@@ -1,72 +1,80 @@
-Return-Path: <linux-kernel+bounces-276430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1240F94938D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:47:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3851594938C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7222868FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ACFF1C20A80
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4271D27A3;
-	Tue,  6 Aug 2024 14:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71601D2795;
+	Tue,  6 Aug 2024 14:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2PtbaYt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bs05C8G2"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5A218D637;
-	Tue,  6 Aug 2024 14:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B74017ADFD;
+	Tue,  6 Aug 2024 14:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955623; cv=none; b=rWimz83/9PXe5m354p/vdIMuBLw/dgxhK1zyFaEH4aRb25eSTPmecT4V/iTgm4B9pL1AQ2SbbO5meRddyW9PPkXmjZr4ca222ibmApkFIB4TCzSrB3/HylRKD5JccQpRfkO2WSvf92WqOgLkomfyq5mfzHM3m+bpJPViiiiIJzY=
+	t=1722955599; cv=none; b=dZKJpV6vnd0KQ0PGvww4NMvefB08QTx6zJzdAMqBzHT58YVGrWXPc8eb7mf4c1CM1/qhwbNbgWpgWWAEaHRjhJgfwnXAHv6/iXE7sQZ6JECUO4RxYEF0Lr2BWPpIv9bo4VhQ9a3VfedLWt0ylfAhbEItqeKDZAh1e41ErHjmIR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955623; c=relaxed/simple;
-	bh=Y5cnqlYZvFN6cWFHE9qVDfBZuNNP2KiMh9AisNZvLTA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B15SPvn2ubSksbwXXI3LbhbClcseFrkfD8hi6qTbIArQWPr3nG4+YR50QKi5n3pOuTMU3SCX1cui3jf7iPYCmNYAqqrC86yFB7rD1+D3eHUOilB+2JDKVE3kfTnVzAbZ3hHC14738B5K6poZnR57EejCDNOIJUh9bPnCFMMYQC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2PtbaYt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0BA1C32786;
-	Tue,  6 Aug 2024 14:46:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722955622;
-	bh=Y5cnqlYZvFN6cWFHE9qVDfBZuNNP2KiMh9AisNZvLTA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=f2PtbaYtlpBr4dZgWrLP4DSz+0sMAoCOJaf8PlESRaHiKNueurDE9IJVMYT+ERerp
-	 oBumhEUT12cbzB84fVrxmavyk80/teYOGHLwSdN1D6K9+KR4PHustrIOXInX1SElSA
-	 YMZUrtH9MyQjkpzDpU42qnmAwGFj6jBxKSa1iWe9WSoIfliMJO/MyuYX/b2yzJm0Rz
-	 ZFAx7D4lVZz+FQbkISq0r+nT6bmiG4r62iAU0r1OAkT9HZ35/WwyoJhWGvPaeMpNRV
-	 NskOt/DARBB63AmPPmSVeAwyppfkBA+FxkZ5Jeu2v+CnLaGENA5+rj/8isxmi9idYj
-	 5mh7ctuAZbUkg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	rust-for-linux@vger.kernel.org,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	llvm@lists.linux.dev,
-	"H. Peter Anvin" <hpa@zytor.com>,
+	s=arc-20240116; t=1722955599; c=relaxed/simple;
+	bh=RmBbJu1TgpSzvGALuwZTXfGVwNT54c2Lub564D6jxCc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KjBrG3E9kfd42wgcZl1PYruLX03ObZZv3gBi7l9csbwHfW/f0h6PL7whSo3VkczI4DB7iv5gHH6U0fXy6hEn1aEB9Wv7WwRHaa8K8q9aRtIhXQtBTyBVRUrdc0SNHZo8zCRxDsVD/cJizxYwaf4HjGEUkbqE93UfjfYqjZq+JRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bs05C8G2; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a728f74c23dso84029666b.1;
+        Tue, 06 Aug 2024 07:46:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722955595; x=1723560395; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgP2wWVmL6FM6THg0mvDQ9WSWyQkjMnUEneO3058pTM=;
+        b=bs05C8G2WBBCGAJQMxjI/4v3GPyYBA4+jawx7eAGm5yDvj09FuJ3tPKt7/oLAjyOXD
+         H1TwBr2toUpBwe1EmAwK+J7kGMj6yRUFcpZAGXWvPRZKUColvIA1sp9RBsiIL6vU2WZJ
+         RibiOjQaFGe0IMPihIFcZ7DVgDgo38FAi3XafjS+xfz9V+7W/g4XZQJe3h8R/Ql3fvwU
+         hkybjBLeDVRPDsZ5w5FMRFX23R2b4NxLtFNfo5PSnKY5RHYdL29zZMFACbQWRUIaaWfz
+         tJvobVFy1cjbQ7tH9hoeykZ6yn1gn4to6MVvCnu6gkwmQmanePfPJAIXH+kRH7pSdWDe
+         DuLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722955595; x=1723560395;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lgP2wWVmL6FM6THg0mvDQ9WSWyQkjMnUEneO3058pTM=;
+        b=pIVwaFqklkJ4MrkrQjXIbaISyFVSppNJ3T9n05kGd7nqDbfZcUfgwt4RHBBNR87WKX
+         yE/rxYM1l5vgfHQS/igA/LXoD+ibzy4F/JjKymV00eSdf3usuppZNvnYobWlXzhmOToH
+         2tMIcZe0RDmFpsOWbxipkmczPkuJytuIkLu8KI2Qyov5/42pR+YbBO+Sy5O0Vk4SEgpA
+         OlGEt29+ChkHqgYkaYohbEtitQ7cnny4PuT529fhs343+wgihbVEDDnV2XmrWlHvi0nK
+         x+pCe8ClD7XS5g6pHmZpkhYUnEjmGlzJxRIbEKjxinUAuzqtzq00fY5oPem1BrpELdpP
+         aMOA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9glFv3blPNIYiDRsEMXINTz/l0XrhilTKBoG5Q9a6/FLB+9MvHGLFmLsLesS75F5w8G9ZFSq/SN1c42wioVgcdEMWqHRj/SHtCJBZtpXA8xOu1XLtfO+/KLH6JT3k48ix6Uq6l5tbhxwlAw==
+X-Gm-Message-State: AOJu0YzA0gz1LY2qZc/zLS4gxE2QK9K7jQUyKUEvMPnpxzDuv3+2j7KS
+	XZBg5YIjuN+M2HVXfFg0CCuZKCNIhaRJZW+qSv/xuytRHepAK7Le
+X-Google-Smtp-Source: AGHT+IGvn80pGS6jhKSCW5CgiBEcqEjIUKYOWYxFMZxnz85DufNBz7RztlGtiII14Nc8uiEg1hoxuA==
+X-Received: by 2002:a17:907:1c19:b0:a6f:4fc8:2666 with SMTP id a640c23a62f3a-a7dc506ce86mr1193200066b.44.1722955595066;
+        Tue, 06 Aug 2024 07:46:35 -0700 (PDT)
+Received: from f.. (cst-prg-92-246.cust.vodafone.cz. [46.135.92.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d42680sm553768566b.118.2024.08.06.07.46.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 07:46:34 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
 	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Nikita Popov <github@npopov.com>
-Subject: [PATCH] rust: x86: remove `-3dnow{,a}` from target features
-Date: Tue,  6 Aug 2024 16:45:58 +0200
-Message-ID: <20240806144558.114461-1-ojeda@kernel.org>
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] vfs: avoid spurious dentry ref/unref cycle on open
+Date: Tue,  6 Aug 2024 16:46:28 +0200
+Message-ID: <20240806144628.874350-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,80 +83,209 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-LLVM 19 is dropping support for 3DNow! in commit f0eb5587ceeb ("Remove
-support for 3DNow!, both intrinsics and builtins. (#96246)"):
+Opening a file grabs a reference on the terminal dentry in
+__legitimize_path(), then another one in do_dentry_open() and finally
+drops the initial reference in terminate_walk().
 
-    Remove support for 3DNow!, both intrinsics and builtins. (#96246)
+That's 2 modifications which don't need to be there -- do_dentry_open()
+can consume the already held reference instead.
 
-    This set of instructions was only supported by AMD chips starting in
-    the K6-2 (introduced 1998), and before the "Bulldozer" family
-    (2011). They were never much used, as they were effectively superseded
-    by the more-widely-implemented SSE (first implemented on the AMD side
-    in Athlon XP in 2001).
+In order to facilitate some debugging a dedicated namei state flag was
+added to denote this happened.
 
-    This is being done as a predecessor towards general removal of MMX
-    register usage. Since there is almost no usage of the 3DNow!
-    intrinsics, and no modern hardware even implements them, simple
-    removal seems like the best option.
+When benchmarking on a 20-core vm using will-it-scale's open3_processes
+("Same file open/close"), the results are (ops/s):
+before:	3087010
+after:	4173977 (+35%)
 
-Thus we should avoid passing these to the backend, since otherwise we
-get a diagnostic about it:
-
-    '-3dnow' is not a recognized feature for this target (ignoring feature)
-    '-3dnowa' is not a recognized feature for this target (ignoring feature)
-
-We could try to disable them only up to LLVM 19 (not the C side one,
-but the one used by `rustc`, which may be built with a range of
-LLVMs). However, to avoid more complexity, we can likely just remove
-them altogether. According to Nikita [2]:
-
-> I don't think it's needed because LLVM should not generate 3dnow
-instructions unless specifically asked to, using intrinsics that Rust
-does not provide in the first place.
-
-Thus do so, like Rust did for one of their builtin targets [3].
-
-For those curious: Clang will warn only about trying to enable them
-(`-m3dnow{,a}`), but not about disabling them (`-mno-3dnow{,a}`), so
-there is no change needed there.
-
-Cc: Nikita Popov <github@npopov.com>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: x86@kernel.org
-Link: https://github.com/llvm/llvm-project/commit/f0eb5587ceeb641445b64cb264c822b4751de04a [1]
-Link: https://github.com/rust-lang/rust/pull/127864#issuecomment-2235898760 [2]
-Link: https://github.com/rust-lang/rust/pull/127864 [3]
-Closes: https://github.com/Rust-for-Linux/linux/issues/1094
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- scripts/generate_rust_target.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/generate_rust_target.rs b/scripts/generate_rust_target.rs
-index 87f34925eb7b..404edf7587e0 100644
---- a/scripts/generate_rust_target.rs
-+++ b/scripts/generate_rust_target.rs
-@@ -162,7 +162,7 @@ fn main() {
-             "data-layout",
-             "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128",
-         );
--        let mut features = "-3dnow,-3dnowa,-mmx,+soft-float".to_string();
-+        let mut features = "-mmx,+soft-float".to_string();
-         if cfg.has("MITIGATION_RETPOLINE") {
-             features += ",+retpoline-external-thunk";
-         }
-@@ -179,7 +179,7 @@ fn main() {
-             "data-layout",
-             "e-m:e-p:32:32-p270:32:32-p271:32:32-p272:64:64-i128:128-f64:32:64-f80:32-n8:16:32-S128",
-         );
--        let mut features = "-3dnow,-3dnowa,-mmx,+soft-float".to_string();
-+        let mut features = "-mmx,+soft-float".to_string();
-         if cfg.has("MITIGATION_RETPOLINE") {
-             features += ",+retpoline-external-thunk";
-         }
+The flag thing is optional and can be dropped, but I think the general
+direction should be to add *more* asserts and whatnot (even if they are
+to land separately). A debug-only variant would not hurt.
 
-base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
+The entire "always consume regardless of error" ordeal stems from the
+corner case where open succeeds with a fully populated file object and
+then returns an error anyway. While odd, it does mean error handling
+does not get more complicated at least.
+
+ fs/internal.h |  3 ++-
+ fs/namei.c    | 30 +++++++++++++++++++++++-------
+ fs/open.c     | 31 ++++++++++++++++++++++++++++---
+ 3 files changed, 53 insertions(+), 11 deletions(-)
+
+diff --git a/fs/internal.h b/fs/internal.h
+index cdd73209eecb..9eeb7e03f81d 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -193,7 +193,8 @@ int chmod_common(const struct path *path, umode_t mode);
+ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+ 		int flag);
+ int chown_common(const struct path *path, uid_t user, gid_t group);
+-extern int vfs_open(const struct path *, struct file *);
++int vfs_open_consume(const struct path *, struct file *);
++int vfs_open(const struct path *, struct file *);
+ 
+ /*
+  * inode.c
+diff --git a/fs/namei.c b/fs/namei.c
+index 1bf081959066..20c5823d34dc 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -595,9 +595,10 @@ struct nameidata {
+ 	umode_t		dir_mode;
+ } __randomize_layout;
+ 
+-#define ND_ROOT_PRESET 1
+-#define ND_ROOT_GRABBED 2
+-#define ND_JUMPED 4
++#define ND_ROOT_PRESET		0x00000001
++#define ND_ROOT_GRABBED 	0x00000002
++#define ND_JUMPED 		0x00000004
++#define ND_PATH_CONSUMED 	0x00000008
+ 
+ static void __set_nameidata(struct nameidata *p, int dfd, struct filename *name)
+ {
+@@ -697,6 +698,7 @@ static void terminate_walk(struct nameidata *nd)
+ 			nd->state &= ~ND_ROOT_GRABBED;
+ 		}
+ 	} else {
++		BUG_ON(nd->state & ND_PATH_CONSUMED);
+ 		leave_rcu(nd);
+ 	}
+ 	nd->depth = 0;
+@@ -3683,6 +3685,7 @@ static const char *open_last_lookups(struct nameidata *nd,
+ static int do_open(struct nameidata *nd,
+ 		   struct file *file, const struct open_flags *op)
+ {
++	struct vfsmount *mnt;
+ 	struct mnt_idmap *idmap;
+ 	int open_flag = op->open_flag;
+ 	bool do_truncate;
+@@ -3720,11 +3723,22 @@ static int do_open(struct nameidata *nd,
+ 		error = mnt_want_write(nd->path.mnt);
+ 		if (error)
+ 			return error;
++		/*
++		 * We grab an additional reference here because vfs_open_consume()
++		 * may error out and free the mount from under us, while we need
++		 * to undo write access below.
++		 */
++		mnt = mntget(nd->path.mnt);
+ 		do_truncate = true;
+ 	}
+ 	error = may_open(idmap, &nd->path, acc_mode, open_flag);
+-	if (!error && !(file->f_mode & FMODE_OPENED))
+-		error = vfs_open(&nd->path, file);
++	if (!error && !(file->f_mode & FMODE_OPENED)) {
++		BUG_ON(nd->state & ND_PATH_CONSUMED);
++		error = vfs_open_consume(&nd->path, file);
++		nd->state |= ND_PATH_CONSUMED;
++		nd->path.mnt = NULL;
++		nd->path.dentry = NULL;
++	}
+ 	if (!error)
+ 		error = security_file_post_open(file, op->acc_mode);
+ 	if (!error && do_truncate)
+@@ -3733,8 +3747,10 @@ static int do_open(struct nameidata *nd,
+ 		WARN_ON(1);
+ 		error = -EINVAL;
+ 	}
+-	if (do_truncate)
+-		mnt_drop_write(nd->path.mnt);
++	if (do_truncate) {
++		mnt_drop_write(mnt);
++		mntput(mnt);
++	}
+ 	return error;
+ }
+ 
+diff --git a/fs/open.c b/fs/open.c
+index 22adbef7ecc2..eb69af3676e3 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -905,6 +905,15 @@ static inline int file_get_write_access(struct file *f)
+ 	return error;
+ }
+ 
++/*
++ * Populate struct file
++ *
++ * NOTE: it assumes f_path is populated and consumes the caller's reference.
++ *
++ * The caller must not path_put on it regardless of the error code -- the
++ * routine will either clean it up on its own or rely on fput, which must
++ * be issued anyway.
++ */
+ static int do_dentry_open(struct file *f,
+ 			  int (*open)(struct inode *, struct file *))
+ {
+@@ -912,7 +921,6 @@ static int do_dentry_open(struct file *f,
+ 	struct inode *inode = f->f_path.dentry->d_inode;
+ 	int error;
+ 
+-	path_get(&f->f_path);
+ 	f->f_inode = inode;
+ 	f->f_mapping = inode->i_mapping;
+ 	f->f_wb_err = filemap_sample_wb_err(f->f_mapping);
+@@ -1045,6 +1053,7 @@ int finish_open(struct file *file, struct dentry *dentry,
+ 	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
+ 
+ 	file->f_path.dentry = dentry;
++	path_get(&file->f_path);
+ 	return do_dentry_open(file, open);
+ }
+ EXPORT_SYMBOL(finish_open);
+@@ -1077,15 +1086,19 @@ char *file_path(struct file *filp, char *buf, int buflen)
+ EXPORT_SYMBOL(file_path);
+ 
+ /**
+- * vfs_open - open the file at the given path
++ * vfs_open_consume - open the file at the given path and consume the reference
+  * @path: path to open
+  * @file: newly allocated file with f_flag initialized
+  */
+-int vfs_open(const struct path *path, struct file *file)
++int vfs_open_consume(const struct path *path, struct file *file)
+ {
+ 	int ret;
+ 
+ 	file->f_path = *path;
++	/*
++	 * do_dentry_open() does the referene consuming regardless of its return
++	 * value
++	 */
+ 	ret = do_dentry_open(file, NULL);
+ 	if (!ret) {
+ 		/*
+@@ -1098,6 +1111,17 @@ int vfs_open(const struct path *path, struct file *file)
+ 	return ret;
+ }
+ 
++/**
++ * vfs_open - open the file at the given path
++ * @path: path to open
++ * @file: newly allocated file with f_flag initialized
++ */
++int vfs_open(const struct path *path, struct file *file)
++{
++	path_get(path);
++	return vfs_open_consume(path, file);
++}
++
+ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *cred)
+ {
+@@ -1183,6 +1207,7 @@ struct file *kernel_file_open(const struct path *path, int flags,
+ 		return f;
+ 
+ 	f->f_path = *path;
++	path_get(&f->f_path);
+ 	error = do_dentry_open(f, NULL);
+ 	if (error) {
+ 		fput(f);
 -- 
-2.46.0
+2.43.0
 
 
