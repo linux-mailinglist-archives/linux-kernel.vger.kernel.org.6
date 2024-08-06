@@ -1,119 +1,155 @@
-Return-Path: <linux-kernel+bounces-276295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B6B9491D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:42:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7CB9491D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3E7A1F23AC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:42:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09060B235C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BDE1D2F7A;
-	Tue,  6 Aug 2024 13:42:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D4E1D2F56;
-	Tue,  6 Aug 2024 13:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF6E1D417F;
+	Tue,  6 Aug 2024 13:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="vJ+Ta7uF"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849BD1D2F5E
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951728; cv=none; b=F6UNfz+GURncVUSDXT61n+987wNvmZS7pjUEqC+9TqVrbjhtBLSZVilmpZkTAtttIbJVWtzhScPtvBehdRojkphq0LLc7hxoOQDgUVjPhh9dCUu4jU7k5eFRfa4VMEgxEYELh6kADJL1gvhTh3jy6r0GUDSbSEcnuu+lRldAHkk=
+	t=1722951754; cv=none; b=lz07pIlR8Y9REoDqienzwcASE1J/qpVUl0YNn488y44r64aXxZZ/y25F4ddF2kJgnR8yoYIQS15CFy5CokVpBcvBGaAnknA5IBMDiH9C9EjVTPQzwvPVkQhiqHyyGMjfJ7KB6rb2eC29/+JEZrB5hNjbdoSbJ/DtTJRyrP8Irac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951728; c=relaxed/simple;
-	bh=pzyYkc0zT5UTgprpaHKFqWUJ4uyiWupZGk5utdJHzLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftbVEYdfU7z3KJCesQaJFpocGM+hYrcQufncwRkxDECaW3qxkIQVD19KfnZFm9GFKi+Og/GsGh8pwdM0WxJHWjDHcxvvEBlAq+/Zxt2rZ4z3AALXlP82U8TQfUF+nl6X1vlPrkOXt2uy+FFe6eX/0Jb0jAntyRaUV3AFEcoQyzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACBEEFEC;
-	Tue,  6 Aug 2024 06:42:31 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AFD13F766;
-	Tue,  6 Aug 2024 06:42:05 -0700 (PDT)
-Date: Tue, 6 Aug 2024 14:42:02 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Etienne Carriere <etienne.carriere@foss.st.com>,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] firmware: arm_scmi: fix voltage description in failure
- cases
-Message-ID: <ZrIoKiQVLKuA-YWh@bogus>
-References: <20240725065317.3758165-1-etienne.carriere@foss.st.com>
- <ZqO9s9YzYjaCHSap@bogus>
- <ZqtqS9x65zs4qXdt@pluto>
+	s=arc-20240116; t=1722951754; c=relaxed/simple;
+	bh=n7HWtJ2Q5oFAz2w27Cnx+HGUSNBLUy2DLPoYOD+2aZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fPRr4sWovb67J6RVU9smK+Gv4yTJMVnprd2Sdr4csSI2LH9e1cMgyKtD2U9ky2y/1XGiKKbxy4f5FLbVROP+Xb0uTYPme63gJdkrjbDpNKYBEpkSn5oMyH6bh/hFv9dYqB5ccpr1aJw1q7SuhogNKfYehcqpqR5RtD54N59xXnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=vJ+Ta7uF; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
+	by cmsmtp with ESMTPS
+	id bEHrs9UyUVpzpbKSHsOoJ2; Tue, 06 Aug 2024 13:42:25 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id bKSFsAKrARBkMbKSGs3knm; Tue, 06 Aug 2024 13:42:24 +0000
+X-Authority-Analysis: v=2.4 cv=CbPD56rl c=1 sm=1 tr=0 ts=66b22840
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=dkpxNnpPgF_yB_CXFPwA:9
+ a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=3t1+IP/qL/b1YIZ9yGD29vrZYQYidH1DMEuJE91dz9Y=; b=vJ+Ta7uF7VP9ifckAl/LUmNjo1
+	cVOgXpSfoMNe5WP3GUeuh7vcP5G0vBy2WtE32lx1Crdb31GMqyjNglYjsQ2JzEnOr54gQp9HuYYSt
+	J54F52l/Uu7INvGnj/HGgW3WRm4xbmrFKY2SnFv/LBl/+yNZWIFWlPgaTGHm4bk7FqOJdfUfM8EHt
+	T9L3lm7PfNyhde40L4E/hn3dz7EPEioVJGoXIqZfk+6u1b6rTSWj0TpRzjtg3YT+/+zBgxcI+E+Xt
+	idkKM/faKzyq7XtdwmKlB9MnfHe0M1Gthfnypt8zStNUyjH3J0sGmhMTXeej+UHkPQex3ewoPQ+ko
+	6ssNuk0w==;
+Received: from [201.172.173.139] (port=56644 helo=[192.168.15.5])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sbKSF-003FWx-1G;
+	Tue, 06 Aug 2024 08:42:23 -0500
+Message-ID: <8e19df11-a64b-4fae-863a-c141612a3d36@embeddedor.com>
+Date: Tue, 6 Aug 2024 07:42:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqtqS9x65zs4qXdt@pluto>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] [PATCH][next] net: atlantic: Aavoid
+ -Wflex-array-member-not-at-end warnings
+To: Igor Russkikh <irusskikh@marvell.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <ZrDwoVKH8d6TdVxn@cute>
+ <0d0a030c-b1ba-77a7-71f5-55448f6797f6@marvell.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <0d0a030c-b1ba-77a7-71f5-55448f6797f6@marvell.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sbKSF-003FWx-1G
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.5]) [201.172.173.139]:56644
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfCFhuo14x3GjX4h71I2n7bh2RuTadhWlLPcoGkVD8sDRPfFNhej2WiOrPItoOYrWuxBOX4hFbH8dqqMMZ8hOwXvQ5UO6tc4VSaXvU4l3NF315HBBKSVV
+ MxtyeISgMRISpBMfkAlKVHM8/VaVv/0cXFt1MdGSxg8IoSLHZursXTCTXLbthF55S5vjzDUDp08azj6HHMlsPy44ZtuaDuDIznJ9EUEnAIWyiO3cLj6hGAaQ
 
-On Thu, Aug 01, 2024 at 11:58:19AM +0100, Cristian Marussi wrote:
-> On Fri, Jul 26, 2024 at 04:16:03PM +0100, Sudeep Holla wrote:
-> > On Thu, Jul 25, 2024 at 08:53:17AM +0200, Etienne Carriere wrote:
-> > > Reset the reception buffer max size when a voltage domain description
-> > > request fails, for example when the voltage domain returns an access
-> > > permission error (SCMI_ERR_ACCESS) unless what only a single 32bit
-> > > word is read back for the remaining voltage description requests
-> > > responses leading to invalid information. The side effect of this
-> > > issue is that the voltage regulators registered from those remaining
-> > > SCMI voltage domain were assigned a wrong regulator name.
-> > > 
-> > > Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
-> > > ---
-> > >  drivers/firmware/arm_scmi/voltage.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/firmware/arm_scmi/voltage.c b/drivers/firmware/arm_scmi/voltage.c
-> > > index 2175ffd6cef5..f1a7c04ae820 100644
-> > > --- a/drivers/firmware/arm_scmi/voltage.c
-> > > +++ b/drivers/firmware/arm_scmi/voltage.c
-> > > @@ -229,8 +229,10 @@ static int scmi_voltage_descriptors_get(const struct scmi_protocol_handle *ph,
-> > >  		/* Retrieve domain attributes at first ... */
-> > >  		put_unaligned_le32(dom, td->tx.buf);
-> > >  		/* Skip domain on comms error */
-> > > -		if (ph->xops->do_xfer(ph, td))
-> > > +		if (ph->xops->do_xfer(ph, td)) {
-> > > +			ph->xops->reset_rx_to_maxsz(ph, td);
-> > 
-> > I am fine with this to keep it simple, but thought I will check my thoughts.
-> > We usually use reset_rx_to_maxsz in iterators as we don't know the expected
-> > size of the response, whereas here it must be max sizeof(*resp_dom).
-> > 
-> > That said, we don't have any helpers and changing xfer->rx.len directly
-> > doesn't looks good ? Or may be it is OK ? Thoughts ?
+
+
+On 06/08/24 03:42, Igor Russkikh wrote:
 > 
-> We do not access those xfer internal field explicitly from the protocol layer
-> (beside once in Base)...and surely not on write....in the past I was even
-> tempted to try to make these internal stuff untouchable by the protocol layer...
-> ...that's the reason of course for the existence of reset_rx_to_maxsz() helpers
-> ....not sure if it is worth adding another helper for this, given that the
-> using the maxsz should have any adverse effect (unless I am missing
-> something of course :P).
 > 
-> This kind of 'issues' are really common whenever in the SCMI stack we
-> reuse the same allocated xfer across multiple do_xfers in a loop
-> (reusing seq_nums is another thing...) since we wanted to avoid the
-> penalty of resetting some of these automatically on each do_xfer()...
+> On 8/5/2024 5:32 PM, Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally. Move the conflicting declaration to
+>> the end of the structure. Notice that `struct hw_atl_utils_fw_rpc` ends in
+>> a flexible-array member
+>>
+>> Fix the following warnings:
+>>
+>> drivers/net/ethernet/aquantia/atlantic/aq_hw.h:197:36: warning: structure
+>> containing a flexible array member is not at the end of another structure
+>> [-Wflex-array-member-not-at-end]
+>>
+>> drivers/net/ethernet/aquantia/atlantic/hw_atl/../aq_hw.h:197:36: warning:
+>> structure containing a flexible array member is not at the end of another
+>> structure [-Wflex-array-member-not-at-end]
 > 
-> ....we could think of some mechanism to transparently reset/fill such xfer
-> fields automatically if the core detects a 'reuse'....got to check first,
-> though, if this does not break some of the current usage patterns...and
-> I would not say it is a high prio thing to explore as of now...
+> Hi Gustavo!
+> 
+> I was abit curious about this variable length structure, because it looks strange and not actually used by driver.
+> 
+> I've cross checked, and its really some outdated declaration. The structure is never used as as a flex sized struct.
+
+Oh, this is great to know. Thanks for looking into this!
+
+> 
+> So better would be to do just this:
+> 
+> --- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.h
+> +++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.h
+> @@ -226,7 +226,6 @@ struct __packed offload_info {
+>          struct offload_port_info ports;
+>          struct offload_ka_info kas;
+>          struct offload_rr_info rrs;
+> -       u8 buf[];
+>   };
+> 
+> Let me know if you want to submit this, or I can do this as well.
 > 
 
-Fair enough, I will merge this as is. I think it should be fine. My suggestion
-might simply complicates things unnecessarily. Lets not do it unless this
-becomes repeating pattern.
+Feel free to send a patch if you wish. :)
 
--- 
-Regards,
-Sudeep
+Thanks!
+--
+Gustavo
 
