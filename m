@@ -1,146 +1,333 @@
-Return-Path: <linux-kernel+bounces-276745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE699497E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:58:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85BF9497DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D797A1F234DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:58:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F403B23CE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2DD145341;
-	Tue,  6 Aug 2024 18:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08E882498;
+	Tue,  6 Aug 2024 18:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gc7Z832/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqFqbAUH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868838F77;
-	Tue,  6 Aug 2024 18:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFC28F77;
+	Tue,  6 Aug 2024 18:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722970692; cv=none; b=NZGA2rtQ1nSkx6/55ShtG225Gxiy6iffuKVN2CHJMaimz6dLHC39ioxNDP0qvzxTyCQwUkWEEuetpmEadFfslWIhrlCmM2OnfbxONMXUjwApRn3VsBnlMD+inigpNGpsTgLAWf2Dtw4R63uSMtSg50ERJUCmjyq0ZOdYcxibZj8=
+	t=1722970685; cv=none; b=bAPsK1ebbe9gnTN51xmfHJHedKqK41qD/eMTSabnvY7EB1mAWUwF/gEVOSe5HRb2s1+kqOGz8qHh01YLlHzo3rQd4yEOnN/FJbRUBAFuICYm20cboHWpoYLxRKHNTzEEENIQxEz+8lWV43E1uAmEvKgzUIDUYUmsvcLux+uFs14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722970692; c=relaxed/simple;
-	bh=CxyhdiqFzs0KCYLIqZCch2rfpOd55xLPflf6rfNePOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MsXGh0jN2nVpqT77OY7z5Y37InpBBUehO+zj0eikb1yfSuSjWZGieOUHbX0SmieJbRdRBF9qhZdjsqoaR+ITXg+8/y2jtxKbc0g1XGJTFTsY1yVp1Mr9htfIe+ken20sae0oo8x/ktno/WGVyAfKEE7pV8l/UXtq7xBHWKdo4h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gc7Z832/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6Unw013589;
-	Tue, 6 Aug 2024 18:58:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fNhD6pIC+oLP/zfHBFA5xgjXKbH5MKc03edOBncHJOI=; b=Gc7Z832/QOIKaCIp
-	y4kNKx5pRPhqRhfxeOjQyqgY55L9QM/SnJKD7xX3ymlV//pON+kai/qbCctEZMRL
-	23DkD/80y+ovLhecS6piy97dXq7QsWzaEhdLtyu0qfqZc0zBZxmWjGcEVUS7WJSN
-	h+hTtOi1YxELp6rwDe23tZ0UWpgED5xORreOvmm5xsD4nSogrwEygp7z1+9fKdzm
-	16l4hZx94yaSviYL3q1yZ1kplndR7dOijSpuPabseKNIYZhOP+pR45s3F0Rhwpwg
-	W9+vB6n790mfUPafs/3cLuLcNR5e9AYPF4uA/DaIbNLLRnd5Bq93m8s2UwG7uk9x
-	MkvF3w==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sa8f0j6u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Aug 2024 18:58:05 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 476Iw4no011042
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 Aug 2024 18:58:04 GMT
-Received: from [10.110.113.181] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 Aug 2024
- 11:58:03 -0700
-Message-ID: <622c0fd6-e4e2-6597-d0a2-ff449d7d2f59@quicinc.com>
-Date: Tue, 6 Aug 2024 11:58:02 -0700
+	s=arc-20240116; t=1722970685; c=relaxed/simple;
+	bh=XimH0OuNIUTLC54WyHG6saQ35XMNvhja1+IPfPU9k/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkIpqnCkEut9Tr2G3n91VEK3MqYWln3u3DOJy6EJAWwLBzIMKodetaSWGY9BwEZtzZs+PzhvAbQ696V8JVEhCZ6MNFxsmT9czB4DRnihAlN7TCBsCPWZ03jHgwO3Uos0mYBNUcgEiC1UrczqPI1WZeSvCWAsMD81+KwGG4EuP2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqFqbAUH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64701C32786;
+	Tue,  6 Aug 2024 18:58:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722970685;
+	bh=XimH0OuNIUTLC54WyHG6saQ35XMNvhja1+IPfPU9k/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cqFqbAUHYuQbPVnvuqQAElWSBkp5YetK7859aYaQEkMbl+2Vf0wG/H0Tig9nROcxl
+	 0eNIKbTWbW6lO59nmX2mqZN0c9g0mu4G33RDSk3mn0OT6wOo43kpuKyaTVnn06imQh
+	 8kfpnb+gq/qcKVC2tFbhssZffzdhhzZ6b1SliAqoHMydU33AMIU1mRxyd0dVflQn1e
+	 kBeF49GFrBu/rWu7CAhaNcVv7y5bqOkvIUPD4uP2+3TRUiN9AssUnJqhxxh4O7Xs8X
+	 Xl+ks2brMkNyjnP1ggJSrUm7EoboYIjYRAeacaNcq+ptpGGkvOX/ztTaeAOJtWBRKw
+	 /b7cwAp0AisNg==
+Date: Tue, 6 Aug 2024 11:58:04 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: chandan.babu@oracle.com, dchinner@redhat.com, hch@lst.de,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v2 04/13] xfs: make EOF allocation simpler
+Message-ID: <20240806185804.GH623936@frogsfrogsfrogs>
+References: <20240705162450.3481169-1-john.g.garry@oracle.com>
+ <20240705162450.3481169-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 0/8] Enable EUD on Qualcomm sm8450 SoC
-Content-Language: en-US
-To: Caleb Connolly <caleb.connolly@linaro.org>,
-        Elson Roy Serrao
-	<quic_eserrao@quicinc.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <gregkh@linuxfoundation.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
-References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
- <023d4ea8-635d-435f-bae2-87284f70123b@linaro.org>
- <2a17eaca-54af-d1fa-304d-c7e0afd85b33@quicinc.com>
- <32f23133-c494-46c1-a1f7-cabddb6331a8@linaro.org>
-From: Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <32f23133-c494-46c1-a1f7-cabddb6331a8@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: D3ARgBR9vxUPoXwXnrhNoEDelUJZiaYf
-X-Proofpoint-ORIG-GUID: D3ARgBR9vxUPoXwXnrhNoEDelUJZiaYf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_15,2024-08-06_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=792
- impostorscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408060133
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240705162450.3481169-5-john.g.garry@oracle.com>
 
-On 8/1/2024 3:52 AM, Caleb Connolly wrote:
-> Hi Trilok,
+On Fri, Jul 05, 2024 at 04:24:41PM +0000, John Garry wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> On 31/07/2024 21:58, Trilok Soni wrote:
->> On 7/31/2024 4:13 AM, Caleb Connolly wrote:
->>>>      2.) Proper routing of USB role switch notifications: EUD hub is physically
->>>>       present in between the USB connector and the USB controller. So the
->>>>       usb role switch notifications originating from the connector should
->>>>       route through EUD. EUD also relies on role switch notifications to
->>>>       communicate with the USB, regarding EUD attach/detach events.
->>>>
->>>> This series aims at implementing the above aspects to enable EUD on
->>>> Qualcomm sm8450 SoC.
->>>
->>> Are there any plans to make this feature available for folks outside of Qualcomm / an NDA?
->>>
->>> There is an openOCD fork on CodeLinaro but it still requires some proprietary library which is only available to folks with a quicinc email as I understand it.
->>>
->>
->> Which codelinaro link are you referring here?
+> Currently the allocation at EOF is broken into two cases - when the
+> offset is zero and when the offset is non-zero. When the offset is
+> non-zero, we try to do exact block allocation for contiguous
+> extent allocation. When the offset is zero, the allocation is simply
+> an aligned allocation.
 > 
-> That would be https://git.codelinaro.org/clo/la/openocd-org/openocd/-/blob/qcom_changes/README_QCOM?ref_type=heads
+> We want aligned allocation as the fallback when exact block
+> allocation fails, but that complicates the EOF allocation in that it
+> now has to handle two different allocation cases. The
+> caller also has to handle allocation when not at EOF, and for the
+> upcoming forced alignment changes we need that to also be aligned
+> allocation.
 > 
-> Which says:
+> To simplify all this, pull the aligned allocation cases back into
+> the callers and leave the EOF allocation path for exact block
+> allocation only. This means that the EOF exact block allocation
+> fallback path is the normal aligned allocation path and that ends up
+> making things a lot simpler when forced alignment is introduced.
 > 
-> Qualcomm specific tools:
-> - Login to qpm.qualcomm.com
-> - QUTS: 1.64.1.39 (version & above)
-> - Qualcomm Host USB Product Suite - QUD QC only : 1.00.63 (supported version)
-> - EUD QC : 2.1.1 (supported version)
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/libxfs/xfs_bmap.c   | 129 +++++++++++++++----------------------
+>  fs/xfs/libxfs/xfs_ialloc.c |   2 +-
+>  2 files changed, 54 insertions(+), 77 deletions(-)
 > 
-> I believe the specific versions of QUD and EUD are only available to Qualcomm engineers and not even to OEMs, though I might be mistaken.
+> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+> index b5156bafb7be..4122a2da06ec 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.c
+> +++ b/fs/xfs/libxfs/xfs_bmap.c
+> @@ -3309,12 +3309,12 @@ xfs_bmap_select_minlen(
+>  static int
+>  xfs_bmap_btalloc_select_lengths(
+>  	struct xfs_bmalloca	*ap,
+> -	struct xfs_alloc_arg	*args,
+> -	xfs_extlen_t		*blen)
+> +	struct xfs_alloc_arg	*args)
+>  {
+>  	struct xfs_mount	*mp = args->mp;
+>  	struct xfs_perag	*pag;
+>  	xfs_agnumber_t		agno, startag;
+> +	xfs_extlen_t		blen = 0;
+>  	int			error = 0;
+>  
+>  	if (ap->tp->t_flags & XFS_TRANS_LOWMODE) {
+> @@ -3328,19 +3328,18 @@ xfs_bmap_btalloc_select_lengths(
+>  	if (startag == NULLAGNUMBER)
+>  		startag = 0;
+>  
+> -	*blen = 0;
+>  	for_each_perag_wrap(mp, startag, agno, pag) {
+> -		error = xfs_bmap_longest_free_extent(pag, args->tp, blen);
+> +		error = xfs_bmap_longest_free_extent(pag, args->tp, &blen);
+>  		if (error && error != -EAGAIN)
+>  			break;
+>  		error = 0;
+> -		if (*blen >= args->maxlen)
+> +		if (blen >= args->maxlen)
+>  			break;
+>  	}
+>  	if (pag)
+>  		xfs_perag_rele(pag);
+>  
+> -	args->minlen = xfs_bmap_select_minlen(ap, args, *blen);
+> +	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
+>  	return error;
+>  }
+>  
+> @@ -3550,78 +3549,40 @@ xfs_bmap_exact_minlen_extent_alloc(
+>   * If we are not low on available data blocks and we are allocating at
+>   * EOF, optimise allocation for contiguous file extension and/or stripe
+>   * alignment of the new extent.
+> - *
+> - * NOTE: ap->aeof is only set if the allocation length is >= the
+> - * stripe unit and the allocation offset is at the end of file.
+>   */
+>  static int
+>  xfs_bmap_btalloc_at_eof(
+>  	struct xfs_bmalloca	*ap,
+> -	struct xfs_alloc_arg	*args,
+> -	xfs_extlen_t		blen,
+> -	bool			ag_only)
+> +	struct xfs_alloc_arg	*args)
+>  {
+>  	struct xfs_mount	*mp = args->mp;
+>  	struct xfs_perag	*caller_pag = args->pag;
+> +	xfs_extlen_t		alignment = args->alignment;
+>  	int			error;
+>  
+> +	ASSERT(ap->aeof && ap->offset);
+> +	ASSERT(args->alignment >= 1);
+> +
+>  	/*
+> -	 * If there are already extents in the file, try an exact EOF block
+> -	 * allocation to extend the file as a contiguous extent. If that fails,
+> -	 * or it's the first allocation in a file, just try for a stripe aligned
+> -	 * allocation.
+> +	 * Compute the alignment slop for the fallback path so we ensure
+> +	 * we account for the potential alignemnt space required by the
+> +	 * fallback paths before we modify the AGF and AGFL here.
+>  	 */
+> -	if (ap->offset) {
+> -		xfs_extlen_t	alignment = args->alignment;
+> -
+> -		/*
+> -		 * Compute the alignment slop for the fallback path so we ensure
+> -		 * we account for the potential alignment space required by the
+> -		 * fallback paths before we modify the AGF and AGFL here.
+> -		 */
+> -		args->alignment = 1;
+> -		args->alignslop = alignment - args->alignment;
+> -
+> -		if (!caller_pag)
+> -			args->pag = xfs_perag_get(mp, XFS_FSB_TO_AGNO(mp, ap->blkno));
+> -		error = xfs_alloc_vextent_exact_bno(args, ap->blkno);
+> -		if (!caller_pag) {
+> -			xfs_perag_put(args->pag);
+> -			args->pag = NULL;
+> -		}
+> -		if (error)
+> -			return error;
+> -
+> -		if (args->fsbno != NULLFSBLOCK)
+> -			return 0;
+> -		/*
+> -		 * Exact allocation failed. Reset to try an aligned allocation
+> -		 * according to the original allocation specification.
+> -		 */
+> -		args->alignment = alignment;
+> -		args->alignslop = 0;
+> -	}
+> +	args->alignment = 1;
+> +	args->alignslop = alignment - args->alignment;
+>  
+> -	if (ag_only) {
+> -		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
+> -	} else {
+> +	if (!caller_pag)
+> +		args->pag = xfs_perag_get(mp, XFS_FSB_TO_AGNO(mp, ap->blkno));
+> +	error = xfs_alloc_vextent_exact_bno(args, ap->blkno);
+> +	if (!caller_pag) {
+> +		xfs_perag_put(args->pag);
+>  		args->pag = NULL;
+> -		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
+> -		ASSERT(args->pag == NULL);
+> -		args->pag = caller_pag;
+>  	}
+> -	if (error)
+> -		return error;
+>  
+> -	if (args->fsbno != NULLFSBLOCK)
+> -		return 0;
+> -
+> -	/*
+> -	 * Aligned allocation failed, so all fallback paths from here drop the
+> -	 * start alignment requirement as we know it will not succeed.
+> -	 */
+> -	args->alignment = 1;
+> -	return 0;
+> +	/* Reset alignment to original specifications.  */
+> +	args->alignment = alignment;
+> +	args->alignslop = 0;
+> +	return error;
+>  }
+>  
+>  /*
+> @@ -3687,12 +3648,19 @@ xfs_bmap_btalloc_filestreams(
+>  	}
+>  
+>  	args->minlen = xfs_bmap_select_minlen(ap, args, blen);
+> -	if (ap->aeof)
+> -		error = xfs_bmap_btalloc_at_eof(ap, args, blen, true);
+> +	if (ap->aeof && ap->offset)
+> +		error = xfs_bmap_btalloc_at_eof(ap, args);
+>  
+> +	/* This may be an aligned allocation attempt. */
+>  	if (!error && args->fsbno == NULLFSBLOCK)
+>  		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
+>  
+> +	/* Attempt non-aligned allocation if we haven't already. */
+> +	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
+> +		args->alignment = 1;
+> +		error = xfs_alloc_vextent_near_bno(args, ap->blkno);
 
-Thanks. So are we okay w/ one of the following option? (trying to understand the need here properly before I relay it internally). 
+and again going back a couple of submissions, do we have to zero
+alignslop here?
 
-Options:
+https://lore.kernel.org/linux-xfs/20240621203556.GU3058325@frogsfrogsfrogs/
 
-(1) Provide EUD library and tools - proprietary w/o any login requirement. 
-(2) Provide open-source EUD library and tools w/o any login requirement. 
+--D
 
-Is Option (1) fine to begin with or option 2 is must? 
-
-
--- 
----Trilok Soni
-
+> +	}
+> +
+>  out_low_space:
+>  	/*
+>  	 * We are now done with the perag reference for the filestreams
+> @@ -3714,7 +3682,6 @@ xfs_bmap_btalloc_best_length(
+>  	struct xfs_bmalloca	*ap,
+>  	struct xfs_alloc_arg	*args)
+>  {
+> -	xfs_extlen_t		blen = 0;
+>  	int			error;
+>  
+>  	ap->blkno = XFS_INO_TO_FSB(args->mp, ap->ip->i_ino);
+> @@ -3725,23 +3692,33 @@ xfs_bmap_btalloc_best_length(
+>  	 * the request.  If one isn't found, then adjust the minimum allocation
+>  	 * size to the largest space found.
+>  	 */
+> -	error = xfs_bmap_btalloc_select_lengths(ap, args, &blen);
+> +	error = xfs_bmap_btalloc_select_lengths(ap, args);
+>  	if (error)
+>  		return error;
+>  
+>  	/*
+> -	 * Don't attempt optimal EOF allocation if previous allocations barely
+> -	 * succeeded due to being near ENOSPC. It is highly unlikely we'll get
+> -	 * optimal or even aligned allocations in this case, so don't waste time
+> -	 * trying.
+> +	 * If we are in low space mode, then optimal allocation will fail so
+> +	 * prepare for minimal allocation and run the low space algorithm
+> +	 * immediately.
+>  	 */
+> -	if (ap->aeof && !(ap->tp->t_flags & XFS_TRANS_LOWMODE)) {
+> -		error = xfs_bmap_btalloc_at_eof(ap, args, blen, false);
+> -		if (error || args->fsbno != NULLFSBLOCK)
+> -			return error;
+> +	if (ap->tp->t_flags & XFS_TRANS_LOWMODE) {
+> +		ASSERT(args->fsbno == NULLFSBLOCK);
+> +		return xfs_bmap_btalloc_low_space(ap, args);
+> +	}
+> +
+> +	if (ap->aeof && ap->offset)
+> +		error = xfs_bmap_btalloc_at_eof(ap, args);
+> +
+> +	/* This may be an aligned allocation attempt. */
+> +	if (!error && args->fsbno == NULLFSBLOCK)
+> +		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
+> +
+> +	/* Attempt non-aligned allocation if we haven't already. */
+> +	if (!error && args->fsbno == NULLFSBLOCK && args->alignment > 1)  {
+> +		args->alignment = 1;
+> +		error = xfs_alloc_vextent_start_ag(args, ap->blkno);
+>  	}
+>  
+> -	error = xfs_alloc_vextent_start_ag(args, ap->blkno);
+>  	if (error || args->fsbno != NULLFSBLOCK)
+>  		return error;
+>  
+> diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
+> index 9f71a9a3a65e..40a2daeea712 100644
+> --- a/fs/xfs/libxfs/xfs_ialloc.c
+> +++ b/fs/xfs/libxfs/xfs_ialloc.c
+> @@ -780,7 +780,7 @@ xfs_ialloc_ag_alloc(
+>  		 * the exact agbno requirement and increase the alignment
+>  		 * instead. It is critical that the total size of the request
+>  		 * (len + alignment + slop) does not increase from this point
+> -		 * on, so reset minalignslop to ensure it is not included in
+> +		 * on, so reset alignslop to ensure it is not included in
+>  		 * subsequent requests.
+>  		 */
+>  		args.alignslop = 0;
+> -- 
+> 2.31.1
+> 
+> 
 
