@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-275576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0344A948764
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:17:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F64A94877C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3230C1C22216
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9A771F266D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FF2DF42;
-	Tue,  6 Aug 2024 02:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Am8D4qac"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0EE4174C;
+	Tue,  6 Aug 2024 02:19:29 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5B8DF5C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FF3757EB
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722910646; cv=none; b=oNvSUvQyWEmdQf90PVObezFVeLlsAzdpmBsV7oDwSaABqoxu8LPCqJWWldF0kaIg4hEi55g/6K6sV4DG742xNqFZkyfVs8WIQYvf5DXNVSNVOeg7HUlSy8tmdf+XrK0KNhYrzAtiLPJzFIyDbWsXAXep5WXF98G9HnVAL4Tnw0U=
+	t=1722910769; cv=none; b=dOwlhMR/Z6QNw278TcNuYLgIYlu6ZCa1ERtzINPMZOg22XPo6IW1BYaApCms3TWXWOAdH7sxjDKxz04QJNbGdfh7ExGYAAkd7w0Y14+wL3Gky8jNoPIj5L3LHNjDdLSeJUANRrs3zuMrx004vk8X/k4K/R5rfeaY2ZTwm1UHAZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722910646; c=relaxed/simple;
-	bh=1kbFbn/hAUhXKnkcqsPGGdbcnRxGgzs3MwJiZATRWDA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=orZaHDIkbGFugY9rQmUItVwscApPNDtVozWQYvyj2prwlLy2MDj+dghFOhWsJPBnvaidjDv/M4MZu3xrpEM9ubUxiV4bP4HJ3YRDuqmMpGwiEjhNAbiif/aAxKu7BNGG2gW/1IDEsnoEXtXt3Uwjd+K/qz+XQYJ5vcN1RIgphbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Am8D4qac; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52efbc57456so106501e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722910642; x=1723515442; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dwq5AxSs3t0w/fOZRG6eJ0P9hFWvane6MBazV/wxmCg=;
-        b=Am8D4qacjeW9OrAKHivXQNmZMPg1xWa3COmbUhBur1GxBq0VDquvIk9ARMf9OK1X6m
-         nemA6pxm+CxjRJosPHqj6qZ0/mHsubx3PaOR3OsclSZjC1Xr70FqaB/IZCP3QKIbPbUq
-         rOdvDFcr/pTuV1sH0AhnHDCmHvrHhRBA8i7Ek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722910642; x=1723515442;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dwq5AxSs3t0w/fOZRG6eJ0P9hFWvane6MBazV/wxmCg=;
-        b=YgB5dyoHXmY2myVXkiijZ46DoPgLLLDJfwnkJ/jSe5pBbvCph/RUCrrqJVYCaPisGD
-         Snsq8ftN12a1TMq3x4TiaHXK74H8GM78yUPqWUqq8luhRL2yXTLqA+mL2E2y/qRjoj1N
-         9I3DWjvRtwfKUzQD8UfnQGg2jEGUOnSEIW35KRY6GY28DMsudRUpyzwXut+QftaxxN9P
-         tYI8/8CVFFWRL6O68Y9d8qt4L0kaGP2ZeuVsfZ3tCA03f5mnl79Zp8T9RdZjMHDc6X00
-         L84KlO9wVeqmdbLzSpp/3Azyvd23i5K0pwd5RIuYIX69uvprCyrMqYGUeHBsCJ4kFlft
-         Jw4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVp7hLg3oMpOK7H3ijJq40iLak8oC95B34FndLhuzsEbzl6r2nWkdmcd6fwa1rKepTq+xWBVpooRnnJdio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKh+1xGJM5mxRuhlMgrNtBZXjY71iDhBI4dVPKi4vt1Snl2dcB
-	HuJyPmWZFPYIKQYF8pnqDgVYJGaQyl6iVwRC0JEX0M63Le2GAHMtywXlD/51UsM8/427bPLhxR5
-	jE4+YpQ==
-X-Google-Smtp-Source: AGHT+IHBgUMZFfDI/gEKKYZ8P+GfoLiBk3/7QSw+F72ZGUHonmeFw0jwggDkFUizWTZvMiysOCd27w==
-X-Received: by 2002:a05:6512:b21:b0:52c:d76a:867f with SMTP id 2adb3069b0e04-530bb3041acmr8488012e87.0.1722910641861;
-        Mon, 05 Aug 2024 19:17:21 -0700 (PDT)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc9dabsm504603866b.39.2024.08.05.19.17.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Aug 2024 19:17:21 -0700 (PDT)
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1c49632deso128947a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:17:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXk266YiF028glFct3wi7Yfo/mbRZ8IOJffz5KnIo43JdITeWVUOF90xSEw2nsMUi+4W1ujxRV/Z/PX/a4=@vger.kernel.org
-X-Received: by 2002:a05:6402:a42:b0:5a2:cc1c:4cf0 with SMTP id
- 4fb4d7f45d1cf-5b7f36f59ffmr9300778a12.7.1722910641236; Mon, 05 Aug 2024
- 19:17:21 -0700 (PDT)
+	s=arc-20240116; t=1722910769; c=relaxed/simple;
+	bh=SgCaGlYNwtKWWvSGFawFuAHR/Xo3DceOjircE0tpmyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jtWAYrZA6G4bT5mTb7Zk0j0B8satt0Tb+eyjYAx3q0CWYTGM+FmweKsHfzYGlUKNaYWOBRHLyVyhhEb6kwDvhUoljcz+hVtRp52UH0f9d3mPml4YYo2Sfu6XQV2Ag3gfo6Kp8E78cVE9AJYb9YT7Iv7BSaTKuW2/JUFI58HNAlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WdH1k5m0mz1S75v;
+	Tue,  6 Aug 2024 10:14:34 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5E3911402CF;
+	Tue,  6 Aug 2024 10:19:16 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 6 Aug 2024 10:19:15 +0800
+Message-ID: <93bbedcd-2f6b-3124-6b54-01080efeb515@huawei.com>
+Date: Tue, 6 Aug 2024 10:19:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202408041602.caa0372-oliver.sang@intel.com> <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
- <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
- <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
- <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
- <CAHk-=wgdTWpCqTMgM9SJxG2=oYwhAueU_fDHMPifjpH5eHG8qw@mail.gmail.com> <87o766iehy.fsf@mail.lhotse>
-In-Reply-To: <87o766iehy.fsf@mail.lhotse>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 5 Aug 2024 19:17:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whQwJaS=jVWVvvvf0R=45EGMb0itmhhSpa7_xWJXQY71Q@mail.gmail.com>
-Message-ID: <CAHk-=whQwJaS=jVWVvvvf0R=45EGMb0itmhhSpa7_xWJXQY71Q@mail.gmail.com>
-Subject: Re: [linus:master] [mseal] 8be7258aad: stress-ng.pagemove.page_remaps_per_sec
- -4.4% regression
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Jeff Xu <jeffxu@google.com>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Pedro Falcato <pedro.falcato@gmail.com>, 
-	kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>, oe-lkp@lists.linux.dev, 
-	lkp@intel.com, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jorge Lucangeli Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Amer Al Shanawany <amer.shanawany@gmail.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com, 
-	feng.tang@intel.com, fengwei.yin@intel.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [RFC PATCH] ARM: Support allocating crashkernel above 4G for LPAE
+Content-Language: en-US
+To: Catalin Marinas <catalin.marinas@arm.com>, "Russell King (Oracle)"
+	<linux@armlinux.org.uk>
+CC: <bhe@redhat.com>, <akpm@linux-foundation.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240802092510.3915986-1-ruanjinjie@huawei.com>
+ <Zqy8lwZM2Z6RlV5H@shell.armlinux.org.uk> <ZrDRCP9tyvXLfAYs@arm.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZrDRCP9tyvXLfAYs@arm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On Mon, 5 Aug 2024 at 19:14, Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Needs a slight tweak to compile, vvar_close() needs to return void.
 
-Ack, shows just how untested it was.
 
-> And should probably be renamed vdso_close().
+On 2024/8/5 21:18, Catalin Marinas wrote:
+> On Fri, Aug 02, 2024 at 12:01:43PM +0100, Russell King wrote:
+>> On Fri, Aug 02, 2024 at 05:25:10PM +0800, Jinjie Ruan wrote:
+>>> As ARM LPAE feature support accessing memory beyond the 4G limit, define
+>>> HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH macro to support reserving crash
+> 
+> At least in 6.11-rc1, there's no trace of such macro anywhere. So not
+> sure this patch has any effect (I haven't checked linux-next though).
 
-.. and that was due to the initial confusion that I then fixed, but
-didn't fix the naming.
+Sorry, this macro is introduced in linux-next, the -next subject has
+been missed.
 
-So yes, those fixes look ObviouslyCorrect(tm).
+> 
+>>> memory above 4G for ARM32 LPAE.
+>>>
+>>> No test because there is no LPAE ARM32 hardware.
+>>
+>> Why are you submitting patches for features you can't test?
+>>
+>> I'm not going to apply this without it being properly tested, because I
+>> don't believe that this will work in the generic case.
+>>
+>> If the crash kernel is located in memory outside of the lower 4GiB of
+>> address space, and there is no alias within physical address space
+>> for that memory, then there is *no* *way* for such a kernel to boot.
+>>
+>> So, right now I believe this patch to be *fundamentally* wrong.
+> 
+> Indeed. Even on arm64, we keep some crashkernel reservations in the
+> lower parts of the memory for ZONE_DMA allocations.
 
-           Linus
+Indeed, it is.
+
+> 
+> On arch/arm with LPAE, we could do something similar like forcing some
+> lowmem reservation and allowing explicit allocation in the higher ranges
+> with crashkernel=<size>,high. We should, of course, force the kdump
+
+In linux-next, with the HAVE_ARCH_CRASHKERNEL_RESERVATION_HIGH macro
+defined, it is ok.
+
+> image placement in the lower memory. The user kexec tools must be taught
+> to interpret this information and provide a DT accordingly to the crash
+> kernel.
+> 
 
