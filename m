@@ -1,257 +1,291 @@
-Return-Path: <linux-kernel+bounces-276013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EFB948D3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D5E948D36
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C81D284A65
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACD721F255A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD231C0DD9;
-	Tue,  6 Aug 2024 10:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F97C1C2300;
+	Tue,  6 Aug 2024 10:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PVGv16ei"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2079.outbound.protection.outlook.com [40.107.236.79])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pEfKK5SW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eknaqgTN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4B51BF339;
-	Tue,  6 Aug 2024 10:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722941523; cv=fail; b=e008nOhstFz8JXEKXDIE9RAxUZCPfPbp5vOPw6HYOKICascVsScxOdVtfNXIeenAu8l6CMHNZTJZfetdzi697HUGYNB9rq2J/I00HLeWPEQbx8ApXymfkYXhCAbhUxeflu2nzotZ1O2g47+5s6frz2k/eqR0YwytvLzpEDnqkKs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722941523; c=relaxed/simple;
-	bh=+mQAGvfPCIAB5wAIwT5kxcIpDUD/FVFdDWEPrvSDEuY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fSs/UehdSLDWmSYilja6GnRMUNpbuQM4HjtwAmssN8hw8iEEDeKEl1yTjZg7jj8u0/zO1JGiz1G0CwG1S+ItAlv123uoPuD//p2fnWhCjz7yNpNRs6a1G+rcrjXx9/yKl/HyL7R1I5lIRCEkatU4oUItMxyvN1sjA/zg2zGa01w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PVGv16ei; arc=fail smtp.client-ip=40.107.236.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d3hNv2MCURmBuuzbjIfThfCFbBRT/SaPz14bSP+JYYbNBZmfB+uDLfXH4El2fMzcbfJEdVeZ6RGyoadtknEGRXg6yjMR0ynOzDtjXAFLQSeF7/6ZCbBp8dVDvicWXEtt643yV7y903vbnj3pOEiixyKkFxua7dhIhuqWQxs8iFgUuZmSLKSEZ3UnbKLXJRNtK4Fiwlh2Ibj8f+kj1uLoXEEWlk1F3CgVfF2aKE+NQruoXdSNbIq5zHFOVsf0mIiodORMfCkjCuLxnN0CUQ4K+0SrasDpx2VkkRdI9/DYlBs90Uw8qAqYOZ74cNS1uNZdSVE/oR2QftdDE7KsxowErQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R8BCV6Ioh7qJW4s1LhWDGNq8U+9yH5YiDLj8PBBh9RY=;
- b=kuIqzg3pkJcQhbG8zB4TlHwRLbT84p2uPr42M2M0FqcuYv5xzPEalqCbmrsrTgYRXe53L1U/PVc24ZuKtbOh9MV2yCfmeXoQQFtpXX2QTpVhfHoLr6sR/06MuX/MbLbXdQgpLhA/7U/ScTc0f3nlP1Q2J8VoIqenQ6L7M+RiFBjRG2m3Cmgzz1gfZFvRc7HaKn7BsoyaYClvJldgowT5PI2cXGXwagQjqKWzVZmfUOUCn+S5KPZbadKqDe8FKzCeShDud0II5iRv9D9M3qV9l+aACUb/tY1evBMyOu9Ns0VZNc8zgMokkviAujwb+5juZchUCccSzmYbeqddibAOmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R8BCV6Ioh7qJW4s1LhWDGNq8U+9yH5YiDLj8PBBh9RY=;
- b=PVGv16eiq4xRjv2kUomtHkVO3/ybvw2VKHxxFM4771RLH7S8mfASZenzX29i7nk6kmihWDYvoKH4e4nmuDW/jyyd63hcBHWpsY7lEhkftOvzgC5/bbJCupb9h0u+0W/MfPLNQ5yemx/oGNec+ytqUYJUtDAJeykrN7U9vsuOQyAssJjiHclfN5dnDVnwapJz0Lh4CthkPbK420/VUxB9QtKLZp8ltNr/ZpgEcdfizqCpgTVKXJktL7Z9frxRpe8qUQAG1VV/Bs+jyTCohfq6P6T/6qQyUeuwonlm3EqH4NK4gj87JYfFwYebMrjRoyXwPgvXPu0XkdyZrm8y4hi4lA==
-Received: from BLAP220CA0013.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::18)
- by DS7PR12MB6143.namprd12.prod.outlook.com (2603:10b6:8:99::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Tue, 6 Aug
- 2024 10:51:56 +0000
-Received: from BN3PEPF0000B36D.namprd21.prod.outlook.com
- (2603:10b6:208:32c:cafe::de) by BLAP220CA0013.outlook.office365.com
- (2603:10b6:208:32c::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27 via Frontend
- Transport; Tue, 6 Aug 2024 10:51:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B36D.mail.protection.outlook.com (10.167.243.164) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.2 via Frontend Transport; Tue, 6 Aug 2024 10:51:55 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
- 03:51:42 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
- 03:51:42 -0700
-Received: from build-amhetre-20240731T045122751.internal (10.127.8.10) by
- mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.4 via
- Frontend Transport; Tue, 6 Aug 2024 03:51:41 -0700
-From: Ashish Mhetre <amhetre@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ashish Mhetre
-	<amhetre@nvidia.com>
-Subject: [PATCH V4] iommu/io-pgtable-arm: Optimise non-coherent unmap
-Date: Tue, 6 Aug 2024 10:51:35 +0000
-Message-ID: <20240806105135.218089-1-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A161BF339;
+	Tue,  6 Aug 2024 10:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722941500; cv=none; b=dQZVJXedAv7GWfz9DC+VyiyF820tXluaiIbPAz9OtJ1aqJDuUQaf9KEQ1/Vx97YzhPm4mIm5/zqt6xaaOoXyk4133TVnderO6tonOQrXbSCS/zQCtQUvMIOk6TWPTAVQrH+EctDkp5ulDCW1TRFWFDa+cKfhItrzEMnFZRYah/M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722941500; c=relaxed/simple;
+	bh=udDo2dN7Vbe93TXBny9bROC4doV9xohXoqT6o+7ou/w=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=GcY7HgEn2gfahpJU7ZAqhyzGwOGNf7PCDK0stmnzE7X79OYFVEncHetlWK8RcT3jcaXT9/f9hIDx0CNNwXVvgXhW/ged478LIJLY97olP4eD9StKask6oQZQox+kVmy7S71Ycil8JY08EL+QjiVpvSkCNtRPG9gAfo5IM1bUX2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pEfKK5SW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eknaqgTN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 06 Aug 2024 10:51:36 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722941496;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IlTiwVfPnP4uq4Zcocbt4UtVv/6Cjv13toMbotpwZBw=;
+	b=pEfKK5SW5uFn9TiiHfrxRRMD6ogimDzffUpx6cHLJy3Yy4Q5cFSMafgc/xS1FiHXfe2H09
+	+y0wRiyUX1eZ7HSpCla1yzhNLmmsUGwMxWBNu6su8As9v0AMqxj5B683CdGDOfe/J14htH
+	NIzTbra6W/GzkE+wYQA+bVn2/+fln5CnHvFolfH0VljDdQhTERyWZV8rQwBKgFDmZG1Vfc
+	Z5wYUUVyCEkfxIE4GDo9jSyyS/ilss6A8vRD5RpvkZVLtKO1OgcxElDakRGrWikGGeZiFN
+	2W5uo5zjgdddutNk+H8hp623l3vZkOTzpW0jiITiesM31WEmentYKlRJAbqt8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722941496;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IlTiwVfPnP4uq4Zcocbt4UtVv/6Cjv13toMbotpwZBw=;
+	b=eknaqgTNVF7mzKveOPb+hA/6reZC+f/RrSumsIxpSCfbVvmmvTKKTwTmr3Ey5hGqoPfr7m
+	kU9YBf03VKTnl0AA==
+From: "tip-bot2 for Dan Williams" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] cleanup: Add usage and style documentation
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Kevin Tian <kevin.tian@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <171175585714.2192972.12661675876300167762.stgit@dwillia2-xfh.jf.intel.com>
+References:
+ <171175585714.2192972.12661675876300167762.stgit@dwillia2-xfh.jf.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36D:EE_|DS7PR12MB6143:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c6452eb-8bb5-49a2-5595-08dcb605ca23
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JU+q20ApQjdGb9JffN+QkuO/KQG7eo21WtHjYUdjVrMBHkPerdPkm4QVqOIH?=
- =?us-ascii?Q?ayHi27zqCH+RMrtHwgH1xi56W5f2a748fCY9EaiTne0gxefmhE+uMH4zFByb?=
- =?us-ascii?Q?6UVzapWxuq5CfnT28IMkfxO81o+aU3jsDNCtW9PTEjkaYfVcNLigEqYgV2/m?=
- =?us-ascii?Q?FgOpCYyD6gE4PRRgajQT+jMgh6rKPHxKSrjj5EGOTZkiqu3HKn3kRZUW3Ieg?=
- =?us-ascii?Q?Hm16aVM2kP2/uuXbmJsZ1h7MmYxitgQTI1y8yPjChM6bXsxssHkm3fxCTeo+?=
- =?us-ascii?Q?y3T2S5NLd5xebVwZ7lwRj3be0UcXZH6tYRwR0IoytBUcYZQ/IgcwsTsScWTQ?=
- =?us-ascii?Q?8wXVuyqCFZ/L7Hy7DgPeNG3NvdtvtOVdR7bFU3cM1CIaLj4bEhPQ0BifVPy5?=
- =?us-ascii?Q?Zr21KuM4Uap1cy33FPtFLAK6ENNtjaQsvV08vvDx+QkEHB76dE57ozoRkZkU?=
- =?us-ascii?Q?r+RJTT4f85RPHiTnaq8EX5i0KIvOZSrABqrxJafXheWF7ZivM/6afwrrkYJv?=
- =?us-ascii?Q?jaVtXGzEHXq9BZfhLJO1poYPCtBPIbgtEeVq7eiTVNY0qg3w+vFEo2PbOeQ/?=
- =?us-ascii?Q?dNLW8IeshFUHV4H/+XDwtDVGrbkiXUI0PMx3w6gGUN7QqJ6fY19uYPISo4Ol?=
- =?us-ascii?Q?NywGpUMkP3HedO/1fPKqwLrSPglgftt+XW9aDCWmZnhR93WhfIbJCq2Fkz98?=
- =?us-ascii?Q?F6FpZySjutf7CdRgylvEqJeXZCKaECm9g4WM1dqGEXxnbjbXpAKYaFg9ABEJ?=
- =?us-ascii?Q?yv0CXME1YkfugxFq5zMSX3hdPqZEZIZovpAfuL1sNmhSj6p4YdE4MWcOBDXU?=
- =?us-ascii?Q?ddTLuR7jmjR/UpW/ogPOrDkZuDrwYcxeh87DT5QkPrboC1+w5u7IVDN8OZEL?=
- =?us-ascii?Q?2/8s7or/f8VAdd8TlFlByNf3iNu1wCCdAW1qrK+HckzTBa7Aqunqpb60pQn2?=
- =?us-ascii?Q?cqbUT/OJq87s/H6ClZurCiI8vtBUW6YsqgmV/kJmxhq5BnoCrRaH4oN8CtU4?=
- =?us-ascii?Q?FYI/Yz/x+oKVuacayHKXjlqC4ipmFCdLONKBZ4czHYBgtwzcIfsDT9ekI7cE?=
- =?us-ascii?Q?Ji9AZU1SSb2GpFoZV1tw1Bccq9K6bmpqzed37ms/Qudsy7f2NfydnesOBfZp?=
- =?us-ascii?Q?e975USZafotQWjanRkXlwuMRotEkyHQnANEGogjJvcaTv064pFG9PIOmJ2BH?=
- =?us-ascii?Q?X/NAUfa5OyUCbTM5Wi2GdXMNY9HjZ83OTCBOh/e+xFAZc9Nx7TYYrz31tMbC?=
- =?us-ascii?Q?MKrl4icraJ8GWlcmUcL5M4Xx5gP6SASwUQZvKz7IrMeJWZNd7uBKwvSSOdoX?=
- =?us-ascii?Q?vwOhQQHAwYgqSgxzMDTH+4tnmevJvZTieV4jH1RiG4mDf+GxD3KPGRWfYLYt?=
- =?us-ascii?Q?VTGO7+TE1iNu6vX3tJCZSMtZIRXzc/v1BP4jzV+8uvECVtPutWUbckKf6/Xv?=
- =?us-ascii?Q?beufdAz6dG86vAUUlO+KgjOVV5/XlXAs?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 10:51:55.9516
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c6452eb-8bb5-49a2-5595-08dcb605ca23
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B36D.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6143
+Message-ID: <172294149613.2215.3274492813920223809.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-The current __arm_lpae_unmap() function calls dma_sync() on individual
-PTEs after clearing them. Overall unmap performance can be improved by
-around 25% for large buffer sizes by combining the syncs for adjacent
-leaf entries.
-Optimize the unmap time by clearing all the leaf entries and issuing a
-single dma_sync() for them.
-Below is detailed analysis of average unmap latency(in us) with and
-without this optimization obtained by running dma_map_benchmark for
-different buffer sizes.
+The following commit has been merged into the locking/core branch of tip:
 
-		UnMap Latency(us)
-Size	Without		With		% gain with
-	optimiztion	optimization	optimization
+Commit-ID:     d5934e76316e84eced836b6b2bafae1837d1cd58
+Gitweb:        https://git.kernel.org/tip/d5934e76316e84eced836b6b2bafae1837d1cd58
+Author:        Dan Williams <dan.j.williams@intel.com>
+AuthorDate:    Fri, 29 Mar 2024 16:48:48 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 05 Aug 2024 16:54:41 +02:00
 
-4KB	3		3		0
-8KB	4		3.8		5
-16KB	6.1		5.4		11.48
-32KB	10.2		8.5		16.67
-64KB	18.5		14.9		19.46
-128KB	35		27.5		21.43
-256KB	67.5		52.2		22.67
-512KB	127.9		97.2		24.00
-1MB	248.6		187.4		24.62
-2MB	65.5		65.5		0
-4MB	119.2		119		0.17
+cleanup: Add usage and style documentation
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+When proposing that PCI grow some new cleanup helpers for pci_dev_put()
+and pci_dev_{lock,unlock} [1], Bjorn had some fundamental questions
+about expectations and best practices. Upon reviewing an updated
+changelog with those details he recommended adding them to documentation
+in the header file itself.
+
+Add that documentation and link it into the rendering for
+Documentation/core-api/.
+
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Link: https://lore.kernel.org/r/171175585714.2192972.12661675876300167762.stgit@dwillia2-xfh.jf.intel.com
 ---
-Changes in V2:
-- Updated the commit message to be imperative.
-- Fixed ptep at incorrect index getting cleared for non-leaf entries.
+ Documentation/core-api/cleanup.rst |   8 ++-
+ Documentation/core-api/index.rst   |   1 +-
+ include/linux/cleanup.h            | 136 ++++++++++++++++++++++++++++-
+ 3 files changed, 145 insertions(+)
+ create mode 100644 Documentation/core-api/cleanup.rst
 
-Changes in V3:
-- Used loop-local variables and removed redundant function variables.
-- Added check for zero-sized dma_sync in __arm_lpae_clear_pte().
-- Merged both patches into this single patch by adding check for a
-  NULL gather in __arm_lpae_unmap() itself.
-
-Changes in V4:
-- Updated the subject in commit message to correctly reflect the changes
-  made in this patch.
----
- drivers/iommu/io-pgtable-arm.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index f5d9fd1f45bf..6fecf3d9fe67 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -274,13 +274,13 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
- 				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
- }
- 
--static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
-+static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
- {
-+	for (int i = 0; i < num_entries; i++)
-+		ptep[i] = 0;
- 
--	*ptep = 0;
--
--	if (!cfg->coherent_walk)
--		__arm_lpae_sync_pte(ptep, 1, cfg);
-+	if (!cfg->coherent_walk && num_entries)
-+		__arm_lpae_sync_pte(ptep, num_entries, cfg);
- }
- 
- static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-@@ -654,26 +654,29 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
- 		num_entries = min_t(int, pgcount, max_entries);
- 
--		while (i < num_entries) {
--			pte = READ_ONCE(*ptep);
-+		/* Find and handle non-leaf entries */
-+		for (i = 0; i < num_entries; i++) {
-+			pte = READ_ONCE(ptep[i]);
- 			if (WARN_ON(!pte))
- 				break;
- 
--			__arm_lpae_clear_pte(ptep, &iop->cfg);
--
- 			if (!iopte_leaf(pte, lvl, iop->fmt)) {
-+				__arm_lpae_clear_pte(&ptep[i], &iop->cfg, 1);
+diff --git a/Documentation/core-api/cleanup.rst b/Documentation/core-api/cleanup.rst
+new file mode 100644
+index 0000000..527eb2f
+--- /dev/null
++++ b/Documentation/core-api/cleanup.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- 				/* Also flush any partial walks */
- 				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
- 							  ARM_LPAE_GRANULE(data));
- 				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
--			} else if (!iommu_iotlb_gather_queued(gather)) {
--				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
- 			}
--
--			ptep++;
--			i++;
- 		}
++===========================
++Scope-based Cleanup Helpers
++===========================
++
++.. kernel-doc:: include/linux/cleanup.h
++   :doc: scope-based cleanup helpers
+diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+index f147854..b99d2fb 100644
+--- a/Documentation/core-api/index.rst
++++ b/Documentation/core-api/index.rst
+@@ -35,6 +35,7 @@ Library functionality that is used throughout the kernel.
  
-+		/* Clear the remaining entries */
-+		__arm_lpae_clear_pte(ptep, &iop->cfg, i);
+    kobject
+    kref
++   cleanup
+    assoc_array
+    xarray
+    maple_tree
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index d9e6138..9c6b4f2 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -4,6 +4,142 @@
+ 
+ #include <linux/compiler.h>
+ 
++/**
++ * DOC: scope-based cleanup helpers
++ *
++ * The "goto error" pattern is notorious for introducing subtle resource
++ * leaks. It is tedious and error prone to add new resource acquisition
++ * constraints into code paths that already have several unwind
++ * conditions. The "cleanup" helpers enable the compiler to help with
++ * this tedium and can aid in maintaining LIFO (last in first out)
++ * unwind ordering to avoid unintentional leaks.
++ *
++ * As drivers make up the majority of the kernel code base, here is an
++ * example of using these helpers to clean up PCI drivers. The target of
++ * the cleanups are occasions where a goto is used to unwind a device
++ * reference (pci_dev_put()), or unlock the device (pci_dev_unlock())
++ * before returning.
++ *
++ * The DEFINE_FREE() macro can arrange for PCI device references to be
++ * dropped when the associated variable goes out of scope::
++ *
++ *	DEFINE_FREE(pci_dev_put, struct pci_dev *, if (_T) pci_dev_put(_T))
++ *	...
++ *	struct pci_dev *dev __free(pci_dev_put) =
++ *		pci_get_slot(parent, PCI_DEVFN(0, 0));
++ *
++ * The above will automatically call pci_dev_put() if @dev is non-NULL
++ * when @dev goes out of scope (automatic variable scope). If a function
++ * wants to invoke pci_dev_put() on error, but return @dev (i.e. without
++ * freeing it) on success, it can do::
++ *
++ *	return no_free_ptr(dev);
++ *
++ * ...or::
++ *
++ *	return_ptr(dev);
++ *
++ * The DEFINE_GUARD() macro can arrange for the PCI device lock to be
++ * dropped when the scope where guard() is invoked ends::
++ *
++ *	DEFINE_GUARD(pci_dev, struct pci_dev *, pci_dev_lock(_T), pci_dev_unlock(_T))
++ *	...
++ *	guard(pci_dev)(dev);
++ *
++ * The lifetime of the lock obtained by the guard() helper follows the
++ * scope of automatic variable declaration. Take the following example::
++ *
++ *	func(...)
++ *	{
++ *		if (...) {
++ *			...
++ *			guard(pci_dev)(dev); // pci_dev_lock() invoked here
++ *			...
++ *		} // <- implied pci_dev_unlock() triggered here
++ *	}
++ *
++ * Observe the lock is held for the remainder of the "if ()" block not
++ * the remainder of "func()".
++ *
++ * Now, when a function uses both __free() and guard(), or multiple
++ * instances of __free(), the LIFO order of variable definition order
++ * matters. GCC documentation says:
++ *
++ * "When multiple variables in the same scope have cleanup attributes,
++ * at exit from the scope their associated cleanup functions are run in
++ * reverse order of definition (last defined, first cleanup)."
++ *
++ * When the unwind order matters it requires that variables be defined
++ * mid-function scope rather than at the top of the file.  Take the
++ * following example and notice the bug highlighted by "!!"::
++ *
++ *	LIST_HEAD(list);
++ *	DEFINE_MUTEX(lock);
++ *
++ *	struct object {
++ *	        struct list_head node;
++ *	};
++ *
++ *	static struct object *alloc_add(void)
++ *	{
++ *	        struct object *obj;
++ *
++ *	        lockdep_assert_held(&lock);
++ *	        obj = kzalloc(sizeof(*obj), GFP_KERNEL);
++ *	        if (obj) {
++ *	                LIST_HEAD_INIT(&obj->node);
++ *	                list_add(obj->node, &list):
++ *	        }
++ *	        return obj;
++ *	}
++ *
++ *	static void remove_free(struct object *obj)
++ *	{
++ *	        lockdep_assert_held(&lock);
++ *	        list_del(&obj->node);
++ *	        kfree(obj);
++ *	}
++ *
++ *	DEFINE_FREE(remove_free, struct object *, if (_T) remove_free(_T))
++ *	static int init(void)
++ *	{
++ *	        struct object *obj __free(remove_free) = NULL;
++ *	        int err;
++ *
++ *	        guard(mutex)(&lock);
++ *	        obj = alloc_add();
++ *
++ *	        if (!obj)
++ *	                return -ENOMEM;
++ *
++ *	        err = other_init(obj);
++ *	        if (err)
++ *	                return err; // remove_free() called without the lock!!
++ *
++ *	        no_free_ptr(obj);
++ *	        return 0;
++ *	}
++ *
++ * That bug is fixed by changing init() to call guard() and define +
++ * initialize @obj in this order::
++ *
++ *	guard(mutex)(&lock);
++ *	struct object *obj __free(remove_free) = alloc_add();
++ *
++ * Given that the "__free(...) = NULL" pattern for variables defined at
++ * the top of the function poses this potential interdependency problem
++ * the recommendation is to always define and assign variables in one
++ * statement and not group variable definitions at the top of the
++ * function when __free() is used.
++ *
++ * Lastly, given that the benefit of cleanup helpers is removal of
++ * "goto", and that the "goto" statement can jump between scopes, the
++ * expectation is that usage of "goto" and cleanup helpers is never
++ * mixed in the same function. I.e. for a given routine, convert all
++ * resources that need a "goto" cleanup to scope-based cleanup, or
++ * convert none of them.
++ */
 +
-+		if (gather && !iommu_iotlb_gather_queued(gather))
-+			for (int j = 0; j < i; j++)
-+				io_pgtable_tlb_add_page(iop, gather, iova + j * size, size);
-+
- 		return i * size;
- 	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
- 		/*
--- 
-2.25.1
-
+ /*
+  * DEFINE_FREE(name, type, free):
+  *	simple helper macro that defines the required wrapper for a __free()
 
