@@ -1,93 +1,259 @@
-Return-Path: <linux-kernel+bounces-276305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DCE9491EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:45:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18AD2949215
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A9192860D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:45:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33717B29DEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24C91EA0DB;
-	Tue,  6 Aug 2024 13:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4BF1D2F76;
+	Tue,  6 Aug 2024 13:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="p5eOHRl5"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="inoP7DaF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jLy9YuYX";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I3BOQiUx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IPr6ZZl9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7CC1EA0C8
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68971C9EB2;
+	Tue,  6 Aug 2024 13:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951853; cv=none; b=rzLHZqeR5DZIqYOKmBoTVrjZ2W3uY8+v82sdSQd7Afqy2VrHKTsvWvniYmSlQSrlATLMQ4XFSN+dTeWy1Za32kPUwtA/M95z4z0iHSwp5q10ff1Wj2lhU8jzAZJax+zhnt7I+5OYk0xbZ6RiwK8z8X0e8ZNd4o8G5Nj4SqbRMrY=
+	t=1722951629; cv=none; b=Mjz46990kVVYXhYQ3d18ATL3LqYpXSnWcXxOMITqOoKuMYZ4Ila92hgg1VXRgolmCxRTEPPma1bBXKo9waihvK65qeHLvLpVQcLdDKcNLavXrJEmgUTADE9WZSnK2+PCO1lhs54p+WSimdqwFKbz0Fv2Ds0nW1k2GhzqCQrIKO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951853; c=relaxed/simple;
-	bh=W7qOO+itSScYp9MgXK6h8Lt+dTjjWTsE0JIPmwSnbIo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=WbmD8uEs635J9mSCraFYNGOOUyif2nS/IQYlOi0mMzqOS4alf3a/DnlH8rNeAI6uSIKFeCwri5OAV6IjASSI+2Ntbnu875IyytwMoOsoRru9auPSohrG3C3pDCTzjRoKO6sqW2e08OzBzcIoZ8mpl+l2ktUkMN7iVkwtc4JnA6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=p5eOHRl5; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722951542; bh=jhSRwE/+HNJENB5Mf85xwGGqSbuh2d2jWWC94TRoOMI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=p5eOHRl5YUbNGPDvrGXSM13aADBnspSeCWoDA5p9YsnCf5Ux65DSXObUH2yP8Mb4j
-	 KbTe8ZbXEgMUzUAer+bhG0Iaa7lm1Ufl4wTAR57Z0auXt29h326bVmBjO08bxTuJv7
-	 8fTnbtNipYKcOwTwKIzvPtKsz2WKzTetdoR1h1jU=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 9C08DE53; Tue, 06 Aug 2024 21:39:00 +0800
-X-QQ-mid: xmsmtpt1722951540tqwnf8hr0
-Message-ID: <tencent_71042D016F7497B0E81EEE1ECD607A9E6D0A@qq.com>
-X-QQ-XMAILINFO: MqjY5q4G7TFLPVH+qFAtW6KDfR3BNZpwQ+I/mtRFmqES8+QM+mU3MwIYDGobMZ
-	 liGA4BiJBBDGiowHb7NseFHfPe6JyXa1p+kWymgwzXLOTqIDV4iAqfdb7sLpZom8sgBkpZXSNxVw
-	 7nFtB0aozUUO6GCFNP82sbUAWn6bYxVClBzutk+FN6Jvs2M0x50Klj1mY57sx2YCe2s0p59WQ6Py
-	 5joI3qU/e6kTUKGeriPdG0MBWo1RAViMb1MDDVLuw1kxKuVM0xd99pzlySaOWJm12Fqaeyug6WJy
-	 6Xg/Lt6wBvHfd7ij/XV/7VRnX6Q0ZbLtyVglUzF8AbP/ZiI8siINLeJ1HzEP/9aZwzeuHoGP0jva
-	 HRjZT4tfoxwx2VWmHYDO7mZl5rR90+g/hSFgkMMVr5OM2QFnAhXEdjt997XW2MpdtF7qL0zTaU9T
-	 XwrDbJ/i8y8qIPTRCwGD5CDJWFEmAe3ABTvhFWxCVKVAfcUps1C+ObL6UIXWlt0AD6OsfNfIY+Vn
-	 xp+05le83HWWyso1WlmUBCIIvDU85DT2ol0vZ9Rmvq1c8VNlY8ABbwUzViVE23BU28kvi0F3Cglc
-	 d8/2dwCsbVBVLMffQXrLZ14aKZl9JjJMrewMKALHd2sS/8UoiAU42gfbzY2/RDa0rGgClrfBD/Gm
-	 U+CBLtHLWB9YbEeoXxeKrm/F623vQkaWwKK7TCvXzFDcBvH/57c1I1eiIeIoBByvHrL4ZYkZ2C8Z
-	 m3dNbDjvrzUAgcpE1/GWjMtbQxrOZyZ2jOIfYYKgfTjfWOMjxui8fahhBE2fyC1Dt19ajGmbCnK2
-	 lcbLLR+rl+3APUOZKt2m2B2eOtEbkPq9UmoVyArE43M839k13cuHqa4Gas145ovzOD+tLEJkQ+OG
-	 ywi/BOB/qGxJ4YJfWICjY7PHLYZjVEmHcuTT985Rg2hMrn//+nklhMgXHe0F+bjw==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [can?] WARNING: refcount bug in j1939_session_put
-Date: Tue,  6 Aug 2024 21:39:01 +0800
-X-OQ-MSGID: <20240806133900.3853566-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000af9991061ef63774@google.com>
-References: <000000000000af9991061ef63774@google.com>
+	s=arc-20240116; t=1722951629; c=relaxed/simple;
+	bh=L2lRD+ifAtj1ErWSRuGb2tmmFh7+d2PfbAYCS6+4V8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUyaFy7i7Qcnor9ZXHBMZO78kqb17qhPaguJjNTlZqY74k+B3ewtBycPvrVYovH9kVVjVNN11mJOVLSiEIC5g06VwVwOYcARvZg7TzgPravkgpqtPwzjTYB6M5w4uYiuAqbPEZiH+xnwOGEAIyeT9WpRIDSuRtnqo9sL+7MR/OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=inoP7DaF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jLy9YuYX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I3BOQiUx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IPr6ZZl9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1138F1FB47;
+	Tue,  6 Aug 2024 13:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722951625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LnTs3+DWE8G/JX7dW/n1r4wmWMOR57NvCPPAJDCIcds=;
+	b=inoP7DaFXueiYZe5EqIUU5oM1uJxbGAMeA+q12+7jK5ouNvhhjm7jv6YCPDgLqoeepXtYJ
+	ew5ebRncmYmm9pHJH5M0YIlKFOoBE0OCVmkBP7CD1bbD/XJrQYnkE+v85p69jK3sksXA9v
+	/ipOtAaLHTLKVPnbOzk3/1z6HNqRXqE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722951625;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LnTs3+DWE8G/JX7dW/n1r4wmWMOR57NvCPPAJDCIcds=;
+	b=jLy9YuYX2xdqM/U2SLmFmLvJpfWS2G/6gMI0DPhvGQhSwAuVqOVM/bfD6Kh7b6fxwavxaP
+	i6k6Uai42K9T33BQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722951624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LnTs3+DWE8G/JX7dW/n1r4wmWMOR57NvCPPAJDCIcds=;
+	b=I3BOQiUxK43fdpawqbLcYJk33xlgDojEsg8h2flAoYKgjxKHcJg+Vo+eTLmAwHSkAKRzqD
+	oKOGqYpq0j9d8sETyWu4bwhcFcmpPiNX+vWCm07hXIHl9+AP8K/5fRWzLAkPlCN9IayAfe
+	XuwYfRVs6CCE40Ln2Bb5A+CRMd/Yvbg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722951624;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LnTs3+DWE8G/JX7dW/n1r4wmWMOR57NvCPPAJDCIcds=;
+	b=IPr6ZZl9zhMZQtAAvVbKlHMawhsKq8MMQ9yIoZuQpoPqtJkC/1m8tDLiGzeiwIGqvBjVhK
+	qDGPqG3lmh7tXJBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0558B13981;
+	Tue,  6 Aug 2024 13:40:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id V21KAcgnsmZrSwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 06 Aug 2024 13:40:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A394DA0762; Tue,  6 Aug 2024 15:40:23 +0200 (CEST)
+Date: Tue, 6 Aug 2024 15:40:23 +0200
+From: Jan Kara <jack@suse.cz>
+To: zhangshida <starzhangzsd@gmail.com>
+Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn,
+	Baolin Liu <liubaolin@kylinos.cn>
+Subject: Re: [RFC PATCH] jbd2: fix a potential assertion failure due to
+ improperly dirtied buffer
+Message-ID: <20240806134023.rm2ggd7swopryqci@quack3>
+References: <20240720062356.2522658-1-zhangshida@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240720062356.2522658-1-zhangshida@kylinos.cn>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,kylinos.cn:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-session skb_queue get ref to skb
+Hello!
 
-#syz test: net-next 743ff02152bc
+On Sat 20-07-24 14:23:56, zhangshida wrote:
+> From: Shida Zhang <zhangshida@kylinos.cn>
+> 
+> On an old kernel version(4.19, ext3, journal=data, pagesize=64k),
+> an assertion failure will occasionally be triggered by the line below:
 
-diff --git a/net/can/j1939/transport.c b/net/can/j1939/transport.c
-index 4be73de5033c..5881d2081aeb 100644
---- a/net/can/j1939/transport.c
-+++ b/net/can/j1939/transport.c
-@@ -1506,6 +1506,7 @@ static struct j1939_session *j1939_session_new(struct j1939_priv *priv,
- 
- 	skb_queue_head_init(&session->skb_queue);
- 	skb_queue_tail(&session->skb_queue, skb);
-+	skb_get(skb);
- 
- 	skcb = j1939_skb_to_cb(skb);
- 	memcpy(&session->skcb, skcb, sizeof(session->skcb));
+OK, just out of curiosity, why are you using data=journal mode? It doesn't
+really get that much testing and the performance is quite bad...
 
+> jbd2_journal_commit_transaction
+> {
+> ...
+> J_ASSERT_BH(bh, !buffer_dirty(bh));
+> /*
+> * The buffer on BJ_Forget list and not jbddirty means
+> ...
+> }
+> 
+> AFAIC, that's how the problem works:
+> --------
+> journal_unmap_buffer
+> jbd2_journal_invalidatepage
+> __ext4_journalled_invalidatepage
+> ext4_journalled_invalidatepage
+> do_invalidatepage
+> truncate_inode_pages_range
+> truncate_inode_pages
+> truncate_pagecache
+> ext4_setattr
+> --------
+>
+> First try to truncate and invalidate the page.
+> Sometimes the buffer and the page won't be freed immediately.
+> the buffer will be sent to the BJ_Forget list of the currently
+> committing transaction. Maybe the transaction knows when and how
+> to free the buffer better.
+> The buffer's states now: !jbd_dirty !mapped !dirty
+> 
+> Then jbd2_journal_commit_transaction(）will try to iterate over the
+> BJ_Forget list:
+> --------
+> jbd2_journal_commit_transaction()
+> 	while (commit_transaction->t_forget) {
+> 	...
+> 	}
+> --------
+> 
+> At this exact moment, another write comes:
+> --------
+> mark_buffer_dirty
+> __block_write_begin_int
+> __block_write_begin
+> ext4_write_begin
+> --------
+> it sees a unmapped new buffer, and marks it as dirty.
+
+This should not happen. When ext4_setattr() truncates the file, we do not
+allow reallocating these blocks for other purposes until the transaction
+commits. Did you find this using some tracing or just code analysis?
+
+There have been quite some fixes to data=journal mode since 4.19 so it may
+quite well be that your problem is actually already fixed in current
+kernels...
+
+								Honza
+
+> Finally, jbd2_journal_commit_transaction(）will trip over the assertion
+> during the BJ_Forget list iteration.
+> 
+> After an code analysis, it seems that nothing can prevent the
+> __block_write_begin() from dirtying the buffer at this very moment.
+> 
+> The same condition may also be applied to the lattest kernel version.
+> 
+> To fix it:
+> Add some checks to see if it is the case dirtied by __block_write_begin().
+> if yes, it's okay and just let it go. The one who dirtied it and the
+> jbd2_journal_commit_transaction() will know how to cooperate together and
+> deal with it in a proper manner.
+> if no, try to complain as we normally will do.
+> 
+> Reported-by: Baolin Liu <liubaolin@kylinos.cn>
+> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+> ---
+>  fs/jbd2/commit.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+> index 75ea4e9a5cab..2c13d0af92d8 100644
+> --- a/fs/jbd2/commit.c
+> +++ b/fs/jbd2/commit.c
+> @@ -1023,7 +1023,20 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+>  			if (is_journal_aborted(journal))
+>  				clear_buffer_jbddirty(bh);
+>  		} else {
+> -			J_ASSERT_BH(bh, !buffer_dirty(bh));
+> +			bool try_to_complain = 1;
+> +			struct folio *folio = NULL;
+> +
+> +			folio = bh->b_folio;
+> +			/*
+> +			 * Try not to complain about the dirty buffer marked dirty
+> +			 * by __block_write_begin().
+> +			 */
+> +			if (buffer_dirty(bh) && folio && folio->mapping
+> +			    && folio_test_locked(folio))
+> +				try_to_complain = 0;
+> +
+> +			if (try_to_complain)
+> +				J_ASSERT_BH(bh, !buffer_dirty(bh));
+>  			/*
+>  			 * The buffer on BJ_Forget list and not jbddirty means
+>  			 * it has been freed by this transaction and hence it
+> -- 
+> 2.33.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
