@@ -1,114 +1,152 @@
-Return-Path: <linux-kernel+bounces-276090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063F3948E42
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:00:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1486948E45
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B491E287E61
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:00:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C13328849D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB0E1C4611;
-	Tue,  6 Aug 2024 11:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32D01C3F08;
+	Tue,  6 Aug 2024 12:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Prp9mtiM"
-Received: from msa.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XcIOqxtJ"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948D11C3F28;
-	Tue,  6 Aug 2024 11:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7974E1BDA83
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 12:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722945580; cv=none; b=hoirQWMRPwKOczk4ls+0Bdhh7AUYf0sOJrJT+bpi4G+o+qfrjMlvckWxzTaITJPraLQXTdNiYpo12oO7AeorzKs7YaskLksyVA0NnU0wuU8Y2gwoCT1TtgxVG4d5ahQrGNr6IryAVMOXEIbyKMsZ4mYP3nsIaveMwcyWIEQhX7A=
+	t=1722945641; cv=none; b=JitiicCoorCVGB+HAlA0RUdwXrebPY78zxg/9V8u4PafDuCt3b5Kazh2VHrMVEw8Zit+9C7tICAG8kVi82hTBFhPGZNMPW0dyJW69oHVhPJn8zPG6X4Y7K/AITK3JvNmjeTeHaMVnKQqElby+pzO/no8Qb5qdYaWMmrj6WakL70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722945580; c=relaxed/simple;
-	bh=rj4oYa/N7G8V8nrMOqBiD5XK8NbtM9oE/cMF9GVPuvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wpcid/Wyii7bmMebltcPbL3XvNjOKfqrNZXdslPmoK7onuVEg+3u80gpav+bCw79AvLp2AiziSfuMb2Hxns6XzyR6hWI3+YmmDv9Iarbszv+n/YkZB5OU3FL+3Fh6G+92/X/n3KXru9cmMSmzNqSBvwziyrjctbQA2QV4G21v4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Prp9mtiM; arc=none smtp.client-ip=80.12.242.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id bIqZs62idOGeabIqfs47Hs; Tue, 06 Aug 2024 13:59:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722945569;
-	bh=U1wmPO7Z7uDvQZNVQuE2oZwHbLILE0+Mf/ztBlL3Y7M=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Prp9mtiM5plHfJXL5GVci2DPl1AvTEDkTqYeDOstFlrA3VlvCb9SroTXIu6PaLSkm
-	 7uibvH2B2qW7S2f4M6stGaBR8RXIusTmY5636yqJp/mJQK1NSMuEZDQc0s3Ylxompr
-	 wr0dvdIUAll59EQWcD1sEYjQCi0yhb9Wz4Rq58rq8N5iSeJm17dz5So156nWGdVyxG
-	 I421MuslIUnoh7hZeYOdDjfqyE3P+o0eISFQzCsYJSE7iEHTXmy15yhAIsCYCvaPx8
-	 kuxSbiJrkxlXr8jZwTl71EZiUQ3ZvmZE6lSq4r4ohTSoiB6zG00g/LchjSaxeglj9I
-	 Yp4JbXYyFf0Yg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 06 Aug 2024 13:59:29 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH 2/2] drm/dp_mst: Slightly optimize drm_dp_mst_i2c_write()    (2/2)
-Date: Tue,  6 Aug 2024 13:59:11 +0200
-Message-ID: <123bc9f79f60de14aad6f46e1c2268cf6f1c27a5.1722945487.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2705cf4c0df41f335cbe91bfd9984fcd95208788.1722945487.git.christophe.jaillet@wanadoo.fr>
-References: <2705cf4c0df41f335cbe91bfd9984fcd95208788.1722945487.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1722945641; c=relaxed/simple;
+	bh=RJDDfvMiOEoXePnZA9Ms3FvFMFt5VD82QTI13DNz0nQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a+E5KajpyE6npU+Ng9D4ppkiPar3WIfe5N7jIfWq0vEH0a1T4IE0+qb2KBhnm6/aE/Hhbw6GYJWoPYC5k90JvrybKx/W/xqmFE3zpwBFnJXjiM0/19wT7kZYpWONpasWUIOjGSb0ZPxav7BsH4clj8tIgUdWzqPH/y+We5ufrs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XcIOqxtJ; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a94aa5080so58416366b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722945637; x=1723550437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fFalGrV5LPuH5m9MtaZapm5ai3Cg5stQHsN8KCx3+Xs=;
+        b=XcIOqxtJ5YIDhKWrW/wV6g9JfeRywxdLZZPhsZRTEZCEwVrOlr0MAMFTNxVaRwwE05
+         9whHnp1ChzIoyTQBB8e8DHbSwYTWrl1OksCJPP08dZjN/+Q/dRPsR2P1il+Q3wKN2vIs
+         SPy97wWm5oE4pppUkHYSKWRVN1zsOsVilX3Yc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722945637; x=1723550437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fFalGrV5LPuH5m9MtaZapm5ai3Cg5stQHsN8KCx3+Xs=;
+        b=bYwFu061X+vEOrN9QS5qFpH18qr/iKdV9ZKYuGFQRqZb8gkSYdbkKBCMxC3KPKJr+h
+         aJ74CwIk+WHZGoNrfcGvzqDIE2DqNnw1mZjkSCEqZX2wLX4GNL6A19dXPIuydxlQwJkm
+         9kQ1uvbMAUAwpK5igjf3ZHayEsiVMYQiiMRZ5IC/kudVVACD7lBZ+UrvVpd7Lp1TiMwi
+         Pl7B2+7PevF21T0/CXoOr7J/WK0nEESAuqO+nkRgNacniAXQn40R8Z3pbAsuAYXU96M5
+         611QfxBwc+UfesCZptCJ1/1s4stxxMD9DTi4qcA5YLYUCKVmV1uFVa5kPOMvOBgsVViO
+         vFhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg/1j/wyiuC10EFwc4fjJxkidqhsg764S0KffR/iOweF0zHTMOm/Cj5MkVfGsZd4tAs0ncHmLVVge8BHBQRLf1GFRsmThZbKN7SwWO
+X-Gm-Message-State: AOJu0YxdlkoLq+/WTedJRt7aRTvw689LyHON1OJEzrVo92KkqiV3Wj89
+	KfdjNvVbX3Xt3fhcn5tvj2FGCPc7rhUtRh4F85a4TjM3Pp887SGq60Y383F3DpPt3sLu9xyjk/g
+	=
+X-Google-Smtp-Source: AGHT+IHjFXEVFjcnoQQ8c6DKX0AaX28slllOLFr+refID70HkEwOlhuF7vap/NrrMV6uHRCGST/i0Q==
+X-Received: by 2002:a17:907:86ab:b0:a7a:91e0:5f1b with SMTP id a640c23a62f3a-a7dc5201c66mr843898566b.68.1722945637322;
+        Tue, 06 Aug 2024 05:00:37 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9ec285bsm538842266b.188.2024.08.06.05.00.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 05:00:36 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a156557026so541696a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 05:00:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW626b6lKDRzuBPp5XhIT7k2xzrWNirbwjuiutv4/ovevCNbLuHXmd7DhWRFpp5Cb+gAm2QkMkYikmwUmr3ZglSHCoTOjlz5iV527O+
+X-Received: by 2002:a17:906:6a1c:b0:a7a:9ca6:524 with SMTP id
+ a640c23a62f3a-a7dc4fe2dd4mr1109632666b.14.1722945635971; Tue, 06 Aug 2024
+ 05:00:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240801084326.1472-1-yr.yang@mediatek.com>
+In-Reply-To: <20240801084326.1472-1-yr.yang@mediatek.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Tue, 6 Aug 2024 19:59:57 +0800
+X-Gmail-Original-Message-ID: <CAC=S1ngP9WvLBmbr6S2C5zs+47ap_FZqCJOJZxZnKOTapJ71eQ@mail.gmail.com>
+Message-ID: <CAC=S1ngP9WvLBmbr6S2C5zs+47ap_FZqCJOJZxZnKOTapJ71eQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ASoC: mediatek: mt8188: Mark AFE_DAC_CON0 register as volatile
+To: "yr.yang" <yr.yang@mediatek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-'msg' is only used with drm_dp_encode_sideband_req() which takes a
-"const struct drm_dp_sideband_msg_req_body *".
+Hi YR,
 
-So some initializations can be done only once outside of the for loop.
+On Thu, Aug 1, 2024 at 4:43=E2=80=AFPM yr.yang <yr.yang@mediatek.com> wrote=
+:
+>
+> From: YR Yang <yr.yang@mediatek.com>
+>
+> Add AFE Control Register 0 to the volatile_register.
+> AFE_DAC_CON0 can be modified by both the SOF and ALSA drivers.
+> If this register is read and written in cache mode, the cached value
+> might not reflect the actual value when the register is modified by
+> another driver. It can cause playback or capture failures. Therefore,
+> it is necessary to add AFE_DAC_CON0 to the list of volatile registers.
+>
+> Signed-off-by: YR Yang <yr.yang@mediatek.com>
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-In case of interest, on x86_64, with allmodconfig, sizeof(*msg) is 420
-bytes.
----
- drivers/gpu/drm/display/drm_dp_mst_topology.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+For this patch for MT8188:
+Reviewed-by: Fei Shao <fshao@chromium.org>
 
-diff --git a/drivers/gpu/drm/display/drm_dp_mst_topology.c b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-index 7bf6157eb3a3..a149ff3f70ad 100644
---- a/drivers/gpu/drm/display/drm_dp_mst_topology.c
-+++ b/drivers/gpu/drm/display/drm_dp_mst_topology.c
-@@ -5891,10 +5891,16 @@ static int drm_dp_mst_i2c_write(struct drm_dp_mst_branch *mstb,
- 		ret = -ENOMEM;
- 		goto out;
- 	}
-+
-+	/*
-+	 * 'msg' is not modified by drm_dp_encode_sideband_req(). So
-+	 * some initializations can be done only once.
-+	 */
-+	memset(&msg, 0, sizeof(msg));
-+	msg.req_type = DP_REMOTE_I2C_WRITE;
-+	msg.u.i2c_write.port_number = port->port_num;
-+
- 	for (i = 0; i < num; i++) {
--		memset(&msg, 0, sizeof(msg));
--		msg.req_type = DP_REMOTE_I2C_WRITE;
--		msg.u.i2c_write.port_number = port->port_num;
- 		msg.u.i2c_write.write_i2c_device_id = msgs[i].addr;
- 		msg.u.i2c_write.num_bytes = msgs[i].len;
- 		msg.u.i2c_write.bytes = msgs[i].buf;
--- 
-2.45.2
+And a side question: is the same also required in mt8195-afe-pcm.c?
+Their volatile register sets look almost identical (except MT8195 has
+some extra lines).
 
+Regards,
+Fei
+
+
+> ---
+> Changes in v2:
+> - Modify commit message.
+> - Link to v1: https://patchwork.kernel.org/project/linux-mediatek/patch/2=
+0240801031030.31114-1-yr.yang@mediatek.com/
+> ---
+>  sound/soc/mediatek/mt8188/mt8188-afe-pcm.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c b/sound/soc/media=
+tek/mt8188/mt8188-afe-pcm.c
+> index ccb6c1f3adc7..73e5c63aeec8 100644
+> --- a/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c
+> +++ b/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c
+> @@ -2748,6 +2748,7 @@ static bool mt8188_is_volatile_reg(struct device *d=
+ev, unsigned int reg)
+>         case AFE_ASRC12_NEW_CON9:
+>         case AFE_LRCK_CNT:
+>         case AFE_DAC_MON0:
+> +       case AFE_DAC_CON0:
+>         case AFE_DL2_CUR:
+>         case AFE_DL3_CUR:
+>         case AFE_DL6_CUR:
+> --
+> 2.34.1
+>
+>
 
