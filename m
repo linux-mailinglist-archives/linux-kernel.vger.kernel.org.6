@@ -1,70 +1,80 @@
-Return-Path: <linux-kernel+bounces-276421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B63949367
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E59949368
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37F681F25284
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:42:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D72D81C2148E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF8F1D47DB;
-	Tue,  6 Aug 2024 14:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E23A1D61B1;
+	Tue,  6 Aug 2024 14:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UsFPlxVZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OSJL4m4a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C2F1D1748
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C2E1C3789
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955199; cv=none; b=bjEIcjMhCjae/c1mq+JAtbxAPjE9CRGoqvmJRK88vV4yAhAK/68rJRqB07YoIDPvLGVmzuVqUVyri0SKt8T1pcVlvXBbIvQ6gUpntSt2cQR95IKTmYc7JMcq4d980xxGVwu1RdxOuxePH7gMR93CSXi2xlymbLZsy08GffdyDHc=
+	t=1722955221; cv=none; b=o5msME6LfSUVmSvYNyJkt2JUCtWLwRi9dALnL8iOuWf8szFhT3rk3xm5VYM9XTy6jYuN4u+3R/k4dnzi29vTHk4Gew7m33rXJRrUQY/faLiHPswdvRewjkMAWrkHOoB6yybMh8hrfqV+23K3r1OF04bm2xmu8diGz7/mq4vKapo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955199; c=relaxed/simple;
-	bh=v68hSRbYssgHPOdUrsegsfZqESfEURUFI1ovetWwfZk=;
+	s=arc-20240116; t=1722955221; c=relaxed/simple;
+	bh=jWkI+sZaploxJo16FuCiQuCe3BbZBjGU+pZrsNJl+gQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P/Sz4w88NspmhJsJoxu2eI7Hu3V0MMxPMeksL4xMoxaHBkcP8GdGl7VBDpLnTZTmXX30hnaAZbfALI3nc06NxI2rx8AXYNJxcwzWnBSiWSrPoXmu6RPriQTRn0j/2BxKP7B9YEwD1zBc2DDBLO1JN27J7qDQTtZz8lWePPri7aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UsFPlxVZ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722955197; x=1754491197;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=v68hSRbYssgHPOdUrsegsfZqESfEURUFI1ovetWwfZk=;
-  b=UsFPlxVZkTmU+Dss4+rw8sEbBKsFO+gcX9mNADlRrtIBVwYfc6F3LpUt
-   Ji6LAHlOMxJQXkdtNmnuADDzrSkXwkFfiPxAr9lpS6VEt4zkreR+ugstL
-   tWGKMe9yQu9hYi7iMr6oCNUcW1br2HXR5NUzW55I+4OMRTD0k7yCcQN0a
-   s2ZXvbr5iQaCo8RNzRMEbph46lgXvWDGfBORdYKnV60Vstc3TmWFOnh1j
-   CRqYNCnAOKf9Rq7GKMsBCbijv6E50T1LMc3QuxvhPnqUYGVPdoUK1UX4Q
-   EQeiSxQ9XtiWX2H1Le0qyP3kQllwstknTiH0TDKKd9uhk6P0UDV1xKSqa
-   A==;
-X-CSE-ConnectionGUID: AWYhwg5fQA+n1xMuivKMww==
-X-CSE-MsgGUID: n7o8qP9rTfiNoljDxF79wg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="43501776"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="43501776"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:39:57 -0700
-X-CSE-ConnectionGUID: HVHRI5pXTp2gRhiQYiWpDQ==
-X-CSE-MsgGUID: JD3uxjkPTJO70/Zu8tmObA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="87176887"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:39:57 -0700
-Received: from [10.212.84.25] (kliang2-mobl1.ccr.corp.intel.com [10.212.84.25])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 8B00B20CFECD;
-	Tue,  6 Aug 2024 07:39:55 -0700 (PDT)
-Message-ID: <9b7c5c61-ef8c-43a8-bf1c-7ff32b4c8bee@linux.intel.com>
-Date: Tue, 6 Aug 2024 10:39:54 -0400
+	 In-Reply-To:Content-Type; b=d+Vub7QRge5kV8s3mNv2xa57lIhufRo2k9s59i3cmSZ9yMn7DyGapZRqW/LP0bIr6MSRbPkRBnvCQQSt/uuwyQzsTy7rxWl1wxkGi0Cay9YVnnYQZ8xX3TxWNrL4VoVRt3Ax9uy7LN1mzpaxMY5G8aID7I1NZ/TvaezRPLY8Y5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OSJL4m4a; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722955219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=J6Adx0B2CFsrsree1Aord21XBomvfgmn1zXz89+4820=;
+	b=OSJL4m4aHOmnGU/hQqP+R5JOvVclPUAiUHhXvPk2BBRC1vcv7CAok9ghojvm+QP6IuypnO
+	eBDxeob/CrWBR83IHc5vU/Ure4q4rGsc4H2VEnpSWknDbzosIZP8HC8CoGcEiLJ5GBoC6K
+	78yuoNL/GW2wuQn12ZQFKm2alZ0BmZE=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-235-XaI3BVZGOLSsuwC8kXKCKw-1; Tue, 06 Aug 2024 10:40:16 -0400
+X-MC-Unique: XaI3BVZGOLSsuwC8kXKCKw-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52fcf2b5287so1137595e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:40:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722955215; x=1723560015;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=J6Adx0B2CFsrsree1Aord21XBomvfgmn1zXz89+4820=;
+        b=jrqfnsvkxe8QlBq95Xq2maBNlX0j8lrOV2g7FK+6gMOxJq0ILF6fmDgu750MUO7oFR
+         WCno86+6Wob7LqxbijVtA6CXwFPMmM5deFaTiRPYcjffII90A4wJPlEw/BkAeUMGuam8
+         gcOPzNjeyJSrXdzU0UC0AT8vHpKMmleizoGs0E9YvOAI0pY8P+J9knGAEUxLJYl9bhiC
+         h0WVIFphg5i8ETQ4uhdAwUT2rfLdPbNBD/Q9hO5vY7PC1APHUq4qeutlWQnI4uikzGWb
+         rkuoZhZjJMBehXtK2buLzsY/tmgjBGlDen3KhJr8M+hXlirgNqsVDC3GDlX/7lxdBFbB
+         /1hg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJSrC6qyBriCXAWWRWLxM3fkUhw0qmfXzkrQd8UCdOrMFRDuqLjSIl5GrL6AHccSTZ1i9Y02D0shuLY5tKbDcStDFNpDTOap35phRt
+X-Gm-Message-State: AOJu0YyZrKHRqlO1amiZWt+gM6Qk95vCYwe4cCllsjdVv8QNawBgVaGh
+	jHHxLJJ9ivWTOH2qn/XDJBa34Y5UC17lOK8gRt0gjHDVdzleyIrD0Qm7V4UppyAx3LTwIBVArQo
+	6L3cGZxfdYUC+FhKEfesNMCM27qFzrQzmpzxyzkCBcS/QFYTkNpTP95Z0CUPm4g==
+X-Received: by 2002:a2e:2e03:0:b0:2ef:2543:457c with SMTP id 38308e7fff4ca-2f15aab06f2mr95870781fa.24.1722955215020;
+        Tue, 06 Aug 2024 07:40:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTSRTwR4vg6qDQJkc79aSqG7JeuIYbH1AYiNNCYk8oHqNzff0UmuuOMAzkLBse1AYZOxAOnw==
+X-Received: by 2002:a2e:2e03:0:b0:2ef:2543:457c with SMTP id 38308e7fff4ca-2f15aab06f2mr95870431fa.24.1722955214459;
+        Tue, 06 Aug 2024 07:40:14 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd01e0a7sm13082779f8f.43.2024.08.06.07.40.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Aug 2024 07:40:14 -0700 (PDT)
+Message-ID: <2659a0bc-b5a7-43e0-b565-fcb93e4ea2b7@redhat.com>
+Date: Tue, 6 Aug 2024 16:40:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,561 +82,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] perf report: Display the branch counter histogram
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: acme@kernel.org, irogers@google.com, peterz@infradead.org,
- mingo@kernel.org, linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
- ak@linux.intel.com, eranian@google.com
-References: <20240703200356.852727-1-kan.liang@linux.intel.com>
- <20240703200356.852727-7-kan.liang@linux.intel.com>
- <CAM9d7cgQWLdec063U+c1su_O9jchv5HSTQ0S0tQJ_q96hjgjXw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 4/7] mm: pgtable: try to reclaim empty PTE pages in
+ zap_page_range_single()
+To: Qi Zheng <zhengqi.arch@bytedance.com>, hughd@google.com,
+ willy@infradead.org, mgorman@suse.de, muchun.song@linux.dev,
+ vbabka@kernel.org, akpm@linux-foundation.org, zokeefe@google.com,
+ rientjes@google.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
+ <9fb3dc75cb7f023750da2b4645fd098429deaad5.1722861064.git.zhengqi.arch@bytedance.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAM9d7cgQWLdec063U+c1su_O9jchv5HSTQ0S0tQJ_q96hjgjXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <9fb3dc75cb7f023750da2b4645fd098429deaad5.1722861064.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2024-08-02 8:18 p.m., Namhyung Kim wrote:
-> On Wed, Jul 3, 2024 at 1:03 PM <kan.liang@linux.intel.com> wrote:
->>
->> From: Kan Liang <kan.liang@linux.intel.com>
->>
->> Reusing the existing --total-cycles option to display the branch
->> counters. Add a new PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER to display
->> the logged branch counter events. They are shown right after all the
->> cycle-related annotations.
->> Extend the struct block_info to store and pass the branch counter
->> related information.
->>
->> The annotation_br_cntr_entry() is to print the histogram of each branch
->> counter event.
->> The annotation_br_cntr_abbr_list() prints the branch counter's
->> abbreviation list. Press 'B' to display the list in the TUI mode.
->>
->> $perf record -e "{branch-instructions:ppp,branch-misses}:S" -j any,counter
->> $perf report  --total-cycles --stdio
->>
->>  # To display the perf.data header info, please use --header/--header-only options.
->>  #
->>  #
->>  # Total Lost Samples: 0
->>  #
->>  # Samples: 1M of events 'anon group { branch-instructions:ppp, branch-misses }'
->>  # Event count (approx.): 1610046
->>  #
->>  # Branch counter abbr list:
->>  # branch-instructions:ppp = A
->>  # branch-misses = B
->>  # '-' No event occurs
->>  # '+' Event occurrences may be lost due to branch counter saturated
->>  #
->>  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles          Branch Counter [Program Block Range]
->>  # ...............  ..............  ...........  ..........  ......................  ..................
->>  #
->>            57.55%            2.5M        0.00%           3             |A   |-   |                 ...
->>            25.27%            1.1M        0.00%           2             |AA  |-   |                 ...
->>            15.61%          667.2K        0.00%           1             |A   |-   |                 ...
->>             0.16%            6.9K        0.81%         575             |A   |-   |                 ...
->>             0.16%            6.8K        1.38%         977             |AA  |-   |                 ...
->>             0.16%            6.8K        0.04%          28             |AA  |B   |                 ...
->>             0.15%            6.6K        1.33%         946             |A   |-   |                 ...
->>             0.11%            4.5K        0.06%          46             |AAA+|-   |                 ...
->>             0.10%            4.4K        0.88%         624             |A   |-   |                 ...
->>             0.09%            3.7K        0.74%         524             |AAA+|B   |                 ...
+On 05.08.24 14:55, Qi Zheng wrote:
+> Now in order to pursue high performance, applications mostly use some
+> high-performance user-mode memory allocators, such as jemalloc or
+> tcmalloc. These memory allocators use madvise(MADV_DONTNEED or MADV_FREE)
+> to release physical memory, but neither MADV_DONTNEED nor MADV_FREE will
+> release page table memory, which may cause huge page table memory usage.
 > 
-> I think this format assumes short width and might not work
-> well when it has more events with bigger width.  Maybe
-> A=<n>, B=<n> ?
-
-The purpose of "AAA" is to print a histogram here which can give the end
-user a straightforward image of the distribution. The A=<n> may not be
-that obvious.
-
-I don't think there is a plan to increase the saturation of the counter.
-So 4 bits of width should last for a long time. Other ARCHs don't have
-such a feature either. I think I can the change the code to force the 4
-bits of width now. For more that 3 events, the perf tool can convert it
-to a "+". We may update the perf tool for a more specific histogram
-later, if the saturation is changed. What do you think?
-
-Thanks,
-Kan
+> The following are a memory usage snapshot of one process which actually
+> happened on our server:
 > 
-> Thanks,
-> Namhyung
+>          VIRT:  55t
+>          RES:   590g
+>          VmPTE: 110g
 > 
->>
->> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->> ---
->>  tools/perf/Documentation/perf-report.txt |   1 +
->>  tools/perf/builtin-diff.c                |   4 +-
->>  tools/perf/builtin-report.c              |  20 ++++-
->>  tools/perf/ui/browsers/hists.c           |  17 +++-
->>  tools/perf/util/annotate.c               | 101 +++++++++++++++++++++++
->>  tools/perf/util/annotate.h               |   3 +
->>  tools/perf/util/block-info.c             |  66 +++++++++++++--
->>  tools/perf/util/block-info.h             |   8 +-
->>  8 files changed, 202 insertions(+), 18 deletions(-)
->>
->> diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
->> index d2b1593ef700..f35189d5ff1e 100644
->> --- a/tools/perf/Documentation/perf-report.txt
->> +++ b/tools/perf/Documentation/perf-report.txt
->> @@ -614,6 +614,7 @@ include::itrace.txt[]
->>         'Avg Cycles%'     - block average sampled cycles / sum of total block average
->>                             sampled cycles
->>         'Avg Cycles'      - block average sampled cycles
->> +       'Branch Counter'  - block branch counter histogram
->>
->>  --skip-empty::
->>         Do not print 0 results in the --stat output.
->> diff --git a/tools/perf/builtin-diff.c b/tools/perf/builtin-diff.c
->> index 2d9226b1de52..de24892dc7b8 100644
->> --- a/tools/perf/builtin-diff.c
->> +++ b/tools/perf/builtin-diff.c
->> @@ -705,7 +705,7 @@ static void hists__precompute(struct hists *hists)
->>                 if (compute == COMPUTE_CYCLES) {
->>                         bh = container_of(he, struct block_hist, he);
->>                         init_block_hist(bh);
->> -                       block_info__process_sym(he, bh, NULL, 0);
->> +                       block_info__process_sym(he, bh, NULL, 0, 0);
->>                 }
->>
->>                 data__for_each_file_new(i, d) {
->> @@ -728,7 +728,7 @@ static void hists__precompute(struct hists *hists)
->>                                 pair_bh = container_of(pair, struct block_hist,
->>                                                        he);
->>                                 init_block_hist(pair_bh);
->> -                               block_info__process_sym(pair, pair_bh, NULL, 0);
->> +                               block_info__process_sym(pair, pair_bh, NULL, 0, 0);
->>
->>                                 bh = container_of(he, struct block_hist, he);
->>
->> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
->> index da8d13bbb500..a0f864f2e996 100644
->> --- a/tools/perf/builtin-report.c
->> +++ b/tools/perf/builtin-report.c
->> @@ -575,6 +575,13 @@ static int evlist__tty_browse_hists(struct evlist *evlist, struct report *rep, c
->>                 hists__fprintf_nr_sample_events(hists, rep, evname, stdout);
->>
->>                 if (rep->total_cycles_mode) {
->> +                       char *buf;
->> +
->> +                       if (!annotation_br_cntr_abbr_list(&buf, pos, true)) {
->> +                               fprintf(stdout, "%s", buf);
->> +                               fprintf(stdout, "#\n");
->> +                               free(buf);
->> +                       }
->>                         report__browse_block_hists(&rep->block_reports[i - 1].hist,
->>                                                    rep->min_percent, pos, NULL);
->>                         continue;
->> @@ -1121,18 +1128,23 @@ static int __cmd_report(struct report *rep)
->>         report__output_resort(rep);
->>
->>         if (rep->total_cycles_mode) {
->> -               int block_hpps[6] = {
->> +               int nr_hpps = 4;
->> +               int block_hpps[PERF_HPP_REPORT__BLOCK_MAX_INDEX] = {
->>                         PERF_HPP_REPORT__BLOCK_TOTAL_CYCLES_PCT,
->>                         PERF_HPP_REPORT__BLOCK_LBR_CYCLES,
->>                         PERF_HPP_REPORT__BLOCK_CYCLES_PCT,
->>                         PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
->> -                       PERF_HPP_REPORT__BLOCK_RANGE,
->> -                       PERF_HPP_REPORT__BLOCK_DSO,
->>                 };
->>
->> +               if (session->evlist->nr_br_cntr > 0)
->> +                       block_hpps[nr_hpps++] = PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER;
->> +
->> +               block_hpps[nr_hpps++] = PERF_HPP_REPORT__BLOCK_RANGE;
->> +               block_hpps[nr_hpps++] = PERF_HPP_REPORT__BLOCK_DSO;
->> +
->>                 rep->block_reports = block_info__create_report(session->evlist,
->>                                                                rep->total_cycles,
->> -                                                              block_hpps, 6,
->> +                                                              block_hpps, nr_hpps,
->>                                                                &rep->nr_block_reports);
->>                 if (!rep->block_reports)
->>                         return -1;
->> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
->> index b7219df51236..73d766eac75b 100644
->> --- a/tools/perf/ui/browsers/hists.c
->> +++ b/tools/perf/ui/browsers/hists.c
->> @@ -3684,8 +3684,10 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
->>         struct hist_browser *browser;
->>         int key = -1;
->>         struct popup_action action;
->> +       char *br_cntr_text = NULL;
->>         static const char help[] =
->> -       " q             Quit \n";
->> +       " q             Quit \n"
->> +       " B             Branch counter abbr list (Optional)\n";
->>
->>         browser = hist_browser__new(hists);
->>         if (!browser)
->> @@ -3703,6 +3705,8 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
->>
->>         memset(&action, 0, sizeof(action));
->>
->> +       annotation_br_cntr_abbr_list(&br_cntr_text, evsel, false);
->> +
->>         while (1) {
->>                 key = hist_browser__run(browser, "? - help", true, 0);
->>
->> @@ -3723,6 +3727,16 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
->>                         action.ms.sym = browser->selection->sym;
->>                         do_annotate(browser, &action);
->>                         continue;
->> +               case 'B':
->> +                       if (br_cntr_text) {
->> +                               ui__question_window("Branch counter abbr list",
->> +                                                   br_cntr_text, "Press any key...", 0);
->> +                       } else {
->> +                               ui__question_window("Branch counter abbr list",
->> +                                                   "\n The branch counter is not available.\n",
->> +                                                   "Press any key...", 0);
->> +                       }
->> +                       continue;
->>                 default:
->>                         break;
->>                 }
->> @@ -3730,5 +3744,6 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
->>
->>  out:
->>         hist_browser__delete(browser);
->> +       free(br_cntr_text);
->>         return 0;
->>  }
->> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
->> index 6baa0671598e..f20f9e40ef0d 100644
->> --- a/tools/perf/util/annotate.c
->> +++ b/tools/perf/util/annotate.c
->> @@ -40,6 +40,7 @@
->>  #include "namespaces.h"
->>  #include "thread.h"
->>  #include "hashmap.h"
->> +#include "strbuf.h"
->>  #include <regex.h>
->>  #include <linux/bitops.h>
->>  #include <linux/kernel.h>
->> @@ -47,6 +48,7 @@
->>  #include <linux/zalloc.h>
->>  #include <subcmd/parse-options.h>
->>  #include <subcmd/run-command.h>
->> +#include <math.h>
->>
->>  /* FIXME: For the HE_COLORSET */
->>  #include "ui/browser.h"
->> @@ -1706,6 +1708,105 @@ static void ipc_coverage_string(char *bf, int size, struct annotation *notes)
->>                   ipc, coverage);
->>  }
->>
->> +int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header)
->> +{
->> +       struct evsel *pos;
->> +       struct strbuf sb;
->> +
->> +       if (evsel->evlist->nr_br_cntr <= 0)
->> +               return -ENOTSUP;
->> +
->> +       strbuf_init(&sb, /*hint=*/ 0);
->> +
->> +       if (header && strbuf_addf(&sb, "# Branch counter abbr list:\n"))
->> +               goto err;
->> +
->> +       evlist__for_each_entry(evsel->evlist, pos) {
->> +               if (!(pos->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS))
->> +                       continue;
->> +               if (header && strbuf_addf(&sb, "#"))
->> +                       goto err;
->> +
->> +               if (strbuf_addf(&sb, " %s = %s\n", pos->name, pos->abbr_name))
->> +                       goto err;
->> +       }
->> +
->> +       if (header && strbuf_addf(&sb, "#"))
->> +               goto err;
->> +       if (strbuf_addf(&sb, " '-' No event occurs\n"))
->> +               goto err;
->> +
->> +       if (header && strbuf_addf(&sb, "#"))
->> +               goto err;
->> +       if (strbuf_addf(&sb, " '+' Event occurrences may be lost due to branch counter saturated\n"))
->> +               goto err;
->> +
->> +       *str = strbuf_detach(&sb, NULL);
->> +
->> +       return 0;
->> +err:
->> +       strbuf_release(&sb);
->> +       return -ENOMEM;
->> +}
->> +
->> +int annotation_br_cntr_entry(char **str, int br_cntr_nr,
->> +                            u64 *br_cntr, int num_aggr,
->> +                            struct evsel *evsel)
->> +{
->> +       struct evsel *pos = evsel ? evlist__first(evsel->evlist) : NULL;
->> +       int i, j, avg, used;
->> +       struct strbuf sb;
->> +
->> +       strbuf_init(&sb, /*hint=*/ 0);
->> +       for (i = 0; i < br_cntr_nr; i++) {
->> +               used = 0;
->> +               avg = ceil((double)(br_cntr[i] & ~ANNOTATION__BR_CNTR_SATURATED_FLAG) /
->> +                          (double)num_aggr);
->> +
->> +               if (strbuf_addch(&sb, '|'))
->> +                       goto err;
->> +
->> +               if (!br_cntr[i]) {
->> +                       if (strbuf_addch(&sb, '-'))
->> +                               goto err;
->> +                       used++;
->> +               } else {
->> +                       evlist__for_each_entry_from(evsel->evlist, pos) {
->> +                               if ((pos->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS) &&
->> +                                   (pos->br_cntr_idx == i))
->> +                                       break;
->> +                       }
->> +                       for (j = 0; j < avg; j++, used++) {
->> +                               if (strbuf_addstr(&sb, pos->abbr_name))
->> +                                       goto err;
->> +                       }
->> +
->> +                       if (br_cntr[i] & ANNOTATION__BR_CNTR_SATURATED_FLAG) {
->> +                               if (strbuf_addch(&sb, '+'))
->> +                                       goto err;
->> +                               used++;
->> +                       }
->> +                       pos = list_next_entry(pos, core.node);
->> +               }
->> +
->> +               /* Assume the branch counter saturated at 3 */
->> +               for (j = used; j < 4; j++) {
->> +                       if (strbuf_addch(&sb, ' '))
->> +                               goto err;
->> +               }
->> +       }
->> +
->> +       if (strbuf_addch(&sb, br_cntr_nr ? '|' : ' '))
->> +               goto err;
->> +
->> +       *str = strbuf_detach(&sb, NULL);
->> +
->> +       return 0;
->> +err:
->> +       strbuf_release(&sb);
->> +       return -ENOMEM;
->> +}
->> +
->>  static void __annotation_line__write(struct annotation_line *al, struct annotation *notes,
->>                                      bool first_line, bool current_entry, bool change_color, int width,
->>                                      void *obj, unsigned int percent_type,
->> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
->> index f39dd5d7b05e..2ff79a389dc0 100644
->> --- a/tools/perf/util/annotate.h
->> +++ b/tools/perf/util/annotate.h
->> @@ -548,4 +548,7 @@ struct annotated_basic_block {
->>  int annotate_get_basic_blocks(struct symbol *sym, s64 src, s64 dst,
->>                               struct list_head *head);
->>
->> +int annotation_br_cntr_entry(char **str, int br_cntr_nr, u64 *br_cntr,
->> +                            int num_aggr, struct evsel *evsel);
->> +int annotation_br_cntr_abbr_list(char **str, struct evsel *evsel, bool header);
->>  #endif /* __PERF_ANNOTATE_H */
->> diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
->> index 04068d48683f..649392bee7ed 100644
->> --- a/tools/perf/util/block-info.c
->> +++ b/tools/perf/util/block-info.c
->> @@ -40,16 +40,32 @@ static struct block_header_column {
->>         [PERF_HPP_REPORT__BLOCK_DSO] = {
->>                 .name = "Shared Object",
->>                 .width = 20,
->> +       },
->> +       [PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER] = {
->> +               .name = "Branch Counter",
->> +               .width = 30,
->>         }
->>  };
->>
->> -struct block_info *block_info__new(void)
->> +static struct block_info *block_info__new(unsigned int br_cntr_nr)
->>  {
->> -       return zalloc(sizeof(struct block_info));
->> +       struct block_info *bi = zalloc(sizeof(struct block_info));
->> +
->> +       if (bi && br_cntr_nr) {
->> +               bi->br_cntr = calloc(br_cntr_nr, sizeof(u64));
->> +               if (!bi->br_cntr) {
->> +                       free(bi);
->> +                       return NULL;
->> +               }
->> +       }
->> +
->> +       return bi;
->>  }
->>
->>  void block_info__delete(struct block_info *bi)
->>  {
->> +       if (bi)
->> +               free(bi->br_cntr);
->>         free(bi);
->>  }
->>
->> @@ -86,7 +102,8 @@ int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
->>
->>  static void init_block_info(struct block_info *bi, struct symbol *sym,
->>                             struct cyc_hist *ch, int offset,
->> -                           u64 total_cycles)
->> +                           u64 total_cycles, unsigned int br_cntr_nr,
->> +                           u64 *br_cntr, struct evsel *evsel)
->>  {
->>         bi->sym = sym;
->>         bi->start = ch->start;
->> @@ -99,10 +116,18 @@ static void init_block_info(struct block_info *bi, struct symbol *sym,
->>
->>         memcpy(bi->cycles_spark, ch->cycles_spark,
->>                NUM_SPARKS * sizeof(u64));
->> +
->> +       if (br_cntr && br_cntr_nr) {
->> +               bi->br_cntr_nr = br_cntr_nr;
->> +               memcpy(bi->br_cntr, &br_cntr[offset * br_cntr_nr],
->> +                      br_cntr_nr * sizeof(u64));
->> +       }
->> +       bi->evsel = evsel;
->>  }
->>
->>  int block_info__process_sym(struct hist_entry *he, struct block_hist *bh,
->> -                           u64 *block_cycles_aggr, u64 total_cycles)
->> +                           u64 *block_cycles_aggr, u64 total_cycles,
->> +                           unsigned int br_cntr_nr)
->>  {
->>         struct annotation *notes;
->>         struct cyc_hist *ch;
->> @@ -125,12 +150,14 @@ int block_info__process_sym(struct hist_entry *he, struct block_hist *bh,
->>                         struct block_info *bi;
->>                         struct hist_entry *he_block;
->>
->> -                       bi = block_info__new();
->> +                       bi = block_info__new(br_cntr_nr);
->>                         if (!bi)
->>                                 return -1;
->>
->>                         init_block_info(bi, he->ms.sym, &ch[i], i,
->> -                                       total_cycles);
->> +                                       total_cycles, br_cntr_nr,
->> +                                       notes->branch->br_cntr,
->> +                                       hists_to_evsel(he->hists));
->>                         cycles += bi->cycles_aggr / bi->num_aggr;
->>
->>                         he_block = hists__add_entry_block(&bh->block_hists,
->> @@ -327,6 +354,24 @@ static void init_block_header(struct block_fmt *block_fmt)
->>         fmt->width = block_column_width;
->>  }
->>
->> +static int block_branch_counter_entry(struct perf_hpp_fmt *fmt,
->> +                                     struct perf_hpp *hpp,
->> +                                     struct hist_entry *he)
->> +{
->> +       struct block_fmt *block_fmt = container_of(fmt, struct block_fmt, fmt);
->> +       struct block_info *bi = he->block_info;
->> +       char *buf;
->> +       int ret;
->> +
->> +       if (annotation_br_cntr_entry(&buf, bi->br_cntr_nr, bi->br_cntr,
->> +                                    bi->num_aggr, bi->evsel))
->> +               return 0;
->> +
->> +       ret = scnprintf(hpp->buf, hpp->size, "%*s", block_fmt->width, buf);
->> +       free(buf);
->> +       return ret;
->> +}
->> +
->>  static void hpp_register(struct block_fmt *block_fmt, int idx,
->>                          struct perf_hpp_list *hpp_list)
->>  {
->> @@ -357,6 +402,9 @@ static void hpp_register(struct block_fmt *block_fmt, int idx,
->>         case PERF_HPP_REPORT__BLOCK_DSO:
->>                 fmt->entry = block_dso_entry;
->>                 break;
->> +       case PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER:
->> +               fmt->entry = block_branch_counter_entry;
->> +               break;
->>         default:
->>                 return;
->>         }
->> @@ -390,7 +438,7 @@ static void init_block_hist(struct block_hist *bh, struct block_fmt *block_fmts,
->>  static int process_block_report(struct hists *hists,
->>                                 struct block_report *block_report,
->>                                 u64 total_cycles, int *block_hpps,
->> -                               int nr_hpps)
->> +                               int nr_hpps, unsigned int br_cntr_nr)
->>  {
->>         struct rb_node *next = rb_first_cached(&hists->entries);
->>         struct block_hist *bh = &block_report->hist;
->> @@ -405,7 +453,7 @@ static int process_block_report(struct hists *hists,
->>         while (next) {
->>                 he = rb_entry(next, struct hist_entry, rb_node);
->>                 block_info__process_sym(he, bh, &block_report->cycles,
->> -                                       total_cycles);
->> +                                       total_cycles, br_cntr_nr);
->>                 next = rb_next(&he->rb_node);
->>         }
->>
->> @@ -435,7 +483,7 @@ struct block_report *block_info__create_report(struct evlist *evlist,
->>                 struct hists *hists = evsel__hists(pos);
->>
->>                 process_block_report(hists, &block_reports[i], total_cycles,
->> -                                    block_hpps, nr_hpps);
->> +                                    block_hpps, nr_hpps, evlist->nr_br_cntr);
->>                 i++;
->>         }
->>
->> diff --git a/tools/perf/util/block-info.h b/tools/perf/util/block-info.h
->> index 0b9e1aad4c55..b9329dc3ab59 100644
->> --- a/tools/perf/util/block-info.h
->> +++ b/tools/perf/util/block-info.h
->> @@ -18,6 +18,9 @@ struct block_info {
->>         u64                     total_cycles;
->>         int                     num;
->>         int                     num_aggr;
->> +       int                     br_cntr_nr;
->> +       u64                     *br_cntr;
->> +       struct evsel            *evsel;
->>  };
->>
->>  struct block_fmt {
->> @@ -36,6 +39,7 @@ enum {
->>         PERF_HPP_REPORT__BLOCK_AVG_CYCLES,
->>         PERF_HPP_REPORT__BLOCK_RANGE,
->>         PERF_HPP_REPORT__BLOCK_DSO,
->> +       PERF_HPP_REPORT__BLOCK_BRANCH_COUNTER,
->>         PERF_HPP_REPORT__BLOCK_MAX_INDEX
->>  };
->>
->> @@ -46,7 +50,6 @@ struct block_report {
->>         int                     nr_fmts;
->>  };
->>
->> -struct block_info *block_info__new(void);
->>  void block_info__delete(struct block_info *bi);
->>
->>  int64_t __block_info__cmp(struct hist_entry *left, struct hist_entry *right);
->> @@ -55,7 +58,8 @@ int64_t block_info__cmp(struct perf_hpp_fmt *fmt __maybe_unused,
->>                         struct hist_entry *left, struct hist_entry *right);
->>
->>  int block_info__process_sym(struct hist_entry *he, struct block_hist *bh,
->> -                           u64 *block_cycles_aggr, u64 total_cycles);
->> +                           u64 *block_cycles_aggr, u64 total_cycles,
->> +                           unsigned int br_cntr_nr);
->>
->>  struct block_report *block_info__create_report(struct evlist *evlist,
->>                                                u64 total_cycles,
->> --
->> 2.38.1
->>
+> In this case, most of the page table entries are empty. For such a PTE
+> page where all entries are empty, we can actually free it back to the
+> system for others to use.
 > 
+> As a first step, this commit attempts to synchronously free the empty PTE
+> pages in zap_page_range_single() (MADV_DONTNEED etc will invoke this). In
+> order to reduce overhead, we only handle the cases with a high probability
+> of generating empty PTE pages, and other cases will be filtered out, such
+> as:
+
+It doesn't make particular sense during munmap() where we will just 
+remove the page tables manually directly afterwards. We should limit it 
+to the !munmap case -- in particular MADV_DONTNEED.
+
+To minimze the added overhead, I further suggest to only try reclaim 
+asynchronously if we know that likely all ptes will be none, that is, 
+when we just zapped *all* ptes of a PTE page table -- our range spans 
+the complete PTE page table.
+
+Just imagine someone zaps a single PTE, we really don't want to start 
+scanning page tables and involve an (rather expensive) walk_page_range 
+just to find out that there is still something mapped.
+
+Last but not least, would there be a way to avoid the walk_page_range() 
+and simply trigger it from zap_pte_range(), possibly still while holding 
+the PTE table lock?
+
+We might have to trylock the PMD, but that should be doable.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
