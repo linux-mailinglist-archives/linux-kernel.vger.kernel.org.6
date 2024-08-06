@@ -1,143 +1,146 @@
-Return-Path: <linux-kernel+bounces-276754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1BCB9497F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:04:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE699497E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE681C20FA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D797A1F234DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3896A7CF30;
-	Tue,  6 Aug 2024 19:04:35 +0000 (UTC)
-Received: from second.openwall.net (second.openwall.net [193.110.157.125])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 8D367EAD2
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.110.157.125
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2DD145341;
+	Tue,  6 Aug 2024 18:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gc7Z832/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868838F77;
+	Tue,  6 Aug 2024 18:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722971074; cv=none; b=jp1xn7yokz/CRKAEeIx4pFvX5ghNO/mpIEh41nn+UGqYBbMgwK00sFHsQWEv7hdSMlDqdDL7auJqdiJsv/g/V/gAaM3trb29Fi5Mmw/U+Qx7TGV3EFBTv5nr8+Yx6xBGcU9E/NnNB9O7eF851aZwnkGWKB0NWTyjv7OSiazJB4s=
+	t=1722970692; cv=none; b=NZGA2rtQ1nSkx6/55ShtG225Gxiy6iffuKVN2CHJMaimz6dLHC39ioxNDP0qvzxTyCQwUkWEEuetpmEadFfslWIhrlCmM2OnfbxONMXUjwApRn3VsBnlMD+inigpNGpsTgLAWf2Dtw4R63uSMtSg50ERJUCmjyq0ZOdYcxibZj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722971074; c=relaxed/simple;
-	bh=kXnF4Vdg5Vrsb77LBn7YP+mgUEhG4aFshvw+dHS7Y/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qLzwDMcTDfqsVpeQYPyp5MEgl7vtinAFHGPiTvxZUbf05lToEZAD+kVkaSkNj97JY56amJz6R6VP303sCJkrdfS8D056AnO/Zsl4ctUeI+3N41MqqhzivhJeSqJj9iahzLlWxvf2+HwB9FylzoREuAtqXwUiwtHvGwgjPjCUjyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openwall.com; spf=pass smtp.mailfrom=openwall.com; arc=none smtp.client-ip=193.110.157.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openwall.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openwall.com
-Received: (qmail 11632 invoked from network); 6 Aug 2024 18:57:47 -0000
-Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
-  by localhost with SMTP; 6 Aug 2024 18:57:47 -0000
-Received: by pvt.openwall.com (Postfix, from userid 503)
-	id 0BF31A064E; Tue,  6 Aug 2024 20:57:37 +0200 (CEST)
-Date: Tue, 6 Aug 2024 20:57:37 +0200
-From: Solar Designer <solar@openwall.com>
-To: Joel Granados <j.granados@samsung.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Kees Cook <keescook@chromium.org>,
-	Thomas Wei??schuh <linux@weissschuh.net>,
-	Wen Yang <wen.yang@linux.dev>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [GIT PULL] sysctl changes for v6.11-rc1
-Message-ID: <20240806185736.GA29664@openwall.com>
-References: <CGME20240716141703eucas1p2f6ddaf91b7363dd893d37b9aa8987dc6@eucas1p2.samsung.com> <20240716141656.pvlrrnxziok2jwxt@joelS2.panther.com>
+	s=arc-20240116; t=1722970692; c=relaxed/simple;
+	bh=CxyhdiqFzs0KCYLIqZCch2rfpOd55xLPflf6rfNePOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MsXGh0jN2nVpqT77OY7z5Y37InpBBUehO+zj0eikb1yfSuSjWZGieOUHbX0SmieJbRdRBF9qhZdjsqoaR+ITXg+8/y2jtxKbc0g1XGJTFTsY1yVp1Mr9htfIe+ken20sae0oo8x/ktno/WGVyAfKEE7pV8l/UXtq7xBHWKdo4h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gc7Z832/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476H6Unw013589;
+	Tue, 6 Aug 2024 18:58:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fNhD6pIC+oLP/zfHBFA5xgjXKbH5MKc03edOBncHJOI=; b=Gc7Z832/QOIKaCIp
+	y4kNKx5pRPhqRhfxeOjQyqgY55L9QM/SnJKD7xX3ymlV//pON+kai/qbCctEZMRL
+	23DkD/80y+ovLhecS6piy97dXq7QsWzaEhdLtyu0qfqZc0zBZxmWjGcEVUS7WJSN
+	h+hTtOi1YxELp6rwDe23tZ0UWpgED5xORreOvmm5xsD4nSogrwEygp7z1+9fKdzm
+	16l4hZx94yaSviYL3q1yZ1kplndR7dOijSpuPabseKNIYZhOP+pR45s3F0Rhwpwg
+	W9+vB6n790mfUPafs/3cLuLcNR5e9AYPF4uA/DaIbNLLRnd5Bq93m8s2UwG7uk9x
+	MkvF3w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sa8f0j6u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 18:58:05 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 476Iw4no011042
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 6 Aug 2024 18:58:04 GMT
+Received: from [10.110.113.181] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 Aug 2024
+ 11:58:03 -0700
+Message-ID: <622c0fd6-e4e2-6597-d0a2-ff449d7d2f59@quicinc.com>
+Date: Tue, 6 Aug 2024 11:58:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240716141656.pvlrrnxziok2jwxt@joelS2.panther.com>
-User-Agent: Mutt/1.4.2.3i
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 0/8] Enable EUD on Qualcomm sm8450 SoC
+Content-Language: en-US
+To: Caleb Connolly <caleb.connolly@linaro.org>,
+        Elson Roy Serrao
+	<quic_eserrao@quicinc.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <gregkh@linuxfoundation.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
+References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+ <023d4ea8-635d-435f-bae2-87284f70123b@linaro.org>
+ <2a17eaca-54af-d1fa-304d-c7e0afd85b33@quicinc.com>
+ <32f23133-c494-46c1-a1f7-cabddb6331a8@linaro.org>
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <32f23133-c494-46c1-a1f7-cabddb6331a8@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: D3ARgBR9vxUPoXwXnrhNoEDelUJZiaYf
+X-Proofpoint-ORIG-GUID: D3ARgBR9vxUPoXwXnrhNoEDelUJZiaYf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-06_15,2024-08-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 clxscore=1015 adultscore=0 malwarescore=0 mlxlogscore=792
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408060133
 
-On Tue, Jul 16, 2024 at 04:16:56PM +0200, Joel Granados wrote:
-> sysctl changes for 6.11-rc1
+On 8/1/2024 3:52 AM, Caleb Connolly wrote:
+> Hi Trilok,
 > 
-> Summary
+> On 31/07/2024 21:58, Trilok Soni wrote:
+>> On 7/31/2024 4:13 AM, Caleb Connolly wrote:
+>>>>      2.) Proper routing of USB role switch notifications: EUD hub is physically
+>>>>       present in between the USB connector and the USB controller. So the
+>>>>       usb role switch notifications originating from the connector should
+>>>>       route through EUD. EUD also relies on role switch notifications to
+>>>>       communicate with the USB, regarding EUD attach/detach events.
+>>>>
+>>>> This series aims at implementing the above aspects to enable EUD on
+>>>> Qualcomm sm8450 SoC.
+>>>
+>>> Are there any plans to make this feature available for folks outside of Qualcomm / an NDA?
+>>>
+>>> There is an openOCD fork on CodeLinaro but it still requires some proprietary library which is only available to folks with a quicinc email as I understand it.
+>>>
+>>
+>> Which codelinaro link are you referring here?
 > 
-> * Remove "->procname == NULL" check when iterating through sysctl table arrays
+> That would be https://git.codelinaro.org/clo/la/openocd-org/openocd/-/blob/qcom_changes/README_QCOM?ref_type=heads
 > 
->     Removing sentinels in ctl_table arrays reduces the build time size and
->     runtime memory consumed by ~64 bytes per array. With all ctl_table
->     sentinels gone, the additional check for ->procname == NULL that worked in
->     tandem with the ARRAY_SIZE to calculate the size of the ctl_table arrays is
->     no longer needed and has been removed. The sysctl register functions now
->     returns an error if a sentinel is used.
+> Which says:
 > 
-> * Preparation patches for sysctl constification
+> Qualcomm specific tools:
+> - Login to qpm.qualcomm.com
+> - QUTS: 1.64.1.39 (version & above)
+> - Qualcomm Host USB Product Suite - QUD QC only : 1.00.63 (supported version)
+> - EUD QC : 2.1.1 (supported version)
 > 
->     Constifying ctl_table structs prevents the modification of proc_handler
->     function pointers as they would reside in .rodata. The ctl_table arguments
->     in sysctl utility functions are const qualified in preparation for a future
->     treewide proc_handler argument constification commit.
+> I believe the specific versions of QUD and EUD are only available to Qualcomm engineers and not even to OEMs, though I might be mistaken.
 
-As (I assume it was) expected, these changes broke out-of-tree modules.
-For LKRG, I am repairing this by adding "#if LINUX_VERSION_CODE >=
-KERNEL_VERSION(6,11,0)" checks around the corresponding module changes.
-This works.  However, I wonder if it would possibly be better for the
-kernel to introduce a corresponding "feature test macro" (or two, for
-the two changes above).  I worry that these changes (or some of them)
-could get backported to stable/longterm, which with the 6.11+ checks
-would unnecessarily break out-of-tree modules again (and again and again
-for each backport to a different kernel branch).  Feature test macro(s)
-would avoid such further breakage, as they would (be supposed to be)
-included along with the backports.
+Thanks. So are we okay w/ one of the following option? (trying to understand the need here properly before I relay it internally). 
 
-Joel, Linus, or anyone else - what do you think?  And in general, would
-it be a good practice for Linux to be providing feature test macros to
-indicate this sort of changes?  Is there a naming convention for them?
+Options:
 
-For omitting the ctl_table array sentinel elements, it is now possible
-to check whether register_sysctl() is a function or a macro.  I've
-tested the below and it works:
+(1) Provide EUD library and tools - proprietary w/o any login requirement. 
+(2) Provide open-source EUD library and tools w/o any login requirement. 
 
-+++ b/src/modules/comm_channel/p_comm_channel.c
-@@ -332,7 +332,14 @@ struct ctl_table p_lkrg_sysctl_table[] = {
-       .extra1         = &p_profile_enforce_min,
-       .extra2         = &p_profile_enforce_max,
-    },
-+/*
-+ * Empty element at the end of array was required when register_sysctl() was a
-+ * function.  It's no longer required when it became a macro in 2023, and it's
-+ * disallowed after further changes in 2024.
-+ */
-+#ifndef register_sysctl
-    { }
-+#endif
- };
+Is Option (1) fine to begin with or option 2 is must? 
 
-But it's a hack, which I'm unhappy about.
 
-So instead of a macro indicating that the "Remove "->procname == NULL"
-check when iterating through sysctl table arrays" change is in place, we
-could have one that indicates that the sentinel elements are no longer
-required (and no need for one indicating that they're no longer allowed,
-then).  Something like LINUX_SYSCTL_NO_SENTINELS.  This could even be
-backported to kernels that do not have the "Remove "->procname == NULL"
-check" commit, if they do have last year's removal of the requirement.
+-- 
+---Trilok Soni
 
-Alternatively, maybe "Remove "->procname == NULL" check when iterating
-through sysctl table arrays" should be reverted.  I can see how it's
-useful as a policy check for the kernel itself, so no space is
-inadvertently wasted on a sentinel element anywhere in the kernel tree,
-but maybe it isn't worth enforcing this for out-of-tree modules.  The
-impact of an extra element (if allowed) is negligible, whereas the
-impact of not having it on an older kernel is really bad.  I worry that
-some out-of-tree modules would be adapted or written for the new
-convention without a 6.11+ check, yet someone would also build and use
-them on pre-6.11.  There's no compile-time failure from omitting the
-sentinel element on a kernel where it was needed, and there isn't a
-_reliable_ runtime failure either.
-
-The other macro could be called LINUX_SYSCTL_TABLE_CONST, although I'm
-not sure whether it should apply only to the "ctl_table arguments in
-sysctl utility functions" (the change so far) or also to "Constifying
-ctl_table structs" (a near future change, right?)
-
-Alexander
 
