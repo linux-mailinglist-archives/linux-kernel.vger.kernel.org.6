@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-276448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12A69493D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:54:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 732119493D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD5D28752B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:54:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46271C2153C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA18D1D27A3;
-	Tue,  6 Aug 2024 14:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F841D61B3;
+	Tue,  6 Aug 2024 14:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J1gyXILH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SfJFDIvX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9528210190;
-	Tue,  6 Aug 2024 14:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B902718D655
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955932; cv=none; b=eRvbce2f8iwakb24Q/K7eWh7V5oYmQQqpQfucMc9yHCuukCk1BXaTiWrOnpX485GNECTinUG2qC95LAKQZVCdfKkkeptWlXaL5smoQ3ZeCyUWnYcWT+jr50V+FoBi75z0A/jDT0cPAk4z27dKxbvuBola0I1Wpc6lZGdlFWl2EU=
+	t=1722955986; cv=none; b=FsslzZOXVIL5t+d2F1ZxMd9kU7Qxbee9XnliBXwd1dUnZyB+iuK7WQ7QieKYUSmELkMdKRXR+w501PH3arYLodjxmK/Hg8hBMFB5HHhNsE2oCXlmsaw0vN6gu+WdfHm03TPrMzrmVcmPlo30BPBBuk572n/QXdUBflMS4fR62RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955932; c=relaxed/simple;
-	bh=ulhVGtEPKBdoyHz0l9ezBsABeAF4IDtYxjCyDs4xjzE=;
+	s=arc-20240116; t=1722955986; c=relaxed/simple;
+	bh=Nqo689t7LgKgBuMFfNk2N1oBq8U9vdikdPaK8ekHCNI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XviYqBpEJvm4l8ff3L2XWSic1RNMr2es3gMaBlFwZLiN6w9+Z2ocYCYG7qC1kC3OGq8mXHSPRAB1h2hMfA3Dt8KOS+5dE76TAcx+u0W4+4L9z8oFLnsca+RuCtcgyj3JbTX1XR0+op7+0hTV14luUA9ikIREV4YM+lxwpJvdz7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J1gyXILH; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722955931; x=1754491931;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ulhVGtEPKBdoyHz0l9ezBsABeAF4IDtYxjCyDs4xjzE=;
-  b=J1gyXILH5Hy10QTy9+i/v3C0PFMbwIUuS7p57nJgtIY3aDySErih81eT
-   upW9yEk+EFmh1PSBgibaBU0wfjhO34P3Tn6ijprxtG9iXhdk5529XTsbT
-   /x4O/FXRWR4T4Nqsm3tCFybLyV6lzTGtGi4r0LO7qb+PtSrMNmy3q/J+1
-   6VIdTdTiQPn36Wq0hva4xvy3711++wkukvqy1QjSrxp7Haroymc8M9Ary
-   +3jU/kq7gCRHdCS6L/EYS+o7bEVPjQdBidBJNl2BOexVPjpa4IRy6ck1J
-   y4GLJzFSFWdweqwoHP2q+04tUg+d5RaByRDlA/EE1ZWPVvWI5Mfyy8pLm
-   g==;
-X-CSE-ConnectionGUID: LLunlwrKQGuc4zUy7GuwDQ==
-X-CSE-MsgGUID: mbhwuqlZRjW6sGIJMtR95w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="21102049"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="21102049"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:52:03 -0700
-X-CSE-ConnectionGUID: cJPN9FP4TuWrzG0YHOubYw==
-X-CSE-MsgGUID: Y9MkFWawRqaVopuvdK1S7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="87476718"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.0.53]) ([10.94.0.53])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 07:51:57 -0700
-Message-ID: <186ae30f-678c-423a-a56f-74510a184f99@linux.intel.com>
-Date: Tue, 6 Aug 2024 16:51:57 +0200
+	 In-Reply-To:Content-Type; b=HpimIcVqERkmFLZa26heXHNKRWqSD5e5DYmOrcJW49fwLgIRr6RPEPUHM451Ow3E2kV3IlkZWhdtZiIfBZKbHvM9HC5jt2FFalfvw8+LSomd4c1GkM6208BP2YBSEBuTV3r26JP9uvzHrk3ti9osY+fotbe7I6suqfcCd4OBkkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SfJFDIvX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722955983;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kw/gJMf5zY8eaBAGFwMXFDAn70FBRPyDWNFLg3x3Xm0=;
+	b=SfJFDIvX69/nDb8MeU5gi6ke0oPNJDdOR8xmFtSze6Uc+GvQHTa24u36V+ywk+guNkl8uW
+	Se7LEpl8guNHcxrZrr0c7xJYwXM3GJ2UHJ5W//9KTUGqUVMWo1SaY76epR5wxxrXH1rFRB
+	2d/8nSl1aTCjaaK6vzdATwrNzV+kZo8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-213-gtB0QFl5Nqu--xTn1Ayd4w-1; Tue,
+ 06 Aug 2024 10:52:58 -0400
+X-MC-Unique: gtB0QFl5Nqu--xTn1Ayd4w-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 323E51955D59;
+	Tue,  6 Aug 2024 14:52:55 +0000 (UTC)
+Received: from [10.2.16.146] (unknown [10.2.16.146])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 84F0D3001D85;
+	Tue,  6 Aug 2024 14:52:53 +0000 (UTC)
+Message-ID: <e378ac65-73cc-4829-b605-f164c67dc5ae@redhat.com>
+Date: Tue, 6 Aug 2024 10:52:52 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,37 +64,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 23/34] ALSA: usb-audio: Prevent starting of audio
- stream if in use
+Subject: Re: [PATCH 2/3] lockdep: clarify size for LOCKDEP_*_BITS configs
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ kernel-team@android.com, Peter Zijlstra <peterz@infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>
+References: <20240806010128.402852-1-cmllamas@google.com>
+ <20240806010128.402852-3-cmllamas@google.com>
+ <218314e9-7c7c-490c-bb2e-9611243cade3@redhat.com>
+ <ZrI3mFLUwDyEMRIB@google.com>
 Content-Language: en-US
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-24-quic_wcheng@quicinc.com>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <20240801011730.4797-24-quic_wcheng@quicinc.com>
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <ZrI3mFLUwDyEMRIB@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 8/1/2024 3:17 AM, Wesley Cheng wrote:
-> With USB audio offloading, an audio session is started from the ASoC
-> platform sound card and PCM devices.  Likewise, the USB SND path is still
-> readily available for use, in case the non-offload path is desired.  In
-> order to prevent the two entities from attempting to use the USB bus,
-> introduce a flag that determines when either paths are in use.
-> 
 
-How can this happen? Can you provide some example with list of devices 
-and which one should block the other? If I recall correctly devices are 
-already exclusive unless you support substreams which ASoC does not at 
-the moment.
+On 8/6/24 10:47, Carlos Llamas wrote:
+> On Mon, Aug 05, 2024 at 09:36:43PM -0400, Waiman Long wrote:
+>> Many kernel developers understand that BITS refers to a size of 2^n. Besides
+>> LOCKDEP, there are also many instances of such use in other kconfig entries.
+>> It can be a bit odd to explicitly state that just for LOCKDEP.
+>>
+>> Cheers,
+>> Longman
+> Right, and similar to BITS there is SHIFT, which is also a common way to
+> specify the 2^n values. I'd point out though, that it is also common to
+> clarify the "power of two" explicitly. To name a few examples that are
+> doing so: SECURITY_SELINUX_SIDTAB_HASH_BITS, NODES_SHIFT, CMA_ALIGNMENT,
+> IP_VS_SH_TAB_BITS, LOG_BUF_SHIFT but there is more.
+>
+> Perhaps this is because the audience for these configs is not always a
+> kernel developer?
+>
+> Anyway, this is pretty much a trivial patch to address Andrew's comment
+> below. But let me know if you think I should drop it, it seems to me it
+> can be helpful.
+>
+>    [...]
+>    btw, the help text "Bitsize for MAX_LOCKDEP_CHAINS" is odd.  What's a
+>    bitsize?  Maybe "bit shift count for..." or such.
+
+I am not against this patch. Currently I am neutral. Let's see what 
+Boqun think about it.
+
+Cheers,
+Longman
 
 
