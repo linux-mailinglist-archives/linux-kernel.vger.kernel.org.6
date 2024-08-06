@@ -1,99 +1,98 @@
-Return-Path: <linux-kernel+bounces-276701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A260949735
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:58:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 443FA94973A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1981C21715
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:58:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 730661C214EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD52F7BB15;
-	Tue,  6 Aug 2024 17:58:33 +0000 (UTC)
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01F6811F7;
+	Tue,  6 Aug 2024 17:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ji9ZQzYp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2712D770FD;
-	Tue,  6 Aug 2024 17:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B79E74402;
+	Tue,  6 Aug 2024 17:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722967113; cv=none; b=c69XMXQsB3SBIryVODANyOVaV4ynjnyHB0ezYNyIC4Rvu0cOGXZ5meDW8+nAiZRSMa+P4V35vw5bJma2wdqpZx7twCEW+FfvUCnhUB8sMW8VoJipN7AcuBJW7IoZ38UWywIwDGV2b7vLtN4ABiXfCFFCZm3sFTuf94ESXj0teQg=
+	t=1722967148; cv=none; b=icU1ymya8jjSCA/43fXxoHjahNYmbx6LCiPI0gdxbpqtxulQC4Q1Kd8h+e91H96Ki5p/NG0Nssez12nuGQirMR1QCAdhYFqcnLWvBWv8tBbAAhEsPvmvcVPJPqpo9WLV/6KW2MqwsXJC/HxuJKmXzWEXm6kIKNc9zZqMZR2JrwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722967113; c=relaxed/simple;
-	bh=/KIR/gZKpDzorl3qERaU8QNHl3C8rqIrcVVnAyuL8V8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pmRfr7tQEoTXbnXmXq1yuaoUETjocGCAsTVEtwj4SLQs5IRCIgvc8bm4O+1Nf7uZzJ6+3Zt77NWR5/StkDKTulU7+os2C2TskG+pt1PcOtqWfWKWPdGx+EtBo5HDYoe1IZqHl5xTiuLUIbfhpSyBro8S4jsHW6shps+AAjBnhY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2cfdc4deeecso805497a91.3;
-        Tue, 06 Aug 2024 10:58:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722967111; x=1723571911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TY5hbZeMbwhXSfDbd/rGzVmx+p5Ai/BI0gEowB/sd04=;
-        b=WTvZYJ0OSWyMp6Kf+eUQO6aIoPgW/tcLv3x7GMR9TLDO4lHSegcrDcGRj32PDBw3ho
-         2UUZZVub73SwbiGmRXvxkg8msBz6vOWSLPVEi+YuZv2Apa+kMVyMigMiz7IFi7M8R+J4
-         ncqj3Zc0isQMxl3DPHQda6jueQML2aFoEkTuMutpkIPg7X4sWIuzw83NqzFZLGc8+z+f
-         5/QH5RCZbGzPh4G3G5erUjZOjvDgJC8i8wSnxGRGkZ5jxqb0muarFF0F0vwDSUUG/3Vh
-         WdkgS8zeyrSzPCYl19Np7C0gRfbbQyoUAM33/8absvtmx/b3HhHnkLjzWEx4NUoXVXQC
-         tF7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVRE7J7fqLnaPo3+KIGXZb1qUAtAnU2WnC73T7sJ2UnMb5dJaTOmLvK05kQ4cwLMElBDLrYImynIDeGSxpdLeh9Zf8GkQEEAkj6IwQSXb6b2qGvw60ocMvXlNkNk4OmrsVexhyy7PQQZnlkaV9KJQ==
-X-Gm-Message-State: AOJu0YxD/1yGRivJvdP1w3qIVRRa2+bchLC4hUiNrbX5oq7WvYKWxEeh
-	vuoaSVm83/60jyRwYKdIn0Zi7tq/qw37OSzRr2EXJG6BVIJgpxuoEq3DmIvB8853wl7DEOF0p60
-	YDpP0BCdoLdTSk5+LSmTslD/sbGc=
-X-Google-Smtp-Source: AGHT+IForZwiPRH0kD/aF8JllfkH6X0668xxvxtoLs8E6LzeI7w5bwBziec4MPX1Z0sC0ipbvgKMl5AbMCOW9CA4y9E=
-X-Received: by 2002:a17:90b:4f91:b0:2c3:40b6:293b with SMTP id
- 98e67ed59e1d1-2cff95511a9mr19791633a91.39.1722967110895; Tue, 06 Aug 2024
- 10:58:30 -0700 (PDT)
+	s=arc-20240116; t=1722967148; c=relaxed/simple;
+	bh=F755KLDI+ys7bWTNSoeWrgEfMJzHK86ZXXHPHScYM38=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=pvvK5z7569773fy5wCDOfdbTxiNDwuDY7EexdcEdgPEiMX50LDQVg3zOrTHSKJT09Ufw2n9eeSUfsmPDE85cUv3o7XQY0FQXDkogSJA5RvuGutS8hXIkXm94JVMU53diF41RBZPbaAiMMXekbKUUZR7E9lv0hnjDZPLOQGQkG+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ji9ZQzYp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D33EC32786;
+	Tue,  6 Aug 2024 17:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722967147;
+	bh=F755KLDI+ys7bWTNSoeWrgEfMJzHK86ZXXHPHScYM38=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Ji9ZQzYpN8tKy6EghID+xHUGnDq+qFZWTIw82FfmMk5NlbmRNPRoBI1EbjTeiGlB5
+	 yvRDpU36mo8FqM8VZShVNVNooRKdnvElJ+ROTP3dJjWffraWCjY/M2bTrb1cfzgwZe
+	 8rnwty7OGzlsV2liiyeuD8ZBFn26SXoIXS40R/8upcEM5k+sMx/SfzGfzBmNfR9JYS
+	 mtGfBXCCNd/rks6o9zfPqGmAuQapdCoXKVRzrb2MYoGdTMeVshGvjiT9Z5+dWLzjNY
+	 3MA6mmWZPenOY2neLzIsHKTenctx5mghui/LkcmTw0barrUJhz4nRwlekSGsGAIbeU
+	 HF9suq6lEfQTw==
+Date: Tue, 6 Aug 2024 12:59:05 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: 412574090@163.com
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiongxin@kylinos.cn,
+	weiyufeng <weiyufeng@kylinos.cn>
+Subject: Re: [PATCH] PCI: Add PCI_EXT_CAP_ID_PL_64GT define
+Message-ID: <20240806175905.GA70868@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806114801.1652417-1-yangjihong@bytedance.com>
-In-Reply-To: <20240806114801.1652417-1-yangjihong@bytedance.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 6 Aug 2024 10:58:19 -0700
-Message-ID: <CAM9d7chhR+jsi6HZ8_xv1BwEuwOKo_87jy_jekmYjZHA+b96Ug@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] perf: build: Minor fixes for build failures
-To: Yang Jihong <yangjihong@bytedance.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Leo Yan <leo.yan@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806022746.16353-1-412574090@163.com>
 
-Add Leo to Cc.
+On Tue, Aug 06, 2024 at 10:27:46AM +0800, 412574090@163.com wrote:
+> From: weiyufeng <weiyufeng@kylinos.cn>
+> 
+> PCIe r6.0, sec 7.7.7.1, defines a new 64.0 GT/s PCIe Extended Capability
+> ID,Add the define for PCI_EXT_CAP_ID_PL_64GT for drivers that will want
+> this whilst doing Gen6 accesses.
+> 
+> Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
+> ---
+>  include/uapi/linux/pci_regs.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 94c00996e633..cc875534dae1 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -741,6 +741,7 @@
+>  #define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
+>  #define PCI_EXT_CAP_ID_PL_16GT	0x26	/* Physical Layer 16.0 GT/s */
+>  #define PCI_EXT_CAP_ID_PL_32GT  0x2A    /* Physical Layer 32.0 GT/s */
+> +#define PCI_EXT_CAP_ID_PL_64GT  0x31    /* Physical Layer 64.0 GT/s */
 
-On Tue, Aug 6, 2024 at 4:48=E2=80=AFAM Yang Jihong <yangjihong@bytedance.co=
-m> wrote:
->
-> This patchset contains minor fixes for build failures when statically com=
-piling in Ubuntu 20.04.
->
-> Changes since v1:
->  - patch3: Remove UTF-8 characters from build failure logs
->
-> Yang Jihong (3):
->   perf: build: Fix static compilation error when libdw is not installed
->   perf: build: Fix build feature-dwarf_getlocations fail for old libdw
->   perf dwarf-aux: Fix build fail when HAVE_DWARF_GETLOCATIONS_SUPPORT
->     undefined
->
->  tools/build/feature/Makefile | 4 ++--
->  tools/perf/Makefile.config   | 2 +-
->  tools/perf/util/dwarf-aux.h  | 1 +
->  3 files changed, 4 insertions(+), 3 deletions(-)
->
-> --
+It probably makes sense to add this (with the corrections noted by
+Ilpo), but I *would* like to see where it's used.
+
+I asked a similar question at
+https://lore.kernel.org/all/20230531095713.293229-1-ben.dooks@codethink.co.uk/
+when we added PCI_EXT_CAP_ID_PL_32GT, but never got a specific
+response.  I don't really want to end up with drivers doing their own
+thing if it's something that could be done in the PCI core and shared.
+
+>  #define PCI_EXT_CAP_ID_DOE	0x2E	/* Data Object Exchange */
+>  #define PCI_EXT_CAP_ID_MAX	PCI_EXT_CAP_ID_DOE
+>  
+> -- 
 > 2.25.1
->
+> 
 
