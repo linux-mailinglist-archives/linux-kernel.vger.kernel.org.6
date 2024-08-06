@@ -1,169 +1,110 @@
-Return-Path: <linux-kernel+bounces-276718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECCD94976B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:18:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780A4949782
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0B8F1C216A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5D9C1C2172D
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F7575817;
-	Tue,  6 Aug 2024 18:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3B57441A;
+	Tue,  6 Aug 2024 18:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="drXzc8GY"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FZgMQMHr"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5039128DD1;
-	Tue,  6 Aug 2024 18:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3723728DD1
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 18:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722968282; cv=none; b=SeHYRBEct++Zds/JT8XaVA4PHAfyjb2KH3dN4RCEo2W6Jc98hSLAMZIHykC76MESB7rBiExMhRXVzq9chnOQc5ET8hpZQbPAYcfJbURW+XuRKvDs2pmauDwAx+Efq+bDbzeAmpN3iCIjDZ/oLkSGx+DOZPtGkRtDXtr8LyRiPHc=
+	t=1722968655; cv=none; b=qaON84+vFWx/W3+HXs5KGTe93Mj26QBQ3+As5Yc1Z7ZDV3bX7el2sTMZJlul9aWME8yjbTT04WD7cq1/7QtkQvXS89GTBUmxneZa1fQMIkhNq4hIozjznie8EQu3q1jdaUhBqPjylbPHTVtbFWZTsPpxPtpOJWKteVLrXOK28K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722968282; c=relaxed/simple;
-	bh=HUpcZf5EKvHYyduu+f4aMQ7rAKMPRGq0CRu7jv8IU5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W3xjAp2kqxtcUv3if//GPzJ4ttiykEki/hcWpzAOjrOewbWbbD5YWfY3hFJAZhuAboO8oau4pg0w86sOLjsWX+bA8mhcEJ4Ts/Hsr22ogmk+Z0Pt+WO4Zmeyt5bXKE8KCifNNkVE+2KzvuKzcOd8XA34G4fvJk6ifFsBp3l6Do8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=drXzc8GY; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd78c165eeso7615415ad.2;
-        Tue, 06 Aug 2024 11:18:01 -0700 (PDT)
+	s=arc-20240116; t=1722968655; c=relaxed/simple;
+	bh=mpPk+W+/bgbK0+Zg4dRFegm2U1Hd3eaHZBUvxVi8n9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KzBs4UbfTo5UNTOFxL4s0cM/udojAXj6wc6F6OzZgXKdhBj2EbKzDxDlulBVvxDT1+OTywKdqN6gZPVgnCzlDw43RAn2fOsNzdq3DUNFp2Iwmou8GqalGhtmBkRa2gv6y93dgyL42WJewCfN1fh3extm7OcyHNvbnmiOwlZTGo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FZgMQMHr; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b7b6a30454so1431194a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 11:24:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722968281; x=1723573081; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qgmOJBOVyTjbprYZEKVF9qltuCiisjLoD4Cqcby3Qk=;
-        b=drXzc8GYO8HsGNCz9H36En3Gkyl1rnPG5cRklxFkSmnpntiKdgAvyqW70DPQryq/ye
-         eNd+nNA/Jf1DdoV2zwakj70LOnC1o/Avw8DNld/tON2taSk8jYxSfhHupqhCJrPs/r6q
-         mSofRhe51dlHNuVgYZDaiVClFPAmcRXBIGwIG/hGhwDtc0Zi5vAo3h3d8Bood1C0KVjG
-         4X1r+aIgrYTmjPg+0axVnzaS9ce70smDeEgJ73B+7zaRQBLGyblIRahWOce2iGPASMw+
-         eWgu3IRR4bR7uZJQBq8AGnDlKqqJbj0CQJMR4o7SMCO8I3BuiIQ9waA38kORtVw7B1hv
-         aEzw==
+        d=linux-foundation.org; s=google; t=1722968651; x=1723573451; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EEdau5PPt6eBF1calzkDuUJZ4BqB2RS7tbhd1Ievheg=;
+        b=FZgMQMHruW9GdJU207UgBnK71P3oWD1+mE1Oygtk7+LRmr5A0tAYSWqudZiz/1m0JW
+         i3a44hRgaCdUrhbkbHGt267njkAXDkzca+bPZ87YUkgB5NYxeyEqVYkRibeQse6S/Sia
+         TV2IlUNk7KZ+FP5K1QO6GmeEOZlUPOQj0bVDk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722968281; x=1723573081;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0qgmOJBOVyTjbprYZEKVF9qltuCiisjLoD4Cqcby3Qk=;
-        b=Ch/RrQkHLtyIkAViljM024xP7R2e4RdRkwFzZ+tSPwbbJfKt3CWEGkxqygRh87kE0e
-         pmhBXuERMaexfdlvH5hmKqBuH2iB+cEjVtiLuLFWEDVmLVbFOadUTAJxcPJ1xEXAEN/l
-         /6HpY004DMb0nATcM1PW7sXw0nBZdjjF2Ygxh7akj0ZL6sY3eSlahXY17ZpG2EtoV1jv
-         BEfCRQi02iA6t2mZikefi0vJ0i/v83lHd2/ixXhzJPC9YqYEBXJkEMM5UI1h2c4hsN+k
-         aA+lgtGip0x6EVmBVJQI/WBohbmP8daVK56Tbx5UsKvWyfgP/v0uy6MHgFoq68pfnzvA
-         XAIA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Z6McBT9/oZPN/DNh14Y3dh2SUIYgwqyootvu9FlsHTrZ9nxjHRl7dc4NKh/ThRxzPg3h+Q/sttk8sNzOAH7hJw/Km9e812HV9sZbo9DmjUoikLgXD79zJ4/SOlPhQ7N9Azh106xsdCHVw0F06UfXesm/PG3oGk+6j7r1XuZs5Ov+8jqXrUw=
-X-Gm-Message-State: AOJu0Ywwnaxai/cM0J4+hnb+JLDRH9N/cj6EXpaTyY18KN2WTaiVoHcm
-	w3raUNXK6nq9ceuJWIROLRSmIkQYf1ETA7v/+/co8+KJr2XVx1i/
-X-Google-Smtp-Source: AGHT+IFV5/xcTBPwVnhSX+vbxtuqdREBY7t7TXnUzNivXFGQkBf1YxxnVhtELswcug/NUj/rocveXA==
-X-Received: by 2002:a17:902:db10:b0:1fb:a38b:c5a7 with SMTP id d9443c01a7336-1ff572512a1mr234357895ad.13.1722968280627;
-        Tue, 06 Aug 2024 11:18:00 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5905fec0sm90626515ad.149.2024.08.06.11.17.59
+        d=1e100.net; s=20230601; t=1722968651; x=1723573451;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EEdau5PPt6eBF1calzkDuUJZ4BqB2RS7tbhd1Ievheg=;
+        b=XHstZVY4RRD7MDqmP0jObEVIZ99f15B9bTj7089Zg3D8D5YDESgX3L6f2GHvxXZfxQ
+         iUJv5XXumQ6wsIpqL8yXeNfFx6ntd3WwnIyULWnd5CD9Ut+PL+jy2cvC+tRkrJOhYFMd
+         wMXa0aNTaT0KsA59amKhNV/VbEqlXiI+jSlnY/t4pmque9lt2gV3qDgPtexSJgw/AX/4
+         +UzXVqPIlrsEtm8zKcTSOX9HcclmWahEe4z770JP894Tv3GU6aDuY/C+1KvgdnX5ADcV
+         T+5SVr7mZy6bbuGtf/GR3jZhOI8TJ/DCqczde0c40JAj4QaI+5WaHp4SvbhmIjRc5H9u
+         AN4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUkRPRlocfq0gU44v50GCe07xqhix4UkNw3NUTX54zQtGIC2ShDaH9iIyaYLl8xbFUAE+nvpx2g+0VYGAkrggSB5AJ+GG3Y5xMc829u
+X-Gm-Message-State: AOJu0YzEhvOV7WIejuvVGmA4XaVTvaN11lv4lPWvF66Li8nizGl9UQPv
+	jjG3Mmjsady+0kplDo9UJ79eAv29X8oPtebtp27qKPcdNFx0HB3gtybQUUe+nsvq7m/sNzlWLGn
+	uQrnNGQ==
+X-Google-Smtp-Source: AGHT+IHOZYdskt2Fv8Yv4+/fZ3HxM7dH2TBwZychZCgKQzFJLcv4IRLpDwztEainXNdkEbeKzFpEbg==
+X-Received: by 2002:a17:907:7f15:b0:a7a:a3f7:389d with SMTP id a640c23a62f3a-a7dc4fae89emr1012105766b.31.1722968651083;
+        Tue, 06 Aug 2024 11:24:11 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0b761sm565252066b.55.2024.08.06.11.24.10
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 11:18:00 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <7b7ca7e0-6bd2-45ab-bd9b-40331a8e6fdd@roeck-us.net>
-Date: Tue, 6 Aug 2024 11:17:58 -0700
+        Tue, 06 Aug 2024 11:24:10 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso1093226a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 11:24:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUE9iYnLAvRo0emantxTWA0kZAFsLDnV4x34YqoVBmDNRXh8mtmvglgIsN2IfbsOmqc4LFrkiwaA1uHjA05ahdUxLikN6rvWNsKo0rT
+X-Received: by 2002:a05:6402:331:b0:58d:81ac:ea90 with SMTP id
+ 4fb4d7f45d1cf-5b7f57f6551mr9769482a12.38.1722968649989; Tue, 06 Aug 2024
+ 11:24:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Capitalize Fahrenheit
-To: David Hunter <david.hunter.linux@gmail.com>, wim@linux-watchdog.org,
- linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-References: <20240806174038.708025-1-david.hunter.linux@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240806174038.708025-1-david.hunter.linux@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240731095022.970699670@linuxfoundation.org> <718b8afe-222f-4b3a-96d3-93af0e4ceff1@roeck-us.net>
+ <CAHk-=wiZ7WJQ1y=CwuMwqBxQYtaD8psq+Vxa3r1Z6_ftDZK+hA@mail.gmail.com>
+ <53b2e1f2-4291-48e5-a668-7cf57d900ecd@suse.cz> <f63c6789-b01a-4d76-b7c9-74c04867bc13@roeck-us.net>
+ <CAHk-=wjmumbT73xLkSAnnxDwaFE__Ny=QCp6B_LE2aG1SUqiTg@mail.gmail.com>
+ <CAHk-=wiss_E41A1uH0-1MXF-GjxzW_Rbz+Xbs+fbr-vyQFpo4g@mail.gmail.com> <3a706169-9fce-48a0-b808-37f347a65a25@roeck-us.net>
+In-Reply-To: <3a706169-9fce-48a0-b808-37f347a65a25@roeck-us.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 6 Aug 2024 11:23:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whoTU9F1-qGW8ad7a1ZCMm5K_QZ9pX-chCxgU8uN0+2LQ@mail.gmail.com>
+Message-ID: <CAHk-=whoTU9F1-qGW8ad7a1ZCMm5K_QZ9pX-chCxgU8uN0+2LQ@mail.gmail.com>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+	Linux-MM <linux-mm@kvack.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/6/24 10:40, David Hunter wrote:
-> Captialize "fahrenheit," a spelling mistake.
+On Tue, 6 Aug 2024 at 11:13, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 8/6/24 10:49, Linus Torvalds wrote:
+> > [ Adding s390 people, this is strange ]
+>
+> Did I get lost somewhere ? I am seeing this with parisc (64 bit), not s390.
 
-s/Captialize/Capitalize/
+Duh. Sorry for the noise. I don't know why I thought this was s390.
 
-Also, this is version 2 of an earlier patch.
-Please read and follow Documentation/process/submitting-patches.rst,
-specifically the information on how to submit new patch revisions.
+The parisc __ffs() is also using some grotty inline asm, but I don't
+see how the compiler could make a mess of it.
 
-Thanks,
-Guenter
-
-> 
-> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
-> ---
-
-
->   Documentation/watchdog/watchdog-api.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/watchdog/watchdog-api.rst b/Documentation/watchdog/watchdog-api.rst
-> index 800dcd7586f2..78e228c272cf 100644
-> --- a/Documentation/watchdog/watchdog-api.rst
-> +++ b/Documentation/watchdog/watchdog-api.rst
-> @@ -249,7 +249,7 @@ Note that not all devices support these two calls, and some only
->   support the GETBOOTSTATUS call.
->   
->   Some drivers can measure the temperature using the GETTEMP ioctl.  The
-> -returned value is the temperature in degrees fahrenheit::
-> +returned value is the temperature in degrees Fahrenheit::
->   
->       int temperature;
->       ioctl(fd, WDIOC_GETTEMP, &temperature);
-
+                Linus
 
