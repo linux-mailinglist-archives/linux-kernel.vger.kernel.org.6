@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-276164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EFE948F54
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:42:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A686948F5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C5031F24A1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:42:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95FD91F24088
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 12:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3C21C9DF7;
-	Tue,  6 Aug 2024 12:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C111CB316;
+	Tue,  6 Aug 2024 12:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hkzs/U0q"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfKPquyy"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5D21C8228;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A0F1C825C;
 	Tue,  6 Aug 2024 12:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722947981; cv=none; b=U15mPSmNH9IoKfzb3zkE8EbEceUv3lePVVkobpnjSbrpZCBIXuvBRNG8YQsiioE6PKcnraOvF16fnbjji/waO0qkTGcUiji7j9BP9uh+pV+7nbip4FOBJ6jj8AJJ9XCP+LZwU5EfgOS2NGEXcOiqfiKfjadcwU6Jibt0J7nqBPc=
+	t=1722947983; cv=none; b=O/24X+E2l3Uhz3KkcSDsaV1EOQ26Uv8jc5TgnpwHOhoVJ3nMqAR8tEDJ4fvbzgIlax+RolROy50Tl4P9YiDAxIB10evc8AppMIboTg8kmiwM/LP/LTY/IGBhYyXMJ/2hdPNBDsRMXbd4n1frj11e5JYIIhrMTBaF2Kjy+JAVATU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722947981; c=relaxed/simple;
-	bh=QzElBNuj1J8hJv9PDx8DoYO0GVDznjYrxqtE1dbgYko=;
+	s=arc-20240116; t=1722947983; c=relaxed/simple;
+	bh=T17tyEhXR87LUZpAQk05MvrMtBbdQ/cRnH7Fo8GgPdI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rLVTYrop82hP84av6GQhWPASXPTIO73W+G2E7RMALq0TjdiWEb3yBdYDrIEkZAbzjT105JTCbIWt1ASD6ajjlZXKa5nBbNJSJBnpQ8WAh3nF/oGYl/SGw9bwDvZA9PS5M8MVNpl0qqgqIDLmHExNTeNYl8Z7B5VS9rEohfXZgcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hkzs/U0q; arc=none smtp.client-ip=209.85.208.176
+	 MIME-Version; b=hJikrjpxc4Krt7GJugiLgA9BjG3GOT0RMo2f08Y5Z4fqrYkg5RGWq1d+Fes70ciO9/OLdeha9+ugmRxCbrEFK7b7tsmltC+u2ctXMB8pq4M9089emPooN48vM7jQgQ/eBx9g/nkWmzt6o/fwrZzKCM6jI+uUlDpdU9J1Kfv8VpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfKPquyy; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso5770001fa.1;
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso35916266b.1;
         Tue, 06 Aug 2024 05:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722947977; x=1723552777; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722947978; x=1723552778; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pwWVwEo5Wg0A+BqBi7xOEQ6wmwPi2hgeCgjQEqA9Ros=;
-        b=hkzs/U0q7drFMRw4FxByXK9gqfamIACopIOwfOC3C8f8HGYpFd3FFf/1RazlKhfl6t
-         4Jpmj8ImZHEJuQhnqA75CnymjRS2SU4yJ48XwhHej1k0pt/82ctwz/2LhIcvEf9oWooM
-         ZVRb7agtPfWjXPZHcPGb2gIGTtqYoI7p9x7r35bs79ZdAZPXn/g/G+8C1RpjRu6RwKEE
-         Dk8HykhIJpBFf3D7fiY7o+PNOdb8mqkx7VDMpknx4bTZrNhXkKIhirWzoYxyATCKK0lL
-         392cRcJDi3ZldZ/70jmtZM4i87PaByrv29ehIK3DGOBy2+bEWGsoUeOP2NXmcRYuCDQd
-         Iy3g==
+        bh=nImzIFtx5SlH47PsIljCYVUBx0TjZ87TW5WbJvpRjC4=;
+        b=cfKPquyyS7mTWh5PRQv+WwttnfWXJZCDGr6aN0Gs7k5DauQP/493s5/nYCDjotDUPj
+         bDGoDxmy+gyKFLaGipxCgcnY2uHAVNgfNhbYKHYvWsc9SPw3cj6pmdJ5sjagv6M0/Rs4
+         BO0IwYxPE5eHWq9pD11TfvffFZBPNCxV0gQlnM2ct06DYESTITiAdM7hehBQHSpRttyX
+         TGQ2+yJMMvtn79MaAHZqdbS+MFfb2IyW0FCl6H85yITzBA0X1h7C0dzR00QwHwxmhS0o
+         Eer5P4lvguYcgsvPW8UASsY9qpFHJYt7sNbplDcudFDhTf1VUKD/KhH40xt0wbNypMLm
+         etxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722947977; x=1723552777;
+        d=1e100.net; s=20230601; t=1722947978; x=1723552778;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pwWVwEo5Wg0A+BqBi7xOEQ6wmwPi2hgeCgjQEqA9Ros=;
-        b=WzG1gp5/0nyNMIC+yFcAP5aWsPphiFIqUVjO17/fuc4ZVnyqNrcqUkEjqMZx01rFG1
-         4Elnk2UqTXneDPOpV2ek8Itg0kg8PFMWEOU/VdjFpJDnlBPSHFqTE65k6TwXIBa5xQrk
-         53mnodUpJkj4tpdxe6aJlysGRRv6yYhhTRHpL/2oYV/eM8xXO/fvH+kPauHDqr6KZgTT
-         lyJEGGF/Nb2MgTJp7D7jnd4TUMxLy8AEeBLWRAEq/fiMeYSnNQSjBB78MoZjrtxfET2K
-         PJYDRVXQOYjnZdToy2lJNj9n8BjD5uh8tlAxYXP21Ha2o9ErJNlVwCSXQ1F2aJfGFmcJ
-         1bQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv0qpyIqn+vkxnbR5pCqtqv0X+e1ssKBFHz5H2BFxzUM14eL48jF51528oZIFiLyFU6bkd0NExvS5kGblIRShZrqmjOuzsNx6eHYcnGxBPJkZh7IrNSXFsCEjR5PASeCI2LoN4PilQw3I=
-X-Gm-Message-State: AOJu0YwOZjPbTjGCyoFjrTD02Zo+Z0+83DPOWlRSIfm5kshqFeluxALY
-	g1utWcrg24k4/W1LRbcGzP4PuDLSsPNIRxKtKwHuNGLYRIE8DY/x
-X-Google-Smtp-Source: AGHT+IESEywxb4J+BS2OsvkSe3szVw3MJ5nI9XEFbDksvBUkM+kMTL8eL+OCEo5/0BTO80h0D/3NXw==
-X-Received: by 2002:a05:6512:31ca:b0:52c:e556:b7e4 with SMTP id 2adb3069b0e04-530bb3b14c1mr9344873e87.15.1722947977246;
-        Tue, 06 Aug 2024 05:39:37 -0700 (PDT)
+        bh=nImzIFtx5SlH47PsIljCYVUBx0TjZ87TW5WbJvpRjC4=;
+        b=dDsyjlqbymhpK1KY+QT4MaSNjWNiEFMA5d+LU7xrRYPTPpbZ62kdSQm+ijcoiR18VU
+         +Jn3s/ihGgcGEMV8O/qYTeuoY5gZTmQ15V1SUbHRPuZjv0EODsos+jSOUKkQv0NjZL1o
+         hhj5eLU+VoDN9ASTB1bXh1ggHK4zirMhpK1jfizdkC9FoVKQkN1e18TVe3pgXU8PFq4h
+         8uiw9WsOi3vLdYbEvhcmkuXAdbmwez4DIQf+CsuAWzUO+aLBchDGPKJxdqWx5dEJ4J1U
+         Tn2iB+d0VUCatnIWL6wZI59BSf0x6dUE9sktYXImqCKjK227uIgxZPPwoTPtRY/Tbq7z
+         OBwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3WtnSG7uEihLt6cvU5k3iWETvHN37xsWEhhv6N27a9R0vW57ZaqJrsO+jfrz2NoPGZu3pyCWQo3H4sHL+b4rLRdoKrpfIYdrYc8g699rNykx96sDVfmZT1TThwtth9WjFdKt9HN6m4SQ=
+X-Gm-Message-State: AOJu0Yzx4muMKXlwiznFA6/ssG89WHztuf8Dv/EqEjwYOEnSx9Ie2iDS
+	UGDDjM+tQvBgVjRP3+3wkEc/2xADONlxYnljYcQqRFf4rR+MowL4
+X-Google-Smtp-Source: AGHT+IEPDyIWBGRteePQrRqq5eQu47iDOoxVZvTe5q/jONVeoncbWcdat+eoE/UgMIfadhyNcZ8wRw==
+X-Received: by 2002:a17:907:60ce:b0:a7a:ab8a:384 with SMTP id a640c23a62f3a-a7dc50a460emr1085482566b.64.1722947978210;
+        Tue, 06 Aug 2024 05:39:38 -0700 (PDT)
 Received: from xeon.. ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.36
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 06 Aug 2024 05:39:37 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
@@ -76,9 +76,9 @@ To: Rob Herring <robh+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 08/11] ARM: nvidia: tf701t: bind WIFI SDIO and EMMC
-Date: Tue,  6 Aug 2024 15:39:03 +0300
-Message-ID: <20240806123906.161218-9-clamor95@gmail.com>
+Subject: [PATCH v1 09/11] ARM: nvidia: tf701t: re-group GPIO keys
+Date: Tue,  6 Aug 2024 15:39:04 +0300
+Message-ID: <20240806123906.161218-10-clamor95@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240806123906.161218-1-clamor95@gmail.com>
 References: <20240806123906.161218-1-clamor95@gmail.com>
@@ -90,90 +90,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add mmc nodes configuration along with WIFI binging to ASUS TF701T device-tree.
+Group GPIO keys into keys and switches.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 57 ++++++++++++++++++-
- 1 file changed, 55 insertions(+), 2 deletions(-)
+ .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 20 +++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index 9596cb495c10..1fca3e2e5aa1 100644
+index 1fca3e2e5aa1..eb38c036bcc5 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -1529,8 +1529,53 @@ i2s@70080600 {		/* i2s3 */
+@@ -1661,11 +1661,9 @@ connector_in: endpoint {
  		};
  	};
  
-+	brcm_wifi_pwrseq: pwrseq-wifi {
-+		compatible = "mmc-pwrseq-simple";
+-	gpio-hall-sensor {
++	extcon-keys {
+ 		compatible = "gpio-keys";
+ 
+-		label = "GPIO Hall Effect Sensor";
+-
+ 		switch-hall-sensor {
+ 			label = "Hall Effect Sensor";
+ 			gpios = <&gpio TEGRA_GPIO(O, 5) GPIO_ACTIVE_LOW>;
+@@ -1674,14 +1672,20 @@ switch-hall-sensor {
+ 			linux,can-disable;
+ 			wakeup-source;
+ 		};
 +
-+		clocks = <&tegra_pmc TEGRA_PMC_CLK_BLINK>;
-+		clock-names = "ext_clock";
-+
-+		reset-gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
-+		post-power-on-delay-ms = <300>;
-+		power-off-delay-us = <300>;
-+	};
-+
-+	/* WiFi */
- 	mmc@78000000 {
--		/* WiFi */
-+		status = "okay";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		assigned-clocks = <&tegra_car TEGRA114_CLK_SDMMC1>;
-+		assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_P>;
-+		assigned-clock-rates = <82000000>;
-+
-+		max-frequency = <82000000>;
-+		keep-power-in-suspend;
-+		bus-width = <4>;
-+		non-removable;
-+
-+		sd-uhs-ddr50;
-+		mmc-ddr-1_8v;
-+
-+		power-gpios = <&gpio TEGRA_GPIO(CC, 5) GPIO_ACTIVE_HIGH>;
-+
-+		nvidia,default-tap = <0x2>;
-+		nvidia,default-trim = <0x2>;
-+
-+		mmc-pwrseq = <&brcm_wifi_pwrseq>;
-+		vmmc-supply = <&vdd_3v3_com>;
-+		vqmmc-supply = <&vdd_1v8_vio>;
-+
-+		wifi@1 {
-+			compatible = "brcm,bcm4329-fmac";
-+			reg = <1>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(U, 5) IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "host-wake";
++		switch-lineout-detect {
++			label = "Audio dock line-out detect";
++			gpios = <&gpio TEGRA_GPIO(X, 5) GPIO_ACTIVE_LOW>;
++			linux,input-type = <EV_SW>;
++			linux,code = <SW_LINEOUT_INSERT>;
++			debounce-interval = <10>;
 +		};
  	};
  
- 	/* MicroSD card */
-@@ -1547,8 +1592,16 @@ mmc@78000400 {
- 		vqmmc-supply = <&vddio_usd>;
- 	};
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
  
-+	/* eMMC */
- 	mmc@78000600 {
--		/* eMMC */
-+		status = "okay";
-+		bus-width = <8>;
-+
-+		non-removable;
-+		mmc-ddr-1_8v;
-+
-+		vmmc-supply = <&vcore_emmc>;
-+		vqmmc-supply = <&vdd_1v8_vio>;
- 	};
+-		label = "GPIO Buttons";
+-
+-		button-power {
++		key-power {
+ 			label = "Power";
+ 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+@@ -1689,14 +1693,14 @@ button-power {
+ 			wakeup-source;
+ 		};
  
- 	usb@7d000000 {
+-		button-volume-down {
++		key-volume-down {
+ 			label = "Volume Down";
+ 			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_VOLUMEDOWN>;
+ 			debounce-interval = <10>;
+ 		};
+ 
+-		button-volume-up {
++		key-volume-up {
+ 			label = "Volume Up";
+ 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_VOLUMEUP>;
 -- 
 2.43.0
 
