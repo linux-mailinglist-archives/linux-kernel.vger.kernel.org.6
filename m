@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-275821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D2C948AA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:53:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EC0948AAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F092C285CB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:52:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C616B2386F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 07:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643A01BC9F0;
-	Tue,  6 Aug 2024 07:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0B21BBBC4;
+	Tue,  6 Aug 2024 07:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJXfPHUv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kDKt/cnz"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CAE1BBBF5
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 07:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46ED942AA0;
+	Tue,  6 Aug 2024 07:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722930763; cv=none; b=WQK9be13Rd7JxS9GgCFGD+g3CyKhGW9XGs1VfxGJWMt+7Ehl52d9p/fdZVLqbIDL6towvXSn3Q/yivHU/s4pc6UbkGVAK8p5SljCjGEEvrm6LQkYtgDJhayHTm5OjblhSnThHtKGk8XH7j30K162U+W16QwdgFrMRMvrrLAlPrg=
+	t=1722930923; cv=none; b=HeR7/okAFEifmRzdP4bHqgghLPlaA7rlAKJdywB1/RuMZk7zs/nkn4uhd7NPBnxwzPvqoKOxue5l1BPF3r2en1CzOUtcQ23JrscOXxCRykrK1HE4/ahTWthXidvWZj6NjCwBoW9pnMak/XPCoAMHgYa8LQUl6sSunjbQRoBeRI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722930763; c=relaxed/simple;
-	bh=+X08FKo9StEUMgf9vTjstF6ql0XMNbcWlbP50Nj+EWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+bGh+aGDf6W68DI4Afq5HuZ4X6wS4sTf/ptH5rE6tTdaAmvAwH2Ce7NWcytkM7cjdVttRz5vIQiHPZtXyM9FgLuAIJ7ldU6Ela9j+8cv0SnZVL3WO1ZqBVHxAZb64wmJ3/n99qchLXibk+jxf77ozD24zpZWpHJ9Bbu7mXLcto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJXfPHUv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92C1C4AF09;
-	Tue,  6 Aug 2024 07:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722930763;
-	bh=+X08FKo9StEUMgf9vTjstF6ql0XMNbcWlbP50Nj+EWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tJXfPHUvIU0q82x/WwqcmxN6Low65cgiC9meVwuKP/9OQsiwLqwa9x5O7ikonDeAt
-	 jMmkKvdUqbPdgmlqETNXWiyfmGmvHfmzM+FtkXpJgNEepFeREoqW6cVm0Un50RKNVs
-	 p73GFTrT3UoSGEAd3IbyFtSYk0DlHWDHzfR+E3xCUJesOml7j1Kq5BMpWRPTDGov75
-	 SYDUoB8bGqZdgiCpxuLToOkez+xLmd5Za6Om+lkalGuqLorW4fQmerlFO52w7Gu/QV
-	 jftAj3GXQqWwREbsKXJukGuYhLlF3g0hkKsmx27dcZ5zsepH3qqoOmBDos5Ca32457
-	 44NHm/JRLDzkg==
-Date: Tue, 6 Aug 2024 10:52:35 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] mm: Accept memory in __alloc_pages_bulk().
-Message-ID: <ZrHWQ/+EC5CApJ3M@kernel.org>
-References: <20240805145940.2911011-1-kirill.shutemov@linux.intel.com>
- <20240805145940.2911011-3-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1722930923; c=relaxed/simple;
+	bh=Hho3Bqf/9kFmx7wGamGh/nWS2t9BQwLo9vANHGGJfPo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nWmXWd3xx1eF+mw/+wVq1/jREEaPseWnCg6jWjoyO0js9DXouuj3eNKBIFBrVNzOBx8fAW7XlgOO1Mqk8cRDl57YgOOPMHB8wD6MGkZ6wn8zGa08zxRo+YMp3z1IEGwKYtn7y6I3NgBeV2GMKB+e1Mj8matCfgSgluD/YyKM6tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kDKt/cnz; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D3014240002;
+	Tue,  6 Aug 2024 07:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722930918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GYpTAA8edk4pyb6Ap5JSaKP/F2u9sV+LUTwUsnkc8iw=;
+	b=kDKt/cnztYn7m4T7BSxC6ziv6Lr8JjWHH2Vyzoq3G0i5HW63e8/XYmUqgwq8DZgI67V8DM
+	4xfCtrF4udWVwJbK/ypTJvZVBtyYnR+SOcXE23Fj1DsxgHaCznK8g+aW/NgizXgUe+R3uK
+	VUunv83h1qDNJRcCH775n/sqUgW3gNVIItXxIwoz1pjT0GUfUp5Jcy3DN5kI60sxCNrXZt
+	d/GsBHY819rQAQKJC1xgax3Y+AfoGPtY+LGzQaSRyH5uxeVoYVKMr8+3BtCaahPC6CmrHG
+	M6BpieduK3r0awi2KV3OWCPVdvPzxmb4iqrf9uko8IHYVB2fs2vxOpxO3rHnDA==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Subject: [PATCH bpf-next v2 0/4] selftests/bpf: convert three other cgroup
+ tests to test_progs
+Date: Tue, 06 Aug 2024 09:55:11 +0200
+Message-Id: <20240806-convert_cgroup_tests-v2-0-180c57e5b710@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805145940.2911011-3-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAN/WsWYC/22NwQqDMBAFf0X23JQkGqU99T+KSBNXXWiTkKTBI
+ v57g732OAxv3gYRA2GEa7VBwEyRnC0gTxWY5WFnZDQWBsllwzupmHE2Y0iDmYN7+yFhTJGNvDN
+ ty1UtpYIy9QEnWo/sHbSfmMU1QV/MQjG58Dn+sjj8L12L/+ksGGeiMdooodtL0920c+lJ9mzcC
+ /p937/mYaj4xAAAAA==
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>, 
+ Alan Maguire <alan.maguire@oracle.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Mon, Aug 05, 2024 at 05:59:34PM +0300, Kirill A. Shutemov wrote:
-> Currently, the kernel only accepts memory in get_page_from_freelist(),
-> but there is another path that directly takes pages from free lists -
-> __alloc_page_bulk(). This function can consume all accepted memory and
-> will resort to __alloc_pages_noprof() if necessary.
-> 
-> Conditionally accepted in __alloc_pages_bulk().
-> 
-> The same issue may arise due to deferred page initialization. Kick the
-> deferred initialization machinery before abandoning the zone, as the
-> kernel does in get_page_from_freelist().
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Hello,
+this series brings a new set of test converted to the test_progs framework.
+Since the tests are quite small, I chose to group three tests conversion in
+the same series, but feel free to let me know if I should keep one series
+per test. The series focuses on cgroup testing and converts the following
+tests:
+- get_cgroup_id_user
+- cgroup_storage
+- test_skb_cgroup_id_user
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+---
+Changes in v2:
+- Use global variables instead of maps when possible
+- Collect review tags from Alan
+- Link to v1: https://lore.kernel.org/r/20240731-convert_cgroup_tests-v1-0-14cbc51b6947@bootlin.com
 
-> ---
->  mm/page_alloc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index aa9b1eaa638c..90a1f01d5996 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4576,12 +4576,25 @@ unsigned long alloc_pages_bulk_noprof(gfp_t gfp, int preferred_nid,
->  			goto failed;
->  		}
->  
-> +		cond_accept_memory(zone, 0);
-> +retry_this_zone:
->  		mark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK) + nr_pages;
->  		if (zone_watermark_fast(zone, 0,  mark,
->  				zonelist_zone_idx(ac.preferred_zoneref),
->  				alloc_flags, gfp)) {
->  			break;
->  		}
-> +
-> +		if (cond_accept_memory(zone, 0))
-> +			goto retry_this_zone;
-> +
-> +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> +		/* Try again if zone has deferred pages */
-> +		if (deferred_pages_enabled()) {
-> +			if (_deferred_grow_zone(zone, 0))
-> +				goto retry_this_zone;
-> +		}
-> +#endif
->  	}
->  
->  	/*
-> -- 
-> 2.43.0
-> 
+---
+Alexis Lothoré (eBPF Foundation) (4):
+      selftests/bpf: convert get_current_cgroup_id_user to test_progs
+      selftests/bpf: convert test_cgroup_storage to test_progs
+      selftests/bpf: add proper section name to bpf prog and rename it
+      selftests/bpf: convert test_skb_cgroup_id_user to test_progs
+
+ tools/testing/selftests/bpf/.gitignore             |   3 -
+ tools/testing/selftests/bpf/Makefile               |   8 +-
+ tools/testing/selftests/bpf/get_cgroup_id_user.c   | 151 -----------------
+ .../selftests/bpf/prog_tests/cgroup_ancestor.c     | 154 +++++++++++++++++
+ .../bpf/prog_tests/cgroup_get_current_cgroup_id.c  |  45 +++++
+ .../selftests/bpf/prog_tests/cgroup_storage.c      |  65 ++++++++
+ ...test_skb_cgroup_id_kern.c => cgroup_ancestor.c} |  14 +-
+ tools/testing/selftests/bpf/progs/cgroup_storage.c |  24 +++
+ .../selftests/bpf/progs/get_cgroup_id_kern.c       |  26 +--
+ tools/testing/selftests/bpf/test_cgroup_storage.c  | 174 --------------------
+ tools/testing/selftests/bpf/test_skb_cgroup_id.sh  |  63 -------
+ .../selftests/bpf/test_skb_cgroup_id_user.c        | 183 ---------------------
+ 12 files changed, 297 insertions(+), 613 deletions(-)
+---
+base-commit: 34dbece299dfc462db4504268a697f29750d2932
+change-id: 20240725-convert_cgroup_tests-d07c66053225
+
+Best regards,
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
