@@ -1,278 +1,195 @@
-Return-Path: <linux-kernel+bounces-276809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3C69498A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE439498AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE622831E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FEC6283238
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBE71509A5;
-	Tue,  6 Aug 2024 19:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="hFzXxG54"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB55150990;
+	Tue,  6 Aug 2024 19:56:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C5A145B1C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7C581AC8
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 19:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722974075; cv=none; b=s/UqV8p2Vse067lC7flHJf+RWxq3njxeJuHZEzyqoh4cbEwn+xhtSeRQs4AZvZmdg0emfZQrvPsCCaBkqQ4/WyCI7JwTR7fXbvSiJ2hqtmK0m8IdlnSdm5zCNs5YvrJyw0U3T7w9gHiKnbwrjE29m0UQ058Lx0ujjoNeL+yVu0o=
+	t=1722974172; cv=none; b=lBOlYxOmiqglkFCvMSROiqUkR7zmF4Sbho17k5t6jONzQLx4ofq1DrViUhl87Ie/ugJ0UNMOj7DQGup0wFdCdNdRvH5nYakJSN2gautoW5nYNN4g3v+aEp/h5rk4CuKO6jQXYptbBMkcoM8vma8f2HZBxN7ZWRAgpli7ydBpSrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722974075; c=relaxed/simple;
-	bh=BpiFkizntkuNYYbqLMUh5o6k123HE/GRHqdrd5DtwaE=;
+	s=arc-20240116; t=1722974172; c=relaxed/simple;
+	bh=u7BQVSOIInr31bt4SnPSp5X+E1sR/G4Z2tTnB19SYLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTNxA9AesYGB5KzzWM4NgG8R6Avon3pYd20YOT+wAftG+IkdhseQh3PbSp1cF183WaoGxQ+g1g8yh+M59u/QPUtWOQ8watB3vgTXw8X9NvOXOUbLi8l64gNidAMx8rbgWS4UASHAyM+f4jMwUQ8KAkl6ll3tTltzPerZJRN3Flc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=hFzXxG54; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4519383592aso6342011cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 12:54:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1722974072; x=1723578872; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Q9KObzHEoTkTzOdnl1Xc1srqmdgq+QKJ4U9b5T6vC08=;
-        b=hFzXxG540fxFXv7qNqVoIzoQguhKaBL5jOVxwSaoipixLKDXPh8+AYRJQDO9s0evh5
-         O7MNMvmBNPMDQteVb6e7gUHBGYtZnH7TmIJyRT7atnqtXc+YkNV/Nwudi4OrijgxdimO
-         3hY+LWhPFBlGjk9CoKw7doiolmXlCrbn6m3H4G0/m9se2bijS3ra0qFWjV17bN4Q6y+L
-         MqeL5xoflOe3pgxEw6ytqPiwJVC7PiSb1e8eiKADwhe9gPJzCQlhAVmN4fT9syndSttg
-         o3JJVaPIhbNYybBw4L4MkRsCqSMu9RjMnlZ87XOjBmm21v09alOxpqPIuyeBgCggQftZ
-         8iSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722974072; x=1723578872;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q9KObzHEoTkTzOdnl1Xc1srqmdgq+QKJ4U9b5T6vC08=;
-        b=S3SJzdMVEsCGn5qGDU2J8w7Nhim2URFU0zAuC4BTkNNDQMxG7BxeC48CqR48JUS7/N
-         apSbRjOBt+ySoiadLs80ggWMlgFyu54merooacSxxPzyesGZg7pnQ0dgQ58SBYx4ZC6z
-         k7gwfuupZjE8YZKefdRcMauEo/lVUfrjdgEf7rWFrgwip0WX0o2yQQnDFBHDjVvdAOyP
-         3cdXAhiKfQ8Zi/8kf8UIM7+gAeV9dihQsu98HlwdnukTVjs0AQ9K01FCQ2xZ/g1c6YYd
-         Er4iBxJ6TLSwZM6ZL6st8UcVZDKOrzAEd3XGXdt7rV7PbLS4BTl4RpVU+T2AxHk+OaTj
-         02MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnjwAKw//1GPA3+tOW+u1kR+SV4PWg/Bh7q6iwPoSwvcoUhj/deOluFVM7pZq97DuufboFW9awNLCL7GU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPupKThZSkxO8eTHmMhULTB16VtDRd8722FeUdAb2ZWdj5UGqo
-	99dgk5LcuO4I61gLzryiJ6aBFOaPDJnLn/sOsjcry/kQk9VCIfIXOQ3BJltTzZU=
-X-Google-Smtp-Source: AGHT+IHtbWCzTzD4UemOkN9Gk7mskcRVQkFIJsa35ZBWCAYvI+WhrKtgZlBUMGgJq6cyyv1rtQTtYA==
-X-Received: by 2002:a05:622a:198a:b0:450:319:6b44 with SMTP id d75a77b69052e-45189206d8amr202167641cf.1.1722974071641;
-        Tue, 06 Aug 2024 12:54:31 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4518a756206sm40320921cf.65.2024.08.06.12.54.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 12:54:31 -0700 (PDT)
-Date: Tue, 6 Aug 2024 15:54:22 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, riel@surriel.com, shakeel.butt@linux.dev,
-	roman.gushchin@linux.dev, david@redhat.com, baohua@kernel.org,
-	ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org,
-	cerasuolodomenico@gmail.com, corbet@lwn.net,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 0/6] mm: split underutilized THPs
-Message-ID: <20240806195422.GF322282@cmpxchg.org>
-References: <20240730125346.1580150-1-usamaarif642@gmail.com>
- <CAOUHufb7z13u51VCTGZMimoCXpmfT5AOAbrUpAvJjTx5+AXwew@mail.gmail.com>
- <20240806173840.GE322282@cmpxchg.org>
- <CAOUHufavZTKjh6sb4n_q0ciLzTS88Kxxkp_2Q1wWVp_ZkFrshQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLtzOmAt28OhLPemupmzRXtifQZEc3Q/9Iud8OgcGbxF+FYKQudiz54Mi23SylU8Znq5oL3nfeUUUCy4eS2qobpPNAfSM4cb614Lg5lthZwelA5Ea1v7L9dEL7hw5K3LqCq4dzq+uL9BdFOV8bLvVLZE1Dls6KmOQBr6RjlAjZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sbQHW-0005kO-0G; Tue, 06 Aug 2024 21:55:42 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sbQHT-0051lZ-Gn; Tue, 06 Aug 2024 21:55:39 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 1826D318370;
+	Tue, 06 Aug 2024 19:55:39 +0000 (UTC)
+Date: Tue, 6 Aug 2024 21:55:38 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Rob Herring <robh@kernel.org>
+Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, David Jander <david.jander@protonic.nl>, 
+	Simon Horman <horms@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH can-next v2 01/20] dt-bindings: can: rockchip_canfd: add
+ rockchip CAN-FD controller
+Message-ID: <20240806-hypersonic-malkoha-of-grandeur-1f5d81-mkl@pengutronix.de>
+References: <20240731-rockchip-canfd-v2-0-d9604c5b4be8@pengutronix.de>
+ <20240731-rockchip-canfd-v2-1-d9604c5b4be8@pengutronix.de>
+ <20240806165020.GA1664499-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oqlbtdiwnzp33yvb"
+Content-Disposition: inline
+In-Reply-To: <20240806165020.GA1664499-robh@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--oqlbtdiwnzp33yvb
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOUHufavZTKjh6sb4n_q0ciLzTS88Kxxkp_2Q1wWVp_ZkFrshQ@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 12:06:20PM -0600, Yu Zhao wrote:
-> On Tue, Aug 6, 2024 at 11:38 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> >
-> > On Thu, Aug 01, 2024 at 12:09:16AM -0600, Yu Zhao wrote:
-> > > On Tue, Jul 30, 2024 at 6:54 AM Usama Arif <usamaarif642@gmail.com> wrote:
-> > > >
-> > > > The current upstream default policy for THP is always. However, Meta
-> > > > uses madvise in production as the current THP=always policy vastly
-> > > > overprovisions THPs in sparsely accessed memory areas, resulting in
-> > > > excessive memory pressure and premature OOM killing.
-> > > > Using madvise + relying on khugepaged has certain drawbacks over
-> > > > THP=always. Using madvise hints mean THPs aren't "transparent" and
-> > > > require userspace changes. Waiting for khugepaged to scan memory and
-> > > > collapse pages into THP can be slow and unpredictable in terms of performance
-> > > > (i.e. you dont know when the collapse will happen), while production
-> > > > environments require predictable performance. If there is enough memory
-> > > > available, its better for both performance and predictability to have
-> > > > a THP from fault time, i.e. THP=always rather than wait for khugepaged
-> > > > to collapse it, and deal with sparsely populated THPs when the system is
-> > > > running out of memory.
-> > > >
-> > > > This patch-series is an attempt to mitigate the issue of running out of
-> > > > memory when THP is always enabled. During runtime whenever a THP is being
-> > > > faulted in or collapsed by khugepaged, the THP is added to a list.
-> > > > Whenever memory reclaim happens, the kernel runs the deferred_split
-> > > > shrinker which goes through the list and checks if the THP was underutilized,
-> > > > i.e. how many of the base 4K pages of the entire THP were zero-filled.
-> > > > If this number goes above a certain threshold, the shrinker will attempt
-> > > > to split that THP. Then at remap time, the pages that were zero-filled are
-> > > > not remapped, hence saving memory. This method avoids the downside of
-> > > > wasting memory in areas where THP is sparsely filled when THP is always
-> > > > enabled, while still providing the upside THPs like reduced TLB misses without
-> > > > having to use madvise.
-> > > >
-> > > > Meta production workloads that were CPU bound (>99% CPU utilzation) were
-> > > > tested with THP shrinker. The results after 2 hours are as follows:
-> > > >
-> > > >                             | THP=madvise |  THP=always   | THP=always
-> > > >                             |             |               | + shrinker series
-> > > >                             |             |               | + max_ptes_none=409
-> > > > -----------------------------------------------------------------------------
-> > > > Performance improvement     |      -      |    +1.8%      |     +1.7%
-> > > > (over THP=madvise)          |             |               |
-> > > > -----------------------------------------------------------------------------
-> > > > Memory usage                |    54.6G    | 58.8G (+7.7%) |   55.9G (+2.4%)
-> > > > -----------------------------------------------------------------------------
-> > > > max_ptes_none=409 means that any THP that has more than 409 out of 512
-> > > > (80%) zero filled filled pages will be split.
-> > > >
-> > > > To test out the patches, the below commands without the shrinker will
-> > > > invoke OOM killer immediately and kill stress, but will not fail with
-> > > > the shrinker:
-> > > >
-> > > > echo 450 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none
-> > > > mkdir /sys/fs/cgroup/test
-> > > > echo $$ > /sys/fs/cgroup/test/cgroup.procs
-> > > > echo 20M > /sys/fs/cgroup/test/memory.max
-> > > > echo 0 > /sys/fs/cgroup/test/memory.swap.max
-> > > > # allocate twice memory.max for each stress worker and touch 40/512 of
-> > > > # each THP, i.e. vm-stride 50K.
-> > > > # With the shrinker, max_ptes_none of 470 and below won't invoke OOM
-> > > > # killer.
-> > > > # Without the shrinker, OOM killer is invoked immediately irrespective
-> > > > # of max_ptes_none value and kill stress.
-> > > > stress --vm 1 --vm-bytes 40M --vm-stride 50K
-> > > >
-> > > > Patches 1-2 add back helper functions that were previously removed
-> > > > to operate on page lists (needed by patch 3).
-> > > > Patch 3 is an optimization to free zapped tail pages rather than
-> > > > waiting for page reclaim or migration.
-> > > > Patch 4 is a prerequisite for THP shrinker to not remap zero-filled
-> > > > subpages when splitting THP.
-> > > > Patches 6 adds support for THP shrinker.
-> > > >
-> > > > (This patch-series restarts the work on having a THP shrinker in kernel
-> > > > originally done in
-> > > > https://lore.kernel.org/all/cover.1667454613.git.alexlzhu@fb.com/.
-> > > > The THP shrinker in this series is significantly different than the
-> > > > original one, hence its labelled v1 (although the prerequisite to not
-> > > > remap clean subpages is the same).)
-> > > >
-> > > > Alexander Zhu (1):
-> > > >   mm: add selftests to split_huge_page() to verify unmap/zap of zero
-> > > >     pages
-> > > >
-> > > > Usama Arif (3):
-> > > >   Revert "memcg: remove mem_cgroup_uncharge_list()"
-> > > >   Revert "mm: remove free_unref_page_list()"
-> > > >   mm: split underutilized THPs
-> > > >
-> > > > Yu Zhao (2):
-> > > >   mm: free zapped tail pages when splitting isolated thp
-> > > >   mm: don't remap unused subpages when splitting isolated thp
-> > >
-> > >  I would recommend shatter [1] instead of splitting so that
-> >
-> > I agree with Rik, this seems like a possible optimization, not a
-> > pre-requisite.
+On 06.08.2024 10:50:20, Rob Herring wrote:
+> On Wed, Jul 31, 2024 at 11:37:03AM +0200, Marc Kleine-Budde wrote:
+> > Add documentation for the rockchip rk3568 CAN-FD controller.
+> >=20
+> > Co-developed-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> > ---
+> >  .../bindings/net/can/rockchip,canfd.yaml           | 76 ++++++++++++++=
+++++++++
+>=20
+> rockchip,rk3568-canfd.yaml
 
-Let me just re-iterate, I don't think this discussion has any bearing
-on the THP shrinker. There is data corroborating that the shrinker
-as-is is useful today.
+Thanks, will rename.
 
-Shattering is an independent proposal for an optimization that should
-be discussed on its own merits.
+> >  MAINTAINERS                                        |  7 ++
+> >  2 files changed, 83 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/net/can/rockchip,canfd.y=
+aml b/Documentation/devicetree/bindings/net/can/rockchip,canfd.yaml
+> > new file mode 100644
+> > index 000000000000..444269f630f4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/can/rockchip,canfd.yaml
+> > @@ -0,0 +1,76 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/can/rockchip,canfd.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title:
+> > +  Rockchip CAN-FD controller
+> > +
+> > +maintainers:
+> > +  - Marc Kleine-Budde <mkl@pengutronix.de>
+> > +
+> > +allOf:
+> > +  - $ref: can-controller.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - const: rockchip,rk3568-canfd
+> > +      - items:
+> > +          - enum:
+> > +              - rockchip,rk3568v2-canfd
+> > +              - rockchip,rk3568v3-canfd
+> > +          - const: rockchip,rk3568-canfd
+>=20
+> Given you already know there are differences in the versions to handle=20
+> and there's no existing driver supporting the fallback, I don't know=20
+> that a fallback is too useful here.
 
-> > > 1) whoever underutilized their THPs get punished for the overhead;
-> >
-> > Is that true?
-> 
-> Yes :)
+Let me re-think out loud about the compatibilities:
 
-It actually sounds like the answer is no.
+There is a CAN-FD IP core in the rockchip,rk3568 SoC.
+=20
+In the silicon revision v2 of the SoC it has 12 documented errata und
+silicon revision v3 some of them are fixed. This means the driver can
+skip some of the workarounds.
 
-> > The downgrade is done in a shrinker.
-> 
-> Ideally, should we charge for the CPU usage of the shrinker and who
-> should we charge it to?
+The v3 revision works with all the errata of the v2 active, currently
+with a probably not measurable increase of CPU load. This might change
+in the future, if more v2 workarounds are added. These might
+degrade performance.
 
-There are two contexts it runs in:
+So it's for the v2 silicon revision:
+compatible =3D "rockchip,rk3568v2-canfd";
 
-1) Task tries to allocate a THP. A physical one cannot be found, so
-   direct reclaim and compaction run. The allocating task and its
-   cgroup get charged for this effort, regardless of who underutilized
-   the page, and regardless of whether we split+compact or shatter.
+And for the v3 silicon revision:
+compatible =3D "rockchip,rk3568v3-canfd", "rockchip,rk3568v2-canfd";
 
-2) Cgroup tries to charge a THP and hits its limit. The allocating
-   task runs limit reclaim, which invokes the shrinker. The job of
-   this context is to enforce memory quantity, not contiguity. A limit
-   can be hit when the system is 5% utilized, with an abundance of
-   free blocks. With the shrinker shattering, the cgroup would be
-   needlessly punished. Twice in fact:
+Which is documented in the yaml as:
 
-   	    a) it would perform unnecessary migration work
+properties:
+  compatible:
+    oneOf:
+      - const: rockchip,rk3568v2-canfd
+      - items:
+          - const: rockchip,rk3568v3-canfd
+          - const: rockchip,rk3568v2-canfd
 
-	    b) splitting retains PTE contiguity on the remaining
-	       subpages, which has benefits on CPUs with TLB
-	       coalescing. Shattering would disrupt that needlessly.
+regards,
+Marc
 
-   This is the wrong context for contiguity work.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-So it seems to me that the punishment of "culprits" is not natural,
-reliable, or proportional in any way.
+--oqlbtdiwnzp33yvb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > With or without
-> > shattering, the compaction effort will be on the allocation side.
-> 
-> If compaction is needed at all.
+-----BEGIN PGP SIGNATURE-----
 
-That's not what I meant.
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmayf7cACgkQKDiiPnot
+vG8IPQf+LbC/VIPZu4gM2+A5GdbMSbKA+z4aGn1tNxv7siHocgF9WZUOcVXbJrLO
+fvDub7fQyHJcmJKmoeN3EqUH9Neh3w1W1yDelU19iuQ8EUC2TBWI52uINZ2U5AlW
+us1lapjelVoNnJjG24mjn4+VILOX2DlMKa4zFVdJ+eJmcKKz7MfZiNT60GE7Xgol
+jkVM989K7H20HS7+tvRAAAgtmTm/zQOcfZiB4owx3xIYByZVJyB7Pn+2IfIfF++Y
+jVUuTXbJxmkrhi4iY+JBZMdoz4ymLLvolJ3+3SnzVBos6cK1gztcdRozWnSNq0O0
+nmOkPEm+nNO+KzlGWm0IQhtcj4VaHw==
+=K7S6
+-----END PGP SIGNATURE-----
 
-Shattering IS compaction work. There is a migration source block, and
-it moves the individual pages to somewhere else to produce a free THP.
-
-> > The only difference is that
-> > compaction would do the work on-demand
-> 
-> And can often fail to produce 2MB blocks *under memory pressure*
-
-So let's agree that shattering helps if the THP demand is constant.
-
-It doesn't help when THP demand *grows* under pressure. But fixing
-this is kind of critical for THPs to be useful.
-
-And fixing the latter obviates the need for a special solution to only
-the former.
-
-> > whereas shattering would do it unconditionally
-> 
-> And always produces a 2MB block
-
-Which can immediately get fragmented by a racing allocation from an
-unrelated cgroup. So the next step would be compaction capturing for
-the shattering code...
-
-I'm not really sold on this. It's re-inventing compaction in an ad-hoc
-scenario that has limited usefulness, instead of addressing the
-fundamental issues that make compaction inefficient & unreliable.
-
-Allocation context is the appropriate place to determine whether, and
-how much, defragmentation (and all its direct and indirect costs) is
-actually warranted. Not opportunistically deep in the reclaim stack.
+--oqlbtdiwnzp33yvb--
 
