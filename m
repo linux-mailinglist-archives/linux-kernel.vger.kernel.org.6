@@ -1,181 +1,127 @@
-Return-Path: <linux-kernel+bounces-276493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A141949487
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:27:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F54949396
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821AD1C2388E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:27:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3161F250CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989992C6BB;
-	Tue,  6 Aug 2024 15:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E3A1E675B;
+	Tue,  6 Aug 2024 14:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cTWSk3Sa"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hX6L01r7"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92BD29408
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 15:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56E31D618A;
+	Tue,  6 Aug 2024 14:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722958013; cv=none; b=PrYzhOZaheC110t+kbpwD8hwUq2bqb1HxjbOMsKKF4czP5m3PJYvtxuVMsQ0t2fhUgwXEO9F2D0R2/9ILUgFWrIv/YWxxooXXhQhE0RGNWLjbr2V+LI3kErvByNwcMHq7VSMXzzhaWWdMsjZE93Ypkj0MNKDeEQNTYfm32nGZFA=
+	t=1722955675; cv=none; b=k0ow91lUp23nbOX5Q5WM5egLKPksHzq5jB9QaTxhvWXuu5MvCXqqLZqxUtQRWoW1HxPamDZjIF1Docpx17QVaC13TRlTFxCndVcHU2t8uLaFTNlIgxyzUoX+DJHk6UCdnQ5du1zXvKJGi2rgEnWNF7h/VgjkLWd+rWnjCDCifYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722958013; c=relaxed/simple;
-	bh=zRyVYewZfJ6vbOqTtDN9VwPuL0s3ORHF8Dgbx8cWW5k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZjlAMvIPaRYDJMF0pGccxCAr87hUW5hMshtVtgyIhMarNOYBDWKcnChawg/MVsTCWKiC+rhl91TXHcHUeupgHaNks6hcoOjYHJMrumRWKozsd0ZF2eHKEg1blkllg2NeHyLxQNIte/NhhBsBSQCgSWV3D1tAmVNEahyq1wcykgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cTWSk3Sa; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=xjnzteocszdshk7n4mljwybxaa.protonmail; t=1722958010; x=1723217210;
-	bh=tpBGENrMupqVDMgdnTEoGfZ9qLS+bFFaxLGIQUvax4Q=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=cTWSk3SaQg0XywrFIDCaxqG/NC6pD5u2vWS5YBrN9PibKcUe5+p3LRmf6f5X8oPK4
-	 QGzo3TMSeCAWDy8BpuseO0uZQy70z7RUoyHXH+YRISriayZafJJmFbN0+gewG3HIpY
-	 lqtJz3vcP4TkN5W7EVET1mS1D7ph/+mnktodp+wEn+oppLbLrsgFR0MNRs/h7VHOfg
-	 fF15DWpGHjcGic37wjH0v6DWVsGshslm71cUm/T9O+nLYr8YSJ/7qe9T0bGPNut4By
-	 SnAgCPCKY0i2M1BTFiGSP/KOzBvKYun38Z7GfqAOU876EbgFl1GY6yDEs2bzkxVuaN
-	 2ppe68CR9JyvA==
-Date: Tue, 06 Aug 2024 14:47:21 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v4 09/10] rust: list: support heterogeneous lists
-Message-ID: <4858fbdc-f1d4-48bf-b884-4db1b1ffbf1b@proton.me>
-In-Reply-To: <20240806-linked-list-v4-9-23efc510ec92@google.com>
-References: <20240806-linked-list-v4-0-23efc510ec92@google.com> <20240806-linked-list-v4-9-23efc510ec92@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 8ea67c05bb2c7315f6812cabc22daabfc76cecc4
+	s=arc-20240116; t=1722955675; c=relaxed/simple;
+	bh=OOjXLBz8njaKfaJdQh4e02mCjySkiFDF4HMnCVRrzl0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C9n9qFSONCZ6nhtks+8libcSpzBl99CeaMcEZBVpvh/mSM4L6gKB3ek7pzBOWNssQ5kukn3RyGXl5HurPRv2OM0yZaVJkFdzKOUSZB5YxHlfOISVhmCMgYzqloO0mReApn2rkBrh9h+cm9SjyADjBQTfX+/aIKILVZxwJLxDbKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hX6L01r7; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 476EljDk016151;
+	Tue, 6 Aug 2024 09:47:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722955665;
+	bh=F6xJ1vugvPMi1ZliOEmRpFNCkLfVTJ4H7brEsMVHfaU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=hX6L01r756YEV2FoXC+rW6q/8dDs/c7EQT+6NVor4kRtiHcijuTM2SQqf8dq5arAr
+	 56CLeGWFT4VgRBcVUaeV2ZLD3jSSOH/h8Bwbl6UHJknlAwlQZW+QWAh7mVxmvN00w9
+	 7GUP8pG9G6EndXVrBDpxosWFgwwR4iNUpPcLIqHc=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 476Eljfk023857
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 6 Aug 2024 09:47:45 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
+ Aug 2024 09:47:45 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 6 Aug 2024 09:47:45 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 476EljAL070726;
+	Tue, 6 Aug 2024 09:47:45 -0500
+Date: Tue, 6 Aug 2024 09:47:45 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Wadim Egorov <w.egorov@phytec.de>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <upstream@lists.phytec.de>,
+        <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <d.schultz@phytec.de>
+Subject: Re: [PATCH] arm64: dts: ti: am642-phyboard-electra: Add PRU-ICSSG
+ nodes
+Message-ID: <20240806144745.s3ga45pkgfuovjg6@henna>
+References: <20240709101205.891587-1-w.egorov@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240709101205.891587-1-w.egorov@phytec.de>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 06.08.24 15:59, Alice Ryhl wrote:
-> Support linked lists that can hold many different structs at once. This
-> is generally done using trait objects. The main challenge is figuring
-> what the struct is given only a pointer to the ListLinks.
->=20
-> We do this by storing a pointer to the struct next to the ListLinks
-> field. The container_of operation will then just read that pointer. When
-> the type is a trait object, that pointer will be a fat pointer whose
-> metadata is a vtable that tells you what kind of struct it is.
->=20
-> Heterogeneous lists are heavily used by Rust Binder. There are a lot of
-> so-called todo lists containing various events that need to be delivered
-> to userspace next time userspace calls into the driver. And there are
-> quite a few different todo item types: incoming transaction, changes to
-> refcounts, death notifications, and more.
->=20
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On 12:12-20240709, Wadim Egorov wrote:
+> The phyBOARD-Electra implements two Ethernet ports utilizing PRUs.
+> Add configuration for both mac ports & PHYs.
+> 
+> Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
 > ---
->  rust/kernel/list.rs                    |  47 +++++++++++-
->  rust/kernel/list/impl_list_item_mod.rs | 131 +++++++++++++++++++++++++++=
-++++++
->  2 files changed, 177 insertions(+), 1 deletion(-)
+>  .../dts/ti/k3-am642-phyboard-electra-rdk.dts  | 146 ++++++++++++++++++
+>  1 file changed, 146 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts b/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+> index 6df331ccb970..364a7582cf99 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+> @@ -28,6 +28,8 @@ / {
+>  	model = "PHYTEC phyBOARD-Electra-AM64x RDK";
+>  
+>  	aliases {
+> +		ethernet1 = &icssg0_emac0;
+> +		ethernet2 = &icssg0_emac1;
+>  		mmc1 = &sdhci1;
+>  		serial2 = &main_uart0;
+>  		serial3 = &main_uart1;
+> @@ -55,6 +57,73 @@ can_tc2: can-phy1 {
+>  		standby-gpios = <&main_gpio0 35 GPIO_ACTIVE_HIGH>;
+>  	};
+>  
+> +	/* Dual Ethernet application node on PRU-ICSSG0 */
+> +	ethernet {
+> +		compatible = "ti,am642-icssg-prueth";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&icssg0_rgmii1_pins_default &icssg0_rgmii2_pins_default>;
 
-One nit below, with that fixed,
+&icssg0_rgmii1_pins_default>, <&icssg0_rgmii2_pins_default>
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
-> diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-> index 904cfa454dff..cf26fec37c1e 100644
-> --- a/rust/kernel/list.rs
-> +++ b/rust/kernel/list.rs
-> @@ -12,7 +12,9 @@
->  use core::ptr;
->=20
->  mod impl_list_item_mod;
-> -pub use self::impl_list_item_mod::{impl_has_list_links, impl_list_item, =
-HasListLinks};
-> +pub use self::impl_list_item_mod::{
-> +    impl_has_list_links, impl_has_list_links_self_ptr, impl_list_item, H=
-asListLinks, HasSelfPtr,
-> +};
->=20
->  mod arc;
->  pub use self::arc::{impl_list_arc_safe, AtomicTracker, ListArc, ListArcS=
-afe, TryNewListArc};
-> @@ -183,6 +185,49 @@ unsafe fn from_fields(me: *mut ListLinksFields) -> *=
-mut Self {
->      }
->  }
->=20
-> +/// Similar to [`ListLinks`], but also contains a pointer to the full va=
-lue.
-> +///
-> +/// This type can be used instead of [`ListLinks`] to support lists with=
- trait objects.
-> +#[repr(C)]
-> +pub struct ListLinksSelfPtr<T: ?Sized, const ID: u64 =3D 0> {
-> +    /// The `ListLinks` field inside this value.
-> +    ///
-> +    /// This is public so that it can be used with `impl_has_list_links!=
-`.
-> +    pub inner: ListLinks<ID>,
-> +    // UnsafeCell is not enough here because we need `Opaque::zeroed` as=
- a dummy value, and
-
-You say that you need `Opaque::zeroed`, but below you use `uninit`, so
-just 's/zeroed/uninit/' in the above line should fix it.
-
----
-Cheers,
-Benno
-
-> +    // `ptr::null()` doesn't work for `T: ?Sized`.
-> +    self_ptr: Opaque<*const T>,
-> +}
 > +
-> +// SAFETY: The fields of a ListLinksSelfPtr can be moved across thread b=
-oundaries.
-> +unsafe impl<T: ?Sized + Send, const ID: u64> Send for ListLinksSelfPtr<T=
-, ID> {}
-> +// SAFETY: The type is opaque so immutable references to a ListLinksSelf=
-Ptr are useless. Therefore,
-> +// it's okay to have immutable access to a ListLinks from several thread=
-s at once.
-> +//
-> +// Note that `inner` being a public field does not prevent this type fro=
-m being opaque, since
-> +// `inner` is a opaque type.
-> +unsafe impl<T: ?Sized + Sync, const ID: u64> Sync for ListLinksSelfPtr<T=
-, ID> {}
-> +
-> +impl<T: ?Sized, const ID: u64> ListLinksSelfPtr<T, ID> {
-> +    /// The offset from the [`ListLinks`] to the self pointer field.
-> +    pub const LIST_LINKS_SELF_PTR_OFFSET: usize =3D core::mem::offset_of=
-!(Self, self_ptr);
-> +
-> +    /// Creates a new initializer for this type.
-> +    pub fn new() -> impl PinInit<Self> {
-> +        // INVARIANT: Pin-init initializers can't be used on an existing=
- `Arc`, so this value will
-> +        // not be constructed in an `Arc` that already has a `ListArc`.
-> +        Self {
-> +            inner: ListLinks {
-> +                inner: Opaque::new(ListLinksFields {
-> +                    prev: ptr::null_mut(),
-> +                    next: ptr::null_mut(),
-> +                }),
-> +            },
-> +            self_ptr: Opaque::uninit(),
-> +        }
-> +    }
-> +}
-> +
->  impl<T: ?Sized + ListItem<ID>, const ID: u64> List<T, ID> {
->      /// Creates a new empty list.
->      pub const fn new() -> Self {
+> +		sram = <&oc_sram>;
+> +		ti,prus = <&pru0_0>, <&rtu0_0>, <&tx_pru0_0>, <&pru0_1>, <&rtu0_1>, <&tx_pru0_1>;
 
+here and elsewhere, follow
+	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+
+	[...]
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
