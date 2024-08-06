@@ -1,219 +1,203 @@
-Return-Path: <linux-kernel+bounces-275683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540E2948861
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:29:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2760948838
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83728B217EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:29:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BD05B22619
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537381BA899;
-	Tue,  6 Aug 2024 04:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABED1BA88D;
+	Tue,  6 Aug 2024 04:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGhO6/vv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qg+uio2o"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D227EADC;
-	Tue,  6 Aug 2024 04:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E909A59
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 04:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722918531; cv=none; b=pC2CNMSHFdyPh5KVopy8UgIfmeRNeKCVSvfy+gVqGW/uVlDCbZZTh4v5uywPsPsGWneUdZGUHUIGc9zqmA3umuYNL+QU8Nsre9cUfQjwkfsC7rjMC6jIBYL6QSrzuQvMx5UHDC+KldAMyCg0i6gY+qSALbEAQCBd52aXMBBILME=
+	t=1722917443; cv=none; b=pD64+8bi2aYFA03WdNzv14o1Vkh5R8UA7h4L/NFtnsDa54ZXAkhAkwCCzTCKizr43w3ANrDaDAdAB7Oa6im2AlkDsz5yFImuSUiYpm11CXyjD64VWS3FA7xG24jDLvgKsLE8VqI2ufnd5y4ZiKGGdOWbkgTETvoBnuJhUmmOuog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722918531; c=relaxed/simple;
-	bh=AS5b7+g/FCzcqVl/UqG+V9yJdrUatcHdi5X20U3QBrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1PsoWtNKsLxaQSFbNnjOKtch5OYxjKMNbFNSjuB1+TCf9lHbvWLVSYTgVmvh+wjCCxpVOAd10/J0mCkTAvbZZBBdYg9ISltgsTlvn72unnHqC6wEjEK+1BulL9mbEanGb9BXhL1RPHYA998ZBBC6Hh1n+rbD4WL7RF24f0IXrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGhO6/vv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1043C32786;
-	Tue,  6 Aug 2024 04:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722918530;
-	bh=AS5b7+g/FCzcqVl/UqG+V9yJdrUatcHdi5X20U3QBrU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=PGhO6/vvMcJa5Zx8uYR3jw9Vh5ZDVX9Jmk2h/KhP+dzS92DHwzkMJVduz4BXKK3Sy
-	 fB1j4GtGvQIzveoGmFL4Rq0sxXCVIi2pISQTfqy5uyX4qeFKo98zKCsj4yYVHb5JKp
-	 W1Tb+7lSwbRw5aWJeVgbXhGS7YVwHs5Mmg94JzUtX+xrTg9YJdk90PIqOKybHFuF1G
-	 cg6ewpMFIsYk8T+rDcpRPHj9Qr+wVYz5uj8Hzog6gJZ6Is+DDPeKNgZukJ80CLWpmW
-	 CQmSiX+cayY7Ej45Zg8bIr8daPIb9Hjiel21IBVp+sjfHJ4myeovJw+7jRlSGbPby7
-	 Gd/PlwrAdYxPg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 790D6CE10CC; Mon,  5 Aug 2024 21:28:49 -0700 (PDT)
-Date: Mon, 5 Aug 2024 21:28:49 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Vineet Gupta <vgupta@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
-	peterz@infradead.org, torvalds@linux-foundation.org, arnd@arndb.de,
-	geert@linux-m68k.org, palmer@rivosinc.com, mhiramat@kernel.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>
-Subject: Re: [PATCH cmpxchg 2/3] ARC: Emulate one-byte cmpxchg
-Message-ID: <3353ac4f-97ed-471b-bd19-96e0dbc41612@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <c1b7f3a2-da50-4dfb-af6f-a1898eaf2b79@paulmck-laptop>
- <20240805192119.56816-2-paulmck@kernel.org>
- <eacb9a3c-0d76-47d2-8b80-59d6a58fe4b4@kernel.org>
+	s=arc-20240116; t=1722917443; c=relaxed/simple;
+	bh=SPnmSOct1S+IO17hcd9r9Hsb1cuxXerhUYiz4U7zea0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CDJdDCjFIfIwvpKb4EpYWUqu6QNxL8sI64vu5m0NSAj0OQ+zx6r8Pw6RRnjY2LbI8sgZTsUlvEuiHQwGnx73kkjYcG9S7D2/75kDUaAY3LwNNfNqkjnzw7YDKVwRmowaKwdYVp002u5UL2mggVPHWxBdmeaLyhB/9OCHoU24/Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qg+uio2o; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722917442; x=1754453442;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=SPnmSOct1S+IO17hcd9r9Hsb1cuxXerhUYiz4U7zea0=;
+  b=Qg+uio2oJYLaLqOvjcexyhxzzYRi1hl5U5XI0zz4W1NBE15tX/72K17q
+   E4Hfe5jCpR/LCzzmjyVtT8OWMc9QIIImWg7yHwm8SqQbHp2h6dcpDW+Wt
+   p8gC409YrW6pJtXSpakwQUbV1KPF66D39P76UqLSoL3Z3y6qK7XnNeOfl
+   3+yZ9ZcL7tit0Wtk/AujR/HE9IVMvHFis1yI0kbgohE256aUfgzfJys+N
+   IUHUeSxRDnZwlS+VTS7gLrwAI+AGqdNPTWC3u0y4w3gyxwiivkGY6zbYn
+   7UZ5CmWeC4h8ZcGiNdOfCAQFCdJgk36Hi48YA8UkEY/jSI+0vmTvVSKrT
+   g==;
+X-CSE-ConnectionGUID: LTxbxFygSn2r4KGCxp1QQg==
+X-CSE-MsgGUID: gNajvCsBRNe9OeQvgoDVnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="31574087"
+X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
+   d="scan'208";a="31574087"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 21:10:41 -0700
+X-CSE-ConnectionGUID: Ex9UJI+RSK6WZm3fGN9X7w==
+X-CSE-MsgGUID: c03abkaDSmmvx4vL6tD6SQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
+   d="scan'208";a="56464538"
+Received: from jraag-nuc8i7beh.iind.intel.com ([10.145.169.79])
+  by fmviesa010.fm.intel.com with ESMTP; 05 Aug 2024 21:10:36 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	himal.prasad.ghimiray@intel.com,
+	francois.dugast@intel.com,
+	rodrigo.vivi@intel.com,
+	aravind.iddamsetty@linux.intel.com,
+	anshuman.gupta@intel.com,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1] drm/xe/uapi: Bring back reset uevent
+Date: Tue,  6 Aug 2024 10:02:31 +0530
+Message-Id: <20240806043231.624645-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eacb9a3c-0d76-47d2-8b80-59d6a58fe4b4@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 05, 2024 at 06:27:57PM -0700, Vineet Gupta wrote:
-> Hi Paul,
-> 
-> On 8/5/24 12:21, Paul E. McKenney wrote:
-> > Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on arc.
-> >
-> > [ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
-> > [ paulmck: Apply feedback from Naresh Kamboju. ]
-> > [ paulmck: Apply kernel test robot feedback. ]
-> >
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Vineet Gupta <vgupta@kernel.org>
-> > Cc: Andi Shyti <andi.shyti@linux.intel.com>
-> > Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Palmer Dabbelt <palmer@rivosinc.com>
-> > Cc: <linux-snps-arc@lists.infradead.org>
-> > ---
-> >  arch/arc/Kconfig               |  1 +
-> >  arch/arc/include/asm/cmpxchg.h | 33 ++++++++++++++++++++++++---------
-> >  2 files changed, 25 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-> > index fd0b0a0d4686a..163608fd49d18 100644
-> > --- a/arch/arc/Kconfig
-> > +++ b/arch/arc/Kconfig
-> > @@ -13,6 +13,7 @@ config ARC
-> >  	select ARCH_HAS_SETUP_DMA_OPS
-> >  	select ARCH_HAS_SYNC_DMA_FOR_CPU
-> >  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-> > +	select ARCH_NEED_CMPXCHG_1_EMU
-> >  	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
-> >  	select ARCH_32BIT_OFF_T
-> >  	select BUILDTIME_TABLE_SORT
-> > diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
-> > index e138fde067dea..2102ce076f28b 100644
-> > --- a/arch/arc/include/asm/cmpxchg.h
-> > +++ b/arch/arc/include/asm/cmpxchg.h
-> > @@ -8,6 +8,7 @@
-> >  
-> >  #include <linux/build_bug.h>
-> >  #include <linux/types.h>
-> > +#include <linux/cmpxchg-emu.h>
-> >  
-> >  #include <asm/barrier.h>
-> >  #include <asm/smp.h>
-> > @@ -46,6 +47,9 @@
-> >  	__typeof__(*(ptr)) _prev_;					\
-> >  									\
-> >  	switch(sizeof((_p_))) {						\
-> > +	case 1:								\
-> > +		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
-> > +		break;							\
-> >  	case 4:								\
-> >  		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
-> >  		break;							\
-> > @@ -65,16 +69,27 @@
-> >  	__typeof__(*(ptr)) _prev_;					\
-> >  	unsigned long __flags;						\
-> >  									\
-> > -	BUILD_BUG_ON(sizeof(_p_) != 4);					\
-> 
-> Is this alone not sufficient: i.e. for !LLSC let the atomic op happen
-> under a spin-lock for non 4 byte quantities as well.
+From: Lucas De Marchi <lucas.demarchi@intel.com>
 
-Now that you mention it, that would be a lot simpler.
+Bring back uevent for gt reset failure with better uapi naming.
+With this in place we can receive failure event using udev.
 
-> > +	switch(sizeof((_p_))) {						\
-> > +	case 1:								\
-> > +		__flags = cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
-> > +		_prev_ = (__typeof__(*(ptr)))__flags;			\
-> > +		break;							\
-> > +		break;							\
-> 
-> FWIW, the 2nd break seems extraneous.
+$ udevadm monitor --property --kernel
+monitor will print the received events for:
+KERNEL - the kernel uevent
 
-And to your earlier point, the first break as well.  ;-)
+KERNEL[871.188570] change   /devices/pci0000:00/0000:00:01.0/0000:01:00.0/0000:02:01.0/0000:03:00.0 (pci)
+ACTION=change
+DEVPATH=/devices/pci0000:00/0000:00:01.0/0000:01:00.0/0000:02:01.0/0000:03:00.0
+SUBSYSTEM=pci
+DEVICE_STATUS=NEEDS_RESET
+REASON=GT_RESET_FAILED
+TILE_ID=0
+GT_ID=0
+DRIVER=xe
+PCI_CLASS=30000
+PCI_ID=8086:56B1
+PCI_SUBSYS_ID=8086:1210
+PCI_SLOT_NAME=0000:03:00.0
+MODALIAS=pci:v00008086d000056B1sv00008086sd00001210bc03sc00i00
+SEQNUM=6104
 
-How does the updated patch below look?  Or did I miss your point?
+Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+---
+ drivers/gpu/drm/xe/xe_gt.c | 27 +++++++++++++++++++++++++--
+ include/uapi/drm/xe_drm.h  | 17 +++++++++++++++++
+ 2 files changed, 42 insertions(+), 2 deletions(-)
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 96c1107797ca329fe203818cdfda2fe5f5a9a82e
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Mon Mar 18 01:27:35 2024 -0700
-
-    ARC: Emulate one-byte cmpxchg
-    
-    Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on arc.
-    
-    [ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
-    [ paulmck: Apply feedback from Naresh Kamboju. ]
-    [ paulmck: Apply kernel test robot feedback. ]
-    [ paulmck: Apply feedback from Vineet Gupta. ]
-    
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-    Cc: Vineet Gupta <vgupta@kernel.org>
-    Cc: Andi Shyti <andi.shyti@linux.intel.com>
-    Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-    Cc: Arnd Bergmann <arnd@arndb.de>
-    Cc: Palmer Dabbelt <palmer@rivosinc.com>
-    Cc: <linux-snps-arc@lists.infradead.org>
-
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index fd0b0a0d4686a..163608fd49d18 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -13,6 +13,7 @@ config ARC
- 	select ARCH_HAS_SETUP_DMA_OPS
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-+	select ARCH_NEED_CMPXCHG_1_EMU
- 	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
- 	select ARCH_32BIT_OFF_T
- 	select BUILDTIME_TABLE_SORT
-diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
-index e138fde067dea..58045c8983404 100644
---- a/arch/arc/include/asm/cmpxchg.h
-+++ b/arch/arc/include/asm/cmpxchg.h
-@@ -8,6 +8,7 @@
+diff --git a/drivers/gpu/drm/xe/xe_gt.c b/drivers/gpu/drm/xe/xe_gt.c
+index b04e47186f5b..5ceef0059861 100644
+--- a/drivers/gpu/drm/xe/xe_gt.c
++++ b/drivers/gpu/drm/xe/xe_gt.c
+@@ -740,6 +740,30 @@ static int do_gt_restart(struct xe_gt *gt)
+ 	return 0;
+ }
  
- #include <linux/build_bug.h>
- #include <linux/types.h>
-+#include <linux/cmpxchg-emu.h>
++static void xe_uevent_gt_reset_failure(struct pci_dev *pdev, u8 tile_id, u8 gt_id)
++{
++	char *reset_event[5];
++
++	reset_event[0] = DRM_XE_RESET_REQUIRED_UEVENT;
++	reset_event[1] = DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT;
++	reset_event[2] = kasprintf(GFP_KERNEL, "TILE_ID=%d", tile_id);
++	reset_event[3] = kasprintf(GFP_KERNEL, "GT_ID=%d", gt_id);
++	reset_event[4] = NULL;
++	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, reset_event);
++
++	kfree(reset_event[2]);
++	kfree(reset_event[3]);
++}
++
++static void gt_reset_failed(struct xe_gt *gt, int err)
++{
++	xe_gt_err(gt, "reset failed (%pe)\n", ERR_PTR(err));
++
++	/* Notify userspace about gt reset failure */
++	xe_uevent_gt_reset_failure(to_pci_dev(gt_to_xe(gt)->drm.dev),
++				   gt_to_tile(gt)->id, gt->info.id);
++}
++
+ static int gt_reset(struct xe_gt *gt)
+ {
+ 	int err;
+@@ -795,8 +819,7 @@ static int gt_reset(struct xe_gt *gt)
+ 	XE_WARN_ON(xe_uc_start(&gt->uc));
+ 	xe_pm_runtime_put(gt_to_xe(gt));
+ err_fail:
+-	xe_gt_err(gt, "reset failed (%pe)\n", ERR_PTR(err));
+-
++	gt_reset_failed(gt, err);
+ 	xe_device_declare_wedged(gt_to_xe(gt));
  
- #include <asm/barrier.h>
- #include <asm/smp.h>
-@@ -46,6 +47,9 @@
- 	__typeof__(*(ptr)) _prev_;					\
- 									\
- 	switch(sizeof((_p_))) {						\
-+	case 1:								\
-+		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
-+		break;							\
- 	case 4:								\
- 		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
- 		break;							\
-@@ -65,8 +69,6 @@
- 	__typeof__(*(ptr)) _prev_;					\
- 	unsigned long __flags;						\
- 									\
--	BUILD_BUG_ON(sizeof(_p_) != 4);					\
--									\
- 	/*								\
- 	 * spin lock/unlock provide the needed smp_mb() before/after	\
- 	 */								\
+ 	return err;
+diff --git a/include/uapi/drm/xe_drm.h b/include/uapi/drm/xe_drm.h
+index 19619d4952a8..9ea3be97535e 100644
+--- a/include/uapi/drm/xe_drm.h
++++ b/include/uapi/drm/xe_drm.h
+@@ -20,6 +20,7 @@ extern "C" {
+  *   2. Extension definition and helper structs
+  *   3. IOCTL's Query structs in the order of the Query's entries.
+  *   4. The rest of IOCTL structs in the order of IOCTL declaration.
++ *   5. uEvents
+  */
+ 
+ /**
+@@ -1686,6 +1687,22 @@ struct drm_xe_oa_stream_info {
+ 	__u64 reserved[3];
+ };
+ 
++/**
++ * DOC: uevent generated by xe on it's pci node.
++ *
++ * DRM_XE_RESET_REQUIRED_UEVENT - Event is generated when device needs reset.
++ * The REASON is provided along with the event for which reset is required.
++ * On the basis of REASONS, additional information might be supplied.
++ */
++#define DRM_XE_RESET_REQUIRED_UEVENT "DEVICE_STATUS=NEEDS_RESET"
++
++/**
++ * DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT - Reason provided to DRM_XE_RESET_REQUIRED_UEVENT
++ * incase of gt reset failure. The additional information supplied is tile id and
++ * gt id of the gt unit for which reset has failed.
++ */
++#define DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT "REASON=GT_RESET_FAILED"
++
+ #if defined(__cplusplus)
+ }
+ #endif
+-- 
+2.34.1
+
 
