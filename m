@@ -1,168 +1,131 @@
-Return-Path: <linux-kernel+bounces-276403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAFA3949331
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:35:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F00949310
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66C73B22648
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0421F2549F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CB01BE875;
-	Tue,  6 Aug 2024 14:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2C41BB68F;
+	Tue,  6 Aug 2024 14:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="FtW3ZM8A"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiZSssAN"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70851D2795;
-	Tue,  6 Aug 2024 14:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319B418D658;
+	Tue,  6 Aug 2024 14:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722954899; cv=none; b=LQT/NrA6NfELZ9xF4xrLhvrorh8DwkAQbPaOS9wpLwsbmLsSj0qGnjqnDZzBCvF9LB98yje/aEEzd5RltSTZVuO3uDpp2QC2J9WucaLTliPSf3PJxDn1lYCAmNsLnCsl60RI0Y4rlwIKTf7yqfzmA1UO5Hn9VSy1x7q+Ym6JBI0=
+	t=1722954548; cv=none; b=ZIr0jGoikFbeMtyKkpUzlCTaXETZarOkMT/xcNKG/Dy79gj92ADQO3DYBegrTn9IjhYnhyWepEhhQBsFUfny8qADBhGprR6yyqu1TNRM57VMMxfqsZG54vx4Mzi+RZ9wYJIwtpzK2c54Wk+B2xgpICq+sDHJ9S6G7fCkrGBXkkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722954899; c=relaxed/simple;
-	bh=lBcajSh9rV2plGk+LAnyxk7BfVpJGadJLEjOWw1jtvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6Za0t0Wa4phyluosyy+36lFLNLhcWEreLeyo0SGCk1iah7kIEYk0zRe3SXeveAqQJKDM5Up/aKvRQUwc5Y+y6SQOPY+4ZWV4I4rX7FwNreXdwYyssW1Kl6dYP3XSIz8rrBKn7z8A4TJsWfShWxVwSWyepfj10o6NWXvFjc+vUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=FtW3ZM8A; arc=none smtp.client-ip=212.227.126.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1722954878; x=1723559678; i=christian@heusel.eu;
-	bh=lBcajSh9rV2plGk+LAnyxk7BfVpJGadJLEjOWw1jtvQ=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FtW3ZM8AIvMRdZZiJDUu/oOgd82M696iohAJOSlg2I2EP/FL4mBfWtQtm462oICr
-	 3n2oHQxttyc9fTKss9amFBpJs9rX4JMuhlADgYeHqDD5dmjGpzI51YKYzquAhrp5f
-	 2L6l11C3C45ZkpItEjdNRYFyluMQQJUIgdXIkdEfC+F2N6Nr/jdYgnRBnHAMC29rQ
-	 etGDV5yrWPbG3El0Z/eEqrg6vmjz12nMVZRYrCcx7lqWkd4IxdcJjtrLO7iFscYMN
-	 hVVbHBCevOJQOFEi9vuE60oBlEb6ros5Wolk9SbmHKXxzpBFZlAqvZ7Mnmd5hFNmi
-	 ky9RlbpbfokqKVVACA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([147.142.139.110]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MfHQp-1rznJP2X0d-00eJ9n; Tue, 06 Aug 2024 16:28:52 +0200
-Date: Tue, 6 Aug 2024 16:28:51 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
-	Jose Fernandez <jose.fernandez@linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	s=arc-20240116; t=1722954548; c=relaxed/simple;
+	bh=+Hia14jXePbx+EZ0PdeS3yPRkGoG79HqfWL28ZGjSZQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gS0qkSCzWAnSearT9hxcypx1qAtoVACuYMiybsSs0MorBwaDvAKHamI87MURq0KdIjP61r5ZUwT/WVvSblrgAJo7IITK28H3MInDvCAB/DjKs6Ue7PAettBN8Xe/29C9L1UbKRO6miYCqHN320lQGraGoNeuOC9E9rlxfWBytgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jiZSssAN; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-368526b1333so4059254f8f.1;
+        Tue, 06 Aug 2024 07:29:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722954545; x=1723559345; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=llNvaKfNW8kRYvcLVyz6JzJVLP63vxvP6L9kO0DUS6k=;
+        b=jiZSssANubddrwD+fnHOTk4a6XELimWyHSqEjjA/eOBm/F6yiF5sq9GJSaCFtNvgdm
+         tYdni4/lx93eBdZqDKoJW4Hs9Ul37baZjPNLv3nekcNoR/6qMGfab5O+sln0lLU3QMDO
+         7THv+fQ4Czr9QMPxOGD9BNRiVpTBm8/07PqyNvEyePr6BqboSiCfNyODv8UHMS5azyeY
+         ngZ7mMhN4R6hsB25dDK+1rcLJ3kfDta2Gek5Z7pDbRFH1T0aV/sDt/8L7LQcVeBkq/YQ
+         jtdMTuWtPGXPfZNEI/nPZmSAwguxkckZz/TF7dl/lHklj43ZomlhP1NWXphCdV1gTNH8
+         UYoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722954545; x=1723559345;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=llNvaKfNW8kRYvcLVyz6JzJVLP63vxvP6L9kO0DUS6k=;
+        b=SwJFBWjJ8oSGS9zDhVTBm5+Rycnxe/4l66DRw/Vi6VbHV6PWjjuhgWu9uK+My9K3Zr
+         I8pvso9gqBRM75v62PUvlkOUJtLZBFXf6mQ0v7EbsXxZj8+681jrLtKWQs9iie17PsoO
+         SpbzDPWECqWmlzzzPWHs8WAcRlN3+9VtvKG4ti+3cMwYiZUeeWeOPlJsB32n69ucSIuu
+         mQGzOCw3oYOzCCiO5wyhnJ5/+9jTaRMVSlHIyfyUA9QvBJYJMPYRiDxETDxR9ZXRUTnn
+         rxnmOEgbtNA7LODX/rPQnlLWHbvccBA1EKwYo9cUCdabE/YObCl98F4SnaQ/Z37/Kf/+
+         mGfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrBGE4F5ALMjz+5b8LdhoYzK3NCu8POmvQRta9zZ+rTViro1iIyYhbvXrenHQfzpwxSX2t72zqK281LwPSaqJ+9+wATU19pn6tqm7Z
+X-Gm-Message-State: AOJu0Yz/H1UIEO88GGTuCZs/hG0r+D0/0Ths53sRsoL1+HceEw73lXym
+	9VvGpKZljxkwqnoC4Q7RigR7e0ThkdKVmXiNf4tECMHuiqqjbTCNKKG4Zg==
+X-Google-Smtp-Source: AGHT+IH0y55ybyEW17euw2OmuZdVdziMjdxhMUolvzWG4oQEqSk93Gz3zBq2u4FRz8277LqDaEucCA==
+X-Received: by 2002:a5d:674e:0:b0:35f:fd7:6102 with SMTP id ffacd0b85a97d-36bbbf138a2mr8235025f8f.35.1722954544637;
+        Tue, 06 Aug 2024 07:29:04 -0700 (PDT)
+Received: from localhost.localdomain (201.red-88-10-59.dynamicip.rima-tde.net. [88.10.59.201])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0cc8esm13072531f8f.19.2024.08.06.07.29.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 07:29:03 -0700 (PDT)
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	tsbogend@alpha.franken.de,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: add debug package to pacman PKGBUILD
-Message-ID: <68b454bb-8d29-4a89-bcca-5ba5a1991209@heusel.eu>
-References: <20240801132945.47963-1-jose.fernandez@linux.dev>
- <20240801183637.GB122261@thelio-3990X>
- <ab9f18b2-a27c-4ac8-bffa-390a8960387b@t-8ch.de>
+Subject: [PATCH] clk: ralink: mtmips: fix clock plan for Ralink SoC RT3883
+Date: Tue,  6 Aug 2024 16:29:02 +0200
+Message-Id: <20240806142902.224164-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6zsmai3kwid5skfe"
-Content-Disposition: inline
-In-Reply-To: <ab9f18b2-a27c-4ac8-bffa-390a8960387b@t-8ch.de>
-X-Provags-ID: V03:K1:crWIXUOk/Cl8iZR95Z7kr6tJojeAme99XgmIVXCT3ABRxb8eQ+j
- T9vOMaUIrsL5BvxPZ/MzUu0R8ONkK7ze9Vqn12hJKqy0QRFcfErnSJrReRNCbM7U9OWYINz
- dB8CufeQEc/xc55t4TxVlVLMEdWrEc6/7NTpyP6hkbpgccXfP+r2ffhmSd0apgESFCBwdf7
- OuNOLPIVKtE6qS0yyVnSg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lHE4Hze/r9A=;MSIU40XQWeooumCwYV8rQTIw6fL
- W1Csh7g5AhwwqRvohvL/c3478VGbuEnK70Lx7jakILa9ny4I6zx/7n3WowLn4XMn51q8jImi1
- fJOGx8aEa1GWj5OuBt+76g/xHFu2Fu0w1vnkAek3hKG/ENt2njUVD7kDaxuHm2EXC57feLA9q
- DJmbc+pGdS+LzsITk0dAQ0Nc0U2QxQUppE/qyBwvRj8kPK8EahZIAgNx8+TwAUul6D+7Sutay
- +84POowyyn0MRECDbME9+M9FCe3fA2TLWiZ2HZOXLRoCaLiysy7dscJ80YLm7+tXC0bcaGkVx
- X7b2VAeq7rk8lM1LRYns2m8DwoeUM+O2hSVWpUsdqjyqPLJnrwgw/78rvlcWsbLHwieh3YRL5
- 8Wkr9b8BaZYXQRf4PgH5m05AjW53leRqq+zT7PFewf6Q2ySkgIc+4mBUT18bUYe5EK+MD5d8c
- Gq+G4FX7ueVrt0TwrWMo5y9QO+KPi8eSJEMFbnYyFwCq0BQnGdIzvXeNdWfMtd1ztqHQzwomZ
- bbkteANywDXVJTxFER47TrSvCYM7qo7ujTqEAvVAKwuOPGJIwtP8UvG3N14CWzCCo+iKT4kCB
- vHZfybhxeRGLpiKtyQ3rw1iOt6S7b3HapOQY2ILQxZwi5nIdJyxGsdRDDQIM+ANBf6VGPsw4x
- 2nBQNVUowoSZTo4/cwb+WEu6oGQd5bkhcjoH3obUo017J/6fArSuipp+4qjzyKiYmQ+K7rhA5
- r9tchlY8vqtHyP74WnokVdBUhpNDH6RSg==
+Content-Transfer-Encoding: 8bit
 
+Clock plan for Ralink SoC RT3883 needs an extra 'periph' clock to properly
+set some peripherals that has this clock as their parent. When this driver
+was mainlined we could not find any active users of this SoC so we cannot
+perform any real tests for it. Now, one user of a Belkin f9k1109 version 1
+device which uses this SoC appear and reported some issues in openWRT:
+- https://github.com/openwrt/openwrt/issues/16054
+The peripherals that are wrong are 'uart', 'i2c', 'i2s' and 'uartlite' which
+has a not defined 'periph' clock as parent. Hence, introduce it to have a
+properly working clock plan for this SoC.
 
---6zsmai3kwid5skfe
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS SoCs")
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ drivers/clk/ralink/clk-mtmips.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-On 24/08/01 08:53PM, Thomas Wei=DFschuh wrote:
-> On 2024-08-01 11:36:37+0000, Nathan Chancellor wrote:
-> > Hi Jose,
-> >=20
-> > On Thu, Aug 01, 2024 at 07:29:40AM -0600, Jose Fernandez wrote:
-> > > Add a new -debug package to the pacman PKGBUILD that will contain the
-> > > vmlinux image for debugging purposes. This package depends on the
-> > > -headers package and will be installed in /usr/src/debug/${pkgbase}.
-> > >=20
-> > > The vmlinux image is needed to debug core dumps with tools like crash.
-> > >=20
-> > > Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> > > Reviewed-by: Peter Jung <ptr1337@cachyos.org>
-> >=20
-> > This appears to add a non-trivial amount of time to the build when benc=
-hmarking
-> > with Arch Linux's configuration (I measure 9% with hyperfine):
->=20
-> As nothing more is compiled, I guess this is just the additional
-> packaging.
+diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtmips.c
+index 50a443bf79ec..787ff3e66b34 100644
+--- a/drivers/clk/ralink/clk-mtmips.c
++++ b/drivers/clk/ralink/clk-mtmips.c
+@@ -267,6 +267,11 @@ static struct mtmips_clk_fixed rt305x_fixed_clocks[] = {
+ 	CLK_FIXED("xtal", NULL, 40000000)
+ };
+ 
++static struct mtmips_clk_fixed rt3383_fixed_clocks[] = {
++	CLK_FIXED("xtal", NULL, 40000000),
++	CLK_FIXED("periph", "xtal", 40000000)
++};
++
+ static struct mtmips_clk_fixed rt3352_fixed_clocks[] = {
+ 	CLK_FIXED("periph", "xtal", 40000000)
+ };
+@@ -779,8 +784,8 @@ static const struct mtmips_clk_data rt3352_clk_data = {
+ static const struct mtmips_clk_data rt3883_clk_data = {
+ 	.clk_base = rt3883_clks_base,
+ 	.num_clk_base = ARRAY_SIZE(rt3883_clks_base),
+-	.clk_fixed = rt305x_fixed_clocks,
+-	.num_clk_fixed = ARRAY_SIZE(rt305x_fixed_clocks),
++	.clk_fixed = rt3383_fixed_clocks,
++	.num_clk_fixed = ARRAY_SIZE(rt3383_fixed_clocks),
+ 	.clk_factor = NULL,
+ 	.num_clk_factor = 0,
+ 	.clk_periph = rt5350_pherip_clks,
+-- 
+2.25.1
 
-I would expect that the overhead stems from the extra compression that
-needs to be done for the resulting package and depending on what you
-have set in your /etc/makepkg.conf this can add significant overhead.
-For packages that are not planned to be distributed it might make sense
-to completely disable compression[0] by setting PKGEXT. The referenced
-forum discussion also explains that this can be hard-disabled in the
-PKGBUILD itself, but I would prefer if we could respect the user config
-in that regard (especially for people who would like to save some space
-on their system).
-
-Additionally the default makepkg configuration is ZSTD compression with
-a few parameters that are pretty time consuming (as they are meant to be
-used by packagers), which will most likely be reverted again in favour
-of a more widely applicable set of defaults with the next pacman
-package release. See [2] for the related discussion on the Arch Linux
-bugtracker.
-
-The rest of the changes looks fine to me, adding in some configuration
-options on which package is actually built via the other patch also
-sounds good.
-
-Reviewed-by: Christian Heusel <christian@heusel.eu>
-
-Cheers,
-Christian
-
-[0]: https://bbs.archlinux.org/viewtopic.php?id=3D127894
-[1]: https://gitlab.archlinux.org/archlinux/packaging/packages/pacman/-/iss=
-ues/23
-
---6zsmai3kwid5skfe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmayMyMACgkQwEfU8yi1
-JYVcFBAAiqg05CLMKPzjUby5/gKPm83LMQ+TH/roEf990lEefgFgOiAW51BG+4/z
-vAz/VOP4BNgdn4EH9snXxDpdE1aVTcB/L2z5a4gW5fnBXIs3aAqxnLuw0Q31hlz+
-fnRewydHFU+at0lN3iMO8TC9wuOYs3i0cwjeLf/HEjAj6fetuhkRJ/0WyDXUYvs7
-cwTMrm1/lhjVjjiF7N0hs4caU30+6B43Jy629GuD9P6Cjp4aTokTqnFVzsPVCEH5
-IZkqn4MxV2GZiuUpUiHxkAnJ7rIwGe/QNkBQOAN+zxKHpXWAe8/7W+Nvxdk8rruu
-Z1XzujbpKnuW8RG6qBRukPEbzTF+2wOcUEr03hd7iq0NN4QQngLbuGawY57TMwg/
-w5eRfaqdknGXe+9qL3cXsLHYkizacryuZHv9j1+yWBlIxoPXQbU87smGZdxIgwJk
-Rk9/g0Me4B2WOH1WmBBDxK0JftSs37QL08MwocNzR+U+2jJmCbccZrpGIiZDKiJK
-RS1NpnEJuMNko7QKUktx6ukH6l90qJcBdz9xO+IIvatwN1ZK7idGmzan2XmteorD
-Wn206SdnawX/+bABFm6NCRthdPwLTyU1GBMYUyBArzEPDoMffN1dYzvuHx3/7Aqz
-WZeCaA6Z3jyhrk4sgyXXoOpya88KhSqvXYZSK9TfIgPh2Y6/by8=
-=NoZj
------END PGP SIGNATURE-----
-
---6zsmai3kwid5skfe--
 
