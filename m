@@ -1,329 +1,104 @@
-Return-Path: <linux-kernel+bounces-276030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5A7948D7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:13:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81635948D80
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E5B61C21433
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8C22864C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996401C231C;
-	Tue,  6 Aug 2024 11:13:32 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB311BE860;
+	Tue,  6 Aug 2024 11:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j9ap+3vL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C25143C4B
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 11:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB6B13B2AC;
+	Tue,  6 Aug 2024 11:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722942812; cv=none; b=eOUia3tFK0Qz5j3lysfmpWYiJ3cQ/iHFTLAxXGIqNZTyVjVMepT+UHdfoFv9xFkyNeZuQMZetkKXpDyu/RyVty8pA/nutsszBBEBipM5oWI2kvOQL/3dVoHMIQ1XmlFEcF0ahGFNR9RIRx8v9lBZjkmTbuBzvp5ss0RF0xmvXFc=
+	t=1722942948; cv=none; b=q787YMAevJF4ety1vOKrlzI9Cx6kiJ6n63MnxzyqO+s0kO5F0c8qMhiEqkJgVK9pq+oqCdLGdxa5kZxDmQga3yYJTCEUs19pkx8eC+MjjYvh159KS6UsAzzzqD8dFr8DZys8lHJSlBdSjY98pqtRkq2iDkog3X/Cdx9yz3isItc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722942812; c=relaxed/simple;
-	bh=sKgteq022n2PL+FDhwndU4jU1OgLpwLaMFAYVYvWkJU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aoAA4mNd5AYfpixYiyWfopm1uMtL11SHmdg5WJ6CtimYJuAUkjqJhuVM7KGHFUY8vFclAL6AdORopqOUBPo+rehkBBJkd5TUV0Pzg4PIDIgCbFKg7hu97+Q4uWNaKFQ2dsIvJbkDvie39PwPF+egV1/NvhFgFWf9jFGWp0K3vVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WdVwL6TShz6K7Fc;
-	Tue,  6 Aug 2024 19:10:42 +0800 (CST)
-Received: from lhrpeml500001.china.huawei.com (unknown [7.191.163.213])
-	by mail.maildlp.com (Postfix) with ESMTPS id 19489140B3C;
-	Tue,  6 Aug 2024 19:13:26 +0800 (CST)
-Received: from lhrpeml500006.china.huawei.com (7.191.161.198) by
- lhrpeml500001.china.huawei.com (7.191.163.213) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 6 Aug 2024 12:13:25 +0100
-Received: from lhrpeml500006.china.huawei.com ([7.191.161.198]) by
- lhrpeml500006.china.huawei.com ([7.191.161.198]) with mapi id 15.01.2507.039;
- Tue, 6 Aug 2024 12:13:25 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Jonathan Cameron <jonathan.cameron@huawei.com>, "Michael S. Tsirkin"
-	<mst@redhat.com>, Ani Sinha <anisinha@redhat.com>, Dongjiu Geng
-	<gengdongjiu1@gmail.com>, Igor Mammedov <imammedo@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"qemu-arm@nongnu.org" <qemu-arm@nongnu.org>, "qemu-devel@nongnu.org"
-	<qemu-devel@nongnu.org>
-Subject: RE: [PATCH v5 6/7] acpi/ghes: add support for generic error injection
- via QAPI
-Thread-Topic: [PATCH v5 6/7] acpi/ghes: add support for generic error
- injection via QAPI
-Thread-Index: AQHa5SUqlFywcvx4lEKDYS91pOZMWrIaGOEQ
-Date: Tue, 6 Aug 2024 11:13:25 +0000
-Message-ID: <e41d0c8cc8b54643adc318c1bb7bd26c@huawei.com>
-References: <cover.1722634602.git.mchehab+huawei@kernel.org>
- <20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
-In-Reply-To: <20c491e357340e0062b6ff09867c1661ed4d2479.1722634602.git.mchehab+huawei@kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1722942948; c=relaxed/simple;
+	bh=s+G81tyZqovaJUdQz429NtvzwlU8vfixIJ0gMH7ho3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cy34773lXutD5VJTkUFJQXtNxX2dgXy070iZOG8dr4NAvIQVrTiL+zCU+bPaeLm3KyplrFULXl7LFgXowkRpSMnC2O/SSocU9KswTYCfmNGSA4quZFDYJHXIyweYUajfQV2ipDTbatyJt6OWnnvGRcBHWUPkHz8677G3APMOxl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j9ap+3vL; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722942947; x=1754478947;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=s+G81tyZqovaJUdQz429NtvzwlU8vfixIJ0gMH7ho3o=;
+  b=j9ap+3vLl/VTqW7OEwwUr7jzcu6IfEcoZeunXRqKLJM65wVKe609Fn1M
+   rdUdvctx3yo8bhTv00mzilZtQ5oR7xrykAvKp1lWn5obsMCGRJyrfzh5R
+   s2OdjyiZqR7r5Px1wvVzdDft2qsCRjuUMrkBBj7H/my+V6xbVMWjraUgi
+   3ddwVICOPwvlC2BJae0ydi0I4hyWu7z5mbW+Rw2xLJerp4wdVrg3VfJHP
+   eyET9e0qyaRkamTHzRApQSn4jHw1oewgWUQcbIPyU3rhHVHZk18V3lKds
+   8nRI1RKBBKax7DNSBdj82/7/rii7J7Pc2olWlJttNUpIYfYDlFLpBOmq4
+   w==;
+X-CSE-ConnectionGUID: HHfj4hb6Rxe3bDoKdMqHKg==
+X-CSE-MsgGUID: kvzsfU51T6qJhTbunwi93g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="20803413"
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="20803413"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 04:15:46 -0700
+X-CSE-ConnectionGUID: T257Zig2SNq3OKcuDMykJA==
+X-CSE-MsgGUID: BVaCOA+aRqGlFKUlOXdTRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="79737483"
+Received: from nneronin-mobl1.ger.corp.intel.com (HELO [10.246.33.105]) ([10.246.33.105])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 04:15:43 -0700
+Message-ID: <010cb430-b0bd-40f9-897e-b48e326a9caa@linux.intel.com>
+Date: Tue, 6 Aug 2024 14:15:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2024-42226: usb: xhci: prevent potential failure in
+ handle_tx_event() for Transfer events without TRB
+To: Jinjiang Tu <tujinjiang@huawei.com>
+Cc: cve@kernel.org, gregkh@linuxfoundation.org,
+ linux-cve-announce@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mathias Nyman <mathias.nyman@linux.intel.com>
+References: <d5691b1b-c7e6-ddea-bd58-10855fd36d40@huawei.com>
+ <9409f3d3-02d1-1e31-a6da-056b44a9523f@huawei.com>
+Content-Language: en-US
+From: "Neronin, Niklas" <niklas.neronin@linux.intel.com>
+In-Reply-To: <9409f3d3-02d1-1e31-a6da-056b44a9523f@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->-----Original Message-----
->From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
->Sent: 02 August 2024 22:44
->Cc: Jonathan Cameron <jonathan.cameron@huawei.com>; Shiju Jose
-><shiju.jose@huawei.com>; Mauro Carvalho Chehab
-><mchehab+huawei@kernel.org>; Michael S. Tsirkin <mst@redhat.com>; Ani
->Sinha <anisinha@redhat.com>; Dongjiu Geng <gengdongjiu1@gmail.com>; Igor
->Mammedov <imammedo@redhat.com>; linux-kernel@vger.kernel.org; qemu-
->arm@nongnu.org; qemu-devel@nongnu.org
->Subject: [PATCH v5 6/7] acpi/ghes: add support for generic error injection=
- via
->QAPI
->
->Provide a generic interface for error injection via GHESv2.
->
->This patch is co-authored:
->    - original ghes logic to inject a simple ARM record by Shiju Jose;
->    - generic logic to handle block addresses by Jonathan Cameron;
->    - generic GHESv2 error inject by Mauro Carvalho Chehab;
->
->Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->Co-authored-by: Shiju Jose <shiju.jose@huawei.com>
->Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
->Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->Cc: Shiju Jose <shiju.jose@huawei.com>
->Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+On 06/08/2024 12.25, Jinjiang Tu wrote:
+> Hi, Niklas
+> 
+> The commit 66cb618bf0bb ("usb: xhci: prevent potential failure in handle_tx_event() for Transfer events without TRB")
+> has been assigned with CVE-2024-42226, but the commit has been reverted in 6.1.99 and 6.6.39 due to
+> performance regression. Do you have a plan to address this issue, or if this CVE should be rejected?
+> 
+> Thanks!
+> 
 
-Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Hi,
 
->---
-> hw/acpi/ghes.c         | 159 ++++++++++++++++++++++++++++++++++++++---
-> hw/acpi/ghes_cper.c    |   2 +-
-> include/hw/acpi/ghes.h |   3 +
-> 3 files changed, 152 insertions(+), 12 deletions(-)
->
->diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c index
->a745dcc7be5e..e125c9475773 100644
->--- a/hw/acpi/ghes.c
->+++ b/hw/acpi/ghes.c
->@@ -395,23 +395,22 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags,
->FWCfgState *s,
->     ags->present =3D true;
-> }
->
->+static uint64_t ghes_get_state_start_address(void)
->+{
->+    AcpiGedState *acpi_ged_state =3D
->+        ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED, NULL));
->+    AcpiGhesState *ags =3D &acpi_ged_state->ghes_state;
->+
->+    return le64_to_cpu(ags->ghes_addr_le); }
->+
-> int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)=
-  {
->     uint64_t error_block_addr, read_ack_register_addr, read_ack_register =
-=3D 0;
->-    uint64_t start_addr;
->+    uint64_t start_addr =3D ghes_get_state_start_address();
->     bool ret =3D -1;
->-    AcpiGedState *acpi_ged_state;
->-    AcpiGhesState *ags;
->-
->     assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
->
->-    acpi_ged_state =3D ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GE=
-D,
->-                                                       NULL));
->-    g_assert(acpi_ged_state);
->-    ags =3D &acpi_ged_state->ghes_state;
->-
->-    start_addr =3D le64_to_cpu(ags->ghes_addr_le);
->-
->     if (physical_address) {
->         start_addr +=3D source_id * sizeof(uint64_t);
->
->@@ -448,9 +447,147 @@ int acpi_ghes_record_errors(uint8_t source_id,
->uint64_t physical_address)
->     return ret;
-> }
->
->+/*
->+ * Error register block data layout
->+ *
->+ * | +---------------------+ ges.ghes_addr_le
->+ * | |error_block_address0 |
->+ * | +---------------------+
->+ * | |error_block_address1 |
->+ * | +---------------------+ --+--
->+ * | |    .............    | GHES_ADDRESS_SIZE
->+ * | +---------------------+ --+--
->+ * | |error_block_addressN |
->+ * | +---------------------+
->+ * | | read_ack0           |
->+ * | +---------------------+ --+--
->+ * | | read_ack1           | GHES_ADDRESS_SIZE
->+ * | +---------------------+ --+--
->+ * | |   .............     |
->+ * | +---------------------+
->+ * | | read_ackN           |
->+ * | +---------------------+ --+--
->+ * | |      CPER           |   |
->+ * | |      ....           | GHES_MAX_RAW_DATA_LENGT
->+ * | |      CPER           |   |
->+ * | +---------------------+ --+--
->+ * | |    ..........       |
->+ * | +---------------------+
->+ * | |      CPER           |
->+ * | |      ....           |
->+ * | |      CPER           |
->+ * | +---------------------+
->+ */
->+
->+/* Map from uint32_t notify to entry offset in GHES */ static const
->+uint8_t error_source_to_index[] =3D { 0xff, 0xff, 0xff, 0xff,
->+                                                 0xff, 0xff, 0xff, 1,
->+0};
->+
->+static bool ghes_get_addr(uint32_t notify, uint64_t *error_block_addr,
->+                          uint64_t *read_ack_addr) {
->+    uint64_t base;
->+
->+    if (notify >=3D ACPI_GHES_NOTIFY_RESERVED) {
->+        return false;
->+    }
->+
->+    /* Find and check the source id for this new CPER */
->+    if (error_source_to_index[notify] =3D=3D 0xff) {
->+        return false;
->+    }
->+
->+    base =3D ghes_get_state_start_address();
->+
->+    *read_ack_addr =3D base +
->+        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
->+        error_source_to_index[notify] * sizeof(uint64_t);
->+
->+    /* Could also be read back from the error_block_address register */
->+    *error_block_addr =3D base +
->+        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
->+        ACPI_GHES_ERROR_SOURCE_COUNT * sizeof(uint64_t) +
->+        error_source_to_index[notify] * ACPI_GHES_MAX_RAW_DATA_LENGTH;
->+
->+    return true;
->+}
->+
-> NotifierList generic_error_notifiers =3D
->     NOTIFIER_LIST_INITIALIZER(error_device_notifiers);
->
->+void ghes_record_cper_errors(AcpiGhesCper *cper, Error **errp,
->+                             uint32_t notify) {
->+    int read_ack =3D 0;
->+    uint32_t i;
->+    uint64_t read_ack_addr =3D 0;
->+    uint64_t error_block_addr =3D 0;
->+    uint32_t data_length;
->+    GArray *block;
->+
->+    if (!ghes_get_addr(notify, &error_block_addr, &read_ack_addr)) {
->+        error_setg(errp, "GHES: Invalid error block/ack address(es)");
->+        return;
->+    }
->+
->+    cpu_physical_memory_read(read_ack_addr,
->+                             &read_ack, sizeof(uint64_t));
->+
->+    /* zero means OSPM does not acknowledge the error */
->+    if (!read_ack) {
->+        error_setg(errp,
->+                   "Last CPER record was not acknowledged yet");
->+        read_ack =3D 1;
->+        cpu_physical_memory_write(read_ack_addr,
->+                                  &read_ack, sizeof(uint64_t));
->+        return;
->+    }
->+
->+    read_ack =3D cpu_to_le64(0);
->+    cpu_physical_memory_write(read_ack_addr,
->+                              &read_ack, sizeof(uint64_t));
->+
->+    /* Build CPER record */
->+
->+    /*
->+     * Invalid fru id: ACPI 4.0: 17.3.2.6.1 Generic Error Data,
->+     * Table 17-13 Generic Error Data Entry
->+     */
->+    QemuUUID fru_id =3D {};
->+
->+    block =3D g_array_new(false, true /* clear */, 1);
->+    data_length =3D ACPI_GHES_DATA_LENGTH + cper->data_len;
->+
->+    /*
->+        * It should not run out of the preallocated memory if
->+        * adding a new generic error data entry
->+        */
->+    assert((data_length + ACPI_GHES_GESB_SIZE) <=3D
->+            ACPI_GHES_MAX_RAW_DATA_LENGTH);
->+
->+    /* Build the new generic error status block header */
->+    acpi_ghes_generic_error_status(block, ACPI_GEBS_UNCORRECTABLE,
->+                                    0, 0, data_length,
->+                                    ACPI_CPER_SEV_RECOVERABLE);
->+
->+    /* Build this new generic error data entry header */
->+    acpi_ghes_generic_error_data(block, cper->guid,
->+                                ACPI_CPER_SEV_RECOVERABLE, 0, 0,
->+                                cper->data_len, fru_id, 0);
->+
->+    /* Add CPER data */
->+    for (i =3D 0; i < cper->data_len; i++) {
->+        build_append_int_noprefix(block, cper->data[i], 1);
->+    }
->+
->+    /* Write the generic error data entry into guest memory */
->+    cpu_physical_memory_write(error_block_addr, block->data,
->+ block->len);
->+
->+    g_array_free(block, true);
->+
->+    notifier_list_notify(&generic_error_notifiers, NULL); }
->+
-> bool acpi_ghes_present(void)
-> {
->     AcpiGedState *acpi_ged_state;
->diff --git a/hw/acpi/ghes_cper.c b/hw/acpi/ghes_cper.c index
->7aa7e71e90dc..d7ff7debee74 100644
->--- a/hw/acpi/ghes_cper.c
->+++ b/hw/acpi/ghes_cper.c
->@@ -39,7 +39,7 @@ void qmp_ghes_cper(CommonPlatformErrorRecord
->*qmp_cper,
->         return;
->     }
->
->-    /* TODO: call a function at ghes */
->+    ghes_record_cper_errors(&cper, errp, ACPI_GHES_NOTIFY_GPIO);
->
->     g_free(cper.data);
-> }
->diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h index
->06a5b8820cd5..ee6f6cd96911 100644
->--- a/include/hw/acpi/ghes.h
->+++ b/include/hw/acpi/ghes.h
->@@ -85,6 +85,9 @@ typedef struct AcpiGhesCper {
->     size_t data_len;
-> } AcpiGhesCper;
->
->+void ghes_record_cper_errors(AcpiGhesCper *cper, Error **errp,
->+                             uint32_t notify);
->+
-> /**
->  * acpi_ghes_present: Report whether ACPI GHES table is present
->  *
->--
->2.45.2
+Currently, I have no plan to address this issue.
 
+The commit in question, was not intended for any previous Linux versions.
+It was created as part of my handle_tx_event() rework series. Future changes
+in said series could potentially trigger the issue, so preemptively preventing
+it was both simpler and more secure.
+
+Thanks,
+Niklas
 
