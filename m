@@ -1,188 +1,249 @@
-Return-Path: <linux-kernel+bounces-277070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58D0949BEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 383B6949C17
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 01:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04F7B1C22A1E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:10:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C9701C2285C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06971176AB7;
-	Tue,  6 Aug 2024 23:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A905817B401;
+	Tue,  6 Aug 2024 23:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u9NV1iaz"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XyM4t6ui"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77934176259
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 23:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C414175D36;
+	Tue,  6 Aug 2024 23:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722985793; cv=none; b=ccEh//5IC7qM7AwJdc1l7T4EVG1e0KgMjLvuTNusnT866nOSeh6V7LoCySaZ7TKYfTn1IAFEFBB0EZxEht2I7XzjCKvhC8xbrbODEmx2jOVSYHVCMlmWTepl89OKo8CJ8EqNiAP3b6oMtygBdC0mjUHs1NWOhrAnMzIbTvdzv0c=
+	t=1722985803; cv=none; b=C9Co98XRZCnGA7XDLLJs+3PgZitmSxvlZ+PwO3xWFjojlTbLYMipEaveWo3oGck79bIz0aLmDipxGQEcjy1EfJdgku21R7ak8KanTIVClW4oR+zHCr6rfrPYAXkJljEGOVpIhmcOWxi72W6I6yOvjeL1N+ZQYFIqFhLvGtY+uzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722985793; c=relaxed/simple;
-	bh=3KEeJcfO/sWphu4davVmyLBGNcr1nNaw7kIV3mnnT34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QHo0mSU9jzR1h1hPE6rhDdbxc+1sVbB0to38yLbZ8O2bJxx24c9E35WtXaBccqRvoHM4VeE6UkYWnhPben5v0zhKDLM9CCpAHo5uSbTXQXOxONwGAnMcwJkwL0YVp0LnomGwk9XfEoUX23RZGc6GJfUBgU3ldoEXpHsx/ICYlY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u9NV1iaz; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5b9fe5ea355so23690a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 16:09:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722985790; x=1723590590; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8wfG0B27yuXZf8QVm7TCISX2r/3GuYLNzlXwozjo5o0=;
-        b=u9NV1iazO9B8cjvgmhdtH2LSmmqet8ywd6m6CfFSQ4sVLlj5T5eKz6hxp8463Ipla3
-         j8J8beGxA+uXt9iQ/ftp6d9LXXmksjuu5CB2TDUBS5uJ4b678soYv6a9B1ea+DsmYbcX
-         xVCeUnJQWIPHGaTTfHWOQRSLLg5hVJhHigIE9NQXCb9cS+lgIqnJ2qUkXhmWovPisJ/B
-         msbIF/YcrQKXQxVJbdkyXaszqOiIiRWc028jAGLG34YWtErLR4ej6IUXvzFacB3usvj6
-         lmcapUmwJ/fuXfCSb6AkTUYmObBsrfIO62qBk5noC0BLk9gIYbylVYrrbAr6k9++7C8+
-         jW8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722985790; x=1723590590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8wfG0B27yuXZf8QVm7TCISX2r/3GuYLNzlXwozjo5o0=;
-        b=Ud1gZ7wVFrm26ps0JatNutvongHzwHXlkMbWe7nNRvPiUIo+DszrIGHiBDAM/MCyzP
-         Tvhs9KDu41aWaTYH21F6rhgsDFoxibsF8NXsPhdOjKkn4jKmo92wHUnlwVq3mQEnlWXP
-         ZiWZ/srQi6iw7Vmk3BU9gh4Ag5hV1sesBs6qmZYZpmXBbBOATflNtv8G2bOcpC53r+L4
-         kZxzRubTjxyqNYZa84Sevuxz5LCFMt5KfgBUD8E0gr4mt+qfJStMT5VTH3F5ooHidP/2
-         GVVc2JmtSlNo6w4OiXVudY/A39v5Jg+p6kYwHS8xGs2USIAp9VwtAmxcnlpY7zQzAXOP
-         VkaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKkqM4asJzF9uJTzfks69LqMiwmwAcY4MkqZ5gPG6gZMzVSU0ZtN7ciKZqx7WB1Ael4PSZqWQVPpBiwOuYH4RUAKMZHO4DqJrS0WYR
-X-Gm-Message-State: AOJu0YwoX1N44WD5H6ZVNn2cRLEAtM5WqAmJmhagZaDaczxYSK1OdE4g
-	mV2uzkZmEPbLzsCNrW25YdgeIjdtfYJbX2aQ5aYOiCuTJFaxjgH3vTOiaB1hSPXFicZJ7rEjfz5
-	Jys4sOMHRd+SL+EEs4La9QWKoHNMVDzxASuPQ
-X-Google-Smtp-Source: AGHT+IEwB5XNHscH8DmO311U1n0+Zhun3ft3s2RMV5xdY2tXSyq6UUu0zpDYxv+uGC6rLVEOROZpHhkYgIDFCx1Us4U=
-X-Received: by 2002:a05:6402:1ecf:b0:5ac:4ce3:8f6a with SMTP id
- 4fb4d7f45d1cf-5bba28b2804mr84654a12.6.1722985789487; Tue, 06 Aug 2024
- 16:09:49 -0700 (PDT)
+	s=arc-20240116; t=1722985803; c=relaxed/simple;
+	bh=srDtPMkx+3Ib/2vxXDsh66x8GKusBSCFnXcAPZ0/fJs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NrX/0vj3hSccTxNv+2yDRxsRnitgFZAmoDvOv39JapwOuQdSGag4A2uW+OnOHFI52IX7n3/g9b7XrV4cZ6GigjXXVYfDZwt5H2ZA0jKfLhXZNX13U5fzpkIFEJyWpTFzQCIB0gSeC8Z6EU3aMfvIkba/AwHhbCfvpkjkknlkC78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XyM4t6ui; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B3CB0C32786;
+	Tue,  6 Aug 2024 23:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722985802;
+	bh=srDtPMkx+3Ib/2vxXDsh66x8GKusBSCFnXcAPZ0/fJs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=XyM4t6uixRdVtkkTDbe0NOXLXZ37CozxQGFZMrfsO/1RoZeoVND7Z91irbEFkZG1o
+	 QK9utNoPH7ktjzxgS9PHoD3qn/DNgqvVdZsgReOQMjUrT2TlQWFkqaNximTlbkANJw
+	 fwIaCs8OsL+5RpaxQ7RQgnnJNhR2sK1DHuPhkA26DmsSHTA9hDidEKUXDf1733zm99
+	 S42u2FVCM/ikVhxmWNb19aaYerJ5H8KgfmYrOTZTuTaNNyjHX7w/yoQnm1GFvnWvt/
+	 BEBQiXjUFnQg6HPQgb/LURhqtACOPKxOuV9p3+Gjq6Aluocc6VajyOLbdkqKccoIPM
+	 bvFunUNgxUrOA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96120C49EA1;
+	Tue,  6 Aug 2024 23:10:02 +0000 (UTC)
+From: Daniel Gomez via B4 Relay <devnull+da.gomez.samsung.com@kernel.org>
+Subject: [PATCH 00/12] Enable build system on macOS hosts
+Date: Wed, 07 Aug 2024 01:09:14 +0200
+Message-Id: <20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806212808.1885309-1-pedro.falcato@gmail.com> <20240806212808.1885309-5-pedro.falcato@gmail.com>
-In-Reply-To: <20240806212808.1885309-5-pedro.falcato@gmail.com>
-From: Jeff Xu <jeffxu@google.com>
-Date: Tue, 6 Aug 2024 16:09:11 -0700
-Message-ID: <CALmYWFu_cnS1nHcQxVmjp=a+SdsACi+4YWWvfDGTB=pj=fmS3A@mail.gmail.com>
-Subject: Re: [PATCH 4/7] mm/mremap: Replace can_modify_mm with can_modify_vma
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABqtsmYC/x3MQQqAIBBA0avErBuwCKyuEi1MpxqoFCcjiO6et
+ HyL/x8QikwCffFApIuF/ZFRlQXY1RwLIbtsqFXdqFZp3I31glPizaGkEHw8sbNGOa2NmyoNuQy
+ RZr7/6zC+7wcg7OjoZQAAAA==
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>, 
+ Kirk Reiser <kirk@reisers.ca>, 
+ Samuel Thibault <samuel.thibault@ens-lyon.org>, 
+ Paul Moore <paul@paul-moore.com>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ Ondrej Mosnacek <omosnace@redhat.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ speakup@linux-speakup.org, selinux@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-serial@vger.kernel.org, llvm@lists.linux.dev, 
+ Finn Behrens <me@kloenk.dev>, 
+ "Daniel Gomez (Samsung)" <d+samsung@kruces.com>, gost.dev@samsung.com, 
+ Daniel Gomez <da.gomez@samsung.com>, 
+ Nick Desaulniers <nick.desaulniers@gmail.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722985800; l=5760;
+ i=da.gomez@samsung.com; s=20240621; h=from:subject:message-id;
+ bh=srDtPMkx+3Ib/2vxXDsh66x8GKusBSCFnXcAPZ0/fJs=;
+ b=LiLIkclk6gyjYUEvcQG/jWd8xczYA+IguM7XsmOaFyvBmuk7FzB0cX6xsiSYYX3g4q3i4pKTn
+ rvltGN/7ZboBznQAO+ngrBCel8MYDLLj7yJ1vi5dIVQBZPHBahIv5wm
+X-Developer-Key: i=da.gomez@samsung.com; a=ed25519;
+ pk=BqYk31UHkmv0WZShES6pIZcdmPPGay5LbzifAdZ2Ia4=
+X-Endpoint-Received: by B4 Relay for da.gomez@samsung.com/20240621 with
+ auth_id=175
+X-Original-From: Daniel Gomez <da.gomez@samsung.com>
+Reply-To: da.gomez@samsung.com
 
-On Tue, Aug 6, 2024 at 2:28=E2=80=AFPM Pedro Falcato <pedro.falcato@gmail.c=
-om> wrote:
->
-> Delegate all can_modify checks to the proper places. Unmap checks are
-> done in do_unmap (et al).
->
-> This patch allows for mremap partial failure in certain cases (for
-> instance, when destination VMAs aren't sealed, but the source VMA is).
-> It shouldn't be too troublesome, as you'd need to go out of your way to
-> do illegal operations on a VMA.
->
-> Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
-> ---
->  mm/mremap.c | 33 +++++++--------------------------
->  1 file changed, 7 insertions(+), 26 deletions(-)
->
-> diff --git a/mm/mremap.c b/mm/mremap.c
-> index e7ae140fc64..8af877d7bb0 100644
-> --- a/mm/mremap.c
-> +++ b/mm/mremap.c
-> @@ -676,6 +676,9 @@ static unsigned long move_vma(struct vm_area_struct *=
-vma,
->         if (unlikely(flags & MREMAP_DONTUNMAP))
->                 to_account =3D new_len;
->
-> +       if (!can_modify_vma(vma))
-> +               return -EPERM;
-> +
-I m not 100% sure, but I suspect you don't need this check? Is
-vma_to_resize already checking the src address ?
+This patch set allows for building the Linux kernel for arm64 in macOS with
+LLVM.
 
-PS. Is it possible to consolidate all the related changes (except the
-fix for madvise) to a single commit ?
- It would be easier to look for dependency, e.g. the remap depends on munma=
-p().
+Patches are based on previous Nick's work and suggestions [1][2][3] to
+enable build system in macOS hosts.
 
-Also selftest is helpful to prove the correctness of the change. (And
-I can also test it)
+Since macOS does not provide some of the headers available in the GNU
+C Library (glibc), the patches include a copy of these headers from
+glibc-2.40, with minor modifications detailed in the commit message.
 
->         if (vma->vm_ops && vma->vm_ops->may_split) {
->                 if (vma->vm_start !=3D old_addr)
->                         err =3D vma->vm_ops->may_split(vma, old_addr);
-> @@ -821,6 +824,10 @@ static struct vm_area_struct *vma_to_resize(unsigned=
- long addr,
->         if (!vma)
->                 return ERR_PTR(-EFAULT);
->
-> +       /* Don't allow vma expansion when it has already been sealed */
-> +       if (!can_modify_vma(vma))
-> +               return ERR_PTR(-EPERM);
-> +
->         /*
->          * !old_len is a special case where an attempt is made to 'duplic=
-ate'
->          * a mapping.  This makes no sense for private mappings as it wil=
-l
-> @@ -902,19 +909,6 @@ static unsigned long mremap_to(unsigned long addr, u=
-nsigned long old_len,
->         if ((mm->map_count + 2) >=3D sysctl_max_map_count - 3)
->                 return -ENOMEM;
->
-> -       /*
-> -        * In mremap_to().
-> -        * Move a VMA to another location, check if src addr is sealed.
-> -        *
-> -        * Place can_modify_mm here because mremap_to()
-> -        * does its own checking for address range, and we only
-> -        * check the sealing after passing those checks.
-> -        *
-> -        * can_modify_mm assumes we have acquired the lock on MM.
-> -        */
-> -       if (unlikely(!can_modify_mm(mm, addr, addr + old_len)))
-> -               return -EPERM;
-> -
->         if (flags & MREMAP_FIXED) {
->                 /*
->                  * In mremap_to().
-> @@ -1079,19 +1073,6 @@ SYSCALL_DEFINE5(mremap, unsigned long, addr, unsig=
-ned long, old_len,
->                 goto out;
->         }
->
-> -       /*
-> -        * Below is shrink/expand case (not mremap_to())
-> -        * Check if src address is sealed, if so, reject.
-> -        * In other words, prevent shrinking or expanding a sealed VMA.
-> -        *
-> -        * Place can_modify_mm here so we can keep the logic related to
-> -        * shrink/expand together.
-> -        */
-> -       if (unlikely(!can_modify_mm(mm, addr, addr + old_len))) {
-> -               ret =3D -EPERM;
-> -               goto out;
-> -       }
-> -
->         /*
->          * Always allow a shrinking remap: that just unmaps
->          * the unnecessary pages..
-> --
-> 2.46.0
->
+To set up the environment:
+
+* Provide build dependencies (installed via Homebrew):
+
+	coreutils, findutils, gnu-sed, gnu-tar, grep, llvm, make and pkg-config.
+
+* A case sensitive volume for building:
+
+	diskutil apfs addVolume /dev/disk<N> "Case-sensitive APFS" linux
+
+* And include in your PATH all GNU tools required by the Linux kernel as
+well as LLVM:
+
+	PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+	PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
+	PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+	PATH="/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH"
+	PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"
+	PATH="/opt/homebrew/opt/make/libexec/gnubin:$PATH"
+	PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+
+* Start the build using LLVM:
+
+	make LLVM=1 allyesconfig
+	make LLVM=1 -j$(nproc)
+
+I believe other architectures could also be supported if we can move
+forward this initiative. Additionally, we could incorporate Rust
+support. I understand that Finn Behrens has some patches [4][5] based on
+Nick's previous work.
+
+[1]: WIP: build Linux on MacOS
+https://github.com/ClangBuiltLinux/linux/commit/f06333e29addbc3d714adb340355f471c1dfe95a
+
+[2] Subject: [PATCH] scripts: subarch.include: fix SUBARCH on MacOS hosts
+https://lore.kernel.org/all/20221113233812.36784-1-nick.desaulniers@gmail.com/
+
+[3] Subject: Any interest in building the Linux kernel from a MacOS host?
+https://lore.kernel.org/all/CAH7mPvj64Scp6_Nbaj8KOfkoV5f7_N5L=Tv5Z9zGyn5SS+gsUw@mail.gmail.com/
+
+[4] https://github.com/kloenk/linux/commits/rust-project_macos-dylib/
+
+[5] https://kloenk.eu/posts/build-linux-on-m1-macos/
+
+To: Masahiro Yamada <masahiroy@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+To: Nicolas Schier <nicolas@fjasle.eu>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: William Hubbs <w.d.hubbs@gmail.com>
+To: Chris Brannon <chris@the-brannons.com>
+To: Kirk Reiser <kirk@reisers.ca>
+To: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: Paul Moore <paul@paul-moore.com>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+To: Ondrej Mosnacek <omosnace@redhat.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+To: James Morse <james.morse@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Zenghui Yu <yuzenghui@huawei.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+To: Nick Desaulniers <ndesaulniers@google.com>
+To: Bill Wendling <morbo@google.com>
+To: Justin Stitt <justinstitt@google.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org
+Cc: intel-xe@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: speakup@linux-speakup.org
+Cc: selinux@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: kvmarm@lists.linux.dev
+Cc: linux-serial@vger.kernel.org
+Cc: llvm@lists.linux.dev
+Cc: Finn Behrens <me@kloenk.dev>
+Cc: Daniel Gomez (Samsung) <d+samsung@kruces.com>
+Cc: gost.dev@samsung.com
+
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+---
+Daniel Gomez (11):
+      kbuild: add header_install dependency to scripts
+      file2alias: fix uuid_t definitions for macos
+      drm/xe: xe_gen_wa_oob: fix program_invocation_short_name for macos
+      accessiblity/speakup: genmap and makemapdata require linux/version.h
+      selinux/genheaders: include bitsperlong and posix_types headers
+      selinux/mdp: include bitsperlong and posix_types headers
+      include: add elf.h support
+      include: add endian.h support
+      scripts/mod: add byteswap support
+      tty/vt: conmakehash requires linux/limits.h
+      scripts/kallsyms: add compatibility support for macos
+
+Nick Desaulniers (1):
+      scripts: subarch.include: fix SUBARCH on MacOS hosts
+
+ Makefile                               |    2 +-
+ arch/arm64/kernel/pi/Makefile          |    1 +
+ arch/arm64/kernel/vdso32/Makefile      |    1 +
+ arch/arm64/kvm/hyp/nvhe/Makefile       |    2 +-
+ drivers/accessibility/speakup/Makefile |    2 +
+ drivers/gpu/drm/xe/xe_gen_wa_oob.c     |    8 +-
+ drivers/tty/vt/Makefile                |    1 +
+ include/byteswap/byteswap.h            |   35 +
+ include/elf/elf.h                      | 4491 ++++++++++++++++++++++++++++++++
+ include/endian/bits/uintn-identity.h   |   48 +
+ include/endian/endian.h                |   63 +
+ scripts/Makefile                       |    3 +-
+ scripts/kallsyms.c                     |    4 +
+ scripts/mod/Makefile                   |    6 +
+ scripts/mod/file2alias.c               |    3 +
+ scripts/selinux/genheaders/Makefile    |    3 +-
+ scripts/selinux/mdp/Makefile           |    3 +-
+ scripts/subarch.include                |    3 +-
+ 18 files changed, 4672 insertions(+), 7 deletions(-)
+---
+base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
+change-id: 20240807-macos-build-support-9ca0d77adb17
+
+Best regards,
+-- 
+Daniel Gomez <da.gomez@samsung.com>
+
+
 
