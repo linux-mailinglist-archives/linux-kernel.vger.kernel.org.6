@@ -1,202 +1,282 @@
-Return-Path: <linux-kernel+bounces-276375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760649492A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:09:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3BE9492AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98EC21C2097C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:09:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D801F21EDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA1C18D656;
-	Tue,  6 Aug 2024 14:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE7A18D63C;
+	Tue,  6 Aug 2024 14:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GaZ8OIDR"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2053.outbound.protection.outlook.com [40.107.220.53])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qU48sPAX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8032317ADE1;
-	Tue,  6 Aug 2024 14:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722953325; cv=fail; b=N6SaWt6p3c9PfOyCxh7T9p2rEm5z1tuCoVGa7903WB0thiqwygnPvbBwlfdmkemZhOPwmR6FGUc0afFSMdGbd2STqn25ea0nySvp795YG/Bk0SyIycr9kuykHDBIX0SyJIJPE1YS/0LIbuC2HopeIz9WbX8wS4JFDkaaLd6Cmrc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722953325; c=relaxed/simple;
-	bh=HE8Qf3dVvmwpmtjYpaBl4Rm8pyCqO5YgFMyxNd5ZDwM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Egclw4nPKQIbxcHe5HvD3I1gLfopKfJz2hwtQcFKOrfBHUOvZiLzJbW/KaMuv8w5/h11uSwNKyyOitXfSxcXtAXcOyqyZzW8kLAuVteX2+vuKHs24H9OxguRco0KhFL2uJ30iseyTFIwMwT9tfQujBhbTLvqTWj3do6lUEwCVmQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GaZ8OIDR; arc=fail smtp.client-ip=40.107.220.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jq0G3akLHqxjwFS6uUmzaPha+HR78ShdRvs02bpo7hD63dL0gI876Z1VYWYOjUPniZGQ8v5Wclmq1LGnm+xuK/keBQOMlno4dqy4CWDYQqwsJdCmlr5UBA5e1HuyC/HfpJkDEjZWc0UX3A+NtmhUr4tB0jwUnp8RerSmkcTHv07Ei2A708LnXFJLkU0WMY/QzAKQ2ygScSX4Y7L8OEcpkd8bky1Z9CidRvitE/Hv+XM52q5Lwvvv/jpQ9McGqDlgSCZXyztO4pdKm7ze92j7faAh4tBoAI0OOV3pOesJdnncC+qGOpYVsMONRhft84Xkb7nAnkcouPX3SoNsBelNfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sv+T8kOmrzoStPBAiVPZOUu8Usc1wC+3NS3v7K6WVdE=;
- b=MReOHM6VRhkD6t0f/35naBfNwqovEBhFZa78ReXAJz98m2LXchcSk+x0mXogqDQscUs0QbJGXPSrcW1Sat+2kt4Jp716DzNAXvLqV2XKGdWL9pkvVxSB4zAU19NAfIlXfJD+76NDzr9c7JoaFGr64NtwP/lzsdmYVh3hghHUW1owtTnG4R6YDblzwFkO9lsfoHob+9WYp/5h0yM+/5Wkyff49HHArFoNt95lu3aucV0wuCbYtbb8m2O+MJbHp1gcMYxGZvuMq72ZiaE1vPksnQ68eS8fSVgptW1d2ef7/p9GXqBqR7L/Tz/uhJemjIwgH7DFzOKIHX090/RQ0KdjMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sv+T8kOmrzoStPBAiVPZOUu8Usc1wC+3NS3v7K6WVdE=;
- b=GaZ8OIDROancj2hY7PpMLQTPttk0S98rUI44so0E9VHJ9s1JmDJZQ6jZ4ijeqOOaRGzdI4nZT0uClciztptowRPSTWFoZlvDIeeHKpzfnDXsOiniGZvGU+04NczzBf16mUbDIeUr9+Bzpnc11c3OIf4O3lOlKa3w2aGwHSuFB84=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by BY5PR12MB4273.namprd12.prod.outlook.com (2603:10b6:a03:212::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27; Tue, 6 Aug
- 2024 14:08:38 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.7849.008; Tue, 6 Aug 2024
- 14:08:38 +0000
-Message-ID: <240900d1-b9ff-7bcb-9cd6-13a511492874@amd.com>
-Date: Tue, 6 Aug 2024 09:08:35 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 2/4] x86/bus_lock: Add support for AMD
-Content-Language: en-US
-To: Ravi Bangoria <ravi.bangoria@amd.com>, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- seanjc@google.com, pbonzini@redhat.com, jmattson@google.com
-Cc: hpa@zytor.com, rmk+kernel@armlinux.org.uk, peterz@infradead.org,
- james.morse@arm.com, lukas.bulwahn@gmail.com, arjan@linux.intel.com,
- j.granados@samsung.com, sibs@chinatelecom.cn, nik.borisov@suse.com,
- michael.roth@amd.com, nikunj.dadhania@amd.com, babu.moger@amd.com,
- x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com,
- manali.shukla@amd.com
-References: <20240806125442.1603-1-ravi.bangoria@amd.com>
- <20240806125442.1603-3-ravi.bangoria@amd.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20240806125442.1603-3-ravi.bangoria@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR05CA0011.namprd05.prod.outlook.com
- (2603:10b6:806:2d2::13) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCED18D62B;
+	Tue,  6 Aug 2024 14:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722953387; cv=none; b=VodXRZE/COk3nW5vGXtNE3HQaMxDZIwDSG3g4Rp33m2ReqsOe6+JvU0xbEoHdlD47Vml65ka6zDDSBX1/Xin1Hic/JixdmsOJP1RkYOldOM053h4bX/VPVgtF+tRnF4O8ErAoxjNURY+rtwHZfkaDEqTQFXr0sdd0lfstsHz6kY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722953387; c=relaxed/simple;
+	bh=AANtZuK2j5YEXT3CJVteG6oAKDxOt2lT1fCvlswfZMU=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6ckXx8adlxTMeoPi86YRQyisMHPNWoaM3sGXeC3damQ9Q53dB1hyhlLfJCD1OpJP6iQIuunR6viC7Szc+AQ49hkm/1d6a2DYB38pSFwjp3RpRngUtuEb4Ccez9mLfrSjPKHrjMmWUCTPtlxjqec50gOaK3jZhW6Qjy14VXsj5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qU48sPAX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DABEFC32786;
+	Tue,  6 Aug 2024 14:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722953386;
+	bh=AANtZuK2j5YEXT3CJVteG6oAKDxOt2lT1fCvlswfZMU=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=qU48sPAXbcCNf08qJMYn4cRDhmKshB4+owlW/3xBbNEK3hIyVR1Uhp95Td3/HZ27s
+	 zR81i0EcxAbCl7s9oej3PXzLPNbaCzxhiLiBnjWwYfdTlaxXaom4/tkVBAFXqRGLDT
+	 FjieblmWqLGB+yhlzrS8nQU9+iU7ZZKxSqk6EYno2V0V92BRUN9HS5XRfT4aZGGYpg
+	 200j81hrEyKqdhCUMPHKqnY+z73arRoO9gWDjvpA6fcHsrSqbydsok2jJCTPJVdAbs
+	 itSiIM837RvV3G7R3hbWY8u01k56a2iF0dyfRxmG/j0A2InvEHp8d7y7XIF0fKnV5U
+	 0bCrCJONLTrDQ==
+Date: Tue, 6 Aug 2024 16:09:43 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Tvrtko Ursulin <tursulin@ursulin.net>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jonathan Corbet <corbet@lwn.net>, David Airlie <airlied@gmail.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org
+Subject: Re: [RFC PATCH 2/6] drm/cgroup: Add memory accounting DRM cgroup
+Message-ID: <20240806-gharial-of-abstract-reverence-aad6ea@houat>
+References: <20240627154754.74828-1-maarten.lankhorst@linux.intel.com>
+ <20240627154754.74828-3-maarten.lankhorst@linux.intel.com>
+ <20240627-paper-vicugna-of-fantasy-c549ed@houat>
+ <6cb7c074-55cb-4825-9f80-5cf07bbd6745@linux.intel.com>
+ <20240628-romantic-emerald-snake-7b26ca@houat>
+ <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
+ <40ef0eed-c514-4ec1-9486-2967f23824be@ursulin.net>
+ <ZrIeuLi88jqbQ0FH@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BY5PR12MB4273:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7091ace2-adb9-4316-a96a-08dcb62144d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cDA5Y2FuNk1iaVBXUlU0U2ZzNzFrUC9Ocnh1WFhDVTBqSWVNVDJKUmZnSVBK?=
- =?utf-8?B?NVFPRGNJN3NrQi8za3cvRG0xT1prdnJYS0p3eUxGdzBPeXAvYUtFRStWMFNp?=
- =?utf-8?B?WHlyRENqUVVDMzIvd0dTU200Rks4K1VPVnFWc2JWT3JiVFpPWkdYVCswMVNK?=
- =?utf-8?B?Z2pDMjFwdUFyVzcwM3FSbURxVExRQ3JhZVd0WU5Jclg1aVJiK3Jvck53cjB0?=
- =?utf-8?B?NGNBamt6ek5zaVRSWFpMWTFYUHhkWkhma3dOeFBkdWR0SVJ1ZFNPZkxZeFRV?=
- =?utf-8?B?RXZ0UEFkd0ptL0RrdXVRek9MbEhJeW4yazFHcE56SGEwdFR5bW9QSVYyZGJz?=
- =?utf-8?B?TXJxM0RtR0kwaTlIMXM5TlhPSHpucDJiYTN2VGtkNWU5d2Z5MEtLeE1wWVFU?=
- =?utf-8?B?bmNQQkdRQVVNdXhsUFByZ040c2xudFpXZG1RdVFiZnh2TUx1OTdCb0tVdGxC?=
- =?utf-8?B?S2pzU0J0eStnd05sSUc0Wi9nVkQ5UUdqS1dSTExPV0NWSERheDJCdTRVNW5m?=
- =?utf-8?B?YVdTSERnTzhKK0dDTnRRMzlhcGljbmw0dEM1WlZGSVE0TDlmRkpucG4rekxT?=
- =?utf-8?B?N3FNMEorTVVrakhMZUk1WllMZ3VjN0xDRGsrY0FNZ1M5UTZtVUV1MWpmY2Zo?=
- =?utf-8?B?NnB3M0p6cTlDVnI3KytlVFlJMXU5T21KazJoQU1VQjU1WGJFUkk3d1M4bURh?=
- =?utf-8?B?NitIN1gxWUozWmpGdlVvaURxb2hIUm5WK2JhdzlSaFprNUw1QzN3TjRMTEVU?=
- =?utf-8?B?L0xLZlFhMllmTWYxQWgxaU8wbTRUL0NCZE9EaktlczdHZkFVYUF4Zm9EL2g3?=
- =?utf-8?B?TmFYaEc0a1dRUjN1QzFjcWRoYnR4VlpTZFdmUzk5U2ZicTlmSWV4OXZjY2tW?=
- =?utf-8?B?ckRna2gzakJwUDUxL1NnS0hQV3NETnRFMFNCYjZBTkoyN1NBdDYxNEduRzZK?=
- =?utf-8?B?amZYQ0xIZ3M5QmY5a2FIeGZScU1xKzZMKzIwUHNJb3hRejdXRmt0YzdEQnBN?=
- =?utf-8?B?SlByS2ZJYTdVeWF5NWFocDBRZFBkR1VOVGRCQTRPYzlzbmM4czBaOVdXMnN6?=
- =?utf-8?B?eWxkeWlTREw0b2haK3BIWk13RlZsbnM0Qmxwdm5WempHRTI2MkE3SU52d0xH?=
- =?utf-8?B?a29zMWs1bXh5citTWFBQUFY3Z3ErKzg2V2psK2kyTDA5VWNYZXpTMDRtL09E?=
- =?utf-8?B?alVKY0FFeHBhV0hER3lndTlGMnNQUGUrRUJySENzS1pCTURoa3hEVlNQZ2h1?=
- =?utf-8?B?TDBRQU16eHFuUVlJNTlER25PVFZ5dVlMSHVVaDhBamlTMGtxbWxvaEtNd2Np?=
- =?utf-8?B?SXU0ejRkOGlXWVZRWG1ObDlUMi96Yjl2c2h4czRKbUQ4cENaTkJoS0NLSmxn?=
- =?utf-8?B?MDkzckcvNCs4aVdJeGdsb2tRWVhHdVBMeEZWOFVRMFFub3ArZ0ltZHh6akRw?=
- =?utf-8?B?V0lKVE9QRU1Kb1BEcml0SFdOYnczenp1RzhQS1ZscUdPMGNLREwxcHF0cmFC?=
- =?utf-8?B?M1d1SEpOQjFUYThZdFEzT3IyZTFCc0owcXhwd3ViRmtCS2dXVFpkTTUyZk1u?=
- =?utf-8?B?dllVQkc5TUJVeWZQQlM5cGdSYlhYRG5ZL3FFdEpyUEVMeTBZQ3BmWTVMejA3?=
- =?utf-8?B?dEQ4MWxRY2ZVM3o5ZVlpamRocGVXc0xqUlpiMkJldEh0a3pPVjBBOVRnZmpJ?=
- =?utf-8?B?MEgyeUdjR3N6TWJBS1E2UW9HaEc1UHN1SUE4V2pEN0p6NGw4bVVxMTdIekV2?=
- =?utf-8?Q?JJBhRg7Ac7T89e47OM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SHAxK0tCT2tESE5vSFJRdnM4M2hnN042RU5KbzE5UE9NOGlmZjdhWHp4Qkoy?=
- =?utf-8?B?Qm5ZMUJHem1aMkV1THdaSWdFdmt2OFpjaGgrSGhwaHdXcEFMRlorbXhXc2Nx?=
- =?utf-8?B?YTdySHlSeThBL2JrWDN0RDh6QVBiZFowV1loYzFNYlA3ek0yWU0yOHV0UjQy?=
- =?utf-8?B?WWlWL0RKZVN5akl2RWpTK3ZRU25rMzBFMzlJTlFpYW1JdHpoMW9OajZUTlM1?=
- =?utf-8?B?WFNVc1JsNVBRaHEzMC9kK251QlpXNEpFVW9hUGhMRFZ5Q3hwQWwzOG5zMjRs?=
- =?utf-8?B?eEVpSWhacjI3ZCsrWVAwZDY4NExZQXo3dThPUjhidWtYL0srQTRMZ2xTdjNY?=
- =?utf-8?B?U0NpVUFmLzY4MjkxS2k1OXlhd0NmdFgzSW1wYjJlQ1ArZTRVTitwdWJLRXVG?=
- =?utf-8?B?Yld5Y2pFR2FleDQxVTRJMUVmdkdlbzdEUFNueEIzQ1ZtNjRFekpLMUMrTEpk?=
- =?utf-8?B?eE9wWHRNMmVXYXNHZDZ6T1VCYjBtUGtpQ1lVdVV6WkRxbVllVzlITDRNMEdB?=
- =?utf-8?B?bEt1RGJ5blVhQmYwQzNlb1Rna1JEN0FjZUx1WG5uS2VzdkNvZ0R4dnpWcWpt?=
- =?utf-8?B?OFdBc1FmaGV0bithb254RDFseU9OcGlkb0M3cUJja0JmUzNKVTNDWUpJRkJX?=
- =?utf-8?B?WEIvNTNyaEVQOUdzUUVMY0czb0s3Ylo3emhZak1CbHpYeVJkV3pySktmMVRH?=
- =?utf-8?B?REd2UGUrcFVYWlprQkUyRGw4L2YxMW1BS0ZZaldveml0UURNZXRnWWpWNG1j?=
- =?utf-8?B?VlJ0V3RlZVBuR3JSYlh0dGlnZThWd0ZQTjBvNmFmam12YnRKaVdZT0dZSEt1?=
- =?utf-8?B?YlBsdVhHellwODVyK1grVEJKNmx1cFBLQ2tRTTRNSWkvdzd0Z2tVd2w0WnpG?=
- =?utf-8?B?OEZoWTBoUm1tWGFwaEViNEdWeStlUGw1bEQ4NmpQV28vS0dDanVQbnVScGlS?=
- =?utf-8?B?Wkx4czdjaXA1ejVhY1NHc2tRWEx1RjdFTmtyRWhjang1ZzQxR29IZzR0dlhN?=
- =?utf-8?B?NWxmTEtGanlKRlhUcFEySnQ0NXZyRERFbmJCM01NcWg2VTFURlBxdjVDQ2RR?=
- =?utf-8?B?bDlhZ3ZnRGt4UXJra2ZzQ3pyQW5SOXJLTTZHNWFUZ3pVSnJGZmZ5ejdNdy90?=
- =?utf-8?B?d2R4eDN3TWkyMVZzMFlVTnBUbitDMmczcm1VdGJMa3ErOTdIem5uSTZKSi9S?=
- =?utf-8?B?Vi9lK0tvR2s2cjBKZVUwbTBLRmtUYmMydmd1bW80aHY1ZU1BWnpQdXkxekE5?=
- =?utf-8?B?Y0ZmT05UR2RQOE9jREdYTUZMMEt3MWxrVTNaNFQwU1NNbmVlWXAveTFkYTJq?=
- =?utf-8?B?QmJVNjdCRWJ1VkFLQzJGSDE1Nk5oNmZrRDVqVUdxTTdwVGlZR3UzdFZ3OW5C?=
- =?utf-8?B?cUFZTDNBWkhkajVudnJ2WVNacmNzQlNUNkJ1cURjMzV5MEFVSVlGOXlQZGxQ?=
- =?utf-8?B?WERQSnllUlF5OVNlWFVubGgwVXNQb1B1Q1lROEdFNnpsV1ZVOU5tQ2ZOdnFo?=
- =?utf-8?B?UndYYVZLU3lNRG1hTHRMTWNNYmNmM1Q2UHhNVzJ5OENya0orV3k0MzlKeG9R?=
- =?utf-8?B?c2dLY2dDajNWQ0RGcmRhRDgyekd4ODRkYjJid0hTN2VTK2srdzNUU2thMVVo?=
- =?utf-8?B?a3Zxc2NyQWtXbkFWS2NzNXUwd1UrcmZHSjdqWHQza2tONFJqUjF2UDEvSEd4?=
- =?utf-8?B?WllYL0p0Tmp1VnRTSysycGZkc3pQQmNMUTYwVXVXT0Y4dU5YZklSam5xZHRC?=
- =?utf-8?B?Ry93RlBFQ2duSUh0YWliUHNRQng4YTIwSUZhbGF1SzhhbS85bDVTSXBJMW14?=
- =?utf-8?B?eHE5dHJhdTQzOTJxK1FwMEtUc1U5RFlKWlA4NS9ta1BxVWtrbTVJODZORkx3?=
- =?utf-8?B?b3JGaGttbFo0NEpZWXhqZ21sSWtld21yaDllOXl2bUk1WWpmRGF5WTd0Ym5Q?=
- =?utf-8?B?eU1KYVNKczZaZUNXYUR3cC9pa09iczFGY0tsN3Q1SGZDNWd6aUFuZTRMQzRR?=
- =?utf-8?B?Sys1VlpzWWJOenhyNUplSGEzOHVkS015V20yc3RwL3EvelpIVjI0cW9pTDhN?=
- =?utf-8?B?ZlBNTWlFazAzMmZlekhqYTFEYktiVUdjWXh2Y0Z2QmZJZ2JCTndpWjF2aVZu?=
- =?utf-8?Q?P43PPmAEwi2yKcls9Mg8LpOcN?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7091ace2-adb9-4316-a96a-08dcb62144d0
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 14:08:38.6726
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OC/q1orOfPaGx5aZ2rWPo9dpnLQnQC9XzwAqjr4y6dZEjUKbKL51Uz3a/sEgJGGVLgouWSF70HN1OggcBBS2ag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4273
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tjibocpyvmmmnhi7"
+Content-Disposition: inline
+In-Reply-To: <ZrIeuLi88jqbQ0FH@phenom.ffwll.local>
 
-On 8/6/24 07:54, Ravi Bangoria wrote:
-> Add Bus Lock Detect (called Bus Lock Trap in AMD docs) support for AMD
-> platforms. Bus Lock Detect is enumerated with CPUID Fn0000_0007_ECX_x0
-> bit [24 / BUSLOCKTRAP]. It can be enabled through MSR_IA32_DEBUGCTLMSR.
-> When enabled, hardware clears DR6[11] and raises a #DB exception on
-> occurrence of Bus Lock if CPL > 0. More detail about the feature can be
-> found in AMD APM[1].
-> 
-> [1]: AMD64 Architecture Programmer's Manual Pub. 40332, Rev. 4.07 - June
->      2023, Vol 2, 13.1.3.6 Bus Lock Trap
->      https://bugzilla.kernel.org/attachment.cgi?id=304653
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
 
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+--tjibocpyvmmmnhi7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  arch/x86/include/asm/cpu.h     | 8 +++++---
->  arch/x86/kernel/cpu/bus_lock.c | 4 ++--
->  arch/x86/kernel/cpu/common.c   | 2 ++
->  arch/x86/kernel/cpu/intel.c    | 1 -
->  include/linux/sched.h          | 2 +-
->  5 files changed, 10 insertions(+), 7 deletions(-)
-> 
+On Tue, Aug 06, 2024 at 03:01:44PM GMT, Daniel Vetter wrote:
+> On Mon, Jul 01, 2024 at 06:01:41PM +0100, Tvrtko Ursulin wrote:
+> >=20
+> > On 01/07/2024 10:25, Maarten Lankhorst wrote:
+> > > Den 2024-06-28 kl. 16:04, skrev Maxime Ripard:
+> > > > Hi,
+> > > >=20
+> > > > On Thu, Jun 27, 2024 at 09:22:56PM GMT, Maarten Lankhorst wrote:
+> > > > > Den 2024-06-27 kl. 19:16, skrev Maxime Ripard:
+> > > > > > Hi,
+> > > > > >=20
+> > > > > > Thanks for working on this!
+> > > > > >=20
+> > > > > > On Thu, Jun 27, 2024 at 05:47:21PM GMT, Maarten Lankhorst wrote:
+> > > > > > > The initial version was based roughly on the rdma and misc cg=
+roup
+> > > > > > > controllers, with a lot of the accounting code borrowed from =
+rdma.
+> > > > > > >=20
+> > > > > > > The current version is a complete rewrite with page counter; =
+it uses
+> > > > > > > the same min/low/max semantics as the memory cgroup as a resu=
+lt.
+> > > > > > >=20
+> > > > > > > There's a small mismatch as TTM uses u64, and page_counter lo=
+ng pages.
+> > > > > > > In practice it's not a problem. 32-bits systems don't really =
+come with
+> > > > > > > > =3D4GB cards and as long as we're consistently wrong with u=
+nits, it's
+> > > > > > > fine. The device page size may not be in the same units as ke=
+rnel page
+> > > > > > > size, and each region might also have a different page size (=
+VRAM vs GART
+> > > > > > > for example).
+> > > > > > >=20
+> > > > > > > The interface is simple:
+> > > > > > > - populate drmcgroup_device->regions[..] name and size for ea=
+ch active
+> > > > > > >     region, set num_regions accordingly.
+> > > > > > > - Call drm(m)cg_register_device()
+> > > > > > > - Use drmcg_try_charge to check if you can allocate a chunk o=
+f memory,
+> > > > > > >     use drmcg_uncharge when freeing it. This may return an er=
+ror code,
+> > > > > > >     or -EAGAIN when the cgroup limit is reached. In that case=
+ a reference
+> > > > > > >     to the limiting pool is returned.
+> > > > > > > - The limiting cs can be used as compare function for
+> > > > > > >     drmcs_evict_valuable.
+> > > > > > > - After having evicted enough, drop reference to limiting cs =
+with
+> > > > > > >     drmcs_pool_put.
+> > > > > > >=20
+> > > > > > > This API allows you to limit device resources with cgroups.
+> > > > > > > You can see the supported cards in /sys/fs/cgroup/drm.capacity
+> > > > > > > You need to echo +drm to cgroup.subtree_control, and then you=
+ can
+> > > > > > > partition memory.
+> > > > > > >=20
+> > > > > > > Signed-off-by: Maarten Lankhorst<maarten.lankhorst@linux.inte=
+l.com>
+> > > > > > > Co-developed-by: Friedrich Vock<friedrich.vock@gmx.de>
+> > > > > > I'm sorry, I should have wrote minutes on the discussion we had=
+ with TJ
+> > > > > > and Tvrtko the other day.
+> > > > > >=20
+> > > > > > We're all very interested in making this happen, but doing a "D=
+RM"
+> > > > > > cgroup doesn't look like the right path to us.
+> > > > > >=20
+> > > > > > Indeed, we have a significant number of drivers that won't have=
+ a
+> > > > > > dedicated memory but will depend on DMA allocations one way or =
+the
+> > > > > > other, and those pools are shared between multiple frameworks (=
+DRM,
+> > > > > > V4L2, DMA-Buf Heaps, at least).
+> > > > > >=20
+> > > > > > This was also pointed out by Sima some time ago here:
+> > > > > > https://lore.kernel.org/amd-gfx/YCVOl8%2F87bqRSQei@phenom.ffwll=
+=2Elocal/
+> > > > > >=20
+> > > > > > So we'll want that cgroup subsystem to be cross-framework. We s=
+ettled on
+> > > > > > a "device" cgroup during the discussion, but I'm sure we'll hav=
+e plenty
+> > > > > > of bikeshedding.
+> > > > > >=20
+> > > > > > The other thing we agreed on, based on the feedback TJ got on t=
+he last
+> > > > > > iterations of his series was to go for memcg for drivers not us=
+ing DMA
+> > > > > > allocations.
+> > > > > >=20
+> > > > > > It's the part where I expect some discussion there too :)
+> > > > > >=20
+> > > > > > So we went back to a previous version of TJ's work, and I've st=
+arted to
+> > > > > > work on:
+> > > > > >=20
+> > > > > >     - Integration of the cgroup in the GEM DMA and GEM VRAM hel=
+pers (this
+> > > > > >       works on tidss right now)
+> > > > > >=20
+> > > > > >     - Integration of all heaps into that cgroup but the system =
+one
+> > > > > >       (working on this at the moment)
+> > > > >=20
+> > > > > Should be similar to what I have then. I think you could use my w=
+ork to
+> > > > > continue it.
+> > > > >=20
+> > > > > I made nothing DRM specific except the name, if you renamed it th=
+e device
+> > > > > resource management cgroup and changed the init function signatur=
+e to take a
+> > > > > name instead of a drm pointer, nothing would change. This is exac=
+tly what
+> > > > > I'm hoping to accomplish, including reserving memory.
+> > > >=20
+> > > > I've started to work on rebasing my current work onto your series t=
+oday,
+> > > > and I'm not entirely sure how what I described would best fit. Let's
+> > > > assume we have two KMS device, one using shmem, one using DMA
+> > > > allocations, two heaps, one using the page allocator, the other usi=
+ng
+> > > > CMA, and one v4l2 device using dma allocations.
+> > > >=20
+> > > > So we would have one KMS device and one heap using the page allocat=
+or,
+> > > > and one KMS device, one heap, and one v4l2 driver using the DMA
+> > > > allocator.
+> > > >=20
+> > > > Would these make different cgroup devices, or different cgroup regi=
+ons?
+> > >=20
+> > > Each driver would register a device, whatever feels most logical for =
+that device I suppose.
+> > >=20
+> > > My guess is that a prefix would also be nice here, so register a devi=
+ce with name of drm/$name or v4l2/$name, heap/$name. I didn't give it much =
+thought and we're still experimenting, so just try something. :)
+> > >=20
+> > > There's no limit to amount of devices, I only fixed amount of pools t=
+o match TTM, but even that could be increased arbitrarily. I just don't thi=
+nk there is a point in doing so.
+> >=20
+> > Do we need a plan for top level controls which do not include region na=
+mes?
+> > If the latter will be driver specific then I am thinking of ease of
+> > configuring it all from the outside. Especially considering that one cg=
+roup
+> > can have multiple devices in it.
+> >=20
+> > Second question is about double accounting for shmem backed objects. I =
+think
+> > they will be seen, for drivers which allocate backing store at buffer
+> > objects creation time, under the cgroup of process doing the creation, =
+in
+> > the existing memory controller. Right?
+>=20
+> We currently don't set __GFP_ACCOUNT respectively use GFP_KERNEL_ACCOUNT,
+> so no. Unless someone allocates them with GFP_USER ...
+>=20
+> > Is there a chance to exclude those from there and only have them in thi=
+s new
+> > controller? Or would the opposite be a better choice? That is, not see =
+those
+> > in the device memory controller but only in the existing one.
+>=20
+> I missed this, so jumping in super late. I think guidance from Tejun was
+> to go the other way around: Exclude allocations from normal system
+> memory from device cgroups and instead make sure it's tracked in the
+> existing memcg.
+>=20
+> Which might mean we need memcg shrinkers and the assorted pain ...
+>=20
+> Also I don't think we ever reached some agreement on where things like cma
+> allocations should be accounted for in this case.
+
+Yeah, but that's the thing, memcg probably won't cut it for CMA. Because
+if you pull the thread, that means that dma-heaps also have to register
+their buffers into memcg too, even if it's backed by something else than
+RAM.
+
+This is what this cgroup controller is meant to do: memcg for memory
+(GFP'd) buffers, this cgroup for everything else.
+
+Maxime
+
+--tjibocpyvmmmnhi7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZrIupwAKCRDj7w1vZxhR
+xfMYAQCjlZGY+yaQq7/ZkakE1LIj5TJntjlKikfSQ4PwzDajvgD/Ts1r9zy6Xvhn
+V56sDNPfYscg2EVK3lOydnNo2fLjVAw=
+=bQek
+-----END PGP SIGNATURE-----
+
+--tjibocpyvmmmnhi7--
 
