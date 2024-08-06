@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-276236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1BC9490BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:17:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CB3B9490BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE9451C20329
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C52EC285E27
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050901D27A5;
-	Tue,  6 Aug 2024 13:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120ED1D2F42;
+	Tue,  6 Aug 2024 13:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qi4F+WHl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7KnUh6v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475BE1D2790
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7B71D175E;
+	Tue,  6 Aug 2024 13:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950070; cv=none; b=fal6yEmzwlXLMtqMPnwLI1SS1M9u9fYVWz3gXAYVVh/nqWOu5LgvciTZrDV5OoGGhmpCHZoiXQ1CgjHPCY4YfDk6UA6SmCZdpC5kFD9z7lju+wae9ikJlRqsFH9iXT2O7/eMEeIex95nJxLbgPOztqYf2TeCaZT5opcroCcQDrg=
+	t=1722950085; cv=none; b=AZ8qWoW7mZmSExU8rvjClJw9ZPirqUVk1M6kkCdwNv6w4sy6XvhXcO60wqhHsKJMCPVVd80VbTGeYKGidPEdtt2tPzolRJt/g9xH4YOTrT/S7VUL9YIjiYuNhiNpXTYpjs7KbQDf9dbafiessrLtOunn17v/ZeV1iKGDThIfkfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950070; c=relaxed/simple;
-	bh=HPutb47YyXZlMnQyn2ng5tcedqjYDvOUbkJUxgrL7rs=;
+	s=arc-20240116; t=1722950085; c=relaxed/simple;
+	bh=2rlJ7K/TJMn5UcyvjCwi6A03r0fDQPfDCt7la8eS7+Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zr1IWyXnahQiuW+DqlrKxr1ItdiESONEot2xYq81HJJJsQXg7aHT8p0NMScc43Umlz7Sqe++ghrw4LXbLu+QKeyYCXqR9vybEu+Ct4zsQlNoAoqmi0wPth4DpZ1s6bEBvkoIZEO5T495r7/oGR7wLDPCYKH3AjFqiDDk5tdYcwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qi4F+WHl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722950067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vXB9n6PIcxQrCckz5y40n2q02jNpo3OBG3jBfQzye5E=;
-	b=Qi4F+WHl8VcBDTqRvJBtH83ZdvuNyU0RK7Hjq+J4n4R9XqBijElK51ycWFSiml+HTRe9ZF
-	uJMcf03wKkcKG82wegpQHSJ1t5REGbwsOumbsFmwq3QdNbKS3+WxEq+qWaGO93/rDicDK3
-	VSydr+YP3rlZYc5AxNpnqCj8AiRrO+A=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-76-qg5kCyikMLapUKJD3l9v5w-1; Tue, 06 Aug 2024 09:14:24 -0400
-X-MC-Unique: qg5kCyikMLapUKJD3l9v5w-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36875698d0dso430583f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 06:14:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722950063; x=1723554863;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vXB9n6PIcxQrCckz5y40n2q02jNpo3OBG3jBfQzye5E=;
-        b=cNuDtBJPoEZYBGXDh2d2RCZbDPbnsdbbxvgtKO2RQS9bzq7zzMP+qPl3FNgSyaymCn
-         unGPCGEAN8E0sj+nVrsbZYh7dLP8JxMCik1oHSmuGMwdaap+J8M77FWhxuX4Fn2KdzXm
-         4KOFRSSWaBiYEDagGNthwa6ISFYfx7IU8zDQmzSDLLPRGDZIJNmcNJTNcb3sD/mbdt4H
-         U3teUPlAAr12nGnQ3lCT1ItYU3xKIaJ04vDt1FYz8UR77HJlkmxmdQF7+6cNkSyM0pSf
-         gQLFhqy8haoPGudAw7GHQuR8oAE/5fNRHJ4Stsciwx9asKn7pJBMD1IhHuRtqHp4TjT2
-         hH9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdE5iquWRhj+XDB4RxStI36KvtUw1TkqWdtXQx0+5/gGXaOmFfWAKCAUNMTVDrh6Jiudx8juMboAsn3hQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZAjo9iuHSep6jaQUSlgs2ADz6T7nKRv/QrBUwii5zGCz0gHYP
-	KmHx5lCGhBm9AOtRuJ0toPV1fT0YG7Kds+BVXjgGv3UYGglDvwmXBMH3nS0k+RrpKsU34WGdGEP
-	ac9vuFxymrKWWdg4iKpNIxeEdiZxRujpdEwA2fHyR8UGoFOjf6e9PmU4JANYYxQ==
-X-Received: by 2002:adf:a3d7:0:b0:368:4bc0:9210 with SMTP id ffacd0b85a97d-36bbc0ca7a6mr8742129f8f.25.1722950063196;
-        Tue, 06 Aug 2024 06:14:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2kT3/Xi0cEGU+HkQRL1WChzAHxB3PhEUEr4okI+OvO3nyCFXV5GtBuMTDD0u+LHyFMqdaiQ==
-X-Received: by 2002:adf:a3d7:0:b0:368:4bc0:9210 with SMTP id ffacd0b85a97d-36bbc0ca7a6mr8742068f8f.25.1722950062633;
-        Tue, 06 Aug 2024 06:14:22 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c73f:8500:f83c:3602:5300:88af? (p200300cbc73f8500f83c3602530088af.dip0.t-ipconnect.de. [2003:cb:c73f:8500:f83c:3602:5300:88af])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf0c314sm12822253f8f.12.2024.08.06.06.14.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 06:14:22 -0700 (PDT)
-Message-ID: <492667ab-81ad-468c-a615-babc4aea4131@redhat.com>
-Date: Tue, 6 Aug 2024 15:14:19 +0200
+	 In-Reply-To:Content-Type; b=O1HGIKaYcexGE7hl19GHwuITsTfikAeEaiQBY1qCgm+5KTzUW6fiXgV5HduBlBBDBj+kPNLlTws7lmEkGS11Wri7niou5EzJzUrjC2qU44voyzaXwibClgkdj5XLHTb+P8fJBiXaYa0ll6SQXH97inPV7y9l+3i5K69SP+t3BC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7KnUh6v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334A0C32786;
+	Tue,  6 Aug 2024 13:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722950084;
+	bh=2rlJ7K/TJMn5UcyvjCwi6A03r0fDQPfDCt7la8eS7+Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M7KnUh6v1Or3ZR+I3Geqe5lTtDRhP7rB6T+9Vr9BS5N0lYPkT62xf7tGflsNaNJpf
+	 B9/x5yd+lxr07QSccQU3S0ki9qJ/5G/QVx7lheUh0i3xvuWYMqxGuyjTBU7GaXTYXN
+	 0+zmnBgEKq2pnpRdPAFzJoWIk3qrJbBTtfaEtLRPjHe0SgXTzS0S3Ky+d/yUypb8Ja
+	 k9+7L3FglLgH0t6pjBwoiYsTLVjHlATwA4WaIPKCrqYMuAIre5ZUTGsGC92Fu8/bn4
+	 jW9AGqRU5WjaDo4GDQ+FW/QeUsyfHYq9xr34XXBMhJLPZqvmuAAfQm3tL1R8c2h8UB
+	 Nh88eytrVtA7w==
+Message-ID: <c82b6e70-8f2f-4b37-9186-7c49aea019bd@kernel.org>
+Date: Tue, 6 Aug 2024 15:14:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,138 +49,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 15/26] x86/numa_emu: use a helper function to get
- MAX_DMA32_PFN
-To: Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
- Borislav Petkov <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dan Williams <dan.j.williams@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
- <dave@stgolabs.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Jonathan Corbet <corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>,
- Palmer Dabbelt <palmer@dabbelt.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Samuel Holland <samuel.holland@sifive.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Vasily Gorbik <gor@linux.ibm.com>,
- Will Deacon <will@kernel.org>, Zi Yan <ziy@nvidia.com>,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-cxl@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- loongarch@lists.linux.dev, nvdimm@lists.linux.dev,
- sparclinux@vger.kernel.org, x86@kernel.org
-References: <20240801060826.559858-1-rppt@kernel.org>
- <20240801060826.559858-16-rppt@kernel.org>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 3/3] arm64: dts: amlogic: add C3 AW419 board
+To: xianwei.zhao@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
+ <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240801060826.559858-16-rppt@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01.08.24 08:08, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On 06/08/2024 12:27, Xianwei Zhao via B4 Relay wrote:
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > 
-> This is required to make numa emulation code architecture independent so
-> that it can be moved to generic code in following commits.
+> Add Amlogic C3 C308L AW419 board.
 > 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Tested-by: Zi Yan <ziy@nvidia.com> # for x86_64 and arm64
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->   arch/x86/include/asm/numa.h  | 1 +
->   arch/x86/mm/numa.c           | 5 +++++
->   arch/x86/mm/numa_emulation.c | 4 ++--
->   3 files changed, 8 insertions(+), 2 deletions(-)
+>  arch/arm64/boot/dts/amlogic/Makefile               |   1 +
+>  .../boot/dts/amlogic/amlogic-c3-c308l-aw419.dts    | 278 +++++++++++++++++++++
+>  2 files changed, 279 insertions(+)
 > 
-> diff --git a/arch/x86/include/asm/numa.h b/arch/x86/include/asm/numa.h
-> index 7017d540894a..b22c85c1ef18 100644
-> --- a/arch/x86/include/asm/numa.h
-> +++ b/arch/x86/include/asm/numa.h
-> @@ -74,6 +74,7 @@ void debug_cpumask_set_cpu(int cpu, int node, bool enable);
->   int numa_emu_cmdline(char *str);
->   void __init numa_emu_update_cpu_to_node(int *emu_nid_to_phys,
->   					unsigned int nr_emu_nids);
-> +u64 __init numa_emu_dma_end(void);
->   #else /* CONFIG_NUMA_EMU */
->   static inline int numa_emu_cmdline(char *str)
->   {
-> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-> index 9180d524cfe4..8b7c6580d268 100644
-> --- a/arch/x86/mm/numa.c
-> +++ b/arch/x86/mm/numa.c
-> @@ -868,6 +868,11 @@ void __init numa_emu_update_cpu_to_node(int *emu_nid_to_phys,
->   		__apicid_to_node[i] = j < nr_emu_nids ? j : 0;
->   	}
->   }
+> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
+> index 29417f04f886..2fbda8419c65 100644
+> --- a/arch/arm64/boot/dts/amlogic/Makefile
+> +++ b/arch/arm64/boot/dts/amlogic/Makefile
+> @@ -2,6 +2,7 @@
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-a4-a113l2-ba400.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-a5-a113x2-av400.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c302x-aw409.dtb
+> +dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c308l-aw419.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-an400.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-khadas-vim4.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
+> new file mode 100644
+> index 000000000000..d28fd2a1acf0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
+> @@ -0,0 +1,278 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+> + */
 > +
-> +u64 __init numa_emu_dma_end(void)
-> +{
-> +	return PFN_PHYS(MAX_DMA32_PFN);
-> +}
+> +/dts-v1/;
+> +
+> +#include "amlogic-c3.dtsi"
+> +
+> +/ {
+> +	model = "Amlogic C308l aw419 Development Board";
+> +	compatible = "amlogic,aw419", "amlogic,c3";
 
-Inline function in header?
+Where are the bindings? Why do you add bindings without boards? Or
+boards without bindings?
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
+Best regards,
+Krzysztof
 
 
