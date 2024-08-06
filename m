@@ -1,259 +1,186 @@
-Return-Path: <linux-kernel+bounces-276290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AD2949215
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:51:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39599491C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33717B29DEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:40:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2A81F2245A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4BF1D2F76;
-	Tue,  6 Aug 2024 13:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEBE1D2F5A;
+	Tue,  6 Aug 2024 13:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="inoP7DaF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jLy9YuYX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I3BOQiUx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IPr6ZZl9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="MqFfp6uY"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68971C9EB2;
-	Tue,  6 Aug 2024 13:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F5419F464
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 13:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951629; cv=none; b=Mjz46990kVVYXhYQ3d18ATL3LqYpXSnWcXxOMITqOoKuMYZ4Ila92hgg1VXRgolmCxRTEPPma1bBXKo9waihvK65qeHLvLpVQcLdDKcNLavXrJEmgUTADE9WZSnK2+PCO1lhs54p+WSimdqwFKbz0Fv2Ds0nW1k2GhzqCQrIKO4=
+	t=1722951685; cv=none; b=i/X7b/lgFV8mgka+FXUMRaJqJmRV7ZHNt1CZy15aSZoU+cmZPnzbU6freVy1YwMVFN0wqMKtrwunMumhr9ntHbiHqaVf+m5xA/ntUfylCOlV3kGz1fbE40vAT4aJLlowrXNvDjUIcMW7oy/XjqMp4v/rY9rr+i41zszFq6W4qgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951629; c=relaxed/simple;
-	bh=L2lRD+ifAtj1ErWSRuGb2tmmFh7+d2PfbAYCS6+4V8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUyaFy7i7Qcnor9ZXHBMZO78kqb17qhPaguJjNTlZqY74k+B3ewtBycPvrVYovH9kVVjVNN11mJOVLSiEIC5g06VwVwOYcARvZg7TzgPravkgpqtPwzjTYB6M5w4uYiuAqbPEZiH+xnwOGEAIyeT9WpRIDSuRtnqo9sL+7MR/OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=inoP7DaF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jLy9YuYX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I3BOQiUx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IPr6ZZl9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1722951685; c=relaxed/simple;
+	bh=j5JvmOSunPkdJ8OgcG76KzviB2w8YucMua34byJeVy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FvlVsjAtsQzP7G0U0fqc+bwYaAxRnEDVXcfoYXQKFjZkZZPNXntX5ntPiYhB2hYVdYvaUO42RiYhnQNs5PafNqeES8Lb4ZeEDocD9ExIahaNK9M6nVgjqxZtzDxb7UhX6bsphzcZdNt9O+Hn9SG5GOS3POOHh8s2rlvyjDP9CG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=MqFfp6uY; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (unknown [193.86.92.181])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1138F1FB47;
-	Tue,  6 Aug 2024 13:40:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722951625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LnTs3+DWE8G/JX7dW/n1r4wmWMOR57NvCPPAJDCIcds=;
-	b=inoP7DaFXueiYZe5EqIUU5oM1uJxbGAMeA+q12+7jK5ouNvhhjm7jv6YCPDgLqoeepXtYJ
-	ew5ebRncmYmm9pHJH5M0YIlKFOoBE0OCVmkBP7CD1bbD/XJrQYnkE+v85p69jK3sksXA9v
-	/ipOtAaLHTLKVPnbOzk3/1z6HNqRXqE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722951625;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LnTs3+DWE8G/JX7dW/n1r4wmWMOR57NvCPPAJDCIcds=;
-	b=jLy9YuYX2xdqM/U2SLmFmLvJpfWS2G/6gMI0DPhvGQhSwAuVqOVM/bfD6Kh7b6fxwavxaP
-	i6k6Uai42K9T33BQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722951624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LnTs3+DWE8G/JX7dW/n1r4wmWMOR57NvCPPAJDCIcds=;
-	b=I3BOQiUxK43fdpawqbLcYJk33xlgDojEsg8h2flAoYKgjxKHcJg+Vo+eTLmAwHSkAKRzqD
-	oKOGqYpq0j9d8sETyWu4bwhcFcmpPiNX+vWCm07hXIHl9+AP8K/5fRWzLAkPlCN9IayAfe
-	XuwYfRVs6CCE40Ln2Bb5A+CRMd/Yvbg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722951624;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LnTs3+DWE8G/JX7dW/n1r4wmWMOR57NvCPPAJDCIcds=;
-	b=IPr6ZZl9zhMZQtAAvVbKlHMawhsKq8MMQ9yIoZuQpoPqtJkC/1m8tDLiGzeiwIGqvBjVhK
-	qDGPqG3lmh7tXJBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0558B13981;
-	Tue,  6 Aug 2024 13:40:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id V21KAcgnsmZrSwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 06 Aug 2024 13:40:24 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A394DA0762; Tue,  6 Aug 2024 15:40:23 +0200 (CEST)
-Date: Tue, 6 Aug 2024 15:40:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: zhangshida <starzhangzsd@gmail.com>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn,
-	Baolin Liu <liubaolin@kylinos.cn>
-Subject: Re: [RFC PATCH] jbd2: fix a potential assertion failure due to
- improperly dirtied buffer
-Message-ID: <20240806134023.rm2ggd7swopryqci@quack3>
-References: <20240720062356.2522658-1-zhangshida@kylinos.cn>
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 50B781D39A7;
+	Tue,  6 Aug 2024 15:41:21 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1722951681; bh=6iMtQdqxuJXos0Mg28nQjzB+f3b8f9BkSrZ+fyn8iGM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MqFfp6uYt6c/v+y0QykSCU+rzOBOLpT7tevu6dv85jxkogcw1OsCIoiWbyCR27BSj
+	 dl3xY24gNJwxC/tu12MrEtI4jmpw+4T0n6p641AuGGkjFfdzkk1Uky182ZeAN86GX/
+	 vu2n5KKWhNGhSkUVyFmTVFJjsKfg/EVViQrFE8+IEcdmewjqaf9II+HHQxE4yLwiBQ
+	 vMjMClZyVXSHu67/tEsUCvSDAyG1EZKNHoRhgvaDR8o+JXNcIImISHhHzsG8hVAEF7
+	 gkTYspdo7OJLEfr9F1AQzV+8XBD48Hczm8NuXCe+Esk/qpieaFdEGncYQ1SGf5SP1c
+	 nQ7NWSXHBHUdA==
+Date: Tue, 6 Aug 2024 15:41:16 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH 08/10] mm: introduce commit_merge(), abstracting merge
+ operation
+Message-ID: <20240806154116.015e329a@mordecai.tesarici.cz>
+In-Reply-To: <3b04eb13b499df3ebf50ae3cde9a7ed5e76237fd.1722849860.git.lorenzo.stoakes@oracle.com>
+References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
+	<3b04eb13b499df3ebf50ae3cde9a7ed5e76237fd.1722849860.git.lorenzo.stoakes@oracle.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240720062356.2522658-1-zhangshida@kylinos.cn>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,kylinos.cn:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello!
+On Mon,  5 Aug 2024 13:13:55 +0100
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-On Sat 20-07-24 14:23:56, zhangshida wrote:
-> From: Shida Zhang <zhangshida@kylinos.cn>
+> Pull this operation into its own function and have vma_expand() call
+> commit_merge() instead.
 > 
-> On an old kernel version(4.19, ext3, journal=data, pagesize=64k),
-> an assertion failure will occasionally be triggered by the line below:
-
-OK, just out of curiosity, why are you using data=journal mode? It doesn't
-really get that much testing and the performance is quite bad...
-
-> jbd2_journal_commit_transaction
-> {
-> ...
-> J_ASSERT_BH(bh, !buffer_dirty(bh));
-> /*
-> * The buffer on BJ_Forget list and not jbddirty means
-> ...
-> }
+> This lays the groundwork for a subsequent patch which replaces vma_merge()
+> with a simpler function which can share the same code.
 > 
-> AFAIC, that's how the problem works:
-> --------
-> journal_unmap_buffer
-> jbd2_journal_invalidatepage
-> __ext4_journalled_invalidatepage
-> ext4_journalled_invalidatepage
-> do_invalidatepage
-> truncate_inode_pages_range
-> truncate_inode_pages
-> truncate_pagecache
-> ext4_setattr
-> --------
->
-> First try to truncate and invalidate the page.
-> Sometimes the buffer and the page won't be freed immediately.
-> the buffer will be sent to the BJ_Forget list of the currently
-> committing transaction. Maybe the transaction knows when and how
-> to free the buffer better.
-> The buffer's states now: !jbd_dirty !mapped !dirty
-> 
-> Then jbd2_journal_commit_transaction(）will try to iterate over the
-> BJ_Forget list:
-> --------
-> jbd2_journal_commit_transaction()
-> 	while (commit_transaction->t_forget) {
-> 	...
-> 	}
-> --------
-> 
-> At this exact moment, another write comes:
-> --------
-> mark_buffer_dirty
-> __block_write_begin_int
-> __block_write_begin
-> ext4_write_begin
-> --------
-> it sees a unmapped new buffer, and marks it as dirty.
-
-This should not happen. When ext4_setattr() truncates the file, we do not
-allow reallocating these blocks for other purposes until the transaction
-commits. Did you find this using some tracing or just code analysis?
-
-There have been quite some fixes to data=journal mode since 4.19 so it may
-quite well be that your problem is actually already fixed in current
-kernels...
-
-								Honza
-
-> Finally, jbd2_journal_commit_transaction(）will trip over the assertion
-> during the BJ_Forget list iteration.
-> 
-> After an code analysis, it seems that nothing can prevent the
-> __block_write_begin() from dirtying the buffer at this very moment.
-> 
-> The same condition may also be applied to the lattest kernel version.
-> 
-> To fix it:
-> Add some checks to see if it is the case dirtied by __block_write_begin().
-> if yes, it's okay and just let it go. The one who dirtied it and the
-> jbd2_journal_commit_transaction() will know how to cooperate together and
-> deal with it in a proper manner.
-> if no, try to complain as we normally will do.
-> 
-> Reported-by: Baolin Liu <liubaolin@kylinos.cn>
-> Signed-off-by: Shida Zhang <zhangshida@kylinos.cn>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->  fs/jbd2/commit.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+>  mm/vma.c | 57 ++++++++++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 45 insertions(+), 12 deletions(-)
 > 
-> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> index 75ea4e9a5cab..2c13d0af92d8 100644
-> --- a/fs/jbd2/commit.c
-> +++ b/fs/jbd2/commit.c
-> @@ -1023,7 +1023,20 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->  			if (is_journal_aborted(journal))
->  				clear_buffer_jbddirty(bh);
->  		} else {
-> -			J_ASSERT_BH(bh, !buffer_dirty(bh));
-> +			bool try_to_complain = 1;
-> +			struct folio *folio = NULL;
+> diff --git a/mm/vma.c b/mm/vma.c
+> index a404cf718f9e..b7e3c64d5d68 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -564,6 +564,49 @@ void validate_mm(struct mm_struct *mm)
+>  }
+>  #endif /* CONFIG_DEBUG_VM_MAPLE_TREE */
+>  
+> +/* Actually perform the VMA merge operation. */
+> +static int commit_merge(struct vma_merge_struct *vmg,
+> +			struct vm_area_struct *adjust,
+> +			struct vm_area_struct *remove,
+> +			struct vm_area_struct *remove2,
+> +			long adj_start,
+> +			bool expanded)
+> +{
+> +	struct vma_prepare vp;
 > +
-> +			folio = bh->b_folio;
-> +			/*
-> +			 * Try not to complain about the dirty buffer marked dirty
-> +			 * by __block_write_begin().
-> +			 */
-> +			if (buffer_dirty(bh) && folio && folio->mapping
-> +			    && folio_test_locked(folio))
-> +				try_to_complain = 0;
+> +	init_multi_vma_prep(&vp, vmg->vma, adjust, remove, remove2);
 > +
-> +			if (try_to_complain)
-> +				J_ASSERT_BH(bh, !buffer_dirty(bh));
->  			/*
->  			 * The buffer on BJ_Forget list and not jbddirty means
->  			 * it has been freed by this transaction and hence it
-> -- 
-> 2.33.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +	if (expanded) {
+> +		vma_iter_config(vmg->vmi, vmg->start, vmg->end);
+> +	} else {
+> +		vma_iter_config(vmg->vmi, adjust->vm_start + adj_start,
+> +				adjust->vm_end);
+> +	}
+
+It's hard to follow the logic if you the "expanded" parameter is always
+true. I have to look at PATCH 09/10 first to see how it is expected to
+be used. Is there no other way?
+
+Note that this is not needed for adjust and adj_start, because they are
+merely moved here from vma_expand() and passed down as parameters to
+other functions.
+
+Petr T
+
+> +
+> +	if (vma_iter_prealloc(vmg->vmi, vmg->vma))
+> +		return -ENOMEM;
+> +
+> +	vma_prepare(&vp);
+> +	vma_adjust_trans_huge(vmg->vma, vmg->start, vmg->end, adj_start);
+> +	vma_set_range(vmg->vma, vmg->start, vmg->end, vmg->pgoff);
+> +
+> +	if (expanded)
+> +		vma_iter_store(vmg->vmi, vmg->vma);
+> +
+> +	if (adj_start) {
+> +		adjust->vm_start += adj_start;
+> +		adjust->vm_pgoff += PHYS_PFN(adj_start);
+> +		if (adj_start < 0) {
+> +			WARN_ON(expanded);
+> +			vma_iter_store(vmg->vmi, adjust);
+> +		}
+> +	}
+> +
+> +	vma_complete(&vp, vmg->vmi, vmg->vma->vm_mm);
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * vma_merge_new_vma - Attempt to merge a new VMA into address space
+>   *
+> @@ -700,7 +743,6 @@ int vma_expand(struct vma_merge_struct *vmg)
+>  	bool remove_next = false;
+>  	struct vm_area_struct *vma = vmg->vma;
+>  	struct vm_area_struct *next = vmg->next;
+> -	struct vma_prepare vp;
+>  
+>  	vma_start_write(vma);
+>  	if (next && (vma != next) && (vmg->end == next->vm_end)) {
+> @@ -713,24 +755,15 @@ int vma_expand(struct vma_merge_struct *vmg)
+>  			return ret;
+>  	}
+>  
+> -	init_multi_vma_prep(&vp, vma, NULL, remove_next ? next : NULL, NULL);
+>  	/* Not merging but overwriting any part of next is not handled. */
+> -	VM_WARN_ON(next && !vp.remove &&
+> +	VM_WARN_ON(next && !remove_next &&
+>  		  next != vma && vmg->end > next->vm_start);
+>  	/* Only handles expanding */
+>  	VM_WARN_ON(vma->vm_start < vmg->start || vma->vm_end > vmg->end);
+>  
+> -	/* Note: vma iterator must be pointing to 'start' */
+> -	vma_iter_config(vmg->vmi, vmg->start, vmg->end);
+> -	if (vma_iter_prealloc(vmg->vmi, vma))
+> +	if (commit_merge(vmg, NULL, remove_next ? next : NULL, NULL, 0, true))
+>  		goto nomem;
+>  
+> -	vma_prepare(&vp);
+> -	vma_adjust_trans_huge(vma, vmg->start, vmg->end, 0);
+> -	vma_set_range(vma, vmg->start, vmg->end, vmg->pgoff);
+> -	vma_iter_store(vmg->vmi, vma);
+> -
+> -	vma_complete(&vp, vmg->vmi, vma->vm_mm);
+>  	return 0;
+>  
+>  nomem:
+
 
