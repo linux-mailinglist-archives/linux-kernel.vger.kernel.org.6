@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-276861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA85F94994B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:42:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8B594994C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814B81F22A8D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:42:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411AC283398
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E3D16B720;
-	Tue,  6 Aug 2024 20:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7FE16DEA6;
+	Tue,  6 Aug 2024 20:41:55 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B396F15ECE7
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD1514EC44
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722976912; cv=none; b=bj2NhvLtda53Od4qssE+qsE9vC3qOHjt+QY5BBMhvSPtqBwk3Mv8mbSd9DkMsDvd0R8o/c5s8PCW2zTZHXXcGy5EOKJL7H0h2iz4Dcv6XNehUzh7ZyjJ6m4x4r+L/qew1pCGGlV/HfmpYeqyKAzLnaTa1LxQ/Dz0BNy6MYeplXg=
+	t=1722976914; cv=none; b=FPE4SWkPTi288MVcTV8fF0cPDYoDjU3tqJ/f7QQuOoUrDY6w0dojQF/si/0ZKfAmK5o6SdYIqBDNhHHssMBwnjv0ZmMX+ylqy8vtf5oMRjgqgY2/WCI7R60OAwPNV1YHEP7kqH42YGvHp1VWur9AMYk2XLb1QOO2DWOfY/3m9ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722976912; c=relaxed/simple;
-	bh=vsm3qi8RvkMCxE073ECII6z81bIECJlBtBNc4117PpQ=;
+	s=arc-20240116; t=1722976914; c=relaxed/simple;
+	bh=devTyGaODtto/FuKq7PIddIKeFGOLuZLMaTOQDXRWdo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kzMI4DiAkrJk8cowxg+Y0Lt/s6zvGAOlfdXdVLeGJ9FwEP9FuQQYnmmlQ2/e1cVyGeoqfCJGHSegfFFGGKkPvUBHvHQSLIEVCpFOxSR18YHAhDlNIS1mDSLVwo6FAfE5GPER5zLznk2nZkswuB3N3nHn8A5z1oPM9ZzEMuUZoHM=
+	 MIME-Version; b=SetF1Go8JM8KehHXW67+HmKeufgFmuNIEuKDv7QXWSjw0AqkWvXHE4GdfUP/PX3nEDacLKD1X4fQzMN0SNG26QMAjLci+nZP0pkBhPfB8J6HZJuFGOC2J0CWZwRFYmWq4pOj7BhZzGBivQ4QSlKBFoYzu4y5pRIT3St0LpmEWdA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 922AB113E;
-	Tue,  6 Aug 2024 13:42:15 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE3AF1063;
+	Tue,  6 Aug 2024 13:42:17 -0700 (PDT)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 009943F766;
-	Tue,  6 Aug 2024 13:41:47 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1C8E63F766;
+	Tue,  6 Aug 2024 13:41:49 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
 To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	Namhyung Kim <namhyung@kernel.org>,
@@ -45,9 +45,9 @@ To: Arnaldo Carvalho de Melo <acme@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	"Liang, Kan" <kan.liang@linux.intel.com>
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 2/9] perf auxtrace: Remove unused 'pmu' pointer from struct auxtrace_record
-Date: Tue,  6 Aug 2024 21:41:23 +0100
-Message-Id: <20240806204130.720977-3-leo.yan@arm.com>
+Subject: [PATCH v1 3/9] perf auxtrace: Refactor auxtrace__evsel_is_auxtrace()
+Date: Tue,  6 Aug 2024 21:41:24 +0100
+Message-Id: <20240806204130.720977-4-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240806204130.720977-1-leo.yan@arm.com>
 References: <20240806204130.720977-1-leo.yan@arm.com>
@@ -59,91 +59,231 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 'pmu' pointer in the auxtrace_record structure is not used after
-support multiple AUX events, remove it.
+The auxtrace__evsel_is_auxtrace() function invokes the callback
+.evsel_is_auxtrace() to check if an event is an AUX trace. In the
+low-level code, every AUX trace module provides its callback to
+compare the PMU type.
+
+This commit refactors auxtrace__evsel_is_auxtrace() by simply
+calling evsel__is_aux_event() rather than using the callback function.
+As a result, the callback .evsel_is_auxtrace() is no longer needed, so
+the definition and implementations are removed.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- tools/perf/arch/arm/util/cs-etm.c     | 1 -
- tools/perf/arch/arm64/util/arm-spe.c  | 1 -
- tools/perf/arch/arm64/util/hisi-ptt.c | 1 -
- tools/perf/arch/x86/util/intel-bts.c  | 1 -
- tools/perf/arch/x86/util/intel-pt.c   | 1 -
- tools/perf/util/auxtrace.h            | 1 -
- 6 files changed, 6 deletions(-)
+ tools/perf/util/arm-spe.c     |  9 ---------
+ tools/perf/util/auxtrace.c    |  4 ++--
+ tools/perf/util/auxtrace.h    |  2 --
+ tools/perf/util/cs-etm.c      | 13 +------------
+ tools/perf/util/hisi-ptt.c    |  9 ---------
+ tools/perf/util/intel-bts.c   | 10 ----------
+ tools/perf/util/intel-pt.c    | 10 ----------
+ tools/perf/util/s390-cpumsf.c |  9 ---------
+ 8 files changed, 3 insertions(+), 63 deletions(-)
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index da6231367993..96aeb7cdbee1 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -888,7 +888,6 @@ struct auxtrace_record *cs_etm_record_init(int *err)
- 	}
+diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+index afbd5869f6bf..27e393a0beec 100644
+--- a/tools/perf/util/arm-spe.c
++++ b/tools/perf/util/arm-spe.c
+@@ -1053,14 +1053,6 @@ static void arm_spe_free(struct perf_session *session)
+ 	free(spe);
+ }
  
- 	ptr->cs_etm_pmu			= cs_etm_pmu;
--	ptr->itr.pmu			= cs_etm_pmu;
- 	ptr->itr.parse_snapshot_options	= cs_etm_parse_snapshot_options;
- 	ptr->itr.recording_options	= cs_etm_recording_options;
- 	ptr->itr.info_priv_size		= cs_etm_info_priv_size;
-diff --git a/tools/perf/arch/arm64/util/arm-spe.c b/tools/perf/arch/arm64/util/arm-spe.c
-index d59f6ca499f2..2be99fdf997d 100644
---- a/tools/perf/arch/arm64/util/arm-spe.c
-+++ b/tools/perf/arch/arm64/util/arm-spe.c
-@@ -514,7 +514,6 @@ struct auxtrace_record *arm_spe_recording_init(int *err,
- 	}
+-static bool arm_spe_evsel_is_auxtrace(struct perf_session *session,
+-				      struct evsel *evsel)
+-{
+-	struct arm_spe *spe = container_of(session->auxtrace, struct arm_spe, auxtrace);
+-
+-	return evsel->core.attr.type == spe->pmu_type;
+-}
+-
+ static const char * const arm_spe_info_fmts[] = {
+ 	[ARM_SPE_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
+ };
+@@ -1344,7 +1336,6 @@ int arm_spe_process_auxtrace_info(union perf_event *event,
+ 	spe->auxtrace.flush_events = arm_spe_flush;
+ 	spe->auxtrace.free_events = arm_spe_free_events;
+ 	spe->auxtrace.free = arm_spe_free;
+-	spe->auxtrace.evsel_is_auxtrace = arm_spe_evsel_is_auxtrace;
+ 	session->auxtrace = &spe->auxtrace;
  
- 	sper->arm_spe_pmu = arm_spe_pmu;
--	sper->itr.pmu = arm_spe_pmu;
- 	sper->itr.snapshot_start = arm_spe_snapshot_start;
- 	sper->itr.snapshot_finish = arm_spe_snapshot_finish;
- 	sper->itr.find_snapshot = arm_spe_find_snapshot;
-diff --git a/tools/perf/arch/arm64/util/hisi-ptt.c b/tools/perf/arch/arm64/util/hisi-ptt.c
-index ba97c8a562a0..eac9739c87e6 100644
---- a/tools/perf/arch/arm64/util/hisi-ptt.c
-+++ b/tools/perf/arch/arm64/util/hisi-ptt.c
-@@ -174,7 +174,6 @@ struct auxtrace_record *hisi_ptt_recording_init(int *err,
- 	}
+ 	arm_spe_print_info(&auxtrace_info->priv[0]);
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index c3f0ef4349fc..03462ff346e7 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -2874,8 +2874,8 @@ void auxtrace__free(struct perf_session *session)
+ bool auxtrace__evsel_is_auxtrace(struct perf_session *session,
+ 				 struct evsel *evsel)
+ {
+-	if (!session->auxtrace || !session->auxtrace->evsel_is_auxtrace)
++	if (!session->auxtrace)
+ 		return false;
  
- 	pttr->hisi_ptt_pmu = hisi_ptt_pmu;
--	pttr->itr.pmu = hisi_ptt_pmu;
- 	pttr->itr.recording_options = hisi_ptt_recording_options;
- 	pttr->itr.info_priv_size = hisi_ptt_info_priv_size;
- 	pttr->itr.info_fill = hisi_ptt_info_fill;
-diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
-index 34696f3d3d5d..85c8186300c8 100644
---- a/tools/perf/arch/x86/util/intel-bts.c
-+++ b/tools/perf/arch/x86/util/intel-bts.c
-@@ -434,7 +434,6 @@ struct auxtrace_record *intel_bts_recording_init(int *err)
- 	}
- 
- 	btsr->intel_bts_pmu = intel_bts_pmu;
--	btsr->itr.pmu = intel_bts_pmu;
- 	btsr->itr.recording_options = intel_bts_recording_options;
- 	btsr->itr.info_priv_size = intel_bts_info_priv_size;
- 	btsr->itr.info_fill = intel_bts_info_fill;
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index 4b710e875953..ea510a7486b1 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -1197,7 +1197,6 @@ struct auxtrace_record *intel_pt_recording_init(int *err)
- 	}
- 
- 	ptr->intel_pt_pmu = intel_pt_pmu;
--	ptr->itr.pmu = intel_pt_pmu;
- 	ptr->itr.recording_options = intel_pt_recording_options;
- 	ptr->itr.info_priv_size = intel_pt_info_priv_size;
- 	ptr->itr.info_fill = intel_pt_info_fill;
+-	return session->auxtrace->evsel_is_auxtrace(session, evsel);
++	return evsel__is_aux_event(evsel);
+ }
 diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index 8a6ec9565835..95304368103b 100644
+index 95304368103b..f13c2de17653 100644
 --- a/tools/perf/util/auxtrace.h
 +++ b/tools/perf/util/auxtrace.h
-@@ -411,7 +411,6 @@ struct auxtrace_record {
- 	int (*read_finish)(struct auxtrace_record *itr, int idx);
- 	unsigned int alignment;
- 	unsigned int default_aux_sample_size;
--	struct perf_pmu *pmu;
- 	struct evlist *evlist;
+@@ -221,8 +221,6 @@ struct auxtrace {
+ 			    struct perf_tool *tool);
+ 	void (*free_events)(struct perf_session *session);
+ 	void (*free)(struct perf_session *session);
+-	bool (*evsel_is_auxtrace)(struct perf_session *session,
+-				  struct evsel *evsel);
  };
  
+ /**
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index d3e9c64d17d4..dac0f7c7e44d 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -899,16 +899,6 @@ static void cs_etm__free(struct perf_session *session)
+ 	zfree(&aux);
+ }
+ 
+-static bool cs_etm__evsel_is_auxtrace(struct perf_session *session,
+-				      struct evsel *evsel)
+-{
+-	struct cs_etm_auxtrace *aux = container_of(session->auxtrace,
+-						   struct cs_etm_auxtrace,
+-						   auxtrace);
+-
+-	return evsel->core.attr.type == aux->pmu_type;
+-}
+-
+ static struct machine *cs_etm__get_machine(struct cs_etm_queue *etmq,
+ 					   ocsd_ex_level el)
+ {
+@@ -2877,7 +2867,7 @@ static int cs_etm__setup_timeless_decoding(struct cs_etm_auxtrace *etm)
+ 	 * Find the cs_etm evsel and look at what its timestamp setting was
+ 	 */
+ 	evlist__for_each_entry(evlist, evsel)
+-		if (cs_etm__evsel_is_auxtrace(etm->session, evsel)) {
++		if (evsel__is_aux_event(evsel)) {
+ 			etm->timeless_decoding =
+ 				!(evsel->core.attr.config & BIT(ETM_OPT_TS));
+ 			return 0;
+@@ -3380,7 +3370,6 @@ int cs_etm__process_auxtrace_info_full(union perf_event *event,
+ 	etm->auxtrace.flush_events = cs_etm__flush_events;
+ 	etm->auxtrace.free_events = cs_etm__free_events;
+ 	etm->auxtrace.free = cs_etm__free;
+-	etm->auxtrace.evsel_is_auxtrace = cs_etm__evsel_is_auxtrace;
+ 	session->auxtrace = &etm->auxtrace;
+ 
+ 	err = cs_etm__setup_timeless_decoding(etm);
+diff --git a/tools/perf/util/hisi-ptt.c b/tools/perf/util/hisi-ptt.c
+index 37ea987017f6..57dd98afb0d2 100644
+--- a/tools/perf/util/hisi-ptt.c
++++ b/tools/perf/util/hisi-ptt.c
+@@ -141,14 +141,6 @@ static void hisi_ptt_free(struct perf_session *session)
+ 	free(ptt);
+ }
+ 
+-static bool hisi_ptt_evsel_is_auxtrace(struct perf_session *session,
+-				       struct evsel *evsel)
+-{
+-	struct hisi_ptt *ptt = container_of(session->auxtrace, struct hisi_ptt, auxtrace);
+-
+-	return evsel->core.attr.type == ptt->pmu_type;
+-}
+-
+ static void hisi_ptt_print_info(__u64 type)
+ {
+ 	if (!dump_trace)
+@@ -181,7 +173,6 @@ int hisi_ptt_process_auxtrace_info(union perf_event *event,
+ 	ptt->auxtrace.flush_events = hisi_ptt_flush;
+ 	ptt->auxtrace.free_events = hisi_ptt_free_events;
+ 	ptt->auxtrace.free = hisi_ptt_free;
+-	ptt->auxtrace.evsel_is_auxtrace = hisi_ptt_evsel_is_auxtrace;
+ 	session->auxtrace = &ptt->auxtrace;
+ 
+ 	hisi_ptt_print_info(auxtrace_info->priv[0]);
+diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+index ec1b3bd9f530..2b571e56f9c9 100644
+--- a/tools/perf/util/intel-bts.c
++++ b/tools/perf/util/intel-bts.c
+@@ -728,15 +728,6 @@ static void intel_bts_free(struct perf_session *session)
+ 	free(bts);
+ }
+ 
+-static bool intel_bts_evsel_is_auxtrace(struct perf_session *session,
+-					struct evsel *evsel)
+-{
+-	struct intel_bts *bts = container_of(session->auxtrace, struct intel_bts,
+-					     auxtrace);
+-
+-	return evsel->core.attr.type == bts->pmu_type;
+-}
+-
+ struct intel_bts_synth {
+ 	struct perf_tool dummy_tool;
+ 	struct perf_session *session;
+@@ -892,7 +883,6 @@ int intel_bts_process_auxtrace_info(union perf_event *event,
+ 	bts->auxtrace.flush_events = intel_bts_flush;
+ 	bts->auxtrace.free_events = intel_bts_free_events;
+ 	bts->auxtrace.free = intel_bts_free;
+-	bts->auxtrace.evsel_is_auxtrace = intel_bts_evsel_is_auxtrace;
+ 	session->auxtrace = &bts->auxtrace;
+ 
+ 	intel_bts_print_info(&auxtrace_info->priv[0], INTEL_BTS_PMU_TYPE,
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index d6d7b7512505..1608d0e38679 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -3589,15 +3589,6 @@ static void intel_pt_free(struct perf_session *session)
+ 	free(pt);
+ }
+ 
+-static bool intel_pt_evsel_is_auxtrace(struct perf_session *session,
+-				       struct evsel *evsel)
+-{
+-	struct intel_pt *pt = container_of(session->auxtrace, struct intel_pt,
+-					   auxtrace);
+-
+-	return evsel->core.attr.type == pt->pmu_type;
+-}
+-
+ static int intel_pt_process_auxtrace_event(struct perf_session *session,
+ 					   union perf_event *event,
+ 					   struct perf_tool *tool __maybe_unused)
+@@ -4356,7 +4347,6 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
+ 	pt->auxtrace.flush_events = intel_pt_flush;
+ 	pt->auxtrace.free_events = intel_pt_free_events;
+ 	pt->auxtrace.free = intel_pt_free;
+-	pt->auxtrace.evsel_is_auxtrace = intel_pt_evsel_is_auxtrace;
+ 	session->auxtrace = &pt->auxtrace;
+ 
+ 	if (dump_trace)
+diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
+index 6fe478b0b61b..a9b0dea199d5 100644
+--- a/tools/perf/util/s390-cpumsf.c
++++ b/tools/perf/util/s390-cpumsf.c
+@@ -1048,14 +1048,6 @@ static void s390_cpumsf_free(struct perf_session *session)
+ 	free(sf);
+ }
+ 
+-static bool
+-s390_cpumsf_evsel_is_auxtrace(struct perf_session *session __maybe_unused,
+-			      struct evsel *evsel)
+-{
+-	return evsel->core.attr.type == PERF_TYPE_RAW &&
+-	       evsel->core.attr.config == PERF_EVENT_CPUM_SF_DIAG;
+-}
+-
+ static int s390_cpumsf_get_type(const char *cpuid)
+ {
+ 	int ret, family = 0;
+@@ -1152,7 +1144,6 @@ int s390_cpumsf_process_auxtrace_info(union perf_event *event,
+ 	sf->auxtrace.flush_events = s390_cpumsf_flush;
+ 	sf->auxtrace.free_events = s390_cpumsf_free_events;
+ 	sf->auxtrace.free = s390_cpumsf_free;
+-	sf->auxtrace.evsel_is_auxtrace = s390_cpumsf_evsel_is_auxtrace;
+ 	session->auxtrace = &sf->auxtrace;
+ 
+ 	if (dump_trace)
 -- 
 2.34.1
 
