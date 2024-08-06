@@ -1,127 +1,87 @@
-Return-Path: <linux-kernel+bounces-275898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505D0948BAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B181948BAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4F2281B8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B57C282331
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3B41BDA92;
-	Tue,  6 Aug 2024 08:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492D91BD51F;
+	Tue,  6 Aug 2024 08:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kgrBCm1p"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5qa+F+o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A90713A884;
-	Tue,  6 Aug 2024 08:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3C664A;
+	Tue,  6 Aug 2024 08:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934301; cv=none; b=TzC8iq/JXad1+6wcvoKrGw7et1z5qi5z0kWkBgzftc962ZA8OhmnV640lDEPQpo5WBLeRB3Li19Yrc9yDEP+nXeH3eEd5P0fQ3z8Ysbsmfjg5TtDBOEPffht0pDAVm5+MdMp+v7Tb/gIh5tIuPuL+Ir5dhdw3wVnMpEhnnC9v/s=
+	t=1722934379; cv=none; b=klPYgBT/e9AaHI3FaYZtgHledN44lRoOcYPNKqGeISDkO8qayLPBBhmaoMfEN68n9qtLiHqRXWzuB6F1tRhSY86tB/OkLIW7FficocW1mpP8vwKvTGpGiwbnKawGpbxZdpxUqeUTIPbIBYdnNy21BHqsJBLQZ3zfw8vf0GH7Hv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934301; c=relaxed/simple;
-	bh=2+Lxiko6ZligeGS4dc4/EzTkBkKDNlSRrqvZ8kgh4ZQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DxnhtNS73NahPQk/XPXoKnNcz5QEXmmR9RsQm6qz5LPKnp+eOdFYHkT15qVRDryVFRmalRmTJlKBeyHQ3TUW/O5dzTnQoC7/mIUgyd2Xt+T6S5pRXfPu7n0LWVPyRHM/e1W0dsZskGrPQlaK1zuPix5BDYXM96Mz6X9OfReeTZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kgrBCm1p; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b7b28442f9so3337876d6.3;
-        Tue, 06 Aug 2024 01:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722934299; x=1723539099; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gin8E/Gou+L852rKqaT8yJDJEOm3ljHZ257fFbqypfY=;
-        b=kgrBCm1pJLjxUwabGl3SDs6hqccO1Gq3z+YXnmsdeig3//6Sb0toobO3di4xvrLot5
-         qSWKY/UDPWWVeiNmkg2xmO5l87BDN82entAr9GnughWqi+Zsn1JTyK5oGat9mTalvTX0
-         egou3qoy3LXD/UwIrcxevEyEjJ17gZheXJw+YvYgnGeIlIuqQSDl0kAnDyM2YT3SO3Lf
-         ItRlov4JVqEdXDv8Ju1fbt1BRUAbA4rRwIfkQkzHDfA6Ao6glhFaC3kFBHMPv2Kz2DN2
-         o5061sBx9rajhantqQqBOorCh4k5oiKDge6IejTb+J+MR8/mrxjB1B/VhgBF+qUs4vsh
-         eNQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722934299; x=1723539099;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gin8E/Gou+L852rKqaT8yJDJEOm3ljHZ257fFbqypfY=;
-        b=Fi0bmzwRAWKrpbnIsVxf6Umkcuip3AglsQFp/mtf4Mjt0D9/Iujecx/wRlgj7tDBql
-         6MCLyUdyoQ7EK/byQXaU4MChQDfzZ+3upQ51I2xgI9RRzZ4BkHIwYhAThzUa4si6qcrF
-         dXtZNOagMugh4lU3qJ6371YC895IeZpN5WaqitPtFxUQPtgggfpbBjUuewc3N4Ep6U6h
-         BIQMLosUgmqms7Ik92GonNDiofTj7lT+SIgr7P+6I9jwFpXtuKUDn4NDjwyCLHM7PZ1p
-         W9aQXkd0qRvYsID4HIQEM9tZ4uRakG9I658zCt+LIsPhp7oAbYynM3ICoU9JFWHwl/Pq
-         rVfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyXTOo68/Ke2ZwhuFmkV2boYa4/c0db8Y1qUAHGSjCkudLBN1lhjyhX+JRavk9WMlCT/tw3STQuIXoANEz4zb6I0BU58vLTHHeNeYvXd/XKdfDpPp00lW3JVTuzz5xk54ff5qfokCi
-X-Gm-Message-State: AOJu0Yw49sYrY8iyI2w6FkhVPMXUMuq18XvzrebWspWsLd74HVNnz0qA
-	67hefxW51bL3I4w/c/Y3HqJaM8MChNW6LkJX1pIHrWtKkoHvkbEbO1XmagnqvwA=
-X-Google-Smtp-Source: AGHT+IG2FgUAZOuWAbufZ/kFsVkYH/mBhs0sj7SW9FI+wwS064TW6Jw82vIizd3/wZrb2sfNmcYI9w==
-X-Received: by 2002:a05:6214:3b88:b0:6b7:aed3:408f with SMTP id 6a1803df08f44-6bb9838e594mr150803896d6.13.1722934299215;
-        Tue, 06 Aug 2024 01:51:39 -0700 (PDT)
-Received: from HYB-hhAwRlzzMZb.ad.analog.com ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c7c2512sm43300816d6.74.2024.08.06.01.51.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 01:51:38 -0700 (PDT)
-From: Dumitru Ceclan <mitrutzceclan@gmail.com>
-X-Google-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-To: mitrutzceclan@gmail.com
-Cc: lars@metafoo.de,
-	jic23@kernel.org,
-	alexandru.tachici@analog.com,
-	Jonathan.Cameron@huawei.com,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dumitru Ceclan <dumitru.ceclan@analog.com>
-Subject: [PATCH] iio: adc: ad7124: fix DT configuration parsing
-Date: Tue,  6 Aug 2024 11:51:33 +0300
-Message-ID: <20240806085133.114547-1-dumitru.ceclan@analog.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722934379; c=relaxed/simple;
+	bh=jLxtaqYwGejHVDr7TLr2wF+thWxAzyeocnesv8I+WjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfsDKyHEnhnuKRutD/LPBo7QyfLfZQvaI8oF96rEiqlHUB6f94LBF54OkNyQBgWTctgFefqx6r/OoncIElb249PtNRS6O7yGLRsc4aM6iA/tJTR/A2q9SW+q+vbOxuBpQWjb4AsKfYnSYSY9b3NwD9K3QvGcCEZ7NPP7FqrfYqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5qa+F+o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF260C32786;
+	Tue,  6 Aug 2024 08:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722934379;
+	bh=jLxtaqYwGejHVDr7TLr2wF+thWxAzyeocnesv8I+WjI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t5qa+F+o1iPppiI2xZ55esXGw/puFe5lAgM1SOXNIEuRgG5VJjXxGGKK8CehV7pER
+	 XzcxjP96ZL7mouz7XSa7gyRnzzZCXBzy/gfOrKYzjIxpeKG910tyqOb298Gk0AjHcF
+	 vTETQSiuIxmAxByPhlSmLTvbpbc95vCzTnIeYhEW4XWMt6uyRG0knTPjZqh1Dbhnf1
+	 4sZsUYE529IeeSD5SeP5VpybqeQrMEdj0xW1frWGSJgdkf+hGW0tPZocUKoS6ZKZ0o
+	 GL8R12u/YY9utt4aAhr4vpkysLv8PF6rV/ktNSSHq5iYdFzPO7tXtzBvrPcdHhUkJm
+	 mQIHqBByrxNCg==
+Date: Tue, 6 Aug 2024 09:52:54 +0100
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: stas.yakovlev@gmail.com, kvalo@kernel.org, gregkh@linuxfoundation.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, johannes@sipsolutions.net,
+	linux-wireless@vger.kernel.org, linux-staging@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] lib80211: Handle const struct lib80211_crypto_ops
+ in lib80211
+Message-ID: <20240806085254.GO2636630@kernel.org>
+References: <cover.1722839425.git.christophe.jaillet@wanadoo.fr>
+ <c74085e02f33a11327582b19c9f51c3236e85ae2.1722839425.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c74085e02f33a11327582b19c9f51c3236e85ae2.1722839425.git.christophe.jaillet@wanadoo.fr>
 
-The cfg pointer is set before reading the channel number that the
-configuration should point to. This causes configurations to be shifted
-by one channel.
-For example setting bipolar to the first channel defined in the DT will
-cause bipolar mode to be active on the second defined channel.
+On Mon, Aug 05, 2024 at 08:40:37AM +0200, Christophe JAILLET wrote:
+> lib80211_register_crypto_ops() and lib80211_unregister_crypto_ops() don't
+> modify their "struct lib80211_crypto_ops *ops" argument. So, it can be
+> declared as const.
+> 
+> Doing so, some adjustments are needed to also constify some date in
+> "struct lib80211_crypt_data", "struct lib80211_crypto_alg" and the
+> return value of lib80211_get_crypto_ops().
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> 
+> Changes in v2:
+>   - Update ipw2x00/libipw_wx.c as well   [Simon Horman]
+> 
+> v1: https://lore.kernel.org/all/d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet@wanadoo.fr/
 
-Fix by moving the cfg pointer setting after reading the channel number.
-
-Fixes: 7b8d045e497a ("iio: adc: ad7124: allow more than 8 channels")
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
----
- drivers/iio/adc/ad7124.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 3beed78496c5..672d41bac8ca 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -839,8 +839,6 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
- 	st->channels = channels;
- 
- 	device_for_each_child_node_scoped(dev, child) {
--		cfg = &st->channels[channel].cfg;
--
- 		ret = fwnode_property_read_u32(child, "reg", &channel);
- 		if (ret)
- 			return ret;
-@@ -858,6 +856,7 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
- 		st->channels[channel].ain = AD7124_CHANNEL_AINP(ain[0]) |
- 						  AD7124_CHANNEL_AINM(ain[1]);
- 
-+		cfg = &st->channels[channel].cfg;
- 		cfg->bipolar = fwnode_property_read_bool(child, "bipolar");
- 
- 		ret = fwnode_property_read_u32(child, "adi,reference-select", &tmp);
--- 
-2.43.0
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
