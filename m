@@ -1,97 +1,207 @@
-Return-Path: <linux-kernel+bounces-275907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3AE948BC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:56:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB06948BBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A3A1C212D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9571C22786
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9911BD50D;
-	Tue,  6 Aug 2024 08:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24721BD50A;
+	Tue,  6 Aug 2024 08:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=angelogioacchino.delregno@collabora.com header.b="jdsvpt3T"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bsTOG6Pg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1167165EE2;
-	Tue,  6 Aug 2024 08:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934566; cv=pass; b=Q6KiadvBowBhVvEWHs0vQmBX7M1gnkVV7V+HdpSZBgnpv51X7jEp4Rx7IMTmkdgho2c/6jnpGOnpiB/zRQ5Cym+O/I3My4stGJG5skUAFYrRWSSTJN8+gNgzYoFBNGR7tuJ+bOIrdKOm5Xr+BDa8GZ2VAba1S2+5wpmVQ2sxoJY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934566; c=relaxed/simple;
-	bh=0J+3XnrsOJYN/0H9QnemZt0E++HbNWXSEhx/JoMbSEc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ssyVpFYZOWjpXlQsk7EW1xexqy7S9W4TUyy1jJfwSb6zVUfzXhPCfQjs4k2BQA9VeNueKWU4jJvjnu0fb7g0JArDiXTcmoohXm3w4X8XkkNRymCBa6V0VBkgbz5z274jz09iPFl0AVDCbwI8AUfbDRVa3Br2vcSUhiIaxgLx1qM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=angelogioacchino.delregno@collabora.com header.b=jdsvpt3T; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1722934555; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=IeG5P7wMxIGYIvJTYZo+GGRXPr9jU8JXhrRWlaR2GF+XkibIoOVzb06gGD7LZm/OeEVM0402bBn7dJdNguBPd8nYxdMLEvKas6U+GyERViCC4+pLGwq/vNTswAk7M4joHvtZxYUZkmd+hnUY2T2ZF3K8fJKL8S+hi//DGXpZCzs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1722934555; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=46FGarQ+Gb6fnnbVjZJzhYqZv+IqQ+GP8N0sis3nVXc=; 
-	b=feLypRvLUUm/SDmS9Q/S2s2AE6y0XAY1KH5TKGvA2MqJJoox7ftkrQsymWXnR7lIb/yJUu84pB3TmSMNJganiwFlIVwJOwi6sQUiiw74xOl5Ln1Nhc3o5pU45bL03xPFp07j54hUaDAWm0SP/AGOIQtSOKpZ0fdhGPUryDeQC3E=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=angelogioacchino.delregno@collabora.com;
-	dmarc=pass header.from=<angelogioacchino.delregno@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722934555;
-	s=zohomail; d=collabora.com;
-	i=angelogioacchino.delregno@collabora.com;
-	h=From:From:To:To:Cc:Cc:In-Reply-To:References:Subject:Subject:Message-Id:Message-Id:Date:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:Reply-To;
-	bh=46FGarQ+Gb6fnnbVjZJzhYqZv+IqQ+GP8N0sis3nVXc=;
-	b=jdsvpt3TKDUcDAJwaVONSQF076JHenq3/e3x/urpn6+FfGIWyXPgJ9UfNksRslrf
-	a0hZ+/KO5RuMvmW/Rl+l0NWxnb38ymyWOxFR/5nej/r5J4wZp8W/HqOGJ7AjH4Uj5QW
-	9b8MU4YzZM1ymBio5f+ibg9Vs4xjuQZb+pqCW0ow=
-Received: by mx.zohomail.com with SMTPS id 1722934552450742.4038831923073;
-	Tue, 6 Aug 2024 01:55:52 -0700 (PDT)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, 
- Pin-yen Lin <treapking@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, 
- Kiwi Liu <kiwi.liu@mediatek.corp-partner.google.com>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Enric Balletbo i Serra <eballetbo@kernel.org>, 
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>
-In-Reply-To: <20240805065051.3129354-1-treapking@chromium.org>
-References: <20240805065051.3129354-1-treapking@chromium.org>
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8183: Remove clock from
- mfg_async power domain
-Message-Id: <172293454965.67359.1861418696492290008.b4-ty@collabora.com>
-Date: Tue, 06 Aug 2024 10:55:49 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0ED64A
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722934482; cv=none; b=pgB7rQD8Y+SPsCmfvPNEFXYqqvs5W9I77WUCYrVndNfCF932gOJo65pqTHlvebpbUZyQFL7L12QxA9kC4C/MIjcYKT9PiFjQqUK5Ta3i+zMM9CtxK8wNAd+MUZXsjiJZU7DTMZvoVKqgm/iBLqrHTvqvlJWf6Id6mCj2ZcaNcCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722934482; c=relaxed/simple;
+	bh=Iyf3zdABSVg02IOekBnUIw0m3tMKfI4cdpn0Jy57kgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=foOGArycc5gTohznDO8fFntPP9P1TNz5PWw6OFZpndVNobFkS2YctsKf0zqSpwEgQtPppmMo2rYP/DLNzDq9XaFA72jyljES3FMsVmWzxJnCUZ4+A/tYhXy5bRrrbzFIygerWrt58JasQ4hQPhZdeqzma5mAvZfSb1zKSIJ69ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bsTOG6Pg; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722934481; x=1754470481;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Iyf3zdABSVg02IOekBnUIw0m3tMKfI4cdpn0Jy57kgE=;
+  b=bsTOG6PgJjBXS1Bfz67SYJdy2Pd8NSMXUeDg8aWWhFy2ktrZPxAe8OlR
+   rH2zPW/ZDoz2u2ZYEu/R1vVGV2hL1q+PzUSVQ11Asi/c6lqY9EfW639oB
+   ffwYPhWv+jQjW1gSCxkY4egaxCPt6UXwINLijJcgYPuRwUGvpXSV4ylQ4
+   YgwLKByXeb6evSrObOlflAkyk2NZwcOHg6AFLe/XsNIGG/59fkL/yRtzv
+   C2R68yLWOrozTdUbVy+Je2Nk9E3p0Noo3+fqIug/kaCKySFUdtJFm4CS3
+   Z/osEE/9f+Ux/el1sVEk5MMEPZThdapRX/vbMQFhgv010+l1Nkqg7zYcA
+   Q==;
+X-CSE-ConnectionGUID: GYaq354PQEq1gngkD7OdeQ==
+X-CSE-MsgGUID: oxcS4klxQy6ABNHU5i/m/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="21115838"
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="21115838"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 01:54:40 -0700
+X-CSE-ConnectionGUID: XTvT/GwVR6i1J0gFExicYw==
+X-CSE-MsgGUID: 0RcR880GT5WdhZ2I/7E1Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,267,1716274800"; 
+   d="scan'208";a="61264296"
+Received: from aravind-dev.iind.intel.com (HELO [10.145.162.146]) ([10.145.162.146])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 01:54:34 -0700
+Message-ID: <35971288-2142-4dc4-8ce1-62b730fa9b44@linux.intel.com>
+Date: Tue, 6 Aug 2024 14:27:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
-X-ZohoMailClient: External
-
-On Mon, 05 Aug 2024 14:50:23 +0800, Pin-yen Lin wrote:
-> This clock dependency introduced a mutual dependency between mfg_async
-> power domain and mt8183-mfgcfg clock, and Mediatek has confirmed that
-> this dependency is not needed. Remove this to avoid potential deadlock.
-> 
-> 
-
-Applied to v6.11-next/dts64, thanks!
-
-[1/1] arm64: dts: mediatek: mt8183: Remove clock from mfg_async power domain
-      commit: 8294c090a05d10fa17fc63ffdaa643f1d123addc
-
-Cheers,
-Angelo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drm/xe/uapi: Bring back reset uevent
+To: Raag Jadav <raag.jadav@intel.com>, lucas.demarchi@intel.com,
+ thomas.hellstrom@linux.intel.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, himal.prasad.ghimiray@intel.com,
+ francois.dugast@intel.com, rodrigo.vivi@intel.com, anshuman.gupta@intel.com
+References: <20240806043231.624645-1-raag.jadav@intel.com>
+Content-Language: en-US
+From: Aravind Iddamsetty <aravind.iddamsetty@linux.intel.com>
+In-Reply-To: <20240806043231.624645-1-raag.jadav@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
+On 06/08/24 10:02, Raag Jadav wrote:
+
+This change  was originally sent by Himal, so may be you should keep his authorship.
+
+
+> From: Lucas De Marchi <lucas.demarchi@intel.com>
+>
+> Bring back uevent for gt reset failure with better uapi naming.
+> With this in place we can receive failure event using udev.
+>
+> $ udevadm monitor --property --kernel
+> monitor will print the received events for:
+> KERNEL - the kernel uevent
+>
+> KERNEL[871.188570] change   /devices/pci0000:00/0000:00:01.0/0000:01:00.0/0000:02:01.0/0000:03:00.0 (pci)
+> ACTION=change
+> DEVPATH=/devices/pci0000:00/0000:00:01.0/0000:01:00.0/0000:02:01.0/0000:03:00.0
+> SUBSYSTEM=pci
+> DEVICE_STATUS=NEEDS_RESET
+> REASON=GT_RESET_FAILED
+> TILE_ID=0
+> GT_ID=0
+> DRIVER=xe
+> PCI_CLASS=30000
+> PCI_ID=8086:56B1
+> PCI_SUBSYS_ID=8086:1210
+> PCI_SLOT_NAME=0000:03:00.0
+> MODALIAS=pci:v00008086d000056B1sv00008086sd00001210bc03sc00i00
+> SEQNUM=6104
+>
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> ---
+>  drivers/gpu/drm/xe/xe_gt.c | 27 +++++++++++++++++++++++++--
+>  include/uapi/drm/xe_drm.h  | 17 +++++++++++++++++
+>  2 files changed, 42 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/xe/xe_gt.c b/drivers/gpu/drm/xe/xe_gt.c
+> index b04e47186f5b..5ceef0059861 100644
+> --- a/drivers/gpu/drm/xe/xe_gt.c
+> +++ b/drivers/gpu/drm/xe/xe_gt.c
+> @@ -740,6 +740,30 @@ static int do_gt_restart(struct xe_gt *gt)
+>  	return 0;
+>  }
+>  
+> +static void xe_uevent_gt_reset_failure(struct pci_dev *pdev, u8 tile_id, u8 gt_id)
+> +{
+> +	char *reset_event[5];
+> +
+> +	reset_event[0] = DRM_XE_RESET_REQUIRED_UEVENT;
+> +	reset_event[1] = DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT;
+> +	reset_event[2] = kasprintf(GFP_KERNEL, "TILE_ID=%d", tile_id);
+> +	reset_event[3] = kasprintf(GFP_KERNEL, "GT_ID=%d", gt_id);
+> +	reset_event[4] = NULL;
+> +	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, reset_event);
+> +
+> +	kfree(reset_event[2]);
+> +	kfree(reset_event[3]);
+> +}
+> +
+> +static void gt_reset_failed(struct xe_gt *gt, int err)
+> +{
+> +	xe_gt_err(gt, "reset failed (%pe)\n", ERR_PTR(err));
+> +
+> +	/* Notify userspace about gt reset failure */
+> +	xe_uevent_gt_reset_failure(to_pci_dev(gt_to_xe(gt)->drm.dev),
+> +				   gt_to_tile(gt)->id, gt->info.id);
+> +}
+> +
+>  static int gt_reset(struct xe_gt *gt)
+>  {
+>  	int err;
+> @@ -795,8 +819,7 @@ static int gt_reset(struct xe_gt *gt)
+>  	XE_WARN_ON(xe_uc_start(&gt->uc));
+>  	xe_pm_runtime_put(gt_to_xe(gt));
+>  err_fail:
+> -	xe_gt_err(gt, "reset failed (%pe)\n", ERR_PTR(err));
+> -
+> +	gt_reset_failed(gt, err);
+>  	xe_device_declare_wedged(gt_to_xe(gt));
+Also, we might want to have a RESET_REQUIRED event whenever
+device is wedged.
+
+
+Thanks,
+Aravind.
+>  
+>  	return err;
+> diff --git a/include/uapi/drm/xe_drm.h b/include/uapi/drm/xe_drm.h
+> index 19619d4952a8..9ea3be97535e 100644
+> --- a/include/uapi/drm/xe_drm.h
+> +++ b/include/uapi/drm/xe_drm.h
+> @@ -20,6 +20,7 @@ extern "C" {
+>   *   2. Extension definition and helper structs
+>   *   3. IOCTL's Query structs in the order of the Query's entries.
+>   *   4. The rest of IOCTL structs in the order of IOCTL declaration.
+> + *   5. uEvents
+>   */
+>  
+>  /**
+> @@ -1686,6 +1687,22 @@ struct drm_xe_oa_stream_info {
+>  	__u64 reserved[3];
+>  };
+>  
+> +/**
+> + * DOC: uevent generated by xe on it's pci node.
+> + *
+> + * DRM_XE_RESET_REQUIRED_UEVENT - Event is generated when device needs reset.
+> + * The REASON is provided along with the event for which reset is required.
+> + * On the basis of REASONS, additional information might be supplied.
+> + */
+> +#define DRM_XE_RESET_REQUIRED_UEVENT "DEVICE_STATUS=NEEDS_RESET"
+> +
+> +/**
+> + * DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT - Reason provided to DRM_XE_RESET_REQUIRED_UEVENT
+> + * incase of gt reset failure. The additional information supplied is tile id and
+> + * gt id of the gt unit for which reset has failed.
+> + */
+> +#define DRM_XE_RESET_REQUIRED_UEVENT_REASON_GT "REASON=GT_RESET_FAILED"
+> +
+>  #if defined(__cplusplus)
+>  }
+>  #endif
 
