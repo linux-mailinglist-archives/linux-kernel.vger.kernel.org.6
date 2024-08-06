@@ -1,184 +1,118 @@
-Return-Path: <linux-kernel+bounces-276697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D929949728
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A40794972C
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 963ED282D8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF2D282C85
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF3175804;
-	Tue,  6 Aug 2024 17:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50417580C;
+	Tue,  6 Aug 2024 17:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="GUIxXTjD"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QF44wfjL"
+Received: from relay.smtp-ext.broadcom.com (saphodev.broadcom.com [192.19.144.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9167A74E26;
-	Tue,  6 Aug 2024 17:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B09D381C4;
+	Tue,  6 Aug 2024 17:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722966901; cv=none; b=mks5aFXdjsuSIc6inhydfLIjcBTWmFp3cIv5kl65JhV5PR3pDg+u1SwHfUf4ilRlF3K/vbTId2d5811Qlp1T3KlkBBSvJ7pjzptTus+XW1nveknpzgJKW8PLTx0hypyhbV/97SF2TIToYyzSlZ/0b8xHHxKhjnjfcdxalwcnPO8=
+	t=1722967032; cv=none; b=QV4EiGJX/hokHBliVUmMn72rBo32U7+1/+aCj50iIJTFROdTOT9f14VxIHP2NpLx0XB2XCDo+FZEbt+S65Fhfdr2ZrzmBVVEsafrkoTPjmxJwlduWBWNloO5fhzmia7e8rroUNEbAl1jqlmoG6psRBfgYPBMoXZeIA0VqwUoGEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722966901; c=relaxed/simple;
-	bh=pITPNxK6NWuL3mgYX/ey5UVzu5AmbaccLKqozNMWZMY=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ChT470qQvJX0SYM2cHhvq+R4XP+d5VLCgHvZqmf/SRhJEDZByiqQ0vxC98B58k8PiBlfDykeU6m/kVa2w4gRA15WsWV9hfSh1XqgXVWEaEfYopMhMc9sZbp87YvZNrzB9mt3mFF/eNaOVn8r6pNqIuOei6PDMV51JDdYzXOfiIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=GUIxXTjD; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [127.0.0.1] (254C310E.nat.pool.telekom.hu [37.76.49.14])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 2CEABE450D;
-	Tue,  6 Aug 2024 17:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1722966897;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g9xC00bI7x2D+/ssVTv2fzqiBPxsHC1NlAvczmix+jw=;
-	b=GUIxXTjDHIauCrUXq8q1KdmQ6PL2uU71zUvJ5KOQelYo6sjUQ4sUKntdwBE0VCysq2n+Dg
-	KcxS/6N4L/X7Sg77feb8PzRFsLrF8axWT2yHq5yi+gZr0Ti7e37ZxpmRS9ZldwEzeL6RZD
-	dmJlY5Y7MgSaRrBDUlsjfdzNfv+fVeDml1VrFuW9sMbNGgHwA9vHhMyxsPlIzDWa7uxPkV
-	J/ELvb6IjI0fx0MDrQnsfRBrl7BoTVlRTbguyZ5tMia1cs20FoF8q9zGoFGRcQQ+si79PX
-	O+xPcEOeRusyiI/zxKtNrx23DmCyyyj34tDGSggIDJxj6XuMrADdcCP0KM/P0Q==
-Date: Tue, 06 Aug 2024 19:54:56 +0200
-From: =?ISO-8859-1?Q?Barnab=E1s_Cz=E9m=E1n?= <barnabas.czeman@mainlining.org>
-To: Jonathan Cameron <jic23@kernel.org>
-CC: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonathan Albrieux <jonathan.albrieux@gmail.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux@mainlining.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/3=5D_iio=3A_magnetometer=3A_?=
- =?US-ASCII?Q?ak8975=3A_Fix_reading_for_ak099xx_sensors?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240806171925.7c512c63@jic23-huawei>
-References: <20240806-ak09918-v2-0-c300da66c198@mainlining.org> <20240806-ak09918-v2-1-c300da66c198@mainlining.org> <20240806171925.7c512c63@jic23-huawei>
-Message-ID: <45915CD6-A9BB-4071-ABCC-8DE76F7066C3@mainlining.org>
+	s=arc-20240116; t=1722967032; c=relaxed/simple;
+	bh=lB7A8e4Ovq/7ddI2/3L5U//TjfEpAgLmMbHp5KMmNzY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ESInWpbiYN9/lpssD/b1VpiKetEcGaV9MTMjY8PQh5fSbCowiSj0YqoQ/i30QT0C50hwkrpPfdrHPpfyhy2KSkXXvRrT7/2jOOh8HJi4a69WL55iMrU6UPHgBxo3hApia5JSb33B8603AI+cbCo2vDoJEJ1/U4MDo3LgXWBECW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QF44wfjL; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 919AFC0000D8;
+	Tue,  6 Aug 2024 10:57:03 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 919AFC0000D8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1722967023;
+	bh=lB7A8e4Ovq/7ddI2/3L5U//TjfEpAgLmMbHp5KMmNzY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QF44wfjLGrt1lZTxZVTcbR2IlJ1KQSjad2Z2Auz7QE+pjofsSNwC6+zR8bdcHtrS4
+	 k2v5x4Dm7Oqcq0vH3PaJHpr/FWX+eKmZf4l9vEHFGKOg4NuGd+4Sjq3SRiKuNWAoQ4
+	 F9rYQC/htNBuG1pE3JSFoHDfhGLgKs/voECi3SXY=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id E5F2018041CAC4;
+	Tue,  6 Aug 2024 10:57:00 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Doug Berger <opendmb@gmail.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net v2] net: bcmgenet: Properly overlay PHY and MAC Wake-on-LAN capabilities
+Date: Tue,  6 Aug 2024 10:56:59 -0700
+Message-Id: <20240806175659.3232204-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+Some Wake-on-LAN modes such as WAKE_FILTER may only be supported by the MAC,
+while others might be only supported by the PHY. Make sure that the .get_wol()
+returns the union of both rather than only that of the PHY if the PHY supports
+Wake-on-LAN.
 
+Fixes: 7e400ff35cbe ("net: bcmgenet: Add support for PHY-based Wake-on-LAN")
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+Changes in v2:
 
-On August 6, 2024 6:19:25 PM GMT+02:00, Jonathan Cameron <jic23@kernel=2Eo=
-rg> wrote:
->On Tue, 06 Aug 2024 08:10:18 +0200
->Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas=2Eczeman@mainlining=2Eorg> wrote=
-:
->
->Hi Barnab=C3=A1s,
->
->Welcome to IIO=2E
->
->> ST2 register read should be placed after read measurment data,
->> because it will get correct values after it=2E
->
->What is the user visible result of this? Do we detect errors when none
->are there?  Do we have a datasheet reference for the status being
->update on the read command, not after the trigger?
+- corrected email address
 
-Second read will fail=2E In the datasheet ST2 comes after measurment data =
-read=2E Here is some explanation from datasheet=2E
+ drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-"When ST2 register is read, AK09918 judges that data reading is finished=
-=2E Stored measurement data is
-protected during data reading and data is not updated=2E By reading ST2 re=
-gister, this protection is
-released=2E It is required to read ST2 register after data reading=2E"
+diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c b/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
+index 1248792d7fd4..0715ea5bf13e 100644
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c
+@@ -42,19 +42,15 @@ void bcmgenet_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+ 	struct bcmgenet_priv *priv = netdev_priv(dev);
+ 	struct device *kdev = &priv->pdev->dev;
+ 
+-	if (dev->phydev) {
++	if (dev->phydev)
+ 		phy_ethtool_get_wol(dev->phydev, wol);
+-		if (wol->supported)
+-			return;
+-	}
+ 
+-	if (!device_can_wakeup(kdev)) {
+-		wol->supported = 0;
+-		wol->wolopts = 0;
++	/* MAC is not wake-up capable, return what the PHY does */
++	if (!device_can_wakeup(kdev))
+ 		return;
+-	}
+ 
+-	wol->supported = WAKE_MAGIC | WAKE_MAGICSECURE | WAKE_FILTER;
++	/* Overlay MAC capabilities with that of the PHY queried before */
++	wol->supported |= WAKE_MAGIC | WAKE_MAGICSECURE | WAKE_FILTER;
+ 	wol->wolopts = priv->wolopts;
+ 	memset(wol->sopass, 0, sizeof(wol->sopass));
+ 
+-- 
+2.34.1
 
-So if ST2 is read before measurment it will stuck at protected mode=2E
->>
->Needs a Fixes tag to let us know how far to backport the fix=2E
-I think it is broken since 09912 was added but i cannot verify i have only=
- devices with 09918=2E
->
->A few comments inline=2E
->=20
->> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas=2Eczeman@mainli=
-ning=2Eorg>
->> ---
->>  drivers/iio/magnetometer/ak8975=2Ec | 31 +++++++++++++++--------------=
---
->>  1 file changed, 15 insertions(+), 16 deletions(-)
->>=20
->> diff --git a/drivers/iio/magnetometer/ak8975=2Ec b/drivers/iio/magnetom=
-eter/ak8975=2Ec
->> index dd466c5fa621=2E=2E925d76062b3e 100644
->> --- a/drivers/iio/magnetometer/ak8975=2Ec
->> +++ b/drivers/iio/magnetometer/ak8975=2Ec
->> @@ -692,22 +692,7 @@ static int ak8975_start_read_axis(struct ak8975_da=
-ta *data,
->>  	if (ret < 0)
->>  		return ret;
->> =20
->> -	/* This will be executed only for non-interrupt based waiting case */
->> -	if (ret & data->def->ctrl_masks[ST1_DRDY]) {
->> -		ret =3D i2c_smbus_read_byte_data(client,
->> -					       data->def->ctrl_regs[ST2]);
->> -		if (ret < 0) {
->> -			dev_err(&client->dev, "Error in reading ST2\n");
->> -			return ret;
->> -		}
->> -		if (ret & (data->def->ctrl_masks[ST2_DERR] |
->> -			   data->def->ctrl_masks[ST2_HOFL])) {
->> -			dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
->> -			return -EINVAL;
->> -		}
->> -	}
->> -
->This completely removes the check from the _fill_buffer() path
->
->> -	return 0;
->> +	return !(ret & data->def->ctrl_masks[ST1_DRDY]);
->returning a positive value here is unusual enough you should add a commen=
-t for
->the function + use that return value=2E
->
->>  }
->> =20
->>  /* Retrieve raw flux value for one of the x, y, or z axis=2E  */
->> @@ -731,6 +716,20 @@ static int ak8975_read_axis(struct iio_dev *indio_=
-dev, int index, int *val)
->>  	ret =3D i2c_smbus_read_i2c_block_data_or_emulated(
->>  			client, def->data_regs[index],
->>  			sizeof(rval), (u8*)&rval);
->No longer gated on ret & data->def->ctrl_masks[ST1_DRDY] which seems unin=
-tentional=2E
->
->Still need a check on ret here=2E
->
->> +	ret =3D i2c_smbus_read_byte_data(client,
->> +				       data->def->ctrl_regs[ST2]);
->> +	if (ret < 0) {
->> +		dev_err(&client->dev, "Error in reading ST2\n");
->> +		goto exit;
->> +	}
->> +
->> +	if (ret & (data->def->ctrl_masks[ST2_DERR] |
->> +		   data->def->ctrl_masks[ST2_HOFL])) {
->> +		dev_err(&client->dev, "ST2 status error 0x%x\n", ret);
->> +		ret =3D -EINVAL;
->> +		goto exit;
->> +	}
->> +
->>  	if (ret < 0)
->>  		goto exit;
->
->And this one ends up redundant I think which suggests to me the
->code is inserted a few lines early=2E
->
->> =20
->>=20
->
 
