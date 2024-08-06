@@ -1,116 +1,93 @@
-Return-Path: <linux-kernel+bounces-276665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE6D9496B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:28:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78AA9496B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 19:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C458328803D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:28:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9C771C20B25
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 17:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186D852F9B;
-	Tue,  6 Aug 2024 17:28:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B045F4F8A0;
+	Tue,  6 Aug 2024 17:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehnhhqF9"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="xG9LQTtm"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FE444376;
-	Tue,  6 Aug 2024 17:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D710482E2
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 17:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722965305; cv=none; b=cElzNf1uIjsTbsqSvtJFSVoNdcoeA6z8/RXgxFKvlbim3mXFBWF33+HMzLjtokiXyn3LAhJOIsbsy/XjhtwDMzTAVUHS1EqEkpDrewcA+WnjzH/Jmwe0kfPvgMq3Ta+kpO+FA2BlE33vTq/EutzCsNh/6cptTIq3lu6NBxaps7I=
+	t=1722965318; cv=none; b=lPaljSMYe94nOJaBm+kOxOXmBCZz8/i2wUHDIlrP7eYlrYdY0BG2JseROl99k/sVHyRN2OZLNtD6zdIPzJDM7Ne9S9UADOIIVv7jHqKtl7xB4VMgQA0nEnYyoCRZ1u84JNygEfwMbJH7EcQzCHEYpiMc2m9ayO3ClW78z3LONWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722965305; c=relaxed/simple;
-	bh=WOQzR1oQzYIbVgPmprQSRRrJW2JnPO/HsIpHRpW9kFQ=;
+	s=arc-20240116; t=1722965318; c=relaxed/simple;
+	bh=CMdCGpnpB5DtRAjVfmvBk5vYaOmVs69vYT7EPaLyuGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JEyWqUjROYCZDeOqmkIQtJAz02p5N6Me60o2BeT1S9LSUODoSI4/U71fRx1j9B+V2SXcE1oBOWPcTiBnzP2U/+ngw6R+KCabs82ipna6b+c5f5YVHxG1SKL4+2mRmNL3s543+mHRWf3K+TU4XeBUuP2Ry69cFEaZvPFN4yAueVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehnhhqF9; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-493e8ef36b4so263040137.2;
-        Tue, 06 Aug 2024 10:28:23 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tqvYRBHfeERXDYeVOgA5M3iXXjDdMsAmxhviRMXHssN2841A6mRoWfNXmTLipr1p5QOIiG6Vjxv3NRdc2M5kOBjmIs9668G6AN5/9nqHjEzPUzmXR5wQazQVmd8n4oiti47UjP/dP/t9UomU5uGoGJkAEwkIw14Era+GeGC2CWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=xG9LQTtm; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-66526e430e0so7245807b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 10:28:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722965302; x=1723570102; darn=vger.kernel.org;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1722965315; x=1723570115; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T9vnUaR6wRRGopZQQHqDc26o4aOyMH38ZUHe9FK1Kw0=;
-        b=ehnhhqF9RG1z3rXw8UXp3kI8kkB0XLj2sPQZjmGGyeSTXeGTz6LQSzch6SwKoy/ipl
-         eiR27SGgdynaMI104Eg/TG/xZvW3yZu6U07MHpRGOXFMtUNY4ofDnyj6hqKmQZweP43+
-         6CueozjnRS2XLNnJuTIaQnEpdVuOuw55CqQrSGbluUYSmCBfHTcoQFl6p6tZ6YL/IvAz
-         2oVEl1IdLLlI/HKJ4/2q9gsRWDtxWsfduuK4Zp28D64qUQa3rh/tzHYzqLT4qj2Ay9so
-         D0lUGPmiuRmvzKl5mGZI8Clt1SAWWJ+dhcQzvTdNdiy1JpGQ1Y1dHutard0FH223zwqN
-         cYmw==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZjljyosPAZ7fSFa2kkPBPoToHoCOQPJRAdwnUNgGi1U=;
+        b=xG9LQTtmcPngA810s428o7RkjcdCg7YguleepswfjLtoOiV5DVIntFUZwItU4Vu5YI
+         PfStcw27Jxw4tLWAjfB9MTDLh5RPF+RnUvuyLGNspKX2D2e2WfEoifR0+/3dIVWqhdmN
+         1TC/Kk1vGkTRS9/fGt/v29AYus133kbPbGXUpFomO1M5NUkCgzeFBZaLB90+OuYZZntY
+         8x0GVmBUFkAElln+eF1ofBRKL9GTCp9gTJWiyR3xIa3Q3TlLzD6uzSDGHv2KXEbRM7vJ
+         MzNE6o7+5GSaRZoB0n7IPODz7/WmUXxrpTvvds2hZZbkMkOaiJth6D5tG9Ag5I5r2bEF
+         TCIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722965302; x=1723570102;
+        d=1e100.net; s=20230601; t=1722965315; x=1723570115;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T9vnUaR6wRRGopZQQHqDc26o4aOyMH38ZUHe9FK1Kw0=;
-        b=HLWtIP7prJu1Ana4CXFdKqtz/IR9kLodloyhT1U81kt6H4qPYO9vAM1UfeyAtSaDno
-         fI9vyJjDRraX0Oao+8nwms/J0dVxEarLR8U95O70kf5zNZ4Bd+QQt7Bb9JLm6YOEd3KA
-         6FvxWKyszvdhPX9zJU7q28UGWX1Xb3IdMsDppM4sr5azQt9ajyIM86LTPnlON3V9u54u
-         VtI2LoitcfkS4pM9brWuHi/RKvT/kp52/sLEMIExNttnUIC0KLxQJKidXsKyG/kj5Ure
-         H1c8IhEYGwLKYn3wkGjCf79fAyV/PPaqKgLf0b35vd3WNofEWPdT7Qipv7CjDgCp21dc
-         9B8A==
-X-Forwarded-Encrypted: i=1; AJvYcCX7k+lJNsqnJCpAxT+mrTvIwVGWVQyIMmwxyXWXUTb0U/3QeoRAkSM7Beo+ec28lGCMvrBUhxm8oziAtLm/IbHE9Gtj29ki6b9p3eW1rCNFmA3i+z+IhzUt+BE+mwFe/ItLAS1n3b0n3QP+JKg=
-X-Gm-Message-State: AOJu0YyXrMoNHhSUnghvdSgz8w8puihT4m+FZB6ttubFuNOVF1L++nm1
-	AD0uaRKVL6eLJlooSezX+EEmUZa+OM7echE8maERrxeKz/IExrM9
-X-Google-Smtp-Source: AGHT+IFB0y+M9Oc1CoQ2lVXqpIciFEC2ygrvj68zOxkubs8DCO/oCBgJk2Lkrlac1mnmzqIBMfk1LQ==
-X-Received: by 2002:a05:6102:d8f:b0:493:b0c2:ad3c with SMTP id ada2fe7eead31-4945bed096cmr22410368137.22.1722965302554;
-        Tue, 06 Aug 2024 10:28:22 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a34f78adb9sm476610385a.124.2024.08.06.10.28.21
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZjljyosPAZ7fSFa2kkPBPoToHoCOQPJRAdwnUNgGi1U=;
+        b=B/IZQswcxmuepkecUzur1y3TsNLwQmuZBzYDhOaAmbuMDLNLUC5wq9UN61xnxMxYQr
+         kPxpXvwPrdTBgsiN+tDafhIk2zqIAvdrjPUDZwzonxXBrP/gk5zm9sdSqbwlDvJKmOjv
+         nXTN1LYpzK15ncwsKIqOed5mHoe73JngpTHsmhA3g0Go53n86FiV2A9hYrizJawi2ta/
+         5WZqAysfIOdC2tmibdFmq5H01C7OU2OXL9zCd1Kw3L/8wtBdOCYIdVrHYQXTbaYjAFeh
+         pchcllyOCvQ7FdDiHEzXh7mIya58cqUqTa+iOonJUi8tVI0MnCxXF+QxBFf0vB21E4CP
+         imqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWApJnTM17zhcefSVULbtpJqf+uo+cFIeaU5RyJ86KLVxqVsZBMRdYB42mhpYPzCIoTcpP7X2ixvVNDLVn/c6V3Gp5icApFis311RU9
+X-Gm-Message-State: AOJu0Yxc6IfrrtVZwureEF+W0qQism4y9/jCnA2KSO6mF2Cfv0F/8i+Z
+	Df+Cc0KUSrPKLM/QenUTi7IXlmmEIsmSySDIkrKsJQ1ChAhYFqD3NaMYPW6rC88hVaRxxtNwUgh
+	8
+X-Google-Smtp-Source: AGHT+IE5yQrzHeTUKXSSCIgGpDJ9JVkB51z02PE93hN7JzChXv6zuyx4GP08AmneFbuyXeQdtH+HGQ==
+X-Received: by 2002:a0d:d107:0:b0:665:3394:c068 with SMTP id 00721157ae682-68964390e70mr169273227b3.37.1722965315536;
+        Tue, 06 Aug 2024 10:28:35 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c839d65sm48454276d6.82.2024.08.06.10.28.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 10:28:22 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 93BB2120006C;
-	Tue,  6 Aug 2024 13:28:21 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 06 Aug 2024 13:28:21 -0400
-X-ME-Sender: <xms:NV2yZmTgAfArMt_wJJkvCxUWMVmunu0_1RzDmDKQjyukMQQ_d26n_w>
-    <xme:NV2yZrx-jLx9AwBqc8Dc4O43XVvvR_msuY7YNLypTsuYPQFxF1BURctuHCGI8dNOq
-    ns6KYCDx1lQcXA3AQ>
-X-ME-Received: <xmr:NV2yZj02X1ZSeUoz93Esk081oi2Ba7MUbgnuyXccDm3UDJXI9zI9lL4B0FqrYw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkeekgdduuddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeejtefftdfgueehgffhkedttddtgeetvdeukeetueeggffhhefffeeuledu
-    ieefveenucffohhmrghinhepiihulhhiphgthhgrthdrtghomhenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgr
-    uhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsoh
-    hquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghr
-    tghpthhtoheptd
-X-ME-Proxy: <xmx:NV2yZiBSZHz0bPQPUDlVFu7n_p7HPyTH4EMdQjWUcGfX4HY0uqTO_w>
-    <xmx:NV2yZvh7Q8oW-2gPrkKx2-i5lg4nI-YiOnF_V5zsRg-Dv-mfRTavyw>
-    <xmx:NV2yZuo0o5kY3gFa1uPlG-GbIbs9xpPKsMS3EBpnTajOSWcxVn8fAw>
-    <xmx:NV2yZihVXTLC5o_N11UoEGXMN3gsV2T3hBPkMx0jrtN30eUpChlF2g>
-    <xmx:NV2yZuT-z4U_qa3jMXw1-jX6yQV5cfFU4LM1zBzBvyQzpaE1coidt9hP>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 6 Aug 2024 13:28:20 -0400 (EDT)
-Date: Tue, 6 Aug 2024 10:27:17 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, llvm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] rust: add intrinsics to fix `-Os` builds
-Message-ID: <ZrJc9UE3xAV1ezdG@boqun-archlinux>
-References: <20240806150619.192882-1-ojeda@kernel.org>
+        Tue, 06 Aug 2024 10:28:35 -0700 (PDT)
+Date: Tue, 6 Aug 2024 13:28:30 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, akpm@linux-foundation.org,
+	linux-mm@kvack.org, riel@surriel.com, shakeel.butt@linux.dev,
+	roman.gushchin@linux.dev, yuzhao@google.com, baohua@kernel.org,
+	ryan.roberts@arm.com, rppt@kernel.org, willy@infradead.org,
+	cerasuolodomenico@gmail.com, corbet@lwn.net,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 0/6] mm: split underutilized THPs
+Message-ID: <20240806172830.GD322282@cmpxchg.org>
+References: <dc00a32f-e4aa-4f48-b82a-176c9f615f3e@redhat.com>
+ <3cd1b07d-7b02-4d37-918a-5759b23291fb@gmail.com>
+ <73b97a03-3742-472f-9a36-26ba9009d715@gmail.com>
+ <95ed1631-ff62-4627-8dc6-332096e673b4@redhat.com>
+ <01899bc3-1920-4ff2-a470-decd1c282e38@gmail.com>
+ <4b9a9546-e97b-4210-979b-262d8cf37ba0@redhat.com>
+ <64c3746a-7b44-4dd6-a51b-e5b90557a30a@gmail.com>
+ <fc63e14d-8269-4db8-9ed2-feb2c5b38c6c@redhat.com>
+ <204af83b-57ec-40d0-98c0-038bfeb393a3@gmail.com>
+ <58025293-c70f-4377-b8be-39994136af83@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,106 +96,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806150619.192882-1-ojeda@kernel.org>
+In-Reply-To: <58025293-c70f-4377-b8be-39994136af83@redhat.com>
 
-On Tue, Aug 06, 2024 at 05:06:19PM +0200, Miguel Ojeda wrote:
-> Alice reported [1] that an arm64 build failed with:
+On Thu, Aug 01, 2024 at 08:36:32AM +0200, David Hildenbrand wrote:
+> I just added another printf to postcopy_ram_supported_by_host(), where 
+> we temporarily do a UFFDIO_REGISTER on some test area.
 > 
->     ld.lld: error: undefined symbol: __extendsfdf2
->     >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
->     >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
->     >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
->     >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
+> Sensing UFFD support # postcopy_ram_supported_by_host()
+> Sensing UFFD support
+> Writing received pages during precopy # ram_load_precopy()
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Writing received pages during precopy
+> Disabling THP: MADV_NOHUGEPAGE # postcopy_ram_prepare_discard()
+> Discarding pages # loadvm_postcopy_ram_handle_discard()
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Discarding pages
+> Registering UFFD # postcopy_ram_incoming_setup()
 > 
->     ld.lld: error: undefined symbol: __truncdfsf2
->     >>> referenced by core.a6f5fc5794e7b7b3-cgu.0
->     >>>               rust/core.o:(<f32>::midpoint) in archive vmlinux.a
+> We could think about using this "ever user uffd" to avoid the shared 
+> zeropage in most processes.
 > 
-> Rust 1.80.0 or later together with `CONFIG_CC_OPTIMIZE_FOR_SIZE=y`
-> is what triggers it.
-> 
-> In addition, x86_64 builds also fail the same way.
-> 
-> Similarly, compiling with Rust 1.82.0 (currently in nightly) makes
-> another one appear, possibly due to the LLVM 19 upgrade there:
-> 
->     ld.lld: error: undefined symbol: __eqdf2
->     >>> referenced by core.20495ea57a9f069d-cgu.0
->     >>>               rust/core.o:(<f64>::next_up) in archive vmlinux.a
->     >>> referenced by core.20495ea57a9f069d-cgu.0
->     >>>               rust/core.o:(<f64>::next_down) in archive vmlinux.a
-> 
-> Gary adds [1]:
-> 
-> > Usually the fix on rustc side is to mark those functions as `#[inline]`
-> >
-> > All of {midpoint,next_up,next_down} are indeed unstable functions not
-> > marked as inline...
-> 
-> Fix all those by adding those intrinsics to our usual workaround.
-> 
-> Cc: Gary Guo <gary@garyguo.net>
-> Reported-by: Alice Ryhl <aliceryhl@google.com>
-> Closes: https://rust-for-linux.zulipchat.com/#narrow/stream/288089-General/topic/v6.2E11-rc1.20doesn't.20build.20for.20arm64/near/455637364
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Of course, there might be other applications where that wouldn't work, 
+> but I think this behavior (write to area before enabling uffd) might be 
+> fairly QEMU specific already.
 
-Put this one into rust-dev and confirm this could fix the issue with
-Rust 1.80. I also add a test with CONFIG_CC_OPTIMIZE_FOR_SIZE=y in my
-rust-dev script, so we can catch the similar issues earlier.
+It makes me a bit uneasy to hardcode this into the kernel. It's fairly
+specific to qemu/criu, and won't protect usecases that behave slightly
+differently.
 
-Tested-by: Boqun Feng <boqun.feng@gmail.com>
+It would also give userfaultfd users that aren't susceptible to this
+particular scenario a different code path.
 
-Regards,
-Boqun
+> Avoiding the shared zeropage has the benefit that a later write fault 
+> won't have to do a TLB flush and can simply install a fresh anon page.
 
-> ---
->  rust/Makefile             | 4 ++--
->  rust/compiler_builtins.rs | 3 +++
->  2 files changed, 5 insertions(+), 2 deletions(-)
+That's true - although if that happens frequently, it's something we
+might want to tune the shrinker for anyway. If subpages do get used
+later, we probably shouldn't have split the THP to begin with.
+
+IMO the safest bet would be to use the zero page unconditionally.
+
+> > 		return false;
+> > 
+> > 	newpte = pte_mkspecial(pfn_pte(page_to_pfn(ZERO_PAGE(pvmw->address)),
+> > 					pvmw->vma->vm_page_prot));
+> > 
+> > 	set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
 > 
-> diff --git a/rust/Makefile b/rust/Makefile
-> index 1f10f92737f2..77836388377d 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -354,8 +354,8 @@ rust-analyzer:
->  		$(if $(KBUILD_EXTMOD),$(extmod_prefix),$(objtree))/rust-project.json
->  
->  redirect-intrinsics = \
-> -	__addsf3 __eqsf2 __gesf2 __lesf2 __ltsf2 __mulsf3 __nesf2 __unordsf2 \
-> -	__adddf3 __ledf2 __ltdf2 __muldf3 __unorddf2 \
-> +	__addsf3 __eqsf2 __extendsfdf2 __gesf2 __lesf2 __ltsf2 __mulsf3 __nesf2 __truncdfsf2 __unordsf2 \
-> +	__adddf3 __eqdf2 __ledf2 __ltdf2 __muldf3 __unorddf2 \
->  	__muloti4 __multi3 \
->  	__udivmodti4 __udivti3 __umodti3
->  
-> diff --git a/rust/compiler_builtins.rs b/rust/compiler_builtins.rs
-> index bba2922c6ef7..f14b8d7caf89 100644
-> --- a/rust/compiler_builtins.rs
-> +++ b/rust/compiler_builtins.rs
-> @@ -40,16 +40,19 @@ pub extern "C" fn $ident() {
->  define_panicking_intrinsics!("`f32` should not be used", {
->      __addsf3,
->      __eqsf2,
-> +    __extendsfdf2,
->      __gesf2,
->      __lesf2,
->      __ltsf2,
->      __mulsf3,
->      __nesf2,
-> +    __truncdfsf2,
->      __unordsf2,
->  });
->  
->  define_panicking_intrinsics!("`f64` should not be used", {
->      __adddf3,
-> +    __eqdf2,
->      __ledf2,
->      __ltdf2,
->      __muldf3,
-> 
-> base-commit: de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed
-> -- 
-> 2.46.0
-> 
-> 
+> We're replacing a present page by another present page without doing a 
+> TLB flush in between. I *think* this should be fine because the new 
+> present page is R/O and cannot possibly be written to.
+
+It's safe because it's replacing a migration entry. The TLB was
+flushed when that was installed, and since the migration pte is not
+marked present it couldn't have re-established a TLB entry.
 
