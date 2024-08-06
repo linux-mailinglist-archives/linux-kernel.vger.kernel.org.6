@@ -1,182 +1,99 @@
-Return-Path: <linux-kernel+bounces-277033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE07949B60
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:38:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC75B949B63
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57DD51F25113
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:38:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A92372832C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E73173357;
-	Tue,  6 Aug 2024 22:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34739173345;
+	Tue,  6 Aug 2024 22:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="VCyE9X62"
-Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZRMda+aD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A31777F08;
-	Tue,  6 Aug 2024 22:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5CB77F08;
+	Tue,  6 Aug 2024 22:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722983911; cv=none; b=KKpO2BQfptfshomOu63uxIvzgY+7+TS4lMsX6Qi9+B+8IzHucXWTBCSCGRURb/hLhy/mNrm6IE75KXNqi4+wd4xr7lGXFcUeocAHIDgPsq5Gi2+ztjJ4aVvKJm8cEExRvgAwOQb2usqRiJY+DtanG88aKKk2OpbOUa54YFOQ540=
+	t=1722983989; cv=none; b=XlO292GKSfUZ9slEBiKLyh7MMsCkzVsxBGhsAy09tZgt+vCTi1Yhq6gOs5TVBS6MyrpS46kt7y1ZccDcXvUVYo+2EqHTWZ8ce0mC+CRXXGots0c/pKZpS9su0s7djIWPZji6evO+b6cpdN6bBt1pF4C06MjLbPUi8RIiCkvjJmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722983911; c=relaxed/simple;
-	bh=aw2hedcbbQ15LOAsTM/yoeU9d3cY/k87+1xCMRhafE0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KsYeyUdcmX3KgVg/fsOBp60nQj6C7TZBQ9YfssY/QMIkk1bViu0nAJqHicX+82/BrV3mdJN3nIaZNQfIVTvFTwFPF7g4aSQKju46X84Tecv00quLE0mMiGKOn8W9OoHfbGj0rGCse2MsDwif6h6gb3NW8PDyViqs862IKH5HPg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=VCyE9X62; arc=none smtp.client-ip=99.78.197.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1722983910; x=1754519910;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=alT17QHgXA3/bEpwdaU1TeEystIV2QUhqeiAIwN2gs0=;
-  b=VCyE9X62RHgFjfYO+Xhw2tYRDVkGuJu9xtU86XLngWCEIIAehsQCxI6y
-   6Y+cNkhpINK+SP9BpzF+K3m8yK2+KEKZ1g9yXm2IfRE8eCGuQiWwLtJ8B
-   awM5dK7UqFb2vuq9rY/zFIlW2JaPvBTw5/S6kqzOQVuwvA/cO/pwUzEU8
-   4=;
-X-IronPort-AV: E=Sophos;i="6.09,268,1716249600"; 
-   d="scan'208";a="113089742"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 22:38:29 +0000
-Received: from EX19MTAUEC001.ant.amazon.com [10.0.44.209:10650]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.87.234:2525] with esmtp (Farcaster)
- id a6747138-ef4c-4899-80c8-33a03505f3b8; Tue, 6 Aug 2024 22:38:28 +0000 (UTC)
-X-Farcaster-Flow-ID: a6747138-ef4c-4899-80c8-33a03505f3b8
-Received: from EX19MTAUEA001.ant.amazon.com (10.252.134.203) by
- EX19MTAUEC001.ant.amazon.com (10.252.135.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 6 Aug 2024 22:38:27 +0000
-Received: from dev-dsk-jorcrous-2c-c78924fd.us-west-2.amazon.com
- (172.23.179.86) by mail-relay.amazon.com (10.252.134.102) with Microsoft SMTP
- Server id 15.2.1258.34 via Frontend Transport; Tue, 6 Aug 2024 22:38:26 +0000
-Received: by dev-dsk-jorcrous-2c-c78924fd.us-west-2.amazon.com (Postfix, from userid 14178300)
-	id AF5B92EA; Tue,  6 Aug 2024 22:38:26 +0000 (UTC)
-Date: Tue, 6 Aug 2024 22:38:26 +0000
-From: Jordan Crouse <jorcrous@amazon.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-CC: <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	<linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/2] media: camss: Avoid overwriting vfe clock rates
- for 8250
-Message-ID: <20240806223822.GA24117@amazon.com>
-References: <20240802152435.35796-1-jorcrous@amazon.com>
- <20240802152435.35796-3-jorcrous@amazon.com>
- <cc737b05-4476-4ded-9d1c-5924cfbce316@linaro.org>
+	s=arc-20240116; t=1722983989; c=relaxed/simple;
+	bh=jJmEId4R3kd51IiNhFHMyrGgMqYmLtP9jg6gv8iF2/8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XLVTOyT7TcUY28LleTuPLUg6fiV/IBPOdSl6Ce8Q6zncKutpwqYl6JZLXB/JzCwGmmqhmsQH0b2zGhcp2NbFChkNHc+ytQeLd59BcPtK4t3De2uFPlgJREl/Rsf2cJya1ZJNQnYxpWJbOgLoQK6TPMtCZd6LDr460KMOubdHURA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZRMda+aD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 592E3C32786;
+	Tue,  6 Aug 2024 22:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722983989;
+	bh=jJmEId4R3kd51IiNhFHMyrGgMqYmLtP9jg6gv8iF2/8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZRMda+aDNhZBB7biIqVBaqsKAzmfTdkIf1Yoa2TeLrWVE6ulp7wdRlaFWo7ZRf1Zj
+	 VNgrxBVr3tOGrBYX50Qjj5m51QBm5QtwAjWjsjmo6WD918JPcbJK7JK4wc3Lo1xb9o
+	 JMFhe1OqgXmwYNJy7gUjEyTsyGADGodHs4iBcnYQ=
+Date: Tue, 6 Aug 2024 15:39:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Barry Song <21cnbao@gmail.com>
+Cc: zhiguojiang <justinjiang@vivo.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Nick Piggin
+ <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann
+ <arnd@arndb.de>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko
+ <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, Shakeel
+ Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ linux-arch@vger.kernel.org, cgroups@vger.kernel.org, kernel test robot
+ <lkp@intel.com>, opensource.kernel@vivo.com
+Subject: Re: [PATCH v2 0/3] mm: tlb swap entries batch async release
+Message-Id: <20240806153947.1af20ffccfb42f1e8d981d6f@linux-foundation.org>
+In-Reply-To: <CAGsJ_4x1tLEmRFbnUYcNYtV73SyBYpBtAx_syjfcnjrom-R+4w@mail.gmail.com>
+References: <20240731133318.527-1-justinjiang@vivo.com>
+	<20240731091715.b78969467c002fa3a120e034@linux-foundation.org>
+	<dbead7ca-e9a4-4ee8-9247-4e1ba9f6695c@vivo.com>
+	<20240806133823.5cb3f27ef30c42dad5d0c3e8@linux-foundation.org>
+	<CAGsJ_4x1tLEmRFbnUYcNYtV73SyBYpBtAx_syjfcnjrom-R+4w@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cc737b05-4476-4ded-9d1c-5924cfbce316@linaro.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 02, 2024 at 11:20:17PM +0100, Bryan O'Donoghue wrote:
-> 
-> On 02/08/2024 16:24, Jordan Crouse wrote:
-> >On sm8250 targets both the csid and vfe subsystems share a number of
-> >clocks. Commit b4436a18eedb ("media: camss: add support for SM8250 camss")
-> >reorganized the initialization sequence so that VFE gets initialized first
-> >but a side effect of that was that the CSID subsystem came in after and
-> >overwrites the set frequencies on the shared clocks.
-> >
-> >Empty the frequency tables for the shared clocks in the CSID resources so
-> >they won't overwrite the clock rates that the VFE has already set.
-> >
-> >Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
-> >---
-> >
-> >  drivers/media/platform/qcom/camss/camss.c | 21 +++++++++++++++------
-> >  1 file changed, 15 insertions(+), 6 deletions(-)
-> >
-> >diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-> >index 51b1d3550421..d78644c3ebe9 100644
-> >--- a/drivers/media/platform/qcom/camss/camss.c
-> >+++ b/drivers/media/platform/qcom/camss/camss.c
-> >@@ -915,6 +915,15 @@ static const struct camss_subdev_resources csiphy_res_8250[] = {
-> >      }
-> >  };
-> >
-> >+/*
-> >+ * Both CSID and VFE use some of the same vfe clocks and both
-> >+ * should prepare/enable them but only the VFE subsystem should be in charge
-> >+ * of setting the clock rates.
-> >+ *
-> >+ * Set the frequency tables for those clocks in the CSID resources to
-> >+ * be empty so the csid subsystem doesn't overwrite the clock rates that the
-> >+ * VFE already set.
-> >+ */
-> >  static const struct camss_subdev_resources csid_res_8250[] = {
-> >      /* CSID0 */
-> >      {
-> >@@ -922,8 +931,8 @@ static const struct camss_subdev_resources csid_res_8250[] = {
-> >              .clock = { "vfe0_csid", "vfe0_cphy_rx", "vfe0", "vfe0_areg", "vfe0_ahb" },
-> >              .clock_rate = { { 400000000 },
-> >                              { 400000000 },
-> >-                             { 350000000, 475000000, 576000000, 720000000 },
-> >-                             { 100000000, 200000000, 300000000, 400000000 },
-> >+                             { 0 },
-> >+                             { 0 },
-> >                              { 0 } },
-> >              .reg = { "csid0" },
-> >              .interrupt = { "csid0" },
-> >@@ -939,8 +948,8 @@ static const struct camss_subdev_resources csid_res_8250[] = {
-> >              .clock = { "vfe1_csid", "vfe1_cphy_rx", "vfe1", "vfe1_areg", "vfe1_ahb" },
-> >              .clock_rate = { { 400000000 },
-> >                              { 400000000 },
-> >-                             { 350000000, 475000000, 576000000, 720000000 },
-> >-                             { 100000000, 200000000, 300000000, 400000000 },
-> >+                             { 0 },
-> >+                             { 0 },
-> >                              { 0 } },
-> >              .reg = { "csid1" },
-> >              .interrupt = { "csid1" },
-> >@@ -956,7 +965,7 @@ static const struct camss_subdev_resources csid_res_8250[] = {
-> >              .clock = { "vfe_lite_csid", "vfe_lite_cphy_rx", "vfe_lite",  "vfe_lite_ahb" },
-> >              .clock_rate = { { 400000000 },
-> >                              { 400000000 },
-> >-                             { 400000000, 480000000 },
-> >+                             { 0 },
-> >                              { 0 } },
-> >              .reg = { "csid2" },
-> >              .interrupt = { "csid2" },
-> >@@ -973,7 +982,7 @@ static const struct camss_subdev_resources csid_res_8250[] = {
-> >              .clock = { "vfe_lite_csid", "vfe_lite_cphy_rx", "vfe_lite",  "vfe_lite_ahb" },
-> >              .clock_rate = { { 400000000 },
-> >                              { 400000000 },
-> >-                             { 400000000, 480000000 },
-> >+                             { 0 },
-> >                              { 0 } },
-> >              .reg = { "csid3" },
-> >              .interrupt = { "csid3" },
-> 
-> Hi Jordan.
-> 
-> Thanks for your patch. Just looking at the clocks you are zeroing here,
-> I think _probably_ these zeroized clocks can be removed from the CSID
-> set entirely.
-> 
-> Could you investigate that ?
+On Wed, 7 Aug 2024 04:32:09 +0800 Barry Song <21cnbao@gmail.com> wrote:
 
-I think that will work. It will cement the need for to VFE always run
-first but we can add documentation warnings about that. It looks like
-we can do this optimization for 845, sm8250 and sm2850xp.
+> > > their independent mm, rather than parent and child processes share the
+> > > same mm. Therefore, when the kernel executes multiple exiting process
+> > > simultaneously, they will definitely occupy multiple CPU core resources
+> > > to complete it.
+> >
+> > What I'm asking is why not change those userspace processes so that they
+> > fork off a child process which shares the MM (shared mm_struct) and
+> > then the original process exits, leaving the asynchronously-running
+> > child to clean up the MM resources.
 > 
-> Also please add
-> 
-> Fixes: b4436a18eedb ("media: camss: add support for SM8250 camss") and
-> cc stable@vger.kernel.org
+> Not Zhiguo. From my perspective as a phone engineer, this issue isn't related
+> to the parent-child process or the wait() function. Phones rely heavily on
+> mechanisms similar to the OOM killer to function efficiently. For instance,
+> if you're using apps like YouTube, TikTok, and Facebook, and then you
+> open the camera app to take a photo, the camera app becomes the foreground
+> process and demands a lot of memory. In this scenario, the phone might
+> decide to terminate the most memory-consuming and less important apps,
+> such as TikTok or YouTube, to free up memory for the camera app. TikTok
+> and YouTube become less important because they are no longer occupying
+> the phone's screen and have moved to the background. The faster TikTok
+> and YouTube can be unmapped, the quicker the camera app can launch,
+> enhancing the user experience.
 
-Will do.
+I don't see how this relates to my question.
 
-Jordan
+Userspace can arrange for these resources to be released in an
+asynchronous fashion (can't it?).  So why change the kernel to do that?
 
