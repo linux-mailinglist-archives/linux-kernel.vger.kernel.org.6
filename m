@@ -1,133 +1,123 @@
-Return-Path: <linux-kernel+bounces-276955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09CBC949A59
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:43:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35597949A64
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 23:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CD4283D87
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:43:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C438CB21A28
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 21:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340F816C685;
-	Tue,  6 Aug 2024 21:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5A116F260;
+	Tue,  6 Aug 2024 21:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJj6fYZH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScglTBQV"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC22149C74;
-	Tue,  6 Aug 2024 21:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7399D149001;
+	Tue,  6 Aug 2024 21:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722980603; cv=none; b=LMrRo+UciaCkQyNhyuDiovPGoQ8A8OoDjc+Eq9lxtpVEE/bko5QG4oOgRW+S/mjuARfBtsiVzcU7Qd5I1oPb8NQd81Wk1G+bB+KltZI14k+BaKkcaOORzQ4+jQH1+o9hd1sWgyP91bP2JF6k8ybTFmrPt7ufFJ3jZ66QTRttQSs=
+	t=1722980706; cv=none; b=ej5PtV+/0EvMOX/huY/0hq4VKdOqZlBS3HDUveeFoSd7i1FJoNdyBevS9dkBFR6D+9j1ethH6ObsOQNqjIZeJvrmpjF+qF4UfYkuLeGPdPosDlVpYF5hsjfXeHzhplbKK8NAiTV7I8ghbgBOa2s1UTXL+QCeZRZzla1srAJDlpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722980603; c=relaxed/simple;
-	bh=ZGkkvxdzIsgtwHZd32zcWU29Y4Hg+7l4aRKBuBmrEs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jalGHuAA6TzpOy5NTfaoii0LMghB/2kXElHeyk5g+mdikNuOFrhDh5sBNka0LC+fuHvEBPUtMTLfA6OOOOwyLSYDYBYpBii/KLmKDXdwn8/QtvyAkTUJFfO4uZNA4pbWeitO4z5njZw6rKO4qVRIfS9qhsjKisuw7rCg7VEso3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJj6fYZH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1EB7C32786;
-	Tue,  6 Aug 2024 21:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722980603;
-	bh=ZGkkvxdzIsgtwHZd32zcWU29Y4Hg+7l4aRKBuBmrEs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DJj6fYZHnNcB0wDMLUpKRx/5yAIa6IEavtlewKA4HrplCIcF+C33AG1uE2ftedYGi
-	 CrH+O96GjHIkYLKv2ocexgEPOGI7obhwnF7cOGET9kahd3cbm+4KiXqNG6lLfFyb9r
-	 e6Ch16eSS+DVbCSBsbLPGdM8zomYACAOGsfzP6i4XKL6fQQ2BkyUH3Y6rL3eqIZCPq
-	 6GwCfF/fKtlvKGO7khVBKGPXzdQ6HYPSDkE3+0Wo5D+LTUCW98X0TLvMPg5Aod2eiY
-	 mYeDUp9tHFaLirXaAobY514UX5sYlvk8Vib/jnXIiIixjmbr+SlDgs1GVsU4PVzljL
-	 YiY9kfAVhOkjQ==
-Date: Tue, 6 Aug 2024 14:43:22 -0700
-From: Kees Cook <kees@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, jannh@google.com,
-	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
-Message-ID: <202408061434.1B746423@keescook>
-References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
- <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
- <202408052046.00BC7CBC@keescook>
- <b172c2c1-42d3-4c50-8065-9bd4ae21ffea@sirena.org.uk>
+	s=arc-20240116; t=1722980706; c=relaxed/simple;
+	bh=5fGtm+0TePKeoW5A7+ayM9+rNstUUYsVnS0z4qNirOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=If1zDBaGtMutF52/2ITbv7yMPGNzdDbkPxcsUNJ7IxtWqzJQyMnb4GN8LdK7CRunmkoX7aPnrpbBRb7LKgSHW1AZ32cf720oCl+y/kyX6YIc/z3dOkRC4rSV40afn84OWuPKRVCWSPk9+JikP2pL25J9vUMbUcfzHdInAO0K3n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScglTBQV; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b79fc76d03so6539616d6.1;
+        Tue, 06 Aug 2024 14:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722980704; x=1723585504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLSFBItpfPwWFfPLR9boww7jDHN1tVOHaURUpYvMBEE=;
+        b=ScglTBQVKd0Ua/8x8gA8r2pMmWCs/DnS8IlaOSwy7vQoiUTT1fROwwVyHteoLmpNEf
+         FyXqzy1i7Q0dsaGqUTto4C8LYy70r4Sbpv6kyVZYWUpP0+nj8v0lVjuy9uFYoWHvNS8d
+         F/8l9IrNIsuWkUIhpz3CiL2kAaum35kk/ZD6FZU3R5ezbd39EJyaJKhhQPRcTaonyjdx
+         fidrL0NzkGjJQvlcTSFISs7+O8Cr/kG8NRLj10TtGUx8XMVQgx1ihzAyh4/J6/T6xcfq
+         YpS/fZJGcnq+IoDuiBxHyRkHOy4cJSaRYJI/+orVlpIgPCMJUvbziBr1EkBAbm9AKPPI
+         m71g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722980704; x=1723585504;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KLSFBItpfPwWFfPLR9boww7jDHN1tVOHaURUpYvMBEE=;
+        b=Gv1cscqhuhSx6weZzkSBuUsE9g15gQdnGu4FgvOIFuavwJSWMpi33RhCI6YcdkVx6O
+         +sq1xVfcWZ8ZrrLkumgmFLgxSRA1SXA1HGseeomUITvpo2p1LpvKD0OK3Z16YjoBPOXt
+         Jyy0EmJV7kYED+hqeagDddEtpMoG5v4PiB3rBpfZEjZZaTKLt1f/9UzyrEjH2dCSNCoC
+         w2S5Yj3AnoZYZwINJRydfikLTGUrmlg9GNXCPvsSehKd5Tu1KZGZFEErV8gh7c3m2GdJ
+         cT5EGTMytgY2nmy/Dqdtv5uhKCyN7qW85T6Yehu6PpT2/QGAxjeGoYpG18mVAAk4lDrx
+         rRkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGhkCPEb3fm5ZSPe/ceokgexIaCrART8CvMMuqgAStPy7zKc3BEm485voJoWD+qT2rYlZTOF/wHVbGDLaUlJzpCtfzU+OMSD274DOmi0YV4aFDxKJWRSUpAfMgiI1pbmr1iXeZVYhMd1PlaFEQtXH1WlRIxvJd0yRJZmKQd7ghebKiaHopOBU=
+X-Gm-Message-State: AOJu0Ywp1M+uaVSvKwjcGUk+4b6lWLitBhEdOIGYaavHvKLEi9DKHZG1
+	W6q41+xj/ZYtML3MXjoetb7zZOtLjOdyxfrU8WmLtS09QaA4vKsT
+X-Google-Smtp-Source: AGHT+IFzOssy1QmsgTWYBcHvTJ6UtXaK9mBa3BKvdzHuAXAXu3NvSanPEiUvUwUK8sWEO6PJLngQLQ==
+X-Received: by 2002:a05:6214:3387:b0:6b0:7eaf:febb with SMTP id 6a1803df08f44-6bb9839db29mr175608146d6.31.1722980704128;
+        Tue, 06 Aug 2024 14:45:04 -0700 (PDT)
+Received: from localhost ([2607:fea8:52a3:d200:324c:b818:b179:79b])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c79b875sm50530676d6.49.2024.08.06.14.45.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 14:45:03 -0700 (PDT)
+From: Richard Acayan <mailingradian@gmail.com>
+To: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Richard Acayan <mailingradian@gmail.com>
+Subject: [PATCH v2 0/4] drm/msm/adreno: Add A615 GPU for SDM670 and Pixel 3a
+Date: Tue,  6 Aug 2024 17:44:54 -0400
+Message-ID: <20240806214452.16406-7-mailingradian@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b172c2c1-42d3-4c50-8065-9bd4ae21ffea@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 09:10:28PM +0100, Mark Brown wrote:
-> On Mon, Aug 05, 2024 at 08:54:54PM -0700, Kees Cook wrote:
-> 
-> >   # Running test 'Shadow stack on system with shadow stack'
-> >   # [5496] Trying clone3() with flags 0 (size 0)
-> >   # I am the parent (5496). My child's pid is 5505
-> >   # Child exited with signal 11
-> >   # [5496] clone3() with flags says: 11 expected 0
-> >   # [5496] Result (11) is different than expected (0)
-> >   not ok 20 Shadow stack on system with shadow stack
-> 
-> > The child segfaults immediately, it seems?
-> 
-> Does this help:
-> 
-> diff --git a/arch/x86/kernel/shstk.c b/arch/x86/kernel/shstk.c
-> index 1755fa21e6fb..27acbdf44c5f 100644
-> --- a/arch/x86/kernel/shstk.c
-> +++ b/arch/x86/kernel/shstk.c
-> @@ -198,13 +198,14 @@ int arch_shstk_post_fork(struct task_struct *t, struct kernel_clone_args *args)
->  	 * the token 64-bit.
->  	 */
->  	struct mm_struct *mm;
-> -	unsigned long addr;
-> +	unsigned long addr, ssp;
->  	u64 expected;
->  	u64 val;
-> -	int ret = -EINVAL;;
-> +	int ret = -EINVAL;
->  
-> -	addr = args->shadow_stack + args->shadow_stack_size - sizeof(u64);
-> -	expected = (addr - SS_FRAME_SIZE) | BIT(0);
-> +	ssp = args->shadow_stack + args->shadow_stack_size;
-> +	addr = ssp - SS_FRAME_SIZE;
-> +	expected = ssp | BIT(0);
->  
->  	mm = get_task_mm(t);
->  	if (!mm)
+This adds support for the speed-binned A615 GPU on SDM670.
 
-Yes indeed! This passes now.
+Changes since v1 (20240730013844.41951-6-mailingradian@gmail.com):
+- add Acked-by tag (1/4)
+- add OPPs exclusive to some speed bins (3/4)
+- enable GMU by default (3/4)
 
-"Shadow stack with no token" still crashes the parent. It seems to
-crash in waitpid(). Under gdb it hangs instead, showing it's in glibc's
-__GI___wait4(). Ah, it's crashing at c3 (ret), so shadow stack problem,
-I imagine.
+Richard Acayan (4):
+  dt-bindings: display/msm/gmu: Add SDM670 compatible
+  drm/msm/adreno: add a615 support
+  arm64: dts: qcom: sdm670: add gpu
+  arm64: dts: qcom: sdm670-google-sargo: enable gpu
 
-Does waitpid() need to be open-coded like the clone3() call too?
+ .../devicetree/bindings/display/msm/gmu.yaml  |   1 +
+ .../boot/dts/qcom/sdm670-google-sargo.dts     |   9 +
+ arch/arm64/boot/dts/qcom/sdm670.dtsi          | 180 ++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c     |  27 +++
+ 4 files changed, 217 insertions(+)
 
 -- 
-Kees Cook
+2.46.0
+
 
