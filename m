@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-275905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE06948BBF
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:55:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 124BD948BC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A361F226BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B93E1C22D69
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378BC1BDAB6;
-	Tue,  6 Aug 2024 08:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1257A1BDA8B;
+	Tue,  6 Aug 2024 08:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="n5A361sf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvyE56tY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D491BDAA4
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4666D16BE17;
+	Tue,  6 Aug 2024 08:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934504; cv=none; b=sx0ii6yuxmg2Z13s3fJr7mT3pFKugCDk7Zn6fDPsA+H2zdJkEuF83xDklTkHYQBwyND6mWelkZ/oPfXViiQOaQ8rvvcH5wNdyQ4NbmB0IlsnhRqdDoqHv+mDxStsWL+CRFISEy6pX+8x3IjgBb2B2Octq0dyOn1xzctp1CyJFsY=
+	t=1722934526; cv=none; b=dPA5AGg8WHWyznPe+vnoyoR1BhmXme/jiQtngSH8NGaZQQoLLED8TKgirnAZ6MyJ71wyhf4ZZlLbwHQc5cgAu0VV9IF3BPioOxdLPcsTLHQdHH9XJ1R21X5MUgXT33dlUlrr3ZpD3wX6QZhHiWq4SlbNDunYxTOgygjprIBoeiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934504; c=relaxed/simple;
-	bh=KVp/7QHAm64lJNet4/OKS5Y0F74l7MEm7GnBgfqleug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SEacncBQGsOyXY9TMyewRgfy2yZZTzKwFCUU5yC8HSI7cJrrefFvsKmZQVb2Bk8Xxg2uD2fJQ23Yy0Dr4NaEPsLcJxUkxvAJiEdTLRRuFjgAf7Wc78lvTqZd0cgr0pf31VzSrVJAn9ZcoS4AIDwGFLDchizwdkzA/MD0MXTeWcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=n5A361sf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70772C32786;
-	Tue,  6 Aug 2024 08:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722934503;
-	bh=KVp/7QHAm64lJNet4/OKS5Y0F74l7MEm7GnBgfqleug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n5A361sfdeIbYeJW+vwPHi54hFdqukWKKC8O+DuTd4GXvMXAGQei2Rvx2zvsFMX9F
-	 /SFSyRy4ToiYBHsinlBExb8qLxCACuqDE0y0NTA9heBmaPQsFZmE0Vul/k1v7V37m3
-	 VgnG4WeZ9S8RkZ4EZFHUA4KAlbJxrh9L7m/0TOdY=
-Date: Tue, 6 Aug 2024 10:55:00 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CVE-2024-42082: xdp: Remove WARN() from __xdp_reg_mem_model()
-Message-ID: <2024080634-electable-foyer-ad3c@gregkh>
-References: <2024072956-CVE-2024-42082-8411@gregkh>
- <25rzouzv3bf4opsbgcbwjn3ycip5s75awl5muu5fzcibwjnv4b@4khlyuarrnl5>
+	s=arc-20240116; t=1722934526; c=relaxed/simple;
+	bh=fNf9KpbqDQ65Rk4oRZ3GXyFRT5bkqehalm3Q1gthkSc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fQEwLiTlXhMCATNzSrcJTvnniGwE1O+Dp2VUEtymAkuetbIKNIkn4n7PafWgr+Uq+eh1n1zeOb9QBOfHh/XvWLn5H9kJaV38kOK5pGu1cqZxRojvZqDf0RN2B3/IJaPJYgSfrjmjvsYXIHcz6SoSEeLTaV9bvhrlXcIliSMc/u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvyE56tY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AADD4C32786;
+	Tue,  6 Aug 2024 08:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722934525;
+	bh=fNf9KpbqDQ65Rk4oRZ3GXyFRT5bkqehalm3Q1gthkSc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TvyE56tYK3MKji+0edYs5FwYHls/3UPSKwVbaoXysQtem6W2x+AET4eygFoJ270tI
+	 6is1jeOuW5z+PbS7fnA27BMCC3phJInVGslO8AhaKB9ivP5S2ZBEhteFvegf0sNC07
+	 YuYNAYg3Ep0MduJiROIWjoOmIH55ccwgUfSuNAPNx6hoXS8jgGo2ML5Y+EbSKa//H6
+	 qXIOM/QqJNB7uUWkG7Of8+R8HbDap7Dq1ryl/W6Vm+HeJRqfR1e4JB09R8xYefspTt
+	 olHjIDWbI3frln7WrTDqsLUJrFNhb1Dd1/4PSD3AIjdlmZxoljfb5rTBMMtrJ7t0uu
+	 cPa7Eq2CqB8qw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sbFyV-001J7s-7B;
+	Tue, 06 Aug 2024 09:55:23 +0100
+Date: Tue, 06 Aug 2024 09:55:22 +0100
+Message-ID: <86ikwe2fph.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	David Matlack <dmatlack@google.com>,
+	David Stevens <stevensd@chromium.org>,
+	Fuad Tabba <tabba@google.com>
+Subject: Re: [PATCH v12 54/84] KVM: arm64: Mark "struct page" pfns accessed/dirty before dropping mmu_lock
+In-Reply-To: <ZrFfvjy_-Tyx4xUV@linux.dev>
+References: <20240726235234.228822-1-seanjc@google.com>
+	<20240726235234.228822-55-seanjc@google.com>
+	<ZrFfgzRbiqT-Zi2O@linux.dev>
+	<ZrFfvjy_-Tyx4xUV@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <25rzouzv3bf4opsbgcbwjn3ycip5s75awl5muu5fzcibwjnv4b@4khlyuarrnl5>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, seanjc@google.com, pbonzini@redhat.com, zhaotianrui@loongson.cn, maobibo@loongson.cn, chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, borntraeger@linux.ibm.com, frankja@linux.ibm.com, imbrenda@linux.ibm.com, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, dmatlack@google.com, stevensd@chromium.org, tabba@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Aug 06, 2024 at 04:48:56PM +0800, Shung-Hsi Yu wrote:
-> On Mon, Jul 29, 2024 at 05:53:11PM GMT, Greg Kroah-Hartman wrote:
-> > Description
-> > ===========
-> > 
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > xdp: Remove WARN() from __xdp_reg_mem_model()
-> > 
-> > syzkaller reports a warning in __xdp_reg_mem_model().
-> > 
-> > The warning occurs only if __mem_id_init_hash_table() returns an error. It
-> > returns the error in two cases:
-> > 
-> >   1. memory allocation fails;
-> >   2. rhashtable_init() fails when some fields of rhashtable_params
-> >      struct are not initialized properly.
-> > 
-> > The second case cannot happen since there is a static const rhashtable_params
-> > struct with valid fields. So, warning is only triggered when there is a
-> > problem with memory allocation.
-> > 
-> > Thus, there is no sense in using WARN() to handle this error and it can be
-> > safely removed.
-> [...]
+On Tue, 06 Aug 2024 00:26:54 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
 > 
-> The mention fix (below) simply removed a WARN_ON(1) call, so I believe
-> there's no security implication here.
+> On Mon, Aug 05, 2024 at 11:26:03PM +0000, Oliver Upton wrote:
+> > [+cc Fuad]
+> 
+> Take 2!
+> 
+> > Fuad, you mentioned in commit 9c30fc615daa ("KVM: arm64: Move setting
+> > the page as dirty out of the critical section") that restructuring
+> > around the MMU lock was helpful for reuse (presumably for pKVM), but I
+> > lack the context there.
+> > 
+> > On Fri, Jul 26, 2024 at 04:52:03PM -0700, Sean Christopherson wrote:
+> > > Mark pages/folios accessed+dirty prior to dropping mmu_lock, as marking a
+> > > page/folio dirty after it has been written back can make some filesystems
+> > > unhappy (backing KVM guests will such filesystem files is uncommon, and
+> > 
+> > typo: s/will/with/
+> > 
+> > > the race is minuscule, hence the lack of complaints).  See the link below
+> > > for details.
 
-If memory allocation fails, and panic-on-warn is enabled, this will
-cause the machine to reboot, hence the need for a CVE allocation.
+Should we consider reverting 9c30fc615daa then?
 
-thanks,
+Thanks,
 
-greg k-h
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
