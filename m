@@ -1,246 +1,121 @@
-Return-Path: <linux-kernel+bounces-276978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA31C949AB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:01:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F201E949ABF
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0ACFB2480C
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC15C284EB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB1D172BD8;
-	Tue,  6 Aug 2024 22:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65310176246;
+	Tue,  6 Aug 2024 22:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2uV6y7p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="l9bcgHFl"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6128C171E61;
-	Tue,  6 Aug 2024 22:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60819171675
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 22:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722981677; cv=none; b=kJJCAPVcSW53fk9HPKJlzFLewFK9XUd2O4HoO8ske4XsvrGKXHAn5FrDjdWOtD34cX24ufdqnz2F2GZ6XwDz7WmJUZHqRe6/bSyZn2OxuHW6jQgUs3/Y2Kog0aCZfhu6KXcRL7TDPra/Iy3LX0bj9yi4nZPFdsR2ZcvnF/QWTjs=
+	t=1722981693; cv=none; b=fIJSCHUxmMSamoDBNdlAAH2z89g7noMHQ2vdZHHjvMSqRFQ9ZE2vrFZCd5b5ZTjDCsc+YjkUGxUaSeDbKhZfQo+LIHHRgti+tGG9B3foap28yNMwSflpO3BOvz3GstSgrenTQVpq9nbTzmOqj3bCcX09TPWfuCXA5OBLHKB8EHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722981677; c=relaxed/simple;
-	bh=3O2F0dhbujAAe3QdNEIIsduxEQUZMXrFfkhNOLE8mJA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nBo5PpXHRrDitvP58cH4a4eFPtaDZ2K6cnbdqpY+hpg3iXdZ76nab+m8IOxYt6wm+m4ywqdy5SAD9k3CUVyyZ2vKumF/xIIlEtDnFlvIeZY4rEKYHsstBfd0/ZmfiapcfXlOjlvdymLl8+aDPXtRzPDfppTohp6lQ1dyy5lQyZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2uV6y7p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C6AC4AF10;
-	Tue,  6 Aug 2024 22:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722981676;
-	bh=3O2F0dhbujAAe3QdNEIIsduxEQUZMXrFfkhNOLE8mJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P2uV6y7piAQ2bFmzGGGGvAfoQ8eJjOXelGUVftgvXw+nBV/Aq2L+ZxHMIrRmBRREE
-	 qmC89YOlLMRzo3c9MSWDhsfABmQlJhLAGmJb67fzkCpBk9RZaKsgfmGvb7cjOjtVir
-	 T0ikzr+6GL4bSXa9uPKGrDFq/bq4pLtoi0W3R8yOf13qBUAtx+0fegqQXlvmBZ5Eeq
-	 0ku0gXS0lU/q0U2UG9dIqdtaTWOBLiipp61Ws9VOUcp0vWWiHsl/0DU6+TiOH8SPQz
-	 xOt51yKhogO9FAx7GDxx1ZvUHaLtTOuPMGeoo4VmGtJ+TqDgtjky5/Gz2KwikMNPx4
-	 RBfrKCrBFPXAQ==
-Date: Tue, 6 Aug 2024 15:01:16 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org,
-	tglx@linutronix.de
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240806220116.GH623957@frogsfrogsfrogs>
-References: <20240730033849.GH6352@frogsfrogsfrogs>
- <87o76f9vpj.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240730132626.GV26599@noisy.programming.kicks-ass.net>
- <20240731001950.GN6352@frogsfrogsfrogs>
- <20240731031033.GP6352@frogsfrogsfrogs>
- <20240731053341.GQ6352@frogsfrogsfrogs>
- <20240731105557.GY33588@noisy.programming.kicks-ass.net>
- <20240805143522.GA623936@frogsfrogsfrogs>
- <20240806094413.GS37996@noisy.programming.kicks-ass.net>
- <20240806103808.GT37996@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1722981693; c=relaxed/simple;
+	bh=4NHQEehVAG0NwxpUnDGcXm8ebXdDqTJOInrMfedXBo0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U8PYjzZ57Mj6mEbReTFJ84nKWWo5sn5PD9wL1FtLMiehyUlM5gdegwndnuk2XKEBZUW6iKrzKx/KXWtXv01hYsC2V6hIxBL/SXSo5XVfKARXhgMKiyUYkMLNCHvMMlWuIhuXlYuwCSzal+Bv4KeM0DbSJIJEGAHbIVcp5r+RgPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=l9bcgHFl; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1ff1cd07f56so9250035ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 15:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722981690; x=1723586490; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHyIBHBe7m7I8HTEvfryrMYI7ZE76p9wqPYDI+ZDXCM=;
+        b=l9bcgHFliocT63QzC9bAPNrZIhADGZGj4cZhW3iDjz9XUDR/yjdTD4urlCoYeOYo1V
+         Ub5MSYL4A7BWzVXeAbS2PD85M3Hgk1zlTIiMVHxxbywyuf2AqhufRhvXk00GTNf5fB7p
+         /6xLxienP6ZmBsNjQDLdWZEU+7a/H/htZVryiK8f3S1W03NBPWX64ZsMWoieMEXPAUGU
+         ByP+4Qjc0mlZ3bq+c4q638OEfe/QOwY6+Tuzy6xQkmu9fWjh7DEUN/L48uQlrsXZGh8W
+         FocuGhsBF1/oEC0v1wSWkLAQvDDOrf/eenmNL4XAb6p+LFzwlOASeIW3M1+kt2hD4Lyt
+         /V1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722981690; x=1723586490;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UHyIBHBe7m7I8HTEvfryrMYI7ZE76p9wqPYDI+ZDXCM=;
+        b=Ax3MSz5bK/rGLxWWiuccUci6uuRlGbiPSXHivm3gfRQJebdb69sx2OHvmRmqkgGRIK
+         If3GjqDyp38qvthVrcoD5NtoAKOmEEbwzt8AOEQWpHpDCml8baqHJMkUR7CAWfPCFXE3
+         YUjxw0yi1mFazSgVedNuWCjm5tLQEsvRMOKRGb0uY37iqJV92MipH+GYKmosY84Vq2YL
+         rGQNaIl3+y7cRNVxel3Lj82yT2psz0lKxjWw7wQ92sJN4UklJQ2BYI3JN4JqCZi3jhy2
+         eL1E+zHHXCrwrzs3Bcr65d0Od0EMwU8VUDRzG0G2Vzby7dhcdJKOe3eQjSCkU5NQlTGN
+         UM0g==
+X-Gm-Message-State: AOJu0Yxk8UR4F07VFMlSl9Q30gdMxycAzOg8tBkRp/MdE6uX6G5SuX0L
+	5J/LtKjNIZTXKXthph6iIFHXecwhY1f3BOfz622Wpg5pwnTSJKsrnTujBSvZD/8=
+X-Google-Smtp-Source: AGHT+IE7qLlUukythdnkW3zQ3rBGy9VXhyoxZcuSe9mUdEA3w7HpB/xZw/B6gcPQ7Q6jajvAhTnbFg==
+X-Received: by 2002:a17:902:e80f:b0:1fa:abda:cf7b with SMTP id d9443c01a7336-1ff5722d9a2mr185899825ad.9.1722981690493;
+        Tue, 06 Aug 2024 15:01:30 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f27340sm92578425ad.17.2024.08.06.15.01.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 15:01:29 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v2 0/2] tools: Add barrier implementations for riscv
+Date: Tue, 06 Aug 2024 15:01:22 -0700
+Message-Id: <20240806-optimize_ring_buffer_read_riscv-v2-0-ca7e193ae198@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806103808.GT37996@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADKdsmYC/4WNQQ6CMBAAv2J6tqasFcWT/zCE0LKFPdCSLTYq4
+ e9WEs8eZw4zi4jIhFFcd4tgTBQp+Ayw3wk7tL5HSV1mAQq0OsNJhmmmkd7YMPm+MQ/nkBvGtss
+ i2iQBLroqrEZTosiVidHRczvc68wDxTnwaxum4mt/7epvOxVSydIYqxzoo0a8MaUQyduDDaOo1
+ 3X9AO9O7jDRAAAA
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Andrea Parri <parri.andrea@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1722981688; l=914;
+ i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
+ bh=4NHQEehVAG0NwxpUnDGcXm8ebXdDqTJOInrMfedXBo0=;
+ b=i+I1n4AKsZR8pKpVgYlgT0CCKtIwC7b2pjgVwea6mE3ubg8yf+0dC42KkaWT+mUnI3SLWIhHt
+ NaO616IplJxDAbx7WL1b6cE1qHI/MI/zZt3DmmrqUJNGG0wm4BHUdos
+X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
+ pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
 
-On Tue, Aug 06, 2024 at 12:38:08PM +0200, Peter Zijlstra wrote:
-> On Tue, Aug 06, 2024 at 11:44:13AM +0200, Peter Zijlstra wrote:
-> > On Mon, Aug 05, 2024 at 07:35:22AM -0700, Darrick J. Wong wrote:
-> > > On Wed, Jul 31, 2024 at 12:55:57PM +0200, Peter Zijlstra wrote:
-> > > > On Tue, Jul 30, 2024 at 10:33:41PM -0700, Darrick J. Wong wrote:
-> > > > 
-> > > > > Sooooo... it turns out that somehow your patch got mismerged on the
-> > > > > first go-round, and that worked.  The second time, there was no
-> > > > > mismerge, which mean that the wrong atomic_cmpxchg() callsite was
-> > > > > tested.
-> > > > > 
-> > > > > Looking back at the mismerge, it actually changed
-> > > > > __static_key_slow_dec_cpuslocked, which had in 6.10:
-> > > > > 
-> > > > > 	if (atomic_dec_and_test(&key->enabled))
-> > > > > 		jump_label_update(key);
-> > > > > 
-> > > > > Decrement, then return true if the value was set to zero.  With the 6.11
-> > > > > code, it looks like we want to exchange a 1 with a 0, and act only if
-> > > > > the previous value had been 1.
-> > > > > 
-> > > > > So perhaps we really want this change?  I'll send it out to the fleet
-> > > > > and we'll see what it reports tomorrow morning.
-> > > > 
-> > > > Bah yes, I missed we had it twice. Definitely both sites want this.
-> > > > 
-> > > > I'll tentatively merge the below patch in tip/locking/urgent. I can
-> > > > rebase if there is need.
-> > > 
-> > > Hi Peter,
-> > > 
-> > > This morning, I noticed the splat below with -rc2.
-> > > 
-> > > WARNING: CPU: 0 PID: 8578 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0x50/0x60
-> > > 
-> > > Line 295 is the else branch of this code:
-> > > 
-> > > 	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
-> > > 		jump_label_update(key);
-> > > 	else
-> > > 		WARN_ON_ONCE(!static_key_slow_try_dec(key));
-> > > 
-> > > Apparently static_key_slow_try_dec returned false?  Looking at that
-> > > function, I suppose the atomic_read of key->enabled returned 0, since it
-> > > didn't trigger the "WARN_ON_ONCE(v < 0)" code.  Does that mean the value
-> > > must have dropped from positive N to 0 without anyone ever taking the
-> > > jump_label_mutex?
-> > 
-> > One possible scenario I see:
-> > 
-> >   slow_dec
-> >     if (try_dec) // dec_not_one-ish, false
-> >     // enabled == 1
-> > 				slow_inc
-> > 				  if (inc_not_disabled) // inc_not_zero-ish
-> > 				  // enabled == 2
-> > 				    return
-> > 
-> >     guard((mutex)(&jump_label_mutex);
-> >     if (atomic_cmpxchg(1,0)==1) // false, we're 2
-> >     
-> > 				slow_dec
-> > 				  if (try-dec) // dec_not_one, true
-> > 				  // enabled == 1
-> > 				    return
-> >     else
-> >       try_dec() // dec_not_one, false
-> >       WARN
-> > 
-> > 
-> > Let me go play to see how best to cure this.
-> 
-> I've ended up with this, not exactly pretty :/
-> 
-> Thomas?
+Add support for riscv specific barrier implementations to the tools
+tree, so that fence instructions can be emitted for synchronization.
 
-It seems to survive a short test, will send it out for overnight testing
-on the full fleet, thanks.
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+Changes in v2:
+- Fix typo in commit message
+- Link to v1: https://lore.kernel.org/r/20240729-optimize_ring_buffer_read_riscv-v1-0-6bbc0f2434ee@rivosinc.com
 
---D
+---
+Charlie Jenkins (2):
+      tools: Add riscv barrier implementation
+      tools: Optimize ring buffer for riscv
 
-> ---
-> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
-> index 6dc76b590703..5fa2c9f094b1 100644
-> --- a/kernel/jump_label.c
-> +++ b/kernel/jump_label.c
-> @@ -168,8 +168,8 @@ bool static_key_slow_inc_cpuslocked(struct static_key *key)
->  		jump_label_update(key);
->  		/*
->  		 * Ensure that when static_key_fast_inc_not_disabled() or
-> -		 * static_key_slow_try_dec() observe the positive value,
-> -		 * they must also observe all the text changes.
-> +		 * static_key_dec() observe the positive value, they must also
-> +		 * observe all the text changes.
->  		 */
->  		atomic_set_release(&key->enabled, 1);
->  	} else {
-> @@ -250,7 +250,7 @@ void static_key_disable(struct static_key *key)
->  }
->  EXPORT_SYMBOL_GPL(static_key_disable);
->  
-> -static bool static_key_slow_try_dec(struct static_key *key)
-> +static bool static_key_dec(struct static_key *key, bool fast)
->  {
->  	int v;
->  
-> @@ -268,31 +268,45 @@ static bool static_key_slow_try_dec(struct static_key *key)
->  	v = atomic_read(&key->enabled);
->  	do {
->  		/*
-> -		 * Warn about the '-1' case though; since that means a
-> -		 * decrement is concurrent with a first (0->1) increment. IOW
-> -		 * people are trying to disable something that wasn't yet fully
-> -		 * enabled. This suggests an ordering problem on the user side.
-> +		 * Warn about the '-1' case; since that means a decrement is
-> +		 * concurrent with a first (0->1) increment. IOW people are
-> +		 * trying to disable something that wasn't yet fully enabled.
-> +		 * This suggests an ordering problem on the user side.
-> +		 *
-> +		 * Warn about the '0' case; simple underflow.
-> +		 *
-> +		 * Neither case should succeed and change things.
-> +		 */
-> +		if (WARN_ON_ONCE(v <= 0))
-> +			return false;
-> +
-> +		/*
-> +		 * Lockless fast-path, dec-not-one like behaviour.
->  		 */
-> -		WARN_ON_ONCE(v < 0);
-> -		if (v <= 1)
-> +		if (fast && v <= 1)
->  			return false;
->  	} while (!likely(atomic_try_cmpxchg(&key->enabled, &v, v - 1)));
->  
-> -	return true;
-> +	if (fast)
-> +		return true;
-> +
-> +	/*
-> +	 * Locked slow path, dec-and-test like behaviour.
-> +	 */
-> +	lockdep_assert_held(&jump_label_mutex);
-> +	return v == 1;
->  }
->  
->  static void __static_key_slow_dec_cpuslocked(struct static_key *key)
->  {
->  	lockdep_assert_cpus_held();
->  
-> -	if (static_key_slow_try_dec(key))
-> +	if (static_key_dec(key, true)) // dec-not-one
->  		return;
->  
->  	guard(mutex)(&jump_label_mutex);
-> -	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
-> +	if (static_key_dec(key, false)) // dec-and-test
->  		jump_label_update(key);
-> -	else
-> -		WARN_ON_ONCE(!static_key_slow_try_dec(key));
->  }
->  
->  static void __static_key_slow_dec(struct static_key *key)
-> @@ -329,7 +343,7 @@ void __static_key_slow_dec_deferred(struct static_key *key,
->  {
->  	STATIC_KEY_CHECK_USE(key);
->  
-> -	if (static_key_slow_try_dec(key))
-> +	if (static_key_dec(key, true)) // dec-not-one
->  		return;
->  
->  	schedule_delayed_work(work, timeout);
+ tools/arch/riscv/include/asm/barrier.h | 39 ++++++++++++++++++++++++++++++++++
+ tools/arch/riscv/include/asm/fence.h   | 13 ++++++++++++
+ tools/include/asm/barrier.h            |  2 ++
+ tools/include/linux/ring_buffer.h      |  2 +-
+ 4 files changed, 55 insertions(+), 1 deletion(-)
+---
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+change-id: 20240725-optimize_ring_buffer_read_riscv-228491c4eb6e
+-- 
+- Charlie
+
 
