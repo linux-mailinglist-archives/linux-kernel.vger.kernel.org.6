@@ -1,87 +1,74 @@
-Return-Path: <linux-kernel+bounces-275613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF5809487A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:35:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FB69487A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C9C61C22235
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:35:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A41928566F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D1510A0E;
-	Tue,  6 Aug 2024 02:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2B111CA9;
+	Tue,  6 Aug 2024 02:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TAhbkbgL"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIeukoio"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1561AD51
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808C6AD51
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722911747; cv=none; b=FlpBQ9jaHJAcEwjWagbafAl0pDK8Gng2cUE3CkYDd7zR6L/selCiiVWyMthkPIsvPcEzvZJUro2nPMB5KN5D+Z2HJzvSusUTStB1YKchAPSTkxpKOwHshu7wt+98DA9u2JgrUG+HMTA5IjIH+5OU3LaUPOpYLljmMqo9YkuKdiU=
+	t=1722912195; cv=none; b=NMJ9bZalxePzz1XlzbVSQqYJHm/JjH9wg9jpoiKZJKBlcfUYFGlXx9PLc9T+XQsoLmup2HfSaHVUEh7tm6+I3Mi1ESnKKCI1OIrKWtZihbYQzr0dQbe2DiVnzlRvfDVWXjkl4RA1b6bL4mRMjvIp1AzvTYL7fx35TS2itIrkCtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722911747; c=relaxed/simple;
-	bh=qIg8yzlF2xZhvsCt/8paM2r2Z8UqmNY3G8iwh67a5fc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gerOlcluL37rxRZw6koqomKGl6TarbgggGD7Kw6810GtStgC/Ad1fNFYeUMSlL7ATu2H5/fZ87OrhzNTw/xP0pSlZOV/8SlnLW4IrDgyyIx/wbRq7IAgkGs3fuTCMZw9VJ96H5KCFLql6hiZUmYzSJvROhI5JCiS0kU/SinrAcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TAhbkbgL; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd66cddd4dso2960215ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:35:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1722911744; x=1723516544; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WCIdnG6JlOPVFpWP4R3rnPh1itu4fm9+2fAZBr1oqW8=;
-        b=TAhbkbgLIiX3/riFJk39uqiAUnGfF5C6eoKKrrDvC31FjclSDdqiol0sVnlsrNsPL0
-         WRjyRtvhZvuAbX7YFlKeUmhe5szOkPNPYguCJpWT9o6Qn4WABpARdvB/xmiFxPfvUwK1
-         9qlXZsKQ2fkUaA/bYLgEWuJwDhavkt6c2ROXc3I/VIQWCzzrP8zJ9J+IYDTTEym8VKFb
-         UGFxvnpjeTA4c6l4hxMUBCdfqXdLIafNeu1a0Gsbq9+tuhirDbI8Xnom5BwdUQE40fUy
-         HpjiYpOZzq4BHpsZNw74x43+Dz4AJPLhiQwJ3awD4MWKDGf0QmR7d5g0HKsTT2wN0SEO
-         kfUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722911744; x=1723516544;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WCIdnG6JlOPVFpWP4R3rnPh1itu4fm9+2fAZBr1oqW8=;
-        b=V44yv83l0DFbO38TlHL4PUWamDBXKD+5F1tDHA5Z5XFgu+i+K06Lo6IlgQoGuPufue
-         Mcsro8M4yPx9+sXoZFdHs5N8D7+BkoJH0wqXXSkmf/EzW7+NNjidJhNoj5Q/Epgfwumb
-         euoilKi+GX/0hqcvNFyoJN+lk3+lcbyfRRIpObRFKKFTteIy5IG35mf7nbjPF1ZOuG4A
-         qY3QMMDOWwThChLNCqqsiXEa9Q2RbRSIyMngNNhkML6WiwnEzhFzLw1OsTm6vvCq6cgs
-         PqCv5BCm8N6RqUuFe3LybOqGgshH+r8y5bwLUs5r+TCz11x0JCYdugOV4J1iBp6LRQ76
-         +a6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWCJS6dlWkXdmIOqAJzij/Svgs1gMkHEvqJvjBpKYjQDKbxbaJoDaxOxp0i9Vrn1bOscZzS2nwBPH5aWgOo9eObzN5bP1SbRXIoxzJG
-X-Gm-Message-State: AOJu0Yzd4m+UdsnczusOC5beAdZRv1QgABoNwJxTJ3bFdEUO2UpU/3RA
-	wwnbbKYFh/iIm1/XV+R/iOkc33lH0orhj5yRXkKLKpWPdPtNTDadqPumeq6mV38=
-X-Google-Smtp-Source: AGHT+IFYA0lBl/EuXvwzMNA/hmZojSyuazTamcGyj/T6TSZSajcF1WFR5fLuVBhzpa8nUkWGuA4B2g==
-X-Received: by 2002:a17:902:d4c2:b0:1fb:6663:b647 with SMTP id d9443c01a7336-1ff5722debemr181766045ad.3.1722911743995;
-        Mon, 05 Aug 2024 19:35:43 -0700 (PDT)
-Received: from ubuntu20.04 ([203.208.189.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59060107sm75725155ad.121.2024.08.05.19.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 19:35:43 -0700 (PDT)
-From: Yang Jihong <yangjihong@bytedance.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: yangjihong@bytedance.com
-Subject: [PATCH] perf sched timehist: Fix missing free of session in perf_sched__timehist()
-Date: Tue,  6 Aug 2024 10:35:33 +0800
-Message-Id: <20240806023533.1316348-1-yangjihong@bytedance.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722912195; c=relaxed/simple;
+	bh=8ikBy/tLCc+vKeAiQwAsjkffCbEbddVM4RZBSOSSBeY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gw7gYCpzf/60k4gH+2g0gHIFatIkr+/IUt/jjOUVnNTZvIQX2OIhxCbHvShY1Lrx4exkGxWdlKHI3XPSvVdTUFtJEFMm+jRiPtJd4+Adct+1T2I9xLEEEoq87KPrNF0BKYg58GBT5Mm2CjSdgOVVm+X4n5HROoZczF1hmCPldC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hIeukoio; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722912192; x=1754448192;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8ikBy/tLCc+vKeAiQwAsjkffCbEbddVM4RZBSOSSBeY=;
+  b=hIeukoio/QBOA4OtRyE8zznB9j0gtDRFAWkbgwo8QUYTf3lNOdrfuDLM
+   eQq26vjvabidkqxTd474kyz/YGWBUMkCDgMzxRXMfcwDkqO1gXcZ/Cr9h
+   7igR3+evHVtQtJg/AC+zNM8VrZ3zVjxFgoV1BgUYf1cEYNHZYtnVWaj7H
+   IzdoCTkaINxRTgtAfkaKwQ9IhICvNvKaieeNt/aX7Pt14B7kKF/50UPZo
+   GIbEGDnyEfQG4FfvocGJdm9qTh28N07qKhmwg6fTSaZVOAnve1oKOTPZa
+   A2PsfRv5k/ZL6qyjhb0GtWWY+mqxFh/gG4YaTdF3w/Cs1mP28TIjwPVgZ
+   A==;
+X-CSE-ConnectionGUID: FAxZ/zMxRoe9ldY7KHwrrQ==
+X-CSE-MsgGUID: sR2K8MF+SGufuJmOklmdrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="20756248"
+X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
+   d="scan'208";a="20756248"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 19:43:12 -0700
+X-CSE-ConnectionGUID: GbRGz6+4SmmFDSV48u5t1A==
+X-CSE-MsgGUID: n1TJ2T7SSLCTw/+xLlAmFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,266,1716274800"; 
+   d="scan'208";a="56572509"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by orviesa006.jf.intel.com with ESMTP; 05 Aug 2024 19:43:10 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v3 0/7] iommu/vt-d: Convert to use static identity domain
+Date: Tue,  6 Aug 2024 10:39:34 +0800
+Message-Id: <20240806023941.93454-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,30 +77,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When perf_time__parse_str() fails in perf_sched__timehist(),
-need to free session that was previously created, fix it.
+Intel's IOMMU driver used a special domain called 1:1 mapping domain to
+support the domain of type IOMMU_DOMAIN_IDENTITY, which enables device
+drivers to directly utilize physical addresses for DMA access despite
+the presence of IOMMU units.
 
-Fixes: 853b74071110 ("perf sched timehist: Add option to specify time window of interest")
-Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
----
- tools/perf/builtin-sched.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The implementation of the 1:1 mapping domain is influenced by hardware
+differences. While modern Intel VT-d implementations support hardware
+passthrough translation mode, earlier versions lacked this feature,
+which requires a more complex implementation approach.
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 8750b5f2d49b..928b9041535d 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -3121,7 +3121,8 @@ static int perf_sched__timehist(struct perf_sched *sched)
- 
- 	if (perf_time__parse_str(&sched->ptime, sched->time_str) != 0) {
- 		pr_err("Invalid time string\n");
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto out;
- 	}
- 
- 	if (timehist_check_attr(sched, evlist) != 0)
+The 1:1 mapping domain for earlier hardware was implemented by associating
+a DMA domain with an IOVA (IO Virtual Address) equivalent to the
+physical address. While, for most hardware supporting passthrough mode,
+simply setting the hardware's passthrough mode is sufficient. These two
+modes were merged together in si_domain, which is a special DMA domain
+sharing the domain ops of an ordinary DMA domain.
+
+As the iommu core has evolved, it has introduced global static identity
+domain with "never fail" attach semantics. This means that the domain is
+always available and cannot fail to attach. The iommu driver now assigns
+this domain directly at iommu_ops->identity_domain instead of allocating
+it through the domain allocation interface.
+
+This converts the Intel IOMMU driver to embrace the global static
+identity domain. For early legacy hardwares that don't support
+passthrough translation mode, ask the iommu core to use a DMA type of
+default domain. For modern hardwares that support passthrough
+translation mode, implement a static global identity domain.
+
+The whole series is also available at
+
+https://github.com/LuBaolu/intel-iommu/commits/vtd-static-identity-domain-v3
+
+Change log:
+v3:
+ - Kevin worried that some graphic devices might still require identity
+   domain. Forcing DMA domain for those drivers might break the existing
+   functionality.
+   https://lore.kernel.org/linux-iommu/BN9PR11MB52761FF9AB496B422596DDDF8C8AA@BN9PR11MB5276.namprd11.prod.outlook.com/
+
+   After confirmed with the graphic community, we decouple "igfx_off"
+   kernel command from graphic identity mapping with the following commits:
+   ba00196ca41c ("iommu/vt-d: Decouple igfx_off from graphic identity mapping")
+   4b8d18c0c986 ("iommu/vt-d: Remove INTEL_IOMMU_BROKEN_GFX_WA").
+
+v2: https://lore.kernel.org/linux-iommu/20231205012203.244584-1-baolu.lu@linux.intel.com/
+ - Re-orgnize the patches by removing 1:1 mappings before implementing
+   global static domain.
+
+v1: https://lore.kernel.org/linux-iommu/20231120112944.142741-1-baolu.lu@linux.intel.com/ 
+
+Lu Baolu (7):
+  iommu/vt-d: Require DMA domain if hardware not support passthrough
+  iommu/vt-d: Remove identity mappings from si_domain
+  iommu/vt-d: Always reserve a domain ID for identity setup
+  iommu/vt-d: Prepare for global static identity domain
+  iommu/vt-d: Factor out helpers from domain_context_mapping_one()
+  iommu/vt-d: Add support for static identity domain
+  iommu/vt-d: Cleanup si_domain
+
+ drivers/iommu/intel/iommu.c | 434 +++++++++++++++++-------------------
+ 1 file changed, 201 insertions(+), 233 deletions(-)
+
 -- 
-2.25.1
+2.34.1
 
 
