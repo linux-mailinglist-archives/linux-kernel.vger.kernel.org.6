@@ -1,197 +1,155 @@
-Return-Path: <linux-kernel+bounces-276417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED7294935A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:41:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3051949363
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 392E928426A
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:41:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5FA81C217C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429B420127F;
-	Tue,  6 Aug 2024 14:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33662101AB;
+	Tue,  6 Aug 2024 14:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="GMlT1K4Q"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XceokrfW"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF1620127B
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEFB201273
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 14:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722955159; cv=none; b=osuq3A9rEfEeIYiyLuFQRFYvapaxFfwjqQDgzvhnypjCSzGHwEGk0vzW4AIhaWMxib8UdKmy2a++jKmggKORJJk+KMOXdCMBqxRSIhkTKidvnAxObacRjtaR5EpTtT5W10paRe52TMLdHn074MEgjbbDNkgOsxU8oPRFgOSvXfw=
+	t=1722955168; cv=none; b=toyn9RIqGDXuAld7/hjJ3tFzwkoFmE4RXblPVoD4gHY/m95QATgy3+RZ62TFN0MzhlnsK+1/7XP9MYvOX92N8rMJ+lrYcNgRlOk1xYOCRhzOskys1fuFG+idFwesnPbeyEzAjDVPkuAM5txpSXtWEUyWMLXRK+/m9NSfAo3U5iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722955159; c=relaxed/simple;
-	bh=h8EQkRC+GliKRB5ksSJd8CsPwKgdtK6CXogtHHOpKb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m0RhDe3Tyj5/2l8wnyYX37ejxIIJ7WNSTd9jdUXwf0XbsRoge92n0RDX1H2Sm+mZmur2yjNTPQkZ/6P8uol+T2G3kxOBNxD2ufs2MDXTeILdKinzm7EYMm7tcHgCUAeN2qaDLjcuMryige05mT3P0IBbps+ukCEsDxVUH9gaO+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=GMlT1K4Q; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from mordecai.tesarici.cz (unknown [193.86.92.181])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id 3F6FE1D1A64;
-	Tue,  6 Aug 2024 16:39:15 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1722955155; bh=1PTYclq5sGfpv3NAMIKIUDYiBHvA3Eo1GiGmYnQbzU4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GMlT1K4Q+3fZxVtkXabhN48mW3V4XmbryxkuKMT2KlQasS4GnS7dtESErsxEhv61A
-	 PkIs8uvElHRyHTEa5BUfz5LZnUKyFq5ajJsfvF6BflXDqKHJXSFGwGkZxiTahYkSY6
-	 nPY9iSvYF8rLPHUlJhxFrgQUanq5zEYYzsdGZCxJZBFUds2+4bpTgv38iXdFht95dg
-	 4QfExY9hq13m7cQz0Ukw4dVZtWQMi7IQAWegKM37O23o0CAq/MhNpIw0SVssabv24f
-	 pagnKQ0E3QhcmmozjpFGOJztF6iv2WyV5ZTl0bFOApyEqAdS+PWskuqMZ17bGYe+mi
-	 cqqxmuI/Sv8xg==
-Date: Tue, 6 Aug 2024 16:39:11 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Andrew Morton
- <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 08/10] mm: introduce commit_merge(), abstracting merge
- operation
-Message-ID: <20240806163911.638cfbb3@mordecai.tesarici.cz>
-In-Reply-To: <c60acd5e-e7c7-42ba-9ad3-1b221cec2ddf@lucifer.local>
-References: <cover.1722849859.git.lorenzo.stoakes@oracle.com>
-	<3b04eb13b499df3ebf50ae3cde9a7ed5e76237fd.1722849860.git.lorenzo.stoakes@oracle.com>
-	<20240806154116.015e329a@mordecai.tesarici.cz>
-	<415d9d9c-7b63-47f0-9091-678f0d8d1268@lucifer.local>
-	<20240806161321.376f0a55@mordecai.tesarici.cz>
-	<c60acd5e-e7c7-42ba-9ad3-1b221cec2ddf@lucifer.local>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1722955168; c=relaxed/simple;
+	bh=7oknU6DGKYF5IvjWgkJ9pfIXoZcCEanwoQfqqdPzX3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9R4TKdchLWmw1mKwM2YcNZADsWiUbQs9FzmhTutj+75V0bp9cDOVt1Wg+6IOuKx2AqPN0/ZUQJaBYOuXsmQ7SvM2oLtYDlqFRcTJ2tD+hyAj5H1/vD4TyTIjTvcFA9Up+LfbYl6agnUCnw1f1R2i7ypnwp5B5Il3WaW4gi1q4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XceokrfW; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-76cb5b6b3e4so507787a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 07:39:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722955166; x=1723559966; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=z4EeH0lY+Ewy/pWDk6E3bMS6Wq7uVbNGOBf9b/txebg=;
+        b=XceokrfWz4sOtlr9SvB0GGIC8srXx+pJq6Ki9mU7DPxJNv8bwTzxIZw8ZjVS0xAZwq
+         LxXrf6KOirC1OU2i2wDZodzJftKZcfFk0Brn0MFiyb15elECPTyu9Bzn3BK/nDJw62mN
+         zy8vJHQfvjpRxmxflI7nED5LQCbBI5kc0+ikAtaVk+IvMqCDOLxWKe4BBdOXvabADo91
+         vRRBvT4NYFC7qBvZQjkTgI4uQnM3c9pWB+7Y4L/PlLYQG9INNJdmAJOi4mkUkqjgSZ9l
+         HLU6O1+WfnPUK1p337FobOT9sDW/QxkjKc7GkRZjXHmOg1hra1TYE/yRfKbMoZ5tTLAF
+         OmXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722955166; x=1723559966;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z4EeH0lY+Ewy/pWDk6E3bMS6Wq7uVbNGOBf9b/txebg=;
+        b=vk/IQL/pnStil0yWACRC2V7kmLRLFY9nKdoTIykY8YtxAkySqk8BdnR+87wU7zlrmw
+         xgbB4s5hCA+SJCe1NAKiuCk33+XAB/JDNDpzw7NgHnK2nuaBQtrMXW/pMWoEq+O7YMGY
+         JcAjWq3KfRkvw4zVaf8BgiZghc9NlgwehzFWDU+xfvEvmQE1x1yNlB+lAYYCCS/Q4dSG
+         Co+fL3tBgyprIkZdkR4V+SLM2yckB8cbRBynBNtytit3x/YYtje57lxTiCJ9IkzRiWOj
+         nM8LnUBQFG/u703iscLuKxR3xs6h+lesp7OE4PMoEbEaaVaCzM4XFcAqoA2/VP2GNom6
+         pKhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpgze+6kpTSmgKSdjI36+1JuCka18qwK36FOoV+np6TvZDctGwVk1wstFEKM/Jd9Bq0Q3W9DhPY4hrDfrz0ZiB7WPon7HVocuwJNiS
+X-Gm-Message-State: AOJu0YzxCRq2CowPUJeVYDDKG2nqc5FUCYD4zTiJw0hnXiM1d+bxhutX
+	LT0d6QP1aFjhMYqj0nhJ+LV8qo6JVX4wUeWSO90Db+m2naCDjvQJ1CHJ8ON6tQ==
+X-Google-Smtp-Source: AGHT+IEt+B2fM5winuaW+nvnzWqWUM+4wQ9VRXuPNs4sBBxJsLRqx4kYyRLSWtsgj2ZxvObCS1514A==
+X-Received: by 2002:a17:903:1207:b0:1f6:fcd9:5b86 with SMTP id d9443c01a7336-1ff5722e771mr156566585ad.12.1722955165862;
+        Tue, 06 Aug 2024 07:39:25 -0700 (PDT)
+Received: from thinkpad ([120.60.72.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff591786b3sm88483375ad.214.2024.08.06.07.39.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 07:39:25 -0700 (PDT)
+Date: Tue, 6 Aug 2024 20:09:18 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <20240806143918.GC2968@thinkpad>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
+ <ZqyxS8spZ-ohsP3R@wunner.de>
+ <20240805133555.GC7274@thinkpad>
+ <ZrHITXLkKrDbQKQp@wunner.de>
+ <20240806124107.GB2968@thinkpad>
+ <ZrIe70Z7uFven8HH@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrIe70Z7uFven8HH@wunner.de>
 
-On Tue, 6 Aug 2024 15:30:49 +0100
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On Tue, Aug 06, 2024 at 03:02:39PM +0200, Lukas Wunner wrote:
+> On Tue, Aug 06, 2024 at 06:11:07PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Aug 06, 2024 at 08:53:01AM +0200, Lukas Wunner wrote:
+> > > AFAICS we always program the device to go to D3hot and the platform
+> > > then cuts power, thereby putting it into D3cold.  So D3hot is never
+> > > skipped.  See __pci_set_power_state():
+> > > 
+> > > 	if (state == PCI_D3cold) {
+> > > 		/*
+> > > 		 * To put the device in D3cold, put it into D3hot in the native
+> > > 		 * way, then put it into D3cold using platform ops.
+> > > 		 */
+> > > 		error = pci_set_low_power_state(dev, PCI_D3hot, locked);
+> > > 
+> > > 		if (pci_platform_power_transition(dev, PCI_D3cold))
+> > > 			return error;
+> > > 
+> > 
+> > This is applicable only to pci_set_power_state(), but AFAIK PCIe spec
+> > doesn't mandate switching to D3Hot for entering D3Cold.
+> 
+> Per PCI Bus Power Management Interface Specification r1.2 sec 5.5 fig 5-1,
+> the only supported state transition to D3cold is from D3hot.
+> 
+> Per PCIe r6.2 sec 5.2, "PM is compatible with the PCI Bus Power Management
+> Interface Specification".
+> 
+> Granted, PCI-PM is an ancient spec, so I think anyone can be forgiven
+> for not knowing its intricacies off-the-cuff. :)
+> 
 
-> On Tue, Aug 06, 2024 at 04:13:21PM GMT, Petr Tesa=C5=99=C3=ADk wrote:
-> > On Tue, 6 Aug 2024 14:48:33 +0100
-> > Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> > =20
-> > > On Tue, Aug 06, 2024 at 03:41:16PM GMT, Petr Tesa=C5=99=C3=ADk wrote:=
- =20
-> > > > On Mon,  5 Aug 2024 13:13:55 +0100
-> > > > Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-> > > > =20
-> > > > > Pull this operation into its own function and have vma_expand() c=
-all
-> > > > > commit_merge() instead.
-> > > > >
-> > > > > This lays the groundwork for a subsequent patch which replaces vm=
-a_merge()
-> > > > > with a simpler function which can share the same code.
-> > > > >
-> > > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > > > ---
-> > > > >  mm/vma.c | 57 ++++++++++++++++++++++++++++++++++++++++++++------=
-------
-> > > > >  1 file changed, 45 insertions(+), 12 deletions(-)
-> > > > >
-> > > > > diff --git a/mm/vma.c b/mm/vma.c
-> > > > > index a404cf718f9e..b7e3c64d5d68 100644
-> > > > > --- a/mm/vma.c
-> > > > > +++ b/mm/vma.c
-> > > > > @@ -564,6 +564,49 @@ void validate_mm(struct mm_struct *mm)
-> > > > >  }
-> > > > >  #endif /* CONFIG_DEBUG_VM_MAPLE_TREE */
-> > > > >
-> > > > > +/* Actually perform the VMA merge operation. */
-> > > > > +static int commit_merge(struct vma_merge_struct *vmg,
-> > > > > +			struct vm_area_struct *adjust,
-> > > > > +			struct vm_area_struct *remove,
-> > > > > +			struct vm_area_struct *remove2,
-> > > > > +			long adj_start,
-> > > > > +			bool expanded)
-> > > > > +{
-> > > > > +	struct vma_prepare vp;
-> > > > > +
-> > > > > +	init_multi_vma_prep(&vp, vmg->vma, adjust, remove, remove2);
-> > > > > +
-> > > > > +	if (expanded) {
-> > > > > +		vma_iter_config(vmg->vmi, vmg->start, vmg->end);
-> > > > > +	} else {
-> > > > > +		vma_iter_config(vmg->vmi, adjust->vm_start + adj_start,
-> > > > > +				adjust->vm_end);
-> > > > > +	} =20
-> > > >
-> > > > It's hard to follow the logic if you the "expanded" parameter is al=
-ways
-> > > > true. I have to look at PATCH 09/10 first to see how it is expected=
- to
-> > > > be used. Is there no other way?
-> > > >
-> > > > Note that this is not needed for adjust and adj_start, because they=
- are
-> > > > merely moved here from vma_expand() and passed down as parameters to
-> > > > other functions. =20
-> > >
-> > > See the next patch to understand how these are used, as the commit me=
-ssage
-> > > says, this lays the groundwork for the next patch which actually uses=
- both
-> > > of these.
-> > >
-> > > I have tried hard to clarify how these are used, however there is some
-> > > unavoidable and inherent complexity in this logic. If you don't belie=
-ve me,
-> > > I suggest trying to follow the logic of the existing code :)
-> > >
-> > > And if you want to _really_ have fun, I suggest you try to understand=
- the
-> > > logic around v6.0 prior to Liam's interventions.
-> > >
-> > > We might be able to try to improve the logic flow further, but it's o=
-ne
-> > > step at a time with this. =20
-> >
-> > What I mean is: Is there no way to arrange the patch series so that I
-> > don't have to look at PATH 09/10 before I can understand code in patch
-> > 08/10? =20
->=20
-> No.
->=20
-> >
-> > This PATCH 08/10 adds only one call to commit_merge() and that one
-> > always sets expanded to true. Maybe you could introduce commit_merge()
-> > here without the parameter and add it in PATCH 09/10? =20
->=20
-> No, I won't do that, you haven't made a case for it.
->=20
-> >
-> > Petr T =20
->=20
-> I appreciate you are doing a drive-by review on code you aren't familiar
-> with, but it's worth appreciating that there is some context here - this =
-is
-> intentionally isolating _existing_ logic from vma_expand() and vma_merge()
-> in such a way that we have a _generic_ function we can use for this
-> operation.
+Ah, the grand old PCI-PM... I don't remember the last time I looked into it :)
 
-The history you make today becomes the learning material for the next
-generation of kernel hackers (who will also lack a lot of context).
+> 
+> > So the PCIe host controller drivers (especically non-ACPI platforms)
+> > may just send PME_Turn_Off followed by removing the slot power
+> > (which again is not controlled by pci_set_power_state())
+> > as there are no non-ACPI related hooks as of now.
+> 
+> Ideally, devicetree-based platforms should be brought into the
+> platform_pci_*() fold to align them with ACPI and get common
+> behavior across all platforms.
+> 
 
-> I think it'd be _more_ confusing and (surprising given your rather pedant=
-ic
-> interpretation of churn elsewhere) churny to rewrite this again with a
-> bunch of added logic in the next commit.
->=20
-> I think this is highly subjective, and I'm not sure it's a great use of
-> either of our time to get too stuck in the weeds on this kind of thing.
+Yeah, that would be the ideal case. Unfortunately, there is no ideal ground for
+DT :/ We do not even have the supplies populated properly. But with the advent
+of power sequencing framework, I think this can be fixed.
 
-Yep. We can all agre this is the best way to convey the idea behind the
-changes. Don't get me wrong; this whole series does a lot of good in
-terms of code readability, even for a bystander like myself.
+Regarding your comment on patch 3/4, we already have the sysfs attribute to
+control whether the device can be put into D3Cold or not and that is directly
+coming from userspace. So there is no guarantee to assume that D3Hot support is
+considered.
 
-Petr T
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
