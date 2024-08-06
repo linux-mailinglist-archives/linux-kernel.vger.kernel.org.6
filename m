@@ -1,63 +1,69 @@
-Return-Path: <linux-kernel+bounces-276293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5029491CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:42:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A2794921A
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 15:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 048222836B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB181B26A77
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 13:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3471D4177;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5FC1D417F;
 	Tue,  6 Aug 2024 13:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="gcXpcJzA"
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="xLsRlk6Q"
 Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1791BD009;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD12919F464;
 	Tue,  6 Aug 2024 13:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951717; cv=none; b=QvG9htGW8UtcIWIKOONMLe8QwzlkAWUNRPjHfEVljpfIcj0O7YiTuZz2rR7bG83OY17hXPlQeZnkIxtMrubcqJo2uUgZl62J6Mevdd6719MpHy2jJouJDuddAIaunigtTDltzxeGeGJBhz3kwtRfmkRTX5qNzVjo1eGqxUwlKvA=
+	t=1722951717; cv=none; b=VKhW9geeYHD+JBEN1Q26BPr2fXcb8gSpZZiwxKzM+ap6VrwPrElf/xZ+Rh76QukLpc173UB73WYANTSFbk9kIXSLqCItlvdtE7SQO6D1W73WJDWgsYv2xzuj9jTJ1vp64NdtMF/djiSTvk/SACuPZn868ho5QTIzLYAECPgdo4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722951717; c=relaxed/simple;
-	bh=dG+ATzNVBJJx+LQfMja9kcJSBo8Yp4nr8S6S//gMM8M=;
+	bh=WufKVeYRMMMtkl0SBVr4NH+Xi3UN9YXrxS6beFaxZJw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M4h3P4ImzJR2pcJRaigiCy8KRv5kv9joJqwUfEWApTwGPcX9/cnZno2t4NC8UlipTyAQp3abZOkO9qaq9m3E5Vg+M8mqF3MDxJFy5qPzd6CZwjvoWSf49H4Lo0Zr9aRQ5wpStEWRQw4zw8FwJKA/lOwGjYH9iSf3KCp023Na5Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=gcXpcJzA; arc=none smtp.client-ip=116.203.77.234
+	 MIME-Version; b=tON1kSvek9kT1RvysEjgeVXy1V2VEkyzjwAibKNQGYMV4xABPAH/mzXQzLHAntcsDHUBo6l5uB4M/VA00jqdytRlkjPjfLXFK22mf7+UVlpmsIcpROH56lmDwXvSCUhNISwBpu+dLvLwEu1vQnPP7e+VtUvisAY13c8+VMfZR4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=xLsRlk6Q; arc=none smtp.client-ip=116.203.77.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 42E3EBFBC6;
-	Tue,  6 Aug 2024 15:34:45 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3354DBFBC7;
+	Tue,  6 Aug 2024 15:34:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
-	t=1722951285; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1722951289; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=wFp5tFAhv5MQ0QywadpHG7YRFsalFYFU8NQQ9AMayj0=;
-	b=gcXpcJzAI++/xeJ2POQgRkkjHHJd971rCA5DnGmNHuoldVCoAwuLhhghGkrJ12k8+tI2eh
-	aMGj5wgvx9IVqONVW8z5n9JGMRDjnytIXkLZfst/VSz6prENUJLdfk48kEfbvYW131ZwiG
-	GxVctSBECogbLnmYsmytucDz23eCr/kx4gfATpAFQteFIG5ntnoUj/1ikHCyiA35W/9Dfb
-	Fp44t0IhLk8K39Oag/eHsnM7BC4m3N8fPhvDxb6CvhnrOv7Hy2yhyJBIeN2f12UVqwQEJL
-	mOjXXI32a9uqMWwUq31zn+zS22/1LyAuOg5bJRiLskSXXsOV4zbfb75EPhbdfg==
+	bh=QYOyecr8YSpIqQFw0AXKerk+WzH6pvykimx2Jj7ntNA=;
+	b=xLsRlk6Q/yPSMG8KP4VRrhg8f1hOhln+EEP7Og4CdgiTTCgBpH9IefxGaIolEDkOM6QI6+
+	0Wuoa0s3gjfGNifBXeEPpcA/l3h5qBIZpVBxFUyDlSys9g6SAJrblIO05TNvFfPigtseOY
+	vkevrW/0NXsXS+Osb8Itu7ShNDmkXHXAEBLzv1e/DeUcp4r0ZrDQMjWBOOLyah7W45NWym
+	fEkITiRG+lJAcvpA5BKieZ9SvRmt1eBiX6I46C7iRO6BCYQeKTLbU2i0l/fuHBdJRqj2hr
+	ZW5PPCiIzcZpduOG15HEhMArHAINIIuzG8Hg3W9SoUl53uu+5fqKI3zvlhTong==
 From: Frieder Schrempf <frieder@fris.de>
 To: Conor Dooley <conor+dt@kernel.org>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
 	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-Subject: [PATCH 1/4] dt-bindings: vendor-prefixes: Add Jenson Display
-Date: Tue,  6 Aug 2024 15:32:59 +0200
-Message-ID: <20240806133352.440922-2-frieder@fris.de>
+	Rob Herring <robh@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Subject: [PATCH 2/4] dt-bindings: display: panel-lvds: Add compatible for Jenson BL-JT60050-01A
+Date: Tue,  6 Aug 2024 15:33:00 +0200
+Message-ID: <20240806133352.440922-3-frieder@fris.de>
 In-Reply-To: <20240806133352.440922-1-frieder@fris.de>
 References: <20240806133352.440922-1-frieder@fris.de>
 Precedence: bulk
@@ -71,26 +77,26 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Add vendor prefix for manufacturer Jenson Display.
+The Jenson BL-JT60050-01A is a 7" 1024x600 LVDS display.
 
 Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ Documentation/devicetree/bindings/display/panel/panel-lvds.yaml | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index a70ce43b3dc03..2b483eb5e364c 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -750,6 +750,8 @@ patternProperties:
-     description: Japan Display Inc.
-   "^jedec,.*":
-     description: JEDEC Solid State Technology Association
-+  "^jenson,.*":
-+    description: Jenson Display Co. Ltd.
-   "^jesurun,.*":
-     description: Shenzhen Jesurun Electronics Business Dept.
-   "^jethome,.*":
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml b/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
+index 155d8ffa8f6ef..5af2d69300751 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
+@@ -50,6 +50,8 @@ properties:
+           - hannstar,hsd101pww2
+           # Hydis Technologies 7" WXGA (800x1280) TFT LCD LVDS panel
+           - hydis,hv070wx2-1e0
++          # Jenson Display BL-JT60050-01A 7" WSVGA (1024x600) color TFT LCD LVDS panel
++          - jenson,bl-jt60050-01a
+           - tbs,a711-panel
+ 
+       - const: panel-lvds
 -- 
 2.45.2
 
