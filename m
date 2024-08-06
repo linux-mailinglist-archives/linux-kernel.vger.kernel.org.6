@@ -1,135 +1,152 @@
-Return-Path: <linux-kernel+bounces-275926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75494948C0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:17:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C50948C0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 11:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B2D286824
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:17:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D230B24387
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 09:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C90A1BDAA1;
-	Tue,  6 Aug 2024 09:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648AA1BDA8B;
+	Tue,  6 Aug 2024 09:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irw3K1eS"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aKx82Bmj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0D71607BD;
-	Tue,  6 Aug 2024 09:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C975464E
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 09:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722935817; cv=none; b=UFgyf7nobKe4/1b6catUMRKdmlB5JbCloiD4a0QhEliABrHEaOjGhAAkCLPbDuqF+fdU90pL0U8z/Pl0BdztoLbGstYcsdvYyobheLVKFqSQ5xqQOepfUaP8tZqYk26gD9BX1vrzVEqKv147A5lUO8YDmWYc+eNsLnYQqJ5MeJ8=
+	t=1722935901; cv=none; b=RcCUZxQs5GNav2xC6g81wmyp6JhaxIp6pVle0JEImbs29a0Kk4f7EoAP9FmmXdgkCRNzMtvLjwzJCNBfhhT2lO8Wfx+U+UstODG1OTEXZP05KKw7dRFTh/dbIfedN4Lqc8otvog53IvAV42ApeHiBns9jUAWdrHdPXXGizVRJCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722935817; c=relaxed/simple;
-	bh=6/MBzf7qMtFkXmI+Aj2neTJCFFRXZb2axQ6D3H52sj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f1MaKf1jbh5frli77DKyqxisLZhLY9CG00YEjl1n0thSSrZ3lyBGoin43UrU7+ZfrD1+I0nhYEH2IVzTvvdfEQDa2JWITMM/iac5wFUpQByBpKhQ/tOhhirIjSm7orffcA5y230zzYneLQRQvGf14CvHNAMLg6ulOPYKKZPlCZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=irw3K1eS; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f04150796so800171e87.3;
-        Tue, 06 Aug 2024 02:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722935814; x=1723540614; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sKgoqBj7LDgdK9cgXdjbVyK58ya9Wcnbj0gf678fdiY=;
-        b=irw3K1eSXjln0vYgDcVyJjvM0o4Dgtw0nvByvOx0geN61O8W4/RtnbyxmjKAWgG38x
-         xEZnRwx/PU8U63foZjgZLCebXKRNh1nepn8hSIaQx4P6wC6gp4WUtK/VK/dqH7sdzQze
-         fkuJhQ8fEmXPuGNRdA4SIJBARcRNo2GZXYsVF251Y8bC3h92lHUlc7rrtWvog6MXDn4r
-         +lBan0jAhsIJQHHPb7tWbqiVo8pOGJt4CeaON57AIeLj87AcxW9Gaj6fLF2K3gbNObyJ
-         LeQhweSATP7X2RskzEKrYkpjx2zo35S2wAGGYyAkgBw9CtZOzQT5yWBL3djyIHXCnwfS
-         f5Xg==
+	s=arc-20240116; t=1722935901; c=relaxed/simple;
+	bh=xQdSI9C7Qu+kqgTBevD0hD13tRvt7O8vyHl2hu1aq2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kPay+TbxqbO7QCVyRp7eaUr9zXRXrsApf9B+Af5vX0F69mM2Z3F52wjzuzLHBdn4s5CCr5n4uVmEgoXyhaPTfK/r8GWDUDixqPqVndFENMd+AsyB0eaEuPQY0cefr/qeelV5HyfQz4ILRy5OXPIVviM1qe8qbuZWNzEtAXpCzoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aKx82Bmj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722935899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y59hN2s/MNY6Pe91xmrj92ENgow4G095yCJtbOBOOcs=;
+	b=aKx82BmjvI2+FvASV7MX9tRhoTDFCMqWgPwC1JqQNYmIMEBux8dM50cGiF2P9ZijlCTsbE
+	NO83rnOrViseNOtdO253rbmF175Z0ZXC+kGg4j6+dXL0JLM/HxXUf3hbPuyWtmrqPGI4+b
+	hiEu5vqdpzvmpsQTIG826mEdeHGhd40=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-251-qW5OfVn5Pa6fyPqbrUf6Pg-1; Tue, 06 Aug 2024 05:18:14 -0400
+X-MC-Unique: qW5OfVn5Pa6fyPqbrUf6Pg-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4281b7196bbso3859455e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 02:18:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722935814; x=1723540614;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sKgoqBj7LDgdK9cgXdjbVyK58ya9Wcnbj0gf678fdiY=;
-        b=WzRAViqQSnTstfRKkTaVh/C9/5uBJK1WbC6utxeSrvS2QgX4pWAXG7yOOEb+x1BAJt
-         LlgrBzGh8xJR3XKRvb/gF9ZVPeHICFEoTB0PjgIgjNmXz+RwmVyreLotjCMdmnh6pL0E
-         ou6rkAAatj5C1Rosi6lA5KrtEIUTfBIpBg3dnA4nhGJyL8YYkPGfvKDfnZHF0qu0DKDI
-         2Y0vy9+Yf4pDyEmDD5eCeJCgLZ5lrY8kGv0lQ/O1wS8moq9+noDgbeWZ5JvilGiCkInl
-         eHhqzu4XEh5mmkyfDxi9sE95PpbINCC1sMvHG2zfYa5VM7gCvllP+UQOYmQu8IuVPnZv
-         VCpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbei6i2j4ftgDENTj9dIUQag8A45mNizWRrtiQuboGAx7AWpLBpYE59C1bf6Dd2WmUFSi4mO66pmgyTCDlm8/mTDgsQIX1b4R4QQDWHCIFqsqH7FeWuAZ0qQpUD3P0QCDKC8Mj
-X-Gm-Message-State: AOJu0YwjN64cHkm0exNICitJ5Fq+Chrz7e6zqAX3b6UyZVR0y5LI4cFu
-	KweFWo95SwJL+0edSEQJ4NXot/rhfLHaG8a2sMMj3iBIKNqBRPzz
-X-Google-Smtp-Source: AGHT+IHTZo7Przl/rVclxgOrc8JseI2RXR0EukFrflIyILA4YgmaESP3m/Bp4UxISHcGTzEdBRVrDQ==
-X-Received: by 2002:a05:6512:a8d:b0:52e:a68a:6076 with SMTP id 2adb3069b0e04-530bb3b42d7mr9535555e87.49.1722935813817;
-        Tue, 06 Aug 2024 02:16:53 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba3527dsm1423441e87.185.2024.08.06.02.16.52
+        d=1e100.net; s=20230601; t=1722935893; x=1723540693;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y59hN2s/MNY6Pe91xmrj92ENgow4G095yCJtbOBOOcs=;
+        b=OuYPeFycNqmin8CtRLgbwJsVNhn9nuqiga4IpT29O78029lUBbONixfas/7MCHlskM
+         /lFvOMiJkXiykuvqfm5r6T9JgEtug6p66LxsIkU2ld2PFtgQfAE5ReEX9doNhxjwxe/W
+         2Nx9q1bTYQxT0losO/eGjuXm46j8XhyTtPQyPApw8Vak4NpdeQ5zeYf2U4mYl1ws//3r
+         g3fNVwCBXvxWz5Cr1yzyn6UCNONail19DJZIw+oycOf7VgYyTtw+FJV1CayN5GNzDn64
+         Q41GZyeRNQWtEVJ/it3+I/TrO4b3xh8qWIG6Pu9YEvJ5+2R6mrvzhooMHB2tNHYiuNqd
+         i2rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYrnx0n0CMXHP2lba2sF0/ko5TfKzyzeTknze1lJm+ZsAyDrr8t7TReQWYdhHD0xhmt2KUWnz8ypRKOhKk5DnTGuouXFD0XewcILS3
+X-Gm-Message-State: AOJu0Yylqoi7KcTFMO8T88Eds7uI0N53RJw4a2IRD1vKAQpNvovpDdCL
+	hG1m1vM1BIF+AjD48BLppuyS/0g91b/3T6XTpau0VixlP+Eyx/lYrB1RNmk4m2WWHedAa12EVok
+	HqCeElaFtMyoX/LSCYtXcKzhYvYWMwccWDESE0qXhtfBNrW/d2lDk5Ug/UQhSMg==
+X-Received: by 2002:a05:600c:3caa:b0:426:622d:9e6b with SMTP id 5b1f17b1804b1-428e6b7e5ddmr108736235e9.23.1722935893261;
+        Tue, 06 Aug 2024 02:18:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvysX2vltXK8sXDEyjf8yRaX+R57uey5E5z7HEyphW/MiuBtAMi/U71enPWHJ9RzN/4Bfl5A==
+X-Received: by 2002:a05:600c:3caa:b0:426:622d:9e6b with SMTP id 5b1f17b1804b1-428e6b7e5ddmr108735955e9.23.1722935892704;
+        Tue, 06 Aug 2024 02:18:12 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb64b84sm231279505e9.32.2024.08.06.02.18.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 02:16:53 -0700 (PDT)
-Date: Tue, 6 Aug 2024 12:16:50 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v1 0/5] net: stmmac: FPE via ethtool + tc
-Message-ID: <v3iwxjoaitetkrwjlcvc7xbwzybpbcvvcikriym4krurb76p7r@2ekkibfy6cih>
-References: <cover.1722421644.git.0x1207@gmail.com>
- <max7qd6eafatuse22ymmbfhumrctvf2lenwzhn6sxsm5ugebh6@udblqrtlblbf>
- <20240806125524.00005f51@gmail.com>
+        Tue, 06 Aug 2024 02:18:11 -0700 (PDT)
+Date: Tue, 6 Aug 2024 11:18:09 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+ <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v5 4/7] acpi/ghes: Support GPIO error source
+Message-ID: <20240806111809.10bc2406@imammedo.users.ipa.redhat.com>
+In-Reply-To: <20240806080928.5a04c550@foz.lan>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<5d53042ebc5bc73bbc71f600e1ec1dea41f346b9.1722634602.git.mchehab+huawei@kernel.org>
+	<20240805175617.000036ce@Huawei.com>
+	<20240806080928.5a04c550@foz.lan>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806125524.00005f51@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 12:55:24PM +0800, Furong Xu wrote:
-> Hi Serge
-> 
-> On Mon, 5 Aug 2024 20:11:10 +0300, Serge Semin <fancer.lancer@gmail.com> wrote:
-> > Hi Furong
-> > 
-> > Thank you very much for the series. I am not that much aware of the
-> > FPE and ethtool MAC Merge guts. But I had a thoughtful glance to the
-> > FPE-handshaking algo and got to a realization that all the FPE-related
-> > data defined in the include/linux/stmmac.h weren't actually
-> > platform-data. All of that are the run-time settings utilized during
-> > the handshaking algo execution.
-> > 
-> > So could you please move the fpe_cfg field to the stmmac_priv data and
-> > move the FPE-related declarations from the include/linux/stmmac.h
-> > header file to the drivers/net/ethernet/stmicro/stmmac/stmmac.h file?
-> > It's better to be done in a pre-requisite (preparation) patch of your
-> > series.
-> This will be included in V2 of this patchset.
-> 
-> > 
-> > Another useful cleanup would be moving the entire FPE-implementation
-> > from stmmac_main.c to a separate module. Thus the main
-> > driver code would be simplified a bit. I guess it could be moved to
-> > the stmmac_tc.c file since FPE is the TC-related feature. Right?
-> 
-> Thanks for your advice.
-> 
-> A few weeks ago, I sent a patchset to refactor FPE implementation:
-> https://lore.kernel.org/all/cover.1720512888.git.0x1207@gmail.com/
-> 
-> Vladimir suggested me to move the FPE over to the new standard API,
-> then this patchset comes.
-> 
-> I am working on V2 of this patchset, once this patchset get merged,
-> a new FPE implementation will be sent to review.
+On Tue, 6 Aug 2024 08:09:28 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-If the new FPE-implementation includes the FPE-hanshaking stuff moved
-out from the stmmac_main.c it will be just wonderful. Thanks!
-
--Serge(y)
+> Em Mon, 5 Aug 2024 17:56:17 +0100
+> Jonathan Cameron <Jonathan.Cameron@Huawei.com> escreveu:
+> 
+> > On Fri,  2 Aug 2024 23:43:59 +0200
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> >   
+> > > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > 
+> > > Add error notification to GHES v2 using the GPIO source.    
+> > 
+> > The gpio / external interrupt follows through.  
+> 
+> True. As session 18.3.2.7 of the spec says:
+> 
+> 	The OSPM evaluates the control method associated with this event 
+> 	as indicated in The Event Method for Handling GPIO Signaled Events 
+> 	and The Event Method for Handling Interrupt Signaled Events.
+> 
+> E. g. defining two methods:
+> 	- GED GPIO;
+> 	- GED interrupt
+> 
+> I'm doing this rename:
+> 
+> 	ACPI_HEST_SRC_ID_GPIO -> ACPI_HEST_SRC_ID_GED_INT
+> 
+> To clearly state what it is implemented there.
+> 
+> I'm also changing patch description to:
+> 
+>     acpi/ghes: Add support for General Purpose Event
+>     
+>     As a GED error device is now defined, add another type
+>     of notification.
+>     
+>     Add error notification to GHES v2 using the GPIO source.
+                                                  ^^^^
+did you mean: GED?
+>     
+>     [mchehab: do some cleanups at ACPI_HEST_SRC_ID_* checks and
+>      rename HEST event to better identify GED interrupt OSPM]
+> 
+>     Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>     Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> 
+> Regards,
+> Mauro
+> 
 
 
