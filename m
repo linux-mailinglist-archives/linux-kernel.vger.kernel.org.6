@@ -1,283 +1,182 @@
-Return-Path: <linux-kernel+bounces-275909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028CC948BCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:58:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20779948BCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 10:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2349DB248E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B62283D0E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 08:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0885F1BD50F;
-	Tue,  6 Aug 2024 08:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62341BD508;
+	Tue,  6 Aug 2024 08:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcSi0qGG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jGk+WyTn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E4D1BD4F0;
-	Tue,  6 Aug 2024 08:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45160165EE2
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 08:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722934706; cv=none; b=tP4BAc9CQS2Q4UoUdBKlWlqOKVP21xeTmjZ4S5bnN5vydHux+GB+0CT8JtH9/sJElKklwGzpQiXMDh4ssO7JYALCZHksNt2rTmv0MQQ7gj3TIqW+Y6cfENf7YnDDULSCCErJ3lIQdIyTGIn1EFb0/LMdeMgM6EmmJmniHeaYULw=
+	t=1722934682; cv=none; b=IN9mYwDNN/g88uih4JxN/2vriWPRQk+uk+6Geo/38SxLVFXxGTqdvg54z+ddIxdBNRpt3na1+OJAGlICmaYYhzOt1iXUCDkO/xn3M48VvfDpVUSP6QISUpYFwasKtae9EeV1SgV8K8bZ6kWp01CPtsv09qPY55vfs1wHxHzxj40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722934706; c=relaxed/simple;
-	bh=SyGVoJDSt98puveMfMQeUQ4rgzr4zqsQZ2Ozvs2D3AM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tEvxi9qM3i4WGBj5umNj8ghJflIG/eoRIa7L37NFeI8sj6jwDgbU8MfNZpiS+4HWGQ+OtLVKuKS1DN9OWTKZZYskoRYWYAxE17Rr4v/n1nDkHNJdSK3E7yFcPsO2nFhvTLQkXED8odMpWSK//aV7VsaFG7lGZAVMmEof95dvd3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcSi0qGG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC958C4AF0F;
-	Tue,  6 Aug 2024 08:58:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722934705;
-	bh=SyGVoJDSt98puveMfMQeUQ4rgzr4zqsQZ2Ozvs2D3AM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BcSi0qGGAEFkfzXXDHCkjxbWGn7PxE8yYnWFVelFtyVs+aNNSwRf2TheJk5IBO4Jh
-	 PU3J1e1xgjsLOOh80+beBZM6HZ0T7Bv4aCSEaB7PCcYjG0NNhU1sWcrpNCTcRv9oKi
-	 OJNSVDZKwUWslQx9gfcujuJoWUxdSdpSntXDXAuBDjP/Sk7fCv2YhLGdv8BLwF+g93
-	 f4iiZfNWyy3i6ogpcY7K3fJ0hFUUkC6gzMWRsZi/dU4kGybb9aIcE4z2NBU4CcH6aN
-	 XJUJi0Bfw5xkCHGlp8VaDGS3G6AOqEyEIu6sbXU04GaOOoHuWjcc5/LwFUX3XwAP07
-	 C0VHGKDw0hTuQ==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efef496ccso508214e87.1;
-        Tue, 06 Aug 2024 01:58:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUX+fdKcZTjO9KEA3qtXGx1zNl+AT0gbkFAhFqeVBTHGNDvMMcocvLJ8ehYsxgpekr07zrF6NFKKxXXmqEdaHr/Ugr5QJwbvk3BACg6sU56jvBeWDPMT7y/ucXzoCe1tnpOlXXlsRS32PRV
-X-Gm-Message-State: AOJu0YwBH0y7sY1VMboV9ThYDK+q5Bb15jwDWaNxqXE1LoEouNtrL23y
-	+sOG7xaUCCL4wONlwqmKM000empkAJp/82RqYo4uhDaD8foeXSDcb05hYYw3ikJKktNXM3ybAsj
-	WK5XDKAkEbAkm8ZeoQidN++RZS70=
-X-Google-Smtp-Source: AGHT+IF2Lx+aVdRgJGQGSExAvK+w/2p99wee+WCknT5xDUb5knpT0GJ0Scw2M3C8IVRkNsQ24JaaCkRPWhbgczarwX0=
-X-Received: by 2002:ac2:4c54:0:b0:52c:dc56:ce62 with SMTP id
- 2adb3069b0e04-530b8d09eb2mr4503698e87.12.1722934704393; Tue, 06 Aug 2024
- 01:58:24 -0700 (PDT)
+	s=arc-20240116; t=1722934682; c=relaxed/simple;
+	bh=VWgW6McWjP04QJIvC8yYz3BMAx3Oktpg/ItbyagpJ/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CDJ9WWr/rcIWAXBfe+uFeuZKboEe8C9PXS1Mkbc1lH4ceXd6U29Q3soKLNcS0BzqyrtvjjeLbSL8Id3IBVxCIo7FgClSQJiyueMB1+8AcRcdwZp9NYtfx5zCCJSOK2OtSgjdheb8A+JhQmUwidefotkw5HI43ncPxNXwOdvBiiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jGk+WyTn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722934679;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PBJPewKe6BU0COfu0bKneZLn3oPmWdR4THfVKVsrupU=;
+	b=jGk+WyTn895JBgKxLUJZVANzLy28binITY0LVktcdGWOltw9SuMJ30/6PlT8F7ATFXQtWB
+	ZXFpJDZatLXvU9CBPVFY9Bo671xtoTTDjNSYWUSvsNnNYFeoPo/JEcXZ304HiAWsEkIK0K
+	cGa6IpKidsiNyWZH5qZX2DIpvoXTcIU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-135-SUzAZmTZPiWK4vbOOMMaGA-1; Tue, 06 Aug 2024 04:57:57 -0400
+X-MC-Unique: SUzAZmTZPiWK4vbOOMMaGA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280c0b3017so2755685e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 01:57:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722934676; x=1723539476;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PBJPewKe6BU0COfu0bKneZLn3oPmWdR4THfVKVsrupU=;
+        b=qcJCyRcKeJhtk9NTEdWSPN6kG3WtQjgFP1GWUNwCdcSIhmj/gbzu4RB5d156PId8Tu
+         d8VsOU2p9xJV9qxJsy2spkajGz9N4nziEL8d7smle6GG4aoNsi3Y8Vswf/TgqN9KEXre
+         kBh6PZDwUHa2Zejl4Aq78CCCyE+1VRI9OENefZz3vcQ+w9qsUFtQuf4ZEmiW1ZssVjDn
+         qUu6k+wJ3PhSIiApzp79+MfAiiQq+S9L8i+B/pncVsaYyjqS/2bCUTfqG5R3Qr4UGNsK
+         Kny8Qoxkf2YnzMaIuFnwFENmDlsVyOQdCTZt9p0YBpH0YVZyDBiyUmaYTEUrk4QIgnwr
+         JMYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2DIyTSA1+Y+YdlNbQy4vtfjGlExOXXhCphrbLZ2/k6OwhDbjvqq/84cGYKe6UVg1EtKGp/d1YmbfpXHCe41FQG4GsSCyzJkWUI3ts
+X-Gm-Message-State: AOJu0YxU2cK2G6uolGv9Q7U9SP4+TvctXyHYeBlD7SYgMYaPvge6XBBZ
+	Uf/letfjs1eSpo4+xLiHm75n/MZcKM0X15VqNcd3Oms3lFCwzK/VBm3pf6htfKezda9rTmZwdGC
+	PRYhXKIsHEyiiQDihgmT8U39lZ5L8DRKjzzrnQZk87txckmRUhWfPmKqHD83Pkg==
+X-Received: by 2002:a05:600c:3153:b0:428:1846:4f0 with SMTP id 5b1f17b1804b1-428e6b026b1mr88241955e9.16.1722934675720;
+        Tue, 06 Aug 2024 01:57:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhy0J15b8IGtupJPtFKwPmRtb6BzvUMcj8sRdt0nXX8aZb/IrgFx/JYW7qKURbakSBHt5GJg==
+X-Received: by 2002:a05:600c:3153:b0:428:1846:4f0 with SMTP id 5b1f17b1804b1-428e6b026b1mr88241715e9.16.1722934675135;
+        Tue, 06 Aug 2024 01:57:55 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e03c4csm173264425e9.13.2024.08.06.01.57.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 01:57:54 -0700 (PDT)
+Date: Tue, 6 Aug 2024 10:57:52 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Peter Maydell <peter.maydell@linaro.org>, Shannon
+ Zhao <shannon.zhaosl@gmail.com>, linux-kernel@vger.kernel.org,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v5 1/7] arm/virt: place power button pin number on a
+ define
+Message-ID: <20240806105752.00c81877@imammedo.users.ipa.redhat.com>
+In-Reply-To: <e5afbbaf2836ebe22b48c455285eccef86db966b.1722634602.git.mchehab+huawei@kernel.org>
+References: <cover.1722634602.git.mchehab+huawei@kernel.org>
+	<e5afbbaf2836ebe22b48c455285eccef86db966b.1722634602.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202408061634.fe6be94-oliver.sang@intel.com>
-In-Reply-To: <202408061634.fe6be94-oliver.sang@intel.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 6 Aug 2024 17:57:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARnytQTW5vE+u+ez1pHuSVS34cQ0+xK+MLyfLp05GjoaA@mail.gmail.com>
-Message-ID: <CAK7LNARnytQTW5vE+u+ez1pHuSVS34cQ0+xK+MLyfLp05GjoaA@mail.gmail.com>
-Subject: Re: [linus:master] [kconfig] f79dc03fe6: segfault_at_ip_sp_error
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 6, 2024 at 5:21=E2=80=AFPM kernel test robot <oliver.sang@intel=
-.com> wrote:
->
->
-> hi, Masahiro Yamada,
->
-> the config for this test is a random config, by this commit, the config h=
-as
-> below diff with parent:
->
-> --- /pkg/linux/i386-randconfig-r032-20230623/gcc-12/ee29e6204c32dce013ac6=
-d1078d98dce5607ce86/.config    2024-08-05 12:56:30.744686432 +0800
-> +++ /pkg/linux/i386-randconfig-r032-20230623/gcc-12/f79dc03fe68c79d388908=
-182e68d702f7f1786bc/.config    2024-08-05 12:56:37.620536644 +0800
-> @@ -770,14 +770,14 @@ CONFIG_MODULE_UNLOAD=3Dy
->  CONFIG_MODULE_SIG=3Dy
->  # CONFIG_MODULE_SIG_FORCE is not set
->  CONFIG_MODULE_SIG_ALL=3Dy
-> -CONFIG_MODULE_SIG_SHA1=3Dy
-> +# CONFIG_MODULE_SIG_SHA1 is not set
->  # CONFIG_MODULE_SIG_SHA256 is not set
->  # CONFIG_MODULE_SIG_SHA384 is not set
->  # CONFIG_MODULE_SIG_SHA512 is not set
-> -# CONFIG_MODULE_SIG_SHA3_256 is not set
-> +CONFIG_MODULE_SIG_SHA3_256=3Dy
->  # CONFIG_MODULE_SIG_SHA3_384 is not set
->  # CONFIG_MODULE_SIG_SHA3_512 is not set
-> -CONFIG_MODULE_SIG_HASH=3D"sha1"
-> +CONFIG_MODULE_SIG_HASH=3D"sha3-256"
->  CONFIG_MODULE_COMPRESS_NONE=3Dy
->  # CONFIG_MODULE_COMPRESS_GZIP is not set
->  # CONFIG_MODULE_COMPRESS_XZ is not set
-> @@ -6201,7 +6201,6 @@ CONFIG_FIPS_SIGNATURE_SELFTEST_ECDSA=3Dy
->  #
->  CONFIG_MODULE_SIG_KEY=3D"certs/signing_key.pem"
->  CONFIG_MODULE_SIG_KEY_TYPE_RSA=3Dy
-> -# CONFIG_MODULE_SIG_KEY_TYPE_ECDSA is not set
->  CONFIG_SYSTEM_TRUSTED_KEYRING=3Dy
->  CONFIG_SYSTEM_TRUSTED_KEYS=3D""
->  CONFIG_SYSTEM_EXTRA_CERTIFICATE=3Dy
->
->
-> we are not sure if these are expected?
+On Fri,  2 Aug 2024 23:43:56 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
+> Having magic numbers inside the code is not a good idea, as it
+> is error-prone. So, instead, create a macro with the number
+> definition.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-This is expected.
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 
-f79dc03fe68c79d388908182e68d702f7f1786bc changed the way how choice is
-calculated.
-So, the randconfig from the same seed can result in a different .config fil=
-e.
+> ---
+>  hw/arm/virt-acpi-build.c | 6 +++---
+>  hw/arm/virt.c            | 7 ++++---
+>  include/hw/arm/virt.h    | 3 +++
+>  3 files changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> index e10cad86dd73..f76fb117adff 100644
+> --- a/hw/arm/virt-acpi-build.c
+> +++ b/hw/arm/virt-acpi-build.c
+> @@ -154,10 +154,10 @@ static void acpi_dsdt_add_gpio(Aml *scope, const MemMapEntry *gpio_memmap,
+>      aml_append(dev, aml_name_decl("_CRS", crs));
+>  
+>      Aml *aei = aml_resource_template();
+> -    /* Pin 3 for power button */
+> -    const uint32_t pin_list[1] = {3};
+> +
+> +    const uint32_t pin = GPIO_PIN_POWER_BUTTON;
+>      aml_append(aei, aml_gpio_int(AML_CONSUMER, AML_EDGE, AML_ACTIVE_HIGH,
+> -                                 AML_EXCLUSIVE, AML_PULL_UP, 0, pin_list, 1,
+> +                                 AML_EXCLUSIVE, AML_PULL_UP, 0, &pin, 1,
+>                                   "GPO0", NULL, 0));
+>      aml_append(dev, aml_name_decl("_AEI", aei));
+>  
+> diff --git a/hw/arm/virt.c b/hw/arm/virt.c
+> index 719e83e6a1e7..687fe0bb8bc9 100644
+> --- a/hw/arm/virt.c
+> +++ b/hw/arm/virt.c
+> @@ -1004,7 +1004,7 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
+>      if (s->acpi_dev) {
+>          acpi_send_event(s->acpi_dev, ACPI_POWER_DOWN_STATUS);
+>      } else {
+> -        /* use gpio Pin 3 for power button event */
+> +        /* use gpio Pin for power button event */
+>          qemu_set_irq(qdev_get_gpio_in(gpio_key_dev, 0), 1);
+>      }
+>  }
+> @@ -1013,7 +1013,8 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
+>                               uint32_t phandle)
+>  {
+>      gpio_key_dev = sysbus_create_simple("gpio-key", -1,
+> -                                        qdev_get_gpio_in(pl061_dev, 3));
+> +                                        qdev_get_gpio_in(pl061_dev,
+> +                                                         GPIO_PIN_POWER_BUTTON));
+>  
+>      qemu_fdt_add_subnode(fdt, "/gpio-keys");
+>      qemu_fdt_setprop_string(fdt, "/gpio-keys", "compatible", "gpio-keys");
+> @@ -1024,7 +1025,7 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
+>      qemu_fdt_setprop_cell(fdt, "/gpio-keys/poweroff", "linux,code",
+>                            KEY_POWER);
+>      qemu_fdt_setprop_cells(fdt, "/gpio-keys/poweroff",
+> -                           "gpios", phandle, 3, 0);
+> +                           "gpios", phandle, GPIO_PIN_POWER_BUTTON, 0);
+>  }
+>  
+>  #define SECURE_GPIO_POWEROFF 0
+> diff --git a/include/hw/arm/virt.h b/include/hw/arm/virt.h
+> index ab961bb6a9b8..a4d937ed45ac 100644
+> --- a/include/hw/arm/virt.h
+> +++ b/include/hw/arm/virt.h
+> @@ -47,6 +47,9 @@
+>  /* See Linux kernel arch/arm64/include/asm/pvclock-abi.h */
+>  #define PVTIME_SIZE_PER_CPU 64
+>  
+> +/* GPIO pins */
+> +#define GPIO_PIN_POWER_BUTTON  3
+> +
+>  enum {
+>      VIRT_FLASH,
+>      VIRT_MEM,
 
-
-
-> we are not sure either if the issue in below report is caused by this con=
-fig
-> diff. just report what we observed in our tests FYI.
-
-
-I believe it is a different issue.
-
-It is just a problem with the combination of depmod
-and CONFIG_MODULE_SIG_SHA3_256=3Dy, isn't it?
-
-
-What is your depmod (kmod) version?
-
-The crash of kmod<=3D28 with CONFIG_MODULE_SIG_SHA3_384=3Dy is a known issu=
-e:
-
-https://lore.kernel.org/linux-kbuild/E1rNVlL-000qDm-Pg@rmk-PC.armlinux.org.=
-uk/
-
-
-
->
->
-> Hello,
->
-> kernel test robot noticed "segfault_at_ip_sp_error" on:
->
-> commit: f79dc03fe68c79d388908182e68d702f7f1786bc ("kconfig: refactor choi=
-ce value calculation")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
-> [test failed on linus/master      de9c2c66ad8e787abec7c9d7eff4f8c3cdd28ae=
-d]
-> [test failed on linux-next/master d6dbc9f56c3a70e915625b6f1887882c23dc5c9=
-1]
->
-> in testcase: rcutorture
-> version:
-> with following parameters:
->
->         runtime: 300s
->         test: default
->         torture_type: srcud
->
->
->
-> compiler: gcc-12
-> test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
->
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
->
->
-> +-------------------------+------------+------------+
-> |                         | ee29e6204c | f79dc03fe6 |
-> +-------------------------+------------+------------+
-> | segfault_at_ip_sp_error | 0          | 30         |
-> +-------------------------+------------+------------+
->
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202408061634.fe6be94-oliver.sang=
-@intel.com
->
->
-> [  OK  ] Started OpenBSD Secure Shell server.
-> LKP: ttyS0: 263: Kernel tests: Boot OK!
-> LKP: ttyS0: 263: HOSTNAME vm-snb-i386, MAC 52:54:00:12:34:56, kernel 6.10=
-.0-rc7-00022-gf79dc03fe68c 1
-> [   12.271477][   T23] input: ImExPS/2 Generic Explorer Mouse as /devices=
-/platform/i8042/serio1/input/input3
-> LKP: ttyS0: 263:  /lkp/lkp/src/bin/run-lkp /lkp/jobs/scheduled/vm-meta-59=
-/rcutorture-300s-default-srcud-debian-11.1-i386-20220923.cgz-i386-randconfi=
-g-r032-20230623-f79dc03fe68c-20240805-47158-x4nrel-3.yaml
-> [   15.209351][  T483] depmod[483]: segfault at 0 ip b7abe4f6 sp bfb00aa4=
- error 4 in libc-2.31.so[8c4f6,b7a4b000+155000] likely on CPU 0 (core 0, so=
-cket 0)
-> [ 15.210249][ T483] Code: 5b 5e 29 f8 5f c3 66 90 66 90 66 90 66 90 66 90=
- 66 90 66 90 56 57 8b 7c 24 0c 31 c0 89 f9 83 e1 3f 66 0f ef c0 83 f9 30 77=
- 17 <f3> 0f 6f 0f 66 0f 74 c1 66 0f d7 d0 85 d2 75 73 89 f8 83 e0 f0 eb
-> All code
-> =3D=3D=3D=3D=3D=3D=3D=3D
->    0:   5b                      pop    %rbx
->    1:   5e                      pop    %rsi
->    2:   29 f8                   sub    %edi,%eax
->    4:   5f                      pop    %rdi
->    5:   c3                      retq
->    6:   66 90                   xchg   %ax,%ax
->    8:   66 90                   xchg   %ax,%ax
->    a:   66 90                   xchg   %ax,%ax
->    c:   66 90                   xchg   %ax,%ax
->    e:   66 90                   xchg   %ax,%ax
->   10:   66 90                   xchg   %ax,%ax
->   12:   66 90                   xchg   %ax,%ax
->   14:   56                      push   %rsi
->   15:   57                      push   %rdi
->   16:   8b 7c 24 0c             mov    0xc(%rsp),%edi
->   1a:   31 c0                   xor    %eax,%eax
->   1c:   89 f9                   mov    %edi,%ecx
->   1e:   83 e1 3f                and    $0x3f,%ecx
->   21:   66 0f ef c0             pxor   %xmm0,%xmm0
->   25:   83 f9 30                cmp    $0x30,%ecx
->   28:   77 17                   ja     0x41
->   2a:*  f3 0f 6f 0f             movdqu (%rdi),%xmm1             <-- trapp=
-ing instruction
->   2e:   66 0f 74 c1             pcmpeqb %xmm1,%xmm0
->   32:   66 0f d7 d0             pmovmskb %xmm0,%edx
->   36:   85 d2                   test   %edx,%edx
->   38:   75 73                   jne    0xad
->   3a:   89 f8                   mov    %edi,%eax
->   3c:   83 e0 f0                and    $0xfffffff0,%eax
->   3f:   eb                      .byte 0xeb
->
-> Code starting with the faulting instruction
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    0:   f3 0f 6f 0f             movdqu (%rdi),%xmm1
->    4:   66 0f 74 c1             pcmpeqb %xmm1,%xmm0
->    8:   66 0f d7 d0             pmovmskb %xmm0,%edx
->    c:   85 d2                   test   %edx,%edx
->    e:   75 73                   jne    0x83
->   10:   89 f8                   mov    %edi,%eax
->   12:   83 e0 f0                and    $0xfffffff0,%eax
->   15:   eb                      .byte 0xeb
-> [   15.251290][  T487] torture module --- srcud:  disable_onoff_at_boot=
-=3D0 ftrace_dump_at_shutdown=3D0 verbose_sleep_frequency=3D0 verbose_sleep_=
-duration=3D1 random_shuffle=3D0
-> [   15.255881][  T487] srcud-torture:--- Start of test: nreaders=3D1 nfak=
-ewriters=3D4 stat_interval=3D60 verbose=3D1 test_no_idle_hz=3D1 shuffle_int=
-erval=3D3 stutter=3D5 irqreader=3D1 fqs_duration=3D0 fqs_holdoff=3D0 fqs_st=
-utter=3D3 test_boost=3D1/0 test_boost_interval=3D7 test_boost_duration=3D4 =
-shutdown_secs=3D0 stall_cpu=3D0 stall_cpu_holdoff=3D10 stall_cpu_irqsoff=3D=
-0 stall_cpu_block=3D0 n_barrier_cbs=3D0 onoff_interval=3D0 onoff_holdoff=3D=
-0 read_exit_delay=3D13 read_exit_burst=3D16 nocbs_nthreads=3D0 nocbs_toggle=
-=3D1000 test_nmis=3D0
-> [   15.258765][  T487] srcud:  Start-test grace-period state: g0 f0x0
-> [   15.259257][  T487] rcu_torture_write_types: Testing expedited GPs.
-> [   15.259713][  T487] rcu_torture_write_types: Testing asynchronous GPs.
->
->
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240806/202408061634.fe6be94-oli=
-ver.sang@intel.com
->
->
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
