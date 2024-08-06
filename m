@@ -1,344 +1,132 @@
-Return-Path: <linux-kernel+bounces-275687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC928948870
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:39:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3FE948876
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 06:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A35B41F21945
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43300284007
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B2A1BA88D;
-	Tue,  6 Aug 2024 04:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3191BB688;
+	Tue,  6 Aug 2024 04:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5kGYjEm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1HSiPX1"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C570FB663;
-	Tue,  6 Aug 2024 04:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF01B663;
+	Tue,  6 Aug 2024 04:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722919146; cv=none; b=Ooijd75MmT9fbqqIAJvdmVbivtJ4kLXwaIx0+fC6OR9OYr1H3k0ZfDIPwIMu6+9qsUMXrNZZ4Xe2OL7kpaal/+0Fewg+Uj7VNEvlPtdTRBgTDlY+KmGVVi65LorZQh3NWv4er4pRtv9oNuPpTRQ+P/Vnp7L68qSLoVZQaxQ1cSo=
+	t=1722919435; cv=none; b=uxzjpwavtA9CLxCGnL84Rd6TNPUZAN+k5qtO3TwWhmOF8huZE6wK2hIQCjeWkwpSK1Ko/zMHIIx4TRNDzCThq0VSO6RbKSR8dP1OC4ad6FZTMnOyaY54LemwGstsfbh8zIOXsvvbjYbMBkUqEN1soQlg8TLJ0o/E2ckKBuFblmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722919146; c=relaxed/simple;
-	bh=8joSK8cgWfzrcf51gsSdZJOHP9od2ZFiV7GhD9Azg7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnV8zXXLzK+ddWOT7cHiobZ0M7AZQGPxXffFuGqWndHI6m/p01H4tRzUkZSMdNIc6f1pKVboNmFzCRmD1M5eGRi+vb7EneNdOpuTAQb6po6SmPyyGByIyw0WRanld3YzAnkFiqeKEQYvNyzRc6/AL3cvPEw+0lP4N9gCRrIXe/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5kGYjEm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E3AFC32786;
-	Tue,  6 Aug 2024 04:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722919146;
-	bh=8joSK8cgWfzrcf51gsSdZJOHP9od2ZFiV7GhD9Azg7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y5kGYjEmjWQ9+33WhwZ5aZeLeVzTGrlnpEIcqsPnRx+AJxgkBoh4GsMMp7kNUkgvu
-	 1QMGdHCtVmoBH3W6KGXlvqhAMBdPmJq/3XD+zAiE3njHKkvVuw3Y86EazNvHIQ1qtG
-	 rRr1zcRpSX7/dRRv+u1s3O2XgaIWeBgnM6Cv8F5TbsCC6K9F8HVTP1espSBF8pLuzj
-	 CzxNy1NeT7e+4fCLDJvkdu6o8zFBHRddV5t8hT7DGFcd3o8g5dQiE3afopmyIrl0ch
-	 CLs4OS+s0bma+I8oOxY8/VTJQ+30ib9CloeojG16rClEMx99mKVoAqTwN52l5NTghr
-	 RwUj/L3AmCgtg==
-Date: Mon, 5 Aug 2024 21:39:05 -0700
-From: Kees Cook <kees@kernel.org>
-To: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Pengfei Xu <pengfei.xu@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Xin Li <xin3.li@intel.com>, Uros Bizjak <ubizjak@gmail.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v5] x86/traps: Enable UBSAN traps on x86
-Message-ID: <202408052138.EB7B9788E3@keescook>
-References: <20240724000206.451425-1-gatlin.newhouse@gmail.com>
+	s=arc-20240116; t=1722919435; c=relaxed/simple;
+	bh=6pLFgKtSxEZKAmcpzacBafyKJDI4FEaQQ0HURf4ACl4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=txWaPCiZKDHlPWANB7vHiiGT0UftjfkQNSpK3Ay9QkHOIjTEfQdvdkjxHFwA2IJ0wGbIexKBQh3EKpnv0VWfTAFatDQixIPVsoRD81VzGf4bo1FFxeB9WE828Ko8zJmJHmJujYreMpJpGkuk/7m5qfSip5ptCoLCVfEiF/78tb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1HSiPX1; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3684bea9728so72992f8f.3;
+        Mon, 05 Aug 2024 21:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722919432; x=1723524232; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6kU1s5BI+S/YW2maSR9DltJXUSi9EBeGhP3JD4j+dAU=;
+        b=I1HSiPX1KO/5L5W2/zvhBY6q4hN6B4U2YYE7xZf0UyhdjRkN92SKWF//glTGZzNcth
+         cKgJg2GntVs03uovkDeNTGiu3gKRnOczjkv0HYwFu0B8c8ut5PF4uVDtVhWOzSxzH0w2
+         ZQlmzJ81ylPXM2fn0pZ3pqwXHjetktbbyhO8FRkLcqIoTiJwcp9xWiGIDXZB+qUmH9lB
+         nNPCtVBxKVb9Avc/T19auHRdclJ4DkV02vcIS3PfQ8wzDY9yHUAtXRxkjHNlc3g/qQwA
+         vKEs2v4i7FYYDVxfuuRTnxFjUhvmjc3N02CKRrStlbDCNtmHxCMRE3tECawRtbv+X9tk
+         GCKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722919432; x=1723524232;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6kU1s5BI+S/YW2maSR9DltJXUSi9EBeGhP3JD4j+dAU=;
+        b=k9eG2wOZHey3432lpu0YZImT4WjtI3CwrY2XcKMUx7NcAbWhHdvcdLR1rtdxDN2dHj
+         GTtscH0yoM+NhL4flxA6OU4BQG5pWI22I86yF6PeLAj5LuAlZNoN0OYEtVhcUHJne2VL
+         iTvW5OeBpjidKvf2nePP/gwHx0r5wOJqIY8YQuEagTIr6tfw9T+22SeDJEH0mFD6IiHx
+         1YnXypMtHwq7KveWqjKib+KgzzkVDqrcgKcGJjaIb7Cmuj9pHJ8WKFvSxDWqnwCAsOnd
+         KUA6tO/GA6Jzy74Ftr/DZgfWa4H7yeltfRYslX0gVV/mFEGGmTSoFVkxh2s1tU2igHlj
+         52sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl8Fjrs8G2pB3dHTnT4itovxtgtr2AAuD1GNPzTOwGbh7XO+Ru+LERuY2F4FYeVCqMLBkROIF+KlE3ui1XDh/Avx+bJSmiBC8xVxctc6kuH4uO4WAr8cLRDOFHWaGbidcRsp49boa/nt20M91BAFzj9K0Qphn9wCcnmhZiKC8g
+X-Gm-Message-State: AOJu0YxiMVtwm/LRAV6I6Epe3YSBp8+2ahYftr7pyQiyOSYBb73lHFPg
+	cIx/dJ+kYJaHg9JuBRMIi6Ro9wBgne/bXWgnyTqNhdN362qdmkBQ
+X-Google-Smtp-Source: AGHT+IED5Mx/PH30QMfFytykQ+7Wd5RiJ81T0D1gDX1QjsZH+etLQy9U23ziQnfhYSWJoGvsN6FS7g==
+X-Received: by 2002:a5d:6c62:0:b0:369:cbd0:61ff with SMTP id ffacd0b85a97d-36bbc0c4fadmr12473218f8f.9.1722919431435;
+        Mon, 05 Aug 2024 21:43:51 -0700 (PDT)
+Received: from [192.168.0.107] ([77.124.98.185])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd0261c2sm11647460f8f.57.2024.08.05.21.43.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Aug 2024 21:43:51 -0700 (PDT)
+Message-ID: <4f42fac4-2a4e-426a-be86-1f4bb79987b4@gmail.com>
+Date: Tue, 6 Aug 2024 07:43:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724000206.451425-1-gatlin.newhouse@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Bug report] NFS patch breaks TLS device-offloaded TX zerocopy
+To: Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
+ Anna Schumaker <Anna.Schumaker@Netapp.com>,
+ Trond Myklebust <trondmy@kernel.org>, linux-nfs@vger.kernel.org,
+ Boris Pismenny <borisp@nvidia.com>, John Fastabend
+ <john.fastabend@gmail.com>, Jakub Kicinski <kuba@kernel.org>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+ Networking <netdev@vger.kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
+References: <aeea3ae5-5c0b-48fa-942b-4d17acfd8cba@gmail.com>
+ <77fb3db5-7a59-4879-b9c2-d3408fcf67e8@grimberg.me>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <77fb3db5-7a59-4879-b9c2-d3408fcf67e8@grimberg.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 12:01:55AM +0000, Gatlin Newhouse wrote:
-> Currently ARM architectures extract which specific sanitizer
-> has caused a trap via encoded data in the trap instruction.[1]
-> Clang on x86 currently encodes the same data in ud1 instructions
-> but the x86 handle_bug() and is_valid_bugaddr() functions
-> currently only look at ud2s.
-> 
-> Bring x86 to parity with arm64, similar to commit 25b84002afb9
-> ("arm64: Support Clang UBSAN trap codes for better reporting").
-> Enable the reporting of UBSAN sanitizer detail on x86 architectures
-> compiled with clang when CONFIG_UBSAN_TRAP=y.
-> 
-> [1] Details are in llvm/lib/Target/X86/X86MCInstLower.cpp. See:
-> https://github.com/llvm/llvm-project/commit/c5978f42ec8e9#diff-bb68d7cd885f41cfc35843998b0f9f534adb60b415f647109e597ce448e92d9f
-> 
-> EmitAndCountInstruction() uses the UD1Lm template, which uses a
-> OpSize32. See:
-> https://github.com/llvm/llvm-project/blob/main/llvm/lib/Target/X86/X86InstrSystem.td#L27
-> 
-> Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-> ---
-> Changes in v5:
->   - Added references to the LLVM commits in the commit message from
->     Kees and Marco's feedback
->   - Renamed incorrect defines, and removed handle_ubsan_failure()'s
->     duplicated work per Peter's feedback
 
-Ping to the x86 maintainers... can someone pick this up? It looks like
-all the feedback has been addressed.
 
-Thanks!
-
--Kees
-
+On 05/08/2024 14:43, Sagi Grimberg wrote:
 > 
-> Changes in v4:
->   - Implement Peter's suggestions for decode_bug(), and fix
->     inconsistent capitalization in hex values.
 > 
-> Changes in v3:
->   - Address Thomas's remarks about: change log structure,
->     get_ud_type() instead of is_valid_bugaddr(), handle_bug()
->     changes, and handle_ubsan_failure().
 > 
-> Changes in v2:
->   - Name the new constants 'LEN_ASOP' and 'INSN_ASOP' instead of
->     'LEN_REX' and 'INSN_REX'
->   - Change handle_ubsan_failure() from enum bug_trap_type to void
->     function
+> On 05/08/2024 13:40, Tariq Toukan wrote:
+>> Hi,
+>>
+>> A recent patch [1] to 'fs' broke the TX TLS device-offloaded flow 
+>> starting from v6.11-rc1.
+>>
+>> The kernel crashes. Different runs result in different kernel traces.
+>> See below [2].
+>> All of them disappear once patch [1] is reverted.
+>>
+>> The issues appears only with "sendfile on and zerocopy on".
+>> We couldn't repro with "sendfile off", or with "sendfile on and 
+>> zerocopy off".
+>>
+>> The repro test is as simple as a repeated client/server communication 
+>> (wrk/nginx), with sendfile on and zc on, and with "tls-hw-tx-offload: 
+>> on".
+>>
+>> $ for i in `seq 10`; do wrk -b::2:2:2:3 -t10 -c100 -d15 --timeout 5s 
+>> https://[::2:2:2:2]:20448/16000b.img; done
+>>
+>> We can provide more details if needed, to help with the analysis and 
+>> debug.
 > 
-> v1: https://lore.kernel.org/linux-hardening/20240529022043.3661757-1-gatlin.newhouse@gmail.com/
-> v2: https://lore.kernel.org/linux-hardening/20240601031019.3708758-1-gatlin.newhouse@gmail.com/
-> v3: https://lore.kernel.org/linux-hardening/20240625032509.4155839-1-gatlin.newhouse@gmail.com/
-> v4: https://lore.kernel.org/linux-hardening/20240710203250.238782-1-gatlin.newhouse@gmail.com/
-> ---
->  MAINTAINERS                  |  2 ++
->  arch/x86/include/asm/bug.h   | 12 ++++++++
->  arch/x86/include/asm/ubsan.h | 18 ++++++++++++
->  arch/x86/kernel/Makefile     |  1 +
->  arch/x86/kernel/traps.c      | 57 ++++++++++++++++++++++++++++++++----
->  arch/x86/kernel/ubsan.c      | 19 ++++++++++++
->  6 files changed, 104 insertions(+), 5 deletions(-)
->  create mode 100644 arch/x86/include/asm/ubsan.h
->  create mode 100644 arch/x86/kernel/ubsan.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 28e20975c26f..b8512887ffb1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22635,6 +22635,8 @@ L:	kasan-dev@googlegroups.com
->  L:	linux-hardening@vger.kernel.org
->  S:	Supported
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
-> +F:	arch/x86/include/asm/ubsan.h
-> +F:	arch/x86/kernel/ubsan.c
->  F:	Documentation/dev-tools/ubsan.rst
->  F:	include/linux/ubsan.h
->  F:	lib/Kconfig.ubsan
-> diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-> index a3ec87d198ac..751e45ea27ca 100644
-> --- a/arch/x86/include/asm/bug.h
-> +++ b/arch/x86/include/asm/bug.h
-> @@ -13,6 +13,18 @@
->  #define INSN_UD2	0x0b0f
->  #define LEN_UD2		2
->  
-> +/*
-> + * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
-> + */
-> +#define INSN_ASOP	0x67
-> +#define OPCODE_ESCAPE	0x0f
-> +#define SECOND_BYTE_OPCODE_UD1	0xb9
-> +#define SECOND_BYTE_OPCODE_UD2	0x0b
-> +
-> +#define BUG_NONE	0xffff
-> +#define BUG_UD1		0xfffe
-> +#define BUG_UD2		0xfffd
-> +
->  #ifdef CONFIG_GENERIC_BUG
->  
->  #ifdef CONFIG_X86_32
-> diff --git a/arch/x86/include/asm/ubsan.h b/arch/x86/include/asm/ubsan.h
-> new file mode 100644
-> index 000000000000..1d7c2b4129de
-> --- /dev/null
-> +++ b/arch/x86/include/asm/ubsan.h
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_UBSAN_H
-> +#define _ASM_X86_UBSAN_H
-> +
-> +/*
-> + * Clang Undefined Behavior Sanitizer trap mode support.
-> + */
-> +#include <linux/bug.h>
-> +#include <linux/ubsan.h>
-> +#include <asm/ptrace.h>
-> +
-> +#ifdef CONFIG_UBSAN_TRAP
-> +void handle_ubsan_failure(struct pt_regs *regs, u32 type);
-> +#else
-> +static inline void handle_ubsan_failure(struct pt_regs *regs, u32 type) { return; }
-> +#endif /* CONFIG_UBSAN_TRAP */
-> +
-> +#endif /* _ASM_X86_UBSAN_H */
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 74077694da7d..fe1d9db27500 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -145,6 +145,7 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
->  obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
->  
->  obj-$(CONFIG_CFI_CLANG)			+= cfi.o
-> +obj-$(CONFIG_UBSAN_TRAP)		+= ubsan.o
->  
->  obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
->  
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index 4fa0b17e5043..6350d00a6555 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -67,6 +67,7 @@
->  #include <asm/vdso.h>
->  #include <asm/tdx.h>
->  #include <asm/cfi.h>
-> +#include <asm/ubsan.h>
->  
->  #ifdef CONFIG_X86_64
->  #include <asm/x86_init.h>
-> @@ -91,6 +92,45 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
->  	return *(unsigned short *)addr == INSN_UD2;
->  }
->  
-> +/*
-> + * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
-> + * If it's a UD1, get the ModRM byte to pass along to UBSan.
-> + */
-> +__always_inline int decode_bug(unsigned long addr, u32 *imm)
-> +{
-> +	u8 v;
-> +
-> +	if (addr < TASK_SIZE_MAX)
-> +		return BUG_NONE;
-> +
-> +	v = *(u8 *)(addr++);
-> +	if (v == INSN_ASOP)
-> +		v = *(u8 *)(addr++);
-> +	if (v != OPCODE_ESCAPE)
-> +		return BUG_NONE;
-> +
-> +	v = *(u8 *)(addr++);
-> +	if (v == SECOND_BYTE_OPCODE_UD2)
-> +		return BUG_UD2;
-> +	if (v != SECOND_BYTE_OPCODE_UD1)
-> +		return BUG_NONE;
-> +
-> +	v = *(u8 *)(addr++);
-> +	if (X86_MODRM_RM(v) == 4)
-> +		addr++;
-> +
-> +	*imm = 0;
-> +	if (X86_MODRM_MOD(v) == 1)
-> +		*imm = *(u8 *)addr;
-> +	else if (X86_MODRM_MOD(v) == 2)
-> +		*imm = *(u32 *)addr;
-> +	else
-> +		WARN_ONCE(1, "Unexpected MODRM_MOD: %u\n", X86_MODRM_MOD(v));
-> +
-> +	return BUG_UD1;
-> +}
-> +
-> +
->  static nokprobe_inline int
->  do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
->  		  struct pt_regs *regs,	long error_code)
-> @@ -216,6 +256,8 @@ static inline void handle_invalid_op(struct pt_regs *regs)
->  static noinstr bool handle_bug(struct pt_regs *regs)
->  {
->  	bool handled = false;
-> +	int ud_type;
-> +	u32 imm;
->  
->  	/*
->  	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
-> @@ -223,7 +265,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
->  	 * irqentry_enter().
->  	 */
->  	kmsan_unpoison_entry_regs(regs);
-> -	if (!is_valid_bugaddr(regs->ip))
-> +	ud_type = decode_bug(regs->ip, &imm);
-> +	if (ud_type == BUG_NONE)
->  		return handled;
->  
->  	/*
-> @@ -236,10 +279,14 @@ static noinstr bool handle_bug(struct pt_regs *regs)
->  	 */
->  	if (regs->flags & X86_EFLAGS_IF)
->  		raw_local_irq_enable();
-> -	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> -	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> -		regs->ip += LEN_UD2;
-> -		handled = true;
-> +	if (ud_type == BUG_UD2) {
-> +		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> +		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> +			regs->ip += LEN_UD2;
-> +			handled = true;
-> +		}
-> +	} else {
-> +		handle_ubsan_failure(regs, imm);
->  	}
->  	if (regs->flags & X86_EFLAGS_IF)
->  		raw_local_irq_disable();
-> diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-> new file mode 100644
-> index 000000000000..63f819928820
-> --- /dev/null
-> +++ b/arch/x86/kernel/ubsan.c
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Clang Undefined Behavior Sanitizer trap mode support.
-> + */
-> +#include <linux/bug.h>
-> +#include <linux/string.h>
-> +#include <linux/printk.h>
-> +#include <linux/ubsan.h>
-> +#include <asm/ptrace.h>
-> +#include <asm/ubsan.h>
-> +
-> +/*
-> + * Checks for the information embedded in the UD1 trap instruction
-> + * for the UB Sanitizer in order to pass along debugging output.
-> + */
-> +void handle_ubsan_failure(struct pt_regs *regs, u32 type)
-> +{
-> +	pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-> +}
-> -- 
-> 2.25.1
+> Does tls sw (i.e. no offload) also break?
 > 
 
--- 
-Kees Cook
+No it doesn't.
+Only the "sendfile with ZC" flow of the TX device-offloaded TLS.
 
