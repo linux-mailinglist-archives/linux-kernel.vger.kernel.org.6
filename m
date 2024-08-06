@@ -1,123 +1,273 @@
-Return-Path: <linux-kernel+bounces-275658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6E794881B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:55:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C9B94881E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 05:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CE91F23916
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:55:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687021C222A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8B01BA880;
-	Tue,  6 Aug 2024 03:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD0B1BB685;
+	Tue,  6 Aug 2024 03:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NVcUuNWs"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8Weu7Y2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86AD3BBF5;
-	Tue,  6 Aug 2024 03:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA501B9B57;
+	Tue,  6 Aug 2024 03:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722916486; cv=none; b=sd7IgCw49mpSyvnI4JL4zYSA4WPLOrETVWRWai8Yr54zOII4svuvmMCbZIjnkGHBuWacxyPFjpqUyIjTl+2aXs/HpO0rabjiw74mQFHEjjNNogjTHZYbpd3JNNdycbHJAEeCn146n2TZgw7UON6e+iMolNDe8MOqI9o/te7z5/k=
+	t=1722916495; cv=none; b=UJcVXz99dt1g69QnlLOhmWUXfmBjz4d8sivv7zTCBPZUm7Kr7TJEoEVk4ZX5jdNyiYEPMzDVsWhU9QbcY26OVSgAvz6YAx60KHID/Q9InjwKV5Aa5G75sErd8TxlRxrAnfz1oB5in4iekWKUwR6rVsGmRN6wsmT25PCGKNpgDSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722916486; c=relaxed/simple;
-	bh=J49K3cYWUArLK8x1yjCzC181gtekpwUQiXcDMGd9uO8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nYOZ32FAaRYenk8AcAde+jWiUapYLqr0u9a/JKjhHmH4KpMka+h7SceCCzQlshIz95d66Dd4Xtj5ppGhcLKgDoGeKBkMcERk2wZlVEW2U+9QZq8CXNwfuOU8N1Mmqb0dxS8RsG2i9V5PCeducWoqBxdDRJhKpJ4v3HEZ0QgjD8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NVcUuNWs; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cfec641429so231163a91.0;
-        Mon, 05 Aug 2024 20:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722916484; x=1723521284; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J49K3cYWUArLK8x1yjCzC181gtekpwUQiXcDMGd9uO8=;
-        b=NVcUuNWs81aphIn3UsHIPe5DhKLK+rq1ud5TYwX/1DU5y8/At3k2GbNgr6TekQ1W6f
-         iYkUTqBm72N2Zfak9OnxUbWsO5k08djgzBGM25qu1BnppaeirMPHOml27b1HbkcrkTTL
-         EkZrRuIqEqyywanl1vzGqbTKI4a3GzJYS7www6w0hiviUS2TzSso76I5sFgjZjd7/GEt
-         SiIPB3KPMNJZChGZeegCKq7a+24cuHK3fl4wW9gq7s5dyN9HoHHHld2jFFTzYDTJRMsa
-         RIw5sVknMQV1+rZo+LhE0eVMtmj2isCDQYXE8yMtDEHfl0SYobPqvlhpu4WXO8EhOl6/
-         xdcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722916484; x=1723521284;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J49K3cYWUArLK8x1yjCzC181gtekpwUQiXcDMGd9uO8=;
-        b=LJRO6aehc4+jmtyyGXHL1eeJPSf3z1SOjtJxYPt6J4vFW20iP7E63pCWOxO7rGBdw/
-         J1u3/qB+Zr1KaLqCnzQCgEWCTOEePnIXgB1i1gVnHRRoEbwbGIiQWIehykqykHK/Ji8h
-         fGK8Id4Cr2R7OIsik1tLW0vm8ZJUUHVFNAX+qUfLTDKGPe1enO9hCbIsjRvNgF9UF6VN
-         Wcka0Hmd7+01+faUNZ32wM2W8gX8igg8kxOSJ2c0S7PSf0GG6dEwObgjzB1aw/GCmdpt
-         HZ/rw0fCTetGCh+F+Se89CC0vYMxkLnpVDvITyK/x62F46tWQjsuuUMmllQ+/lkK1g+Q
-         0ETA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+u9pvcdkZyG1ZNB02K9OmIGTbU/yPx8DitpkCY/dnZ5UFZ3/l4ZMUsCfqX38ECxR4HsWzH9ez35d3mv7bleYfEvBedNPwYlRA+5XGFjZBKnm/ME9AJg5sBZ6TOgsiA8isa6Rn16rirfbPN/AqXEVoWivgQP/T5Z42siZ4Ito8+5hHKYkOmUc=
-X-Gm-Message-State: AOJu0YxifcrWy+Wxta4VcLF/cKqdGqcn7RI4ewUis5k0/UkkmQxZbitn
-	Smd5UVvt4iLcR8MxPyyCIYSSCRDMHYbrV4fm842DrwFNlyPF9TSAyEzLI3KTzg==
-X-Google-Smtp-Source: AGHT+IHhWKClEsbgs1e+2zfUkzsV1vKpeHv4n/WG5pfmZ/WMqH0SY+HG+dVEbhLbZzHg59sxc21bsQ==
-X-Received: by 2002:a17:90a:cf0f:b0:2c7:8a94:215d with SMTP id 98e67ed59e1d1-2cff94040d2mr12625900a91.12.1722916483871;
-        Mon, 05 Aug 2024 20:54:43 -0700 (PDT)
-Received: from swift.. ([114.254.10.84])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffaf6a6d0sm7963455a91.6.2024.08.05.20.54.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 20:54:43 -0700 (PDT)
-From: LidongLI <wirelessdonghack@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	mark.esler@canonical.com,
-	stf_xl@wp.pl,
-	wirelessdonghack@gmail.com
-Subject: Re: Ubuntu RT2X00 WIFI USB Driver Kernel NULL pointer Dereference&Use-After-Free Vulnerability
-Date: Tue,  6 Aug 2024 11:54:33 +0800
-Message-Id: <20240806035433.20901-1-wirelessdonghack@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <2024080359-getaway-concave-623e@gregkh>
-References: <2024080359-getaway-concave-623e@gregkh>
+	s=arc-20240116; t=1722916495; c=relaxed/simple;
+	bh=ZN7LpMGj7zrmpfRGmVKaOCvARt0JyWCvzNUEqCDoDQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jqPjqifq8vYKSDKp8bQybQ1ABv/UJvHsjWeNI1iqACVii8T9FLutZ0xZnjCR/nbDOsurkqtEsjOJcYXXxBYYonm8otqZ6gL67FUgZ1kImB2mGoNyusp5AuvcoJcWnukF3KHqAjTMbIUq6jLoRZl8gahcsme3Yr/jmH8U9n2j2k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8Weu7Y2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA205C32786;
+	Tue,  6 Aug 2024 03:54:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722916494;
+	bh=ZN7LpMGj7zrmpfRGmVKaOCvARt0JyWCvzNUEqCDoDQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e8Weu7Y2u+9A2JYm6rvXwGOSTOLzWkUqOaHH4e8QT6kE4d36A9vli3jj1A/JW+uuC
+	 SmHjqErcIJiy2XqELNbvRJn4fpt0BpEV5yn+z3xykCDZzgQvMwxs4i1cpnFytv4jX1
+	 r1Wz2fzY8bewmmlw80OSHZbEGdlyVTJzk82+y8bm2FNvBL155Ej3y8v3bFEKefSeGK
+	 rkogUeMwt+ZjRHriemu4nf/po3z0UzAd6iOY+g8GudodQhbypv+gmdxttLDlhRlZp3
+	 LyDvY7ZSCyOLbkGIZDOMXzhg4NUAoGL/kwUImG7tyUilhwrZijXNrUitI7sAvppsmF
+	 mKsBgx/5zyJ5g==
+Date: Mon, 5 Aug 2024 20:54:54 -0700
+From: Kees Cook <kees@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, jannh@google.com,
+	linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH RFT v7 9/9] selftests/clone3: Test shadow stack support
+Message-ID: <202408052046.00BC7CBC@keescook>
+References: <20240731-clone3-shadow-stack-v7-0-a9532eebfb1d@kernel.org>
+ <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731-clone3-shadow-stack-v7-9-a9532eebfb1d@kernel.org>
 
+On Wed, Jul 31, 2024 at 01:14:15PM +0100, Mark Brown wrote:
+> Add basic test coverage for specifying the shadow stack for a newly
+> created thread via clone3(), including coverage of the newly extended
+> argument structure.  We check that a user specified shadow stack can be
+> provided, and that invalid combinations of parameters are rejected.
+> 
+> In order to facilitate testing on systems without userspace shadow stack
+> support we manually enable shadow stacks on startup, this is architecture
+> specific due to the use of an arch_prctl() on x86. Due to interactions with
+> potential userspace locking of features we actually detect support for
+> shadow stacks on the running system by attempting to allocate a shadow
+> stack page during initialisation using map_shadow_stack(), warning if this
+> succeeds when the enable failed.
+> 
+> In order to allow testing of user configured shadow stacks on
+> architectures with that feature we need to ensure that we do not return
+> from the function where the clone3() syscall is called in the child
+> process, doing so would trigger a shadow stack underflow.  To do this we
+> use inline assembly rather than the standard syscall wrapper to call
+> clone3().  In order to avoid surprises we also use a syscall rather than
+> the libc exit() function., this should be overly cautious.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  tools/testing/selftests/clone3/clone3.c           | 134 +++++++++++++++++++++-
+>  tools/testing/selftests/clone3/clone3_selftests.h |  38 ++++++
+>  2 files changed, 171 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/clone3/clone3.c b/tools/testing/selftests/clone3/clone3.c
+> index 26221661e9ae..81c2e8648e8b 100644
+> --- a/tools/testing/selftests/clone3/clone3.c
+> +++ b/tools/testing/selftests/clone3/clone3.c
+> @@ -3,6 +3,7 @@
+>  /* Based on Christian Brauner's clone3() example */
+>  
+>  #define _GNU_SOURCE
+> +#include <asm/mman.h>
+>  #include <errno.h>
+>  #include <inttypes.h>
+>  #include <linux/types.h>
+> @@ -11,6 +12,7 @@
+>  #include <stdint.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+> +#include <sys/mman.h>
+>  #include <sys/syscall.h>
+>  #include <sys/types.h>
+>  #include <sys/un.h>
+> @@ -19,8 +21,12 @@
+>  #include <sched.h>
+>  
+>  #include "../kselftest.h"
+> +#include "../ksft_shstk.h"
+>  #include "clone3_selftests.h"
+>  
+> +static bool shadow_stack_supported;
+> +static size_t max_supported_args_size;
+> +
+>  enum test_mode {
+>  	CLONE3_ARGS_NO_TEST,
+>  	CLONE3_ARGS_ALL_0,
+> @@ -28,6 +34,10 @@ enum test_mode {
+>  	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NEG,
+>  	CLONE3_ARGS_INVAL_EXIT_SIGNAL_CSIG,
+>  	CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG,
+> +	CLONE3_ARGS_SHADOW_STACK,
+> +	CLONE3_ARGS_SHADOW_STACK_NO_SIZE,
+> +	CLONE3_ARGS_SHADOW_STACK_NO_POINTER,
+> +	CLONE3_ARGS_SHADOW_STACK_NO_TOKEN,
+>  };
+>  
+>  typedef bool (*filter_function)(void);
+> @@ -44,6 +54,44 @@ struct test {
+>  	filter_function filter;
+>  };
+>  
+> +
+> +/*
+> + * We check for shadow stack support by attempting to use
+> + * map_shadow_stack() since features may have been locked by the
+> + * dynamic linker resulting in spurious errors when we attempt to
+> + * enable on startup.  We warn if the enable failed.
+> + */
+> +static void test_shadow_stack_supported(void)
+> +{
+> +	long ret;
+> +
+> +	ret = syscall(__NR_map_shadow_stack, 0, getpagesize(), 0);
+> +	if (ret == -1) {
+> +		ksft_print_msg("map_shadow_stack() not supported\n");
+> +	} else if ((void *)ret == MAP_FAILED) {
+> +		ksft_print_msg("Failed to map shadow stack\n");
+> +	} else {
+> +		ksft_print_msg("Shadow stack supportd\n");
 
-Hi Ted,
+typo: supportd -> supported
 
-Thank you for your detailed response.
+> +		shadow_stack_supported = true;
+> +
+> +		if (!shadow_stack_enabled)
+> +			ksft_print_msg("Mapped but did not enable shadow stack\n");
+> +	}
+> +}
 
-An attacker doesn't need to create a udev rule in the user's path because that isn't feasible. We need to consider scenarios where certain special devices (embedded systems) are designed from the outset with RT2X00 wireless network cards included in the udev rules. This is because they need to perform custom or automated functions related to the embedded system's operations.
+On my CET system, this reports:
 
-Therefore, what I want to emphasize is that while this vulnerability may not affect users who do not have udev rules configured, setting udev rules is not inherently insecure. It is a normal configuration. Without udev rules, USB devices cannot be properly invoked or perform additional functions under certain conditions. It's a necessary feature.
+  ...
+  # clone3() syscall supported
+  # Shadow stack supportd
+  # Running test 'simple clone3()'
+  ...
 
-However, for users utilizing RT2X00 drivers with this normal configuration, it directly allows the execution of the script without sudo, leading to a system crash. This indicates that the RT2X00 driver itself has a vulnerability that needs to be addressed. A robust and secure kernel and driver should not crash or dereference a null pointer regardless of the script run or the permissions used. We tested other drivers and did not encounter similar issues.
+(happily doesn't print "Mapped but did not enable ...").
 
-I believe this issue should be considered from two aspects:
+> +
+> +static unsigned long long get_shadow_stack_page(unsigned long flags)
+> +{
+> +	unsigned long long page;
+> +
+> +	page = syscall(__NR_map_shadow_stack, 0, getpagesize(), flags);
+> +	if ((void *)page == MAP_FAILED) {
+> +		ksft_print_msg("map_shadow_stack() failed: %d\n", errno);
+> +		return 0;
+> +	}
+> +
+> +	return page;
+> +}
+> +
+>  static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
+>  {
+>  	struct __clone_args args = {
+> @@ -89,6 +137,21 @@ static int call_clone3(uint64_t flags, size_t size, enum test_mode test_mode)
+>  	case CLONE3_ARGS_INVAL_EXIT_SIGNAL_NSIG:
+>  		args.exit_signal = 0x00000000000000f0ULL;
+>  		break;
+> +	case CLONE3_ARGS_SHADOW_STACK:
+> +		/* We need to specify a normal stack too to avoid corruption */
+> +		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
+> +		args.shadow_stack_size = getpagesize();
+> +		break;
 
-1.The vulnerability indeed requires certain conditions to be triggered, but the configuration required is normal and necessary.
-2.Running the script does cause a kernel null pointer dereference. Any robust and secure system should not encounter null pointer dereferences or crashes.
+  # Running test 'Shadow stack on system with shadow stack'
+  # [5496] Trying clone3() with flags 0 (size 0)
+  # I am the parent (5496). My child's pid is 5505
+  # Child exited with signal 11
+  # [5496] clone3() with flags says: 11 expected 0
+  # [5496] Result (11) is different than expected (0)
+  not ok 20 Shadow stack on system with shadow stack
 
-I understand your analogy with the /bin/bash example, and I'd like to clarify a couple of points to provide more context for why I believe this should be considered a security issue:
+The child segfaults immediately, it seems?
 
-Normal and Necessary Configuration: While it is true that setting up udev rules is not common among typical personal Ubuntu users, there are legitimate and necessary scenarios, especially in embedded Linux environments, where such configurations are required. For example, in industrial automation systems, USB devices are often used to connect various sensors and controllers. In such environments, udev rules are configured to automatically load specific drivers or execute scripts upon device connection to ensure the proper operation of the system. This setup is essential for the reliable functioning of the automation process and is not an example of an insecure configuration.
+> +	case CLONE3_ARGS_SHADOW_STACK_NO_POINTER:
+> +		args.shadow_stack_size = getpagesize();
+> +		break;
 
-System Robustness and Stability: Regardless of the configuration, a robust and secure system should handle unexpected inputs gracefully. In this case, running the script under the specified conditions causes a kernel null pointer dereference, leading to a system crash. For instance, consider a medical device scenario where a USB-connected device is used for critical patient monitoring. The udev rule is set to load necessary drivers and start monitoring software automatically upon connection. If an attacker can exploit this setup to cause a kernel crash, it can lead to severe consequences, including potential harm to patients. This example highlights that the presence of udev rules is not inherently insecure; rather, the kernel's inability to handle the input correctly is the underlying issue.
+  # Running test 'Shadow stack with no pointer'
+  # [5496] Trying clone3() with flags 0 (size 0)
+  # Invalid argument - Failed to create new process
+  # [5496] clone3() with flags says: -22 expected -22
+  ok 21 Shadow stack with no pointer
 
-These points underscore the importance of addressing this vulnerability. While the initial setup requires root permissions, the critical aspect is the kernel's handling of the input, which should be robust enough to prevent crashes or null pointer dereferences, ensuring the system's stability and security.
+This seems like it misses the failure and reports ok
 
+> +	case CLONE3_ARGS_SHADOW_STACK_NO_SIZE:
+> +		args.shadow_stack = get_shadow_stack_page(SHADOW_STACK_SET_TOKEN);
+> +		break;
 
-Our requirement is to assign a CVE for this "bug" because it is an issue within the kernel. Since it is a problem, it poses a potential risk. Therefore, we believe it is necessary to address it accordingly.
+  # Running test 'Shadow stack with no size'
+  # [5496] Trying clone3() with flags 0 (size 0)
+  # Invalid argument - Failed to create new process
+  # [5496] clone3() with flags says: -22 expected -22
+  ok 22 Shadow stack with no size
 
-Because it involves a driver development error, we believe it is necessary and meaningful to address this issue.
-Cheers,
+Same?
 
+> +	case CLONE3_ARGS_SHADOW_STACK_NO_TOKEN:
+> +		args.shadow_stack = get_shadow_stack_page(0);
+> +		args.shadow_stack_size = getpagesize();
+> +		break;
 
+This actually segfaults the parent:
+
+  # Running test 'Shadow stack with no token'
+  # [5496] Trying clone3() with flags 0x100 (size 0)
+  # I am the parent (5496). My child's pid is 5507
+  Segmentation fault
+
+Let me know what would be most helpful to dig into more...
+
+-- 
+Kees Cook
 
