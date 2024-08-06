@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-276548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09EE94951B
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:03:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FBB94951F
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 18:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07B61C231CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:03:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EC61F22978
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF4573477;
-	Tue,  6 Aug 2024 16:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2364E7711F;
+	Tue,  6 Aug 2024 16:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VFOJCTf+"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWMb8Din"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FFA39855
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 16:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF3039855;
+	Tue,  6 Aug 2024 16:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722960039; cv=none; b=mGTEOpSilbIy6vDMhnOHWBXWATSt9R2q8kJ72nzBlvIUY+XA9vvU5AHU73XorDIfNWnhhiJAzaBkYmnz3fuJn13X0BH6p2EW0AHNuwpfs2mDcWG1yC66PcSQaYjTXllZkfGjuHo+5bUFkvIiPLdsN10ZRSgSHrJ7RhIPmcx50Ts=
+	t=1722960049; cv=none; b=Xask1lQm2JUno7Ku/dxJIxu3b8njdY0u8oLswESqf7oZbicIGnnKQhII/sKyBckLJNQSzO0DrTpZl6wYnKQU3yTs3PBVNRfyIrrOrmdTLq8Vllyzd5Ka2ZjEVH2+Jy67qflaPC0i543FY9n10CM9xU0uW/ElZbDzPRdYph3ASM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722960039; c=relaxed/simple;
-	bh=G2dFHbwQlABEbn7C/wHN9BFrhR5+2PlXMiREOnZ8MQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sKI2IG76sDXoYsnPJrerEsn4PF/P5VTz+nKH0WvAoSTWaU1EHinaPQCZ1VYb1By6RpCmn/FtauLecA83AlL1qZrRvpH01DznWHE/b/GtJwNly5SGsqlpwO65VlcKbyV0NwP8I5m64r0Cow8gwekUzrWKm8koIoLhiD9/RIEW3c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VFOJCTf+; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2611dcc3941so178007fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 09:00:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722960036; x=1723564836; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=utkiIdj88F+G+vP4WL7Umx3nVwa48ZRhAzXQxTEoHOE=;
-        b=VFOJCTf+mMXWRUO8LnuRgJQsQucOlijtux8CmADQ/7FiSA1BCOhDgHszV1w4Cpp2wB
-         cBOJQchPQWSj87YwfqsbAzURgmeNzS59l4UcD2T+nqS7fMBVVKoMVVzC1FRf1KI1zmvr
-         8maHH6OKgxm/5jAEbsjUxyHqEM7Vf3/DfI2YE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722960036; x=1723564836;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=utkiIdj88F+G+vP4WL7Umx3nVwa48ZRhAzXQxTEoHOE=;
-        b=kg1BZ44PvZXUT9kQAsIpOUlVpFzOJ90/BnVRT4dHg4eadP3BFWH+RMOoSeccn0AovI
-         OiSipfPTuJeFXzBZWZDVY5wjTJGMit0PVHmAFslXErtQdBsUYAtFH37jqJEUOM+OQ9V0
-         1wrFnjzyjIwAwx37J95fd6Dx68Cstlg2E49VifX3Hm0EX8C7e4FoPy58POi/ov+RJBSQ
-         Pu15TW52iRFI63Zdu6TVX5a7eAl2exFTzdiLPV8CUZ56UCwph2584Z7na9mwKAupIjRi
-         79rT9LtC34cyyHzkjyqqFEh7SkvC6GZytD0C2diFNREhErhW3+UAhFteefQrgbyl3ZIh
-         lKaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqcxyf1Ka/Kyb3IwxdIkBhERaMzPGMVm88MUq8vCNadPOzhLeYR2jMjZrY0qEm7PxnR/T3cm38hT8LM05b6aKlwOGcOaRL+ovPpvAo
-X-Gm-Message-State: AOJu0Yy90f7WP8/nd5YjKa/aOuiNGhFEpQ0paHyqYgRalftawlD3qs1O
-	9l4TlamQEKZ++NjG9TtO6LTdDRwqQVbV2p+qKtCECQNwh82VjBEHB4FdVITg2FI=
-X-Google-Smtp-Source: AGHT+IGrBYXn93GiNjPAMz6Efo4Ui0+eYh9UkvImYpLmBkriv1OTC2hCb+Yboc/erVeCc1w6GJHdjw==
-X-Received: by 2002:a05:6871:4d17:b0:268:97cb:f367 with SMTP id 586e51a60fabf-26897cbfc9amr6125173fac.2.1722960036286;
-        Tue, 06 Aug 2024 09:00:36 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2689a629a83sm3286314fac.45.2024.08.06.09.00.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 09:00:35 -0700 (PDT)
-Message-ID: <6a3b2f3c-b733-4f64-a550-2f7dcbaf7cb7@linuxfoundation.org>
-Date: Tue, 6 Aug 2024 10:00:33 -0600
+	s=arc-20240116; t=1722960049; c=relaxed/simple;
+	bh=dgWnsxsAvivSg1NsaUmrzHE9OVk8NSPXI08WSrXTbFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHfxIKErfk+dsYO2X/JVt0tcIKFWUarfsNHV/EcNBQYbAkTBBPXNsUoHAMvHSbjkdlw1e3+wZegy0BJZnx+o355up9ZTff5fkZUDUR30W+cj5V3K95ztILlV3+Uwb71opXjUiTjRCWaW7RbFC0ENZpFqoddqXQ9RNjTO4p+NzGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWMb8Din; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8947BC32786;
+	Tue,  6 Aug 2024 16:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722960049;
+	bh=dgWnsxsAvivSg1NsaUmrzHE9OVk8NSPXI08WSrXTbFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RWMb8DinnsQDbExSXI48mqLZXdQfdEcahKloBdwJNTneK5rXsJPuherek4DNYhnQc
+	 nMuc+iI6iLE7WXm+KdHNQhklUwK/t36LzCVZrQC4RXPbxB+1gazxyAJCNV3titjVFI
+	 hKJ2JMkWMcrxKqK6gBrldhaI/z2x21prMAyYNFxF3+bqmPklGCbZv18l0MvIdM7jT9
+	 ho1bEKE2Td2MpRJ+ef2RIwybb1Syg+enLl97MB6eZFsFHxPRKbwHorGNg6YNrvWg8C
+	 OBqud50XwNj7nyU4q5hhOqi5rldeUvkjt/O42SJ/M/Td7Fhag0dMnc0d0QC724QenI
+	 TO6A9cfCgqyIw==
+Date: Tue, 6 Aug 2024 17:00:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <barnabas.czeman@mainlining.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Albrieux <jonathan.albrieux@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux@mainlining.org,
+	Danila Tikhonov <danila@jiaxyga.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: iio: imu: magnetometer: Add ak09118
+Message-ID: <20240806-paycheck-visibly-4e114692ae98@spud>
+References: <20240806-ak09918-v2-0-c300da66c198@mainlining.org>
+ <20240806-ak09918-v2-2-c300da66c198@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: kvm: fix mkdir error when building for
- non-supported arch
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: kernel@collabora.com, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240806121029.1199794-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240806121029.1199794-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3TllyQc2YYniCF7R"
+Content-Disposition: inline
+In-Reply-To: <20240806-ak09918-v2-2-c300da66c198@mainlining.org>
 
-On 8/6/24 06:10, Muhammad Usama Anjum wrote:
-> The mkdir generates an error when kvm suite is build for non-supported
 
-built
-unsupported
+--3TllyQc2YYniCF7R
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> architecture such as arm. Fix it by ignoring the error from mkdir.
-> 
-> mkdir: missing operand
-> Try 'mkdir --help' for more information.
+On Tue, Aug 06, 2024 at 08:10:19AM +0200, Barnab=E1s Cz=E9m=E1n wrote:
+> From: Danila Tikhonov <danila@jiaxyga.com>
+>=20
+> Document asahi-kasei,ak09918 compatible.
 
-Simply suppressing the message isn't a good fix. Can you investigate
-a bit more on why mkdir is failing and the architectures it is failing
-on?
+Please explain what makes this device incompatible with those already in
+the binding and why a fallback is not suitable.
 
-This change simply suppresses the error message and continues - Should
-this error end the build process or not run mkdir to begin with by
-checking why $(sort $(dir $(TEST_GEN_PROGS)))) results in an empty
-string?
+Thanks,
+Conor.
 
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>=20
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> Signed-off-by: Barnab=E1s Cz=E9m=E1n <barnabas.czeman@mainlining.org>
 > ---
->   tools/testing/selftests/kvm/Makefile | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-> index 48d32c5aa3eb7..8ff46a0a8d1cd 100644
-> --- a/tools/testing/selftests/kvm/Makefile
-> +++ b/tools/testing/selftests/kvm/Makefile
-> @@ -317,7 +317,7 @@ $(LIBKVM_S_OBJ): $(OUTPUT)/%.o: %.S $(GEN_HDRS)
->   $(LIBKVM_STRING_OBJ): $(OUTPUT)/%.o: %.c
->   	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -ffreestanding $< -o $@
->   
-> -$(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))))
-> +$(shell mkdir -p $(sort $(dir $(TEST_GEN_PROGS))) > /dev/null 2>&1)
->   $(SPLIT_TEST_GEN_OBJ): $(GEN_HDRS)
->   $(TEST_GEN_PROGS): $(LIBKVM_OBJS)
->   $(TEST_GEN_PROGS_EXTENDED): $(LIBKVM_OBJS)
+>  .../devicetree/bindings/iio/magnetometer/asahi-kasei,ak8975.yaml        =
+ | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/asahi-kas=
+ei,ak8975.yaml b/Documentation/devicetree/bindings/iio/magnetometer/asahi-k=
+asei,ak8975.yaml
+> index 9790f75fc669..583cdd2fad7e 100644
+> --- a/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak89=
+75.yaml
+> +++ b/Documentation/devicetree/bindings/iio/magnetometer/asahi-kasei,ak89=
+75.yaml
+> @@ -18,6 +18,7 @@ properties:
+>            - asahi-kasei,ak09911
+>            - asahi-kasei,ak09912
+>            - asahi-kasei,ak09916
+> +          - asahi-kasei,ak09918
+>        - enum:
+>            - ak8975
+>            - ak8963
+>=20
+> --=20
+> 2.46.0
+>=20
 
+--3TllyQc2YYniCF7R
+Content-Type: application/pgp-signature; name="signature.asc"
 
-thanks,
--- Shuah
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrJIrAAKCRB4tDGHoIJi
+0uydAQDG0c2y7H6w4zozEzZ9VYi7IQyZI7ZDFm2zmKjet3UbjwEAkDB2RHT1yKvq
+QktGCWzF0cmqhwU+BMbBEe9J7IzyGAE=
+=BSEH
+-----END PGP SIGNATURE-----
+
+--3TllyQc2YYniCF7R--
 
