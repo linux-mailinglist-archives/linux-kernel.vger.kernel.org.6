@@ -1,90 +1,129 @@
-Return-Path: <linux-kernel+bounces-277018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-277019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46465949B26
-	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:15:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBB9949B2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  7 Aug 2024 00:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4AB1B25225
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E131C22AB5
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2EE17994F;
-	Tue,  6 Aug 2024 22:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAC0173336;
+	Tue,  6 Aug 2024 22:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cieWg0aI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="YlV4UK0N"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0629D178381;
-	Tue,  6 Aug 2024 22:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23A715FA92
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 22:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722982390; cv=none; b=hNpkc36GrkBHfjd/ZdWFEsJYLBX6yYARNFjeSapwc8XvimUb2+L70/MDI3x10WUgfUTSVzIDa0ftiCFDb9YUSHQtXMT3mr9M3Hbonrh3Qwd1EyBfaw6EWQ7682MoCxyb22yU/u0DD+JxWUwCva2WDYeRnrH+aWUD7oYIoqt/Ke8=
+	t=1722982501; cv=none; b=LSDaSr03y40d7Cfvk8eY3+FUxxM5Xj4c4AIpU+OJSclof4jh1O90wjJdqce6siPKEc/+r2ooKb/ShaP7xpA4CmWZ/DtJ9hIczSjGSBM5pAXZBQiT9J3/vs/PRcSQhwZBAeMoo9nndDKDar+Mtb4Ab/V/9EncNSJ6AFLGkPfOQos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722982390; c=relaxed/simple;
-	bh=cLcQPUSyW6zpKPEpULWnl+A4X3BrwKfXFamHYe2uC7A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KDTJeJ8WpvSLMKMoHoLUzkhL23BfsU24vDsMiq+FtFZHseP9CcjtA4OEKJA85mYBU8g1jAxVJNpVbUWmcwxwTywyv8RmdhJDw5lmp0XaZfirBO04GaW0GcCOkrzoz5zKXEzfuvtVbIZ7ZysmorBEb1AjtjNfEWrcXwDOpU8Fk8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cieWg0aI; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722982389; x=1754518389;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cLcQPUSyW6zpKPEpULWnl+A4X3BrwKfXFamHYe2uC7A=;
-  b=cieWg0aIzjMLk01YEz4u7NnV7RbuG0oHNxH7WCVAygwFRpVJw0fBXxDL
-   +Hho9D6Z7mDAp9uCOY1fZPDMFEixrzhvaCmBQ0YBlDGBkEGnPptsbSy06
-   QD7m/FxAUi0HXlkOEnEZCp6URAn86Zk/Lrc4bsOYQaYKhyRtTMla/d/ht
-   LnHn+ivHAphkR/CPRC2L2BhkVEEOXjT9tH0XTgS64igvfLIPfUsBjz+Us
-   DYYgw+UD2cqx82SI7WGWmiZWm9C+wU9UR5K3WhHIlk5CDqKXiZ4yoGK3J
-   kpLqyRZTnDMXaOgQQb0h+Cu6P7NZx1FEjCp7SdinQRUL5hSAav1WbHKNp
-   w==;
-X-CSE-ConnectionGUID: taUgbzgBSwqZCxDgDeVV+Q==
-X-CSE-MsgGUID: cLQs4eK3QIOMv8R3ZZzdFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11156"; a="38534422"
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="38534422"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2024 15:13:09 -0700
-X-CSE-ConnectionGUID: 1ddOgj/xQqe50JmXrzya0Q==
-X-CSE-MsgGUID: jVbftUq8SVq6ntpXp5x24g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,268,1716274800"; 
-   d="scan'208";a="61465671"
-Received: from yjiang5-dev1.sc.intel.com ([172.25.103.134])
-  by orviesa003.jf.intel.com with ESMTP; 06 Aug 2024 15:13:08 -0700
-From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
+	s=arc-20240116; t=1722982501; c=relaxed/simple;
+	bh=Ogo68UR/OsXc9UdIgAzdmezFiK2lZB543zE7hjBKpoA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=j8Ja8Yk0tl0Jn8aaHkL1X5FsCJxl5I87sVOFEhAxhruxPF9co7XL1eiCn8SUHX/SmwbKU+KWsGLaqqkIhE9SfgtF8L9x7q7oQl7zPEG28SfJyepujpiLcv7j8ymjaWANSX/fdye8EvlZku7SLSBGXp7aymeCY6Yr6jA2WWMShuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=YlV4UK0N; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6bb687c3cceso5630026d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 15:14:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1722982498; x=1723587298; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DpwrGsGSvnHFdGVf1tlm4Wyo1L4IUT4bE3I4p9OVTOM=;
+        b=YlV4UK0Ns+x6vWW4pQb1PxiOCgj3UfN2LH3YTukO/FXGZ0bD92QPr48/UUmJ6Hq0RH
+         zOBse55MvGDNU/iAqK3YB3o2rytTM0FQ2tJXc6eB3ckMwiPoKuu9AHg3qS/oOfmzm9vE
+         KxUd7vQJ5i7LTHUBD1no49qrotXEgHqW9WzeimmlwRzfazm/Jo3Ywvw7lF33T/ClGrLQ
+         lHvUjBP01T+yUrQH6obD0TfVR04vypt3/fmUnOVElDqWhm2y4zjsu5X+HhJ5e7El1vrV
+         EYws6boRBqVOiWDRP7AKJjEAfRZ/WjfVfZMU7oYmw8C/b8kHsvKekeWsbp15264WBQHN
+         6wcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722982498; x=1723587298;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DpwrGsGSvnHFdGVf1tlm4Wyo1L4IUT4bE3I4p9OVTOM=;
+        b=vw0OFMMRGDIbsAn8UlOOaqKQsURfGj1DUFKb8qK/1amOtIOiHdCJ4zGJtQadTNvC+z
+         xFVNbFWlfBCE28jgv2HQcT3LNQwB2NOlGcgwJ27nrlhoTPiQHG2w+hQLtxdZysgibhTb
+         dXcNxZMenA5NIaA/vJ+cH4saLXaB89I1X5qR1oYpGzW088yBZwMRGYAql+4pdQ6K/1QL
+         R1lgij7QWwxLRh19JgPNS84cSNkrrxOQWn6uPZcOizEWbFEcD6bglHOL7Gre4XuOFjC1
+         +E2roMuZFSP1eG42RJXtUKvgtf+BZEenJQgqzmzq/a8kaqJwJzohit60cEP54o4g6uf+
+         DeDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBAef/3q/AImJxoMqiqfTEJJPMe4IgeA7ZW1PJwrzpEOXtid/TCRdoopYh5bZoSk+u0Pc14TihffNsxtYIhP2t0eNGXM8J+rjhPvjB
+X-Gm-Message-State: AOJu0Yx94bdvhVcIeGDII8vCKi4/ccm9ZRwfeCTjSYO8APebR31ewQMe
+	VvVgp6Fe4/YsovfIURI4zl40gY4glTl9LwjbWaVIXL6GZvkEwYv5hY2AohjpXUc=
+X-Google-Smtp-Source: AGHT+IGvHhFLKBv+CzG3kEzbceETNjAkvAWmYHLIEUsuY6FkehJnB//a5YH4EciwSMoOH9WpYcIhcQ==
+X-Received: by 2002:a05:6214:5990:b0:6b0:86f9:64ad with SMTP id 6a1803df08f44-6bb98493eb3mr259732626d6.52.1722982497815;
+        Tue, 06 Aug 2024 15:14:57 -0700 (PDT)
+Received: from soleen.c.googlers.com.com (118.239.150.34.bc.googleusercontent.com. [34.150.239.118])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c8778e1sm50584506d6.128.2024.08.06.15.14.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 15:14:57 -0700 (PDT)
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: agordeev@linux.ibm.com,
+	akpm@linux-foundation.org,
+	alexghiti@rivosinc.com,
+	aou@eecs.berkeley.edu,
+	ardb@kernel.org,
+	arnd@arndb.de,
+	bhe@redhat.com,
+	bjorn@rivosinc.com,
+	borntraeger@linux.ibm.com,
 	bp@alien8.de,
+	catalin.marinas@arm.com,
+	chenhuacai@kernel.org,
+	chenjiahao16@huawei.com,
+	christophe.leroy@csgroup.eu,
 	dave.hansen@linux.intel.com,
-	x86@kernel.org,
+	david@redhat.com,
+	dawei.li@shingroup.cn,
+	gerald.schaefer@linux.ibm.com,
+	gor@linux.ibm.com,
+	hca@linux.ibm.com,
 	hpa@zytor.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	kirill.shutemov@linux.intel.com
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	yunhong.jiang@linux.intel.com
-Subject: [PATCH 7/7] x86/hyperv: Use the ACPI wakeup mailbox for VTL2 guests when available
-Date: Tue,  6 Aug 2024 15:12:37 -0700
-Message-Id: <20240806221237.1634126-8-yunhong.jiang@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240806221237.1634126-1-yunhong.jiang@linux.intel.com>
-References: <20240806221237.1634126-1-yunhong.jiang@linux.intel.com>
+	kent.overstreet@linux.dev,
+	kernel@xen0n.name,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	luto@kernel.org,
+	maobibo@loongson.cn,
+	mark.rutland@arm.com,
+	mcgrof@kernel.org,
+	mingo@redhat.com,
+	mpe@ellerman.id.au,
+	muchun.song@linux.dev,
+	namcao@linutronix.de,
+	naveen@kernel.org,
+	npiggin@gmail.com,
+	osalvador@suse.de,
+	palmer@dabbelt.com,
+	pasha.tatashin@soleen.com,
+	paul.walmsley@sifive.com,
+	peterz@infradead.org,
+	philmd@linaro.org,
+	rdunlap@infradead.org,
+	rientjes@google.com,
+	rppt@kernel.org,
+	ryan.roberts@arm.com,
+	souravpanda@google.com,
+	svens@linux.ibm.com,
+	tglx@linutronix.de,
+	tzimmermann@suse.de,
+	will@kernel.org,
+	x86@kernel.org
+Subject: [PATCH 1/2] mm: update the memmap stat before page is freed
+Date: Tue,  6 Aug 2024 22:14:53 +0000
+Message-ID: <20240806221454.1971755-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,34 +132,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The VTL2 in a TDX guest can boot utilizing the device tree instead of
-ACPI tables. When the ACPI wakeup mailbox is present in device tree,
-don't overwrite wakeup_secondary_cpu_64 so that the acpi_wakeup_cpu will
-be used to bring up the APs.
+It is more logical to update the stat before the page is freed, to avoid
+use after free scenarios.
 
-Signed-off-by: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+Fixes: 15995a352474 ("mm: report per-page metadata information")
+Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/x86/hyperv/hv_vtl.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ mm/hugetlb_vmemmap.c | 4 ++--
+ mm/page_ext.c        | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-index a1eb5548bd4d..132d05fd9136 100644
---- a/arch/x86/hyperv/hv_vtl.c
-+++ b/arch/x86/hyperv/hv_vtl.c
-@@ -276,9 +276,10 @@ int __init hv_vtl_early_init(void)
- 		panic("XSAVE has to be disabled as it is not supported by this module.\n"
- 			  "Please add 'noxsave' to the kernel command line.\n");
- 
--	if (!wakeup_mailbox_addr)
-+	if (!wakeup_mailbox_addr) {
- 		real_mode_header = &hv_vtl_real_mode_header;
--	apic_update_callback(wakeup_secondary_cpu_64, hv_vtl_wakeup_secondary_cpu);
-+		apic_update_callback(wakeup_secondary_cpu_64, hv_vtl_wakeup_secondary_cpu);
-+	}
- 
- 	return 0;
+diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+index 829112b0a914..fa83a7b38199 100644
+--- a/mm/hugetlb_vmemmap.c
++++ b/mm/hugetlb_vmemmap.c
+@@ -185,11 +185,11 @@ static int vmemmap_remap_range(unsigned long start, unsigned long end,
+ static inline void free_vmemmap_page(struct page *page)
+ {
+ 	if (PageReserved(page)) {
+-		free_bootmem_page(page);
+ 		mod_node_page_state(page_pgdat(page), NR_MEMMAP_BOOT, -1);
++		free_bootmem_page(page);
+ 	} else {
+-		__free_page(page);
+ 		mod_node_page_state(page_pgdat(page), NR_MEMMAP, -1);
++		__free_page(page);
+ 	}
  }
+ 
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index c191e490c401..962d45eee1f8 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -330,18 +330,18 @@ static void free_page_ext(void *addr)
+ 	if (is_vmalloc_addr(addr)) {
+ 		page = vmalloc_to_page(addr);
+ 		pgdat = page_pgdat(page);
++		mod_node_page_state(pgdat, NR_MEMMAP,
++				    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
+ 		vfree(addr);
+ 	} else {
+ 		page = virt_to_page(addr);
+ 		pgdat = page_pgdat(page);
++		mod_node_page_state(pgdat, NR_MEMMAP,
++				    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
+ 		BUG_ON(PageReserved(page));
+ 		kmemleak_free(addr);
+ 		free_pages_exact(addr, table_size);
+ 	}
+-
+-	mod_node_page_state(pgdat, NR_MEMMAP,
+-			    -1L * (DIV_ROUND_UP(table_size, PAGE_SIZE)));
+-
+ }
+ 
+ static void __free_page_ext(unsigned long pfn)
 -- 
-2.25.1
+2.46.0.76.ge559c4bf1a-goog
 
 
