@@ -1,140 +1,183 @@
-Return-Path: <linux-kernel+bounces-275555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30572948726
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:01:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1240E948728
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 04:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44D981C222DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D421C222E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 02:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311BDB676;
-	Tue,  6 Aug 2024 02:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B38CAD5B;
+	Tue,  6 Aug 2024 02:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="DyjuYawi"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dVamHCWh"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD4F184D;
-	Tue,  6 Aug 2024 02:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED191184D
+	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 02:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722909675; cv=none; b=hXhRQGE9b6GlkuObHlYOMDOQPMGGigvps6dusjMd5tcY8jnIy4s15f9Md1zPLew2tk8+uh3MkzVWytgWWMyrKKX0fDAb0C2WH7fdu6y83R2qwgyTuMjU/Y+1EENhxj6Cf05hnLlTRUcNLBrYR6kCESBHaDJOmJrs7nKlsFcRtMo=
+	t=1722909704; cv=none; b=OIJV51+ny4bvdeUdnBZg2kR6Fopj56nIT6+Mrqu69s3mQClc+RtXmkCS3W2bHtcu/F7aIgdW0gEgSi2r8HXUZu0M1an6Nsps0JSyGegGaYuISkflIXO88y271P3FGkCLLD8ZcYmBkcJT0aVcdoSlGFU0U7Pmdn8vyAlZMMcogkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722909675; c=relaxed/simple;
-	bh=+G3dYnQ0cpfsMR46ZgVaWGrkRceqV/ppO50AvX/RlDg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FEVdaQFyvs2J6A/6WhSrj77KNxdK5dCWNEESQwLerdD1ZrnXe3xP9Uku1rTBgckYIuOQUxdfc80q9IHq49MSESc/CbDPQIHyeBEVDYQbixnRxv0HxdVjQVQJUR42OoOKYfE1q1Bt5Wo/+x9zp2WU49aG2n/JJhbZsYszVetpIDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=DyjuYawi; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1722909671;
-	bh=bg4E/qAsWu2tlT5JbHkQmtf9JeB5TlVVndOX9oUBJns=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DyjuYawiAIBzg/xqvIdkFxKg5M3pB84GhEJNimx33sHPmy8ncPLLj1b4r24T1P3SR
-	 /kCdawSJrpAKLyHAqLIXmhdpmqYbd6ORqggGac5jhoXpUvy0lFjSTTcx9XkGlaKG4i
-	 j2YCTDy0tugHgb37/rrhlZ/KUSV5bQZDlT0Zg8tMup4594CnFomaYHRZc7LNdv2cN5
-	 Lpgq9eqCfPdMcp22by2kuaxDPI3+aQA5Y68Txl1fpBKtkbOf/6Ln9+o4TA//4G4knQ
-	 n+Xp0IRRTs0FcOi6HtW+KZLORZ8MCEI8GuSNmgGKhXZe53XwBemCGx7N6DOLPzOPrY
-	 oq6R3OnEHh+Lw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WdGkD0kZtz4w2F;
-	Tue,  6 Aug 2024 12:01:07 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>, Nicholas Piggin
- <npiggin@gmail.com>
-Cc: Jeff Xu <jeffxu@google.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Pedro Falcato <pedro.falcato@gmail.com>,
- kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>,
- oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Kees Cook
- <keescook@chromium.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave
- Hansen <dave.hansen@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Guenter Roeck <groeck@chromium.org>, Jann
- Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, Jorge Lucangeli
- Obes <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>, Stephen =?utf-8?Q?R?=
- =?utf-8?Q?=C3=B6ttger?=
- <sroettger@google.com>, Suren Baghdasaryan <surenb@google.com>, Amer Al
- Shanawany <amer.shanawany@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Shuah Khan <shuah@kernel.org>,
- linux-api@vger.kernel.org, linux-mm@kvack.org, ying.huang@intel.com,
- feng.tang@intel.com, fengwei.yin@intel.com
-Subject: Re: [linus:master] [mseal] 8be7258aad:
- stress-ng.pagemove.page_remaps_per_sec -4.4% regression
-In-Reply-To: <CAHk-=wjeWqr+0Ktzbwqrw17aESe5dZm5Kt6nwqtKJX00VsDqWg@mail.gmail.com>
-References: <202408041602.caa0372-oliver.sang@intel.com>
- <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
- <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
- <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
- <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
- <CALmYWFuCvphvLQOuQHBbFq0G8Ekyze=q45Tt4dATOt-GhO2RGg@mail.gmail.com>
- <CAHk-=wgySgXXkZtx49Xq70X2CmSizM8siacYKncMmFWRzKjs5Q@mail.gmail.com>
- <D38D6LJZOIQK.2GV58PGVL5K85@gmail.com>
- <CAHk-=wjeWqr+0Ktzbwqrw17aESe5dZm5Kt6nwqtKJX00VsDqWg@mail.gmail.com>
-Date: Tue, 06 Aug 2024 12:01:06 +1000
-Message-ID: <87r0b2if4t.fsf@mail.lhotse>
+	s=arc-20240116; t=1722909704; c=relaxed/simple;
+	bh=yYZvawzGMDPq+ccKvMiG+y0paygheXBb8BODrFmiovc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jt1Ww5WYq+OqEClkuvHJPQ0sOCpu0Z3C5akiZts2YzxWCpYEdU9eWpEG3BDcQxYMEPEWoY+dVtVxnjld4kspLCWy8Aj7jolJD0PoWKvRNKJcubQw4GJn3U82f/CyrbDcO5AIa44Gh3MtUL5PBzljp7uo6AfP0JSNIqntTSL7Elg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dVamHCWh; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-664aa55c690so3677857b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 05 Aug 2024 19:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722909702; x=1723514502; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IrclXbPxc7k+OsvCfqyiA7cTaQluZqiW+2v7tbHuPRY=;
+        b=dVamHCWhOxBR2CYb1Pt5HBycKT46EpAt3msGeIXE9bwoojWM/Bk/lAeAB2ZAaVxe5r
+         UF5BD+GGlD5uv3aYyTFtuLOTLmh1/1vyOiNW3PeMmljmeYF4tSWg02GERAcOxjEDrlx/
+         B0U87Z+lIkoikuq7yshbc1hqN528QqzgwTfq4VtRvK2oBsxbasvsE3a+r5LYHFHxrqlu
+         4HAxn+gQj/cZ1g4MwoJ4qi7cDdSI221MFe44S+xgIq9ocEfXnO/a3NScqpg0idj8MdDx
+         OkPZpPF0NrgaBXPDAZh5h9QUOI+OrvrJPLDT033aPZ6OgfbqaOuju+S3YoUJ4ygM9GV/
+         c8rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722909702; x=1723514502;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IrclXbPxc7k+OsvCfqyiA7cTaQluZqiW+2v7tbHuPRY=;
+        b=ML9mLccegcID11Mz7IdEP4VYnH+5UAqn7yA2UdPi4KBcFDXTU7UQfnibe4e5dgFpX3
+         hIcdbtkElQNX0PJLKy/k3wNS5aQ3nNn+BYuFhqgHfo48qm7d1aN0zKCuRabSWAmlA9AF
+         XSQG4bFBgjd14u3PXvS7sPq5EW9YPEsrt7kmQVObHaGKhnaYr7wQbL8ZpQ6iaFWpsh5F
+         vwdBPdYN6+Dm0HiuM/BsnehJNHVyP2V346jCXgkQIhyvaswXF69x+cFHmPJtS0RYdyCR
+         qfaQZ/zReMXYGiOgmZEjARdfwHuQivL0+T4Oyt7ROBiSPrORV0qGhEf0ZxqMwAINz7Gg
+         zsRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxJBfEqNYZ/fcGuVEcuqegJ0aANliF83tHmHi+eUELUV3764G+J8eXIPhdyQumTx5LON9C8bxmDn9UBLf9MlQebgltOpQ2DpzsE6V8
+X-Gm-Message-State: AOJu0YyAGh3I950qR/zcU2z6BCjx2QKws/I1kRmviD35sIrXo3yTvATO
+	yMILHDtJSKeW+wtA0dvHDbQDRjgwS0xXXp+J15LIwwhX5+B9oCnGn4xZ9I7iiRnfb8nNkISPiF+
+	92MFsnq7/RQ==
+X-Google-Smtp-Source: AGHT+IFVyQGN4z12IAVH+p7jnaVWp/Emc818EHEeeiX5g2mVHI0oTfp6EnyTQ6L3zVZpWN1ojVrhtzHHhEUTqg==
+X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
+ (user=davidgow job=sendgmr) by 2002:a05:690c:fd1:b0:691:55ea:85be with SMTP
+ id 00721157ae682-69155eac781mr5317037b3.4.1722909701960; Mon, 05 Aug 2024
+ 19:01:41 -0700 (PDT)
+Date: Tue,  6 Aug 2024 10:01:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240806020136.3481593-1-davidgow@google.com>
+Subject: [PATCH] kunit: Fix kunit_kstrdup_const() with modules
+From: David Gow <davidgow@google.com>
+To: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Kees Cook <kees@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Nico Pache <npache@redhat.com>
+Cc: David Gow <davidgow@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
-> On Mon, 5 Aug 2024 at 16:25, Nicholas Piggin <npiggin@gmail.com> wrote:
->>
->> Can userspace on other archs not unmap their vdsos?
->
-> I think they can, and nobody cares. The "context.vdso" value stays at
-> some stale value, and anybody who tries to use it will just fail.
->
-> So what makes powerpc special is not "you can unmap the vdso", but
-> "powerpc cares".
->
-> I just don't quite know _why_ powerpc cares.
+In commit 7d3c33b290b1 ("kunit: Device wrappers should also manage driver name"),
+the kunit_kstrdup_const() and kunit_kfree_const() were introduced as an
+optimisation of kunit_kstrdup(), which only copy/free strings from the
+kernel rodata.
 
-AFAIK for CRIU the problem is signal delivery:
+However, these are inline functions, and is_kernel_rodata() only works
+for built-in code. This causes problems in two cases:
+- If kunit is built as a module, __{start,end}_rodata is not defined.
+- If a kunit test using these functions is built as a module, it will
+  suffer the same fate.
 
-arch/powerpc/kernel/signal_64.c:
+Restrict the is_kernel_rodata() case to when KUnit is built as a module,
+which fixes the first case, at the cost of losing the optimisation.
 
-int handle_rt_signal64(struct ksignal *ksig, sigset_t *set,
-		struct task_struct *tsk)
-{
-        ...
-	/* Set up to return from userspace. */
-	if (tsk->mm->context.vdso) {
-		regs_set_return_ip(regs, VDSO64_SYMBOL(tsk->mm->context.vdso, sigtramp_rt64));
+Also, make kunit_{kstrdup,kfree}_const non-inline, so that other modules
+using them will not accidentally depend on is_kernel_rodata(). If KUnit
+is built-in, they'll benefit from the optimisation, if KUnit is not,
+they won't, but the string will be properly duplicated.
 
+(And fix a couple of typos in the doc comment, too.)
 
-ie. if the VDSO is moved but mm->context.vdso is not updated, signal
-delivery will crash in userspace.
+Reported-by: Nico Pache <npache@redhat.com>
+Closes: https://lore.kernel.org/all/CAA1CXcDKht4vOL-acxrARbm6JhGna8_k8wjYJ-vHONink8aZ=w@mail.gmail.com/
+Fixes: 7d3c33b290b1 ("kunit: Device wrappers should also manage driver name")
+Signed-off-by: David Gow <davidgow@google.com>
+---
+ include/kunit/test.h | 16 +++-------------
+ lib/kunit/test.c     | 19 +++++++++++++++++++
+ 2 files changed, 22 insertions(+), 13 deletions(-)
 
-x86-64 always uses SA_RESTORER, and arm64 & s390 can use SA_RESTORER, so
-I think CRIU uses that to avoid problems with signal delivery when the
-VDSO is moved.
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index da9e84de14c0..5ac237c949a0 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -489,11 +489,7 @@ static inline void *kunit_kcalloc(struct kunit *test, size_t n, size_t size, gfp
+  * Calls kunit_kfree() only if @x is not in .rodata section.
+  * See kunit_kstrdup_const() for more information.
+  */
+-static inline void kunit_kfree_const(struct kunit *test, const void *x)
+-{
+-	if (!is_kernel_rodata((unsigned long)x))
+-		kunit_kfree(test, x);
+-}
++void kunit_kfree_const(struct kunit *test, const void *x);
+ 
+ /**
+  * kunit_kstrdup() - Duplicates a string into a test managed allocation.
+@@ -527,16 +523,10 @@ static inline char *kunit_kstrdup(struct kunit *test, const char *str, gfp_t gfp
+  * @gfp: flags passed to underlying kmalloc().
+  *
+  * Calls kunit_kstrdup() only if @str is not in the rodata section. Must be freed with
+- * kunit_free_const() -- not kunit_free().
++ * kunit_kfree_const() -- not kunit_kfree().
+  * See kstrdup_const() and kunit_kmalloc_array() for more information.
+  */
+-static inline const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp)
+-{
+-	if (is_kernel_rodata((unsigned long)str))
+-		return str;
+-
+-	return kunit_kstrdup(test, str, gfp);
+-}
++const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp);
+ 
+ /**
+  * kunit_vm_mmap() - Allocate KUnit-tracked vm_mmap() area
+diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+index e8b1b52a19ab..089c832e3cdb 100644
+--- a/lib/kunit/test.c
++++ b/lib/kunit/test.c
+@@ -874,6 +874,25 @@ void kunit_kfree(struct kunit *test, const void *ptr)
+ }
+ EXPORT_SYMBOL_GPL(kunit_kfree);
+ 
++void kunit_kfree_const(struct kunit *test, const void *x)
++{
++#if !IS_MODULE(CONFIG_KUNIT)
++	if (!is_kernel_rodata((unsigned long)x))
++#endif
++		kunit_kfree(test, x);
++}
++EXPORT_SYMBOL_GPL(kunit_kfree_const);
++
++const char *kunit_kstrdup_const(struct kunit *test, const char *str, gfp_t gfp)
++{
++#if !IS_MODULE(CONFIG_KUNIT)
++	if (is_kernel_rodata((unsigned long)str))
++		return str;
++#endif
++	return kunit_kstrdup(test, str, gfp);
++}
++EXPORT_SYMBOL_GPL(kunit_kstrdup_const);
++
+ void kunit_cleanup(struct kunit *test)
+ {
+ 	struct kunit_resource *res;
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
-riscv doesn't support SA_RESTORER but I guess CRIU doesn't support riscv
-yet so it's not become a problem.
-
-There was a patch to support SA_RESTORER on powerpc, but I balked at
-merging it because I couldn't find anyone on the glibc side to say
-whether they wanted it or not. I guess I should have just merged it.
-
-There was an attempt to unify all the vdso stuff and handle the
-VDSO mremap case in generic code:
-
-  https://lore.kernel.org/lkml/20210611180242.711399-17-dima@arista.com/
-
-But I think that series got a bit big and complicated and Dmitry had to
-move on to other things.
-
-cheers
 
