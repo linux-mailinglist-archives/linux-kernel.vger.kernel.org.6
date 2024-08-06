@@ -1,282 +1,199 @@
-Return-Path: <linux-kernel+bounces-276377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3BE9492AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:09:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF86B9492B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 16:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D801F21EDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AD731F21D2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 14:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE7A18D63C;
-	Tue,  6 Aug 2024 14:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4153618D638;
+	Tue,  6 Aug 2024 14:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qU48sPAX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HGprX/Z7"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCED18D62B;
-	Tue,  6 Aug 2024 14:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C54118D624;
+	Tue,  6 Aug 2024 14:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722953387; cv=none; b=VodXRZE/COk3nW5vGXtNE3HQaMxDZIwDSG3g4Rp33m2ReqsOe6+JvU0xbEoHdlD47Vml65ka6zDDSBX1/Xin1Hic/JixdmsOJP1RkYOldOM053h4bX/VPVgtF+tRnF4O8ErAoxjNURY+rtwHZfkaDEqTQFXr0sdd0lfstsHz6kY=
+	t=1722953458; cv=none; b=qlqjGnkAg3LMRcV/pTnOd34xkdo+M2M/x96alw/j+MdlFybr/R4WVqOPZzck+YbX2T6QSfA0Um5ALf4ov5HKaiLyT5tVU6qIzrUclZBUP1uf1HfWS5Og1H7e6r7S00xWtYp9UAuOs9biQEE03lANU+ioWJh9ZHLre5qI2CDp+/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722953387; c=relaxed/simple;
-	bh=AANtZuK2j5YEXT3CJVteG6oAKDxOt2lT1fCvlswfZMU=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E6ckXx8adlxTMeoPi86YRQyisMHPNWoaM3sGXeC3damQ9Q53dB1hyhlLfJCD1OpJP6iQIuunR6viC7Szc+AQ49hkm/1d6a2DYB38pSFwjp3RpRngUtuEb4Ccez9mLfrSjPKHrjMmWUCTPtlxjqec50gOaK3jZhW6Qjy14VXsj5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qU48sPAX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DABEFC32786;
-	Tue,  6 Aug 2024 14:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722953386;
-	bh=AANtZuK2j5YEXT3CJVteG6oAKDxOt2lT1fCvlswfZMU=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=qU48sPAXbcCNf08qJMYn4cRDhmKshB4+owlW/3xBbNEK3hIyVR1Uhp95Td3/HZ27s
-	 zR81i0EcxAbCl7s9oej3PXzLPNbaCzxhiLiBnjWwYfdTlaxXaom4/tkVBAFXqRGLDT
-	 FjieblmWqLGB+yhlzrS8nQU9+iU7ZZKxSqk6EYno2V0V92BRUN9HS5XRfT4aZGGYpg
-	 200j81hrEyKqdhCUMPHKqnY+z73arRoO9gWDjvpA6fcHsrSqbydsok2jJCTPJVdAbs
-	 itSiIM837RvV3G7R3hbWY8u01k56a2iF0dyfRxmG/j0A2InvEHp8d7y7XIF0fKnV5U
-	 0bCrCJONLTrDQ==
-Date: Tue, 6 Aug 2024 16:09:43 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Tvrtko Ursulin <tursulin@ursulin.net>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, David Airlie <airlied@gmail.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org
-Subject: Re: [RFC PATCH 2/6] drm/cgroup: Add memory accounting DRM cgroup
-Message-ID: <20240806-gharial-of-abstract-reverence-aad6ea@houat>
-References: <20240627154754.74828-1-maarten.lankhorst@linux.intel.com>
- <20240627154754.74828-3-maarten.lankhorst@linux.intel.com>
- <20240627-paper-vicugna-of-fantasy-c549ed@houat>
- <6cb7c074-55cb-4825-9f80-5cf07bbd6745@linux.intel.com>
- <20240628-romantic-emerald-snake-7b26ca@houat>
- <70289c58-7947-4347-8600-658821a730b0@linux.intel.com>
- <40ef0eed-c514-4ec1-9486-2967f23824be@ursulin.net>
- <ZrIeuLi88jqbQ0FH@phenom.ffwll.local>
+	s=arc-20240116; t=1722953458; c=relaxed/simple;
+	bh=Tr7FlYBnH8Q3Q1Z6VOCLMv+vllTDR+BMfDqgxYyf8Kw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NTdZPpfqkBT5Lb6jL14PWn2Xo0FYgVX8FFBGDROb2nPeLI29Lgkpen2VvCFmO0rxp3cPAx+A9ritq6jRa4Rx/VuPTvBLd11ZRG+YpzV7mVRiLqt7RGSqd/LW8tFqC1/a633zNyImw8GckQmXsEyVi7o+UcZGS/889Ad59b4W3Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HGprX/Z7; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 476DLSqb000824;
+	Tue, 6 Aug 2024 14:10:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	RpU2aVxWdDTZHcLwnpTaW0udfZ/USdPNjDlMy7rfXgo=; b=HGprX/Z7CGpek+7K
+	6UROpsRZVGhCiVxUXI2pu6Ec0B6AhQ1/f51QjdL9ehNQGbwuGiSal2lEQXcepmvY
+	MqIcl7Xdb6rrKCPOR6gIFTiNajtafYiAL3DjHKaWdxYPmlCFNHVFJD2xyIoIGanE
+	Pfq5+3w3ej+m6xOHJR3xrsXBHf2TpSsA9fHy3xeyWW4PgHtLnehT6Cr8qhK+KCc5
+	IWgOhVskeBxxUDW/4pJob8E/KOHeiCD4H92jDEfUkjJ9Nu1OQMHkjlXbSCP2Po7h
+	xp9TBvdXCHtgXWMq/FcxqJcodviOcypEy8vk1t3FfBeg87/CRjkGcpCUnSqrKK9a
+	eoEgJQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40u5t3sxs9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 14:10:38 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 476BXZdW024314;
+	Tue, 6 Aug 2024 14:10:37 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40sy90m545-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 14:10:37 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 476EAX3f24248952
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 6 Aug 2024 14:10:35 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9CAD658081;
+	Tue,  6 Aug 2024 14:10:33 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5CC2A58063;
+	Tue,  6 Aug 2024 14:10:31 +0000 (GMT)
+Received: from [9.171.74.197] (unknown [9.171.74.197])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  6 Aug 2024 14:10:31 +0000 (GMT)
+Message-ID: <3ac48be62da0afdca6923c7a09fa303cf2c76ad2.camel@linux.ibm.com>
+Subject: Re: [PATCH] iommu/s390: Implement blocking domain
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin
+ Murphy <robin.murphy@arm.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: Gerd Bayer <gbayer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Joerg Roedel
+ <jroedel@suse.de>,
+        iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Date: Tue, 06 Aug 2024 16:10:30 +0200
+In-Reply-To: <20240806-blocking_domain-v1-1-8abc18e37e52@linux.ibm.com>
+References: <20240806-blocking_domain-v1-1-8abc18e37e52@linux.ibm.com>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xiNIssvAY7dQnrFT97QnGfWdp7KeY2rN
+X-Proofpoint-ORIG-GUID: xiNIssvAY7dQnrFT97QnGfWdp7KeY2rN
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tjibocpyvmmmnhi7"
-Content-Disposition: inline
-In-Reply-To: <ZrIeuLi88jqbQ0FH@phenom.ffwll.local>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-06_11,2024-08-06_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=7 priorityscore=1501
+ lowpriorityscore=0 mlxscore=7 suspectscore=0 mlxlogscore=113
+ impostorscore=0 clxscore=1015 adultscore=0 malwarescore=0 phishscore=0
+ bulkscore=0 spamscore=7 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408060093
 
-
---tjibocpyvmmmnhi7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 06, 2024 at 03:01:44PM GMT, Daniel Vetter wrote:
-> On Mon, Jul 01, 2024 at 06:01:41PM +0100, Tvrtko Ursulin wrote:
-> >=20
-> > On 01/07/2024 10:25, Maarten Lankhorst wrote:
-> > > Den 2024-06-28 kl. 16:04, skrev Maxime Ripard:
-> > > > Hi,
-> > > >=20
-> > > > On Thu, Jun 27, 2024 at 09:22:56PM GMT, Maarten Lankhorst wrote:
-> > > > > Den 2024-06-27 kl. 19:16, skrev Maxime Ripard:
-> > > > > > Hi,
-> > > > > >=20
-> > > > > > Thanks for working on this!
-> > > > > >=20
-> > > > > > On Thu, Jun 27, 2024 at 05:47:21PM GMT, Maarten Lankhorst wrote:
-> > > > > > > The initial version was based roughly on the rdma and misc cg=
-roup
-> > > > > > > controllers, with a lot of the accounting code borrowed from =
-rdma.
-> > > > > > >=20
-> > > > > > > The current version is a complete rewrite with page counter; =
-it uses
-> > > > > > > the same min/low/max semantics as the memory cgroup as a resu=
-lt.
-> > > > > > >=20
-> > > > > > > There's a small mismatch as TTM uses u64, and page_counter lo=
-ng pages.
-> > > > > > > In practice it's not a problem. 32-bits systems don't really =
-come with
-> > > > > > > > =3D4GB cards and as long as we're consistently wrong with u=
-nits, it's
-> > > > > > > fine. The device page size may not be in the same units as ke=
-rnel page
-> > > > > > > size, and each region might also have a different page size (=
-VRAM vs GART
-> > > > > > > for example).
-> > > > > > >=20
-> > > > > > > The interface is simple:
-> > > > > > > - populate drmcgroup_device->regions[..] name and size for ea=
-ch active
-> > > > > > >     region, set num_regions accordingly.
-> > > > > > > - Call drm(m)cg_register_device()
-> > > > > > > - Use drmcg_try_charge to check if you can allocate a chunk o=
-f memory,
-> > > > > > >     use drmcg_uncharge when freeing it. This may return an er=
-ror code,
-> > > > > > >     or -EAGAIN when the cgroup limit is reached. In that case=
- a reference
-> > > > > > >     to the limiting pool is returned.
-> > > > > > > - The limiting cs can be used as compare function for
-> > > > > > >     drmcs_evict_valuable.
-> > > > > > > - After having evicted enough, drop reference to limiting cs =
-with
-> > > > > > >     drmcs_pool_put.
-> > > > > > >=20
-> > > > > > > This API allows you to limit device resources with cgroups.
-> > > > > > > You can see the supported cards in /sys/fs/cgroup/drm.capacity
-> > > > > > > You need to echo +drm to cgroup.subtree_control, and then you=
- can
-> > > > > > > partition memory.
-> > > > > > >=20
-> > > > > > > Signed-off-by: Maarten Lankhorst<maarten.lankhorst@linux.inte=
-l.com>
-> > > > > > > Co-developed-by: Friedrich Vock<friedrich.vock@gmx.de>
-> > > > > > I'm sorry, I should have wrote minutes on the discussion we had=
- with TJ
-> > > > > > and Tvrtko the other day.
-> > > > > >=20
-> > > > > > We're all very interested in making this happen, but doing a "D=
-RM"
-> > > > > > cgroup doesn't look like the right path to us.
-> > > > > >=20
-> > > > > > Indeed, we have a significant number of drivers that won't have=
- a
-> > > > > > dedicated memory but will depend on DMA allocations one way or =
-the
-> > > > > > other, and those pools are shared between multiple frameworks (=
-DRM,
-> > > > > > V4L2, DMA-Buf Heaps, at least).
-> > > > > >=20
-> > > > > > This was also pointed out by Sima some time ago here:
-> > > > > > https://lore.kernel.org/amd-gfx/YCVOl8%2F87bqRSQei@phenom.ffwll=
-=2Elocal/
-> > > > > >=20
-> > > > > > So we'll want that cgroup subsystem to be cross-framework. We s=
-ettled on
-> > > > > > a "device" cgroup during the discussion, but I'm sure we'll hav=
-e plenty
-> > > > > > of bikeshedding.
-> > > > > >=20
-> > > > > > The other thing we agreed on, based on the feedback TJ got on t=
-he last
-> > > > > > iterations of his series was to go for memcg for drivers not us=
-ing DMA
-> > > > > > allocations.
-> > > > > >=20
-> > > > > > It's the part where I expect some discussion there too :)
-> > > > > >=20
-> > > > > > So we went back to a previous version of TJ's work, and I've st=
-arted to
-> > > > > > work on:
-> > > > > >=20
-> > > > > >     - Integration of the cgroup in the GEM DMA and GEM VRAM hel=
-pers (this
-> > > > > >       works on tidss right now)
-> > > > > >=20
-> > > > > >     - Integration of all heaps into that cgroup but the system =
-one
-> > > > > >       (working on this at the moment)
-> > > > >=20
-> > > > > Should be similar to what I have then. I think you could use my w=
-ork to
-> > > > > continue it.
-> > > > >=20
-> > > > > I made nothing DRM specific except the name, if you renamed it th=
-e device
-> > > > > resource management cgroup and changed the init function signatur=
-e to take a
-> > > > > name instead of a drm pointer, nothing would change. This is exac=
-tly what
-> > > > > I'm hoping to accomplish, including reserving memory.
-> > > >=20
-> > > > I've started to work on rebasing my current work onto your series t=
-oday,
-> > > > and I'm not entirely sure how what I described would best fit. Let's
-> > > > assume we have two KMS device, one using shmem, one using DMA
-> > > > allocations, two heaps, one using the page allocator, the other usi=
-ng
-> > > > CMA, and one v4l2 device using dma allocations.
-> > > >=20
-> > > > So we would have one KMS device and one heap using the page allocat=
-or,
-> > > > and one KMS device, one heap, and one v4l2 driver using the DMA
-> > > > allocator.
-> > > >=20
-> > > > Would these make different cgroup devices, or different cgroup regi=
-ons?
-> > >=20
-> > > Each driver would register a device, whatever feels most logical for =
-that device I suppose.
-> > >=20
-> > > My guess is that a prefix would also be nice here, so register a devi=
-ce with name of drm/$name or v4l2/$name, heap/$name. I didn't give it much =
-thought and we're still experimenting, so just try something. :)
-> > >=20
-> > > There's no limit to amount of devices, I only fixed amount of pools t=
-o match TTM, but even that could be increased arbitrarily. I just don't thi=
-nk there is a point in doing so.
-> >=20
-> > Do we need a plan for top level controls which do not include region na=
-mes?
-> > If the latter will be driver specific then I am thinking of ease of
-> > configuring it all from the outside. Especially considering that one cg=
-roup
-> > can have multiple devices in it.
-> >=20
-> > Second question is about double accounting for shmem backed objects. I =
-think
-> > they will be seen, for drivers which allocate backing store at buffer
-> > objects creation time, under the cgroup of process doing the creation, =
-in
-> > the existing memory controller. Right?
+On Tue, 2024-08-06 at 15:45 +0200, Niklas Schnelle wrote:
+> This fixes a crash when surprise hot-unplugging a PCI device. This crash
+> happens because during hot-unplug __iommu_group_set_domain_nofail()
+> attaching the default domain fails when the platform no longer
+> recognizes the device as it has already been removed and we end up with
+> a NULL domain pointer and UAF. This is exactly the case referred to in
+> the second comment in __iommu_device_set_domain() and just as stated
+> there if we can instead attach the blocking domain the UAF is prevented
+> as this can handle the already removed device. Implement the blocking
+> domain to use this handling. This would still leave us with a warning
+> for a failed attach. As failing to attach when the device is no longer
+> present is expected behavior turn this into an explicit -ENODEV error
+> and don't warn for it. Also change the error return for a NULL zdev to
+> -EIO as we don't want to ignore this case that would be a serious bug.
 >=20
-> We currently don't set __GFP_ACCOUNT respectively use GFP_KERNEL_ACCOUNT,
-> so no. Unless someone allocates them with GFP_USER ...
+> Fixes: c76c067e488c ("s390/pci: Use dma-iommu layer")
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+> Note: I somewhat suspect this to be related to the following discussion
+> or at least we have seen the same backtraces in reports that we suspect
+> to be caused by the issue fixed with this patch. In the case I was able
+> to reproduce with vfio-pci pass-through to a KVM guest I got a different
+> trace though.
+
+Forgot the link:
+https://lore.kernel.org/all/8743264a-9700-4227-a556-5f931c720211@huawei.com/
+
 >=20
-> > Is there a chance to exclude those from there and only have them in thi=
-s new
-> > controller? Or would the opposite be a better choice? That is, not see =
-those
-> > in the device memory controller but only in the existing one.
->=20
-> I missed this, so jumping in super late. I think guidance from Tejun was
-> to go the other way around: Exclude allocations from normal system
-> memory from device cgroups and instead make sure it's tracked in the
-> existing memcg.
->=20
-> Which might mean we need memcg shrinkers and the assorted pain ...
->=20
-> Also I don't think we ever reached some agreement on where things like cma
-> allocations should be accounted for in this case.
-
-Yeah, but that's the thing, memcg probably won't cut it for CMA. Because
-if you pull the thread, that means that dma-heaps also have to register
-their buffers into memcg too, even if it's backed by something else than
-RAM.
-
-This is what this cgroup controller is meant to do: memcg for memory
-(GFP'd) buffers, this cgroup for everything else.
-
-Maxime
-
---tjibocpyvmmmnhi7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZrIupwAKCRDj7w1vZxhR
-xfMYAQCjlZGY+yaQq7/ZkakE1LIj5TJntjlKikfSQ4PwzDajvgD/Ts1r9zy6Xvhn
-V56sDNPfYscg2EVK3lOydnNo2fLjVAw=
-=bQek
------END PGP SIGNATURE-----
-
---tjibocpyvmmmnhi7--
+> Organizational note: I'll be on vacation starting Thursday. Matt will
+> then take over and sent new revisions as necessary.
+> ---
+>  drivers/iommu/iommu.c      |  7 ++++---
+---8<---
 
