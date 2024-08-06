@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-275540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-275539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C1E2948700
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:28:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E1C9486FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 03:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5661B1C2223D
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C209628337E
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 01:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D695FBF0;
-	Tue,  6 Aug 2024 01:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730DAAD51;
+	Tue,  6 Aug 2024 01:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gXltVDaJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEzjgHGN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA1AB65C
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 01:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A828D8F62;
+	Tue,  6 Aug 2024 01:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722907683; cv=none; b=gaw7bAUHzThOoY/02Mqe+dh0bjQBJpVsIMeo8NR68DwI3DNv4iml96V+NtF4NZc7/tjhUjeBsu7CALEXJz81tLeUvZHFZ+WznLDHeseZ/FLR96g5MXYV4+MQb2mEfW0pwtxweqBwgHcXtcvhwL2v4xWNDZqoDQrndb/gBRww1HI=
+	t=1722907680; cv=none; b=YHuhFpQZ1NM+NHoBpnel75/KrdwR0iMCWB5R/xmQjlL76f2JxmmgJdj3XUMm+Xq1Xj02G2YtXCihvDPARBW6e/JF3Y9OFoPT0cRyNO+WfGbCujrB5mXO5lmUy19857suSikZ4cVNrTuziwBuR/2EkykcMtLKigUNZu5GBLAKZXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722907683; c=relaxed/simple;
-	bh=1i9OZ5kYFOHnn8yyarxxp4Ja57O53M1Z2RbHEOca1tU=;
+	s=arc-20240116; t=1722907680; c=relaxed/simple;
+	bh=aIfOxL3rtOChdt3CLqv4K7JL0Tufmfdr6MR2r8LWXZM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prBGEr70tJv2JVUA4NOs84MI7XvSNle4L/iUVrLHXeLIAEBCi99K1j7gonFAML5ZOp+PkdFa2V3Dt/WqNd7aMM3NDW8Id6SJGHQfDKUMAi7Cw0H7wn8LqayYhseRyMmG1yTzJViZlwO4CRdthhvURLh1z/9icpBS/zP1jqq3NWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gXltVDaJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722907680;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J+bdAM/DkGOA/Zs1QvQLk45BV0xvOdfS2m9pTY/3ctI=;
-	b=gXltVDaJwhzoAEytTz1F6dXHOlMbmabuB2XyQkYfA3UgNaEYYUBmymfzTcoUyShuKNfzr9
-	RUrpaWvf7iCbn0qMsgWwO+dryD3G8yRdT1gU1p5lydeVubmwce8yFXvyE6dKeTsHSWC2rA
-	hQnqbwiADiSbid+bZNwQ1WoU5x9Rm44=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-nnEXIJAgOyu_UeSWzu0Ffw-1; Mon,
- 05 Aug 2024 21:27:57 -0400
-X-MC-Unique: nnEXIJAgOyu_UeSWzu0Ffw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBB79195609E;
-	Tue,  6 Aug 2024 01:27:55 +0000 (UTC)
-Received: from [10.22.32.51] (unknown [10.22.32.51])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C0C351955F40;
-	Tue,  6 Aug 2024 01:27:53 +0000 (UTC)
-Message-ID: <45ceeb38-06c4-4b8a-8b3f-afe57c891f9a@redhat.com>
-Date: Mon, 5 Aug 2024 21:27:52 -0400
+	 In-Reply-To:Content-Type; b=Ol0LgcZSO/FuY1npU2DlTkyGyMxhSqeG3WLPB75SZGx7WVdn9uilT+uNPjNdYQ+FFLZa7ICCpGA1RqR/HGTrho7AssYBe3hEdm/o4QozsSA0ogRfaNiI1Tcj9XVhepC1xjKH8jol8o6Anfe6r23eoHvZSY4VQYCrCrqr7AeeLHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEzjgHGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66AF2C32782;
+	Tue,  6 Aug 2024 01:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722907680;
+	bh=aIfOxL3rtOChdt3CLqv4K7JL0Tufmfdr6MR2r8LWXZM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DEzjgHGNlgbqmK2mVmCz9C8IEZB2HDN2a8ja+5OLyah6qlvRrnd8pl0P7Ixfw3EEP
+	 y7rDUY0KtiET+W6nUHVLdmj38iQHKpHvmOqat4kcVmocatbu8YmGfwf4zzEAFN8/DN
+	 66d/dxGS7yLdybB6gOAxxqRdm9Fm8sBYuGqQpFlLzfvdtSd4PTvQB2KnvJ5UwnAaK/
+	 0C8PMyQ+Jt/KHMj2U9RoCyMbRVwRFrGkTfefzdRMrNMvUiy/2VrF7b40r9C16PLYCu
+	 5xMrsRfazUFhSFrZiyy+yeIJg1qgE9laFK+WIgWLL9J86XaFH93FpaMQpe5Wi5kDC6
+	 dMi66ky02syCA==
+Message-ID: <eacb9a3c-0d76-47d2-8b80-59d6a58fe4b4@kernel.org>
+Date: Mon, 5 Aug 2024 18:27:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,74 +49,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] lockdep: document MAX_LOCKDEP_CHAIN_HLOCKS
- calculation
-To: Carlos Llamas <cmllamas@google.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- Huang Ying <ying.huang@intel.com>, "J. R. Okajima" <hooanon05g@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>
-References: <20240806010128.402852-1-cmllamas@google.com>
- <20240806010128.402852-4-cmllamas@google.com>
+Subject: Re: [PATCH cmpxchg 2/3] ARC: Emulate one-byte cmpxchg
+To: "Paul E. McKenney" <paulmck@kernel.org>, linux-arch@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
+ peterz@infradead.org, torvalds@linux-foundation.org, arnd@arndb.de,
+ geert@linux-m68k.org, palmer@rivosinc.com, mhiramat@kernel.org,
+ linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ Vineet Gupta <vgupta@kernel.org>, Andi Shyti <andi.shyti@linux.intel.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>
+References: <c1b7f3a2-da50-4dfb-af6f-a1898eaf2b79@paulmck-laptop>
+ <20240805192119.56816-2-paulmck@kernel.org>
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240806010128.402852-4-cmllamas@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+From: Vineet Gupta <vgupta@kernel.org>
+In-Reply-To: <20240805192119.56816-2-paulmck@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/5/24 21:01, Carlos Llamas wrote:
-> Add a comment to document the magic number '5' used in the calculation
-> of MAX_LOCKDEP_CHAIN_HLOCKS. This number represents the estimated
-> average depth (number of locks held) of a lock chain. This definition
-> was added in commit 443cd507ce7f ("lockdep: add lock_class information
-> to lock_chain and output it").
+Hi Paul,
+
+On 8/5/24 12:21, Paul E. McKenney wrote:
+> Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on arc.
 >
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: J. R. Okajima <hooanon05g@gmail.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Will Deacon <will@kernel.org>
-> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> [ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
+> [ paulmck: Apply feedback from Naresh Kamboju. ]
+> [ paulmck: Apply kernel test robot feedback. ]
+>
+> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Vineet Gupta <vgupta@kernel.org>
+> Cc: Andi Shyti <andi.shyti@linux.intel.com>
+> Cc: Andrzej Hajda <andrzej.hajda@intel.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Palmer Dabbelt <palmer@rivosinc.com>
+> Cc: <linux-snps-arc@lists.infradead.org>
 > ---
->   kernel/locking/lockdep_internals.h | 1 +
->   1 file changed, 1 insertion(+)
+>  arch/arc/Kconfig               |  1 +
+>  arch/arc/include/asm/cmpxchg.h | 33 ++++++++++++++++++++++++---------
+>  2 files changed, 25 insertions(+), 9 deletions(-)
 >
-> diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-> index bbe9000260d0..2b429ed103a8 100644
-> --- a/kernel/locking/lockdep_internals.h
-> +++ b/kernel/locking/lockdep_internals.h
-> @@ -119,6 +119,7 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
->   
->   #define MAX_LOCKDEP_CHAINS	(1UL << MAX_LOCKDEP_CHAINS_BITS)
->   
-> +/* We estimate that a chain holds 5 locks on average. */
->   #define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
->   
->   extern struct lock_chain lock_chains[];
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index fd0b0a0d4686a..163608fd49d18 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -13,6 +13,7 @@ config ARC
+>  	select ARCH_HAS_SETUP_DMA_OPS
+>  	select ARCH_HAS_SYNC_DMA_FOR_CPU
+>  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+> +	select ARCH_NEED_CMPXCHG_1_EMU
+>  	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
+>  	select ARCH_32BIT_OFF_T
+>  	select BUILDTIME_TABLE_SORT
+> diff --git a/arch/arc/include/asm/cmpxchg.h b/arch/arc/include/asm/cmpxchg.h
+> index e138fde067dea..2102ce076f28b 100644
+> --- a/arch/arc/include/asm/cmpxchg.h
+> +++ b/arch/arc/include/asm/cmpxchg.h
+> @@ -8,6 +8,7 @@
+>  
+>  #include <linux/build_bug.h>
+>  #include <linux/types.h>
+> +#include <linux/cmpxchg-emu.h>
+>  
+>  #include <asm/barrier.h>
+>  #include <asm/smp.h>
+> @@ -46,6 +47,9 @@
+>  	__typeof__(*(ptr)) _prev_;					\
+>  									\
+>  	switch(sizeof((_p_))) {						\
+> +	case 1:								\
+> +		_prev_ = (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
+> +		break;							\
+>  	case 4:								\
+>  		_prev_ = __cmpxchg(_p_, _o_, _n_);			\
+>  		break;							\
+> @@ -65,16 +69,27 @@
+>  	__typeof__(*(ptr)) _prev_;					\
+>  	unsigned long __flags;						\
+>  									\
+> -	BUILD_BUG_ON(sizeof(_p_) != 4);					\
 
-I think it is better to define another macro like
+Is this alone not sufficient: i.e. for !LLSC let the atomic op happen
+under a spin-lock for non 4 byte quantities as well.
 
-diff --git a/kernel/locking/lockdep_internals.h 
-b/kernel/locking/lockdep_internals.h
-index bbe9000260d0..8805122cc9f1 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -119,7 +119,8 @@ static const unsigned long LOCKF_USED_IN_IRQ_READ =
+> +	switch(sizeof((_p_))) {						\
+> +	case 1:								\
+> +		__flags = cmpxchg_emu_u8((volatile u8 *)_p_, (uintptr_t)_o_, (uintptr_t)_n_);	\
+> +		_prev_ = (__typeof__(*(ptr)))__flags;			\
+> +		break;							\
+> +		break;							\
 
-  #define MAX_LOCKDEP_CHAINS     (1UL << MAX_LOCKDEP_CHAINS_BITS)
+FWIW, the 2nd break seems extraneous.
 
--#define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
-+#define AVG_LOCKDEP_CHAIN_DEPTH         5
-+#define MAX_LOCKDEP_CHAIN_HLOCKS 
-(MAX_LOCKDEP_CHAINS*AVG_LOCKDEP_CHAIN_DEPTH)
+> +	case 4:								\
+> +		/*							\
+> +		 * spin lock/unlock provide the needed smp_mb()		\
+> +		 * before/after						\
+> +		 */							\
+> +		atomic_ops_lock(__flags);				\
+> +		_prev_ = *_p_;						\
+> +		if (_prev_ == _o_)					\
+> +			*_p_ = _n_;					\
+> +		atomic_ops_unlock(__flags);				\
+> +		break;							\
+> +	default:							\
+> +		BUILD_BUG();						\
+> +	}								\
+>  									\
+> -	/*								\
+> -	 * spin lock/unlock provide the needed smp_mb() before/after	\
+> -	 */								\
+> -	atomic_ops_lock(__flags);					\
+> -	_prev_ = *_p_;							\
+> -	if (_prev_ == _o_)						\
+> -		*_p_ = _n_;						\
+> -	atomic_ops_unlock(__flags);					\
+>  	_prev_;								\
+>  })
 
-  extern struct lock_chain lock_chains[];
-
-Cheers,
-Longman
-
+-Vineet
 
