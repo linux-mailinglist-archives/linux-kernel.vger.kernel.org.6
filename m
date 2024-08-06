@@ -1,153 +1,123 @@
-Return-Path: <linux-kernel+bounces-276885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-276886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2428794998E
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:50:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A88E9949992
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 22:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8025282EF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:50:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43F8DB27DE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  6 Aug 2024 20:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B5F15B137;
-	Tue,  6 Aug 2024 20:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D7E15B99E;
+	Tue,  6 Aug 2024 20:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="b8pYLhvk"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEHIKsWT"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DAF77F08
-	for <linux-kernel@vger.kernel.org>; Tue,  6 Aug 2024 20:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EF9155CAD;
+	Tue,  6 Aug 2024 20:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722977394; cv=none; b=db9yWkBsPuGeGSVboIsDH9KHnA0trs0U5h3Qgv3lTn7NMLVriNr25qBylRrHm5J25LmyW5KG4oYDKgKpDvGdTpTv6oc4hxTHtxqGtpGcxU3EBfyjbZKTw91HY2gv/UKK5/rzUCtT+dYGuqzzyOs76KwmKWphvDzP0V0BH2OMfPI=
+	t=1722977426; cv=none; b=oIKxqGPGPynEfCo5r9P4x5JtzU+UluvOJcwx1ZAxSvHqq0mGmsgs5PMfOhNDqXJl+ZKzf53SRgi2MqGIny7wpjJKFnqLIZ55G+3xTqFxfUi8MYkZFGteu2BWb65Rs0Ot6xckjiWnIV4DH4uhUAlV2GiZL4JWaR83bPgo9f4u6bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722977394; c=relaxed/simple;
-	bh=LAOwpjfaOTd9j79Xq3XM0C4JVgaSGIPP9nm5nXzl8No=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JPD8hDLn2LpLK9uQYwbBDATqkRtwdPAOFcuX2FP1hKmnf4k8MM6/HoQOpizj9xX8+LIsRq1/sX3yLD5/bz6FAyIui9zh3VLtZUXeA7ee/sPke/QgmrbVF+jaS54+ottUhzkLoIlUEui8Q6Iv9uu9Ddvtvexazw5hi8PH72jgGKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=b8pYLhvk; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc56fd4de1so1895205ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 06 Aug 2024 13:49:52 -0700 (PDT)
+	s=arc-20240116; t=1722977426; c=relaxed/simple;
+	bh=/vIo88rGxJ7Qi1zU5jtv8+n+vDDff7LpbagHpBmGLkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o+KBpTnHctsA2f+vgUzyhrlqQq5DMOtFZJChdgpNbQpkk5DVodFd98wBXbTDGU1s+yiC8Uob5BWmdZaMJ/0n345KlnrcQqrSCaXkX7483EuVcGUFUO7nW5OmJJ9WH7f8Krq+FZTTaULfLdO8IM2FY2jNZ5hIeEM4QuAQ2wHzpTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEHIKsWT; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a9185e1c0so113364966b.1;
+        Tue, 06 Aug 2024 13:50:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1722977392; x=1723582192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bOb7yzxJR8v2Ep13bBP5suT1y7mTdVA2Wy56PSiUs5w=;
-        b=b8pYLhvkfesniuuqhHdU3sIJon4RDgoHA1u1P1Bm1uwW3XO/Pg/wzt7INGwVRW6Dwj
-         pwVsk8ViNT4RG74XJUjayGZHJqcqGDiSesrmLIGqc9urbUmmIrwskXm629tnfWZRdbeA
-         SPMZjSrAPbmiFgU5EC8fPVgoOH5LQziumU7U20kb//1UzRhmkj4IixbJsYsVHmrlfysl
-         eMa9MdXp3s0BLok0Q3OUVBLRhqHbJhiWMU300Q+sB5snPKfkDShQ8TrjguNnYo8QpETe
-         +rYBxhKAI013FJt/IH1mvBrFuzgWg0E+4iSVc+uK9Iwstr7Qwbb78/F9xkC1TbBrIjQd
-         wfkg==
+        d=gmail.com; s=20230601; t=1722977423; x=1723582223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SPWAqHyClCkz14eOqbyrR1m/H7AsRzTMOO2Sv00fuaA=;
+        b=TEHIKsWTxbxpiQLHCkuWnG/MCAj0nfTmURnML607pHIhdSst22cS8DOHyQ+938FFKz
+         4hZl9Q/ILhDLX+pxEuaJA+ytO15NsT5HlHlgrnwhpXTiMn/Mzp8z1S48IMOUlPWzBVE8
+         YDrQPCXy5yv5/MlN6ZO2MxTMhRHhNchFF+yQ3hdqaA/53AaxVSuaabSZLq0LW6mPHf60
+         qxoATJPLwkLJw5DszihF+JsYljAgfwJz7j4nDagNY2ceBRjPg/R9LxOyNOB1/BKeZNx+
+         evFjWmVTNbhLuFr0xwXSM32klELv19Eo/eiFnsnLCHN8/jO/wPntEiaShzX+TKU6yljj
+         ImCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722977392; x=1723582192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bOb7yzxJR8v2Ep13bBP5suT1y7mTdVA2Wy56PSiUs5w=;
-        b=VQew23bN06Pl8e4ETyMuDS+6Mhf0sraoYPV0hrJB8KX4VM1opaTWzJBWdoiN3VT4HM
-         Gw6/v9C63wntCcbMA7dVtKHPqOzOzLPwlAKsMKsZ1l+sNLO89p1jINpa6xCSM2OKPQwa
-         G6w743jKMp8jW+nQ5gpSzVKjQBhBa5o5s6GT3yopAHf50y+6mjcyS7jefhsAGIth+h4V
-         YgeF4EPbrmJcIPX9qunpT3f7TtrB3wPCWDhM7kUF2azXhfQ6h4/UKu2oQBUVBBS23Djh
-         c4ZyRaSGjCL8lweMA8uD6hFqQDUAPKYnJGlznxUeuDZwhTjiEFBk0pEpzlUM2yJQfRwI
-         wVeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMQFBGv4NnfWCKo6WNEaqTJYSmuPsQabDqCVO01ttlF+WPx0biQY5+VLy2LkK6q5JsPs3r8F8XlB+xqca6VQYtlBFRYU0rRuOJpXjG
-X-Gm-Message-State: AOJu0Yz5PUHFpMrlEeeH2nHp4K8Iose4kzLZ8wSSbP33UZQOlMbAYwH8
-	jyL590ztbWysbOZI8K5B6w2WAcUZRO/vHQabxxzmOpb4BqtdeFgjzzPcvjv3t0Eh5irW3z/KvsE
-	ognjjjrQYPcKeQLu9Qz9FILfQyP8=
-X-Google-Smtp-Source: AGHT+IEWfPRU2iaveYmuat0ybCTueo7tRCzgALc58m0y0WIi4uI64eQxtPbB6Cb9+AleElQR9RrKgLFpgvj4b6HwZRI=
-X-Received: by 2002:a17:902:ec86:b0:1ff:39d7:a1c4 with SMTP id
- d9443c01a7336-2008552d030mr595535ad.25.1722977391739; Tue, 06 Aug 2024
- 13:49:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722977423; x=1723582223;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SPWAqHyClCkz14eOqbyrR1m/H7AsRzTMOO2Sv00fuaA=;
+        b=uXF9DiPYWKKN7j63C8mbJPT/+6ouaabiU/n29rrlK3WP6ZEo3gmVX8+wEY6eh64Aiq
+         FgNFDI7ZQKk/o7WIba6Z8FIXJi0hxiLNG58R00z1BCEXU7ZLgQIGuEk6+ck6YnPkGeSa
+         SOkKqnBLwzdHLw2T35OZboPRZuNCXCeNw+jPDyTtPr+hD55BNQBS0NvEm9RoFx9vAQUs
+         TKXSf+uL3LXL1EruHvFKAFT061m6zUGKERV3lqq+2C5XHA5+Kzq+kmnVmuLoWs8ZihOO
+         B4qqp4uDoFJMpOWUxaqpxYi4/LJcNfrP9muFnlUy+9USoNX6L14cLX93f4eF5IakSohi
+         Kh3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Db9yEvshhJFpZLjeLKpA+Bsr0xVlx+qY4eCgR8/pEa4dRnXnjdUT2MghXjVzz0s6Gkq6mXK/RqiVb21lNzzehHze7Y5k5DUwRHvOoSlmsNagA99S2iDEu4b4x6J6t3dn0dD1AttFQ7xPonBMs9lfwnTrO/HpPUkyvTqU4Nk0a7uqyl9tdW2LRcMMW6kqoSnEdbYDsvsrpYzwKGXwF+OKwUNMDTdAy7H4mw==
+X-Gm-Message-State: AOJu0YxbkoBRP22zPnEtw1thGtoYcFR0CGqbPIQjGnF/EXmBUXMY2XQr
+	9pT/xVnND/38kKyEIfaLL9prknrCpOx2NMrah+brke3OUo6JeyQn
+X-Google-Smtp-Source: AGHT+IEK7snqhGEt0KxcB2YfnB10pN1hdWKFMMtgDeoUtWdZlsGgynYkA8Nr/UcGh8tdKonEa33RpQ==
+X-Received: by 2002:a17:907:7e9c:b0:a72:6b08:ab24 with SMTP id a640c23a62f3a-a7dc4dc4df4mr1018771666b.14.1722977422271;
+        Tue, 06 Aug 2024 13:50:22 -0700 (PDT)
+Received: from localhost.localdomain ([94.120.87.161])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e8674dsm588730066b.146.2024.08.06.13.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 13:50:21 -0700 (PDT)
+From: =?UTF-8?q?Mustafa=20Ek=C5=9Fi?= <mustafa.eskieksi@gmail.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: mustafa.eskieksi@gmail.com,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	pavel@ucw.cz,
+	lee@kernel.org,
+	linux-leds@vger.kernel.org,
+	rishitbansal0@gmail.com,
+	bahaku@elrant.team,
+	carlosmiguelferreira.2003@gmail.com,
+	alviro.iskandar@gnuweeb.org,
+	ammarfaizi2@gnuweeb.org,
+	bedirhan_kurt22@erdogan.edu.tr
+Subject: [PATCH v7 0/1] platform/x86: Add wmi driver for Casper Excalibur laptops
+Date: Tue,  6 Aug 2024 23:50:00 +0300
+Message-ID: <20240806205001.191551-1-mustafa.eskieksi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730125023.710237-1-jbrunet@baylibre.com> <20240730125023.710237-6-jbrunet@baylibre.com>
-In-Reply-To: <20240730125023.710237-6-jbrunet@baylibre.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 6 Aug 2024 22:49:40 +0200
-Message-ID: <CAFBinCCvWFCCvb9gPvv0-eudG=iuKROk5rPSiorKTnHcToDfTQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] drm/meson: dw-hdmi: split resets out of hw init.
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Kevin Hilman <khilman@baylibre.com>, dri-devel@lists.freedesktop.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Jerome,
+Hi,
+I made the changes you suggested.
 
-On Tue, Jul 30, 2024 at 2:50=E2=80=AFPM Jerome Brunet <jbrunet@baylibre.com=
-> wrote:
->
-> This prepares the migration to regmap usage.
->
-> To properly setup regmap, the APB needs to be in working order.
-> This is easier handled if the resets are not mixed with hw init.
->
-> More checks are required to determine if the resets are needed
-> on resume or not. Add a note for this.
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/gpu/drm/meson/meson_dw_hdmi.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meso=
-n/meson_dw_hdmi.c
-> index 5cd3264ab874..47aa3e184e98 100644
-> --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-> @@ -581,11 +581,6 @@ static void meson_dw_hdmi_init(struct meson_dw_hdmi =
-*meson_dw_hdmi)
->         /* Bring HDMITX MEM output of power down */
->         regmap_update_bits(priv->hhi, HHI_MEM_PD_REG0, 0xff << 8, 0);
->
-> -       /* Reset HDMITX APB & TX & PHY */
-> -       reset_control_reset(meson_dw_hdmi->hdmitx_apb);
-> -       reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
-> -       reset_control_reset(meson_dw_hdmi->hdmitx_phy);
-> -
->         /* Enable APB3 fail on error */
->         if (!meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
->                 writel_bits_relaxed(BIT(15), BIT(15),
-> @@ -675,6 +670,10 @@ static int meson_dw_hdmi_bind(struct device *dev, st=
-ruct device *master,
->                 return PTR_ERR(meson_dw_hdmi->hdmitx_phy);
->         }
->
-> +       reset_control_reset(meson_dw_hdmi->hdmitx_apb);
-> +       reset_control_reset(meson_dw_hdmi->hdmitx_ctrl);
-> +       reset_control_reset(meson_dw_hdmi->hdmitx_phy);
-The old out of tree vendor driver [0] enables the "isfr" and "iahb"
-(in P_HHI_HDMI_CLK_CNTL and P_HHI_GCLK_MPEG2) clocks before triggering
-the resets.
-Previously meson_dw_hdmi's behavior was identical as it enabled the
-clocks in meson_dw_hdmi_bind() and only later triggered the resets.
+On 5.08.2024 18:31, Hans de Goede wrote:
+> So lets name it "casper:rgb:biaslight", which I admittedly is a bit
+> weird, but backlight for LEDs which are not actually a backlight for
+> displays or keys is confusing, so IMHO biaslight is best.
+I agree, biaslight fits well. Do I need to add this naming to
+Documentation/leds/leds-class.rst?
 
-I'm totally fine with moving the resets to meson_dw_hdmi_bind() but I
-think it should happen after devm_clk_bulk_get_all_enable() has been
-called (to keep the order and thus avoid side-effects that we don't
-know about yet).
+Thanks for reviewing.
 
-Also out of curiosity: are you planning to convert the driver to use
-devm_reset_control_bulk_get_exclusive()?
+Mustafa Ekşi (1):
+  platform/x86: Add wmi driver for Casper Excalibur laptops
 
+ MAINTAINERS                       |   6 +
+ drivers/platform/x86/Kconfig      |  14 +
+ drivers/platform/x86/Makefile     |   1 +
+ drivers/platform/x86/casper-wmi.c | 640 ++++++++++++++++++++++++++++++
+ 4 files changed, 661 insertions(+)
+ create mode 100644 drivers/platform/x86/casper-wmi.c
 
-Best regards,
-Martin
+-- 
+2.46.0
 
-
-[0] https://github.com/endlessm/linux-s905x/blob/master/drivers/amlogic/hdm=
-i/hdmi_tx_20/hw/hdmi_tx_hw.c#L470
 
